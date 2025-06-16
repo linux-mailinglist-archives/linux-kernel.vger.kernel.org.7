@@ -1,156 +1,157 @@
-Return-Path: <linux-kernel+bounces-688374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832BAADB1AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:22:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6863ADB1B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD685167464
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:22:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BB5A7A7C8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88B42DBF42;
-	Mon, 16 Jun 2025 13:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uACVJSQJ"
-Received: from mail-lj1-f201.google.com (mail-lj1-f201.google.com [209.85.208.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69782DA76D;
+	Mon, 16 Jun 2025 13:22:53 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898A3292B2A
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47983292B54
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750080130; cv=none; b=T5gQDAEnOPMMEuz9GzjwCAmXC+2m6xKC1RqjnjUJ3ClOe8xb7EqHVRX9faVsUoyCljGduyhfkfXaegxsTGtuffVNIAk2CaZ/v1xaMPmSfaDdMJsWIdNIzFARpEm0BhsX+aQwIVJF5LldTkxzUt4orBBDhnt97cW+E31pAKqeMJU=
+	t=1750080173; cv=none; b=pDUhrAL/AetmVRwQxTpNiP4Ygo9bK4bDx9VoO0LdBUGhrypy1atiOZGzOG3GlUI4erDx9M1doerieXAnOXeDm/Vj5tCpKH7dIKp17ACT9W3NqwGUmI5i/uZCrIEk2xYWyIE6U44X419LfC9gPAnRLbGEIhDGggk9KDe2kdUnOy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750080130; c=relaxed/simple;
-	bh=96HwMABA3lat6ZaJt+24p8PnCvjukTFtGwymnSobeyo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mqsIu+h9BPoV5NQ7mUgt/KDzg2jCkPHBlib5I4prfI1gmtmLJ6WEcyDKvbW6ytPsAjJX9FjdPMdZaTdSt8ehEWKDoZk5shVYMDwFYWNzfKOuK8Cn1z1+kpUGQNTz7I+HRTKrXo9mvvUbDxdvc0yueqmnr7ElXwBS1j0z2yPkzLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uACVJSQJ; arc=none smtp.client-ip=209.85.208.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com
-Received: by mail-lj1-f201.google.com with SMTP id 38308e7fff4ca-32b48369fadso10320831fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 06:22:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750080127; x=1750684927; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vO6E1genm1NfTChAjYKuzLF6v70uWc0Xmgx3nG50sAw=;
-        b=uACVJSQJ3caLeXpVNEm9VxP3JsY7gfHZ0AKShMC1kFGFzOvL82Eb5TVPrX99wcTPQW
-         wQPYTxjKL05wf9AF/ae1DJPFfq/38LWriKJjDaLotecAWb8S5WgpBZgTKwpA6BeBLFuX
-         avfXKQi2q/8WMQCmp9aMkyLjiLb300SjozV/wjf1zeuE5BLRqeZ/M3DnsLyB1BUVlq8h
-         oBb0MbNs2Oa4vf5nGz4rBux9/jwvMJ/O2atYnK7O5+ZJnWKMzrCCluPhQfvrycjpbZrE
-         cX0IIDkeiTsS7he2qndIz5OVNKaVXhtdHZ94XvLqQHhIF6x+wyWFO4GpfXGFuZ2ZNOYD
-         3jLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750080127; x=1750684927;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vO6E1genm1NfTChAjYKuzLF6v70uWc0Xmgx3nG50sAw=;
-        b=QeQu/wmGV3BJCec8msL1izaBAVni4PnHGmOmDuaiUS2iI1dgbumS0rk+7PNCDarH4E
-         2/y4TIEmCAk/zz5d03yVajrs/2IuP/kNGJNMlNUa0fFPg39AMRgBNcAnja51Six4IJY6
-         vDdMlecs8snx4Orf+wqhbmQMxuljYm1fL95qpWWtGzKnjerTmsSBb4KxL93hVS2A/me0
-         MMvPMUKWceqaNvaoNBdjAHP2zDBJDuB0N4GrBzA5hf4QjTiyDcSYmAHF0YvOXx6VtlV6
-         GEN25/WTXHXlL/o0WpkXS/X2MsaoCQbYAsTdA8EplgxxBeSV7aczkSdJvtQHqMavld8x
-         2uzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdu5k4bPhrm+0uoR0ZUDMhsWadyLAU0uEdVi7vlaVqU9a87BRvn02bRpenj06sK1wE7TXy7vd1Qdaf9T0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd7bms4BSxA8Ss7Cis5tcfVO3kTQoAX2DV6nRQ1GgVP3PMZvqV
-	rCyKQtVEaptmpju2vIcW99FNiCTeRhKDHBN9M9hEy342dTFWzZ+RU1YV47ANZ+LKMUdNwBvD+az
-	7uk0RVQ==
-X-Google-Smtp-Source: AGHT+IFkt/Rh1bB1x+RfplLzW+PaREG+5HeLz6GmLPczhv2jggzzAjkVBt+PwypmVdooMJyZhNAqyFDMU9k=
-X-Received: from ljdr25.prod.google.com ([2002:a05:651c:4199:b0:32a:78e9:1a99])
- (user=khtsai job=prod-delivery.src-stubby-dispatcher) by 2002:a05:651c:50a:b0:30b:f0dd:9096
- with SMTP id 38308e7fff4ca-32b46e8e2fdmr28896961fa.12.1750080126678; Mon, 16
- Jun 2025 06:22:06 -0700 (PDT)
-Date: Mon, 16 Jun 2025 21:21:47 +0800
-In-Reply-To: <20250616132152.1544096-1-khtsai@google.com>
+	s=arc-20240116; t=1750080173; c=relaxed/simple;
+	bh=SfDNrgkiyxr1e5rAONZhMJ5nG8Q58jojguyKXEUxd+I=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ALVM3qrTebVdq0zOXHLKeiLqcpDDz3hTsoG33guyiXWy2pemgBYB7E0FXOhDLeigq0uva+auRYgV3wj588pV5wwyZ1v2AkeQqoPe+Ke9z4aFKkEQvZ1KoLt9tCDjO75SIxA0+HbXFfVdSUg4aEHzIlxddQzglcLeZejPxKpNdRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uR9n5-0003xV-Cd; Mon, 16 Jun 2025 15:22:23 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uR9n4-003oWd-0b;
+	Mon, 16 Jun 2025 15:22:22 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uR9n4-000VBo-0L;
+	Mon, 16 Jun 2025 15:22:22 +0200
+Message-ID: <6aeab5e5b616b1e690c2622d6599c5228a391e69.camel@pengutronix.de>
+Subject: Re: [PATCH 1/8] mmc: sdhci-of-aspeed: Fix sdhci software reset
+ can't be cleared issue.
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Cool Lee <cool_lee@aspeedtech.com>, andrew@codeconstruct.com.au, 
+	adrian.hunter@intel.com, ulf.hansson@linaro.org, joel@jms.id.au, 
+	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
+	linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 16 Jun 2025 15:22:21 +0200
+In-Reply-To: <20250615035803.3752235-2-cool_lee@aspeedtech.com>
+References: <20250615035803.3752235-1-cool_lee@aspeedtech.com>
+	 <20250615035803.3752235-2-cool_lee@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250616132152.1544096-1-khtsai@google.com>
-X-Mailer: git-send-email 2.50.0.rc2.692.g299adb8693-goog
-Message-ID: <20250616132152.1544096-2-khtsai@google.com>
-Subject: [PATCH 2/2] usb: gadget: u_serial: Fix race condition in TTY wakeup
-From: Kuen-Han Tsai <khtsai@google.com>
-To: gregkh@linuxfoundation.org, prashanth.k@oss.qualcomm.com, 
-	khtsai@google.com, hulianqin@vivo.com, krzysztof.kozlowski@linaro.org, 
-	mwalle@kernel.org, jirislaby@kernel.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-A race condition occurs when gs_start_io() calls either gs_start_rx() or
-gs_start_tx(), as those functions briefly drop the port_lock for
-usb_ep_queue(). This allows gs_close() and gserial_disconnect() to clear
-port.tty and port_usb, respectively.
+On So, 2025-06-15 at 11:57 +0800, Cool Lee wrote:
+> Replace sdhci software reset by scu reset from top.
+>=20
+> Signed-off-by: Cool Lee <cool_lee@aspeedtech.com>
+> ---
+>  drivers/mmc/host/sdhci-of-aspeed.c | 55 +++++++++++++++++++++++++++++-
+>  1 file changed, 54 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/mmc/host/sdhci-of-aspeed.c b/drivers/mmc/host/sdhci-=
+of-aspeed.c
+> index d6de010551b9..01bc574272eb 100644
+> --- a/drivers/mmc/host/sdhci-of-aspeed.c
+> +++ b/drivers/mmc/host/sdhci-of-aspeed.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/reset.h>
+>  #include <linux/spinlock.h>
+> =20
+>  #include "sdhci-pltfm.h"
+> @@ -39,6 +40,7 @@
+>  struct aspeed_sdc {
+>  	struct clk *clk;
+>  	struct resource *res;
+> +	struct reset_control *rst;
+> =20
+>  	spinlock_t lock;
+>  	void __iomem *regs;
+> @@ -328,13 +330,58 @@ static u32 aspeed_sdhci_readl(struct sdhci_host *ho=
+st, int reg)
+>  	return val;
+>  }
+> =20
+> +static void aspeed_sdhci_reset(struct sdhci_host *host, u8 mask)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_priv;
+> +	struct aspeed_sdhci *aspeed_sdhci;
+> +	struct aspeed_sdc *aspeed_sdc;
+> +	u32 save_array[7];
+> +	u32 reg_array[] =3D {SDHCI_DMA_ADDRESS,
+> +			SDHCI_BLOCK_SIZE,
+> +			SDHCI_ARGUMENT,
+> +			SDHCI_HOST_CONTROL,
+> +			SDHCI_CLOCK_CONTROL,
+> +			SDHCI_INT_ENABLE,
+> +			SDHCI_SIGNAL_ENABLE};
+> +	int i;
+> +	u16 tran_mode;
+> +	u32 mmc8_mode;
+> +
+> +	pltfm_priv =3D sdhci_priv(host);
+> +	aspeed_sdhci =3D sdhci_pltfm_priv(pltfm_priv);
+> +	aspeed_sdc =3D aspeed_sdhci->parent;
+> +
+> +	if (!IS_ERR(aspeed_sdc->rst)) {
+> +		for (i =3D 0; i < ARRAY_SIZE(reg_array); i++)
+> +			save_array[i] =3D sdhci_readl(host, reg_array[i]);
+> +
+> +		tran_mode =3D sdhci_readw(host, SDHCI_TRANSFER_MODE);
+> +		mmc8_mode =3D readl(aspeed_sdc->regs);
+> +
+> +		reset_control_assert(aspeed_sdc->rst);
+> +		mdelay(1);
+> +		reset_control_deassert(aspeed_sdc->rst);
+> +		mdelay(1);
 
-Use the null-safe TTY Port helper function to wake up TTY.
+Why are there delays here ...
 
-Cc: stable@vger.kernel.org
-Fixes: 35f95fd7f234 ("TTY: usb/u_serial, use tty from tty_port")
-Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
----
-Explanation:
-    CPU1:                            CPU2:
-    gserial_connect() // lock
-                                     gs_close() // await lock
-    gs_start_rx()     // unlock
-    usb_ep_queue()
-                                     gs_close() // lock, reset port_tty and unlock
-    gs_start_rx()     // lock
-    tty_wakeup()      // dereference
+[...]
+> @@ -535,6 +582,12 @@ static int aspeed_sdc_probe(struct platform_device *=
+pdev)
+> =20
+>  	spin_lock_init(&sdc->lock);
+> =20
+> +	sdc->rst =3D devm_reset_control_get(&pdev->dev, NULL);
+> +	if (!IS_ERR(sdc->rst)) {
+> +		reset_control_assert(sdc->rst);
+> +		reset_control_deassert(sdc->rst);
 
-Stack traces:
-[   51.494375][  T278] ttyGS1: shutdown
-[   51.494817][  T269] android_work: sent uevent USB_STATE=DISCONNECTED
-[   52.115792][ T1508] usb: [dm_bind] generic ttyGS1: super speed IN/ep1in OUT/ep1out
-[   52.516288][ T1026] android_work: sent uevent USB_STATE=CONNECTED
-[   52.551667][ T1533] gserial_connect: start ttyGS1
-[   52.565634][ T1533] [khtsai] enter gs_start_io, ttyGS1, port->port.tty=0000000046bd4060
-[   52.565671][ T1533] [khtsai] gs_start_rx, unlock port ttyGS1
-[   52.591552][ T1533] [khtsai] gs_start_rx, lock port ttyGS1
-[   52.619901][ T1533] [khtsai] gs_start_rx, unlock port ttyGS1
-[   52.638659][ T1325] [khtsai] gs_close, lock port ttyGS1
-[   52.656842][ T1325] gs_close: ttyGS1 (0000000046bd4060,00000000be9750a5) ...
-[   52.683005][ T1325] [khtsai] gs_close, clear ttyGS1
-[   52.683007][ T1325] gs_close: ttyGS1 (0000000046bd4060,00000000be9750a5) done!
-[   52.708643][ T1325] [khtsai] gs_close, unlock port ttyGS1
-[   52.747592][ T1533] [khtsai] gs_start_rx, lock port ttyGS1
-[   52.747616][ T1533] [khtsai] gs_start_io, ttyGS1, going to call tty_wakeup(), port->port.tty=0000000000000000
-[   52.747629][ T1533] Unable to handle kernel NULL pointer dereference at virtual address 00000000000001f8
----
- drivers/usb/gadget/function/u_serial.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+... but not here?
 
-diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
-index c043bdc30d8a..540dc5ab96fc 100644
---- a/drivers/usb/gadget/function/u_serial.c
-+++ b/drivers/usb/gadget/function/u_serial.c
-@@ -295,8 +295,8 @@ __acquires(&port->port_lock)
- 			break;
- 	}
-
--	if (do_tty_wake && port->port.tty)
--		tty_wakeup(port->port.tty);
-+	if (do_tty_wake)
-+		tty_port_tty_wakeup(&port->port);
- 	return status;
- }
-
-@@ -574,7 +574,7 @@ static int gs_start_io(struct gs_port *port)
- 		gs_start_tx(port);
- 		/* Unblock any pending writes into our circular buffer, in case
- 		 * we didn't in gs_start_tx() */
--		tty_wakeup(port->port.tty);
-+		tty_port_tty_wakeup(&port->port);
- 	} else {
- 		/* Free reqs only if we are still connected */
- 		if (port->port_usb) {
---
-2.50.0.rc2.692.g299adb8693-goog
-
+regards
+Philipp
 
