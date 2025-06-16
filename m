@@ -1,152 +1,102 @@
-Return-Path: <linux-kernel+bounces-687571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C362ADA6AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 05:08:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A8DADA6B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 05:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE66E189065D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 03:08:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5B8C3A44F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 03:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD4B28EA76;
-	Mon, 16 Jun 2025 03:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD94528E59E;
+	Mon, 16 Jun 2025 03:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQT9nbsI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BsNKNSEx"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E75B1C27;
-	Mon, 16 Jun 2025 03:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B034A1B87EB;
+	Mon, 16 Jun 2025 03:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750043270; cv=none; b=YYj3O8GzuYt86f3sGZdo9PNNV9rMoQjoXLSLud7tj030ydGTHEv6lxI5P3fqEGFmxhQZ3tFIcqxbo6XaqhLy7YJTa/MaNK315SQva7OAQWhF3h0t+QFp8k/NPQrRGkYUmchgBHPA0/YmWFqN0wsDWhL88Oks2NaQPz5lj9WHxi4=
+	t=1750043652; cv=none; b=Tu6ceqrcPlPl8CHzWsko1W6McovaDde3i/GjJSGvLFPmiz8ypSICF9bXsUFA3Laa5rUMEC2+RwcycD4xjlFQphpOwf6Q+ZV0E5gHrsZ37zgWhnEN85VqWTSp7eV/JNB5FbmP0U2i/DxngH6OQbyH7BXxAlAntRWBplNRQDVUCwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750043270; c=relaxed/simple;
-	bh=bjRNAwejvi/pkSblMCe8b7ZKY/fm9CLxTviorz8zlvU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f2oFPXCfOkPe8H4dTidovmQOPfDSFueLAwyia7kkYH8OANId5OtsSsgH7e2RY9N3vg6eDIOcOAc7ziwYUyZ+eQZH64vz712Rrm6Z1KbeCazInE3J8XUOfCAeKZqagjfeF8qNkEx1UgMYlyj41WVqa5izKMBUE1XPRoqykWc62t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQT9nbsI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CE38C4CEE3;
-	Mon, 16 Jun 2025 03:07:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750043270;
-	bh=bjRNAwejvi/pkSblMCe8b7ZKY/fm9CLxTviorz8zlvU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CQT9nbsI8d9vBZ/Qx4cKvcNDaOk2CN4rNQCGYPx9b8PdND0NEG2DhUclJggIQkrhW
-	 XjOmxEPFl9Vy0B5MriWGPBIS/n4U0qAkolAkfov0MNtpX1kx8DVYcSMZhA0z74QC+m
-	 85VXICr0CcRQybSfCby+vGCHyzsHorApRTudIkpl+UPTQ7mQ79eWApaTCQepIx1Dfv
-	 7xVah+CAhlZQo2R+8wYhfr6Y4W9NZv7vkIBVt0CS57B1doDoOlGXrs+wN7s0C8DF+g
-	 VY7PL4tVdzsK/qM2t10YQU8UXyr/o8Yb0TK2b3A+JgwsSRxtBTJ8uXWzNOYvlNV24D
-	 BFR96KsYIpcjA==
-Message-ID: <9002cafb-4517-43be-9949-e09101a453ba@kernel.org>
-Date: Mon, 16 Jun 2025 12:07:47 +0900
+	s=arc-20240116; t=1750043652; c=relaxed/simple;
+	bh=c0gwZpvRrZjf8E2MnG1KTyVnYNJEeLeorWvXPnso7jY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FlZBXbEhDhm1EPYMaEesZINI/Frug3WcKnMmYpYuhLLtudJSyA0PhLeKgse9RCCHrf7htiRBisPkFMlnzE5LHH7yQi9k2B7Q6dgyyf5OgO9aU9nk88lUjP92z4odiXE2e2HZMKO3sZEJj9PmCxCz0B1aadQKO9GWgJxUHlTLIDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BsNKNSEx; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=saNW8zdmippLZ+j7mPmKokLCsY7iQ+AF9tZzNqrD19s=; b=BsNKNSExvA9ezQrc46m9qXkSN7
+	4cQGezjhvnz2LgDhnu8UNRpY71q7WcxFVbxKkvwFooieoP1RAqi2gMen9NdtjmJKJr1tk7Yg3jryv
+	U4NeEqkudnRmDnynRoYxCleb7l1+TdsVDXNF7EKSNZ3WXMK5iT0ifuHtAt9hbX2Fmh9cu5R4xwmZB
+	i0+2vHFe0uzJv6c7dEuDfdTPc80CHfdFFi4B/I3Ku3PnISB7mTNlYswQ4QzkPM1ioF8ritKYHhRmu
+	U6CNQZQViGDPU1oaUA+CLOkr88XQfqLNszq7vrJZ5uoI19RtJMc4jMdT+DSCAijzCsZ5obtSa8gQP
+	IugRgPbQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uR0IF-0000000FUtX-15Dq;
+	Mon, 16 Jun 2025 03:13:55 +0000
+Date: Mon, 16 Jun 2025 04:13:55 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Hao Ge <hao.ge@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>, Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-s390@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
+Subject: Re: [PATCH v3 1/2] mm: Optimize the ARCH_NEEDS_WEAK_PER_CPU logic
+ for s390/alpha architectures
+Message-ID: <aE-L81GzxzWBTfPb@casper.infradead.org>
+References: <cover.1750040317.git.gehao@kylinos.cn>
+ <57e110be6d8387e403b4ef1f3b10714c36afbb51.1750040317.git.gehao@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 5/5] blk-mq-sched: support request batch
- dispatching for sq elevator
-To: Yu Kuai <yukuai1@huaweicloud.com>, ming.lei@redhat.com,
- yukuai3@huawei.com, tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com
-References: <20250614092528.2352680-1-yukuai1@huaweicloud.com>
- <20250614092528.2352680-6-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20250614092528.2352680-6-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <57e110be6d8387e403b4ef1f3b10714c36afbb51.1750040317.git.gehao@kylinos.cn>
 
-On 6/14/25 18:25, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Before this patch, each context will hold a global lock to dispatch one
-> request at a time, which introduce intense lock competition:
-
-How so ? If there is only a single context issuing IOs, there will not be any
-contention on the lock.
-
-> lock
-> ops.dispatch_request
-> unlock
-> 
-> Hence support dispatch a batch of requests while holding the lock to
-> reduce lock contention.
-
-Lock contention would happen only if you have multiple processes issuing I/Os.
-For a single context case, this simply reduces the overhead of dispatching
-commands by avoiding the lock+unlock per request. So please explain that clearly.
-
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->  block/blk-mq-sched.c | 55 ++++++++++++++++++++++++++++++++++++++++----
->  block/blk-mq.h       | 21 +++++++++++++++++
->  2 files changed, 72 insertions(+), 4 deletions(-)
-> 
-> diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-> index 990d0f19594a..d7cb88c8e8c7 100644
-> --- a/block/blk-mq-sched.c
-> +++ b/block/blk-mq-sched.c
-> @@ -101,6 +101,49 @@ static bool elevator_can_dispatch(struct sched_dispatch_ctx *ctx)
->  	return true;
->  }
+On Mon, Jun 16, 2025 at 10:29:17AM +0800, Hao Ge wrote:
+> +++ b/mm/Kconfig
+> @@ -929,6 +929,10 @@ config ARCH_SUPPORTS_PUD_PFNMAP
+>  	def_bool y
+>  	depends on ARCH_SUPPORTS_HUGE_PFNMAP && HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
 >  
-> +static void elevator_dispatch_requests(struct sched_dispatch_ctx *ctx)
-> +{
-> +	struct request *rq;
-> +	int budget_token[BUDGET_TOKEN_BATCH];
-> +	int count;
-> +	int i;
+> +# s390 and alpha should be enabled,see comments for DECLARE_PER_CPU_SECTION
 
-These 2 can be declared on the same line.
+This comment is inappropriate and should be removed.
 
+> +config ARCH_NEEDS_WEAK_PER_CPU
+> +       bool
 > +
-> +	while (true) {
-> +		if (!elevator_can_dispatch(ctx))
-> +			return;
-> +
-> +		count = blk_mq_get_dispatch_budgets(ctx->q, budget_token);
-> +		if (count <= 0)
-> +			return;
-> +
-> +		elevator_lock(ctx->e);
-> +		for (i = 0; i < count; ++i) {
-> +			rq = ctx->e->type->ops.dispatch_request(ctx->hctx);
-> +			if (!rq) {
-> +				ctx->run_queue = true;
-> +				goto err_free_budgets;
-> +			}
-> +
-> +			blk_mq_set_rq_budget_token(rq, budget_token[i]);
-> +			list_add_tail(&rq->queuelist, &ctx->rq_list);
-> +			ctx->count++;
-> +			if (rq->mq_hctx != ctx->hctx)
-> +				ctx->multi_hctxs = true;
-> +
-> +			if (!blk_mq_get_driver_tag(rq)) {
-> +				i++;
-> +				goto err_free_budgets;
-> +			}
-> +		}
-> +		elevator_unlock(ctx->e);
-> +	}
-> +
-> +err_free_budgets:
-> +	elevator_unlock(ctx->e);
-> +	for (; i < count; ++i)> +		blk_mq_put_dispatch_budget(ctx->q, budget_token[i]);
-> +}
-
-
--- 
-Damien Le Moal
-Western Digital Research
+>  #
+>  # UP and nommu archs use km based percpu allocator
+>  #
+> -- 
+> 2.25.1
+> 
+> 
 
