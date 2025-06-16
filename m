@@ -1,118 +1,129 @@
-Return-Path: <linux-kernel+bounces-688120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB9E6ADADE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:00:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C70EADADF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A935F7A667B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:59:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29DA8188E364
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAF229A9ED;
-	Mon, 16 Jun 2025 11:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nr8+lOHM"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1205826D4C7;
+	Mon, 16 Jun 2025 11:02:00 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C73B2641C3;
-	Mon, 16 Jun 2025 11:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D000F29DB9B
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 11:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750071626; cv=none; b=c0dag+M1TyaL1euEgCgKexJxJl2c6LXslvCBEkzutv8eRlb/C0p5FJtSjkar+0yyJfULyNGCa7n0DQBeUxMcTpHYa8HAY1kf/Yv1Okzney5WLAVAFDS+gFYWhUta9tgmQAKxWcWQo3X8I0RGjldl/qYiAsBC6itwTSD1SPhl0VQ=
+	t=1750071719; cv=none; b=SQcQJEjqwEEpqTiKn+kHswby1TZQAGYyWtaQ//HGGTv142b2f7ksmuV2xJZEnWBvfmP4as4zcwHyyxmCpfU3JvQeA40dc7aWXiWb64IEKWZY2yM+X+zGdpy6V1jVdMI0frK94hpTB7QwdSafpWNNTH0/CUMiCm6aF23Ib4uEoIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750071626; c=relaxed/simple;
-	bh=AbD6CFZ8f8GSOHilTcveBi0HsQjmGCPfyQtNZhA9M+w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WSp1ipthMEeytjt+YXBX5OGgmKmoc6/SgFzn6OGqJFbI0lialRPa4urKDRGn1QO0LKOFzWfJbUkASrShW3RGfbvf2EnqeI/CPs4empmhoNXAdWGbRNoBWOR1p9y+Bc0tfNq+CkKM/qNXA70NSg0TYnDj6+wXuFbaev25iJRyKZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nr8+lOHM; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-adb5cb6d8f1so795395766b.3;
-        Mon, 16 Jun 2025 04:00:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750071623; x=1750676423; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AbD6CFZ8f8GSOHilTcveBi0HsQjmGCPfyQtNZhA9M+w=;
-        b=nr8+lOHMjxyuHICm+ArWlVxZzmskpusPTFDytfzBPl77G6s6wo1AQGIzCusrugiBRr
-         vbSzNnXl4DcOJDB2Ph1I06AH24TGCFdgj/3GIdv/vciECr0pM0Rkf3Y6y949+Q1paVIf
-         WRWEzTx/7Oni5OxPjShCz9ivqkYr6iMQ9ixON0V7NEdq+O7jt0s5X8MKqcTR7dveScPk
-         aqrwJhUUXr4c7aTW+T2lCz8QRLU/cIbV2kvE68swUwzr/38fPEy/lbN3o4uyxCayWZAw
-         GqWeX/Zg1f0sUBbBzP2a0Csa18OvAaGP8ocLOR1JGXrKRt2HMtGvjW2DwP5r/yOsXW+V
-         jWeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750071623; x=1750676423;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AbD6CFZ8f8GSOHilTcveBi0HsQjmGCPfyQtNZhA9M+w=;
-        b=OsyRdXKcreawNlo9vIq1kFdj/fdZRJedLKrNT6WEG8Ff41Dsx6XrtZBIOsXahvBWxo
-         BMgxvMBTP07hkKAPOUPlb0BdAj4Drq2F5aSPZVEQL9+UfwmluxD3lGBQaOKpjul2MT83
-         ucYXvUKfdIpHBFOfATRg4ic8vKdhYgnyxUK7HUuzYHA2HNtyyS+B2BD/U9bOXNqo2pHR
-         wMrK7g0vtghAx9rkhmgo9YEIJi/rMbpw8L9AyxBRKSMMbkQi8Yg37M1NpGpEc1Tw/wQF
-         Z9Qt2/LJa8Tf9cIzhik+rPCTik+uLC+tNNLkmG2kVMYR6pHjpsD9tZWGb7ZnjFNuK6jS
-         IzjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFf8fhK4iGjO8vYNVJ7/V6ytbrdPnzJp+qQMa87NddBfjOt0bQoi6zDu+gZtCGOsahrGSnrQgnY2rU@vger.kernel.org, AJvYcCVLFtsLT0Z/O5oOJonzKhrmO6Qh7Vo5qR+NyKFi8fW7wDoNl9zKIs4txLtRUIqUkYBnY+W1fcxrlMkDbtD9@vger.kernel.org, AJvYcCW70/SreqCrLFHp3SylW5Q+F32ortFs+8Vd/SieXNJ5ZtqTrBZU1hOWyxP1wWPn60nycAdRFvC4Cng=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0+XVQn/mCtAgSp/MkmycrdIuOfMymBLYHV8njzzQLEJtdpAi6
-	49YXPCmi5E3SDlofKn+gwCocAq5Fh/9uksr7hpdMtOfGRzdnq3OwCmk+DxT55KN61W63YL5CqO1
-	GbTDfHeHrS+O8980TnhuhvSS2kyHOd0E=
-X-Gm-Gg: ASbGncvyez+YjTpgudPBr0TQjdH+lQVWlRazBtv+UtbO9PedsPGtldQ7xM8CjPHJ3oM
-	QZeLtAEFjNmFrLJEIMs5bKfKkIH6OxUSxMPZqt1hvfNxJ3CHYdHcjKQhf3tJN5tE5KlBWT3bFFV
-	myfVf13To2uPp2ibcIyKJ9vNo2Jvfc2i+7+IrHmE7mKhr6x5Z6UwteiQR4
-X-Google-Smtp-Source: AGHT+IFTvZ1bxIVHymw7Z9570UwTxcMu+BTxqbdPWSquHTZVTj7pV51Qp/E+mICU5fILfs5NslaFzbViLRLCarztW1g=
-X-Received: by 2002:a17:907:3f87:b0:ad8:9f50:d8c1 with SMTP id
- a640c23a62f3a-adfad416340mr891784966b.31.1750071622484; Mon, 16 Jun 2025
- 04:00:22 -0700 (PDT)
+	s=arc-20240116; t=1750071719; c=relaxed/simple;
+	bh=Blj7OdweNvMj6IcZFUrLUJTJlraPWT18QouClWkAzsU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=W673LEpxFGIb1ZQ2G6aKMQHeI6FbVNT3vGqxRh5/B2oKkvAZVFxWhYeKom8z6hlragcpqkxVK2spAz5iWDswout8sCCKHCJKX3B+g/3G6C8DnMgLMBtE43YrD4E9ci8cG9yLvwWz/DMfgWCSeg3gr/RgAzvfxuiqB984O3vQPcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uR7ap-0007WP-Qv; Mon, 16 Jun 2025 13:01:35 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uR7ao-003nBX-1X;
+	Mon, 16 Jun 2025 13:01:34 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uR7ao-000LXs-1C;
+	Mon, 16 Jun 2025 13:01:34 +0200
+Message-ID: <0444ceee9743a349bb7155dac6ca7ea25f5adb18.camel@pengutronix.de>
+Subject: Re: [PATCH v3 3/5] net: phy: qcom: at803x: Add Qualcomm IPQ5018
+ Internal PHY support
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: george.moussalem@outlook.com, Andrew Lunn <andrew@lunn.ch>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Florian Fainelli
+ <f.fainelli@gmail.com>, Bjorn Andersson <andersson@kernel.org>, Konrad
+ Dybcio <konradybcio@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Date: Mon, 16 Jun 2025 13:01:34 +0200
+In-Reply-To: <20250602-ipq5018-ge-phy-v3-3-421337a031b2@outlook.com>
+References: <20250602-ipq5018-ge-phy-v3-0-421337a031b2@outlook.com>
+	 <20250602-ipq5018-ge-phy-v3-3-421337a031b2@outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250615222258.117771-1-l.rubusch@gmail.com>
-In-Reply-To: <20250615222258.117771-1-l.rubusch@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 16 Jun 2025 13:59:46 +0300
-X-Gm-Features: AX0GCFtmkoV0DBvSDaNhj8w-fa-lVbU7JTeoqQ34pPmD9BIM28vNTjqJHzx28kg
-Message-ID: <CAHp75VcQd_u4LCGbD3khx3EvMzXVNRHBvewYwK2UpAGCiqNS2w@mail.gmail.com>
-Subject: Re: [PATCH v5 0/8] iio: accel: adxl313: add power-save on activity/inactivity
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
-	andy@kernel.org, corbet@lwn.net, lucas.p.stankus@gmail.com, lars@metafoo.de, 
-	Michael.Hennerich@analog.com, bagasdotme@gmail.com, linux-iio@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Jun 16, 2025 at 1:23=E2=80=AFAM Lothar Rubusch <l.rubusch@gmail.com=
-> wrote:
->
-> The patch set covers the following topics:
-> - add debug register and regmap cache
-> - prepare iio channel scan_type and scan_index
-> - prepare interrupt handling
-> - implement fifo with watermark
-> - add activity/inactivity together with auto-sleep with link bit
-> - add ac coupled activity/inactivity, integrate with auto-sleep and link =
-bit
-> - documentation
->
-> Since activity and inactivity here are implemented covering all axis, I
-> assumed x&y&z and x|y|z, respectively. Thus the driver uses a fake
-> channel for activity/inactiviy. AC-coupling is similar to other Analog De=
-vice
-> accelerometers, so MAG_ADAPTIVE events are chosen. Combinations are
-> documented and functionality tested and verified working.
+On Mo, 2025-06-02 at 13:53 +0400, George Moussalem via B4 Relay wrote:
+> From: George Moussalem <george.moussalem@outlook.com>
+>=20
+> The IPQ5018 SoC contains a single internal Gigabit Ethernet PHY which
+> provides an MDI interface directly to an RJ45 connector or an external
+> switch over a PHY to PHY link.
+>=20
+> The PHY supports 10/100/1000 mbps link modes, CDT, auto-negotiation and
+> 802.3az EEE.
+>=20
+> Let's add support for this PHY in the at803x driver as it falls within
+> the Qualcomm Atheros OUI.
+>=20
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> ---
+>  drivers/net/phy/qcom/Kconfig  |   2 +-
+>  drivers/net/phy/qcom/at803x.c | 185 ++++++++++++++++++++++++++++++++++++=
+++++--
+>  2 files changed, 178 insertions(+), 9 deletions(-)
+>=20
+[...]
+> diff --git a/drivers/net/phy/qcom/at803x.c b/drivers/net/phy/qcom/at803x.=
+c
+> index 26350b962890b0321153d74758b13d817407d094..c148e245b5391c5da374ace86=
+09dcdfd8284732d 100644
+> --- a/drivers/net/phy/qcom/at803x.c
+> +++ b/drivers/net/phy/qcom/at803x.c
+> @@ -7,19 +7,24 @@
+[...]
+> +static int ipq5018_probe(struct phy_device *phydev)
+> +{
+> +	struct device *dev =3D &phydev->mdio.dev;
+> +	struct ipq5018_priv *priv;
+> +	int ret;
+> +
+> +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->set_short_cable_dac =3D of_property_read_bool(dev->of_node,
+> +							  "qcom,dac-preset-short-cable");
+> +
+> +	priv->rst =3D devm_reset_control_array_get_exclusive(dev);
 
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-for non-commented patches, or where nit-picks can be easily solved and
-you agree with the suggestions.
+Both dt-bindings and dts patch only show a single reset. Is there a
+reason this is a reset_control_array?
 
---=20
-With Best Regards,
-Andy Shevchenko
+regards
+Philipp
 
