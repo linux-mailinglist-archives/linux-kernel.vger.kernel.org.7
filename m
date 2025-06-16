@@ -1,127 +1,120 @@
-Return-Path: <linux-kernel+bounces-688252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5FE9ADAFF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:14:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE20ADAFF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10EE81888EEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:14:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B5B2168A6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA5F2E426D;
-	Mon, 16 Jun 2025 12:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E5F2E426F;
+	Mon, 16 Jun 2025 12:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SqW6QiCy"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MWYdBw2z"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FE12E4246
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 12:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44CC2E4264;
+	Mon, 16 Jun 2025 12:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750076039; cv=none; b=mFODgdxSun7aoEp1W41QCdxuzjQgEyu+qY/f6FzhaWmJf8t4CvYtlJPGaZa74IwtJyt6zflbktawXOYVIFQHZ7o6mzpF1aMC5I6Fv2llzT+INUo0JMlMLQeagMT9DDXvXayvXz7xnEFsfZGA0XjHXv5Q3fQOPXofeY/RqB1StYE=
+	t=1750076087; cv=none; b=Vctl0UWiNrvCUQqbpUO5+aubsYSOjegeLG1dEi4MERlsLcPAXTDdQoI6fJ51gK8x9RA97JfK8UvvifMgd9n/TFP/fhqH1u2zFV6SYfMCyhD+L4qZmZXCIarTRCl/F1f7C59HC97ZyMKbInxd6r/x+OSXoQ00XFcta73G/SfApyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750076039; c=relaxed/simple;
-	bh=I+7zHqlcUgl5RQ5alAtZZ1LmERnzYAgseVjcxK+zizk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TaBS6QxjBzqe1Y9XuGlsKNt6GX19VGowIoJFZVoKNt2eO8qkuQf76RZjbDpWfR7kGRMi83tsiu+4lNI9EckgJq5jd1jO4JLUCI0Rm+SPNfzGaXjODnJF3gQEzoQf8aFX5cgQGTiC3QAhwIeNK+F0ry7WabHou1RHpIDCZuBjtBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SqW6QiCy; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a53359dea5so3001576f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 05:13:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750076036; x=1750680836; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8RhKiRlCCs0IRZurAump6WGQZLFAsTIozbu73EzZAuE=;
-        b=SqW6QiCyiTMh8CIqdYR78QGHYQByaDlhzWwt12V0QBxTuo4Pma+EtBxS+9GVcx6PzM
-         AmFNLWciX0G2AhvgKEygPR1Boyv2W1z1w4vozf5H4NxBggcsr3ViCGC5+t2JEm8z0jvq
-         uP5aYUoT4inbcr47MrK+lHX4VyZ94blkSNa1abPVbYdoQnH2CW7kkYUMWH440jQCW+4h
-         a3tSHNj08FqFO0K5LxfW9ktQNO4aObeDfywvMRtg6BTqzyUK6k9vE5cjbZCLIEx1oYyS
-         IvcnLjylA3rFzB4NWTp0/1kNy9eXZ4YTKrhkeD9JySl97S3l6B7KkUELEWXmN9c+ecIX
-         mS4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750076036; x=1750680836;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8RhKiRlCCs0IRZurAump6WGQZLFAsTIozbu73EzZAuE=;
-        b=VWDTkTjDTNIN6/+G9y6/MMPsf4UYx5mdi/lM6Vh7WrZZw06GSeX1cFOHS0W34L5nXo
-         2i6HxWC3194RZB8hlvP2CRMBqHCHvbJdMWKNxOm8SH7YEW4r5Kto/FBga06wBz+/ImHz
-         yzl1m/ZHKgfb7UMbM/izjalTX7J1HoGxnFLY3MU6pi5akjt3LGR/e5CvebCJZ/KJdzpG
-         Q7fkvMUxzPijdRCo1smDmIcXFoBQWydJu1RYbxHzaW6ssAlCbJ1lJgccAbZdu1yjcznW
-         LKo57nHP3P2SsNN2p1yhP2d1MI2NoKX31Wrz01CsErNRXjAaeSiVx0hhZ93iEtFFHxU4
-         JeWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDZRyKCVfvdel+SEfr//ET/Ofv6h2C6BDZGnZSpZ6cUIxFlvPblPvUfoVqS1UmhRFLdkFs9NJFVXwc9XU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkfuM2kSdUkUw+45xI9AXfavd3fBXGDAmDSPqUALqRy+OHyLdG
-	fzFmVfgLNF37uf62KT5gzItg9L4kDx6RUahoxy65Evwr+bSW85P5xxinSbxVsTceELYGTeElWz2
-	L0J40yOg2f5u1APybapxrTdPzWO9e1A2AAABfsVhb
-X-Gm-Gg: ASbGnctWpDdtZHeecXfUUR9r/Fa7hzhrH6RbgQ7yieiWSBhx6D4m6dmCZmhjq0xx2Mb
-	77PtgQX+kr8Bf12z2cBQLMhGBNlk65wwc0OhlIn2d2UR54VikrInjD9fjqn/9Rr3yRmnqb5eRsK
-	0w/lBkSe2wGdyxNBayVPcLki4t6RyKbGyG1n2+9VF8gnNk
-X-Google-Smtp-Source: AGHT+IFyjKifnw4nJRdSku3PfjoVUiF1cHVDjz4vD9go7tk98USfWK5+Su8jtqkQ7OhDV/5ugWmX3JcVAUGW2BHxuXo=
-X-Received: by 2002:a05:6000:2308:b0:3a5:25e0:ab53 with SMTP id
- ffacd0b85a97d-3a5723a399cmr7284379f8f.32.1750076036156; Mon, 16 Jun 2025
- 05:13:56 -0700 (PDT)
+	s=arc-20240116; t=1750076087; c=relaxed/simple;
+	bh=jx9LsrnqqvfZJjAXS2T4pIFNkI+/mxQjwBC79Za+/bM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mBCPppMR4REsLmVmPQaE2ouA3+fLnnYEmEKBt/pBYooQLhJ7VxjECHz0nABCRrk9ot43KlEqagZrk18JNVZrkoFHKCLmKzcYdWDPAzvEwgFvGxt/AO6JulMDSQf9cvxRR6hbPydMAhC0e7/7d/1GI0vC0DeI+mMdOzq8Op3So/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MWYdBw2z; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.0.172] (mob-5-90-141-184.net.vodafone.it [5.90.141.184])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A881D22A;
+	Mon, 16 Jun 2025 14:14:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1750076071;
+	bh=jx9LsrnqqvfZJjAXS2T4pIFNkI+/mxQjwBC79Za+/bM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=MWYdBw2zHaZk1+bjy3Y8U+xS9f2b0reAcgjaTNz9pEs1ncZETw2nFtBOXxf2502A+
+	 YxTuf4gzE5v55JDzOZ1bCWM7JVUixKgZ/5YeZRmFeYIDHz98WOh3OIs6RKouAiltEY
+	 hdBLgkLXfCEdAfH8IKPHcLs+sy8IsemNNKZkioyU=
+From: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+Subject: [PATCH v2 0/2] media: vsp1: Add FCP soft reset procedure
+Date: Mon, 16 Jun 2025 14:14:23 +0200
+Message-Id: <20250616-vspx-reset-v2-0-6cc12ed7e9bb@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502-unique-ref-v10-0-25de64c0307f@pm.me> <20250502-unique-ref-v10-2-25de64c0307f@pm.me>
- <aBStYylT7wy9JiDx@google.com> <aFAGeu5FwaEEUZD8@mango>
-In-Reply-To: <aFAGeu5FwaEEUZD8@mango>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 16 Jun 2025 14:13:44 +0200
-X-Gm-Features: AX0GCFulNDKTw_W_UJNLS2CnL1V2yleJgmKBT2DpUiM6GmIfGgzrQi0qgZyZLdY
-Message-ID: <CAH5fLgh4H8mVjjPT3ya9Seop+xnzrwMEfSWF7eEcT3e16oV5FQ@mail.gmail.com>
-Subject: Re: [PATCH v10 2/5] rust: Rename AlwaysRefCounted to RefCounted
-To: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKAKUGgC/22OQQ6DIBBFr2JmXRrAWoqr3qNxgTBUFooFSmyMd
+ y/VbZfvZ/6bv0LE4DBCW60QMLvo/FSAnyrQg5qeSJwpDJzyhl6pJDnOCwkYMRFlLWPNTdSSaii
+ FOaB1yy57dAcHfL2LMx0h9Coi0X4cXWqri+G6NoIKKS387gcXkw+ffUtme+Hf28wIJdIywYUoC
+ 5DfnUEV/dR7Fcy56KHbtu0L70GL+NsAAAA=
+X-Change-ID: 20250609-vspx-reset-aff11587390c
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Koji Matsuoka <koji.matsuoka.xm@renesas.com>, 
+ LUU HOAI <hoai.luu.ub@renesas.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1115;
+ i=jacopo.mondi+renesas@ideasonboard.com; h=from:subject:message-id;
+ bh=jx9LsrnqqvfZJjAXS2T4pIFNkI+/mxQjwBC79Za+/bM=;
+ b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBoUAqr7TWZDtdbyV1Xa6UryYIEK9IMrZG9YR84D
+ tFE2j3QS1eJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaFAKqwAKCRByNAaPFqFW
+ PGguD/9t866PZU4M48mikMXcg+BIvFEdwKQq23PQNA2iVmYni3J1tKbTqhQLylIea8zu4Wy6H9e
+ WiysSp0jRPLqFnRejtyyAHXQqEGi4MrHUlIWUeIMBPJ8q7tU86OIZh6fKsSbq1sR4mwIXBJI8/U
+ YeOuENJy3djNrWunUle4iI3LAr6NnRduWTJKLA6dhHBATsIdb8bLMpVxkQ1NClpk+OC9Mi9eG3S
+ /nV8V935YK92XNZSNi+siosQhaRF7WDd/Y6nfqHG8AgfGrb0IaY5+OE+pNG4ysLlq1I0In4eTEi
+ 2OS1Lp9D58x87oWTNTiW3FVCjWP0Nq6PUUasN1NW8N4eARFtys6S+fzJ0KJHvJ4PjnWNr2CTv9Z
+ bBSqjY9wYNdJKd3tm1IDB3pyQVUBNp8ieXWRUQ298nAZ5V3rlIyp4FDAQiXcp22jqrl2B53Ev1o
+ xUbMhdsYP11dshCOKwuoHIE+SVoyUi6nc7YVcJolWQg1pk0kQIchrvjR9VY2ACNDpLv0FlPJAQp
+ 6SCkQySdX50J2uJKs9syR8akBRJ/s06pUpv2cL6fwOAq4H1TciFxeUyvdembK4M1BYUE69DqMef
+ iwf4kgGuvrpn3HIHVw1/o7rVpD4n3fbBxKSjfe4L4cCeTTVvG2KIYQNehec5QRrhaeLwpIVHZvl
+ 99pcfVGcfK9/kRg==
+X-Developer-Key: i=jacopo.mondi+renesas@ideasonboard.com; a=openpgp;
+ fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
-On Mon, Jun 16, 2025 at 1:56=E2=80=AFPM Oliver Mangold <oliver.mangold@pm.m=
-e> wrote:
->
-> On 250502 1132, Alice Ryhl wrote:
-> > On Fri, May 02, 2025 at 09:02:37AM +0000, Oliver Mangold wrote:
-> > > AlwaysRefCounted will become a marker trait to indicate that it is al=
-lowed
-> > > to obtain an ARef<T> from a `&T`, which cannot be allowed for types w=
-hich
-> > > are also Ownable.
-> > >
-> > > Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
-> > > Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> >
-> > >  // SAFETY: All instances of `Request<T>` are reference counted. This
-> > > -// implementation of `AlwaysRefCounted` ensure that increments to th=
-e ref count
-> > > +// implementation of `RefCounted` ensure that increments to the ref =
-count
-> > >  // keeps the object alive in memory at least until a matching refere=
-nce count
-> > >  // decrement is executed.
-> >
-> > It looks like "keeps" now fits on the previous line. I would reflow all
-> > text in this patch.
->
-> Say, this means you have a tool to do that automatically for you? I'm doi=
-ng
-> it by hand currently.
+Introduce the FCP soft reset procedure as documented in section 62.3.7.3
+Reset Operation" of R-Car Gen4 Hardware Manual rev 1.21, and use it to
+reset FCPD by upporting patch b4bc2410cd81 ("rcar-fcp: Add FCPVD reset
+sequence for VSPD") from Renesas R-Car BSP 3.5.3.
 
-In vim you can do it by selecting the text and typing gq.
+Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+---
+Changes in v2:
+- Drop VSPX reset
+- Reset FCP in vsp1_reset_wpf()
+- Apply reset for Gen4 as well
+- Link to v1: https://lore.kernel.org/r/20250609-vspx-reset-v1-0-9f17277ff1e2@ideasonboard.com
 
-Alice
+---
+Jacopo Mondi (1):
+      media: rcar-fcp: Add rcar_fcp_soft_reset()
+
+Koji Matsuoka (1):
+      media: vsp1: Reset FCP after VSPD
+
+ drivers/media/platform/renesas/rcar-fcp.c      | 41 ++++++++++++++++++++++++++
+ drivers/media/platform/renesas/vsp1/vsp1_drv.c |  9 +++++-
+ include/media/rcar-fcp.h                       |  5 ++++
+ 3 files changed, 54 insertions(+), 1 deletion(-)
+---
+base-commit: 4d2c3d70799f5eb210003613766bbd113bbebc1a
+change-id: 20250609-vspx-reset-aff11587390c
+
+Best regards,
+-- 
+Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+
 
