@@ -1,152 +1,144 @@
-Return-Path: <linux-kernel+bounces-688755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062CFADB6B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:25:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F4009ADB6C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09C4F1738B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B48F1892991
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998532882D3;
-	Mon, 16 Jun 2025 16:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3538287508;
+	Mon, 16 Jun 2025 16:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0xwSQyx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gBvRlXgz"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA5C283FC4;
-	Mon, 16 Jun 2025 16:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CEA216E26
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 16:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750091003; cv=none; b=B7OaG2KFhB5WaaenKbkNlT8gJ3IZzvldhdidhT6tLwWsa60tHbF8T1ZEcWdPB9yBAHXbdD+jcVgCNFhYGEFEXcD6o5FuVICObnIIBgMH/WbV9c4jn2VNTlrJ0NZauHXoSrN4UdHmrweOCA3aeSJRhith17Lf0dBv+lffPlTHg40=
+	t=1750091075; cv=none; b=R3zFFV5ANmzPHTLd2XKW67jBtZuZbguU9pO+XHTqG+raHfmMeBGsKXN/ZIGfrPDafgnUIW15cJ/NaEWS16gGeb2t/ZRRGOS1BcCrMT4g/q0zr9v0xv6zEilgPU3k36OUx2jvtNpAE+ePVGlH9kuLroDg0L4bb4PZ7YlELNl9jQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750091003; c=relaxed/simple;
-	bh=qFpotMY7tq4ADsoi3DUebAKJTMXci31UD1MWqzHTu7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EoaMTLNOMWT5gtD80QD77zVQ3IIn3vjO28lJ+abfRMJqVGzobZ2anUMvboNXI8ZSWnqxXXhL2yo02dOXpWbHigT6kgvxkRi9cLmI5+asevoCZ96K7xUSxkSIckhSsKetfTO6kSoD+DcMp6Z6srU0GO9sf49P6tpmLaj1bw0XHLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0xwSQyx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AA8BC4CEEA;
-	Mon, 16 Jun 2025 16:23:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750091003;
-	bh=qFpotMY7tq4ADsoi3DUebAKJTMXci31UD1MWqzHTu7k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p0xwSQyxC2/YKKvq1zomzh/UTxDXOFM6cVT6l1b81FM0GIBkoShWmbGUYidAcGE+j
-	 zfVSJQo1GCdcunPqJQfcPBxaOHq1L+RdnYOshC1XZl5vvDzq9wvN6YgzunP7b+23hp
-	 540L+dO1091AvjzZUeoWPgpECDob7HscFfF3brQEAaxMNqrHoogCRAVXath9tSJaW1
-	 SgEnPBizK5nWto+5YkBcnaFCnDYf4MkgjwdCMTO4bJRWui0AmHMY0Uj5X27ksgTTwV
-	 3a8xJJLDUOvfQz8ibVFjZ9u2mpaEGgEFwsHBYdLOmCUoy6jGt57FRp9IpvKNcT1IbS
-	 M1Je5K0XDbICA==
-Message-ID: <48e6cc62-ffb0-4ca7-80c8-9e510db505db@kernel.org>
-Date: Mon, 16 Jun 2025 18:23:18 +0200
+	s=arc-20240116; t=1750091075; c=relaxed/simple;
+	bh=Y4VyjNxxY6W3sU2TV0gRB/KV8PY0ccpcCfdQGFBPWvg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IsNJrxmhk5+fZHJD8NoYmPS3726Tvv1prPXKZLNUNuz+42cM0SvqUox3X86lzHMa4UCV+H3lx8A6TE17ChyU2tY5tho3LiRKlLXQvkH14UXXQQSEnxuHSswgtvUqANyFNaj1HqwunsL7z6c6uWxe0kpgnh/I4zL26cJ31N7OpN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gBvRlXgz; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-236470b2dceso39745375ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:24:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1750091070; x=1750695870; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jn+pl8Ukndl7fV/3rtDt80K83DzVb4ofgvMyTIgGDxE=;
+        b=gBvRlXgzTj/pLxVOyRF78AMU8rmkAIEv+VXcwr9KsEGabp2BxM2xvZMePz31G3CiYu
+         jSdEyCXeWa0v06QALmIgwjKoDsQWhXaN5cCG2OjHCvUEnPzdybYPfzERv+RyOLkcozOe
+         UCbnTXSkLHw3SFXOZbQUUu42gX1oJ2YYlSWiY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750091070; x=1750695870;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Jn+pl8Ukndl7fV/3rtDt80K83DzVb4ofgvMyTIgGDxE=;
+        b=wyLwB+efsOSpFJsNaneqwWyjqJ/yNH5wwA2u5qN0qOdx8+jmS0VeLqz0BUAzQSJneV
+         hPn/sQMXOkiN/8XVctVAIuzoBFbDiYI5sA2gWw2ZMx2wgxAlphLCOTx7Z55i/sh9ENIs
+         c6vtkUEEAX9TAQS/tXOgOwh1Tc5S446lP/gwZL/cUejV3hISeleYoFVBKe2xFT3VnmUC
+         y4Nzvw9HCxkEQ3o2ojqAsXrG30RhycdkcoKTwMA53+iKpg7DF1NImMLRnOzyIZm0pz4E
+         QWxM/YBe8arUw4m8XqEfICHtFm2zEsijgbDNVNRTyEBrCN9v3U6q+rrX87C/LeuR0nUp
+         K5SA==
+X-Forwarded-Encrypted: i=1; AJvYcCUahoN8SpYq4Bio9O0rvMLdxLoxrNElClxuA2pC9byET2uWFN+HzMTOT/GvDgzYSLGLz8wYfusKBplx4LU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylcA9UA14zg2Fyk5WJSeZ5TcvthblVVmqm++IsRaFH+SRrx+9z
+	m4R5MgGCVExOSzh+kIhPKA2rbDo6ssfNJmW5ADGF7MFKOZMcTZux8TGwYb6A4aeoO5qiRzT818r
+	eXTg=
+X-Gm-Gg: ASbGncvGBnGJsNwjb4Qp1whrndJI/vaB4A+4HDWdxJEEXwpQtWM0HxgNjICnvUfgCBw
+	FPdHPzVauU1JY0giycD8klbfSR9VZ5dv1T1g0asVt3FPrlJDE3yZuBz+H2YLy5ryJpVA3zng5l5
+	x3Nrx3EpBIOSRvIl0wgX3dmlTCmj9xYao2d9SNt3LkbEwoh42Wx460qP9XvNztlS4vVr4bABcPU
+	XkBGjgPK3BjJqm04T78mDouQRwtWGo7UTvgI2MgyV3wc/vgpZlRaBVQGwe3isyYq37XZcoGdzSD
+	0tta4PailspldwTUZpqr5K+pbzV+duMkrp1uE2H6K17appt8CKthAWA1OStQvZTBmYuKJjg5619
+	FAmY1U7FC6ggn5otEStws4ldO7OoGwA==
+X-Google-Smtp-Source: AGHT+IFhSb0g33+iwpE0YteOGYofG1LGCmkj9VUmu5y+T+TsgMWq5NIUZk8m+XaYjVmyH36otKQR/w==
+X-Received: by 2002:a17:903:32cf:b0:234:e655:a618 with SMTP id d9443c01a7336-2366b3ad2d9mr147687395ad.25.1750091069774;
+        Mon, 16 Jun 2025 09:24:29 -0700 (PDT)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com. [209.85.214.169])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365decc11fsm62856905ad.222.2025.06.16.09.24.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Jun 2025 09:24:28 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-23636167afeso45627385ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:24:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVpmlD2H3J5vzzsfqS8hUDL8UL38O8oM2wGkwN45jKD2PlAeyCwuKeVBZaBpduNq/wIv8j5iOEs2Jjcxok=@vger.kernel.org
+X-Received: by 2002:a17:90b:35ce:b0:311:d670:a10d with SMTP id
+ 98e67ed59e1d1-313f1d96b23mr13483334a91.26.1750091067151; Mon, 16 Jun 2025
+ 09:24:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: media: venus: Add qcm2290 dt schema
-To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-Cc: quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com,
- bryan.odonoghue@linaro.org, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, stanimir.varbanov@linaro.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250613140402.3619465-1-jorge.ramirez@oss.qualcomm.com>
- <20250613140402.3619465-2-jorge.ramirez@oss.qualcomm.com>
- <6f4e715f-1c73-450e-b7eb-92781b7fa050@kernel.org> <aFATp3zoSgkrj3YX@trex>
- <a76789cf-afe1-4d91-afdf-65c3af5ad11f@kernel.org> <aFBDzWLkKC9MWGoC@trex>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aFBDzWLkKC9MWGoC@trex>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250616093240.499094-1-j-choudhary@ti.com>
+In-Reply-To: <20250616093240.499094-1-j-choudhary@ti.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 16 Jun 2025 09:24:15 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Wb=bWXDfCyF8XhJ93dBRU2rUKM+B0X5uYh39FHRgT1Ww@mail.gmail.com>
+X-Gm-Features: AX0GCFvx1jdSZ7AywPO9rUfFoTu7hX2oWiRuFWLsC1T8ClrkXmqFBGVmsbCBYTw
+Message-ID: <CAD=FV=Wb=bWXDfCyF8XhJ93dBRU2rUKM+B0X5uYh39FHRgT1Ww@mail.gmail.com>
+Subject: Re: [PATCH v5] drm/bridge: ti-sn65dsi86: Add HPD for DisplayPort
+ connector type
+To: Jayesh Choudhary <j-choudhary@ti.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org, 
+	tomi.valkeinen@ideasonboard.com, max.krummenacher@toradex.com, 
+	ernestvanhoecke@gmail.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, kieran.bingham+renesas@ideasonboard.com, 
+	linux-kernel@vger.kernel.org, max.oss.09@gmail.com, devarsht@ti.com, 
+	geert@linux-m68k.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 16/06/2025 18:18, Jorge Ramirez wrote:
-> On 16/06/25 16:41:44, Krzysztof Kozlowski wrote:
->> On 16/06/2025 14:52, Jorge Ramirez wrote:
->>>>
->>>>> +  The Venus AR50_LITE IP is a video encode and decode accelerator present
->>>>> +  on Qualcomm platforms
->>>>> +
->>>>> +allOf:
->>>>> +  - $ref: qcom,venus-common.yaml#
->>>>> +
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    const: qcom,qcm2290-venus
->>>>> +
->>>>> +  power-domains:
->>>>> +    minItems: 2
->>>>> +    maxItems: 3
->>>>> +
->>>>> +  power-domain-names:
->>>>> +    minItems: 2
->>>>
->>>> Why is this flexible? Either you have two or three. Not mixed.
->>>
->>> please check 5b380f242f360256c96e96adabeb7ce9ec784306
->>
->> This does not explain why this is optional HERE. You cannot use for a
->> new platform an argument that some existing platform was changed in
->> ABI-preserving way.
-> 
-> thanks for quick the follow up.
-> 
-> but bear with me please because I dont follow - why can the same logic
-> be used - it being applicable - and therefore result in a definition
-> similar to those other platforms?
+Hi,
 
-Because this platform either has 2 or 3, not both. Unless that's not
-true, but then please share some arguments.
+On Mon, Jun 16, 2025 at 2:32=E2=80=AFAM Jayesh Choudhary <j-choudhary@ti.co=
+m> wrote:
+>
+> @@ -1220,6 +1231,27 @@ static void ti_sn65dsi86_debugfs_init(struct drm_b=
+ridge *bridge, struct dentry *
+>         debugfs_create_file("status", 0600, debugfs, pdata, &status_fops)=
+;
+>  }
+>
+> +static void ti_sn_bridge_hpd_enable(struct drm_bridge *bridge)
+> +{
+> +       struct ti_sn65dsi86 *pdata =3D bridge_to_ti_sn65dsi86(bridge);
+> +
+> +       /*
+> +        * Device needs to be powered on before reading the HPD state
+> +        * for reliable hpd detection in ti_sn_bridge_detect() due to
+> +        * the high debounce time.
+> +        */
+> +
+> +       pm_runtime_get_sync(pdata->dev);
+> +}
+> +
+> +static void ti_sn_bridge_hpd_disable(struct drm_bridge *bridge)
+> +{
+> +       struct ti_sn65dsi86 *pdata =3D bridge_to_ti_sn65dsi86(bridge);
+> +
+> +       pm_runtime_mark_last_busy(pdata->dev);
+> +       pm_runtime_put_autosuspend(pdata->dev);
 
-Best regards,
-Krzysztof
+nit: you don't need the pm_runtime_mark_last_busy() here, do you? Just
+call pm_runtime_put_autosuspend().
+
+Aside from the nit, this looks reasonable to me now.
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
