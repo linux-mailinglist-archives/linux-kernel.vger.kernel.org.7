@@ -1,104 +1,159 @@
-Return-Path: <linux-kernel+bounces-687715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77139ADA80F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:15:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB26ADA7F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 873F23B0B23
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:14:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAD433AB1F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169981DE4F6;
-	Mon, 16 Jun 2025 06:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D145C1DD877;
+	Mon, 16 Jun 2025 06:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="WuNLzXg2"
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSEJ/cIW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0191DEFE0;
-	Mon, 16 Jun 2025 06:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F3B5A79B;
+	Mon, 16 Jun 2025 06:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750054506; cv=none; b=Pljb7CK5rab+fS/x6fSPrxJlicfou+34jB8YI9ouPFIXrfMkjnq/EBt/K3zXTY7W/lTjjbnDS4fyFI5YCAhF/0Q8GTaYKEiGxuZXlBZo6S337xZ1BaPNv0lLAj1NfhDlqcfmMS0sP5mmXXfFaoanAOviEWm2qZMnea2QR+tXX3g=
+	t=1750053958; cv=none; b=VAASN7cq15m8R9oZO21ys+usHsvpGTMhxCyM6GwEVQShafT4oQKBrhLwlKRB84SFkeh1o4B9w9TaaYUmNIzVm+r9+GP0pFj9XGtfbzISHZ3nqyuHVcP7NFiNdT3C1Tt2yu6IpfkGUnGk53LQc6tT90xNaNczlfxpjcXH/hJBe3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750054506; c=relaxed/simple;
-	bh=01Dh3/JKpAgSejIE64mTqC7VtvSIfjcSsvNN6mHkM+U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=prlCHYejN2YYaQO4oOSm24zqvbqzRsPN4TIEVQGhmWBgT0T5nRGZRrGaYknZVX+oyY9SfHi/tl8kFw8rUJ9uMNJY6yEffWEPiL9C0fwzy0b5hNFzMx5HaiUzyCTEBTvIEE5BXwavVGjJtNbtDEeRtaRLBLRY67IDTPALL2PuNbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=WuNLzXg2; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from localhost.localdomain (2.general.phlin.uk.vpn [10.172.194.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id AE36241ACB;
-	Mon, 16 Jun 2025 06:09:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1750054148;
-	bh=erA/UguxQP3JF42uo8ErXFFZLH61G26696D+fredls8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version;
-	b=WuNLzXg29xfR148rjWOUb+YH+JvpDP+hamry+rGpqMX1TA8aMECgQr0vtJ0OdX6hG
-	 VPVelFgYlbaHNY5W8by7xS3c8kK0idWr7grxrtbBehbZP/GEYEsvMYpoOTgWLkwblC
-	 +6Ln9HNM0jKhjm5JakpMrVFXEeY10nlcA48Py0MmdJP96P82oDe1UdT4G9eZP5tydJ
-	 FnroepdEFMuPU1Ui2XSy/pByPMZrBS+9ykPh5ZhQmrBkjm6CIeWNqT8tp1AEgX6guy
-	 ablifj+xMou8qXbwm5sSTm66eb3i88UXtc5Rg9QTNEN/U/6+D/52wwauaqPgPeSR+R
-	 puDt3XOAvUceg==
-From: Po-Hsu Lin <po-hsu.lin@canonical.com>
-To: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: shuah@kernel.org,
-	po-hsu.lin@canonical.com
-Subject: [PATCH 1/1] selftests/memfd: skip hugetlbfs test if not supported
-Date: Mon, 16 Jun 2025 14:04:23 +0800
-Message-Id: <20250616060423.2180088-2-po-hsu.lin@canonical.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250616060423.2180088-1-po-hsu.lin@canonical.com>
-References: <20250616060423.2180088-1-po-hsu.lin@canonical.com>
+	s=arc-20240116; t=1750053958; c=relaxed/simple;
+	bh=TzpmtX/vUICVRU32l59Sc0Qk3sBx7l2J4vSns0iJ/Lo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y901svnNNwYYRDk/U57tTQSsKgUQcw+4i4YsPbJsp3ZafKT/JFlI/C9yZ4gspLh6EDBFOj8byWIKqbxdvEk6P9RLhBFpg4l+g3FUlHbAfs26uVJU9gixM9e0Bpu3Tgt0umnUrTPrvPrpCORNcXUTm5m+uTeAIiKxE8BlaV3AUUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSEJ/cIW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84D44C4CEEA;
+	Mon, 16 Jun 2025 06:05:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750053956;
+	bh=TzpmtX/vUICVRU32l59Sc0Qk3sBx7l2J4vSns0iJ/Lo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SSEJ/cIWWt8cawrwMkBQSkK05+pWBeBtXPg4a0NRoAIkecAIiL+P90ytHza2oX1sM
+	 KdQsXwMgmUKrGk2dHYyeC/0cy8RJPRDsHhKgcjRC4GiAEXlchVaeJq5ujEUyM5ZRI2
+	 MSeTkvrqpuEQVk4VSgqqtVY6g8re+iwXamKxHp9NJToVzTTiXusmxLy6epRQ67ydgA
+	 P2jTgB7ayPVxUgOADNly30Z1j/nBW7N41Ibcu24ljHQx+mN91MFp0mV1jtdEr1tLKq
+	 9c8W/VXZkm5njtgXHwbodNPAQxx9D4foQcr6hpJmRbgB47Bkea9M80MWizFb12nmGH
+	 CvqECjFZZoXiA==
+Message-ID: <f4430b9a-3275-405e-becf-ff62ae16f23c@kernel.org>
+Date: Mon, 16 Jun 2025 08:05:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] dt-bindings: arm: axiado: add AX3000 EVK
+ compatible strings
+To: Harshit Shah <hshah@axiado.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ soc@lists.linux.dev
+References: <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-0-341502d38618@axiado.com>
+ <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-2-341502d38618@axiado.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-2-341502d38618@axiado.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Check hugetlbfs support before starting tests in run_hugetlbfs_test.sh.
+On 16/06/2025 06:31, Harshit Shah wrote:
+> Add device tree binding schema for Axiado platforms, specifically the
+> AX3000 SoC and its associated evaluation board. This binding will be
+> used for the board-level DTS files that support the AX3000 platforms.
+> 
+> Signed-off-by: Harshit Shah <hshah@axiado.com>
+> ---
+>  .../devicetree/bindings/arm/axiado/axiado.yaml     | 23 ++++++++++++++++++++++
 
-Otherwise on a system that does not support hugetlbfs the free huge
-pages availability check will fail with:
-  ./run_hugetlbfs_test.sh: line 47: [: -lt: unary operator expected
-  ./run_hugetlbfs_test.sh: line 60: 12577 Aborted                 (core dumped) ./memfd_test hugetlbfs
-  Aborted (core dumped)
+Just arm/axiado.yaml
 
-And it will left a fuse_mnt process behind, which may cause some
-unexpected issues.
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/axiado/axiado.yaml b/Documentation/devicetree/bindings/arm/axiado/axiado.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f323162b7c3cf973754a3539b94a7534111886cf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/axiado/axiado.yaml
+> @@ -0,0 +1,23 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/axiado/axiado.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Axiado Platforms
+> +
+> +maintainers:
+> +  - Harshit Shah <hshah@axiado.com>
+> +
+> +properties:
+> +  $nodename:
+> +    const: '/'
+> +  compatible:
+> +    oneOf:
+> +      - description: AX3000 based boards
+> +        items:
+> +          - enum:
+> +              - axiado,ax3000_evk       # Axiado AX3000 Evaluation Board
 
-Signed-off-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
----
- tools/testing/selftests/memfd/run_hugetlbfs_test.sh | 5 +++++
- 1 file changed, 5 insertions(+)
+No underscores in compatibles (just look at any other example).
 
-diff --git a/tools/testing/selftests/memfd/run_hugetlbfs_test.sh b/tools/testing/selftests/memfd/run_hugetlbfs_test.sh
-index fb633eeb0290..15f4d1299563 100755
---- a/tools/testing/selftests/memfd/run_hugetlbfs_test.sh
-+++ b/tools/testing/selftests/memfd/run_hugetlbfs_test.sh
-@@ -10,6 +10,11 @@ ksft_skip=4
- #
- hpages_test=8
- 
-+if ! grep -q hugetlbfs /proc/filesystems; then
-+	echo "hugetlbfs not supported, test skipped."
-+	exit $ksft_skip
-+fi
-+
- #
- # Get count of free huge pages from /proc/meminfo
- #
--- 
-2.34.1
 
+
+Best regards,
+Krzysztof
 
