@@ -1,181 +1,140 @@
-Return-Path: <linux-kernel+bounces-688494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F47DADB324
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:10:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D0CADB32F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B3031689F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:10:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9DF18835C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F109A1C5D7D;
-	Mon, 16 Jun 2025 14:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65EE1DB122;
+	Mon, 16 Jun 2025 14:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FfE3qqOd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GaimmJA3";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FfE3qqOd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GaimmJA3"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="i6yGYI5m"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9B42BEFE6
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 14:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC9B1A3142
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 14:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750083016; cv=none; b=PHf24oj//yCXFUGSOK+1UCHsSc6eoHeNF4JT7Aq3busbQOgK8WMIenp3/5hRJx1bMps5hNyDCF7IKbR9/+noUoDU3fk3yy3BT7URrL/8Ey9/YyXnnFEuknOxh2/P+uFX7xsp8sSUFfgF3FJzKXGW/NsKB+vjIz2m6atBzib4C30=
+	t=1750083076; cv=none; b=OSECJgGGUram2IrIRVzCVrZ4VgIlBhX6JRW7KMQEoJOe9YYpYPVHnYJjh8GLTRJYfTD5k/kaMH3OqRzAd4FmTOqG0SMZVqipHdm0sRtwajkOskDqbm19LluMFEocuZM1x7DhOYpL6IWu8HNAjOyDCegfcRngkWWbTEO3ktTSlcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750083016; c=relaxed/simple;
-	bh=WAuAopaFE62od8GV/8XzeePYFJyET2mSBfEs8wOz79A=;
+	s=arc-20240116; t=1750083076; c=relaxed/simple;
+	bh=zoPlTkoZZmJtHvxgje6uQdW9GgwchQlmybNP8yjwaN8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nbJRlLEWn2KjfiHj9C4EcdgcVbzccAtgmheeYmnO5FyfrTVUWUNNDUWsVvEmLyNI3jEL/7nVB0zb0tS6sIZ7eZM0SH7i6fQOmtaI9GfN8m+sW+1+jieBYG0vXxGJE7NL2wysVxHmJ3Y+BxLFQPuu+/j4Hm3kLtCVI9O0lNVLTzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FfE3qqOd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GaimmJA3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FfE3qqOd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GaimmJA3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E1D641F74A;
-	Mon, 16 Jun 2025 14:10:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750083012; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pjbZJaffVvP6vuBZvxM6g9mqSeMEhj0RjSxyuqax+yM=;
-	b=FfE3qqOdPMtM0nEACqjOdSJ/1V4ckmGIOhu1d5aYdsNFn6fKKVdl+ETe/QJYsWZvy+yecS
-	1oQ81cb/l4FZLTktYRnKbbNc45L6Q13UAhp6i/pHdxZuEOsGEUnfFSJGfmJy8lj7rXyk/W
-	8TH9YE1y2rhdI6eEqvPaLgVylJV5YLA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750083012;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pjbZJaffVvP6vuBZvxM6g9mqSeMEhj0RjSxyuqax+yM=;
-	b=GaimmJA3hGx3BbuHMjADldom51FNmjZZ7B48/hqQNjxvz3DaCiejmLIujrOxQO9RxiqY0q
-	rchSEgGVgze38lDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750083012; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pjbZJaffVvP6vuBZvxM6g9mqSeMEhj0RjSxyuqax+yM=;
-	b=FfE3qqOdPMtM0nEACqjOdSJ/1V4ckmGIOhu1d5aYdsNFn6fKKVdl+ETe/QJYsWZvy+yecS
-	1oQ81cb/l4FZLTktYRnKbbNc45L6Q13UAhp6i/pHdxZuEOsGEUnfFSJGfmJy8lj7rXyk/W
-	8TH9YE1y2rhdI6eEqvPaLgVylJV5YLA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750083012;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pjbZJaffVvP6vuBZvxM6g9mqSeMEhj0RjSxyuqax+yM=;
-	b=GaimmJA3hGx3BbuHMjADldom51FNmjZZ7B48/hqQNjxvz3DaCiejmLIujrOxQO9RxiqY0q
-	rchSEgGVgze38lDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6FFE013A6D;
-	Mon, 16 Jun 2025 14:10:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id J++TF8QlUGi9TAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 16 Jun 2025 14:10:12 +0000
-Date: Mon, 16 Jun 2025 16:10:02 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	James Houghton <jthoughton@google.com>,
-	Peter Xu <peterx@redhat.com>, Gavin Guo <gavinguo@igalia.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] mm,hugetlb: Document the reason to lock the folio in
- the faulting path
-Message-ID: <aFAlupvoJ_w7jCIU@localhost.localdomain>
-References: <20250612134701.377855-1-osalvador@suse.de>
- <20250612134701.377855-3-osalvador@suse.de>
- <44f0f1cc-307a-46e3-9e73-8b2061e4e938@redhat.com>
- <aEw0dxfc5n8v1-Mp@localhost.localdomain>
- <ffeeb3d2-0e45-43d1-b2e1-a55f09b160f5@redhat.com>
- <aEychl8ZkJDG1-5K@localhost.localdomain>
- <aE075ld-fOyMipcJ@localhost.localdomain>
- <a5e098d1-ee5a-447f-9e05-0187b22500e1@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KWYZZ83qmnWWnaYRdNy7dIVKAEbDj7a1dJNneCxYTtn3SWZ8SNgA2QDUSdCtPtRggZgmIjf9Tjr2F2S9INEs4J2Hq4YZpnUElGagThtdJqTmx8YKZffS6GUL1sFmZhocD4H7KGfeWwcOdps74qO/gfr1EoGrMnPVpifpwsYBiow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=i6yGYI5m; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c5675dec99so566178985a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 07:11:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1750083073; x=1750687873; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OOggq/KPowkbkENDJnGOHpXXvgQx4F56FAixym3bp2M=;
+        b=i6yGYI5mS8tlXa57baShPSH1cg7VlSZA/FnWjgWXRGRVWm1L2qVZxRNeMHEv9TafUr
+         h6WqqYDQXfXcLvzvvScx3JA9m9yQlwDFa5rUdSR2eJxlFGV+mZmJ2nrZpUxcEFQa6WZ8
+         P+MhRH3J4Di0h0uAwi4BZP4+ekovjxaHDEcSqLOUswi1rnJLWbadESAmUjYOz1HcI4ed
+         JfnSzqDk+WmtX3iCcfk+rUtXTpJOMxpMarD53llGdlCaIJ54AtL/GjIQdBV3MLitglW5
+         zGAwbNhf/U20Ca1ck/GrRJTzN5j4Stf3n+pasQT7ackjJYXk9mGzdOopT5sVLFT6CSDm
+         H1jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750083073; x=1750687873;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OOggq/KPowkbkENDJnGOHpXXvgQx4F56FAixym3bp2M=;
+        b=aD+KVbXakR7x1g5aARRfnnZvjZMpHIFIhxfuxr5JfWcHb1WlUwja3k2rl+O+P6bs4V
+         CeXYyhw4ov6qkw2cUNMQANU3FIhnnihOTWfS7E9ibSPVv3oV5oIhLH9MOnqHsjAG1Xor
+         mw3vo7/hxoi7bSMdaP50GjHlKoTJVU6ZbbL0NrZu95B8VIUS7jEUh+I5eWBXQ1reeGgo
+         mc+GVNl8qknQv7PndOGMHQvQ5X7B3d2pnMWYF0NzrmxVm2V6aOs7mIRfRGuOD/Zx43xM
+         8J0DrNf2FNuQsGmnw3SjrauzPlucnWuiZYaX9qvJSWAE3EW6Mep4OBG9WSL0bkWhlOxy
+         t98g==
+X-Forwarded-Encrypted: i=1; AJvYcCVvKWvfVWrxnrXa4pQ/XfGUBF4ELqLKzas10D5g7yiqDYKfNvSY63+f/kXz1mZdjpuidTFVT/wbSUzkZuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX2yfxnH8TWVkizciVnGmSUx8Fg0hN3n5UrhPWHBMRQXWIXTeu
+	M/Sy/JgXRDtP2rmFqfVmXHR4JI+BUP+SYrZuSYoECfb4w61hd2xHAr/j3zxbC86rPg==
+X-Gm-Gg: ASbGnctXsk8kTdad+Ua7A4C+KE/WprLEwwsScnhBbdgjzn1437zB0Wata+/ogQgkmeP
+	hbtLs9zHkou2OMlKNt5rkipERAWRzOesgvDmErobxzEy8kLCEEnL7V5dLyiYCnSqHA1P26gZccL
+	+yQH00yKsWDo1/ayQKLO0af+ubSc7TnAtU02Z77+V7H5bVmfSZAP6N/qsQ9VXF3QTAOfBlwue2z
+	nO50eYulMeA2xdUL/IaDsR8/f6eps3+Jqf13E/Yr2r3hmSG3sCv1avmnogqCoCNl8iVuDIGqNeQ
+	UuztFMLHGtC89kioZOy20JirMij3afm8TjsLJDpe2ujGx3lAC5ClkwJb9WGRKTCosdOp1AOaC99
+	H8Iuz
+X-Google-Smtp-Source: AGHT+IG/Q8oqK3NAs6JYHlzNOnNjSakbP4l5bRaZECFc8nTtdEfQzpzqsQ4tpcjcD5JM5xcRL5wrXQ==
+X-Received: by 2002:a05:620a:390a:b0:7d2:2822:3f79 with SMTP id af79cd13be357-7d3c6c18fcdmr1653377685a.13.1750083073152;
+        Mon, 16 Jun 2025 07:11:13 -0700 (PDT)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8dfe347sm530784885a.36.2025.06.16.07.11.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 07:11:12 -0700 (PDT)
+Date: Mon, 16 Jun 2025 10:11:10 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Thomas Haas <t.haas@tu-bs.de>, Peter Zijlstra <peterz@infradead.org>,
+	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	lkmm@lists.linux.dev, hernan.poncedeleon@huaweicloud.com,
+	jonas.oberhauser@huaweicloud.com,
+	"r.maseli@tu-bs.de" <r.maseli@tu-bs.de>
+Subject: Re: [RFC] Potential problem in qspinlock due to mixed-size accesses
+Message-ID: <357b3147-22e0-4081-a9ac-524b65251d62@rowland.harvard.edu>
+References: <cb83e3e4-9e22-4457-bf61-5614cc4396ad@tu-bs.de>
+ <20250613075501.GI2273038@noisy.programming.kicks-ass.net>
+ <aEwHufdehlQnBX7g@andrea>
+ <9264df13-36db-4b25-b2c4-7a9701df2f4d@tu-bs.de>
+ <aE-3_mJPjea62anv@andrea>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <a5e098d1-ee5a-447f-9e05-0187b22500e1@redhat.com>
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aE-3_mJPjea62anv@andrea>
 
-On Mon, Jun 16, 2025 at 11:22:43AM +0200, David Hildenbrand wrote:
- 
-> hugetlb_fault->hugetlb_no_page->hugetlb_wp
+On Mon, Jun 16, 2025 at 08:21:50AM +0200, Andrea Parri wrote:
+> > Thanks for the praise. I expected more questioning/discussion and less
+> > immediate acceptance :)
 > 
-> already *mapped* the pagecache page into the page table.
+> Well, the discussion isn't closed yet.  ;-)
 > 
-> See
-> 	if (anon_rmap)
-> 		hugetlb_add_new_anon_rmap(folio, vma, vmf->address);
-> 	else
-> 		hugetlb_add_file_rmap(folio);
 > 
-> So at that point it would be "stable" unless I am missing something?
+> > Maybe one should also take into consideration a hypothetical extension of
+> > LKMM to MSA.
+> > I think LKMM (and also C11) do not preserve REL->ACQ ordering because this
+> > would disallow their implementation as simple stores/loads on TSO.
+> > That being said, maybe preserving  "rmw;[REL];po;[ACQ]" on the
+> > language-level would be fine and sufficient for qspinlock.
 > 
-> So once we are in hugetlb_wp(), that path much rather corresponds to
-> do_wp_page()->wp_page_copy.
+> On PPC say, the expression can translate to a sequence "lwsync ; lwarx ;
+> stwcx. ; ... ; lwz ; lwsync", in which the order of the two loads is not
+> necessarily preserved.
+> 
+> MSAs have been on the LKMM TODO list for quite some time.  I'm confident
+> this thread will help to make some progress or at least to reinforce the
+> interest in the topic.
 
-Yes, that's right.
-That's something I've been thinking over the weekend.
+Indeed.  I was surprised to learn that CPUs can sometimes change a 
+32-bit load into two 16-bit loads.
 
-E.g: do_cow_fault, first copies the page from the pagecache to a new one
-and __then__ maps the that page into the page tables.
-While in hugetlb_no_page->hugetlb_wp, the workflow is a bit different.
+My question is: Do we have enough general knowledge at this point about 
+how the various types of hardware handle mixed-size accesses to come up 
+with a memory model everyone can agree one?
 
-We first map it and then we copy it if we need to.
-
-What do you mean by stable?
-In the generic faulting path, we're not worried about the page going away
-because we hold a reference, so I guess the lock must be to keep content stable?
-
-I mean, yes, after we have mapped the page privately into the pagetables,
-we don't have business about content-integrity anymore, so given this rule, yes,
-I guess hugetlb_wp() wouldn't need the lock (for !anonymous) because we already
-have mapped it privately at that point.
-
-But there's something I don't fully understand and makes me feel uneasy.
-If the lock in the generic faultin path is to keep content stable till we
-have mapped it privately, wouldn't be more correct to also hold it
-during the copy in hugetlb_wp, to kinda emulate that?
-
-
--- 
-Oscar Salvador
-SUSE Labs
+Alan
 
