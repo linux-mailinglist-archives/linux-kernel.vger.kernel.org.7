@@ -1,164 +1,122 @@
-Return-Path: <linux-kernel+bounces-688805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA79BADB759
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:49:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079FAADB75C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E343D7A593B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:47:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8209D1888EDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6294C2877E4;
-	Mon, 16 Jun 2025 16:48:32 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3C0286409;
+	Mon, 16 Jun 2025 16:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C58Pi8Y3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADF22877D7
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 16:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AEF2BEFE1
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 16:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750092512; cv=none; b=hxWsi9E970oiUDBq2gGSYE88NQnzTv2pwZz337osCkpk4/J7QLmdeBY7iYmodqTzmPmdk3FMdAZ9cufe0prGkQ3tB/cZWRPtQaJOLtZwm6hGl5QbVxJmRr9jIb9RozuWMaKz90ObKF6ZArWf+lzxr9FU5ZuEv8KOccKyigLPB8I=
+	t=1750092582; cv=none; b=qFG9to2G8RpFzjacHBNu2zHKyLeb4P2i/ZFSitz5eMuCQX0oWGHMDOQ+GinZo7eEW5PjDQi68Uql5+jMTmy9qAa17IlTE+6Glc7zmhIrTFK1DWqmkJcKlZrGjtB52xEx/24UpFoFuWKz+742V+WyFpipSNyuVzAXdCueGT4bihY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750092512; c=relaxed/simple;
-	bh=e5V81vJTsurH16HupVU30ELi7Vbxcb5PLOKsR0X5FmY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KG2G0TO3++Hr9fcxyY6uNKB8ZXO3dKbW93o0x3zsqyFUOQHPiKZaajHv2Uaz31Px8nSXkAN7jeFHeWhpe+VLFBzXLx3Yqq19f0td0K6RTPWxQ6XblYREv/MRV8U9uKY0cqEaFyO/uCUSmsFqwUJ77xocwDg9XRutUR20JiAUdNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3ddc4908c4dso50021855ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:48:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750092509; x=1750697309;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DGi86GqHzCIrMHCxrqrf3ZFJEnPb6WF6Ee0Udc8mJag=;
-        b=VcuIl7PmdUbo9puBdiw8At8+rWA+POH7J1flKeIEsg/LQi0SXTbBPwMQRRBE8aZ4vT
-         EC3FKbuMjIwSyNN7ygIC1SuXvb8GxJ37TcM7dGSKCe+kaTOWtLtgWpA17IHR4mBKWnX7
-         L7e+HZbtXAMPrUDHSA2I9qZ+RYDrnInxSqUGuzbzQO26EHe+f+mMCBDyFU3iFKWn6k+6
-         ycaZA+lzxvDxVhQGxMi+qCKwA0vbdM5sUF9z94JktdWy3j5PiPDAeMQwUuwQO+0M3khX
-         lNa/WXFq/tRL8pNtCKtUqXcZ22qbb1dMVwIAuKuhAs9CvG4pLWdw6eemf0xFDq0cyLY5
-         /bJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLglMymuYuMtHbIyDtxz3Ok1WCokzAB32ONabGabkJ0y/v/JK7x6uSUfu2GleMw3XNTWIL7ELb4vPv08Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGEm7w7QdXOgCzo+zoSQ/hwhog3HgUnjzU6ewSfmbfQ1qZh6m8
-	79R3jcmUaGuXoPqEZhZFuhcb5sVJpiGrXLec0Wn/44P/0PEWw4zusnk2zDv4u//4DOzH2iPAvEQ
-	oBQF7FRlFaXUf9z7Af6JIQRjShfO+B4sA+rGFp2yzc9nMHgUIrrXzDHMxI8E=
-X-Google-Smtp-Source: AGHT+IE5Hf5iXTuGWP6aI8KYGocSFkY8smikigrdkhwypO33dMqeNxfGi5hezPLgrQpJJAxjwEIfSBRDunDqCFjHYfFZZj2e4MpP
+	s=arc-20240116; t=1750092582; c=relaxed/simple;
+	bh=Re7MybfrCn2NryESzYDIQfzsdBo71QopT31SeH8/1PI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pj2V1AOP/42RMpIe0kqJmxJZxn91LSqjCY1YBV4Aw4MROU8cO1F9NQvZfFSfraAiD4wevTb+sXwMb5NyCW6KWw/bXzP/4GMsLBMyNXdEJfyI4/SQ+QluJX2t1xtCO3xUgY4qM1OYAt2RKt5kgJZMPLxhITE5dLaaxzsjHmaJ478=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C58Pi8Y3; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750092580; x=1781628580;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Re7MybfrCn2NryESzYDIQfzsdBo71QopT31SeH8/1PI=;
+  b=C58Pi8Y3GgUSbUpdUHZqNnN3e2aHnxIN/JAKm3txN95IlriexJJ7Ro3n
+   GohfuTkdImL9S2XeThs83VklyKe5UpTZIGHw2CSAvWZhkf+vVBRxnUjhh
+   5kVRqra4YhhI7g2bAcx4/8lhtrvLybPwq3nChs6vMQ4UTBnPrUGBxOLpo
+   EOd0yrY1hdJWdOCe9kvWEwJpBRBsCH+XEqG+AVEj2pOddvdAtiNGpSY3J
+   JaBgP7fkfDIM+3UjEWC/zNvaiHmUPj9Ba+4TZtz3HlHPmkGh2jFoX6Ab2
+   w3VkIrAHsNFSYIZ6yNyRhpPF6KTQcNpgUBN2W0GUYilC/BiJIzjc6A3fP
+   A==;
+X-CSE-ConnectionGUID: u8GVBQBKR+GjJVOFDsB8vw==
+X-CSE-MsgGUID: GE/wHyqwQ0SsUUTbE+l8pg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="52381858"
+X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
+   d="scan'208";a="52381858"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 09:49:39 -0700
+X-CSE-ConnectionGUID: MrWKEVp6TOSMw+SNG752gQ==
+X-CSE-MsgGUID: vtZbKAVGQeiUqmqw+fmGww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
+   d="scan'208";a="148427784"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 16 Jun 2025 09:49:34 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uRD1Y-000FBg-2D;
+	Mon, 16 Jun 2025 16:49:32 +0000
+Date: Tue, 17 Jun 2025 00:48:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, x86@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	akpm@linux-foundation.org, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
+	mjguzik@gmail.com, luto@kernel.org, peterz@infradead.org,
+	acme@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
+	willy@infradead.org, jon.grimm@amd.com, bharata@amd.com,
+	raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com, ankur.a.arora@oracle.com
+Subject: Re: [PATCH v4 10/13] x86/mm: Simplify clear_page_*
+Message-ID: <202506170010.r7INoexI-lkp@intel.com>
+References: <20250616052223.723982-11-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:5e81:b0:3de:1583:dc2d with SMTP id
- e9e14a558f8ab-3de1583df07mr33235175ab.11.1750092509506; Mon, 16 Jun 2025
- 09:48:29 -0700 (PDT)
-Date: Mon, 16 Jun 2025 09:48:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68504add.a70a0220.395abc.01e7.GAE@google.com>
-Subject: [syzbot] [wireless?] UBSAN: array-index-out-of-bounds in ieee80211_rx_mgmt_beacon
-From: syzbot <syzbot+6554b492c7008bcd3385@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250616052223.723982-11-ankur.a.arora@oracle.com>
 
-Hello,
+Hi Ankur,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build errors:
 
-HEAD commit:    18531f4d1c8c Merge tag 'acpi-6.16-rc2' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=100fc5d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3a936e3316f9e2dc
-dashboard link: https://syzkaller.appspot.com/bug?extid=6554b492c7008bcd3385
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c8710c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10e24e82580000
+[auto build test ERROR on perf-tools-next/perf-tools-next]
+[also build test ERROR on tip/perf/core perf-tools/perf-tools linus/master v6.16-rc2 next-20250616]
+[cannot apply to acme/perf/core]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-18531f4d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/aa1e5854fc49/vmlinux-18531f4d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ca38347f64b2/bzImage-18531f4d.xz
+url:    https://github.com/intel-lab-lkp/linux/commits/Ankur-Arora/perf-bench-mem-Remove-repetition-around-time-measurement/20250616-132651
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git perf-tools-next
+patch link:    https://lore.kernel.org/r/20250616052223.723982-11-ankur.a.arora%40oracle.com
+patch subject: [PATCH v4 10/13] x86/mm: Simplify clear_page_*
+config: x86_64-buildonly-randconfig-004-20250616 (https://download.01.org/0day-ci/archive/20250617/202506170010.r7INoexI-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250617/202506170010.r7INoexI-lkp@intel.com/reproduce)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6554b492c7008bcd3385@syzkaller.appspotmail.com
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506170010.r7INoexI-lkp@intel.com/
 
-wlan0: Creating new IBSS network, BSSID 50:50:50:50:50:50
-wlan1: Created IBSS using preconfigured BSSID 50:50:50:50:50:50
-wlan1: Creating new IBSS network, BSSID 50:50:50:50:50:50
-------------[ cut here ]------------
-UBSAN: array-index-out-of-bounds in net/mac80211/mlme.c:7224:41
-index 4 is out of range for type 'u8[0]' (aka 'unsigned char[0]')
-CPU: 0 UID: 0 PID: 38 Comm: kworker/u4:3 Not tainted 6.16.0-rc1-syzkaller-00182-g18531f4d1c8c #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: events_unbound cfg80211_wiphy_work
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
- __ubsan_handle_out_of_bounds+0xe9/0xf0 lib/ubsan.c:455
- ieee80211_rx_mgmt_beacon+0x21fd/0x2c10 net/mac80211/mlme.c:7224
- ieee80211_iface_process_skb net/mac80211/iface.c:1630 [inline]
- ieee80211_iface_work+0x49c/0xfe0 net/mac80211/iface.c:1722
- cfg80211_wiphy_work+0x2df/0x460 net/wireless/core.c:435
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
----[ end trace ]---
-Kernel panic - not syncing: UBSAN: panic_on_warn set ...
-CPU: 0 UID: 0 PID: 38 Comm: kworker/u4:3 Not tainted 6.16.0-rc1-syzkaller-00182-g18531f4d1c8c #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: events_unbound cfg80211_wiphy_work
-Call Trace:
- <TASK>
- dump_stack_lvl+0x99/0x250 lib/dump_stack.c:120
- panic+0x2db/0x790 kernel/panic.c:382
- check_panic_on_warn+0x89/0xb0 kernel/panic.c:273
- __ubsan_handle_out_of_bounds+0xe9/0xf0 lib/ubsan.c:455
- ieee80211_rx_mgmt_beacon+0x21fd/0x2c10 net/mac80211/mlme.c:7224
- ieee80211_iface_process_skb net/mac80211/iface.c:1630 [inline]
- ieee80211_iface_work+0x49c/0xfe0 net/mac80211/iface.c:1722
- cfg80211_wiphy_work+0x2df/0x460 net/wireless/core.c:435
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+All errors (new ones prefixed by >>):
 
+>> ld.lld: error: undefined symbol: __kcfi_typeid_memzero_page_aligned_unrolled
+   >>> referenced by usercopy_64.c
+   >>>               vmlinux.o:(__cfi_memzero_page_aligned_unrolled)
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
