@@ -1,88 +1,90 @@
-Return-Path: <linux-kernel+bounces-687432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6601ADA4EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 02:28:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E1F1ADA4F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 02:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D903AFD12
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 00:28:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC54A18877EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 00:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2776C1474CC;
-	Mon, 16 Jun 2025 00:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65981156677;
+	Mon, 16 Jun 2025 00:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g89+fnln"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N6jM/syt"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC594126C17
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 00:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38725126F0A
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 00:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750033709; cv=none; b=kz8cuvhFsmCH2Q9O/gfc7QVe40P8TzO+NkK9RWc/MdDKv1pDyvCT9Af4pA1ejL7lo3ivodqLFPZI5428asNoaI1miA/PHv7uWxAfdAuZVMSPasn3XOSlhANdX2ON1gRAxx++fmIuBWFT7xhdlzqsa/fbjUEVDkZu/KSeoK93edA=
+	t=1750033721; cv=none; b=YLdXMX1rrm5dl3R1zHr1+px7ZMqi0VFakkMvOPCtcAMXIB78ZEpnzIJKrxim/6exqy7p7ITwrpilei+lst5rCSdkFJq6MC5qTaen0wntw7u1lfAjNlw1EV9Mp7tYfSwft7GQEqKFljmOw+WDEVXmP16WrMb2NRU7mXcbBjGmAGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750033709; c=relaxed/simple;
-	bh=tTkONwaTKNs5Th90Uob+QQKWh4KxfwIU+Ne+iEv3Fu8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iWmXrlGjXc1XlruSHeK1Z1VvMeosSRZig9LdQLLy46ofPR+USzVuTzpsaoht9mRYIktTIBdnf65LpaANYU0TZvVqPhLObpJelgBMVELSm9sHKV9dw6ugadNhEHJjU8zBt1/SNV22ZsyO0mv+zFSB8V7VZZX2qq2o9pCqKFqdRiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g89+fnln; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1750033721; c=relaxed/simple;
+	bh=CyevXooayJgTRHhip0Jc/dJHXf5dF8Ulyrh+9bR9yQI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=lORr1D6vfqi2Y16+xXmNA5begJoUTJPwrtFXXf46DfnfXrLdS+oCX7VecACJRNYkHHx8JrrRnYzwAuqOVMGWxa2pyQzFt7ZaaK1SzbuJMQ8zacePS2YiVOOgKq7qmHBkTym3EiBXJUN10hJQoN2jGjQMFVgfVWxIEZBYwkfHQOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N6jM/syt; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55FNqApe025415
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 00:28:26 GMT
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55FNeh6A021721
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 00:28:29 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=PvOfpKcTPNY/T+XF/EuQGK
-	wrKoT6J0q2a3ZDB8OoQGs=; b=g89+fnlnKrClToJ9Ma/kmuqgzvURLz37oVXtA6
-	kPCvfyxXXRSCbyGkG9jv5xb8AeIPrZJfWoYT/KUdBNlDUWSgTqDOrkxVIuZqbi+L
-	0/V6k4YE7YkFWAPDCTY9DpGiaiNtBM4uSKJaGe5nJIWviyzzUJ1gAP3Y3P0oELpG
-	feAmG0wTiB+jAtOy/LRQtIkhUNtWmNh4Vd0E6EQs0jrMlB28zlch8vTodLFNiZqV
-	LgMS7sju2fb9pgYDARxSdCGj4nhmK1bl2FSoZr0QriISXzg3bKIRY9b+x/d2NYWQ
-	1JDSDEteHvTLfR7mNE6BoaGuMp3xso6RZKzWuOeFlMW/TuPw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 479qp5h5pc-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dDGlOHr4NgcDVCXG2RQ6GCKnY1CV3e4EG2J6GhifJ9w=; b=N6jM/sytFMeGNTKD
+	ARV7N7bz0CnHvGuwbMJWaCFnWsoosqBcivtvF9oegs3hu+bbzwNYCciHpWRzm8CT
+	irW55+qQuZPZumhJgqPGs/dyVKicn7cW4Fd9Kw9YS6JTNeQZ9tz2vG+Znqq9iAno
+	yUlRDKzvofSSG+DWoZCiIKFIie36AzovUgushf2aNuBELAEq8+k+J9pd+RE7T3s7
+	C1coJw6RBJtV7hQTbXcuPhTP2X3zlNMaTmxU6n7kzMht7874e/KVv/YbFBjec9kh
+	Ux1Gt4g8xL2tJ2/PIctCwHubaHSG/US7hpKd+UAlWDQwJ+P3irEmKAgVrdkx+iiU
+	HOMb9Q==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4792c9thn2-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 00:28:26 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6fad1f7f175so66546306d6.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jun 2025 17:28:26 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 00:28:29 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6faeebe9c5bso34738286d6.2
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jun 2025 17:28:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750033705; x=1750638505;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PvOfpKcTPNY/T+XF/EuQGKwrKoT6J0q2a3ZDB8OoQGs=;
-        b=HhC7QQNPOFPl6azcKH3ywdcFbZcze/WSfVi8E+4ueFBUtpNltMYiA0fXJU1kuBYRLF
-         WZRQhrO2jdgMsk9/ToQwkZxOOQCEyCGUwFXJszeK5Yd3h7lXP4LQqX/VDJzWwEqRqtuM
-         32wW0ZFbuYRBn4UqMBWpPSMj8S5OQD/w9NYauPaNKzt2CfzJKNeW2rOf31MWFw2EpvSd
-         VK84uS7rkNzD0eI5LKW9YYQa0vBJ71ZXymNUt31K1+tMU2tdCsm5ipGrKGSPK2ws8p9V
-         c8rMKJp6YaHQbxXHERI4G/8RuP3MP3H5yd1iAN1o512QKVw8SBak+rmsIIejfAgpOupT
-         4Wog==
-X-Forwarded-Encrypted: i=1; AJvYcCUkn4urnNDLspgHwDfCj3krQC+lXr7e/jTHQ6hDwgwKzAGnviBtkffUk7nMVUk7QocBtqe4IUJC5NXLtWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4QaN5eaWhSjmFBSFud3LIHBswHGEjyjGjJPJIDsgXH/DNL46e
-	OvjTzMUh6w1PVMioU7Bpbh0sPi8HB7HDkJM1V0ve9CZLTOyKjdXe9FhVybN8BAs+7XGMZEF3Z61
-	zSn7A3Q+IXDvmHkNH9zmo7ej2sWqWkghKKKeiSc9znyx/lIj8j6244NL71vKpj6goCuI=
-X-Gm-Gg: ASbGncu2hWvtnmhzde6R6o6nxu2PXVT7SLpNKaF/omvIeclD9L9VpVNqk+lxUOR5kRo
-	MvNFf8geFWNZp+jChRp2mhRWAwYil02SLjH3lvX5f/d2jH/xQ407zD0DUscmd58ei3Vd5Qasca7
-	/R8ppTXbDAfqsU3ZgoXe+iz+GpkVWBfqgNZ+vCStaC20nbETq93kkUHooaMd0thrNLhrSfgxtix
-	J0d6sOPgQo9h2tvqB7RBkZ2jdIdfaPP4wPH6Uq3yzTp0P1zH3EUuqpAoye/TYuJWmOZfDEB2Qzh
-	1+cgHPdmrJODApcKd+bQbLriXelfbKpnypXMOKLsemoDbbKEx5xTkS+TygrKdMEKtNk1todJTv6
-	QzjaJnzIYxwY7e64xWl4d+wsHN1ILSW93ygQ=
-X-Received: by 2002:a05:6214:e61:b0:6fa:edb8:b343 with SMTP id 6a1803df08f44-6fb45afe68emr133413466d6.2.1750033705109;
-        Sun, 15 Jun 2025 17:28:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGmGu2GYdq2W+SCMEcx1ePbAUyOpvMBtExb1SkBXqC5Dpe4fxzjvdP5hMCJmzgCnUMKQLYdiw==
-X-Received: by 2002:a05:6214:e61:b0:6fa:edb8:b343 with SMTP id 6a1803df08f44-6fb45afe68emr133413256d6.2.1750033704653;
-        Sun, 15 Jun 2025 17:28:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750033708; x=1750638508;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dDGlOHr4NgcDVCXG2RQ6GCKnY1CV3e4EG2J6GhifJ9w=;
+        b=LEMvqrUYC1GKP5ZOHPZLXp8URXDW0IEeigs+Qw7djMHEPoH3Awz0oxJCmK01hLQI1y
+         dI6yc3zFq9j2CpW7wL7mGnwekavD9T0lY8lVxQtwlvVQtqP/BjXGakH1eD6RKEzG4Q80
+         mvj2pMvIQigVJOIMhRt7BztjQeQfanrL1yVmq8jnjM0HwhZ9ErTxaebIBA33ayTBNDWn
+         1Paab3vc0c0wQxHE1jLGd4Ptrf04tBlLbip+z/jvCWUsB+gSrVxv7VRap+PWPY+tbm7+
+         HxItQPmhOrcvnCM8Np3vXAyf0ihHhA4rJWtpbtSbblp2s9d5l3FGzRQEkS3Gr5qKkL1D
+         IeOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEvoAWR1VRhJNIGnGyF3G3U04x/FoH7cDlh1VnpYIHKiQfudg41XOJWrRljCdGUFgHADlfrMgeIYV23E4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw78JD2zbE0pRoOBpxhH0TETeS4Hl6LDxyr8sAKRY54gsGpFzXi
+	CvVeHpE0nwVsWizSF99uCPHhUVRq7ubEbXFiSqOXehGIJE7USl8BbbZujc8mSXlIQFqNHOjZi7c
+	STyBO6hgdZx7niEkUUNoEmUanO8Vjkwfvx9DxR6byAVxlGGfcYLkuuGmfmt9kwKJjRsBQFAKyXT
+	Q+MA==
+X-Gm-Gg: ASbGncuaGFyFuH0YNkEutXYrZ0gVPLTpkrQxlvZUjz+vL1lXpYF63YEhz69gHBs6vbu
+	hxyje0m9whlJwOVXPIemAebe9kzQ76PS4k3Ujiw4gju/n9VHGDyuEOTsYFJQGIFlH+VC4HcV+t5
+	6vZjgHW9JpmO/Np2gkFGnG32IyHQtSgsvC0o+4Flx3gKy6GWL8tZUe3sYtQ2L9kob2e0EjIqyWg
+	NRLAy5GQZcTuVE7agfoFZC5F8jbp2A+OG9Nxewrelkb9iOs0eNmpgZf8gvZgijtR2aAMy5oXYpx
+	o+fFXTgU7TUY27xpXQSnXGq/VtyvxveXH1d+IDsM5KThEmhpsaBRvrMrU0S1c1L7uZAvpy9UR2V
+	AYlorwZuXoe6aqODOGqHVfCXrllwz3SyWyOE=
+X-Received: by 2002:a05:6214:470a:b0:6fb:4954:846a with SMTP id 6a1803df08f44-6fb4954886dmr91519726d6.3.1750033707809;
+        Sun, 15 Jun 2025 17:28:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHt/JZjdIkRHjrhbfDSHfCFDPji9PWUnBm0HXDcW0iTYfjKMfPKMxD5XA4I6dTHJmHeuaSYxQ==
+X-Received: by 2002:a05:6214:470a:b0:6fb:4954:846a with SMTP id 6a1803df08f44-6fb4954886dmr91519516d6.3.1750033707402;
+        Sun, 15 Jun 2025 17:28:27 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac136104sm1334990e87.77.2025.06.15.17.28.22
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac136104sm1334990e87.77.2025.06.15.17.28.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Jun 2025 17:28:23 -0700 (PDT)
+        Sun, 15 Jun 2025 17:28:25 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: [PATCH 00/28] interconnect: qcom: icc-rpmh: use NULL-terminated
- arrays and drop static IDs
-Date: Mon, 16 Jun 2025 03:28:12 +0300
-Message-Id: <20250616-rework-icc-v1-0-bc1326294d71@oss.qualcomm.com>
+Date: Mon, 16 Jun 2025 03:28:13 +0300
+Subject: [PATCH 01/28] interconnect: qcom: sc8280xp: specify num_links for
+ qnm_a1noc_cfg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,149 +93,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAB1lT2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDM0Nj3aLU8vyibN3M5GRdgxTjJHMjc7NEc0sLJaCGgqLUtMwKsGHRsbW
- 1AGSy6+BcAAAA
-X-Change-ID: 20250613-rework-icc-0d3b7276a798
+Message-Id: <20250616-rework-icc-v1-1-bc1326294d71@oss.qualcomm.com>
+References: <20250616-rework-icc-v1-0-bc1326294d71@oss.qualcomm.com>
+In-Reply-To: <20250616-rework-icc-v1-0-bc1326294d71@oss.qualcomm.com>
 To: Georgi Djakov <djakov@kernel.org>, Bjorn Andersson <andersson@kernel.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5425;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=814;
  i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=tTkONwaTKNs5Th90Uob+QQKWh4KxfwIU+Ne+iEv3Fu8=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoT2UhujIdU8ZiDZPCRTfol/v1s4RujRBQ41cbr
- oFGcgp5fQ2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaE9lIQAKCRCLPIo+Aiko
- 1WvAB/9hKGAcqZ1WCq0hiRlwkcv7lXVVfO30f0+Azc6Dk6xMQoZQiIPKFt1GWKzj0yJ0BUGl5o9
- mnnl7hjrOFbcZKimAqrIbz9pJeJGF/TjRwrkL6Kykc9p9FKWEqlD7VNH5gpGFURQOWZhE7wqux/
- dhofSr2ePRrqDa2FtIozGxtgyWMGqzC0WMqpiHeMAy2vESvzTGhL/XWgI9axbW+JxVz4006oiLl
- XzdoTN7rNDJnz28fKqk7UeUpXli9e796cgBeKqrfSmKf32BpG2We/2KT6XbRmqUvppLJtNFa52t
- i5i/z/nmKd+0oiO9rTE+T41GF4L03UJPdoBPml3uSief1QIr
+ bh=CyevXooayJgTRHhip0Jc/dJHXf5dF8Ulyrh+9bR9yQI=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoT2UheJCO7+4KsyI6UefPVpkp7eVLHpsfkW/8Y
+ gH6QLOIvVSJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaE9lIQAKCRCLPIo+Aiko
+ 1ScPB/0RAK0//iNxH/4+6HAe6bd22Av+Lttd13V1+oqzqJ+YtOIhBJSwlFRTpgY60SRhmWl3mdG
+ QHkyMdPnQsVVdWn/IV5O6IH6lC9vB86u/mG4J45dwCFtXfw0F3ERMM3woOIDJeAXlIL/sLLUc/s
+ SzG1/fcFTrZsrpPbV5yqHVpkwyBuTaHaIZsUyuakeF0Xa4ToMCFFbnzClf5nTCBOl6ml9rRwp1c
+ Y7odSPsFlopOrEP40b/z7XnDx0uznUz6fbqpBCLVUdpCEM48QGcUlec2zF+ItRuGSX1nCwN2fsR
+ zM0hX3g6NP7Ub2fhp0v+J4YUKw6GAmWxneORcdBI2GbQdlC0
 X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-GUID: UgNARgRmJV6hQdhcD_qWyHr2vh64AuyJ
-X-Proofpoint-ORIG-GUID: UgNARgRmJV6hQdhcD_qWyHr2vh64AuyJ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDAwMSBTYWx0ZWRfX90ylLu/Mh5fL
- 2g92+n54pinFNgBCUn68p8pVWmeEBtgQO3jstfraaND7as1DMVjdwiN/hHr69VEJQj0eVZiD9LL
- UTmatoB0j4HKxdJBRZ+dQzktp6xjmM8LvliGEEcHvhWlx9epKj/GF9esfYRviCxVY/z/wn6GBOa
- HVuRzsdMKpiR+viOJ1xOGkvo8rWr+R6Tc8skp/Uy9pz4SxxjECNUyeb2ePJHJu49MJB3VWIT25t
- FSBLItao4o/j3VOjWfM9WnZ7a9z2HbWqpFBd3WotgVELdsem/q0Kpbs4W0IWN4y9mAdlgJ+v9+M
- yXuXimNRVaJ0cr43wsQ0lv3xDqtqAJJpfJyXd+aRDCxPTxZ1dib8dcbF3kx/KRlhUBokq4C1vso
- TBX/647RpO0NrHPWmrbTgeTY9Mkbv3ppK2avJqNwpSQbQMg2zO+/iHv7tJvHhSgS2OTnKgzk
-X-Authority-Analysis: v=2.4 cv=fMc53Yae c=1 sm=1 tr=0 ts=684f652a cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=XAMh8DXI7HpmVRFZxe8A:9 a=QEXdDO2ut3YA:10
- a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-GUID: K03E8mmPBBkxTcb214089cyo3i5ZmuoA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDAwMSBTYWx0ZWRfX6nMhVjjK6j49
+ XgGsB2TSYTJLirVwI2AuInCJ4OuQ1fZkOIuy047RLdQVpIJ2K9+OWr3fDso9DayYwq0ZTsaDWsF
+ eQCdKZczzXXrqC1qJK0fCQ+iwRj6NUOrcwmimCOysnlatsU91jZwSrExEVzPCQOE9/aQWosQiX0
+ I6STUbEWRlfQhoxRkJTIrYJEH2qMnKDm0StHBmneDyy3Wc6uoKOIiRk7BXogY8cvfN6CQDenRFc
+ CA2ganVX0vdFZQUVqpH34VZ+OCoIz5p0BVuHT6X13KI7NoeiyVxLEJGrLF4m3V0/RKuE1Sj9tDc
+ 5ooLVDMUBI7Efxj5E3UtqRhy/EmELd23c4IjRRLkBQCzEdp4YdUwXoQg+xff9fwK+Z1hawtxKbJ
+ Sx6eixowelQ8HteSiZuOFwRO7wqhnn99rknxYlp/WRkewYrGuaesTGCl2bjvKwslXIERC49O
+X-Proofpoint-ORIG-GUID: K03E8mmPBBkxTcb214089cyo3i5ZmuoA
+X-Authority-Analysis: v=2.4 cv=etffzppX c=1 sm=1 tr=0 ts=684f652d cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=lLMxHPiN_djQrzgEttIA:9 a=QEXdDO2ut3YA:10
+ a=OIgjcC2v60KrkQgK7BGD:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-15_10,2025-06-13_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 bulkscore=0 clxscore=1015 malwarescore=0
- mlxlogscore=616 spamscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
- priorityscore=1501 suspectscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
+ clxscore=1015 impostorscore=0 adultscore=0 spamscore=0 malwarescore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 bulkscore=0 mlxscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
  engine=8.19.0-2505280000 definitions=main-2506160001
 
-Qualcomm interconnect code has been using .num_foo fields together with
-the arrays embedded in the structure, which results in hard-to-notice
-mistakes if .num_foo gets omitted or incorrect.
+The qnm_a1noc_cfg declaration didn't include .num_links definition, fix
+it.
 
-Rework RPMh interconnect code to use NULL-terminated arrays for the
-dynamic IDs case (as now all the arrays contain only pointers) and,
-while we are at it, rework all the drivers to use dynamic IDs and drop
-static IDs code.
-
-This series touches only RPMh interconnect drivers. Corresponding series
-for RPM drivers will follow up shortly.
-
+Fixes: f29dabda7917 ("interconnect: qcom: Add SC8280XP interconnect provider")
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
-Dmitry Baryshkov (28):
-      interconnect: qcom: sc8280xp: specify num_links for qnm_a1noc_cfg
-      interconnect: qcom: sc8180x: specify num_nodes
-      interconnect: qcom: rpmh: make nodes a NULL_terminated array
-      interconnect: qcom: rpmh: make link_nodes a NULL_terminated array
-      interconnect: qcom: sc7280: convert to dynamic IDs
-      interconnect: qcom: sc8180x: convert to dynamic IDs
-      interconnect: qcom: sc8280xp: convert to dynamic IDs
-      interconnect: qcom: sdm845: convert to dynamic IDs
-      interconnect: qcom: sm8250: convert to dynamic IDs
-      interconnect: qcom: x1e80100: convert to dynamic IDs
-      interconnect: qcom: qcs615: convert to dynamic IDs
-      interconnect: qcom: qcs8300: convert to dynamic IDs
-      interconnect: qcom: qdu1000: convert to dynamic IDs
-      interconnect: qcom: sar2130p: convert to dynamic IDs
-      interconnect: qcom: sc7180: convert to dynamic IDs
-      interconnect: qcom: sdm670: convert to dynamic IDs
-      interconnect: qcom: sdx55: convert to dynamic IDs
-      interconnect: qcom: sdx65: convert to dynamic IDs
-      interconnect: qcom: sdx75: convert to dynamic IDs
-      interconnect: qcom: sm6350: convert to dynamic IDs
-      interconnect: qcom: sm7150: convert to dynamic IDs
-      interconnect: qcom: sm8150: convert to dynamic IDs
-      interconnect: qcom: sm8350: convert to dynamic IDs
-      interconnect: qcom: sm8450: convert to dynamic IDs
-      interconnect: qcom: sm8550: convert to dynamic IDs
-      interconnect: qcom: sm8650: convert to dynamic IDs
-      interconnect: qcom: sm8750: convert to dynamic IDs
-      interconnect: qcom: icc-rpmh: drop support for non-dynamic IDS
+ drivers/interconnect/qcom/sc8280xp.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/interconnect/qcom/bcm-voter.c |    4 +-
- drivers/interconnect/qcom/icc-rpmh.c  |   20 +-
- drivers/interconnect/qcom/icc-rpmh.h  |   13 +-
- drivers/interconnect/qcom/qcs615.c    |  713 ++++++++-----------
- drivers/interconnect/qcom/qcs615.h    |  128 ----
- drivers/interconnect/qcom/qcs8300.c   |  911 +++++++++++-------------
- drivers/interconnect/qcom/qcs8300.h   |  177 -----
- drivers/interconnect/qcom/qdu1000.c   |  470 ++++++------
- drivers/interconnect/qcom/qdu1000.h   |   95 ---
- drivers/interconnect/qcom/sa8775p.c   |  493 ++++++-------
- drivers/interconnect/qcom/sar2130p.c  |  795 ++++++++-------------
- drivers/interconnect/qcom/sc7180.c    |  892 +++++++++++------------
- drivers/interconnect/qcom/sc7180.h    |  149 ----
- drivers/interconnect/qcom/sc7280.c    |  840 ++++++++++------------
- drivers/interconnect/qcom/sc7280.h    |  154 ----
- drivers/interconnect/qcom/sc8180x.c   | 1013 +++++++++++++-------------
- drivers/interconnect/qcom/sc8180x.h   |  179 -----
- drivers/interconnect/qcom/sc8280xp.c  | 1257 ++++++++++++++++-----------------
- drivers/interconnect/qcom/sc8280xp.h  |  209 ------
- drivers/interconnect/qcom/sdm670.c    |  712 +++++++++----------
- drivers/interconnect/qcom/sdm670.h    |  128 ----
- drivers/interconnect/qcom/sdm845.c    |  986 ++++++++++++--------------
- drivers/interconnect/qcom/sdm845.h    |  140 ----
- drivers/interconnect/qcom/sdx55.c     |  611 ++++++++--------
- drivers/interconnect/qcom/sdx55.h     |   70 --
- drivers/interconnect/qcom/sdx65.c     |  577 +++++++--------
- drivers/interconnect/qcom/sdx65.h     |   65 --
- drivers/interconnect/qcom/sdx75.c     |  498 ++++++-------
- drivers/interconnect/qcom/sdx75.h     |   97 ---
- drivers/interconnect/qcom/sm6350.c    |  838 +++++++++++-----------
- drivers/interconnect/qcom/sm6350.h    |  139 ----
- drivers/interconnect/qcom/sm7150.c    |  860 +++++++++++-----------
- drivers/interconnect/qcom/sm7150.h    |  140 ----
- drivers/interconnect/qcom/sm8150.c    |  930 ++++++++++++------------
- drivers/interconnect/qcom/sm8150.h    |  152 ----
- drivers/interconnect/qcom/sm8250.c    |  977 ++++++++++++-------------
- drivers/interconnect/qcom/sm8250.h    |  168 -----
- drivers/interconnect/qcom/sm8350.c    |  901 ++++++++++++-----------
- drivers/interconnect/qcom/sm8350.h    |  158 -----
- drivers/interconnect/qcom/sm8450.c    |  823 ++++++++++-----------
- drivers/interconnect/qcom/sm8450.h    |  169 -----
- drivers/interconnect/qcom/sm8550.c    |  683 ++++++++----------
- drivers/interconnect/qcom/sm8550.h    |  138 ----
- drivers/interconnect/qcom/sm8650.c    |  713 ++++++++-----------
- drivers/interconnect/qcom/sm8650.h    |  144 ----
- drivers/interconnect/qcom/sm8750.c    |  779 ++++++++------------
- drivers/interconnect/qcom/x1e80100.c  |  819 ++++++++++-----------
- drivers/interconnect/qcom/x1e80100.h  |  192 -----
- 48 files changed, 8655 insertions(+), 13464 deletions(-)
----
-base-commit: 410f15dcfe222c06f0d6379adec630061e88dc72
-change-id: 20250613-rework-icc-0d3b7276a798
+diff --git a/drivers/interconnect/qcom/sc8280xp.c b/drivers/interconnect/qcom/sc8280xp.c
+index 0270f6c64481a92149cb19556acdc6e2fead39c9..c646cdf8a19bf6f5a581cd9491b104259259fff3 100644
+--- a/drivers/interconnect/qcom/sc8280xp.c
++++ b/drivers/interconnect/qcom/sc8280xp.c
+@@ -48,6 +48,7 @@ static struct qcom_icc_node qnm_a1noc_cfg = {
+ 	.id = SC8280XP_MASTER_A1NOC_CFG,
+ 	.channels = 1,
+ 	.buswidth = 4,
++	.num_links = 1,
+ 	.links = { SC8280XP_SLAVE_SERVICE_A1NOC },
+ };
+ 
 
-Best regards,
 -- 
-With best wishes
-Dmitry
+2.39.5
 
 
