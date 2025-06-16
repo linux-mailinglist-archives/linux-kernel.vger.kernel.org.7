@@ -1,94 +1,94 @@
-Return-Path: <linux-kernel+bounces-688689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A07ADB5D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:48:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4C6ADB5DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:50:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B3D3A86FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:46:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5D7516FF80
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8374027F016;
-	Mon, 16 Jun 2025 15:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD86927F4CB;
+	Mon, 16 Jun 2025 15:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b="1hVYtNBo"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b="FkEL7YfA"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBE82BF01A
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 15:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C7A267721
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 15:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750088771; cv=none; b=ckVp0Sg/AhoKb+Mvn1T4Ji34s6P//1WqQQc321SfkMloVXYrJcN2hqQF2boi+XOiUO9T859I3ln9MskzE74dZ6bP4fs1zE/1tROZDDPOf4bjU3emkJsecQ/pIC37ff3bom2ESN+aLQG8uAbFsCbWEdKcngNtG7jL1935uyjiQkI=
+	t=1750089006; cv=none; b=OPZL0JFPSyCGGQhceLzJ5j3TT9lwMWMhqrUyIM7Thz9RYvsNh2/2PtoFbftwPXONTIuJnawRWQYZwHw3BR5EvgrHhythIQ+bWzYAZpQP7gqTo58g8pk4423ChmMeo9Oalhh8r2wEtm9UggNGQBMpXGB0HonzhH/e2jIS8XDfCd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750088771; c=relaxed/simple;
-	bh=jYvKBBGoQsaB69Pl1Nz9L1WYoE9u5ZPj5WCOapiu2K4=;
+	s=arc-20240116; t=1750089006; c=relaxed/simple;
+	bh=qob5NJ8G5c6QzGmBfprP/lA7j97XJ9zNuEiloSsBDvk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sx0OuE6HKSkNxrfq2KCo1GE2aESQY39FaZdqttJHisJk7QxEKjxfyl1nEjyZE2noO1irDALrZDEN+PZFOd8Q5vI55mULzDFRM0dHV8UYUsY+rE2Oi+3N/CHYG47lAIWpIEHzoKFKWgqhT7cJ5uhiMOUuZLXYgWyHGvd4uMn/QkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to; spf=none smtp.mailfrom=dama.to; dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b=1hVYtNBo; arc=none smtp.client-ip=209.85.128.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=lvyKdEdMvvcEn3HzofvA77obah3i08jXcUSRi4YQfxe52OjyOPSQlb23ZuDJE7C7MovroPseC4lgpUcIKeRlkIn7HqqF63HWCTK6NWhfovbIZYZJcMpi3igFq+dpK9510QXBqI9WgmnxeVfEXX71KokopebHR+j1cTnnNio8ai8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to; spf=none smtp.mailfrom=dama.to; dkim=pass (2048-bit key) header.d=dama-to.20230601.gappssmtp.com header.i=@dama-to.20230601.gappssmtp.com header.b=FkEL7YfA; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dama.to
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dama.to
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-450cf0120cdso39110265e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 08:46:09 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-450cfb79177so28755295e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 08:50:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dama-to.20230601.gappssmtp.com; s=20230601; t=1750088767; x=1750693567; darn=vger.kernel.org;
+        d=dama-to.20230601.gappssmtp.com; s=20230601; t=1750089003; x=1750693803; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references
          :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FFZY7ivm1a6iFjbcG8oxzsLPAoqgNHYn501cBEjAinc=;
-        b=1hVYtNBo9/vyPjFVnwfK3qe6nfWjWp2eJWglirTyGyHlh9cPRwigq5oS4dTGVIT2pE
-         +h57KhSqXVLMEF0lW/KAeS4CB2BY3LhmK6Y+t2bCWqIohy9XPcLP+EP4bUrkC6PBMyyA
-         bJ35KAsLgOW5Tw4n2396BHcx0zZ81Mz/I2mOr1H5H+G6RUfzp9oFSIR5igwB5ui0jXLI
-         zujHgjIXDcgKlqfm3lO3+jR2IKFjUbnAbJzsz1gPwXa9Ki3Y/QO170CzxGdeWzWrLAcC
-         v5aoCmBaEKJaZbO/fYYBZc6LgQOHpjakSm268YunjOPZqtVTWACdCr9JKTJCYpKhVLqw
-         GCeQ==
+        bh=+HG07yhDdt92251lTiG8gm/91c+HEf0mdiuFjonzF6Y=;
+        b=FkEL7YfAb9m+0CijchWGHD1+f93zOBfmNtpruELi6g5lE5Qq8SORF/+GLUYR0tVhdB
+         tWjE4IawaQjOrCJmwxVJIRrF0Nf7vyZrUmpOTmX0kPto28y/kbOuRwt74AR7JKXqJgbV
+         H4mclPjAJDXReqqoktoVDlNaKKVZjkhr5+Wjyo/GhfS6XBYndMWkKz8JU/A3QiO6t1PM
+         /yl9wOEQTfCEwOTFnLPIpKGGIc6w8Jn8c6DEttCmiBTD+i2nxz0ETILGQJDFFMYHbX0b
+         +Yz17pjKFsCacEzttZNzIw460mekcWbXGej2kp4LeTkXW3fGufdfjevEYaBU8RGW06ke
+         FM9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750088767; x=1750693567;
+        d=1e100.net; s=20230601; t=1750089003; x=1750693803;
         h=in-reply-to:content-disposition:mime-version:references
          :mail-followup-to:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FFZY7ivm1a6iFjbcG8oxzsLPAoqgNHYn501cBEjAinc=;
-        b=E5COpU6grw228oig61Q2FrxKxsyBdC7iUkJP27K3gGMGuPkqQHJIsa+DzeKVKWLGm7
-         GaKx+aPD5+wFMVBWypVMdz+OmNq+IQxn81zR4TzBy+2xUQeBxCqU3WGR5I+SIYouQjLr
-         2UQ802E+/nC97rvkJYSyvjXZ//DVh4AhtGXs0Z2+IdJ8B8l7qXcq5Qk9s6LXv6laIljf
-         kOsDgqremWaz9KmGqhSBo0pdSkF+0u4LcbK/E3T6Ted/Cbd+Mu8cCN0ucSOvavN+Zb6x
-         K/jIbx+ORln1ZvlVCZF0quBhfyc1j2CEUd31hiM/JfSvAXy7eQYIHMtQRmAMlaNh+xle
-         k0eg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMy2npA/DGy0fhiq+z7w2z9X8HfFLDlYO4kNyz+CuZ8zeRcfR/MZm60ds1SHD6NcIzSMjHifbPgGNJl3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+9MuRf7CAVfSJr/jeJgM7lknHTb+fRDJY9VWKE1IqNZ0f0KxK
-	tUuRVO6X3t1WBInbhl6lTUjcXNGogaZD+GiGZpgEJ6tjBuiU9xQEEUIJYXiHGAbBhkU=
-X-Gm-Gg: ASbGncu7/o9cFg8R3m1RNy8JwhcjBf9I03Ut1j5JIu5aTQUx5GdNX+9++YcfyE6mmNJ
-	2Vur7cQJ0LYcVRC/2cH+6CsypNLxOVC0YfF4Lul+h6sxdg3mQr0ZUbX4jDsSYg4Czaxf5a2TDcX
-	mP983ynlxe2WtUi4VWbt7/o9MKoycAlqVG6KwImoWLqR+C6RKifwOlCyZ0k4iZmn6MT3WOT+L4S
-	qUiTHff30P5tCZ3DBKUMCjOf4UXWOebAJbd3KuVfqtQvDnJlfzl1JDijPMThcurgAmOj0Cpvxw7
-	smdzsOt1sXyfMkd+StLyEZuIj1HGJRrwNCjZpc4DzekegNg8TGstJozDcbmiGsdrZwk=
-X-Google-Smtp-Source: AGHT+IEt/30I++Du4WLml4SC2pgcz2vdPzvcuBNh0U+CmdXoLVZMp5wzQZkp7cbhCbobFlfshCULrg==
-X-Received: by 2002:a5d:5889:0:b0:3a4:cfbf:5199 with SMTP id ffacd0b85a97d-3a572367ab7mr8439463f8f.9.1750088767639;
-        Mon, 16 Jun 2025 08:46:07 -0700 (PDT)
+        bh=+HG07yhDdt92251lTiG8gm/91c+HEf0mdiuFjonzF6Y=;
+        b=AMEoYMmnvv8kz0ukWFGhGXg2rNF57SjhGTayQ1QjSkgMnbFcmA/9g3LRM7t9/8OSvb
+         bnJpFL4hj1zts1N3eagWnbE/eKiJsbFayVLKocm+gFkbUYaJRpmCTgcqOaIfGsl/1VZV
+         Kvvc23p14enyDJeRkZE5mZaxbRIcJyIKYM44X5uuwuPZVBb/v+83Wh9cB1WLEzLXWv9n
+         nBG5vp3go7IRHb0dlkHuxP7E87spcMtvKky47mlbpWx4B7BqlcGRUI6jUB18g02c2JI8
+         9WY9Xuh2mkb72FBj8Zd778ZlZ8Gs1TNR9xnRMdcQ6WivdIt0YsiZ8GJCBMSx0NEhQNFv
+         G+xA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSmmSUXxFquMJLoCdske/6zJ8n+EGli0ta503J6/42ofVCVpPjN9nmIXeQ0Pc8VraMzjWYdLAO57RlLUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdJpY94z7duuULMhMFljdal6s8Ct2nUytEtu1jC1OjD5tmKWko
+	Cidk4VzTDObuzW4cQ+ad7ksD85gOMjN1tE/ta3QnI1/N4tAIubT/1dkYnxC8gwaa0sE=
+X-Gm-Gg: ASbGncsedRDEgGJwxtY1+XBal80GdpoRDPQpZUalkNo/Pl7SVsaC8PqvHWP7KF60B38
+	J/NanODc1ntNVLERXYsPwR0M8XMXUfsYXd8frI2w5lyQUswxwyjA7ErLeXb629DRyzcS9FdsVSi
+	o25tSGFLBkblHi5+p0d+2Sb7NTJ7zWJYLDifF+HctH8XY60Dwc6uHwdZ1b/RD3XDWani5MHJFZv
+	t+bywepEbsGtRqW4LqxJaHNGWUFnoH4FNjD8AlPE9/1MN4p8bd/Dd0/++qhIfek1AeR0tyYEOmf
+	1UuiitrQR7iiXjc54jreh6TAgonGtMw7hPJ5b3zMNCMElb3h7f+5K35QCxlGpkorXds=
+X-Google-Smtp-Source: AGHT+IH0ZJ7gpp+bLXTmZH0utmqDobsB3MfjlLY8LYiad1AFTLXWZpdDhWNjYJrUzP1yR5mvXiTn3w==
+X-Received: by 2002:a05:600c:1f94:b0:450:d019:263 with SMTP id 5b1f17b1804b1-4533cad3c9cmr103710705e9.18.1750089002809;
+        Mon, 16 Jun 2025 08:50:02 -0700 (PDT)
 Received: from MacBook-Air.local ([5.100.243.24])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532de8c4b1sm151608895e9.2.2025.06.16.08.46.05
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b70d77sm11543216f8f.94.2025.06.16.08.50.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 08:46:07 -0700 (PDT)
-Date: Mon, 16 Jun 2025 18:46:04 +0300
+        Mon, 16 Jun 2025 08:50:02 -0700 (PDT)
+Date: Mon, 16 Jun 2025 18:49:59 +0300
 From: Joe Damato <joe@dama.to>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, andrew+netdev@lunn.ch,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	horms@kernel.org, jdamato@fastly.com, pkshih@realtek.com,
-	larry.chiu@realtek.com
-Subject: Re: [PATCH net-next v2 2/2] rtase: Link queues to NAPI instances
-Message-ID: <aFA8PEZCAInzMZnM@MacBook-Air.local>
+To: Alok Tiwari <alok.a.tiwari@oracle.com>
+Cc: pabeni@redhat.com, kuba@kernel.org, jeroendb@google.com,
+	hramamurthy@google.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, netdev@vger.kernel.org, almasrymina@google.com,
+	bcf@google.com, linux-kernel@vger.kernel.org, ziweixiao@google.com,
+	joshwash@google.com, willemb@google.com, pkaligineedi@google.com
+Subject: Re: [PATCH 1/2] gve: Fix various typos and improve code comments
+Message-ID: <aFA9J6-6Kj3LcQL8@MacBook-Air.local>
 Mail-Followup-To: Joe Damato <joe@dama.to>,
-	Justin Lai <justinlai0215@realtek.com>, kuba@kernel.org,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	andrew+netdev@lunn.ch, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, horms@kernel.org, jdamato@fastly.com,
-	pkshih@realtek.com, larry.chiu@realtek.com
-References: <20250616032226.7318-1-justinlai0215@realtek.com>
- <20250616032226.7318-3-justinlai0215@realtek.com>
+	Alok Tiwari <alok.a.tiwari@oracle.com>, pabeni@redhat.com,
+	kuba@kernel.org, jeroendb@google.com, hramamurthy@google.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	netdev@vger.kernel.org, almasrymina@google.com, bcf@google.com,
+	linux-kernel@vger.kernel.org, ziweixiao@google.com,
+	joshwash@google.com, willemb@google.com, pkaligineedi@google.com
+References: <20250616054504.1644770-1-alok.a.tiwari@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,17 +97,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250616032226.7318-3-justinlai0215@realtek.com>
+In-Reply-To: <20250616054504.1644770-1-alok.a.tiwari@oracle.com>
 
-On Mon, Jun 16, 2025 at 11:22:26AM +0800, Justin Lai wrote:
-> Link queues to NAPI instances with netif_queue_set_napi. This
-> information can be queried with the netdev-genl API.
-> 
-> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
-> ---
->  drivers/net/ethernet/realtek/rtase/rtase.h    |  1 +
->  .../net/ethernet/realtek/rtase/rtase_main.c   | 19 +++++++++++++++++--
->  2 files changed, 18 insertions(+), 2 deletions(-)
+On Sun, Jun 15, 2025 at 10:45:00PM -0700, Alok Tiwari wrote:
+> - Correct spelling and improves the clarity of comments
+>    "confiugration" -> "configuration"
+>    "spilt" -> "split"
+>    "It if is 0" -> "If it is 0"
+>    "DQ" -> "DQO" (correct abbreviation)
+> - Clarify BIT(0) flag usage in gve_get_priv_flags()
+> - Replaced hardcoded array size with GVE_NUM_PTYPES
+>   for clarity and maintainability.
+
+Subject line should target the tree ("net-next") and it's helpful to include
+the base-commit (git format-patch --base=auto). Since this series is two
+patches you should probably include a short cover letter.
+
+That said, the changes seem reasonable so when you resubmit you can add my:
 
 Reviewed-by: Joe Damato <joe@dama.to>
 
