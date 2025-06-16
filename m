@@ -1,150 +1,139 @@
-Return-Path: <linux-kernel+bounces-688772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC88ADB6EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:31:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 182A2ADB6DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 072A23A7FA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:28:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D70D3A6F6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2382882CB;
-	Mon, 16 Jun 2025 16:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583EA287511;
+	Mon, 16 Jun 2025 16:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b="N+LPfg/O"
-Received: from rcdn-iport-8.cisco.com (rcdn-iport-8.cisco.com [173.37.86.79])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="scGwM9O1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34072868B3;
-	Mon, 16 Jun 2025 16:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.86.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90776286420;
+	Mon, 16 Jun 2025 16:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750091279; cv=none; b=rY6ZIorURvX5oOnhXGCYLHkQQYJAFERbjABlXULO8KrG4mJpaT6aqz9Te08CxxSMcqLYzcbl4Awu+EWdHAH99pDRJyj523hFTupKAIeGP8dsBSgOC0Rd2Iy2tRLOQU90rrHYD9OAn24yVRaySFcDJJ+deBubhmcemrIe+VkIOy8=
+	t=1750091219; cv=none; b=sYgbv1Nkq2baSnLPP13j8s9PT0qE0oJD5JKNVrXM3BMpyQMWUn8OB9d2ajJvme9zneBnrVjnUfE5q2yEaZVl6oNwvX+0+7T5lPPr9djPKWZ3sx14qHnUs3b+gteRqeF39QMSx1YBQH0wijLcFmkj1zA4T2KepoEPPAEOR+ZK/yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750091279; c=relaxed/simple;
-	bh=HURmsdBbKNOSAqNOenBr9m14Z0sOMDL8smrbOnA/p1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WkS5kR0RwO6egxwj6sqOMsaaikiMWpDWHLQTfHRU8MK3TTkCFQNYsU15F6sZ1IMNlS+IBJkoSbAFOF6idYVwcftFqcvRIJoNm9R0Gl04TvK7wW7vXoIzbbO4jizpyb39PL74Q2QoT/JrKkiC4QpsmXQ8jdx5kR9+iJcvuv8HCo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b=N+LPfg/O; arc=none smtp.client-ip=173.37.86.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=1077; q=dns/txt;
-  s=iport01; t=1750091278; x=1751300878;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=IFBqO6pbNAK7jq9L1bG5wLn+UjI0z0smSksS5Y9zv6A=;
-  b=N+LPfg/Oz2RRoLbTZTO/o5g9yvRqBWb1/fWXcgpIt8OL4ndBLHNtoz8O
-   pDkR4ChJIOf78ke2Xqb1Vr2+vA6o81fjZjgUenZxJnRDW0GNOpSMwg7aE
-   IFEyt4jRAhjFagUzgWYFpNBx9QCsbvo4xNkwwPSzSbKoAJIOrRkbTrZHr
-   9wE6lfXt9Ry6Bs1Bg8D1b7xZq5ditiUhg6HNcy9BC2So5DyigsyH54Mhj
-   zaRoaPWDXQNicNnPIfaHRFwh4cEG3nFRFQuQX/Ejym73icL3Fk99z/GDs
-   h1IWUDrjX7CQJbHJeFLHIG3mgZus+Oe9UPU4jZuTsyhMeUFOa0+ZeuiYc
-   w==;
-X-CSE-ConnectionGUID: kIg4VixtRbSEoQ7TvlZwnw==
-X-CSE-MsgGUID: b9xPorp1RVeXRrUqJcmfaQ==
-X-IPAS-Result: =?us-ascii?q?A0ANAACbRFBo/5QQJK1aGwEBAQEBAQEBBQEBARIBAQEDA?=
- =?us-ascii?q?wEBAYF/BgEBAQsBgkqBUkMZMIxwhzSgOoElA1cPAQEBD1EEAQGFBwKLZgImN?=
- =?us-ascii?q?AkOAQIEAQEBAQMCAwEBAQEBAQEBAQEBCwEBBQEBAQIBBwWBDhOGCIZbAgEDJ?=
- =?us-ascii?q?wsBRhBRVhmDAoJvA694gXkzgQHeN4FugUkBjU1whHcnFQaBSUSCUIE+b4FSg?=
- =?us-ascii?q?jiBBoV3BIMmFJUzi3BIgR4DWSwBVRMNCgsHBYFjAzUMCy4VbjIdgg2FGYISh?=
- =?us-ascii?q?CmGX4RJK0+FIYUFJHEPBk9AAwsYDUgRLDcUGwY+bgeYC4NygQ6BAoE9AaYAo?=
- =?us-ascii?q?QuEJaFTGjOqYZkEqTiBaDyBWTMaCBsVgyJSGQ+OLRa7UyYyPAIHCwEBAwmPf?=
- =?us-ascii?q?4F9AQE?=
-IronPort-Data: A9a23:BIWiv6Cl+O9POBVW//niw5YqxClBgxIJ4kV8jS/XYbTApDlxgWAHm
- 2QYCGDXPa6DZWTzft0kbN7koE4D6JOHx98xOVdlrnsFo1CmBibm6XV1Cm+qYkt+++WaFBoPA
- /02M4eGdIZuCCaF/H9BC5C5xVFkz6aEW7HgP+DNPyF1VGdMRTwo4f5Zs7ZRbrVA357gXWthh
- fuo+5eCYAH8hWYuWo4pw/vrRC1H7ayaVAww5jTSVdgT1HfCmn8cCo4oJK3ZBxPQXolOE+emc
- P3Ixbe/83mx109F5gSNy+uTnuUiG9Y+DCDW4pZkc/HKbitq+kTe5p0G2M80Mi+7vdkmc+dZk
- 72hvbToIesg0zaldO41C3G0GAkmVUFKFSOuzXWX6aSuI0P6n3TEwNRhUH83LZEi8N1aBlgRy
- eIcGi8LcUXW7w626OrTpuhEj8AnKozveYgYoHwllGifBvc9SpeFSKLPjTNa9G5v3YYVQ7CHO
- YxANWoHgBfoO3WjPn8UAYgineOhhVH0ciZTrxSeoq9fD237l1wtjOi2bIOPEjCMbc8Ejn6fv
- HqfxVr0MisACcW9wj+L+0v504cjmgu+Aur+DoaQ+vdsxlaa3HQeDgEbT3O/oP+wkEn4XMhQQ
- 2QW9ygkhawz8lG7CNj3Wluzp3vslhsVQcZRFasi5R2A0LHZ5S6eHGEPSjMHY9sj3Oc0QDEs2
- 1CJnvvzCDBvuaHTQnWYnp+OoC2/IzM9N2IOZSYYCwAC5rHLpIA1kwKKTdt5FqOxpsP6FCu2w
- D2QqiU6wbIJgqYj06S94ECCmDm3p7DXQQMvoAbaRGSo6kV+foHNWmCzwVHf6fAFKMOSSUOM+
- SFd3cOf9+sJS5qKkURhXdkwIV1g3N7dWBW0vLKlN8dJG+iFk5J7Qb1t3Q==
-IronPort-HdrOrdr: A9a23:xozmcqtMJXdssWrU/7ysx1cP7skDWdV00zEX/kB9WHVpmwKj+/
- xG+85rsSMc5wx+ZJhNo7q90ey7MBDhHP1OkOws1NWZPTUO0VHAROpfBMnZsl/d8kbFmdK1u5
- 0MT4FOTPXtEFl3itv76gGkH9tl/MOK68mT9IDjJg9WLT2Dr8pbnn5E4sHxKDwReDV7
-X-Talos-CUID: 9a23:ItKyc2M+tYQZYu5DWwhoqHAVCtwfeEbwy06PH1G8O3lvV+jA
-X-Talos-MUID: 9a23:Mh7zGgROYDMtF6J/RXTm1SFaM91wup6QBXA3i6gfmcKBOyVJbmI=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.16,241,1744070400"; 
-   d="scan'208";a="384483412"
-Received: from alln-l-core-11.cisco.com ([173.36.16.148])
-  by rcdn-iport-8.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 16 Jun 2025 16:27:51 +0000
-Received: from fedora.lan?044cisco.com (unknown [10.188.19.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kartilak@cisco.com)
-	by alln-l-core-11.cisco.com (Postfix) with ESMTPSA id 85E82180001E7;
-	Mon, 16 Jun 2025 16:27:49 +0000 (GMT)
-From: Karan Tilak Kumar <kartilak@cisco.com>
-To: sebaddel@cisco.com
-Cc: arulponn@cisco.com,
-	djhawar@cisco.com,
-	gcboffa@cisco.com,
-	mkai2@cisco.com,
-	satishkh@cisco.com,
-	aeasi@cisco.com,
-	jejb@linux.ibm.com,
-	martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jmeneghi@redhat.com,
-	revers@redhat.com,
-	dan.carpenter@linaro.org,
-	Karan Tilak Kumar <kartilak@cisco.com>
-Subject: [PATCH v5 4/4] scsi: fnic: Set appropriate logging level for log message
-Date: Mon, 16 Jun 2025 09:26:32 -0700
-Message-ID: <20250616162632.4835-4-kartilak@cisco.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250616162632.4835-1-kartilak@cisco.com>
-References: <20250616162632.4835-1-kartilak@cisco.com>
+	s=arc-20240116; t=1750091219; c=relaxed/simple;
+	bh=LfL5akD0juU3a/TgCe4Dc3dTCfPxOqJ7AMeYJcIw5lY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mJtpzC/iz+Qjr3zCUWC5vFXDEKgrQ8fhgfILSZr88cbD+JD9mHDnv5r3JmhpvpRr3287aEdG4YQ95MUGQ2LIy9eSc6CBK1eo4nWO/OdYD6l2aakJN1uVo6UiaJupIJ8+7HWv9mILrfd6Wuw+9sr+d8ruWAp2sLP4YAoIUcE7gP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=scGwM9O1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B0BC4CEEA;
+	Mon, 16 Jun 2025 16:26:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750091219;
+	bh=LfL5akD0juU3a/TgCe4Dc3dTCfPxOqJ7AMeYJcIw5lY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=scGwM9O15IzKtEPUSKkwQYqiuDPLyK4sn8KlYI5gdUxCAWkqdgzgPAFmz7cy9ilIt
+	 5Tuqd0YX/s9AYc3oDuz2JnFPhvNRwCk9h3R/vz64BtAdhCpl30sjGidnZsBYSXEOiA
+	 V1tKqaBv/lqhlwfiSFUSRRaSkJ+wsRMFe8pTLH2ZixuKMDrJP6AlMnc0f0oaaPgnEI
+	 DqjCdT8VP+znmMHGiWwnVyQBySB+IaHJBarqEt7sox213cWQ6+JfRYi0bo5x3xF18I
+	 8bgpsV5yj+Gymsnr8wKq4H/0O3MNSpIrMVpLOsDjnBh2qu3Z4rWgNuT1GGWyzvKY3n
+	 gCwbUv9P5+04g==
+Message-ID: <e15f4d39-379d-436f-b401-36f5b3f6f010@kernel.org>
+Date: Mon, 16 Jun 2025 18:26:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authenticated-User: kartilak@cisco.com
-X-Outbound-SMTP-Client: 10.188.19.134, [10.188.19.134]
-X-Outbound-Node: alln-l-core-11.cisco.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] dt-bindings: net: bluetooth: nxp: Add support for
+ 4M baudrate
+To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>, marcel@holtmann.org,
+ luiz.dentz@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, amitkumar.karwar@nxp.com, sherry.sun@nxp.com,
+ manjeet.gupta@nxp.com
+References: <20250616150919.8821-1-neeraj.sanjaykale@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250616150919.8821-1-neeraj.sanjaykale@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Replace KERN_INFO with KERN_DEBUG for a log message.
+On 16/06/2025 17:09, Neeraj Sanjay Kale wrote:
+> Add support for 4000000 as secondary baudrate for downloading FW chunks and
+> after HCI initialization is done at fw-init-baudrate.
+> 
+> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+> ---
+>  .../bindings/net/bluetooth/nxp,88w8987-bt.yaml         | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
+> index 3ab60c70286f..f1c7f900001c 100644
+> --- a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
+> +++ b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
+> @@ -34,6 +34,16 @@ properties:
+>        This property depends on the module vendor's
+>        configuration.
+>  
+> +  secondary-baudrate:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
 
-Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
-Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
-Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
-Reviewed-by: Arun Easi <aeasi@cisco.com>
-Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
----
-Changes between v4 and v5:
-    - Incorporate review comments from John:
-	- Refactor patches
----
- drivers/scsi/fnic/fnic_scsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+baudrate is in some value, so use unit suffix from property-units and
+drop the ref.
 
-diff --git a/drivers/scsi/fnic/fnic_scsi.c b/drivers/scsi/fnic/fnic_scsi.c
-index 7133b254cbe4..75b29a018d1f 100644
---- a/drivers/scsi/fnic/fnic_scsi.c
-+++ b/drivers/scsi/fnic/fnic_scsi.c
-@@ -1046,7 +1046,7 @@ static void fnic_fcpio_icmnd_cmpl_handler(struct fnic *fnic, unsigned int cq_ind
- 		if (icmnd_cmpl->scsi_status == SAM_STAT_TASK_SET_FULL)
- 			atomic64_inc(&fnic_stats->misc_stats.queue_fulls);
- 
--		FNIC_SCSI_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
-+		FNIC_SCSI_DBG(KERN_DEBUG, fnic->host, fnic->fnic_num,
- 				"xfer_len: %llu", xfer_len);
- 		break;
- 
--- 
-2.47.1
+And then you will see that it could be actually an array, so why not
+using existing properties? Otherwise you will add soon "tertiary" etc?
+This does not scale.
 
+Best regards,
+Krzysztof
 
