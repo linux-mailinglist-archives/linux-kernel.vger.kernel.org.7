@@ -1,100 +1,182 @@
-Return-Path: <linux-kernel+bounces-688178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A4D9ADAEA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:35:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227D2ADAEAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03673B4BF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:34:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCFE5171995
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281AE1A840A;
-	Mon, 16 Jun 2025 11:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4252E88BA;
+	Mon, 16 Jun 2025 11:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SSdYGFHm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V1g+KUgl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125B21DFE1;
-	Mon, 16 Jun 2025 11:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F312E2EF4;
+	Mon, 16 Jun 2025 11:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750073698; cv=none; b=fTS9k8bY/isA08VGPde8BDmAXBAUzMoaNHrYa82WPAVlwE+HvtozuvqOvEHR8v0KCy7jC0Y+QLjIhm0z2Of1DL56LTnBpijqIFQsZcaOYvCyS9fBZIYXy2faS4qQA3T+Ncp6cM95QAIApxwe+Z2E5UNYVwXIHvdaMaJ7reLBwQM=
+	t=1750073704; cv=none; b=Qc75hQmBnnHJymrjM4L341Hg4oXIcoDS/UWCcuORKt61v+du4FzRVNzNTU1IUzsjG/GiL++pwhklphP67XJwLccd3R2CigLK80sQfn4JK0sHA8Cjetng8asTt6uk/pXX0c5c6jZKyTxhXPPpVsQB3PR53CfE2nVajxtwKYyak08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750073698; c=relaxed/simple;
-	bh=ojHEuztj0i3yHmHmm9T4QjxP+NTevWKTFSWpUEeibRQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nwmW/GrmcCjxEpzI4O+ar/wfn2iJYYPuWytLvuN6bZtnx1W4T6iYYvZj3SSrm6Z91rpWBWcCyt7jbX1E9Zdq04mAYZiE8BEe/WZCsfzXWn4NsE7zvEzi7+gJUbpXpnfIQkaK6kl23R9Grbsy26OcI6q6smOriNCrF4MfOrmJynY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SSdYGFHm; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750073697; x=1781609697;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ojHEuztj0i3yHmHmm9T4QjxP+NTevWKTFSWpUEeibRQ=;
-  b=SSdYGFHmirv6FtK1PnJJn/K3rpi9Okjk/d5sgWej9lItMuG/C503Nesz
-   0f2Hh4F2wimLnhzEBLD4MpCD+He5vqg/zXpJlXfx5dlUFZ/3KG9ztPC8C
-   +RnN55yYrqVA7azZuYETTIT1jXhSPn6IXQ+4LY/hyREzDUtBmVljAvKW3
-   BddkUOuj2mvM5Fnl7Da/lMzqzrVgDtPSTHhkkOWs2P4Xzs9Zik19EQldo
-   mQF58rY9s+zGxZ2rA6NPKr0aZkQpn9Ycul12JKQDXDiQt3yL48lzBfurK
-   tRbSM+CJ5XaVIgewY834OeM39Lu/6l7t/OaTV1E8pd45yCHHNuTxYeHlC
-   g==;
-X-CSE-ConnectionGUID: LF3tsWK6QvSQ19G012IJ/A==
-X-CSE-MsgGUID: dE15yrUFQhCQLqGilsihoA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="69657837"
-X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
-   d="scan'208";a="69657837"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 04:34:56 -0700
-X-CSE-ConnectionGUID: gaIal/9STnGso6QkRJ98mQ==
-X-CSE-MsgGUID: u+WnkkfGQnmQxYoDn68uJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
-   d="scan'208";a="152282524"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.243.252]) ([10.124.243.252])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 04:34:50 -0700
-Message-ID: <68fda26e-f6d8-4be3-a411-a0cea13115b9@linux.intel.com>
-Date: Mon, 16 Jun 2025 19:34:47 +0800
+	s=arc-20240116; t=1750073704; c=relaxed/simple;
+	bh=G9IPn0guZ8e7luDU6lCo/MjI/7F105ibaLtlSYoaCLo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GlAgrpx9PZ4LEH93KgV8OxBMaeQ0f+nA9g/oEuk7FitqCe+Ye5U8FbmjQw5u5Kdfy+eGCTKawOY2rZBPmqFvljUn0Jj3MvvYZD00EDLsOQnzvsIf32WJSK5n/Fukfx9Evl8eB3Emtk9hv0j8D5ZRUwzBGbmV00IqRIkbw9YHLD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V1g+KUgl; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55G8llZk004109;
+	Mon, 16 Jun 2025 11:34:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mr+Lp2/Tw3slc2QsiFw5oFEx+8uq1qJflYKkjSNvbyQ=; b=V1g+KUgltpBweqga
+	hHfyKTyVE7c57ftCUqnehK21wDra3JnHOH+fHvRd3IL7k8A1vuC8qigmyQXmSgLB
+	A+hIBXoz6v84oQ4dakE2aDgF2o8RGpnpcAqNYorpjeohSs4S7ln29jJp4jLuOkY2
+	AjVUW00G8gG+MECBWBN3QKzuVsalwTOIo4SBmCFvqGRBRXRVHnjhGMQvcEhyxZ4G
+	62nIT2730k7ukpIdVhH66ZMsncuu/FYJpfuJfAXgmC0hcUM/a2ze6MT0wM0sD3+6
+	lKk3EUMrz2VFf05zSjj4PjzbB6PydCkYbc99J9bNTlo04XYmkTz8x3Xnpjn6FzhG
+	i8ALtw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791fsv9k4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Jun 2025 11:34:57 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55GBYuOA010464
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Jun 2025 11:34:56 GMT
+Received: from [10.206.101.41] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Jun
+ 2025 04:34:54 -0700
+Message-ID: <a20f7ad1-1b01-57d0-89ad-e1429690e770@quicinc.com>
+Date: Mon, 16 Jun 2025 17:04:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, bagasdotme@gmail.com, robin.murphy@arm.com,
- joro@8bytes.org, thierry.reding@gmail.com, vdumpa@nvidia.com,
- jonathanh@nvidia.com, shuah@kernel.org, jsnitsel@redhat.com,
- nathan@kernel.org, peterz@infradead.org, yi.l.liu@intel.com,
- mshavit@google.com, praan@google.com, zhangzekun11@huawei.com,
- iommu@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
- patches@lists.linux.dev, mochs@nvidia.com, alok.a.tiwari@oracle.com,
- vasant.hegde@amd.com, dwmw2@infradead.org
-Subject: Re: [PATCH v6 15/25] Documentation: userspace-api: iommufd: Update HW
- QUEUE
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
- corbet@lwn.net, will@kernel.org
-References: <cover.1749884998.git.nicolinc@nvidia.com>
- <e6931ee1643d717f13bdc30e7dfd9eeb9fd0fafa.1749884998.git.nicolinc@nvidia.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v6 0/6] media: Fix coccinelle warning/errors
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <e6931ee1643d717f13bdc30e7dfd9eeb9fd0fafa.1749884998.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Ricardo Ribalda <ribalda@chromium.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Hans Verkuil
+	<hverkuil@xs4all.nl>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        Kosta Stefanov <costa.stephanoff@gmail.com>
+References: <20250111-fix-cocci-v6-0-1aa7842006cc@chromium.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250111-fix-cocci-v6-0-1aa7842006cc@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDA3MSBTYWx0ZWRfX0ZGFoaCRuJxE
+ mOxG45ATH6ThVLoctmeRTgoYsoVY4UiC9dJtNsEKqtehWKw1pk0oSyWWCtThX28u0tQRnTzOgHr
+ hRkLa5dZDdnU97QV+KnxGrGeiyjOLs6tWmP/hRfvNfeH/CcL+pSPa3hrWsCQASvEIh6Oov3O5Du
+ Ki/onV82tNJ28aFuyKIYOqcGcKyRJfxe0r9ifqoB8XGOgyX3i82cnHh2TNokisIuK/4ycNt6Zfv
+ iEgRgVotgr05Kqv4131nXxA8cd/MStyxp9u6WR5br0uxW3XwxJuHx0+ESkC3/rHZmZ9u4W4efco
+ XMVLvRMi5IrUd2luJzStl7hTA39hkovxg89XL+LdgOzr88brCelY3f3DIYi28ZIjP8YN/wWoyUh
+ fwfJm6TzUdRegeSUsIbKCTRJyUvZ+/dtbKGtVdgk8CeQM+mBapZG/i4yZVz0wEwQw8acrgb0
+X-Proofpoint-ORIG-GUID: adkOhAidUbc3L4XsB_qaLo5Jh1Mg_aLX
+X-Authority-Analysis: v=2.4 cv=OLIn3TaB c=1 sm=1 tr=0 ts=68500161 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
+ a=cm27Pg_UAAAA:8 a=pGLkceISAAAA:8 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8
+ a=xOd6jRPJAAAA:8 a=OPJHTv8p9pyGCHnS0U8A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: adkOhAidUbc3L4XsB_qaLo5Jh1Mg_aLX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-16_05,2025-06-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 clxscore=1011 lowpriorityscore=0 priorityscore=1501
+ malwarescore=0 impostorscore=0 mlxscore=0 bulkscore=0 adultscore=0
+ suspectscore=0 phishscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506160071
 
-On 6/14/2025 3:14 PM, Nicolin Chen wrote:
-> With the introduction of the new object and its infrastructure, update the
-> doc to reflect that.
+Hi Ricardo,
+
+On 1/11/2025 3:25 PM, Ricardo Ribalda wrote:
+> These is the last set of patches to fix all the relevant patchwork
+> warnings (TM).
 > 
-> Reviewed-by: Jason Gunthorpe<jgg@nvidia.com>
-> Reviewed-by: Kevin Tian<kevin.tian@intel.com>
-> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
+> --
+> 
+> ---
+> Changes in v6:
+> - Improve comments for tda10048, thanks Kosta.
+> - Link to v5: https://lore.kernel.org/r/20250107-fix-cocci-v5-0-b26da641f730@chromium.org
+> 
+> Changes in v5:
+> - venus: Ignore fps > 240
+> - venus: Clamp invalid fps instead of -EINVAL
+> - Link to v4: https://lore.kernel.org/r/20250106-fix-cocci-v4-0-3c8eb97995ba@chromium.org
+> 
+> Changes in v4:
+> - Remove all merged patches
+> - Improve commit messages.
+> - media: Remove timeperframe from inst
+> - Ignore 0 fps (Thanks Hans)
+> - Link to v3: https://lore.kernel.org/r/20240429-fix-cocci-v3-0-3c4865f5a4b0@chromium.org
+> 
+> Changes in v3: Thanks Bryan, Dan, Markus, Sakary and Hans
+> - Improve commit messages.
+> - Use div64_u64 when possible
+> - Link to v2: https://lore.kernel.org/r/20240419-fix-cocci-v2-0-2119e692309c@chromium.org
+> 
+> Changes in v2:
+> - Remove all the min() retval, and send a patch for cocci:  https://lore.kernel.org/lkml/20240415-minimax-v1-1-5feb20d66a79@chromium.org/T/#u
+> - platform_get_irq() cannot return 0, fix that (Thanks Dan).
+> - Fix stb0800 patch. chip_id can be 0 (Thanks Dan).
+> - Use runtime (IS_ENABLED), code looks nicer. (Thanks Dan).
+> - Do not replace do_div for venus (Thanks Dan).
+> - Do not replace do_div for tda10048 (Thanks Dan).
+> - Link to v1: https://lore.kernel.org/r/20240415-fix-cocci-v1-0-477afb23728b@chromium.org
+> 
+> To: Mauro Carvalho Chehab <mchehab@kernel.org>
+> To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+> To: Vikash Garodia <quic_vgarodia@quicinc.com>
+> To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> To: Hans Verkuil <hverkuil@xs4all.nl>
+> Cc: linux-media@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-arm-msm@vger.kernel.org
+> 
+> ---
+> Ricardo Ribalda (6):
+>       media: dvb-frontends: tda10048: Make the range of z explicit.
+>       media: venus: vdec: Clamp parm smaller than 1fps and bigger than 240.
+>       media: venus: venc: Clamp parm smaller than 1fps and bigger than 240
+>       media: venus: Remove timeperframe from inst
+>       media: venus: venc: Make the range of us_per_frame explicit
+>       media: venus: vdec: Make the range of us_per_frame explicit
+> 
+>  drivers/media/dvb-frontends/tda10048.c   |  8 +++++++-
+>  drivers/media/platform/qcom/venus/core.h |  4 ++--
+>  drivers/media/platform/qcom/venus/vdec.c | 23 +++++++++++------------
+>  drivers/media/platform/qcom/venus/venc.c | 24 +++++++++++-------------
+>  4 files changed, 31 insertions(+), 28 deletions(-)
+> ---
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Apologies for delay in review for this series.
+
+Regards,
+Vikash
 
