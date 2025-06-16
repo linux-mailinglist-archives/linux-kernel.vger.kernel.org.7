@@ -1,98 +1,112 @@
-Return-Path: <linux-kernel+bounces-688037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F36EADACDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:03:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF0BADACEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C09727A2E7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:02:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 348D2166928
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6B62D1914;
-	Mon, 16 Jun 2025 09:59:24 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F236275853;
+	Mon, 16 Jun 2025 09:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PvsnX9U4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059232D0283
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9CD2E7F1B;
+	Mon, 16 Jun 2025 09:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750067963; cv=none; b=CvdotH8MBFNQE0oe/5gN8/wwjjgXmOscIRTgBIBuK6wIX7r0oTlKursTFV3o4hEjn8uvSWiNcsa58tIApKQoFNDpYEPFTcX1kE4o9mMNp9oBt1HWikbTOcZsHH1WO1DGPIB9g3PVFvOoM4lKaFqCehvxV5/VoTyLK99pLlh2aaM=
+	t=1750067991; cv=none; b=LVxYW4PiOjaM3QeU/iLdFI1LU8rsKQgcO3fg7wC5y2sCduFZCIZl9fY5fi1bJuiuetw90dWoTMxtCk2aJ+sw6rm87cK5KfubIowoIOq2KU75MODaMNIpMBdgR+lVsgdvMFrVK8ck5x+KR2CqGfVuqJwsiKQIFXKb4hQ6Q6btY7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750067963; c=relaxed/simple;
-	bh=doCLeYzsrj45Z2HBYvq5g3My9gFsOrT5a5JAuEQIrso=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AB9mmzu7JIKxcOInj5/kDf3N6cgUAKKFjD+QHBoiSr1+UpurNXoip0Hsg0nVHI3MTy0nbenM1JaNSHaK3C8fvD3QwE16w8kj2vOeSsIvZsp10tFXseRD0F4KVnCybgn1YG2GzKtbJSPpz3qxHDryay+TbKTL6zLAzamQSLgYcug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ddb9c3b6edso54943445ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 02:59:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750067961; x=1750672761;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Uv1B4mAfQmuzPqdcif0Rr998oEN+e6p2IZSVJLfUKAY=;
-        b=YdGvCHl5tBJJHR05RrviZyclczu0O433wMYyHSaH5bfCgmSxCUw7SShzBWHw8YSq2x
-         Nn1zvBUyOo6UCwb2jv3z8wRnCu+94rDUf0zyZSTYFfJf0ak5IAOd/M7JGtnNINLPtJZW
-         ws80Ra1sz6q2q9kkD/DXw++TkdXd3pvQWaCnwng9iHLiYqTajaPFBPa9BI76YXaFjfPZ
-         X3SiBmVTqd4yQBYRrIZKIQDh+J/EPndmpvID5yMOxocNBH4XASaNUNfp/GBmrNe/nwS1
-         FD0PjxDMOi7FLC/tYlAnYxTm7yJiFVUsWVUz3gyLk6zpFSnJj6zIUidBgfJ2Q6KbwWJ2
-         vjEg==
-X-Gm-Message-State: AOJu0YwNK46OhA1uzuPUoMgRIMLFJNed6ajCQtxS2Qzq9XOKD9v9AP2T
-	oNRDurl7bhPcflwRejqTI/wqKlNd4i0npneU0Zoig1Jb5AN1xqzXLVEi7HJH7pNLjM0Kh4C6E4A
-	f3jSOXip9mJQmjcWya3vQcTm2x1kXiWGm+J12vCQ7m2d+HFMPdU8bymMa4m0=
-X-Google-Smtp-Source: AGHT+IGL3GRknel6W1gofzr2MZ/Z3dEyG16sNMTBLVsWsK9zMf4tfmz3K7ba/JBRVWpRHM++g7sMRmmM/qThPgdChW6+K6cUasAP
+	s=arc-20240116; t=1750067991; c=relaxed/simple;
+	bh=DHwnW5tWKwgmW1+X3cVu0d99P45MmBzMs9DpMm2Wt5Y=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=CUcJN/vjzRAxMqinn1D1iWm17hPFSoVeHMLRQV+e48L2nMi0yz0SGEuUouxMkCV6VznVs3qL4gfGOE6s+fbsa0XE4bNDW/X5RdmTQCJhnGPakdpykVrOfqd2ZyB6vANkwCBKiXCzgxa6Rh78zIgABH4Gg7bcnAivnrVKwzRoZak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PvsnX9U4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97CDFC4CEEA;
+	Mon, 16 Jun 2025 09:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750067991;
+	bh=DHwnW5tWKwgmW1+X3cVu0d99P45MmBzMs9DpMm2Wt5Y=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=PvsnX9U4GYzvBesH8XXm2KHkmR6LqFo5OwzydWbMpSu7JzEo/j5nJWoFE3yEG30VB
+	 2dgoe7ShIAy9R+5Pa/nTfrXVJZnSFVCmzUGD1DFAEgi4Ez17x7SUTQRoC0eI/kztZJ
+	 m0tY9mHwAkgOLVfXdJHCBE268C5f7LuicaH0U3bUieXWHSsuU5RlBn5/BpUvTHNwQN
+	 Ki/2SXWXGxT61dlH1foEjDnTcK4d8wFwWxOYPAKv6nqXG1pFBEUAW/dhL/vTJ1bHqf
+	 LJhRyBGU1adsQDT+XBlhgfkypwZvacBlQtKEDzYoS+9uYWUAfpEZoOF0yXLIBC+LZ7
+	 GYaVo3SH2PwJA==
+Date: Mon, 16 Jun 2025 04:59:49 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168e:b0:3dc:8423:545c with SMTP id
- e9e14a558f8ab-3de07bc8ab4mr92413975ab.0.1750067961202; Mon, 16 Jun 2025
- 02:59:21 -0700 (PDT)
-Date: Mon, 16 Jun 2025 02:59:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <684feaf9.050a0220.3aca5c.000c.GAE@google.com>
-Subject: [syzbot] Monthly sctp report (Jun 2025)
-From: syzbot <syzbot+list1d5558bc40e501f5b38a@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	lucien.xin@gmail.com, marcelo.leitner@gmail.com, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Andrew Davis <afd@ti.com>, Lee Jones <lee@kernel.org>, kernel@axis.com, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Pavel Machek <pavel@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Johan Adolfsson <johan.adolfsson@axis.com>
+In-Reply-To: <20250616-led-fix-v5-2-f59c740831ab@axis.com>
+References: <20250616-led-fix-v5-0-f59c740831ab@axis.com>
+ <20250616-led-fix-v5-2-f59c740831ab@axis.com>
+Message-Id: <175006798950.3330655.3341024776863428708.robh@kernel.org>
+Subject: Re: [PATCH v5 2/2] dt-bindings: leds: lp50xx: Document child reg,
+ fix example
 
-Hello sctp maintainers/developers,
 
-This is a 31-day syzbot report for the sctp subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/sctp
+On Mon, 16 Jun 2025 09:57:09 +0200, Johan Adolfsson wrote:
+> The led child reg node is the index within the bank, document that
+> and update the example accordingly.
+> 
+> Signed-off-by: Johan Adolfsson <johan.adolfsson@axis.com>
+> ---
+>  .../devicetree/bindings/leds/leds-lp50xx.yaml        | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
+> 
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 4 issues are still open and 70 have already been fixed.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Some of the still happening issues:
+yamllint warnings/errors:
 
-Ref Crashes Repro Title
-<1> 3976    Yes   KMSAN: uninit-value in sctp_inq_pop (2)
-                  https://syzkaller.appspot.com/bug?extid=70a42f45e76bede082be
-<2> 124     No    KMSAN: uninit-value in sctp_assoc_bh_rcv
-                  https://syzkaller.appspot.com/bug?extid=773e51afe420baaf0e2b
-<3> 3       Yes   INFO: rcu detected stall in inet6_rtm_newaddr (3)
-                  https://syzkaller.appspot.com/bug?extid=3e17d9c9a137bb913b61
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml: patternProperties:^multi-led@[0-9a-f]$:patternProperties:^led@[0-9a-f]+$:properties:reg: {'maxItems': 1, 'items': [{'minimum': 0, 'maximum': 2}], 'description': 'This property denotes the index within the LED bank. The value will act as the index in the multi_index file to give consistent result independent of devicetree processing order.'} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml: patternProperties:^multi-led@[0-9a-f]$:patternProperties:^led@[0-9a-f]+$:properties:reg: 'anyOf' conditional failed, one must be fixed:
+	'items' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
+	'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
+	1 is less than the minimum of 2
+		hint: Arrays must be described with a combination of minItems/maxItems/items
+	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+doc reference errors (make refcheckdocs):
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250616-led-fix-v5-2-f59c740831ab@axis.com
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-You may send multiple commands in a single email message.
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
