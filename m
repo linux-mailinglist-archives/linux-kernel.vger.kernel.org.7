@@ -1,140 +1,111 @@
-Return-Path: <linux-kernel+bounces-687924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739D7ADAAD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:33:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698F9ADAAE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E76416F274
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:31:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D6AB7A4F5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A56226D4E9;
-	Mon, 16 Jun 2025 08:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F48A2737F1;
+	Mon, 16 Jun 2025 08:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddBkUSnc"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fsYltiCq"
+Received: from out.smtpout.orange.fr (out-13.smtpout.orange.fr [193.252.22.13])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120131E25EB
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 08:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87D81FFC6D;
+	Mon, 16 Jun 2025 08:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750062662; cv=none; b=nYU3rm7qRsXV9e5cBJEFmqGnhMLQXyX4KLP7/97IUN/r7A/A68kqb7urKIgh5LSTJ9vQfJkEyNDSVdP+sA1BjXMfFUaHJ+/eP2JbOXYaJp6c9RggpGRit1KAd2Kc1ssBqoCCN82pTLkggu3pD/cWrIpHAxCgaJGPyPzlgK4Q6To=
+	t=1750062981; cv=none; b=Wd75/xLmPsMcR38yNX59C0sQUkzjSgJWYFiwbsakYQ/+w1K8zrU+TxCCZXEa/hXtSNie5UFHdXhc1OylS8Q5ch4DgoOAJ2k2XT8aGGOjbvFO1T7lW2Usytn9b10q1+672+gLh7BpABcbyBCBudIc7ky0m190ZPqXXOHHCMNgGfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750062662; c=relaxed/simple;
-	bh=2/Z4r18vsY0SX4W4/zyu97SlBTjtJ9U8SMkKx61jbSM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QfuIa+sBJOVYK8Wv6lnel/Ep3tj7iQIMMICUbFP/OKsSCwFUtZKcPR5q2xW4qOvg1Y7WWRO7NpwnNza+Jt/pkfc5OJSl+f+jL60vmBAD2NVOTOZACo1v+Z4oIX52MsrQEbC7raKs8Bo9jz+BIESmLPSWfUSvhjT4CbZsjtFYnL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ddBkUSnc; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-450cf0120cdso35050015e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 01:31:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750062659; x=1750667459; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CjVy9U5cCHfPCLkIztlHvZcD6jwKLBifr0CRV+MLuWg=;
-        b=ddBkUSnc8e5vMtxJvxBVk3aURwNsygEbWYhbLWMLy0v0M4H5lmJBXnjeZsl8QSrjxv
-         DYKe4f47zfTl6KRdGkkSkHUzVEDyOQ2WRF32C2+iaqgLi/Qt+REjzHnU/2dYavWuOI88
-         K9Gz1/vdOlu5XNU9+5TYH3jMin5OxwCCuf3EgqP+nYNV3+Xxk9QIu3BYvWF13hCz/mno
-         zzzHQyJX5/1K3lc0YKHfZsBATjTRsPgfttWYIpZkX/PDDIcIOwnxz/RJ3FHy/qYbb3Sm
-         NYk/ydQzjKUrgGfKKGVnlpwXJoUXX3OzvhY0IDQXJJ9kWu7Ih7wxM0A8qkiHv9QgjqvU
-         Nhig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750062659; x=1750667459;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CjVy9U5cCHfPCLkIztlHvZcD6jwKLBifr0CRV+MLuWg=;
-        b=m6pUhXNjlL/TEwxAEEPkS8plEPH6B4FV/nanJ45YTFX2kwb25tQM7BlqwA8Nm/6eXU
-         S68SjyiZmOELYytcW6ZYvf1OInhv1YS0H7kF6sJGVmIveBoCRyEYDnkUsqyyd7Fz4Xvk
-         5BebSz9o2Ab8MvvyYDQ6spL+5jX9nC/D9udBQ8EJg/T28Db7ZzFWD8qZYq45CzKVN+82
-         T95S0CwfwZkUsQEsMPhsGneSA3KqLXGw3bRXOT3EgnVHPwUHfxIR8eCLmXeeYOAa4EIJ
-         axMpiz/2SSpSshWRMWW1j5W9OOJ5zO5qhtdIEqNzhlwR9BNNUHxi7vcXXfIeBPLq+gnA
-         d46w==
-X-Forwarded-Encrypted: i=1; AJvYcCVsmRXkZiKNKJWPfOJZ804u1Z3pSAMNhZq1qEVjFJcWSq37kapUy7YDjgQreo1+5hgkeyS12gSQsKfnaMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhkp+fNeLggvl0HlYiJZxmoBbgb/dY45yEA3nfg78Y3e289G4S
-	hIlldWgXk478yQOBtuS5qOvS7LApHLrcqlGacMA4bC/0cCZ5yGhSKMks
-X-Gm-Gg: ASbGncu5beAEWKWVRGIG7+QHdEFsv/tOlDoWyehj0zUyF8YRFH/4QfYXUPfA9it0x02
-	4ENMtyyx2lNTV9FW7eAqAXesprEeBnxespss9QYBhwVlzSNbo8Wpz9OMIROwe3BJWJIg3CfX07T
-	Poly5hYbEl0FACT7aOlq0WXyMu9Dc09RpcSDNviW/f1XVxpQdRXsZ+TYxDVeIR/fRisCkfdQG26
-	86rdDd5dQsHyhoeu6SIiaJS1gT7649aksY290g9zxSpRpt1e7N3vOyCF3Uu7szLT7HJUa5nfu77
-	cC+gX3UZmLUEbeZQCZ/7NC1h2PrITwrcIxgIOmBySV0CJxXStX7PbQ==
-X-Google-Smtp-Source: AGHT+IFhoddjnbRB+Yj//UnTop550KeuR1B2yCI8OKQE7qzsxeHpqo1UpQ670wVoWROSY/sPoY36BA==
-X-Received: by 2002:a05:6000:4028:b0:3a4:f379:65b6 with SMTP id ffacd0b85a97d-3a5723af4e8mr7039560f8f.46.1750062659214;
-        Mon, 16 Jun 2025 01:30:59 -0700 (PDT)
-Received: from fedora.. ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a633ddsm10329580f8f.26.2025.06.16.01.30.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 01:30:58 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.ort,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] x86/idle: Use MONITORX and MWAITX mnemonics in <asm/mwait.h>
-Date: Mon, 16 Jun 2025 10:30:41 +0200
-Message-ID: <20250616083056.157460-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750062981; c=relaxed/simple;
+	bh=utrvK5z++4pWgL/XQzh0Lgu2WUPVRlcJZdqAcKgzPW8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TO0hVnBhuFaTJTCNscqenPL7vOugKiDqarc0eU0vEpcOJtVaPVDWgtttXVqP70ZFxgbuzWAmqi5MiJvwxMuaDuKh6RPw4fkEnv4QScrbaKsztJ/RnaRyDzknIO6IZuuiQxEN7tUCsbHpTjTnPfcoXUJLbS5mFTjZoTBIoMaIk80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fsYltiCq; arc=none smtp.client-ip=193.252.22.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id R5IeuW612OV6eR5Imu85m7; Mon, 16 Jun 2025 10:34:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1750062900;
+	bh=yljn2wE0jxa3Ta1cbirF7DuNbCTWHRKQYs9jILtQOYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=fsYltiCqE50Oa0GcKzBw679uxCrG9XJtgv0kp7F4MUXqm0R8UF0EXWim5Uuo5kiX6
+	 UEh/FQSbHha17lgba4Cv4KclKCZGH2qFoo4SPm9yUvbpLOgNvncJU4R0s+pXIMD6d6
+	 OMEqNFAIcjYwZ+AqHO9wx6hJgT4zd2iLhIlYwz0vkq6KnXk8XKDtpL1ETYHOxuhSAq
+	 Ep1FK8MqIsTTUVgVtMfXXr5gc9/mSV1ppjYn3PWQIP5CnUPVRUE25Zs400PyTjDJbo
+	 HpqFPuRnsGxRHaXIoUGQ9TUtgZmem8cEgWGB8vBI5ej+BXdQ2Jd7XBBAjyepJjLITi
+	 iBH60L1r8VjNw==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 16 Jun 2025 10:35:00 +0200
+X-ME-IP: 124.33.176.97
+Message-ID: <0b74cdf8-516a-4f13-928c-4d88307bf1ed@wanadoo.fr>
+Date: Mon, 16 Jun 2025 17:34:38 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] net: can: mcp251x: propagate the return value of
+ mcp251x_spi_write()
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-can@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ "Chester A. Unal" <chester.a.unal@arinc9.com>,
+ Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
+ Sean Wang <sean.wang@mediatek.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Marc Kleine-Budde <mkl@pengutronix.de>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>
+References: <20250616-gpiochip-set-rv-net-v2-0-cae0b182a552@linaro.org>
+ <20250616-gpiochip-set-rv-net-v2-3-cae0b182a552@linaro.org>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20250616-gpiochip-set-rv-net-v2-3-cae0b182a552@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Current minimum required version of binutils is 2.30,
-which supports MONITORX and MWAITX instruction mnemonics.
+On 16/06/2025 at 16:24, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Add an integer return value to mcp251x_write_bits() and use it to
+> propagate the one returned by mcp251x_spi_write(). Return that value on
+> error in the request() GPIO callback.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Replace the byte-wise specification of MONITORX and
-MWAITX with these proper mnemonics.
+Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 
-No functional change intended.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
- arch/x86/include/asm/mwait.h | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/include/asm/mwait.h b/arch/x86/include/asm/mwait.h
-index dd2b129b0418..d4bcbe59626d 100644
---- a/arch/x86/include/asm/mwait.h
-+++ b/arch/x86/include/asm/mwait.h
-@@ -36,9 +36,7 @@ static __always_inline void __monitor(const void *eax, u32 ecx, u32 edx)
- 
- static __always_inline void __monitorx(const void *eax, u32 ecx, u32 edx)
- {
--	/* "monitorx %eax, %ecx, %edx" */
--	asm volatile(".byte 0x0f, 0x01, 0xfa"
--		     :: "a" (eax), "c" (ecx), "d"(edx));
-+	asm volatile("monitorx" :: "a" (eax), "c" (ecx), "d"(edx));
- }
- 
- static __always_inline void __mwait(u32 eax, u32 ecx)
-@@ -82,9 +80,7 @@ static __always_inline void __mwaitx(u32 eax, u32 ebx, u32 ecx)
- {
- 	/* No MDS buffer clear as this is AMD/HYGON only */
- 
--	/* "mwaitx %eax, %ebx, %ecx" */
--	asm volatile(".byte 0x0f, 0x01, 0xfb"
--		     :: "a" (eax), "b" (ebx), "c" (ecx));
-+	asm volatile("mwaitx" :: "a" (eax), "b" (ebx), "c" (ecx));
- }
- 
- /*
--- 
-2.49.0
+Yours sincerely,
+Vincent Mailhol
 
 
