@@ -1,273 +1,142 @@
-Return-Path: <linux-kernel+bounces-688000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B98ADAC08
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:37:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 899EDADAC1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:39:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D490F16BDD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:37:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B35643B43B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E79272E6D;
-	Mon, 16 Jun 2025 09:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50B52E11CF;
+	Mon, 16 Jun 2025 09:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="W7+MozSm"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mgwee4eW"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E5D270577
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBEC18E025
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750066668; cv=none; b=sTAzO79iBaRIyKedZRZp//LyQP7BQ7vgJmYczLWJx7jpD2atGxOvhl+rxSyUVxfVxQi2nO6zXlmJS83pZ0OPZuDNst6XT9gRFwYq0YzJmVLDacsu1jUB5tyAehF3RylGoWNnLkv/10CHbv+zrebBNPMKDcOacRK1wBGhkwKN1jg=
+	t=1750066737; cv=none; b=GfhZBH1BsYEGL8FnY265r5vzEzCeLRe8ZMiB8wnUjTfJXtO/pplcmPYzlcHzhHzYv2yibImPqNxXQFVBsF1EmU70hoNRz/SVTFQaYOYgPHE9KTTZj0/yHUVPDKE5BwljdJ4b5FE0VLfQk08fpKltsXvil3YPD2sriustWPLARRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750066668; c=relaxed/simple;
-	bh=v7iwsXmtI/7HuEw8E5jMH8gjGCJ/PmdbDct0UukEscI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CRAu8vK3HMLkVs8H62G2N8ric3liLWmr/9D/5gZI5VOSODL4u+CvtHKS2ZIoL8Vb3QzTtJ1UB81Qya6kXRoJmbWMNgxD7fcDHdap0lrOm8mf28yJvGiKBOMSmXkVFI/ciYXGT+OyEio+SxIL5UMMkmwWT20UHohqUpqWudx22kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=W7+MozSm; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-607b59b447bso7528470a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 02:37:45 -0700 (PDT)
+	s=arc-20240116; t=1750066737; c=relaxed/simple;
+	bh=FVwtelZAyWQx+vqU97yUlvnFPUwmzYcKQPRUwBFWJkU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O4JQeV2kn9JfSW4tRkZSVOPhgpRBnU04LYT6gisR68dZXmm3n5aDWVBQt0ENF6ZqbfOOSpt0u0ntyXGorE46mHnwMQZVa+EzV/ASEojumhbaeepWby5JDUaGRK1oHmxRAbWCRC1i9s8HMOJv7JjrM4mdH9mTgm3dWP1A62HV/t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mgwee4eW; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a4e57d018cso602325f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 02:38:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1750066664; x=1750671464; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dfP8v62XGv6w7z/ZmGpzfijGDXvy28lSonmS90eMeCc=;
-        b=W7+MozSmJ0KttRNUxdO2NaTes8jsh6mtJkE40GPIZHfMhgoWxq2VW7+1KnpgkdA933
-         bY8dZsdRaZck6xWd/OnGzO+o2NR+cJ+Nx25Mz+OrDcekVJf6zgrAedgZRPV6Tf+FUtDZ
-         xrwLb+8K3BvFq5a0SAywDWXOT75BAc+vVTo7a2uHxTA09UixEhyQFRteBTYH6TmIWfaJ
-         St/CGkf8CZtkZLD5RvoVIz7Y3y0T5JYxd8AfKeK98PDDW6zL1kj+nZYicAa9qERwKJfV
-         UVTwTCUy1RT+Yy9XM32X9TmqVQrFxLb/ik9wd1YqDxyzuyEC242Y5ZJNTBlxp1HgbuZF
-         F/Xg==
+        d=linaro.org; s=google; t=1750066732; x=1750671532; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cHZtdjxQWPz2h4m67PPRQKRG4gxPJKeLX80vTkxBv+0=;
+        b=Mgwee4eWM9etIm67A2SXC0P40omJbKt28X5GPLWjlvDvCSdqROXOTns1h7NwcGnqgK
+         Pn9Hl+aBHtHsFXi6BL/fpHpDywzRLjI+dislhRPKbsStlg8Lho75g0ee/+z9sO4s8thK
+         BGhkdRlVAcuKwALjeTWf3SN/QOpJTDbIoxM3+4EEoQNd2r1ElIn6G6puKhB5e0fCVtuF
+         Ew5arFgVbqSEgY0f+vkIExf3tSMPHPnhQBMx5d730P7HJNDw3kXjBlKQtjz+M5VgC+W5
+         T5OcUHAu8L3q3lCXpKyW/APbtqlv6upxTapQachCsJa+A+sYNhdBfbP28Gxg96G/RG7I
+         CmOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750066664; x=1750671464;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dfP8v62XGv6w7z/ZmGpzfijGDXvy28lSonmS90eMeCc=;
-        b=jFmUMWg3RJ7kQTEIm5MVwm2G+09bFQCC8dLP+q71EP0lBoeakq0UnukqWre2+ommTc
-         RmE7YwnD/P7ko7B7IiKXHRw+IEtOZLjv8hJ+9m5eoCURw4P1z70Z8IwjHwzS6A8poc5D
-         HG4UwX8bnSMF3HA0Zy103kMwpF/DgsbxC2o/9PuXWZNSuGj18sBAJLJYDWN0UaE0aUtL
-         E0rtFiUikl0CwBnB3kbnt2593tBy590ouz13fcOG+bGRBwv3O2Xohy4yDpj+FeIDlecD
-         9UOUjbWDM0didUoiuNLWjCFwOYWtl5tDocBo9uTQxWQePiaxV6xuRp25g5IATI/C4YmF
-         aPHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWVQVDvX0dBkZvoWEtuYab4pKgkM+3+6RnaGKzCgb1ypwrcjRG+oF7X88fbc6nerN26mBFGWZrQxBQKwJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJwqYO68HZmELcLlrP6Nk53vLycvZYoTtm6qv/dqwBS8Rn/gN9
-	JcXzuF03mOmL/4Vsqx1nP/vSNEfGevifPHl6UzJ9fWalcHZWfEJrJC0rOOQDdr2zWSw=
-X-Gm-Gg: ASbGncuPVARydJzYkHCeRkQ9eQi1GjLFw5RBRjhkELcgJYN8I31a6IYBoqBa8Sxac1+
-	yNSWp+oRfk5l/YWXOjoVaqCMs+RztBRrf8nRaC7x9NSo2irUyP6ZBgvDpmPRcXzZDoZ+c7uYx+R
-	VeghTeDKANwnSOUjkpCRQGd2f4kh1ihCs2qB7yktBv/FPx0TDLcxgCxJH+bfshBJqs4v6qMZX4/
-	ztuDsEYzp6VGhSGUE94pnHZXsAYCMZ+Ax3teoQ4QqcOnibK1KSHR2f/PffGLeIedUU1TzRb5rp4
-	s2bXhgFLjXIdeKlEbBNoJIf4kkln+Vi0C1eYh+1uVlQKUkQd8ZvuAAVKprF/D4PKDtyiAnp5a/X
-	3cyVtFg==
-X-Google-Smtp-Source: AGHT+IGstgDvCZ7kkheENEgwtKA2GsdZiS2gQeWTudsZRkiraVvavy0/6m9lYQPhBNBoWFt98BlCYg==
-X-Received: by 2002:a17:906:9f88:b0:ad8:96d2:f3e with SMTP id a640c23a62f3a-adfad326d9cmr714122866b.22.1750066663863;
-        Mon, 16 Jun 2025 02:37:43 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.110])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adfddc96709sm126821866b.134.2025.06.16.02.37.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jun 2025 02:37:43 -0700 (PDT)
-Message-ID: <4360ee7a-d85a-4fa0-a1d6-d09a3b9d57c0@tuxon.dev>
-Date: Mon, 16 Jun 2025 12:37:41 +0300
+        d=1e100.net; s=20230601; t=1750066732; x=1750671532;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cHZtdjxQWPz2h4m67PPRQKRG4gxPJKeLX80vTkxBv+0=;
+        b=wPOyfpA11NyJlYwAA81MXS7oIsE4GNHg2aAJ4eMFK0d7xmjVH8Z54EPbEPXk0zFCkB
+         bJ2G9W9JjxE/cauYweVF3HGNrgwqkcNQD3OAiQ13WRIcLrWa7aFgBvsveuodQ56EEYT/
+         LACTxtbUAmGst5srAwmI+KMc8Zq2ZRLHK8f1MsQ17I6PyHWiL5X1pcDuqWToQPIYelVn
+         PGzxWCc2fA/HQncHeN0xmhWyrQ0LIupPzv9Nhrs1lkkrfujJr257X88X2Yxw1iZ+uF8C
+         6ckdjhLE63sPefI55vq1Q2DvvlKqcwnJ9fGskVfiQLkKfgHzu/UMRqJ/oLwYah0FhX6h
+         Lf4A==
+X-Gm-Message-State: AOJu0YyZmrfPjHBlkJcAkzE0xQ8rVgAtzL7v8Ab0hF3amdrttZvSbd4O
+	FXY5fChyMU1vvWyc6HHSq0Ri3K/0JQThAnJO29B3axPxdflFiaXrsgYaHEPnI3hQOlU=
+X-Gm-Gg: ASbGncvhlGYw+rX+n+vkwQIA2n59OMl/DOwJNWPe+SB9oQxQYTrmZAcrSptuqyioUSU
+	aHCfv2acWJT0/ZwGRph2obOPToBpGlLWjZE5DGxASe+SM+NhwNEnvctsW/YoJrNfEmGOd4BMpla
+	uDREwG5SBhnxwGI7o3+EPyrrn9oOeUk3rNYpB1eQsV6O/D83jtfmtE55Hk2ooPd+MCFILKagIJt
+	hSs4Cz+674XECmQvRmQfZI1CB34N07p7pXY9656xsmUfXAngC6JRRzs10Oyytqtyffvk7yKRFDT
+	hxpnTJdF3V5abVlq4UoxUYe42nriLwJeUo8gDXrOm/kbdpaVQbB4QV3CJz27gyGpNuKbmTuSeqp
+	m8fUOpglu
+X-Google-Smtp-Source: AGHT+IH7YEG/fin7X5hn4NWKBNL9RSaFU1CTzTiJlnm8LW90ELlWxqL77mm55nI4g/YzfkCic3CivQ==
+X-Received: by 2002:adf:9d85:0:b0:3a5:7875:576 with SMTP id ffacd0b85a97d-3a578750726mr1381419f8f.1.1750066732325;
+        Mon, 16 Jun 2025 02:38:52 -0700 (PDT)
+Received: from kuoka.. ([178.197.223.125])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b403b4sm10337099f8f.80.2025.06.16.02.38.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 02:38:51 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	peda@axentia.se,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	kernel test robot <lkp@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH current v6.16] mux: mmio: Fix missing CONFIG_REGMAP_MMIO
+Date: Mon, 16 Jun 2025 11:38:42 +0200
+Message-ID: <20250616093841.31985-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] PM: domains: Add devres variant for
- dev_pm_domain_attach()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, gregkh@linuxfoundation.org,
- dakr@kernel.org, len.brown@intel.com, pavel@kernel.org,
- ulf.hansson@linaro.org, daniel.lezcano@linaro.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, bhelgaas@google.com,
- geert@linux-m68k.org, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, fabrizio.castro.jz@renesas.com,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250606111749.3142348-1-claudiu.beznea.uj@bp.renesas.com>
- <20250606111749.3142348-2-claudiu.beznea.uj@bp.renesas.com>
- <CAJZ5v0i_Ey+OVpSZHXru=tubMaZi=y-uOh_0M6zmWZ2DqqA7Vg@mail.gmail.com>
- <zhjytvj35lknj7v3jhva3n3nbv6qctvqgykwyi5huj6omet7lz@wchd7f4p4dpv>
- <CAJZ5v0hsT-Q2hz=qoBo409oungaCmexJwwGheN7KRLFqz=6_Dw@mail.gmail.com>
- <20250607140600.76e87ea5@jic23-huawei>
- <CAJZ5v0jqZ6gYKb85dpR-X5RwFeUBcbbcJ_b-AOe+JypBXod-MA@mail.gmail.com>
- <486a1110-5336-42fd-82b8-a7b1452bad65@tuxon.dev>
- <CAJZ5v0hqBm4L2V9aUjB0tmW67eRRCnM7FScgdJQ=ihnpAZuMfA@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <CAJZ5v0hqBm4L2V9aUjB0tmW67eRRCnM7FScgdJQ=ihnpAZuMfA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1225; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=FVwtelZAyWQx+vqU97yUlvnFPUwmzYcKQPRUwBFWJkU=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoT+YhNcd0X+nGHi+aAV4LRAJsyBED4eM37dhf2
+ kjd+VaS6+iJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaE/mIQAKCRDBN2bmhouD
+ 110UD/oCUAiBpnLeUsWxxbwLNuC15j1Ju10mxr+crkyKH7iElXDsvrBhiqQwhYFQGsdv0idiUvX
+ QN0+SHrETa6rxsQVAaPjUuEwYKlAzOrMU2tgOp4rozlNNQcECR7454UgPz1TMODUxa4C7HPMfJt
+ J7LWIsUlP1zXaEBQSvySYNXcKrWwIT9AluIo8W8TxTPBWttVI6rXutd/wKWarovnBa7YDCoV1rg
+ M4PSsb+5sDLxK4HcCo7IC+k86wlB6YmZAYz3J95ewbcsVKP918RiHRGtkKtAqeh80lId1a7W5fy
+ WRTFksmR4h0WoW8gaB80d86NG6/vwA00Y6EyMA0Y7WodMzFjlo+5zXBukDOGviRlYNEcRNcBX8e
+ Dd1RsTBQLF/FW6VQBWDKZiUebFgmD2wGKQHWvMI1kJ7iLW4KAxxZn/EjbST/ipJN+/0dobo+rjW
+ esgy/sCt0Gy6AZAhjXLfIPCexGlXf/g1zCvBdzcHtTZLKqO6nr94jE3G3RpzxxVcREs4SLxoor2
+ UU1pZBpSi2QnkgGLPnlIbbJD/JD+yTJFeUg/yUd2Qae2La2bqjN6S1kaGuwqtJPXk29IS5nEvaK
+ aWStiYob3rEavnrXRm0oj0+cf9hP8lo33ItH0I3TkWf+iguFYJrz64IrKppZjHO4a93NDzrpF8E gk9zfKrOedWmxNw==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
-Hi, Rafael,
+MMIO mux uses now regmap_init_mmio(), so one way or another
+CONFIG_REGMAP_MMIO should be enabled, because there are no stubs for
+!REGMAP_MMIO case:
 
-On 13.06.2025 13:02, Rafael J. Wysocki wrote:
-> On Fri, Jun 13, 2025 at 9:39 AM Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
->>
->> Hi, Rafael,
->>
->> On 09.06.2025 22:59, Rafael J. Wysocki wrote:
->>> On Sat, Jun 7, 2025 at 3:06 PM Jonathan Cameron <jic23@kernel.org> wrote:
->>>>
->>>> On Fri, 6 Jun 2025 22:01:52 +0200
->>>> "Rafael J. Wysocki" <rafael@kernel.org> wrote:
->>>>
->>>> Hi Rafael,
->>>>
->>>>> On Fri, Jun 6, 2025 at 8:55 PM Dmitry Torokhov
->>>>> <dmitry.torokhov@gmail.com> wrote:
->>>>>>
->>>>>> On Fri, Jun 06, 2025 at 06:00:34PM +0200, Rafael J. Wysocki wrote:
->>>>>>> On Fri, Jun 6, 2025 at 1:18 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>>>>>>>
->>>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>>>>
->>>>>>>> The dev_pm_domain_attach() function is typically used in bus code alongside
->>>>>>>> dev_pm_domain_detach(), often following patterns like:
->>>>>>>>
->>>>>>>> static int bus_probe(struct device *_dev)
->>>>>>>> {
->>>>>>>>     struct bus_driver *drv = to_bus_driver(dev->driver);
->>>>>>>>     struct bus_device *dev = to_bus_device(_dev);
->>>>>>>>     int ret;
->>>>>>>>
->>>>>>>>     // ...
->>>>>>>>
->>>>>>>>     ret = dev_pm_domain_attach(_dev, true);
->>>>>>>>     if (ret)
->>>>>>>>         return ret;
->>>>>>>>
->>>>>>>>     if (drv->probe)
->>>>>>>>         ret = drv->probe(dev);
->>>>>>>>
->>>>>>>>     // ...
->>>>>>>> }
->>>>>>>>
->>>>>>>> static void bus_remove(struct device *_dev)
->>>>>>>> {
->>>>>>>>     struct bus_driver *drv = to_bus_driver(dev->driver);
->>>>>>>>     struct bus_device *dev = to_bus_device(_dev);
->>>>>>>>
->>>>>>>>     if (drv->remove)
->>>>>>>>         drv->remove(dev);
->>>>>>>>     dev_pm_domain_detach(_dev);
->>>>>>>> }
->>>>>>>>
->>>>>>>> When the driver's probe function uses devres-managed resources that depend
->>>>>>>> on the power domain state, those resources are released later during
->>>>>>>> device_unbind_cleanup().
->>>>>>>>
->>>>>>>> Releasing devres-managed resources that depend on the power domain state
->>>>>>>> after detaching the device from its PM domain can cause failures.
->>>>>>>>
->>>>>>>> For example, if the driver uses devm_pm_runtime_enable() in its probe
->>>>>>>> function, and the device's clocks are managed by the PM domain, then
->>>>>>>> during removal the runtime PM is disabled in device_unbind_cleanup() after
->>>>>>>> the clocks have been removed from the PM domain. It may happen that the
->>>>>>>> devm_pm_runtime_enable() action causes the device to be runtime-resumed.
->>>>>>>
->>>>>>> Don't use devm_pm_runtime_enable() then.
->>>>>>
->>>>>> What about other devm_ APIs? Are you suggesting that platform drivers
->>>>>> should not be using devm_clk*(), devm_regulator_*(),
->>>>>> devm_request_*_irq() and devm_add_action_or_reset()? Because again,
->>>>>> dev_pm_domain_detach() that is called by platform bus_remove() may shut
->>>>>> off the device too early, before cleanup code has a chance to execute
->>>>>> proper cleanup.
->>>>>>
->>>>>> The issue is not limited to runtime PM.
->>>>>>
->>>>>>>
->>>>>>>> If the driver specific runtime PM APIs access registers directly, this
->>>>>>>> will lead to accessing device registers without clocks being enabled.
->>>>>>>> Similar issues may occur with other devres actions that access device
->>>>>>>> registers.
->>>>>>>>
->>>>>>>> Add devm_pm_domain_attach(). When replacing the dev_pm_domain_attach() and
->>>>>>>> dev_pm_domain_detach() in bus probe and bus remove, it ensures that the
->>>>>>>> device is detached from its PM domain in device_unbind_cleanup(), only
->>>>>>>> after all driver's devres-managed resources have been release.
->>>>>>>>
->>>>>>>> For flexibility, the implemented devm_pm_domain_attach() has 2 state
->>>>>>>> arguments, one for the domain state on attach, one for the domain state on
->>>>>>>> detach.
->>>>>>>
->>>>>>> dev_pm_domain_attach() is not part driver API and I'm not convinced at
->>>>>>
->>>>>> Is the concern that devm_pm_domain_attach() will be [ab]used by drivers?
->>>>>
->>>>> Yes, among other things.
->>>>
->>>> Maybe naming could make abuse at least obvious to spot? e.g.
->>>> pm_domain_attach_with_devm_release()
->>>
->>> If I'm not mistaken, it is not even necessary to use devres for this.
->>>
->>> You might as well add a dev_pm_domain_detach() call to
->>> device_unbind_cleanup() after devres_release_all().  There is a slight
->>> complication related to the second argument of it, but I suppose that
->>> this can be determined at the attach time and stored in a new device
->>> PM flag, or similar.
->>>
->>
->> I looked into this solution. I've tested it for all my failure cases and
->> went good.
-> 
-> OK
-> 
->>> Note that dev->pm_domain is expected to be cleared by ->detach(), so
->>> this should not cause the domain to be detached twice in a row from
->>> the same device, but that needs to be double-checked.
->>
->> The genpd_dev_pm_detach() calls genpd_remove_device() ->
->> dev_pm_domain_set(dev, NULL) which sets the dev->pm_domain = NULL. I can't
->> find any other detach function in the current code base.
-> 
-> There is also acpi_dev_pm_detach() which can be somewhat hard to find,
-> but it calls dev_pm_domain_set(dev, NULL) either.
-> 
->> The code I've tested for this solution is this one:
->>
->> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
->> index b526e0e0f52d..5e9750d007b4 100644
->> --- a/drivers/base/dd.c
->> +++ b/drivers/base/dd.c
->> @@ -25,6 +25,7 @@
->>  #include <linux/kthread.h>
->>  #include <linux/wait.h>
->>  #include <linux/async.h>
->> +#include <linux/pm_domain.h>
->>  #include <linux/pm_runtime.h>
->>  #include <linux/pinctrl/devinfo.h>
->>  #include <linux/slab.h>
->> @@ -552,8 +553,11 @@ static void device_unbind_cleanup(struct device *dev)
->>         dev->dma_range_map = NULL;
->>         device_set_driver(dev, NULL);
->>         dev_set_drvdata(dev, NULL);
->> -       if (dev->pm_domain && dev->pm_domain->dismiss)
->> -               dev->pm_domain->dismiss(dev);
->> +       if (dev->pm_domain) {
->> +               if (dev->pm_domain->dismiss)
->> +                       dev->pm_domain->dismiss(dev);
->> +               dev_pm_domain_detach(dev, dev->pm_domain->detach_power_off);
-> 
-> I would do the "detach" before the "dismiss" to retain the current ordering.
+  ERROR: modpost: "__regmap_init_mmio_clk" [drivers/mux/mux-mmio.ko] undefined!
 
-I applied on my local development branch all your suggestions except this
-one because genpd_dev_pm_detach() as well as acpi_dev_pm_detach() set
-dev->pm_domain = NULL.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202505150312.dYbBqUhG-lkp@intel.com/
+Fixes: 61de83fd8256 ("mux: mmio: Do not use syscon helper to build regmap")
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20250521152354.92720-2-krzysztof.kozlowski@linaro.org
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
 
-Due to this I would call first ->dismiss() then ->detach(), as initially
-proposed. Please let me know if you consider it otherwise.
+Hi Greg,
 
-Thank you,
-Claudiu
+This fixes compile test build isssues reported for commit introduced in
+this merge window.  
+
+ drivers/mux/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/mux/Kconfig b/drivers/mux/Kconfig
+index 80f015cf6e54..c68132e38138 100644
+--- a/drivers/mux/Kconfig
++++ b/drivers/mux/Kconfig
+@@ -48,6 +48,7 @@ config MUX_GPIO
+ config MUX_MMIO
+ 	tristate "MMIO/Regmap register bitfield-controlled Multiplexer"
+ 	depends on OF
++	select REGMAP_MMIO
+ 	help
+ 	  MMIO/Regmap register bitfield-controlled Multiplexer controller.
+ 
+-- 
+2.45.2
+
 
