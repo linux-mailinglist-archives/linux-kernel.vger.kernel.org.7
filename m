@@ -1,112 +1,114 @@
-Return-Path: <linux-kernel+bounces-688039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF0BADACEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:05:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75122ADAD0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 348D2166928
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:04:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1463162428
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F236275853;
-	Mon, 16 Jun 2025 09:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9422698AE;
+	Mon, 16 Jun 2025 10:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PvsnX9U4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="S50GKCaC"
+Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9CD2E7F1B;
-	Mon, 16 Jun 2025 09:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3970F27EFF6;
+	Mon, 16 Jun 2025 10:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750067991; cv=none; b=LVxYW4PiOjaM3QeU/iLdFI1LU8rsKQgcO3fg7wC5y2sCduFZCIZl9fY5fi1bJuiuetw90dWoTMxtCk2aJ+sw6rm87cK5KfubIowoIOq2KU75MODaMNIpMBdgR+lVsgdvMFrVK8ck5x+KR2CqGfVuqJwsiKQIFXKb4hQ6Q6btY7c=
+	t=1750068473; cv=none; b=hZrOPt7DdbvuTDUsXLYR5eroEnJrVBlHsXJ04MQXcT8YlN03K/1xSEauNu4ureJRD327fjQErHWLC7w5svCryP5+Ln0l0nXcuezuObmHGCYt09jbu+VKEVZe96MPt1qQ6YARoZ7LIaqKuQAQAgDdDZ/aiHuuUHb/89o4KpajyXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750067991; c=relaxed/simple;
-	bh=DHwnW5tWKwgmW1+X3cVu0d99P45MmBzMs9DpMm2Wt5Y=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=CUcJN/vjzRAxMqinn1D1iWm17hPFSoVeHMLRQV+e48L2nMi0yz0SGEuUouxMkCV6VznVs3qL4gfGOE6s+fbsa0XE4bNDW/X5RdmTQCJhnGPakdpykVrOfqd2ZyB6vANkwCBKiXCzgxa6Rh78zIgABH4Gg7bcnAivnrVKwzRoZak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PvsnX9U4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97CDFC4CEEA;
-	Mon, 16 Jun 2025 09:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750067991;
-	bh=DHwnW5tWKwgmW1+X3cVu0d99P45MmBzMs9DpMm2Wt5Y=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=PvsnX9U4GYzvBesH8XXm2KHkmR6LqFo5OwzydWbMpSu7JzEo/j5nJWoFE3yEG30VB
-	 2dgoe7ShIAy9R+5Pa/nTfrXVJZnSFVCmzUGD1DFAEgi4Ez17x7SUTQRoC0eI/kztZJ
-	 m0tY9mHwAkgOLVfXdJHCBE268C5f7LuicaH0U3bUieXWHSsuU5RlBn5/BpUvTHNwQN
-	 Ki/2SXWXGxT61dlH1foEjDnTcK4d8wFwWxOYPAKv6nqXG1pFBEUAW/dhL/vTJ1bHqf
-	 LJhRyBGU1adsQDT+XBlhgfkypwZvacBlQtKEDzYoS+9uYWUAfpEZoOF0yXLIBC+LZ7
-	 GYaVo3SH2PwJA==
-Date: Mon, 16 Jun 2025 04:59:49 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1750068473; c=relaxed/simple;
+	bh=3+NUWscYQFNZqNiDoVLK4YsZWnWr4faF6U442YOervk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:Content-Type; b=TcBYkuhpLirAARI7+B8AcQ2CHyoPB02rLc7KDFQgRAPm0z+3fock3NIEVWUg3DB65fr7Xw5Nbbw7W/i9Z2fH3CiNMr0VqWhLtwx3JlY8YE7jgc2RDlmzRZKfZYuQ6/VnYuA7DG4D5TnFEFmybJbIutYcqCMnNCLablfNBeIcTzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=S50GKCaC; arc=none smtp.client-ip=178.154.239.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:1984:0:640:94c0:0])
+	by forward500a.mail.yandex.net (Yandex) with ESMTPS id 7DEBF611DA;
+	Mon, 16 Jun 2025 13:01:33 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id W1IY5V13IGk0-thMQg0Br;
+	Mon, 16 Jun 2025 13:01:33 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1750068093; bh=3+NUWscYQFNZqNiDoVLK4YsZWnWr4faF6U442YOervk=;
+	h=In-Reply-To:Subject:To:From:Cc:Date:References:Message-ID;
+	b=S50GKCaCtgSQLOoCOW0vJifev1JEjnz3plRXmKeGvpVTTJLFJalKqO9no6fMjVTdT
+	 5lqvCBcPqDDm1GhesQ6btyXziElV9gKhH0hXZJTAEgM1LMKZ9Tyw/QJTnxz1I1Ddw+
+	 FKsqwvQkFfjZp8VBL4M+FNZYAn3jvc3PXvv9hX14=
+Authentication-Results: mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <70de6013-a5db-45c6-8288-e7b211a55a1e@yandex.ru>
+Date: Mon, 16 Jun 2025 13:01:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Andrew Davis <afd@ti.com>, Lee Jones <lee@kernel.org>, kernel@axis.com, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Pavel Machek <pavel@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Johan Adolfsson <johan.adolfsson@axis.com>
-In-Reply-To: <20250616-led-fix-v5-2-f59c740831ab@axis.com>
-References: <20250616-led-fix-v5-0-f59c740831ab@axis.com>
- <20250616-led-fix-v5-2-f59c740831ab@axis.com>
-Message-Id: <175006798950.3330655.3341024776863428708.robh@kernel.org>
-Subject: Re: [PATCH v5 2/2] dt-bindings: leds: lp50xx: Document child reg,
- fix example
+User-Agent: Mozilla Thunderbird
+Content-Language: en-MW
+To: Fedor Pchelkin <pchelkin@ispras.ru>,
+ Christian Lamparter <chunkeey@gmail.com>
+Cc: linux-wireless@vger.kernel.org,
+ Christian Lamparter <chunkeey@googlemail.com>, linux-kernel@vger.kernel.org
+References: <3qom4fkg7kp4l3bcgrbivmm2yi2wqrmso7rb5qe3xffjj3k7hz@nc7gx4atzfyq>
+From: Dmitry Antipov <dmantipov@yandex.ru>
+Autocrypt: addr=dmantipov@yandex.ru; keydata=
+ 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
+ A/UwwXBRuvydGV0=
+Subject: Re: [PATCH] wifi: carl9170: do not ping device which has failed to
+ load firmware
+In-Reply-To: <3qom4fkg7kp4l3bcgrbivmm2yi2wqrmso7rb5qe3xffjj3k7hz@nc7gx4atzfyq>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 6/15/25 10:54 PM, Fedor Pchelkin wrote:
 
-On Mon, 16 Jun 2025 09:57:09 +0200, Johan Adolfsson wrote:
-> The led child reg node is the index within the bank, document that
-> and update the example accordingly.
-> 
-> Signed-off-by: Johan Adolfsson <johan.adolfsson@axis.com>
-> ---
->  .../devicetree/bindings/leds/leds-lp50xx.yaml        | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
-> 
+> So it looks like ar->registered being false here is a "correct" failure
+> condition, i.e. it can be expected when the certain phase of the driver
+> initialization fails and should be handled without any WARNs.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Looking through Documentation/process/coding-style.rst, it may be
+better to use pr_warn_once() instead; anyway I would prefer leave
+the final decision to the maintainer.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml: patternProperties:^multi-led@[0-9a-f]$:patternProperties:^led@[0-9a-f]+$:properties:reg: {'maxItems': 1, 'items': [{'minimum': 0, 'maximum': 2}], 'description': 'This property denotes the index within the LED bank. The value will act as the index in the multi_index file to give consistent result independent of devicetree processing order.'} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml: patternProperties:^multi-led@[0-9a-f]$:patternProperties:^led@[0-9a-f]+$:properties:reg: 'anyOf' conditional failed, one must be fixed:
-	'items' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	1 is less than the minimum of 2
-		hint: Arrays must be described with a combination of minItems/maxItems/items
-	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250616-led-fix-v5-2-f59c740831ab@axis.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Dmitry
 
 
