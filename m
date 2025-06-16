@@ -1,179 +1,175 @@
-Return-Path: <linux-kernel+bounces-688305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D5D6ADB094
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:50:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39AA0ADB099
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6BC31883C61
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:50:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4249D3A3AB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108392980B0;
-	Mon, 16 Jun 2025 12:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997DB25E450;
+	Mon, 16 Jun 2025 12:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JGVHJc8R"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2052.outbound.protection.outlook.com [40.107.101.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ao/+Im09"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B17292B4C
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 12:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750078194; cv=fail; b=q5xE3Kbw3b0MLReKe490jrMoXYlxm5jCPqqMoX4kUbs/GaIdkGaYcVyE4s3CsNJgaMyvsqiUU4+zqfSCnw96JVdyyLV4y9DWjH6TJOxl6fu4/Gv5yN64f8C3eUt7yF8ZdjOGXOL7+xcDg1qSXROnhX/TRvR8DAxeGF85wuLfd+0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750078194; c=relaxed/simple;
-	bh=KzHiSLW8+7RWGGw2CtSIhmO1mkKYrEwLQstzLk1CGV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=VaRC0d2v93c4qK7Qgl134SjFVm3MKbjm5LXtIvmxR4mg6iaVXfsxua+LJ2u6G2Sc+NUIWq/bjiqHXEgrpO7LsjTDccgGQAl/rVE/fUL7AjxiRzVg7Jtjrdg+TE/gO0h8kL8OziSUVZld6dmMChMC+whxu0cRyZPm0zXw4So1L2Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JGVHJc8R; arc=fail smtp.client-ip=40.107.101.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z5IRp9HSk04To9iDPpBWzPn8fNl/+xAdSS5J2qXJKV9QRJ3wmcNgiVEhOhOfvRobe0e0jcmIeOZPyKaA12AzN1XMcwMB5VFtlwXhCBIC5qmwqgJG1ItSY+NQUmPN21m26xSoty8dmcc0DA6r4WOHst6/61w2Ogo3jutzzUyLwr7Rapws36Wao26UHUkSCPBxShkYrNurfTJHY/WGZFPl1cgA6UL/Uod+utIA2cxsXipXEcjvha3KRyGRadJtEGw72eeSGQNAabMTXtlZsvoQozOP7whmAM6y4USOKVEW/xg/sgMzBzoxsoR5/MUweDUyo+rNsyD317cwpD6wFUPoHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+bBsPf46nEX05Uqb0GW8aVVLHRkYK+jBcbzGVBU/M9A=;
- b=T5keuX0U/sYSMsVkpv6UDmkP4Vuq4RNStubD7d/WVR3WMDXORJvI+zTQV8WjMlUlV+dbLnfutCo/2il+fOijyP2TmJKOTaSr6fOXxDlqs4dN4ujT+rj0bOuH56BkGUOzOepV0Afvn5A+rDv7mz/1jO+N19Bh+uVAZuXXby0aWNiMgc6537CiDn+LBqbWWmO6XMkROgqTIxQg0hVTdzEGHEExbAwu0sILQenkJLzXXepcKmI5DhxjyYbqix4yJLmhRCOwSFLKHlniSkQWlpsx0oJRBlgO1XeRzMvWzZ68BNYSQ6l8V/0ZZFGl1Wa900haukwXW2RSrOvo4pnAGukR8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+bBsPf46nEX05Uqb0GW8aVVLHRkYK+jBcbzGVBU/M9A=;
- b=JGVHJc8Rmun69xWnBabuC8dP25z3lN4GSTg6yCAA+AS7YOCNv1ROZSkdP1TvnyGFoKUctftgrJVo8LvrDp8W+71z9O8LlhE9HjZLIiUbhzMXDY2q5hO43mtB2BYm6J0GJHHd7Fm363Dokv6TLuJfrOHkOx9D67Gh4dMQL1GaxmduEU+Pe/KsR4jXAjN+i8IeGLilYHyACWeeNMmL5TRxieh5Ud+NDnUmgEdeYVO2otA9FEGn4ZBZYGpvSqpzlYdannTIs75lKJmDXFIZ+JihDrcMqY0J8RKCp9gkgtZPAOIvSBTd5DcymqFpXIOq0e9ghmF3VjyMYHFpYYv4M3PS5g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by MN0PR12MB6295.namprd12.prod.outlook.com (2603:10b6:208:3c0::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Mon, 16 Jun
- 2025 12:49:50 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8835.023; Mon, 16 Jun 2025
- 12:49:50 +0000
-Date: Mon, 16 Jun 2025 09:49:48 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: kevin.tian@intel.com, will@kernel.org, robin.murphy@arm.com,
-	joro@8bytes.org, praan@google.com, yi.l.liu@intel.com,
-	peterz@infradead.org, jsnitsel@redhat.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	baolu.lu@linux.intel.com
-Subject: Re: [PATCH v2 11/14] iommu: Deprecate viommu_alloc op
-Message-ID: <20250616124948.GA1174925@nvidia.com>
-References: <cover.1749882255.git.nicolinc@nvidia.com>
- <5b32d4499d7ed02a63e57a293c11b642d226ef8d.1749882255.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5b32d4499d7ed02a63e57a293c11b642d226ef8d.1749882255.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: YT4PR01CA0288.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:109::16) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001AD292B50
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 12:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750078218; cv=none; b=txPt2UvwU6REec165zM5FmV7uHShUcVTHvXtWbimbrp51OcvnPOI/jHG+tT5f4k9kqUaH0p2lSUKmIUniPkrQbOBfGARBHdHRr9jCigsAdDhiFuYwOn+lZiPvksOiY18dmC9ybP7lg/0yR1RsW+HZW+NjJ0KRutbb/PC4DZqHGE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750078218; c=relaxed/simple;
+	bh=5B0GDypy6woAYzSY9aHY7htf77d3A3ENXwrDkuTjJK8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=q7mVaGywN5Zqw1390TpzH5DMt5fVqrzOqjD2Arr6J1dV2xJ8KOPHRsD59Ji7c2SKTQdzlZCXOt+Tuu1xHaxiPdRVjEpIYy+RJU1g+DENSYHvSEqh7wmlWvNm4a4d99Y2nL3ZnpggTOlvqTH6+yuY+k6p1mrdX1DZWl0OvZoIoHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ao/+Im09; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6142EC4CEEA;
+	Mon, 16 Jun 2025 12:50:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750078217;
+	bh=5B0GDypy6woAYzSY9aHY7htf77d3A3ENXwrDkuTjJK8=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=Ao/+Im09ikS3XYNJif4IPzCZVPI1rLzBr2hkK5fQi5W+mQhbzAjuFoCmdVYUus5G5
+	 iAsrj9MC5DiaqctCBweLZ9P0wrywMKO9w1CHFmM4gQoV2uSfqzAptfRc1AIAcUL6Am
+	 zuKvJC4174ktQCdROvzMsSLvGQ5D/+FG6qNiTRRMRjCTTEBe9WR0hrf9mp5qgi0xNn
+	 gYvmNk805qMhSUBPKNt7+uDd5FszJx+mmK+hWdE189GL2AUw722N7SYEpthsERw0R/
+	 OgLPmJQ8j6iL7tVXud3Epilgoybkzl1tmYP/KqpPBZJb9LUNpiqmBuvLi/IZAsyVSs
+	 myTmzPYTwBwlg==
+Message-ID: <c8389c1a-16d2-4de4-bc3f-7a5e4ccdbc34@kernel.org>
+Date: Mon, 16 Jun 2025 20:50:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MN0PR12MB6295:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d866390-4ba8-4461-452f-08ddacd44803
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/bU6oHI39LDxvsnw0itYmaqIbPrcn+1OtQAtuTOsIsIrXVEJuRazFMdmIf3R?=
- =?us-ascii?Q?6HDDJedZaV07FKl9Y9dmY40MfG698i5Pc3W5LYIO3ajYFKmKlCQkDewWAJVx?=
- =?us-ascii?Q?6DLisanZLtEV50MB7SxtRTVEYiU1lQrGe24lQHuem1X9JQRaE8lzh2pFSISG?=
- =?us-ascii?Q?6BQTFevUrxZ/HHta73Vusez5JVOe2lOTQBbtqjdkWb0rNS1nxRrNPduVAPZC?=
- =?us-ascii?Q?FI5ZA+v1Lsnn5cwdZKzXuD0QAviy25VL3GNkHpi0BPRlT6/sQcXUAg7dBOV/?=
- =?us-ascii?Q?DpOF3bBOY1tqo1i6/iYfdd5e5NXLrCu4mHbOCcqEIkit4kDX5RqoFDOPkof7?=
- =?us-ascii?Q?FU2KOZ3x+ZF4gaL/fSncHe1aPAkoQ2pl0UFGOshjKoWADFinHQ/OvAPvlBwn?=
- =?us-ascii?Q?V5I1hTxKDhzaRbK2o4DjOleN46SL3lnnyOKkPUxhea2pNCyKdadOSCgRYUf4?=
- =?us-ascii?Q?x06YbpQT5wDWPOMHhvCXRHGF2RADl581DZIdcVGgK1h5ZHLZrk8dG/8GT9hv?=
- =?us-ascii?Q?x/TFJSSJhrqoF0prVRiXxeJUFQfOmiIF7mSUKk9YlI3V61Jkm+9hEKXsiZ2O?=
- =?us-ascii?Q?KdHKx3lDfrl9rTQcunou7ibYLl3R+uI/IxBWfwiFEFSN0Wbpj6pFguuA4zwp?=
- =?us-ascii?Q?IIuowAA9VfDSUbmDwXEgmUADXgt6uogDyG/OAYz8ttGZG65EFzP5s3Bdb9I1?=
- =?us-ascii?Q?jED05uG1+25S7WQDiHKu2i/1zAqlVGhUpIZSZR7LE/0GV1LKd+Zs/D6Gfr7S?=
- =?us-ascii?Q?LTp6wx0VqkykO21+TzvnI4ZWE0wiBOV5MgsrtyzO4+Ahwhn5D9rnHd/gt/7L?=
- =?us-ascii?Q?BCjTLbzFeQvNiMiD6wdc4oLDdtBjzPVA0XzoCmcB3wUl2r+a3qldcRMyBALj?=
- =?us-ascii?Q?9ubiRCbhNWnoIBq9M1zZ9ezWdMsLdu8/JD3V/c/jHr0HcCjyJfkuZ2J2ANa+?=
- =?us-ascii?Q?kMxfmZo38EPnTNphTmNjNFXZMoAcSoNRN9xbb0QkJbcnT0MhHhtUa6MfDfZp?=
- =?us-ascii?Q?KC2ECCCSJN7obkXvQ0V9cLVysvJulEFzkhGaUpZcAah/SiTKbxRKxsvZOTkM?=
- =?us-ascii?Q?ayJqmGtkgxkKkn/2JqzJtb0tn6jg+HlBFQNts0Bx75hOip7DkT/f7xvErZoN?=
- =?us-ascii?Q?2nvZMJgh15vflKHCXdy5OcDaYrCQMgziVIQ2YzMWaQ02h7jmULVbQbTGxiAU?=
- =?us-ascii?Q?8dTx3MpdPTsHQZF1Y1JpM0DeLricXPKKBtsb9tQkQ9J97QA5MEtU6xH+u0EK?=
- =?us-ascii?Q?QDgIALZWcItXMUZ3WUeKN8zeL7J8TdsY3qI7JcdV4ivBT7J7ANtphIo8mMIq?=
- =?us-ascii?Q?SYHv9x4awjvlbxnfPNECWX3DOkxmM7o068eXk/SdCi7O0hZKrCE+YbBjZKwa?=
- =?us-ascii?Q?fonFDpLIhQ2bUVurLiaaLzb0d4d0bTgmTt7/8fIRFj8GIYh6Fz277c+Ofqxm?=
- =?us-ascii?Q?5eVdUkPUPDk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?g1VqdsKMX7AZHedWTc2GbHseS7xx5GGkJZY9/3jKzaQlT7e9QergAskhkm8F?=
- =?us-ascii?Q?m0kUFKXxMKv+sycMNrc16mcN1UdRkOlafNw/UGjbqlnloaCVWbDoSyPJTqrs?=
- =?us-ascii?Q?n58JPp9/lTiZa/IaMOarpLfULgSzk/iWNybjv/dMAIdaMK1vfSvILrVSBBVQ?=
- =?us-ascii?Q?z+elMN/X2Dip3H7bAViw5cc+D6wBgasNrZTzEHKx3Kq6zsapsCeb06KY7ON0?=
- =?us-ascii?Q?YURxwpfd7K6VmKQp/dKISsBoeShi+O/Mc0tb5p2PPqAjBdAhsUeM30qbnIc6?=
- =?us-ascii?Q?EkEMYLUY6Uu5tK2ft5J31xLxByL83YPA2gKAtgmk2u2WJq3J59cqTAucXxa5?=
- =?us-ascii?Q?ns3Bg6KCkyrAZBLL4X9FuhFXC2HvW2ErUICEjkcnPz6CZPplQd7CLpKp8LF3?=
- =?us-ascii?Q?COEjWwnbpx9KWBrwWcoRYoSuwBeI7JMzPPTJm4IKBGBk07owz38lEXMItF4c?=
- =?us-ascii?Q?CrUvb6l4fADJgZkPkGT2NFSH70rvq7XqEzsfVQVp4laCzyCsrtWSKONsGzws?=
- =?us-ascii?Q?h61MhgJyKD7H0XqSoGGSe9Gf4s5VPoaCTBI9Flct4csUB2IAvlzxW+H9paGA?=
- =?us-ascii?Q?Pju+xhAQ9j0Ky8FGE/okGZIji8paDLMSYcTWPyhSFu8D2S2zLzj+8zDOKIEa?=
- =?us-ascii?Q?UIIeZefv663TzmqZdPbFYYIOvfUzgP56e1zwEd+el53pqkW6BfJlrLlqnRKo?=
- =?us-ascii?Q?tKKT7hwD2iY590rXVT5fjETBHxBI323k7Wd4cZtZdyGkCEmG/xsXoJmoWTQi?=
- =?us-ascii?Q?YNfEZzQVIuJd+Xk5EWYm5LXh8STEtlH2mvcfpDEeU9BCrJVJzDz+g6pC1Fc2?=
- =?us-ascii?Q?fL+nTUgkdpmYiOMW+rwKnHDUYjzotoF54Mp3C8U13HW/r45RnLjqvTVcsZBN?=
- =?us-ascii?Q?GRFjIHj18wO0P0mR+KhHsOLUko5eji/i9umTHFiSLFY0Pz/y4DcE2t4e2qA9?=
- =?us-ascii?Q?TfAEPPAOCfCKfltAXIIKgdc2440RaTqxwMKWn+Lz6p0Ku55I13Qg/7+jTEV2?=
- =?us-ascii?Q?cTrrFRj21beQmey2KmKp5u/lLYBYt+p6OPX8SttQ6e5k4L+iy+ZJvz4Mmj+c?=
- =?us-ascii?Q?C6pw/sdksoGzagvC6CXi1v6UwfhowL0b13DaYydC6ODI+fUkCTEWJ4gQjpBO?=
- =?us-ascii?Q?cny5DxmKXamv6SNmvx3atTfotg7+oV72rhV4u6Pe/B62IN+/MTX25IPRXT8U?=
- =?us-ascii?Q?iaAKoKcGGdDt+08/CTh+5q9D6lof9V+Bh6XZFOjtsVTZgv46lwoLoUgzs7B2?=
- =?us-ascii?Q?VSdCRpAsKYhTb1lUwPJC3lyq0aWUL8roIySTXy+COhFVCamoaLhE3Oj0ct1c?=
- =?us-ascii?Q?Ykh/HVvdOY4RSCwLksbV/vdGro26CCHqOly2+S0IS5EGLUukcOZW51sT5Kyd?=
- =?us-ascii?Q?7O9DMXX+CkG7BrP26msZjvylpxIPPg0irC2xXUvcAtoz9q/FZE5K9aYts8h8?=
- =?us-ascii?Q?LhnggJjRDL1SrpYYb5koe0DOdemsbR/RQmF7SkflD7tioxscVhoaBZufl8Ng?=
- =?us-ascii?Q?K88VLzM51YYALm1KCHtK252EzYCptOdWJ834VbO20f2OGqB8PX0HADexUL3m?=
- =?us-ascii?Q?vRkHGkkHHSVMOU3HL9fVhdj4zwFh96BXar7lsCQY?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d866390-4ba8-4461-452f-08ddacd44803
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2025 12:49:50.1211
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YA3C8qWRCNsxXuPsrEqAt2GMavEBoZ2X5YAOgMfkkMyhL/NDGf/SolPROSsCKswT
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6295
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] f2fs: use ioprio hint for hot and pinned files
+To: Daniel Lee <chullee@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20250615144235.1836469-1-chullee@google.com>
+ <20250615144235.1836469-3-chullee@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250615144235.1836469-3-chullee@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 13, 2025 at 11:35:23PM -0700, Nicolin Chen wrote:
-> To ease the for-driver iommufd APIs, get_viommu_size and viommu_init ops
-> are introduced. Now, those existing vIOMMU supported drivers implemented
-> these two ops, replacing the viommu_alloc one. So, there is no use of it.
+On 6/15/25 22:42, Daniel Lee wrote:
+> Apply the `ioprio_hint` to set `F2FS_IOPRIO_WRITE` priority
+> on files identified as "hot" at creation and on files that are
+> pinned via ioctl.
 > 
-> Remove it from the headers and the viommu core.
-> 
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> Signed-off-by: Daniel Lee <chullee@google.com>
 > ---
->  include/linux/iommu.h          | 11 -----------
->  include/linux/iommufd.h        | 18 ------------------
->  drivers/iommu/iommufd/viommu.c | 20 +++++---------------
->  3 files changed, 5 insertions(+), 44 deletions(-)
+>  fs/f2fs/f2fs.h  | 19 +++++++++++++++++++
+>  fs/f2fs/file.c  |  3 +++
+>  fs/f2fs/namei.c | 11 +++++++----
+>  3 files changed, 29 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 3e02687c1b58..0c4f52892ff7 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -3440,6 +3440,25 @@ static inline void set_file(struct inode *inode, int type)
+>  	f2fs_mark_inode_dirty_sync(inode, true);
+>  }
+>  
+> +static inline int get_ioprio(struct inode *inode)
+> +{
+> +	return F2FS_I(inode)->ioprio_hint;
+> +}
+> +
+> +static inline void set_ioprio(struct inode *inode, int level)
+> +{
+> +	if (get_ioprio(inode) == level)
+> +		return;
+> +	F2FS_I(inode)->ioprio_hint = level;
+> +}
+> +
+> +static inline void clear_ioprio(struct inode *inode)
+> +{
+> +	if (get_ioprio(inode) == 0)
+> +		return;
+> +	F2FS_I(inode)->ioprio_hint = 0;
+> +}
+> +
+>  static inline void clear_file(struct inode *inode, int type)
+>  {
+>  	if (!is_file(inode, type))
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 3eb40d7bf602..a18fb7f3d019 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -3496,6 +3496,7 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
+>  
+>  	if (!pin) {
+>  		clear_inode_flag(inode, FI_PIN_FILE);
+> +		clear_ioprio(inode);
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+I guess there are more places clearing FI_PIN_FILE? we need to cover
+them all?
 
-Jason
+>  		f2fs_i_gc_failures_write(inode, 0);
+>  		goto done;
+>  	} else if (f2fs_is_pinned_file(inode)) {
+> @@ -3529,6 +3530,8 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
+>  	}
+>  
+>  	set_inode_flag(inode, FI_PIN_FILE);
+> +	file_set_hot(inode);
+
+Unnecessary file_set_hot() invoking? Or am I missing anything?
+
+Thanks,
+
+> +	set_ioprio(inode, F2FS_IOPRIO_WRITE);
+>  	ret = F2FS_I(inode)->i_gc_failures;
+>  done:
+>  	f2fs_update_time(sbi, REQ_TIME);
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 07e333ee21b7..0f96a0b86c40 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -191,9 +191,10 @@ static void set_compress_new_inode(struct f2fs_sb_info *sbi, struct inode *dir,
+>  }
+>  
+>  /*
+> - * Set file's temperature for hot/cold data separation
+> + * Set file's temperature (for hot/cold data separation) and
+> + * I/O priority, based on filename extension
+>   */
+> -static void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
+> +static void set_file_temp_prio(struct f2fs_sb_info *sbi, struct inode *inode,
+>  		const unsigned char *name)
+>  {
+>  	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
+> @@ -212,8 +213,10 @@ static void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
+>  
+>  	if (i < cold_count)
+>  		file_set_cold(inode);
+> -	else
+> +	else {
+>  		file_set_hot(inode);
+> +		set_ioprio(inode, F2FS_IOPRIO_WRITE);
+> +	}
+>  }
+>  
+>  static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
+> @@ -317,7 +320,7 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
+>  		set_inode_flag(inode, FI_INLINE_DATA);
+>  
+>  	if (name && !test_opt(sbi, DISABLE_EXT_IDENTIFY))
+> -		set_file_temperature(sbi, inode, name);
+> +		set_file_temp_prio(sbi, inode, name);
+>  
+>  	stat_inc_inline_xattr(inode);
+>  	stat_inc_inline_inode(inode);
+
 
