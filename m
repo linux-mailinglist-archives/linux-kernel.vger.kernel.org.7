@@ -1,152 +1,167 @@
-Return-Path: <linux-kernel+bounces-688124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C49ADADF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:03:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E894ADADFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F93188E364
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:03:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1558C170442
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533F926D4C7;
-	Mon, 16 Jun 2025 11:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD891E7C23;
+	Mon, 16 Jun 2025 11:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="T7zp98lz";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="EqbDo9Jb"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NwxSOp57"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199BF298998;
-	Mon, 16 Jun 2025 11:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A8C298998
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 11:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750071808; cv=none; b=TwECSr+1YUASKu+FnOPEAKBZb9HlBX5nmkXmJZjMOUAFL5fWHpN/Z1W8kE5MMc0g3hODJrjlHwDCGLfjVi5X9kXLWIswI9XpiWrHwi1g+Ywocr4VyoXXhKYtOgurdTGhHQS9bXXNRhi4wsm4LTU+9cKQnrzgHe67dxEyz0rBwmY=
+	t=1750071860; cv=none; b=mi9ALMdTDkCGNQ2R3TFBgg9IPDY58/VLL5hPvhQ9kuZFRS8zMc68jerJoNt9OPMWySHCfMlPsINGi4HX7ElyP1FZRaKK3jlaOdCrC8/Uq9bDBDwN83gu1ZTtt709y4UOGlMmrIVP9j6GCqiv3THPWhuhY+ou68vIcVzaPehW5xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750071808; c=relaxed/simple;
-	bh=Q2nz0LgS7aKDrvHOh/ID/OK4/kAnT426iqByTBIMF7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H8R19VlJairMG6/1BfIielssWcJgo7QqiEe37xCoYikw1U+ypKbtkbKwmMcWS6movQqOpckmSx4z6afaONHPt7TCNtAJIOodUKrlXYv+zlCwPCSoBJI54wHzDEjQODu2ieEsHbyzMrJ+jjFiGypHErVvdbRMIie6ss11T7ZG36M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=T7zp98lz; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=EqbDo9Jb; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	s=arc-20240116; t=1750071860; c=relaxed/simple;
+	bh=cZ96XbquQqST07cmpZCxaySWnUVgiBMaxoseaYKqZAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eSTZIHnj9SxC4BuLdjpABYQl5IyD27SnWpKju3NOE3JZxcKA1wSoQHnnEeORsFTuFQWVJ1z83U98mKtLl+ZCD48vXyQ2h/734qtq6AJRdZFztKKnrn5dYGC6gMY0KyXjn7u05h9IJsWvVQimSTDKiqcDZijCLlG6wiXPk9hzOkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NwxSOp57; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750071856;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RznKbWG0gfknAu3iwovxCiP4HQBREMLRrwNJpblRENQ=;
+	b=NwxSOp57qULHJKmsb9tQ5QadW/rkAT/pYjYu6jr+UUaA6NW+md8zqEmpP+RWdgVWyRgcgj
+	c2tt4YYwUU4FIZ/1qLJ4BBAh3UVykkuEzlIPPlGQjyt+K21dH6JJWUqD8/CKiQX8dorMfF
+	sbKHkxWZlO66K/58CBPxeZ0LIp5F1ok=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-277-3TpVPDTSMqaDXMKXkrGKcQ-1; Mon,
+ 16 Jun 2025 07:04:12 -0400
+X-MC-Unique: 3TpVPDTSMqaDXMKXkrGKcQ-1
+X-Mimecast-MFC-AGG-ID: 3TpVPDTSMqaDXMKXkrGKcQ_1750071850
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bLRv11NgFz9tGT;
-	Mon, 16 Jun 2025 13:03:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1750071805;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GCkIT9Bmo2LyS7jzFRkKLIYyEqPPLaYeVM6P5aSr1IA=;
-	b=T7zp98lznQIYSFT62HieidYZqCJLtIk80oVAGBB5vYnoUuYQx2pXjRH7YE6M2MgFQm/A5z
-	vI+vRhySCbd4rwsxYOBkB67A0tVXV2FQ8FuotHBM379ESLxMzw4h2zpnu8Qtp4AaWu+zxL
-	F4r4wocxYw39jXUNiHY1P3dRSMvxDjA929Fz0fiDhdOEIhrsPvzXekRYRlDWf0Kn2NJrIQ
-	6LlCLEYEvA0dB4OLFx7AB96spl7Z5ro4r2qCYq76lVdyu0Sr6tFuAUXKNpVegYWKVzPxPI
-	u8t9QTlI1F1HaHokMt8Y6EYT+Xstvf2S1IFADi9Q3YmVqkFLFaQJT2LE6iNgmg==
-Message-ID: <db14331e-193a-4915-990e-7657b5ca0c5b@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1750071803;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GCkIT9Bmo2LyS7jzFRkKLIYyEqPPLaYeVM6P5aSr1IA=;
-	b=EqbDo9JbtidayMwEz56W5wvKzvXhQdAQticLQV1x8iqmn9XyjsL6GmGpwL0O1/kmAT+YiG
-	62AyP1/hrgtZRJu4KTlCBoswjsHqBF8hEyuTgL7X6Y2ZdULZG0zREhQSzqwIBkIH+hRz/g
-	NIV1Zqjl74Gm+FYDX+0NiuieXsVqKUuknqqpuOYPAmNAC3OKZ7kjHusXT2fgdZbvnNcdI0
-	D98eROJAomMUTguDIf9gq0VFzVRV2/YfCYHyWxF2sYkljJxdXki8HcsAD4MN+dVkJ4YeRM
-	XgbCvIHNpF+rXcmZBe7bZN43cHKH66feeqITPSVPFdasal/PQ2ceFxwBFR7SiQ==
-Date: Mon, 16 Jun 2025 13:03:20 +0200
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E9D9119560B5;
+	Mon, 16 Jun 2025 11:04:08 +0000 (UTC)
+Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.88.154])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9AD881956096;
+	Mon, 16 Jun 2025 11:03:59 +0000 (UTC)
+Date: Mon, 16 Jun 2025 08:03:57 -0300
+From: Wander Lairson Costa <wander@redhat.com>
+To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>, David Vernet <dvernet@meta.com>, 
+	Barret Rhoden <brho@google.com>, Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>, DietmarEggemann@uudg.org, 
+	dietmar.eggemann@arm.com, Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RESEND PATCH v4] sched: do not call __put_task_struct() on rt
+ if pi_blocked_on is set
+Message-ID: <sebgq5zykuzb5qx22ejjlz5b4pnnrnpgcq7mk6cr7vkl455sjy@z3xx7l3s6ks6>
+References: <aEw-KjUjjP2gYH6z@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] iio: accel: bmc150: Do not configure IRQ registers if no
- IRQ connected
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Marek Vasut <marek.vasut+bmc150@mailbox.org>,
- Hans de Goede <hansg@kernel.org>, linux-iio@vger.kernel.org,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, David Lechner <dlechner@baylibre.com>,
- Jonathan Cameron <jic23@kernel.org>, Julien Stephan <jstephan@baylibre.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Salvatore Bonaccorso <carnil@debian.org>, linux-kernel@vger.kernel.org
-References: <20250613124648.14141-1-marek.vasut+bmc150@mailbox.org>
- <aEw_DcqpCpcsBGd0@smile.fi.intel.com>
- <8605141c-b615-4e84-9574-81e24590df48@mailbox.org>
- <aE_aL5dGKZeKBu50@smile.fi.intel.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <aE_aL5dGKZeKBu50@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: g1x4qyqwgt4bzrtwse6e68z7ewxubgnr
-X-MBO-RS-ID: 54396ab99c5020fce69
-X-Rspamd-Queue-Id: 4bLRv11NgFz9tGT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEw-KjUjjP2gYH6z@uudg.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 6/16/25 10:47 AM, Andy Shevchenko wrote:
-> On Fri, Jun 13, 2025 at 07:02:28PM +0200, Marek Vasut wrote:
->> On 6/13/25 5:09 PM, Andy Shevchenko wrote:
->>> On Fri, Jun 13, 2025 at 02:45:22PM +0200, Marek Vasut wrote:
+On Fri, Jun 13, 2025 at 12:05:14PM -0300, Luis Claudio R. Goncalves wrote:
+> With PREEMPT_RT enabled, some of the calls to put_task_struct() coming
+> from rt_mutex_adjust_prio_chain() could happen in preemptible context and
+> with a mutex enqueued. That could lead to this sequence:
 > 
->>>> The BMC150 on Onemix 2S does not have IRQ line described in ACPI tables,
->>>> which leads to bmc150_accel_core_probe() being called with irq=0, which
->>>> leads to bmc150_accel_interrupts_setup() never being called, which leads
->>>> to struct bmc150_accel_data *data ->interrupts[i].info being left unset
->>>> to NULL. Later, userspace can indirectly trigger bmc150_accel_set_interrupt()
->>>> which depends on struct bmc150_accel_data *data ->interrupts[i].info being
->>>> non-NULL, and which triggers NULL pointer dereference. This is triggered
->>>> e.g. from iio-sensor-proxy.
->>>>
->>>> Fix this by skipping the IRQ register configuration in case there is no
->>>> IRQ connected in hardware, in a manner similar to what the driver did in
->>>> the very first commit which added the driver.
->>>>
->>>> ACPI table dump:
->>>
->>>>           Device (BMA2)
->>>>           {
->>>>               Name (_ADR, Zero)  // _ADR: Address
->>>>               Name (_HID, "BOSC0200")  // _HID: Hardware ID
->>>>               Name (_CID, "BOSC0200")  // _CID: Compatible ID
->>>>               Name (_DDN, "Accelerometer")  // _DDN: DOS Device Name
->>>>               Name (_UID, One)  // _UID: Unique ID
->>>>               Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
->>>>               {
->>>>                   Name (RBUF, ResourceTemplate ()
->>>>                   {
->>>>                       I2cSerialBusV2 (0x0019, ControllerInitiated, 0x00061A80,
->>>>                           AddressingMode7Bit, "\\_SB.PCI0.I2C0",
->>>>                           0x00, ResourceConsumer, , Exclusive,
->>>>                           )
->>>>                   })
->>>>                   Return (RBUF) /* \_SB_.PCI0.I2C0.BMA2._CRS.RBUF */
->>>>               }
+>         rt_mutex_adjust_prio_chain()
+>           put_task_struct()
+>             __put_task_struct()
+>               sched_ext_free()
+>                 spin_lock_irqsave()
+>                   rtlock_lock() --->  TRIGGERS
+>                                       lockdep_assert(!current->pi_blocked_on);
 > 
->>>>           }
+> Fix that by unconditionally resorting to the deferred call to
+> __put_task_struct() if PREEMPT_RT is enabled.
 > 
-> ...
+> Suggested-by: Crystal Wood <crwood@redhat.com>
+> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+> ---
 > 
->>> As for the solution, are you sure the line is not wired at all?
->>
->> No . It is some cheap mini-laptop , I have no schematics or any other info
->> really .
+> Resent as a gentle reminder, because this issue results in scary backtraces,
+> not obvious to debug and pinpoint root cause.
 > 
->> Note that I am not really familiar with x86 and ACPI, so there is that.
+> v2: (Rostedt) remove the #ifdef from put_task_struct() and create
+>     tsk_is_pi_blocked_on() in sched.h to make the change cleaner.
+> v3: (Sebastian, PeterZ) always call the deferred __put_task_struct() on RT.
+> v4: Fix the implementation of what was requested on v3.
 > 
-> Yes, I understand that.
+>  include/linux/sched/task.h |   17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
 > 
-> You can try to monitor the /sys/kernel/debug/pinctrl/*/pins files for any
-> changes that might happen on the sensor events. It might (help to) reveal
-> the IRQ line.
-Sooo ... if the IRQ line is not described in ACPI, it could still be 
-connected ? Hum, I'll try to shake the laptop next time I power it up.
+> diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+> index 0f2aeb37bbb04..51678a541477a 100644
+> --- a/include/linux/sched/task.h
+> +++ b/include/linux/sched/task.h
+> @@ -134,11 +134,8 @@ static inline void put_task_struct(struct task_struct *t)
+>  	if (!refcount_dec_and_test(&t->usage))
+>  		return;
+>  
+> -	/*
+> -	 * In !RT, it is always safe to call __put_task_struct().
+> -	 * Under RT, we can only call it in preemptible context.
+> -	 */
+> -	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || preemptible()) {
+> +	/* In !RT, it is always safe to call __put_task_struct(). */
+> +	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
+>  		static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_SLEEP);
+>  
+>  		lock_map_acquire_try(&put_task_map);
+> @@ -148,11 +145,13 @@ static inline void put_task_struct(struct task_struct *t)
+>  	}
+>  
+>  	/*
+> -	 * under PREEMPT_RT, we can't call put_task_struct
+> +	 * Under PREEMPT_RT, we can't call __put_task_struct
+>  	 * in atomic context because it will indirectly
+> -	 * acquire sleeping locks.
+> +	 * acquire sleeping locks. The same is true if the
+> +	 * current process has a mutex enqueued (blocked on
+> +	 * a PI chain).
+>  	 *
+> -	 * call_rcu() will schedule delayed_put_task_struct_rcu()
+> +	 * call_rcu() will schedule __put_task_struct_rcu_cb()
+>  	 * to be called in process context.
+>  	 *
+>  	 * __put_task_struct() is called when
+> @@ -165,7 +164,7 @@ static inline void put_task_struct(struct task_struct *t)
+>  	 *
+>  	 * delayed_free_task() also uses ->rcu, but it is only called
+>  	 * when it fails to fork a process. Therefore, there is no
+> -	 * way it can conflict with put_task_struct().
+> +	 * way it can conflict with __put_task_struct().
+>  	 */
+>  	call_rcu(&t->rcu, __put_task_struct_rcu_cb);
+>  }
+> 
+
+Reviewed-by: Wander Laurson Costa <wander@redhat.com>
+
+> ----- End forwarded message -----
+> 
+
 
