@@ -1,103 +1,137 @@
-Return-Path: <linux-kernel+bounces-688695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED06AADB5E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:51:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF24ADB5EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD3A5188EBD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:51:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8758C18905C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A046628150F;
-	Mon, 16 Jun 2025 15:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21F226529A;
+	Mon, 16 Jun 2025 15:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DJObnkvj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FwI1crum"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D70272E48;
-	Mon, 16 Jun 2025 15:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D11F20C00C
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 15:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750089062; cv=none; b=BbjRZnaMjwQSd6atcyHM2jIVGaerfY1HO74EpzcDLomsB+UvPzHFHnHcCjKUrE/avp/TA3HKcnRc/M9t4wCtQT2z7JMe4pOUDWk5rYihOLy0e775Wk2302W4k5spuhCpKF942304eExNTXe19mPcKN5JQMKqSqYmrLxLHCqJ48o=
+	t=1750089140; cv=none; b=Dp9EX8D+FbqluYwDriCUrMd4w+C0CO79DqCXNb3rkZk7xvez4OXqtb7GVpm2UlCpn3cEFuWlsQfZyUS7XNo+5DIeZA0d6j0/GMIsjgkRfGEVYIziCIkyXqmOezzrpgtf9xTeSdEEr0ni9Ib+4Gf65e2h6stlo4e86Ekv6+G2q8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750089062; c=relaxed/simple;
-	bh=28vPoRV0MqpgDqKlSqbg3ckxTwcQdUvEgqn/B8VzSz8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qnM3nTm39Y737UREHe7Ql3rLT+CM6MhDpXMWkEkys4RMPlwpFuzfXUG7npNy6vMRbmQFtNzYRzvBTZ/COxf2P4EUPF9QodvfCVHPgkYWC7C0k1AzruN1dFPjjrLU3Z6yL586+8e9ge0BkG3otdqQMLQxDEYU5/WqzwqJ44Y+LuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DJObnkvj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC17C4CEED;
-	Mon, 16 Jun 2025 15:51:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750089061;
-	bh=28vPoRV0MqpgDqKlSqbg3ckxTwcQdUvEgqn/B8VzSz8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=DJObnkvj3MXTHhVltXB7GjWTvTuNOuOm6QP+EEp3vDMtIu8rjSHqJ1Xc5/ySvozaQ
-	 enZq/1g/UhrINfzMYZWTIO3PeRrUgW0CfTm70BEA3/QvYdisi4ek18n/leuuKGwmIh
-	 Sh5i1vzDJQPEI67wBLn7c4UlZHdArJkz4C/N66xZTrZKfYyZ5jYPa9V4GUi1A9CeS4
-	 pSW2giY2PcY1wbkVVtRDBsE2/S2xw6vCmLMHeU0CPetkPslS1Da/WqSS2qMZTY8KRv
-	 NKEE38k/hjpOxJxM6Za0z5NT16NDyd1lk9ySPfyNhMzfe4yJD86ynDVZlWkoJ3EXWf
-	 REyyb20C1TQhw==
-From: Mark Brown <broonie@kernel.org>
-To: rust-for-linux@vger.kernel.org, Eunsoo Eun <ewhk9887@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Eunsoo Eun <naturale@hufs.ac.kr>, 
- Benno Lossin <lossin@kernel.org>
-In-Reply-To: <20250614081312.763606-1-ewhk9887@gmail.com>
-References: <20250614081312.763606-1-ewhk9887@gmail.com>
-Subject: Re: [PATCH 1/2] rust: macros: allow optional trailing comma in
- module!
-Message-Id: <175008906033.262451.8015418058709433630.b4-ty@kernel.org>
-Date: Mon, 16 Jun 2025 16:51:00 +0100
+	s=arc-20240116; t=1750089140; c=relaxed/simple;
+	bh=cgvgta8aciMoxErXIYuF2aSDop9idzFQFduLa/KczfY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NOU6Gw2jadsJugwpiCfiFLlJoyEiXgqgUvhlGc5pWTDsgK+J+XRDfA2PmI0e2Q4sdLX0+taNSkE4jh4vZg56jbR2J2Z1sJ/2rTYWrZYBCjk8nLUQDG4dJGe9HRbwp4rIEOBj5YwDxqwz+4wEsXS7OgDzTq1Ic1Po6gSvdOW395o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FwI1crum; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750089137;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cgvgta8aciMoxErXIYuF2aSDop9idzFQFduLa/KczfY=;
+	b=FwI1crum+6sDSY8I6SAH1U9Ei4gFbgW7lIb6eT8ud716xsA3n5FqKjt/aDGu0wRBbM09vG
+	dudwm7ZJmMPFQVe0WYrroF02niCOjQeIret7dUvkjiMCtbTSpp0rT9KYqbaG6bmNoHAkUH
+	1sndlpmKyyEoDFwQ2FHpC/+aYkO8KAg=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-354-UyegdF5kOQOorfTMLrrS8A-1; Mon, 16 Jun 2025 11:52:16 -0400
+X-MC-Unique: UyegdF5kOQOorfTMLrrS8A-1
+X-Mimecast-MFC-AGG-ID: UyegdF5kOQOorfTMLrrS8A_1750089135
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-70e86a2a1b8so64520777b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 08:52:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750089135; x=1750693935;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cgvgta8aciMoxErXIYuF2aSDop9idzFQFduLa/KczfY=;
+        b=tede5ZkuBSIGK2N6UTu/HUY0swL+N2Tza/r9oI1gb3Vxv9VRjIZqDCyOLaY/m78gx6
+         JcemGkVFrll+c02GPRFjZa/XYDKEkojySgbYncZBbBooyNGOHumk3NJIoojslMPMi5g2
+         PZOPvkitHDUZZ0dWlIyGTuzSS9uaqJeIKbEmcjScQQk/UmmlY+aA/0yembK2+LnPfO2r
+         foeEAvny9ZAaznNizjTQC1BEKZPGjh/rGJyDCktLAWl9DUPiVRBAQ+EvdmhM5pddtyJH
+         YMeBmbOeQyuXDGL50vw6g0F8lO32CHi4Yz7Q64qcPqWAIHm3XXZ9IZQSmZC0qFEvx8Tx
+         fMKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUayHmt4/DDuRny3YuNKbg0cqGs1QKXKae+iSPLabUgyIYkgqXO0OI2zUzxtwhNoLbyRnAebL6+MQpQWGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9ex4I1cE1Re4nEMEAJ39X7gqoxuJ7hjW15kWV6iUoTSHuznSv
+	6Kivb9iiX/u2oieXQCypRn07AFmfF7XrnPBeOBqYq3Wwg6SR2YX/AhEJy6oPGVxzBhOvebi8F7x
+	XO+7Wc1Ax9foqvUUZ04klwpU3sz+fpcBpQFuviudDslRz7DpAgS18O3z/D29/L0dU39/R/3oLZA
+	ZVnULkcLslNeSRPrHFsWuvmC+8VwUF9gRPvCtyjWUK
+X-Gm-Gg: ASbGncv7AqG4vSHRi8+HQzuJy2PpQIRR/zRfXByAmhBbsBmv0E5GhCWsImZIWZIYNLa
+	v1aKMQOAk60WRPQBOyUHnjFyqFJAPTja5O82v6SGVnRWwmDTBeu9se6g0APrZeCnbEuiNantMcR
+	dvpHAgiQ==
+X-Received: by 2002:a05:690c:385:b0:70d:f237:6a60 with SMTP id 00721157ae682-7117543cf7cmr125891087b3.7.1750089135490;
+        Mon, 16 Jun 2025 08:52:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZXG6wclfxD90BTesxhzMtrDTqbltqXOg871c5dsmQbh0pbJek5ygMMH70krpIlhvDmoHznJlg+ptMx6vksPc=
+X-Received: by 2002:a05:690c:385:b0:70d:f237:6a60 with SMTP id
+ 00721157ae682-7117543cf7cmr125890177b3.7.1750089134944; Mon, 16 Jun 2025
+ 08:52:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-08c49
+References: <20250515032226.128900-1-npache@redhat.com> <8621cd4f-a206-4440-9b02-52e9277ce212@arm.com>
+In-Reply-To: <8621cd4f-a206-4440-9b02-52e9277ce212@arm.com>
+From: Nico Pache <npache@redhat.com>
+Date: Mon, 16 Jun 2025 09:51:48 -0600
+X-Gm-Features: AX0GCFv_bntaKb1uWoTVlmOvBCUrEspFcRe-M6VQE_1ShbpjFnXLzcNhSs4x95w
+Message-ID: <CAA1CXcD=MOEfa6XBp3+e3dSMCmgfx0NgB0DgnxRWTAS-KKZx-g@mail.gmail.com>
+Subject: Re: [PATCH v7 00/12] khugepaged: mTHP support
+To: Dev Jain <dev.jain@arm.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com, 
+	corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org, 
+	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, baohua@kernel.org, 
+	willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com, 
+	usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
+	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
+	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, 
+	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, 
+	jglisse@google.com, surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 14 Jun 2025 17:13:09 +0900, Eunsoo Eun wrote:
-> Make the `module!` macro syntax more flexible by allowing an optional
-> trailing comma after the last field. This makes it consistent with
-> Rust’s general syntax patterns where trailing commas are allowed in
-> structs, arrays, and other comma-separated lists.
-> 
-> For example, these are now all valid:
-> 
-> [...]
+On Sun, Jun 15, 2025 at 9:52=E2=80=AFPM Dev Jain <dev.jain@arm.com> wrote:
+>
+>
+> On 15/05/25 8:52 am, Nico Pache wrote:
+> > The following series provides khugepaged and madvise collapse with the
+> > capability to collapse anonymous memory regions to mTHPs.
+>
+> Hi Nico,
+Hey Dev!
 
-Applied to
+>
+> Can you tell the expected date of posting v8 of this patchset?
+Hopefully by next week, although it may be longer (as a try to catch
+up on everything after PTO). We were originally targeting 6.16, but we
+missed that window-- so I need to repost for 6.17, which we have
+plenty of time for. Ive also been releasing them slower as previously
+I was not giving reviewers enough time to actually review between my
+different versions (and this creates a lot of noise in people's
+inboxes).
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+I'm also going through some of the testing again, this time with
+redis-memtier (as David suggested).
 
-Thanks!
-
-[1/2] rust: macros: allow optional trailing comma in module!
-      (no commit info)
-[1/2] spi: spi-pci1xxxx: Drop MSI-X usage as unsupported by DMA engine
-      commit: 9f0ad43b158d07bc7144d219ceabdea36e28e392
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Cheers,
+-- Nico
+>
+> >
+>
 
 
