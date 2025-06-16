@@ -1,230 +1,122 @@
-Return-Path: <linux-kernel+bounces-688496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA05AADB32A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:10:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E330BADB334
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 967F7170C7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:10:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D59F03A5667
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD831B6D08;
-	Mon, 16 Jun 2025 14:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548A61DB122;
+	Mon, 16 Jun 2025 14:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cLrKKGdf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dny4tXlS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="g3VRNMnF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tOk6EJwq"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CfJ2D+YM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740E81A3142
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 14:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A850842A99;
+	Mon, 16 Jun 2025 14:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750083049; cv=none; b=kKupJNiYFinpWbqfNo59SwOYyrItxmQko2QQURB5oBn9ciIE/zMxjv3IBKWwXPz7uWYXgAXSjg5eNVOvVdzUA2HfiFVDjc93AouEzanW6CI5aS97O1PeDJ3pj6n//gZ4OwxND5HQ0uyE2KpWNNCY7cxU/79wmcm8N0OvcIxXyeg=
+	t=1750083194; cv=none; b=Vq9HqksIg8TLA96YeiooN6Xv+MoSlvQEpp7Be7xzXH5Vvh0Ct+Z7WI3jMviL18AP+3x4Y4scFc3GWeQ9T3SIKN1+22Fxaw28nn82SxdxMcb+aca7/KzZufhA8M3AVjOd14+jPmCWVcku2J/p1DzAQrx5plL6FQJZvTQW5JIuOLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750083049; c=relaxed/simple;
-	bh=tZQNTAFb0RgI8Axkya+HR9XuebZC0Wk3IaBZRpHDbhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kuIb0NuEEguBGfW9S+Nmtj1uprhL3RrNi74ZAxMnaWxOeL3PoZsqLAGgGkayvm/SYfzD1Jqh8V4QCwvWuYsqpTyq8uYvEGRzHRLzVzPGrkBE3agCcscYYPtbHH178RPucUsB33AEx1WCs7LW2YYNRMVGr60go9zwZ9QQJxK60l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cLrKKGdf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dny4tXlS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=g3VRNMnF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tOk6EJwq; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BBF422118F;
-	Mon, 16 Jun 2025 14:10:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750083045; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gvIC/uuDHCtY1vVb5K1eQEc7EXM23z+t5pvf9m+AhSQ=;
-	b=cLrKKGdfazuK4Qsukb+W30iaMebUpZwmGcHBCODU8QlPw2sGSsAGCWuCP1j/u4IDPpF2ET
-	OK05y/aNcjg1kQTGXig6zW1VXgNvQZjQU98gqo/c2b94ojdV5Zqhlr1FPpBqKU0qDUr5/r
-	0ZBtHGHlaNToPDVcFSjsjmkpIP7Oi4U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750083045;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gvIC/uuDHCtY1vVb5K1eQEc7EXM23z+t5pvf9m+AhSQ=;
-	b=dny4tXlS0p6cvIpZ3qa22iOHOnwh/W933JFxtg1ZB+XpFFp1lApUVb+aC7FQhwZ/9HvcsI
-	A7Q4iQejoxV4OXDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750083040; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gvIC/uuDHCtY1vVb5K1eQEc7EXM23z+t5pvf9m+AhSQ=;
-	b=g3VRNMnFsV2vpdwTe3cGuOXifgTf2FfpdE1rZIRFPWSL3GI5QjO++smsP4a7JNEl5523nL
-	MenhZkK0wh7D3vkWSKzAbsy9yl8JJf/vUE+W0iMvnEoZEC6BVTAQFbvIxL6lWjo8WSQQ29
-	Q/7yL3lzmi0BN1fb6MqRzT3/RMAPbUY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750083040;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gvIC/uuDHCtY1vVb5K1eQEc7EXM23z+t5pvf9m+AhSQ=;
-	b=tOk6EJwqEhGC67oaMTTzj0WMn9JCX+ZBx3ZaIpb2DuC1HJE2OP1fOcZ9/QLj4zBlzg3H68
-	hEDgeLSCNHZgYNDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A747A13A6D;
-	Mon, 16 Jun 2025 14:10:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7r6UKOAlUGjxTAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 16 Jun 2025 14:10:40 +0000
-Message-ID: <830729b1-dbe8-4569-89fb-4ada13ec7bc2@suse.cz>
-Date: Mon, 16 Jun 2025 16:11:47 +0200
+	s=arc-20240116; t=1750083194; c=relaxed/simple;
+	bh=K9lGYE1jC13GQlRKSFKfI1egBgg+0AaxtQyIvBUOSSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jP7q62dW1LMeRTamqmot9wE77T+kmVqtYnPKpoCLHdLIKV0BxyRV61KaEiK6pNlvOdAXVJ8dDddkHOoQXIMPHRh5tK+xhyqa1qQmMEWsVRnvdp+yyFj3ZZ7JVb7Q2XkSg62oK5uVChExToczbQhwFjvxSG2Ad83iZbhmgDlz93I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CfJ2D+YM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12393C4CEEA;
+	Mon, 16 Jun 2025 14:13:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750083194;
+	bh=K9lGYE1jC13GQlRKSFKfI1egBgg+0AaxtQyIvBUOSSM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CfJ2D+YM+/jAdZB7kow/k66QuxCaiA+KCGIIKdTXAScDkWBvkf8euzyYoAkXXmvI7
+	 0ZSy1McdEnIfG0vu1Prz3YVK8s82g8UvKp/jyZzlb/P7hJ9F7VcpUGtP+AVWXDNj+z
+	 ki4CpttRg2hw8I0zmq0rgMQz1kFDX5mU+G0nOfitIdZj+EQTXtZJ3IUn2DQdN5Tl1C
+	 4V3b7v3o1aSanESBDIXG96bOFRft3hWUgF7OgjqwiCRFag50WI5cSALvf/saEWDogn
+	 gpXvMOc10qkFuDSsZtDSP5LNnsKde+Pb2pAedkEWi5n0UBpfcTxzg3YAOuU4f3xALm
+	 AsCXz1KkoizWg==
+Date: Mon, 16 Jun 2025 16:13:09 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Collin Funk <collin.funk1@gmail.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, 
+	eggert@cs.ucla.edu, bug-gnulib@gnu.org
+Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list()
+Message-ID: <20250616-flitzen-barmherzigen-e30c63f9e8ba@brauner>
+References: <20250605164852.2016-1-stephen.smalley.work@gmail.com>
+ <CAHC9VhQ-f-n+0g29MpBB3_om-e=vDqSC3h+Vn_XzpK2zpqamdQ@mail.gmail.com>
+ <CAHC9VhRUqpubkuFFVCfiMN4jDiEhXQvJ91vHjrM5d9e4bEopaw@mail.gmail.com>
+ <87plfhsa2r.fsf@gmail.com>
+ <CAHC9VhRSAaENMnEYXrPTY4Z4sPO_s4fSXF=rEUFuEEUg6Lz21Q@mail.gmail.com>
+ <20250611-gepunktet-umkurven-5482b6f39958@brauner>
+ <CAHC9VhTWEWq_rzZnjbYrS6MCb5_gSBDAjUoYQY4htQ5MaY2o_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 11/11] mm,memory_hotplug: Drop status_change_nid
- parameter from memory_notify
-To: Oscar Salvador <osalvador@suse.de>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Harry Yoo <harry.yoo@oracle.com>, Rakie Kim <rakie.kim@sk.com>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250616135158.450136-1-osalvador@suse.de>
- <20250616135158.450136-12-osalvador@suse.de>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <20250616135158.450136-12-osalvador@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,huawei.com,oracle.com,sk.com,gmail.com,kvack.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -6.80
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhTWEWq_rzZnjbYrS6MCb5_gSBDAjUoYQY4htQ5MaY2o_w@mail.gmail.com>
 
-On 6/16/25 3:51 PM, Oscar Salvador wrote:
-> There no users left of status_change_nid, so drop it from memory_notify
-> struct.
+On Mon, Jun 16, 2025 at 10:03:52AM -0400, Paul Moore wrote:
+> On Wed, Jun 11, 2025 at 6:05 AM Christian Brauner <brauner@kernel.org> wrote:
+> > On Tue, Jun 10, 2025 at 07:50:10PM -0400, Paul Moore wrote:
+> > > On Fri, Jun 6, 2025 at 1:39 AM Collin Funk <collin.funk1@gmail.com> wrote:
+> > > > Paul Moore <paul@paul-moore.com> writes:
+> > > > >> <stephen.smalley.work@gmail.com> wrote:
+> > > > >> >
+> > > > >> > commit 8b0ba61df5a1 ("fs/xattr.c: fix simple_xattr_list to always
+> > > > >> > include security.* xattrs") failed to reset err after the call to
+> > > > >> > security_inode_listsecurity(), which returns the length of the
+> > > > >> > returned xattr name. This results in simple_xattr_list() incorrectly
+> > > > >> > returning this length even if a POSIX acl is also set on the inode.
+> > > > >> >
+> > > > >> > Reported-by: Collin Funk <collin.funk1@gmail.com>
+> > > > >> > Closes: https://lore.kernel.org/selinux/8734ceal7q.fsf@gmail.com/
+> > > > >> > Reported-by: Paul Eggert <eggert@cs.ucla.edu>
+> > > > >> > Closes: https://bugzilla.redhat.com/show_bug.cgi?id=2369561
+> > > > >> > Fixes: 8b0ba61df5a1 ("fs/xattr.c: fix simple_xattr_list to always include security.* xattrs")
+> > > > >> >
+> > > > >> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > > > >> > ---
+> > > > >> >  fs/xattr.c | 1 +
+> > > > >> >  1 file changed, 1 insertion(+)
+> > > > >>
+> > > > >> Reviewed-by: Paul Moore <paul@paul-moore.com>
+> > > > >
+> > > > > Resending this as it appears that Stephen's original posting had a
+> > > > > typo in the VFS mailing list.  The original post can be found in the
+> > > > > SELinux archives:
+> > > > >
+> > > > > https://lore.kernel.org/selinux/20250605164852.2016-1-stephen.smalley.work@gmail.com/
+> > > >
+> > > > Hi, responding to this message since it has the correct lists.
+> > > >
+> > > > I just booted into a kernel with this patch applied and confirm that it
+> > > > fixes the Gnulib tests that were failing.
+> > > >
+> > > > Reviewed-by: Collin Funk <collin.funk1@gmail.com>
+> > > > Tested-by: Collin Funk <collin.funk1@gmail.com>
+> > > >
+> > > > Thanks for the fix.
+> > >
+> > > Al, Christian, are either of you going to pick up this fix to send to
+> > > Linus?  If not, any objection if I send this up?
+> >
+> > It's been in vfs.fixes for some time already and it'll go out with the
+> > first round of post -rc1 fixes this week.
 > 
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> Acked-by: David Hildenbrand <david@redhat.com>
+> Checking on the status of this patch as we are at -rc2 and I don't see
+> it in Linus' tree?
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-
-> ---
->  Documentation/core-api/memory-hotplug.rst | 7 -------
->  include/linux/memory.h                    | 1 -
->  mm/memory_hotplug.c                       | 4 ----
->  3 files changed, 12 deletions(-)
-> 
-> diff --git a/Documentation/core-api/memory-hotplug.rst b/Documentation/core-api/memory-hotplug.rst
-> index fb84e78968b2..8fc97c2379de 100644
-> --- a/Documentation/core-api/memory-hotplug.rst
-> +++ b/Documentation/core-api/memory-hotplug.rst
-> @@ -59,17 +59,10 @@ The third argument (arg) passes a pointer of struct memory_notify::
->  	struct memory_notify {
->  		unsigned long start_pfn;
->  		unsigned long nr_pages;
-> -		int status_change_nid;
->  	}
->  
->  - start_pfn is start_pfn of online/offline memory.
->  - nr_pages is # of pages of online/offline memory.
-> -- status_change_nid is set node id when N_MEMORY of nodemask is (will be)
-> -  set/clear. It means a new(memoryless) node gets new memory by online and a
-> -  node loses all memory. If this is -1, then nodemask status is not changed.
-> -
-> -  If status_changed_nid* >= 0, callback should create/discard structures for the
-> -  node if necessary.
->  
->  It is possible to get notified for MEM_CANCEL_ONLINE without having been notified
->  for MEM_GOING_ONLINE, and the same applies to MEM_CANCEL_OFFLINE and
-> diff --git a/include/linux/memory.h b/include/linux/memory.h
-> index a9ccd6579422..de8b898ada3f 100644
-> --- a/include/linux/memory.h
-> +++ b/include/linux/memory.h
-> @@ -109,7 +109,6 @@ struct memory_notify {
->  	unsigned long altmap_nr_pages;
->  	unsigned long start_pfn;
->  	unsigned long nr_pages;
-> -	int status_change_nid;
->  };
->  
->  struct notifier_block;
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index e8ccfe4cada2..bfaa570c0685 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1153,7 +1153,6 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
->  	struct memory_notify mem_arg = {
->  		.start_pfn = pfn,
->  		.nr_pages = nr_pages,
-> -		.status_change_nid = NUMA_NO_NODE,
->  	};
->  	struct node_notify node_arg = {
->  		.nid = NUMA_NO_NODE,
-> @@ -1181,7 +1180,6 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
->  	if (!node_state(nid, N_MEMORY)) {
->  		/* Adding memory to the node for the first time */
->  		node_arg.nid = nid;
-> -		mem_arg.status_change_nid = nid;
->  		ret = node_notify(NODE_ADDING_FIRST_MEMORY, &node_arg);
->  		ret = notifier_to_errno(ret);
->  		if (ret)
-> @@ -1905,7 +1903,6 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
->  	struct memory_notify mem_arg = {
->  		.start_pfn = start_pfn,
->  		.nr_pages = nr_pages,
-> -		.status_change_nid = NUMA_NO_NODE,
->  	};
->  	struct node_notify node_arg = {
->  		.nid = NUMA_NO_NODE,
-> @@ -1976,7 +1973,6 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
->  	 */
->  	if (nr_pages >= pgdat->node_present_pages) {
->  		node_arg.nid = node;
-> -		mem_arg.status_change_nid = node;
->  		ret = node_notify(NODE_REMOVING_LAST_MEMORY, &node_arg);
->  		ret = notifier_to_errno(ret);
->  		if (ret)
-
+Sent this morning with some other fixes.
 
