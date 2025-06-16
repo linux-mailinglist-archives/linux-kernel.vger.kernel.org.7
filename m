@@ -1,156 +1,143 @@
-Return-Path: <linux-kernel+bounces-689174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C14ADBD58
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 00:56:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDADAADBD62
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 01:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A7B3B678A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:56:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE0E03B7B71
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 23:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB832264AF;
-	Mon, 16 Jun 2025 22:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609E72264C9;
+	Mon, 16 Jun 2025 23:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ji5fPsx5"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6179914C5B0
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 22:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="ba1Vh+Nr"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5265E223DD5;
+	Mon, 16 Jun 2025 23:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750114582; cv=none; b=KBs9x+piAGgkIN9V4XlSEZ48UUkgqY4bvfGXonUejBxMu8puwEo4u6RhPiPe5I2TQScc3gMdfXdHYKDtSXBuU2PtEzQk0J8SnJskT3lk4wfUIY9AqTy06iY86CuczfjRQU5T+PVABBVl46t3ySWFBc26gHnijTbFSDN8X1uTurk=
+	t=1750115416; cv=none; b=q9X5Jt6mZjsTBFBvmzcNyq7VGHyU+t5bBSdRlDB2pN0L/IwIzVc/HzUqNjdgFFO0rO83e+gg0Z+T1aKVLR3hdT54GUYcMa0ghb6tpbYQZLH7sL2LjYHjPOQLI7dYNKPgL9W12gP53ngLjZ8GIw6W4gxwkpfLRheUcbitse0leVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750114582; c=relaxed/simple;
-	bh=nmDdx+pP0H38NdKv072XQf8thk7tTAg2KJDwDQI60Es=;
+	s=arc-20240116; t=1750115416; c=relaxed/simple;
+	bh=l/dsEKZik8069kBgbRAsR0tcPdM8xcTYaQmnuK2tb18=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cS25eGRZJSbZ64aijQkyvMPPLCSA/VBmegi4OsO7oitYZDh9SGh71eExzavs33N2y2rjNRMP+w6JhgCNRpPkAfkZnuJafdHq0adECvuqUAScbG1Yjuu+cGTh1meaXgiA/SK3JJKmVgVsGulTNzv20r+OP89B7CSD1/N9UvJDiTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ji5fPsx5; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 16 Jun 2025 15:56:02 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750114577;
+	 Content-Type:Content-Disposition:In-Reply-To; b=uoc3gh/IxUWhOCpTpzxd72d7kaubKJLjkWmmIyAvP4jeVn0dJr36xj/q/P1z/dS5Bu+BYsbL2qJczHuOhy4axBcHZrxB871AWOTpyY0pq3lnJpO9iPKYC4XsXXKXtEWwecoB/Rx8blF2goDzFWWf/lNGUic/z7Zi/RHfrA537Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=ba1Vh+Nr; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 45E3014C2D3;
+	Tue, 17 Jun 2025 01:00:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1750114827;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vBF0zojgAYzzJ5lMjiUR1nnWNeajMbt4wna1wGlVy9E=;
-	b=ji5fPsx5J2eIPmYLm1BQ3oOmbithArlzeW3d9reowesgLSa+A2mfsaLXrF+IPGc1gfcxu0
-	3quarNyuOo2PukdCRd6GOPH6dGqHCWO3aZv0svcEm1X61MPL6r//rX2c4x/qUV38wwH/w0
-	tRJDrnsCzD+P6Vfry15HPk6T0JN65i0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] MAINTAINERS: add further core files to mm core
- section
-Message-ID: <35kubwcjkvyu34k7ejp2ykydtrbcl2gptcurs7rhqzi3cy3l5h@gcxndb7dfdgq>
-References: <20250616203844.566056-1-lorenzo.stoakes@oracle.com>
- <727b5e89-89d7-4abf-a93c-8d6f2cb2c438@redhat.com>
+	bh=LSj4gXCyHisTwhB2BQnYcgpL/7V+l81OjPQ3XMozPiY=;
+	b=ba1Vh+NrSIjd7dsdd0+OHQAo7kEOIiMCbiZJITasBMpb06v5GCKFJzfa1Q00oZ7ppDVJYG
+	V+JsgYIurMccniqSrkVZn6QnSlVESpbxMFZPC8sfVKmKZ+D3eo+daYi/ML7Vs8MJu4t/cR
+	1BtXctHoYjA4lz1+e8LJvfTLuJIMFlCmmGvQXCcVMABgSNMwml7IPYNukXzENuyJR/XK7w
+	LIkPx8oP95IJ7trvfZ/myMEkKZumsIBRyJr+knK01jJeJ8WRyBrEAcGxgk9x92o3cIZwfM
+	mlxTijTq0BCrtF6ANKmdm/PJN/2PMo81dXOiCXGii/KvVky1ARmGdwrB/hSKmw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id ffc07ee8;
+	Mon, 16 Jun 2025 23:00:23 +0000 (UTC)
+Date: Tue, 17 Jun 2025 08:00:08 +0900
+From: asmadeus@codewreck.org
+To: Yuhao Jiang <danisjiang@gmail.com>
+Cc: ericvh@kernel.org, lucho@ionkov.net, linux_oss@crudebyte.com,
+	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
+	security@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] net/9p: Fix buffer overflow in USB transport layer
+Message-ID: <aFCh-JXnifNXTgSt@codewreck.org>
+References: <20250616132539.63434-1-danisjiang@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <727b5e89-89d7-4abf-a93c-8d6f2cb2c438@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250616132539.63434-1-danisjiang@gmail.com>
 
-On Mon, Jun 16, 2025 at 11:10:41PM +0200, David Hildenbrand wrote:
-> On 16.06.25 22:38, Lorenzo Stoakes wrote:
-> > There are a number of files which don't quite belong anywhere else, so
-> > place them in the core section. If we determine in future they belong
-> > elsewhere we can update incrementally but it is preferable that we assign
-> > each file to a section as best we can.
-> > 
-> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > ---
-> > REVIEWERS - let me know if these seem appropriate, I'm eyeballing
-> > this. even if they are not quite best placed a 'best effort' is still
-> > worthwhile so we establish a place to put all mm files, we can always
-> > incrementally update these later.
-> > 
-> >   MAINTAINERS | 28 ++++++++++++++++++++++++----
-> >   1 file changed, 24 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 4523a6409186..a61d56bd7aa4 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -15740,10 +15740,6 @@ F:	include/linux/memory_hotplug.h
-> >   F:	include/linux/memory-tiers.h
-> >   F:	include/linux/mempolicy.h
-> >   F:	include/linux/mempool.h
-> > -F:	include/linux/memremap.h
-> > -F:	include/linux/mmzone.h
-> > -F:	include/linux/mmu_notifier.h
-> > -F:	include/linux/pagewalk.h
-> >   F:	include/trace/events/ksm.h
-> >   F:	mm/
-> >   F:	tools/mm/
+Yuhao Jiang wrote on Mon, Jun 16, 2025 at 09:25:39PM +0800:
+> A buffer overflow vulnerability exists in the USB 9pfs transport layer
+> where inconsistent size validation between packet header parsing and
+> actual data copying allows a malicious USB host to overflow heap buffers.
 > 
-> Probably better to have some section than none ... was just briefly
-> wondering if "CORE" is the right section for some of that. Some of that
-> might be better of in a "MM MISC" section, maybe.
+> The issue occurs because:
+> - usb9pfs_rx_header() validates only the declared size in packet header
+> - usb9pfs_rx_complete() uses req->actual (actual received bytes) for memcpy
 > 
-> > @@ -15764,16 +15760,40 @@ S:	Maintained
-> >   W:	http://www.linux-mm.org
-> >   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> >   F:	include/linux/memory.h
-> > +F:	include/linux/memremap.h
-> >   F:	include/linux/mm.h
-> >   F:	include/linux/mm_*.h
-> >   F:	include/linux/mmdebug.h
-> > +F:	include/linux/mmu_notifier.h
-> > +F:	include/linux/mmzone.h
-> >   F:	include/linux/pagewalk.h
-> >   F:	kernel/fork.c
-> >   F:	mm/Kconfig
-> >   F:	mm/debug.c
-> > +F:	mm/debug_page_ref.c
-> > +F:	mm/debug_vm_pgtable.c
+> This allows an attacker to craft packets with small declared size (bypassing
+> validation) but large actual payload (triggering overflow in memcpy).
 > 
-> Wondering if there should be a MM DEBUG section. But then, no idea who in
-> their right mind would be willing to maintain that ;)
-> 
-> > +F:	mm/folio-compat.c
-> > +F:	mm/highmem.c
-> >   F:	mm/init-mm.c
-> > +F:	mm/internal.h
-> > +F:	mm/interval_tree.c
-> > +F:	mm/io-mapping.c> +F:	mm/ioremap.c
-> > +F:	mm/list_lru.c
-> 
-> Smells like reclaim/memcg.
+> Add validation in usb9pfs_rx_complete() to ensure req->actual does not
+> exceed the buffer capacity before copying data.
 
-Shrinker might be more appropriate (along with the list_lru.h)
+Thanks for this check!
 
-> 
-> > +F:	mm/maccess.c
-> > +F:	mm/mapping_dirty_helpers.c
-> >   F:	mm/memory.c> +F:	mm/memremap.c
-> 
-> memory hotplug related. Well, one could argue that it's just a memory
-> hotplug user. It's mostly ZONE_DEVICE handling. Wonder if that would be
-> worth a separate section ...
-> 
-> > +F:	mm/mmu_notifier.c
-> > +F:	mm/mmzone.c
-> > +F:	mm/oom_kill.c
-> 
-> This contains quite some meat. I wonder if a OOM section would be
-> appropriate (Michal, I'm looking at you :) )
-> 
+Did you reproduce this or was this static analysis found?
+(to knowi if you tested wrt question below)
 
-I think Michal already has a patch on OOM section which I expect he will
-send out soon.
+> Reported-by: Yuhao Jiang <danisjiang@gmail.com>
+> Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
+> ---
+>  net/9p/trans_usbg.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
+> index 6b694f117aef..047a2862fc84 100644
+> --- a/net/9p/trans_usbg.c
+> +++ b/net/9p/trans_usbg.c
+> @@ -242,6 +242,15 @@ static void usb9pfs_rx_complete(struct usb_ep *ep, struct usb_request *req)
+>  	if (!p9_rx_req)
+>  		return;
+>  
+> +	/* Validate actual received size against buffer capacity */
+> +	if (req->actual > p9_rx_req->rc.capacity) {
+> +		dev_err(&cdev->gadget->dev,
+> +			"received data size %u exceeds buffer capacity %zu\n",
+> +			req->actual, p9_rx_req->rc.capacity);
+> +		p9_req_put(usb9pfs->client, p9_rx_req);
 
+I still haven't gotten around to setting up something to test this, and
+even less the error case, but I'm not sure a single put is enough --
+p9_client_cb does another put.
+Conceptually I think it's better to mark the error and move on
+e.g. (not even compile tested)
+```
+	int status = REQ_STATUS_RCVD;
+
+	[...]
+
+	if (req->actual > p9_rx_req->rc.capacity) {
+		dev_err(...)
+		req->actual = 0;
+		status = REQ_STATUS_ERROR;
+	}
+	
+	memcpy(..)
+
+        p9_rx_req->rc.size = req->actual;
+
+        p9_client_cb(usb9pfs->client, p9_rx_req, status);
+        p9_req_put(usb9pfs->client, p9_rx_req);
+
+	complete(&usb9pfs->received);
+```
+(I'm not sure overriding req->actual is allowed, might be safer to use
+an intermediate variable like status instead)
+
+What do you think?
+
+Thanks,
+-- 
+Dominique Martinet | Asmadeus
 
