@@ -1,87 +1,71 @@
-Return-Path: <linux-kernel+bounces-688380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 176CFADB1C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:25:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE941ADB195
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 384123A7BB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:25:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70E4E188A095
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A21B2DBF42;
-	Mon, 16 Jun 2025 13:25:48 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB732BD5B7;
+	Mon, 16 Jun 2025 13:19:52 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188B72701D0;
-	Mon, 16 Jun 2025 13:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FCC27E05A;
+	Mon, 16 Jun 2025 13:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750080348; cv=none; b=I/ipGHtS9/6La2xKLSEuOkbD4iaBkcVkMbtXk4iNsXx3g5dycnryrO4bEdlfm3eWOzZb2dJxHlqEefDQKZalAbF/rTc5iWTnjL94hv+cWtVoYQfVo9bq5zlp0jYdHqOUU2tsV4I33mFzecc1vFxRBT3FIl4k5m8XZVQ4009F1Is=
+	t=1750079992; cv=none; b=JLsfcySr8jbGbyJ0BBV2XGx7Wz5308CX3pDkNx9wEF7sJh+lWvQJMFKcExsSiPYHyZxibijuVjSLH9wIcJqW/JWAiAiRmPdMIkOOMC25+RGWXBGJ4MnDMZmF9eupGMLPdH7XVuf4a38sShQo7zALqx7sswTVEtFbLuJqm3lpU0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750080348; c=relaxed/simple;
-	bh=7jLZI80Hgb1SAIJq13IgdmwGWGYWoNlMu8efq1m7Cjs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q1whjYCxWO2jZosEdeAtC1LIdQ9EHxM5SwItDIhxNwyhR7fR+fQMfGSo4M2fheU0MokM7BkxQ5reFU7XH99RuRggKddczhNhmgb6HA4rA9TQEzgRZeh2xM4B8qcIPfI8mgaMT3oTXXn8gckp8VcSsanCwQymcyMs5btXVuABbn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bLW1Y1h7Pz2TSN3;
-	Mon, 16 Jun 2025 21:24:17 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2E0F6140279;
-	Mon, 16 Jun 2025 21:25:43 +0800 (CST)
-Received: from localhost.localdomain (10.90.31.46) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 16 Jun 2025 21:25:42 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <mkubecek@suse.cz>
-CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>
-Subject: [PATCH ethtool] ethtool: hibmcge: fix wrong register address in pretty print of ethtool -d command
-Date: Mon, 16 Jun 2025 21:18:40 +0800
-Message-ID: <20250616131840.812638-1-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1750079992; c=relaxed/simple;
+	bh=j83uEkut/IUacfVpKQoQfNEnac5UYtvjf4AmXzaWfRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sv0Rvl3l3NJGIDkfSHXQscNWlqbyU6H42V2aMGk1QJerk9auwKRW75z0hC5mKS4BxnD7BS5v/s2GowbffYMLvD7CeUBV24E7GRC0cl5qVMZP6yAJwtV2vKIXtNRo9HvIoeIA1oYx5U7ont5/Mhf/l6u9v0kEel+0fH18uQ5rSP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id B8C2467373; Mon, 16 Jun 2025 15:19:44 +0200 (CEST)
+Date: Mon, 16 Jun 2025 15:19:44 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: James Clark <james.clark@linaro.org>
+Cc: Christoph Hellwig <hch@lst.de>, Mark Brown <broonie@kernel.org>,
+	olteanv@gmail.com, oe-kbuild-all@lists.linux.dev, arnd@arndb.de,
+	larisa.grigore@nxp.com, Frank.li@nxp.com, linux-spi@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
+Subject: Re: [PATCH] dma-mapping: Stub out dma_{alloc,free,map}_pages() API
+Message-ID: <20250616131944.GA30260@lst.de>
+References: <20250616111749.316413-1-james.clark@linaro.org> <20250616112927.GA21689@lst.de> <5f1ca0ac-b66c-4b92-8f69-027c2468b117@sirena.org.uk> <20250616120832.GA24959@lst.de> <2d62254e-5cbe-4174-95d8-e80cae4f4543@sirena.org.uk> <20250616121444.GA25443@lst.de> <7cfcf919-3c7d-4f0c-911f-697ea3141080@linaro.org> <20250616131346.GB29838@lst.de> <83855c1a-c128-4762-9d6b-e17f2c4c8820@linaro.org> <d16bdc40-20d6-49db-bf41-18bb9b8e01fd@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d16bdc40-20d6-49db-bf41-18bb9b8e01fd@linaro.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-The addresses of mac_addr_h and mac_addr_l are wrong,
-they need to be swapped.
+On Mon, Jun 16, 2025 at 02:15:56PM +0100, James Clark wrote:
+>> Yes it does, it has a few modes that don't require it. Presumably we can't 
+>> just add a depends into the kconfig for all devices because they might not 
+>> be using DMA.
+>
+> *for all the different variants of spi-fsl-dpsi devices I mean
 
-Fixes: d89f6ee9c12a ("hibmcge: add support dump registers for hibmcge driver")
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- hibmcge.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This is drivers/spi/spi-fsl-dspi.c?
 
-diff --git a/hibmcge.c b/hibmcge.c
-index 921efd2..ca81bc0 100644
---- a/hibmcge.c
-+++ b/hibmcge.c
-@@ -36,8 +36,8 @@ static const struct hbg_offset_name_map hbg_spec_maps[] = {
- 	{0x0004, "event_req"},
- 	{0x0008, "mac_id"},
- 	{0x000c, "phy_addr"},
--	{0x0010, "mac_addr_h"},
--	{0x0014, "mac_addr_l"},
-+	{0x0010, "mac_addr_l"},
-+	{0x0014, "mac_addr_h"},
- 	{0x0018, "uc_max_num"},
- 	{0x0024, "mdio_freq"},
- 	{0x0028, "max_mtu"},
--- 
-2.33.0
-
+Yes, looks like it is one of those rare devices supporting a DMA and
+non-DMA mode.  But everything seems nicely guarded off using
+"dspi->devtype_data->trans_mode == DSPI_DMA_MODE" checks there.  So
+wrap them into a little helper using IS_ENABLED(CONFIG_HAS_DMA) and
+everything should be sorted out.
 
