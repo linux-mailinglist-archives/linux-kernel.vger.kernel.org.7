@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-688426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8308ADB249
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:42:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3234ADB250
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D380168F6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:40:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C70DA16F073
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CE2285C98;
-	Mon, 16 Jun 2025 13:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B536189B8C;
+	Mon, 16 Jun 2025 13:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nXpYsAws"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2070.outbound.protection.outlook.com [40.107.223.70])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nsqsyWOo"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2057.outbound.protection.outlook.com [40.107.93.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F61F27605A
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312982877D6
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.57
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750081245; cv=fail; b=eyc/LiviyZYzlfzLX64ZVldBaPAH44BGKXj4Zo89WJ0kor/1BEnSjDNAEZTXb8vdmyodw0jJjNBNk3u43aYetwzU0IYTBhlt9mk2cHDGLBHYk4r0Pu2LkNWuiiIyZOKZ85revGYNi0ZlDuYQ81R0yRCLtjlpjjEZQJxvWNNfYhg=
+	t=1750081270; cv=fail; b=jE70C3hsJNq8uhWULK9Yjlu3Eqr2jaXE3vJL8IetypPxDScM/DP07E0dg7zbiWrX+C5CInugTVgiOHzDR1pQWwwhiD/Y2qY5SQYhVXVN7JlhUNF3VYUEeGqUGCEH6dM3WaIdBDexyt5QppeuS5/N+xHe/fVyyUDmm6l/2tPfRgg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750081245; c=relaxed/simple;
-	bh=WpsAEvMnUDf34eJlZpw8U/J3fwHi+PNQD3GFF8QOV0k=;
+	s=arc-20240116; t=1750081270; c=relaxed/simple;
+	bh=9ZGJa5rYwZnky1bskagr5zhcLs7DRH2wI7Qnjtew8cw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ubvkqpPG/7zXpen3IX/bV7PbXrWhfYFEcGIzeycYGnbHcnzerT3l4GMlMIhevztbIIuQVO960Kvt76terJp8u02HrwKxPQPVikb80KwRiEAKftc9w+7VvTY5pFP4tWw7+OUYLngUs0yJI72lESMMRB1q9fHLzguSFWWwTNfv08E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nXpYsAws; arc=fail smtp.client-ip=40.107.223.70
+	 MIME-Version:Content-Type; b=IepcrfM5Od5p7wm5LmiquxCE9KENC0XF4ABbt03HUvA14tCEJzZd0lnywAPo+IulYnjeqnWjX+xJkcS8LrxqCIdo1E+mQwMTN0k9GPX3Eiw6TH9PZJb+1uH8x6F5OzzDl2RryU3mW9I8MEQQF4siiuULK6TxVSI3cCOf1QRwOPY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nsqsyWOo; arc=fail smtp.client-ip=40.107.93.57
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NDDU0Q+cXKZNXNIYmAy3rhAmHpQ9sMyB/Fyx3hzei/tM3vF4oVUAzX6dq6PHAk3kE5zNlffi/8pRBAigKTf1zKW4CLyKW1a5Izj3+SnFp5No0aKGJaYC/0twb8doSW05j2bZxKGQH9nnw5iTujfySnP0tKMlQo9rBANnDPq0Qk0Ike23lg+3A80dT2zffEu4Oz0g4D2FuJ6fqSKmqfENKKQMOtRvg5q8lsaP7sP7roijb56kR2uu59rtfX7ymD8VjlNKdXOuf8lC4cUwofOoMix3l42/i/HYEZKBzqnzdITdaVT8raLhuGzPEVEQMue2CDh8RFrSVneFn9JqrfH9Vg==
+ b=HSGiOFwhAzX6+X9MTJjWBhNfZeBESHA+znyMJYURIvp1iwbVPTK9FnpAhLc5KdtSdo1BB1+Rvvjf2d4HhG/6uJQ1hM8Jlu93CE7u9hmuGEYzkDuVqee8brf9im8HzfQ0W7YbDxwyrpucEDHMsAf+ed58GtR09kkwwlUmOCtK6b5KFzK3VNnYQdj5XsW7qcvp6lQzl4u6o0KK19LsS0aH5bSmGkCKWxpVqTiPpa0DpbSwVUGG6OxFBN72qzUEUSos7t3K+kqlm01lvfNNJf9Q8gm5JEUJrA9p4FpDjr3TuCJw8MoWBDfrs7Bw52wMbop4Lfo3OvNdJjDS8qP9fWssbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+eZdYa07Ng3zHhaAtg01x0vI5scO5bdFkv3BXOmr10M=;
- b=HytlNuTkdhVaF6nOVrSkBgRoZul9AO/2q7ODWXYkDQjSJg/vnbPj6OURDOG1PtkkPapObkWsXWN9WeJbbnEE78bh6p1pryjMrqp/kLhfCmcAcyjixBUS0nJ7cLPV2YtV+iwcKz5aDWRzK7/O8IhL66Zn33QUbsQxafc0EB/knwOxzqqldxCpA83NksdYR7BPo2fCBzfHqwRvNIhEpvl7p00PwYuLGwy8mpiI4yX6+7t/JK+mfC7YJ+ecm59YBtNcdI4H6lXV/veltrpW9JjKgU3pQ9S9GoSfKsWkejL8/EUilRzqKujKgBlubgR9ri9KKfhN3wwXT/1A7ggYRjpBkQ==
+ bh=AtvFA3x7Z9k0MQ6dYrbalvJCVo0G2UC6SLH9leZKv1M=;
+ b=Sq2aH9XlUMVJ/RD64IMJS7UNQvvEiuJurOlJLtelFBMDWeBtMI/9Ff7NuR29KICbL1K2PR4M8molv8hGWvKXFmF5copFvQJbmUtugB7mgP6tB1b+lIxUPRXIrkYGtJehyk+Rvwa27Jva3F7ZIUisoeU/tOROUl+dGKMVareijAdqjHTpUUhru14+z1b9Y7WAVG5qps79xte8+HaCcxksseSAWb3IUZJ3rpsfs+CBMLd7iDtnqeGne3i51zRhCeh0chFDFrSK5aABKVtifhr0d85IfiHejFDmhYvQ3XKmA92iDPCA5IX5VSiR6yvAYqPJUPzVwAwXVuNRBXDH7zI5uA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+eZdYa07Ng3zHhaAtg01x0vI5scO5bdFkv3BXOmr10M=;
- b=nXpYsAwswKdNRIYg1iirRQi7rQnrHxgBKo7MswAANHKPkjaoa44JHVIwVCVspJzRV3qAvwk0tKrwKcy7TCMwDCpPyHWE70ASA8SwmH8abKo1rFWbP5+mgXmE9VQR4QO/ks5BaWsEmMRy6QkPZj0dMz3TZRFSGB0ngtoJXR9AanQ=
-Received: from DS7PR06CA0014.namprd06.prod.outlook.com (2603:10b6:8:2a::11) by
- SA0PR12MB4445.namprd12.prod.outlook.com (2603:10b6:806:95::15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8835.29; Mon, 16 Jun 2025 13:40:41 +0000
-Received: from DS3PEPF000099D8.namprd04.prod.outlook.com
- (2603:10b6:8:2a:cafe::84) by DS7PR06CA0014.outlook.office365.com
- (2603:10b6:8:2a::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.29 via Frontend Transport; Mon,
- 16 Jun 2025 13:40:41 +0000
+ bh=AtvFA3x7Z9k0MQ6dYrbalvJCVo0G2UC6SLH9leZKv1M=;
+ b=nsqsyWOoWNHHoxqPVsBGVmexBCfbp5BQnbDMPslQ/Zyj/MjIv2vJPiLVUiJ3Ca5bKplC6kSrIomBqpqSQd64Qu91MsMHANLsX0mYMcKXZ5aCVodDv8IF2rsFJTkoiaWfCdDW5VdPTIXZ7bVmO5U6GQbAIXdL1mAuPeGPEw+nY2c=
+Received: from DM6PR21CA0006.namprd21.prod.outlook.com (2603:10b6:5:174::16)
+ by SA0PR12MB4384.namprd12.prod.outlook.com (2603:10b6:806:9f::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.30; Mon, 16 Jun
+ 2025 13:41:06 +0000
+Received: from DS3PEPF000099D9.namprd04.prod.outlook.com
+ (2603:10b6:5:174:cafe::55) by DM6PR21CA0006.outlook.office365.com
+ (2603:10b6:5:174::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.4 via Frontend Transport; Mon,
+ 16 Jun 2025 13:41:05 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -61,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS3PEPF000099D8.mail.protection.outlook.com (10.167.17.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8835.15 via Frontend Transport; Mon, 16 Jun 2025 13:40:41 +0000
+ DS3PEPF000099D9.mail.protection.outlook.com (10.167.17.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8835.15 via Frontend Transport; Mon, 16 Jun 2025 13:41:05 +0000
 Received: from BLR-L-BHARARAO.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 16 Jun
- 2025 08:40:34 -0500
+ 2025 08:40:57 -0500
 From: Bharata B Rao <bharata@amd.com>
 To: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
 CC: <Jonathan.Cameron@huawei.com>, <dave.hansen@intel.com>,
@@ -78,9 +79,9 @@ CC: <Jonathan.Cameron@huawei.com>, <dave.hansen@intel.com>,
 	<ziy@nvidia.com>, <dave@stgolabs.net>, <nifan.cxl@gmail.com>,
 	<xuezhengchu@huawei.com>, <yiannis@zptcorp.com>, <akpm@linux-foundation.org>,
 	<david@redhat.com>, <bharata@amd.com>
-Subject: [RFC PATCH v1 2/4] migrate: implement migrate_misplaced_folios_batch
-Date: Mon, 16 Jun 2025 19:09:29 +0530
-Message-ID: <20250616133931.206626-3-bharata@amd.com>
+Subject: [RFC PATCH v1 3/4] mm: kmigrated - Async kernel migration thread
+Date: Mon, 16 Jun 2025 19:09:30 +0530
+Message-ID: <20250616133931.206626-4-bharata@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250616133931.206626-1-bharata@amd.com>
 References: <20250616133931.206626-1-bharata@amd.com>
@@ -96,132 +97,429 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099D8:EE_|SA0PR12MB4445:EE_
-X-MS-Office365-Filtering-Correlation-Id: d1473e6c-f478-4824-c6ba-08ddacdb62e4
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D9:EE_|SA0PR12MB4384:EE_
+X-MS-Office365-Filtering-Correlation-Id: e6728915-fd4f-4c3f-1e60-08ddacdb717a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|7416014|1800799024;
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?P2ZcE34/UDrSbP7y1ismNghP+NvTVso+BLF6GaSRdVy+OT4xtcem7KXtBDLU?=
- =?us-ascii?Q?oYw7i38/pYUx/D2J/oFZGdNYhP1YacfPFKh+AsWzS7l1WwfMVf1aSYT5lkj7?=
- =?us-ascii?Q?wUWIvErhdJwi6asK/qZJF8U/83O7myJ6NGAWmwy8+LsjjoFAG0UMfuKojbLu?=
- =?us-ascii?Q?jCEY36l0O+wMj3ptI1fc1yCN5rB72en453OckQeZzxOfy9x8aVrfTR8pdJoO?=
- =?us-ascii?Q?F2crQuEN1gMf//EI6i0SEZxJNBYfbzEhoaexRc5bS+9rWSEJoJ3xy8M8ZZWi?=
- =?us-ascii?Q?LS+oCVtPOOaLXO5swVmiwmOB95hufoNgaR7UehkVuRKDOMV8BaovKQ35W4XB?=
- =?us-ascii?Q?cNdGQ0KxJ0t8AYwUrVMPoHM6s/OaIl00mxXxJetpL/iut4tck6u9VLtThEkE?=
- =?us-ascii?Q?zaj9pBJ38bmMkIbsqfo+R/TqfmHw6i041969gAY1vn8lk2+nhiJ52w3+ukf2?=
- =?us-ascii?Q?SLrfNj+AUoyyWnJiYIf7tq4gGpu3AgeCc+SBZ82EgwzodHI6B4MJrSO2S5iS?=
- =?us-ascii?Q?D0Vjxw/pZNwc/xli6ZRKpXio2F3lTb1pCT2UbyVeM6qr+TgnyOv1l/J3jM9M?=
- =?us-ascii?Q?kKJ/t83fuzurw3UdRaRa3JlcoFL1xBwr3f+BEEMqYvONfNgZz7Fq1BNDhkMO?=
- =?us-ascii?Q?rtKsZLij+/YC+I2WAroHiKcAZpsIzhd/gNQnrT/IU8c0DRMuEwWFiuNFibIb?=
- =?us-ascii?Q?6PA9luO+X8v5QicGvKVNlw0K3b7vPG0R0kPrJIB4mcGhMFLvrKcERYvUz21f?=
- =?us-ascii?Q?lmsz2LtClRNMNcdZrojn1bLg7TaEvtCd/3e4+UPAI1eXK/pqiMUK1GiGJxrO?=
- =?us-ascii?Q?8pnnqqF2cYd8L7wGAvrMTuMm/5uEfVW/X/4e9ijA/PlH81f+XvdqCG1+9Vj0?=
- =?us-ascii?Q?AG8rNlxm01aJ9u20JOWiGB+jcyywo532gU3EQk7A/Gt3B/f5KaIQHILtQX0g?=
- =?us-ascii?Q?ziVYFdSfgYvf6kc7vj9+a6RTckX2Z4vXUhIckGRc8XDY94WsLJdQ+pI7lbez?=
- =?us-ascii?Q?K5iNNUjVEmo3lV0JXj/Zcltb+lQ3kgfgGTgfXkUHK1d9J4kZfMWrjuv2Fc3D?=
- =?us-ascii?Q?2zRS41kZsAhBm1SgY+E1m1aoylvkRxNvHR37tkwHCdc6ts9pqcNoCfPvu7Fz?=
- =?us-ascii?Q?Av1NZvSNlY+0LacooMkti8wSSfbxknCHWaKc/zbT4N3iIHFTtgM1YNNoV0S/?=
- =?us-ascii?Q?dHtHjPnpbTBvCL3HVM+tv+PLA2ElSjXrGiVZLgxFgsbvXwSp+Nw+t3HXqV5T?=
- =?us-ascii?Q?h4PGKRRp1NCshZHvp/6hd3KI6hP/mM3Dqu4GJHVhGmg17AEj8ZqQhOIEGSSr?=
- =?us-ascii?Q?nbOptpKsII0gjBM510AJUzQuZEZBRHvVlHaVQY4ZaAD1wONzTnslTE0RHq+l?=
- =?us-ascii?Q?KwfxdXqPV1VzeOTTxAPqAr+XeShWqXA0zCrRIx6O+ssFRuHwhOePvMZ2h5dd?=
- =?us-ascii?Q?T8WMe82gEZLn2szb6AFaD6DNCYxH4XvLnxpYSAdXKnO9qj64adDveX8vS2+v?=
- =?us-ascii?Q?v2LFz3qeUEoWj/1qyM02MLkNDW7fhrKbMjRV?=
+	=?us-ascii?Q?739xXXvgMLrc+N9JQUsddEWmjc+cjfR6+vuwxUPpx3PCF72ORs/jLu1S8oM1?=
+ =?us-ascii?Q?Kp2kIlKeDbdijv4zxDFQYwQ9T9Wp/UBL3riFmm9rdNJ2OMKvRGCAF/3c3sjR?=
+ =?us-ascii?Q?BkIzED7YDdRCGn0SYFnJfYGZFUGKAOlhpL5t/N6NU3oY7/bEU04cBieOHaEL?=
+ =?us-ascii?Q?r8gI9MuDmGbSPK4Ws+JV1mnTI5x9fmiFrjF8pGrDDR9WO075TN5lPwPGjCRv?=
+ =?us-ascii?Q?fU8+XkVv8nbQeu0KyWm4NycK5to8Pc60KCutSK9VoVae0KcEcN36jf/vDKLP?=
+ =?us-ascii?Q?SVXWp0X8EoDrIePIIgVOpyRBy1iBoUz1Ru4nJrTTITQmvMl6SNHp6LFs7Umd?=
+ =?us-ascii?Q?XteO+Fb8IbmtOrSO2CURSrUFmp+F02hP+z3OSWhVR+YwqFkIbg5jZMWUCOUq?=
+ =?us-ascii?Q?aGyVsTG1fTqw51GNdN7yAXKFE/K6ku/1JyKNzjtrIhEiVr9p+oDhvKM0Yaxx?=
+ =?us-ascii?Q?eBz6pjTcNW5TA5SPAtw9NEO/z0pIZ8JDQrp/rpymoNM7uM2Zs14634SRKWFd?=
+ =?us-ascii?Q?yI9hZ90RwUy3CllF/xp+KjYpOvgE5NB7ExOHjEhDpeWZdSyc6/V/0zlXoTAj?=
+ =?us-ascii?Q?5lf6gla1Vm0ozMf4z4hfgHb+rMkH6zz9dhRvPk1rbhVGYliuCE4oFqwrHMS+?=
+ =?us-ascii?Q?IyUUedf8CKI+DdrjoNQHX4cPcqgGehYAWML8V4+yNIyhZmj90gJknIEh/63K?=
+ =?us-ascii?Q?kno6n1BbaGP14YPsoIr4Ptl72vxbL4vJZrz7EY7zzgkx2ytAlnQRmd0i+o5n?=
+ =?us-ascii?Q?69XLPuhxVRAOOHxHQisJ01ab/Fz3Qa6X3AlYyfZr4IpO9789Zd5rxJcSofWf?=
+ =?us-ascii?Q?vnvoNtWici9PDukip1uoD5/kAkVvWHBmVVjwkivk+G8//zhoEVizqmvH2IlY?=
+ =?us-ascii?Q?aS3KAeeWRkMF1NVYATZPz+W0kzt43qjO6TkzgHo5Q2trgg/cXgjEiqNHnT/V?=
+ =?us-ascii?Q?0jtWlrfQ1gsYX1/wnircebp2lt+CjOUZDwLTQae1mhs3IYv1DXNBWd7AOiE8?=
+ =?us-ascii?Q?bAIKvIgRtQABG8LZGrlwMg2vC/6A7YffHB5jjQgOmyYQV9RQuLZYzXi/VzZL?=
+ =?us-ascii?Q?mWsyujAjQAc/sbcyfUuLiK+O5eo35us7k4XCpv/9i43vOVR8Bxrd01QU1t95?=
+ =?us-ascii?Q?/tdrHkDfEcfdcP3jqDxETulebf+o9Qu1U7jPAvgHyU4DslLVNOn5c/iPG4vg?=
+ =?us-ascii?Q?oquukHQys/9hyp6yKPIWCh2gLuvZR+LxiuEV3cMMyrw5rbT8fCXpLdSZE5zK?=
+ =?us-ascii?Q?ntb1vV8cHaPuTLEhsc/hP2dHxLeyN6/chRchs8WmycODNkF+NzEUPXtb20qZ?=
+ =?us-ascii?Q?U8F096sSpyCxnt1KlsOLEAOhrOR8DKP7WQMeN0rEH0CMBm8SxNqrJtigl9Se?=
+ =?us-ascii?Q?NIM/kbx6MS+10om4S8awRtJGU8fSRmYZ+0a3c8yZJ/1o16+YZIvDec6iXfSy?=
+ =?us-ascii?Q?6jD7JWmqlAQDVVNibmxD2l5LHjH+SKhvwLbBCMS06v+sMFzqdL7nRqEve3jD?=
+ =?us-ascii?Q?xmfyISY/Wk8lEp7Iv5KTxNdgtBBQ66xPq5tj?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2025 13:40:41.2646
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2025 13:41:05.7319
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1473e6c-f478-4824-c6ba-08ddacdb62e4
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6728915-fd4f-4c3f-1e60-08ddacdb717a
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099D8.namprd04.prod.outlook.com
+	DS3PEPF000099D9.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4445
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4384
 
-From: Gregory Price <gourry@gourry.net>
+kmigrated is a per-node kernel thread that migrates the
+folios marked for migration in batches. Each kmigrated
+thread walks the PFN range spanning its node and checks
+for potential migration candidates.
 
-A common operation in tiering is to migrate multiple pages at once.
-The migrate_misplaced_folio function requires one call for each
-individual folio.  Expose a batch-variant of the same call for use
-when doing batch migrations.
+It depends on the fields added to extended page flags
+to determine the pages that need to be migrated and
+the target NID.
 
-Signed-off-by: Gregory Price <gourry@gourry.net>
 Signed-off-by: Bharata B Rao <bharata@amd.com>
 ---
- include/linux/migrate.h |  6 ++++++
- mm/migrate.c            | 31 +++++++++++++++++++++++++++++++
- 2 files changed, 37 insertions(+)
+ include/linux/mmzone.h   |   5 +
+ include/linux/page_ext.h |  17 +++
+ mm/Makefile              |   3 +-
+ mm/kmigrated.c           | 223 +++++++++++++++++++++++++++++++++++++++
+ mm/mm_init.c             |   6 ++
+ mm/page_ext.c            |  11 ++
+ 6 files changed, 264 insertions(+), 1 deletion(-)
+ create mode 100644 mm/kmigrated.c
 
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index aaa2114498d6..90baf5ef4660 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -145,6 +145,7 @@ const struct movable_operations *page_movable_ops(struct page *page)
- int migrate_misplaced_folio_prepare(struct folio *folio,
- 		struct vm_area_struct *vma, int node);
- int migrate_misplaced_folio(struct folio *folio, int node);
-+int migrate_misplaced_folios_batch(struct list_head *foliolist, int node);
- #else
- static inline int migrate_misplaced_folio_prepare(struct folio *folio,
- 		struct vm_area_struct *vma, int node)
-@@ -155,6 +156,11 @@ static inline int migrate_misplaced_folio(struct folio *folio, int node)
- {
- 	return -EAGAIN; /* can't migrate now */
- }
-+static inline int migrate_misplaced_folios_batch(struct list_head *foliolist,
-+						 int node)
-+{
-+	return -EAGAIN; /* can't migrate now */
-+}
- #endif /* CONFIG_NUMA_BALANCING */
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 283913d42d7b..5d7f0b8d3c91 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -853,6 +853,8 @@ enum zone_type {
  
- #ifdef CONFIG_MIGRATION
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 9fdc2cc3dd1c..748b5cd48a1f 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -2675,5 +2675,36 @@ int migrate_misplaced_folio(struct folio *folio, int node)
- 	BUG_ON(!list_empty(&migratepages));
- 	return nr_remaining ? -EAGAIN : 0;
- }
+ };
+ 
++int kmigrated_add_pfn(unsigned long pfn, int nid);
++
+ #ifndef __GENERATING_BOUNDS_H
+ 
+ #define ASYNC_AND_SYNC 2
+@@ -1049,6 +1051,7 @@ enum pgdat_flags {
+ 					 * many pages under writeback
+ 					 */
+ 	PGDAT_RECLAIM_LOCKED,		/* prevents concurrent reclaim */
++	PGDAT_KMIGRATED_ACTIVATE,	/* activates kmigrated */
+ };
+ 
+ enum zone_flags {
+@@ -1493,6 +1496,8 @@ typedef struct pglist_data {
+ #ifdef CONFIG_MEMORY_FAILURE
+ 	struct memory_failure_stats mf_stats;
+ #endif
++	struct task_struct *kmigrated;
++	wait_queue_head_t kmigrated_wait;
+ } pg_data_t;
+ 
+ #define node_present_pages(nid)	(NODE_DATA(nid)->node_present_pages)
+diff --git a/include/linux/page_ext.h b/include/linux/page_ext.h
+index 76c817162d2f..4300c9dbafec 100644
+--- a/include/linux/page_ext.h
++++ b/include/linux/page_ext.h
+@@ -40,8 +40,25 @@ enum page_ext_flags {
+ 	PAGE_EXT_YOUNG,
+ 	PAGE_EXT_IDLE,
+ #endif
++	/*
++	 * 32 bits following this are used by the migrator.
++	 * The next available bit position is 33.
++	 */
++	PAGE_EXT_MIGRATE_READY,
+ };
+ 
++#define PAGE_EXT_MIG_NID_WIDTH	10
++#define PAGE_EXT_MIG_FREQ_WIDTH	3
++#define PAGE_EXT_MIG_TIME_WIDTH	18
++
++#define PAGE_EXT_MIG_NID_SHIFT	(PAGE_EXT_MIGRATE_READY + 1)
++#define PAGE_EXT_MIG_FREQ_SHIFT	(PAGE_EXT_MIG_NID_SHIFT + PAGE_EXT_MIG_NID_WIDTH)
++#define PAGE_EXT_MIG_TIME_SHIFT	(PAGE_EXT_MIG_FREQ_SHIFT + PAGE_EXT_MIG_FREQ_WIDTH)
++
++#define PAGE_EXT_MIG_NID_MASK	((1UL << PAGE_EXT_MIG_NID_SHIFT) - 1)
++#define PAGE_EXT_MIG_FREQ_MASK	((1UL << PAGE_EXT_MIG_FREQ_SHIFT) - 1)
++#define PAGE_EXT_MIG_TIME_MASK	((1UL << PAGE_EXT_MIG_TIME_SHIFT) - 1)
++
+ /*
+  * Page Extension can be considered as an extended mem_map.
+  * A page_ext page is associated with every page descriptor. The
+diff --git a/mm/Makefile b/mm/Makefile
+index 1a7a11d4933d..5a382f19105f 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -37,7 +37,8 @@ mmu-y			:= nommu.o
+ mmu-$(CONFIG_MMU)	:= highmem.o memory.o mincore.o \
+ 			   mlock.o mmap.o mmu_gather.o mprotect.o mremap.o \
+ 			   msync.o page_vma_mapped.o pagewalk.o \
+-			   pgtable-generic.o rmap.o vmalloc.o vma.o vma_exec.o
++			   pgtable-generic.o rmap.o vmalloc.o vma.o vma_exec.o \
++			   kmigrated.o
+ 
+ 
+ ifdef CONFIG_CROSS_MEMORY_ATTACH
+diff --git a/mm/kmigrated.c b/mm/kmigrated.c
+new file mode 100644
+index 000000000000..3caefe4be0e7
+--- /dev/null
++++ b/mm/kmigrated.c
+@@ -0,0 +1,223 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * kmigrated is a kernel thread that runs for each node that has
++ * memory. It iterates over the node's PFNs and  migrates pages
++ * marked for migration into their targeted nodes.
++ *
++ * kmigrated depends on PAGE_EXTENSION to find out the pages that
++ * need to be migrated. In addition to a few fields that could be
++ * used by hot page promotion logic to store and evaluate the page
++ * hotness information, the extended page flags is field is extended
++ * to store the target NID for migration.
++ */
++#include <linux/mm.h>
++#include <linux/migrate.h>
++#include <linux/cpuhotplug.h>
++#include <linux/page_ext.h>
++
++#define KMIGRATE_DELAY	MSEC_PER_SEC
++#define KMIGRATE_BATCH	512
++
++static int page_ext_xchg_nid(struct page_ext *page_ext, int nid)
++{
++	unsigned long old_flags, flags;
++	int old_nid;
++
++	old_flags = READ_ONCE(page_ext->flags);
++	do {
++		flags = old_flags;
++		old_nid = (flags >> PAGE_EXT_MIG_NID_SHIFT) & PAGE_EXT_MIG_NID_MASK;
++
++		flags &= ~(PAGE_EXT_MIG_NID_MASK << PAGE_EXT_MIG_NID_SHIFT);
++		flags |= (nid & PAGE_EXT_MIG_NID_MASK) << PAGE_EXT_MIG_NID_SHIFT;
++	} while (unlikely(!try_cmpxchg(&page_ext->flags, &old_flags, flags)));
++
++	return old_nid;
++}
 +
 +/*
-+ * Batch variant of migrate_misplaced_folio. Attempts to migrate
-+ * a folio list to the specified destination.
++ * Marks the page as ready for migration.
 + *
-+ * Caller is expected to have isolated the folios by calling
-+ * migrate_misplaced_folio_prepare(), which will result in an
-+ * elevated reference count on the folio.
++ * @pfn: PFN of the page
++ * @nid: Target NID to were the page needs to be migrated
 + *
-+ * This function will un-isolate the folios, dereference them, and
-+ * remove them from the list before returning.
++ * The request for migration is noted by setting PAGE_EXT_MIGRATE_READY
++ * in the extended page flags which the kmigrated thread would check.
 + */
-+int migrate_misplaced_folios_batch(struct list_head *folio_list, int node)
++int kmigrated_add_pfn(unsigned long pfn, int nid)
 +{
-+	pg_data_t *pgdat = NODE_DATA(node);
-+	unsigned int nr_succeeded;
-+	int nr_remaining;
++	struct page *page;
++	struct page_ext *page_ext;
 +
-+	nr_remaining = migrate_pages(folio_list, alloc_misplaced_dst_folio,
-+				     NULL, node, MIGRATE_ASYNC,
-+				     MR_NUMA_MISPLACED, &nr_succeeded);
-+	if (nr_remaining)
-+		putback_movable_pages(folio_list);
++	page = pfn_to_page(pfn);
++	if (!page)
++		return -EINVAL;
 +
-+	if (nr_succeeded) {
-+		count_vm_numa_events(NUMA_PAGE_MIGRATE, nr_succeeded);
-+		mod_node_page_state(pgdat, PGPROMOTE_SUCCESS, nr_succeeded);
-+	}
-+	BUG_ON(!list_empty(folio_list));
-+	return nr_remaining ? -EAGAIN : 0;
++	page_ext = page_ext_get(page);
++	if (unlikely(!page_ext))
++		return -EINVAL;
++
++	page_ext_xchg_nid(page_ext, nid);
++	test_and_set_bit(PAGE_EXT_MIGRATE_READY, &page_ext->flags);
++	page_ext_put(page_ext);
++
++	set_bit(PGDAT_KMIGRATED_ACTIVATE, &page_pgdat(page)->flags);
++	return 0;
 +}
- #endif /* CONFIG_NUMA_BALANCING */
- #endif /* CONFIG_NUMA */
++
++/*
++ * If the page has been marked ready for migration, return
++ * the NID to which it needs to be migrated to.
++ *
++ * If not return NUMA_NO_NODE.
++ */
++static int kmigrated_get_nid(struct page *page)
++{
++	struct page_ext *page_ext;
++	int nid = NUMA_NO_NODE;
++
++	page_ext = page_ext_get(page);
++	if (unlikely(!page_ext))
++		return nid;
++
++	if (!test_and_clear_bit(PAGE_EXT_MIGRATE_READY, &page_ext->flags))
++		goto out;
++
++	nid = page_ext_xchg_nid(page_ext, nid);
++out:
++	page_ext_put(page_ext);
++	return nid;
++}
++
++/*
++ * Walks the PFNs of the zone, isolates and migrates them in batches.
++ */
++static void kmigrated_walk_zone(unsigned long start_pfn, unsigned long end_pfn,
++				int src_nid)
++{
++	int nid, cur_nid = NUMA_NO_NODE;
++	LIST_HEAD(migrate_list);
++	int batch_count = 0;
++	struct folio *folio;
++	struct page *page;
++	unsigned long pfn;
++
++	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
++		if (!pfn_valid(pfn))
++			continue;
++
++		page = pfn_to_online_page(pfn);
++		if (!page)
++			continue;
++
++		if (page_to_nid(page) != src_nid)
++			continue;
++
++		/*
++		 * TODO: Take care of folio_nr_pages() increment
++		 * to pfn count.
++		 */
++		folio = page_folio(page);
++		if (!folio_test_lru(folio))
++			continue;
++
++		nid = kmigrated_get_nid(page);
++		if (nid == NUMA_NO_NODE)
++			continue;
++
++		if (page_to_nid(page) == nid)
++			continue;
++
++		if (migrate_misplaced_folio_prepare(folio, NULL, nid))
++			continue;
++
++		if (cur_nid != NUMA_NO_NODE)
++			cur_nid = nid;
++
++		if (++batch_count >= KMIGRATE_BATCH || cur_nid != nid) {
++			migrate_misplaced_folios_batch(&migrate_list, cur_nid);
++			cur_nid = nid;
++			batch_count = 0;
++			cond_resched();
++		}
++		list_add(&folio->lru, &migrate_list);
++	}
++	if (!list_empty(&migrate_list))
++		migrate_misplaced_folios_batch(&migrate_list, cur_nid);
++}
++
++static void kmigrated_do_work(pg_data_t *pgdat)
++{
++	struct zone *zone;
++	int zone_idx;
++
++	clear_bit(PGDAT_KMIGRATED_ACTIVATE, &pgdat->flags);
++	for (zone_idx = 0; zone_idx < MAX_NR_ZONES; zone_idx++) {
++		zone = &pgdat->node_zones[zone_idx];
++
++		if (!populated_zone(zone))
++			continue;
++
++		if (zone_is_zone_device(zone))
++			continue;
++
++		kmigrated_walk_zone(zone->zone_start_pfn, zone_end_pfn(zone),
++				    pgdat->node_id);
++	}
++}
++
++static inline bool kmigrated_work_requested(pg_data_t *pgdat)
++{
++	return test_bit(PGDAT_KMIGRATED_ACTIVATE, &pgdat->flags);
++}
++
++static void kmigrated_wait_work(pg_data_t *pgdat)
++{
++	long timeout = msecs_to_jiffies(KMIGRATE_DELAY);
++
++	wait_event_timeout(pgdat->kmigrated_wait,
++			   kmigrated_work_requested(pgdat), timeout);
++}
++
++/*
++ * Per-node kthread that iterates over its PFNs and migrates the
++ * pages that have been marked for migration.
++ */
++static int kmigrated(void *p)
++{
++	pg_data_t *pgdat = (pg_data_t *)p;
++
++	while (!kthread_should_stop()) {
++		kmigrated_wait_work(pgdat);
++		kmigrated_do_work(pgdat);
++	}
++	return 0;
++}
++
++static void kmigrated_run(int nid)
++{
++	pg_data_t *pgdat = NODE_DATA(nid);
++
++	if (pgdat->kmigrated)
++		return;
++
++	pgdat->kmigrated = kthread_create(kmigrated, pgdat, "kmigrated%d", nid);
++	if (IS_ERR(pgdat->kmigrated)) {
++		pr_err("Failed to start kmigrated for node %d\n", nid);
++		pgdat->kmigrated = NULL;
++	} else {
++		wake_up_process(pgdat->kmigrated);
++	}
++}
++
++static int __init kmigrated_init(void)
++{
++	int nid;
++
++	for_each_node_state(nid, N_MEMORY)
++		kmigrated_run(nid);
++
++	return 0;
++}
++
++subsys_initcall(kmigrated_init)
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index f2944748f526..3a9cfd175366 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -1398,6 +1398,11 @@ static void pgdat_init_kcompactd(struct pglist_data *pgdat)
+ static void pgdat_init_kcompactd(struct pglist_data *pgdat) {}
+ #endif
+ 
++static void pgdat_init_kmigrated(struct pglist_data *pgdat)
++{
++	init_waitqueue_head(&pgdat->kmigrated_wait);
++}
++
+ static void __meminit pgdat_init_internals(struct pglist_data *pgdat)
+ {
+ 	int i;
+@@ -1407,6 +1412,7 @@ static void __meminit pgdat_init_internals(struct pglist_data *pgdat)
+ 
+ 	pgdat_init_split_queue(pgdat);
+ 	pgdat_init_kcompactd(pgdat);
++	pgdat_init_kmigrated(pgdat);
+ 
+ 	init_waitqueue_head(&pgdat->kswapd_wait);
+ 	init_waitqueue_head(&pgdat->pfmemalloc_wait);
+diff --git a/mm/page_ext.c b/mm/page_ext.c
+index c351fdfe9e9a..546725fffddb 100644
+--- a/mm/page_ext.c
++++ b/mm/page_ext.c
+@@ -76,6 +76,16 @@ static struct page_ext_operations page_idle_ops __initdata = {
+ };
+ #endif
+ 
++static bool need_page_mig(void)
++{
++	return true;
++}
++
++static struct page_ext_operations page_mig_ops __initdata = {
++	.need = need_page_mig,
++	.need_shared_flags = true,
++};
++
+ static struct page_ext_operations *page_ext_ops[] __initdata = {
+ #ifdef CONFIG_PAGE_OWNER
+ 	&page_owner_ops,
+@@ -89,6 +99,7 @@ static struct page_ext_operations *page_ext_ops[] __initdata = {
+ #ifdef CONFIG_PAGE_TABLE_CHECK
+ 	&page_table_check_ops,
+ #endif
++	&page_mig_ops,
+ };
+ 
+ unsigned long page_ext_size;
 -- 
 2.34.1
 
