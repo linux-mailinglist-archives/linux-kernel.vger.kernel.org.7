@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-688354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2382BADB171
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:15:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A89ADB173
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23CD3B6E38
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:15:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5696188B279
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527A92E06FB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D82285C91;
 	Mon, 16 Jun 2025 13:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="jOyYZgdx"
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="FK6QUhR1"
 Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF54B2DF3D5
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921742DF3EF
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750079651; cv=none; b=XSISag4eX4MjFc32CoRKkguMu5X2xjb0X+f8FU9qCIcvOE6uUlgfPmLNGTeQDj9qwFqC4IpTVAe0499dv0iSruqRm0iLr5SuqdOduqY8Z9g0hQrCKmnzQjhUyL3b76DplOq3dV0GI39t7wnpzVquXwPganBAZ4O8ulK9PNP+Q80=
+	t=1750079651; cv=none; b=iIQKvX2hc3j2wBCEkHi7007WhDdZBBbOw63gNnSMZUQUDSohWMht1L+omkbxHdiMe7jcJvRRpAG8hQesdPi3Q++KvwrQ/PDfYkZ51vTXDnEcCHjQXp0CO0MmZcXtzizWEGGdRekqdY1rz70ZOFiNYd3C8YKTbGcNdTJSgtmkyPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1750079651; c=relaxed/simple;
-	bh=5ur0noPldhPSJzrpIbGvJfTAVrDS0OY/wJuG/WreF/g=;
+	bh=XZ/hpMSqcPDhFeBv3nEIKFYJRxLWPko8hPYvUZIb08Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kLg8R3YGNwuWbhkbiZgbc+q3G3plgMKpqBjtvJLhcwbo4csZ8Kwk8zHpaPZnSvVQoDhfhykD5QdIRrv11VlMgMBWQcP1RCWoffIEKlgEIK9Ts1CGmGPSjdOamkueRZNLD+eg0IorEwyTTUn3PriihsgEjZyt47HCsw66EFUhZic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=jOyYZgdx; arc=none smtp.client-ip=203.29.241.158
+	 In-Reply-To:To:Cc; b=HeACDHLtwgR9wcMgTkwRRnAphhCMomaAAypLhI+zikM7Bm7SvRwpzOcprisax2gbidcNQKvH4131Qp5yVu0oVeI069FlypJf7kdqfOb8wT7Ok995k/b8YOgLZ3+xF4SxNjKv/WoANuTAqpuzbX+0Pf0Em5q366GXCaBiMqG3V9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=FK6QUhR1; arc=none smtp.client-ip=203.29.241.158
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1750079640;
-	bh=ZH2nQiJURmm3f1AacPrlu4/bRjlg+XhQ1J7Bn7VXnB0=;
+	d=codeconstruct.com.au; s=2022a; t=1750079641;
+	bh=YIWTEhmFsARbk2BN345atKp2DrJ1LmEtzHmUjEpWj/4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=jOyYZgdxYYAWdVDWWT9hujOZNAzM7/cW8rNsAD7F/VQKHLlPYJNsa9RD7V0Mbu3CD
-	 ZC3xxtBeDLKvUk3wfHwhcQr1yNbTCCJEEMVQSNJmxWpUEHRFjg9WINb24ZCOU3tUDx
-	 lpiB0l8eGro6Lp/dqaeZwN71irafgr7CH9dBLiaiXT83vQNOr5HJIe4XQA49+S0xgp
-	 KU2guJrnLcxMmJENIbv23CfG/lwB6Apj2Dzx5VS0K2o6baF37jr6AgkgJ+/hrW79Bh
-	 pn0QzyL/NBVQp9m3AtYxPL4Uj++L8qBSWDBo9zAhlVg04udw67xJS8ziEQu1Vcjm11
-	 +u4D9a6bUJasQ==
+	b=FK6QUhR1cwtYs5DPuSeAzi7fp76/6QCgGoDSaXgKWhg6g7s/j6FFq1EUiLX0NdXR2
+	 HY/JXtzCN+JvM6XYtOscdY3vvcBMgwht9leEXBEgRSIBXRyTnuEcjyxNCglYFDacNG
+	 Y3uKK3TYQYd9UUtrGSgwzDDrpa220ufI+GkWCOjFgv/6bwUpoPjTprz8y4AE6m/RNm
+	 I10kxqhj2WndFcpsefx9NXEnw9B6xQ2TpHh4rxi9As5JaBeQEwMr9aAqMLUvmDUAhy
+	 RqDpHSQEShArOJbSA+CVu1rccSBKNfdyWjkCSxmd+uaU+QoP7p/+TrxNTUpXj5jxwB
+	 /TUiPahUDAypg==
 Received: from [127.0.1.1] (unknown [180.150.112.166])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 329C36884F;
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id EE27B68850;
 	Mon, 16 Jun 2025 21:14:00 +0800 (AWST)
 From: Andrew Jeffery <andrew@codeconstruct.com.au>
-Date: Mon, 16 Jun 2025 22:43:41 +0930
-Subject: [PATCH v2 04/10] soc: aspeed: lpc-snoop: Constrain parameters in
- channel paths
+Date: Mon, 16 Jun 2025 22:43:42 +0930
+Subject: [PATCH v2 05/10] soc: aspeed: lpc-snoop: Rename 'channel' to
+ 'index' in channel paths
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250616-aspeed-lpc-snoop-fixes-v2-4-3cdd59c934d3@codeconstruct.com.au>
+Message-Id: <20250616-aspeed-lpc-snoop-fixes-v2-5-3cdd59c934d3@codeconstruct.com.au>
 References: <20250616-aspeed-lpc-snoop-fixes-v2-0-3cdd59c934d3@codeconstruct.com.au>
 In-Reply-To: <20250616-aspeed-lpc-snoop-fixes-v2-0-3cdd59c934d3@codeconstruct.com.au>
 To: linux-aspeed@lists.ozlabs.org
@@ -68,101 +68,115 @@ Cc: Joel Stanley <joel@jms.id.au>, Henry Martin <bsdhenrymartin@gmail.com>,
  linux-kernel@vger.kernel.org, Andrew Jeffery <andrew@codeconstruct.com.au>
 X-Mailer: b4 0.14.2
 
-Ensure pointers and the channel index are valid before use.
+We'll introduce another 'channel' variable shortly
 
+Acked-by: Jean Delvare <jdelvare@suse.de>
 Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
 ---
- drivers/soc/aspeed/aspeed-lpc-snoop.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ drivers/soc/aspeed/aspeed-lpc-snoop.c | 43 ++++++++++++++++++-----------------
+ 1 file changed, 22 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/soc/aspeed/aspeed-lpc-snoop.c b/drivers/soc/aspeed/aspeed-lpc-snoop.c
-index ca7536213e0986f737606a52996ffea620df2a7a..804c6ed9c4c671da73a6c66c1de41c59922c82dc 100644
+index 804c6ed9c4c671da73a6c66c1de41c59922c82dc..e9d17239163a8ae5145bd3652fcec572b70bd11c 100644
 --- a/drivers/soc/aspeed/aspeed-lpc-snoop.c
 +++ b/drivers/soc/aspeed/aspeed-lpc-snoop.c
-@@ -25,7 +25,6 @@
- 
- #define DEVICE_NAME	"aspeed-lpc-snoop"
- 
--#define NUM_SNOOP_CHANNELS 2
- #define SNOOP_FIFO_SIZE 2048
- 
- #define HICR5	0x80
-@@ -57,6 +56,12 @@ struct aspeed_lpc_snoop_model_data {
- 	unsigned int has_hicrb_ensnp;
- };
- 
-+enum aspeed_lpc_snoop_index {
-+	ASPEED_LPC_SNOOP_INDEX_0 = 0,
-+	ASPEED_LPC_SNOOP_INDEX_1 = 1,
-+	ASPEED_LPC_SNOOP_INDEX_MAX = ASPEED_LPC_SNOOP_INDEX_1,
-+};
-+
- struct aspeed_lpc_snoop_channel {
- 	bool enabled;
- 	struct kfifo		fifo;
-@@ -68,7 +73,7 @@ struct aspeed_lpc_snoop {
- 	struct regmap		*regmap;
- 	int			irq;
- 	struct clk		*clk;
--	struct aspeed_lpc_snoop_channel chan[NUM_SNOOP_CHANNELS];
-+	struct aspeed_lpc_snoop_channel chan[ASPEED_LPC_SNOOP_INDEX_MAX + 1];
- };
- 
- static struct aspeed_lpc_snoop_channel *snoop_file_to_chan(struct file *file)
-@@ -182,9 +187,10 @@ static int aspeed_lpc_snoop_config_irq(struct aspeed_lpc_snoop *lpc_snoop,
- 	return 0;
- }
- 
-+__attribute__((nonnull))
+@@ -190,37 +190,37 @@ static int aspeed_lpc_snoop_config_irq(struct aspeed_lpc_snoop *lpc_snoop,
+ __attribute__((nonnull))
  static int aspeed_lpc_enable_snoop(struct aspeed_lpc_snoop *lpc_snoop,
  				   struct device *dev,
--				   int channel, u16 lpc_port)
-+				   enum aspeed_lpc_snoop_index channel, u16 lpc_port)
+-				   enum aspeed_lpc_snoop_index channel, u16 lpc_port)
++				   enum aspeed_lpc_snoop_index index, u16 lpc_port)
  {
  	const struct aspeed_lpc_snoop_model_data *model_data;
  	u32 hicr5_en, snpwadr_mask, snpwadr_shift, hicrb_en;
-@@ -251,8 +257,9 @@ static int aspeed_lpc_enable_snoop(struct aspeed_lpc_snoop *lpc_snoop,
+ 	int rc = 0;
+ 
+-	if (WARN_ON(lpc_snoop->chan[channel].enabled))
++	if (WARN_ON(lpc_snoop->chan[index].enabled))
+ 		return -EBUSY;
+ 
+-	init_waitqueue_head(&lpc_snoop->chan[channel].wq);
++	init_waitqueue_head(&lpc_snoop->chan[index].wq);
+ 	/* Create FIFO datastructure */
+-	rc = kfifo_alloc(&lpc_snoop->chan[channel].fifo,
++	rc = kfifo_alloc(&lpc_snoop->chan[index].fifo,
+ 			 SNOOP_FIFO_SIZE, GFP_KERNEL);
+ 	if (rc)
+ 		return rc;
+ 
+-	lpc_snoop->chan[channel].miscdev.minor = MISC_DYNAMIC_MINOR;
+-	lpc_snoop->chan[channel].miscdev.name =
+-		devm_kasprintf(dev, GFP_KERNEL, "%s%d", DEVICE_NAME, channel);
+-	if (!lpc_snoop->chan[channel].miscdev.name) {
++	lpc_snoop->chan[index].miscdev.minor = MISC_DYNAMIC_MINOR;
++	lpc_snoop->chan[index].miscdev.name =
++		devm_kasprintf(dev, GFP_KERNEL, "%s%d", DEVICE_NAME, index);
++	if (!lpc_snoop->chan[index].miscdev.name) {
+ 		rc = -ENOMEM;
+ 		goto err_free_fifo;
+ 	}
+-	lpc_snoop->chan[channel].miscdev.fops = &snoop_fops;
+-	lpc_snoop->chan[channel].miscdev.parent = dev;
+-	rc = misc_register(&lpc_snoop->chan[channel].miscdev);
++	lpc_snoop->chan[index].miscdev.fops = &snoop_fops;
++	lpc_snoop->chan[index].miscdev.parent = dev;
++	rc = misc_register(&lpc_snoop->chan[index].miscdev);
+ 	if (rc)
+ 		goto err_free_fifo;
+ 
+ 	/* Enable LPC snoop channel at requested port */
+-	switch (channel) {
++	switch (index) {
+ 	case 0:
+ 		hicr5_en = HICR5_EN_SNP0W | HICR5_ENINT_SNP0W;
+ 		snpwadr_mask = SNPWADR_CH0_MASK;
+@@ -246,25 +246,26 @@ static int aspeed_lpc_enable_snoop(struct aspeed_lpc_snoop *lpc_snoop,
+ 	if (model_data && model_data->has_hicrb_ensnp)
+ 		regmap_update_bits(lpc_snoop->regmap, HICRB, hicrb_en, hicrb_en);
+ 
+-	lpc_snoop->chan[channel].enabled = true;
++	lpc_snoop->chan[index].enabled = true;
+ 
+ 	return 0;
+ 
+ err_misc_deregister:
+-	misc_deregister(&lpc_snoop->chan[channel].miscdev);
++	misc_deregister(&lpc_snoop->chan[index].miscdev);
+ err_free_fifo:
+-	kfifo_free(&lpc_snoop->chan[channel].fifo);
++	kfifo_free(&lpc_snoop->chan[index].fifo);
  	return rc;
  }
  
-+__attribute__((nonnull))
+ __attribute__((nonnull))
  static void aspeed_lpc_disable_snoop(struct aspeed_lpc_snoop *lpc_snoop,
--				     int channel)
-+				     enum aspeed_lpc_snoop_index channel)
+-				     enum aspeed_lpc_snoop_index channel)
++				     enum aspeed_lpc_snoop_index index)
  {
- 	if (!lpc_snoop->chan[channel].enabled)
+-	if (!lpc_snoop->chan[channel].enabled)
++	if (!lpc_snoop->chan[index].enabled)
  		return;
-@@ -331,16 +338,16 @@ static int aspeed_lpc_snoop_probe(struct platform_device *pdev)
- 	if (rc)
- 		goto err;
  
--	rc = aspeed_lpc_enable_snoop(lpc_snoop, dev, 0, port);
-+	rc = aspeed_lpc_enable_snoop(lpc_snoop, dev, ASPEED_LPC_SNOOP_INDEX_0, port);
- 	if (rc)
- 		goto err;
- 
- 	/* Configuration of 2nd snoop channel port is optional */
- 	if (of_property_read_u32_index(dev->of_node, "snoop-ports",
- 				       1, &port) == 0) {
--		rc = aspeed_lpc_enable_snoop(lpc_snoop, dev, 1, port);
-+		rc = aspeed_lpc_enable_snoop(lpc_snoop, dev, ASPEED_LPC_SNOOP_INDEX_1, port);
- 		if (rc) {
--			aspeed_lpc_disable_snoop(lpc_snoop, 0);
-+			aspeed_lpc_disable_snoop(lpc_snoop, ASPEED_LPC_SNOOP_INDEX_0);
- 			goto err;
- 		}
+-	switch (channel) {
++	/* Disable interrupts along with the device */
++	switch (index) {
+ 	case 0:
+ 		regmap_update_bits(lpc_snoop->regmap, HICR5,
+ 				   HICR5_EN_SNP0W | HICR5_ENINT_SNP0W,
+@@ -279,10 +280,10 @@ static void aspeed_lpc_disable_snoop(struct aspeed_lpc_snoop *lpc_snoop,
+ 		return;
  	}
-@@ -358,8 +365,8 @@ static void aspeed_lpc_snoop_remove(struct platform_device *pdev)
- 	struct aspeed_lpc_snoop *lpc_snoop = dev_get_drvdata(&pdev->dev);
  
- 	/* Disable both snoop channels */
--	aspeed_lpc_disable_snoop(lpc_snoop, 0);
--	aspeed_lpc_disable_snoop(lpc_snoop, 1);
-+	aspeed_lpc_disable_snoop(lpc_snoop, ASPEED_LPC_SNOOP_INDEX_0);
-+	aspeed_lpc_disable_snoop(lpc_snoop, ASPEED_LPC_SNOOP_INDEX_1);
- 
- 	clk_disable_unprepare(lpc_snoop->clk);
+-	lpc_snoop->chan[channel].enabled = false;
++	lpc_snoop->chan[index].enabled = false;
+ 	/* Consider improving safety wrt concurrent reader(s) */
+-	misc_deregister(&lpc_snoop->chan[channel].miscdev);
+-	kfifo_free(&lpc_snoop->chan[channel].fifo);
++	misc_deregister(&lpc_snoop->chan[index].miscdev);
++	kfifo_free(&lpc_snoop->chan[index].fifo);
  }
+ 
+ static int aspeed_lpc_snoop_probe(struct platform_device *pdev)
 
 -- 
 2.39.5
