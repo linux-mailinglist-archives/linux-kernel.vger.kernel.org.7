@@ -1,197 +1,135 @@
-Return-Path: <linux-kernel+bounces-688289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C782ADB072
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:42:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E87CADB075
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6BC81679FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:42:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C62A188634F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73F6292B5C;
-	Mon, 16 Jun 2025 12:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95979292B20;
+	Mon, 16 Jun 2025 12:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LHGtTA7n"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bNEYiPqc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8CB292B3E
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 12:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F9126C3B7;
+	Mon, 16 Jun 2025 12:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750077733; cv=none; b=DgbVrWiYfsvbw9buFDCIpUeBFXQxda6+9hf3Z3g+5Ou6YpxKLWF/62l16GqTI9t1cosGWc+/TN3qtwmQljT+XrBLESz5kUla0xVISHEP+HH7Nx7zNDgPkyxcIbsiL+ry6Hd/NgWOwWI9FbT5vyL0Y3EXn45HDFKvoobX99xL4Ao=
+	t=1750077789; cv=none; b=U2+ypWhWw509rkjNlBipQ0uyVOhzZ9NM1RDFA9dracfdHuXEuvU959IqcZbAQTzsBA3FA6vIID4Zr1TkgYaMe33RUJtNvsqR1uVyMNE9O7k20CjkWPXIzYkTg75qaX98EtpSZ1vbGAqI/Ongn5IfN098YJl7QsHBUeJoJNJwm+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750077733; c=relaxed/simple;
-	bh=Y22ZxTR2DcKyT7kx2NYZr8N8bEg7nYMhhgJibMcqX0g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=e5ztrNmd6BW2p2LRET97lx0qfSKgZJvVerMi8rQ8lPzpUOBKNwDauTqMQkwbE7dB9nA90CYgsCdcRixVQAgoCpqluenboGudTR0f1Fg6ycLmXhGbvDhPwoCy3auNjwE0RnEtuHRCBHlTzSxl+djUdRv8RBF94OgZzggL8Q6HZKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LHGtTA7n; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a4fac7fa27so1969290f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 05:42:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750077729; x=1750682529; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CuCPHidyaJNjh33RmhUzqGRp6ORq7xZF7q/o9iPn7Ss=;
-        b=LHGtTA7n926K/gWUxflXxgrXAr4zU/wzdk02roKJBO8tDXZycQZcAqOATrVwhM+MIJ
-         jLaptEw4iGyK5s76FpbHdNZylYPkwzcOVuoKsYilzbp/VMMrriVhScSiDs00JYDjlCMV
-         LPnF2vRkPWxVz3QSBORIuvEEHgS5Q1LQusuh22dL1aSATPB7yfCRy5g3yeyZ4JYBb9Ix
-         gx9BUQIwPm2LaFr9L7bxOKHd8nWk4LvbIVTnSlb9C0UDZNvogtrdeMDy/49GwGraxiNb
-         pBICJQ60LfLVvsX9l/Y4XkSlw7gIYBH+IAdqlf9Gn47uu6Ye1H635OF5Vfc95jFg77rX
-         f2ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750077729; x=1750682529;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CuCPHidyaJNjh33RmhUzqGRp6ORq7xZF7q/o9iPn7Ss=;
-        b=Jrz9W/xVV3bGJ86ojm0h+DP7aC+I5uDea4Pp7CEa2f2yDx36ZUfpAvqNEFo81eHyoe
-         RdOQ+HavUyVqcMqtXJ1i0e+aRhql9fDwfHLzycxlW5yBPqGmN21eM92LMpGdb6DJmHEU
-         JOobpehXVDloBT2sJ/bNqjj5zpAJTdDlQlhIA3LvcxSEVK+e6BbQyIlg0p6JwEE3qdyx
-         8wcancma7DIP+TYPwsUr8ykViuo5FOPlPoVhZq5HtoWhqYYju5DCYeX14pB79kVfwrJT
-         kVfCl9NV7N3suw39cgHMuqT+JlNvWw6zJ7uIF3pzx/IRkR6vIvLIPo0UV/by8dSir4P5
-         jyUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOA1Sj1nS7YyBn3Iuf2zCSAbMNOdVA4Gzfx2YtTqVMvdCkJCz7fMxr3hKwg0c1Z/+HP4icjoOhEIL275A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVaGn+K3uv20zPEjkfOJ+Xwhl2IracJESKP+qBPSX8dZI04pRl
-	gihOKNlvDmcquQYBjxR6pj1N4BTZCWtqqsGh+o44PPS9X4GCK4L8Mws5cBvC1ArX9nHp87KRjZn
-	cNJ6491Khuob5LopZwA==
-X-Google-Smtp-Source: AGHT+IEos9wyOljUVIq90oH/1Empt3J27Zrm4ASfnekdBgunNGd+0fbNM/dRPiUIggHpq4BXdQu5iWPUfUkkAZo=
-X-Received: from wmbet8.prod.google.com ([2002:a05:600c:8188:b0:453:f66:5f37])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:718:b0:3a5:3b63:58f0 with SMTP id ffacd0b85a97d-3a57237178dmr6945893f8f.18.1750077729505;
- Mon, 16 Jun 2025 05:42:09 -0700 (PDT)
-Date: Mon, 16 Jun 2025 12:41:48 +0000
-In-Reply-To: <20250616-strncpy-from-user-v5-0-2d3fb0e1f5af@google.com>
+	s=arc-20240116; t=1750077789; c=relaxed/simple;
+	bh=rT/5O1pFR+fi1TbayQkW7zHw+KVBHF8HPxP4ZI+ohiw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OSod2wewLaVxUxXv+6NaUiiFRKojoro0cnLk8oheBiHk2l8S5NXfdQPOqAfgVJKOfvYjWRScnE9cSW4AjJ+Ek/6VHrUvQSj2uq8pQ/eznwbeorJEVSPEv+hS47ulKCAUQ4BhefTc0hlr14XY8u/7jqQjD6AIT8dJVmEgBBF1w3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bNEYiPqc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 369ECC4CEEA;
+	Mon, 16 Jun 2025 12:43:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750077788;
+	bh=rT/5O1pFR+fi1TbayQkW7zHw+KVBHF8HPxP4ZI+ohiw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=bNEYiPqcCX0Xpwqz42+6CfGJMEtShOH8ujQuf9BG7VBCUsH9vd7Xr1ugSdFJasGwP
+	 BLkm8ZN61wW8GOgv2qWLHIHSlCcUUGdoiaDcD2HThCeVSlRBFYHS2g+2dsau49GAy1
+	 vwhAGz2VzXx+BzFws1qEVysVByDWNsBanLYJhM2CeLqiQG0VHLHaufnv06sqTpmO0e
+	 MxSQ2FRPSMrvtwId+11+ppKOOcWPp9ICnKI2+ryTkEMR7TbvGEkQTk73XG7Dq4bgzW
+	 4kZOXyD8s4O/RVV5up9vQkDAH6B72CEPCDXM+Z2zr4NbF/JdR2fULsnbLqCZFVRiVu
+	 rMuhGNlAz1R/g==
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 667051AF7032; Mon, 16 Jun 2025 14:42:54 +0200 (CEST)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>
+To: Jesper Dangaard Brouer <hawk@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Linux trace
+ kernel <linux-trace-kernel@vger.kernel.org>, bpf@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [PATCH] xdp: Remove unused events xdp_redirect_map and
+ xdp_redirect_map_err
+In-Reply-To: <20415ab5-5003-4725-bf1b-560f197465c4@kernel.org>
+References: <20250611155615.0c2cf61c@batman.local.home>
+ <87bjqtb6c1.fsf@toke.dk> <4af27621-6d81-4316-b57a-b546c8a7ad08@kernel.org>
+ <20415ab5-5003-4725-bf1b-560f197465c4@kernel.org>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Mon, 16 Jun 2025 14:42:54 +0200
+Message-ID: <87v7ovluwh.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250616-strncpy-from-user-v5-0-2d3fb0e1f5af@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4668; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=Y22ZxTR2DcKyT7kx2NYZr8N8bEg7nYMhhgJibMcqX0g=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBoUBEaT5eIFMl7DUCzdjz0g9XIj9E+jo8Q9i1mT
- 2jQH/b4/1+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaFARGgAKCRAEWL7uWMY5
- Run8D/9uR2TkeeCSeYbhMCB9fnbQeEsT3DeNMpVZDAtJSqXmkusSPB+9E9qlBSNt2z604bOQ2d6
- 48wxi0hTUluSRGs9EvZPjIiWfjPOhGbUk/5Qc0LtNFBK/BfJ5L6DLsO4uCQK1fymL5rsNbLsNCv
- f2CWyKlX7IMJxE0SpDAKxH5XgBvgc2isNOZfqmI4zI1A6Dn56uUcDNqXmtyzbDys82MFrsEp1Bq
- C1OXgES8mm8kXQrScgmKfkQzRJwHDoFgesbx1Noc0N1NRQqnv2V3ppYjx2r/vAntVy6nqDbvXvh
- mubfwSFHQ0OiHxCs4SSfDURnjRPQ8iaZOwndZxNQcQf2a8Zvdu4o6CTKIud7WHIcIepCTD/HxOl
- 7N6EAXyssV0I7JvSxsndjQIzuTUhdcUHPt5Eaqqr1vR3zVACt21DALVD2QurJifeMHk/YgWkh4O
- uHLDau5USjWyVIOIxQPWjXqrnIFFuhRVrL9vrnrtNBOB4lXU6ZAH5ZBpW7nAolmHuk4ZyQXKSzR
- noMO7FmCgfp3x8K87IfkFeES6tLdryyIQUOcAkxIYkFBjtRXYfELrRD/CXLVYEM5Jl+uO41dUQz
- AolPq1W4Jx4obxS3j11PSmQfAyhV+GXTwOTqzW5kUyPiq09AWpvnLm5nI4cIYL0Lt3cLW/C/rhK LSucTuUoKNStijw==
-X-Mailer: b4 0.14.2
-Message-ID: <20250616-strncpy-from-user-v5-2-2d3fb0e1f5af@google.com>
-Subject: [PATCH v5 2/2] uaccess: rust: add UserSliceReader::strcpy_into_buf
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Benno Lossin <lossin@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds a more convenient method for reading C strings from
-userspace. Logic is added to NUL-terminate the buffer when necessary so
-that a &CStr can be returned.
+Jesper Dangaard Brouer <hawk@kernel.org> writes:
 
-Note that we treat attempts to read past `self.length` as a fault, so
-this returns EFAULT if that limit is exceeded before `buf.len()` is
-reached.
+> On 12/06/2025 12.54, Jesper Dangaard Brouer wrote:
+>>=20
+>>=20
+>> On 12/06/2025 12.30, Toke H=C3=B8iland-J=C3=B8rgensen wrote:
+>>> Steven Rostedt <rostedt@goodmis.org> writes:
+>>>
+>>>> From: Steven Rostedt <rostedt@goodmis.org>
+>>>>
+>>>> Each TRACE_EVENT() defined can take up around 5K of text and meta data
+>>>> regardless if they are used or not. New code is being developed that=20
+>>>> will
+>>>> warn when a tracepoint is defined but not used.
+>>>>
+>>>> The trace events xdp_redirect_map and xdp_redirect_map_err are=20
+>>>> defined but
+>>>> not used, but there's also a comment that states these are kept=20
+>>>> around for
+>>>> backward compatibility. Which is interesting because since they are not
+>>>> used, any old BPF program that expects them to exist will get incorrect
+>>>> data (no data) when they use them. It's worse than not working, it's
+>>>> silently failing.
+>>>>
+>>>> Remove them as they will soon cause warnings, or if they really need to
+>>>> stick around, then code needs to be added to use them.
+>>>>
+>>>> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+>>>
+>>> I guess that makes sense; I have no objections to getting rid of them.
+>>>
+>>> Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@kernel.org>
+>>=20
+>> Make sense.
+>>=20
+>>=20
+>> Toke we have to check how XDP-tools handle when these tracepoints=20
+>> disappears.
+>
+> To Toke, notice that userspace tools expect this tracepoint to be
+> available will fail as below (for kernel release v6.16):
+>
+>   $ sudo ./xdp-bench redirect mlx5p1 veth41
+>    libbpf: prog 'tp_xdp_redirect_map_err': failed to find kernel BTF=20
+> type ID of 'xdp_redirect_map_err': -3
+>    libbpf: prog 'tp_xdp_redirect_map_err': failed to prepare load=20
+> attributes: -3
+>    libbpf: prog 'tp_xdp_redirect_map_err': failed to load: -3
+>    libbpf: failed to load object 'xdp_redirect_basic'
+>   Failed to attach XDP program: No such process
+>
+> IMHO this is a userspace problem, that needs to be more flexible and
+> adapt to this change.
+>
+> This was changed in kernel v5.6 (Jan 2020) commit 1d233886dd90 ("xdp:
+> Use bulking for non-map XDP_REDIRECT and consolidate code paths").
+> So, I'm thinking that xdp-tools could just remove monitoring for these
+> tracepoints?
 
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/kernel/uaccess.rs | 60 +++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 59 insertions(+), 1 deletion(-)
+Yeah, let's just get rid of them:
+https://github.com/xdp-project/xdp-tools/pull/513
 
-diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-index 635a03e0989f3fe99be80987aa47763782de1d3f..106aa05ea1b88868fe48f64ca9c86b20ad7db68e 100644
---- a/rust/kernel/uaccess.rs
-+++ b/rust/kernel/uaccess.rs
-@@ -291,6 +291,65 @@ pub fn read_all<A: Allocator>(mut self, buf: &mut Vec<u8, A>, flags: Flags) -> R
-         unsafe { buf.inc_len(len) };
-         Ok(())
-     }
-+
-+    /// Read a NUL-terminated string from userspace and return it.
-+    ///
-+    /// The string is read into `buf` and a NUL-terminator is added if the end of `buf` is reached.
-+    /// Since there must be space to add a NUL-terminator, the buffer must not be empty. The
-+    /// returned `&CStr` points into `buf`.
-+    ///
-+    /// Fails with [`EFAULT`] if the read happens on a bad address (some data may have been
-+    /// copied).
-+    #[doc(alias = "strncpy_from_user")]
-+    pub fn strcpy_into_buf<'buf>(self, buf: &'buf mut [u8]) -> Result<&'buf CStr> {
-+        if buf.is_empty() {
-+            return Err(EINVAL);
-+        }
-+
-+        // SAFETY: The types are compatible and `strncpy_from_user` doesn't write uninitialized
-+        // bytes to `buf`.
-+        let mut dst = unsafe { &mut *(buf as *mut [u8] as *mut [MaybeUninit<u8>]) };
-+
-+        // We never read more than `self.length` bytes.
-+        if dst.len() > self.length {
-+            dst = &mut dst[..self.length];
-+        }
-+
-+        let mut len = raw_strncpy_from_user(dst, self.ptr)?;
-+        if len < dst.len() {
-+            // Add one to include the NUL-terminator.
-+            len += 1;
-+        } else if len < buf.len() {
-+            // This implies that `len == dst.len() < buf.len()`.
-+            //
-+            // This means that we could not fill the entire buffer, but we had to stop reading
-+            // because we hit the `self.length` limit of this `UserSliceReader`. Since we did not
-+            // fill the buffer, we treat this case as if we tried to read past the `self.length`
-+            // limit and received a page fault, which is consistent with other `UserSliceReader`
-+            // methods that also return page faults when you exceed `self.length`.
-+            return Err(EFAULT);
-+        } else {
-+            // This implies that `len == buf.len()`.
-+            //
-+            // This means that we filled the buffer exactly. In this case, we add a NUL-terminator
-+            // and return it. Unlike the `len < dst.len()` branch, don't modify `len` because it
-+            // already represents the length including the NUL-terminator.
-+            //
-+            // SAFETY: Due to the check at the beginning, the buffer is not empty.
-+            unsafe { *buf.last_mut().unwrap_unchecked() = 0 };
-+        }
-+
-+        // This method consumes `self`, so it can only be called once, thus we do not need to
-+        // update `self.length`. This sidesteps concerns such as whether `self.length` should be
-+        // incremented by `len` or `len-1` in the `len == buf.len()` case.
-+
-+        // SAFETY: There are two cases:
-+        // * If we hit the `len < dst.len()` case, then `raw_strncpy_from_user` guarantees that
-+        //   this slice contains exactly one NUL byte at the end of the string.
-+        // * Otherwise, `raw_strncpy_from_user` guarantees that the string contained no NUL bytes,
-+        //   and we have since added a NUL byte at the end.
-+        Ok(unsafe { CStr::from_bytes_with_nul_unchecked(&buf[..len]) })
-+    }
- }
- 
- /// A writer for [`UserSlice`].
-@@ -380,7 +439,6 @@ pub fn write<T: AsBytes>(&mut self, value: &T) -> Result {
- /// When this function returns `Ok(len)`, it is guaranteed that the first `len` bytes of `dst` are
- /// initialized and non-zero. Furthermore, if `len < dst.len()`, then `dst[len]` is a NUL byte.
- #[inline]
--#[expect(dead_code)]
- fn raw_strncpy_from_user(dst: &mut [MaybeUninit<u8>], src: UserPtr) -> Result<usize> {
-     // CAST: Slice lengths are guaranteed to be `<= isize::MAX`.
-     let len = dst.len() as isize;
-
--- 
-2.50.0.rc2.692.g299adb8693-goog
-
+-Toke
 
