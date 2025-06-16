@@ -1,98 +1,97 @@
-Return-Path: <linux-kernel+bounces-688607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 185B1ADB4AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:59:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A5DADB4B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6753188D068
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:58:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0F543B7B9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06B621771A;
-	Mon, 16 Jun 2025 14:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhdBe2A8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED3F21D3FB;
+	Mon, 16 Jun 2025 14:58:32 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144E620DD42;
-	Mon, 16 Jun 2025 14:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134C2216E26;
+	Mon, 16 Jun 2025 14:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750085895; cv=none; b=jxaJ87R8AybopdRCzEZytu+95SdYAYGuubRw07ek8IDK2Pm6kP6IwAagJSMhdrwXRPTPFFOnHwwdyM82LGOf7XHRuLFZyXujf2bMHKJrQS8rEee8FEMh4muIkz0EyG6h1aRIs6jBE5Z+0rfFXydvGoU1QmoEJJF63Q7UQ+mAlJY=
+	t=1750085912; cv=none; b=Jj064MVyT+kCRzUf51jQv4V2OdEZ17vrTCVH+z9N9fbpLnpdJHXhnMDeRmYjtACzLJ2xsJHjX7u3IiNPIV6Z/M08KKUvynPreYJAAuvieKQ+8+2qwGRCLt2x2PhN0/XlmRFUdQ34PJmevWU7nBke9d3RJVw9INTW64PO5dNvmYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750085895; c=relaxed/simple;
-	bh=FXVcftLBzL0VE22s0E173pGv668LrsMf8ycBcz8A5/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eIK6ZOIWmgrhxfIVXWro2bgGHGKnaQJ6In819I19YiXgWAtNTN5Rsqno1zpER9+211j/cotaMVvejEvWtA/TeJRB5kpdkYwaJhaqwstKAZSwhzX6KPC44W1b4YXjd+LkL0cGPMkjzcONBDdHEc46Kx/JMPN/DOlbjZHcnv/tHH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RhdBe2A8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F580C4CEEA;
-	Mon, 16 Jun 2025 14:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750085894;
-	bh=FXVcftLBzL0VE22s0E173pGv668LrsMf8ycBcz8A5/U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RhdBe2A8FCIO3U1UH6P1Jg8RbOENgnvRjwXnJKBA6EurzujsdvPYBTcPijXefLHEg
-	 MFUmQfBraBxGxJdXZ6QZ9GitvQvCMtHGNtM28xQQyVdDkrQy9GPbFfPimWacpVe97k
-	 LQopjACsD+oIVG73E5lXFXxk66Ee213j2dIj+TAl4Hw2rexbie9XYsof0IBdwEVl6d
-	 QEDOs4nYWcYXcF8Elqxq9HHm8MZTRQEuWqR914mpKLyVOq857hIDDvgxZN2EA4NjJE
-	 aWbWKgsBtqkaiIb1egZ/B4X+XrBsDpXttdpWU/PV9qA9lDd9TPFo9o7EPt+EmyJtOr
-	 /Boz3CBB9wYWA==
-Date: Mon, 16 Jun 2025 15:58:09 +0100
-From: Conor Dooley <conor@kernel.org>
-To: yassine.ouaissa@allegrodvt.com
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Dufresne <nicolas@ndufresne.ca>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] dt-bindings: media: allegro: Add al300 decoder IPs
-Message-ID: <20250616-unopposed-overgrown-00a1a7a423b1@spud>
-References: <20250616-allegro_dvt_al300_dec_driver-v3-0-7d746cb9e5f9@allegrodvt.com>
- <20250616-allegro_dvt_al300_dec_driver-v3-2-7d746cb9e5f9@allegrodvt.com>
+	s=arc-20240116; t=1750085912; c=relaxed/simple;
+	bh=wIdiZPYyli2N4szu69CA2U7XhLnv02tXx97AcQ5lBKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O1cmxOMJoYvIRPmjwRC7fe4EcvD2MBVYdMKJqfrSz31RRHhBy6VS+9ETOb3dhBrgOp3bh/nloolO/we2UO8GCyVOs3jG5SZY8vGt+viOYORBctlXEUGw8/Vaa2O8og1Ie2g3lfZDWMGBe9t8Cmk+klKvnaEChpL5wlsesfCMBps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 425EB59CCB;
+	Mon, 16 Jun 2025 14:58:22 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 237CC20034;
+	Mon, 16 Jun 2025 14:58:20 +0000 (UTC)
+Date: Mon, 16 Jun 2025 10:58:19 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Carlos Maiolino <cem@kernel.org>
+Subject: Re: [PATCH 00/14] xfs: Remove unused trace events
+Message-ID: <20250616105819.4d37b83a@batman.local.home>
+In-Reply-To: <20250616053119.GD1148@lst.de>
+References: <20250612212405.877692069@goodmis.org>
+	<20250613150855.GQ6156@frogsfrogsfrogs>
+	<20250613113119.24943f6d@batman.local.home>
+	<20250616053119.GD1148@lst.de>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="a6CGOvP6rpx/UjSC"
-Content-Disposition: inline
-In-Reply-To: <20250616-allegro_dvt_al300_dec_driver-v3-2-7d746cb9e5f9@allegrodvt.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 237CC20034
+X-Stat-Signature: xrtt3cne15mpszeso61c3wd1iqzm4pfr
+X-Rspamd-Server: rspamout05
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19hESC1G4pzjZZdZ9uHr9kQMXh3gtnL9xU=
+X-HE-Tag: 1750085900-926499
+X-HE-Meta: U2FsdGVkX193XZgjGdRK5j8nHlonQUe7QYiUVCQinh20elGdhOpp7c9hBPTtm5JJvTcbS6ldHLC9sbPCyryypjBGvpBDVZTRyqY6aSqmsqGX8RgyTMQRew3KOtRbz44Ssm6cDa1nhpy1kvsyLnwEXnPHc/Wl2q2iiV0gg+OdXBl9tTiyo79whbeqEcAMxUhRlKhyjxG1ZiINHlBzkHblOiFX6YI41WsbBFKzRnurU8Vt4O3bcR5X21qvWkiDwuqVsk1cdotXm2Vt0bvpVK8HGfdsZXy7TltjDrMcdDqu/qKaALWntfOpgYVkSbn1TCR81H27Gmk8wgv7TLGDJAdRDZbXi0my8FFs
 
+On Mon, 16 Jun 2025 07:31:19 +0200
+Christoph Hellwig <hch@lst.de> wrote:
 
---a6CGOvP6rpx/UjSC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > I just did an analysis of this:
+> > 
+> >   https://lore.kernel.org/lkml/20250613104240.509ff13c@batman.local.home/T/#md81abade0df19ba9062fd51ced4458161f885ac3
+> > 
+> > A TRACE_EVENT() is about 5K, and each DEFINE_EVENT() is about 1K.  
+> 
+> That's really quite expensive.  And you only measured the tezt/data/bss
 
-On Mon, Jun 16, 2025 at 01:12:13PM +0000, Yassine Ouaissa via B4 Relay wrot=
-e:
-> From: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
->=20
-> Add a schema for the allegro gen3 video decoder.
->=20
-> Signed-off-by: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
+Yes. This is something I've spent a bit of time over the years trying
+to address. With moving a bunch of code into trace_event.c with the
+added expense that trace events do function calls.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+It looks like it's still growing as the last time I checked it was just
+under 5K (something around 4800 bytes) and now it's over 5K, and the
+tracepoint code grew 4x. I'll start looking into "why" later when I
+have more time to deal with this. My time budget for removing unused
+events has pretty much dried up.
 
---a6CGOvP6rpx/UjSC
-Content-Type: application/pgp-signature; name="signature.asc"
+> overhead and not even the dynamic memory overhead, which is probably
+> a lot more.
 
------BEGIN PGP SIGNATURE-----
+Yes, and this is another area I look to make better. It was the
+motivation for eventfs which saved over 20 megs of memory by having
+trace event files dynamically created instead of being permanent.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaFAxAQAKCRB4tDGHoIJi
-0tK2AP9ymTqmYzuxA/6f0/Fe15cY09M/yEBJYFxP8DZ8hyX30QD/b9wjHeVFQuTs
-ZGS35plIvS3a1A1W+mvRVpW6R94FKQQ=
-=MWub
------END PGP SIGNATURE-----
-
---a6CGOvP6rpx/UjSC--
+-- Steve
 
