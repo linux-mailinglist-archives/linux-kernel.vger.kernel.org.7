@@ -1,129 +1,297 @@
-Return-Path: <linux-kernel+bounces-688965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9206DADB95B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:12:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730FDADB97E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 862441743C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:12:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA1C3B36C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1087228983C;
-	Mon, 16 Jun 2025 19:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D3028A1CD;
+	Mon, 16 Jun 2025 19:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwfE4MpV"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="MlAR+TVO"
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5153208;
-	Mon, 16 Jun 2025 19:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8928C28937D;
+	Mon, 16 Jun 2025 19:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750101140; cv=none; b=oxAQzf/NS6h3PHSXSpfsYVuY1tnwaFh9p4xcVksq3md00sp9emd/97cEHXogkqzEFFMH5ONXEgkVH1GYfrCF0m07uzixTV/2CG+aFrwrRX5+/20CSne/nRzeZyWsZqZk4+1ME/PdlLhvKpLDfPpbW5M3DpAd4xp8T/+osHJRKpY=
+	t=1750101657; cv=none; b=onAep6RSUO44VFjdHWTUmGUw36SE+YbogzOdssGLJkNaCepju9yEzwbBzVHO1faO2Jtmc4b97Mafx/ytLNqSjuIuMuhZPMTnee7siX7ZBx3PYiwwWw7KEwu3EXo3WEJwNYxLbYiZdizozTYygZ26y3E4Y51LIAlhC/BwkZq8cBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750101140; c=relaxed/simple;
-	bh=TmiBOGB9WJPk09Gtr12N6wA5rUl/LqW+HBksPj41ibE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BFD4M64mFUjea2erMiBhfzxN+E0sTl6tOhEfl8zdT38Vns290WikA9QkHDh3+JoDCAA6ZXzwMxgyz4hK/tZqFDwHRLGS00HGwdyJIsIUy6C30SgED52tUeLNkRa1/HnzAo9yyy7Q0snItnX09kkvfYIfBq9LfUx2YFJ9rI2kzDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bwfE4MpV; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6fabb948e5aso52524366d6.1;
-        Mon, 16 Jun 2025 12:12:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750101138; x=1750705938; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TmiBOGB9WJPk09Gtr12N6wA5rUl/LqW+HBksPj41ibE=;
-        b=bwfE4MpVJ7qPzJrLOP4G1yKwT2PDhHvxrR0CIL6GgeRsaTlcL5Ef1X47N/K0QKACWx
-         Qn40pGDUR/uze2YpQX6jk5aNbVgvc7D42+Bv2uwh+as6Vdd3bwI+jKu7KMYdBfCTP8Hq
-         0ojrRsn7rUyEa183srPRcaDe8c9xETDWsBVGbqVljdSwNWA7fL1jIdyvDmoM2ajaIfS6
-         UHsb0L0fUSjLbTo4oZvY/w1VfqHvNikes2IqP4nfsdLU0TqlnYRRZhSzA0gnX1jLpu2e
-         3jMd+RxWE5nXqouvgonEt46OqlXrtv3wDKb9SLOGSWYPQgPt5naPB/oCtRBYkHYgLOyB
-         ZxCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750101138; x=1750705938;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TmiBOGB9WJPk09Gtr12N6wA5rUl/LqW+HBksPj41ibE=;
-        b=BeSVrEp6tWvbzAZDwNtfjzG/690ZhHGgMeAPMA56NwO4CU04NxXFmczL8F4rA2lmyp
-         qE0TsxcRVVUPMqzRkZOm6D5ZP1q9t8UC7My5p9vS7dfSI8t3v4U3Wvt1B/7T56syfW8Q
-         HrcbKV0PmJJ/JNXa5hqfeSVKF0xtXrmrDMTAXSAO6fcsbEZWJya3VwP6mnOHUpwd8eSx
-         Qw/Ih3bol4xUC9IWhx0nEo+LLrc/XbTwlEvdEdE6IG5CdUdn5HlJZkKSsACLOw/zLisU
-         3w0E/G0YSR3LlDnPa/SximTtqgs2/zzedIz7lRuANy95N/+Zj1ZbOhf2Nc7QHSvx+fGl
-         EOXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCaCoDr/bkoWmnVYAfU+h2vF8G6aIKx7f3Ayb0fjKx1LtS+PL2Ew7TIq2cIEChrtmcqTwoWQztC6T8gTs=@vger.kernel.org, AJvYcCXNw0JC1Tu6Hr3iAt5Q8eT+72ifAJMHTowTMAi4SZKnWUpe3sr9gOD3Up15gsCpw4M+Za9n/OZY@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvMGbieHe3LCrtT/m74sErOMTfGMdh7ZbmWtPaAa8qPRNdV6of
-	RQQzLdvqCHcQjjmVGQ5eb8duX4t2R2hHerPFqVOFJcXPSYQotDcN8JLR
-X-Gm-Gg: ASbGncu6dEsuB0CtNf0oK6hbObMkZq1jA3qLNIPzQkcZ7maf3Zj10qR7XvNG1g4s57E
-	oeRB2+6sIFBX+ARBa+6qZLWl6f1JCt9Zd9uJ+4vm+nk+cg3vF7u8DKSRBmER/yg/udcfeiAgDum
-	/fZstqmiM+PZyO6m4xjCuzY6ZyFQx6XL1869S6F7vlUUCKOGxYQfyxFRDCBQKGDR9mzW7ZTLYzN
-	23yeIjHgD6PKYc2DaYXlcq+uy2uL7biMHLV03bvLQnBH/RkNlpjzk0N2teevNLe262Dr9+z5eIe
-	ru2Ci2YRYRbD/uqvpI13eyfmYJ+96xdiMz0Fe3Viy1qw4q6P0dLpAsFU6OL9evtxPVOSJ4VUsBn
-	0bcmxS3Ls4YnVd9OF+AysSjGKlTgfHaLdVrWP6d7Bcg==
-X-Google-Smtp-Source: AGHT+IEAYwwClB30T0oftCcaMqxfxEhEAICWJRaAromfaRxoULiVpzdPgJj+ZQ9n+/tJCNnixQas7g==
-X-Received: by 2002:a05:6214:dc2:b0:6fa:cc39:67 with SMTP id 6a1803df08f44-6fb47759253mr197221056d6.22.1750101137821;
-        Mon, 16 Jun 2025 12:12:17 -0700 (PDT)
-Received: from localhost.localdomain (syn-184-074-055-142.biz.spectrum.com. [184.74.55.142])
-        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6fb527a3efdsm18583566d6.44.2025.06.16.12.12.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 12:12:17 -0700 (PDT)
-From: Robert Cross <quantumcross@gmail.com>
-To: andrew@lunn.ch
-Cc: bpf@vger.kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	olteanv@gmail.com,
-	pabeni@redhat.com,
-	quantumcross@gmail.com
-Subject: Re: [PATCH v2] net: dsa: mv88e6xxx: fix external smi for mv88e6176
-Date: Mon, 16 Jun 2025 15:12:14 -0400
-Message-Id: <20250616191214.2295467-1-quantumcross@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <ad17b701-f260-473f-b96f-0668ce052e75@lunn.ch>
-References: <ad17b701-f260-473f-b96f-0668ce052e75@lunn.ch>
+	s=arc-20240116; t=1750101657; c=relaxed/simple;
+	bh=axNIAB/C6jkDTgjQBx60qehyaTss7JGdiBObM6fIxF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o74JPrv5B6p6HG67LPmft89+3iwLubdRezJuCa0A//o2cMsKDfpUDFL2XmIKRCAi7oC3NTvmUNyT+LuXuEcCZBZT2kI6/58TVs8y6KFSZNkfPgNUPM3955k1H7f2+JPyOcGullFBQ5RmgNK7QDVowLVfk3aq2ubNXHAmi3rz2U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=MlAR+TVO; arc=none smtp.client-ip=217.72.192.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1750101647; x=1750706447; i=christian@heusel.eu;
+	bh=vWAwD/gglL+XzNx4ZE+OLzKqaXpxiSmNcafe/8jSO5U=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=MlAR+TVORkUBc1M50CPILIc1WVlvKcCedsR4Ol7SKNWOssKzTwBkw1tfKav1pDX8
+	 TRisLZqgXvsltp+Ji+lAxxk2E0OkzFq5Ja9ORm8DvhLTJ3nk6Fl9yoyqFlXsS6wZE
+	 iz6gVoWEmnFYmgJ0RNirrB5jtHguBNBMTojzJAgUdmMO9ZLur3y8DnKC/eg9pfOZc
+	 OGzbzrYdVyDYCvJxxUN5Y23kfrxc71PYcYn5R84G7pC9DhkAj6gi18N6SoScsadpt
+	 SN2vLCJWtppn6kU7t31+up/jt8LW2dWJ/x+KdE++Ve8UtONx60ybmullxSDWo5YJG
+	 qX7K0XEryWDcuNBX9w==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([80.187.66.155]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1N8G6I-1unIRg0e9Y-00rsbO; Mon, 16 Jun 2025 21:14:44 +0200
+Date: Mon, 16 Jun 2025 21:14:39 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: clang-built-linux <llvm@lists.linux.dev>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Vlastimil Babka <vbabka@suse.cz>, Shuah Khan <shuah@kernel.org>, 
+	Zi Yan <ziy@nvidia.com>, David Hildenbrand <david@redhat.com>, lorenzo.stoakes@oracle.com, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, jackmanb@google.com
+Subject: Re: clang: selftests/mm gup_longterm error while loading shared
+ libraries liburing.so.2 cannot open shared object file No such file or
+ directory
+Message-ID: <7c101fe5-7c73-4916-a832-d656511eeab8@heusel.eu>
+References: <CA+G9fYssELHcYKwgGNBMLrfeKZa9swGdLrH7gxqzd4P0kaOiZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2ifj2fqs4sl63qpb"
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYssELHcYKwgGNBMLrfeKZa9swGdLrH7gxqzd4P0kaOiZg@mail.gmail.com>
+X-Provags-ID: V03:K1:pjn8XBlqfHHtOY72HbeSefm8Rf/7BdJhV7MoRC2aUUryDa1n66a
+ ABaLBzLk0y3//12UpZsoLd2/LKAlG9KBi9+UfpGW1NB1E/3kYYr1okeWMICCXaPk10z25wk
+ GmSIrqflP0XnNLS4DmSUQg3QxPN8t3E7zLo0OnvqUzvhV+I+6SkuGhs8lYECSwJnbPpzeab
+ 45uKoJ8iPPQWFWScrd/Zg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:SlavsgczDwk=;IWiRp/j7s5zo6lFg0OjNh6OQePo
+ Kb514vk/gPWqumXbDt/bzWIm02m4PPP2eKDzOSXGiBL6rl6aOwQE6Op58/QAFLy+s2pq6QDIq
+ 8BWeBAkGbRW3KCiPPfhALunLnEf2lxczNRfbL4r+cLarqspbYjp6NgS37prto2kJpyCGsbNlT
+ GmtyS5B1RmrZeDphIzohK+UrppNn7AwUHLEX/+vqiMoU0SWSnmMwPxcUj/fOxNRsS36EyOxsS
+ r7IxkFHbhUE2TszaK/ywUFch6KBN/t8SX0FQl9YgCU4CNW2SEXFPdcS6e5cpm5wxyuI/wxt+V
+ 9CbSyXvgH9EZPZ4/BBbU6DSS8DapKjK11UO4G/Ge7s88jkJ12I3hjmq85K4rk/ydlE3M4tnzU
+ PzuPGjUHqUms42JZUIWBI8yLAXUUmUgTdjex/+jSmfsC270EgDBzQ7WeFcHm5XOtfiNIEVFcE
+ 2sc2m6t8ZY0fYRPLi/IvPo+P6XONXC1PR8kOqb2qYwdrMXPFp8l/RT5j8GE2g2c/Fx5Bn06d0
+ xjcZ5wbHTlFsErb7RIs2xohoQaGTt5B0vMZOCiaDlcu+qsGPpGWd1bjvuujOOXbyBgqZEMkoU
+ fahSHFlcdMEr5zGbljwyjL+7PUv9PP7Sh6SaqkX8yZ73lYacz/xrQr67mflLIfANJ1jn+WRTE
+ ROv3ksG4YvLQQey+NotUQVrBjf1f4OJOHBXgYkS2aavfFnGzdY8GxFJc7W6tR2rEIiCVRkHpD
+ x8OVkXd+turOhdWwGo8FHHduyJctkYX7PLjHfLAkycX3zOmbnWpuFpG8oKqZVr/MKDtcFTHr4
+ WplNw/Vn610zQ/c75pQRJSU4oQAbdA6fkgZDyawW4N4isT3hVf67PN6u7Q+RpGrE6TE1De4Dx
+ Oxf5TojYBgYrvTEhcLMcicxeKqOkNFq2BP5fsljEc4BEJ2KQlk3y/ZuFhjaAZ85uSXEoxWV2Q
+ PaMsO87ankUosuwGEhp6SHAJdOp9NLdUuqR7l53WC0uCTcGU/Zg1BkD0BKiIMayL6nxpmgx/Z
+ p9bbm/MVjd9w6PnOVCyaEwnGnmymGvgED+6Uw2sbU2xws/1AT7bN+0Hx74qigdGbx9Ba1WpYi
+ 9zR/b8bv8uZjBXOaA78UAOyQzWaEJLUqTc254JWfBs1bblwAbdeFlzmgo7pgxs2vYpJ9TTFsT
+ DqBj/uk4s5ehBi67PjxnTzg3PdUBfQaGQ3NiDJmUGR+GyHujiadVv+6uqEWkPp9+VTvwJGmmU
+ +Hk9QIkzCkTV4ufFoQAf2E/F475ATXvAmwOWveIDCsr76m/uYXHHDEFQsaUVwGrGJfZQJj9s6
+ vf2pV5BnnAfhLqILvjfiMIdmZTfMxD+ftqk7020mo4PpbIKfKkBkYHp0IlwmiS7Yz2SkqAUAT
+ DrwX4ENd7pU8NOiTvLJXIQPYx38qHSaqRvpIz0a4iyW89WLlDu8WzkkFzd
 
-> The MV88E6390_G2_SMI_PHY_CMD_FUNC_EXTERNAL bit is reserved on the 6352
-> family.
 
-Indeed it is...
+--2ifj2fqs4sl63qpb
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: clang: selftests/mm gup_longterm error while loading shared
+ libraries liburing.so.2 cannot open shared object file No such file or
+ directory
+MIME-Version: 1.0
 
-> You are not understanding what i'm saying. This family has a single
-> MDIO bus controller. That controller is used by both the internal PHY
-> devices, plus there are two pins on the chip for external PHYs.
->
-> All the PHYs will appear on that one MDIO bus controller.
+On 25/06/16 11:02PM, Naresh Kamboju wrote:
+> The following test regressions noticed while running selftests/mm gup_lon=
+gterm
+> test cases on Dragonboard-845c, Dragonboard-410c, rock-pi-4, qemu-arm64 a=
+nd
+> qemu-x86_64 this build have required selftest/mm/configs included and too=
+lchain
+> is clang nightly.
+>=20
+> Regressions found on Dragonboard-845c, Dragonboard-410c, rock-pi-4,
+> qemu-arm64 and qemu-x86_64
+>   -  selftests mm gup_longterm fails
+>=20
+> Regression Analysis:
+>  - New regression? Yes
+>  - Reproducibility? Yes
+>=20
+> Test regression: selftests mm gup_longterm error while loading shared
+> libraries liburing.so.2 cannot open shared object file No such file or
+> directory
+> Test regression: selftests mm cow error while loading shared libraries
+> liburing.so.2 cannot open shared object file No such file or directory
 
-So you're saying that if I removed my hack that apparently just sets
-this reserved bit, and I take my PHY on port 6 and remove it from
-the mdio_ext { compatible = "marvell,mv88e6xxx-mdio-external"; } entry
-and put it in my mdio { } node it will direct requests to address 6 to
-the external phy via the MDC/MDIO_PHY pins just fine?
+These do not really look like kernel regressions, rather like a bug in
+the userspace testing tool =F0=9F=A4=94 Could it be that the tests were not
+rebuilt for the new liburing or that the dependency is not installed in
+the test environment?
 
-I'm guessing it will just automatically enable or disable the external
-SMI pins depending on the state of port 5 which shares pins?
+> Test regression: selftests mm mlock-random-test exit=3D139
+> Test regression: selftests mm pagemap_ioctl exit=3D1
+> Test regression: selftests mm guard_regions file hole_punch
+>=20
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>=20
+>=20
+> ## Test log
+> Linux version 6.15.0-next-20250606 (tuxmake@tuxmake) (Debian clang
+> version 21.0.0 (++20250602112323+c5a56f74fef7-1~exp1~20250602112342.1487),
+> Debian LLD 21.0.0) #1 SMP PREEMPT @1749190532
+>=20
+> running ./gup_longterm
+> ----------------------
+> ./gup_longterm: error while loading shared libraries: liburing.so.2:
+> cannot open shared object file: No such file or directory
+> [FAIL]
+>  not ok 14 gup_longterm # exit=3D127
+>=20
+> ./cow: error while loading shared libraries: liburing.so.2: cannot
+> open shared object file: No such file or directory
+> [FAIL]
+> not ok 50 cow # exit=3D127
+>=20
+> running ./mlock-random-test
+> ---------------------------
+> TAP version 13
+> 1..2
+> [  311.408456] traps: mlock-random-te[21661] general protection fault
+> ip:7f63210dbf0f sp:7ffdff6fca28 error:0 in
+> libc.so.6[adf0f,7f6321056000+165000]
+> [FAIL]
+> not ok 23 mlock-random-test # exit=3D139
+>=20
+> running ./pagemap_ioctl
+>=20
+> ...
+> ok 53 Huge page testing: only two middle pages dirty
+> ok 54 # SKIP Hugetlb shmem testing: all new pages must not be written (di=
+rty)
+> ok 55 # SKIP Hugetlb shmem testing: all pages must be written (dirty)
+> ok 56 # SKIP Hugetlb shmem testing: all pages dirty other than first
+> and the last one
+> ok 57 # SKIP Hugetlb shmem testing: PM_SCAN_WP_MATCHING | PM_SCAN_CHECK_W=
+PASYNC
+> ok 58 # SKIP Hugetlb shmem testing: only middle page dirty
+> ok 59 # SKIP Hugetlb shmem testing: only two middle pages dirty
+> ok 60 # SKIP Hugetlb mem testing: all new pages must not be written (dirt=
+y)
+> ok 61 # SKIP Hugetlb mem testing: all pages must be written (dirty)
+> ok 62 # SKIP Hugetlb mem testing: all pages dirty other than first and
+> the last one
+> ok 63 # SKIP Hugetlb mem testing: PM_SCAN_WP_MATCHING |
+> PM_SCAN_CHECK_WPASYNC[  241.731600] run_vmtests.sh (456): drop_caches:
+> 3
+> ok 64 # SKIP Hugetlb mem testing: only middle page dirty
+> ok 65 # SKIP Hugetlb mem testing: only two middle pages dirty
+> Bail out! uffd-test creation failed 12 Cannot allocate memory
+> 12 skipped test(s) detected. Consider enabling relevant config options
+> to improve coverage.
+> Planned tests !=3D run tests (115 !=3D 65)
+> Totals: pass:53 fail:0 xfail:0 xpass:0 skip:12 error:0
+> [FAIL]
+> # not ok 48 pagemap_ioctl # exit=3D1
+>=20
+> running ./guard-regions
+> ...
+> RUN           guard_regions.file.hole_punch ...
+> guard-regions.c:1905:hole_punch:Expected madvise(&ptr[3 * page_size],
+> 4 * page_size, MADV_REMOVE) (-1) =3D=3D 0 (0)
+> hole_punch: Test terminated by assertion
+>          FAIL  guard_regions.file.hole_punch
+> not ok 80 guard_regions.file.hole_punch
+>=20
+>=20
+> ## Source
+> * Kernel version: 6.16.0-rc2
+> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next=
+/linux-next.git
+> * Git sha: 050f8ad7b58d9079455af171ac279c4b9b828c11
+> * Git describe: next-20250616
+> * Project details:
+> https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250616/
+> * Architectures: arm64, x86_64
+> * Test environments: Dragonboard-845c, Dragonboard-410c,  rock-pi-4,
+> qemu-arm64, qemu-x86_64 and x86
+> * Toolchains: clang nightly
+> * Kconfigs: selftest/mm/config+defconfig+
+>=20
+> ## Test
+> * Test log: https://qa-reports.linaro.org/api/testruns/28766026/log_file/
+> * Test log 2: https://qa-reports.linaro.org/api/testruns/28743077/log_fil=
+e/
+> * Build details:
+> https://regressions.linaro.org/lkft/linux-next-master/next-20250616/kself=
+test-mm/mm_run_vmtests_sh_gup_longterm/
+> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2ya0=
+viPHafKAe0u89drIv5fcwu2/
+> * Kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/2ya0viPHafKAe0u89d=
+rIv5fcwu2/config
+>=20
+>=20
+> ## Steps to reproduce
+>   - tuxrun \
+>    --runtime podman \
+>    --device qemu-x86_64 \
+>    --boot-args rw  \
+>    --kernel https://storage.tuxsuite.com/public/linaro/lkft/builds/2ya0wm=
+Vl0eHb9koWyQYC7myXjpX/bzImage
+> \
+>    --rootfs https://storage.tuxboot.com/debian/20250605/trixie/amd64/root=
+fs.ext4.xz
+> \
+>    --modules https://storage.tuxsuite.com/public/linaro/lkft/builds/2ya0w=
+mVl0eHb9koWyQYC7myXjpX/modules.tar.xz
+> /usr/ \
+>    --parameters MODULES_PATH=3D/usr/ \
+>    --parameters
+> SQUAD_URL=3Dhttps://qa-reports.linaro.org//api/submit/lkft/linux-next-mas=
+ter/next-20250616/env/
+> \
+>    --parameters SKIPFILE=3Dskipfile-lkft.yaml \
+>    --parameters
+> KSELFTEST=3Dhttps://storage.tuxsuite.com/public/linaro/lkft/builds/2ya0wm=
+Vl0eHb9koWyQYC7myXjpX/kselftest.tar.xz
+> \
+>    --image docker.io/linaro/tuxrun-dispatcher:v1.2.2 \
+>    --tests kselftest-mm \
+>    --timeouts boot=3D15
+>=20
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
+>=20
 
-I'm also guessing that ports 0, 1, 2, 3, and 4 will map to the
-internal PHYs (because there are 5) and then ports 5 and 6
-automagically externally...
+--2ifj2fqs4sl63qpb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I shudder to think how by what forbidden voodoo my current device
-tree actually works with this hack...
+-----BEGIN PGP SIGNATURE-----
 
-Thank you so much for your explanation. Hopefully I'll have a
-real substantive patch in the future :)
+iQIzBAABCgAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmhQbR4ACgkQwEfU8yi1
+JYXNhBAA4J8IfYyoS8afSaTdCPF1zLiPorF6mZuTwefTndUd//Zm6nOhBHsU4KsV
+YQDbZUMUV0IGXSZ0leI7mb4TVVg+y1Xn4p35uNKfykilbUpuXZz/y4toLJMuFG73
+abD+pXJQK9bGnZOeTocm45uwbeUnAq4VcwPaI2vAmaIXZkde1ca4G9gXonk077au
+rko4E9+W2gCHNKoNqsVrJ5BRTGrxAKkWKYMiO1TuIhodrNmLikk+vmyR68hVY4bl
+TcYp1BDhioojMtP/4KwgXY1e1jbUvGDdG/rrRiPYEWNiVNx33LsTu/o0Hj8SbxgA
+cFPJM5UiSPY0Yy9jVGgoTjcIU4Il1PsH4kscqvneaXpKEkGk/SP0l57xUmc87+S8
+MtA5IC72mwxVbOgtPEqBcbpT6Q7HvFlTVEZSwfFcJk6wW7cbMJjKFCEPm1lR1sqK
+Pcii1RpfY8iSAeXcDu7t0PjAR1/W+2SzfrVdXrgteaFR+MJDPjPxyocEjrS+59jT
+FIwOBTg836WK1382cwXplao891izLPG4A3oLZhPUNKucadmRHlODJlSvOnZGxOFJ
++Xlkh01E2yHt/wUTmYG04gDEuA9GU9Ile50LBsntFQpH2wbYVtPM7GS3VBOyRhvE
+iXtUBSHyWH3bH5nmkc7mgmd5iVlQGWmPRYgzPYv+XDddgyiz0fo=
+=w13D
+-----END PGP SIGNATURE-----
+
+--2ifj2fqs4sl63qpb--
 
