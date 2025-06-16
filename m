@@ -1,138 +1,205 @@
-Return-Path: <linux-kernel+bounces-688185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0120AADAECF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:39:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C693ADAEF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFE2F7A743A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:37:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9979B189143F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935E32E6D12;
-	Mon, 16 Jun 2025 11:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741402EA48A;
+	Mon, 16 Jun 2025 11:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mKXrRLV+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=jm0.eu header.i=@jm0.eu header.b="HWemglRp";
+	dkim=permerror (0-bit key) header.d=jm0.eu header.i=@jm0.eu header.b="Ve7bFb6T"
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC82261570;
-	Mon, 16 Jun 2025 11:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750073942; cv=none; b=gVOx4yiYMnA3oSvVcluS4F82L0vO7hC84PAq9YFjnqmCwhckeIKE2PKC/oFnXjCDojMauvlbTSjjc1uyXfSEHqGUY683W6opidh112WlqAhVXxrZdYwAilTreai+xWiInhJKTieokxZWNF+0FNfus52xchRM4JBExpPpAHAZ9Pg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750073942; c=relaxed/simple;
-	bh=/8TbTg+Rq7g+nI2tGAfe3AOGwuVcjXQE+KjkEaEhDZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LuvHeHzzj0ejrM3KW+HOeOoIJ+ySjkppUdM2MK6xkL9Xgyfy7/EnI6Ktq+baz4JR2C7rslUrCk+PrpnaEHKzDepTrhXW3jy6x15yPrje/WuVYjvM62lkyTn7kjlcu5S+m/snTdvme0oPFUTrx+wqTAE4VStuKGq5zGiKmMBx+sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mKXrRLV+; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750073940; x=1781609940;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/8TbTg+Rq7g+nI2tGAfe3AOGwuVcjXQE+KjkEaEhDZM=;
-  b=mKXrRLV+KxhMIUcPw1VnzwIFVrmfDVUD+k4XzDaf3IbqwEuoUmoRZFJW
-   lKsUFmJKV1CBY32uv//pZrbig3/M3x6/QE00xDgoy4tN8bR8dhTz1Ew3r
-   zpKUaQTxxSV0aJLSQPHLBkCApw19CRA+HlnZk685mkpTsp/WgZrJwNOzv
-   HbW/ovOEuufSMDl0I1x3bcE0zbWsGqb7M37wgaDGDhxE0V6eEnmx5L4xH
-   d2uheBDlqZmvB4Qhf7i0UXpGxQ8esmMNMiyw3l1frKz1ErX93bsUNweb9
-   n/kLYZMxXn86+3lwO90SYcfya8aNiLg+iimtDHHJmFm1isTuHbCtFnNlH
-   A==;
-X-CSE-ConnectionGUID: g0tL27b4TDq9ITwP91KGig==
-X-CSE-MsgGUID: ZpJOSgMwQM6TWJc1E6DzSA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="39821618"
-X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
-   d="scan'208";a="39821618"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 04:38:59 -0700
-X-CSE-ConnectionGUID: QHF3MIx1Sbm3cPmZqxp25Q==
-X-CSE-MsgGUID: 2KQYlUUgQY6oxpvI+njcjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
-   d="scan'208";a="149345151"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 04:38:50 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uR8An-000000073ou-0Cpl;
-	Mon, 16 Jun 2025 14:38:45 +0300
-Date: Mon, 16 Jun 2025 14:38:44 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 12/28] driver core: fw_devlink: Tag the fwnode dev
- member as private
-Message-ID: <aFACRPNCxYfZZp9i@smile.fi.intel.com>
-References: <20250613134817.681832-1-herve.codina@bootlin.com>
- <20250613134817.681832-13-herve.codina@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221712EA46D;
+	Mon, 16 Jun 2025 11:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750074310; cv=pass; b=bnhYMApy2AoJqxwRxo/T/Wryd2RLnF9tYS7OpLJcUNMYF7xQFfAaqs52XFQfcsHLZVWUnTPfRz7VzCiDWWSmfBCPQzb8zGMNOQoZ5TZlsEKtVqlnUz3lVxumUp0EEUKfN+JfcwxbUKDogWQoqa/TvCM+UADASWvTYkuLKtB6cxg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750074310; c=relaxed/simple;
+	bh=/fJnsIDZVbBh60xVBDENVXk/vS0J+yOhafeM1KUVnuU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UB3Le1j3byj31iNVry/YPQu/2ISv09qc7hVJrhAh+auHJsDW7oKIJ4Gzs90zwhIjrz1X34t5Td3/LxPj9CqzPyVgQ6y1d3ROMhwkXts8hz3+Spi0luZGE5/wa+s3bTPh0ZLWJWXXfrPk3FFTFllviesi9eZjrYci5Af42mOMRfU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jm0.eu; spf=none smtp.mailfrom=jm0.eu; dkim=pass (2048-bit key) header.d=jm0.eu header.i=@jm0.eu header.b=HWemglRp; dkim=permerror (0-bit key) header.d=jm0.eu header.i=@jm0.eu header.b=Ve7bFb6T; arc=pass smtp.client-ip=85.215.255.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jm0.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=jm0.eu
+ARC-Seal: i=1; a=rsa-sha256; t=1750073947; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=F9RTtV/6F2OkIl8BeaUyhAktRiwZQ00InbFBWyfnaCw6onw9mTIqmf0UlGV/QSDHg9
+    9kddPwBkAy8MKk8DyZ5NF7Ldlf/RLgFzhu2s48GTM2fvS5uVbnTur9Abm98m72LcH6L0
+    0Tlep/85UQyEze4CIOWwlAS9HlAQhxAwxkBtHraBMQc/FBfDWE84M0jBymbuPsFaMtw9
+    hJ7hTZIzZWi7SfCsiUjpyAyKCl9FbHly5mbEXjKwimWqj6nOQKbHQLlXhDJvqds6Puo5
+    vaJQ0kJjYsuQIFdCAlcDgrpXcUQfsm/JjAqvkOo3GfwFsR3jJ33x2yohEN05eYthh/46
+    /Ehw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1750073947;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=YQ5aUH7zfhXOCP2tutXlMeFvigXdIeN/ybAKmivyPd0=;
+    b=ru7uZ7Suplu5qdTNB98Cyf8drcyfuJIAY9Mru6PLW5Xc6DwOGPEGVAaTXEeQNdgwiH
+    4yzgIosobXzMaoZJCljEPSLqdMkZO4XiWANJTgjHqlZyfUT15pAQjus5ede/2QQoFGES
+    W9d86jivVEQ7Zr2Rlkb+sNjHkYSY/NudTIU7GU6jrFa85K5YWw/hn52vc6iMJszvLY18
+    6MoCqXVrrZhuubAyimn8OAOgRxSHGTvZYeVwH9bETbFBeFQ+l7WFrGFNOn6Wkyq8LBaQ
+    sROoPqceeYC4TRjtXI18jCGem1T8QkqzF6vr+yPZdra74um/JlbS2vTHGUi6QUi+GCBD
+    JPag==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1750073947;
+    s=strato-dkim-0002; d=jm0.eu;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=YQ5aUH7zfhXOCP2tutXlMeFvigXdIeN/ybAKmivyPd0=;
+    b=HWemglRppNKZ1QHsrbVcMdKipm0cRSRDqE49HPoVg0lOmnT87CU8lC2Je7ukL5r31D
+    0BBscAoiGNOZIbyPKtibfdAkIj8FF7V2+GIue5mF0L2AaviyiWZ4+z8RvXN0ybpx+Ew5
+    uMmtaPj1Mux1Wv4xb49wIyU9eK87NBdfxXqib9p5BBrU8LVXqKW4LqHvvTDpyGqnxsX1
+    xYdGhGIo0svxwFMWxI/f1RGwsneToFL0xSsfygcYRz0IOT32yq5xHsj3c3EDL+DBkcSZ
+    A31gigFm5NR7f+lLZF42Ni3XmMR7NUyW62+zGKEX5lfc2Nc/3z810ssemzIgT2M9Om4G
+    krJQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1750073947;
+    s=strato-dkim-0003; d=jm0.eu;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=YQ5aUH7zfhXOCP2tutXlMeFvigXdIeN/ybAKmivyPd0=;
+    b=Ve7bFb6T+npQJDnr7+7YXB5MuWFGZBn58mFWWVRbrGPo5SUeV8BHgHTXOg6jdXzl4i
+    2ef7EzOPLS6kNzs7KeAQ==
+X-RZG-AUTH: ":JmMXYEHmdv4HaV2cbPh7iS0wbr/uKIfGM0EPTeoCaRth8YQl85wlaBlpkx4CWttlFZIgbULbhEgjs89efw=="
+Received: from [IPV6:2a00:a041:265b:4200::1001]
+    by smtp.strato.de (RZmta 51.3.0 AUTH)
+    with ESMTPSA id z292ee15GBd4Qh9
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Mon, 16 Jun 2025 13:39:04 +0200 (CEST)
+Message-ID: <7e854232-f02f-4ad6-b65e-22c18d1d9fe5@jm0.eu>
+Date: Mon, 16 Jun 2025 14:39:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250613134817.681832-13-herve.codina@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/7] ARM: dts: omap: Remove incorrect compatible
+ strings from device trees
+To: Kory Maincent <kory.maincent@bootlin.com>,
+ Jason Kridner <jkridner@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
+ Roger Quadros <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Paul Barker <paul.barker@sancloud.com>,
+ Marc Murphy <marc.murphy@sancloud.com>, Andrew Davis <afd@ti.com>,
+ Bajjuri Praneeth <praneeth@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250613-bbg-v3-0-514cdc768448@bootlin.com>
+ <20250613-bbg-v3-2-514cdc768448@bootlin.com>
+ <CA+T6QPnaCFZyRsv9q3bcOrTc22nA0AOXy0tR_SpAkGVVPQqfLg@mail.gmail.com>
+ <20250616103919.2d678c1a@kmaincent-XPS-13-7390>
+Content-Language: en-US
+From: Josua Mayer <josua.mayer@jm0.eu>
+In-Reply-To: <20250616103919.2d678c1a@kmaincent-XPS-13-7390>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 13, 2025 at 03:47:52PM +0200, Herve Codina wrote:
-> The dev member in the fwnode structure should be accessed only by the
-> fwnode core. The fw_devlink_set_device() helper has been introduced to
-> avoid users to set this member directly. All users have been converted
-> and use fw_devlink_set_device() to set the field.
-> 
-> To avoid future abusers who might set the field directly and allow
-> sparse to detect them, tag the dev field as a private field.
+Hi Kory,
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Am 16.06.25 um 11:39 schrieb Kory Maincent:
+> Le Fri, 13 Jun 2025 13:52:23 -0500,
+> Jason Kridner <jkridner@gmail.com> a écrit :
+>
+>> On Fri, Jun 13, 2025 at 10:49 AM Kory Maincent <kory.maincent@bootlin.com>
+>> wrote:
+>>
+>>> Several device trees incorrectly included extraneous compatible strings
+>>> in their compatible property lists. The policy is to only describe the
+>>> specific board name and SoC name to avoid confusion.
+>>>
+>>> Remove these incorrect compatible strings to fix the inconsistency.
+>>>
+>>> Also fix board vendor prefixes for BeagleBoard variants that were
+>>> incorrectly using "ti" instead of "beagle" or "seeed".
+>>>
+>>> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+>>> ---
+>>>
+>>> Changes in v3:
+>>> - Remove extraneous compatible strings.
+>>> - Replace BeagleBone board name vendor.
+>>>
+>>> Changes in v2:
+>>> - New patch
+>>> ---
+>>>   arch/arm/boot/dts/ti/omap/am335x-base0033.dts                   | 2 +-
+>>>   arch/arm/boot/dts/ti/omap/am335x-bone.dts                       | 4 ++--
+>>>   arch/arm/boot/dts/ti/omap/am335x-boneblack-wireless.dts         | 4 ++--
+>>>   arch/arm/boot/dts/ti/omap/am335x-boneblack.dts                  | 4 ++--
+>>>   arch/arm/boot/dts/ti/omap/am335x-boneblue.dts                   | 4 ++--
+>>>   arch/arm/boot/dts/ti/omap/am335x-bonegreen-wireless.dts         | 4 ++--
+>>>   arch/arm/boot/dts/ti/omap/am335x-bonegreen.dts                  | 4 ++--
+>>>   arch/arm/boot/dts/ti/omap/am335x-chiliboard.dts                 | 3 +--
+>>>   arch/arm/boot/dts/ti/omap/am335x-myirtech-myd.dts               | 2 +-
+>>>   arch/arm/boot/dts/ti/omap/am335x-osd3358-sm-red.dts             | 2 +-
+>>>   arch/arm/boot/dts/ti/omap/am335x-pocketbeagle.dts               | 4 ++--
+>>>   arch/arm/boot/dts/ti/omap/am335x-sancloud-bbe-extended-wifi.dts | 5 +----
+>>>   arch/arm/boot/dts/ti/omap/am335x-sancloud-bbe-lite.dts          | 5 +----
+>>>   arch/arm/boot/dts/ti/omap/am335x-sancloud-bbe.dts               | 2 +-
+>>>   arch/arm/boot/dts/ti/omap/am335x-shc.dts                        | 2 +-
+>>>   15 files changed, 22 insertions(+), 29 deletions(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/ti/omap/am335x-base0033.dts
+>>> b/arch/arm/boot/dts/ti/omap/am335x-base0033.dts
+>>> index 46078af4b7a3..176de29de2a6 100644
+>>> --- a/arch/arm/boot/dts/ti/omap/am335x-base0033.dts
+>>> +++ b/arch/arm/boot/dts/ti/omap/am335x-base0033.dts
+>>> @@ -9,7 +9,7 @@
+>>>
+>>>   / {
+>>>          model = "IGEP COM AM335x on AQUILA Expansion";
+>>> -       compatible = "isee,am335x-base0033", "isee,am335x-igep0033",
+>>> "ti,am33xx";
+>>> +       compatible = "isee,am335x-base0033", "ti,am33xx";
+>>>
+>>>          hdmi {
+>>>                  compatible = "ti,tilcdc,slave";
+>>> diff --git a/arch/arm/boot/dts/ti/omap/am335x-bone.dts
+>>> b/arch/arm/boot/dts/ti/omap/am335x-bone.dts
+>>> index b5d85ef51a02..2790c0c5a473 100644
+>>> --- a/arch/arm/boot/dts/ti/omap/am335x-bone.dts
+>>> +++ b/arch/arm/boot/dts/ti/omap/am335x-bone.dts
+>>> @@ -8,8 +8,8 @@
+>>>   #include "am335x-bone-common.dtsi"
+>>>
+>>>   / {
+>>> -       model = "TI AM335x BeagleBone";
+>>> -       compatible = "ti,am335x-bone", "ti,am33xx";
+>>> +       model = "AM335x BeagleBone";
+>>
+>> We have software that looks at these in running systems, so I’d be ok not
+>> to change. If changing, why not “BeagleBoard.org BeagleBone”? Not sure of
+>> the convention to mention the SoC, but AM335x is not part of the product
+>> name.
+> Is it ok to change it or not then? Ok to move on to BeagleBoard.org.
+The Debian project most notably uses the "model" string:
 
--- 
-With Best Regards,
-Andy Shevchenko
+https://salsa.debian.org/installer-team/flash-kernel/-/blob/master/db/all.db?ref_type=heads#L2191
 
+When that changes inside a dtb by kernel update, users may be unable to 
+boot.
+Therefore I would recommend against changing "model" values.
 
+sincerely
+Josua Mayer
 
