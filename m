@@ -1,171 +1,105 @@
-Return-Path: <linux-kernel+bounces-687939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C17ADAB11
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:48:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9310FADAB14
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 226D516C17A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:48:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D43EC3AD79E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0436B26D4C1;
-	Mon, 16 Jun 2025 08:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D98026D4E8;
+	Mon, 16 Jun 2025 08:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QMTegmHZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y30ocp6R"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE023522F;
-	Mon, 16 Jun 2025 08:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A6E26D4C7
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 08:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750063675; cv=none; b=aexve3sYoh9nCIHodEsQ7EKfWidcXc+qD+L+JhUod6jBFqA4E4G2PdM1VSOpqZteUDF6KpnkryeIifEtX7/e96yROLLBXDZK2ZHdmln1EaSdXRJ07eb2OlXmwu2CmZvNDeLnz3ksCeoj0nvup8fU8atQexSjYPX4RcI79Z9MBq0=
+	t=1750063693; cv=none; b=Y+4W4N8c0mtwl+gMBCZD/2+sjbvIp+b87aDK2Jb4ccUQPnxweSp7BmYDVADQGhg3tU3dm6Dr6E8W9yIuSyB1vTkHfsRW3n/t2mF0TqoviceolBoyOH2bwX7uNEfCEaTpi8D9HvQXGqfCl+kHFQG5cDuwCfG4s8Xyg4MUSVfn4N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750063675; c=relaxed/simple;
-	bh=Jmw+LF/yWtvrkBOZ2hbKLwp4rJ8jMljTl1Iw26HP98I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VnJgH0aGbs7BAoLs3ahrgHzUxmrMSPmt8opNJYk6LlFy2Of7V6y8gmWi24kJgikT0iWygj400EqIyjGNAj+MwYRvZCB8ulib/rZQsPUlc079a1Ne4f+3HMCzRo1oka+8xP+XXivcD4H9CQWOxIn3ngUxhEZ8IpSVK7RCFprOxIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QMTegmHZ; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750063674; x=1781599674;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Jmw+LF/yWtvrkBOZ2hbKLwp4rJ8jMljTl1Iw26HP98I=;
-  b=QMTegmHZ01LY5UrRRB6DlH4DCkOJnpPQ4ijSD5pMNKvHSztotNmk9Ig3
-   0bL891QzCkqTT7wgikwJu+GDdE+6AAdz7qVlATaE5OCCdB4Bv285c82vd
-   0Zm4b8xdt5gSD36vdYFxNMKuhkQreBzLgta5DwUlKG4xw1p5Dewqetx+u
-   TCVYuQiQ9qrLgacxAcWZXw9gI+TjIdeYqd9Tl/sXdWdkpGCKj3R1DAJKE
-   NqkNv2IyaIsEtw+2Yp6X5ZGIIGo/w7LYSHu62k73u+61+b8nyrO2atikL
-   GPOqBsXyKhmWWn6tPjooQCJiWi5iI9RRu+5VmlZMPe+0APOMNii1w/Ir/
-   g==;
-X-CSE-ConnectionGUID: kC0Gih4sSHW8PnJWDm/e8g==
-X-CSE-MsgGUID: knB34gDwTe6h6tgcurk7UA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="62472285"
-X-IronPort-AV: E=Sophos;i="6.16,240,1744095600"; 
-   d="scan'208";a="62472285"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 01:47:50 -0700
-X-CSE-ConnectionGUID: k9Brh6RfRuyve3qjkPmnxg==
-X-CSE-MsgGUID: faX8jCxLQECduLo6MltvDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,240,1744095600"; 
-   d="scan'208";a="153709859"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 01:47:47 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uR5VH-000000071XI-2Sv3;
-	Mon, 16 Jun 2025 11:47:43 +0300
-Date: Mon, 16 Jun 2025 11:47:43 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: Marek Vasut <marek.vasut+bmc150@mailbox.org>,
-	Hans de Goede <hansg@kernel.org>, linux-iio@vger.kernel.org,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Julien Stephan <jstephan@baylibre.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Salvatore Bonaccorso <carnil@debian.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: accel: bmc150: Do not configure IRQ registers if no
- IRQ connected
-Message-ID: <aE_aL5dGKZeKBu50@smile.fi.intel.com>
-References: <20250613124648.14141-1-marek.vasut+bmc150@mailbox.org>
- <aEw_DcqpCpcsBGd0@smile.fi.intel.com>
- <8605141c-b615-4e84-9574-81e24590df48@mailbox.org>
+	s=arc-20240116; t=1750063693; c=relaxed/simple;
+	bh=DrGv/t0gdja4YyUbnvE/2AmaBViJfnwtbz0D2rU2N0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VpMsEqOBqOfl8MhYy+X20uOp4lhHTfoKphiLJEtQjxBC3s8MoasZUrySG4gfWiJdcCw89gg7bbbNou3bdqYqs56OBoJN7ZMnKEmYsaGFe7kcbAXFZLvNuldAsluTrNOHeO2rc1fJxYRsdqTpauf6REonyCYouEssHImlojo6lL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y30ocp6R; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3105ef2a071so42493291fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 01:48:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750063690; x=1750668490; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DrGv/t0gdja4YyUbnvE/2AmaBViJfnwtbz0D2rU2N0A=;
+        b=Y30ocp6RPBBY96BsWmfqPvcktpuFOJnWTLiBf6Dm9K0Z9k0uERyCO4kTBNr8a+C+rP
+         SwqF0eIHLcg5ruU08PWNNc1BZN2P7F4PIzrduYMKC9UpuPLzJdRF43cVN5GlXirVVap/
+         0VXv8Ne5Vef5z2CbuIUvkNxuQucg9NM1OMYdTk+kssRTPjiS/rsQbIaWcFqGCUVvg9df
+         R9DH4ImgDtkQgSsZdUfw0fpkLT8opj0JC0lnwLYQVVXxuZ3PvL25+HNWr+nqaRL27JGQ
+         WwFT8nEMG0KkHX4PsQNjNbopHRJXmE4MR1llpdr/6HhB4hpy4kIn+aVzIjeG/h0OQRUQ
+         T6wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750063690; x=1750668490;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DrGv/t0gdja4YyUbnvE/2AmaBViJfnwtbz0D2rU2N0A=;
+        b=WVg17nf3kZk59G+U6AaEj04p9W61TjicY+GOvRbtcJAgIDED74zkqYGlGhGppKN1JB
+         k7/zDlFLiACMiCbGhhNxGsvdh/+pboE97LuojBowf5K8iZsmNNwznh1bXovOlm/L/fKe
+         nzVu/J2GyTQ0E68BHYdEXzwSBCQ8GkZNovYHEnTd9OqDgHIdZEHQO5e2dxgz4V17vCix
+         HXdXYMjcyq8KzuBOmWkbIAGdcQkvYlUGpv9+UHZxq7/68/UINNigw7cqp5i0ojBvOxrx
+         l9Pb4DGNMwCJToyrvxNhF7Ldk86WJO7a2AFcVCjW9c4TnZe0T+brqjBwCRYFlqOx83gW
+         wdXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgrA7UbKOG6UDmuJ2x5YHtIeaGqyslNvhoArgwW1gbKk3gnMTCbp3pzaNwUhP5Kk8dVtrrDcoPdiWCE34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjcR112pt5wFB4P0ftLlQ+8slkYmTiTGVIVROAvJTNxpGrQcQg
+	egSukzZQWnaOnJu1A+7TsFxVRLuBCCmkqiIwAKVblppZFDhfLwwe0+MlfH3R95eyJjDyFlvTG/0
+	JagFxu/5IK4JVvxz7yLg+b2mxmI43m74=
+X-Gm-Gg: ASbGncugwZNI46WBnDfJxOfbYaY5Aq39IZwW3fid7amOBCtVfUQ6OZleRjp5XeqCt1B
+	RRMjko1WyU7hGaVkZlFztHE/mMV62iWLYai9DHFaNjZVG1CXYGn5Ua3jrzT4hmBrwOOn27eUwTT
+	D6w5LfSpR7B0SEt4+YvKsvBJ4j+OTDhw4KkWqHJwfL7PQ=
+X-Google-Smtp-Source: AGHT+IHScaDdY5IcJHSg0gKTcs9SxJxqatQurhkW3HvTnt+zdpYbSH8IvPkY9DjO5WcfgeVpJtOKSgYuzZWgbXm8O60=
+X-Received: by 2002:a05:651c:4018:b0:32a:6af3:aead with SMTP id
+ 38308e7fff4ca-32b4a4080aemr11366111fa.16.1750063689934; Mon, 16 Jun 2025
+ 01:48:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8605141c-b615-4e84-9574-81e24590df48@mailbox.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250616083611.157740-1-ubizjak@gmail.com> <20250616083944.GC1613376@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250616083944.GC1613376@noisy.programming.kicks-ass.net>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Mon, 16 Jun 2025 10:47:58 +0200
+X-Gm-Features: AX0GCFsnOq1eoIcVM99UqD3JLPDnssfWN1GAl4OGdkVDJo_Ovb2sQMh2ewtNTHY
+Message-ID: <CAFULd4YQe=xb2-GH8EHLyiNQL=uCBZ7QAqmasyroT9ZhPoRRwg@mail.gmail.com>
+Subject: Re: [PATCH] x86/asm: Use RDPKRU and WRPKRU mnemonics in <asm/special_insns.h>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 13, 2025 at 07:02:28PM +0200, Marek Vasut wrote:
-> On 6/13/25 5:09 PM, Andy Shevchenko wrote:
-> > On Fri, Jun 13, 2025 at 02:45:22PM +0200, Marek Vasut wrote:
+On Mon, Jun 16, 2025 at 10:39=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
+>
+> On Mon, Jun 16, 2025 at 10:35:57AM +0200, Uros Bizjak wrote:
+> > Current minimum required version of binutils is 2.30,
+> > which supports RDPKRU and WRPKRU instruction mnemonics.
+> >
+> > Replace the byte-wise specification of RDPKRU and
+> > WRPKRU with these proper mnemonics.
+>
+> What about the minimal clang version and their integrated assembler?
 
-> > > The BMC150 on Onemix 2S does not have IRQ line described in ACPI tables,
-> > > which leads to bmc150_accel_core_probe() being called with irq=0, which
-> > > leads to bmc150_accel_interrupts_setup() never being called, which leads
-> > > to struct bmc150_accel_data *data ->interrupts[i].info being left unset
-> > > to NULL. Later, userspace can indirectly trigger bmc150_accel_set_interrupt()
-> > > which depends on struct bmc150_accel_data *data ->interrupts[i].info being
-> > > non-NULL, and which triggers NULL pointer dereference. This is triggered
-> > > e.g. from iio-sensor-proxy.
-> > > 
-> > > Fix this by skipping the IRQ register configuration in case there is no
-> > > IRQ connected in hardware, in a manner similar to what the driver did in
-> > > the very first commit which added the driver.
-> > > 
-> > > ACPI table dump:
-> > 
-> > >          Device (BMA2)
-> > >          {
-> > >              Name (_ADR, Zero)  // _ADR: Address
-> > >              Name (_HID, "BOSC0200")  // _HID: Hardware ID
-> > >              Name (_CID, "BOSC0200")  // _CID: Compatible ID
-> > >              Name (_DDN, "Accelerometer")  // _DDN: DOS Device Name
-> > >              Name (_UID, One)  // _UID: Unique ID
-> > >              Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
-> > >              {
-> > >                  Name (RBUF, ResourceTemplate ()
-> > >                  {
-> > >                      I2cSerialBusV2 (0x0019, ControllerInitiated, 0x00061A80,
-> > >                          AddressingMode7Bit, "\\_SB.PCI0.I2C0",
-> > >                          0x00, ResourceConsumer, , Exclusive,
-> > >                          )
-> > >                  })
-> > >                  Return (RBUF) /* \_SB_.PCI0.I2C0.BMA2._CRS.RBUF */
-> > >              }
+Yes, it works with the minimum required clang version 13.0.1.
 
-> > >          }
-
-...
-
-> > As for the solution, are you sure the line is not wired at all?
-> 
-> No . It is some cheap mini-laptop , I have no schematics or any other info
-> really .
-
-> Note that I am not really familiar with x86 and ACPI, so there is that.
-
-Yes, I understand that.
-
-You can try to monitor the /sys/kernel/debug/pinctrl/*/pins files for any
-changes that might happen on the sensor events. It might (help to) reveal
-the IRQ line.
-
-> > IIRC Hans had a broken tales where it was simply forgotten, meaning
-> > the Android / Windows driver simply hardcoded needed info.
-> > 
-> > If it's the case, it should be solved differently around PDx86 special quirk
-> > driver for the cases like this.
-> There are likely two issues.
-> 
-> First, this driver needs to handle i2c_client->irq == 0 correctly if it
-> should work without IRQ line, which the driver seems to indicate that it
-> does. The current crashing the kernel is not the correct way of handling
-> that. That's this patch, in some form.
-> 
-> Second, if this laptop has some IRQ line for this chip hidden somewhere,
-> then it might need a quirk of sorts, sure. Is there some way to find out,
-> without taking the thing apart and poking around with a scope ?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Uros.
 
