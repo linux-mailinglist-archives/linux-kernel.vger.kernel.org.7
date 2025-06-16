@@ -1,171 +1,100 @@
-Return-Path: <linux-kernel+bounces-688725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D905AADB64C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6047CADB652
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46F99162BB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:09:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A20F1628CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7FB2BF017;
-	Mon, 16 Jun 2025 16:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D648286429;
+	Mon, 16 Jun 2025 16:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="saAwb6ic";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YWzwOCuD";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ue3TZ7yi";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Gq51MwMk"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DuFAyVY0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C149216E26
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 16:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421932206AA;
+	Mon, 16 Jun 2025 16:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750090171; cv=none; b=ZietBvHknwU5jhBscfLBjb22B7JM1YkG9JqkPt3pkVgWfBPx6IdzGaCCqnalkkwtexRyA8y/YzwwVMZCOlLcCYu19S8q3nyQTeWQ1ANgRxRLPY+usdNXAZKNWUdmjoRxReWUfhCK3HdqugkbkVC3TosEC+0zdXn/TciiWfGXpCc=
+	t=1750090270; cv=none; b=CD74LLD+dtbp1E8H5OMoKpgwIKgxpmiZkPzuU/w5XtkwW+AGDdparQbMYHMy3az9fkZkfTEoOkRyqGNPCxxPHcbITO/Fd7cs3XaHkL0HQGO4IDQPHTAAXT5OvDPFSK3u3p88asDxNAYBIGCQg8tkdMl4vCKt+mR51MaPFM9rOdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750090171; c=relaxed/simple;
-	bh=n7CGWUPKO6knlkUZxBxZQSBznQO4bkyQfuItUEb1xPY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FbD2pu51DU5Vp2PRyEB7fJjrk8+nmKQ2iZ3c+jdcBczcyNmX41858y2AGUTexL+LjieJbsUwVe96iKsJcYdMIQNLdRTibdfRh1Xmf0EdUw2xpnKURO8UNhgieCLMV/OP5yiBLNjJ+gXO+Ez7lv1Iqwg86ZLcG8V0Fbgqa1PKuJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=saAwb6ic; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YWzwOCuD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ue3TZ7yi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Gq51MwMk; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 62C8221215;
-	Mon, 16 Jun 2025 16:09:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750090162; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=Bx6i2NZ8BbZBrNkIElY6uzwl2GaqIZIIjwPFKMYv8is=;
-	b=saAwb6icJLSPyayJZyeWCYcfF6sLhVl2GprjCYXgMLgkyF76PdevYHAbY6b2wsVkHh7RXX
-	giSBC0eCWznrXSpSsga8e93B4x2sLXsZ/5HgLvtwO7AKORufCD8cAh4+cVjkUDBoNXl3hV
-	U/9D/dNn7RDXLkvzU5DDb27/YFGW9TE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750090162;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=Bx6i2NZ8BbZBrNkIElY6uzwl2GaqIZIIjwPFKMYv8is=;
-	b=YWzwOCuDrVxMk/dZk/+rwM2wTjzFlIUDz2rysRQcXwNQ75zYE6ntpMRIsG7eYDSHIyKag7
-	lvj25i3r92pDAODw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ue3TZ7yi;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Gq51MwMk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750090157; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=Bx6i2NZ8BbZBrNkIElY6uzwl2GaqIZIIjwPFKMYv8is=;
-	b=ue3TZ7yiQq865YUUlgGbbdCLmNL/TkQTkRUu+r25AlbdBgLa4YQzpe0tfrzpvOup9sbtlR
-	BYfzL9tmbJidhZ4TheHub78Avob4IzdeZNgRb8EmAFAFSOf0XHCJSdw+oKV+9wG256GQx3
-	6OQf6f0aFzipYl5300ZFqotgRT/d+E4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750090157;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=Bx6i2NZ8BbZBrNkIElY6uzwl2GaqIZIIjwPFKMYv8is=;
-	b=Gq51MwMkyjQs/bLBV9jOh+Av8HGn3aFzXBqBjuNojMHe5NAQaR5Loh0RlR2b/T5FRFX9Yc
-	gfVm9DFmFPs+frCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 28E0E13A6B;
-	Mon, 16 Jun 2025 16:09:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qAOqCKhBUGi5cQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 16 Jun 2025 16:09:12 +0000
-From: Takashi Iwai <tiwai@suse.de>
-To: amd-gfx@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Subject: [PATCH RESEND] drm/amd/display: Add sanity checks for drm_edid_raw()
-Date: Mon, 16 Jun 2025 18:08:41 +0200
-Message-ID: <20250616160908.26333-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750090270; c=relaxed/simple;
+	bh=tIPOanycRXeGUG/qLXkxXMcG2ZUS1ng5H3LFlCMh0F0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MhAU5MlIhuB3wvKJU6kwiVAY9uFgAYy/kgRMeER82A+nWjlD5m7dtYS1JLejGFLrlJocaDxY5rjnT7tMF2laAR20mb61G3e4kGAR5cpPNF+Oq6jbQGaxll390EesJwDh9Z+dR7EseztYyJFWKhR/o6T5dd1ljZdcXZAmWNB9Amg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DuFAyVY0; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750090269; x=1781626269;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tIPOanycRXeGUG/qLXkxXMcG2ZUS1ng5H3LFlCMh0F0=;
+  b=DuFAyVY0ZKGwnngDTAEm0ki2fqYYAPXRT+UUQbd9AAQqTSuVv92OOafq
+   L19xv5d1SPKsFRK8HaPATPZ9NY8SKJUDb7GFaGbnboTr/AzmgS8Jc6C1j
+   05jAkaADR+AASfmsyYKKkx0voCQlPof7UcMeYOHDGbIUB9XkzTarvrG1P
+   2rM3iU6LgeB9FNBRPR0keH3TpJ7h90ckpNPJTipGI9389uwD+V/Bu+qyw
+   +z8eHgBe5oU8DVB9sQ9vU2ZvBuO7wxrNLlOrRZLQigMx6T0kmrP8jQPRs
+   ew9cgxI9G8B+vfOItgjvOXnMIsRoxw7ICKXsWED/jE48DHWhnKLjSmoL7
+   A==;
+X-CSE-ConnectionGUID: mdUozK+WTy6EmKo/Beb74w==
+X-CSE-MsgGUID: RMYWrht/TIWrlarBRe0eTQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="52332028"
+X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
+   d="scan'208";a="52332028"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 09:11:07 -0700
+X-CSE-ConnectionGUID: ACIPburjT3GhT2CCHanwww==
+X-CSE-MsgGUID: RUdiEX63QvqhGcy5gRx1yw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
+   d="scan'208";a="148350687"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 09:11:07 -0700
+Date: Mon, 16 Jun 2025 09:11:05 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: George Gaidarov <gdgaidarov+lkml@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>, Jason Baron <jbaron@akamai.com>,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	James Morse <james.morse@arm.com>, Robert Richter <rric@kernel.org>
+Subject: Re: [PATCH 1/2] EDAC/ie31200: Enable support for Core i5-14600 and
+ i7-14700
+Message-ID: <aFBCGTJhve9DAG6O@agluck-desk3>
+References: <20250529162933.1228735-1-gdgaidarov+lkml@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	ASN_FAIL(0.00)[7.9.0.0.4.6.0.0.0.5.1.0.0.1.0.0.4.0.1.0.1.8.2.b.0.4.e.d.7.0.a.2.asn6.rspamd.com:server fail];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid,suse.de:email,suse.com:url];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 62C8221215
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -3.01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250529162933.1228735-1-gdgaidarov+lkml@gmail.com>
 
-When EDID is retrieved via drm_edid_raw(), it doesn't guarantee to
-return proper EDID bytes the caller wants: it may be either NULL (that
-leads to an Oops) or with too long bytes over the fixed size raw_edid
-array (that may lead to memory corruption).  The latter was reported
-actually when connected with a bad adapter.
+On Thu, May 29, 2025 at 04:29:32PM +0000, George Gaidarov wrote:
+> Device ID '0xa740' is shared by i7-14700, i7-14700K, and i7-14700T.
+> Device ID '0xa704' is shared by i5-14600, i5-14600K, and i5-14600T.
+> 
+> Tested locally on my i7-14700K.
+> 
 
-Add sanity checks for drm_edid_raw() to address the above corner
-cases, and return EDID_BAD_INPUT accordingly.
+George,
 
-Fixes: 48edb2a4256e ("drm/amd/display: switch amdgpu_dm_connector to use struct drm_edid")
-Link: https://bugzilla.suse.com/show_bug.cgi?id=1236415
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
+Applied to the edac-drivers branch of the RAS tree[1]
 
-Just resent, as the previous submission seems overlooked
+Should be picked up by linux-next, and will be merged into v6.17
 
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-index d4395b92fb85..9e3e51a2dc49 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-@@ -1029,6 +1029,10 @@ enum dc_edid_status dm_helpers_read_local_edid(
- 			return EDID_NO_RESPONSE;
- 
- 		edid = drm_edid_raw(drm_edid); // FIXME: Get rid of drm_edid_raw()
-+		if (!edid ||
-+		    edid->extensions >= sizeof(sink->dc_edid.raw_edid) / EDID_LENGTH)
-+			return EDID_BAD_INPUT;
-+
- 		sink->dc_edid.length = EDID_LENGTH * (edid->extensions + 1);
- 		memmove(sink->dc_edid.raw_edid, (uint8_t *)edid, sink->dc_edid.length);
- 
--- 
-2.49.0
+-Tony
 
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git
 
