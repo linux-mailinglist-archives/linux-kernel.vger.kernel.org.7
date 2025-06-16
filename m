@@ -1,134 +1,79 @@
-Return-Path: <linux-kernel+bounces-688197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB03ADAEFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:46:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24DD1ADAF08
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDC841730A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:46:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66FE41892508
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DB62DA755;
-	Mon, 16 Jun 2025 11:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kbf3Mba5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0942EA46D;
+	Mon, 16 Jun 2025 11:47:22 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB3E27E059;
-	Mon, 16 Jun 2025 11:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341062E92DB
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 11:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750074357; cv=none; b=BCo0iHr/ECy/e7WKiRKntY759vdqtMzYOqlGyvCV2pnUQKbDGC9rcWhY8c8kOP0H1+VznEEPXPdo9JITf0xAboWroyuLrCHyfJF+OTh4y1Nrws1qvckb309mY2NIZ8Q8xrgpc8xAO9muEbQec19i9osFygT0oFCuPKe1B5fqz98=
+	t=1750074441; cv=none; b=UWaUr+uZ6wr4ok/pZuTvS2d+KDsT7jssAdpZtFRtQKp4VYYAvX/2DZnSQurXHAZzPgvkskrs7XsnA9tK/rLgcXplV3dzYz1ohnOoG03ixMV3BMqOCXuaZ6gLJ5VOj3FBoYJYWBYKBnPPHr0ewc3dKxtXRygo+qrP3L/WjYdbsXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750074357; c=relaxed/simple;
-	bh=O7zqOTuFLCOrB6zke/k+DoaYmhGkvGgv200R9Xh9Rv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=stTCNcicH4HPa1Juu+9MW01jXse/1kMqCcw5vJMk8vwsn9nZRnRDwK9DHmIcN5ruh38A/Se3KCIQY6Y13MlTM4RZLOJnzsufpZZ6ZyQtH1IKduqZ/oaaMO8OtVLThWU9bKV0l1t3bZa2iytW6wIJgT2x1KUkwNhXkYv+NEI9dyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kbf3Mba5; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750074355; x=1781610355;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O7zqOTuFLCOrB6zke/k+DoaYmhGkvGgv200R9Xh9Rv0=;
-  b=Kbf3Mba5ujKZypBR2wIFKFyXP2jDydWZiWqnkCWSjV//2oHf4L7KLUZ3
-   mPIGNyf+4BzQIebMf7pl0Wu8IHJMsjAGgHQKHiV/jZxc+sD3ctOpTA0RU
-   dYO2a5NKyt2iikZchHcvHXhjdlecC2zncKbekLVeZOK4NlI5T+BHkFM8+
-   GUyHDDx0tREYPRdz9FXd4bNHyImr2TlctrXJFwOEFd8I1KEq1EV19nKvV
-   4OduPrG3PjfJdmR64+1t5s2xzVMRp2efzhdI8rIlCco3zNbIGX3VD1S1V
-   F/zzrfnBNKo3ybIRp3NpUcDRtaSi3oluzFaVEgB4zBGR7zh2pYmMMCAH4
-   Q==;
-X-CSE-ConnectionGUID: gOMbagrtSzKEhzy9DzzA/A==
-X-CSE-MsgGUID: 8MHOkuv5SOKrX9eqeReAMw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="63629545"
-X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
-   d="scan'208";a="63629545"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 04:45:54 -0700
-X-CSE-ConnectionGUID: YPoKs+xPTJS23+lwLuQK+g==
-X-CSE-MsgGUID: 2/EHphBLS6e1qatprLVKeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
-   d="scan'208";a="148991459"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 04:45:42 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uR8HR-000000073td-2aiv;
-	Mon, 16 Jun 2025 14:45:37 +0300
-Date: Mon, 16 Jun 2025 14:45:37 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 11/28] PCI: of: Use fw_devlink_set_device()
-Message-ID: <aFAD4czF-qPxoc-X@smile.fi.intel.com>
-References: <20250613134817.681832-1-herve.codina@bootlin.com>
- <20250613134817.681832-12-herve.codina@bootlin.com>
+	s=arc-20240116; t=1750074441; c=relaxed/simple;
+	bh=7Gw1Y4myJIX8GON3qOXr637A8LTprOV7WLv/0b8wTfI=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uCrCT7Acc10xM4vUOdU1yfBHpsk6svUfphjHQsjqqBgaUlKwaEYIO3B844zgFuVjytJGLcBkVmdSDIICYAxqWlvwjZI2cDAo5IFPSAULBfwococpyjLdaXzy9rEehNRrETG2RPY4yYBjI53nR1LhnOarD5zEnVa8Qxc6+A5ka7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: "mingo@redhat.com" <mingo@redhat.com>, "peterz@infradead.org"
+	<peterz@infradead.org>, "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>, "rostedt@goodmis.org"
+	<rostedt@goodmis.org>, "bsegall@google.com" <bsegall@google.com>,
+	"mgorman@suse.de" <mgorman@suse.de>, "vschneid@redhat.com"
+	<vschneid@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIXSBzY2hlZC9jcHV0aW1lOiBGaXggYSBtb3N0bHkgdGhl?=
+ =?gb2312?Q?oretical_divide_by_zero?=
+Thread-Topic: [PATCH] sched/cputime: Fix a mostly theoretical divide by zero
+Thread-Index: AQHb1UB9Uh7C2aJ+ekCiq94zr/3OHrQFtOCg
+Date: Mon, 16 Jun 2025 11:46:25 +0000
+Message-ID: <54c4aa198131420d9c77542bad5d27e7@baidu.com>
+References: <20250604110442.8251-1-lirongqing@baidu.com>
+In-Reply-To: <20250604110442.8251-1-lirongqing@baidu.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250613134817.681832-12-herve.codina@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-FEAS-Client-IP: 172.31.51.55
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Fri, Jun 13, 2025 at 03:47:51PM +0200, Herve Codina wrote:
-> The code set directly fwnode.dev field.
-> 
-> Use the dedicated fw_devlink_set_device() helper to perform this
-> operation.
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+PiANCj4gU3VtIG9mIHV0aW1lIGFuZCBzdGltZSBjYW4gb3ZlcmZsb3cgdG8gMCwgd2hlbiBhIHBy
+b2Nlc3Mgd2l0aCBtYW55IHRocmVhZHMNCj4gcnVuIG92ZXIgdG90YWwgMl42NCBucw0KPiANCj4g
+U2lnbmVkLW9mZi1ieTogTGkgUm9uZ1FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPg0KDQoNClBp
+bmcNCg0KVGhhbmtzDQoNCi1MaQ0KDQo+IC0tLQ0KPiAga2VybmVsL3NjaGVkL2NwdXRpbWUuYyB8
+IDMgKystDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0p
+DQo+IA0KPiBkaWZmIC0tZ2l0IGEva2VybmVsL3NjaGVkL2NwdXRpbWUuYyBiL2tlcm5lbC9zY2hl
+ZC9jcHV0aW1lLmMgaW5kZXgNCj4gNmRhYjQ4NTQuLmMzNWZjNGMgMTAwNjQ0DQo+IC0tLSBhL2tl
+cm5lbC9zY2hlZC9jcHV0aW1lLmMNCj4gKysrIGIva2VybmVsL3NjaGVkL2NwdXRpbWUuYw0KPiBA
+QCAtNTc5LDcgKzU3OSw4IEBAIHZvaWQgY3B1dGltZV9hZGp1c3Qoc3RydWN0IHRhc2tfY3B1dGlt
+ZSAqY3Vyciwgc3RydWN0DQo+IHByZXZfY3B1dGltZSAqcHJldiwNCj4gIAkJZ290byB1cGRhdGU7
+DQo+ICAJfQ0KPiANCj4gLQlzdGltZSA9IG11bF91NjRfdTY0X2Rpdl91NjQoc3RpbWUsIHJ0aW1l
+LCBzdGltZSArIHV0aW1lKTsNCj4gKwlpZiAobGlrZWx5KHN0aW1lICsgdXRpbWUpKQ0KPiArCQlz
+dGltZSA9IG11bF91NjRfdTY0X2Rpdl91NjQoc3RpbWUsIHJ0aW1lLCBzdGltZSArIHV0aW1lKTsN
+Cj4gIAkvKg0KPiAgCSAqIEJlY2F1c2UgbXVsX3U2NF91NjRfZGl2X3U2NCgpIGNhbiBhcHByb3hp
+bWF0ZSBvbiBzb21lDQo+ICAJICogYWNoaXRlY3R1cmVzOyBlbmZvcmNlIHRoZSBjb25zdHJhaW50
+IHRoYXQ6IGEqYi8oYitjKSA8PSBhLg0KPiAtLQ0KPiAyLjkuNA0KDQo=
 
