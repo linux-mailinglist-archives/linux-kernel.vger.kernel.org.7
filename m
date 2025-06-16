@@ -1,119 +1,173 @@
-Return-Path: <linux-kernel+bounces-688347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CE96ADB162
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:14:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DDA0ADB164
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6984C1743B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:14:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8432D3B63DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7402B2E06F9;
-	Mon, 16 Jun 2025 13:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137432DBF6B;
+	Mon, 16 Jun 2025 13:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="avfpS6nZ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kXueeXiX"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AAB2E06E0;
-	Mon, 16 Jun 2025 13:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E732DBF46
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750079566; cv=none; b=hszTOkOHw6+xKS0cIRF/oY28o+05ARSMkNrmnFaL3FAYde38SO4a3BHXDkbdTtez5IKzxfDW6M/CMiy93aBXp7Mu6ZO/Km9YOqxkt769OuH4/2uBklz8LSeBLMEMqpJUqUD/gRzXC3PvjFnacbpYtRY89aucAtyTL7l6MrpFtHs=
+	t=1750079646; cv=none; b=h0iMMe1t+9yIRhV1GVJvVWB4L7q0g+/57W/ykxRHPlD/DNA8lVtZn4p/apvAjQ3B9m1qH5+ejGiYL74GDTOIiwqOcQEZhFpGSk1KWWk/tDYAL3zgNuL1cRXxpStgN1Uec/Kx+6FaIMtD/hqsZbDPbe59VMux8grKIZV6dNUG6oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750079566; c=relaxed/simple;
-	bh=CuYtgieWF4URffDKBDTk16YnYn/RE5FqB0DlCr6y9CQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KgBwB2LGpO2TROToG6JhCbez8FatQlWEyt0MexH1b4meWf/I7/r4R74hmv3ddRH3+K9UG/dp+tDyyte7a2D6R9JHtHk73hZF4TrMU0Ehc7g8mOkZQTGr7uvj9SelfWLedZ8UAfAp3eEvhetmeOL5QffqFMy0SqNLzvoalZHsQjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=avfpS6nZ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=QDQN6GYwYKn7ZOSeeLgojQdiSLD5+Ckw667EaUGQn3w=; b=avfpS6nZPx9dBOEfOKh6rjQJK8
-	2HvqMW3l8yGneKnvb9QJzID+F1h4B8Csv6RK8n8Yo6zQIuaI/vwO8ZOEGYXKl+0fAkYlBe3+TgH1S
-	dODfZ0mY8JAWliWP7a4yTzpQCKtYXitfuYkWxuw1CsFJI/HN6mleJRpMy15ngGAouF4g=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uR9dd-00G2pC-KC; Mon, 16 Jun 2025 15:12:37 +0200
-Date: Mon, 16 Jun 2025 15:12:37 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Shenwei Wang <shenwei.wang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	Frank Li <frank.li@nxp.com>
-Subject: Re: [PATCH net-next v2 07/10] net: fec: fec_enet_rx_queue(): replace
- manual VLAN header calculation with skb_vlan_eth_hdr()
-Message-ID: <4877c76a-d0c1-41d7-95c6-553542e2d9b1@lunn.ch>
-References: <20250612-fec-cleanups-v2-0-ae7c36df185e@pengutronix.de>
- <20250612-fec-cleanups-v2-7-ae7c36df185e@pengutronix.de>
- <729dfa8c-6eca-42c6-b9fd-5333208a0a69@lunn.ch>
- <PAXPR04MB8510A1946372F37B5F97E9F28870A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1750079646; c=relaxed/simple;
+	bh=bEkIwJKNMLdtIH3qoD09umnOzSE4UEjxHiK/ZI7dhJU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WoqcLYrqex3yxuS4f4NP3K5Z7CWuAHdl6Sq9G7TKgmpZAljQ/2ih2UNxr5KOEZVU09wJ6GZB2J9yOBWC6+DuO/7aH0vKdJZI0gK47dGAV2tTBHRO7mXR6slpUGrsqMkr4lP0IWD/RuLJiZOylfaUQC/3VYiyL6/g8PHJT/lc+Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kXueeXiX; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e8187601f85so3757409276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 06:14:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750079643; x=1750684443; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BRYkbvCVxvcI/mg8yKgS8W1N0iZ7JRBV2UIynjIs8JQ=;
+        b=kXueeXiXDOnLyphxh64NM1Nkew0a6yBveieNTwSqw/YCZHZuRHKe4N0OYd6EKn4R06
+         87u9Yt53Lpb8g+AeEQcnrIkkDwd14K7ocAIOvgp9qlPqoYcufwbpYS/D9iqE7a2VmP8P
+         hhsi+VFLONtsA8xf5e6vOHDSyGpeviPVAjRVWuKoDQUBYI9e3MHvvUGaoWTSDEE4WFkH
+         k/srN1hoauo46MLjdmDQYVAZO+lT1g+1ypzUcnSPa9EK+QjKrk5b6uz7AhRdWOAuFWbc
+         RID/da0s1R0sH6neIXUas5q/1Por/QRGBg6djdcdBIPJf2RKfZiLOjcQk7vE/2njHAjP
+         ZeIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750079643; x=1750684443;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BRYkbvCVxvcI/mg8yKgS8W1N0iZ7JRBV2UIynjIs8JQ=;
+        b=pwtrW9nvOWbCLWty0wvaGpJmp5P5G5UtxFMyQw/OLGWWlSp4fuXgrvdp2HT/zrDrUQ
+         W1AEddUSNu8HaD0IExX/GXgBx5hnSdlD0iv11jw5UhjkmNlz+MioB+PGnSQAyepIRkg3
+         fmv2/h7puQ0Z2miD6zVkKo5SrOOP/ImgZdY28KUd2B7Ou6LjVLJysoMX/owOhFuqvBAg
+         BAt/mGviqu8dmLKTW7nQnM7kU6v1QoAdfCIBM6V+TimBqOG3ZaLTpf7xjDk7fVBoKJ/0
+         0aZ1rqCzHo0npLbRMpY5Ko6tFOHKtdP789NNGxowWWI+vhSU2A0OEDS6dQvQBqPPa/Em
+         vt7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXy97158NHKCSGNQBDszi6U0bJ4mfMp+7t9uU+0J1y5uE3nQnC/h2c+68YFHSvWolIz9UMci2comS4a4CQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc/8rpcckadXWYe25bSiMGfSwdtC5zDN9oBbKygCqQYbuWOYF2
+	tDKYclnf1bn9LPc7Mru/xLPqAwozsOGvXxdU4/NtnrQPg5om21OXPy0yVeqocLsAtPq8BG7iP9j
+	ZCi3rkD/4cCEYR9DCo4jxzxb5VHsBpsNAVTbclcfxwg==
+X-Gm-Gg: ASbGncuovRLAW+nNcjalHRVBDEt3MeFbaTlLX9EyPjZqJzFYjAV/G9EnccRe7uSqjL6
+	0Y8WRzK5iL+E4wmSfAnh/cda/thTUJvUCmZWKP7whyzUMJp4fAbhb/MFi8Y7vXZgvYga4puRIRp
+	hzANN9PMzxxeOvpWoay2c9aC/iCXgTRE/uPBYdjjjNvBfk
+X-Google-Smtp-Source: AGHT+IGi/aEqL6Rh0/QFbFi5llqcB5Z+A4DQiJChk6fNONAKpDZLCVOKHVzGhfBOvJ/fA1gHl6Xt6hW+mpx8lzQMNck=
+X-Received: by 2002:a05:6902:150d:b0:e7f:682f:9536 with SMTP id
+ 3f1490d57ef6-e822acb5383mr11988415276.46.1750079642672; Mon, 16 Jun 2025
+ 06:14:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8510A1946372F37B5F97E9F28870A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250602131906.25751-1-hiagofranco@gmail.com> <20250602131906.25751-2-hiagofranco@gmail.com>
+ <iuotfsnaft3623lchzop6sbu5ox56scdr57uia56qm6ummcvzt@yisczcdzbc3b> <20250612173132.ixgctqijtd33vnmb@hiago-nb>
+In-Reply-To: <20250612173132.ixgctqijtd33vnmb@hiago-nb>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 16 Jun 2025 15:13:26 +0200
+X-Gm-Features: AX0GCFuvpjxjHJP5wI9sLNmiJuYGa1YHq-TFuFSLYi0hAhYmQqrk1asShtl7yPE
+Message-ID: <CAPDyKFoHHMv1MUnT-ZUTDiwZdMChq1KooQxnNDx=eettpoTAGA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] pmdomain: core: introduce dev_pm_genpd_is_on
+To: Hiago De Franco <hiagofranco@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
+	"Rafael J . Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 16, 2025 at 01:42:08AM +0000, Wei Fang wrote:
-> > >  drivers/net/ethernet/freescale/fec_main.c | 3 +--
-> > >  1 file changed, 1 insertion(+), 2 deletions(-)
+On Thu, 12 Jun 2025 at 19:31, Hiago De Franco <hiagofranco@gmail.com> wrote:
+>
+> On Wed, Jun 11, 2025 at 10:32:28AM -0500, Bjorn Andersson wrote:
+> > On Mon, Jun 02, 2025 at 10:19:03AM -0300, Hiago De Franco wrote:
+> > > From: Hiago De Franco <hiago.franco@toradex.com>
 > > >
-> > > diff --git a/drivers/net/ethernet/freescale/fec_main.c
-> > > b/drivers/net/ethernet/freescale/fec_main.c
-> > > index 6b456372de9a..f238cb60aa65 100644
-> > > --- a/drivers/net/ethernet/freescale/fec_main.c
-> > > +++ b/drivers/net/ethernet/freescale/fec_main.c
-> > > @@ -1860,8 +1860,7 @@ fec_enet_rx_queue(struct net_device *ndev, u16
-> > queue_id, int budget)
-> > >  		    fep->bufdesc_ex &&
-> > >  		    (ebdp->cbd_esc & cpu_to_fec32(BD_ENET_RX_VLAN))) {
-> > >  			/* Push and remove the vlan tag */
-> > > -			struct vlan_hdr *vlan_header =
-> > > -					(struct vlan_hdr *) (data + ETH_HLEN);
-> > > +			struct vlan_ethhdr *vlan_header = skb_vlan_eth_hdr(skb);
-> > 
-> > This is not 'obviously correct', so probably the commit message needs expanding.
-> > 
-> > static inline struct vlan_ethhdr *skb_vlan_eth_hdr(const struct sk_buff *skb) {
-> > 	return (struct vlan_ethhdr *)skb->data; }
-> > 
-> > I can see a few lines early:
-> > 
-> > 		data = skb->data;
-> > 
-> > but what about the + ETH_HLEN?
-> > 
-> 
-> The type of vlan_header has been changed from "struct vlan_hdr *" to
-> "struct vlan_ethhdr *", so it is correct to use skb->data directly.
+> > > This helper function returns the current power status of a given generic
+> > > power domain.
+> > >
+> >
+> > Please correct me if I'm wrong, but this returns the momentary status of
+> > the device's associated genpd, and as genpds can be shared among devices
+> > wouldn't there be a risk that you think the genpd is on but then that
+> > other device powers it off?
+>
+> I am not fully familiar with the genpd's, so my knowledge might be
+> limited, but I think this is correct, if the genpd is shared.
+>
+> >
+> > > As example, remoteproc/imx_rproc.c can now use this function to check
+> > > the power status of the remote core to properly set "attached" or
+> > > "offline" modes.
+> >
+> > I presume this example works because there is a dedicated, single usage,
+> > genpd for the remoteproc instance?
+>
+> Peng might correct if I am wrong, but yes, I believe this is correct.
+>
+> >
+> > >
+> > > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+> > > ---
+> > > v4: New patch.
+> > > ---
+> > >  drivers/pmdomain/core.c   | 27 +++++++++++++++++++++++++++
+> > >  include/linux/pm_domain.h |  6 ++++++
+> > >  2 files changed, 33 insertions(+)
+> > >
+> > > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> > > index ff5c7f2b69ce..bcb74d10960c 100644
+> > > --- a/drivers/pmdomain/core.c
+> > > +++ b/drivers/pmdomain/core.c
+> > > @@ -758,6 +758,33 @@ int dev_pm_genpd_rpm_always_on(struct device *dev, bool on)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(dev_pm_genpd_rpm_always_on);
+> > >
+> > > +/**
+> > > + * dev_pm_genpd_is_on - Get device's power status
+> >
+> > Functions in kernel-doc should have () prefix
+>
+> Thanks, I will correct this is next patch version.
+>
+> >
+> > > + *
+> > > + * @dev: Device to get the current power status
+> > > + *
+> > > + * This function checks whether the generic power domain is on or not by
+> > > + * verifying if genpd_status_on equals GENPD_STATE_ON.
+> > > + *
+> >
+> > If my understanding is correct, I'd like a warning here saying that this
+> > is dangerous if the underlying genpd is shared.
+>
+> I believe this is correct, maybe Peng or Ulf can also comment here, but
+> if that is the case then I can update the comment.
 
-Doh! I missed that, sorry. Maybe extend the commit message, you
-mention skb_vlan_eth_hdr() but you could add something like
+Good point!
 
-... and change the type of vlan_header to struct vlan_ethhdr to take
-into account the ethernet header plus vlan header is returned.
+I would not say that it's "dangerous", while I agree that we need to
+extend the comment to make it really clear that it returns the current
+power status of the genpd, which potentially may change beyond
+returning from the function and especially if the genpd has multiple
+consumers.
 
-With that, please add: Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+[...]
 
-    Andrew
+Kind regards
+Uffe
 
