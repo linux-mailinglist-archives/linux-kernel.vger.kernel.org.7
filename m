@@ -1,144 +1,143 @@
-Return-Path: <linux-kernel+bounces-687759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B82ADA8BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:02:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E78ADA8C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B8616BEAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:02:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 389CD16BF71
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579221E3787;
-	Mon, 16 Jun 2025 07:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3351EF0B9;
+	Mon, 16 Jun 2025 07:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="s2UVLpUK"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="IxQi+7T1"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B1417BCE;
-	Mon, 16 Jun 2025 07:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750057317; cv=none; b=VpS7Klvb10yA8oNeHoFyIC4efCcPRZFY66Tv3qrrbb9YKcxECy6zHfipsCoGAPJ7KRPpf4iqtNQsk1vkLtwFx1IK6E6uHhrdAf1xGRYHpG1jSsemt1G5qhxZ9KfTLeXC5TUgZOTXIoDOk+Mxbbc2IKE6GD24WFC/cuwndUZmKko=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750057317; c=relaxed/simple;
-	bh=InuKAAGjHu/C7GD/p6y1dIS+oWspdPvUrz6/e8cjyKM=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
-	 In-Reply-To:References; b=W5OPfBhXIhvvKRoFubdRIpBJ7DaCtE4NRx1tD1I9BldcgUifMC/wCgOjB9nYyUaAptQV2JTGdow049wyUaCoWBe6NAuYkf1Evvuz8AKvSk+/OdqYhITAYHulsmLft/I7WqrIg2IHDvsavQMWUD4bmgFtLPHDjr8Lut7kjOQdTUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=s2UVLpUK; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1750057280; x=1750662080; i=frank-w@public-files.de;
-	bh=InuKAAGjHu/C7GD/p6y1dIS+oWspdPvUrz6/e8cjyKM=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:Date:In-Reply-To:References:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=s2UVLpUKJZyqePN0VoRDHjcH1kF2nvZKAqTZkzdJ3S1G1FhxLe/WJ7aonJgYwff1
-	 2O7pslpgw6AoB9xR1d+Lp2pQuxrpjw4e7vRRvzCQCJE9Le8pURc9y1BzdaDseApBW
-	 vGKi3V4o+j/N+t8sgHoYJlOfYH7EYq5jZ1g3AEaGpqqlIIfpajDNXPPYcaa6QNwtz
-	 HS5/BrZ1I/KpeER6QopNP6/0JUw9kUSZ6tF+9OJjWZ+JZ70abf1sefc9pPUhTNMWT
-	 Bs6vg9RrfIqyhdldZ0+XsproGILWz+1DSAmbEKySlpL5WDQzzQPV9G6OQp2f/k9ZN
-	 VbxjqO4BMB+mS72rWg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [100.67.37.206] ([100.67.37.206]) by
- trinity-msg-rest-gmx-gmx-live-b647dc579-tr2th (via HTTP); Mon, 16 Jun 2025
- 07:01:20 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2CC191F7E;
+	Mon, 16 Jun 2025 07:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750057335; cv=pass; b=dU1qTExKRhIMPgGVyjWwA+BaE3SWdz6PG6PXUHcjf03UYwcD4SP6UTszEfAwsGDzxzRe8gCDuc8gZt5/jWIiMGZeDOvCJ2/HeQFJ9YQiqk+z5/6kl+p1IyEYE8en9gIET4MQlpTFFxGKRdqiLSa/u42s6Do9r16NhSp4iE4iDQU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750057335; c=relaxed/simple;
+	bh=oEb7wU/bu1oja52oKmgMha7mtv8iISClgAa0+JK8RlY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U+ydmlMxPBKBrZnNxWj64pM6OUhG4xTsJSO/IVqoPIouJsueqHNxiDaeEotUbmxTv1PwrGWvy+3zj9WV2X7ZLNQex2kVeXe+Lxa/dwn3fZAVqKOkiexY0O7pYjvhj67hg8U3oNRBXkR1OL0fwRI7mztbxsVQBJa8QSE0m7jAliQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=IxQi+7T1; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1750057314; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Jifj7LPMyfhtP30MtT1rMLT80HmtvAWL7dm8J4KTHjHv0ysl3gAQ2JJsye1U79ru0Ptyvm5+F9c0fE0g2ttioPbe+VSLnCipT5Ra++D1TvHI0PnaA1zMqYapDXAoxB78QCEFlwmI0/9Tq1MvOZYOsevhuv/KTBjOVNhT+H7Lv9A=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750057314; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=w2oMih2lbo9iywrNmIQ7860yAhkMUGDVYCOSRkVl8HE=; 
+	b=Xl6Z8aNSFfTb8gDV7YCiDulQeCZ4LdwI96+oaLlG0NMP3Mi6u7FGhX1Z/DFfHyRDJb6imFWelRXCPRFzWLM9Bta63b4n8Ys7OIbaYRwjz8k26pIjZdkJOoEDaZrwRcs62hRHyT5RmG/t52K+Rto5nJcuYLtxnSkrM1KTT1p+aSI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750057314;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=w2oMih2lbo9iywrNmIQ7860yAhkMUGDVYCOSRkVl8HE=;
+	b=IxQi+7T1vu3ihlP6vgZgo5YeXRZ1xjBpC9Gb25NI5BOcn+wqUVXT+L2oBykRhQJA
+	BBkE1n6pOQHpPizZw7CG8aBOJVIee2SspJ+EEh4xOf/fcjCTlFKaUykFYEgpwEje0cy
+	l6MPeRz7CejjG12vjWB8M7zT3+cmrpQNwWCMamDU=
+Received: by mx.zohomail.com with SMTPS id 17500573121561008.1454058676544;
+	Mon, 16 Jun 2025 00:01:52 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: kernel@collabora.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] docs: document linked lists
+Date: Mon, 16 Jun 2025 09:01:48 +0200
+Message-ID: <4657048.LvFx2qVVIh@workhorse>
+In-Reply-To: <87v7p48vd6.fsf@trenco.lwn.net>
+References:
+ <20250520-linked-list-docs-v1-0-db74f7449785@collabora.com>
+ <20250520-linked-list-docs-v1-2-db74f7449785@collabora.com>
+ <87v7p48vd6.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-e9eaf8fd-42f1-46d5-b1df-3bfefe02b2fe-1750057280436@trinity-msg-rest-gmx-gmx-live-b647dc579-tr2th>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: mason-cw.chang@mediatek.com, rafael@kernel.org,
- daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
- angelogioacchino.delregno@collabora.com, nfraprado@collabora.com,
- jpanis@baylibre.com, npitre@baylibre.com, colin.i.king@gmail.com,
- u.kleine-koenig@baylibre.com, wenst@chromium.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, daniel@makrotopia.org,
- steven.liu@mediatek.com, sam.shih@mediatek.com
-Cc: mason-cw.chang@mediatek.com
-Subject: Aw: [PATCH 0/3] thermal/drivers/mediatek/lvts_thermal: add mt7988
- lvts commands
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 16 Jun 2025 07:01:20 +0000
-In-Reply-To: <20250526102659.30225-1-mason-cw.chang@mediatek.com>
-References: <20250526102659.30225-1-mason-cw.chang@mediatek.com>
-X-UI-CLIENT-META-MAIL-DROP: W10=
-X-Provags-ID: V03:K1:E53Jv9HXOWkrKn1ZmdCThVsKfrzyzuGZargrqRZrhq4Jf1N6adv3cJ2SO3q/CtWy8d1d/
- QDM9voUlQrOto5dwjYfZWRz4yPGaMpj5j0PIhveWyIfGmukm4lJdw+qRF8g5xZigd97/80PljnoQ
- H8ZrO1S5pA+KCV21QjyAF1d3rOVeZzzMO0CfDykQZKy1Pztvw0C+hv8rbqBrIxsegEJF5iyfSKP0
- r4WZa67IPl1lKRtoLF3B1SdTESGO/2b3C5xJh94nV4fOA2mNfxuFfOgbRims31qA5sc6MRAMUNFf
- lw41SniqEtVepmdTyGLN3TgvPEvq317HVyJqOzvxi5npkIetYQ1kamys4S/E8OxFUA=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PxlaLSE8vxo=;EPEHr1o7va+Z4JcCx7lU/6b8+Cc
- 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
- LFSEZB56NrtCrz7ufFA==
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+
+On Monday, 9 June 2025 23:20:53 Central European Summer Time Jonathan Corbet wrote:
+> Nicolas Frattaroli <nicolas.frattaroli@collabora.com> writes:
+> 
+> > The kernel contains various generic data structures that should ideally
+> > not be reinvented. However, it often fails to document the usage of
+> > these in the in-tree kernel documentation beyond just a listing of
+> > header symbols in the very lengthy kernel-api docs page. This is fine
+> > for things that have simple invocations, but occasionally things devolve
+> > into several layers of concatenating macros, which are subpar for humans
+> > to parse.
+> >
+> > Begin making a small impact by adding some rudimentary example-driven
+> > documentation for the linked list type. It's far from exhaustive, as
+> > many list modification functions are currently not mentioned. However,
+> > it covers the basics and directs readers towards further documentation
+> > should they be interested in concurrency.
+> >
+> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > ---
+> >  Documentation/core-api/index.rst |   1 +
+> >  Documentation/core-api/list.rst  | 390 +++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 391 insertions(+)
+> 
+> So I'm only now getting around to a belated look at this.  I like it
+> overall, but I do have a couple of comments:
+> 
+> - Is there any way to talk you into replacing all of the graphviz
+>   diagrams with ascii art in literal blocks?  All the dot stuff makes
+>   for pretty HTML, but is entirely unreadable for people looking at the
+>   plain-text docs.
+
+Yeah, the dot was more easily understood at one point but then I decided
+I wanted to wrestle the layout and add backedges and then not make the
+backedges look horrible. Now it's a mess. I think I can easily be
+convinced to replace it with ASCII art in literal blocks. On that note,
+I wonder if there is a tool to translate simple ASCII graphs into dot
+and then whatever output from that, which would be the ideal solution
+here to encode semantic meaning for both audiences.
+
+I'll definitely drop the back edges from the diagrams though, they
+only make things more confusing.
+
+> 
+> - All of the kerneldoc stuff for list.h is currently pulled into
+>   kernel-api.rst.  Should we perhaps move it over here?
+
+I think that's a good idea once the new documentation exhaustively
+covers everything. Pulling it into both places generates warnings,
+which is why I didn't do it for the functions I already did document.
+And doing it only for some and not others needlessly spreads things
+out across two pages, though maybe this is best dealt with having a
+"dumping ground" in each section for other functions related to that
+section, so that we have an exhaustive function listing even if no
+usage examples are provided.
+
+I will work on a v2 today which addresses your concerns, and expands
+on the documentation to also include some list modification functions.
+
+> 
+> Thanks,
+> 
+> jon
+> 
+
+Kind regards,
+Nicolas Frattaroli
 
 
-> Gesendet: Montag, 26. Mai 2025 um 12:26
-> Von: "Mason Chang" <mason-cw.chang@mediatek.com>
-> Betreff: [PATCH 0/3] thermal/drivers/mediatek/lvts_thermal: add mt7988 l=
-vts commands
->
-> Add the LVTS commands for Mediatek Filogic 880/MT7988.
->=20
-> This series fixes severely abnormal and inaccurate LVTS temperature
-> readings when using the default commands.
->=20
-> Signed-off-by: Mason Chang <mason-cw.chang@mediatek.com>
 
-Hi
-
-just a friedly reminder for maintainers, is the patch series ok or does it=
- need any changes?
-
-regards Frank
 
