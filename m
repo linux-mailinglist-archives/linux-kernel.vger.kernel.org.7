@@ -1,96 +1,107 @@
-Return-Path: <linux-kernel+bounces-688967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF3DAADB967
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:18:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42732ADB973
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BAD318902DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:18:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AEB93B269A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAA3289368;
-	Mon, 16 Jun 2025 19:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWOR9q/D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0023B28981D;
+	Mon, 16 Jun 2025 19:18:56 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64BB1C700D;
-	Mon, 16 Jun 2025 19:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796721C700D;
+	Mon, 16 Jun 2025 19:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750101476; cv=none; b=mEo/PiKxnpEP3Ck9Ol/p6q5CWJ+NMB2rUQ1yLgZ+JWe9ygtSVWJ0ct/23Hw4RygGddcbcN1Y931nxbAh3DY6mGaoKZmyuxN4l9nrLfMvdjhgSh7Rn9YhqXJ+aBiWfk8oLvvLe1JM9Dm02NGS7BGcZaQG7y1D+jItKZpcLLw9Oos=
+	t=1750101535; cv=none; b=Zf79Q5Bg2odi8Zbo5tGnmu7TxQs1rxqw6ULzUBOgQfT7uJZUK07i5ssSJ9C2a7CeTfryTbxSGzpvS870SPmqzpD5fOAC/4pT8Igvi7a6Qtyyb0LfOdHoaf6wKKA/+bk+TcCXcidk8hb+i2tHXq+mJEoh1c/k2Q3+Us8getYO+Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750101476; c=relaxed/simple;
-	bh=CoAMun8R7pN+jZjFgrOl5n9fazsstR/Wnm3bSiQFnwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I8DbTWVRhTnHOnrtwCQVd0nF4WHPCnW4dm+7Tj/m+BxRMC062CRU7dUDLYBHhPRtEATG2zLaI0aDSJfBE7k/BiaiiJTuCT9fWVizfsl7d1gsnvJjfs1v+97ZtizZUw96VnwsY0F1CTNKPhA7g4FN6d8zFoKnlCRUv6qjyUbPhOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWOR9q/D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F313DC4CEEA;
-	Mon, 16 Jun 2025 19:17:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750101475;
-	bh=CoAMun8R7pN+jZjFgrOl5n9fazsstR/Wnm3bSiQFnwk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MWOR9q/DL5dmtOWTs8z1Rd9159DcaIblk9pMRjbqtHX5ZX9p0/PUXEb+3xUHWhusN
-	 HOiUJYoQmMuMl103MHhUNmczer3K8E02XylGXcD4Qoh7ubgy1irYoBq8BwYA77Tu/s
-	 Lj11kLYuF/afpFA++39N+VzqnNDsdFP8dW2lN2kQnsSQdPzebkbleZK/SMhGsxTUD6
-	 SQXrUmViyaqJGu5ZWkyXIGGoR3qRJiifQe5HnMI3lSiWDdS5tLj5/3XCY6W5Pla3zM
-	 3odnsvfVcVr72qfze7Hc017uP6nc5vQaRWpRbsDrzVXxF9WcWCycv/8xqb1qZvIw/Q
-	 YKWt/CreJQ30w==
-Date: Mon, 16 Jun 2025 20:17:50 +0100
-From: Simon Horman <horms@kernel.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: David Thompson <davthompson@nvidia.com>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, asmaa@nvidia.com, u.kleine-koenig@baylibre.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v1] mlxbf_gige: emit messages during open and
- probe failures
-Message-ID: <20250616191750.GB5000@horms.kernel.org>
-References: <20250613174228.1542237-1-davthompson@nvidia.com>
- <20250616135710.GA6918@horms.kernel.org>
- <ecadea91-7406-49ff-a931-00c425a9790a@intel.com>
+	s=arc-20240116; t=1750101535; c=relaxed/simple;
+	bh=EpxFWOeKKzby0k/IoO779qDJQTpZINzLmss4VsjsOO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=COZKo8NQMBEiwCcig7Wc0gEUtewOsTZwVJ3M1gSL3jxg6K1UAJ7sz/PzLpmqP5QHJOVat+b8bG+vEVcyTueWFUu6dBVImkIQNYfUVaee3glHQ+PqISX/cEZBDoS0i0vKu3yMXUndFyfSbh/jzWTBgpR5QoV8GQfi2R1t2lru+fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 0750416032C;
+	Mon, 16 Jun 2025 19:18:51 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id C50A46000C;
+	Mon, 16 Jun 2025 19:18:49 +0000 (UTC)
+Date: Mon, 16 Jun 2025 15:18:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Carlos  Maiolino
+ <cem@kernel.org>, Christoph Hellwig <hch@lst.de>, "Darrick J. Wong"
+ <djwong@kernel.org>
+Subject: Re: [PATCH v2 00/13] xfs: tracing: remove unused event
+ xfs_reflink_cow_found
+Message-ID: <20250616151848.36ddcee5@batman.local.home>
+In-Reply-To: <20250616175146.813055227@goodmis.org>
+References: <20250616175146.813055227@goodmis.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ecadea91-7406-49ff-a931-00c425a9790a@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: C50A46000C
+X-Rspamd-Server: rspamout08
+X-Stat-Signature: t8djaqg6jmxc3r9qw4a4cdjrsbrwpznt
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19sFy0mMt69Phvj+J8Y/DQjMU5FGDu9ueY=
+X-HE-Tag: 1750101529-661037
+X-HE-Meta: U2FsdGVkX19WkZNorP5ucOpv6p01Ousfxni3d9I9O6JFDXYkkCSBUjIBDSGuoT07HgwIoEeRO4OcxARt7CeH36+t4981QWdE9DKFdDZPY8+OlCMOYziQTfg7ck4g2iXgxYhgvHNOoGqKF02FST9REKID5i+Wkwnc9RvJjDhCqAXBCzgyv4Ng1VDduqPZCs8pyXXTxxZ45KLvWTlo+LaUjhY0ERK+KM+xIiOksvhe+VCcliubHDThRrfdZPA1MoALQez8xEKvysSP9R4rr2ks7gEslofQtc/QTvtfHAegTt6gPh24EiUFUqaSgARKwHDHV0XXDC2MDjhurUBlQKxAQyLReROr9Fv6Iu5poGEURYLJHT6ijZdPAcJwEBmDYgpNmlShi+NhmlJl+Vja5tFOKg==
 
-On Mon, Jun 16, 2025 at 04:06:49PM +0200, Alexander Lobakin wrote:
-> From: Simon Horman <horms@kernel.org>
-> Date: Mon, 16 Jun 2025 14:57:10 +0100
+
+Bah, I hate the multiple clipboards of the Linux desktop. I had cut and
+pasted the above subject line in one clipboard and then cut the subject
+I wanted in another, and unfortunately pasted the former :-p
+
+This is what the subject was supposed to be:
+
+  "xfs: remove unused trace events"
+
+
+On Mon, 16 Jun 2025 13:51:46 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> Trace events take up to 5K in memory for text and meta data. I have code that
+> will trigger a warning when it detects unused tracepoints[1]. The XFS file
+> system contains many events that are not called. Most of them used to be called
+> but due to code refactoring the calls were removed but the trace events stayed
+> behind.
 > 
-> > On Fri, Jun 13, 2025 at 05:42:28PM +0000, David Thompson wrote:
-> >> The open() and probe() functions of the mlxbf_gige driver
-> >> check for errors during initialization, but do not provide
-> >> details regarding the errors. The mlxbf_gige driver should
-> >> provide error details in the kernel log, noting what step
-> >> of initialization failed.
-> >>
-> >> Signed-off-by: David Thompson <davthompson@nvidia.com>
-> > 
-> > Hi David,
-> > 
-> > I do have some reservations about the value of printing
-> > out raw err values. But I also see that the logging added
-> > by this patch is consistent with existing code in this driver.
-> > So in that context I agree this is appropriate.
-> > 
-> > Reviewed-by: Simon Horman <horms@kernel.org>
+> Some events were added but never used. If they were recent, I just reported
+> them, but if they were older, this series simply removes them.
 > 
-> I still think it's better to encourage people to use %pe for printing
-> error codes. The already existing messages could be improved later,
-> but then at least no new places would sneak in.
+> One is called only when CONFIG_COMPACT is defined, so an #ifdef was placed
+> around it.
+> 
+> Finally, one event is supposed to be a trace event class, but was created with
+> the TRACE_EVENT() macro and not the DECLARE_EVENT_CLASS() macro. This works
+> because a TRACE_EVENT() is simply a DECLARE_EVENT_CLASS() and DEFINE_EVENT()
+> where the class and event have the same name. But as this was a mistake, the
+> event created should not exist.
+> 
+> [1] https://patchwork.kernel.org/project/linux-trace-kernel/cover/20250612235827.011358765@goodmis.org/
+> 
+> Changes since v1: https://lore.kernel.org/linux-trace-kernel/20250612212405.877692069@goodmis.org/
 
-Thanks, I agree that is reasonable.
-And as a bonus the patch-set could update existing messages.
+And this should have been to the lore link and not patchwork:
 
-David, could you consider making this so?
+  https://lore.kernel.org/linux-trace-kernel/20250612235827.011358765@goodmis.org/
+
+-- Steve
 
