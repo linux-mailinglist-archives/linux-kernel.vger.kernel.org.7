@@ -1,147 +1,142 @@
-Return-Path: <linux-kernel+bounces-688712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA164ADB627
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:06:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1675DADB62C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEEA93B5C58
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:06:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D296F188F749
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905BF286424;
-	Mon, 16 Jun 2025 16:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52851286883;
+	Mon, 16 Jun 2025 16:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="Cxej/lQU"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="S0PEOhi7"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF8586340;
-	Mon, 16 Jun 2025 16:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750089998; cv=pass; b=Uhxot0FKfp8X5AHs33kCP5Jo4x5Uu2kCaeea3Xa/19vQq270NwG/bgfVhwvHzKMdLfsD79kzOnPHmaILoCy3duaznro1+OGtdWJWiHA1ESYNdoi48SmwJh+PkkQRRghqesSI0tn8mHJGyqj3h2YljsXiW3HUy7PB/3359YLKbmA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750089998; c=relaxed/simple;
-	bh=ASFFuuxt+NkRcr85V9Pfr5TSV45ijN++k4YYQyXOBPw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FyslqY2BM0rkBV7Ns71zdTaLdiYX2TFu/S9pa8SBVYPQBU9ej6y4iQ6N8rSBxAHLxh1sQEv8Gi4gExlbj5pBHd46uO1WkpefhHivnTh4Qqn0bsHf47a8wcv3JxRC9ykPnVThc16pH1Claw7jlQrUT0LVcZC6r64YnScThDebtSc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=Cxej/lQU; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1750089974; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=e3GNWk/WbTMBevIRzVxs0X0CrdY0pRAyPGz6jfHOmRORUsjwLA1tl83Tcg69Gdmjm6LtbNDMWkmzWPXstgPN13BL4cUCzalmADCecyqghzLvTPu7xIp5Zte6CJ7oUCnJXZEHBgK41h40PJKyFeuACrxbSi+mpnczIfdnz4rfot8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750089974; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=R2NIJYlZXUCPFvz62oOBC7RgnkUtxPH/uiLdx+Eefzw=; 
-	b=LPTH8d3DUcfCDo7jV04mDGb73PcRIZcqmB6HWL3b3Fwmaro5ZWuxr+RCxr3Gh3EofXC1PFLsCGqgykkco3tglMzjHesUsHPyai1hut15i1TFpPYezmbnoImx6TieTKuB6c2a9oBwESWEKNux8OyIhLTWlIF7v0/BhzqbDVUirqs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
-	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750089973;
-	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=R2NIJYlZXUCPFvz62oOBC7RgnkUtxPH/uiLdx+Eefzw=;
-	b=Cxej/lQUz2GTaTy62PcnOSfRvxKBanXxW0lGKW0AFWDQ7U+qDpLJSKzl0sFtrdA7
-	IlPkQnAXxZZRvNLvs2aFKNCn7ht/En6XoDdo+4KiSUwcNsn0YeE3BwU1TiJVG+uovHv
-	FdY7IkjAhFOlAV0AndUjZn8f5RMcY2IxVzacAGQM=
-Received: by mx.zohomail.com with SMTPS id 1750089971949421.80620542117106;
-	Mon, 16 Jun 2025 09:06:11 -0700 (PDT)
-Message-ID: <163a05ac-b0de-4345-8489-dbf858326908@collabora.com>
-Date: Mon, 16 Jun 2025 18:06:08 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353FB216E26;
+	Mon, 16 Jun 2025 16:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750090031; cv=none; b=gWKkZKhphD+z4rjpkvaIVPrxAD75NglpH893NN6crAY5ws4bactBJoM+CnoR7KKT2WPP89sPFWyiQhZtr4lUqShwhkd5nlr8UabCQE44vmb90dKx4gZISKEI+F634onm2A9sRt951wIxWDK9jnFnA531lubWRD4SquZpONat/VU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750090031; c=relaxed/simple;
+	bh=N3+w7YRiWNSYjXfkzMcJUCIjuAfRuZULI8CJX32v8Mg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kh915MbuSr9HKRqbZkadt5sKo5ZT8fSkl3BDGXXpR9sJl39TZ3uT+c39BSNVtgtwMovadtWzg6wfVxLymLmuuU9dJjc5URH/zAmMzFlMBk8j9DFn5IJsGbBWxdhq87z2Ae6RYrVyy+VQdXWCi9JVN1q4FcHP7PQJB68o2Tow1lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=S0PEOhi7; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55GF04OW004256;
+	Mon, 16 Jun 2025 16:06:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=I6tpdeq6gAbNR7xr7dzlEkuLfK7b1b6RfYKjOPqWj
+	Hg=; b=S0PEOhi7NkolxOg84i7V2oNTwFW8Jd8FD2tbxqRH0OZ4bOKbGNCXdYrdS
+	pziPD77tN343Febgnk4CPKlOLQsOhvCBj7cQSoc99r71DaCZMasUTNiene91k5j4
+	dRctiUUUQCWBquIiHM/NLB/k4UsS8w7N19CbYaYwTM0T8LSKSevzb2F58xxgqU5z
+	7wLgOS5mJzKGwfmjoBKjbCDM+q6bZSeIAZ5sVfNkZdnkDKcEuqQqad6rfUMgWq6h
+	q5gwOieVOKdTZ8WUVydjD4syW+moUs0BBvwOF4FeSVMfdZ69zlPk04uzMp5YyZbk
+	PV3is+96YUwTHXVVtaIXFFemnHUiA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 478ygn2vrb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Jun 2025 16:06:45 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55GG2J5w001796;
+	Mon, 16 Jun 2025 16:06:45 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 478ygn2vr6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Jun 2025 16:06:44 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55GDL38C005492;
+	Mon, 16 Jun 2025 16:06:44 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 479mwkxtg0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Jun 2025 16:06:44 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55GG6e8p24707822
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Jun 2025 16:06:40 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1CF4920043;
+	Mon, 16 Jun 2025 16:06:40 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3AD9E20040;
+	Mon, 16 Jun 2025 16:06:34 +0000 (GMT)
+Received: from li-c18b6acc-24ee-11b2-a85c-81492619bda1.ibm.com.com (unknown [9.43.33.110])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 16 Jun 2025 16:06:33 +0000 (GMT)
+From: Aboorva Devarajan <aboorvad@linux.ibm.com>
+To: akpm@linux-foundation.org, Liam.Howlett@oracle.com,
+        lorenzo.stoakes@oracle.com, shuah@kernel.org, pfalcato@suse.de,
+        david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+        npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+        baohua@kernel.org
+Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, donettom@linux.ibm.com,
+        ritesh.list@gmail.com, aboorvad@linux.ibm.com
+Subject: [PATCH 0/6] selftests/mm: Fix false positives and skip unsupported tests
+Date: Mon, 16 Jun 2025 21:36:26 +0530
+Message-ID: <20250616160632.35250-1-aboorvad@linux.ibm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: iommu: verisilicon: Add binding for VSI
- IOMMU
-To: Conor Dooley <conor@kernel.org>
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
- nicolas.dufresne@collabora.com, p.zabel@pengutronix.de, mchehab@kernel.org,
- iommu@lists.linux.dev, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
- kernel@collabora.com
-References: <20250616145607.116639-1-benjamin.gaignard@collabora.com>
- <20250616145607.116639-3-benjamin.gaignard@collabora.com>
- <20250616-winter-strict-db98f85db22d@spud>
- <5c971c09-c398-40a3-9ed5-ec38b6645e1d@collabora.com>
- <20250616-contempt-remix-5af2b7281cbd@spud>
- <2d251d7c-7906-4a66-9791-7f71e7a4b54d@collabora.com>
- <20250616-capped-rehab-6e7fd24d23ae@spud>
-Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <20250616-capped-rehab-6e7fd24d23ae@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDEwMiBTYWx0ZWRfX4xEd6FrN0e/r /ltKQUB2w4Fczw3Gh78GdlaJpu7A8woR/RpRv4HZKY3+ZHi72LWxtFVAcZ3wsEgVQjplNeMkwjC p/Z7UhLu+z35vXrezRodLm25KLHklTQllFna5IeflKX+HAwTV33L/y9Onh/bHY4utuB/HLoe1bX
+ JJr0YhphTVu9YeyNrtYxy8KPnyW3vnbVs6aW75f8VF08+IaaimEg9Nid+nl6RCeWcCvAwyWSQ7z npB+2+FuMolxGLlowv3y7J0XNavADL3yNTweXGSE/jOiWvCL6/pF7q5N7V4Lu/TiZjyYXOjCStM Gcwj2jPx/A28A4DssFLq/p9b2DOlKhemMZUFK9V5krHcnPZKD8IKVYOQqrolhfQfGcIeNaZDxdg
+ llYBmgGyhhYMuP48GKKyeuzmfWr03NuXxApI5U8quZVzeRIr7lGTLgSNWE3C5wbQPyHTZ2Aj
+X-Authority-Analysis: v=2.4 cv=fYSty1QF c=1 sm=1 tr=0 ts=68504115 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=6IFa9wvqVegA:10 a=SIVL7P9ECBs5F6Hl04QA:9
+X-Proofpoint-ORIG-GUID: 92M_0BToZtZBcQFtkmzxgcKbc4vSdr56
+X-Proofpoint-GUID: LKPpOlXkcsJ-F05eAvT-Ci6P3YCXw_80
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-16_08,2025-06-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ spamscore=0 mlxlogscore=999 lowpriorityscore=0 adultscore=0 mlxscore=0
+ impostorscore=0 bulkscore=0 phishscore=0 clxscore=1011 priorityscore=1501
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506160102
 
+This patch series fixes some of the false positives in generic
+mm selftests and skips tests that cannot run correctly due to
+missing features or system limitations.
 
-Le 16/06/2025 à 17:58, Conor Dooley a écrit :
-> On Mon, Jun 16, 2025 at 05:50:50PM +0200, Benjamin Gaignard wrote:
->> Le 16/06/2025 à 17:42, Conor Dooley a écrit :
->>> On Mon, Jun 16, 2025 at 05:30:44PM +0200, Benjamin Gaignard wrote:
->>>> Le 16/06/2025 à 17:14, Conor Dooley a écrit :
->>>>> On Mon, Jun 16, 2025 at 04:55:50PM +0200, Benjamin Gaignard wrote:
->>>>>> Add a device tree binding for the Verisilicon (VSI) IOMMU. This IOMMU sits
->>>>>> in front of hardware encoder and decoder blocks on SoCs using Verisilicon IP,
->>>>>> such as the Rockchip RK3588.
->>>>>>
->>>>>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
->>>>>> ---
->>>>>>     .../bindings/iommu/verisilicon,iommu.yaml     | 71 +++++++++++++++++++
->>>>>>     1 file changed, 71 insertions(+)
->>>>>>     create mode 100644 Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml b/Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
->>>>>> new file mode 100644
->>>>>> index 000000000000..acef855fc61d
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
->>>>>> @@ -0,0 +1,71 @@
->>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>>>> +%YAML 1.2
->>>>>> +---
->>>>>> +$id: http://devicetree.org/schemas/iommu/verisilicon,iommu.yaml#
->>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>>> +
->>>>>> +title: Verisilicon IOMMU
->>>>>> +
->>>>>> +maintainers:
->>>>>> +  - Benjamin Gaignard <benjamin.gaignard@collabora.com>
->>>>>> +
->>>>>> +description: |+
->>>>>> +  A Versilicon iommu translates io virtual addresses to physical addresses for
->>>>>> +  its associated video decoder.
->>>>>> +
->>>>>> +properties:
->>>>>> +  compatible:
->>>>>> +    oneOf:
->>>>>> +      - items:
->>>>>> +          - const: verisilicon,iommu
->>>>> You're missing a soc-specific compatible at the very least here, but is
->>>>> there really no versioning on the IP at all? I'd be surprised if
->>>>> verisilicon only produced exactly one version of an iommu IP.
->>>> I only aware this version of the iommu for the moment.
->>> "for the moment", yeah. Is there any information that could be used to
->>> version this available?
->> The hardware block isn't documented in the TRM so I don't know if there is a version
->> field or something like that.
->>
->>>> Does adding verisilicon,rk3588-iommu sound good for you ?
->>> It'd be "rockchip,rk3588-iommu", but sure.
->> "rockchip,rk3588-iommu" is already use for other MMUs in rk3588.
-> "rockchip,rk3588-video-iommu" then? Instances of an IP in an SoC get a
-> specific compatible with the SoC vendor's prefix, so having verisilicon
-> there isn't suitable unless they made the SoC.
+Please let us know if you have any feedback.
 
-Other hardware video codecs have a different IOMMU so I will suggest
-"rockchip,rk3588-av1-iommu" which is specific to this video hardware block.
+Thanks,  
+Aboorva
+
+Aboorva Devarajan (2):
+  selftests/mm: Fix child process exit codes in KSM tests
+  selftests/mm: Mark thuge-gen as skipped if shmmax is too small or no
+    1G pages
+
+Donet Tom (4):
+  mm/selftests: Fix virtual_address_range test issues.
+  selftest/mm: Fix ksm_funtional_test failures
+  selftests/mm : fix test_prctl_fork_exec failure
+  mm/selftests: Fix split_huge_page_test failure on systems with 64KB
+    page size
+
+ .../selftests/mm/ksm_functional_tests.c       | 24 +++++++++++++------
+ .../selftests/mm/split_huge_page_test.c       | 23 ++++++++++++++----
+ tools/testing/selftests/mm/thuge-gen.c        | 11 +++++----
+ .../selftests/mm/virtual_address_range.c      | 14 +++--------
+ 4 files changed, 45 insertions(+), 27 deletions(-)
+
+-- 
+2.43.5
 
 
