@@ -1,149 +1,195 @@
-Return-Path: <linux-kernel+bounces-688606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1447ADB49C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:59:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D8BADB4B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D54847A9269
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:56:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4663F3B5790
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9228214A94;
-	Mon, 16 Jun 2025 14:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7606220C00E;
+	Mon, 16 Jun 2025 14:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="f7619JxT"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="ia6evUwi"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C722BEFEB;
-	Mon, 16 Jun 2025 14:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750085804; cv=pass; b=dODtuZoWnCG+aSspemgdQFGu4M0Rw/v0IdbfkMxvRQ+fKLyJGFC8oen4z2U6+cmwBOc4PUhglh6t5tNrLe7bDBKLP2lvwiQ5uizvZgsCrO1kA4bWTnL81U2hRQ4160omw2/TtNWOG+kt1IAhlBGiu8QZQoJmnyEagz98vBXSyhE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750085804; c=relaxed/simple;
-	bh=FHA0qXxH97hrMpK1m8eyFVAD3IhyOatmTyHQSe8khfs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=I8BnUcJGcygQAX+yPDTIKDPSUl52bF3vGgPafrk8zLbIY/bdYGhw4lnlAkNB6Yc+E3Qj9EGHGq66pAcyFWocjtHPWB2Tqx/krBsHL13+FAyjisubxHKo+WDyVuPm07CbA0/1t3ry93AHuoW74jg4myhBoiRgfSouV6uT26GbFXY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=f7619JxT; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1750085783; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=N9dWNo7I2HlyV+sYWjI8Ob3/p92WpGS1VgqstYxavj1x2w1o7h95OonO6JCLvymRHvI/v+xfZopCwAfW6G0mRBBeU3S38JkBafQUA7jrEbV7Bz8TyScGIonEcATQdxGXbyRLdh7x91CfwSHX3N27Axny4Rl02fQlnN2G6FgT+cg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750085783; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=FHA0qXxH97hrMpK1m8eyFVAD3IhyOatmTyHQSe8khfs=; 
-	b=GckFlxZK4x5CEzw6YzyU6v4lAucKxdOaZ8T3M3L7KABRRABBF/WmuTlOwqKSKxdEeOIpBcbIMKkxBVJNqsNGM0E+S3h4CIPHwJ9B4bt1yM30UH+fdpRk8F77+DR8Cs3Gw6u76YVFcr6VB/jepe42RJ55QRupw9byi7lCR4x4l6E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750085783;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=FHA0qXxH97hrMpK1m8eyFVAD3IhyOatmTyHQSe8khfs=;
-	b=f7619JxTxaVC0lISJRSuqOPQ16AF7xlL2mh4yEaxEu3YF481jw1zJ2mZe9EwAiBD
-	fCbsiQb20r+MV8iKcP20aoskorbHdjtdEe7MvDRN8I6GcdiOZwPf6XWttjcGPp3HxaX
-	Wedx/VvHjJghcr3mqRSCc9PFHfl54+jkpOJBPH2M=
-Received: by mx.zohomail.com with SMTPS id 1750085781588401.0239276513456;
-	Mon, 16 Jun 2025 07:56:21 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BF820C00D
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 14:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750085904; cv=none; b=tZal0l5Rfix69P4IYW4gp/4QTvQlPNdfgXdlizfyQb7dkj9IBsrQ7mnHbp47C5XYhTXL9zbNFmrsE70b3wQs27+SYFpgOgAdZWdhpmPe6OrQ48q/e71kfRn17zywHQC7buYy02XcSWej/hHUQcsRB8Q4plKo594Vsbcso1fIi1U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750085904; c=relaxed/simple;
+	bh=cPrfXMOyiWg+1h9JS6Q6gagkKfqg1QmmYqOaKsbzlBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NAr2CSG8KfI7Icluxib5Alnxy0hHfN8Q0VDy2YxBBYAe9ifjebUeW6IUi4HzXhDWLpw1JYwBa6fw/HT4cHvo1BvFZI7xfvksI+lCieQr61qw3NYmUPFk0EkHnxbi446tsCKlP5lqr40UrZa2xvmakkFj8JaeTDgPfP+HlMnCZPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=ia6evUwi; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4a58ebece05so49237731cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 07:58:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1750085901; x=1750690701; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DuMKK0wxk2Ppc1cObPUWbdepum9enQdFn8eNSrTwIrE=;
+        b=ia6evUwisqAqbsdfGS2WQmeFvKFqfSOW/rmLZQxtc4azBceotQXLEFO5kpZgvAVAny
+         tqIBfos4/uCaFNz6ZgRpimK4t1+XmKWkRe37dRA3nkgewq5+rFYG+R3gpDLBqs5LDUux
+         ufNKmtKMM+weH3NnAGJb4LdXODp3iPGzpbepysVzv2vEvF6Bbd4W/fEW3d8YseAlAW5B
+         XRhmAk+vWEX4npvwNR4KJnjD6+xzyRDsC7lhE6xPnIHxW9SAyMkVNXCM5vLo0nSVif0V
+         ig0orE2NNRpqwD9gDf6eOs+Ln5aGN2yuzl69rpH2tSy9kFnngm/NOi78lBUwhPAqBqzD
+         6wTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750085901; x=1750690701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DuMKK0wxk2Ppc1cObPUWbdepum9enQdFn8eNSrTwIrE=;
+        b=ncUR4SgMenvUzWkbXkrW3OEQjmbfuMlD6wW+McRtheMK043qH/d4202WMr078WX22K
+         FwnF1fPcKNFHmwGUD8qawMHLuO11tm/DAA6PMKUhhrvLDWjWJlKuUItA1/s/vNnATvoY
+         Tp7GWWdjanGjxDw+PHR3YgMCE0b+IhgH9mpaqDAZyRTf15SHzHSinKIpsmKBUud1GsqV
+         7nqxAfJxJt0P7iGv+oJjZbaXWC2H6lXtDOu63f8Z/YKkoCBYnhGaYu7z/rcZz829bNke
+         RstAfPCKz8fpwlMsy7yPbPM1aD2ybD10Aifmld78/QatHM4tsSxYzae+gTfkKAjgImHH
+         rEHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjlfsXHitWIDDKkx4ojfMxe0PGntl1jkG5I/cCLwWNxS//bp7suhEOXG9PouMIXGNaT3vDoXHzN0NhS6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8j051Uma+667FJsGX5PBQbDNdHULeaWuNnml0BTnecda6Sd6z
+	t+LqN9MPjeS2lyhZ77uOwAPqvNl1jNxq/t/hrj5r+z8sbDozWoAWfrTFYAM3TH3VyPY/ooA2HnG
+	rs/bbtrptcFVU7mC6kloLfrxVoFJVo42w7vuV4Xr20g==
+X-Gm-Gg: ASbGncsGRX+JSWf7LyxQNzo+uCKcnLA+uDVfQ69uiEUaxGJe4CLpCBoxWRv6HXN/fez
+	MLC5RPq1tJRlmYSRdYegla2UhqSMTS9KPdhdqNszN5HhHxtq+gO/St1fnt9q9MpE5LfLh9/gERS
+	Zaqkm1s9w/E03HRHwXLbwZHO/00qxzHsuA9XyldmP7
+X-Google-Smtp-Source: AGHT+IHeqnVp8310ARaaqnrcuIV7Bf4XtpwoW0IDiqPPSGX8Jd8nm+uznItPFIhEpr0JFzT8rjNxr8wKmjb6IQDf1UQ=
+X-Received: by 2002:a05:622a:1814:b0:4a6:ef6d:d608 with SMTP id
+ d75a77b69052e-4a73c609abfmr154969901cf.38.1750085901185; Mon, 16 Jun 2025
+ 07:58:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v6] rust: kernel: add support for bits/genmask macros
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <DAO1K5YIFVRH.31XI173DWYYX1@nvidia.com>
-Date: Mon, 16 Jun 2025 11:56:06 -0300
-Cc: Boqun Feng <boqun.feng@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
+MIME-Version: 1.0
+References: <20250515182322.117840-1-pasha.tatashin@soleen.com>
+ <20250515182322.117840-10-pasha.tatashin@soleen.com> <mafs0y0u6rx8y.fsf@kernel.org>
+ <CA+CK2bCigGJJqtSt1-4GP0JPVCZrTa6WS4LiMTT0J=04G64e5w@mail.gmail.com>
+ <mafs0h60jmzzc.fsf@kernel.org> <CA+CK2bA6zsdARkRMQwadD__qXOzjABcRnwdZjfdnvLf26hsz9w@mail.gmail.com>
+ <mafs0a568vuf5.fsf@kernel.org>
+In-Reply-To: <mafs0a568vuf5.fsf@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 16 Jun 2025 10:57:44 -0400
+X-Gm-Features: AX0GCFtEAEaQHrRq3yY3LztJjK9AZdUJhVhSl24FNdkzOUkQ_-QE0qUF49S7jzU
+Message-ID: <CA+CK2bBcgkrM0D0w77+UpDZsF2rDOc15iAcEJ7PMw52HQDipvA@mail.gmail.com>
+Subject: Re: [RFC v2 09/16] luo: luo_files: implement file systems callbacks
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: jasonmiu@google.com, graf@amazon.com, changyuanl@google.com, 
+	rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
+	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <3EAB4EAE-DDCF-47C4-A712-77B37AEDF4E8@collabora.com>
-References: <20250610-topic-panthor-rs-genmask-v6-1-50fa1a981bc1@collabora.com>
- <DAMAPVAI3V8X.N8SAQD6KOO1Q@nvidia.com>
- <9578ECFC-6C59-40E3-9340-A426E8D2328A@collabora.com>
- <aFAqLYBMHkC_X-dr@Mac.home>
- <D29BB87C-356E-4885-8308-456028AE3B6F@collabora.com>
- <D12DC02A-E1EE-47F1-86AF-C25C492FA3D4@collabora.com>
- <DAO1K5YIFVRH.31XI173DWYYX1@nvidia.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
 
-Hi Alex,
+On Mon, Jun 16, 2025 at 6:43=E2=80=AFAM Pratyush Yadav <pratyush@kernel.org=
+> wrote:
+>
+> On Fri, Jun 13 2025, Pasha Tatashin wrote:
+>
+> > On Fri, Jun 13, 2025 at 11:18=E2=80=AFAM Pratyush Yadav <pratyush@kerne=
+l.org> wrote:
+> >>
+> >> On Sun, Jun 08 2025, Pasha Tatashin wrote:
+> >>
+> >> > On Thu, Jun 5, 2025 at 12:04=E2=80=AFPM Pratyush Yadav <pratyush@ker=
+nel.org> wrote:
+> >> >>
+> >> >> On Thu, May 15 2025, Pasha Tatashin wrote:
+> >> >>
+> >> >> > Implements the core logic within luo_files.c to invoke the prepar=
+e,
+> >> >> > reboot, finish, and cancel callbacks for preserved file instances=
+,
+> >> >> > replacing the previous stub implementations. It also handles
+> >> >> > the persistence and retrieval of the u64 data payload associated =
+with
+> >> >> > each file via the LUO FDT.
+> >> >> >
+> >> >> > This completes the core mechanism enabling registered filesystem
+> >> >> > handlers to actively manage file state across the live update
+> >> >> > transition using the LUO framework.
+> >> >> >
+> >> >> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> >> >> > ---
+> >> >> >  drivers/misc/liveupdate/luo_files.c | 105 ++++++++++++++++++++++=
++++++-
+> >> >> >  1 file changed, 103 insertions(+), 2 deletions(-)
+> >> >> >
+> >> >> [...]
+> >> >> > @@ -305,7 +369,29 @@ int luo_do_files_prepare_calls(void)
+> >> >> >   */
+> >> >> >  int luo_do_files_freeze_calls(void)
+> >> >> >  {
+> >> >> > -     return 0;
+> >> >> > +     unsigned long token;
+> >> >> > +     struct luo_file *h;
+> >> >> > +     int ret;
+> >> >> > +
+> >> >> > +     xa_for_each(&luo_files_xa_out, token, h) {
+> >> >>
+> >> >> Should we also ensure at this point that there are no open handles =
+to
+> >> >> this file? How else would a file system ensure the file is in quies=
+cent
+> >> >> state to do its final serialization?
+> >> >
+> >> > Do you mean check refcnt here? If so, this is a good idea, but first
+> >> > we need to implement the lifecycle of liveupdate agent correctectly,
+> >> > where owner of FD must survive through entering into reboot() with
+> >> > /dev/liveupdate still open.
+> >>
+> >> Yes, by this point we should ensure refcnt =3D=3D 1. IIUC you plan to
+> >> implement the lifecycle change in the next revision, so this can be
+> >> added there as well I suppose.
+> >
+> > Yes, I am working on that. Current, WIP patch looks like this:
+> > https://github.com/soleen/linux/commit/fecf912d8b70acd23d24185a8c050476=
+4e43a279
+> >
+> > However, I am not sure about refcnt =3D=3D 1 at freeze() time. We can h=
+ave
+> > programs, that never terminated while we were still in userspace (i.e.
+> > kexec -e -> reboot() -> freeze()), in that case refcnt can be anything
+> > at the time of freeze, no?
+>
+> Do you mean the agent that controls the liveupdate session? Then in that
+Yes
+> case the agent can keep running with the /dev/liveupdate FD open, but it
+> must close all of the FDs preserved via LUO before doing kexec -e.
 
-> On 16 Jun 2025, at 11:52, Alexandre Courbot <acourbot@nvidia.com> =
-wrote:
->=20
-> On Mon Jun 16, 2025 at 11:45 PM JST, Daniel Almeida wrote:
->>=20
->>=20
->>> On 16 Jun 2025, at 11:42, Daniel Almeida =
-<daniel.almeida@collabora.com> wrote:
->>>=20
->>> Hi Boqun,
->>>=20
->>>>=20
->>>> We should tell/educate people to do the right thing, if a..b is not
->>>> inclusive in Rust, then we should treat them as non-inclusive in =
-Rust
->>>> kernel code. Otherwise you create confusion for no reason. My =
-assumption
->>>> is that most people will ask "what's the right way to do this" =
-first
->>>> instead of replicating the old way.
->>>>=20
->>>> Regards,
->>>> Boqun
->>>>=20
->>>=20
->>> This is just my opinion, of course:
->>>=20
->>> I _hardly_ believe this will be the case. When people see genmask =
-and two
->>> numbers, they expect the range to be inclusive, full stop (at least =
-IMHO). That's how it has
->>> worked for decades, so it=E2=80=99s only natural to expect this =
-behavior to transfer over.
->>>=20
->>> However, I do understand and agree with your point, and I will =
-change the
->>> implementation here to comply. Perhaps we can use some markdown to =
-alert users?
->>>=20
->>> =E2=80=94 Daniel
->>=20
->> Or better yet, perhaps we should only support a..=3Db.
->=20
-> ... or just drop the ranges and do as Daniel initially did, using two
-> arguments. But I agree with Boqun that we should not deviate from the
-> official interpretation of ranges if we use them - the fact that =
-`Range`
-> is exclusive on its upper bound is documented and a property of the =
-type
-> itself.
+Right, but in this case the agent would have to basically kill all the
+processes the regestred FDs through it prior to 'kexec -e', I am not
+sure it is its job. However, we can add some pr_warn_once() when rfcnt
+!=3D 1, I think this is a minor change. Lets do that once we have a more
+developed userspace setup. We need to start working on liveupdated
+that would through some sort of RPCs calls store and restore FDs.
 
-By the same token, I agree that we should use ranges instead of two =
-arguments,
-if said two arguments represent a range anyways. So my vote is for a..=3Db=
- JFYI.
-
-
+Pasha
 
