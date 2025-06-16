@@ -1,166 +1,172 @@
-Return-Path: <linux-kernel+bounces-688324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17434ADB0FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:02:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE0D4ADB100
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC01E1888FAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:02:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28CEC18891B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9AB154C15;
-	Mon, 16 Jun 2025 13:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2007292B21;
+	Mon, 16 Jun 2025 13:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Nnc3/6d3";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="kjZ68fhU"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rOoehX0s"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0608035957;
-	Mon, 16 Jun 2025 13:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBE913D8A3
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750078884; cv=none; b=VEyXdCdrfJhSGH90+jzxOudcN05ZihMvMe5CJ+3wHDNyat4KGqYHcl+tkWhsiP8wNd9h78pabwL8ZndE9IqkWEW+Tt+pS4+5eWGX4yPIcc6gladnYXax6RIssAca57Q9kx23+ANuluwF0bJ7y+RI3Soh4JQR69AEKQ5PvFiftNM=
+	t=1750079002; cv=none; b=aUwNRAVw2Oo9uxjaDxo2tZNlddJuhCT9Z+umyjWdl7l74mn0gK0x0sjMkbFU20umfM3k8YOGg37Nk0U+/gmPx23smB38bocghS8neeMIfOTsNjZoZ7GxdXr8gIiE3laYZkv/9gGkyCUqid6PtilyLivs42C6D+nmKiKIGBFOKQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750078884; c=relaxed/simple;
-	bh=ONuIo+AnCcXSkSvmvKqIeq1jW2aLTmVOMuS2CQ5WgbA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UZw3Y758FZF//gOZY7SlOo4HiByNDnfgA5NxAhr+iX+D63LoiPg9PPiT70VE7ibNystzB+9lXU/joMy7/O31eEep/oNXOvrX6kIVMa/pnSiyshIVPKwCRtPGPv4NbOhrgW7FTvEjqxP0kkcNMv+zwFY6VSX7cVEFMzL/9Ml1pN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Nnc3/6d3; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=kjZ68fhU reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1750078880; x=1781614880;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yxALRRYScDYKnexuf1UxNeEFBeVRTJqf7bEilvpn8nY=;
-  b=Nnc3/6d34MKWXyMWnXESxLwSGtqgqqr4gdEvzPaaFBuWqpXqDk0vkIPB
-   ARUSy3JSb71LDoe9ll4UJlf9SlP2mo164j8nMeEhGaQTnryzpyLRTXc8t
-   BmuMeSYXftv+5ut9rM8LXVYr7KdHr5/lnB4k9UQXFNBKHx0KROJ8GhJok
-   qZoD7AsPQlxeoB9a/xCFx73q//S9lb71CWP3QuK3LKU0XyItmtz9H8abB
-   OZH3kDFhK8vlgrgJES2BkYpnGZt1hecd2AVuaSu56EEfza5kAd55j6IZl
-   Sm2sFaYZ+fu+gnabUFIO0O5xzBUFlYoyVqU3URYxSPOv9kMjs0A/GLPM3
-   w==;
-X-CSE-ConnectionGUID: ykC0lJx2QwyDuee7QurJag==
-X-CSE-MsgGUID: nCf91h3nQ7y4VxRRpe5wIw==
-X-IronPort-AV: E=Sophos;i="6.16,241,1744063200"; 
-   d="scan'208";a="44660120"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 16 Jun 2025 15:01:12 +0200
-X-CheckPoint: {68501597-32-28ACC837-DD1065DB}
-X-MAIL-CPID: 0D78A9916BC46A124D0B2A24D9C3DCEA_2
-X-Control-Analysis: str=0001.0A006378.685015AD.0055,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 07815169520;
-	Mon, 16 Jun 2025 15:01:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1750078867;
+	s=arc-20240116; t=1750079002; c=relaxed/simple;
+	bh=YDdt2a9xy/4INarcQaMrArBFeqy3/Ue9LuaTqFLYAK0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=satyNmfJLub24THQuVXZ39ZLdkjhNtJTXKKaLLq7lIsg4JiVQaIu6D5KItngb8zwW8anbjXRfYu8eGrmMeHopSlMxBc0dRIpMFklBAXbtKaClv+U/kiyKzV8DsnOuUpqH+veiq0o83ghgHLkcgSNDiZkB+HQPbcu6M9tw0kFOLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rOoehX0s; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750078978;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yxALRRYScDYKnexuf1UxNeEFBeVRTJqf7bEilvpn8nY=;
-	b=kjZ68fhUvFFeJkU6SrbOnINd8NZvl1oPW17GzZaKqV8t57ObVZqmWjlbhy5Z8fxOBaFHt2
-	3rLF+RdsJkvr3IlFTV2uuhX4DFVS/ComS89kCpMSCwjnEE9Ey5NEOQgypbD68oqQk54VQs
-	DM+h8ILls0CNse9+f3FJWp74gY0qtnppLVdo8zy8mJDHZws0sUdu9fkLAgGE6YsQXpr1jv
-	Kp3NowvMt3shYe5hRzm16klR8pgp4KtYuvv5+iw5QDsMrl5wZFfGYVQUceysgxroT2dfWS
-	169P/nFSXo/SwqYAW9ROBkPvwzUnMoyVfAd2tMZE8qsH4U2gJZHimViXvKsWzA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux@ew.tq-group.com
-Subject:
- Re: [PATCH 1/1] arm64: dts: tqma8mpql-mba8mpxl-lvds: Rename overlay to
- include display name
-Date: Mon, 16 Jun 2025 15:01:06 +0200
-Message-ID: <2788842.mvXUDI8C0e@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20250408140856.1143290-1-alexander.stein@ew.tq-group.com>
-References: <20250408140856.1143290-1-alexander.stein@ew.tq-group.com>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Eubdnz44eJHj7tXfj3/2tAprEgJBgR4lupu93+abiDA=;
+	b=rOoehX0sU7Frhgcz8UBT13xk6wjZchspa3Ko8wehdCZ0ZwM8CN2OxOiqzVlJ003ytlkgYU
+	Z5jEbgg0ZxSKzHq58K7mBMLPBMzYX6S9Jx1u1CeV0W4K/0wwHxx1t/O6zE/FWYcy4FStLe
+	dKipLGWX4vngnzt5EGgsCumYTfyhvOU=
+From: Tao Chen <chen.dylane@linux.dev>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mattbobrowski@google.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next v3 1/2] bpf: Add show_fdinfo for uprobe_multi
+Date: Mon, 16 Jun 2025 21:02:32 +0800
+Message-ID: <20250616130233.451439-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+Show uprobe_multi link info with fdinfo, the info as follows:
 
-Am Dienstag, 8. April 2025, 16:08:55 CEST schrieb Alexander Stein:
-> This platform supports several displays, so rename the overlay to reflect
-> the actual display being used. This also aligns the name to the other
-> TQMa8M* modules.
->=20
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> ---
->  arch/arm64/boot/dts/freescale/Makefile                        | 4 ++--
->  ...s.dtso =3D> imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33.dtso} | 0
->  2 files changed, 2 insertions(+), 2 deletions(-)
->  rename arch/arm64/boot/dts/freescale/{imx8mp-tqma8mpql-mba8mpxl-lvds.dts=
-o =3D> imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33.dtso} (100%)
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts=
-/freescale/Makefile
-> index 93cbd8d5081b3..38ce3d1c41c10 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -263,7 +263,7 @@ imx8mp-tqma8mpql-mba8mpxl-imx327-isp1-dtbs +=3D imx8m=
-p-tqma8mpql-mba8mpxl.dtb imx8
->  imx8mp-tqma8mpql-mba8mpxl-imx327-isp2-dtbs +=3D imx8mp-tqma8mpql-mba8mpx=
-l.dtb imx8mp-isp2.dtbo imx8mp-tqma8mpql-mba8mpxl-imx327.dtbo
->  imx8mp-tqma8mpql-mba8mpxl-imx327-isi1-dtbs +=3D imx8mp-tqma8mpql-mba8mpx=
-l.dtb imx8mp-isi1.dtbo imx8mp-tqma8mpql-mba8mpxl-imx327.dtbo
->  imx8mp-tqma8mpql-mba8mpxl-imx415-isp1-dtbs +=3D imx8mp-tqma8mpql-mba8mpx=
-l.dtb imx8mp-isp1.dtbo imx8mp-tqma8mpql-mba8mpxl-imx415.dtbo
-> -imx8mp-tqma8mpql-mba8mpxl-lvds-dtbs +=3D imx8mp-tqma8mpql-mba8mpxl.dtb i=
-mx8mp-tqma8mpql-mba8mpxl-lvds.dtbo
-> +imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33-dtbs +=3D imx8mp-tqma8mpql-mb=
-a8mpxl.dtb imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33.dtbo
->  imx8mp-tqma8mpql-mba8mpxl-lvds-g133han01-dtbs +=3D imx8mp-tqma8mpql-mba8=
-mpxl.dtb imx8mp-tqma8mpql-mba8mpxl-lvds-g133han01.dtbo
->  imx8mp-tqma8mpql-mba8mpxl-lvds-lb070wv8-dtbs +=3D imx8mp-tqma8mpql-mba8m=
-pxl.dtb imx8mp-tqma8mpql-mba8mpxl-lvds-lb070wv8.dtbo
->  imx8mp-tqma8mpql-mba8mpxl-ov9281-isi1-dtbs +=3D imx8mp-tqma8mpql-mba8mpx=
-l.dtb  imx8mp-isi1.dtbo imx8mp-tqma8mpql-mba8mpxl-ov9281.dtbo
-> @@ -277,7 +277,7 @@ dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-tqma8mpql-mba8mpxl=
-=2Dimx327-isp1.dtb
->  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-tqma8mpql-mba8mpxl-imx327-isp2.dtb
->  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-tqma8mpql-mba8mpxl-imx327-isi1.dtb
->  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-tqma8mpql-mba8mpxl-imx415-isp1.dtb
-> -dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-tqma8mpql-mba8mpxl-lvds.dtb
-> +dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33.d=
-tb
->  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-tqma8mpql-mba8mpxl-lvds-g133han01.dtb
->  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-tqma8mpql-mba8mpxl-lvds-lb070wv8.dtb
->  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-tqma8mpql-mba8mpxl-ov9281-isi1.dtb
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl-lvds=
-=2Edtso b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl-lvds-tm07=
-0jvhg33.dtso
-> similarity index 100%
-> rename from arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl-lvds.=
-dtso
-> rename to arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl-lvds-tm=
-070jvhg33.dtso
->=20
+link_type:	uprobe_multi
+link_id:	9
+prog_tag:	e729f789e34a8eca
+prog_id:	39
+type:	uprobe_multi
+uprobe_cnt:	3
+pid:	0
+path:	/home/dylane/bpf/tools/testing/selftests/bpf/test_progs
+offset           ref_ctr_offset   cookie
+0xa69f13         0x0              3
+0xa69f1e         0x0              1
+0xa69f29         0x0              2
 
-any other feedback on this patch?
+Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+---
+ kernel/trace/bpf_trace.c | 47 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-Best regards,
-Alexander
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+Change list:
+  v2 -> v3:
+    - show info in one line for multi events.(Jiri)
+  v2:
+  https://lore.kernel.org/bpf/20250615150514.418581-1-chen.dylane@linux.dev 
 
+  v1 -> v2:
+    - replace 'func_cnt' with 'uprobe_cnt'.(Andrii)
+    - print func name is more readable and security for kprobe_multi.(Alexei)
+  v1:
+  https://lore.kernel.org/bpf/20250612115556.295103-1-chen.dylane@linux.dev
+
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 24b94870b50..2d422f897ac 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -3157,10 +3157,57 @@ static int bpf_uprobe_multi_link_fill_link_info(const struct bpf_link *link,
+ 	return err;
+ }
+ 
++#ifdef CONFIG_PROC_FS
++static void bpf_uprobe_multi_show_fdinfo(const struct bpf_link *link,
++					 struct seq_file *seq)
++{
++	struct bpf_uprobe_multi_link *umulti_link;
++	char *p, *buf;
++
++	umulti_link = container_of(link, struct bpf_uprobe_multi_link, link);
++
++	buf = kmalloc(PATH_MAX, GFP_KERNEL);
++	if (!buf)
++		return;
++
++	p = d_path(&umulti_link->path, buf, PATH_MAX);
++	if (IS_ERR(p)) {
++		kfree(buf);
++		return;
++	}
++
++	seq_printf(seq,
++		   "type:\t%s\n"
++		   "uprobe_cnt:\t%u\n"
++		   "pid:\t%u\n"
++		   "path:\t%s\n",
++		   umulti_link->flags == BPF_F_UPROBE_MULTI_RETURN ?
++					 "uretprobe_multi" : "uprobe_multi",
++		   umulti_link->cnt,
++		   umulti_link->task ? task_pid_nr_ns(umulti_link->task,
++			   task_active_pid_ns(current)) : 0,
++		   p);
++
++	seq_printf(seq, "%-16s %-16s %-16s\n", "offset", "ref_ctr_offset", "cookie");
++	for (int i = 0; i < umulti_link->cnt; i++) {
++		seq_printf(seq,
++			   "%#-16llx %#-16lx %-16llu\n",
++			   umulti_link->uprobes[i].offset,
++			   umulti_link->uprobes[i].ref_ctr_offset,
++			   umulti_link->uprobes[i].cookie);
++	}
++
++	kfree(buf);
++}
++#endif
++
+ static const struct bpf_link_ops bpf_uprobe_multi_link_lops = {
+ 	.release = bpf_uprobe_multi_link_release,
+ 	.dealloc_deferred = bpf_uprobe_multi_link_dealloc,
+ 	.fill_link_info = bpf_uprobe_multi_link_fill_link_info,
++#ifdef CONFIG_PROC_FS
++	.show_fdinfo = bpf_uprobe_multi_show_fdinfo,
++#endif
+ };
+ 
+ static int uprobe_prog_run(struct bpf_uprobe *uprobe,
+-- 
+2.48.1
 
 
