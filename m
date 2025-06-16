@@ -1,580 +1,166 @@
-Return-Path: <linux-kernel+bounces-687977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE63DADABAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:21:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABE8ADABB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08FB03B2032
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:21:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B94BB1659BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B3B273804;
-	Mon, 16 Jun 2025 09:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4BA273814;
+	Mon, 16 Jun 2025 09:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzJFyXSz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="i6fPRhjn"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2515C4A33;
-	Mon, 16 Jun 2025 09:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43012270EBD
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750065695; cv=none; b=IZB9dfAwLVPjcePgHHWHXByoL/SZ9rgTnaH1kTYQBA9OCAIfXDYucqtg1/n7WW7tU3M9IzBbgMjiwwfb4gjMk+vGHZDscs1fhE0jbOpf1vUlpsFn11hCgi6x7TZLyiZUW44mrUTwlt3APmA7lZboppjRjmKlHR1N8u/zNHnMNRk=
+	t=1750065768; cv=none; b=MkDgtNPI9s2LoAf6Y8Z9AiaZx68SzihdLKCcewOoQYVRukSfhMN6OzNRn5s2GcljriY+jm07v9nJxJqf7iErlMw8XLunkM2afBKOtVCrRd8vxXNPvwVsxQC7zqiTWmAKNdV+ZYMCEkdudQ5hptGLF/l9c5G/vDcre0rf5ffkEp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750065695; c=relaxed/simple;
-	bh=F5KAkKBRvMmgLQwEQfJPDviEgn8ekPbT601F5MS3B7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AH2Rys/TS/spyxT5Fzz9z/gNCYXD02A60GheSp2hz0A26uFmO//B8aqLkPYsMvsZmrIXNlNt4BgTWSX51+tzYQjsk8TBR+r3hO4bTrVoeojpIr06fP02Zo0rg0bKPvzc3mxRlJO40V0VSGuJOBPtKiJ1Fo9Npku0Ab4Hw7h88MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QzJFyXSz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66219C4CEEA;
-	Mon, 16 Jun 2025 09:21:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750065695;
-	bh=F5KAkKBRvMmgLQwEQfJPDviEgn8ekPbT601F5MS3B7Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QzJFyXSzLIRErXwhpt1hk0RoMEQp3TuvRBXJd72O8VSI4mfde3YhLVV+tI/2yLLlm
-	 kR0FoPrwehHVfU7k3r2aqtI5Fl7bIniRQgiuLkF3+jXsF8J/LC2rf4iODNqtpIDntf
-	 b4kfmHr7UO2Mr/6CJ7dzuVDkW2QzLBBv9TTfsYArvWRYB6X39J2T7eAujBUIqjdG2d
-	 Q4vdGkbooP81JxIRdGqT2SpA2KbSxV3JywPQTFCKst8YZYCYRfKP8dEfFNuqSOM9ic
-	 9k9h+EuD8giVGWkVTNmxNBq40iDht4w4OOGTPr70a9P+uADCIMgKypaPWKdKTzvJ2F
-	 Jk/OXYf/+8eCA==
-Message-ID: <77da5151-ddbd-409f-8b48-28029a96d5d8@kernel.org>
-Date: Mon, 16 Jun 2025 11:21:26 +0200
+	s=arc-20240116; t=1750065768; c=relaxed/simple;
+	bh=boaYqs6W2Ch9MV7MIDV7tFHWVXlXvSTuE+SZQidgsAU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BzgIk12FWTpHYKNzksIRhpIifNdxBTrFHvENEfd/4EMimVbdoBym7OoCWu8KQKd6KoKpp/hpY7TG9INiVr1fxatWbd8YJUOHkPos7Trg9L0bvS3ugME2DvtrvdB0scDrYV65Po03izKR4Kkm+fmaIs2g3Kx6H+LrYHXKX9SoGx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=i6fPRhjn; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-553be4d2fbfso1126807e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 02:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750065764; x=1750670564; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L4clW0hfNM59uFuEpnawSRjVBJDyxSvonnhwsOilymQ=;
+        b=i6fPRhjnQZjdK8HXqHfTZaEscbWr/UIPbqEg7J++f3Hq1vFi70kq0wIxLaECCi8xXp
+         itBZMq26Hs4HGhrOOJvdVaT/CQPAS07WrfQeD6LAYLF/qU0WSoaujeeYFW0j2tUCXcSt
+         4pMptEtGAzaHx0T7CVq7Iv552TK7/d04NcR/1YfUSqCJwnsSP/rtW7NftW5ROs/p8yFO
+         LTMgI+j+2FJf39hQpYgpR6GFIvw158JH20qFvMg0l93hgXNf+ZXU1BEvoitePGvkcdhJ
+         AsBzBYPQPLNr0OVbPeOHiS0+dIoW78P1Ot20qFvhG9tRGQ4eifcxQgcevJyXeH45C4pv
+         xidw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750065764; x=1750670564;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L4clW0hfNM59uFuEpnawSRjVBJDyxSvonnhwsOilymQ=;
+        b=je3t4eThMaDxhi5fJGyYd7Q3zu5dyxr3cqfUFR6rZHCmH2a2YzVhuXIPnEFBecer+f
+         EBDOUMZW3TcVKnU9ZX6kOUjHxw0UIKTnHQ2qzTC92rvH55Qph/tnoJxI6FTnSVvAEVps
+         4GPS/FoGSb75+4Qn3LKQS1FUZyfSchYS6/IjCGvSFbPahJrHYJZNKmYgoSYRxd4R9ARJ
+         ais2mzWia9dA9yWzJjBKle5PiOWjULiEGuKyWToZwk9oqKjzNmpK8Oh7DSoRnBbG7dmn
+         OZMtgdv3v1tiRHpHFwaqLRpAMzcVSVeLxxR/MQbmsevJBquP0PdIA6Pg0eDra6bCt9nV
+         yFTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqWyTFHSnjqacAaTfpNA8FfTAEPP4yg7lEfbSBwQnFWE1Nb3RDLFQKe8Kkbkgx/MlNcZrLV3wbJbnrwfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8TEqA0/eR3+JAzUT+Tk3z9PhBUjHSOomyxkQjeZfLHbqnAD2Y
+	lKzaOpQB7oJCH2pcwvoKWME6ACG2HLCloOWCKzwHtsIdmLTlGI5Boa/6thmqDUn6lC6aq6acVoh
+	clcmKOxj35KwD4Jl0My5UMc7d2/nMIEMI+uW6Vh4oqA==
+X-Gm-Gg: ASbGnct+VX86FbWk+A6gztIbIQAnJin7bPduyg2bWwoJuJYFOma6+URFXpcYqE17Bju
+	+2y9F57adzFbeJi06VYmQe40prgR6opvvn+2379Ipfoe39bBr82wc0WlodrbHewAwz+KzES7gHj
+	u1v4+yc/ire7WiD45CdXhy8EW+tOc8YHdYCbh0cXBLHEBqKjDoZ1qKa7R8dieMbqyDoa/ZkgwaM
+	VU=
+X-Google-Smtp-Source: AGHT+IEsBvyH0Zky97WuBrKbbjvEScgzySvzxn3rYYtDfdyw86suCq566xBi9HBUjAShIE2Mm9O+XZUWm2PEcQ1RjmQ=
+X-Received: by 2002:a05:6512:12ca:b0:553:2ed2:15b4 with SMTP id
+ 2adb3069b0e04-553b6f4d916mr2068254e87.57.1750065764330; Mon, 16 Jun 2025
+ 02:22:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/3] platform/x86: Add Uniwill WMI driver
-To: Armin Wolf <W_Armin@gmx.de>, ilpo.jarvinen@linux.intel.com,
- hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
- wse@tuxedocomputers.com, ggo@tuxedocomputers.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org
-References: <20250615175957.9781-1-W_Armin@gmx.de>
- <20250615175957.9781-2-W_Armin@gmx.de>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <20250615175957.9781-2-W_Armin@gmx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250614-apr_14_for_sending-v4-8-8e3945c819cd@samsung.com>
+ <CGME20250615105256eucas1p21dba29a1450757d9201b2a9c7f0e34e8@eucas1p2.samsung.com>
+ <202506151839.IKkZs0Z0-lkp@intel.com> <9765c970-55cc-4413-9fd0-5e0cdfa900fa@samsung.com>
+In-Reply-To: <9765c970-55cc-4413-9fd0-5e0cdfa900fa@samsung.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 16 Jun 2025 11:22:32 +0200
+X-Gm-Features: AX0GCFvGdfEg2CPyKVWjNTkacG-9vOyaV6LbrgzY6YJIQBzVINyrlmiwiBnsQKI
+Message-ID: <CAMRc=MeG40TxMj3ezeC0iUBBo8w99RXQWOQBsfG4ZAJdbA+dYg@mail.gmail.com>
+Subject: Re: [PATCH v4 8/8] drm/imagination: Enable PowerVR driver for RISC-V
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: kernel test robot <lkp@intel.com>, Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Paul Gazzillo <paul@pgazz.com>, Necip Fazil Yildiran <fazilyildiran@gmail.com>, oe-kbuild-all@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15-Jun-25 19:59, Armin Wolf wrote:
-> Add a new driver for handling WMI events on Uniwill laptops.
-> The driver sadly cannot use the WMI GUID for autoloading since Uniwill
-> just copied it from the Windows driver example.
-> 
-> The driver is reverse-engineered based on the following information:
-> - https://github.com/pobrn/qc71_laptop
-> - https://github.com/tuxedocomputers/tuxedo-drivers
-> - various OEM software
-> 
-> Reported-by: cyear <chumuzero@gmail.com>
-> Closes: https://github.com/lm-sensors/lm-sensors/issues/508
-> Closes: https://github.com/Wer-Wolf/uniwill-laptop/issues/3
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> ---
->  Documentation/wmi/devices/uniwill-wmi.rst  |  52 ++++++
->  MAINTAINERS                                |   8 +
->  drivers/platform/x86/Kconfig               |   2 +
->  drivers/platform/x86/Makefile              |   3 +
->  drivers/platform/x86/uniwill/Kconfig       |  32 ++++
->  drivers/platform/x86/uniwill/Makefile      |   7 +
->  drivers/platform/x86/uniwill/uniwill-wmi.c | 177 +++++++++++++++++++++
->  drivers/platform/x86/uniwill/uniwill-wmi.h | 122 ++++++++++++++
->  8 files changed, 403 insertions(+)
->  create mode 100644 Documentation/wmi/devices/uniwill-wmi.rst
->  create mode 100644 drivers/platform/x86/uniwill/Kconfig
->  create mode 100644 drivers/platform/x86/uniwill/Makefile
->  create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.c
->  create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.h
-> 
-> diff --git a/Documentation/wmi/devices/uniwill-wmi.rst b/Documentation/wmi/devices/uniwill-wmi.rst
-> new file mode 100644
-> index 000000000000..232fa8349611
-> --- /dev/null
-> +++ b/Documentation/wmi/devices/uniwill-wmi.rst
-> @@ -0,0 +1,52 @@
-> +.. SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +======================================
-> +Uniwill WMI event driver (uniwill-wmi)
-> +======================================
-> +
-> +Introduction
-> +============
-> +
-> +Many notebooks manufactured by Uniwill (either directly or as ODM) provide an WMI-based
-> +event interface for various platform events like hotkeys. This interface is used by the
-> +``uniwill-wmi`` driver to react to hotkey presses.
-> +
-> +WMI interface description
-> +=========================
-> +
-> +The WMI interface description can be decoded from the embedded binary MOF (bmof)
-> +data using the `bmfdec <https://github.com/pali/bmfdec>`_ utility:
-> +
-> +::
-> +
-> +  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"),
-> +   Description("Class containing event generated ULong data"),
-> +   guid("{ABBC0F72-8EA1-11d1-00A0-C90629100000}")]
-> +  class AcpiTest_EventULong : WmiEvent {
-> +    [key, read] string InstanceName;
-> +    [read] boolean Active;
-> +
-> +    [WmiDataId(1), read, write, Description("ULong Data")] uint32 ULong;
-> +  };
-> +
-> +Most of the WMI-related code was copied from the Windows driver samples, which unfortunately means
-> +that the WMI-GUID is not unique. This makes the WMI-GUID unusable for autoloading.
-> +
-> +WMI event data
-> +--------------
-> +
-> +The WMI event data contains a single 32-bit value which is used to indicate various platform events.
-> +Many non-hotkey events are not directly consumed by the driver itself, but are instead handled by
-> +the ``uniwill-laptop`` driver.
-> +
-> +Reverse-Engineering the Uniwill WMI event interface
-> +===================================================
-> +
-> +The driver logs debug messages when receiving a WMI event. Thus enabling debug messages will be
-> +useful for finding unknown event codes.
-> +
-> +Special thanks go to github user `pobrn` which developed the
-> +`qc71_laptop <https://github.com/pobrn/qc71_laptop>`_ driver on which this driver is partly based.
-> +The same is true for Tuxedo Computers, which developed the
-> +`tuxedo-drivers <https://github.com/tuxedocomputers/tuxedo-drivers>`_ package which also served as
-> +a foundation for this driver.
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c14614613377..53876ec2d111 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -25496,6 +25496,14 @@ L:	linux-scsi@vger.kernel.org
->  S:	Maintained
->  F:	drivers/ufs/host/ufs-renesas.c
->  
-> +UNIWILL WMI DRIVER
-> +M:	Armin Wolf <W_Armin@gmx.de>
-> +L:	platform-driver-x86@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/wmi/devices/uniwill-wmi.rst
-> +F:	drivers/platform/x86/uniwill/uniwill-wmi.c
-> +F:	drivers/platform/x86/uniwill/uniwill-wmi.h
-> +
->  UNSORTED BLOCK IMAGES (UBI)
->  M:	Richard Weinberger <richard@nod.at>
->  R:	Zhihao Cheng <chengzhihao1@huawei.com>
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 43055df44827..ba9d65f01332 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -65,6 +65,8 @@ config HUAWEI_WMI
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called huawei-wmi.
->  
-> +source "drivers/platform/x86/uniwill/Kconfig"
-> +
->  config UV_SYSFS
->  	tristate "Sysfs structure for UV systems"
->  	depends on X86_UV
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-> index 0530a224bebd..1549c56ced91 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -107,6 +107,9 @@ obj-$(CONFIG_TOSHIBA_WMI)	+= toshiba-wmi.o
->  # before toshiba_acpi initializes
->  obj-$(CONFIG_ACPI_TOSHIBA)	+= toshiba_acpi.o
->  
-> +# Uniwill
-> +obj-y				+= uniwill/
-> +
->  # Inspur
->  obj-$(CONFIG_INSPUR_PLATFORM_PROFILE)	+= inspur_platform_profile.o
->  
-> diff --git a/drivers/platform/x86/uniwill/Kconfig b/drivers/platform/x86/uniwill/Kconfig
-> new file mode 100644
-> index 000000000000..5f1ea3e9e72f
-> --- /dev/null
-> +++ b/drivers/platform/x86/uniwill/Kconfig
-> @@ -0,0 +1,32 @@
-> +# SPDX-License-Identifier: GPL-2.0-or-later
-> +#
-> +# Uniwill X86 Platform Specific Drivers
-> +#
-> +
-> +menuconfig X86_PLATFORM_DRIVERS_UNIWILL
-> +	bool "Uniwill X86 Platform Specific Device Drivers"
-> +	depends on X86_PLATFORM_DEVICES
-> +	help
-> +	  Say Y here to get to see options for device drivers for various
-> +	  Uniwill X86 platforms, including many OEM laptops originally
-> +	  manufactured by Uniwill.
-> +	  This option alone does not add any kernel code.
-> +
-> +	  If you say N, all options in this submenu will be skipped and disabled.
-> +
-> +if X86_PLATFORM_DRIVERS_UNIWILL
-> +
-> +config UNIWILL_WMI
-> +	tristate "Uniwill WMI Event Driver"
-> +	default m
-> +	depends on ACPI_WMI
-> +	depends on INPUT
-> +	select INPUT_SPARSEKMAP
-> +	help
-> +	  This driver adds support for various hotkey events on Uniwill laptops,
-> +	  like rfkill and other special buttons. It also supports many OEM laptops
-> +	  originally manufactured by Uniwill.
-> +
-> +	  If you have such a laptop, say Y or M here.
-> +
-> +endif
-> diff --git a/drivers/platform/x86/uniwill/Makefile b/drivers/platform/x86/uniwill/Makefile
-> new file mode 100644
-> index 000000000000..a5a300be63f3
-> --- /dev/null
-> +++ b/drivers/platform/x86/uniwill/Makefile
-> @@ -0,0 +1,7 @@
-> +# SPDX-License-Identifier: GPL-2.0-or-later
-> +#
-> +# Makefile for linux/drivers/platform/x86/uniwill
-> +# Uniwill X86 Platform Specific Drivers
-> +#
-> +
-> +obj-$(CONFIG_UNIWILL_WMI)	+= uniwill-wmi.o
-> diff --git a/drivers/platform/x86/uniwill/uniwill-wmi.c b/drivers/platform/x86/uniwill/uniwill-wmi.c
-> new file mode 100644
-> index 000000000000..b95a0d68ce6a
-> --- /dev/null
-> +++ b/drivers/platform/x86/uniwill/uniwill-wmi.c
-> @@ -0,0 +1,177 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Linux hotkey driver for Uniwill notebooks.
-> + *
-> + * Copyright (C) 2025 Armin Wolf <W_Armin@gmx.de>
-> + */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/device.h>
-> +#include <linux/errno.h>
-> +#include <linux/export.h>
-> +#include <linux/input.h>
-> +#include <linux/input/sparse-keymap.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/notifier.h>
-> +#include <linux/printk.h>
-> +#include <linux/slab.h>
-> +#include <linux/types.h>
-> +#include <linux/wmi.h>
-> +
-> +#include "uniwill-wmi.h"
-> +
-> +#define DRIVER_NAME		"uniwill-wmi"
-> +#define UNIWILL_EVENT_GUID	"ABBC0F72-8EA1-11D1-00A0-C90629100000"
-> +
-> +struct uniwill_wmi_data {
-> +	struct mutex input_lock;	/* Protects input sequence during notify */
-> +	struct input_dev *input_device;
-> +};
-> +
-> +static BLOCKING_NOTIFIER_HEAD(uniwill_wmi_chain_head);
-> +
-> +static const struct key_entry uniwill_wmi_keymap[] = {
-> +	/* Reported via keyboard controller */
-> +	{ KE_IGNORE,	UNIWILL_OSD_CAPSLOCK,			{ KEY_CAPSLOCK }},
-> +	{ KE_IGNORE,	UNIWILL_OSD_NUMLOCK,			{ KEY_NUMLOCK }},
-> +
-> +	/* Reported when the user locks/unlocks the super key */
-> +	{ KE_IGNORE,	UNIWILL_OSD_SUPER_KEY_LOCK_ENABLE,	{ KEY_UNKNOWN }},
-> +	{ KE_IGNORE,	UNIWILL_OSD_SUPER_KEY_LOCK_DISABLE,	{ KEY_UNKNOWN }},
-> +
-> +	/* Reported in manual mode when toggling the airplane mode status */
-> +	{ KE_KEY,	UNIWILL_OSD_RFKILL,			{ KEY_RFKILL }},
-> +
-> +	/* Reported when user wants to cycle the platform profile */
-> +	{ KE_IGNORE,	UNIWILL_OSD_PERFORMANCE_MODE_TOGGLE,	{ KEY_UNKNOWN }},
-> +
-> +	/* Reported when the user wants to toggle the microphone mute status */
-> +	{ KE_KEY,	UNIWILL_OSD_MIC_MUTE,			{ KEY_MICMUTE }},
-> +
-> +	/* Reported when the user locks/unlocks the Fn key */
-> +	{ KE_IGNORE,	UNIWILL_OSD_FN_LOCK,			{ KEY_FN_ESC }},
-> +
-> +	/* Reported when the user wants to toggle the brightness of the keyboard */
-> +	{ KE_KEY,	UNIWILL_OSD_KBDILLUMTOGGLE,		{ KEY_KBDILLUMTOGGLE }},
-> +
-> +	/* FIXME: find out the exact meaning of those events */
-> +	{ KE_IGNORE,	UNIWILL_OSD_BAT_CHARGE_FULL_24_H,	{ KEY_UNKNOWN }},
-> +	{ KE_IGNORE,	UNIWILL_OSD_BAT_ERM_UPDATE,		{ KEY_UNKNOWN }},
-> +
-> +	/* Reported when the user wants to toggle the benchmark mode status */
-> +	{ KE_IGNORE,	UNIWILL_OSD_BENCHMARK_MODE_TOGGLE,	{ KEY_UNKNOWN }},
-> +
-> +	{ KE_END }
-> +};
-> +
-> +int uniwill_wmi_register_notifier(struct notifier_block *nb)
-> +{
-> +	return blocking_notifier_chain_register(&uniwill_wmi_chain_head, nb);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(uniwill_wmi_register_notifier, "UNIWILL");
-> +
-> +int uniwill_wmi_unregister_notifier(struct notifier_block *nb)
-> +{
-> +	return blocking_notifier_chain_unregister(&uniwill_wmi_chain_head, nb);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(uniwill_wmi_unregister_notifier, "UNIWILL");
-> +
-> +static void devm_uniwill_wmi_unregister_notifier(void *data)
-> +{
-> +	struct notifier_block *nb = data;
-> +
-> +	uniwill_wmi_unregister_notifier(nb);
-> +}
-> +
-> +int devm_uniwill_wmi_register_notifier(struct device *dev, struct notifier_block *nb)
-> +{
-> +	int ret;
-> +
-> +	ret = uniwill_wmi_register_notifier(nb);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return devm_add_action_or_reset(dev, devm_uniwill_wmi_unregister_notifier, nb);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(devm_uniwill_wmi_register_notifier, "UNIWILL");
-> +
-> +static void uniwill_wmi_notify(struct wmi_device *wdev, union acpi_object *obj)
-> +{
-> +	struct uniwill_wmi_data *data = dev_get_drvdata(&wdev->dev);
-> +	u32 value;
-> +	int ret;
-> +
-> +	if (obj->type != ACPI_TYPE_INTEGER)
-> +		return;
-> +
-> +	value = obj->integer.value;
-> +
-> +	dev_dbg(&wdev->dev, "Received WMI event %u\n", value);
-> +
-> +	ret = blocking_notifier_call_chain(&uniwill_wmi_chain_head, value, NULL);
-> +	if (ret == NOTIFY_BAD)
-> +		return;
-> +
-> +	mutex_lock(&data->input_lock);
-> +	sparse_keymap_report_event(data->input_device, value, 1, true);
-> +	mutex_unlock(&data->input_lock);
-> +}
-> +
-> +static int uniwill_wmi_probe(struct wmi_device *wdev, const void *context)
-> +{
-> +	struct uniwill_wmi_data *data;
-> +	int ret;
+On Mon, Jun 16, 2025 at 11:09=E2=80=AFAM Michal Wilczynski
+<m.wilczynski@samsung.com> wrote:
+>
+>
+>
+> On 6/15/25 12:51, kernel test robot wrote:
+> > Hi Michal,
+> >
+> > kernel test robot noticed the following build warnings:
+> >
+> > [auto build test WARNING on 4774cfe3543abb8ee98089f535e28ebfd45b975a]
+> >
+> > url:    https://protect2.fireeye.com/v1/url?k=3D6c3bc994-0cd954c9-6c3a4=
+2db-000babd9f1ba-30c2378fa012fc4a&q=3D1&e=3Dc39c960c-4d5f-44d7-aed7-0097394=
+dfc81&u=3Dhttps%3A%2F%2Fgithub.com%2Fintel-lab-lkp%2Flinux%2Fcommits%2FMich=
+al-Wilczynski%2Fpower-sequencing-Add-T-HEAD-TH1520-GPU-power-sequencer-driv=
+er%2F20250615-021142
+> > base:   4774cfe3543abb8ee98089f535e28ebfd45b975a
+> > patch link:    https://lore.kernel.org/r/20250614-apr_14_for_sending-v4=
+-8-8e3945c819cd%40samsung.com
+> > patch subject: [PATCH v4 8/8] drm/imagination: Enable PowerVR driver fo=
+r RISC-V
+> > config: riscv-kismet-CONFIG_DRM_GEM_SHMEM_HELPER-CONFIG_DRM_POWERVR-0-0=
+ (https://download.01.org/0day-ci/archive/20250615/202506151839.IKkZs0Z0-lk=
+p@intel.com/config)
+> > reproduce: (https://download.01.org/0day-ci/archive/20250615/2025061518=
+39.IKkZs0Z0-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202506151839.IKkZs0Z0-l=
+kp@intel.com/
+> >
+> > kismet warnings: (new ones prefixed by >>)
+> >>> kismet: WARNING: unmet direct dependencies detected for DRM_GEM_SHMEM=
+_HELPER when selected by DRM_POWERVR
+> >    WARNING: unmet direct dependencies detected for DRM_GEM_SHMEM_HELPER
+> >      Depends on [n]: HAS_IOMEM [=3Dy] && DRM [=3Dy] && MMU [=3Dn]
+>
+> I believe this is triggered because RISC-V can be compiled without MMU
+> support, while MMU support is mandatory for ARM64.
+>
+> Would an acceptable fix be to require an explicit dependency on the MMU,
+> like so?
+>
+> depends on (ARM64 || RISCV) && MMU
+>
 
-Hmm, if someone manually modprobe-s this because they think it will
-help it will still load despite the generic GUID thing.
+I'd put them on separate lines. While at it: how about enabling build
+with COMPILE_TEST to extend build coverage too?
 
-I think this should the same DMI allow-list as the -laptop driver?
+Bart
 
-Or maybe just export the driver as a symbol and have -laptop do
-the actual registering of the driver ? Then if e.g. a force module
-option gets added to the -laptop driver that will not need to
-be duplicated here ...
-
-Regards,
-
-Hans
-
-
-
-> +
-> +	data = devm_kzalloc(&wdev->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	ret = devm_mutex_init(&wdev->dev, &data->input_lock);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	dev_set_drvdata(&wdev->dev, data);
-> +
-> +	data->input_device = devm_input_allocate_device(&wdev->dev);
-> +	if (!data->input_device)
-> +		return -ENOMEM;
-> +
-> +	ret = sparse_keymap_setup(data->input_device, uniwill_wmi_keymap, NULL);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	data->input_device->name = "Uniwill WMI hotkeys";
-> +	data->input_device->phys = "wmi/input0";
-> +	data->input_device->id.bustype = BUS_HOST;
-> +
-> +	return input_register_device(data->input_device);
-> +}
-> +
-> +/*
-> + * We cannot fully trust this GUID since Uniwill just copied the WMI GUID
-> + * from the Windows driver example, and others probably did the same.
-> + *
-> + * Because of this we cannot use this WMI GUID for autoloading.
-> + */
-> +static const struct wmi_device_id uniwill_wmi_id_table[] = {
-> +	{ UNIWILL_EVENT_GUID, NULL },
-> +	{ }
-> +};
-> +
-> +static struct wmi_driver uniwill_wmi_driver = {
-> +	.driver = {
-> +		.name = DRIVER_NAME,
-> +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-> +	},
-> +	.id_table = uniwill_wmi_id_table,
-> +	.probe = uniwill_wmi_probe,
-> +	.notify = uniwill_wmi_notify,
-> +	.no_singleton = true,
-> +};
-> +module_wmi_driver(uniwill_wmi_driver);
-> +
-> +MODULE_AUTHOR("Armin Wolf <W_Armin@gmx.de>");
-> +MODULE_DESCRIPTION("Uniwill notebook hotkey driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/platform/x86/uniwill/uniwill-wmi.h b/drivers/platform/x86/uniwill/uniwill-wmi.h
-> new file mode 100644
-> index 000000000000..41662ece0675
-> --- /dev/null
-> +++ b/drivers/platform/x86/uniwill/uniwill-wmi.h
-> @@ -0,0 +1,122 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/*
-> + * Linux hotkey driver for Uniwill notebooks.
-> + *
-> + * Copyright (C) 2025 Armin Wolf <W_Armin@gmx.de>
-> + */
-> +
-> +#ifndef UNIWILL_WMI_H
-> +#define UNIWILL_WMI_H
-> +
-> +#define UNIWILL_OSD_CAPSLOCK			0x01
-> +#define UNIWILL_OSD_NUMLOCK			0x02
-> +#define UNIWILL_OSD_SCROLLLOCK			0x03
-> +
-> +#define UNIWILL_OSD_TOUCHPAD_ON			0x04
-> +#define UNIWILL_OSD_TOUCHPAD_OFF		0x05
-> +
-> +#define UNIWILL_OSD_SILENT_MODE_ON		0x06
-> +#define UNIWILL_OSD_SILENT_MODE_OFF		0x07
-> +
-> +#define UNIWILL_OSD_WLAN_ON			0x08
-> +#define UNIWILL_OSD_WLAN_OFF			0x09
-> +
-> +#define UNIWILL_OSD_WIMAX_ON			0x0A
-> +#define UNIWILL_OSD_WIMAX_OFF			0x0B
-> +
-> +#define UNIWILL_OSD_BLUETOOTH_ON		0x0C
-> +#define UNIWILL_KEY_BLUETOOTH_OFF		0x0D
-> +
-> +#define UNIWILL_OSD_RF_ON			0x0E
-> +#define UNIWILL_OSD_RF_OFF			0x0F
-> +
-> +#define UNIWILL_OSD_3G_ON			0x10
-> +#define UNIWILL_OSD_3G_OFF			0x11
-> +
-> +#define UNIWILL_OSD_WEBCAM_ON			0x12
-> +#define UNIWILL_OSD_WEBCAM_OFF			0x13
-> +
-> +#define UNIWILL_OSD_BRIGHTNESSUP		0x14
-> +#define UNIWILL_OSD_BRIGHTNESSDOWN		0x15
-> +
-> +#define UNIWILL_OSD_RADIOON			0x1A
-> +#define UNIWILL_OSD_RADIOOFF			0x1B
-> +
-> +#define UNIWILL_OSD_POWERSAVE_ON		0x31
-> +#define UNIWILL_OSD_POWERSAVE_OFF		0x32
-> +
-> +#define UNIWILL_OSD_MENU			0x34
-> +
-> +#define UNIWILL_OSD_MUTE			0x35
-> +#define UNIWILL_OSD_VOLUMEDOWN			0x36
-> +#define UNIWILL_OSD_VOLUMEUP			0x37
-> +
-> +#define UNIWILL_OSD_MENU_2			0x38
-> +
-> +#define UNIWILL_OSD_LIGHTBAR_ON			0x39
-> +#define UNIWILL_OSD_LIGHTBAR_OFF		0x3A
-> +
-> +#define UNIWILL_OSD_KB_LED_LEVEL0		0x3B
-> +#define UNIWILL_OSD_KB_LED_LEVEL1		0x3C
-> +#define UNIWILL_OSD_KB_LED_LEVEL2		0x3D
-> +#define UNIWILL_OSD_KB_LED_LEVEL3		0x3E
-> +#define UNIWILL_OSD_KB_LED_LEVEL4		0x3F
-> +
-> +#define UNIWILL_OSD_SUPER_KEY_LOCK_ENABLE	0x40
-> +#define UNIWILL_OSD_SUPER_KEY_LOCK_DISABLE	0x41
-> +
-> +#define UNIWILL_OSD_MENU_JP			0x42
-> +
-> +#define UNIWILL_OSD_CAMERA_ON			0x90
-> +#define UNIWILL_OSD_CAMERA_OFF			0x91
-> +
-> +#define UNIWILL_OSD_RFKILL			0xA4
-> +
-> +#define UNIWILL_OSD_SUPER_KEY_LOCK_CHANGED	0xA5
-> +
-> +#define UNIWILL_OSD_LIGHTBAR_STATE_CHANGED	0xA6
-> +
-> +#define UNIWILL_OSD_FAN_BOOST_STATE_CHANGED	0xA7
-> +
-> +#define UNIWILL_OSD_LCD_SW			0xA9
-> +
-> +#define UNIWILL_OSD_FAN_OVERTEMP		0xAA
-> +
-> +#define UNIWILL_OSD_DC_ADAPTER_CHANGED		0xAB
-> +
-> +#define UNIWILL_OSD_BAT_HP_OFF			0xAC
-> +
-> +#define UNIWILL_OSD_FAN_DOWN_TEMP		0xAD
-> +
-> +#define UNIWILL_OSD_BATTERY_ALERT		0xAE
-> +
-> +#define UNIWILL_OSD_TIMAP_HAIERLB_SW		0xAF
-> +
-> +#define UNIWILL_OSD_PERFORMANCE_MODE_TOGGLE	0xB0
-> +
-> +#define UNIWILL_OSD_KBDILLUMDOWN		0xB1
-> +#define UNIWILL_OSD_KBDILLUMUP			0xB2
-> +
-> +#define UNIWILL_OSD_BACKLIGHT_LEVEL_CHANGE	0xB3
-> +#define UNIWILL_OSD_BACKLIGHT_POWER_CHANGE	0xB4
-> +
-> +#define UNIWILL_OSD_MIC_MUTE			0xB7
-> +
-> +#define UNIWILL_OSD_FN_LOCK			0xB8
-> +#define UNIWILL_OSD_KBDILLUMTOGGLE		0xB9
-> +
-> +#define UNIWILL_OSD_BAT_CHARGE_FULL_24_H	0xBE
-> +
-> +#define UNIWILL_OSD_BAT_ERM_UPDATE		0xBF
-> +
-> +#define UNIWILL_OSD_BENCHMARK_MODE_TOGGLE	0xC0
-> +
-> +#define UNIWILL_OSD_KBD_BACKLIGHT_CHANGED	0xF0
-> +
-> +struct notifier_block;
-> +
-> +int uniwill_wmi_register_notifier(struct notifier_block *nb);
-> +int uniwill_wmi_unregister_notifier(struct notifier_block *nb);
-> +int devm_uniwill_wmi_register_notifier(struct device *dev, struct notifier_block *nb);
-> +
-> +#endif /* UNIWILL_WMI_H */
-
+> >      Selected by [y]:
+> >      - DRM_POWERVR [=3Dy] && HAS_IOMEM [=3Dy] && (ARM64 || RISCV [=3Dy]=
+) && DRM [=3Dy] && PM [=3Dy]
+> >
+>
+> Best regards,
+> --
+> Michal Wilczynski <m.wilczynski@samsung.com>
 
