@@ -1,159 +1,150 @@
-Return-Path: <linux-kernel+bounces-687707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB26ADA7F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:06:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C0BADA7F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAD433AB1F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:05:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFCCF3AFD49
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D145C1DD877;
-	Mon, 16 Jun 2025 06:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6FA1DD877;
+	Mon, 16 Jun 2025 06:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSEJ/cIW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qAH/5Ut/"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F3B5A79B;
-	Mon, 16 Jun 2025 06:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539815A79B;
+	Mon, 16 Jun 2025 06:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750053958; cv=none; b=VAASN7cq15m8R9oZO21ys+usHsvpGTMhxCyM6GwEVQShafT4oQKBrhLwlKRB84SFkeh1o4B9w9TaaYUmNIzVm+r9+GP0pFj9XGtfbzISHZ3nqyuHVcP7NFiNdT3C1Tt2yu6IpfkGUnGk53LQc6tT90xNaNczlfxpjcXH/hJBe3g=
+	t=1750054074; cv=none; b=hUvpWBUtWhE69H9e57rwS2MEs456/xxj242+/Y6wzojszOBecuTIIhVPXKJc32Zt5/noYpyEB+qcWM6lAGonS4es77acOEPQtVDrCkvVQcPtsduSUaNYwQFXiaJWYvjkeOlBMvxfC7BZxchj8pICmVa0Y6BFuIkW0Ch6WqTQfDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750053958; c=relaxed/simple;
-	bh=TzpmtX/vUICVRU32l59Sc0Qk3sBx7l2J4vSns0iJ/Lo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y901svnNNwYYRDk/U57tTQSsKgUQcw+4i4YsPbJsp3ZafKT/JFlI/C9yZ4gspLh6EDBFOj8byWIKqbxdvEk6P9RLhBFpg4l+g3FUlHbAfs26uVJU9gixM9e0Bpu3Tgt0umnUrTPrvPrpCORNcXUTm5m+uTeAIiKxE8BlaV3AUUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSEJ/cIW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84D44C4CEEA;
-	Mon, 16 Jun 2025 06:05:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750053956;
-	bh=TzpmtX/vUICVRU32l59Sc0Qk3sBx7l2J4vSns0iJ/Lo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SSEJ/cIWWt8cawrwMkBQSkK05+pWBeBtXPg4a0NRoAIkecAIiL+P90ytHza2oX1sM
-	 KdQsXwMgmUKrGk2dHYyeC/0cy8RJPRDsHhKgcjRC4GiAEXlchVaeJq5ujEUyM5ZRI2
-	 MSeTkvrqpuEQVk4VSgqqtVY6g8re+iwXamKxHp9NJToVzTTiXusmxLy6epRQ67ydgA
-	 P2jTgB7ayPVxUgOADNly30Z1j/nBW7N41Ibcu24ljHQx+mN91MFp0mV1jtdEr1tLKq
-	 9c8W/VXZkm5njtgXHwbodNPAQxx9D4foQcr6hpJmRbgB47Bkea9M80MWizFb12nmGH
-	 CvqECjFZZoXiA==
-Message-ID: <f4430b9a-3275-405e-becf-ff62ae16f23c@kernel.org>
-Date: Mon, 16 Jun 2025 08:05:51 +0200
+	s=arc-20240116; t=1750054074; c=relaxed/simple;
+	bh=3aY1BoapMOrG+X9hJ11RVDqZMjK7J273gsTC9KOzXYo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M6VIov4DjhWA0eSTJ8845pShiXMGiWWxNXbKnPVsLrA1JKWrQkhiLeGW9dnDJLJueuODl3XDOMOZM/BEzbqkP5cl74kyR/DDwlZxn07auVaeMfqXEvNL3vhibU3yariGnI5jN4aoZYsF6phsKIHhAkiwpUvmx5A7rNYEBXGbQmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=qAH/5Ut/; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55FNrep0004958;
+	Mon, 16 Jun 2025 06:07:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=OeQccFsxYaMk+2oAr5Rfei0TTt24+
+	k+w+3UL8HZWKiw=; b=qAH/5Ut/H1NSM0b4+rVKdR/qBxvKO+gWdugz7L9lhdHMz
+	wb+x8jhnZ2MPqBV09JrAb/K1jUikPtoxpeyHCB7ir83USspzOculELRgq4F7p4j+
+	xVc6gIWUHji76kE5eq3OJWsae8cP2CZGf2QlN34l6Yw2ec7/cPMraoW/IqQF9G84
+	y9IfZMZ7mhM3lQWME3ENQLZODLvpNLXRpd13swWEeSV2YZBfoa9q1pvS+bINeRVU
+	4pS2i0Zhr79MvF5C3O7KnMatHYtO7x+XmMlH5rfo9FJ0XTOt8AxTkae+0+bgwLVi
+	okSZmEASL4eE4/OxWNsNNMWQ2Bd/C6BH27lZyss9Q==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47914ehqxe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Jun 2025 06:07:41 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55G4dPoj032093;
+	Mon, 16 Jun 2025 06:07:40 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 478yh7g6ey-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Jun 2025 06:07:40 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55G67d7f007555;
+	Mon, 16 Jun 2025 06:07:39 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 478yh7g6ej-1;
+	Mon, 16 Jun 2025 06:07:39 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: linux-doc@vger.kernel.org, linux-cxl@vger.kernel.org, corbet@lwn.net,
+        dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+        alison.schofield@intel.com, vishal.l.verma@intel.com,
+        ira.weiny@intel.com, dan.j.williams@intel.com, gourry@gourry.net
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org,
+        darren.kenny@oracle.com
+Subject: [PATCH] cxl: docs/devices Fix typos and clarify wording in device-types.rst
+Date: Sun, 15 Jun 2025 23:07:32 -0700
+Message-ID: <20250616060737.1645393-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] dt-bindings: arm: axiado: add AX3000 EVK
- compatible strings
-To: Harshit Shah <hshah@axiado.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
- soc@lists.linux.dev
-References: <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-0-341502d38618@axiado.com>
- <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-2-341502d38618@axiado.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-2-341502d38618@axiado.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-16_02,2025-06-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
+ spamscore=0 malwarescore=0 adultscore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2506160039
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDAzOSBTYWx0ZWRfXx4QQKlmuKXZI VLp2EqYIjck4mohGrDvUjfp31yijgBn+I32lT4NY9loLjOLz5Ert7n8gCJtHw+MU8nN9uFKDW47 shebjA8umXRTQXMCBbuYb241uxIBJGDOr8X73cQvOVveEmJHRu8/5clISCh1MKU6ntwH2Tjy/SG
+ Sf7edSC45mJnnUS4dj+A7/j3ldfee/axO1gr/j9w3cNeWOPoX4oYp/E3Tp/5vOu1As1em9qrYHl jTz86ruXzGR6xxtkvJeZGlumxQS7fWxVYtcEmgqIIGh4wYRPl2g7VyIP7c3CPY0PoQyalJmiP3x HMXvMQdmwEVdfo38kw6BohfJwxJyieu6H1wwhkS3EAj7fSleIXemgH4GIPqSdBtEiVCUtZWkvoR
+ u5PFXqdLpPf54GSKNqtXoYumdYP7Yy2Vd8EWZEssE2aFIL+R9CM426HprUpBVtGwQdlVk1f0
+X-Authority-Analysis: v=2.4 cv=U4CSDfru c=1 sm=1 tr=0 ts=684fb4ad b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8 a=5rsIUXSFhDujYq55XicA:9
+X-Proofpoint-GUID: DkbpINJH-lcQiqr3Wuefolq7p5FmBC-P
+X-Proofpoint-ORIG-GUID: DkbpINJH-lcQiqr3Wuefolq7p5FmBC-P
 
-On 16/06/2025 06:31, Harshit Shah wrote:
-> Add device tree binding schema for Axiado platforms, specifically the
-> AX3000 SoC and its associated evaluation board. This binding will be
-> used for the board-level DTS files that support the AX3000 platforms.
-> 
-> Signed-off-by: Harshit Shah <hshah@axiado.com>
-> ---
->  .../devicetree/bindings/arm/axiado/axiado.yaml     | 23 ++++++++++++++++++++++
+Fix several typos and improve comment clarity in the CXL device types
+docs:
+ "w/" replaced with "with"
+ "sill" -> "still"
+ "The allows" -> "This allows"
+ "capacity" corrected to "capable"
+ "more devices" corrected to "more hosts" in MLD description
 
-Just arm/axiado.yaml
+These changes improve readability and enhance the documentation quality.
 
->  1 file changed, 23 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/axiado/axiado.yaml b/Documentation/devicetree/bindings/arm/axiado/axiado.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f323162b7c3cf973754a3539b94a7534111886cf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/axiado/axiado.yaml
-> @@ -0,0 +1,23 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/axiado/axiado.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Axiado Platforms
-> +
-> +maintainers:
-> +  - Harshit Shah <hshah@axiado.com>
-> +
-> +properties:
-> +  $nodename:
-> +    const: '/'
-> +  compatible:
-> +    oneOf:
-> +      - description: AX3000 based boards
-> +        items:
-> +          - enum:
-> +              - axiado,ax3000_evk       # Axiado AX3000 Evaluation Board
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+---
+ Documentation/driver-api/cxl/devices/device-types.rst | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-No underscores in compatibles (just look at any other example).
+diff --git a/Documentation/driver-api/cxl/devices/device-types.rst b/Documentation/driver-api/cxl/devices/device-types.rst
+index f5e4330c1cfe..401c463af3ba 100644
+--- a/Documentation/driver-api/cxl/devices/device-types.rst
++++ b/Documentation/driver-api/cxl/devices/device-types.rst
+@@ -63,13 +63,13 @@ A Type-2 CXL Device:
+ 
+ * Supports cxl.io, cxl.cache, and cxl.mem protocols
+ * Optionally implements coherent cache and Host-Managed Device Memory
+-* Is typically an accelerator device w/ high bandwidth memory.
++* Is typically an accelerator device with high bandwidth memory.
+ 
+ The primary difference between a type-1 and type-2 device is the presence
+ of host-managed device memory, which allows the device to operate on a
+-local memory bank - while the CPU sill has coherent DMA to the same memory.
++local memory bank - while the CPU still has coherent DMA to the same memory.
+ 
+-The allows things like GPUs to expose their memory via DAX devices or file
++This allows things like GPUs to expose their memory via DAX devices or file
+ descriptors, allows drivers and programs direct access to device memory
+ rather than use block-transfer semantics.
+ 
+@@ -89,7 +89,7 @@ basic coherent DMA.
+ Switch
+ ------
+ 
+-A CXL switch is a device capacity of routing any CXL (and by extension, PCIe)
++A CXL switch is a device capable of routing any CXL (and by extension, PCIe)
+ protocol between an upstream, downstream, or peer devices.  Many devices, such
+ as Multi-Logical Devices, imply the presence of switching in some manner.
+ 
+@@ -103,7 +103,7 @@ A Single-Logical Device (SLD) is a device which presents a single device to
+ one or more heads.
+ 
+ A Multi-Logical Device (MLD) is a device which may present multiple devices
+-to one or more devices.
++to one or more hosts.
+ 
+ A Single-Headed Device exposes only a single physical connection.
+ 
+-- 
+2.47.1
 
-
-
-Best regards,
-Krzysztof
 
