@@ -1,142 +1,203 @@
-Return-Path: <linux-kernel+bounces-688002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899EDADAC1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:39:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C016ADAC2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B35643B43B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:38:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC7383B4317
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50B52E11CF;
-	Mon, 16 Jun 2025 09:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C648327057B;
+	Mon, 16 Jun 2025 09:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mgwee4eW"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="GWCt+dz+"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBEC18E025
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E8F20CCC9
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750066737; cv=none; b=GfhZBH1BsYEGL8FnY265r5vzEzCeLRe8ZMiB8wnUjTfJXtO/pplcmPYzlcHzhHzYv2yibImPqNxXQFVBsF1EmU70hoNRz/SVTFQaYOYgPHE9KTTZj0/yHUVPDKE5BwljdJ4b5FE0VLfQk08fpKltsXvil3YPD2sriustWPLARRU=
+	t=1750066867; cv=none; b=Q8zb2YydAFTG3H8HuFF/+ZoLhA7p/xOERk9EmRJHZUkF/qnkmJz5mjLpccvjvUT41cQofhEKkJu6BBvo4nXel10iwKjEeaTZEqcFPc2tTwNhsErzEckXcgQYkMC4n8wqDifKIGnFJ4Pn3eaEhMPR/yWr396Gh9kSPxmRBsBVqBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750066737; c=relaxed/simple;
-	bh=FVwtelZAyWQx+vqU97yUlvnFPUwmzYcKQPRUwBFWJkU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O4JQeV2kn9JfSW4tRkZSVOPhgpRBnU04LYT6gisR68dZXmm3n5aDWVBQt0ENF6ZqbfOOSpt0u0ntyXGorE46mHnwMQZVa+EzV/ASEojumhbaeepWby5JDUaGRK1oHmxRAbWCRC1i9s8HMOJv7JjrM4mdH9mTgm3dWP1A62HV/t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mgwee4eW; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a4e57d018cso602325f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 02:38:53 -0700 (PDT)
+	s=arc-20240116; t=1750066867; c=relaxed/simple;
+	bh=7XgftMYlowI9omQsqIdx6iLF24jqn6RByllX2ehfs7M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DD5Wgq3LMOtL4X8Y/ZlJIztwqqbzH+/EKZYN/jNwUvCTV6losaV1Vs86L+pyhVcVb7RBz5TAFacBmivC/6Sf3S34qhElML5Ae8143GetnBPsel/1E4B/a/cv5qQK8U2/5RZ9ujNmmGURkhKKMkLg15i5CILTF9ZTdz8q0kKaBuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=GWCt+dz+; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-553b82f3767so1830146e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 02:41:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750066732; x=1750671532; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cHZtdjxQWPz2h4m67PPRQKRG4gxPJKeLX80vTkxBv+0=;
-        b=Mgwee4eWM9etIm67A2SXC0P40omJbKt28X5GPLWjlvDvCSdqROXOTns1h7NwcGnqgK
-         Pn9Hl+aBHtHsFXi6BL/fpHpDywzRLjI+dislhRPKbsStlg8Lho75g0ee/+z9sO4s8thK
-         BGhkdRlVAcuKwALjeTWf3SN/QOpJTDbIoxM3+4EEoQNd2r1ElIn6G6puKhB5e0fCVtuF
-         Ew5arFgVbqSEgY0f+vkIExf3tSMPHPnhQBMx5d730P7HJNDw3kXjBlKQtjz+M5VgC+W5
-         T5OcUHAu8L3q3lCXpKyW/APbtqlv6upxTapQachCsJa+A+sYNhdBfbP28Gxg96G/RG7I
-         CmOQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750066864; x=1750671664; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZadNMdHIaOPYoMnd8DCHGg9pjL54W3auftd8ZPyuMno=;
+        b=GWCt+dz+xgX1+HTKkjCZXjMRV7n/QHqw+aBcgYC0SnsqkYJ+sgXMWHq+ZWPK7LTaBt
+         6nDaEIBRp2k6IiutyYuXPyVWtkdUzKQPC6JVb/yqLe9ohmZTwjpKmEyq/ObkmEFY+DSw
+         P5AOU/CSqlA9EgMx4/2Fny+uOGdJDHYL9lfina9VfUCXtt6I6gzwQT4aqL2J6it+sQhu
+         JBNCNsUKihsXQ+BTfpoiIPx92h7mKGqRxX8gfTPf0EPH28J66pVnfWvj6pVI4B4ooTLR
+         xRrzNBIf3i5H/JOOezwkR9FSkCispNTrhpbBVC6jnh5LxSNTPbWZg1tJXIOs69qSOnXM
+         PI1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750066732; x=1750671532;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cHZtdjxQWPz2h4m67PPRQKRG4gxPJKeLX80vTkxBv+0=;
-        b=wPOyfpA11NyJlYwAA81MXS7oIsE4GNHg2aAJ4eMFK0d7xmjVH8Z54EPbEPXk0zFCkB
-         bJ2G9W9JjxE/cauYweVF3HGNrgwqkcNQD3OAiQ13WRIcLrWa7aFgBvsveuodQ56EEYT/
-         LACTxtbUAmGst5srAwmI+KMc8Zq2ZRLHK8f1MsQ17I6PyHWiL5X1pcDuqWToQPIYelVn
-         PGzxWCc2fA/HQncHeN0xmhWyrQ0LIupPzv9Nhrs1lkkrfujJr257X88X2Yxw1iZ+uF8C
-         6ckdjhLE63sPefI55vq1Q2DvvlKqcwnJ9fGskVfiQLkKfgHzu/UMRqJ/oLwYah0FhX6h
-         Lf4A==
-X-Gm-Message-State: AOJu0YyZmrfPjHBlkJcAkzE0xQ8rVgAtzL7v8Ab0hF3amdrttZvSbd4O
-	FXY5fChyMU1vvWyc6HHSq0Ri3K/0JQThAnJO29B3axPxdflFiaXrsgYaHEPnI3hQOlU=
-X-Gm-Gg: ASbGncvhlGYw+rX+n+vkwQIA2n59OMl/DOwJNWPe+SB9oQxQYTrmZAcrSptuqyioUSU
-	aHCfv2acWJT0/ZwGRph2obOPToBpGlLWjZE5DGxASe+SM+NhwNEnvctsW/YoJrNfEmGOd4BMpla
-	uDREwG5SBhnxwGI7o3+EPyrrn9oOeUk3rNYpB1eQsV6O/D83jtfmtE55Hk2ooPd+MCFILKagIJt
-	hSs4Cz+674XECmQvRmQfZI1CB34N07p7pXY9656xsmUfXAngC6JRRzs10Oyytqtyffvk7yKRFDT
-	hxpnTJdF3V5abVlq4UoxUYe42nriLwJeUo8gDXrOm/kbdpaVQbB4QV3CJz27gyGpNuKbmTuSeqp
-	m8fUOpglu
-X-Google-Smtp-Source: AGHT+IH7YEG/fin7X5hn4NWKBNL9RSaFU1CTzTiJlnm8LW90ELlWxqL77mm55nI4g/YzfkCic3CivQ==
-X-Received: by 2002:adf:9d85:0:b0:3a5:7875:576 with SMTP id ffacd0b85a97d-3a578750726mr1381419f8f.1.1750066732325;
-        Mon, 16 Jun 2025 02:38:52 -0700 (PDT)
-Received: from kuoka.. ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b403b4sm10337099f8f.80.2025.06.16.02.38.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 02:38:51 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	peda@axentia.se,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	kernel test robot <lkp@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH current v6.16] mux: mmio: Fix missing CONFIG_REGMAP_MMIO
-Date: Mon, 16 Jun 2025 11:38:42 +0200
-Message-ID: <20250616093841.31985-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1750066864; x=1750671664;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZadNMdHIaOPYoMnd8DCHGg9pjL54W3auftd8ZPyuMno=;
+        b=CqJIDsW7lWaugBbfhm4oKdeyTSIa6u9G4qEhFTrUxYaXgaFRlM2rHA3bY7X3TQNUbP
+         Os6LzG2BeqxBdDAN6UJzR9GSYp/4Nbo03Pjm/Y7HNnCxsn6WzFT5o7VJcxdK+ahrpUny
+         WogP2AUBdxW4hErhkMjB76EHyignXZTcNmZoxPEi9FSTaxTjbdAALhgugjayWT57wvoN
+         36ebX9YYA3g27McjuwMWdSBSmImYoqv8GlcWW6OviB7wo/DkENvzijLWvAAxqWCPAf91
+         6/7eqxbNy8I+ZAkZ3Y/0o98IeEG9epeMaJQJcTQKjXXb2fBxNPQ0dINmuHJBV9jL/2bX
+         Bp+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXzXDgLSCjDgcHyfCj3pGDIHOSKpgJzwXfvrE6eIjR4A9Uw7XmD53zsBnOoXq9B7+tYBinor7+p6/A/6Go=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCoAzrvgsoW25sb6IBYQsAFaxPNPxhy8q+7d+CASHFYT6+PNvu
+	hSc2xFgBbgIhKdSc0R8tEUaxijMw8+nKzyXPLt9t/2ZyUQrMyGAO45VCiPD2zQDr4C+oqfe0xNC
+	JcxftKTHjJQWi0L6brMoc9j2TCHyJX2Z9OMi60/jGrA==
+X-Gm-Gg: ASbGncsMidgiNsX0X4DyDWlhsmafoQ/RO5Ycmlb5RupBE9Wle6DL6Het8ggRwNceEKC
+	LB7jga6KVab/dgZpAljhWx2nB9vKjx6Ktx/42bC4Bj86230t5SoeneZG+xQL1iDZLECgPesQjjR
+	hZv3T10Atyy3jBKntKKdgCzDOEJeMf4kJ1Nb6p7DlFWqd+NO4sreiOcF6KU4yeDL7Xnb7da+8SE
+	I0=
+X-Google-Smtp-Source: AGHT+IGQWWfUkusHDrOLuRcyzoECeHHGTF7H0pzgq8rg6Tj7LyO4hdSVch5xZMTnr/dQPwUpgGJMqB60ks8Us882nLo=
+X-Received: by 2002:a05:6512:12d1:b0:553:663d:7354 with SMTP id
+ 2adb3069b0e04-553b6f31175mr1628391e87.48.1750066863507; Mon, 16 Jun 2025
+ 02:41:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1225; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=FVwtelZAyWQx+vqU97yUlvnFPUwmzYcKQPRUwBFWJkU=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoT+YhNcd0X+nGHi+aAV4LRAJsyBED4eM37dhf2
- kjd+VaS6+iJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaE/mIQAKCRDBN2bmhouD
- 110UD/oCUAiBpnLeUsWxxbwLNuC15j1Ju10mxr+crkyKH7iElXDsvrBhiqQwhYFQGsdv0idiUvX
- QN0+SHrETa6rxsQVAaPjUuEwYKlAzOrMU2tgOp4rozlNNQcECR7454UgPz1TMODUxa4C7HPMfJt
- J7LWIsUlP1zXaEBQSvySYNXcKrWwIT9AluIo8W8TxTPBWttVI6rXutd/wKWarovnBa7YDCoV1rg
- M4PSsb+5sDLxK4HcCo7IC+k86wlB6YmZAYz3J95ewbcsVKP918RiHRGtkKtAqeh80lId1a7W5fy
- WRTFksmR4h0WoW8gaB80d86NG6/vwA00Y6EyMA0Y7WodMzFjlo+5zXBukDOGviRlYNEcRNcBX8e
- Dd1RsTBQLF/FW6VQBWDKZiUebFgmD2wGKQHWvMI1kJ7iLW4KAxxZn/EjbST/ipJN+/0dobo+rjW
- esgy/sCt0Gy6AZAhjXLfIPCexGlXf/g1zCvBdzcHtTZLKqO6nr94jE3G3RpzxxVcREs4SLxoor2
- UU1pZBpSi2QnkgGLPnlIbbJD/JD+yTJFeUg/yUd2Qae2La2bqjN6S1kaGuwqtJPXk29IS5nEvaK
- aWStiYob3rEavnrXRm0oj0+cf9hP8lo33ItH0I3TkWf+iguFYJrz64IrKppZjHO4a93NDzrpF8E gk9zfKrOedWmxNw==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+References: <CGME20250614180911eucas1p16c9fb4a8160253c253f623bec2529f70@eucas1p1.samsung.com>
+ <20250614-apr_14_for_sending-v4-0-8e3945c819cd@samsung.com> <20250614-apr_14_for_sending-v4-4-8e3945c819cd@samsung.com>
+In-Reply-To: <20250614-apr_14_for_sending-v4-4-8e3945c819cd@samsung.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 16 Jun 2025 11:40:50 +0200
+X-Gm-Features: AX0GCFt1wszk0eSWs2NPgAoE3A4kwN-NyBJ_b5il4mUmGBJkPe4uMiqiWgyvPn0
+Message-ID: <CAMRc=MfdBd6HBwM4F1TcjDvwbOJ03kxgRk4hJQ8HFK7Wz2XBAg@mail.gmail.com>
+Subject: Re: [PATCH v4 4/8] drm/imagination: Use pwrseq for TH1520 GPU power management
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Frank Binns <frank.binns@imgtec.com>, 
+	Matt Coster <matt.coster@imgtec.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-MMIO mux uses now regmap_init_mmio(), so one way or another
-CONFIG_REGMAP_MMIO should be enabled, because there are no stubs for
-!REGMAP_MMIO case:
+On Sat, Jun 14, 2025 at 8:09=E2=80=AFPM Michal Wilczynski
+<m.wilczynski@samsung.com> wrote:
+>
+> Update the Imagination PVR DRM driver to leverage the pwrseq framework
+> for managing the power sequence of the GPU on the T-HEAD TH1520 SoC.
+>
+> To cleanly handle the TH1520's specific power requirements in the
+> generic driver, this patch implements the "driver match data" pattern. A
+> has_pwrseq flag in a new pvr_soc_data struct is now associated with
+> thead,th1520-gpu compatible string in the of_device_id table.
+>
+> At probe time, the driver checks this flag. If true, it calls
+> devm_pwrseq_get("gpu-power"), requiring a valid sequencer and deferring
+> probe on failure. In this mode, all power and reset control is delegated
+> to the pwrseq provider. If the flag is false, the driver skips this
+> logic and falls back to its standard manual power management. Clock
+> handles are still acquired directly by this driver in both cases for
+> other purposes like devfreq.
+>
+> The runtime PM callbacks, pvr_power_device_resume() and
+> pvr_power_device_suspend(), are modified to call pwrseq_power_on() and
+> pwrseq_power_off() respectively when the sequencer is present.  A helper
+> function, pvr_power_off_sequence_manual(), is introduced to encapsulate
+> the manual power-down logic.
+>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
 
-  ERROR: modpost: "__regmap_init_mmio_clk" [drivers/mux/mux-mmio.ko] undefined!
+[snip]
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202505150312.dYbBqUhG-lkp@intel.com/
-Fixes: 61de83fd8256 ("mux: mmio: Do not use syscon helper to build regmap")
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/r/20250521152354.92720-2-krzysztof.kozlowski@linaro.org
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
+>
+> +static int pvr_power_off_sequence_manual(struct pvr_device *pvr_dev)
+> +{
+> +       int err;
+> +
+> +       err =3D reset_control_assert(pvr_dev->reset);
+> +
+> +       clk_disable_unprepare(pvr_dev->mem_clk);
+> +       clk_disable_unprepare(pvr_dev->sys_clk);
+> +       clk_disable_unprepare(pvr_dev->core_clk);
+> +
+> +       return err;
+> +}
+> +
+>  int
+>  pvr_power_device_suspend(struct device *dev)
+>  {
+> @@ -252,11 +266,10 @@ pvr_power_device_suspend(struct device *dev)
+>                         goto err_drm_dev_exit;
+>         }
+>
+> -       clk_disable_unprepare(pvr_dev->mem_clk);
+> -       clk_disable_unprepare(pvr_dev->sys_clk);
+> -       clk_disable_unprepare(pvr_dev->core_clk);
+> -
+> -       err =3D reset_control_assert(pvr_dev->reset);
+> +       if (pvr_dev->pwrseq)
+> +               err =3D pwrseq_power_off(pvr_dev->pwrseq);
+> +       else
+> +               err =3D pvr_power_off_sequence_manual(pvr_dev);
+>
+>  err_drm_dev_exit:
+>         drm_dev_exit(idx);
+> @@ -276,44 +289,55 @@ pvr_power_device_resume(struct device *dev)
+>         if (!drm_dev_enter(drm_dev, &idx))
+>                 return -EIO;
+>
+> -       err =3D clk_prepare_enable(pvr_dev->core_clk);
+> -       if (err)
+> -               goto err_drm_dev_exit;
+> +       if (pvr_dev->pwrseq) {
+> +               err =3D pwrseq_power_on(pvr_dev->pwrseq);
+> +               if (err)
+> +                       goto err_drm_dev_exit;
+> +       } else {
+> +               err =3D clk_prepare_enable(pvr_dev->core_clk);
+> +               if (err)
+> +                       goto err_drm_dev_exit;
+>
+> -       err =3D clk_prepare_enable(pvr_dev->sys_clk);
+> -       if (err)
+> -               goto err_core_clk_disable;
+> +               err =3D clk_prepare_enable(pvr_dev->sys_clk);
+> +               if (err)
+> +                       goto err_core_clk_disable;
+>
+> -       err =3D clk_prepare_enable(pvr_dev->mem_clk);
+> -       if (err)
+> -               goto err_sys_clk_disable;
+> +               err =3D clk_prepare_enable(pvr_dev->mem_clk);
+> +               if (err)
+> +                       goto err_sys_clk_disable;
+>
 
-Hi Greg,
+In order to decrease the number of if-elses, would it make sense to
+put the "manual" and "pwrseq" operations into their own separate
+functions and then store addresses of these functions in the device
+match data struct as function pointers (instead of the has_pwrseq
+flag)? This way we'd just call them directly.
 
-This fixes compile test build isssues reported for commit introduced in
-this merge window.  
-
- drivers/mux/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mux/Kconfig b/drivers/mux/Kconfig
-index 80f015cf6e54..c68132e38138 100644
---- a/drivers/mux/Kconfig
-+++ b/drivers/mux/Kconfig
-@@ -48,6 +48,7 @@ config MUX_GPIO
- config MUX_MMIO
- 	tristate "MMIO/Regmap register bitfield-controlled Multiplexer"
- 	depends on OF
-+	select REGMAP_MMIO
- 	help
- 	  MMIO/Regmap register bitfield-controlled Multiplexer controller.
- 
--- 
-2.45.2
-
+Bart
 
