@@ -1,47 +1,56 @@
-Return-Path: <linux-kernel+bounces-687962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80FC5ADAB6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:04:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6230ADAB85
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3D693B2A74
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:04:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E521188F203
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209E1270EBD;
-	Mon, 16 Jun 2025 09:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3129D2727F4;
+	Mon, 16 Jun 2025 09:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCCjnVs1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="xSBkN1Af"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743F81991CD;
-	Mon, 16 Jun 2025 09:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4745D202C50;
+	Mon, 16 Jun 2025 09:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750064659; cv=none; b=fgDYb+4ikKv96tocgqdNp22Q8Phe165LmOQtowcvqdJSu3O1iZRuoQM9nNwNN1YGqhX1dwiwcaYxaaxbhuQVYGL+TEBHvP9p17KVBu/A0cke/CKBR74D0XpsVrZs2Ooa0Cdf/mmglPi8TTH4LK8SNc7v3wHukg6TlNGJwH577uA=
+	t=1750065022; cv=none; b=gF5RtiDU1IiXYB7XsU8Y9dIqvB6Rl4BNcXASvE7R5PJ1Mln/f+fWQtzvbFu+HYYt4YZMex64XvZ+fqWCX+uTTyeGbJCd9LxrM7oqt+i92hpoO68L6xDFnWJXwEWz0VE+9Kim/51qTnOkKffNhKD4+oUMBQ0t+YBYrUjV4WmJtlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750064659; c=relaxed/simple;
-	bh=0cC6uUPoW8D1ceNhr+gzB+r6cQqyjYO+BddOkail6Jg=;
+	s=arc-20240116; t=1750065022; c=relaxed/simple;
+	bh=Ab/azGHZAN5imCLvzke6FrRFhZsJl1QU6kgQsGu6z18=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=koNzkQachRBRoxZ0v6BDJXuuw1t16ETriLXrWOQWqht0P5kxM1nIiN4N7jhezsaBgSvEm/EeTBZxRNvRKeOJKEXf3fbVO4lpKf3+BHKBE7B2ERspsJpBFExJ4O4V8NUOXrM+z/KB4mRWX7K9fwuFF05a4pBrQHi3RAn1/zk2Zos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCCjnVs1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7566C4CEEA;
-	Mon, 16 Jun 2025 09:04:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750064655;
-	bh=0cC6uUPoW8D1ceNhr+gzB+r6cQqyjYO+BddOkail6Jg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vCCjnVs15JhLr+gkD0415uzKKH65zw2YauahA6dRUAPnpTJy+lPsBQ6ucpj7PZf0N
-	 vvkhTkiUXBcywJwff0Ncy4b2zFm0yVpVGV7GiQuquOXqrE8cfvYNHeHu6FGWeHja/x
-	 rfJWVhb++gX0S2D9XIaUSle/unVj5pwTs1H3JrDm2IZdLO9fPHfwRLNxEvmC6xRKl0
-	 lR8bJSr2kBTAqCOF6bvWtcySDjgslavLj1rC0+8r3MbFhjezmcdlaPYgmL6J/AUDln
-	 bGUrLl7+vAMzJmABMvhYZUPclEUIhdfWrZ2jA9D3eDwjPsKI+PbGyr/WDrHMIoeExR
-	 bGrh9zQ+C8llA==
-Message-ID: <92df9bdd-734b-461c-bf98-070e4fc59d50@kernel.org>
-Date: Mon, 16 Jun 2025 11:04:08 +0200
+	 In-Reply-To:Content-Type; b=WNL0qhPFiuXmE3vd40uLorv+xVNHuehkHSPxJ+7CElHawwpQo8iRhsbCuBQHezW27rtr+xrHAL4egADBj6vPqfs4rQYN48vTOzqLMV8Dd/9OIzV9K8yD4PqS6z/M+pvuJ7e0Rr0ZE/Wvqrn7VW696OrgBC9IN/SoukbQAWcqeqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=xSBkN1Af; arc=none smtp.client-ip=212.227.126.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1750065018; x=1750669818;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=Ab/azGHZAN5imCLvzke6FrRFhZsJl1QU6kgQsGu6z18=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=xSBkN1AfEEtMEcgvvZ/bUfDrElxWGO4lHiVJfduxQyBf4lRe2XkT/+j90unZ1PTG
+	 V4FKNFIrNgG6RaFveuHeinzSDX5G1CtoRoky0dKhY5NLPRrC70dU82vZJ//mbDOqY
+	 JvK9WnkG0RTOr+F56qZtflomu1frtMf677lOD8GN/Mbgc6mrFufgj34qLGD6zxZyL
+	 SIYPRflsbyBJvdSG5SdR4b5gojDrfnNnmIJ3nbNA1VOBW72zD2v1+gjG6qdE9C117
+	 Lke+F58Q64Wwe6MaDDI2ln+2kS9zds0G4StGKAnwNwJCojcD6WzCTgtvmqAvS3kiA
+	 9oe/9gle4d1LYNZ7Ag==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.107] ([62.226.41.128]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N336L-1unjU43iov-00wUjJ; Mon, 16 Jun 2025 11:04:57 +0200
+Message-ID: <3d449803-1880-46df-aacb-b42e757f90ab@oldschoolsolutions.biz>
+Date: Mon, 16 Jun 2025 11:04:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,55 +58,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] rust: add support for port io
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Andrew Ballance <andrewjballance@gmail.com>, a.hindborg@kernel.org,
- airlied@gmail.com, akpm@linux-foundation.org, alex.gaynor@gmail.com,
- andriy.shevchenko@linux.intel.com, arnd@arndb.de, benno.lossin@proton.me,
- bhelgaas@google.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
- daniel.almeida@collabora.com, fujita.tomonori@gmail.com, gary@garyguo.net,
- gregkh@linuxfoundation.org, kwilczynski@kernel.org, me@kloenk.dev,
- ojeda@kernel.org, raag.jadav@intel.com, rafael@kernel.org, simona@ffwll.ch,
- tmgross@umich.edu, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org
-References: <20250514105734.3898411-1-andrewjballance@gmail.com>
- <CAH5fLgjgtLQMaAZxufttzoVCJpAfTifn6VWwKZ7Q6vAOOvG+ug@mail.gmail.com>
-From: Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v2] dt: arm64: qcom: sc8280xp-x13s: amend usb0-sbu-mux
+ enable gpio
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Johan Hovold <johan+linaro@kernel.org>
+References: <20250610-x13s-usb0-mux-v2-1-598454e6ad64@oldschoolsolutions.biz>
+ <aEffYQND8eUgJbua@hovoldconsulting.com>
+ <64d963bd-b38c-4f14-bb1d-f7e89dad999a@oldschoolsolutions.biz>
+ <aE_cejDMmmU48jMp@hovoldconsulting.com>
 Content-Language: en-US
-In-Reply-To: <CAH5fLgjgtLQMaAZxufttzoVCJpAfTifn6VWwKZ7Q6vAOOvG+ug@mail.gmail.com>
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <aE_cejDMmmU48jMp@hovoldconsulting.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:9n3JJbsirUUTnyIWevxVAiWuOHNYigcxz+SL06SugMshZXOjIiV
+ 453xsIWJL6OFGFydTArw3j7+8lS7o5zlQej4L/HIrYlhSI4UGbBDK613IcVCOh0oYQFSsTm
+ gOCv4dgAUGnpfeYTPaAtqxFPWN1Lk+NmZ/qCUpqqvmgTN8rU7tU55tsqwce6TeRCp/Hj22n
+ zzIyv5Jt2o0fSq62YCI/Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:cuZjWuahtNg=;xzMFAAhf5qPzgZEqeXX/sUeuZFB
+ UwIH1oC4TX3N0ucQW1rpI4M0tGbh6L1u7pvPz5iz4ui5iY7peuwMGkR4Moy9Kg/BXJUxkkWCA
+ IBZnwjCqgmLE3ApwcBE5q8oDZUERhR6eJNAhxoS6el9tpn220DuO73Z+RAOcHeqMwJspQPhyu
+ Unz2raRiRVW4OQvsE3hs6vHTTp9Uf377eMbsM6IJV1gDEn+t555tv2irHkJMRfz+saTXxgKqZ
+ s9Y8CTeawhvFqCjVajIojbh0qirJHDXELjt4d1FxexwoooCgY0Cs6udLdbjdwou2zNv81ZQjm
+ Td2V8nlyXTMsDpLyz8khFWMHpBcbFOOETAHossNfCB+keYS8+XthSFScy9iauNQyo4G/LJwYe
+ UJDrJ3C0OiHNcjsXwTnxTg/Q7Hok5fVPMZzkHwp7E8vWS7txR7YeFXJ46ObKiCVcZIuajmrnm
+ wExo89uVkTNgDRndnuYsjLUL+pTS+DM6rs8en7Eua5gwLn3QCtAsPNIqXfNNBm5h2clPVszyb
+ HHLNfmTpI5L6YkZ0iItSdLUkPK15B2IRMvdXvWbalmon5j0LSTZuYUnx5QnrRb118rX5mQYJv
+ w/TD+tiw/NZLOmOWwNN2sQ+XA2vCxlqZCvUmDN3Hx3h4nY+017ttCmq7t41voPcpmC/RJResE
+ 916LAkg+nyXl2VF0tY/hksfb7H5UFWeei97xFfqt18b16EILeo7XryCamIlX1ymZgJTolYFdL
+ biD21MBx7UkYmmKSD14EfHXZZ7umC0AM18nhun/P5KDGYAY7QRkLQM/HA0hund5ecRn9K6YZs
+ kbXMtPMuT+1t5HETB6TR0pwObUlF8yzSuEUEy4cmtDhq1AQzi/o+Ps9WHnvfEg2OqEFvg+Cql
+ DUt3mj0UrD+dHjonkwMRYqct9DAq15MbiFPi4jOjRIzyh7kYs6tTQQic+HcPHKzJf99aKynFX
+ 0oZ8Mx0vEihhrw+pxbWoQlBsE3jlKG06+zkMSaTTsGI45/YAMasqsHOCzuqBZCwj8kQ7vgQFJ
+ 1Vbls3MvqIF7GtmPMXcQOupqjK7jd3k33+Hj04dfXjJz8e5CtttgIGm/I/Eyc1tmZE8CccTJC
+ +wPijOc2RxL7xtvSV70+KPPtLFpU6/0YJINnJtDjyGIgHy/yHrsiGITzFudDxeh0zLUVJAVXS
+ VT24TjZmaDTxGvc9O0nOz/2jo0boVYtG2InALThxDVlJAq0sdFb5AVqdTlTI6UINHCOB1K623
+ R3H3QEcuOvyDzAIQWhxq+hdqkY6Zxmawj4QpwR+RKpe3UNmKtH+qjVOCz7IDp3wbWXtAAYscN
+ zOLLORCPCijwmd9KIG4gK0g+0W/Ep3u/MIqXlvE1lGGiGH/VuNKztZFufpUZBUQ/z/CLEIqVr
+ r//BldTiemqSuDJWrsrLzBJV0LcMfATyOHqCtiAOcRAbpAaZIFlnD/SniP
 
-On 6/16/25 10:03 AM, Alice Ryhl wrote:
-> On Wed, May 14, 2025 at 12:58 PM Andrew Ballance
-> <andrewjballance@gmail.com> wrote:
->>
->> currently the rust `Io` type maps to the c read{b, w, l, q}/write{b, w, l, q}
->> functions and have no support for port io. this can be a problem for pci::Bar
->> because the pointer returned by pci_iomap can be either PIO or MMIO [0].
->>
->> this patch series splits the `Io` type into `Io`, and `MMIo`. `Io` can be
->> used to access PIO or MMIO. `MMIo` can only access memory mapped IO but
->> might, depending on the arch, be faster than `Io`. and updates pci::Bar,
->> so that it is generic over Io and, a user can optionally give a compile
->> time hint about the type of io.
->>
->> Link: https://docs.kernel.org/6.11/driver-api/pci/pci.html#c.pci_iomap [0]
-> 
-> This series seems to try and solve parts of the same problems as
-> Daniel's patchset:
-> https://lore.kernel.org/rust-for-linux/20250603-topics-tyr-platform_iomem-v9-0-a27e04157e3e@collabora.com/#r
-> 
-> We should probably align these two patchsets so that they do not add
-> incompatible abstractions for the same thing.
+On 16.06.25 10:57, Johan Hovold wrote:
+> No, this patch should not be picked up now.
+>
+> But you may want to revisit the other related patches for other boards
+> that you sent in case they too are based on some misunderstanding.
+>
+> Johan
 
-AFAICS, they solve different problems, i.e.
+That, I did. No changes except for this one.
 
-   1) Add Port I/O support to the generic I/O abstractions.
-   2) Add an abstraction for generic ioremap() used to map a struct resource
-      obtained from a platform device.
+with best regards
 
-The patch series will conflict though, I think it would be best to rebase this
-one onto Daniel's patch series, since it is close to land.
+Jens
+
 
