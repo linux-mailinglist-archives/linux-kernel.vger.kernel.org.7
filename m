@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-687473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB04ADA55E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 03:09:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04CF2ADA55F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 03:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDDFC7A5AD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 01:07:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C80A3AC61C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 01:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4B72B9A5;
-	Mon, 16 Jun 2025 01:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568471C4A0A;
+	Mon, 16 Jun 2025 01:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="yL/oXijF"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gi7mAVBM"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DDF23AD
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83F417BA5
 	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 01:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750036133; cv=none; b=F/a/5pLn87uL8POB5IRv5FSDPgpohaejgTG1HLf07boOxwETX677nFERtKB1pBl9p5HFvWYDNE94uIGWBrrmo/2cSRd0xoreELVXRG2mq1kvQtF+1OVag39iagfpj0U/JZnJ6C+9tcwMM9fouzFiUU6++SKxJwYmNurAWIm0SDQ=
+	t=1750036134; cv=none; b=DNj2xiEvUbCEXlwFUPH+HsSqUiDqtAvXXIwXSC0tdmsbv/ei8jlEMTtREPA+xIrVI2+iJ2yoRT1LTJtianJqccz+vFTdH6PG93tfoJDZZ0CNXHkeorksMT3aRM+XanVUkQ4o8KZvHQddeIzYynaBQMSiFgRtvq8x2EJjysSKch8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750036133; c=relaxed/simple;
-	bh=abEiY5hBMI67CoNMXEMvgnnZK8G6qawPiVrmr/bLuG0=;
+	s=arc-20240116; t=1750036134; c=relaxed/simple;
+	bh=aJiRQnuOhkLa7LiyyMk2v14H2mCJujdpRcITqvpIvqI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hOJlojOVMqh5Cznsb+wMY4ZZiTUnhlqVSLa9/hewIjYcMVBPE5G5hnY3rZkGr4UG0mRJ3Xfo4QQ4pW1QDNmonyLR3Od37ynRjVDh89421VrDzWZLuqWeR3o23v+ZgHeYy82gLAx7C2GywIQNXa3pyOcmDKKMWIgEpej8k/D2mG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=yL/oXijF; arc=none smtp.client-ip=115.124.30.131
+	 MIME-Version; b=ecOYB7HAMSw8VTQMY5aguismw23JHAV1MMx/oavqcWO1Ri1wMe5s9KMCClVPAyvsw2HKzWRBhFf9Isng0nDIPb3q7SbkgzSY9IbHKMqJCUL2TtUfVOK3YoAW7JOWXs/vGBVa+NlT9vyWT0hiAItB8eFXFczvvYp4puc0kZqLWXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gi7mAVBM; arc=none smtp.client-ip=115.124.30.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
 	t=1750036124; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=PLJj49F9PjWWVpiZxBe0LA+dLBqogOq9Z6+7w2bNWXk=;
-	b=yL/oXijFpfOmhCbcDCAq8xYUSSrD81HZynudmaTSRMKtgSuK9kSuuaHNp8odsVvWwQUVBLJe9vDsooRH9PntuO9gTYZfvx2Wmoc0Ign236G1xFA3f765ANeh9oyusgk58dBFurGxDct1Ht/yrHnUbj/IS03TBHe4CRYb4hV47Ng=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WdqyMzW_1750036122 cluster:ay36)
+	bh=M3lJK2qdxM3QqbG3JD1EivF32/aBG5sfk+PR7hs51W0=;
+	b=gi7mAVBMq6CkoejO4q2D/p0iy/jiYBDXGYwYbJhJOERMCaE1xrIaqZ1TS549PiH1HyncC558tHjc8SYgBGUhRX3fE4I7sBvNXDvrzlfuLjUtt/hR0uJbgX0M96IyWJTkDA6t9wUpgsep8Lhu5JFB2/7a285I9L0i7CD2vM8MBOA=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0Wdr-a1H_1750036123 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Mon, 16 Jun 2025 09:08:42 +0800
+          Mon, 16 Jun 2025 09:08:43 +0800
 From: Feng Tang <feng.tang@linux.alibaba.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Petr Mladek <pmladek@suse.com>,
@@ -48,9 +48,9 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 Cc: paulmck@kernel.org,
 	john.ogness@linutronix.de,
 	Feng Tang <feng.tang@linux.alibaba.com>
-Subject: [PATCH V2 3/5] sys_info: add help to translate sys_info string to bitmap
-Date: Mon, 16 Jun 2025 09:08:38 +0800
-Message-Id: <20250616010840.38258-4-feng.tang@linux.alibaba.com>
+Subject: [PATCH V2 4/5] panic: add 'panic_sys_info=' setup option for sysctl and kernel cmdline
+Date: Mon, 16 Jun 2025 09:08:39 +0800
+Message-Id: <20250616010840.38258-5-feng.tang@linux.alibaba.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250616010840.38258-1-feng.tang@linux.alibaba.com>
 References: <20250616010840.38258-1-feng.tang@linux.alibaba.com>
@@ -62,142 +62,114 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Bitmap definition is hard to remember and decode. Add sysctl interface
-to translate human readable string like "tasks,mem,timer,lock,ftrace,..."
-to bitmap.
+Add 'panic_sys_info=' setup which expects string like "tasks,mem,lock,...".
+It supports both runtime sysctl control and boot time kernel cmdline setup,
+and could be seen as human readable string version of 'panic_print'.
+
+The detail mapping is:
+	SYS_SHOW_TASK_INFO	"tasks"
+	SYS_SHOW_MEM_INFO	"mem"
+	SYS_SHOW_TIMER_INFO	"timer"
+	SYS_SHOW_LOCK_INFO	"lock"
+	SYS_SHOW_FTRACE_INFO	"ftrace"
+	SYS_SHOW_ALL_CPU_BT	"all_bt"
+	SYS_SHOW_BLOCKED_TASKS	"blocked_tasks"
 
 Suggested-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
 ---
- include/linux/sys_info.h |  7 +++
- lib/sys_info.c           | 97 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 104 insertions(+)
+ .../admin-guide/kernel-parameters.txt          | 13 +++++++++++++
+ Documentation/admin-guide/sysctl/kernel.rst    | 18 ++++++++++++++++++
+ kernel/panic.c                                 | 16 ++++++++++++++++
+ 3 files changed, 47 insertions(+)
 
-diff --git a/include/linux/sys_info.h b/include/linux/sys_info.h
-index 79bf4a942e5f..0b49863cd414 100644
---- a/include/linux/sys_info.h
-+++ b/include/linux/sys_info.h
-@@ -16,5 +16,12 @@
- #define SYS_SHOW_BLOCKED_TASKS		0x00000080
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index f1f2c0874da9..d714a0ebf909 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4541,6 +4541,19 @@
+ 			Use this option carefully, maybe worth to setup a
+ 			bigger log buffer with "log_buf_len" along with this.
  
- extern void sys_show_info(unsigned long info_mask);
-+extern unsigned long sys_info_parse_param(char *str);
++	panic_sys_info=
++			String of subsystem info to be dumped on panic.
++			It expects string of comma-separated words like
++			"tasks,mem,timer,...", which is a human readable string
++			version of 'panic_print':
++			tasks: print all tasks info
++			mem: print system memory info
++			timer: print timer info
++			lock: print locks info if CONFIG_LOCKDEP is on
++			ftrace: print ftrace buffer
++			all_bt: print all CPUs backtrace (if available in the arch)
++			blocked_tasks: print only tasks in uninterruptible (blocked) state
++
+ 	parkbd.port=	[HW] Parallel port number the keyboard adapter is
+ 			connected to, default is 0.
+ 			Format: <parport#>
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index dd49a89a62d3..2013afd98605 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -899,6 +899,24 @@ So for example to print tasks and memory info on panic, user can::
+   echo 3 > /proc/sys/kernel/panic_print
  
-+#ifdef CONFIG_SYSCTL
-+struct ctl_table;
-+extern int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
-+					  void *buffer, size_t *lenp,
-+					  loff_t *ppos);
-+#endif
- #endif	/* _LINUX_SYS_INFO_H */
-diff --git a/lib/sys_info.c b/lib/sys_info.c
-index 90a79b5164c9..9693542435ba 100644
---- a/lib/sys_info.c
-+++ b/lib/sys_info.c
-@@ -5,6 +5,103 @@
- #include <linux/console.h>
- #include <linux/nmi.h>
  
-+struct sys_info_name {
-+	unsigned long bit;
-+	const char *name;
-+};
++panic_sys_info
++==============
 +
-+static const char sys_info_avail[] = "tasks,mem,timer,lock,ftrace,all_bt,blocked_tasks";
++String of subsystem info to be dumped on panic. It expects string of
++comma-separated words like "tasks,mem,timer,...", which is a human
++readable string version of 'panic_print':
 +
-+static const struct sys_info_name  si_names[] = {
-+	{ SYS_SHOW_TASK_INFO,	"tasks" },
-+	{ SYS_SHOW_MEM_INFO,	"mem" },
-+	{ SYS_SHOW_TIMER_INFO,	"timer" },
-+	{ SYS_SHOW_LOCK_INFO,	"lock" },
-+	{ SYS_SHOW_FTRACE_INFO, "ftrace" },
-+	{ SYS_SHOW_ALL_CPU_BT,	"all_bt" },
-+	{ SYS_SHOW_BLOCKED_TASKS, "blocked_tasks" },
-+};
++=============   ===================================================
++tasks           print all tasks info
++mem             print system memory info
++timer           print timer info
++lock            print locks info if CONFIG_LOCKDEP is on
++ftrace          print ftrace buffer
++all_bt          print all CPUs backtrace (if available in the arch)
++blocked_tasks   print only tasks in uninterruptible (blocked) state
++=============   ===================================================
 +
-+/* Expecting string like "xxx_sys_info=tasks,mem,timer,lock,ftrace,..." */
-+unsigned long sys_info_parse_param(char *str)
++
+ panic_on_rcu_stall
+ ==================
+ 
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 35c98aefa39f..ea238f7d4b54 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -125,6 +125,13 @@ static const struct ctl_table kern_panic_table[] = {
+ 		.mode           = 0644,
+ 		.proc_handler   = proc_douintvec,
+ 	},
++	{
++		.procname	= "panic_sys_info",
++		.data		= &panic_print,
++		.maxlen         = sizeof(panic_print),
++		.mode		= 0644,
++		.proc_handler	= sysctl_sys_info_handler,
++	},
+ };
+ 
+ static __init int kernel_panic_sysctls_init(void)
+@@ -135,6 +142,15 @@ static __init int kernel_panic_sysctls_init(void)
+ late_initcall(kernel_panic_sysctls_init);
+ #endif
+ 
++/* The format is "panic_sys_info=task,mem,ftrace,..." */
++static int __init setup_panic_sys_info(char *buf)
 +{
-+	unsigned long si_bits = 0;
-+	char *s, *name;
-+	int i;
-+
-+	s = str;
-+	while ((name = strsep(&s, ",")) && *name) {
-+		for (i = 0; i < ARRAY_SIZE(si_names); i++) {
-+			if (!strcmp(name, si_names[i].name)) {
-+				si_bits |= si_names[i].bit;
-+				break;
-+			}
-+		}
-+	}
-+
-+	return si_bits;
++	/* There is no risk of race in kernel boot phase */
++	panic_print = sys_info_parse_param(buf);
++	return 1;
 +}
++__setup("panic_sys_info=", setup_panic_sys_info);
 +
-+#ifdef CONFIG_SYSCTL
-+int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
-+					  void *buffer, size_t *lenp,
-+					  loff_t *ppos)
-+{
-+	char names[sizeof(sys_info_avail) + 1];
-+	struct ctl_table table;
-+	unsigned long *si_bits_global;
-+	int i, ret, len;
-+
-+	si_bits_global = ro_table->data;
-+
-+	if (write) {
-+		unsigned long si_bits;
-+
-+		table = *ro_table;
-+		table.data = names;
-+		table.maxlen = sizeof(names);
-+		ret = proc_dostring(&table, write, buffer, lenp, ppos);
-+		if (ret)
-+			return ret;
-+
-+		si_bits = sys_info_parse_param(names);
-+		/*
-+		 * The access to the global value is not synchronized.
-+		 */
-+		WRITE_ONCE(*si_bits_global, si_bits);
-+		return 0;
-+	} else {
-+		/* for 'read' operation */
-+		bool first = true;
-+		char *buf;
-+
-+		buf = names;
-+		for (i = 0; i < ARRAY_SIZE(si_names); i++) {
-+			if (*si_bits_global & si_names[i].bit) {
-+
-+				if (first) {
-+					first = false;
-+				} else {
-+					*buf = ',';
-+					buf++;
-+				}
-+
-+				len = strlen(si_names[i].name);
-+				strncpy(buf, si_names[i].name, len);
-+				buf += len;
-+			}
-+
-+		}
-+		*buf = '\0';
-+
-+		table = *ro_table;
-+		table.data = names;
-+		table.maxlen = sizeof(names);
-+		return proc_dostring(&table, write, buffer, lenp, ppos);
-+	}
-+}
-+#endif
-+
- void sys_show_info(unsigned long info_flag)
- {
- 	if (info_flag & SYS_SHOW_TASK_INFO)
+ static atomic_t warn_count = ATOMIC_INIT(0);
+ 
+ #ifdef CONFIG_SYSFS
 -- 
 2.39.5 (Apple Git-154)
 
