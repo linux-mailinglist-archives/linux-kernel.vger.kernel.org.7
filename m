@@ -1,193 +1,159 @@
-Return-Path: <linux-kernel+bounces-687629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2589EADA733
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:33:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD60DADA738
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344D93A7BFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 04:32:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B911D7A5907
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 04:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586B31DF991;
-	Mon, 16 Jun 2025 04:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5A5193077;
+	Mon, 16 Jun 2025 04:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b="gbAMH1zP"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2132.outbound.protection.outlook.com [40.107.92.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="Gj8Zd8UD"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8841DD9AC;
-	Mon, 16 Jun 2025 04:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.132
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750048319; cv=fail; b=ZKcu7JH0YihzCAWh9/Kp1W/pp2wJlSIH+dlL44YL8T7QaMCVV1zc3nQl6o8WMywTovnv8k+mKtK4nBiWZ74ydyXfyOeuaYyLsFe1eCQgFlM+9QwLSeiipe6ErRhCqLPhxwBMc92LpvWMZXkq2Paq8l1PT0h3zwsxTCO0IjhhJPE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750048319; c=relaxed/simple;
-	bh=KshauV0Ltf+cmlkwHT/6QLg4kHHEmWooSrGJxOuEkO0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r43F5y+SrKAQmIY7gEZrLT/eJfFUM9BZmlo2pCm/aPUK//35EVmSlFlL7p8XJ10IXJVKQA5Eek8IUzacgUgEi8zviDJsE5Lr834f3AAz/kCCYR6scpRd4u9AtaZnWe3PUyZZAC3zwoT3U/OWUTWbmgOZvHdEBwXHu2OoGvY5rtA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com; spf=pass smtp.mailfrom=axiado.com; dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b=gbAMH1zP; arc=fail smtp.client-ip=40.107.92.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axiado.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PB5sLYPiMPx4zQqY2DN7bIrzwKy3N1wu4R1p2s2NyyzhKNnaM5qDbWAa8y0uhr/eyNfy/Vt5bVHm4X1C0WPDxnTfX0WnUIqj3P87VsSfjQvMKkFt/hQ7573ysBrK/3QZ23DnFKTdRszPx6OR25bHcvUAHfYRdrzsnOdL6IwE1BHDSymhKpkJWYJxCgYGrM8k0Yx4rylULrKvFAY3c131NAgTU7b+5q+xFpofOLp4DB7h5H0zT2zmXee1fELMv7fbTjBE+udoxHa2piThwduypnA/i5BJIdJepyST2/RNYLKEiy8RGJ5HtNvuyGB0sn7zutv40k5j+40i+avIGONKrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=M/e6dBMomDzA+OPvRajUARC3maAaTpwenAd7WEVsP1w=;
- b=H8jXhE63oIuUp+cR0MWRObfK4EFsE2Q/Ugj4q4JB9cXJXPZ839CqyUk3BR6DQEaEAojN629dHcOfDjkg7Vo3lZzwVrV7y1l/YWd9ew2LHjseNAlpnU6l05uLLqFnBXjHI9HBZM0RL4s+lffgtXKT1S7J8wkze1oxh2EIeVPo9G5wUs9/NZekVv3UMX9Qe1in2RATBSon0D3m2y3xwatK788B6w/JKQ37ylup5QIs72slFI/1TRACDid2Vpe63UVUHUnohooTRHcjYIl4waTzvGSqav6QoBOIC7gnIClnY7ChbTxrJpcp0L+atOPtMeAks17mL19dMGCQrj+MZylIcw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 50.233.182.194) smtp.rcpttodomain=lists.linux.dev smtp.mailfrom=axiado.com;
- dmarc=none action=none header.from=axiado.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axiado.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M/e6dBMomDzA+OPvRajUARC3maAaTpwenAd7WEVsP1w=;
- b=gbAMH1zPzFMrVmwo5R+g9bAV6u1bNR8iQdODTlOv3/Vw2qTylHChzYejfDC5okAOVbhS5CXWGChkCygpBNcBM/bCRZrGRhIPf/gZVB4/buhrbheB8Qa5PwH73e8IOPtjofJj1oOWn3KjZ+T5OWtnTPIkPfsC5hPJw9ibpRGNPpDpPMIaNPnnt9XXORE9rel16RfIqdgrWEZ5gmZoaKIl6L44cNPSaW3bkDP9jd4mPKlfGJPp2JNKFI0ED2dOimshp0sMZx3HPBw96BS9KBMn2RnbHZKNfjgipuXbnne3mBh3Fxfn9sJ34OPlqin2bI47tzwmSiUFEVUQ+n9Sq3PJkw==
-Received: from MW4PR03CA0063.namprd03.prod.outlook.com (2603:10b6:303:b6::8)
- by PH0PR18MB4656.namprd18.prod.outlook.com (2603:10b6:510:c7::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Mon, 16 Jun
- 2025 04:31:53 +0000
-Received: from SJ1PEPF00002327.namprd03.prod.outlook.com
- (2603:10b6:303:b6:cafe::29) by MW4PR03CA0063.outlook.office365.com
- (2603:10b6:303:b6::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.23 via Frontend Transport; Mon,
- 16 Jun 2025 04:31:52 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 50.233.182.194)
- smtp.mailfrom=axiado.com; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axiado.com;
-Received-SPF: Fail (protection.outlook.com: domain of axiado.com does not
- designate 50.233.182.194 as permitted sender)
- receiver=protection.outlook.com; client-ip=50.233.182.194; helo=[127.0.0.1];
-Received: from [127.0.0.1] (50.233.182.194) by
- SJ1PEPF00002327.mail.protection.outlook.com (10.167.242.90) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.15
- via Frontend Transport; Mon, 16 Jun 2025 04:31:52 +0000
-From: Harshit Shah <hshah@axiado.com>
-Date: Sun, 15 Jun 2025 21:31:39 -0700
-Subject: [PATCH v2 6/6] MAINTAINERS: Add entry for AXIADO
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4877262B
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 04:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750048740; cv=none; b=g7vLlphuAo+NFz6s/x3iNM9SSacGhOh+KpytiPZjZVHkStXyhHORv+wC3dBrshyZ726mxnCWT12dXy802AxPaMnQaOE8gK1pUcwZJ9LjNsDmeEHY+hdqDUOCVNBIozSqg2ZtI3OQ0fo8rmyTu0PvrJPCRsXfS1EqSP1tGvv8UX8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750048740; c=relaxed/simple;
+	bh=ukMrFs54obPST5gEbpIZADkYDnuDNh1MUH1aN8jHv6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ADpxPF7jFzNvRSWs5PzoNGYk5oEHGIr1RDgNgP/bNMb62ZUxP8ByIULG45K+1vgxQ/W1NmfB/2QYlkJS8rnZBH9frJ74wlpGclcsLfRjYZj4sfDkebTM8hco/ENxiRBlBPZbwUVGPAzfDIoyLYGqApETRWA/nGTW5lTs/AqC7Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=Gj8Zd8UD; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7fd581c2bf4so3095906a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jun 2025 21:38:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wbinvd.org; s=wbinvd; t=1750048738; x=1750653538; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QeDMCjmT243+ImCsN5aSe2LSuaW52Izp8hB4w8uj3WA=;
+        b=Gj8Zd8UDNWy+ayVNGHdEHfFsIh1c/Cr+fB4YW8wgkS3VcX79JAc1wDCdXZjZRB5KBr
+         Rld+oetOU4EV6HdJBvRbG9DKny19jXe9MoLqW87CfOxmXDMps589vq6U2CDYKCGY0W1a
+         lJooWQRvr1nvKcozznuMhXeMxDHJFAmiu6S98IMpzpJDn+uZs5FH+Ml78DDDi4uTh2LC
+         4vcrF/nJULyKIzEEDzWRTQP/FyzXlCmE0MWe/Oh2uIXFIwccldxWB1g4dbEnmVwc8zAT
+         icvnkHQM68ZmHdZhEDCAnnPLXrQGDbdW+sTvnVRviw84DKH1q6eI6vQaelbrdEjjG+Bo
+         lDyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750048738; x=1750653538;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QeDMCjmT243+ImCsN5aSe2LSuaW52Izp8hB4w8uj3WA=;
+        b=rTBAYjxKDXoLeQTVLZh6GMjn+86+ko/E0k7oXPcYjbiy5WEErHMAq3tRA7pVeWO8lW
+         DZRZ3IsZwT/HKz4y0Qu8u5xcQ3u/8Ipi+WtJNBy/8wXRqhlHlQ7ZfitZZv8aRSqhQgau
+         na47MkQuREuj/P9Fs0YaQwqn05MGTYoHEsvOlt+u7ZD9jBLWEbkkDhy29FwSHeDYQaHg
+         rSj9xb/8DeatbTIDY1Zg6T4E4ZBRpopuJ6L0d/+dJAjcgSREUANg5NA3YfANtd1XtpW+
+         S0+xEcbFQizQDxMCwKLO2eFmhIIEBt8YQ0bcpZLnNXzXCNDr6ik3l6ozTk22eEbnCAWe
+         6jkw==
+X-Gm-Message-State: AOJu0YxVhPj7WoJ1OM9GWPkqwHOdWT3waym2OK1SZ9+cOuH1aukKcIhi
+	hJZ88x11Npitg4e7e8JJiF2FalPgE58wSaEr9wRlNnBcX8d+c+Lk7cO9H55yXkHpXlQ=
+X-Gm-Gg: ASbGncvIbYz65ZpAtB/Vme6vNvnirR9XGOkdd4DOyTW3Vxs5mQn1z84AE2nxwXrV88T
+	aOjJ2vYW9RyCjzzoFksQYrkxwWfe7N98gjOc81wPNbF/tR2q59h+6/1UflM25+vzduYkmg+yvI3
+	sWP+e9eHUhYdzA0NwEshgL3Dje2yuY8HvmWw7/EbU/v87L5r9brLbN83+KHtInTSwx67GuLG+LB
+	66rfvL9Z29OgDu7jRp7Z271H0PxO4QFFepOkAidkNbNPOmpcv1ImFR2BTuM4Dg8gI2mr8/qfVJL
+	GUAKKOP3TqxyaOkWgNN+bfjNjNW3QobvqAlYM4Jtgn2DEy+bX12vBSQYP2rpO9X/6uShYGlRde/
+	Vm4k0tXC0dZIGNQebrx/gyXqX9P16rVQ=
+X-Google-Smtp-Source: AGHT+IFoxN4G3980gIVK0np5tw1fQkp1JKCmZrSoIiC5wwrCJivYrHj/DKmD4vFX3iCyAyCKzILJmA==
+X-Received: by 2002:a17:90b:2dd0:b0:313:287c:74bd with SMTP id 98e67ed59e1d1-313f1d10aaamr15121787a91.33.1750048737766;
+        Sun, 15 Jun 2025 21:38:57 -0700 (PDT)
+Received: from mozart.vkv.me (192-184-162-253.fiber.dynamic.sonic.net. [192.184.162.253])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313c1bd9ae1sm8569187a91.18.2025.06.15.21.38.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Jun 2025 21:38:57 -0700 (PDT)
+Date: Sun, 15 Jun 2025 21:38:55 -0700
+From: Calvin Owens <calvin@wbinvd.org>
+To: "Zhang, Rui" <rui.zhang@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>
+Subject: Re: [PATCH] tools/power turbostat: Fix MSRs with CONFIG_MULTIUSER=n
+Message-ID: <aE-f35kOO0TywX5K@mozart.vkv.me>
+References: <81f4c402d1fda7c2419aac1148061a0789112e76.1749849645.git.calvin@wbinvd.org>
+ <99f09d35e30fa335508823e9848a3365936ac9b3.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-6-341502d38618@axiado.com>
-References: <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-0-341502d38618@axiado.com>
-In-Reply-To: <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-0-341502d38618@axiado.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
- soc@lists.linux.dev, Harshit Shah <hshah@axiado.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=833; i=hshah@axiado.com;
- h=from:subject:message-id; bh=KshauV0Ltf+cmlkwHT/6QLg4kHHEmWooSrGJxOuEkO0=;
- b=owEB7QES/pANAwAKAfFYcxGhMtX7AcsmYgBoT54yksR62DuLnXNEOI2sY465LkxMu+71h8sIk
- BcJ9q8VJ6GJAbMEAAEKAB0WIQRO3pC/7SkLS2viWOvxWHMRoTLV+wUCaE+eMgAKCRDxWHMRoTLV
- +7VTDACNh/iN4bBw+nhfx0gLrOAijl4NMFO8y0Y9n+6KRQv0dLWUaViC1d/w3NEbjWFV7P938/w
- z1fkJs3fz1CKyrsubZbol5dfeT5Nt9VQP/zJBmJK65XN+dL5TiM37O4XEtnJLmEAVdExUq0aQ9M
- NnOydy9lQTZwt14s1QOKxehuYBF+l/l6cETh4rfl4xCUai5jY3vhhyn8wZhzGJYtPQ9Dx8tjRw2
- VZ3Rsk56OgwrH6Op+zXoYUREOgI67aAooUyDo5NakmcG00/P1M12pm8M3siGI2w+9rV3N+TBEBG
- K7mwDJ4HSRSDu5h4WBfSH6sY7nWETt+7RlwRndNdCOYcvc4BlM2yiIHGhzxybLviuEoMUt51Jgw
- 7vA42R2UxxJmgV0ccEegnHvjzoMgmIeFCP1eQZ2R/+a2gaVX7Riavhm7FplN47aQcEN/SS4XjDb
- WhYfLR2PWNMmZwzsZi7/nSyQROdp9iLPyamPxcGiLNZJTjPsh5yVXRERQSsahS8NW0P8Y=
-X-Developer-Key: i=hshah@axiado.com; a=openpgp;
- fpr=4EDE90BFED290B4B6BE258EBF1587311A132D5FB
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002327:EE_|PH0PR18MB4656:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7ba3b9b4-c7e8-4f74-a5f0-08ddac8eb7d0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TjAxc29VNU9Kb3JnT2hPZDJnaXNrZUpWTjRRV1FIZDhsUW1LOGZ2Nm1SSkdw?=
- =?utf-8?B?VEdTWUFEcXplc3Q4TkdoTWRXcjg1Rk00SmlMOFAwT05WVnRhUmMyUndJcW9J?=
- =?utf-8?B?NHZma3IvL1RZYmt3d3JHbStXSGR1TEtENWUrMVVUdzBTeDA5N0JjK3M1WUJ6?=
- =?utf-8?B?MERqRE1BRmxHVWlJSzQ2djUvWG9EbDVJREV0TTI2N0hUa0REd3cvUlV6NUJr?=
- =?utf-8?B?aW5OQlBXZ2hkNExrRVhycHdycjZUbGs0TUdzQjlIQ25jUmlNdXVDV1FqSGdJ?=
- =?utf-8?B?c3RRb2l2OUV6UFJNR01NbXRXMXpBaU1LR3NHOFN6eVc5QjE1MlpjcnVIeHNy?=
- =?utf-8?B?VzBhSFNtdXpFUDBtaDFVSVNFalRubTRRa1J2V212czBheUd6dXVPR1VZcXR5?=
- =?utf-8?B?L1d5Y05Ga0Qra1RjbnNHcnlJZjlmbGptWlpLRnROK3dGMjkyUGVFVUF0QWVW?=
- =?utf-8?B?blpIQ05xSy9pb3lmYWpUdE96YUNkWDFGeWp1eUdYcmFodGQ2NS84V0tSOExj?=
- =?utf-8?B?WjJsc3NUakNFVkxSNUx2M1hlaGhQb05rMWhQNDFCRWNqTEJ3MWVtWFAyMGhC?=
- =?utf-8?B?bmRMQzZGRzVqa1NNQjExOUlNa2tpOHkvdHlGTXdGT3dtaS9PcHFpU08xbDRG?=
- =?utf-8?B?VUkyMzh0ZUo5cENlNHZKVGJ4UzVUakhSNHljcVA2U2lFR3BEUExOc2QrZUNz?=
- =?utf-8?B?RlNvNDdQaEtLMWxYSTF1VFRJU2ExOFczM3ZnR1FuOXJPM3N1aTZYN2ZXMmFn?=
- =?utf-8?B?bU13MWhvZXZNbWFPaGJmMUorZTBGczl6RUV2S3N6UlVURGdTWjNNNU1tYkE0?=
- =?utf-8?B?REVQSENodE9FaEhwMUVFcmZRQ3FiYTdKSC9tbE1wWkNxcEwvK0ZYVTJhTkgz?=
- =?utf-8?B?OGpYL0dnejZlZmVRZ2pHK0F1WVhzQXg3VFVxbEVmcXlJQ2xFdWxVQlRpalNQ?=
- =?utf-8?B?bk9ULytXVlR0ZXNocFZZUWdZNDNVcU13TENnMTVicUo5VWhjRzlEVkkxUUhm?=
- =?utf-8?B?aGhDK2xwMTR4cUN1bzN2ODQ5dU12c3I4aGswQTdIZG1uYWh1ak9TU3AvYU5J?=
- =?utf-8?B?UVFBN3dKamNqZVJsMlFhRDA1bFNxTEgrVTBNUWdWSFdPWDh0ZENmSDFLRDg2?=
- =?utf-8?B?Q2ZEc0x0elB4MHU3ZVNHSHN5a0M5aWU5VGI3d3V4UzZyVHJvUmhwUzZkVjY5?=
- =?utf-8?B?TEsrUGxzQkNGZlprUHdWUThpcG4wWGNmWTEvM3U4Rlhra2phWFVYRGh2VGEv?=
- =?utf-8?B?UC84blZFbVRIbW14K0puUVk0c2hwSE1hN1dNVG9RZEVoTG5JZkFTYUxBb21U?=
- =?utf-8?B?TEtXc1FVcTJHWlRMYnhnWlphbTBvWEEyNzNLengwdlZqSC9neDB4bHVIZWpN?=
- =?utf-8?B?dHFrQWdSL0ZlOVBMeEkwZEE4Z3U5dnV1Uk5TazZGbHdQS1g1bldrWmt4ZGdz?=
- =?utf-8?B?VTNKK1BkbCtnR0tPbkVQWnp0c2lZVmhxUVhDOWVyYUxwYWkxYVIwTTlNRUZ6?=
- =?utf-8?B?djdjZ2xVV3ZTbU43anI2SUt6N3I5b3dCSXU1SlVtaXpCdnVYempIZXYwQndF?=
- =?utf-8?B?ME5kaloxTThpZjlMRThCbkMraVJmUFNEQ1BXVWN2TTJtOHJ0NmliVGRJTEdW?=
- =?utf-8?B?SjVaSUt4NlhZakV5d0RqQWIydW1MRVpFWkhuakk0ZEpWVjVuY3VuUktaTTdo?=
- =?utf-8?B?ckJkTk96TmpBTUNKVkdSR3ZQb0E3VU9BVG9hQ29mL0JhQzNkc1NpZ0VCdHV6?=
- =?utf-8?B?cFdTUzVKUHNDNkpTcEs1Si8xVzVYTlltNHRRMHh5WEZORytTK3NHOHhMR0VI?=
- =?utf-8?B?WWJZa0s4QlNUYWhIZmZLVGhsb1diV3p3aHdRV0xIRlRvOEVGdlRZREZnMHY5?=
- =?utf-8?B?UmtUa0hlUEJZUVRHS3BzVHAwWGdReUZabGYyWXFuYnNYWWNCdlZlU1ZNVnFj?=
- =?utf-8?B?Mm9VQUcrQ2dQaHhnS01ZVUhWbFBDTmttMGRMV21udWhwYmlHMGRQNEJXcWNo?=
- =?utf-8?B?amd1V3JCNk1vbjlMNWpLV1BVWThkTVRiczRQK211cTJFNHYzM1RETlYwOFhF?=
- =?utf-8?Q?F+7uW7?=
-X-Forefront-Antispam-Report:
-	CIP:50.233.182.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:[127.0.0.1];PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1102;
-X-OriginatorOrg: axiado.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2025 04:31:52.5196
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ba3b9b4-c7e8-4f74-a5f0-08ddac8eb7d0
-X-MS-Exchange-CrossTenant-Id: ff2db17c-4338-408e-9036-2dee8e3e17d7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=ff2db17c-4338-408e-9036-2dee8e3e17d7;Ip=[50.233.182.194];Helo=[[127.0.0.1]]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002327.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR18MB4656
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <99f09d35e30fa335508823e9848a3365936ac9b3.camel@intel.com>
 
-Add entry for AXIADO maintainer and files
+On Monday 06/16 at 01:30 +0000, Zhang, Rui wrote:
+> On Fri, 2025-06-13 at 19:20 -0700, Calvin Owens wrote:
+> > Handle ENOSYS from cap_get_proc() in check_for_cap_sys_rawio(), so
+> > turbostat can display temperatures when running on kernels compiled
+> > without multiuser support.
+> > 
+> > Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+> > ---
+> >  tools/power/x86/turbostat/turbostat.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/power/x86/turbostat/turbostat.c
+> > b/tools/power/x86/turbostat/turbostat.c
+> > index 925556b90770..f7d665913a52 100644
+> > --- a/tools/power/x86/turbostat/turbostat.c
+> > +++ b/tools/power/x86/turbostat/turbostat.c
+> > @@ -6496,8 +6496,13 @@ int check_for_cap_sys_rawio(void)
+> >  	int ret = 0;
+> >  
+> >  	caps = cap_get_proc();
+> > -	if (caps == NULL)
+> > +	if (caps == NULL) {
+> > +		/* Support CONFIG_MULTIUSER=n */
+> > +		if (errno == ENOSYS)
+> 
+> Can you point me where this knowledge comes from?
+> 
+> I downloaded the libcap source and didn't see how ENOSYS is set.
 
-Signed-off-by: Harshit Shah <hshah@axiado.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Hi Rui,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0c1d245bf7b84f8a78b811e0c9c5a3edc09edc22..1118827b8bdf7774e51c0ca9dc33c13257173f2a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2414,6 +2414,14 @@ F:	arch/arm/boot/dts/aspeed/
- F:	arch/arm/mach-aspeed/
- N:	aspeed
- 
-+ARM/AXIADO ARCHITECTURE
-+M:	Harshit Shah <hshah@axiado.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/arm/axiado/
-+F:	arch/arm64/boot/dts/axiado/
-+N:	axiado
-+
- ARM/AXM LSI SOC
- M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+When the kernel is built without multiuser support, the capget() et al.
+syscalls are #ifdef'd out:
 
--- 
-2.25.1
+    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/capability.c#n32
 
+...so userspace will get -ENOSYS when it tries to call them, and that
+ends up being propagated to errno in userspace.
+
+Admittedly it is sort of implicit. Maybe a better way to "fix" this
+would be to warn the user if the capability check fails, but still
+attempt to access the MSR devices? I can do that if you prefer.
+
+That is my only problem here: when check_for_cap_sys_rawio() fails, the
+current code doesn't attempt to access the MSR devices at all, even
+though in my case it would actually work.
+
+I realize this is very weird: it came up when I was recently including
+turbostat as part of an extremely tiny bootable utility image.
+
+Thanks,
+Calvin
+
+> thanks,
+> rui
+> > +			return 0;
+> > +
+> >  		return 1;
+> > +	}
+> >  
+> >  	if (cap_get_flag(caps, CAP_SYS_RAWIO, CAP_EFFECTIVE,
+> > &cap_flag_value)) {
+> >  		ret = 1;
+> 
 
