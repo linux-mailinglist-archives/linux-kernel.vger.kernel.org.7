@@ -1,104 +1,147 @@
-Return-Path: <linux-kernel+bounces-687613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C291ADA703
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:00:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96383ADA707
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FF123AF171
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 04:00:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB388188FACD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 04:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9669119066B;
-	Mon, 16 Jun 2025 04:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6091A38F9;
+	Mon, 16 Jun 2025 04:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJ1peQkD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSeIzJgu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED27F46B5;
-	Mon, 16 Jun 2025 04:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF1346B5;
+	Mon, 16 Jun 2025 04:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750046446; cv=none; b=eRv8h7z/h2BDZmkmO3NAmRvTL90BmdjYnwQCxM3jciSYpoD6oCkygFCWnNoubtcOGz83YLTOeJjwEnxh+/ozR1rmr2j8XZIENvFNywm3ya3jFDpWbfr0AQbmKmUaggieZ+fFdepF5TvT7vT9Y0YB/VMkH48FbcDvZ1nSxVIlSSw=
+	t=1750046642; cv=none; b=P3I4NvrUjzmbophP5ehhHA2hXaJhIjWc3sA3Xx4rcHXg6N7iesa6zjgeBiER8wfOl3dJ93Ps6/s1lMtQ1oAR0qfRhBnkgYhLh2UFAoaQZWZCd4jkqCTnksLvsGFpy/Cph6RDgHFqJNIIWMhOMbPJSzKMZH/X2sIYhaonQ5zQ7fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750046446; c=relaxed/simple;
-	bh=DNjwjD8hhxbYC5MpkZvfw4zJE0EdrDcAW1zA+Ae08dk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dwZ+pyWMVnvkWkKSIrU9AyCMzlLBQLa702l/Dv9JnhzVcyBSnT6ZiuFs5+pViSyaEjDTerXi0cQrGkIxPmwNqJNDqOqDG3uxB3gkWukce2wcXpUy638UT9yUHc+dpnDxVvsS38UpVULweq4ejIq6BlmztJs8eZcLEUspXpPBFYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJ1peQkD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AFA7C4CEEA;
-	Mon, 16 Jun 2025 04:00:45 +0000 (UTC)
+	s=arc-20240116; t=1750046642; c=relaxed/simple;
+	bh=yDzp1HXMtne8DF19p6akhYxebQV8My0v2pNpbGDe7DQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uu6IPVvYnIRIaFhdNWolHd1QY1OpGG1TIXZCvGx+IrdLKSrxHc5QClfgij8sjQKzbWC8jhyPPaYahG6n28sGPbQFkuDVly13FhgCotn5Zs7fksPBtk8HAQRkT7fgYrgQ3yrlRNE40xsay0cFpim6+5z7Fy+wajDyspkfEJFuXEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSeIzJgu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21278C4CEEA;
+	Mon, 16 Jun 2025 04:04:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750046445;
-	bh=DNjwjD8hhxbYC5MpkZvfw4zJE0EdrDcAW1zA+Ae08dk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hJ1peQkDLOiv4Y+i8Uj6JDkRJBClMNSdzYWuoRgA7dIVv+UAlVomCsCTtYUBZtyva
-	 4MNPrL/3n8vaoFc5U8hEBPhOQb4sUKuGKtLVUqI4VgD1TblmpuTE/AEQn+B93J0kzO
-	 kfbw39TmzO/6Xl+JgG+CnP0OXYwDCBKI4r/f7WmyGchHF4WIB47S46tzh6gPrBr6Ji
-	 mifNCMklUd5rQniJfvFb8wCXYq0one4WJKHd3w7peLeZ98ULoBpl1ZNfm64PjbtHiy
-	 9HeUVguZMLVXO55sKzo0n7kQOBiMy3YdWE+JQm0T2Z5BdcTAqVuX+7hgpiO8w3OeeT
-	 wBJfc/6yd39Ng==
-Date: Sun, 15 Jun 2025 21:00:16 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Jason@zx2c4.com,
-	ardb@kernel.org, kent.overstreet@linux.dev
-Subject: Re: [PATCH] lib/crypto/poly1305: Fix arm64's poly1305_blocks_arch()
-Message-ID: <20250616040016.GA749462@sol>
-References: <20250616010654.367302-1-ebiggers@kernel.org>
- <aE-PDfmowagPegen@gondor.apana.org.au>
+	s=k20201202; t=1750046641;
+	bh=yDzp1HXMtne8DF19p6akhYxebQV8My0v2pNpbGDe7DQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bSeIzJgu6jzY4Cv6vyOqZ3mwBMw5YbDtb2K73cSvFLj1NS45YrgepgVZ9xYxSkhxb
+	 PBhhca9dYT3DucO+oiMAz/1YLLM1IYrZ+nWF9iiBiXBNY/k9hedenuUuoE8PYa3fSc
+	 LbboorWoyS+MgkCebsDY28x/QVCYWtI3baDZrumT3A7zwwl9/SQhXbjSuEGafP7wYa
+	 fvb9YIWtsfFxzihajNe2Qmv7HlKlwcmlSBcZS7IcP7MlmLYtxHDK+viY7sQiiY23+I
+	 jwXRnll7VpL5uHrEr08YqM7TnyBeS+Pkn8kV9kgCN2RDqvamqamVicYcuGRQMwvAu2
+	 ytrtm4g/CIGPQ==
+Message-ID: <9d3aee10-9eb3-4f2d-bb9a-1721c05ec3aa@kernel.org>
+Date: Mon, 16 Jun 2025 13:03:59 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aE-PDfmowagPegen@gondor.apana.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 0/5] blk-mq-sched: support request batch
+ dispatching for sq elevator
+To: Yu Kuai <yukuai1@huaweicloud.com>, ming.lei@redhat.com,
+ yukuai3@huawei.com, tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250614092528.2352680-1-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250614092528.2352680-1-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 16, 2025 at 11:27:09AM +0800, Herbert Xu wrote:
-> Eric Biggers <ebiggers@kernel.org> wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > For some reason arm64's Poly1305 code got changed to ignore the padbit
-> > argument.  As a result, the output is incorrect when the message length
-> > is not a multiple of 16 (which is not reached with the standard
-> > ChaCha20Poly1305, but bcachefs could reach this).  Fix this.
+On 6/14/25 18:25, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> Sorry, it was a cut-n-paste error since I copy the code from
-> the update function where the padbit is always 1.
+> Before this patch, each dispatch context will hold a global lock to
+> dispatch one request at a time, which introduce intense lock competition:
 > 
-> > diff --git a/arch/arm64/lib/crypto/poly1305-glue.c b/arch/arm64/lib/crypto/poly1305-glue.c
-> > index 6a661cf048213..c9a74766785bd 100644
-> > --- a/arch/arm64/lib/crypto/poly1305-glue.c
-> > +++ b/arch/arm64/lib/crypto/poly1305-glue.c
-> > @@ -36,18 +36,18 @@ void poly1305_blocks_arch(struct poly1305_block_state *state, const u8 *src,
-> >        if (static_branch_likely(&have_neon)) {
-> >                do {
-> >                        unsigned int todo = min_t(unsigned int, len, SZ_4K);
-> > 
-> >                        kernel_neon_begin();
-> > -                       poly1305_blocks_neon(state, src, todo, 1);
-> > +                       poly1305_blocks_neon(state, src, todo, padbit);
+> lock
+> ops.dispatch_request
+> unlock
 > 
-> This would do the wrong thing if someone ever tried to pad a
-> message more than 4K and called the block function with padbit == 0.
-> Fortunately it can't happen today as there is no digest interface
-> to poly1305.
-
-The final partial block is (and needs to be) processed with its own call to
-poly1305_blocks().
-
-> Looking around it seems that this pattern is replicated across
-> all of our poly1305 implementations so it isn't a big deal.
+> Hence support dispatch a batch of requests while holding the lock to
+> reduce lock contention.
 > 
-> I presume you will be picking this up via the lib/crypto tree?
+> nullblk setup:
+> modprobe null_blk nr_devices=0 &&
+>     udevadm settle &&
+>     cd /sys/kernel/config/nullb &&
+>     mkdir nullb0 &&
+>     cd nullb0 &&
+>     echo 0 > completion_nsec &&
+>     echo 512 > blocksize &&
+>     echo 0 > home_node &&
+>     echo 0 > irqmode &&
+>     echo 128 > submit_queues &&
+>     echo 1024 > hw_queue_depth &&
+>     echo 1024 > size &&
+>     echo 0 > memory_backed &&
+>     echo 2 > queue_mode &&
+>     echo 1 > power ||
+>     exit $?
+> 
+> Test script:
+> fio -filename=/dev/$disk -name=test -rw=randwrite -bs=4k -iodepth=32 \
+>   -numjobs=16 --iodepth_batch_submit=8 --iodepth_batch_complete=8 \
+>   -direct=1 -ioengine=io_uring -group_reporting -time_based -runtime=30
+> 
+> Test result(elevator is deadline): iops
+> |                 | null_blk | scsi hdd |
+> | --------------- | -------- | -------- |
+> | before this set | 263k     | 24       |
+> | after this set  | 475k     | 272      |
 
-Yes.
+For the HDD, these numbers are very low, and I do not understand how you can get
+any improvement from reducing lock contention, since contention should not be an
+issue with this kind of performance. What HW did you use for testing ? Was this
+a VM ?
 
-- Eric
+I tested this null_blk setup and your fio command on a bare-metal 16-cores Xeon
+machine. For the scsi disk, I used a 26TB SATA HDD connected to an AHCI port).
+With this setup, results are like this:
+
+|                 | null_blk | hdd (write) | hdd (read) |
+| --------------- | -------- | ----------- | ---------- |
+| before this set | 613k     | 1088        | 211        |
+| after this set  | 940k     | 1093        | 212        |
+
+So not surprisingly, there is no improvement for the SATA HDD because of the low
+max IOPS these devices can achieve: lock contention is not really an issue when
+you are dealing with a slow device. And a SAS HDD will be the same. Gains may
+likely be more significant with a fast SAS/FC RAID array but I do not have
+access to that.
+
+But the improvement for a fast device like null_blk is indeed excellent (+53%).
+
+With LOCKDEP & KASAN disabled, the results are like this:
+
+|                 | null_blk | hdd (write) | hdd (read) |
+| --------------- | -------- | ----------- | ---------- |
+| before this set | 625k     | 1092        | 213        |
+| after this set  | 984k     | 1095        | 215        |
+
+No real changes for the HDD, as expected, and the improvement for null_blk is
+still good.
+
+So maybe drop the RFC tag on these patches and repost after cleaning things up ?
+
+
+-- 
+Damien Le Moal
+Western Digital Research
 
