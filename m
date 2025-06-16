@@ -1,131 +1,117 @@
-Return-Path: <linux-kernel+bounces-688235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD86ADAFD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:06:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B36CFADAFD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E9C53A3F3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:05:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B3EE3B1E4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF662E4259;
-	Mon, 16 Jun 2025 12:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AE62E4243;
+	Mon, 16 Jun 2025 12:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pq67Wpiy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jN7PV+OK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062D82E424A;
-	Mon, 16 Jun 2025 12:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A052E4250;
+	Mon, 16 Jun 2025 12:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750075564; cv=none; b=tzIe96KNyNUSzP7KYI1z4meYQ4OGwEtTZrhZFIHe1zoPDdJGOR2laQDzcEmChb5bGNX/CPrDNC7tnl2ydiJUXG4rrDF0Ve4OXwpiyZ8cve70aBArlO9ig33AWItLr/eLDNSjL+jZBd5akQLYlnLqm7LAQDRUpcFRfe0fGydqbp8=
+	t=1750075576; cv=none; b=isDPNaD1YlTmmmY4AXGGPawbBzRcKkyx7CUJFClrkDB5TqO3s+kVNdIeJawlSxQXi+bbcYlc1mTFiNaNsLaInlVAzuVr8AbdpBvjLTJTjXnAAhAq2bElfM92FPhM5VmyZan5DLmq31Bb+i+kCoxJQHD9MjSCc5OaMG7bQ2hyJ3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750075564; c=relaxed/simple;
-	bh=b9WYpdYFnxnMvXA1h3uf/5jste9EtGT+SWQw77HmkHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Aupcn7drlTaujYfs4UdI/BGDOk49TB6mkAeYUYumxOu19FMEsts3G0V8A9NIvHjNFtgBbi2k1QOEsGV/wBa504Ht6cy5mgNXQMweA8ZaX8JDV9D7jcDctUuh+ZwGSbZb/jrTwf+cFXO6DbebO5Ypx0DzvWi6FIf8DvUfbee5OMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pq67Wpiy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E4F8C4CEEA;
-	Mon, 16 Jun 2025 12:06:00 +0000 (UTC)
+	s=arc-20240116; t=1750075576; c=relaxed/simple;
+	bh=4uEpYiyn+cDmCnrHepPRVMLDX/06gaPZ5NPiOUGm4UI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IOA+2NEEr9Eawzwg7msL7XL3jzXskC0XzeW54dJ9lMoV157Ga5u2xv/Jn1/Kj0DeOwzVydzpZEm7aC315ZnGXk9sCTdHH5McKYGoERQJrnu9JdYjKWuyuyhL+V1dlofFV9OkqEVFkBxNhn+ZdRM+JkJw7wMLOFLR+uUsowDz7L8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jN7PV+OK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8E13C4CEF1;
+	Mon, 16 Jun 2025 12:06:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750075563;
-	bh=b9WYpdYFnxnMvXA1h3uf/5jste9EtGT+SWQw77HmkHQ=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=pq67WpiybJlomxNo1Q0ynrhGsdBlLEZa3DapIvrN62fslXaJvFSseYU1F6UF6iK7m
-	 eRjNYnjG4H+HpTv+rDskCAVmxpco7/DZ+LSFuf6wTg0KlYhtOAWE/nAjK43uRVc+mZ
-	 jLR2DW/n7KG1ffCW0PtADsj9vMXl1cgYgm39oBRnpvW912H0vgijYY1cE6n2UfvoJo
-	 g3MFBCtiYS2xpwe4DQIkU5knmOVB1NsyYKYtmYFn55S1xvicbtUkR+RuAaSfi8PXXz
-	 U6Xd+aDPSj5ualUsK7k5hQqGA3nehA79pSkx32khEdCQ/bUQdJ+l6ni7LEO1Sq5oJo
-	 rkLvwouWXCydQ==
-Message-ID: <20415ab5-5003-4725-bf1b-560f197465c4@kernel.org>
-Date: Mon, 16 Jun 2025 14:05:58 +0200
+	s=k20201202; t=1750075575;
+	bh=4uEpYiyn+cDmCnrHepPRVMLDX/06gaPZ5NPiOUGm4UI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jN7PV+OKe4kK7t9sezCh4YDmcotyMEV/FWqyy/aCKXD/bOqeWDNrs47EPsxF5GuDQ
+	 csKk42KVD0tGGf90XBNrOhPMfW7/wXCyudLRkjG7uIbjUYgGCKAOxIqlyv9viPilW/
+	 VwM7G9nWHt+PP4bJbnvzUkU28YilMdnTJBhUpfC7wx9zxLh+zXrUlBWxJXnW9WSomp
+	 WeDlSpVjsrOD3B2friMRlenZU4uVcEj5bJ38HHVgsK/0TawB6PzQRx9BZy1oKRlTXl
+	 /zcUlk5lZHAoLie3m7KXqs4a6iLQJIdgXxz5r+GLShy7pR9tY9Q+PZHHsN1UmO6E3X
+	 d6qg5dobC4Naw==
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-610dfa45fa2so2591135eaf.2;
+        Mon, 16 Jun 2025 05:06:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVK4QGEhh7f0DJ19qy33VJv8HMPLGbBYXAdAouf16xFplHWcFULCtXGZhG1/IhUVC0AeTMMPGANLSQ=@vger.kernel.org, AJvYcCW6qqBQQlksWCQgPAVNeIL0zXT1h9ULlDFcfyUxgdQj7Z3BNrSzW34RNXxEHm/jSmdu97fwmpgjZcroSa0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyihupECx1c3Rm/doFd6vTSWSByybZkbZnEjT2QzOvK5o0k6rJt
+	DLQujCpVLQFpYTTvbzFS9zy0VyBXAtQ1LJ0AWrmli/GJgi/98hw3DGtYkEM2HOkop+2SRFr4Krq
+	we21zr2vkVgRIvdRf6D9UVDiF1NLCmAc=
+X-Google-Smtp-Source: AGHT+IFy1zym+4Q5imP+75KVhgYVa7eHhY8Xhr4U2gwmYKuGk22DNuQAO20NmOw30FKtPOKaK9ZjcznZH1gHNpaBOEE=
+X-Received: by 2002:a05:6820:2290:b0:611:6fa:fbb8 with SMTP id
+ 006d021491bc7-61110fdf602mr4938153eaf.6.1750075575051; Mon, 16 Jun 2025
+ 05:06:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xdp: Remove unused events xdp_redirect_map and
- xdp_redirect_map_err
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-To: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>,
- Linux trace kernel <linux-trace-kernel@vger.kernel.org>, bpf@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>
-References: <20250611155615.0c2cf61c@batman.local.home>
- <87bjqtb6c1.fsf@toke.dk> <4af27621-6d81-4316-b57a-b546c8a7ad08@kernel.org>
-Content-Language: en-US
-In-Reply-To: <4af27621-6d81-4316-b57a-b546c8a7ad08@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250613214923.2910397-1-srinivas.pandruvada@linux.intel.com> <0dc5ad78ecd3e9a692c50ffb860bb1b0f93fef39.camel@intel.com>
+In-Reply-To: <0dc5ad78ecd3e9a692c50ffb860bb1b0f93fef39.camel@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 16 Jun 2025 14:05:59 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jY1HRqDtCBkDWD6FyWNGS+U1K2Y=9BqS7rgVZYS06dMg@mail.gmail.com>
+X-Gm-Features: AX0GCFsY5nZpGvBPcGJEONjmDPFJldt-XLNs0OESQtrgSBIELofuZNG7LUPK0gU
+Message-ID: <CAJZ5v0jY1HRqDtCBkDWD6FyWNGS+U1K2Y=9BqS7rgVZYS06dMg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] thermal: intel: int340x: Add throttling control
+ interface to PTC
+To: "Zhang, Rui" <rui.zhang@intel.com>, 
+	"srinivas.pandruvada@linux.intel.com" <srinivas.pandruvada@linux.intel.com>
+Cc: "lukasz.luba@arm.com" <lukasz.luba@arm.com>, 
+	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jun 16, 2025 at 2:47=E2=80=AFAM Zhang, Rui <rui.zhang@intel.com> wr=
+ote:
+>
+> On Fri, 2025-06-13 at 14:49 -0700, Srinivas Pandruvada wrote:
+> > Firmware-based thermal temperature control loops may aggressively
+> > throttle performance to prevent temperature overshoots relative to the
+> > defined target temperature. This can negatively impact performance.
+> > User
+> > space may prefer to prioritize performance, even if it results in
+> > temperature overshoots with in acceptable range.
+> >
+> > For example, user space might tolerate temperature overshoots when the
+> > device is placed on a desk, as opposed to when it's on a lap. To
+> > accommodate such scenarios, an optional attribute is provided to
+> > specify
+> > a tolerance level for temperature overshoots while maintaining
+> > acceptable
+> > performance.
+> >
+> > Attribute:
+> > thermal_tolerance:
+>
+> yeah, this is much better to me.
+>
+> >  This attribute ranges from 0 to 7, where 0 represents
+> > the most aggressive control to avoid any temperature overshoots, and 7
+> > represents a more graceful approach, favoring performance even at the
+> > expense of temperature overshoots.
+> > Note: This level may not scale linearly. For example, a value of 3 does
+> > not
+> > necessarily imply a 50% improvement in performance compared to a value
+> > of
+> > 0.
+> >
+> > Signed-off-by: Srinivas Pandruvada
+> > <srinivas.pandruvada@linux.intel.com>
+>
+> Reviewed-by: Zhang Rui <rui.zhang@intel.com>
 
-
-On 12/06/2025 12.54, Jesper Dangaard Brouer wrote:
-> 
-> 
-> On 12/06/2025 12.30, Toke Høiland-Jørgensen wrote:
->> Steven Rostedt <rostedt@goodmis.org> writes:
->>
->>> From: Steven Rostedt <rostedt@goodmis.org>
->>>
->>> Each TRACE_EVENT() defined can take up around 5K of text and meta data
->>> regardless if they are used or not. New code is being developed that 
->>> will
->>> warn when a tracepoint is defined but not used.
->>>
->>> The trace events xdp_redirect_map and xdp_redirect_map_err are 
->>> defined but
->>> not used, but there's also a comment that states these are kept 
->>> around for
->>> backward compatibility. Which is interesting because since they are not
->>> used, any old BPF program that expects them to exist will get incorrect
->>> data (no data) when they use them. It's worse than not working, it's
->>> silently failing.
->>>
->>> Remove them as they will soon cause warnings, or if they really need to
->>> stick around, then code needs to be added to use them.
->>>
->>> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
->>
->> I guess that makes sense; I have no objections to getting rid of them.
->>
->> Reviewed-by: Toke Høiland-Jørgensen <toke@kernel.org>
-> 
-> Make sense.
-> 
-> 
-> Toke we have to check how XDP-tools handle when these tracepoints 
-> disappears.
-
-To Toke, notice that userspace tools expect this tracepoint to be
-available will fail as below (for kernel release v6.16):
-
-  $ sudo ./xdp-bench redirect mlx5p1 veth41
-   libbpf: prog 'tp_xdp_redirect_map_err': failed to find kernel BTF 
-type ID of 'xdp_redirect_map_err': -3
-   libbpf: prog 'tp_xdp_redirect_map_err': failed to prepare load 
-attributes: -3
-   libbpf: prog 'tp_xdp_redirect_map_err': failed to load: -3
-   libbpf: failed to load object 'xdp_redirect_basic'
-  Failed to attach XDP program: No such process
-
-IMHO this is a userspace problem, that needs to be more flexible and
-adapt to this change.
-
-This was changed in kernel v5.6 (Jan 2020) commit 1d233886dd90 ("xdp:
-Use bulking for non-map XDP_REDIRECT and consolidate code paths").
-So, I'm thinking that xdp-tools could just remove monitoring for these
-tracepoints?
-
---Jesper
+Applied along with the [2/2] as 6.17 material, thanks!
 
