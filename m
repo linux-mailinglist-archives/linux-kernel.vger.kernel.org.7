@@ -1,133 +1,129 @@
-Return-Path: <linux-kernel+bounces-687976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF23ADABA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:20:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 564B4ADABD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 803FD3AAF6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:19:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0321D16AB64
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A9127380B;
-	Mon, 16 Jun 2025 09:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6A82741AF;
+	Mon, 16 Jun 2025 09:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D7cLhWnR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="nGvHoSK9"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59416270EBD
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A3E1E832E;
+	Mon, 16 Jun 2025 09:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750065607; cv=none; b=G4imhQjMgDH4FIQOkO9PNm7QIp0pwSmDSYH1PggVvHPhwIG4VuLCJIB3PanJaPrt4aTnP4Ct4K1AY0L9db+C7VRiUXeYlT1AfgfG+DVfL0RPR1nAjAxP0YJP6U/xXEGqHl9P8OykHZ1lBG0ODyyB7SGU2AuamZ/+qLAr35jJZGA=
+	t=1750065835; cv=none; b=ET5lHLeOXHEmCdY/0FAeUwHhl1Dm90tgSPwQwSej7uIi9spqVDvJhDKn0Kmbn/MxpX8mmq6tRoNrzZ+l2k/IJ7xqjMlKie2UqpApbrNWw+aeG7QPev0KOzlTNROZfPlnQatibzqf3cNEzFxgR9HpNZ3tUROFSTKha6lXqx6XuVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750065607; c=relaxed/simple;
-	bh=SNag/bOAXJOjhxBCZjBV9Gk10G61ThtijECgTvWYBlM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lmms1f4Av4MZADKGC2mhSaYvej7RJqyA594GgKI6LL+YIc85xLsg4SyixqP8pCvNKGjowPJymQnO420mKjKM4yuGmve+PpkeCuFxdfTvED97IMD/Hn2Rbk53PpP1ZQIZCRrWJ6VT3+GZlU+iUnSL7zG3S3Be38/FIWOCZkwXzM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D7cLhWnR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750065604;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2aN38x2eQAv5g2zQkakGSr4DbNCLimCT3gIZvjNzrH4=;
-	b=D7cLhWnRBch5ZTobOTwZJEJBFCe8VqMIwv3BXJ5OHc/IU5vrSdObOC5NkjLQSHj0gK+WfW
-	1b+iSmtfk9kRyHYefglvu5SoAACg1yaLwZRIUfxQl0Hlx6WbeLQyo9fCUrkT6GxHl9ap6q
-	nR6bA1txtlVkPpgTmYalwLsJlSnnR5k=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-497--1WKtF8wNMSWlZYzzDf1og-1; Mon, 16 Jun 2025 05:20:02 -0400
-X-MC-Unique: -1WKtF8wNMSWlZYzzDf1og-1
-X-Mimecast-MFC-AGG-ID: -1WKtF8wNMSWlZYzzDf1og_1750065602
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-adb32dbf60bso468701966b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 02:20:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750065601; x=1750670401;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2aN38x2eQAv5g2zQkakGSr4DbNCLimCT3gIZvjNzrH4=;
-        b=g6unRKu2Sl7oIb5TV2UibbAJ/iR8Nj3iCDbaPVQb/mSVO073oIwQbqCtZPZLOSzZfC
-         L5kqPfdLyVeR33nE0V8vXFd6itf/WZ7sMCaKRkIQwWgbAfWzd4QqIbyurY4ByXWO9jNN
-         Lx4mBV25ooabzQgbMsXINtFEyH0eKzYKpwgwbMmAmd2ePtNx0nzbqV+XFwMx0Uwdeodu
-         z3l3dFMNLB1q+TSuhe4DX6TVcRczrcMqUOPW4WN90Q4Y2sNANpIF8aclWj4RsD+Mtm4S
-         lAGeejWCu7ZDyAqvGCkBhjZOTfoyH+uDp3DcbyEM/2pvt0lYKbj8fuzOCQulWl/RvQxD
-         Go5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUIjSJkQkjn3clLg8NnfkH5OSEsEi44cCMezlionTWoIiDx3eNrvrKY2rhM31MbYmEsY/rbzNjrcFJdsQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO/19S6oMjr7OLYxRsqWCD+m7+m9J1hggI1ocA/yUj/lwXgAAn
-	cRPF5ewhE/Ulturx9ezSgdvn0MTkdIUmaGReJ7MhcJySDZmUnD/C1i8+xcVspd6OW5rXzqAAxNh
-	tMra68i5afwhRqoM2SN7LVXbl/SBWtSguPIfqCo0JiF7GfgJLtTt+t8IZtrJkt8zyrA==
-X-Gm-Gg: ASbGncvpGxOJY90oZaWQDCbyeXgkU8RRy1o6lIzD+wJhrpGT9aOd8AlUqfEIvLyVyws
-	qSybAsqv1KFq5SgdqG3PrnazBeEy3AbH+hVn6PJpdutu7xuMzq9QGJznOUSjKaLb5Im1qSRooeG
-	+Ob788YT8fBR0bzC9+52G8hnXy8p+0+Rtt6n+wdFa6gqyG94t1+NZk7BGTL+GifpnCGomForv54
-	bgKRacS/gmVAF/MmzGtaoxVA6sZ12NBQ8cx4cHNUQT/W41oJIujD59YDrhmAgzzkKDuQjbxstrH
-	xjCMMp/NKaGHBNQL4oTTiRbnPl+8rX16b3ec5fO0+od146D8XCXMUxS+DvCgjk4ibFiW
-X-Received: by 2002:a17:907:1ca4:b0:ade:399c:7a9 with SMTP id a640c23a62f3a-adfad5447bamr709041366b.37.1750065601657;
-        Mon, 16 Jun 2025 02:20:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJKuhj5xyfGL3uzgbw9CuILR/QbgjEmvD0ydX72pNcFuNUu1+mxkyNoYCSx3RhwBrzPxddVQ==
-X-Received: by 2002:a17:907:1ca4:b0:ade:399c:7a9 with SMTP id a640c23a62f3a-adfad5447bamr709039066b.37.1750065601216;
-        Mon, 16 Jun 2025 02:20:01 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec81c5c3bsm626948866b.61.2025.06.16.02.19.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 02:20:00 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Mark Brown <broonie@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Ciprian Marian Costea <ciprianmarian.costea@nxp.com>,
-	Larisa Grigore <Larisa.Grigore@nxp.com>,
-	Stoica Cosmin-Stefan <cosmin.stoica@nxp.com>,
-	linux-spi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] spi: spi-fsl-dspi: Revert unintended dependency change in config SPI_FSL_DSPI
-Date: Mon, 16 Jun 2025 11:19:55 +0200
-Message-ID: <20250616091955.20547-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750065835; c=relaxed/simple;
+	bh=7Vdj5JwozjxiuV9du+8pzO72eFlxbjLPYUC/AlN3M3Y=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=rb8SVZq66sfRa8DVHKomYF4EAopqeoJPZ4L7FMC6CeccdB9U8v6H7r+kneVoFkovgbe4GVUiG/GvXhpe1XcliDiaIKq3wHS77nzEFbgt3SVzNHFaWGGtc+OgGLyeojxTM5O5kai5oAxriwFMABjCZtSuW8w1BrITir0SzkWUEUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=nGvHoSK9; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55G9HgW0009690;
+	Mon, 16 Jun 2025 11:23:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=1VW7Pa1Gidi9hXrAppAz/z
+	YkvYMUMSpLtKQNgis2pAs=; b=nGvHoSK9r/Yv+tQd5+u/IYuDVPowaAxR9jB+y0
+	vlFUl5YmxwhAFmmMOnSBe0HXaK873nI7ZKsuE/QeZnoyw7h/O8he9jPCHdwhwBB8
+	KLWxnl0Ed5wFb7wuZb2gnPKpzjqd1Jtpl04pOvadm1ujCNCIiKKLnvWKKaFUc/pz
+	1i68Ewwmpq4hsBo4HQ/MW4U0hzy7UZRtLaW2zcxCwLpJosjF2o7ejNmaE0SGwEXm
+	gGNxgJawgJRnsURShoR873GPTgiJj+aids0ojLnl4ZR/NfckPVmFrNq4ssz0iMh9
+	ssh/zSut0yPiF5ILulMaUrudg5tkq1ZtkCHy2TYflWRIF2/Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 479jn4mm6q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Jun 2025 11:23:30 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 075084005D;
+	Mon, 16 Jun 2025 11:22:17 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9066FAA69AC;
+	Mon, 16 Jun 2025 11:21:06 +0200 (CEST)
+Received: from localhost (10.252.14.42) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 16 Jun
+ 2025 11:21:06 +0200
+From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Subject: [PATCH 0/6] Add few updates to the STM32 SPI driver
+Date: Mon, 16 Jun 2025 11:21:01 +0200
+Message-ID: <20250616-spi-upstream-v1-0-7e8593f3f75d@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAP3hT2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDUyNz3eKCTN3SguKSotTEXF3DpEQTC4sUC0OTVHMloJaCotS0zAqwcdG
+ xtbUAWkKrH14AAAA=
+X-Change-ID: 20250527-spi-upstream-1ba488d814e7
+To: Alain Volmat <alain.volmat@foss.st.com>, Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Valentin Caron <valentin.caron@foss.st.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Erwan Leray <erwan.leray@foss.st.com>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        Sumit Semwal
+	<sumit.semwal@linaro.org>,
+        =?utf-8?q?Christian_K=C3=B6nig?=
+	<christian.koenig@amd.com>
+CC: <linux-spi@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
+        kernel
+ test robot <lkp@intel.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-16_04,2025-06-13_01,2025-03-28_01
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+This series aims to improve the STM32 SPI driver in different areas.
+It adds SPI_READY mode, fixes an issue raised by a kernel bot,
+add the ability to use DMA-MDMA chaining for RX and deprecate an ST bindings
+vendor property.
 
-Commit 9a30e332c36c ("spi: spi-fsl-dspi: Enable support for S32G
-platforms") reworks the dependencies of config SPI_FSL_DSPI, but introduces
-a typo changing the dependency to M5441x to a dependency on a non-existing
-config M54541x.
-
-Revert the unintended change to depend on the config M5441x.
-
-Fixes: 9a30e332c36c ("spi: spi-fsl-dspi: Enable support for S32G platforms")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
 ---
- drivers/spi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Clément Le Goffic (6):
+      spi: stm32: Add SPI_READY mode to spi controller
+      spi: stm32: Check for cfg availability in stm32_spi_probe
+      dt-bindings: spi: stm32: update bindings with SPI Rx DMA-MDMA chaining
+      spi: stm32: use STM32 DMA with STM32 MDMA to enhance DDR use
+      spi: stm32: deprecate `st,spi-midi-ns` property
+      dt-bindings: spi: stm32: deprecate `st,spi-midi-ns` property
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 60eb65c927b1..f2d2295a5501 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -647,7 +647,7 @@ config SPI_FSL_SPI
- config SPI_FSL_DSPI
- 	tristate "Freescale DSPI controller"
- 	select REGMAP_MMIO
--	depends on ARCH_MXC || ARCH_NXP || M54541x || COMPILE_TEST
-+	depends on ARCH_MXC || ARCH_NXP || M5441x || COMPILE_TEST
- 	help
- 	  This enables support for the Freescale DSPI controller in master
- 	  mode. S32, VF610, LS1021A and ColdFire platforms uses the controller.
+ .../bindings/spi/spi-peripheral-props.yaml         |   1 +
+ .../devicetree/bindings/spi/st,stm32-spi.yaml      |  48 +++-
+ drivers/spi/spi-stm32.c                            | 310 ++++++++++++++++++---
+ 3 files changed, 325 insertions(+), 34 deletions(-)
+---
+base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
+change-id: 20250527-spi-upstream-1ba488d814e7
+
+Best regards,
 -- 
-2.49.0
+Clément Le Goffic <clement.legoffic@foss.st.com>
 
 
