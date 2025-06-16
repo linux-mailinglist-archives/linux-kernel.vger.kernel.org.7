@@ -1,109 +1,131 @@
-Return-Path: <linux-kernel+bounces-687619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83B65ADA713
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:15:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22038ADA71F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3467416C72E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 04:15:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C2D5188E4A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 04:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAD119E96A;
-	Mon, 16 Jun 2025 04:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB1113A41F;
+	Mon, 16 Jun 2025 04:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pho//p2s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b91cMfJR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1D519F40A;
-	Mon, 16 Jun 2025 04:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7000716E863
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 04:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750047307; cv=none; b=laHrFW4DvVvmSYeH5rK0axddbOuqRvgpcs2SVReVbRUV1Ju3YvqFEkOnewr5593pz6auIzvannLqQv65Is+jwkQ0SE5QksmCe91cKLAuExS/bKPOqv/lGUF+8NKkKqb3Kte6u8D7bd/YuaUHPD2pCW6wCF//+fZ8qN5MxGCSLMA=
+	t=1750047984; cv=none; b=ZTzHAHKXgctDEtasotVBtaepHPEAnOfT4nzFeALSWyMzlbxhRa+ax549PACa/GawQM8svjPfZwN+U7dj1QMUYqgMs1K0uJbKKibQsnkzegwXECzF2gvNn4+IsbgjcKqtoPZqBVEBFgFVShbBpL2LUMz09Kdhgy7BG1Qr+HX3l9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750047307; c=relaxed/simple;
-	bh=rM9bL9wU00reQIIaJPIlupar5fdGN2JTE/STQh4Kwy8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hEtSeNTpCjjZbsLEEW+MRUuuyGqlixsRsfa1wEArI/LJCHsFBw3ZsF7Uqe7A96CBPY5nQl4miqJUOhab87/QAFB9zRefo2g2qjl6zBnayHt7sDFfoq44ejaF+ztGMWHxMHnBTF3KGzh5U9GDYonsK4+ZLBf4JPb1ta10Y+Net4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pho//p2s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6061C4CEEA;
-	Mon, 16 Jun 2025 04:15:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750047307;
-	bh=rM9bL9wU00reQIIaJPIlupar5fdGN2JTE/STQh4Kwy8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=pho//p2sCMtqAHmfvjHeegXm1CNgbt731roXNYYkYIUi5nT1Ulu3PkBwnT73QZAfI
-	 /7MtdLlan1GgNIL+clL6kRIyutQEB+PB2SnFW6F4ZBRg03/QVye8DxrMFAXHxSZS/T
-	 ApayrsqxuEcw/TuSTbEfb/OPgX9VIwqdPZMz90zeK71BjQlIBeqHexb92pQjgCzKuu
-	 6xiRsEs+8vL6IyKGpuEBjyioW0JkpiNme2R+Z/SphrqtDr+7wlVTcAG3dK28Q9G/B5
-	 u4DU3rzspodA/cVWTn9KanSc/p4uJS6EoZmpIj4p3KzsCyyAKEemOxypMyA//xmtcZ
-	 +6UIYIN81NXRQ==
-X-Mailer: emacs 30.1 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>
-Subject: RE: [RFC PATCH] iommufd: Destroy vdevice on device unbind
-In-Reply-To: <BN9PR11MB5276B467ADCC57BC6571CA458C77A@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20250610065146.1321816-1-aneesh.kumar@kernel.org>
- <BN9PR11MB527606182417BB7A35349F598C74A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20250612172645.GA1011960@ziepe.ca>
- <BN9PR11MB5276B467ADCC57BC6571CA458C77A@BN9PR11MB5276.namprd11.prod.outlook.com>
-Date: Mon, 16 Jun 2025 09:45:00 +0530
-Message-ID: <yq5aecvktj97.fsf@kernel.org>
+	s=arc-20240116; t=1750047984; c=relaxed/simple;
+	bh=m3S0zSBgDFKKScH5RHAi0V+FAYo9FVJQ4q5+WQzTGBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQ/IDBAENLLtY8s51ZKE5z+PoXhUNpqGCnw+vqZ+r2sDFkgQDhX6a7gPSNX3sYiPitxJNnNlq2qEyJ0xEtm8bNtDtK5lz5SyIP8potd9f8me8uTLY6IpookDQIxsO8qga45YQxxWDwYwUXqYf0bAf6UQZ2NP+N4oQuYoPnt2IG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b91cMfJR; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750047983; x=1781583983;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=m3S0zSBgDFKKScH5RHAi0V+FAYo9FVJQ4q5+WQzTGBk=;
+  b=b91cMfJRsaXLrzHC6yop4mWjXPfwdsFNRtK4Rm8chENeHR7Vv20C7++w
+   /77kiEojTDKQZiPtZYhDdDn4DbVATwKqIIv8KXelLAQqTEaRRll3f7OOJ
+   fTIoKroMwEd4Y2p2uNm07Um93EvU3+2489rahDRpcqHxaNYr9LqLc5gqk
+   4S6H/bxwn/UnFQmqfiDDZ2uL8Nv+m2adyLmSBbxchZlPBg8IT7iFIDzV2
+   DYQTCbRwRSbPT5bFjEmYixvF5rzus44JCQpnLx9AlkCxNjanhaGgIkTQ4
+   PkVhWq9NupOC3OF49deQDDMELWxhrtROe7/YEmijO9YrDmCKVbqmIrb8L
+   w==;
+X-CSE-ConnectionGUID: 78Mc1WqHQwqj7wZ45DevrQ==
+X-CSE-MsgGUID: yWSG9vYrQ4u1lnNmRKMNJQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="54800379"
+X-IronPort-AV: E=Sophos;i="6.16,240,1744095600"; 
+   d="scan'208";a="54800379"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2025 21:26:18 -0700
+X-CSE-ConnectionGUID: zylQUKlmThCzhIwHPwYjjg==
+X-CSE-MsgGUID: exEdgsBoQpepmT98IkqQIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,240,1744095600"; 
+   d="scan'208";a="149239912"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 15 Jun 2025 21:26:14 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uR1QB-000Ek0-37;
+	Mon, 16 Jun 2025 04:26:11 +0000
+Date: Mon, 16 Jun 2025 12:25:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Feng Tang <feng.tang@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Lance Yang <lance.yang@linux.dev>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	paulmck@kernel.org, john.ogness@linutronix.de,
+	Feng Tang <feng.tang@linux.alibaba.com>
+Subject: Re: [PATCH V2 3/5] sys_info: add help to translate sys_info string
+ to bitmap
+Message-ID: <202506161234.wRZSzo5v-lkp@intel.com>
+References: <20250616010840.38258-4-feng.tang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250616010840.38258-4-feng.tang@linux.alibaba.com>
 
-"Tian, Kevin" <kevin.tian@intel.com> writes:
+Hi Feng,
 
->> From: Jason Gunthorpe <jgg@ziepe.ca>
->> Sent: Friday, June 13, 2025 1:27 AM
->> 
->> On Thu, Jun 12, 2025 at 08:05:37AM +0000, Tian, Kevin wrote:
->> > The initial v5 patch [1] from Nicolin was similar to what this
->> > patch does. Jason explained [2] why it's unsafe to destroy "userspace
->> > created" objects behind the scene. And a general rule in iommufd is
->> > to not take long term references on kernel owned objects.
->> >
->> > [1]
->> https://lore.kernel.org/all/53025c827c44d68edb6469bfd940a8e8bc6147a5.1
->> 729897278.git.nicolinc@nvidia.com/
->> > [2] https://lore.kernel.org/all/20241029184801.GW6956@nvidia.com/
->> 
->> Yes, we have a problem here where we both can't let VFIO go away while
->> the vdevice is present nor can we let the vdevice be fully deleted.
->> 
->> At that point it wasn't such a big deal, but the new stuff seems to
->> make vdevice more complicated that it cannot out live the idevice.
->> 
->> Probably the answer is to tombstone the vdevice in the xarray so the
->> ID is still there and userspace can still destroy it while destroying
->> everything linked to it?
->> 
->
-> yeah that seems to be the option if the said life-cycle dependency
-> cannot be removed...
->
-> conceptually it's still a bit unclean as the user needs to know that
-> the vdevice object is special after idevice is unbound i.e. it can only
-> be destroyed instead of supporting any other kind of operations.
->
-> hmm if the user needs to build certain knowledge anyway can we 
-> go one step further to state that the vdevice will be destroyed
-> automatically once its idevice is unbound so the user shouldn't
-> attempt to explicitly destroy it again after unbind?
+kernel test robot noticed the following build warnings:
 
-That is what this patch is does. ie, it automatically destroy the
-vdevice while unbinding the idevice.
+[auto build test WARNING on akpm-mm/mm-nonmm-unstable]
+[also build test WARNING on akpm-mm/mm-everything linus/master v6.16-rc2 next-20250613]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
--aneesh
+url:    https://github.com/intel-lab-lkp/linux/commits/Feng-Tang/panic-clean-up-code-for-console-replay/20250616-091042
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
+patch link:    https://lore.kernel.org/r/20250616010840.38258-4-feng.tang%40linux.alibaba.com
+patch subject: [PATCH V2 3/5] sys_info: add help to translate sys_info string to bitmap
+config: x86_64-buildonly-randconfig-001-20250616 (https://download.01.org/0day-ci/archive/20250616/202506161234.wRZSzo5v-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250616/202506161234.wRZSzo5v-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506161234.wRZSzo5v-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> lib/sys_info.c:13:19: warning: unused variable 'sys_info_avail' [-Wunused-const-variable]
+      13 | static const char sys_info_avail[] = "tasks,mem,timer,lock,ftrace,all_bt,blocked_tasks";
+         |                   ^~~~~~~~~~~~~~
+   1 warning generated.
+
+
+vim +/sys_info_avail +13 lib/sys_info.c
+
+    12	
+  > 13	static const char sys_info_avail[] = "tasks,mem,timer,lock,ftrace,all_bt,blocked_tasks";
+    14	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
