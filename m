@@ -1,80 +1,88 @@
-Return-Path: <linux-kernel+bounces-687915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E046DADAACA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:31:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866BBADAACF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA64A3AEA10
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:28:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B134F3B7BFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CFC26FA58;
-	Mon, 16 Jun 2025 08:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46AC26E17F;
+	Mon, 16 Jun 2025 08:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bhJ5vcFZ"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T7pS/9Vv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0881272E5F
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 08:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248E726C3BE
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 08:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750062406; cv=none; b=WU7OE9KybjRAz74/t+E9JncNR4hHnJeoaz7DitoiJ7XbCHyx8ma9cMZCGItBDyOVLy2MCCbTrWWHnvY/bzFO7AP8dy10W+KH8mdJYZI4fFCBcdKSUP/AXusvljMC2SHCz8S/iuCRn6dkfwlFcxNjf0oF8oss8lI4Qn4ir8QXtUk=
+	t=1750062426; cv=none; b=hctYFzwqrFYsu4SWCHM0aa/38XVPoWQbizjAqVcXGS2F5AMtZpv3Kaa4XtT7JmQlXyYsbwfjg/B53umTtjmy522lk6DUx36x8N9kWpqTgwepBomaiey7t1n/AfLNpz3GDDgry7szRM2+YY7OtCzpEfu42Shae52iBNt2J6UGoys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750062406; c=relaxed/simple;
-	bh=dzrhcjShNCoaTrCzZaUpxU7oveFbVSDpyJ8UTGShwms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IJW9Y+JFDKm26E9lHwc2jDSPepAK/FeJyAWilgPoJkAa5qJ2TFTaqYgEpq/sf8MbciztNs8nMlINqRu75CzMrQD0fOU30fbB8OXbDD1LRKZE4gY0UNUUAfzaQ/9XQL1RBqRyKCKmBGkPsu5c/VYL0ZF3bWu6dXie4CRnliInatc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bhJ5vcFZ; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a528e301b0so556086f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 01:26:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750062403; x=1750667203; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=du7JrElzZeEeAv8lyMWhqP+Gh9K+o2Sclibuv0wS5GI=;
-        b=bhJ5vcFZvaE2zotWb0HLV/2o19Yvun0fJ+5NxlVzbNDnK5U3d9XvaP804pHPtLXpcc
-         lQfaStE0qI2++0jIiM6inMN/CBykWFm05HDJZZv/aFC5nrfIjL7mVXIB1g5OzGP6DhWk
-         2gvvXH534eB4pNr1Oczq7iQjfEp0x2nFfbQVll+3v4F5+P200/XANbkgzsTHXd9odP4R
-         1SD5TS3dYEkZf7CuTdMCjrCAPRr0vJ4Osf/tHIoj3x0k1F1mg12H1MLBSlKUTi0s7KYM
-         1eD0vrKjdWvowBSZiy+Oi7cZFSQTAqMF/4WdBhBs0l0GBS/rvK9lvMNuyxoNIYVvPbPk
-         Sgow==
+	s=arc-20240116; t=1750062426; c=relaxed/simple;
+	bh=3p8JnVC59Axce3ey1C4bHo+o0k4d9kC42u2K1gtGQhw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Xfkh9629TW1+2ndM/Cw4TqI3k6QuGrxqDaF1SJR7b/JxT7PGHFLG+oe9suwbPZfVSmjkhR5GikhYazYRpkbZW54+GBZ8jxW7mnroLaROTqUe7+61r6edQjre87vUU84SeZtB1AAH+hObnZqwspEhrM9W0XTCDnae1JtBH7Nw5nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T7pS/9Vv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750062424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=S3r6tcF/8sUOM4JJUK08ZCgx8v60UgNdJX131lcRrgw=;
+	b=T7pS/9VvThsy/OddgBpvLjcWLbDrVGpg2Z2AjnN6SlQgPeZa1F0SKac9+y/dIf0GyhAinS
+	m+43hjam6K9h70Hg0Oz/9Gf5APX+e4h0q1l6WSmWbhoF+1hzVsBWPH9KIAxev+LK8Z1L5W
+	eSgNdRqSuBmAt0U5XmlDG2UTd4tkh4I=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-292-KtIz7RuUNJ-B5V6Caozc2Q-1; Mon, 16 Jun 2025 04:27:03 -0400
+X-MC-Unique: KtIz7RuUNJ-B5V6Caozc2Q-1
+X-Mimecast-MFC-AGG-ID: KtIz7RuUNJ-B5V6Caozc2Q_1750062422
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-450d50eacafso25770055e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 01:27:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750062403; x=1750667203;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=du7JrElzZeEeAv8lyMWhqP+Gh9K+o2Sclibuv0wS5GI=;
-        b=MeGHebzZ9MVIcrOQHs9McjKM+GEV5P1EvRFEjjQqn+/KfhU5UWNBCBTvBldeUnkcaM
-         hdqwEkFcu8mD2X+ngj+xpzb3BaFZXBE6N+tL2PTexg3ilNvtHHW+X+zulZCKf+Aflanr
-         J7F29iMtHx6uEI/Dq0476nS9LnPhn5ojriyQ5IsCN/hwnvQBN0CGIN45XOZYIxRvPkkl
-         bzIUe7/9YUSmuQnZCYqI7+6HYPRHtDjoleEd0kFL+OfUDxrU/jTVmBEnCheXqjkkjWli
-         kqT/KFxX0R0pjXc/jPZafIESvDXv5PnF53028/ZhhlchRPC2mTpEhO2j7sv4D2CV3wkL
-         wG2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXXSA6+WgDnIdOVe2ow7yUosFCxrK+/AwleGhuBv1UcluujhAmEnQsP5ZDBrHFFil6ve6KPcToJVdb1/dc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr5467gLfCTIie6eZDQTb3TjzwDpKxmfLoQtz3jJJlCXhgv0t9
-	ZUi5vY/TIelpl2TIZXF4JS9h5qSfVZfRLtnQ6Ub9tEvzwz+XnqIkiFCSHK5cUilvoTQ=
-X-Gm-Gg: ASbGnctjV6hdLXbOw7RRp24PomYKYaExQ9EbUVdLr0nzvcqDqzFO30EoCPq3EDH0l97
-	Z/v2hecOYHnduMnONPLP8jpR/Ucq14AN1thjFE2VjwzH5GR3dXhj1b7vSsFEv9l6MKUWuUkNWll
-	vNJtfBDU53LAs49rW1Kyk0Xvjx7sP6yrjgmDYfvj4N31KK2xd5ArOTx10ucImSum0OmS0P9zXNq
-	1AdvhKvfgOeXTyf2KhiQRFJjy2Rzgg9DNMEssiDFbchnYOJvuhjrub5ID7gKIPt7BQLYKIYm7AS
-	eQwfiTIu2dVXIsxemFWxU/IkwiZW/i/IHs/pRbTYHONEWYVZbu1p68HP70jeugPhqdkPXKqffqw
-	kiA5xvgw=
-X-Google-Smtp-Source: AGHT+IH8jt5igk2cxjvoNOWoEJSi/mpNQI0tFXmRto6kaJk/mrAc9NXRo2NCwvHYWUf6psPiqp/Hmw==
-X-Received: by 2002:a05:6000:220f:b0:3a4:e0e1:8dc8 with SMTP id ffacd0b85a97d-3a5723a1ea1mr2457195f8f.9.1750062403199;
-        Mon, 16 Jun 2025 01:26:43 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a7e980sm10157398f8f.41.2025.06.16.01.26.41
+        d=1e100.net; s=20230601; t=1750062422; x=1750667222;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=S3r6tcF/8sUOM4JJUK08ZCgx8v60UgNdJX131lcRrgw=;
+        b=IXurzsp5yRA0stjrCVM4yr3tmi/ZBPIwCEwuIAjmhSgjP6fFS1gc+rvwzsQdLBKPI2
+         sGUrbS6najGO6fnuAzOoNAFrBArqRmHKSFi2r/jIGqKv7XP/3cMxsfqED52/XjeIfw/o
+         n8+nmwMOAOJ4cNHxuHWryBIwLB5m1ElZBShyY5ViXHhFiDDvFPaxW7DewBojuazv0Fzn
+         xQGD7z6ndwm/Iywo/k8uCeu3jE5HIXoI+BDaCRoFBiZytFB9/fBqhK3xop27l/LVHbon
+         5U5xZLdIcFLtIRHS0izK0CqGuMolARlZ4l15VBPL1am1mmOvNm1p2dkY8xm7KP+mnjaO
+         arkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrr6BiB/o1kS0TENYAm4gs+lYVS6AyTQICh4+2+FNrdFeJnKWMg3reqSkXuBPJm0hF3/OAN4nX2dhCVZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHeMYWwBfAHXgvS/lxuhlZg029KTKofrOUQgSyo3CLJC6fOzYj
+	ldcaR2CccElAi2YZ6Xla6gnduiNcecPRVN9/Lix2XgiULHUMQjh64kVr1RHCm4x9WNhdUlsFKS9
+	lXeRIsC1JYo9pZyaJP+8bnTvyXmgeSB7h5WOq6CbjV5ISREj6lYWygOVsSbjdCw5LTcPYWYXH0w
+	==
+X-Gm-Gg: ASbGnctFVRZLOENyST8oW9VD2CL+a3Sxuu6htEzXr6gcYNHkr7ZG7CEn/q/mM8zSHrz
+	H76pzHgIL5jTkjwEHtA3scRGOO59VgB5ZNDgTs3Nyc8KShZaNn+Hx0hgL3TwmYeV/KdYjvVzNop
+	5x3S1e+Wx+rY5b8W4CVZr9WFReLKlozT4RoB+THgQ8LhP1+LBjYCSTTUgdIWYnzpSybclFhyLZT
+	l/OPjF7p7aGVEbflOC9GCueV+2CQOJ5mY+8AqIeZk1ByVox6ChzwNtSsyWXwSPMOGzQjHFpJfA0
+	Pg4a8ehB2lWvl6nSqcw1xFgkRZTvficxfMXA7/lKvdyg12cgcGXnnCU7K+s4IcB821hdvrc6F0V
+	qVE3dKB34cCPO13YHMkHJjqvYL2KC7N0P+Fq4/xUxrriMlfU=
+X-Received: by 2002:a05:6000:22c1:b0:3a4:e65d:5d8c with SMTP id ffacd0b85a97d-3a572e8bfa1mr6071712f8f.40.1750062421702;
+        Mon, 16 Jun 2025 01:27:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE+M+jQb0Xm3oaWQ7WNYNXfojT/2tgpVvG95fbwzgYBLLiBn8Ck7Q9Uvf6CA0/WL9XO9noU6w==
+X-Received: by 2002:a05:6000:22c1:b0:3a4:e65d:5d8c with SMTP id ffacd0b85a97d-3a572e8bfa1mr6071697f8f.40.1750062421294;
+        Mon, 16 Jun 2025 01:27:01 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:bd00:949:b5a9:e02a:f265? (p200300d82f25bd000949b5a9e02af265.dip0.t-ipconnect.de. [2003:d8:2f25:bd00:949:b5a9:e02a:f265])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b090b0sm10343419f8f.46.2025.06.16.01.27.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jun 2025 01:26:42 -0700 (PDT)
-Message-ID: <3e71adab-c108-4872-86a3-8dc6280429a9@linaro.org>
-Date: Mon, 16 Jun 2025 10:26:40 +0200
+        Mon, 16 Jun 2025 01:27:00 -0700 (PDT)
+Message-ID: <2933056a-1f4d-49bd-ae62-5571a222c223@redhat.com>
+Date: Mon, 16 Jun 2025 10:27:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,80 +90,198 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] dt-bindings: arm: qcom: Add MSM8976 BQ Aquaris X5
- Plus
-To: git@apitzsch.eu, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Marijn Suijten <marijn.suijten@somainline.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250615-bqx5plus-v2-0-72b45c84237d@apitzsch.eu>
- <20250615-bqx5plus-v2-2-72b45c84237d@apitzsch.eu>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 2/2] vfio/type1: optimize vfio_unpin_pages_remote() for
+ large folio
+From: David Hildenbrand <david@redhat.com>
+To: lizhe.67@bytedance.com, alex.williamson@redhat.com
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, peterx@redhat.com
+References: <20250616075251.89067-1-lizhe.67@bytedance.com>
+ <20250616075251.89067-3-lizhe.67@bytedance.com>
+ <753caff4-58d6-4d23-ae69-4b909a99aa16@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250615-bqx5plus-v2-2-72b45c84237d@apitzsch.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <753caff4-58d6-4d23-ae69-4b909a99aa16@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 15/06/2025 22:35, André Apitzsch via B4 Relay wrote:
-> From: André Apitzsch <git@apitzsch.eu>
+On 16.06.25 10:14, David Hildenbrand wrote:
+> On 16.06.25 09:52, lizhe.67@bytedance.com wrote:
+>> From: Li Zhe <lizhe.67@bytedance.com>
+>>
+>> When vfio_unpin_pages_remote() is called with a range of addresses that
+>> includes large folios, the function currently performs individual
+>> put_pfn() operations for each page. This can lead to significant
+>> performance overheads, especially when dealing with large ranges of pages.
+>>
+>> This patch optimize this process by batching the put_pfn() operations.
+>>
+>> The performance test results, based on v6.15, for completing the 16G VFIO
+>> IOMMU DMA unmapping, obtained through unit test[1] with slight
+>> modifications[2], are as follows.
+>>
+>> Base(v6.15):
+>> ./vfio-pci-mem-dma-map 0000:03:00.0 16
+>> ------- AVERAGE (MADV_HUGEPAGE) --------
+>> VFIO MAP DMA in 0.047 s (338.6 GB/s)
+>> VFIO UNMAP DMA in 0.138 s (116.2 GB/s)
+>> ------- AVERAGE (MAP_POPULATE) --------
+>> VFIO MAP DMA in 0.280 s (57.2 GB/s)
+>> VFIO UNMAP DMA in 0.312 s (51.3 GB/s)
+>> ------- AVERAGE (HUGETLBFS) --------
+>> VFIO MAP DMA in 0.052 s (308.3 GB/s)
+>> VFIO UNMAP DMA in 0.139 s (115.1 GB/s)
+>>
+>> Map[3] + This patchset:
+>> ------- AVERAGE (MADV_HUGEPAGE) --------
+>> VFIO MAP DMA in 0.027 s (598.2 GB/s)
+>> VFIO UNMAP DMA in 0.049 s (328.7 GB/s)
+>> ------- AVERAGE (MAP_POPULATE) --------
+>> VFIO MAP DMA in 0.289 s (55.3 GB/s)
+>> VFIO UNMAP DMA in 0.303 s (52.9 GB/s)
+>> ------- AVERAGE (HUGETLBFS) --------
+>> VFIO MAP DMA in 0.032 s (506.8 GB/s)
+>> VFIO UNMAP DMA in 0.049 s (326.7 GB/s)
+>>
+>> For large folio, we achieve an approximate 64% performance improvement
+>> in the VFIO UNMAP DMA item. For small folios, the performance test
+>> results appear to show no significant changes.
+>>
+>> [1]: https://github.com/awilliam/tests/blob/vfio-pci-mem-dma-map/vfio-pci-mem-dma-map.c
+>> [2]: https://lore.kernel.org/all/20250610031013.98556-1-lizhe.67@bytedance.com/
+>> [3]: https://lore.kernel.org/all/20250529064947.38433-1-lizhe.67@bytedance.com/
+>>
+>> Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
+>> ---
+>>    drivers/vfio/vfio_iommu_type1.c | 55 +++++++++++++++++++++++++++------
+>>    1 file changed, 46 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+>> index e952bf8bdfab..09ecc546ece8 100644
+>> --- a/drivers/vfio/vfio_iommu_type1.c
+>> +++ b/drivers/vfio/vfio_iommu_type1.c
+>> @@ -469,17 +469,28 @@ static bool is_invalid_reserved_pfn(unsigned long pfn)
+>>    	return true;
+>>    }
+>>    
+>> -static int put_pfn(unsigned long pfn, int prot)
+>> +static inline void _put_pfns(struct page *page, int npages, int prot)
+>>    {
+>> -	if (!is_invalid_reserved_pfn(pfn)) {
+>> -		struct page *page = pfn_to_page(pfn);
+>> +	unpin_user_page_range_dirty_lock(page, npages, prot & IOMMU_WRITE);
+>> +}
+>>    
+>> -		unpin_user_pages_dirty_lock(&page, 1, prot & IOMMU_WRITE);
+>> -		return 1;
+>> +/*
+>> + * The caller must ensure that these npages PFNs belong to the same folio.
+>> + */
+>> +static inline int put_pfns(unsigned long pfn, int npages, int prot)
+>> +{
+>> +	if (!is_invalid_reserved_pfn(pfn)) {
+>> +		_put_pfns(pfn_to_page(pfn), npages, prot);
+>> +		return npages;
+>>    	}
+>>    	return 0;
+>>    }
+>>    
+>> +static inline int put_pfn(unsigned long pfn, int prot)
+>> +{
+>> +	return put_pfns(pfn, 1, prot);
+>> +}
+>> +
+>>    #define VFIO_BATCH_MAX_CAPACITY (PAGE_SIZE / sizeof(struct page *))
+>>    
+>>    static void __vfio_batch_init(struct vfio_batch *batch, bool single)
+>> @@ -806,11 +817,37 @@ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
+>>    				    bool do_accounting)
+>>    {
+>>    	long unlocked = 0, locked = vpfn_pages(dma, iova, npage);
+>> -	long i;
+>>    
+>> -	for (i = 0; i < npage; i++)
+>> -		if (put_pfn(pfn++, dma->prot))
+>> -			unlocked++;
+>> +	while (npage) {
+>> +		long nr_pages = 1;
+>> +
+>> +		if (!is_invalid_reserved_pfn(pfn)) {
+>> +			struct page *page = pfn_to_page(pfn);
+>> +			struct folio *folio = page_folio(page);
+>> +			long folio_pages_num = folio_nr_pages(folio);
+>> +
+>> +			/*
+>> +			 * For a folio, it represents a physically
+>> +			 * contiguous set of bytes, and all of its pages
+>> +			 * share the same invalid/reserved state.
+>> +			 *
+>> +			 * Here, our PFNs are contiguous. Therefore, if we
+>> +			 * detect that the current PFN belongs to a large
+>> +			 * folio, we can batch the operations for the next
+>> +			 * nr_pages PFNs.
+>> +			 */
+>> +			if (folio_pages_num > 1)
+>> +				nr_pages = min_t(long, npage,
+>> +					folio_pages_num -
+>> +					folio_page_idx(folio, page));
+>> +
+>> +			_put_pfns(page, nr_pages, dma->prot);
 > 
-> BQ Aquaris X5 Plus (Longcheer L9360) is a smartphone based on MSM8976
-> SoC.
 > 
-> Signed-off-by: André Apitzsch <git@apitzsch.eu>
-> ---
+> This is sneaky. You interpret the page pointer a an actual page array,
+> assuming that it would give you the right values when advancing nr_pages
+> in that array.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Just to add to this: unpin_user_page_range_dirty_lock() is not 
+universally save in the hugetlb scenario I described.
 
-Best regards,
-Krzysztof
+-- 
+Cheers,
+
+David / dhildenb
+
 
