@@ -1,147 +1,156 @@
-Return-Path: <linux-kernel+bounces-688648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91C3ADB544
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:26:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E24ADB538
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40EB3170EED
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:26:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A593A62DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8FE2820DA;
-	Mon, 16 Jun 2025 15:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gudnlrs9"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F74B2586DA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639862367D5;
 	Mon, 16 Jun 2025 15:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nujVl81k"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5191F0995
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 15:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750087498; cv=none; b=qaHHcm6o/dY6U5ogCLbYJ60ByhxcRHYBQ6xs+/G03U3o5D03nA46iT+PH84QZL/CzkWFpi6rZyUNCYFmeI/uhP08bi6ZVFlEf8awvKx/QVEKyWHhHLYO4Kxv/4T7dcwOjJW2nEGL4lgBlE0PSfgXp5u0GABP5nu4tXh6s45SJvM=
+	t=1750087492; cv=none; b=Ldk77h/nqstPKP8t0XObrTahnx/PAUrDnIMxBRbklGwprm4xz9H9lIKV+jZC+HOoz+R9MC/p6kPcEx6M2eJtvAetsBypAq3ix4ygH8bHisUrUbfUeRA3A4PZr7UJAsNGhPg0RQc4Z6vTD64BQhpQL/sxVHjt+uzWoDCDNJsaWbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750087498; c=relaxed/simple;
-	bh=1zST8I1L47LsyprRInMB4W5wPxqsdKmiB6rSknrXSXk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rtcWb8tV7fCUHn93hx+qNDh6WjQ+XbJGNAVXC05AXII5txry8LZ+k41kVrgWXL9E1xIADovvNmkTOtDM9V3vIFYuJVVlacjprWtJr1yMUB91CE9QLnScffI0Qtw2J2OILG/PUl0RGc1S8hqXRhiQCavPCAyo9J+QucXWyV2wo5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gudnlrs9; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=CB
-	PIeMxN4KZH1YUu5o5pO0fqGcObPWjxzDMlC6AruYg=; b=gudnlrs98kVynardqx
-	g71pP51O2JOmdtivBBygr/KmdlHlKw9meXhxWKNZzLlDiCS5/Euz91hAqOkcc1vh
-	92u/Lz4IQ4gg9JYTBfYgTRPgzf+eu+IhO6JiIS2SEXmweKPqchTK0joiEVk7NgCB
-	rS+6r2atnM4ozhsVSo2WDAaZo=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wA3lFUwN1Boy+x7Ig--.55574S2;
-	Mon, 16 Jun 2025 23:24:32 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: bhelgaas@google.com
-Cc: ilpo.jarvinen@linux.intel.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH] PCI: Remove redundant TTL variable initialization
-Date: Mon, 16 Jun 2025 23:24:14 +0800
-Message-Id: <20250616152414.966218-1-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1750087492; c=relaxed/simple;
+	bh=/ctcI5zq3gIzZXnfGFYc8xkKJPq2Ec4HSPKJ2/pD5Qc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JXwzLhE/sBH5KZp1NxM/2vK9x3APCdBTUISsYBojumO69N3uTU3S9yqJ8NKFkodQzQgGrvPTkOmHfKLzzZAAs6rdE+EjLPJ8UVwMUa9ko0qxIrurWiLMsIz417DMDytXdV2spk2oTmTyL/e6K78ZfrmmU8tmuQDgwrjxf1qYZpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nujVl81k; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54d98aa5981so5856164e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 08:24:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1750087489; x=1750692289; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E4xFHhWgDcpghRYZo7vm6fqhadBi5lxuMRQKlHZhCCk=;
+        b=nujVl81k8VBlCXtcLCjmY9xBmKOqRVPZ4U2Dk00DKnfa2axL1kuvt89VZEsztN3DDU
+         sWDsRIypvF8Q+ub9okeTjEmf7hlKTpOQNa3wDTvIYsFm4ZegFmvtFuKRImKvnsnv70BI
+         zA9we69nM4390Edj6BxzKT2haGsKOiBzkKBZo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750087489; x=1750692289;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E4xFHhWgDcpghRYZo7vm6fqhadBi5lxuMRQKlHZhCCk=;
+        b=jCol3WcZdhuGaRsr2AglbmUGYfweX4IPbB9E3VQuWwBOXtxrbEqYOrTclskTQx5EjA
+         qZy9Bwr4LgWMmUDcOYrPuiRxg90DlkhGB+OGVuo17S0w3rPjZMHNfg+0jwLzUJivU8nW
+         u7f7mTO/F2xm4GPWHHwWjPZ+UeFBVEUWuJewEvHg63dDbDsN/jxy3nokamTbnjB1xpg/
+         QP4zThEZKgxOLpJYRKdR2hhCeEhENUaNG6gosuZLnZX9p9j7ShJDMsIoq+veE9PkbdXi
+         KgSBwsqikOcXSl6G/kktKur0J+j7XdXzPGHw4Q6Kani7UXq5KKAkQI8qKrWqYk0Cv8Kb
+         4BOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXH+48MZ6vncDEeE3Tsx+O79SsWhE6EgPq0LI345pmR+djWenDWbLYoafP8v8ydl0qEUNPF395DeEwUxXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwWijfQHNRhgI84qhS04ObpJbDrB5hT2JIPQt+7S+odnNnWKKb
+	QdO8HSIu0bUPaotnJs6zIVwFwrcyGLubj1Xwloqkb2mBlFQ6AzzuyIgnRI+HtNJlLw==
+X-Gm-Gg: ASbGnctvucj3t3ILo9+E36N5LGZ4B4D6YjGhZhNEFsnV45iYCp3CGpehXzqLT3buN+C
+	6VBqIl3Tet8emh1ooDdt9DmrYUlinZ16BO38qzk28l77suziXzsXpUXX7Qp2Wczm3IEor8gazmy
+	n+fhQ2fsXPUXzUaTOOX3gSJkPILiXEPyH1rBuOnXxLMp3WS8WTvwM/++IDijNJDBxAZZtUfy2Tc
+	y5tyyZ1RsQqmcnIxyPfLhu5anRMJ0f8ewa1n8dFFu38nhLGf8K9WLp1y1GwvCpC952PRYgX63vE
+	crmCYXi8CEHbMn0/bCNJMf6nEL0XOtfF0tNYnRgyzhabiiFe1pcHF02wT11wmttrcTTp8ptsF/7
+	rx/GM8OwXB/4hDlsBDhVcJT8HdihW3KgAh7vaEvrByQ==
+X-Google-Smtp-Source: AGHT+IFG2j1B5vIdNM+dOt6CECPa65tQ6vxHGK/kdmI/5t9vH+V5tW9j0VMhLNJ6m6uuevak0D2wTw==
+X-Received: by 2002:a05:6512:128a:b0:549:887b:253f with SMTP id 2adb3069b0e04-553b6f50bdfmr2629332e87.51.1750087488959;
+        Mon, 16 Jun 2025 08:24:48 -0700 (PDT)
+Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac1dbcf5sm1564271e87.190.2025.06.16.08.24.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 08:24:48 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v4 0/5] media: uvcvideo: use vb2 ioctl and fop helpers
+Date: Mon, 16 Jun 2025 15:24:37 +0000
+Message-Id: <20250616-uvc-fop-v4-0-250286570ee7@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wA3lFUwN1Boy+x7Ig--.55574S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZryUCw47tFyxuF4kuw1fCrg_yoW5WFy7pF
-	W5uFn0kFWkJFy7tanrXF4UCF12va1kJ3yI9FykG3y2vF1DAF9YqFySkF1FqF1xJrZxur1x
-	X3s0yr97GayYyw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRzVb-UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOh5uo2hQMWGpLwAAsH
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADU3UGgC/3XMyw7CIBCF4VdpWIsZoPTiyvcwLmgZWhaVBizRN
+ H13aRMvMbo8k/n+mQT0FgM5ZDPxGG2w7pJGvstI26tLh9TqtAkHLkFyRqfYUuNG2pQ51gCl1pK
+ R9D16NPa2lU7ntHsbrs7ft3Bk6/XZ4K9GZBSoaAyWCsAIpo9t791gp2HvfEfWTORvWsAH5YlKq
+ BSvBSqs2A8q/lCRqKprZJUpZJHDF12W5QFl+q30FwEAAA==
+X-Change-ID: 20250521-uvc-fop-b74e9007dd51
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hdegoede@redhat.com>, Hans Verkuil <hans@jjverkuil.nl>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>, Hans de Goede <hansg@kernel.org>, 
+ Hans Verkuil <hverkuil@xs4all.nl>
+X-Mailer: b4 0.14.2
 
-The local variables `ttl` were initialized to PCI_FIND_CAP_TTL but never
-actually used. The loop termination condition is inherently controlled
-by the TTL mechanism inside the PCI_FIND_NEXT_CAP_TTL macro, which already
-ensures protection against infinite loops.
+This is a rebump of a 4 years old patch from Hans.
+https://lore.kernel.org/linux-media/20210618122923.385938-21-ribalda@chromium.org/
 
-Remove these redundant operations to simplify the code and eliminate
-potential logical ambiguities. This change does not affect functionality,
-as the TTL safeguard is properly implemented within the macro.
+It brings "new" helpers to the uvcdriver and removes tons of code.
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
+The patch:
+media: uvcvideo: Refactor uvc_queue_streamon
+Is already in the uvc tree. It is here just for CI purposes, do not
+review.
+
+I have uploaded my working tree at:
+https://gitlab.freedesktop.org/linux-media/users/ribalda/-/commits/b4/uvc-fop
+which shows the differences from the original patch, this is mainly for
+helping the review to people familiar with the previous patch.
+
+The patch:
+"media: uvcvideo: Use prio state from v4l2_device"
+is just for RFC, the set can land without it.
+
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
-- Submissions based on the following patches:
-https://patchwork.kernel.org/project/linux-pci/patch/20250607161405.808585-1-18255117159@163.com/
+Changes in v4:
+- Improve commit messages
+- Move prio changes to a different patch
+- Add missing lock
+- Remove redundant file->private_data = NULL;
+- Link to v3: https://lore.kernel.org/r/20250602-uvc-fop-v3-0-a99e18f65640@chromium.org
 
-Recently, I checked the code and found that there are still some areas that can be further optimized.
-The above series of patches has been around for a long time, so I'm sending this one out for review
-as a separate patch.
+Changes in v3:
+- Refactor start/stop_streaming(): make meta and video versions
+- Link to v2: https://lore.kernel.org/r/20250602-uvc-fop-v2-0-508a293eae81@chromium.org
+
+Changes in v2, Thanks HansV:
+- Fix typos
+- Use start_streaming and stop_streaming for managing pm
+- Link to v1: https://lore.kernel.org/r/20250522-uvc-fop-v1-0-3bfe7a00f31d@chromium.org
+
 ---
- drivers/pci/quirks.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+Hans Verkuil (1):
+      media: uvcvideo: Use vb2 ioctl and fop helpers
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index d7f4ee634263..50d0f193e4a3 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -2742,10 +2742,10 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_AMD, 0x9601, quirk_amd_780_apc_msi);
-  */
- static int msi_ht_cap_enabled(struct pci_dev *dev)
- {
--	int pos, ttl = PCI_FIND_CAP_TTL;
-+	int pos;
- 
- 	pos = pci_find_ht_capability(dev, HT_CAPTYPE_MSI_MAPPING);
--	while (pos && ttl--) {
-+	while (pos) {
- 		u8 flags;
- 
- 		if (pci_read_config_byte(dev, pos + HT_MSI_FLAGS,
-@@ -2796,10 +2796,10 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_CK804_PCIE,
- /* Force enable MSI mapping capability on HT bridges */
- static void ht_enable_msi_mapping(struct pci_dev *dev)
- {
--	int pos, ttl = PCI_FIND_CAP_TTL;
-+	int pos;
- 
- 	pos = pci_find_ht_capability(dev, HT_CAPTYPE_MSI_MAPPING);
--	while (pos && ttl--) {
-+	while (pos) {
- 		u8 flags;
- 
- 		if (pci_read_config_byte(dev, pos + HT_MSI_FLAGS,
-@@ -2935,12 +2935,11 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_NVIDIA,
- 
- static int ht_check_msi_mapping(struct pci_dev *dev)
- {
--	int pos, ttl = PCI_FIND_CAP_TTL;
--	int found = 0;
-+	int pos, found = 0;
- 
- 	/* Check if there is HT MSI cap or enabled on this device */
- 	pos = pci_find_ht_capability(dev, HT_CAPTYPE_MSI_MAPPING);
--	while (pos && ttl--) {
-+	while (pos) {
- 		u8 flags;
- 
- 		if (found < 1)
-@@ -3060,10 +3059,10 @@ static void nv_ht_enable_msi_mapping(struct pci_dev *dev)
- 
- static void ht_disable_msi_mapping(struct pci_dev *dev)
- {
--	int pos, ttl = PCI_FIND_CAP_TTL;
-+	int pos;
- 
- 	pos = pci_find_ht_capability(dev, HT_CAPTYPE_MSI_MAPPING);
--	while (pos && ttl--) {
-+	while (pos) {
- 		u8 flags;
- 
- 		if (pci_read_config_byte(dev, pos + HT_MSI_FLAGS,
+Ricardo Ribalda (4):
+      media: uvcvideo: Handle locks in uvc_queue_return_buffers
+      media: uvcvideo: Split uvc_stop_streaming()
+      media: uvcvideo: Remove stream->is_streaming field
+      media: uvcvideo: Use prio state from v4l2_device
 
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+ drivers/media/usb/uvc/uvc_driver.c   |  39 ++---
+ drivers/media/usb/uvc/uvc_metadata.c |   8 +-
+ drivers/media/usb/uvc/uvc_queue.c    | 194 +++++------------------
+ drivers/media/usb/uvc/uvc_v4l2.c     | 293 ++---------------------------------
+ drivers/media/usb/uvc/uvcvideo.h     |  38 +----
+ 5 files changed, 68 insertions(+), 504 deletions(-)
+---
+base-commit: def55d9b22d294e47a2b4c9eb09a0e9faade7ae7
+change-id: 20250521-uvc-fop-b74e9007dd51
+
+Best regards,
 -- 
-2.25.1
+Ricardo Ribalda <ribalda@chromium.org>
 
 
