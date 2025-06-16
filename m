@@ -1,101 +1,111 @@
-Return-Path: <linux-kernel+bounces-688862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB48ADB820
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:52:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65109ADB807
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA6057A8FA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:51:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 689B03ADBAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F5628B4F3;
-	Mon, 16 Jun 2025 17:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306DA289347;
+	Mon, 16 Jun 2025 17:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7ow5wJg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xlan4KEP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB6828A737;
-	Mon, 16 Jun 2025 17:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A5A288CA5;
+	Mon, 16 Jun 2025 17:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750096240; cv=none; b=fYWdi5/dh3afUUAisvUurr7gIRkyzLDdsxZAEh5sVeKmWwZjlJsu7WAxzaMFb/b3AOtrvTWSOdZnV+rN7m7wF4IncMc6NxCkGS34GQgk08jVf6Eea+JcYI+sIiekkgM0qDjQFiJAsSBFkhYGPTUMiWQbSl2eDSUX/ACC7Sc/3/8=
+	t=1750096231; cv=none; b=f0Veu7K5ZinQ4e4+emC6+e9s6L6oGlsySOkPkVFsvcmUcQqALPBnSnjRaNVLZNHy01PJZB3zDkRXpysF+ucrnpRcFpH0slASfECNKBV9m1Nq6sUnuv5fY5jQmEStuQ8026jYM1XT7X8Mj2clHQ3e1YReQXFTKyChagDwLNcKt3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750096240; c=relaxed/simple;
-	bh=kzKMod4I7trzDSgNu24uRFQQmwK7y0+QIxuaSSqQlpQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S9Ti30IWSF9Ki1g1CK+OzKVu3JhxGwFNDhsq0UVFRTphq/nXOM3Li4fBkgocBjWKWvGB9Up/zDMJIbpqpjC1gm8If5fAs30baHZsQ/CGMmzfAFMP4N2VjnrMe296joxd5a8dREBNzOoP2D9LsHLYz+4WwR2mkafhqgpfo9be/84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h7ow5wJg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A46AC4CEF0;
-	Mon, 16 Jun 2025 17:50:39 +0000 (UTC)
+	s=arc-20240116; t=1750096231; c=relaxed/simple;
+	bh=ZH0omtETsKuyn5ulbuxDWU51+MWKmkLDhZHvmjw4mmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gt9t33xnhK+XWxpXTdpVRuBGgErC59pAbzlWu14OzTzQiAZOteAdm+oZpn7kM1iUe39aAar3wMQUCkqMv+1bmQUYaz/zqqZlTo2GQYQWM/6xrm9Ejj0UqQcT3O7SOY7R5jaeNGRdD9aT5VAAlzNi4SuQi93x/gCu8J9DlgABmew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xlan4KEP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB7A4C4CEEE;
+	Mon, 16 Jun 2025 17:50:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750096240;
-	bh=kzKMod4I7trzDSgNu24uRFQQmwK7y0+QIxuaSSqQlpQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h7ow5wJgVkPm9yWdKVjD60KWlSRkSmm6cw/oTDox6/0rJnALyI2LzVVZmftnEbk1a
-	 cj19J5s9m/xSEt0Q1lGfyisLPD/xhUWj3eJ09ZV7Cq2eDPmHpFKxV9ttKVAXRYO9xL
-	 t3i75y+Zn+c41hwcIVmbXzN/gyJv/L/HXJ9RMmvRcJWAYVbn7Jsm+qspDe1DC5VhaI
-	 cwuktwZSEI59MRvzFnWWFepW6VoI0xSUtYpv3awwFbio469BFaBdVvfj8WcGXMvj9t
-	 TFKV9Aoh0KnDwKQtpZ/8VlqOm2A7m2x7gAcDDj2Nru3AaKfILw0lJ+N9Iz9jFs4TIV
-	 bTShavQtFBzpQ==
-From: Mario Limonciello <superm1@kernel.org>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS),
-	linux-pm@vger.kernel.org (open list:HIBERNATION (aka Software Suspend, aka swsusp)),
-	linux-pci@vger.kernel.org (open list:PCI SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list),
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-	linux-scsi@vger.kernel.org (open list:SCSI SUBSYSTEM),
-	linux-usb@vger.kernel.org (open list:USB SUBSYSTEM),
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH v4 5/5] usb: sl811-hcd: Add PM_EVENT_POWEROFF into suspend callbacks
-Date: Mon, 16 Jun 2025 12:50:19 -0500
-Message-ID: <20250616175019.3471583-6-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250616175019.3471583-1-superm1@kernel.org>
-References: <20250616175019.3471583-1-superm1@kernel.org>
+	s=k20201202; t=1750096231;
+	bh=ZH0omtETsKuyn5ulbuxDWU51+MWKmkLDhZHvmjw4mmI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xlan4KEPrx+MN4NwKxLS3+Zn0vkWvwMZxmQJ7WtxiManS0nrIrk0i5WG0WYjuq2A2
+	 e5SW4jw5CZm34+NYrNaZHIlklOvUvvQx90t8ViXUaNxSqnC4AzPaceD4d8gZdtluvK
+	 VoawFm1/X+RVed3rERc8e/gFrDDvwvXC165XhKCYv7QDq/V3oJV0xVkHYjyasCP1lX
+	 0KEcaenhxBgeFOw8jn52Z65S/LLfMcIgvMlqOWE4uVOnN8LAgZowhwtOz0cPEjge8m
+	 30zAm1VdI6S+FRWadr5PY1vMNifST5ry3NGbZ/PTMXzKlzTs4nV9cKVZnphzj6Qzpc
+	 ndriVVnA8sMMQ==
+Date: Mon, 16 Jun 2025 10:50:26 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Will Deacon <will@kernel.org>
+Subject: Re: ld.lld: error: Cannot export BSS symbol __inittext_end to
+ startup code
+Message-ID: <20250616175026.GA1187576@ax162>
+References: <202506150602.qswx7ZzQ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202506150602.qswx7ZzQ-lkp@intel.com>
 
-From: Mario Limonciello <mario.limonciello@amd.com>
+On Sun, Jun 15, 2025 at 06:13:33AM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   8c6bc74c7f8910ed4c969ccec52e98716f98700a
+> commit: dc0a083948040ff364d065da8bb50c29f77a39ad arm64: Work around convergence issue with LLD linker
+> date:   12 days ago
+> config: arm64-randconfig-004-20250615 (https://download.01.org/0day-ci/archive/20250615/202506150602.qswx7ZzQ-lkp@intel.com/config)
+> compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250615/202506150602.qswx7ZzQ-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202506150602.qswx7ZzQ-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+> >> ld.lld: error: Cannot export BSS symbol id_aa64isar1_override to startup code
+> >> ld.lld: error: Cannot export BSS symbol id_aa64isar2_override to startup code
+> >> ld.lld: error: Cannot export BSS symbol id_aa64mmfr0_override to startup code
+> >> ld.lld: error: Cannot export BSS symbol id_aa64mmfr1_override to startup code
+> >> ld.lld: error: Cannot export BSS symbol id_aa64mmfr2_override to startup code
+> >> ld.lld: error: Cannot export BSS symbol id_aa64pfr0_override to startup code
+> >> ld.lld: error: Cannot export BSS symbol id_aa64pfr1_override to startup code
+> >> ld.lld: error: Cannot export BSS symbol id_aa64smfr0_override to startup code
+> >> ld.lld: error: Cannot export BSS symbol id_aa64zfr0_override to startup code
+> >> ld.lld: error: Cannot export BSS symbol arm64_sw_feature_override to startup code
+> >> ld.lld: error: Cannot export BSS symbol arm64_use_ng_mappings to startup code
+> >> ld.lld: error: Cannot export BSS symbol _ctype to startup code
+> >> ld.lld: error: Cannot export BSS symbol swapper_pg_dir to startup code
+> >> ld.lld: error: Cannot export BSS symbol _etext to startup code
+> >> ld.lld: error: Cannot export BSS symbol __start_rodata to startup code
+> >> ld.lld: error: Cannot export BSS symbol __inittext_begin to startup code
+> >> ld.lld: error: Cannot export BSS symbol __inittext_end to startup code
+> >> ld.lld: error: Cannot export BSS symbol __initdata_begin to startup code
+> >> ld.lld: error: Cannot export BSS symbol __initdata_end to startup code
+> >> ld.lld: error: Cannot export BSS symbol _data to startup code
 
-When the ACPI core uses hibernation callbacks for shutdown drivers
-will receive PM_EVENT_POWEROFF and should handle it the same as
-PM_EVENT_HIBERNATE would have been used.
+This version of ld.lld is from early April, which does not contain
+Fangrui's fix [1], so this is expected given the stubbing out of ASSERT
+that Ard did in commit e21560b7d33c ("arm64: Disable LLD linker
+ASSERT()s for the time being") does not happen due to the version.
+Please upgrade to a newer version of LLVM main to avoid triggering this,
+I can confirm that I do not see an error with a current version.
 
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
-v3: https://lore.kernel.org/linux-pm/20250609024619.407257-1-superm1@kernel.org/T/#me6db0fb946e3d604a8f3d455128844ed802c82bb
----
- drivers/usb/host/sl811-hcd.c | 1 +
- 1 file changed, 1 insertion(+)
+[1]: https://github.com/llvm/llvm-project/commit/5859863bab7f
 
-diff --git a/drivers/usb/host/sl811-hcd.c b/drivers/usb/host/sl811-hcd.c
-index ea3cab99c5d40..5d6dba681e503 100644
---- a/drivers/usb/host/sl811-hcd.c
-+++ b/drivers/usb/host/sl811-hcd.c
-@@ -1748,6 +1748,7 @@ sl811h_suspend(struct platform_device *dev, pm_message_t state)
- 		break;
- 	case PM_EVENT_SUSPEND:
- 	case PM_EVENT_HIBERNATE:
-+	case PM_EVENT_POWEROFF:
- 	case PM_EVENT_PRETHAW:		/* explicitly discard hw state */
- 		port_power(sl811, 0);
- 		break;
--- 
-2.43.0
-
+Cheers,
+Nathan
 
