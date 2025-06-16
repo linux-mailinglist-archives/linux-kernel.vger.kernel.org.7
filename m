@@ -1,217 +1,105 @@
-Return-Path: <linux-kernel+bounces-688959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C23ADB93C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:00:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CC5ADB94E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 21:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91CB51884FB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:00:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89CDF3B65D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE211E571B;
-	Mon, 16 Jun 2025 19:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CA42877C3;
+	Mon, 16 Jun 2025 19:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vAI8SHBx"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7121B1E22FC
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 19:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QhhiY1he"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85921E2312;
+	Mon, 16 Jun 2025 19:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750100431; cv=none; b=aMlPH4CGXp/kJj0+7slKa8S6AIpwouxyiUXRR15ez9TTSkuhH9Cg5KhW0WpreXVm9VElCUgE4QBzWCbCMLnYh35QGzs6f01qGHeCHLAg/23hVpQu7l2WqgRvKdKuEn0+tEvxg5JholssGFjXXve128pnLGV3LFp7n9LFOJ4MaYw=
+	t=1750100590; cv=none; b=lcn/LNQXD1A74AqfTuv9Y4RRSHudQLJm8e9/3M2XPEEnmkphA/lv99vSzx+q0ZVDKr2KGd7zLL1lr8itRPdpYyDtgglf4MmsW0JGGDH0IN83lGoByJGD1Xi4/pEjZD0P/97ktyPKXjggABTvO4Ly5N7XAxOLS/AcriHeVFLn7TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750100431; c=relaxed/simple;
-	bh=9besGwIU/81/CaB70eqYGxX6VSKamtzwWGExgc/F3XE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cUHG5aEZ3i89z5aYhCl4NELwF8fVApczmUAsdAD6tNEiqXToEA7hxvn/pqn0KuAk7DVzejBeWCty0Y9Qzw89L4+Onj65o5jhc/RSmK5VjMdAvyRD5Y+RhmwKd8s+r3I9Uuv3JO7omwM6crDwoAeD4oFIA6MeMFUGC7sSmI7U4fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vAI8SHBx; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-23689228a7fso11899235ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 12:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750100422; x=1750705222; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jFNCP/Zfjf0zOYYsP29CukZPsGtgXo87gr1Y7z6mt20=;
-        b=vAI8SHBxRlToldnVS8rSMkh4trf+nWk+GEtyW9HLfnFBZY2cZX+uOcyc/eUH8Bxgb5
-         yIM1LdSrq8t/j7vkJNaPkQ3AYERZx9FcLD4k2r2qwN7zmq/mqP3xCPwvD1fMNq+bY5H0
-         juPQ1nEDxfygJTuDzY7Yd77tqN6u0ovz4jq0zt9KbaPs3Zx3zCy9NVwzPOHYmD8FWx2e
-         1tmyge1QHZWljLoR2ArNOZ4EJFABP4VSVFz7zAbcMeqV1EjA/m8XNZhw1pRzQb+g5X/Q
-         k6MTYI5JdyHe/e4hfN6s51T/NkKRD9qVC+ig3mARZtulqMxxMHi26mJ0mVuMaZ7lE/hT
-         8hvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750100422; x=1750705222;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jFNCP/Zfjf0zOYYsP29CukZPsGtgXo87gr1Y7z6mt20=;
-        b=SBdmOhNCK6iHnhsYbspViOfzTavqLyngd+QckDdS+y6WFTDekv+KRtyELCDV6WY8Ow
-         zYuBlQXpCjPGgD5y8RTdu+SZlb6T72NBUYJTfzWA22ErGr6pWqJpqDTnDByXVm6N18Hk
-         kC9yg6Q3Ajz1uhEiYGlc6KqBecDJ3JeV1Qdq5NGPKja9ciWjbxKGhKezsokY5HVeQmZs
-         lnJAwOQVeOFMUvAXNrbUui3Bv1gc/uY8xJZfMqKhKNmTNEDH/mJ6pIgD2IETiyIjnA+P
-         zVL7Akk4rcqjO7iqFCkVUuxnHCaJsyLZSImbFMeyDhlgELVsAnlDVuuzqBXgOD6i/HRe
-         gd5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUAyLVLz5QMz4WQxN0orujjQQkgpSq+AflA+WFrm+Y0Wha1KH1DMIJEguaXq64qjSob109SrYxUcmfU6aQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz18CIOClG0WIFMH5Cu1MXt1icGcbbozFlAUEMtUWYtX3Mrcl7G
-	ISCouP85DhBXAcdd1r5OX8EpgO6bknRv7+FER4iU8xqWpHY4zmyQ8SPwEOmvptvqiVpJ+tIi207
-	K+HCZ6g/mpEPu6dYJa4dWRbbIng==
-X-Google-Smtp-Source: AGHT+IGSEuQN3aX5jJ+hJ9qbwRUdVZknufgr0wwISVat/2IXLjOni3lc/rfWow0P9ZS5mdJZ7txhZ0mkCZ6P5oOqvA==
-X-Received: from plap10.prod.google.com ([2002:a17:902:f08a:b0:220:ca3c:96bc])
- (user=salomondush job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:ce89:b0:220:c164:6ee1 with SMTP id d9443c01a7336-2366b3dd319mr170509295ad.32.1750100421812;
- Mon, 16 Jun 2025 12:00:21 -0700 (PDT)
-Date: Mon, 16 Jun 2025 19:00:18 +0000
-In-Reply-To: <20250612212504.512786-1-salomondush@google.com>
+	s=arc-20240116; t=1750100590; c=relaxed/simple;
+	bh=TiGn5vLTbl/cgQnK+m/xLhluHVT+QlPWoPVKqHQbM7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CBPmnsZc92IsaVAGfHpszBsNUMvhr5ok9o4+4FiJayVP9u3ltMWBG92lejCd/31SmLPYe9ljoSziMy1G5QcCndmaH1wxVnv2Rg8M9l1pfjQN81ZWNAK/FdFjBy1BPrfA/JH7V90ZwkDfvvdCvugvZJSXlwxfrowFq0YWZIHcIqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=QhhiY1he; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.32.75] (unknown [20.236.11.185])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3B9562115DDF;
+	Mon, 16 Jun 2025 12:03:08 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3B9562115DDF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1750100588;
+	bh=Ms/yjK19i4V4dUp6b/HkFTJmVTcWiMdjhEutCQP1Ui4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QhhiY1he/OSRHCqghlsYJW44c9cGf3ubQZ/wSbYDD1hPk4sbD0mV+0ZYfHFBuO+cq
+	 ypYC7Mav5mJpnlUW3yk/q5qkT/7envmc6VsrgWSNAdyRmr/Yj1GfYxOXD7Xy14i36S
+	 Tte9h9EuH+I2E/VnpnTpf3+4avI24JhfLv2AA93c=
+Message-ID: <56b926e8-4b5c-45a8-882e-7c6be0e2fd26@linux.microsoft.com>
+Date: Mon, 16 Jun 2025 12:02:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250612212504.512786-1-salomondush@google.com>
-X-Mailer: git-send-email 2.50.0.rc2.701.gf1e915cc24-goog
-Message-ID: <20250616190018.2136260-1-salomondush@google.com>
-Subject: [PATCH v3] scsi: pm80xx: add controller scsi host fatal error uevents
-From: Salomon Dushimirimana <salomondush@google.com>
-To: Jack Wang <jinpu.wang@cloud.ionos.com>, 
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>, 
-	"Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Salomon Dushimirimana <salomondush@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] PCI: Reduce FLR delay to 10ms for MSFT devices
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Niklas Cassel <cassel@kernel.org>,
+ linux-pci@vger.kernel.org, shyamsaini@linux.microsoft.com, code@tyhicks.com,
+ Okaya@kernel.org, bhelgaas@google.com, linux-kernel@vger.kernel.org
+References: <20250613153304.GA959741@bhelgaas>
+Content-Language: en-US
+From: Graham Whyte <grwhyte@linux.microsoft.com>
+In-Reply-To: <20250613153304.GA959741@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Adds pm80xx_fatal_error_uevent_emit(), called when the pm80xx driver
-encouters a fatal error. The uevent has the following additional custom
-key/value pair sets:
 
-- DRIVER: driver name, pm80xx in this case
-- HBA_NUM: the scsi host id of the device
-- EVENT_TYPE: to indicate a fatal error
-- REPORTED_BY: either driver or firmware
 
-The uevent is anchored to the kernel object that represents the scsi
-controller, which includes other useful core variables, such as, ACTION,
-DEVPATH, SUBSYSTEM, and more.
+On 6/13/2025 8:33 AM, Bjorn Helgaas wrote:
+> On Thu, Jun 12, 2025 at 09:41:45AM -0700, Graham Whyte wrote:
+>> On 6/11/2025 11:31 PM, Christoph Hellwig wrote:
+>>> On Wed, Jun 11, 2025 at 01:08:21PM -0700, Graham Whyte wrote:
+>>>> We can ask our HW engineers to implement function readiness but we need
+>>>> to be able to support exiting products, hence why posting it as a quirk.
+>>>
+>>> Your report sounds like it works perfectly fine, it's just that you
+>>> want to reduce the delay.  For that you'll need to stick to the standard
+>>> methods instead of adding quirks, which are for buggy hardware that does
+>>> not otherwise work.
+>>
+>> Bjorn, what would you recommend as next steps here?
+> 
+> This is a tough call and I don't pretend to have an obvious answer.  I
+> understand the desire to improve performance.  On the other hand, PCI
+> has been successful over the long term because devices adhere to
+> standardized ways of doing things, which makes generic software
+> possible.  Quirks degrade that story, of course, especially when there
+> is an existing standardized solution that isn't being used.  I'm not
+> at all happy about vendors that decide against the standard solution
+> and then ask OS folks to do extra work to compensate.
+> 
+> Bjorn
 
-The fatal_error_uevent_emit() function is called when the controller
-fatal error state changes. Since this doesn't happen often for a
-specific scsi host, there is no worries of a uevent storm.
+Hi Bjorn,
 
-Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
----
-Changelog since v2:
-- Same intention as v2 but actually includes the changes to fix build
-  warnings
+Should someone want to implement readiness time reporting down the road,
+they'll need to do the same work as patch 1 in this series (making the
+flr delay a configurable parameter). This change lays the groundwork for
+that work, while also supporting devices that can't use readiness time
+reporting.
 
- drivers/scsi/pm8001/pm8001_sas.h | 10 +++++++
- drivers/scsi/pm8001/pm80xx_hwi.c | 48 ++++++++++++++++++++++++++++++++
- 2 files changed, 58 insertions(+)
+Alternatively could we use a sysfs file to make this parameter
+configurable via the user space application? Similar to switching between
+d3hot and d3cold by writing to /sys/bus/pci/slots/$DEVICE/power.
 
-diff --git a/drivers/scsi/pm8001/pm8001_sas.h b/drivers/scsi/pm8001/pm8001_sas.h
-index 315f6a7523f0..334485bb2c12 100644
---- a/drivers/scsi/pm8001/pm8001_sas.h
-+++ b/drivers/scsi/pm8001/pm8001_sas.h
-@@ -170,6 +170,14 @@ struct forensic_data {
- #define SPCV_MSGU_CFG_TABLE_TRANSFER_DEBUG_INFO  0x80
- #define MAIN_MERRDCTO_MERRDCES		         0xA0/* DWORD 0x28) */
- 
-+/**
-+ * enum fatal_error_reporter: Indicates the originator of the fatal error
-+ */
-+enum fatal_error_reporter {
-+	REPORTER_DRIVER,
-+	REPORTER_FIRMWARE,
-+};
-+
- struct pm8001_dispatch {
- 	char *name;
- 	int (*chip_init)(struct pm8001_hba_info *pm8001_ha);
-@@ -715,6 +723,8 @@ ssize_t pm80xx_get_non_fatal_dump(struct device *cdev,
- 		struct device_attribute *attr, char *buf);
- ssize_t pm8001_get_gsm_dump(struct device *cdev, u32, char *buf);
- int pm80xx_fatal_errors(struct pm8001_hba_info *pm8001_ha);
-+void pm80xx_fatal_error_uevent_emit(struct pm8001_hba_info *pm8001_ha,
-+	enum fatal_error_reporter error_reporter);
- void pm8001_free_dev(struct pm8001_device *pm8001_dev);
- /* ctl shared API */
- extern const struct attribute_group *pm8001_host_groups[];
-diff --git a/drivers/scsi/pm8001/pm80xx_hwi.c b/drivers/scsi/pm8001/pm80xx_hwi.c
-index 5b373c53c036..d1741a2ea07c 100644
---- a/drivers/scsi/pm8001/pm80xx_hwi.c
-+++ b/drivers/scsi/pm8001/pm80xx_hwi.c
-@@ -1551,6 +1551,52 @@ static int mpi_uninit_check(struct pm8001_hba_info *pm8001_ha)
- 	return 0;
- }
- 
-+/**
-+ * pm80xx_fatal_error_uevent_emit - emits a single fatal error uevent
-+ * @pm8001_ha: our hba card information
-+ * @error_reporter: reporter of fatal error
-+ */
-+void pm80xx_fatal_error_uevent_emit(struct pm8001_hba_info *pm8001_ha,
-+	enum fatal_error_reporter error_reporter)
-+{
-+	struct kobj_uevent_env *env;
-+
-+	pm8001_dbg(pm8001_ha, FAIL, "emitting fatal error uevent");
-+
-+	env = kzalloc(sizeof(struct kobj_uevent_env), GFP_KERNEL);
-+	if (!env)
-+		return;
-+
-+	if (add_uevent_var(env, "DRIVER=%s", DRV_NAME))
-+		goto exit;
-+
-+	if (add_uevent_var(env, "HBA_NUM=%u", pm8001_ha->id))
-+		goto exit;
-+
-+	if (add_uevent_var(env, "EVENT_TYPE=FATAL_ERROR"))
-+		goto exit;
-+
-+	switch (error_reporter) {
-+	case REPORTER_DRIVER:
-+		if (add_uevent_var(env, "REPORTED_BY=DRIVER"))
-+			goto exit;
-+		break;
-+	case REPORTER_FIRMWARE:
-+		if (add_uevent_var(env, "REPORTED_BY=FIRMWARE"))
-+			goto exit;
-+		break;
-+	default:
-+		if (add_uevent_var(env, "REPORTED_BY=OTHER"))
-+			goto exit;
-+		break;
-+	}
-+
-+	kobject_uevent_env(&pm8001_ha->shost->shost_dev.kobj, KOBJ_CHANGE, env->envp);
-+
-+exit:
-+	kfree(env);
-+}
-+
- /**
-  * pm80xx_fatal_errors - returns non-zero *ONLY* when fatal errors
-  * @pm8001_ha: our hba card information
-@@ -1580,6 +1626,7 @@ pm80xx_fatal_errors(struct pm8001_hba_info *pm8001_ha)
- 			"Fatal error SCRATCHPAD1 = 0x%x SCRATCHPAD2 = 0x%x SCRATCHPAD3 = 0x%x SCRATCHPAD_RSVD0 = 0x%x SCRATCHPAD_RSVD1 = 0x%x\n",
- 				scratch_pad1, scratch_pad2, scratch_pad3,
- 				scratch_pad_rsvd0, scratch_pad_rsvd1);
-+		pm80xx_fatal_error_uevent_emit(pm8001_ha, REPORTER_DRIVER);
- 		ret = 1;
- 	}
- 
-@@ -4039,6 +4086,7 @@ static int process_oq(struct pm8001_hba_info *pm8001_ha, u8 vec)
- 			pm8001_dbg(pm8001_ha, FAIL,
- 				   "Firmware Fatal error! Regval:0x%x\n",
- 				   regval);
-+			pm80xx_fatal_error_uevent_emit(pm8001_ha, REPORTER_FIRMWARE);
- 			pm8001_handle_event(pm8001_ha, NULL, IO_FATAL_ERROR);
- 			print_scratchpad_registers(pm8001_ha);
- 			return ret;
--- 
-2.50.0.rc2.701.gf1e915cc24-goog
+Thanks,
+Graham
 
 
