@@ -1,175 +1,138 @@
-Return-Path: <linux-kernel+bounces-688307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39AA0ADB099
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:50:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0153ADB09E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4249D3A3AB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:50:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75137171D15
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997DB25E450;
-	Mon, 16 Jun 2025 12:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D601D292B26;
+	Mon, 16 Jun 2025 12:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ao/+Im09"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="EdILSAIZ"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001AD292B50
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 12:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3041E4BE
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 12:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750078218; cv=none; b=txPt2UvwU6REec165zM5FmV7uHShUcVTHvXtWbimbrp51OcvnPOI/jHG+tT5f4k9kqUaH0p2lSUKmIUniPkrQbOBfGARBHdHRr9jCigsAdDhiFuYwOn+lZiPvksOiY18dmC9ybP7lg/0yR1RsW+HZW+NjJ0KRutbb/PC4DZqHGE=
+	t=1750078304; cv=none; b=jHcFJh8dX+2xI8bDYainLm0EjOgpa7//PdFUrS7jWE8UGmgUIrfLPXK3L7NrJ/l99EzIRRYhAQDzWSE9Zm5GZK2opCOPtE2d5iAzLmsBpD5gXzTaQr5VA+LKknOFHvZ9lojVU6904NFeeSMf+f35BnCasurCMsScSwA731ubtC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750078218; c=relaxed/simple;
-	bh=5B0GDypy6woAYzSY9aHY7htf77d3A3ENXwrDkuTjJK8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=q7mVaGywN5Zqw1390TpzH5DMt5fVqrzOqjD2Arr6J1dV2xJ8KOPHRsD59Ji7c2SKTQdzlZCXOt+Tuu1xHaxiPdRVjEpIYy+RJU1g+DENSYHvSEqh7wmlWvNm4a4d99Y2nL3ZnpggTOlvqTH6+yuY+k6p1mrdX1DZWl0OvZoIoHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ao/+Im09; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6142EC4CEEA;
-	Mon, 16 Jun 2025 12:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750078217;
-	bh=5B0GDypy6woAYzSY9aHY7htf77d3A3ENXwrDkuTjJK8=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Ao/+Im09ikS3XYNJif4IPzCZVPI1rLzBr2hkK5fQi5W+mQhbzAjuFoCmdVYUus5G5
-	 iAsrj9MC5DiaqctCBweLZ9P0wrywMKO9w1CHFmM4gQoV2uSfqzAptfRc1AIAcUL6Am
-	 zuKvJC4174ktQCdROvzMsSLvGQ5D/+FG6qNiTRRMRjCTTEBe9WR0hrf9mp5qgi0xNn
-	 gYvmNk805qMhSUBPKNt7+uDd5FszJx+mmK+hWdE189GL2AUw722N7SYEpthsERw0R/
-	 OgLPmJQ8j6iL7tVXud3Epilgoybkzl1tmYP/KqpPBZJb9LUNpiqmBuvLi/IZAsyVSs
-	 myTmzPYTwBwlg==
-Message-ID: <c8389c1a-16d2-4de4-bc3f-7a5e4ccdbc34@kernel.org>
-Date: Mon, 16 Jun 2025 20:50:14 +0800
+	s=arc-20240116; t=1750078304; c=relaxed/simple;
+	bh=9k9Wh/NoYsqbKlKsFE6tFkqP7y1xy/55zKbtVtGtJXE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ToHqQSKk7hxBQUfRcV9phJBsF4SLUrT5V0+1QBLmjpzw40e0Jsne1mTkrlN7jsX6STBZspR6MYmAz3u5xcIHMp5JkrsVDfBb1pnjwRluTlU5n3GLhSMCvCTzgJpQbnntUPUiDtZc6IhMCo+vS3CR6znq736i+sIBDTMVu0BLL9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=EdILSAIZ; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3da73df6b6bso15888505ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 05:51:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1750078301; x=1750683101; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S/rRqga4nciTe+40s1lGUJde2Ttgzu3tg/+nM/gCFAE=;
+        b=EdILSAIZjrQDawlMlERPytnM5jrP/lgXhVtRY0XasclPozbLQw8c033FbZxIYn4h8n
+         5hYvZmkHxE8OA3GtOLSO8f0lVZCoVXQ5MCsy3JpZKtJn4cvFsBP/MMeKHB4Y1qkDiMFM
+         87Q8QWi5SuS5DlZZDRHF0Ga9MPW/bFWlAWfzJl1/0j0hnnf5sxZaEBFNml2bBl1zbYRp
+         CTqeZCENc3XTtQw/ctb3Jay7wLVKllLHOBeWPzL40EwdZJvnPcvMgL9mCZUVAz7uYmOi
+         Z8QSlPYNvsFao4aokb8MT+OW4H+fhWl9vQ527iS7mI/z58LhgRs3se9EJjWrTjgb6+7t
+         t8hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750078301; x=1750683101;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S/rRqga4nciTe+40s1lGUJde2Ttgzu3tg/+nM/gCFAE=;
+        b=Tv1Al5KbplvUH8IubPSAYzt+YjK5XK8Jbkfarc4OEDiqoeji8NIX+7IpD4VXAfXpwR
+         O7Mp3JAOU31prIFbVpaplB9xCprcg8ruGvUt6FPjsGkU3idYY/iPMfCJjDT85M+YXkeQ
+         2zVsnFCqy/9QtCCLE+N+f+mhQZRGNx8RHmbKoZNfYYPt0Eev/FDafKi856i3aGhCOYBx
+         06+yFZZrhvnTZAe8BHMwtzyuO4S1tMGqJTkOztXZrfO72TSq9RQeDwMiAHmDLQFj0gXb
+         kk2JpRU1oYNkVoOx0vVnYJUVhtLrNmB+zKMbkmUbTwiXDlyGHMYUtyfSq68HK45Fa+RU
+         +T4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWzp2i08hHktnoLhZO5qfSS/3CF0noI7kNmr+E9sFnIFoN3bgVXs2cwRPFmHf+pe3R6/kBRJVC0/2hk/8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwpB2LXX4QSymt9QStA6zx0//2Q+dd+zjE5D/Eri8sQsyh1imW
+	7FPNVqLZeMGW0jP9zxcIhJkBG18MZNt0G+fEgx6vGWSy4N5xG9Dcxt/PT2Vrmj53n/dlqH46pbW
+	o9vfu
+X-Gm-Gg: ASbGncvauy5xNlt1vksbp6drk+6kBZ0ZnelggTIzlr+NbawccExRCIyOFDVb3Yr2FXx
+	9m/iLH64zyex1QZ7z20C/5KiYgIhfK8shs/FLm6I27ZAwUhXerkQ5UJbZHskDTdbsxzeCEf5UXO
+	9k6su/+EMkpjS2dEDCCSWw2ia0B2q66mOqpSzIuMFp8CqmvzwClPTpmzqSEpPDXY/UGNc1uqHrh
+	BGJm9CHpzal8xVyQ516mZymoQ+YK2DjaOldLbmsd+Q6iSEvZAP16CV/YdgAX6HlP0WIja4Me1Sr
+	v3wUl6sNaVYhPOTi0NnFdhRw8wdOgHjhE2iRBua9WkUVngstrkwZZFPs5CyLBOW5MD4mXZaDH3u
+	ndmVy6abxtttrICIl8CDwBjafjsHHtrk=
+X-Google-Smtp-Source: AGHT+IGBM9IfcIVPXLIx3r77XwCbfXk8tkksQXCR2d/8SBqn06Uhn07s7o49RLoWiyjUv193p5+5QQ==
+X-Received: by 2002:a05:6e02:1529:b0:3dd:cbbb:b731 with SMTP id e9e14a558f8ab-3de07c55b92mr92098655ab.9.1750078300563;
+        Mon, 16 Jun 2025 05:51:40 -0700 (PDT)
+Received: from presto.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3de019b442fsm20352865ab.2.2025.06.16.05.51.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 05:51:40 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: andi.shyti@kernel.org,
+	dlan@gentoo.org,
+	troymitchell988@gmail.com
+Cc: elder@riscstar.com,
+	linux-i2c@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] i2c: k1: check for transfer error
+Date: Mon, 16 Jun 2025 07:51:36 -0500
+Message-ID: <20250616125137.1555453-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] f2fs: use ioprio hint for hot and pinned files
-To: Daniel Lee <chullee@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250615144235.1836469-1-chullee@google.com>
- <20250615144235.1836469-3-chullee@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250615144235.1836469-3-chullee@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/15/25 22:42, Daniel Lee wrote:
-> Apply the `ioprio_hint` to set `F2FS_IOPRIO_WRITE` priority
-> on files identified as "hot" at creation and on files that are
-> pinned via ioctl.
-> 
-> Signed-off-by: Daniel Lee <chullee@google.com>
-> ---
->  fs/f2fs/f2fs.h  | 19 +++++++++++++++++++
->  fs/f2fs/file.c  |  3 +++
->  fs/f2fs/namei.c | 11 +++++++----
->  3 files changed, 29 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 3e02687c1b58..0c4f52892ff7 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -3440,6 +3440,25 @@ static inline void set_file(struct inode *inode, int type)
->  	f2fs_mark_inode_dirty_sync(inode, true);
->  }
->  
-> +static inline int get_ioprio(struct inode *inode)
-> +{
-> +	return F2FS_I(inode)->ioprio_hint;
-> +}
-> +
-> +static inline void set_ioprio(struct inode *inode, int level)
-> +{
-> +	if (get_ioprio(inode) == level)
-> +		return;
-> +	F2FS_I(inode)->ioprio_hint = level;
-> +}
-> +
-> +static inline void clear_ioprio(struct inode *inode)
-> +{
-> +	if (get_ioprio(inode) == 0)
-> +		return;
-> +	F2FS_I(inode)->ioprio_hint = 0;
-> +}
-> +
->  static inline void clear_file(struct inode *inode, int type)
->  {
->  	if (!is_file(inode, type))
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 3eb40d7bf602..a18fb7f3d019 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -3496,6 +3496,7 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
->  
->  	if (!pin) {
->  		clear_inode_flag(inode, FI_PIN_FILE);
-> +		clear_ioprio(inode);
+If spacemit_i2c_xfer_msg() times out waiting for a message transfer to
+complete, or if the hardware reports an error, it returns a negative
+error code (-ETIMEDOUT, -EAGAIN, -ENXIO. or -EIO).
 
-I guess there are more places clearing FI_PIN_FILE? we need to cover
-them all?
+The sole caller of spacemit_i2c_xfer_msg() is spacemit_i2c_xfer(),
+which is the i2c_algorithm->xfer callback function.  It currently
+does not save the value returned by spacemit_i2c_xfer_msg().
 
->  		f2fs_i_gc_failures_write(inode, 0);
->  		goto done;
->  	} else if (f2fs_is_pinned_file(inode)) {
-> @@ -3529,6 +3530,8 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
->  	}
->  
->  	set_inode_flag(inode, FI_PIN_FILE);
-> +	file_set_hot(inode);
+The result is that transfer errors go unreported, and a caller
+has no indication anything is wrong.
 
-Unnecessary file_set_hot() invoking? Or am I missing anything?
+When this code was out for review, the return value *was* checked
+in early versions.  But for some reason, that assignment got dropped
+between versions 5 and 6 of the series, perhaps related to reworking
+the code to merge spacemit_i2c_xfer_core() into spacemit_i2c_xfer().
 
-Thanks,
+Simply assigning the value returned to "ret" fixes the problem.
 
-> +	set_ioprio(inode, F2FS_IOPRIO_WRITE);
->  	ret = F2FS_I(inode)->i_gc_failures;
->  done:
->  	f2fs_update_time(sbi, REQ_TIME);
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index 07e333ee21b7..0f96a0b86c40 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -191,9 +191,10 @@ static void set_compress_new_inode(struct f2fs_sb_info *sbi, struct inode *dir,
->  }
->  
->  /*
-> - * Set file's temperature for hot/cold data separation
-> + * Set file's temperature (for hot/cold data separation) and
-> + * I/O priority, based on filename extension
->   */
-> -static void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
-> +static void set_file_temp_prio(struct f2fs_sb_info *sbi, struct inode *inode,
->  		const unsigned char *name)
->  {
->  	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
-> @@ -212,8 +213,10 @@ static void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
->  
->  	if (i < cold_count)
->  		file_set_cold(inode);
-> -	else
-> +	else {
->  		file_set_hot(inode);
-> +		set_ioprio(inode, F2FS_IOPRIO_WRITE);
-> +	}
->  }
->  
->  static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
-> @@ -317,7 +320,7 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
->  		set_inode_flag(inode, FI_INLINE_DATA);
->  
->  	if (name && !test_opt(sbi, DISABLE_EXT_IDENTIFY))
-> -		set_file_temperature(sbi, inode, name);
-> +		set_file_temp_prio(sbi, inode, name);
->  
->  	stat_inc_inline_xattr(inode);
->  	stat_inc_inline_inode(inode);
+Fixes: 5ea558473fa31 ("i2c: spacemit: add support for SpacemiT K1 SoC")
+Signed-off-by: Alex Elder <elder@riscstar.com>
+Reviewed-by: Troy Mitchell <troymitchell988@gmail.com>
+---
+v3: Rebased on v6.16-rc2; included version in message subject
+
+ drivers/i2c/busses/i2c-k1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
+index 5965b4cf6220e..b68a21fff0b56 100644
+--- a/drivers/i2c/busses/i2c-k1.c
++++ b/drivers/i2c/busses/i2c-k1.c
+@@ -477,7 +477,7 @@ static int spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, in
+ 
+ 	ret = spacemit_i2c_wait_bus_idle(i2c);
+ 	if (!ret)
+-		spacemit_i2c_xfer_msg(i2c);
++		ret = spacemit_i2c_xfer_msg(i2c);
+ 	else if (ret < 0)
+ 		dev_dbg(i2c->dev, "i2c transfer error: %d\n", ret);
+ 	else
+-- 
+2.45.2
 
 
