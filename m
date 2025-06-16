@@ -1,112 +1,114 @@
-Return-Path: <linux-kernel+bounces-687806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A9C6ADA978
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:31:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D86FEADA983
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 555CF1894BAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:31:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88662170A98
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793B81E3762;
-	Mon, 16 Jun 2025 07:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0941EF39E;
+	Mon, 16 Jun 2025 07:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKFulSnI"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XWq5w4cu"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8949D1DA53;
-	Mon, 16 Jun 2025 07:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0ED54BC6
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 07:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750059073; cv=none; b=uqDjIECDDEBOd9hUCngabutt7KISXhRIeOeOLfJvMOYeCUFKFi9g+EnnAW6amg93JvxkjHxiGLSDDZ3VREzTGuhWBmZuUKf9YCrZRH1C7pI/qot8idsO+vAK+Ep069rjaQr4HdnQM3WzPEzGFB4HTufEgRFp80QqvMww+AkkHHI=
+	t=1750059269; cv=none; b=YCkpue6OuUYnSwR2TMqzU6bMBHjB4bQcYwz+tO2oMRO43K1TKl4T0UKQeRbCLa13id3QnYP8zET2nSfzURfIy/yyw6iBjV/HmkCOaBzq1bsO1Aa7r+rn0fyQWTWSy/3LqHzhUJLV4qC2HXPsj7fufNS7v7i26hzgED/oQlPtwZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750059073; c=relaxed/simple;
-	bh=cheEarIyKVJUARXwRvLdgflVQA3knWwTd0Aeo5HkwRs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JZSXd3sFcIF0E+43rmbRInUN9Km+ZQxP2Im1dHbGx7rMnqaJSJXnhRiCNnIYCNLT/+vCqfdOn0eosQxZL0QVIFNplXrOSNd9ih780Mvcs0bHIm4Mb8cE3dz3pPQ3Eh3gpOcH5S7Gw1jkEefweoqipGiKw/ms53t6lHfsdR8xocM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKFulSnI; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-af51596da56so3509844a12.0;
-        Mon, 16 Jun 2025 00:31:12 -0700 (PDT)
+	s=arc-20240116; t=1750059269; c=relaxed/simple;
+	bh=g2iX34IoxrIaM3UBcHz+mdIuH/BJpUNpXaFUUcajRvc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qt9/oMRc9ePh8BLTHIRJ7TLZb0zLAbuyLTPqI5b+HzQLPzoX1TF+AyLo50EC+BuS1Uzs9cDnFHyqwNjIsngv1Gtrg8Ti0SW0mJgHaScjMHD0rvcVqIdjUOIFtUKq3dKPm3EfPcZE00zapcL785gZ4Uo7oKvaeX3RONIzaoeQDe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XWq5w4cu; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4530921461aso34338515e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 00:34:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750059072; x=1750663872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750059266; x=1750664066; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cheEarIyKVJUARXwRvLdgflVQA3knWwTd0Aeo5HkwRs=;
-        b=MKFulSnIWH4GvPNkt1OHFWo+qB4zTZ0WcKLLAvIGzn0Lhff/rrYuOHx3N1qQ16HBzH
-         spEgY/sGDmfDZEqHiyolcP0CzEdM2cF5nMCw5nH/25r71yZJXb4VIEskkbfEhBjbiCoR
-         yeSamMoJ3dixoySedJxw5cxrq8iyun3CbKhO+sSLWxqjo91cwdBhTpcXwMRMQHrMcki5
-         pwc3nouzzYzKv+/XauOdbnq6VCHkTovo6TavAlvkaf4NBYRkzAU2NPkMrhBbBrJYZeuK
-         Xh4N2q9O1Ba6JKQafXYlvxFzYA6bHmj2uZ7Ub5OvL6saMEhiXRFUjgaYmzlNonxOr2gz
-         mORg==
+        bh=NufnnT2z/L01xcT8J/hVS5CTO/xRwDlIelt9on8BTLQ=;
+        b=XWq5w4cuLD+9cn6ZYOrhDgpODg4mehTkFByZqT2czVUzAKpe7TrT2f8naPCzYetQcf
+         J0WlAvII6X0C6ceIa0j/1yfuLPd3chSrCibu198DD1ES13/Av0ldyadFzkoOesy2c9FT
+         ELC9QJ+LXiKRLdo3ewezsKPGGIyEMTxtvEToiRU+gjWouLB+8SL0LQNcxvYPM+0bl0MX
+         egEj8bybRM34NBgtY2Es7mMXJEy47oIlhKBjNLXhV0cGb2nj8DpPAIzwEB2ku3LXQC/6
+         3Y66KlHaoL561HNR7R3Jt6vkWy/qremLE+e9I8B22iqnexUOr08o1O8qf3p3iqpOy0z9
+         NdBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750059072; x=1750663872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1750059266; x=1750664066;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cheEarIyKVJUARXwRvLdgflVQA3knWwTd0Aeo5HkwRs=;
-        b=FfYz1b6h2QxD2/Rih+qDRqW8R3LpswNZTahLmOKDaNbhcjRqHnW268UX/fl7JQRMPG
-         RJd3MLDBNNfiSvInKjdSn+uHsipMQPYDArGTNB0IZajX48JvHcKOIkCq+GoomZzDtmEP
-         5xVH0zOEc8k6XWe6jLVjh8NDsw9l1LRrZ5MeUXaoB70A4v53FsmqSH9YfSnqfT7i0Rxb
-         MM7P6nus8L4Js/uEeR0su+gP+6F8mPRqq/S42GU4B6lEb5+hp5mmiJz/IfPdLnSsW0/b
-         bUgcru7krzmaUrwy4JMRH//eDWvyH3VwuUazpF3NQzvtcvLi2KhVNRMz0PaAn3UVP8Ke
-         uJ4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUpij9ltFNsKjunJ++0VekxzXKjClcdWIuwSRHUWdg6LCeJeuKGbMEUwfeytj7+/WvhPyVX/+zmZSK4tfw=@vger.kernel.org, AJvYcCWwoVQsgvgpuipoboxX+pUZGVvDPzkIrSJ/2ERi2SUWGc6FDh9Kzw/Zofj6W38uZvE8Ryp7wU8ie5cc9II=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjwtjyCPIK1iWMNGQ0u1w9OSSPvEZxsDK6gJqYSdlAQWMJw3C6
-	KA8Q8I5wtiMB1cUQM8GAuk9lnbUVvHU54B0FhiyCsVG9lN+UGjsSrPG9m/jD4eSz+MMInThmBEg
-	nYrFGMkmrS+r4NITwm5aBqh8zBHdZz64=
-X-Gm-Gg: ASbGncuFl7CPMTuFJK40gzwVaq3LGS1oeWjTvn30ukrPOTspmyvU+H3tVSDTMPuNoYG
-	tXQ7BSDMkJfEeH5h4o0649UlmCJR18yk+ky7u0s1bNFEQBKP8yr+OJifYtQ2gjTodStPB0DZRQ2
-	Ou1ReBw990LJWdukIAsK8WMrLX35hwCS1dXLvSX90a
-X-Google-Smtp-Source: AGHT+IFAqYUd3QpiI+ATQMIggtddyd5pZ5byJDm+wKZp9c0vvh4+WvPZLenvvopWZ+I4insDVZLiVfMwAJbeqfnmCkc=
-X-Received: by 2002:a17:90a:c107:b0:311:fc8b:31b5 with SMTP id
- 98e67ed59e1d1-313f1ca1398mr15200699a91.14.1750059071687; Mon, 16 Jun 2025
- 00:31:11 -0700 (PDT)
+        bh=NufnnT2z/L01xcT8J/hVS5CTO/xRwDlIelt9on8BTLQ=;
+        b=gupDN8AkRU7i0B7CZ+cEWqtCFcdmdfVbQHkdPb4yMp8EkTdrTwX7H7nX5et4Qv3acF
+         D96JErZqDKVJStas6OWCP0GakH1BuIuaDQyZTjGEujZzT37wfK2m6w4tiEmxkBBI0YvU
+         q4+qyqBTH3S1AHgydIlBB2GsOIC73WxGqsIqL4uoyWgd551eQsR2qWtvharLiHJx2wr0
+         GCv3edCrhR6quKb5yAvyephuQIt+FG6OeD/i1QerllJOaz7o9HbvtdHuehs/bPS8OVAh
+         YOWSfjmOhoa553nlBHquu61NMkNi441/lh61ctOGc1q8A0QSu49XF6TgfguoSJuUj1Dl
+         nW0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWjP0klKSLovQGISz8c8+qWtl23gM0cpnf3SNFUd/ptegP0Equo5vxiIhPZ4HQT9Spo3ScWCAhaHaO/bVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxybElh8zrV1szsCeS9xUs5fj6PCbm4c9Tbo5NifVAf9rJOvn13
+	I6Ebtkv7r8NH1VLWU4Ov0rKzUEJX2G+5ZHbk1kcurBH+fbjxPPWdwBUdN3eCgQ6BYWu0VdnEHS8
+	FQUAsjrA=
+X-Gm-Gg: ASbGncs0R5kesNA+iT+3WVIBHJ6c3UzgLpT6WeaCajkWkq881XavBL29YzxhRuBeNZ8
+	xUtIGfIg89QE2ju9qCkwXBY6X28jinkUOvDgp1JefFZ/4Iv+8o1R7eH/eB7m7gzQoATzPNx91bJ
+	YoDatcXstaKarTG5TRzTECNXlIXyoMuK7jiDs9YnrGuD5wsb3gsS4rlx8DBXiDCbIyWxadUeflv
+	w5GCu3RSjYKkXbRQMz+O4z/JoPK3wuZdyUlxy6CJR32Hj/D5ifBcBjnzam6YHruXZO7OpWRGjRT
+	0TMgPgBqt9BfbcvFw2b2aVk/KITw2HOaxyF5GmzqhD5AKptohDVnVV5RftBHvIg=
+X-Google-Smtp-Source: AGHT+IFV0yz0l2515IeeTm9GioSRgS+MJm0JO7b1ZICcf7COUEwdawqQ7EAIvhjQwyAaNliNSkmk4Q==
+X-Received: by 2002:a05:6000:2c13:b0:3a4:d0dc:184d with SMTP id ffacd0b85a97d-3a5723a2d79mr7119025f8f.27.1750059265794;
+        Mon, 16 Jun 2025 00:34:25 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:4238:f8a4:c034:8590])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a54b7asm10388705f8f.16.2025.06.16.00.34.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 00:34:25 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	David Lechner <dlechner@baylibre.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: virtuser: use gpiod_multi_set_value_cansleep()
+Date: Mon, 16 Jun 2025 09:34:22 +0200
+Message-ID: <175005925792.13944.4716742075474493399.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250611-gpio-virtuser-use-gpiod_multi_set_value_cansleep-v1-1-43b4adf6c807@baylibre.com>
+References: <20250611-gpio-virtuser-use-gpiod_multi_set_value_cansleep-v1-1-43b4adf6c807@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613194310.1128733-1-laurentiumihalcea111@gmail.com>
-In-Reply-To: <20250613194310.1128733-1-laurentiumihalcea111@gmail.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Mon, 16 Jun 2025 10:33:13 +0300
-X-Gm-Features: AX0GCFtn0hwbvtz7t5if-ZTv1RrgsBJVVoHPdrySbGFc57a2cboCkTDRMjfm2ao
-Message-ID: <CAEnQRZBHF4dwTEcaz2VQE9UYCu9aVapV4fuRtTXhvBdDDkZDWg@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: SOF: imx8: add core shutdown operation for imx8/imx8x
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
-	Bard Liao <yung-chuan.liao@linux.intel.com>, 
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 13, 2025 at 10:43=E2=80=AFPM Laurentiu Mihalcea
-<laurentiumihalcea111@gmail.com> wrote:
->
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->
-> Currently, the DSP core from i.MX8QM/i.MX8QXP is able to operate while th=
-e
-> firmware image is being loaded. Because of this, the DSP may change the
-> content of the firmware data just after it was loaded, thus leading to th=
-e
-> data having unexpected values when the DSP is reset (via run()).
->
-> Fix this by implementing the core_shutdown() operation that will put the
-> DSP in stall during suspend(). The stall will be removed during the run()
-> opertion, thus guaranteeing that the DSP core will not be able to run
-> while the firmware image is being loaded.
->
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+
+On Wed, 11 Jun 2025 13:50:26 -0500, David Lechner wrote:
+> Reduce verbosity by using gpiod_multi_set_value_cansleep() instead of
+> gpiod_set_array_value_cansleep().
+> 
+> 
+
+Applied, thanks!
+
+[1/1] gpio: virtuser: use gpiod_multi_set_value_cansleep()
+      https://git.kernel.org/brgl/linux/c/0a99f2d8ff5b31c3aaa70b23bde58692d1300bdc
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
