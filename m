@@ -1,195 +1,111 @@
-Return-Path: <linux-kernel+bounces-688520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF59ADB388
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:22:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 109ABADB3A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 004FE1733B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:21:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57734189268A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF3B217F40;
-	Mon, 16 Jun 2025 14:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2DC1FAC4B;
+	Mon, 16 Jun 2025 14:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fAgauei0"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JBx8fsLo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4D91D6DB5;
-	Mon, 16 Jun 2025 14:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5A41FDE31;
+	Mon, 16 Jun 2025 14:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750083430; cv=none; b=nKyfYk4nHjNAfkwkEdScn2nvVU0J4R82nYDRN/TSVxI/7/bR6qstM4hElu6G/O4xErEMzi2oiuKdRymPoxYK1HeVnqdeStoxDC/809NZiTzvnAjLLprnUEXhH4VwfSJPhH0JsMvcnz5AnnSaR35ys/wBMF7AL8NaknLftXrIXFY=
+	t=1750083454; cv=none; b=oVrlVkcnX7C5WwNhgrU81+e4eg+C+ZwF7s1nEXSjUbNFjVkjtpJoro0ZXWIgQRrHYt9IjTpvZvESneD7Ry4KW6X5d0Ryg+1SXak+lmOw2njCC7GawsV+fXTNHtPcFIozqoyTyNSt13aixYeovcaBg9BqNCtt+81QW8O0iRKRE64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750083430; c=relaxed/simple;
-	bh=eP6PuM+64K5CWtrRCBbwXKZnsU5mxw6QkvsFbixFqYU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T+b22kxJi0OnojXLHQbr5fhJVfWaNWfNJflNfmLTW9C3UaOvswpfk7sCkd6yA8hcywkBxuzIDgtFBVY1/FxRDN5e/7lqTpEUVlvfU7zGaA+dM9hv6Xv/frwcam0JoVItTOZ4X8z1wHCaPiaP9LqIy9/5EcMVbziW7Y9UNXTLnVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fAgauei0; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6095de12d62so1550265a12.1;
-        Mon, 16 Jun 2025 07:17:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750083427; x=1750688227; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eP6PuM+64K5CWtrRCBbwXKZnsU5mxw6QkvsFbixFqYU=;
-        b=fAgauei0P9Md/AapoGhTU8kqKKmKHOfCFxa7L33imhh5/YQYKY5ndu5M8QZSRvNXdG
-         JU4y9gl/ZpZKBXqKvJrqte54BprYMno+nEHxlPFpWX6bd90bpm2YLAVobSLU9+CxiwWc
-         fKKjJORzuetIjl93FFSo8+uqvfja/UV1ZIzTJnmqLMOnDXQDJiSPX85JcHc3CHxMtFOs
-         RB0Qj7NkFgeVbViUOAW15ofJhvWVZphOKswWzzjuyicb+Q4sh/Mqx4I1c5c7MmQB0esj
-         iKAN2u7kREfPgABnlO7CuJomySR5ujthTtRhxD3SM0jNJpsc3BjLhR5831vy3N+73SFR
-         m+dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750083427; x=1750688227;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eP6PuM+64K5CWtrRCBbwXKZnsU5mxw6QkvsFbixFqYU=;
-        b=PKG5H0rcw0suUK6pcoPCNHGSC2YCnLD66CBAy5tkuP/7zfzW5UPc+gVrb/IRfKon8A
-         K9TxwEoa9/yPiaJiHi7f2pUrMChL0hVJ+VtGCP2SQtmNWMgCz7dxpFpTeMOLNwOlsoZs
-         QGVYFpoQ7A6rTbeMFZo2+dnprnEV6l9OsVYzUaEN1MWxrOdD2FOC/sxh2VvYgznZaagM
-         +hOWD2vVnYRi80HWOD+bSrqI3sacEj7808kyrN2lDDiUoaxEFQ3zt+sZJtwZlkvh7dTq
-         0RygUdbGo5eAfVjQWeWygSiyGCq5leNhzo2/ZoN/F85/JFO/+2vwOaIvxsKfY+Z+Q9ys
-         e5HA==
-X-Forwarded-Encrypted: i=1; AJvYcCUm5GaySzNqqONrWo2mJFvkT2Bpr9bTWs4ht12a5PDc4gqR9psE1jeuynnQFDeCKbe9/GxB749hXaE=@vger.kernel.org, AJvYcCXq4d5z2N1jlrRe5DklLKBdwutSjN5OTZC5NZDvc+JK9yS1pA3CpiwxAstXD9/4dHMpyHDeVDYDkYkrK0ZZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRf4Z/MHq+6Ao6gdYbX06LKs5616fRXrdWaTeTQApVs/Wm4Jcp
-	Aq209PRG4DqwnPLTJOhn1Gc2l/zGgkZgAl1p25jXzOBW0WU0YeSWKFE/yYa2Szxl9DObEmZB4rg
-	fZs0yVYyPFVQMBqp9vt+GMfw1WXfo8LE=
-X-Gm-Gg: ASbGncvS1xSiAvrbx2MKwLqk/Lm/+w3m/ELJZE2AwDKxf+Ab8dgOwJrJvVJvCZBlQis
-	S6LAJ2K5/nOvpM5ZQQmOtJtERwaBgC+6tATUFvJ/l7BuKxS1NsqM0KTZrUOBFlZvz0WXAIhImeY
-	fKCByViH5z3wTbYWy402cZZsyIH4I8dHM7KbUMtWReBX/pr79acgBk2vKiFlDVJn9GJtWwHg462
-	T8pJA==
-X-Google-Smtp-Source: AGHT+IG36AYu/aqp41xnF1pJkXFnqEk2HCgmA8jDS9zdCLJ74WU28G5N0cZpsN3g7yXaxRPiI8ZvSI/MMogdMmVSBfg=
-X-Received: by 2002:a17:906:9fc5:b0:ad8:6dc0:6a8a with SMTP id
- a640c23a62f3a-adf9bfdd52fmr854559366b.1.1750083426656; Mon, 16 Jun 2025
- 07:17:06 -0700 (PDT)
+	s=arc-20240116; t=1750083454; c=relaxed/simple;
+	bh=7vD+jdFcbRODnTyocCRqC2CBnN4fjCfLQDbcXwpnOFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zsvpf4a/h+sG7F9ep7+s7eOiXxGvlMYQxblfqArMD3u6NoUOTFTJurzqaRnV54UWH9nJJofpM0SzfXzy0e/+X71znyhEIpZuLdiC/t11NfB3OfLU9meHVzCkmYIXsOrsLj9Sy7Qnj5Q6C8XWX4lVYVX9JRGhv/XZn52NOm8zwLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JBx8fsLo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71E27C4CEEA;
+	Mon, 16 Jun 2025 14:17:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1750083454;
+	bh=7vD+jdFcbRODnTyocCRqC2CBnN4fjCfLQDbcXwpnOFU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JBx8fsLok416/BE/CRF9cIHl1X7u6rcJT9hirMbzyUtEPyE5nP27OqsGSo9d6VcrM
+	 rnZk3M53sB+oeNQ815/7F89jqwyJQKRNenNBCsH3tGIn8P9ceUPGhfNFWnwJF1IcLx
+	 qQUPXZUK/1AftN5AznCXG0ZbWdTZRICNSZ0IiRdg=
+Date: Mon, 16 Jun 2025 16:17:30 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Kuen-Han Tsai <khtsai@google.com>
+Cc: prashanth.k@oss.qualcomm.com, hulianqin@vivo.com,
+	krzysztof.kozlowski@linaro.org, mwalle@kernel.org,
+	jirislaby@kernel.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] usb: gadget: u_serial: Fix race condition in TTY
+ wakeup
+Message-ID: <2025061634-heavily-outrage-603a@gregkh>
+References: <20250616132152.1544096-1-khtsai@google.com>
+ <20250616132152.1544096-2-khtsai@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612181330.31236-1-bijan311@gmail.com> <20250612181330.31236-2-bijan311@gmail.com>
- <5a50eeba-b26d-4913-8016-45278608a1ee@redhat.com> <CAMvvPS5U8exSvy0fknfhv8ym_dKgMVa7cfMOqn0fGyd+NSjSuQ@mail.gmail.com>
- <e40aa590-f0a2-4666-84b0-c33c8f4fef87@redhat.com>
-In-Reply-To: <e40aa590-f0a2-4666-84b0-c33c8f4fef87@redhat.com>
-From: Bijan Tabatabai <bijan311@gmail.com>
-Date: Mon, 16 Jun 2025 09:16:55 -0500
-X-Gm-Features: AX0GCFtYGWGWkDqtRWR9qfiUop7Yc8zxOn5BNjJ8enw3Dihp3CCnDxICYmQLo6k
-Message-ID: <CAMvvPS5bTUfAXy4g79tAq+1DWKX79b33Jt=UNBg-xR9BDa7FdA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/4] mm/mempolicy: Expose policy_nodemask() in include/linux/mempolicy.h
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj@kernel.org, akpm@linux-foundation.org, 
-	corbet@lwn.net, ziy@nvidia.com, matthew.brost@intel.com, 
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
-	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
-	bijantabatab@micron.com, venkataravis@micron.com, emirakhur@micron.com, 
-	ajayjoshi@micron.com, vtavarespetr@micron.com, damon@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250616132152.1544096-2-khtsai@google.com>
 
-On Mon, Jun 16, 2025 at 4:46=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 13.06.25 18:33, Bijan Tabatabai wrote:
-> > On Fri, Jun 13, 2025 at 8:45=E2=80=AFAM David Hildenbrand <david@redhat=
-.com> wrote:
-> >>
-> >> On 12.06.25 20:13, Bijan Tabatabai wrote:
-[...]
-> Hi,
->
-> >
-> > I did not use get_vma_policy or mpol_misplaced, which I believe is the
-> > closest function that exists for what I want in this patch, because
-> > those functions
->
-> I think what you mean is, that you are performing an rmap walk. But
-> there, you do have a VMA + MM available (stable).
->
-> > seem to assume they are called inside of the task that the folio/vma
-> > is mapped to.
->
-> But, we do have a VMA at hand, so why would we want to ignore any set
-> policy? (I think VMA policies so far only apply to shmem, but still).
->
-> I really think you want to use get_vma_policy() instead of the task polic=
-y.
+On Mon, Jun 16, 2025 at 09:21:47PM +0800, Kuen-Han Tsai wrote:
+> A race condition occurs when gs_start_io() calls either gs_start_rx() or
+> gs_start_tx(), as those functions briefly drop the port_lock for
+> usb_ep_queue(). This allows gs_close() and gserial_disconnect() to clear
+> port.tty and port_usb, respectively.
+> 
+> Use the null-safe TTY Port helper function to wake up TTY.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 35f95fd7f234 ("TTY: usb/u_serial, use tty from tty_port")
+> Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
+> ---
+> Explanation:
+>     CPU1:                            CPU2:
+>     gserial_connect() // lock
+>                                      gs_close() // await lock
+>     gs_start_rx()     // unlock
+>     usb_ep_queue()
+>                                      gs_close() // lock, reset port_tty and unlock
+>     gs_start_rx()     // lock
+>     tty_wakeup()      // dereference
 
-Sorry, I think I misunderstood you before. You are right, we should
-consider the VMA policy before using the task policy. I will do this
-in the next revision.
+Why isn't this up in the changelog?
 
->
-> > More specifically, mpol_misplaced assumes it is being called within a
-> > page fault.
-> > This doesn't work for us, because we call it inside of a kdamond proces=
-s.
->
-> Right.
->
-> But it uses the vmf only for ...
->
-> 1) Obtaining the VMA
-> 2) Sanity-checking that the ptlock is held.
->
-> Which, you also have during the rmap walk.
+> 
+> Stack traces:
+> [   51.494375][  T278] ttyGS1: shutdown
+> [   51.494817][  T269] android_work: sent uevent USB_STATE=DISCONNECTED
+> [   52.115792][ T1508] usb: [dm_bind] generic ttyGS1: super speed IN/ep1in OUT/ep1out
+> [   52.516288][ T1026] android_work: sent uevent USB_STATE=CONNECTED
+> [   52.551667][ T1533] gserial_connect: start ttyGS1
+> [   52.565634][ T1533] [khtsai] enter gs_start_io, ttyGS1, port->port.tty=0000000046bd4060
+> [   52.565671][ T1533] [khtsai] gs_start_rx, unlock port ttyGS1
+> [   52.591552][ T1533] [khtsai] gs_start_rx, lock port ttyGS1
+> [   52.619901][ T1533] [khtsai] gs_start_rx, unlock port ttyGS1
+> [   52.638659][ T1325] [khtsai] gs_close, lock port ttyGS1
+> [   52.656842][ T1325] gs_close: ttyGS1 (0000000046bd4060,00000000be9750a5) ...
+> [   52.683005][ T1325] [khtsai] gs_close, clear ttyGS1
+> [   52.683007][ T1325] gs_close: ttyGS1 (0000000046bd4060,00000000be9750a5) done!
+> [   52.708643][ T1325] [khtsai] gs_close, unlock port ttyGS1
+> [   52.747592][ T1533] [khtsai] gs_start_rx, lock port ttyGS1
+> [   52.747616][ T1533] [khtsai] gs_start_io, ttyGS1, going to call tty_wakeup(), port->port.tty=0000000000000000
+> [   52.747629][ T1533] Unable to handle kernel NULL pointer dereference at virtual address 00000000000001f8
 
-There is another subtle dependency in get_vma_policy.
-It first checks if a VMA policy exists, and if it doesn't, it uses the
-task policy of the current task, which doesn't make sense when called
-by a kdamond thread.
+What is [khtsai] from?
 
-However, I don't think this will change what seems to be our consensus
-of adding a new helper function.
+thanks,
 
->
-> So what about factoring out that handling from mpol_misplaced(), having
-> another function where you pass the VMA instead of the vmf?
->
-> >
-> > I would be open to adding a new function that takes in a folio, vma,
-> > address, and
-> > task_struct and returns the nid the folio should be placed on. It could=
- possibly
-> > be implemented as a function internal to mpol_misplaced because the two=
- would
-> > be very similar.
->
-> Good, you had the same thought :)
->
-> >
-> > How would you propose we handle MPOL_BIND and MPOL_PREFFERED_MANY
-> > in this function? mpol_misplaced chooses a nid based on the node and
-> > cpu the fault
-> > occurred on, which we wouldn't have in a kdamond context. The two optio=
-ns I see
-> > are either:
-> > 1. return the nid of the first node in the policy's nodemask
-> > 2. return NUMA_NO_NODE
-> > I think I would lean towards the first.
->
-> I guess we'd need a way for your new helper to deal with both cases
-> (is_fault vs. !is_fault), and make a decision based on that.
->
->
-> For your use case, you can then decide what would be appropriate. It's a
-> good question what the appropriate action would be: 1) sounds better,
-> but I do wonder if we would rather want to distribute the folios in a
-> different way across applicable nodes, not sure ...
-
-Yes, I was thinking about that too, but I felt that adding state
-somewhere or using randomness to distribute the folios was incorrect,
-especially since those policies are not the focus of this patchset.
-
-I think I'll move forward with option 1 for now.
-
-Thanks,
-Bijan
+greg k-h
 
