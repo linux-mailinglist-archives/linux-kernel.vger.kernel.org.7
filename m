@@ -1,131 +1,130 @@
-Return-Path: <linux-kernel+bounces-688018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A93D9ADAC78
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:55:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B45ADAC8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E2E016D6C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:55:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C73C11722CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF81273D74;
-	Mon, 16 Jun 2025 09:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="hViOd2+A"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C5D2741B7;
+	Mon, 16 Jun 2025 09:58:05 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC0C18E025
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EFA273D99
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 09:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750067739; cv=none; b=KEDkq+D7fvbOsVALuRsKHNJ8nEvTHsbuYsvssUhnTTmP2OHXL9os5lHgZtcqX1YN8cIKj4BODD5iqqr7d7lCkWqH5t6/wykGfmtuLvbNNvAaVIgYlLZh/nGajp9Zmen5sjbpfDObPK1oryG3bmaBy8DQE4pUf2fLU5k0XYp3clk=
+	t=1750067885; cv=none; b=LOKMSZ+tSQXilo/DdWwrSHuCNmbWfuT3oFsDAcK0cmpOj2QmjPjhv1bSpxhNobIvdTUGS0Kcwh/IUe5ESBtQW3zp8Tiz0yWe3avxY32Jz4ZKvuwPCbk7Dt6P3on84kGDsrybUeAkrA9a5QN3gryiKPFi/5wj17UZlkb50nIkxco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750067739; c=relaxed/simple;
-	bh=drPrCveQJ2nF38aDlX6Xryfirhzqd9PmLSAMhJNpAOA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LGo2hvQ0aNEIr1hEPTMahuSlrwhV/cPZOF+nkqWlQhDd2PbaE/pDFxyr0f+pmcaVHGa8qguxyaxxM6aQVSavgZmbfEEW+WsyYLqgBf7z83PNBpou6lL3YYkmh+5iuqaC09+LFck7ynN6ST9UeMscVRqTasHU5VqRbWu/0+DBeYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=hViOd2+A; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4530921461aso35747625e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 02:55:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1750067736; x=1750672536; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PQ3V0gzJmMqB9pDar/canoJsIJpbRR3q/9+xStbVMrA=;
-        b=hViOd2+AeKV5D5pCAbje8Dpk9JicmEvAsEV2xVF24mVfLV8KCvHccUPxLUnXd7Qo8U
-         OYiNes7FxIlGaNgjACmB/ZEj6TpkLoUdyhwPJTbSRhooB3q10hLVDNLLBfkEYHaWC/Kw
-         NwRmP+M8HsYK5YOOPVMWIcJwWz5AFmD2Zq7M/9MsXPdZD3Yf6uao+B+7LQlGjCJMImFD
-         2un2djr589tVyoRXt+hlJ3nBS8N8iRgWfdow0HXkZN9T5RFMDnq/rSSvg7OJjiBDVAXe
-         7mzPlJCPa+yKBBZ8EplBU3/jfvJuFkkFWaiLkVOs/XzDl4220YqpMDqpEq3ITFozC320
-         L3lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750067736; x=1750672536;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PQ3V0gzJmMqB9pDar/canoJsIJpbRR3q/9+xStbVMrA=;
-        b=WTuSA3r5w+kXbXvUb4UNOoeULn9RkRM/afLeoGMK4S2q5crqm5Den2NZmY2z1MiE6B
-         KbF7xuMdw9F8jNr340/zwc6Hw0KT5eOK9qE2OAfk83S4gpl8/D4jAQIfAfxdA3RGDpk+
-         wUMAhMWLlDwJCqwoEe41te0SMYVlWjU8Dph/WKvpeF8R/lgX9fuu/lzQvvQhoUx5lNME
-         rN4hpksESY/ovZNhmNxsEFc4v6+AbXL8RXeE6IBWVQdC/hr/2g2y5IkDIokXMgHEVQuf
-         oC1jbs/WN0+2cYDO9EJeIBmLosS5czy6D2YhsPd8/MxJ3w6Az6FJMohHYqNncW8624pI
-         lzZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWtqxRG9UqO6V692Gv4cjTL8sfOZG+urUWjKdocw9j7RcjjO53B1A7Ddz26VAhs8hX8wu2c6G2POGYlV2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO+SnYanmP/3giwIF4OZCtd4QaUZhDjDanxANuO9LwubnYaDQD
-	jETf0iXAUCKpYYFKrsgXpHnz6IRkYzrkmrrs+krqZ7GEtEpjau1ggc6d7SiTTzPZTlA=
-X-Gm-Gg: ASbGncu95bC+AZGzyQQVew9TzZSetyZgrgp16wnKUzJT5xUKh4jrWdYfXpKciSkaR+j
-	6iyTqMpdHtaH/FAdPrCkU5zmSyAytMP2TshfesXAynoO8Vo51ZZ6zMRvvqV457G2wnD4XJQ+uec
-	2eW3nG+KhfnpF1mnSvf5ZeAUVOZqzd/n2Vp/f5fYPi9PYP0gj58ncLaBLleJ249e3Wh87BzBCDs
-	3yI4lt4yHHGvkzhQchR5dF4gmxilpdEEjLYv4zQO5cK1cgo7lGT0+B5dNRX3SD87Z/0jLDE4Iaq
-	hx1VT5C9RMJMczlbcNlzLoMyANRPlTdO/KApPdkN2Mghfsz2ivtqbVh/7b1NjYzg
-X-Google-Smtp-Source: AGHT+IGsunl5K1ssoQSRQmIgzglzisrnybJwWxpgkBqoS6HCLg2uMYiKE39WDsXJ7qi/USmCgzVtaA==
-X-Received: by 2002:a05:6000:401e:b0:3a4:f7dc:8a62 with SMTP id ffacd0b85a97d-3a57189690emr6979169f8f.0.1750067736249;
-        Mon, 16 Jun 2025 02:55:36 -0700 (PDT)
-Received: from matt-Precision-5490.. ([2a09:bac1:2880:f0::2e0:113])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b28876sm10554308f8f.73.2025.06.16.02.55.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 02:55:35 -0700 (PDT)
-From: Matt Fleming <matt@readmodwrite.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@cloudflare.com,
-	Matt Fleming <mfleming@cloudflare.com>
-Subject: [PATCH] bpf: Call cond_resched() to avoid soft lockup in trie_free()
-Date: Mon, 16 Jun 2025 10:55:32 +0100
-Message-Id: <20250616095532.47020-1-matt@readmodwrite.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750067885; c=relaxed/simple;
+	bh=r3ZafE+v5VeSNX6Xt/GDq+TE85TaHGnoq3LgKAUW3Ow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MEMYKcLmjxO/QzafUC3Xi3HfqDRHU/00rJz5K3KShvDwy4HM/9xvjZvZgmr2x24OxnqURhdHrwET2N7I5Rny6Pf5ZMu7N/iuKTqGOeP997BM4fsQvYesF1OyXtg54jl0fwQJN+EY8X6dhUowgBcbEnX7p2RrbrpoZ2I7keFGugM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uR6ag-0002GD-6S; Mon, 16 Jun 2025 11:57:22 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uR6ac-003mk1-1V;
+	Mon, 16 Jun 2025 11:57:18 +0200
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id D3E53428695;
+	Mon, 16 Jun 2025 09:57:17 +0000 (UTC)
+Date: Mon, 16 Jun 2025 11:57:16 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, "Chester A. Unal" <chester.a.unal@arinc9.com>, 
+	Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-can@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 3/5] net: can: mcp251x: propagate the return value of
+ mcp251x_spi_write()
+Message-ID: <20250616-authentic-competent-bustard-e31498-mkl@pengutronix.de>
+References: <20250616-gpiochip-set-rv-net-v2-0-cae0b182a552@linaro.org>
+ <20250616-gpiochip-set-rv-net-v2-3-cae0b182a552@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="e4kyy2hl3xavjzza"
+Content-Disposition: inline
+In-Reply-To: <20250616-gpiochip-set-rv-net-v2-3-cae0b182a552@linaro.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Matt Fleming <mfleming@cloudflare.com>
 
-Calls to kfree() in trie_free() can be expensive for KASAN-enabled
-kernels. This can cause soft lockup warnings when traversing large maps,
+--e4kyy2hl3xavjzza
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 3/5] net: can: mcp251x: propagate the return value of
+ mcp251x_spi_write()
+MIME-Version: 1.0
 
-  watchdog: BUG: soft lockup - CPU#41 stuck for 76s! [kworker/u518:14:1158211]
+On 16.06.2025 09:24:06, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>=20
+> Add an integer return value to mcp251x_write_bits() and use it to
+> propagate the one returned by mcp251x_spi_write(). Return that value on
+> error in the request() GPIO callback.
+>=20
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Avoid an unbounded loop and periodically check whether we should reschedule.
+Reviewed-by: Marc Kleine-Budde <mkl@pengutronix.de>
 
-Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
----
- kernel/bpf/lpm_trie.c | 2 ++
- 1 file changed, 2 insertions(+)
+Feel free to mainline the 2 CAN patches via the net-next tree directly.
 
-diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
-index be66d7e520e0..a35619cd99f6 100644
---- a/kernel/bpf/lpm_trie.c
-+++ b/kernel/bpf/lpm_trie.c
-@@ -646,6 +646,8 @@ static void trie_free(struct bpf_map *map)
- 			RCU_INIT_POINTER(*slot, NULL);
- 			break;
- 		}
-+
-+		cond_resched();
- 	}
- 
- out:
--- 
-2.34.1
+regards,
+Marc
 
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--e4kyy2hl3xavjzza
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmhP6nkACgkQDHRl3/mQ
+kZxs6wgAhFu5HOzU+o2sA/iQUZtoFgGRCGlnrRtplsyqOkJuBOv+EbNYewvtRN3L
+auIWb+i9/gNN7LtktKhKgqQ/w3ZP+dXNqktHOODiNT6EbzdIF4XpUzGEq1cG7Gaa
+SCYw1XiSs1A4p88Vr0sa15bYmRam7OK16HTquSz0yPXeTGdc/mjdYnOD6Zu8bVM7
+p8E0Z6zcjxDsagIp99SIUpJvyUat2LkMxi+3aKx4vCcDgm5WsEniGjFITJm0SmvJ
+yUlCyfN5HEjiQVI1Pc4Ns8ngROMfciVzVoTPfghS957w1aNM8SGQB+5qeX+UctWf
+iofixBKdnPKxxjesIAlu3SjuYLm/jg==
+=UtNp
+-----END PGP SIGNATURE-----
+
+--e4kyy2hl3xavjzza--
 
