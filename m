@@ -1,71 +1,109 @@
-Return-Path: <linux-kernel+bounces-687686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84F1ADA7A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:28:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A32ADA7D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 292637A13D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 05:27:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E88FF7A539D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 05:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48A21D416E;
-	Mon, 16 Jun 2025 05:28:16 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989EC46B5;
-	Mon, 16 Jun 2025 05:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D61C21DB92A;
+	Mon, 16 Jun 2025 05:50:39 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F1C2E11CF;
+	Mon, 16 Jun 2025 05:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750051696; cv=none; b=TZWHf/95Dqb5R1Ed8AO3J3ISJYoPAgbLK6GepWx08nptMLhrbN5c6SAMIuh1S7OoRQTjGlIyUUEfaMGdxG3m+uFs80OmO+PobDrZHZWsIEMZwdFXlGHYxAKdCCDhyyirXsiicopkSdyp2whL2gFxxsqu3aVFCplSggA21QZhtcI=
+	t=1750053039; cv=none; b=rF2iVw52asvrrEhtBoalrJH9aqpXNIomHT2qGlIiaIB0r0svShaNytZVHkgGYFBv2TTFa364UlLY7WPPsPnxGO3/w2dMwpXrkiWMOhnjTX7SvPdbkuklbucMNpy4bK+HByi8DnF0bkQ+cA3V11X8Lf99ZNKM14JuSpZ4OcoWKUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750051696; c=relaxed/simple;
-	bh=y6/xbAj2sgoXm9Y8QGNpdpm/uiCjtktBmHi+ar3x4RY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TsL1I4REyGh5Y0tx1UR04jceEnt8/wyuWA31Z+PSJPjdaHvWqgv1tI5Yi9ECfkTK6tFBDjpOhGf/HPbLgS2Q1KIkiOzhMpoqpQA2Sz2IRfQss5PxFvyfVsrzIwRqq38eHTsr4frDFtI6lnhVO30j4yJfwj2UksO4RJeLNnmO5BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id EC77668BFE; Mon, 16 Jun 2025 07:28:10 +0200 (CEST)
-Date: Mon, 16 Jun 2025 07:28:10 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Carlos Maiolino <cem@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Subject: Re: [PATCH 07/14] xfs: ifdef out unused xfs_attr events
-Message-ID: <20250616052810.GB1148@lst.de>
-References: <20250612212405.877692069@goodmis.org> <20250612212635.748779142@goodmis.org>
+	s=arc-20240116; t=1750053039; c=relaxed/simple;
+	bh=CJAd+aKM9Pfu6e0guSrEaR+0MN/mkaAyikHCoyUr4Rw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=duIRcJ+FKvMH5HJoBfhMZwSl+tcQfPIIb3qegpE84y2HNc/XszOt4WZOlNY/2d2sZwOtVWrPbMjX0gxmsMFwI1cxoi5hy42nvvo6pUek0GuAgVDzgTwigyorSHSVJkgXqYHtvxTM4ScCGR9/f+q5sMKQK9wNmRN/rB1LECho5UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bLJVC6tLxz9st4;
+	Mon, 16 Jun 2025 07:29:55 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id FIWO7-Oem8zY; Mon, 16 Jun 2025 07:29:55 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bLJVC638Dz9sSD;
+	Mon, 16 Jun 2025 07:29:55 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id CDA7C8B764;
+	Mon, 16 Jun 2025 07:29:55 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id UYBXJMCF-rVY; Mon, 16 Jun 2025 07:29:55 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 899E08B763;
+	Mon, 16 Jun 2025 07:29:55 +0200 (CEST)
+Message-ID: <20f5757c-78b3-4a68-a499-96951108d27c@csgroup.eu>
+Date: Mon, 16 Jun 2025 07:29:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250612212635.748779142@goodmis.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the sound tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Takashi Iwai <tiwai@suse.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20250616130126.08729b84@canb.auug.org.au>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250616130126.08729b84@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 12, 2025 at 05:24:12PM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
+
+
+Le 16/06/2025 à 05:01, Stephen Rothwell a écrit :
+> Hi all,
 > 
-> Trace events can take up to 5K in memory for text and meta data per event
-> regardless if they are used or not, so they should not be defined when not
-> used. The events xfs_attr_fillstate and xfs_attr_refillstate are only
-> called in code that is #ifdef out and exists only for future reference.
+> After merging the sound tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> Ifdef out the events that go with that code and add a comment mentioning
-> the other code.
+> In file included from include/linux/uaccess.h:12,
+>                   from include/linux/sched/task.h:13,
+>                   from include/linux/sched/signal.h:9,
+>                   from include/linux/rcuwait.h:6,
+>                   from include/linux/percpu-rwsem.h:7,
+>                   from include/linux/fs.h:34,
+>                   from include/linux/compat.h:17,
+>                   from sound/core/pcm_native.c:7:
+> sound/core/pcm_compat.c: In function 'snd_pcm_ioctl_sync_ptr_x32':
+> sound/core/pcm_native.c:3081:60: error: 'struct snd_pcm_mmap_status_x32' has no member named 'tstamp'
+>   3081 |         unsafe_put_user(__s.tstamp.tv_sec, &__src->s.status.tstamp.tv_sec, failed);             \
+>        |                                                            ^
 
-Just drop them entirely, which is what the code using them should
-have done as well.  We can always triviall bring back code from
-git history.
+...
 
+> 
+> Caused by (sone of) commits
+> 
+>    2acd83beb4d3 ("ALSA: pcm: refactor copy from/to user in SNDRV_PCM_IOCTL_SYNC_PTR")
+>    de32a6120b80 ("ALSA: pcm: Convert snd_pcm_sync_ptr() to user_access_begin/user_access_end()")
+>    a0f3992ee86e ("ALSA: pcm: Replace [audio_]tstamp_[n]sec by struct __snd_timespec in struct snd_pcm_mmap_status32")
+>    a9b49bf8ad59 ("ALSA: pcm: Convert SNDRV_PCM_IOCTL_SYNC_PTR to user_access_begin/user_access_end()")
+> 
+> I have used the sound tree from next-20250613 for today.
+> 
+
+This is caused by a0f3992ee86e.
+
+Fix here : 
+https://lore.kernel.org/linux-sound/e46139ed61bc52fab51babadb8b656fa1aa15506.1750050658.git.christophe.leroy@csgroup.eu/T/#u
+
+Christophe
 
