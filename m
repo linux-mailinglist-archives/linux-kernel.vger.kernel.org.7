@@ -1,201 +1,169 @@
-Return-Path: <linux-kernel+bounces-688440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84BA4ADB276
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:48:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B26ADB27E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 264231651C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:48:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31B4C18821D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F602877D8;
-	Mon, 16 Jun 2025 13:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54EF292B28;
+	Mon, 16 Jun 2025 13:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HC9caf5t"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="A8V7qrDQ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F1E285CB2
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750081727; cv=none; b=KPik4sJSJpG2R4uweCXeD51lb1R20VxueZ/CjUKI4arVHy1LHP/qCQEaUVaIhYHgpoSv3o6c5XJOXeZ46TOBFVi6GeReO+Gx07Z3MrgKpiI7qZgXjA142bQgnIcD7i7iGiIMuRQYMcvO73fpZoGVYb5Fl2JWOzNBrLzoSEyy+jo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750081727; c=relaxed/simple;
-	bh=hORHC5srxkLYSdtcercNBIJfYGZMJfr+bVXBwlntJR8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JVWRdnjjY0Wiw1289Pa9YmCasL2EjC7OcolwbM6Mfnnwelw6B3wIjpkK2DzUKT8+JXyNR896AZm3Sh5tiYSh1T7q+k9kE7km0VzyicHV7KEGLY8sXX/KyMgSCPgPgStAxWozktfvnq5eri0nVyCKDsu33CCrDsc+Uvqz6OpgdfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HC9caf5t; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e733e25bfc7so3826394276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 06:48:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750081725; x=1750686525; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uDEsIjpQxmad8FZLMr2zVoXrSneTIt+2z4fP3XcIK5Y=;
-        b=HC9caf5t7Z3YV34hMVfY2iOyc8ceDK41ddWnZGKqTuEfRCkaUY3raiG3FlkrCFIjfD
-         tPyRf2CTFWTmNqn1/fqrqeiU9uJtuN0/o6S2lRpPIvGheNVfGEWlXe0gKBMgT93uCWaV
-         howKJOdXYFL5VBUyk2ABJnWG4of5g8jT5EQF3lfnh7+BPQPGs47ip1FBWZ/yH45SY+nE
-         ITmfq9OEFvRdyraYRy2/XeNzHkPruJLRo4LNcIanLnMF1+j2wUFJAl4/IBSZ8nBmL7y3
-         hnmmFLXuSOCnEaOhKiBMjLbpfE4uyCGHw7eLjaR81qvd/V7H6hVfgYy2IZI1q74yo9eT
-         +LMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750081725; x=1750686525;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uDEsIjpQxmad8FZLMr2zVoXrSneTIt+2z4fP3XcIK5Y=;
-        b=XW813BwnyEvu3qxyuTH1WTRy4v51kUvcXClRxvU2Xa954TNdm/HuJlghbnRas3YcRz
-         5/wqIrK/jJgi8pTX/6YVst27CB4st2rzEDK8lUsWMo0v1dODNlhwgbYjBRG4CtcUshDL
-         SKV/+geDC506/SKMihygFJUC7tkbWiNmscC1XUJmTj4t6Gwq5EbyVLgN4ev3wpLxC96o
-         /gfDK8aQXb5YqAGa7HNp0K+MgmMAuRFssNUALvTvSOEZiawaKOYPywqw9FGGupVq3WnG
-         2pPdQmroKGBN1xaB2528mPxtW2asVLK6ignZnIwVxV+UGVnryKFDoZNZZ2MQRZfP4YGI
-         y5iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTQZVRXiXTPqKJs64X+OmK5DCN4wg0JhPWRowLIW7HDyGH3YIWNpSEuRNpzJrb+3ooKzV96tJIbliIEtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypfmZVYtM9MCXuWsM48VL8ZoBfiN9KuvyiPUBtOwN5L6DGu65I
-	tOPvyWgIZ9hybEsWeGQW+Y2ZOJA02iF7Xq2yqjbdPNUTq83iiUYv0rsAi0bPhPJa4vGLyIyG/3p
-	YjodZPDqjcgdguc/fXDDUstwY2yv1OHO+3oSvwTHx4Q==
-X-Gm-Gg: ASbGncvAbsHDGFo2hmBeTBxzAP0UPoZXNJOr8RoReUzt805EZfaVdPQ99jsgI4KCIkF
-	LCDeSbTnXPv9pp7JwE2BqHYt3pRlEVB32ksyFX/AQvpCxO036n5417m95EP/64H92YSuPxnfuTe
-	m3x7Ak9iB6YdZMhN2lWAtHVJEVGUzknxxlJzZMViuxkuK6
-X-Google-Smtp-Source: AGHT+IHNxadKla4VrvH6YQyXKvJ7gWCdWq9mPlNx20rADiF787HEQItMLkqVHGwgE74xslQFsHpPtk0p6m7ForJ9ORA=
-X-Received: by 2002:a05:6902:220e:b0:e81:9581:4caa with SMTP id
- 3f1490d57ef6-e822ad8bc0fmr12562057276.34.1750081724654; Mon, 16 Jun 2025
- 06:48:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1211D63F8;
+	Mon, 16 Jun 2025 13:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750081758; cv=pass; b=D/sZy8wjj9iWUjw1+b/n7GtYzWvcxf0NCz/T1siqXQiwCjCKLmzUjAxN+xpkTNF8dB/S4vkjgCPvdKrDfMNmpAa/36stpHtOeXUegSmOIqPOJwv728yd39mZEF+tTogIazwGU0NMdPfQWw4RvuT5hWeCAhSk+VJQMU2qtTrJmJg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750081758; c=relaxed/simple;
+	bh=suG/XmN64poiwvdjtYlhbYfxNOYfNnN19diIXR+URYY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=YNGktZj4eAPYLZP5V01Z/QC2PcwFWaziIZtczQo7QGIcNpQE7K06Hn1nzT0HjU8DKSey9XrOEQUoYKMPSH1a9SoT9b7yHsah5jpFx1rUXpGX4WUVX3Bk5eCEYYOxwH++PV3hsvusIdUrXIiNYhiFdiHBKKJoEdrRVrfGF6b5kW8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=A8V7qrDQ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1750081736; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QOkFke+WYRdhFdoWYsFwbcjyaLKzKNw5qOZVzhtwMnkC8aHMsPHoCw/QiCXEp/9Ypa1VT7dBHA12lhloN7qHviAL3wTRkjorBOPpcflZK2Fl4f22aTVf3R+x2LOoxpbob/rTd0J5odSv6Cvwa1oerNYVx1ToYkntyST4iItDleM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750081736; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=F/rH2WrCUQ484FUFlRj5siQ69daSzn6eYUq3Oh+TEoA=; 
+	b=DcMPcGCrew6QaLYGsiLfH3eXLW7MKhjOEbGXzk9JdIz6BBTP64jDYKkt63VC4NkX5qSZD9ftmb9otDVDKQR9uQAWImdPnUMCJjfrKUoGAfe8qOwy56ODAJRUKWJTzhThQ9qjqFu6rkazbgso0qVaNYMvmzJrdVBhDN5nvZx0LsE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750081736;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=F/rH2WrCUQ484FUFlRj5siQ69daSzn6eYUq3Oh+TEoA=;
+	b=A8V7qrDQFujNu15YNu5iHvvHPfx9ilP21fKxk0qxc48bCSQezHjtuRu3sAE8HmQs
+	ifHB+BeziJgMEUeUNra2Ay39jCpSs+Vy3V59m4LjPzpheE9dG9W51P8+susyRO89MiL
+	OMC6NF0j3DrBPOVEbxtSK3mvkdm0J3r7YXrI3vwQ=
+Received: by mx.zohomail.com with SMTPS id 1750081733380228.17260193114203;
+	Mon, 16 Jun 2025 06:48:53 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250613-pmdomain-hierarchy-onecell-v3-0-5c770676fce7@baylibre.com>
- <20250613-pmdomain-hierarchy-onecell-v3-2-5c770676fce7@baylibre.com>
-In-Reply-To: <20250613-pmdomain-hierarchy-onecell-v3-2-5c770676fce7@baylibre.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 16 Jun 2025 15:48:08 +0200
-X-Gm-Features: AX0GCFvKDYfrBoGxWHbzdQisHdQSvIWu47gSqcVmiJT8KMDILVyrcsYNa9sTBzs
-Message-ID: <CAPDyKFrO9rb0eDb2qO+EGaVjOFG=7emgca8511XACDhWY=dt5g@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 2/2] pmdomain: core: add support for subdomains
- using power-domain-map
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-pm@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v4 4/6] rust: irq: add support for threaded IRQs and
+ handlers
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <5B3865E5-E343-4B5D-9BF7-7B9086AA9857@collabora.com>
+Date: Mon, 16 Jun 2025 10:48:37 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Benno Lossin <lossin@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-pci@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B4E43744-D3F5-4720-BC75-29C092BAF7A6@collabora.com>
+References: <20250608-topics-tyr-request_irq-v4-0-81cb81fb8073@collabora.com>
+ <20250608-topics-tyr-request_irq-v4-4-81cb81fb8073@collabora.com>
+ <aEbTOhdfmYmhPiiS@pollux>
+ <5B3865E5-E343-4B5D-9BF7-7B9086AA9857@collabora.com>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Sat, 14 Jun 2025 at 00:39, Kevin Hilman <khilman@baylibre.com> wrote:
->
-> Currently, PM domains can only support hierarchy for simple
-> providers (e.g. ones with #power-domain-cells = 0).
->
-> Add more generic support for hierarchy by using nexus node
-> maps (c.f. section 2.5.1 of the DT spec.)
->
-> For example, we could describe SCMI PM domains with multiple parents
-> domains (MAIN_PD and WKUP_PD) like this:
->
->     scmi_pds: protocol@11 {
->         reg = <0x11>;
->         #power-domain-cells = <1>;
->
->         power-domain-map = <15 &MAIN_PD>,
->                            <19 &WKUP_PD>;
->     };
->
-> which should mean that <&scmi_pds 15> is a subdomain of MAIN_PD and
-> <&scmi_pds 19> is a subdomain of WKUP_PD.
->
-> IOW, given an SCMI device which uses SCMI PM domains:
->
->    main_timer0: timer@2400000 {
->       power-domains = <&scmi_pds 15>;
->    };
->
-> it already implies that main_timer0 is PM domain <&scmi_pds 15>
->
-> With the new map, this *also* now implies <&scmi_pds 15> is a
-> subdomain of MAIN_PD.
->
-> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-> ---
->  drivers/pmdomain/core.c | 24 ++++++++++++++++++++++--
->  1 file changed, 22 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> index d6c1ddb807b2..adf022b45d95 100644
-> --- a/drivers/pmdomain/core.c
-> +++ b/drivers/pmdomain/core.c
-> @@ -2998,8 +2998,8 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
->                                  unsigned int index, unsigned int num_domains,
->                                  bool power_on)
->  {
-> -       struct of_phandle_args pd_args;
-> -       struct generic_pm_domain *pd;
-> +       struct of_phandle_args pd_args, parent_args;
-> +       struct generic_pm_domain *pd, *parent_pd = NULL;
->         int ret;
->
->         ret = of_parse_phandle_with_args(dev->of_node, "power-domains",
-> @@ -3039,6 +3039,22 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
->                         goto err;
->         }
->
-> +       /*
-> +        * Check for power-domain-map, which implies the primary
-> +        * power-doamin is a subdomain of the parent found in the map.
-> +        */
-> +       ret = of_parse_phandle_with_args_map(dev->of_node, "power-domains",
-> +                                            "power-domain", index, &parent_args);
-> +       if (!ret && (pd_args.np != parent_args.np)) {
-> +               parent_pd = genpd_get_from_provider(&parent_args);
-> +               of_node_put(parent_args.np);
-> +
-> +               ret = pm_genpd_add_subdomain(parent_pd, pd);
-> +               if (!ret)
-> +                       dev_dbg(dev, "adding PM domain %s as subdomain of %s\n",
-> +                               pd->name, parent_pd->name);
-> +       }
+Hi Danilo,
 
-Please move the above new code to a separate shared genpd helper
-function, that genpd providers can call build the topology. This, to
-be consistent with the current way for how we usually add
-parent/child-domains in genpd (see of_genpd_add_subdomain).
+> On 9 Jun 2025, at 13:24, Daniel Almeida <daniel.almeida@collabora.com> =
+wrote:
+>=20
+> Hi Danilo,
+>=20
+>> On 9 Jun 2025, at 09:27, Danilo Krummrich <dakr@kernel.org> wrote:
+>>=20
+>> On Sun, Jun 08, 2025 at 07:51:09PM -0300, Daniel Almeida wrote:
+>>> +/// Callbacks for a threaded IRQ handler.
+>>> +pub trait ThreadedHandler: Sync {
+>>> +    /// The actual handler function. As usual, sleeps are not =
+allowed in IRQ
+>>> +    /// context.
+>>> +    fn handle_irq(&self) -> ThreadedIrqReturn;
+>>> +
+>>> +    /// The threaded handler function. This function is called from =
+the irq
+>>> +    /// handler thread, which is automatically created by the =
+system.
+>>> +    fn thread_fn(&self) -> IrqReturn;
+>>> +}
+>>> +
+>>> +impl<T: ?Sized + ThreadedHandler + Send> ThreadedHandler for Arc<T> =
+{
+>>> +    fn handle_irq(&self) -> ThreadedIrqReturn {
+>>> +        T::handle_irq(self)
+>>> +    }
+>>> +
+>>> +    fn thread_fn(&self) -> IrqReturn {
+>>> +        T::thread_fn(self)
+>>> +    }
+>>> +}
+>>=20
+>> In case you intend to be consistent with the function pointer names =
+in
+>> request_threaded_irq(), it'd need to be handler() and thread_fn(). =
+But I don't
+>> think there's a need for that, both aren't really nice for names of =
+trait
+>> methods.
+>>=20
+>> What about irq::Handler::handle() and irq::Handler::handle_threaded() =
+for
+>> instance?
+>>=20
+>> Alternatively, why not just
+>>=20
+>> trait Handler {
+>>  fn handle(&self);
+>> }
+>>=20
+>> trait ThreadedHandler {
+>>  fn handle(&self);
+>> }
+>>=20
+>> and then we ask for `T: Handler + ThreadedHandler`.
+>=20
+> Sure, I am totally OK with renaming things, but IIRC I've tried  =
+Handler +
+> ThreadedHandler in the past and found it to be problematic. I don't =
+recall why,
+> though, so maybe it's worth another attempt.
 
-Moreover, we also need a corresponding "cleanup" helper function to
-remove the child-domain (subdomain) correctly, similar to
-of_genpd_remove_subdomain().
+Handler::handle() returns IrqReturn and ThreadedHandler::handle() =
+returns
+ThreadedIrqReturn, which includes WakeThread, so these had to be =
+separate
+traits.
 
-> +
->         ret = genpd_set_required_opp(dev, index);
->         if (ret)
->                 goto err;
-> @@ -3056,6 +3072,8 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
->                         dev_gpd_data(dev)->default_pstate = 0;
->                 }
->
-> +               if (parent_pd)
-> +                       pm_genpd_remove_subdomain(parent_pd, pd);
->                 genpd_remove_device(pd, dev);
->                 return -EPROBE_DEFER;
->         }
-> @@ -3063,6 +3081,8 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device *base_dev,
->         return 1;
->
->  err:
-> +       if (parent_pd)
-> +               pm_genpd_remove_subdomain(parent_pd, pd);
->         genpd_remove_device(pd, dev);
->         return ret;
->  }
->
-> --
-> 2.49.0
->
+I'd say lets keep it this way. This really looks like the discussion on
+de-duplicating code, and as I said (IMHO) it just complicates the
+implementation for no gain.
 
-Kind regards
-Uffe
+=E2=80=94 Daniel=
 
