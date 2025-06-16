@@ -1,131 +1,198 @@
-Return-Path: <linux-kernel+bounces-688661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F24ADB576
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:32:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A89ADB588
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 502403B4160
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:29:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DD377ABAC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E17C28151E;
-	Mon, 16 Jun 2025 15:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B21625A33A;
+	Mon, 16 Jun 2025 15:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lo8vdmQm"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="SWU8ZoOV"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6942638A1
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 15:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750087765; cv=none; b=g4iv7EtqewYXjim0nMDeNgFuiNqV3vEeCbhftMOC+2mFJAMikI3yK/K+ISNY6tsr+WrezYfGmZaDQ8HfKwej0MhtpaMrl101zqcdItfzkKaI8U0PcK2vfRDHRBhU1S/+FPmHldKUciEniNp6OUWnNQPz+1nJRARzeXLEtQWhhKc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750087765; c=relaxed/simple;
-	bh=6eIWkWuKOIsBSFSU81VrPxHUw8nDWPxgWAtBDL7zshI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qBzaZBfm3hRdjAIrJ7fRXoieWyhon/OV4KdBIVwzt/CLB7DOxCzqAtGJ7ExLFodOTanNBglkFLJNnF9sp5v8qBBvmke/KI4qnilXJuci/c2sDJ7mPjrqZHfCgciOwZ6IzBs4l4zfWftx/2jU4Ge237+1YXXO8KNlz2zgGGO/cOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lo8vdmQm; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-553b544e7b4so3224142e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 08:29:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750087761; x=1750692561; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CXcagyWgdxPaOdyolF8VUudFwWviLYrCDNyLuJgMIK8=;
-        b=lo8vdmQmQIuBU+rG6oVMZ3Paswhb7vfDWvcnzuQ9VQgwSm73+wZs6xsP9lUDT8jxCS
-         0bfa0mtN3r+4xz60vJS+YuAUcEU+EiAboktTxBD/urpXRUp/uuplWUYa3h4cZa1h31W+
-         QyjUb/VOSXjBPjtKF+P6xvxtHE/o7ZW0TLuxw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750087761; x=1750692561;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CXcagyWgdxPaOdyolF8VUudFwWviLYrCDNyLuJgMIK8=;
-        b=ZHanJG17uTgNfR7csIreSJ1lH+zvOpRTwlefHucv/lFfNNM/KcUZy/ryMsD3SZptdu
-         6RqE+zUiSN2pGqrtAyZlZqhxzjGtb3Ak2GECiOpsfEheEpM3xqfQdJI0GW85N4q96rIY
-         l5x59yqNpZ6JchZUQUMxx97a+NFUNOF4SKchEGJ3HbaSOmtdBnUlmdbrlJCLOlUwlJUZ
-         EFwmadQXMo3hwcG4xqS+PabKVqtqRQyfCI9CmWgQf+Sbyxhg+Dh2uEZoloqz9oFIVmCV
-         r1UMeaK2wXH+243qWKtpfPji8ugyYro63mGyGEx/xNAaPKUgwv5p1rROKtcf+ehFDp6i
-         xNGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUG2HKqaTTNYIJWjX1CaSuSY5AF/RU0eVgKviEwg8tNbcYlEBE/PQEY8ukKr5+AkqB+6M/buxmO3wROMhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywke1pDxDt/nmkxpC6Dcn106ISZ8xeeseB70/uaOFptWL8wt/AJ
-	jemMA9HT57SjVpExk4RU1Hv5/F3NmYTqL3X22bcAWtOffaEMWIumvBXilKWoNZBBu4yPV7nuhsu
-	slykFJw==
-X-Gm-Gg: ASbGnct6bYGn9o5xkXxng8AYjtVmDl1fibUB8LEl+RpF7313bXfYiBK343X8hU5cEiU
-	UnR/yodNspTYRKD02YjgtkhdONzKT+tjFR2zXTWzfMFhsz1Yw5CpyVIVPJ2Jz5M8qJTG6OO5m/K
-	KeTxlGEkZmMRVHpggisZ804tUvovsvDhO4MtBybDjhqGku4hZTxcKbNnlSaXF4+Inbh5/k45G1j
-	7QRF+Hlc6nU9tUu5A/LVZw7JcSPRpLKzC97Ie+oSrpiI218/jGYSdb+0Ggw51qV4xOBzZOok1L3
-	daWj1XNJWni6tIbrYzNTabc3PpbeE5gQlvu2dBb0k9Pnp7MEhsgmRkNCp3bxxJRqHjCv0CgJRKj
-	TOHhsk1JLDcBwKYFKLwL44zg2ts2hjTz8cmKUCCkq0A==
-X-Google-Smtp-Source: AGHT+IH1S4ALM2gMeb/svq1KORr41xuNr85Hs8gIC4o8fbK5Xpu5PFMKGkdjJyiQOAmowu8Unfeo7w==
-X-Received: by 2002:a05:6512:1114:b0:553:510d:f46b with SMTP id 2adb3069b0e04-553b6f0f99bmr2569990e87.32.1750087760767;
-        Mon, 16 Jun 2025 08:29:20 -0700 (PDT)
-Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac11ff5dsm1568020e87.31.2025.06.16.08.29.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 08:29:20 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 16 Jun 2025 15:29:18 +0000
-Subject: [PATCH v7 5/5] media: venus: vdec: Make the range of us_per_frame
- explicit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A0D38FB0;
+	Mon, 16 Jun 2025 15:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750087883; cv=pass; b=uSqh0G2ADeKUWDFrhr8B+20dI97uPNhZZdgcWP0/9Ezb9K6yXZD486wDWYAb4XZi1wDKL8MaIFTeXIfnbq7hAaPXUIGD7C/YwoYdZb2JPTlpCaCrhDIh4nQHb5w/oeN47xbdnk0uiidRRheYiod3JlN44UccDrIqN7cCvLusn9E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750087883; c=relaxed/simple;
+	bh=IyNyE4rK4hkY3z7uAZZgkVqTnSDkDqzal28PUmVRGsc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q6Faip4G97I632KhZ8NwHK/aOtgujaCI4+aYoW3ZgbvcsJ6CX3HTckPap9ltugckGZQ+t5AZSQfHGK24mgTYw/MXgERX3smwmqLPHLlf45sGWB3/vNPtHTGYfVvFlgIhZ4cMt/wua4xjjzZJF+nhM7l7xE51HM7jfu2zWKHLl+A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=SWU8ZoOV; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1750087851; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Cgga3I8jF2zVzJLMOxq+Vn/77I5PkLmkTEtFZ7zNvJouifQS8tbvClE2MYxzRvqgv5KVzPwkMsKX2c8dbRw5aHEE/3p6BawvJT7ELQd2A/dXTwS/Q232zAh7k72IfEqxMWj/wct0nfysdOtrsy6wmTBOQ1YWREv9UelFbSUtMMk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750087851; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=0BL+aG/UNNGLP1x4xgnCt14zsxQCcrfboSBpn0n95Mc=; 
+	b=dNmPhDbLjmWo3vNDqZAV9EaDNH0C+Nd6EWaKjh/gurcELJAgpGBk3PZFA3qlTTe9rbCGWjQHk9g5ZmMoK1gP/8stAwxj+jZv7f9YjMebrb1NxZXxPxGUcya6gQHqL98FvYUFoIJOBgFVMeycR6esHS9i3XNPYNIsO5Bha0wQpgI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
+	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750087851;
+	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=0BL+aG/UNNGLP1x4xgnCt14zsxQCcrfboSBpn0n95Mc=;
+	b=SWU8ZoOVqPfce4bWTOatjItj8sFTpIKwVX2258AwFPU8OkUv2qfeu9ySMT7l9ZJU
+	hOApFkMODZXMLbz4r7F2gtSRAFjq/z0WgTx1z/VEEVumTMuhTO23GeTEzAmQRhghH5a
+	DDVTRNOSby77h75bM5LvF0eCcqcswZ36jcaAHcnw=
+Received: by mx.zohomail.com with SMTPS id 1750087849499697.6715293869444;
+	Mon, 16 Jun 2025 08:30:49 -0700 (PDT)
+Message-ID: <5c971c09-c398-40a3-9ed5-ec38b6645e1d@collabora.com>
+Date: Mon, 16 Jun 2025 17:30:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250616-test-v7-5-b8c0f98494fa@chromium.org>
-References: <20250616-test-v7-0-b8c0f98494fa@chromium.org>
-In-Reply-To: <20250616-test-v7-0-b8c0f98494fa@chromium.org>
-To: Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Dikshita Agarwal <quic_dikshita@quicinc.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Stanimir Varbanov <stanimir.varbanov@linaro.org>, 
- Hans Verkuil <hans.verkuil@cisco.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] dt-bindings: iommu: verisilicon: Add binding for VSI
+ IOMMU
+To: Conor Dooley <conor@kernel.org>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+ nicolas.dufresne@collabora.com, p.zabel@pengutronix.de, mchehab@kernel.org,
+ iommu@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+ kernel@collabora.com
+References: <20250616145607.116639-1-benjamin.gaignard@collabora.com>
+ <20250616145607.116639-3-benjamin.gaignard@collabora.com>
+ <20250616-winter-strict-db98f85db22d@spud>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <20250616-winter-strict-db98f85db22d@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Fps bigger than 0.000232829 fps, this fits in a 32 bit us_per_frame.
-There is no need to do a 64 bit division here.
-Also, the driver only works with whole fps.
 
-Found by cocci:
-drivers/media/platform/qcom/venus/vdec.c:488:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead.
+Le 16/06/2025 à 17:14, Conor Dooley a écrit :
+> On Mon, Jun 16, 2025 at 04:55:50PM +0200, Benjamin Gaignard wrote:
+>> Add a device tree binding for the Verisilicon (VSI) IOMMU. This IOMMU sits
+>> in front of hardware encoder and decoder blocks on SoCs using Verisilicon IP,
+>> such as the Rockchip RK3588.
+>>
+>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+>> ---
+>>   .../bindings/iommu/verisilicon,iommu.yaml     | 71 +++++++++++++++++++
+>>   1 file changed, 71 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml b/Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
+>> new file mode 100644
+>> index 000000000000..acef855fc61d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
+>> @@ -0,0 +1,71 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/iommu/verisilicon,iommu.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Verisilicon IOMMU
+>> +
+>> +maintainers:
+>> +  - Benjamin Gaignard <benjamin.gaignard@collabora.com>
+>> +
+>> +description: |+
+>> +  A Versilicon iommu translates io virtual addresses to physical addresses for
+>> +  its associated video decoder.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - items:
+>> +          - const: verisilicon,iommu
+> You're missing a soc-specific compatible at the very least here, but is
+> there really no versioning on the IP at all? I'd be surprised if
+> verisilicon only produced exactly one version of an iommu IP.
 
-Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # qrb5615-rb5
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/platform/qcom/venus/vdec.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I only aware this version of the iommu for the moment.
+Does adding verisilicon,rk3588-iommu sound good for you ?
 
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 7d6612234d18a49573dc502d48ee61a900b63194..6042eb1e8705196b754dffc16bdb714378bb4cd4 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -484,8 +484,7 @@ static int vdec_s_parm(struct file *file, void *fh, struct v4l2_streamparm *a)
- 	do_div(us_per_frame, timeperframe->denominator);
- 
- 	us_per_frame = clamp(us_per_frame, 1, USEC_PER_SEC);
--	fps = (u64)USEC_PER_SEC;
--	do_div(fps, us_per_frame);
-+	fps = USEC_PER_SEC / (u32)us_per_frame;
- 	fps = min(VENUS_MAX_FPS, fps);
- 
- 	inst->fps = fps;
+>
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: Core clock
+>> +      - description: Interface clock
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: aclk
+>> +      - const: iface
+> Why "aclk" rather than core, to match the description?
 
--- 
-2.50.0.rc1.591.g9c95f17f64-goog
+I will change that, the driver doesn't care of the clock name anyway
 
+>
+>> +
+>> +  "#iommu-cells":
+>> +    const: 0
+>> +
+>> +  power-domains:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +  - clocks
+>> +  - clock-names
+>> +  - "#iommu-cells"
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +    bus {
+>> +      #address-cells = <2>;
+>> +      #size-cells = <2>;
+>> +
+>> +      vsi_mmu: iommu@fdca0000 {
+> The "vsi_mmu" label can be dropped here, it has no users.
+
+ok.
+
+Thanks,
+Benjamin
+
+>
+> Cheers,
+> Conor.
+>
+>> +        compatible = "verisilicon,iommu";
+>> +        reg = <0x0 0xfdca0000 0x0 0x600>;
+>> +        interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH 0>;
+>> +        clocks = <&cru ACLK_AV1>, <&cru PCLK_AV1>;
+>> +        clock-names = "aclk", "iface";
+>> +        #iommu-cells = <0>;
+>> +      };
+>> +    };
+>> -- 
+>> 2.43.0
+>>
 
