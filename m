@@ -1,300 +1,212 @@
-Return-Path: <linux-kernel+bounces-689059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB4CADBB76
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:47:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8CAADBB7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51B5B7A9F4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:46:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D3F83A977F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686F5216E2A;
-	Mon, 16 Jun 2025 20:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0412139CE;
+	Mon, 16 Jun 2025 20:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k55DcCHw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="locjFBNP";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Ie+bX6pP"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964BE2139CE;
-	Mon, 16 Jun 2025 20:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750106825; cv=none; b=meYkY3yPJWJT/LXH3oIRaUmVdC1l7nE3gutrWBX1uRJu0EdLdYLs03CAQE4ZTwCPr/k6v3NI8JdIVzKWdYcnkr5X83RIxBBGzuEfIoZrXM1JptPwWfAfHoKLYnuuW7nGDxxO0kisA2c9JYPgKbZWni9OFTIYWwb3LTvhRDMdQAc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750106825; c=relaxed/simple;
-	bh=0OgSSjO6xbyQI46xG7vaabloFQEtXfOKW8TtUv1V/Cc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kus5tkORMrq3GYS2l0eZbaVnKIOfU9V8YP/WaQ/HzBW2dfckgyUlXUTVPxhGpU34yGIX5+9c8P/zBqZGyDsxlyWPengeJNRsZsyvCcA0Nshcq2D798jIcjY2npTj7go+Uz6QAeG2AUtC7LN6JoHs2lH6RA27CLt7Q0NmoNYRexg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k55DcCHw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49172C4CEEA;
-	Mon, 16 Jun 2025 20:47:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750106825;
-	bh=0OgSSjO6xbyQI46xG7vaabloFQEtXfOKW8TtUv1V/Cc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=k55DcCHwuZsapo4JLZGnNei7Rvl+wX5uTEekWGMWQDAlzpIzfRSeFv8b0OQa3QpeB
-	 nLOdKgWK+W5BmrHMGBHC8A/VZNGLY8w0K03JsxA8Atlrzcwq+UiA1BfnOw/BwY9aFk
-	 XUruHie4GcWEH5Nf0nGt42LYdtYfjjoye3qmpz/WLSc3ktQFYzV4xBe9dz7r+kpk0r
-	 vxWt7ZVNAtoJf4IWjyCO0ytwY5uFPY1/AshJiwMK4XDwvAyD/d9S3GPDD2DPcvYhB9
-	 fEzWWZwPzmvQDTtHwxXGxIWtNMB4HNdjNzVodetv50A68QUW4z6xRAfOUmMwlnchv/
-	 p+kY4kr1hG/SQ==
-Message-ID: <ec722aa6-17d4-4264-b99f-bdae1d908713@kernel.org>
-Date: Mon, 16 Jun 2025 22:47:01 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05915204098;
+	Mon, 16 Jun 2025 20:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750107019; cv=fail; b=qJtqr4DFbrdth1+qS71L+lAwjShnAcE2ZnHoKV/HVhE0uf2/AKxWnBO/zcOirt4B7/oksaJcWmuwoQ2F2KkR5N4bvhi3o3Bb6dCKuD4K8fNgcpnIBUDzmh9YIi1OHIm0oQ1lSMvVtlwlwc8l45VyTRgFDpS5gZrcdBvltvMEpt4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750107019; c=relaxed/simple;
+	bh=HxoSqfKhjfLxM7rkdRhEznwNgz16hGYXghrs0wuip1M=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=X3+NHxHa9z44EAbcxZgJT8E3n4va5f4k07KCuKKduTJMKH8QGSHncywQaJKzJxRbuMM+cx7rJXsyKEZjuHfOj2QN5G7X9XTfXTshRt+RGGi07FtlJ5UkKovXY/a8hHoPC7aWXqLZ5lx80fs0vkbLQaYXHwPd37N3hBeI+y7gW00=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=locjFBNP; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Ie+bX6pP; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55GHuS58015723;
+	Mon, 16 Jun 2025 20:49:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=R3XWyahjD6iJNo2aQZ
+	FuSrLRg1fyXAYnwiqhm+qDlps=; b=locjFBNPuRt4b7lk7SBn1WlUcYzdM6oFPi
+	R0u+xHi8aMqFxzWue1n7iPCOYxOajJ/7+CqwcOPSgd+VuJikWrN8GwcbWKPhhFOx
+	rRHJ5v0PrKJhv6JYWVyULHYr6eduC0FbBa1EaYC9PTsuaCpC0X+qYADBIigN6A4O
+	AsGVo7StvJ2S6r2DdF1Ag2yZrvuTifL7tzoI/FogqfoNuJyj0wG6enpw6+hK73rc
+	XOVV2ad8Hv/AvLW4W04q+sw6LgN2pfE9hTwtCVf+rnhkVuFQEbf+BiO6aY5cYSIb
+	YtBL50jphxyVCCNInc2slfx7fOZx9Ouv0JMEzvHuQgU9lBk3Y5zQ==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 478yv53uqr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Jun 2025 20:49:52 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55GJWUer031022;
+	Mon, 16 Jun 2025 20:49:51 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2076.outbound.protection.outlook.com [40.107.220.76])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 478yh85x8m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Jun 2025 20:49:51 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PTtya7E9WYzdYfI1uDx1H6ZaeQzm18ig0eHc1W9GyYUV6gSmcOVqsmnIGUh+SgqhscbZqgOMC2FrLYNZbYmJxULazXVFUQgxEqF1YBxrp9Vnkdy/oaG7dOHV6V/+drKIKSE+8qlW4V1zmSCisAm8Pf2cRhTNmPj7inw5Y7mPiOCrEmaAZ4L5AUoCytnxMkZtaG9nEhAjnf8VR31QEUHP1nDFfdZLlroiiQ5Hvt+iqEMP6QHL7iZ118rOaZDCHazifbWIaJzhVZ9k2DpBfv+Q923ZMiyFLWoCevWyaDfAVrs1miJNyoAahKUtfMuOnOwDcpaQh3pIix5wHO0syLxXcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=R3XWyahjD6iJNo2aQZFuSrLRg1fyXAYnwiqhm+qDlps=;
+ b=ppnO9GP0/3zTEbT14NuaoK4r/eGpZFLZhT9hseC+32+5fG13I1puCs3uu02pnshdUEZLRbFC/pQdCjavkQKkPzi8B97sVI1fNqkT4nmBNSEmhr2F/6Nyg2YpLvusf9U70UTx8OL5L4/yhnzH1szM/3SROOfnGpBYFJtHNHaj214kIizFby82Dff+kSnRHadc2jc1TyI8SOgr1qTgI3HkQtv/HDx4ldPdhxNRUUlbEDDR3HztLPKxANPZTT3n79ulTixMGuuy2gWoR+FxP5QWpnVDLZmUA00qWr2YWR4V32kvSHnGH1jGnbhggo8UtRIZJ87H74DXgLB8tTxI71HqSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R3XWyahjD6iJNo2aQZFuSrLRg1fyXAYnwiqhm+qDlps=;
+ b=Ie+bX6pPUZUatVNKYPIkg0T6Agcb/sZLiiO6//W67XlVDXQYOswUP8hgd4V94O4kgs0LtD6ZvwxQtDrVSDc9mRqzqBIFfIxn6Ew382J0sEc5qJz79RuQjpOF9r3fbhbFZt+CRm/SjKrpI7Z00f3BgfGpz8sQ2Mxt6+cmOqH9wJc=
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
+ by CH3PR10MB6761.namprd10.prod.outlook.com (2603:10b6:610:146::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Mon, 16 Jun
+ 2025 20:49:48 +0000
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf%7]) with mapi id 15.20.8835.027; Mon, 16 Jun 2025
+ 20:49:48 +0000
+To: zhengqixing@huaweicloud.com
+Cc: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        Ranjan Kumar
+ <ranjan.kumar@broadcom.com>, sathya.prakash@broadcom.com,
+        sreekanth.reddy@broadcom.com, suganath-prabu.subramani@broadcom.com,
+        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
+        yangerkun@huawei.com
+Subject: Re: [PATCH v2] scsi: mpt3sas: fix uaf in
+ _scsih_fw_event_cleanup_queue() during hard reset
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <28dbc2.10c5.197529065a2.Coremail.zhengqixing@huaweicloud.com>
+	(zhengqixing@huaweicloud.com's message of "Mon, 9 Jun 2025 10:41:24
+	+0800 (GMT+08:00)")
+Organization: Oracle Corporation
+Message-ID: <yq1h60fza56.fsf@ca-mkp.ca.oracle.com>
+References: <20250528004935.2000196-1-zhengqixing@huaweicloud.com>
+	<28dbc2.10c5.197529065a2.Coremail.zhengqixing@huaweicloud.com>
+Date: Mon, 16 Jun 2025 16:49:45 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR02CA0011.namprd02.prod.outlook.com
+ (2603:10b6:a02:ee::24) To CH0PR10MB5338.namprd10.prod.outlook.com
+ (2603:10b6:610:cb::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/4] media: uvcvideo: Auto-set UVC_QUIRK_MSXU_META
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans de Goede <hdegoede@redhat.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20250604-uvc-meta-v6-0-7141d48c322c@chromium.org>
- <20250604-uvc-meta-v6-4-7141d48c322c@chromium.org>
- <d1e5942b-f8e5-42c6-98ae-d346927df3cb@kernel.org>
- <CANiDSCtXmXYkv3b_62iegTFOxBVrGUv9+mbioxvQvPsadwBpqg@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <CANiDSCtXmXYkv3b_62iegTFOxBVrGUv9+mbioxvQvPsadwBpqg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-Hi Ricardo,
-
-On 16-Jun-25 5:04 PM, Ricardo Ribalda wrote:
-> Hi Hans
-> 
-> On Mon, 16 Jun 2025 at 16:38, Hans de Goede <hansg@kernel.org> wrote:
->>
->> Hi Ricardo,
->>
->> On 4-Jun-25 14:16, Ricardo Ribalda wrote:
->>> If the camera supports the MSXU_CONTROL_METADATA control, auto set the
->>> MSXU_META quirk.
->>>
->>> Reviewed-by: Hans de Goede <hansg@kernel.org>
->>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->>> ---
->>>  drivers/media/usb/uvc/uvc_metadata.c | 72 ++++++++++++++++++++++++++++++++++++
->>>  include/linux/usb/uvc.h              |  3 ++
->>>  2 files changed, 75 insertions(+)
->>>
->>> diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
->>> index df3f259271c675feb590c4534dad95b3b786f082..cd58427578ff413591b60abe0a210b90802dddc7 100644
->>> --- a/drivers/media/usb/uvc/uvc_metadata.c
->>> +++ b/drivers/media/usb/uvc/uvc_metadata.c
->>> @@ -10,6 +10,7 @@
->>>  #include <linux/list.h>
->>>  #include <linux/module.h>
->>>  #include <linux/usb.h>
->>> +#include <linux/usb/uvc.h>
->>>  #include <linux/videodev2.h>
->>>
->>>  #include <media/v4l2-ioctl.h>
->>> @@ -188,11 +189,82 @@ static const struct v4l2_file_operations uvc_meta_fops = {
->>>       .mmap = vb2_fop_mmap,
->>>  };
->>>
->>> +static const u8 uvc_msxu_guid[16] = UVC_GUID_MSXU_1_5;
->>> +
->>> +static struct uvc_entity *uvc_meta_find_msxu(struct uvc_device *dev)
->>> +{
->>> +     struct uvc_entity *entity;
->>> +
->>> +     list_for_each_entry(entity, &dev->entities, list) {
->>> +             if (!memcmp(entity->guid, uvc_msxu_guid, sizeof(entity->guid)))
->>> +                     return entity;
->>> +     }
->>> +
->>> +     return NULL;
->>> +}
->>> +
->>> +#define MSXU_CONTROL_METADATA 0x9
->>> +static int uvc_meta_detect_msxu(struct uvc_device *dev)
->>> +{
->>> +     u32 *data __free(kfree) = NULL;
->>> +     struct uvc_entity *entity;
->>> +     int ret;
->>> +
->>> +     entity = uvc_meta_find_msxu(dev);
->>> +     if (!entity)
->>> +             return 0;
->>> +
->>> +     /*
->>> +      * USB requires buffers aligned in a special way, simplest way is to
->>> +      * make sure that query_ctrl will work is to kmalloc() them.
->>> +      */
->>> +     data = kmalloc(sizeof(*data), GFP_KERNEL);
->>> +     if (!data)
->>> +             return -ENOMEM;
->>> +
->>> +     /* Check if the metadata is already enabled. */
->>> +     ret = uvc_query_ctrl(dev, UVC_GET_CUR, entity->id, dev->intfnum,
->>> +                          MSXU_CONTROL_METADATA, data, sizeof(*data));
->>> +     if (ret)
->>> +             return 0;
->>> +
->>> +     if (*data) {
->>> +             dev->quirks |= UVC_QUIRK_MSXU_META;
->>> +             return 0;
->>> +     }
->>> +
->>> +     /*
->>> +      * We have seen devices that require 1 to enable the metadata, others
->>> +      * requiring a value != 1 and others requiring a value >1. Luckily for
->>> +      * us, the value from GET_MAX seems to work all the time.
->>> +      */
->>> +     ret = uvc_query_ctrl(dev, UVC_GET_MAX, entity->id, dev->intfnum,
->>> +                          MSXU_CONTROL_METADATA, data, sizeof(*data));
->>> +     if (ret || !*data)
->>> +             return 0;
->>> +
->>> +     /*
->>> +      * If we can set MSXU_CONTROL_METADATA, the device will report
->>> +      * metadata.
->>> +      */
->>> +     ret = uvc_query_ctrl(dev, UVC_SET_CUR, entity->id, dev->intfnum,
->>> +                          MSXU_CONTROL_METADATA, data, sizeof(*data));
->>> +     if (!ret)
->>> +             dev->quirks |= UVC_QUIRK_MSXU_META;
->>
->> Since we set the ctrl to enable MSXU fmt metadata here, this means that
->> cameras which also support V4L2_META_FMT_D4XX will be switched to MSXU
->> metadata mode at probe() time.
-> 
-> Not sure that I completely follow you. D4XX cameras will not be
-> switched to MSXU, they will support MSXU and D4XX with the current
-> patchset.
-
-Is MSXU an extension on top of D4XX ? If not then we need to tell
-the camera which metadata we want in uvc_meta_v4l2_set_format()
-
-Currently your patch 4/4 does:
-
-+	ret = uvc_query_ctrl(dev, UVC_SET_CUR, entity->id, dev->intfnum,
-+			     MSXU_CONTROL_METADATA, data, sizeof(*data));
-
-in uvc_meta_detect_msxu() which runs at probe time.
-
-So patch 4/4 breaks V4L2_META_FMT_D4XX support as it switched the
-camera to MSXU metadata mode (I'm assuming the 2 metadata formats
-are different and that MSXU metadata is not just a superset of D4xx).
-
-This is why I suggest supporting only one metadata format. If we
-want to support both on cameras which support both and can switch
-formats with the msxu control, then this patch needs to modify
-uvc_meta_v4l2_set_format() to do something like this:
-
-+	ret = uvc_query_ctrl(dev, UVC_SET_CUR, entity->id, dev->intfnum,
-+			     MSXU_CONTROL_METADATA, data, sizeof(*data));
-
-When switching formats, that or only support 1 metadata fmt.
-
-I hope this explains my thinking here, if not keep asking questions ...
-
-Regards,
-
-Hans
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|CH3PR10MB6761:EE_
+X-MS-Office365-Filtering-Correlation-Id: c7261230-db75-4a69-e58f-08ddad17554c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GyxmGreTEYw0O6aBBqWsVWfNTLdVDSF0rQgKUrudcSbeiGppBNeGCl50bV4p?=
+ =?us-ascii?Q?soVTtzFSEz0eASiIH7MHC/TsMu29K09b7c1+uUdXQd7p9Axk2jppyh5lse8+?=
+ =?us-ascii?Q?I3oPU5ik8fgNb+VAD5s8LmhSWuiatKc5YrYck9ylJH9H0AxiGkWFxiGaV5Xl?=
+ =?us-ascii?Q?W1nVsD84JzlyZlr/WX/zdb7mDCjitR5MyRHaMVCgX6KJy/JspV9KionjI/Ef?=
+ =?us-ascii?Q?Jm2LrceNMfUOslOJ15YgXQzLQj21XQdjmBc/wGg8e0oo833I68ebUeW1ERVy?=
+ =?us-ascii?Q?SOI966V1VMWYaNIYtUPniR06evJnZipMvK6mpaiQgByR/HbadWK3NXMADNU4?=
+ =?us-ascii?Q?z7te/maqQ5e6SiVz2MU1N22WLi6ShMYS4Rc5/n32pV3BtGsq7x6eIP6yQo/4?=
+ =?us-ascii?Q?lb38uV4QW5iF4yvZEEW5Aurj4+A3qTLHnpIPGMUkF0wy6Z3QrBpb6RyUzZFL?=
+ =?us-ascii?Q?PN3UnYU1DtJIGKE4jgOit2VuWdjmnvcMr/FRinrJZg9DN2SAUOwyXXv26YvC?=
+ =?us-ascii?Q?B3XuTj74hJkVQa8FIC2PIhAYmsELUlUvCaGfiXCfFs90sEECtZ6RY09jZ8AY?=
+ =?us-ascii?Q?imEVfK/QMTSjMv7uii8mLsan/0llXl6crBLA8jx2JnBLQoyfbjW+55JCYJsH?=
+ =?us-ascii?Q?/U3P0UrBvUBdb3KZJ6jOxczWEieAgRWYIc0/p45UItg28QqTttl7fTNB6h2g?=
+ =?us-ascii?Q?EMBiUAxtDFL87Zf/7pw++M6CtieRVst8owdIsO1UxZuYuzFH6j68uhaGMN+C?=
+ =?us-ascii?Q?JEw6zsQp6YdpuJK7nfAcSeY52z9m4oCKaAUBYCQHE7s36Pg0qwJxDtkfhxl4?=
+ =?us-ascii?Q?aDjjJZZCDKC0D8kFUsk9dqx7H2FqnXKVnx4OyuP7uvzgqHAu0wENZ6N98obJ?=
+ =?us-ascii?Q?uTuaOT/QqoISh09Raf+9yqWGIfh1Lo5ocLK6dqPzkJoO+Aww8fJj5AWRs3JT?=
+ =?us-ascii?Q?C2QD5v/QoIw1I2n01MIADyangKYuVWEysSSSTuxbwjrGv68zEgrwZ9ji8uOD?=
+ =?us-ascii?Q?1zLCEx7adR0DIi/SU3iUUqSaQ5yX5dOEeCfmTerpljxKaazt6ZRkw1l8NDms?=
+ =?us-ascii?Q?itsgo66ImGV4PpdHd6MB+VbeG99JXH4mW/Gpm8+wJOkugltt5+zPqS3denF0?=
+ =?us-ascii?Q?jD4EWoaXubR8a5v02EQTfy1K1WhrEhgAjIrx/sWgA1UHW3comErOKnx4K70U?=
+ =?us-ascii?Q?0SPaBGseeBUOJYlJaxIbbzRrZwTF7Mo8VRYCOC6RLt8ZgDT9xvqNEgoAU2hn?=
+ =?us-ascii?Q?sSdM6zywCvvFHlTcxb3eOHvXLej1oBPtGqwKLRLYwrT2Uk0PpF3p8RY/Cb1A?=
+ =?us-ascii?Q?vyWG4aFxZoqD82sUJimEPXk5bufFpBdouri91Plax0aLpA5S0hzEyMfpLUzf?=
+ =?us-ascii?Q?JycknUrgF+FL5R7AFZVRMHXQSQv9LoCOngCmjlnIrgd8lS62T4uu7GCe/IeD?=
+ =?us-ascii?Q?CphllLVsDHc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MLC12+i9x7OfI6YuglSd4FaUv3coisVepU+PL1QBq3BmIu2eUXzJHVSdlA1b?=
+ =?us-ascii?Q?WArzNnlwAwkvir8LOtRdpvBxRTcYxLmnQ68ez6/zH+6AQpQdZ+2jsJhchzl5?=
+ =?us-ascii?Q?lZq00Hjfm6SB14EceyeNoxP6achmbR2DrQtnlSVryFSkLsnKlI19Ek7/IiSs?=
+ =?us-ascii?Q?0SSK8giJFDzIGaeJp4WMyJbhiILeTqMXfPwxPf6laGflnsN1DW4s7oWauiUD?=
+ =?us-ascii?Q?xtvd3YR47f6YkdnFWmF4aNAh7rEoc/V6yX1fG9bytTbbNPsQtXD55rMImEVk?=
+ =?us-ascii?Q?4jj6fnWaxxCRV6OX5xgPknE+E+0n/XbRAOcdTdO9X4UexYZkkvQgxIvxwYzP?=
+ =?us-ascii?Q?Ag97jrn3u50q7cRlD5Jz1sIWqyhkOtYBLUBrRs1zr6uSB15lQGlYQEaiWj4l?=
+ =?us-ascii?Q?rsdYbu5B2l4TTdPpZRnv062VV7LSVzTR31NW/7PFfHe3R5lnmiG2awsYAs4n?=
+ =?us-ascii?Q?EwgK6rUYEEV2xIhs9JEyxnqqln4cDys5KNmCWBs3xVjRTkt6QsBIDYrw1Y7o?=
+ =?us-ascii?Q?vbdEIjsQVCttVeM8I+V353A9W4VjEtc72UnNNT+xdw5eXJaZIBJkvQItjOn2?=
+ =?us-ascii?Q?g6rRdYd0JT9j89rtTKoTow4XcIPQcbn3bNBJcS+6xgk4jEjJM+XVq8SQzl+F?=
+ =?us-ascii?Q?cL1dRwWvBzjtOJUNMYACP6b4O0LdMCcMbAImvmxoqO3/E0/pb/6oeKbKc2Xe?=
+ =?us-ascii?Q?1cPKb7BLP73pKf4WgwlnjQSi0K+zzmN+3X4y4Ev4T8qNoqSsNRS8+AIMdL5O?=
+ =?us-ascii?Q?X8OVfRz9ZyyBu58G57458P+zy0qS3jvcr0S43RAIlFIDtAnReX960NvP4CWh?=
+ =?us-ascii?Q?C/GL1I/ePHToPWQ0Dpppemms8Li15TPFBOD93zTkwxbBA3NWp4tIxq1BFpHb?=
+ =?us-ascii?Q?qirR52p50gURGnorZd0uH0QBsx/hqy2EtL5+q1LsXBaecMef18pGcimyGdst?=
+ =?us-ascii?Q?mE6aaowjyLWSC43b5WgCU4dpjF+sSXveqGIRWMxklq3A9MRoR6lGtxM+3Lsn?=
+ =?us-ascii?Q?qtSK4Ms1PtmyrjZS1Z8QkrRFnFkbi7ynsqzvLxL/RgXyPQI4Aa+p9StgoB2I?=
+ =?us-ascii?Q?9bsoeNnOyVBIb8f7jCzF7OXYck9Kg0NxliTmXAHh81PYcmeoNnCCt3KRncrN?=
+ =?us-ascii?Q?Dhhilt499lyHLV1rpaFpz+BZNzdnVdA3CPm+ZFYUp8/aD866SkXGlfMqsCrA?=
+ =?us-ascii?Q?6yv4Rs3a1VDuE6cCI/AUDTb9+EPH5nnR4yXWu/fBRFJXzLnHNoQB3bnZy3x0?=
+ =?us-ascii?Q?FKeWYsXsP4RgAyuqhQcUawCMeZeTnfxvaPhKeRMRXLSUiWv8LfThbkxltDOl?=
+ =?us-ascii?Q?WX6LBMVhOOyVsHDVW+CKFdBRXJT4cDjU4NclJxdaW6AN5nPr6//wI5dlPOMM?=
+ =?us-ascii?Q?bjcppC4mwSQ/4D4d2Rwu+jlbz3ucW/83ge8ScccAyTJVYLzEHoFA27baHmwe?=
+ =?us-ascii?Q?PKsTJlwEQx8u/29+tdJ0K2X8MEa76zpccTpU4W/l4NJCLwnSilUjPU3hGL2t?=
+ =?us-ascii?Q?0f6m6cTUdhAUF2TnA6zh8GRMXVSH24yq1Eig0BdTQkVQRLof2XdC7miPd8ag?=
+ =?us-ascii?Q?zLTPUytToktf0yFXsTOiQO+9fDqriKsT6NUPfCVdwq5ZehnKwLkJ5UgEgaJd?=
+ =?us-ascii?Q?0A=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	6kQxs36AOs6koAzd9ZeZOLBQBM8MfYqFid5TDJaJ1+8zn5CCxWO24DDfgydZqChCIxK5GX8PnfwOHL464xs1Z2GpSl1v25hTZrFpKciC9rHUWS7D9VRhfE5q/5vw/HHbROqlQLbHJNbJ9HkVn3B0qwSGeVnPr2TmzSPcOvokPdWLzU6lKBPpTyZNR3CXu3m0/5+7r3K3RKHA0uNQ31HslTwckG9+lODSROdeNXF2TrgMg03gyncxQOiHYbVJqWKysSAUpLcSwFPeB9x301eSM3qHDF3we1A43QxZrHl0DNbyMfnzZc3KVUVV5DZaQrmp5QiU/4BhUrPX5tSAo6OJyXeAXJsKRf2qLWKI2uqXG2Bg/zAWwuQxQsEX8LoiSthHqaMbwaRP0KUj65vRu6YLCona2zoRkOfsnqaFArnELTdGOgk05psQQAchwzWzua9Z/MN2EY0eWkK5b2w7XfOEwgjHC4POI1qP9D3pZOg3nWHi34IGyCWaid1pA5vtOzVO38OEzSS4N5BeSLoyYSHVDKshLWnlST2R7Pp0F1C0MaEacKrVgHLwXo0LTLArYeWdVzOYmkiXrvVySfOnTn+Ifs9HYNC8ItvqI8csZb0isis=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7261230-db75-4a69-e58f-08ddad17554c
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2025 20:49:48.7523
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DT2jvhfeZydfQ3IcPUO4KlknB32Y5KpAbzzykCXYZWdsXN4HKYpFUBywL7jf2Rd+AbpF/maVlNLm7tISZK57jXy+AlUbi3jkd3DCglGmx7U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6761
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-16_10,2025-06-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 adultscore=0
+ mlxlogscore=997 spamscore=0 mlxscore=0 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2506160145
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDE0NSBTYWx0ZWRfX9R8z7ZWXDJoN eTLQwsPkv6H3Jrg0OWfb/HFOHrBjGLNiQXp5LlIU4L2nPRdgZEAV18sRMkZezTqbyTB4PaY+qbq wboDyH8lyUNcSaC3GFbtZAx+64BJAsfVXhQYABcdkbHNOxljoRh1nn+pI73PXAw8aoGaE0j2gFr
+ DsUVveCnoDLFvU9h2lzxHoD/JSUiES2GVISTmlaSRACmapUaz+7+PUy3J+RBDfWxV6BXOuk7ZGb eDxwUzU9ukYmV04d7vrF5Y/v9dP+dUH7DI1e6A8/AVSCqBWOjlqUGAZD/A7XhELcJQaoE5pInrW VYxT3n/xu/etJiqr6a+Kor9yxN/bgHXQzx7RjxeKOK0VxzRH69SRng03ssIC9nSgP65dIogdf/h
+ qPgPFc2YOByPiBVWvvXmLooqxO9G2OriYH5aa5JVU1lPHMEnOHt+Dno/spXlk457gbU0A80V
+X-Proofpoint-GUID: M9mvGZsgL1L1IyiAHKgYeTbuYIc67EGE
+X-Proofpoint-ORIG-GUID: M9mvGZsgL1L1IyiAHKgYeTbuYIc67EGE
+X-Authority-Analysis: v=2.4 cv=W9c4VQWk c=1 sm=1 tr=0 ts=68508370 cx=c_pps a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=Gk4AjVvYMSocsk8ISDEA:9
 
 
+> Gentle ping on this patch submitted two weeks ago. Could someone
+> please take a look when convenient?
 
+Broadcom: Please review!
 
-> 
->>
->> So even if cameras exist which support both metadata formats, since we
->> switch to MSXU at probe() time, disabling V4L2_META_FMT_D4XX support,
->> the uvcvideo driver will only support 1 metadata fmt per camera.
->> Which is fine supporting more then 1 metadata fmt is not worth
->> the trouble IMHO.
-> 
-> If we only support one metadata, we have two options for D4XX cameras:
-> 
-> A) Switch to MSXU: apps that expect D4XX will not work. I think this
-> will mean breaking uAPI.
-> B) Keep D4XX and ignore MSXU: apps that work with MSXU will not work
-> with D4XX cameras. I do not love this but it will not affect my
-> usecase.
-> 
-> 
-> If you are ok with B) I can start the implementation. But I still
-> believe that the current option is more generic and the extra
-> complexity is not too excessive.
-> 
-> 
->>
->> This means that Laurent's remark on [PATCH v5 4/4]:
->>
->> "I would prefer if you could instead add a metadata format field in the
->> uvc_device structure (I'd put it right after the info field, and while
->> at it you could move the quirks field to that section too). The metadata
->> format would be initialized from dev->info (when available) or set to
->> the UVC format, and overridden when the MSXU is detected."
->>
->> is still relevant, which will also make patch 3/4 cleaner.
->>
->> The idea is to (in patch 3/4):
->>
->> 1. Introduce a dev->meta_format which gets initialized from dev->info->meta_format
->> 2. Keep the quirk and if the quirk is set override dev->meta_format to
->>    V4L2_META_FMT_UVC_MSXU_1_5 thus still allowing testing for MSXU metadata on
->>    cameras which lack the MSXU_CONTROL_METADATA control.
->>
->> Doing things this way avoids the need for the complexity added to
->> uvc_meta_v4l2_try_format() / uvc_meta_v4l2_set_format() /
->> uvc_meta_v4l2_enum_format(). Instead the only changes necessary there now will
->> be replacing dev->info->meta_format with dev->meta_format.
->>
->> Regards,
->>
->> Hans
->>
->>
->>
->>
->>
->>> +
->>> +     return 0;
->>> +}
->>> +
->>>  int uvc_meta_register(struct uvc_streaming *stream)
->>>  {
->>>       struct uvc_device *dev = stream->dev;
->>>       struct video_device *vdev = &stream->meta.vdev;
->>>       struct uvc_video_queue *queue = &stream->meta.queue;
->>> +     int ret;
->>> +
->>> +     ret = uvc_meta_detect_msxu(dev);
->>> +     if (ret)
->>> +             return ret;
->>>
->>>       stream->meta.format = V4L2_META_FMT_UVC;
->>>
->>> diff --git a/include/linux/usb/uvc.h b/include/linux/usb/uvc.h
->>> index bce95153e5a65613a710d7316fc17cf5462b5bce..ee19e9f915b8370c333c426dc1ee4202c7b75c5b 100644
->>> --- a/include/linux/usb/uvc.h
->>> +++ b/include/linux/usb/uvc.h
->>> @@ -29,6 +29,9 @@
->>>  #define UVC_GUID_EXT_GPIO_CONTROLLER \
->>>       {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
->>>        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x03}
->>> +#define UVC_GUID_MSXU_1_5 \
->>> +     {0xdc, 0x95, 0x3f, 0x0f, 0x32, 0x26, 0x4e, 0x4c, \
->>> +      0x92, 0xc9, 0xa0, 0x47, 0x82, 0xf4, 0x3b, 0xc8}
->>>
->>>  #define UVC_GUID_FORMAT_MJPEG \
->>>       { 'M',  'J',  'P',  'G', 0x00, 0x00, 0x10, 0x00, \
->>>
->>
-> 
-> 
-
+-- 
+Martin K. Petersen
 
