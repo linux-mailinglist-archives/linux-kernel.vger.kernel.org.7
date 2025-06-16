@@ -1,122 +1,115 @@
-Return-Path: <linux-kernel+bounces-687836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F2EADA9D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:47:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB0CADA9CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 09:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 403207A5F49
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:45:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F999167084
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 07:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A781FBE87;
-	Mon, 16 Jun 2025 07:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC1920E315;
+	Mon, 16 Jun 2025 07:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="AnnBijBV"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F43C1991CD
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 07:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Rwr5uj6i"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FA220E023
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 07:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750060018; cv=none; b=eavDTjj5MjWP+OEWqKFYEliogfEHvrxFloy7LDqUcmD9JzuVmW7Mek5L4R/v+gLGW27tc+2/MEbVBl67PuFiv+u38d9Z1Dfo8rDefEsTaWCNxwJgpLFucnD/T7EbsKYminHpDk/moSc7X+GH/PfQB98aycYayz60ZPh2ZV5+2mY=
+	t=1750059941; cv=none; b=qfSLDhadQScqwn/FuDwq8kQV+Yzk46zgCncaN9vDuLPSBwT/p8yYxb+HRKVk41/BnWbEBh8Q4piZmBP5SyTv7js/ixI2qHQUJBEAIzmmpGid0bQZh+FmsEexNKgJ7MFvhFE2IwNYmraNhA684j+0bRiCcXF/UWYl7A4LkPgqz3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750060018; c=relaxed/simple;
-	bh=jgAxsTdc39hBDx7iOTO5H6wVJ8soJenHQN6jHtoYN5s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m+tU2Q9NFMQxXm9LSRe/a7AwTNBs0FAeqiyxJ4MUuxPLPINFI2iK4N1X7eNCc2eXNbSuDWICYst1954eDcmiVAPkHksOlv9yKddS3UmjYj09QINBYi7mNcbO2Vk0zXE8QVgSjFxCIyEl4dkvcGvvBvvYYFGF8Tm0HppvvU2jwvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=AnnBijBV; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=W5
-	j43MkTtuhs8sLgSYF06e94i28Dyh1YdNYRzVhcD+k=; b=AnnBijBVVxkVB0n/id
-	LVlTpE4ey75AQ1TwAG+xGen99uajIa+EJ6OJZ9StTC/QpqU79mdMMet0QLVQrNCM
-	9R0TppduEUHGdGBWxLrz3UkMvXQncERgK5A/Fmsrn1eOp3G5t8siUBg/gKc+YFQf
-	Lwp83xJ9PLs1I/wqLjZWGV/pQ=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgCHXoSgy09oddz2Aw--.42840S2;
-	Mon, 16 Jun 2025 15:45:37 +0800 (CST)
-From: wangdicheng <wangdich9700@163.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	wangdicheng <wangdich9700@163.com>,
-	wangdicheng <wangdicheng@kylinos.cn>
-Subject: [PATCH] ALSA: hda/realtek: Fixup ft alc257 rename alc3328
-Date: Mon, 16 Jun 2025 15:45:20 +0800
-Message-Id: <20250616074520.582138-1-wangdich9700@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1750059941; c=relaxed/simple;
+	bh=emuYZRRsAsbfW8dtLwfIHR1XhI9Ti0TeclpaLXuKj8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nh5KMmk6LOCJzPH6R0jrjdxgLxGaRDuK7iuNotlfncYrNUS+JZF0jjqRSzy/FTxC3aWLm+oRk2mZAEMO1N/CnXgeGLVdpOafa/D9D5peUsV8f7WCbxE3EPHtewHcgD58ViqqrgyfhHwyHoNbVMcDJMuxPwBc1qzQrSOKdsSQins=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Rwr5uj6i; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a50fc7ac4dso2402273f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 00:45:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750059938; x=1750664738; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QkcvPSidlO7p10vWDcll4mLBY5FWBOj4Z5ozH1tkERw=;
+        b=Rwr5uj6iG7+A25+ymEVrEZn9F3u5jsC6JRLVR7SNXGU5QCK+i3GObrIW0VCEfcj5vs
+         hT8e862H5y9uxoIUYSTsRKAeotcSV0HJIemrpN28NFzPvI8J3mbwGTmaGeqQ8sMVsN/Z
+         KUyGmd0XNuNaDHaWVqizcrtRm7YMDS3CDWqggq9jnlH/DgiMhkyUax5lm7xivfz7+Jk7
+         HR/+RPYLcGbGC/V7sGkgwQRvkXWGHcIPyg5POIE1rvXXeZIZe8bdj/gzCpfGe6B3Qs4h
+         i4+uP/3nxDtjSqKfu//B7TBUedStmSttiOeeBQFDmHfSWy7WMgbSs0DQxqc5iaAlkQF+
+         uAnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750059938; x=1750664738;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QkcvPSidlO7p10vWDcll4mLBY5FWBOj4Z5ozH1tkERw=;
+        b=Au3O37+jZRRtyNvFef10QnCS6BudWTbnsQ3Dk+urkDhyEewJLmM3QPwBQOulGEc2i/
+         /XPQKLrDoVbWM8N/kau7VYZqfyR8U9IFmnvpf47SZWlhMXkOOnkXP0rR/9W+8qVI3Cs5
+         GZ2khVzkl+pfH+gO1SS+3tC6nC3VbniEPHv/XwGh29TnDFwBXbQI+tovJQsPAqDlkLbj
+         kF6vV+xSzl5c7JcOtUEAxd9VyjGiRaLVRIQzMCVciqXYQjG+CCqGOCAn6X8ha2KsUNV3
+         Qq+2H5es8pBq4cJbJnWwcXrECJsLa8ajVnyXtLJd/a8rfuyjngn5tKpubPL1+PEWCb/m
+         hBMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKJjSUnvUTCSgQlKScIjIdn6K1Gi7AWqiTFDLDzPJLDsoWvk0qcTF6ZVyUP8aev/1yzLFr0cu7Pag60Sg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5EFyCb/x1AlCxclrF2aGOrgTwSMLuxjSkVfN717RWhdOZ/dSF
+	2FEWjfv4694s6lZumVI1uu4cKz63H+RCZrcK8XIwSCMi0ScZ5DZF2W+VGMvzIut+WS0=
+X-Gm-Gg: ASbGnct1h0aMbwRtHtkNiZKNfmdWpyRRp3VwNQNATMcqvuzEjzH/dFbojlSO6HJs/Qh
+	26zu56o6kLbcgpyW3SbEP3uBtxve9O5SGmhef4JGIAgSXPs1QBZsosMWoUQjtf5kYp1yyU7QzyI
+	3VOU1U3wBufIAqxbAO2J/TSdCEP6x6J2BNpqso9W9EuyUCNladH6A8QP1OSEdS0oNI/ubMH3aqB
+	c4v1nwVZFawd953R9JRhPQHUypJIdx5gQQUTvXEE528OeQ47KCphBxiyfYoo7B1HJtPjXjt8jSA
+	c8WWqr6RR/p3mX4B9tjiTHJSKXHXrQTbGJfPH14HbbTotWhDimHrMOjoDqiDenE=
+X-Google-Smtp-Source: AGHT+IHa3z0ZuONg+scxBHZPdfzZc35NbDeT4H9xI2j2Jv9Zpz8bLhlsMxdnKEUqdd/SI/I3ccpjFA==
+X-Received: by 2002:a05:6000:2289:b0:3a5:39bb:3d61 with SMTP id ffacd0b85a97d-3a5723a3af6mr6913868f8f.27.1750059937840;
+        Mon, 16 Jun 2025 00:45:37 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:4238:f8a4:c034:8590])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b2b113sm10297163f8f.75.2025.06.16.00.45.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 00:45:37 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] gpio: sloppy-logic-analyzer: Fully open-code compatible for grepping
+Date: Mon, 16 Jun 2025 09:45:33 +0200
+Message-ID: <175005992380.16166.15596259788808709225.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250613071627.46687-2-krzysztof.kozlowski@linaro.org>
+References: <20250613071627.46687-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgCHXoSgy09oddz2Aw--.42840S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WFW5Ww13Kw4xCF1DKFW7Jwb_yoW8trWfpF
-	45ZF48WFZ3XF92vr4xKF4UuF1rC3WkGFyrC3y3u34Iqw1kZ395GF4jqF4jvFn3GrW8Gry5
-	Zr1qva4Yqr4Fqr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUUku7UUUUU=
-X-CM-SenderInfo: pzdqwv5lfkmliqq6il2tof0z/xtbBDRBuT2hPyE1ZWwAAsc
 
-Audio ALC3328 recognized as ALC257, updated PCI ID0x10EC12F0 to rename it to 3328
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
----
- sound/pci/hda/patch_realtek.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index d3c9ed963588..e18b2a2acba8 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6712,6 +6712,13 @@ static void alc_fixup_disable_mic_vref(struct hda_codec *codec,
- 		snd_hda_codec_set_pin_target(codec, 0x19, PIN_VREFHIZ);
- }
- 
-+static void alc_fixup_ft_alc257_rename(struct hda_codec *codec,
-+                                 const struct hda_fixup *fix, int action)
-+{
-+       int err;
-+       if (action == HDA_FIXUP_ACT_PRE_PROBE)
-+               err = alc_codec_rename(codec, "ALC3328");
-+}
- 
- static void alc294_gx502_toggle_output(struct hda_codec *codec,
- 					struct hda_jack_callback *cb)
-@@ -7799,6 +7806,7 @@ enum {
- 	ALC269_FIXUP_VAIO_VJFH52_MIC_NO_PRESENCE,
- 	ALC233_FIXUP_MEDION_MTL_SPK,
- 	ALC294_FIXUP_BASS_SPEAKER_15,
-+	ALC257_FIXUP_FT_RENAME,
- };
- 
- /* A special fixup for Lenovo C940 and Yoga Duet 7;
-@@ -10143,6 +10151,10 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc294_fixup_bass_speaker_15,
- 	},
-+	[ALC257_FIXUP_FT_RENAME] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = alc_fixup_ft_alc257_rename,
-+	},
- };
- 
- static const struct hda_quirk alc269_fixup_tbl[] = {
-@@ -10715,6 +10727,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x10cf, 0x1757, "Lifebook E752", ALC269_FIXUP_LIFEBOOK_HP_PIN),
- 	SND_PCI_QUIRK(0x10cf, 0x1845, "Lifebook U904", ALC269_FIXUP_LIFEBOOK_EXTMIC),
- 	SND_PCI_QUIRK(0x10ec, 0x10f2, "Intel Reference board", ALC700_FIXUP_INTEL_REFERENCE),
-+	SND_PCI_QUIRK(0x10ec, 0x12f0, "BXC NF271B FT board", ALC257_FIXUP_FT_RENAME),
- 	SND_PCI_QUIRK(0x10ec, 0x118c, "Medion EE4254 MD62100", ALC256_FIXUP_MEDION_HEADSET_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x10ec, 0x119e, "Positivo SU C1400", ALC269_FIXUP_ASPIRE_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x10ec, 0x11bc, "VAIO VJFE-IL", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+On Fri, 13 Jun 2025 09:16:28 +0200, Krzysztof Kozlowski wrote:
+> It is very useful to find driver implementing compatibles with `git grep
+> compatible`, so driver should not use defines for that string, even if
+> this means string will be effectively duplicated.
+> 
+> 
+
+Applied, thanks!
+
+[1/1] gpio: sloppy-logic-analyzer: Fully open-code compatible for grepping
+      https://git.kernel.org/brgl/linux/c/bddfad9f7ef3fc73f0a6fb05996719adcb5082fc
+
+Best regards,
 -- 
-2.25.1
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
