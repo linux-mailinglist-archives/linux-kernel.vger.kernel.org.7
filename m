@@ -1,138 +1,176 @@
-Return-Path: <linux-kernel+bounces-689012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC10BADBA9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:13:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DE0ADBAA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3C6718917A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:13:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A645F3B5CCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDD12045AD;
-	Mon, 16 Jun 2025 20:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1620D21767A;
+	Mon, 16 Jun 2025 20:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ma10h3nb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RgjXGrxw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E491898E8
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 20:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE142BEFF0
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 20:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750104807; cv=none; b=kt1kE07YbTRQeFiYp/Voy7FRX73jRlHF3V+MxEvtByM0KUa2GdAaF/XjTAhffdW+r1jfCCY7UjfM9K/Zcqec6N9bAzigFlboFzgOdXiaVzByA+x/SMYvZJnT7kC1b/BJOnkmKrTWC0OtP5xoSF9edlnilSJBfsnryLgp3veNIsY=
+	t=1750104864; cv=none; b=E8pJW0+C/sECKXknhjkdlxR171YIpVvz0P8Ihb7YtIlCFxKmPDhbRrslX/IKY9NMZr+wqx4n/DvEl00oKWbSBMQh6LcTOsh/IFXnXcadd9vZ8UPYKa9tscUtOgWu1pFhTkByebar9H5m7re/609WfXOOw1K/UAmIL+Xrcmh8beU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750104807; c=relaxed/simple;
-	bh=rm2cm6leHzxDp92hNDKcjjotXJWyVbcCrZHVpdjT+Og=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U6aEGSNuiaaOHkDwWLlR8pMWrVdDNynKXh+9W5+IxjVJGbpsq3o6wdmUgZWiOQSB13H8ZpPFGEV8ZVsZjFiqAYKimXR6qB0zgO4HSTBxw7RRiFW/ILMxnbZgcCG9qfO9pf1QTTIv/vy9b4/EWaWPn0yIDNVpI2s+boRlqmVpHbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ma10h3nb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEA0CC4CEEA;
-	Mon, 16 Jun 2025 20:13:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750104806;
-	bh=rm2cm6leHzxDp92hNDKcjjotXJWyVbcCrZHVpdjT+Og=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ma10h3nbgcMypzEjwGvkb/8ehPfXSj1zZzZgZjxydI5QqZYV7X6pEQSd8ocnBDQlc
-	 H7eXIwC/MFY16MDO4Zfmkpy5pwlLbhDYIbgm8BE/qthcjRu1KqZky30RTclqDcI4+m
-	 TBfwMOm1rzbX8OFoTuVw+kedRfR7W2WQrui4QSrZonw1rujNRsQ1HWrmY6qWjBeNpB
-	 wGfw4YbMZB5VUe3OZji1pOx8ZKRiK2/0/QGjGzWbIbD4V4ibx8tl4wzjK/hfqwB0Rq
-	 WZJ87Y4RjMNggy86AGcghPRoYqVcKhBXHz3SHjBvyD/UdJO9pcn5bVJJ9twXFORCJE
-	 9dLJh0g/u/L4g==
-Date: Mon, 16 Jun 2025 10:13:25 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH v2 2/2 sched_ext/for-6.16-fixes] sched_ext, sched/core: Don't
- call scx_group_set_weight() prematurely from sched_create_group()
-Message-ID: <aFB65Zfis1iBvKoc@slm.duckdns.org>
-References: <aEyy27BecPPHDWHc@slm.duckdns.org>
- <aEyzhBAl5zkP6Ku-@slm.duckdns.org>
+	s=arc-20240116; t=1750104864; c=relaxed/simple;
+	bh=TwP2O71xNX5KZBAcekuLe3rjLWvw+dJPP0fdo82f4Wo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dJQDYDP3da5eFzkkq53SReYtwDVrjFKuQIg/LZtLHOhqHCKwJRvG+VUzzyhwCUeJ6RFROTWvPdYoC09Fj8RF7WHDI2YTV6B6I2cMQBhHJNCtljWjmH1H0+cnRV7wSxImcRx9AogUV7j/Rzrxkk3CAQkhyCsf2SDjL631MmFj068=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RgjXGrxw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750104860;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Aad9Gkf4CPYgn7WvQvhOXyC5N0TDYkAraLsrfuZwf9I=;
+	b=RgjXGrxwuxpox3mC+RTFvEPEj434Mo1FDa8B56vJP7b8QFCqJDX2Ql7zmkEl3NDMTWxvM2
+	ylBNHCo6Al6iQwhYF4JsaxN0JySZfryAUcq7k/+Z1zOkRqXbdsAjoN4Ddc4c/id0WWt7Jd
+	KqIPIBWYbwMs/E7TsSaf8wDU7/Emb70=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-592-FGeS-c9YOQuieXqBPEq_vA-1; Mon,
+ 16 Jun 2025 16:14:17 -0400
+X-MC-Unique: FGeS-c9YOQuieXqBPEq_vA-1
+X-Mimecast-MFC-AGG-ID: FGeS-c9YOQuieXqBPEq_vA_1750104854
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 05F3D19560B2;
+	Mon, 16 Jun 2025 20:14:14 +0000 (UTC)
+Received: from p16v.luc.cera.cz (unknown [10.45.224.53])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BEB1330001B1;
+	Mon, 16 Jun 2025 20:14:05 +0000 (UTC)
+From: Ivan Vecera <ivecera@redhat.com>
+To: netdev@vger.kernel.org
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Shannon Nelson <shannon.nelson@amd.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Michal Schmidt <mschmidt@redhat.com>,
+	Petr Oros <poros@redhat.com>
+Subject: [PATCH net-next v11 00/14] Add Microchip ZL3073x support (part 1)
+Date: Mon, 16 Jun 2025 22:13:50 +0200
+Message-ID: <20250616201404.1412341-1-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEyzhBAl5zkP6Ku-@slm.duckdns.org>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-During task_group creation, sched_create_group() calls
-scx_group_set_weight() with CGROUP_WEIGHT_DFL to initialize the sched_ext
-portion. This is premature and ends up calling ops.cgroup_set_weight() with
-an incorrect @cgrp before ops.cgroup_init() is called.
+Add support for Microchip Azurite DPLL/PTP/SyncE chip family that
+provides DPLL and PTP functionality. This series bring first part
+that adds the core functionality and basic DPLL support.
 
-sched_create_group() should just initialize SCX related fields in the new
-task_group. Fix it by factoring out scx_tg_init() from sched_init() and
-making sched_create_group() call that function instead of
-scx_group_set_weight().
+The next part of the series will bring additional DPLL functionality
+like eSync support, phase offset and frequency offset reporting and
+phase adjustments.
 
-v2: Retain CONFIG_EXT_GROUP_SCHED ifdef in sched_init() as removing it leads
-    to build failures on !CONFIG_GROUP_SCHED configs.
+Testing was done by myself and by Prathosh Satish on Microchip EDS2
+development board with ZL30732 DPLL chip connected over I2C bus.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Fixes: 819513666966 ("sched_ext: Add cgroup support")
-Cc: stable@vger.kernel.org # v6.12+
 ---
- kernel/sched/core.c |    4 ++--
- kernel/sched/ext.c  |    5 +++++
- kernel/sched/ext.h  |    2 ++
- 3 files changed, 9 insertions(+), 2 deletions(-)
+Changelog:
+v11:
+Fixed uninitialized 'rc' in error-path in patch 9
+v10:
+Usage of str_enabled_disabled() where possible.
+v9:
+After discussion with Jakub Kicinski we agreed that it would be better
+to implement whole functionality in a single driver without touching
+MFD sub-system. Besides touching multiple sub-systems by single device
+there are also some technical issues that are easier resolvable
+in a single driver. Additionally the firmware flashing functionality
+would bring more than 1000 lines of code with previous approach to
+the MFD driver - it is not something the MFD maintainers would like
+to see.
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -8437,7 +8437,7 @@ void __init sched_init(void)
- 		init_cfs_bandwidth(&root_task_group.cfs_bandwidth, NULL);
- #endif /* CONFIG_FAIR_GROUP_SCHED */
- #ifdef CONFIG_EXT_GROUP_SCHED
--		root_task_group.scx_weight = CGROUP_WEIGHT_DFL;
-+		scx_tg_init(&root_task_group);
- #endif /* CONFIG_EXT_GROUP_SCHED */
- #ifdef CONFIG_RT_GROUP_SCHED
- 		root_task_group.rt_se = (struct sched_rt_entity **)ptr;
-@@ -8872,7 +8872,7 @@ struct task_group *sched_create_group(st
- 	if (!alloc_rt_sched_group(tg, parent))
- 		goto err;
- 
--	scx_group_set_weight(tg, CGROUP_WEIGHT_DFL);
-+	scx_tg_init(tg);
- 	alloc_uclamp_sched_group(tg, parent);
- 
- 	return tg;
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -4056,6 +4056,11 @@ bool scx_can_stop_tick(struct rq *rq)
- DEFINE_STATIC_PERCPU_RWSEM(scx_cgroup_rwsem);
- static bool scx_cgroup_enabled;
- 
-+void scx_tg_init(struct task_group *tg)
-+{
-+	tg->scx_weight = CGROUP_WEIGHT_DFL;
-+}
-+
- int scx_tg_online(struct task_group *tg)
- {
- 	struct scx_sched *sch = scx_root;
---- a/kernel/sched/ext.h
-+++ b/kernel/sched/ext.h
-@@ -95,6 +95,7 @@ static inline void scx_update_idle(struc
- 
- #ifdef CONFIG_CGROUP_SCHED
- #ifdef CONFIG_EXT_GROUP_SCHED
-+void scx_tg_init(struct task_group *tg);
- int scx_tg_online(struct task_group *tg);
- void scx_tg_offline(struct task_group *tg);
- int scx_cgroup_can_attach(struct cgroup_taskset *tset);
-@@ -104,6 +105,7 @@ void scx_cgroup_cancel_attach(struct cgr
- void scx_group_set_weight(struct task_group *tg, unsigned long cgrp_weight);
- void scx_group_set_idle(struct task_group *tg, bool idle);
- #else	/* CONFIG_EXT_GROUP_SCHED */
-+static inline void scx_tg_init(struct task_group *tg) {}
- static inline int scx_tg_online(struct task_group *tg) { return 0; }
- static inline void scx_tg_offline(struct task_group *tg) {}
- static inline int scx_cgroup_can_attach(struct cgroup_taskset *tset) { return 0; }
+Ivan Vecera (14):
+  dt-bindings: dpll: Add DPLL device and pin
+  dt-bindings: dpll: Add support for Microchip Azurite chip family
+  dpll: Add basic Microchip ZL3073x support
+  dpll: zl3073x: Add support for devlink device info
+  dpll: zl3073x: Protect operations requiring multiple register accesses
+  dpll: zl3073x: Fetch invariants during probe
+  dpll: zl3073x: Add clock_id field
+  dpll: zl3073x: Read DPLL types and pin properties from system firmware
+  dpll: zl3073x: Register DPLL devices and pins
+  dpll: zl3073x: Implement input pin selection in manual mode
+  dpll: zl3073x: Add support to get/set priority on input pins
+  dpll: zl3073x: Implement input pin state setting in automatic mode
+  dpll: zl3073x: Add support to get/set frequency on input pins
+  dpll: zl3073x: Add support to get/set frequency on output pins
+
+ .../devicetree/bindings/dpll/dpll-device.yaml |   76 +
+ .../devicetree/bindings/dpll/dpll-pin.yaml    |   45 +
+ .../bindings/dpll/microchip,zl30731.yaml      |  115 ++
+ Documentation/networking/devlink/index.rst    |    1 +
+ Documentation/networking/devlink/zl3073x.rst  |   37 +
+ MAINTAINERS                                   |   10 +
+ drivers/Kconfig                               |    4 +-
+ drivers/dpll/Kconfig                          |    6 +
+ drivers/dpll/Makefile                         |    2 +
+ drivers/dpll/zl3073x/Kconfig                  |   36 +
+ drivers/dpll/zl3073x/Makefile                 |   10 +
+ drivers/dpll/zl3073x/core.c                   |  968 +++++++++++
+ drivers/dpll/zl3073x/core.h                   |  371 ++++
+ drivers/dpll/zl3073x/dpll.c                   | 1494 +++++++++++++++++
+ drivers/dpll/zl3073x/dpll.h                   |   42 +
+ drivers/dpll/zl3073x/i2c.c                    |   95 ++
+ drivers/dpll/zl3073x/prop.c                   |  358 ++++
+ drivers/dpll/zl3073x/prop.h                   |   34 +
+ drivers/dpll/zl3073x/regs.h                   |  206 +++
+ drivers/dpll/zl3073x/spi.c                    |   95 ++
+ 20 files changed, 4003 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dpll/dpll-device.yaml
+ create mode 100644 Documentation/devicetree/bindings/dpll/dpll-pin.yaml
+ create mode 100644 Documentation/devicetree/bindings/dpll/microchip,zl30731.yaml
+ create mode 100644 Documentation/networking/devlink/zl3073x.rst
+ create mode 100644 drivers/dpll/zl3073x/Kconfig
+ create mode 100644 drivers/dpll/zl3073x/Makefile
+ create mode 100644 drivers/dpll/zl3073x/core.c
+ create mode 100644 drivers/dpll/zl3073x/core.h
+ create mode 100644 drivers/dpll/zl3073x/dpll.c
+ create mode 100644 drivers/dpll/zl3073x/dpll.h
+ create mode 100644 drivers/dpll/zl3073x/i2c.c
+ create mode 100644 drivers/dpll/zl3073x/prop.c
+ create mode 100644 drivers/dpll/zl3073x/prop.h
+ create mode 100644 drivers/dpll/zl3073x/regs.h
+ create mode 100644 drivers/dpll/zl3073x/spi.c
+
+-- 
+2.49.0
+
 
