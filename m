@@ -1,208 +1,172 @@
-Return-Path: <linux-kernel+bounces-688457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2BBADB29B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:55:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABE06ADB2AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF7381885DCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:55:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1C4A3A455F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43F32D9EDC;
-	Mon, 16 Jun 2025 13:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D309D2DBF61;
+	Mon, 16 Jun 2025 13:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="h7XMA1G1"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FzGnlYMW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5422877DF;
-	Mon, 16 Jun 2025 13:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750082011; cv=pass; b=VzniAGeovsTde/aM93H9zmXvzpCM7sG4tDB3R+9VONAvASd2lFIUYJ9pXc2/k3axgsyqziOvpeOj3tnUJRu7S3e2lVmBLNsOplPFoVBfzGnUEkpDxBqNQ5HW8r4gCnrkYj6+ymCO3za+xMaYlbRG1Uzs0Js87IW9eHy4YnsP+Qk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750082011; c=relaxed/simple;
-	bh=VPBW3DUZWR8rEu+xKM8mLtm8j6S+GyFkek9AfvzzjtY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=dNyZLlk1kVK6S8tjFfunT7MnNHty77W0S0wQCkrAgPK1jd1pXhXsO1S3vtKGDF1uwsgvgjqEdCIJZQhi26tNYmQErHJ7z+cBdEKi9hDtctOnwXze1XFnX1poSe7dF8fIwB3HYW+w/1Ig3VzfbHZ0mO8cLFJXCJnyXZANmeA9cNY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=h7XMA1G1; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1750081982; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=PLKRiJVJmOyTAh2bXwlTII/rAuVlxuOBFvmRD8uxukWTwO/W5f3KfBu02FQihNT3EujN2JMsySR10GfMFNvge1tMTknr4TQ0ScsjEsgHoPZt+ps2m1yj7L6ZIyK3fg9Qm8tEL0NuPXPrvvdp6+eSqvxLTWTQzrm6Y4ja++Hcsqc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750081982; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=1KfyiRvfAxxfHaWLnswCRSWM0xyQXffOX6Zl0uvCN6o=; 
-	b=I4aRotmYjNrU2gOe3zrwlmnBIe3JQaYiFYtio7k18SlZb1D0bcuMj2f+mZ1J76rX65RLJrBQV7x3ew/r6fneoWQwjJR/FWwwDGrQ+P+BJaRVuZcaeai0aL+pXcS212gfgFhFUM1nZfdTacSQ8JWEhF7gdupKOiOl+t7sCZ5wpHI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750081982;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=1KfyiRvfAxxfHaWLnswCRSWM0xyQXffOX6Zl0uvCN6o=;
-	b=h7XMA1G1BS40763It7I+21kD5l55RVWd4SasXUxDkq4tQryH19E0esGJuzPEelG4
-	fbBPV8ErEkEiWTuIJjx0ORWvXvKV8GT1INfNfOeLr2pVmo9tOt7ZYGaA4ExO9YX3Y3n
-	NjQYfqnS+KY1mlIt1+JttTtEGycBMcbMVyUvAArI=
-Received: by mx.zohomail.com with SMTPS id 1750081979926577.9845647874406;
-	Mon, 16 Jun 2025 06:52:59 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648292877E1
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750082047; cv=none; b=P1CjwKTZY6G9jguU8wYQ751/w4gep2UwMk0oRGyDXv1pRjhMvf9TH/H1DxecLTEtKTgue/7xoNm2gyRGjn/BO8rUbpgg7ekR6Jo1zUV4TDNINFV72rZiNT1cgZPsHTANH7KlcMJxsoPIwlLyYhAhXT6sm6rfj0lFEzfzFfuWI+E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750082047; c=relaxed/simple;
+	bh=ALufLifN8ET5GUUo9VdmBMb2kiTd+JEXg3vJP9CcLJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oxJkKjsTnaEbL5zxlpPb1CMOw8XKFOrHVhys3FrRjJrXuuzfgfgO45vQ8UlW3EycdF/H0Puyv/QK42LQOm3xq3PZxWzl2wcpNGt/4r4PC3yO2Yt89z5StH2YplrI7Gqq8B+wD4lv8pD7esBq3Fk+HEJzKa7A4NBGuv5XId70Qn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FzGnlYMW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750082044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HXRSgHsBoykaoCkGaODkCk80Pz+wKzFt/0k3tccKi30=;
+	b=FzGnlYMW0DefksNaJ8K60nt15cqmriHP8gDVM2KeIHpVQdnT0janqupyXTRtFBb8A/ocgN
+	ZqCdm5YWUF3Q0rsHPE5LZQ/RKzhUiiXGCaiJt9zxEIT0CX3Z4MSh/Abd8joDJ2A5ieAShU
+	Il8KLSBMHqHvyaw/ZyQss6iHJgya3qA=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-411-vjeSGmHVOtG4LlQvkHeJgg-1; Mon, 16 Jun 2025 09:54:02 -0400
+X-MC-Unique: vjeSGmHVOtG4LlQvkHeJgg-1
+X-Mimecast-MFC-AGG-ID: vjeSGmHVOtG4LlQvkHeJgg_1750082041
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45311704cdbso23730485e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 06:54:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750082041; x=1750686841;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HXRSgHsBoykaoCkGaODkCk80Pz+wKzFt/0k3tccKi30=;
+        b=Fuv4QDa1lNX4FIWT/WFJs15k8quvNieoRC6hlx70iHeR/iBXOJzQa2lsVc58gfSyL/
+         lrFmiFvRuo4T0tFUU7mIw9eeD14gPZ4eMBg12S7sBN4zfZai3FqPVZzycsFDvmGxxAhh
+         dz2/jA8Qrdbrozc0IP/x86hiwgi2JMWGTBQZTWU2hw7t08CTr50+hx4idDId6hCmVT25
+         FT0Qm2ORSOcTuQBPKtlFe2hnuh5699zTljnzgHVcFYzSUDEkGySM3K9ug1UtWaad9oCd
+         tYadIsUr52KS4y/LYBEfBVSwOCLhKGoBvpRKh8Hs430O9NrkJLUDamhWzK+ca+XkQxRb
+         bVGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbbKYarmFvqYZ54cdhVYcNQ1KhrgLy0mQ8uLde6ukpyq3XzykkuFD3MwdhwDZVVXkq1mLO8//qilZXZgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMWyDCDinmuAjopbr9Z/X0jzXS/0bluPiaWtq8UcECcYpjyywZ
+	046IHhARhHdluFeRjFKQH6e9SLSeD7f0ZxWyXheX30w9ncYZrOabebASArn9HBEhbLxtn6hlwLo
+	4S8lyBYsghv3C7ZX6a+hr0QKYp37OXoqyjEgK7ZsFft0Vs6dzNrMyCZjRfIHaPlNwhg==
+X-Gm-Gg: ASbGncvyWSrcnxRvOKTifyj9TE4sBO0Nrpugso5e6T8OJvgc789xOZdeZt2bdiaoa2c
+	cUQi0dcE2SHkPo5CH36sF97jIi5lRcwXuA7YKehOexe3UKXv6+SPQ8WJT6r8Fn4S31NWaw96hxi
+	vsCjre3PxA922kekklPjugYOzIWNYRTWAJGyH3k7Cv6ZymgYg5BydY9Nnoy5cPYhR3Mb6dtnapg
+	eG/JH080NyrPrFii9TyAvyncZFPDhQxyzb+S1sB4k8xzFj9jbUieSnaqGJErctKZ0zTSxbmChYX
+	Jp4e5Y9OfQ0dAZvSo0cDH9+44fQ=
+X-Received: by 2002:a5d:5f8d:0:b0:3a4:fa6a:9174 with SMTP id ffacd0b85a97d-3a5723a36b1mr7744982f8f.33.1750082041415;
+        Mon, 16 Jun 2025 06:54:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG9KK52CE4TM7xQev5LOLheuW7Ek08zbqpia8Xus0jUc0uv2rsRw4izzQxnWbncAFqkbNkuqg==
+X-Received: by 2002:a5d:5f8d:0:b0:3a4:fa6a:9174 with SMTP id ffacd0b85a97d-3a5723a36b1mr7744946f8f.33.1750082040864;
+        Mon, 16 Jun 2025 06:54:00 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.202.17])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b403b4sm10933571f8f.80.2025.06.16.06.53.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 06:54:00 -0700 (PDT)
+Date: Mon, 16 Jun 2025 15:53:53 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Xuewei Niu <niuxuewei97@gmail.com>
+Cc: mst@redhat.com, pabeni@redhat.com, jasowang@redhat.com, 
+	xuanzhuo@linux.alibaba.com, davem@davemloft.net, netdev@vger.kernel.org, stefanha@redhat.com, 
+	virtualization@lists.linux.dev, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	fupan.lfp@antgroup.com, Xuewei Niu <niuxuewei.nxw@antgroup.com>
+Subject: Re: [PATCH net-next v2 1/3] vsock: Add support for SIOCINQ ioctl
+Message-ID: <xshb6hrotqilacvkemcraz3xdqcdhuxp3co6u3jz3heea3sxfi@eeys5zdpcfxb>
+References: <20250613031152.1076725-1-niuxuewei.nxw@antgroup.com>
+ <20250613031152.1076725-2-niuxuewei.nxw@antgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v4 4/6] rust: irq: add support for threaded IRQs and
- handlers
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <5B3865E5-E343-4B5D-9BF7-7B9086AA9857@collabora.com>
-Date: Mon, 16 Jun 2025 10:52:44 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Benno Lossin <lossin@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <24F81191-5391-4208-9943-64440FCC19D8@collabora.com>
-References: <20250608-topics-tyr-request_irq-v4-0-81cb81fb8073@collabora.com>
- <20250608-topics-tyr-request_irq-v4-4-81cb81fb8073@collabora.com>
- <aEbTOhdfmYmhPiiS@pollux>
- <5B3865E5-E343-4B5D-9BF7-7B9086AA9857@collabora.com>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250613031152.1076725-2-niuxuewei.nxw@antgroup.com>
 
-Hi,
+On Fri, Jun 13, 2025 at 11:11:50AM +0800, Xuewei Niu wrote:
+>This patch adds support for SIOCINQ ioctl, which returns the number of
+>bytes unread in the socket.
+>
+>Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+>---
+> include/net/af_vsock.h   |  2 ++
+> net/vmw_vsock/af_vsock.c | 22 ++++++++++++++++++++++
+> 2 files changed, 24 insertions(+)
+>
+>diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
+>index d56e6e135158..723a886253ba 100644
+>--- a/include/net/af_vsock.h
+>+++ b/include/net/af_vsock.h
+>@@ -171,6 +171,8 @@ struct vsock_transport {
+>
+> 	/* SIOCOUTQ ioctl */
+> 	ssize_t (*unsent_bytes)(struct vsock_sock *vsk);
+>+	/* SIOCINQ ioctl */
+>+	ssize_t (*unread_bytes)(struct vsock_sock *vsk);
 
->>=20
->>> +
->>> +impl<T: ?Sized + ThreadedHandler, A: Allocator> ThreadedHandler for =
-Box<T, A> {
->>> +    fn handle_irq(&self) -> ThreadedIrqReturn {
->>> +        T::handle_irq(self)
->>> +    }
->>> +
->>> +    fn thread_fn(&self) -> IrqReturn {
->>> +        T::thread_fn(self)
->>> +    }
->>> +}
->>> +
->>> +/// A registration of a threaded IRQ handler for a given IRQ line.
->>> +///
->>> +/// Two callbacks are required: one to handle the IRQ, and one to =
-handle any
->>> +/// other work in a separate thread.
->>> +///
->>> +/// The thread handler is only called if the IRQ handler returns =
-`WakeThread`.
->>> +///
->>> +/// # Examples
->>> +///
->>> +/// The following is an example of using `ThreadedRegistration`. It =
-uses a
->>> +/// [`AtomicU32`](core::sync::AtomicU32) to provide the interior =
-mutability.
->>> +///
->>> +/// ```
->>> +/// use core::sync::atomic::AtomicU32;
->>> +/// use core::sync::atomic::Ordering;
->>> +///
->>> +/// use kernel::prelude::*;
->>> +/// use kernel::device::Bound;
->>> +/// use kernel::irq::flags;
->>> +/// use kernel::irq::ThreadedIrqReturn;
->>> +/// use kernel::irq::ThreadedRegistration;
->>> +/// use kernel::irq::IrqReturn;
->>> +/// use kernel::platform;
->>> +/// use kernel::sync::Arc;
->>> +/// use kernel::sync::SpinLock;
->>> +/// use kernel::alloc::flags::GFP_KERNEL;
->>> +/// use kernel::c_str;
->>> +///
->>> +/// // Declare a struct that will be passed in when the interrupt =
-fires. The u32
->>> +/// // merely serves as an example of some internal data.
->>> +/// struct Data(AtomicU32);
->>> +///
->>> +/// // [`handle_irq`] takes &self. This example illustrates =
-interior
->>> +/// // mutability can be used when share the data between process =
-context and IRQ
->>> +/// // context.
->>> +///
->>> +/// type Handler =3D Data;
->>> +///
->>> +/// impl kernel::irq::request::ThreadedHandler for Handler {
->>> +///     // This is executing in IRQ context in some CPU. Other CPUs =
-can still
->>> +///     // try to access to data.
->>> +///     fn handle_irq(&self) -> ThreadedIrqReturn {
->>> +///         self.0.fetch_add(1, Ordering::Relaxed);
->>> +///
->>> +///         // By returning `WakeThread`, we indicate to the system =
-that the
->>> +///         // thread function should be called. Otherwise, return
->>> +///         // ThreadedIrqReturn::Handled.
->>> +///         ThreadedIrqReturn::WakeThread
->>> +///     }
->>> +///
->>> +///     // This will run (in a separate kthread) if and only if =
-`handle_irq`
->>> +///     // returns `WakeThread`.
->>> +///     fn thread_fn(&self) -> IrqReturn {
->>> +///         self.0.fetch_add(1, Ordering::Relaxed);
->>> +///
->>> +///         IrqReturn::Handled
->>> +///     }
->>> +/// }
->>> +///
->>> +/// // This is running in process context.
->>> +/// fn register_threaded_irq(handler: Handler, dev: =
-&platform::Device<Bound>) -> Result<Arc<ThreadedRegistration<Handler>>> =
-{
->>> +///     let registration =3D dev.threaded_irq_by_index(0, =
-flags::SHARED, c_str!("my-device"), handler)?;
->>=20
->> This doesn't compile (yet). I think this should be a "raw" example, =
-i.e. the
->> function should take an IRQ number.
->>=20
->> The example you sketch up here is for =
-platform::Device::threaded_irq_by_index().
->=20
-> Yes, I originally had an example along the lines of what you =
-mentioned. Except
-> that with the changes in register() from pub to pub(crate) they =
-stopped
-> compiling.
->=20
-> I am not sure how the doctest to kunit machinery works, but I was =
-expecting
-> tests to have access to everything within the module they're defined =
-in, but
-> this is apparently not the case.
+Instead of adding a new callback, can we just use 
+`vsock_stream_has_data()` ?
 
-Does anybody have any input on this? Again, I tried it already before =
-sending
-the current version but it does not compile due to pub(crate).
+Maybe adjusting it or changing something in the transports, but for 
+virtio-vsock, it seems to me it does exactly what the new 
+`virtio_transport_unread_bytes()` does, right?
 
-=E2=80=94 Daniel=
+Thanks,
+Stefano
+
+>
+> 	/* Shutdown. */
+> 	int (*shutdown)(struct vsock_sock *, int);
+>diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+>index 2e7a3034e965..466b1ebadbbc 100644
+>--- a/net/vmw_vsock/af_vsock.c
+>+++ b/net/vmw_vsock/af_vsock.c
+>@@ -1389,6 +1389,28 @@ static int vsock_do_ioctl(struct socket *sock, unsigned int cmd,
+> 	vsk = vsock_sk(sk);
+>
+> 	switch (cmd) {
+>+	case SIOCINQ: {
+>+		ssize_t n_bytes;
+>+
+>+		if (!vsk->transport || !vsk->transport->unread_bytes) {
+>+			ret = -EOPNOTSUPP;
+>+			break;
+>+		}
+>+
+>+		if (sock_type_connectible(sk->sk_type) &&
+>+		    sk->sk_state == TCP_LISTEN) {
+>+			ret = -EINVAL;
+>+			break;
+>+		}
+>+
+>+		n_bytes = vsk->transport->unread_bytes(vsk);
+>+		if (n_bytes < 0) {
+>+			ret = n_bytes;
+>+			break;
+>+		}
+>+		ret = put_user(n_bytes, arg);
+>+		break;
+>+	}
+> 	case SIOCOUTQ: {
+> 		ssize_t n_bytes;
+>
+>-- 
+>2.34.1
+>
+
 
