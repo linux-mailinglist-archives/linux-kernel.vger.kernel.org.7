@@ -1,150 +1,108 @@
-Return-Path: <linux-kernel+bounces-688422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53AB1ADB245
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:41:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB744ADB254
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C535A16E7F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:39:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70BFE163A91
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3734285C9F;
-	Mon, 16 Jun 2025 13:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPhak58S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CDB2BF00A;
-	Mon, 16 Jun 2025 13:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072302877D8;
+	Mon, 16 Jun 2025 13:41:54 +0000 (UTC)
+Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0825285C98;
+	Mon, 16 Jun 2025 13:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750081178; cv=none; b=aAUDlgG/AeHiInWUlVzrTiEfVy5w8Tvwcswgp+lBLzEqF3YdFoVMbh9r1dqa0tsC+xCw/kACli+CrvRzZOnNLca55H43SPM90pnzkizqU1dQYsIObmXJRcj2oMF4iChk9WN5ki+yGjEcj4yvbNGmSzXytEJKmBa1L3EpOehCKmY=
+	t=1750081313; cv=none; b=SsVTl5EudXP7gVnhDG8Ruud9i3nLfioS/45AUV5NmuJCDFKOk4Jq4NbxsMT8B3FN1+Jy/POXQL6OoCt2SJNa3ATyyoOdUiCbAaOGD8ASH31Ir83acii8FDkhdH0+/8n8km+y5T2DJNUdgpg5RyJYNSqwZ4OGSOmn9ymZQK57U78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750081178; c=relaxed/simple;
-	bh=QChRHTU/30PQQdwPpB0Y5bMUBvR5fCOVd6P2tx7W2Bk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jSbqUZuQwBGtI/aOKbrAWOZQzpicZiObVSvTQhr2kY2AyxRGevL23lmxddBL081Ipy3umKFi7OMWgVvL6vj+YjyWqzJWLjEiYo5SAQxMm9kWVB2EJB+pP4jGHyHmkrFtjVbN9vgQFOC8Jfncy3btzzOZezVs3C9QpoM4SqPogG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPhak58S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E541C4CEEA;
-	Mon, 16 Jun 2025 13:39:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750081177;
-	bh=QChRHTU/30PQQdwPpB0Y5bMUBvR5fCOVd6P2tx7W2Bk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DPhak58SfBy+BJ/+F7Bo/tmnEg3tGs/6HlSKTVoMq1AaVYyiF6y1H2/CltKTVo4e5
-	 F/xpI7PpnQ4eOtiDNpKT/v4VGt/FHb82bvmL2USQvvaOgOF4tSoM6z/MSQjn305brv
-	 j94nP2FwSSC0Sxi1O6LPpdl+PwwjOklaXg1IaSQN+eMc5jVIJouXc5bUyiXiEvPDFB
-	 nMWRWvn3Czp/uutQ+xKJ0ZPNE90Xm3kfqC20CR7P1faHNhitS36YDw/UB18UyMgtzd
-	 AqBYNeDEwegzcf2Jadgf0xMRHh68XLNqWQT0mQZ8tVB9VxK7NEc8OSfxl45VVCQBiy
-	 psPdGl12QhC/Q==
-Message-ID: <ec83739d-26aa-4b83-a548-e3905097fe10@kernel.org>
-Date: Mon, 16 Jun 2025 15:39:33 +0200
+	s=arc-20240116; t=1750081313; c=relaxed/simple;
+	bh=UG52tGL5lemW+BQ7mx7lKFDNox+1XXbApeUAxe3ql90=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MaIMAlekvN1J79hZWubkcOOPPXMZgixFXiJCPJ6/idBoqdFXJP7FfYNL0tg6D5QiYU1do2tSYoWxAAQvOdGo8OPOCZq8tVD/2u8L74Z+/GO1fvPqqRihf31M7S3bKsIk4l1INaPwk03ZnTlSD/NYutxX3ZkeThxUQUuXTi0pwxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.50])
+	by app2 (Coremail) with SMTP id HwEQrAD3J7DhHlBoJl2aAQ--.19222S2;
+	Mon, 16 Jun 2025 21:40:49 +0800 (CST)
+Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
+	by gateway (Coremail) with SMTP id _____wDngNnfHlBoWuZCAA--.2378S2;
+	Mon, 16 Jun 2025 21:40:48 +0800 (CST)
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: Alex Shi <alexs@kernel.org>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Dongliang Mu <dzm91@hust.edu.cn>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs/zh_CN: update git command examples in how-to.rst
+Date: Mon, 16 Jun 2025 21:40:01 +0800
+Message-ID: <20250616134003.3981866-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] media: uvcvideo: Split uvc_stop_streaming()
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans de Goede <hdegoede@redhat.com>, Hans Verkuil <hans@jjverkuil.nl>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250602-uvc-fop-v3-0-a99e18f65640@chromium.org>
- <20250602-uvc-fop-v3-4-a99e18f65640@chromium.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <20250602-uvc-fop-v3-4-a99e18f65640@chromium.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HwEQrAD3J7DhHlBoJl2aAQ--.19222S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvdXoWrtw4UGw15WrWxurykXw4UXFb_yoWDtFbE9F
+	93JF4fAwsrAr4xJFn5Z34jqF18uF409wn7Arn0y3yDJw17W3yDWrWDXrWkZF15XanI9Fyr
+	CFZ3uayrXF9IvjkaLaAFLSUrUUUU8b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbv8YjsxI4VWxJwAYFVCjjxCrM7CY07I20VC2zVCF04k26cxKx2IY
+	s7xG6rWj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI
+	8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vE
+	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_Jr
+	v_JF1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
+	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r
+	4UJVWxJr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1l
+	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxAIw2
+	8IcVCjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AK
+	xVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
+	AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
+	42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
+	IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
+	KfnxnUUI43ZEXa7IU0X_-JUUUUU==
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-Hi Ricardo,
+This patch leverages `checkout -b` to shorten branch & checkout
+and fix the missing checkout.
 
-On 2-Jun-25 18:06, Ricardo Ribalda wrote:
-> uvc_stop_streaming() is used for meta and video nodes. Split the function
-> in two to avoid confusion.
-> 
-> Use this opportunity to rename uvc_start_streaming() to
-> uvc_start_streaming_video(), as it is only called by the video nodes.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+---
+ Documentation/translations/zh_CN/how-to.rst | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Thanks, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hansg@kernel.org>
-
-Regards,
-
-Hans
-
-
-> ---
->  drivers/media/usb/uvc/uvc_queue.c | 22 +++++++++++++++-------
->  1 file changed, 15 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_queue.c b/drivers/media/usb/uvc/uvc_queue.c
-> index 8f9737ac729546683ca48f5e71ce3dfacbae2926..3f357c2d48cfd258c26f0342007d1d12f1e01007 100644
-> --- a/drivers/media/usb/uvc/uvc_queue.c
-> +++ b/drivers/media/usb/uvc/uvc_queue.c
-> @@ -167,7 +167,7 @@ static void uvc_buffer_finish(struct vb2_buffer *vb)
->  		uvc_video_clock_update(stream, vbuf, buf);
->  }
->  
-> -static int uvc_start_streaming(struct vb2_queue *vq, unsigned int count)
-> +static int uvc_start_streaming_video(struct vb2_queue *vq, unsigned int count)
->  {
->  	struct uvc_video_queue *queue = vb2_get_drv_priv(vq);
->  	struct uvc_streaming *stream = uvc_queue_to_stream(queue);
-> @@ -186,14 +186,22 @@ static int uvc_start_streaming(struct vb2_queue *vq, unsigned int count)
->  	return ret;
->  }
->  
-> -static void uvc_stop_streaming(struct vb2_queue *vq)
-> +static void uvc_stop_streaming_video(struct vb2_queue *vq)
->  {
->  	struct uvc_video_queue *queue = vb2_get_drv_priv(vq);
->  
->  	lockdep_assert_irqs_enabled();
->  
-> -	if (vq->type != V4L2_BUF_TYPE_META_CAPTURE)
-> -		uvc_video_stop_streaming(uvc_queue_to_stream(queue));
-> +	uvc_video_stop_streaming(uvc_queue_to_stream(queue));
-> +
-> +	uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
-> +}
-> +
-> +static void uvc_stop_streaming_meta(struct vb2_queue *vq)
-> +{
-> +	struct uvc_video_queue *queue = vb2_get_drv_priv(vq);
-> +
-> +	lockdep_assert_irqs_enabled();
->  
->  	uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
->  }
-> @@ -203,15 +211,15 @@ static const struct vb2_ops uvc_queue_qops = {
->  	.buf_prepare = uvc_buffer_prepare,
->  	.buf_queue = uvc_buffer_queue,
->  	.buf_finish = uvc_buffer_finish,
-> -	.start_streaming = uvc_start_streaming,
-> -	.stop_streaming = uvc_stop_streaming,
-> +	.start_streaming = uvc_start_streaming_video,
-> +	.stop_streaming = uvc_stop_streaming_video,
->  };
->  
->  static const struct vb2_ops uvc_meta_queue_qops = {
->  	.queue_setup = uvc_queue_setup,
->  	.buf_prepare = uvc_buffer_prepare,
->  	.buf_queue = uvc_buffer_queue,
-> -	.stop_streaming = uvc_stop_streaming,
-> +	.stop_streaming = uvc_stop_streaming_meta,
->  };
->  
->  int uvc_queue_init(struct uvc_video_queue *queue, enum v4l2_buf_type type)
-> 
+diff --git a/Documentation/translations/zh_CN/how-to.rst b/Documentation/translations/zh_CN/how-to.rst
+index 569b0209385a..0896f13d8b8d 100644
+--- a/Documentation/translations/zh_CN/how-to.rst
++++ b/Documentation/translations/zh_CN/how-to.rst
+@@ -177,8 +177,7 @@ git和邮箱配置
+ 请执行以下命令，新建开发分支::
+ 
+ 	git checkout docs-next
+-	git branch my-trans
+-	git checkout my-trans
++	git checkout -b my-trans
+ 
+ 译文格式要求
+ ------------
+@@ -286,7 +285,7 @@ warning 不需要解决::
+ 然后执行以下命令为补丁追加更改::
+ 
+ 	git checkout docs-next
+-	git branch test-trans
++	git checkout -b test-trans-new
+ 	git am 0001-xxxxx.patch
+ 	./scripts/checkpatch.pl 0001-xxxxx.patch
+ 	直接修改您的翻译
+-- 
+2.43.0
 
 
