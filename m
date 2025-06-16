@@ -1,78 +1,90 @@
-Return-Path: <linux-kernel+bounces-687550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98090ADA66F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 04:46:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2A8ADA674
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 04:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADE583AF125
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 02:46:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A98F7A7AC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 02:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C941D28D8C0;
-	Mon, 16 Jun 2025 02:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC30295531;
+	Mon, 16 Jun 2025 02:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBZifnpa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="gVuxHSAd"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C0123AD;
-	Mon, 16 Jun 2025 02:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DC428EA65;
+	Mon, 16 Jun 2025 02:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750041996; cv=none; b=or7GGf0LYD30Vq71DpmvtHUQLBdJyCMPXIXnqnsQRg0uko8V0GUqdreBTnuhc6toy/1bPPIDJRHUrXdSwzCtwiZ+G2LLqxwJiTYxho2Vck06JqG7JIJldsYPvmVS0/MJxkOMRR3Aw9DTEv6lYZW+hgsKONJggTBDvjyv2T0CvxE=
+	t=1750042039; cv=none; b=s289j30/nJ07ZnDJLLuzeyxJtzFtUqrTR2OwNO+tBAee2ZaH7te/zWIEvmoCjwsadZjQhNA5CXmAiFKBRY9TJIDHhXAnoo/zyWe3gEXGp6MHD9KqC9JVCIBpBmHIeMQRsqcwh2nfGgaXOLXro3sET7nNkqLmlSepdo4KBapS/7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750041996; c=relaxed/simple;
-	bh=wJvmwvSD+YkCIiDpdRJYVYq/38i1xbnya3KSea6L8Ks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JqTt5JbSzQM/ZhCdhMSTVY+qITYexOr4hr0j5EViz9uB3RPrNwTzv4NTIllk3EM+NnWO83V5mtimfdZg94o4gJYhRVfKgpBqXMHNaDEn6FNf7Vr6zU531JNX+SL67k8HLJ1Bf7LkEj8uOEb34U9znahPfmCJx64sxWJA+/AS1nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jBZifnpa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1616BC4CEE3;
-	Mon, 16 Jun 2025 02:46:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750041995;
-	bh=wJvmwvSD+YkCIiDpdRJYVYq/38i1xbnya3KSea6L8Ks=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jBZifnpahyggAD0yBiXHQWIESzcdElxHRG7Pd8CHuaSXT/WlWO1jgSkpBI219nYOW
-	 XrDyjZ+D+M9La7IGAIgPi4zBizOMtCwv3RymcTK6yOiv4Vj0Ber9Onw+I1a7diaUa6
-	 ThB5l15dj7azaxtSLdoXEbIdbgPVcxcMUKh0G4Kwjpk5RMMxMpvcUlXCM+db0SxvUE
-	 Om/fefRbo8JTfLc5fTI19w7BCDDdxa/hW8D0Wr3LZqkndv9R9IIDNwmVi31wnBVzFm
-	 G+R8bs5ha1k4jvukR33NzTrtewUs8qPRnLc75ZrJpTdcwRPLCaqYKDxCJtv1p0B2sV
-	 /wgB5L/U0GtzQ==
-Message-ID: <8c17ba4e-98b1-4ac5-8c0d-fb5e1c13f7f2@kernel.org>
-Date: Mon, 16 Jun 2025 11:46:33 +0900
+	s=arc-20240116; t=1750042039; c=relaxed/simple;
+	bh=FlwQxJuGAOcmvn4PXXGQ+USfVSwSjgXAPWXer3igmeo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z8sGBpVdfTq5TuyOH1wLPzCOpVh6I2e5OqgbtdhYLYpmcmx8K6FY5vttg8UYmHOriX6Do0E73/8a1ccO6YMi7DZJ2aQqmKZhwGktEMfOBKJg/AncmDnO4UxtpUA/7rjcPSYhPVFe4dtaspdKkVKQVeFdOO8k6o0yVrJ8tKmMSyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=gVuxHSAd; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=YEtckLm6ZfdKefMAFsRJm10nDoOLNy7qpOL8icEW1ns=; b=gVuxHSAdhpWrGQVNeZ3UWOg1L3
+	E6usWBR3XW9Atf19k3GlkHqJCsReefNrZJvvmYJiVOKjHP2kWGd7C58qkMX/6CDt9YRgz5diTev9K
+	Oor10CZwvwF69EvtcICFu87zfWMb8c13ajgN+8Tku2C8UTkYtga6vWwuS1GQuf/27gDw147Iqps22
+	KkZytWHXgyQTgM17vIrrEEKkRuU0qD+ytC9hoErN6ATooaEN6eC9VagI4+a/QU9lUUJNwD7gURXHM
+	4yoWJrGkqqL8iXtxrtROus//vU7gc4BzDMx/Uxcxq7iZQCAk57TVRFKype1jElwGM795BSAeuLkdm
+	aGFGE1xw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uQzd0-000IXB-2T;
+	Mon, 16 Jun 2025 10:46:59 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 16 Jun 2025 10:46:58 +0800
+Date: Mon, 16 Jun 2025 10:46:58 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: thomas.lendacky@amd.com, john.allen@amd.com, davem@davemloft.net,
+	dan.carpenter@linaro.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: ccp: Fix dereferencing uninitialized error
+ pointer
+Message-ID: <aE-ForLUfyrXeOhg@gondor.apana.org.au>
+References: <20250528202018.78192-1-Ashish.Kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 3/5] block, bfq: switch to use elevator lock
-To: Yu Kuai <yukuai1@huaweicloud.com>, ming.lei@redhat.com,
- yukuai3@huawei.com, tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com
-References: <20250614092528.2352680-1-yukuai1@huaweicloud.com>
- <20250614092528.2352680-4-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20250614092528.2352680-4-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250528202018.78192-1-Ashish.Kalra@amd.com>
 
-On 6/14/25 18:25, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
+On Wed, May 28, 2025 at 08:20:18PM +0000, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
 > 
-> Convert 'bfqd->lock' to high level 'q->elevator->lock', prepare to support
-> batch requests dispatching.
+> Fix below smatch warnings:
+> drivers/crypto/ccp/sev-dev.c:1312 __sev_platform_init_locked()
+> error: we previously assumed 'error' could be null
+> 
+> Fixes: 9770b428b1a2 ("crypto: ccp - Move dev_info/err messages for SEV/SNP init and shutdown")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/202505071746.eWOx5QgC-lkp@intel.com/
+> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> ---
+>  drivers/crypto/ccp/sev-dev.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 
-Same comment as for the previous patch.
-
+Patch applied.  Thanks.
 -- 
-Damien Le Moal
-Western Digital Research
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
