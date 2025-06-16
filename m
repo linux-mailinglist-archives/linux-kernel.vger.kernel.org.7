@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-687752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B196ADA8A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:53:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5CEDADA8B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D9343A5347
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:52:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 271921891D46
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90621E5B9E;
-	Mon, 16 Jun 2025 06:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A9F1E8854;
+	Mon, 16 Jun 2025 06:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUxWq/Kn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cyYWaqXu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1952F1AC88A;
-	Mon, 16 Jun 2025 06:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4832B1DD0D4;
+	Mon, 16 Jun 2025 06:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750056791; cv=none; b=QpZS9dn4h6oAgPnFjvAJcaEkNzT9t0DaZPfKB7UDl10Fne63VX6fZHewcr2WCWRDLhHlrX6acMlBih8Lwn1ghiIxGC8ziW9i2x7wMLFoOemGI7s1KzBzfrG9kO5MgObJFyqfhZs/TzSBNWrwQrDUGchDxIE5DBV7DCaQCmgWHGc=
+	t=1750056917; cv=none; b=ZK6tJtH/Pp7ldyh6VgwI+AXinc8ecQ+QKQQFTuFIaom5DDpHpnZAJUnYF//vhcMla+fCWgATogoLn6VZB7PujZyeoLNDg5MYYTYlerHN2/D87qpWoE0B2sZzLlfnhhWd/oR2rEEMxi5TRwwufRCDfiIX/nHKG6Wxl3zxx/MGoM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750056791; c=relaxed/simple;
-	bh=Qfmr62EJG482Y98uXnZ0DUADLOxBA9j0CZv+N0ryPJc=;
+	s=arc-20240116; t=1750056917; c=relaxed/simple;
+	bh=JzhPaAJq3SE1ySzHxtViTC3KuZDIosj/LQ8YKkF7X1Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ezszMWeQG0N1tkv8F96Wf0pkRKcMDIoXBuHildQiaG+cK2qCiwfbIm9kRXUb7KJV0ivKPF0Z0yCfNt/64yjQot5AIo0F3bpxhThhqXw5ovYfiUqu0N/ZUJpqIXcTFdgfyQx6UV+amKDrZJIlNoO3W55WOS2srcCH09r3ba8SAUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUxWq/Kn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 516E3C4CEEA;
-	Mon, 16 Jun 2025 06:53:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750056790;
-	bh=Qfmr62EJG482Y98uXnZ0DUADLOxBA9j0CZv+N0ryPJc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oUxWq/KnldbiR/TxJ0fzYjMtotL6MHBUiLQSObTGmjtJLlQhqm53uC0mdw9phQxoM
-	 0gy4gtpKPPZcko4q2k8bozIQjCoIsK4/ejzd2/ZUEiaWZxxqp8eo0Hu47AnQ9TpXvj
-	 qZpZu/5rNNxg4eEQX6gFZLtACX1xxepWTMvxTW1q7mdshN+4lUcgf2IsMZ5znaogsE
-	 D27kpe/2dLeTcIm/Y/xem4Yrv3oGqWByf2Y5nZLyGPY4XHFCKvQMH1NvlcTLKlwUO1
-	 cAw3x9gULotD0fnvW2soIHheICiasZAq0ZtKenDlx/GB+nLy6gwrki+ZhwefNmHRT9
-	 3IMzivRNHBCWA==
-Message-ID: <2ecee1b5-4d95-47ea-935f-3ba93d35d2ff@kernel.org>
-Date: Mon, 16 Jun 2025 08:53:02 +0200
+	 In-Reply-To:Content-Type; b=RHHD3S8XKanIIplen56GJWwOB7S5RrCYV/QUzJXLuF6tv5rjALUcsWvBkWMF9+Iz/zSYnK8+XOmJQ8b8PrOUphbOnNitbchhW90ZPJdtX/7KwGPUZi+PONySBNS2bi03LDSpJfpOl3xVwH8pzfkxUlN11PWQBcE1Q/4uT2Vl584=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cyYWaqXu; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750056916; x=1781592916;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=JzhPaAJq3SE1ySzHxtViTC3KuZDIosj/LQ8YKkF7X1Q=;
+  b=cyYWaqXuzxQGoEnk6FkXdDDj6qA2SvmAUQ8BqdrJJrlwKUBQwRyGsgZb
+   qg+4uDMw8daZyiAWzuuyNJNU9bJNLHjImemojOuPIJBnI61IBJSxy+R+s
+   AeZc7mmmhIBb99FIjg17Iudw2esSOx0mkkmuvl/RxZe3d4McU5yvu62sI
+   jVqOQC0Kjt3ii4F0M1Dg4aB7R64HIXQZcOdaZY6SWGzGGkrQg5/133ADv
+   JjVAh4jqRBBcfjJioCoA5ke+m18yy8rTKZNAhZ8QyGDL8MIUZjRzyzB+3
+   cB6r1oZ2JqflzsM3sHrJCrFSY9KTp0dSifPqD2Gl/g0C2wKF0slqo3jqI
+   g==;
+X-CSE-ConnectionGUID: iMKpV/ppRhafhABIDZU6Qg==
+X-CSE-MsgGUID: h5rV8wUgTG+hA6QjQEb8dA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="74720822"
+X-IronPort-AV: E=Sophos;i="6.16,240,1744095600"; 
+   d="scan'208";a="74720822"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2025 23:55:15 -0700
+X-CSE-ConnectionGUID: eWT5UpgTTxO6CbYgUZWzxg==
+X-CSE-MsgGUID: xOYLWIvfQEeVOE3EP2VS3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,240,1744095600"; 
+   d="scan'208";a="149298915"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2025 23:55:09 -0700
+Message-ID: <b9a7ae65-edc6-46e9-bea0-163a51459884@linux.intel.com>
+Date: Mon, 16 Jun 2025 14:54:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,87 +66,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] dt-bindings: pwm: thead: Add T-HEAD TH1520 PWM
- controller
-To: Michal Wilczynski <m.wilczynski@samsung.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
- Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com>
- <CGME20250610125336eucas1p2ea5eaa740364b6db5007e0849465402d@eucas1p2.samsung.com>
- <20250610-rust-next-pwm-working-fan-for-sending-v2-4-753e2955f110@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v6 10/25] iommufd/viommu: Add IOMMUFD_CMD_HW_QUEUE_ALLOC
+ ioctl
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
+ bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+ thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+ shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+ peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+ praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
+ alok.a.tiwari@oracle.com, vasant.hegde@amd.com, dwmw2@infradead.org
+References: <cover.1749884998.git.nicolinc@nvidia.com>
+ <7dfb002613f224f57a069d27e7bf2b306b0a5ba0.1749884998.git.nicolinc@nvidia.com>
+ <1ab8030b-8d2f-4ebe-a280-6d0e4e1d17c7@linux.intel.com>
+ <aE+976F9zPsjtfry@nvidia.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250610-rust-next-pwm-working-fan-for-sending-v2-4-753e2955f110@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <aE+976F9zPsjtfry@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/06/2025 14:52, Michal Wilczynski wrote:
-> Add the Device Tree binding documentation for the T-HEAD
-> TH1520 SoC PWM controller.
+On 6/16/25 14:47, Nicolin Chen wrote:
+> On Mon, Jun 16, 2025 at 02:12:04PM +0800, Baolu Lu wrote:
+>> On 6/14/25 15:14, Nicolin Chen wrote:
+>>> +	if (!viommu->ops || !viommu->ops->get_hw_queue_size ||
+>>> +	    !viommu->ops->hw_queue_init_phys) {
+>>> +		rc = -EOPNOTSUPP;
+>>> +		goto out_put_viommu;
+>>> +	}
+> Hmm, here it does abort when !viommu->ops->hw_queue_init_phys ..
 > 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
+>>> +	/*
+>>> +	 * FIXME once ops->hw_queue_init is introduced, this should check "if
+>>> +	 * ops->hw_queue_init_phys". And "access" should be initialized to NULL.
+>>> +	 */
+>> I just don't follow here. Up until now, only viommu->ops->
+>> hw_queue_init_phys has been added, which means the current code only
+>> supports hardware queues that access guest memory using physical
+>> addresses. The access object is not needed for the other type of
+>> hardware queue that uses guest IOVA.
+>>
+>> So, why not just abort here if ops->hw_queue_init_phys is not supported
+>> by the IOMMU driver?
+> .. so, it already does.
+> 
+>> Leave other logics to the patches that introduce
+>> ops->hw_queue_init? I guess that would make this patch more readible.
+> The patch is doing in the way to support the hw_queue_init_phys
+> case only. It is just adding some extra FIXMEs as the guideline
+> for the future patch adding hw_queue_init op.
+> 
+> I personally don't feel these are confusing. Maybe you can help
+> point out what specific wording feels odd here? Maybe "FIXME"s
+> should be "TODO"s?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Oh, I probably misunderstood the logic here. For both hw_queue_init and
+hw_queue_init_phys, using an access object to pin the pages for hardware
+access is necessary, right? My understanding was that pinning pages is
+only required for hw_queue_init_phys.
 
-Best regards,
-Krzysztof
+> 
+> I could also drop all of these guideline if they are considered
+> very unnecessary.
+> 
+> Thanks
+> Nicolin
+
+Thanks,
+baolu
 
