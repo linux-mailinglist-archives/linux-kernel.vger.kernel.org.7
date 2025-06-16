@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-689146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D42A5ADBCBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 00:16:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C2DADBCC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 00:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A198F3A28A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:16:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77E6B3B4895
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA131547C9;
-	Mon, 16 Jun 2025 22:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5811DE2CF;
+	Mon, 16 Jun 2025 22:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSbPtCv8"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQDnASwo"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC44214C5B0;
-	Mon, 16 Jun 2025 22:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C0442A83;
+	Mon, 16 Jun 2025 22:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750112205; cv=none; b=VqDmHKk8SoWCRGEBhCbgJJEAYAg7GKlsiCxLHqx7gjo433UyKEjCcnziDAgJUxvWNPGeoYKO8u0NuMhkGfVR+bTyoson2nKQNMQSE+AGowKsOhfiSiO/vqa7BOxtm0PpoF1JIhp4pI4DP+OEDMW1xSEvzqpSvO9H0NDH+ohW6Nk=
+	t=1750112230; cv=none; b=eFxxxUCeP/3ggsdhvEhiFRBGhyYqivhimh6icttDAcS2SMg7XjVVyO0JdxLz9aVDEC50Z4g6QHH4B0fz65sDQK3nm1xGn7awvR9YKOU5svDwGv/ztWL8MJBSUNv0WRiB8/vMrFP4QocAs9PFvcbq0QogsysDAJsOE0Wtw+6FL+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750112205; c=relaxed/simple;
-	bh=KmLlsiJggLaioGxm5JWtZbVEvujaic5Q0beryzz+APk=;
+	s=arc-20240116; t=1750112230; c=relaxed/simple;
+	bh=ecdtu9IoLAFC6tSfFm4Ul1T4VV4iYp3PqZ1Bd6n427c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GZMFsWgmsvVZwFzeOoUmENjhtfGvKJco/2wZ1YI7dKpk/N4gJKjTNhL1IpX8lDd1hchIvHQdVqMIgs5F6qQKUZ1/m57TRRJal6OS+C5re4AleYCNmo9kWgCBtcWUy7IBo1H7BwujL0pR9cZ5ETUP7bEyKOvRBblu+MA7fhQ4pEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NSbPtCv8; arc=none smtp.client-ip=209.85.214.178
+	 Content-Type:Content-Disposition:In-Reply-To; b=AR9XiyZBBTWkodYP63jd0hBvqX+La9TmViJhBFtUu8SGbM7737ptPXLHPSY9OBSBY5lmLUtAZwHHGDhgd2oVg/hK4s04ool7fwT3PGBDiI6HTAcZ3oNYYYcZAMyjBtRlcQOo63oTqzy7aQkOXecuEP4IKxHlGWvjJLvJn3ihdlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VQDnASwo; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-23649faf69fso48884235ad.0;
-        Mon, 16 Jun 2025 15:16:43 -0700 (PDT)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b2f603b0f0dso4764504a12.1;
+        Mon, 16 Jun 2025 15:17:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750112203; x=1750717003; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750112228; x=1750717028; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Hk/1RrX60JDmdVrtnshWrtDpcwloR4SRE8DgWiROa1Q=;
-        b=NSbPtCv8H+ORD0NotsGySUBm8qkK21pKh8w9Nz7+Z/k8Ya/mUO9q+WkHKg6+YLfi5U
-         IBlz45D1DHxZYjpektvJD4jRIvChT9A0Y/FJxQb3q7KxS/gpyamnYUB+QRfyEE53W+b+
-         qCbH4LBurxWFIothqtM0N3oCv20tbGRM+MxnPYIlINpxcNkMgMGvxuqrTvNGsND+rfNN
-         z+5hW/13bU4JIt1vfoWT1Oi6flKQfzJR8yAiMJfGw+cGWUS8gCJt+EOD/dk2e7TCRH0e
-         G81+bumaR7XoVmaH8qmbqdP/aSg1nEF/NgsYkrWOBBTfQBN8Q2rmAuX0zCpSKu4xM7X5
-         XTTA==
+        bh=L5Fh2IblBptlZ3vF3rnRWlEF+hFPfUIR1AemX0HSA00=;
+        b=VQDnASwoUUHt0TzvgpE8JBBjiUDtnxvN9uQ1oecUSjbWtqd+s6TXnpULfrR89drqOb
+         ENJ3NIYGGh5d2gS1jRU4vbfx5AISS1g1LYvcEdR1DWG/44WsIE4ASoYexx0lpZMkt/YN
+         Kxl8tQIwuJN22bV1xO6hKAFiOF0OQ7akfDw0h3D5v5A30RWoT8CC3EBGpYhWM1lqORIm
+         lHn0dlN+9hHt+YDQKYtrhkZRx0/c1HsvNck6mB/p8IpUvdqmGTHF6cYSYnvObvmuynJt
+         NFgxHuLkq86FMwQn5EFMYilnpfI1IzyVSLmpYw3FJA862e/VSRXpv973Irp/f7uKF5UM
+         sfjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750112203; x=1750717003;
+        d=1e100.net; s=20230601; t=1750112228; x=1750717028;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Hk/1RrX60JDmdVrtnshWrtDpcwloR4SRE8DgWiROa1Q=;
-        b=iw6g3vaPXlT/qKN++esBl78kc9IzIpRHiKjw8Eqxert3bRtv3HdZolNqxMe8O4v3H2
-         UPg3lBjIKSkhyXOqayU1Zqg4M0PAeYovb6EHOhKNyXMTpX0RMHVUaGEyQeBuK8E1eAdz
-         r74UisqJYLSi4+DuAjgNStwmq9tXbCJtvLOc5S/63r31JAU/YXhmmWXxbGzeEJuibAWf
-         8Jsgx1MJL6V4Lt4KQVh7uC52+ocoNv2Pe5jyqlu0bItrzT4pC1bI1Z3K6z0J1P0qsL54
-         4Uk4mIxRHtuevUq8ZjEzePoOkNYXIPegR/8AW21z9b04hSCVPxGW2L1DPXozTkrmYsU5
-         Si1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVLaZVWRZz8zpUCHezQc50FTF5jrgH8IFt0FEjfMwFrZjjKuY9AoREyJi6zfsMWVWmruxp7JLqs0P9tWo7a@vger.kernel.org, AJvYcCXVOElRQRnjthR0NxVBGU8b5W9klqaF5jWNFNqSmtVIXWz2JEo6jYPpaI7h6TYvZR1KcDMFNm7GMs10jg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPaAz7Q713lMKtA+y+kSYfTYSbS6La1XBo+lz5hOiESqJoMw0V
-	dWF5Bc1//tfyaAr0/EfloZ5eNoc31dFeH/8Yav6X6OjBCMEod9Z6Sh/AgnbFDA==
-X-Gm-Gg: ASbGncvTJdsPPqoDEeF4mKAFUwCVuH57gd930L5rDbCHTh/ubor5Vl1KAgSVTQTMWyn
-	Xwnj6a01UQXRfk5J219dbHYgJ5wtxwpG9uHqrWMJly15vCbcBU+9k5ppR3tVOIYSS3YSNIZKTX5
-	P4m+ygFF9/pU+ray5OzEp/S/6EA9Q7sqaFvtYOEkmZTqoK7Fu+Fm8fAioEti5ZvHiIYNk3eLLGb
-	4eotFpotlBU5jgzo8AFlXxL2n6TmiscueW71/mJRjntyriIBQXmBe0dPa9NH3oqL4hfJmudGdFC
-	MWmLUxOoFCRxCU3eXZRmFznx+h3OtTJgyVmmjRBgD987aQQEsQ2+rHvIkabh4vrdk0OneOMsmGE
-	=
-X-Google-Smtp-Source: AGHT+IH/vDq9MzidY2EpHhbnojUd1IyfqI+gwLmq2pgb7YkKLjm2cBD1/eXa2xI2DvQeLeHOp831uQ==
-X-Received: by 2002:a17:902:f690:b0:22d:b243:2fee with SMTP id d9443c01a7336-2366b005d10mr141778865ad.13.1750112203018;
-        Mon, 16 Jun 2025 15:16:43 -0700 (PDT)
+        bh=L5Fh2IblBptlZ3vF3rnRWlEF+hFPfUIR1AemX0HSA00=;
+        b=nXiASCVqHS+2do95ebeBaJ4G2xdGRp1nv5Bucm8IyFriPZP+50vVkjSCBtmsDseXfT
+         UxJSZUvy2D7qfNsVezZruhgqyfimQNKeL6vLYBUMdVqTCfQUWJPJ+YE8F92JPipOOhJm
+         UrhC8kLL6oPuhzeFHuUlMBi1zWlEfDCVJEh45Cq+bwo6l3AFp+eSmw2D5laImpmlSDBq
+         3NBRSfh5dSJNgWD7Uv0gtqtEAFDcL+2OpaqvtXwdK/gKHIwdehCAZID18BQBcXqsfHSy
+         aRLf2QZ/tUe1tsF5Y71tMt+vC8j+amV2XEYv8zFmZlzy/pdeR4q675cbqMOjTdeSypM8
+         r7hw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDrUUOFxsY2Ei/fJjSmAYZ223TZVgwDc9hcH31E7bL8QLazYqXwuU9/zSDHk5YaQYVlmdwkeHbLvjQtw==@vger.kernel.org, AJvYcCWmS30Az18X/22ymzEVHNtd74kngwWv3FVcGnS4EMnBl4VLTAO6EIFRX4qymUau20rlk6ty9/sjmpAHxf/a@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTgat1zrE1T4N388tDGtQCmpAgudtdq8UERyLZsO4dEmjo/57A
+	95erEzYxFqb51bZnDzIIvTDcIiNO2Oc2IlcKHM8YzJ9X3GszwrdgFmwwAw6yPA==
+X-Gm-Gg: ASbGnctfofKj2g3QC8ihbRIZ7IDFq4ZfRUvxmemGpvKgpfdUNQl21dmVMb7zvgXSF3A
+	DRJUbjf2pFQzS/lfeghxdL2aMfGISUn5MTN6Oe32ualURH4DMMouGCgSTP74WR6sAR41OjyQOtL
+	BrSDi9INw9Rous6qfYHQYsygxRtEMcTdmp07CKsdu/x/GDoiJ8EaKCJqysCB52MUebC1zXmiJGi
+	3Nviu/I+zkrHytAZUctD3PKyoIphKwB7KY9vNf3se0JToiCfaFULgsRAIfrhZV868BYZI5zn/zT
+	3xwmdcd3kE1H4ynj3wwALfZn0eICLkI8UgPBJL4wu8vGXQwdaItWnnHzRbGtUFi+EJRoMlo0bLo
+	7+ijrZ+4KEQ==
+X-Google-Smtp-Source: AGHT+IH0R/kwqrtGK7vSfYsjfazrkbGVD0Jb0vrp0a0cSzfE6EUdfWb215kTnNr1aWjA7NvqBBDnog==
+X-Received: by 2002:a17:90b:39c5:b0:312:1ac5:c7c7 with SMTP id 98e67ed59e1d1-313f1ca7855mr17965599a91.2.1750112228057;
+        Mon, 16 Jun 2025 15:17:08 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365d88bf0esm66382195ad.31.2025.06.16.15.16.42
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313c19d1122sm9229246a91.13.2025.06.16.15.17.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jun 2025 15:16:42 -0700 (PDT)
+        Mon, 16 Jun 2025 15:17:07 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 16 Jun 2025 15:16:41 -0700
+Date: Mon, 16 Jun 2025 15:17:06 -0700
 From: Guenter Roeck <linux@roeck-us.net>
 To: florin.leotescu@oss.nxp.com
 Cc: Jean Delvare <jdelvare@suse.com>,
@@ -82,11 +82,11 @@ Cc: Jean Delvare <jdelvare@suse.com>,
 	viorel.suman@nxp.com, carlos.song@nxp.com, daniel.baluta@nxp.com,
 	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
 	festevam@gmail.com
-Subject: Re: [PATCH 2/4] hwmon: emc2305: Configure PWM channels based on DT
- properties
-Message-ID: <39229deb-41b0-49ba-bd4d-33d57ab38ef0@roeck-us.net>
+Subject: Re: [PATCH 3/4] hwmon: emc2305: Enable PWM polarity and output
+ configuration
+Message-ID: <57210f02-ab4b-4bcc-87a6-7a41a239b569@roeck-us.net>
 References: <20250603113125.3175103-1-florin.leotescu@oss.nxp.com>
- <20250603113125.3175103-3-florin.leotescu@oss.nxp.com>
+ <20250603113125.3175103-4-florin.leotescu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,13 +95,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250603113125.3175103-3-florin.leotescu@oss.nxp.com>
+In-Reply-To: <20250603113125.3175103-4-florin.leotescu@oss.nxp.com>
 
-On Tue, Jun 03, 2025 at 02:31:23PM +0300, florin.leotescu@oss.nxp.com wrote:
+On Tue, Jun 03, 2025 at 02:31:24PM +0300, florin.leotescu@oss.nxp.com wrote:
 > From: Florin Leotescu <florin.leotescu@nxp.com>
 > 
-> Add support for configuring each PWM channel using Device Tree (DT)
-> properties by parsing the 'pwms' phandle arguments.
+> Enable configuration of PWM polarity and PWM output config
+> based Device Tree properties.
 > 
 > Signed-off-by: Florin Leotescu <florin.leotescu@nxp.com>
 
