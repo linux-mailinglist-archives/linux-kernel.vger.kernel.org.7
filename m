@@ -1,102 +1,122 @@
-Return-Path: <linux-kernel+bounces-688694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D86ADB5E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:51:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D483FADB5E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1073188F86F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:51:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF77818901B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78045269B08;
-	Mon, 16 Jun 2025 15:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF1E27F73D;
+	Mon, 16 Jun 2025 15:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwApcJfx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABlsFso4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD1326463A
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 15:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CB120DD54;
+	Mon, 16 Jun 2025 15:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750089060; cv=none; b=UFi+IFonyooGQ1InexIGDcMHrfdhvckWXy8AqbrtAUJLs4V01Qe9fAAWgnpchKEadeHMoxlrSJVVdGXQkXga1A/pGW+rELF77oPFG5uBfQobZywNHa//Jo6pU1REb75V9ix+DLzmoJ3NhFEA+4FF5qCbWTKFcneMXmxLDAuWd5g=
+	t=1750089073; cv=none; b=MW/glM35z+PNe3y3ifa+6slltq4pabPFXwDCZiVXHjfyIkCG6lPKkCdCfKvhwaEHoD8rCeje6fgXKVOIttsGl12/kfUuz4wR3a+870maf40OXT4grNng+tF9TiLThSQocn9Y13eFeNBkxHFD4MNEP/+Re3UI8N4HjMbTbCTgiJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750089060; c=relaxed/simple;
-	bh=puAp8vVie1YZJSKL4nqENUKM1UhshsrnW2fbHlvQVD4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=geZ1CMxEtozgiWG1eRgSbjj6pxZBCHtd5fqOjS+CxlAv6K+qcmlfj/2rOe3eWJGQDQ3byVRji+pdVeG2Ke0U4ebheDKFx6L2Pvy3wdGja70y5Qo5YC5Zfo7YaPcYFsOoXCQpPeWAblVHaq3VMhOmpMCsNR8K00N4rVTgjspj/f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwApcJfx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00D43C4CEEA;
-	Mon, 16 Jun 2025 15:50:58 +0000 (UTC)
+	s=arc-20240116; t=1750089073; c=relaxed/simple;
+	bh=1IQ346zNYVuM6lRx+3Lxg56eImhlMLA0oHvWP0r94kA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CfYCesVanDafqvApQSgmRgdlPHoeHAH89fRgrwABS0eXPx4O4KF69Y0GK7ubMPOjm+O/C+pipCRJYrEYXMWPrlbZJ+GlfsM4UJxkCDmszjQ7aQbwNCoGgEewW5KQ4r+bjiVPOjhp7zHLgoQX2EjVHXcTZuQyaz+e2r+KmISSrRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABlsFso4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8169DC4CEF8;
+	Mon, 16 Jun 2025 15:51:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750089060;
-	bh=puAp8vVie1YZJSKL4nqENUKM1UhshsrnW2fbHlvQVD4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=gwApcJfxXI5EecMPOvsLEHPdVVOG7C8bWtQgMkHX4nPQsMF6CA6rXkttMhYZB6dG7
-	 bvpWVQvYni0/EIJ3aK8AwJtTvGmMXrMqYVVbOpVMMsiUNa3Im31e0/k3YTlElbD8Tx
-	 9hM+23C7wHExMxkwATc2Cn+RB0RBS/4VLJKpvizBiHQOgt+LrFOsR6skj7GNBQWWzp
-	 auISFRscYFITRcuTB+Uzf60R+Ysr7o05hYXNA1ChGZN0iLZANbIqIP1vjjcl09YAjW
-	 ua+UWgZ45k6FZqPdpobK5OeMVmJWvGj4X4nnrgRjfIalXTzQ/k1lWnW2HvQqJCNezv
-	 71F4HTc6TsCzw==
-From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-kernel@vger.kernel.org, wens@kernel.org, quentin.schulz@cherry.de
-In-Reply-To: <20250606190418.478633-1-heiko@sntech.de>
-References: <20250606190418.478633-1-heiko@sntech.de>
-Subject: Re: [PATCH] regulator: fan53555: add enable_time support and
- soft-start times
-Message-Id: <175008905873.262451.9164441451650062773.b4-ty@kernel.org>
-Date: Mon, 16 Jun 2025 16:50:58 +0100
+	s=k20201202; t=1750089072;
+	bh=1IQ346zNYVuM6lRx+3Lxg56eImhlMLA0oHvWP0r94kA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ABlsFso4LatrwE13U8Tbb+tm5+R3hqaDkMZM6jlcXooiAVtTO1wRpYqVzfSEyciGe
+	 TRJ2F+/c2VgzaAQilK21b5eKaidhYqGsVQWYK1kJHTdXOKYpoOitgFnLcrbNcfTHBL
+	 Wipbje2urmd/GAlqADLbBaMS45343VrXJN2iU+Ilu+lgcnGQLt3lsUWKsJG6atp/NV
+	 3pU2cdk7ejq0WMKO6YbaI6WQDPdP2kgsilKtfZcf2aCDwS7ujkjH38wPYRPP7C27oV
+	 JpXqQC4iPJDgJYeq32FkDI/5hn1Biz+SyzI2NghJQ8ssjQj8gWAHSJEEXcsJcm9jVI
+	 sfvIsBjmiR14Q==
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4a44b3526e6so62870291cf.0;
+        Mon, 16 Jun 2025 08:51:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWIU7rKKEHXLNVbppDKsEZPOxpjKxMOYiWMb2DVvkH8gnWOibqfbtNPaRH20Ip9XeLQJcQ=@vger.kernel.org, AJvYcCXBEV8ukEhD0aoj25ZO/lGy15CHNv7B2qTxIjKCBkUAkcsLB8akJ1ykGLR2myWac8dRQnM6WAZVT7zz5Cxa@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzEZo3uwx0m6QqZfzP0i8e30UsThki1fI3VjS6vaOsRAOXQ9H2
+	7+MqB1YHh+TMcgBkWKZ7uj/iYIySSqlnNyehWPOY1GIdDn/0uf8tN1gfKcdZWapbtt/b2Wm6B01
+	3pw61wWCaYcNs0Ek9iVmE9Q0imw1FGlQ=
+X-Google-Smtp-Source: AGHT+IEruSD9QNTjLoQwJZZefnA/4WRHh7lO5AJIHFCUDpHpP+t8W6jXHMulp+dSHEV0ihSgIt6cozsKO9xdrVpRX+k=
+X-Received: by 2002:ac8:7fcb:0:b0:472:1d98:c6df with SMTP id
+ d75a77b69052e-4a73c5c3447mr162424511cf.52.1750089071562; Mon, 16 Jun 2025
+ 08:51:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-08c49
+References: <20250616095532.47020-1-matt@readmodwrite.com>
+In-Reply-To: <20250616095532.47020-1-matt@readmodwrite.com>
+From: Song Liu <song@kernel.org>
+Date: Mon, 16 Jun 2025 08:50:58 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4ie=vvDSc97pk5qH+faoKjz+b51MDYGA3shaJwNd677Q@mail.gmail.com>
+X-Gm-Features: AX0GCFvUaE9dttZdJBdvpTmPqrf3iG2pJ0W7olm9JHra97Bg2gJGxgUnrlZedhk
+Message-ID: <CAPhsuW4ie=vvDSc97pk5qH+faoKjz+b51MDYGA3shaJwNd677Q@mail.gmail.com>
+Subject: Re: [PATCH] bpf: Call cond_resched() to avoid soft lockup in trie_free()
+To: Matt Fleming <matt@readmodwrite.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@cloudflare.com, 
+	Matt Fleming <mfleming@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 06 Jun 2025 21:04:18 +0200, Heiko Stuebner wrote:
-> The datasheets for all the fan53555 variants (and clones using the same
-> interface) define so called soft start times, from enabling the regulator
-> until at least some percentage of the output (i.e. 92% for the rk860x
-> types) are available.
-> 
-> The regulator framework supports this with the enable_time property
-> but currently the fan53555 driver does not define enable_times for any
-> variant.
-> 
-> [...]
+On Mon, Jun 16, 2025 at 2:55=E2=80=AFAM Matt Fleming <matt@readmodwrite.com=
+> wrote:
+>
+> From: Matt Fleming <mfleming@cloudflare.com>
+>
+> Calls to kfree() in trie_free() can be expensive for KASAN-enabled
+> kernels. This can cause soft lockup warnings when traversing large maps,
 
-Applied to
+I think this could also happen to KASAN-disabled kernels, so the commit log
+is a bit misleading.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+>
+>   watchdog: BUG: soft lockup - CPU#41 stuck for 76s! [kworker/u518:14:115=
+8211]
+>
+> Avoid an unbounded loop and periodically check whether we should reschedu=
+le.
+>
+> Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
 
-Thanks!
+Other than that:
 
-[1/1] regulator: fan53555: add enable_time support and soft-start times
-      commit: 8acfb165a492251a08a22a4fa6497a131e8c2609
+Acked-by: Song Liu <song@kernel.org>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> ---
+>  kernel/bpf/lpm_trie.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
+> index be66d7e520e0..a35619cd99f6 100644
+> --- a/kernel/bpf/lpm_trie.c
+> +++ b/kernel/bpf/lpm_trie.c
+> @@ -646,6 +646,8 @@ static void trie_free(struct bpf_map *map)
+>                         RCU_INIT_POINTER(*slot, NULL);
+>                         break;
+>                 }
+> +
+> +               cond_resched();
+>         }
+>
+>  out:
+> --
+> 2.34.1
+>
 
