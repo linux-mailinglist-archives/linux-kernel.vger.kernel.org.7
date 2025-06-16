@@ -1,146 +1,117 @@
-Return-Path: <linux-kernel+bounces-688726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC56ADB64F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:11:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C989ADB63C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 18:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DBE9163A39
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8821A17494A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DFD28641F;
-	Mon, 16 Jun 2025 16:09:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB6720AF67;
-	Mon, 16 Jun 2025 16:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AB92874FC;
+	Mon, 16 Jun 2025 16:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8KYK0sx"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDA5286428;
+	Mon, 16 Jun 2025 16:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750090190; cv=none; b=SKiQ/FLt+8wHE52yLqUccZ89pwyfQCOTopSdNYtPjkFvhwiGISOVqY9U8i4bEy/cVHBLK//KuylabeP8dQdcZ0raEX53NC5bfZkR7t29FrFP2KeE0hsDgdQdPjfcu28f+YMhKdvK+fcI0j2xpNuA2vPV6KFChULEGHp0odj1Z9A=
+	t=1750090063; cv=none; b=d6UhwmrG8Ys+IUAfzzaN9ggXT5Mq/miWBxDRKsi4SOmXdKgR7XvQ6rg74ebxLRxkiM9GUJ0pLPVH1CPxH/OBr5x1cVK16SPnMTXobKl4SjQUkLnXZAQ1mfXfpteQtLrmQcaAYqgFqVJ3JLL8hjO/ZZ1j1K3q7maNsc0egciX4N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750090190; c=relaxed/simple;
-	bh=hupPpB5C7hsOujbd0CaSC1f/KBFOevySlxxsM3jXnA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DyWF7bVxGjkWUKCWxaU6wp3JvkhSy2k8sYq8QmMvzuKviJjF3naOg8Sp72HcxThAi4fkpNbJqgLd8Hfvzcv4YJPVTk0O0+XpV4VYB2bACAA5yFllgLqMzVh36sX7OolPPEqcy2bZrdVLCSY0+BRPMh7QDY2AFfKwdEe8sCYo0G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B05A6150C;
-	Mon, 16 Jun 2025 09:09:26 -0700 (PDT)
-Received: from [192.168.20.57] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C883B3F673;
-	Mon, 16 Jun 2025 09:09:47 -0700 (PDT)
-Message-ID: <14f2329f-e110-4f3f-976b-acb38d255798@arm.com>
-Date: Mon, 16 Jun 2025 11:07:08 -0500
+	s=arc-20240116; t=1750090063; c=relaxed/simple;
+	bh=KsgLfuDYy7dDbDgTv6+EomPA1mb4NN/cDbkcAly4i04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A5tLv0PzhUK/wjVUH6oQ14zMW3wjA+m9advl1td7ACB5ZbuqTIpZBQWu/tZSup4GqdNOTG6+PE8TROx2Ewxidl1X6OK3Km2NAG31YDB0plR6jHvlT12gyskldCNUjxEkf6ZqyO1WQJppQs+/dQMGBt3Qv2tTWMc42f+lGF1xA0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G8KYK0sx; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e8187df27f8so551691276.3;
+        Mon, 16 Jun 2025 09:07:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750090061; x=1750694861; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eMxTLAjWm10iLw7QnXC6/MuovWFMfEKiXtH5mlIUP3g=;
+        b=G8KYK0sxYz5sQTT6k2axlm7xJdviNEUakDVVyH29m2CvN5i28CrrQZxdoOg67V+WWk
+         3RaPOsADM4qtH+Qbrho7fddfKFwHuJstedEK2GcsWW1VfRiIkl6y8unct1Hcxspf3jir
+         yj/6qJQX2G2rAlBnFL2HH9J0joXqI+0JUTkk38s8P1AK+E0PIajT+YpHmCPiTrRWedYI
+         L6v+E+gjP82MQwtBPj0y7F7w+ia7+Udj6/GJHKDZrNGbDNn6WiCzrF2lMYKBwrSXdzty
+         GNZxKAaSCFXZriIIiH56hNpdXwaMqAuvqHTLYyQ7ErG4Db/9tTfVVcFHwPm8touVl9gv
+         c2eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750090061; x=1750694861;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eMxTLAjWm10iLw7QnXC6/MuovWFMfEKiXtH5mlIUP3g=;
+        b=bRn59thQV+cFtwUXYxs5nhXNLvGch9EhL+YqHqzLJDooYM42YS6103Tu6gYOkrNVdF
+         Nvh8LLizpcNWngKgSLx0Ienf2WMCXTssyud+T+VPgUyIBldOWyZnhvrkWDf7PqYMI51g
+         I0h89JyJpWlZVGGoITiWfJoVwWpjnBc8LDUmojI62jpwQln83K5lJ6neac3AZ0lpK0vX
+         peDPGZfqYtH5pwAPS4/NVH/HEgbmz5E3bQZ5s8WSvjXIjRD1tdnd303BsoYARMmmeSCW
+         0w66u+PulKvZB1h9FJmmpHd8rQTNy3VtoLr+cGbfnJK1nLemMOGJBleNzojgTjMmZnT0
+         rDAg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8q55V0HNYP5+k6JOj9prp5HBNN8KQ7jeqlY/vkBC5Soub/HhDCL9L/JeikPZA9Kvo6o5ayY7DBitcI4XB@vger.kernel.org, AJvYcCVGka4tO65OLm6RiRFfkaW6buwMjABYaA3kaH504yf01aaoA68ByZUDrCrgpTxMa/Ye9KKMdoRFrxA=@vger.kernel.org, AJvYcCVHlTc36WV/3MkwlMB8rA4BnPH75RCCdwRo9uElpBPyX8MPHrN5Lv3yuynrM1WGXBSe/FDkG0aP@vger.kernel.org, AJvYcCWPMq/zN7wpGRkwSk8ISdszJr8zKxumMAqa0Lvu2d/PoT8hMKjFuYSQefwsIUvzj8XdqMSF2ndDmkFT57QOsA81@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuUqHAcxtwOpmQPVS71BPPGXd8wp6TpDaJv5hm6EY76xQSv1Zs
+	175I2CryQQTP914p1saQSfRFM9CgdXYyu4a0MF94UMvLPJc5Y4KizZeGhInib1qmna9giRC7MvW
+	CKzRljqr5sG/fg1BnhIwJimk+N6T5U6c=
+X-Gm-Gg: ASbGncsyirb9SBEmd/Uu0U8YrNYhsITQ9al9mA+/IZhSDceF4Fh5Vci7FjzKZ26YXdw
+	gYtlQMHCbPBS/bGHO/XI0cUDA5qEiS5YevCsHMLJuBokrodMJhKF5UvwqPDY7Nd/eNgF5iyFgyg
+	jXOOyq57RguhRW4IJr/mXwm1FSi3bssXlKR7aRXzyxv9xHB4WRsW4Tq2Itf1xL1H8iL2ID
+X-Google-Smtp-Source: AGHT+IFNg7I4XsDY/FdlWOLQEVc4xIZLS0HZaG/S0kB5iwZhvz5AUSvqz4talBpkFkW4J4zqnPwP0y0I4ly2Ykaqbwo=
+X-Received: by 2002:a05:690c:1d:b0:710:ee89:d34e with SMTP id
+ 00721157ae682-7117551588cmr57892367b3.8.1750090061132; Mon, 16 Jun 2025
+ 09:07:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scripts: add zboot support to extract-vmlinux
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, nathan@kernel.org,
- nicolas.schier@linux.dev, linux-kernel@vger.kernel.org,
- Ard Biesheuvel <ardb@kernel.org>
-References: <20250522172941.1669424-1-jeremy.linton@arm.com>
- <CAK7LNAQzkh+DO7ZBVEgLu63k0H5qB-etV_jpo67k+itLWGAosA@mail.gmail.com>
-Content-Language: en-US
-From: Jeremy Linton <jeremy.linton@arm.com>
-In-Reply-To: <CAK7LNAQzkh+DO7ZBVEgLu63k0H5qB-etV_jpo67k+itLWGAosA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250612-netconsole-msgid-v2-0-d4c1abc84bac@gmail.com>
+ <20250612-netconsole-msgid-v2-3-d4c1abc84bac@gmail.com> <20250614125149.55a8bc1f@kernel.org>
+In-Reply-To: <20250614125149.55a8bc1f@kernel.org>
+From: Gustavo Luiz Duarte <gustavold@gmail.com>
+Date: Mon, 16 Jun 2025 17:07:28 +0100
+X-Gm-Features: AX0GCFsG7aAkCLxvAEeFhB0hvUvlv9vtc2b6rgSY6b_6uyOO7FHX3qHDEuWg0tY
+Message-ID: <CAGSyskU4Hh8qebN6KhVjFZXsPr3A5At7gAtm9wipnEZbiZZ+9g@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 3/5] netconsole: append msgid to sysdata
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sat, Jun 14, 2025 at 8:51=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Thu, 12 Jun 2025 13:02:16 -0700 Gustavo Luiz Duarte wrote:
+> > diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+> > index 3bf8777fcd01..baa9862c1bc3 100644
+> > --- a/drivers/net/netconsole.c
+> > +++ b/drivers/net/netconsole.c
+> > @@ -155,6 +155,8 @@ struct netconsole_target {
+> >       size_t                  userdata_length;
+> >       /* bit-wise with sysdata_feature bits */
+> >       u32                     sysdata_fields;
+> > +     /* protected by target_list_lock */
+> > +     u32                     msgcounter;
+> >  #endif
+>
+> kdoc is complaining that:
+>
+> drivers/net/netconsole.c:167 struct member 'msgcounter' not described in =
+'netconsole_target'
 
-Thanks for looking at this.
-
-On 6/7/25 11:04 AM, Masahiro Yamada wrote:
-> On Fri, May 23, 2025 at 2:29 AM Jeremy Linton <jeremy.linton@arm.com> wrote:
->>
->> Zboot compressed kernel images are used for arm kernels on various
->> distros.
-> 
-> Are you talking about arm 32 bit here?
-> (arch/arm/boot/zImage)
-
-No, it should be arm64.
-
-> 
->> extract-vmlinux fails with those kernels because the wrapped image is
->> another PE. While this could be a bit confusing, the tools primary
->> purpose of unwrapping and decompressing the contained vmlinux image
->> makes it the obvious place for this functionality.
->>
->> Add a 'file' check in check_vmlinux() that detects a contained PE
->> image before trying readelf. Recent file implementations output
->> something like:
->>
->> "Linux kernel ARM64 boot executable Image, little-endian, 4K pages"
-> 
-> Are you talking about arm64 here?
-> 
-> I am confused, as arm64 adopts a simple-compressed image.
-
-No, there is a CONFIG_EFI_ZBOOT, which is a EFI/PE image which self 
-decompresses a contained kernel similar to x86, but is for !x86 EFI 
-architectures. This patch extends this utility to work for those images 
-as well.
-
-
-> 
-> 
-> Apparently, this patch did not work for me.
-> 
-> $ ./scripts/extract-vmlinux  arch/arm/boot/zImage
-> extract-vmlinux: Cannot find vmlinux.
-> 
-> The 'file' command says, it is "data".
-> Is my 'file' command too old?
-> 
-> $ file arch/arm/boot/Image
-> arch/arm/boot/Image: data
-> 
-> 
->> Which is also a stronger statement than readelf provides so drop that
->> part of the comment. At the same time this means that kernel images
->> which don't appear to contain a compressed image will be returned
->> rather than reporting an error. Which matches the behavior for
->> existing ELF files.
->>
->> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
->> Cc: Ard Biesheuvel <ardb@kernel.org>
->> ---
->>   scripts/extract-vmlinux | 9 +++++----
->>   1 file changed, 5 insertions(+), 4 deletions(-)
->>
->> diff --git a/scripts/extract-vmlinux b/scripts/extract-vmlinux
->> index 8995cd304e6e..edda1abe226c 100755
->> --- a/scripts/extract-vmlinux
->> +++ b/scripts/extract-vmlinux
->> @@ -12,10 +12,11 @@
->>
->>   check_vmlinux()
->>   {
->> -       # Use readelf to check if it's a valid ELF
->> -       # TODO: find a better to way to check that it's really vmlinux
->> -       #       and not just an elf
->> -       readelf -h $1 > /dev/null 2>&1 || return 1
->> +       file $1 |grep 'Linux kernel.*boot executable Image' > /dev/null
->> +       if [ "$?" -ne "0" ]; then
->> +               # Use readelf to check if it's a valid ELF, if 'file' fails
->> +               readelf -h $1 > /dev/null 2>&1 || return 1
->> +       fi
->>
->>          cat $1
->>          exit 0
->> --
->> 2.49.0
->>
-> 
-> 
-
+Good catch. I'm sending v3 to fix this (will also add kdoc check to my
+pre-send checklist).
+Thanks for the review!
 
