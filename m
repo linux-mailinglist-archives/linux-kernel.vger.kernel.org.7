@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-688857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65109ADB807
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:50:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7EBADB825
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 19:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 689B03ADBAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:50:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D46D3A813C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 17:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306DA289347;
-	Mon, 16 Jun 2025 17:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xlan4KEP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328FF289361;
+	Mon, 16 Jun 2025 17:52:59 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A5A288CA5;
-	Mon, 16 Jun 2025 17:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6774288C36;
+	Mon, 16 Jun 2025 17:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750096231; cv=none; b=f0Veu7K5ZinQ4e4+emC6+e9s6L6oGlsySOkPkVFsvcmUcQqALPBnSnjRaNVLZNHy01PJZB3zDkRXpysF+ucrnpRcFpH0slASfECNKBV9m1Nq6sUnuv5fY5jQmEStuQ8026jYM1XT7X8Mj2clHQ3e1YReQXFTKyChagDwLNcKt3I=
+	t=1750096378; cv=none; b=s5wVVCtvu3SBmr1A9hL9ONVLt8UhNzsGOQkKPchF40jfjnQVAsR9TWtTy0qNyzUuc13zKGVOLa3BJPknz8cgP4bs799eCxIHCvQakdyvFF3dzog5wLfS7flpSm9ctkRp6PhxMi7LVahyrG8Ry4eonH2l50o8hYGYA17gZ7XkGDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750096231; c=relaxed/simple;
-	bh=ZH0omtETsKuyn5ulbuxDWU51+MWKmkLDhZHvmjw4mmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gt9t33xnhK+XWxpXTdpVRuBGgErC59pAbzlWu14OzTzQiAZOteAdm+oZpn7kM1iUe39aAar3wMQUCkqMv+1bmQUYaz/zqqZlTo2GQYQWM/6xrm9Ejj0UqQcT3O7SOY7R5jaeNGRdD9aT5VAAlzNi4SuQi93x/gCu8J9DlgABmew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xlan4KEP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB7A4C4CEEE;
-	Mon, 16 Jun 2025 17:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750096231;
-	bh=ZH0omtETsKuyn5ulbuxDWU51+MWKmkLDhZHvmjw4mmI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xlan4KEPrx+MN4NwKxLS3+Zn0vkWvwMZxmQJ7WtxiManS0nrIrk0i5WG0WYjuq2A2
-	 e5SW4jw5CZm34+NYrNaZHIlklOvUvvQx90t8ViXUaNxSqnC4AzPaceD4d8gZdtluvK
-	 VoawFm1/X+RVed3rERc8e/gFrDDvwvXC165XhKCYv7QDq/V3oJV0xVkHYjyasCP1lX
-	 0KEcaenhxBgeFOw8jn52Z65S/LLfMcIgvMlqOWE4uVOnN8LAgZowhwtOz0cPEjge8m
-	 30zAm1VdI6S+FRWadr5PY1vMNifST5ry3NGbZ/PTMXzKlzTs4nV9cKVZnphzj6Qzpc
-	 ndriVVnA8sMMQ==
-Date: Mon, 16 Jun 2025 10:50:26 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Will Deacon <will@kernel.org>
-Subject: Re: ld.lld: error: Cannot export BSS symbol __inittext_end to
- startup code
-Message-ID: <20250616175026.GA1187576@ax162>
-References: <202506150602.qswx7ZzQ-lkp@intel.com>
+	s=arc-20240116; t=1750096378; c=relaxed/simple;
+	bh=tZK8sZhrRuJkUd94DOj0Da3QF8eQqbxhHLW8WZ0Xpww=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=NKSZwvDZ2GFuqhKQG3Rw2wR/8z6oy8oznyK6jxs6Zz/zmXSbHsAd34DE6Oafxn8KH50Y+Zq++Ad3ifYGVaZMIicZ8tV5PcnpOoIi6jR7ws/Mq8Z/E2YcDipmJGCFCOS8ncws/TSKy4ZxbBzuA1LqlbGaS6ILct4E51DYBV13EtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 628AA1D6E83;
+	Mon, 16 Jun 2025 17:52:54 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: nevets@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id DCB1018;
+	Mon, 16 Jun 2025 17:52:52 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1uRE0u-00000001KSl-2giW;
+	Mon, 16 Jun 2025 13:52:56 -0400
+Message-ID: <20250616175146.813055227@goodmis.org>
+User-Agent: quilt/0.68
+Date: Mon, 16 Jun 2025 13:51:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Carlos  Maiolino <cem@kernel.org>,
+ Christoph Hellwig <hch@lst.de>,
+ "Darrick J. Wong" <djwong@kernel.org>
+Subject: [PATCH v2 00/13] xfs: tracing: remove unused event xfs_reflink_cow_found
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: DCB1018
+X-Stat-Signature: pcm5p1o6d9ehrao3yxj8mhp1t1eqgbmo
+X-Session-Marker: 6E657665747340676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX187sn21lbs88YuYah9C4XSDehXNxsM/QFs=
+X-HE-Tag: 1750096372-767895
+X-HE-Meta: U2FsdGVkX18XIL6B6qSaT+uXtfwF5NpCFUrZd6pWI88AYnQ81d8uoiGpwJrhSlkDCeDlyMmOTLgcbjcw2khbtwBuKCO9tM0Ss1y9E6klJCNY8czY4ajA4jQMo7pghxhYQ//5vFjUzWkuIgErta42PxO57NLNYHNH5xV09uVoiO7/q5jRm6ja95YP1yXHDiqwBDZj9NUiVrPe+fbr9/+S5Z/fRaoj61bV3Sze4vD1AD3pYuXvIDdt9nWwtA3phKguzXpjC9fPep9bK634mVNLIL3yVM8DfBjrPcNZh9ZBJyuUyZmKSwMakyIhiqkx0cDyW3b0Tmh2xIbU0JL4U8+EiaxecVPKxalRgwWLL7yvNH9OB0fEBce1heHoOkhGaPt5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202506150602.qswx7ZzQ-lkp@intel.com>
 
-On Sun, Jun 15, 2025 at 06:13:33AM +0800, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   8c6bc74c7f8910ed4c969ccec52e98716f98700a
-> commit: dc0a083948040ff364d065da8bb50c29f77a39ad arm64: Work around convergence issue with LLD linker
-> date:   12 days ago
-> config: arm64-randconfig-004-20250615 (https://download.01.org/0day-ci/archive/20250615/202506150602.qswx7ZzQ-lkp@intel.com/config)
-> compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250615/202506150602.qswx7ZzQ-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202506150602.qswx7ZzQ-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> ld.lld: error: Cannot export BSS symbol id_aa64isar1_override to startup code
-> >> ld.lld: error: Cannot export BSS symbol id_aa64isar2_override to startup code
-> >> ld.lld: error: Cannot export BSS symbol id_aa64mmfr0_override to startup code
-> >> ld.lld: error: Cannot export BSS symbol id_aa64mmfr1_override to startup code
-> >> ld.lld: error: Cannot export BSS symbol id_aa64mmfr2_override to startup code
-> >> ld.lld: error: Cannot export BSS symbol id_aa64pfr0_override to startup code
-> >> ld.lld: error: Cannot export BSS symbol id_aa64pfr1_override to startup code
-> >> ld.lld: error: Cannot export BSS symbol id_aa64smfr0_override to startup code
-> >> ld.lld: error: Cannot export BSS symbol id_aa64zfr0_override to startup code
-> >> ld.lld: error: Cannot export BSS symbol arm64_sw_feature_override to startup code
-> >> ld.lld: error: Cannot export BSS symbol arm64_use_ng_mappings to startup code
-> >> ld.lld: error: Cannot export BSS symbol _ctype to startup code
-> >> ld.lld: error: Cannot export BSS symbol swapper_pg_dir to startup code
-> >> ld.lld: error: Cannot export BSS symbol _etext to startup code
-> >> ld.lld: error: Cannot export BSS symbol __start_rodata to startup code
-> >> ld.lld: error: Cannot export BSS symbol __inittext_begin to startup code
-> >> ld.lld: error: Cannot export BSS symbol __inittext_end to startup code
-> >> ld.lld: error: Cannot export BSS symbol __initdata_begin to startup code
-> >> ld.lld: error: Cannot export BSS symbol __initdata_end to startup code
-> >> ld.lld: error: Cannot export BSS symbol _data to startup code
 
-This version of ld.lld is from early April, which does not contain
-Fangrui's fix [1], so this is expected given the stubbing out of ASSERT
-that Ard did in commit e21560b7d33c ("arm64: Disable LLD linker
-ASSERT()s for the time being") does not happen due to the version.
-Please upgrade to a newer version of LLVM main to avoid triggering this,
-I can confirm that I do not see an error with a current version.
+Trace events take up to 5K in memory for text and meta data. I have code that
+will trigger a warning when it detects unused tracepoints[1]. The XFS file
+system contains many events that are not called. Most of them used to be called
+but due to code refactoring the calls were removed but the trace events stayed
+behind.
 
-[1]: https://github.com/llvm/llvm-project/commit/5859863bab7f
+Some events were added but never used. If they were recent, I just reported
+them, but if they were older, this series simply removes them.
 
-Cheers,
-Nathan
+One is called only when CONFIG_COMPACT is defined, so an #ifdef was placed
+around it.
+
+Finally, one event is supposed to be a trace event class, but was created with
+the TRACE_EVENT() macro and not the DECLARE_EVENT_CLASS() macro. This works
+because a TRACE_EVENT() is simply a DECLARE_EVENT_CLASS() and DEFINE_EVENT()
+where the class and event have the same name. But as this was a mistake, the
+event created should not exist.
+
+[1] https://patchwork.kernel.org/project/linux-trace-kernel/cover/20250612235827.011358765@goodmis.org/
+
+Changes since v1: https://lore.kernel.org/linux-trace-kernel/20250612212405.877692069@goodmis.org/
+
+- Removed the first patch that mistakenly removed xfs_reflink_cow_found
+
+- Change subjects to start with lowercase
+
+- Removed xfs_attr events that are used in an #if 0 section instead of
+  adding #if 0 around them
+
+- I added: Reviewed-by: Christoph Hellwig <hch@lst.de>
+  to all patches but the one with the modified #if 0 as Christoph
+  said he looked at them all.
+
+Steven Rostedt (13):
+      xfs: remove unused trace event xfs_attr_remove_iter_return
+      xfs: remove unused event xlog_iclog_want_sync
+      xfs: remove unused event xfs_ioctl_clone
+      xfs: remove unused xfs_reflink_compare_extents events
+      xfs: remove unused trace event xfs_attr_rmtval_set
+      xfs: remove unused xfs_attr events
+      xfs: remove unused event xfs_attr_node_removename
+      xfs: remove unused event xfs_alloc_near_error
+      xfs: remove unused event xfs_alloc_near_nominleft
+      xfs: remove unused event xfs_pagecache_inval
+      xfs: remove usused xfs_end_io_direct events
+      xfs: only create event xfs_file_compat_ioctl when CONFIG_COMPAT is configure
+      xfs: change xfs_xattr_class from a TRACE_EVENT() to DECLARE_EVENT_CLASS()
+
+----
+ fs/xfs/scrub/trace.h |  2 +-
+ fs/xfs/xfs_trace.h   | 68 ++--------------------------------------------------
+ 2 files changed, 3 insertions(+), 67 deletions(-)
 
