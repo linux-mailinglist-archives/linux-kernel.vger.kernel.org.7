@@ -1,123 +1,149 @@
-Return-Path: <linux-kernel+bounces-688605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADBBADB49B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:59:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1447ADB49C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48F243B58C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:57:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D54847A9269
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E870263892;
-	Mon, 16 Jun 2025 14:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9228214A94;
+	Mon, 16 Jun 2025 14:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="moaFefQz"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="f7619JxT"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE11321CA0E;
-	Mon, 16 Jun 2025 14:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750085786; cv=none; b=K+kyTpkkcJRizzGMY9UOFOELbB3wmq4rqIwUnZnGR3537zKAM79smvs0UJhcvKBs+jAzfrB+C/JUF8iJRWztQbVHlTMnoorrwMNe//ANKGalGn/IYkUmpn9mDboc9Yds2hf8Us9IePaISaWWMcpGO8QAI9/p9T9GsneWsZeRnd8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750085786; c=relaxed/simple;
-	bh=iAx8mzEEjM64kl3dReqUnCAxjjZTtPCO99ShqsJi2Qk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S7zoNKkBQHGRvda+gbsVimZl5J8g9cv3yId92IomIBKHiiRj0Aq47801TTIPg8IAOr6awzE/vubQMw8xvgKuamYEzXU751KHLIx5qyGOpbynhCqk8lxIlDjlWnniZ05oZr69NP1kDzVUhdLgf5KGmwuoOHKL5Oz+IwgnTnFUwjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=moaFefQz; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C722BEFEB;
+	Mon, 16 Jun 2025 14:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750085804; cv=pass; b=dODtuZoWnCG+aSspemgdQFGu4M0Rw/v0IdbfkMxvRQ+fKLyJGFC8oen4z2U6+cmwBOc4PUhglh6t5tNrLe7bDBKLP2lvwiQ5uizvZgsCrO1kA4bWTnL81U2hRQ4160omw2/TtNWOG+kt1IAhlBGiu8QZQoJmnyEagz98vBXSyhE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750085804; c=relaxed/simple;
+	bh=FHA0qXxH97hrMpK1m8eyFVAD3IhyOatmTyHQSe8khfs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=I8BnUcJGcygQAX+yPDTIKDPSUl52bF3vGgPafrk8zLbIY/bdYGhw4lnlAkNB6Yc+E3Qj9EGHGq66pAcyFWocjtHPWB2Tqx/krBsHL13+FAyjisubxHKo+WDyVuPm07CbA0/1t3ry93AHuoW74jg4myhBoiRgfSouV6uT26GbFXY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=f7619JxT; arc=pass smtp.client-ip=136.143.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750085776;
-	bh=iAx8mzEEjM64kl3dReqUnCAxjjZTtPCO99ShqsJi2Qk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=moaFefQzNAqyMxNFZCgYN7/ZIY2A3LlHEqJJ6rErfkLEiDIJsEQi2Yfp4kotwQcp+
-	 QvwQJhKsC0De+iTa8FzHuGsLuCo9iVCVy8zseEFKbLpMHGKnXnFqOb4VIrgacktzBt
-	 YdcvTsIGhQDxeGRnX541dW7kq/zej4dnrlxJmP4rWM99R2yOoG8D+pRJz037kxiKsh
-	 XxSv/pMzunbcGctCR8K0iel2dQx8KbVN2Ibb5az8oVSKt1o87jFrb1tCrH1NadgkZh
-	 J37uGjNXVr6h/gJhfRexk9Rw/1Ml8LtGSxlhbixd6H1eljmOvBa7WRflgvCQxkwVkm
-	 avMTF2ntxanxg==
-Received: from benjamin-XPS-13-9310.. (unknown [IPv6:2a01:e0a:120:3210:4811:e81c:4b33:730c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: benjamin.gaignard)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id D829717E35D9;
-	Mon, 16 Jun 2025 16:56:15 +0200 (CEST)
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-To: joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	nicolas.dufresne@collabora.com,
-	p.zabel@pengutronix.de,
-	mchehab@kernel.org
-Cc: iommu@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-media@vger.kernel.org,
-	kernel@collabora.com,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Subject: [PATCH 5/5] media: verisilicon: Flush IOMMU before decoding a frame
-Date: Mon, 16 Jun 2025 16:55:53 +0200
-Message-ID: <20250616145607.116639-6-benjamin.gaignard@collabora.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250616145607.116639-1-benjamin.gaignard@collabora.com>
-References: <20250616145607.116639-1-benjamin.gaignard@collabora.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1750085783; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=N9dWNo7I2HlyV+sYWjI8Ob3/p92WpGS1VgqstYxavj1x2w1o7h95OonO6JCLvymRHvI/v+xfZopCwAfW6G0mRBBeU3S38JkBafQUA7jrEbV7Bz8TyScGIonEcATQdxGXbyRLdh7x91CfwSHX3N27Axny4Rl02fQlnN2G6FgT+cg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750085783; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=FHA0qXxH97hrMpK1m8eyFVAD3IhyOatmTyHQSe8khfs=; 
+	b=GckFlxZK4x5CEzw6YzyU6v4lAucKxdOaZ8T3M3L7KABRRABBF/WmuTlOwqKSKxdEeOIpBcbIMKkxBVJNqsNGM0E+S3h4CIPHwJ9B4bt1yM30UH+fdpRk8F77+DR8Cs3Gw6u76YVFcr6VB/jepe42RJ55QRupw9byi7lCR4x4l6E=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750085783;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=FHA0qXxH97hrMpK1m8eyFVAD3IhyOatmTyHQSe8khfs=;
+	b=f7619JxTxaVC0lISJRSuqOPQ16AF7xlL2mh4yEaxEu3YF481jw1zJ2mZe9EwAiBD
+	fCbsiQb20r+MV8iKcP20aoskorbHdjtdEe7MvDRN8I6GcdiOZwPf6XWttjcGPp3HxaX
+	Wedx/VvHjJghcr3mqRSCc9PFHfl54+jkpOJBPH2M=
+Received: by mx.zohomail.com with SMTPS id 1750085781588401.0239276513456;
+	Mon, 16 Jun 2025 07:56:21 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v6] rust: kernel: add support for bits/genmask macros
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <DAO1K5YIFVRH.31XI173DWYYX1@nvidia.com>
+Date: Mon, 16 Jun 2025 11:56:06 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3EAB4EAE-DDCF-47C4-A712-77B37AEDF4E8@collabora.com>
+References: <20250610-topic-panthor-rs-genmask-v6-1-50fa1a981bc1@collabora.com>
+ <DAMAPVAI3V8X.N8SAQD6KOO1Q@nvidia.com>
+ <9578ECFC-6C59-40E3-9340-A426E8D2328A@collabora.com>
+ <aFAqLYBMHkC_X-dr@Mac.home>
+ <D29BB87C-356E-4885-8308-456028AE3B6F@collabora.com>
+ <D12DC02A-E1EE-47F1-86AF-C25C492FA3D4@collabora.com>
+ <DAO1K5YIFVRH.31XI173DWYYX1@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Flush the IOMMU mapping before decoding a frame to ensure that all memory
-translations are properly applied.
+Hi Alex,
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
----
- drivers/media/platform/verisilicon/hantro_drv.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+> On 16 Jun 2025, at 11:52, Alexandre Courbot <acourbot@nvidia.com> =
+wrote:
+>=20
+> On Mon Jun 16, 2025 at 11:45 PM JST, Daniel Almeida wrote:
+>>=20
+>>=20
+>>> On 16 Jun 2025, at 11:42, Daniel Almeida =
+<daniel.almeida@collabora.com> wrote:
+>>>=20
+>>> Hi Boqun,
+>>>=20
+>>>>=20
+>>>> We should tell/educate people to do the right thing, if a..b is not
+>>>> inclusive in Rust, then we should treat them as non-inclusive in =
+Rust
+>>>> kernel code. Otherwise you create confusion for no reason. My =
+assumption
+>>>> is that most people will ask "what's the right way to do this" =
+first
+>>>> instead of replicating the old way.
+>>>>=20
+>>>> Regards,
+>>>> Boqun
+>>>>=20
+>>>=20
+>>> This is just my opinion, of course:
+>>>=20
+>>> I _hardly_ believe this will be the case. When people see genmask =
+and two
+>>> numbers, they expect the range to be inclusive, full stop (at least =
+IMHO). That's how it has
+>>> worked for decades, so it=E2=80=99s only natural to expect this =
+behavior to transfer over.
+>>>=20
+>>> However, I do understand and agree with your point, and I will =
+change the
+>>> implementation here to comply. Perhaps we can use some markdown to =
+alert users?
+>>>=20
+>>> =E2=80=94 Daniel
+>>=20
+>> Or better yet, perhaps we should only support a..=3Db.
+>=20
+> ... or just drop the ranges and do as Daniel initially did, using two
+> arguments. But I agree with Boqun that we should not deviate from the
+> official interpretation of ranges if we use them - the fact that =
+`Range`
+> is exclusive on its upper bound is documented and a property of the =
+type
+> itself.
 
-diff --git a/drivers/media/platform/verisilicon/hantro_drv.c b/drivers/media/platform/verisilicon/hantro_drv.c
-index 8542238e0fb1..5a672467d83f 100644
---- a/drivers/media/platform/verisilicon/hantro_drv.c
-+++ b/drivers/media/platform/verisilicon/hantro_drv.c
-@@ -11,6 +11,9 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/dma-map-ops.h>
-+#include <linux/iommu.h>
-+#include <linux/iommu-dma.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -186,6 +189,14 @@ static void device_run(void *priv)
- 
- 	v4l2_m2m_buf_copy_metadata(src, dst, true);
- 
-+	if (use_dma_iommu(ctx->dev->v4l2_dev.dev)) {
-+		struct iommu_domain *mmu_dom;
-+
-+		mmu_dom = iommu_get_domain_for_dev(ctx->dev->v4l2_dev.dev);
-+		if (mmu_dom)
-+			iommu_flush_iotlb_all(mmu_dom);
-+	}
-+
- 	if (ctx->codec_ops->run(ctx))
- 		goto err_cancel_job;
- 
--- 
-2.43.0
+By the same token, I agree that we should use ranges instead of two =
+arguments,
+if said two arguments represent a range anyways. So my vote is for a..=3Db=
+ JFYI.
+
 
 
