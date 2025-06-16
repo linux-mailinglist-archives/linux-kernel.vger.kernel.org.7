@@ -1,147 +1,155 @@
-Return-Path: <linux-kernel+bounces-688561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4FDADB40E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:39:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87798ADB410
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 16:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 771577A8B80
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:37:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99CE616CC39
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 14:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C70210F4A;
-	Mon, 16 Jun 2025 14:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507B420012B;
+	Mon, 16 Jun 2025 14:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="INCtnHk7"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EIn/VDUR"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433761F7060
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 14:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FD11F8676
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 14:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750084700; cv=none; b=cG2E905qyLZ9iV/vmE2k/9dMsvaLFNF9NBMsinfcf5kufKZ4JPZDftcXsX34JBB6d3D4UqA2AYqn9DFZVq1RE6EBMsFn7FTKxz83UE8jmMhW4J+r+HY2wse+7oc97FR/731RCtCSAEyRnUHZZ9nchPT6ZuUWBWrrS6ERGzrRwik=
+	t=1750084734; cv=none; b=sIC60gULwQozh38+MLz79byqagZVA1NF6LRzyXO1HmPzVYEXwjsOpg0dfvDAO1a3nJisxHblxpbBh+PQPvWrBTWFWy7h0RHJlfeQrPW1SGtp/AOGxLnIlDGqx6SnxvZm61dQCk6uIrFWKFBha4HLJdRB/Sut3Rtp82wYqFya9pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750084700; c=relaxed/simple;
-	bh=UXaABHQD22K9FyO8R9mM3dQFCxIl3GBYZjPUSbcMKwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R08tBetxVZzmB3IMiY2W0f2Vcsw/qfdXS0CRfH1nQjJxYamqfUcu35zr4WxUW32p4gn1o+d3EU5SLKXmWq2Z6uJkpJ5oL+Iml5guPESzKIWc/cdzGJCfaZ+6BGYYCqOo6HoUhJGSeS1q5ri6bEtM4xoR7fYP3/6IDbrPTnYHseI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=INCtnHk7; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3ddc5084952so19609945ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 07:38:17 -0700 (PDT)
+	s=arc-20240116; t=1750084734; c=relaxed/simple;
+	bh=ytjfmtK/XdCP2wuHUwDkdi5kPia1J9R+DeT4RG9dGAA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=deTwcSnjPJH4RXt8RtgzLRyg8OshyhL4EyOu28H0QwSihCUZyxM8gXtFTg5KIxz99eiLERqJ3baVayx2lraGoyJZg4rRoyFzpg0ZGUW/Im1Y8eqqQ19OXQE7T+bVqcNclOgmNjHlB9lYml9DGyL+wHOUN6aJaBT2dgGeUF6l3R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EIn/VDUR; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a54700a463so3330806f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 07:38:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1750084697; x=1750689497; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RaDdB7ecZw9rq7H/cB+ruY2mtDm9EqdjfLyEE/nDh7s=;
-        b=INCtnHk7i6hY6jsAz4shzHWCSEKsQ6iJ13dDtEuVgk/XlTSIgsui3751au2x9jtMKq
-         1rTL1NVzuJmfFpgihedliMgTwcv4PhSwFSP5rBfbO25Wos5qZvRMI07yAFiA64SAx4a4
-         xIDYC0JcoCZCvEI4LOdI8DWDWtwJvxu3miHRE=
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1750084730; x=1750689530; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gWToLPQVitiBw5bzYj/kjSaIU+PcrpH2/GQkA5MT3qo=;
+        b=EIn/VDURJ/pEmfl1IwDXo0UtU/zvPgOMZldIkDL0mkMIO8cF8XsZRraKRvB0riqfXW
+         ObzsPB0h/7v227+3XIL15j1VucsxzEX41A+WnUVRZjVpChNxWgJZmpze5SnPy5onkGcA
+         yJS0gYD0t5TW0gKFBWBO46o9K7qGbVbdwWpwHLwELWee4A5fPtroDTBBDo1NtcjOoCSv
+         vTi2YejmYUud/uG5Y++w1YR4GnuvzaqT8PdtbCXbZttwAAg0ACZI+hSkIvCdNv7CR24Z
+         YFDI8wOdKE1GLKjOKPvp6JODud+CbtxQcPTNF1q6d5Fuku1oyijmig6YqdN2Gbvugb3O
+         +Svg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750084697; x=1750689497;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RaDdB7ecZw9rq7H/cB+ruY2mtDm9EqdjfLyEE/nDh7s=;
-        b=W8d9SFViAWHWUz8X42M7mH0kpAGw6etT+3rwW7m9kk1YpWzZEMZhOUPWhBOvJ2gtg8
-         atmC4Q2+r0cZyrwmCxKvaGCRl3S2CSBoKbK9LkZAKqZeFlGdNSyI9v529nGejwgScO5y
-         K7GbdZc/W1L3pt9Q37a3wIgiwVpxkueExzz9yc3AgANEIfMF7OiXZW/ZiqY6S4kLIG0J
-         ea8T3SNJotxNTYHynG0wQ6o4R94SshJ+vboOaEG55diOJXZV22Fa+/vwbgz05LqAp42h
-         GyNjPDy1YYugdgfXAuim7UXN2LIlkv0TMtExmquKocC+WhPzzcC/9URMS6ZRcG9ESCAF
-         QjmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6b/Af2HkGAXaLxdP5QF1zj+qKK2VJTD9DJ7ApUiQ67LG/D/+8zGphJX5hU55wrKxhH4D9NHCDu9SVmSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQv4mh/QOGpX+X2DQpPzrTIL2TgmQAT7kJnDhUMdion1X58V6D
-	lAS2Jye9OnvrmpXqG6kd/c3liWUMbD8xlDg6Db32Qxz9dSgXAgQx4jqci7DC2J3GFIQ=
-X-Gm-Gg: ASbGncsjUOUK+xRC7AbmpOMrhxSJw+T+oobQlvNDJ7HCAoVu/keo0RV8flbdqI+SQVj
-	sLz6WxTL+xs9a+h5zkNe+GGewJyebIK9HLWU3hr/xoLQ8ctbA1KC4lhHV0u2bOEO4wnxdgOLocQ
-	R6h4imQbFEM4PjO9HaCh/CeWJGs+qGMrb+hJrPcvzU9eXgDnxn8LTAOOKTAC2Sv03CFqslf2k5L
-	BjkisFTzpAz7xOqVf7I2krHUasnue5rLXuhFWL7CICI5OBKVRj7nxOur28W4XvwCFh/6py+NlG3
-	xcB+LSn+zeq6R46D+UFzeEwiLKYIYC/BUtfZMOnHmcpQwb7zoJWtAsDvikn0SCIC/CHoFk0TGw=
-	=
-X-Google-Smtp-Source: AGHT+IGp/2E6cAX4aTSkp5+1j4lVd5Xk0hzBOAiQZW5tUPxlnAfIJ0ewA01WNGRwtt7CvP7Nt/sbOw==
-X-Received: by 2002:a05:6e02:1c09:b0:3db:86fc:d328 with SMTP id e9e14a558f8ab-3de07c3ef41mr106272685ab.5.1750084697187;
-        Mon, 16 Jun 2025 07:38:17 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3de019b3fd0sm19388505ab.11.2025.06.16.07.38.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jun 2025 07:38:16 -0700 (PDT)
-Message-ID: <5e8e0f17-9a4c-41d0-854f-e73a6f5866b7@linuxfoundation.org>
-Date: Mon, 16 Jun 2025 08:38:16 -0600
+        d=1e100.net; s=20230601; t=1750084730; x=1750689530;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gWToLPQVitiBw5bzYj/kjSaIU+PcrpH2/GQkA5MT3qo=;
+        b=QL18KgZl5rht7HYyQz6q4LqMsTHFDi6/15f/KeNBYXTrmAV4iPXJVSvRO2ye1QSuoE
+         zi96SnmHdavUdmxaeoTJfRO16uxeaCVNLRG07LhN5mrf2slwBU8xDi/tvgh331Mf7Puw
+         N5qQT3iItru2RKC/7OmecZoG6zTxaTqQGo5NTe44Kqq4m/TGCUZpEAZRkyJqGysT4EV4
+         y8LcSGpYYPaMDdXo6dOlQ6WxmKm+5P4v9cCO9MLO33cB15f41FtTFOwv/1yWjP+ZRpCq
+         iviqM0/Qq18ILWLk0cWFvNW1dBxTlZiNqoTjxq2Eq7+1D/QoeGjwL2fs+3FieDYTMQqX
+         xzyw==
+X-Forwarded-Encrypted: i=1; AJvYcCWobLk9yoyjKNsIxCpVI/QqLM14s9F86oEDkzu2k3koxSzsZDF4IwFhmYGtY9lHtsFRYMOUS30k6kxG5QU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz346gMiPYJgXoWyjW7Zx67s0ZXIhCDbcTHR34/TeimPl/Kno2x
+	48ZI3Me9JfcFqQ0AArtE668lRVkVYEaTbCbeFDDanHvkACrbqz2fzDNACmESrd+3MScTWi5EJWI
+	//qnlKKs=
+X-Gm-Gg: ASbGnctmePzCdA7AE01X2P2d3EZzipGUEAuvi8QlbPtlmI8cKP4v40DDi5Cb1mTBycP
+	tTgklMAP0BL5Bw5VJm+IyMH9xZpqsErtOjnAFpM4lyhxHcAbPR7CYNjZVbLZE/uWoUN6AdSHCWy
+	PauzopA8LxbuxbF9gEubSRohCuIoxbH6s9ffuPIakAZvt3fgAGGwYYWsALC9crbBx3YZ6kZxKcc
+	EgL4ta36Al23bu7DXhUrCWEElrVE9Y4Z7cs32FrE56DkhwMyE5gIbN4nQKp6SFaoU/ZpYQyJq17
+	HPLl6NXe6BeqdtQtt0MTU/gU7F6lPCg99RSS5wnLHVBrZtRvRpJ41lKQ5ax0mzJ+yCKGUa+9/+k
+	Zrc6fRUgbbx0igI8x44VmdCBj0MVUWncrMlc=
+X-Google-Smtp-Source: AGHT+IEGRmeB3oMKleC3pKBVMBYu/8jfqnCCDOYSgFOyYxzD5mJZV1fg44FKowdo55Cr1jLuHCyDjw==
+X-Received: by 2002:a5d:5f54:0:b0:3a5:1397:51a7 with SMTP id ffacd0b85a97d-3a56d7cd5b7mr9274661f8f.7.1750084730495;
+        Mon, 16 Jun 2025 07:38:50 -0700 (PDT)
+Received: from [192.168.42.1] (88-127-185-231.subs.proxad.net. [88.127.185.231])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4533fc6578csm77990485e9.19.2025.06.16.07.38.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 07:38:50 -0700 (PDT)
+From: Alexandre Mergnat <amergnat@baylibre.com>
+Date: Mon, 16 Jun 2025 16:38:28 +0200
+Subject: [PATCH] arm64: defconfig: enable Startek KD070FHFID015 panel
+ support for mt8365-evk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] clocksource: Use cpumask_first_but() in
- clocksource_verify_choose_cpus()
-To: Thomas Gleixner <tglx@linutronix.de>, Yury Norov <yury.norov@gmail.com>,
- I Hsin Cheng <richard120310@gmail.com>
-Cc: linux@rasmusvillemoes.dk, jstultz@google.com, sboyd@kernel.org,
- linux-kernel@vger.kernel.org, eleanor15x@gmail.com, visitorckw@gmail.com,
- jserv@ccns.ncku.edu.tw, linux-kernel-mentees@lists.linux.dev,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250613033447.3531709-1-richard120310@gmail.com>
- <20250613033447.3531709-3-richard120310@gmail.com> <aEuw7ls9hieUv_Ox@yury>
- <87ldpvsyr8.ffs@tglx>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <87ldpvsyr8.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250616-display-defconf-v1-1-c9c269c9c27b@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAGMsUGgC/x3MQQqAIBBA0avErBNSSqirRItRxxoIFYUopLsnL
+ d/i/wqFMlOBpauQ6eLCMTTIvgN7YNhJsGsGNahp0FILxyWd+AhH3sbgxTTibJCkMyNCq1Imz/d
+ /XLf3/QDaGjrrYQAAAA==
+X-Change-ID: 20250616-display-defconf-54a9bae1db4a
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Alexandre Mergnat <amergnat@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1487; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=ytjfmtK/XdCP2wuHUwDkdi5kPia1J9R+DeT4RG9dGAA=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBoUCx5eXjdcOVffnq7WXqqYRnDsTdZZj1URCBrdgGb
+ xUNVAA6JAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCaFAseQAKCRArRkmdfjHURbu8EA
+ DHfrZk940Kjkbb7HO3M0y+77ll7StOw6cYtUFU60Y3f0qJy5Uzt49F0AcaoWOICKDrI5rsE0R9CoJ+
+ rarUxHOdagpMdKzJe+NbD14e7yujy5McG2KgSe93nPok6kt4Vb1POkq8sb1tbPS3gojF3Gf1mCPN9I
+ zEM0mW3pMX29/LOiRnbfRFVU5hXbUh7uIVIzrnYH044y7F9sWochwHdCTKnkCg7z6i4gqbyhpf5f9t
+ /UGOE0UxEdJSMWGQZWFkV+OwoPiew+VUWeg6qnJJrNt+S4+bIXftIpGc1UwMmQSeRkamV+ZMMtKD5u
+ bOuQlkODD9zAiI+9MMwyBEu42Y1Jiv+4tNARQrtLUKDS4Up2soTHjqyMpzxZ9brKcQZhhdGFpxjV7H
+ KhjArSXiUQS9IivhhJJfQufiMlZmpB50pB0jALEzfa9v/pH8QLAqbMQSSpl3znRsq8ixBLP5UIBnPJ
+ Xcvk6+6bniS+K+oK87xGvuTJGSnaxXqESOwgp6wssmvRQCzzh75Y495vK5Mmw5HLtDwbUqtrprgzik
+ gMN4yU94JQaUBup/uwfZ3hb/S5VgqGYXx3FY9mU3GzjyICzGlCEmHTYfv1lwLR0MPqEKzkax/9IUv7
+ fthBOcdg5fZGwwWFLcmUCUWN1oGPhm0ctSoS1WGVlUW7uL7iiqiO4neOMqag==
+X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
+ fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 
-On 6/13/25 04:48, Thomas Gleixner wrote:
-> Yury!
-> 
-> On Fri, Jun 13 2025 at 01:02, Yury Norov wrote:
->> This exact change has already been submitted by me and is under review.
->>
->> https://lore.kernel.org/all/20250604232550.40491-2-yury.norov@gmail.com/
->>
->> I don't understand why are you undercutting my work, and moreover do it
->> for the second time.
->>
->> For the first time you submitted something that duplicates my another
->> patch from the exact same series. John Stultz has pointed that, so you're
->> surely aware.
->>
->> https://lore.kernel.org/all/CANDhNCoJ_MmpEfyuL+JWav+NUfQDH3dm196JSE-Mv3QrPUzi3g@mail.gmail.com/
->>
->> Kernel development process implies that one makes sure that his work
->> is unique and doesn't break someone else's development, at one's best
->> knowledge.
->>
->> What you're doing not only breaks this rule. You're in fact trying to
->> get credit for the work that is done by someone else. This is the
->> definition of fraud.
->>
->> I cannot make sure that any other patches from you are unique and
->> written by actually you. Therefore, I will not take your work anymore.
->>
->> I encourage everyone else to be careful working with I Hsing Cheng
->> and check his patches for uniqueness, at minimum.
-> 
-> There is absolutely no justification for accusing Hsin of fraud or other
-> nasty intentions.
-> 
-> It's sufficient to point him to your series and tell him that it's
-> already been dealt with.
+Enable the MIPI-DSI display Startek KD070FHFID015 panel to have it
+working on the mt8365-evk board.
 
-Thank you Thomas.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+---
+This patch come from another serie [1]. Since doesn't depend to the
+remaining patches, the defconfig change has been splitted to this
+new serie.
 
-I Hsin is enrolled in kernel mentorship program and is new to the
-kernel community. Pleas give them the benefit of the doubt. It can
-be overwhelming when you just start sending patches. It can be
-difficult to figure out if there is duplicate work happening.
+CONFIG_DRM_DISPLAY_CONNECTOR=m has been removed after rebasing because
+is it already on the mainline.
 
-Duplicate patches happen during kernel workflow. Most of us have done
-that at least once.
+[1] https://lore.kernel.org/all/20231023-display-support-v8-1-c2dd7b0fb2bd@baylibre.com/
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-thanks,
--- Shuah
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 5bb8f09422a22116781169611482179b10798c14..319d1899348bf6b6c26362c9b4fe7f1da917769a 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -914,6 +914,7 @@ CONFIG_DRM_PANEL_NOVATEK_NT36672E=m
+ CONFIG_DRM_PANEL_RAYDIUM_RM67191=m
+ CONFIG_DRM_PANEL_SAMSUNG_ATNA33XC20=m
+ CONFIG_DRM_PANEL_SITRONIX_ST7703=m
++CONFIG_DRM_PANEL_STARTEK_KD070FHFID015=m
+ CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA=m
+ CONFIG_DRM_PANEL_VISIONOX_VTDR6130=m
+ CONFIG_DRM_DISPLAY_CONNECTOR=m
+
+---
+base-commit: 0d8d44db295ccad20052d6301ef49ff01fb8ae2d
+change-id: 20250616-display-defconf-54a9bae1db4a
+
+Best regards,
+-- 
+Alexandre Mergnat <amergnat@baylibre.com>
+
 
