@@ -1,330 +1,327 @@
-Return-Path: <linux-kernel+bounces-688143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17F8ADAE2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:20:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7351ADAE2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390DE1882778
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B21643B2A16
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 11:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2FDA2BD01E;
-	Mon, 16 Jun 2025 11:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5FD2E336D;
+	Mon, 16 Jun 2025 11:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KPK92Myq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M/jPHDvV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAA527F183
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 11:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750072747; cv=none; b=Jva026WKpGOUgH9yFsmWJfgCZT1zLkafIzaWaaZxtiHYQO8lFTjkXmg585S2XdeKw/7jXrTGNB0wXn3WVXKPZ/TdzL5tH76qvHILnV8Iyzlo4mAR/XfBOLXqZsDEhEVTsfmnSu0l6Y90+Uf9XjInEXbZjtHQi8CeDKfKjYxEKGw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750072747; c=relaxed/simple;
-	bh=lO+oSdtzjJoXT/Hiv71KLVRuw1AoWu2xGuyDXukpwoY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EkCKxStxFKyp40tHXWbob7NymHsl45yfWd/vJpAALQgUhM4+ymCN/4l4OjbpBdAOcR1FkDfYoDqWcvGpKgzNRRrf0gGP2VN72Tssr3S71DkZOeATaVSTUVbFIE3XtkLd1nD2ycp+IIP1tKv2ivePztmlhG6AhYPFQ73EsjrKfrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KPK92Myq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750072743;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NoVmmxCcA77lmhKdryfGIR+1/dQgmY7Gw3ATY3zbYNo=;
-	b=KPK92MyqyRY8zdzLyiviv3RAwUJlIex1a157pl39RRf8cx+u9quQiqfq4f90u6TlZCgTj9
-	WTFxfkCSY8laI56h4saT4qWnrkj1iuAtu7kHIAJ2Xz/Y4OqnyDx4eeu0c8Qpsuv7F7rNFC
-	MrNCgAOZPvqgKjus0akqBAwTAiQK6iY=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-479--1XL2iZxPjKZH9fWNvCPMw-1; Mon, 16 Jun 2025 07:19:02 -0400
-X-MC-Unique: -1XL2iZxPjKZH9fWNvCPMw-1
-X-Mimecast-MFC-AGG-ID: -1XL2iZxPjKZH9fWNvCPMw_1750072742
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4f85f31d9so1631642f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 04:19:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750072741; x=1750677541;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NoVmmxCcA77lmhKdryfGIR+1/dQgmY7Gw3ATY3zbYNo=;
-        b=oI6pDWu1sF+vnTDbg2/wMJ4xq4KbG6aSbMwv6wcZfH61Qgawrf2Xb2lWc6SPJHS0/+
-         /0f/zEgRinCWzGyGk9iAdiER3lmcWTmFZOg3ryUC14QlKtNhKyORUkq1UNJG6e2PFXmw
-         BH5sh9nLretGXPl3R/f6JUXd73BDvuNtvyfJiTrCEPBTk105h9fpJlZdUpdf6eCVRva7
-         +f6yMVqo7gWIQp5O2k5sG7HFIWU9u1WRZPBlmHy5cpHh38DEzIKFtoXE38F9rzFRK33v
-         pSfyrXzVdQ3CZpTxGd2xBjwL0rTJOwoOmpEwxNCsBjN0ABXcBFZpwiwfvBaFZ6T3yjFk
-         O8Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdTejCg7LnPecrZL92WoIHhJbYgXmoN6/J52XrgXo0n9NIR94kl5b0KPp2r24wtQpnRw6zteckTkEKp6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC5HsKbMwAKx+jzgA3+wG6WgUkfTgzOXpxSlZ1SJO2X2sSnDbE
-	daTCtS/pYos8ICSUkQfjB3V+EVqb8Tg7tCimS4AqAJT8jygCupq1LXhUlfCYkKnlMRpGAMscYWD
-	6qTLDm6DSVbi+62y+eb7vqRSJbuuz9j24jyGyczCSrO5o6jc/c4zQPLZxVuB8/bWsTA==
-X-Gm-Gg: ASbGncuq5tw0tNkYNJSTWd15hFjSQc91FcnURCgiTdABMK5fqk+tgfUk7ipcxZKRIpu
-	RLQEgRZTiG4vKM4iihG3/4jXpKYSPWbtHyWh7p8eHMZYUWrvvzR7Uk/cxHpiXha0MqmRj5DNwsZ
-	knOkzlwV/Q9t/nFvOYEKoMq1B7OXjALDowXfvpAbrdy6TcijoM06sSmkiGhZOl1N+w4q0J/sDJ2
-	i22mqwykGUnrZQPyfw/BZY1dWnRBd8n0SgSwZP9AM6ro0v7ugMpSIPKjmpAF2ZCi0+iUW24OKwN
-	5l+peMliq9SaLz2PxrLHNV6NaBYIwNkg2hpmiq/l3mMHslJzLtCIpN4d/0aDKC3vT5zHIzOM5BM
-	IfOJxetyMK/C98cA7jghGE3s616epkbd/uGWhhSOAKdWbjrg=
-X-Received: by 2002:a05:6000:1acf:b0:3a5:39d7:3f17 with SMTP id ffacd0b85a97d-3a572e92329mr7492273f8f.47.1750072741467;
-        Mon, 16 Jun 2025 04:19:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGDoesy1VAfhtKWcYhHC2stapPOyVLHQXCHGCMu9iwSLcFu1cYern443u4X7AyjoYNzTnLLw==
-X-Received: by 2002:a05:6000:1acf:b0:3a5:39d7:3f17 with SMTP id ffacd0b85a97d-3a572e92329mr7492243f8f.47.1750072741064;
-        Mon, 16 Jun 2025 04:19:01 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f25:bd00:949:b5a9:e02a:f265? (p200300d82f25bd000949b5a9e02af265.dip0.t-ipconnect.de. [2003:d8:2f25:bd00:949:b5a9:e02a:f265])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e2384cesm139576665e9.16.2025.06.16.04.18.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jun 2025 04:18:59 -0700 (PDT)
-Message-ID: <8483b457-6044-4174-9190-161f29f2cda5@redhat.com>
-Date: Mon, 16 Jun 2025 13:18:58 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E841D2D9EC5;
+	Mon, 16 Jun 2025 11:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750072755; cv=fail; b=S0TRlBK3nX35uMw/jtOMM6PzwLg1gT3RkrqhexyaAltk7jVlgGfwpJH+z/foYlSp5Q4aJ5+zfp+O3dOWYZDBnvRb1YYC3u/zqLRH1UVi5p6Z3eOJquSjwhyLki7v3whPqkCa3HBlbaHLr3++3ZlYZhnpluPEb+fQMo+AdnR3uVk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750072755; c=relaxed/simple;
+	bh=QcgXg7mhEKSn7bdbijQo8IeRWqHZlnkvza3vUrgSmXU=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=n6qlXarOqxFnOQ2SanCYLM3JXF0quioBFV8cTmMDEnvYq6EFOqOy7gpgrX/EYpJCJkvsIW6ZmfxQwMV19Qom1fwCpATzzJlkP+7saUcZNIpqYpkE4smsfAGZZVtTF6pLpEUETTtG9kRhMvAfbRc3jfE/5uWDP6djFLwNaIj+xew=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M/jPHDvV; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750072754; x=1781608754;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=QcgXg7mhEKSn7bdbijQo8IeRWqHZlnkvza3vUrgSmXU=;
+  b=M/jPHDvV7RtrFW2Expq9qdGpmFJvrZlBMUccYRAhOpk9kv0nfFXexX8+
+   zgcb4T/s96tg3jiSydg7tT/D9fCoNluSh/8k0oSq+Hov4JwY+uoQDtV8x
+   mipDR/CHIFJS8I1Qc8AdBRWOKEn1VEez3eIGwj+QbUYM1NHRB1n9K0FV0
+   ms0GbHsEVnI483ebC1mgQ4rbGuUhf4eATp6lTbBKbm0jPL2nz3a6GRX22
+   8NgnExjZrIEh5TcJYVsl52a/ZTsM2PkTNye5d8A3Y2sJQGCrkFtLaQasu
+   lHLPwLihMZGb+lMq1G+iVLTTHIaijveUynqGx/m2wcjbM5vqcj35uxueE
+   Q==;
+X-CSE-ConnectionGUID: tyezbV36TI6A7rJlEwFsMQ==
+X-CSE-MsgGUID: ZciMGRFvSP+J2JNBXD0YFQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="69789554"
+X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
+   d="scan'208";a="69789554"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 04:19:13 -0700
+X-CSE-ConnectionGUID: FYM8LReLQfCVDF6IlHDMow==
+X-CSE-MsgGUID: rc4dziLNQc+zilw89SUH4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
+   d="scan'208";a="153599582"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 04:19:12 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 16 Jun 2025 04:19:11 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Mon, 16 Jun 2025 04:19:11 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.87)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 16 Jun 2025 04:19:11 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y9JNi0eRsC6dRKHolHcrv41Tqe3H7X5KrL67e4QW/qK3WAFgxEtMzChfohAu3yHVaU3MDZEoUo4ULXv0XMI6g9+rtv3/EsoYALKYwHreJzpRClTBkVIT31q0/PCAuh0U5QVVw9R5GFq1YeSbDrLIGNWuBSAir3pDBCQqTK/o3FoVm3SLRyMglB6kx0fPQPvwzWYg+WXjd1MXGlXU3MzRnSzhqL/CnuslBpWDADZAeWHoMeA6JGWpRrHrytrorzzexbnuBBPkFrUyrjh5tqwO1Thy4poGR87G0Ikm4ja1omPQBeAGTWHTjNbPXIQbpC8sZkdkvr+m5ZsW6ZhasDsuJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X2y3UcUHDIeApblInph6mEAVDuQcU+1KXAGCBp+DHjs=;
+ b=fiR4vY7RDCgmv5FmvxQXv5w/TbMp5veUThvEWoFW4zSNjKCkcrzHKZj1mSW6pfGo5sib5prJuzZXGmE1bPDGyBc/Rkvu8CPUYr/6FoKup2rDyR5BfD0aWdHR2C76vTeyDbuZRjYxtsHqKk8psniyfUFlwjp9OkZK1KiYClpdipyz1Oa3zVmEaHe/WgUP9uYw7XiD0o20LEwhPX1bgfbWFK49n7Hph2hxXndauAumOTxod0qYGxDwA3QqVeKwevfz2G3DfK9fWFaDMEuK6viVsd67P/vXg5Ffr1b+oXVItY2Qst1HUVhcbPfbJ2/DnWM3TMsJATtrwe5GNKcR4OJkbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BYAPR11MB3206.namprd11.prod.outlook.com (2603:10b6:a03:78::27)
+ by PH0PR11MB5125.namprd11.prod.outlook.com (2603:10b6:510:3e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Mon, 16 Jun
+ 2025 11:19:09 +0000
+Received: from BYAPR11MB3206.namprd11.prod.outlook.com
+ ([fe80::4001:1e6c:6f8d:469d]) by BYAPR11MB3206.namprd11.prod.outlook.com
+ ([fe80::4001:1e6c:6f8d:469d%4]) with mapi id 15.20.8835.026; Mon, 16 Jun 2025
+ 11:19:09 +0000
+Message-ID: <87619781-629b-4393-8c14-b34483a7c734@intel.com>
+Date: Mon, 16 Jun 2025 14:19:01 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 5/9] mmc: sdhci: add Black Sesame Technologies BST
+ C1200 controller driver
+To: Albert Yang <yangzh0906@thundersoft.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>, Ge Gordon <gordon.ge@bst.ai>
+CC: BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
+	<linux-mmc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Victor Shih <victor.shih@genesyslogic.com.tw>, Shan-Chun Hung
+	<shanchun1218@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "AngeloGioacchino
+ Del Regno" <angelogioacchino.delregno@collabora.com>, Peter Robinson
+	<pbrobinson@gmail.com>, Ben Chuang <ben.chuang@genesyslogic.com.tw>
+References: <20250528085453.481320-1-yangzh0906@thundersoft.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
+ 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
+ 4, Domiciled in Helsinki
+In-Reply-To: <20250528085453.481320-1-yangzh0906@thundersoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU2PR04CA0298.eurprd04.prod.outlook.com
+ (2603:10a6:10:28c::33) To BYAPR11MB3206.namprd11.prod.outlook.com
+ (2603:10b6:a03:78::27)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] vfio/type1: optimize vfio_unpin_pages_remote() for
- large folio
-To: lizhe.67@bytedance.com
-Cc: alex.williamson@redhat.com, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, peterx@redhat.com
-References: <753caff4-58d6-4d23-ae69-4b909a99aa16@redhat.com>
- <20250616111353.7964-1-lizhe.67@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250616111353.7964-1-lizhe.67@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR11MB3206:EE_|PH0PR11MB5125:EE_
+X-MS-Office365-Filtering-Correlation-Id: 40f64c37-06f0-4fc7-233f-08ddacc79cd0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MUduSkpFZks5TDVGYmg2V1Bya2cxcE1Vb0NON3BDTWNMZUFCcmhPMG5ybk4y?=
+ =?utf-8?B?cEdNOWJmMDh0cFFEU0VhemVqVVlkbWZIRWh4S2V6T3BLZHBFK1pVd1FSYzha?=
+ =?utf-8?B?b3EycXN3OTVNcFNKTEIzcXp4ZlUyR216UGxLWTZycW1JYkdkR3Fsdkp5RGE2?=
+ =?utf-8?B?UXE1allYSTdEZ0hWeU0ycXNBOXB2U0ZCOU4wbnA2TzRlZUVNZ1hvbC9ZWEFI?=
+ =?utf-8?B?ZVd0bW1kYmwvQTk4YkFNTGIwR3puclpkSDM4WGVVdHJRb1pjQWVKaVhMdzVG?=
+ =?utf-8?B?TkFmUVB1Rlppa1dKOUpweHpwOXBDVTFsRzQ5cnlUaDVrQWdlUzBBdzJOcm5t?=
+ =?utf-8?B?SzU3akxpdzNRTjV0UEUwNzh5d2hWdkwzYXZGR2VPRjMyYkJPbU9kQ2NlaFNO?=
+ =?utf-8?B?WkNFTHc2MktJbUkzVE5nL2VId3FxZGRGMzBHUGQ4TFZ0MlcrSDhsYlo5citL?=
+ =?utf-8?B?eEtMK0FCdzB2YmVpNzZQTEh6TFM4c3pUV1NJUlpSYUpFL0N1cVBlN2tGZVM4?=
+ =?utf-8?B?T1RBNGliZFVyT1dlYTd1Y3BZZm9RaHJTbm5KZ2pZSUFLQm1FS2RVR0hhNGNR?=
+ =?utf-8?B?QW5wTXRZTXEzWEtWZzliSXpzVGJhWVFTQ2k4NzJ0a3lvVmVRcUMyT285Tk5X?=
+ =?utf-8?B?TUhhNmpUL1JPTHR1am5odmVmRzRCcTBFTEZwd2NXWkRVY0xGb2hwWVcyejJG?=
+ =?utf-8?B?M3M0cVZrZHBTdEFYQU9Oc2VueTNCaGVJZDJnWEYwdmhJeWFBazhsTE9QUC9s?=
+ =?utf-8?B?MTd6OXp1cktvNENSNHhRMjNrRlVEOFcybS9UdVBQNzV0WFRmQ1VzaEp1THNj?=
+ =?utf-8?B?UHdQVnlYT3ZvWWFaekVteUZ4NUtETGwwMCtxWWhobEpTWTc2ZGw4TDdlTEQ1?=
+ =?utf-8?B?VENrQm9RcjROUW16M0lDL1Z2Q0l4Y250cGVLbU0zaisraDJJdHRpRStlUXZk?=
+ =?utf-8?B?SjUrN3JTalZMYkt2K3lydTlaQitmSVBuS2tTME9BaFF3dDcrRDhndTZOeEVD?=
+ =?utf-8?B?UXFJRnhCT0NmcGgyVG84WmVWSHNqNk5CRlU5aGJuV1ArTEZySTYwOTF0cHRC?=
+ =?utf-8?B?OGk4WXZVaFFmRXVvbVpib3dETFYyMzBHMzdPQlRJNWdkcVZQbzNoZ0dNL1VW?=
+ =?utf-8?B?WVRYZThMY1lheWFFYjZTaE40TmJpRVFBMlZ1dFRxOXhtbktjZXowVTF6bXh3?=
+ =?utf-8?B?YWNtNExqTWIwQllLbEM2UldzZGIvM3RSbWhDOTgzSWVZajBlZTJsNG9UR0Rh?=
+ =?utf-8?B?ZlpXcllNU2l1TmR4aUFIZTIzUDZld1NYU1hwUkoybG9XM3BNc1ZmSjFaUEI4?=
+ =?utf-8?B?NUd6SWFrWTd3YUtuMFM3azZhRUViSTgzWmR2dHF4b3NpdG5Wbm9pQVF1Y1pG?=
+ =?utf-8?B?SXFDZUwwa3N6MmtpZEFsaFNsUEVac0NrTFYyUzBrYUtOMnlLdjhMOWU2V0lo?=
+ =?utf-8?B?ZFA1OExPaW43Q1ovVGZMTHN3byt0RVJGNG5LaVdObk01MzVPRW5PbExmMmYx?=
+ =?utf-8?B?NzUySFQzN2wrNzZ3VHVJZlZuQ2c5L3RNdEo3OVJkSGNYeTZtU3lZMjhhNzlr?=
+ =?utf-8?B?T1lUb0RKdlZiTjVyS1VjYTdTMm1GS2djWmJHRDJHYXJRbEdabHQvZE5nTlFv?=
+ =?utf-8?B?R2hrODU2U04zRVFFVmd6aVdJS0d4Q2VBUXFkbHlxZjV4amR6cGtlRU8xQ3hp?=
+ =?utf-8?B?Ujh1TWNqN2xOM3I0bXROZGNBd2FaN0tLSXMxV1doWXpERDRBMmxvOFR5V2hQ?=
+ =?utf-8?B?ZkFFWnhkc1pXNGFvTU5zTGpLK0lLQlVDbGJqVWVudjZUTHZmcWJIUDBWTnpi?=
+ =?utf-8?B?R0w2Q0drSkVnbG9ZdkF0ZUdlR3ZoMmx2UGV4YndWNHk5TEJnRnBLMi90WlI0?=
+ =?utf-8?B?a0xOT2RnbjQyZUdmTGxCQmQ1b0M5WHN0RmtUL3ZWUEJUak5EcmlRQXpSRzJR?=
+ =?utf-8?Q?AtjFNL3BINc=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3206.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?LytFM2t6UGVvakRORlBXODBBbjdHNE5WQWxDZ3VyZ1F4U3JnOFlOOWwyeHlq?=
+ =?utf-8?B?NU15czlKOFpvMG5jWXVCVk1PVWRGelNDOVpNZTNsd0ZrdW9sdGk3L2lhUTlh?=
+ =?utf-8?B?VEovVzdVWEY1RE01RHpVdzhvb0NOYXUzaHBxbEtKSFZJV0lBMkFCUFlVdk5I?=
+ =?utf-8?B?bUIvdUpZSmtJdkNyNHVHQzRtRHBDY0RET1BaWldWRHFLU1lzdmswLzlsMHpu?=
+ =?utf-8?B?R3RsMWVLRnF0bEIva0ZMUllxcDB3dHJqUFJzV2dvdFpCS2Q3Y2pJNVBYSGNQ?=
+ =?utf-8?B?QVVsbENsYzJUc2FVV0JTM05Fd29jSDVEcHY2MjlheERkMnRiYVBwa2hraW1P?=
+ =?utf-8?B?aVhUQmRzODA1OGFQMUVZd0RPcHhhV3BJL0ppQjExNk56YjFKamVJQ28yOFFW?=
+ =?utf-8?B?SW5MSUZpeHNyQkNIS3F1am9HVDdENHgzR0hWSlNmaTVNa2NKd3IweVpmcXlB?=
+ =?utf-8?B?bmFJVjhmWUt4TW1OajR2eDZIM2kzdjk3Q3pIbHpOYTNiWUhtVzNqcG84VmpF?=
+ =?utf-8?B?eVkzOUV4alM0bmlMYUZ1enZDWXVSTS9BKzQzQndnVDIwUDBBY3A4UGtMQnhi?=
+ =?utf-8?B?WXR4WFBBT3p5dEd4enRBcHQzOHVZc3l2MVcwbjVzcmVhNVpla29CemxSMi9R?=
+ =?utf-8?B?OE1SeHh2eW5kY3VxemFKak40b2Q1UGhxUytmYlZmeDhsNlVXUnlEdWQ4WkRW?=
+ =?utf-8?B?MkhxcXVLMkZ0VWRVcHJGVXlYT1VmUXA4UWpQeEZqemxXeWNjaVd3Q0R6ZGln?=
+ =?utf-8?B?Q3Y3eE1KMG9MZytnYkxaRG4wRDNoS1Z6WU1xeHBydklvbG1NQlZSbDZuQmYv?=
+ =?utf-8?B?MzJ2b3NEbUpZa0Z1UnJDTjhSd1JadVZMRHJQS2RUdjlCbHJCRVZaT0lBSHBE?=
+ =?utf-8?B?dkQ1UXYyOHIwRXJsdjAxSSs1SDlCTFFvZVZjcVI4K0JQQlZHRmtkQjdzbFJo?=
+ =?utf-8?B?QmpGTzBJbGxpc1REOGkvc1BzL3lKZ2lUYWQ0dld2WHlUa0ZHOXBSalpUQUxJ?=
+ =?utf-8?B?SW0vU0hTQnQ5VHI3SkF1UG1ZMVVmMEIrZU5IUzNrUjR0LzMrTWtSR0huT3l4?=
+ =?utf-8?B?VVJDYjRTSmJWYlJCUEdlQXJsL0I4UDhlSHlkVHFDcEdia3MrK0FMQUdGcCtq?=
+ =?utf-8?B?Q0t0V1lWVlhSUzAvK2kyN0w2cklab0pDV1RNTXl2d2RGbTQ0aTFXZHFyb1gx?=
+ =?utf-8?B?TWFneGw0b1ZDSytTSlE1Yyt6Z1J5NmNmOFV0dmplVXk4WkpuY2hSZmtPMW4x?=
+ =?utf-8?B?Sjk1eVA2dUhDcTBxc0tqYXRzMFcxMzB6bEltek1NbThCTzVzSE5FM0hpS0xk?=
+ =?utf-8?B?UnJyQ1JUM1BhNlBzdkoyNHBBUWdzcnBvV2RwOUUxUnJGeDl0Q1A4RFFZRHV0?=
+ =?utf-8?B?dTcvRjl5ZXBuaG9hcE9WYXExVllMQVBUZUdGMzZkT0pXcm5MYVIyaVZZdVRX?=
+ =?utf-8?B?bmVhM21BL2I4STk3ZU9JenlUbWtycnFKZzFHWEY4L2xESzBWa09lVy9ra3hG?=
+ =?utf-8?B?UnNWSCt4eVQxSnBzM3NyV01KeGYxTXM3TGhLUE84RmUvbWs5bXJWYXhuZ25U?=
+ =?utf-8?B?b0d3UlJOUjNla3BUWlNQb1pDeTE3NHAzQ1ZXOHpXWEZIa3JjUnYrNUQwWEFJ?=
+ =?utf-8?B?VkxLOGpqb1NSdVVEZ1h6RVRSMGdBSXZwdVBqa2EyVk1RaVJKN1RneEpOSWN4?=
+ =?utf-8?B?OTh5OTMrdDZvSnpHcjFQMThxTHl1OVZncnUrOXNnc0pqdXJiUGlsMm55WHhL?=
+ =?utf-8?B?OVBZUUpaaHpvSkh1TnhYUjR5NlNRSmhuVWlBdUpxLzFmY1VFRUdaMTJHT0JE?=
+ =?utf-8?B?UVdNNXNsY0dVa1E3OGl0ckVMS1Vjd09hMy81TjNQYTk3NFo2MC9lYkhlWThj?=
+ =?utf-8?B?YkxaTkllVVVyeTlKa1prSVNtdHhkQXpQc3NPOFlNSmpzbDFHSDFGU05RczNk?=
+ =?utf-8?B?VUY1VmIzN0FUclRTdHUrNDZKUXpnRkJwcVU0YndHOC9aMjQraERxcnE5cDZh?=
+ =?utf-8?B?cFM4MHBJKy9Ub1o4eFRGV3A0S3ROcCtyNjI5VkpWV2hDd3VNT0NXY0Q4dks0?=
+ =?utf-8?B?N1lVU29aY0YyQlBQcGZYd2NRaW1icGowZW5BeCtQWVBJeGVvcEROa1I4bjFx?=
+ =?utf-8?B?aThET2FUTWw3Qk5peG52Z0hCUTVMaGViRzdIV0hLSndKcGFTYy9LVTNoeWpo?=
+ =?utf-8?B?bmc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40f64c37-06f0-4fc7-233f-08ddacc79cd0
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3206.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2025 11:19:08.9307
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8EQyYHrvInsHOec/VOfH6Z2pGS0D/NFclqdFUSZEvzge0fs4RcX3aETZjmCihOH4HW87ov/PTM06mOlu54OpdQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5125
+X-OriginatorOrg: intel.com
 
-On 16.06.25 13:13, lizhe.67@bytedance.com wrote:
-> On Mon, 16 Jun 2025 10:14:23 +0200, david@redhat.com wrote:
+On 28/05/2025 11:54, Albert Yang wrote:
+> Add a driver for the DesignWare Mobile Storage Host Controller (DWCMSHC)
+> SDHCI controller found in Black Sesame Technologies C1200 SoCs.
 > 
->>>    drivers/vfio/vfio_iommu_type1.c | 55 +++++++++++++++++++++++++++------
->>>    1 file changed, 46 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
->>> index e952bf8bdfab..09ecc546ece8 100644
->>> --- a/drivers/vfio/vfio_iommu_type1.c
->>> +++ b/drivers/vfio/vfio_iommu_type1.c
->>> @@ -469,17 +469,28 @@ static bool is_invalid_reserved_pfn(unsigned long pfn)
->>>    	return true;
->>>    }
->>>    
->>> -static int put_pfn(unsigned long pfn, int prot)
->>> +static inline void _put_pfns(struct page *page, int npages, int prot)
->>>    {
->>> -	if (!is_invalid_reserved_pfn(pfn)) {
->>> -		struct page *page = pfn_to_page(pfn);
->>> +	unpin_user_page_range_dirty_lock(page, npages, prot & IOMMU_WRITE);
->>> +}
->>>    
->>> -		unpin_user_pages_dirty_lock(&page, 1, prot & IOMMU_WRITE);
->>> -		return 1;
->>> +/*
->>> + * The caller must ensure that these npages PFNs belong to the same folio.
->>> + */
->>> +static inline int put_pfns(unsigned long pfn, int npages, int prot)
->>> +{
->>> +	if (!is_invalid_reserved_pfn(pfn)) {
->>> +		_put_pfns(pfn_to_page(pfn), npages, prot);
->>> +		return npages;
->>>    	}
->>>    	return 0;
->>>    }
->>>    
->>> +static inline int put_pfn(unsigned long pfn, int prot)
->>> +{
->>> +	return put_pfns(pfn, 1, prot);
->>> +}
->>> +
->>>    #define VFIO_BATCH_MAX_CAPACITY (PAGE_SIZE / sizeof(struct page *))
->>>    
->>>    static void __vfio_batch_init(struct vfio_batch *batch, bool single)
->>> @@ -806,11 +817,37 @@ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
->>>    				    bool do_accounting)
->>>    {
->>>    	long unlocked = 0, locked = vpfn_pages(dma, iova, npage);
->>> -	long i;
->>>    
->>> -	for (i = 0; i < npage; i++)
->>> -		if (put_pfn(pfn++, dma->prot))
->>> -			unlocked++;
->>> +	while (npage) {
->>> +		long nr_pages = 1;
->>> +
->>> +		if (!is_invalid_reserved_pfn(pfn)) {
->>> +			struct page *page = pfn_to_page(pfn);
->>> +			struct folio *folio = page_folio(page);
->>> +			long folio_pages_num = folio_nr_pages(folio);
->>> +
->>> +			/*
->>> +			 * For a folio, it represents a physically
->>> +			 * contiguous set of bytes, and all of its pages
->>> +			 * share the same invalid/reserved state.
->>> +			 *
->>> +			 * Here, our PFNs are contiguous. Therefore, if we
->>> +			 * detect that the current PFN belongs to a large
->>> +			 * folio, we can batch the operations for the next
->>> +			 * nr_pages PFNs.
->>> +			 */
->>> +			if (folio_pages_num > 1)
->>> +				nr_pages = min_t(long, npage,
->>> +					folio_pages_num -
->>> +					folio_page_idx(folio, page));
->>> +
->>> +			_put_pfns(page, nr_pages, dma->prot);
->>
->>
->> This is sneaky. You interpret the page pointer a an actual page array,
->> assuming that it would give you the right values when advancing nr_pages
->> in that array.
->>
->> This is mostly true, but with !CONFIG_SPARSEMEM_VMEMMAP it is not
->> universally true for very large folios (e.g., in a 1 GiB hugetlb folio
->> when we cross the 128 MiB mark on x86).
->>
->> Not sure if that could already trigger here, but it is subtle.
+> The driver provides specialized clock configuration, tuning, voltage
+> switching, and power management for the BST DWCMSHC controller. It also
+> includes support for eMMC boot and memory-mapped I/O for CRM registers.
 > 
-> As previously mentioned in the email, the code here functions
-> correctly.
-> 
->>> +			unlocked += nr_pages;
->>
->> We could do slightly better here, as we already have the folio. We would
->> add a unpin_user_folio_dirty_locked() similar to unpin_user_folio().
->>
->> Instead of _put_pfns, we would be calling
->>
->> unpin_user_folio_dirty_locked(folio, nr_pages, dma->prot & IOMMU_WRITE);
-> 
-> Thank you so much for your suggestion. Does this implementation of
-> unpin_user_folio_dirty_locked() look viable to you?
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index fdda6b16263b..567c9dae9088 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1689,6 +1689,8 @@ void unpin_user_page_range_dirty_lock(struct page *page, unsigned long npages,
->   				      bool make_dirty);
->   void unpin_user_pages(struct page **pages, unsigned long npages);
->   void unpin_user_folio(struct folio *folio, unsigned long npages);
-> +void unpin_user_folio_dirty_locked(struct folio *folio,
-> +		unsigned long npages, bool make_dirty);
->   void unpin_folios(struct folio **folios, unsigned long nfolios);
->   
->   static inline bool is_cow_mapping(vm_flags_t flags)
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 84461d384ae2..2f1e14a79463 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -360,11 +360,8 @@ void unpin_user_page_range_dirty_lock(struct page *page, unsigned long npages,
->   
->   	for (i = 0; i < npages; i += nr) {
->   		folio = gup_folio_range_next(page, npages, i, &nr);
-> -		if (make_dirty && !folio_test_dirty(folio)) {
-> -			folio_lock(folio);
-> -			folio_mark_dirty(folio);
-> -			folio_unlock(folio);
-> -		}
-> +		if (make_dirty && !folio_test_dirty(folio))
-> +			folio_mark_dirty_lock(folio);
->   		gup_put_folio(folio, nr, FOLL_PIN);
+> Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
+> Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
+> ---
+>  drivers/mmc/host/Kconfig              |  11 +
+>  drivers/mmc/host/Makefile             |   1 +
+>  drivers/mmc/host/sdhci-of-bst-c1200.c | 920 ++++++++++++++++++++++++++
+>  3 files changed, 932 insertions(+)
+>  create mode 100644 drivers/mmc/host/sdhci-of-bst-c1200.c
 
-We can call unpin_user_folio_dirty_locked(). :)
+<SNIP>
 
->   	}
->   }
-> @@ -435,6 +432,26 @@ void unpin_user_folio(struct folio *folio, unsigned long npages)
->   }
->   EXPORT_SYMBOL(unpin_user_folio);
->   
-> +/**
-> + * unpin_user_folio_dirty_locked() - release pages of a folio and
-> + * optionally dirty
-
-"conditionally mark a folio dirty and unpin it"
-
-Because that's the sequence in which it is done.
-
-> + *
-> + * @folio:  pointer to folio to be released
-> + * @npages: number of pages of same folio
-
-Can we change that to "nrefs" or rather "npins"?
-
-> + * @make_dirty: whether to mark the folio dirty
-> + *
-> + * Mark the folio as being modified if @make_dirty is true. Then
-> + * release npages of the folio.
-
-Similarly, adjust the doc here.
-
-> + */
-> +void unpin_user_folio_dirty_locked(struct folio *folio,
-> +		unsigned long npages, bool make_dirty)
+> +static void bst_sdhci_allocate_bounce_buffer(struct sdhci_host *host)
 > +{
-> +	if (make_dirty && !folio_test_dirty(folio))
-> +		folio_mark_dirty_lock(folio);
-> +	gup_put_folio(folio, npages, FOLL_PIN);
+> +	struct mmc_host *mmc = host->mmc;
+> +	unsigned int max_blocks;
+> +	unsigned int bounce_size;
+> +	int ret;
+> +
+> +	/*
+> +	 * Cap the bounce buffer at 64KB. Using a bigger bounce buffer
+> +	 * has diminishing returns, this is probably because SD/MMC
+> +	 * cards are usually optimized to handle this size of requests.
+> +	 */
+> +	bounce_size = SZ_32K;
+> +	/*
+> +	 * Adjust downwards to maximum request size if this is less
+> +	 * than our segment size, else hammer down the maximum
+> +	 * request size to the maximum buffer size.
+> +	 */
+> +	if (mmc->max_req_size < bounce_size)
+> +		bounce_size = mmc->max_req_size;
+> +	max_blocks = bounce_size / 512;
+> +
+> +	ret = of_reserved_mem_device_init_by_idx(mmc_dev(mmc), mmc_dev(mmc)->of_node, 0);
+> +	if (ret) {
+> +		dev_err(mmc_dev(mmc), "of_reserved_mem_device_init error\n");
+> +		return;
+> +	}
+> +	host->bounce_buffer = dma_alloc_coherent(mmc_dev(mmc), bounce_size,
+> +						 &host->bounce_addr, GFP_KERNEL);
+
+sdhci uses dma_sync_single_for_device() and dma_sync_single_for_cpu()
+with this buffer.  Does that really work?
+
+> +
+> +	ret = dma_mapping_error(mmc_dev(mmc), host->bounce_addr);
+> +	if (ret) {
+> +		devm_kfree(mmc_dev(mmc), host->bounce_buffer);
+> +		host->bounce_buffer = NULL;
+> +		/* Again fall back to max_segs == 1 */
+> +		return;
+> +	}
+> +
+> +	host->bounce_buffer_size = bounce_size;
+> +
+> +	/* Lie about this since we're bouncing */
+> +	mmc->max_segs = max_blocks;
+> +	mmc->max_seg_size = bounce_size;
+> +	mmc->max_req_size = bounce_size;
+> +
+> +	pr_info("BST reallocate %s bounce up to %u segments into one, max segment size %u bytes\n",
+> +		mmc_hostname(mmc), max_blocks, bounce_size);
 > +}
-> +EXPORT_SYMBOL(unpin_user_folio_dirty_locked);
+> +
+> +static int bst_sdhci_set_dma_mask(struct sdhci_host *host)
 
-Yes, should probably go into a separate cleanup patch.
+This is identical to sdhci_set_dma_mask() just just drop it.
 
--- 
-Cheers,
+> +{
+> +	struct mmc_host *mmc = host->mmc;
+> +	struct device *dev = mmc_dev(mmc);
+> +	int ret = -EINVAL;
+> +
+> +	if (host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA)
+> +		host->flags &= ~SDHCI_USE_64_BIT_DMA;
+> +
+> +	/* Try 64-bit mask if hardware is capable  of it */
+> +	if (host->flags & SDHCI_USE_64_BIT_DMA) {
+> +		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
+> +		if (ret) {
+> +			pr_warn("%s: Failed to set 64-bit DMA mask.\n",
+> +				mmc_hostname(mmc));
+> +			host->flags &= ~SDHCI_USE_64_BIT_DMA;
+> +		}
+> +	}
+> +
+> +	/* 32-bit mask as default & fallback */
+> +	if (ret) {
+> +		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
+> +		if (ret)
+> +			pr_warn("%s: Failed to set 32-bit DMA mask.\n",
+> +				mmc_hostname(mmc));
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +int bst_sdhci_setup_host(struct sdhci_host *host)
 
-David / dhildenb
+It is not acceptable for the driver to have its own copy of
+sdhci_setup().
+
+Please describe what you need to customize and why.
 
 
