@@ -1,100 +1,133 @@
-Return-Path: <linux-kernel+bounces-688104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A46AADADBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:48:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 423E9ADADC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 12:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 870D4188D044
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:48:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28A31188DE8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 10:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A17527FB10;
-	Mon, 16 Jun 2025 10:48:20 +0000 (UTC)
-Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDCB29B8D9;
+	Mon, 16 Jun 2025 10:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="JbX1CR8R"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9658713B7AE;
-	Mon, 16 Jun 2025 10:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EDB27FB10;
+	Mon, 16 Jun 2025 10:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750070900; cv=none; b=E65N0SEg934ftlWiqJG9W0B6jxZsNtq0xagmBtngPyNm7TLAWna9EtMbuoTOCAS20xYw4hjYRc+lEUrRlkKXeQG89xv8hesomyFV8i/eOqUNREkI1KTOkwWfcv5hIomWUB2napgZjxdHvFi46DRFnbfOHYZEtbwvI0uI5IjQG/c=
+	t=1750070986; cv=none; b=YLAZlh96tdPQS0iNzbVVm+8M4V1NqGWFP2uFgtI9foeMaZmM6N1wNEW9+9pn10eNvhio5X0flFnGE9j5DXXCh/vuoUU30r6Mqmou5FnRi+AZz3iIQGRwNLo900wG/GU8pngKFoP8z5cQRW5r0lTLw7f9oOPxjwYoCU0YPL07pNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750070900; c=relaxed/simple;
-	bh=x5FniQdBF81UjKI7MTU91bNOmr2CkQuBY4UD77/WCV8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jIWoMl+TBL+fr88L2nKGtIJy9I2BXyXLUi40n4UnEx6OoG2WRQvyunx08YDM7Uevh1GO1YH3+L05UroNh4IrXsUd9ov75Vf7v9XIa/pClh8s1Ij5H3rDd/kDZA4aaRPIoeYY0Gk6AzPqYax+DqQCety1Og/tjgqjm6y99QVEMI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201609.home.langchao.com
-        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202506161848138885;
-        Mon, 16 Jun 2025 18:48:13 +0800
-Received: from locahost.localdomain.com (10.94.7.47) by
- jtjnmail201609.home.langchao.com (10.100.2.9) with Microsoft SMTP Server id
- 15.1.2507.57; Mon, 16 Jun 2025 18:48:12 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <vireshk@kernel.org>, <andriy.shevchenko@linux.intel.com>,
-	<vkoul@kernel.org>, <miquel.raynal@bootlin.com>,
-	<ilpo.jarvinen@linux.intel.com>
-CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Charles Han
-	<hanchunchao@inspur.com>
-Subject: [PATCH] dmaengine: dw: dmamux: Add NULL check in rzn1_dmamux_route_allocate()
-Date: Mon, 16 Jun 2025 18:48:10 +0800
-Message-ID: <20250616104810.2222-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1750070986; c=relaxed/simple;
+	bh=dTq/ijg9wAiLDDvYi5+KhFq6NE1kLb9RMnNwHLT6zAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KOKHVGbSTLTAQhCLd9u1kzBNhCdL1sT2yzIjON8IPlFFZhAMXjt/eBZrG4h3XXdI57eJDHxskX0HSBnwQVIzOVV5okQYXeoSMaa6+NsPO5My08HhRv6gIoihCzETxskxEUx9cAVtnq0LKk03w+YE0FralqkPprcZvuStQTznQXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=JbX1CR8R; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bLRb2549Vz9sQV;
+	Mon, 16 Jun 2025 12:49:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1750070974;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XY8QmFX6C/sGkVxyzcatdwuMOackSJD85Ys2cJrlHdU=;
+	b=JbX1CR8RBtgCBQt8jaWY9VXnIednZIJjOtAvoib1pnvZYtCrjr7WedGKILsmrbjHc5Ejk1
+	U+EYALUUEEX7ioXOI0+f8htJlHxdiyPInM69QH9+x/zQ9MGxC/PYi1zKomi2BzPQ+ryMgM
+	LWBw4qAe5jDrzf2wJNd56YTxKrpD5t+Nr9QYUhJnBmX3C3Qd8H3J9THwBFFDwS5ccAnMAY
+	b6qdhL6RV5rmJCmXJv+c3mSrO2OVMeCWO6CN+ZTHSWd9Ne1KohY8T48fiOHT6/Jy5pikcV
+	D12PQCDwZVtg6fZKx7tvUb43RvI0lMB8MnmpErrcoKnSAoVyj+TX4ORp6a1K/g==
+Date: Mon, 16 Jun 2025 12:49:27 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Dave Hansen <dave.hansen@intel.com>, 
+	Pankaj Raghav <p.raghav@samsung.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, x86@kernel.org, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
+	gost.dev@samsung.com, hch@lst.de
+Subject: Re: [PATCH 0/5] add STATIC_PMD_ZERO_PAGE config option
+Message-ID: <vmc7bu6muygheuepfltjvbbio6gvjemxostq4rjum66s4ok2f7@x7l3y7ot7mf4>
+References: <20250612105100.59144-1-p.raghav@samsung.com>
+ <30a3048f-efbe-4999-a051-d48056bafe0b@intel.com>
+ <nsquvkkywghoeloxexlgqman2ks7s6o6isxzvkehaipayaxnth@6er73cdqopmo>
+ <76a48d80-7eb0-4196-972d-ecdcbd4ae709@intel.com>
+ <jpuz2xprvhklazsziqofy6y66pjxy5eypj3pcypmkp6c2xkmpt@bblq4q5w7l7h>
+ <b128d1de-9ad5-4de7-8cd7-1490ae31d20f@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 20256161848136ebfb9d244cae38bcdbb2842ebaab288
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b128d1de-9ad5-4de7-8cd7-1490ae31d20f@redhat.com>
 
-The function of_find_device_by_node() may return NULL if the device
-node cannot be found or CONFIG_OF is not defined, dereferencing
-it without NULL check may lead to NULL dereference.
-Add a check to verify whether the return value is NULL.
+> > > 
+> > > The mm is a nice convenient place to stick an mm but there are other
+> > > ways to keep an efficient refcount around. For instance, you could just
+> > > bump a per-cpu refcount and then have the shrinker sum up all the
+> > > refcounts to see if there are any outstanding on the system as a whole.
+> > > 
+> > > I understand that the current refcounts are tied to an mm, but you could
+> > > either replace the mm-specific ones or add something in parallel for
+> > > when there's no mm.
+> > 
+> > But the whole idea of allocating a static PMD page for sane
+> > architectures like x86 started with the intent of avoiding the refcounts and
+> > shrinker.
+> > 
+> > This was the initial feedback I got[2]:
+> > 
+> > I mean, the whole thing about dynamically allocating/freeing it was for
+> > memory-constrained systems. For large systems, we just don't care.
+> 
+> For non-mm usage we can just use the folio refcount. The per-mm refcounts
+> are all combined into a single folio refcount. The way the global variable
+> is managed based on per-mm refcounts is the weird thing.
+> 
+> In some corner cases we might end up having multiple instances of huge zero
+> folios right now. Just imagine:
+> 
+> 1) Allocate huge zero folio during read fault
+> 2) vmsplice() it
+> 3) Unmap the huge zero folio
+> 4) Shrinker runs and frees it
+> 5) Repeat with 1)
+> 
+> As long as the folio is vmspliced(), it will not get actually freed ...
+> 
+> I would hope that we could remove the shrinker completely, and simply never
+> free the huge zero folio once allocated. Or at least, only free it once it
+> is actually no longer used.
+> 
 
-Fixes: 134d9c52fca2 ("dmaengine: dw: dmamux: Introduce RZN1 DMA router support")
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- drivers/dma/dw/rzn1-dmamux.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Thanks for the explanation, David.
 
-diff --git a/drivers/dma/dw/rzn1-dmamux.c b/drivers/dma/dw/rzn1-dmamux.c
-index 4fb8508419db..a21623d98e41 100644
---- a/drivers/dma/dw/rzn1-dmamux.c
-+++ b/drivers/dma/dw/rzn1-dmamux.c
-@@ -41,13 +41,19 @@ static void rzn1_dmamux_free(struct device *dev, void *route_data)
- static void *rzn1_dmamux_route_allocate(struct of_phandle_args *dma_spec,
- 					struct of_dma *ofdma)
- {
--	struct platform_device *pdev = of_find_device_by_node(ofdma->of_node);
--	struct rzn1_dmamux_data *dmamux = platform_get_drvdata(pdev);
-+	struct platform_device *pdev;
-+	struct rzn1_dmamux_data *dmamux;
- 	struct rzn1_dmamux_map *map;
- 	unsigned int dmac_idx, chan, val;
- 	u32 mask;
- 	int ret;
- 
-+	pdev = of_find_device_by_node(ofdma->of_node);
-+	if (!pdev)
-+		return ERR_PTR(-ENODEV);
-+
-+	dmamux = platform_get_drvdata(pdev);
-+
- 	if (dma_spec->args_count != RNZ1_DMAMUX_NCELLS)
- 		return ERR_PTR(-EINVAL);
- 
--- 
-2.43.0
+But I am still a bit confused on how to proceed with these patches.
 
+So IIUC, our eventual goal is to get rid of the shrinker.
+
+But do we still want to add a static PMD page in the .bss or do we take
+an alternate approach here?
+
+--
+Pankaj
 
