@@ -1,167 +1,133 @@
-Return-Path: <linux-kernel+bounces-688377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B74FADB1B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:23:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C439ADB1BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 189467A53A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:21:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2918A1883A81
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A082DBF46;
-	Mon, 16 Jun 2025 13:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05B82DBF5A;
+	Mon, 16 Jun 2025 13:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q/6P2ggl"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TRqGg63o"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456E3285C9F
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6982980B0
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 13:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750080188; cv=none; b=TM6paEheK6kTxI4Py1HCXIRESXu45H0R2htVCxL4AykvCPUtFQyP9+Dp68hx8JhB2jQyVxW0rWLcOYkY2goHH2oXmyn4ydXeLC7KBTcx2SIIGE21ykMRenFY4trLef6MNKOOjgbV++cfAHSBvDiCHGdWIugtTmrvGOWcDDh5JnU=
+	t=1750080222; cv=none; b=GAePqzt7eCycmZBOzrFDGV4cQKQOhejVYZQTCzdKHzZ7+fOaGIcGXo6fz+vj47efLF1Be5z7SojTSBthknamctAbbszPHCBfi9A3Mf129z2aZlFv7Ucn37UBMhRjN8AKFyBzgmGt0BMCa8pcV8SbZ4BhUiksnejvwKjNYG7WDn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750080188; c=relaxed/simple;
-	bh=KCD5428E2V4OWj4bxH6DMumzOTk0rgOlJJTO5eLsA3E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bh2C/6T1QWyUXXm7JF4tdRJUJhYCCb8NhxiIpVWCgOx0kthK7NEzjjLzVbA783Kh7kGKo2HhAojTpdIAC4GtfKrTqgXpWZnjh2G5Fff/Stc5hgOvip9DjolvUrSIovG9pz8IVlRONg9dPRHxkY1wGRg3OGmS3Up+XpvGy5w39Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Q/6P2ggl; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32b2f5d91c8so36333991fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 06:23:05 -0700 (PDT)
+	s=arc-20240116; t=1750080222; c=relaxed/simple;
+	bh=cyawNk1X0Zi/5eV0YddzR83paiy0w8sFEtP0KMTHO+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NSlapzHYY1l9+GQpqzRI9x+erpvKkDjPxPbxuO/CKhbjgn0A5qRSn3kIbHEmZIAqnLgfyJQ8tUldL4oTWMRYcEt0JDlOTsws1I2ZxxErmsZfBKfByQJbDoiMnYSwb7MzgSkndUWy+xp+dfNIC6TKbKSiKM7C1i8U/pxtuof5PIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TRqGg63o; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-450ce671a08so28377395e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 06:23:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750080184; x=1750684984; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QPiIwXPnB/QPRp9lTZSU0TIMgfDz8msjPC5y3Zu6Zog=;
-        b=Q/6P2gglNhFX5JSn/TNYE4WC/y4jwf+pWVN1Lu4HiwbgF5ULtY009pZEG/m1pgfsr5
-         j7XuoFzua6NKkNS+QmxHGrFBKXCI5QPYt5xzT5retPkHNd03RUtN+vCzD2y/zee5xkyc
-         /jxu0YcIh6GustVWC5FflYDCJCqyeLquzdyJk=
+        d=linaro.org; s=google; t=1750080219; x=1750685019; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/qEWpHoeWIO3tFYAF9CvYNghxJJaKn+YeJWG4YUN/nk=;
+        b=TRqGg63ou/s3tD74bRsyVsr2sY1dkVhUms4/6J8wHrZt5ko0oWZhelFQEU8RRlbj8/
+         Prd6UuBno5THmCRv2c/2vmxutGq9tgRZ79JAcRkDTezmyyOJXGtoUwGIwWkinNF65tkR
+         0w8QAGj6elBXSSVLtKpkeik/cN5HNpkjmVVKkXuX2rLdgkMGqMvdDikqiQS3OZBPJUGy
+         y1ayWGUCOgLQz1Or1WJ0Ptz0fVGhgTyGL8WyAI4Jd48uWcG8h2lszXnX0H/JaNQXrpjW
+         5NQ7lrk1W9q4vlAOuqqduyg1WD3ib+LFrjzEwT2eN85Ybrql5F3q86WxD8r3NQSq7OM5
+         zU6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750080184; x=1750684984;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QPiIwXPnB/QPRp9lTZSU0TIMgfDz8msjPC5y3Zu6Zog=;
-        b=jKO2+C6jzWv04ZoEDFuo6Zlc9JfCOGlrxYnuUk/19BRzr8j54eYZiPSKLoB8b0e4m9
-         XJIjCnJdbqPXTyYMjs5YZkZiso3FmnJ8s+XZGsuS3rsBugAwhetvQdb//XVyw9/yY666
-         9hhVjWjnpYbhVyFZHTeUfv7ptY/HprSPjCb0L8J+pF1dFkaEtKDe2VwlX8489SOofou6
-         eg3ROwf8CGTJOGHPbLSR9YkSrkWaxPcLwppSw5Tyb+l4jWD9udT2nxY1ThDcAKZRRgln
-         DO5YUcx+sX6D7+a5sgAfnoKLz6fU+HW+i98phdqLKu34hhbv1+F9dg04klXZFQCIUUNi
-         Wk8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUzhct3hgYuei90Hae+/RDjUsRZTdh0Iyk6jO8swymy75rNX22UsyD2epYSe51Cmn1EmqMoOvTJCqdJegY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIRw/+cJKejfFKZjHHOX7kV4VCB/Xr+LTQiGQw/FOtPeEtM1MY
-	vJ93nX65GmgX2Jd3szON64oWBAr7BQftVygZ0Mkie1k97QO0gvouKH4jFIzqYIPssovPTRyaMj4
-	e8fE=
-X-Gm-Gg: ASbGncvR1uZ2q4fRA3R5K8zE6uAl2TfRXe5gtr0kmyidjcTMThxE332Uy/ObVetL7KD
-	m4kgQhPaRH3bN5lVa/BwnwvKaWdWV6SZm4h2KFjjDKCOJrdQ1G5gNPziLhveEi3KRiVaMf309Z/
-	uBMJESQ33YCxznXF0x7djGKuO0w3rX/5DMZhB8Ch0PAgyDuE5/MaBQt97LkYr3yEgPPSbPi19vS
-	8ZTjq7q6NN7CKXp+M1o+ffV6KdRWufIivM3ZAz9uxaeBNbI5vX30Mwx1nARFwQ7ZZh0kNraxh4i
-	FmOesUtAnkB1V8b0UXOZu0gtJtxQ6Pzjwj8CZktFD9wr4idqrnudVtxNymlSyoGMduFvWif3cqq
-	EYaG9av993BpThMDpesK/LbK2N4JDfQL4L+4=
-X-Google-Smtp-Source: AGHT+IHI25Lmv6QNsScKcnkP/rp8EsU0TtGI6aL9qL16iPxNpB9wmIHh/n47hh6ryqzgLejzDstuYg==
-X-Received: by 2002:a05:651c:a0b:b0:32a:6eea:5c35 with SMTP id 38308e7fff4ca-32b4a2ff940mr19804101fa.15.1750080184022;
-        Mon, 16 Jun 2025 06:23:04 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32b331ca96asm15922441fa.101.2025.06.16.06.23.03
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1750080219; x=1750685019;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/qEWpHoeWIO3tFYAF9CvYNghxJJaKn+YeJWG4YUN/nk=;
+        b=eScBPGqCS6oYHJlbQJJAfc3Cv0Wald76XqOvmUU8PV8XPz5o2qkOMSYKcdsH6aIP3u
+         FtsV7rJ5PmaMREf4qXQc0kCQonD73PdZ6j7RudBbxSdAJ80XzU6rMwZx42QW1Y5saOQg
+         5M9JSXG449IkUlyRzCU8FSx5NesKBysWlhjKuvjqYY5nHnTN5bLnA3/jm916Jl7zgleA
+         RiZ9d+LdE/qnseXrYUh357KEBC410qxu3hUVSHGEQTwUtIDhMMvIs4vlb/64k9uHGdFO
+         dueB5yvjmdeVP6445kxKgQjH+9QQcFmNM3pzZuHQ+FZTtw5HkqZo5zsMsT265UW6gQgo
+         i62Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVooND2z8p0642ziQZUcWHGsh/YoC6FE3KW032ChkMc7SZ5QTJI5QFGWzCQNd/nZjjGtjiERvJJgZDdpqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+kSOaY+SXVsijmv9sHzyQZftQuCykYO+qk2GbOQh9uIMhZfVF
+	uqLaj4NfWBPnzN50npK2N0U0HSoHhZpsN8ZkELwZ8rFQfpKEFSWlT5r7g/kpx3Nq+bw=
+X-Gm-Gg: ASbGnct3/Vdn2y9eqDd4HCpCQq/bBNIgArYSLiQIJkMLXUhUukrrEefHVRgUSurdtat
+	rYj5YdkqXzsIoC9ZwceikQVU6Q+rBf+NmVCprt9FRLC7n+m9JG8NVDx6Y3BAjecQUjBbBdgMBcl
+	s2BZ6O4ELbEfnmIbJlgnFhuHDj8ds645Ps6cooD74eeJVYu4iLiziX+u2i9LMvA/auCvLp2e7Wg
+	LJ/O9dRBExQNJ7ADscLe8SLXeviofZCf2Ddv705Ydmg/eBuYV5LkjZ0yE+1ITx88VRIbVDQluos
+	Yv8m6iaObBuZlrRieYRJmSL5ICMP/l3FkO7Lo/vLSEAcJ7icr1p2yBgXh/wcCzAyYvs=
+X-Google-Smtp-Source: AGHT+IERCtaWBolBNjDrXYPOFWEd3Y/yA2ERjVGzzTRMp9TUI6iIxEBCxIQatiSsuRqkKHIXYBVg9A==
+X-Received: by 2002:a05:600c:1d1f:b0:440:68db:9fef with SMTP id 5b1f17b1804b1-4534f9f165amr12231765e9.20.1750080218851;
+        Mon, 16 Jun 2025 06:23:38 -0700 (PDT)
+Received: from [192.168.1.3] ([37.18.136.128])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e241b70sm142753815e9.18.2025.06.16.06.23.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jun 2025 06:23:03 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-553b82f3767so2069931e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 06:23:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUq4LFYU1zlQJZk4WCW7bUAtGBtbmFdgU0J6zYEMifQckDyzhS7dATaQu1bqpqidcfaDTL/3sevHPQqWQ0=@vger.kernel.org
-X-Received: by 2002:a05:6512:1150:b0:553:2a0f:d3d4 with SMTP id
- 2adb3069b0e04-553b6f4268dmr1908878e87.49.1750080183070; Mon, 16 Jun 2025
- 06:23:03 -0700 (PDT)
+        Mon, 16 Jun 2025 06:23:38 -0700 (PDT)
+Message-ID: <f723d490-c228-42d5-9f9f-158df54a092d@linaro.org>
+Date: Mon, 16 Jun 2025 14:23:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429-keep-sorted-v1-0-2fa3538c0315@chromium.org> <f9275079-842a-406e-8bb7-b22a22b7c7e6@kernel.org>
-In-Reply-To: <f9275079-842a-406e-8bb7-b22a22b7c7e6@kernel.org>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 16 Jun 2025 15:22:49 +0200
-X-Gmail-Original-Message-ID: <CANiDSCt18PUWo2Z-9T2nBMMJfpRcdAGhO5S0jE85-1ZPO1qD7g@mail.gmail.com>
-X-Gm-Features: AX0GCFuqWLgUehzKJAibYIjgFF6eDhR6nU8vRFEBGE8EDAHBKBOg2zBL7WW-dyc
-Message-ID: <CANiDSCt18PUWo2Z-9T2nBMMJfpRcdAGhO5S0jE85-1ZPO1qD7g@mail.gmail.com>
-Subject: Re: [PATCH 0/2] media: uvcvideo: Enable keep-sorted
-To: Hans de Goede <hansg@kernel.org>, Hans Verkuil <hans@jjverkuil.nl>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-
-Hi Hans
-
-On Mon, 16 Jun 2025 at 15:05, Hans de Goede <hansg@kernel.org> wrote:
->
-> Hi Ricardo,
->
-> On 29-Apr-25 15:47, Ricardo Ribalda wrote:
-> > When committers contribute quirks to the uvc driver, they usually add
-> > them out of order.
-> >
-> > We can automatically validate that their follow our guidelines with the
-> > use of keep-sorted.
-> >
-> > This patchset adds support for keep-sorted in the uvc driver. The two
-> > patches can be squashed if needed.
-> >
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->
-> I've no objections against these 2 patches, but these need to be
-> rebased on top of the latest uvc/for-next. Can you send out a new
-> version please ?
-
-I was waiting for HansV to say that keep-sorted was useful and then
-add it to the CI.
-
-Right now it is probably just useful for the Makefiles and uvc.
-
->
-> Also for patch 2/2 can we not just add the 2 keep-sorted headers
-> and then actually run keep-sorted to auto-fix things ?
-
-Do you mean removing the annotation after running keep-sorted?
-
-We can do that, but we will be unsorted again in the future after N
-patches unless we add it to CI.
-
-If we do not handle this automatically I do not think that there is
-much point on this series.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dma-mapping: Stub out dma_{alloc,free,map}_pages() API
+To: Christoph Hellwig <hch@lst.de>
+Cc: Mark Brown <broonie@kernel.org>, olteanv@gmail.com,
+ oe-kbuild-all@lists.linux.dev, arnd@arndb.de, larisa.grigore@nxp.com,
+ Frank.li@nxp.com, linux-spi@vger.kernel.org, imx@lists.linux.dev,
+ linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
+References: <20250616111749.316413-1-james.clark@linaro.org>
+ <20250616112927.GA21689@lst.de>
+ <5f1ca0ac-b66c-4b92-8f69-027c2468b117@sirena.org.uk>
+ <20250616120832.GA24959@lst.de>
+ <2d62254e-5cbe-4174-95d8-e80cae4f4543@sirena.org.uk>
+ <20250616121444.GA25443@lst.de>
+ <7cfcf919-3c7d-4f0c-911f-697ea3141080@linaro.org>
+ <20250616131346.GB29838@lst.de>
+ <83855c1a-c128-4762-9d6b-e17f2c4c8820@linaro.org>
+ <d16bdc40-20d6-49db-bf41-18bb9b8e01fd@linaro.org>
+ <20250616131944.GA30260@lst.de>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250616131944.GA30260@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-Thanks for looking into it anyway :)
 
->
-> Or can it not auto-fix ?
->
-> Regards,
->
-> Hans
->
->
->
-> > ---
-> > Ricardo Ribalda (2):
-> >       media: uvcvideo: Rewrite uvc_ids for keep-sorted.
-> >       media: uvcvideo: Add keep-sorted statement and sort uvc_ids
-> >
-> >  drivers/media/usb/uvc/uvc_driver.c | 660 +++++++++++++++++++++++--------------
-> >  1 file changed, 409 insertions(+), 251 deletions(-)
-> > ---
-> > base-commit: 398a1b33f1479af35ca915c5efc9b00d6204f8fa
-> > change-id: 20250429-keep-sorted-2ac6f4796726
-> >
-> > Best regards,
->
+On 16/06/2025 2:19 pm, Christoph Hellwig wrote:
+> On Mon, Jun 16, 2025 at 02:15:56PM +0100, James Clark wrote:
+>>> Yes it does, it has a few modes that don't require it. Presumably we can't
+>>> just add a depends into the kconfig for all devices because they might not
+>>> be using DMA.
+>>
+>> *for all the different variants of spi-fsl-dpsi devices I mean
+> 
+> This is drivers/spi/spi-fsl-dspi.c?
+> 
+> Yes, looks like it is one of those rare devices supporting a DMA and
+> non-DMA mode.  But everything seems nicely guarded off using
+> "dspi->devtype_data->trans_mode == DSPI_DMA_MODE" checks there.  So
+> wrap them into a little helper using IS_ENABLED(CONFIG_HAS_DMA) and
+> everything should be sorted out.
 
+Sure, I don't mind doing it.
 
--- 
-Ricardo Ribalda
+But separately to that, I still think making the stubs consistent would 
+save people a lot of time diagnosing build failures if they switch 
+existing code to any of those 3 functions. Principle of Least 
+Astonishment and all that.
+
 
