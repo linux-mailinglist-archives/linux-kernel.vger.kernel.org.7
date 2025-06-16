@@ -1,140 +1,142 @@
-Return-Path: <linux-kernel+bounces-687755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-687753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5CEDADA8B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:55:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573A2ADA8A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 08:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 271921891D46
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:55:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34D377A24AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 06:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A9F1E8854;
-	Mon, 16 Jun 2025 06:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9181E47B3;
+	Mon, 16 Jun 2025 06:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cyYWaqXu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="chG1Hbui"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4832B1DD0D4;
-	Mon, 16 Jun 2025 06:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A721494C2;
+	Mon, 16 Jun 2025 06:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750056917; cv=none; b=ZK6tJtH/Pp7ldyh6VgwI+AXinc8ecQ+QKQQFTuFIaom5DDpHpnZAJUnYF//vhcMla+fCWgATogoLn6VZB7PujZyeoLNDg5MYYTYlerHN2/D87qpWoE0B2sZzLlfnhhWd/oR2rEEMxi5TRwwufRCDfiIX/nHKG6Wxl3zxx/MGoM0=
+	t=1750056870; cv=none; b=XDeuJ4rwwdr33eJud34S+Ff8Rike33z/m+72VPlrsW2xomFOk0bI55aoA58bK6xc2oBtuSGis9g72i0Nyw1NPaVgVDxdymcVX++W5KmHhQJNGbGACwCGYjn4wgnj7W8d48tYrlNLkNFRt8ig4fwhOQky1+I50dq9ETxCEjclLFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750056917; c=relaxed/simple;
-	bh=JzhPaAJq3SE1ySzHxtViTC3KuZDIosj/LQ8YKkF7X1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RHHD3S8XKanIIplen56GJWwOB7S5RrCYV/QUzJXLuF6tv5rjALUcsWvBkWMF9+Iz/zSYnK8+XOmJQ8b8PrOUphbOnNitbchhW90ZPJdtX/7KwGPUZi+PONySBNS2bi03LDSpJfpOl3xVwH8pzfkxUlN11PWQBcE1Q/4uT2Vl584=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cyYWaqXu; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750056916; x=1781592916;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=JzhPaAJq3SE1ySzHxtViTC3KuZDIosj/LQ8YKkF7X1Q=;
-  b=cyYWaqXuzxQGoEnk6FkXdDDj6qA2SvmAUQ8BqdrJJrlwKUBQwRyGsgZb
-   qg+4uDMw8daZyiAWzuuyNJNU9bJNLHjImemojOuPIJBnI61IBJSxy+R+s
-   AeZc7mmmhIBb99FIjg17Iudw2esSOx0mkkmuvl/RxZe3d4McU5yvu62sI
-   jVqOQC0Kjt3ii4F0M1Dg4aB7R64HIXQZcOdaZY6SWGzGGkrQg5/133ADv
-   JjVAh4jqRBBcfjJioCoA5ke+m18yy8rTKZNAhZ8QyGDL8MIUZjRzyzB+3
-   cB6r1oZ2JqflzsM3sHrJCrFSY9KTp0dSifPqD2Gl/g0C2wKF0slqo3jqI
-   g==;
-X-CSE-ConnectionGUID: iMKpV/ppRhafhABIDZU6Qg==
-X-CSE-MsgGUID: h5rV8wUgTG+hA6QjQEb8dA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="74720822"
-X-IronPort-AV: E=Sophos;i="6.16,240,1744095600"; 
-   d="scan'208";a="74720822"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2025 23:55:15 -0700
-X-CSE-ConnectionGUID: eWT5UpgTTxO6CbYgUZWzxg==
-X-CSE-MsgGUID: xOYLWIvfQEeVOE3EP2VS3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,240,1744095600"; 
-   d="scan'208";a="149298915"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2025 23:55:09 -0700
-Message-ID: <b9a7ae65-edc6-46e9-bea0-163a51459884@linux.intel.com>
-Date: Mon, 16 Jun 2025 14:54:10 +0800
+	s=arc-20240116; t=1750056870; c=relaxed/simple;
+	bh=xTXhD1PieVFTPzYkVx5m5BYJQrQsHZiX18xQoY/GikM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PTZsdYfmfeSZY389DirTHVRxo9+HTdBIhgzmURnsW95cby74eLNahvd/q+hMSxRayFpkM5GC7YX1gfX9yl0A/KLl57k3O4sSeWVZ5j6k2CIzC+zKn1+jLtMGExlrstSH9+UyrC+0cg2PpbHq+OAkwD4JH+tkJMdz8O2yFvF9J8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=chG1Hbui; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a575a988f9so1036013f8f.0;
+        Sun, 15 Jun 2025 23:54:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750056867; x=1750661667; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LA6qyNS9z6v4ERjgPYF6WqyvfBbPjoGj6cbNiGOvOfU=;
+        b=chG1HbuiZMfT+yrR2ZbzmREYGMNJi3z1quFQdPRl0QtzV9iQZg7WzuU565EXN2Q5jq
+         BDxqxG9SQ71/ZGiflEESDVdYFoKCw8JrNE885mUd/Lr4E4JNf3iF8q1A4XwmuLrOIAM8
+         TYPOIv4Znx6SBOPbD5leClEMk6RTW6Ur8URRlqNKC0/fNv3KUz6wswytRtmVdifkjT/E
+         iqjWKWvSvzvAvpOr9g2Ud8ztjywd4SFgxwEVO7dztO1XlcGixUMo1ytjc+dIMd+3I6K6
+         kqepLM81AsREInOpbhWjHT17JPcJwuBdVlqt7QrSg7HBtIjjsNeG5Jnw/UTq/qkOXNRA
+         Wjcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750056867; x=1750661667;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LA6qyNS9z6v4ERjgPYF6WqyvfBbPjoGj6cbNiGOvOfU=;
+        b=vELuE2Jvjq1kcSsxtTNgBBpl7Kn9UEmPU/y+JCiJZBaTpnnYE6ojXDDlgnkMEmo0PQ
+         w9i4Hd8e1WoaMhiO4MD3UhF+gXAJpNu/n2JEd8aEd5Avno1bIyoQIA+P+lQa/CNKw3Po
+         8B2TZy5fgA7xBWT5RFdSgPkjFPf8IoO543l1RlMtQuQwa8NKcYsMSYDobljJ1JHPSq+i
+         cqV49zFYnW9fgxUXPnIild7ZpHIAfM0VDn0WTl0M8xiyqzZchxD/SlMzKoaygXtDKzX+
+         xxzKuzoyrXTUvHXGCK2P+3dUyYCrw5Z/4eSdE31W1DtQCVZuxNZ/CuLPKT6n5apvDu3X
+         TvBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVO/E87uTHspLaSXnYpZUnthBG4m8hPLVyW4H86kzhbFYZ9yRA4I9fAbekdmWKNkqdAuB6hEUHjUUPB9hH0@vger.kernel.org, AJvYcCXyaSSod2BfXvldJPR3U8dXX61JwTNK6TB6+7MnomTLgA6ixhXz1s9VqgdCG+cJZqqwKRTLaD9YfTFr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsIchhj6X+20Wsife0twrn6SDOIADHVJDyHadjgHVTve818Mar
+	Uh2krT01NEo6/a1HIG3P/gwHO0DSU5++BYsOkncn7lYSaq2OxIKaECCiTOcsyubogQuaM0ybPri
+	IiEGVbab4nIJN79ND6N2GJAv9bmrHD6U=
+X-Gm-Gg: ASbGncvWvAUbW4LYy2c9k0UAj9Vl9yAkSLEOYy+Yy3ngXwHbPsxysjyxqNud3ZUaFhl
+	7a3ADsQU4nOXuzo0nIwtTGhoZPgSvNdtwvQNjwfldJ45lleH9T9UrXfMuYan79jljbWtmXDyhgq
+	CCFV7HebwI5pd7dYcCpkqrmTVz6jS7v0KUxsl1J8zYfmN8
+X-Google-Smtp-Source: AGHT+IE6I/2rx5nV7gfMDtPJalNVlAfDKfRXQhOdtSztm+UZjqmnbWflX8kVdEbyui2m9twc6XUIRhcYi9XfbwIQvAM=
+X-Received: by 2002:a5d:64c9:0:b0:3a4:dde7:ee12 with SMTP id
+ ffacd0b85a97d-3a572e9e01cmr7227639f8f.53.1750056866681; Sun, 15 Jun 2025
+ 23:54:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 10/25] iommufd/viommu: Add IOMMUFD_CMD_HW_QUEUE_ALLOC
- ioctl
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
- bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
- thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
- shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
- peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
- praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
- alok.a.tiwari@oracle.com, vasant.hegde@amd.com, dwmw2@infradead.org
-References: <cover.1749884998.git.nicolinc@nvidia.com>
- <7dfb002613f224f57a069d27e7bf2b306b0a5ba0.1749884998.git.nicolinc@nvidia.com>
- <1ab8030b-8d2f-4ebe-a280-6d0e4e1d17c7@linux.intel.com>
- <aE+976F9zPsjtfry@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <aE+976F9zPsjtfry@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250303120455.90156-1-clamor95@gmail.com> <CAPVz0n0XSzxzkPocRVx6QF7xwmA4otSeSEiRZgJQ3oStyUBrLA@mail.gmail.com>
+ <CAPVz0n2MLmHfVNb25=o1_woE7v16hoamwFbbT3ecE+BP1Bn9aw@mail.gmail.com> <6df6ecc4-088a-4b27-bebf-abc4560b00ae@kernel.org>
+In-Reply-To: <6df6ecc4-088a-4b27-bebf-abc4560b00ae@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 16 Jun 2025 09:54:14 +0300
+X-Gm-Features: AX0GCFsqWt_-u5ay7d5bbJVixmP9gUXeVtMWlZMdDA1f-EF5ljJHdYmn8kGXcoI
+Message-ID: <CAPVz0n1S2rWW_08FoL+jsVJEOkQ0JJZBu+bB2U5K=fF-g87Y0A@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] drm: bridge: add support for Triple 10-BIT
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxim Schwalm <maxim.schwalm@gmail.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/16/25 14:47, Nicolin Chen wrote:
-> On Mon, Jun 16, 2025 at 02:12:04PM +0800, Baolu Lu wrote:
->> On 6/14/25 15:14, Nicolin Chen wrote:
->>> +	if (!viommu->ops || !viommu->ops->get_hw_queue_size ||
->>> +	    !viommu->ops->hw_queue_init_phys) {
->>> +		rc = -EOPNOTSUPP;
->>> +		goto out_put_viommu;
->>> +	}
-> Hmm, here it does abort when !viommu->ops->hw_queue_init_phys ..
-> 
->>> +	/*
->>> +	 * FIXME once ops->hw_queue_init is introduced, this should check "if
->>> +	 * ops->hw_queue_init_phys". And "access" should be initialized to NULL.
->>> +	 */
->> I just don't follow here. Up until now, only viommu->ops->
->> hw_queue_init_phys has been added, which means the current code only
->> supports hardware queues that access guest memory using physical
->> addresses. The access object is not needed for the other type of
->> hardware queue that uses guest IOVA.
->>
->> So, why not just abort here if ops->hw_queue_init_phys is not supported
->> by the IOMMU driver?
-> .. so, it already does.
-> 
->> Leave other logics to the patches that introduce
->> ops->hw_queue_init? I guess that would make this patch more readible.
-> The patch is doing in the way to support the hw_queue_init_phys
-> case only. It is just adding some extra FIXMEs as the guideline
-> for the future patch adding hw_queue_init op.
-> 
-> I personally don't feel these are confusing. Maybe you can help
-> point out what specific wording feels odd here? Maybe "FIXME"s
-> should be "TODO"s?
+=D0=BF=D0=BD, 16 =D1=87=D0=B5=D1=80=D0=B2. 2025=E2=80=AF=D1=80. =D0=BE 09:5=
+0 Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On 16/06/2025 08:42, Svyatoslav Ryhel wrote:
+> >>>
+> >>>  .../devicetree/bindings/display/bridge/lvds-codec.yaml       | 1 +
+> >>>  .../devicetree/bindings/display/bridge/simple-bridge.yaml    | 1 +
+> >>>  drivers/gpu/drm/bridge/simple-bridge.c                       | 5 +++=
+++
+> >>>  3 files changed, 7 insertions(+)
+> >>>
+> >>> --
+> >>> 2.43.0
+> >>>
+> >>
+> >> These patches had no activity/feedback from maintainers for a while,
+> >> so, in case they got lost in the depths of email box, this is a
+> >> friendly reminder that they are still relevant and I would like them
+> >> to move on.
+> >>
+> >> Best regards,
+> >> Svyatoslav R.
+> >
+> > These patches had no activity/feedback from maintainers for a while,
+>
+> Really? No activity/feedback?
+>
+> What is this then:
+>
+> https://lore.kernel.org/all/567addb4-169b-4fd0-aabb-78ceded22702@kernel.o=
+rg/#t
+>
+> https://lore.kernel.org/all/ptyvn34i377pdu7mqital6v2bqe36oy3yprxb5c3hztni=
+7h52j@6eo64gzxvgg3/
+>
+> You already were sending such pings claiming there is no activity while
+> we provide you the reviews.
+>
+>
 
-Oh, I probably misunderstood the logic here. For both hw_queue_init and
-hw_queue_init_phys, using an access object to pin the pages for hardware
-access is necessary, right? My understanding was that pinning pages is
-only required for hw_queue_init_phys.
+Then why these patches were not picked for more then 2 month if
+everyone acked and reviewed them? I am pinging every month to remind
+that they are still relevant and were not picked!
 
-> 
-> I could also drop all of these guideline if they are considered
-> very unnecessary.
-> 
-> Thanks
-> Nicolin
-
-Thanks,
-baolu
+> Best regards,
+> Krzysztof
 
