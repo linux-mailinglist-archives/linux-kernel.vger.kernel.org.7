@@ -1,283 +1,139 @@
-Return-Path: <linux-kernel+bounces-688386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-688381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA446ADB1D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:28:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF4CADB1C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 15:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A3E3A89C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287C5188B348
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 13:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67532EB5A9;
-	Mon, 16 Jun 2025 13:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464102DBF7C;
+	Mon, 16 Jun 2025 13:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzKNAZC1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XShyaIPv"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86912BEC28;
-	Mon, 16 Jun 2025 13:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442F82DBF5B;
+	Mon, 16 Jun 2025 13:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750080371; cv=none; b=Gq3bsbkiSiuH/3qxU4OnjsZd/a58CfC+xNR9KuZLd3zY6g9gKQTrZEi7FYIRJqlJUKgSwcborR3yjLfJHR24IWubbXqJKofeiIwH31Ao3Dzr35fdqfujaO6rIDdb79gy1GXDp907ZRItFT4Q5XJCSl60EzE1Z3WS7pZ46vxpXWE=
+	t=1750080352; cv=none; b=fWx35q/kopet3zvWsVD1GE+m6428N/Sz5DNoy/gR4oG2EG/PAhUJbfmggeo/k5KfbVqoPkwKv6ucTR/tC3D4I3v7rDQfSSrxfHFtYTUpqtfrkRD3p7UD+ldHoLlcrHXNzJxfqcllGcZ2sQpu8xyFR4igT4zUkshsKNlL1ICodMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750080371; c=relaxed/simple;
-	bh=dTgPoZkqeSzmhbD3zTW4tZnvROkf83BsbNxNte8KtQY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QsXGzvDZ3YvTRkG7bZchluK34G9jUFJGV8DvFItYL2AsGIEuBjlpDv+3IPl7yd2RkM9jVCewAHkNfSlPtp5Oe062rP6RFCA539N228UaLUXOsm8Jd+AvM7bX8x6zVry4/knAAwUUBV6KVI7X1ai4Bhe1uzbg4/nKL1E7Kqi3MC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzKNAZC1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2CCBC4CEED;
-	Mon, 16 Jun 2025 13:26:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750080371;
-	bh=dTgPoZkqeSzmhbD3zTW4tZnvROkf83BsbNxNte8KtQY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=dzKNAZC1WUu7nMBXuaTAdUXCJbgiueXDJxcSE8So0CStqYmwkZHIm1+q2PT/d42ti
-	 oTj2ApTOrJoCM07/22V5gm6CCPtux2jwf/C1vdsBn7bSm9j++NmUhGfyyfU/BzkRLB
-	 FlrFkawngZxP3eCWT/JhNd+OB6GkWSUuIWZ0W3XCtJl4rk3QhDtLSy14BQZEWzd2q0
-	 uZObPOCO05PTwjMKa9SMjIoIqh2Kz3lysJVuUTLfTSQfLXGJ6FQ9jhmZY6P/uDE5lP
-	 LI4uSg/3+fyjEsg20W+HdSkD5y5x42+XQcMp5zgxAlLwy230cyaBARMS4xQTEfVR4Q
-	 eN3oi8KFDSSQg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Mon, 16 Jun 2025 15:23:59 +0200
-Subject: [PATCH 9/9] rnull: add soft-irq completion support
+	s=arc-20240116; t=1750080352; c=relaxed/simple;
+	bh=td7khtP98l7Q2qh50OlQWBKZ7UZjfxc2FqvRip6lP7A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DATvBFFDmDkcBVJn39f2QdhzNmnrMgjyls85SgWvsWxMYg023h+JBJXcJ2kvXoU3rdIEqEkFfEKBVa8BBpZ3aREHfKRcjD9SOA9+G0p/dFWc0ByZrmS57DIDdl86hYAy0tbZboECrsigELmZMjG/K3rp79DuNfZj0l0PUygDzVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XShyaIPv; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7485bcb8b7cso3541467b3a.1;
+        Mon, 16 Jun 2025 06:25:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750080350; x=1750685150; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zPykcaldmChQZHEMlm465r/ktpDt3VnqSSRAnP0PM/8=;
+        b=XShyaIPvNRM8Y2D6HDn7WEJxwP5n9mFlRhyC8p+8PebSKKfpMeqOzNQJjRZWM5T8o4
+         461gTWfJEheFT/wj/aGJImHJjdrKB/HSnwrKt4kPnGwyLRXeuktLomjINshrZtReZBNY
+         2ECCht29r5fBoV4eavAt9EaH8osgTxpez08yLqFr16kAX5UKyKHwbsRxpzT/Ir/e7rKs
+         mphliHojSwAe9Sg9fFRT0w2mO619ul0jnJyVx7QOVMjaYE8xfKHSEwTVEN0XubTi12u6
+         ct5wQvmMcrO78LZZwvunIpoB0KVfyGx/EISp0yLQvpPsnBHXkb/kSP0US//Dd8gK3oFm
+         +9/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750080350; x=1750685150;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zPykcaldmChQZHEMlm465r/ktpDt3VnqSSRAnP0PM/8=;
+        b=WwnoHsHRkmrXs3ozbvJ0jvpxD4iMgnXiAsHRg1+/mTJMBCbpDvo8GJIMUteby9XGED
+         +U/5cEjLXbWt/fvFPTFmfhJdaB+uI8/Tu+LKa3gsUzhVnx7TBHMFVkuKmZCneJtq5JzC
+         DT37b2IyKk0XG2m1SqiWHnVNG06pbJdEsfR+YcH/aYs2k9PEwHsAoFw6YlHxvskGv9UJ
+         BNKdBlJ/Ab6dDpNreYPsUIlH4ge7K0QFTZ/lqvu7OfaUrxqFWlWEjzBjTXHaSh/Qp+mg
+         1LfX+aTVa5p+MGlvLV2f0Pw706TE3523tocJhI2Thwgswk859jM7wem4EUDX8qq2ltAE
+         rY2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWM4aGlMWmjNDpTrOrnGx+2rsvta5C7/41uqj3tuSmIkil+v0ADaDjPOSRUGT6bREgNrAo0+TLCbRPRBBc=@vger.kernel.org, AJvYcCX2Zome2nyOxoE4qQoMRXgp0RT/qokn61WzuiUKoetBwVcR0UJ/TE5udEC1/QPx1AmsRSbzBaby@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjBqHka7Mrm40Wq5I4kxfnCU1+48wTWIOg0xa8GimZFcg+oPSK
+	VecBoaLCnFYph7+4dU811Zy7ZInG5lO+64Oam96WFYpBAvkED9jN0tYT
+X-Gm-Gg: ASbGncsW2jQKQ3vnaoLh/ZYSJVaB6ldwsdc3uRv8Te/E+9Qv2UJBhUJfeNG/DrXgRKY
+	mFBlcCkvn/ml1EAGuSXrHfb6mU5XPdDxWu7TINnU9zA0M3k0hs+EtYa3hm3tgqvDUCdDXrzcX+A
+	o07tqC8EgWNY47EpaK1hAZW6NVyMsePu8Vjpmdlz2qZznyTPubh/nlx8gob45d8Zi4iXF88YgQd
+	TskPfNjC0iAlS9av4EWrGU6I2g0qckK7nLdTpiibEvRwTKuj/MgDdTHXDnbkFfdtv2OjsKQSWVl
+	MSKBZoxex0LX198xz+WBuy8f+NK2JS+uvhb0fvkB0e7mRpdWXxnAyUrm6zHXpGz7JUiN6g==
+X-Google-Smtp-Source: AGHT+IGGC0yG9eWTrvC96f40RZCC+M7NlH4ZHN5h3TAKdLDn6BgEURju/EiL6fGQTx8qNnzcyUZCzQ==
+X-Received: by 2002:a05:6a00:846:b0:73e:1e21:b653 with SMTP id d2e1a72fcca58-7489cf5a90fmr12310846b3a.5.1750080350538;
+        Mon, 16 Jun 2025 06:25:50 -0700 (PDT)
+Received: from localhost ([42.120.103.50])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7488ffec9c6sm6750467b3a.9.2025.06.16.06.25.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 06:25:50 -0700 (PDT)
+From: Yuhao Jiang <danisjiang@gmail.com>
+To: ericvh@kernel.org,
+	lucho@ionkov.net,
+	asmadeus@codewreck.org
+Cc: linux_oss@crudebyte.com,
+	v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	security@kernel.org,
+	stable@vger.kernel.org,
+	Yuhao Jiang <danisjiang@gmail.com>
+Subject: [PATCH] net/9p: Fix buffer overflow in USB transport layer
+Date: Mon, 16 Jun 2025 21:25:39 +0800
+Message-ID: <20250616132539.63434-1-danisjiang@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250616-rnull-up-v6-16-v1-9-a4168b8e76b2@kernel.org>
-References: <20250616-rnull-up-v6-16-v1-0-a4168b8e76b2@kernel.org>
-In-Reply-To: <20250616-rnull-up-v6-16-v1-0-a4168b8e76b2@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6402; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=dTgPoZkqeSzmhbD3zTW4tZnvROkf83BsbNxNte8KtQY=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBoUBsSCoREy8jtImQsfJflLYzF1UigDvdHuVQvc
- OO+1YxFgHOJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaFAbEgAKCRDhuBo+eShj
- d553D/9VZbWPqk35VqeRAhcq89xfE5xu3K9b9AjTrVoNE1fBO9oBHdbAh+Cb8PdIoNxuWvKfrrN
- gkDxguSh+v8JnMpAvY6vxNRYrgEA6hrbLVOszYfmm8D4jl5OXcP4RzD1IVOicMFklmvljcEXUb/
- MHdNviq87DdtIVe4opK/5+Q6NGSkv4duWGl/Uw/GeUmEv4koc/h7EIpmyvALz/z/n0oQbZz7khh
- zbcM5dhjxFFCwC/LrhxrKia7B7SH/+acrD1ivg1405jYQ0WQJXTN788uPbK/cuCODkCqkkEC4FE
- sRMtK4XnuZ6Z6QW5RFmf94hfRZ+qK5QXxjrZEeAjmLEhj8MUcQxLIy17pY4ghH32EW2CLbdMbKu
- kESQ5KNEC66RVLlYkKty3XBovTunX9vm8a1Qbs8ioFp6wczo2zpjkS/1tHJ0W/uM0B6xVW6bdfv
- m5xiokinovACYIBi2nKuxenfOn8pBzr/TOcZvNPy+rL/WY9EH2tjTlRLGGKlcWkNZ2pLo5IM9Du
- WSfio26g0EdhgoYxsauQOZE3YYpe+XAw6qTFfpJdw3R1Lpchghwbdjm8dwsQzrGUBb3LxOg32NH
- 5Cx+OzEzKubcn752kAUnXIYgX/EyEIiTmJDixb2OZIreRVCZlFgi2upAxx/0Ffvq/9bv9KtBMJz
- P8nBprzZG9+DD9A==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+Content-Transfer-Encoding: 8bit
 
-rnull currently only supports direct completion. Add option for completing
-requests across CPU nodes via soft IRQ or IPMI.
+A buffer overflow vulnerability exists in the USB 9pfs transport layer
+where inconsistent size validation between packet header parsing and
+actual data copying allows a malicious USB host to overflow heap buffers.
 
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+The issue occurs because:
+- usb9pfs_rx_header() validates only the declared size in packet header
+- usb9pfs_rx_complete() uses req->actual (actual received bytes) for memcpy
+
+This allows an attacker to craft packets with small declared size (bypassing
+validation) but large actual payload (triggering overflow in memcpy).
+
+Add validation in usb9pfs_rx_complete() to ensure req->actual does not
+exceed the buffer capacity before copying data.
+
+Reported-by: Yuhao Jiang <danisjiang@gmail.com>
+Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
+Cc: stable@vger.kernel.org
+Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
 ---
- drivers/block/rnull/configfs.rs | 61 +++++++++++++++++++++++++++++++++++++++--
- drivers/block/rnull/rnull.rs    | 32 +++++++++++++--------
- 2 files changed, 80 insertions(+), 13 deletions(-)
+ net/9p/trans_usbg.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/block/rnull/configfs.rs b/drivers/block/rnull/configfs.rs
-index 315e04fbf14f..22a7ec26cb36 100644
---- a/drivers/block/rnull/configfs.rs
-+++ b/drivers/block/rnull/configfs.rs
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
+diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
+index 6b694f117aef..047a2862fc84 100644
+--- a/net/9p/trans_usbg.c
++++ b/net/9p/trans_usbg.c
+@@ -242,6 +242,15 @@ static void usb9pfs_rx_complete(struct usb_ep *ep, struct usb_request *req)
+ 	if (!p9_rx_req)
+ 		return;
  
- use super::{NullBlkDevice, THIS_MODULE};
--use core::fmt::Write;
-+use core::fmt::{Display, Write};
- use kernel::{
-     block::mq::gen_disk::{GenDisk, GenDiskBuilder},
-     c_str,
-@@ -36,7 +36,7 @@ impl AttributeOperations<0> for Config {
- 
-     fn show(_this: &Config, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
-         let mut writer = kernel::str::BufferWriter::new(page)?;
--        writer.write_str("blocksize,size,rotational\n")?;
-+        writer.write_str("blocksize,size,rotational,irqmode\n")?;
-         Ok(writer.pos())
-     }
- }
-@@ -58,6 +58,7 @@ fn make_group(
-                 blocksize: 1,
-                 rotational: 2,
-                 size: 3,
-+                irqmode: 4,
-             ],
-         };
- 
-@@ -72,6 +73,7 @@ fn make_group(
-                     rotational: false,
-                     disk: None,
-                     capacity_mib: 4096,
-+                    irq_mode: IRQMode::None,
-                     name: name.try_into()?,
-                 }),
-             }),
-@@ -79,6 +81,34 @@ fn make_group(
-     }
- }
- 
-+#[derive(Debug, Clone, Copy)]
-+pub(crate) enum IRQMode {
-+    None,
-+    Soft,
-+}
++	/* Validate actual received size against buffer capacity */
++	if (req->actual > p9_rx_req->rc.capacity) {
++		dev_err(&cdev->gadget->dev,
++			"received data size %u exceeds buffer capacity %zu\n",
++			req->actual, p9_rx_req->rc.capacity);
++		p9_req_put(usb9pfs->client, p9_rx_req);
++		return;
++	}
 +
-+impl TryFrom<u8> for IRQMode {
-+    type Error = kernel::error::Error;
-+
-+    fn try_from(value: u8) -> Result<Self> {
-+        match value {
-+            0 => Ok(Self::None),
-+            1 => Ok(Self::Soft),
-+            _ => Err(kernel::error::code::EINVAL),
-+        }
-+    }
-+}
-+
-+impl Display for IRQMode {
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        match self {
-+            Self::None => f.write_str("0")?,
-+            Self::Soft => f.write_str("1")?,
-+        }
-+        Ok(())
-+    }
-+}
-+
- #[pin_data]
- pub(crate) struct DeviceConfig {
-     #[pin]
-@@ -92,6 +122,7 @@ struct DeviceConfigInner {
-     block_size: u32,
-     rotational: bool,
-     capacity_mib: u64,
-+    irq_mode: IRQMode,
-     disk: Option<GenDisk<NullBlkDevice>>,
- }
+ 	memcpy(p9_rx_req->rc.sdata, req->buf, req->actual);
  
-@@ -126,6 +157,7 @@ fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-                 guard.block_size,
-                 guard.rotational,
-                 guard.capacity_mib,
-+                guard.irq_mode,
-             )?);
-             guard.powered = true;
-         } else if guard.powered && !power_op {
-@@ -218,3 +250,28 @@ fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-         Ok(())
-     }
- }
-+
-+#[vtable]
-+impl configfs::AttributeOperations<4> for DeviceConfig {
-+    type Data = DeviceConfig;
-+
-+    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> Result<usize> {
-+        let mut writer = kernel::str::BufferWriter::new(page)?;
-+        writer.write_fmt(fmt!("{}\n", this.data.lock().irq_mode))?;
-+        Ok(writer.pos())
-+    }
-+
-+    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
-+        if this.data.lock().powered {
-+            return Err(EBUSY);
-+        }
-+
-+        let text = core::str::from_utf8(page)?.trim();
-+        let value = text
-+            .parse::<u8>()
-+            .map_err(|_| kernel::error::code::EINVAL)?;
-+
-+        this.data.lock().irq_mode = IRQMode::try_from(value)?;
-+        Ok(())
-+    }
-+}
-diff --git a/drivers/block/rnull/rnull.rs b/drivers/block/rnull/rnull.rs
-index 371786be7f47..85b1509a3106 100644
---- a/drivers/block/rnull/rnull.rs
-+++ b/drivers/block/rnull/rnull.rs
-@@ -4,6 +4,7 @@
- 
- mod configfs;
- 
-+use configfs::IRQMode;
- use kernel::{
-     alloc::flags,
-     block::{
-@@ -54,35 +55,44 @@ fn new(
-         block_size: u32,
-         rotational: bool,
-         capacity_mib: u64,
-+        irq_mode: IRQMode,
-     ) -> Result<GenDisk<Self>> {
-         let tagset = Arc::pin_init(TagSet::new(1, 256, 1), flags::GFP_KERNEL)?;
- 
-+        let queue_data = Box::new(QueueData { irq_mode }, flags::GFP_KERNEL)?;
-+
-         gen_disk::GenDiskBuilder::new()
-             .capacity_sectors(capacity_mib << (20 - block::SECTOR_SHIFT))
-             .logical_block_size(block_size)?
-             .physical_block_size(block_size)?
-             .rotational(rotational)
--            .build(fmt!("{}", name.to_str()?), tagset, ())
-+            .build(fmt!("{}", name.to_str()?), tagset, queue_data)
-     }
- }
- 
-+struct QueueData {
-+    irq_mode: IRQMode,
-+}
-+
- #[vtable]
- impl Operations for NullBlkDevice {
--    type QueueData = ();
-+    type QueueData = KBox<QueueData>;
- 
-     #[inline(always)]
--    fn queue_rq(_queue_data: (), rq: ARef<mq::Request<Self>>, _is_last: bool) -> Result {
--        mq::Request::end_ok(rq)
--            .map_err(|_e| kernel::error::code::EIO)
--            // We take no refcounts on the request, so we expect to be able to
--            // end the request. The request reference must be unique at this
--            // point, and so `end_ok` cannot fail.
--            .expect("Fatal error - expected to be able to end request");
--
-+    fn queue_rq(queue_data: &QueueData, rq: ARef<mq::Request<Self>>, _is_last: bool) -> Result {
-+        match queue_data.irq_mode {
-+            IRQMode::None => mq::Request::end_ok(rq)
-+                .map_err(|_e| kernel::error::code::EIO)
-+                // We take no refcounts on the request, so we expect to be able to
-+                // end the request. The request reference must be unique at this
-+                // point, and so `end_ok` cannot fail.
-+                .expect("Fatal error - expected to be able to end request"),
-+            IRQMode::Soft => mq::Request::complete(rq),
-+        }
-         Ok(())
-     }
- 
--    fn commit_rqs(_queue_data: ()) {}
-+    fn commit_rqs(_queue_data: &QueueData) {}
- 
-     fn complete(rq: ARef<mq::Request<Self>>) {
-         mq::Request::end_ok(rq)
-
+ 	p9_rx_req->rc.size = req->actual;
 -- 
-2.47.2
-
+2.43.0
 
 
