@@ -1,158 +1,113 @@
-Return-Path: <linux-kernel+bounces-689057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAE2ADBB70
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:46:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B2BADBB40
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 22:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AC9E7A9559
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:45:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB1EF1891D26
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Jun 2025 20:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061381E32C6;
-	Mon, 16 Jun 2025 20:46:35 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AA41E25EF;
+	Mon, 16 Jun 2025 20:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bMObYNJJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAFF1E89C;
-	Mon, 16 Jun 2025 20:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974CC2BEFE2
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 20:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750106794; cv=none; b=OQRJDs5nRb0jGoltB+IJdXpIDozzqMrnzr9+Pg6vob7S5LgXwLDf0nXYCshd03EjdZWZsKfVrrOr1luS1UyDY83/Ed8QEZQBe7zVjJ3XQXzBTZSEPCfmjHXDB7Nb4XkrN+oqgWPO8K270q158Ar7azLRrhgCM2RMXC+ECLPtv1M=
+	t=1750105918; cv=none; b=CxzPBzHnj2kkD4VaSsEHyClSekjaRWBW43M+DpCLxrTLw6x50pAhltJIfUsycyJNU/AtWOuFZxdnoUTtxZKK/mzKO4PzU+4Ga5gDTzjsPGkTgYTKNzG3opU1k7slYK/HuNITJVJtaZAF4ZaBqVtCZO6y3R/aRI3A/mW0LfoPY58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750106794; c=relaxed/simple;
-	bh=eAyF1yEkPz/7b1iwDBdEM7HpOPPG+s3E1OAnGVTGLq4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=FTux6G4zA3CPz6SHPcv/yi0CtivEH2AfSHWndO1kuA/aALp+hgs4CxDF7NNAZlt7pKXjBYn8o6DbdJkevIIPbsL3AFBw7VCPZExTG4H+JEXoBx2uz9XVUrOalI9dWh7K02kuBdIA+3mNPf6f9rxE4YH479xA1V5vBxn7Bv0V9qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.102] (213.87.150.136) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 16 Jun
- 2025 23:30:59 +0300
-Message-ID: <8809cfc6-6e49-4c9c-bc0e-8eb581478d11@omp.ru>
-Date: Mon, 16 Jun 2025 23:30:58 +0300
+	s=arc-20240116; t=1750105918; c=relaxed/simple;
+	bh=MgCdLVTTAtUoKOk5If9G2gC5BCaozX6QWBBrB/BwDM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qfI9hwX08XjSzrY9MBqRnpJO/5tjSfuA13m+9Cz1RJSTPnmNCLMyda+6xeyvERWpLdopX072C1Yc/0TDObSJpCAOIElm7Ap6u2j7QuGfHg2NP0Q1d7Le/JHYjj4OSkXzA0gks6lkc+1rbgAUlB3xGLDMyOXiB72KBdKKGPXvs6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bMObYNJJ; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750105917; x=1781641917;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=MgCdLVTTAtUoKOk5If9G2gC5BCaozX6QWBBrB/BwDM0=;
+  b=bMObYNJJcs619ZJtrkOJ7jHmqwZ6i3AvadXtGz9Hxe3G0O9St7qOnFKX
+   cti/YXpC4e4KsIcRXk/Fz3ABEEfwN+VP5dR6NAXWXi3nGEgLk6JM1ESDC
+   0cXATKCWNMHPZ9TKpiAJDv8rI0QN2TTPVKBwGAprXGQr/sNKsv4tdMkmF
+   T1xvqJZQx5NZx0lyoTFlmmbrjNEY3RySpzFWMw2ZobK0gMkYNagLcNEva
+   2b2JK5DibEQ1GHzRs0gMK8bgOsK/FrDXEoTPEF6kqsAGxQugmnzn2Assa
+   NidmiJH8elq/6e9gP6tv3xrnd1f6RQ5hzsp7YUwOLzByU5paPOzc7CqdG
+   w==;
+X-CSE-ConnectionGUID: s4LpZhufSpCwMGDA8bL1iw==
+X-CSE-MsgGUID: AESplozmQiqANq12XD702Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="51968722"
+X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
+   d="scan'208";a="51968722"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 13:31:56 -0700
+X-CSE-ConnectionGUID: VMiKPuKGRQSZWsU6qnVEeA==
+X-CSE-MsgGUID: oU7JRpFpT6mdppZ50bZQLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; 
+   d="scan'208";a="179558276"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 16 Jun 2025 13:31:55 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uRGUi-000FKe-2Y;
+	Mon, 16 Jun 2025 20:31:52 +0000
+Date: Tue, 17 Jun 2025 04:31:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nick Terrell <terrelln@meta.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: ERROR: modpost: "__ld_r13_to_r23_ret" [lib/zstd/zstd_decompress.ko]
+ undefined!
+Message-ID: <202506170440.xI7L5buI-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: Re: [PATCH] usb: gadget: composite: fix possible kernel oops in
- composite_setup()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<linux-usb@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Fedor
- Pchelkin <pchelkin@ispras.ru>
-References: <0e61b364-8f26-4f98-9f10-9b9800b1cd41@omp.ru>
-Content-Language: en-US
-Organization: Open Mobile Platform
-In-Reply-To: <0e61b364-8f26-4f98-9f10-9b9800b1cd41@omp.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 06/16/2025 20:19:32
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 194079 [Jun 16 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 62 0.3.62
- e2af3448995f5f8a7fe71abf21bb23519d0f38c3
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.150.136 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.150.136 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.150.136
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 06/16/2025 20:20:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 6/16/2025 2:43:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 4/29/25 11:32 PM, Sergey Shtylyov wrote:
+Hi Nick,
 
-   Hm, 1.5 months passed and no reaction whatsoever... :-/
+First bad commit (maybe != root cause):
 
-> list_first_entry() should never return NULL -- which makes Svace complain
-> about the next *if* statement's condition being always false. What's worse,
-> list_first_entry() won't work correctly when the list is empty -- in that
-> case, passing config->descriptors[0] to memcpy() further below will cause
-> dereferencing of a garbage pointer read from cdev->qw_sign[] and so (most
-> probably) a kernel oops. Use list_first_entry_or_null() that returns NULL
-> if the list is empty; fix the strange indentation below, while at it...
-> 
-> TTBOMK, this situation shouldn't happen with the current gadget drivers --
-> however there's no guarantee that usb_add_config[_only]() is called by any
-> gadget driver; and anyway, Svace's complaints would be silenced...
-> 
-> Found by Linux Verification Center (linuxtesting.org) with the Svace static
-> analysis tool.
-> 
-> Fixes: 53e6242db8d6 ("usb: gadget: composite: add USB_DT_OTG request handling")
-> Suggested-by: Fedor Pchelkin <pchelkin@ispras.ru>
-> Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-> 
-> ---
-> This patch is against the usb-linus branch of Greg KH's usb.git repo.
-> 
->  drivers/usb/gadget/composite.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> Index: usb/drivers/usb/gadget/composite.c
-> ===================================================================
-> --- usb.orig/drivers/usb/gadget/composite.c
-> +++ usb/drivers/usb/gadget/composite.c
-> @@ -1887,8 +1887,8 @@ composite_setup(struct usb_gadget *gadge
->  				if (cdev->config)
->  					config = cdev->config;
->  				else
-> -					config = list_first_entry(
-> -							&cdev->configs,
-> +					config = list_first_entry_or_null(
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   44a5ab7a7958fbf190ae384b8ef252f23b840c1b
+commit: 65d1f5507ed2c78c64fce40e44e5574a9419eb09 zstd: Import upstream v1.5.7
+date:   3 months ago
+config: arc-randconfig-001-20250617 (https://download.01.org/0day-ci/archive/20250617/202506170440.xI7L5buI-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250617/202506170440.xI7L5buI-lkp@intel.com/reproduce)
 
-   So we either need to do this...
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506170440.xI7L5buI-lkp@intel.com/
 
-> +						&cdev->configs,
->  						struct usb_configuration, list);
->  				if (!config)
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-   ... or this check needs to be removed.
+>> ERROR: modpost: "__ld_r13_to_r23_ret" [lib/zstd/zstd_decompress.ko] undefined!
+ERROR: modpost: "__st_r13_to_r22" [lib/zstd/zstd_decompress.ko] undefined!
+ERROR: modpost: "__ld_r13_to_r19_ret" [lib/zstd/zstd_decompress.ko] undefined!
+ERROR: modpost: "__ld_r13_to_r22_ret" [lib/zstd/zstd_decompress.ko] undefined!
+>> ERROR: modpost: "__st_r13_to_r15" [lib/zstd/zstd_decompress.ko] undefined!
+ERROR: modpost: "__st_r13_to_r24" [lib/zstd/zstd_decompress.ko] undefined!
+ERROR: modpost: "__st_r13_to_r19" [lib/zstd/zstd_decompress.ko] undefined!
+>> ERROR: modpost: "__st_r13_to_r23" [lib/zstd/zstd_decompress.ko] undefined!
+ERROR: modpost: "__ld_r13_to_r24_ret" [lib/zstd/zstd_decompress.ko] undefined!
+>> ERROR: modpost: "__ld_r13_to_r18_ret" [lib/zstd/zstd_decompress.ko] undefined!
+WARNING: modpost: suppressed 4 unresolved symbol warnings because there were too many)
 
->  					goto done;
-
-   OK, I've tried (unsuccessfully!) reaching Greg on IRC, both privately and
-on the OFTC's IRC channel #kernelnewbies -- and now I can't even connect to
-irc.oftc.net:6697 for some reason. Thought I should try following up on the
-linux-usb ML, just in case...
-   So Greg, I'd still like to know: do you ignore all patches from .ru, all
-patches from omp.ru or just all patches from me? :-)
-
-MBR, Sergey
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
