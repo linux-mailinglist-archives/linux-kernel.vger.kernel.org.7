@@ -1,264 +1,179 @@
-Return-Path: <linux-kernel+bounces-689814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2C4ADC6C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:38:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BFF2ADC6CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21503166D32
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:38:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 462B33A91F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12104179BD;
-	Tue, 17 Jun 2025 09:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C138F293B55;
+	Tue, 17 Jun 2025 09:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="e0a/5ojX"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012032.outbound.protection.outlook.com [52.101.66.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9SnfLJu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E662900B0;
-	Tue, 17 Jun 2025 09:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750153123; cv=fail; b=ookrniOTfUbFB9nx9c7ggIsJ11GHKBz6Q6pGecRa6unQq20k9CXqT3fzlyEaSey1dY4gwOMa6vUxXeFfIcgQyKk9Nq/I/kqPlfd/Q4PnObNv8nfn424iWC/z4hZN2hhYpv8Y1rIaveLAQHpMbJQtRz+6ONAjtu7ZCdqRFh5eDd8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750153123; c=relaxed/simple;
-	bh=/1hMEErlPvAIrBflgHP2u9Jb/6YUc6K5RYjyRO13EXE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XLS679aHJD/hMEDLz6oZlywo8tYUbboQOavsv7euGuJfQMtRe5Q4KO7QLz7k0ZBtKNLbQ0gSjANZMSnLDWLj91sjQXANT1+hSkhb3lFAmjbqx6pcVZajZaOvP2p6LfvQfXyUJQvNvuhpxByr8pD5uuFtSIkKwCNSjqII7M3IdgI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=e0a/5ojX; arc=fail smtp.client-ip=52.101.66.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F3Z45xj5F9pgiTgEMA49CqhsJ3aLsLsowQpcP5FpHUC8fXqEXRyul4l+faD1ErlHuCYGppTYz4TkruQNSYEKW5mNIP7tUIVDRF4go5Ml7AZ+jf5MxKP2brL0YEiUGD/ZBv3QFtLBeuOjE69e5Hy2iyRKhiS6Mc95YWfA53z5ut0JNhZGGWexpJ9nU+tZ79U0pc+Rob7TFsM7IM6yrOX1C+npoxqQTFWlu0fHYRY+QGsuFpovXmsQPIkrxvTgHSUzmSCpdHttXDbTl0ZMiwYNIJkrDYJZxHaUhVGvGt+ACtDrIXToao+eVEv8fhjTU3NGJ2+L0v/aVfo1L5/OY/9a8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jAFiq+IcaVjsCwE466dANBMynLCsi9sNek5qz+5MMFQ=;
- b=yLFUhCbFy1QiaaplXxvpoXi2vBG8Dr5qDZaYP83D2Io3S1E/rZkZpBWooP2TqkvkKno9QMm/aUI8KKCY3Dr0n3rpgjVZgpTb/xHOxHY+yv2IbRZj6F2cZ8JQW2JfAe6XciKvxgeNJO++9rd1YWPQCz24h0zx9sdGBLrzftPit2sgW/PMZzNbE/GJJcZzLsbrMv56On08dMpjRNrdLE0fJv2alaNNX3r1l++cUKCXjdK1clLVKPkTMO4kKviBZ1F0mjNb2HpHyUHRYbrftdlCYXsLSd0KLknITZ6zDpLCuVfoI02gQUQxBVWsBzrO4UEiOeVS80I/bjkczMZxbJm+lw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jAFiq+IcaVjsCwE466dANBMynLCsi9sNek5qz+5MMFQ=;
- b=e0a/5ojXplhSkVVg9W8vV9GYBvCAhbPkoxQRe8MevefpnpFc9/SUnJAU+UVYp/+EKI49dwTp+qP619taGuMQf1B5PSF5hrbEkp4w0JtVyNLPVXKpSOyI8EYGeZiRv8r/oj8+BKs10VwdEj9kwtBetGA913nak6LFFCqoZHZIMpU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by AS4PR04MB9484.eurprd04.prod.outlook.com (2603:10a6:20b:4ed::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.26; Tue, 17 Jun
- 2025 09:38:35 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%5]) with mapi id 15.20.8835.027; Tue, 17 Jun 2025
- 09:38:35 +0000
-Message-ID: <b079fc14-8692-4521-bd81-fe2fca713f2f@cherry.de>
-Date: Tue, 17 Jun 2025 11:38:33 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: mfd: rk806: allow to customize PMIC
- reset mode
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Quentin Schulz <foss+kernel@0leil.net>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Lukasz Czechowski <lukasz.czechowski@thaumatec.com>,
- Daniel Semkowicz <dse@thaumatec.com>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250605-rk8xx-rst-fun-v2-0-143d190596dd@cherry.de>
- <20250605-rk8xx-rst-fun-v2-1-143d190596dd@cherry.de>
- <20250617-small-vivacious-labrador-7f0eb0@kuoka>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20250617-small-vivacious-labrador-7f0eb0@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DU6P191CA0005.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:540::18) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ABF179BD;
+	Tue, 17 Jun 2025 09:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750153158; cv=none; b=P/G0xmE1vw12kBQfzURt0BM5VzigJmvA0FiDY4PfBTDL88HQpAJAsbXaVVqxQcNoJMs6OkLgrG09JBeIvvkk9fe94dmct7LOohQ1JCqPgMnwUwf/yGEhSSOKILbLLr8Y0tfFX8xE9CRYIh6kp4zP5vbmF3+xtb8ubBrBCEgpfVk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750153158; c=relaxed/simple;
+	bh=BN+BG+Egj5hmEaPRsr5xomxA25oN6dNrWmEOIW5nhkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DQ3TaDnembv5D55WyGhVk171BVQeD+CAEtH6JG4ayS5i9enlQqhPtikR9zL8P1HqGXSXHy8UaJxZyhkBCk+JRYUIt2T2lLM+Zi2wdtfkAiYTufcjK0Wu/M5M0+dSpMOLVNjI3RvzIsEW/pZl2HI45rx24PUwAW54CYC5UIfJp3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9SnfLJu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 607AEC4CEE3;
+	Tue, 17 Jun 2025 09:39:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750153157;
+	bh=BN+BG+Egj5hmEaPRsr5xomxA25oN6dNrWmEOIW5nhkI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U9SnfLJusdCZuKL2k+Rp/GPyZ86f0ubl01iXJY/oUDz4eQHI+8qdFaySo+I8CgUBh
+	 T56MzkX3FtXqUWpHoidAcaNu4WSbtOFjusg8/mftXvmIiTPdqgjOHqgkIeIUbl3JrL
+	 7qRJKdxe5WJ6IEP6cRtxXi/mwynyEHklCOwzmLzklofYNeb7FdPvYXmyq1locJJNLt
+	 YFLP5yHZSwjeA2/OZHX3Eh80XFi4v8TiP4rclFTAzteWrkfkGiR8rxWuvkjUYns30S
+	 2lDsImKOI88CwIhzTNkEHWA/BU4cIHB8HAoIP+qigcp9cBmzYfeGlrrNKIppTJDPo5
+	 RNGC9CWWLuX3w==
+Date: Tue, 17 Jun 2025 15:09:11 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Slark Xiao <slark_xiao@163.com>
+Cc: manivannan.sadhasivam@linaro.org, johan+linaro@kernel.org, 
+	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] bus: mhi: host: pci_generic: Add Foxconn T99W696
+Message-ID: <4k7426oxhrnfoshkcqwwilq5lqldjovvtrwfownllwxwgudwjo@a3i47vma4lhr>
+References: <20250528092232.16111-1-slark_xiao@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|AS4PR04MB9484:EE_
-X-MS-Office365-Filtering-Correlation-Id: eb5f9890-82df-434e-2e83-08ddad82bb29
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V3BIOVF1VVBHRmo4MGp0YkM0WmlKN3ZZVVZvejlFMmRWWlhLS1JSWXI4KzZP?=
- =?utf-8?B?YzJwU2szSHpYR2Q1WXllZDJrcEhtcTM2U2lvRUZVa2RtMU9DRkNQSTk4eEd0?=
- =?utf-8?B?cWZaMEdsVXpyNWRacXJpbkpsZUo2aCtBUWZVa2EvVk0xL1pmSXZhY3BYZ0N6?=
- =?utf-8?B?MVVPM3c1OGQ4TzVKaXJZNnBUM05SemhvYjhCREJNc3dBTGljUExDYjlGQlJH?=
- =?utf-8?B?cjdOR0lOMlRwVFFVdFNyYTZWZkt3RWhGak42eS9xeUVqbmkveVEvcXVSMkt1?=
- =?utf-8?B?ejdCQjRxUUdwdTdEQWVKa0xHcmppdW9nbThnVk9NMGNsS1ZVb0ltVkI5d1F5?=
- =?utf-8?B?TkQ3QjhncmZLVzZ1c2hmWHU3VmVJbjU2RXpvTWRNNGRQQXl3bThIeHlSdFJu?=
- =?utf-8?B?OTdGa2Q1S3Y5ZFM3WllNUWZtUndEZW9BbjRCOU9EYU0rNVJXVDEyMzR3VFJs?=
- =?utf-8?B?SUtrNlZhbnZKZ3JtajhzTEZ4UHFoN2NaNWFxMFV5NUlWeVc2dHB6RlYybUo4?=
- =?utf-8?B?NzZRR2ZOeEN3TG1ZOEJWYnhxRyt2dlV5YnVmS2tOWHhzZGxQU05GcW85UktE?=
- =?utf-8?B?aHJ3aUhBSnQzeUdNbjk4NWwxakUxRGxSSDd4RXYrRE5NbFhBeEYxNzhrWi9S?=
- =?utf-8?B?Z29YaUZXLy85bmVpenZSRGVQcm5maTJNZmhwMU91WURoSU5GV2pUYzU1V3BW?=
- =?utf-8?B?NXJWNW1yVUpUWmlGS3I3eU1LNm5VeUxnZGlrWFd6ZURkM1BQTkJHUk9UbEJv?=
- =?utf-8?B?RnV0UEYvOVkwRmRSMmFRRThOSzFvY0JUeFdaejlNbWxTY3YyUFl3dEd0OWVh?=
- =?utf-8?B?TVpoeTlWUnNMTVFjUHJCRGE2d01JWUFZbnUyTFhEUXpJYkN2ckpVNVozQm1m?=
- =?utf-8?B?VURxU0lrblZzbGp6M28zMkhFUTNvWVpFVnJXaU5BWWZGZW9YYmhwUDl4K2lt?=
- =?utf-8?B?V3g2aHBla1lINlF5VWxpeGhtWm9FaHVzRFFjVjZhWENNSFNPQWpIamU5VlFT?=
- =?utf-8?B?TzdMMC9tVUFSTDVyRTN3Q0I4NFFCNWIvRm5jYkxYdjRYcWRWOUZHby9Kbis3?=
- =?utf-8?B?aXZTWkN3bTJORUpRSGR0WWhDdytnbStmRUZEckc1WlNhZFpMOTVQTEFEQ2Zn?=
- =?utf-8?B?R2JycVFkVDRneWFQVU1EUVpqcmQrcG5UZGpZZHprN01mMDByejBVNVROR2xp?=
- =?utf-8?B?R0F3MFNOeTViMDdOUFVRblNMeWNhRm95WllibHRyMFl0NGp2bXM0Z2JEMWpm?=
- =?utf-8?B?TWhBRTBueGRWcGtLanNGN01yamR2R2szMS8vMmZyRTFJZGRKVnk1emhBQTNG?=
- =?utf-8?B?aGR2WGZvMGplSkEyc1dhbEFFZEJFWjFjQnJJZm5YcGljcGRPVFl3STNkNkh6?=
- =?utf-8?B?MkhEenBwRmFmL3dIQ3NPVDFiTFpqbUFZbzVLWlA5cWpuOTdmQmlUMHBqQkti?=
- =?utf-8?B?K0JJaS9VSjcrOXk1RWdVV0dIQzlYWWlHUGJpeVNnZVBPczZJeFZ6M0gxNEJI?=
- =?utf-8?B?bmFaZDFkRnhOK0NFd2x4alRWM2xKZ2h5anpuYXhFaENIcEdLZmVpdGxsOE9t?=
- =?utf-8?B?aTlEZ21JKzROdE9Md0FxZzdyNlZaRVZ2SjRTL3RyV21zWkNoUmlGeG5jZXNZ?=
- =?utf-8?B?MmpNaUhaMTJXVjBNMk5jYS8wN0J4QTM5b0x2a3IrWWFBSDRORGM4dG1LMkxW?=
- =?utf-8?B?emZxNnVWc2dXV2V6WEczaExXK0VZNWYzRit3akJHaHFZVWdBaEgzMk5XN29P?=
- =?utf-8?B?RTcweHFNTVZhKzJJSWJQaG1HMitETGd0b0k0eVQ2eUVMZzRVM0Z2UkxWWDZJ?=
- =?utf-8?B?RzNMazlDSmsvTVp3ejQ2OXNhbW1xQWEvMmYrTU4zZWRNUlduajFnNzhmVGZH?=
- =?utf-8?B?ekZmYS9wMWNCb0RYVEFzejlSc2YvdHpTNHluYkwrdEtZUWcvY2ZyVUVvSHBD?=
- =?utf-8?Q?NlHlmvXu3GQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N09UemR6TmZ4QUVUUHdFdnAzalFZdmZxbjdsdkd4dmFhL3VjQXh2UkRQN21x?=
- =?utf-8?B?ZUh5MkxPTGl6cXRnRDZXYTQ3WWdVU2pBT2FvaHlJMjkxeEx2YUttUUVPRUQy?=
- =?utf-8?B?b2kwT0xEZjlweFRyeXVnN1BRSUdnbXg3bHJwclNTMUFVQzZ2UExtamhyNCtX?=
- =?utf-8?B?VS8rdDV6aGc2SmkvM2JaV2hkWmJOU1puRnZwQkpCWmJKeHByUjNmVjVZalpn?=
- =?utf-8?B?bnZoeEJ5V0YwZkFtMHR0ZnZHV2lMMTd3V1N6enBJTng5TGt2OEpLQ05TSGs5?=
- =?utf-8?B?VDRWbVA5cjQrelJZZitaWEZGTXdnSVQ3Q3B2TkNYelBuL1NiZkxTcFpXZjBl?=
- =?utf-8?B?c2hEU0dvMWRPTkhhaHZHK0RaejYyblFEbXZwSUpJTktvOTBDOXlQTE40RllC?=
- =?utf-8?B?RmlrbCtVQ3gxQXZoZ3g1WFE3MjNOZkJOZ3pQeWd1VFhjbFl2UUFuc2s5Vzh4?=
- =?utf-8?B?WGNFbUFYVXVVbS92R09BbEJuaVB4SjJNN3NpKzc5ZnMrV0tCclpIQ2NOdC9D?=
- =?utf-8?B?ZzJLQWNBWEllUkdaZWFkV3FYWHRaK1ZXdk4ydWE3Z1hLN21FYjJpb2NSZS93?=
- =?utf-8?B?eHhXYWViczdLTnhhVWMxalVyS3pZZDZ6UndkMUZpMUpuYTM2RnpEZDFUVlQ0?=
- =?utf-8?B?UjdRekFpd0VXL2IwMnpoMkZLVVFlNm0rZnBWQWN5ZXlqdlQ4TTF3S0NtT3Vn?=
- =?utf-8?B?R0M2VmxTSDVDNGJFYTVYdjVWMFRtVXFEVUtvKzFybkpIYS9JM09FMDJXOXpS?=
- =?utf-8?B?L1JVbEcyL2F3djliTWZKNHdzNldMWko3Y1QxSEFLWGpvVXJ6Q2pDdy9IaUdq?=
- =?utf-8?B?cU4zd3ZlN2pZbnlTcm1waWtPRnRHVGYxRlQ3ellRYnV5aGRHMHhkSkhraVVI?=
- =?utf-8?B?aEZJeUVVSVBPY3NtU1hqbStsbllKR2VPZFY5UGZkai9vNXRGbmpqamthTU5u?=
- =?utf-8?B?cFg0UFgyRWlXU3FzTk5MdmdxTTNxYlo0N2xRTUJ2L1psQXQxS0sxc2tCWjhE?=
- =?utf-8?B?NFRKN3pNZlNFWCs4VWp5bklsbDlvU0tyeE0wa1lmM1FodlhRZlJndXczTmda?=
- =?utf-8?B?TFJMVnpFVTBuRnRWN1NVUGNYdEsvcE9WN2UyWldPZXBDaGNFYjAwOWRTSVQ2?=
- =?utf-8?B?MG92NUhJSVFDVGZRSFhxcDlHaGVFTERIbWZEZWwya2lqc2RQV3NEejJRM2RB?=
- =?utf-8?B?Ym5tczVGWEE5MzUxVldRdlU5bmg1cVBoalJYS3RSVWZBVmx1dCs1UW1MNmpm?=
- =?utf-8?B?M0gzcGU2T1I2cWRGUGRzbFp3NHh1anZJQlNpWnR0YStONlMwWTRVNjViSmhr?=
- =?utf-8?B?TjkrL01uZERlZFBUUW8ra2RDWEUyTnM3YU0zMFVxbzRQM25ZRmdSbmFCQlk0?=
- =?utf-8?B?bXZNQkJaQm9PekJkeHV6UC93RVRuSHBOQ3hNcFZaVU5oNmFsaVgxa2FLOG1H?=
- =?utf-8?B?WmM0bGpGVHIrdk1sRTBVSER2Mnp1d09jSUNmYW5UVXMzazFreFRXekZaUE9Q?=
- =?utf-8?B?MTc1OW9tTERaM1BSUUIxTHBYVjZOY0FVLzdnNFlURFkwT0IwakMrT2FTUGE1?=
- =?utf-8?B?ak16dktnRG9yaXQ2WjIyMUtMUk1ZeXJNVUVzdFdXRllHUkJnbGxQeEpYanMv?=
- =?utf-8?B?eFZqcWN4VFZBT0N5bklRVEZ2WTZtNXdWRnJmeFhadElKVS8xK2FPOERiUGgx?=
- =?utf-8?B?RTVRaGpNaTgrV1FWVnVPTE10UmFqSFRFZE0wSGFacmsyVzFtcnNJdHY0V0Iz?=
- =?utf-8?B?Z2lDSnNvZXNFOTFWandDTXdpYlQyQnJxajA5d1l0MnJwZzAzbEFwVStmaGpt?=
- =?utf-8?B?d3RoelJNTEMxeFJJWCtxQmhpMGUvazdESEpFQ0xQNU9NeitmbTlwZWd0N1Yv?=
- =?utf-8?B?aHZWb25LRjdpVHIzR1NsbkoxT256NXRkSDU5bVBVRExsVWE4OHVRcEtPNDEw?=
- =?utf-8?B?WkNHK3h5L1lkb1pzTkpKZXVBcHljdXpkOS80R0Q4MUs4WXNtVFhLa3VtczZI?=
- =?utf-8?B?c0FGT1BaUEdtOGdqTEUyMmZNMjhiOXdVbzI2b2paVVdHWDNtdDRUK0drWmdB?=
- =?utf-8?B?Sm5yRFZXaTVkZG1uT3ZRVWlmcklUUTYxV0dwL2V5WW9TWG9TbUZsd1ZsMGwy?=
- =?utf-8?B?N0gxc2RsdTVlSnI5Sld1b0V6Q29kOTN1RFFOb2w5Vm5YVzZPeVlKUGZRWjBQ?=
- =?utf-8?B?dEE9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb5f9890-82df-434e-2e83-08ddad82bb29
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2025 09:38:35.6699
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mtM8NkmESV08kgYkq6B6u6rdcVlc/MXgUa8wn1Bjy1ixvlcxRR9vqvlRul+cf4AGjbjoeJgX2FgzRwkOxcQJZswR+fjbucrSHdExG+0FG7U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9484
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250528092232.16111-1-slark_xiao@163.com>
 
-Hi Krzysztof,
-
-On 6/17/25 10:08 AM, Krzysztof Kozlowski wrote:
-> On Thu, Jun 05, 2025 at 05:41:06PM GMT, Quentin Schulz wrote:
->> +  rockchip,reset-mode:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    enum: [0, 1, 2]
->> +    description:
->> +      Mode to use when a reset of the PMIC is triggered.
->> +
->> +      The reset can be triggered either programmatically, via one of
->> +      the PWRCTRL pins (provided additional configuration) or
->> +      asserting RESETB pin low.
->> +
->> +      The following modes are supported (see also
->> +      include/dt-bindings/mfd/rockchip,rk8xx.h)
->> +
->> +      - 0 (RK806_RESTART) restart PMU,
->> +      - 1 (RK806_RESET) reset all power off reset registers and force
->> +        state to switch to ACTIVE mode,
->> +      - 2 (RK806_RESET_NOTIFY) same as RK806_RESET and also pull
->> +        RESETB pin down for 5ms,
->> +
->> +      For example, some hardware may require a full restart
->> +      (RK806_RESTART mode) in order to function properly as regulators
->> +      are shortly interrupted in this mode.
->> +
-> 
-> This is fine, although now points to missing restart-handler schema and
-> maybe this should be once made common property. But that's just
-> digression, nothing needed here.
-> 
->>     vcc1-supply:
->>       description:
->>         The input supply for dcdc-reg1.
->> diff --git a/include/dt-bindings/mfd/rockchip,rk8xx.h b/include/dt-bindings/mfd/rockchip,rk8xx.h
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..f058ed1ca661185f79738a358aa2d4f04539c590
->> --- /dev/null
->> +++ b/include/dt-bindings/mfd/rockchip,rk8xx.h
->> @@ -0,0 +1,17 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
->> +/*
->> + * Device Tree defines for Rockchip RK8xx PMICs
->> + *
->> + * Copyright 2025 Cherry Embedded Solutions GmbH
->> + *
->> + * Author: Quentin Schulz <quentin.schulz@cherry.de>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_MFD_ROCKCHIP_RK8XX_H
->> +#define _DT_BINDINGS_MFD_ROCKCHIP_RK8XX_H
->> +
->> +#define RK806_RESTART		0
->> +#define RK806_RESET		1
->> +#define RK806_RESET_NOTIFY	2
-> 
-> I do not see how this is a binding. Where do you use this in the driver
-> (to be a binding because otherwise you just add unused ABI)?
+On Wed, May 28, 2025 at 05:22:32PM +0800, Slark Xiao wrote:
+> T99W696 is designed based on Qualcomm SDX61 chip which is a cost
+> down chip refer to previous SDX62/SDX65. Though we have a support
+> on SDX62/SDX65, we create a new channel config for SDX61 since
+> we add a NMEA channel support from this product.
+> For new products we are allowed to customize the subVID and
+> subPID only.
 > 
 
-Explained in the commit log of the driver patch:
+Could you please push the firmware to linux-firmware? I don't expect the users
+of the products to upstream the firmware, but I do expect the vendors to do so.
 
-"""
-This adds the appropriate logic in the driver to parse the new
-rockchip,reset-mode DT property to pass this information. It just
-happens that the values in the binding match the values to write in the
-bitfield so no mapping is necessary.
-"""
+FYI: Qcom was able to upstream the firmware for one of their modems:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/qcom/qdu100/xbl_s.melf?id=01842da45df0a9f862098d1597f6ae5774b3e48a
 
-I can add useless mapping in the driver if it's preferred. I had the 
-impression that simply using a hardcoded value in the DT binding and 
-then writing it to the register was not desired, so the constant is now 
-here to make this less obscure from DT perspective though I'm still 
-writing the value directly in the register. If hardcoded values are ok 
-in the binding, then I can remove that header file.
+So there should be no licensing issues. Going forward, I want both Qcom and
+vendors to upstream the firmware before the modem support gets in.
 
-Cheers,
-Quentin
+- Mani
+
+> Signed-off-by: Slark Xiao <slark_xiao@163.com>
+> ---
+> v2: Correct the ch_cfg as sdx61 channels
+> ---
+>  drivers/bus/mhi/host/pci_generic.c | 52 ++++++++++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index a4a62429c784..a90ab31c46a9 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -490,6 +490,23 @@ static const struct mhi_channel_config mhi_foxconn_sdx55_channels[] = {
+>  	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
+>  };
+>  
+> +static const struct mhi_channel_config mhi_foxconn_sdx61_channels[] = {
+> +	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 32, 0),
+> +	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 32, 0),
+> +	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 32, 1),
+> +	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 32, 1),
+> +	MHI_CHANNEL_CONFIG_UL(12, "MBIM", 32, 0),
+> +	MHI_CHANNEL_CONFIG_DL(13, "MBIM", 32, 0),
+> +	MHI_CHANNEL_CONFIG_UL(32, "DUN", 32, 0),
+> +	MHI_CHANNEL_CONFIG_DL(33, "DUN", 32, 0),
+> +	MHI_CHANNEL_CONFIG_UL_FP(34, "FIREHOSE", 32, 0),
+> +	MHI_CHANNEL_CONFIG_DL_FP(35, "FIREHOSE", 32, 0),
+> +	MHI_CHANNEL_CONFIG_UL(50, "NMEA", 32, 0),
+> +	MHI_CHANNEL_CONFIG_DL(51, "NMEA", 32, 0),
+> +	MHI_CHANNEL_CONFIG_HW_UL(100, "IP_HW0_MBIM", 128, 2),
+> +	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
+> +};
+> +
+>  static struct mhi_event_config mhi_foxconn_sdx55_events[] = {
+>  	MHI_EVENT_CONFIG_CTRL(0, 128),
+>  	MHI_EVENT_CONFIG_DATA(1, 128),
+> @@ -506,6 +523,15 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
+>  	.event_cfg = mhi_foxconn_sdx55_events,
+>  };
+>  
+> +static const struct mhi_controller_config modem_foxconn_sdx61_config = {
+> +	.max_channels = 128,
+> +	.timeout_ms = 20000,
+> +	.num_channels = ARRAY_SIZE(mhi_foxconn_sdx61_channels),
+> +	.ch_cfg = mhi_foxconn_sdx61_channels,
+> +	.num_events = ARRAY_SIZE(mhi_foxconn_sdx55_events),
+> +	.event_cfg = mhi_foxconn_sdx55_events,
+> +};
+> +
+>  static const struct mhi_controller_config modem_foxconn_sdx72_config = {
+>  	.max_channels = 128,
+>  	.timeout_ms = 20000,
+> @@ -615,6 +641,17 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5934e_info = {
+>  	.sideband_wake = false,
+>  };
+>  
+> +static const struct mhi_pci_dev_info mhi_foxconn_t99w696_info = {
+> +	.name = "foxconn-t99w696",
+> +	.edl = "qcom/sdx61/foxconn/prog_firehose_lite.elf",
+> +	.edl_trigger = true,
+> +	.config = &modem_foxconn_sdx61_config,
+> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> +	.dma_data_width = 32,
+> +	.mru_default = 32768,
+> +	.sideband_wake = false,
+> +};
+> +
+>  static const struct mhi_channel_config mhi_mv3x_channels[] = {
+>  	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 64, 0),
+>  	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 64, 0),
+> @@ -863,6 +900,21 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+>  	/* Telit FE990A */
+>  	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, 0x1c5d, 0x2015),
+>  		.driver_data = (kernel_ulong_t) &mhi_telit_fe990a_info },
+> +	/* Foxconn T99W696.01, Lenovo Generic SKU */
+> +	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe142),
+> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
+> +	/* Foxconn T99W696.02, Lenovo X1 Carbon SKU */
+> +	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe143),
+> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
+> +	/* Foxconn T99W696.03, Lenovo X1 2in1 SKU */
+> +	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe144),
+> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
+> +	/* Foxconn T99W696.04, Lenovo PRC SKU */
+> +	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe145),
+> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
+> +	/* Foxconn T99W696.00, Foxconn SKU */
+> +	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe146),
+> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0308),
+>  		.driver_data = (kernel_ulong_t) &mhi_qcom_sdx65_info },
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0309),
+> -- 
+> 2.25.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
