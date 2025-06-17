@@ -1,84 +1,124 @@
-Return-Path: <linux-kernel+bounces-690302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFB3ADCE79
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:58:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D14ADCC2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ADE8188A6F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:58:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DA901897BBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78C22E2668;
-	Tue, 17 Jun 2025 13:58:09 +0000 (UTC)
-Received: from smtprelay05.ispgateway.de (smtprelay05.ispgateway.de [80.67.31.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D391528D85F;
+	Tue, 17 Jun 2025 12:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZ8e+JbD"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF212DBF4C;
-	Tue, 17 Jun 2025 13:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.67.31.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFDC28C2D2;
+	Tue, 17 Jun 2025 12:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750168689; cv=none; b=DU4/1ydnu9/iurEc+tIQ3xqfsBptesHjyD2DiZfbBr2wn+SEsESTlQ0C5MmfnLslOlCMFO1/Jgi4xgbV5kPLCNUFIKBMoi2JhCxoApAKiggbDHP9rhYihXfBE8ylmxa1Oeq5O4LUBdtEL0u4cKQcXT02nZmLDsLNrFApsGIak2w=
+	t=1750165199; cv=none; b=XsGNs2uZfu5SpkBm8BrmIeoQqozKyWMVGhPVhLD6BcdsCgR0o2pC2wVR1G5hlJCqmZ9p5PVArI+xgPyfoM6U8GvzVNP14q/8CdQdNE/5gQuF1cwb7cev7nYoLxhCaBhytDief2LqLBsPuRyY5YnZefMrJ3DRb7OblLb/xas8PVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750168689; c=relaxed/simple;
-	bh=CFtLsOFLFGIiCRFnTt2iOFk29p0WHpWhEjfgeStGpS4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IoRy0fZMCZhhGghYeXmecJvroI+tvfhVY7FlGBRccHU0kuRewE0f4gACle4ICqbV3eM+c1gUU2Uc15FBeSc7iHTQ1b+QIln8YA5se5yE7Jb/ZIMlfB9mZNIZ9Xqok5HDMEo4zu94WuUGSGT7WVWaLxBAMERuqHyH6sxH8c2aWdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eltropuls.de; spf=pass smtp.mailfrom=eltropuls.de; arc=none smtp.client-ip=80.67.31.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eltropuls.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eltropuls.de
-Received: from [87.79.10.98] (helo=mail.eltropuls.de)
-	by smtprelay05.ispgateway.de with esmtpa (Exim 4.98)
-	(envelope-from <marc.straemke@eltropuls.de>)
-	id 1uRT9q-000000003tS-0ACJ;
-	Tue, 17 Jun 2025 12:03:10 +0200
-Received: from [172.16.0.75] (unknown [172.16.0.75])
-	by mail.eltropuls.de (Postfix) with ESMTPSA id C99CAFFC71;
-	Tue, 17 Jun 2025 12:03:31 +0200 (CEST)
-Message-ID: <b7179ac8-c64b-44dd-b25a-62b34eb49c24@eltropuls.de>
-Date: Tue, 17 Jun 2025 12:03:31 +0200
+	s=arc-20240116; t=1750165199; c=relaxed/simple;
+	bh=bQYR6efMPCgHSXc5WbPc2ysqUPrzj3om34G9i+1jBvg=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=eWAHxV2coJmFYOnZw3pwttMEM2vBKvfQJ1qIyleyGo2+x3PPTZ5R3eQoLEoCMBo6ot9GTWvTZAmSPWCfx2OtX/DQ7AgDUA042w/gqfGPncjfOMlsWkuICBiIrbeFBn8YQCqAp8UAnXT4ypqLxR88InszChn6b+AFqXhVMvaWzRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IZ8e+JbD; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a54690d369so5808568f8f.3;
+        Tue, 17 Jun 2025 05:59:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750165196; x=1750769996; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pfUao9xL+Nf+9UmRpe2eBeY78KoI4cSH6kfRJvoG+2g=;
+        b=IZ8e+JbDU247dvRSngS3trxMbzdKl+s2XrnSdnt7Lz8OPmGANcs0jJFzXY4ViWb6LL
+         0hVt6UeiVU1Q+nTy+QJN9adokASpxZ4jnx1TrpMR9k+RjxufVPIT5rMz5R84GpWiLPPj
+         BqH9Ih237hqNmGXNG1k0yJ7qoAI0pLgouyNGJYR+nsPan0UWLbAZ4cyuvX7L+3UyJRR5
+         FOUPKO0yJoIaYUd5D4e9NZ7vMLh4R0WH4+28LDBqn95HEpuxHYwH/cbzxJSrdOSte3xg
+         gDbObEzMA3nN/Kh39VmoIwjav2MQ4MvGMrbBLo5zIEqlzlfphEXj7QqBEZvCzobfFji3
+         24tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750165196; x=1750769996;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pfUao9xL+Nf+9UmRpe2eBeY78KoI4cSH6kfRJvoG+2g=;
+        b=gmGzOcUOsAVZDUtxHzgQqnJtFaUKed8DHkZx/8RhRA2VMgIgnU79UKHp6MY0sDmmZ9
+         9ZO5AzREc55eWVBdzaxjJmPDRl6HhWjMl1XZzNEt+jngvaFLP33YrPjxn9EIYsA5daMP
+         POizl5YnGrcDqyBPi6XwO8TkfDm4RcC6zoRwC7x5Jbm0evWDidp02QJ7Zss2PjvpyV+j
+         XAHjJvtVRKFMXLsTu+7fTXkFTjSzIWyRaJs/imI5RbWebbS1jHqz1p4M6YfMHXLINzEq
+         xa6XeGbovBF4nkGuxp2CP6YAZj7fIrdf2OrKdfMmMWlrvXUi3NfpGcLt7fhpXiPg3j+E
+         MFQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVq2/ST2mpuRiwLSHKDmvBWC3qJQ3aejRIn0Rs5/TQM1XKOlSRORSUTBG6vGvuVWbELIcIMFwr+pn1q3iI=@vger.kernel.org, AJvYcCWSVrBj3kzkcg66IbvSRwj8i/lqViPzVFIpfsYXjYkKzp5P00+x/ifl/ALviVEcEMPWMS/eZ+R/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJzjsf6Ed2l7cSU++tHAgQPwkafW5xtNil6FP5f//FxKZHOxrw
+	UL6LM9UXLl/nPgu3FBE5QOa3KWtTqjK9En1bxXUXq+GNJkjGq3ks9FNG
+X-Gm-Gg: ASbGncvasTM5q3phYAiWfgDUtDWFSf/g80JBwAZCjNOQYwCsT6b1CA4RKL3EpWQQM/7
+	RKjbpoEyGYl9oIotfotjkd37PwkMCsWYv8psptU4xiyiWF9nvpkcQMD7uPuE6td2BGcIErjfXtm
+	31lrOHdxNsDjDGPTOYESyK0EMJzjwXD0ZeP+wUfTJC9CsiBONfR1ugpe6Pgp5DmavmHYOYL21OB
+	/lSNdAVdYze0/Z+zFIQoeYWag0/ptzpjVu/lOTd7PqulydGKXI0BhjTLnDl1B2GzCN75NEefEAs
+	THAnoxlh4C3F8hHXGQWDqv1Ws/6UxWM+lNajmM+U7T5qXcB3BU3C+ZMn6WU7+r5567j5hU+Ly7c
+	=
+X-Google-Smtp-Source: AGHT+IF61fOL3eHzYcgqTc6vlyac0Gb7tm3KYDOskETixTUcfYre70Gc0Oij3ykKtyQjrqCRI7YAKw==
+X-Received: by 2002:a05:6000:2884:b0:3a4:cb4f:ac2a with SMTP id ffacd0b85a97d-3a572374884mr11851638f8f.21.1750165195752;
+        Tue, 17 Jun 2025 05:59:55 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:8931:baa3:a9ed:4f01])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e2449f1sm180628625e9.23.2025.06.17.05.59.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 05:59:55 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
+ <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
+ <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
+ Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
+ <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
+ Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Ruben
+ Wauters" <rubenru09@aol.com>,  "Shuah Khan" <skhan@linuxfoundation.org>,
+  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
+  linux-kernel@vger.kernel.org,  lkmm@lists.linux.dev,
+  netdev@vger.kernel.org,  peterz@infradead.org,  stern@rowland.harvard.edu
+Subject: Re: [PATCH v5 01/15] docs: conf.py: properly handle include and
+ exclude patterns
+In-Reply-To: <cca10f879998c8f0ea78658bf9eabf94beb0af2b.1750146719.git.mchehab+huawei@kernel.org>
+Date: Tue, 17 Jun 2025 11:38:06 +0100
+Message-ID: <m21prilkkx.fsf@gmail.com>
+References: <cover.1750146719.git.mchehab+huawei@kernel.org>
+	<cca10f879998c8f0ea78658bf9eabf94beb0af2b.1750146719.git.mchehab+huawei@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Latency spikes on V6.15.1 Preempt RT and maybe related to intel?
- IGB
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-References: <20250613145434.T2x2ML8_@linutronix.de>
- <E1uQ6I0-000000003aa-37uJ@smtprelay05.ispgateway.de>
- <20250613195838.0-gZ6bqS@linutronix.de>
- <97638b0b-cd96-40e2-9dc2-5e6f767b90a4@eltropuls.de>
- <20250617092814.vqKdu23w@linutronix.de>
- <bb74b5b6-bc23-4aa4-83df-449dc7c9006b@eltropuls.de>
- <20250617100013.1o5lsPLq@linutronix.de>
-Content-Language: de-DE, en-US
-From: =?UTF-8?Q?Marc_Str=C3=A4mke?= <marc.straemke@eltropuls.de>
-In-Reply-To: <20250617100013.1o5lsPLq@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Df-Sender: Y2F0Y2hhbGxfbWFpbEBlbHRyb3B1bHMuZXU=
+Content-Type: text/plain
 
-Hi Sebastian,
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-On 17.06.25 12:00, Sebastian Andrzej Siewior wrote:
-> Even if CPU1 would handle CPU0's timers then it would wake cyclictest on
-> CPU0 but that thread would have to wake until CPU0 is done with the PCI
-> bus. CPU1 knows nothing about it.
+> When one does:
+> 	make SPHINXDIRS="foo" htmldocs
+>
+> All patterns would be relative to Documentation/foo, which
+> causes the include/exclude patterns like:
+>
+> 	include_patterns = [
+> 		...
+> 		f'foo/*.{ext}',
+> 	]
+>
+> to break. This is not what it is expected. Address it by
+> adding a logic to dynamically adjust the pattern when
+> SPHINXDIRS is used.
+>
+> That allows adding parsers for other file types.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Okay then the latency I see on the other CPU must be from a PCI access 
-done by the second CPU which stall on the same shared bus.
-
-
-Anyway: Thanks for your help Sebastian! I can probably live well with 
-these spikes in latency. I was more concerned that there is a deeper 
-issue with my config and the response time could be unbounded.
-
-
-Marc
-
+Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
 
