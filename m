@@ -1,153 +1,137 @@
-Return-Path: <linux-kernel+bounces-690390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3C4ADD003
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:35:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82074ADCFD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7A3F17B829
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:31:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D61F2C045D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9602B2EF67B;
-	Tue, 17 Jun 2025 14:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F051D212B3B;
+	Tue, 17 Jun 2025 14:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tu-bs.de header.i=@tu-bs.de header.b="vAlBf45Q"
-Received: from pmxout1.rz.tu-bs.de (pmxout1.rz.tu-bs.de [134.169.4.151])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YFeDjSQT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263CC13B59B;
-	Tue, 17 Jun 2025 14:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.169.4.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA462EF650
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 14:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750170668; cv=none; b=eMYMUTqFOUHsc95244a6qF6Cd94IqYHQCe5zVUF2BPea90O0QErfivWv7BJqJkVbzLV1RE9rBxFqj2I/+cjAKKfOOHpC9v2PZZ6/F5QT5MXDZtP/28bAfGYgNpcbe5ELPFxhVzDpmjxiAEpjyHN4aA83umtgwZAeXXFQ3vPrTFI=
+	t=1750170255; cv=none; b=fs2p0v006multWdHIa8yDJZ5OSWsPT4RnqXb34/1M7kphqHtklKqvE+9gFMRdq5EsFknAUK56HKs5O4kUN0YWmvNebuNTstQUbAFeE0GH8gsf+fEC1MkrHRWSMaCK2Cq6DwblnvJ1rTqsYmIZrLkl85+xa8jP9pabGv4DEbyxHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750170668; c=relaxed/simple;
-	bh=juqQSj/laUBX8o+BD7Z+D+hetaYyMMlkdg3OwrDPg/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=B5GV1lmsLIjZjXXkHyCvcxMi+Bkzxv6ZBto4oRkLDmUcfoO2G+2cxsMkxv1gK1oSy/cwUYAP/siq5mj2DpWGDW+5zJGqnfvcWiF/WgMiK5cVua+CpDSa1nK3DWBWbBFmLRGzgJ2fdmaPJys9MLPl4B0xk3wpiQyQpHDQk6d/NR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-bs.de; spf=pass smtp.mailfrom=tu-braunschweig.de; dkim=pass (2048-bit key) header.d=tu-bs.de header.i=@tu-bs.de header.b=vAlBf45Q; arc=none smtp.client-ip=134.169.4.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-bs.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-braunschweig.de
-Received: from Hermes02.ad.tu-bs.de (hermes02.rz.tu-bs.de [134.169.4.130])
-	by pmxout1.rz.tu-bs.de (Postfix) with ESMTPS id 913744E045C;
-	Tue, 17 Jun 2025 16:23:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-bs.de;
-	s=exchange_neu; t=1750170191;
-	bh=juqQSj/laUBX8o+BD7Z+D+hetaYyMMlkdg3OwrDPg/Y=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To:From;
-	b=vAlBf45QqpajDkfZR12GetzpNNBG4nKWZVr36RayL04UKqxYZ+oB45SitL6Q5CPgB
-	 18U6SYmcvn8lzwo6tcq2DuQvprkDJw+Kq4+mygpRO+Djz8miax+70pj6wRPpLcaJxL
-	 latX0ejwoxhjh2/N9d+W/2iTT3O5e8JzI9iTGWHd/O2CvQGmPP8Sqliu7o6xTxpyKP
-	 yL5zOHRhUM8AxlwHWv2OxSWyaFveTT9FEkap8mkgEHkf/hW/nkWh3fp3AeYzs71jyM
-	 ASwWVpj+yN1c4bprSXXqFE1v5bQy14h1AAjI+NZup3uOwk8W96eMkT2yJQMqh/CG+G
-	 5Ehowj0hhgo+A==
-Received: from [134.169.39.43] (134.169.9.110) by Hermes02.ad.tu-bs.de
- (134.169.4.130) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 17 Jun
- 2025 16:23:11 +0200
-Message-ID: <7a20b873-3c26-4a52-b118-c816ede7298d@tu-bs.de>
-Date: Tue, 17 Jun 2025 16:23:11 +0200
+	s=arc-20240116; t=1750170255; c=relaxed/simple;
+	bh=pgRckujxifebMmqGjuPlksy5+XUQ//atvU7V5Z5Wnoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R/rUBrxT0qXgpMWh3wPhrLVf9JrIezpklMo6zPI5sfEZq2PTmUaPigyjdg6+q9acn0vrWu8InAA8zEbZPmvT2T1rwKaup9+jVmoBeQblwi/cbC+XkRWN5OqXe336eFg5SE8Yn77dwHVazm/oN3Srxd56a9BsKapMIIs16BVrPwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YFeDjSQT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750170252;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8nZJ22rsS0RPWxh3ZE7aCZVwueQlyLoqt+SFU6IEEhY=;
+	b=YFeDjSQTrqWCTahBS30hWV+IV7DHoV3tktIPAZK6D/rrVqcytVXp66Tc3bjOwCE1PcFNz+
+	RM7s0ECJExLWvuR+IMvwIQoMytkFT+FC7oMWnPjyM4Z+GgORPhoASKBA4lutYjLVP97P5d
+	/EAKX2khl6Z8YajtRZ/jErZe1k/9iRc=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-247-6AcTJXLjOPu8zr1UEyeDMg-1; Tue, 17 Jun 2025 10:23:57 -0400
+X-MC-Unique: 6AcTJXLjOPu8zr1UEyeDMg-1
+X-Mimecast-MFC-AGG-ID: 6AcTJXLjOPu8zr1UEyeDMg_1750170236
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-450d64026baso40020835e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 07:23:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750170236; x=1750775036;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8nZJ22rsS0RPWxh3ZE7aCZVwueQlyLoqt+SFU6IEEhY=;
+        b=gaQq8DSfuwlfjA7TInWrMzEHgTDgUpOpmRkdCdYgz4PVBOCTmBNFusXwGaCjkjiNDc
+         O4Iksc19ygq05dABbHq2hmhy7by3adyKbE7ekTKvhxPsTzmCuxNi+uoE875awm/M/Eut
+         ZKkw5AaNLOihwsqvYS5FFVP7TWUmXskXhGBNO0r6e23WWNFFLGT/yIlvWUOQ+KBkVnk6
+         +Gw7n3EfSd1d638YvFixzp2ZuoT2D0SF0f+SMvnpsxSe03GjTXz8RKGbX55ASFIlmvkm
+         DYFIS8JJjJHWDKLu+CYSM2IgGgv+O5tLusxDMOdorXQlnPW6P6SACrSFfI2fw7bEspwQ
+         T+ew==
+X-Forwarded-Encrypted: i=1; AJvYcCXwJKcJihoP6yk9fpLAYarhedT/6+863H3wRQJSTs9cypV6vQVXg8JT7i5WzLcx5OI5ggKJ8AORUPxLSc4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoXIQqRfnsP5M4S2ZyzIOXbFJV3cH7Jz7TM+Nof1YTDYNS9vwV
+	ctGouSqPA+PriPIRC3Ow/9B2YjaEmM7bh9eDEwZjW6bYgXVuofn9VKQ6yt4qsbh28rmjTH6Nqt2
+	d1jQO7b2vMwToy0E1UcPVzYy+eZJd53XCY8j7VNC9fqCsxhScUH76A1D1W2q3DIVLdA==
+X-Gm-Gg: ASbGncu1V8ZEx1232JxMKBjprM1OP3sJkC82xgiR4HYATB+y2hE14+4hGir1mZ/m1X/
+	jzaTeJNvQSyHoeBJKwCUVRtQsh6ZWDeyqjFMuDfLgerse3bSd+deURPOMZhIE+3WisfWkvGCNYl
+	UroGBbqH4rAZrYq/v55IoC5whp08mAByK7m3Ld0nrLilEfwO2UUm5dWjz44PXK+KA8oRvTJ9l+2
+	kol6Co5GLwPgA6xEA0onf1aSg7REBE2BBD5qzO9DI+fpzedhvJiasV1WAYkaLMcrkFal02vyf5t
+	8bjKKzgNqmZ6BPjdPVXzhl+WTA/cJoXT/xU3wA0Hn9XZLgJlFh5Dzw==
+X-Received: by 2002:a05:600c:5396:b0:43d:172:50b1 with SMTP id 5b1f17b1804b1-4533cac8fdbmr122013185e9.29.1750170236073;
+        Tue, 17 Jun 2025 07:23:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFXdSBOaD0bkiX6RgDIIItmoJz66Z98LumAPn/RVxW5in7JWmC1em46bTnPvZqEArSrV/R5Q==
+X-Received: by 2002:a05:600c:5396:b0:43d:172:50b1 with SMTP id 5b1f17b1804b1-4533cac8fdbmr122013005e9.29.1750170235702;
+        Tue, 17 Jun 2025 07:23:55 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.151.199])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e25302dsm171997755e9.26.2025.06.17.07.23.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 07:23:55 -0700 (PDT)
+Date: Tue, 17 Jun 2025 16:23:53 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Kuyo Chang <kuyo.chang@mediatek.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	jstultz <jstultz@google.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 1/1] sched/deadline: Fix fair_server runtime calculation
+ formula
+Message-ID: <aFF6eYzMahzQ9sxE@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250614020524.631521-1-kuyo.chang@mediatek.com>
+ <20250617085558.GN1613376@noisy.programming.kicks-ass.net>
+ <aFFgi_9yxLN-auBE@jlelli-thinkpadt14gen4.remote.csb>
+ <20250617141437.GW1613376@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Potential problem in qspinlock due to mixed-size accesses
-To: Will Deacon <will@kernel.org>, Hernan Ponce de Leon
-	<hernan.poncedeleon@huaweicloud.com>
-CC: Peter Zijlstra <peterz@infradead.org>, Alan Stern
-	<stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, Boqun
- Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>, David
- Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc
- Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, Joel
- Fernandes <joelagnelf@nvidia.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arch@vger.kernel.org>, <lkmm@lists.linux.dev>,
-	<jonas.oberhauser@huaweicloud.com>, "r.maseli@tu-bs.de" <r.maseli@tu-bs.de>
-References: <cb83e3e4-9e22-4457-bf61-5614cc4396ad@tu-bs.de>
- <20250613075501.GI2273038@noisy.programming.kicks-ass.net>
- <20250616142347.GA17781@willie-the-truck>
- <d66d0351-b523-40da-ae47-8b06f37bf3b6@tu-bs.de>
- <2b11f09d-b938-4a8e-8c3a-c39b6fea2b21@huaweicloud.com>
- <20250617141704.GB19021@willie-the-truck>
-Content-Language: en-US
-From: Thomas Haas <t.haas@tu-bs.de>
-In-Reply-To: <20250617141704.GB19021@willie-the-truck>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: Hermes06.ad.tu-bs.de (134.169.4.134) To
- Hermes02.ad.tu-bs.de (134.169.4.130)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250617141437.GW1613376@noisy.programming.kicks-ass.net>
 
+On 17/06/25 16:14, Peter Zijlstra wrote:
+> On Tue, Jun 17, 2025 at 02:33:15PM +0200, Juri Lelli wrote:
 
+...
 
-On 17.06.25 16:17, Will Deacon wrote:
-> On Tue, Jun 17, 2025 at 10:42:04AM +0200, Hernan Ponce de Leon wrote:
->> On 6/17/2025 8:19 AM, Thomas Haas wrote:
->>> On 16.06.25 16:23, Will Deacon wrote:
->>>> I'm half inclined to think that the Arm memory model should be tightened
->>>> here; I can raise that with Arm and see what they say.
->>>>
->>>> Although the cited paper does give examples of store-forwarding from a
->>>> narrow store to a wider load, the case in qspinlock is further
->>>> constrained by having the store come from an atomic rmw and the load
->>>> having acquire semantics. Setting aside the MSA part, that specific case
->>>> _is_ ordered in the Arm memory model (and C++ release sequences rely on
->>>> it iirc), so it's fair to say that Arm CPUs don't permit forwarding from
->>>> an atomic rmw to an acquire load.
->>>>
->>>> Given that, I don't see how this is going to occur in practice.
->>>
->>> You are probably right. The ARM model's atomic-ordered-before relation
->>>
->>>        let aob = rmw | [range(rmw)]; lrs; [A | Q]
->>>
->>> clearly orders the rmw-store with subsequent acquire loads (lrs = local-
->>> read-successor, A = acquire).
->>> If we treat this relation (at least the second part) as a "global
->>> ordering" and extend it by "si" (same-instruction), then the problematic
->>> reordering under MSA should be gone.
->>> I quickly ran Dartagnan on the MSA litmus tests with this change to the
->>> ARM model and all the tests still pass.
->>
->> Even with this change I still get violations (both safety and termination)
->> for qspinlock with dartagnan.
+> > To me it looks like we want this (no scaling) for fair_server (and
+> > possibly scx_server?) as for them we are only looking into a 'fixed
+> > time' type of isolation. Full fledged servers (hierarchical scheduling)
+> > maybe have it configurable, or enabled by default as a start (as we have
+> > it today).
 > 
-> Please can you be more specific about the problems you see?
-
-I talked to Hernán personally and it turned out that he used the generic 
-implementation of smp_cond_acquire (not sure if the name is correct) 
-which uses a relaxed load followed by a barrier. In that case, replacing 
-aob by aob;si does not change anything.
-Indeed, even in the reported problem we used the generic implementation 
-(I was unaware of this), though it is easy to check that changing the 
-relaxed load to acquire does not give sufficient orderings.
-
+> Right. Then we should write the above like:
 > 
->> I think the problem is actually with the Internal visibility axiom, because
->> only making that one stronger seems to remove the violations.
+> 	scaled_delta_exec = delta_exec;
+> 	if (!dl_se->dl_server)
+> 		scaled_delta_exec = dl_scaled_delta_exec(rq, dl_se, delta_exec);
 > 
-> That sounds surprising to me, as there's nothing particularly weird about
-> Arm's coherence requirements when compared to other architectures, as far
-> as I'm aware.
-> 
+> and let any later server users add bits on if they want more options.
 
-I agree. The internal visibility axiom is not the issue I think.
+Works for me. Looks cleaner also.
 
--- 
-=====================================
+Kuyo, can you please update your patch then?
 
-Thomas Haas
-
-Technische Universität Braunschweig
-Institut für Theoretische Informatik
-Mühlenpfordtstr. 23, Raum IZ 343
-38106 Braunschweig | Germany
-
-t.haas@tu-braunschweig.de
-https://www.tu-braunschweig.de/tcs/team/thomas-haas
+Thanks,
+Juri
 
 
