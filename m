@@ -1,251 +1,162 @@
-Return-Path: <linux-kernel+bounces-690677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1097ADDACD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 19:40:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB038ADDAD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 19:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B8FF17E5E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EDC6403CE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A642ECEA3;
-	Tue, 17 Jun 2025 17:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DCE2ED17C;
+	Tue, 17 Jun 2025 17:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="IKCyTGnP"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nbmr5A2s"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014F42ECD23;
-	Tue, 17 Jun 2025 17:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028182ED14B
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 17:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750182050; cv=none; b=WKrnIrgeNKosYaz8ejcm0DiOLblTviy5rVC+VmvGVpgvRVOdg0QYHekHakAAueDdRJX5UT2wOm0TnVPy9lQch47G1nXsSk29hb17m1EW7hxkNKaOcGPpbew6+9s0ZChuC4dUbqrMLQNAfrN8U1Kf48BFU5JTeWiHe0X3y6MKXww=
+	t=1750182080; cv=none; b=BrSz227lmdGa1E7Yw3aDGKv8h6aNseKuvn3KxPpaLKE6BWgzgC2Odlj/Wsf8GAdWQNcfp0esj0JGiIj905xLpCihcZbofuD6aCIgPDNdopwZ9tMlByxIoe7TpkWCTdwEW0rIPycVPxFeSSks+sUmAGKJBDO/BiRZ3ljOTT3WhrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750182050; c=relaxed/simple;
-	bh=K0vxcsqHQKl0mgOXeJnuKBSYZIgPQRDBokS04NUAV2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rNtFrEUijLqFOo0obfEgMFqwzof94gerDk46wG/odpjTB9shfhoidSLsff0rrdqYOm3x9eCVrnt/vWZnvM365+E9LGh4lLW07OV/3LW0KxsRYLlwxyW5iMS3RiIWLCHnD8tNagJ6rwbNDAO6vY9Hw5SYadnmLEEIHsRkPMOXg74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=IKCyTGnP; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55HFaTiR013203;
-	Tue, 17 Jun 2025 19:40:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	BCDEKH89I2K3oqjv3tljOt2+d5QzCMjlDICRktrlLTw=; b=IKCyTGnPnox4Lq0F
-	vOPeRvGck68q98cBsI1r908q9qQaq0urFuUVIibrgqbHbAF8QnrTAh1syjaauuJI
-	Z9fbs2dQMkOJe1WcvbSnPzbQmmMNKhCEGWyV2mx7qoqnIN07dFr7JvdJlSbDV9Zq
-	TjRmnsKJc8xXpZRgal2yWz9OHRKVNjr2aYyucZPU7LyStZkEV0PfMCh5kDPsCW0I
-	yH3k3rNOtGLEqnfB17zBUwYSnS54AhP49bBzuyxg5/FObZaIvK7EKxEvvt98FKqA
-	WMGjPD39u4D2/xnXa0995jsQF7bsnjaBK0utur3Zss/fYyrf6wHQTCVLjRigP0C2
-	CqQZdQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4790e27jt9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Jun 2025 19:40:16 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D153640045;
-	Tue, 17 Jun 2025 19:39:10 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C2540B88169;
-	Tue, 17 Jun 2025 19:38:20 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
- (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 17 Jun
- 2025 19:38:20 +0200
-Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 17 Jun
- 2025 19:38:19 +0200
-Message-ID: <cda96440-5c53-4b7a-8b51-51506f5e7cc3@foss.st.com>
-Date: Tue, 17 Jun 2025 19:38:19 +0200
+	s=arc-20240116; t=1750182080; c=relaxed/simple;
+	bh=kJNOz7TooDBzp/PLOeTk4CdDG2jJXihBazSW4X49KPE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uoP7mduq1zrVKtC7EQL+vVJQoKIFrnDlDi06yCvMVAOw66oajA+ixznFnLSune0dxDAqxN5vZAmP6ou2BzZRqUeX7+XQlPnedB2IGD4LeWS/kXju656J7XtHGuwZW4tpugKXr151YkgEWBOF4Ac46EDVNAQVoLno7GA+ompg5uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nbmr5A2s; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7426c44e014so5052270b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 10:41:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750182077; x=1750786877; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mgrGkqOxDNObLjLq6D7C6MTexdeVGeUMjxtSLbN+W2o=;
+        b=Nbmr5A2spdQp9TaxmKc2vIlTXiaSNeiNXosM8sPQFgIi6bwENIObLKGDDhezX8iLTd
+         dtGtr2fxY+kvp7h8eVDZXVVGWWEWdCtowflIOUgUQksdmVVUumGNw2hmiQyvghMQ3rKJ
+         TYH1KzFuBS650wlhIfhdU35Ko15PiIiUlBQawgTpSMU7H1sOujN72mzhT8EVnrqc/btK
+         2GRLWyQxEQOzAysxUfgnZL3OhRe0bxvW2R1W+XRv0PJXSBNM+fY7Cfs82FjBF2etYI3t
+         Q8aCezftCVr4pNNXhYnp2QqVYobMBSn4ITE6C93kxZ1rABNyM/3fasrjsrRTWtfCcSiz
+         sc1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750182077; x=1750786877;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mgrGkqOxDNObLjLq6D7C6MTexdeVGeUMjxtSLbN+W2o=;
+        b=uncEPo3/ZLutetj8qbwjFqXKTR9NhD4z7wGfsLa2dA5T29rsfHY8emiQTJW6Ng1fSK
+         8Eb7SQaYAbc8TP0ixfPnUcfV8GyYuTMxSyUU1Qhsp4T/8aXBlgiowvhQjuw0Y9jUPhWR
+         gM/yEedpQT5wMOuM8VvUtnzPYodmzhbxV57WBmWSWlxrluEtflhTno37oRTUKy3yb/49
+         kr6j36+YKLELP4dDTIw8sBlk6gJR4xhjRBPJ8Jj8Abp/1s75k+pgVDM0nclAkP/th//I
+         Q8lx14m/aABRsvR4KM9C6iTY2WViDLNLf/Cs+Dg7R3oGBc6wYm45r1zu35y7I1kUyz6w
+         3VCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqGRHLGT1DwqIhsd2IfV2GdUEX6KGMg2IqHGTZiqbrpmIGThRFOJ6UdXsr1h/RcfHROQaoL4YmzeHkFZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhicnG3XkWzitbRtoGSBI7V5UuurRe1OEymwtC3H1O5zz+Q2p7
+	T8+NdQ0ZDoJwnCGNmJ5j4qAk3hZGHk8lvx0t+P7Q6P35Q4ygb0CO3wCT
+X-Gm-Gg: ASbGncvOlwCnBF8Mqnqr/Fc5phspE494zChC9H481oA4ynZACllo+zxZXQA9wzafE3k
+	jnZ0U2Ca+MJxH4/fyzpRdo4Vn/eg7gD/7x0XsqlJwp5TrzQbX6uxJAX/48hWkqV4LI6fzusQpGS
+	4XHXhUTyNGxMVGMCqvEeZdQ+2fqhwQDQxAvMSbuTkCBK4FENxx5/s1VBIFYkf8T7AdJCdCEut72
+	G32k+wjA2IHVu7oDfXnLS7BJV8swQoYIUu7e7ppfZg0AsryVIAF9yZNzLb05dp/lR3/B2hoDGqd
+	knTFe8v8h5gH1PWuSzU1E16q0Uxh+/b1DxLMvByMdl+EXEN6jato8BJag5y/bHCValShjFQrLRh
+	06crxKg==
+X-Google-Smtp-Source: AGHT+IG8uYkJ0nlmr7+LvuiKbnGE6RpbM0HNHS45nKFtm9jDCdWQmNQSRmkk3m6DxI7dLLyvTk/vmw==
+X-Received: by 2002:a05:6a00:230d:b0:742:a7e3:7c84 with SMTP id d2e1a72fcca58-7489cf97bf8mr18115909b3a.13.1750182077189;
+        Tue, 17 Jun 2025 10:41:17 -0700 (PDT)
+Received: from deb-101020-bm01.dtc.local ([149.97.161.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748900d29a2sm9417592b3a.175.2025.06.17.10.41.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 10:41:16 -0700 (PDT)
+From: Swarna Prabhu <sw.prabhu6@gmail.com>
+X-Google-Original-From: Swarna Prabhu <s.prabhu@samsung.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Cc: mcgrof@kernel.org,
+	Swarna Prabhu <s.prabhu@samsung.com>
+Subject: [PATCH] f2fs: Fix the typos in comments
+Date: Tue, 17 Jun 2025 17:40:47 +0000
+Message-ID: <20250617174047.1511951-1-s.prabhu@samsung.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v18 3/6] remoteproc: Introduce release_fw optional
- operation
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jens Wiklander
-	<jens.wiklander@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
-References: <20250616075530.4106090-1-arnaud.pouliquen@foss.st.com>
- <20250616075530.4106090-4-arnaud.pouliquen@foss.st.com>
- <6ekro2uytz7kguphtub54wivmclpnfkjobduhsom4kvxlmov2l@hgcjoposj3md>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <6ekro2uytz7kguphtub54wivmclpnfkjobduhsom4kvxlmov2l@hgcjoposj3md>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-17_08,2025-06-13_01,2025-03-28_01
+Content-Transfer-Encoding: 8bit
 
-Hello Bjorn,
+This patch fixes minor typos in comments in f2fs.
 
-On 6/17/25 06:44, Bjorn Andersson wrote:
-> On Mon, Jun 16, 2025 at 09:55:27AM +0200, Arnaud Pouliquen wrote:
->> The release_fw operation is the inverse operation of the load, responsible
->> for releasing the remote processor resources configured from the loading
->> of the remoteproc firmware (e.g., memories).
->>
-> 
-> I was under the impression that we agreed that this would unroll
-> rproc_parse_fw() not the "load" in general.
+Signed-off-by: Swarna Prabhu <s.prabhu@samsung.com>
+---
+ fs/f2fs/f2fs.h  | 6 +++---
+ fs/f2fs/node.h  | 2 +-
+ fs/f2fs/super.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-Not Krystal clear to me what you are expecting here.
-Is it just on the description or on the design?
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9333a22b9a01..fdf69330582b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -386,7 +386,7 @@ struct discard_cmd {
+ 	struct rb_node rb_node;		/* rb node located in rb-tree */
+ 	struct discard_info di;		/* discard info */
+ 	struct list_head list;		/* command list */
+-	struct completion wait;		/* compleation */
++	struct completion wait;		/* completion */
+ 	struct block_device *bdev;	/* bdev */
+ 	unsigned short ref;		/* reference count */
+ 	unsigned char state;		/* state */
+@@ -1427,7 +1427,7 @@ enum {
+ 
+ enum {
+ 	MEMORY_MODE_NORMAL,	/* memory mode for normal devices */
+-	MEMORY_MODE_LOW,	/* memory mode for low memry devices */
++	MEMORY_MODE_LOW,	/* memory mode for low memory devices */
+ };
+ 
+ enum errors_option {
+@@ -1491,7 +1491,7 @@ enum compress_flag {
+ #define COMPRESS_DATA_RESERVED_SIZE		4
+ struct compress_data {
+ 	__le32 clen;			/* compressed data size */
+-	__le32 chksum;			/* compressed data chksum */
++	__le32 chksum;			/* compressed data checksum */
+ 	__le32 reserved[COMPRESS_DATA_RESERVED_SIZE];	/* reserved */
+ 	u8 cdata[];			/* compressed data */
+ };
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index 1446c433b3ec..b5218d642545 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -31,7 +31,7 @@
+ /* control total # of nats */
+ #define DEF_NAT_CACHE_THRESHOLD			100000
+ 
+-/* control total # of node writes used for roll-fowrad recovery */
++/* control total # of node writes used for roll-forward recovery */
+ #define DEF_RF_NODE_BLOCKS			0
+ 
+ /* vector size for gang look-up from nat cache that consists of radix tree */
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index bbf1dad6843f..b4f2b5a85d58 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2569,7 +2569,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 			!test_opt(sbi, MERGE_CHECKPOINT)) {
+ 		f2fs_stop_ckpt_thread(sbi);
+ 	} else {
+-		/* Flush if the prevous checkpoint, if exists. */
++		/* Flush if the previous checkpoint, if exists. */
+ 		f2fs_flush_ckpt_thread(sbi);
+ 
+ 		err = f2fs_start_ckpt_thread(sbi);
+-- 
+2.47.2
 
-Unroll only the rproc_parse_fw is not sufficient. The need here is also
-to go back from a LOAD state of the TEE. So in such case the role of
-release_fw() would be to unroll the load + the parse of the resource.
-Is it your expectation?
-
-> 
->> The operation is called in the following cases:
->>  - An error occurs on boot of the remote processor.
->>  - An error occurs on recovery start of the remote processor.
->>  - After stopping the remote processor.
->>
->> This operation is needed for the remoteproc_tee implementation after stop
->> and on error.
-> 
-> And if it's defined to unroll rproc_parse_fw() it can be used for other
-> things where some resources was allocated to set up the resource table.
-
-True
-
-> 
->> Indeed, as the remoteproc image is loaded when we parse the resource
->> table, there are many situations where something can go wrong before
->> the start of the remote processor(resource handling, carveout allocation,
->> ...).
-> 
-> Unbalanced parenthesis? I think you can write this in less
-> conversational style.
-> 
->>
->> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->> ---
->>  drivers/remoteproc/remoteproc_core.c     | 6 ++++++
->>  drivers/remoteproc/remoteproc_internal.h | 6 ++++++
->>  include/linux/remoteproc.h               | 3 +++
->>  3 files changed, 15 insertions(+)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index d06eef1fa424..4c1a4bc9e7b7 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1857,6 +1857,8 @@ static int rproc_boot_recovery(struct rproc *rproc)
->>  
->>  	/* boot the remote processor up again */
->>  	ret = rproc_start(rproc, firmware_p);
->> +	if (ret)
->> +		rproc_release_fw(rproc);
->>  
->>  	release_firmware(firmware_p);
->>  
->> @@ -1998,6 +2000,8 @@ int rproc_boot(struct rproc *rproc)
->>  		}
->>  
->>  		ret = rproc_fw_boot(rproc, firmware_p);
->> +		if (ret)
->> +			rproc_release_fw(rproc);
->>  
->>  		release_firmware(firmware_p);
->>  	}
->> @@ -2067,6 +2071,8 @@ int rproc_shutdown(struct rproc *rproc)
->>  
->>  	rproc_disable_iommu(rproc);
->>  
->> +	rproc_release_fw(rproc);
->> +
->>  	/* Free the copy of the resource table */
->>  	kfree(rproc->cached_table);
->>  	rproc->cached_table = NULL;
-> 
-> These are allocated in rproc_parse_fw(), would it not make sense to
-> clean them up in your newly introduced function?
-
-It seems possible as proposed in v11 3/7[1], but this needs an exception
-for rproc_detach().
-[1]
-https://patchew.org/linux/20241009080108.4170320-1-arnaud.pouliquen@foss.st.com/20241009080108.4170320-4-arnaud.pouliquen@foss.st.com/
-
-> 
->> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
->> index 0cd09e67ac14..c7fb908f8652 100644
->> --- a/drivers/remoteproc/remoteproc_internal.h
->> +++ b/drivers/remoteproc/remoteproc_internal.h
->> @@ -221,4 +221,10 @@ bool rproc_u64_fit_in_size_t(u64 val)
->>  	return (val <= (size_t) -1);
->>  }
->>  
->> +static inline void rproc_release_fw(struct rproc *rproc)
->> +{
->> +	if (rproc->ops->release_fw)
->> +		rproc->ops->release_fw(rproc);
->> +}
->> +
->>  #endif /* REMOTEPROC_INTERNAL_H */
->> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->> index 8fd0d7f63c8e..80128461972b 100644
->> --- a/include/linux/remoteproc.h
->> +++ b/include/linux/remoteproc.h
->> @@ -381,6 +381,8 @@ enum rsc_handling_status {
->>   * @panic:	optional callback to react to system panic, core will delay
->>   *		panic at least the returned number of milliseconds
->>   * @coredump:	  collect firmware dump after the subsystem is shutdown
->> + * @release_fw:	optional function to release the loaded firmware, called after
->> + *              stopping the remote processor or in case of error
-> 
-> The struct firmware is released at the end of startup and the typical
-> carveout memory where the firmware is loaded into is released at
-> rproc_shutdown().
-> 
-> As such, this won't help anyone understand the purpose of the ops unless
-> they know your system design (and know you added it).
-
-Could you detail which improvement you are expecting here?
-Name of the ops, associated comment? both?
-
-Thanks,
-Arnaud
-
-> 
-> Regards,
-> Bjorn
-> 
->>   */
->>  struct rproc_ops {
->>  	int (*prepare)(struct rproc *rproc);
->> @@ -403,6 +405,7 @@ struct rproc_ops {
->>  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
->>  	unsigned long (*panic)(struct rproc *rproc);
->>  	void (*coredump)(struct rproc *rproc);
->> +	void (*release_fw)(struct rproc *rproc);
->>  };
->>  
->>  /**
->> -- 
->> 2.25.1
->>
 
