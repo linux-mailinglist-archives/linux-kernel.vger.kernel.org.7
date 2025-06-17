@@ -1,113 +1,131 @@
-Return-Path: <linux-kernel+bounces-689558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652A6ADC387
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:38:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78DE2ADC392
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65AFB3B342E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:38:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B40F57A76F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB86289829;
-	Tue, 17 Jun 2025 07:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C3828EA52;
+	Tue, 17 Jun 2025 07:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZAFvrA8H"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LQqR6ibE";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FHtGhuDp"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4613F28DB48
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 07:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9C7289803;
+	Tue, 17 Jun 2025 07:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750145917; cv=none; b=s7cOGPDfAaPDgrpl/1KqCKiE9dJu8NqtPOULKTTa/UOLIIQKE3FG/weaDlZnUAB3/78tT6RqtiCJBdFG1NtNBrDuzCqSeeqEF2WbD0tM6gEyFXNYDeZxi4EG98Ue5WqMQZTwenbhthlN8SBVRgGO8l1qSGcaXxXAJHwFtvDLSds=
+	t=1750145955; cv=none; b=TjXaIInNeAChWc1ptTG7ZULLuhezTwZgTSF2tCJs390jYF+KKZoihDcjzeYJX6djgoP2Bo5lMnFvzcQfjVyubE7s2mKgmDay2cCJDGAs+xpBi+Cux4Z/EXrehfNSCwQ5q8NBqJYo9qVENaT7kiOIp3K3LQ/A/tY1Jt2ibuBsa5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750145917; c=relaxed/simple;
-	bh=8hre+ioZSV1ApKk0mMHgtp6YNV3r2Lv8bwiGE/XHevY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l45EsYroaiA+xL0FSfJ37pOgHwztxp3hMOfLPuY3VRMu9OF4DD3ojQl0WJyaotxS3bF/6on3aK/MbLXMatzKaIhIObyNJ0Wq8GYlaDUNoE/M9A0/q1annXeQ0Aegh3yv+luzW/kk/XQhuG05tNCEbv4al6U/gTVe6U1W6U//VTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZAFvrA8H; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a531fcaa05so3319553f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 00:38:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750145912; x=1750750712; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=06WdrqrgwMt+XD3JlxWH3rD2dWkzuQMHj217UXJd1mk=;
-        b=ZAFvrA8HheWATGw+r3/dK2tdOyWQDuFedteaxpkni/rcBlxdgd++CPXH7Y6nZMf0wd
-         wkD9L15kea2H0sxy9YfJmNw0IMpfhw9smRFsAGj1MNsvAXkuGyP6ty/wsRtJg/tlSKy+
-         3Tk8kfRzFoiHNFaaYeh0YSQ7S5yNkgMH64aMYFs7qkVym4l1SWFhKN9Tq4c9SSnH8eqY
-         U46FWVAw3ihWfZbSTVW6DJdBaSH2o0K5bVQggXvqBxYju2NiXi/x7x/3hZL1j/uUTk6A
-         AvrvFlr5rtRiipI+138Afw9eu2izvgYuZUrADc3SEMaa4qZv0qIRpoy3ow7DFAVZkKTv
-         OZ0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750145912; x=1750750712;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=06WdrqrgwMt+XD3JlxWH3rD2dWkzuQMHj217UXJd1mk=;
-        b=R5hmymiBpyjLYm05j2VDzVNIGdH/vwdckH69wal8jP/lQCpko/0ph/32poSDOqOi9c
-         ksmlJ25UfvzWX9B7/zPVuMPOPEt3fHmn6qPkK2HnCKMjKoudZSmKjSgv2tDD6SMD64ak
-         R5o44bImNaRsWW7Vyo11vjV2uxGS44jNV2AaOHOFhvMeaPLiHgpT5Bs3yj7vreLGko9z
-         AA79Yq5UKVSljoGcX/yeJ/9/L/BHyYaKa9Kck67fuLSWIa1Y0JTx26yOT2YKP+iz3fEZ
-         IM00kpUqm+4Up2hj0MJvSRBU64fOC+W45FrnCk7qUZl5i1YwY5JIgLuQNQYGmuKn1QGz
-         FO8A==
-X-Forwarded-Encrypted: i=1; AJvYcCW0s2xtuVs7kMJJtlWuq2Zi01pkKhb5LF+ZPJYm94DBJ/kw0UMKBjE8EXoez52YdvKjIvlYzg/NDrUx0P4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+IYxPMUdCdWacoyUhD4ImTY7ETSIZ/zEGY4px5+32zrbTXr54
-	wlG9SNdCx2qZydLHOm6eyhQ7Rd+0DW0w2yHRBH+WmUury8nHUPaCqrjn6W33Vp+ogKQ=
-X-Gm-Gg: ASbGncvwADOjLx8WW/D5NT1zx66Zk+ne9VekYsU7VcNxIx0vxUA3H/yJJ4pIb9XGeBE
-	xmzmGX8AKLjn4ih2ZCoVg6wIozdB1MvQ06a9qIxJLVmborwTX1y0n7K/kh1IukYfceqxKRULx9m
-	ztN9V6eppelMeV2XLyftpRlWrKDARadw9aFWv6bGFwhvlALJYx3OnVUdREhsVkBN+N+Du0sud8J
-	kSGWVQDchjlvkGVkjb07cbLkd/xQsIhhGvRUtq5uuFk9wsg++bNaZelqumjtvpPBamU8/WRoXIg
-	ojTZ2qe3D6CjZ3HfVqmbr2wx2UOqe93UozFck5/LJWbotDgWHvt8TboZrR5UtjHEiJH/c3XV3eJ
-	N
-X-Google-Smtp-Source: AGHT+IEsDXzygzUiu5hDuvAS7nNYSt4nrUBrznqidImzQhFxIgxXYCsglRc9gafDTyPOPS+m5grryw==
-X-Received: by 2002:a05:6000:1ac8:b0:3a5:2653:734d with SMTP id ffacd0b85a97d-3a572e7a1eemr9910886f8f.28.1750145912511;
-        Tue, 17 Jun 2025 00:38:32 -0700 (PDT)
-Received: from [10.100.51.209] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e1838fasm164856835e9.38.2025.06.17.00.38.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 00:38:32 -0700 (PDT)
-Message-ID: <87e3de90-ffa8-40b7-a81b-70f5e5b8af20@suse.com>
-Date: Tue, 17 Jun 2025 09:38:31 +0200
+	s=arc-20240116; t=1750145955; c=relaxed/simple;
+	bh=ZqChbIHl8eFApjqdf88u+0LzeRDCHv9CNT33A4cC8W8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hwT+UoRo/7MM9Fc16UCySaqh78fOrAaIbkuzMOwSS1OHZ4wnx+yAuI8VQJDLiXoHsR74YtVeIGdrOAdWaFmqORqbCEK7esakg6oXGpMUdgd2RNqIjJOd330oc0ax4TtZU0oHo8wfW1s0dj/hiM6HMmAjXAecGT05/jwehJDLEA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LQqR6ibE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FHtGhuDp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 17 Jun 2025 09:39:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750145952;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AUjG6+JFxLZDStRNnT8ioKp8RqTOmg0bGcH75TxHJOo=;
+	b=LQqR6ibEuyBEC7uwHHtnbVzvvooJNrTvO3oXqLrInJhDVXhZtr/gNdtPqVlrTxlenvdbRZ
+	RnHN7iVlyBuYyZiSaE1AIArJAPtizX2fRnqAhJe6uiUXXlFZOQ729I9/gS4GVU7O7ePnd6
+	Brh+HSm4WXshRLvZoWd5xxBzlMQKduMd/6lGt5nw6MqflQ2v4FTgWVregP7xTNLP+Yuzc+
+	ybhMgXXRgjtX5mfxmcebXoLmfXe1IgbHqGynqe6AGe/XwzUdMLF35HWuR/RCpmEnyerE6H
+	aO31q/Nd9xiou/f5+oOoRBHfBajKMQfD+n3V5gkOUNEUDwQTphRJe5Pr2eYMig==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750145952;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AUjG6+JFxLZDStRNnT8ioKp8RqTOmg0bGcH75TxHJOo=;
+	b=FHtGhuDpN/5Xuy91ovmc3tSQjnTi2R4gYX20+L0rJCOATaiEhbU7vlEdMIy3pGCokkZDf5
+	Tyyjyt1nxeTJX1Ag==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Willy Tarreau <w@1wt.eu>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Shuah Khan <shuah@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-doc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, workflows@vger.kernel.org
+Subject: Re: [PATCH v3 02/16] kbuild: userprogs: also inherit byte order and
+ ABI from kernel
+Message-ID: <20250617093523-e7f54d95-96d0-4411-92d6-dd80fe84ee98@linutronix.de>
+References: <20250611-kunit-kselftests-v3-0-55e3d148cbc6@linutronix.de>
+ <20250611-kunit-kselftests-v3-2-55e3d148cbc6@linutronix.de>
+ <CAK7LNATuk_tpDAq07e5oSU4FptRO_88Oxh2=W=3YmBotbGuU5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] module: move 'struct module_use' to internal.h
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Brendan Higgins <brendan.higgins@linux.dev>,
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-References: <20250612-kunit-ifdef-modules-v1-0-fdccd42dcff8@linutronix.de>
- <20250612-kunit-ifdef-modules-v1-1-fdccd42dcff8@linutronix.de>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250612-kunit-ifdef-modules-v1-1-fdccd42dcff8@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNATuk_tpDAq07e5oSU4FptRO_88Oxh2=W=3YmBotbGuU5g@mail.gmail.com>
 
-On 6/12/25 4:53 PM, Thomas Weißschuh wrote:
-> The struct was moved to the public header file in
-> commit c8e21ced08b3 ("module: fix kdb's illicit use of struct module_use.").
-> Back then the structure was used outside of the module core.
-> Nowadays this is not true anymore, so the structure can be made internal.
+On Mon, Jun 16, 2025 at 11:49:41PM +0900, Masahiro Yamada wrote:
+> On Wed, Jun 11, 2025 at 4:38 PM Thomas Weißschuh
+> <thomas.weissschuh@linutronix.de> wrote:
+> >
+> > Make sure the byte order and ABI of the userprogs matches the one of the
+> > kernel, similar to how the bit size is handled.
+> > Otherwise the userprogs may not be executable.
+> > This happens for example on powerpc little endian, or riscv32.
+> >
+> > Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> > ---
+> >  Makefile | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index c4293cf91e968ca8ee64452841fb266e24df63f6..b9aa1058321dabd3b3dd5610e45a2807dfa257f4 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -1129,8 +1129,8 @@ ifneq ($(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS),)
+> >  LDFLAGS_vmlinux        += --emit-relocs --discard-none
+> >  endif
+> >
+> > -# Align the bit size of userspace programs with the kernel
+> > -USERFLAGS_FROM_KERNEL := -m32 -m64 --target=%
+> > +# Align the bit size, byte order and architecture of userspace programs with the kernel
+> > +USERFLAGS_FROM_KERNEL := -m32 -m64 -mlittle-endian -mbig-endian --target=% -march=% -mabi=%
+> >  KBUILD_USERCFLAGS  += $(filter $(USERFLAGS_FROM_KERNEL), $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
+> >  KBUILD_USERLDFLAGS += $(filter $(USERFLAGS_FROM_KERNEL), $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
 > 
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> 
+> Why didn't you do like this?
+> 
+> USERFLAGS_FROM_KERNEL := $(filter -m32 -m64 -mlittle-endian
+> -mbig-endian --target=% -march=% -mabi=%, $(KBUILD_CPPFLAGS)
+> $(KBUILD_CFLAGS))
+> KBUILD_USERCFLAGS  += $(USERFLAGS_FROM_KERNEL)
+> KBUILD_USERLDFLAGS += $(USERFLAGS_FROM_KERNEL)
 
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+The idea was to keep the USERFLAGS_FROM_KERNEL line free of clutter, as it is
+probably going to change more often. To improve reviewability and gain some
+available horizontal space in case it should be needed at some point.
 
--- 
-Thanks,
-Petr
+If you prefer the other layout I'll be happy to switch it around.
+
+
+Thomas
 
