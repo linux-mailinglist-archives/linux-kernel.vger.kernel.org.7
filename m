@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-690291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329ECADCE60
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:55:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E37C7ADCE69
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85EF9188CF98
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:55:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAD43188D07D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D7E2E3B00;
-	Tue, 17 Jun 2025 13:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E8A2E9728;
+	Tue, 17 Jun 2025 13:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQbquBVW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tnWj9Uy2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98132E266E;
-	Tue, 17 Jun 2025 13:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017802E92BE;
+	Tue, 17 Jun 2025 13:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750168460; cv=none; b=c2Mm4hIvAH4mugDHphcEXgDie0Wjodbk9w5I3DmDphdNanMX6LObfPFQFOUV5FKBJkyhgcnwZHlohYSwSF2y2hQvY95eWp3nmuAIOxaFGYDFYjS5s4BoIdkjYGvMe0g6zewvNvJouRZN2ELiTAnUBcLVhw3HgPZPo74aAifg1S4=
+	t=1750168466; cv=none; b=VLd1Fu2pkp9KnJlOhjIOjKyUlLR7vqDM75krubVuaO/fK2Ol1jfECPXZC96p60RAebv0T4idh9aectCaIxAuZDXH7woFINFRAtmQ2q+HcUAx+trfT8R6fE0oL3nZ3VGNeBAON0/DJylgoEOw7hktMK9frpDXSWYY6mDz8KBZ8Jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750168460; c=relaxed/simple;
-	bh=+mvYcib1jOLn2MJdJlLe3/Of17qNWzn3vv5uSzZoKSU=;
+	s=arc-20240116; t=1750168466; c=relaxed/simple;
+	bh=0k2cvXqcvQ++6SyJaasJsgpYXhw/jpea2Kwx1uvjjR4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kl/yJjI2fxj794RFGX1W66GaO/HqBu3oYdwnoKk3K2k8e9FwB9AL+PU18zphQadJuaYjFSiQ7opWs0gwaPIdiuL/ZGKb1oGwFGi+NJ09xnnulnYlJ3vgDTZ2++LZI8W0H10gl2PuGm95LgWXOlsyIKD4gQ/kUwFuOpgtdgz27jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQbquBVW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 161CEC4CEF5;
-	Tue, 17 Jun 2025 13:54:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=S5xs3Z2gwimwUZ8EbvE5YnLIUNs+kD7Z2I+8gYKEI31FbyWvM4Q9lYvcrjrpxpxQWbYnW9bUc5PRumMtjnm3eoXxN2kUj3W26kvX4OXjDNSJdE5VDWD3uPitTYwpkQfgcN1krrWei7TGUtB6OTGFcPmxIOz0dLNxGwBLZ37QkQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tnWj9Uy2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C1C9C4CEE3;
+	Tue, 17 Jun 2025 13:54:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750168459;
-	bh=+mvYcib1jOLn2MJdJlLe3/Of17qNWzn3vv5uSzZoKSU=;
+	s=k20201202; t=1750168465;
+	bh=0k2cvXqcvQ++6SyJaasJsgpYXhw/jpea2Kwx1uvjjR4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qQbquBVWTNilpD9J2DZukqDqhw6dYV6sQdAC3swnhkXDCzrarHfIjtDx6+iaanIj2
-	 /w49fQnKSs5gIvxmaG8LRqyy10uW6vxniN9Vtlf836msmzLX6mULgZBsyo2VCzTtdQ
-	 v8HEJuCYV3Vzp6qLFx9lNWclFdUMun1+SF3Xe0r/IgIThr2gBMuIJcCrwNKPXlzr4k
-	 qKVgTe3En5KlysSFaraPhOlK6Hm77MlTIQOT81QI2BUf7+QXEZ3OYgm8HvmQq5bDyj
-	 EA6ptglxv3jHHKeLyaL/2d/HPCJgn2G8R6Gxm7WZ6HZYrmkdGksTvaIIGBQm3ZA2aU
-	 6u12Pn3Ty9DSA==
-Date: Tue, 17 Jun 2025 16:54:15 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: keyrings@vger.kernel.org, Steve French <sfrench@samba.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jeffrey Altman <jaltman@auristor.com>, hch@infradead.org,
-	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Keyrings: How to make them more useful
-Message-ID: <aFFzWwPoXMhMJjTL@kernel.org>
-References: <462886.1749731810@warthog.procyon.org.uk>
+	b=tnWj9Uy2c7BCkpWha/u5uEkmT9SIqT2blzfoI0++eLbOOlF9K8/ENCbm14xbzK6Hp
+	 P+imT5MRdqto5N7EKqoPey2PiJfxbqPYCn06GNnC7RvNU0O2WL3eFQFcbwWA+AHheJ
+	 VtZmUFcF6PRX1htfkCNNYnuDuNqqFxNBDbVdJEKm2kV7IqavgTt1eCwSzds7yJLx49
+	 ClwaApk4XLGc6lGRsFEbipSSflok8A2jb0Z6bstQV3hjllpB1OlTcxn4Ec1bFgZhKA
+	 TUdOMw6wcOmpi82Qa1SMg/Hi3dgQ6p2PwFa6g4kwVSfvrwfyYwdzEgqtzIS2+/rskC
+	 3bR5PRmt2Hcog==
+Date: Tue, 17 Jun 2025 15:54:19 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, dri-devel@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: types: add Opaque::from_raw
+Message-ID: <aFFzi88miMbCZ0yQ@pollux>
+References: <20250617-opaque-from-raw-v1-1-a2e99efa3ba2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,118 +65,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <462886.1749731810@warthog.procyon.org.uk>
+In-Reply-To: <20250617-opaque-from-raw-v1-1-a2e99efa3ba2@google.com>
 
-On Thu, Jun 12, 2025 at 01:36:50PM +0100, David Howells wrote:
-> Hi Jarkko, Steve, Chuck, Mimi, et al.,
+On Tue, Jun 17, 2025 at 01:36:47PM +0000, Alice Ryhl wrote:
+> Since commit b20fbbc08a36 ("rust: check type of `$ptr` in
+> `container_of!`") we have enforced that the field pointer passed to
+> container_of! must match the declared field. This caused mismatches when
+> using a pointer to bindings::x for fields of type Opaque<bindings::x>.
 > 
-> I think work needs to be done on the keyrings subsystem to make them more
-> useful for network filesystems and other kernel services such as TLS and
-> crypto.
+> This situation encourages the user to simply pass field.cast() to the
+> container_of! macro, but this is not great because you might
+> accidentally pass a *mut bindings::y when the field type is
+> Opaque<bindings::x>, which would be wrong.
 > 
-> There are a number of issues that I think need addressing:
-> 
->  (1) One of the flaws in the initial design is that whilst keys have a type
->      (which is necessary), this has to be specified as part of the lookup or
->      the search, which is overly restrictive.
-> 
->      It probably would have been better to search by description alone and
->      then, if a key is found, have any type of key with that description
->      returned and let the app/service investigate the key to find the type.
-> 
->      Now, this is still possible to implement on top of the existing API: just
->      allow a NULL type to be passed in - but we might need some way to
->      enumerate all the keys with that description, but of different types.
->      Possibly, the search function should return all the matching keys.
-> 
->      Possibly, within the kernel, for each keyring, all the keys of the same
->      description can be stored within a group structure, and the search
->      returns the group.  This could also have the added benefit of maybe
->      making it easier to handle updates.
+> To help catch this kind of mistake, add a new Opaque::from_raw that
+> wraps a raw pointer in Opaque without changing the inner type.
 
-All keys matching the description can be collected by iterating all the
-key types (instead of passing NULL).
+The patch does more than that, it also adds a hint to container_of!() and fixes
+up two occurences. I feel like we should split it up.
 
-Having only a syscall for the process has of course much better
-concurrency properties.  Just trying to understand the improvements by
-actual measure, that's all.
+> +    /// The opposite operation of [`Opaque::raw_get`].
+> +    pub const fn from_raw(this: *const T) -> *const Self {
 
->  (2) For certain applications, keys need versioning - and we need to be able
->      to get access to older versions (at least to some extent) of the keys.
->      An example of this is cifs where (if I understand it correctly) the key
->      version gets cranked, but not all servers may have caught up yet, so we
->      need to be able to try the keys in descending order of version.
-> 
->      This could also work within the group idea mentioned above.
-> 
->  (3) For certain applications, such as AFS and AF_RXRPC, we may need to be
->      able to keep a number of keys around that have the same description
->      (e.g. cell name) and basic type (e.g. rxrpc) and version, but that have
->      different crypto types (e.g. Rx security classes and Kerberos types, such
->      as RxGK+aes256-cts-hmac-sha1-96, RxGK+aes128-cts-hmac-sha256-128 or
->      RxKAD) as different servers in the same cell might not support all or we
->      might be implementing a server that is offering multiple crypto types.
-> 
->      So we might need a "subtype" as well as a version.
+Do we want to name this from_raw()? Usually from_raw() methods return either
+Self or &'a Self.
 
-1. How the history is capped? I presume it is a fixed-size circular
-   buffer, where the oldest entry is deleted, when the key is updated.
-1. How history queried by the caller?
-2. How a newer version is revoked in favor of a newer version?
+Maybe something like cast_from() and rename raw_get() to cast_into()? I think
+the latter may be confusing anyways, since it sounds like it would do somthing
+with reference counting.
 
->  (4) I think the keyring ACLs idea need to be revived.  We have a whole bunch
->      of different keyrings, each with a specific 'domain' of usage for the
->      keys contained therein for checking signatures on things.  Can we reduce
->      this to one keyring and use ACLs to declare the specific purposes for
->      which a key may be used or the specific tasks that may use it?  Use
->      special subject IDs (ie. not simply UIDs/GIDs) to mark this.
-
-Is subject ID some kind of token that a process can hold (and possibly
-can be sent to a process)?
-
-> 
->  (5) Replace the upcall mechanism with a listenable service channel, so that a
->      userspace service (possibly part of systemd or driven from systemd) can
->      listen on it and perform key creation/maintenance services.
-> 
->      From previous discussions with the systemd maintainer, it would be a lot
->      easier for them to manage if the key is attached to a file descriptor -
->      at least for the duration of the maintenance operation.
-> 
->      Further, this needs to be containerised in some way so that requests from
->      different containers can be handled separately - and can be
->      distinguished
-
-This sounds like an universally sane idea (outside the scope of the
-patch set).
-
-> 
->  (6) Move away from keeping DNS records in a keyring, but rather keep them in
->      some sort of shrinkable list.  They could still be looked up over a
->      secure channel.
-
-Don't expertise to understand the benefits of this change. 
-
-
-> 
-> To aid with at least (1), (2) and (3) and possibly (4), I think it might be
-> worth adding an extended add_key() system call that takes an additional
-> parameter string:
-> 
-> 	key_serial_t add_key2(const char *type,
-> 			      const char *description,
-> 			      const char *parameters,
-> 			      const void payload, size_t plen,
-> 			      key_serial_t keyring);
-> 
-> The parameters would get passed to the key type driver for it to extract
-> things like version number and subtype from without the need to try and fold
-> it into the payload (which may, for example, be a binary ticket obtained from
-> kerberos).  Though possibly that is a bad example as the kerberos ticket may
-> contain multiple keys.
-
-Does the parameter list mimic kernel command-line style of comma
-separated attributes?
-
-BR, Jarkko
+> +        this.cast()
+> +    }
 
