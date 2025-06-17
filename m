@@ -1,171 +1,194 @@
-Return-Path: <linux-kernel+bounces-690537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08705ADD3F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:05:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4374EADD3F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FC4719451A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:56:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530073B43D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94822ED85C;
-	Tue, 17 Jun 2025 15:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6D82EE616;
+	Tue, 17 Jun 2025 15:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hFHsLYVG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJnjQyZs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9C62ED174
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 15:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134D92EE60C;
+	Tue, 17 Jun 2025 15:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750175586; cv=none; b=Cd3iWPNV95dGf5v9gj3N5j7rruaSoIhugR1J2Jj10eF+P5JJcaGsgwwkiYEHE8PoYQ7QGrZ0CJZkStkbETQV7u8R4fy67a8gDyLFSH4dP0lw5n8P8/ER4SRlHK2dgnaEO7Dy79Eo0lo2ljVpmDd99al4wx4XvnHioENqF2KVq74=
+	t=1750175638; cv=none; b=Wua6ofzH2ItXrnB5h5eYAxlNlOiZ7YI2o1Ssqo5SYBxJkRTo54zi2zN0rEIIFqj3yS1OQXzVyrhc/Go/sVIwNMtlcMkJELUvoFrHXLA2dg8dOrzJtzgPQKIMdwsABZKU5inn8LErA5Ox1uEQS1VNQblYoFSFGlO8RNpNEwKBsII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750175586; c=relaxed/simple;
-	bh=2y/C+adZWcpGeXZ41er/vdVT0+2Y0fJsv5oavIJoY3o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dnWxwXAQg+NPurx9qRaZifYjjtxYvIYO0lgWQg/qJHBLn/c9E1JNQzBwWOimqwdVIhryHO2fRzYMJvM+vEGB4UIcGtoHQYv+B7A9XObxWIowmcE+SBndBx0DxIM2DKxCAjWVgXj7uW13btB9z8H850Ozmi2XBpecoBrLxnGdofw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hFHsLYVG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750175583;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HaT4xhEiG8Bb8Mw40gW82t8aaZIx76CCvPK1lpII0+o=;
-	b=hFHsLYVGpA1c70x6Mw37W058slgLHgVPFSvKNLVRINOvx7cXXSD5rtb102Pu2MQUzShfiA
-	by0LEWVm7XGjyXpdwKdKbgo8StOutU7GYMzqtYmJI7ZNjTJcnJmOAXP72tuU7/LmLaOEQH
-	qjxQ7YKXykY6SpFq5hlBjSgUSvKH6pY=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-266-6dY6T4ghMdm2KuzKOeWpig-1; Tue, 17 Jun 2025 11:53:02 -0400
-X-MC-Unique: 6dY6T4ghMdm2KuzKOeWpig-1
-X-Mimecast-MFC-AGG-ID: 6dY6T4ghMdm2KuzKOeWpig_1750175581
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-60835716983so5454141a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 08:53:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750175581; x=1750780381;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HaT4xhEiG8Bb8Mw40gW82t8aaZIx76CCvPK1lpII0+o=;
-        b=Hu/a7mYdaCeVFyKkrOKZ76kI8bET8vJ7ewVXb+ZAjGl0gEcEHf85QvGRpHK0oBtEpi
-         VtXy1pCGMJWMEXoL/nTsbPyjb1DBE1U88xEY5i9uWkJxVrKaeHnavvMdHvUPKWPgiJGq
-         gg/M48jjBuMlKoKRZBeuv64mQ1+vbTL4OD2+B69b9ZFGrF5vp7+zSfNsAUObnqDolzRR
-         LNNbdqkYAPyufhZosgf9sin6C2Q6Sati/7mzKtAbhaVmNxrKoPkD4X6KA3O+2zVeRxm/
-         5yHrrz2q7AgvYu0o9OwLiSiR01UmAkq2o3/BdOEqLhlqxxZfxZfVrndUALtQYo50HGai
-         da2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXugPwROL/lWv5eAanNE4c1ghspEOTTwmGBexy9QKQLBUotumd2BUNDv6lWKEp0dD379jbuHntrhyWcRX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8Kr3KCF6PlESyMXO++RJM5kKKe5N37xBIquTvmsEs5lIWv9RX
-	3GcmwkCnuNNIi6yscjbtAb1c0i1GPe9/1Auz7yAz+IKsAhxiZmXEVDi8J3ZeclL7jslkX2/vONL
-	5urRnQ5CH8xypPt/6tHhppAXvpJGOVqQTjIHd9w2TSJ9E7MdPwaf0pw9EIkXE/WOdCA==
-X-Gm-Gg: ASbGncvsJkojo1UlojThC8NcYjxJaO15Q4Y7SBhVT7LPZENtqXcK2LVoLKKuCOxNpnJ
-	p3RDHJzkWQ6O3HGlZF8a7i5VraL77gPlQ+RMsW3E4pVyZ+XnQgCY46rupVV2TxPsv4ZTY+J4gA3
-	HfF8yvPLZUZbrNbLUSlgxGb2Ps1AubBUMo86Az9Ch7cBZsRm67GOeDwEVqBCzEzMNtCtG0I7Zge
-	TZBs6y4HiZ1L4bIkWybxbtC7x8DvAveMpWmJy0Uo8G+2vuJsttVCGc6oeh+GsLtOYG6OflGy2PO
-	dWx6PfHg9LcXmKvidwTjFGHXNNgeTz7jMWR3ZqNhG7sFIUV8mnUc4maKA0QBqiWng6bMrA53fDL
-	2klyh8lzYU4BVkVV4APbl4jug223tgE4HBvJpbUSeHODHHN0=
-X-Received: by 2002:a05:6402:5193:b0:608:176f:9b5c with SMTP id 4fb4d7f45d1cf-608d09482efmr12302494a12.20.1750175580154;
-        Tue, 17 Jun 2025 08:53:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFs/FdPJD1Cpyka9ske3aQonq0wW4O8xqaFFyELuEJmexa4cPGnTwDKHRl3GxDOYGTxbaQrtg==
-X-Received: by 2002:a05:6402:5193:b0:608:176f:9b5c with SMTP id 4fb4d7f45d1cf-608d09482efmr12302476a12.20.1750175579810;
-        Tue, 17 Jun 2025 08:52:59 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f31:700:3851:c66a:b6b9:3490? (p200300d82f3107003851c66ab6b93490.dip0.t-ipconnect.de. [2003:d8:2f31:700:3851:c66a:b6b9:3490])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6097ad640bcsm2577033a12.25.2025.06.17.08.52.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 08:52:59 -0700 (PDT)
-Message-ID: <027c64d1-6736-4e1f-9995-f198b38175f1@redhat.com>
-Date: Tue, 17 Jun 2025 17:52:58 +0200
+	s=arc-20240116; t=1750175638; c=relaxed/simple;
+	bh=Xmi1segpA11UP+V+o5ts0ddLZv32iD3xxVOdV/BoX0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hJ9k2GMKUfdwBNqxj/AV3GCgWG4LUZ3OC0IOjTXN2qHGYzoDy0SPhySE2bZFpt61S4JGyif4S/dNgOHv3NzGu3lM2wer+C0zaeD2nHAI0HorgrlGHnr2lpOt8g+TNlB5ueNuC/prnorvxHFEehJEEsrRkJOqyfYi2cSwrgImw+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJnjQyZs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E2CCC4CEE3;
+	Tue, 17 Jun 2025 15:53:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750175637;
+	bh=Xmi1segpA11UP+V+o5ts0ddLZv32iD3xxVOdV/BoX0k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KJnjQyZs2WukgTIGrOZ4NLTHG4aQxtoWKt+MijZ79h2DNRRGnnK40lZLezVngpq9x
+	 xjXq9icUhycIdkZp9Aouq6wkzVoRcvPO6CBuNlrnYWcldqYEGoBtv1WqUnyqP3ojrD
+	 MOTD6sw+tMAjkCI2RLOE/O3G+lahwO6HJCwRZgeBZt/15w7goIiUgj1HOeauKt/atF
+	 BEYBWLp9fyPgxHajrXkAOPePV1oLXV7MgIrEnny+LSDvntDjc3ilNaOdVCsdCg8YbM
+	 UUx/PFfJuqM5x2fc/LKuum1o8V8Kz0yyoAvmrfT8jxbqVV+Ngu1N3Wkloqx48Qq8Y0
+	 HAWJHSVg12lYw==
+Date: Tue, 17 Jun 2025 10:53:54 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Praveen Talari <quic_ptalari@quicinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org, psodagud@quicinc.com, 
+	djaggi@quicinc.com, quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com, 
+	quic_arandive@quicinc.com, quic_mnaresh@quicinc.com, quic_shazhuss@quicinc.com
+Subject: Re: [PATCH v6 7/8] serial: qcom-geni: Enable PM runtime for serial
+ driver
+Message-ID: <d6cr4elhrbh27lmlcv5xzuel75uvsgi7klxjkevm7vg4jcbawe@5ojgetrxkag5>
+References: <20250606172114.6618-1-quic_ptalari@quicinc.com>
+ <20250606172114.6618-8-quic_ptalari@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm/ksm: calculate ksm_process_profit more accurately
-To: Longlong Xia <xialonglong@kylinos.cn>, akpm@linux-foundation.org,
- xu.xin16@zte.com.cn
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250604031758.4150209-1-xialonglong@kylinos.cn>
- <20250604031758.4150209-2-xialonglong@kylinos.cn>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250604031758.4150209-2-xialonglong@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250606172114.6618-8-quic_ptalari@quicinc.com>
 
-On 04.06.25 05:17, Longlong Xia wrote:
-> The general_profit_show() only considers ksm_pages_sharing,
-> whereas ksm_process_profit() accounts for both ksm_pages_sharing
-> and ksm_pages_shared for each process. This discrepancy leads to
-> the sum of ksm_process_profit() across all processes not being equal
-> to general_profit_show().
+On Fri, Jun 06, 2025 at 10:51:13PM +0530, Praveen Talari wrote:
+> Add Power Management (PM) runtime support to Qualcomm GENI
+> serial driver.
 > 
-> Fixes: 7609385337a4 ("ksm: count ksm merging pages for each process")
-> Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
+
+Doesn't this have impact on the behavior outside of your
+project? Or is the transition from qcom_geni_serial_pm() to explicit
+RPM merely moving code around?
+
+Seems like this deserves to not be hidden in a middle of a patch series.
+
+> Introduce necessary callbacks and updates to ensure seamless
+> transitions between power states, enhancing overall power
+> efficiency.
+> 
+
+This commit message fails to state why we need runtime PM support in the
+driver.
+
+Also, start your commit message with a problem description, per
+https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Praveen Talari <quic_ptalari@quicinc.com>
 > ---
+> v5 -> v6
+> - added reviewed-by tag in commit
+> - added __maybe_unused to PM callback functions to avoid
+>   warnings of defined but not used
+> ---
+>  drivers/tty/serial/qcom_geni_serial.c | 33 +++++++++++++++++++++++----
+>  1 file changed, 29 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+> index b6fa7dc9b1fb..3691340ce7e8 100644
+> --- a/drivers/tty/serial/qcom_geni_serial.c
+> +++ b/drivers/tty/serial/qcom_geni_serial.c
+> @@ -1686,10 +1686,10 @@ static void qcom_geni_serial_pm(struct uart_port *uport,
+>  		old_state = UART_PM_STATE_OFF;
+>  
+>  	if (new_state == UART_PM_STATE_ON && old_state == UART_PM_STATE_OFF)
+> -		geni_serial_resources_on(uport);
+> +		pm_runtime_resume_and_get(uport->dev);
+>  	else if (new_state == UART_PM_STATE_OFF &&
+>  		 old_state == UART_PM_STATE_ON)
+> -		geni_serial_resources_off(uport);
+> +		pm_runtime_put_sync(uport->dev);
+>  
+>  }
+>  
+> @@ -1827,9 +1827,11 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> +	pm_runtime_enable(port->se.dev);
 
+Any reason not to use devm_pm_runtime_enable() and avoid the
+two pm_runtime_disable() below?
 
-What happened to the original idea of [1]
+Regards,
+Bjorn
 
-[1] 
-https://lkml.kernel.org/r/20250606070314.3028593-1-xialonglong@kylinos.cn
-
--- 
-Cheers,
-
-David / dhildenb
-
+> +
+>  	ret = uart_add_one_port(drv, uport);
+>  	if (ret)
+> -		return ret;
+> +		goto error;
+>  
+>  	if (port->wakeup_irq > 0) {
+>  		device_init_wakeup(&pdev->dev, true);
+> @@ -1839,11 +1841,15 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
+>  			device_init_wakeup(&pdev->dev, false);
+>  			ida_free(&port_ida, uport->line);
+>  			uart_remove_one_port(drv, uport);
+> -			return ret;
+> +			goto error;
+>  		}
+>  	}
+>  
+>  	return 0;
+> +
+> +error:
+> +	pm_runtime_disable(port->se.dev);
+> +	return ret;
+>  }
+>  
+>  static void qcom_geni_serial_remove(struct platform_device *pdev)
+> @@ -1855,9 +1861,26 @@ static void qcom_geni_serial_remove(struct platform_device *pdev)
+>  	dev_pm_clear_wake_irq(&pdev->dev);
+>  	device_init_wakeup(&pdev->dev, false);
+>  	ida_free(&port_ida, uport->line);
+> +	pm_runtime_disable(port->se.dev);
+>  	uart_remove_one_port(drv, &port->uport);
+>  }
+>  
+> +static int __maybe_unused qcom_geni_serial_runtime_suspend(struct device *dev)
+> +{
+> +	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
+> +	struct uart_port *uport = &port->uport;
+> +
+> +	return geni_serial_resources_off(uport);
+> +}
+> +
+> +static int __maybe_unused qcom_geni_serial_runtime_resume(struct device *dev)
+> +{
+> +	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
+> +	struct uart_port *uport = &port->uport;
+> +
+> +	return geni_serial_resources_on(uport);
+> +}
+> +
+>  static int qcom_geni_serial_suspend(struct device *dev)
+>  {
+>  	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
+> @@ -1901,6 +1924,8 @@ static const struct qcom_geni_device_data qcom_geni_uart_data = {
+>  };
+>  
+>  static const struct dev_pm_ops qcom_geni_serial_pm_ops = {
+> +	SET_RUNTIME_PM_OPS(qcom_geni_serial_runtime_suspend,
+> +			   qcom_geni_serial_runtime_resume, NULL)
+>  	SYSTEM_SLEEP_PM_OPS(qcom_geni_serial_suspend, qcom_geni_serial_resume)
+>  };
+>  
+> -- 
+> 2.17.1
+> 
 
