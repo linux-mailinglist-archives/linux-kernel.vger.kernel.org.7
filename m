@@ -1,138 +1,89 @@
-Return-Path: <linux-kernel+bounces-690446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE76EADD0D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:04:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE2AADD10F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E2B3A5E72
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:01:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9D767AB834
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355B72E06EF;
-	Tue, 17 Jun 2025 15:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959812E92B9;
+	Tue, 17 Jun 2025 15:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nR6yuflu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1V8IgRl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBF22EF66C;
-	Tue, 17 Jun 2025 15:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E708D2E889A;
+	Tue, 17 Jun 2025 15:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750172491; cv=none; b=hnHVOVgGNelHxrxe8Vji8ehjPVeu4r/+v4HkbtJnJJ+GaNS6SdKXUlFIOQ4C2vq12vVPRDN6mu1UE4B3wNuWOj9b2hcxLGtmdfqEKX3fplV2fm0xgnW7Y98RbGAm9rvBOARfqci65dIZ31MDpCVP9aFQRsqamSnNkdgrYXsq8ZY=
+	t=1750173019; cv=none; b=uusAlsXv7o5kGjlmAy/aYeWxh51aOhZB3g6LnDFupEC7ZKgerjTjnM7wAPLpeRyZVLNbFIaIHH86Pb/nAAfvFBDs6Un01EpRJVacj8FKEeNC4UdI94HEOg3nw8p0Xn7GJq+JCuQxK74dbGVTuzgVylTYllY2LuaeNy8RUe+DHps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750172491; c=relaxed/simple;
-	bh=gh5DADUalEMP4gj0Me9Xk+6/WmVz+lvL0J727pePtE0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bpAJCgJIADpP2Q0yxWiBO9THYd2K0E88BYb4vzIffCqs0ywr0WEUzHJc14PSCyUJCikruMMLvZurQnTzPCJ8Gfg/BaiHOXUuI1R7XUnXP8AVvdGa5RnZ611OTBWpJg/HiKx+SfOQsqQ/7r+4sUoCIciXfbr4oXO+qGm+GUaW5n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nR6yuflu; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750172490; x=1781708490;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=gh5DADUalEMP4gj0Me9Xk+6/WmVz+lvL0J727pePtE0=;
-  b=nR6yufluEt0J5CgnpqCkg1w+7NhAMtLbcmAjnlgirD8boJ0sV1bnQKxr
-   c0AvE7uX8NDU7haUODym0vnxkC2LXKQSM/3kxytsmfmHVdgNxej1KcCoe
-   4fE7RCkLH9LVyJwiW7gPMhd928SmfA7YPWoRxhuZQh3w6CxjoMNgPy55y
-   MNSxKK6V7px46RAbPjt4uXRbf+UzwvcaR6BKWiTkqDOyJgDBGtUz3EU7h
-   jI1TmCw3ulBag/373wCCEDBnpYVEprlEOhyor2tTVUiHnwW5DbNuqdDya
-   GEv/bRjcjrH6jhN1gPz8pREZyZFM6LbA1Dkr13duiZMxahe/h9SenD3Ic
-   Q==;
-X-CSE-ConnectionGUID: JfvFuZHOQyG89V1TXS6yZw==
-X-CSE-MsgGUID: owivTaBBTLqRSHHMtzFJzQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="52494442"
-X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="52494442"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 08:01:29 -0700
-X-CSE-ConnectionGUID: N4IVYjiXQQSYIJynd6RK+Q==
-X-CSE-MsgGUID: eclSMGLOQfKXIE06ljvoFQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="149698273"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.108.47]) ([10.125.108.47])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 08:01:29 -0700
-Message-ID: <26b8939e-796a-4581-a41c-42e3582326bd@intel.com>
-Date: Tue, 17 Jun 2025 08:01:28 -0700
+	s=arc-20240116; t=1750173019; c=relaxed/simple;
+	bh=TZcOBjPsqZfGB1DMcUTuXivLLt+YrMUoZ3nRg9JcutA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qs+b4vVpu/W53/PM0eF8RBOs228FmQ3E+JAFQSqQvyLa8pAwgxdA6SYmYhjz3rd5YlNUSm/pnOd/zmiIfEjHhrlDLcNMRtjiROfTJvmaUoEVMFQ0YSYFMv0EFfZ7AtoaX1fUYKFXmzXcLJPVRL1PnqcnBah9FgWr5/B5NBMwru0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1V8IgRl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB254C4CEE3;
+	Tue, 17 Jun 2025 15:10:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750173018;
+	bh=TZcOBjPsqZfGB1DMcUTuXivLLt+YrMUoZ3nRg9JcutA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l1V8IgRlHTwSpqeHPfwcab6KJbWP4sgrPRjDiY5mVBfW1R1Ysf8BUTKEIPao3PYyQ
+	 lI3B1+Mj6q5O5kBypRlQzoI0+zeVg+I1fwkDRbujK5PcEnZUMljlB8yEQocCjbqlXl
+	 vSAD4DY6nXirSVMcaqOWWV5d61j6LRHxZvTg8UArFI6hBYa6KarYXR+JTOG3pMWy0Q
+	 ltpk+JEFpn0LUZuzNOniyP0LlW9VNrfuBZo8dxB8XEJHh8d8DFdgtkHUqCD/RXZq2Z
+	 BcjKScmmFE7bQHLs4S3AgeqqmssrlnkLDTG7lQ7nEMwFC1/4FwVhOyJn3+Gi8b0qI6
+	 q+AdRLx1gSiEA==
+Date: Tue, 17 Jun 2025 20:31:36 +0530
+From: Naveen N Rao <naveen@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, 
+	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, Sairaj Kodilkar <sarunkod@amd.com>, 
+	Vasant Hegde <vasant.hegde@amd.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
+	Joao Martins <joao.m.martins@oracle.com>, Francesco Lavra <francescolavra.fl@gmail.com>, 
+	David Matlack <dmatlack@google.com>
+Subject: Re: [PATCH v3 14/62] KVM: SVM: Track AVIC tables as natively sized
+ pointers, not "struct pages"
+Message-ID: <a7j5yllrxxzaqzjcmpfu3oxh775xgzx7h7nrkw53rmucnrbspy@zlwzwgfd7uke>
+References: <20250611224604.313496-2-seanjc@google.com>
+ <20250611224604.313496-16-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/sgx: Use ENCLS mnemonic in <kernel/cpu/sgx/encls.h>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-sgx@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-References: <20250616085716.158942-1-ubizjak@gmail.com>
- <aFF_UwJ2XlFQSZOi@kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <aFF_UwJ2XlFQSZOi@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611224604.313496-16-seanjc@google.com>
 
-On 6/17/25 07:44, Jarkko Sakkinen wrote:
-> I don't really see how this is that useful. That said, f a bug fix or
-> feature used encls mnemonic, I'd had no problems with acking it.
+On Wed, Jun 11, 2025 at 03:45:17PM -0700, Sean Christopherson wrote:
+> @@ -277,8 +265,8 @@ static int avic_init_backing_page(struct kvm_vcpu 
+> *vcpu)
+>  		return 0;
+>  	}
+>  
+> -	BUILD_BUG_ON((AVIC_MAX_PHYSICAL_ID + 1) * sizeof(*table) > PAGE_SIZE ||
+> -		     (X2AVIC_MAX_PHYSICAL_ID + 1) * sizeof(*table) > PAGE_SIZE);
+> +	BUILD_BUG_ON((AVIC_MAX_PHYSICAL_ID + 1) * sizeof(new_entry) > PAGE_SIZE ||
+> +		     (X2AVIC_MAX_PHYSICAL_ID + 1) * sizeof(new_entry) > PAGE_SIZE);
 
-It's not _that_ useful.
+Ah, you change to 'new_entry' here. Would be good to rename it to just 
+'entry', but that's a minor nit. Ignore my comment on the previous 
+patch.
 
-But old assemblers that we still want to use *NEVER* have support for
-newfanlged instructions, so we always add new instructions with ".byte".
-Then, a few years down the road when we've moved to just old assemblers
-instead of super old assemblers, we move to the real instruction names.
+For this patch:
+Acked-by: Naveen N Rao (AMD) <naveen@kernel.org>
 
-This is all business as usual.
+
+- Naveen
 
