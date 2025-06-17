@@ -1,71 +1,66 @@
-Return-Path: <linux-kernel+bounces-689886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC29ADC7D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:15:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E87ADC7DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 267CA7A65E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:13:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28ACB1893BD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786F72C031B;
-	Tue, 17 Jun 2025 10:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F363B1C54AF;
+	Tue, 17 Jun 2025 10:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/1uzIR6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="sUBCKre8"
+Received: from jpms-ob01.noc.sony.co.jp (jpms-ob01.noc.sony.co.jp [211.125.140.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19821DD9AC;
-	Tue, 17 Jun 2025 10:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BA3221568;
+	Tue, 17 Jun 2025 10:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750155295; cv=none; b=fSzkeZFz2yyHXneFMRzaPxm3+KaXKBKop2KZr447BW7UWlqKt7GecVaKqRLxd+BJga+677RvV2KUGcVuq5M5bvV6tce3NDhVE41+V8g+dQaDEVP+V1FqHw8K5IhoqrxW3tQJwfTMstP8zIsvVI/hg3WQ7O1D3uV6OCNMt3wejLc=
+	t=1750155316; cv=none; b=MHFO4/VEXUfFwBFJO7ifieZEc6UuhAXYauJ9OVqichc82f+4qvX4XdpA2/nVpoQ6/buEgxoahendbyzGiDNqLiLAz29QG+zJDFePTXtNIwpADOA36CLVANt8vCn0kQap7PUWD+01GW3cm28jMWE7mAlcJXfR6ygdV5XZYhb+kao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750155295; c=relaxed/simple;
-	bh=TGiJ78OP12uHdMJQ3lJsjwAsNWLdhU7ATUP+OpaDnTM=;
+	s=arc-20240116; t=1750155316; c=relaxed/simple;
+	bh=qi167v05pSdImwk+jUtorfAvfqhSdptwLbnqtnr/hK8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NjdzFYypV/dQnOG9U8muxe5WRnRBU/JnXHCOw2Ym9UYXzSOF7WcEF6DlK78bCPgMvi3Pd39vOQY9oxgxeXo9wOnYddoTd6eDq8kjqgGyVEjKBKvwtZGxtD8Mkvqovc37brVYjAZUXwxQ2OJv7GhTwFJx7A1Auz6ztdiRfChwe4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o/1uzIR6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E694C4CEEE;
-	Tue, 17 Jun 2025 10:14:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750155295;
-	bh=TGiJ78OP12uHdMJQ3lJsjwAsNWLdhU7ATUP+OpaDnTM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o/1uzIR6BMhnlc2FAlYqUdmXvvuDtF8wPGOeNwLChQTgBUbfOFenjr3VK/V41Gvh9
-	 Jg5EIm+eukoiDcygWJPerWvg8K/Cl8DES8H+DLZCh0cCI7gGKklAVtLqfdl2wTGkPe
-	 DALKiNyxhk5j/1mBAnw+60bPHI/gS/amHDBeMwgEh3kU63Zi9JvteyDGx13Swwp8pv
-	 dWAEOIjVr/6vLeeB6RjIH5XrAdrKk0O6vO1ChEwwxpVZYCsjcCLM5uyROvgvzsjKRd
-	 5yd+RoYXU7iK8SpnT+BoBNJFGDv1K8JHAH/Z1+bq8ENUyHEYRPNs0FAY1N7KkAX6wL
-	 tV3Y6e4JkfMDQ==
-Date: Tue, 17 Jun 2025 15:44:45 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-	op-tee@lists.trustedfirmware.org,
-	linux-arm-kernel@lists.infradead.org,
-	Olivier Masse <olivier.masse@nxp.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T . J . Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	azarrabi@qti.qualcomm.com, Simona Vetter <simona.vetter@ffwll.ch>,
-	Daniel Stone <daniel@fooishbar.org>,
-	Rouven Czerwinski <rouven.czerwinski@linaro.org>,
-	robin.murphy@arm.com
-Subject: Re: [PATCH v10 2/9] dma-buf: dma-heap: export declared functions
-Message-ID: <aFFAFcSNtMM7d38w@sumit-X1>
-References: <20250610131600.2972232-1-jens.wiklander@linaro.org>
- <20250610131600.2972232-3-jens.wiklander@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J1J/b/PZS8s7pp12ZnQAnzW/iXW+OlU5YgLGA6XL4LVZTe5jGad2yufZKfXWq6QeKeS2PgnNwdruD+Z/oiLb0m34NxiySeMHqyAx3NrF/r+k+QvzyzxEmIyzpt4jKaD/bh8ATf1CFYO99Hu0yizuZ/VNbI1eQzOTZa297vunSGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=sUBCKre8; arc=none smtp.client-ip=211.125.140.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=sony.com; s=s1jp; t=1750155313; x=1781691313;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xAGT5VwsBh5YQsXs7TeqXfNEzf33+wLYzOeBX75jZec=;
+  b=sUBCKre8P2o3shBda7aM1/HuH6f1m+BzbtyJIGKonZIlSLNp8FyxBNee
+   vhyGmRVz/nSHM+/nIWolpijPM4dry4Qr+Jg1vq/oAWJS2p6R3NCJuor8P
+   VYUN6C92S/Fhwv7rn267cvxZMvzOzWsyZL78XReQPbvyqEriie9W7rz87
+   kUKTtm/etL0redylHQcwYxvq1tzZ3PdcVT+hhSJMs12R1imYCA+SC3Q1R
+   gndhhb2Sd6r9ebakyqAK3pCU38CFPh3opcAQelXWHWmfL7U7QQEYdsH4B
+   5TGLmbcvGJUFDSHo/mN6lJ0sFppjMr7kL91RUPvpkHIkK+CYr97wnWRx/
+   Q==;
+Received: from unknown (HELO jpmta-ob02.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::7])
+  by jpms-ob01.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 19:15:05 +0900
+X-IronPort-AV: E=Sophos;i="6.16,242,1744038000"; 
+   d="scan'208";a="543112704"
+Received: from unknown (HELO JPC00244420) ([IPv6:2001:cf8:1:573:0:dddd:6b3e:119e])
+  by jpmta-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 19:15:05 +0900
+Date: Tue, 17 Jun 2025 19:14:58 +0900
+From: Shashank Balaji <shashank.mahadasyam@sony.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shinya Takumi <shinya.takumi@sony.com>,
+	20250522-userspace-governor-doc-v1-1-c8a038e39084@sony.com
+Subject: Re: [PATCH v2 0/2] cpufreq: userspace: add CPUFREQ_GOV_STRICT_TARGET
+ flag
+Message-ID: <aFFAIrGNlsGyKVLc@JPC00244420>
+References: <20250527-userspace-governor-doc-v2-0-0e22c69920f2@sony.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,52 +69,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250610131600.2972232-3-jens.wiklander@linaro.org>
+In-Reply-To: <20250527-userspace-governor-doc-v2-0-0e22c69920f2@sony.com>
 
-On Tue, Jun 10, 2025 at 03:13:46PM +0200, Jens Wiklander wrote:
-> Export the dma-buf heap functions to allow them to be used by the OP-TEE
-> driver. The OP-TEE driver wants to register and manage specific secure
-> DMA heaps with it.
-> 
-> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+Hi Rafael,
+
+Could you please take a look at this?
+
+Thanks
+
+Regards,
+Shashank
+
+On Tue, May 27, 2025 at 09:59:08PM +0900, Shashank Balaji wrote:
+> In-Reply-To: 20250522-userspace-governor-doc-v1-1-c8a038e39084@sony.com
+> Signed-off-by: Shashank Balaji <shashank.mahadasyam@sony.com>
 > ---
->  drivers/dma-buf/dma-heap.c | 3 +++
->  1 file changed, 3 insertions(+)
-
-Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
-
--Sumit
-
+> Changes in v2:
+> - Instead of modifying the documentation to say that variation in frequency is
+> possible despite setting scaling_setspeed, add the CPUFREQ_GOV_STRICT_TARGET
+> flag to the userspace governor to make its behaviour match the expectation when
+> used with the intel_pstate driver with HWP enabled
+> - Mention in the documentation that variation in frequency due to hardware
+> factors is possible
+> - Link to v1: https://lore.kernel.org/r/20250522-userspace-governor-doc-v1-1-c8a038e39084@sony.com
 > 
-> diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
-> index 3cbe87d4a464..cdddf0e24dce 100644
-> --- a/drivers/dma-buf/dma-heap.c
-> +++ b/drivers/dma-buf/dma-heap.c
-> @@ -202,6 +202,7 @@ void *dma_heap_get_drvdata(struct dma_heap *heap)
->  {
->  	return heap->priv;
->  }
-> +EXPORT_SYMBOL(dma_heap_get_drvdata);
->  
->  /**
->   * dma_heap_get_name - get heap name
-> @@ -214,6 +215,7 @@ const char *dma_heap_get_name(struct dma_heap *heap)
->  {
->  	return heap->name;
->  }
-> +EXPORT_SYMBOL(dma_heap_get_name);
->  
->  /**
->   * dma_heap_add - adds a heap to dmabuf heaps
-> @@ -303,6 +305,7 @@ struct dma_heap *dma_heap_add(const struct dma_heap_export_info *exp_info)
->  	kfree(heap);
->  	return err_ret;
->  }
-> +EXPORT_SYMBOL(dma_heap_add);
->  
->  static char *dma_heap_devnode(const struct device *dev, umode_t *mode)
->  {
+> ---
+> Shashank Balaji (2):
+>       cpufreq: userspace: set CPUFREQ_GOV_STRICT_TARGET flag
+>       cpufreq, docs: userspace: mention variation in freq due to hw coordination
+> 
+>  Documentation/admin-guide/pm/cpufreq.rst | 4 +++-
+>  drivers/cpufreq/cpufreq_userspace.c      | 1 +
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+> ---
+> base-commit: 914873bc7df913db988284876c16257e6ab772c6
+> change-id: 20250522-userspace-governor-doc-86380dbab3d5
+> 
+> Best regards,
 > -- 
-> 2.43.0
+> Shashank Balaji <shashank.mahadasyam@sony.com>
 > 
 
