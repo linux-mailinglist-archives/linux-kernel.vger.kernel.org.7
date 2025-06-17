@@ -1,93 +1,115 @@
-Return-Path: <linux-kernel+bounces-689989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC9BADC9A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:42:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9920ADC9AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD99B178C16
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:42:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 839817AA5A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4072DF3C7;
-	Tue, 17 Jun 2025 11:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977442DF3CC;
+	Tue, 17 Jun 2025 11:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="v68wUDbK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DR+EApLN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15E5202C5D;
-	Tue, 17 Jun 2025 11:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F141E202C5D;
+	Tue, 17 Jun 2025 11:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750160527; cv=none; b=dEnlp2G0xzXRHaIIQGmnC0zY+94QNpCZuZTrQ/c7LG8IlgGLCDjwcrcN2Rb+nwXg60JHK5OGYQo0WHR8J1gcMICPiHmPOEb2WgkkovfQOEc7r/K6BjP4EWiS/fQlg/jNY8ABoeNnTYcKi0morpG9eSOC7q9OaUN/t1UhvsNM8mg=
+	t=1750160576; cv=none; b=sMU42Ty/szdJHPH10ZrPY6fbpiamjYKPOVdLo3EYZnq462BAW/YMshI3NWM2yFNIae5QOIz4LmL223cn+Qp0Qmh7o0wdIzE/wFkZ+nVDE3sFj85RapKscD9eH0i5wHshOnqA8UTxYpKxcAiR6mQ0NgI7h92+yMF3+5Dh5WV6cPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750160527; c=relaxed/simple;
-	bh=lOwm9sI0KP7rL93Un/JNFyYB8Kf8ajV3HnbE+/qfiBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I3VvFfeojGvNYPQfR27RMdCfJbo8khrOqrFdWUsy3Lso3WquiuMyKpLOOGcyOdlPi0IXZAXAa6jmNQtmr7odpYxa7z2w9m3VCIu/NX02jsCXVvQyVD7NjXOZ73RXYwlUpEiDEmNdi0b/d2g3dig/dIQhiJaoXTtDtZ+n9PNjA9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=v68wUDbK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F436C4CEE3;
-	Tue, 17 Jun 2025 11:42:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750160526;
-	bh=lOwm9sI0KP7rL93Un/JNFyYB8Kf8ajV3HnbE+/qfiBE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=v68wUDbK/b7Wqos24oKH/hgR/Q5WDrEmQ4KRbOHAfqO7y9ASMzzVY6e9415zEmuL3
-	 GD+Sx7+9vsPaGTDoVxlQ60j67veVmpRY6PO2KEJWXSfMMn4Ck5bERJDdC806VchCi+
-	 uPiqFqnQ+31VCqlPvFsvVdU/n7vQ0FVSdrDfLy6o=
-Date: Tue, 17 Jun 2025 13:42:02 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 29/33] serial: 8250: drop DEBUG_AUTOCONF() macro
-Message-ID: <2025061733-pushy-croon-08da@gregkh>
-References: <20250611100319.186924-1-jirislaby@kernel.org>
- <20250611100319.186924-30-jirislaby@kernel.org>
- <alpine.DEB.2.21.2506171216090.37405@angie.orcam.me.uk>
+	s=arc-20240116; t=1750160576; c=relaxed/simple;
+	bh=ZvdSEdU5JBmsYcVsM6sokn+S/zufsOKiewcUzKJvMsA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=S41LxCaUNYhjPlqLpFhdjOdwZy/L41MKFytQ1T2ZaDHQdgTjG5P50U4MQLy40CpTZjKcqaGOozK+r6rJ2rnLufITPBhhY8kxLhr54/WXq3zu+pELt2VY4PNWq+TJAc/7VP2N/EK9itFvmxlwd3WXqcT9AhZzi/eNq1PDhb+2w+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DR+EApLN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3033BC4CEE3;
+	Tue, 17 Jun 2025 11:42:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750160575;
+	bh=ZvdSEdU5JBmsYcVsM6sokn+S/zufsOKiewcUzKJvMsA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=DR+EApLNj6iIvg5dNSpfFJM6L6zzGCAh19XLGo1BkrbM+G7UcF5kqpyWLDtUl4IAe
+	 hLOmcWZv6yjvIA3BIZ3mhhiOplHpIJOEl9+3cuqKaPc2EJAAntbOk1CHS3VlP7q0Sj
+	 DVmRvRioXhTADtcPNwObbUbBqv8TnX8LFJG0i1c4DA0XSuCxcBiT9+UBTf6DUXCQuY
+	 GlwDYkU4tc9QnFvfVaSgQzaWEZwQoy4DaC8xmaaIwWj43BZ/SOqq1VMuCktNmp5Y0V
+	 1G/RyLUXnDKifC/+cPZ+SRlYR8+S/exfpBLZHVroFpzdcaNU1EHYJDlh4v3WYTIyai
+	 BPr+qwWHW39Mg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Oliver Mangold" <oliver.mangold@pm.me>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Asahi Lina" <lina@asahilina.net>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 1/5] rust: types: Add Ownable/Owned types
+In-Reply-To: <aFADYBIYqQjMx118@mango> (Oliver Mangold's message of "Mon, 16
+	Jun 2025 11:43:34 +0000")
+References: <20250502-unique-ref-v10-0-25de64c0307f@pm.me>
+	<d6hUddIgwZqRCgQQQV7L2VG4idnic0hOdWqt67Itt_xixs1RI25dMrPZRMyoIe2W_FS4eL6X66J_iclD2aUA0Q==@protonmail.internalid>
+	<20250502-unique-ref-v10-1-25de64c0307f@pm.me> <87zffvz65x.fsf@kernel.org>
+	<uQThW1b1Vsk26nMFCbW4JE3fdvnK2zfmwC8aKJJWA12u4sT2-0ZTJk63QiSyH6K31wFvYTTcJ6NTzPn7JtfwEQ==@protonmail.internalid>
+	<aFADYBIYqQjMx118@mango>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Tue, 17 Jun 2025 13:42:47 +0200
+Message-ID: <87zfe68uh4.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2506171216090.37405@angie.orcam.me.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 17, 2025 at 12:32:48PM +0100, Maciej W. Rozycki wrote:
-> On Wed, 11 Jun 2025, Jiri Slaby (SUSE) wrote:
-> 
-> > DEBUG_AUTOCONF() is always disabled (by "#if 0"), so one would need to
-> > recompile the kernel to use it. And even if they did, they would find
-> > out it is broken anyway:
-> >   error: variable 'scratch' is used uninitialized whenever 'if' condition is false
-> 
->  This is removing useful debugging aids.
+"Oliver Mangold" <oliver.mangold@pm.me> writes:
 
-How can it be "useful" if it's broken and no one has ever reported that?
+> On 250502 1157, Andreas Hindborg wrote:
+>> > +
+>> > +impl<T: Ownable> Owned<T> {
+>> > +    /// Creates a new instance of [`Owned`].
+>> > +    ///
+>> > +    /// It takes over ownership of the underlying object.
+>> > +    ///
+>> > +    /// # Safety
+>> > +    ///
+>> > +    /// Callers must ensure that the underlying object is acquired an=
+d can be considered owned by
+>> > +    /// Rust.
+>>
+>>
+>> This part "the underlying object is acquired" is unclear to me. How abou=
+t:
+>>
+>>   Callers must ensure that *ownership of* the underlying object has been
+>>   acquired. That is, the object can be considered owned by the caller.
+>>
+>>
+>
+> Yes, made me think about the phrasing, too. But the main point is, that t=
+he
+> object must be considered to be owned by the `Owned<T>` after the function
+> call, no?
+>
+> So maybe:
+>
+>    Callers must ensure that ownership of the underlying object can be
+>    transfered to the `Owned<T>` and must consider it to be transfered
+>    after the function call. This usually implies that the object
+>    most not be accessed through `ptr` anymore.
 
->  The issue with compilation is related to commit 3398cc4f2b15 ("serial: 
-> 8250: Add IIR FIFOs enabled field properly"), which removed the assignment 
-> of IIR to `scratch' (although a path did exist before it that bypassed the 
-> assignment anyway), and can be trivially fixed by bringing the assignment 
-> back and moving the debug statement next to it.
+Sounds good to me =F0=9F=91=8D
 
-So it's been broken for over 2 years and no one has asked for it to be
-fixed?
 
->  I agree that "#if 0" isn't very useful as it requires patching the source 
-> to activate; changing it to "#ifdef DEBUG" would make more sense nowadays.
+Best regards,
+Andreas Hindborg
 
-No, dynamic debugging is the proper solution, not build-time stuff.  If
-you really need/want this, add it back in that way, not this old-style
-"let's rebuild the whole kernel" type of thing.  This isn't the 1990's
-anymore :)
 
-thanks,
-
-greg k-h
 
