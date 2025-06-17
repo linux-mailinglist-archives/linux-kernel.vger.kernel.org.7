@@ -1,167 +1,178 @@
-Return-Path: <linux-kernel+bounces-690824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C150EADDCDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:05:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB70ADDCE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41EA67A2788
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:04:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 469D217FA05
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724F32E7172;
-	Tue, 17 Jun 2025 20:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7FF2EBBAF;
+	Tue, 17 Jun 2025 20:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RjJadWSm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NJ70yeuu"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402C3CA4B
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 20:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B840B2F2714
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 20:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750190750; cv=none; b=nnF9JsgcMJ6MI1SOM1pm9+KYjTucej8bBgK+pah15nvfFBIAUCTVDrE8qUSyXSmbyaQh57TIY+34hvjnQ01mupif7h8FucT0+zbfy1oPCB6E4/cuOUAcfFLH5q6Yp+VsUfxK3lyfcbz11D7pL2rSdCnxgdHt/eyHcPIDXOyV2YQ=
+	t=1750190776; cv=none; b=bVq7QmONdXQDl7QQ1Y7GNWEU/EIrInhnfS7N9Bl2TGWHZrYp+cqqxkwTsMJSEprlQAsIAHFxgH1NcCu1ZTB9KiIvlbbcm0GjByfqPpkxx0Zbn4faoC8G58R4lLUU4FE/Er/O7qDOlmSWt6NkZcILXGTDiPYFT3uzTBPIyKSn+uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750190750; c=relaxed/simple;
-	bh=qxrlP5wx3wm5ffqiQ/jHZk1W8SOknrUkEIcDQebObKc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=Vs+IiQlK+wT+m36JKF9uqMxL43oug3UilENdFqaCfjCxj3i5gRNKKMhkwGkJjfSyEjvNacCa9FA6H1Imhh0lQQgJfcfYxMf/lVW+UIGkCYO0go5XUq9uWfm6RI7mHBYxiYfEZiuORhFmHo6GJIQOJS3VuBaPfFUDdlqD0FvuNtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RjJadWSm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750190748;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RlptmckFm3OqP+oSzwoFBzQgslgWEXABhcW4F5+Im4Q=;
-	b=RjJadWSmBBZsvdWblxDLTL5fyHTcwmKggX/BIHpzpJN+JfmhGx4tIGzKHRRhGOVdsWE2nl
-	8iYcOMQ5NGfdGL/uU51lygDb9+mekMAzls35yUEa9+o4ckjyLpBBudovA3z0SFT1qH5Ui5
-	mPt8OnGLZauqyCvNfuISB0HUaiUKsOE=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-68-61D-qG_LO2azkjCWVZYVWA-1; Tue, 17 Jun 2025 16:05:46 -0400
-X-MC-Unique: 61D-qG_LO2azkjCWVZYVWA-1
-X-Mimecast-MFC-AGG-ID: 61D-qG_LO2azkjCWVZYVWA_1750190745
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-32b40be4525so21160081fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:05:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750190744; x=1750795544;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RlptmckFm3OqP+oSzwoFBzQgslgWEXABhcW4F5+Im4Q=;
-        b=HPlV+KeJCOuvbeDJQx4oBzAvW/+ZZuWvMwioLoREaCmH43k5nMPiXcEspaP3QGj8T/
-         s9/sMu57QqtcQBqDRMOaI53Sy7pzSpiHQ5iSjG4gggj5sdb+QZscbvmHNDJp077guPM3
-         Pf/hkIoj7Lh5gHP2VsCg+Xtj1TczuR6iwuZ7KL87zmKQItHPaDL6iGrGioisBfHboW65
-         +YlKCGM4jQRmRI7HTd87l5JMdc6F4b35+OA3SVaTQkFsSQdyQUc4FWEZdtPRCUBMSK4q
-         H7RwWI6TQN1yVKYHMfKMHhN6MpvK6Gy8Li8vqKReamwGtRJ9Hk+Yr4/Sc7WADnk+nLfa
-         9f1g==
-X-Gm-Message-State: AOJu0Yz9ZZV9CfLK5gdIpZsEWjDA+KNf6ZH561xDgt9pVcdFvd0GDAvn
-	aISdZ1oRVf2sNZPyfKvGRf/Q+Aevzm863iXvIPEqv4Vrq7KERBa7RClvqpq3Ywj+9RBsd5W4aWQ
-	5ZvhfPasnRxH/P0Hi90fXFK0hx/RzADO0dMy19bNJvEb0YV4e+h2clgjdqkg88opcYVG0qV7S+7
-	w6EwZojlqsIMWnf59F2pHjwkiwOYl9JKJ/H3SL20BGqP806QGDkbk=
-X-Gm-Gg: ASbGncvgY5CSJCI/wKCnH8moCaGTArp1ASwh7FpRxWpQtWz9yxE3s9Dx5jokgujYFyT
-	VbyHtcSblo7Lqurkw04T9ZnhBBTkDmUu2TdaPNN7+qZXoF1ccQmTYht0A2bv36xuf+jCBg9Or3L
-	om
-X-Received: by 2002:a2e:a546:0:b0:32a:648e:7ee3 with SMTP id 38308e7fff4ca-32b4a6dbc53mr51983001fa.25.1750190744394;
-        Tue, 17 Jun 2025 13:05:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHjri2HblvmO9lJyZCGwHDbmMcwo6053CGagJL48df8Y1FKZSqhJ0vTHbqp1IKfUUx3LACfZchDU9AbjYbvm54=
-X-Received: by 2002:a2e:a546:0:b0:32a:648e:7ee3 with SMTP id
- 38308e7fff4ca-32b4a6dbc53mr51982931fa.25.1750190743858; Tue, 17 Jun 2025
- 13:05:43 -0700 (PDT)
+	s=arc-20240116; t=1750190776; c=relaxed/simple;
+	bh=nxG0MN8gNOMVDZDTw/GF5IpT1tBDjSa6XvsqeaNOsRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V0DTL+ZAVMv5AvaFKD9M7U//avbJt2ftL+ZNd3ks9xZAFAyWx1Jwx48eMB5ygMx0a0ZfVUmnhPRarW9WpPs5/H6X9dxCqRzI6J+0n1v4fV0ow334hdlQZp+OvbEPcREaUfezfq6VZ6SvO/kItkFgXUllu6JirzVm0LUbAIEhp3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NJ70yeuu; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5098140E01D6;
+	Tue, 17 Jun 2025 20:06:11 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id CdwBwy_wbeSr; Tue, 17 Jun 2025 20:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1750190765; bh=XvlQhiaovgN0UX7t8GkLS4GdvYCHO1JNmYVvwUvQgTc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NJ70yeuuq82hluIe6QeArqw8ggjLztu94ilbEOtzZZwpTcpt4ZaWVXzdyfrjeAYnt
+	 ufkAbW24IFdlBlkpTKJKp9Bl7MzAVfhnqt8HY41oXfqDReCwobs9nQ6ByV+BId18x4
+	 eUPOTjqvMcQ0sGV+EfNPM9a4UJgXbG9bX9jumxZ22DCXcplQQC5FRiRcq974FuPa85
+	 F8nWmKUXyDv5sDDKG6T6F4dZEbsvmrp+ZFnAkpNjdq7zV7VJuFPEpVbTBqECFtjh9q
+	 wmtcO7IkNsSWnaem3k4GqBC90on8yOVEtdSWheauMctfts6LftuyXOLHEvJBPBdzra
+	 +rkIj6HglAmV3ONhUfD5gKd2uElK+krjA+UNsBJcf2+kqn9TyRKVL0DbBGC/GmJZwP
+	 hSwzy0DyIXyfP+8uyIFLk8CIgbL9/KqhemDIZWX3yAGuq67Rmq0xXt5XzRV3G6tVNB
+	 N0Dl5L6Q3Vf3TQKvgJ16UYRNSLmMos7WD2u0TGFR/hw/R9jWsfNPvfVPwaqYo5IyuD
+	 R9zp7uUtPcG1eBjMbi5JGlU1bd7j6SlL2rCwqXAsdTR87679gMkaUiDjdgWDdjAtGy
+	 vi64cHPGyDg8FQtTaB+/Xh9J/xdYhDJC26qw7dZkRtczRH9/HjRy3mhTxlpA0fEN7z
+	 mlVvxN/JgArGfg7E1KnXuguU=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 26E2B40E00DD;
+	Tue, 17 Jun 2025 20:05:58 +0000 (UTC)
+Date: Tue, 17 Jun 2025 22:05:51 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Mikhail Paulyshka <me@mixaill.net>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] x86/rdrand: disable RDSEED on AMD Cyan Skillfish
+Message-ID: <20250617200551.GIaFHKnyPV_XsSjlMP@fat_crate.local>
+References: <20250524145319.209075-1-me@mixaill.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Jirka Hladky <jhladky@redhat.com>
-Date: Tue, 17 Jun 2025 22:05:30 +0200
-X-Gm-Features: AX0GCFtJIZV9BDx3wKDiaSFS31gx1BqxtU5KPeC5BqxT33JbBy0MfTYylJzVdEk
-Message-ID: <CAE4VaGBLJxpd=NeRJXpSCuw=REhC5LWJpC29kDy-Zh2ZDyzQZA@mail.gmail.com>
-Subject: [BUG] Kernel panic in __migrate_swap_task() on 6.16-rc2 (NULL pointer dereference)
-To: linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250524145319.209075-1-me@mixaill.net>
 
-Hi all,
+On Sat, May 24, 2025 at 05:53:19PM +0300, Mikhail Paulyshka wrote:
+> AMD Cyan Skillfish (Family 17h, Model 47h, Stepping 0h) has an
+> error that causes RDSEED to always return 0xffffffff, while RDRAND
+> works correctly.
+> 
+> This patch masks the RDSEED cap for this CPU so that both
+> /proc/cpuinfo and direct CPUID read report RDSEED as unavailable.
+> 
+> 
+> v2:
+>   * Limit changes to AMD Cyan Skillfish
+>   * Replace the runtime RDSEED sanity check with a simple
+>     family/model/stepping match
+> 
+> Signed-off-by: Mikhail Paulyshka <me@mixaill.net>
+> ---
+>  arch/x86/include/asm/msr-index.h       | 1 +
+>  arch/x86/kernel/cpu/rdrand.c           | 9 +++++++++
+>  tools/arch/x86/include/asm/msr-index.h | 1 +
+>  3 files changed, 11 insertions(+)
 
-I=E2=80=99ve encountered a reproducible kernel panic on 6.16-rc1 and 6.16-r=
-c2
-involving a NULL pointer dereference in `__migrate_swap_task()` during
-CPU migration. This occurred on various AMD and Intel systems while
-running a CPU-intensive workload (Linpack, Stress_ng - it's not
-specific to a benchmark).
+Does this one work too?
 
-Full trace below:
 ---
-BUG: kernel NULL pointer dereference, address: 00000000000004c8
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 4078b99067 P4D 4078b99067 PUD 0
-Oops: Oops: 0000 [#1] SMP NOPTI
-CPU: 74 UID: 0 PID: 466 Comm: migration/74 Kdump: loaded Not tainted
-6.16.0-0.rc2.24.eln149.x86_64 #1 PREEMPT(lazy)
-Hardware name: GIGABYTE R182-Z91-00/MZ92-FS0-00, BIOS M07 09/03/2021
-Stopper: multi_cpu_stop+0x0/0x130 <- migrate_swap+0xa7/0x120
-RIP: 0010:__migrate_swap_task+0x2f/0x170
-Code: 41 55 4c 63 ee 41 54 55 53 48 89 fb 48 83 87 a0 04 00 00 01 65
-48 ff 05 e7 14 dd 02 48 8b af 50 0a 00 00 66 90 e8 61 93 07 00 <48> 8b
-bd c8 04 00 00 e8 85 11 35 00 48 85 c0 74 12 ba 01 00 00 00
-RSP: 0018:ffffce79cd90bdd0 EFLAGS: 00010002
-RAX: 0000000000000001 RBX: ffff8e9c7290d1c0 RCX: 0000000000000000
-RDX: ffff8e9c71e83680 RSI: 000000000000001b RDI: ffff8e9c7290d1c0
-RBP: 0000000000000000 R08: 00056e36392913e7 R09: 00000000002ab980
-R10: ffff8eac2fcb13c0 R11: ffff8e9c77997410 R12: ffff8e7c2fcf12c0
-R13: 000000000000001b R14: ffff8eac71eda944 R15: ffff8eac71eda944
-FS:  0000000000000000(0000) GS:ffff8eac9db4a000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000000004c8 CR3: 0000003072388003 CR4: 0000000000f70ef0
-PKRU: 55555554
-Call Trace:
- <TASK>
- migrate_swap_stop+0xe8/0x190
- multi_cpu_stop+0xf3/0x130
- ? __pfx_multi_cpu_stop+0x10/0x10
- cpu_stopper_thread+0x97/0x140
- ? __pfx_smpboot_thread_fn+0x10/0x10
- smpboot_thread_fn+0xf3/0x220
- kthread+0xfc/0x240
- ? __pfx_kthread+0x10/0x10
- ? __pfx_kthread+0x10/0x10
- ret_from_fork+0xf0/0x110
- ? __pfx_kthread+0x10/0x10
- ret_from_fork_asm+0x1a/0x30
- </TASK>
+From: Mikhail Paulyshka <me@mixaill.net>
+Date: Sat, 24 May 2025 17:53:19 +0300
+Subject: [PATCH] x86/rdrand: Disable RDSEED on AMD Cyan Skillfish
+
+AMD Cyan Skillfish (Family 17h, Model 47h, Stepping 0h) has an error that
+causes RDSEED to always return 0xffffffff, while RDRAND works correctly.
+
+Mask the RDSEED cap for this CPU so that both /proc/cpuinfo and direct CPUID
+read report RDSEED as unavailable.
+
+  [ bp: Move to amd.c, massage. ]
+
+Signed-off-by: Mikhail Paulyshka <me@mixaill.net>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/20250524145319.209075-1-me@mixaill.net
 ---
+ arch/x86/include/asm/msr-index.h       | 1 +
+ arch/x86/kernel/cpu/amd.c              | 7 +++++++
+ tools/arch/x86/include/asm/msr-index.h | 1 +
+ 3 files changed, 9 insertions(+)
 
-**Kernel Version:**
-6.16.0-0.rc2.24.eln149.x86_64 (Fedora rawhide)
-https://koji.fedoraproject.org/koji/buildinfo?buildID=3D2732950
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index b7dded3c8113..5cfb5d74dd5f 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -628,6 +628,7 @@
+ #define MSR_AMD64_OSVW_STATUS		0xc0010141
+ #define MSR_AMD_PPIN_CTL		0xc00102f0
+ #define MSR_AMD_PPIN			0xc00102f1
++#define MSR_AMD64_CPUID_FN_7		0xc0011002
+ #define MSR_AMD64_CPUID_FN_1		0xc0011004
+ #define MSR_AMD64_LS_CFG		0xc0011020
+ #define MSR_AMD64_DC_CFG		0xc0011022
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 93da466dfe2c..c2ef5ab4a9e3 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -930,6 +930,13 @@ static void init_amd_zen2(struct cpuinfo_x86 *c)
+ 	init_spectral_chicken(c);
+ 	fix_erratum_1386(c);
+ 	zen2_zenbleed_check(c);
++
++	/* Disable RDSEED on AMD Cyan Skillfish because of an error. */
++	if (c->x86_model == 0x47 && c->x86_stepping == 0x0) {
++		clear_cpu_cap(c, X86_FEATURE_RDSEED);
++		msr_clear_bit(MSR_AMD64_CPUID_FN_7, 18);
++		pr_emerg("RDSEED is not reliable on this platform; disabling.\n");
++	}
+ }
+ 
+ static void init_amd_zen3(struct cpuinfo_x86 *c)
+diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
+index e7d2f460fcc6..2333f4e7bc2f 100644
+--- a/tools/arch/x86/include/asm/msr-index.h
++++ b/tools/arch/x86/include/asm/msr-index.h
+@@ -624,6 +624,7 @@
+ #define MSR_AMD64_OSVW_STATUS		0xc0010141
+ #define MSR_AMD_PPIN_CTL		0xc00102f0
+ #define MSR_AMD_PPIN			0xc00102f1
++#define MSR_AMD64_CPUID_FN_7		0xc0011002
+ #define MSR_AMD64_CPUID_FN_1		0xc0011004
+ #define MSR_AMD64_LS_CFG		0xc0011020
+ #define MSR_AMD64_DC_CFG		0xc0011022
+-- 
+2.43.0
 
-**Reproducibility:**
-Happened multiple times during routine CPU-intensive operations. It
-happens with various benchmarks (Stress_ng, Linpack) after several
-hours of performance testing. `migration/*` kernel threads hit a NULL
-dereference in `__migrate_swap_task`.
+-- 
+Regards/Gruss,
+    Boris.
 
-**System Info:**
-- Platform: GIGABYTE R182-Z91-00 (dual socket EPYC)
-- BIOS: M07 09/03/2021
-- Config: Based on Fedora=E2=80=99s debug kernel (`PREEMPT(lazy)`)
-
-**Crash Cause (tentative):**
-NULL dereference at offset `0x4c8` from a task struct pointer in
-`__migrate_swap_task`. Possibly an uninitialized or freed
-`task_struct` field.
-
-Please let me know if you=E2=80=99d like me to test a patch or if you need
-more details.
-
-Thanks,
-Jirka
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
