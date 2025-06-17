@@ -1,205 +1,255 @@
-Return-Path: <linux-kernel+bounces-689676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F028ADC53B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:44:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B7AADC57C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 052D97A43DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:43:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADA373AAB8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9FD28FFEC;
-	Tue, 17 Jun 2025 08:44:33 +0000 (UTC)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A0928FFEC;
+	Tue, 17 Jun 2025 08:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="a6vfYuY6"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF45D28FFE1;
-	Tue, 17 Jun 2025 08:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476F728ECE5
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 08:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750149873; cv=none; b=fm0tZXzzkqp4+9ISZ2sWXw960aEa327E6gnDjd7XXZcXpJdpvgBzU2KQmIP6pA+GVIFYCiRi9TEEvcsy0uIjSl4HdjOXail+A4eLOd6ceyZXYcWbswoaKCJTiKQ1jWJCrwP29RelJ3lxMwkpiBW4ItNiJjNDGK1cDjDPMqBGxeA=
+	t=1750150624; cv=none; b=E8HhJMx86KhIj00AIaFHN2jCswY9ZLBSGV2ZIFs/GO86lVVRCrLyA0g5lUG6ajFXi59lE5N3GWL/SdsDt7r7jTcFd0p6Y28nrdjkrU50HX1Dd71nAFKzzRoOSMAigNC9M49myBaz6+VC1gyXB4+araq+lnvdaP5G8iqKZjKydvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750149873; c=relaxed/simple;
-	bh=EMaZW0W6NTuCn8tFaeSafgDTZ6GVDT5IJeOSEngyzIk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FC9RUxL2DadSO9D3rU5T8z3u/NcwKJ/h8otpigCvDMMSsNcEFQJKrJfdQVyK5hUZjcyYHMdXcQsJFLrFjF3rrbjUmJrnQ4N2vm9JGQoenxsz91eoMEkEaxNYt15bCO9gPzdrsHa3jNddC/Drxdk20Uk+dUnYjg4egFDGIq11Q7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-87f1bd2229aso547479241.0;
-        Tue, 17 Jun 2025 01:44:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750149869; x=1750754669;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fIpxA99mr6qgUAtAVkjCW/9Y2TY9goKEtR/+Z0STSCw=;
-        b=Gezgqh4h3u8vxn4bHL+2WB1tvXAPhjqxmE/Obwu29gpU+r8xsfu5b2HaXw8ysBZ/H2
-         zfcqJ/tG+WR4PhuHzChrpU5zFJTtIpk/4Jan/4EGugJsfaIvlZxyyFMXg82m5iLYBB96
-         A9qMr5ckH8oog+3/vVXML4cjlVEX46TryBGhiXkODfhoi2GdK41DgRhON/Z7WwbbZ/8F
-         jKAFuLtGVw/xNNgYWKIkZtWDhzXO2bT+t+B1xebk8kaSdFvZIA5bAL8EPDIwxkOdXVlE
-         tcmE8OYQut5TYO2Tkj23bfCAbvWl4Bu8KdvkRVAzVH6rmc7KUHS5CXLq9wwDI3rh21QN
-         7z9w==
-X-Forwarded-Encrypted: i=1; AJvYcCU7NSffZT0H4cWUPfW1SJhNslDrUhR00XzoQQqL3V3ifMid92cLPURIY7Zu5808QD9zUy8MAa2b2nwtw4JJ@vger.kernel.org, AJvYcCV1xlpxtfQc9B6s8e5OdPNIhx9BwnaX4H6p+Kbi6ODwAAp2Q7MS+VyggOwjq1Z0Nb2kgbhONvbhJ/g3BXUr@vger.kernel.org, AJvYcCVYSMvmaYjxC8dIUpa/70YcmhqJTWStFQg5vqhqaIELCv1Bar1We6JwBP9KBtSQ0hACl9YK5nhqO6RqIJzTKJ2DmgU=@vger.kernel.org, AJvYcCXa373lfYmDdrNJ4ADz0NAkA5uQIXj6VoV1IuATe8EaLC7LT7JjGVXPg/xw9eFtbwYVMqJ25itumVAr@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPig2Z5PMQqK7Cga0F3h5Qfca6UIwYoWw1K/A/YBT1tIExtnFZ
-	Y6fw3Io1U1EygFdC+3Otws54FBMHcpvAii50KqdnBlhHbJCB4s14Pr+Hn0B9dPGS
-X-Gm-Gg: ASbGncuuFOwvKotT+6TzIaR7rHErz2frQ7FF3xdD6xLW5832TxEOtoFlAajGo04VEDY
-	1gwwjLL7Gu+g/s1CzwBlAol8P7ybOjf8Vsi31v5YWTDa0I0p0smXMKjkc3SV02GzYHZ4ZBuuYpU
-	M9GujpgC1QxAP2+pRcrRlTd4CKMnGmFFQ0ngl3ysRLsDyk3FxJPZc9wwUQWfI05FDNT+RKAPZQ4
-	faTgCW7WTIBnzBprRylZQCqPyoxux/zobYxgpKKJo1lCIYpkCdWvth5Q9SwTNpYtERMIjhKzPkr
-	2IKlfh/wLslv+PHldcIZmOmA16U0ZNPS4fjvuD5wfHHLITUg1XQ9ixAgHfFWtD6wlny11AYtjTN
-	O3AtRuqUvD0wcEPVaU47XWRlX
-X-Google-Smtp-Source: AGHT+IGkzaQczw5HupLSBSC9OG58i3xOsAJR2nM/rhptgXTUii39REDpddFugyuat8Ca+EXMbd2xPw==
-X-Received: by 2002:a05:6102:8359:b0:4e9:8f71:bd6e with SMTP id ada2fe7eead31-4e98f71bfe3mr41701137.0.1750149868593;
-        Tue, 17 Jun 2025 01:44:28 -0700 (PDT)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87f21ab5768sm1107859241.10.2025.06.17.01.44.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 01:44:28 -0700 (PDT)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-87f1bd2229aso547466241.0;
-        Tue, 17 Jun 2025 01:44:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVLLPpg6cY7Nvmzi1gnwmmbMtvrypuTX2RWHOAKv2HCLgfS0QDxbfebsMbkD56Oy2cPUcFyY4HTxBSv0NAd@vger.kernel.org, AJvYcCW8M+TKKDHgubmG0a9+sRSvtLeOEb2aUmT+UX74syO9S/uNoNvFcS0JztcTdJV+J1PjHepgcNBNGTEeieG3r5pOMKc=@vger.kernel.org, AJvYcCWGS1sav0xl0j0gYXgaWk6u/FmGektBKAcGYECXYNjByukMqUezGiMHYn6MQ7AN3oRudroqtWjUTTkf@vger.kernel.org, AJvYcCWvEsKjaHLQGBIlpQw1Gijr+W1BjqM/CbE0oMkwGwwXfFG6xH3H+XiDJ+lDu8HFOmNtCZe7wChy5CQi6P3s@vger.kernel.org
-X-Received: by 2002:a05:6102:26c2:b0:4e2:ecd8:a1f with SMTP id
- ada2fe7eead31-4e7f6186014mr6831759137.1.1750149867998; Tue, 17 Jun 2025
- 01:44:27 -0700 (PDT)
+	s=arc-20240116; t=1750150624; c=relaxed/simple;
+	bh=aAKpauYEeKSBPnaAaPVPszbd5HjIt0otIctFPrCCeg8=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=P7jBncdSKK75CUYcLWtDP2XAv+Re705fhd8aWyj5/rVjPId8i3lGjl20OJO39+NNKLasBEDYndK+mbgM8neVmuSnejwob7Tg6czhjO+mp9+M438oY+Yzc/Gz0OqQtqfsZmOTZtIYYdTKWExOEcY5tzrXLCQAiXvkSTIiIVJN3MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=a6vfYuY6; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1750150315;
+	bh=2gVFkORzM62hZB18JS/222UmlfBatrpXaEZJPo4NBDg=;
+	h=From:To:Cc:Subject:Date;
+	b=a6vfYuY60DQWsiVT9jAhkB+SjoGkKXpkolhYc3BzXo0gqFM+p0skKIEFTsZLaOQ9O
+	 fr2nuaCxY5rgo4ve5EpXJdUXokWHb+MH2zXz0/IyAGAQgM65V1vvDWLDEbtEyt1NkI
+	 uar94jJXBEBM1CDqCFMz1tS4+i5YH0IQVSNdVQ8Y=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id B67830BE; Tue, 17 Jun 2025 16:45:39 +0800
+X-QQ-mid: xmsmtpt1750149939tfjk0u1ko
+Message-ID: <tencent_24A44EBAE7F05D812288B973A8EC2013BC09@qq.com>
+X-QQ-XMAILINFO: No7DFzN00JnRs2AZ9M9EPgnY/wZEwJNUZpthjcQ9o7AUHD2ySvoAQVE5/Xy5ux
+	 pNO+Ng4Gwf8TbQ8rbFGQQdm2bVqnVopO+CXLLsY3WW3FHNoG3YJ8BgCT4T5jjL9s/BdbXk9p9BkV
+	 EFIWskl3v5kGMyqARd18knuJcUDyGiABD09PvMvCpOAZlPBs1zWXfLVoOccv/FlhPLr/KlHnhxnR
+	 fltVBMktIA+onVZVzcB9Na+SVPwXNoGBxf28LJ7JhqJ1vKYyF3c7fcHS/EnFthMdPjUHLK5Hvqbd
+	 bQi0j8y30uKNdaqoWAYFZJESb8sT8+XV9QqEINwbCBFFcMr4em0iG7kWj+sDIcYd+YbYsmgyYc01
+	 RHS/wk6BrfanRSxbBZk/1sHtWPeyBwyE9P71CoA+xRalrUiX2+5GibAAFLzw7w5wYZz+9fGIK0Hg
+	 sf44RLUPjIhSUy83w55Mxy/6DBTOh+qwNwY4WKe4mxL4Oayi3/jE6JTAUSZS8J90OWN7RDuj3v8a
+	 sd2jBB3S/INT2pyHKFrxOIFobSl9nQ/ho3qet2mhub1I5hSqRqUeHSZwXmv1K4Gfdqh9krnhzJ5O
+	 xkdhlOUqnpeENx1DfcDFyCdseEkf6pznxD9PaB2JNqd7rqU7esHu+2xRZAWCGyHCjIB/2+KzAcJ8
+	 JdlmbOUal6qiOrM8QMOmw5KjwkHKJY7nQZaBZO0pmvccCQASTK/EFLWpIAnHoMNLWqHr4arlc0lb
+	 pw9saynpmvFp8Xra6ATkhT+PxA1HBs2gC96aLP3DpSf+D6SWC6uEUiAWVTR4NWhL20ZfUPWyMgBj
+	 BPLvCr/FF+RAcUnchgwdF01OdiOF21iT5SjQ7AgWLki+l0TKMGPNbTVcrHmKPRq2aY433qmj1Fo2
+	 qMGAwpDC7QA66Ol/dadhDb4wsw9LBOr2vuoDI18QS+0Jpu3AhXZ3r4QaxLVyhWGnFqT77G4amLkK
+	 yNokzGpNtWkg8VodchsS4j8cQ0a6slvj2wKp8ZJuwW88gKyTxj2YigPTbzcxPJMgNh4H/Afmo=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: xiaopeitux@foxmail.com
+To: harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH] drm/amd/display: sspl: Use of macro ARRAY_SIZE to calculate array size
+Date: Tue, 17 Jun 2025 16:45:38 +0800
+X-OQ-MSGID: <1a2b56dba50b9b4fc4b69ffdf84de6e67e7e3dff.1750148897.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616213927.475921-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250616213927.475921-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250616213927.475921-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Jun 2025 10:44:16 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUU-EyU3DgqP9KDmeT_A4i-xaE9hAUOvYFQcbYmpJc2ng@mail.gmail.com>
-X-Gm-Features: AX0GCFu96slHpR78sWUkf3MntdiwPRfZq6OEEltMiCRMN1dl7oBZu7rvTpsJ3sE
-Message-ID: <CAMuHMdUU-EyU3DgqP9KDmeT_A4i-xaE9hAUOvYFQcbYmpJc2ng@mail.gmail.com>
-Subject: Re: [PATCH v11 3/5] tty: serial: sh-sci: Use port ops callbacks
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Prabhakar,
+From: Pei Xiao <xiaopei01@kylinos.cn>
 
-On Mon, 16 Jun 2025 at 23:39, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Replace direct calls to internal helpers such as sci_stop_tx(),
-> sci_start_tx(), sci_stop_rx(), sci_set_mctrl(), sci_enable_ms(), and
-> sci_request_port() with their corresponding port ops callbacks.
->
-> This change improves consistency and abstraction across the driver and
-> prepares the codebase for adding support for the RSCI driver on the
-> Renesas RZ/T2H SoC, which heavily reuses the existing SCI driver.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Use of macro ARRAY_SIZE to calculate array size and reduce the number of
+lines of code.
 
-Thanks for your patch!
+cocci warning:
+drivers/gpu/drm/amd/display/dc/sspl/dc_spl_scl_easf_filters.c:
+	WARNING: Use ARRAY_SIZE
 
-I am a bit reluctant to increase the number of indirect calls in a
-driver that is also used on (old and slow) SH systems...
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+---
+ .../display/dc/sspl/dc_spl_scl_easf_filters.c | 50 +++++++------------
+ 1 file changed, 17 insertions(+), 33 deletions(-)
 
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -880,7 +880,7 @@ static void sci_transmit_chars(struct uart_port *port)
->                         sci_serial_out(port, SCSCR, ctrl);
->                 }
->
-> -               sci_stop_tx(port);
-> +               s->port.ops->stop_tx(port);
+diff --git a/drivers/gpu/drm/amd/display/dc/sspl/dc_spl_scl_easf_filters.c b/drivers/gpu/drm/amd/display/dc/sspl/dc_spl_scl_easf_filters.c
+index 0d1bd81ff04a..1b11dc886a7e 100644
+--- a/drivers/gpu/drm/amd/display/dc/sspl/dc_spl_scl_easf_filters.c
++++ b/drivers/gpu/drm/amd/display/dc/sspl/dc_spl_scl_easf_filters.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: MIT
+ //
+ // Copyright 2024 Advanced Micro Devices, Inc.
+-
++#include <linux/array_size.h>
+ #include "spl_debug.h"
+ #include "dc_spl_filters.h"
+ #include "dc_spl_scl_filters.h"
+@@ -2409,8 +2409,7 @@ static uint32_t spl_easf_get_scale_ratio_to_reg_value(struct spl_fixed31_32 rati
+ uint32_t spl_get_v_bf3_mode(struct spl_fixed31_32 ratio)
+ {
+ 	uint32_t value;
+-	unsigned int num_entries = sizeof(easf_v_bf3_mode_lookup) /
+-		sizeof(struct scale_ratio_to_reg_value_lookup);
++	unsigned int num_entries = ARRAY_SIZE(easf_v_bf3_mode_lookup);
+ 	value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 		easf_v_bf3_mode_lookup, num_entries);
+ 	return value;
+@@ -2418,8 +2417,7 @@ uint32_t spl_get_v_bf3_mode(struct spl_fixed31_32 ratio)
+ uint32_t spl_get_h_bf3_mode(struct spl_fixed31_32 ratio)
+ {
+ 	uint32_t value;
+-	unsigned int num_entries = sizeof(easf_h_bf3_mode_lookup) /
+-		sizeof(struct scale_ratio_to_reg_value_lookup);
++	unsigned int num_entries = ARRAY_SIZE(easf_h_bf3_mode_lookup);
+ 	value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 		easf_h_bf3_mode_lookup, num_entries);
+ 	return value;
+@@ -2430,13 +2428,11 @@ uint32_t spl_get_reducer_gain6(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 4) {
+-		num_entries = sizeof(easf_reducer_gain6_4tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_reducer_gain6_4tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_reducer_gain6_4tap_lookup, num_entries);
+ 	} else if (taps == 6) {
+-		num_entries = sizeof(easf_reducer_gain6_6tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_reducer_gain6_6tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_reducer_gain6_6tap_lookup, num_entries);
+ 	} else
+@@ -2449,13 +2445,11 @@ uint32_t spl_get_reducer_gain4(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 4) {
+-		num_entries = sizeof(easf_reducer_gain4_4tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_reducer_gain4_4tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_reducer_gain4_4tap_lookup, num_entries);
+ 	} else if (taps == 6) {
+-		num_entries = sizeof(easf_reducer_gain4_6tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_reducer_gain4_6tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_reducer_gain4_6tap_lookup, num_entries);
+ 	} else
+@@ -2468,13 +2462,11 @@ uint32_t spl_get_gainRing6(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 4) {
+-		num_entries = sizeof(easf_gain_ring6_4tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_gain_ring6_4tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_gain_ring6_4tap_lookup, num_entries);
+ 	} else if (taps == 6) {
+-		num_entries = sizeof(easf_gain_ring6_6tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_gain_ring6_6tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_gain_ring6_6tap_lookup, num_entries);
+ 	} else
+@@ -2487,13 +2479,11 @@ uint32_t spl_get_gainRing4(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 4) {
+-		num_entries = sizeof(easf_gain_ring4_4tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_gain_ring4_4tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_gain_ring4_4tap_lookup, num_entries);
+ 	} else if (taps == 6) {
+-		num_entries = sizeof(easf_gain_ring4_6tap_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_gain_ring4_6tap_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_gain_ring4_6tap_lookup, num_entries);
+ 	} else
+@@ -2506,8 +2496,7 @@ uint32_t spl_get_3tap_dntilt_uptilt_offset(int taps, struct spl_fixed31_32 ratio
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 3) {
+-		num_entries = sizeof(easf_3tap_dntilt_uptilt_offset_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_3tap_dntilt_uptilt_offset_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_3tap_dntilt_uptilt_offset_lookup, num_entries);
+ 	} else
+@@ -2520,8 +2509,7 @@ uint32_t spl_get_3tap_uptilt_maxval(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 3) {
+-		num_entries = sizeof(easf_3tap_uptilt_maxval_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_3tap_uptilt_maxval_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_3tap_uptilt_maxval_lookup, num_entries);
+ 	} else
+@@ -2534,8 +2522,7 @@ uint32_t spl_get_3tap_dntilt_slope(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 3) {
+-		num_entries = sizeof(easf_3tap_dntilt_slope_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_3tap_dntilt_slope_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_3tap_dntilt_slope_lookup, num_entries);
+ 	} else
+@@ -2548,8 +2535,7 @@ uint32_t spl_get_3tap_uptilt1_slope(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 3) {
+-		num_entries = sizeof(easf_3tap_uptilt1_slope_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_3tap_uptilt1_slope_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_3tap_uptilt1_slope_lookup, num_entries);
+ 	} else
+@@ -2562,8 +2548,7 @@ uint32_t spl_get_3tap_uptilt2_slope(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 3) {
+-		num_entries = sizeof(easf_3tap_uptilt2_slope_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_3tap_uptilt2_slope_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_3tap_uptilt2_slope_lookup, num_entries);
+ 	} else
+@@ -2576,8 +2561,7 @@ uint32_t spl_get_3tap_uptilt2_offset(int taps, struct spl_fixed31_32 ratio)
+ 	unsigned int num_entries;
+ 
+ 	if (taps == 3) {
+-		num_entries = sizeof(easf_3tap_uptilt2_offset_lookup) /
+-			sizeof(struct scale_ratio_to_reg_value_lookup);
++		num_entries = ARRAY_SIZE(easf_3tap_uptilt2_offset_lookup);
+ 		value = spl_easf_get_scale_ratio_to_reg_value(ratio,
+ 			easf_3tap_uptilt2_offset_lookup, num_entries);
+ 	} else
+-- 
+2.25.1
 
-RSCI has its own implementation of sci_port_ops.transmit_chars(), so
-I think it is better to avoid the overhead of an indirect call, and keep
-calling sci_stop_tx() directly.
-
-         }
->  }
->
-> @@ -1497,7 +1497,7 @@ static void sci_dma_tx_work_fn(struct work_struct *work)
->  switch_to_pio:
->         uart_port_lock_irqsave(port, &flags);
->         s->chan_tx = NULL;
-> -       sci_start_tx(port);
-> +       s->port.ops->start_tx(port);
-
-This function is indeed shared by sh-sci and rsci, but still unused
-by the latter as it does not support DMA yet.
-
->         uart_port_unlock_irqrestore(port, flags);
->         return;
->  }
-> @@ -2289,8 +2289,8 @@ void sci_shutdown(struct uart_port *port)
->         mctrl_gpio_disable_ms_sync(to_sci_port(port)->gpios);
->
->         uart_port_lock_irqsave(port, &flags);
-> -       sci_stop_rx(port);
-> -       sci_stop_tx(port);
-> +       s->port.ops->stop_rx(port);
-> +       s->port.ops->stop_tx(port);
-
-OK.
-
->         s->ops->shutdown_complete(port);
->         uart_port_unlock_irqrestore(port, flags);
->
-> @@ -2684,7 +2684,7 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
->         }
->         if (port->flags & UPF_HARD_FLOW) {
->                 /* Refresh (Auto) RTS */
-> -               sci_set_mctrl(port, port->mctrl);
-> +               s->port.ops->set_mctrl(port, port->mctrl);
-
-RSCI has its own implementation of uart_ops.set_termios(), so please
-keep the direct call.
-
->         }
->
->         /*
-> @@ -2721,7 +2721,7 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
->         sci_port_disable(s);
->
->         if (UART_ENABLE_MS(port, termios->c_cflag))
-> -               sci_enable_ms(port);
-> +               s->port.ops->enable_ms(port);
-
-Likewise.
-And once RSCI fully implements uart_ops.set_termios(), I think
-it can just reuse sci_enable_ms().
-
->  }
->
->  void sci_pm(struct uart_port *port, unsigned int state,
-> @@ -2827,7 +2827,7 @@ void sci_config_port(struct uart_port *port, int flags)
->                 struct sci_port *sport = to_sci_port(port);
->
->                 port->type = sport->cfg->type;
-> -               sci_request_port(port);
-> +               sport->port.ops->request_port(port);
-
-Both sh-sci and rsci use sci_request_port() as their
-uart_ops.request_port() callbacks, so please use a direct call.
-
->         }
->  }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
