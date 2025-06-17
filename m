@@ -1,102 +1,71 @@
-Return-Path: <linux-kernel+bounces-689771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 682C3ADC63E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:26:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DDAADC644
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:26:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247F5189720E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:26:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0AE716F7B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFEA292B40;
-	Tue, 17 Jun 2025 09:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F31A293C5F;
+	Tue, 17 Jun 2025 09:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="b//26688";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gPcu95GC";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="b//26688";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gPcu95GC"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cRnCcT2G"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A2528C2C7
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A6D293C57;
+	Tue, 17 Jun 2025 09:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750152371; cv=none; b=JOPvys83MbT3IpyNKdXN43C6La0Ndv7JFlD10kkGibtpuQ9fxYj6BLGRDNpErXYRo1zF5nQaoQZtEiXqvUMKOCf/WxwZVh2bUoq0AfkIi677cyBvaQz0t1082mBBuwCx0Un275GLu+zbIlXLbxKtw9IPCgUr/z/LuRLbSnauh+w=
+	t=1750152380; cv=none; b=BzV0GpxvlvrqW2qGe7o5NAOTT4LLss6Pc2oaD13E3LQuOiyERWMeff3bci7of9taO168eEuzL7dAxDYp9Yo6/mdyxDhHZjxiLU9pHrWGHd4vQKCsk4DDRDuflWwMvkVWxksGo0xvccA1frulz0xKU10rZ311uuvfLgtdIZcOLwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750152371; c=relaxed/simple;
-	bh=mHloKpHeIqjd28yabftvO0kzJW8++POCYyqtmXjfZwY=;
+	s=arc-20240116; t=1750152380; c=relaxed/simple;
+	bh=tEdbtuqZcchLoDWZOowWW0dNyOhuwX8zhFxOwPzEozM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i8/ZpQaK75Mw3Px1DbigjPL1Wr6kWnaZhkQk+yC2zoaKWNERCiZmSwZNmL5YUHRPbQxrGDpJqJRAz0KkJh8tCiJhED610FVR6f04+Svd1rbVa2z4uwEiFapNdfbisZxrzAbwmtiQ1Qe4bUV+TS+rlDl97kSlSofMl0letzxxxa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=b//26688; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gPcu95GC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=b//26688; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gPcu95GC; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CB21821170;
-	Tue, 17 Jun 2025 09:26:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750152367; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LuvnCETedbBU+Lf4XYDf0unBd6y0p8DZmC16erlmjdY=;
-	b=b//266883fGKUrK4O0jRR6q+dCtJ9iwfHBl9E3N96qrpnr8P9x3ijt236xyi90P/i2GzCf
-	FuuU9EBtt27f7NdchP60hkA1l4Jncn8DJ3b2Q+SCwG6vrqHJaF5QYxQWTdeYXtY8RDgg1b
-	pzYr9wMYg/P+hd3Xxd3OhjekXSy7HD0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750152367;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LuvnCETedbBU+Lf4XYDf0unBd6y0p8DZmC16erlmjdY=;
-	b=gPcu95GCD365nvDwPgEMzE/ebHqpuGPBHGybDqQQEZtJ1ekdnlQqn3uAfhVKnTF5F1H41X
-	FroK/8B6sNDpfsBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="b//26688";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=gPcu95GC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750152367; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LuvnCETedbBU+Lf4XYDf0unBd6y0p8DZmC16erlmjdY=;
-	b=b//266883fGKUrK4O0jRR6q+dCtJ9iwfHBl9E3N96qrpnr8P9x3ijt236xyi90P/i2GzCf
-	FuuU9EBtt27f7NdchP60hkA1l4Jncn8DJ3b2Q+SCwG6vrqHJaF5QYxQWTdeYXtY8RDgg1b
-	pzYr9wMYg/P+hd3Xxd3OhjekXSy7HD0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750152367;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LuvnCETedbBU+Lf4XYDf0unBd6y0p8DZmC16erlmjdY=;
-	b=gPcu95GCD365nvDwPgEMzE/ebHqpuGPBHGybDqQQEZtJ1ekdnlQqn3uAfhVKnTF5F1H41X
-	FroK/8B6sNDpfsBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 41739139E2;
-	Tue, 17 Jun 2025 09:26:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cFAcDa80UWi+CgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 17 Jun 2025 09:26:07 +0000
-Date: Tue, 17 Jun 2025 11:26:05 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Harry Yoo <harry.yoo@oracle.com>, Rakie Kim <rakie.kim@sk.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 00/11] Implement numa node notifier
-Message-ID: <aFE0rTNnw_X0pT5D@localhost.localdomain>
-References: <20250616135158.450136-1-osalvador@suse.de>
- <fe0e9434-0c6d-4a24-b209-d40c7b9e9352@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pk+QuMxp3YIs4MxXYtKAnAdKnz5RMVVmUHvzn/2Yf8pCfBVDFWCRCXLJxKYPAzHXzmwSd8+BagkvE2lo+oqEmU2zhDlWIqi8DYOy5QRyKJMLTdemxcG9XWQrhhScw1IjiZ6l14pzKAxSyuvbZOhGWJTs5U6ZlGyHbdGc81xnZGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cRnCcT2G; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LpJtHAO+l391V4MTDYJdtbpzYP7Tob1XgARez9VAkgk=; b=cRnCcT2GzpjKy0QWJm5YQR+8Or
+	bzwk0WBy8L7GiYB4PNEh9jGyGUWnQEi4rHBzYiv1Yu74tbayYsQ1NlJ+fwYcYmVwkI7a6voy5jJx/
+	13NCMApPKbBC2laXjlmavhVLeb0seRjMAX1AQdRhyrFqxjZck51eTUJf3uQ0cUxin7h+U2Tdj76Hr
+	r+nQR6xFRbTuAniLpf8cIZknua6p4DQP7QSF0dgwt9N6035dTPO7Jw7dgRpyFFulKBOTdZ1Y10uYA
+	R4D5MR7arZ5Grupp/FN/AzEYuPHKfvmPnyKVf9CHWc6BrZLTBTar4HmfCqdRNlOuhhUXZiUqWVxmO
+	o5nBULTQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uRSa3-0000000Gwgx-0uHc;
+	Tue, 17 Jun 2025 09:26:11 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E5433308523; Tue, 17 Jun 2025 11:26:09 +0200 (CEST)
+Date: Tue, 17 Jun 2025 11:26:09 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
+	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
+	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
+	DietmarEggemann@uudg.org, dietmar.eggemann@arm.com,
+	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wander Lairson Costa <wander@redhat.com>
+Subject: Re: [RESEND PATCH v4] sched: do not call __put_task_struct() on rt
+ if pi_blocked_on is set
+Message-ID: <20250617092609.GR1613376@noisy.programming.kicks-ass.net>
+References: <aEw-KjUjjP2gYH6z@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,49 +74,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fe0e9434-0c6d-4a24-b209-d40c7b9e9352@redhat.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: CB21821170
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[linux-foundation.org,suse.cz,huawei.com,oracle.com,sk.com,gmail.com,kvack.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim]
-X-Spam-Score: -3.01
-X-Spam-Level: 
+In-Reply-To: <aEw-KjUjjP2gYH6z@uudg.org>
 
-On Mon, Jun 16, 2025 at 04:32:32PM +0200, David Hildenbrand wrote:
-> All looking good to me (and much easier to digest now that it's properly
-> split up into patches!) :)
+On Fri, Jun 13, 2025 at 12:05:14PM -0300, Luis Claudio R. Goncalves wrote:
+> With PREEMPT_RT enabled, some of the calls to put_task_struct() coming
+> from rt_mutex_adjust_prio_chain() could happen in preemptible context and
+> with a mutex enqueued. That could lead to this sequence:
+> 
+>         rt_mutex_adjust_prio_chain()
+>           put_task_struct()
+>             __put_task_struct()
+>               sched_ext_free()
+>                 spin_lock_irqsave()
+>                   rtlock_lock() --->  TRIGGERS
+>                                       lockdep_assert(!current->pi_blocked_on);
+> 
+> Fix that by unconditionally resorting to the deferred call to
+> __put_task_struct() if PREEMPT_RT is enabled.
+> 
 
-Great! Thank you all for all the feedback ;-P!
+Should this have a Fixes: tag and go into /urgent?
 
- 
-
--- 
-Oscar Salvador
-SUSE Labs
+> Suggested-by: Crystal Wood <crwood@redhat.com>
+> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+> ---
+> 
+> Resent as a gentle reminder, because this issue results in scary backtraces,
+> not obvious to debug and pinpoint root cause.
+> 
+> v2: (Rostedt) remove the #ifdef from put_task_struct() and create
+>     tsk_is_pi_blocked_on() in sched.h to make the change cleaner.
+> v3: (Sebastian, PeterZ) always call the deferred __put_task_struct() on RT.
+> v4: Fix the implementation of what was requested on v3.
+> 
+>  include/linux/sched/task.h |   17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+> index 0f2aeb37bbb04..51678a541477a 100644
+> --- a/include/linux/sched/task.h
+> +++ b/include/linux/sched/task.h
+> @@ -134,11 +134,8 @@ static inline void put_task_struct(struct task_struct *t)
+>  	if (!refcount_dec_and_test(&t->usage))
+>  		return;
+>  
+> -	/*
+> -	 * In !RT, it is always safe to call __put_task_struct().
+> -	 * Under RT, we can only call it in preemptible context.
+> -	 */
+> -	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || preemptible()) {
+> +	/* In !RT, it is always safe to call __put_task_struct(). */
+> +	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
+>  		static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_SLEEP);
+>  
+>  		lock_map_acquire_try(&put_task_map);
+> @@ -148,11 +145,13 @@ static inline void put_task_struct(struct task_struct *t)
+>  	}
+>  
+>  	/*
+> -	 * under PREEMPT_RT, we can't call put_task_struct
+> +	 * Under PREEMPT_RT, we can't call __put_task_struct
+>  	 * in atomic context because it will indirectly
+> -	 * acquire sleeping locks.
+> +	 * acquire sleeping locks. The same is true if the
+> +	 * current process has a mutex enqueued (blocked on
+> +	 * a PI chain).
+>  	 *
+> -	 * call_rcu() will schedule delayed_put_task_struct_rcu()
+> +	 * call_rcu() will schedule __put_task_struct_rcu_cb()
+>  	 * to be called in process context.
+>  	 *
+>  	 * __put_task_struct() is called when
+> @@ -165,7 +164,7 @@ static inline void put_task_struct(struct task_struct *t)
+>  	 *
+>  	 * delayed_free_task() also uses ->rcu, but it is only called
+>  	 * when it fails to fork a process. Therefore, there is no
+> -	 * way it can conflict with put_task_struct().
+> +	 * way it can conflict with __put_task_struct().
+>  	 */
+>  	call_rcu(&t->rcu, __put_task_struct_rcu_cb);
+>  }
+> 
+> ----- End forwarded message -----
+> 
 
