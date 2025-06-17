@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-690139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D3EAADCC63
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:04:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02CFAADCC73
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B5973ADBAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:01:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C25E84003B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70AE2ECE99;
-	Tue, 17 Jun 2025 13:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFA72E2668;
+	Tue, 17 Jun 2025 13:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mTu51itU"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="REbDqV+P"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092E12E92CB
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6BC2EB5C8
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750165211; cv=none; b=Q63p+MPh+m7X2rleT3faedyfagoeQr3lDw92F8zgj7xj5hBNibyCjJbN+j+U0+FIfVdNuqnvj/9u8ktlBvKAuqO2GBF80q+RnGJ7gJZ48dFTK1aVXsOvQGvy35RyysQoRNBewbrGD2wUjjDzLRoz5vuvpJ1WExSpQxamwwYJYhY=
+	t=1750165214; cv=none; b=EIyRXtspNK+QMH1R151BIhahf4CZb0yakUgM5bG5IqRp+NcxR4qu85xfO9koT6C+f1frTMP82o3/Cip8IgLAwaAs9ilRKuTK80uV9tHzroKS0759Id5eg19hOBCbhr55UVWQDTHoG+LsyVAUyM49NDB1LaaiX+JuS9mEuuuWWyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750165211; c=relaxed/simple;
-	bh=z5fxDXe+5ZZ/gJ0Rsqi71QFDsI6asZuTO64TmhTNpxE=;
+	s=arc-20240116; t=1750165214; c=relaxed/simple;
+	bh=QPRyqi00g3KJ9J3/BOtH9ar5XWUEC5GSFTuURVygUrE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=S0qxyMEF5uO8Zv+sGWmzHbJhFxj1PSSt1lN7X5RQz7DG2OWLm6zLaO+N7d/rATvX5Pdk0dDa0akevDRpzuzF0ane69t0uC8M1haarUXXyl7s0HtPQxe13DlBmg/2f1dogeiz6XL69UYTZ0KDvFmA4HzCImyiBhCIXeGn4O1fG8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mTu51itU; arc=none smtp.client-ip=203.254.224.33
+	 Content-Type:References; b=YdBvFJBifGsV+XkIVcYwI4HbG3kr/tnDblIErA2pdTpivybjFovZWYfiM7w+qa2RuAsAiWBhN01tmqsbX8DWUidHBDS4ewlyIrwFoABwMxvIBuwaGJ8eonyDoUJ/OupZuLQkVNyVJWOqNoJP1i60WwuJ06I9fOu1Wo4JHutzBUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=REbDqV+P; arc=none smtp.client-ip=203.254.224.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250617130005epoutp033ad113c91dd4f5c28bf47f0376bd6233~J1ftEiioT1779017790epoutp03f
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250617130005epoutp04e28fb94d9cdca576fa5a5832db9b7c2f~J1ftXJDQ22167821678epoutp04O
 	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:00:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250617130005epoutp033ad113c91dd4f5c28bf47f0376bd6233~J1ftEiioT1779017790epoutp03f
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250617130005epoutp04e28fb94d9cdca576fa5a5832db9b7c2f~J1ftXJDQ22167821678epoutp04O
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
 	s=mail20170921; t=1750165205;
-	bh=jvB3e+JAq4PqZt4kGvVf2gWFtHrsQk5KtlLBOQVZQXY=;
+	bh=mGOKRZhuRng8+G/QThk2A3VRJikf51QSXgSzCEdjU8o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mTu51itUyU+NV6DEmhHkcVPhk6/4l3gJVkblCQvzu8ogjvzCRT3fAsOq+tnz0xkYN
-	 Jlo51IExxJLItYbRNu9J+fFEpFNlO/smizQJSdMm7qfTDJ0/ClfrdjqqLTpimBoZjR
-	 ZG4GUrxzDb6Jhr7fnBhDVqDhZmgXEiYo7tI1YXaY=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250617130004epcas5p166f569f7de3716ce57c4e5d29b043575~J1fskvFRE0551805518epcas5p14;
-	Tue, 17 Jun 2025 13:00:04 +0000 (GMT)
+	b=REbDqV+PmFzICJsQc5XQrgbdJ5p3WtEewJef+wrSjfc5YNp0B6Rreqt/I0b9GmL+x
+	 31Yk4EoinjqNaNfFoCpPp+7gj+pfH1BjNlu/ZQ3rVvS51e0zwaoAKSVgsu0tK6xj+B
+	 K8LOeoIdeVNgsiBVe0OjmucDkLTwyCT15J0Z1kfE=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250617130005epcas5p20cff7e0ab5ca5607ee6edae7abf2485d~J1fs3AobM1917719177epcas5p2N;
+	Tue, 17 Jun 2025 13:00:05 +0000 (GMT)
 Received: from epcpadp1new (unknown [182.195.40.141]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4bM6R85kSPz6B9m7; Tue, 17 Jun
-	2025 13:00:04 +0000 (GMT)
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4bM6R90n2qz3hhT4; Tue, 17 Jun
+	2025 13:00:05 +0000 (GMT)
 Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250617124028epcas5p2bb45182c91359a16efc5b1561927abce~J1OlPt45x0929709297epcas5p2c;
-	Tue, 17 Jun 2025 12:40:28 +0000 (GMT)
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250617124031epcas5p3542c2fc6d946f3cdcbc06dbfc65743e2~J1On-HuCs2102821028epcas5p33;
+	Tue, 17 Jun 2025 12:40:31 +0000 (GMT)
 Received: from test-PowerEdge-R740xd.samsungds.net (unknown [107.99.41.79])
 	by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250617124026epsmtip2e47f2ff5c61a2d7efbf6724986284891~J1OivnCml2545625456epsmtip2c;
-	Tue, 17 Jun 2025 12:40:25 +0000 (GMT)
+	20250617124028epsmtip2fae8871e5bf5e82a4abc397ffd8e6dde~J1Ole78oP2555425554epsmtip2H;
+	Tue, 17 Jun 2025 12:40:28 +0000 (GMT)
 From: Neeraj Kumar <s.neeraj@samsung.com>
 To: dan.j.williams@intel.com, dave@stgolabs.net,
 	jonathan.cameron@huawei.com, dave.jiang@intel.com,
@@ -65,10 +65,10 @@ Cc: a.manzanares@samsung.com, nifan.cxl@gmail.com, anisa.su@samsung.com,
 	alok.rathore@samsung.com, s.neeraj@samsung.com, neeraj.kernel@gmail.com,
 	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
 	nvdimm@lists.linux.dev, gost.dev@samsung.com, cpgs@samsung.com
-Subject: [RFC PATCH 08/20] nvdimm/label: Include region label in slot
- validation
-Date: Tue, 17 Jun 2025 18:09:32 +0530
-Message-Id: <148912029.181750165204802.JavaMail.epsvc@epcpadp1new>
+Subject: [RFC PATCH 09/20] nvdimm/namespace_label: Skip region label during
+ ns label DPA reservation
+Date: Tue, 17 Jun 2025 18:09:33 +0530
+Message-Id: <306123060.201750165205099.JavaMail.epsvc@epcpadp1new>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250617123944.78345-1-s.neeraj@samsung.com>
 Precedence: bulk
@@ -78,168 +78,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250617124028epcas5p2bb45182c91359a16efc5b1561927abce
+X-CMS-MailID: 20250617124031epcas5p3542c2fc6d946f3cdcbc06dbfc65743e2
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 X-CPGSPASS: Y
 X-Hop-Count: 3
-X-CMS-RootMailID: 20250617124028epcas5p2bb45182c91359a16efc5b1561927abce
+X-CMS-RootMailID: 20250617124031epcas5p3542c2fc6d946f3cdcbc06dbfc65743e2
 References: <20250617123944.78345-1-s.neeraj@samsung.com>
-	<CGME20250617124028epcas5p2bb45182c91359a16efc5b1561927abce@epcas5p2.samsung.com>
+	<CGME20250617124031epcas5p3542c2fc6d946f3cdcbc06dbfc65743e2@epcas5p3.samsung.com>
 
-slot validation routine validates label slot by calculating label
-checksum. It was only validating namespace label. This changeset also
-validates region label if present.
-
-Also validate and calculate lsa v2.1 namespace label checksum
+If Namespace label is present in LSA during nvdimm_probe then DPA
+reservation is required. But this reservation is not required by region
+label. Therefore if LSA scanning finds any region label, skip it.
 
 Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
 ---
- drivers/nvdimm/label.c | 52 ++++++++++++++++++++++++++++++++++--------
- drivers/nvdimm/nd.h    | 21 +++++++++++++++++
- 2 files changed, 63 insertions(+), 10 deletions(-)
+ drivers/nvdimm/label.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-index 108100c4bf44..22e13db1ca20 100644
+index 22e13db1ca20..3a870798a90c 100644
 --- a/drivers/nvdimm/label.c
 +++ b/drivers/nvdimm/label.c
-@@ -359,7 +359,7 @@ static bool nsl_validate_checksum(struct nvdimm_drvdata *ndd,
- {
- 	u64 sum, sum_save;
- 
--	if (!ndd->cxl && !efi_namespace_label_has(ndd, checksum))
-+	if (!efi_namespace_label_has(ndd, checksum))
- 		return true;
- 
- 	sum_save = nsl_get_checksum(ndd, nd_label);
-@@ -374,13 +374,25 @@ static void nsl_calculate_checksum(struct nvdimm_drvdata *ndd,
- {
- 	u64 sum;
- 
--	if (!ndd->cxl && !efi_namespace_label_has(ndd, checksum))
-+	if (!efi_namespace_label_has(ndd, checksum))
- 		return;
- 	nsl_set_checksum(ndd, nd_label, 0);
- 	sum = nd_fletcher64(nd_label, sizeof_namespace_label(ndd), 1);
- 	nsl_set_checksum(ndd, nd_label, sum);
- }
- 
-+static bool rgl_validate_checksum(struct nvdimm_drvdata *ndd,
-+				  struct cxl_region_label *rg_label)
-+{
-+	u64 sum, sum_save;
-+
-+	sum_save = rgl_get_checksum(rg_label);
-+	rgl_set_checksum(rg_label, 0);
-+	sum = nd_fletcher64(rg_label, sizeof_namespace_label(ndd), 1);
-+	rgl_set_checksum(rg_label, sum_save);
-+	return sum == sum_save;
-+}
-+
- static void rgl_calculate_checksum(struct nvdimm_drvdata *ndd,
- 				   struct cxl_region_label *rg_label)
- {
-@@ -395,13 +407,25 @@ static bool slot_valid(struct nvdimm_drvdata *ndd,
- 		struct nd_lsa_label *nd_label, u32 slot)
- {
- 	bool valid;
-+	char *label_name;
- 
- 	/* check that we are written where we expect to be written */
--	if (slot != nsl_get_slot(ndd, &nd_label->ns_label))
--		return false;
--	valid = nsl_validate_checksum(ndd, &nd_label->ns_label);
-+	if (is_region_label(ndd, nd_label)) {
-+		label_name = "rg";
-+		if (slot != rgl_get_slot(&nd_label->rg_label))
-+			return false;
-+		valid = rgl_validate_checksum(ndd, &nd_label->rg_label);
-+	} else {
-+		label_name = "ns";
-+		if (slot != nsl_get_slot(ndd, &nd_label->ns_label))
-+			return false;
-+		valid = nsl_validate_checksum(ndd, &nd_label->ns_label);
-+	}
-+
- 	if (!valid)
--		dev_dbg(ndd->dev, "fail checksum. slot: %d\n", slot);
-+		dev_dbg(ndd->dev, "%s label checksum fail. slot: %d\n",
-+			label_name, slot);
-+
- 	return valid;
- }
- 
-@@ -577,17 +601,25 @@ int nd_label_active_count(struct nvdimm_drvdata *ndd)
- 
- 	for_each_clear_bit_le(slot, free, nslot) {
- 		struct nd_lsa_label *nd_label;
-+		u32 lslot;
-+		u64 size, dpa;
- 
+@@ -450,6 +450,10 @@ int nd_label_reserve_dpa(struct nvdimm_drvdata *ndd)
  		nd_label = to_label(ndd, slot);
+ 		ns_label = &nd_label->ns_label;
  
- 		if (!slot_valid(ndd, nd_label, slot)) {
--			u32 label_slot = nsl_get_slot(ndd, &nd_label->ns_label);
--			u64 size = nsl_get_rawsize(ndd, &nd_label->ns_label);
--			u64 dpa = nsl_get_dpa(ndd, &nd_label->ns_label);
-+			if (is_region_label(ndd, nd_label)) {
-+				lslot = __le32_to_cpu(nd_label->rg_label.slot);
-+				size = __le64_to_cpu(nd_label->rg_label.rawsize);
-+				dpa = __cpu_to_le64(nd_label->rg_label.dpa);
-+			} else {
-+				lslot = nsl_get_slot(ndd, &nd_label->ns_label);
-+				size = nsl_get_rawsize(ndd, &nd_label->ns_label);
-+				dpa = nsl_get_dpa(ndd, &nd_label->ns_label);
-+			}
- 
- 			dev_dbg(ndd->dev,
- 				"slot%d invalid slot: %d dpa: %llx size: %llx\n",
--					slot, label_slot, dpa, size);
-+					slot, lslot, dpa, size);
++		/* skip region label, dpa reservation for ns label only */
++		if (is_region_label(ndd, nd_label))
++			continue;
++
+ 		if (!slot_valid(ndd, nd_label, slot))
  			continue;
- 		}
- 		count++;
-diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
-index 1e5a68013735..ca8256b31472 100644
---- a/drivers/nvdimm/nd.h
-+++ b/drivers/nvdimm/nd.h
-@@ -331,6 +331,22 @@ static inline bool nsl_region_uuid_equal(struct nd_namespace_label *ns_label,
- 	return uuid_equal(&tmp, uuid);
- }
  
-+static inline bool is_region_label(struct nvdimm_drvdata *ndd,
-+				   struct nd_lsa_label *nd_label)
-+{
-+	uuid_t ns_type, region_type;
-+
-+	if (ndd->cxl) {
-+		uuid_parse(CXL_REGION_UUID, &region_type);
-+		import_uuid(&ns_type, nd_label->ns_label.cxl.type);
-+		if (uuid_equal(&region_type, &ns_type))
-+			return true;
-+		else
-+			return false;
-+	} else
-+		return false;
-+}
-+
- static inline bool rgl_uuid_equal(struct cxl_region_label *rg_label,
- 				  const uuid_t *uuid)
- {
-@@ -340,6 +356,11 @@ static inline bool rgl_uuid_equal(struct cxl_region_label *rg_label,
- 	return uuid_equal(&tmp, uuid);
- }
- 
-+static inline u32 rgl_get_slot(struct cxl_region_label *rg_label)
-+{
-+	return __le32_to_cpu(rg_label->slot);
-+}
-+
- static inline u64 rgl_get_checksum(struct cxl_region_label *rg_label)
- {
- 	return __le64_to_cpu(rg_label->checksum);
 -- 
 2.34.1
 
