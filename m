@@ -1,146 +1,84 @@
-Return-Path: <linux-kernel+bounces-690029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55EF4ADCA67
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:04:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FFB3ADCE79
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024B9167DE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:04:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ADE8188A6F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F142DF3C1;
-	Tue, 17 Jun 2025 12:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LX2BYbm2"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78C22E2668;
+	Tue, 17 Jun 2025 13:58:09 +0000 (UTC)
+Received: from smtprelay05.ispgateway.de (smtprelay05.ispgateway.de [80.67.31.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A88F28F519;
-	Tue, 17 Jun 2025 12:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF212DBF4C;
+	Tue, 17 Jun 2025 13:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.67.31.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750161889; cv=none; b=D7pwsI/uyFLPTmpcGMlsPctp92PvpsKoajxDBdKik0yXV31YaJkIf+WOVWrHfz5L7BVDZD8m/O7m7HInLu7h2ZUMtIx2gJ5vH5KylMOQR5u1Y7oVXIF49sxl3D3RHRC3DiZ66TFrEhK+TKYBVi+SI2oCepLf4673GCC+KZGWHmo=
+	t=1750168689; cv=none; b=DU4/1ydnu9/iurEc+tIQ3xqfsBptesHjyD2DiZfbBr2wn+SEsESTlQ0C5MmfnLslOlCMFO1/Jgi4xgbV5kPLCNUFIKBMoi2JhCxoApAKiggbDHP9rhYihXfBE8ylmxa1Oeq5O4LUBdtEL0u4cKQcXT02nZmLDsLNrFApsGIak2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750161889; c=relaxed/simple;
-	bh=rfk7FiF0lOcK1XJobZRLILVg/IGnNJQDHCvjJMTre4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nU2bxnor4VfNqSyQTAjV2U5vhjqpTYec23NMq9zBv0gNNoXTIZkYg6QCCggsnorEVi4pfe6ss5zy0KEViEmhxmQYRR/vIvZ16WzRBU9J+CZuCJIAW4CX4JozYylVX0LrY4M4DpBQNGcab1WmBwaGLt+S3mzvxgLeU83pKPEXc6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LX2BYbm2; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45305c280a3so23185405e9.3;
-        Tue, 17 Jun 2025 05:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750161886; x=1750766686; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WBHeAKw5ugZZFecnxceACnihCxbJc4Qc9dF4pQfrgXc=;
-        b=LX2BYbm2JzGOXdnMHvEOZjSKjzw4ckfnORv3tRMVBHipXdRgpLpocBK7dE3veHZUg2
-         2Jq0BDS3WR1kUGgFqCVayVLa6wWMiLxRk70/kRVUP2XMLGzft0DLavoePBEG2w7ARjaQ
-         LjxoK+rRxHB5VV8eCNG1fnpm64j3lNlfiWVejT8M4M/oNDeYjjfVtUegqIlns7++PAfP
-         6kJoyGEeJZc8EcXmMg0uWtkvx3mVRzXOs0jzKGG3mWQBcPn09qi7IjwDq1EPxDknKlHF
-         O952UAZPXNjlI+0U0yd+I6sSQq+WsqcTAt/ksqX+PWQF/sjXFAPY16W6LgeMo7HTrWe3
-         UaGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750161886; x=1750766686;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WBHeAKw5ugZZFecnxceACnihCxbJc4Qc9dF4pQfrgXc=;
-        b=VQU0wJNsliUpca/m8OEsADQplJHSy8oRmbdvwRyR8X5eDPB33/XVlsdMiXxed4ion7
-         VHgXW5yhMDj6/xdlG08r2LtIqU3p2Dq8DPd5+PtsSwn8MYgenSSt7oc9lbn5PgXhGGho
-         icTICFFx/GlF9werZn5mlyArraServmtYK7Qbt5DWbiU4B0OSQUpBVs5tfoyusghYJPd
-         sTkaDhVfYBpkUi5xMgE/wFSKZ9ntcHYlOgzzqNuq/Xq26ErgKojCpDcJQF57fve76uYH
-         CR1TswnwvNxCx4EpAwh/+bxIdCoMimpQ3pmdkmgKJbVu2ZMg+v9zVW+H4RPnYKUvS+EA
-         kPNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjm6eGhwiz1izMLFVbpeQN5DWZauN/VjPd7ZTv/1ZTIQ7EIkBf1fdGL8ErqGC9nezWZcBjVyeoH3PmlGk=@vger.kernel.org, AJvYcCXzX4hzDaCgx+S3HgIsjb1czZ54oSBnbe1A8kQUESXb8OQDLuLgrjZKoltgV/DZHOgE3Z0y1es7Z4bb4n4L@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzJ32OwiSYhWCJUI24giiJebz3qcbXhP0TJ9+aFYePVtES/eMN
-	EoHjxN4KLhngDBItE8vadQ5jtgtZKOp864+uDrOYijQr2sWgch+SVQF0
-X-Gm-Gg: ASbGncutUXCRGDmmyhBbu68Zamk3Zk59AIDLV+NYEz6+vLM/AnUh9/c9ZruTCtA/8pM
-	4Y4klQUFTHtdkWw2qYahpsV6Q2B8NbjdfR/nEcIPP4/BY4leUTk/evxeZi7c0luA7z4eKe66qGr
-	zX/22VyIcDWTE9sKYfQd2laex2CPgTG8Labnzj6iy4eqJbO3+z3MdqV4HjLZc1ZaBAhK0Wm9oOs
-	G7KM6uEox5WP/S6P/XYuJpFj1qZtI9PJr3vfdzttD5vtemQBPqui0evfWyrRKC93TxHWJyT0f84
-	8jqOVEte4E/nXI40eOlyjEOBQQT+TjMrFe5S1ehLhzbIYl1k+HxSgC7y8QxUIVKvp7APvzBpH5U
-	M3XSkCP0UhPWA3BfvQHdL1XEe
-X-Google-Smtp-Source: AGHT+IGmVJOqVjr2VDFVGKHhn97Oi9W87DltDZ3k18EklWE4Qpu3vNOETU6VYKXRArKUhMPQLl1vTQ==
-X-Received: by 2002:a05:6000:430c:b0:3a5:3517:de3e with SMTP id ffacd0b85a97d-3a572e6bc97mr11266548f8f.35.1750161884721;
-        Tue, 17 Jun 2025 05:04:44 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a60d0fsm13613548f8f.22.2025.06.17.05.04.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 05:04:44 -0700 (PDT)
-Date: Tue, 17 Jun 2025 13:04:31 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, kees@kernel.org,
- skhan@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] tty: replace capable() with file_ns_capable()
-Message-ID: <20250617130431.50f761dc@pumpkin>
-In-Reply-To: <20250607134114.21899-1-pranav.tyagi03@gmail.com>
-References: <20250607134114.21899-1-pranav.tyagi03@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1750168689; c=relaxed/simple;
+	bh=CFtLsOFLFGIiCRFnTt2iOFk29p0WHpWhEjfgeStGpS4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IoRy0fZMCZhhGghYeXmecJvroI+tvfhVY7FlGBRccHU0kuRewE0f4gACle4ICqbV3eM+c1gUU2Uc15FBeSc7iHTQ1b+QIln8YA5se5yE7Jb/ZIMlfB9mZNIZ9Xqok5HDMEo4zu94WuUGSGT7WVWaLxBAMERuqHyH6sxH8c2aWdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eltropuls.de; spf=pass smtp.mailfrom=eltropuls.de; arc=none smtp.client-ip=80.67.31.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eltropuls.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eltropuls.de
+Received: from [87.79.10.98] (helo=mail.eltropuls.de)
+	by smtprelay05.ispgateway.de with esmtpa (Exim 4.98)
+	(envelope-from <marc.straemke@eltropuls.de>)
+	id 1uRT9q-000000003tS-0ACJ;
+	Tue, 17 Jun 2025 12:03:10 +0200
+Received: from [172.16.0.75] (unknown [172.16.0.75])
+	by mail.eltropuls.de (Postfix) with ESMTPSA id C99CAFFC71;
+	Tue, 17 Jun 2025 12:03:31 +0200 (CEST)
+Message-ID: <b7179ac8-c64b-44dd-b25a-62b34eb49c24@eltropuls.de>
+Date: Tue, 17 Jun 2025 12:03:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: Latency spikes on V6.15.1 Preempt RT and maybe related to intel?
+ IGB
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+References: <20250613145434.T2x2ML8_@linutronix.de>
+ <E1uQ6I0-000000003aa-37uJ@smtprelay05.ispgateway.de>
+ <20250613195838.0-gZ6bqS@linutronix.de>
+ <97638b0b-cd96-40e2-9dc2-5e6f767b90a4@eltropuls.de>
+ <20250617092814.vqKdu23w@linutronix.de>
+ <bb74b5b6-bc23-4aa4-83df-449dc7c9006b@eltropuls.de>
+ <20250617100013.1o5lsPLq@linutronix.de>
+Content-Language: de-DE, en-US
+From: =?UTF-8?Q?Marc_Str=C3=A4mke?= <marc.straemke@eltropuls.de>
+In-Reply-To: <20250617100013.1o5lsPLq@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Df-Sender: Y2F0Y2hhbGxfbWFpbEBlbHRyb3B1bHMuZXU=
 
-On Sat,  7 Jun 2025 19:11:14 +0530
-Pranav Tyagi <pranav.tyagi03@gmail.com> wrote:
+Hi Sebastian,
 
-> The TIOCCONS ioctl currently uses capable(CAP_SYS_ADMIN) to check for
-> privileges, which validates the current task's credentials. Since this
-> ioctl acts on an open file descriptor, the check should instead use the
-> file opener's credentials.
+On 17.06.25 12:00, Sebastian Andrzej Siewior wrote:
+> Even if CPU1 would handle CPU0's timers then it would wake cyclictest on
+> CPU0 but that thread would have to wake until CPU0 is done with the PCI
+> bus. CPU1 knows nothing about it.
 
-Is that right?
-A terminal will have been opened before the login sequence changed the user id.
+Okay then the latency I see on the other CPU must be from a PCI access 
+done by the second CPU which stall on the same shared bus.
 
-The 'best practise' might be to check both!
 
-	David
+Anyway: Thanks for your help Sebastian! I can probably live well with 
+these spikes in latency. I was more concerned that there is a deeper 
+issue with my config and the response time could be unbounded.
 
-> 
-> Replace capable() with file_ns_capable() to ensure the capability is
-> checked against file->f_cred in the correct user namespace. This
-> prevents unintended privilege escalation and aligns with best practices
-> for secure ioctl implementations.
-> 
-> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-> Link: https://github.com/KSPP/linux/issues/156
-> ---
->  drivers/tty/tty_io.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-> index e2d92cf70eb7..ee0df35d65c3 100644
-> --- a/drivers/tty/tty_io.c
-> +++ b/drivers/tty/tty_io.c
-> @@ -102,6 +102,9 @@
->  #include <linux/uaccess.h>
->  #include <linux/termios_internal.h>
->  #include <linux/fs.h>
-> +#include <linux/cred.h>
-> +#include <linux/user_namespace.h>
-> +#include <linux/capability.h>
->  
->  #include <linux/kbd_kern.h>
->  #include <linux/vt_kern.h>
-> @@ -2379,7 +2382,7 @@ static int tiocswinsz(struct tty_struct *tty, struct winsize __user *arg)
->   */
->  static int tioccons(struct file *file)
->  {
-> -	if (!capable(CAP_SYS_ADMIN))
-> +	if (!file_ns_capable(file, file->f_cred->user_ns, CAP_SYS_ADMIN))
->  		return -EPERM;
->  	if (file->f_op->write_iter == redirected_tty_write) {
->  		struct file *f;
+
+Marc
 
 
