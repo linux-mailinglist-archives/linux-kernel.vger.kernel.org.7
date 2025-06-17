@@ -1,168 +1,181 @@
-Return-Path: <linux-kernel+bounces-690294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4447ADCE5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:55:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329ECADCE60
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A16A7175224
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:55:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85EF9188CF98
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E612E92A8;
-	Tue, 17 Jun 2025 13:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D7E2E3B00;
+	Tue, 17 Jun 2025 13:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HZx1zX53"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQbquBVW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A452E8881;
-	Tue, 17 Jun 2025 13:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98132E266E;
+	Tue, 17 Jun 2025 13:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750168464; cv=none; b=Jjx6tdpnWLnnn7Uvbnsg9YNRJ/v7a+u0Uv5JkAlWvPL/THvGfR03nxsydJMY0+pvxeJuEaF1AZiFCuvBNZWlS6CKpj5JrlVbo7zAqY+J6oJBGZTcqmGvXxMp3wN1lvp/Gxj37r62NHgX/xnRY4ToWUk0MXzyulM46fGZ4IPNt5A=
+	t=1750168460; cv=none; b=c2Mm4hIvAH4mugDHphcEXgDie0Wjodbk9w5I3DmDphdNanMX6LObfPFQFOUV5FKBJkyhgcnwZHlohYSwSF2y2hQvY95eWp3nmuAIOxaFGYDFYjS5s4BoIdkjYGvMe0g6zewvNvJouRZN2ELiTAnUBcLVhw3HgPZPo74aAifg1S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750168464; c=relaxed/simple;
-	bh=+zqqmKIUftUfrElMykNoEhWSaAdLvXt5iznvaoygcTU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MUu4ZOjCbrud3m6PH5QPI5V9Epe2t0Sh0xEqpbS7hbw7YX0bQl57VUl5xchY6jzeIEBYmhcTJwvnATi+dQPwYSQuhpAKeACOMdMQwH+79zBr2Chabu8QwdpA6La0wjNmbwZeDeTvtWThFofGP++wng+LF2erwPEWOEf5dpgfAvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HZx1zX53; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.1.102] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BE7BA4371;
-	Tue, 17 Jun 2025 15:54:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1750168445;
-	bh=+zqqmKIUftUfrElMykNoEhWSaAdLvXt5iznvaoygcTU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=HZx1zX53qc58axyY+buCnKjSNgBYyNb281iQ+d8JoeKYrFZZWX3+Uq7/tc9kqNKlx
-	 a1/Qcm2aoy5sOg+iSbY+pNP1HmmG87SmilEjPDO3A0IytziFsH+5ccIqEEf/s2TiPZ
-	 22rJvmVLKMOIunr402Td3u51fw2mZjU5VIXmY+WI=
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Tue, 17 Jun 2025 15:54:02 +0200
-Subject: [PATCH v8 4/4] media: pisp_be: Fix pm_runtime underrun in probe
+	s=arc-20240116; t=1750168460; c=relaxed/simple;
+	bh=+mvYcib1jOLn2MJdJlLe3/Of17qNWzn3vv5uSzZoKSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kl/yJjI2fxj794RFGX1W66GaO/HqBu3oYdwnoKk3K2k8e9FwB9AL+PU18zphQadJuaYjFSiQ7opWs0gwaPIdiuL/ZGKb1oGwFGi+NJ09xnnulnYlJ3vgDTZ2++LZI8W0H10gl2PuGm95LgWXOlsyIKD4gQ/kUwFuOpgtdgz27jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQbquBVW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 161CEC4CEF5;
+	Tue, 17 Jun 2025 13:54:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750168459;
+	bh=+mvYcib1jOLn2MJdJlLe3/Of17qNWzn3vv5uSzZoKSU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qQbquBVWTNilpD9J2DZukqDqhw6dYV6sQdAC3swnhkXDCzrarHfIjtDx6+iaanIj2
+	 /w49fQnKSs5gIvxmaG8LRqyy10uW6vxniN9Vtlf836msmzLX6mULgZBsyo2VCzTtdQ
+	 v8HEJuCYV3Vzp6qLFx9lNWclFdUMun1+SF3Xe0r/IgIThr2gBMuIJcCrwNKPXlzr4k
+	 qKVgTe3En5KlysSFaraPhOlK6Hm77MlTIQOT81QI2BUf7+QXEZ3OYgm8HvmQq5bDyj
+	 EA6ptglxv3jHHKeLyaL/2d/HPCJgn2G8R6Gxm7WZ6HZYrmkdGksTvaIIGBQm3ZA2aU
+	 6u12Pn3Ty9DSA==
+Date: Tue, 17 Jun 2025 16:54:15 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org, Steve French <sfrench@samba.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jeffrey Altman <jaltman@auristor.com>, hch@infradead.org,
+	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] Keyrings: How to make them more useful
+Message-ID: <aFFzWwPoXMhMJjTL@kernel.org>
+References: <462886.1749731810@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250617-pispbe-mainline-split-jobs-handling-v6-v8-4-e58ae199c17d@ideasonboard.com>
-References: <20250617-pispbe-mainline-split-jobs-handling-v6-v8-0-e58ae199c17d@ideasonboard.com>
-In-Reply-To: <20250617-pispbe-mainline-split-jobs-handling-v6-v8-0-e58ae199c17d@ideasonboard.com>
-To: Naushir Patuck <naush@raspberrypi.com>, 
- Nick Hollinghurst <nick.hollinghurst@raspberrypi.com>, 
- David Plowman <david.plowman@raspberrypi.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3265;
- i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=+zqqmKIUftUfrElMykNoEhWSaAdLvXt5iznvaoygcTU=;
- b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBoUXOEbA+dXnVyiD4fxG8s5bJd//kD7Vj5ntMJc
- MB1aGNB5uSJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaFFzhAAKCRByNAaPFqFW
- PO2QD/9FWbjUfguHOEg9Va0TjkdMBLIiy4tT32D8DssRg/qq2p4rWJPSjE1Hjabozj8wAgpJ8Br
- puM+Lgw2lxhq1t5DSJvKQkkEirD3uedtCHet2vwU95CswdHsnqljKsytl67N623aNIgE9cVBEYF
- APlOPUuY81umvgcQeYmTVdvOHGXphD5IRSuJPDiXb+FcxZWozgMIkkM3Mc5muYq6RImez9DGOKT
- iT9C/A1isjiYMu3nYac3kMWods8nBeibf/nsrblNt3dvEo0mRqwUf/S+YunHLZMH1+8GZasW1SB
- H5Uh4zeUlPKLBChdkjBJDZBMCUAlPPcfMxb46pYfmw/iZvZ3yU16Q5o9r9uwVBztwBGkdOK2yGQ
- K2vmzZMSPFPzaxKPfXkb77G2QVOBxFId3FwBaXQwcviPRoEyPvonGhpb/Zs3BzsDr0RH0eo407D
- CjRtH6tQo/KXPI14oFJGBY4JczLbJjK6zxtTtVM4baqlfZxakT6zXDS7qsE6+iQJM3JqYTDR2sr
- PNY2qS9g8jZ5AkyURyU7s5FeHytuA8Qd/pJhqXaCFGQWiel6O2DR33bBjXww6HGkQ+WxWTo4ucL
- Fw0sAxJZyaETE+CFXpcjIrtDpwelnpBxtr2B90KZs4joHTNuCJcFaUgPDdrEZFBP8jr6XjzubjE
- 1rp2/O83LtcxvZw==
-X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <462886.1749731810@warthog.procyon.org.uk>
 
-During the probe() routine, the PiSP BE driver needs to power up the
-interface in order to identify and initialize the hardware.
+On Thu, Jun 12, 2025 at 01:36:50PM +0100, David Howells wrote:
+> Hi Jarkko, Steve, Chuck, Mimi, et al.,
+> 
+> I think work needs to be done on the keyrings subsystem to make them more
+> useful for network filesystems and other kernel services such as TLS and
+> crypto.
+> 
+> There are a number of issues that I think need addressing:
+> 
+>  (1) One of the flaws in the initial design is that whilst keys have a type
+>      (which is necessary), this has to be specified as part of the lookup or
+>      the search, which is overly restrictive.
+> 
+>      It probably would have been better to search by description alone and
+>      then, if a key is found, have any type of key with that description
+>      returned and let the app/service investigate the key to find the type.
+> 
+>      Now, this is still possible to implement on top of the existing API: just
+>      allow a NULL type to be passed in - but we might need some way to
+>      enumerate all the keys with that description, but of different types.
+>      Possibly, the search function should return all the matching keys.
+> 
+>      Possibly, within the kernel, for each keyring, all the keys of the same
+>      description can be stored within a group structure, and the search
+>      returns the group.  This could also have the added benefit of maybe
+>      making it easier to handle updates.
 
-The driver resumes the interface by calling the
-pispbe_runtime_resume() function directly, without going
-through the pm_runtime helpers, but later suspends it by calling
-pm_runtime_put_autosuspend().
+All keys matching the description can be collected by iterating all the
+key types (instead of passing NULL).
 
-This causes a PM usage count imbalance at probe time, notified by the
-runtime_pm framework with the below message in the system log:
+Having only a syscall for the process has of course much better
+concurrency properties.  Just trying to understand the improvements by
+actual measure, that's all.
 
- pispbe 1000880000.pisp_be: Runtime PM usage count underflow!
+>  (2) For certain applications, keys need versioning - and we need to be able
+>      to get access to older versions (at least to some extent) of the keys.
+>      An example of this is cifs where (if I understand it correctly) the key
+>      version gets cranked, but not all servers may have caught up yet, so we
+>      need to be able to try the keys in descending order of version.
+> 
+>      This could also work within the group idea mentioned above.
+> 
+>  (3) For certain applications, such as AFS and AF_RXRPC, we may need to be
+>      able to keep a number of keys around that have the same description
+>      (e.g. cell name) and basic type (e.g. rxrpc) and version, but that have
+>      different crypto types (e.g. Rx security classes and Kerberos types, such
+>      as RxGK+aes256-cts-hmac-sha1-96, RxGK+aes128-cts-hmac-sha256-128 or
+>      RxKAD) as different servers in the same cell might not support all or we
+>      might be implementing a server that is offering multiple crypto types.
+> 
+>      So we might need a "subtype" as well as a version.
 
-Fix this by resuming the interface using the pm runtime helpers instead
-of calling the resume function directly and use the pm_runtime framework
-in the probe() error path. While at it, remove manual suspend of the
-interface in the remove() function. The driver cannot be unloaded if in
-use, so simply disable runtime pm.
+1. How the history is capped? I presume it is a fixed-size circular
+   buffer, where the oldest entry is deleted, when the key is updated.
+1. How history queried by the caller?
+2. How a newer version is revoked in favor of a newer version?
 
-To simplify the implementation, make the driver depend on PM as the
-RPI5 platform where the ISP is integrated in uses the PM framework by
-default.
+>  (4) I think the keyring ACLs idea need to be revived.  We have a whole bunch
+>      of different keyrings, each with a specific 'domain' of usage for the
+>      keys contained therein for checking signatures on things.  Can we reduce
+>      this to one keyring and use ACLs to declare the specific purposes for
+>      which a key may be used or the specific tasks that may use it?  Use
+>      special subject IDs (ie. not simply UIDs/GIDs) to mark this.
 
-Fixes: 12187bd5d4f8 ("media: raspberrypi: Add support for PiSP BE")
-Cc: stable@vger.kernel.org
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
----
- drivers/media/platform/raspberrypi/pisp_be/Kconfig   | 1 +
- drivers/media/platform/raspberrypi/pisp_be/pisp_be.c | 5 ++---
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Is subject ID some kind of token that a process can hold (and possibly
+can be sent to a process)?
 
-diff --git a/drivers/media/platform/raspberrypi/pisp_be/Kconfig b/drivers/media/platform/raspberrypi/pisp_be/Kconfig
-index 46765a2e4c4d1573757ff842f208834216e582cb..a9e51fd94aadc6add70f883bfcea0c9fa91f0c4b 100644
---- a/drivers/media/platform/raspberrypi/pisp_be/Kconfig
-+++ b/drivers/media/platform/raspberrypi/pisp_be/Kconfig
-@@ -3,6 +3,7 @@ config VIDEO_RASPBERRYPI_PISP_BE
- 	depends on V4L_PLATFORM_DRIVERS
- 	depends on VIDEO_DEV
- 	depends on ARCH_BCM2835 || COMPILE_TEST
-+	depends on PM
- 	select VIDEO_V4L2_SUBDEV_API
- 	select MEDIA_CONTROLLER
- 	select VIDEOBUF2_DMA_CONTIG
-diff --git a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
-index ccc6cb99868b842ac0d295f9ec28470303e60788..be794a12362020f42b3cf5bd291b4a1625543b5f 100644
---- a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
-+++ b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
-@@ -1725,7 +1725,7 @@ static int pispbe_probe(struct platform_device *pdev)
- 	pm_runtime_use_autosuspend(pispbe->dev);
- 	pm_runtime_enable(pispbe->dev);
- 
--	ret = pispbe_runtime_resume(pispbe->dev);
-+	ret = pm_runtime_resume_and_get(pispbe->dev);
- 	if (ret)
- 		goto pm_runtime_disable_err;
- 
-@@ -1747,7 +1747,7 @@ static int pispbe_probe(struct platform_device *pdev)
- disable_devs_err:
- 	pispbe_destroy_devices(pispbe);
- pm_runtime_suspend_err:
--	pispbe_runtime_suspend(pispbe->dev);
-+	pm_runtime_put(pispbe->dev);
- pm_runtime_disable_err:
- 	pm_runtime_dont_use_autosuspend(pispbe->dev);
- 	pm_runtime_disable(pispbe->dev);
-@@ -1761,7 +1761,6 @@ static void pispbe_remove(struct platform_device *pdev)
- 
- 	pispbe_destroy_devices(pispbe);
- 
--	pispbe_runtime_suspend(pispbe->dev);
- 	pm_runtime_dont_use_autosuspend(pispbe->dev);
- 	pm_runtime_disable(pispbe->dev);
- }
+> 
+>  (5) Replace the upcall mechanism with a listenable service channel, so that a
+>      userspace service (possibly part of systemd or driven from systemd) can
+>      listen on it and perform key creation/maintenance services.
+> 
+>      From previous discussions with the systemd maintainer, it would be a lot
+>      easier for them to manage if the key is attached to a file descriptor -
+>      at least for the duration of the maintenance operation.
+> 
+>      Further, this needs to be containerised in some way so that requests from
+>      different containers can be handled separately - and can be
+>      distinguished
 
--- 
-2.49.0
+This sounds like an universally sane idea (outside the scope of the
+patch set).
 
+> 
+>  (6) Move away from keeping DNS records in a keyring, but rather keep them in
+>      some sort of shrinkable list.  They could still be looked up over a
+>      secure channel.
+
+Don't expertise to understand the benefits of this change. 
+
+
+> 
+> To aid with at least (1), (2) and (3) and possibly (4), I think it might be
+> worth adding an extended add_key() system call that takes an additional
+> parameter string:
+> 
+> 	key_serial_t add_key2(const char *type,
+> 			      const char *description,
+> 			      const char *parameters,
+> 			      const void payload, size_t plen,
+> 			      key_serial_t keyring);
+> 
+> The parameters would get passed to the key type driver for it to extract
+> things like version number and subtype from without the need to try and fold
+> it into the payload (which may, for example, be a binary ticket obtained from
+> kerberos).  Though possibly that is a bad example as the kerberos ticket may
+> contain multiple keys.
+
+Does the parameter list mimic kernel command-line style of comma
+separated attributes?
+
+BR, Jarkko
 
