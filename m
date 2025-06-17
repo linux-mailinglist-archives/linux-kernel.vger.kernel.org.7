@@ -1,97 +1,81 @@
-Return-Path: <linux-kernel+bounces-690890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC79FADDD7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:57:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22FFADDD81
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2EC03A1DC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:56:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FFA1189BD53
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5836F2EF9A7;
-	Tue, 17 Jun 2025 20:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5AA2E719C;
+	Tue, 17 Jun 2025 20:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="neB8o4Il"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2062.outbound.protection.outlook.com [40.107.236.62])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="gqle6n5E"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11022075.outbound.protection.outlook.com [52.101.43.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4073C2EA16C;
-	Tue, 17 Jun 2025 20:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C05823B60B
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 20:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.75
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750193800; cv=fail; b=Ex+MvClSMh8nnsFZtsZw6GZezrOx8YpJv39PkHCmg1GJfSdYHg6t7XcBSfutAFt2ndAQ4HdGYuWiX68qZZ7IXeqFLld6F6raozlnp8bZsXnYQWb1LwVGhr5snF+4ig0c7fxn2o4VwG7zP7/nVYZ8H7vG6wEcZA6qjb6I6ePjtzc=
+	t=1750193862; cv=fail; b=fkvYcd95x7KY9S4irycqaTyCFGbMrwLD/6emSnaLB0whkI36P+HtCi6jQF4FOzs5kP8JMbLBqkJOK3UQO1c2zX56tss6ycG/f/yqx5/Y3rDXncKdggQSFw0snYbudahqdEIFmeXL9DGu/hWFIDPEVX4mqZFEfK2mvuR3ov+PO80=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750193800; c=relaxed/simple;
-	bh=89myzUIAdQFxfPf/3gsaVGGlhyMkeXLByZV66HT9FiQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nhL3Ffrd1ptEZ5HiSqLSXMTlZsGIGx4EljxL00AaP/LGZ35TLrR0vTz8Di7xak8QyfATVtOIkEtAt2GddyU1yTnQmSl/a+uNLV2o/JDPFCQYVs03ISXV0cVEFhbNEsKdL6mhTJYo0bWJHscI/oDR5wQ1BOkqdgbhC5TILoDlKNw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=neB8o4Il; arc=fail smtp.client-ip=40.107.236.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1750193862; c=relaxed/simple;
+	bh=VWpv5BhcJNrlMUgbOYM75Whc5Lw7abXlbh0cYPUi40E=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IUoZw+GrVFI6b489e5p1VCCng8COdQ7sa6GsCzBF8LU6zwS2weMcFcboCA3gZIk9/mROiSF0Gv6FpM8NYPKI5cdEZ3Dbg6xHSU6HDEqLxDQ0hzjAocBnVvxRSU7LH9wbr9U8SsD06rTaYzQtmUCKKx2b72POCBtPpYnd1GT6p8Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=gqle6n5E; arc=fail smtp.client-ip=52.101.43.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gdRTTM5pNVNUDNky541NIoILdc0CSJUPCETd/eZpI/1ipkS2hnBjgQGDKhB7aAukboMRfQcWSaSD9A/WL9nGlvhw+trPhX7IAfNYUAshfB9hpdtgzV7eykKJLSG2hsudEgU77zkJ5kFYKmOj/DdfYl25w8E06LWhvoe1TMNysZByHdoR+QXezy4jcVoeY/7DTWGnpTIvsHq/POZD5i75RZB8hrumuxBWS133K9hZRpvFIfKCVpGvgk+WEhu4UyzkZXYiU3e4vDc0mv5jCiFsWgb6KDHl0jH34937eIfl7AdS9KuhU4md2sV0gNYJWZDMKbcrVKfnZvaHJuJvKFCQrw==
+ b=iHtbFk2KAJLYOxuFJdZaymroTrJb34qOoYCqtiRYphjItdrNuPe4xXl+D2kLRPJAYpQDaYHWfxVT3H738Kb0ZJ5/PBfV4wMqx+T9bQtpt3+UQXZ+1uUUIrA+GIIZhsZ1m8eT2R6o75C1ZAYhaGvItnWF6SRg+dsIr6GraR7R0yTyRnqdPPrMcDMfPE5q/uDQdaXI33f5dIGFDw3tiO6x6PHby33Q2aalc6Y1FqTj++yc+O3qGPhYUrlPnhp8k+X74b6TiNY8bh5Y865qQt6j1Uc+hqtpGNpYkykpT+mYDy6vsXuQUOzPsecXheNfe32sX9qUeXjHfJyH8Ttvshk9ng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WPUQNDafWxG2AjH+PAIh31ni9hRVeH/NRRYaP1Lxz8E=;
- b=Lqb6EKAcTytUuAipdvEl+tAPOnKsMiDoN3rXwdwMjIUgd9stsh98TXI3XO1nwYWA4tDh13R9ip4ePa9tKs0MwtqOpv6KYaDpgt63MPFb8EPuIALVILNZwEZOSyJqQ0tLmrL26qrmDYkp9+ursKcznSKL+ORHc4ymCKrOKo1J1bYXrIP2sOcBUxWukQWZc/fyhPdHPI9ks/ZonDYEcYxMqBH4T43KQT7meqhTSRPdC3co/DZz76inLiNUzEoriEthcFrC0sws7w0GBHNw/YeWlSnWFqPBEOTfuFFWqG41KEA7BG5JxYya4/dbJ4dAgn4midfsjOeRas8QoBqs+gIx1A==
+ bh=1XkwDTjVuqhCyt4wKdxhsz8oSN6OtvjRWMKisi/vRjE=;
+ b=q5jjW+OEdqBc14FjiyTetDQm/lePyo+5Cn60yjckJe5zilcv1ueTEjKQPtC+/pAEm4gNbJMFvQ91E0E/J8iv1C3N7KKEM+FXrPq2zo2O8iwWtL0EcfMBfjwEeT85bYQvKgS58o8mZgZBkp1uOcseue1bAYHAYN+AJwLA8Nk0dQOt9F6NDDLDM9kt4pitfKj/fVWBl15Iz/X/L0u8z/AQlIUxR/FAKXTBjZ8+nTchV8wGpjoTM8ZLEKYWUFRUNR/TGEy4I52h6PoTzrnjwwcoH4J+gK13fIM8in7aXwT/EKDj+HFh2SywbycInVGkJhfnOgulBFVE8pGEzqthKGKZTA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WPUQNDafWxG2AjH+PAIh31ni9hRVeH/NRRYaP1Lxz8E=;
- b=neB8o4Il6G2msOSKzgPI8V+w6j+Dto2HraLCUbCVSNrWUfu4iyHQA0Unn26uAtbpZXkz+5U1VjB3L6TiXL/oRT/7tiOhEpaRFz4hhWpwF84kuwoBGepuRT5/9h1G2Z3oAJXjThg3y4c8iEGWR+HNbERhtPvcSgC4HI9eU1kWw+vP02P0p2cgRpgw6kaCzgwI96srES2rIYwHt8Xrkc4VP4zthZeDtMlTkw3EVb2qpYGdVao/TcvPpwiQSho0VAdGMgLFhczYZwmsWY0j3ZinVXUIhMJu7QHCrHdOCSEoWeuRkf/UrE8WoTb5NU3lqY3Pjk4O7XF/RXPXWZCSp4uh8g==
+ bh=1XkwDTjVuqhCyt4wKdxhsz8oSN6OtvjRWMKisi/vRjE=;
+ b=gqle6n5EG8w5RcFa18pTA6AGa294ov0BUkdR/xr7LPB8IG4WjN51ajTpbGbsrwmbIcR8N6hvug5a7uoEQOmmc3GLta1bNcDBi7bqCwWrLVZPvjAuR1yu6l6uIFVtorC2GQtmuKc69tFUrmbJ9y2nERirE9XQRPrF09MOjse/Oyo=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from IA0PR12MB8422.namprd12.prod.outlook.com (2603:10b6:208:3de::8)
- by SA0PR12MB4462.namprd12.prod.outlook.com (2603:10b6:806:95::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.19; Tue, 17 Jun
- 2025 20:56:33 +0000
-Received: from IA0PR12MB8422.namprd12.prod.outlook.com
- ([fe80::50d8:c62d:5338:5650]) by IA0PR12MB8422.namprd12.prod.outlook.com
- ([fe80::50d8:c62d:5338:5650%5]) with mapi id 15.20.8835.026; Tue, 17 Jun 2025
- 20:56:32 +0000
-Date: Tue, 17 Jun 2025 15:56:26 -0500
-From: Daniel Dadap <ddadap@nvidia.com>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Lukas Wunner <lukas@wunner.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
-	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
-	"open list:VFIO DRIVER" <kvm@vger.kernel.org>,
-	"open list:SOUND" <linux-sound@vger.kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v2 6/6] vgaarb: Look at all PCI display devices in VGA
- arbiter
-Message-ID: <aFHWejvqNpGv-3UI@ddadap-lakeline.nvidia.com>
-References: <20250617175910.1640546-1-superm1@kernel.org>
- <20250617175910.1640546-7-superm1@kernel.org>
- <aFHABY5yTYrJ4OUw@ddadap-lakeline.nvidia.com>
- <d40a585f-6eca-45dd-aa9f-7dcda065c80a@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d40a585f-6eca-45dd-aa9f-7dcda065c80a@kernel.org>
-X-ClientProxiedBy: BYAPR06CA0016.namprd06.prod.outlook.com
- (2603:10b6:a03:d4::29) To IA0PR12MB8422.namprd12.prod.outlook.com
- (2603:10b6:208:3de::8)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
+ BY3PR01MB6770.prod.exchangelabs.com (2603:10b6:a03:360::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8857.19; Tue, 17 Jun 2025 20:57:35 +0000
+Received: from CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460%6]) with mapi id 15.20.8835.027; Tue, 17 Jun 2025
+ 20:57:35 +0000
+Message-ID: <2b816a20-a0ce-43b2-b76f-d9e175913b27@os.amperecomputing.com>
+Date: Tue, 17 Jun 2025 13:57:31 -0700
+User-Agent: Mozilla Thunderbird
+From: Yang Shi <yang@os.amperecomputing.com>
+Subject: Re: [v4 PATCH 0/4] arm64: support FEAT_BBM level 2 and large block
+ mapping when rodata=full
+To: Ryan Roberts <ryan.roberts@arm.com>, will@kernel.org,
+ catalin.marinas@arm.com, Miko.Lenczewski@arm.com, dev.jain@arm.com,
+ scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250531024545.1101304-1-yang@os.amperecomputing.com>
+ <47adeebf-9997-45fa-8607-67e219c2ed17@os.amperecomputing.com>
+ <5491098f-5508-4665-a8dc-b91a950bbc02@arm.com>
+Content-Language: en-US
+In-Reply-To: <5491098f-5508-4665-a8dc-b91a950bbc02@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: CYZPR05CA0009.namprd05.prod.outlook.com
+ (2603:10b6:930:89::26) To CH0PR01MB6873.prod.exchangelabs.com
+ (2603:10b6:610:112::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,270 +83,316 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PR12MB8422:EE_|SA0PR12MB4462:EE_
-X-MS-Office365-Filtering-Correlation-Id: e1b09a18-9887-438a-60a5-08ddade170a0
+X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|BY3PR01MB6770:EE_
+X-MS-Office365-Filtering-Correlation-Id: cf908037-5a3c-4511-9382-08ddade19617
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|13003099007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?aDoGkcNUGrIdjce73DxsY96R4p38ArR664cCBIiacJoHsvBrByc9Uxyeuxso?=
- =?us-ascii?Q?VnwbfQrYd+2mPOjjGn6U59tXyt9okyqOIGKE9iOLEJ+pNDStQyxSvVNYZNPY?=
- =?us-ascii?Q?KkxJxuN2MIC5ED0p1xKRRl8AZBBYvBOz+f9XpWFlc4VFgYFZxQp81A8suF9S?=
- =?us-ascii?Q?N2xBa579c3YWUiN7FBI+Uc9yJIFYF4+q2akUCRBQz/QorcBW0jAFe2wB16KD?=
- =?us-ascii?Q?gnsocvTp4MTgh/3MtbF/XxljWNDzQenv14puAeIWEoZvn9GJFwT0zfSSoon3?=
- =?us-ascii?Q?0QhX41xD1EQD7bDQCt8iPxYPffXv63aVeOgu3077RUCPU4QrhbOv8F8kDWcw?=
- =?us-ascii?Q?+YyMOvc0GpGkuYYzOn2paSChDUE6rpB3b9HgEDFLR059rMiDOeDal2AFeep7?=
- =?us-ascii?Q?wnJrwc7fBRHXQMJfkyRfn1NwCsIJYa/ZsY8GCmk7WeATjJsaeGxhkJ18DySv?=
- =?us-ascii?Q?eL6dOdXX1Q1rESO8904G3QPFYcBlcotdoLiSaQZfa9Qkii3XC8bIGYZ0wqb3?=
- =?us-ascii?Q?ZmFOda4l9kqxJgTON1tc7frJnIQGnUOoIn81Ti9s12P/7xVwVRR97uSG5Cxp?=
- =?us-ascii?Q?oleIrkp0X7bUF13il0MA19WV6VIp4yFl8mKY/Fe3FxDl8XPHRIVk6InHw6xo?=
- =?us-ascii?Q?wM+95N6+qwB3p89LpRDUWxXSYY2i7ekzLg/ehxMU6ssEpDH072gdwY0IZlrl?=
- =?us-ascii?Q?JZdOHtSl9GaFjAzsYaVBtPLe6NM57xS1Uez7JCIdvL4kXO2h58bB8qycGh0w?=
- =?us-ascii?Q?HQUJeM8Slrtk1QgrEFf+QqLG6OgGRA0A+buk/33kyNNAwv4aOpF7lTEV9xPh?=
- =?us-ascii?Q?a6j3nygakkw/gg/uVlI6qNyBmdhkDNM/2zIEJDGEnaHKOWvVHbXMs3OOuwlk?=
- =?us-ascii?Q?RfGLDB2QreEkqcSdbsh8Wg2GaSHamVu44Vumx6sms3Mro8Mtt8RxHv6UnwMA?=
- =?us-ascii?Q?iSSVT2bcQG0ZAI1WAp+EYDqx5Kz1r2Jx/ZyRfvEEWVpqC2xUhLWhycdLwjub?=
- =?us-ascii?Q?z4Yye5K9HyrLJn2qw8CyavPNiAWLn7wumopbKvR0yxhYs1p8jd9/R1NW7qCs?=
- =?us-ascii?Q?s8pDVR1SgxOms0anygBtS//HPVARZfQAXtbLmi+B5eYwA65dGPiA7vVPI/2n?=
- =?us-ascii?Q?21vVkHzwiURAVjnVgzkMAkvXcP8+7D6oib/oVTpjDImUDWCCvfABEBaJYZvV?=
- =?us-ascii?Q?/864zv+u3n+ZqiAjNr6PGVWLtOMY3vc8S7h8YKoGh+zNybgPjWsRp947urVH?=
- =?us-ascii?Q?hRAjtDV5lBLn80sYAu5WZjHjaMdWN6Xs9WqZA2F3bkkprS3ze2g0qf0ZjpB8?=
- =?us-ascii?Q?IX3+GV+W4SfquoM9tHvuH4n9GsY+YaZqK4/YeZ+I9wh2nFeIUXuRDdWU2Ush?=
- =?us-ascii?Q?hAFYqr1lLGT5qI95VoS6VIJGrGOVUbARgEn2lDTN+hQ8BS+fzQmO792/ALOM?=
- =?us-ascii?Q?p7CjnotBgpA=3D?=
+	=?utf-8?B?eXhVN1AzZUV4cHdXd2F1dHN5NzY4L05Bc09qZTFPaGVkeTdaVlJxU1lFRjJR?=
+ =?utf-8?B?QVE2QXI1QWd6R05ObjBURkcra0dSSHhGaFBiQlNpc3hPUkx5Wk4xUzFzbklk?=
+ =?utf-8?B?RWZXWHUwaWtwSUE2S1NPVlg3UzhHMDNNLzZvVzJxMlRYdTg1ZjMwTVhnamFX?=
+ =?utf-8?B?Y0lVTUZsNUtheXdwSnJLTjNGVXlyNVphN0w0MytPNUYydDd1eXhIN0xoMWJC?=
+ =?utf-8?B?MkhxV2hEWGtPVU9wY2ZyL05BdUlWSEFVbXR5SEcvdjdSUGhwQ3MxL01pd2JZ?=
+ =?utf-8?B?ZERjUmlTOUhMMnoyZ3F4WHViR0pteTZaR1hkeUk2VlZ4TlUrbmd0MXNXTFph?=
+ =?utf-8?B?OG1TTFZVK1dsbXpoUWtQeVM3Q2N0ZDJHeWtUM0taeXRWZGlYOWJSQWhzeEVD?=
+ =?utf-8?B?M0xzcEc3UWFvaVIzdEd6T0hVMHp5eCt2dHpQQWxkZXoyYnZkaThOeHFsc3J2?=
+ =?utf-8?B?WGh2V21NSzVEOHFWR2hhU00zbitmSHlJVDFFU1EzZmtnYk1ydjFNMUVYb2tl?=
+ =?utf-8?B?SlNKNEJCYkdHa1hBNlJrUmdTa3NoK2dLRlJXMWhseG1mZ2t3V245UEdFS2Vu?=
+ =?utf-8?B?OEUyZTNZNUJWbCtWaDJYRUdGZCtZWFBXUW5QTjRmTzJJNWpUWDhIcDViTGVi?=
+ =?utf-8?B?aDlLZEtDOVpIV2xxOEFpNkFCZ25rUWllVGRoQ2lCR2dqdHNrNUFnZG03VkQy?=
+ =?utf-8?B?VmxkcG1KZHlrcnZBQktvQlJ5WEIyTUl4aUsrNjlOTXVEdUVjUkxLNGxIMGw0?=
+ =?utf-8?B?aDB2TmRtbGkrS1h2SlR2elo5N2ZSWmNWRTN1SmZaWkEwZ1hMVkpyT2NTbkE2?=
+ =?utf-8?B?VnNod0tzbnJjdWFuRWpCTXF1dXEwNEUzR05KOStGV1pGZWpiK292MWZmeWZi?=
+ =?utf-8?B?Q280ODFsWFZrUzQyUDB1b3FQaWN3eUE3VXQwTDMzYk9xQW93MDRMeFhjS0k0?=
+ =?utf-8?B?eTlNcVU2TFdhd1VkeFhwTDVlODV3ZW14QllscGZ1dE1YcFphc3NlcmdUVUNJ?=
+ =?utf-8?B?NTg4T1FPMHlKazg2OU1DelVaUUNYUmwyQ1YvOHZTRThzdExOZURSb2thdito?=
+ =?utf-8?B?L0xMZkg5UnBLL0RIeU5PQTV5S295eENCa2p4aXZ0ZWlUd05ONHRwcEl1Y2tM?=
+ =?utf-8?B?dG43L2R3a1Z6ckhJVTlvZmhLK2oxK3F6bkt5emhxbWlTcm1od2NVeGx5dkNy?=
+ =?utf-8?B?ckphWUJab05RT3RNcThRalg0aUkxZlRBMGtIUS9QMTRDZUsrTS8zR3Q4SWNY?=
+ =?utf-8?B?UXY2Z3drOW81V0d2akRPdUVUOHlnSzRhOFRvVWpTK2JiWTJIVnpFTnV0bENR?=
+ =?utf-8?B?bnpBbTl5QWs4aUtsczJXZE1QR2FQZ29iN1BOb1BMK05jRkJTSUc0dk56cEpG?=
+ =?utf-8?B?c2lRTnJWQVc2R1VnbnRtRytuYzFpODZpaW5JYnVHSERjNVh0YTI2UW83aFJ4?=
+ =?utf-8?B?cmpGRWlyYmI4NzJQdU9NYmtvU2NlaEY4bVBHNnFNZVJPZnExcjNSM0lNcmtD?=
+ =?utf-8?B?S1pLTnAxT3dZbGFqeHEvVFFPMVNxSk9ueWxidDFmR3N1aGFHcXZaUWhWbzBr?=
+ =?utf-8?B?OEhJU1VQWXN5SVJoZS9LTUtMVVorOVJybDYvMmJBS3hnNkJybndYSVZGUnRG?=
+ =?utf-8?B?L05INzYrc2VKVnBUOHY2U3FsRVZHOVJjck10OXU5SHJ4THA2RXpTL1crRFVw?=
+ =?utf-8?B?RDB6YmF3RUczcFlhbGhCejYvWUZtZ1ZRdFZrMWhieDcrcC9Ndk9kZWJ2Q1FV?=
+ =?utf-8?B?ZWJqWlpjRVpPSFVPLzJUYm5HZE4zVmo3NWRlOURNaVN1Rk8yRytvVDBISjFQ?=
+ =?utf-8?Q?e2KdjEdUttlVEvoiQxG3+J1s3gJDB8pHqQo5M=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB8422.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(13003099007);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?05hwKl5IiTxhdh5IXvqJAiA8LTfKh4ydU1w6h9sFV6gmZBLYWenoXDTUyLb1?=
- =?us-ascii?Q?4pWxdy9HNG1HKco5cr5gqNgKquhsS0FH+YnrC2YLNyGFzd6WDhcvzsizqfVF?=
- =?us-ascii?Q?y+o5keiWpejXlTmQfW8DniBcfn7Jg5YuLlOITwifKoye5HXACJ8ZqlY6OLOL?=
- =?us-ascii?Q?BK1/Wu5xgtUp6GgHlzDdavBfjOrUgE95CtK+qTj+2m1NZ9KELQUzlpCPCMIv?=
- =?us-ascii?Q?/Lda8a9JdHAg291pOL0uF10tdtg/EG4q3EqCVU5/jr0We9hS90ZFEnstOHvv?=
- =?us-ascii?Q?a26TztY//dmIr60eWt443OBmzLghjCqtwbSQ8IrnN33PEHllKnAT7O2PmMS3?=
- =?us-ascii?Q?ow0lOGX8FRRbujzT+UN3X+AN+3JGj0MlJPQXxARc7IB8T8ctzD4esjYXMgeU?=
- =?us-ascii?Q?sWiZokwIcn3M1lHSB8usfG2w97/NRKYfxQ2FzwjsicyLRF2gYHd9g0udVYqo?=
- =?us-ascii?Q?o061pn4VFJQFbXKnUCw1DY/SNCMdv5xb6EaMvkiSHbSeTZk0kowNccL7ge+t?=
- =?us-ascii?Q?4g2p6ffpseRiZYMWPS5NkDejjvV8aPmt7Kx7Se+9DTjf6vcszRxiPYa4+pml?=
- =?us-ascii?Q?c0EGak2dtiXfKTv5kCuUInhJMssQCck5ZWlvID18TuLFuVOGLRW9rLTTF/HI?=
- =?us-ascii?Q?W9fsQWlxXhXTR35mU60VAEjgc1l1FpYAr4tELTuXQhXCdrVCeB5UUvSY7wM4?=
- =?us-ascii?Q?qW1zOfLyGFjrfZzHUuNu5nTDUpsCvrllA35cRlv/DM6YFlAD9Jmkji2m0FPo?=
- =?us-ascii?Q?fE/ndpXPp+H/2Nd/ZquWcNCQ9LksMqVSM1bB84RP1NZrPLLmBJeeOfv1JG2+?=
- =?us-ascii?Q?Ibh5OCw5jHcBbZSPoMOby0JWwz1TQ3UeEpNI0v0ydvH6n39/eNjDIAhAA6RT?=
- =?us-ascii?Q?dgUNcVBtKZw9Nbv2l0ubdVd2TPPoPaG4txliMe91sI3kE3mG20o8Lfy/CmYJ?=
- =?us-ascii?Q?bvdh8KhwTaWAqoiu0jtEU3qCIJEnwXQSw3dd18fHUTppSorWGweNFepET9jv?=
- =?us-ascii?Q?IHVz358ow87MVFXRcedHYHuqrgrUjhHIvPgdqwCAXhogCZQxNiDjTzde/GMs?=
- =?us-ascii?Q?RMGyt05gXj04fMQ93yHL8tk+dS9dj3v+0UoDpHR0V9qaGT7sYZUFdrxWPDK7?=
- =?us-ascii?Q?dvWLkeXs5asN07jWgPMGquA2ROpejMSc4UzIhA37lcx8OwqJCpmCfCeV7UJz?=
- =?us-ascii?Q?EoqpdZz96TO09kE62sZOSXD47JFtzw6RT6w6fP1aC8dhm3Z042vKMKg0Xyle?=
- =?us-ascii?Q?MTJaMjs18T2XSpwU1HvK+JpAJy1HOwRB+g5BXOvN4ZjartCQD0fIiPos8ZUl?=
- =?us-ascii?Q?q6kdxhRemhyjEX7Q+DJy25zvosHUf/TNK09EIBVxEEUbk8kw6Cq6z1IBWjQ+?=
- =?us-ascii?Q?f7c1U3z/9CMgTHukTYapw30+GHg7SrnqfM7QV15HM89q7M80M5NaFVekrPgq?=
- =?us-ascii?Q?Jzw+yxtMBm4rwRJIArDiPNkkhyujPIgNOdcyyk2UIIELyhiH0Y6wydmeVEJy?=
- =?us-ascii?Q?UdkJctqHAaykLKndijE9CBm6U5039zeKzbtEZkheNyVOv2GbhoO3D8T8C4nm?=
- =?us-ascii?Q?Y7cVfMfn6BGCqW7RbQ4n3NPNUIt5MSaFiiwuZkFu?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1b09a18-9887-438a-60a5-08ddade170a0
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8422.namprd12.prod.outlook.com
+	=?utf-8?B?akFUT3JsOEVSUEJEYkhPRTZSQUdKVnpVRjJqL3R2U1JMb0oyYXc0WFlOSElj?=
+ =?utf-8?B?cE9CaGdnOGpMUUJtTUpyaUdUNlQwdUx2S1VVUmhIalVSZnltbG1oM0w0d3N6?=
+ =?utf-8?B?T1Y0WTA2bXRHZklQVm0vSFRORXFtOHdMTTFIc1R6VVM4Tkp0L1E3cEFDUkZz?=
+ =?utf-8?B?QU5yNzltSEdsd2k5Y1NJUUVMcU0zTEVuQ2xvSDlUdjI1QVgxOFdYK1R5UU1t?=
+ =?utf-8?B?OFdqUWM5eUhmeVN6ZVVSTExuWWFmQlMwcTJzbDI5SFFHNTZpWUtLT1owSUVW?=
+ =?utf-8?B?WWQ5OVVWYTFBRXdYZTBCeFJkTnB0Mlh0bE1oNXJPajNlU3ZQbE9YOWFUbGFQ?=
+ =?utf-8?B?Vm0vUi8wUmxwK0pndUNSOFM4V0VEQUlHVEp3VkkxdDhzVjQyWDlCTXVOUFVk?=
+ =?utf-8?B?bUROZXh0dmUzTGJ5dGFzNEtsS040R0tQejE5cW8rQ3VWUUxjN2pwVWliSis4?=
+ =?utf-8?B?Mjk1aU5aUUtBRzlUK0kxck9Cb3hicXhsd1lwTko0QWIwYW03OFd5K1JoWStN?=
+ =?utf-8?B?VWZZSlZHVUc1SUVJNGcxRnNQSzk2Q2svWnZlRXRSalJ4SGU3bGFCRVlDRTNJ?=
+ =?utf-8?B?dHQ0T2tQRWNuVTJGTlVLUmNRMUowbDlzOUJzRVBkb2RqYzhUS2gyNDBkcFZy?=
+ =?utf-8?B?b2xkY2c2clh2SWZiOGZKV2Vyb21LOURMUFV2Q0VaaEdDaXEyR2NzNnZmNGZL?=
+ =?utf-8?B?bHhFVmpDQk9pbnZoN2Vwd0xBWml6U0ZxaXkyRlRoTDAvdENRRHNiSnNaT09S?=
+ =?utf-8?B?c2JJMzhyWVp1SENDN0h5WXByUU1OdEJEYmtLNUxHRVlaVDF4UjdiNzVFbE82?=
+ =?utf-8?B?a3YzbGdYRHljL2tGMFJoQWM2ZXU0elpsWEorTGN1dzMxSHBmRkNPMjBDWTJN?=
+ =?utf-8?B?alBLc3Arc29MdXZ0clZaN0VpMVhUdmplcVBrYVdFMnJWWEtHa0ttSDRDQnIy?=
+ =?utf-8?B?MGpDdzROejM4eFRKbFpBVEUvNDBWZlovMzdaREpJdzZDY05lbngyS3k0TjBX?=
+ =?utf-8?B?K3AvSTZZMktLSkxObmNyTFVrcnJOSlpIUXRmWHVmUVc3bDUvcnI0bmlUZFlZ?=
+ =?utf-8?B?bWxyKzAvazZpTTRwK044VWxXaWc5QVg1T2pjRHV5VlJHVzNrMm1DQmo3Vzg4?=
+ =?utf-8?B?ZGhJR3BKS1R0UzJPR3p6WmJaazlnTGZHYXBZd05BMzJBVzYwRWZLNEE2ekRY?=
+ =?utf-8?B?YlFMMHA2Ym16eFV2Z25DN1NYcE9WQmxjNURJb09TWFViK1E1d29DSzdCalV3?=
+ =?utf-8?B?cFlkSEsxby9rWWZMd0cza3p3TkhPSVpURC9XWmwvejdvNHg3dlVITFVxdFBh?=
+ =?utf-8?B?ZHFyREpxL0FTVFJ6OWZvRWliTWhxRC9MeTlyRTI3VE1WaC9TR1VuNHNPeXJL?=
+ =?utf-8?B?NWNZZGpFSllzNjFSNCtRNktBNWswaGFyT3ZQQnJGdzdIUkMybCtVOEQ4L0xk?=
+ =?utf-8?B?QUc4b3lxWDZyRjhERmVrTVAzTk5vQ3k2QXNEREsvcCtCL3FRSlhydHZrbGo1?=
+ =?utf-8?B?MnhVZWJpMnZXd0Y0OFk4bkZtWVBxeUM1UzZMYnpWcFYxSVJIYVNvV01Ia0xF?=
+ =?utf-8?B?VDl6V2p4OXlkbWlYR1plK0ZEc1lnR1lPY0VpMmtsdUtITExMQ29OaDJZRmVw?=
+ =?utf-8?B?aks0UVQ3MyszNk4wckdqRXFWcGYybTRPOUxGaWU0MWNRSEo1ZHNNZ1IycHAx?=
+ =?utf-8?B?eU9oMm4xQitCM290SUh6RDJZMDgyVHlwM2lqczZWalNlREoyaWxYN2N0MHRJ?=
+ =?utf-8?B?elBRN0ZuQWQwOVluRGQ2V3BUd0dVdE85aWlMUGJFalNHWnpQQWxGQ3o2NThX?=
+ =?utf-8?B?UW9CTzg1V3ZnMGN4WC8wT2U4UjEwNSs2N2RjWlBFaHVjQ3M2eXJJUGczT012?=
+ =?utf-8?B?YmdFUDdpN0xDdDNhQnF0Q3NZbFp4UFRCOS9wS2crcThOVGN5MFVKWmdPbjc5?=
+ =?utf-8?B?bnZmK2hUSXA4VFNYQUM0SGpNUjNzc2pnN3pHZVBseVBVRERJVDV4Z1FlM3Zu?=
+ =?utf-8?B?OStGNi9aNGVKUzhhcW1idUxKNVluYm04QmR5cWJjRS8vaVNiU3Z2UG9ZYXhB?=
+ =?utf-8?B?Tk5FazYvSTRWZytUQkM4MnpPcmNOTU9tcHVlSkg3dWtYVHg2TkJLMGwvNzMw?=
+ =?utf-8?B?TURYV2c0MXFWcTJNTUlYZ1c2WUFwTkI4SGFjVk1TeU11dkZoYjNDZ1BleVB3?=
+ =?utf-8?Q?tFO5jFRpGBfDth/GgUDyjzk=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf908037-5a3c-4511-9382-08ddade19617
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2025 20:56:32.8238
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2025 20:57:35.5509
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ed9zkJKG/1Ko6kXJiic4rZtQYVJQ4wwxYhS1UeiGKlKeCI8wX4CWxYoW0R8wK+fyWMwv3u5V4vm3CpJ6E5G5lQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4462
+X-MS-Exchange-CrossTenant-UserPrincipalName: boOtBGJTlqsiS4YT+Al7IchY01qjPmvTv6wQBy7TJa9O3cl4fsVKKPAJfkkHS30NJU2MuP5LNvZLZlCC9g5zRkisS6kqyIEbc4HXZVfk08Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY3PR01MB6770
 
-On Tue, Jun 17, 2025 at 03:15:35PM -0500, Mario Limonciello wrote:
-> 
-> 
-> On 6/17/25 2:20 PM, Daniel Dadap wrote:
-> > On Tue, Jun 17, 2025 at 12:59:10PM -0500, Mario Limonciello wrote:
-> > > From: Mario Limonciello <mario.limonciello@amd.com>
-> > > 
-> > > On a mobile system with an AMD integrated GPU + NVIDIA discrete GPU the
-> > > AMD GPU is not being selected by some desktop environments for any
-> > > rendering tasks. This is because neither GPU is being treated as
-> > > "boot_vga" but that is what some environments use to select a GPU [1].
-> > > 
-> > > The VGA arbiter driver only looks at devices that report as PCI display
-> > > VGA class devices. Neither GPU on the system is a PCI display VGA class
-> > > device:
-> > > 
-> > > c5:00.0 3D controller: NVIDIA Corporation Device 2db9 (rev a1)
-> > > c6:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI] Device 150e (rev d1)
-> > > 
-> > > If the GPUs were looked at the vga_is_firmware_default() function actually
-> > > does do a good job at recognizing the case from the device used for the
-> > > firmware framebuffer.
-> > > 
-> > > Modify the VGA arbiter code and matching sysfs file entries to examine all
-> > > PCI display class devices. The existing logic stays the same.
-> > > 
-> > > This will cause all GPUs to gain a `boot_vga` file, but the correct device
-> > > (AMD GPU in this case) will now show `1` and the incorrect device shows `0`.
-> > > Userspace then picks the right device as well.
-> > > 
-> > > Link: https://github.com/robherring/libpciaccess/commit/b2838fb61c3542f107014b285cbda097acae1e12 [1]
-> > > Suggested-by: Daniel Dadap <ddadap@nvidia.com>
-> > > Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-> > > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> > > ---
-> > >   drivers/pci/pci-sysfs.c | 2 +-
-> > >   drivers/pci/vgaarb.c    | 8 ++++----
-> > >   2 files changed, 5 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> > > index 268c69daa4d57..c314ee1b3f9ac 100644
-> > > --- a/drivers/pci/pci-sysfs.c
-> > > +++ b/drivers/pci/pci-sysfs.c
-> > > @@ -1707,7 +1707,7 @@ static umode_t pci_dev_attrs_are_visible(struct kobject *kobj,
-> > >   	struct device *dev = kobj_to_dev(kobj);
-> > >   	struct pci_dev *pdev = to_pci_dev(dev);
-> > > -	if (a == &dev_attr_boot_vga.attr && pci_is_vga(pdev))
-> > > +	if (a == &dev_attr_boot_vga.attr && pci_is_display(pdev))
-> > >   		return a->mode;
-> > 
-> > I can't help but worry about userspace clients that might be checking for
-> > the presence of the boot_vga sysfs file but don't check its contents.
-> 
-> Wouldn't those clients "already" be broken by such an assumption?
-> We know today that there are systems with two VGA devices in them too.
+
+
+On 6/16/25 2:09 AM, Ryan Roberts wrote:
+> On 13/06/2025 18:21, Yang Shi wrote:
+>> Hi Ryan,
+>>
+>> Gently ping... any comments for this version?
+> Hi Yang, yes sorry for slow response - It's been in my queue. I'm going to start
+> looking at it now and plan to get you some feedback in the next couple of days.
 >
+>> It looks Dev's series is getting stable except some nits. I went through his
+>> patches and all the call sites for changing page permission. They are:
+>>    1. change_memory_common(): called by set_memory_{ro|rw|x|nx}. It iterates
+>> every single page mapped in the vm area then change permission on page basis. It
+>> depends on whether the vm area is block mapped or not if we want to change
+>>       permission on block mapping.
+>>    2. set_memory_valid(): it looks it assumes the [addr, addr + size) range is
+>> mapped contiguously, but it depends on the callers pass in block size (nr > 1).
+>> There are two sub cases:
+>>       2.a kfence and debugalloc just work for PTE mapping, so they pass in single
+>> page.
+>>       2.b The execmem passes in large page on x86, arm64 has not supported huge
+>> execmem cache yet, so it should still pass in singe page for the time being. But
+>> my series + Dev's series can handle both single page mapping and block mapping well
+>>           for this case. So changing permission for block mapping can be
+>> supported automatically once arm64 supports huge execmem cache.
+>>    3. set_direct_map_{invalid|default}_noflush(): it looks they are page basis.
+>> So Dev's series has no change to them.
+>>    4. realm: if I remember correctly, realm forces PTE mapping for linear address
+>> space all the time, so no impact.
+> Yes for realm, we currently force PTE mapping - that's because we need page
+> granularity for sharing certain portions back to the host. But with this work I
+> think we will be able to do the splitting on the fly and map using big blocks
+> even for realms.
 
-Yes, for systems with multiple VGA devices, which is an uncommon case. I
-think that on systems with one VGA device and one 3D device, which is
-probably the most common case, this change might break such clients.
- 
-> I'd think those should have both GPUs exporting a file and one having a 0
-> the other 1.
+OK, it is good to support more usecase.
 
-Yeah, agreed. I'd consider it a userspace bug if the client only tests for
-the presence of the file but doesn't look at its contents, but it's still
-preferable not to break (hypothetical, buggy) clients unnecessarily. One
-could make a philosophical argument that "boot_vga" should really mean VGA
-subclass, as the name implies, but even so I think that, in lieu of a new
-interface to report what the desktop environments are actually trying to
-test for (which nobody uses yet because it doesn't exist), exposing the
-boot_vga file for a non-VGA GPU in the special case of there being zero
-VGA GPUs on the system is a reasonable and practical compromise to allow
-existing code to work on the zero-VGA systems.
+>> So it looks like just #1 may need some extra work. But it seems simple. I should
+>> just need advance the address range in (1 << vm's order) stride. So there should
+>> be just some minor changes when I rebase my patches on top of Dev's, mainly
+>> context changes. It has no impact to the split primitive and repainting linear
+>> mapping.
+> I haven't looked at your series yet, but I had assumed that the most convenient
+> (and only) integration point would be to call your split primitive from dev's
+> ___change_memory_common() (note 3 underscores at beginning). Something like this:
+>
+> ___change_memory_common(unsigned long start, unsigned long size, ...)
+> {
+> 	// This will need to return error for case where splitting would have
+> 	// been required but system does not support BBML2_NOABORT
+> 	ret = split_mapping_granularity(start, start + size)
+> 	if (ret)
+> 		return ret;
+>
+> 	...
+> }
 
-I think it ultimately comes down to a semantic argument about what "VGA"
-is really supposed to mean here. There's the real, honest-to-goodness VGA
-interface with INT 10h and VBE, and then there's the common de facto sort
-of shorthand convention (commonly but not universally followed) where VGA
-means it can drive displays and 3D means it can't. It used to be the case
-(at least on x86) that display controllers which could drive real display
-hardware were always VGA-compatible, and display controllers were not VGA
-compatible could never drive real display hardware, which I think is how
-that convention originated, but on UEFI systems with no CSM support, it's
-not necessarily true any more. However, there's so much existing software
-out there that conflates VGA-ness with display-ness that some controllers
-with no actual VGA support get listed with the VGA controller subclass to
-avoid breaking such software.
+Yeah, I agree. All callsites converge to ___change_memory_common() once 
+Dev's series is applied.
 
-If you go by the language of the definitions for the subclasses of PCI
-base class 03h, it seems pretty clear that the VGA subclass is supposed
-to mean actually compatible with real honest-to-goodness VGA. So those
-non-VGA devices that pretend to be VGA for software compatibility aren't
-following the spec. I'd be willing to wager that the system in question
-is being accurate when it says that it has no VGA controllers. It is
-arguably a userspace bug that these desktop environments are testing for
-"VGA" when they really probably mean something else, but it will probably
-take some time to hunt down everything that's relying on boot_vga for
-possibly wrong reasons, and I think the pragmatic option is to lie about
-it until we have a better way to test for whatever the desktops really
-want to know, and that better way is widely used. But it would be nice to
-limit the lying to cases where it unbreaks things if we can.
+Thanks,
+Yang
 
-> 
-> > I
-> > understand that it's the intention to expose the file for non-VGA display
-> > controllers in the case where none of the display controllers are of the
-> > VGA subclass, but one of them is the boot console device and should be
-> > considered "VGA" for the purposes of the overloaded meaning of "VGA", but
-> > if it isn't too much trouble to minimize the change to UAPI here, I'd be
-> > more comfortable with only exposing this file for devices that really are
-> > VGA and/or the firmware default.
-> > 
-> > Maybe something like making the condition:
-> > 
-> > if (a == &dev_attr_boot_vga.attr) {
-> > 	if (pci_is_vga(pdev) ||
-> > 	    (pci_is_display(pdev) && vga_default_device() == pdev))
-> > 		return a->mode;
-> > }
-> > 
-> > (maybe we don't even need the pci_is_display() check at that point? I
-> > feel more comfortable leaving it in, though)
-> 
-> I suppose it depends upon call order whether the above works or not.
-> 
-> I'm not sure 'off hand' right now.
-> 
-> > > I'd expect that to do something like (assuming two-GPU hybrid system):
-> > 
-> > * Systems with one VGA controller and one 3D controller:
-> >    * VGA controller gets boot_vga file, contents are "1"
-> >    * 3D controller does not get boot_vga file
-> > * Systems with no VGA controllers and two 3D controllers:
-> >    * 3D controller driving the console gets boot_vga file: "1"
-> >    * 3D controller not driving the console does not get boot_vga file
-> > * Systems with two VGA controllers and no 3D controllers:
-> >    * VGA controller driving the console gets boot_vga file: "1"
-> >    * VGA controller not driving the console gets boot_vga file: "0"
-> > 
-> > i.e., the behavior would only be visibly different in the case with two
-> > 3D controllers, like the one targeted by this patch. You and I have seen
-> > the two VGA controller case in the wild, so we know it exists.
-> 
-> Yeah I wish we had some more data from that reporter right now to
-> potentially support a proposal that would help their system too.
-> 
-> This patch as it is today will only help case 1 and 2.
+>> Thanks,
+>> Yang
+>>
+>>
+>> On 5/30/25 7:41 PM, Yang Shi wrote:
+>>> Changelog
+>>> =========
+>>> v4:
+>>>     * Rebased to v6.15-rc4.
+>>>     * Based on Miko's latest BBML2 cpufeature patch (https://lore.kernel.org/
+>>> linux-arm-kernel/20250428153514.55772-4-miko.lenczewski@arm.com/).
+>>>     * Keep block mappings rather than splitting to PTEs if it is fully contained
+>>>       per Ryan.
+>>>     * Return -EINVAL if page table allocation failed instead of BUG_ON per Ryan.
+>>>     * When page table allocation failed, return -1 instead of 0 per Ryan.
+>>>     * Allocate page table with GFP_ATOMIC for repainting per Ryan.
+>>>     * Use idmap to wait for repainting is done per Ryan.
+>>>     * Some minor fixes per the discussion for v3.
+>>>     * Some clean up to reduce redundant code.
+>>>
+>>> v3:
+>>>     * Rebased to v6.14-rc4.
+>>>     * Based on Miko's BBML2 cpufeature patch (https://lore.kernel.org/linux-
+>>> arm-kernel/20250228182403.6269-3-miko.lenczewski@arm.com/).
+>>>       Also included in this series in order to have the complete patchset.
+>>>     * Enhanced __create_pgd_mapping() to handle split as well per Ryan.
+>>>     * Supported CONT mappings per Ryan.
+>>>     * Supported asymmetric system by splitting kernel linear mapping if such
+>>>       system is detected per Ryan. I don't have such system to test, so the
+>>>       testing is done by hacking kernel to call linear mapping repainting
+>>>       unconditionally. The linear mapping doesn't have any block and cont
+>>>       mappings after booting.
+>>>
+>>> RFC v2:
+>>>     * Used allowlist to advertise BBM lv2 on the CPUs which can handle TLB
+>>>       conflict gracefully per Will Deacon
+>>>     * Rebased onto v6.13-rc5
+>>>     *https://lore.kernel.org/linux-arm-kernel/20250103011822.1257189-1-
+>>> yang@os.amperecomputing.com/
+>>>
+>>> v3:https://lore.kernel.org/linux-arm-kernel/20250304222018.615808-1-
+>>> yang@os.amperecomputing.com/
+>>> RFC v2:https://lore.kernel.org/linux-arm-kernel/20250103011822.1257189-1-
+>>> yang@os.amperecomputing.com/
+>>> RFC v1:https://lore.kernel.org/lkml/20241118181711.962576-1-
+>>> yang@os.amperecomputing.com/
+>>>
+>>> Description
+>>> ===========
+>>> When rodata=full kernel linear mapping is mapped by PTE due to arm's
+>>> break-before-make rule.
+>>>
+>>> A number of performance issues arise when the kernel linear map is using
+>>> PTE entries due to arm's break-before-make rule:
+>>>     - performance degradation
+>>>     - more TLB pressure
+>>>     - memory waste for kernel page table
+>>>
+>>> These issues can be avoided by specifying rodata=on the kernel command
+>>> line but this disables the alias checks on page table permissions and
+>>> therefore compromises security somewhat.
+>>>
+>>> With FEAT_BBM level 2 support it is no longer necessary to invalidate the
+>>> page table entry when changing page sizes.  This allows the kernel to
+>>> split large mappings after boot is complete.
+>>>
+>>> This patch adds support for splitting large mappings when FEAT_BBM level 2
+>>> is available and rodata=full is used. This functionality will be used
+>>> when modifying page permissions for individual page frames.
+>>>
+>>> Without FEAT_BBM level 2 we will keep the kernel linear map using PTEs
+>>> only.
+>>>
+>>> If the system is asymmetric, the kernel linear mapping may be repainted once
+>>> the BBML2 capability is finalized on all CPUs.  See patch #4 for more details.
+>>>
+>>> We saw significant performance increases in some benchmarks with
+>>> rodata=full without compromising the security features of the kernel.
+>>>
+>>> Testing
+>>> =======
+>>> The test was done on AmpereOne machine (192 cores, 1P) with 256GB memory and
+>>> 4K page size + 48 bit VA.
+>>>
+>>> Function test (4K/16K/64K page size)
+>>>     - Kernel boot.  Kernel needs change kernel linear mapping permission at
+>>>       boot stage, if the patch didn't work, kernel typically didn't boot.
+>>>     - Module stress from stress-ng. Kernel module load change permission for
+>>>       linear mapping.
+>>>     - A test kernel module which allocates 80% of total memory via vmalloc(),
+>>>       then change the vmalloc area permission to RO, this also change linear
+>>>       mapping permission to RO, then change it back before vfree(). Then launch
+>>>       a VM which consumes almost all physical memory.
+>>>     - VM with the patchset applied in guest kernel too.
+>>>     - Kernel build in VM with guest kernel which has this series applied.
+>>>     - rodata=on. Make sure other rodata mode is not broken.
+>>>     - Boot on the machine which doesn't support BBML2.
+>>>
+>>> Performance
+>>> ===========
+>>> Memory consumption
+>>> Before:
+>>> MemTotal:       258988984 kB
+>>> MemFree:        254821700 kB
+>>>
+>>> After:
+>>> MemTotal:       259505132 kB
+>>> MemFree:        255410264 kB
+>>>
+>>> Around 500MB more memory are free to use.  The larger the machine, the
+>>> more memory saved.
+>>>
+>>> Performance benchmarking
+>>> * Memcached
+>>> We saw performance degradation when running Memcached benchmark with
+>>> rodata=full vs rodata=on.  Our profiling pointed to kernel TLB pressure.
+>>> With this patchset we saw ops/sec is increased by around 3.5%, P99
+>>> latency is reduced by around 9.6%.
+>>> The gain mainly came from reduced kernel TLB misses.  The kernel TLB
+>>> MPKI is reduced by 28.5%.
+>>>
+>>> The benchmark data is now on par with rodata=on too.
+>>>
+>>> * Disk encryption (dm-crypt) benchmark
+>>> Ran fio benchmark with the below command on a 128G ramdisk (ext4) with disk
+>>> encryption (by dm-crypt with no read/write workqueue).
+>>> fio --directory=/data --random_generator=lfsr --norandommap --randrepeat 1 \
+>>>       --status-interval=999 --rw=write --bs=4k --loops=1 --ioengine=sync \
+>>>       --iodepth=1 --numjobs=1 --fsync_on_close=1 --group_reporting --thread \
+>>>       --name=iops-test-job --eta-newline=1 --size 100G
+>>>
+>>> The IOPS is increased by 90% - 150% (the variance is high, but the worst
+>>> number of good case is around 90% more than the best number of bad case).
+>>> The bandwidth is increased and the avg clat is reduced proportionally.
+>>>
+>>> * Sequential file read
+>>> Read 100G file sequentially on XFS (xfs_io read with page cache populated).
+>>> The bandwidth is increased by 150%.
+>>>
+>>>
+>>> Yang Shi (4):
+>>>         arm64: cpufeature: add AmpereOne to BBML2 allow list
+>>>         arm64: mm: make __create_pgd_mapping() and helpers non-void
+>>>         arm64: mm: support large block mapping when rodata=full
+>>>         arm64: mm: split linear mapping if BBML2 is not supported on secondary
+>>> CPUs
+>>>
+>>>    arch/arm64/include/asm/cpufeature.h |  26 +++++++
+>>>    arch/arm64/include/asm/mmu.h        |   4 +
+>>>    arch/arm64/include/asm/pgtable.h    |  12 ++-
+>>>    arch/arm64/kernel/cpufeature.c      |  30 ++++++--
+>>>    arch/arm64/mm/mmu.c                 | 505 ++++++++++++++++++++++++++++++++++
+>>> +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>> +---------------
+>>>    arch/arm64/mm/pageattr.c            |  37 +++++++--
+>>>    arch/arm64/mm/proc.S                |  41 ++++++++++
+>>>    7 files changed, 585 insertions(+), 70 deletions(-)
+>>>
 
-I don't think case 1 needs any help: the behavior I describe above is what
-I expect the existing behavior to be. However if you expose boot_vga files
-for all display controllers, the behavior for case 1 (which I expect to be
-the common case) will be different after that change: both controllers get
-a boot_vga file with different contents, versus only the VGA controller
-having a boot_vga file previously.
-
-> 
-> > The one 3D
-> > and one VGA controller case is what I'd expect to be the common one, and
-> > hopefully this will have the same behavior before and after this change
-> > regardless of whether a muxed system defaults to dGPU (like hybrid Mac
-> > notebooks) or iGPU (like other hybrid systems I'm accustomed to).
-> > 
-> > >   	return 0;
-> > > diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
-> > > index 78748e8d2dbae..63216e5787d73 100644
-> > > --- a/drivers/pci/vgaarb.c
-> > > +++ b/drivers/pci/vgaarb.c
-> > > @@ -1499,8 +1499,8 @@ static int pci_notify(struct notifier_block *nb, unsigned long action,
-> > >   	vgaarb_dbg(dev, "%s\n", __func__);
-> > > -	/* Only deal with VGA class devices */
-> > > -	if (!pci_is_vga(pdev))
-> > > +	/* Only deal with PCI display class devices */
-> > > +	if (!pci_is_display(pdev))
-> > >   		return 0;
-> > >   	/*
-> > > @@ -1546,12 +1546,12 @@ static int __init vga_arb_device_init(void)
-> > >   	bus_register_notifier(&pci_bus_type, &pci_notifier);
-> > > -	/* Add all VGA class PCI devices by default */
-> > > +	/* Add all PCI display class devices by default */
-> > >   	pdev = NULL;
-> > >   	while ((pdev =
-> > >   		pci_get_subsys(PCI_ANY_ID, PCI_ANY_ID, PCI_ANY_ID,
-> > >   			       PCI_ANY_ID, pdev)) != NULL) {
-> > > -		if (pci_is_vga(pdev))
-> > > +		if (pci_is_display(pdev))
-> > >   			vga_arbiter_add_pci_device(pdev);
-> > >   	}
-> > > -- 
-> > > 2.43.0
-> > > 
-> 
 
