@@ -1,53 +1,85 @@
-Return-Path: <linux-kernel+bounces-690050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BEC5ADCAD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:15:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2925ADCAB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA08C3A9AEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:13:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 154CF3A4CA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA37D2EACE5;
-	Tue, 17 Jun 2025 12:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D3B2E06CF;
+	Tue, 17 Jun 2025 12:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="V197FZFy"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mGmT086r"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491D72E4243;
-	Tue, 17 Jun 2025 12:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DF32D9ED9
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 12:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750162348; cv=none; b=BjvZ7fx0v1a2qu16QNWBFpoVK6e0xtu9iV0RAQY2wzzJ2c3EZ8yHhPQPM22Uf3ppPCST0kjpsXnRF68b+YILgF4JGQUprgsRiTuqsiXP3V8yPYHKbLnh71dOUUWCGDpN0yF2D/7/6rmHyTFunXcgxz2v0ZM/p5p9N71ItLAmGa0=
+	t=1750162328; cv=none; b=Sfx4J+xGu20gpoyjzm3ipYwSbFNcDWF3TI0KsAtCp3c9rkZoJGZF7ALnyOnzurU5Et+v2XfVlizOQmklkiHEtvATt9wa1xR7m6vcHdQznul3pdfZh+DVCiA+etS0nrAmotq777NZz2G0bn/cbVvPv5t99mPni9v3ev64QK9TfQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750162348; c=relaxed/simple;
-	bh=Ktc3xxYXhnRG0Rnso71RGDXd3fiZ42jyI/Gy94OBfRE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GMUpQ4pQekfrkCTDO2Zyodn9RBbRnQTjVyKL7D63ync0Blgl4s4dbbIYwym5d5e65ii20n8e2CMYUg0zUg2qh0d/2upmiqIT7YqWdsxmglUE6wm7a6YwVJipzq0++ZKUvlPcn2FNEQA/MxkEE4RLVwbmpVw8Le1ijAIWyCPHm9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=V197FZFy; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 941F84330E;
-	Tue, 17 Jun 2025 12:12:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1750162337;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gKchl/gqrxYqm9EjAM8es6ran3MYFcPpOU3PjiegdmY=;
-	b=V197FZFy3iIABlRa+SP8g4qOE68/WcZFBJFYvANXHgdwUj97pprskxJr2vJSQNc5HFRYPe
-	LegCw14rU312nz41o/OwvjbS6UkxWvKzPbsuVG/gCAHk9sgZG2ajll4tXvCllgIcogII33
-	JSUTcdThMioyEzgGzlnLTIv0sYoKmdKubP62RZ7GRuSZVJm8OYKRayQvah+c/Zg8LbLPG4
-	Iy9SLwjy8+YfCDwEmDuf0V+My/m563SX4nNF3tvcQTAr/jhGkMI0xDSYbbhx8IcgavXECT
-	+CZDvojE9ITLAat4LPRroexT7xcGH8qzx8qHikn8mrgolh6r2Jz4Ezwp446z8w==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Tue, 17 Jun 2025 14:12:02 +0200
-Subject: [PATCH net-next v14 03/13] net: pse-pd: tps23881: Add support for
- PSE events and interrupts
+	s=arc-20240116; t=1750162328; c=relaxed/simple;
+	bh=jtjGkx7PbcE2vHDnfHVl0N+SZYB2VE9WYKDSXkb4WjQ=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=e0KMuwIXJtRA4rLFDbFrH97+luIhHQPFMFn//B8iQ74vCnk05KUR93VXXzoY8yfQCh/ciwaR2rY+75s+cTzG4XKrxlgkcoYn7YyB3nx/SiyN2diZ+5LiBK6OUmyiNJiUwHoQme7gbr714tFuEIdbr7utjP1uQGpu+Yu24PGjr0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mGmT086r; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-875acfc133dso179848539f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 05:12:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750162325; x=1750767125; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f/qjREJUOIJxRz7QxQVVE+iucFdBwBB5lgjEmSZXzLo=;
+        b=mGmT086rDSv7DqoRsYsm4hr01t+EewawRqPgaSFQ7wJ8WbFVCNAgAXCiF8xgAAX3sc
+         pdQILmDjv45bpSIS+NgKuIoSZ/cNchEEr7GO8ILikEADqb4iXlk5LHssXe0/Eyt5lI7B
+         v3KOFuX+CJ0RC4pT3fOI53UICL/+eJOGvTZ/w3uCe0J5g7MbPF0QOwexLd1jyjNU9CzB
+         JQEcOrdfA0EPcaxWrOJqwdwpiavmBJ7yQeOLLxVi8UKhyrIeT8iVjSi7G4L95Qf9lQgu
+         XAtuvf7HLPdHAE0R/hkoeIEi2Bno+KqGPCG6nFerdz1P3INH3Xef3FZQdY1fDLYepG3A
+         IGPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750162325; x=1750767125;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f/qjREJUOIJxRz7QxQVVE+iucFdBwBB5lgjEmSZXzLo=;
+        b=GPGLyuQF0XfZAsHOC2H0rkLTgKjkUOzTQLaHK5Ouedj8R9SPhNYJ1kFdbIPUopA/+C
+         EHLHoqSGQ7NikbrQojtwkWaBuKoHblrUz88S/CNYCWQO7n3vmudBayIV/8BLS8NrVcBA
+         0V/ytp8xWbTOkIBCvewIWXUlHy7ueirxkY32pnCnP8KxCL9C++JzqaPV8SPA6rFcqAng
+         ERc5+YSS75hiUYT3J0QoBMKZ1xol/U60HcT19GKewONlZeRJgNK6PaAF1wKeNkBPU9hs
+         GST+ICSF7jwfTiDW3NGSlOS0PM6aM+m2CEhGaKvzdkD1sp3MyL6kaBXM4W/RyoLQATgg
+         vxNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUaLX6igOwkVvY8QhEL5XRXEQUm8egwt0/3wsVNyXqJ9sSJ7Q71WuV5i+saEnOS4lXwGu/AxKKdQBwqUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaKvxZQWcJbYr8+PhwwslII9/ZyiXr7rV8JqgXWyiL24XXOkc3
+	4GwrZ+a5NezeRdv1ZicGYkrKPsc2GeZXjdLTV5CHDClj7nnnNtcq9+igRRqKvf7N7S2/oPs4Tpo
+	pWN+D
+X-Gm-Gg: ASbGncudxW1/KynHfr5QPztSD2/NG8t0Vqiyf2+KVx0laRhWU4OJAzCr0pGYi4s1KC+
+	QOMMomuV+u2pTgmytoi4+cClTvvdV7IPh9n4mukvUW8kvZdleI4uJQ2mE59vaov7fVcWt5c1AzH
+	GJVKM5Te8ThizpkFEgLXdSWxoKpymkgKC0dRa4nE9jeHfNcjkVR8qDV4vM1dhKBufu/eizoghlj
+	yvcPnSMhf0glV2ORaebOgC5U6pq+QtQr0LaUvlU22x8SOzm1NjCh/EYGYGixpSHt5vjT1UhQO32
+	gFLygwvRq69VticvqY6muhk6HXrF8cfhyjclZ7dOS+pAuHRN3AfSJQ==
+X-Google-Smtp-Source: AGHT+IG0w7oJnEhc9SyJVK6zFLHv3cqGyVrecWmvAPvfn0VzcgjB1pecE+hhN3zMhmzyPcnm5FRGeQ==
+X-Received: by 2002:a05:6e02:184a:b0:3db:7c22:303c with SMTP id e9e14a558f8ab-3de07cfe991mr128241535ab.8.1750162324822;
+        Tue, 17 Jun 2025 05:12:04 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3de01a502b8sm24901745ab.66.2025.06.17.05.12.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 05:12:04 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: ed.cashin@acm.org, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Justin Sanders <jsanders.devel@gmail.com>
+In-Reply-To: <20250610170600.869-1-jsanders.devel@gmail.com>
+References: <20250610170600.869-1-jsanders.devel@gmail.com>
+Subject: Re: [PATCH 1/2] aoe: clean device rq_list in aoedev_downdev()
+Message-Id: <175016232389.1144398.4390914425439308132.b4-ty@kernel.dk>
+Date: Tue, 17 Jun 2025 06:12:03 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,301 +88,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250617-feature_poe_port_prio-v14-3-78a1a645e2ee@bootlin.com>
-References: <20250617-feature_poe_port_prio-v14-0-78a1a645e2ee@bootlin.com>
-In-Reply-To: <20250617-feature_poe_port_prio-v14-0-78a1a645e2ee@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Jonathan Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, 
- Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- Simon Horman <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, 
- Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>
-X-Mailer: b4 0.15-dev-8cb71
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddugecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvefgvdfgkeetgfefgfegkedugffghfdtffeftdeuteehjedtvdelvddvleehtdevnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdejpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdpr
- hgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkhihlvgdrshifvghnshhonhesvghsthdrthgvtghh
-X-GND-Sasl: kory.maincent@bootlin.com
+X-Mailer: b4 0.14.3-dev-d7477
 
-From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 
-Add support for PSE event reporting through interrupts. Set up the newly
-introduced devm_pse_irq_helper helper to register the interrupt. Events are
-reported for over-current and over-temperature conditions.
+On Tue, 10 Jun 2025 17:05:59 +0000, Justin Sanders wrote:
+> An aoe device's rq_list contains accepted block requests that are
+> waiting to be transmitted to the aoe target. This queue was added as
+> part of the conversion to blk_mq. However, the queue was not cleaned out
+> when an aoe device is downed which caused blk_mq_freeze_queue() to sleep
+> indefinitely waiting for those requests to complete, causing a hang. This
+> fix cleans out the queue before calling blk_mq_freeze_queue().
+> 
+> [...]
 
-Signed-off-by: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
-Change in v11:
-- Remove a potential infinite loop spotted by llm in tps23881_irq_handler.
+Applied, thanks!
 
-Change in v7:
-- Add a max irq retry limit to avoid infinite loop in the interrupt
-  handler.
+[1/2] aoe: clean device rq_list in aoedev_downdev()
+      commit: a847c4a41630b38136e069aad82dd619c03e95b6
+[2/2] aoe: defer rexmit timer downdev work to workqueue
+      commit: 71437cf6208c63af6ba99cb42074d13d7b56b669
 
-Change in v4:
-- Small rename of a function.
-
-Change in v3:
-- Loop over interruption register to be sure the interruption pin is
-  freed before exiting the interrupt handler function.
-- Add exist variable to not report event for undescribed PIs.
-- Used helpers to convert the chan number to the PI port number.
-
-Change in v2:
-- Remove support for OSS pin and TPC23881 specific port priority management
----
- drivers/net/pse-pd/tps23881.c | 189 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 187 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/pse-pd/tps23881.c b/drivers/net/pse-pd/tps23881.c
-index 5e9dda2c0eac..7a9a5dbe0cb1 100644
---- a/drivers/net/pse-pd/tps23881.c
-+++ b/drivers/net/pse-pd/tps23881.c
-@@ -16,7 +16,15 @@
- #include <linux/pse-pd/pse.h>
- 
- #define TPS23881_MAX_CHANS 8
--
-+#define TPS23881_MAX_IRQ_RETRIES 10
-+
-+#define TPS23881_REG_IT		0x0
-+#define TPS23881_REG_IT_MASK	0x1
-+#define TPS23881_REG_IT_IFAULT	BIT(5)
-+#define TPS23881_REG_IT_SUPF	BIT(7)
-+#define TPS23881_REG_FAULT	0x7
-+#define TPS23881_REG_SUPF_EVENT	0xb
-+#define TPS23881_REG_TSD	BIT(7)
- #define TPS23881_REG_PW_STATUS	0x10
- #define TPS23881_REG_OP_MODE	0x12
- #define TPS23881_OP_MODE_SEMIAUTO	0xaaaa
-@@ -24,6 +32,7 @@
- #define TPS23881_REG_DET_CLA_EN	0x14
- #define TPS23881_REG_GEN_MASK	0x17
- #define TPS23881_REG_NBITACC	BIT(5)
-+#define TPS23881_REG_INTEN	BIT(7)
- #define TPS23881_REG_PW_EN	0x19
- #define TPS23881_REG_2PAIR_POL1	0x1e
- #define TPS23881_REG_PORT_MAP	0x26
-@@ -51,6 +60,7 @@ struct tps23881_port_desc {
- 	u8 chan[2];
- 	bool is_4p;
- 	int pw_pol;
-+	bool exist;
- };
- 
- struct tps23881_priv {
-@@ -782,8 +792,10 @@ tps23881_write_port_matrix(struct tps23881_priv *priv,
- 		hw_chan = port_matrix[i].hw_chan[0] % 4;
- 
- 		/* Set software port matrix for existing ports */
--		if (port_matrix[i].exist)
-+		if (port_matrix[i].exist) {
- 			priv->port[pi_id].chan[0] = lgcl_chan;
-+			priv->port[pi_id].exist = true;
-+		}
- 
- 		/* Initialize power policy internal value */
- 		priv->port[pi_id].pw_pol = -1;
-@@ -1017,6 +1029,173 @@ static int tps23881_flash_sram_fw(struct i2c_client *client)
- 	return 0;
- }
- 
-+/* Convert interrupt events to 0xff to be aligned with the chan
-+ * number.
-+ */
-+static u8 tps23881_irq_export_chans_helper(u16 reg_val, u8 field_offset)
-+{
-+	u8 val;
-+
-+	val = (reg_val >> (4 + field_offset) & 0xf0) |
-+	      (reg_val >> field_offset & 0x0f);
-+
-+	return val;
-+}
-+
-+/* Convert chan number to port number */
-+static void tps23881_set_notifs_helper(struct tps23881_priv *priv,
-+				       u8 chans,
-+				       unsigned long *notifs,
-+				       unsigned long *notifs_mask,
-+				       enum ethtool_pse_event event)
-+{
-+	u8 chan;
-+	int i;
-+
-+	if (!chans)
-+		return;
-+
-+	for (i = 0; i < TPS23881_MAX_CHANS; i++) {
-+		if (!priv->port[i].exist)
-+			continue;
-+		/* No need to look at the 2nd channel in case of PoE4 as
-+		 * both registers are set.
-+		 */
-+		chan = priv->port[i].chan[0];
-+
-+		if (BIT(chan) & chans) {
-+			*notifs_mask |= BIT(i);
-+			notifs[i] |= event;
-+		}
-+	}
-+}
-+
-+static void tps23881_irq_event_over_temp(struct tps23881_priv *priv,
-+					 u16 reg_val,
-+					 unsigned long *notifs,
-+					 unsigned long *notifs_mask)
-+{
-+	int i;
-+
-+	if (reg_val & TPS23881_REG_TSD) {
-+		for (i = 0; i < TPS23881_MAX_CHANS; i++) {
-+			if (!priv->port[i].exist)
-+				continue;
-+
-+			*notifs_mask |= BIT(i);
-+			notifs[i] |= ETHTOOL_PSE_EVENT_OVER_TEMP;
-+		}
-+	}
-+}
-+
-+static void tps23881_irq_event_over_current(struct tps23881_priv *priv,
-+					    u16 reg_val,
-+					    unsigned long *notifs,
-+					    unsigned long *notifs_mask)
-+{
-+	u8 chans;
-+
-+	chans = tps23881_irq_export_chans_helper(reg_val, 0);
-+	if (chans)
-+		tps23881_set_notifs_helper(priv, chans, notifs, notifs_mask,
-+					   ETHTOOL_PSE_EVENT_OVER_CURRENT);
-+}
-+
-+static int tps23881_irq_event_handler(struct tps23881_priv *priv, u16 reg,
-+				      unsigned long *notifs,
-+				      unsigned long *notifs_mask)
-+{
-+	struct i2c_client *client = priv->client;
-+	int ret;
-+
-+	/* The Supply event bit is repeated twice so we only need to read
-+	 * the one from the first byte.
-+	 */
-+	if (reg & TPS23881_REG_IT_SUPF) {
-+		ret = i2c_smbus_read_word_data(client, TPS23881_REG_SUPF_EVENT);
-+		if (ret < 0)
-+			return ret;
-+		tps23881_irq_event_over_temp(priv, ret, notifs, notifs_mask);
-+	}
-+
-+	if (reg & (TPS23881_REG_IT_IFAULT | TPS23881_REG_IT_IFAULT << 8)) {
-+		ret = i2c_smbus_read_word_data(client, TPS23881_REG_FAULT);
-+		if (ret < 0)
-+			return ret;
-+		tps23881_irq_event_over_current(priv, ret, notifs, notifs_mask);
-+	}
-+
-+	return 0;
-+}
-+
-+static int tps23881_irq_handler(int irq, struct pse_controller_dev *pcdev,
-+				unsigned long *notifs,
-+				unsigned long *notifs_mask)
-+{
-+	struct tps23881_priv *priv = to_tps23881_priv(pcdev);
-+	struct i2c_client *client = priv->client;
-+	int ret, it_mask, retry;
-+
-+	/* Get interruption mask */
-+	ret = i2c_smbus_read_word_data(client, TPS23881_REG_IT_MASK);
-+	if (ret < 0)
-+		return ret;
-+	it_mask = ret;
-+
-+	/* Read interrupt register until it frees the interruption pin. */
-+	retry = 0;
-+	while (true) {
-+		if (retry > TPS23881_MAX_IRQ_RETRIES) {
-+			dev_err(&client->dev, "interrupt never freed");
-+			return -ETIMEDOUT;
-+		}
-+
-+		ret = i2c_smbus_read_word_data(client, TPS23881_REG_IT);
-+		if (ret < 0)
-+			return ret;
-+
-+		/* No more relevant interruption */
-+		if (!(ret & it_mask))
-+			return 0;
-+
-+		ret = tps23881_irq_event_handler(priv, (u16)ret, notifs,
-+						 notifs_mask);
-+		if (ret)
-+			return ret;
-+
-+		retry++;
-+	}
-+	return 0;
-+}
-+
-+static int tps23881_setup_irq(struct tps23881_priv *priv, int irq)
-+{
-+	struct i2c_client *client = priv->client;
-+	struct pse_irq_desc irq_desc = {
-+		.name = "tps23881-irq",
-+		.map_event = tps23881_irq_handler,
-+	};
-+	int ret;
-+	u16 val;
-+
-+	val = TPS23881_REG_IT_IFAULT | TPS23881_REG_IT_SUPF;
-+	val |= val << 8;
-+	ret = i2c_smbus_write_word_data(client, TPS23881_REG_IT_MASK, val);
-+	if (ret)
-+		return ret;
-+
-+	ret = i2c_smbus_read_word_data(client, TPS23881_REG_GEN_MASK);
-+	if (ret < 0)
-+		return ret;
-+
-+	val = (u16)(ret | TPS23881_REG_INTEN | TPS23881_REG_INTEN << 8);
-+	ret = i2c_smbus_write_word_data(client, TPS23881_REG_GEN_MASK, val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return devm_pse_irq_helper(&priv->pcdev, irq, 0, &irq_desc);
-+}
-+
- static int tps23881_i2c_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
-@@ -1097,6 +1276,12 @@ static int tps23881_i2c_probe(struct i2c_client *client)
- 				     "failed to register PSE controller\n");
- 	}
- 
-+	if (client->irq) {
-+		ret = tps23881_setup_irq(priv, client->irq);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return ret;
- }
- 
-
+Best regards,
 -- 
-2.43.0
+Jens Axboe
+
+
 
 
