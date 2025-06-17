@@ -1,339 +1,297 @@
-Return-Path: <linux-kernel+bounces-689869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC52ADC766
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:03:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094D7ADC770
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F1F91882219
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:03:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD5577A5FE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99CC291C13;
-	Tue, 17 Jun 2025 10:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A0A294A0C;
+	Tue, 17 Jun 2025 10:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="abbLPbCF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+4+4PvYT";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="abbLPbCF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+4+4PvYT"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XFZ9z+LD"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CAA2BF012
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 10:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F005219D06A
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 10:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750154599; cv=none; b=jOhbEjQF0AkZmwpg5Ogs33XRAaM3Y0z0sKzVDbsq1nkoXgx+g03jCHVZ+A3B183dltcMRKnmyKRzS4brJwzDFvUoC7fLY2ya6fIcXuUiERBGthjZQFKLRiiaVYDbO7EXb8UDjlqkTsyvQ8m9ZshiO8o2z/PIYXoOUOStZGa0qZA=
+	t=1750154652; cv=none; b=bQArLf6JxnGXXIDxGe6ObxBRoIl2AxqWD2ylCngkgUtobib15RcwZvQTE4upZVUlXsmlYSmrfi1V7hql8mzsghziN3/yyrL0fFu56VoVICTJ3H3s77XhXdh/9NgM33fimAUIgePFUxLUbKyCd0iaT4OqvvaJELkjaKqqLLeqWDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750154599; c=relaxed/simple;
-	bh=89x755ehqxV4PxNYZeJleUo/fHv/V0t6PSoaOVSeTCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K2q+Hwu3QvKxzihzd298P7VqsqXKhZMravO6SQpasZ22fFLryjemLRozeO5gLjK2r55KWBDjhUSF02MMUgMNrXRRrudDWo5323azz2lWzp+7BoMw2w49howKirLvzyumD1GgZKIYEttLHBZYqKWkCDCNoE/aKSijcOOmFz8kc3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=abbLPbCF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+4+4PvYT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=abbLPbCF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+4+4PvYT; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 657D021190;
-	Tue, 17 Jun 2025 10:03:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750154595; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lkNuGFHnLWcnxmlORCCDKyxXf53aZscV6U0/WkfcPWo=;
-	b=abbLPbCF0mQbynj4JRIDX4N1v1ml2XXAGepHiUo+Bi1uAaXbeK8xjHw3Zfl51/DW60qKhO
-	ERYt3F3iBlmZpBPXx0GyvgFSbEfFnPSrw8T9hM4NVtZYPMwv8NYUSp4nWuTMEbVgEensPZ
-	DbSsc3bjGy/NEZpxir9EGu0OQJNtSZQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750154595;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lkNuGFHnLWcnxmlORCCDKyxXf53aZscV6U0/WkfcPWo=;
-	b=+4+4PvYT4QpEoAXU/fGikyT2jcyOTXZly0hpO0zg6KqC6MjqPV2L3pcYAK4A1+fLOj90Dc
-	+VsZjnJM4K+uMgBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=abbLPbCF;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=+4+4PvYT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750154595; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lkNuGFHnLWcnxmlORCCDKyxXf53aZscV6U0/WkfcPWo=;
-	b=abbLPbCF0mQbynj4JRIDX4N1v1ml2XXAGepHiUo+Bi1uAaXbeK8xjHw3Zfl51/DW60qKhO
-	ERYt3F3iBlmZpBPXx0GyvgFSbEfFnPSrw8T9hM4NVtZYPMwv8NYUSp4nWuTMEbVgEensPZ
-	DbSsc3bjGy/NEZpxir9EGu0OQJNtSZQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750154595;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lkNuGFHnLWcnxmlORCCDKyxXf53aZscV6U0/WkfcPWo=;
-	b=+4+4PvYT4QpEoAXU/fGikyT2jcyOTXZly0hpO0zg6KqC6MjqPV2L3pcYAK4A1+fLOj90Dc
-	+VsZjnJM4K+uMgBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DEBC913A69;
-	Tue, 17 Jun 2025 10:03:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FR6GM2I9UWgFFgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 17 Jun 2025 10:03:14 +0000
-Date: Tue, 17 Jun 2025 12:03:13 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	James Houghton <jthoughton@google.com>,
-	Peter Xu <peterx@redhat.com>, Gavin Guo <gavinguo@igalia.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] mm,hugetlb: Document the reason to lock the folio in
- the faulting path
-Message-ID: <aFE9YTNcCHAGBtKi@localhost.localdomain>
-References: <20250612134701.377855-1-osalvador@suse.de>
- <20250612134701.377855-3-osalvador@suse.de>
- <44f0f1cc-307a-46e3-9e73-8b2061e4e938@redhat.com>
- <aEw0dxfc5n8v1-Mp@localhost.localdomain>
- <ffeeb3d2-0e45-43d1-b2e1-a55f09b160f5@redhat.com>
- <aEychl8ZkJDG1-5K@localhost.localdomain>
- <aE075ld-fOyMipcJ@localhost.localdomain>
- <a5e098d1-ee5a-447f-9e05-0187b22500e1@redhat.com>
- <aFAlupvoJ_w7jCIU@localhost.localdomain>
- <1297fdd5-3de2-45bc-b146-e14061643fee@redhat.com>
+	s=arc-20240116; t=1750154652; c=relaxed/simple;
+	bh=8T6XGntRet/Z6G/uVi8ecQ2qd6xlMey+nPT6aDLp9EU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FmWnuNsmI1tpN5ecnLZoJ0bG24l4CjfoojzC+h6r/3fY+OclB8KS8ZqbDI++V1eicaV1uPr/4rYr47fMeaursS79KV5A8aCHZUH3LkTOiXaoEvIIZEsDhWeseXBeCApPfrSVnErXaeIAWQk9u7+ATdoNOnsV5kkMh3+cvy3QKdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XFZ9z+LD; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55H8RlcB013681
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 10:04:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9qQ6chZxwb0kaN95EAupZIbA55eTV4KovirnoXg/Nr0=; b=XFZ9z+LD0aFsm4Xp
+	obIib7tpEfq3obX3cs0RL2FUzgbH9XugZVk8H1XLHdRXvdQlXTlv75B7Zvd5L7NS
+	r5qTmdbsm1nK49PNS6ozQfHaLvEOgsAPnEbtfBPYZpbo6LPUMxCZxv9zMeRwI3OQ
+	3XAiJJCdgz28UnaCA/GldP5dh5PcMbi8hcJQVX2Hh4frDguuYx9H+hClVyaFTult
+	yoNAE+KcB2WWsJkuulW9kJ0ZdBoY8A8kMWENtFhmLFU04oJpYIe/AjYM8HV08IpE
+	fo8jSEobGQDnLG8iBtxh56XsizNz3iKer3w7e4AwRgu7g0sWdd6scS+YU4xgWDZQ
+	jnAk6w==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 479qp5pfn5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 10:04:09 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d3dcac892bso203489485a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 03:04:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750154649; x=1750759449;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9qQ6chZxwb0kaN95EAupZIbA55eTV4KovirnoXg/Nr0=;
+        b=DQHadD5EPkmqR6KMGOoFgx8vleMeJdiQ04JuN9mA3/jk5he+lyOspaIoxpT7ixzCaH
+         ESV/g3Gkm7OKtcjRgc2AXsotukpbi5ITdJkpkkkIb7AkqABN35O5MbV2ggmjkEl1F4OM
+         X0mhNd2A2QEGv/5b8i2lQGmxBBZ6XBXD3KDGvgbfXKRTZGPfIQJIIqaxe1J71HSSHQDD
+         X5WjVLlFHJsLtiR9jmRXEcqUnXLw2W9bHciGHIUjrvF0YGY+5rK/jMpNnZAEg4eu2NLq
+         YItPxYUsEYPXsbvE1gDP1WaaJIyy+Nz+HuO86yjsze8oTbtPYRHHazLVGiHfB8czRT8f
+         69Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCWVmTZ5FtUmB72zOnykkI8cVrbF8UK6pnrlue0QcmOXtU8pGZ+eYI9p02G0b8ebHwQBRKimAzbVPr6n2rg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZJPqMPhQNOhCH6K0fiSscHlWBkTh7i4gDGwC9Xt3/ebSfrDOX
+	eviwB2HUhZmxOEAjX65VbBrbOv7hGZKzd1GEq+Z9z4pIOs8wcdjhgbOARssaysVZxsel0xBM3Kk
+	UF5SJBwV27iCPgdgAq5srGj4XXI5NbbLaIN7eAzagWG8lfukzg6lmbpjdsHfKD9WX2+o=
+X-Gm-Gg: ASbGncuSQjPn8IQOPv1URJ4mt2wyvbiJBvyUeSicoWCS79ZPKUzx/1+UwHTzrM9Tg0P
+	teKaRdy2L1QTjPn6IaGmOTr3DB7T6GrUWNlLq+D46oJ9mKfNwznw12L2GPBexbV6vhTv7Tv+Xy2
+	it28o5Wu7RK3pvR1h/7rJdfmLNncolMUM2D8e4PzT+0w4HMT57v9zt2dGc+O1Mu0Q2T6itrBKFN
+	ajUApqE4mf1Y3FKQ0TTCHV+EO7XQ2xWGZ6lroRYMNiX1eBmS4aVLqr1glvkYKi4bzH7rMEvQA4y
+	fnp2oDg7MTZpVJiZnqtNcZQmDSw28FvnmQZJBVcvjr81b4t44fmi66nQ3GqspQXzXiiddoGLPcU
+	hNp2qSsnWlrU0fdUfWQnDgqkIFexZp4gN4BT+HuPrmWZl5lnNpEnsGRLBLqZzeS/iMcdYTjHG51
+	8=
+X-Received: by 2002:a05:620a:84c5:b0:7d3:904a:30c5 with SMTP id af79cd13be357-7d3e03b10c8mr316439185a.4.1750154648451;
+        Tue, 17 Jun 2025 03:04:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGvna9IJ6ePvmIjs2uDIO38vWP2NflNsfddbUTeI2csRoT/3ReiocEENEsqlHc9sjbmCU22Tg==
+X-Received: by 2002:a05:620a:84c5:b0:7d3:904a:30c5 with SMTP id af79cd13be357-7d3e03b10c8mr316434085a.4.1750154647952;
+        Tue, 17 Jun 2025 03:04:07 -0700 (PDT)
+Received: from ?IPV6:2001:14bb:c7:3ae3:d1c0:258a:276f:153c? (2001-14bb-c7-3ae3-d1c0-258a-276f-153c.rev.dnainternet.fi. [2001:14bb:c7:3ae3:d1c0:258a:276f:153c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32b3307ae42sm18230001fa.43.2025.06.17.03.04.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jun 2025 03:04:07 -0700 (PDT)
+Message-ID: <4d8c89be-2589-40f9-841e-27cb7b1040de@oss.qualcomm.com>
+Date: Tue, 17 Jun 2025 13:04:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1297fdd5-3de2-45bc-b146-e14061643fee@redhat.com>
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 657D021190
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.51
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 29/38] drm/msm/dp: add connector abstraction for DP MST
+To: Yongxing Mou <quic_yongmou@quicinc.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>
+References: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
+ <20250609-msm-dp-mst-v2-29-a54d8902a23d@quicinc.com>
+ <fcmbo5qhiifo3erfnejgtu6es2nmeo3c5r4plbutj23gdtydng@xy3mqkhbsjia>
+ <1c09642b-7a0c-4073-97d3-f6f6cddbde83@quicinc.com>
+ <7r7vdbeols4suew7rlvogft4b5lmg22osipydxzkubxsychewi@lpyj6vmoapzb>
+ <19895a7d-4f30-44f1-bc5f-45d200666860@quicinc.com>
+Content-Language: en-US
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+In-Reply-To: <19895a7d-4f30-44f1-bc5f-45d200666860@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: Vp_Gcgfxtt7uzxR2CaYSiLQr2rapIFnG
+X-Proofpoint-ORIG-GUID: Vp_Gcgfxtt7uzxR2CaYSiLQr2rapIFnG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE3MDA4MSBTYWx0ZWRfXwem6ULxYpjLj
+ JqvxM9wWa9Lkrh7b6vG0KPeT5AgPPzM3k0RQLe/VGIE3DTMQqN7TgkeoF+32AGzdh/aUeoaSPaM
+ 1S5Nwo7aagqsjiFw72IktQzLrftKrvar8E8uu2ao2HPmHAoE1fvK90hE99MspZ6Vfu4ovigz8Ak
+ VSq07kjw6AH9qHvflMKar1GGcn/Db0jqasKbbbrUkoe3uYUSpfDHdYeB89YHrZ1avu5PUF+/4PH
+ ugrHl+33sDQrX+O916HdnGeXnznm1sD3V6QYxMcrEe4265NtiqaehsEGjKpN3gZIKJ0p9eK4qui
+ XzVXQzy3chhRyZZYsPxL1OhhmeW0X7Hs12oqbyQ1YgK97p2WjJwstrGzDvU/B2PfKZFYPmi9J8L
+ PwftzNcM8s7G5/43TxrcW1zI2/QoVv/16OlJJn6QS8kHzti19IHyrfBD3TohYlYbE8hrlAuL
+X-Authority-Analysis: v=2.4 cv=fMc53Yae c=1 sm=1 tr=0 ts=68513d9a cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=WoTifGf_cgNeg6NlKB0A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-17_04,2025-06-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 bulkscore=0 clxscore=1015 malwarescore=0
+ mlxlogscore=999 spamscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 suspectscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506170081
 
-On Mon, Jun 16, 2025 at 04:41:20PM +0200, David Hildenbrand wrote:
-> On 16.06.25 16:10, Oscar Salvador wrote:
-> > What do you mean by stable?
+On 17/06/2025 10:52, Yongxing Mou wrote:
 > 
-> The same "stable" you used in the doc, that I complained about ;)
-
-Touche :-D
-
-> > In the generic faulting path, we're not worried about the page going away
-> > because we hold a reference, so I guess the lock must be to keep content stable?
 > 
-> What you want to avoid is IIRC, is someone doing a truncation/reclaim on the
-> folio while you are mapping it.
-
-Ok, I see. I thought it was more about holding writes, but this makes sense.
-
-> Take a look at truncate_inode_pages_range() where we do a folio_lock()
-> around truncate_inode_folio().
+> On 2025/6/16 21:48, Dmitry Baryshkov wrote:
+>> On Mon, Jun 16, 2025 at 08:43:40PM +0800, Yongxing Mou wrote:
+>>>
+>>>
+>>> On 2025/6/9 23:51, Dmitry Baryshkov wrote:
+>>>> On Mon, Jun 09, 2025 at 08:21:48PM +0800, Yongxing Mou wrote:
+>>>>> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>>>>>
+>>>>> Add connector abstraction for the DP MST. Each MST encoder
+>>>>> is connected through a DRM bridge to a MST connector and each
+>>>>> MST connector has a DP panel abstraction attached to it.
+>>>>>
+>>>>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>>>>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+>>>>> ---
+>>>>>    drivers/gpu/drm/msm/dp/dp_mst_drm.c | 515 ++++++++++++++++++++++ 
+>>>>> ++++++++++++++
+>>>>>    drivers/gpu/drm/msm/dp/dp_mst_drm.h |   3 +
+>>>>>    2 files changed, 518 insertions(+)
+>>>>
+>>>>> +
+>>>>> +static enum drm_mode_status msm_dp_mst_connector_mode_valid(struct 
+>>>>> drm_connector *connector,
+>>>>> +                                const struct drm_display_mode *mode)
+>>>>> +{
+>>>>> +    struct msm_dp_mst_connector *mst_conn;
+>>>>> +    struct msm_dp *dp_display;
+>>>>> +    struct drm_dp_mst_port *mst_port;
+>>>>> +    struct msm_dp_panel *dp_panel;
+>>>>> +    struct msm_dp_mst *mst;
+>>>>> +    u16 full_pbn, required_pbn;
+>>>>> +    int available_slots, required_slots;
+>>>>> +    struct msm_dp_mst_bridge_state *dp_bridge_state;
+>>>>> +    int i, slots_in_use = 0, active_enc_cnt = 0;
+>>>>> +    const u32 tot_slots = 63;
+>>>>> +
+>>>>> +    if (drm_connector_is_unregistered(connector))
+>>>>> +        return 0;
+>>>>> +
+>>>>> +    mst_conn = to_msm_dp_mst_connector(connector);
+>>>>> +    dp_display = mst_conn->msm_dp;
+>>>>> +    mst = dp_display->msm_dp_mst;
+>>>>> +    mst_port = mst_conn->mst_port;
+>>>>> +    dp_panel = mst_conn->dp_panel;
+>>>>> +
+>>>>> +    if (!dp_panel || !mst_port)
+>>>>> +        return MODE_ERROR;
+>>>>> +
+>>>>> +    for (i = 0; i < mst->max_streams; i++) {
+>>>>> +        dp_bridge_state = to_msm_dp_mst_bridge_state(&mst- 
+>>>>> >mst_bridge[i]);
+>>>>> +        if (dp_bridge_state->connector &&
+>>>>> +            dp_bridge_state->connector != connector) {
+>>>>> +            active_enc_cnt++;
+>>>>> +            slots_in_use += dp_bridge_state->num_slots;
+>>>>> +        }
+>>>>> +    }
+>>>>> +
+>>>>> +    if (active_enc_cnt < DP_STREAM_MAX) {
+>>>>> +        full_pbn = mst_port->full_pbn;
+>>>>> +        available_slots = tot_slots - slots_in_use;
+>>>>> +    } else {
+>>>>> +        DRM_ERROR("all mst streams are active\n");
+>>>>> +        return MODE_BAD;
+>>>>> +    }
+>>>>> +
+>>>>> +    required_pbn = drm_dp_calc_pbn_mode(mode->clock, (connector- 
+>>>>> >display_info.bpc * 3) << 4);
+>>>>> +
+>>>>> +    required_slots = msm_dp_mst_find_vcpi_slots(&mst->mst_mgr, 
+>>>>> required_pbn);
+>>>>> +
+>>>>> +    if (required_pbn > full_pbn || required_slots > 
+>>>>> available_slots) {
+>>>>> +        drm_dbg_dp(dp_display->drm_dev,
+>>>>> +               "mode:%s not supported. pbn %d vs %d slots %d vs 
+>>>>> %d\n",
+>>>>> +               mode->name, required_pbn, full_pbn,
+>>>>> +               required_slots, available_slots);
+>>>>> +        return MODE_BAD;
+>>>>> +    }
+>>>>
+>>>> I almost missed this. Could you please point me, do other drivers
+>>>> perform mode_valid() check based on the current slots available or not?
+>>>> Could you please point me to the relevant code in other drivers? 
+>>>> Because
+>>>> it doesn't look correct to me. The mode on the screen remains valid no
+>>>> matter if I plug or unplug other devices. The atomic_check() should 
+>>>> fail
+>>>> if we don't have enough resources (which includes slots).
+>>>>
+>>> Currently, I haven't found other drivers checking available slots during
+>>> mode_valid(). Intel will check the PBN in here.
+>>
+>> pointer? Also, what do AMD and nouveau do?
+>>
+> Hi,here is the link:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/ 
+> drivers/gpu/drm/i915/display/intel_dp_mst.c?h=v6.16-rc2#n1504
 > 
-> In other words, while you hold the folio lock (and verified that the folio
-> was not truncated yet: for example, that folio->mapping is still set), you
-> know that it cannot get truncated concurrently -- without holding other
-> expensive locks.
+> nouveau just check the mode_rate and ds_max_dotclock in MST connector 
+> mode_valid().
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/ 
+> drivers/gpu/drm/nouveau/nouveau_dp.c?h=v6.16-rc2#n527
 > 
-> Observe how truncate_cleanup_folio() calls
+> The AMD driver seems much more complex, and I can't understand all the 
+> logic. It looks like AMD always tries to enable DSC and use the smallest 
+> possible bandwidth.
+>>> This condition can help us
+>>> in the following case:
+>>>
+>>> Assume two downstream devices both support 4K 60Hz 10-bit. In MST 
+>>> mode, when
+>>> the first device occupies the 4Kx60Hzx10bit mode, the remaining 
+>>> bandwidth is
+>>> insufficient to support the same mode for the second device.
+>>>
+>>> If we check the slots in mode_valid(), the second device will reject the
+>>> 4Kx60Hzx10bit mode but accept 4Kx30Hzx10bit. However, if the check is 
+>>> done
+>>> in atomic_check(), the second device will display a black screen 
+>>> (because
+>>> 4Kx60Hzx10bit is considered valid in mode_valid() but failed in
+>>> atomic_check()).
+>>
+>> If we filter modes in mode_valid(), then consider the following
+>> scenario: we plug monitor A, plug monitor B, then unplug monitor A. At
+>> this point we only have monitor B, but it has all modes filtered when A
+>> has been plugged. So, it is impossible to select 4k@60x10, even though
+>> it is a perfectly valid mode now.
+>>
+>> Also, with the check happening in the atomic_check() the user will not
+>> get the black screen: the commit will get rejected, letting userspace to
+>> lower the mode for the second monitor.
+>>
+> Oh, this scenario is indeed just as you described. So let's remove this 
+> part of the logic and let userspace decide the final mode.
+
+Ack. I think all three major drivers don't perform a check against 
+currently allocated slots.
+
+>>>>> +
+>>>>> +    return msm_dp_display_mode_valid(dp_display, &dp_display- 
+>>>>> >connector->display_info, mode);
+>>>>> +}
+>>>>> +
+>>>>
+>>>
+>>
 > 
-> 	if (folio_mapped(folio))
-> 		unmap_mapping_folio(folio);
-> 
-> To remove all page table mappings.
-> 
-> So while holding the folio lock, new page table mappings are not expected to
-> appear (IIRC).
 
-Ah ok, so it's more that we don't end up mapping something that's not there
-anymore (or something completely different).
-
-> > I mean, yes, after we have mapped the page privately into the pagetables,
-> > we don't have business about content-integrity anymore, so given this rule, yes,
-> > I guess hugetlb_wp() wouldn't need the lock (for !anonymous) because we already
-> > have mapped it privately at that point.
-> 
-> That's my understanding. And while holding the PTL it cannot get unmapped.
-> Whenever you temporarily drop the PTL, you have to do a pte_same() check to
-> make sure concurrent truncation didn't happen.
-
-Yap, hugetlb_wp() drops the locks temporarily when it needs to unmap the private
-page from other processes, but then does the pte_same() check.
-
-> So far my understanding at least of common filemap code.
-> 
-> > 
-> > But there's something I don't fully understand and makes me feel uneasy.
-> > If the lock in the generic faultin path is to keep content stable till we
-> > have mapped it privately, wouldn't be more correct to also hold it
-> > during the copy in hugetlb_wp, to kinda emulate that?
-> As long there us a page table mapping, it cannot get truncated. So if you
-> find a PTE under PTL that maps that folio, truncation could not have
-> happened.
-
-I see, this makes a lot of sense, thanks for walking me through David!
-Alright, then, with all this clear now we should:
-
-- Not take any locks on hugetlb_fault()->hugetlb_wp(), hugetlb_wp() will take it
-  if it's an anonymous folio (re-use check)
-- Drop the lock in hugetlb_no_page() after we have mapped the page in
-  the pagetables
-- hugetlb_wp() will take the lock IFF the folio is anonymous
-
-This will lead to something like the following:
-
- diff --git a/mm/hugetlb.c b/mm/hugetlb.c
- index dfa09fc3b2c6..4d48cda8a56d 100644
- --- a/mm/hugetlb.c
- +++ b/mm/hugetlb.c
- @@ -6198,6 +6198,8 @@ static vm_fault_t hugetlb_wp(struct vm_fault *vmf)
-  	 * in scenarios that used to work. As a side effect, there can still
-  	 * be leaks between processes, for example, with FOLL_GET users.
-  	 */
- +	if (folio_test_anon(old_folio))
- +		folio_lock(old_folio);
-  	if (folio_mapcount(old_folio) == 1 && folio_test_anon(old_folio)) {
-  		if (!PageAnonExclusive(&old_folio->page)) {
-  			folio_move_anon_rmap(old_folio, vma);
- @@ -6212,6 +6214,8 @@ static vm_fault_t hugetlb_wp(struct vm_fault *vmf)
-  	}
-  	VM_BUG_ON_PAGE(folio_test_anon(old_folio) &&
-  		       PageAnonExclusive(&old_folio->page), &old_folio->page);
- +	if (folio_test_anon(old_folio))
- +		folio_unlock(old_folio);
- 
-  	/*
-  	 * If the process that created a MAP_PRIVATE mapping is about to perform
- @@ -6537,11 +6541,6 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
-  			}
-  			new_pagecache_folio = true;
-  		} else {
- -			/*
- -			 * hugetlb_wp() expects the folio to be locked in order to
- -			 * check whether we can re-use this page exclusively for us.
- -			 */
- -			folio_lock(folio);
-  			anon_rmap = 1;
-  		}
-  	} else {
- @@ -6558,7 +6557,8 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
- 
-  		/* Check for page in userfault range. */
-  		if (userfaultfd_minor(vma)) {
- -			folio_unlock(folio);
- +			if (!anon_rmap)
- +				folio_unlock(folio);
-  			folio_put(folio);
-  			/* See comment in userfaultfd_missing() block above */
-  			if (!hugetlb_pte_stable(h, mm, vmf->address, vmf->pte, vmf->orig_pte)) {
- @@ -6604,6 +6604,13 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
-  		new_pte = huge_pte_mkuffd_wp(new_pte);
-  	set_huge_pte_at(mm, vmf->address, vmf->pte, new_pte, huge_page_size(h));
- 
- +	/*
- +	 * This folio cannot have been truncated since we were holding the lock,
- +	 * and we just mapped it into the pagetables. Drop the lock now.
- +	 */
- +	if (!anon_rmap)
- +		folio_unlock(folio);
- +
-  	hugetlb_count_add(pages_per_huge_page(h), mm);
-  	if ((vmf->flags & FAULT_FLAG_WRITE) && !(vma->vm_flags & VM_SHARED)) {
-  		/* Optimization, do the COW without a second fault */
- @@ -6619,8 +6626,6 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
-  	 */
-  	if (new_folio)
-  		folio_set_hugetlb_migratable(folio);
- -
- -	folio_unlock(folio);
-  out:
-  	hugetlb_vma_unlock_read(vma);
- 
- @@ -6639,8 +6644,8 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
-  backout_unlocked:
-  	if (new_folio && !new_pagecache_folio)
-  		restore_reserve_on_error(h, vma, vmf->address, folio);
- -
- -	folio_unlock(folio);
- +	if (!anon_rmap)
- +		folio_unlock(folio);
-  	folio_put(folio);
-  	goto out;
-  }
- @@ -6805,21 +6810,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
-  		/* Fallthrough to CoW */
-  	}
- 
- -	/*
- -	 * We need to lock the folio before calling hugetlb_wp().
- -	 * Either the folio is in the pagecache and we need to copy it over
- -	 * to another file, so it must remain stable throughout the operation,
- -	 * or the folio is anonymous and we need to lock it in order to check
- -	 * whether we can re-use it and mark it exclusive for this process.
- -	 * The timespan for the lock differs depending on the type, since
- -	 * anonymous folios only need to hold the lock while checking whether we
- -	 * can re-use it, while we need to hold it throughout the copy in case
- -	 * we are dealing with a folio from a pagecache.
- -	 * Representing this difference would be tricky with the current code,
- -	 * so just hold the lock for the duration of hugetlb_wp().
- -	 */
-  	folio = page_folio(pte_page(vmf.orig_pte));
- -	folio_lock(folio);
-  	folio_get(folio);
- 
-  	if (flags & (FAULT_FLAG_WRITE|FAULT_FLAG_UNSHARE)) {
- @@ -6835,7 +6826,6 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
-  						flags & FAULT_FLAG_WRITE))
-  		update_mmu_cache(vma, vmf.address, vmf.pte);
-  out_put_page:
- -	folio_unlock(folio);
-  	folio_put(folio);
-  out_ptl:
-  	spin_unlock(vmf.ptl);
-  
-This should be patch#2 with something like "Sorting out locking" per
-title, and maybe explaining a bit more why the lock in hugelb_wp for
-anonymous folios.
-
-What do you think?
-
- 
 
 -- 
-Oscar Salvador
-SUSE Labs
+With best wishes
+Dmitry
 
