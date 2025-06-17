@@ -1,170 +1,185 @@
-Return-Path: <linux-kernel+bounces-689835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5DF2ADC70F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:51:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AEC7ADC711
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59EE57A5EF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:50:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F86B1893B15
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914F82DECB0;
-	Tue, 17 Jun 2025 09:50:04 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383972DBF56;
+	Tue, 17 Jun 2025 09:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BNIwxYas"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B624D2C17A1
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C16218AA0
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750153804; cv=none; b=s4TMdrJHxwKaE8cdNpQClsWPJzsXhl/Vz/ZMA98azcpy0Ek7eEXWb0waBdQbV9ZVDe7s/BspaeumjeINJRp0wAWQcmkI6mVB1N4/lpY+Zb2ZztL1x5L3pg4dEPMsBc38Yenfq+mOJ+otF5ln9TS/Pft3tlF0T8PhxwIKnfP6XWg=
+	t=1750153791; cv=none; b=WVY6MMfwbATIyJ7oCd2BhBlpLJhxIFB2ivzNRt5M5WS6bjMhOyjgke4aDJbZVVuPhkm7yazHcCI+YpQPKlYnjl4kFSfrFpmBnM2ozEp0L5rxtIreGYNh+JdjaVGVVq5fLaLgtSYOEXNd3cA3rQz1h010Im5rhxxZtDhlqEqDzPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750153804; c=relaxed/simple;
-	bh=CSE1xGwJPwkE21FMhoW6TOA0Bu55dDPTRRyrNaMKYnQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ug9cTDvmI8MJ5JnFJOdxfaFziaig3O1P01qndDDiu9Q+UqDt6FnFjGDILXBgGO1v0HyM7uCSrQMKCGpmXfFN1+MntkGiwBR2SAAa/P74zr6sk5YUD1aEzy48WpLo00XqORynzc89dJz6Cj/0r249Sp8zYHAN+kda0DxF1hHLeto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uRSwt-0005ew-0H; Tue, 17 Jun 2025 11:49:47 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uRSws-003x4z-0r;
-	Tue, 17 Jun 2025 11:49:46 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uRSws-00FBgX-0Y;
-	Tue, 17 Jun 2025 11:49:46 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Sebastian Reichel <sre@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org,
-	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>,
-	Guenter Roeck <groeck@chromium.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	chrome-platform@lists.linux.dev
-Subject: [PATCH v10 4/7] nvmem: provide consumer access to cell size metrics
-Date: Tue, 17 Jun 2025 11:49:42 +0200
-Message-Id: <20250617094945.3619360-5-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250617094945.3619360-1-o.rempel@pengutronix.de>
-References: <20250617094945.3619360-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1750153791; c=relaxed/simple;
+	bh=dXw2koHc8UFjgXNHPwgDuWQ1C54kUQxtSSpnKFQknPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pAzIyHUZOdssLE1FkU6cm+G5Kq5MMTIN9lKk9arN0Td6hSxXpLAVbRQlNZetNW+8yR/4PK+47aeVrRJcmwn3QHnaDdWXKCaIOiJSzKaYg+jETEqS/+9sPB0mCdhAZVGFppI0SuwA4Ji0QU09urwOCgPdOk4CakJXqVwgp5BjIXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BNIwxYas; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750153788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DF2LSLjoIDZihiRcdf30WHksttB87jWZgxoeifw/8vs=;
+	b=BNIwxYasbCufquJMv8PTP3TA9tL5rbY7VE0lYOZYL2/id32vV+LlGpreXILvaTZvmpBJMj
+	4NeSxduxmkiPhMyxz2I9NNT2dHbeakR1VdXNzXXVo57S+qaROJigSTFpNtvREiWJYHAMhs
+	540Na2xZlNznF1GUCjo16CZTDT6s2wc=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-626-cWqG1oj3MLiQ1_Wu8MG4Gg-1; Tue, 17 Jun 2025 05:49:47 -0400
+X-MC-Unique: cWqG1oj3MLiQ1_Wu8MG4Gg-1
+X-Mimecast-MFC-AGG-ID: cWqG1oj3MLiQ1_Wu8MG4Gg_1750153786
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451d7de4ae3so35687205e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 02:49:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750153786; x=1750758586;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DF2LSLjoIDZihiRcdf30WHksttB87jWZgxoeifw/8vs=;
+        b=qkav8D6LIxQ8glWp/eO2+ei+4epYq8EuOSLI2LWN1Kd+6YfyP97r7u+ubekQSC4vG7
+         qTb81QBFiCmD1N+8d5lOSkypoFagZSndH1vgm6v5cbW6B3v1TQAcf929AUczLUg8akUj
+         mheuHtugixeV5Ru3yHitGOFypKNridNWk1ZVixuGjvQkQCjkG+ypKXm3v1HUxHGMhdfJ
+         H4BLm9ZFeSi33kpu3+JizcBkzIyuD+bqaH2E90NNyMfGXQNh5vZNnE5UMz83lUuDBV1x
+         qgdroisqxDUl9uOGiD11nlRLwBa/2EDKOO16/+BCYrnNDFFiY/l+na9vj9Lenqe307zL
+         W5zw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmXiOJEnefEaRTuZKXL3F+kd1Xz2jwnjmBHSkB5JFJsS7UcCMWA1VrYoaoQxnkPXEQM81aDHv1u5R9gLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLV5N5MXfs5bd5IMeHC0Xik5/xRRDkqtSyKHJ/F7Rid7h8nwdu
+	uN9eQoZiasYdhRCZ3V9CNOsmb6vdHoGHEAw4h/mKLyTi5TUjhy0FsdN8D2E+I1+aTIPPUbOr9Yv
+	vvV/YbvTAtsHb7aVLWQRvpg4W9/jSllaYeP1ferqcvQiwi4RkA0Sm7QqsFI+P4UKCAw==
+X-Gm-Gg: ASbGncvSp35aGaw7uxXcdHDMR+PM9DpkEl02SvYz7UeavQBSdeh/NYYlr85r/TXnRUw
+	7eAMTVw1ax+j84hWoCt/1f21lqCsvZwPhhvrZHHIWoPkX0rRr2GNcHQYDjdctxOn3Om8thJ4vVw
+	8v0IKAf+lbRGBPzjkgzsrviE/idsTpHL1lxR7cUUqxLBFM1ABfEYI3lzOmfO58BAfOj/FrVb3bP
+	5hVHsyC8jG44yphXFpCHrf1SiIbHbCZo6saApHYQ/qTmAkOeswyifem6b/wXcWGhZxFkeCbtbEg
+	zlgLazZ7qKDq3D1LxeKo2WhNDUuV/hUxEyABwfqarqlhVc7F2+OSq7+eZChN5RZR7V0EA9zI+JZ
+	6gRjqM0ahwWVdIFjrAzxZ8mSPBwElc+DWSemXhwQuf0uAAvU=
+X-Received: by 2002:a05:600c:1e1a:b0:43c:f513:958a with SMTP id 5b1f17b1804b1-453501b41d8mr46951385e9.13.1750153785831;
+        Tue, 17 Jun 2025 02:49:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEvM94fKFQqOi6f/UiYAlYA5Dbtm0BuNIi449CTJMM+YlZg/bJp3A8qBZE/OedzVBw3uw9beA==
+X-Received: by 2002:a05:600c:1e1a:b0:43c:f513:958a with SMTP id 5b1f17b1804b1-453501b41d8mr46951115e9.13.1750153785434;
+        Tue, 17 Jun 2025 02:49:45 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f31:700:3851:c66a:b6b9:3490? (p200300d82f3107003851c66ab6b93490.dip0.t-ipconnect.de. [2003:d8:2f31:700:3851:c66a:b6b9:3490])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e256d95sm169069565e9.31.2025.06.17.02.49.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jun 2025 02:49:44 -0700 (PDT)
+Message-ID: <b88d58d2-59f8-4007-a6c5-d32ba4972bea@redhat.com>
+Date: Tue, 17 Jun 2025 11:49:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/3] vfio/type1: optimize vfio_unpin_pages_remote() for
+ large folio
+To: lizhe.67@bytedance.com
+Cc: akpm@linux-foundation.org, alex.williamson@redhat.com,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ peterx@redhat.com
+References: <e0c741a0-450a-4512-8796-bd83a5618409@redhat.com>
+ <20250617094713.12501-1-lizhe.67@bytedance.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250617094713.12501-1-lizhe.67@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add nvmem_cell_get_size() function to provide access to cell size
-metrics. In some cases we may get cell size less as consumer would
-expect it. So, nvmem_cell_write() would fail with incorrect buffer size.
+On 17.06.25 11:47, lizhe.67@bytedance.com wrote:
+> On Tue, 17 Jun 2025 09:43:56 +0200, david@redhat.com wrote:
+>   
+>>> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+>>> index e952bf8bdfab..d7653f4c10d5 100644
+>>> --- a/drivers/vfio/vfio_iommu_type1.c
+>>> +++ b/drivers/vfio/vfio_iommu_type1.c
+>>> @@ -801,16 +801,43 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+>>>           return pinned;
+>>>    }
+>>>    
+>>> +/* Returned number includes the provided current page. */
+>>> +static inline unsigned long folio_remaining_pages(struct folio *folio,
+>>> +               struct page *page, unsigned long max_pages)
+>>> +{
+>>> +       if (!folio_test_large(folio))
+>>> +               return 1;
+>>> +       return min_t(unsigned long, max_pages,
+>>> +                    folio_nr_pages(folio) - folio_page_idx(folio, page));
+>>> +}
+>>
+>> Note that I think that should go somewhere into mm.h, and also get used
+>> by GUP. So factoring it out from GUP and then using it here.
+> 
+> I think I need to separate this out into a distinct patch within the
+> patchset. Is that correct?
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
-changes v10:
-- add Reviewed-by: Sebastian Reichel ...
-changes v6:
-- update function comment for nvmem_cell_get_size()
----
- drivers/nvmem/core.c           | 29 +++++++++++++++++++++++++++++
- include/linux/nvmem-consumer.h |  7 +++++++
- 2 files changed, 36 insertions(+)
+Yes, that's what I would do.
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index fd2a9698d1c9..59c295a11d86 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -1810,6 +1810,35 @@ int nvmem_cell_write(struct nvmem_cell *cell, void *buf, size_t len)
- 
- EXPORT_SYMBOL_GPL(nvmem_cell_write);
- 
-+/**
-+ * nvmem_cell_get_size() - Retrieve the storage size of an NVMEM cell.
-+ * @cell: Pointer to the NVMEM cell structure.
-+ * @bytes: Optional pointer to store the cell size in bytes (can be NULL).
-+ * @bits: Optional pointer to store the cell size in bits (can be NULL).
-+ *
-+ * This function allows consumers to retrieve the size of a specific NVMEM
-+ * cell before performing read/write operations. It is useful for validating
-+ * buffer sizes to prevent mismatched writes.
-+ *
-+ * Return: 0 on success or negative on failure.
-+ */
-+int nvmem_cell_get_size(struct nvmem_cell *cell, size_t *bytes, size_t *bits)
-+{
-+	struct nvmem_cell_entry *entry = cell->entry;
-+
-+	if (!entry->nvmem)
-+		return -EINVAL;
-+
-+	if (bytes)
-+		*bytes = entry->bytes;
-+
-+	if (bits)
-+		*bits = entry->nbits;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(nvmem_cell_get_size);
-+
- static int nvmem_cell_read_common(struct device *dev, const char *cell_id,
- 				  void *val, size_t count)
- {
-diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
-index 34c0e58dfa26..bcb0e17e415d 100644
---- a/include/linux/nvmem-consumer.h
-+++ b/include/linux/nvmem-consumer.h
-@@ -56,6 +56,7 @@ void nvmem_cell_put(struct nvmem_cell *cell);
- void devm_nvmem_cell_put(struct device *dev, struct nvmem_cell *cell);
- void *nvmem_cell_read(struct nvmem_cell *cell, size_t *len);
- int nvmem_cell_write(struct nvmem_cell *cell, void *buf, size_t len);
-+int nvmem_cell_get_size(struct nvmem_cell *cell, size_t *bytes, size_t *bits);
- int nvmem_cell_read_u8(struct device *dev, const char *cell_id, u8 *val);
- int nvmem_cell_read_u16(struct device *dev, const char *cell_id, u16 *val);
- int nvmem_cell_read_u32(struct device *dev, const char *cell_id, u32 *val);
-@@ -128,6 +129,12 @@ static inline int nvmem_cell_write(struct nvmem_cell *cell,
- 	return -EOPNOTSUPP;
- }
- 
-+static inline int nvmem_cell_get_size(struct nvmem_cell *cell, size_t *bytes,
-+				      size_t *bits)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- static inline int nvmem_cell_read_u8(struct device *dev,
- 				     const char *cell_id, u8 *val)
- {
 -- 
-2.39.5
+Cheers,
+
+David / dhildenb
 
 
