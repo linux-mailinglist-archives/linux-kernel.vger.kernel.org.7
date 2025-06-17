@@ -1,181 +1,305 @@
-Return-Path: <linux-kernel+bounces-690103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00EC8ADCBD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:48:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77434ADCBDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34D311895B15
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:48:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B19B1764C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B382C08C7;
-	Tue, 17 Jun 2025 12:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF774290BC4;
+	Tue, 17 Jun 2025 12:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Aw/V4pYk"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TzbgZmve"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD001F1311
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 12:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367E34689
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 12:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750164484; cv=none; b=I4eyWXcFISZTDtsFLGPlw+ISqwdUuqdSUg86dK7DGlMexjkB500yM/fJFw4ocQHyNsCE/I6z7NAjZnoMZdA9bTBk+f3/sYIK566YN9OYvLz03Pg/a6Ifs1bXXYVu6aIJtJLKwSeeDqtX+QBqFJQV542itj0+nOe3HS7iIFw88ug=
+	t=1750164548; cv=none; b=VxVpM1IqUjUtCk78QRgL/Y3Uyxsag93a8T+U7RvAIj3snUUu1dS6FIf0vmuctZqiaEfw4v+MhhEP+PT+PLONzX0DyDRnXb+KwDAhysP5aoheUjvRyK6RvexzXs1Z9LMIg+7LcEcG5sWf5K4hoP+ceAyEG6o3qHUji7xvGUAK7IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750164484; c=relaxed/simple;
-	bh=U0+A1lOtSox6LNSrWEe69AlsxRTU/WjvnlKjyZjOruA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fR9EMj7gasNyiwJjE6c5s4yuFFJm/1lpimlBJSXxEwlssVGEVOyKoFhySVb2y9zBEb7TgKsFshjjQGYnNd4+sO6HZWQsV4I9GpN2p4Z+4Sxh56I8vPByV8Eq29LBNtJGnf20Z6kHPSJHVwUcvEyEU+x/0WPFGvF5hwpxDOw/cLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Aw/V4pYk; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d948ce7d9dso24235335ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 05:48:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750164481; x=1750769281; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=X+NvbUmM4Qyku01Y5V+HBwrpgHLhxJzThOfuu9er8Zc=;
-        b=Aw/V4pYk7cF8CBvXwey+ZIUD0xVGMXxJek4O2+m5f6CmsaNiLMqJWXtmHX2TOytdIY
-         nNj6VvSDe9NVERT27IpflHtH+85LA9gsQTSFiqpqZu7pcgojryetGH3iu0+RnknRzykM
-         S5RiC5/E/32FJ2A8ceUZeXz8GOUs2t3TAhku/CNNsho2CdfkbDLzF//nPy3+b/3E2sGy
-         IMU95vvys2w95CbGoTMM30NUHW/KmYM3GYKY4FYUt/DflrXqRPflhuCX5nGMpTdg0M8d
-         0TgDhfLLD46iU2T9esLPZopBnJfWf7JQb8G1GJvlcM+y+N16XuAhdjaosGHnxvRGouMg
-         wY9A==
+	s=arc-20240116; t=1750164548; c=relaxed/simple;
+	bh=vqglCvKb/kVnaBK7RDUWDgQ/lpuelVEe/fAU5UV78nY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R2V5sTuAklqreSPT5qcZWIQq8uxLGk7lIbRggO7QtiE+ZDMeVFwM5qXDTY810THUtWrt4m1cfiCtikpwryIYFqAnHsWnWbz5OATBFhhDdU6ap3yYGKD0CBNYuvCSBFXFauq5qwgDSxODuztdHg4ws0J7c/lFbpSfFPACsMJCWj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TzbgZmve; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55H6u2Y3030619
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 12:49:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=
+	qcppdkim1; bh=HsjtAPzi1ENatdMFvPbZQiDIcA+6y5YgY7lBmrMZq70=; b=Tz
+	bgZmveOd9ZR3FCr//DrV1wJ5RbUDyeeS/1oVqfYTxGwKV1YNLgwrsDMidzxggcxT
+	F+xsRKtD3jvaeIRmvXDYwyvaxzs1yRob0Jo1FerC1EX3iTLf74IV/e6oH3NiEOvS
+	HRWcz9qOQdBQ2Nos83rJJB+iQWpC+tsZOwaDQL4/2PA8nb1iTajurisRrgl/pQtd
+	5jnIL7esx+xD7c+pUMqTuafQ1TrHjpAVkckI2rmUHEq6jLfWc9RtWvy5M4z4N7D1
+	rZf6CZHd9E5vTOnPInLyiJGEKUFZEjpnt2U4oVsXntJxeOlPFD/jgzo3X2hGLFn4
+	289CCKKb+DQ2kU8o9lpg==
+Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com [209.85.160.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47928mg9ym-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 12:49:05 +0000 (GMT)
+Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-2e8f1365181so3598231fac.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 05:49:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750164481; x=1750769281;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X+NvbUmM4Qyku01Y5V+HBwrpgHLhxJzThOfuu9er8Zc=;
-        b=ilFkMG0+Y9K8wSPS2gzB/nW+PK3cusUEoTeo1KTCDRledRUvM1vZgESgeSkEMqHxPG
-         tPj6/EiPHvTL560pp3ppJvaxIUMGR1wgfYEiqi1VS0OcyBv95SOTwWh72JppA5l6Tf/y
-         /NJiIC/tJz64PLx6sBOv5sRUhzO672xrPjVTDVvJpLEc1/0NKkIOoR5R0ihCPKD5DXSw
-         uN6sOsvb+OM0HlMItmy2vmesCJp17dwFGZW6rQhg5Ptkm+vKWn+sJPYwNnhJU8X7bnK3
-         iJSSw5d6Knit/LyQ5gPCVRr5qygzlVL+Iu83zMp2UE1pjqGQQKnTDFmTSpSdaU4nuqe5
-         chsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXedQszaR8RBGj08IO3CRPlXjIsAh2vIXUzJgbAtX67lNoMG5A6MN7u0cs8zTPR5JenyZylRCwwhrqMOH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+CH3zLIuGi5VtGwuEO/4xUHSJ21Kwc6EFssWgafRSmLEe+461
-	mj/KMU0/SMQXZW049TPBsD5+JRzYzu5eVkIqwZREwTd9qoRn27/Pm1sIWAbSI53zMFE=
-X-Gm-Gg: ASbGncsp44BbkIog5CgEjF+VJIzirzghl7a73kf3AK0UGQIXaWr+tF49ZYyuR5D/wOT
-	ngkZ3IhXefTBNEVSDMXJ28I7irJV/FzlmvoSPeo5VyTkqVuiVV447sJoTVFI/4AqdRUtntBthee
-	2hBz7mopGElP3+LCb4eWi6wqdt6zxJrzg1upuJ+Vihjultftd/S56Oy1CwPFTHgqP4YH1D2UyPi
-	2vHFjB8aku9OxlklAElXzBikJ15VtrVTHUbqadorr/Xf5rIVaY9I3o3YxDLIXoaft8Ad32oy0Wl
-	Suu8oNnUmbE9u3vj/v29sqJsS82zMVqFD9BQxTvNEU6niB71uzFgN6ITqV0=
-X-Google-Smtp-Source: AGHT+IEcZ7IWwbzk7Cr79F+9XAqiUrbefLCmZGtZDQW6QXzoOs2RilX/320awuYADG21Cf4HFNqMFg==
-X-Received: by 2002:a05:6e02:370a:b0:3dd:a13c:603e with SMTP id e9e14a558f8ab-3de07d0cd09mr149833125ab.14.1750164480957;
-        Tue, 17 Jun 2025 05:48:00 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3de01a4ae11sm24255875ab.52.2025.06.17.05.47.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 05:48:00 -0700 (PDT)
-Message-ID: <c655293b-b2da-497b-98a6-05399fd120f8@kernel.dk>
-Date: Tue, 17 Jun 2025 06:47:59 -0600
+        d=1e100.net; s=20230601; t=1750164544; x=1750769344;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HsjtAPzi1ENatdMFvPbZQiDIcA+6y5YgY7lBmrMZq70=;
+        b=ZQPN2t2H+WSwk5cNfRfijyl7i9419SYplSWRTLpk1IJopEMRsc1mTAfZHZ/gcX+uNW
+         fi8Qf2Nrara8cVSqkvC9xdRbw3cixv5TbJ6T4xl4pY0Wedzv61X6NV7D1CWXtSzGVsuE
+         dB7ihHqQPeYDwDJo7UKuWT+FPquvkP4zyyCRNTT6yrc5mxY7QzboozlM0YUR6M4gompN
+         wSlcYIV9FF2wXhh1PCQQj2FnbAapZWrf1l/aIWTQ5Cxb78pjXHK34B58NsrU/nHeOG2u
+         p5YG9JHQiW+v9Ru9Q6sSOHKpAL4HFMa2SMM8cRkGBsb1UlYCKxJ2+2Xne2vS0I/zpCGv
+         90Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGZUkUNlfhpPQpeguhDJsdk57Z7NLwy9T9oL609/GqYK5DTw79tzTmh9MbLyihYjuoGqp3DeTqcLWJKcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztjzElzKR6yc7lw77gLTaAltTByJ0oZ5Lgt9Hwtn+jpBSehjRJ
+	PmSIaqjAr+rSitvSfBDvcXSpl0aBZRhqNqoWslFKipuNlvws9X+qozd3au44y2kYtEyFplbvH8v
+	gdU0K5sAqi7w9vNI5gX8uQtdDQmqkVCqO/v47n43jyjHXehik3GAC3qkrm1Br0S6ITyaWpZg7Gs
+	I064/CAiArAJqqmOeQjJjzbonJ7jwWhrDRMoAnpBYoAw==
+X-Gm-Gg: ASbGncubUnFTK9FEY8MswvrpMD5FcahzOqkdo9a+i3oePXMlcvHhcg6O+xWRYiyOZ+p
+	nyNl4FnkRVAmgQ8qHzpK4PAlbVQjHZGbhP5mKAOldxQEBQ+X6ZzuMEFvTF5rrX51JcpjiMFBeDi
+	NsxDAgcBZiFUHMv7iYCpdWPsptF9MGKihcjWw=
+X-Received: by 2002:a05:6871:808:b0:2c6:7f82:d38c with SMTP id 586e51a60fabf-2eaf08f5e95mr7741560fac.31.1750164544082;
+        Tue, 17 Jun 2025 05:49:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFVcM/MQTWFafHIfMYka9uN1j4G7MdwAjNhpq/R3LYdd+ev5tTG9Q8+EdYKxyTexzb9k6Yr8QjEodNKm2RNHAk=
+X-Received: by 2002:a05:6871:808:b0:2c6:7f82:d38c with SMTP id
+ 586e51a60fabf-2eaf08f5e95mr7741553fac.31.1750164543683; Tue, 17 Jun 2025
+ 05:49:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] WARNING: ODEBUG bug in io_sq_offload_create
-To: syzbot <syzbot+763e12bbf004fb1062e4@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, Penglei Jiang <superman.xpt@gmail.com>
-References: <6851237a.a70a0220.395abc.0208.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <6851237a.a70a0220.395abc.0208.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250613235705.28006-1-robin.clark@oss.qualcomm.com>
+ <20250613235705.28006-3-robin.clark@oss.qualcomm.com> <aE1RPZ_-oFyM4COy@pollux>
+ <CACSVV00uwmuAC4eMi-4QiF4sOu4r9u8eXxyAgt83YS8Yfgoemg@mail.gmail.com>
+ <aFCO7_RHuAaGyq1Q@pollux> <CACSVV03WboQp_A1bzQ+xpX5DDkfaoXmbTuo9RfZ9bMaVTqdU+A@mail.gmail.com>
+ <aFE6pq8l33NXfFdT@pollux>
+In-Reply-To: <aFE6pq8l33NXfFdT@pollux>
+Reply-To: rob.clark@oss.qualcomm.com
+From: Rob Clark <rob.clark@oss.qualcomm.com>
+Date: Tue, 17 Jun 2025 05:48:52 -0700
+X-Gm-Features: AX0GCFtPfTlA2GRsU9ACng3Ixka2Eu1d511bEmpGNDNZ-mVIdVL_VX43qMBCLHE
+Message-ID: <CACSVV00VzOfTDh2sKst+POzkZ-5MH+0BDY-GVB2WKTyONRrHjw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drm/gpuvm: Add locking helpers
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE3MDEwMiBTYWx0ZWRfX90kOh4Saje90
+ GDONgA9rIDgq2oSp8qs+/ELKUNpxbfP0K+Tdl+c56XYMoAT7IE2Nom8VYPW26osJ6yfPqcua9uR
+ YzV+U7ziuCm33QYmH17j+strt9/Q1MDpJS2rLM8oEepHfQ5QhpGDOJ2sTAUqFLjb9vDAhGBrzr3
+ N8ya/ExBCJAmn4kRn/adfhWiXcwONtKs0n4NG+zoWaBIZx8fKNfZPLAHVli4aQTRyxTJzJyTuoI
+ xZABdPfTJ/quIo+wBOuedaDX8cWFnTFe2SRHbBgJDeeNr0o5giGtpiwuSym9C6AI0tLSL9iKFII
+ H+jDRE1eRgVPpCDd7yJtN00njB9WYhDuwUA7v+PsPF1dJdE6gdy0LaFpU17dAQA63HtXuv1M2bX
+ xuzsq82KdXgtV+OaMuId5d8xinh4yGvg/mAfSsqV9uOLOhja7sj3t/eLmsnu7Q2Eds4xFujU
+X-Authority-Analysis: v=2.4 cv=fvbcZE4f c=1 sm=1 tr=0 ts=68516441 cx=c_pps
+ a=Z3eh007fzM5o9awBa1HkYQ==:117 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10
+ a=e5mUnYsNAAAA:8 a=20KFwNOVAAAA:8 a=hmUYbjr5NfTcrHOMeKgA:9 a=QEXdDO2ut3YA:10
+ a=eBU8X_Hb5SQ8N-bgNfv4:22 a=Vxmtnl_E_bksehYqCbjh:22
+X-Proofpoint-GUID: I6TDdIaGuIifpm7R0ua5hiWTxJpQNWC-
+X-Proofpoint-ORIG-GUID: I6TDdIaGuIifpm7R0ua5hiWTxJpQNWC-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-17_05,2025-06-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
+ mlxlogscore=999 phishscore=0 clxscore=1015 mlxscore=0 impostorscore=0
+ adultscore=0 spamscore=0 suspectscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506170102
 
-On 6/17/25 2:12 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    8c6bc74c7f89 Merge tag 'v6.16-rc1-smb3-client-fixes' of gi..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1745710c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=1ab5c40b21ee326a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=763e12bbf004fb1062e4
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13ea3d70580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c5710c580000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-8c6bc74c.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/b523997774df/vmlinux-8c6bc74c.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/da5178f1b34a/bzImage-8c6bc74c.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+763e12bbf004fb1062e4@syzkaller.appspotmail.com
-> 
-> R13: 0000000000000002 R14: 00007fad89109ab1 R15: 00007fad8910601d
->  </TASK>
-> ------------[ cut here ]------------
-> ODEBUG: free active (active state 1) object: ffff888024813bd0 object type: rcu_head hint: 0x0
-> WARNING: CPU: 0 PID: 5941 at lib/debugobjects.c:612 debug_print_object+0x1a2/0x2b0 lib/debugobjects.c:612
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 5941 Comm: syz-executor101 Not tainted 6.16.0-rc1-syzkaller-00236-g8c6bc74c7f89 #0 PREEMPT(full) 
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:debug_print_object+0x1a2/0x2b0 lib/debugobjects.c:612
-> Code: fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 54 41 56 48 8b 14 dd 00 8a 15 8c 4c 89 e6 48 c7 c7 80 7e 15 8c e8 bf 33 99 fc 90 <0f> 0b 90 90 58 83 05 56 99 c6 0b 01 48 83 c4 18 5b 5d 41 5c 41 5d
-> RSP: 0018:ffffc90003f8fa78 EFLAGS: 00010282
-> RAX: 0000000000000000 RBX: 0000000000000003 RCX: ffffffff817ae248
-> RDX: ffff88803cd0a440 RSI: ffffffff817ae255 RDI: 0000000000000001
-> RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
-> R10: 0000000000000001 R11: 0000000000000001 R12: ffffffff8c158520
-> R13: ffffffff8baeb4a0 R14: 0000000000000000 R15: ffffc90003f8fb78
-> FS:  00007fad890686c0(0000) GS:ffff8880d6753000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fad8911b362 CR3: 0000000031b29000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  __debug_check_no_obj_freed lib/debugobjects.c:1099 [inline]
->  debug_check_no_obj_freed+0x4b7/0x600 lib/debugobjects.c:1129
->  slab_free_hook mm/slub.c:2312 [inline]
->  slab_free mm/slub.c:4643 [inline]
->  kmem_cache_free+0x2ac/0x4d0 mm/slub.c:4745
->  put_task_struct include/linux/sched/task.h:145 [inline]
->  put_task_struct include/linux/sched/task.h:132 [inline]
->  io_sq_offload_create+0xe4b/0x1330 io_uring/sqpoll.c:517
->  io_uring_create io_uring/io_uring.c:3747 [inline]
->  io_uring_setup+0x1514/0x2120 io_uring/io_uring.c:3830
->  __do_sys_io_uring_setup io_uring/io_uring.c:3864 [inline]
->  __se_sys_io_uring_setup io_uring/io_uring.c:3855 [inline]
->  __x64_sys_io_uring_setup+0xc2/0x170 io_uring/io_uring.c:3855
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fad890b6f99
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 31 1b 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fad89068208 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-> RAX: ffffffffffffffda RBX: 00007fad891393c8 RCX: 00007fad890b6f99
-> RDX: 0000000000000000 RSI: 0000200000000200 RDI: 0000000000004d25
-> RBP: 00007fad891393c0 R08: 00007fad89067fa6 R09: 0000000000003232
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fad89068210
-> R13: 0000000000000002 R14: 00007fad89109ab1 R15: 00007fad8910601d
->  </TASK>
+On Tue, Jun 17, 2025 at 2:51=E2=80=AFAM Danilo Krummrich <dakr@redhat.com> =
+wrote:
+>
+> On Mon, Jun 16, 2025 at 03:25:08PM -0700, Rob Clark wrote:
+> > On Mon, Jun 16, 2025 at 2:39=E2=80=AFPM Danilo Krummrich <dakr@redhat.c=
+om> wrote:
+> > >
+> > > On Sat, Jun 14, 2025 at 08:03:20AM -0700, Rob Clark wrote:
+> > > > On Sat, Jun 14, 2025 at 3:39=E2=80=AFAM Danilo Krummrich <dakr@redh=
+at.com> wrote:
+> > > > >
+> > > > > On Fri, Jun 13, 2025 at 04:57:03PM -0700, Rob Clark wrote:
+> > > > > > For UNMAP/REMAP steps we could be needing to lock objects that =
+are not
+> > > > > > explicitly listed in the VM_BIND ioctl in order to tear-down un=
+mapped
+> > > > > > VAs.  These helpers handle locking/preparing the needed objects=
+.
+> > > > >
+> > > > > Yes, that's a common use-case. I think drivers typically iterate =
+through their
+> > > > > drm_gpuva_ops to lock those objects.
+> > > > >
+> > > > > I had a look at you link [1] and it seems that you keep a list of=
+ ops as well by
+> > > > > calling vm_op_enqueue() with a new struct msm_vm_op from the call=
+backs.
+> > > > >
+> > > > > Please note that for exactly this case there is the op_alloc call=
+back in
+> > > > > struct drm_gpuvm_ops, such that you can allocate a custom op type=
+ (i.e. struct
+> > > > > msm_vm_op) that embedds a struct drm_gpuva_op.
+> > > >
+> > > > I did use drm_gpuvm_sm_xyz_ops_create() in an earlier iteration of =
+my
+> > > > VM_BIND series, but it wasn't quite what I was after.  I wanted to
+> > > > apply the VM updates immediately to avoid issues with a later
+> > > > map/unmap overlapping an earlier map, which
+> > > > drm_gpuvm_sm_xyz_ops_create() doesn't really handle.  I'm not even
+> > > > sure why this isn't a problem for other drivers unless userspace is
+> > > > providing some guarantees.
+> > >
+> > > The drm_gpuva_ops are usually used in a pattern like this.
+> > >
+> > >         vm_bind {
+> > >                 for_each_vm_bind_operation {
+>                             drm_gpuvm_sm_xyz_ops_create();
+> > >                         drm_gpuva_for_each_op {
+> > >                                 // modify drm_gpuvm's interval tree
+> > >                                 // pre-allocate memory
+> > >                                 // lock and prepare objects
+> > >                         }
+> > >                 }
+> > >
+> > >                 drm_sched_entity_push_job();
+> > >         }
+> > >
+> > >         run_job {
+> > >                 for_each_vm_bind_operation {
+> > >                         drm_gpuva_for_each_op {
+> > >                                 // modify page tables
+> > >                         }
+> > >                 }
+> > >         }
+> > >
+> > >         run_job {
+> > >                 for_each_vm_bind_operation {
+> > >                         drm_gpuva_for_each_op {
+> > >                                 // free page table structures, if any
+> > >                                 // free unused pre-allocated memory
+> > >                         }
+> > >                 }
+> > >         }
+> > >
+> > > What did you do instead to get map/unmap overlapping? Even more inter=
+esting,
+> > > what are you doing now?
+> >
+> > From what I can tell, the drivers using drm_gpva_for_each_op()/etc are
+> > doing drm_gpuva_remove() while iterating the ops list..
+> > drm_gpuvm_sm_xyz_ops_create() itself does not modify the VM.  So this
+> > can only really work if you perform one MAP or UNMAP at a time.  Or at
+> > least if you process the VM modifying part of the ops list before
+> > proceeding to the next op.
+>
+> (Added the drm_gpuvm_sm_xyz_ops_create() step above.)
+>
+> I went through the code you posted [1] and conceptually you're implementi=
+ng
+> exactly the pattern I described above, i.e. you do:
+>
+>         vm_bind {
+>                 for_each_vm_bind_operation {
+>                         drm_gpuvm_sm_xyz_exec_lock();
+>                 }
+>
+>                 for_each_vm_bind_operation {
+>                         drm_gpuvm_sm_xyz() {
+>                                 // modify drm_gpuvm's interval tree
+>                                 // create custom ops
+>                         }
+>                 }
+>
+>                 drm_sched_entity_push_job();
+>         }
+>
+>         run_job {
+>                 for_each_vm_bind_operation {
+>                         for_each_custom_op() {
+>                                 // do stuff
+>                         }
+>                 }
+>         }
 
-Looks like fallout from a fix in the 6.16 kernel series, where:
+Close, but by the time we get to run_job there is just a single list
+of ops covering all the vm_bind operations:
 
-commit ac0b8b327a5677dc6fecdf353d808161525b1ff0
-Author: Penglei Jiang <superman.xpt@gmail.com>
-Date:   Tue Jun 10 10:18:01 2025 -0700
+        run_job {
+                for_each_custom_op() {
+                        // do stuff
+                }
+        }
 
-    io_uring: fix use-after-free of sq->thread in __io_uring_show_fdinfo()
+rather than a list of va ops per vm_bind op.
 
-moves task_struct error handling to io_sq_thread(), but misses that
-io_sq_offload_create() does it too for tctx allocation failure.
+> However, GPUVM intends to solve your use-case with the following, semanti=
+cally
+> identical, approach.
+>
+>         vm_bind {
+>                 for_each_vm_bind_operation {
+>                         drm_gpuvm_sm_xyz_ops_create();
+>
+>                         drm_gpuva_for_each_op {
+>                                 // modify drm_gpuvm's interval tree
+>                                 // lock and prepare objects (1)
 
-#syz test: git://git.kernel.dk/linux.git syztest
+I currently decouple lock+pin from VM modification to avoid an error
+path that leaves the VM partially modified.  Once you add this back
+in, the va-ops approach isn't simpler, IMHO.
 
--- 
-Jens Axboe
+>                         }
+>                 }
+>
+>                 drm_sched_entity_push_job();
+>         }
+>
+>         run_job {
+>                 for_each_vm_bind_operation {
+>                         drm_gpuva_for_each_op() {
+>                                 // do stuff
+>                         }
+>                 }
+>         }
+>
+> (Note that GPUVM already supports to extend the existing OP structures; y=
+ou
+> should take advantage of that.)
+>
+> Hence, the helper we really want is to lock and prepare the objects at (1=
+). I.e.
+> a helper that takes a pointer to a struct drm_gpuva_op and locks / valida=
+tes the
+> corresponding objects.
 
+I still prefer that we don't _require_ using va-ops.  But if it makes
+it more useful for other drivers I could add a helper which
+exec_lock's based on a list of va-ops instead.
+
+BR,
+-R
+
+> [1] https://gitlab.freedesktop.org/robclark/msm/-/blob/sparse-newer/drive=
+rs/gpu/drm/msm/msm_gem_vma.c
+>
 
