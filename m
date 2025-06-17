@@ -1,118 +1,105 @@
-Return-Path: <linux-kernel+bounces-689366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8682DADC069
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 06:24:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 581EBADC090
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 06:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77FF07A7B51
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 04:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 084C9171078
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 04:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940D720297C;
-	Tue, 17 Jun 2025 04:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE0D238151;
+	Tue, 17 Jun 2025 04:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ahzXS8Sg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JT0Zap80"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D251E008B;
-	Tue, 17 Jun 2025 04:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20C115539A;
+	Tue, 17 Jun 2025 04:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750134272; cv=none; b=e7B7xo9F7kDGvGe9OOXlzLR/lKaAilfIvdd9XKFpRwpQVhAmYYWjqNijLD5lClVcmYXqj30vWmtwm4UqOfcAwKWlkCQWtGWxce9wPGFx39/w7UTpIRh0SQOsWOjCo6waKYlG+6EAWi6Nh7nInynq8IEENU3naa/h3ar5s1b39Mo=
+	t=1750134506; cv=none; b=pggJzdX9N0dGp2sPBTmU9L2c3zUgB8vZrlaIFtcWk4bzbSnbW5lWbtogkDK8ydzk8gxH8zZwpdFMm5OAwRIv5POXywbJx/fJgD2QklpsLia83tFink5UsnlYb4SLpoFWN1aOOamPUBQD8HjK4sRIyA4nWJTe6NtErfJR16QRcKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750134272; c=relaxed/simple;
-	bh=hS1jLez6pg2f2TjhjY9W1XKul5ilJirXcpZ9vDFaRGE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MwY3Ug/NBwgQzAkHk1bUWg87QpdaR1pMU6p5RyH49ZcUYjjTtm4kC7cRAUvleY6JFldJFKNrkmPMULU3ceKiuA5uDDteGYZSpQd+FerEYaWD5ztpG0ripdaZhyet8G3a3JbrSfifuk9FEU87UOFKUC28sB1C9EX8SI6+zWIaMhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ahzXS8Sg; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750134270; x=1781670270;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hS1jLez6pg2f2TjhjY9W1XKul5ilJirXcpZ9vDFaRGE=;
-  b=ahzXS8SgbcC/OFnLD/sR7e5uKx+WsU5AdW1jFY2GVsRkvFZ9jFNS9NNl
-   g8TZmb2CfLQP1aUT85u26KJ3vNoNm4D50cgJcwS32leaOLmGweGcaFkrs
-   7kS2Ej5XAJlMhZSUEBgratyi9D5M9LsDc/x4Np77lmR5n0qAv20feEMg9
-   nzyZNZy2h0U5lhOoVG35hO2+cqgUsR2T34BCeSpT2NTMsQNiF8lbFbfnL
-   7V9W8dblkf32/G/VUMf3zuQ3kgA2WjuPhsaVW9794jPJWQUGmDkdsdN+F
-   e1LGvDoUM6dNRBAJbFrVzQuBYr1BHIIIh0F8+5KMqdVhpjESd1RtAglKr
-   g==;
-X-CSE-ConnectionGUID: qoTuCe63RpiN+8Tfxwdyog==
-X-CSE-MsgGUID: Dyg5ZuYyT2GSIdQMwRszog==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="54909366"
-X-IronPort-AV: E=Sophos;i="6.16,242,1744095600"; 
-   d="scan'208";a="54909366"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 21:24:29 -0700
-X-CSE-ConnectionGUID: osI7mkNFQI24GZf/sZPogQ==
-X-CSE-MsgGUID: 9yvR0dzZRHWogZ9sJL5FrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,242,1744095600"; 
-   d="scan'208";a="153956949"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 21:24:22 -0700
-Message-ID: <c3842cc4-f057-4ab6-b0bd-f7742ca7c645@linux.intel.com>
-Date: Tue, 17 Jun 2025 12:23:20 +0800
+	s=arc-20240116; t=1750134506; c=relaxed/simple;
+	bh=PnJko5vxDtAYo4xtfL54bpZLAmxUI5zpeQ7QYnXzKvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=djyoCCWWTExKIbv80M1rtpjo3DodiWsSKRKkGnilE8dJX0rxBNbP5GunH26wTKtafbsj/ZDE/sGVn2LrqyxNwquOaqp4UVK0MKeQhDU+j1MYw8PupkoSqEJUthSRwqDsXPJU+yJFDTpSc5tgI1pbszqJSTicjJhX9HOIqYxJtPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JT0Zap80; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A85E2C4CEE3;
+	Tue, 17 Jun 2025 04:28:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750134506;
+	bh=PnJko5vxDtAYo4xtfL54bpZLAmxUI5zpeQ7QYnXzKvQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JT0Zap801QYfqX2dK6+3BKLTq1OF46HXM2SK+yQrcSWC8I0+zNUAnAAgk3oW5qz/j
+	 bViQ4PWHNR7sp/btqryPHfVoaJaLBgME5dXhIHLrA94VDiVckwTcRtJbO06HZZt725
+	 dH11OlQhV9Gkmc+f21JopULDKqTzdurT1MHX3Ovf0jI/T0VAFNegSarfjXrg+fOzga
+	 7QmwpodhbrLN8MkjoeEVEpft84z0LxroJd+JdiXE7PUl8teApAvmMPmHyMAC6mxsh9
+	 m4HJsdClJkT8S4S/Pr/gigmN6cn6niFTyWi9dvmj2s3bw717Dms2/jXMNlK4IMUalG
+	 hZVoqhPXnyhpg==
+Date: Mon, 16 Jun 2025 21:27:55 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: T Pratham <t-pratham@ti.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kamlesh Gurudasani <kamlesh@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Praneeth Bajjuri <praneeth@ti.com>,
+	Manorit Chawdhry <m-chawdhry@ti.com>
+Subject: Re: [PATCH v5 0/2] Add support for Texas Instruments DTHE V2 crypto
+ accelerator
+Message-ID: <20250617042755.GG8289@sol>
+References: <20250603124217.957116-1-t-pratham@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 07/25] iommufd/access: Add internal APIs for HW queue
- to use
-To: Nicolin Chen <nicolinc@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>
-Cc: kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
- bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
- thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
- shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
- peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
- praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
- alok.a.tiwari@oracle.com, vasant.hegde@amd.com, dwmw2@infradead.org
-References: <cover.1749884998.git.nicolinc@nvidia.com>
- <64145b184a0fa7c9b60532c9b475a51625edb77c.1749884998.git.nicolinc@nvidia.com>
- <20250616133719.GC1174925@nvidia.com> <aFDSNYOTToFSbFA2@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <aFDSNYOTToFSbFA2@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250603124217.957116-1-t-pratham@ti.com>
 
-On 6/17/25 10:25, Nicolin Chen wrote:
->>>   struct iommufd_eventq {
->>>   	struct iommufd_object obj;
->>>   	struct iommufd_ctx *ictx;
->>> diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
->>> index 9293722b9cff..ad33f1e41a24 100644
->>> --- a/drivers/iommu/iommufd/device.c
->>> +++ b/drivers/iommu/iommufd/device.c
->>> @@ -1084,7 +1084,39 @@ void iommufd_access_destroy_object(struct iommufd_object *obj)
->>>   	if (access->ioas)
->>>   		WARN_ON(iommufd_access_change_ioas(access, NULL));
->>>   	mutex_unlock(&access->ioas_lock);
->>> -	iommufd_ctx_put(access->ictx);
->>> +	if (access->ops)
->>> +		iommufd_ctx_put(access->ictx);
->> I was hoping we could null the ictx to signal internal? That didn't
->> work out?
-> access->ictx should be NULL for internal. It should have been:
-> +	if (access->ictx)
-> +		iommufd_ctx_put(access->ictx);
+On Tue, Jun 03, 2025 at 06:07:27PM +0530, T Pratham wrote:
+> This series adds support for TI DTHE V2 crypto accelerator. DTHE V2 is a
+> new crypto accelerator which contains multiple crypto IPs [1].
+> This series implements support for ECB and CBC modes of AES for the AES
+> Engine of the DTHE, using skcipher APIs of the kernel.
+> 
+> Tested with:
+> CONFIG_CRYPTO_MANAGER_DISABLE_TESTS is not set
+> CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y
+> 
+> and tcrypt,
+> sudo modprobe tcrypt mode=500 sec=1
+> 
+> Signed-off-by: T Pratham <t-pratham@ti.com>
+> ---
+> [1]: Section 14.6.3 (DMA Control Registers -> DMASS_DTHE)
+> Link: https://www.ti.com/lit/ug/sprujb4/sprujb4.pdf
 
-access->ictx could be treated as user ownership token. If it's NULL,
-there is no user ownership, indicating it's owned by the kernel. This is
-the concept here?
+Numbers, please.  What is the specific, real use case in Linux where this
+patchset actually improves performance?  Going off the CPU and back again just
+to en/decrypt some data is hugely expensive.
 
-Thanks,
-baolu
+Note that the manual you linked to above explicitly states that the CPU supports
+the ARMv8 Cryptography Extensions.  That definitively makes any off-CPU offload
+obsolete.  But even without that, these sorts of off-CPU offloads have always
+been highly questionable.
+
+I think it's implausible that this patchset could actually be beneficial.
+
+In fact, it might actually be really harmful.  You set your algorithms to
+priority 30000, which makes them be prioritized over ARMv8 CE.  I've seen
+exactly that bug with other "accelerators", which actually regressed performance
+by over 50x compared to simply staying on the CPU.
+
+- Eric
 
