@@ -1,330 +1,188 @@
-Return-Path: <linux-kernel+bounces-690727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AEA0ADDB7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCD7ADDB60
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816D13A5A45
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:36:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66A713A501C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C092F2718;
-	Tue, 17 Jun 2025 18:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63C627991E;
+	Tue, 17 Jun 2025 18:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="WiU+lJis"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="SW6fBmVh"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8397C2F94A1;
-	Tue, 17 Jun 2025 18:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C6923AE84
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 18:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750185334; cv=none; b=sfD30NOzFY2RT6fUIAXqf37G3DAH5xQbpXPJLKTLDCPo3uavv1M6nePXyGfLaFJdfoYz2sTfdzhzVpremR9nh+xmw/5v/LdRe9VU/RzvyuDUyA/RlbX5TO5PO09yT5ddA/3fAaqW5ptYWcFcbzqujrNwTUE0q8btGSH11y2DXuc=
+	t=1750185298; cv=none; b=A594mMEenh+H7h31rOKSAL53hbrNea/rDRAmRXdvQafadqDnLN9VfRRucL2R40GXdwA6fs3c/SG3v/TJMp4KZZjEztndi4NTdZ7KOtC4nvI5kDOWBZek4Al1NqQv8GsQ1Zfb9d5sGBohrw72ct478/6ucmTF1EVzEzPCB7BhCiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750185334; c=relaxed/simple;
-	bh=PecueBhb3qx1RHFBN98VuO4lhdtWIZM9jToHkTc/HLE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CCWPivZ5t3xoloCACOa/veBi9ObqRZBcQbdlVotdBPN8ABlo5qhXxqy9FQSWsNCHRvDUbNldCPBDWOJnE6jHZAiWzgek9fPke7FrOs5Ua6SKeVI+NE/SRu8nuXHafqcaY0Cl0lfgjDrZnCdypU2dG6vS0x54zJod6mnf7LSlUmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=WiU+lJis; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=N5VA/SwJ6w5fExHAtI2s26hUsQkblQRmCfj6Ybce2s4=; b=WiU+lJis5rhkm3wXROIn8wWZN6
-	1I6y8gGWwWryS5WSvWNumDuNqyc+S+r+S3/hpmGqdolYgxzetUifU6aYcfNdW496COWhFdhGtfelK
-	drv4oKxqI90UzEs+pV068X9ZRlvP4VBuLWG6yWEB6TZW3sJOswkDY/b9sNpvRZHiRU5Su/uVMUbaz
-	i3DRjLxUpV3LVuX6qv79iye5WOwPC+LOrBHAy/8QLNPB2EZ8eL8fUstEp+gkdqA62FBGPu+ts9UI2
-	tAOEai3yqYV8uG+8nIotb5bbTyZjE/oWM6BQiXpJI7A7UobWIXrtHJJB25pRqAwA3MGqNzRsN7Ypp
-	1vjWUvvg==;
-Received: from [191.204.192.64] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uRb9W-004j89-8N; Tue, 17 Jun 2025 20:35:22 +0200
-From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Tue, 17 Jun 2025 15:34:24 -0300
-Subject: [PATCH RESEND v4 7/7] selftests: futex: Expand robust list test
- for the new interface
+	s=arc-20240116; t=1750185298; c=relaxed/simple;
+	bh=vNXK4oDmkZ/5vEde1tk21+hvLrX1mK5D+uSj7F3uoxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qi2YJ6OEVAotwh0We7wni2yyTx3AbCntd3qReODggqXwk7PVfHeCUTpIUZfz/f7lsMsAMf6mGhd1Kfhlpplr8YPMPKTkkUiiFYUogtgmOLypTnq0hbdLKntPEp2/JCi2AO/kgd6tMp1aQ2ER38mZd6RNunlQXhaDQ5xiRXojYbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=SW6fBmVh; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4a585dc5f4aso78894561cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 11:34:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1750185294; x=1750790094; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IkUw7K1fNTUFr0XSmkjhiZVRjINQnKgrdCWIYf4LhiU=;
+        b=SW6fBmVhRIDyMil9P+ONyamLGQ+q2K8ad+OW+owAVvPuliycX23+XDnXPKi29J5uQg
+         YvXvKp2hUg7jUzUmBIjnmT4zPQLzwAg5LcPSAMOIskePlaxqMaGZvIBy+nufqbc4J7cQ
+         6m/25EF0/S8ptbo6HUSnGApHMRBM6Ow1Fh6+Dck2t6WzLvCo10vZJIjwDoFVl58/Rn7x
+         W+aQX8r6NAtBN0okuV0/CAzA1S9vdQTD/i53ZtZV6a78RkSILxyL/bRlBIsb/yHZb+2Z
+         K+ySpHlALFM7Op+GnP31DpQF4Je9/A26J1XQejZ37kUOlFehgmMcqWCTY1T/5QuhHb3K
+         L1IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750185294; x=1750790094;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IkUw7K1fNTUFr0XSmkjhiZVRjINQnKgrdCWIYf4LhiU=;
+        b=DPFFbsYX57+l77BODYlpJ2EgAkrUJh94j1uIzJWXpSe2k6080OkWQFIlZXZDI1lpgI
+         Wx20yBYCZY/Vn6SGGT4254lmVQrLGIsFbQlHD2k4/suwAb1YcazHCGQz7cNeyz50R0YR
+         S741yYSNVWYC/WXukxe3CfRshamwM0PLfvKlUhQSyQ5Mvp4x5Uvic9MKHzChBEVAG+vd
+         c0ZZN2mMS04q6+z2KB7+wEOaMv8/sQDA7kSjHrYzPgFO3GMDwpGlAdTgML5pdz6D2wZi
+         e5sHcGbTAEC6d35qdFlbeF8Rvd8ThcfeAhW86oGKzm5hGokd372TYsuKFSY6UxqLF7b+
+         WqwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQZsgQffOD8aShzWDIBwQCID2VKcmnXWsj9n4noHc5aoQDmt1P3LXMVziXthNM5meORyvsSbzoHhlmFaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi0d0+Y538SZMHnyFTOLb1PhZoh+r6d1CZV8xI46sf0Avq16jl
+	3I0uDl/qSUqyRE8qyEdSF2giAg+/GxRPBsIkN23q1hmlZ4NFoR2ho0Ipnya5R93T8p4=
+X-Gm-Gg: ASbGncvAr5IzoyekHl3nPCjy6oYPkpoPhk7BNTme/by8cI8i/2aaUB/Dt8/Z3KmSZE7
+	9X47GS6IAnh4vTvc/P/CIupohCCIopp3q+BL28rpB9YcSwOKv+UGBc2L4HuyBsJuo+TWpiqogDk
+	0AD7bR5s5+vWlZHFBS2nn8rwLIFBXoljsYuwO0FvJsew3pj64DjNp5pnVDTaX5VjwhDJTCK4sQh
+	y6QEmHAWUxQuQG/hWBQJyGvXT/Cz1mm9Tx4TNwmwQ17cd0sB8s/ISomhRQdCDourGb8wJ4NzaxZ
+	GU35bKNg9Bmnpxq7KwN7x/C2QEZEoprR3FqfZhQ+/rai6i/ZKh8+Uf3liCLhVemL4SQBfCIJvab
+	hyb9fDm98gEPKqBvTP1VkMbAlU/qLnG4VH0Ca/g==
+X-Google-Smtp-Source: AGHT+IF+gpQV430tU9VpFbWOEEO9nCtbhkf7JKZT2vfz8vbnYNPhZr+BRPLWyOfEF+iclrfKMJ7agA==
+X-Received: by 2002:ac8:598b:0:b0:494:a2b8:88f0 with SMTP id d75a77b69052e-4a73c589061mr236405141cf.33.1750185293762;
+        Tue, 17 Jun 2025 11:34:53 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a72a4b0cb9sm64018831cf.50.2025.06.17.11.34.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 11:34:53 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uRb92-00000006bm4-2q58;
+	Tue, 17 Jun 2025 15:34:52 -0300
+Date: Tue, 17 Jun 2025 15:34:52 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
+Cc: "Tian, Kevin" <kevin.tian@intel.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [RFC PATCH] iommufd: Destroy vdevice on device unbind
+Message-ID: <20250617183452.GG1376515@ziepe.ca>
+References: <20250610065146.1321816-1-aneesh.kumar@kernel.org>
+ <BN9PR11MB527606182417BB7A35349F598C74A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20250612172645.GA1011960@ziepe.ca>
+ <BN9PR11MB5276B467ADCC57BC6571CA458C77A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20250613124202.GD1130869@ziepe.ca>
+ <yq5abjqotim7.fsf@kernel.org>
+ <BN9PR11MB527633CA2F698E83E12BFBD68C70A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20250616164941.GA1373692@ziepe.ca>
+ <yq5azfe6ssev.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250617-tonyk-robust_futex-v4-7-6586f5fb9d33@igalia.com>
-References: <20250617-tonyk-robust_futex-v4-0-6586f5fb9d33@igalia.com>
-In-Reply-To: <20250617-tonyk-robust_futex-v4-0-6586f5fb9d33@igalia.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
- Davidlohr Bueso <dave@stgolabs.net>, Shuah Khan <shuah@kernel.org>, 
- Arnd Bergmann <arnd@arndb.de>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- Waiman Long <longman@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-api@vger.kernel.org, kernel-dev@igalia.com, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq5azfe6ssev.fsf@kernel.org>
 
-Expand the current robust list test for the new set_robust_list2
-syscall. Create an option to make it possible to run the same tests
-using the new syscall, and also add two new relevant test: test long
-lists (bigger than ROBUST_LIST_LIMIT) and for unaligned addresses.
+On Tue, Jun 17, 2025 at 01:37:04PM +0530, Aneesh Kumar K.V wrote:
+ 
+> How do we reclaim that object id for further reuse? 
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- .../selftests/futex/functional/robust_list.c       | 160 ++++++++++++++++++++-
- 1 file changed, 156 insertions(+), 4 deletions(-)
+Maybe just don't? Userspace did something it shouldn't, it now leaked
+8 bytes of kernel memory until the FD is closed.
 
-diff --git a/tools/testing/selftests/futex/functional/robust_list.c b/tools/testing/selftests/futex/functional/robust_list.c
-index 42690b2440fd29a9b12c46f67f9645ccc93d1147..004ad79ff6171c411fd47e699e3c38889544218e 100644
---- a/tools/testing/selftests/futex/functional/robust_list.c
-+++ b/tools/testing/selftests/futex/functional/robust_list.c
-@@ -35,16 +35,45 @@
- #include <stddef.h>
- #include <sys/mman.h>
- #include <sys/wait.h>
-+#include <stdint.h>
- 
- #define STACK_SIZE (1024 * 1024)
- 
- #define FUTEX_TIMEOUT 3
- 
-+#define SYS_set_robust_list2 468
-+
-+enum robust_list2_type {
-+        ROBUST_LIST_32BIT,
-+        ROBUST_LIST_64BIT,
-+};
-+
- static pthread_barrier_t barrier, barrier2;
- 
-+bool robust2 = false;
-+
- int set_robust_list(struct robust_list_head *head, size_t len)
- {
--	return syscall(SYS_set_robust_list, head, len);
-+	int ret, flags;
-+
-+	if (!robust2) {
-+		return syscall(SYS_set_robust_list, head, len);
-+	}
-+
-+	if (sizeof(head) == 8)
-+		flags = ROBUST_LIST_64BIT;
-+	else
-+		flags = ROBUST_LIST_32BIT;
-+
-+	/*
-+	 * We act as we have just one list here. We try to use the first slot,
-+	 * but if it hasn't been alocated yet we allocate it.
-+	 */
-+	ret = syscall(SYS_set_robust_list2, head, 0, flags);
-+	if (ret == -1 && errno == ENOENT)
-+		ret = syscall(SYS_set_robust_list2, head, -1, flags);
-+
-+	return ret;
- }
- 
- int get_robust_list(int pid, struct robust_list_head **head, size_t *len_ptr)
-@@ -246,6 +275,11 @@ static void test_set_robust_list_invalid_size(void)
- 	size_t head_size = sizeof(struct robust_list_head);
- 	int ret;
- 
-+	if (robust2) {
-+		ksft_test_result_skip("This test is only for old robust interface\n");
-+		return;
-+	}
-+
- 	ret = set_robust_list(&head, head_size);
- 	ASSERT_EQ(ret, 0);
- 
-@@ -321,6 +355,11 @@ static void test_get_robust_list_child(void)
- 	struct robust_list_head head, *get_head;
- 	size_t len_ptr;
- 
-+	if (robust2) {
-+		ksft_test_result_skip("Not implemented in the new robust interface\n");
-+		return;
-+	}
-+
- 	ret = pthread_barrier_init(&barrier, NULL, 2);
- 	ret = pthread_barrier_init(&barrier2, NULL, 2);
- 	ASSERT_EQ(ret, 0);
-@@ -332,7 +371,7 @@ static void test_get_robust_list_child(void)
- 
- 	ret = get_robust_list(tid, &get_head, &len_ptr);
- 	ASSERT_EQ(ret, 0);
--	ASSERT_EQ(&head, get_head);
-+	ASSERT_EQ(get_head, &head);
- 
- 	pthread_barrier_wait(&barrier2);
- 
-@@ -507,11 +546,119 @@ static void test_circular_list(void)
- 	ksft_test_result_pass("%s\n", __func__);
- }
- 
-+#define ROBUST_LIST_LIMIT	2048
-+#define CHILD_LIST_LIMIT (ROBUST_LIST_LIMIT + 10)
-+
-+static int child_robust_list_limit(void *arg)
-+{
-+	struct lock_struct *locks;
-+	struct robust_list *list;
-+	struct robust_list_head head;
-+	int ret, i;
-+
-+	locks = (struct lock_struct *) arg;
-+
-+	ret = set_list(&head);
-+	if (ret)
-+		ksft_test_result_fail("set_list error\n");
-+
-+	/*
-+	 * Create a very long list of locks
-+	 */
-+	head.list.next = &locks[0].list;
-+
-+	list = head.list.next;
-+	for (i = 0; i < CHILD_LIST_LIMIT - 1; i++) {
-+		list->next = &locks[i+1].list;
-+		list = list->next;
-+	}
-+	list->next = &head.list;
-+
-+	/*
-+	 * Grab the lock in the last one, and die without releasing it
-+	 */
-+	mutex_lock(&locks[CHILD_LIST_LIMIT], &head, false);
-+	pthread_barrier_wait(&barrier);
-+
-+	sleep(1);
-+
-+	return 0;
-+}
-+
-+/*
-+ * The old robust list used to have a limit of 2048 items from the kernel side.
-+ * After this limit the kernel stops walking the list and ignore the other
-+ * futexes, causing deadlocks.
-+ *
-+ * For the new interface, test if we can wait for a list of more than 2048
-+ * elements.
-+ */
-+static void test_robust_list_limit(void)
-+{
-+	struct lock_struct locks[CHILD_LIST_LIMIT + 1];
-+	_Atomic(unsigned int) *futex = &locks[CHILD_LIST_LIMIT].futex;
-+	struct robust_list_head head;
-+	int ret;
-+
-+	if (!robust2) {
-+		ksft_test_result_skip("This test is only for new robust interface\n");
-+		return;
-+	}
-+
-+	*futex = 0;
-+
-+	ret = set_list(&head);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	ASSERT_EQ(ret, 0);
-+
-+	create_child(child_robust_list_limit, locks);
-+
-+	/*
-+	 * After the child thread creates the very long list of locks, wait on
-+	 * the last one.
-+	 */
-+	pthread_barrier_wait(&barrier);
-+	ret = mutex_lock(&locks[CHILD_LIST_LIMIT], &head, false);
-+
-+	if (ret != 0)
-+		printf("futex wait returned %d\n", errno);
-+	ASSERT_EQ(ret, 0);
-+
-+	ASSERT_TRUE(*futex | FUTEX_OWNER_DIED);
-+
-+	wait(NULL);
-+	pthread_barrier_destroy(&barrier);
-+
-+	ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+/*
-+ * The kernel should refuse an unaligned head pointer
-+ */
-+static void test_unaligned_address(void)
-+{
-+	struct robust_list_head head, *h;
-+	int ret;
-+
-+	if (!robust2) {
-+		ksft_test_result_skip("This test is only for new robust interface\n");
-+		return;
-+	}
-+
-+	h = (struct robust_list_head *) ((uintptr_t) &head + 1);
-+	ret = set_list(h);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+}
-+
- void usage(char *prog)
- {
- 	printf("Usage: %s\n", prog);
- 	printf("  -c	Use color\n");
- 	printf("  -h	Display this help message\n");
-+	printf("  -n	Use robust2 syscall\n");
- 	printf("  -v L	Verbosity level: %d=QUIET %d=CRITICAL %d=INFO\n",
- 	       VQUIET, VCRITICAL, VINFO);
- }
-@@ -520,7 +667,7 @@ int main(int argc, char *argv[])
- {
- 	int c;
- 
--	while ((c = getopt(argc, argv, "cht:v:")) != -1) {
-+	while ((c = getopt(argc, argv, "chnt:v:")) != -1) {
- 		switch (c) {
- 		case 'c':
- 			log_color(1);
-@@ -531,6 +678,9 @@ int main(int argc, char *argv[])
- 		case 'v':
- 			log_verbosity(atoi(optarg));
- 			break;
-+		case 'n':
-+			robust2 = true;
-+			break;
- 		default:
- 			usage(basename(argv[0]));
- 			exit(1);
-@@ -538,7 +688,7 @@ int main(int argc, char *argv[])
- 	}
- 
- 	ksft_print_header();
--	ksft_set_plan(7);
-+	ksft_set_plan(8);
- 
- 	test_robustness();
- 
-@@ -548,6 +698,8 @@ int main(int argc, char *argv[])
- 	test_set_list_op_pending();
- 	test_robust_list_multiple_elements();
- 	test_circular_list();
-+	test_robust_list_limit();
-+	test_unaligned_address();
- 
- 	ksft_print_cnts();
- 	return 0;
+> is it that if there is a request for a iommufd_object_remove() with object
+> refcount > 1, we insert a XA_ZERO_ENTRY and convert that to NULL entry
+> on IOMMU_DESTROY?
 
--- 
-2.49.0
+Oh no we can't do that, if the refcount is elevated that is a problem,
+it means some thread somewhere is using that memory.
 
+We can sleep and wait for shortterm_users to go to zero and if users
+is still elevated then we are toast. WARN_ON and reatin it in the
+xarray and hope for the best.
+
+So the thread that will trigger the detruction needs to have a users
+refcount of 1. Meaning users needs to be one while idle in the xarray,
+and the idevice destruction will obtain a users=2 from its pointer
+under some kind of lock.
+
+> -enum {
+> -	REMOVE_WAIT_SHORTTERM = 1,
+> -};
+> +#define	REMOVE_WAIT_SHORTTERM	BIT(0)
+> +#define	REMOVE_OBJ_FORCE	BIT(1)
+
+You can keep the enum for flags, but 'force' isn't the right name. I
+would think it is 'tombstone'
+
+> diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
+> index b7aa725e6b37..d27b61787a53 100644
+> --- a/drivers/iommu/iommufd/main.c
+> +++ b/drivers/iommu/iommufd/main.c
+> @@ -88,7 +88,8 @@ struct iommufd_object *iommufd_get_object(struct iommufd_ctx *ictx, u32 id,
+>  
+>  	xa_lock(&ictx->objects);
+>  	obj = xa_load(&ictx->objects, id);
+> -	if (!obj || (type != IOMMUFD_OBJ_ANY && obj->type != type) ||
+> +	if (!obj || xa_is_zero(obj) ||
+> +	    (type != IOMMUFD_OBJ_ANY && obj->type != type) ||
+>  	    !iommufd_lock_obj(obj))
+
+xa_load can't return xa_is_zero(), xas_load() can
+
+We already use XA_ZERO_ENTRY to hold an ID during allocation till
+finalize.
+
+I think you want to add a new API
+
+iommufd_object_tombstone_user(idev->ictx, &idev->vdev->obj);
+
+Which I think is the same as the existing
+iommufd_object_destroy_user() except it uses tombstone..
+
+The only thing tombstone does is:
+
+	xas_store(&xas, (flags & REMOVE_OBJ_TOMBSTONE) ? XA_ZERO_ENTRY : NULL);
+
+All the rest of the logic including the users and shorterm check would
+be the same.
+
+> --- a/drivers/iommu/iommufd/viommu.c
+> +++ b/drivers/iommu/iommufd/viommu.c
+> @@ -213,6 +213,8 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
+>  	/* vdev lifecycle now managed by idev */
+>  	idev->vdev = vdev;
+>  	refcount_inc(&vdev->obj.users);
+> +	/* Increment refcount since userspace can hold the obj id */
+> +	refcount_inc(&vdev->obj.users);
+>  	goto out_put_idev_unlock;
+
+I don't think this should change.. There should be no extra user refs
+or userspace can't destroy it.
+
+The pointer back from the idevice needs locking to protect it while a
+refcount is obtained.
+
+Jason
 
