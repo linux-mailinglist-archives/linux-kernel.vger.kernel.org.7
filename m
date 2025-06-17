@@ -1,116 +1,116 @@
-Return-Path: <linux-kernel+bounces-690876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11B6ADDD5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4872ADDD60
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3414A4A07BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:44:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80EB14A06BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8B32F0022;
-	Tue, 17 Jun 2025 20:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC933132103;
+	Tue, 17 Jun 2025 20:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="zDH400Cg"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L9XklDxX"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76AD2EF9C7;
-	Tue, 17 Jun 2025 20:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864FE25A2C2;
+	Tue, 17 Jun 2025 20:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750193066; cv=none; b=ZeVLG71I660OcbvkGLffWBT5ITp3Rw73QnzIBPX1DAg+5uUCtgDciWl3H+knWnoQ7yEJOm+GCLdn3KuEr93IzIbDhWWC/+2IhqfHQnQIuCWWunzOH9z2soCXfRBsPf2K7V1t/EysnA+agtgeEEdbxmbn+P8HNbWC0EpLkpijfdQ=
+	t=1750193108; cv=none; b=LiaLfLUopmt/NBJSO7iRYZa5L8BWWETtBgHMBVdLSWp6uvgBAWjBUjiOHF/M+KbJsWk0UEIjJHcgpQOYahz6hI+FsH+Q9LF7clQ6zls2cBU5FBnFLRxQSpgTQIahJ9mJmCw7jjBfEPk6sm3B6CahYmBLdi2i8H+zs0lC3Ir/8ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750193066; c=relaxed/simple;
-	bh=NenoU6iJEOzpUiP+jsIKZvLpP3TvdBXNqcmpwU2kdYk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fO+jkmvhfTz8iZrAcza3SLKz2xF9IHc7BQwDk6G/tTzeWkQP48U5KkJ1PcDj1RjQZ7V/GkBJzLfdzAU4zF5jnTcdOc4RLIPAy2JeuUkUCAdXLJMlfn8a+jLlsEfpJAUWJ676FIER/CHCuNUqToc/oJAYKuODolwUlov/wOr1LA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=zDH400Cg; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bMJkn6z8qzm1HbT;
-	Tue, 17 Jun 2025 20:44:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1750193056; x=1752785057; bh=mXfic0ItqVeP4UWsBKuKWGxL
-	90Cx/yU9vDDLjBUlkbA=; b=zDH400CgWpACsxBmkw4yU6WG7quKVjwGhzRTuE6p
-	MDYGIHZFgTISrbkntnw6Vu3iHyG/Bs7kUR5uidTP755lUQp3ub7yIF5sYZIDe0SP
-	2nwcIBAVTHLBjGQZEdXJebQaMrudFfY5CXsnCB2Ylx/EWCkHmN7J19YgM1mRAdEv
-	B71IEolwc4utFahlLYBoDtu18C40L8FO4P56i8Z6kVIk6hzNAyHqj3NdxKJjql2F
-	045qJHCPAN2nkBx29m9P4d/52i0IOMYdDh83SwDwiCdCVq50ioH3hu6LumWL4fEi
-	FDHwOhdVz3KnV5hzhHCBv5SvG56TRk5Ty2Sq5U3oDtB4jA==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 28xjMBXV75lE; Tue, 17 Jun 2025 20:44:16 +0000 (UTC)
-Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bMJkh5411zm0yVb;
-	Tue, 17 Jun 2025 20:44:11 +0000 (UTC)
-Message-ID: <07c4c84d-0c52-4843-b32d-6806e58892fe@acm.org>
-Date: Tue, 17 Jun 2025 13:44:10 -0700
+	s=arc-20240116; t=1750193108; c=relaxed/simple;
+	bh=YO2pgphW5ix2G641Cyt99AzxDf6RghmJ03fQI+EU4qM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oPBcWze4oNbESRzyNd7vHlpix55vShLSG+lcixUbcPCtXrLM13aEW3+DRoxr4RbpFJXvsO8cO3/yehEbcb83rFGbG2Hiunx/Bmh1fCTxXR8UJMiSMbn+zHuDBgx+ZqUixq0Yxt46ZRf2CeVAEqyh81ks8s4ps94eb+7ojbK2/cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L9XklDxX; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7d3da67de87so225527685a.3;
+        Tue, 17 Jun 2025 13:45:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750193105; x=1750797905; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gpU9B+2Z/eErONpWTKeNVO2o1qMt7HuQeN7CFpLreI0=;
+        b=L9XklDxXO8yT/scdZ0MhKVmitXa+blK8GzzOYNRBJpIgQbAbrSEXlVzwcuY0kL9kHb
+         bz1WgEmE9bLSumoE+jKkFEfCyeBKUMjjH2QCXLRGqSIMugXbmg2Nqyab7zaW9xHjkO56
+         KykY2nDcdiTgzeRmxVyrIpB9LspRwJwFqz14HPUK2kD0UbtNlr4RxhQcx55MFlVVzKvc
+         bBJnb9jFoSnDejb1YHWjkZHSFTxqSfYZXPLN5QOvJossuyRo3GpHetjKs7b42Gu8G6MF
+         9R/O0tknskshVvCUI+I1wGZoPPergqYTxjlNCIASUGx6vJeNEJCR7kwFnlogbe2WZ/oO
+         5C1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750193105; x=1750797905;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gpU9B+2Z/eErONpWTKeNVO2o1qMt7HuQeN7CFpLreI0=;
+        b=AZBmMqJoXNG0VdqIddR75Z0un1CJg1hio+MuLdVw/qWbb8UhabbMy0+P8+li7Cu6hT
+         GtTRLvpzpRJfnYukTLAp9pireN1RGVNRHCZlhvj20/RB9n+ssjAlm0EaUR8TojMolwKn
+         Dh2C0dpzcZbqys9Xi6Rng+LuMRLlrJBLgLKDkaE6STV58Baca5sCYrZ8ItopNSonnDKp
+         zfGyXoMYDyIDp2ulXPAdbOdKDLMMV4XJkhBLbOz/2MBYPPZSurRUBz6L2Xirb2z6hHWA
+         8X5y9GgBOlprcmLWNk5m81qWB2Yk0eGdS9qBkrjlavtn1saIfhCTe92ogyE0qT4xUPWd
+         uUeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUV1JFjyD03JW7feUFGs1a7WNHzWNJAeGk9L0TEQoApHGAWU6Rbg8mbePsrFHWQAUIOA7gyPxzL+g1vPRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDYac/KXlWLluMAuojI2c0zr/pSIWDpdcRirnR0JAmRMse+mAb
+	+QHdFOh7xqqVCILLgebNSGeIOde0BzuQDutxT4M9JQITIZUCA7dMCiaF
+X-Gm-Gg: ASbGnctDydzVlrh1ekaNX5aZAgcXIpsAhsFRPHc8ZFNla/yzP1Z0dhWiN9+yQfe32tJ
+	1t7TbnzmtP+kE6t0mQ4baEPpbW4fezgf6Cyc9pD8aCZ+SY32XZPDzTG2WXWaH/kor3K9NMxdpZC
+	lJxO7/A+JnKdvD9E7Ekjul+c9K13gZHz+qqn1RebUOfrNdbAx+3/67Gm0z3d+2cg6lQseJzebfi
+	RlDBBgjizVgl5JDDNguAnU0Z0/mx4zHTRrMZ0aiHCkXsQU304+FTZgEISG8sOdcVdp5bHH7i+Xx
+	MlUcYSe/WCS14c4IuHWoTVWr9DCw08nNHI67qGnsMmFi4TzwQVB27D8kvMe6Maef5JqltN5/zIq
+	YCe8iAGueYmZfGNb3RHixRBkWCxJ8AxAIlR6Gre7UdwqTio3ZRvJxdKid86k+Hh+waX6W
+X-Google-Smtp-Source: AGHT+IFRAps+zO/vJX6pDZ2o+vNJWC8FCSCWhveQTRcKO3q7pJ5/kTdWBwmiavE/8mZtjpkCAy4M3Q==
+X-Received: by 2002:a05:620a:8086:b0:7ce:e010:88bb with SMTP id af79cd13be357-7d3c6c1ab89mr2449431985a.22.1750193105160;
+        Tue, 17 Jun 2025 13:45:05 -0700 (PDT)
+Received: from seungjin-HP-ENVY-Desktop-TE02-0xxx.dartmouth.edu ([129.170.197.81])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8f10887sm691056685a.105.2025.06.17.13.45.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 13:45:04 -0700 (PDT)
+From: pip-izony <eeodqql09@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pip-izony <eeodqql09@gmail.com>
+Subject: [PATCH] usb: host: xhci-plat: fix incorrect type for of_match variable in xhci_plat_probe()
+Date: Tue, 17 Jun 2025 16:45:00 -0400
+Message-ID: <20250617204500.346984-1-eeodqql09@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: fix out of bounds error in /drivers/scsi
-To: jackysliu <1972843537@qq.com>, James.Bottomley@HansenPartnership.com
-Cc: martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <tencent_BD16D2DE705D6E27FC5B93ECDEEF9A7B5009@qq.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <tencent_BD16D2DE705D6E27FC5B93ECDEEF9A7B5009@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/17/25 2:03 AM, jackysliu wrote:
-> Out-of-bounds vulnerability found in ./drivers/scsi/sd.c,
-> sd_read_block_limits_ext Function Due to Unreasonable boundary checks.
-> Out-of-bounds read vulnerability exists in the
-> Linux kernel's SCSI disk driver (./drivers/scsi/sd.c).
-> The flaw occurs in the sd_read_block_limits_ext function
->   when processing Vital Product Data (VPD) page B7 (Block Limits Extension)
->   responses from storage devices
-> 
-> Signed-off-by: jackysliu <1972843537@qq.com>
-> ---
->   drivers/scsi/sd.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-> index 3f6e87705b62..eeaa6af294b8 100644
-> --- a/drivers/scsi/sd.c
-> +++ b/drivers/scsi/sd.c
-> @@ -3384,7 +3384,7 @@ static void sd_read_block_limits_ext(struct scsi_disk *sdkp)
->   
->   	rcu_read_lock();
->   	vpd = rcu_dereference(sdkp->device->vpd_pgb7);
-> -	if (vpd && vpd->len >= 2)
-> +	if (vpd && vpd->len >= 6)
->   		sdkp->rscs = vpd->data[5] & 1;
->   	rcu_read_unlock();
->   }
+The variable `of_match` was incorrectly declared as a `bool`.
+It is assigned the return value of of_match_device(), which is a pointer of
+type `const struct of_device_id *`.
 
-Fixes: and Cc: stable tags are missing. Please add these.
+Signed-off-by: pip-izony <eeodqql09@gmail.com>
+---
+ drivers/usb/host/xhci-plat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-How has this been detected? Please mention this in the patch
-description. When I wrote the above code I was assuming that vpd->len
-represents the contents of the PAGE LENGTH field (bytes 2 and 3).
-Apparently vpd->len is the length in bytes of the entire VPD page.
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 6dab142e7278..49eb874b1d81 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -152,7 +152,7 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
+ 	int			ret;
+ 	int			irq;
+ 	struct xhci_plat_priv	*priv = NULL;
+-	bool			of_match;
++	const struct of_device_id *of_match;
+ 
+ 	if (usb_disabled())
+ 		return -ENODEV;
+-- 
+2.43.0
 
-Thanks,
-
-Bart.
 
