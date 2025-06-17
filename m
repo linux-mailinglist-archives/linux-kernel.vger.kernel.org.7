@@ -1,174 +1,106 @@
-Return-Path: <linux-kernel+bounces-689212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1818BADBE1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 02:29:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CBDDADBDEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 02:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5187F1892280
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 00:29:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B2AC3B6B33
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 00:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0631411EB;
-	Tue, 17 Jun 2025 00:28:58 +0000 (UTC)
-Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A06C2FB;
+	Tue, 17 Jun 2025 00:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="RDXXWZ+K"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D722F13AA2F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 00:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A737B15D1
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 00:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750120137; cv=none; b=l+26sBCTMgDL2VQSV8VFQYqQWZjOjTVaUzSgWI2Gxu/2CcQNzWDnkxNSCl5ewb2HGNQbDEznNAvMnfGhcxatIe13teiM89p94Ky4+gEFcuqVJsHHYQISltTkFkDOi1WwT+ywaUKo6m7p6AT0xLajdBg05pt37gw7kls2wdOAQBs=
+	t=1750119061; cv=none; b=Jqh3jmBqdJDNRD9AYS92FxhqcdZvExomH+zIS/LCSO0SPGp+USBCylluYMEm9BhnrOBZTA2wEmtntrARStdFDKjJ38zItDDxXKfPDb/j7PbHCLDtZ02FlhKUeiDFEXyI4d7w3/K0bkDgGn0rwS3TM5R5jju+/4pVH6lzSYxUORc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750120137; c=relaxed/simple;
-	bh=8uIvppExe+TsXXPieSx7PUqI2+M7uvzYYeDJJrC18Lg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=gbr7YyzR3ewOpD8vsWNsGRBTpEzz4/P2WtWgeusHF3MOqSq5HdVsBDUO+hfBfjXS8xwIiHcUoRQKrlZaN/nePXGFOYauU97tYZLZ63x10XcZlyuRwEh4ZTqEAtcR/dcBkkJwBg2I0S8Bkyj9Bmcq0cLaxqxkURDPaVmnPFMSTH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1750120112-086e230fbd4e130001-xx1T2L
-Received: from ZXSHMBX1.zhaoxin.com (ZXSHMBX1.zhaoxin.com [10.28.252.163]) by mx1.zhaoxin.com with ESMTP id Qu9fjuOQyXZBQgOK (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Tue, 17 Jun 2025 08:28:32 +0800 (CST)
-X-Barracuda-Envelope-From: AlanSong-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
-Received: from ZXSHMBX1.zhaoxin.com (10.28.252.163) by ZXSHMBX1.zhaoxin.com
- (10.28.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Tue, 17 Jun
- 2025 08:28:31 +0800
-Received: from ZXSHMBX1.zhaoxin.com ([::1]) by ZXSHMBX1.zhaoxin.com
- ([fe80::2c07:394e:4919:4dc1%7]) with mapi id 15.01.2507.044; Tue, 17 Jun 2025
- 08:28:31 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
-Received: from [10.32.65.156] (10.32.65.156) by ZXBJMBX02.zhaoxin.com
- (10.29.252.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Mon, 16 Jun
- 2025 20:23:45 +0800
-Message-ID: <0575ec9d-a6b8-4932-a1aa-9646813957a2@zhaoxin.com>
-Date: Mon, 16 Jun 2025 20:23:36 +0800
+	s=arc-20240116; t=1750119061; c=relaxed/simple;
+	bh=cW9a3H2Jb1XORPCWPEbQXH89DofL90Y/4tlpYncP5Rc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GtrqnjHIRq+wX8nSVdez7aMkFyF8M1+wHoJHZfwvadjRsBcfPiNjsQLZ66+zbx/5tJBmmYlyWfFgP4SMhUMFu6/9iKiL4xezeqMfC3YHFicpQCCkAT5hXIep6aNHGWdbjZ0nmScqdZKJDEMuWvGmhDLVqNVnrZuXOAHZY7ieqHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=RDXXWZ+K; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4a5a196f057so111157911cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 17:10:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1750119057; x=1750723857; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e5TEqGP1dA1ohDNNPEUIn+95Q5c5y2M6lr7dUEc7k9U=;
+        b=RDXXWZ+KwE2+4LSb7ctQH5GYfTiJoYS6MiwgxmT33G10W7tEFaFSkcd388+pg4rE4m
+         xiWaBLGZsRGBy14UTyouhU1t7kOqj5KzaKH5QtRLu7CvEhD5+xMqTI9JkeV+kSHVZnRI
+         43zoXRjbeXo5ciWP1X2gX70UdSjz4+Mwt5dJfkVvdmyxTF9BYIa5V19n+HLUlgIVKKAs
+         XdGL6/eivkNxEeQIpc42ogywATi2GYvM0WYVTdXboz6LcCGTmvg52KaSDHq0+5/YXDPF
+         Xxl1ek6rJbsL8DnDnVSa9mlUpKhY30ZqGyqRCkzGgnG2opZDOYn17cpHe0T2Fhd1ek09
+         F/pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750119057; x=1750723857;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e5TEqGP1dA1ohDNNPEUIn+95Q5c5y2M6lr7dUEc7k9U=;
+        b=aVBVCohgO9zNoEwmKEnTMV+5kcI/lQ0sm/sJohubIIyltJOI9aYb555OVpWKaLTvRA
+         fPF9WXwW6CZhCAs1I94M3Jqirl0Wv/wiV0ZRWQzOvlIiU6gw5BDLLivOyAyOhpE/7pFF
+         BXRlW0FP7OCuY7m8eKmR6fr6fKPPSKBy3Xo2s2EwWIrc+OkfTlr28aNXZfmmBr7rC8M+
+         mV5Qu1goiQWy/AKuQzGfm4QVWh3iHO94wpHKd9mYHZcH5nWGR4Vp7j/bsO+oWH1PVwk2
+         rc/f+LFvzr4C+2piuAY7gYvUtkpQYGhEfL/0/LtSQFYxC2MECVwAWbjIlGvs+2ufKRzS
+         6gFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYLyYnLSi9R6hZC2NkEGusegeGLOP82zcGBDb5Pvubgk1oGNBCLvG9XKtWcJ48u3BbR3hqp8Fw0FlPZ8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsShLw9qELHULkc73hq/2rSm7zPoLstDqo45yqLW0WrM1ff8Dw
+	VXM1WBK26vPmLN6hKD+lcpbhxpjhiR6CaiHcqyxbvYsj+BiJbdxc9TdtPUJwwwZ47WI=
+X-Gm-Gg: ASbGncs+IS1LYpkCGolLMFLi/RMTPlN2fPX8sT82+EiUhbXSP1IT2N3wgrq8nG5llmN
+	GmlzzORgGqcMZpREomJb69Yqm5blBVwfc/C6bWqpYbevGwM8UOi2AJKl194cmad/012b7A336zh
+	EfE4/kABqJ3i2XLrssrp0F4ogobzcFPrASIfxfQe/38S1bB00Mag5vOCbq1FMEhAUaSHBoFcQw2
+	ninAx9troennOP07TBEKifyzX/tagMfNIAgw2R8V/77WFyRNJVME9YmNdc18l0m6XLEdSYAKw6R
+	LJOrZQQ6/kx/UmkqV2wHF6Cv0P17/+59Ek73z+RkxEX5PdiqCIs6YLLdxw==
+X-Google-Smtp-Source: AGHT+IETz9LYg5ng7mTZU0WsBXmtI5+6OhKkrzdiTTp9Ts5WqaC5ydvNWoYbhaOUC9it+gTF/lSbLw==
+X-Received: by 2002:a05:622a:87:b0:4a4:3bae:8dce with SMTP id d75a77b69052e-4a73c597286mr190961541cf.33.1750119057584;
+        Mon, 16 Jun 2025 17:10:57 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F ([2620:10d:c091:400::5:cf64])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a72a3103a5sm54775971cf.30.2025.06.16.17.10.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 17:10:56 -0700 (PDT)
+Date: Mon, 16 Jun 2025 19:10:54 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: Alok Tiwari <alok.a.tiwari@oracle.com>, linux-doc@vger.kernel.org,
+	linux-cxl@vger.kernel.org, corbet@lwn.net, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com,
+	dan.j.williams@intel.com, linux-kernel@vger.kernel.org,
+	darren.kenny@oracle.com
+Subject: Re: [PATCH] cxl: docs/devices Fix typos and clarify wording in
+ device-types.rst
+Message-ID: <aFCyjkSB9VwZXjPt@gourry-fedora-PF4VCD3F>
+References: <20250616060737.1645393-1-alok.a.tiwari@oracle.com>
+ <aFBUGTM4fpwU749k@gourry-fedora-PF4VCD3F>
+ <b2acd80e-38ce-488f-a6d8-8bdad425534c@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: AlanSong-oc <AlanSong-oc@zhaoxin.com>
-Subject: Re: [PATCH] crypto: padlock-sha - Add support for Zhaoxin processor
-To: Herbert Xu <herbert@gondor.apana.org.au>
-X-ASG-Orig-Subj: Re: [PATCH] crypto: padlock-sha - Add support for Zhaoxin processor
-CC: <davem@davemloft.net>, <linux-crypto@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <CobeChen@zhaoxin.com>,
-	<TonyWWang-oc@zhaoxin.com>, <YunShen@zhaoxin.com>, <GeorgeXue@zhaoxin.com>,
-	<LeoLiu-oc@zhaoxin.com>, <HansHu@zhaoxin.com>
-References: <20250611101750.6839-1-AlanSong-oc@zhaoxin.com>
- <aEpgKQ1I0VDSfhO0@gondor.apana.org.au>
-In-Reply-To: <aEpgKQ1I0VDSfhO0@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- ZXBJMBX02.zhaoxin.com (10.29.252.6)
-X-Moderation-Data: 6/17/2025 8:28:30 AM
-X-Barracuda-Connect: ZXSHMBX1.zhaoxin.com[10.28.252.163]
-X-Barracuda-Start-Time: 1750120112
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 4475
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.142971
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2acd80e-38ce-488f-a6d8-8bdad425534c@intel.com>
 
-
-On 6/12/2025 1:05 PM, Herbert Xu wrote:
+On Mon, Jun 16, 2025 at 03:32:44PM -0700, Dave Jiang wrote:
+> > With that change you may add
+> > 
+> > Reviewed-by: Gregory Price <gourry@gourry.net>
 > 
-> On Wed, Jun 11, 2025 at 06:17:50PM +0800, AlanSong-oc wrote:
->>
->> +static int padlock_sha1_update_zhaoxin(struct shash_desc *desc,
->> +                                   const u8 *src, unsigned int len)
->> +{
->> +       struct sha1_state *state = padlock_shash_desc_ctx(desc);
->> +       int blocks = len / SHA1_BLOCK_SIZE;
->> +
->> +       /* The xsha1 instruction requires a 32-byte buffer for execution for Zhaoxin processors */
->> +       u8 buf[32 + PADLOCK_ALIGNMENT - 1];
->> +       u8 *dst = PTR_ALIGN(&buf[0], PADLOCK_ALIGNMENT);
-> 
-> The padlock has always had an alignment requirement.  We already
-> deal with this by using PADLOCK_ALIGNMENT.  So rather than re-inventing
-> it here, you should simply change PADLOCK_ALIGNMENT to 32 for Zhaoxin.
+> I fixed it up with your suggestion and applied to cxl/next. Please check and make sure the fix is correct. Thanks!
 
-For the Zhaoxin processor, the XSHA1 instruction requires 16-byte
-alignment, as specified by PADLOCK_ALIGNMENT, rather than 32 bytes,
-which remains unchanged. Instead, it requires a 32-byte output buffer
-for instruction execution. Before execution, the first 20 bytes of the
-output buffer must be initialized with the SHA-1 initial hash constants.
-After execution, the first 20 bytes will contain the computed hash
-result, while the remaining 12 bytes will be zeroed out. Explain it
-using a graph as shown below:
-
-# Before XSHA1 Execution on Zhaoxin platform
-Offset:     0                      19                       31
-             +----------------------+------------------------+
-Buffer:     | Initial Hash Values  |        xxxxxx          |
-             +----------------------+------------------------+
-
-# After XSHA1 Execution on Zhaoxin platform
-Offset:     0                      19                       31
-             +----------------------+------------------------+
-Buffer:     |     Hash Result      |        Zeroed          |
-             +----------------------+------------------------+
-
-> You should also fix the comment to state that 32 is for alignment
-> rather than the size.  The Nano already requires an 128-byte buffer
-> and we cater for that so it can't be the size that's the problem
-> here.
-
-The 128-byte buffer requirement is already included in 'descsize',
-as defined by PADLOCK_SHA_DESCSIZE. In the previous version of
-the padlock-sha driver, the 'struct sha1_state' variable and the buffer
-resided in separate memory regions. It allowed the driver to safely
-write initial hash constants into the buffer and retrieve hash results
-from buffer through memcpy() operations. Crucially, when the XSHA1
-instruction zeroed out the tail bytes of the buffer, it cannot affect
-the contents of 'struct sha1_state'. However, in the current driver
-implementation, the 'struct sha1_state' shares memory space with the
-buffer. Consequently, when the XSHA1 instruction executes, it
-inadvertently clears other members of 'struct sha1_state'. Specifically,
-when padlock_sha1_finup() is called, the 'count' member of
-'struct sha1_state' no longer reflects the actual data length processed.
-Explain it using a graph as shown below:
-
-# Previous version of driver
-Offset:         0               19     27                     91
-                 +---------------+-------+---------------------+
-sha1_state:     |     state     | count |      buffer         |
-                 +---------------+-------+---------------------+
-                    |         ^
-           1. Write |         | 2. Retrieve
-                    |         |
-Offset:         0  v         |  19                                 127
-                 +---------------+----------------------------------+
-Buffer:         |               |                                  |
-                 +---------------+----------------------------------+
-
-# Current version of driver
-Offset:         0                                                  127
-                 +--------------------------------------------------+
-                 |               19      27 31                 91   |
-                 |+--------------+-------+---------------------+    |
-Buffer:         ||     state    | count |      buffer         |    |
-                 |+--------------+-------+---------------------+    |
-                 |                **********                        |
-                 +--------------------------------------------------+
-                 *: will cleared by instruction
-
-Best Regards
-AlanSong-oc
-
+lgtm
 
