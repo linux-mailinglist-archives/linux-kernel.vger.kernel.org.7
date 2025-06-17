@@ -1,136 +1,117 @@
-Return-Path: <linux-kernel+bounces-689320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6C0ADBF5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 04:53:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357F1ADBF56
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 04:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED8F67A1F0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 02:51:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65658188FE7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 02:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21838236457;
-	Tue, 17 Jun 2025 02:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41981239E7B;
+	Tue, 17 Jun 2025 02:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="KUgFjIlt"
-Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXAdnN/V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD86717BA1;
-	Tue, 17 Jun 2025 02:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCD11624DD;
+	Tue, 17 Jun 2025 02:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750128778; cv=none; b=HwWtFSpSYpvS0aqQREdkWhlSr3WMJg2fb8gLWLgwhBM4mywJV1Oo5M8ppgvVzRPaiK0nODBhMXK7MtG17ViCMG4lIM9aOy6bojHDfBUraGj+qlsqz5oZ2+MgBPER//ZWeqir3rajb/gamolJUQAM8F+u3/uQ7oIsoXWnufXjipI=
+	t=1750128523; cv=none; b=sTt0rXg/W7TPHgeIKuxb5igQzmDZb76YgriUv0YzR0mAlcMNWsn8dHhrNgtMxzAGe3y+YPmBdP3IL4He8qu3pSD24ioXUAnE3imChjgPtb6Fuui981zFAV2QL7z8brxSlCW/qb5Hc3ul0ggE5eumPL9YCBSxwr2FIJOAyu4oPqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750128778; c=relaxed/simple;
-	bh=W9fJKLe2wR84h2VrmjzQtkDbhuruEgU5j31sPL0XNY0=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=GE1hThiS53txlPc0+HuDFfBrxJxmjv2tqxp9qUijHSCKPRit07gQd3d3kSdvkgU7Rfdph9P9l2AX/ZThFLvuSWi2CTO9KVXmX0b5/VvjAv6f0FhjLLCW/qf+NDird3dkvgXNt6nG7Kwv0XiFjWKpMk4WqXmbLSeV4fPeR+sc9Fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=KUgFjIlt; arc=none smtp.client-ip=203.205.221.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1750128464; bh=9bdvI/j47gzxAn9bte7+qP0EGwt9RgXTXOAGmzGFRqM=;
-	h=From:To:Cc:Subject:Date;
-	b=KUgFjIlt+OlOO9wN0U5gkaCoovINlP+Vrk+jZeJMWL4WF3o2VLqotHP1Yk4Hoapqa
-	 vI+P7IoRSJS2kuL6Lb1NxloRnQyM+6Paen3xHCgYGcSrY0DvuEZbnALmznw4O63KdD
-	 tq6oZfOtgVbDku1lLM/bFa2YPHkgeB3QwnGHILu4=
-Received: from localhost.localdomain ([218.76.6.102])
-	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
-	id A661E461; Tue, 17 Jun 2025 10:41:38 +0800
-X-QQ-mid: xmsmtpt1750128098t35fbsk4g
-Message-ID: <tencent_C3FBDADE7060045B2952DE00576F922C5E06@qq.com>
-X-QQ-XMAILINFO: NnYhxYSyuBnLlQ35giN5wSf1QGuEgWPqCw7D1PT/zvkubzW6hww6YIEj4H5NgZ
-	 4H/+lUOldjdQNn7LF1ZhgEuvBGA5vCwmDe9See45GnP6REFgAGHaHCIbcUMulh9MnqNF0kfaC1JV
-	 CRJ1h0Eou/WFHtcORu43yV2DE83fWHtk6kS6TZkXwDa77EpJTSdwi5T8W1gKktuQzISn5UiJxiHE
-	 /yM5WCN0dQc65n4xO26WPfizHDOEvhY/vhVNtPSc+3ZkbNktlHDNNMxk16RSs6KH7R0fIwIrOJxb
-	 Rx3oat6OyglKIxK7A6F502L/eBC9nbFk5mHf7ULFYa9iG0phxnthIfKpfdZpKesx/EPS3qoIU2FW
-	 /0qbxsbMIKyRDrlE1u5/OHwOScuA2XrYbPIn3n5WIq/PuBTpEBAZUfP8HWqU3h2GjyQ6g7XTQLOG
-	 CAlyIFxdGok5/rtAN0n3hLcOGbSjY/QBvPQnCKl2t1ZIHEJfY1msKVygMLIt/ersVGmAFyRaWggx
-	 z6wObA5Vj9O3ZbLobR3fD34FmnoScttn2MqQIWsX6mpmKUmoT1lsJHI5shBEdxAmi/Q0hnodGMyf
-	 pYC7cTtWS6Yy6wcMRLyKZLF4PJgs8btcks2uHOOgrBRZqfQZnxpMNLgqEp+9N4zGuyM+lchdy3+L
-	 d+abnmKKZ+Hiw+dvPzFoSxaiJ7cYRaWjoZ7X/CydpnXOp/vwkOUqWVZuKqHRV1GM4Vhy2Art/pW3
-	 LfGukMHNSXjk1tNWA6v1SF0ns4dFM+cyZAr+Yvytss71QGVVuT2g5xePH2p9QDVKf2QMF+EDH4lA
-	 rkr6hmPywJz9yDR+VzVWzRMYpSSNDh6VOLxEVC8jh7zVXzFyw/j02BWLJxDxrtV/7zQplbBbb7dr
-	 KFrp/EDfBpck1nGDd/tLcfshn1Rbet53RLnPnuTw8ENrvwTVKMeAEOCLoF9VSjgcQcjDPGl6OS8w
-	 S8g/Ipk4FAtrvjjCzJhcYoijKZopLeWxDWOJKCSenOPBdYml7tkS0kee5+dx6i0/sUCmQF2OhMRk
-	 A+GRnoMytl6/jxtiEClqYAKN2BT3QXJyXiWh5EMLY3vT1/ml0F
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Haofeng Li <920484857@qq.com>
-To: Tony Lindgren <tony@atomide.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Roger Quadros <rogerq@kernel.org>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haofeng Li <lihaofeng@kylinos.cn>
-Subject: [PATCH v1] mfd: twl4030-irq: Fix unused variable warning when CONFIG_OF disabled
-Date: Tue, 17 Jun 2025 10:41:30 +0800
-X-OQ-MSGID: <20250617024130.1689363-1-920484857@qq.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1750128523; c=relaxed/simple;
+	bh=DklztjJ2Mw4DZTzCJXFIusPWDE6iqwE0hRAVc+zb/5M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EZzj2HyJuKdABuGcHBi7qjqpiFbTxmYBaLXNHOBS12H5YDq67L6xCuuq0AGHFzNm3bmk8JcazDL42k9fbMCWjtWtf0/OhZbdlrbmZGkqkEqXTIKaGi2IomYAVhXOeI7L6OK78y9IeHHu3jtMY1Yj95BmfSTzKJGDRgRosZCaigI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXAdnN/V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1410FC4CEEA;
+	Tue, 17 Jun 2025 02:48:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750128523;
+	bh=DklztjJ2Mw4DZTzCJXFIusPWDE6iqwE0hRAVc+zb/5M=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=RXAdnN/VH4whkEDHi0WhWsgK0TD7IDzbqiegcOr8PAe/4GJk+joOalb9pVGxfU9W8
+	 vzRlHw2yZ9Y3UzN5eZkuCRmU/GV/Uj3OvEZRx0zow+BdXW+jLfvEDF3o7r8+QEH+/X
+	 WlwW9rnX/FR09001rWLFG8GucBxi64Yc0JZanNOWuq+f/8nC4NE1nVM58O1LbIcPtr
+	 Nv6HAJCQ7SE5N99mdASgfCpoIAGvR8PghnVFgSrZLGB0ZM55r8BFCXXCfjKEbCIaSY
+	 ZmJtjLPb3sRjnj5ep7Ji4LLWzUFJK8++bzt8FnVLgxNsw/Gs7Rv6GqvZ2Ty4kYuMwm
+	 bX8YIABlGxAWw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F41F2C71155;
+	Tue, 17 Jun 2025 02:48:42 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH v2 0/3] support for amlogic the new SPI IP
+Date: Tue, 17 Jun 2025 10:48:35 +0800
+Message-Id: <20250617-spisg-v2-0-51a605a84bd5@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIPXUGgC/zXMQQ6DIBCF4auYWZcGsFh11Xs0LhBGnKSKgYa0M
+ dy91LTL/+Xl2yFiIIzQVzsETBTJryXkqQIz69UhI1saJJeKN7xmcaPo2LWdpGhaiaM2UL5bwIl
+ eh3MfSs8Unz68DzaJ7/oXLj8hCcaZarvajtjZTtU3vTy8I3M2foEh5/wBvye3UZwAAAA=
+To: Sunny Luo <sunny.luo@amlogic.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-amlogic@lists.infradead.org, linux-spi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750128521; l=1440;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=DklztjJ2Mw4DZTzCJXFIusPWDE6iqwE0hRAVc+zb/5M=;
+ b=8h9iC9im/B3MsOYxsjoF/SsNde6GwLGzHa0m3zbNfwkanuyQJc2YiiDB/4mkEiGbxoWFHVw3a
+ mrUv4z5DSneBIlVg5e9geBhXGLt5rG9DeNZfOReOCIDhe1z5P9+zp4m
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-From: Haofeng Li <lihaofeng@kylinos.cn>
+Introduced support for the new SPI IP (SPISG). The SPISG is
+a communication-oriented SPI controller from Amlogic,supporting
+three operation modes: PIO, block DMA, and scatter-gather DMA.
 
-With compile testing on non-OF platforms, compiler reports:
-../drivers/mfd/twl4030-irq.c:679:46: error: unused variable 'node' [-Werror=unused-variable]
-  679 |         struct                  device_node *node = dev->of_node;
+Add the drivers and device tree bindings corresponding to the SPISG.
 
-This occurs because:
-1. of_fwnode_handle() is unavailable without CONFIG_OF
-2. The 'node' variable becomes unused
-3. -Werror flags the unused variable as an error
-
-Fix by:
-1. Replace device_node pointer with fwnode_handle pointer,
-   initialized to NULL
-2. Only setting fwnode when CONFIG_OF is enabled
-3. Passing fwnode to irq_domain_create_legacy()
-
-Passing NULL fwnode is safe:
-- irq_domain_create_legacy() accepts NULL fwnode_handle
-- The function has appropriate NULL checks in its implementation
-- Equivalent to original behavior when CONFIG_OF is disabled
-
-Signed-off-by: Haofeng Li <lihaofeng@kylinos.cn>
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 ---
- drivers/mfd/twl4030-irq.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Changes in v2:
+- Use regmap to operation register and drop bitfied define.
+- Use "SPISG" prefix intead of "SPICC", and declare clock div table in the spisg_device. 
+- Delete other power operation functions except for runtime_supspend and runtime_resume.
+- Fix some format corrections.
+- Link to v1: https://lore.kernel.org/r/20250604-spisg-v1-0-5893dbe9d953@amlogic.com
 
-diff --git a/drivers/mfd/twl4030-irq.c b/drivers/mfd/twl4030-irq.c
-index 232c2bfe8c18..8297966bd957 100644
---- a/drivers/mfd/twl4030-irq.c
-+++ b/drivers/mfd/twl4030-irq.c
-@@ -676,7 +676,7 @@ int twl4030_init_irq(struct device *dev, int irq_num)
- 	static struct irq_chip	twl4030_irq_chip;
- 	int			status, i;
- 	int			irq_base, irq_end, nr_irqs;
--	struct			device_node *node = dev->of_node;
-+	struct fwnode_handle    *fwnode = NULL;
- 
- 	/*
- 	 * TWL core and pwr interrupts must be contiguous because
-@@ -690,8 +690,10 @@ int twl4030_init_irq(struct device *dev, int irq_num)
- 		dev_err(dev, "Fail to allocate IRQ descs\n");
- 		return irq_base;
- 	}
--
--	irq_domain_create_legacy(of_fwnode_handle(node), nr_irqs, irq_base, 0,
-+#ifdef CONFIG_OF
-+	fwnode = of_fwnode_handle(dev->of_node);
-+#endif
-+	irq_domain_create_legacy(fwnode, nr_irqs, irq_base, 0,
- 				 &irq_domain_simple_ops, NULL);
- 
- 	irq_end = irq_base + TWL4030_CORE_NR_IRQS;
+---
+Sunny Luo (2):
+      dt-bindings: spi: Add binding document of Amlogic SPISG controller
+      spi: Add Amlogic SPISG driver
+
+Xianwei Zhao (1):
+      MAINTAINERS: Add an entry for Amlogic spi driver
+
+ .../devicetree/bindings/spi/amlogic,a4-spisg.yaml  |  55 ++
+ MAINTAINERS                                        |   9 +
+ drivers/spi/Kconfig                                |   9 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-amlogic-spisg.c                    | 878 +++++++++++++++++++++
+ 5 files changed, 952 insertions(+)
+---
+base-commit: bd30b995df8fd053e13d10f78dbc7b2fa5ed1aae
+change-id: 20250603-spisg-78f21682ebac
+
+Best regards,
 -- 
-2.25.1
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
 
 
