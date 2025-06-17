@@ -1,143 +1,76 @@
-Return-Path: <linux-kernel+bounces-689480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC2DADC275
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:34:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67EA7ADC27A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 777271771B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 06:34:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E7AA3B60A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 06:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D71A28C02C;
-	Tue, 17 Jun 2025 06:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="eKF33h08"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE85428BABA;
+	Tue, 17 Jun 2025 06:38:23 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147C016B3B7;
-	Tue, 17 Jun 2025 06:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA99B288C39
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 06:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750142066; cv=none; b=CQj2bWj46NiVM1JnRaVrePEAMCUzKn+D0niu3voH2A8wBhJRtGhEfiUhSj+92fnT1qGg1UIjhzhNFGsQ+WLITDC86TpvPjAd0sjS9EdLg2VsLjFQBX8t/rQhGkOXrxOJ4AsJdBxffI+pBFICh/QUjenjYTsHIzlOMyMqmawCLxk=
+	t=1750142303; cv=none; b=L+TXN8CYqUpiLRBlCmJZrmXY3ErgY7Ar0dmQg4NGXsUBKFdzYjxeHVYIaC5ulA1v8YChqaOLmBxuOEehnO2qqChdVz50eH+yAdbKp765wTSgx+QeGfAmHTvkdrSpgWN5nk+zS1664H2nmZ4pq77IFmf4bIvvKDBq4arKSVIa/DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750142066; c=relaxed/simple;
-	bh=waS7//7mESOoJ0KPrUPjr8RYE0ggAPYjN8HDSpBN9fU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SBFDUZX6U0jriUd3ipBBGmr6tYnfd1RwXoWGGM8OWwK6ik6zghaj9bOEyzg8rssyYFl8/k/Z/6qA4y5rTibzR6vPapKkoxNeChU5UEKD20gBPiGWSNjlviOH/5UMgDsp6pbBq8PyakeWPKiLrqi5w2A5xfqLdYM+KBIwkW+yvK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=eKF33h08; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55GNXmk7031454;
-	Mon, 16 Jun 2025 23:34:12 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=AV2HzGw9EyINSKLyYtsSssn
-	pW4NDyvKSwe7LrSIKmic=; b=eKF33h08JZlWHXP+4zMpn36crA1zadCAX9EkV8e
-	URn2OPMFax00VtM8bKrCWyPrJAH2hncKpjLI4gVoalYK12J0Hb/GUc6YN7fQM44A
-	wVSU9atmIxSlsBq3+3fIAk0APszvxSpCN1lhYCMJbBsFicWPHh9C+DcpNgpE5urB
-	04zK4AeLFoeeAlxjozte0L2SbQ6sq53wguNzGkeSe99B/1EiOPIywxtmFLn6n1B5
-	VGlTe0fqv81xhEOW3hIuI87/JlXHgSdrKZiIPEkt3TFbVMGNLETj9Tgh7fbt8pPR
-	xRM0pcx+ZCJFDj53caVjXwi/z88OJzgCmjyCCNtAry+7rOA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47aw21rpta-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Jun 2025 23:34:12 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 16 Jun 2025 23:34:11 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 16 Jun 2025 23:34:11 -0700
-Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with ESMTP id 9F6E562676B;
-	Mon, 16 Jun 2025 23:34:07 -0700 (PDT)
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Hariprasad Kelam <hkelam@marvell.com>,
-        Sunil Goutham
-	<sgoutham@marvell.com>,
-        Geetha sowjanya <gakula@marvell.com>,
-        "Subbaraya
- Sundeep" <sbhatta@marvell.com>,
-        Bharat Bhushan <bbhushan2@marvell.com>,
-        "Andrew Lunn" <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>,
-        Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: [net] Octeontx2-pf: Fix Backpresure configuration
-Date: Tue, 17 Jun 2025 12:04:02 +0530
-Message-ID: <20250617063403.3582210-1-hkelam@marvell.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750142303; c=relaxed/simple;
+	bh=SqrDemTKsCW272OVpEmXBQqwurVhef25klcLb23F5N8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YeWyTNybE0rMQXOglDyvq9j155oaX+Am1/oxgNJAZYjEihj0eGCXM2nWmoiF6t0A3jV4+G+XBMtboVp9IPO5n+yIqPANgQizczMHu4VhYO0kCAPdgRiuRE1s+1HWK9LNbjImvBuywkWZbkPyFNMVJVnU3pGMu3wkSjPyPAV3sxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+CC: "mingo@redhat.com" <mingo@redhat.com>, "peterz@infradead.org"
+	<peterz@infradead.org>, "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>, "rostedt@goodmis.org"
+	<rostedt@goodmis.org>, "bsegall@google.com" <bsegall@google.com>,
+	"mgorman@suse.de" <mgorman@suse.de>, "vschneid@redhat.com"
+	<vschneid@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: =?utf-8?B?562U5aSNOiBb5aSW6YOo6YKu5Lu2XSBSZTogW1BBVENIXSBzY2hlZC9jcHV0?=
+ =?utf-8?Q?ime:_Fix_a_mostly_theoretical_divide_by_zero?=
+Thread-Topic: =?utf-8?B?W+WklumDqOmCruS7tl0gUmU6IFtQQVRDSF0gc2NoZWQvY3B1dGltZTogRml4?=
+ =?utf-8?Q?_a_mostly_theoretical_divide_by_zero?=
+Thread-Index: AQHb1UB9Uh7C2aJ+ekCiq94zr/3OHrQFtOCg//+VZACAAXsLkA==
+Date: Tue, 17 Jun 2025 06:36:37 +0000
+Message-ID: <4709b236e32a41158994dae282f2be75@baidu.com>
+References: <20250604110442.8251-1-lirongqing@baidu.com>
+ <54c4aa198131420d9c77542bad5d27e7@baidu.com>
+ <CAKfTPtBKm7WgwcUHcMXnH3PL3KFSniy02mb6Ag4eQ1fA3e+H3g@mail.gmail.com>
+In-Reply-To: <CAKfTPtBKm7WgwcUHcMXnH3PL3KFSniy02mb6Ag4eQ1fA3e+H3g@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: hJvi0UwyBlPuEQToEF_8xjL_R591C_iW
-X-Proofpoint-ORIG-GUID: hJvi0UwyBlPuEQToEF_8xjL_R591C_iW
-X-Authority-Analysis: v=2.4 cv=DfMXqutW c=1 sm=1 tr=0 ts=68510c64 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=cIFZUDyxDlkkEMaN0r4A:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE3MDA1MiBTYWx0ZWRfX43+QRQoJQsNI t9vpXvjvDE46T1s4+fiqNA/GDkVe7t4Nwv0QNQKm3Ocrko8sgBd52nAnQYTz00Qbf07Jq36b/3R SxV5GFrn8qwLekr1gPxVMXgBrIdMFUZOf1KdJ8zpz92zKNnsWZ/Xu0RLX7EtR6fvik7XE/AOFjg
- BlVHXN4qrIhZsb8+PEsLbBPPtgqlmQQCx2Jp/l/1KF2vvbh5aHlT8hdC7cPF14VWXC9rq0Gi6Bx XAKOmOnXWSUWTQ5jN3/bLP50Qo86AgJNYhB8q2eyw5HBk4Q+swiFFWwz60eZnzRxhY+1QzFBHpv fASbeS/brH1Q3iGcrG3N5A6EhlKbd0XaHS8PWYH+k5MKpWL9fHgnLyO3FUuZP2Lru4LtbsaKmGt
- ZoejZ5GoUcb/4hG9z4fYT3MzPukFPIFaSrpaZxmu5tGpbbaWEzIcFoSv9rDVHcE99vRK/STg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-17_02,2025-06-13_01,2025-03-28_01
+X-FEAS-Client-IP: 172.31.50.11
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-NIX block can receive packets from multiple links such as
-MAC (RPM), LBK and CPT.
-
-       -----------------
- RPM --|     NIX       |
-       -----------------
-             |
-             |
-            LBK
-
-Each link supports multiple channels for example RPM link supports
-16 channels. In case of link oversubsribe, NIX will assert backpressure
-on receive channels.
-
-The previous patch considered a single channel per link, resulting in
-backpressure not being enabled on the remaining channels
-
-Fixes: a7ef63dbd588 ("octeontx2-af: Disable backpressure between CPT and NIX")
-Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
----
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-index 6f572589f1e5..6b5c9536d26d 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-@@ -1822,7 +1822,7 @@ int otx2_nix_config_bp(struct otx2_nic *pfvf, bool enable)
- 		req->chan_cnt = IEEE_8021QAZ_MAX_TCS;
- 		req->bpid_per_chan = 1;
- 	} else {
--		req->chan_cnt = 1;
-+		req->chan_cnt = pfvf->hw.rx_chan_cnt;
- 		req->bpid_per_chan = 0;
- 	}
- 
-@@ -1847,7 +1847,7 @@ int otx2_nix_cpt_config_bp(struct otx2_nic *pfvf, bool enable)
- 		req->chan_cnt = IEEE_8021QAZ_MAX_TCS;
- 		req->bpid_per_chan = 1;
- 	} else {
--		req->chan_cnt = 1;
-+		req->chan_cnt = pfvf->hw.rx_chan_cnt;
- 		req->bpid_per_chan = 0;
- 	}
- 
--- 
-2.34.1
-
+PiBUaGVvcmV0aWNhbCBpcyB0aGUgcmlnaHQgd29yZDsgSWYgYWxsIDJeMzIgcG9zc2libGUgdGhy
+ZWFkcyBiZWxvbmcgdG8gdGhlIHByb2Nlc3MsDQo+IHdlIGNhbiBnZXQgYW4gb3ZlcmZsb3cgdG8g
+MCBhZnRlciB+NHNlYyBydW4gdGltZSBvZiBlYWNoIHRocmVhZC4gQnV0IHRoZW4gaG93DQo+IGxv
+bmcgd2lsbCBpdCB0YWtlIHRvIGhhdmUgdGhvc2UgMl4zMiB0aHJlYWRzIHJ1biA0c2VjIG9uIGEg
+c3lzdGVtIC4uLg0KPiANCj4gSXQgd291bGQgYmUgZ29vZCB0byBnZXQgbnVtYmVyIHRvIHNob3cg
+aG93IHJlYWxpc3RpYyBvciBub3QgaXQgY291bGQgYmUgdG8NCj4gcmVhY2ggdGhpcyB2YWx1ZQ0K
+PiANCj4NCg0KVGhlIDJeNjQgbnMgaXMgNTg0IHllYXJzLCBpZiBhIHByb2Nlc3Mgd2l0aCAxMDAw
+IGJ1c3kgcG9sbGluZyB0aHJlYWRzIGlzIHJ1bm5pbmcgaW4gYSBtYWNoaW5lIHdpdGggbW9yZSB0
+aGFuIDEwMDAgQ1BVcywgdGhlIHJ1bnRpbWUgd2lsbCBvdmVyZmxvdyBhYm91dCBoYWxmIHllYXIN
+Cg0KVGhhbmsNCi1MSQ0KDQo=
 
