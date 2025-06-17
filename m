@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-690038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16316ADCAA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:11:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B55FADCAA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C84D21886E4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:10:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 271C017A362
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11B92EB5CD;
-	Tue, 17 Jun 2025 12:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5382206A6;
+	Tue, 17 Jun 2025 12:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z4wr22Q1"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b1+GmFHM"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDEC2EB5C8
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 12:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10EE2E06FF
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 12:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750162067; cv=none; b=CSz33ODZI04876x2MECGLvl4coU8pSr94DHu+SE2U2H8yA3qdTLm+a5/uiOIRa0XJO+VWV28Em638aVC8Ule1qK1VCx0NZeltK5+fuFTFMSbl+XgLlVSVLvPXnrLbPGj04QcvcvESAqb/VN0qarZf6eEOzU9cdOiLN1CT31GKRk=
+	t=1750162104; cv=none; b=FAZ/sZZm9KSsm3YDxUo2fPX+F1qeSfhIseK8M+isUvaA8Wz0WsOYTpMGkB0teMNMKIHpUdLOMSFxFSgwB+poxKSW0wEgBybCF+VhK6H57uquwtFjV1T0IKDOUd6iVRlePJxGLFNoi4+NDHTTAU9zbtbo/NE2kvB1rOVh+dZcS+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750162067; c=relaxed/simple;
-	bh=sLVbqeXSXgq/ED2fS5Kxi7FhPFWukWFPxg2XOULk8mY=;
+	s=arc-20240116; t=1750162104; c=relaxed/simple;
+	bh=LLAHgdluLm5x5YBmK+qiWUwc8tIucU1SrEPB0E/Hj7o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lR507pRrJ3nAPAOQWOcKbzi0RDNn2PZAGyLX9q22maDk6nk18QKTsCvu5asZx7M1kdzTwsSSmRJG2mifH888NxD2BPBy3nRTqBeMsUnPy3A/UG79zsAmeNJnbxcIsFm/ufQ/Ei3dSMWVKAfoiWitvkCPBkZJe/kV7J/mxR8/ooM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z4wr22Q1; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=UDMkVdzVgKjuMjr2dFQ7C1SSx/k8yJjGYxX5sewqPH0bkUqq23R3Xn7+fEX4gvUrWXXr2ElAmsO2NIANiCnrNxgfM3wXpw92MsXbyAkjTY4HZeq8Ei6QtH9AZ7uU4W1CFwqZBwN/txX2AyK25UlONSiZo4XyRNoSAXMU/mlZzwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b1+GmFHM; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750162064;
+	s=mimecast20190719; t=1750162101;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=A6Te2d8SmKORmL+MjMF/CvD735H81Qg4mzRRaium6K8=;
-	b=Z4wr22Q1m7KNmag6POCi6VRp39Vn9T9jTVhyBMMIB6y3TxrhjV881movf4kAZ/LLYVNQnt
-	oYbMtw8kBfMAI6tkuOzPJP9Qucs0Hdm/cXVQ41bGfF/i5T3XQPc87mr9g2qbn2UOtSkOY/
-	UT+mTRfLiUBULROJHFB7ZmZzFRmJUDs=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=D0qajvAD1m1Xwz4yku3nLH9nqsxwn7lwGgZg7DJwBao=;
+	b=b1+GmFHMMNWFyfqnQgsEkQP8qoV56litpZJE3DWZJjZrcyuT+jh9rjO80t+ViQTtJJrzap
+	lhpw08Np1KPqvO+uth4iglOLtZPQIG5EEo+U8ZQld4x3P6g9gvgMT/MGzSRpUHOFVTe5aF
+	SA7A1AmvD+eeXaECG19+HfpLoP6Zb4Y=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-267-avVn9ItqOIOSGa03_kuUlw-1; Tue, 17 Jun 2025 08:07:42 -0400
-X-MC-Unique: avVn9ItqOIOSGa03_kuUlw-1
-X-Mimecast-MFC-AGG-ID: avVn9ItqOIOSGa03_kuUlw_1750162061
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4edf5bb4dso3646084f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 05:07:42 -0700 (PDT)
+ us-mta-607-SM52ewtcO0asKa4ZQSAYWA-1; Tue, 17 Jun 2025 08:08:19 -0400
+X-MC-Unique: SM52ewtcO0asKa4ZQSAYWA-1
+X-Mimecast-MFC-AGG-ID: SM52ewtcO0asKa4ZQSAYWA_1750162098
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45334219311so21383755e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 05:08:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750162061; x=1750766861;
+        d=1e100.net; s=20230601; t=1750162098; x=1750766898;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=A6Te2d8SmKORmL+MjMF/CvD735H81Qg4mzRRaium6K8=;
-        b=Vev0+WjHLIJW/TydYynH6dMgM/aLkQ3RhMo8yhV99Yk/SBliofWSLiOOR7fI0viKKE
-         MYsk0rPOxccyGZFTc1fSHSIrouzKtqCX3cwGftWGb3D5MV3cfPK3nKBDwIJFFs0r7sHY
-         ahlhVPqEPHN81mHxp05RBs3HrWWS8Kd5tFxX6gCOowDZ/ljBCDjprzSHil3zYGwWTY4r
-         SETtLqn7+IOpK0VZPBppJhgm58yBslcUuk4T3Knq8V4bxr7a3sE+S4ioGrvwtuOm/02Q
-         vbPwa0f8Y3n9tGZyBJra1KP9SOe37sShwdIgM09g1HEbwm04lg+Dt2drOPkxQZ0cWAba
-         ibNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLybuQyQBOdV70NpW75a+zHA4cIlcV8svp2hvtnavxxkMKjOnjmhw/vlguF9aUqFZ7D8DXNbFfobMQXhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0myEnWu5jJiY0MA5sepbdejNIXoO//Hya6bba+BJ22IdopuVY
-	CZQV6i25Vz4hrGSpd8SrCXr64XcW8rTnYwh49OT3F+i9/Y4mp5I3D5SPV02hEPJpPGAGYtTL/wI
-	ha41uu/42rizjZlTgj6LJ1ifbTPBrzydLoFRC9iuDAVdw5QvnBIe45LgZ5y9xwiFKSA==
-X-Gm-Gg: ASbGncvqehchonxlRPs3V1XYLI0r559kTn4BzXlByts7SPvhrUYg0O0golDgv6DXkUB
-	xo5mg/5tVB/tw0qis/fhpO/J+pq2KRcBSZW3UtdthNqo0MUcgeIyqZiBfEWASiCx0RU2lkbzCN0
-	8dM7wNDUzBh8AR0wgq6Y6wv34mJxzwqDHCCT6yfKDomQ7T96s4mYwd19cUuf6uVI2SNtAEEyTfC
-	7iQ0ydcmtwIACa4l1A1YB27G2QleUAMdTdmdcoxWUBSdHDjXFZoxGDWolc7ZM729y4N4/dQsdMW
-	idbovIlBFlq2qiK3YkPWuYYQZPiB4CWpRK64bX2uKkBq/9lnHGoYftcbRldqGEedVGq9heDgg31
-	fTnUVRcV0Xvd27ufPnSdJBOBW/OJkqxXIc1ehZ/ilNvpTBfA=
-X-Received: by 2002:a05:6000:2582:b0:3a5:1222:ac64 with SMTP id ffacd0b85a97d-3a572e82147mr10299491f8f.38.1750162060708;
-        Tue, 17 Jun 2025 05:07:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFtIfcpG+yjbTYMfj8/fQ/P4dUCekxMz0fmZW/E/QEh4Lhnkkhf+v/nguaYm046a2iMPdFJVg==
-X-Received: by 2002:a05:6000:2582:b0:3a5:1222:ac64 with SMTP id ffacd0b85a97d-3a572e82147mr10299441f8f.38.1750162060153;
-        Tue, 17 Jun 2025 05:07:40 -0700 (PDT)
+        bh=D0qajvAD1m1Xwz4yku3nLH9nqsxwn7lwGgZg7DJwBao=;
+        b=NOdQMSspKR8n7Ug4Qzb9RXwlRkYay7+aGIBOVJl8FJFP6KXGRv8Z0XzlFoBVQm/EVK
+         nrQooEb3kE4XOw4FPSAoZ4sK2J0h5pCFXMXb5a05kflMQRQ9aB6Apd2k0uG/ieCRNqXO
+         dxjjZWWPqaziPIfTdLHev3B70Y5thTvMRMCMUSpLQuTdnRSOcPwTPbcO0CnHXEjB4bjo
+         sxPyRo2P5ri3JWT4CjIRnC+7cnUhuQueNs+twSkqc3QIi6dmriNNT+buO1C+r9oXemJw
+         q4UoMNC9sKH+LICqEwDRGLgyF6G6T+jtuMLS0c97HP4tVhSkIEjrhJMz7SKiDBaJcdRK
+         WEhA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2eLrf/u5yAVs/x6M70ElgiocAM4SsKev0eQXlAErOwrQAHH0hL7RZEimR1B9Myzh2Wr8ng2Yz1anL1UU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU/Mpc4bl6k6GmPzUwR/gDRzQu9BoA0wy2q4Lwr+FEE14iod9R
+	kJTJriniq5njySRo0T3hYbflWLOig9fr6zHXue8ti396ClQbfZwnQKqRaOEf2OTY85H2Od9x+dT
+	KASkOeLibRlI8aD0entsao1XlQwmk0tWIAvcfOg85vOZJ22K69UH1TD24GdOlwn6gBg==
+X-Gm-Gg: ASbGncv55wLBGzfRLf/IIOTKFJT+s2qraX/WXIHnGpHEvrLI1U56ExNKNeTqRYnH+IX
+	rihO0pRTO9VsW32ebQ69DICHkmmE7NAcrlnF8d23chD4fNC1s8pp7uZDOoKFYU2G2we9Rl6qtBb
+	sry0o6iC9DiB610eZq4WEmwyB4LtcDf51TY31bH9tHvU8figVC6Mt6R8egg0oe2N4nqh+vWaJSu
+	h91z2iK6mcOl646fcVa6FXPTsd0pnoR4aehGGcPMYKFHRgOBPaOiZJ+hV27g3Zb+5LxG8rcXBiI
+	KFGZ4/++1el27Kutx5stvo+91m0TWUv/BJXsedpnif31knpbESoMKUx55js2xUjqqzJ6b7GnngR
+	TK/HDHuxnZ76PcKpFEKg9TE6EYsNoT4ckOlTlXlHgQslWZCQ=
+X-Received: by 2002:a05:600c:5396:b0:43d:172:50b1 with SMTP id 5b1f17b1804b1-4533cac8fdbmr116396825e9.29.1750162097981;
+        Tue, 17 Jun 2025 05:08:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHcjZMoZVqyhUU85/xMfAEISP0sV5ePTiVGQbzZHlrbLCanK+p4gIMfAB3aca+TCNqUCo+rRw==
+X-Received: by 2002:a05:600c:5396:b0:43d:172:50b1 with SMTP id 5b1f17b1804b1-4533cac8fdbmr116396495e9.29.1750162097582;
+        Tue, 17 Jun 2025 05:08:17 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f31:700:3851:c66a:b6b9:3490? (p200300d82f3107003851c66ab6b93490.dip0.t-ipconnect.de. [2003:d8:2f31:700:3851:c66a:b6b9:3490])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b08a2bsm14044028f8f.62.2025.06.17.05.07.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a60d0fsm13622090f8f.22.2025.06.17.05.08.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 05:07:39 -0700 (PDT)
-Message-ID: <018c0663-dffb-49d0-895c-63bc9e5f9aec@redhat.com>
-Date: Tue, 17 Jun 2025 14:07:38 +0200
+        Tue, 17 Jun 2025 05:08:17 -0700 (PDT)
+Message-ID: <3eb8e1e2-5887-47ed-addc-3be664dd7053@redhat.com>
+Date: Tue, 17 Jun 2025 14:08:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,24 +89,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/11] mm/mremap: introduce more mergeable mremap via
- MREMAP_RELOCATE_ANON
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Subject: Re: [PATCH 2/5] mm,hugetlb: Document the reason to lock the folio in
+ the faulting path
+To: Oscar Salvador <osalvador@suse.de>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>, Matthew Wilcox
- <willy@infradead.org>, Pedro Falcato <pfalcato@suse.de>,
- Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Jakub Matena <matenajakub@gmail.com>,
- Wei Yang <richard.weiyang@gmail.com>, Barry Song <baohua@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>, James Houghton <jthoughton@google.com>,
+ Peter Xu <peterx@redhat.com>, Gavin Guo <gavinguo@igalia.com>,
  linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1749473726.git.lorenzo.stoakes@oracle.com>
- <22a80f22ba2082b28ee0b0a925eb3dbb37c2a786.1749473726.git.lorenzo.stoakes@oracle.com>
- <f24dd244-f188-4804-981c-8b7560e5a26b@redhat.com>
- <d51af1de-110a-4cde-9091-98e15367dda3@lucifer.local>
+References: <44f0f1cc-307a-46e3-9e73-8b2061e4e938@redhat.com>
+ <aEw0dxfc5n8v1-Mp@localhost.localdomain>
+ <ffeeb3d2-0e45-43d1-b2e1-a55f09b160f5@redhat.com>
+ <aEychl8ZkJDG1-5K@localhost.localdomain>
+ <aE075ld-fOyMipcJ@localhost.localdomain>
+ <a5e098d1-ee5a-447f-9e05-0187b22500e1@redhat.com>
+ <aFAlupvoJ_w7jCIU@localhost.localdomain>
+ <1297fdd5-3de2-45bc-b146-e14061643fee@redhat.com>
+ <aFE9YTNcCHAGBtKi@localhost.localdomain>
+ <11a1d0f7-ef4e-4836-9bde-d7651eebcd03@redhat.com>
+ <aFFZtD4zN_qINo9P@localhost.localdomain>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -154,201 +154,41 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <d51af1de-110a-4cde-9091-98e15367dda3@lucifer.local>
+In-Reply-To: <aFFZtD4zN_qINo9P@localhost.localdomain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-> 
+On 17.06.25 14:04, Oscar Salvador wrote:
+> On Tue, Jun 17, 2025 at 01:27:18PM +0200, David Hildenbrand wrote:
+>>>    @@ -6198,6 +6198,8 @@ static vm_fault_t hugetlb_wp(struct vm_fault *vmf)
+>>>     	 * in scenarios that used to work. As a side effect, there can still
+>>>     	 * be leaks between processes, for example, with FOLL_GET users.
+>>>     	 */
+>>>    +	if (folio_test_anon(old_folio))
+>>>    +		folio_lock(old_folio);
 >>
->>> +	/* The above check should imply these. */
->>> +	VM_WARN_ON_ONCE(folio_mapcount(folio) > folio_nr_pages(folio));
->>> +	VM_WARN_ON_ONCE(!PageAnonExclusive(folio_page(folio, 0)));
->>
->> This can trigger in one nasty case, where we can lose the PAE bit during
->> swapin (refault from the swapcache while the folio is under writeback, and
->> the device does not allow for modifying the data while under writeback).
+>> If holding the PTL, this would not work. You'd have to unlock PTL, lock
+>> folio, retake PTL, check pte_same.
 > 
-> Ugh god wasn't aware of that. So maybe drop this second one?
+> Why so?
+> 
+> hugetlb_no_page() has already checked pte_same under PTL, then mapped the page
+> and called hugetlb_wp().
+> 
+>   hugetlb_no_page
+>    vmf->ptl = huge_pte_lock()
+>    pte_same
+>    set_huge_pte_at
+>    hugetlb_wp
+> 
+> and in hugetlb_wp() we're still holding the PTL.
+> Why do we have to release PTL in order to lock the folio?
+> This folio can't have been unmapped because we're holding PTL, right?
+> And it can't have been truncaed for the same reason.
+> 
+> It's because some lock-order issue?
 
-Yes.
-
-> 
->>
->>> +
->>> +	/*
->>> +	 * A pinned folio implies that it will be used for a duration longer
->>> +	 * than that over which the mmap_lock is held, meaning that another part
->>> +	 * of the kernel may be making use of this folio.
->>> +	 *
->>> +	 * Since we are about to manipulate index & mapping fields, we cannot
->>> +	 * safely proceed because whatever has pinned this folio may then
->>> +	 * incorrectly assume these do not change.
->>> +	 */
->>> +	if (folio_maybe_dma_pinned(folio))
->>> +		goto out;
->>
->> As discussed, this can race with GUP-fast. SO *maybe* we can just allow for
->> moving these.
-> 
-> I'm guessing you mean as discussed below? :P Or in the cover letter I've not
-> read yet? :P
-
-The latter .. IIRC :P It was late ...
-
-> 
-> Yeah, to be honest you shouldn't be fiddling with index, mapping anyway except
-> via rmap logic.
-> 
-> I will audit access of these fields just to be safe.
-> 
-
-[...]
-
->>> +
->>> +	state.ptep = ptep_start;
->>> +	for (; !pte_done(&state); pte_next(&state, nr_pages)) {
->>> +		pte_t pte = ptep_get(state.ptep);
->>> +
->>> +		if (pte_none(pte) || !pte_present(pte)) {
->>> +			nr_pages = 1;
->>
->> What if we have
->>
->> (a) A migration entry (possibly we might fail migration and simply remap the
->> original folio)
->>
->> (b) A swap entry with a folio in the swapcache that we can refault.
->>
->> I don't think we can simply skip these ...
-> 
-> Good point... will investigate these cases.
-
-migration entries are really nasty ... probably have to wait for the 
-migration entry to become a present pte again.
-
-swap entries ... we could lookup any folio in the swapcache and adjust that.
-
-> 
->>
->>> +			continue;
->>> +		}
->>> +
->>> +		nr_pages = relocate_anon_pte(pmc, &state, undo);
->>> +		if (!nr_pages) {
->>> +			ret = false;
->>> +			goto out;
->>> +		}
->>> +	}
->>> +
->>> +	ret = true;
->>> +out:
->>> +	pte_unmap_unlock(ptep_start, state.ptl);
->>> +	return ret;
->>> +}
->>> +
->>> +static bool __relocate_anon_folios(struct pagetable_move_control *pmc, bool undo)
->>> +{
->>> +	pud_t *pudp;
->>> +	pmd_t *pmdp;
->>> +	unsigned long extent;
->>> +	struct mm_struct *mm = current->mm;
->>> +
->>> +	if (!pmc->len_in)
->>> +		return true;
->>> +
->>> +	for (; !pmc_done(pmc); pmc_next(pmc, extent)) {
->>> +		pmd_t pmd;
->>> +		pud_t pud;
->>> +
->>> +		extent = get_extent(NORMAL_PUD, pmc);
->>> +
->>> +		pudp = get_old_pud(mm, pmc->old_addr);
->>> +		if (!pudp)
->>> +			continue;
->>> +		pud = pudp_get(pudp);
->>> +
->>> +		if (pud_trans_huge(pud) || pud_devmap(pud))
->>> +			return false;
->>
->> We don't support PUD-size THP, why to we have to fail here?
-> 
-> This is just to be in line with other 'magical future where we have PUD THP'
-> stuff in mremap.c.
-> 
-> A later commit that permits huge folio support actually lets us support these...
-> 
->>
->>> +
->>> +		extent = get_extent(NORMAL_PMD, pmc);
->>> +		pmdp = get_old_pmd(mm, pmc->old_addr);
->>> +		if (!pmdp)
->>> +			continue;
->>> +		pmd = pmdp_get(pmdp);
->>> +
->>> +		if (is_swap_pmd(pmd) || pmd_trans_huge(pmd) ||
->>> +		    pmd_devmap(pmd))
->>> +			return false;
->>
->> Okay, this case could likely be handled later (present anon folio or
->> migration entry; everything else, we can skip).
-> 
-> Hmm, but how? the PMD cannot be traversed in this case?
-> 
-> 'Present' migration entry? Migration entries are non-present right? :) Or is it
-> different at PMD?
-
-"present anon folio" or "migration entry" :)
-
-So that latter meant a PMD migration entry (that is non-present)
-
-[...]
-
->>>    	pmc.new = new_vma;
->>> +	if (relocate_anon) {
->>> +		lock_new_anon_vma(new_vma);
->>> +		pmc.relocate_locked = new_vma;
->>> +
->>> +		if (!relocate_anon_folios(&pmc, /* undo= */false)) {
->>> +			unsigned long start = new_vma->vm_start;
->>> +			unsigned long size = new_vma->vm_end - start;
->>> +
->>> +			/* Undo if fails. */
->>> +			relocate_anon_folios(&pmc, /* undo= */true);
->>
->> You'd assume this cannot fail, but I think it can: imagine concurrent
->> GUP-fast ...
-> 
-> Well if we change the racey code to ignore DMA pinned we should be ok right?
-
-We completely block migration/swapout, or could they happen 
-concurrently? I assume you'd block them already using the rmap locks in 
-write mode.
-
-> 
->>
->> I really wish we can find a way to not require the fallback.
-> 
-> Yeah the fallback is horrible but we really do need it. See the page table move
-> fallback code for nightmares also :)
-> 
-> We could also alternatively:
-> 
-> - Have some kind of anon_vma fragmentation where some folios in range reference
->    a different anon_vma that we link to the original VMA (quite possibly very
->    broken though).
-> 
-> - Keep a track of folios somehow and separate them from the page table walk (but
->    then we risk races)
-> 
-> - Have some way of telling the kernel that such a situation exists with a new
->    object that can be pointed to by folio->mapping, that the rmap code recognise,
->    like essentially an 'anon_vma migration entry' which can fail.
-> 
-> I already considered combining this operation with the page table move
-> operation, but the locking gets horrible and the undo is categorically much
-> worse and I'm not sure it's actually workable.
-
-Yeah, I have to further think about that. :(
+folio lock is a sleeping lock, PTL is a spinlock. :)
 
 -- 
 Cheers,
