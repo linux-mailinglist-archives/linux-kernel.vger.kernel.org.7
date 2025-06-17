@@ -1,144 +1,126 @@
-Return-Path: <linux-kernel+bounces-689952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47FDFADC900
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:01:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90CC8ADC8B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF7561669C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:01:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4302B16D955
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977992980AC;
-	Tue, 17 Jun 2025 11:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D962D12E3;
+	Tue, 17 Jun 2025 10:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b="Qa0Mmh0S"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="afpqtohj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCB9293C72
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 11:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9302192EA
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 10:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750158094; cv=none; b=Z1jYGbNR8MM1x8sY6g4DilJeHoQ/WivIs2gk2ecvJl8FxiL9JjG7Zj8GsZeyLjLOR2NR/wFP2/1883tnAeMt0W+YxBnIYuCKpyrVCKfbAxP5W1kMPSjQoYO15gszAWGJtfbXARFXGBaLyj+EDBrRqw0NGSWztu3vLMSLNRPisGQ=
+	t=1750157597; cv=none; b=euGikEMfTp4+PO6JgYxgqBCSpZRrflTCIXGMhK+mVpjE3bysDY2AO4E2eHSxeXhdF02noIN7kPA5AeJ4THwNv+Obuv9oIS60b064N/TxbPmSzWkhJUiZd6zrOtB4qZwsrjT1hj+ZcDy2P/L4Pqce+CjHzBnyTLwfzbUVdXOVboA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750158094; c=relaxed/simple;
-	bh=IBYQZSudqTgn34Kapoq78rT+fFWNWZ9+bS43x3EWBcc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XUDPyfbfBNUB7VtgvEIda6ssESeYkGf2+C6oTCTyO52ZeeYsbs4G8ZZ8nka6zEmBVztW7HlsWr/N0WlC8VfQ1+//14JHXptIakwU2dnuLjCR+eiA+HpHsEm9fsllp2hd6TIfLZU/xreAlAoh5Und/Yq7fnG4U3UiHwTnrA8xHrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com; spf=pass smtp.mailfrom=inventec.com; dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b=Qa0Mmh0S; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-235a3dd4f0dso35398425ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 04:01:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=inventec.com; s=google; t=1750158089; x=1750762889; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1DHyU2R8WPjOq8eE9G+orQPQ64Wuq4IqqrSMYFwTCBc=;
-        b=Qa0Mmh0SUDjvxQros6xspDcRisYS82W0rofYbdCTcSlLbgn0LyzGGoCz9sYazZGFKF
-         T5w9mLsYXIE0y887zNgX+V6aiBSXYnwclbM/naIuDkv9Y0romKwnXW29WgtzIXiHUDeA
-         HOIcqEv3L/RKmVEJsve+GNZTSlmBGljrJ6AWE79GU31U4zsiqf89HmfLrrV9z9G/bDdY
-         5dkYhg+k28MP6xLcXwDbME8hlEsoAwKSSm6wOaaKWmr8luoQo/c+VLlLJ2FY1FqSOcVu
-         IvvNYEhokAWi/iDO8Gdgn2q5Y7jTkt6lZ6DrohoRW+SIq/7IEWEOOU5CquhnR+8Op2KC
-         Wy1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750158089; x=1750762889;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1DHyU2R8WPjOq8eE9G+orQPQ64Wuq4IqqrSMYFwTCBc=;
-        b=bO//yXqilHYtTFWkHxUfMQ29dMelGCwd0HMFtVzMItMtRx0mF6z++IHne9Z78bLZg6
-         2hR5ielUIqSX+ukoacpOy0WvJ5YY4nbYaigdTs4Z7REqkY0jWAUtC3t0fjXogvAGcvzW
-         TrQqlOlOxFGyEO2AYYE6ButQkn8CGQcr+ASozTw2s6LlVz9cBl5bbjHI/khLt0Y6MGfm
-         RBaH7dq3zsMgYfyvHwIF1fiAb+AJPoMFDDW1VqNaBoZLOCmsClUC7IKGuo51CaQ7V/5F
-         IC9j1QBYggWJu4zECZe06+3y50fkfh/YA2PL1cftKImCFApledColaeMzCn7wRtBRqmu
-         YEHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWAoo44JP7cRp02YzE0qg8fLxvC+B0I3NytV7NpUp9I8sVNgR1XetLi0VFoLPfEqgEzEcCYbtNebfjikCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf2orIzHVxGdhTl32GuGs0akLERH0oqcb0Nkm39ln9uJH2ALKD
-	PfaIN8Ijs2fkdw5gEMwddTqV+9loet5ADEgsZKB4qUyoq9C5J93FtGHjqcyDQxW7+gY=
-X-Gm-Gg: ASbGnct/kyqhfsUXv5dgrDcnjZfhbjJU/FyGTZWPT1Y7DS1YDDy+CQEPd2iMsVr4/fS
-	ux9GYuYXy2pAQpUVgUrVripEpM70N/N+khfca4V7KnGxFucgtSCrNWb6nyvZceaYZKc5bGdZPaz
-	d56ZjscwuOAr4eqR3XrJJqZ7KWbKAtPBTmYFS7DirVK3vamML21FjumqhHHhKuGaFvFbIMYftdY
-	TYGLEQAhw5OMvmZvv0F9QCPMmRXMabMu9X/FHQB8ieVyrZMOjuAvNemt0NrdFsNFsrHclIOwS0h
-	8B3YeVzN15PsEvlmcSEuS001tg/B2E3kigWg+eMUBVF/sPKHhmsiZwVcDqP6FpCq1F3aDQS1jVa
-	lKDQBqRE=
-X-Google-Smtp-Source: AGHT+IFhiIFZVVRkKW6KlPv5Ms3limyDQ3qCAx3P+UVC13Dsqu72f+r1sPGNNNtDItxGQ9ngdyMNEQ==
-X-Received: by 2002:a17:903:1a83:b0:234:9656:7db9 with SMTP id d9443c01a7336-2366b122186mr205102705ad.32.1750158088915;
-        Tue, 17 Jun 2025 04:01:28 -0700 (PDT)
-Received: from localhost.localdomain ([123.51.235.216])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365d88f423sm77142515ad.12.2025.06.17.04.01.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 04:01:28 -0700 (PDT)
-From: Brian Chiang <chiang.brian@inventec.com>
-X-Google-Original-From: Brian Chiang <Chiang.Brian@inventec.com>
-To: linux@roeck-us.net
-Cc: alex@ghiti.fr,
-	aou@eecs.berkeley.edu,
-	chiang.brian@inventec.com,
-	corbet@lwn.net,
-	jdelvare@suse.com,
-	linux-doc@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com
-Subject: Re: [PATCH v9 2/2] hwmon: (pmbus/tps53679) Add support for TPS53685
-Date: Tue, 17 Jun 2025 18:51:41 +0800
-Message-Id: <20250617105141.4081335-1-Chiang.Brian@inventec.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <b278e83a-473f-46ee-b353-3f8c14d03aaf@roeck-us.net>
-References: <b278e83a-473f-46ee-b353-3f8c14d03aaf@roeck-us.net>
+	s=arc-20240116; t=1750157597; c=relaxed/simple;
+	bh=UgCGhu7fYeMI4mIfoFDow90naCmWaWja5M31mu4hz14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WoSUseeOPei1PKaPRlnP2gKd8YBUPSyBsMoSuJhOxOxkCw2+yN6DecOpy1RvGL/IQzMG3tFmJgdFrSlmH8EviD0AbrRDVEQkiugyNYZobIPASHi4iYQmnOq22miNs1QRJ3iEmDWF+/kMiNicdAJ5tkKk8BY0RQnK34RxTEdtkG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=afpqtohj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750157594;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U0ncJVs04Al38TEGKEfhY3VBsmgJ1MjE0cgapDAotLM=;
+	b=afpqtohjLqRluzD7ApFR5xi0H0sgk2mPQdFcU1qHnyHlwXMknyC+fnULHz4CelrIM8b/cp
+	mZhJ+UInFXI4gvkg7BeDGzvhOfIYy63/90Tj19iQw7yMR8O54YrF2yjjlgmSQwZ5oDn1ky
+	abRwDdooCn7qDbqoCJJNqUj2Fw32b3c=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-581-Nf1SH4g6PqWzvE_XXZcHWA-1; Tue,
+ 17 Jun 2025 06:53:09 -0400
+X-MC-Unique: Nf1SH4g6PqWzvE_XXZcHWA-1
+X-Mimecast-MFC-AGG-ID: Nf1SH4g6PqWzvE_XXZcHWA_1750157587
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 43ED21955F45;
+	Tue, 17 Jun 2025 10:53:06 +0000 (UTC)
+Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.88.173])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1CD2D18002B5;
+	Tue, 17 Jun 2025 10:52:56 +0000 (UTC)
+Date: Tue, 17 Jun 2025 07:52:55 -0300
+From: Wander Lairson Costa <wander@redhat.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, 
+	"Luis Claudio R. Goncalves" <lgoncalv@redhat.com>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>, David Vernet <dvernet@meta.com>, 
+	Barret Rhoden <brho@google.com>, Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>, DietmarEggemann@uudg.org, 
+	dietmar.eggemann@arm.com, Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RESEND PATCH v4] sched: do not call __put_task_struct() on rt
+ if pi_blocked_on is set
+Message-ID: <kq6edcqhqwzy25y4uurbjkty6r3vzmz74wizmmy4vxu6rvofvk@opm4sjchvegc>
+References: <aEw-KjUjjP2gYH6z@uudg.org>
+ <20250617092609.GR1613376@noisy.programming.kicks-ass.net>
+ <20250617093627.ykSeZMqk@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250617093627.ykSeZMqk@linutronix.de>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-> On Mon, 16 Jun 2025 09:15:43 -0700 Guenter Roeck wrote:
+On Tue, Jun 17, 2025 at 11:36:27AM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-06-17 11:26:09 [+0200], Peter Zijlstra wrote:
+> > On Fri, Jun 13, 2025 at 12:05:14PM -0300, Luis Claudio R. Goncalves wrote:
+> > > With PREEMPT_RT enabled, some of the calls to put_task_struct() coming
+> > > from rt_mutex_adjust_prio_chain() could happen in preemptible context and
+> > > with a mutex enqueued. That could lead to this sequence:
+> > > 
+> > >         rt_mutex_adjust_prio_chain()
+> > >           put_task_struct()
+> > >             __put_task_struct()
+> > >               sched_ext_free()
+> > >                 spin_lock_irqsave()
+> > >                   rtlock_lock() --->  TRIGGERS
+> > >                                       lockdep_assert(!current->pi_blocked_on);
+> > > 
+> > > Fix that by unconditionally resorting to the deferred call to
+> > > __put_task_struct() if PREEMPT_RT is enabled.
+> > > 
+> > 
+> > Should this have a Fixes: tag and go into /urgent?
 > 
-> On 6/10/25 03:25, Chiang Brian wrote:
-> ...
-> > @@ -263,6 +282,10 @@ static int tps53679_probe(struct i2c_client *client)
-> >   		info->identify = tps53681_identify;
-> >   		info->read_word_data = tps53681_read_word_data;
-> >   		break;
-> > +	case tps53685:
-> > +	    info->pages = TPS53679_PAGE_NUM;
-> > +	    info->identify = tps53685_identify;
-> > +		break;
+> I would say so. I'm not sure what caused it. I think Luis said at some
+> point that it is caused by a sched_ext case or I mixed it up with
+> something. Luis?
 > 
-> 0-day rightfully complains about the bad alignment above.
+> The other question I have, do we need to distinguish between PREEMPT_RT
+> and not or can we do this unconditionally?
 > 
-> If you want this patch to be applied for the next kernel release,
-> I would suggest to copy the hardware monitoring list on the first patch
-> of the series. Without it, I get
+
+That's something I had been wondering myself. However, since this code
+runs in multiple places, I was concerned it might trigger some obscure
+corner-case issue. In any case, if we decide to remove the
+PREEMPT_RT conditional, I’d prefer to handle that in a follow-up patch.
+
+> Sebastian
 > 
-> WARNING: DT compatible string "ti,tps53685" appears un-documented -- check ./Documentation/devicetree/bindings/
-> #296: FILE: drivers/hwmon/pmbus/tps53679.c:316:
-> +	{.compatible = "ti,tps53685", .data = (void *)tps53685},
-> 
-> Since I am not copied on the first patch of the series, that patch has to be applied
-> through a different maintainer tree, and I have to wait until that is the case.
-> Not that I understand the logic behind it, but I mentioned that before, so I assume
-> this is on purpose.
 
-Thank you for the feedback. I'll address both issues in v10:
-
-1. Fix the indentation alignment in the switch case
-2. CC linux-hwmon@vger.kernel.org on all patches in the series
-
-I apologize for the oversight, this wasn't intentional, but rather due to 
-my automated CC generation only considering per-patch maintainers.
-
-For v10, I'll ensure all the devicetree and hwmon maintainer lists are 
-included on all patches so you can see the complete series.
-
-Best Regards,
-Brian Chiang
 
