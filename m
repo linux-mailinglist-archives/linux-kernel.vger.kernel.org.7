@@ -1,123 +1,107 @@
-Return-Path: <linux-kernel+bounces-690532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8875BADD36E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:58:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1296ADD2A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8CE91621F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:53:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3E9A17E417
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0C12F2C74;
-	Tue, 17 Jun 2025 15:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g8ybcfpx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC6C2ECE94;
+	Tue, 17 Jun 2025 15:43:50 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE592F2C41;
-	Tue, 17 Jun 2025 15:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51771E8332
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 15:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750175419; cv=none; b=fVNBghu7mfJqh+kLjyKVUb5KLhIdZ5rl8j/rS5eT4EEf/hUYRvmbx5l/XYCOiEBok6+yGTEPLzczsOpx3rkCSdQN44JKq96OIHzF65hXfGWInoa8B1ERhdBZ0uzTpxlcdB9E2enBdIac8rvSvmiwCzyJgD6NO6FgbHtLkELzTlU=
+	t=1750175030; cv=none; b=EhMP6dHVUezTNlwbUfzvbDxvyXcwzP+RfqDQEc5LrHxi19fDEyFYTTZYmh350P5SEuirOI6uvoKlQdutUB5q51gJPg7PnsZ12YiJ355XZXAUm8CXLHs8gKRmGdG3CQQBDDLMYPxAYCEnoNPjKOZDl3RULZvrybLRpl7TVQUmti4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750175419; c=relaxed/simple;
-	bh=LNC2w8LSdPeWSFo7aYqjVJu6bohSIps4pbr6GI4K0BA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BMub4BeFW7RTCF/MG/FI76+WPR0OR7kB8tCKaFQRfYxgysqufziL/r+XXMNNoLP5hyfzZwzYs2hlT/6RKFwByLClXn2yRx1YUTaf28J9pA5RupmDjXwyTOZ7Ju0uEge/YG0u6AYZaoIw/nzJMKT1h2kR81DygTY4Hm6pZt1YJq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g8ybcfpx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B85CC4CEE3;
-	Tue, 17 Jun 2025 15:50:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750175419;
-	bh=LNC2w8LSdPeWSFo7aYqjVJu6bohSIps4pbr6GI4K0BA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g8ybcfpxWV2OtWW99thzTjWTfLwKsYYyaqcTvP7aHzalyqXMXPorjLvVi6xHimaHF
-	 eJsTaSqfWINmIeb2EWU2+/1+1jmxVvUKxnQVRhZUALS1HDkfjHe1OCSVKeKD6cMpT1
-	 jD8uwP4U1MtAJpojwUNjP8SJAr9bp+FteCTVASwSS77HmIqjK1cEtysYmef1wfU7Um
-	 EURHWiaOCN3HV7rbcHdsJDcgHHmGnmyc9SHUZ/5P92AhI2AZ2xt4gPLhtJUX1WHsCu
-	 TGiAuinoczfD8wisKatLD5XmFhJtiY/HaD0eXCqDoVmrX4+TYH5y5xXYeQNZ+BGEeO
-	 3mSt/BnDa6lwA==
-Date: Tue, 17 Jun 2025 21:12:58 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, 
-	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, Sairaj Kodilkar <sarunkod@amd.com>, 
-	Vasant Hegde <vasant.hegde@amd.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Joao Martins <joao.m.martins@oracle.com>, Francesco Lavra <francescolavra.fl@gmail.com>, 
-	David Matlack <dmatlack@google.com>
-Subject: Re: [PATCH v3 38/62] KVM: SVM: Take and hold ir_list_lock across
- IRTE updates in IOMMU
-Message-ID: <qhvns5twcxwzrz2fhp7njmyqb5x5icgiz4iszwvwmeoxhw7ycv@3we3xqqaqeib>
-References: <20250611224604.313496-2-seanjc@google.com>
- <20250611224604.313496-40-seanjc@google.com>
+	s=arc-20240116; t=1750175030; c=relaxed/simple;
+	bh=gojLBIG1GfBfEK+BJinhqciB5+7LPA9ofH5Eor64FuM=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=QhBOhZtIaMKe10fcggqTrRrL7gK+/p5gdioAeNIXyhkG/TTIF9HcD5FmcxDHYN+L1tl3gYsrEU/dkLTtXRhaDTwoGgDIDZEX45Yc/wxxNsegQFYyz0e5swhQN453dcXqW/0SiITpG5ZoCGmfymHRD7kwoBC7zSdnjYffbPz+CnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf17.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 83105140405;
+	Tue, 17 Jun 2025 15:43:46 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: nevets@goodmis.org) by omf17.hostedemail.com (Postfix) with ESMTPA id 5F6F917;
+	Tue, 17 Jun 2025 15:43:45 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1uRYTX-000000029Go-26Nw;
+	Tue, 17 Jun 2025 11:43:51 -0400
+Message-ID: <20250617154303.952651744@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 17 Jun 2025 11:43:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: "John Warthog9 Hawley" <warthog9@kernel.org>,
+ dhaval@gianis.ca
+Subject: [PATCH 0/4] ktest.pl: Updates for 6.17
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 5F6F917
+X-Stat-Signature: 9juhffteh5xwcqgbokcffjdupnid3rrd
+X-Session-Marker: 6E657665747340676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/XaWVLaTOg5c07PW7Ny/X2fPgPslS/3D8=
+X-HE-Tag: 1750175025-21049
+X-HE-Meta: U2FsdGVkX1/9VjAR1JaySvoPJre8aPNxYbzGvD091n9PyiFxk8pCVjOF6FYv5ldndKSfDcIkhylDdWX1fBmWw7ES50N2IBZUpR16ytMpGE9pJV9uWI8YUUDhR3j+Z9rKcZnGbsOMKOy59Vb9Y8plHvVj0N6bVYa7hsvLrtrOLjQhz0Ta9Fv5x+/3VkldTgxdA1KWZs75lbkVrKnspJiRLwl3yTAhDLSDpNTHt6C1WrbT9i0/27pgl/agQ+GFqM278oNcJpaxDm8uShg0eNWaVH+gAh1uR1L9lnItgCwIOPc=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611224604.313496-40-seanjc@google.com>
 
-On Wed, Jun 11, 2025 at 03:45:41PM -0700, Sean Christopherson wrote:
-> Now that svm_ir_list_add() isn't overloaded with all manner of weird
-> things, fold it into avic_pi_update_irte(), and more importantly take
-> ir_list_lock across the irq_set_vcpu_affinity() calls to ensure the info
-> that's shoved into the IRTE is fresh.  While preemption (and IRQs) is
-> disabled on the task performing the IRTE update, thanks to irqfds.lock,
-> that task doesn't hold the vCPU's mutex, i.e. preemption being disabled
-> is irrelevant.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/svm/avic.c | 55 +++++++++++++++++------------------------
->  1 file changed, 22 insertions(+), 33 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-> index f1e9f0dd43e8..4747fb09aca4 100644
-> --- a/arch/x86/kvm/svm/avic.c
-> +++ b/arch/x86/kvm/svm/avic.c
-> @@ -769,32 +769,6 @@ static void svm_ir_list_del(struct kvm_kernel_irqfd *irqfd)
->  	spin_unlock_irqrestore(&to_svm(vcpu)->ir_list_lock, flags);
->  }
->  
-> -static void svm_ir_list_add(struct vcpu_svm *svm,
-> -			    struct kvm_kernel_irqfd *irqfd,
-> -			    struct amd_iommu_pi_data *pi)
-> -{
-> -	unsigned long flags;
-> -	u64 entry;
-> -
-> -	irqfd->irq_bypass_data = pi->ir_data;
-> -
-> -	spin_lock_irqsave(&svm->ir_list_lock, flags);
-> -
-> -	/*
-> -	 * Update the target pCPU for IOMMU doorbells if the vCPU is running.
-> -	 * If the vCPU is NOT running, i.e. is blocking or scheduled out, KVM
-> -	 * will update the pCPU info when the vCPU awkened and/or scheduled in.
-> -	 * See also avic_vcpu_load().
-> -	 */
-> -	entry = svm->avic_physical_id_entry;
-> -	if (entry & AVIC_PHYSICAL_ID_ENTRY_IS_RUNNING_MASK)
-> -		amd_iommu_update_ga(entry & AVIC_PHYSICAL_ID_ENTRY_HOST_PHYSICAL_ID_MASK,
-> -				    true, pi->ir_data);
-> -
-> -	list_add(&irqfd->vcpu_list, &svm->ir_list);
-> -	spin_unlock_irqrestore(&svm->ir_list_lock, flags);
-> -}
-> -
 
-There are a few comments in avic_vcpu_load() and avic_vcpu_put() which 
-still refer to svm_ir_list_add(). Would be good to update those.
+ktest.pl updates:
 
-- Naveen
+- Add a "-D" flag to allow overriding the content in the config file.
 
+  Instead of having to tweak a config file for minor changes to run
+  a ktest.pl execution, allow for config options to be overridden by
+  the command line:
+
+  ktest.pl -D ADD_CONFIG=/tmp/temp_config machine.conf
+
+  The above will make ADD_CONFIG default to /tmp/temp_config
+
+  To have it work for a specific test, add "[<test #>]" to the option:
+
+  ktest.pl '-DBUILD_TYPE[2]=allyesconfig' machine.conf
+
+  The above will change the BUILD_TYPE to "allyesconfig" for test 2.
+
+  This works for temp variables as well (using ":=" instead of "=")
+
+  ktest.pl -D 'ARCH:=arm' machine.conf
+
+  The first "ARCH" variable will be overwritten as "arm". Note if
+  there are more than one "ARCH" variables, it will not override the
+  later ones.
+
+- Check for recursion in processing default variables
+
+  If a default variable has itself, then do not continue with it.
+
+  ADD_CONFIG = temp_config ${ADD_CONFIG}
+
+  Expects there to be a: ADD_CONFIG := other_config
+
+  But if that temp variable "ADD_CONFIG" does not exist, it will use itself.
+  Do not allow that.
+
+Steven Rostedt (4):
+      ktest.pl: Add -D option to override variables
+      ktest.pl: Allow command option -D to override temp variables
+      ktest.pl: Have -D option work without a space
+      ktest.pl: Prevent recursion of default variable options
+
+----
+ tools/testing/ktest/ktest.pl | 79 ++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 76 insertions(+), 3 deletions(-)
 
