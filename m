@@ -1,69 +1,97 @@
-Return-Path: <linux-kernel+bounces-689508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E294ADC2DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:06:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D56FADC2CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23B387A144B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:05:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41FE21775D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5069928C5AF;
-	Tue, 17 Jun 2025 07:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E07528C5CA;
+	Tue, 17 Jun 2025 07:03:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=archlinux.org header.i=@archlinux.org header.b="rvWxmHMC";
-	dkim=permerror (0-bit key) header.d=archlinux.org header.i=@archlinux.org header.b="j24T8DRD"
-Received: from mail.archlinux.org (mail.archlinux.org [95.216.189.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bBmgQguV"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F9228BABD;
-	Tue, 17 Jun 2025 07:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.216.189.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E8628C2C9;
+	Tue, 17 Jun 2025 07:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750144003; cv=none; b=bSvvcyq4zUAowgsmpPuB81YrXJA9ea2hE3AD0hNTMu+DgnsMTqAzTSRoxqr/3dbGod5+pdbJYBHl7ZUwzfFsHon0wx58K2WDZ43u1mJG6aduybAvfuaYnCPf20CTjGm4QKE5lWA4oiiJ7e4Qpm2x3ki19OA1k3NXe4DGU5zpcHg=
+	t=1750143785; cv=none; b=tnEElsb1PDVEAN4wrlW1hI5UgtkJxxyF/qHfZenkBhw+QfWn0uF7gkg1dAw63el9uSXkO+beMCkbIOiK9iMrQTBpF0GOvVwB8jRsH63Z82jpOlPGQMBYhMzc2gPpBjOLKeCeW4DITQ3RriQvH3Z4r+TcZBz+4wMIXmY5yavH9Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750144003; c=relaxed/simple;
-	bh=nvMdHSpWVUPTjrFiKn24e2laEyS1rQMORZ9YpXHTrVc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XTqyCR25WGo0cNLFJzYF8XohzlTiFyfIM4v00QZOIEXHz2o74S2QpRxIt7KwwQbFlN9Pwf+f1RcNxgvra2jNRuOBqj+xJrUE8QvFDbE8Cnzdq8ieXp7zhHTwKuXagnNXtS/HzjlDaApulxAJEAdLKo1t9G0POo1TBrIwEUyqCEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=archlinux.org; spf=pass smtp.mailfrom=archlinux.org; dkim=pass (4096-bit key) header.d=archlinux.org header.i=@archlinux.org header.b=rvWxmHMC; dkim=permerror (0-bit key) header.d=archlinux.org header.i=@archlinux.org header.b=j24T8DRD; arc=none smtp.client-ip=95.216.189.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=archlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=archlinux.org
-From: George Hu <integral@archlinux.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=archlinux.org;
-	s=dkim-rsa; t=1750143632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=eRoqgXRJ2jvZqZ0wCNBlPWys9iezWcvb617+aqNYKXw=;
-	b=rvWxmHMCqy73aEU+7tj3KNDRS5o83sS09bzRfoCoL1i3T7PZmw1ar2hNNdFu/tb6+d4KZh
-	ekW1nqdWrg0aSW8kUu7AFrKzQNNTINKBZLoNiVZdwyyaJGAl4T33GVDfmiu5BDbrKyiBoK
-	RKdtoO/Q+XQPyk2Wmo/sC+C8xsK5Top64LPmk6tMv34c7RQSbiHykobA/49v/pyawl+QV1
-	GcQMBr6P48NVUb0bGlj9iXALv8K6DHoKPf7G75X0TA8wqO8DAVSAo6KKxnISG2jaqXK0kv
-	2L6GlpnMrq3y8IhLlPXol7U4/A8dX8+l7qjmFax9/cMC4dBq9XbOxFj+zZ0sXJj7usUwol
-	omXk6Wxy+3nI1nJfc35Jj+TokLi7m5tzaKtDMEPbrWpm8XwphBZpZT7FCft7IwxghVBw1l
-	mPbrfJ9jiZOktIYSnLaddyFQDpWmZdyLUixSSFcx5QcBvS38HkQrNN4YswnZ6uGQEph/Hb
-	cGdVqtFUbyj5kwdxiIsDRbcqPlakNTHR1ya/cK+9TWH+4Am7SfECd9R2GI1UXDoBwYKZCT
-	AillVH+PxfWpU8snw+l3avWTXQ7v5gHbFd1Y66CgQizgjjmmnOL3F3xyOoV7gyDqX9bfey
-	uB3pJfTTdY2eeLAmzzqz7/jtfSo/GE9TqEmj3bfxAgXil86fn/5EU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=archlinux.org;
-	s=dkim-ed25519; t=1750143632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=eRoqgXRJ2jvZqZ0wCNBlPWys9iezWcvb617+aqNYKXw=;
-	b=j24T8DRDT5dhQYaPIdobl7Bam9a3TiBbsBiwmrszpqKQ7424GRwcwm+GoZOQfTVHfzNgo4
-	UjJdIejrpHefiGAw==
-Authentication-Results: mail.archlinux.org;
-	auth=pass smtp.auth=integral smtp.mailfrom=integral@archlinux.org
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org,
+	s=arc-20240116; t=1750143785; c=relaxed/simple;
+	bh=9uQYlaKrOF8qdMrm3wBT3CKVF83rj42WRbeBiwxnE0Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WOJt0Xm0vcfHnMr/k/tbGSggflOu5FTqC4vQXfz8dZv0dTwrxVsbdUhun5fOkvcRuWI9L8wxZa+8q9EyPIdRCvRTUIKfQOmhOSgPTmgXjhtNgu2cwddtISfwPO4Ru2dScYjY4ZKwWtQVods4spMxyyuZ2Rz77pfv3rzHK6KcBvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bBmgQguV; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-23633a6ac50so76348015ad.2;
+        Tue, 17 Jun 2025 00:03:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750143782; x=1750748582; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UaG/t7KG9r8h6CuNkV1Xs54wfnnVvv58385nUogNAos=;
+        b=bBmgQguVTLAOZ5ajcCrmZHalv/y1BWUNFbq87IJiRRqJIZBzKGcoM9CZFv9WPq1B7v
+         h7//vroZNKy5NySUKsIszJ958X3FcpD/SIbe08lIIsg697SMEQUK8LGDaHF43JsTwoxu
+         qt1/hiQ3t1K/TiJ0uq/oVCdbX4bYg/x5X0NsElxI3VfIAhsu7s6JufELg+tA2w9ByBJv
+         PAIomyKlxM+4gMFf3xOqMxeNd6kA33ciortSrWN44SezxFdcV60ZD4RLX44cxHCFstNH
+         noc643idcYQSZkFwyhuPLKJDiv4eDP95Q39A6DWVBAulZti0ZTfsjkarO1yc24Up0iML
+         8iYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750143782; x=1750748582;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UaG/t7KG9r8h6CuNkV1Xs54wfnnVvv58385nUogNAos=;
+        b=ZUTAuZpch5L00XqnRCLla8wqcGos/yWWD1f9Y6P4pkPFBjy1dNpRQY0lGwkb9KAfPi
+         WVjxJ3xV+om+CJR2Cc8ePUmV8HbxxWhEfL1G7HbSEKTpXMqzejwW+j501lTaWluTRoJ6
+         kHCs/67SrqfiG4hBOl2/G0BfzLLXlzNVUf/q+QkuLaFPO1oRq+O8HcIIZV5G4gLhYrwx
+         tEtfhkKZwSAyxH5xUtsmAgaT4eOTkqlDEGOOuDgeiMY+IbTdEkjH6eVKv0A83VU5Ctgy
+         EqFUndFbSGy/6dKeXlJExdO9dtOoG3laC8vIvQjr/lFxUyCtta60pXFcX7xGswtXuGJI
+         oXmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWABwqiokyLOPqcjec9706os7/SG54p91dkpbjihYMoco2CcQbAIdj8HV85qFldKGAvP8kE3TaHKG/3lQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd8w2hFbxDddErR/LjLf7TNQWZIK0YzZPHYGSJp6FPHnDCbLSW
+	CHhglCKziaznx/HStIHVtU+m2UAErlarupQVPo5lSNlaDDcfjWHvMgMQ
+X-Gm-Gg: ASbGncuTSGFyt7rLuu2cMhWFxbJ6jlriI3NUnC7FBFVZZ1iqyN1CR5hbVXiLkoAgG1t
+	y1NBtZ2wQBTeDvhOP7GUmREAG9ATDhFmnSwxfww6BLBsx3GqsxlekE9LCF0VbMd6rIXuGpf88jd
+	qUT8/NqDSnHCV2Phl8nlFiqG+DBrQ1BvNfRBDOkmdg10UFy28L5lB0ZGLvE5g+u2tJjoK5COUMa
+	4ArCA5FfrEJz6ZsFvsjacbECfGv5srGofXwiCceELx72Aq2mg8AY9l13VdpHcOW234M54ZI3MM5
+	yZQbol2JKyDREdhbwJxv2ksQSao7afiqh91veQQSektXy2GoR5kWAadlcdR6VA==
+X-Google-Smtp-Source: AGHT+IGqDk0ZeWL4AT26rDLpFZ8Aq+pamnX39szXBefKiFUBuwuWNS2youv83CQvs23AFpZt39mjJQ==
+X-Received: by 2002:a17:903:2f4b:b0:234:a139:1217 with SMTP id d9443c01a7336-2366b3505c4mr146544715ad.18.1750143782107;
+        Tue, 17 Jun 2025 00:03:02 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23692e44fcesm6154635ad.169.2025.06.17.00.03.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 00:03:01 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Ze Huang <huangze@whut.edu.cn>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	George Hu <integral@archlinux.org>
-Subject: [PATCH v2 RESEND] bcachefs: use union for bch_compression_opt to make encode & decode easier
-Date: Tue, 17 Jun 2025 15:00:36 +0800
-Message-ID: <20250617070036.10685-1-integral@archlinux.org>
+	linux-riscv@lists.infradead.org,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH v4 0/4] riscv: sophgo: cv18xx: Add reset generator support
+Date: Tue, 17 Jun 2025 15:01:38 +0800
+Message-ID: <20250617070144.1149926-1-inochiama@gmail.com>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,164 +101,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Eliminate redundant encode & decode function by using union for
-bch_compression_opt, which reduces code complexity.
+Like SG2042, CV1800 Series SoCs also have simple bit reset generator.
+Add necessary code and bindings for it.
 
-Signed-off-by: George Hu <integral@archlinux.org>
----
- fs/bcachefs/compress.c | 17 +++++++++--------
- fs/bcachefs/compress.h | 36 +++++++++++-------------------------
- fs/bcachefs/extents.c  |  2 +-
- 3 files changed, 21 insertions(+), 34 deletions(-)
+Changes from v4:
+1. patch 1: convert the compatible as entry of enum.
+1. patch 2, 3: apply Alexander's tag.
+1. patch 3: apply Junhui's tag.
 
-diff --git a/fs/bcachefs/compress.c b/fs/bcachefs/compress.c
-index b37b1f325f0a..5f74de920c92 100644
---- a/fs/bcachefs/compress.c
-+++ b/fs/bcachefs/compress.c
-@@ -336,7 +336,7 @@ static int attempt_compress(struct bch_fs *c,
- 			    void *workspace,
- 			    void *dst, size_t dst_len,
- 			    void *src, size_t src_len,
--			    struct bch_compression_opt compression)
-+			    union bch_compression_opt compression)
- {
- 	enum bch_compression_type compression_type =
- 		__bch2_compression_opt_to_type[compression.type];
-@@ -426,7 +426,7 @@ static int attempt_compress(struct bch_fs *c,
- static unsigned __bio_compress(struct bch_fs *c,
- 			       struct bio *dst, size_t *dst_len,
- 			       struct bio *src, size_t *src_len,
--			       struct bch_compression_opt compression)
-+			       union bch_compression_opt compression)
- {
- 	struct bbuf src_data = { NULL }, dst_data = { NULL };
- 	void *workspace;
-@@ -553,7 +553,7 @@ unsigned bch2_bio_compress(struct bch_fs *c,
- 
- 	compression_type =
- 		__bio_compress(c, dst, dst_len, src, src_len,
--			       bch2_compression_decode(compression_opt));
-+			       (union bch_compression_opt){ .value = compression_opt });
- 
- 	dst->bi_iter.bi_size = orig_dst;
- 	src->bi_iter.bi_size = orig_src;
-@@ -602,7 +602,8 @@ static int __bch2_check_set_has_compressed_data(struct bch_fs *c, u64 f)
- int bch2_check_set_has_compressed_data(struct bch_fs *c,
- 				       unsigned compression_opt)
- {
--	unsigned compression_type = bch2_compression_decode(compression_opt).type;
-+	unsigned int compression_type = ((union bch_compression_opt){ .value = compression_opt })
-+					.type;
- 
- 	BUG_ON(compression_type >= ARRAY_SIZE(bch2_compression_opt_to_feature));
- 
-@@ -683,7 +684,7 @@ static int __bch2_fs_compress_init(struct bch_fs *c, u64 features)
- 
- static u64 compression_opt_to_feature(unsigned v)
- {
--	unsigned type = bch2_compression_decode(v).type;
-+	unsigned int type = ((union bch_compression_opt){ .value = v }).type;
- 
- 	return BIT_ULL(bch2_compression_opt_to_feature[type]);
- }
-@@ -703,7 +704,7 @@ int bch2_opt_compression_parse(struct bch_fs *c, const char *_val, u64 *res,
- {
- 	char *val = kstrdup(_val, GFP_KERNEL);
- 	char *p = val, *type_str, *level_str;
--	struct bch_compression_opt opt = { 0 };
-+	union bch_compression_opt opt = { 0 };
- 	int ret;
- 
- 	if (!val)
-@@ -736,7 +737,7 @@ int bch2_opt_compression_parse(struct bch_fs *c, const char *_val, u64 *res,
- 		opt.level = level;
- 	}
- 
--	*res = bch2_compression_encode(opt);
-+	*res = opt.value;
- err:
- 	kfree(val);
- 	return ret;
-@@ -744,7 +745,7 @@ int bch2_opt_compression_parse(struct bch_fs *c, const char *_val, u64 *res,
- 
- void bch2_compression_opt_to_text(struct printbuf *out, u64 v)
- {
--	struct bch_compression_opt opt = bch2_compression_decode(v);
-+	union bch_compression_opt opt = { .value = v };
- 
- 	if (opt.type < BCH_COMPRESSION_OPT_NR)
- 		prt_str(out, bch2_compression_opts[opt.type]);
-diff --git a/fs/bcachefs/compress.h b/fs/bcachefs/compress.h
-index bec2f05bfd52..667ddb91d47a 100644
---- a/fs/bcachefs/compress.h
-+++ b/fs/bcachefs/compress.h
-@@ -10,41 +10,27 @@ static const unsigned __bch2_compression_opt_to_type[] = {
- #undef x
- };
- 
--struct bch_compression_opt {
--	u8		type:4,
--			level:4;
--};
--
--static inline struct bch_compression_opt __bch2_compression_decode(unsigned v)
--{
--	return (struct bch_compression_opt) {
--		.type	= v & 15,
--		.level	= v >> 4,
-+union bch_compression_opt {
-+	u8 value;
-+	struct {
-+#if defined(__LITTLE_ENDIAN_BITFIELD)
-+		u8 type:4, level:4;
-+#elif defined(__BIG_ENDIAN_BITFIELD)
-+		u8 level:4, type:4;
-+#endif
- 	};
--}
-+};
- 
- static inline bool bch2_compression_opt_valid(unsigned v)
- {
--	struct bch_compression_opt opt = __bch2_compression_decode(v);
-+	union bch_compression_opt opt = { .value = v };
- 
- 	return opt.type < ARRAY_SIZE(__bch2_compression_opt_to_type) && !(!opt.type && opt.level);
- }
- 
--static inline struct bch_compression_opt bch2_compression_decode(unsigned v)
--{
--	return bch2_compression_opt_valid(v)
--		? __bch2_compression_decode(v)
--		: (struct bch_compression_opt) { 0 };
--}
--
--static inline unsigned bch2_compression_encode(struct bch_compression_opt opt)
--{
--	return opt.type|(opt.level << 4);
--}
--
- static inline enum bch_compression_type bch2_compression_opt_to_type(unsigned v)
- {
--	return __bch2_compression_opt_to_type[bch2_compression_decode(v).type];
-+	return __bch2_compression_opt_to_type[((union bch_compression_opt){ .value = v }).type];
- }
- 
- struct bch_write_op;
-diff --git a/fs/bcachefs/extents.c b/fs/bcachefs/extents.c
-index 036e4ad95987..8bdcb1551814 100644
---- a/fs/bcachefs/extents.c
-+++ b/fs/bcachefs/extents.c
-@@ -1512,7 +1512,7 @@ int bch2_bkey_ptrs_validate(struct bch_fs *c, struct bkey_s_c k,
- 			const struct bch_extent_rebalance *r = &entry->rebalance;
- 
- 			if (!bch2_compression_opt_valid(r->compression)) {
--				struct bch_compression_opt opt = __bch2_compression_decode(r->compression);
-+				union bch_compression_opt opt = { .value = r->compression };
- 				prt_printf(err, "invalid compression opt %u:%u",
- 					   opt.type, opt.level);
- 				return bch_err_throw(c, invalid_bkey);
--- 
+Changes from v2:
+1. patch 3: fix wrong reset ID.
+
+Changes from v1:
+1. rebase to v6.16-rc1
+2. patch 1: apply Rob's tag
+3. patch 3: fix wrong reset ID
+
+Inochi Amaoto (4):
+  dt-bindings: reset: sophgo: Add CV1800B support
+  reset: simple: add support for Sophgo CV1800B
+  riscv: dts: sophgo: add reset generator for Sophgo CV1800 series SoC
+  riscv: dts: sophgo: add reset configuration for Sophgo CV1800 series
+    SoC
+
+ .../bindings/reset/sophgo,sg2042-reset.yaml   |  4 +-
+ arch/riscv/boot/dts/sophgo/cv180x.dtsi        | 25 +++++
+ arch/riscv/boot/dts/sophgo/cv18xx-reset.h     | 98 +++++++++++++++++++
+ drivers/reset/reset-simple.c                  |  2 +
+ 4 files changed, 128 insertions(+), 1 deletion(-)
+ create mode 100644 arch/riscv/boot/dts/sophgo/cv18xx-reset.h
+
+--
 2.49.0
 
 
