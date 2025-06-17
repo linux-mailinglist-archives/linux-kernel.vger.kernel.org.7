@@ -1,293 +1,331 @@
-Return-Path: <linux-kernel+bounces-690000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E64ADC9E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:49:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF943ADC9EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB61178733
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:49:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09EAB18961B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78352DBF7B;
-	Tue, 17 Jun 2025 11:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55922DF3E2;
+	Tue, 17 Jun 2025 11:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HotaY1pt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ir8nYTCY"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC1C2E06C2
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 11:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D991128F50F
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 11:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750160968; cv=none; b=CWF+okMmZhKUzzQtPTLrx7Bev23tUnvt0UZ/wNckyIDxJv7iS8V9mUVFItn3eXQ7FRF18G5RJDyLEUaefluINEw0TnIt1OuAj+cMWWjRiHLyTzdoSdCo/hJBeMOdmWDuNjkP1+pFKTz0E7HutrtjUGx2syAcmoC8Onf5m7nXVQE=
+	t=1750161100; cv=none; b=bCIBdhziHHuam6MIs/Bzyj07Tc8JTmLjZGMGxxFYFiZj6WSCZwN0YOpO9DQYDZxAC51Wi6lTcCE8Srbzg3oTmeEUuGi27vw8aZQF6DRRUPbwLoPm2pMOJin289yu+DDzqNOuegPeOE8X1Nl15Rk5nR+IeSwrUCSswEHatQqakN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750160968; c=relaxed/simple;
-	bh=JNmTYLOp+P+t/Cb2ACD7zV51Bf89soE1pAZIHyqsCOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LbCVhnXRZXcm9GCQ+/bYNSUnGVO9fZPL3H6HUBAr5/0Y6oqueg3ReadqJJN6OJ3XrMpofeumjeqVRVInkrRJseFYsBBOJTuVirJTsanKq3bdyyj2JI0m7FWtBTGJadMzMhtFYWdjNviRtiWpoifCP+GgdbawcCP32/EDyK8oE6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HotaY1pt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750160965;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hE4jQf30NhDONzaYTp5udghTJVFFQmiX++mtkRc+5ps=;
-	b=HotaY1ptd6XOk3YpYihCscZOMkB3BIIvBigdw8PrxZj4DBrVsT7LyYsOzATPuzXgb0Y5KS
-	mSAXbU5pCNM/dvl8IOY5UcCCRMaIsng38JO4Ejh9srqDIaxHGOKJWJXZbpcLcQ7zquAbi0
-	q5ZrZJFdIe10MmMSpJBO+rnkBM1VhRw=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-66-V_G2taS1Mqec8eGRmqBLKA-1; Tue, 17 Jun 2025 07:49:24 -0400
-X-MC-Unique: V_G2taS1Mqec8eGRmqBLKA-1
-X-Mimecast-MFC-AGG-ID: V_G2taS1Mqec8eGRmqBLKA_1750160963
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-450cf229025so19939165e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 04:49:24 -0700 (PDT)
+	s=arc-20240116; t=1750161100; c=relaxed/simple;
+	bh=zdD/Dj3eieGVzmJSbPKJ2gsUmRtPUGrtDNooDPB9NLI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FyqhFlR/OgjHFlUjPA0YU0BSmXjIxTXby4wN2wBGlU3sgXVP8svmqiZ+RyavdHPBRBBJnnHkfS3BI6OtHgla8Cp7sSq7Rv28S06/orgWMBZkgwHfnb7336llcIDKMJXdT3xcofjP008tPJkTJ2QqCIz7eQfoo1ZV589AKbVtYd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ir8nYTCY; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55394ee39dfso815286e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 04:51:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750161095; x=1750765895; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=twj8T2eR6XN/ea4DF81VTervPoMfcDtyylv6jyLSLM0=;
+        b=Ir8nYTCY3QY2mS6m4ozcDP5atbts/e9Rigab69LAZMO6gulQlLm18gf/1sDAr+gLsb
+         4plkTaEYBSDXYRyW/9oD6t/I1jbJVinymhoBzC78wwAvcdkZfbFJPz+kQ02eiE5BHcaG
+         M+UeFm6WlMWE9hXy2C0z9VMbODGtvSknZLKrbyy+bjlaQ2a5qIz7rct81mQP33vpBw65
+         E7a2SgYonJ0arNd8Z2JIL0YWac8W7BypScpxJCHAzXU4n2pxtbBbnkPp/sUgFKg3i8P5
+         KRv9VrpiGyDGfMOeanaSu1PKiFzKm3QgJlgHtD+CgOHvtzMC5NBK0ieQLOFZb4902oLF
+         bf4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750160963; x=1750765763;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hE4jQf30NhDONzaYTp5udghTJVFFQmiX++mtkRc+5ps=;
-        b=fytEzELL2VJfUL0/1fyp3sIRR4/vVgGPpabrY8HwruvnvhmI3Z6Z5oBZe7/w1DHq9S
-         Jg7mkWaKcuyxbe2aOSfertCW6PKyMvYJp8DWpA2ZF/ZQ4gwVo8MeGPvTqhw8q56E+hxZ
-         ko2w3S1D+ChLq2B77TcQLgTUYv9ypurpiVbLCzxHcQAzQl69queBhbsNCBowNrJ6Cfld
-         TRG2k9qEzdxnGhJCw8UV3qZ8CEAdkb8TyY2bldr89coH/feMI7p77BRa+ECbcyDQi6L5
-         hEtDx5alAvrkJYXCjGNQB43235F9bAf/ywOzMMfqt5DfDZaljGkf4DFM9sLy0fCFG7Gb
-         G4Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhtbt37OamTzAlA1ahKsniNC4XwME70zh5wfnvTzwlSbCz3X9+2/rMm0yFhH0w8Ey3uQtQ1ZPU2zy0tng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLjAQ6+7PrlsLWt6RXfcDJ5jWBeYyP4wI2JVx7T3D4UGU35MRn
-	RHwQImTqqM+2a4nTuuN5PnaWMkI6slwHvyUKvSooIjNRIhrLKObyxEVsHPks+1hpPAYHAafPizn
-	4fvHtC0C/Svf5aOFB/3G8yj1t4FtblpH7CRSmvIy7yC1qXVXZcjvsu2+g0qB+EoUPsg==
-X-Gm-Gg: ASbGncv4QI9qaJT3wSKShK02QQk8uh1hxvcQwdcbXZHKrppiVE05g/EGWkKqjKCcISa
-	NajDltqeDib2MQJG2/QoASA+WmTD/8nQs9/ossgO4mTbncncZ7UYrnBrwtOEMX65H/O/lHhrni5
-	AFK6emlpkf4jyjAEtATyeM59hBlUVetRaA75o0hGxGvPuGKW77LTpQXcfNDbpyhHxXXAUnJQ1V3
-	hCcfx1/4XwKISJuOHvCbNbwQj1nkN6jLMMKEA+SqtBjOkt5BLqiLywCuXMp9jNYefydLo2LApo1
-	Bnt/sf/flo03iw/G7Y3HpyyOZmr69z48BUhid1BpACXlURBbhAU3tfXstRlsQOOhbwqa2EbImq/
-	CE8d6i84g4WU8V/R9dLMtGZy8B6ZXjvu2MLwCKfjvofEiDNY=
-X-Received: by 2002:a05:6000:40c9:b0:3a4:ef70:e0e1 with SMTP id ffacd0b85a97d-3a572e897camr10382750f8f.55.1750160963221;
-        Tue, 17 Jun 2025 04:49:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHlBsMyHOaTTPLqmqFnkM6OJpPPZgQeYrXfiZldtxrH7SiO0M2P1VW30LutSVUXkr0Rwtv4aA==
-X-Received: by 2002:a05:6000:40c9:b0:3a4:ef70:e0e1 with SMTP id ffacd0b85a97d-3a572e897camr10382706f8f.55.1750160962736;
-        Tue, 17 Jun 2025 04:49:22 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f31:700:3851:c66a:b6b9:3490? (p200300d82f3107003851c66ab6b93490.dip0.t-ipconnect.de. [2003:d8:2f31:700:3851:c66a:b6b9:3490])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a5546asm13560837f8f.3.2025.06.17.04.49.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 04:49:22 -0700 (PDT)
-Message-ID: <7beef290-e68b-4599-aedb-994c2e9fa237@redhat.com>
-Date: Tue, 17 Jun 2025 13:49:21 +0200
+        d=1e100.net; s=20230601; t=1750161095; x=1750765895;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=twj8T2eR6XN/ea4DF81VTervPoMfcDtyylv6jyLSLM0=;
+        b=Ltzff2GWYYbrDdiF3mnbpv9wz96f8K10rNTLRS9AkLi3BeHqn375aOMLtKdrxOi9oC
+         yBq6gi1izPthrxIGidmm4FXyRPQknPzrCDHIXe8/WtveE7Jii287Fk3wzpCxw2hFUY2b
+         p88ZRXxteRoXUWf9g7CwNIK9a/8pdtJyo5PlNFQNTu2VeRQfl+AvoM/AjRCSrZFinzdW
+         jmBRyUx9PNjKQIxRhSjccZALmNOdjTepCWOco5ZqKsjiS096xPfHBkdpDd39hgV7FYnD
+         aoEpzgOrjAvRi+YpCCX3904OeBXWUWTELasAuyqRBI0ZaBcn9UF2/8tJ7mPVa568ROk0
+         7GSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkknj1Al100PITJWtRHdBYWQCJCCd9HkDuQHT2bk6UXWnii6wsN7fQVWehChpZPPkNFkYzgBand8KNP44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzRBOB1t68FkYL7TAEcvSKdXsGbbxZ0UswhZLzL2mV+fphVEVF
+	fXOrFENdvascTE/lx5sfblIsqLAK1bSw/VvufQUEXIojOSDX4k5M/Vk+
+X-Gm-Gg: ASbGncsyN0i81g+W93tGEyqQdvOQLnHr17ajtCRf7doiNI7nYp5W0Hx8hc4tFcUeL48
+	1awXj3laqEZT75ihs3p+/aX7kWcFjkzFJUtzo7WvJXp5nbxhAvqFb8krN0QvAKa2kIJBKHR3hVZ
+	nQcHFoC+jAuOOS5Wmlh5eO6dlmy3dFJrO9UbaG0K7nfGIwqk/rQaQ6FfmH4JMFXqcKCnq4Ukf+S
+	wx0Ow3H0WQOzIoxJTL4Ttn9QGmu4sfw/zxCM2aNHX4UgJQ0Q/bgUCgDzNtb/05+KoRTNw6A2mXC
+	kNSv3IJctKqY2Z8fdHEgbPZUa1JGFh/2d1qH7xHdjAVVfeYbyaYvrIp9T1+iHfIoUAifZZFW9Ds
+	GYyAkAj0zmh3w9eCnR+xFwQ==
+X-Google-Smtp-Source: AGHT+IEKWlB3168SWBmkir7b5NWAqwlA5k6vSjGyUh+TrlKI3+6zMMfmZ0bIynD2z+XrjGmUbtwH3A==
+X-Received: by 2002:a05:6512:aca:b0:553:35bb:f7ba with SMTP id 2adb3069b0e04-553b6828f11mr3690846e87.11.1750161094445;
+        Tue, 17 Jun 2025 04:51:34 -0700 (PDT)
+Received: from pc636 (host-95-203-1-180.mobileonline.telia.com. [95.203.1.180])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac1ab12csm1877346e87.113.2025.06.17.04.51.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 04:51:33 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Tue, 17 Jun 2025 13:51:31 +0200
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com, will@kernel.org,
+	anshuman.khandual@arm.com, quic_zhenhuah@quicinc.com,
+	kevin.brodsky@arm.com, yangyicong@hisilicon.com, joey.gouly@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	david@redhat.com
+Subject: Re: [PATCH v3] arm64: Enable vmalloc-huge with ptdump
+Message-ID: <aFFWw4O2PjOScWld@pc636>
+References: <20250616103310.17625-1-dev.jain@arm.com>
+ <d0b17ac1-32e1-4086-97ec-1d70c1ac62e6@arm.com>
+ <ed2df0cc-e02c-4376-af7a-7deac6efa9b4@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/11] mm/mremap: introduce more mergeable mremap via
- MREMAP_RELOCATE_ANON
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Harry Yoo <harry.yoo@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>, Matthew Wilcox
- <willy@infradead.org>, Pedro Falcato <pfalcato@suse.de>,
- Rik van Riel <riel@surriel.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Jakub Matena <matenajakub@gmail.com>, Wei Yang <richard.weiyang@gmail.com>,
- Barry Song <baohua@kernel.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1749473726.git.lorenzo.stoakes@oracle.com>
- <22a80f22ba2082b28ee0b0a925eb3dbb37c2a786.1749473726.git.lorenzo.stoakes@oracle.com>
- <aFFOTjLtPNp7S8sP@hyeyoo>
- <7f22dec0-680b-4e3d-9aab-cd516dda8ed7@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <7f22dec0-680b-4e3d-9aab-cd516dda8ed7@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ed2df0cc-e02c-4376-af7a-7deac6efa9b4@arm.com>
 
-On 17.06.25 13:24, Lorenzo Stoakes wrote:
-> On Tue, Jun 17, 2025 at 08:15:52PM +0900, Harry Yoo wrote:
->> On Mon, Jun 09, 2025 at 02:26:35PM +0100, Lorenzo Stoakes wrote:
->>> When mremap() moves a mapping around in memory, it goes to great lengths to
->>> avoid having to walk page tables as this is expensive and
->>> time-consuming.
->>>
->>> Rather, if the VMA was faulted (that is vma->anon_vma != NULL), the virtual
->>> page offset stored in the VMA at vma->vm_pgoff will remain the same, as
->>> well all the folio indexes pointed at the associated anon_vma object.
->>>
->>> This means the VMA and page tables can simply be moved and this affects the
->>> change (and if we can move page tables at a higher page table level, this
->>> is even faster).
->>>
->>> While this is efficient, it does lead to big problems with VMA merging - in
->>> essence it causes faulted anonymous VMAs to not be mergeable under many
->>> circumstances once moved.
->>>
->>> This is limiting and leads to both a proliferation of unreclaimable,
->>> unmovable kernel metadata (VMAs, anon_vma's, anon_vma_chain's) and has an
->>> impact on further use of mremap(), which has a requirement that the VMA
->>> moved (which can also be a partial range within a VMA) may span only a
->>> single VMA.
->>>
->>> This makes the mergeability or not of VMAs in effect a uAPI concern.
->>>
->>> In some use cases, users may wish to accept the overhead of actually going
->>> to the trouble of updating VMAs and folios to affect mremap() moves. Let's
->>> provide them with the choice.
->>>
->>> This patch add a new MREMAP_RELOCATE_ANON flag to do just that, which
->>> attempts to perform such an operation. If it is unable to do so, it cleanly
->>> falls back to the usual method.
->>>
->>> It carefully takes the rmap locks such that at no time will a racing rmap
->>> user encounter incorrect or missing VMAs.
->>>
->>> It is also designed to interact cleanly with the existing mremap() error
->>> fallback mechanism (inverting the remap should the page table move fail).
->>>
->>> Also, if we could merge cleanly without such a change, we do so, avoiding
->>> the overhead of the operation if it is not required.
->>>
->>> In the instance that no merge may occur when the move is performed, we
->>> still perform the folio and VMA updates to ensure that future mremap() or
->>> mprotect() calls will result in merges.
->>>
->>> In this implementation, we simply give up if we encounter large folios. A
->>> subsequent commit will extend the functionality to allow for these cases.
->>>
->>> We restrict this flag to purely anonymous memory only.
->>>
->>> we separate out the vma_had_uncowed_parents() helper function for checking
->>> in should_relocate_anon() and introduce a new function
->>> vma_maybe_has_shared_anon_folios() which combines a check against this and
->>> any forked child anon_vma's.
->>>
->>> We carefully check for pinned folios in case a caller who holds a pin might
->>> make assumptions about index, mapping fields which we are about to
->>> manipulate.
->>>
->>> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>> ---
->>>   include/linux/rmap.h             |   4 +
->>>   include/uapi/linux/mman.h        |   1 +
->>>   mm/internal.h                    |   1 +
->>>   mm/mremap.c                      | 403 +++++++++++++++++++++++++++++--
->>>   mm/vma.c                         |  77 ++++--
->>>   mm/vma.h                         |  36 ++-
->>>   tools/testing/vma/vma.c          |   5 +-
->>>   tools/testing/vma/vma_internal.h |  38 +++
->>>   8 files changed, 520 insertions(+), 45 deletions(-)
->>
->> [...snip...]
->>
->>> @@ -754,6 +797,209 @@ static unsigned long pmc_progress(struct pagetable_move_control *pmc)
->>>   	return old_addr < orig_old_addr ? 0 : old_addr - orig_old_addr;
->>>   }
->>>
->>> +/*
->>> + * If the folio mapped at the specified pte entry can have its index and mapping
->>> + * relocated, then do so.
->>> + *
->>> + * Returns the number of pages we have traversed, or 0 if the operation failed.
->>> + */
->>> +static unsigned long relocate_anon_pte(struct pagetable_move_control *pmc,
->>> +		struct pte_state *state, bool undo)
->>> +{
->>> +	struct folio *folio;
->>> +	struct vm_area_struct *old, *new;
->>> +	pgoff_t new_index;
->>> +	pte_t pte;
->>> +	unsigned long ret = 1;
->>> +	unsigned long old_addr = state->old_addr;
->>> +	unsigned long new_addr = state->new_addr;
->>> +
->>> +	old = pmc->old;
->>> +	new = pmc->new;
->>> +
->>> +	pte = ptep_get(state->ptep);
->>> +
->>> +	/* Ensure we have truly got an anon folio. */
->>> +	folio = vm_normal_folio(old, old_addr, pte);
->>> +	if (!folio)
->>> +		return ret;
->>> +
->>> +	folio_lock(folio);
->>> +
->>> +	/* No-op. */
->>> +	if (!folio_test_anon(folio) || folio_test_ksm(folio))
->>> +		goto out;
->>
->> I think the kernel should not observe any KSM pages during mremap
->> because it breaks KSM pages in prep_move_vma()?
-
-Ah, that's the maigc bit, thanks!
-
+On Mon, Jun 16, 2025 at 10:20:29PM +0100, Ryan Roberts wrote:
+> On 16/06/2025 19:07, Ryan Roberts wrote:
+> > On 16/06/2025 11:33, Dev Jain wrote:
+> >> arm64 disables vmalloc-huge when kernel page table dumping is enabled,
+> >> because an intermediate table may be removed, potentially causing the
+> >> ptdump code to dereference an invalid address. We want to be able to
+> >> analyze block vs page mappings for kernel mappings with ptdump, so to
+> >> enable vmalloc-huge with ptdump, synchronize between page table removal in
+> >> pmd_free_pte_page()/pud_free_pmd_page() and ptdump pagetable walking. We
+> >> use mmap_read_lock and not write lock because we don't need to synchronize
+> >> between two different vm_structs; two vmalloc objects running this same
+> >> code path will point to different page tables, hence there is no race.
+> >>
+> >> For pud_free_pmd_page(), we isolate the PMD table to avoid taking the lock
+> >> 512 times again via pmd_free_pte_page().
+> >>
+> >> We implement the locking mechanism using static keys, since the chance
+> >> of a race is very small. Observe that the synchronization is needed
+> >> to avoid the following race:
+> >>
+> >> CPU1							CPU2
+> >> 						take reference of PMD table
+> >> pud_clear()
+> >> pte_free_kernel()
+> >> 						walk freed PMD table
+> >>
+> >> and similar race between pmd_free_pte_page and ptdump_walk_pgd.
+> >>
+> >> Therefore, there are two cases: if ptdump sees the cleared PUD, then
+> >> we are safe. If not, then the patched-in read and write locks help us
+> >> avoid the race.
+> >>
+> >> To implement the mechanism, we need the static key access from mmu.c and
+> >> ptdump.c. Note that in case !CONFIG_PTDUMP_DEBUGFS, ptdump.o won't be a
+> >> target in the Makefile, therefore we cannot initialize the key there, as
+> >> is being done, for example, in the static key implementation of
+> >> hugetlb-vmemmap. Therefore, include asm/cpufeature.h, which includes
+> >> the jump_label mechanism. Declare the key there and define the key to false
+> >> in mmu.c.
+> >>
+> >> No issues were observed with mm-selftests. No issues were observed while
+> >> parallelly running test_vmalloc.sh and dumping the kernel pagetable through
+> >> sysfs in a loop.
+> >>
+> >> v2->v3:
+> >>  - Use static key mechanism
+> >>
+> >> v1->v2:
+> >>  - Take lock only when CONFIG_PTDUMP_DEBUGFS is on
+> >>  - In case of pud_free_pmd_page(), isolate the PMD table to avoid taking
+> >>    the lock 512 times again via pmd_free_pte_page()
+> >>
+> >> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> >> ---
+> >>  arch/arm64/include/asm/cpufeature.h |  1 +
+> >>  arch/arm64/mm/mmu.c                 | 51 ++++++++++++++++++++++++++---
+> >>  arch/arm64/mm/ptdump.c              |  5 +++
+> >>  3 files changed, 53 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> >> index c4326f1cb917..3e386563b587 100644
+> >> --- a/arch/arm64/include/asm/cpufeature.h
+> >> +++ b/arch/arm64/include/asm/cpufeature.h
+> >> @@ -26,6 +26,7 @@
+> >>  #include <linux/kernel.h>
+> >>  #include <linux/cpumask.h>
+> >>  
+> >> +DECLARE_STATIC_KEY_FALSE(ptdump_lock_key);
+> >>  /*
+> >>   * CPU feature register tracking
+> >>   *
+> >> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> >> index 8fcf59ba39db..e242ba428820 100644
+> >> --- a/arch/arm64/mm/mmu.c
+> >> +++ b/arch/arm64/mm/mmu.c
+> >> @@ -41,11 +41,14 @@
+> >>  #include <asm/tlbflush.h>
+> >>  #include <asm/pgalloc.h>
+> >>  #include <asm/kfence.h>
+> >> +#include <asm/cpufeature.h>
+> >>  
+> >>  #define NO_BLOCK_MAPPINGS	BIT(0)
+> >>  #define NO_CONT_MAPPINGS	BIT(1)
+> >>  #define NO_EXEC_MAPPINGS	BIT(2)	/* assumes FEAT_HPDS is not used */
+> >>  
+> >> +DEFINE_STATIC_KEY_FALSE(ptdump_lock_key);
+> >> +
+> >>  enum pgtable_type {
+> >>  	TABLE_PTE,
+> >>  	TABLE_PMD,
+> >> @@ -1267,8 +1270,9 @@ int pmd_clear_huge(pmd_t *pmdp)
+> >>  	return 1;
+> >>  }
+> >>  
+> >> -int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
+> >> +static int __pmd_free_pte_page(pmd_t *pmdp, unsigned long addr, bool lock)
+> >>  {
+> >> +	bool lock_taken = false;
+> >>  	pte_t *table;
+> >>  	pmd_t pmd;
+> >>  
+> >> @@ -1279,15 +1283,29 @@ int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
+> >>  		return 1;
+> >>  	}
+> >>  
+> >> +	/* See comment in pud_free_pmd_page for static key logic */
+> >>  	table = pte_offset_kernel(pmdp, addr);
+> >>  	pmd_clear(pmdp);
+> >>  	__flush_tlb_kernel_pgtable(addr);
+> >> +	if (static_branch_unlikely(&ptdump_lock_key) && lock) {
+> >> +		mmap_read_lock(&init_mm);
+> >> +		lock_taken = true;
+> >> +	}
+> >> +	if (unlikely(lock_taken))
+> >> +		mmap_read_unlock(&init_mm);
+> >> +
+> >>  	pte_free_kernel(NULL, table);
+> >>  	return 1;
+> >>  }
+> >>  
+> >> +int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
+> >> +{
+> >> +	return __pmd_free_pte_page(pmdp, addr, true);
+> >> +}
+> >> +
+> >>  int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+> >>  {
+> >> +	bool lock_taken = false;
+> >>  	pmd_t *table;
+> >>  	pmd_t *pmdp;
+> >>  	pud_t pud;
+> >> @@ -1301,15 +1319,40 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+> >>  	}
+> >>  
+> >>  	table = pmd_offset(pudp, addr);
+> >> +	/*
+> >> +	 * Isolate the PMD table; in case of race with ptdump, this helps
+> >> +	 * us to avoid taking the lock in __pmd_free_pte_page().
+> >> +	 *
+> >> +	 * Static key logic:
+> >> +	 *
+> >> +	 * Case 1: If ptdump does static_branch_enable(), and after that we
+> >> +	 * execute the if block, then this patches in the read lock, ptdump has
+> >> +	 * the write lock patched in, therefore ptdump will never read from
+> >> +	 * a potentially freed PMD table.
+> >> +	 *
+> >> +	 * Case 2: If the if block starts executing before ptdump's
+> >> +	 * static_branch_enable(), then no locking synchronization
+> >> +	 * will be done. However, pud_clear() + the dsb() in
+> >> +	 * __flush_tlb_kernel_pgtable will ensure that ptdump observes an
+> >> +	 * empty PUD. Thus, it will never walk over a potentially freed
+> >> +	 * PMD table.
+> >> +	 */
+> >> +	pud_clear(pudp);
+> > 
+> > How can this possibly be correct; you're clearing the pud without any
+> > synchronisation. So you could have this situation:
+> > 
+> > CPU1 (vmalloc)			CPU2 (ptdump)
+> > 
+> > 				static_branch_enable()
+> > 				  mmap_write_lock()
+> > 				    pud = pudp_get()
+> > pud_free_pmd_page()
+> >   pud_clear()
+> > 				    access the table pointed to by pud
+> > 				    BANG!
+> > 
+> > Surely the logic needs to be:
+> > 
+> > 	if (static_branch_unlikely(&ptdump_lock_key)) {
+> > 		mmap_read_lock(&init_mm);
+> > 		lock_taken = true;
+> > 	}
+> > 	pud_clear(pudp);
+> > 	if (unlikely(lock_taken))
+> > 		mmap_read_unlock(&init_mm);
+> > 
+> > That fixes your first case, I think? But doesn't fix your second case. You could
+> > still have:
+> > 
+> > CPU1 (vmalloc)			CPU2 (ptdump)
+> > 
+> > pud_free_pmd_page()
+> >   <ptdump_lock_key=FALSE>
+> > 				static_branch_enable()
+> > 				  mmap_write_lock()
+> > 				    pud = pudp_get()
+> >   pud_clear()
+> > 				    access the table pointed to by pud
+> > 				    BANG!
+> > 
+> > I think what you need is some sort of RCU read-size critical section in the
+> > vmalloc side that you can then synchonize on in the ptdump side. But you would
+> > need to be in the read side critical section when you sample the static key, but
+> > you can't sleep waiting for the mmap lock while in the critical section. This
+> > feels solvable, and there is almost certainly a well-used pattern, but I'm not
+> > quite sure what the answer is. Perhaps others can help...
 > 
-> Right, nor should we observe !anon pages here since we already checked for
-> that...
+> Just taking a step back here, I found the "percpu rw semaphore". From the
+> documentation:
 > 
-> This is belt + braces. Maybe we should replace with VM_WARN_ON_ONCE()'s...?
+> """
+> Percpu rw semaphores is a new read-write semaphore design that is
+> optimized for locking for reading.
+> 
+> The problem with traditional read-write semaphores is that when multiple
+> cores take the lock for reading, the cache line containing the semaphore
+> is bouncing between L1 caches of the cores, causing performance
+> degradation.
+> 
+> Locking for reading is very fast, it uses RCU and it avoids any atomic
+> instruction in the lock and unlock path. On the other hand, locking for
+> writing is very expensive, it calls synchronize_rcu() that can take
+> hundreds of milliseconds.
+> """
+> 
+> Perhaps this provides the properties we are looking for? Could just define one
+> of these and lock it in read mode around pXd_clear() on the vmalloc side. Then
+> lock it in write mode around ptdump_walk_pgd() on the ptdump side. No need for
+> static key or other hoops. Given its a dedicated lock, there is no risk of
+> accidental contention because no other code is using it.
+>
+Write-lock indeed is super expensive, as you noted it blocks on
+synchronize_rcu(). If that write-lock interferes with a critical
+vmalloc fast path, where a read-lock could be injected, then it
+is definitely a problem. 
 
-Sure. Anything you can throw out probably reduces the overhead :)
+I have not analysed this patch series. I need to have a look what
+"ptdump" does.
 
--- 
-Cheers,
-
-David / dhildenb
-
+--
+Uladzislau Rezki
 
