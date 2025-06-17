@@ -1,146 +1,89 @@
-Return-Path: <linux-kernel+bounces-690544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C0FADD429
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:07:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8763ADDA17
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 19:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8358E4066BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:59:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4CC04A2B70
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DC62F4333;
-	Tue, 17 Jun 2025 15:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F82C13B5B3;
+	Tue, 17 Jun 2025 16:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="HIqVRqdc"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Fo0EChMa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06C92E92C8
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 15:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA01F2FA624;
+	Tue, 17 Jun 2025 16:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750175718; cv=none; b=Z08E9lYSkk6PHHHuj1iWLr4Fz+3gi4YB6q2bUEiopSnnuBa34TpTdxXUBNJB/KT+5umJmrYUBhS8FncNEFDI5CuwwRa8RMCzK7RQSxBGKcpU4vf3rmeHNepE2b6gGBJnlP3YT1D9AoEr+2u6r6JsHM7VpVv+/Wdu0uwLO0n6wTY=
+	t=1750179595; cv=none; b=lTqTAs+YM8XvlhLoRLQQ0mYqJU/xrbBv6DzwFuVa3wJ+YjImDhf9CjbSArdQE8otikj4LLm6vVxnyetxy9ZtgL71KuQsjiubI1C6oY0+egwcHqntCLNh940Hv2HNTVdf9DE2z7N5AFGlpkrQrZK0juvtBARRVCVZd2fvJTmGucM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750175718; c=relaxed/simple;
-	bh=55IiHynz00pYy+b7hGuuDjrL2Y//CLig++XAkelZNU4=;
+	s=arc-20240116; t=1750179595; c=relaxed/simple;
+	bh=uEOMgL0enjAcnngHzRz3sXuDxKITAnkXRV1o9HPvaIE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XEeX0Nqx1rJ6CBXULcHOaljArerOTI4zAOEuxWimldmttKXx9KcG3SS9ynG1iFvvO2ShbcSgLOJkRO2UkrjLTmuVuwq+Me6LGM47dzSEPYC51FRPC7BPC4Og4/a3pFsLQLpJybHPWPIbsAPbA0uYqPTD9nZA8jpz12JbkACLsKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=HIqVRqdc; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7d094d1fd7cso844465885a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 08:55:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1750175715; x=1750780515; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wx304DZ0NE2g+OOJjBg61lF2TCxnm7rjurAO1hRurAk=;
-        b=HIqVRqdcOM4dDB8xrn1Py7RCcYdMa06j2fwy4Yz1zBiYGgAfO59m9m3uatw1ynKgkY
-         HEF2qsGl3Ek9fyOlCEPddvdrZEMUJeZYunfJqUDC8+M1wb7Kcn1kbcgMwp8ivgAIPvhI
-         w7vOd5IDMbcrC2NZf1zsK9RYMV8sA2L0CHdwLS9YDvze56bH3fKVGkJqNASxCWU20Jim
-         c/89OCT2QHklTFpDlRLcDMuLvDfv2E5V3/5z4Ctb4RWB7jQLT4MTZtOHEf3nBpATz+W2
-         Qi/xch2rzD46weHvEw/s8aSyXwc4qbjVTZI/8WRXWqEa6FxVbRON4IAffCFDWeNNNqiO
-         JGtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750175715; x=1750780515;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wx304DZ0NE2g+OOJjBg61lF2TCxnm7rjurAO1hRurAk=;
-        b=eVOqYRqYf904q9KalM4VA7ltE0qJiDAhq5aWyGCF1vM9u89i3EMpcBe9cNoCZkHL0R
-         HnJfQOhWAsZpux6E+UMPdW7hXcOXz0Kq8EZbtyOU/9PaRLtlEdtgumYyq0sifvuI09bW
-         4zQfmfpZL0HQB6L957YS++8oRUfGvnvejsPuwYz4eS3+8GvA/mrAGSAK0o/5W2GO4uks
-         oIoUT8Ufe+ftW3emZi4IHwIUvKlp31kWVbU1OFL9FajOr0KapYTv1Ut95TZpFEq9EbMS
-         Z+28NjWJ0oEfrOiclmdPmn1iE2VArd0V0ZvRM+RKtyUE0f8PO6PDAt2nlXw4ckJAy/91
-         R3qg==
-X-Forwarded-Encrypted: i=1; AJvYcCX00wuOzyrk7jMxzU/U/ABXohKXksVoaeKBBvlshTTl/wR71LunpkDm65Qsf1eqtrtjKi8VlrBA6fE4Zis=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr+9EESemw/jG7iAyIfuYlrsS0OJSGmSTwXEpgRckMFMDOhQt5
-	Gp/z9C1+wdGZ95JWHwmmOZWYm7bSViHy9tNBjs1wTZNDkhoQht4Wu0TBKMOJVEXQYWg=
-X-Gm-Gg: ASbGncsTdw2QG+c+e8Cm+0/friSAt4o+EnwmF4EoYHKAVYmVoq9JiP+lpzaRggc42Uj
-	802RQo3azqO9t8Fakth7G4ucc1NEYPUqeojWvgv7M4f/4cBaGisXbkGmWP+p7y4PIF8lyANwNvV
-	R2WK3qIe0uLnruLdUFRG0Uz5hkmHRBLBCcDKQqlt2iwXlnnhsAfr8wAYgXkgPoA5OdZobD8y6Na
-	gNtQBC8J11Vr1u5MwKBw9YLMCgUL6juTxJij0mwZkvJVEeZcsTvqjfwTyUx7rCYGqLfkc9Pmkbp
-	/A9nHGS9P0wJ+ojj34hIOEAun4+bxGuGYYSQsNOvi2v8oWXqNNF3IWW+tnKhShxsZ5aUkR208hi
-	pPkK6gh0qQkDNQfHsCBS1yGd4XKh2cWTgNCiN9Q==
-X-Google-Smtp-Source: AGHT+IFXnZTcKPgzMT86nxmrlf7kz4ru5nOzoSNqyGX+eUmWwxWkQ7vtqqAzKrLwaYYroH6Qyc+UTQ==
-X-Received: by 2002:a05:6214:2682:b0:6fa:c634:dc01 with SMTP id 6a1803df08f44-6fb47786d90mr220187206d6.16.1750175715483;
-        Tue, 17 Jun 2025 08:55:15 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb35b20abasm63746496d6.1.2025.06.17.08.55.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 08:55:14 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uRYeY-00000006WS6-1OTF;
-	Tue, 17 Jun 2025 12:55:14 -0300
-Date: Tue, 17 Jun 2025 12:55:14 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Christoph Hellwig <hch@lst.de>, James Clark <james.clark@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	Vladimir Oltean <olteanv@gmail.com>, oe-kbuild-all@lists.linux.dev,
-	Larisa Grigore <larisa.grigore@nxp.com>,
-	Frank Li <Frank.li@nxp.com>, linux-spi@vger.kernel.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
-Subject: Re: [PATCH] dma-mapping: Stub out dma_{alloc,free,map}_pages() API
-Message-ID: <20250617155514.GC1376515@ziepe.ca>
-References: <7cfcf919-3c7d-4f0c-911f-697ea3141080@linaro.org>
- <20250616131346.GB29838@lst.de>
- <83855c1a-c128-4762-9d6b-e17f2c4c8820@linaro.org>
- <d16bdc40-20d6-49db-bf41-18bb9b8e01fd@linaro.org>
- <20250616131944.GA30260@lst.de>
- <f723d490-c228-42d5-9f9f-158df54a092d@linaro.org>
- <9788991a-ac37-4fde-81db-c55035d00f27@app.fastmail.com>
- <20250617044833.GE1824@lst.de>
- <5de445aa-048b-4f60-9045-df5d45341436@app.fastmail.com>
- <76a8c896-d7ea-4471-99a2-34b3a7ac9804@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m6i7NtmBSPqv7B7I3hDbF7otmGujDTmQXSKYyXkjq5RMNAY11ptyoKzNqbW5s/ablKQCs1pyDF9Y1jBnaz+gyFYLZPsZg7F4x8hJfKwxDz1jNiWc20n/eFREiWkEJTGz4kWM/UVOfyzSvKNV05Mu85arxPDB5xEDma01CHHA+6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Fo0EChMa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26D13C4CEF0;
+	Tue, 17 Jun 2025 16:59:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1750179595;
+	bh=uEOMgL0enjAcnngHzRz3sXuDxKITAnkXRV1o9HPvaIE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fo0EChMa7s6vQniwm+xb0uKPr5MvPVjqgu2ivI/SpK3Rvof5c0D/40E9AGjA8WDmy
+	 9jE2igMgBxD3NJCCiUDZlGAdmpIcz8ZkXLEtJEuXzdivjH/vBnhOWZ0l9YHyv8+ojp
+	 3/McfGdtgmSajg4anTY9MfdwOhN5ysAxheAxoPKs=
+Date: Tue, 17 Jun 2025 17:56:03 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Aidan Stewart <astewart@tektelic.com>
+Cc: "jirislaby@kernel.org" <jirislaby@kernel.org>,
+	"tony@atomide.com" <tony@atomide.com>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] serial: core: restore of_node information in sysfs
+Message-ID: <2025061740-sustained-linked-a845@gregkh>
+References: <20250616162154.9057-1-astewart@tektelic.com>
+ <2025061746-raking-gusto-d1f3@gregkh>
+ <915d0631ac123bbbb5d3fac1248b97d9de3295c6.camel@tektelic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <76a8c896-d7ea-4471-99a2-34b3a7ac9804@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <915d0631ac123bbbb5d3fac1248b97d9de3295c6.camel@tektelic.com>
 
-On Tue, Jun 17, 2025 at 10:26:51AM +0200, Arnd Bergmann wrote:
-> On Tue, Jun 17, 2025, at 09:53, Arnd Bergmann wrote:
-> 
-> > Between SH72xx/SH76xx, SUN3 and M68328, I believe the
-> > supported machines are all limited to between 1MB and 32MB in
-> > the maximum configuration, which is obviously extremely
-> > tight.
-> 
-> I checked the exact numbers we're talking about here: enabling
-> CONFIG_HAS_DMA on rsk7269_defconfig adds 10KB of extra vmlinux
-> size, which doesn't seem too bad:
-> 
->    text	   data	    bss	    dec	    hex	filename
-> 3295084	1111396	 112264	4518744	 44f358	vmlinux-before
-> 3302836	1113652	 112264	4528752	 451a70	vmlinux-after
+On Tue, Jun 17, 2025 at 03:46:37PM +0000, Aidan Stewart wrote:
+> On Tue, 2025-06-17 at 06:44 +0200, Greg KH wrote:
+> > 
+> > On Mon, Jun 16, 2025 at 10:21:54AM -0600, Aidan Stewart wrote:
+> > > 
+> > > 
+> > > +     if (IS_ENABLED(CONFIG_OF)) {
+> > > +             device_set_of_node_from_dev(dev, parent_dev);
+> > > +     }
+> > 
+> > Did this pass checkpatch.pl?
+> I ran checkpatch.pl with the --strict option and I didn't get any warnings
+> or errors. Is there a style issue you would like me to fix?
 
-Long ago I ran some numbers for an ancient PPC system:
+You should not need {} for a one line if statement.
 
-https://lore.kernel.org/all/20121119214922.GA5636@obsidianresearch.com/
+> > And why is the if statement needed?
+> I guess it's not really needed. I was trying to avoid the call for non-DT
+> systems, but it should still be safe to do. I will remove it in v2.
 
-The base smallest kernel was growing .text and a stripped down initrd
-at a rate of 1MB evey 6 years.
+Please do!
 
-Somehow I doubt that system (with 16MB ram I think it was) would even
-fit a v6.x kernel. v3.6 was already challenging.
+thanks,
 
-Even back then Greg was incredulous that an embedded system would run
-a 6 year newer kernel. Here we are contemplating a 20 year newer
-kernel?
-
-I think you have the right direction, we just removed !SMP support,
-removing !DMA also seems logical to me.
-
-Jason
+greg k-h
 
