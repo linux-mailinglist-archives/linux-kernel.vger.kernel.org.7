@@ -1,261 +1,156 @@
-Return-Path: <linux-kernel+bounces-690959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB0CADDE7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:03:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D06ADDE89
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BE60189F088
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:03:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6744176DEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31512853E0;
-	Tue, 17 Jun 2025 22:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3E129550C;
+	Tue, 17 Jun 2025 22:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="XBSYUyy4"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iVHPpoS1"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE24169AE6;
-	Tue, 17 Jun 2025 22:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA82291880;
+	Tue, 17 Jun 2025 22:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750197781; cv=none; b=s9zkL0sbHiqXw7ZUQzgEO36L9VT4oX5AR8e/QFuR9TmjwxiLGUN0cReDwXcQ4u5an/3vlDcojmoqhJ9ZoIllTGf5AGFtvhiX6QuskuiAdjXFWm2rYqP7HTcTRSQezVJwV3yp7MOV1VuJnVApTYSYVnpdWa9PanFpa6WQWF8ZidU=
+	t=1750198353; cv=none; b=cRsYhesvlbDGXX+02y3nJcDDjsFXx5Osff1MKJV8DTDnQ/DiQiXRAGYVKeyPHqRnm2/TNAF3ABcazS41dw9VDLQj91FwzmiiB5jrm6/V0LXtRW90SHhF/Uf/wsLkc9PpsKTPZ9/xwpp9hJe1XeYNZYksRnIbg10JIKpO7nnqhdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750197781; c=relaxed/simple;
-	bh=IYwhBocoQttwqti4KzzsLz7mIWxTlUfZKRvFXl5rOZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E0RpBG0RXoTvoJ4i8Iphb0Bf4IWNErKwI34Oap92KyCMRKeR6nt3h8alXajiaV8txkK0/7dN1pO1mrlF9Gq/6Xt/MYPLjVX3fpTe0Y7eS6pL6TR3RtpCyGWApQv76jJnPqQ6XyCQ9Ez5ldt80UYRf4JWUo/n0+2hUbt6dDp8Ej8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=XBSYUyy4; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1750197768; x=1750802568; i=w_armin@gmx.de;
-	bh=IYwhBocoQttwqti4KzzsLz7mIWxTlUfZKRvFXl5rOZs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=XBSYUyy4fvblqrWCRwkdj9Re7JqSX9eiNj5nV4nFpxhT5lSdEzo/9+8AHDNvsj9o
-	 BD7VfgftGZDye+5NQFmZCiE9MSEYKYEBKtbV4uK38y4r2WmSKvzfRs2aaHPd7CGW0
-	 Uds/tSu+Yy6HB22z1zEAMNnWUJA4x+rjmh2HMw31Tka1Bv8rWaLvTTY8QFbaI+RYq
-	 xScHudm1HoFqMVqXzdcE67N/TZSGzl7PB6ZXj5qrZQzMcnAnV7fWDKLJVusTySrig
-	 nvEft/hTRT57xK0Qy+ChuPEaoiF9prPgIGY6/bH8lJya0ik4aMdCSt8yGyrfIUAAf
-	 ARHuRqWJzQzGHRtXiw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M3DJv-1uUgGI2xsT-0024iN; Wed, 18
- Jun 2025 00:02:47 +0200
-Message-ID: <a01af201-328b-4017-ab17-16cbc4ecfff4@gmx.de>
-Date: Wed, 18 Jun 2025 00:02:45 +0200
+	s=arc-20240116; t=1750198353; c=relaxed/simple;
+	bh=EPmLUyNxBvduEf3hivuJ/ziJSJf45XkSAheFAsJmhFI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=M7s3C2db7jv2Y4ok42iVpewXOqnjOUtZ6MweO4SDf3iffLeg2B+BA4XgA/zBhjRn4xbB+PtdsZVq0MWdrSje3BtHbGquyB+wFBeAOSpcpvmYxSM3S3OHK4qTaDVdLV2fjMzcodMAZKe08P3VdT62OE3Qh20KulvCXow+WI+MZtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iVHPpoS1; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-306b6ae4fb2so5376484a91.3;
+        Tue, 17 Jun 2025 15:12:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750198349; x=1750803149; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BKH4UrAHhOah9Nma21oGP9V2LUXoZwe3ujsfHTgLwZs=;
+        b=iVHPpoS1B0VNU0wDkosUUOfvw0GsYQUWqr0zeAQSe6ruXT5qqOPHGd6UDv2Zy54CVr
+         hOa+vANDc1emrS5n4XVEd8UEjdwU1O2g6A59We487IYjMhlRwGPkCdj5ekWryiN2Am0l
+         rM9TWpCtZaiTe2Hb0+mWciJDQ4C2TQ7n75K92D2HmOFoG0WeSafCYX8I3Bhy2eMNvvy3
+         bew1bvlaV9Dre2GEwcKaT45/0VrOOueu4zmoA9GT36czsRGD62R65OjeqPlHtbZgY0/N
+         Om73RvPSDgel5nPUxvuUpSJxQNNj1CrAQ/cg1QQvjUX9zwjuXrhzvvj8UHAViOo3s6fY
+         mWhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750198349; x=1750803149;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BKH4UrAHhOah9Nma21oGP9V2LUXoZwe3ujsfHTgLwZs=;
+        b=OTknHWEngC+TsB2ef2e4e1tGxVVOC1fHEUEqseLPUZ2UMvulrbhdE7XnxkQ0wlXWYd
+         nCf4CUaeTlc8r5wP/tcylylRTRZACth0afH0MZDOhZnJlrizvVHqtEuQuB2YeLu1JpBE
+         F+YcPiJKDWoZ38KdmaGzpRGAaRDFkQtET2bafB6VsrnjLRD9pcpuZIEDJatMnDEV8t1q
+         5MNUMaQEjzLPfCUJsNaRPDgkzkgjW+pf1ACo4VYQmO8z/NKXDWxDuvq+S28uzvJQBaRe
+         qllWSZcgJXDLc/wb5ZwjLdvyRubIJ6GkaLJXIAX4hIwAkhjaj9LHUga3gsYYvJJCEVWi
+         nBcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWf4WALjAajTVWCuG///c014Kl/TM1O4JUbAOWSPYwAtc8LqDasiAfOaUpFGupW5Cf8wAa0sBiWCxTGEMBa@vger.kernel.org, AJvYcCX+aqrZsNKN53Iwfvebp8TqW5DY2Q8Dkl1AH8QxubuOC6wnTENwKh9Tg4hG+Poy2wweQcPMCWuujnlb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIWTkVYgms6fNVuQatEVg223FModnK7pYHrloX4YGfzzT84Bgt
+	hk9mkiOHBZUZlWSXTA3Tl9HxUFrycQ0PDa0v6OWfju/sguUPyuA+4pCt
+X-Gm-Gg: ASbGnct/sxpyTSYhN3zwWgtcDBuJmeHJ6jXC4GiVVrm3VWFJqeygVtHLLaq9kKtrpvy
+	Gv8X7IW1XAcqIK4EmmZ25vkH2sxgtuO/d1+1/pzVCkBOQK8cjX1FanQHGqMXuG/5RjJd9UugMsg
+	yoy6EvHy1lzFd93FpWye0tuA/2ubrHsLV2/R8DkMcQUBifvkPuMPs/olfGFoG4Ip68ZaDI754kn
+	hq+q7mg8Ma+iLIdHqzfR/Iu4p1drq5UYT2QN50C/vg6UAeSIUBOtl5aDqPq5XUx5y+HsKzEh0ZL
+	ZqomNBqXm7+QPSXZiwvxbuWwBKk/s1+P16De7ehwTWjImD7k/9cSVIOorTAZLQ==
+X-Google-Smtp-Source: AGHT+IHfxEMFqwig695MprualdP+GZmtfO5tuTvZ8Lq8VdsfGlpR2m4blSerjMAnZ+9WZVEN6I2sKg==
+X-Received: by 2002:a17:90b:3d0a:b0:312:18e:d930 with SMTP id 98e67ed59e1d1-313f1d4e217mr20021387a91.19.1750198348900;
+        Tue, 17 Jun 2025 15:12:28 -0700 (PDT)
+Received: from wash.local ([50.46.184.91])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365de781c7sm85862635ad.128.2025.06.17.15.12.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 15:12:28 -0700 (PDT)
+From: Joseph Kogut <joseph.kogut@gmail.com>
+Subject: [PATCH v5 0/3] Add Radxa CM5 module and IO board dts
+Date: Tue, 17 Jun 2025 15:11:58 -0700
+Message-Id: <20250617-rk3588s-cm5-io-dts-upstream-v5-0-8d96854a5bbd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/3] platform/x86: Add support for Uniwill laptop
- features
-To: Werner Sembach <wse@tuxedocomputers.com>, ilpo.jarvinen@linux.intel.com,
- hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
- ggo@tuxedocomputers.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org
-References: <20250615175957.9781-1-W_Armin@gmx.de>
- <50c4d166-0254-4f5e-b006-85aef8d9dd02@tuxedocomputers.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <50c4d166-0254-4f5e-b006-85aef8d9dd02@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jIW5LwIVNRdAyaBjRU4dtAMFovbLA5YIdPcYrjrpC70JeAnDlOg
- G9Vko6rwDFtImI+hsJo3vHv9mh8zkC4C9LksE1Q0Bd4luTBVa6sMbh/dKktZsuKoSB/VMCt
- UrnSpezco1++75GcXMwnQnhPP1zfrPrLVPXs/TAWJRWI8UBnMS791pg+Cd3cdaKzhKvHJTx
- elLcr7rDmq9crfRzAl5OA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:cH50EjbrdMo=;r6xzHubFZGBQ8HyiwVoc00G7w7M
- 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
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC7oUWgC/43NQQ6CMBCF4auYrh1ToQPVlfcwLEo7wERLSYtEQ
+ 7i7lRO4/N7if6tIFJmSuB5WEWnhxGHMwONB2MGMPQG7bFHIAmUlEeKjRK0TWI/AAdyc4DWlOZL
+ x0Cl3Jo3lpa5J5MIUqeP3Xr832QOnOcTPfrao3/pfd1EgQSuFrkVrqlbeem/4ebLBi2bbti8cs
+ FMoxgAAAA==
+X-Change-ID: 20250605-rk3588s-cm5-io-dts-upstream-f4d1e853977e
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Jimmy Hon <honyuenkwun@gmail.com>
+Cc: Steve deRosier <derosier@cal-sierra.com>, devicetree@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Joseph Kogut <joseph.kogut@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
 
-Am 16.06.25 um 14:59 schrieb Werner Sembach:
+This patch series adds initial device tree support for the Radxa CM5 SoM
+and accompanying IO board.
 
-> Hi Armin,
->
-> Am 15.06.25 um 19:59 schrieb Armin Wolf:
->> This patch series adds support for the various features found on
->> laptops manufactured by Uniwill. Those features are:
->>
->> =C2=A0 - battery charge limiting
->> =C2=A0 - RGB lightbar control
->> =C2=A0 - hwmon support
->> =C2=A0 - improved hotkey support
->> =C2=A0 - keyboard-related settings
->>
->> This patch series is based on the following out-of-tree drivers:
->>
->> =C2=A0 - https://github.com/pobrn/qc71_laptop
->> =C2=A0 - https://github.com/tuxedocomputers/tuxedo-drivers
-> Better use=20
-> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
->>
->> Additionally the OEM software of the Intel Nuc x15 was
->> reverse-engineered to have a better understanding about the underlying
->> hardware interface.
->>
->> The first patch introduces the uniwill-wmi driver used for handling
->> WMI events on Uniwill devices. Due to a grave design error inside the
->> underlying WMI firmware interface (the WMI GUID was copied from the
->> Windows driver samples and is thus not unique) the driver cannot be
->> autoloaded. Instead drivers using this module will load it as an
->> module dependency.
->>
->> The second patch introduces the uniwill-laptop driver that does the
->> majority of the work. This driver talks to the embedded controller
->> yet another WMI interface to control the various features. Sadly this
->> WMI firmware interfaces suffers from the exact same issue (the WMI
->> GUID is not unique) and thus a DMI whitelist has to be used for
->> loading the driver.
->>
->> The last patch finally adds some documentation for configuring and
->> using both drivers.
->>
->> Special thanks go to:
->>
->> =C2=A0 - github user cyear for bring up this topic on the lm-sensors is=
-sue
->> =C2=A0=C2=A0=C2=A0 tracker and being the tester for various prototype v=
-ersions
->> =C2=A0 - github user dumingqiao for testing the battery, lightbar and
->> =C2=A0=C2=A0=C2=A0 keyboard-related features
->> =C2=A0 - Tuxedo computers for giving advice on how to design the usersp=
-ace
->> =C2=A0=C2=A0=C2=A0 interface
->>
->> I send this series as an RFC to gather feedback and to request any
->> involved developers if they want to have their Co-developed-by tags
->> on the final patch series.
->
-> Afaik most of the initial uniwill module in tuxedo-drivers was written=
-=20
-> by Christoffer, he is currently on holiday, but I will ask him when he=
-=20
-> is back. I also did later added to it later.
->
-> Since this driver is a complete rewrite I'm not sure if a Co-developed=
-=20
-> by for Christoffer and me is appropriate, but we would ofc be happy=20
-> about it. Maybe for finding out the EC register meanings that you=20
-> probably at least partially copied over from tuxedo-drivers?
->
-I did, but i mostly relied on the reverse-engineered OEM application for t=
-hat.
+V4 -> V5:
+  Patch (2/3), per Jimmy:
+  - Alias eMMC to mmc0
+  - Remove unused sdio alias
+  - Move gmac, hdmi0 nodes to carrier board dts
 
-> Or do you see another label more fitting?
->
-I could also include your names inside the individual driver source code i=
-n a special thank-you section.
+  Patch (3/3), per Jimmy:
+  - Enable hdmi0_sound and i2s5_8ch
+  - Remove redundant enablement of sdhci
+  - Enable usb_host2_xhci
 
-Thanks,
-Armin Wolf
+  - Tested HDMI audio
 
-> Best regards,
->
-> Werner
->
->>
->> Armin Wolf (3):
->> =C2=A0=C2=A0 platform/x86: Add Uniwill WMI driver
->> =C2=A0=C2=A0 platform/x86: Add Uniwill laptop driver
->> =C2=A0=C2=A0 Documentation: laptops: Add documentation for uniwill lapt=
-ops
->>
->> =C2=A0 .../ABI/testing/sysfs-driver-uniwill-laptop=C2=A0=C2=A0 |=C2=A0=
-=C2=A0 53 +
->> =C2=A0 Documentation/admin-guide/laptops/index.rst=C2=A0=C2=A0 |=C2=A0=
-=C2=A0=C2=A0 1 +
->> =C2=A0 .../admin-guide/laptops/uniwill-laptop.rst=C2=A0=C2=A0=C2=A0 |=
-=C2=A0=C2=A0 68 +
->> =C2=A0 Documentation/wmi/devices/uniwill-laptop.rst=C2=A0 |=C2=A0 109 +=
-+
->> =C2=A0 Documentation/wmi/devices/uniwill-wmi.rst=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0=C2=A0 52 +
->> =C2=A0 MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0=C2=A0 17 +
->> =C2=A0 drivers/platform/x86/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
-=C2=A0=C2=A0 2 +
->> =C2=A0 drivers/platform/x86/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=
-=A0=C2=A0 3 +
->> =C2=A0 drivers/platform/x86/uniwill/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 49 +
->> =C2=A0 drivers/platform/x86/uniwill/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 8 +
->> =C2=A0 drivers/platform/x86/uniwill/uniwill-laptop.c | 1477 +++++++++++=
-++++++
->> =C2=A0 drivers/platform/x86/uniwill/uniwill-wmi.c=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 178 ++
->> =C2=A0 drivers/platform/x86/uniwill/uniwill-wmi.h=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 122 ++
->> =C2=A0 13 files changed, 2139 insertions(+)
->> =C2=A0 create mode 100644=20
->> Documentation/ABI/testing/sysfs-driver-uniwill-laptop
->> =C2=A0 create mode 100644=20
->> Documentation/admin-guide/laptops/uniwill-laptop.rst
->> =C2=A0 create mode 100644 Documentation/wmi/devices/uniwill-laptop.rst
->> =C2=A0 create mode 100644 Documentation/wmi/devices/uniwill-wmi.rst
->> =C2=A0 create mode 100644 drivers/platform/x86/uniwill/Kconfig
->> =C2=A0 create mode 100644 drivers/platform/x86/uniwill/Makefile
->> =C2=A0 create mode 100644 drivers/platform/x86/uniwill/uniwill-laptop.c
->> =C2=A0 create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.c
->> =C2=A0 create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.h
->>
+V3 -> V4:
+  - Fixed XHCI initialization bug by changing try-power-role from source
+    to sink
+
+V2 -> V3:
+  - Addressed YAML syntax error in dt binding (per Rob)
+  - Fixed whitespace issue in dts reported by checkpatch.pl
+  - Split base SoM and carrier board into separate patches
+  - Added further details about the SoM and carrier to the commit
+    messages
+
+V1 -> V2:
+  - Added copyright header and data sheet links
+  - Removed non-existent property
+  - Sorted alphabetically
+  - Removed errant whitespace
+  - Moved status to the end of each node
+  - Removed pinctrl-names property from leds (indicated by CHECK_DTBS)
+  - Removed delays from gmac with internal delay
+
+- Link to v4: https://lore.kernel.org/r/20250605-rk3588s-cm5-io-dts-upstream-v4-0-8445db5ca6b0@gmail.com
+
+Signed-off-by: Joseph Kogut <joseph.kogut@gmail.com>
+---
+Joseph Kogut (3):
+      dt-bindings: arm: rockchip: Add Radxa CM5 IO board
+      arm64: dts: rockchip: Add rk3588 based Radxa CM5
+      arm64: dts: rockchip: Add support for CM5 IO carrier
+
+ .../devicetree/bindings/arm/rockchip.yaml          |   7 +
+ arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+ .../boot/dts/rockchip/rk3588s-radxa-cm5-io.dts     | 486 +++++++++++++++++++++
+ .../arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi | 135 ++++++
+ 4 files changed, 629 insertions(+)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250605-rk3588s-cm5-io-dts-upstream-f4d1e853977e
+
+Best regards,
+-- 
+Joseph Kogut <joseph.kogut@gmail.com>
+
 
