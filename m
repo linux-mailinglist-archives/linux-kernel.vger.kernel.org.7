@@ -1,290 +1,188 @@
-Return-Path: <linux-kernel+bounces-689762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08031ADC620
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:21:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A38ADC61D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A3D31774FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:21:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1158177899
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8EC294A0B;
-	Tue, 17 Jun 2025 09:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="aVdt8hme"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC9B293C42;
+	Tue, 17 Jun 2025 09:21:23 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FE2293C5C
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115A8292B47;
+	Tue, 17 Jun 2025 09:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750152088; cv=none; b=amrkEp4j/DktjnvNPgLpPtttrs7RAfUJ1z4mD6MJVn2BgjynppROOtz5Rot2tJLHv48lwO2T2AFjbneVaOf0EMyNHBEvWXXQsaxEXJW3XOFZKHmQ4c+kCOJczGsjEqz55pt8xmm9pn+PSATENuaTbP0kAIxb20YpOmd8SNA18lI=
+	t=1750152083; cv=none; b=eRBEL6u1SKQtNOtD7YP3mEY0svpnZk7swNW0Xyr01PpDdMoC/W/xNKehsQLVZskDsDx9Y8/pUjwCd2DWekcrMbr7GXz2PAh/DPmrVwTbPkqSzD3Mhej4yMh+IsgSatcV/OdZJScuilAMn7JJiVWz2Uo5mTSfHVANbNmYksyQqsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750152088; c=relaxed/simple;
-	bh=Ow3AGhVqlqjnFCJ1JQEH8ceZfT2t+7tTzq/V/n123cs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QDLBL3Bp/aybnCQdqitG5tWd0RBFGFhL3kSu8jq/5vd0JE7O8DAlSdPYOlhbVy2CpC0G3qfGOSfXQRwg8ucTY7elg+Op/Znb2kV0Jwe8TcRbCI+bU2bbLzVIyTjdN9xiiSURl+wBudntB5FhC8kczOqql+Ydt1hTY43gXQ2zaKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=aVdt8hme; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b2fb8226e1cso6108096a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 02:21:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1750152084; x=1750756884; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tQhHDdXRASPFShTEMtGhN37rSYP2mIQBC7ckn6Zfygs=;
-        b=aVdt8hmecBkj7Y8zeeB8Svdb1CvkJgAF38Fw4OTwoAYojYi6wa7h4zNcGdOyZLHJem
-         qvDFzLQI/uGX28zSCatiahp+mW0U2gk9cKAjFTyhhXWd6czaWsmlxfIqrO1gDlXSh1DU
-         /4SN/ujhlVA+560kv9/Sx2O8Np5T46j+quzEzKndpwauQDrCuVfHAOdHkkvTLetTzqDv
-         qZvGRL3DO+++u/eSRDFalcCoHCrdC81phkUHb9inDB2GJLflLu+Wv2gGkXGKCN1HDcXE
-         GSWyw7lupVkmEWdmCKANCLQz6JEOElIFrXOh2sBhs0ufa35vW4tTb3BeYLl6vzqecS3M
-         pd7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750152084; x=1750756884;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tQhHDdXRASPFShTEMtGhN37rSYP2mIQBC7ckn6Zfygs=;
-        b=spROxl+YVR/yYgSSFZeaFV+Gc4qert/IltCwgEtB9tSvSkRnznAuCVO0UstYQxQLz+
-         n0Tl4JTXzNVDI3Mbfk53c4lkq05vPPnyHD7s1CNz/rCGQfDzluzVJCak18R/Eq0Zlx60
-         1FRkXHJ1OLGUuPgc+b+Uljh9oDblm3BzaY9iOntaNnjOvFZNPicPxcKaCMxSMx0s6Eh6
-         lFaLWIr5XdWRsn7xruypjAV3RdZq14er2vMvHVYoiEy+yJNJN9wWnOepTJzVpSse/iFm
-         xfmwk2U1IIFuqs/4DPgBbh0QR7GxMNScGbjVHuHIxgeEABP70Us24QrhabesGG8C/uP4
-         f5Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAU1NxpmRQJah2M5cbEGXBz+TypUV4TNGDS4JaDNPhN2NYOpUms8leB83QWEaPIIwhMpsRAEre/Wr682k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwapMudCu22jRJfQ+LJr9U+Cutf17ImOb479C6Y/Qkm77DDVqKr
-	X6f1YKmZj4Rxx65pWXrlgyX0WK4TA78xFrN5vySS3H6M4oCcFTPDg2Heya1O5hIMJ6U=
-X-Gm-Gg: ASbGncvptdAmXQ254M423z+rBlhydKGusubVDYfKCVfPuUOyNdbWulCIC/3qVRtnRmy
-	o8gnoGmdopU54lLXl/xDeQYx+ghEzei9xkTDJKBARuqMLq6hJWOEo1GAG4fbt1Kd2ChJUl6Cx2w
-	tfejWmMtbONIs5oHms8jvB8BciqP3nBHLRvECmeon+s5nDCYD+0YP517CwSi2EodfQyzexM8E+n
-	z/d2sj0iRMLGGHNbDtViS58/dM9vHcTIX+Fzj6hO5jLOa/n4yL3mqPt+9g15rZAUgab28rDxl0I
-	HjBos0Ucc12AfLff8E4L57L4SFo5Vj27fVD/AwWag2Bt7XhZ1vFaUjLqW9dSNLJ7p8BK6OoRpOl
-	00HJ99G954dbg1g==
-X-Google-Smtp-Source: AGHT+IH4Lc/yHe2dEENhF5nwP1sRWFMN4XZjeIToef7j+ESUprmceHkDq6MxthbKbJpXxCtADv1M3g==
-X-Received: by 2002:a17:90b:180b:b0:311:1617:5bc4 with SMTP id 98e67ed59e1d1-31427e9f120mr2815486a91.12.1750152084194;
-        Tue, 17 Jun 2025 02:21:24 -0700 (PDT)
-Received: from localhost.localdomain ([203.208.189.14])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365d88e554sm75458145ad.16.2025.06.17.02.21.20
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 17 Jun 2025 02:21:23 -0700 (PDT)
-From: lizhe.67@bytedance.com
-To: david@redhat.com
-Cc: akpm@linux-foundation.org,
-	alex.williamson@redhat.com,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lizhe.67@bytedance.com,
-	peterx@redhat.com
-Subject: Re: [PATCH v4 2/3] gup: introduce unpin_user_folio_dirty_locked()
-Date: Tue, 17 Jun 2025 17:21:17 +0800
-Message-ID: <20250617092117.10772-1-lizhe.67@bytedance.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <34560ae6-c598-4474-a094-a657c973156b@redhat.com>
-References: <34560ae6-c598-4474-a094-a657c973156b@redhat.com>
+	s=arc-20240116; t=1750152083; c=relaxed/simple;
+	bh=fQhFMXKS1jxzyeyKFyZ012VkcA/YEIuP2eIKV160jxI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dLv0+DBcc5jrM5KLYji0yz8HmdPBRt0tPVc2oe6fLdFDABpQGdFRDL63MxqcqJ4jcTbHtZPDmgFfow3FUapl0SSM1bmb9pLYgFwwgF/YEyh4popJpmlyBR4SOL1LPbDq7Ik+dXvknPGtcYdfUHC9Vvsrmc3sLADRU6qCrQhZeT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69FE2C4CEF6;
+	Tue, 17 Jun 2025 09:21:21 +0000 (UTC)
+Message-ID: <6db6545a-c0b2-427e-8aba-f171c91580ff@xs4all.nl>
+Date: Tue, 17 Jun 2025 11:21:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/5] media: uvcvideo: Handle locks in
+ uvc_queue_return_buffers
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hans de Goede <hansg@kernel.org>
+References: <20250616-uvc-fop-v4-0-250286570ee7@chromium.org>
+ <20250616-uvc-fop-v4-2-250286570ee7@chromium.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20250616-uvc-fop-v4-2-250286570ee7@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 17 Jun 2025 09:43:56 +0200, david@redhat.com wrote:
- 
-> On 17.06.25 06:18, lizhe.67@bytedance.com wrote:
-> > From: Li Zhe <lizhe.67@bytedance.com>
-> > 
-> > When vfio_unpin_pages_remote() is called with a range of addresses that
-> > includes large folios, the function currently performs individual
-> > put_pfn() operations for each page. This can lead to significant
-> > performance overheads, especially when dealing with large ranges of pages.
-> > 
-> > This patch optimize this process by batching the put_pfn() operations.
-> > 
-> > The performance test results, based on v6.15, for completing the 16G VFIO
-> > IOMMU DMA unmapping, obtained through unit test[1] with slight
-> > modifications[2], are as follows.
-> > 
-> > Base(v6.15):
-> > ./vfio-pci-mem-dma-map 0000:03:00.0 16
-> > ------- AVERAGE (MADV_HUGEPAGE) --------
-> > VFIO MAP DMA in 0.047 s (338.6 GB/s)
-> > VFIO UNMAP DMA in 0.138 s (116.2 GB/s)
-> > ------- AVERAGE (MAP_POPULATE) --------
-> > VFIO MAP DMA in 0.280 s (57.2 GB/s)
-> > VFIO UNMAP DMA in 0.312 s (51.3 GB/s)
-> > ------- AVERAGE (HUGETLBFS) --------
-> > VFIO MAP DMA in 0.052 s (308.3 GB/s)
-> > VFIO UNMAP DMA in 0.139 s (115.1 GB/s)
-> > 
-> > Map[3] + This patchset:
-> > ------- AVERAGE (MADV_HUGEPAGE) --------
-> > VFIO MAP DMA in 0.028 s (563.9 GB/s)
-> > VFIO UNMAP DMA in 0.049 s (325.1 GB/s)
-> > ------- AVERAGE (MAP_POPULATE) --------
-> > VFIO MAP DMA in 0.294 s (54.4 GB/s)
-> > VFIO UNMAP DMA in 0.296 s (54.1 GB/s)
-> > ------- AVERAGE (HUGETLBFS) --------
-> > VFIO MAP DMA in 0.033 s (485.1 GB/s)
-> > VFIO UNMAP DMA in 0.049 s (324.4 GB/s)
-> > 
-> > For large folio, we achieve an approximate 64% performance improvement
-> > in the VFIO UNMAP DMA item. For small folios, the performance test
-> > results appear to show no significant changes.
-> > 
-> > [1]: https://github.com/awilliam/tests/blob/vfio-pci-mem-dma-map/vfio-pci-mem-dma-map.c
-> > [2]: https://lore.kernel.org/all/20250610031013.98556-1-lizhe.67@bytedance.com/
-> > [3]: https://lore.kernel.org/all/20250529064947.38433-1-lizhe.67@bytedance.com/
-> > 
-> > Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
-> > ---
-> >   drivers/vfio/vfio_iommu_type1.c | 35 +++++++++++++++++++++++++++++----
-> >   1 file changed, 31 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> > index e952bf8bdfab..159ba80082a8 100644
-> > --- a/drivers/vfio/vfio_iommu_type1.c
-> > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > @@ -806,11 +806,38 @@ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
-> >   				    bool do_accounting)
-> >   {
-> >   	long unlocked = 0, locked = vpfn_pages(dma, iova, npage);
-> > -	long i;
-> >   
-> > -	for (i = 0; i < npage; i++)
-> > -		if (put_pfn(pfn++, dma->prot))
-> > -			unlocked++;
-> > +	while (npage) {
-> > +		long nr_pages = 1;
-> > +
-> > +		if (!is_invalid_reserved_pfn(pfn)) {
-> > +			struct page *page = pfn_to_page(pfn);
-> > +			struct folio *folio = page_folio(page);
-> > +			long folio_pages_num = folio_nr_pages(folio);
-> > +
-> > +			/*
-> > +			 * For a folio, it represents a physically
-> > +			 * contiguous set of bytes, and all of its pages
-> > +			 * share the same invalid/reserved state.
-> > +			 *
-> > +			 * Here, our PFNs are contiguous. Therefore, if we
-> > +			 * detect that the current PFN belongs to a large
-> > +			 * folio, we can batch the operations for the next
-> > +			 * nr_pages PFNs.
-> > +			 */
-> > +			if (folio_pages_num > 1)
-> > +				nr_pages = min_t(long, npage,
-> > +					folio_pages_num -
-> > +					folio_page_idx(folio, page));
-> > +
+On 16/06/2025 17:24, Ricardo Ribalda wrote:
+> Most of the calls to uvc_queue_return_buffers() wrap the call with
+> spin_lock_irq()/spin_unlock_irq().
 > 
-> (I know I can be a pain :) )
+> Rename uvc_queue_return_buffers to __uvc_queue_return_buffers to
+> indicate that this is the version that does not handle locks and create
+> a new version of the function that handles the lock.
+> 
+> Reviewed-by: Hans de Goede <hansg@kernel.org>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-No, not at all! I really appreciate you taking the time to review my
-patch.
+Reviewed-by: Hans erkuil <hverkuil@xs4all.nl>
 
-> But the long comment indicates that this is confusing.
+Regards,
+
+	Hans
+
+> ---
+>  drivers/media/usb/uvc/uvc_queue.c | 20 +++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
 > 
-> 
-> That is essentially the logic in gup_folio_range_next().
-> 
-> What about factoring that out into a helper like
-> 
-> /*
->   * TODO, returned number includes the provided current page.
+> diff --git a/drivers/media/usb/uvc/uvc_queue.c b/drivers/media/usb/uvc/uvc_queue.c
+> index 72c5494dee9f46ff61072e7d293bfaddda40e615..8f9737ac729546683ca48f5e71ce3dfacbae2926 100644
+> --- a/drivers/media/usb/uvc/uvc_queue.c
+> +++ b/drivers/media/usb/uvc/uvc_queue.c
+> @@ -42,13 +42,15 @@ static inline struct uvc_buffer *uvc_vbuf_to_buffer(struct vb2_v4l2_buffer *buf)
+>   *
+>   * This function must be called with the queue spinlock held.
 >   */
-> unsigned long folio_remaining_pages(struct folio *folio,
-> 	struct pages *pages, unsigned long max_pages)
-> {
-> 	if (!folio_test_large(folio))
-> 		return 1;
-> 	return min_t(unsigned long, max_pages,
-> 		     folio_nr_pages(folio) - folio_page_idx(folio, page));
-> }
+> -static void uvc_queue_return_buffers(struct uvc_video_queue *queue,
+> -			       enum uvc_buffer_state state)
+> +static void __uvc_queue_return_buffers(struct uvc_video_queue *queue,
+> +				       enum uvc_buffer_state state)
+>  {
+>  	enum vb2_buffer_state vb2_state = state == UVC_BUF_STATE_ERROR
+>  					? VB2_BUF_STATE_ERROR
+>  					: VB2_BUF_STATE_QUEUED;
+>  
+> +	lockdep_assert_held(&queue->irqlock);
+> +
+>  	while (!list_empty(&queue->irqqueue)) {
+>  		struct uvc_buffer *buf = list_first_entry(&queue->irqqueue,
+>  							  struct uvc_buffer,
+> @@ -59,6 +61,14 @@ static void uvc_queue_return_buffers(struct uvc_video_queue *queue,
+>  	}
+>  }
+>  
+> +static void uvc_queue_return_buffers(struct uvc_video_queue *queue,
+> +				     enum uvc_buffer_state state)
+> +{
+> +	spin_lock_irq(&queue->irqlock);
+> +	__uvc_queue_return_buffers(queue, state);
+> +	spin_unlock_irq(&queue->irqlock);
+> +}
+> +
+>  /* -----------------------------------------------------------------------------
+>   * videobuf2 queue operations
+>   */
+> @@ -171,9 +181,7 @@ static int uvc_start_streaming(struct vb2_queue *vq, unsigned int count)
+>  	if (ret == 0)
+>  		return 0;
+>  
+> -	spin_lock_irq(&queue->irqlock);
+>  	uvc_queue_return_buffers(queue, UVC_BUF_STATE_QUEUED);
+> -	spin_unlock_irq(&queue->irqlock);
+>  
+>  	return ret;
+>  }
+> @@ -187,9 +195,7 @@ static void uvc_stop_streaming(struct vb2_queue *vq)
+>  	if (vq->type != V4L2_BUF_TYPE_META_CAPTURE)
+>  		uvc_video_stop_streaming(uvc_queue_to_stream(queue));
+>  
+> -	spin_lock_irq(&queue->irqlock);
+>  	uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
+> -	spin_unlock_irq(&queue->irqlock);
+>  }
+>  
+>  static const struct vb2_ops uvc_queue_qops = {
+> @@ -263,7 +269,7 @@ void uvc_queue_cancel(struct uvc_video_queue *queue, int disconnect)
+>  	unsigned long flags;
+>  
+>  	spin_lock_irqsave(&queue->irqlock, flags);
+> -	uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
+> +	__uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
+>  	/*
+>  	 * This must be protected by the irqlock spinlock to avoid race
+>  	 * conditions between uvc_buffer_queue and the disconnection event that
 > 
-> 
-> Then here you would do
-> 
-> if (!is_invalid_reserved_pfn(pfn)) {
-> 	struct page *page = pfn_to_page(pfn);
-> 	struct folio *folio = page_folio(page);
-> 
-> 	/* We can batch-process pages belonging to the same folio. */
-> 	nr_pages = folio_remaining_pages(folio, page, npage);
-> 
-> 	unpin_user_folio_dirty_locked(folio, nr_pages,
-> 				      dma->prot & IOMMU_WRITE);
-> 	unlocked += nr_pages;
-> }
 
-Yes, this indeed makes the code much more comprehensible. Do you think
-the implementation of the patch as follows look viable to you? I have
-added some brief comments on top of your work to explain why we can
-batch-process pages belonging to the same folio. This was suggested by
-Alex[1].
-
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index e952bf8bdfab..d7653f4c10d5 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -801,16 +801,43 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
-        return pinned;
- }
- 
-+/* Returned number includes the provided current page. */
-+static inline unsigned long folio_remaining_pages(struct folio *folio,
-+               struct page *page, unsigned long max_pages)
-+{
-+       if (!folio_test_large(folio))
-+               return 1;
-+       return min_t(unsigned long, max_pages,
-+                    folio_nr_pages(folio) - folio_page_idx(folio, page));
-+}
-+
- static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
-                                    unsigned long pfn, unsigned long npage,
-                                    bool do_accounting)
- {
-        long unlocked = 0, locked = vpfn_pages(dma, iova, npage);
--       long i;
- 
--       for (i = 0; i < npage; i++)
--               if (put_pfn(pfn++, dma->prot))
--                       unlocked++;
-+       while (npage) {
-+               unsigned long nr_pages = 1;
-+
-+               if (!is_invalid_reserved_pfn(pfn)) {
-+                       struct page *page = pfn_to_page(pfn);
-+                       struct folio *folio = page_folio(page);
-+
-+                       /*
-+                        * We can batch-process pages belonging to the same
-+                        * folio because all pages within a folio share the
-+                        * same invalid/reserved state.
-+                        * */
-+                       nr_pages = folio_remaining_pages(folio, page, npage);
-+                       unpin_user_folio_dirty_locked(folio, nr_pages,
-+                                       dma->prot & IOMMU_WRITE);
-+                       unlocked += nr_pages;
-+               }
-+
-+               pfn += nr_pages;
-+               npage -= nr_pages;
-+       }
- 
-        if (do_accounting)
-		vfio_lock_acct(dma, locked - unlocked, true);
----
-
-Thanks,
-Zhe
-
-[1]: https://lore.kernel.org/all/20250613113818.584bec0a.alex.williamson@redhat.com/
 
