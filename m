@@ -1,151 +1,188 @@
-Return-Path: <linux-kernel+bounces-689525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA8ECADC32D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:23:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC37FADC30B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE2218846B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:23:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B29AB3AB4EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16FC28D8EF;
-	Tue, 17 Jun 2025 07:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IDEKkTJq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RB29ACJB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508D228D83A;
+	Tue, 17 Jun 2025 07:17:01 +0000 (UTC)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7260F136358;
-	Tue, 17 Jun 2025 07:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448D219047F;
+	Tue, 17 Jun 2025 07:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750144992; cv=none; b=jzPqiZWGnCrUwAp8JXYv/Qpszi6utwqi8LULTatoAzuSr7tNeJ8XW/FONETT9wfMoC+cW1Hm7AMRr0sVLxLOF1NgFEcqvB5hTfwHItOVtJjWUtZWX9CDGrTGglnxkRVvPKhVxNalyHQiKm43k4KRzRExXfANCErMQeMgFyKvnR8=
+	t=1750144620; cv=none; b=msM5bkD5m4zsXo7y/VKrQUgkP5AqutUYho+RpP+aWJAgRjpF3LyuXG+dxN9YYWHnyTwcP6CPKiCBP2l9b6wqKp/4DHLuX9K+EMTU528oRGfJJjQUcyBfq8burdP1CxeR5cw64CGLEx8sFSwWXBW1sj7KOvbGwDKuraRr5jy45CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750144992; c=relaxed/simple;
-	bh=QL5rnVySYB4u0j606Dbbvhxyl3a6d/u9v0ubbhQt6M0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LGwx0oYtkK1BGqcCLjsWrSpvmduIvAzagdsj63VzaoH4X/yEj47mym6pdBDsBIyq40TKuKeujrsjKsZBKneWriEcv1z49+P+rkKQeVpWCpnfCd2NzrKdiQ0VPkkknPxHm50Fxc2wWRGQ9Vz+fJPBDqB4VdP9cvaAbGey4MjYfEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IDEKkTJq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RB29ACJB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 17 Jun 2025 09:16:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750144590;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2G4Y6TvuyVNHN1PWsG91G5aIgYTdXQnZyKGYWG9XcMo=;
-	b=IDEKkTJqdCSfbB27SYK9a63VZZhdQeCif0syY9m4ucJXSjatqy7gdGwkUVSPujH1u1rPfd
-	dBubBSeBiSOU66iQKjIsOB3fOJET5kB/y4B7Hgte7FXHwNu9Mbzq3NbYn3neY3SKxzbK6I
-	72SXVrWtuk5Us6A6btlbx1EuxKvdXrrYdpKAPn7TEGAZNrWOGdDzbE8CHTi0s/XsInS2vy
-	NAepcGK69xUff8ojWj6+gdeGjAKb7suXfxFdrTNh+fOm1/3V9kL1MCQpmJRAT0u9hRiRkz
-	DYqYasJzl6vkoBW3eSFFEQmeM7L5O/wy5nMFhaj5mMvr2bEvyzan8ZdonDEFrA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750144590;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2G4Y6TvuyVNHN1PWsG91G5aIgYTdXQnZyKGYWG9XcMo=;
-	b=RB29ACJBDHSl7cWS1B213J/dq3behAIUQmPuWgfViXOQK9GY2QTqzEgLWGZRKqJBeGePsE
-	XOM1t4kHHvfIvvDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Calvin Owens <calvin@wbinvd.org>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	"Lai, Yi" <yi1.lai@linux.intel.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
-Subject: Re: [tip: locking/urgent] futex: Allow to resize the private local
- hash
-Message-ID: <20250617071628.lXtqjG7C@linutronix.de>
-References: <20250602110027.wfqbHgzb@linutronix.de>
- <174965275618.406.11364856155202390038.tip-bot2@tip-bot2>
- <aFBQ8CBKmRzEqIfS@mozart.vkv.me>
+	s=arc-20240116; t=1750144620; c=relaxed/simple;
+	bh=vJfnfZo46y9GEvS0iOv7XCEvS5tUoHWEXPhprydyMMY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c19qGtTsSqX7aGfi5NxY1dJM16BwSmzLB9A7By7lg0CUmdRTKbbyZPRVpJyLn5v/N5sADHap9Iq1qdM57uQB23HxLKdIMNPoE3qMUNRtReJA/hhvKZxrvl3mlek5A6RumE4l8r7n56dLweq3xTDzJNpjkxebetpTV2FSXaFKDw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4e7949d9753so1749147137.2;
+        Tue, 17 Jun 2025 00:16:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750144617; x=1750749417;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M261FUbjDGS7IxZQCcj9y1Rgp/W6CtrsJj62qQj1ziU=;
+        b=U9D4yPLf0iPI0PM+kIlc6r0GX7pbMdRIkLTt23sv6Yqv/M+VxT8ipq4YYkDtxwfmWA
+         szyElzQX5hmtZLx7DjHZcnjI+xOBrF1JAGJEYqmzOLswpzrBkO3oxVodM1bKMcCSebCZ
+         JC3rmuRe/TaOg1ijbEqgCnUacqhNlLCCxfVgovyuKmAs+z+UG9625eU+yMLIID4+G2OH
+         FtcH29erNuL+ErCHVu9zPWUfRg4Gv0uvDJHXbgUrollmaCVa5aJpXSe/jJQqfx8LY+hF
+         uENvbn85upffldaA7YD6ZGmGQVWyS/zd2oTZIEQiCFzS/SvxugdF1gS9STAAcP8RmCH9
+         wO0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUIMaHfY2qexiSYhDrwfX60wb/3ibCnE4pilst4PNQHzypr6guA+n1S1rsGTsoyZmKxCPKHDUxy9yK0n5ML@vger.kernel.org, AJvYcCUVvaxSPlB7nHqPzEw48pC1UfwglL99fdrNcHKd8XPQan5Lb7YqjDmmzXDcCw/Vmbwz94e8cLAgTFV4@vger.kernel.org, AJvYcCVCMWlIz1TXyRs0oOrL6e9c4scxk/7VKqlCg/oZc89h00IistKJcfsRcfPH3z/cMxKAnbPjL6+DkgR0ZjrECZ/39yI=@vger.kernel.org, AJvYcCWSv8Om9BXoiKbeGLwrxgxyR780bfk8VlnilQ+70aERI5+Zh2IjeUwogkJIgq+zfFuhPhiTizhuVHqW@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkF1CjH1Vv6iAWSOPsi2NRlELA2V2M5F5IJvSozC2xIicsQhOp
+	nJvvK9cZrQHvA5Fm916ZNAJ0BmRIDsCG+L9Uc3/ZVsit4yyQwg9Yq4G105TozmGL
+X-Gm-Gg: ASbGncviRNFsk1YobrXGuqD9tcgJkIH3HCqeSbe8Xp/VLjExlJGFJWirQRENdlI8IHP
+	/ok3kittiqpGA1indCbiSgp1ygbOBGJjGrkYQYhXY2VN9dF5NhsCPnjMZ21jP/8UJv1zyxfsdYf
+	CJForPMO0imUm+vheM3DHmbqNjq10cczVKycd9hfnYpA6DYv2B222gvGMSldjOmUyY520tUBJyo
+	vvH7jyXIfz5zNfLPT1jhBY7FjepxnN0jzx3OPLSxRoCWEoXiU/9hNz7todAaLIKNK3XlpsUx3IK
+	bekYfkAIdE3+ll6TrWgyH7H/oRVW8tUHKvXeSCbTTqvbamMRcqTNBcmBwlelbAkQRCrBtwCdnsk
+	2M50mnmgM7Y5dkGOe/Tgev55Z
+X-Google-Smtp-Source: AGHT+IFSldgcspJdYfaqoXpvSdUG8xksqj/EMeYw6DZ+KFVXYnKNUWOT/5UIW2zyFx3PErO5bOITvw==
+X-Received: by 2002:a05:6102:38d0:b0:4dd:b9bc:df71 with SMTP id ada2fe7eead31-4e7f61ced95mr7948299137.10.1750144616698;
+        Tue, 17 Jun 2025 00:16:56 -0700 (PDT)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4e7e70c6886sm1534977137.24.2025.06.17.00.16.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jun 2025 00:16:56 -0700 (PDT)
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4e77d1333aeso1460299137.0;
+        Tue, 17 Jun 2025 00:16:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUS+77P2SATXhNdpDT94nv+r1Gnx7XVmyhm2c+B9v3DjTBm08wAER9lbcuWwNaCPK5+Cr1BBIZeAaqH@vger.kernel.org, AJvYcCUiiXCZXAa5vB0GXCJ+5EjVJG5GXS5E6ZtR4LT7oAAXUC7KOEgD7dV0/qDf8COUtRzLKL3B5gA7H/MH@vger.kernel.org, AJvYcCWOWdRDQoIHejzUeV1KXMHKHkXy2uuo6NergREDwmi9cnIVc32At5lqFNSJkcimuWvaqEu8wQLNiua0Ts45EXTrUAY=@vger.kernel.org, AJvYcCWwHSGBXry1Imvudr4WDmYlc8zvAa1wQEBgksnoejgvZr2FGANQmyr7ikQQhjT7XcMi5kQDlgF99D83Zhnt@vger.kernel.org
+X-Received: by 2002:a05:6102:4a98:b0:4e6:a338:a421 with SMTP id
+ ada2fe7eead31-4e7f61b1f1bmr7111790137.6.1750144615617; Tue, 17 Jun 2025
+ 00:16:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20250609203656.333138-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250609203656.333138-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVvQEC9c9wHDrFiY6iixuP-JjOgHZQjfzOkAjvxs=LuqQ@mail.gmail.com> <CA+V-a8vUdBwAx5x1FfWJZK0BeXQQqFeDRLtvyETiPDQc1Pftiw@mail.gmail.com>
+In-Reply-To: <CA+V-a8vUdBwAx5x1FfWJZK0BeXQQqFeDRLtvyETiPDQc1Pftiw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Jun 2025 09:16:43 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVDqoBEaBg+Tqj1nxTHJXGG8LWyo1xenSuTXTf0DQw9nQ@mail.gmail.com>
+X-Gm-Features: AX0GCFvTdSEkTtmnY7ITCikl3hKxLbzpvQWPX_2lfUXVw80Wv9KR5OXOX2w3SaQ
+Message-ID: <CAMuHMdVDqoBEaBg+Tqj1nxTHJXGG8LWyo1xenSuTXTf0DQw9nQ@mail.gmail.com>
+Subject: Re: [PATCH 3/8] dt-bindings: clock: renesas,cpg-mssr: Document RZ/N2H support
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aFBQ8CBKmRzEqIfS@mozart.vkv.me>
 
-On 2025-06-16 10:14:24 [-0700], Calvin Owens wrote:
-> On Wednesday 06/11 at 14:39 -0000, tip-bot2 for Sebastian Andrzej Siewior=
- wrote:
-> > <snip>=20
-> > It is possible that two threads simultaneously request the global hash
-> > and both pass the initial check and block later on the
-> > mm::futex_hash_lock. In this case the first thread performs the switch
-> > to the global hash. The second thread will also attempt to switch to the
-> > global hash and while doing so, accessing the nonexisting slot 1 of the
-> > struct futex_private_hash.
->=20
-> In case it's interesting to anyone, I'm hitting this one in real life,
-> one of my build machines got stuck overnight:
+Hi Prabhakar,
 
-The scenario described in the description is not something that happens
-on its own. The bot explicitly "asked" for it. This won't happen in a
-"normal" scenario where you do not explicitly ask for specific hash via
-the prctl() interface.
+On Fri, 13 Jun 2025 at 17:29, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
+rote:
+> On Thu, Jun 12, 2025 at 3:38=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Mon, 9 Jun 2025 at 22:37, Prabhakar <prabhakar.csengg@gmail.com> wro=
+te:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Document support for Module Standby and Software Reset found on the
+> >
+> > the Clock Generator and Module Standby and Software Reset
+> >
+> Ok, I'll amend the commit message as above.
+>
+> > > Renesas RZ/N2H (R9A09G087) SoC. The Module Standby and Software Reset=
+ IP
+> >
+> > Clock Generator and ...
+> >
+> Ok, I'll amend the commit message as above.
+>
+> > > is similar to that found on the RZ/T2H SoC.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> >
+> > > --- /dev/null
+> > > +++ b/include/dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h
+> > > @@ -0,0 +1,28 @@
+> > > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > + *
+> > > + * Copyright (C) 2025 Renesas Electronics Corp.
+> > > + */
+> > > +
+> > > +#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G087_CPG_H__
+> > > +#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G087_CPG_H__
+> > > +
+> > > +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> > > +
+> > > +/* R9A09G087 CPG Core Clocks */
+> > > +#define R9A09G087_CLK_CA55C0           0
+> > > +#define R9A09G087_CLK_CA55C1           1
+> > > +#define R9A09G087_CLK_CA55C2           2
+> > > +#define R9A09G087_CLK_CA55C3           3
+> > > +#define R9A09G087_CLK_CA55S            4
+> > > +#define R9A09G087_CLK_CR52_CPU0                5
+> > > +#define R9A09G087_CLK_CR52_CPU1                6
+> > > +#define R9A09G087_CLK_CKIO             7
+> > > +#define R9A09G087_CLK_PCLKAH           8
+> > > +#define R9A09G087_CLK_PCLKAM           9
+> > > +#define R9A09G087_CLK_PCLKAL           10
+> > > +#define R9A09G087_CLK_PCLKGPTL         11
+> > > +#define R9A09G087_CLK_PCLKH            12
+> > > +#define R9A09G087_CLK_PCLKM            13
+> > > +#define R9A09G087_CLK_PCLKL            14
+> >
+> > The RZ/T2H DT bindings file lacks PCLKL, which was probably a harmless
+> > oversight (it can always be added later), as it does exist on RZ/T2H,
+> > too, according to the documentation.
+> >
+> > However, given drivers/clk/renesas/r9a09g077-cpg.c has
+> > LAST_DT_CORE_CLK =3D R9A09G077_CLK_PCLKM,
+> > using R9A09G087_CLK_PCLKL will lead to wrong results.
+> >
+> > So either you want to add R9A09G077_CLK_PCLKL and update
+> > LAST_DT_CORE_CLK first, or set LAST_DT_CORE_CLK to R9A09G087_CLK_PCLKL
+> > in this patch.
+> >
+> Actually I already have a patch which includes a couple of fixes and
+> to the orignal bring up series for T2H + I2C support which adds
+> R9A09G077_CLK_PCLKL and updates LAST_DT_CORE_CLK. I intend to send
+> them when the base patches are accepted. As there are no users for
+> PCLKL in the bringup series this won't cause any issues. Is that OK
+> with you?
 
-> Jun 16 02:51:34 beethoven kernel: rcu: INFO: rcu_preempt self-detected st=
-all on CPU
-> Jun 16 02:51:34 beethoven kernel: rcu:         16-....: (59997 ticks this=
- GP) idle=3Deaf4/1/0x4000000000000000 softirq=3D14417247/14470115 fqs=3D211=
-69
-> Jun 16 02:51:34 beethoven kernel: rcu:         (t=3D60000 jiffies g=3D214=
-53525 q=3D663214 ncpus=3D24)
-> Jun 16 02:51:34 beethoven kernel: CPU: 16 UID: 1000 PID: 2028199 Comm: ca=
-rgo Not tainted 6.16.0-rc1-lto-00236-g8c6bc74c7f89 #1 PREEMPT=20
-> Jun 16 02:51:34 beethoven kernel: Hardware name: ASRock B850 Pro-A/B850 P=
-ro-A, BIOS 3.11 11/12/2024
-> Jun 16 02:51:34 beethoven kernel: RIP: 0010:queued_spin_lock_slowpath+0x1=
-62/0x1d0
-> Jun 16 02:51:34 beethoven kernel: Code: 0f 1f 84 00 00 00 00 00 f3 90 83 =
-7a 08 00 74 f8 48 8b 32 48 85 f6 74 09 0f 0d 0e eb 0d 31 f6 eb 09 31 f6 eb =
-05 0f 1f 00 f3 90 <8b> 07 66 85 c0 75 f7 39 c8 75 13 41 b8 01 00 00 00 89 c=
-8 f0 44 0f
-=E2=80=A6
-> Jun 16 02:51:34 beethoven kernel: Call Trace:
-> Jun 16 02:51:34 beethoven kernel:  <TASK>
-> Jun 16 02:51:34 beethoven kernel:  __futex_pivot_hash+0x1f8/0x2e0
-> Jun 16 02:51:34 beethoven kernel:  futex_hash+0x95/0xe0
-> Jun 16 02:51:34 beethoven kernel:  futex_wait_setup+0x7e/0x230
-> Jun 16 02:51:34 beethoven kernel:  __futex_wait+0x66/0x130
-> Jun 16 02:51:34 beethoven kernel:  ? __futex_wake_mark+0xc0/0xc0
-> Jun 16 02:51:34 beethoven kernel:  futex_wait+0xee/0x180
-> Jun 16 02:51:34 beethoven kernel:  ? hrtimer_setup_sleeper_on_stack+0xe0/=
-0xe0
-> Jun 16 02:51:34 beethoven kernel:  do_futex+0x86/0x120
-> Jun 16 02:51:34 beethoven kernel:  __se_sys_futex+0x16d/0x1e0
-> Jun 16 02:51:34 beethoven kernel:  do_syscall_64+0x47/0x170
-> Jun 16 02:51:34 beethoven kernel:  entry_SYSCALL_64_after_hwframe+0x4b/0x=
-53
-=E2=80=A6
-> <repeats forever until I wake up and kill the machine>
->=20
-> It seems like this is well understood already, but let me know if
-> there's any debug info I can send that might be useful.
+Please include that fix in your v2 series, to avoid any possible
+issues with using R9A09G087_CLK_PCLKL.
+Thanks!
 
-This is with LTO enabled.
-Based on the backtrace: there was a resize request (probably because a
-thread was created) and the resize was delayed because the hash was in
-use. The hash was released and now this thread moves all enqueued users
-=66rom the old the hash to the new. RIP says it is a spin lock that it is
-stuck on. This is either the new or the old hash bucket lock.
-If this lifelocks then someone else must have it locked and not
-released.
-Is this the only thread stuck or is there more?
-I'm puzzled here. It looks as if there was an unlock missing.
+Gr{oetje,eeting}s,
 
-> Thanks,
-> Calvin
+                        Geert
 
-Sebastian
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
