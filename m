@@ -1,71 +1,56 @@
-Return-Path: <linux-kernel+bounces-690419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C2BEADD085
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:52:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA32ADD088
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A51189E9D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:47:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02CEE194015D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA952E3B06;
-	Tue, 17 Jun 2025 14:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C1220FAB6;
+	Tue, 17 Jun 2025 14:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N9vsPZm/"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/Oo6HDv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDE62E3AE5
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 14:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA7B2E54A3;
+	Tue, 17 Jun 2025 14:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750171467; cv=none; b=qbD7FQfG2C8SsRJDaWJimVZDrs2tEENeUsk749GJ+FxhEPT2qh7gEq/UST8re8fHSdOlTJlVChgKoqrCE0QDoAUmog9FQ5LoPj2M/nVaWY82mV4rWL9wuRzl7vmaA1qpPKwcJCZmuJDVAT7uYgutRnIOBI33INd/aLAeBAW7Hko=
+	t=1750171479; cv=none; b=k5Joo7eq9k0h3A/3GOClDeuRAdXt9N6RGi+A/GxJgdGvVMEOnKrf19aW/doKs+A1iK05Kg14JpKFUMdaBW7kdUfBfongu9Zw5p5yl+ljcb02DvkjJgsfba+bgobzT7S9z+MDVnWj9cTWiZ+c2P9BtK1EOhvsLsdkPngXeklD1aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750171467; c=relaxed/simple;
-	bh=jCDYe2aYeTh3eR/O/VIFINlb+8LgYhXkHgjAMV1IHXo=;
+	s=arc-20240116; t=1750171479; c=relaxed/simple;
+	bh=r+1sIvSIxYaTR9LID7Lz+1ggjxbL3RpmshgYY0QT/Yg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZOiscKvhCG6yHeb1umq5rlBXiQbTZZqaYLYQpl4EyPBSPyuRw3xK3tBLbnlEmEFIP5HxSjI+CO/VO4D66vzHmPtnr5MuSefaLYJFjOZYS4GIqhb9RlQRArfxfyJRVkExNG2kvHhjc3r+2xqVAL1EjtlgFiHraWuQs8F5mC6dAwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N9vsPZm/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kQ6J8TtBUCTZkdOZVOX3lXfTblBryoju8JB2ZactZKE=; b=N9vsPZm/8Z+IlgSRHWH75Qqywg
-	1iwYHaiQIzL/dZ9KaDpu8YHUMWNBy4dH1FGpDOP+os5MlxelfVirJIbKPxflyGWZLkxEoNe/wGR3s
-	2Nfz9vsxdiOf2ok5J/B2jLhOgXPw6b9QpH8lyqM+d2KPZmwzVHPVFFPb01zgje/kNiaQrjQsQcoJA
-	OPsVD1nql859b6fB7gLd8+Hlj8SPnr3bP7CGZxUNqiX2Gqe0mUOJmIhw8K9ro70NLDJwQ1Uegub+w
-	CfEvYE4Ntr03xYuO28/ecg94dYbsEQ35xAdTrJpXQF3EjHf0RhkN/M22jNoODAeYqfMPJ0tiAvHL1
-	2HQD7C+g==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uRXXt-0000000HGua-2HmK;
-	Tue, 17 Jun 2025 14:44:17 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A6F0130BDAD; Tue, 17 Jun 2025 16:44:16 +0200 (CEST)
-Date: Tue, 17 Jun 2025 16:44:16 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>, kan.liang@linux.intel.com,
-	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	tglx@linutronix.de, dave.hansen@linux.intel.com, irogers@google.com,
-	adrian.hunter@intel.com, jolsa@kernel.org,
-	alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-	ak@linux.intel.com, zide.chen@intel.com
-Subject: Re: [RFC PATCH 06/12] perf: Support extension of sample_regs
-Message-ID: <20250617144416.GY1613376@noisy.programming.kicks-ass.net>
-References: <20250613134943.3186517-1-kan.liang@linux.intel.com>
- <20250613134943.3186517-7-kan.liang@linux.intel.com>
- <20250617081458.GI1613376@noisy.programming.kicks-ass.net>
- <8fbf7fc5-2e38-4882-8835-49869b6dd47f@linux.intel.com>
- <20250617102813.GS1613376@noisy.programming.kicks-ass.net>
- <dc084dac-170d-434e-9d8c-ba11cbc8e008@linux.intel.com>
- <20250617133333.GU1613376@noisy.programming.kicks-ass.net>
- <20250617140617.GC1613633@noisy.programming.kicks-ass.net>
- <aFF6gdxVyp36ADOi@J2N7QTR9R3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YtHGo7uIGvskAK06D7MRmk7OUsjQE+nbQ4AcQAsNMR32pFzpUues+forNB6e+JjB/cFwU6yB5nBunn1D/FydKQ/D8WPJea1VnZlhA0ykRZgNgSBQY2FhKnBdzAeS3jls5CCZivV6KwvuJnJpkxliCSRDmZlk118H0m4WcqLGsRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/Oo6HDv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F6C0C4CEE3;
+	Tue, 17 Jun 2025 14:44:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750171478;
+	bh=r+1sIvSIxYaTR9LID7Lz+1ggjxbL3RpmshgYY0QT/Yg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A/Oo6HDvYzO27Nuyc8XzyehNuqOvA/l80Yn5mh/xvg5wFQH6bgZVWXg3nDbKI5cIE
+	 gpjYE5m37eOqNb1gjt9ho/Xs+ouXdDbZhoZAMaz898sKyORFKPRAyq3j21UmfTOX28
+	 YHnmS+n9E0XvI68fZ2KipIpQJ6SDRqUZYfyi72+rpqsM7ORs/k2YdkxyjyUwLoaNyk
+	 QgNNbc3nwhmYfu1ishW5ZsbeoEp9aKiS7XreLlcVE1wvSZi0X2v4TqsjwslkcBkrUv
+	 SZAjlq/uwGh68kphB9DPqNg1YAS4F9b/UOhjHF8pitf+yCoGzzvaY2yDaI6ZXjrSoh
+	 xOX24kjZMdKpw==
+Date: Tue, 17 Jun 2025 17:44:35 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-sgx@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/sgx: Use ENCLS mnemonic in <kernel/cpu/sgx/encls.h>
+Message-ID: <aFF_UwJ2XlFQSZOi@kernel.org>
+References: <20250616085716.158942-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,37 +59,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aFF6gdxVyp36ADOi@J2N7QTR9R3>
+In-Reply-To: <20250616085716.158942-1-ubizjak@gmail.com>
 
-On Tue, Jun 17, 2025 at 03:24:01PM +0100, Mark Rutland wrote:
-
-> TBH, I don't think we can handle extended state in a generic way unless
-> we treat this like a ptrace regset, and delegate the format of each
-> specific register set to the architecture code.
+On Mon, Jun 16, 2025 at 10:56:30AM +0200, Uros Bizjak wrote:
+> Current minimum required version of binutils is 2.30,
+> which supports ENCLS instruction mnemonic.
 > 
-> On arm64, the behaviour is modal (with two different vector lengths for
-> streaming/non-streaming SVE when SME is implemented), per-task
-> configurable (with different vector lengths), can differ between
-> host/guest for KVM, and some of the registers only exist in some
-> configurations (e.g. the FFR only exists for SME if FA64 is
-> implemented).
+> Replace the byte-wise specification of ENCLS with
+> this proper mnemonic.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> ---
+>  arch/x86/kernel/cpu/sgx/encls.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+> index 99004b02e2ed..42a088a337c5 100644
+> --- a/arch/x86/kernel/cpu/sgx/encls.h
+> +++ b/arch/x86/kernel/cpu/sgx/encls.h
+> @@ -68,7 +68,7 @@ static inline bool encls_failed(int ret)
+>  	({							\
+>  	int ret;						\
+>  	asm volatile(						\
+> -	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
+> +	"1: encls\n"						\
+>  	"2:\n"							\
+>  	_ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_SGX)		\
+>  	: "=a"(ret)						\
+> @@ -111,8 +111,8 @@ static inline bool encls_failed(int ret)
+>  	({							\
+>  	int ret;						\
+>  	asm volatile(						\
+> -	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
+> -	"   xor %%eax,%%eax;\n"					\
+> +	"1: encls\n\t"						\
+> +	"xor %%eax,%%eax\n"					\
+>  	"2:\n"							\
+>  	_ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_SGX)		\
+>  	: "=a"(ret), "=b"(rbx_out)				\
+> -- 
+> 2.49.0
+> 
 
-Well, much of this is per necessity architecture specific. But the
-general form of vector registers is similar enough.
+I don't really see how this is that useful. That said, f a bug fix or
+feature used encls mnemonic, I'd had no problems with acking it.
 
-The main point is to not try and cram the vector registers into multiple
-GP regs (sadly that is exactly what x86 started doing).
-
-Anyway, your conditional length thing is 'fun' and has two solutions:
-
-  - the arch can refuse to create per-cpu counters with SIMD samples, or
-
-  - 0 pad all 'unobtainable state'.
-
-Same when asking for wider vectors than the hardware supports; eg.
-asking for 512 wide registers on Intel clients will likely end up in a
-lot of 0s for the high bits -- seeing how AVX512 is mostly a server
-thing on Intel.
-
-
+BR, Jarkko
 
