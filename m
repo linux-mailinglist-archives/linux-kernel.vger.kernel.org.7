@@ -1,104 +1,94 @@
-Return-Path: <linux-kernel+bounces-689929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D12FADC881
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1FDAADC887
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 789131886E0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:37:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE06D1894F73
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D1D2C159F;
-	Tue, 17 Jun 2025 10:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D861292B34;
+	Tue, 17 Jun 2025 10:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j6UCKw5+"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FcQ1R1Tn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12120295DA5;
-	Tue, 17 Jun 2025 10:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AE2292B5F;
+	Tue, 17 Jun 2025 10:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750156599; cv=none; b=Sl+XYPpXrZEYOgj4wyWVQK31eqS/K8I0l3gArYeGzdkPrDndXomp68RfXspM8TYEPLUEmp5WYqvVu1TqHrxR71zbTK8Igelv4FcmXQOOlLEmjV9jTdSKgjmYPMZP8BLio4CmV1hcrmzqz50O0eJTz6U8DHjvYsVE2ixaMhnOQSM=
+	t=1750156747; cv=none; b=G9pkla1qpmVXKIvdhvCguwRTHPZ2pzbHXcOudaiTlCgD5KrasewIdJvN8KfCsqWqyx0ORDD8x2K6wRHBECepiOiF8bSflXDwE1Hbs8TfSK9xu3K/s1Ki8nzUrGw9lEnVntpOwxomBCp4MXvwipQzKSZlMCfq6Su20hQiLj1lA/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750156599; c=relaxed/simple;
-	bh=Mt4oHekiA92rE/VwZpu/nA4D4ECjqqc2xguHzhD9/qU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jCSgMYMDSNJD/26lSyp9H2dhA8xi9giFDwCFhqBRUuISzna3QGve7k3uxmmDOSTkco3xqJL7UxmrhygPLoHtxXNE6j5KzCm1r5zz0kIOXglSSwi2uoeWOLNCyjDY2KuXKGIEZexs2LBt8t1GZTHNj48tg6AVuvKYC8kKIoNMZGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j6UCKw5+; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=coH03vPFT2rsdcf33PRUsXpuL1g7ZkrTHF5F6QDpPTw=; b=j6UCKw5+yqg03P3VhjtZ9xHG8P
-	e4cSe5GL2d0JRvRqNrvswgi6bodPQzOEVUO5+zrI4dSd94fYfRq81jJ68n3ymYKF3kgnqk1w7PlQD
-	2rs0P1TaU43pNhvwf8LQj0XqJwyn/ztplssurZC7V2hUpBegF42QbnoqQ4qKCFRDc8vBV5jpcsLKm
-	fYB9/KUDmQJpBm1HuRUzFUIWtp1HTUjk6gitVpAulJxDtYup8LIzJTEbrlS/wy1njjaew/4jiN6sq
-	Pj03UWhF7nhi3p0cn7WieeXViPmoo4yWwK3V+nl+/JQqU9jQcTOADPV3/FKrc6GyLg8jeH2AB7Rkt
-	svxY6k8w==;
-Received: from 2001-1c00-8d82-d000-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d82:d000:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uRTfv-0000000H0cK-2kRJ;
-	Tue, 17 Jun 2025 10:36:19 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 02E7A30BDAD; Tue, 17 Jun 2025 12:36:19 +0200 (CEST)
-Date: Tue, 17 Jun 2025 12:36:18 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Koichi Okuno <fj2767dz@fujitsu.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] perf: Fujitsu: Add the Uncore PCI PMU driver
-Message-ID: <20250617103618.GT1613376@noisy.programming.kicks-ass.net>
-References: <20250617102819.3685543-1-fj2767dz@fujitsu.com>
- <20250617102819.3685543-3-fj2767dz@fujitsu.com>
+	s=arc-20240116; t=1750156747; c=relaxed/simple;
+	bh=5yPJNBmfdXvAOE/rAPylW6t0NlGPk7YDdIznpDZVewQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=SutfdjYT6ZuWeXKGf443lNN3IDSI/TxBo8COj7DUvogzeMXyKq26ybVlwXHcG+2KhD37dnDKjUj45UjT3gUrDFvSUq2xjzf69K0Gj7kNq3BuFC2RO5K+jqkvQuitE2Do2PujP5YULbMI4XdotuFRU2btdkqs9rFQ3fMZg8u+vDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FcQ1R1Tn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33FE6C4CEE3;
+	Tue, 17 Jun 2025 10:39:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750156747;
+	bh=5yPJNBmfdXvAOE/rAPylW6t0NlGPk7YDdIznpDZVewQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=FcQ1R1TnuPjK/UMLz/v5VhBYk9Dcb0+VI+PGR/OpnHG/z9kNgS70fMFx2P01Vlk0b
+	 To01bZs48vyQo+jCwT4LiHaKw3uIlN8uo/wfGY64ZuL2d6KuP/fV8Vc6UvIUd5EnL1
+	 68LpZIMbFOlcEHQnVXS9N+95WhTVqwlTemiiLATNmjTS9HI98VD3NfCp5NKMBGRQqY
+	 Sx9p5vrg+1LKAiKN0w+sSrWWybV4mQA9nyBPEJXOnTT1h6TL9VasntdrJ9JDp1nGhJ
+	 E7o5HHtsSbek1hBJPgxeiW+Mkvm+HXokiyBe8BUUBEa5juUQFnZktv3FV4OTR9g8r2
+	 Vwq84717DRcJA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: alex.gaynor@gmail.com, ojeda@kernel.org, 
+ FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: aliceryhl@google.com, anna-maria@linutronix.de, 
+ bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org, 
+ frederic@kernel.org, gary@garyguo.net, jstultz@google.com, 
+ linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com, 
+ rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
+ tmgross@umich.edu
+In-Reply-To: <20250610093258.3435874-1-fujita.tomonori@gmail.com>
+References: <20250610093258.3435874-1-fujita.tomonori@gmail.com>
+Subject: Re: [PATCH v4 0/3] rust: time: Introduce typed clock sources and
+ generalize Instant
+Message-Id: <175015666836.277659.13544106248408491638.b4-ty@kernel.org>
+Date: Tue, 17 Jun 2025 12:37:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250617102819.3685543-3-fj2767dz@fujitsu.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Tue, Jun 17, 2025 at 07:27:50PM +0900, Koichi Okuno wrote:
-> +	pcipmu->pmu = (struct pmu) {
-> +		.parent		= dev,
-> +		.task_ctx_nr	= perf_invalid_context,
-> +
-> +		.pmu_enable	= fujitsu_pci__pmu_enable,
-> +		.pmu_disable	= fujitsu_pci__pmu_disable,
-> +		.event_init	= fujitsu_pci__event_init,
-> +		.add		= fujitsu_pci__event_add,
-> +		.del		= fujitsu_pci__event_del,
-> +		.start		= fujitsu_pci__event_start,
-> +		.stop		= fujitsu_pci__event_stop,
-> +		.read		= fujitsu_pci__event_read,
-> +
-> +		.attr_groups	= fujitsu_pci_pmu_attr_grps,
-> +		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
 
-Should these drivers not also have PERF_PMU_CAP_NO_INTERRUPT ? Per them
-being uncore they cannot generate samples.
+On Tue, 10 Jun 2025 18:32:53 +0900, FUJITA Tomonori wrote:
+> This patch series introduces a type-safe abstraction over clock
+> sources. The goal is to remove the need for runtime clock selection
+> (via ClockId) and instead leverage Rust's type system to statically
+> associate the Instant type with a specific clock.
+> 
+> This approach enables compile-time enforcement of clock correctness
+> across the APIs of Instant type.
+> 
+> [...]
 
-> +	};
+Applied, thanks!
+
+[1/3] rust: time: Replace ClockId enum with ClockSource trait
+      commit: 1664a671be46a0b0daf5250eb124d94a5501a64c
+[2/3] rust: time: Make Instant generic over ClockSource
+      commit: 768dfbfc98e26cfad45f7165a1801d188f3cbd81
+[3/3] rust: time: Add ktime_get() to ClockSource trait
+      commit: cc6d1098b4cca6ec8e659de8361457c59a90b583
+
+Best regards,
+-- 
+Andreas Hindborg <a.hindborg@kernel.org>
 
 
 
