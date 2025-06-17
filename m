@@ -1,106 +1,131 @@
-Return-Path: <linux-kernel+bounces-689740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C4EADC5D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:10:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880D3ADC5A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D861899EE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:10:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F092175B23
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C735A292B2C;
-	Tue, 17 Jun 2025 09:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84753290BD5;
+	Tue, 17 Jun 2025 09:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="J0XMvo//"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FokIEwN1"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F040292906;
-	Tue, 17 Jun 2025 09:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5030F28C873;
+	Tue, 17 Jun 2025 09:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750151327; cv=none; b=lNws7FVsmG4rmz+qoBVIAKxBOk9YrUeGV72bwMgSpCKOFfGYjPdb8qRwA8iO17ULAGFxWspsJW5QQ94fYlhfmfiYRfIv83nBocx7jjuGN/KoWK19CRonUCY8mgG28hz4Z2jtScO5h457dwFbSJq/oZnWDh11RkuPnAQtr3fX8Ls=
+	t=1750151022; cv=none; b=t79OIS9ihkbnPG5zgDYc2ylj6VdHb9is+DphDHBKWP8F5pRGOnmeJvQDQGguaMmU5ZP/Y3qPDhTAJbsZBk1YWd2motS7x7kDR/WiuTOe6hJE4dcCwpaqFO2AHRCgGNNDQIm8uoIFQdI2gbYM04AbYwVaWKQiSAUq6maHqno6Rrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750151327; c=relaxed/simple;
-	bh=y2kpAHe6WXsS++Wx3Pgute+9Qw0FzzbQqOP2DPszjUM=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=CUsGdDKgzPz4ogpdX0wtnnbOOwcb3feoJ9dViCgI1jG8G3YS1p67ScOgDiwcrwManWCo1DG5TSJPIIzfvnbJwF50X33rATCRICNZC89LtLDddoL4BDnbiZ154HPV97bYdLZU+h5V0MH47+CP7g430lUG4niI6B7dtpaAIkjje9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=J0XMvo//; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1750151016; bh=hphOaMPhVeReQubhMjEgQY7y3BcvT7JT2QC8BwFPfho=;
-	h=From:To:Cc:Subject:Date;
-	b=J0XMvo//egT0/n9OK8WI+zsZ8HUGgKBmDMLcIZCl+MSIYyiC6iK27mrvD6gCrGQCl
-	 xt8PK8Zn5fYqJGLN+/HU9AaejlVAEJqGpuv6MbRmUqe8Qu3Fb8RvEfkciIM1iSJRsw
-	 Fajy/Zg09gKfwH3Bs4jSc7q/E6tSsogS+EWeEA74=
-Received: from VM-222-126-tencentos.localdomain ([14.22.11.162])
-	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
-	id E28CA6A; Tue, 17 Jun 2025 17:03:34 +0800
-X-QQ-mid: xmsmtpt1750151014tzvu4q5rh
-Message-ID: <tencent_BD16D2DE705D6E27FC5B93ECDEEF9A7B5009@qq.com>
-X-QQ-XMAILINFO: OcNQvPIwPRPcCZww6mf1bDJ83odA4DL4U3jXTfU7FCAcFQEuOrwsasSzgo/Jna
-	 78pM9VeNIPMxk92QyRRNrxSlouqa0pLOvQGoi5a0SyJwZrcRdCg+qHIbPdr7atFIwjVqAi+/n6ai
-	 L+ekxepNmQedfoOs/R2ko3XKV5O/sdzDUZ2PZ4AIw88IrCivCEWtcGyS2H2Y7Y9sW16m1W+WcVax
-	 VqnWVwyFU9RkmztHaUxZWFpmUVfXIprh3/z3AhQxw4WQsIDcosl+x+24E2TqhKCtu1wWzN5+Nn9T
-	 /EUDeWEQA2N3hXEfRTxokMN7vmJk9hF4j8DEpbUtI1sli14j2m81iYsB+0Ek7C4/GjwCh5XbW5wD
-	 6iUBoVNAu2rPsukjuKGWqSt7fmQ6lYJuUiZlqnTEgaJ6Er4fosxKXmIKFPXfzWe5vOLQuOGO7ba+
-	 KoEeHTdh8ytIL9i8N1PGpGKyQ81eJvlow73jGK/p4R05wrGcAXWL6/p0A4THFXT4/gYmVjB+Ab3q
-	 KiwOTyVf8GEdPvrbt/9zFpauOgKkf1nvWw7qLI8kuB8gUX2Vfgr9zOOJgd/SvOvIL9J8R1FXHpv7
-	 kcPabNZ8xuaa4Pusw54RXAcOY/i/we6UtbfkB5beybQhReAn+8/hT3oqK/fg/SY9MPbfDYgBHiCB
-	 Xgk5WsGvnhqKpAnluTLnEuoeeaeWBD8TP0nFlD18g1ALoStiYhgG2hukL4f028aTyo8zut4zVy4V
-	 NM9WjNs/QmiqswzrASuNY+VE7rRzigWakvgl6MDxdvl+zDvXYddtRpInULKEZTqP1hM5sbY8uO/B
-	 oSwhY/bSijfBtkJiODqVO3iDQxuGBxXtFd00SCVXrz+6OMtgNtWqhJTDpY4WmVRmvyXlBhijTGdH
-	 xqnDuKM0kdQxEwLvsooiNWMcJEJogpXy4YDWuGzPZOgFhPj9F2U0m4LV2ONZS6mGjtAj5XeutKN3
-	 nlFZQ0Au2epd2jYDTX5o1qWztGcx7Zld+bglf5GH2xBchIBgJIAN03jx4lILMUQ8xb5vI0XbD7iy
-	 o3oGYI5rjIABL5lOdxyQ5N9tAc9+ZBywmEiNmJItupcFGuUqfMLJBzVnEkX8vGqG/L0aWY6w==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: jackysliu <1972843537@qq.com>
-To: James.Bottomley@HansenPartnership.com
-Cc: martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jackysliu <1972843537@qq.com>
-Subject: [PATCH] scsi: fix out of bounds error in /drivers/scsi
-Date: Tue, 17 Jun 2025 17:03:26 +0800
-X-OQ-MSGID: <20250617090326.753352-1-1972843537@qq.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1750151022; c=relaxed/simple;
+	bh=0jXIXmWCiLrPFyDn+WH7Az5AxH7uOGz0L78bXYR4JJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OzYijdMvAGeRuDrtUmBrFv4r3gU1JvE8ELxa18W+v6pch1hdodhY6D/M0b/QUU04A+l04WJVQigHUXtuOZk86vQDlhbk8nEsh/rbZSw/51u+S+sVvDzwltKf9GXYwnDBRYdF8VMf9Uj4/FcFw+i5S3R80wRlgcgwWFfG2K+cK/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FokIEwN1; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=O1aQjgQO8XR30rV5R8gCxQHfePvnGGG/SprTQSTa2jQ=; b=FokIEwN1p2FvqL66tn8K60SPz5
+	UxyId9D5qadVtujZCBWpP+KG+S8Maktqmk6GE1Z4HyidDnL0PwQgUMbpjFVyLIkVaWErihzIuDYWU
+	eNJ1PM3tJH7vrCzr3Q4XEuZXRITaqd1HIX5QS1O24phxhJe30qGcEJIQmdhQ3pAZwzn/uhkHROKtH
+	GD3lD2oxvkwfVPbFwPlq6fLPDL1ONmSATfrEKCdlL+3o094P/igJY1JnYm6Jdh8R6S5hiaOvnyQyq
+	6l+ImSPR79wi0VB7IGHHcMNl5dO0yfrXexEWQNJqeeVU/5pV2WmIcBmYyNSEustE4pKn215vVQRhS
+	ihWPZ+pg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uRSE6-0000000GvSG-1dCk;
+	Tue, 17 Jun 2025 09:03:30 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 83070308523; Tue, 17 Jun 2025 11:03:29 +0200 (CEST)
+Date: Tue, 17 Jun 2025 11:03:29 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Xin Li (Intel)" <xin@zytor.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, seanjc@google.com,
+	pbonzini@redhat.com, sohil.mehta@intel.com, brgerst@gmail.com,
+	tony.luck@intel.com, fenghuay@nvidia.com
+Subject: Re: [PATCH v2 1/2] x86/traps: Initialize DR6 by writing its
+ architectural reset value
+Message-ID: <20250617090329.GO1613376@noisy.programming.kicks-ass.net>
+References: <20250617073234.1020644-1-xin@zytor.com>
+ <20250617073234.1020644-2-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250617073234.1020644-2-xin@zytor.com>
 
-Out-of-bounds vulnerability found in ./drivers/scsi/sd.c,
-sd_read_block_limits_ext Function Due to Unreasonable boundary checks.
-Out-of-bounds read vulnerability exists in the
-Linux kernel's SCSI disk driver (./drivers/scsi/sd.c).
-The flaw occurs in the sd_read_block_limits_ext function
- when processing Vital Product Data (VPD) page B7 (Block Limits Extension)
- responses from storage devices
+On Tue, Jun 17, 2025 at 12:32:33AM -0700, Xin Li (Intel) wrote:
+> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+> index 8feb8fd2957a..3bd7c9ac7576 100644
+> --- a/arch/x86/kernel/cpu/common.c
+> +++ b/arch/x86/kernel/cpu/common.c
+> @@ -2243,20 +2243,17 @@ EXPORT_PER_CPU_SYMBOL(__stack_chk_guard);
+>  #endif
+>  #endif
+>  
+> -/*
+> - * Clear all 6 debug registers:
+> - */
+> -static void clear_all_debug_regs(void)
+> +static void initialize_debug_regs(void)
+>  {
+>  	int i;
+>  
+> -	for (i = 0; i < 8; i++) {
+> -		/* Ignore db4, db5 */
+> -		if ((i == 4) || (i == 5))
+> -			continue;
+> +	/* Control register first */
+> +	set_debugreg(0, 7);
+> +	set_debugreg(DR6_RESERVED, 6);
+>  
+> +	/* Ignore db4, db5 */
+> +	for (i = 0; i < 4; i++)
+>  		set_debugreg(0, i);
+> -	}
+>  }
+>  
+>  #ifdef CONFIG_KGDB
 
-Signed-off-by: jackysliu <1972843537@qq.com>
----
- drivers/scsi/sd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Maybe like so?
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 3f6e87705b62..eeaa6af294b8 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -3384,7 +3384,7 @@ static void sd_read_block_limits_ext(struct scsi_disk *sdkp)
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -2206,15 +2206,14 @@ EXPORT_PER_CPU_SYMBOL(__stack_chk_guard)
  
- 	rcu_read_lock();
- 	vpd = rcu_dereference(sdkp->device->vpd_pgb7);
--	if (vpd && vpd->len >= 2)
-+	if (vpd && vpd->len >= 6)
- 		sdkp->rscs = vpd->data[5] & 1;
- 	rcu_read_unlock();
+ static void initialize_debug_regs(void)
+ {
+-	int i;
+-
+-	/* Control register first */
++	/* Control register first -- to make sure everything is disabled. */
+ 	set_debugreg(0, 7);
+ 	set_debugreg(DR6_RESERVED, 6);
+-
+-	/* Ignore db4, db5 */
+-	for (i = 0; i < 4; i++)
+-		set_debugreg(0, i);
++	/* dr5 and dr4 don't exist */
++	set_debugreg(0, 3);
++	set_debugreg(0, 2);
++	set_debugreg(0, 1);
++	set_debugreg(0, 0);
  }
--- 
-2.43.5
-
+ 
+ #ifdef CONFIG_KGDB
 
