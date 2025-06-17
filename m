@@ -1,133 +1,151 @@
-Return-Path: <linux-kernel+bounces-690643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933C6ADDA20
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 19:13:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00011ADD3FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CD482C550B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:00:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A72893AD32A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2112FA636;
-	Tue, 17 Jun 2025 16:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DC72F2C4E;
+	Tue, 17 Jun 2025 15:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="U05IuaD1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Js1PFMfb"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7559C2FA624;
-	Tue, 17 Jun 2025 16:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B9E2EF2BC
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 15:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750179592; cv=none; b=hblZbkPZPY2ptjPvhsv4LjVbIOu4cu0tmBFG8dtkTKpalSrcL7F+PHSeGLD86MSB89MsTMvrq3kWZ3vNWxuKjPWS3MJm4khwLBfrnFGxKPuuTwEK8Z6iMP8ccS1/eNrXP1ITT4w+2k4zQhQZYvhPIWf7m1GP/EIhPHxUcvMvIzU=
+	t=1750175646; cv=none; b=Qc26ife19YpoOFysf0p3JcPNbdWukmKmoSkSBYOQPIVhfENDkAOemKn1VQqchgJxhJ/YzI0yjkvMr7w0LUIferXJEGwHPnELTyREJ7eDHFlokY/XbPoQ4TtjQFqGG6a//WHVUo7k9YAnB9WimrqP2o4YHuwdqP2U6Taz6eaSctw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750179592; c=relaxed/simple;
-	bh=cpdFqG8VE3oUn40geLA2DBr+wtB8mZ02xKcGoI5IPQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xqbcjmhn6xdbITEY55U0v2jzFIHKHF9s/YyI3GoaVuKNYWHPGLAlu/f9hQ7EJ7f8+Xwf3RiW9t2aUvNGc1qZj403Boumfsoyi0spTqYmxT1b6/6+kkB9rBmmslr6zXbzcX+8afa2QpB07QcOkZhQTpM6H9UgEEkX0swOVOzbt7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=U05IuaD1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7AB8C4CEE3;
-	Tue, 17 Jun 2025 16:59:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750179592;
-	bh=cpdFqG8VE3oUn40geLA2DBr+wtB8mZ02xKcGoI5IPQY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U05IuaD1bJIohe7AWSw6RJtjOsWhQJenPkMDttC2JsPV3u/WK0613Q2jx++HkMUqe
-	 OY+GtUyehrqkNdtyVyTeOfN9yIeaQMOHKzrIA0dMNtJEYb5uzaIRYyK9qF2ua345cz
-	 91yICdBzyCvdLXb/bho0HFh42Zr572zghzcqmOeQ=
-Date: Tue, 17 Jun 2025 17:49:49 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Saravana Kannan <saravanak@google.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Grant Likely <grant.likely@linaro.org>
-Subject: Re: [PATCH] driver core: Prevent deferred probe loops
-Message-ID: <2025061740-banter-acclaim-2006@gregkh>
-References: <cb354fd2-bece-42ef-9213-de7512e80912@linux.dev>
- <20250610183459.3395328-1-sean.anderson@linux.dev>
- <CAGETcx-koKBvSXTHChYYF-qSU-r1cBUbLghJZcqtJOGQZjn3BA@mail.gmail.com>
- <a52c513c-ff93-4767-a370-3f7c562df7bd@linux.dev>
- <2025061147-squishier-oversleep-80cd@gregkh>
- <7d6d8789-e10b-4b06-aa99-5c1a1bdd3b4c@linux.dev>
- <CAGETcx9E5DB4UtdjjAO2=XfTNXdXocj7uk0JkVZ8hf9YadwNcA@mail.gmail.com>
- <70958a2e-abc8-4894-b99a-f2981db9981f@linux.dev>
- <2025061700-unmapped-labrador-a8c9@gregkh>
- <0ee2f641-c3f3-4a3a-87b4-e1279a862d68@linux.dev>
+	s=arc-20240116; t=1750175646; c=relaxed/simple;
+	bh=GixHo7OCVTSD0sJSxwSZMCjsg1quwRg/ut0ejA/F6/k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JUvKf5suKa3NHe9zMVosCzBczPA8vKPi8EH8/ePuBa6dyZSTVAuaCamcCaHmHk31A5Enl1DG5jFUVZqtCWplD/ct5V/bwJezo8ye8UFtmddEesQyMHj8WojjlLz9uFnNI6AnnuBSodmyQmLVcKmPeMUtALSPfgIrGXdFEsTisj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Js1PFMfb; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 48305d404b9311f0b33aeb1e7f16c2b6-20250617
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=DM70jmBk+8+pNXMrSmDw0F0d1r4Q4LzFUoMuNsxPcH4=;
+	b=Js1PFMfbr+Kni92Htg/UjrRVzwKN0SJuv+R9I0eBGAeZTW5YUG0Hb9xJYsGSMVqLNxO39RVkVAxTTOsdDTwrrlSRJYnkYNlT7qZlX+W6IFjbaTGraw0itmnfbN455gI1oEY0I0+WDtOFHxPN/uTwFEhcC35k33+CaEh7WSGoIwY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.3,REQID:5b480e38-e146-42eb-84d7-2bc1e7194b3c,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-5
+X-CID-META: VersionHash:09905cf,CLOUDID:35561477-7521-4364-b0ef-cd7d9c0ecbde,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,
+	LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 48305d404b9311f0b33aeb1e7f16c2b6-20250617
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <kuyo.chang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 773875663; Tue, 17 Jun 2025 23:53:59 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Tue, 17 Jun 2025 23:53:57 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Tue, 17 Jun 2025 23:53:57 +0800
+From: Kuyo Chang <kuyo.chang@mediatek.com>
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Matthias
+ Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: John Stultz <jstultz@google.com>, kuyo chang <kuyo.chang@mediatek.com>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>
+Subject: [PATCH v2 1/1] sched/deadline: Fix dl_server runtime calculation formula
+Date: Tue, 17 Jun 2025 23:52:49 +0800
+Message-ID: <20250617155355.1479777-1-kuyo.chang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0ee2f641-c3f3-4a3a-87b4-e1279a862d68@linux.dev>
+Content-Type: text/plain
+X-MTK: N
 
-On Tue, Jun 17, 2025 at 11:35:04AM -0400, Sean Anderson wrote:
-> On 6/17/25 04:50, Greg Kroah-Hartman wrote:
-> > On Thu, Jun 12, 2025 at 04:40:48PM -0400, Sean Anderson wrote:
-> >> On 6/12/25 13:56, Saravana Kannan wrote:
-> >> > On Thu, Jun 12, 2025 at 8:53 AM Sean Anderson <sean.anderson@linux.dev> wrote:
-> >> >>
-> >> >> On 6/11/25 08:23, Greg Kroah-Hartman wrote:
-> >> >> > On Tue, Jun 10, 2025 at 07:44:27PM -0400, Sean Anderson wrote:
-> >> >> >> On 6/10/25 19:32, Saravana Kannan wrote:
-> >> >> >> > On Tue, Jun 10, 2025 at 11:35 AM Sean Anderson <sean.anderson@linux.dev> wrote:
-> >> >> >> >>
-> >> >> >> >> A deferred probe loop can occur when a device returns EPROBE_DEFER after
-> >> >> >> >> registering a bus with children:
-> >> >> >> >
-> >> >> >> > This is a broken driver. A parent device shouldn't register child
-> >> >> >> > devices unless it is fully read itself. It's not logical to say the
-> >> >> >> > child devices are available, if the parent itself isn't fully ready.
-> >> >> >> > So, adding child devices/the bus should be the last thing done in the
-> >> >> >> > parent's probe function.
-> >> >> >> >
-> >> >> >> > I know there are odd exceptions where the parent depends on the child,
-> >> >> >> > so they might add the child a bit earlier in the probe
-> >> >> >>
-> >> >> >> This is exactly the case here. So the bus probing cannot happen any
-> >> >> >> later than it already does.
-> >> >> >
-> >> >> > Please fix the driver not to do this.
-> >> >>
-> >> >> How? The driver needs the PCS to work. And the PCS can live on the MDIO
-> >> >> bus.
-> >> > 
-> >> > Obviously I don't know the full details, but you could implement it as
-> >> > MFD. So the bus part would not get removed even if the PCS fails to
-> >> > probe. Then the PCS can probe when whatever it needs ends up probing.
-> >> 
-> >> I was thinking about making the MDIO bus a separate device. But I think
-> >> it will be tricky to get suspend/resume working correctly. And this
-> >> makes conversions more difficult because you cannot just add some
-> >> pcs_get/pcs_put calls, you have to split out the MDIO bus too (which is
-> >> invariably created as a child of the MAC).
-> >> 
-> >> And what happens if a developer doesn't realize they have to split off
-> >> the MDIO bus before converting? Everything works fine, except if there
-> >> is some problem loading the PCS driver, which they may not test. Is this
-> >> prohibition against failing after creating a bus documented anywhere? I
-> >> don't recall seeing it...
-> > 
-> > What do you mean "failing after creating a bus"?  If a bus is failed to
-> > be created, you fail like normal, no difference here.
-> 
-> Creating the bus is successful, but there's an EPROBE_DEFER failure after
-> that. Which induces the probe loop as described in my initial email.
+From: kuyo chang <kuyo.chang@mediatek.com>
 
-Then don't allow a defer to happen :)
+[Symptom]
+The calculation formula for dl_server runtime is based on
+Frequency/capacity scale-invariance.
+This will cause excessive RT latency (expect absolute time).
 
-Or better yet, just succeed and spin up a new thread for the new bus to
-attach it's devices to.  That's what many other busses do today.
+[Analysis]
+Consider the following case under a Big.LITTLE architecture:
 
-thanks,
+Assume the runtime is: 50,000,000 ns, and Frequency/capacity
+scale-invariance defined as below:
 
-greg k-h
+Frequency scale-invariance: 100
+Capacity scale-invariance: 50
+First by Frequency scale-invariance,
+the runtime is scaled to 50,000,000 * 100 >> 10 = 4,882,812
+Then by capacity scale-invariance,
+it is further scaled to 4,882,812 * 50 >> 10 = 238,418.
+
+So it will scaled to 238,418 ns.
+
+[Solution]
+The runtime for dl_server should be fixed time
+asis RT bandwidth control.
+Fix the runtime calculation formula for the dl_server.
+
+Signed-off-by: kuyo chang <kuyo.chang@mediatek.com>
+Acked-by: Juri Lelli <juri.lelli@redhat.com>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+
+v1: https://lore.kernel.org/all/20250614020524.631521-1-kuyo.chang@mediatek.com/
+
+---
+ kernel/sched/deadline.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index ad45a8fea245..f68a158d01e9 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1504,7 +1504,9 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64
+ 	if (dl_entity_is_special(dl_se))
+ 		return;
+ 
+-	scaled_delta_exec = dl_scaled_delta_exec(rq, dl_se, delta_exec);
++	scaled_delta_exec = delta_exec;
++	if (!dl_se->dl_server)
++		scaled_delta_exec = dl_scaled_delta_exec(rq, dl_se, delta_exec);
+ 
+ 	dl_se->runtime -= scaled_delta_exec;
+ 
+@@ -1624,7 +1626,9 @@ void dl_server_update_idle_time(struct rq *rq, struct task_struct *p)
+ 	if (delta_exec < 0)
+ 		return;
+ 
+-	scaled_delta_exec = dl_scaled_delta_exec(rq, &rq->fair_server, delta_exec);
++	scaled_delta_exec = delta_exec;
++	if (!rq->fair_server.dl_server)
++		scaled_delta_exec = dl_scaled_delta_exec(rq, &rq->fair_server, delta_exec);
+ 
+ 	rq->fair_server.runtime -= scaled_delta_exec;
+ 
+-- 
+2.45.2
+
 
