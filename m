@@ -1,100 +1,95 @@
-Return-Path: <linux-kernel+bounces-690985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83782ADDEF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:31:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9E04ADDEB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DDAA3BDE0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:31:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31CFC189C3EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDC82F0C55;
-	Tue, 17 Jun 2025 22:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF37C294A15;
+	Tue, 17 Jun 2025 22:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SovLzznF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bRnDxeEY"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2932C2E54A0;
-	Tue, 17 Jun 2025 22:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD612F5312;
+	Tue, 17 Jun 2025 22:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750199402; cv=none; b=ng3x6muhAeYYTVLWS3z8Ud13KJAuYskhM1VPzNrVXlc+7ZmStpiYDjQ8E7P/JlBI1deEq0xZIDEfksi0WN9kV4jTqhndKMThQzHcglN4ZVmcHqLYJZ5gTekV7Fd7PXxt/PIpDInyUzfr1XlcAJJbljOoVwIM24DY0lvC+Q1C/wI=
+	t=1750199297; cv=none; b=qiMVTMSDU7rzOJXGqkyOOoIp4cOwk4tndpO276Kj0jMsul4wjCRTR6KRAbL5TCw0gR79t9HpDV+di7319KOLbqhpa82ZqkVrxHYvYwA8x4fzDAbsVn0xFCR7yC4ooGhnRFfU0rzsSbOqCTgIyRQF7jztAibqm9dIA9ynZuVAxmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750199402; c=relaxed/simple;
-	bh=oGJq6YZzLbO82TcEMZLZBS9E98OIIOd5KDDOCIIYowQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jPMIFCZiIVVcsYln0yh0IW0fz5qKqGQFwS1wsXKbyhwBA84xF7XBSpglF0g7ePz9xDfG2FbB9Ax6+Lie9N3Z64bVeIVadKVe2iX0kAeq9fzCaKMqOiPm9JXITaEnvmQMcESjyA44bzCRT0PFAoVuNrIZyG9QRPzfmWmAKdjTuVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SovLzznF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF370C4CEF8;
-	Tue, 17 Jun 2025 22:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750199402;
-	bh=oGJq6YZzLbO82TcEMZLZBS9E98OIIOd5KDDOCIIYowQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SovLzznFPfIAEgcoGd3wa7ftl9jecC4+XnxcYbmljKPn6KsHB6owxneOsiWiHlnab
-	 muiKIw9awT6KzPqUeNlzqPMNRQ6FYy7/UhXGHPM/wLDCfc1FPzhQZtrSQX6W5VQKa4
-	 50B2rUTWfZHWORPDSaKSt4nf8HFzuFx1dUcky6sSdjuVTg5jP3l3Ie8z4zoxN0BeIB
-	 5vJahEvic3FD72FGGK9qwYIGiNTNyNAnjg9FNwA98XjMM+3bCyH7NImzGI7tl4fW1C
-	 By1EilFtNRcoK8uUYNAou3W+ESJ441BuamWF8ppNnSTp3K+Rnnx3FCX2Vt8euhkRiM
-	 JB91sT3DxJ9UQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Jason A . Donenfeld " <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mips@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	x86@kernel.org
-Subject: [PATCH 9/9] MAINTAINERS: drop arch/*/lib/crypto/ pattern
-Date: Tue, 17 Jun 2025 15:27:26 -0700
-Message-ID: <20250617222726.365148-10-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250617222726.365148-1-ebiggers@kernel.org>
-References: <20250617222726.365148-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1750199297; c=relaxed/simple;
+	bh=2ygcoiPdg5tXbbjhveGnMjSSG6kQpW//H1KxZ2agnv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kRUKtUqoVN+A16psdCgZG7q9RTKoIZfNyZyJQ3AaI2+O0duVWf019Csfn0ESRoZs6Yd2hpVeETY9OW9g7sUelx01tbZAjvSZIKdMdRrY3xHXWtstCqftMO+G7crk/0KfWhUkz1p8JGqKlOVngUbE1Gb7lqTaHWdSSxg/kf2FLzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=bRnDxeEY; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=W0OOXNAeUJvkfL1jvOAbJIXmDdUCK0qiD8aREElX9bc=; b=bRnDxeEYmtsxBY/dzVEQPU1g7+
+	ybaEFJ+5Qx9x/CkDvIRHJnI3/ZBw+f5Np7a1T/GbvA8DptM/IyP87exa/esIAncJaVSyrJ7AIsEXB
+	zp7cY25R5I8JCmbn3tL59sRxarYH/mdnmbe6rA9axu7dgZJ2b0WOL7+6M6K3kih8BewDESCVjI4OD
+	MjosC+jV8GuYPv4Hw1Pp6sBmOi6TvFZdBu8aOcNyv1DDwvT06RZg5OlZ5cjKoo54NUHFwOusSG689
+	9QRAzefeesRcgpvSqoRwS+kiA7oJlOi8DN31ofoc6oEnrOMudCHvBUvCFRH8K7b+ICr/pdkIYq/B7
+	A1U/qVAQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60834)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uRemn-0005eV-1B;
+	Tue, 17 Jun 2025 23:28:09 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uReml-0006As-0G;
+	Tue, 17 Jun 2025 23:28:07 +0100
+Date: Tue, 17 Jun 2025 23:28:06 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jayesh Choudhary <j-choudhary@ti.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
+	devarsht@ti.com, linux-kernel@vger.kernel.org,
+	tomi.valkeinen@ideasonboard.com
+Subject: Re: [PATCH] clk: Add clk_determine_rate function call
+Message-ID: <aFHr9sVnU3Nx6yh0@shell.armlinux.org.uk>
+References: <20250616103527.509999-1-j-choudhary@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250616103527.509999-1-j-choudhary@ti.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-From: Eric Biggers <ebiggers@google.com>
+On Mon, Jun 16, 2025 at 04:05:27PM +0530, Jayesh Choudhary wrote:
+> Add a function to determine if a particular rate can be set for a clock
+> with its argument being the clock and the desired rate so that it could
+> be exposed to other peripherals.
+> For example, the display controllers typically has to perform multiple
+> checks for supported display resolutions including those related to
+> clock rates. The controller has to check this way before it actually
+> enables the clock and has to do it multiple times (typically for each
+> mode), and therefore using the clk_set_rate when its not needed, does
+> not make sense.
 
-arch/*/lib/crypto/ will no longer be used, and its contents have been
-moved to lib/crypto/.  (Well, except for a few .gitignore files which
-are intentionally being kept for a while.)  Therefore, remove the
-arch/*/lib/crypto/ pattern from MAINTAINERS.
+So what's up with using clk_round_rate(), which returns the clock rate
+that one would actually get if one calls clk_set_rate() with the the
+value passed into clk_round_rate() ?
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+Why is clk_round_rate() not sufficient?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a92290fffa163..8ca374b24a806 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6408,11 +6408,10 @@ M:	Jason A. Donenfeld <Jason@zx2c4.com>
- M:	Ard Biesheuvel <ardb@kernel.org>
- L:	linux-crypto@vger.kernel.org
- S:	Maintained
- T:	git https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git libcrypto-next
- T:	git https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git libcrypto-fixes
--F:	arch/*/lib/crypto/
- F:	lib/crypto/
- 
- CRYPTO SPEED TEST COMPARE
- M:	Wang Jinchao <wangjinchao@xfusion.com>
- L:	linux-crypto@vger.kernel.org
 -- 
-2.49.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
