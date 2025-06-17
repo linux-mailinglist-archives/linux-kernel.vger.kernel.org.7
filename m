@@ -1,132 +1,131 @@
-Return-Path: <linux-kernel+bounces-691029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33445ADDF74
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 01:14:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A5CADDF7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 01:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D50AF7A3BCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 23:13:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E709189A095
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 23:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3333296150;
-	Tue, 17 Jun 2025 23:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFEA2980DD;
+	Tue, 17 Jun 2025 23:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FFKswCHi"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A4tlmChr"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE531898E8;
-	Tue, 17 Jun 2025 23:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCFB1F5847;
+	Tue, 17 Jun 2025 23:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750202064; cv=none; b=sak5dYEZpBVHOl8I95L6ZAojAsdJwIIP/Blp2eEa04WzkyPsf2YqAMLxNKD9pDAig1t/UbDKVkZ4+wimccQlctSgGKelczu06pxt9uxJ3NLCyNordHj3k8jfwfeZcSFElKLEQoDXO64ylhn20fESFQqIAjVW+TtoNtFGH1QPVAs=
+	t=1750202321; cv=none; b=LIZEC4zGxAZqoWgRXTmfgX+qF4CdW2toUL8hwDOklarNYk4opzsJiYTpCWXz6WYVz+jap2lmCiRXu1zS8eBDNLDyCp8XFvFPm8G/xO4dT4+sAiyBKO3VzjOQ4Fp6rjXaDPMYsxk2oe7DuC4g9TfYIdSXzfobJDTr14NTVL7gub0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750202064; c=relaxed/simple;
-	bh=Cunbq/fRkIIK20gW7uYxC8XS+0I3YTwbTImpnDIBVeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EVZF0JXngt2Fd06tOygqWe9g+jNvXCsVmYe4Ja7phCBgCz2zsXHqLeVr3xSbjEt1CUrimRHSWcE5t7Bo5r8cUt6agJrIzPUZjgXD77sqmMqWdG6qq78Ju6+hXnk5NNo6VplMI/Mnp3bRJki6JHgQygzLwLLC1JCmahB+Y4oRLzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FFKswCHi; arc=none smtp.client-ip=209.85.215.179
+	s=arc-20240116; t=1750202321; c=relaxed/simple;
+	bh=tPLaqT0XJ8nrfzkBU9nkA2Wy+xH1RGEkXtskrER6iOU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jXUFVrKUEmeLXdpchfdpkBiY9b65daYO4h6NK8zL/8nu3JbFhQnyCuTbrKNJinoyF6CW6S5XtcUSLVMr/XrdjwsZ3zRXKpRzxGQXGnp5OG8xMtnvN3fUO7wCPZ83EYBoukRcNO+Njo+NoD+k7RGpN1jw02ld6rGMR4mZOT7oqAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A4tlmChr; arc=none smtp.client-ip=209.85.219.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b2c4476d381so141335a12.0;
-        Tue, 17 Jun 2025 16:14:22 -0700 (PDT)
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6face367320so61517266d6.3;
+        Tue, 17 Jun 2025 16:18:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750202062; x=1750806862; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EGBYSwd2ZHfMGSOUy0pV5HM6pjaKicXfvLPu6XGQKPg=;
-        b=FFKswCHiZsexVzLRneN7TE8Rqvc4Q7Hzhpm3WyAJypXOVjChz+SKM+TAVvEhEiNsek
-         a0TJueteGjKnizccCn3a51hhh7G10/TzR4h4jfEsBJHbPDdv0FPCv1JyxX5FJIXNhfct
-         1VnK9gv2jMChQ1tHO1JGhY/SfN3dYv92uoAJO6/gYnUC2NS60L30anOrsfwe0MBlQ1tG
-         +FQtLLle+1xUUKFh94BeAW3/3ZLLXWFKhnMQ9oF58SN7Kq/XV4lvvVueHi4M12jZfsgl
-         BiWkMe64VPzHjeaRATfoPYmDgZJT+zir9B22lzR01CauKXIkARx0k7LW0uMhgNx5Zity
-         d8Qg==
+        d=gmail.com; s=20230601; t=1750202318; x=1750807118; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uAavNtXTEy/ItbwFLsjFRgKmKMcqXHSbnjX4Bu11eac=;
+        b=A4tlmChrTTbZzzpCJsEDQ1TZRQR1C4jkUDHEKYSB0IDAK0Mh3of4rSYr5rIbdqKiGa
+         5QV5wHJz0qIGucczHalQPtfHnJBjmhRW7+xYuusiwTZiYDQC1XHPVMWbEtmtah5X2oPc
+         /lp2jIj+6Feohq//OHHEbapAwbhX+FMGFpJC4TZaGFx5my3cIqDhIz8N2TAvF49Z/YQu
+         oKZ/8n31e1qTcKW3xfvP1KVQm631Wk4wYpBF1zuHjs0QYdCgDocNkzm9jzKguo5Sq9FU
+         A3mzjl2aJw14segFvpcibrF3U4suCJD8sHNK5w9jZD/Qc9aguYkIIvjBQ4TRfx+f2736
+         c5fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750202062; x=1750806862;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EGBYSwd2ZHfMGSOUy0pV5HM6pjaKicXfvLPu6XGQKPg=;
-        b=MkDdmtQdEkUfpvd9lZeM7i9W6aOJDxFlOmQQGOLPC0mUosMtkHGGXYBkAUr+O75SH/
-         5rKmLcZ3j2zLNCQYymMb2GZt+DgEa8flZ7N9bL6jFXyo5+wnWR0d0sG95W96OodCeQdc
-         DOalWHgmHdSpYjeumZe7ixPyh15xNyyuEtW3a6tiSTpSJMf2g/HcJdjYmGX52+9qUykr
-         6CuVNeHSyo8p8BcaVC6/CQtXfRQEoQbl1sPmlInZfbPCoNAyKUmnpFxkP3BN8OQFte4q
-         lno2PqJhaSi6TlNpuh6ub1LIyOyVoTkQbp72ScEPvZK9kHUiQcGRxb2FG5d5MWRLUhxW
-         4KIA==
-X-Forwarded-Encrypted: i=1; AJvYcCU07TRAR8tp71/z4euPy4LueDj14uJK5dC+HMASKaZA1kFyBCx03w65ye8xFL164taT9eCIGTAsklUTZlYG@vger.kernel.org, AJvYcCXukwK9iuMnPGtEINU0Lk3YwzP8SbC8qwfQ7HYg95CpFtvzAcd51KX1uCm+/uQNG53thN5eEkkSBkwG@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXxnkWWB+en0ImjwnjdcUAGAOfKUH53aS2d0822ds0dAcpj5BF
-	WeCBKYSYPqlD9E669upctzqtJQm9dM9Cdjy0x57yDXKxSZk1PUvDezdw
-X-Gm-Gg: ASbGncu0W/3IX8Gb5JF0EBN+P+/72/9lafwgRr1C1PtUoZKjAdovuZV5xU2RvSKILvN
-	VDfyuFKZvXduAk920voCn6ewjoz3yIxX3DaLhJLjwgni5Fy89J8PuSRRgC823Zu/gjcxyW1XAvf
-	9AzuXvd4sxNry4KjDDaejIgrUdNjssX1mYYIqUoSdH1nGxaXAA+bcT/c4JbSDVyic9uBvQ2HXm3
-	qC4KDEEsQdDgMqKQoUOVUrBKcz8K7tBqCgvzG8Tc4dRxKWLwdvBwOrUkJyBFUf31TyJonB4xz3T
-	09GomlOy3VO6dMgEmlaN4teIXNoJf4hFJNO0qsMguVstEq7586tD/djrc/0Zkg==
-X-Google-Smtp-Source: AGHT+IHV7psFrMmfaxJ1IV6J338iQx2HCKSnK63uEQGDNoDbLglPoYovMqJVxLQHE0+ZHMqLW7PAuQ==
-X-Received: by 2002:a17:903:15c7:b0:235:1b50:7245 with SMTP id d9443c01a7336-237c2047aafmr5335835ad.7.1750202062010;
-        Tue, 17 Jun 2025 16:14:22 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2365de78169sm86179965ad.123.2025.06.17.16.14.21
+        d=1e100.net; s=20230601; t=1750202318; x=1750807118;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uAavNtXTEy/ItbwFLsjFRgKmKMcqXHSbnjX4Bu11eac=;
+        b=KWqu40s2MjaGLqb3B4/d+DXAJsj8lzrQzPxVYFWxexdcIJMSs4RgtQqRSr2BEsnJG3
+         gEPmsngWNnA53Yu8YIBMR0bRWZzTy6JgUJw/OZrnrGZw30AKjTHyUDs1uH05cEQT7hfo
+         Pnuzkreg1wRvQmCp8XXlSfizz2IijFVALagUYFm11jdqKRhPBQmB8GrQ4D5zsRh9oliR
+         4fkFLd2ZeLIRCPuUk7I+LyHkwCJhEna0wRBXm5JBJN+qwE7wTOcrdhvn9d/NRVRv5RBj
+         UqdvWyFdaGxvaHMEytw9shzT6VK6YbDoX/SPbdo1FUb25nP1S4u/EIq1py/AWERJZhyc
+         3IFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUObJohC2mIcM9jLIh5i6M4cdr1MVj4ib8nU2fDGtODkGUw1YiVKLgyX0fctxpyD8xB5yHW/pb3vnf2uaCz@vger.kernel.org, AJvYcCWryGeWLQML0/AreeMY0iDMMTUBCr9NuLNjE+UzzCCf2wZWmBXc8tVlbWB2kbjJ0bSIXIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4foD36I3e+EQ9Pywhz+xWR/U8IgtyUMB0AaKbMuAuXXySWEjW
+	IgazP5Jp+eUWZy9gkZDIY/dheChKYMrS9WP/YnVuhEnVfLhkBS0MHUqd
+X-Gm-Gg: ASbGncuJMv5h013ybS5cg1ciKrNGIsZBELWf0T1QYhRiBhf00onCJXpbgSb5jxXAt3p
+	TdnEo/WYZwjkgQC87oE6MLNmhbreu4JG6OtoOI20rRYgU9rQsNisgLHuZplpRHvioXyI15/fwWP
+	D0CXAiZHvdqDFjNioZJ2S0OIO7q5kmIbImxQAb4h0rLe4qVBVYaVrSN3iVzvw63Z/MlrvK5SNHX
+	RuwZQE7KS3ukP+RkfwhFJ1NUBZB7QK7gnLT4PE9wHjFsLjtBVZfwBNxaX9AfBeFbavVhul+PJnC
+	FM7lgJhUoHCoxDq68iuoI+exnKh8SjNJxXQDBI9wyVxTyiYsZX+4Zu78rdqW/SV9kz4gsGLBSPk
+	EpZOoYkY63VHPieJwZtKJaeEI6ujUUz4kkptNEVIsnnK18++wWhwqH/fjRjklicFeB9R5PA==
+X-Google-Smtp-Source: AGHT+IFmTufse5jxjgAZrCveK9CG5cYsrI0uZkITry7qkqBaYJ+m6Yb+OTtXCXcGcDjsHfV1ORx4Aw==
+X-Received: by 2002:a05:6214:5014:b0:6fa:fddf:7343 with SMTP id 6a1803df08f44-6fb477784fbmr235285266d6.23.1750202317910;
+        Tue, 17 Jun 2025 16:18:37 -0700 (PDT)
+Received: from lima-default.. (pool-108-50-252-180.nwrknj.fios.verizon.net. [108.50.252.180])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb5db9f173sm12992576d6.14.2025.06.17.16.18.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 16:14:21 -0700 (PDT)
-Date: Wed, 18 Jun 2025 07:13:05 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>, 
-	Inochi Amaoto <inochiama@gmail.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Ze Huang <huangze@whut.edu.cn>, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Yixun Lan <dlan@gentoo.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>, 
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Chen Wang <unicorn_wang@outlook.com>, sophgo@lists.linux.dev, 
-	Alexandre Ghiti <alex@ghiti.fr>, Longbin Li <looong.bin@gmail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>
-Subject: Re: [PATCH v4 1/4] dt-bindings: reset: sophgo: Add CV1800B support
-Message-ID: <jwehvuaywhkmrnmjxz4s6vv45seof5aihvb33upwbjv73bt5ak@e6yt2wdo2mzd>
-References: <20250617070144.1149926-1-inochiama@gmail.com>
- <20250617070144.1149926-2-inochiama@gmail.com>
- <175017325268.2418026.3599473248491336605.robh@kernel.org>
+        Tue, 17 Jun 2025 16:18:37 -0700 (PDT)
+From: Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>
+To: ast@kernel.org
+Cc: m.shachnai@rutgers.edu,
+	srinivas.narayana@rutgers.edu,
+	santosh.nagarakatte@rutgers.edu,
+	Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] bpf, verifier: Improve precision of BPF_ADD and BPF_SUB
+Date: Tue, 17 Jun 2025 19:17:30 -0400
+Message-ID: <20250617231733.181797-1-harishankar.vishwanathan@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175017325268.2418026.3599473248491336605.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 17, 2025 at 10:14:30AM -0500, Rob Herring (Arm) wrote:
-> 
-> On Tue, 17 Jun 2025 15:01:39 +0800, Inochi Amaoto wrote:
-> > Add bindings for the reset generator on the SOPHGO CV1800B
-> > RISC-V SoC.
-> > 
-> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > ---
-> >  .../devicetree/bindings/reset/sophgo,sg2042-reset.yaml        | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> 
-> 
-> Please add Acked-by/Reviewed-by tags when posting new versions. However,
-> there's no need to repost patches *only* to add the tags. The upstream
-> maintainer will do that for acks received on the version they apply.
-> 
-> If a tag was not added on purpose, please state why and what changed.
-> 
-> Missing tags:
-> 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> 
+This patchset improves the precision of BPF_ADD and BPF_SUB range
+tracking, and also adds selftests that exercise the precision
+improvement.
 
-I removed this tag due to the the small change to use enum.
-It seems like that it is not necessary for such a small 
-change. I will keep the tag for the next time. Thanks for
-your explanation.
+Changelog:
 
-Regards,
-Inochi
+v2:
+* Add clearer example of precision improvement in the commit message for
+  verifier.c changes.
+* Add selftests that exercise the precision improvement to
+  verifier_bounds.c (suggested by Eduard Zingerman).
+
+v1:
+  https://lore.kernel.org/bpf/20250610221356.2663491-1-harishankar.vishwanathan@gmail.com/
+
+Harishankar Vishwanathan (2):
+  bpf, verifier: Improve precision for BPF_ADD and BPF_SUB
+  selftests/bpf: Add testcases for BPF_ADD and BPF_SUB
+
+ kernel/bpf/verifier.c                         | 76 ++++++++++++-----
+ .../selftests/bpf/progs/verifier_bounds.c     | 85 +++++++++++++++++++
+ 2 files changed, 141 insertions(+), 20 deletions(-)
+
+-- 
+2.45.2
 
 
