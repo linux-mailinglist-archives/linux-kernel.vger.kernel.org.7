@@ -1,144 +1,95 @@
-Return-Path: <linux-kernel+bounces-689590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601D2ADC3E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:00:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 721D0ADC3DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE731175AE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:00:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D86916F768
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCFC28F937;
-	Tue, 17 Jun 2025 08:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144F428ECDA;
+	Tue, 17 Jun 2025 08:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RIDbaZIA"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WclTdQBf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CC728E59E;
-	Tue, 17 Jun 2025 08:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E2F288CAC
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 08:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750147235; cv=none; b=nHiigYuXeTXt9FPm1Om/8sbx6EjuHc2l39DstMJ7JcBbN2YG7MtGdZZsQIEDQK0sRJ+x3XNMVJTV4Eq5jNFXuUFWsak8o5tsqKNZ7JvNVXTqjnFjTtEdkDjULuyg69aIeILmxRSmKRallCupfU1xGZDxvhrchySK4wI9NAFeYfs=
+	t=1750147205; cv=none; b=uhawo3ffgL/oRgSBTn0fxh8cHSfJyKqnIg3uL3ye+oq/4SKBGR7taDAB5zpgIHLXqHZQlvZpbL1SBOKBCCkntkwTsXdJbINXrngUn72y4847D6DbI3fLN8utGo8b2TpUm9cGvPJzwpTA7B8T57KNT6hcQjON95S1JShayJbSfdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750147235; c=relaxed/simple;
-	bh=jvXWAS+XoKyjgR6Dpr49k5hO9jM/ljMWObx/URUPfog=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IQg4Y8uw5Kyyg/hcAAcjMrnfOVKuBg/kuQFQ3tCP+ZOywHpPyAAVPWkNVahJd4zU1wp6tEaYzCreF7g+LFHVeiQjtydvRqwBnj4uEbKr+QZ3/LPKCM7nemw5irg7OLXTlmC5BSbf1nEUlU2t+igPP/DQ6q+2SXk7zHSpgdnox3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RIDbaZIA; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-60497d07279so11115000a12.3;
-        Tue, 17 Jun 2025 01:00:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750147231; x=1750752031; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jvXWAS+XoKyjgR6Dpr49k5hO9jM/ljMWObx/URUPfog=;
-        b=RIDbaZIAPQRcChybgXJuycsRDpa9mGJYXpptHsjaFp4oWDbxY3ZwrAgJjZQXGz/AB5
-         tXAY+FruL+l2B+ECYNSXRz8HLB6zH9sxMf603L6J9/WMB3mKNpB8AK2iQDnpOle1mlSW
-         J0D8yazmc5fk8+YkJQQ1RJqQWn8NvJnys/cJypFl916JwLJCuJpUWWo9apdWKaRwiDnq
-         yZ9rCgO0pSzc+Oh4WGBgcNAMm9GYBpWDLn3CR2cC8ktuCfA8dIQsqiwsYQAUQwMRXTSu
-         rmosFlb7AI+fcWAK/UtkiKoCsppc2eOElxK61JPRzrnHoR3MNl5UKBBXiYaUoT809q3d
-         2MeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750147231; x=1750752031;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jvXWAS+XoKyjgR6Dpr49k5hO9jM/ljMWObx/URUPfog=;
-        b=N+5ZHK+9ki9Z84WiQrK3k9z5aF2WZKcms59x+Lrcz+WUXMgx+s4CUXhBfrB2+2oB2I
-         Egacv6+loQpn2ulfFPLxG5l1c6ZociwUylkRqVbyhebZG5DWfs6cgpOcWEdrQyc0pZvi
-         kdVK100DiYiTS5ZunbKZARbouvFYYIvRkRA+vibuv1sAxu6Ulp6SNbQU/w+iS+ZAgLt+
-         KVT4lhAYLD8IjLfrcTWLKd645vO/gKuy3otzGd2kj0tL7Q0qnHDxy/z70/D+3VljGnxW
-         YpxrozvzWTxQ6T5IS4wV1wMaIC/ViySWIYPKgIc+ALCQ7X23TGSt0kzn0kDSaF8lUY5F
-         SNkQ==
-X-Gm-Message-State: AOJu0YwrbrzAzUl5Petau02z0YgUR8x4wDVWfL9Z8pVAOjWm5FhrgBFU
-	fjM4Ru6HWw6yF31coA0lmyJTrzbkW+Qz4zXPKjVvpspYLG/oroQDyrRt3Vdl/IIY6xefSGQTCLR
-	owzfLNeNrWD0o+ZeEkXUTF62NhoMWWlrahA==
-X-Gm-Gg: ASbGncsvYeFUixj/HNnXAUvtTJxBM7kLMThdSGuZ6GQsWXXPBDVbyuFCVa5IngUsZ6u
-	hhT+jtYfuGbqV+8B1zKfVNgniytiZCPZR4k5Zr76ocGo9wQD3TL5Hwxt6vBLWGcbBd36bKrcGhI
-	ix+qJtLSFibhoZbGHiUICIN7ETna8atZvMKoXVjrUiZLCWGgYe/zXHDw==
-X-Google-Smtp-Source: AGHT+IHn8xOsl0QJPzdPuwCxzcbmEdIXRb2kUiv+YzDFkUoHjIa8NAxhuvpDQEAdAt6QboeMaTpCAJoCmoc8JUZ8Sv8=
-X-Received: by 2002:a05:6402:909:b0:606:baba:79f2 with SMTP id
- 4fb4d7f45d1cf-608d0a188bbmr10524044a12.33.1750147231323; Tue, 17 Jun 2025
- 01:00:31 -0700 (PDT)
+	s=arc-20240116; t=1750147205; c=relaxed/simple;
+	bh=UbMrgrxGSnG5QmILlu9vBgJIYjFRInQ4JmymSgsLo2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IyqOeKIYSYRC5LvVD2lluVDXHtaaTFT+4lfTo9fG8Ui0ABLh+f9s000CdSyQq0z72JJUlf7p0IQcx23rs7bdW6HEscu2PKs+it1S347/RaZMaEg6jguQMLFPzDcYym7NiSrvSKjLODw6sU367MRFH4A99OQOzIm8+qI5x8mHL44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WclTdQBf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1530C4CEE3;
+	Tue, 17 Jun 2025 08:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750147205;
+	bh=UbMrgrxGSnG5QmILlu9vBgJIYjFRInQ4JmymSgsLo2M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WclTdQBfOSaaufAvyHlWwcjStHDYL4M9cpu5/5VMtFa+5cTFiTiqa4KjssJXInsOt
+	 otcWW9J1+eWGaFlxjuLtmPzEprLNAX2vGyg584/eMoHpwxWp4ipxZ/p2WQKOrMngz/
+	 NOy5Ow1vOAKi7zk4cYSJQd3Sz7izNLe/SHmsAOO65OgsMvUUYFvvF9aeY1or9msxhO
+	 QMItb3spCa4PhopjX94f0Qkts6xygeBweWT/Mvyfc5WcgbbaMEANcMr92rUzX0FkW6
+	 SR1Xnyea2W0tkBRJ+/bdSKfXhl+284HQFYJ6DJgPSzjhiYUyKurjad5/9n8QHBeR/Q
+	 bAthUrajeXs8w==
+Date: Tue, 17 Jun 2025 10:00:01 +0200
+From: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, 
+	Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>
+Subject: Re: [PATCH] bus: moxtet: Use dev_fwnode()
+Message-ID: <32qyokqqrdauwzjph45cga2ypqwn4i6aa3yiusasq6syxwhxlr@e2n7zb6rip2d>
+References: <20250611104348.192092-1-jirislaby@kernel.org>
+ <20250611104348.192092-3-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHnbEGLHGX2rMnf=S6CasoNyc939DTe-whcsjt9WhSWG920OoA@mail.gmail.com>
- <434f6474-b960-4383-8d61-0705632b4c33@oracle.com> <CAHnbEGJq-w4CMS1dg8UBraV+6kLMkmC-hO4Dq7f4z8Af6maitA@mail.gmail.com>
- <41e9ed40-311d-42ee-9fe2-5af3ecda67d4@oracle.com>
-In-Reply-To: <41e9ed40-311d-42ee-9fe2-5af3ecda67d4@oracle.com>
-From: Sebastian Feld <sebastian.n.feld@gmail.com>
-Date: Tue, 17 Jun 2025 09:59:53 +0200
-X-Gm-Features: AX0GCFsHVhgscIbJDN0NHhQgPfuzjRi8G-BjDqpxvliHZk2cQ57ARBvCYufRKYo
-Message-ID: <CAHnbEGLuYq6vYqq9M3w+W0iR-r0OOeCfSD3cEV-yekAbo-yAQw@mail.gmail.com>
-Subject: Re: fattr4_hidden and fattr4_system r/w attributes in Linux NFSD?
-To: Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Cc: open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250611104348.192092-3-jirislaby@kernel.org>
 
-On Tue, Apr 29, 2025 at 3:45=E2=80=AFPM Chuck Lever <chuck.lever@oracle.com=
-> wrote:
->
-> On 4/29/25 9:10 AM, Sebastian Feld wrote:
-> > On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Chuck Lever <chuck.lever@oracle=
-.com> wrote:
-> >>
-> >> Hi Sebastian -
-> >>
-> >> On 4/28/25 7:06 AM, Sebastian Feld wrote:
-> >>> I've been debating with Opentext support about their Windows NFS4.0
-> >>> client about a problem that the Windows attributes HIDDEN and SYSTEM
-> >>> work with a Solaris NFSD, but not with a Linux NFSD.
-> >>>
-> >>> Their support said it's a known bug in LInux NFSD that "fattr4_hidden
-> >>> and fattr4_system, specified in RFC 3530, are broken in Linux NFSD".
-> >>
-> >> RFC 7530 updates and replaces RFC 3530.
-> >>
-> >> Section 5.7 lists "hidden" and "system" as RECOMMENDED attributes,
-> >> meaning that NFSv4 servers are not required to implement them.
-> >>
-> >> So that tells me that both the Solaris NFS server and the Linux NFS
-> >> server are spec compliant in this regard. This is NOTABUG, but rather =
-it
-> >> is a server implementation choice that is permitted by RFC.
-> >>
-> >> It is more correct to say that the Linux NFS server does not currently
-> >> implement either of these attributes. The reason is that native Linux
-> >> file systems do not support these attributes, and I believe that neith=
-er
-> >> does the Linux VFS. So there is nowhere to store these, and no way to
-> >> access them in filesystems (such as the Linux port of NTFS) that do
-> >> implement them.
-> >>
-> >> We want to have a facility that can be used by native applications
-> >> (such as Wine), Samba, and NFSD. So implementing side-car storage
-> >> for such attributes that only NFSD can see and use is not really
-> >> desirable.
-> >
-> > I did a bit of digging, that debate started in 2002.
-> >
-> > 23 years later, nothing happened. No Solution.
-> > Very depressing.
->
-> It's a hard problem.
->
-> Focus on the recent work. It appears to be promising and there have
-> been few objections to it.
+Reviewed-by: Marek Behún <kabel@kernel.org>
 
-Do you have any reference to that work? Are there status updates?
-
-Sebi
---=20
-Sebastian Feld - IT security consultant
+On Wed, Jun 11, 2025 at 12:43:31PM +0200, Jiri Slaby (SUSE) wrote:
+> irq_domain_create_simple() takes fwnode as the first argument. It can be
+> extracted from the struct device using dev_fwnode() helper instead of
+> using of_node with of_fwnode_handle().
+> 
+> So use the dev_fwnode() helper.
+> 
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: "Marek Behún" <kabel@kernel.org>
+> ---
+>  drivers/bus/moxtet.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/bus/moxtet.c b/drivers/bus/moxtet.c
+> index 6c3e5c5dae10..7ce61d629a87 100644
+> --- a/drivers/bus/moxtet.c
+> +++ b/drivers/bus/moxtet.c
+> @@ -737,8 +737,7 @@ static int moxtet_irq_setup(struct moxtet *moxtet)
+>  {
+>  	int i, ret;
+>  
+> -	moxtet->irq.domain = irq_domain_create_simple(of_fwnode_handle(moxtet->dev->of_node),
+> -						      MOXTET_NIRQS, 0,
+> +	moxtet->irq.domain = irq_domain_create_simple(dev_fwnode(moxtet->dev), MOXTET_NIRQS, 0,
+>  						      &moxtet_irq_domain, moxtet);
+>  	if (moxtet->irq.domain == NULL) {
+>  		dev_err(moxtet->dev, "Could not add IRQ domain\n");
+> -- 
+> 2.49.0
+> 
 
