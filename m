@@ -1,105 +1,125 @@
-Return-Path: <linux-kernel+bounces-689270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B626ADBEC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C139DADBED6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 391AD17570B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 01:45:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CAF8162C09
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 01:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4841A840A;
-	Tue, 17 Jun 2025 01:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07451A5BBE;
+	Tue, 17 Jun 2025 01:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ByRUu2Ts"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eknN8oFI"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AF21A5BBE
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 01:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAB0647;
+	Tue, 17 Jun 2025 01:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750124706; cv=none; b=RFt+Y0/H/RN8s2mlomzgdvy5F8v910as92f3GkGXPK4Epabkwy/ee9QKI4uMbcK4Vu5DmS10EYaK9YQAodc2XgHHMb3a7PgYOExsYa11h94aAlXveg+/ssg+z6yDf3/TA8GNPmBuplZ+suWj4arqqdCtzuH1AbEdO2wkWlk05TY=
+	t=1750125164; cv=none; b=hkWtZY1pxeem4xtfeFUPAQ26TYL/zyoVv/KykWES+zqVfD5+k7YaTGRPO1G+IeAdmzkqGsvDWXQ/RN0qy97T/QSzYFrLELS8oSd3lHugxZvNX1mW4HlhJoqunnuAhKsod4P657vktGPxrfAp2aBiHPGxPKQhMnffpFlefy3wNEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750124706; c=relaxed/simple;
-	bh=FrMNpoU0KsNW0qg02rDXo3Uu0wX8loscUpEUTMv+OGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bixFrijrxqmYO9QGfh+kv40TZb+pUsXoF/vQRnptWAca0apEa7Yap9Gv3zLU9TCzefPn4BZhh/Z5/enxGFVHROsgjq9ji6qFzWmTzpVYQZF8GGcQQjtsrAH82scLxkC7G2OQI7RjAWXj9E/t8Mq1IbrsvXa3/fPiktbmknxChYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ByRUu2Ts; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <9aa4278e-0f43-420b-b6b5-78a32263d7ec@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750124692;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9j6dPiBh9J0ibfK+wZrIlMMj9iz4s5guo08DGg4VYmg=;
-	b=ByRUu2TsHF2kz4dnEeUzXvAzZoJvp6QzwxAHILKnjkUbd27t2f/4c3I8MO1igzw19z9HJi
-	cpyvTkgoFoearRR5vcWUdGSeM7Rq2Xlf7HcbDjOec5DcKIP71O+Oz0OxcFVDpIJBmrDo4y
-	nZsqxe5Oulo0XOp0MXeyb4cF7JAsmS4=
-Date: Tue, 17 Jun 2025 09:44:43 +0800
+	s=arc-20240116; t=1750125164; c=relaxed/simple;
+	bh=2vWdDlnUM+1Z4YdX5+KjuwTXw7wsa3h3y+Q03yQxtmg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eraOnseGNOrul0mLlofLsnawH8kk69pVUq9bptaF29X2T/vK/+mX8gG0qSJv77YmkFxe9fah4fjr+Lm2WirFrPdVUzhnAMBoKN2CbK4cdelAYRxup9P+7sbdv+kYdKeOUrmyTtGGk1l7qyh4lBcvLTKiDazCDOtw/3qerIVQ3zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eknN8oFI; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-31223a4cddeso3775035a91.1;
+        Mon, 16 Jun 2025 18:52:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750125162; x=1750729962; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+4wRzKmv5gF0vl0DYBtvVGu1v4s1UTEDBSiIWouw9g4=;
+        b=eknN8oFI8Ut9SJ5MrcIOcms210pS3mtut+NLZwZ4tK/Qi9nIJgOB8tojRAvDBNYqUK
+         77NQvDB/GSyy2aLqnqLqSJn2djkapYea3tQ7wYh+5AAyAcqvNOUbG+9VxJ0qWCAsVLpG
+         BvJ/gYsNrG9+hnBRYa4FsJHdEBhDJ075fey2n0Zk7F9SI93YK2ilpTa/vJwg3ipP7dGP
+         goRMEmsNpHTgOFwXTvsVMk0e9tKKoXxsCsmNYvJZZs+/irjasFHtqE/sp5siLMwTQYm0
+         JJhIJWG9JHmGKJ/IaQ0JK0vRw9wb+T1cuHprBJUpFSyqD/p22uzEorZSn+tZpDzqHu7Y
+         XCMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750125162; x=1750729962;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+4wRzKmv5gF0vl0DYBtvVGu1v4s1UTEDBSiIWouw9g4=;
+        b=Q9FbPV3ppytgn6YCJn75aUi6Ooiznv+YeCl+i0OQLLocT6SOeH23aeDadFX11BX1Gb
+         N5Hidz5/Rtar8FLpIvw9e4NERrYxDF/orNx85e4RieUe6+8gvS1NTNrryPUF451u8iMi
+         mXEq25aR3nmuaBezk7L+Oyh/XmPGvP/fAFZPPfhppGDq6ydq61nljzCKjT9LWSaFb+4C
+         uKfNijGVpn6tDwYir0H9q5piiZGeXOE15eizQh2XtuSTsGHcxijbkZSTknV+INWMxwKy
+         VJMAntk9IjSLY0ZT16LD5PVKO839FqKjuuvuFWxv6Z7RORWkZGLjS6JTGdoZ1CzSXf76
+         KFBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzbZfId8ACPJht8lacRJiO8445uanmIb07U+lVPx1KU3mIl0wZLgmEcQ2SQgBRQcsnZm0kdoP/wbw+dng=@vger.kernel.org, AJvYcCV5MbVT0LnEvdWMopnKSdva2ZvS+7Thaf65M4tUCd1qObGXtk6QGrXAfU4k/Bavzz3k3zHSkVcD2L5Bdyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvARQ8eXVmEkFgjuRaddhwxWYztuxys6JLPIrUz+4aTO1UPowk
+	vePACGdm9586n32l60FH5aFJFzGDArqOwHLInvXI5mdiopWyEYZdM2/P
+X-Gm-Gg: ASbGncu7bcbqYByT0mGJ6TJzh5om/wVTT9ZYC0dUC+Z0hcA30E8WqEnCmIYPS63dZcE
+	m+SM36s1hZ0fnD90vDci3CJYDYEyKvlRqsqLezvMyQcLKC/hNKSsZL4b4aK+ReTdUZQqHHlOb2s
+	al2kDRxhSaEp+U2VnbikbIIFS36VwXIQGoEKhGxH+Y7dK1K7OM5FPVFlmndWgKow/5/20t8hkoJ
+	cG/KyZ1Ig4/8tiUvw1oDC4Bwxsd84kixWbQizeeo86LRYx9Vz3YVkzHuFA2lRSaPLJKt2yxWVhm
+	mvzGjJfjQH+6lUc3V8SusGfTCZaiN6N5UfkswzaCdCHmded0SHnTEytE3lGFR1VMUZP8PFXQc4/
+	wGiwf0LlvmA==
+X-Google-Smtp-Source: AGHT+IHarADlZB0VeHVzCafKF7EmYysDMeWCUlBw75xHY9NURJ8PDhG2WFEJ/Y+jSbgltbFLYTjm9w==
+X-Received: by 2002:a17:90b:2dd0:b0:313:287c:74bd with SMTP id 98e67ed59e1d1-313f1d10aaamr20946251a91.33.1750125161888;
+        Mon, 16 Jun 2025 18:52:41 -0700 (PDT)
+Received: from localhost.localdomain ([2804:14d:4c64:81ec:7409:107a:a63b:a3da])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365de7815esm68513345ad.118.2025.06.16.18.52.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 18:52:41 -0700 (PDT)
+From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+To: vkoul@kernel.org,
+	yung-chuan.liao@linux.intel.com,
+	pierre-louis.bossart@linux.dev,
+	sanyog.r.kale@intel.com
+Cc: ~lkcamp/patches@lists.sr.ht,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] soundwire: debugfs: initialize ktime_t variables before div_u64
+Date: Mon, 16 Jun 2025 22:48:30 -0300
+Message-ID: <20250617015230.54981-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] docs/zh_CN: update git command examples in how-to.rst
-To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250616134003.3981866-1-dzm91@hust.edu.cn>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20250616134003.3981866-1-dzm91@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
+The start_t and finish_t variables are not properly initialized
+if errors happens over request_firmware actions. This was also detected by smatch:
 
-在 6/16/25 9:40 PM, Dongliang Mu 写道:
-> This patch leverages `checkout -b` to shorten branch & checkout
-> and fix the missing checkout.
->
-> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+drivers/soundwire/debugfs.c:301 cmd_go() error: uninitialized symbol 'finish_t'.
+drivers/soundwire/debugfs.c:301 cmd_go() error: uninitialized symbol 'start_t'.
 
-Acked-by: Yanteng Si <si.yanteng@linux.dev>
+Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-sound/0db6d0bf-7bac-43a7-b624-a00d3d2bf829@stanley.mountain/
+Fixes: bb5cb09eedce ("soundwire: debugfs: add interface for BPT/BRA transfers")
+---
+ drivers/soundwire/debugfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/soundwire/debugfs.c b/drivers/soundwire/debugfs.c
+index 3099ea074f10..951fc255e4eb 100644
+--- a/drivers/soundwire/debugfs.c
++++ b/drivers/soundwire/debugfs.c
+@@ -237,8 +237,8 @@ static int cmd_go(void *data, u64 value)
+ {
+ 	const struct firmware *fw = NULL;
+ 	struct sdw_slave *slave = data;
+-	ktime_t start_t;
+-	ktime_t finish_t;
++	ktime_t start_t = 0;
++	ktime_t finish_t = 0;
+ 	int ret;
+ 
+ 	if (value != 1)
+-- 
+2.49.0
 
-Thanks,
-
-Yanteng
-
-> ---
->   Documentation/translations/zh_CN/how-to.rst | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/translations/zh_CN/how-to.rst b/Documentation/translations/zh_CN/how-to.rst
-> index 569b0209385a..0896f13d8b8d 100644
-> --- a/Documentation/translations/zh_CN/how-to.rst
-> +++ b/Documentation/translations/zh_CN/how-to.rst
-> @@ -177,8 +177,7 @@ git和邮箱配置
->   请执行以下命令，新建开发分支::
->   
->   	git checkout docs-next
-> -	git branch my-trans
-> -	git checkout my-trans
-> +	git checkout -b my-trans
->   
->   译文格式要求
->   ------------
-> @@ -286,7 +285,7 @@ warning 不需要解决::
->   然后执行以下命令为补丁追加更改::
->   
->   	git checkout docs-next
-> -	git branch test-trans
-> +	git checkout -b test-trans-new
->   	git am 0001-xxxxx.patch
->   	./scripts/checkpatch.pl 0001-xxxxx.patch
->   	直接修改您的翻译
 
