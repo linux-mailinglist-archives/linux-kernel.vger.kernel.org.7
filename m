@@ -1,162 +1,116 @@
-Return-Path: <linux-kernel+bounces-690207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC0EADCD21
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:27:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8ED6ADCCE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D98C3B894E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:20:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44789179993
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E602E3B0A;
-	Tue, 17 Jun 2025 13:19:45 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF3E2E719C;
+	Tue, 17 Jun 2025 13:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkvDV9HX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4102DF3C7;
-	Tue, 17 Jun 2025 13:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6282E7183;
+	Tue, 17 Jun 2025 13:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750166385; cv=none; b=aUk79hfbGnyYK+3/oSa3nL2+ORGiw/i/I7wBBCgJvYTr9SqZOEPiWIF8uRQUriAPQ2o8sQkU/+UN3r5a2uL8FyjhnyYE3OKTJFHaZVzMfHV7RLxuv9tLnd17pieoB65OHsgT3V/u86yTLjpd719+nxq8fdM1cMuNNwbdVvpoTQQ=
+	t=1750165919; cv=none; b=OBwC4nBnUWFmkegzoytj73712z1UkOqs01bJoPoXhJH0bOtn1QQZE+/a/DvfRDcfvShipYKhmuQsMqlJpL3a5CtdIMXhpJkTUXeK3rQvSDRBgxYLZYb1ZOC5a7CG//mqes2b0BWQp/oXRqTXDzW0A/3rzNhwGU2FI7Sr1raN7Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750166385; c=relaxed/simple;
-	bh=qNSggQtTc4hb3h8JdQRfNZCPiLKFSqM36zpwz196/TU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tnW9J3va4KALUD+e8YjjS4v11ju4JsaoBzTSYjoO3HNarzPMl4KUWj4oYRtXwOZk9ss5pd13i5Pkt2+fRsaQyoJQ5D8H1E/Sk6l+nKeiUgNqQjthJSDUNSh6CG23hhV8U+8PP1TH3PbbLdPCvlR9smetnk85z6oy7erR2P6ANhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from zq-Legion-Y7000.. (unknown [180.110.114.155])
-	by APP-05 (Coremail) with SMTP id zQCowACn8xFla1Fopiw9Bw--.2140S2;
-	Tue, 17 Jun 2025 21:19:34 +0800 (CST)
-From: zhouquan@iscas.ac.cn
-To: anup@brainfault.org,
-	ajones@ventanamicro.com,
-	atishp@atishpatra.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	Quan Zhou <zhouquan@iscas.ac.cn>
-Subject: [PATCH 5/5] KVM: riscv: selftests: Add bfloat16 extension to get-reg-list test
-Date: Tue, 17 Jun 2025 21:10:50 +0800
-Message-Id: <65752029ed1ae331a9ac867a6fef2e63a797569e.1750164414.git.zhouquan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1750164414.git.zhouquan@iscas.ac.cn>
-References: <cover.1750164414.git.zhouquan@iscas.ac.cn>
+	s=arc-20240116; t=1750165919; c=relaxed/simple;
+	bh=kLpVHH/oSXMyWtAknVnnOLvs1mUmoq/Job7UKUflMWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZokV5P6LyhBs5SnS6GspkN76IPYeR2aSZwpE39F7HeKCHI9sHjhMAORV7MevHjT6bLCGLpYSpx1iwv0N0dyrNPqfyXzr3U60ELPl3wvhDnzb0ix7ZX8GHTVVjI8SouUKxmzHAMgiENL8JYp/Dj5n5d2dimWNSa9JQX+y4VKf9ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkvDV9HX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F430C4CEE3;
+	Tue, 17 Jun 2025 13:11:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750165918;
+	bh=kLpVHH/oSXMyWtAknVnnOLvs1mUmoq/Job7UKUflMWc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rkvDV9HX+sS5KL7PRdL3WMFnyO67XeGcjBX/QFs9fcDIclkUwTEgJNcmTAc+vWHug
+	 gmvpPfcr8BC8tEgi44BavGHJqFfGh1IEr+9mfqNRxwB5lDPTFlwganEjeJwF5w/Raw
+	 3Jz/yLv+n0a4J3G08mml4+XOvaQBXvPR33V2BQGM91C/VcBse6wopqXKClO16Ps+N+
+	 qszS4Vg97PFs1TTPWclO1wk1QAqGYEAm2nMv5sMbGR/eM2vIPvhS7zIB+3+swCgKg3
+	 KeEbSPK5eZ4aAUzIRJBUBObE9urTqShqOn377qsPAAGvoJXD9MjfM7RvdjFyPG5cCT
+	 Bc/LxB6+MLGBg==
+Date: Tue, 17 Jun 2025 15:11:52 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Remo Senekowitsch <remo@buenzli.dev>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Mark Brown <broonie@kernel.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v1 3/3] samples: rust: platform: Add property child and
+ reference args examples
+Message-ID: <aFFpmKLKR2hGs1I1@pollux>
+References: <20250616154511.1862909-1-remo@buenzli.dev>
+ <20250616154511.1862909-4-remo@buenzli.dev>
+ <CAL_JsqKXrsdGjTE5KDkqmVHUK5urMJnWSLWgEi8H1yM21gcOCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACn8xFla1Fopiw9Bw--.2140S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGrWrXr1DZw15Ww1rZryrZwb_yoWrXF1Upr
-	10ya9xGr48J34fZws2yF98Gw48Xws8Jw4kCw47ur1fXFyjyryxJF1qy3W3Jw1qya4Fqr1S
-	vFyfXr4Iyw40yrUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOdgADUUUU
-X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiBgwQBmhRLE-RLwAAs4
+In-Reply-To: <CAL_JsqKXrsdGjTE5KDkqmVHUK5urMJnWSLWgEi8H1yM21gcOCA@mail.gmail.com>
 
-From: Quan Zhou <zhouquan@iscas.ac.cn>
+On Tue, Jun 17, 2025 at 08:01:08AM -0500, Rob Herring wrote:
+> On Mon, Jun 16, 2025 at 10:45 AM Remo Senekowitsch <remo@buenzli.dev> wrote:
+> > @@ -91,6 +95,13 @@ fn properties_parse(dev: &device::Device) -> Result {
+> >          let prop: KVec<i16> = fwnode.property_read_array_vec(name, 4)?.required_by(dev)?;
+> >          dev_info!(dev, "'{name}'='{prop:?}' (KVec)\n");
+> >
+> > +        for child in fwnode.children() {
+> > +            let name = c_str!("test,ref-arg");
+> > +            let nargs = NArgs::N(2);
+> > +            let prop: FwNodeReferenceArgs = child.property_get_reference_args(name, nargs, 0)?;
+> 
+> Is there some reason we can just pass 2 in rather than nargs? Seems
+> overly verbose for my tastes.
 
-The KVM RISC-V allows Zfbfmin/Zvfbfmin/Zvfbfwma extensions for Guest/VM
-so add them to get-reg-list test.
+It's because you could also pass NArgs::Prop("foo-bar") to indicate the the
+name of the property telling the number of arguments.
 
-Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
----
- tools/testing/selftests/kvm/riscv/get-reg-list.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+NArgs is defined as
 
-diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-index ebdc34b58bad..e5a07e000b66 100644
---- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
-+++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-@@ -80,6 +80,7 @@ bool filter_reg(__u64 reg)
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZCF:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZCMOP:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFA:
-+	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFBFMIN:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFH:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFHMIN:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZICBOM:
-@@ -104,6 +105,8 @@ bool filter_reg(__u64 reg)
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZTSO:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVBB:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVBC:
-+	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVFBFMIN:
-+	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVFBFWMA:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVFH:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVFHMIN:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVKB:
-@@ -535,6 +538,7 @@ static const char *isa_ext_single_id_to_str(__u64 reg_off)
- 		KVM_ISA_EXT_ARR(ZCF),
- 		KVM_ISA_EXT_ARR(ZCMOP),
- 		KVM_ISA_EXT_ARR(ZFA),
-+		KVM_ISA_EXT_ARR(ZFBFMIN),
- 		KVM_ISA_EXT_ARR(ZFH),
- 		KVM_ISA_EXT_ARR(ZFHMIN),
- 		KVM_ISA_EXT_ARR(ZICBOM),
-@@ -559,6 +563,8 @@ static const char *isa_ext_single_id_to_str(__u64 reg_off)
- 		KVM_ISA_EXT_ARR(ZTSO),
- 		KVM_ISA_EXT_ARR(ZVBB),
- 		KVM_ISA_EXT_ARR(ZVBC),
-+		KVM_ISA_EXT_ARR(ZVFBFMIN),
-+		KVM_ISA_EXT_ARR(ZVFBFWMA),
- 		KVM_ISA_EXT_ARR(ZVFH),
- 		KVM_ISA_EXT_ARR(ZVFHMIN),
- 		KVM_ISA_EXT_ARR(ZVKB),
-@@ -1138,6 +1144,7 @@ KVM_ISA_EXT_SIMPLE_CONFIG(zcd, ZCD);
- KVM_ISA_EXT_SIMPLE_CONFIG(zcf, ZCF);
- KVM_ISA_EXT_SIMPLE_CONFIG(zcmop, ZCMOP);
- KVM_ISA_EXT_SIMPLE_CONFIG(zfa, ZFA);
-+KVM_ISA_EXT_SIMPLE_CONFIG(zfbfmin, ZFBFMIN);
- KVM_ISA_EXT_SIMPLE_CONFIG(zfh, ZFH);
- KVM_ISA_EXT_SIMPLE_CONFIG(zfhmin, ZFHMIN);
- KVM_ISA_EXT_SUBLIST_CONFIG(zicbom, ZICBOM);
-@@ -1162,6 +1169,8 @@ KVM_ISA_EXT_SIMPLE_CONFIG(zkt, ZKT);
- KVM_ISA_EXT_SIMPLE_CONFIG(ztso, ZTSO);
- KVM_ISA_EXT_SIMPLE_CONFIG(zvbb, ZVBB);
- KVM_ISA_EXT_SIMPLE_CONFIG(zvbc, ZVBC);
-+KVM_ISA_EXT_SIMPLE_CONFIG(zvfbfmin, ZVFBFMIN);
-+KVM_ISA_EXT_SIMPLE_CONFIG(zvfbfwma, ZVFBFWMA);
- KVM_ISA_EXT_SIMPLE_CONFIG(zvfh, ZVFH);
- KVM_ISA_EXT_SIMPLE_CONFIG(zvfhmin, ZVFHMIN);
- KVM_ISA_EXT_SIMPLE_CONFIG(zvkb, ZVKB);
-@@ -1213,6 +1222,7 @@ struct vcpu_reg_list *vcpu_configs[] = {
- 	&config_zcf,
- 	&config_zcmop,
- 	&config_zfa,
-+	&config_zfbfmin,
- 	&config_zfh,
- 	&config_zfhmin,
- 	&config_zicbom,
-@@ -1237,6 +1247,8 @@ struct vcpu_reg_list *vcpu_configs[] = {
- 	&config_ztso,
- 	&config_zvbb,
- 	&config_zvbc,
-+	&config_zvfbfmin,
-+	&config_zvfbfwma,
- 	&config_zvfh,
- 	&config_zvfhmin,
- 	&config_zvkb,
--- 
-2.34.1
+	pub enum NArgs<'a> {
+	    /// The name of the property of the reference indicating the number of
+	    /// arguments.
+	    Prop(&'a CStr),
+	    /// The known number of arguments.
+	    N(u32),
+	}
 
+and FwNode::property_get_reference_args() can match against the corresponding
+enum variant to cover both cases.
+
+> > +            dev_info!(dev, "'{name}'='{prop:?}'\n");
+> > +        }
+> > +
+> >          Ok(())
+> >      }
+> >  }
+> > --
+> > 2.49.0
+> >
 
