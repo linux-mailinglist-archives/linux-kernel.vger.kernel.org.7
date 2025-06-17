@@ -1,190 +1,172 @@
-Return-Path: <linux-kernel+bounces-689591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0230ADC3E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:01:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6AFADC405
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B95A83B83B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:01:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FA0F7A485F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729B328CF58;
-	Tue, 17 Jun 2025 08:01:34 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B18A291C15;
+	Tue, 17 Jun 2025 08:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRS/iG9r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EA41B85FD
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 08:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1371D88AC;
+	Tue, 17 Jun 2025 08:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750147294; cv=none; b=ZkkZ7doEWs3/lgHoZpz1BEREXVnfSrYkw0LRo0/tOCgdNiBmcr9JfLIWxhhj3gxt/MRKvOVCIWTuzAcBqRUU/QBRH8AuQ6Vvu0kbQmGeUgGUGbrBtfw9vywb3QDnrgaLWMCoC6+0mITxAuHhTxOeZFZWdRuExAWWDRJG/KUpJSY=
+	t=1750147352; cv=none; b=p+FXU2HKllALMMR3Ysf04uQTFNo/vWQsKFo47+uhsQkhJQhoRWL/9oS74otJ3+/TZf2g/aBsYAdaziH4inHkHlZnTYlxd/LU/f6mJ6Kff0Sm37S5PmCbcs87CZBfynMmVtCZltSJCKvwWKT7DFMRwSOEk/wEOAyFW5HfiGvelN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750147294; c=relaxed/simple;
-	bh=FYncf0Gwp1uLRRk+uYgc+h7nkTLVop02HHpfWbUpAT0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=G8EniW9vDXVwXuIFcAOQDuTA1rq5frvg8qV/7iYnAw1DSJpe0RZ1cMTLXU2P2Dc1hzTNQ+QkGePlIdRm2sfH84sMtYTtKUmE64JXZICSOwj+5qV0j5dVim0p/0JKPtg+c7kREFXrb/tM4nthxmvhNMB+4VK//UU4/be5P1X1jZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ddc0a6d4bdso68513765ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 01:01:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750147288; x=1750752088;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e29NjVcmLgFlgix8gs7SJOTwD7u9KXoV23o2ubJcggQ=;
-        b=pOTW3+KuGqtHDKiapmhCmJwwpZnNjmgzg+yGWmV6uON0Vhd95MqVFlCcPAiJ2/O4HP
-         PJPOLtZHtYET2Rx/XD8lWcKE0DEbkFZu+3XfMtFktlENKoKmRYasHG1PTxxcUP1Rgwey
-         ZpHEZIjhRXy7LneU4t0hWTTYjwnU7Q38szMTiz4qHKtwDP6smcmjqw3halQrnRmTy97X
-         Z1U4vM2aV5kpLLTnMhFcE+1sA8FLeaY0gHXrs6Sop3kGD+vXtFj4VDALLoCv4wKvZHKT
-         aOjgy2s6EEXvKZh3pTMu14g0vO0mlxqZc/D0jwnmcOTRqSpy/JzpI5ucnc6iBgdm+ThE
-         pxXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvkkh/uRt3SVZ6VWJJhhzky8zVapbjIvUO+z7B6YhD1MrtmD7UXRO9rlaK1bZrWOhf11xanL3/yn00SMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK5ntTYiDUbYpvQePTHRPHQj5nSvZ7MYAibmlW6rMDvIs/ezdh
-	RMVJXCwAoVluw10gwxClh5j2aB1qj91nOg9wZbksUMN/4dllCxuOfA/9LsLJnH+rE2HcTsbGiGH
-	TfujFBKW/z2NKiHod94ywXLw9JnkPLsIq71mtia0NjPJOGMAfvTobW+Gtdjc=
-X-Google-Smtp-Source: AGHT+IGEtTFqUZrc9jB73llRLoLcKYQbUn9ikYxSRc2hqlSQIm2PIZkBrEGpFh2tgRG1FMUZ5DzaJF874DDr6cZkYJQOSxAIJCMN
+	s=arc-20240116; t=1750147352; c=relaxed/simple;
+	bh=Bmc1dcL/vKMpcG3gmR7p+QTIxzrCe6x9Ewb/iBXx3i4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jr6p/BxzIx37AAwbUlP0A6gYT6cFqqvSFdk2UnuRF8jcjFoQR7+TrXOrZixzdJ/1squBqlS+cuxpZ517Hx/CkKxLhjnbZ+Bb4Cyg212owAxjT7y1v1HOEUAexoq04SKuAyJFxyokiCfjbkACBBymFkkNZD/XtyJbx1aFRUJdxro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRS/iG9r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6C0CC4AF09;
+	Tue, 17 Jun 2025 08:02:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750147351;
+	bh=Bmc1dcL/vKMpcG3gmR7p+QTIxzrCe6x9Ewb/iBXx3i4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CRS/iG9rRgPnce4tyJMHGV9BjQMNm8HrVXKixDQywp13eFOqk2fvEcvfiRUsUWgJP
+	 p9lPf4LghIe1yslQXDNg+PV/WIEY+gP8G/iEM5CNZmbiJ+xqkwFxiErJ49cbkYIFYh
+	 v0Lyod+7IollBzGERTKzGoLS2vV8L+i272d37FBX1TQKq5iPf4E9Pgk5QHputHl1fV
+	 qRzTSGDBibtMgBDs8W20NsTq/arXPxRGgsewZqVntd9d84Y7wndAYZJvMT2vtEbf2v
+	 hOOVMJ5McR5etd2Ilk+u7ipJerJInE+4Lpz1JZtQjLDW3e1Kqmzk2bkKdgIzTlTT2x
+	 ri/DEJ9nQFqAQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1uRRH3-00000001vcm-3bGt;
+	Tue, 17 Jun 2025 10:02:29 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Akira Yokosawa <akiyks@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Ignacio Encinas Rubio <ignacio@iencinas.com>,
+	Marco Elver <elver@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jan Stancek <jstancek@redhat.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Ruben Wauters <rubenru09@aol.com>,
+	joel@joelfernandes.org,
+	linux-kernel-mentees@lists.linux.dev,
+	lkmm@lists.linux.dev,
+	netdev@vger.kernel.org,
+	peterz@infradead.org,
+	stern@rowland.harvard.edu,
+	Breno Leitao <leitao@debian.org>,
+	Jakub Kicinski <mchehab+huawei@kernel.org>,
+	Simon Horman <mchehab+huawei@kernel.org>
+Subject: [PATCH v5 00/15] Don't generate netlink .rst files inside $(srctree)
+Date: Tue, 17 Jun 2025 10:01:57 +0200
+Message-ID: <cover.1750146719.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a68:b0:3dc:7bc9:503e with SMTP id
- e9e14a558f8ab-3de07cdb455mr138915935ab.2.1750147288407; Tue, 17 Jun 2025
- 01:01:28 -0700 (PDT)
-Date: Tue, 17 Jun 2025 01:01:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685120d8.a70a0220.395abc.0204.GAE@google.com>
-Subject: [syzbot] [ntfs3?] general protection fault in pick_link (2)
-From: syzbot <syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Hello,
+As discussed at:
+   https://lore.kernel.org/all/20250610101331.62ba466f@foz.lan/
 
-syzbot found the following issue on:
+changeset f061c9f7d058 ("Documentation: Document each netlink family")
+added a logic which generates *.rst files inside $(srctree). This is bad
+when O=<BUILDDIR> is used.
 
-HEAD commit:    9afe652958c3 Merge tag 'x86_urgent_for_6.16-rc3' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10cf95d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d11f52d3049c3790
-dashboard link: https://syzkaller.appspot.com/bug?extid=1aa90f0eb1fc3e77d969
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11969e82580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14fd450c580000
+A recent change renamed the yaml files used by Netlink, revealing a bad
+side effect: as "make cleandocs" don't clean the produced files and symbols
+appear duplicated for people that don't build the kernel from scratch.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-9afe6529.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/46695f4e5fdb/vmlinux-9afe6529.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4357674be01a/bzImage-9afe6529.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/dd817d4f3932/mount_0.gz
+This series adds an yaml parser extension and uses an index file with glob for
+*. We opted to write such extension in a way that no actual yaml conversion
+code is inside it. This makes it flexible enough to handle other types of yaml
+files in the future. The actual yaml conversion logic were placed at 
+netlink_yml_parser.py. 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com
-
-ntfs3(loop0): ino=1b, "file0" ntfs_rename
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5313 Comm: syz-executor352 Not tainted 6.16.0-rc2-syzkaller-00024-g9afe652958c3 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:pick_link+0x4f1/0xe80 fs/namei.c:1949
-Code: 4c 89 f7 e8 81 fa ea ff 4d 8b 36 4d 85 f6 0f 84 9b 00 00 00 e8 50 7c 87 ff 49 bf 00 00 00 00 00 fc ff df 4c 89 f0 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 b9 06 00 00 41 0f b6 2e bf 2f 00 00 00
-RSP: 0018:ffffc9000d2477e8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffffc9000d247908 RCX: ffff88801a34c880
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffff823d3d98
-R10: 000000003b9aca00 R11: ffffffff823cb0a0 R12: 1ffff92001a48f8b
-R13: ffffc9000d247c20 R14: 0000000000000002 R15: dffffc0000000000
-FS:  00005555725f0380(0000) GS:ffff88808d251000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f4a1afaf000 CR3: 00000000438a8000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- step_into+0xc5d/0xf30 fs/namei.c:2008
- open_last_lookups fs/namei.c:3843 [inline]
- path_openat+0x1bc6/0x3830 fs/namei.c:4052
- do_filp_open+0x1fa/0x410 fs/namei.c:4082
- do_sys_openat2+0x121/0x1c0 fs/open.c:1437
- do_sys_open fs/open.c:1452 [inline]
- __do_sys_open fs/open.c:1460 [inline]
- __se_sys_open fs/open.c:1456 [inline]
- __x64_sys_open+0x11e/0x150 fs/open.c:1456
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5aa2adeed9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc2e7cf7e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007f5aa2b47ac0 RCX: 00007f5aa2adeed9
-RDX: 0000000000000000 RSI: 0000000000048500 RDI: 0000200000000a80
-RBP: 0000200000001240 R08: 00005555725f14c0 R09: 00005555725f14c0
-R10: 00005555725f14c0 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffc2e7cfa38 R14: 431bde82d7b634db R15: 00007f5aa2b2803b
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:pick_link+0x4f1/0xe80 fs/namei.c:1949
-Code: 4c 89 f7 e8 81 fa ea ff 4d 8b 36 4d 85 f6 0f 84 9b 00 00 00 e8 50 7c 87 ff 49 bf 00 00 00 00 00 fc ff df 4c 89 f0 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 b9 06 00 00 41 0f b6 2e bf 2f 00 00 00
-RSP: 0018:ffffc9000d2477e8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffffc9000d247908 RCX: ffff88801a34c880
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffff823d3d98
-R10: 000000003b9aca00 R11: ffffffff823cb0a0 R12: 1ffff92001a48f8b
-R13: ffffc9000d247c20 R14: 0000000000000002 R15: dffffc0000000000
-FS:  00005555725f0380(0000) GS:ffff88808d251000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055ff6c3df070 CR3: 00000000438a8000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	4c 89 f7             	mov    %r14,%rdi
-   3:	e8 81 fa ea ff       	call   0xffeafa89
-   8:	4d 8b 36             	mov    (%r14),%r14
-   b:	4d 85 f6             	test   %r14,%r14
-   e:	0f 84 9b 00 00 00    	je     0xaf
-  14:	e8 50 7c 87 ff       	call   0xff877c69
-  19:	49 bf 00 00 00 00 00 	movabs $0xdffffc0000000000,%r15
-  20:	fc ff df
-  23:	4c 89 f0             	mov    %r14,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 0f b6 04 38       	movzbl (%rax,%r15,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	0f 85 b9 06 00 00    	jne    0x6f0
-  37:	41 0f b6 2e          	movzbl (%r14),%ebp
-  3b:	bf 2f 00 00 00       	mov    $0x2f,%edi
-
+As requested by YNL maintainers, this version has netlink_yml_parser.py
+inside tools/net/ynl/pyynl/ directory. I don't like mixing libraries with
+binaries, nor to have Python libraries spread all over the Kernel. IMO,
+the best is to put all of them on a common place (scripts/lib, python/lib,
+lib/python, ...) but, as this can be solved later, for now let's keep it this
+way.
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+v5:
+- some patch reorg;
+- netlink_yml_parser.py is now together with ynl tools;
+- minor fixes.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+v4:
+- Renamed the YNL parser class;
+- some minor patch cleanups and merges;
+- added an extra patch to fix a insert_pattern/exclude_pattern logic when
+   SPHINXDIRS is used.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+v3:
+- Two series got merged altogether:
+  - https://lore.kernel.org/linux-doc/cover.1749723671.git.mchehab+huawei@kernel.org/T/#t
+  - https://lore.kernel.org/linux-doc/cover.1749735022.git.mchehab+huawei@kernel.org
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+- Added an extra patch to update MAINTAINERS to point to YNL library
+- Added a (somewhat unrelated) patch that remove warnings check when
+  running "make cleandocs".
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
 
-If you want to undo deduplication, reply with:
-#syz undup
+Mauro Carvalho Chehab (15):
+  docs: conf.py: properly handle include and exclude patterns
+  docs: Makefile: disable check rules on make cleandocs
+  tools: ynl_gen_rst.py: create a top-level reference
+  docs: netlink: netlink-raw.rst: use :ref: instead of :doc:
+  tools: ynl_gen_rst.py: make the index parser more generic
+  tools: ynl_gen_rst.py: Split library from command line tool
+  scripts: lib: netlink_yml_parser.py: use classes
+  docs: netlink: index.rst: add a netlink index file
+  tools: ynl_gen_rst.py: clanup coding style
+  docs: sphinx: add a parser for yaml files for Netlink specs
+  docs: use parser_yaml extension to handle Netlink specs
+  docs: uapi: netlink: update netlink specs link
+  tools: ynl_gen_rst.py: drop support for generating index files
+  docs: netlink: remove obsolete .gitignore from unused directory
+  MAINTAINERS: add netlink_yml_parser.py to linux-doc
+
+ Documentation/Makefile                        |  19 +-
+ Documentation/conf.py                         |  63 ++-
+ Documentation/netlink/specs/index.rst         |  13 +
+ Documentation/networking/index.rst            |   2 +-
+ .../networking/netlink_spec/.gitignore        |   1 -
+ .../networking/netlink_spec/readme.txt        |   4 -
+ Documentation/sphinx/parser_yaml.py           |  76 ++++
+ Documentation/userspace-api/netlink/index.rst |   2 +-
+ .../userspace-api/netlink/netlink-raw.rst     |   6 +-
+ Documentation/userspace-api/netlink/specs.rst |   2 +-
+ MAINTAINERS                                   |   1 +
+ tools/net/ynl/pyynl/netlink_yml_parser.py     | 360 ++++++++++++++++
+ tools/net/ynl/pyynl/ynl_gen_rst.py            | 385 +-----------------
+ 13 files changed, 523 insertions(+), 411 deletions(-)
+ create mode 100644 Documentation/netlink/specs/index.rst
+ delete mode 100644 Documentation/networking/netlink_spec/.gitignore
+ delete mode 100644 Documentation/networking/netlink_spec/readme.txt
+ create mode 100755 Documentation/sphinx/parser_yaml.py
+ create mode 100755 tools/net/ynl/pyynl/netlink_yml_parser.py
+
+-- 
+2.49.0
+
+
 
