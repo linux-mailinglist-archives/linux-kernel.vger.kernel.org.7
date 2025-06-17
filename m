@@ -1,131 +1,113 @@
-Return-Path: <linux-kernel+bounces-690015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A79ADCA33
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75FB6ADCA49
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD042167868
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:59:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A2A16768F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A5C2E06DC;
-	Tue, 17 Jun 2025 11:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D8F2E88A6;
+	Tue, 17 Jun 2025 11:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOJ7mniZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pO5m+4Tb"
+Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2802DF3C1;
-	Tue, 17 Jun 2025 11:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF972E4255;
+	Tue, 17 Jun 2025 11:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750161574; cv=none; b=frlTGN06OBd9DZ9q0+JPXBu59HGp83bPhnBU3oFS2f1UziYj/I39M+D02BGtjEYQgggIaGvmUoMGS0qCHYAxXTTJoIItCjU8xEN6DAMSSLsy3PUJvgMbwNNUFJXY2BqkgVxUkowLBtbNy52PXc64g1IwR9xf4pikxa3hAz6GrnY=
+	t=1750161585; cv=none; b=ZV0d8ptIsaf4MqXW/YzjwG0Tgq+DxYiKbRA/XuDovUkmsTLocbKN9Fe+s6QZEKNp034pZjv7j+nTe1SIEteR9a++LSZzKLl61huMP8/gvq0hYTmCFtlcKILYCocF0MchimkqGwMH8PDD33g14CNkZuyElghq0iOoPztWCXrYWEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750161574; c=relaxed/simple;
-	bh=gBH+kampHpHmy4DMMyqIZcw5DfcfBCFtwdQpcTObOnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nxiu2gmOM6qILoyWXRu1PY49P7m+1KBQ0M1o5vLDXPI90APIQg6jJr+zKVxFXrV0zDO4lLW3SgC9CseNH3DIB94vZhJSqOIxYcmLhG/hhHqNgn0Bdfq5rO+Tc04iv1gNQerp0vLLoihx2twFCDwOUhdOWzIqb/DcGWtJ+r+9b5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOJ7mniZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3E66C4CEE3;
-	Tue, 17 Jun 2025 11:59:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750161573;
-	bh=gBH+kampHpHmy4DMMyqIZcw5DfcfBCFtwdQpcTObOnI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gOJ7mniZUaKYc8b10FgbwNkGP+WmfJy6/Cay8PK7jWoKyH+/6ChmwaKJ6HS41DRTr
-	 HND8IQ7bC60xAK1fXRbiggUgwr4vPCjEtMTtcmb420hiYv6Po76PVPhscp5cyYFXvM
-	 KdNd0MNogDZf0IMV7vHAGfvR8jc9sCiqib7SCfMYJM4HWs+UoWObi1/MuFLdNTMevH
-	 BZuRkd+OBfilTEp5inIP5dkhNKQnE7RCYH/zaZuo/pcgJt+L1gEd8LtjvmVfYx47Il
-	 NBu7f8TNuN41V5FD7P+8nv654J+b8cq7RfhzFxBeC6+7uzhTPwGWNQBxJMPMjq3UH3
-	 MuPXKMMjI5AnQ==
-Date: Tue, 17 Jun 2025 12:59:27 +0100
-From: Simon Horman <horms@kernel.org>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Akira Yokosawa <akiyks@gmail.com>,
-	Breno Leitao <leitao@debian.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Ignacio Encinas Rubio <ignacio@iencinas.com>,
-	Jan Stancek <jstancek@redhat.com>, Marco Elver <elver@google.com>,
-	Paolo Abeni <pabeni@redhat.com>, Ruben Wauters <rubenru09@aol.com>,
-	Shuah Khan <skhan@linuxfoundation.org>, joel@joelfernandes.org,
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
-	lkmm@lists.linux.dev, netdev@vger.kernel.org, peterz@infradead.org,
-	stern@rowland.harvard.edu
-Subject: Re: [PATCH v5 05/15] tools: ynl_gen_rst.py: make the index parser
- more generic
-Message-ID: <20250617115927.GK5000@horms.kernel.org>
-References: <cover.1750146719.git.mchehab+huawei@kernel.org>
- <1cd8b28bfe159677b8a8b1228b04ba2919c8aee8.1750146719.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1750161585; c=relaxed/simple;
+	bh=aXbdP135E/8l1hbD7RqAWIprGHFgVchsaw7pLuLYYu0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=mHThFuj/32UE0sudbA3Q8MPFredvjLLK/R7O7oE+KovfNConBuCBI+dt8Ywg9RPBrsEWaXaKE0KmL36RMuTAZip55B5gzaUTBdD/M17ai8KygthnJbNRdBqmS7FahIH2cuNIwREHczqSLmn1UiF09Vx/1Y24Sn5yHphnl9YfiKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pO5m+4Tb; arc=none smtp.client-ip=217.70.178.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1729644964;
+	Tue, 17 Jun 2025 11:59:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1750161576;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=owL8VrtpI4A4L/ELmkd2ca11ITWWGjt30KjpL7fRe7w=;
+	b=pO5m+4TbC0lPzSPArA+c3WkfJhcFcgXxxNuPxG5vco8mOzNQNg6yXclEQ4zWytZZhSskYJ
+	uomgj9cxQdY325INSPOAWAZb2bz9cIazzIdN2Z9hwGWjcyr7xbucYkqrTTEcb6sTB1iDTJ
+	Wb+wJDbxJ89W0KpDBCxtJ5i2oi7LNX3f56fr3ytSyDJVHOz6ZQBIouXYtMCKKK+EzMph4T
+	58lajRTZ4Y52qphmBuBJ/FwKcwPpNkdvh/6knKDtpNJfA4LopsodXLd1V9w7iqeeqss5SX
+	MiRAXydbdO4e7/s633Jq/9aFeCCY73d5aZPfTenA25qcOKvQr3zuOG7HPX13Xg==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Date: Tue, 17 Jun 2025 13:59:27 +0200
+Subject: [PATCH v4 4/7] dt-bindings: omap: Add Seeed BeagleBone Green Eco
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1cd8b28bfe159677b8a8b1228b04ba2919c8aee8.1750146719.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250617-bbg-v4-4-827cbd606db6@bootlin.com>
+References: <20250617-bbg-v4-0-827cbd606db6@bootlin.com>
+In-Reply-To: <20250617-bbg-v4-0-827cbd606db6@bootlin.com>
+To: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+ Roger Quadros <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Paul Barker <paul.barker@sancloud.com>, 
+ Marc Murphy <marc.murphy@sancloud.com>
+Cc: Jason Kridner <jkridner@gmail.com>, Andrew Davis <afd@ti.com>, 
+ Bajjuri Praneeth <praneeth@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-omap@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Kory Maincent <kory.maincent@bootlin.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.15-dev-8cb71
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdduvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvefgvdfgkeetgfefgfegkedugffghfdtffeftdeuteehjedtvdelvddvleehtdevnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdefpdhrtghpthhtoheprghnughrvggrsheskhgvmhhnrgguvgdrihhnfhhopdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheptghonhhorhdrughoohhlvgihsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheplhhinhhugidqohhmrghpsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvl
+ hdrohhrghdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjkhhrihgunhgvrhesghhmrghilhdrtghomhdprhgtphhtthhopehtohhnhiesrghtohhmihguvgdrtghomh
 
-On Tue, Jun 17, 2025 at 10:02:02AM +0200, Mauro Carvalho Chehab wrote:
-> It is not a good practice to store build-generated files
-> inside $(srctree), as one may be using O=<BUILDDIR> and even
-> have the Kernel on a read-only directory.
-> 
-> Change the YAML generation for netlink files to allow it
-> to parse data based on the source or on the object tree.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  tools/net/ynl/pyynl/ynl_gen_rst.py | 22 ++++++++++++++++------
->  1 file changed, 16 insertions(+), 6 deletions(-)
-> 
-> diff --git a/tools/net/ynl/pyynl/ynl_gen_rst.py b/tools/net/ynl/pyynl/ynl_gen_rst.py
-> index 7bfb8ceeeefc..b1e5acafb998 100755
-> --- a/tools/net/ynl/pyynl/ynl_gen_rst.py
-> +++ b/tools/net/ynl/pyynl/ynl_gen_rst.py
-> @@ -365,6 +365,7 @@ def parse_arguments() -> argparse.Namespace:
->  
->      parser.add_argument("-v", "--verbose", action="store_true")
->      parser.add_argument("-o", "--output", help="Output file name")
-> +    parser.add_argument("-d", "--input_dir", help="YAML input directory")
->  
->      # Index and input are mutually exclusive
->      group = parser.add_mutually_exclusive_group()
-> @@ -405,11 +406,14 @@ def write_to_rstfile(content: str, filename: str) -> None:
->      """Write the generated content into an RST file"""
->      logging.debug("Saving RST file to %s", filename)
->  
-> +    dir = os.path.dirname(filename)
-> +    os.makedirs(dir, exist_ok=True)
-> +
->      with open(filename, "w", encoding="utf-8") as rst_file:
->          rst_file.write(content)
+Document the seeed,am335x-bone-green-eco compatible string in the
+appropriate place within the omap family binding file.
 
-Hi Mauro,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+Changes in v4:
+- Forgot a 'e' to seeed in the commit message.
 
-With this patch applied I see the following, which did not happen before.
+Changes in v3:
+- New patch
+---
+ Documentation/devicetree/bindings/arm/ti/omap.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-$ make -C tools/net/ynl
-...
-Traceback (most recent call last):
-  File ".../tools/net/ynl/generated/../pyynl/ynl_gen_rst.py", line 464, in <module>
-    main()
-    ~~~~^^
-  File ".../tools/net/ynl/generated/../pyynl/ynl_gen_rst.py", line 456, in main
-    write_to_rstfile(content, args.output)
-    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
-  File ".../tools/net/ynl/generated/../pyynl/ynl_gen_rst.py", line 410, in write_to_rstfile
-    os.makedirs(dir, exist_ok=True)
-    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
-  File "<frozen os>", line 227, in makedirs
-FileNotFoundError: [Errno 2] No such file or directory: ''
-make[1]: *** [Makefile:55: conntrack.rst] Error 1
+diff --git a/Documentation/devicetree/bindings/arm/ti/omap.yaml b/Documentation/devicetree/bindings/arm/ti/omap.yaml
+index 7e0d5d376d57..ffea0c3006c2 100644
+--- a/Documentation/devicetree/bindings/arm/ti/omap.yaml
++++ b/Documentation/devicetree/bindings/arm/ti/omap.yaml
+@@ -124,6 +124,7 @@ properties:
+               - oct,osd3358-sm-refdesign
+               - sancloud,am335x-boneenhanced
+               - seeed,am335x-bone-green
++              - seeed,am335x-bone-green-eco
+               - seeed,am335x-bone-green-wireless
+               - tcl,am335x-sl50
+               - ti,am335x-evm
 
 -- 
-pw-bot: cr
+2.43.0
+
 
