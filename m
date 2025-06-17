@@ -1,95 +1,110 @@
-Return-Path: <linux-kernel+bounces-690184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2C1ADCCCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:17:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE9AADCCE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB68C17FC34
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:12:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F1103BAA99
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9382E2665;
-	Tue, 17 Jun 2025 13:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A822E973E;
+	Tue, 17 Jun 2025 13:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAXFordH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gcXSTeBH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B512C08BB
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E092E716B;
+	Tue, 17 Jun 2025 13:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750165714; cv=none; b=UkONUMxTIp4LEOZyocrkNNb6wjIbDx3NeuGyZoJZiHkE4IDUBCzEWY/tiuuwuEoYqbibdcUykBgUJU/a5Io5UweyXVTj1iUnMzpie/jjpcBaxyts2mlI0wKz9etg8/aFcz9Durf5j1+a0HpbHTJCafKlP0SmOdwTOPd49pdnO1Y=
+	t=1750165769; cv=none; b=tvR6iXo8LpVuKRi53L0X4QYGCu6S7oejWetlDRefZ/Z1CfJy1Q007S+HwLy5a5+TPqrACE20pOBYdE0g6XJGNzJC2TfzH5TlBaBrcUjMXVWcBiV94vQUZ8L1WIop2d1WxZeJoI/hwxSrKWpe73y+i4KNnwU6YjTJ1kRyIfFTWow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750165714; c=relaxed/simple;
-	bh=AyTUTNLjWBATyHbjVw17F4xXlhTSyaPg3Ia/Umh903s=;
+	s=arc-20240116; t=1750165769; c=relaxed/simple;
+	bh=HvGY6oce5rUZfv/fTGrMAeDcKLN52b/tg7Nr1pAVykk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EmO5Cc+6t/RTyjosGBa3QYsFr/XD/4vupPf+txeGnDPoR23ZepvnPXDzFZ5aaOzx14L+QInlwHbO/bCnR9jpqzPCpWcvP1qbMI21cb8jnTgt2JSxZQEcztTg6txGa5pJyMBhK4QGvRYOPjCX0Z9K2PqcENfjbm8YJUV/PRtKwrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAXFordH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11487C4CEE3;
-	Tue, 17 Jun 2025 13:08:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iocI1XSEOHyBaUkIc2Q0To75FvM7mwhmSznAPCoAsUbYHFaVcpEr6MP0w9SjQGhB6pd8+764De3lLVFY4Pie6cpJC0lQjtgJdHF3aiznWp4H0vVmmYqzCnYtqqCHhylxdLuQ+pGVU0sv1RtXrQfwmi4EKMA+WjcPDlzASPIsZc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gcXSTeBH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D046C4CEE3;
+	Tue, 17 Jun 2025 13:09:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750165713;
-	bh=AyTUTNLjWBATyHbjVw17F4xXlhTSyaPg3Ia/Umh903s=;
+	s=k20201202; t=1750165769;
+	bh=HvGY6oce5rUZfv/fTGrMAeDcKLN52b/tg7Nr1pAVykk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VAXFordHMA/gkCOqFMV4TzCebuHiM2OhA6jWEQ0xosiXV0I9NInpi5EXuWyGH88zh
-	 SurVYw0G6Np1BJCX1KBxBERoyw4Docls9aOnWJKIKs5IaWpjEstpImQkomnLLOKfyE
-	 h/BrGSKSztVTdpGHfW+8htswPe2S7P1md3KfaWDFbn2pZeitLttcUqvOM3y/jSiBr3
-	 cr/mFXTlel/nvZmZr8NlPspQQSDxayRtyJOSiVILcdQFS5CFTPZhusBqSPPPH6uzjT
-	 tEmo6yrD8c/ooSKArQfRjiW4U1YLRRrq7lZ381202hYbHcHZNU+MvmMn4sZ4f0FR0q
-	 b9jUcR5fuADnA==
-Date: Tue, 17 Jun 2025 15:08:30 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Marco Crivellari <marco.crivellari@suse.com>,
-	linux-kernel@vger.kernel.org,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v5 0/3] Workqueue: add WQ_PERCPU, system_dfl_wq and
- system_percpu_wq
-Message-ID: <aFFozq_dzk8Qn7XN@localhost.localdomain>
-References: <20250614133531.76742-1-marco.crivellari@suse.com>
- <aFBj9PXQiw-7O6yQ@slm.duckdns.org>
+	b=gcXSTeBHsqWdmxhqwnrQnxGYBo33tJMLPLnh4ac3nUmRVLuZoj3aOHF9p/NbUw8ly
+	 F1Zj31U3KrWkLHatgLRu2bNuoRsWY/HpwV3gJ3zVsnOoZ3B1fPcVWuk3Vwt1yseCyJ
+	 GjIwN0z6BBSnRSzVYV/FL0jE3iQuHyiGkH8B3LQ715vd+vHSjMoIPPvf1k4nrLGOzh
+	 Ipz3prrnlSsQN6vcQMCPoZ0IoYTnm78XxepwPH/yy1sWdr+QfVN5FuZ8670VQfDjmM
+	 9VMVFQDcVkYEr5j7FYhuTUTSsolMIzoS2W5IfMQLVpFkr78zeKm01m2CPlle3DompZ
+	 g64GzwOAQ6i2w==
+Date: Tue, 17 Jun 2025 08:09:24 -0500
+From: Rob Herring <robh@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>, sophgo@lists.linux.dev,
+	Jingbao Qiu <qiujingbao.dlmu@gmail.com>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Move sophgo,cv1800b-rtc to rtc directory
+Message-ID: <20250617130924.GA1678432-robh@kernel.org>
+References: <20250608224252.3902421-1-robh@kernel.org>
+ <ywln42bb3i5hyzlsmfbx3xt2kjbefqmcxytcqxdcgah77gcesi@2cdw3cgxbg4c>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aFBj9PXQiw-7O6yQ@slm.duckdns.org>
+In-Reply-To: <ywln42bb3i5hyzlsmfbx3xt2kjbefqmcxytcqxdcgah77gcesi@2cdw3cgxbg4c>
 
-Le Mon, Jun 16, 2025 at 08:35:32AM -1000, Tejun Heo a écrit :
-> On Sat, Jun 14, 2025 at 03:35:28PM +0200, Marco Crivellari wrote:
-> > Marco Crivellari (3):
-> >   Workqueue: add system_percpu_wq and system_dfl_wq
-> >   Workqueue: add new WQ_PERCPU flag
-> >   [Doc] Workqueue: add WQ_PERCPU
+On Mon, Jun 09, 2025 at 06:49:38AM +0800, Inochi Amaoto wrote:
+> On Sun, Jun 08, 2025 at 05:42:51PM -0500, Rob Herring (Arm) wrote:
+> > The $id path for the sophgo,cv1800b-rtc binding was missing part of the
+> > path 'soc'. However, the correct place for RTC bindings (even if it's
+> > also a "syscon") is the rtc directory, so move the binding there while
+> > fixing the $id value.
+> > 
+> > Fixes: 76517429dbfd ("dt-bindings: soc: sophgo: add RTC support for Sophgo CV1800 series")
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> >  .../bindings/{soc/sophgo => rtc}/sophgo,cv1800b-rtc.yaml        | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >  rename Documentation/devicetree/bindings/{soc/sophgo => rtc}/sophgo,cv1800b-rtc.yaml (96%)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/soc/sophgo/sophgo,cv1800b-rtc.yaml b/Documentation/devicetree/bindings/rtc/sophgo,cv1800b-rtc.yaml
+> > similarity index 96%
+> > rename from Documentation/devicetree/bindings/soc/sophgo/sophgo,cv1800b-rtc.yaml
+> > rename to Documentation/devicetree/bindings/rtc/sophgo,cv1800b-rtc.yaml
+> > index 5cf186c396c9..c695d2ff9fcc 100644
+> > --- a/Documentation/devicetree/bindings/soc/sophgo/sophgo,cv1800b-rtc.yaml
+> > +++ b/Documentation/devicetree/bindings/rtc/sophgo,cv1800b-rtc.yaml
+> > @@ -1,7 +1,7 @@
+> >  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >  %YAML 1.2
+> >  ---
+> > -$id: http://devicetree.org/schemas/sophgo/sophgo,cv1800b-rtc.yaml#
+> > +$id: http://devicetree.org/schemas/rtc/sophgo,cv1800b-rtc.yaml#
+> >  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> >  
+> >  title: Real Time Clock of the Sophgo CV1800 SoC
+> > -- 
+> > 2.47.2
+> > 
 > 
-> Applied 1-3 to wq/for-6.17. I applied as-is but the third patch didn't need
-> to be separate. Maybe something to consider for future.
+> As the rtc syscon has a sub function for remoteproc, is it proper to
+> move this binding into rtc subsystem?
 
-If this is for the next merge window, I guess the easiest is to wait for it
-before sending patches to other subsystems to convert them?
+Does that affect the binding (is there more to add)? Looks like an RTC 
+from the binding.
 
-I guess we could shortcut that with providing a branch that other subsystems
-could pull from but that doesn't look convenient...
-
-Thanks.
-
-> 
-> Thanks.
-> 
-> -- 
-> tejun
-
--- 
-Frederic Weisbecker
-SUSE Labs
+Rob
 
