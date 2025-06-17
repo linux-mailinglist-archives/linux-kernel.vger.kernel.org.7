@@ -1,188 +1,245 @@
-Return-Path: <linux-kernel+bounces-689569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A676FADC3A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:49:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A813ADC3B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4202B1663F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:49:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62F84173374
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B84328B7DB;
-	Tue, 17 Jun 2025 07:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329C528ECCB;
+	Tue, 17 Jun 2025 07:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qg2ZV+7M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QH7tapkH"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2070.outbound.protection.outlook.com [40.107.95.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E753D2FB
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 07:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750146551; cv=none; b=CCkzHWwHl2k1MqygFUKYSN628Ie2SAx8yer3WD8lzgjMnbXEWjH4zlFLETm4mkL1v0HpMqiOQ7QcDHFPYtm502mWxJ1smKM1apjnO7YrWW3fBxwAuZz2hbB7BnH6afXl8yl39TQal3Kw5xTcX/wnk0fWQllqPuAMLEJ7r//9+TU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750146551; c=relaxed/simple;
-	bh=edgKKuKIHXNY19Bf7dXcjsr8rGZB29QD7qjrFQ312ZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GL+70Q8BJgijvANChGovlFMRlEPFGLsII9Z5dbjd+Z+xUOty8LJXQx4iU6PmmCWQ6oHkOYHkLvM0JmXlV7WsbRyFod+71LZPa6E34vE7biv7MujpxAaHdZ4IFm1tQRw4ABllSLhy32QYFb84c2QWKfRaRp2y5z4G8Gw1y63PKAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qg2ZV+7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1636C4AF0B
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 07:49:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750146551;
-	bh=edgKKuKIHXNY19Bf7dXcjsr8rGZB29QD7qjrFQ312ZU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Qg2ZV+7M6wDk5oEos5QuLkHbnWwF6jPYFE78H5PCAba13QBuBDy35OYFoMhglpeW5
-	 NBag6k8dEESHzN8Q4vUqE4JWFUbtpOHYKQcDd6VUMvP4TkWZNzyJhBI3JTYcpFnL6B
-	 0rm2+kHekDrTqYpWRvFNXOgUZ8sTa/5hNOlUq9jT+yT+7JPmZi458L+jYT7I21mPl9
-	 F5jpDgf1PwDzXIC+cd+QGt3SNHv4r+RSnoWHbRdr4Q1vC8s4eofVBnO4e87NYU91U8
-	 4MCPOgblmY72XartoFJndIWWnvzdPo4AY9xyThgeGPYaDZGDA9HWpiw00Dt+9Pay1s
-	 YBRWjkrPJvF8Q==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-310447fe59aso54948951fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 00:49:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVJ/O4zPIkLEe4FADNZHQuEa1bnvOWqnhfh1vj7oq3ZyFbhluiy9eHOaJK48Wgv5OCRFwARK3FICwLsy7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8k2EJwZ7h+Zu/p2ipyWpoms0OmJIvaC9zOsuZOlDjFR9Quw49
-	Ctp/dWIzr8qO6JGaNvq+hiSpBYjTrKpRthf2XzhlHE7h16YLMggr9w40Iu8BIbv4lccstLhtXQz
-	a11ko8dnwDY44OcG/VBYr2csn5VROw6A=
-X-Google-Smtp-Source: AGHT+IHrRIPcTTe7BlmbCtWLApFzRGHworOqkbPXOiF9QRjABzfBe8quyQOD07oWuiKgft2iwTO2AezAGElWEQA8PXA=
-X-Received: by 2002:a05:6512:1181:b0:553:cc61:170f with SMTP id
- 2adb3069b0e04-553cc611901mr289711e87.31.1750146549176; Tue, 17 Jun 2025
- 00:49:09 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840F228A700;
+	Tue, 17 Jun 2025 07:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750146581; cv=fail; b=KA9tjekrRv6081B7AuRBdOEVHwUeoStdDf6N4f56YhSfWyA+bd/Y98cFFqA+SOcpxwdABjSQZyMNXGTxp/FxmuX38dS8QBE+riptD/XXJHEX9j9L2SWSB/SsEN3upWJC43zMHVlN6wkPQOZDQDbx8HURO7WKAEz5i7ZlKmO6R88=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750146581; c=relaxed/simple;
+	bh=4djIvyIx6U7E68umMePOkEF15HIVaPqHb25II+V61dw=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=a2XXaOvf7+fTzFRLMMwwlLGrIcFYJqTgkeqaBNEDHPNxhMju6CoeFfgriOe5V5Cu7OSZXxRWcm4EHyOMtwFi6YaRR9eJK1fg8sEOHRyGxO0BApHip0z6YvunuowYq7FH2ak/WRoItybv4wGMSSpRaR3hWj6WdCmBf9XewlUQ9lM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QH7tapkH; arc=fail smtp.client-ip=40.107.95.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NsyFOoIZE95BNT105rvYpMVKbYxHMhkvbp0/vdPr4jLarMuw+sIPOhoPZ5/74aEv8jGFAxunsGAYC0CF47xyEWQplFOn3om7ohCdUlY4iVfljmkZ0PAF6yEmGTEkh+IxBq0EwVCsiij25YvSm//fEEm/ue8Op4gnhm8PgatH4UF6Ds4Be6BGBSpRU17ueXT8C44iyCy8+XXq8d9XidXmcdrtNh9w7oP9/HNZ6DtWbYNjeSHu3ZhhDXw4xDc6wG3pi7tIGnBMsjfEhTxQG0vuCBy/2rYBiRExbLYan9MRJTzgqSXQNwdMbIObGvXeTxgU9ieVv9QoXYeC+rBqRkah3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8SGg+p3bUyED74XJma+JMh3NOEyyecJu9VaF/LmbFe4=;
+ b=e4xtVBH7ANdLv73WZUfCl1tC/aamHf9fJiS2YiGs4sFM87D9Gfg7TXt8RaSazjj36+32bHXSb342m1WLFcJcbV7qJaF81Vk95vTcjBUJW/7b7YLIHc1ir2A1kRgWw5rogqqUsAXPm9dfLPemrIt4i0cJJ/WdGRgC+w1D5FORp0QKYZGPM6WxSYFBOT4XeIprGwFi6PJsKlrAtqQCaGuUnSt2uanHi3BtSkOR3xnL72JipeRYKyWtVzNLJ9IyDmjsEtuaODMrCrsukiqqKStNo+0VeQ2sPNDkmL8ZANvfT0d4wfPuEvcQd9G5/8Cqo+v5zI9ROkOi7SwyhcLi5V6naA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8SGg+p3bUyED74XJma+JMh3NOEyyecJu9VaF/LmbFe4=;
+ b=QH7tapkH4h2j8glZ/EpDLX2W0cQ9Tqyc2lpBG8tbat9lwehoqCgcysADEoJN3IiHKnV7Ym+nddkcXyaWrc9FJJCk/FfQMPpQG4TSOIuzidZLBl7PYKhXF22HK7XP1yqUUNP2kFcP2YZ5yyKtBxOwlxarM8AxxTvsWzsRSoi+/gg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH3PR12MB7523.namprd12.prod.outlook.com (2603:10b6:610:148::13)
+ by IA0PR12MB8349.namprd12.prod.outlook.com (2603:10b6:208:407::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Tue, 17 Jun
+ 2025 07:49:34 +0000
+Received: from CH3PR12MB7523.namprd12.prod.outlook.com
+ ([fe80::f722:9f71:3c1a:f216]) by CH3PR12MB7523.namprd12.prod.outlook.com
+ ([fe80::f722:9f71:3c1a:f216%5]) with mapi id 15.20.8835.023; Tue, 17 Jun 2025
+ 07:49:34 +0000
+Message-ID: <fadd937c-dbcc-4cb1-ad98-b787dd244d8d@amd.com>
+Date: Tue, 17 Jun 2025 13:19:28 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] amd-xgbe: Configure and retrieve 'tx-usecs' for
+ Tx coalescing
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>, Shyam-sundar.S-k@amd.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250616104232.973813-1-Vishal.Badole@amd.com>
+ <1c1e7c9c-5143-43e9-a40b-42dfc3866a56@linux.dev>
+Content-Language: en-US
+From: "Badole, Vishal" <vishal.badole@amd.com>
+In-Reply-To: <1c1e7c9c-5143-43e9-a40b-42dfc3866a56@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN3PR01CA0164.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:de::6) To CH3PR12MB7523.namprd12.prod.outlook.com
+ (2603:10b6:610:148::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250617073733.760-1-khaliidcaliy@gmail.com>
-In-Reply-To: <20250617073733.760-1-khaliidcaliy@gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 17 Jun 2025 09:48:57 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHAkpynA9avioMtVO1escDhWV4SjzDHt_7enLXQDPx+Tg@mail.gmail.com>
-X-Gm-Features: AX0GCFvqMdBv9k2uHFwQQCR6TRz4_1obSANqbzc1N7IhmKxnNO5-fwVuNy3b5-o
-Message-ID: <CAMj1kXHAkpynA9avioMtVO1escDhWV4SjzDHt_7enLXQDPx+Tg@mail.gmail.com>
-Subject: Re: [PATCH v3] x86/boot: Don't return encryption mask from __startup_64()
-To: Khalid Ali <khaliidcaliy@gmail.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB7523:EE_|IA0PR12MB8349:EE_
+X-MS-Office365-Filtering-Correlation-Id: 15443af7-d654-41b4-cc3a-08ddad738075
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bDFQaGUvdk1PZzlFckpaNi9malZFN1NzVjdYUWIyTkUyMFFBTk96NVk1UE5S?=
+ =?utf-8?B?NldqTFQ4RjNvQXRrbXZnd3Z0a2hpNEhCaU1nWGFYMmF5NVpPS3lmMncwTmtU?=
+ =?utf-8?B?U1dUSGhBOThTa1RVQU5uYnJ2MDRvSzNQSTZ5WTBEQnkrTFpSZWdkVEY2aFM1?=
+ =?utf-8?B?Y3hodERXeklFRktCdkM4ejVFNS83YlMzNUFXUGVEV1hBQlAzVzFVb3J5ZmM2?=
+ =?utf-8?B?YnBhaG54M25mazhpWGJLTlNlSkpCekROOVU2OUdJMjNpKzJmaDFrK0dCTzRU?=
+ =?utf-8?B?UGNIOWtoMzh1b3JGVmdUSk42Q1BXYWI1N2kwUHdGU0Fsc2wzNzAvVnJSQ0JE?=
+ =?utf-8?B?eWUrd1ZnWStNQ1lkQ0t5NFE2YlJsYVozbGlXK3hBR2NvMDRYaGlpZHNMYlBt?=
+ =?utf-8?B?ZGxPR3llVVRBNE51Sm9GcEg4YlRWWG9DNWE5ZEtBbmdRQkxCRVhHOXhBL0c4?=
+ =?utf-8?B?QWpHVFFzSlJvajNyVXRSUFMyaDR1Q2RQS2p0d2tGUDN6VUpGN25xbXg1WWlv?=
+ =?utf-8?B?ZURKZzNRL2V0R2dKSTNTbjdJNEtpMnZOVkpFREt0VTBPUWNlbFE3MmxzbkZO?=
+ =?utf-8?B?YkhoekRCNVArUnZwOXBXR2JISnZNeEVyVnRMY2szNEhNSXJmS0JCZG1vRnR5?=
+ =?utf-8?B?dVRuaGFXci9sNGZvczJmZXNUZDl2bHBFYzBwUytMU3EyYU5JZUpzOUZQRDZ1?=
+ =?utf-8?B?RHJ5SkNydHBvQWJVY1Q3M2RkY2hIRm9nTGVCVG1UYm5jRHdBNStETlIvYVNE?=
+ =?utf-8?B?RXNSdHNIazFaUFNzNW90MVE1WVBNaWQrMnBSa0V3YXdkVytzVURDQ1BVMjJn?=
+ =?utf-8?B?MVh3Qk9Ib2RCU2tVYWFwTURoZTZqZ3pFOXJyVlBYbTQwYXJkVjIyZnd4ckFH?=
+ =?utf-8?B?VmhHUmVyZU1zSG1VdVFzN25jb0ZuTmdNUnd6SmhsaUZ1S1JTcE0ra0hsVWxW?=
+ =?utf-8?B?azBoM0tidHp0MXhycXIvOVJUTnFhc3BDbWNORFlkaHU0RFoycnlKa01kQ0xE?=
+ =?utf-8?B?YzRVOTA2aWpCSFZOdFVvRDAxVDZ3SUVkQmlaWDc1SUI3ZW9JTnhmblRmUEZH?=
+ =?utf-8?B?c1NoYjVXRmFpbUV0Z1dqQXE1WnlNd0l5L08xMkRIMHNkWHJGZjZrSVl4cUFy?=
+ =?utf-8?B?bG9LSVVCbE96cDhabXpFVHRaMlFVMEtnS0R5b1N0ckNyQnZuU0hITllXc1dN?=
+ =?utf-8?B?MFhiaG9RWk1kNWoxak1uQXh1cmhpbytEWklIVjhqc1drRkgwR1g0YVdob21Z?=
+ =?utf-8?B?MEErT0QzYmhvTGZIRFIxemN5QzgzbUgyUlpyRElnbkNsU0dwWmFBM09hY0tp?=
+ =?utf-8?B?Z3RCRnJVVFdWNGxOdWI2aHAwWmQ4bit6eTVkeXdBcDh4dzRhd3lPR1UrdWJT?=
+ =?utf-8?B?ZGxMM1h4dnczdlM0SkEzNE1YWVhDQTBEVkpRN2JQOE5KWXRVUEdTTVc2V0Z0?=
+ =?utf-8?B?NmRWWnI0TEFMR25XcHJBM1kxQldnTlZ4ckFTUS9yVVh0YmxKVVd5RnJiVzVt?=
+ =?utf-8?B?dDU5ekpvcHJrTlpwanU2QXJTaXZ5WEx3bWtoMEhCZk1NUGpDSFVrWEtuNTJY?=
+ =?utf-8?B?VWxBMTFlMXFjREdvSC9pQ2Y2YUtSQWMrSmN2R0dSdUw2djZpRFBxTGFBUSsr?=
+ =?utf-8?B?ZDF0Uytybjc4YWR2Q1NQczJsZzZGZnYvNUZjK3l0NVpRQWduV1N4M1lwL2Zl?=
+ =?utf-8?B?UmtrdjFab2RKVHJ3a2t0SXpDbEg1VkdVY25uYS9ZdW1ZT0JxMVVDMy90Ukxo?=
+ =?utf-8?B?VDE0SEpQVVFDZ1k5b0k3eUsyQUdxS21CTlU4aE1zV3VkQXh2OE9URDBiQkJn?=
+ =?utf-8?B?Wmk4ZlpONXVrWk0wd0E4cnY0TmZoVVNTUmhXOXpSbUNDeUdXOExQZ0pVZ0xm?=
+ =?utf-8?B?U28wWXE1dTlaWGkvMXNhampJbm16SUwrekkzR080NmRyaG1rT3Zra3BUUW9M?=
+ =?utf-8?Q?zmO0asrd8ls=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7523.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NnJ0L3M0bGFqelhUNFZzUFA0eldmZ2NiNWRpMlg1bWlDUUM0RVVmTHVqdVYz?=
+ =?utf-8?B?bXU3SkJsTFlKY3FjalNkdWFuU0w5Y0dwRndTb0JkU0F3eFNDRkw4YW1iRGNT?=
+ =?utf-8?B?dG1XL3ZhV1pwTFc4MGdSbThnKzlYWU5nekgvQlJ2VGZ1SjU4RFViU01UcHlx?=
+ =?utf-8?B?Y2h0V1dyTktkb1o0T0ZuRXNod3pUOUU0bzI1bUlxUjZuQU9HNDAyMzd4V2V6?=
+ =?utf-8?B?ejlwdU9TSzdCUGtFZGwydzVQbGhmaXRiSXlTbWkybzR4ZnpVNUl1Wm4zbCtT?=
+ =?utf-8?B?MDZVUXVNUkVXUGZoZkVjMWxUQXp1bzNMOWEwQUtXMSs4QVd0ZnRxakJ3RmVh?=
+ =?utf-8?B?bDM1eE1IYUo1TEsxbzJrVFJGdDExYnRzTEpHK3J1OHpsSTlqVkxieDF0akRq?=
+ =?utf-8?B?VFM3WjZ6RVcwdkJiQkJGa0FEUlJsd3kvYmVtR2FIZWxzK2kvWUFiQmFMdlFI?=
+ =?utf-8?B?RjV1bVI1YWFObDFPNkZpTUl0UHNjcEdZc1BHQm5lQlRSMTNXaEFJUWdBcjdL?=
+ =?utf-8?B?aWQ3TXlxVkRIQjBYbEEzcDVUdXl3ajVoOU5jNVdsUm1ESFZpeTFpMDQ1dS9m?=
+ =?utf-8?B?QTVlZEF6MUZrazAwSXdCcWl0SDRBNzlwaVF6STFvR0lzSUg4RnNRaE5nM3d5?=
+ =?utf-8?B?QTMxaXd0dGxPMDF4U29yUkdEeTdwODlPS2JOT2RPRGVzeXJBNWNuOVBxNFg2?=
+ =?utf-8?B?cERhaDFuNkt5QlNVdzU4cEtzVnQxOGxSaXZvcGZNNm50cmdmZ0ErS0c5bFBM?=
+ =?utf-8?B?c2U2bkpGaUlOOEoyUFlOOVNXNzc5WUpMZ1U0UEVCRXRIaS9lZnJXVjJUZ2Vh?=
+ =?utf-8?B?YnkzNUFVVjJxUjdaU05QSWJKTmc4aTJwWVBuT3cxM05MOHFPTk01U3FHOTN2?=
+ =?utf-8?B?UElpcHVFVWFyWEd3L2U2eTVVQ0d4YnJjMDY0UFlIQmpPb3RBOHUxOTJpTXRi?=
+ =?utf-8?B?NGYrNW1xeFpYZHJtZEtOVC9GeVNvYk90SUVRdVRCSHVuenJWbmszeHZvVVRX?=
+ =?utf-8?B?OGFNL2ppRzVyMGpTdW9hUG5Fd0xiWm5GNFdGeXZKc3JUSU1LMjlVTVQ4VXFm?=
+ =?utf-8?B?RDdPVXZ3RHFrREtyZDhKKytPdjVsUGlPRURuYUliTEd5Rzdob1cxNTFkSjlH?=
+ =?utf-8?B?Y3RtTG13QjVEcHIzcEtONlQ0SGNmcHJUdDNLeTBvRU9YeEpNMkYzN2dYSWdi?=
+ =?utf-8?B?Rlp6bHM0YWtybExNdVBjNjRFa2pHckwrOFB6dVBBSGxuMTVQbENsZnNyUHVk?=
+ =?utf-8?B?YzBmRURrMDdwUnp5VFAvcVRqRHF6TjBNTWdtYXBoaS9uWXZ4MWtkbGJTaVd4?=
+ =?utf-8?B?dDM5djJLd0x1K0M2UlhYVDBITjl1MEpTdGYvMnBWb1VNZFFwOTZ0OVQrbkoz?=
+ =?utf-8?B?WHM2TlppUG5NdENFczVDOHFHbFY1L2dsQk04Tkc4RUpmQUM2emNmTzVWS0dr?=
+ =?utf-8?B?RmJqLzlWT09KM1pqRzRCTWJFQTdoQXF6cmU0S1U4OHBBWlBCOXJJWXBralRm?=
+ =?utf-8?B?Q1V4N3Zramg5WVY5OWRLNkVkZDRSci9qY2ZEVW9YaW1xYmN6SGhhdnJ1YlBY?=
+ =?utf-8?B?eUVHaytPeWE2aEtLeEV3M1VYN1F5bTNhRUZGaEhlbUE4cWhVTUI0Y2R3ZVFi?=
+ =?utf-8?B?Y2xCS3I4RkFKWis5UXdJeHRPbVV2QytldWFkQlFWS0FTbHB1cjFzMGIzbDMz?=
+ =?utf-8?B?VWtIL1dQSkRmZWtsM2xLdUdLZjNVZTFqME5TYnhOOWhKMWRHS2RvWThzYU16?=
+ =?utf-8?B?VEJRVTRSVEVZOVBvREZTZ2FrcThOK1NYMW9rWXVvMXFDalJ3bWJ0VDZJNkZI?=
+ =?utf-8?B?Wm1BbzN6b3NqVXd5eGh6aHdhSVl5ZmdOeFV2YmgvNk9LNkk4WnRYbTNsUjMw?=
+ =?utf-8?B?eWkwV3VqUHpJY3pZZzRJMGRXSWMxUGduYTNyeW05Q25EdFE5M1YrcEVrbGVE?=
+ =?utf-8?B?Nk8weXBVWTNJWmJuK295UWF1NEcrUlJyai9WVEZLSmc4K0QxektZcjdGU3dX?=
+ =?utf-8?B?MGZRaVE3YVYwMVNETjk5Q2hWdVJoMDV3SFQrVitjUnF6ZG9LSE9hdDdDYndE?=
+ =?utf-8?B?SUV5L3F1MnN5OVpDRU1nQlNTang1Y0pPK0x2N0ZWdDd3Z2FSSjJ1ZURIb1l2?=
+ =?utf-8?Q?PcV7+YaYcDPd2FO9I5MUkR4Md?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15443af7-d654-41b4-cc3a-08ddad738075
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7523.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2025 07:49:34.8138
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eiZ6ShyAYqcVVPSfxURoEzWzop3ARbfLGaZnxT8BES3ETwRYC1XUFVWLhNBOJSveFVGKkT1mMzNVJLBd7TYoMg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8349
 
-On Tue, 17 Jun 2025 at 09:38, Khalid Ali <khaliidcaliy@gmail.com> wrote:
->
-> Avoid returning the SME encryption mask from __startup_64(), and instead
-> let the function handle encryption directly as needed. The encryption
-> mask is already available to callers and can be accessed via
-> sme_get_me_mask() in C code, or directly through the sme_me_mask symbol
-> in assembly, if CONFIG_AMD_MEM_ENCRYPT is enabled.
->
-> This change aligns with how secondary_startup_64_no_verify handles SME
-> and keeps the behavior consistent. For Intel CPUs, SME is not relevant,
-> so there is no need to retrieve the mask unless CONFIG_AMD_MEM_ENCRYPT
-> is enabled.
->
-> Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506171012.Ji3c5sJh-lkp@intel.com/
-
-Please drop these lines ^^^ (but no need to resend just for that)
-
-As it says on the page:
-
-"If you fix the issue in a separate patch/commit (i.e. not just a new
-version of the same patch/commit), kindly add following tags"
 
 
-> ---
->  arch/x86/boot/startup/map_kernel.c | 11 +++--------
->  arch/x86/include/asm/setup.h       |  2 +-
->  arch/x86/kernel/head_64.S          | 10 ++++------
->  3 files changed, 8 insertions(+), 15 deletions(-)
->
-> diff --git a/arch/x86/boot/startup/map_kernel.c b/arch/x86/boot/startup/map_kernel.c
-> index 332dbe6688c4..6fdb340e9147 100644
-> --- a/arch/x86/boot/startup/map_kernel.c
-> +++ b/arch/x86/boot/startup/map_kernel.c
-> @@ -30,7 +30,7 @@ static inline bool check_la57_support(void)
->         return true;
->  }
->
-> -static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
-> +static void __head sme_postprocess_startup(struct boot_params *bp,
->                                                     pmdval_t *pmd,
->                                                     unsigned long p2v_offset)
->  {
-> @@ -68,11 +68,6 @@ static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
->                 }
->         }
->
-> -       /*
-> -        * Return the SME encryption mask (if SME is active) to be used as a
-> -        * modifier for the initial pgdir entry programmed into CR3.
-> -        */
-> -       return sme_get_me_mask();
->  }
->
->  /*
-> @@ -84,7 +79,7 @@ static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
->   * the 1:1 mapping of memory. Kernel virtual addresses can be determined by
->   * subtracting p2v_offset from the RIP-relative address.
->   */
-> -unsigned long __head __startup_64(unsigned long p2v_offset,
-> +void __head __startup_64(unsigned long p2v_offset,
->                                   struct boot_params *bp)
->  {
->         pmd_t (*early_pgts)[PTRS_PER_PMD] = rip_rel_ptr(early_dynamic_pgts);
-> @@ -213,5 +208,5 @@ unsigned long __head __startup_64(unsigned long p2v_offset,
->         for (; i < PTRS_PER_PMD; i++)
->                 pmd[i] &= ~_PAGE_PRESENT;
->
-> -       return sme_postprocess_startup(bp, pmd, p2v_offset);
-> +        sme_postprocess_startup(bp, pmd, p2v_offset);
->  }
-> diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
-> index 692af46603a1..29ea24bb85ff 100644
-> --- a/arch/x86/include/asm/setup.h
-> +++ b/arch/x86/include/asm/setup.h
-> @@ -50,7 +50,7 @@ extern unsigned long acpi_realmode_flags;
->
->  extern void reserve_standard_io_resources(void);
->  extern void i386_reserve_resources(void);
-> -extern unsigned long __startup_64(unsigned long p2v_offset, struct boot_params *bp);
-> +extern void __startup_64(unsigned long p2v_offset, struct boot_params *bp);
->  extern void startup_64_setup_gdt_idt(void);
->  extern void startup_64_load_idt(void *vc_handler);
->  extern void early_setup_idt(void);
-> diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-> index 3e9b3a3bd039..4390a28f7dad 100644
-> --- a/arch/x86/kernel/head_64.S
-> +++ b/arch/x86/kernel/head_64.S
-> @@ -106,18 +106,16 @@ SYM_CODE_START_NOALIGN(startup_64)
->
->         /*
->          * Perform pagetable fixups. Additionally, if SME is active, encrypt
-> -        * the kernel and retrieve the modifier (SME encryption mask if SME
-> -        * is active) to be added to the initial pgdir entry that will be
-> -        * programmed into CR3.
-> +        * the kernel.
->          */
->         movq    %r15, %rsi
->         call    __startup_64
->
->         /* Form the CR3 value being sure to include the CR3 modifier */
-> -       leaq    early_top_pgt(%rip), %rcx
-> -       addq    %rcx, %rax
-> -
-> +       leaq    early_top_pgt(%rip), %rax
-> +
->  #ifdef CONFIG_AMD_MEM_ENCRYPT
-> +       addq    sme_me_mask(%rip), %rax
->         mov     %rax, %rdi
->
->         /*
-> --
-> 2.49.0
->
+On 6/16/2025 4:59 PM, Vadim Fedorenko wrote:
+> On 16/06/2025 11:42, Vishal Badole wrote:
+>> Ethtool has advanced with additional configurable options, but the
+>> current driver does not support tx-usecs configuration.
+>>
+>> Add support to configure and retrieve 'tx-usecs' using ethtool, which
+>> specifies the wait time before servicing an interrupt for Tx coalescing.
+>>
+>> Signed-off-by: Vishal Badole <Vishal.Badole@amd.com>
+>> Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+>> ---
+>>   drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c | 19 +++++++++++++++++--
+>>   drivers/net/ethernet/amd/xgbe/xgbe.h         |  1 +
+>>   2 files changed, 18 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c b/drivers/ 
+>> net/ethernet/amd/xgbe/xgbe-ethtool.c
+>> index 12395428ffe1..362f8623433a 100644
+>> --- a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
+>> +++ b/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
+>> @@ -450,6 +450,7 @@ static int xgbe_get_coalesce(struct net_device 
+>> *netdev,
+>>       ec->rx_coalesce_usecs = pdata->rx_usecs;
+>>       ec->rx_max_coalesced_frames = pdata->rx_frames;
+>> +    ec->tx_coalesce_usecs = pdata->tx_usecs;
+>>       ec->tx_max_coalesced_frames = pdata->tx_frames;
+>>       return 0;
+>> @@ -463,7 +464,7 @@ static int xgbe_set_coalesce(struct net_device 
+>> *netdev,
+>>       struct xgbe_prv_data *pdata = netdev_priv(netdev);
+>>       struct xgbe_hw_if *hw_if = &pdata->hw_if;
+>>       unsigned int rx_frames, rx_riwt, rx_usecs;
+>> -    unsigned int tx_frames;
+>> +    unsigned int tx_frames, tx_usecs;
+>>       rx_riwt = hw_if->usec_to_riwt(pdata, ec->rx_coalesce_usecs);
+>>       rx_usecs = ec->rx_coalesce_usecs;
+>> @@ -485,9 +486,22 @@ static int xgbe_set_coalesce(struct net_device 
+>> *netdev,
+>>           return -EINVAL;
+>>       }
+>> +    tx_usecs = ec->tx_coalesce_usecs;
+>>       tx_frames = ec->tx_max_coalesced_frames;
+>> +    /* Check if both tx_usecs and tx_frames are set to 0 
+>> simultaneously */
+>> +    if (!tx_usecs && !tx_frames) {
+>> +        netdev_err(netdev,
+>> +               "tx_usecs and tx_frames must not be 0 together\n");
+>> +        return -EINVAL;
+>> +    }
+>> +
+>>       /* Check the bounds of values for Tx */
+>> +    if (tx_usecs > XGMAC_MAX_COAL_TX_TICK) {
+>> +        netdev_err(netdev, "tx-usecs is limited to %d usec\n",
+>> +               XGMAC_MAX_COAL_TX_TICK);
+>> +        return -EINVAL;
+>> +    }
+> 
+> ethtool uses netlink interface now and coalesce callbacks have extack
+> parameters to return error information back to user-space. It would be
+> great to switch to use it instead of adding more netdev_err messages.
+> 
+Hi Vadim.
+Thank you for your observations. Since this driver is quite old, we have 
+used netdev_err() to report errors to maintain consistency. In the 
+future, we plan to upgrade the driver to use netlink interfaces with 
+extack parameters for returning error information to user-space.
+> [...]
+
 
