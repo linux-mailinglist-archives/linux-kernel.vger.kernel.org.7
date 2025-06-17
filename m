@@ -1,146 +1,134 @@
-Return-Path: <linux-kernel+bounces-690810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1096BADDCB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 21:57:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F67ADDCBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 21:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7AA73ACB86
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 19:57:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3FF23B75A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 19:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1611E2E2676;
-	Tue, 17 Jun 2025 19:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29DA2EBBAB;
+	Tue, 17 Jun 2025 19:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ett0jDLE"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IM3o9XfU"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C891C28C00E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 19:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6F92EBBAD
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 19:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750190244; cv=none; b=uf99yzIQyMhe0L+9zkLnMH6ycnPiWNDDGGlgb9BFvBz7bQBgWBQL4A3w2IKI+5/2T3+DtXO87v3E9I4o9FrkuGyQTUVrxuHoBGu0L0zl/YOkH5yFx7j6gJ9PCTt0aXy7LT3xsLlAZ/1qGWKtGTxXFnyyBZ99kLomNiB8c1OZlD0=
+	t=1750190268; cv=none; b=cxat9CiqquMgsBOPsiI0q839Q2/Km7v9BstPC/eMWSsrEQf2frBWi74Nm/lSKaerNuVKzfD6Bbc7oBMy7w7aMNjfA8ZPylS5VtIeLFjj33xhx877Dx71t8VBPFqQ8yy9WuRvemR4Ywr1NuEprSU2hHCGAjZ2lsXsylH9jn0j95g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750190244; c=relaxed/simple;
-	bh=g1hqr9LAd5tlBlXHUe2Abbj5LysvcxE3l71FgP8GPCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IcsKYsaAUB9U1+rgJIuLARTUQWyv0FuRoYlSMDM5WBM3ex3Fak5tR8cIykft2lxjV/sO0oyjUHHZHRER1tUyGn2Mm4I4OJjjnVKCzgRVfbX1xIXGzwMdZ9qyfx8n/QA+pm6tb2zUL7o6oaO5TDtLqUzCYuW4Znmr220VdnoTg6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=ett0jDLE; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7d09a032914so547600785a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 12:57:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1750190242; x=1750795042; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GSljJoj4v6CeDXJDozVd8y37KP8tPNu+Cmnc8/7K2EU=;
-        b=ett0jDLEoebh+JyaQv+RJbvAuXymydoDvslAFmcZ6Z4dfurrqwxY3JeC1uQ3i1SOPt
-         ph8UXl6D771R+SfQfflI+6p3EoDL8zJq1hfV/tn/e7AD0FzGVuyWE4f72YJt+YKMDQQj
-         hsXyhtTxcd99QA2PUBp4kv+CHzGKeNhCdIHRpPqFydEQbsnW/BpP4yHrMLKTODHfGoYW
-         8+Bc+Rf4948wdV/0bi221GMSuJKpKMLGTUB4rzPeJMJaHs5aXJXBmihiPn1q9o8MeSXh
-         z21/ZZdKkfS2mpDdBS53ts3GuAn+zCodwtfNBvXnwpGeyg7BqwWckZyWeJr+H/nJreHp
-         8Orw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750190242; x=1750795042;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GSljJoj4v6CeDXJDozVd8y37KP8tPNu+Cmnc8/7K2EU=;
-        b=rPHxc+wyAz7hbTZtixL2TplWTg46ic5FE8FxZb9qwDHJp6cDnUI95DVRq+Eq2x1TYi
-         7mZlQXaoy7qCR5wG3CQq9RXixWQYnqnIVmUzPuJNSq3ABRIbANybiT5wEh/HETnRFHbX
-         JuV38WAZ82fXe/kyOgV3JPjStZzGcLlCx/vEiMwCkMQjq1i/sdtpuTWEhpY8p0CaIy+v
-         LCwIWiHRu9TXpgZ7YhJY9vQEzZF+mvevyD8A1KB5ZnbaG2R1hbnUz6k/ws69ruOd6PQN
-         DLQavrY+/zxjdHZ+NDSQvHeOG/kwc5qSJ93+Uqmd4HsYyyuwgmZ42B2RA7Kdv2RzhJ2Q
-         Dhlw==
-X-Forwarded-Encrypted: i=1; AJvYcCWi4BpY7pT06+mLLythgGb34vH38eFH9r6l3HSo5yUEJcI+lONiHQDwCX+I3te1oULBQcSTENMuoHpJh10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIWUS1VXI2OQxIr/Al9aQHfPspz7RYYZZGGAlBnM9ukp4JYIuY
-	HTWz1DyXLw8k7IzXK0LGuooJykO6oz0B3goJ5VWf0kfwjw+6/645tttgrVCO5absDIk=
-X-Gm-Gg: ASbGncufkUrEbyKk2x/t++ngtQCSctQmq79E7NpfbXoKDgp5elFbwqMHuN/lr7R/Kd+
-	lMPXDmx4nYSOjv8GIMOS3ZEOmUYEd+H4q7x6XxgsvP5+4Yqc8Z3EKcb8jOgZ40KefVLmvx5+/Tg
-	CHTeOI6Gc3DgBCfqS6LoewBNChtKvhIlqS2HQoatmEG8csdf5aKZGAm/w+yw81+qvauwnxgiTHF
-	dLUmTWsNY9W+zEkZnGtkWViQ+/BHEgVwJnU90JcvGCZtXNRCVjM/Xr1MQhE4fQS4HNZzCKMjYdo
-	oI8I3Yp5YxdEgl3NMpPc1ttP9yIBxXGt/RlHxaZbESrLidLQTcb5HAZomPsTIuTdwK7XPjnq4es
-	tVwEB+7zlMY+BCw1YP1D/eF5AwmKFfVI+cyszRg==
-X-Google-Smtp-Source: AGHT+IHoE/CIYPSeBo9AkwYX6P5QyNezX929DkvT7AQbxP5vAuyPsD+eSrDU1SNqwDaclH2cAsl91Q==
-X-Received: by 2002:ac8:5746:0:b0:494:f1e7:65ef with SMTP id d75a77b69052e-4a73c627abcmr231747311cf.44.1750190241701;
-        Tue, 17 Jun 2025 12:57:21 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a72a4b0e93sm65849681cf.42.2025.06.17.12.57.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 12:57:21 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uRcQq-00000006ckX-2tam;
-	Tue, 17 Jun 2025 16:57:20 -0300
-Date: Tue, 17 Jun 2025 16:57:20 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Demi Marie Obenour <demiobenour@gmail.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Alyssa Ross <hi@alyssa.is>, virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	iommu@lists.linux.dev, x86@kernel.org,
-	Spectrum OS Development <devel@spectrum-os.org>
-Subject: Re: Virtio-IOMMU interrupt remapping design
-Message-ID: <20250617195720.GI1376515@ziepe.ca>
-References: <>
- <a65d955c-192b-4e79-ab11-8e2af78b62af@gmail.com>
- <20250616132031.GB1354058@ziepe.ca>
- <20250617154331-mutt-send-email-mst@kernel.org>
+	s=arc-20240116; t=1750190268; c=relaxed/simple;
+	bh=C/eAwE2iKVL8/nxhtpTFgtgQt5E1SogTfxONay/0hAY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SVorxx99KYAve08YE5jkunYPlpJ14qtmiq9tDTQ/BfAL2Gs1zvRtlWZv4T7dJyM+d1bkIadxEZrClrfP2I86bKajatajVT7r97VB03lLZ0q0+QJqi4JOmRt2o9S8Y8m3o+2pMUZJZL32DXCKf6RG817ulaglx19alvaKbG6lGzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IM3o9XfU; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750190254;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=chThj5q3V7f3H1aWStWIZNg3tPJSNout6hvisnuDvdI=;
+	b=IM3o9XfUi37VhXYjtKSxKAMuNcFi/hJ+bbR6TOn6gTzawy8KlCCPplZuF56BMgxQ5BRMLR
+	orRZElM45luzIkNtlZAvuwUB7sYfadtisqkfoWY0bKHlC6k+mh/onrG5hNk1049oWZvQR/
+	KjgDxBXUYnX4DOr0HRjO1bG9M/n3ixw=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Tejun Heo <tj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	JP Kobryn <inwardvessel@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	bpf@vger.kernel.org,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: [PATCH v3 0/4] cgroup: nmi safe css_rstat_updated
+Date: Tue, 17 Jun 2025 12:57:21 -0700
+Message-ID: <20250617195725.1191132-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250617154331-mutt-send-email-mst@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jun 17, 2025 at 03:44:20PM -0400, Michael S. Tsirkin wrote:
-> On Mon, Jun 16, 2025 at 10:20:31AM -0300, Jason Gunthorpe wrote:
-> > On Sun, Jun 15, 2025 at 02:47:15PM -0400, Demi Marie Obenour wrote:
-> > 
-> > > Is a paravirtualized IOMMU with interrupt remapping something that makes
-> > > sense?
-> > 
-> > IMHO linking interrupt remapping to the iommu is a poor design,
-> > interrupt routing belongs in the irq subsystem, not in the iommu.
-> > 
-> > The fact AMD and Intel both coupled their interrupt routing to their
-> > iommu hardware is just a weird design decision. ARM didn't do this,
-> > for instance.
-> 
-> why does it matter in which device it resides?
+BPF programs can run in nmi context and may trigger memcg charged memory
+allocation in such context. Recently linux added support to nmi safe
+page allocation along with memcg charging of such allocations. However
+the kmalloc/slab support and corresponding memcg charging is still
+lacking,
 
-It would cleanup the boot process if the IRQ components were available
-at the same time as the IRQ drivers instead of much later when the
-iommu gets plugged in.
+To provide nmi safe support for memcg charging for kmalloc/slab
+allocations, we need nmi safe memcg stats because for kernel memory
+charging and stats happen together. At the moment, memcg charging and
+memcg stats are nmi safe and the only thing which is not nmi safe is
+adding the cgroup to the per-cpu rstat update tree. i.e.
+css_rstat_updated() which this series is doing.
 
-> Way I see it, there is little reason to remap interrupts without
-> also using an iommu, so why not a single device.  what did I miss?
+This series made css_rstat_updated by using per-cpu lockless lists whose
+node in embedded in individual struct cgroup_subsys_state and the
+per-cpu head is placed in struct cgroup_subsys. For rstat users without
+cgroup_subsys, a global per-cpu lockless list head is created. The main
+challenge to use lockless in this scenario was the potential multiple
+inserters from the stacked context i.e. process, softirq, hardirq & nmi,
+potentially using the same per-cpu lockless node of a given
+cgroup_subsys_state. The normal lockless list does not protect against
+such scenario.
 
-Remapping interrupts can be understood to be virtualizing the MSI
-addr/data pair space so that the CPU controls where the interrupt goes
-though its internal tables not the device through the addr/data.
+The multiple stacked inserters using potentially same lockless node was
+resolved by making one of them succeed on reset the lockless node and
+the
+winner gets to insert the lockless node in the corresponding lockless
+list. The losers can assume the lockless list insertion will eventually
+succeed and continue their operation.
 
-On x86 you also need to use remapping to exceed the max CPU count that
-can be encoded in the MSI, no iommu required to need this.
+Changelog since v3:
+- Rebased on for-6.17 branch of cgroup tree
 
-There is also some stuff related to IMS that could get improved here.
+Changelog since v2:
+- Add more clear explanation in cover letter and in the comment as
+  suggested by Andrew, Michal & Tejun.
+- Use this_cpu_cmpxchg() instead of try_cmpxchg() as suggested by Tejun.
+- Remove the per-cpu ss locks as they are not needed anymore.
 
-You don't need an iommu to enjoy those benefits.
+Changelog since v1:
+- Based on Yosry's suggestion always use llist on the update side and
+  create the update tree on flush side
 
-Jason
+[v1]
+https://lore.kernel.org/cgroups/20250429061211.1295443-1-shakeel.butt@linux.dev/
+
+Shakeel Butt (4):
+  cgroup: support to enable nmi-safe css_rstat_updated
+  cgroup: make css_rstat_updated nmi safe
+  cgroup: remove per-cpu per-subsystem locks
+  memcg: cgroup: call css_rstat_updated irrespective of in_nmi()
+
+ include/linux/cgroup-defs.h   |  11 +--
+ include/trace/events/cgroup.h |  47 ----------
+ kernel/cgroup/rstat.c         | 158 ++++++++++++++--------------------
+ mm/memcontrol.c               |  10 +--
+ 4 files changed, 72 insertions(+), 154 deletions(-)
+
+-- 
+2.47.1
+
 
