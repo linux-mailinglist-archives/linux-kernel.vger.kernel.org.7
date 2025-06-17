@@ -1,192 +1,290 @@
-Return-Path: <linux-kernel+bounces-689759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5463EADC61B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:21:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08031ADC620
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A78175800
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:21:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A3D31774FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D9D292B22;
-	Tue, 17 Jun 2025 09:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8EC294A0B;
+	Tue, 17 Jun 2025 09:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dd6FDGyg"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="aVdt8hme"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2D1292B2D
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FE2293C5C
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750152075; cv=none; b=d56TJ6itfCnxD385wS2RJLNQ8UVnabcIZNBN63OG9VRwJ9G9XnZdxN47AAjehaXSAcMCdXe9z7zrdYybuA33QxbFqaRIXSDZXeVg9CmnFEz3qZxMXyVnm0DQPeWFsVIUZIs96n8eIAANoJcMhwpDaEODyMep3+rvg11vMiS001A=
+	t=1750152088; cv=none; b=amrkEp4j/DktjnvNPgLpPtttrs7RAfUJ1z4mD6MJVn2BgjynppROOtz5Rot2tJLHv48lwO2T2AFjbneVaOf0EMyNHBEvWXXQsaxEXJW3XOFZKHmQ4c+kCOJczGsjEqz55pt8xmm9pn+PSATENuaTbP0kAIxb20YpOmd8SNA18lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750152075; c=relaxed/simple;
-	bh=pv6NOo0JjJRQSbVugTbjenxxKrUDmgUgtZePZT4E2Ow=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DLHS6J4+TNpVNmXoD4JRr1sgJ515FpasBiVMhaVDBj+Eo7tC0Hyt1wg6DJKBpFHdeBBqFk09tqJ0/sU5awa0KHCO+1VnMCSUF/Mp5vltb88mQRmBwlfoRa1SbV4gyuRXV105RJEiEVKxbGfiOwIsDXzSUqKzWtapm2UcUjq/y2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dd6FDGyg; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <142cb257-6c04-4a8f-9153-4759c50aff4e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750152068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R7X3zKdDa6C/f9djBhnhvhmD9Fs51aNtXIyVNL1VTRk=;
-	b=Dd6FDGygEjufLhqJ9Z2/eOK4jp/IHSPlY3m5/IVJQmj1cgBIsMiDOIK679YmM/lxK1ekB4
-	/I7zRM9rZTaQYTK+glOlivsdq9XXfgqOkYJUFgOYrENTLXNBtqUdRr/vty+CPcPhGC9x5c
-	PvcfiWXfd3FBbEkTNvNZ8GjfRTL1Trc=
-Date: Tue, 17 Jun 2025 17:21:03 +0800
+	s=arc-20240116; t=1750152088; c=relaxed/simple;
+	bh=Ow3AGhVqlqjnFCJ1JQEH8ceZfT2t+7tTzq/V/n123cs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QDLBL3Bp/aybnCQdqitG5tWd0RBFGFhL3kSu8jq/5vd0JE7O8DAlSdPYOlhbVy2CpC0G3qfGOSfXQRwg8ucTY7elg+Op/Znb2kV0Jwe8TcRbCI+bU2bbLzVIyTjdN9xiiSURl+wBudntB5FhC8kczOqql+Ydt1hTY43gXQ2zaKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=aVdt8hme; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b2fb8226e1cso6108096a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 02:21:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1750152084; x=1750756884; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tQhHDdXRASPFShTEMtGhN37rSYP2mIQBC7ckn6Zfygs=;
+        b=aVdt8hmecBkj7Y8zeeB8Svdb1CvkJgAF38Fw4OTwoAYojYi6wa7h4zNcGdOyZLHJem
+         qvDFzLQI/uGX28zSCatiahp+mW0U2gk9cKAjFTyhhXWd6czaWsmlxfIqrO1gDlXSh1DU
+         /4SN/ujhlVA+560kv9/Sx2O8Np5T46j+quzEzKndpwauQDrCuVfHAOdHkkvTLetTzqDv
+         qZvGRL3DO+++u/eSRDFalcCoHCrdC81phkUHb9inDB2GJLflLu+Wv2gGkXGKCN1HDcXE
+         GSWyw7lupVkmEWdmCKANCLQz6JEOElIFrXOh2sBhs0ufa35vW4tTb3BeYLl6vzqecS3M
+         pd7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750152084; x=1750756884;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tQhHDdXRASPFShTEMtGhN37rSYP2mIQBC7ckn6Zfygs=;
+        b=spROxl+YVR/yYgSSFZeaFV+Gc4qert/IltCwgEtB9tSvSkRnznAuCVO0UstYQxQLz+
+         n0Tl4JTXzNVDI3Mbfk53c4lkq05vPPnyHD7s1CNz/rCGQfDzluzVJCak18R/Eq0Zlx60
+         1FRkXHJ1OLGUuPgc+b+Uljh9oDblm3BzaY9iOntaNnjOvFZNPicPxcKaCMxSMx0s6Eh6
+         lFaLWIr5XdWRsn7xruypjAV3RdZq14er2vMvHVYoiEy+yJNJN9wWnOepTJzVpSse/iFm
+         xfmwk2U1IIFuqs/4DPgBbh0QR7GxMNScGbjVHuHIxgeEABP70Us24QrhabesGG8C/uP4
+         f5Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAU1NxpmRQJah2M5cbEGXBz+TypUV4TNGDS4JaDNPhN2NYOpUms8leB83QWEaPIIwhMpsRAEre/Wr682k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwapMudCu22jRJfQ+LJr9U+Cutf17ImOb479C6Y/Qkm77DDVqKr
+	X6f1YKmZj4Rxx65pWXrlgyX0WK4TA78xFrN5vySS3H6M4oCcFTPDg2Heya1O5hIMJ6U=
+X-Gm-Gg: ASbGncvptdAmXQ254M423z+rBlhydKGusubVDYfKCVfPuUOyNdbWulCIC/3qVRtnRmy
+	o8gnoGmdopU54lLXl/xDeQYx+ghEzei9xkTDJKBARuqMLq6hJWOEo1GAG4fbt1Kd2ChJUl6Cx2w
+	tfejWmMtbONIs5oHms8jvB8BciqP3nBHLRvECmeon+s5nDCYD+0YP517CwSi2EodfQyzexM8E+n
+	z/d2sj0iRMLGGHNbDtViS58/dM9vHcTIX+Fzj6hO5jLOa/n4yL3mqPt+9g15rZAUgab28rDxl0I
+	HjBos0Ucc12AfLff8E4L57L4SFo5Vj27fVD/AwWag2Bt7XhZ1vFaUjLqW9dSNLJ7p8BK6OoRpOl
+	00HJ99G954dbg1g==
+X-Google-Smtp-Source: AGHT+IH4Lc/yHe2dEENhF5nwP1sRWFMN4XZjeIToef7j+ESUprmceHkDq6MxthbKbJpXxCtADv1M3g==
+X-Received: by 2002:a17:90b:180b:b0:311:1617:5bc4 with SMTP id 98e67ed59e1d1-31427e9f120mr2815486a91.12.1750152084194;
+        Tue, 17 Jun 2025 02:21:24 -0700 (PDT)
+Received: from localhost.localdomain ([203.208.189.14])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365d88e554sm75458145ad.16.2025.06.17.02.21.20
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 17 Jun 2025 02:21:23 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: david@redhat.com
+Cc: akpm@linux-foundation.org,
+	alex.williamson@redhat.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lizhe.67@bytedance.com,
+	peterx@redhat.com
+Subject: Re: [PATCH v4 2/3] gup: introduce unpin_user_folio_dirty_locked()
+Date: Tue, 17 Jun 2025 17:21:17 +0800
+Message-ID: <20250617092117.10772-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <34560ae6-c598-4474-a094-a657c973156b@redhat.com>
+References: <34560ae6-c598-4474-a094-a657c973156b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/1] mm/madvise: initialize prev pointer in
- madvise_walk_vmas
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, 21cnbao@gmail.com, david@redhat.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, jannh@google.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Lance Yang <ioworker0@gmail.com>
-References: <20250617020544.57305-1-lance.yang@linux.dev>
- <6181fd25-6527-4cd0-b67f-2098191d262d@lucifer.local>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <6181fd25-6527-4cd0-b67f-2098191d262d@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+On Tue, 17 Jun 2025 09:43:56 +0200, david@redhat.com wrote:
+ 
+> On 17.06.25 06:18, lizhe.67@bytedance.com wrote:
+> > From: Li Zhe <lizhe.67@bytedance.com>
+> > 
+> > When vfio_unpin_pages_remote() is called with a range of addresses that
+> > includes large folios, the function currently performs individual
+> > put_pfn() operations for each page. This can lead to significant
+> > performance overheads, especially when dealing with large ranges of pages.
+> > 
+> > This patch optimize this process by batching the put_pfn() operations.
+> > 
+> > The performance test results, based on v6.15, for completing the 16G VFIO
+> > IOMMU DMA unmapping, obtained through unit test[1] with slight
+> > modifications[2], are as follows.
+> > 
+> > Base(v6.15):
+> > ./vfio-pci-mem-dma-map 0000:03:00.0 16
+> > ------- AVERAGE (MADV_HUGEPAGE) --------
+> > VFIO MAP DMA in 0.047 s (338.6 GB/s)
+> > VFIO UNMAP DMA in 0.138 s (116.2 GB/s)
+> > ------- AVERAGE (MAP_POPULATE) --------
+> > VFIO MAP DMA in 0.280 s (57.2 GB/s)
+> > VFIO UNMAP DMA in 0.312 s (51.3 GB/s)
+> > ------- AVERAGE (HUGETLBFS) --------
+> > VFIO MAP DMA in 0.052 s (308.3 GB/s)
+> > VFIO UNMAP DMA in 0.139 s (115.1 GB/s)
+> > 
+> > Map[3] + This patchset:
+> > ------- AVERAGE (MADV_HUGEPAGE) --------
+> > VFIO MAP DMA in 0.028 s (563.9 GB/s)
+> > VFIO UNMAP DMA in 0.049 s (325.1 GB/s)
+> > ------- AVERAGE (MAP_POPULATE) --------
+> > VFIO MAP DMA in 0.294 s (54.4 GB/s)
+> > VFIO UNMAP DMA in 0.296 s (54.1 GB/s)
+> > ------- AVERAGE (HUGETLBFS) --------
+> > VFIO MAP DMA in 0.033 s (485.1 GB/s)
+> > VFIO UNMAP DMA in 0.049 s (324.4 GB/s)
+> > 
+> > For large folio, we achieve an approximate 64% performance improvement
+> > in the VFIO UNMAP DMA item. For small folios, the performance test
+> > results appear to show no significant changes.
+> > 
+> > [1]: https://github.com/awilliam/tests/blob/vfio-pci-mem-dma-map/vfio-pci-mem-dma-map.c
+> > [2]: https://lore.kernel.org/all/20250610031013.98556-1-lizhe.67@bytedance.com/
+> > [3]: https://lore.kernel.org/all/20250529064947.38433-1-lizhe.67@bytedance.com/
+> > 
+> > Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
+> > ---
+> >   drivers/vfio/vfio_iommu_type1.c | 35 +++++++++++++++++++++++++++++----
+> >   1 file changed, 31 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> > index e952bf8bdfab..159ba80082a8 100644
+> > --- a/drivers/vfio/vfio_iommu_type1.c
+> > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > @@ -806,11 +806,38 @@ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
+> >   				    bool do_accounting)
+> >   {
+> >   	long unlocked = 0, locked = vpfn_pages(dma, iova, npage);
+> > -	long i;
+> >   
+> > -	for (i = 0; i < npage; i++)
+> > -		if (put_pfn(pfn++, dma->prot))
+> > -			unlocked++;
+> > +	while (npage) {
+> > +		long nr_pages = 1;
+> > +
+> > +		if (!is_invalid_reserved_pfn(pfn)) {
+> > +			struct page *page = pfn_to_page(pfn);
+> > +			struct folio *folio = page_folio(page);
+> > +			long folio_pages_num = folio_nr_pages(folio);
+> > +
+> > +			/*
+> > +			 * For a folio, it represents a physically
+> > +			 * contiguous set of bytes, and all of its pages
+> > +			 * share the same invalid/reserved state.
+> > +			 *
+> > +			 * Here, our PFNs are contiguous. Therefore, if we
+> > +			 * detect that the current PFN belongs to a large
+> > +			 * folio, we can batch the operations for the next
+> > +			 * nr_pages PFNs.
+> > +			 */
+> > +			if (folio_pages_num > 1)
+> > +				nr_pages = min_t(long, npage,
+> > +					folio_pages_num -
+> > +					folio_page_idx(folio, page));
+> > +
+> 
+> (I know I can be a pain :) )
 
+No, not at all! I really appreciate you taking the time to review my
+patch.
 
-On 2025/6/17 16:50, Lorenzo Stoakes wrote:
-> Lace - To simplify and not get bogged down in sub-threads am replying at the top
-> level.
+> But the long comment indicates that this is confusing.
 > 
-> TL;DR this fix is incorrect, but the issue is correct :)
 > 
-> So the patch at [0] introduced by Barry changed things in a way that _appears_
-> broken but in fact aren't, however we should do something about this, obviously.
+> That is essentially the logic in gup_folio_range_next().
 > 
-> That patch added:
+> What about factoring that out into a helper like
 > 
-> 	if (madv_behavior && madv_behavior->lock_mode == MADVISE_VMA_READ_LOCK) {
-> 		vma = try_vma_read_lock(mm, madv_behavior, start, end);
-> 		if (vma) {
-> 			error = visit(vma, &prev, start, end, arg);
-> 			vma_end_read(vma);
-> 			return error;
-> 		}
-> 	}
+> /*
+>   * TODO, returned number includes the provided current page.
+>   */
+> unsigned long folio_remaining_pages(struct folio *folio,
+> 	struct pages *pages, unsigned long max_pages)
+> {
+> 	if (!folio_test_large(folio))
+> 		return 1;
+> 	return min_t(unsigned long, max_pages,
+> 		     folio_nr_pages(folio) - folio_page_idx(folio, page));
+> }
 > 
-> And the problem is, in this case, we don't initialise prev.
 > 
-> In all other cases, we do (under mmap lock):
+> Then here you would do
 > 
-> 	vma = find_vma_prev(mm, start, &prev);
-> 	if (vma && start > vma->vm_start)
-> 		prev = vma;
+> if (!is_invalid_reserved_pfn(pfn)) {
+> 	struct page *page = pfn_to_page(pfn);
+> 	struct folio *folio = page_folio(page);
 > 
-> The reason this isn't a problem is that the only madvise operation that
-> currently supports this, madvise_dontneed_free() will initialise *prev = vma.
+> 	/* We can batch-process pages belonging to the same folio. */
+> 	nr_pages = folio_remaining_pages(folio, page, npage);
 > 
-> BUT we really shouldn't be relying on this, so I attach a fixpatch.
-> 
-> Given Barry's patch isn't mainline yet, I think this should just be squashed
-> into that as a fix?
-> 
-> It kind of sucks to do this, but it resolves any potential bug.
-> 
-> I think a follow up is needed, as there's an implicit assumption it seems that
-> prev is updated immediately for most callers, but of course anon_vma_name is a
-> special snowflake.
-> 
-> todos++;
+> 	unpin_user_folio_dirty_locked(folio, nr_pages,
+> 				      dma->prot & IOMMU_WRITE);
+> 	unlocked += nr_pages;
+> }
 
-Ah, please keep me in the loop ;)
+Yes, this indeed makes the code much more comprehensible. Do you think
+the implementation of the patch as follows look viable to you? I have
+added some brief comments on top of your work to explain why we can
+batch-process pages belonging to the same folio. This was suggested by
+Alex[1].
 
-> 
-> Lance - I suggest you reply to Barry's series with the below fix, or I can if
-> you prefer?
-
-Sure, go ahead!
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index e952bf8bdfab..d7653f4c10d5 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -801,16 +801,43 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+        return pinned;
+ }
+ 
++/* Returned number includes the provided current page. */
++static inline unsigned long folio_remaining_pages(struct folio *folio,
++               struct page *page, unsigned long max_pages)
++{
++       if (!folio_test_large(folio))
++               return 1;
++       return min_t(unsigned long, max_pages,
++                    folio_nr_pages(folio) - folio_page_idx(folio, page));
++}
++
+ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
+                                    unsigned long pfn, unsigned long npage,
+                                    bool do_accounting)
+ {
+        long unlocked = 0, locked = vpfn_pages(dma, iova, npage);
+-       long i;
+ 
+-       for (i = 0; i < npage; i++)
+-               if (put_pfn(pfn++, dma->prot))
+-                       unlocked++;
++       while (npage) {
++               unsigned long nr_pages = 1;
++
++               if (!is_invalid_reserved_pfn(pfn)) {
++                       struct page *page = pfn_to_page(pfn);
++                       struct folio *folio = page_folio(page);
++
++                       /*
++                        * We can batch-process pages belonging to the same
++                        * folio because all pages within a folio share the
++                        * same invalid/reserved state.
++                        * */
++                       nr_pages = folio_remaining_pages(folio, page, npage);
++                       unpin_user_folio_dirty_locked(folio, nr_pages,
++                                       dma->prot & IOMMU_WRITE);
++                       unlocked += nr_pages;
++               }
++
++               pfn += nr_pages;
++               npage -= nr_pages;
++       }
+ 
+        if (do_accounting)
+		vfio_lock_acct(dma, locked - unlocked, true);
+---
 
 Thanks,
-Lance
+Zhe
 
-> 
-> [0]: https://lore.kernel.org/linux-mm/20250607220150.2980-1-21cnbao@gmail.com/
-> 
-> Thanks!
-> 
-> On Tue, Jun 17, 2025 at 10:05:43AM +0800, Lance Yang wrote:
->> From: Lance Yang <lance.yang@linux.dev>
->>
->> The prev pointer was uninitialized, which could lead to undefined behavior
->> where its address is taken and passed to the visit() callback without being
->> assigned a value.
->>
->> Initializing it to NULL makes the code safer and prevents potential bugs
->> if a future callback function attempts to read from it.
->>
->> Signed-off-by: Lance Yang <lance.yang@linux.dev>
->> ---
->>   mm/madvise.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/mm/madvise.c b/mm/madvise.c
->> index 267d8e4adf31..c87325000303 100644
->> --- a/mm/madvise.c
->> +++ b/mm/madvise.c
->> @@ -1536,10 +1536,10 @@ int madvise_walk_vmas(struct mm_struct *mm, unsigned long start,
->>   				   struct vm_area_struct **prev, unsigned long start,
->>   				   unsigned long end, void *arg))
->>   {
->> +	struct vm_area_struct *prev = NULL;
->>   	struct vm_area_struct *vma;
->> -	struct vm_area_struct *prev;
->> -	unsigned long tmp;
->>   	int unmapped_error = 0;
->> +	unsigned long tmp;
->>   	int error;
->>
->>   	/*
->> --
->> 2.49.0
->>
-> 
-> ----8<----
->  From c8dc9f5b2929e389cac44b79201fff43e0ab8195 Mon Sep 17 00:00:00 2001
-> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Date: Tue, 17 Jun 2025 09:46:27 +0100
-> Subject: [PATCH] fix
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->   mm/madvise.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 267d8e4adf31..45ea4588e34e 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -1549,6 +1549,7 @@ int madvise_walk_vmas(struct mm_struct *mm, unsigned long start,
->   	if (madv_behavior && madv_behavior->lock_mode == MADVISE_VMA_READ_LOCK) {
->   		vma = try_vma_read_lock(mm, madv_behavior, start, end);
->   		if (vma) {
-> +			*prev = vma;
->   			error = visit(vma, &prev, start, end, arg);
->   			vma_end_read(vma);
->   			return error;
-> --
-> 2.49.0
-
+[1]: https://lore.kernel.org/all/20250613113818.584bec0a.alex.williamson@redhat.com/
 
