@@ -1,150 +1,210 @@
-Return-Path: <linux-kernel+bounces-690484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A576EADD141
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:24:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43DBAADD14A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B710E1894DE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:24:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69D7D3B4BF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE8F2EB5C2;
-	Tue, 17 Jun 2025 15:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335E22EBDD5;
+	Tue, 17 Jun 2025 15:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="RgT260GC"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aSZiIOGW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635BF293443
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 15:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19BA2EB5AB
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 15:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750173842; cv=none; b=GG+t78zZKZYdEFpXBAzPzQIVLdv0m2uQpczILGO2epSZExOIGg6pPhBDbxBZ7fd88uN7rFUIK0BHh3cSc9QBb/rFGJOBpuo8LnN/6g8fVwwYOkPpTSL+iUdn4hq/cAVAYNjvtO0E4EyRXkzchQVc+ZGyK+qW4RwO4/oK5kVd0vQ=
+	t=1750173891; cv=none; b=cMmq5Z7hXAxd4U6AyfNb/akplnrydN51hmDzjbWCi/V3pCpFqzoO5tKn2ExyA62QNfp+vS9TETX2s+kPtI632qiRgZEbQxIpaL+hcf66tX9eOyxHRQFhZcoRzDzGMnux+RY6TjncCP4eZl4iSpyOnX2PtYVF5b023Z7yPSAY7Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750173842; c=relaxed/simple;
-	bh=t73wsGBwQ3kna8QJXYRTLcNV/4ySU7J72gDs71dpIbE=;
+	s=arc-20240116; t=1750173891; c=relaxed/simple;
+	bh=Y8gxeEKFkYw0UIV/IY7FhDkAqzZ2xhiVyi4v6GxhZx0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1KzMRHJlW35r79fu+XBJDP2mZpiwDJukYyrtArSYOJBATz0GHxWFhIJul7lnM3ID8G9mthcQ0yUERaUpeXlSdVr/R/961HFiy521UNXUbzO0+OGo+ThOaGXYjNnKL1Y49O9tt4yfG2WF0hp1M9IzXtQ2WRZHDu1JJ2Eceo9Tgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=RgT260GC; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c56a3def84so598920985a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 08:24:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1750173839; x=1750778639; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1G30twoTSmDNYqYLbQb9BVxeBr+2W0lftNV3Vff6vfU=;
-        b=RgT260GCd46CZ2jvifkpokDkVcV+CLmJsF7MCXONdFNrq5IAeDvQ9LGTU9cMNgKzwD
-         7OIFnLoSW/6YLEbBHcbIbWx6kepk9ndSckMIFLaqhhd/dOXBfFAZ4RBIQ1SHUrpKInsq
-         oVXQkzsSn0uwk0yDtnqubJeHHYTHhiabIJ6iI8OV1zW9slZF3LzlGc9i42VIHFphpph/
-         7uOpAukSU9/G7CNBRO2D3X05Dh6yZw265lZwHGWyhok8T0LCxRV9UvAUMFOdVoNpnf8D
-         k4EaCZBi6I4zek5vTyaWavDy5JGMa+6QIqZdZTrfqYFtuzUhP27KNDvdc+vhsMmgX5hE
-         N60g==
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsaKUJtfaf439Ywr8NbC8nErcmMLPBNa2zxUbNcvbZGnbnFa0YLX8dadEG0cvcWFMCgSBnPIIUwOl4nFL3Qz7yn1XI3J75p2h8zhtceQVJaEgIZp13JVUm0ddhNJN/4y5vjCqrZl6EeTqWEt8j44YAaVxMjKP2kybECvXkaB2FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aSZiIOGW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750173888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H7t/M+XkM4gCOEnwp8IXnN3sMzd4/YJo/8sq4GFgliY=;
+	b=aSZiIOGWwYcXGZ1zK9ihIkDE/h8fofdl+a+ynYHMM9GOvLnWCikeKqFFxrkbc7Zg3bEiGe
+	mXn/mfz0mHuEjzm7tGeB5bgVkN3r7MFVlYjP+ynEw9IU1YAKfZ9W2llp1eJclrLZakSR0T
+	HozqA4LWB4hDXEdLwoFFWpL7v2vBp1M=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-524-0aQCwcsCPbeWe9dzwG7veA-1; Tue, 17 Jun 2025 11:24:46 -0400
+X-MC-Unique: 0aQCwcsCPbeWe9dzwG7veA-1
+X-Mimecast-MFC-AGG-ID: 0aQCwcsCPbeWe9dzwG7veA_1750173885
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-450df53d461so48133355e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 08:24:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750173839; x=1750778639;
+        d=1e100.net; s=20230601; t=1750173885; x=1750778685;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1G30twoTSmDNYqYLbQb9BVxeBr+2W0lftNV3Vff6vfU=;
-        b=m64HnF6whxy1olbP+S6wSyoRRoHOx5DMt4ZMK2gkiOa+erQm+DZlZ87lr+0+THiFIB
-         AbAUM1rLTqr0XQiPiUV6xAbl07vs1jqdUZEyWVTBG5eBVVoBXOMq3b/ryXHvLwFJdx8u
-         txHrCVipcq0mipPLyrUB+ngu2/a0sDQSpv+ufqFtz8bSe6gDDOKTR/MGuD+NVH4/1zPe
-         9Z93ic5HStvgitKuJj7a4uqPFr3NpUcx3WZJe+hPftrLAEtFZXCWKq8z/RpspeXJP8nb
-         My6vCabeWi66trmZTgFDzD1hgUjx/7ItrG7uH7MMlWeFW8kAP0tGcolWVEoqrvIz16+p
-         uGDw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+c8W0WG156Z16vcc4Lu9+hPpDacbITHf7+0vL3GkDbs4a10x3Cb1bw5QWp2bVi/EBd41N6urTRdfwLWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0eIj9qN/ZxDVUhWh317smeOWzWjjbQbXjQFE2DMSFd8zncXca
-	Vy+uVF+skv5MuKepzDKJhICtxfwn+3HNDXaIbIewA4FilU/2FA47UkufDPTWTbG1Nhk=
-X-Gm-Gg: ASbGncvLNebY2kOpAQobnVh6gTQUDFS2wRzA3LPUjf7bI1zvQ9X1Ja++4kwMILc3ZY9
-	gxRWGM21nevjT1Z3OIU5FFnFq+d7vuHk2Jfpp/wwV8nXITim7wigmIRuNBVaeKtBU5nVs8AyKQG
-	KuLB6aOL7nAyEhipy/tL2zsF367H+Hlh1fOMRPgMD9PyVGeH5+KvDG36HkccjO9QWsL65IgfPNc
-	lFRRrLJPIC6BkOulxIbRgDS3ZeSck5cK5iNt1uGqoc2kfWqe9yUUEuboW1XvQGeJYyjqztZF7Rl
-	TIquMx2XdJ6vE3ch99wPYe7uW7SJbsd7+Yj/5ZCAtsL7yplXvwrtfabjuoZhH+bixA1EkWygpCH
-	0PYFWzI/3Yglnxtr1WVyWkeAlp/BxLPeWGgUO0g==
-X-Google-Smtp-Source: AGHT+IEoD6WfW4XcrXeA6atAW+1ffW+wg1paWr3c3lf/SNV5jhl70hbs0VEdmHRG0GMaJ0zxaZAYmg==
-X-Received: by 2002:a05:6214:20ea:b0:6fa:8c15:75c1 with SMTP id 6a1803df08f44-6fb4762f389mr178635926d6.2.1750173838901;
-        Tue, 17 Jun 2025 08:23:58 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb5f63431bsm7780936d6.43.2025.06.17.08.23.58
+        bh=H7t/M+XkM4gCOEnwp8IXnN3sMzd4/YJo/8sq4GFgliY=;
+        b=ITCE7jZv2WjgEwgMcJdADse9TvHtXzwF5B4JkrZcNOkmR8u0EcdIjkmv3Ku0JJxyBk
+         1OlQKjxfiUgmHEoxW5KU55HlnDrpYHlPTAMiH8bn84Pp/TuvHp1QKHfJ9dL3OnYY8QwH
+         AJleaMIM5nFl8zSBsFK6cQZlZQuLU03GM5r/82Cb/mCOfDZcuSATny8v4HLpF4c1tJ3H
+         PBDfHvvPVLBskmeVDDsKPmAppwRAZ7NZFNdjdZMNrOKUdiBlifAfH7uaFqC4aov7OKZt
+         RnAXJsj/49k+XaKimXm2xqAYACmuHdtaupH9SkSiZDgEo0DGRRjmP3z/3/ezWl6j8Gp9
+         1f6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXJsMwQW2umOgBDdRgV9fHpH6eFlwH73k/Mms38tGOtM6HzU0uCYvkJwIOwX55NRy1fLE03642reZoO6Ts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzerBQ2KSMfw9WbNMFR2BIz7A+ue9okSepqWU5rzra8xyCq3tE4
+	/axMg9U8xQT0ei5S/micv4jqyTUdNoPn4sL2Lb/ebIEEY/cTFwXubPYk62IOMjBYSsTd687YJlZ
+	rDmTnhcn0vdXhsCFMwH3O2Yfe8x4MNTQRrrs7lknbACEAna9L2wReh3hbhVGhnZtlXQ==
+X-Gm-Gg: ASbGnctH8Xt+kvfa4BpOJscdRda6OzFyqhvzgEHbAYQ23kNLWq1EoftaemESsysnCoX
+	+UXsp+mh5tgNvjKmU/E6nYKZ6Fi6Vr8v5ZhVtX1L+f1WfBsg4bdyIagWE1hd1tMcbJtoDsLZX5I
+	+euvJXWqVd0TSizcxKcH3Z6jvOVM4yLW2cl4ZR3ycd/ywLb1u5is97Zc300DtpZmVXmz1fgIOFc
+	clNM8Fag7hc8dZwgxyquzBI+V6B5dfwyk0+IgMWWhwgvlO68pdXeSfoeQttCgcgEWsnySJ6J6X6
+	XlMQKrxsBvA6FgXDAjar6lpYPeYo
+X-Received: by 2002:a05:600c:8b01:b0:441:d437:e3b8 with SMTP id 5b1f17b1804b1-4533cac9179mr118928605e9.23.1750173885153;
+        Tue, 17 Jun 2025 08:24:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFsm6jVbEl2m7WR2NEEu2J8dhq+GSg2FL6XFR2OWFKAilrHXhJdlDK5TX0Ng08O9R8MuoDrjg==
+X-Received: by 2002:a05:600c:8b01:b0:441:d437:e3b8 with SMTP id 5b1f17b1804b1-4533cac9179mr118928105e9.23.1750173884572;
+        Tue, 17 Jun 2025 08:24:44 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.200.233])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b089b5sm14100994f8f.48.2025.06.17.08.24.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 08:23:58 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uRYAH-00000006W0E-3mNh;
-	Tue, 17 Jun 2025 12:23:57 -0300
-Date: Tue, 17 Jun 2025 12:23:57 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, jasonmiu@google.com,
-	graf@amazon.com, changyuanl@google.com, rppt@kernel.org,
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com
-Subject: Re: [RFC v2 05/16] luo: luo_core: integrate with KHO
-Message-ID: <20250617152357.GB1376515@ziepe.ca>
-References: <20250515182322.117840-1-pasha.tatashin@soleen.com>
- <20250515182322.117840-6-pasha.tatashin@soleen.com>
- <mafs0sekfts2i.fsf@kernel.org>
- <CA+CK2bA7eAB4PvF0RXtt2DJ+FQ4DVV3x1OZrVo4q3EvgowhvJg@mail.gmail.com>
- <mafs0sek3n0x8.fsf@kernel.org>
+        Tue, 17 Jun 2025 08:24:43 -0700 (PDT)
+Date: Tue, 17 Jun 2025 17:24:36 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>, berrange@redhat.com
+Cc: Stefan Hajnoczi <stefanha@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	kvm@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH RFC net-next v4 00/11] vsock: add namespace support to
+ vhost-vsock
+Message-ID: <bgntskdmtb3usi6izcxywuhpvyldnoaxnomub4t7vfclv3xqhx@gjcs5ay4mkyt>
+References: <20250616-vsock-vmtest-v4-0-bdd1659c33fb@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <mafs0sek3n0x8.fsf@kernel.org>
+In-Reply-To: <20250616-vsock-vmtest-v4-0-bdd1659c33fb@meta.com>
 
-On Fri, Jun 13, 2025 at 04:58:27PM +0200, Pratyush Yadav wrote:
-> On Sat, Jun 07 2025, Pasha Tatashin wrote:
-> [...]
-> >>
-> >> This weirdness happens because luo_prepare() and luo_cancel() control
-> >> the KHO state machine, but then also get controlled by it via the
-> >> notifier callbacks. So the relationship between then is not clear.
-> >> __luo_prepare() at least needs access to struct kho_serialization, so it
-> >> needs to come from the callback. So I don't have a clear way to clean
-> >> this all up off the top of my head.
-> >
-> > On production machine, without KHO_DEBUGFS, only LUO can control KHO
-> > state, but if debugfs is enabled, KHO can be finalized manually, and
-> > in this case LUO transitions to prepared state. In both cases, the
-> > path is identical. The KHO debugfs path is only for
-> > developers/debugging purposes.
-> 
-> What I meant is that even without KHO_DEBUGFS, LUO drives KHO, but then
-> KHO calls into LUO from the notifier, which makes the control flow
-> somewhat convoluted. If LUO is supposed to be the only thing that
-> interacts directly with KHO, maybe we should get rid of the notifier and
-> only let LUO drive things.
+CCing Daniel who commented v2.
 
-Yes, we should. I think we should consider the KHO notifiers and self
-orchestration as obsoleted by LUO. That's why it was in debugfs
-because we were not ready to commit to it.
+On Mon, Jun 16, 2025 at 09:32:49PM -0700, Bobby Eshleman wrote:
+>This series adds namespace support to vhost-vsock. It does not add
+>namespaces to any of the guest transports (virtio-vsock, hyperv, or
+>vmci).
+>
+>The current revision only supports two modes: local or global. Local
+>mode is complete isolation of namespaces, while global mode is complete
+>sharing between namespaces of CIDs (the original behavior).
+>
+>If it is deemed necessary to add mixed mode up front, it is doable but
+>at the cost of more complexity than local and global modes. Mixed will
+>require adding the notion of allocation to the socket lookup functions
+>(like vhost_vsock_get()) and also more logic will be necessary for
+>controlling or using lookups differently based on mixed-to-global or
+>global-to-mixed scenarios.
+>
+>The current implementation takes into consideration the future need for mixed
+>mode and makes sure it is possible by making vsock_ns_mode per-namespace, as for
+>mixed mode we need at least one "global" namespace and one "mixed"
+>namespace for it to work. Is it feasible to support local and global
+>modes only initially?
+>
+>I've demoted this series to RFC, as I haven't been able to re-run the
+>tests after rebasing onto the upstreamed vmtest.sh, some of the code is
+>still pretty messy, there are still some TODOs, stale comments, and
+>other work to do. I thought reviewers might want to see the current
+>state even though unfinished, since I'll be OoO until the second week of
+>July and that just feels like a long time of silence given we've already
+>all done work on this together.
+>
+>Thanks again for everyone's help and reviews!
+>
+>Signed-off-by: Bobby Eshleman <bobbyeshleman@gmail.com>
+>---
+>Changes in v3:
+>- add notion of "modes"
+>- add procfs /proc/net/vsock_ns_mode
+>- local and global modes only
+>- no /dev/vhost-vsock-netns
+>- vmtest.sh already merged, so new patch just adds new tests for NS
+>- Link to v2:
+>  https://lore.kernel.org/kvm/20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com
 
-Jason
+Thanks for this!
+FYI I'll be off for the next days, I hope to comment next week.
+
+Thanks,
+Stefano
+
+>
+>Changes in v2:
+>- only support vhost-vsock namespaces
+>- all g2h namespaces retain old behavior, only common API changes
+>  impacted by vhost-vsock changes
+>- add /dev/vhost-vsock-netns for "opt-in"
+>- leave /dev/vhost-vsock to old behavior
+>- removed netns module param
+>- Link to v1:
+>  https://lore.kernel.org/r/20200116172428.311437-1-sgarzare@redhat.com
+>
+>Changes in v1:
+>- added 'netns' module param to vsock.ko to enable the
+>  network namespace support (disabled by default)
+>- added 'vsock_net_eq()' to check the "net" assigned to a socket
+>  only when 'netns' support is enabled
+>- Link to RFC: https://patchwork.ozlabs.org/cover/1202235/
+>
+>---
+>Bobby Eshleman (11):
+>      selftests/vsock: add NS tests to vmtest.sh
+>      vsock: a per-net vsock NS mode state
+>      vsock: add vsock net ns helpers
+>      vsock: add net to vsock skb cb
+>      vsock: add common code for vsock NS support
+>      virtio-vsock: add netns to common code
+>      vhost/vsock: add netns support
+>      vsock/virtio: add netns hooks
+>      hv_sock: add netns hooks
+>      vsock/vmci: add netns hooks
+>      vsock/loopback: add netns support
+>
+> MAINTAINERS                             |   1 +
+> drivers/vhost/vsock.c                   |  48 ++-
+> include/linux/virtio_vsock.h            |  12 +
+> include/net/af_vsock.h                  |  53 ++-
+> include/net/net_namespace.h             |   4 +
+> include/net/netns/vsock.h               |  19 ++
+> net/vmw_vsock/af_vsock.c                | 203 +++++++++++-
+> net/vmw_vsock/hyperv_transport.c        |   2 +-
+> net/vmw_vsock/virtio_transport.c        |   5 +-
+> net/vmw_vsock/virtio_transport_common.c |  14 +-
+> net/vmw_vsock/vmci_transport.c          |   4 +-
+> net/vmw_vsock/vsock_loopback.c          |   4 +-
+> tools/testing/selftests/vsock/vmtest.sh | 555 +++++++++++++++++++++++++++++---
+> 13 files changed, 843 insertions(+), 81 deletions(-)
+>---
+>base-commit: 8909f5f4ecd551c2299b28e05254b77424c8c7dc
+>change-id: 20250325-vsock-vmtest-b3a21d2102c2
+>
+>Best regards,
+>-- 
+>Bobby Eshleman <bobbyeshleman@meta.com>
+>
+>
+
 
