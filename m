@@ -1,204 +1,184 @@
-Return-Path: <linux-kernel+bounces-689509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F8EFADC2E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:11:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13EDAADC2ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1AAD16EF5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:11:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACC7A16EB92
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68A328C5D3;
-	Tue, 17 Jun 2025 07:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957EE28C872;
+	Tue, 17 Jun 2025 07:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="BrTNm6MC"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010026.outbound.protection.outlook.com [52.101.69.26])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="umkYV1WU"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AF62BF017;
-	Tue, 17 Jun 2025 07:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750144283; cv=fail; b=kh2daBKtDU04KTHWrmH0vn/GfV5Pi7XzrmSpC1jdPBDtKJ2f6nM7xo8vOD5USijttTxnucasb7jdoAltyJsuvuoXy8W5zQrLBCzlSerRUvVvsxrwY6oVWsCRzBioqLxTVJUJ22JWW7Xtq+/rIfln3raYzkv7eZOTAIQAVM/yn7I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750144283; c=relaxed/simple;
-	bh=bgHO7+MoUuQGPB9SwffZNir+EMhJxe/Wd3BLJKao3K4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IfgCGzi941GdaaNWa6EJIdT/GERsaKOidwOkig9s9ZXj88erJ1hwoulfSu9zgMOLzFyVj6LhefHL+kgWk4Y72IX1EtYU/rUxT7YpKBz/TfEZu84EZLOv8l+6tyRgrYK76x+Whxphh9h/uBySNMglnqhGtPLGOamfuv0lucoON7g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=BrTNm6MC; arc=fail smtp.client-ip=52.101.69.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nCvWbAh1FCCkOjpRHlIIsrP6gwz/ZDnbEYv2wTBgx+ElWptUllzGNJjcn7lnJG15kWehPWfotbluM58IRKqAtcEbqjsUPzq8s/26zucmFcf/z4ZpmnxzOldt5zrhAplBXAfSTKWwKpwikA2Pmmycdz5vBXlKuubsMyJri8XOldDGUt3NRqH3fHx3KY3AE27yx0kCZIWYndO5PGZj3I0aC9AZwPkdDmmXEDAUT3i4BqLOZqWbJcR8TJ1eY9EGt+TawTkmJ1wK7mQlylPgUIw8q4iZ7DVd1XMuP+ZqipHBR0TeFMGltHKfiYReYL73wY2jbzAJxniw8+jPPv3ODvexlA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BUHE7ZUqgb9wyTiXP7suOSz1xQnHPf7kR4TsQmCvW3k=;
- b=VXP6MZrTcTDJ9NsENTu/P3fCurF79A0CZIGN1AQNs5pTXcm+JY4Zb3SH3e8W2q67na7mQ7FCmxT1t3xYg/vK0Ekkm+gkKxrq3HgkH0b5wnfVOKxQdxCZeIyHt8uTjrkqo9WcVOYuEuWBPoFidz1doAI7Ep1QAlz3mKSwSHp847DoD7761cqQn9dquRPd9yVOu8Sk88gUz5r3w7d0QDKukiCwxpVVJRj5IJ5ls3NvCrVGCFjNLvwO9gzPW22wh/n6+/QwgbXMQSXrjFFYDASN6xqFIbNIZT6xqpH7KM0c3kG33hYiqMred0zIn1REbyeYhl8DBb0izond7n12N+TKPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 139.15.153.206) smtp.rcpttodomain=kernel.org smtp.mailfrom=de.bosch.com;
- dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BUHE7ZUqgb9wyTiXP7suOSz1xQnHPf7kR4TsQmCvW3k=;
- b=BrTNm6MCQfZk5rsZSzAuIXx5ieSgYrs3sKSVk4kEGejDoqfpyfePoUnOLfQjKPxLHuiJ6aifr4PS0Etec0LZVHe4vYJ1Zt2e3KWZVkM74RfNuDtS7LBYHEGAWe8pnvqNPYwj2ETflWJ/4Sk2JrjPFrn138JQixwgEPz7Ap/FWTu3yBO2z/lylcoyC/Tr4OuKImspBJcejL2U+Cfh98XbIf9cKXYCGJkaFAA5u6wEKsGekgUh/mnsCNE5xLDrY50CyBTM4U9rbxiHgn+vQl0L5HdErvM4vy1GtZ7Epmvr3BiMT9yJzYkX2xGOps8dANSMA4fQ6oBglc9zpnC8vnwn9g==
-Received: from AS4P251CA0025.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:5d3::12)
- by AS4PR10MB5799.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:506::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Tue, 17 Jun
- 2025 07:11:13 +0000
-Received: from AMS1EPF0000004C.eurprd04.prod.outlook.com
- (2603:10a6:20b:5d3:cafe::37) by AS4P251CA0025.outlook.office365.com
- (2603:10a6:20b:5d3::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.29 via Frontend Transport; Tue,
- 17 Jun 2025 07:11:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
- smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=de.bosch.com;
-Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
- 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
- client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
-Received: from eop.bosch-org.com (139.15.153.206) by
- AMS1EPF0000004C.mail.protection.outlook.com (10.167.16.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8835.15 via Frontend Transport; Tue, 17 Jun 2025 07:11:13 +0000
-Received: from FE-EXCAS2001.de.bosch.com (10.139.217.200) by eop.bosch-org.com
- (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.26; Tue, 17 Jun
- 2025 09:10:58 +0200
-Received: from RNGMBX3002.de.bosch.com (10.124.11.207) by
- FE-EXCAS2001.de.bosch.com (10.139.217.200) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.57; Tue, 17 Jun 2025 09:10:57 +0200
-Received: from [10.34.219.93] (10.34.219.93) by smtp.app.bosch.com
- (10.124.11.207) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.26; Tue, 17 Jun
- 2025 09:10:45 +0200
-Message-ID: <d59f8392-c4ca-4f39-a57f-83c669e3efb2@de.bosch.com>
-Date: Tue, 17 Jun 2025 09:10:38 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F392A28C5CA
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 07:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750144330; cv=none; b=EOlJe9XZ5J3lvPAr7rPnkdyJALtGLT2dDHLjIYMuk/gOcwCbSbMrMnyROA6hVBiwsiY+DnlLGVp2M9Ob+BWSoa7M8NK+HNjJ9WCJSffnqlWpr7sBA9Xecvcuj2vUI7dl7Qe+TzY7GCwG8N1qE3BapjYtcQuHgA1FRAQIaYG6K/A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750144330; c=relaxed/simple;
+	bh=YIu7ey9UODrhg8Ytmf4JRWtiWxqFnsjtrEgZ0wi8w8U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NZM21HI6xV8vwL0yfyfa1OZ5VYi0j7dJoozPQxut5cFwseM2+nIIwP4O58Xb71pB67NeEvXXcnyia7IML1+RK2tU79H2KkDDnn0qi9aLqEvd1QM1FZwW8B3gQPjtTYTm57ENYEVF1+RSojZo2dcJbynwl1khzIKonkcoOs/kpwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=umkYV1WU; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750144312;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wi3cd5Kmrpjh06Tdyw4IbO6I5Ww4NWJ5Q/peG+jrHlo=;
+	b=umkYV1WUksMByRsQKfhalBwWGC437/K/+eHfu1cbDr88+Xev/LaD2iGn79M1O8mRqsCPM1
+	JrqMFFZUyzA+hH/MLX6OmcDvyctYw3t/+msnKjrkZpmuKKK/OuN6PqyAPWvuD22/5epesl
+	ebpF13mDAPWpp3jsiuy90tVQxHSzZt4=
+From: Hao Ge <hao.ge@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-alpha@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	Hao Ge <hao.ge@linux.dev>,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH v5 0/1] mm: Restrict _shared_alloc_tag static definition to CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU
+Date: Tue, 17 Jun 2025 15:10:51 +0800
+Message-Id: <cover.1750143986.git.gehao@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] samples: rust: platform: don't call as_ref()
- repeatedly
-To: Danilo Krummrich <dakr@kernel.org>, <igor.korotin.linux@gmail.com>,
-	<gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
-	<alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
-	<bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>,
-	<a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>
-CC: <rust-for-linux@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250613135407.1233005-1-igor.korotin.linux@gmail.com>
- <20250616194439.68775-1-dakr@kernel.org>
- <20250616194439.68775-2-dakr@kernel.org>
-Content-Language: en-GB
-From: Dirk Behme <dirk.behme@de.bosch.com>
-In-Reply-To: <20250616194439.68775-2-dakr@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS1EPF0000004C:EE_|AS4PR10MB5799:EE_
-X-MS-Office365-Filtering-Correlation-Id: 05bd1d6c-5fef-42cf-6d63-08ddad6e24e3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|82310400026|1800799024|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SHFjVVpEdG5wZGdiem16Q1BKYVFNK0luM1NvMkphUURVektqaFc1RkVRVDdz?=
- =?utf-8?B?NHFMQmpHY1BWY0dacFBLTGVCT2R2Rm92OFhxNm9vZG1YbVNsSm0zbXp4aTVF?=
- =?utf-8?B?QmdtU2VaamhrKzdXQm1vRnpBTE5HK04zRURTLzBUaXZYN2djWHNXYjBGZkVs?=
- =?utf-8?B?c0dldXlSRTJ1N0lLaXlzeDEvZ1RzMmgxbjV5STdVSmgrSlJ3ejlOSGVGM0t1?=
- =?utf-8?B?VGJuZE1UbUFOMmU0RitPckkwa1l1RGZ6Q2dLby9oS2dmYm8xZ1ZxZFRicThu?=
- =?utf-8?B?VFl6aktubVNVSGE2U1hVNUJKeHNQakdvM3VPdWlMZGxSWnZURFNhemFacHdP?=
- =?utf-8?B?K0V4dkpHK3JKQ2MvTVh4UlZjak10V09iYnIrU0UvTXFRWUozeFhOYm9sMG8r?=
- =?utf-8?B?K1YwYzN1U3N3Vzg5NktIVGNTYnhMSmpnWk1wM2JLeTZDTk9lbzRxTm5lcXBl?=
- =?utf-8?B?aW9xL2FZVVpobG5DdzVDTEJBNTVkeUxRTDAzeFZxQTRpcGFMc1NBdmp2b0E4?=
- =?utf-8?B?SExkRGtERHYvZU9DMjJrQS9kSXJZN2dvVHQybG81amNxTUFWOTZ1ZWU2R0FN?=
- =?utf-8?B?M2tyUTJ0dDJYdWkxU2NjWm1weWJja2ViYTBaOHJqUDZPUXQ5aTUzdDhkN0JI?=
- =?utf-8?B?aGorcWVPRVkxOFNUeG9hK0V3QTZPOTV0alNKbDNad3BZcERTZDRuZ3NVNVlx?=
- =?utf-8?B?enJwNFZFak50eWgwdHV1RFNmVEtMMnhqWkR1S1ZwRDc4TXBKcU9wS0pyV2tu?=
- =?utf-8?B?VlcwWEVLeDlrT3FhLzFXZHhlbzREd2o5MVlrblZyTGpkczd5ejl0cmthbi9w?=
- =?utf-8?B?eDhkb3BFU2NtdmxtcjFkSWI1cWcwZ1BrSjlCTEtIMmhpODdqT1plMkJKaWw3?=
- =?utf-8?B?ZjFhTE1UemtDZm4rWG5FOVNzdFd1NklCWnJMWmZ1MWRKeFk5SUx3aUFHaDV6?=
- =?utf-8?B?SjhkZTdOTGJaQXhwRVhDcExMSUdEVVFLeDNjcHZhMFZaMGMyMHU4akhDUGtF?=
- =?utf-8?B?NU9iQUszM0s2L2t2WGpacFNPZzYyQUNra0t1Q2RFNzdrNmNpN1R1RmM3cmMr?=
- =?utf-8?B?VGoySDNXSG53WnlEdXRiOXU0R1VITHpwVGJHSnVDaUVQUGVBK2VMRVl6ekcz?=
- =?utf-8?B?ZGtIOU5XYkM2Nit0LzNsYWJnWm95M0Z1RlZzTnRzcVRhOEpPcnhjYVJuZ3VO?=
- =?utf-8?B?WFRieHVhUnpBWHJ2MFNyU0pzUjJFWFZNdEMxZ3lKdDVBd203NTk3SHhKSDc3?=
- =?utf-8?B?TllwT1IxeEJiRWw1dE1pNFJyU2V4bTduMWVpZGhDNUpvM2pCbDJjVU9ZUFNU?=
- =?utf-8?B?SFUvcm9jVHlsZkNreXRGY1czQjA4Ym5qYUR2YytJaVZoN2JnTUJEcTlVSi9h?=
- =?utf-8?B?WGh0NmFzc1N0ZjBZZXVOQzg4K2dQeHdaV3BMTVhvTVJVeEFoMFlpMzhuczAv?=
- =?utf-8?B?bzlXTW9ST2l5bGJMNjg5V1k0V25nNFUyMVdiWnZpdWNyM0JkbUhnT0dSRGlX?=
- =?utf-8?B?NmJuSjYxMlpBY21XVHFhSW9zUDdqeStzVTNmT3h0WWYvbWpYTVdYRDdXRHhG?=
- =?utf-8?B?WEpkdlBoY1hCL3U4eVAxRUFVZWY5cFVyTlZVeDF0OVV3T0xIT29UZ25RaFMz?=
- =?utf-8?B?UHlvOTFtcjhvYXJzR3VxWFFXQTh2bm04YXZuNWRYcm1NTXFNRnFNQXBXMEdH?=
- =?utf-8?B?ZkFTeTFLa3J5TXlPOUd0aEsydWxONXVYbHora3pnRlZJK1pKVzZiakZPVlBD?=
- =?utf-8?B?OExNbGZGM2Z3Q0NQc0UrdDNGN3NNOWNvSjNBT3ZIK0hhdWp3MmZUR2I2Y3lU?=
- =?utf-8?B?T2lBYnpDSHBXMXl5aXVoK3VYQjRDOTVnOVQvYlVNNVh4VmFhejBzNElmcTJL?=
- =?utf-8?B?Q284Z2ZtQXNoN3JkVVpvd3FCTlVPZGtPQzVIVTZCOGhqY1lwbjlsSlRjdi9I?=
- =?utf-8?B?VlUwUkpRSFEzbXVZT2VtVDhqelZGaUQ1aGdtODZURjNaT0FlUnp2U21HVW1y?=
- =?utf-8?B?QXMyV1VHWnRTdXFPdmFScDdRcmhkRVVhN2t4NUJUSU9Na1hRN2JCNWhnRlh0?=
- =?utf-8?B?Z3JLMjlTNEZMNEs4ZS9pTVhTeStTcysxQ2ZIUT09?=
-X-Forefront-Antispam-Report:
-	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(82310400026)(1800799024)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2025 07:11:13.2717
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05bd1d6c-5fef-42cf-6d63-08ddad6e24e3
-X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS1EPF0000004C.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB5799
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 16/06/2025 21:40, Danilo Krummrich wrote:
-> In SampleDriver::probe() don't call pdev.as_ref() repeatedly, instead
-> introduce a dedicated &Device.
-> 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  samples/rust/rust_driver_platform.rs | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-> index c0abf78d0683..000bb915af60 100644
-> --- a/samples/rust/rust_driver_platform.rs
-> +++ b/samples/rust/rust_driver_platform.rs
-> @@ -32,13 +32,15 @@ fn probe(
->          pdev: &platform::Device<Core>,
->          info: Option<&Self::IdInfo>,
->      ) -> Result<Pin<KBox<Self>>> {
-> -        dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver sample.\n");
-> +        let dev = pdev.as_ref();
-> +
-> +        dev_dbg!(dev, "Probe Rust Platform driver sample.\n");
->  
->          if let Some(info) = info {
-> -            dev_info!(pdev.as_ref(), "Probed with info: '{}'.\n", info.0);
-> +            dev_info!(dev, "Probed with info: '{}'.\n", info.0);
->          }
->  
-> -        Self::properties_parse(pdev.as_ref())?;
-> +        Self::properties_parse(dev)?;
->  
->          let drvdata = KBox::new(Self { pdev: pdev.into() }, GFP_KERNEL)?;
+From: Hao Ge <gehao@kylinos.cn>
 
-Yes!
+Recently discovered this entry while checking kallsyms on ARM64:
+ffff800083e509c0 D _shared_alloc_tag
 
-Reviewed-by: Dirk Behme <dirk.behme@de.bosch.com>
+If ARCH_NEEDS_WEAK_PER_CPU is not defined(it is only defined for
+s390 and alpha architectures), there's no need to statically define
+the percpu variable _shared_alloc_tag.
 
-Thanks,
+Therefore, we need to implement isolation for this purpose.
 
-Dirk
+However, currently ARCH_NEEDS_WEAK_PER_CPU is a #define and
+is enclosed within the #if defined(MODULE) conditional block.
+
+When building the core kernel code for s390 or alpha architectures,
+ARCH_NEEDS_WEAK_PER_CPU remains undefined (as it is gated
+by #if defined(MODULE)). However, when building modules for these
+architectures, the macro is explicitly defined.
+
+Therefore, we remove all instances of ARCH_NEEDS_WEAK_PER_CPU from
+the code and introduced CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU to
+replace the relevant logic. We can now conditionally define the perpcu
+variable _shared_alloc_tag based on CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU.
+This allows architectures (such as s390/alpha) that require weak
+definitions for percpu variables in modules to include the definition,
+while others can omit it via compile-time exclusion.
+
+The following version can be regarded as the most original version:
+https://lore.kernel.org/all/20250529073537.563107-1-hao.ge@linux.dev/
+But unfortunately, it caused build errors on s390.
+Based on Suren's guidance and suggestions,
+I've refined it into this patch series.
+Many thanks to Suren for his patient instruction.
+
+Verify:
+     1. On Arm64:
+        nm vmlinux | grep "_shared_alloc_tag",no output is returned.
+     2. On S390:
+        Compile tested.
+        nm vmlinux | grep "_shared_alloc_tag"
+        00000000015605b4 r __crc__shared_alloc_tag
+        0000000001585fef r __kstrtab__shared_alloc_tag
+        0000000001586897 r __kstrtabns__shared_alloc_tag
+        00000000014f6548 r __ksymtab__shared_alloc_tag
+        0000000001a8fa28 D _shared_alloc_tag
+        nm net/ceph/libceph.ko | grep "_shared"
+        U _shared_alloc_tag
+     3. On alpha
+        Compile tested.
+        nm vmlinux | grep "_shared_alloc_tag"
+        fffffc0000b080fa r __kstrtab__shared_alloc_tag
+        fffffc0000b07ee7 r __kstrtabns__shared_alloc_tag
+        fffffc0000adee98 r __ksymtab__shared_alloc_tag
+        fffffc0000b83d38 D _shared_alloc_tag
+        nm crypto/cryptomgr.ko | grep "_share"
+        U _shared_alloc_tag
+
+v5: Regarding the omission of defined(MODULE) in alloc_tag.h where
+    only #ifdef CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU was used,
+    I apologize for this error.
+    Please find version 5 attached to address this issue.
+
+v4:
+   Merge previous patches into a single patch.
+   Remove all instances of ARCH_MODULE_NEEDS_WEAK_PER_CPU from v3
+   and use CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU to
+   replace the relevant logic.
+   Replace CONFIG_ARCH_NEEDS_WEAK_PER_CPU with
+   CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU in v3, as weak percpu support
+   is only required for modules ,making the name more
+   semantically accurate.
+   David, Mike, Matthew, Kent, Heiko and Suren have all
+   provided valuable input. Thanks for this.
+
+v3:
+    Suren pointed out that patches 1-2 can be merged into a single patch
+    in version 2. And the commit message for patch 3 can be made more
+    concise.Make corresponding modifications based on the pointed-out
+    issues and update the corresponding commit message.
+
+v2:
+    Heiko pointed out that when defining MODULE_NEEDS_WEAK_PER_CPU,
+    the CONFIG_ARCH_NEEDS_WEAK_PER_CPU condition in the v1 version
+    should be removed,as it is always true for s390 and alpha
+    architectures.And He also pointed out that patches 2-4 need to
+    be merged into one patch. Modify the code according to the suggestions
+    and update the corresponding commit message
+
+Hao Ge (1):
+  mm/percpu: Conditionally define _shared_alloc_tag via
+    CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU
+
+ arch/alpha/Kconfig              | 1 +
+ arch/alpha/include/asm/percpu.h | 5 ++---
+ arch/s390/Kconfig               | 1 +
+ arch/s390/include/asm/percpu.h  | 5 ++---
+ include/linux/alloc_tag.h       | 6 +++---
+ include/linux/percpu-defs.h     | 7 ++++---
+ lib/alloc_tag.c                 | 2 ++
+ mm/Kconfig                      | 7 +++++++
+ 8 files changed, 22 insertions(+), 12 deletions(-)
+
+-- 
+2.25.1
+
 
