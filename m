@@ -1,194 +1,191 @@
-Return-Path: <linux-kernel+bounces-689780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 075F1ADC653
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:28:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33855ADC667
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC60A7A19C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:27:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80133BD644
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08622951D8;
-	Tue, 17 Jun 2025 09:27:47 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F3A294A0C;
+	Tue, 17 Jun 2025 09:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7KJbSIC"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D10C29550C;
-	Tue, 17 Jun 2025 09:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6AD293B53;
+	Tue, 17 Jun 2025 09:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750152467; cv=none; b=ZOZ44nNGl4H4SD1Vn2mmIc1R2Oizns32XRUUWdJ3wL1Y/iclBow/jAev9YYf7H5TWYAIKC5Rn380cqlb8jbWoemSEEb51rDBXDbticgtGV9zt0Eemqt4i4pG2EGvVTax6uKWEi2b0Z56Xoh1IoYpp5xchEt8YZJ3xyTkfkF5fFs=
+	t=1750152508; cv=none; b=Mrk6WbQjIJe4CIA2ousmkWUIedXcIME+XH8SkK9Jd+NQXPrOLZrRwFHWelL1thelZQeC0tVFFHBt7ramRjJMGRfidH7PPhsOflOz62sZ33Hcx9pCtDqcFGukOiPTLwpXLM+ZOHMIxrqyq2EqmtBcW6WCkLNPDx6sfSTxkNz/lWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750152467; c=relaxed/simple;
-	bh=xE+gHJNGo05Zy/RUAP7+DAYexNU22w0emubGn6vJUZ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=awQsFrBfwNGw+O1SQRGRDRKoNhshqE7aqVnP0ueVFxHGeXoXZc1VlZNVUbNTu7eHIFkczTPBgDstTxRh7YHlXQOCSeTh872oyc4ugZGJosdR0B6PUVaEsLgfdQg0WX1IxrZpt1Xk5PXltM0mkiIXd6JNYZ+gP/UOw+dnWQ32PaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D903BC4CEEE;
-	Tue, 17 Jun 2025 09:27:45 +0000 (UTC)
-Message-ID: <04e10cfa-f1b1-4327-b0ca-c66f8450d42f@xs4all.nl>
-Date: Tue, 17 Jun 2025 11:27:44 +0200
+	s=arc-20240116; t=1750152508; c=relaxed/simple;
+	bh=Q5fd04hqWSCGDEzHOkzetwrrFZNmS/QF+IyVMo8AaK4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SRk8lC2NIe42nZDoQzLTUE2MqcaSIUJMyVwt6huefJ5qFy5dCqQ9K5TrJ/0lWcWK76aAWUSlbbOQhd8CIfINIufbjyRK9Y0NcdgRirKn316O72HlnjlBbAOh4fqoxBWIFzaWLq2yYGEUnqUTMDqN7gBKIw1IqMAOyLAa/TwMVds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P7KJbSIC; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e81881bdd55so718800276.0;
+        Tue, 17 Jun 2025 02:28:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750152506; x=1750757306; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gALTqNQrj90wQMFVEUTnuyFeDr4GZi/SD5mn5GfukAs=;
+        b=P7KJbSICWReIJutj8Q447Uisi/eY9mDBt/rX35mXu/U+mx5uFsQrb2V5w4Zwb4ghJu
+         SIR5aUdPWKBHdBGcUsyWTLHJ/VqpTjLa4Z2THi9OHMX34d1EPXg5FhI2mAejE6Z62WDW
+         l7u6v/24E7xrQW0w58biKRD8wyiL+JYjg8R7/kTLmRaWogXiAGcKIoaR8rHWPSL2uKLv
+         Qc0bIHxGG+bgm7HspunnCIsa0yjfGRBSt0Asuzj/WUQ8xtKXnrSoYbh5BzmPKHCfvFqt
+         aZZpdYyVkUU7oGwMKqDPfLkQmmr6bVtSx1P73nwbT0gBDLjjPzB5Jfrq829F2/mBN9Q/
+         sg6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750152506; x=1750757306;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gALTqNQrj90wQMFVEUTnuyFeDr4GZi/SD5mn5GfukAs=;
+        b=vPXHS3RU6Ee/oerLz7MIEJ+SmOE4Q9ESE1xQ7Suqz0xs7AwPZrZtBotoJA4d7lSpiz
+         ERJHTHq/QS1Cv36Lgl+xjKEPSWLZL4CNo5rxyJ0L9WrhB+/LXAZJsQ/ggkGKTgCCe5i1
+         bk1LG/KjBGL6Z8lrm+ZhPHWhHcvrs4/fbp8jolguO/j5qn249Z1m71clTdWmR9BMx0ie
+         /qWcniGstK9YxblQFJ0TBql1tnij1VFzXfhjJkA2kq8UxrI2BygCivmv/8Vf/PbKTnL+
+         ISq7+A7JZELER91n8ksoxq5+mCEzsYrcXwobALwwE2xew3+AtjhzsO7MWxbCYqzw4wlE
+         WVaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJAMMcqN+FCK8Q/6qRPU1Q0+BvnHlliUK2GHd1IIs0L8f9eGxjJiEgFp6bBPMtYOLHkfCFqALlc6Ai@vger.kernel.org, AJvYcCVtmQPfvGkHP9u2/B8V11bLVt8A5A0FPyM3duGGn9MysDgF4lyYz+ESQPDQEWN7940akgz3to5PEMA7SJ4d@vger.kernel.org, AJvYcCVwo+E8703cFveWx5fLnwohqzaeR4y1GDapDpv4gKOFEJFNHzcjcs59Q4tvXojbk2OppAuDXOeLFZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf8rV3OwUuH55VPuhlXe5Bsg384EQSMoKicwFsk2T9x3VUmjVh
+	d2wIHjX2q6DeqK1s75iwaqwRZI1f+NA22BcfCwGZpUHI/O9Ryg+tUYk9Jr/OP1qJwTTqHI1lC5m
+	zSP5EG2ljr/vcM6ELdClIcslLwjStSRs=
+X-Gm-Gg: ASbGncuhRfiMDWq3zvvUHKbNQGLgRXd0qc4+csSPhtIiV+U7fat6PUCsRrxOUXywMGx
+	hNmLCJpylRK22tBsg6PLEv2Rgf5ILykVn6wBJ5aC78XSA0sXswrBFTjUsDThG4D5ZL/d9vwKf2z
+	OQ46CeiTivMQ70ah+sXjvVDZN3lIYFXZDPqnr+Eq81HhQ=
+X-Google-Smtp-Source: AGHT+IGfEO9KKif1fDX3wWrW5gIl4x+KT/D8NnLSgBbamSDflf/3JpdAOEJzp96RWvwMj+B2D/u2WRFgO85wbi8Vcd8=
+X-Received: by 2002:a05:690c:1d:b0:710:ee89:d34e with SMTP id
+ 00721157ae682-7117551588cmr74852627b3.8.1750152506329; Tue, 17 Jun 2025
+ 02:28:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/5] media: uvcvideo: Split uvc_stop_streaming()
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans de Goede <hdegoede@redhat.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hans de Goede <hansg@kernel.org>
-References: <20250616-uvc-fop-v4-0-250286570ee7@chromium.org>
- <20250616-uvc-fop-v4-3-250286570ee7@chromium.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20250616-uvc-fop-v4-3-250286570ee7@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250615222258.117771-1-l.rubusch@gmail.com> <20250615222258.117771-4-l.rubusch@gmail.com>
+ <CAHp75Vf6sLfVrN30divVqPBnJBQsU5b+SY24yC2PJuuTmRQ1LA@mail.gmail.com>
+In-Reply-To: <CAHp75Vf6sLfVrN30divVqPBnJBQsU5b+SY24yC2PJuuTmRQ1LA@mail.gmail.com>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Tue, 17 Jun 2025 11:27:50 +0200
+X-Gm-Features: AX0GCFtdtyrQdB3K0tsd9fV7juD1I_SYR0hG_EI8QiCnyXtYFHZ8_2mUhT98E2Y
+Message-ID: <CAFXKEHan_NnmMUfuy9cyjgBsdFK+C6V7eVxq_V3--afzQYGDDQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/8] iio: accel: adxl313: add buffered FIFO watermark
+ with interrupt handling
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, corbet@lwn.net, lucas.p.stankus@gmail.com, lars@metafoo.de, 
+	Michael.Hennerich@analog.com, bagasdotme@gmail.com, linux-iio@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 16/06/2025 17:24, Ricardo Ribalda wrote:
-> uvc_stop_streaming() is used for meta and video nodes. Split the function
-> in two to avoid confusion.
-> 
-> Use this opportunity to rename uvc_start_streaming() to
-> uvc_start_streaming_video(), as it is only called by the video nodes.
-> 
-> Reviewed-by: Hans de Goede <hansg@kernel.org>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/usb/uvc/uvc_queue.c | 22 +++++++++++++++-------
->  1 file changed, 15 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_queue.c b/drivers/media/usb/uvc/uvc_queue.c
-> index 8f9737ac729546683ca48f5e71ce3dfacbae2926..3f357c2d48cfd258c26f0342007d1d12f1e01007 100644
-> --- a/drivers/media/usb/uvc/uvc_queue.c
-> +++ b/drivers/media/usb/uvc/uvc_queue.c
-> @@ -167,7 +167,7 @@ static void uvc_buffer_finish(struct vb2_buffer *vb)
->  		uvc_video_clock_update(stream, vbuf, buf);
->  }
->  
-> -static int uvc_start_streaming(struct vb2_queue *vq, unsigned int count)
-> +static int uvc_start_streaming_video(struct vb2_queue *vq, unsigned int count)
->  {
->  	struct uvc_video_queue *queue = vb2_get_drv_priv(vq);
->  	struct uvc_streaming *stream = uvc_queue_to_stream(queue);
-> @@ -186,14 +186,22 @@ static int uvc_start_streaming(struct vb2_queue *vq, unsigned int count)
->  	return ret;
->  }
->  
-> -static void uvc_stop_streaming(struct vb2_queue *vq)
-> +static void uvc_stop_streaming_video(struct vb2_queue *vq)
->  {
->  	struct uvc_video_queue *queue = vb2_get_drv_priv(vq);
->  
->  	lockdep_assert_irqs_enabled();
->  
-> -	if (vq->type != V4L2_BUF_TYPE_META_CAPTURE)
-> -		uvc_video_stop_streaming(uvc_queue_to_stream(queue));
-> +	uvc_video_stop_streaming(uvc_queue_to_stream(queue));
-> +
-> +	uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
-> +}
-> +
-> +static void uvc_stop_streaming_meta(struct vb2_queue *vq)
-> +{
-> +	struct uvc_video_queue *queue = vb2_get_drv_priv(vq);
-> +
-> +	lockdep_assert_irqs_enabled();
->  
->  	uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
->  }
-> @@ -203,15 +211,15 @@ static const struct vb2_ops uvc_queue_qops = {
->  	.buf_prepare = uvc_buffer_prepare,
->  	.buf_queue = uvc_buffer_queue,
->  	.buf_finish = uvc_buffer_finish,
-> -	.start_streaming = uvc_start_streaming,
-> -	.stop_streaming = uvc_stop_streaming,
-> +	.start_streaming = uvc_start_streaming_video,
-> +	.stop_streaming = uvc_stop_streaming_video,
->  };
->  
->  static const struct vb2_ops uvc_meta_queue_qops = {
->  	.queue_setup = uvc_queue_setup,
->  	.buf_prepare = uvc_buffer_prepare,
->  	.buf_queue = uvc_buffer_queue,
-> -	.stop_streaming = uvc_stop_streaming,
-> +	.stop_streaming = uvc_stop_streaming_meta,
->  };
+Hi Andy,
 
-I think there should be a comment stating that the metadata stream
-expects that video is streaming, it does not start streaming by itself.
+On Mon, Jun 16, 2025 at 11:33=E2=80=AFAM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Mon, Jun 16, 2025 at 1:23=E2=80=AFAM Lothar Rubusch <l.rubusch@gmail.c=
+om> wrote:
+> >
+> > Cover the following tasks:
+> > =E2=80=93 Add scan_mask and scan_index to the IIO channel configuration=
+. The
+> > scan_index sets up buffer usage. According to the datasheet, the ADXL31=
+3
+> > uses a 13-bit wide data field in full-resolution mode. Set the
+> > signedness, number of storage bits, and endianness accordingly.
+> >
+> > =E2=80=93 Parse the devicetree for an optional interrupt line and confi=
+gure the
+> > interrupt mapping based on its presence. If no interrupt line is
+> > specified, keep the FIFO in bypass mode as currently implemented.
+> >
+> > =E2=80=93 Set up the interrupt handler. Add register access to detect a=
+nd
+> > evaluate interrupts. Implement functions to clear status registers and
+> > reset the FIFO.
+> >
+> > =E2=80=93 Implement FIFO watermark configuration and handling. Allow th=
+e
+> > watermark level to be set, evaluate the corresponding interrupt, read
+> > the FIFO contents, and push the data to the IIO channel.
+>
+> ...
+>
+> > +       int_line =3D ADXL313_INT1;
+> > +       irq =3D fwnode_irq_get_byname(dev_fwnode(dev), "INT1");
+> > +       if (irq < 0) {
+> > +               int_line =3D ADXL313_INT2;
+> > +               irq =3D fwnode_irq_get_byname(dev_fwnode(dev), "INT2");
+> > +               if (irq < 0)
+> > +                       int_line =3D ADXL313_INT_NONE;
+> > +       }
+> > +
+> > +       if (int_line !=3D ADXL313_INT_NONE) {
+>
+> > +       } else {
+>
+> > +       }
+>
+> What I meant is something like this:
+>
+>
+>        int_line =3D ADXL313_INT_NONE;
+>        irq =3D fwnode_irq_get_byname(dev_fwnode(dev), "INT1");
+>        if (irq > 0) {
+>               int_line =3D ADXL313_INT1;
+>        } else {
+>                irq =3D fwnode_irq_get_byname(dev_fwnode(dev), "INT2");
+>                if (irq > 0)
+>                       int_line =3D ADXL313_INT2;
+>        }
+>
+>        if (int_line =3D=3D ADXL313_INT_NONE) {
+>    ...
+>        } else {
+>    ...
+>        }
+>
 
-Something like:
+I probably got this wrong. I interpreted Jonathans review [PATCH v3
+06/12] in the above way. Anyway, I did not read his second phrase. I
+agree, flipping if / else case and going by '=3D=3D' instead of '!=3D'
+simplifies it.
+   ...
+    > +
+    > + if (int_line =3D=3D ADXL313_INT1 || int_line =3D=3D ADXL313_INT2) {
 
-	/*
-	 * .start_streaming is not provided here. Metadata relies on
-	 * video streaming being active. If video isn't streaming, then
-	 * no metadata will arrive either.
-	 */
+    Why not int_line !=3D ADXL313_INT_NONE ?
+    Or flip the logic so that you do that case first.
+    ...
+https://marc.info/?l=3Dlinux-iio&m=3D174817641830144&w=3D2
 
-It's unexpected that there is no start_streaming for metadata, so a
-comment wouldn't hurt.
 
-Otherwise this looks fine, so:
+> Obviously with a helper you can unnest the if-else-if above.
+>
+> static unsigned int _get_int_type(...)
+> {
+>     if (irq > 0)
+>         return ...
+>     return _NONE;
+> }
+>
 
-Reviewed-by: Hans Verkuil <hverkuil@xs4all.nl>
+Well, indeed. That's definitely the obvious simplification needed
+here. Thanks for pointing out.
 
-Regards,
-
-	Hans
-
->  
->  int uvc_queue_init(struct uvc_video_queue *queue, enum v4l2_buf_type type)
-> 
-
+> --
+> With Best Regards,
+> Andy Shevchenko
 
