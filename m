@@ -1,97 +1,130 @@
-Return-Path: <linux-kernel+bounces-690946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9986FADDE39
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 23:51:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B4EADDE40
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 23:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CA723BBE25
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 21:51:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9633B17E917
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 21:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E800228F523;
-	Tue, 17 Jun 2025 21:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C0B291873;
+	Tue, 17 Jun 2025 21:52:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="N/+RE1FO"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zJsXlUhe"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717792F5302;
-	Tue, 17 Jun 2025 21:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5F528C00E
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 21:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750197095; cv=none; b=dJNCEaRwtSWCc4RphtXN3N7kzOgw08lDevD8IpV4jXivUCP9qy3cPgnbtpN02G2klXPUuEtsgUj+8nTqiwV3apCk2ndu7yt0zpNQpo5dF/c5wkOrlVSQe7Chd8L26QE4Hc0n0S/tGLCGDlet7VL3vHA2QU4vZELa/xLbIsWSqzA=
+	t=1750197152; cv=none; b=HU+fZv67Am2G5e941EKEB2ohCu88xfWgSIUuQTVo3MgvxrKEdUY+lXgWApSNLMeUQDvhX075X0FPbXgnyHxVG0lJjh345fVqzt082FyJ/AMdqqHd2l8Vmh/Bz+E0IyDxYw9bQA3H0JGrf+jYO4BcLTumwdArmY24NVMS2J4OyEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750197095; c=relaxed/simple;
-	bh=7rtHWg82JqPoc/R1c0Z4yTbnEX2uP7bi9HFESJVgt6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KsJ1DWS0rbqQxGscoDFlQTrm38gKeil0JK5SvRPsFrch4OJHEzKwMAlxa0xERTRimbpstXXjOvslEYllI6cKHRidCJVhlrxW37tpWd8Rs4rlfwhXtsm45RVcVK6sWRVOeMQF2bnJHRHQZ6SQs+6wZhrVYyNd93ZxyYRF822LEUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=N/+RE1FO; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1750197089;
-	bh=vljL/WIvTBMPII0zAoYA4dc4BqDldv47RGEnHEigWqY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=N/+RE1FOF5GpcKtXgKGdLe64BigiblLSGn5VdjRBoci0jpDGcKTGPMmr6zA6tiupA
-	 hheDxXkCUnUKBuBVpm8tQR/CqjAdJRfZ4pdVp9ZC/vUvVaHM6wdklsHtO+qe60JMfk
-	 +Y8hPt8e56+Hyu8Anm387yNvQ+59FezddY9IAkggfCr4rhSLv8dqQ0OvX6lIVepwoU
-	 ZOye2IPPmh4fDjSGG9PE0liBe/uIgYpsL/IXtWd1w5JIuXfhngTFywRpqhA8Q7FkH6
-	 POo47QCgmQMJd1iYYTb2A6v3ZkyuuTC4+83kjixEIvLSFuHyh/G+pQU430NrTsoi9X
-	 YLp9CzEnvuOdg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bMLDK2s5Mz4wc3;
-	Wed, 18 Jun 2025 07:51:28 +1000 (AEST)
-Date: Wed, 18 Jun 2025 07:51:28 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the landlock tree
-Message-ID: <20250618075128.2a8e9fcd@canb.auug.org.au>
+	s=arc-20240116; t=1750197152; c=relaxed/simple;
+	bh=G6aq9UULzQSeWStHfJCFlTRXAe06thPa3pLZymjNKfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L+EnK3ZY4H25Olkb/eaTdj4A1kJukJJxBr/9UUt7WgC0WY509meDTsG1pgDA5PUf/AFYXCRnkIjMoNqJV4fcBn2UNRqitGXgFqMcnHxMC/2knpND68KMNCDOGBL5YynsglE0tDWS+2OV8i+k1eKUVvsj+rMIWYr61amP7ORzegk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zJsXlUhe; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-235e389599fso62925ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 14:52:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750197150; x=1750801950; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tk9GnGftZvypb/fve6Tub1/yPh7i0cO/ST2epnsknjQ=;
+        b=zJsXlUheUCW2JIG/15+IHtVHkX/mQF9dlkr4jyeK+BLPjAAOHU0m2nmqrga7HVGzC9
+         7unkZHSVF8xWoPA+H391ji4FGmtIcWqkgTumss1HQYXdqA8l0mJEhZUkp+R+z7jXGsuk
+         iWp462bbNrPjHik0Y9rYmgkSWDgVTo8IyqC6YdJyEYn3lEyTVMb5Un8wRfITR9+9O+AZ
+         /A1nKHjlxsxIpEZsqpLaXQWkyN9YO7uY5Ksm+2aBZEWG2JKbv/erbbK7ab+0wVkNAlht
+         I1InBMejwQsrOXiIIhJu/L3euzIiI9YnCS8rwt8cBRPY9I7+S1WZHbY758kmCoCtojUr
+         S94g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750197150; x=1750801950;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tk9GnGftZvypb/fve6Tub1/yPh7i0cO/ST2epnsknjQ=;
+        b=XX6RAmDAGBManMleLuLLNZ0+Rd8uc72pM5PV5fj4fDfhWqHf+2xZ2jtnbEO2hUouNu
+         BxeMRusZqQNjo3KV2ptf8LRJUJTaDcEBXYrUuSh7nIOKzAZsxdhriCeGY4orJ0hoOb1S
+         ffyJFau0zImgeQnxb/YYT9206nsLcuKrq2E6wUycVZe1k3/+j7CeoOkgIEZrbruqPnKM
+         tDVLjgKq/302t/sdqS89WZJkMtMwRRKxfhWdrSayj8+mV+YSZkhnjowlpM558KxXW5kB
+         rttq7ZrLWLeJ/i1hOMZG4K7xJKobw4ZpsdLrnh+rBHLzsyuFf9KT6c73a4e7SlPA0S5+
+         qjTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdYoBnym4/jy7v5PArZUXrNY02z4VxN4hWhd7mXrPbQzm6AXJWquHLqZXhw/1sgLF/DR1LMyNPWbwaEMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQSLIJ6oFKTEoD+8rxZysSQHWCMaEBQ37x8c+S0VmNQ9R3fPxr
+	0LS5sThdY5yT8R83f72bkcrpOFl4NLO7UxXahYdoa2lbWN7JzkF36b+VA7gufo9Oiv+aYCbCs0b
+	8+dqa0R+1MfwPgs72JP3i5iHGclcfWUmxopyMYaG3
+X-Gm-Gg: ASbGncvJZxp42ImWR7iiNnauM1BekL6qg7/ZAxPobJ99PC5xRKPdnVt7NUPVogNF/X4
+	sqjmtUUsJijXT6JKo0UOU3zwNGM24ABqhc0HtLWAOK05TZJpi1q/RdBx7eyJ0dmdkgaoH+GB66t
+	UHyF0DiVuGak2CobjlB3qUka+LHhkSOh8LgNE5HfeDMmiWEaIK9lENWs6aJfFyvyyCIO2MjbHWn
+	A==
+X-Google-Smtp-Source: AGHT+IEjic+DQ+x5I1iXBb3/VZNJM4D7edP1sy7P3+y0WzbFzyD+lgXbWJrCNXbJ7hLkiIre4KJPn7EyvpHv7CZV3kw=
+X-Received: by 2002:a17:902:f78e:b0:235:e1d6:5339 with SMTP id
+ d9443c01a7336-2366c8140dfmr9959955ad.26.1750197150134; Tue, 17 Jun 2025
+ 14:52:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8BvRhMsJ1EgJSmM.q9TvfTG";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/8BvRhMsJ1EgJSmM.q9TvfTG
-Content-Type: text/plain; charset=US-ASCII
+References: <20250617210950.1338107-1-almasrymina@google.com>
+ <CAHS8izMWiiHbfnHY=r5uCjHmDSDbWgsOOrctyuxJF3Q3+XLxWw@mail.gmail.com> <aFHeYuMf_LCv6Yng@mini-arch>
+In-Reply-To: <aFHeYuMf_LCv6Yng@mini-arch>
+From: Mina Almasry <almasrymina@google.com>
+Date: Tue, 17 Jun 2025 14:52:17 -0700
+X-Gm-Features: AX0GCFvx4bn0aOYkN3CSqdpJSpRaKHHjptdW4cwpAa8d5lG6VPslMmhVC6iQfF0
+Message-ID: <CAHS8izOMfmj6R8OReNqvoasb_b0M=gsnrCOv3budBRXrYjO67g@mail.gmail.com>
+Subject: Re: [PATCH net v1] netmem: fix skb_frag_address_safe with unreadable skbs
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	ap420073@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Jun 17, 2025 at 2:30=E2=80=AFPM Stanislav Fomichev <stfomichev@gmai=
+l.com> wrote:
+>
+> On 06/17, Mina Almasry wrote:
+> > On Tue, Jun 17, 2025 at 2:09=E2=80=AFPM Mina Almasry <almasrymina@googl=
+e.com> wrote:
+> > >
+> > > skb_frag_address_safe() needs a check that the
+> > > skb_frag_page exists check similar to skb_frag_address().
+> > >
+> > > Cc: ap420073@gmail.com
+> > >
+> >
+> > Sorry, I realized right after hitting send, I'm missing:
+> >
+> > Fixes: 9f6b619edf2e ("net: support non paged skb frags")
+> >
+> > I can respin after the 24hr cooldown.
+>
+> The function is used in five drivers, none of which support devmem tx,
+> does not look like there is a reason to route it via net.
+>
+> The change it self looks good, but not really sure it's needed.
+> skb_frag_address_safe is used in some pass-data-via-descriptor-ring mode,
+> I don't see 'modern' drivers (besides bnxt which added this support in 20=
+15)
+> use it.
 
-Commit
+Meh, a judgement call could be made here.  I've generally tried to
+make sure skb helpers are (unreadable) netmem compatible without a
+thorough analysis of all the callers to make sure they do or will one
+day use (unreadable) netmem. Seems better to me to fix this before
+some code path that plumbs unreadable memory to the helper is actually
+merged and that code starts crashing.
 
-  4213018f5f77 ("selftests/landlock: Fix readlink check")
-
-is missing a Signed-off-by from its author and committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/8BvRhMsJ1EgJSmM.q9TvfTG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhR42AACgkQAVBC80lX
-0GyJewf/YzwFd2tFxw7B/4+oqCEavklj+Uu3aqCAgIYGKdnBgGUBTk+uIX0Wr9Ly
-ZpLVCwoxkWPXnUOROWwV3JlHu5P+Z8uFaM/rjsC9w3Jy3LKLucqMDEPWLeRAViGA
-lThqVfGQ76JmtNvMBfAF0z70f3x/i1HTNh4joFUqYJiuefw/p+E3L1IXb+C2op+j
-3SyesmkBImY7qg+hR0rX86htyi06WA7EbNsv1CbVQ7xOqUdLp89wZhoMs8hORz2C
-g22CaU7Se0f27tbP3wsaefXZuKNA+M9SnpsPQIMj9+ZvDAxqABGjLgUiDv7ObUs5
-V19uZvZU41k3yJwb15Ohhj1D+ETVjg==
-=AlKj
------END PGP SIGNATURE-----
-
---Sig_/8BvRhMsJ1EgJSmM.q9TvfTG--
+Similarly I put this in net because it's a fix and not a feature. I
+can send to net-next if preferred.
 
