@@ -1,159 +1,188 @@
-Return-Path: <linux-kernel+bounces-689831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D272ADC707
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:50:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B47D2ADC71D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A56BF176020
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:50:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52DF1178631
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0C2298261;
-	Tue, 17 Jun 2025 09:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UEoIk8Ia"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDF72E425B;
+	Tue, 17 Jun 2025 09:50:14 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1272DA762
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219662E424C
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750153782; cv=none; b=YkfSItkNE+qYeaTgp2Z6nxQXH4W52iqJDILYZInSg0kZM/nMacH1KGivCJCroaqBFfsv7IyO5om+FKyQFd5AXCiqCFKr778WN1xwG2efeqcb6ehxiQEKJ0ExihKlHkEqjSYR97jaBZ71cODnIlTEk+1kWRVVVAJsSj252hy6RB4=
+	t=1750153813; cv=none; b=fy7yXBeSQBCG8jOBPD3C02HDazeXovca6Sy12TPEyTTm/d8EWBZPf1j+kDHWcWW+qu5NHuBN6tBfvlp84BfXTiaVFmND+N+fnSc1/LSgh6iRfpNd068PyVW7qRUnR68v2LNSNaYq5ErRX/5sjsDJPVcfjDX7vWJV/2I7FhMd3k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750153782; c=relaxed/simple;
-	bh=GWDev21kMk2PfZZCQNtZQ/tufdRgAISEjZGNO6cmMps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AIsMY7Q0nLO6ybt/WIdzTtjlhEcqaSjROSx+DvmoeM1JXMEVxgtQbmwNM3gjPpRTQgKd/QzCle44KwpJm4DoXLmUMtmJxrxfMB8IjnqjyCley1DkvUc5B75q9vl9H63aWhGZtErTuPGnhRqG2AQrl8v+TQzLH2L3mH0JVBZR9Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UEoIk8Ia; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-453426170b6so15828475e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 02:49:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750153779; x=1750758579; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GWDev21kMk2PfZZCQNtZQ/tufdRgAISEjZGNO6cmMps=;
-        b=UEoIk8IaMVyqXUJoXExQvZAFuq0Bzk0dnMQBTKAZwHITzOaASrwFmG4VH4MujPbKXY
-         QB5hoN9mR7LtKIaFOmAAOs9/+U29dK4811TnAATjn9I6yag4STMQlYfJgvMvGaqDiv1t
-         ZoSp63z5tj8qy8yFzS6RmhNwxRO+qTWL+pPaSe6D8HcMorFj2y3gga1nmn+9S7Tplb7a
-         3M4rbePaa0TO3W9I/2A8i+h7jvDjHpE+30YRbIM3VSnJvx6xu7/IxteiZY7WR5SOIRAp
-         xQ4KsZjlgpE4I64uc1MvVg97UFd3MlrccODGFryWG8oA87FFnpdcqeHUMoH/NW7H+stU
-         AOKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750153779; x=1750758579;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GWDev21kMk2PfZZCQNtZQ/tufdRgAISEjZGNO6cmMps=;
-        b=b3HheMthFMsv5bUFryWg2IOgDIa+QImRoFoWTg7uYMfzdnu+iwtudeM/XG1a0D2hfT
-         d2c5Zduu7+vjgIcVjWouw8Fy1o01lUgLR/8ypHEogCQvLXDLEAD5ubD8+4rFYPqR3OMc
-         3CVkeDDYLflilHyYUnOllQOsEZRb6rJzbp04DSIokZFNp+w10TJhl7tGhwIAPxylaI0t
-         ITf4xtNm7FXYD+/kQcfRi4/VxgVXxp0KsXwgxaynBKPcxL++yCH7EVDLcweqTV4hF95B
-         yKYUfywCuGTJXEzEbLa0ITk9T+cLbakavSri5FuGANCRnSyUpBy8p93IU/VU0CCBVeYC
-         z9hw==
-X-Gm-Message-State: AOJu0YzO6ZI4qsLM8RTbwB2jOuZadbwfM+vGPtvcwcxwLLjSB2DMSyjB
-	TkixYilsd3gqqLPR4U+AhwjS8gRYsUtAD3A/ry6SHienmfrQwfOxoy+PQtUmUAiM+gm7fJxyX53
-	QjUNJqGU=
-X-Gm-Gg: ASbGncuffXTm0RaiEY2TRvkH0YwY/2hjg7qJSoMwB+4LUUUa8Pai6In9QogN4oPRLbn
-	CQMSy8IfdGYYN6eIkKPxwdOIfrLsnR/39mYy0YMFB7Mdt7Hzc1wauHzxairN4xgDHA7RCT8OEx6
-	v9mg2kvv9vC5Ek/3I3YVvXWGVfaWgklTg3Ytt00TiTHVZLzTFLGqVw/eFBh7aFr6rMTXNOUXSLV
-	v4zflKHAldMtCvP+g0o45fvh/qvv2Z3rpdwt2JBo8WTlNpVxfo83Yj7Uj2u4Xvil98m9OF1HFKZ
-	LjBoO5qswHVGeHTXEj+2Yp+iqckSozO7qfhelcG5VbFlNC5o2KHvn+I3ysLSIESU
-X-Google-Smtp-Source: AGHT+IEOvxWVDOlNZWXip6ImB2ddbE7O2B8u/+uYGYg94jAlO+CMlOLLaVPrqILnw9oEr4gJgo9dxQ==
-X-Received: by 2002:a05:6000:2504:b0:3a4:f7ae:77c9 with SMTP id ffacd0b85a97d-3a5723840d3mr10086383f8f.5.1750153778998;
-        Tue, 17 Jun 2025 02:49:38 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a57b2bfc69sm7527269f8f.76.2025.06.17.02.49.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 02:49:38 -0700 (PDT)
-Date: Tue, 17 Jun 2025 11:49:36 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Tiffany Yang <ynaffit@google.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	kernel-team@android.com, John Stultz <jstultz@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Chen Ridong <chenridong@huawei.com>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [RFC PATCH] cgroup: Track time in cgroup v2 freezer
-Message-ID: <gn6xiuqczaoiepdczg364cj46riiskvqwgvyaawbb3bpaybaw4@5iiohkyscrek>
-References: <20250603224304.3198729-3-ynaffit@google.com>
+	s=arc-20240116; t=1750153813; c=relaxed/simple;
+	bh=aF1Z+V8cSTppxaNsZeCgq5XdFu67jukK5nsS21oN+5M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=eKNp6E0rQR/krC/Rpddt+QjY8o/uVrLZhIFyMe4+Kt5YCOtje1efMoWDLky2LVvGyvi1OS2jFNgHE1jMqUVPfIiP1qPISVIinTjAbir1I/AE5Gie+E7fkKgBzPrd7GQFcRCwn9EpwItKvzrC8vFb4PZyOKgnnWW9wyMqUHLQKa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uRSwt-0005es-0H; Tue, 17 Jun 2025 11:49:47 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uRSws-003x4s-0N;
+	Tue, 17 Jun 2025 11:49:46 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uRSws-00FBer-02;
+	Tue, 17 Jun 2025 11:49:46 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>,
+	Guenter Roeck <groeck@chromium.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	chrome-platform@lists.linux.dev
+Subject: [PATCH v10 0/7] Introduction of PSCR Framework and Related Components
+Date: Tue, 17 Jun 2025 11:49:38 +0200
+Message-Id: <20250617094945.3619360-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dj6i5wtbfqaemcxf"
-Content-Disposition: inline
-In-Reply-To: <20250603224304.3198729-3-ynaffit@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+chnages v10:
+- add some add Reviewed-by tags
+- regulator_handle_critical: set pscr = PSCR_UNKNOWN for default case
+- make g_pscrr static
 
---dj6i5wtbfqaemcxf
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [RFC PATCH] cgroup: Track time in cgroup v2 freezer
-MIME-Version: 1.0
+changes v9:
+- Remove redundant pr_crit() messages before hw_protection_trigger()
+- Replace psc_reason_to_str() switch with static const string array
+- Mark psc_last_reason as static
 
-Hello.
+changes v8:
+- Use DEFINE_GUARD() and guard(g_pscrr) for scoped locking of the global
+  pscrr_core struct
+- Replace manual mutex_lock/unlock with automatic cleanup-based guard()
+  usage
+- Centralize backend and locking state in struct pscrr_core
+- Prepare for future multi-backend support with clean encapsulation
+- Improve sysfs documentation:
+  * Added full enum psc_reason value table
+  * Simplified example comments, removed redundant "may differ" phrasing
+  * Added note that not all values are supported on all systems
+  * Linked value definitions to include/linux/reboot.h
+  * Added clear read/write usage examples for sysfs entries
 
-On Tue, Jun 03, 2025 at 10:43:05PM +0000, Tiffany Yang <ynaffit@google.com> wrote:
-> The cgroup v2 freezer controller allows user processes to be dynamically
-> added to and removed from an interruptible frozen state from
-> userspace.
+changes v7:
+- document expected values in sysfs documentation
+- make write support optional
 
-Beware of freezing by migration vs freezing by cgroup attribute change.
-The latter is primary design of cgroup v2, the former is "only" for
-consistency.
+changes v6:
+- add sysfs documentation
+- rebase against latest hw_protection_reboot changes:
+  https://web.git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=mm-nonmm-unstable&id=212dd3f6e57f6af8ed3caa23b93adc29334f9652
+- push core part of the reset reason the kernel/reboot.c
 
-> This feature is helpful for application management, as it
-> allows background tasks to be frozen to prevent them from being
-> scheduled or otherwise contending with foreground tasks for resources.
+changes v5:
+- fix compile with NVMEM=n and potential issues with NVMEM=m
 
-> Still, applications are usually unaware of their having been placed in
-> the freezer cgroup, so any watchdog timers they may have set will fire
-> when they exit. To address this problem, I propose tracking the per-task
-> frozen time and exposing it to userland via procfs.
+changes v4:
+- fix compile with CONFIG_PSCRR=n
 
-But the watchdog fires rightfully when the application does not run,
-doesn't it?
-It should be responsibility of the "freezing agent" to prepare or notify
-the application about expected latencies.
+changes v3
+- rework to remove devicetree dependencies
+- extend NVMEM to search devices and cells by names.
 
-> but the main focus in this initial submission is establishing the
-> right UAPI for this accounting information.
+changes v2:
+- rename the framework from PSCR to PSCRR (last R is for Recorder)
+- extend power on reason header and use it to show detected reason on
+  system start and in sysfs.
+- remove "unknow" reason
+- rebase on top of v6.8-rc1
+- yaml fixes
+- zero reason state on boot
 
-/proc/<pid>/cgroup_v2_freezer_time_frozen looks quite extraordinary with
-other similar metrics, my first thought would be a field in
-/proc/<pid>/stat (or track it per cgroup as Tejun suggests).
+Hello all,
 
-Could you please primarily explain why the application itself should
-care about the frozen time (and not other causes of delay)?
+This patch series introduces the Power State Change Reasons Recording
+(PSCRR) framework and its related components into the kernel. The PSCR
+framework is designed for systems where traditional methods of storing
+power state change reasons, like PMICs or watchdogs, are inadequate. It
+provides a structured way to store reasons for system shutdowns and
+reboots, such as under-voltage or software-triggered events, in
+non-volatile hardware storage.
 
-Thanks,
-Michal
+These changes are critical for systems requiring detailed postmortem
+analysis and where immediate power-down scenarios limit traditional
+storage options. The framework also assists bootloaders and early-stage
+system components in making informed recovery decisions.
 
---dj6i5wtbfqaemcxf
-Content-Type: application/pgp-signature; name="signature.asc"
+Oleksij Rempel (7):
+  power: Extend power_on_reason.h for upcoming PSCRR framework
+  reboot: hw_protection_trigger: use standardized numeric
+    shutdown/reboot reasons instead of strings
+  power: reset: Introduce PSCR Recording Framework for Non-Volatile
+    Storage
+  nvmem: provide consumer access to cell size metrics
+  nvmem: add support for device and sysfs-based cell lookups
+  power: reset: add PSCR NVMEM Driver for Recording Power State Change
+    Reasons
+  Documentation: Add sysfs documentation for PSCRR reboot reason
+    tracking
 
------BEGIN PGP SIGNATURE-----
+ .../ABI/testing/sysfs-kernel-reboot-pscrr     |  74 ++++
+ drivers/nvmem/core.c                          | 134 ++++++
+ drivers/platform/chrome/cros_ec_lpc.c         |   2 +-
+ drivers/power/reset/Kconfig                   |  47 ++
+ drivers/power/reset/Makefile                  |   2 +
+ drivers/power/reset/pscrr-nvmem.c             | 254 +++++++++++
+ drivers/power/reset/pscrr.c                   | 405 ++++++++++++++++++
+ drivers/regulator/core.c                      |  15 +-
+ drivers/regulator/irq_helpers.c               |   9 +-
+ drivers/thermal/thermal_core.c                |   3 +-
+ include/linux/nvmem-consumer.h                |  25 ++
+ include/linux/power/power_on_reason.h         |   4 +
+ include/linux/pscrr.h                         |  58 +++
+ include/linux/reboot.h                        |  77 +++-
+ kernel/reboot.c                               |  85 +++-
+ 15 files changed, 1172 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
+ create mode 100644 drivers/power/reset/pscrr-nvmem.c
+ create mode 100644 drivers/power/reset/pscrr.c
+ create mode 100644 include/linux/pscrr.h
 
-iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaFE6LAAKCRB+PQLnlNv4
-CI0vAQC5P5WI9MTxhoy5l1ZfngNl+iV61djqa8dUqqxkexlC4QEA+Gqby40dN6Q/
-BPa8zfglVJFybFxTO++SbIEs6CQkXQU=
-=mtgT
------END PGP SIGNATURE-----
+--
+2.39.5
 
---dj6i5wtbfqaemcxf--
 
