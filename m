@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-690569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678DFADD589
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:22:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04181ADD4E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BCC32C605C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:12:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E7677ADE8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3F92EF2BD;
-	Tue, 17 Jun 2025 16:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B5C2F2C74;
+	Tue, 17 Jun 2025 16:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="isSM6mrr"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="h9Y1DMTJ"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CE82ED153;
-	Tue, 17 Jun 2025 16:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3F92EF2B1;
+	Tue, 17 Jun 2025 16:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750176532; cv=none; b=UoCEUpQMtJZ33clvO61PiJg/blVoTxoFE4sjwhSBDWM1Kbz7Umcm5khE5xGWD0L0WsD9hsz5qMucaCvfLMV/45HeRAsK0n1gsfQm5AbjqNororPPDQ6Z3dlztvNsJMqubpc+DvmgKTzSD8onZ9As7qo9vINdQiHr43zpWlQNCe8=
+	t=1750176534; cv=none; b=sR4PZMXt+Af22Rgtbuno8cRt5DZ5FEMEuJSzzq4V+UMGcWyowluciRscPuuj8Sq4MMgle37CO0GE93iWeDzdQcHU1DehdasB4zBHbDo5AiXC8Ebs41xbftCRK96fugZPGNgihm+acd472DWi8iBm8dB3vnrSAkN4H/PL3M++46s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750176532; c=relaxed/simple;
-	bh=EB5X8t9uCWFld+ZhEZJ+i1WeKs1OXWAYq6WKGW2AoXU=;
+	s=arc-20240116; t=1750176534; c=relaxed/simple;
+	bh=nqsSXzEVo7LciP/E9QCITo+geSD6uCnlbwEd+v/NZZw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C3KG/e0EYnvrufTasZgyHqEhPogHh9Pb5EaUPB8HSnKXsQC+ts21RsCHPoTmTgdhPyoGvFqjlS5gZ642TUxckPDRTsEJE98ZTE+y/0XeJl8dfPglBMXGvBt+zL4xq3CW1VP0+gvzko4yJs5PNc8fE1WHtf37Lf+yDciXNs42T1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=isSM6mrr; arc=none smtp.client-ip=68.232.154.123
+	 MIME-Version:Content-Type; b=V7T9QQRv1SzJuH50BSVwuN2CohFCbniKFDfhy+QmE3ykesyK1xUd49ogmesrfx5oj4+tInGMWrx0s1/ZQ/hdT/Xw3cs0kj0RAgbMnXgV9aIXyfx8QOADSNvbs9D2J5jiCtDDILhtTNegiHqaKkH3pFumL7SVn6XXp6DaMWE6biM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=h9Y1DMTJ; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1750176530; x=1781712530;
+  t=1750176532; x=1781712532;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=EB5X8t9uCWFld+ZhEZJ+i1WeKs1OXWAYq6WKGW2AoXU=;
-  b=isSM6mrrInpWzXIZFEqHRaobgsQfISZSDPU0gwsa1xn0kshVISrp+zoV
-   eN6CZROEY23glb9Nm3gv8ZIEQUWq/fBURrnqOfLMbEgPxI0m+5wceGxHC
-   WBp+96AWIGlqM7zBj8M/m99qxz0QUnnFkkwzO9LCWV/9ZFFFA2Mqs0zvq
-   zxUoiS+gB9nGP4z2nf2cqcVS9xAyWkwyixfOUS3s9TFhqvc9AP/7NKWeN
-   gFGe/PTUy0GdVf3XDdFyoeLlxfXUIybQRbiWblvlv6agCinfXG8zlUuLe
-   9+nuBaxmzu9WVDKpbbey7jw3Jci24Jg04R1X/3ZgoLPfkn/ymj2T3EHfR
+  bh=nqsSXzEVo7LciP/E9QCITo+geSD6uCnlbwEd+v/NZZw=;
+  b=h9Y1DMTJV3YGvV9JKcOs19EvydySD7kFDzi7z2eIDe4BfDbbLC0+kheW
+   KttpA2HB6JRqEA1z2FC/6VuzA3UzRnmcu5KIVMyWMwnvFx08c6VkCX4kg
+   eQnVCKsZT6ZetAToEUAciEerJd4wNhPZtdGgI3zQunRcR96CLl5fm8fbo
+   EPnso+pGKlQVXrZFP4IPM1/ZExOj2gMnD0GqFLKozEY4t/ikpmYI3+CCO
+   cSOmzq5AWdT2UWyZsqICIL4hw1lu5Hx+54/m85GPA1MA8ABO9v8ZCEl/M
+   4YD7kzd17/J9oTKdUFddWhHNqKLvMWAP6V4cpCRl5CwiOTPWUHRQysJ+a
    Q==;
 X-CSE-ConnectionGUID: nTbCTdliQ7eOQ0UC/OTqRA==
-X-CSE-MsgGUID: L+mGEzq9Q8uyf7PV/8cibw==
+X-CSE-MsgGUID: FFAlFapsSs2WBQXKChchzw==
 X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="210388674"
+   d="scan'208";a="210388675"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
   by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Jun 2025 09:08:49 -0700
@@ -63,9 +63,9 @@ To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
 	<claudiu.beznea@tuxon.dev>
 CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
-Subject: [PATCH v5 2/3] ARM: dts: microchip: sama7d65: Add clock name property
-Date: Tue, 17 Jun 2025 09:08:41 -0700
-Message-ID: <3878ae6d0016d46f0c91bd379146d575d5d336aa.1750175453.git.Ryan.Wanner@microchip.com>
+Subject: [PATCH v5 3/3] ARM: dts: microchip: sam9x7: Add clock name property
+Date: Tue, 17 Jun 2025 09:08:42 -0700
+Message-ID: <036518968ac657b93e315bb550b822b59ae6f17c.1750175453.git.Ryan.Wanner@microchip.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1750175453.git.Ryan.Wanner@microchip.com>
 References: <cover.1750175453.git.Ryan.Wanner@microchip.com>
@@ -86,27 +86,27 @@ register the main and slow xtal.
 This fixes the issue of the SoC clock driver not being able to find
 the main xtal and slow xtal correctly causing a bad clock tree.
 
-Fixes: 261dcfad1b59 ("ARM: dts: microchip: add sama7d65 SoC DT")
+Fixes: 41af45af8bc3 ("ARM: dts: at91: sam9x7: add device tree for SoC")
 Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 ---
- arch/arm/boot/dts/microchip/sama7d65.dtsi | 2 ++
+ arch/arm/boot/dts/microchip/sam9x7.dtsi | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/microchip/sama7d65.dtsi b/arch/arm/boot/dts/microchip/sama7d65.dtsi
-index d08d773b1cc5..f96b073a7db5 100644
---- a/arch/arm/boot/dts/microchip/sama7d65.dtsi
-+++ b/arch/arm/boot/dts/microchip/sama7d65.dtsi
-@@ -38,11 +38,13 @@ cpu0: cpu@0 {
+diff --git a/arch/arm/boot/dts/microchip/sam9x7.dtsi b/arch/arm/boot/dts/microchip/sam9x7.dtsi
+index b217a908f525..114449e90720 100644
+--- a/arch/arm/boot/dts/microchip/sam9x7.dtsi
++++ b/arch/arm/boot/dts/microchip/sam9x7.dtsi
+@@ -45,11 +45,13 @@ cpu@0 {
  	clocks {
- 		main_xtal: clock-mainxtal {
- 			compatible = "fixed-clock";
-+			clock-output-names = "main_xtal";
- 			#clock-cells = <0>;
- 		};
- 
  		slow_xtal: clock-slowxtal {
  			compatible = "fixed-clock";
 +			clock-output-names = "slow_xtal";
+ 			#clock-cells = <0>;
+ 		};
+ 
+ 		main_xtal: clock-mainxtal {
+ 			compatible = "fixed-clock";
++			clock-output-names = "main_xtal";
  			#clock-cells = <0>;
  		};
  	};
