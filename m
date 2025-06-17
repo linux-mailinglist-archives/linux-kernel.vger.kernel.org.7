@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-690309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 389B1ADCE99
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:01:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D87ADCE97
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 912791886D2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:00:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E90E27A622E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21CA2E717D;
-	Tue, 17 Jun 2025 13:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB162E2676;
+	Tue, 17 Jun 2025 13:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lg8gm7Ua"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aPIO2alt"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDB42DE20F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877A32E4253
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750168772; cv=none; b=Qt1tk1m4X2ApdmbOFu6bE58CFn2sojpj0A+39J3krp7Gqj/UC/0JdktNYW33ltei3LvqgHQFrVp0oryoI9jeJGziRidAatUtYDNhBKugWIJa9l+9IZMUL+Xvyou7otj0Qyv9rCzJcYz710/kAzt+6/2P3oJ6L/S5YMWv3hVEXZY=
+	t=1750168785; cv=none; b=GACkudp5fT9iIsaOdA85LLRWjgZ7MRaPtihfxO8Ak/4D8zaXJ8DXjYBjj7rqje0hXxMku1SgnlQaAuLY3I+ACXWq0K7HGvfgMlUI3V4iSnfspGte/6D5fFMwojENAym8vlbr60vXqbjDdXIhf9d5ME34OBKkncGLniAG7Y5G6HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750168772; c=relaxed/simple;
-	bh=1rWZu6zk+/8Dn/O0RQ+wvJF7YY6eB0G1xr7Z4PhkCPE=;
+	s=arc-20240116; t=1750168785; c=relaxed/simple;
+	bh=q0hWiCYmWKAaZmB913NuWi2bGtvj235TysVC+ofT7zg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nc89c6zTnKDq0YVWLnvW8iJ3+pc2CD9R9IlTP702r74Ntatakqhs9Bi0A/GcctWt2rHXbo2lBc9cQvxYp1Bm0ClYtw4aggWFb7x3d98R1EAuaEaEDrfcVOLI13zFOpCi+Nn/ZIGPqUlGBOGWjVzeHIOnVFsgFn4gIs+LNOquZwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lg8gm7Ua; arc=none smtp.client-ip=198.175.65.15
+	 MIME-Version; b=Zznb9RCYjbcmTpqCd9xg6GAUbtvIG2cm2UNhRH1NTQDWFTIlTiJPeFNN/74AzrAXqpwvPTmHW8TuKZzruze5nneS/0IKeiXlrbnsk18O6k9dHS68SeAiv2MKhjRDZCbeT6ChR4PalhvdiIvvsJmnDOTKpx98X4UgU1aLX+hr6Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aPIO2alt; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750168771; x=1781704771;
+  t=1750168784; x=1781704784;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=1rWZu6zk+/8Dn/O0RQ+wvJF7YY6eB0G1xr7Z4PhkCPE=;
-  b=Lg8gm7Ua5byFzn9pgag5preUggt276W8BkReuEOAAIONRXQlxsh+6yy9
-   Gcss0LeRYiuLAA7cF3rUlAqwlEGXQUGFF1IF/35LMP4aTPjNdUARY4PFv
-   UKYwObnoKPsH4C02xX6aHhJK28E03hVItTnrozNNWn+Z4Py3F8mX4wDO/
-   BTD5pfN4/7NKLZ0Uc5oOc0tRSJpam57cSmZbihNzkYY/uurlvN77nMwGZ
-   6XyNinIIGj5+UzGLZoR7pXSVFXw1p66yhp2r6R2qsQJZXT+mSoVfquUSN
-   tiEd3O2ulVV+r88+IFP7ic+w0NWoMX+fu//JeYm79zkLJxjpiK7dYPSPr
-   w==;
-X-CSE-ConnectionGUID: JaHqgXtwTXe2ake6WLrAJA==
-X-CSE-MsgGUID: tT46UbOHRO2/XajSUkzoSQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="56026535"
+  bh=q0hWiCYmWKAaZmB913NuWi2bGtvj235TysVC+ofT7zg=;
+  b=aPIO2altna8Ip+LpVxJyVAJlyuxpfMcrKDYwlfsAKuGQMzWZvOyM/lk4
+   aXLFczeDTYJ+5EZBDCq2GHNcFY5EyhVUBl29zSdMvftv4dmqjxA+ebMNU
+   08hP0U6+kIa14SJwrbxRIID0P7oOv9XwtvcaRHJGQl7Hri7zsK8sWTSEN
+   SkN/dK/3f0C+mxDnYw3CYKc1cjcHVcp83sJyxOnzsC9K/NiQfP+F4gSRu
+   kDPwk44RI5OG4dI5nPO9C5rPqF0+wuoFAq2kmlATDYfY9LkmPtCc/ZoZW
+   hIVhJ/Myt3bDPe0kI7u1t5YHTClDqjEwKOQb+KH4KywVHH/2PRlR3CdPG
+   Q==;
+X-CSE-ConnectionGUID: 7EB6c8uQS3qR9rF/TP5TOg==
+X-CSE-MsgGUID: vuLuyX4uSIW+gI1ERBkjMw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="56026567"
 X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="56026535"
+   d="scan'208";a="56026567"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 06:59:30 -0700
-X-CSE-ConnectionGUID: srpDNi0vTCa0Ur94taDj6w==
-X-CSE-MsgGUID: jojVs+5KRGeqQ3501Z4Ivg==
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 06:59:43 -0700
+X-CSE-ConnectionGUID: Mw7D4kP0RlaIFsOMDRwH1Q==
+X-CSE-MsgGUID: gnq+P81GQHqzX+BSEZXwRg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="153739507"
+   d="scan'208";a="153739542"
 Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 06:59:23 -0700
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 06:59:37 -0700
 From: Alexander Usyskin <alexander.usyskin@intel.com>
 To: Miquel Raynal <miquel.raynal@bootlin.com>,
 	Richard Weinberger <richard@nod.at>,
@@ -81,11 +81,10 @@ Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
 	intel-gfx@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Tomas Winkler <tomasw@gmail.com>,
-	Vitaly Lubart <lubvital@gmail.com>
-Subject: [PATCH v13 04/10] mtd: intel-dg: register with mtd
-Date: Tue, 17 Jun 2025 16:45:26 +0300
-Message-ID: <20250617134532.3768283-5-alexander.usyskin@intel.com>
+	Tomas Winkler <tomasw@gmail.com>
+Subject: [PATCH v13 06/10] drm/i915/nvm: add nvm device for discrete graphics
+Date: Tue, 17 Jun 2025 16:45:28 +0300
+Message-ID: <20250617134532.3768283-7-alexander.usyskin@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250617134532.3768283-1-alexander.usyskin@intel.com>
 References: <20250617134532.3768283-1-alexander.usyskin@intel.com>
@@ -97,343 +96,231 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Register the on-die nvm device with the mtd subsystem.
-Refcount nvm object on _get and _put mtd callbacks.
-For erase operation address and size should be 4K aligned.
-For write operation address and size has to be 4bytes aligned.
+Enable access to internal non-volatile memory on
+DGFX devices via a child device.
+The nvm child device is exposed via auxiliary bus.
 
-CC: Rodrigo Vivi <rodrigo.vivi@intel.com>
 CC: Lucas De Marchi <lucas.demarchi@intel.com>
-Reviewed-by: Raag Jadav <raag.jadav@intel.com>
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Co-developed-by: Tomas Winkler <tomasw@gmail.com>
 Signed-off-by: Tomas Winkler <tomasw@gmail.com>
-Co-developed-by: Vitaly Lubart <lubvital@gmail.com>
-Signed-off-by: Vitaly Lubart <lubvital@gmail.com>
 Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
 ---
- drivers/mtd/devices/mtd_intel_dg.c | 228 ++++++++++++++++++++++++++++-
- 1 file changed, 224 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/i915/Makefile      |  4 ++
+ drivers/gpu/drm/i915/i915_driver.c |  6 ++
+ drivers/gpu/drm/i915/i915_drv.h    |  3 +
+ drivers/gpu/drm/i915/i915_reg.h    |  1 +
+ drivers/gpu/drm/i915/intel_nvm.c   | 98 ++++++++++++++++++++++++++++++
+ drivers/gpu/drm/i915/intel_nvm.h   | 15 +++++
+ 6 files changed, 127 insertions(+)
+ create mode 100644 drivers/gpu/drm/i915/intel_nvm.c
+ create mode 100644 drivers/gpu/drm/i915/intel_nvm.h
 
-diff --git a/drivers/mtd/devices/mtd_intel_dg.c b/drivers/mtd/devices/mtd_intel_dg.c
-index 4d6e2c009b45..6d971fb77938 100644
---- a/drivers/mtd/devices/mtd_intel_dg.c
-+++ b/drivers/mtd/devices/mtd_intel_dg.c
-@@ -5,6 +5,7 @@
+diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makefile
+index 7c6075bc483c..ed4d15ad4cdf 100644
+--- a/drivers/gpu/drm/i915/Makefile
++++ b/drivers/gpu/drm/i915/Makefile
+@@ -211,6 +211,10 @@ i915-y += \
+ i915-y += \
+ 	gt/intel_gsc.o
  
- #include <linux/bitfield.h>
- #include <linux/bits.h>
-+#include <linux/cleanup.h>
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/intel_dg_nvm_aux.h>
-@@ -12,6 +13,8 @@
- #include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/mtd/mtd.h>
-+#include <linux/mtd/partitions.h>
- #include <linux/string.h>
- #include <linux/slab.h>
- #include <linux/sizes.h>
-@@ -19,6 +22,8 @@
++# graphics nvm device (DGFX) support
++i915-y += \
++	intel_nvm.o
++
+ # graphics hardware monitoring (HWMON) support
+ i915-$(CONFIG_HWMON) += \
+ 	i915_hwmon.o
+diff --git a/drivers/gpu/drm/i915/i915_driver.c b/drivers/gpu/drm/i915/i915_driver.c
+index c6263c6d3384..6d83f8d1a957 100644
+--- a/drivers/gpu/drm/i915/i915_driver.c
++++ b/drivers/gpu/drm/i915/i915_driver.c
+@@ -85,6 +85,8 @@
+ #include "soc/intel_dram.h"
+ #include "soc/intel_gmch.h"
  
- struct intel_dg_nvm {
- 	struct kref refcnt;
-+	struct mtd_info mtd;
-+	struct mutex lock; /* region access lock */
- 	void __iomem *base;
- 	size_t size;
- 	unsigned int nregions;
-@@ -185,7 +190,6 @@ static int idg_nvm_is_valid(struct intel_dg_nvm *nvm)
- 	return 0;
- }
++#include "intel_nvm.h"
++
+ #include "i915_debugfs.h"
+ #include "i915_driver.h"
+ #include "i915_drm_client.h"
+@@ -645,6 +647,8 @@ static int i915_driver_register(struct drm_i915_private *dev_priv)
+ 	/* Depends on sysfs having been initialized */
+ 	i915_perf_register(dev_priv);
  
--__maybe_unused
- static unsigned int idg_nvm_get_region(const struct intel_dg_nvm *nvm, loff_t from)
- {
- 	unsigned int i;
-@@ -217,7 +221,6 @@ static ssize_t idg_nvm_rewrite_partial(struct intel_dg_nvm *nvm, loff_t to,
- 	return len;
- }
++	intel_nvm_init(dev_priv);
++
+ 	for_each_gt(gt, dev_priv, i)
+ 		intel_gt_driver_register(gt);
  
--__maybe_unused
- static ssize_t idg_write(struct intel_dg_nvm *nvm, u8 region,
- 			 loff_t to, size_t len, const unsigned char *buf)
- {
-@@ -274,7 +277,6 @@ static ssize_t idg_write(struct intel_dg_nvm *nvm, u8 region,
- 	return len;
- }
+@@ -687,6 +691,8 @@ static void i915_driver_unregister(struct drm_i915_private *dev_priv)
  
--__maybe_unused
- static ssize_t idg_read(struct intel_dg_nvm *nvm, u8 region,
- 			loff_t from, size_t len, unsigned char *buf)
- {
-@@ -333,7 +335,6 @@ static ssize_t idg_read(struct intel_dg_nvm *nvm, u8 region,
- 	return len;
- }
+ 	i915_hwmon_unregister(dev_priv);
  
--__maybe_unused
- static ssize_t
- idg_erase(struct intel_dg_nvm *nvm, u8 region, loff_t from, u64 len, u64 *fail_addr)
- {
-@@ -422,6 +423,147 @@ static int intel_dg_nvm_init(struct intel_dg_nvm *nvm, struct device *device)
- 	return n;
- }
++	intel_nvm_fini(dev_priv);
++
+ 	i915_perf_unregister(dev_priv);
+ 	i915_pmu_unregister(dev_priv);
  
-+static int intel_dg_mtd_erase(struct mtd_info *mtd, struct erase_info *info)
+diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+index 5e4c49f0d5d4..ba75e7651c5e 100644
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -65,6 +65,7 @@ struct drm_i915_clock_gating_funcs;
+ struct intel_display;
+ struct intel_pxp;
+ struct vlv_s0ix_state;
++struct intel_dg_nvm_dev;
+ 
+ #define GEM_QUIRK_PIN_SWIZZLED_PAGES	BIT(0)
+ 
+@@ -289,6 +290,8 @@ struct drm_i915_private {
+ 
+ 	struct i915_perf perf;
+ 
++	struct intel_dg_nvm_dev *nvm;
++
+ 	struct i915_hwmon *hwmon;
+ 
+ 	struct intel_gt *gt[I915_MAX_GT];
+diff --git a/drivers/gpu/drm/i915/i915_reg.h b/drivers/gpu/drm/i915/i915_reg.h
+index 52a902532e6f..ea9b90d59cd3 100644
+--- a/drivers/gpu/drm/i915/i915_reg.h
++++ b/drivers/gpu/drm/i915/i915_reg.h
+@@ -277,6 +277,7 @@
+ #define DG2_GSC_HECI2_BASE	0x00374000
+ #define MTL_GSC_HECI1_BASE	0x00116000
+ #define MTL_GSC_HECI2_BASE	0x00117000
++#define GEN12_GUNIT_NVM_BASE	0x00102040
+ 
+ #define HECI_H_CSR(base)	_MMIO((base) + 0x4)
+ #define   HECI_H_CSR_IE		REG_BIT(0)
+diff --git a/drivers/gpu/drm/i915/intel_nvm.c b/drivers/gpu/drm/i915/intel_nvm.c
+new file mode 100644
+index 000000000000..ae7f9f2c01bf
+--- /dev/null
++++ b/drivers/gpu/drm/i915/intel_nvm.c
+@@ -0,0 +1,98 @@
++// SPDX-License-Identifier: MIT
++/*
++ * Copyright(c) 2019-2024, Intel Corporation. All rights reserved.
++ */
++
++#include <linux/intel_dg_nvm_aux.h>
++#include <linux/irq.h>
++#include <linux/pci.h>
++#include "i915_reg.h"
++#include "i915_drv.h"
++#include "intel_nvm.h"
++
++#define GEN12_GUNIT_NVM_SIZE 0x80
++
++static const struct intel_dg_nvm_region regions[INTEL_DG_NVM_REGIONS] = {
++	[0] = { .name = "DESCRIPTOR", },
++	[2] = { .name = "GSC", },
++	[11] = { .name = "OptionROM", },
++	[12] = { .name = "DAM", },
++};
++
++static void i915_nvm_release_dev(struct device *dev)
 +{
-+	struct intel_dg_nvm *nvm = mtd->priv;
-+	size_t total_len;
-+	unsigned int idx;
-+	ssize_t bytes;
-+	loff_t from;
-+	size_t len;
-+	u8 region;
-+	u64 addr;
-+
-+	if (WARN_ON(!nvm))
-+		return -EINVAL;
-+
-+	if (!IS_ALIGNED(info->addr, SZ_4K) || !IS_ALIGNED(info->len, SZ_4K)) {
-+		dev_err(&mtd->dev, "unaligned erase %llx %llx\n",
-+			info->addr, info->len);
-+		info->fail_addr = MTD_FAIL_ADDR_UNKNOWN;
-+		return -EINVAL;
-+	}
-+
-+	total_len = info->len;
-+	addr = info->addr;
-+
-+	guard(mutex)(&nvm->lock);
-+
-+	while (total_len > 0) {
-+		if (!IS_ALIGNED(addr, SZ_4K) || !IS_ALIGNED(total_len, SZ_4K)) {
-+			dev_err(&mtd->dev, "unaligned erase %llx %zx\n", addr, total_len);
-+			info->fail_addr = addr;
-+			return -ERANGE;
-+		}
-+
-+		idx = idg_nvm_get_region(nvm, addr);
-+		if (idx >= nvm->nregions) {
-+			dev_err(&mtd->dev, "out of range");
-+			info->fail_addr = MTD_FAIL_ADDR_UNKNOWN;
-+			return -ERANGE;
-+		}
-+
-+		from = addr - nvm->regions[idx].offset;
-+		region = nvm->regions[idx].id;
-+		len = total_len;
-+		if (len > nvm->regions[idx].size - from)
-+			len = nvm->regions[idx].size - from;
-+
-+		dev_dbg(&mtd->dev, "erasing region[%d] %s from %llx len %zx\n",
-+			region, nvm->regions[idx].name, from, len);
-+
-+		bytes = idg_erase(nvm, region, from, len, &info->fail_addr);
-+		if (bytes < 0) {
-+			dev_dbg(&mtd->dev, "erase failed with %zd\n", bytes);
-+			info->fail_addr += nvm->regions[idx].offset;
-+			return bytes;
-+		}
-+
-+		addr += len;
-+		total_len -= len;
-+	}
-+
-+	return 0;
 +}
 +
-+static int intel_dg_mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
-+			     size_t *retlen, u_char *buf)
++int intel_nvm_init(struct drm_i915_private *i915)
 +{
-+	struct intel_dg_nvm *nvm = mtd->priv;
-+	unsigned int idx;
-+	ssize_t ret;
-+	u8 region;
-+
-+	if (WARN_ON(!nvm))
-+		return -EINVAL;
-+
-+	idx = idg_nvm_get_region(nvm, from);
-+
-+	dev_dbg(&mtd->dev, "reading region[%d] %s from %lld len %zd\n",
-+		nvm->regions[idx].id, nvm->regions[idx].name, from, len);
-+
-+	if (idx >= nvm->nregions) {
-+		dev_err(&mtd->dev, "out of range");
-+		return -ERANGE;
-+	}
-+
-+	from -= nvm->regions[idx].offset;
-+	region = nvm->regions[idx].id;
-+	if (len > nvm->regions[idx].size - from)
-+		len = nvm->regions[idx].size - from;
-+
-+	guard(mutex)(&nvm->lock);
-+
-+	ret = idg_read(nvm, region, from, len, buf);
-+	if (ret < 0) {
-+		dev_dbg(&mtd->dev, "read failed with %zd\n", ret);
-+		return ret;
-+	}
-+
-+	*retlen = ret;
-+
-+	return 0;
-+}
-+
-+static int intel_dg_mtd_write(struct mtd_info *mtd, loff_t to, size_t len,
-+			      size_t *retlen, const u_char *buf)
-+{
-+	struct intel_dg_nvm *nvm = mtd->priv;
-+	unsigned int idx;
-+	ssize_t ret;
-+	u8 region;
-+
-+	if (WARN_ON(!nvm))
-+		return -EINVAL;
-+
-+	idx = idg_nvm_get_region(nvm, to);
-+
-+	dev_dbg(&mtd->dev, "writing region[%d] %s to %lld len %zd\n",
-+		nvm->regions[idx].id, nvm->regions[idx].name, to, len);
-+
-+	if (idx >= nvm->nregions) {
-+		dev_err(&mtd->dev, "out of range");
-+		return -ERANGE;
-+	}
-+
-+	to -= nvm->regions[idx].offset;
-+	region = nvm->regions[idx].id;
-+	if (len > nvm->regions[idx].size - to)
-+		len = nvm->regions[idx].size - to;
-+
-+	guard(mutex)(&nvm->lock);
-+
-+	ret = idg_write(nvm, region, to, len, buf);
-+	if (ret < 0) {
-+		dev_dbg(&mtd->dev, "write failed with %zd\n", ret);
-+		return ret;
-+	}
-+
-+	*retlen = ret;
-+
-+	return 0;
-+}
-+
- static void intel_dg_nvm_release(struct kref *kref)
- {
- 	struct intel_dg_nvm *nvm = container_of(kref, struct intel_dg_nvm, refcnt);
-@@ -430,9 +572,78 @@ static void intel_dg_nvm_release(struct kref *kref)
- 	pr_debug("freeing intel_dg nvm\n");
- 	for (i = 0; i < nvm->nregions; i++)
- 		kfree(nvm->regions[i].name);
-+	mutex_destroy(&nvm->lock);
- 	kfree(nvm);
- }
- 
-+static int intel_dg_mtd_get_device(struct mtd_info *mtd)
-+{
-+	struct mtd_info *master = mtd_get_master(mtd);
-+	struct intel_dg_nvm *nvm = master->priv;
-+
-+	if (WARN_ON(!nvm))
-+		return -EINVAL;
-+	pr_debug("get mtd %s %d\n", mtd->name, kref_read(&nvm->refcnt));
-+	kref_get(&nvm->refcnt);
-+
-+	return 0;
-+}
-+
-+static void intel_dg_mtd_put_device(struct mtd_info *mtd)
-+{
-+	struct mtd_info *master = mtd_get_master(mtd);
-+	struct intel_dg_nvm *nvm = master->priv;
-+
-+	if (WARN_ON(!nvm))
-+		return;
-+	pr_debug("put mtd %s %d\n", mtd->name, kref_read(&nvm->refcnt));
-+	kref_put(&nvm->refcnt, intel_dg_nvm_release);
-+}
-+
-+static int intel_dg_nvm_init_mtd(struct intel_dg_nvm *nvm, struct device *device,
-+				 unsigned int nparts, bool writable_override)
-+{
-+	struct mtd_partition *parts = NULL;
-+	unsigned int i, n;
++	struct pci_dev *pdev = to_pci_dev(i915->drm.dev);
++	struct auxiliary_device *aux_dev;
++	struct intel_dg_nvm_dev *nvm;
 +	int ret;
 +
-+	dev_dbg(device, "registering with mtd\n");
++	/* Only the DGFX devices have internal NVM */
++	if (!IS_DGFX(i915))
++		return 0;
 +
-+	nvm->mtd.owner = THIS_MODULE;
-+	nvm->mtd.dev.parent = device;
-+	nvm->mtd.flags = MTD_CAP_NORFLASH;
-+	nvm->mtd.type = MTD_DATAFLASH;
-+	nvm->mtd.priv = nvm;
-+	nvm->mtd._write = intel_dg_mtd_write;
-+	nvm->mtd._read = intel_dg_mtd_read;
-+	nvm->mtd._erase = intel_dg_mtd_erase;
-+	nvm->mtd._get_device = intel_dg_mtd_get_device;
-+	nvm->mtd._put_device = intel_dg_mtd_put_device;
-+	nvm->mtd.writesize = SZ_1; /* 1 byte granularity */
-+	nvm->mtd.erasesize = SZ_4K; /* 4K bytes granularity */
-+	nvm->mtd.size = nvm->size;
++	/* Nvm pointer should be NULL here */
++	if (WARN_ON(i915->nvm))
++		return -EFAULT;
 +
-+	parts = kcalloc(nvm->nregions, sizeof(*parts), GFP_KERNEL);
-+	if (!parts)
++	i915->nvm = kzalloc(sizeof(*nvm), GFP_KERNEL);
++	if (!i915->nvm)
 +		return -ENOMEM;
 +
-+	for (i = 0, n = 0; i < nvm->nregions && n < nparts; i++) {
-+		if (!nvm->regions[i].is_readable)
-+			continue;
-+		parts[n].name = nvm->regions[i].name;
-+		parts[n].offset  = nvm->regions[i].offset;
-+		parts[n].size = nvm->regions[i].size;
-+		if (!nvm->regions[i].is_writable && !writable_override)
-+			parts[n].mask_flags = MTD_WRITEABLE;
-+		n++;
-+	}
++	nvm = i915->nvm;
 +
-+	ret = mtd_device_register(&nvm->mtd, parts, n);
++	nvm->writable_override = true;
++	nvm->bar.parent = &pdev->resource[0];
++	nvm->bar.start = GEN12_GUNIT_NVM_BASE + pdev->resource[0].start;
++	nvm->bar.end = nvm->bar.start + GEN12_GUNIT_NVM_SIZE - 1;
++	nvm->bar.flags = IORESOURCE_MEM;
++	nvm->bar.desc = IORES_DESC_NONE;
++	nvm->regions = regions;
 +
-+	kfree(parts);
-+	return ret;
-+}
++	aux_dev = &nvm->aux_dev;
 +
- static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
- 			      const struct auxiliary_device_id *aux_dev_id)
- {
-@@ -461,6 +672,7 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
- 		return -ENOMEM;
- 
- 	kref_init(&nvm->refcnt);
-+	mutex_init(&nvm->lock);
- 
- 	for (n = 0, i = 0; i < INTEL_DG_NVM_REGIONS; i++) {
- 		if (!invm->regions[i].name)
-@@ -488,6 +700,12 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
- 		goto err;
- 	}
- 
-+	ret = intel_dg_nvm_init_mtd(nvm, device, ret, invm->writable_override);
++	aux_dev->name = "nvm";
++	aux_dev->id = (pci_domain_nr(pdev->bus) << 16) | pci_dev_id(pdev);
++	aux_dev->dev.parent = &pdev->dev;
++	aux_dev->dev.release = i915_nvm_release_dev;
++
++	ret = auxiliary_device_init(aux_dev);
 +	if (ret) {
-+		dev_err(device, "failed init mtd %d\n", ret);
++		drm_err(&i915->drm, "i915-nvm aux init failed %d\n", ret);
 +		goto err;
 +	}
 +
- 	dev_set_drvdata(&aux_dev->dev, nvm);
- 
- 	return 0;
-@@ -504,6 +722,8 @@ static void intel_dg_mtd_remove(struct auxiliary_device *aux_dev)
- 	if (!nvm)
- 		return;
- 
-+	mtd_device_unregister(&nvm->mtd);
++	ret = auxiliary_device_add(aux_dev);
++	if (ret) {
++		drm_err(&i915->drm, "i915-nvm aux add failed %d\n", ret);
++		auxiliary_device_uninit(aux_dev);
++		goto err;
++	}
++	return 0;
 +
- 	dev_set_drvdata(&aux_dev->dev, NULL);
- 
- 	kref_put(&nvm->refcnt, intel_dg_nvm_release);
++err:
++	kfree(nvm);
++	i915->nvm = NULL;
++	return ret;
++}
++
++void intel_nvm_fini(struct drm_i915_private *i915)
++{
++	struct intel_dg_nvm_dev *nvm = i915->nvm;
++
++	/* Only the DGFX devices have internal NVM */
++	if (!IS_DGFX(i915))
++		return;
++
++	/* Nvm pointer should not be NULL here */
++	if (WARN_ON(!nvm))
++		return;
++
++	auxiliary_device_delete(&nvm->aux_dev);
++	auxiliary_device_uninit(&nvm->aux_dev);
++	kfree(nvm);
++	i915->nvm = NULL;
++}
+diff --git a/drivers/gpu/drm/i915/intel_nvm.h b/drivers/gpu/drm/i915/intel_nvm.h
+new file mode 100644
+index 000000000000..a9e4046b830f
+--- /dev/null
++++ b/drivers/gpu/drm/i915/intel_nvm.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Copyright(c) 2019-2024 Intel Corporation. All rights reserved.
++ */
++
++#ifndef __INTEL_NVM_H__
++#define __INTEL_NVM_H__
++
++struct drm_i915_private;
++
++int intel_nvm_init(struct drm_i915_private *i915);
++
++void intel_nvm_fini(struct drm_i915_private *i915);
++
++#endif /* __INTEL_NVM_H__ */
 -- 
 2.43.0
 
