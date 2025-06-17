@@ -1,135 +1,97 @@
-Return-Path: <linux-kernel+bounces-690396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05156ADD00E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:38:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD87AADD016
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7659517209C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:36:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B96A51631C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2186C201006;
-	Tue, 17 Jun 2025 14:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A382520ADD6;
+	Tue, 17 Jun 2025 14:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sp6cQCew"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="guK+8hum"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA2D1FDA9E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 14:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD58D1FDA7B
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 14:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750170986; cv=none; b=By3KfHSw3cagaPScmF2/Bp1za/WLx6uCS6gZwO4gsSrjUg0sf/LleMqRny0Mifi6vLcWY69plvgY/w88f+AFCJXfg8luX1/yx6M1w6MrMR+cflj2BTSPpGtRl8Ni+QLXARDiimoUe8VJkvtITBun//vJifyCdN3BS9s8kMEcv4Y=
+	t=1750171109; cv=none; b=Ntlw/ctYlgJ7KKcUe16nA80wmDXPNG+n3EKxhQEUjHKkhWYAUcxb4uztYOWOWV/jl8KKXBhtfPUF4ceGwvi5pkVAd1jfVqluD6aKlkmEHE+FYRFrNvMKzDlQOD//xPuSCpSs0hE562lL0l+jJdX+GflN9KSaiypEs6cS6UoEcAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750170986; c=relaxed/simple;
-	bh=XascYBoc9NckCIIv+PQoeUxYqjNPXzZSnGc/V/kEwjs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Q3eMZYZKXKpa52ztfET87GhWeRIj9aesaUDBjeJkXg+2/CWMk0fcHvIrMOYuLKmhwQpiwQhjFte3w+1gWU7knbAE6Ej8/7W668fvOrmpjfc3pcFTecuvJPbEVQwHbPGPkQkiHLOyJa4cT4fd+JQsuouvzdt9W2y81ehIzDxDI80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sp6cQCew; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-74620e98ec8so4801265b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 07:36:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750170984; x=1750775784; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uMwlSkCNIqJfHOH66+3JA30LqpAbnp8KrvmDSuhH/Ag=;
-        b=sp6cQCewnH92bNA3UZI8X8hP07fmWYuMOsZFn/8O65BPTv+z6ZCvPu/ojtyUV9SXvX
-         mBCG2EjVcEoFmAZCBOuDLT33Vd44Vh7RAEfY5L8JEhdB7+lCH4nlES0WGb7lKDB3hM9j
-         Yiskl6ZyWJsFjhGboi7+YTS22KwCkUwqKNBe3PZkQykFY/Dk8Azlp2Ey1oOdJydzLh4c
-         8ilxDWLLMRpUiug3LF64R1HDJUDQZaJaHd8Rv9TGhb2Z9MypVYwa6GIiFUwEeZA7Nuq9
-         6sKUgt/Km5ayiEjNHf5U3B36Uy42B0IQ9WmXSoZyPeb3iXT4kV4UHv39vqQ651MOr+u2
-         fTsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750170984; x=1750775784;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uMwlSkCNIqJfHOH66+3JA30LqpAbnp8KrvmDSuhH/Ag=;
-        b=Z5Ab3d+5QzS1RscLFLU7iBoZsp8g3xGIDFOa9wBWsqdf9cwkpuK96WGS0gMlc7V9jR
-         5548u5Vb0GD6T2WxrJ3rkB6L+VQ86NYya6PRowhFDCD23unvxR7C0jauOREQ5euwCarl
-         Tfctci+ZXCvrfLhgEthIkz2S+AvGJMn4xxhagP4Bsw8dl5FUiTAb4EmLtsoZrS0cg9Of
-         Yy2HQNTropkM02lmac4pwO3TxlzYRofiPMEoGIWTWLdDBdsSEud7hodtyqAAoS+xvZnq
-         cK0yi98SPgJpDhvn0B/iKAN+n53bP6KtqMEx7rDzNCtcwgVyd8BaoCHohgPwm1cFQIxR
-         pUlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFYZGRhRpxiFfCIQ6i4kbcMiB6G5m11KHCSf3Ibvz98gpgSwicWImNEMEUkM+X17cJ1FGc58XQnxwzW7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrcPffWfRVmsUaSrIpW2q3bDFyJAkzu9P6oOx9Cnn3pqheeda0
-	nYr1TtQXo5CyIyg6WJ5fMRwv9TVsDm2LeBvUeImq2eHuHBUgBPX9RyE2VtRhayz9wbBp4qxENKs
-	rQPAOXg==
-X-Google-Smtp-Source: AGHT+IFdJLXMZEEu8DdlQZ+U+oQwIvzvdGgAICIJ+geqiAScmpG1InwG5WTe3wRE1wV8wV8tzAaYKmdEpJA=
-X-Received: from pfnw6.prod.google.com ([2002:aa7:8586:0:b0:747:a8e8:603e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:9181:b0:748:a0b9:f873
- with SMTP id d2e1a72fcca58-748a0b9f8d2mr16220059b3a.9.1750170984466; Tue, 17
- Jun 2025 07:36:24 -0700 (PDT)
-Date: Tue, 17 Jun 2025 07:36:22 -0700
-In-Reply-To: <CAK9=C2WFA+SDt4MCLj0reQnkkA2kxUmfWhT8HZxjT_DdW8W_rQ@mail.gmail.com>
+	s=arc-20240116; t=1750171109; c=relaxed/simple;
+	bh=lCKA3/SlJo37tFXLmmWB118bUZSJDi+rBnfI8bPOF/s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FrdcAqrxaapVxysSXQfTVMIvDSgjw5eiXNv/3q908avQ6MKc6isocbB89EbvJxoYcugFR6XvKPGYKd3OkBwGpl68A7rfJMoHp5pOPsHMyf55NrrRwFfRmmh7yGwYjD4auJnn1DIT6Bk8IaIvX7TZsoTt3d/emPmHL9nkk6kXyfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=guK+8hum; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=8eHJgER+R9kCEbZ1L3X7vCzptyp1NrKUg6DntB/MAXQ=; b=guK+8hum7ftX7NWo0v1A9Olhcl
+	In/Q4ehx8mgJVGTwOWlqldsRPcgAkjfFaKZ+fF6Y//y+E0iaheLKwJWun7RzevFBNSeuLMqfq2D3Y
+	cKtTPBq6J/jzcFAqMwSwefENE4S83b3r6cwg5weJT9xQCFD+D5q/ixn92ehtGEzEp0q3wtpC+rCk3
+	T1Vxf74wkgPXl3892YyYMwBgDgHyFL9+dnyTZLbKViYR5JlQzlxdCHVeohptTZGIy201ogTJxSorz
+	9iAACx5DWMXG8Z+WEFDWGkb40Lr7Brqr/9c4N3u37V3fMy/wjFXTqixdXRCOzw9Yl/K1Wuy98d/kC
+	Kl5g6tmQ==;
+Received: from [191.204.192.64] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uRXRx-004dC5-5G; Tue, 17 Jun 2025 16:38:09 +0200
+Message-ID: <7d82dbc2-b902-498b-a70d-8be49c1be87a@igalia.com>
+Date: Tue, 17 Jun 2025 11:38:03 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <50989f0a02790f9d7dc804c2ade6387c4e7fbdbc.1749634392.git.zhouquan@iscas.ac.cn>
- <20250611-352bef23df9a4ec55fe5cb68@orel> <aEmsIOuz3bLwjBW_@google.com>
- <20250612-70c2e573983d05c4fbc41102@orel> <aEymPwNM59fafP04@google.com> <CAK9=C2WFA+SDt4MCLj0reQnkkA2kxUmfWhT8HZxjT_DdW8W_rQ@mail.gmail.com>
-Message-ID: <aFF9ZqbvZZtbUnGt@google.com>
-Subject: Re: [PATCH] RISC-V: KVM: Avoid re-acquiring memslot in kvm_riscv_gstage_map()
-From: Sean Christopherson <seanjc@google.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Andrew Jones <ajones@ventanamicro.com>, zhouquan@iscas.ac.cn, anup@brainfault.org, 
-	atishp@atishpatra.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 6/6] drm/amdgpu: Make use of drm_wedge_task_info
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: jani.nikula@linux.intel.com, Raag Jadav <raag.jadav@intel.com>,
+ dri-devel@lists.freedesktop.org, rodrigo.vivi@intel.com,
+ Krzysztof Karas <krzysztof.karas@intel.com>,
+ Xaver Hugl <xaver.hugl@gmail.com>, Alex Deucher <alexander.deucher@amd.com>,
+ simona@ffwll.ch, linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
+ amd-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, siqueira@igalia.com, airlied@gmail.com
+References: <20250617124949.2151549-1-andrealmeid@igalia.com>
+ <20250617124949.2151549-7-andrealmeid@igalia.com>
+ <5db1dda6-0cd7-4fc7-9a22-8ed57b12ada1@amd.com>
+ <63b4fb79-8132-4c05-bcac-3238366899d9@igalia.com>
+Content-Language: en-US
+In-Reply-To: <63b4fb79-8132-4c05-bcac-3238366899d9@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jun 15, 2025, Anup Patel wrote:
-> On Sat, Jun 14, 2025 at 3:59=E2=80=AFAM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > On Thu, Jun 12, 2025, Andrew Jones wrote:
-> > > On Wed, Jun 11, 2025 at 09:17:36AM -0700, Sean Christopherson wrote:
-> > > > Looks like y'all also have a bug where an -EEXIST will be returned =
-to userspace,
-> > > > and will generate what's probably a spurious kvm_err() message.
-> > >
-> > > On 32-bit riscv, due to losing the upper bits of the physical address=
-? Or
-> > > is there yet another thing to fix?
-> >
-> > Another bug, I think.  gstage_set_pte() returns -EEXIST if a PTE exists=
-, and I
-> > _assume_ that's supposed to be benign?  But this code returns it blindl=
-y:
->=20
-> gstage_set_pte() returns -EEXIST only when it was expecting a non-leaf
-> PTE at a particular level but got a leaf PTE=20
+Em 17/06/2025 10:22, André Almeida escreveu:
+> Em 17/06/2025 10:07, Christian König escreveu:
+>> On 6/17/25 14:49, André Almeida wrote:
+>>> To notify userspace about which task (if any) made the device get in a
+>>> wedge state, make use of drm_wedge_task_info parameter, filling it with
+>>> the task PID and name.
+>>>
+>>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+>>
+>> Reviewed-by: Christian König <christian.koenig@amd.com>
+>>
+>> Do you have commit right for drm-misc-next?
+>>
+> 
+> Thanks for the reviews!
+> 
+> I do have access, but if you don't mind, can you push this one?
+> 
 
-Right, but isn't returning -EEXIST all the way to userspace undesirable beh=
-avior?
-
-E.g. in this sequence, KVM will return -EEXIST and incorrectly terminate th=
-e VM
-(assuming the VMM doesn't miraculously recover somehow):
-
- 1. Back the VM with HugeTLBFS
- 2. Fault-in memory, i.e. create hugepage mappings
- 3. Enable KVM_MEM_LOG_DIRTY_PAGES
- 4. Write-protection fault, kvm_riscv_gstage_map() tries to create a writab=
-le
-    non-huge mapping.
- 5. gstage_set_pte() encounters the huge leaf PTE before reaching the targe=
-t
-    level, and returns -EEXIST.
-
-AFAICT, gstage_wp_memory_region() doesn't split/shatter/demote hugepages, i=
-t
-simply clears _PAGE_WRITE.
-
-It's entirely possible I'm missing something that makes the above scenario
-impossible in practice, but at this point I'm genuinely curious :-)
+Never mind, I can push this one myself :)
 
