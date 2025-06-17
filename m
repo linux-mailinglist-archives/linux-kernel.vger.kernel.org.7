@@ -1,180 +1,143 @@
-Return-Path: <linux-kernel+bounces-690531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB46ADD3A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:00:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34225ADD37B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29F851943F38
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:53:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A76F169BD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F77D2EF2A3;
-	Tue, 17 Jun 2025 15:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JTx+fPgq"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E712DFF32;
+	Tue, 17 Jun 2025 15:51:07 +0000 (UTC)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33ECE2ECE99;
-	Tue, 17 Jun 2025 15:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D213C2CCC5;
+	Tue, 17 Jun 2025 15:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750175416; cv=none; b=g1/id2z/YhpDTCUT4NeDdWpNJqred1eTvn8lw0P1XSo1jW4l0BCBtdwbE+3z6o84IGPo1tMCsFAZhq6j2nZLIZxd4JcqBpZKONpBC2Kf/0OgR2+cv7Jk9yXcTmF081gDfYIa77g7RjBH57Pqv5YHkTCh1Vq8rlmvEELmCy/2YlQ=
+	t=1750175467; cv=none; b=TzXsZmRzqJCAjL8afTnZAQMOrv3BIn5pQnobibY6tt08D5bIpoFisJBzP5lKwIqEWScoHYMNJUUD5Zuaod+kcniUPUVR0NQw1+c2VYgJgrM3rhL/vS4F4GZsQnwhTfsUwU2HR8M5ZxNqs0CEBRyOmYCqI3mhlBCoKjUTULqi7uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750175416; c=relaxed/simple;
-	bh=sQUR3wj1GLJjyLrPyEj1zSMJgcPH/Jb28IWEOYVQa0E=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=SRIaWdCg0rjpODkFVyHL4fKlUmCjA62nTvOpuGLlznvwcwTLweSIdBJ7Ad3ShCD0+1imQyeLAhjAhKX+HsfPYmm0ChAho98VhulfaJRBfuRs2qqHSXcXrDUO2L62KsbtIurlmDuvAeWMuRj9Id8F17xHyhqm4jDkAjVMYz9AMl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JTx+fPgq; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1750175467; c=relaxed/simple;
+	bh=5RqjtlgUUeuy/fAmRiej3LgLEt2jOXDeeg6BVuZlz38=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W3UNBpiMWqNJDRxTHvO9s8lvV4/Wfl8ksPOJpUnAt9v/x06KofgwzVQLPMP3+WGCKbe7IOS3XdA4GDSbzKJnyHVwptUu21p6fOIsfYXvbNBEdS4CyBJRf5+NdtQyR6snpMdwqLB9R1Q509/4EvaxjANfM9eH9R0oheuyY2U6+ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-311ef4fb43dso4680136a91.3;
-        Tue, 17 Jun 2025 08:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750175414; x=1750780214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/8BjRQTbTLXO4efQmkPOb9g/rZijb4u6NSdRQHT66tg=;
-        b=JTx+fPgqFt6W04485Ax63S/KxDofvC5qvNDdpQxH61yTxy5zQ7zVEk8ytkK62n1ulx
-         ashqW2B92q4mxsPtYjxVLfJuS1kL2vR874+26SwI3+C7oLVI7WRQ/L1sWZwDRZBGthJf
-         3dNJGy9Th6il87bv+IB11CQ/K5Ww8zgBiWYz8kuXps/0VnTsWAkqZHxiN/+FGNI59pkj
-         B6sKB3YtoQiu0vfOCBA+FbC4k1vb+0p2NAkcJJ5Xh84ySAK+3rabCBNwPYDNYn8UJzwU
-         XE0mzugVqMIUoR8CIK2nLSyhI5GtvVmBZ8T5NwT3zH553tRVTuXvFE5i1iqm6rjIv3br
-         fPpA==
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4e7fb730078so992295137.1;
+        Tue, 17 Jun 2025 08:51:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750175414; x=1750780214;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/8BjRQTbTLXO4efQmkPOb9g/rZijb4u6NSdRQHT66tg=;
-        b=OvsYw/rCsIE1vseDGeyDmd8IOhD+XuljVCPDoqDWq/ZhyONTazofP8Vcx7yATgYaMS
-         zZLSiGr8al9MVQGP5+P2idsdRPb7lg2MnQajdr48xS7K6+s+hjcmsMiwpImx6oDpt6E2
-         TpAcc3MLisKKe2I0UZt7cxz0OAyAFqEFlat4FLdApJ0q0762Suk08Pvb3sRbMijRGgsJ
-         /xalhE+dGOwVRiwAGCUqkPVGqpwh5RS5IjmVMBRUjHtrZ0bIalV4gmzeBQZFXNyNnSFs
-         Fmz4UYJxC7TjXlQeoalvK0jE60CJjlX8J57ePmma74gRhwJLn4LUXTpqp7T9sYTwQ4Am
-         iQ3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWo02ZOLft5mhH1UnfPoAVfJT81d6yghIueS7C+mEBYYW/AantJX8QpBDeYV4oRTpJOq899eLQDQLP9IRpCYj7/@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvcB0eqo27tW1/wlcbmajTMLy5uloAa9v5qkxo7xrORtSSvvol
-	ieaci/ht+Ofp7lilWKjvqWOJ5oEyFgjmEJxHtuPeOgNmjvU0VRklDrI1AUr9UQ==
-X-Gm-Gg: ASbGncs8leb7uf+Qz8RwzAMRUYve2Wi1ps1RqAlmt5GIpmGUMoBtfK1UQME75lriMSM
-	APTskcPY3HAL3s4sqa9lRHRJE5fGyctz7vO1jGan3AxED5ihjQZzq15vZKtkMTMBzAPtHrjrny0
-	V2Jq4+gklnuwD7Vm2I4AIHsveq3qlG8i3JBqJdYJ1JHuknnPkQ65dNX2I4CZjTdz0UVtVi+/C4T
-	BIUSaGb2Z0URXKecjtbuQVufdDrOE0iiaM3+4wTALez0lJJmNRYR7LLbcTVjn4ecPF+C7llwjSA
-	BMvWkF16RO4Pe9e0BnAse5ULhoUO4FbLNcILYR72faN8fSWHghfUj798/hNuxnMKbtx07vo=
-X-Google-Smtp-Source: AGHT+IE2SUZCziltGWP41uV/6AVJMUmfB9j3FNze1Bjcvn4EHiwNf3s+mbjnZ9Zj06V5bmarXFHdVg==
-X-Received: by 2002:a17:90b:1f8d:b0:312:db8:dbdd with SMTP id 98e67ed59e1d1-313f1ce3cbbmr20240405a91.28.1750175414272;
-        Tue, 17 Jun 2025 08:50:14 -0700 (PDT)
-Received: from ?IPv6:::1? ([2405:201:900e:b1b1:7db9:b6b5:b232:fcae])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313c1c5fef6sm12168541a91.40.2025.06.17.08.50.13
+        d=1e100.net; s=20230601; t=1750175464; x=1750780264;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OWqem8pDRB+jdxImbAtTRPgwW7lDiNsUzIpmKoUsHz4=;
+        b=Px+MLzP5um6MdMYgFr4ki2uvKKHACV5fxFQj6z3je4MEwrCNxDcHyuaAjVmRbIQxEw
+         PnJmqE4UQ4e9YPD5fSkFT3X04ozAj0vYkzX4UEUggRB3tXb4s1rjG6PGwgUW+udiSwVf
+         zj9/aVZvQ5Dq/dx0bMgJIZrQfo2mpoPSb5kzJfeVKgz6VVsOOdRKkq2bJV40kHztnKHx
+         AwTP6iUWp6ScKliboTjRC+biLQbdedM4cvfSJ0xNUdcFy+v6OLJMQTT2EhXld/TRXaHT
+         GyFOoVrWqkYBZ6tWmGF+8Rmit8XNcD9XzGkRyt6Fbxz+msEEFyZl+f4MLwfrM/qlWPq8
+         HxqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTG1CTCZnidGAOuHmC7eecJMQVykufZQ5O7yaU56NByzwUFeMp1fBIQNydy36cjt6U4HCcOcaF8mS1@vger.kernel.org, AJvYcCWanNbcH+Pq4P4F+dfxVdlz6lmLPdbNGJ0fa7mik8YV1w7XRju5OlW0l/IlK3bUiFJoGZN7sD76GW4RL1RrA660H54=@vger.kernel.org, AJvYcCXfNHX/HpgmgK2wFvAd6ZIZwJnI/e3N4C37h/l2QU/7XZbFTAtMuBlSOvHm/UD5e6rXsyaajOCBh7UoPu86@vger.kernel.org, AJvYcCXlOSj2FS2ZPqe2UEcXY71LmIZ8ndzvklWoxjdLnYo4OvYCIvQOfdgH03CL71NDkFaqn6kXXlFt@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTwuY3JHfc4ONEoV7m5cxuwwDU/oUgWDJsduGJiazddNkxo91A
+	mDPqRHMgXeWu7QKaKumvfRmongzTMmkcnxUaOtBTPmxTz0SoZ+Jr9e3FNzKW28Qb
+X-Gm-Gg: ASbGncuhAsj0T8IwdFc1Cye2nj9iGBG6YSdX71n+r7C53pWfkc8XPKkBqeddlsV7Zv4
+	5Lqf2vXXKi8Xwj1HvagzxbpAVYGJEgSml/FtQRFthsLEwgSEwodQVuZzObeZxx8hsfasHHztz7j
+	0bNP9f9NqegR1G9AYXYzsAeSbdY6a8+6X2xpddU9LQwks66ll1NqvcWmJziE3SwmlcmJVPTFrZp
+	k6L9eY/mFyGd8TtasG9gcDo0tFHhZfmJYw9/cfB2RSNszaAhZ9tcn4uOAFaMOyXhl/k1h5xvLgE
+	T2PWPsLE3FPHyB/xuNpLugl2LhV9Pows4rCop+KQ/j56jNwspysMvQ56EdnN3LZ3RfyHuoJAwjS
+	FQVdr9t0j32TpHU+Su4gGKysw5A0a2/lgwSM=
+X-Google-Smtp-Source: AGHT+IEYnm3bsCHqtvQsTtYnEmS222ydUHeJsXfCGfB3ygwEnvT/dNNuIa75K2agZgGorXX1wavBgQ==
+X-Received: by 2002:a05:6102:2927:b0:4e6:245b:cf5e with SMTP id ada2fe7eead31-4e7f62a5240mr9649994137.17.1750175463588;
+        Tue, 17 Jun 2025 08:51:03 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87f0fb54157sm1590908241.27.2025.06.17.08.51.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 08:50:14 -0700 (PDT)
-Date: Tue, 17 Jun 2025 21:20:09 +0530
-From: Abhigyan ghosh <zscript.team.zs@gmail.com>
-To: Vince Weaver <vincent.weaver@maine.edu>
-CC: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [perf] unchecked MSR access error: WRMSR to 0x3f1
-User-Agent: K-9 Mail for Android
-In-Reply-To: <14d3167e-4dad-f68e-822f-21cd86eab873@maine.edu>
-References: <14d3167e-4dad-f68e-822f-21cd86eab873@maine.edu>
-Message-ID: <328B9E3D-E0B0-44C6-8574-27302F33A638@gmail.com>
+        Tue, 17 Jun 2025 08:51:03 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-87f234ba1abso642533241.1;
+        Tue, 17 Jun 2025 08:51:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4U6/pXgl6a/mYaRWTLR6HdZJmqXd792SUhqQRoaLS6+MHfA2PTTwObHRtpt/jwnitpC0/K+Skhg4w@vger.kernel.org, AJvYcCVqvROObTfYX3Mme6oKGX5eJXs6KYHk6tQaLzhHFJjk+pgTV2ChY6XZb7y2VOaUxnsRU5ICWWs54yECJlek@vger.kernel.org, AJvYcCW+fMuEPqamnIHccAoogjdEjZD8IlrQsuiHFMFn4EsShJHN+ZyZ+YiFA+KRYQl1yZhePYKL0DFJ@vger.kernel.org, AJvYcCW6Vk8esDhWSmEUgBG6zopDrDLdBDFQ0m5SmZMhiUUTREhRaBruhMVdz1ECtpvuF0nWQjxjI5resd2bl6RaXKdS02s=@vger.kernel.org
+X-Received: by 2002:a05:6102:26c2:b0:4e2:ecd8:a1f with SMTP id
+ ada2fe7eead31-4e7f6186014mr8280933137.1.1750175462827; Tue, 17 Jun 2025
+ 08:51:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250611061609.15527-1-john.madieu.xa@bp.renesas.com> <20250611061609.15527-4-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20250611061609.15527-4-john.madieu.xa@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Jun 2025 17:50:50 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWJNCSUj6mUweKtXycHNNok4L=TFQipVO8n9g7DiU=b9A@mail.gmail.com>
+X-Gm-Features: Ac12FXwk4GGI8MpQTiHifAVx3-K2qs_irp8n-7ldxy3kuIQEgMz6LOdOM9uXcm0
+Message-ID: <CAMuHMdWJNCSUj6mUweKtXycHNNok4L=TFQipVO8n9g7DiU=b9A@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] arm64: dts: renesas: rzg3e-smarc-som: Enable
+ eth{0-1} (GBETH) interfaces
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: andrew+netdev@lunn.ch, conor+dt@kernel.org, davem@davemloft.net, 
+	edumazet@google.com, krzk+dt@kernel.org, kuba@kernel.org, pabeni@redhat.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, robh@kernel.org, 
+	biju.das.jz@bp.renesas.com, devicetree@vger.kernel.org, john.madieu@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	magnus.damm@gmail.com, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Vince,
+Hi John,
 
-Thanks for sharing the report=2E
-
-The WRMSR to 0x3f1 stood out =E2=80=94 seems similar to the one handled in=
- commit 2dc0572f2cef back in 2021=2E Curious if 0x3f1 has popped up before =
-or if this could be a new MSR usage pattern tied to recent PEBS changes?
-
-Also, do you think a quirk-based mask or trap filter around this could be =
-a cleaner way to handle this in the fuzzer context, especially for newer In=
-tel platforms?
-
-Let me know your thoughts=2E
-
-Best, =20
-Abhigyan Ghosh
-
-On 17 June 2025 9:09:36=E2=80=AFpm IST, Vince Weaver <vincent=2Eweaver@mai=
-ne=2Eedu> wrote:
->Hello
+On Wed, 11 Jun 2025 at 11:00, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
+> Enable the Gigabit Ethernet Interfaces (GBETH) populated on the RZ/G3E SMARC EVK
 >
->When running the perf_fuzzzer on a raptor-lake machine I get a
->	unchecked MSR access error: WRMSR to 0x3f1
->error (see below)=2E
->
->A similar message happened before back in 2021 and was fixed in
->commit 2dc0572f2cef87425147658698dce2600b799bd3 so not sure if this is th=
-e=20
->same problem or something new=2E
->
->Vince Weaver
->vincent=2Eweaver@maine=2Eedu
->
->[12646=2E001692] unchecked MSR access error: WRMSR to 0x3f1 (tried to wri=
-te 0x0001000000000001) at rIP: 0xffffffffa98932af (native_write_msr+0xf/0x2=
-0)
->[12646=2E001698] Call Trace:
->[12646=2E001700]  <TASK>
->[12646=2E001700]  intel_pmu_pebs_enable_all+0x2c/0x40
->[12646=2E001703]  intel_pmu_enable_all+0xe/0x20
->[12646=2E001705]  ctx_resched+0x227/0x280
->[12646=2E001708]  event_function+0x8f/0xd0
->[12646=2E001710]  ? __pfx___perf_event_enable+0x10/0x10
->[12646=2E001711]  remote_function+0x42/0x50
->[12646=2E001713]  ? __pfx_remote_function+0x10/0x10
->[12646=2E001714]  generic_exec_single+0x6d/0x130
->[12646=2E001715]  smp_call_function_single+0xee/0x140
->[12646=2E001716]  ? __pfx_remote_function+0x10/0x10
->[12646=2E001717]  event_function_call+0x9f/0x1c0
->[12646=2E001718]  ? __pfx___perf_event_enable+0x10/0x10
->[12646=2E001720]  ? __pfx_event_function+0x10/0x10
->[12646=2E001721]  perf_event_task_enable+0x7b/0x100
->[12646=2E001723]  __do_sys_prctl+0x56f/0xca0
->[12646=2E001725]  do_syscall_64+0x84/0x2f0
->[12646=2E001727]  ? exit_to_user_mode_loop+0xcd/0x120
->[12646=2E001729]  ? do_syscall_64+0x1ef/0x2f0
->[12646=2E001730]  ? try_to_wake_up+0x7e/0x640
->[12646=2E001732]  ? complete_signal+0x2e8/0x350
->[12646=2E001734]  ? __send_signal_locked+0x2e3/0x450
->[12646=2E001735]  ? send_signal_locked+0xb6/0x120
->[12646=2E001736]  ? do_send_sig_info+0x6e/0xc0
->[12646=2E001737]  ? kill_pid_info_type+0xa6/0xc0
->[12646=2E001738]  ? kill_something_info+0x167/0x1a0
->[12646=2E001739]  ? syscall_exit_work+0x132/0x140
->[12646=2E001740]  ? do_syscall_64+0xbc/0x2f0
->[12646=2E001741]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->[12646=2E001743] RIP: 0033:0x7efe86afd40d
->[12646=2E001744] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 18=
- 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 9d 00 00 00 0f 05=
- <48> 3d 00 f0 ff ff 77 1b 48 8b 54 24 18 64 48 2b 14 25 28 00 00 00
->[12646=2E001745] RSP: 002b:00007ffcd6444cf0 EFLAGS: 00000246 ORIG_RAX: 00=
-0000000000009d
->[12646=2E001746] RAX: ffffffffffffffda RBX: 000000000000000e RCX: 00007ef=
-e86afd40d
->[12646=2E001747] RDX: 0000000000000001 RSI: 00007ffcd6444d24 RDI: 0000000=
-000000020
->[12646=2E001747] RBP: 00007ffcd6444d60 R08: 00007efe86bc625c R09: 00007ef=
-e86bc6260
->[12646=2E001748] R10: 00007efe86bc6250 R11: 0000000000000246 R12: 0000000=
-000000000
->[12646=2E001748] R13: 00007ffcd64471b8 R14: 0000559eb2a2edd8 R15: 00007ef=
-e86c30020
->[12646=2E001749]  </TASK>
->
->
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 
-aghosh
+Thanks for your patch!
+
+> --- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+
+> @@ -77,6 +79,74 @@ &audio_extal_clk {
+>         clock-frequency = <48000000>;
+>  };
+>
+> +&eth0 {
+> +       phy-handle = <&phy0>;
+> +       phy-mode = "rgmii-id";
+> +
+> +       pinctrl-0 = <&eth0_pins>;
+> +       pinctrl-names = "default";
+> +       status = "okay";
+> +
+> +       mdio {
+
+&mdio0 {
+
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +               compatible = "snps,dwmac-mdio";
+
+No need for these three properties, as they are already present in the
+SoC-specific DTS with the exact same values.
+
+Same for the second interface.
+
+The rest LGTM, so with the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
