@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-689449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33839ADC210
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:07:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8444DADC216
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA16616955F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 06:07:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75CFB3B2291
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 06:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F2228B3F8;
-	Tue, 17 Jun 2025 06:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDCA28B513;
+	Tue, 17 Jun 2025 06:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lltu9USM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MbLVaY/V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA02B1B043C;
-	Tue, 17 Jun 2025 06:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F3E202C48;
+	Tue, 17 Jun 2025 06:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750140431; cv=none; b=LsCRVqBYKHfpqWfujztOAmS3NzS2xkd4Q4YrJ5BFpRoID1RD4jHDjNHIeUsZoHBGRIMYA6gUFTL51e0NVIbObZVThCyeERjKbFVzrWb3Lqgs5TL/hWIqht9karLldSCNTTAmrKE3j/Jqtg7LM+cVJpS2O38c5l+mzAEg5jlfIIo=
+	t=1750140517; cv=none; b=CBnMiOXlO+z9/EMYpQjV0P4j7HubHrZcJxNUf54K37M5CdfBfUi2Jhs3MM3/1mH8S3LYk4mRqZ0iMwwjylwL4oLWzQRS9Iu2Sf1Mq+bO1Y0GDVELinO/oirQRGPpvjx3TCYesfDzo9spKFv0BaLN3jYycZIp/uIqOe+TpHt40Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750140431; c=relaxed/simple;
-	bh=mFMrX2PmYbA54J62FTMIDoAR1Cnr1l3itbLBIBwh1Ak=;
+	s=arc-20240116; t=1750140517; c=relaxed/simple;
+	bh=VFgG5c3adCcLcFwMHG3HHPoRX1wEDrUuiPjHGzWQRFQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r2xsaX2kIyGzUOx64sLCwmQZOgIRmZOSpa6iaGfN7I98MmaVDNbkIhCbbJ/I9/jYZWyt8KxKpHOaeaU32uq2qmSFyVAsLr9+rxCV7T6K7xrDqh3PupoCC7qEO5w64AnhyGFoJNX+dXSBs04bmTgC5XyEIYZUvY689qCqqqKw0NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lltu9USM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07064C4CEE3;
-	Tue, 17 Jun 2025 06:07:06 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=M3lGSJMhLA3AQNiXW8j0zq2q1hF5bFL8ePi8MSc4KrlXKQvmDLEyYXzAV2O/QsbcENJDk71PxKPfPUqftCohOnqHVixfKE3/XSVyUMtkfWmZRgKJ+oYPU1Ile+9X/uEk6Sy/1LwYgQPEN5g60yXcYrI8bnFYIHHff4HyOyjnQ6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MbLVaY/V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 036CDC4CEE3;
+	Tue, 17 Jun 2025 06:08:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750140430;
-	bh=mFMrX2PmYbA54J62FTMIDoAR1Cnr1l3itbLBIBwh1Ak=;
+	s=k20201202; t=1750140517;
+	bh=VFgG5c3adCcLcFwMHG3HHPoRX1wEDrUuiPjHGzWQRFQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lltu9USMO6lgqz7XfulXgAzlFCv33lY0VTvJ4hnkuig/YNBOICkEoH3rW+Z8EoYKS
-	 LqZ2xjrpsLC8OcGBqcKN9dYzeX41AZLWW+hnkUrqGz/b0g2aUsY1Kd7GyHePbv8Ju9
-	 F4EoSlg7lZkTpcbejBfVCq459SOFt4o9Bm0XiV8azNGt4Fhp6tEceXRojPOr2sr+rI
-	 CI5pxwPCUSilIkGf9nVJcAabn2Jt7Es48qbMVR6n+wuxVp1qgVbyBrw5B0H4NiNKo9
-	 xCovlZy6wiIMlEgTEj5ErCJxqH/jXWTh/rNCWUgfcsx0RebCpzSprzr1/ib0d86zwX
-	 vGV40k3bdmO0w==
-Message-ID: <e4e018a4-1481-4132-9a5a-34233403df89@kernel.org>
-Date: Tue, 17 Jun 2025 08:07:04 +0200
+	b=MbLVaY/VkG7/yqaRdZJ4ciDzFzYcKYR7O3yeNw5GNfJmykreKe+c7Pss06elNsxKS
+	 nOj3pEYNbM9B/NWO3+Cqa8Oz9djVOgI5vWIpwafcrV/qL6tIajVghtvwHokGpUdd8N
+	 pwtSabaozykpShj2T6IgN/h2GGofjTLDEUSJ2DUiD/O7PU4Lub+nlvgi3XjNXVIicN
+	 gu/pKzgE2avenkO22T3GzPB2lNGiPHRFPYRlcZrMm9iOe2hYLQN3tujmVnCr+9eST1
+	 w8insVfLhED/TmE/hKPztnG3tfK8pWUI0bX14kSQtOrfGTFZZIeTrQaXYSpjvbq448
+	 ETF48L9aPJfEw==
+Message-ID: <d99c2be9-1052-4c09-9707-ac8b82bc6fee@kernel.org>
+Date: Tue, 17 Jun 2025 08:08:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 9/9] ARM64: xilinx: zynqmp: Add spi-buses property
-To: Sean Anderson <sean.anderson@linux.dev>, Mark Brown <broonie@kernel.org>,
- Michal Simek <michal.simek@amd.com>, linux-spi@vger.kernel.org
-Cc: Jinjie Ruan <ruanjinjie@huawei.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- David Lechner <dlechner@baylibre.com>,
- Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org
-References: <20250616220054.3968946-1-sean.anderson@linux.dev>
- <20250616220054.3968946-10-sean.anderson@linux.dev>
+Subject: Re: [PATCH v2 2/6] dt-bindings: arm: axiado: add AX3000 EVK
+ compatible strings
+To: Harshit Shah <hshah@axiado.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "soc@lists.linux.dev" <soc@lists.linux.dev>
+References: <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-0-341502d38618@axiado.com>
+ <20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-2-341502d38618@axiado.com>
+ <f4430b9a-3275-405e-becf-ff62ae16f23c@kernel.org>
+ <IA0PPFBEC4B1F8E5727945AD33204C3AB18D570A@IA0PPFBEC4B1F8E.namprd18.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,43 +111,42 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250616220054.3968946-10-sean.anderson@linux.dev>
+In-Reply-To: <IA0PPFBEC4B1F8E5727945AD33204C3AB18D570A@IA0PPFBEC4B1F8E.namprd18.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17/06/2025 00:00, Sean Anderson wrote:
-> Add the spi-buses property to the ZynqMP devicetrees. This is pretty
-> simple, since all boards use the lower bus.
+On 16/06/2025 23:13, Harshit Shah wrote:
 > 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
-> 
-> (no changes since v1)
-> 
->  arch/arm64/boot/dts/xilinx/zynqmp-sm-k26-revA.dts      | 1 +
->  arch/arm64/boot/dts/xilinx/zynqmp-zc1254-revA.dts      | 1 +
->  arch/arm64/boot/dts/xilinx/zynqmp-zc1751-xm015-dc1.dts | 1 +
->  arch/arm64/boot/dts/xilinx/zynqmp-zc1751-xm018-dc4.dts | 1 +
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts      | 1 +
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu104-revA.dts      | 1 +
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu104-revC.dts      | 1 +
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts      | 1 +
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts      | 1 +
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu1275-revA.dts     | 1 +
->  10 files changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-sm-k26-revA.dts b/arch/arm64/boot/dts/xilinx/zynqmp-sm-k26-revA.dts
-> index bfa7ea6b9224..3d3cb656f38c 100644
-> --- a/arch/arm64/boot/dts/xilinx/zynqmp-sm-k26-revA.dts
-> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-sm-k26-revA.dts
-> @@ -132,6 +132,7 @@ &qspi { /* MIO 0-5 - U143 */
->  	spi_flash: flash@0 { /* MT25QU512A */
->  		compatible = "jedec,spi-nor"; /* 64MB */
->  		reg = <0>;
-> +		spi-buses = <0>;
+> ________________________________________
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: 15 June 2025 23:05
+> To: Harshit Shah <hshah@axiado.com>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Linus Walleij <linus.walleij@linaro.org>; Bartosz Golaszewski <brgl@bgdev.pl>; Arnd Bergmann <arnd@arndb.de>; Catalin Marinas <catalin.marinas@arm.com>; Will Deacon <will@kernel.org>
+> Cc: devicetree@vger.kernel.org <devicetree@vger.kernel.org>; linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; linux-arm-kernel@lists.infradead.org <linux-arm-kernel@lists.infradead.org>; linux-gpio@vger.kernel.org <linux-gpio@vger.kernel.org>; soc@lists.linux.dev <soc@lists.linux.dev>
+> Subject: Re: [PATCH v2 2/6] dt-bindings: arm: axiado: add AX3000 EVK compatible strings
+>  
+> CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender and know the content is safe.
 
-Default is 0, so this entire patch is noop. Commit msg should explain
-that if noop is still needed for any reason.
+Drop all this. Not needed, not useful and not even correctly wrapped.
+
+> 
+> 
+> On 16/06/2025 06:31, Harshit Shah wrote:
+>> Add device tree binding schema for Axiado platforms, specifically the
+>> AX3000 SoC and its associated evaluation board. This binding will be
+>> used for the board-level DTS files that support the AX3000 platforms.
+>>
+>> Signed-off-by: Harshit Shah <hshah@axiado.com>
+>> ---
+>>   .../devicetree/bindings/arm/axiado/axiado.yaml     | 23 ++++++++++++++++++++++
+> 
+> Just arm/axiado.yaml
+
+use proper quoting. Who wrote that?
+
+> 
+> Noted. I will update the same in v3.
+
+And that?
 
 Best regards,
 Krzysztof
