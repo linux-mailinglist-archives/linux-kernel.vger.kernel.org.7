@@ -1,151 +1,739 @@
-Return-Path: <linux-kernel+bounces-689471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E17ADC25B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:27:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4828ADC25C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C7A9188F670
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 06:27:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 041137A675E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 06:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1BA28BABF;
-	Tue, 17 Jun 2025 06:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DAB28B3F7;
+	Tue, 17 Jun 2025 06:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKHscu2X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FpwHKJCo"
+Received: from mail-yb1-f196.google.com (mail-yb1-f196.google.com [209.85.219.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE5A28B7C8;
-	Tue, 17 Jun 2025 06:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F2128A73A
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 06:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750141625; cv=none; b=QDqTbauxAGlXZ/i/DkkT6Dy3nlZrL/iq4NacWGmuJU+RExycMaxjMLR/9OIVSgWIybU4AsSxJHb4FIFQz+Q623sbVHJ4zFzYmGTJ7m3NGCopgKMwh4OVwQz2gqgDug5AHaafUM/4sMN/a+0M6QeRZmi7gLF46RI/XZ8CgbQLics=
+	t=1750141637; cv=none; b=GqupPJbISiXi08ud8u8yGZNSmI+Ze+YSawbkmLN7T+nabSCadDBhxsGuZffFVK4uCc+KJo+n3h0Dg+xsu4Rhn5ve1xVPIdfnCYS0GPR6zMr7wROCFNEXX6Ppa8TYkQ5ZdPB/2F6CG8A8s7Lw+v0n4DHaAziGbsyphyqyjw4gORg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750141625; c=relaxed/simple;
-	bh=+bc02TymjgmsM9tzQNjyi2Q+WmyiCmbfIdTCI5hk2gI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L55Q3GC81z/Uz+o+GPWAkGdV4KNZQ6Qyq1yTLcJvm881GErwVsGc16RBeWcra9jH/2pcZzCsiP9UD5esrFOlyyPCVmZtT1V0LPKzBoJVIqTWVLoqQK1r9wMwvJvPmJBu1Ph99TRs+8usx8YRvGZZkacluL62o1FUfSlOOa0mNVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKHscu2X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA25C4CEE3;
-	Tue, 17 Jun 2025 06:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750141624;
-	bh=+bc02TymjgmsM9tzQNjyi2Q+WmyiCmbfIdTCI5hk2gI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oKHscu2XKU+YHOo5MC9ElcB5xlczAajjpnf6NXmrhM6lb7A7mgoI5PTeGpTUv9iCy
-	 3ZL9MwGPcft5teF7OKZrDP6u36c+jXJrCzz/jiVT5WGyzMAaNNLIvqHQDfzB4XB/Vj
-	 wkTXLXnQCvQrSVLiuwMK4CvDpzvqLQ4z0Vpo+r0IOWtbxCe+UUa4HGjBLRjF3twpiS
-	 rYjX1TIappf1uu8urM061m/xCncbZrtaceP1oqej/6AfptB3Vra3RCA5KOqQ/jvMvq
-	 iToJoBehXYRNEh1dDZub//sV4l7ZMhDkd21+6D/uLqRADgCh4mtaKjr42wYrtDU0BN
-	 exEFc4qEpft1Q==
-Message-ID: <0379000a-7ca6-4619-ad71-0ea9f71ffb8f@kernel.org>
-Date: Tue, 17 Jun 2025 08:27:00 +0200
+	s=arc-20240116; t=1750141637; c=relaxed/simple;
+	bh=CkKX5ZUwpZMBfbRSNVtmm8xmSZeDEhtOJBgswIf4zPE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=qLuLCdeEyTCq4My+4JNJ5sYwTsVONNS3sC2UwuKm7DAgRmD/5Ocov3ynbFZaQ0qyWJtd27MMmVIKs8ihHixfif929Jzgrn+biVmGsyoOTA05NhcWH2OyMygJg3rVBOMvkFPxXFWxLWH3fRhv0GmTyiv6kCjYtIB2cdUfNAOyvMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FpwHKJCo; arc=none smtp.client-ip=209.85.219.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f196.google.com with SMTP id 3f1490d57ef6-e740a09eae0so5096129276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 23:27:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750141634; x=1750746434; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0OBnUnPsiiEApkoO/4v+mLaltlnQNQRIsdN+TSNPuQ8=;
+        b=FpwHKJCosYlSHHgtwz580tN6xACMn2UY2WN+OBUVznhkBIEtAcpLorNbovXcICXCkM
+         ZZIU+OkniVNTGSlYHnHPvGYSONjSFOeiraZVJDTi/vON44NpDM71iJ1qHGNES4yVeqR4
+         8zDdUNI4IyfxngaeLwJ5pFMGbrO6IKu1Hx7f/jzwVMsmva4JKzAj9yZ2H7j4nMDceZzB
+         qs3shL3WD9cMRyF/JDY4ZZS25QftBjgK5dxiAG/GSwzM4Cj5K0bLwWtCVADgMgFgKwjd
+         5WOKUOSWxNf7LdfnKboN/YAOU+MfdxCEQFwG+35LhzGqA44B7TFwlYaYf31p4T2RI3pP
+         7EYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750141634; x=1750746434;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0OBnUnPsiiEApkoO/4v+mLaltlnQNQRIsdN+TSNPuQ8=;
+        b=lP5onfkRYMDMDLcxOXG5ZFW1A2r6xZ7cta5bcKBOc9SrKB0FkVF7M5MgV9YagJ3QUR
+         oGB2mphGSV4vk4trkyFDfSBRGdHTqw0U4lguEP9vJyIqux8XaS1E7BiM9wGiKkiXdLAR
+         iGRMSIwUi5zKlg2jHlNuhgLPYnPG12AdNpCGcT5Jch+7+2LfYqlbFkB9DPumylJt4/r4
+         MvgPxd7Z27Eq8mKYsBl9pLCJzjnMyZOoIyyMp7x0WYt5wqmKjkKdzyhs39h+m7x/uxp3
+         W83akp7A1Itf0yZzkIktIWeZkIowxBaknvnWRqIgnfdgDrAw/spKvhWH8NkFIL4+0O35
+         uylQ==
+X-Gm-Message-State: AOJu0YxXJdQQxHcC8rdn4ejUnHbC8oNxY4AzLgxVCRJzYzeF492tAswP
+	I6z56yJyiqvyipkOyf3t7Dbhgb8hv8GFLRx94lFWjzER3t7DnGWpR61iGcVZ3WTEGvbrRqLA7Mo
+	5W5oy2NC1ktVV6LYqm07EoC60r3feFHu5EEJXjfqQRQ==
+X-Gm-Gg: ASbGncs1+grU7W32FDR+oVmG2d3oPJjMJ/XLvkOVrZY9f3DauSpoL5FnvzewL5EBvf3
+	zRZiiRrchPrGFIqcFcexpkgV5KQIbFg6lF1s4zVJ8cKQLJ0zDIFzxAiNbw2Sg8XpQZ301aDWPBb
+	JJ1d711x2T4j4o1FDxFOn7PHPCvjeKto04vjwu8yhEocvJQp/hyNXCwIeDBjr47ZmavKY8f2r3v
+	VmXQw==
+X-Google-Smtp-Source: AGHT+IGpt4T2Pn3BeWXlmr2xpIM8zjST5bW3t6pvsJBdhqJsJ+S2ldG/s80oP1voXpbJoYoiAZ5gPk2qmTy3So3/yn4=
+X-Received: by 2002:a05:690c:670a:b0:70d:fe09:9b18 with SMTP id
+ 00721157ae682-71175385147mr189265037b3.2.1750141633960; Mon, 16 Jun 2025
+ 23:27:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 1/2] arm64: dts: socfpga: agilex5: Add SMMU-V3-PMCG
- nodes
-To: adrianhoyin.ng@altera.com, dinguyen@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Matthew Gerlach <matthew.gerlach@altrera.com>
-References: <20250616145006.1081013-1-adrianhoyin.ng@altera.com>
- <20250616145006.1081013-2-adrianhoyin.ng@altera.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250616145006.1081013-2-adrianhoyin.ng@altera.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Amit <amitchoudhary0523@gmail.com>
+Date: Tue, 17 Jun 2025 11:57:02 +0530
+X-Gm-Features: AX0GCFszeHwKATkz9KMLFmb8AbNccVyEGd22800kIT8HcUWZg19yFvkqgPgiK50
+Message-ID: <CAFf+5zj=HzH0EKkw0tM_WenRdLtBMJLVUkMBit6Hz_zkppWsFg@mail.gmail.com>
+Subject: Split a string into an array of string tokens based on a string
+ delimiter (Four files: str_split.c, str_split.h, test_str_split.c, ReadMe.txt).
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 16/06/2025 16:50, adrianhoyin.ng@altera.com wrote:
-> From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
-> 
-> Add SMMU-V3 PMCG nodes for Agilex5.
-> 
-> Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
-> Reviewed-by: Matthew Gerlach <matthew.gerlach@altrera.com>
-> ---
->  .../arm64/boot/dts/intel/socfpga_agilex5.dtsi | 62 +++++++++++++++++++
->  1 file changed, 62 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> index 7d9394a04302..06920de87a41 100644
-> --- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> @@ -133,6 +133,68 @@ usbphy0: usbphy {
->  		compatible = "usb-nop-xceiv";
->  	};
->  
-> +	pmu0: pmu {
-> +		compatible = "arm,armv8-pmuv3";
-> +		interrupt-parent = <&intc>;
-> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-> +
-> +	pmu0_tcu: pmu@16002000 {
+Split a string into an array of string tokens based on a string
+delimiter (Four files: str_split.c, str_split.h, test_str_split.c,
+ReadMe.txt).
 
+--------------
+str_split.c
+--------------
 
-It does not look like you tested the DTS against bindings. Please run
-`make dtbs_check W=1` (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
-Maybe you need to update your dtschema and yamllint. Don't rely on
-distro packages for dtschema and be sure you are using the latest
-released dtschema.
+/*
+ * License:
+ *
+ * This file has been released under "unlicense" license
+ * (https://unlicense.org).
+ *
+ * This is free and unencumbered software released into the public domain.
+ *
+ * Anyone is free to copy, modify, publish, use, compile, sell, or distribute
+ * this software, either in source code form or as a compiled binary, for any
+ * purpose, commercial or non-commercial, and by any means.
+ *
+ * For more information about this license, please visit - https://unlicense.org
+ */
 
-Or... if it passes still obviously mixes MMIO and non-MMIO nodes. MMIO
-nodes go into soc@0.
+/*
+ * Author: Amit Choudhary
+ * Email: amitchoudhary0523 AT gmail DOT com
+ */
 
-Best regards,
-Krzysztof
+#include "str_split.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Change this value to process more characters.
+#define MAX_STR_SIZE_ALLOWED 8192 // including null terminating character
+
+#define MIN_STR_SIZE_ALLOWED 2 // including null terminating character
+
+static void free_all_allocated_memory(char **tokens_array, long n);
+
+char **str_split(const char *str, const char *delim, long max_splits)
+{
+
+    char **output_tokens_array = NULL;
+    char *temp = NULL;
+    char *prev_temp = NULL;
+    long num_tokens = 0;
+    size_t delim_len = 0;
+    size_t len = 0;
+    long i = 0;
+
+    if ((str == NULL) || (str[0] == '\0') ||
+        (delim == NULL) || (delim[0] == '\0')) {
+        return NULL;
+    }
+
+    if (strnlen(str, MAX_STR_SIZE_ALLOWED) == MAX_STR_SIZE_ALLOWED) {
+        return NULL;
+    }
+
+    if (strnlen(delim, MAX_STR_SIZE_ALLOWED) == MAX_STR_SIZE_ALLOWED) {
+        return NULL;
+    }
+
+    // At this point, it is guaranteed that both 'str' and 'delim' are null
+    // terminated. If either or both of them were not null terminated then
+    // strnlen() above would have returned 'MAX_STR_SIZE_ALLOWED' and this
+    // function would have returned from there.
+    //
+    // So, from here onwards, using all string functions is safe.
+
+    // Handle the cases where either 'max_splits' is 0 or 'delim' does not occur
+    // in 'str'.
+    if ((max_splits == 0) || (strstr(str, delim) == NULL)) {
+
+        output_tokens_array = calloc(2, (sizeof(*output_tokens_array)));
+
+        if (output_tokens_array == NULL) {
+            return NULL;
+        }
+
+        len = strlen(str);
+
+        // allocate 1 extra byte for null terminator
+        output_tokens_array[0] = calloc(1, (len + 1));
+
+        if (output_tokens_array[0] == NULL) {
+            free(output_tokens_array);
+            return NULL;
+        }
+
+        memmove(output_tokens_array[0], str, len);
+        (output_tokens_array[0])[len] = '\0';
+
+        output_tokens_array[1] = NULL;
+
+        return output_tokens_array;
+
+    }
+
+    delim_len = strlen(delim);
+
+    temp = (char *)(str);
+    prev_temp = (char *)(str);
+
+    while (1) {
+
+        temp = strstr(temp, delim);
+
+        num_tokens = num_tokens + 1;
+
+        if (temp == NULL) {
+            break;
+        }
+
+        temp = temp + delim_len;
+        prev_temp = temp;
+
+    } // end of while (1) loop
+
+    if ((max_splits > 0) && (max_splits < num_tokens)) {
+        num_tokens = max_splits + 1;
+    }
+
+    // allocate 1 extra character pointer to terminate output_tokens_array with
+    // a NULL pointer.
+    output_tokens_array = calloc((size_t)(num_tokens) + 1,
+                                  (sizeof(*output_tokens_array)));
+
+    if (output_tokens_array == NULL) {
+        return NULL;
+    }
+
+    temp = (char *)(str);
+    prev_temp = (char *)(str);
+    i = 0;
+
+    while (1) {
+
+        temp = strstr(temp, delim);
+
+        len = (size_t)(temp - prev_temp);
+
+        // allocate 1 extra byte for null terminator
+        output_tokens_array[i] = calloc(1, (len + 1));
+
+        if (output_tokens_array[i] == NULL) {
+            free_all_allocated_memory(output_tokens_array, i);
+            return NULL;
+        }
+
+        memmove(output_tokens_array[i], prev_temp, len);
+        (output_tokens_array[i])[len] = '\0';
+
+        i = i + 1;
+
+        temp = temp + delim_len;
+        prev_temp = temp;
+
+        if ((num_tokens - i) == 1) { // last token
+
+            len = (size_t)(str + strlen(str) - prev_temp);
+
+            // allocate 1 extra byte for null terminator
+            output_tokens_array[i] = calloc(1, (len + 1));
+
+            if (output_tokens_array[i] == NULL) {
+                free_all_allocated_memory(output_tokens_array, i);
+                return NULL;
+            }
+
+            memmove(output_tokens_array[i], prev_temp, len);
+            (output_tokens_array[i])[len] = '\0';
+
+            i = i + 1;
+
+            break;
+
+        } // end of if ((num_tokens - i) == 1)
+
+    } // end of while (1) loop
+
+    output_tokens_array[i] = NULL;
+
+    return output_tokens_array;
+
+} // end of function str_split()
+
+void print_tokens_array(char **tokens_array)
+{
+
+    long i = 0;
+
+    printf("\n");
+
+    if (tokens_array == NULL) {
+        printf("Error: Argument 'tokens_array' is NULL.\n\n");
+        return;
+    }
+
+    printf("Tokens are printed below (within single quotes):\n\n");
+    printf("---- Start of Tokens ----\n");
+
+    while (tokens_array[i]) {
+        printf("'%s'\n", tokens_array[i]);
+        i = i + 1;
+    }
+
+    printf("---- End of Tokens ----\n\n");
+
+    return;
+
+} // end of function print_tokens_array()
+
+long get_total_number_of_tokens_in_tokens_array(char **tokens_array)
+{
+
+    long i = 0;
+
+    if (tokens_array == NULL) {
+        return 0;
+    }
+
+    while (tokens_array[i]) {
+        i = i + 1;
+    }
+
+    return i;
+
+} // end of function get_total_number_of_tokens_in_tokens_array()
+
+void free_tokens_array(char **tokens_array)
+{
+
+    long i = 0;
+
+    if (tokens_array == NULL) {
+        return;
+    }
+
+    while (tokens_array[i]) {
+        free(tokens_array[i]);
+        i = i + 1;
+    }
+
+    free(tokens_array);
+
+    return;
+
+} // end of function free_tokens_array()
+
+/*
+ * static void free_all_allocated_memory(char **tokens_array, long n):
+ *
+ * Function free_all_allocated_memory() frees the tokens in the array of
+ * tokens ('tokens_array') from index '0' to 'n - 1'. It also frees
+ * 'tokens_array'.
+ */
+static void free_all_allocated_memory(char **tokens_array, long n)
+{
+
+    long i = 0;
+
+    if (tokens_array == NULL) {
+        return;
+    }
+
+    for (i = 0; i < n; i = i + 1) {
+        free(tokens_array[i]);
+    }
+
+    free(tokens_array);
+
+    return;
+
+} // end of function free_all_allocated_memory()
+
+--------------
+str_split.h
+--------------
+
+/*
+ * License:
+ *
+ * This file has been released under "unlicense" license
+ * (https://unlicense.org).
+ *
+ * This is free and unencumbered software released into the public domain.
+ *
+ * Anyone is free to copy, modify, publish, use, compile, sell, or distribute
+ * this software, either in source code form or as a compiled binary, for any
+ * purpose, commercial or non-commercial, and by any means.
+ *
+ * For more information about this license, please visit - https://unlicense.org
+ */
+
+/*
+ * Author: Amit Choudhary
+ * Email: amitchoudhary0523 AT gmail DOT com
+ */
+
+#ifndef STR_SPLIT_H
+#define STR_SPLIT_H
+
+/*
+ * char **str_split(const char *str, const char *delim, long max_splits):
+ *
+ * Function str_split() splits a string ('str') into an array of string tokens
+ * (a token is also a string). This function uses the 'delim' string to split
+ * 'str' into tokens. If a 'delim' is found at position "i", then the token ends
+ * at the position "i - 1".
+ *
+ * 'max_splits' argument is used to control how many times 'str' should be
+ * split. For example, if 'max_splits' is 1, then 'str' will be split one time
+ * only. So, if 'str' is "a;b;c" and 'delim' is ";" and 'max_splits' is 1 then
+ * 'str' will be split one time only and two tokens will be generated - "a" and
+ * "b;c".
+ *
+ * If 'max_splits' is zero (0) then an array of tokens is returned whose first
+ * token (at index 0) is a copy of 'str' and the second token (at index 1) is
+ * NULL.
+ *
+ * If 'max_splits' is negative then it means that all tokens should be returned.
+ *
+ * In some (error/invalid, etc.) cases NULL is returned. If NULL is returned
+ * then this means that 'str' was not split and nothing was done. The cases
+ * where NULL will be returned are listed below:
+ *
+ *      ** 'str' is NULL.
+ *      ** 'str' is an empty string.
+ *      ** 'str' size (including null terminating character) is greater than
+ *          'MAX_STR_SIZE_ALLOWED'.
+ *      ** 'delim' is NULL.
+ *      ** 'delim' is an empty string.
+ *      ** 'delim' size (including null terminating character) is greater than
+ *          'MAX_STR_SIZE_ALLOWED'.
+ *
+ * In successful cases, the return value of this function is a pointer to an
+ * array of string tokens. This array of tokens is terminated by a NULL token.
+ *
+ * The pseudocode of looping through this array of tokens is:
+ *
+ *          long i = 0;
+ *          while (tokens_array[i]) {
+ *              ..do stuff here..
+ *              i = i + 1;
+ *          }
+ *
+ * All these tokens had been allocated using calloc(), so when these tokens
+ * are no longer needed then the user should free these tokens by calling the
+ * function 'free_tokens_array()'.
+ *
+ * If 'delim' is not found in 'str' then an array of tokens is returned whose
+ * first token (at index 0) is a copy of 'str' and the second token (at index
+ * 1) is NULL.
+ *
+ * Sometimes, depending on 'str' and 'delim', it is quite possible that in the
+ * returned array of tokens, some tokens are empty tokens (means that the first
+ * character of the token is a null character). For example, if there are two
+ * consecutive 'delim', then one empty token will be generated.
+ *
+ * This function returns empty tokens because some users may want them. One use
+ * case is the following - if the user is splitting records from a file to
+ * insert in a database, then when an empty token is found, then the user can
+ * insert NULL or 0, etc. in that column.
+ *
+ * In case, empty tokens are of no use then they can be skipped by using the
+ * following line of code: "if ((tokens_array[i])[0] == '\0') { continue; }".
+ *
+ * There are two more functions available that you can use:
+ * print_tokens_array() and get_total_number_of_tokens_in_tokens_array().
+ */
+char **str_split(const char *str, const char *delim, long max_splits);
+
+/*
+ * void print_tokens_array(char **tokens_array):
+ *
+ * Function print_tokens_array() prints all the tokens in the 'tokens_array'.
+ */
+void print_tokens_array(char **tokens_array);
+
+/*
+ * long get_total_number_of_tokens_in_tokens_array(char **tokens_array):
+ *
+ * Function get_total_number_of_tokens_in_tokens_array() returns the count of
+ * the number of tokens in the 'tokens_array'. It is assumed that the
+ * 'tokens_array' is terminated by a NULL token.
+ */
+long get_total_number_of_tokens_in_tokens_array(char **tokens_array);
+
+/*
+ * void free_tokens_array(char **tokens_array):
+ *
+ * Function free_tokens_array() frees all the tokens in the 'tokens_array'.
+ * It also frees the 'tokens_array'.
+ */
+void free_tokens_array(char **tokens_array);
+
+#endif
+
+--------------------
+test_str_split.c
+--------------------
+
+/*
+ * License:
+ *
+ * This file has been released under "unlicense" license
+ * (https://unlicense.org).
+ *
+ * This is free and unencumbered software released into the public domain.
+ *
+ * Anyone is free to copy, modify, publish, use, compile, sell, or distribute
+ * this software, either in source code form or as a compiled binary, for any
+ * purpose, commercial or non-commercial, and by any means.
+ *
+ * For more information about this license, please visit - https://unlicense.org
+ */
+
+/*
+ * Author: Amit Choudhary
+ * Email: amitchoudhary0523 AT gmail DOT com
+ */
+
+#include "str_split.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Change this value to process more characters.
+#define MAX_STR_SIZE_ALLOWED 8192 // including null terminating character
+
+#define MIN_STR_SIZE_ALLOWED 2 // including null terminating character
+
+#define ARRAY_SIZE 256 // including null terminating character
+
+static char *get_input_from_stdin_and_discard_extra_characters(char *str,
+                                                               int size);
+static void discard_all_characters_from_stdin(void);
+
+int main(void)
+{
+
+    char str[ARRAY_SIZE] = {0};
+    char delim[ARRAY_SIZE] = {0};
+    long max_splits = 0;
+    char **tokens_array = NULL;
+    char *arg_str = NULL;
+    char *arg_delim = NULL;
+
+    while (1) {
+
+        arg_str = str;
+        arg_delim = delim;
+
+        printf("\n");
+
+        printf("Please input a string to split (max %d characters) (To enter"
+               " NULL string, type NULL (in capital letters) and press ENTER):"
+               " ", ARRAY_SIZE - 1);
+
+        get_input_from_stdin_and_discard_extra_characters(str, ARRAY_SIZE);
+
+        if (strncmp(str, "NULL", (strlen("NULL") + 1)) == 0) {
+            arg_str = NULL;
+        }
+
+        printf("\nPlease input a delimiter for splitting the string (max %d"
+               " characters) (To enter NULL delimiter, type NULL (in capital"
+               " letters) and press ENTER): ", ARRAY_SIZE - 1);
+
+        get_input_from_stdin_and_discard_extra_characters(delim, ARRAY_SIZE);
+
+        if (strncmp(delim, "NULL", (strlen("NULL") + 1)) == 0) {
+            arg_delim = NULL;
+        }
+
+        printf("\nPlease input maximum number of splits (a negative value means"
+               " to split the string as many times as possible): ");
+
+        scanf("%ld", &max_splits);
+
+        // now clear the stdin input buffer
+        discard_all_characters_from_stdin();
+
+        printf("\n------\n");
+        printf("Output\n");
+        printf("------\n\n");
+        printf("Input parameters: str=\"%s\", delim=\"%s\", max_splits=%ld\n\n",
+               arg_str ? arg_str: "(null string)",
+               arg_delim ? arg_delim: "(null delimiter)", max_splits);
+
+        tokens_array = str_split(arg_str, arg_delim, max_splits);
+
+        if (tokens_array == NULL) {
+            printf("\n**Function str_split() returned NULL. The input string"
+                   " was not split.**\n");
+        }
+
+        if (tokens_array) {
+            printf("Number of tokens = %ld\n",
+                   get_total_number_of_tokens_in_tokens_array(tokens_array));
+            print_tokens_array(tokens_array);
+            free_tokens_array(tokens_array);
+        }
+
+        printf("\nPlease press ENTER to continue..");
+
+        // now clear the stdin input buffer
+        discard_all_characters_from_stdin();
+
+    } // end of while(1) loop
+
+} // end of function main()
+
+/*
+ * static char *get_input_from_stdin_and_discard_extra_characters(char *str,
+ *                                                                int size):
+ *
+ * Function get_input_from_stdin_and_discard_extra_characters() reads at most
+ * (size - 1) characters from stdin and stores them in 'str'. One character is
+ * used to null terminate 'str'. The rest of the remaining characters in stdin
+ * are read and discarded, they are not stored in 'str'. So, when this function
+ * returns then there is no input/characters left in stdin.
+ *
+ * If 'str' is NULL then it is an error and nothing is read from stdin and NULL
+ * is returned.
+ *
+ * If 'size' is greater than 'MAX_STR_SIZE_ALLOWED' or less than
+ * 'MIN_STR_SIZE_ALLOWED' then it is an error and nothing is read from stdin
+ * and NULL is returned.
+ */
+static char *get_input_from_stdin_and_discard_extra_characters(char *str,
+                                                               int size)
+{
+
+    int c = 0;
+    int i = 0;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    if ((size < MIN_STR_SIZE_ALLOWED) || (size > MAX_STR_SIZE_ALLOWED)) {
+        return NULL;
+    }
+
+    for (i = 0; i < (size - 1); i = i + 1) {
+
+        c = getchar();
+
+        if ((c == '\n') || (c == EOF)) {
+            str[i] = 0;
+            return str;
+        }
+
+        str[i] = (char)(c);
+
+    } // end of for loop
+
+    str[i] = 0;
+
+    // discard the rest of the input
+    while ((c = getchar()) && (c != '\n') && (c != EOF));
+
+    return str;
+
+} // end of function get_input_from_stdin_and_discard_extra_characters()
+
+static void discard_all_characters_from_stdin(void)
+{
+
+    int c = 0;
+
+    // discard all characters from stdin
+    while ((c = getchar()) && (c != '\n') && (c != EOF));
+
+    return;
+
+} // end of function discard_all_characters_from_stdin()
+
+----------------
+ReadMe.txt
+----------------
+
+File "str_split.c" implements a function called str_split() which splits a
+string into an array of string tokens based on a string delimiter. The signature
+of this function is:
+
+        char **str_split(const char *str, const char *delim, long max_splits)
+
+Function str_split() splits a string ('str') into an array of string tokens (a
+token is also a string). This function uses the 'delim' string to split 'str'
+into tokens. If a 'delim' is found at position "i", then the token ends at the
+position "i - 1".
+
+'max_splits' argument is used to control how many times 'str' should be split.
+For example, if 'max_splits' is 1, then 'str' will be split one time only. So,
+if 'str' is "a;b;c" and 'delim' is ";" and 'max_splits' is 1 then 'str' will be
+split one time only and two tokens will be generated - "a" and "b;c".
+
+If 'max_splits' is zero (0) then an array of tokens is returned whose first
+token (at index 0) is a copy of 'str' and the second token (at index 1) is NULL.
+
+If 'max_splits' is negative then it means that all tokens should be returned.
+
+In some (error/invalid, etc.) cases NULL is returned. If NULL is returned then
+this means that 'str' was not split and nothing was done. The cases where NULL
+will be returned are listed below:
+
+     ** 'str' is NULL.
+     ** 'str' is an empty string.
+     ** 'str' size (including null terminating character) is greater than
+         'MAX_STR_SIZE_ALLOWED'.
+     ** 'delim' is NULL.
+     ** 'delim' is an empty string.
+     ** 'delim' size (including null terminating character) is greater than
+         'MAX_STR_SIZE_ALLOWED'.
+
+In successful cases, the return value of this function is a pointer to an array
+of string tokens. This array of tokens is terminated by a NULL token.
+
+The pseudocode of looping through this array of tokens is:
+
+         long i = 0;
+         while (tokens_array[i]) {
+             ..do stuff here..
+             i = i + 1;
+         }
+
+All these tokens had been allocated using calloc(), so when these tokens are no
+longer needed then the user should free these tokens by calling the function
+'free_tokens_array()'.
+
+If 'delim' is not found in 'str' then an array of tokens is returned whose
+first token (at index 0) is a copy of 'str' and the second token (at index 1) is
+NULL.
+
+Sometimes, depending on 'str' and 'delim', it is quite possible that in the
+returned array of tokens, some tokens are empty tokens (means that the first
+character of the token is a null character). For example, if there are two
+consecutive 'delim', then one empty token will be generated.
+
+This function returns empty tokens because some users may want them. One use
+case is the following - if the user is splitting records from a file to insert
+in a database, then when an empty token is found, then the user can insert NULL
+or 0, etc. in that column.
+
+In case, empty tokens are of no use then they can be skipped by using the
+following line of code: "if ((tokens_array[i])[0] == '\0') { continue; }".
+
+There are two more functions available that you can use: print_tokens_array()
+and get_total_number_of_tokens_in_tokens_array().
+
+---- End of README ----
 
