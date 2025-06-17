@@ -1,184 +1,119 @@
-Return-Path: <linux-kernel+bounces-689777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 320A2ADC64E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:27:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9416ADC651
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C967F171393
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:27:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A75B77A1640
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFC8295516;
-	Tue, 17 Jun 2025 09:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC412951B5;
+	Tue, 17 Jun 2025 09:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="FFKg4QgY"
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ME6cL/4G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA02293C63;
-	Tue, 17 Jun 2025 09:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D717293C68;
+	Tue, 17 Jun 2025 09:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750152429; cv=none; b=Q8fdQLXFo1HSV4FV982mYuRjX/w5KIYNUhbGlhYnHoiZW0y+itB6nqaiFJ60l8xipfo+3dadTMaVoFyP0WAFC2sa5nJBCnkgi68osy30KpN3f2G0XbWd3IJitComItvcrdRiHiGmej1ZnU/esSTU132w8YApbmwHxK1Y3TET2dM=
+	t=1750152440; cv=none; b=D/uRH0mtKionms8SBYt6EsnJS4ZjPvamVTpV5oiW/eZ0qu0SOu/c3Xwo1u1yi/Z1JnkiEMD2uv1RuJKPzthkSRRGbX143Umk/1B9I/cUhqm48zV3VW23ijRt8LQzmSgY2LBIvtT1MXQEGByueQzQXVx7pQDgp5E8N++GfvdWUWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750152429; c=relaxed/simple;
-	bh=6NWPPlQjO1jAJ/PEmOb+hvVFlM5PIHsiKWIz6FWtskA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DtI6dwjrg6sROjvQUBAfTfLCOfflmvr/Y7w/ojxvz1KtU47YOs/v5ArDxZhkWLkn9FlOHY9z6s6vqlLikmV5CKcaPfpawAIUjbVo64/N+YAKwxz41hsUS3jFv6tHzR3jvV294BMANuRzGjqPSZRKsrsu/tX/haCTmv4Z0OJA0Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=FFKg4QgY; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id A568F600023C;
-	Tue, 17 Jun 2025 10:27:03 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id myyMLEEWYjmo; Tue, 17 Jun 2025 10:27:01 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 0441C6000248;
-	Tue, 17 Jun 2025 10:27:00 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1750152421;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MmK/CfeD2UinWWA4TumYD2vKdr/yWCjwsN6TOvI7FK8=;
-	b=FFKg4QgYeTHlD874AcH9qvxVa6dYirY61mYj77LtWOh26aKHHLRzSIRMH8hYK9LgwkylVg
-	0KHSQfi2EWvZU8D+fe7n4G3Vt+BKx6IGyhMjPjfV2cBOnP3x0wq8MX7esdSI/3c954oyp0
-	ZZtUKBO18sKn1KfjdG9TlTCy7Z4cGbo=
-Received: from [10.158.133.22] (dial-b1-161-46.telepac.pt [194.65.161.46])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 2D7E4360089;
-	Tue, 17 Jun 2025 10:27:00 +0100 (WEST)
-Message-ID: <82bfabf0-8c55-4bbd-8c81-44dc86209b15@tecnico.ulisboa.pt>
-Date: Tue, 17 Jun 2025 10:26:54 +0100
+	s=arc-20240116; t=1750152440; c=relaxed/simple;
+	bh=/j9qw9CPeikjZGsZN2keC06a14oGdbXh/cFa9quarCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HM9T5pPU17Tne/oeIIoK2mVuj0FJfLcyZu9bgBnbcH07qECDIqGyPKewueGN6yLvwUu24Wp0jYgpYb8xGufg/lya+v0C2TZAdznFESUnIr3dwXcmv9dTEJaYuekmDOKFvBgrMYx5+Qqext3qrDteS7Gv8ZqF7nZpvgVbaQZdN6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ME6cL/4G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81322C4CEED;
+	Tue, 17 Jun 2025 09:27:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750152440;
+	bh=/j9qw9CPeikjZGsZN2keC06a14oGdbXh/cFa9quarCc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ME6cL/4GMsQtRnijbudm4iGh8KzyGl0NTc/VXArUH+mvjy1T33nog+OwCG93otWrk
+	 DYBqmNHjytCJwzC1Xulz/YxqBh3EEFJzrvjJK3x/yE8eW1EPJ950sePx54GQ2mSIAV
+	 2QHhLS4V/c03f1RRao2qOVdiYcN9bd5x9s8zwqEvHwNBgN5TCSnIJu92m5kaCpb9pa
+	 EbquN/L70dtcGp22NxwgtLWVHcAMDBWiCr5ZYbp7apLQPT6Jt1VGgSfD8WSqbf/uTZ
+	 VTLmdopIHDu0ib2z/YRTyxBRqvQIJhmVLvA9KLh3ZCv5j6kVsw/KaT2+r1GDl4Men8
+	 988a/p9L4qQ3g==
+Date: Tue, 17 Jun 2025 14:57:11 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Adam Xue <zxue@semtech.com>, Thomas Perrot <thomas.perrot@bootlin.com>, 
+	Aleksander Morgado <aleksander@aleksander.es>
+Cc: manivannan.sadhasivam@linaro.org, slark_xiao@163.com, 
+	johan+linaro@kernel.org, quic_vpernami@quicinc.com, tglx@linutronix.de, 
+	fabio.porcedda@gmail.com, quic_msarkar@quicinc.com, mhi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, imocanu@semtech.com
+Subject: Re: [PATCH v1] bus: mhi: host: pci_generic: Add support for EM929x
+ and set MRU to 32768 for better performance.
+Message-ID: <gt6uyoohzyjlqsbb4wro7vjsyhgwpvca46ixmivo6ybvmejsc3@nc3syx4lk4t3>
+References: <20250528175943.12739-1-zxue@semtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] NVIDIA Tegra210 NVJPG support
-To: Mikko Perttunen <cyndis@kapsi.fi>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt>
- <mz5sytol6aw7ouwiimmrd7lqhtvq6nj7pqpxq4ie6em6nwvvkh@2cux3no33gre>
- <621a9459-f2dd-4b19-a083-0e62f1a42f50@kapsi.fi>
- <96b721cd-7223-4b28-a3fd-a4d92c9d5142@tecnico.ulisboa.pt>
- <4cibh66elviiatataa45lsfcyeovkqyxe4fjvfh7uqddhsbe6z@svt2dgeafrdh>
- <78cc8814-c89f-4a5f-9a70-08ed69580c3f@tecnico.ulisboa.pt>
- <36898d74-d9f7-4c5a-b6f2-d9652c674b84@kapsi.fi>
-Content-Language: en-US
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-In-Reply-To: <36898d74-d9f7-4c5a-b6f2-d9652c674b84@kapsi.fi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250528175943.12739-1-zxue@semtech.com>
 
+On Wed, May 28, 2025 at 10:59:43AM -0700, Adam Xue wrote:
 
++ Thomas and Aleksander (for EM919X related question)
 
-On 6/17/25 5:40 AM, Mikko Perttunen wrote:
+> Add MHI controller config for EM929x. It uses the same configuration
+> as EM919x. Also set the MRU to 32768 to improve downlink throughput.
+> 
+
+This also affects the EM919X modem. So I want either Thomas or Aleksander to
+confirm that it doesn't cause any regression.
+
+Rest looks good to me.
+
+- Mani
+
+> 02:00.0 Unassigned class [ff00]: Qualcomm Technologies, Inc Device 0308
+> 	Subsystem: Device 18d7:0301
+> 
+> Signed-off-by: Adam Xue <zxue@semtech.com>
+> ---
+>  drivers/bus/mhi/host/pci_generic.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index 03aa88795209..9bf8e7991745 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -695,6 +695,7 @@ static const struct mhi_pci_dev_info mhi_sierra_em919x_info = {
+>  	.config = &modem_sierra_em919x_config,
+>  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+>  	.dma_data_width = 32,
+> +	.mru_default = 32768,
+>  	.sideband_wake = false,
+>  };
+>  
+> @@ -813,6 +814,9 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+>  	/* EM919x (sdx55), use the same vid:pid as qcom-sdx55m */
+>  	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0306, 0x18d7, 0x0200),
+>  		.driver_data = (kernel_ulong_t) &mhi_sierra_em919x_info },
+> +	/* EM929x (sdx65), use the same configuration as EM919x */
+> +	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, 0x18d7, 0x0301),
+> +		.driver_data = (kernel_ulong_t) &mhi_sierra_em919x_info },
+>  	/* Telit FN980 hardware revision v1 */
+>  	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0306, 0x1C5D, 0x2000),
+>  		.driver_data = (kernel_ulong_t) &mhi_telit_fn980_hw_v1_info },
+> -- 
+> 2.45.2
 > 
 > 
-> On 6/16/25 7:21 PM, Diogo Ivo wrote:
->>
->>
->> On 6/11/25 4:06 PM, Thierry Reding wrote:
->>> On Wed, Jun 11, 2025 at 01:05:40PM +0100, Diogo Ivo wrote:
->>>>
->>>>
->>>> On 6/10/25 10:52 AM, Mikko Perttunen wrote:
->>>>> On 6/10/25 6:05 PM, Thierry Reding wrote:
->>>>>> On Fri, Jun 06, 2025 at 11:45:33AM +0100, Diogo Ivo wrote:
->>>>>>> Hello,
->>>>>>>
->>>>>>> This series adds support for the NVJPG hardware accelerator found 
->>>>>>> in the
->>>>>>> Tegra210 SoC.
->>>>>>>
->>>>>>> The kernel driver is essentially a copy of the NVDEC driver as both
->>>>>>> engines are Falcon-based.
->>>>>>>
->>>>>>> For the userspace part I have written a Mesa Gallium backend [1] 
->>>>>>> that,
->>>>>>> while still very much experimental, works in decoding images
->>>>>>> with VA- API.
->>>>>>>
->>>>>>> I have been using ffmpeg to call VA-API with the following command:
->>>>>>>
->>>>>>> ffmpeg -v verbose -hwaccel vaapi -hwaccel_device
->>>>>>> /dev/dri/renderD129 -i <input.jpg> -pix_fmt bgra -f fbdev
->>>>>>> /dev/fb0
->>>>>>>
->>>>>>> which decodes <input.jpg> and shows the result in the framebuffer.
->>>>>>>
->>>>>>> The firmware for the engine can be obtained from a Linux for Tegra
->>>>>>> distribution.
->>>>>>
->>>>>> By the way, have you tried running this on anything newer than 
->>>>>> Tegra210?
->>>>>> Given your progress on this, we can probably start thinking about
->>>>>> submitting the binaries to linux-firmware.
->>>>>
->>>>> FWIW, the impression I have is that NVJPG is basically unchanged 
->>>>> all the
->>>>> way to Tegra234. So if we add stream ID support and the firmwares, 
->>>>> it'll
->>>>> probably just work. Tegra234 has the quirk that it has two 
->>>>> instances of
->>>>> NVJPG -- these have to be distinguished by their different class IDs.
->>>>> But we should go ahead with the T210 support first.
->>>>
->>>> I have a question here, what exactly are the stream IDs? While working
->>>> on the driver this came up and I didn't manage to figure it out.
->>>
->>> Stream IDs are a way to identify memory transactions as belonging to a
->>> certain device. This comes into play when working with the IOMMU (which
->>> is a Tegra SMMU on Tegra210 and earlier, and an ARM SMMU on Tegra) and
->>> is used to isolate DMA capable devices. Basically for every stream ID
->>> you get a separate I/O address space. NVJPG will have its own address
->>> space, and so will VIC. Each device can only access whatever has been
->>> mapped to it's I/O address space. That means NVJPG can't interfere with
->>> VIC and vice-versa. And neither can any of these engines read from or
->>> write to random system memory if badly programmed.
->>
->> So if I understand this correctly a Stream ID corresponds to an IOMMU
->> domain right?
-> 
-> Technically not necessarily, but in practice that's the case, as the 
-> IOMMU driver creates IOMMU domains for each stream ID in the device 
-> tree. They are similar to the SWGROUPs on Tegra210.
+> To view our privacy policy, including the types of personal information we collect, process and share, and the rights and options you have in this respect, see www.semtech.com/legal.
 
-Ok that makes sense, thank you for the clarification :)
-
->> Ok, then in that case I'll keep the driver in its current state without
->> these implementations if that's ok. Connected with this I wanted to know
->> your thoughts on the best way to upstream this, is it better to wait for
->> testing on different platforms first and then if things work merge a
->> driver that works for all of them or go with Tegra210 first and then add
->> more platforms later on?
-> 
-> Personally, I'd say to go for Tegra210 first.
-
-In that case I believe that in the v2 I sent out of the driver I addressed
-both yours and Thierry's reviews and the driver should be in good condition
-for Tegra210. What are the next steps in order to merge it?
-
-Thanks,
-Diogo
-
-> Cheers
-> Mikko
+-- 
+மணிவண்ணன் சதாசிவம்
 
