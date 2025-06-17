@@ -1,123 +1,124 @@
-Return-Path: <linux-kernel+bounces-690997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 615B6ADDF23
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:51:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3275ADDF40
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD829189BD34
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:51:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A32BE7A8054
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE286220F34;
-	Tue, 17 Jun 2025 22:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226BC2550D8;
+	Tue, 17 Jun 2025 22:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="K21XFM9n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b="KBN2S6J3";
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="Em0VfFx5"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A73D2F5310
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 22:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E79295DBA
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 22:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750200658; cv=none; b=hR8ams3ECvFjubyEYKZXodCu0CMn0BhB6OOIehJB5UyA+a1W+BrRkua0/d0CsOJa1F6vKRj1QWubl12xvfS7x55UugUsojpcBt6ZXx2pOHpcZSZT+vMIH6h/pdRjQa78j9mujho5jhEmDJU5klntE8NNVOH3hd0l6q3I5tAilgk=
+	t=1750200771; cv=none; b=LQIFddHXeR+/BLCMEiVNdIy3Jo0iqyk9FVhq/RkjIsPjl72FPxaE3n4NbfoXEEOBnYRnAlx49YmRoh/qLb4zwHNM2MyBSROKoPDoJkojwPD9XZdpdVFpZlOvgwNR7mEG4Fv2NKTahI6Ti58jrFsGbJBmAh9pTKRg+fnGfQGcG8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750200658; c=relaxed/simple;
-	bh=kIJZkon3PpVO1xO+Y1dqXu0EPSWvOnvPVKJ734wyHYI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ZxnqgiAA8N+OnZ+PEaL+YQSXNhlP06ItLcbMoCXaUwV3Kn+zs/apbnggQlr/4s3sfo2WfoP8xoHbC5QMWL1cS9+iyTrZ24oIGzqoleZyd6WEH+0VgtEfMbqsW3KF4lNNbEFCcHZqs0+EmjelaU3480pOyNRliNlLwZNZoD/X/78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=K21XFM9n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55ACAC4CEE3;
-	Tue, 17 Jun 2025 22:50:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1750200657;
-	bh=kIJZkon3PpVO1xO+Y1dqXu0EPSWvOnvPVKJ734wyHYI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=K21XFM9nN0omO6l6y3lzXoFZTDDxsuz+KxauHElK4d6V1eVHhSaIIM/uE0hpXrXpB
-	 IqDnHv383DOUVN0pJHAhRqSS32hMrMpGdLmfgA+4TTtrPz8AOWJzpBCFYgqv+1oZqI
-	 GZ1CPJClQE+KTy7q2cKA1sFam3IU4c9TUdhfBZ24=
-Date: Tue, 17 Jun 2025 15:50:56 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Rasmus Villemoes
- <linux@rasmusvillemoes.dk>, John Stultz <jstultz@google.com>, Thomas
- Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 1/3] bitmap: generalize node_random()
-Message-Id: <20250617155056.5c1d292d8831e7c7a27c8e5f@linux-foundation.org>
-In-Reply-To: <20250617200854.60753-2-yury.norov@gmail.com>
-References: <20250617200854.60753-1-yury.norov@gmail.com>
-	<20250617200854.60753-2-yury.norov@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1750200771; c=relaxed/simple;
+	bh=A0ZxN9aZ5KdP0dwFmuWSkqKp5m+dIkABM5Qg/UoFprs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=nGSgHDamJinLdheD9QrIL0la6Cz3LKOZafSlIMXeQXijM02/MUdwYAz4AHrEzr8+wbHu1IC9Du9evkS7RYYSSI6EW7tNE35eFSx0QGi8YPRQidAUs5o7sR2PMyNN38ZwVw+eKYfYVgkpVXG/TX+sLKxyAH51EAR7v+owoKusCUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space; spf=pass smtp.mailfrom=elijahs.space; dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b=KBN2S6J3; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=Em0VfFx5; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=elijahs.space
+DKIM-Signature: a=rsa-sha256; b=KBN2S6J3FfQ02LL+cDATLQtsENXBtZzsjiiVnFofZ3sS/vqCuzXvYoFOAnE1peGIMosoQDZzmENhiU0qU55Q+CuTeDTmsGOTPedN+uZIRNwEbTjsc9cTK5ATW5HSzuWsADxTgsuq5iesC7SxAGh5TXgVPDtM53twC2ASz1tGGm0PQRmC0Mdo3nZEmWF8DvwiKttqD13qgzvGgH0T68JRaL83i3rgtUww8vURca5gquG13NQ0a8scqnhni6zRghkHzawlBDJjslCF2VGNvvR59RkOmHE9dTXt3iWK2cGj4VHLYT75gC4drTla7PsaFaHae1AOgONhc141KkXkKvgRbg==; s=purelymail3; d=elijahs.space; v=1; bh=A0ZxN9aZ5KdP0dwFmuWSkqKp5m+dIkABM5Qg/UoFprs=; h=Received:Date:Subject:To:From;
+DKIM-Signature: a=rsa-sha256; b=Em0VfFx5rItcOwhidEMJKTId6c8XgJMxS/rC92O03l6t7gKrgIqxSLhJYGcobmmi4X5NrUBjJPMi/m6sODoTKFlQq16UkUyJaVb+8YOiHhnPgdWGzRRrw51rcqhn95YTRUizVf6WfNi91YN4TuzFiFaQylcuHHV+IQWsST0FHD6NtKxMGyU546127OCYfMRN8Stb7/A40teZ0gy+fewSp54tj3de7w70GW7t+uEQEnMHYtUyB++QrekD1Sx50cP/OOD1iNsADfVkZtpcxj9zM45fGOn8g5+92j1NBUSeIuNJL8gHvJBHtXd3JuE2EUL/JuylnV9NP1CbB4AVErzJrQ==; s=purelymail3; d=purelymail.com; v=1; bh=A0ZxN9aZ5KdP0dwFmuWSkqKp5m+dIkABM5Qg/UoFprs=; h=Feedback-ID:Received:Date:Subject:To:From;
+Feedback-ID: 147366:4866:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -738148538;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Tue, 17 Jun 2025 22:52:30 +0000 (UTC)
+Message-ID: <b2644203-b1cd-4bc9-9afe-bd0ae0390ae4@elijahs.space>
+Date: Tue, 17 Jun 2025 15:52:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] block: mq-deadline: check if elevator is attached to
+ queue in dd_finish_request
+To: Bart Van Assche <bvanassche@acm.org>
+References: <20250617205630.207696-1-git@elijahs.space>
+ <1e25d17b-f481-485c-85a6-d5a8440c1c96@acm.org>
+Content-Language: en-US
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Elijah Wright <git@elijahs.space>
+In-Reply-To: <1e25d17b-f481-485c-85a6-d5a8440c1c96@acm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
 
-On Tue, 17 Jun 2025 16:08:51 -0400 Yury Norov <yury.norov@gmail.com> wrote:
+I see. would it be possible to detach the elevator from the queue in=20
+elevator_exit instead?
 
-> From: "Yury Norov [NVIDIA]" <yury.norov@gmail.com>
-> 
-> Generalize node_random() and make it available to general bitmaps and
-> cpumasks users.
-> 
-> Notice, find_first_bit() is generally faster than find_nth_bit(), and we
-> employ it when there's a single set bit in the bitmap.
-> 
-> See commit 3e061d924fe9c7b4 ("lib/nodemask: optimize node_random for
-> nodemask with single NUMA node").
-> 
-> ...
->
-> --- a/include/linux/nodemask.h
-> +++ b/include/linux/nodemask.h
-> @@ -492,21 +492,7 @@ static __always_inline int num_node_state(enum node_states state)
->  static __always_inline int node_random(const nodemask_t *maskp)
->  {
->  #if defined(CONFIG_NUMA) && (MAX_NUMNODES > 1)
-> -	int w, bit;
-> -
-> -	w = nodes_weight(*maskp);
-> -	switch (w) {
-> -	case 0:
-> -		bit = NUMA_NO_NODE;
+On 6/17/2025 3:25 PM, Bart Van Assche wrote:
+> On 6/17/25 1:56 PM, Elijah Wright wrote:
+>> in dd_finish_request(), per_prio points to a rq->elv.priv[0], which=20
+>> could be
+>> free memory if an in-flight requests completes after its associated=20
+>> scheduler
+>> has been freed
+>>
+>> Signed-off-by: Elijah Wright <git@elijahs.space>
+>> ---
+>> =C2=A0 block/mq-deadline.c | 16 +++++++++-------
+>> =C2=A0 1 file changed, 9 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+>> index 2edf1cac06d5..4d7b21b144d3 100644
+>> --- a/block/mq-deadline.c
+>> +++ b/block/mq-deadline.c
+>> @@ -751,13 +751,15 @@ static void dd_finish_request(struct request *rq)
+>> =C2=A0 {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dd_per_prio *per_prio =3D rq->elv.=
+priv[0];
+>> -=C2=A0=C2=A0=C2=A0 /*
+>> -=C2=A0=C2=A0=C2=A0=C2=A0 * The block layer core may call dd_finish_requ=
+est() without having
+>> -=C2=A0=C2=A0=C2=A0=C2=A0 * called dd_insert_requests(). Skip requests t=
+hat bypassed I/O
+>> -=C2=A0=C2=A0=C2=A0=C2=A0 * scheduling. See also blk_mq_request_bypass_i=
+nsert().
+>> -=C2=A0=C2=A0=C2=A0=C2=A0 */
+>> -=C2=A0=C2=A0=C2=A0 if (per_prio)
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 atomic_inc(&per_prio->stats.=
+completed);
+>> +=C2=A0=C2=A0=C2=A0 if (rq->q->elevator) {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * The block layer core may c=
+all dd_finish_request() without=20
+>> having
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * called dd_insert_requests(=
+). Skip requests that bypassed I/O
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * scheduling. See also blk_m=
+q_request_bypass_insert().
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (per_prio)
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 atom=
+ic_inc(&per_prio->stats.completed);
+>> +=C2=A0=C2=A0=C2=A0 }
+>> =C2=A0 }
+>=20
+> The warnings in dd_exit_sched() will be triggered if dd_finish_request()
+> is ever called with rq->q->elevator =3D=3D NULL.
+>=20
+> If this can happen, it should be fixed in the block layer core instead
+> of in the mq-deadline scheduler.
+>=20
+> Thanks,
+>=20
+> Bart.
 
-If the mask has no bits set, return -1.
-
-> -		break;
-> -	case 1:
-> -		bit = first_node(*maskp);
-> -		break;
-> -	default:
-> -		bit = find_nth_bit(maskp->bits, MAX_NUMNODES, get_random_u32_below(w));
-> -		break;
-> -	}
-> -	return bit;
-> +	return find_random_bit(maskp->bits, MAX_NUMNODES);
->
-> ...
->
-> +unsigned long find_random_bit(const unsigned long *addr, unsigned long size)
-> +{
-> +	int w = bitmap_weight(addr, size);
-> +
-> +	switch (w) {
-> +	case 0:
-> +		return size;
-
-If the mask has no bits set, return the mask's size.
-
-> +	case 1:
-> +		/* Performance trick for single-bit bitmaps */
-> +		return find_first_bit(addr, size);
-> +	default:
-> +		return find_nth_bit(addr, size, get_random_u32_below(w));
-> +	}
-> +}
-
-I'm not seeing how this is correct?
 
