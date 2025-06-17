@@ -1,170 +1,191 @@
-Return-Path: <linux-kernel+bounces-690328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E209ADCF13
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:15:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24857ADCEF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B427117BB0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:11:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 167E33A2645
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B05A2E54DA;
-	Tue, 17 Jun 2025 14:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B512E88B1;
+	Tue, 17 Jun 2025 14:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CLzQdQCI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AKthm1gs"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF0A2E54C9
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 14:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046FA2E2EF4;
+	Tue, 17 Jun 2025 14:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750169221; cv=none; b=R7vFalKNQ53FU/Y9KSaPRoeul0yiTU+7M4UqlQjmJ4eB+h78NarEqW9xSwhwGHYumXsiJhaXTWXUTnjPb/zuMb0YiGuVEf02HCabaUq5MuOouMy0Q9fP6p0QrjTzDfxCGmyEsOv1AoO9anI0uLEaliABpbVRG7nOOoIPCPwh1pw=
+	t=1750169181; cv=none; b=amIfwVQBt2js+SezU4Y6zsyPZn+tX082Di/xY4jvJmQmoXqcj6QlKkgmlnVJPzCffRsmJZKXmPUB/MHNMy6j3LSKTV2hX6zSNwqlZHM7gwaalvDbl1XXfw1vuoOu7b0XBKTOb+cm/BJfdLKRhTdtBEeekRsxvETLjOH/b8oVAjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750169221; c=relaxed/simple;
-	bh=lh4Wu179zCLjOtNueJK/Sz96qfLF/PqNel8O0RNTt9E=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=Sg3e98W9mfyGAYZ/HUdCj6qCAptOg9R6jhZNIZgFFTXgJjkeTVc42VdgXsx2Js0MiHjd1gHNGEmZ8zNiyiyrPzyIyS5nCyW8vZlR1emIwDYxJIORPzElXGC3zar0rUS9IyVCkNHrettnTIalCBdCyZgqo/V5aprpFXL9gs6HrM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CLzQdQCI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750169218;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lh4Wu179zCLjOtNueJK/Sz96qfLF/PqNel8O0RNTt9E=;
-	b=CLzQdQCITdsKXzQbX0x0RHhbqxj4MI8bZUnFNGfj7K5WqjtJiD1mcnUKDAJZP4rGaq7wKb
-	zzZxOwdgo48sCMfaw93NTgWPQhNhG57/z1WfmOo6Guo3D2KA8f7xrKY6QP7UW2FS0XWj4M
-	I22tlEoLhjAwHyQEue4xzmYYftZfXQk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-74-2LLz78djNkqBLGkfhctWoA-1; Tue,
- 17 Jun 2025 10:06:57 -0400
-X-MC-Unique: 2LLz78djNkqBLGkfhctWoA-1
-X-Mimecast-MFC-AGG-ID: 2LLz78djNkqBLGkfhctWoA_1750169214
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9696F19560A5;
-	Tue, 17 Jun 2025 14:06:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.18])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5C81A19560B0;
-	Tue, 17 Jun 2025 14:06:01 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <cover.1750099179.git.lorenzo.stoakes@oracle.com>
-References: <cover.1750099179.git.lorenzo.stoakes@oracle.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-    "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-    Jens Axboe <axboe@kernel.dk>,
-    Jani Nikula <jani.nikula@linux.intel.com>,
-    Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-    Rodrigo Vivi <rodrigo.vivi@intel.com>,
-    Tvrtko Ursulin <tursulin@ursulin.net>,
-    David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Latchesar Ionkov <lucho@ionkov.net>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Christian Schoenebeck <linux_oss@crudebyte.com>,
-    David Sterba <dsterba@suse.com>, David Howells <dhowells@redhat.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Alexander Viro <viro@zeniv.linux.org.uk>,
-    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-    Benjamin LaHaise <bcrl@kvack.org>,
-    Miklos Szeredi <miklos@szeredi.hu>,
-    Amir Goldstein <amir73il@gmail.com>,
-    Kent Overstreet <kent.overstreet@linux.dev>,
-    "Tigran A
- . Aivazian" <aivazian.tigran@gmail.com>,
-    Kees Cook <kees@kernel.org>, Chris Mason <clm@fb.com>,
-    Josef Bacik <josef@toxicpanda.com>, Xiubo Li <xiubli@redhat.com>,
-    Ilya Dryomov <idryomov@gmail.com>, Jan Harkes <jaharkes@cs.cmu.edu>,
-    coda@cs.cmu.edu, Tyler Hicks <code@tyhicks.com>,
-    Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-    Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
-    Sandeep Dhavale <dhavale@google.com>,
-    Hongbo Li <lihongbo22@huawei.com>,
-    Namjae Jeon <linkinjeon@kernel.org>,
-    Sungjong Seo <sj1557.seo@samsung.com>,
-    Yuezhang Mo <yuezhang.mo@sony.com>, Theodore Ts'o <tytso@mit.edu>,
-    Andreas Dilger <adilger.kernel@dilger.ca>,
-    Jaegeuk Kim <jaegeuk@kernel.org>,
-    OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-    Viacheslav Dubeyko <slava@dubeyko.com>,
-    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-    Yangtao Li <frank.li@vivo.com>, Richard Weinberger <richard@nod.at>,
-    Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-    Johannes Berg <johannes@sipsolutions.net>,
-    Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
-    David Woodhouse <dwmw2@infradead.org>,
-    Dave Kleikamp <shaggy@kernel.org>,
-    Trond Myklebust <trondmy@kernel.org>,
-    Anna Schumaker <anna@kernel.org>,
-    Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-    Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-    Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-    Joseph Qi <joseph.qi@linux.alibaba.com>,
-    Bob Copeland <me@bobcopeland.com>,
-    Mike Marshall <hubcap@omnibond.com>,
-    Martin Brandenburg <martin@omnibond.com>,
-    Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>,
-    Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Bharath SM <bharathsm@microsoft.com>,
-    Zhihao Cheng <chengzhihao1@huawei.com>,
-    Hans de Goede <hdegoede@redhat.com>,
-    Carlos Maiolino <cem@kernel.org>,
-    Damien Le Moal <dlemoal@kernel.org>,
-    Naohiro Aota <naohiro.aota@wdc.com>,
-    Johannes Thumshirn <jth@kernel.org>,
-    Dan Williams <dan.j.williams@intel.com>,
-    Matthew Wilcox <willy@infradead.org>,
-    Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-    Pedro Falcato <pfalcato@suse.de>, linux-block@vger.kernel.org,
-    linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-    dri-devel@lists.freedesktop.org, v9fs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-    linux-aio@kvack.org, linux-unionfs@vger.kernel.org,
-    linux-bcachefs@vger.kernel.org, linux-mm@kvack.org,
-    linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-    linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-    linux-f2fs-devel@lists.sourceforge.net, linux-um@lists.infradead.org,
-    linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
-    linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
-    ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-    linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
-    linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-    linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev
-Subject: Re: [PATCH 00/10] convert the majority of file systems to mmap_prepare
+	s=arc-20240116; t=1750169181; c=relaxed/simple;
+	bh=ujEVgJp17HsXe/xyAX0/dp1pdcA2vygvIovjmYs64xM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m8ynnJ1Hf2Lujn95rC2Cfz3yxGe41Mrnq5ndLUsAhPNDHhV6dYwM1rSdkpuwxVqX6GWoJNyJxRovy/U2wix5uPxvYzVqFcz2fYCstmsZkoSsombV0oSQ4c8Iu0hmCM07blL5QtIDcsXaSEvQR1i6Igp+I8w1Iow9FqWFjlauvx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AKthm1gs; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 15DE37E1;
+	Tue, 17 Jun 2025 16:06:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1750169166;
+	bh=ujEVgJp17HsXe/xyAX0/dp1pdcA2vygvIovjmYs64xM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AKthm1gsy+QYt3KxC54bKBFKCQT04uhOdX1ltu29G+NhLXV92t554CL+46clAlTUX
+	 d5gChZn/8MuARCgpyQPEhChYZGYNypFGJWASeRn8jyVGcrwQP+/1qP3xFosSQ0d/i5
+	 5cK514uMEsDInIJyAmFuvfIeFODF0OP3CiAnWeiw=
+Date: Tue, 17 Jun 2025 17:06:02 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Hans Verkuil <hans@jjverkuil.nl>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 5/5] media: uvcvideo: Use prio state from v4l2_device
+Message-ID: <20250617140602.GD10006@pendragon.ideasonboard.com>
+References: <20250616-uvc-fop-v4-0-250286570ee7@chromium.org>
+ <20250616-uvc-fop-v4-5-250286570ee7@chromium.org>
+ <CANiDSCur8zys_CSZC9+-QdD0U556A7HLLdSN8mJuOpXm+Ls8Wg@mail.gmail.com>
+ <20250617100730.GA10006@pendragon.ideasonboard.com>
+ <CANiDSCvfbB+wwFqNGJKBbSGNhXWvxxK=dvGuej7VmHc+hAUNEA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <644215.1750169159.1@warthog.procyon.org.uk>
-Date: Tue, 17 Jun 2025 15:05:59 +0100
-Message-ID: <644216.1750169159@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANiDSCvfbB+wwFqNGJKBbSGNhXWvxxK=dvGuej7VmHc+hAUNEA@mail.gmail.com>
 
-Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On Tue, Jun 17, 2025 at 01:09:38PM +0200, Ricardo Ribalda wrote:
+> On Tue, 17 Jun 2025 at 12:07, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> >
+> > On Mon, Jun 16, 2025 at 08:30:08PM +0200, Ricardo Ribalda wrote:
+> > > On Mon, 16 Jun 2025 at 17:24, Ricardo Ribalda <ribalda@chromium.org> wrote:
+> > > >
+> > > > Currently, a UVC device can have multiple chains, and each chain maintains
+> > > > its own priority state. While this behavior is technically correct for UVC,
+> > > > uvcvideo is the *only* V4L2 driver that does not utilize the priority state
+> > > > defined within `v4l2_device`.
+> > > >
+> > > > This patch modifies uvcvideo to use the `v4l2_device` priority state. While
+> > > > this might not be strictly "correct" for uvcvideo's multi-chain design, it
+> > > > aligns uvcvideo with the rest of the V4L2 drivers, providing "correct enough"
+> > > > behavior and enabling code cleanup in v4l2-core. Also, multi-chain
+> > > > devices are extremely rare, they are typically implemented as two
+> > > > independent usb devices.
+> > >
+> > > As the cover letter says, this last patch 5/5 is a RFC. We can decide
+> > > if it is worth to keep it or not.
+> > >
+> > > The pros is that we can do some cleanup in the core,
+> >
+> > What cleanups would that be ?
+> >
+> > > the cons is that it might break kAPI.
+> >
+> > Multi-chain devices are essentially multiple video devices inside a
+> > single USB function. They are exposed as completely separate devices to
+> > userspace, having the priority ioctls on one chain impact the other
+> > chain wouldn't make much sense to me. I think we should drop this patch.
+> 
+> Ack, let's drop it.
+> 
+> PS: Do you know about a multi chain device that is commercially
+> available? I would love to buy one for testing.
+> Also do you know any "output" device that I can buy?
 
-> This is preferred to the existing f_op->mmap() hook as it does require a
-> VMA to be established yet,
+The only output device I've worked with was a custom camera developed by
+a customer that had a "UVC to VGA" output path. It was a loooooong time
+ago, I don't have a device to test UVC output anymore.
 
-Did you mean ".. doesn't require a VMA to be established yet, ..."
+> > > I checked in the debian sourcecode and I could only find a user of
+> > > PRIORITY for dvb and was optional.
+> >
+> > We could discuss deprecating the priority ioctls overall if we think
+> > they're not useful (and used) by userspace. I was however considering
+> > using them in libcamera though, to prevent other applications from
+> > modifying the camera configuration behind the library's back.
+> 
+> For the record:
+> From: https://codesearch.debian.net/search?q=VIDIOC_S_PRIORITY
+> If I am not wrong, this is the only relevant usecase:
+> https://sources.debian.org/src/zvbi/0.2.44-1/daemon/proxyd.c/?hl=1523#L1523
+> 
+> O_EXCL does not work for you?
 
-David
+I haven't tried it, but tt's defined as
 
+    O_EXCL Ensure that this call creates the file: if this flag is
+	   specified in conjunction with O_CREAT, and pathname already
+	   exists, then open() fails with the error EEXIST.
+
+	   When these two flags are specified, symbolic links are not
+	   followed: if pathname is a symbolic link, then open() fails
+	   regardless of where the symbolic link points.
+
+	   In general, the behavior of O_EXCL is undefined if it is used
+	   without O_CREAT.  There is one exception: on Linux 2.6 and
+	   later, O_EXCL can be used without O_CREAT  if  pathname
+	   refers to a block device.  If the block device is in use by
+	   the system (e.g., mounted), open() fails with the error
+	   EBUSY.
+
+so I don't expect it would work.
+
+It's not a big deal, libcamera doesn't get exclusive access to video
+devices today and the world doesn't collapse (at least not because of
+this specific issue). And we don't have priority support on subdevs, so
+we couldn't solve the whole problem anyway.
+
+> > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > ---
+> > > >  drivers/media/usb/uvc/uvc_driver.c | 2 --
+> > > >  drivers/media/usb/uvc/uvcvideo.h   | 1 -
+> > > >  2 files changed, 3 deletions(-)
+> > > >
+> > > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> > > > index accfb4ca3c72cb899185ddc8ecf4e29143d58fc6..e3795e40f14dc325e5bd120f5f45b60937841641 100644
+> > > > --- a/drivers/media/usb/uvc/uvc_driver.c
+> > > > +++ b/drivers/media/usb/uvc/uvc_driver.c
+> > > > @@ -1728,7 +1728,6 @@ static struct uvc_video_chain *uvc_alloc_chain(struct uvc_device *dev)
+> > > >         INIT_LIST_HEAD(&chain->entities);
+> > > >         mutex_init(&chain->ctrl_mutex);
+> > > >         chain->dev = dev;
+> > > > -       v4l2_prio_init(&chain->prio);
+> > > >
+> > > >         return chain;
+> > > >  }
+> > > > @@ -2008,7 +2007,6 @@ int uvc_register_video_device(struct uvc_device *dev,
+> > > >         vdev->fops = fops;
+> > > >         vdev->ioctl_ops = ioctl_ops;
+> > > >         vdev->release = uvc_release;
+> > > > -       vdev->prio = &stream->chain->prio;
+> > > >         vdev->queue = &queue->queue;
+> > > >         vdev->lock = &queue->mutex;
+> > > >         if (type == V4L2_BUF_TYPE_VIDEO_OUTPUT)
+> > > > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> > > > index 3e6d2d912f3a1cfcf63b2bc8edd3f86f3da305db..5ed9785d59c698cc7e0ac69955b892f932961617 100644
+> > > > --- a/drivers/media/usb/uvc/uvcvideo.h
+> > > > +++ b/drivers/media/usb/uvc/uvcvideo.h
+> > > > @@ -354,7 +354,6 @@ struct uvc_video_chain {
+> > > >                                                  * uvc_fh.pending_async_ctrls
+> > > >                                                  */
+> > > >
+> > > > -       struct v4l2_prio_state prio;            /* V4L2 priority state */
+> > > >         u32 caps;                               /* V4L2 chain-wide caps */
+> > > >         u8 ctrl_class_bitmap;                   /* Bitmap of valid classes */
+> > > >  };
+
+-- 
+Regards,
+
+Laurent Pinchart
 
