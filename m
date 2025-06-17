@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-689281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12A7ADBEED
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 04:12:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B112ADBEEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 04:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B77513A14F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 02:12:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C6ED7AA661
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 02:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B37D20297C;
-	Tue, 17 Jun 2025 02:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0D0205ABA;
+	Tue, 17 Jun 2025 02:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PdK+Ye/c"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sR23UqxR"
 Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2064.outbound.protection.outlook.com [40.107.243.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7281F8AF8
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 02:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3B41FDA7B
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 02:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.64
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750126344; cv=fail; b=cNUDkGOL5A2Yi3ZOz6bCBNwqmX3bwtJ9JFpClJMkNHHfXotx1fjK9lmtO7W7zXshwQQLB6MeJLLcEyJz0tHZX7c7Nu95sxV5ercjr+Mv3NgQfwHGgoqdPrOuNf4J3rbbdjI1C8KXpk0DCABZIinKw+MpnAxpWX1bB3m0v37/t8k=
+	t=1750126346; cv=fail; b=Iebhdk3xvjEQWhxs+X9hE5eaJrJ1h1qrY1VJ8OA0FWyXA5tU2p5N3SrOl+0oBo5aMrj9Dsf4kNw4MQajZrbX7abmL8SxUI8LlJ3svY2uzCp9sQQUL4ABLhiHT6SmteiVbZiq5WM4wk7HsY11PsXIBoJaR4a8sKByZVnaTEbrfCk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750126344; c=relaxed/simple;
-	bh=S4e+9XzKlIrvOyINOii8CzkVw85HJlNYfb1g8CE3TNA=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=pGha40Xk8ikaseVB3tJeLhiKzRbzRSw6skMz1nv6nwDtvra/kfv+Yu9wu7rLCv/G+Xbyq+48lU7mmabokMD1JLk787iI/1S/YfdoMB9kHFgEm5toTdXDSKlVeG6tTmY0cRNXXNmVnsegzgV8MTVLgg3jouHvjCJZQ7XKNMNxBys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PdK+Ye/c; arc=fail smtp.client-ip=40.107.243.64
+	s=arc-20240116; t=1750126346; c=relaxed/simple;
+	bh=N7UO7wHQXxuCm5PacS6BHJrNgpM2js1V5V2lHd94PiM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=slP03kfk1sOver/xTWOgTWWyMQTaQyBFSWL8xRvyhGNnT3+4KH/iBbkGT08WXdhHRJ0dzw/PnhQW6sb6Zxjky1wZYqvlkRwNnOBt0B2vGv8FPUef4rm7QGwGUhgiKd1CxFzlBtOqEI+SZEKVz0QpYH2nLag1/Q9xwGdsRDY1ho4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sR23UqxR; arc=fail smtp.client-ip=40.107.243.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E/Cail8Hw6g5RZ6dPXfVMCkJ7UGSUmt8JlzqIs/p37hXaP/HijZ0YqArwQjI/FJ8meJIKFRJntFTLn28ufXvsdIg4lKZBNRAKolWTXDVOdFJrRezGvtDW1Oas4Mru2blcT/O7Htp2IuaG5BTRUiZaypqoZQ5/Mb6wHJtXAwGbnPKALMthfPwNUaTR2M3X0OMJ2Po4XWcvMHlv/xfNNWJ1devMaAPUmPZV2K/z+TgpLK5LpOj6AF5aqFQh81sFyJ0TW1R1R79VC4tWaPz21KBF03XFj/KBliOce73aqRnf4FuHWYHlCDbqYuCk94N4Wf4MCWnw2/iyC0lkunwAxX96Q==
+ b=Qrqyck0/9JVXU0fJOdQeaEOWY95q0+lt8RjYwOC1g88HXSa5alksB4wBGVAAX8V4xTLRbQ7Nu5TniuWKEOtzg6y5VBVSpg8vJhXJ7pBag7JU8xJ5NRAMMP8lCbIE1zNqcu/7QcAmNzDyyW+0bFPpGjWkjIEGEPDZrlXL0eQrlgA8CXcH4xk9OQPKQ8Furwhhyb3cy2uw2pO31NNgue092Yv9ouNdZoE1TaBPBk9ZBlDmXDP25V06G9wsUJ6dIEb9q5tIJeOKrzcJwTE+63iVPUhlZGdVksrtOaPhSMHcWZLFqln38kvFktIHmA8IZAED7DNnG7y1ZeQd6MHfz7SUWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=M+0JL0aR9rRnZRzTMB3+7v30NXsFAPoqHbiJEOTBb5c=;
- b=Vag5IMNJ9caD5rka1dAMlOOdfmraLUKgHUDi9nD+AvwTVhqPYPprCmBvszrRBmRJpTvUHIg1iSJFYrad73FVtK+XyNHJuw09X2ytj8LXbwaaISL+F/HXKUcxo9XZ+x8RTH6D5C9raMWZ/qfKa4d3LBaPmvoDTEajwfEAXvG4bRglGAZAjB50QyCgBEeh/ERf4ErifEbJwBgRXOuxao7/ALyxE2qL/UruP7VKt8wWA5Wm2BP9hd8wHG2ONohdbQmlI74UpmqhO9snt/VNZB/fPK79Yx7m6ls5fH9NsN0rUJetgytm2BRuArvmLsKzSOyQmc9nWU7h8tdKgzSdaxBsOA==
+ bh=wE8sLxzQaz8zGgNGZIBWr6Ap7mgkheIObVmJrbM19qM=;
+ b=aabqOhD+t2UqxWdyNw7eqtg6X2LMGY03GMU8iDYXy1TQCzPc2zfYZgpvuGRE98ObcPJlxNNGlYwo7XJq2SE66eNTFrLeIKtuCmF6zH21aOxKGJk0VrVXdZLUEnjzM3IEh5YxYisWjEdbSJZVQqaGea4p7OyCW45AURwKBiGyTu2bEpESYjuSBM/hkIOxNdPjthEtxqG1Ow/oyqhwmg6SsTn3mI0qN49O2mYKvMtDTHrzzZDZOHCV6BRP3p/gJ3fi/VUlJTcnksPhB9E+ZvkFxGiREE5DlwWm7kjJ80wmeP8l6gwKvWBSb+0N+k1xytMQtvYCv5+bibCYQRQRPz4EUg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M+0JL0aR9rRnZRzTMB3+7v30NXsFAPoqHbiJEOTBb5c=;
- b=PdK+Ye/cUK8uQa1WKNiVGhpBnuBTKMU5j1L5ZCpDIQ2CrBMdjjp0ldHK5mKQJN8KyS+KGfsmA8Ym5R5CQcT8KfJ98kblbnpT8YQsQUFMnluyhbt625Ed5QeSNeAZBdmGHMv7z2oILePYsD81J4xcfA0GgQnZ6O7csUVW0udI/ovEXfwpjqcThv+Af+6QQNWSJCHmLcy2YRGo+OMLsbvW/XOcOXYJiQPm3ihgdo9AM7XVQwz4LwjWTQePczMhA/ClZ7x9fzUFTaWXaB3b7gOC2yPW+p003bBzl5Oq2Pzwl7guwKSi1yi8uQXh5Ey0xl4ZL5e2QhxRfLwiVZa3UlviRw==
+ bh=wE8sLxzQaz8zGgNGZIBWr6Ap7mgkheIObVmJrbM19qM=;
+ b=sR23UqxRftCauBPfrS9QnKvwhNTxtehvkE3NqKKaQs09eW2nvqJdmbHQT3XHR5oVOkCNuXTJbU15A+bBAhePdf5QqxjcRLqWrBGyYYbu2VQb9pDUDxs4S69TvGO7bYYdlEjWBuKKg4eacGo9LB1NgJFohB/fMHjpin+F4ms/0hEXjHIyKbiFa964das8GKCUCFq0TuCaPj3fGAJbvzNKKWyRScUMKXLnMehEajxOZ8JRPTz6hqoZ9G+L43kxnEpzQqPDvGoFiFTRxN1hhXpr1y42YGciHG1gFmpJWbCMsO5xNTo+X4jLhJz5tIOoEz63iHhuGO+CA/PIGdTAgMCfIA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
  BL1PR12MB5921.namprd12.prod.outlook.com (2603:10b6:208:398::5) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8835.29; Tue, 17 Jun 2025 02:12:18 +0000
+ 15.20.8835.29; Tue, 17 Jun 2025 02:12:20 +0000
 Received: from DS7PR12MB9473.namprd12.prod.outlook.com
  ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
  ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8835.027; Tue, 17 Jun 2025
- 02:12:18 +0000
+ 02:12:20 +0000
 From: Zi Yan <ziy@nvidia.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	linux-mm@kvack.org
@@ -70,14 +71,16 @@ Cc: David Hildenbrand <david@redhat.com>,
 	Richard Chang <richardycc@google.com>,
 	linux-kernel@vger.kernel.org,
 	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v10 0/6] Make MIGRATE_ISOLATE a standalone bit
-Date: Mon, 16 Jun 2025 22:11:08 -0400
-Message-ID: <20250617021115.2331563-1-ziy@nvidia.com>
+Subject: [PATCH v10 1/6] mm/page_alloc: pageblock flags functions clean up.
+Date: Mon, 16 Jun 2025 22:11:09 -0400
+Message-ID: <20250617021115.2331563-2-ziy@nvidia.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250617021115.2331563-1-ziy@nvidia.com>
+References: <20250617021115.2331563-1-ziy@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BN9PR03CA0699.namprd03.prod.outlook.com
- (2603:10b6:408:ef::14) To DS7PR12MB9473.namprd12.prod.outlook.com
+X-ClientProxiedBy: BN9PR03CA0716.namprd03.prod.outlook.com
+ (2603:10b6:408:ef::31) To DS7PR12MB9473.namprd12.prod.outlook.com
  (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -87,244 +90,501 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|BL1PR12MB5921:EE_
-X-MS-Office365-Filtering-Correlation-Id: 64ac10c4-fb95-4017-d8cf-08ddad4462b4
+X-MS-Office365-Filtering-Correlation-Id: f3c889f8-53f5-409a-4827-08ddad4463e6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bL5jOnQ/40vVIEye+LuyJ06TuHat/Lvqcc6NaHwgeV9ZwPpdlSOIhOQOeT3c?=
- =?us-ascii?Q?Ij7uNNaKRaNdrobe0njd5/uQpx5qL6YOg8qBrYxVyipSo1LYIX2v+TgQG00O?=
- =?us-ascii?Q?SC0z5EjciGtb1k/1UmMUvk4FoeSwzTTYtsZ9yJE1vJPFZONQgZHza36RjfeJ?=
- =?us-ascii?Q?pX0IZrnqFCiHibzKeNUqJCysCDQ0elCMuk39zQA9VhEyGntdvFTVtzyiNOHD?=
- =?us-ascii?Q?+DJrMta4QiIMA5PYApGkhbcMBu/n4n+oTsdRjUoMDFAs1oLvXgLOszKdq5Sr?=
- =?us-ascii?Q?/B/F5cB0sKIyVI84/AdFm9uEiVLnbdZDu0ZqQGdWNotcpzqiKr+D04QugqV6?=
- =?us-ascii?Q?AmxwzHhcB6KJgZRnJpMno+0I8ahmj0tE9Sdb0EQNyEshzevZv/ZWbUFa2LvO?=
- =?us-ascii?Q?sSZr1hLEiGxgoAkNUTCHcbfg/pZigaHYgXhVuEshbzD4Vq9k63wDTTpGFgEO?=
- =?us-ascii?Q?M76cTrN3MSWv/Lpp9W9Hyy/nVWzMXow6m8ug6J3S/pCA4uQf7R+Ge+NdpAAK?=
- =?us-ascii?Q?9LiI92KMzBnbMoJVULUgNH3QdCbuGcenWt/RdAgFQErvRzGVA73Nk5kx5s8j?=
- =?us-ascii?Q?eskMBrrl7Wit3HuoYRPAChhOtI/1GkUIxnelvm+1XfwV2vOxDh2Mxvs/8nE6?=
- =?us-ascii?Q?0vA6TINqS4VsClamLtD4Klbv6p0cj4Mu6sZieMQRxzMZOkO6esHd8hyuAjdn?=
- =?us-ascii?Q?MtYusshW4wyJUJ5TVPSWbpdxHeCD9wBAddmJ8oq73NFvHOTINq6D0cIgJGdz?=
- =?us-ascii?Q?2FWwW8CvzRi38mc7ysveHxFgm5cA9/Yohbz5/6rcs99fzlEgoRgx/7JI47I0?=
- =?us-ascii?Q?6EHJCnqvDfSdwPEe2/Yj2gt4OvgEmwZBFojBapbWG0AjFILsAvUWEGcXJg8y?=
- =?us-ascii?Q?qPT7Bameqslp6auCzh1M+ccvTDLMtvAP3NMmyiL94tT0i4jdaA9tB8JA+CJ5?=
- =?us-ascii?Q?EIU8aHm5GW7GIGsRXLHoKYotavTaKIuUQXnQdXRAaN6U9r8y83/kASC3Dwua?=
- =?us-ascii?Q?0+sSAzjPuYE0Ibb5ff/GIkVV9XLcCHuYofjRC6Vox5PWujQPaLf6lflIezbn?=
- =?us-ascii?Q?dIrtPm5pXdbtgJtsezCBEU9HZsizkdFNM3wK7nHB/R1gOPuaFVB+KGqXONVw?=
- =?us-ascii?Q?HQMsYDqgy3StJAr2yRHehmDbk1ZlDwj4PMgGtr5jvnGubSYDnu3CWNE07y/e?=
- =?us-ascii?Q?RTZxmMB8WdvfgctwCs6gJJ/A+LD1bwKzlXoH+hM/cQ2JEvdDsR0WU1WhA5ap?=
- =?us-ascii?Q?a+cdax0Y8Ro6AHvxRLOncenDSwoZe421HNnGyp5tf+yktGp6sNrd2Dx/gtFQ?=
- =?us-ascii?Q?VaHD/X83BF+Osc+X+nPXqJLO91N7rRxBieYjPGjVZDMHXn+8tSGVhXi66+Hk?=
- =?us-ascii?Q?yRNYTVnjMXCK1iWgd75SWFZmgrzuZdwWhYRWnbfRW8ZfChoklUyar3ZVBh8L?=
- =?us-ascii?Q?YEWOCL+gqFg=3D?=
+	=?us-ascii?Q?zyxlTrFlxskokZh5VvLCUAExUU82JWyw7WN0lElRaM12GeKjDzHULCQH7nbH?=
+ =?us-ascii?Q?K62DAp/FeQ8HdoS+Y07aM2naQOvF9BQ5aOBazU+r1qCd6uIQQ8OakTIperAz?=
+ =?us-ascii?Q?ikVAGCz2CeNX9rPw8cSupYkLdIhEx0iDWGXkGD4Sae3q7L4q3uwj0z60HSLY?=
+ =?us-ascii?Q?lw0TR5Vp7eEhq6JliPjd4LbtqA6iiN/N1QeitZjDNbmBTGggUzp7h1vlC/yc?=
+ =?us-ascii?Q?uCM6uXxH6BK5SIU1nCu9INQiBE1vOLeHDcUx9v3VVPbcWJtN4g+fWMZc/+K7?=
+ =?us-ascii?Q?rqVFkv36UyL/uD8b6KZ8s2w/LWUcvGXsErOOUoVFuqZJhk6Uxjnl9AJ7UUcX?=
+ =?us-ascii?Q?R1Hs+128NpCAm+oYVFYzkexvH5qtvBfP4ecXAytKue8iTSg3tCPa+aJiXDJM?=
+ =?us-ascii?Q?jgbJlz1r9IC3NcMruC92dVswGRABb1l7Ofqa+V81pAg6ydk1ir/28VeEv6hq?=
+ =?us-ascii?Q?aY7vnieLpGVyzjpoSs9+3VyztIetb8NJV21hfXPfyXXo4rH3vr65qylbmSN5?=
+ =?us-ascii?Q?B0W9cTwHP2CNqUsLkhhC2nxYXNcbZO8E4rN3PJtfMuPePc4TXTwYEl7WxuoS?=
+ =?us-ascii?Q?naQ1p/IRkwBFaUw3oItVtZ3AdQVw9OcnUAF77d+mb84LUwk4auDNLF0qKkrj?=
+ =?us-ascii?Q?mpapj3A1hLSmdAqizP7auuvvEpcHh2AMRYQfOS3mzaF3zCaNSTf2DCB0Y0oB?=
+ =?us-ascii?Q?i9n6jribaVSaC9cqCOtdTZ3TwlIEpej9o1NC1jD7FQVBjFGiMd7as2SY7s08?=
+ =?us-ascii?Q?yecrglCtKiq2z045hSj5kpZbR0fCBO/yMyyNbqfnYORX8s7815qUmCJed0VM?=
+ =?us-ascii?Q?93OvuzOAXqfq6NjzIbbUPEMsHc7ExYlaCBO8q5vsIl/9EurfhaxiGo7xwvxU?=
+ =?us-ascii?Q?SOp1a3TxlVEt3XmXvtUR8tqULe3JrJNFMQV6ykC5vKpCXoa4EJD7e+DSqpzL?=
+ =?us-ascii?Q?bMy2lyCJu7WOyb5ZbbMbRtHv8BtQ+3Pf/0Uj2UNBwf9SVnXal0kGSCqpXqMW?=
+ =?us-ascii?Q?FZeTIzH5/rL9SHO16VufU3Cu8s8o11EhSVfY3DiDZkeONPHURjnk3cs2pzI7?=
+ =?us-ascii?Q?KENIl83YztlT5yeQz7Bj1lehO/P4OK4rSLZFovS4JJtMGbSF8e1rBDlGVYfN?=
+ =?us-ascii?Q?Vv/vkaRP95vGgIZkwXReghxzviBhfmmkLZOAGCNIjQmIBhdO8dz58tCRO+rc?=
+ =?us-ascii?Q?EGKUd4dTBtQeOxl0hGAMwgtvGRgRRhjBKihywNksEfUQJvqBmOxXm1WbW7pO?=
+ =?us-ascii?Q?PC31Rx8SIetNKbjL7jDSP3vB+hBoqgu/TWXQ9l3/HDmzTTow/CStJQJiM75e?=
+ =?us-ascii?Q?m235489GB13z72iMsabXE6T/skimdspCihUlFMf9uaRXYJZGOunua/xBVt2z?=
+ =?us-ascii?Q?XsgytkGRpbTETdnpkfrXUriKJqNZQUrP8MKJr1rcismuzEyVFcl0QRCjWlui?=
+ =?us-ascii?Q?E2fQoVX+wRA=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2j7HzXNQEsjS1Y2P+w+i1t8VNw/Bmr7BhpwUq8Yt+TL6T6CjMjYOfkNsMfY7?=
- =?us-ascii?Q?/cXwyW02YXmKgQp2xxJGY1ChAxFlfWgJV0d7nCe2EKpVt8wwU2TrAdZz4BXZ?=
- =?us-ascii?Q?EiQtotNt48unUTo3gnFsvdIBHcbY1XLOS8BGeyfnv1lGRLvqy3MNC2aK4VLV?=
- =?us-ascii?Q?0pbHxmoahrn0MA630rC/Xs+dAU1hzSDOpI1Pcmd7ic6hHw2EKJNlgNLeFZIp?=
- =?us-ascii?Q?V70YeE9Hx8vssZol0f7gYG1E0WXKDVpUsZceYBaXUZEWGSDZ+EvSNCVSRK5u?=
- =?us-ascii?Q?ytR5FvX/IYw77aZnEjpm+rOxQepzfWlpobczKLzK1eSRKWOvu189MsWMAqv7?=
- =?us-ascii?Q?lFSfYMRa6Tppz7c1LmaCMqDCIdnVluqXi6URsYJKo2m533LquShX+kCqeDXb?=
- =?us-ascii?Q?gfFGwmFSP5nyNz3y6JVnM8OSzCJ5t2jts12stPnrG77xRK7YkA8t3iVpglVD?=
- =?us-ascii?Q?KIZR/Tm9f5j5u8toEZ83gy0mV9bTbqAiHVsdRqVqJ12/RXebW2t5KxD/tf3L?=
- =?us-ascii?Q?rUQQor0Fhu/cKN+MSj246mfyjYyfvBsptC5pnJV5yFighpQdWpcq0+3lbCT0?=
- =?us-ascii?Q?zdA6OFwoON/iOps4XkwrM9FDFBWuDp5y/CSS5Y/yO2Mg0aSciGMnCjF/qpA4?=
- =?us-ascii?Q?/kuoM89MZmpiRkZDo3jdW1emvs9qAwFI5aJer/se71kimllpUZ3oYhp6cTNW?=
- =?us-ascii?Q?J2B0jcJv/2DZSrj2mYv+oX2CKIOen7MY65AvdMKJ4lY3pjz4N1tqbFyb9qsF?=
- =?us-ascii?Q?86tBaushTxzsunAARaFfzXKBWUFk8EJPY2iI7aro1juaTTR9uS7TPvoKFTu9?=
- =?us-ascii?Q?KwBUpjDaT+Q8G3o51N5QxTO0QjdhHIMtn4Jnk8DLSf+KPFIzufyPIpqKIrRT?=
- =?us-ascii?Q?rDrehV7jL6bp8Pwq+24RX2cUcCwUVrRvaxf7W3TjelAsWGOpeFiemcmGDBHa?=
- =?us-ascii?Q?mQBn/AutnE0wBiSsiyqb5VMjjDX6jIvCwmXgAJhLIm0WZqZM3RrjoMGKROxe?=
- =?us-ascii?Q?jugF7+wPvKavw0gahvEXtctSPIOQ+RlrILig6G583yX/c32gDXPnS3Ge6HdU?=
- =?us-ascii?Q?rrxskh1r9UCZ8IoVjeVGWEYtJzl+vNGOi16/C60PYJuPr1LBq+6YEV1QumYy?=
- =?us-ascii?Q?o2sQxxFWHHpjTXM72rlDR/z09ftzdOLYT9ZpcSdARaO+i6demsjAJzSDeMSs?=
- =?us-ascii?Q?6KjVic3ix9NW5oHxp6j/tMS83q/6ZznUvbqLMJbw+PB5uE9Js8uKwcrsaQJU?=
- =?us-ascii?Q?y9mCk4CVp1AXX/AUFgBL2SPl4Cum3gyGxJw4OUE/KNcbQf3gsKPXITl4zHui?=
- =?us-ascii?Q?of3lFtlz0uXnsnMkphFJbVrxYfOjs6woMJEyf9v6G/qunYD5udI6qI67bOKo?=
- =?us-ascii?Q?8VaqdIqbM8/RZtXyzp0RR2Q2WqQQ+qE+SOFvDVJBPg0jf+8VC7Ps8ZucnbQL?=
- =?us-ascii?Q?RYxsYQbM9zBkcn2Zcvd7vnc80vliCt8WwXYCAZTy9u6LOiCSyOaigeWJs1S3?=
- =?us-ascii?Q?3BJmvwvkdsR05f5VYOu3P5EJRIwCu0kEhz1HPDJEzlnmNSqoQulEI7IJG50a?=
- =?us-ascii?Q?VFouImqeiPRHZsw11cejV+iLdSwnwSz97umKpIe6?=
+	=?us-ascii?Q?npm7AVQCPTUKC48Nk3PuEHCQfi38uW3v4jFNM+pH6/HS/q0zOzf0qXn2P6yJ?=
+ =?us-ascii?Q?oAsZHpZlIJOt66A6YnEBnCi74hPvJtd38qLRue48zUaxO21JpvVnN5WCrYyC?=
+ =?us-ascii?Q?V5JgO8RwShoFEi9tnGy7mY0P8vpP3r8CAyWoMqMbCjxGik/4AtQKoY7LRJ5a?=
+ =?us-ascii?Q?oR3kLe5AOzIj3K6Nl3W5ba1H4Siy4eJGivcknuKAzR4icobjSmvFy01jPheX?=
+ =?us-ascii?Q?mf4saugEGwrYFEj15sGN3FdRTQYhP6V4x9JBT585XTy/v5pAx8Y8v9ZgRIXv?=
+ =?us-ascii?Q?GHk61M7gV7n2s3su8Uvy0n8m1b9VE5QJjtX/P2kKmjZLA8BfmdPIsGkU7876?=
+ =?us-ascii?Q?vJExqDZ+9JbOIJ4z/TJeLAc97sH23BbCGKNlt+64+NvUKdrasTZ9BzlcC19M?=
+ =?us-ascii?Q?Rcd6jaY1c1P83wYoNzTnwBX3c5xLfEuwL/tjUidK77nALxGG909QyNybF4tG?=
+ =?us-ascii?Q?RZaTWGT+IzcDtyhrnb9q7B27iKWMwIyjCf+lSyq6NrCeIOv4ExSKTq2Uu1FY?=
+ =?us-ascii?Q?Kd3kKMoHDjjjs+5zWbaqxyaLjVC4DzZ96GsxkOonp9FFpJaaB4PHia9aHVXl?=
+ =?us-ascii?Q?KSCn29KCtNIcVObqgI/+Fjz5hgKbhoyGWJOLgcNqacdyYd94eI11IQQIV2TG?=
+ =?us-ascii?Q?y//NyKydYGpPDSBH4fcXsoJymrw6xSkNSScamKg2BVwio2rFrsKuN/vPIenq?=
+ =?us-ascii?Q?iAAixYynbsSpy1Jn3YxGlz2HRonlz9sWQ7DEgTQcJzD/Za82eU52J3lyBejb?=
+ =?us-ascii?Q?7iSFN4uwpVbqClqSUEL7fqP2ih2/tAT9bcjkFvDybFVAhcf54EsfNn+ls2aR?=
+ =?us-ascii?Q?BJWTbxJ+PjLB4c1jo9epk8W3aIMJnLur6M1zw39ln6ckA3+IrFOQlGm1YXxQ?=
+ =?us-ascii?Q?i3qiBvzBFUs4XbJs79Gs3G4u8zWiO+4a94r3R+WqFKKjqFZaMY9j7yRE22TF?=
+ =?us-ascii?Q?9CeWQ4fgoFwgZ1OoIrK6g+JfJAe5Qih2V8H6SgEMFLqn7jUA8B+wpmpRUNWk?=
+ =?us-ascii?Q?6ZG155zjhfcYpxb/gz/YSZcd4MKiHZ7sJDb/vOJZzJwmycz0xqDbq/zeAK1D?=
+ =?us-ascii?Q?q2utNHojh0HFBAtbpdp1a4lmU1kJHYa0B/4xQKp9sX4n5YIhsfPoN6wkDLRh?=
+ =?us-ascii?Q?1y0WYZcEhO51WMBE9L1Z8jPlod7TBLoNdOZhLfdYcc4lXHEz3Q/s7/moBcHC?=
+ =?us-ascii?Q?NthVAzj0wx8G+flXzivIwDpj1P6ccSbVKKA30EbYCQ6cZaqJUxX8xowgSHqA?=
+ =?us-ascii?Q?ghOgOODK/mKIjThdqn6ysAnQhTTm95EGZflmS+1ZTSZu0DljzD03sJMB4I2L?=
+ =?us-ascii?Q?rDYpN+7CuPT5Ol+73F3j5vm4t66ICX1pQrNL5jhORxbLJA8PpCRRaHmGULGn?=
+ =?us-ascii?Q?nziwjwO9R8/lbcLwGQkr32EGnF8bWMMxi/BKfjNJRHvC0SvTKSfFjQv07fPn?=
+ =?us-ascii?Q?9ATtdApCMdDTzJoFyzud26mihGxuNwftnggMsPyUlRLZ4k3RQ7sTp60Yl4Bq?=
+ =?us-ascii?Q?QUK+eqWsF7G6YRYCIuW/c9Du+fDb6VkbTWF2M6/zjW52pVhXUMPo3H9TWmEg?=
+ =?us-ascii?Q?IOWycrrrO9vOa0BlHLIdLT45mneyGnpm1nZPb0B0?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64ac10c4-fb95-4017-d8cf-08ddad4462b4
+X-MS-Exchange-CrossTenant-Network-Message-Id: f3c889f8-53f5-409a-4827-08ddad4463e6
 X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2025 02:12:18.5053
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2025 02:12:20.4709
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B1cEXznd4VINuRj/xVBDJQMG72AODFH4X5p1T/DW/RDVEraWEJBAAOb4zId67GWh
+X-MS-Exchange-CrossTenant-UserPrincipalName: tepWsWfXvHeBAX+k7k4JgKc7aWDCbvw9WUP/8ubfKfHnYV2erYScBRkh+4faiY3o
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5921
 
-Hi all,
+No functional change is intended.
 
-This patchset moves MIGRATE_ISOLATE to a standalone bit to avoid
-being overwritten during pageblock isolation process. Currently,
-MIGRATE_ISOLATE is part of enum migratetype (in include/linux/mmzone.h),
-thus, setting a pageblock to MIGRATE_ISOLATE overwrites its original
-migratetype. This causes pageblock migratetype loss during
-alloc_contig_range() and memory offline, especially when the process
-fails due to a failed pageblock isolation and the code tries to undo the
-finished pageblock isolations.
+1. Add __NR_PAGEBLOCK_BITS for the number of pageblock flag bits and use
+   roundup_pow_of_two(__NR_PAGEBLOCK_BITS) as NR_PAGEBLOCK_BITS to take
+   right amount of bits for pageblock flags.
+2. Rename PB_migrate_skip to PB_compact_skip.
+3. Add {get,set,clear}_pfnblock_bit() to operate one a standalone bit,
+   like PB_compact_skip.
+3. Make {get,set}_pfnblock_flags_mask() internal functions and use
+   {get,set}_pfnblock_migratetype() for pageblock migratetype operations.
+4. Move pageblock flags common code to get_pfnblock_bitmap_bitidx().
+3. Use MIGRATETYPE_MASK to get the migratetype of a pageblock from its
+   flags.
+4. Use PB_migrate_end in the definition of MIGRATETYPE_MASK instead of
+   PB_migrate_bits.
+5. Add a comment on is_migrate_cma_folio() to prevent one from changing it
+   to use get_pageblock_migratetype() and causing issues.
 
-It is on top of mm-new.
-
-In terms of performance for changing pageblock types, no performance
-change is observed:
-
-1. I used perf to collect stats of offlining and onlining all memory of a
-40GB VM 10 times and see that get_pfnblock_flags_mask() and
-set_pfnblock_flags_mask() take about 0.12% and 0.02% of the whole process
-respectively with and without this patchset across 3 runs.
-
-2. I used perf to collect stats of dd from /dev/random to a 40GB tmpfs file
-and find get_pfnblock_flags_mask() takes about 0.05% of the process with and
-without this patchset across 3 runs.
-
-
-Changelog
-===
-From V9[8]:
-1. changed acr_flags_t item prefix from ACR_ to ACR_FLAGS_ to avoid
-   conflicting with drm/msm hdmi_acr_cts enum.
-2. converted kexec_handover to use init_pageblock_migratetype() too.
-
-From V8[7]:
-1. made init_pageblock_migratetype() set right migratetype, when
-   page_group_by_mobility_disabled is 1.
-
-From V7[6]:
-1. restored acr_flags_t and renamed ACR_OTHER to ACR_NONE
-
-From V6[5]:
-1. used MIGRATETYPE_AND_ISO_MASK in init_pageblock_migratetype() too.
-2. fixed an indentation issue in Patch 3.
-3. removed acr_flags_t and used enum pb_isolate_mode instead in
-   alloc_contig_range().
-4. collected review tags.
-
-From V5[4]:
-1. used atomic version bitops for pageblock standalone bit operations.
-2. added a helper function for standalone bit check.
-3. renamed PB_migrate_skip to PB_compact_skip.
-4. used #define MIGRATETYPE_AND_ISO_MASK MIGRATETYPE_MASK to simplify
-   !CONFIG_MEMORY_ISOLATION code.
-5. added __MIGRATE_TYPE_END to make sure migratetypes can be stored in
-   PB_migratetype_bits.
-6. used set and clear to implement toggle_pageblock_isolate() and added
-   VM_WARN_ONCE in __move_freepages_block_isolate() to warn isolating a
-   isolated pageblock and unisolating a not isolated pageblock.
-7. dropped toggle_pfnblock_bit().
-8. made acr_flags_t an enum and added ACR_OTHER for non CMA allocation.
-9. renamed pb_isolate_mode items to have PB_ISOLATE_MODE prefix.
-10. collected reviewed-by.
-
-From v4[3]:
-1. cleaned up existing pageblock flag functions:
-   a. added {get,set}_{pfnblock,pageblock}_migratetype() to change
-      pageblock migratetype
-   b. added {get,set,clear}_pfnblock_bit() to change pageblock
-      standalone bit, i.e., PB_migrate_skip and PB_migrate_isolate (added
-      in this series).
-   c. removed {get,set}_pfnblock_flags_mask().
-2. added __NR_PAGEBLOCK_BITS to present the number of pageblock flag bits and
-   used roundup_pow_of_two(__NR_PAGEBLOCK_BITS) as NR_PAGEBLOCK_BITS.
-3. moved {get,set,clear}_pageblock_isolate() to linux/page-isolation.h.
-4. added init_pageblock_migratetype() to initialize a pageblock with a
-   migratetype and isolated. It is used by memmap_init_range(), which is
-   called by move_pfn_range_to_zone() in online_pages() from
-   mm/memory_hotplug.c. Other set_pageblock_migratetype() users are
-   changed too except the ones in mm/page_alloc.c.
-5. toggle_pageblock_isolate() is reimplemented using __change_bit().
-6. set_pageblock_migratetype() gives a warning if a pageblock is changed
-   from MIGRATE_ISOLATE to other migratetype.
-7. added pb_isolate_mode: MEMORY_OFFLINE, CMA_ALLOCATION, ISOLATE_MODE_OTHERS
-   to replace isolate flags.
-8. REPORT_FAILURE is removed, since it is only used by MEMORY_OFFLINE.
-
-From v3[2]:
-1. kept the original is_migrate_isolate_page()
-2. moved {get,set,clear}_pageblock_isolate() to mm/page_isolation.c
-3. used a single version for get_pageblock_migratetype() and
-   get_pfnblock_migratetype().
-4. replace get_pageblock_isolate() with
-   get_pageblock_migratetype() == MIGRATE_ISOLATE, a
-   get_pageblock_isolate() becomes private in mm/page_isolation.c
-5. made set_pageblock_migratetype() not accept MIGRATE_ISOLATE, so that
-   people need to use the dedicate {get,set,clear}_pageblock_isolate() APIs.
-6. changed online_page() from mm/memory_hotplug.c to first set pageblock
-   migratetype to MIGRATE_MOVABLE, then isolate pageblocks.
-7. added __maybe_unused to get_pageblock_isolate(), since it is only
-   used in VM_BUG_ON(), which could be not present when MM debug is off.
-   It is reported by kernel test robot.
-7. fixed test_pages_isolated() type issues reported by kernel test
-   robot.
-
-From v2[1]:
-1. Moved MIGRATETYPE_NO_ISO_MASK to Patch 2, where it is used.
-2. Removed spurious changes in Patch 1.
-3. Refactored code so that migratetype mask is passed properly for all
-callers to {get,set}_pfnblock_flags_mask().
-4. Added toggle_pageblock_isolate() for setting and clearing
-MIGRATE_ISOLATE.
-5. Changed get_pageblock_migratetype() when CONFIG_MEMORY_ISOLATION to
-handle MIGRATE_ISOLATE case. It acts like a parsing layer for
-get_pfnblock_flags_mask().
-
-
-Design
-===
-
-Pageblock flags are read in words to achieve good performance and existing
-pageblock flags take 4 bits per pageblock. To avoid a substantial change
-to the pageblock flag code, 8 pageblock flag bits are used.
-
-It might look like the pageblock flags have doubled the overhead, but in
-reality, the overhead is only 1 byte per 2MB/4MB (based on pageblock config),
-or 0.0000476 %.
-
-Any comment and/or suggestion is welcome. Thanks.
-
-[1] https://lore.kernel.org/linux-mm/20250214154215.717537-1-ziy@nvidia.com/
-[2] https://lore.kernel.org/linux-mm/20250507211059.2211628-2-ziy@nvidia.com/
-[3] https://lore.kernel.org/linux-mm/20250509200111.3372279-1-ziy@nvidia.com/
-[4] https://lore.kernel.org/linux-mm/20250523191258.339826-1-ziy@nvidia.com/
-[5] https://lore.kernel.org/linux-mm/20250530162227.715551-1-ziy@nvidia.com/
-[6] https://lore.kernel.org/linux-mm/20250602151807.987731-1-ziy@nvidia.com/
-[7] https://lore.kernel.org/linux-mm/20250602235247.1219983-1-ziy@nvidia.com/
-
-Zi Yan (6):
-  mm/page_alloc: pageblock flags functions clean up.
-  mm/page_isolation: make page isolation a standalone bit.
-  mm/page_alloc: add support for initializing pageblock as isolated.
-  mm/page_isolation: remove migratetype from
-    move_freepages_block_isolate()
-  mm/page_isolation: remove migratetype from undo_isolate_page_range()
-  mm/page_isolation: remove migratetype parameter from more functions.
-
+Signed-off-by: Zi Yan <ziy@nvidia.com>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: David Hildenbrand <david@redhat.com>
+---
  Documentation/mm/physical_memory.rst |   2 +-
- drivers/virtio/virtio_mem.c          |   2 +-
- include/linux/gfp.h                  |   7 +-
- include/linux/memory_hotplug.h       |   3 +-
- include/linux/mmzone.h               |  21 +-
- include/linux/page-isolation.h       |  47 +++-
- include/linux/pageblock-flags.h      |  48 ++--
- include/trace/events/kmem.h          |  14 +-
- kernel/kexec_handover.c              |   4 +-
- mm/cma.c                             |   2 +-
- mm/hugetlb.c                         |   4 +-
- mm/internal.h                        |   3 +-
- mm/memory_hotplug.c                  |  24 +-
- mm/memremap.c                        |   2 +-
- mm/mm_init.c                         |  24 +-
- mm/page_alloc.c                      | 321 +++++++++++++++++++++------
- mm/page_isolation.c                  | 100 ++++-----
- 17 files changed, 435 insertions(+), 193 deletions(-)
+ include/linux/mmzone.h               |  18 +--
+ include/linux/page-isolation.h       |   2 +-
+ include/linux/pageblock-flags.h      |  34 +++---
+ mm/memory_hotplug.c                  |   2 +-
+ mm/page_alloc.c                      | 171 +++++++++++++++++++++------
+ 6 files changed, 162 insertions(+), 67 deletions(-)
 
+diff --git a/Documentation/mm/physical_memory.rst b/Documentation/mm/physical_memory.rst
+index d3ac106e6b14..9af11b5bd145 100644
+--- a/Documentation/mm/physical_memory.rst
++++ b/Documentation/mm/physical_memory.rst
+@@ -584,7 +584,7 @@ Compaction control
+ 
+ ``compact_blockskip_flush``
+   Set to true when compaction migration scanner and free scanner meet, which
+-  means the ``PB_migrate_skip`` bits should be cleared.
++  means the ``PB_compact_skip`` bits should be cleared.
+ 
+ ``contiguous``
+   Set to true when the zone is contiguous (in other words, no hole).
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 5bec8b1d0e66..76d66c07b673 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -92,8 +92,12 @@ extern const char * const migratetype_names[MIGRATE_TYPES];
+ #ifdef CONFIG_CMA
+ #  define is_migrate_cma(migratetype) unlikely((migratetype) == MIGRATE_CMA)
+ #  define is_migrate_cma_page(_page) (get_pageblock_migratetype(_page) == MIGRATE_CMA)
+-#  define is_migrate_cma_folio(folio, pfn)	(MIGRATE_CMA ==		\
+-	get_pfnblock_flags_mask(&folio->page, pfn, MIGRATETYPE_MASK))
++/*
++ * __dump_folio() in mm/debug.c passes a folio pointer to on-stack struct folio,
++ * so folio_pfn() cannot be used and pfn is needed.
++ */
++#  define is_migrate_cma_folio(folio, pfn) \
++	(get_pfnblock_migratetype(&folio->page, pfn) == MIGRATE_CMA)
+ #else
+ #  define is_migrate_cma(migratetype) false
+ #  define is_migrate_cma_page(_page) false
+@@ -122,14 +126,12 @@ static inline bool migratetype_is_mergeable(int mt)
+ 
+ extern int page_group_by_mobility_disabled;
+ 
+-#define MIGRATETYPE_MASK ((1UL << PB_migratetype_bits) - 1)
++#define get_pageblock_migratetype(page) \
++	get_pfnblock_migratetype(page, page_to_pfn(page))
+ 
+-#define get_pageblock_migratetype(page)					\
+-	get_pfnblock_flags_mask(page, page_to_pfn(page), MIGRATETYPE_MASK)
++#define folio_migratetype(folio) \
++	get_pageblock_migratetype(&folio->page)
+ 
+-#define folio_migratetype(folio)				\
+-	get_pfnblock_flags_mask(&folio->page, folio_pfn(folio),		\
+-			MIGRATETYPE_MASK)
+ struct free_area {
+ 	struct list_head	free_list[MIGRATE_TYPES];
+ 	unsigned long		nr_free;
+diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
+index 898bb788243b..277d8d92980c 100644
+--- a/include/linux/page-isolation.h
++++ b/include/linux/page-isolation.h
+@@ -25,7 +25,7 @@ static inline bool is_migrate_isolate(int migratetype)
+ #define MEMORY_OFFLINE	0x1
+ #define REPORT_FAILURE	0x2
+ 
+-void set_pageblock_migratetype(struct page *page, int migratetype);
++void set_pageblock_migratetype(struct page *page, enum migratetype migratetype);
+ 
+ bool move_freepages_block_isolate(struct zone *zone, struct page *page,
+ 				  int migratetype);
+diff --git a/include/linux/pageblock-flags.h b/include/linux/pageblock-flags.h
+index 6297c6343c55..c240c7a1fb03 100644
+--- a/include/linux/pageblock-flags.h
++++ b/include/linux/pageblock-flags.h
+@@ -19,15 +19,19 @@ enum pageblock_bits {
+ 	PB_migrate,
+ 	PB_migrate_end = PB_migrate + PB_migratetype_bits - 1,
+ 			/* 3 bits required for migrate types */
+-	PB_migrate_skip,/* If set the block is skipped by compaction */
++	PB_compact_skip,/* If set the block is skipped by compaction */
+ 
+ 	/*
+ 	 * Assume the bits will always align on a word. If this assumption
+ 	 * changes then get/set pageblock needs updating.
+ 	 */
+-	NR_PAGEBLOCK_BITS
++	__NR_PAGEBLOCK_BITS
+ };
+ 
++#define NR_PAGEBLOCK_BITS (roundup_pow_of_two(__NR_PAGEBLOCK_BITS))
++
++#define MIGRATETYPE_MASK ((1UL << (PB_migrate_end + 1)) - 1)
++
+ #if defined(CONFIG_HUGETLB_PAGE)
+ 
+ #ifdef CONFIG_HUGETLB_PAGE_SIZE_VARIABLE
+@@ -65,27 +69,23 @@ extern unsigned int pageblock_order;
+ /* Forward declaration */
+ struct page;
+ 
+-unsigned long get_pfnblock_flags_mask(const struct page *page,
+-				unsigned long pfn,
+-				unsigned long mask);
+-
+-void set_pfnblock_flags_mask(struct page *page,
+-				unsigned long flags,
+-				unsigned long pfn,
+-				unsigned long mask);
++enum migratetype get_pfnblock_migratetype(const struct page *page,
++					  unsigned long pfn);
++bool get_pfnblock_bit(const struct page *page, unsigned long pfn,
++		      enum pageblock_bits pb_bit);
++void set_pfnblock_bit(const struct page *page, unsigned long pfn,
++		      enum pageblock_bits pb_bit);
++void clear_pfnblock_bit(const struct page *page, unsigned long pfn,
++			enum pageblock_bits pb_bit);
+ 
+ /* Declarations for getting and setting flags. See mm/page_alloc.c */
+ #ifdef CONFIG_COMPACTION
+ #define get_pageblock_skip(page) \
+-	get_pfnblock_flags_mask(page, page_to_pfn(page),	\
+-			(1 << (PB_migrate_skip)))
++	get_pfnblock_bit(page, page_to_pfn(page), PB_compact_skip)
+ #define clear_pageblock_skip(page) \
+-	set_pfnblock_flags_mask(page, 0, page_to_pfn(page),	\
+-			(1 << PB_migrate_skip))
++	clear_pfnblock_bit(page, page_to_pfn(page), PB_compact_skip)
+ #define set_pageblock_skip(page) \
+-	set_pfnblock_flags_mask(page, (1 << PB_migrate_skip),	\
+-			page_to_pfn(page),			\
+-			(1 << PB_migrate_skip))
++	set_pfnblock_bit(page, page_to_pfn(page), PB_compact_skip)
+ #else
+ static inline bool get_pageblock_skip(struct page *page)
+ {
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index dd1c4332347c..ddc6c6c63a30 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -774,7 +774,7 @@ void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
+ 
+ 	/*
+ 	 * TODO now we have a visible range of pages which are not associated
+-	 * with their zone properly. Not nice but set_pfnblock_flags_mask
++	 * with their zone properly. Not nice but set_pfnblock_migratetype()
+ 	 * expects the zone spans the pfn range. All the pages in the range
+ 	 * are reserved so nobody should be touching them so we should be safe
+ 	 */
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 1d46d0fb1f61..b303f60b6ed1 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -353,81 +353,174 @@ static inline int pfn_to_bitidx(const struct page *page, unsigned long pfn)
+ 	return (pfn >> pageblock_order) * NR_PAGEBLOCK_BITS;
+ }
+ 
++static __always_inline bool is_standalone_pb_bit(enum pageblock_bits pb_bit)
++{
++	return pb_bit > PB_migrate_end && pb_bit < __NR_PAGEBLOCK_BITS;
++}
++
++static __always_inline void
++get_pfnblock_bitmap_bitidx(const struct page *page, unsigned long pfn,
++			   unsigned long **bitmap_word, unsigned long *bitidx)
++{
++	unsigned long *bitmap;
++	unsigned long word_bitidx;
++
++	BUILD_BUG_ON(NR_PAGEBLOCK_BITS != 4);
++	BUILD_BUG_ON(MIGRATE_TYPES > (1 << PB_migratetype_bits));
++	VM_BUG_ON_PAGE(!zone_spans_pfn(page_zone(page), pfn), page);
++
++	bitmap = get_pageblock_bitmap(page, pfn);
++	*bitidx = pfn_to_bitidx(page, pfn);
++	word_bitidx = *bitidx / BITS_PER_LONG;
++	*bitidx &= (BITS_PER_LONG - 1);
++	*bitmap_word = &bitmap[word_bitidx];
++}
++
++
+ /**
+- * get_pfnblock_flags_mask - Return the requested group of flags for the pageblock_nr_pages block of pages
++ * __get_pfnblock_flags_mask - Return the requested group of flags for
++ * a pageblock_nr_pages block of pages
+  * @page: The page within the block of interest
+  * @pfn: The target page frame number
+  * @mask: mask of bits that the caller is interested in
+  *
+  * Return: pageblock_bits flags
+  */
+-unsigned long get_pfnblock_flags_mask(const struct page *page,
+-					unsigned long pfn, unsigned long mask)
++static unsigned long __get_pfnblock_flags_mask(const struct page *page,
++					       unsigned long pfn,
++					       unsigned long mask)
+ {
+-	unsigned long *bitmap;
+-	unsigned long bitidx, word_bitidx;
++	unsigned long *bitmap_word;
++	unsigned long bitidx;
+ 	unsigned long word;
+ 
+-	bitmap = get_pageblock_bitmap(page, pfn);
+-	bitidx = pfn_to_bitidx(page, pfn);
+-	word_bitidx = bitidx / BITS_PER_LONG;
+-	bitidx &= (BITS_PER_LONG-1);
++	get_pfnblock_bitmap_bitidx(page, pfn, &bitmap_word, &bitidx);
+ 	/*
+-	 * This races, without locks, with set_pfnblock_flags_mask(). Ensure
++	 * This races, without locks, with set_pfnblock_migratetype(). Ensure
+ 	 * a consistent read of the memory array, so that results, even though
+ 	 * racy, are not corrupted.
+ 	 */
+-	word = READ_ONCE(bitmap[word_bitidx]);
++	word = READ_ONCE(*bitmap_word);
+ 	return (word >> bitidx) & mask;
+ }
+ 
+-static __always_inline int get_pfnblock_migratetype(const struct page *page,
+-					unsigned long pfn)
++/**
++ * get_pfnblock_bit - Check if a standalone bit of a pageblock is set
++ * @page: The page within the block of interest
++ * @pfn: The target page frame number
++ * @pb_bit: pageblock bit to check
++ *
++ * Return: true if the bit is set, otherwise false
++ */
++bool get_pfnblock_bit(const struct page *page, unsigned long pfn,
++		      enum pageblock_bits pb_bit)
+ {
+-	return get_pfnblock_flags_mask(page, pfn, MIGRATETYPE_MASK);
++	unsigned long *bitmap_word;
++	unsigned long bitidx;
++
++	if (WARN_ON_ONCE(!is_standalone_pb_bit(pb_bit)))
++		return false;
++
++	get_pfnblock_bitmap_bitidx(page, pfn, &bitmap_word, &bitidx);
++
++	return test_bit(bitidx + pb_bit, bitmap_word);
+ }
+ 
+ /**
+- * set_pfnblock_flags_mask - Set the requested group of flags for a pageblock_nr_pages block of pages
++ * get_pfnblock_migratetype - Return the migratetype of a pageblock
++ * @page: The page within the block of interest
++ * @pfn: The target page frame number
++ *
++ * Return: The migratetype of the pageblock
++ *
++ * Use get_pfnblock_migratetype() if caller already has both @page and @pfn
++ * to save a call to page_to_pfn().
++ */
++__always_inline enum migratetype
++get_pfnblock_migratetype(const struct page *page, unsigned long pfn)
++{
++	return __get_pfnblock_flags_mask(page, pfn, MIGRATETYPE_MASK);
++}
++
++/**
++ * __set_pfnblock_flags_mask - Set the requested group of flags for
++ * a pageblock_nr_pages block of pages
+  * @page: The page within the block of interest
+- * @flags: The flags to set
+  * @pfn: The target page frame number
++ * @flags: The flags to set
+  * @mask: mask of bits that the caller is interested in
+  */
+-void set_pfnblock_flags_mask(struct page *page, unsigned long flags,
+-					unsigned long pfn,
+-					unsigned long mask)
++static void __set_pfnblock_flags_mask(struct page *page, unsigned long pfn,
++				      unsigned long flags, unsigned long mask)
+ {
+-	unsigned long *bitmap;
+-	unsigned long bitidx, word_bitidx;
++	unsigned long *bitmap_word;
++	unsigned long bitidx;
+ 	unsigned long word;
+ 
+-	BUILD_BUG_ON(NR_PAGEBLOCK_BITS != 4);
+-	BUILD_BUG_ON(MIGRATE_TYPES > (1 << PB_migratetype_bits));
+-
+-	bitmap = get_pageblock_bitmap(page, pfn);
+-	bitidx = pfn_to_bitidx(page, pfn);
+-	word_bitidx = bitidx / BITS_PER_LONG;
+-	bitidx &= (BITS_PER_LONG-1);
+-
+-	VM_BUG_ON_PAGE(!zone_spans_pfn(page_zone(page), pfn), page);
++	get_pfnblock_bitmap_bitidx(page, pfn, &bitmap_word, &bitidx);
+ 
+ 	mask <<= bitidx;
+ 	flags <<= bitidx;
+ 
+-	word = READ_ONCE(bitmap[word_bitidx]);
++	word = READ_ONCE(*bitmap_word);
+ 	do {
+-	} while (!try_cmpxchg(&bitmap[word_bitidx], &word, (word & ~mask) | flags));
++	} while (!try_cmpxchg(bitmap_word, &word, (word & ~mask) | flags));
++}
++
++/**
++ * set_pfnblock_bit - Set a standalone bit of a pageblock
++ * @page: The page within the block of interest
++ * @pfn: The target page frame number
++ * @pb_bit: pageblock bit to set
++ */
++void set_pfnblock_bit(const struct page *page, unsigned long pfn,
++		      enum pageblock_bits pb_bit)
++{
++	unsigned long *bitmap_word;
++	unsigned long bitidx;
++
++	if (WARN_ON_ONCE(!is_standalone_pb_bit(pb_bit)))
++		return;
++
++	get_pfnblock_bitmap_bitidx(page, pfn, &bitmap_word, &bitidx);
++
++	set_bit(bitidx + pb_bit, bitmap_word);
+ }
+ 
+-void set_pageblock_migratetype(struct page *page, int migratetype)
++/**
++ * clear_pfnblock_bit - Clear a standalone bit of a pageblock
++ * @page: The page within the block of interest
++ * @pfn: The target page frame number
++ * @pb_bit: pageblock bit to clear
++ */
++void clear_pfnblock_bit(const struct page *page, unsigned long pfn,
++			enum pageblock_bits pb_bit)
++{
++	unsigned long *bitmap_word;
++	unsigned long bitidx;
++
++	if (WARN_ON_ONCE(!is_standalone_pb_bit(pb_bit)))
++		return;
++
++	get_pfnblock_bitmap_bitidx(page, pfn, &bitmap_word, &bitidx);
++
++	clear_bit(bitidx + pb_bit, bitmap_word);
++}
++
++/**
++ * set_pageblock_migratetype - Set the migratetype of a pageblock
++ * @page: The page within the block of interest
++ * @migratetype: migratetype to set
++ */
++__always_inline void set_pageblock_migratetype(struct page *page,
++					       enum migratetype migratetype)
+ {
+ 	if (unlikely(page_group_by_mobility_disabled &&
+ 		     migratetype < MIGRATE_PCPTYPES))
+ 		migratetype = MIGRATE_UNMOVABLE;
+ 
+-	set_pfnblock_flags_mask(page, (unsigned long)migratetype,
+-				page_to_pfn(page), MIGRATETYPE_MASK);
++	__set_pfnblock_flags_mask(page, page_to_pfn(page),
++				  (unsigned long)migratetype, MIGRATETYPE_MASK);
+ }
+ 
+ #ifdef CONFIG_DEBUG_VM
+@@ -667,7 +760,7 @@ static inline void __add_to_free_list(struct page *page, struct zone *zone,
+ 	int nr_pages = 1 << order;
+ 
+ 	VM_WARN_ONCE(get_pageblock_migratetype(page) != migratetype,
+-		     "page type is %lu, passed migratetype is %d (nr=%d)\n",
++		     "page type is %d, passed migratetype is %d (nr=%d)\n",
+ 		     get_pageblock_migratetype(page), migratetype, nr_pages);
+ 
+ 	if (tail)
+@@ -693,7 +786,7 @@ static inline void move_to_free_list(struct page *page, struct zone *zone,
+ 
+ 	/* Free page moving can fail, so it happens before the type update */
+ 	VM_WARN_ONCE(get_pageblock_migratetype(page) != old_mt,
+-		     "page type is %lu, passed migratetype is %d (nr=%d)\n",
++		     "page type is %d, passed migratetype is %d (nr=%d)\n",
+ 		     get_pageblock_migratetype(page), old_mt, nr_pages);
+ 
+ 	list_move_tail(&page->buddy_list, &area->free_list[new_mt]);
+@@ -715,7 +808,7 @@ static inline void __del_page_from_free_list(struct page *page, struct zone *zon
+ 	int nr_pages = 1 << order;
+ 
+         VM_WARN_ONCE(get_pageblock_migratetype(page) != migratetype,
+-		     "page type is %lu, passed migratetype is %d (nr=%d)\n",
++		     "page type is %d, passed migratetype is %d (nr=%d)\n",
+ 		     get_pageblock_migratetype(page), migratetype, nr_pages);
+ 
+ 	/* clear reported state and update reported page count */
+@@ -3123,7 +3216,7 @@ static struct page *rmqueue_pcplist(struct zone *preferred_zone,
+ 
+ /*
+  * Do not instrument rmqueue() with KMSAN. This function may call
+- * __msan_poison_alloca() through a call to set_pfnblock_flags_mask().
++ * __msan_poison_alloca() through a call to set_pfnblock_migratetype().
+  * If __msan_poison_alloca() attempts to allocate pages for the stack depot, it
+  * may call rmqueue() again, which will result in a deadlock.
+  */
 -- 
 2.47.2
 
