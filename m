@@ -1,116 +1,199 @@
-Return-Path: <linux-kernel+bounces-689683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EBA7ADC54E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23BD3ADC551
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 037463A4C11
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:46:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 120693A62C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7055585260;
-	Tue, 17 Jun 2025 08:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4D576026;
+	Tue, 17 Jun 2025 08:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXmPsthd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYZNu/IY"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63C423B601;
-	Tue, 17 Jun 2025 08:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7571E3DCF
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 08:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750150007; cv=none; b=q6EHs57lGeyDUc689RuEeNWiL5Bya7QqertaK08dsoG3jNAQEbWSfAualBy4ib0vszsCIuiC6GL//UXwdL03RW4+RMvRNmim8RtSUCELFyFEXwvmuYvZKauWeVa32wGvlJhNbwNlO8OMg+fQuOm+NCN00Mv2Hc9Y/4iFm8TcMqU=
+	t=1750150079; cv=none; b=WGSFCgxh1h/20FjFAdKtM99kXxlPwmAopN3NaYPFp8FBm1vrT9XoonAdft3TZNR7jkZi7w0iNlUrr9y46/NYZeXFw8zvlp2imw5DQsyEgBLOSFHyooZG1zVk01WN9Vc4zzaj8o30lX9w4KGn3UzYnMK/WdUcFX+3sVHg/hX/iKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750150007; c=relaxed/simple;
-	bh=UOC+kxOE3OLiMAYZQ8H+yk57DcCQ6dMktSpb1jyC+6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S486Z+4+w7BLS2XE2ngMf0BoyaieGjiI5Vxv6MafLkf8CUGMBK+kwPt1kGy0PCCg5FoVvSiwhn5SfhQcQ7AuxjWU8RIMhY/DeW8nkPJteFMa7PYvZSb457T5QlxvoIFJlLdzKfAIu3r5LYrM8MnyjL+iTsI1gKj4K6vsHAcgAso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXmPsthd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57CBBC4CEE3;
-	Tue, 17 Jun 2025 08:46:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750150007;
-	bh=UOC+kxOE3OLiMAYZQ8H+yk57DcCQ6dMktSpb1jyC+6A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RXmPsthdJOuimlL4S/oQli4WOuXI41v/dyqIfStlaJikD3cjHFQNJ9QJpwfoD76gl
-	 TItbD3NTfoq4+GgKg1wTFekzpYALQb+GNBiXwThN32ghyR3zGQBwPDD4YePHNNpOqL
-	 fdi+tx0QysjjARUkFKCoD2amPfQ7ldaGbHJJM3tOeZjvwKs06QrpPtqWV/RAPZyYgr
-	 wtseBup9QqemwmilqI9W63RIEk5GpxWAr9lcWv8uteeT/Y4kv+4tJsvHTOFmHsxVaC
-	 g8M7YKSPof+JYC2CgL7kAdOyGdS5aRzZivIn9HZ2IgbjKE0dRGE8aWXFKNSfIEX8hA
-	 gm8qc8Kn1FwBA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uRRxt-000000003p7-16ok;
-	Tue, 17 Jun 2025 10:46:45 +0200
-Date: Tue, 17 Jun 2025 10:46:45 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Praneesh P <praneesh.p@oss.qualcomm.com>
-Cc: Baochen Qiang <quic_bqiang@quicinc.com>,
-	P Praneesh <quic_ppranees@quicinc.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Miaoqing Pan <quic_miaoqing@quicinc.com>,
-	Remi Pommarel <repk@triplefau.lt>, linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] wifi: ath12k: fix dest ring-buffer corruption
-Message-ID: <aFErdeZlT-Hm63pu@hovoldconsulting.com>
-References: <20250604144509.28374-1-johan+linaro@kernel.org>
- <20250604144509.28374-2-johan+linaro@kernel.org>
- <6f3eb9fa-617e-4434-8fc4-33dd92c4bdd2@quicinc.com>
- <aEFqsghEuJc3xxlU@hovoldconsulting.com>
- <ed06d62a-4b98-443a-a2ed-c92058bb521a@quicinc.com>
- <63c2c889-0a09-4b25-a1d2-2aaa92d75d9f@oss.qualcomm.com>
+	s=arc-20240116; t=1750150079; c=relaxed/simple;
+	bh=VlWmSPgV1PjiqoBSuasdLioOpExD34OKldbn7qDwYB4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J1UvJPQqsqeJLBRzBVPau3nbVqlxwAZqqR8X5ZUptu1qNqiN9amD9Y+pG9i1lulISNfJZgZOYK5RfuLO6paI3H50cjCTPQB0j3hSfArbA28CN9yGUBxmFF/pOgCFJDCG3ns7osqgJV+Yk9B56B7GoZiOds5HUChsRmkwa+R/a1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYZNu/IY; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-453066fad06so40461775e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 01:47:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750150076; x=1750754876; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N+SpZuLBwukzwEpp0LTElP9gCCu2gWXx1DVuRQoCZ8U=;
+        b=RYZNu/IY6pM9yFa+041uNQuU6EDk0S6EjZJFTjuTxDR/nFXBCw68nngSXJd+TtxdBi
+         XLlDZo73SBLeVMFAe3xIhxTuVjvQlts3zAW5D0xiHVulUUTUO5efaDCPXU8EClbXjGl2
+         vtNIMmq8xyw8TrGHDnqpbg1TEZOrQbgrbHVbbdTpP6Ht88AWSlDxKNyq09m1MssF1fln
+         jOfeQfn3IelOZOexo1YaYgikUwNv2/nE8Iei8DVhMG7JKoSmWKQNvSYh3fRHfWmUjeVD
+         XX6ZttWGz20oxNEvqmGtwJIZuG+M8umkhe9dHnWh28kyB/8y8Ok0fxtyVpjZ8UZXJM4x
+         vk6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750150076; x=1750754876;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N+SpZuLBwukzwEpp0LTElP9gCCu2gWXx1DVuRQoCZ8U=;
+        b=Ui72yqBUAoRTjcR2okxpV/sT8JbdaaXuO0dfHp2Hta7Fz07/A7x8bQMUpiCR2SP8UR
+         bGOtbu2C6xnEW6DO/jVYelVUvXSsY0XFDvh0mYqMeIQf6msD15bnwyl/0IXDBlV+tYdt
+         +ZoEqMOC0W8klT+Kw+Zd1RsEKmJTK/kqSW0c0S7KX2VWUU4m+4u4WwpbbTGHaU3hfmql
+         T4COcAfnEh3luVAU4NervjWXpAOLX64TYDNDdjNzAhS1EUQRnJ5It1+LT5mINa5FeHTK
+         jWLcGdh2+QbyvGzUsKTzj+sFAl/KiLZ48d72hXbFMObOcYotsHkAp7vbp9+9FbW86EIS
+         67uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWldwsYLRHL0GKZl/ybDKs24UAEhUOhNA3rJqzOaPpR5jf6QqS01Z8B/xHo4ZQN7AwHNbokiforDvcH7u4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWHhB0bVO5uDvqdOiJyo2Y0JK8oaGrlaDn3s9DM3NOsgGUAZQO
+	ASQ63GEKr69fH8sMTpUMOuxshffBNeEggjDeLx+JD0nfEyT3U9bbSVZB
+X-Gm-Gg: ASbGnctS+/J5ghpx7HUKylAavwF5eAi48M+twyMYIww22OzpBtotc32fs/mkHLW8DYH
+	aMRZyAB1zZeib57LfyVk+OQmbDFfU3a9ad537H3EqMRYVJ/XvGPavLrQOSeuDF0sIYt1J1itNs2
+	jZ8KnVQXNLSaJYGizX2nV1EEbXjVUOWkSw0D4f8PQPqafk+0SRimHwugRIiC2bmZYdKrehrrXMO
+	PfyR3KEARhjn0h8prLHE6KQJ4rDtYQjvXAqqMNEwLXcZ5MCcYnRmBhAvdSHF6BY+DfmXMyYrc/l
+	joAf7koACGJQ8dVWTuTTWjx3xDLLEYeeogT2kQVxkEil8ekWnStUUVWB/y6eDFhVCKJM+Zv0gvg
+	PcA==
+X-Google-Smtp-Source: AGHT+IGhSo4sTIxAKrr6iSdP/GPSFBv+fxRz/DzEUGmsb43kwWPBRI88SHOYqyq6LTAYoclrnvEfbQ==
+X-Received: by 2002:a05:600c:1ca1:b0:453:84a:8cf1 with SMTP id 5b1f17b1804b1-4533cac6479mr97494635e9.33.1750150076053;
+        Tue, 17 Jun 2025 01:47:56 -0700 (PDT)
+Received: from localhost.localdomain ([41.79.198.22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e172b03sm167887695e9.36.2025.06.17.01.47.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 01:47:55 -0700 (PDT)
+From: Khalid Ali <khaliidcaliy@gmail.com>
+X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	ardb@kernel.org
+Cc: hpa@zytor.com,
+	linux-kernel@vger.kernel.org,
+	Khalid Ali <khaliidcaliy@gmail.com>
+Subject: [PATCH v3] x86/boot: Don't return encryption mask from __startup_64()
+Date: Tue, 17 Jun 2025 08:46:46 +0000
+Message-ID: <20250617084705.619-1-khaliidcaliy@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <63c2c889-0a09-4b25-a1d2-2aaa92d75d9f@oss.qualcomm.com>
 
-On Mon, Jun 16, 2025 at 02:59:24PM +0530, Praneesh P wrote:
-> On 6/5/2025 4:19 PM, Baochen Qiang wrote:
-> > On 6/5/2025 6:00 PM, Johan Hovold wrote:
-> >> On Thu, Jun 05, 2025 at 04:41:32PM +0800, Baochen Qiang wrote:
-> >>> On 6/4/2025 10:45 PM, Johan Hovold wrote:
+Avoid returning the SME encryption mask from __startup_64(), and instead
+let the function handle encryption directly as needed. The encryption
+mask is already available to callers and can be accessed via
+sme_get_me_mask() in C code, or directly through the sme_me_mask symbol
+in assembly, if CONFIG_AMD_MEM_ENCRYPT is enabled.
 
-> >>>> Add the missing memory barrier to make sure that destination ring
-> >>>> descriptors are read after the head pointers to avoid using stale data
-> >>>> on weakly ordered architectures like aarch64.
-> >>>>
-> >>>> The barrier is added to the ath12k_hal_srng_access_begin() helper for
-> >>>> symmetry with follow-on fixes for source ring buffer corruption which
-> >>>> will add barriers to ath12k_hal_srng_access_end().
-> >>>>
-> >>>> Note that this may fix the empty descriptor issue recently worked around
-> >>>> by commit 51ad34a47e9f ("wifi: ath12k: Add drop descriptor handling for
-> >>>> monitor ring").
+This change aligns with how secondary_startup_64_no_verify handles SME
+and keeps the behavior consistent. For Intel CPUs, SME is not relevant,
+so there is no need to retrieve the mask unless CONFIG_AMD_MEM_ENCRYPT
+is enabled.
 
-> >>> why? I would expect drunk cookies are valid in case of HAL_MON_DEST_INFO0_EMPTY_DESC,
-> >>> rather than anything caused by reordering.
+Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
 
-> >> Based on a quick look it seemed like this could possibly fall in the
-> >> same category as some of the other workarounds I've spotted while
-> >> looking into these ordering issues (e.g. f9fff67d2d7c ("wifi: ath11k:
-> >> Fix SKB corruption in REO destination ring")).
-> >>
-> >> If you say this one is clearly unrelated, I'll drop the comment.
+---
+ arch/x86/boot/startup/map_kernel.c | 11 +++--------
+ arch/x86/include/asm/setup.h       |  2 +-
+ arch/x86/kernel/head_64.S          | 10 ++++------
+ 3 files changed, 8 insertions(+), 15 deletions(-)
 
-> > Praneesh, could you comment here since you made that change?
+diff --git a/arch/x86/boot/startup/map_kernel.c b/arch/x86/boot/startup/map_kernel.c
+index 332dbe6688c4..6fdb340e9147 100644
+--- a/arch/x86/boot/startup/map_kernel.c
++++ b/arch/x86/boot/startup/map_kernel.c
+@@ -30,7 +30,7 @@ static inline bool check_la57_support(void)
+ 	return true;
+ }
+ 
+-static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
++static void __head sme_postprocess_startup(struct boot_params *bp,
+ 						    pmdval_t *pmd,
+ 						    unsigned long p2v_offset)
+ {
+@@ -68,11 +68,6 @@ static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
+ 		}
+ 	}
+ 
+-	/*
+-	 * Return the SME encryption mask (if SME is active) to be used as a
+-	 * modifier for the initial pgdir entry programmed into CR3.
+-	 */
+-	return sme_get_me_mask();
+ }
+ 
+ /*
+@@ -84,7 +79,7 @@ static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
+  * the 1:1 mapping of memory. Kernel virtual addresses can be determined by
+  * subtracting p2v_offset from the RIP-relative address.
+  */
+-unsigned long __head __startup_64(unsigned long p2v_offset,
++void __head __startup_64(unsigned long p2v_offset,
+ 				  struct boot_params *bp)
+ {
+ 	pmd_t (*early_pgts)[PTRS_PER_PMD] = rip_rel_ptr(early_dynamic_pgts);
+@@ -213,5 +208,5 @@ unsigned long __head __startup_64(unsigned long p2v_offset,
+ 	for (; i < PTRS_PER_PMD; i++)
+ 		pmd[i] &= ~_PAGE_PRESENT;
+ 
+-	return sme_postprocess_startup(bp, pmd, p2v_offset);
++	 sme_postprocess_startup(bp, pmd, p2v_offset);
+ }
+diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
+index 692af46603a1..29ea24bb85ff 100644
+--- a/arch/x86/include/asm/setup.h
++++ b/arch/x86/include/asm/setup.h
+@@ -50,7 +50,7 @@ extern unsigned long acpi_realmode_flags;
+ 
+ extern void reserve_standard_io_resources(void);
+ extern void i386_reserve_resources(void);
+-extern unsigned long __startup_64(unsigned long p2v_offset, struct boot_params *bp);
++extern void __startup_64(unsigned long p2v_offset, struct boot_params *bp);
+ extern void startup_64_setup_gdt_idt(void);
+ extern void startup_64_load_idt(void *vc_handler);
+ extern void early_setup_idt(void);
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 3e9b3a3bd039..4390a28f7dad 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -106,18 +106,16 @@ SYM_CODE_START_NOALIGN(startup_64)
+ 
+ 	/*
+ 	 * Perform pagetable fixups. Additionally, if SME is active, encrypt
+-	 * the kernel and retrieve the modifier (SME encryption mask if SME
+-	 * is active) to be added to the initial pgdir entry that will be
+-	 * programmed into CR3.
++	 * the kernel.
+ 	 */
+ 	movq	%r15, %rsi
+ 	call	__startup_64
+ 
+ 	/* Form the CR3 value being sure to include the CR3 modifier */
+-	leaq	early_top_pgt(%rip), %rcx
+-	addq	%rcx, %rax
+-
++	leaq	early_top_pgt(%rip), %rax
++	
+ #ifdef CONFIG_AMD_MEM_ENCRYPT
++	addq	sme_me_mask(%rip), %rax
+ 	mov	%rax, %rdi
+ 
+ 	/*
+-- 
+2.49.0
 
-> Empty/Drop descriptor is intentionally issued by the hardware during 
-> backpressure scenario
-> and is unrelated to the issue discussed in this patch series.
-
-Thanks for confirming. I've dropped this comment in v3:
-
-	https://lore.kernel.org/lkml/20250617084402.14475-1-johan+linaro@kernel.org/
-
-Johan
 
