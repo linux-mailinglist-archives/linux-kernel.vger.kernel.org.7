@@ -1,76 +1,87 @@
-Return-Path: <linux-kernel+bounces-689907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE55DADC832
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:28:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A12ADC846
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3676F3B3522
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:27:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42C417A8740
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27582C0331;
-	Tue, 17 Jun 2025 10:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E2129824E;
+	Tue, 17 Jun 2025 10:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MVnLnf/j"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="jn3HOQwW"
+Received: from esa6.hc1455-7.c3s2.iphmx.com (esa6.hc1455-7.c3s2.iphmx.com [68.232.139.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76600288CA5;
-	Tue, 17 Jun 2025 10:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632A43B1AB;
+	Tue, 17 Jun 2025 10:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750156074; cv=none; b=Up/llgG5os7rfxnlKPuh57w05CIPsiEmdgd1mJ0BpdWha9mVBScELHpLbLppRFbLSiQ0fkICI43/2e9T2BeLBxSOzYdeX0TLGrhjb6Hn8l498GGsJffGjNlL1Al8K59pny4EO90MD6ZFQlJHVF6vxL3AaXwayRUvZFNJs/RypkA=
+	t=1750156153; cv=none; b=q7KO3QQ6N7rsnM8Xxfu8Qs4X9OMyuiYPku7bQ4RdNHXeqeJt8NEFbty5XWwHujXNNxkw8IfKq4wnDi0XBmNUxVsZWyVySPcCKKyowzxAHKum+3maJNCALZ9AIp3DRCV7A3o37YZUSdUbYdVRCqSobNdWU25sUe2kq0F4o8cfzls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750156074; c=relaxed/simple;
-	bh=gqV21TcK9Cc3ulZOth7BRdJuQAZrSi3YuwCV5P2/3fY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lqmgVOWgKUr3zceXM5FwYyRLDatsv1K5qg8hRDbyz0BW1AxyAul7UoBzQA1Upsd+kDjmmDijGcudH4fOm2OV3ZZzGczOOj2fyqYkvR/sksdfN5hgv4HmKPn4r3VoQ0EBj6H36oPzQ/xQtGTQm+AbHWrTBD6g5yDaOqK9ctWPH5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MVnLnf/j; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750156073; x=1781692073;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gqV21TcK9Cc3ulZOth7BRdJuQAZrSi3YuwCV5P2/3fY=;
-  b=MVnLnf/j4EmQI2rTMgah4O4yMqXX5u/9oaKlU9B3FMsNKNxfiwb+KM9Y
-   MIDc1o/iMPPUH449AY7w+sRG1BEJ61parNnZwaGa5wYVqzSU9YcMtKivG
-   Z796oXkdgg371B6oDRy5U3wp9Eze6fktBE7wB+9N3pWpPbwpbolZUlw/z
-   3Mfm9Zt0tOE0THLbT3XkPiaRldumA1Ye1wWXgXViwdCUHXx8sBMs6C0Xz
-   T3kfQjQTYZwlcPC+NtKuffcWmnqrDynC5mduqBdIqVZ61q1D8aNjdsk/n
-   Q50pUSPkyIKQK2JGgEwZshYbNPTz8wyH95Cu38KS8J1Dgb4MnP+GGD7JF
+	s=arc-20240116; t=1750156153; c=relaxed/simple;
+	bh=pnhUkbY2mgh5Xqb/2wQjNDvJKL6EEQEt1xGWbB9n4sI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=g96QU6YKRs/sGkZnDCM/6PttYj8SJYfrlVN7HJC+7xQxCZ3rbrLtKERSd9TM5q+uY/NLxR/Oy9pbbFSyTbHvd6O1+hWkcuog8fSK/qzjEj9I2ppwzr+HMeb4aSG7A6JkISxIdW9UyAorjkHp3wsxyM8GJ4RwaoObJU3F6QNLiFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=jn3HOQwW; arc=none smtp.client-ip=68.232.139.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1750156152; x=1781692152;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=pnhUkbY2mgh5Xqb/2wQjNDvJKL6EEQEt1xGWbB9n4sI=;
+  b=jn3HOQwWP+nTfxMkLNMQVVMo2EPC0mhnZ8E8bGWRiwNy8nQfEYeuZMsK
+   qzwpXwuAqjt0w2T/TRAk0JGsMLGKz0EBnpvaqRiaguAUCz1nZpqj1fRLk
+   sndsNf9x7Hao9pxzuchSNqQMrqHTGZGgG3MWawDFzW2r5ahUWKTBYi4jt
+   /GCNuOgOR2hoqWN33c58qez9gZZppKrfZ2LnEZNdF2BbsXTpFfxZU/v4F
+   54XMhEvVBFv/1SczvA3T+EYj+i08WHMjwY5XEdY592sPwbFhZvfQoLz/c
+   Dw4HhJv6W+W3IwsjLl0bGkevR4/tRaFnsWfBbxyEa0TQceSe+zyoEktTv
    Q==;
-X-CSE-ConnectionGUID: IBUGp3h8StSt+jwt0GWJWw==
-X-CSE-MsgGUID: ochE/QEaTFe2R6xyVIOhIg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="52462100"
-X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="52462100"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 03:27:53 -0700
-X-CSE-ConnectionGUID: lwt4GzZNQpG3EDFu5X4pPQ==
-X-CSE-MsgGUID: UzK3sOE6T+WPbk/BM/Nabg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="154033970"
-Received: from ysun46-mobl (HELO YSUN46-MOBL..) ([10.239.96.51])
-  by orviesa005.jf.intel.com with ESMTP; 17 Jun 2025 03:27:50 -0700
-From: Yi Sun <yi.sun@intel.com>
-To: vinicius.gomes@intel.com,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: dave.jiang@intel.com,
-	yi.sun@intel.com,
-	gordon.jin@intel.com,
-	fenghuay@nvidia.com
-Subject: [PATCH v3 2/2] dmaengine: idxd: Fix refcount underflow on module unload
-Date: Tue, 17 Jun 2025 18:27:12 +0800
-Message-ID: <20250617102712.727333-3-yi.sun@intel.com>
+X-CSE-ConnectionGUID: VEUI9cTvSfSIFjVhGcBRLA==
+X-CSE-MsgGUID: NzL0bd6HTnmYL6vqzUql3A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="206103682"
+X-IronPort-AV: E=Sophos;i="6.16,243,1744038000"; 
+   d="scan'208";a="206103682"
+Received: from unknown (HELO oym-r3.gw.nic.fujitsu.com) ([210.162.30.91])
+  by esa6.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 19:29:03 +0900
+Received: from oym-m3.gw.nic.fujitsu.com (oym-nat-oym-m3.gw.nic.fujitsu.com [192.168.87.60])
+	by oym-r3.gw.nic.fujitsu.com (Postfix) with ESMTP id 1820AE0ABD;
+	Tue, 17 Jun 2025 19:29:01 +0900 (JST)
+Received: from oym-om2.fujitsu.com (oym-om2.o.css.fujitsu.com [10.85.58.162])
+	by oym-m3.gw.nic.fujitsu.com (Postfix) with ESMTP id D8859D765C;
+	Tue, 17 Jun 2025 19:29:00 +0900 (JST)
+Received: from sm-arm-grace07.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
+	by oym-om2.fujitsu.com (Postfix) with ESMTP id 1D13B40045BEB;
+	Tue, 17 Jun 2025 19:29:00 +0900 (JST)
+From: Koichi Okuno <fj2767dz@fujitsu.com>
+To: Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Koichi Okuno <fj2767dz@fujitsu.com>
+Subject: [PATCH v5 0/2] perf: Fujitsu: Add Uncore MAC/PCI PMU driver
+Date: Tue, 17 Jun 2025 19:27:48 +0900
+Message-ID: <20250617102819.3685543-1-fj2767dz@fujitsu.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250617102712.727333-1-yi.sun@intel.com>
-References: <20250617102712.727333-1-yi.sun@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,39 +90,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A recent refactor introduced a misplaced put_device() call, leading to a
-reference count underflow during module unload.
+This adds two new dynamic PMUs to the Perf Events framework to program
+and control the Uncore MAC/PCI PMUs in Fujitsu chips.
 
-There is no need to add additional put_device() calls for idxd groups,
-engines, or workqueues. Although commit a409e919ca3 claims:"Note, this
-also fixes the missing put_device() for idxd groups, engines, and wqs."
-It appears no such omission existed. The required cleanup is already
-handled by the call chain:
-idxd_unregister_devices() -> device_unregister() -> put_device()
+These drivers were created with reference to drivers/perf/qcom_l3_pmu.c.
 
-Extend idxd_cleanup() to perform the necessary cleanup, and remove
-idxd_cleanup_internals() which was not originally part of the driver
-unload path and introduced unintended reference count underflow.
+These drivers export formatting and event information to sysfs so they can
+be used by the perf user space tools with the syntaxes:
 
-Fixes: a409e919ca32 ("dmaengine: idxd: Refactor remove call with idxd_cleanup() helper")
-Signed-off-by: Yi Sun <yi.sun@intel.com>
+perf stat -e mac_iod0_mac0_ch0/ea-mac/ ls
+perf stat -e mac_iod0_mac0_ch0/event=0x80/ ls
 
-diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-index 40cc9c070081..40f4bf446763 100644
---- a/drivers/dma/idxd/init.c
-+++ b/drivers/dma/idxd/init.c
-@@ -1292,7 +1292,10 @@ static void idxd_remove(struct pci_dev *pdev)
- 	device_unregister(idxd_confdev(idxd));
- 	idxd_shutdown(pdev);
- 	idxd_device_remove_debugfs(idxd);
--	idxd_cleanup(idxd);
-+	perfmon_pmu_remove(idxd);
-+	idxd_cleanup_interrupts(idxd);
-+	if (device_pasid_enabled(idxd))
-+		idxd_disable_system_pasid(idxd);
- 	pci_iounmap(pdev, idxd->reg_base);
- 	put_device(idxd_confdev(idxd));
- 	pci_disable_device(pdev);
+perf stat -e pci_iod0_pci0/ea-pci/ ls
+perf stat -e pci_iod0_pci0/event=0x80/ ls
+
+FUJITSU-MONAKA PMU Events Specification v1.1 URL:
+https://github.com/fujitsu/FUJITSU-MONAKA
+
+Changes in v5:
+- Update PMU events for FUJITSU-MONAKA to latest(v1.1) spec.
+  The changed events are as follows:
+  - Removed events:
+    ea-memory-mac-read
+    ea-memory-mac-pwrite
+  - Description changed events:
+    read-count-return
+    read-count-return-pftgt-hit
+    read-count-return-pftgt-miss
+    ea-mac
+    ea-memory
+    ea-ha
+    ea-pci
+- Modify the code as suggested. (Jonathan Cameron)
+  - Added include mod_devicetable.h.
+  - EA events that share the same description as MAC events have been
+    removed.
+    These events will remain in the specification, but will be removed
+    from the code.
+    These events will be supported in future enhancements as the
+    specification changes.
+  - Changed MAC events with the same description to different
+    description.
+  - Changed some programming styles as suggested.
+- Link to v4:https://lore.kernel.org/all/20250116045911.3382537-1-fj5100bi@fujitsu.com/
+
+Koichi Okuno (2):
+  perf: Fujitsu: Add the Uncore MAC PMU driver
+  perf: Fujitsu: Add the Uncore PCI PMU driver
+
+ .../admin-guide/perf/fujitsu_mac_pmu.rst      |  73 +++
+ .../admin-guide/perf/fujitsu_pci_pmu.rst      |  50 ++
+ Documentation/admin-guide/perf/index.rst      |   2 +
+ drivers/perf/Kconfig                          |  18 +
+ drivers/perf/Makefile                         |   2 +
+ drivers/perf/fujitsu_mac_pmu.c                | 569 ++++++++++++++++++
+ drivers/perf/fujitsu_pci_pmu.c                | 553 +++++++++++++++++
+ 7 files changed, 1267 insertions(+)
+ create mode 100644 Documentation/admin-guide/perf/fujitsu_mac_pmu.rst
+ create mode 100644 Documentation/admin-guide/perf/fujitsu_pci_pmu.rst
+ create mode 100644 drivers/perf/fujitsu_mac_pmu.c
+ create mode 100644 drivers/perf/fujitsu_pci_pmu.c
+
 -- 
 2.43.0
 
