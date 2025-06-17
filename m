@@ -1,274 +1,107 @@
-Return-Path: <linux-kernel+bounces-690088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C74ADCBA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:32:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C12ADCB86
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5771A18954C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:32:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52F0E188EDC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770112DE1F8;
-	Tue, 17 Jun 2025 12:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QpEX4HTj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84399238175;
+	Tue, 17 Jun 2025 12:29:22 +0000 (UTC)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D01F9C1;
-	Tue, 17 Jun 2025 12:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3CE218EB1;
+	Tue, 17 Jun 2025 12:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750163530; cv=none; b=DIkRTWvBm9g2E2gze7twH9F7DjqczgvB6FfwYqJ2l1GyqhNaoVnQczrJ1yrIJDp6iqJPbCnXwdHU0tVjB76Ai7iNlbtD1VbWwMUJD9RohrI/eTFE3uJ/BDgEQ6L7Ak8yMs2r3lEhyzF/4HwE4sFg/gUBUjH9dHGxW111pFFBSjg=
+	t=1750163362; cv=none; b=MbszdA+Tipo0uouLtdfu6WD8z0XO3jVuzwinhQisoJtCQZmO6niQpW1ys5ubat2gvLKLHEl4c/fj3WI8gtnp0QwdYzIP2rz8Z22M+Mb2EQ6GmroCbEn7IZ0Qdw0GcAmbgZJv2/E92+F9Vb2OscOPjjllE9CTPaKThjCda3B3rFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750163530; c=relaxed/simple;
-	bh=LuiDLCiBmzOtrkWiGYzaos/vIBFgUoxHOmHYolNd7Lk=;
-	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=UmWSOsh+2GayQKVKVOca5Ohq8GZjaiSxd63+j72QlotteImvJTfZiOVO2igYgIan+mpLk9h0Y/aACAI3SZGPhV0iWM4J4DtIQBB1BKgw332bfnoN8DnD4q7tMN5eG6N5Qg0WpWKWFnhrMt4/RJCIUm8HZDTl6oELujcMbEhTskg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QpEX4HTj; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750163529; x=1781699529;
-  h=from:to:cc:date:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=LuiDLCiBmzOtrkWiGYzaos/vIBFgUoxHOmHYolNd7Lk=;
-  b=QpEX4HTjGb+kOamxXGo8exyPO0M/+hM8+233XUrO6zScTd2dkEpF5AMX
-   xHcaPTVpel4QivDfaHKSabBukmop+fjq14OfDj78iWm4b0fCuPLNoSElm
-   /VQUev73vKTiVKPxndUapQa2dEGfvFwvScNaWEdHWh70ETyfkGxytf9Gi
-   mKPHcDO+1H6YY8AovSb1GvEoWVxEv36L0gkra0HT2RZF+sTsg2RJ3a/wc
-   S9pzEvQaEpCBGceHZw4Ljfuby3jv8ThnrRt9bai/hTYZSeX2Haj0UkTjL
-   KNPSCpwf/zHUFjSFCIz9ZzTrfi+7i6NqutGjgjli0/gZhF/ugHPp5OPO1
-   w==;
-X-CSE-ConnectionGUID: JLKRNoqkQC2waMXm/O7BwA==
-X-CSE-MsgGUID: ntB2BaFeSRCQY+zUE42TXA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="52252406"
-X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="52252406"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 05:30:46 -0700
-X-CSE-ConnectionGUID: 8RLb4unqRnShhIEZfTrZnQ==
-X-CSE-MsgGUID: pNrz+SDnSDiOy62onCbY6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="153656018"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.164])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 05:30:43 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>, Pavel Machek <pavel@ucw.cz>
-Date: Tue, 17 Jun 2025 15:28:16 +0300
-Subject: [GIT PULL] platform-drivers-x86 for v6.16-2
-Message-ID: <pdx86-pr-20250617152816-1278911842@linux.intel.com>
+	s=arc-20240116; t=1750163362; c=relaxed/simple;
+	bh=1rabJWHs/troXwkLRRhetm/8+lxBBJBnQJuQDDtiXSQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E9Fr5QTZM72gbKjPD085gZ5KJg1tnjTduNI0Ya9UYyYGXclFVIfMISMJoiELQFL3lo0L7NCp7JOC2ZXUHE4697ByNEJVqNRC3yT/WDDW/fWF/IdVS235vLQ0p44y1H5wbPKwWBG/hUmI5epcPJnpTrPjjt9DQuDppJEhirjo2eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4e7fc3309f2so822883137.2;
+        Tue, 17 Jun 2025 05:29:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750163356; x=1750768156;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uly5rMibStMdldgH/XC+DdGvc/SzsbEOlkLd11yOicU=;
+        b=dfr7NktUk0k0y9GJZLEoYi8lpXckQZAhFgitxPyBmmtLMwn20pprnBLu7XyvG8xWxA
+         XjqR2ta0KUmXaO+vy0AjECHVE/u9LUCX1gKCV8ePpw90pSyDtuysaMMWPAdLxsuPyKGH
+         YK7y6uA+JWfwv3BkC7/BU5bjwBcCWNORpbQssziRxuNzE49rqB0NJnnidCi76qeyCXlp
+         AxQeOEKuoFAMuskSxh8jqAT8jDOjIJTcKU9cAGA4e+FyKPPO8VlbTXVVksJFjfg1gxOK
+         zcPQSC5AyrIv/g/CJqPQLXIA2qfJ3yqfmCVOumTNuC+A06bLeAYwmSm98cAPK/al55xn
+         jBuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDkLlZSnxbE9Ah1uAgWfqH2Z8CIbGs5CbDPGgW4b3+RLUNMRLebjfKR1FM65Uj2Xr/YI5/ohDmC7uqOKk=@vger.kernel.org, AJvYcCWJJZEt/k3Qa6uim9GELNXXsrD68LVJYiHDH29qoQxWfkZbiGiWRynnb6yjkyPfnpTUWA7zO/oXwlTTxdCI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7Y5sr8gIg48hslLHgc0q0p19/iEkVKIZVh87aDQ1ZI0eYwC0u
+	jfp5uVpZ28NjrjBWwQVRaW+ixg8exoEkr0FcYHnNmKXuavPhihu1NvgbzogVsDuo
+X-Gm-Gg: ASbGncvEaWTePzBbDonNv1JrwX8J1WCUbXcn3SAbboqY/VculdqmsV8lq8YC5GKYplv
+	ZJBfLNJm+SC/MW54qmTwrZzp48MSKaPvhtqgc2+SJB8BUVkEVbiv3ki26dW3ErkilGtAoEz7V0e
+	UHXgOdP+5ZUzQnfrB8no1v/nRykTSaow8oGEFuOPN39MlT5Y0h8MaJqrWJLgXP8w3xqp0mJpJQK
+	FzcjyfXleg1Dc2cvgZ0tvV4FowHP/QbNEcRBTfin7upcql0lTh6AJwiq06t0rwTk3cQi97KnReN
+	A0pSFiY8n0hnPWSzKEOLRaT3HxcquDhPoepHCehdxrMvYz7YO4PBIQPcWvBBaEoaEWDS64WGfhE
+	9f3tuoWpSsxrAO9yzdNiphLnF
+X-Google-Smtp-Source: AGHT+IFmZEcii9qLnDX7tPSnNnbt3GSrEazD1Fz6FNjMWw1e+qqMvLFx9hM0qGG2n+gRO5AXuD8iyg==
+X-Received: by 2002:a05:6102:26d3:b0:4de:d08f:6727 with SMTP id ada2fe7eead31-4e7f63a1f01mr8365900137.13.1750163356430;
+        Tue, 17 Jun 2025 05:29:16 -0700 (PDT)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4e7f2fbf5b9sm1450960137.29.2025.06.17.05.29.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jun 2025 05:29:16 -0700 (PDT)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4e2b5ffb932so1513186137.0;
+        Tue, 17 Jun 2025 05:29:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUBty6xD7iZkyQ9bzBix6HCaQac8MxtYydnw7g0ExdNCxXXKWXSR+CEePRH8MHjdITJp0a56QlzEKcsD7UM@vger.kernel.org, AJvYcCVSuDTlhxdtnqBv4aKue8XlPBBRUrV6ntktVxWd7JsCWnmPoWKmEQVOI2vfRdpEgXw8QIXlglcq4L2U3Bo=@vger.kernel.org
+X-Received: by 2002:a05:6102:6c9:b0:4e5:9867:14fb with SMTP id
+ ada2fe7eead31-4e7f63f3d52mr8675512137.24.1750163355790; Tue, 17 Jun 2025
+ 05:29:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Hi Linus,
-
-Here is a platform-drivers-x86 fixes PR for v6.16.
-
-Fixes and New HW Support
-
-- amd/hsmp: Timeout handling fixes
-
-- amd/pmc:
-
-  - Clear metrics table at start of cycle
-
-  - Add PCSpecialist Lafite Pro V 14M to 8042 quirks list
-
-- amd/pmf: Fix error handling corner cases (nth attempt)
-
-- alienware-wmi-wmax: Revert G-Mode support as it lowers performance
-
-- dell_rbu:
-
-  - Fix sparse lock context warning
-
-  - Fix list head usage
-
-  - Don't overwrite data buffer past the size of the last packet
-
-- ideapad-laptop: Ensure EC is not polled too frequently
-
-- intel-uncore-freq:
-
-  - Fail module load when plat_info is NULL
-
-  - Avoid a non-literal format string as it triggers a compiler warning
-
-- intel/pmc: Add Lunar Lake and Panther Lake support to SSRAM Telemetry
-
-- intel/power-domains: Fix error code in tpmi_init()
-
-- samsung-galaxybook: Add support for Notebook 9 Pro and others (SAM0426)
-
-Regards, i.
-
-
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
-
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.16-2
-
-for you to fetch changes up to e2468dc700743683e1d1793bbd855e2536fd3de2:
-
-  Revert "platform/x86: alienware-wmi-wmax: Add G-Mode support to Alienware m16 R1" (2025-06-13 15:09:02 +0300)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v6.16-2
-
-Fixes and New HW Support
-
-- amd/hsmp: Timeout handling fixes
-
-- amd/pmc:
-
-  - Clear metrics table at start of cycle
-
-  - Add PCSpecialist Lafite Pro V 14M to 8042 quirks list
-
-- amd/pmf: Fix error handling corner cases (nth attempt)
-
-- alienware-wmi-wmax: Revert G-Mode support as it lowers performance
-
-- dell_rbu:
-
-  - Fix sparse lock context warning
-
-  - Fix list head usage
-
-  - Don't overwrite data buffer past the size of the last packet
-
-- ideapad-laptop: Ensure EC is not polled too frequently
-
-- intel-uncore-freq:
-
-  - Fail module load when plat_info is NULL
-
-  - Avoid a non-literal format string as it triggers a compiler warning
-
-- intel/pmc: Add Lunar Lake and Panther Lake support to SSRAM Telemetry
-
-- intel/power-domains: Fix error code in tpmi_init()
-
-- samsung-galaxybook: Add support for Notebook 9 Pro and others (SAM0426)
-
-The following is an automated shortlog grouped by driver:
-
-amd/pmc:
- -  Add PCSpecialist Lafite Pro V 14M to 8042 quirks list
-
-amd: pmc:
- -  Clear metrics table at start of cycle
-
-amd: pmf:
- -  Prevent amd_pmf_tee_deinit() from running twice
- -  Simplify error flow in amd_pmf_init_smart_pc()
- -  Use device managed allocations
-
-dell_rbu:
- -  Bump version
- -  Fix list usage
- -  Fix lock context warning
- -  Stop overwriting data buffer
-
-ideapad-laptop:
- -  use usleep_range() for EC polling
-
-intel/pmc:
- -  Add Lunar Lake support to Intel PMC SSRAM Telemetry
- -  Add Panther Lake support to Intel PMC SSRAM Telemetry
-
-intel: power-domains:
- -  Fix error code in tpmi_init()
-
-intel-uncore-freq:
- -  avoid non-literal format string
- -  Fail module load when plat_info is NULL
-
-MAINTAINERS: .mailmap:
- -  Update Hans de Goede's email address
-
-platform/x86: alienware-wmi-wmax:
- - Revert: Add G-Mode support to Alienware m16 R1
-
-samsung-galaxybook:
- -  Add SAM0426
-
-x86/platform/amd:
- -  move final timeout check to after final sleep
- -  replace down_timeout() with down_interruptible()
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      platform/x86/intel-uncore-freq: avoid non-literal format string
-
-Dan Carpenter (1):
-      platform/x86/intel: power-domains: Fix error code in tpmi_init()
-
-Hans de Goede (1):
-      MAINTAINERS: .mailmap: Update Hans de Goede's email address
-
-Jake Hillion (2):
-      x86/platform/amd: move final timeout check to after final sleep
-      x86/platform/amd: replace down_timeout() with down_interruptible()
-
-Joshua Grisham (1):
-      platform/x86: samsung-galaxybook: Add SAM0426
-
-Kurt Borja (1):
-      Revert "platform/x86: alienware-wmi-wmax: Add G-Mode support to Alienware m16 R1"
-
-Mario Limonciello (5):
-      platform/x86/amd: pmc: Clear metrics table at start of cycle
-      platform/x86/amd: pmf: Use device managed allocations
-      platform/x86/amd: pmf: Prevent amd_pmf_tee_deinit() from running twice
-      platform/x86/amd: pmf: Simplify error flow in amd_pmf_init_smart_pc()
-      platform/x86/amd/pmc: Add PCSpecialist Lafite Pro V 14M to 8042 quirks list
-
-Rong Zhang (1):
-      platform/x86: ideapad-laptop: use usleep_range() for EC polling
-
-Srinivas Pandruvada (1):
-      platform/x86/intel-uncore-freq: Fail module load when plat_info is NULL
-
-Stuart Hayes (4):
-      platform/x86: dell_rbu: Fix lock context warning
-      platform/x86: dell_rbu: Fix list usage
-      platform/x86: dell_rbu: Stop overwriting data buffer
-      platform/x86: dell_rbu: Bump version
-
-Xi Pardee (2):
-      platform/x86/intel/pmc: Add Lunar Lake support to Intel PMC SSRAM Telemetry
-      platform/x86/intel/pmc: Add Panther Lake support to Intel PMC SSRAM Telemetry
-
- .mailmap                                           |   1 +
- MAINTAINERS                                        |  72 +++++++-------
- drivers/platform/x86/amd/hsmp/hsmp.c               |  14 ++-
- drivers/platform/x86/amd/pmc/pmc-quirks.c          |   9 ++
- drivers/platform/x86/amd/pmc/pmc.c                 |   2 +
- drivers/platform/x86/amd/pmf/core.c                |   3 +-
- drivers/platform/x86/amd/pmf/tee-if.c              | 108 ++++++++-------------
- drivers/platform/x86/dell/alienware-wmi-wmax.c     |   2 +-
- drivers/platform/x86/dell/dell_rbu.c               |  10 +-
- drivers/platform/x86/ideapad-laptop.c              |  19 +++-
- drivers/platform/x86/intel/pmc/core.h              |   7 ++
- drivers/platform/x86/intel/pmc/ssram_telemetry.c   |   3 +
- drivers/platform/x86/intel/tpmi_power_domains.c    |   4 +-
- .../uncore-frequency/uncore-frequency-common.c     |   2 +-
- .../intel/uncore-frequency/uncore-frequency-tpmi.c |   9 +-
- drivers/platform/x86/samsung-galaxybook.c          |   1 +
- 16 files changed, 137 insertions(+), 129 deletions(-)
+References: <20250611100319.186924-1-jirislaby@kernel.org> <20250611100319.186924-5-jirislaby@kernel.org>
+In-Reply-To: <20250611100319.186924-5-jirislaby@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Jun 2025 14:29:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUDFjBwu-3+bx=MqNW_m5EdUHcfn-gROY1ZfHFahzkUgw@mail.gmail.com>
+X-Gm-Features: Ac12FXy71I420HG6FoY8xytnP_y8sbWA9TF3YO8Rg8lKJ2-nqSvV06O0TmPz6vM
+Message-ID: <CAMuHMdUDFjBwu-3+bx=MqNW_m5EdUHcfn-gROY1ZfHFahzkUgw@mail.gmail.com>
+Subject: Re: [PATCH 04/33] m68k: remove unneeded tty includes
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: gregkh@linuxfoundation.org, linux-serial@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Joshua Thompson <funaho@jurai.org>, 
+	linux-m68k@lists.linux-m68k.org
+Content-Type: text/plain; charset="UTF-8"
+
+On Wed, 11 Jun 2025 at 12:03, Jiri Slaby (SUSE) <jirislaby@kernel.org> wrote:
+> All these includes must have been cut & pasted. The code does not use
+> any tty or vt functionality at all.
+>
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+
+Since GregKH seems to be eager to pick up this series:
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
