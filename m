@@ -1,172 +1,225 @@
-Return-Path: <linux-kernel+bounces-690013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8981FADCA2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:58:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A774EADCA5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B5821892BDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:58:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9DA189A776
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD802E06C5;
-	Tue, 17 Jun 2025 11:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6863D2EB5A9;
+	Tue, 17 Jun 2025 12:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TrqVcL8Y"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cbm6eSpO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30572D12F7;
-	Tue, 17 Jun 2025 11:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B6E2E2EED;
+	Tue, 17 Jun 2025 12:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750161493; cv=none; b=ZhTyuhk0FN3Qia0TwM1FK9uXAeUPeib9IYHSiW6vF/++TevMgLJ9qcIw2xixHLh7UpFjV0pYXdXcDSNpv/2cj+sgQ2wwyt7xgu9Lz/4+S8f0YZbHQ2aIAmTT/8KpuaK3xhKFbn40i8+GXALmjV7qiiedq+FVqPeYW10PVUMiUrE=
+	t=1750161613; cv=none; b=Fs/uJGexitASToujes1COkDDwMnIFxKXTlqTMadwGmfb29cEmJv8owNZX9WBdmKu+sNbe8h+3trujKTezUZjlRIDokDYzgNRUjrCCHe8n6cPuqaw2YjnOuxeIW7UVu2tH1bQJH0m3RqVtYBd2aEwYGI+rapOZgXFkSsq1I7XVxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750161493; c=relaxed/simple;
-	bh=9OLdh2NGryQfmDtM2Fz5KGiePLaw/bXfVfqGVqpThNo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UbF/dugPi/W7qOULeyUyiUi2ORZz0rAhRn/lE67z/t7nuzPwZn9vpCVbZKhxJSD0ehSsxtPon3uIC70HhObb6ZzVInm7V6Tc5qoCW/9V3zwJPGKoSoli8lrumwFnXhlFSEJFRLLYg6JQSp9u3Mt0WgN0KwNKlQMaAfMw5gAmvQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TrqVcL8Y; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ade5b8aab41so1199254766b.0;
-        Tue, 17 Jun 2025 04:58:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750161490; x=1750766290; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AAyN+ToNafItED7vOGd5xwZjLyU6vZgREgdnOsl2nNs=;
-        b=TrqVcL8YaeM4ndcbzqbmdSYdOQHLh59HYTLNAV25+vpDnifLs13HlpYOU7VuWTF59P
-         fm15nbyfeRwHxcB6UNDP5KKnnXSI35hhLHiTxSbp5lJZ4Y0VuKUT99t+x2XHaI0QwPY8
-         o6+XDXUy/1fc0P++fzleblDBxij3vcIxbkC0DiF4Bchq921nGQ/SyJWYDgxjFvS6UW17
-         z6dVs59QtI1CVuj2zcwW3D+ZvYIDIp8GGtwFKYLH11BjaKiIUSSXjqNtS4yHbY/oy3ac
-         nsDvbG29yfLQdWnd7usCNC16bNqYwoYtYGKJEDyedgvw63H4qDaPpQcZ3b1SB9G+EKhc
-         Nr7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750161490; x=1750766290;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AAyN+ToNafItED7vOGd5xwZjLyU6vZgREgdnOsl2nNs=;
-        b=q66NBl4rFbi1ZITukFCRgiEQHbVbpYPRnoAoCf1AYeE6sS/SI5PqRUCsDynTB1p5bu
-         CWUyShWPeZ5cJ4HFs3qHopOrMX+Hf1rXpBPixdmgH8NGmJAdTYLPuNvJXRJcfMx9mYtH
-         h/C/zHbU9DUqZ61lcGOCB3ckY9nXcyxHIRVDwmCNMadis8tZDN4eb10v4BaD6pjkhWiG
-         ePIosAZWum0YznZhr88zox8id65dFUKYnG1wiqqh8O81tLVq4sS/qEFhMnm7XpZR1qdH
-         MK6ly389WzpAqt/Vn7is41q9casa8aow3xmDT/5qf4SJWbhYp44/A6XXJryR2SeAl68Z
-         0A3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUkaIHFmTzbL5YOBa/YlFpaHGg0+kTtNZBcs487FxSK5IGV283jTQCSgti9PINhoxV28r6TL9uOOykZv1pd2okmfMxj@vger.kernel.org, AJvYcCXRG2CFtNNaxRl2osPCC6G9IBwpmNLCUe7/QcOYzocigu7vHqNRmD9as/QSU6X4yMsQS8+Ri65c9gZG3V8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxzrFdUtW1uuFSni8kXSlIl0y15mhjnTDfEu3nYMg60QSKn4i/
-	bnV2DQJaSK+PuhDGX5J+N6UoJB1mxb6Gl7j4GWoUudqhqryy8c3WcuDe
-X-Gm-Gg: ASbGncvNQv2FCGDj+8F/apR21WpWPOWcxVIVKZgxNYvkgz+vqFPE5MNUmrcU5sNJWff
-	mJ3bgdV86iOzmjx9QFKCex/3lvNc5JqiXFQYqBTcYzXcqJ6NZGJjN7A3tSJtHibPY6JJer8Sh1a
-	54J/PIEBT3kOfuiiQyRUhiDGvF4TRzelAjrWsaT+Ynif7Fbpg9bnOVO8auA0WIj137oPzohdCPD
-	PWyPGGecBlaHy59UGp5TbtSyVKAt2GHvMxGgOxtS6IEs7fUE+Eg/xp6QBQXREO53likivoON+aO
-	JYpzfXIe6DiWVYZjlG9OYkixbWAjwvtRtFlkgDuRSDc4i5Tw
-X-Google-Smtp-Source: AGHT+IGXnMPgXlA31Bvtqkmp3Vbasv6EcrISFOMjHiVmpzR0wieOBOhr8LT/ICTlXm+PF1m7z7hFmA==
-X-Received: by 2002:a17:907:3f1f:b0:ad2:4fa0:88cd with SMTP id a640c23a62f3a-adfad287bbcmr1067904566b.9.1750161489658;
-        Tue, 17 Jun 2025 04:58:09 -0700 (PDT)
-Received: from krava ([173.38.220.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec8159e24sm853034966b.34.2025.06.17.04.58.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 04:58:09 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 17 Jun 2025 13:58:06 +0200
-To: Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
+	s=arc-20240116; t=1750161613; c=relaxed/simple;
+	bh=d7N8Br27sigUm6RwJ6QKDyuMIfLKb482gs0GJECdYqY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TpoxnDu7k7Zh0jsZP89zkOSHC40Q6MNfKBXNp4X8xu/Oka5Ml1WdAuFLBzDzXGrl1pr7xPq7TTxS1KxiplImQK3YFc5/N1j5wty6mzbfdkSHtnv2Xse7GJVbzCv6PJ6NvdJUKHZBepvCPjY3D1DYVDr2WZxIB9R/36VlehvrqW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cbm6eSpO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F729C4CEE3;
+	Tue, 17 Jun 2025 11:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750161613;
+	bh=d7N8Br27sigUm6RwJ6QKDyuMIfLKb482gs0GJECdYqY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cbm6eSpOXnYTKVf24fD5wSecYeYAtaJSPLtzA/cg7YuA4PJRPYSNZqoHGrOB9vedO
+	 xE+Kw4QDbA/4jdsP7oXbPhVrMP5XKHSj57b+LizHRuDadEPqGBM+ZxF2QhTJG4KKld
+	 niMYuWEWwMHm5apCVpkqg1uA/sm57a3OJs6XP47Q03JuvcLdBMJ4BZLJME8mGFpquF
+	 OAV54y1YNZFqwgygvgnolLyQkxdfAP1bT54VMRT4yd/LwvYOK0H78h2s/9FU+jHgJZ
+	 /1P5yb/ScvLTgMkRASvu83CdtUFgXaGEFmmqSgC4JGFIOk41SmtzQEJEUL45wKXKIE
+	 copUCuL9W6X/w==
+From: Christian Brauner <brauner@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	David Sterba <dsterba@suse.com>,
+	David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Benjamin LaHaise <bcrl@kvack.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Tigran A . Aivazian" <aivazian.tigran@gmail.com>,
+	Kees Cook <kees@kernel.org>,
+	Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Jan Harkes <jaharkes@cs.cmu.edu>,
+	coda@cs.cmu.edu,
+	Tyler Hicks <code@tyhicks.com>,
+	Gao Xiang <xiang@kernel.org>,
+	Chao Yu <chao@kernel.org>,
+	Yue Hu <zbestahu@gmail.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>,
+	Sandeep Dhavale <dhavale@google.com>,
+	Hongbo Li <lihongbo22@huawei.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	Yuezhang Mo <yuezhang.mo@sony.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Yangtao Li <frank.li@vivo.com>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Dave Kleikamp <shaggy@kernel.org>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	Mark Fasheh <mark@fasheh.com>,
+	Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	Bob Copeland <me@bobcopeland.com>,
+	Mike Marshall <hubcap@omnibond.com>,
+	Martin Brandenburg <martin@omnibond.com>,
+	Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Bharath SM <bharathsm@microsoft.com>,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <jth@kernel.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	v9fs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-afs@lists.infradead.org,
+	linux-aio@kvack.org,
+	linux-unionfs@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-btrfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	codalist@coda.cs.cmu.edu,
+	ecryptfs@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org,
+	linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-um@lists.infradead.org,
+	linux-mtd@lists.infradead.org,
+	jfs-discussion@lists.sourceforge.net,
+	linux-nfs@vger.kernel.org,
+	linux-nilfs@vger.kernel.org,
+	ntfs3@lists.linux.dev,
+	ocfs2-devel@lists.linux.dev,
+	linux-karma-devel@lists.sourceforge.net,
+	devel@lists.orangefs.org,
+	linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	linux-xfs@vger.kernel.org,
+	nvdimm@lists.linux.dev,
 	Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 mm-stable] uprobes: Revert ref_ctr_offset in
- uprobe_unregister error path
-Message-ID: <aFFYTi4FcKE7rmlI@krava>
-References: <20250514101809.2010193-1-jolsa@kernel.org>
- <aECseBOkQynCpnfK@krava>
- <aElE4r21ZYhLWTZz@krava>
+Subject: Re: [PATCH 00/10] convert the majority of file systems to mmap_prepare
+Date: Tue, 17 Jun 2025 13:58:21 +0200
+Message-ID: <20250617-neugliederung-erarbeiten-58c2ad93db83@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <cover.1750099179.git.lorenzo.stoakes@oracle.com>
+References: <cover.1750099179.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aElE4r21ZYhLWTZz@krava>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2454; i=brauner@kernel.org; h=from:subject:message-id; bh=d7N8Br27sigUm6RwJ6QKDyuMIfLKb482gs0GJECdYqY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQERqz1Wd3by3g/duuF6rmP/N/MPRV+t8Tf5qpaV67t4 jKOJ7rXO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaysIiRYfKb1+w2vf8O/mdg vPFO8PHqRzML+F0vTZYp4bqm1fwkeyXDP4PuJqblPl9UmcRtf/n65jge6ap97PLc+43T4+kid/k fMgMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-ping
-
-On Wed, Jun 11, 2025 at 10:57:08AM +0200, Jiri Olsa wrote:
-> hi, ping ;-)
+On Mon, 16 Jun 2025 20:33:19 +0100, Lorenzo Stoakes wrote:
+> REVIEWER'S NOTES
+> ================
 > 
-> On Wed, Jun 04, 2025 at 10:28:42PM +0200, Jiri Olsa wrote:
-> > On Wed, May 14, 2025 at 12:18:09PM +0200, Jiri Olsa wrote:
-> > > From: Jiri Olsa <olsajiri@gmail.com>
-> > > 
-> > > There's error path that could lead to inactive uprobe:
-> > > 
-> > >   1) uprobe_register succeeds - updates instruction to int3 and
-> > >      changes ref_ctr from 0 to 1
-> > >   2) uprobe_unregister fails  - int3 stays in place, but ref_ctr
-> > >      is changed to 0 (it's not restored to 1 in the fail path)
-> > >      uprobe is leaked
-> > >   3) another uprobe_register comes and re-uses the leaked uprobe
-> > >      and succeds - but int3 is already in place, so ref_ctr update
-> > >      is skipped and it stays 0 - uprobe CAN NOT be triggered now
-> > >   4) uprobe_unregister fails because ref_ctr value is unexpected
-> > > 
-> > > Fixing this by reverting the updated ref_ctr value back to 1 in step 2),
-> > > which is the case when uprobe_unregister fails (int3 stays in place),
-> > > but we have already updated refctr.
-> > > 
-> > > The new scenario will go as follows:
-> > > 
-> > >   1) uprobe_register succeeds - updates instruction to int3 and
-> > >      changes ref_ctr from 0 to 1
-> > >   2) uprobe_unregister fails  - int3 stays in place and ref_ctr
-> > >      is reverted to 1..  uprobe is leaked
-> > >   3) another uprobe_register comes and re-uses the leaked uprobe
-> > >      and succeds - but int3 is already in place, so ref_ctr update
-> > >      is skipped and it stays 1 - uprobe CAN be triggered now
-> > >   4) uprobe_unregister succeeds
-> > > 
-> > > Fixes: 1cc33161a83d ("uprobes: Support SDT markers having reference count (semaphore)")
-> > > Acked-by: David Hildenbrand <david@redhat.com>
-> > > Acked-by: Oleg Nesterov <oleg@redhat.com>
-> > > Suggested-by: Oleg Nesterov <oleg@redhat.com>
-> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > 
-> > hi,
-> > I can't find this in any related tree, was this pulled in?
-> > 
-> > thanks,
-> > jirka
-> > 
-> > 
-> > > ---
-> > > v2 changes:
-> > > - adding proper Fixes tag and acks
-> > > 
-> > >  kernel/events/uprobes.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > > index 4c965ba77f9f..84ee7b590861 100644
-> > > --- a/kernel/events/uprobes.c
-> > > +++ b/kernel/events/uprobes.c
-> > > @@ -581,8 +581,8 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
-> > >  
-> > >  out:
-> > >  	/* Revert back reference counter if instruction update failed. */
-> > > -	if (ret < 0 && is_register && ref_ctr_updated)
-> > > -		update_ref_ctr(uprobe, mm, -1);
-> > > +	if (ret < 0 && ref_ctr_updated)
-> > > +		update_ref_ctr(uprobe, mm, is_register ? -1 : 1);
-> > >  
-> > >  	/* try collapse pmd for compound page */
-> > >  	if (ret > 0)
-> > > -- 
-> > > 2.49.0
-> > > 
+> I am basing this on the mm-new branch in Andrew's tree, so let me know if I
+> should rebase anything here. Given the mm bits touched I did think perhaps
+> we should take it through the mm tree, however it may be more sensible to
+> take it through an fs tree - let me know!
+> 
+> [...]
+
+This looks good. I fixed up the minor review comments.
+Looking forward to further cleanups in this area.
+
+---
+
+Applied to the vfs-6.17.mmap_prepare branch of the vfs/vfs.git tree.
+Patches in the vfs-6.17.mmap_prepare branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.17.mmap_prepare
+
+[01/10] mm: rename call_mmap/mmap_prepare to vfs_mmap/mmap_prepare
+        https://git.kernel.org/vfs/vfs/c/20ca475d9860
+[02/10] mm/nommu: use file_has_valid_mmap_hooks() helper
+        https://git.kernel.org/vfs/vfs/c/c6900f227f89
+[03/10] fs: consistently use file_has_valid_mmap_hooks() helper
+        https://git.kernel.org/vfs/vfs/c/b013ed403197
+[04/10] fs/dax: make it possible to check dev dax support without a VMA
+        https://git.kernel.org/vfs/vfs/c/0335f6afd348
+[05/10] fs/ext4: transition from deprecated .mmap hook to .mmap_prepare
+        https://git.kernel.org/vfs/vfs/c/8c90ae8fe5e3
+[06/10] fs/xfs: transition from deprecated .mmap hook to .mmap_prepare
+        https://git.kernel.org/vfs/vfs/c/6528d29b46d8
+[07/10] mm/filemap: introduce generic_file_*_mmap_prepare() helpers
+        https://git.kernel.org/vfs/vfs/c/5b44297bcfa4
+[08/10] fs: convert simple use of generic_file_*_mmap() to .mmap_prepare()
+        https://git.kernel.org/vfs/vfs/c/951ea2f4844c
+[09/10] fs: convert most other generic_file_*mmap() users to .mmap_prepare()
+        https://git.kernel.org/vfs/vfs/c/a5ee9a82981d
+[10/10] fs: replace mmap hook with .mmap_prepare for simple mappings
+        https://git.kernel.org/vfs/vfs/c/a1e5b36c4034
 
