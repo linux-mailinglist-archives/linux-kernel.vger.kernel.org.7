@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-690988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB03AADDEFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:32:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB98ADDF01
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB9CB17B2B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:32:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97C59189C7C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A3B298261;
-	Tue, 17 Jun 2025 22:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E24295520;
+	Tue, 17 Jun 2025 22:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="C5tZyF3M"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f7YEoRxa"
 Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E3A2F533D;
-	Tue, 17 Jun 2025 22:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805DE2F5328;
+	Tue, 17 Jun 2025 22:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750199533; cv=none; b=Wd0TzcW8RlxyvMZHEsz92kl5jeD5b83sW5KH17zTYpRlHP5pr817nhbL+6miNQ+FQBatXIQK9A1V6zUKHddbGlfg7iNelPH/blcuLNACFBjGTLdSnZL9d7LocxeunN7UfUuExAd4ZDz/xq0h9x6af3O8T2frCLrScrj/p8kCW5w=
+	t=1750199534; cv=none; b=DM4fJg0BgqwpbYkV8fLjRqONwodC493OJfRuJhXsS3tnQ9NzCE0Cco0mI0z1HHNUtNKBN17jz24J1dcKb1YoEzA+ZzZyOJJuy/atv6buXGZ6+cgj/c6/KhWCR1a2+YQ2ffRneUy/fiSvL2qL6P7B23RKmpQ8lk/BO5o1SGtXzfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750199533; c=relaxed/simple;
-	bh=6iFGCl+vrI3UJYLZ8mJlwkON1FhnOipz+urUhHLe6wo=;
+	s=arc-20240116; t=1750199534; c=relaxed/simple;
+	bh=dCX1n65xBRoezMqGO2CbhPRyi4/zYkLQkgcntqwDZio=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZcDPiciAIBHMrbg3WcORl1DkOSNu2vR1fQpcUK3yrKMsO6BOGgxnrH3OolB+OTkYaZB1qLGWscD5gOA07bkyVs+wGafBhEx/IkD9IGcMoOMbgBiCRcL0GNYICKI10+valETiale36I+wQd4rm9SaXzTSoUWv19vx0zJmY5+WAhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=C5tZyF3M; arc=none smtp.client-ip=217.70.183.194
+	 In-Reply-To:To:Cc; b=PfaY5kHAhVQ1Djrg3YAXgTs2mQddfT8y0niG5lg9+2uz0Xg9zL9AtPrYpY0QgteJK4sEMj/kcs2v6eDqBHGNqrAgK6/W08xGnpc2rGQfTyybkwEp9jVIqjuVwaatXPLJ+vqWkkq2lnh99nbtRGsW6t2G4j+QmwH4i3Zxnz06+YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f7YEoRxa; arc=none smtp.client-ip=217.70.183.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 38C2143165;
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A21D64316C;
 	Tue, 17 Jun 2025 22:32:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1750199524;
+	t=1750199525;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BY8lr3cwBhpY747VHtfxpWMlqtvjqMvD4rBIcdrKAxU=;
-	b=C5tZyF3M+bt1MHFLo9nXnW9oA87sYfPMoAAzCDOJgOaUYBToftzB8ensVCrrjf5ioRM/Wa
-	g5wOkC2qxmQxVXjUBxW8Uy6uAA3Nb4EE0xhKct/vS8kecXMneLuKjj3PHxitwbY4ZJ0fOc
-	rijcA1Nml/R8umSpXkJ0E4sDhyPNZI26PUPADFlJ+VyVq2XGHtqjDQ5keBKRCtfnxY38+4
-	03hw85ZtaInPvfAKpVWVzt/CGRreSijRiVZwL+VNLm8pA6XK0J4TUgLZNN+ZMDpD3Lv0K/
-	6Rer6iJk4asT3b2KmrbZgxnOToRmPQdtETEClsoONKa2diUG02jwkaBOIcb3aQ==
+	bh=esmmfpi3kvEuTnF8NNPy+ASdlcPdHl8nczq2Wpky2kI=;
+	b=f7YEoRxabbDiuDE81Y4N7liiuep0PepQZBg4OcbRpIFGIKa4Bn/euoAyzd5uw/Dqwk32+3
+	3ZfiIWRiAz+G/U/aPg4jtSknpoUL3rw0jZIl42c21UD0ai3BnXJnWL8dO8ziKmBz53G5LP
+	ua9CNK/CX6XDyNfKjkN5B/Sfl8It4K5mbJzTAs34AikOaMRL7SldUojIGlSAG9DsCrjBly
+	B8l1OmSOyUrd/gfBQuCx8RzgXbxKj7mr2FPpzKU5PVqUsCo1GmxTS1+7fyq+Fpsf6f3qhp
+	bFxZfOaciK6wQ+0N6uXDXw4hLHh9bpeJuihmnY5qOwZH324wEJ32gLSYAWDHMw==
 From: Olivier Benjamin <olivier.benjamin@bootlin.com>
-Date: Wed, 18 Jun 2025 00:32:01 +0200
-Subject: [PATCH 2/3] arm64: dts: rockchip: Fix the mipi port definition for
- RK3399
+Date: Wed, 18 Jun 2025 00:32:02 +0200
+Subject: [PATCH 3/3] arm64: dts: rockchip: Remove unused property in
+ PinePhone Pro MIPI panel
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250618-dtb_fixes-v1-2-e54797ad2eba@bootlin.com>
+Message-Id: <20250618-dtb_fixes-v1-3-e54797ad2eba@bootlin.com>
 References: <20250618-dtb_fixes-v1-0-e54797ad2eba@bootlin.com>
 In-Reply-To: <20250618-dtb_fixes-v1-0-e54797ad2eba@bootlin.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -72,27 +72,26 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddufeelucetufdoteggodetrfd
  ghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqrhhotghktghhihhpsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 X-GND-Sasl: olivier.benjamin@bootlin.com
 
-The RK3399's MIPI DSI has 2 ports: in an out. The definition of
-the port property necessitates the value of #address-cells to be 1.
+The MIPI panel definition in the PinePhone Pro DTS includes a
+"pinctrl-names" property, which is unused in the absence of pinctrl-0.
 
 Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-index 5ebc380a24df86ba7172b0950b89cac56b61c507..5a7341fb6bcb0613af6f3ac31d99355a0f890e89 100644
+index 5a7341fb6bcb0613af6f3ac31d99355a0f890e89..405140700208365c8631de86a2d7b6e577b7aa7f 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-@@ -468,7 +468,7 @@ &mipi_dsi {
+@@ -485,7 +485,6 @@ panel@0 {
+ 		reset-gpios = <&gpio4 RK_PD1 GPIO_ACTIVE_LOW>;
+ 		vcc-supply = <&vcc2v8_lcd>;
+ 		iovcc-supply = <&vcc1v8_lcd>;
+-		pinctrl-names = "default";
  
- 	ports {
- 		mipi_out: port@1 {
--			#address-cells = <0>;
-+			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <1>;
- 
+ 		port {
+ 			mipi_in_panel: endpoint {
 
 -- 
 2.49.0
