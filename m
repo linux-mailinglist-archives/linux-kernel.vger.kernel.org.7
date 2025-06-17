@@ -1,56 +1,75 @@
-Return-Path: <linux-kernel+bounces-690403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE056ADD024
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:40:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8EF3ADD034
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558A31631FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:40:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DEF7189189C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7704C205E3E;
-	Tue, 17 Jun 2025 14:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7606620C028;
+	Tue, 17 Jun 2025 14:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3WgjR7f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSTCRk8U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4B42EB10;
-	Tue, 17 Jun 2025 14:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9997B2CCDE;
+	Tue, 17 Jun 2025 14:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750171240; cv=none; b=TOJk4tShuj4Llk5wdh/eM1CpihItECE7reCxiaiI4zJaEnBvOZJj3geSzE9OAJpdXfP42/v7g2zI8k3mV/1nrU2+22j7Gbchihb8e/Nb9EZ/EzYPX0JZ7SdHkYSWz/t2MpE0sYwlvttFzL4zG7/4euuSJ+saKu8Co+cpy9d7muM=
+	t=1750171270; cv=none; b=d0KAOAvHaM4wIjVryUoZ6qsFaiHnMremXbdi2KGdR95OO6Z3d+/YjO8kxXIrerNNUPyHm5fYQZDDeclSH/wCKg91m1SUSMLmW5Z9xlf79nF3cBZQrJLWQrgUsfNe8p/qPzPLUTjScXcEEHJUfiqjo1VGdqRtdBgqiKwAAxU0zSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750171240; c=relaxed/simple;
-	bh=TqtzmXYPJKEqTXMU+f7uN1rUv0VpX38ROAg2dTsXMek=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=NWuZPlpW4nxmWfY/11PdnQSKHj+pTmFT+MsGwKUnCEs9y3gY10Mk0iYIXCSEDrDhh4ZI6p5yRc5Va9W8VoNLeAErkrCh3J+PEmx6lSc0tSO8B/1KxKZhePwbR2tFwhePiHFkcn6SNsz7JgVjhXmc89yX2RZDrH2Dyfsqn8naFXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3WgjR7f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A514C4CEE3;
-	Tue, 17 Jun 2025 14:40:40 +0000 (UTC)
+	s=arc-20240116; t=1750171270; c=relaxed/simple;
+	bh=XdJb0Fw4Rr6pT0ZoN+vrT8BJNFqp2n7RZt9bLdoicy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jcCjAhgg0L38niekZ8SEGzwmokzFOZhik6zFX4v9WIA+cQdIhBqStlANqZmvRg5Sh+RkBPVU8J3Nwe0/nWO98zHLas07iBkOq4Vj5kdK3i9pX1xie+Hs3nftcQ8IT6pH/dlLJINo3Kf25133l94S8yaO3YRq+CnammmOIrWxvJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSTCRk8U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CD93C4CEE3;
+	Tue, 17 Jun 2025 14:41:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750171240;
-	bh=TqtzmXYPJKEqTXMU+f7uN1rUv0VpX38ROAg2dTsXMek=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=P3WgjR7fLmn91+0xU8Hla3uG7iISQmyRbiw94Do9t79HnPRryQW91aQxjSru5nf5w
-	 uT+oQMbTF96IrfX9N7QuW42vSOjnYQ6YdIa/jqrHfzB0CwvOWnWfr+EVIbpy1hUAhi
-	 IsxLeqVzQZBVQoUkSm3Rd09GRekXl1ZBvnfS7OHuKzK0FAKqGZ2CFQtTJNC7SF/uN4
-	 R03Fe1ZKEBtoJCVwSCcPlxoJp42MgUOfFxEl2hwoeCsFJ2rw+BMj9tQi8G8uR4O8Mr
-	 BHWm+58erlcWIWl757167rxBk+/Fsfhnj6ejwq705UuMfxyq0q1T8IACscMltivasX
-	 T+MfltiURB8HA==
-Date: Tue, 17 Jun 2025 09:40:38 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Zhe Qiao <qiaozhe@iscas.ac.cn>
-Cc: rafael@kernel.org, bhelgaas@google.com, lenb@kernel.org,
-	kwilczynski@kernel.org, sashal@kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH v2] PCI/ACPI: Fix double free bug in pci_acpi_scan_root()
- function
-Message-ID: <20250617144038.GA1134072@bhelgaas>
+	s=k20201202; t=1750171269;
+	bh=XdJb0Fw4Rr6pT0ZoN+vrT8BJNFqp2n7RZt9bLdoicy0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dSTCRk8Uwi677vKg6k6lOAWXdtA+M+meFSVzjlFArZ9bvcH54PzhYbqd7CJlg63T/
+	 xJ0+p8rTVazZ6/wO72ITTYo2jiM5Tbugln+L3yIBtD9EBCyLvlK3Uf+wo/ABwAm3Vy
+	 fPAoXHXkEsLyBw49G9HKJjcjV6mofeyhQa4lbM/8mb3sWMomcQgyA7/LvkGC8yKDG9
+	 odnD5n9ZIAUz+x2GSLx7JB/j6pW2RBIQtlbDvHkin8zrtZV/xYDMLS6fmj6g31qdWG
+	 HZkv+V2DMP0ZzeS0iAymfIqkXqCiWdwpzWqjTJXdU4eV1g/aaKOhKSpv5Kz+VAmX7Z
+	 jrf/zUgEtABtw==
+Date: Tue, 17 Jun 2025 16:41:00 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 3/9] rust: pwm: Add driver operations trait and
+ registration support
+Message-ID: <aFF-fNOOEzoiomFu@pollux>
+References: <20250617-rust-next-pwm-working-fan-for-sending-v3-0-1cca847c6f9f@samsung.com>
+ <CGME20250617140838eucas1p2a31af5a73297580c2421263c1c6ba700@eucas1p2.samsung.com>
+ <20250617-rust-next-pwm-working-fan-for-sending-v3-3-1cca847c6f9f@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,99 +78,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250617023738.779081-1-qiaozhe@iscas.ac.cn>
+In-Reply-To: <20250617-rust-next-pwm-working-fan-for-sending-v3-3-1cca847c6f9f@samsung.com>
 
-[+cc Dan]
+On Tue, Jun 17, 2025 at 04:07:26PM +0200, Michal Wilczynski wrote:
+> +/// Manages the registration of a PWM chip, ensuring `pwmchip_remove` is called on drop.
+> +pub struct Registration {
+> +    chip: ManuallyDrop<ARef<Chip>>,
 
-On Tue, Jun 17, 2025 at 10:37:38AM +0800, Zhe Qiao wrote:
-> The patch "PCI/ACPI: Fix allocated memory release on error in
-> pci_acpi_scan_root()" introduces a dual release issue. When
-> acpi_pci_root_creat() fails, the pci_cpi_can_root() function
-> will release 'ri ->cfg' and 'root_ops' in the error handling
-> path.However, acpi_pci_root_creat() will also call
-> __acpi_pci_root_release_info(), which in turn will call the
-> release_info hook, causing the same block of memory to be
-> released again.
+Why is this ManuallyDrop when you call ManuallyDrop::drop(&mut self.chip) as
+the last thing in Registration::drop()?
 
-These are all nits, but would have to be fixed before applying:
+I think you don't need ManuallyDrop here.
 
-  - 'The patch "PCI/ACPI: Fix ..."' is not the usual way to identify a
-    commit.  Use the same style as in the Fixes: tag below.
+> +}
+> +
+> +impl Registration {
+> +    /// Registers a PWM chip (obtained via `Chip::new`) with the PWM subsystem.
+> +    ///
+> +    /// Takes an [`ARef<Chip>`]. On `Drop` of the returned `Registration` object,
+> +    /// `pwmchip_remove` is called for the chip.
+> +    pub fn new(chip: ARef<Chip>, ops_vtable: &'static PwmOpsVTable) -> Result<Self> {
 
-  - Typo in "acpi_pci_root_creat" (twice)
+For the reason mentioned in [1] this should either return Result<Devres<Self>>
+or just Result, if you use Devres::new_foreign_owned() (see also [2]).
 
-  - Typo in "pci_cpi_can_root"
+In case of the latter, the Registration instance is automatically dropped once
+the parent device is unbound.
 
-  - Add space after the period in "path.However, ..."
+If you go with the first, you can drop the Devres<Registration> (and hence the
+inner Registration) at any arbitrary point of time, but Devres will still
+gurarantee that the inner Registration is dropped once the parent device is
+unbound, i.e. it can't out-live driver unbind.
 
-  - Add "Reported-by: Dan Carpenter <dan.carpenter@linaro.org>" and
-    "Closes: https://lore.kernel.org/all/aEmdnuw715btq7Q5@stanley.mountain/"
-    and cc: Dan.
+This guarantees that the &Device<Bound> instance you provide in the callbacks
+below is guaranteed to be valid.
 
-  - 631b2af2f357 appeared in v6.16-rc1, so we should try to get the
-    fix into v6.16.  A hint after the "---" would be helpful to make
-    sure that happens.
+[1] https://lore.kernel.org/lkml/aFF7qqlexxh540FW@pollux/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/rust/kernel/drm/driver.rs#n134
 
-Wait a few days before reposting in case other folks have comments.
+> +        // Get the raw C pointer from ARef<Chip>.
+> +        let c_chip_ptr = chip.as_raw().cast::<bindings::pwm_chip>();
+> +
+> +        // SAFETY: `c_chip_ptr` is valid (guaranteed by ARef existing).
+> +        // `ops_vtable.as_raw()` provides a valid `*const bindings::pwm_ops`.
+> +        // `bindings::__pwmchip_add` preconditions (valid pointers, ops set on chip) are met.
+> +        unsafe {
+> +            (*c_chip_ptr).ops = ops_vtable.as_raw();
+> +            to_result(bindings::__pwmchip_add(c_chip_ptr, core::ptr::null_mut()))?;
+> +        }
 
-> Fixes: 631b2af2f357 ("PCI/ACPI: Fix allocated memory release on error in pci_acpi_scan_root()")
-> Signed-off-by: Zhe Qiao <qiaozhe@iscas.ac.cn>
-> ---
-> v1 -> v2:
->  - Restore all changes from the first version.
->  - Remove unnecessary release info hooks.
->  - Add a NULL check before calling info->ops->release_info().
->  - Delete the currently unused pci_api_geneic_delease_info () function.
-> ---
->  drivers/acpi/pci_root.c |  3 ++-
->  drivers/pci/pci-acpi.c  | 12 ------------
->  2 files changed, 2 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
-> index 74ade4160314..83628adbc56b 100644
-> --- a/drivers/acpi/pci_root.c
-> +++ b/drivers/acpi/pci_root.c
-> @@ -974,7 +974,8 @@ static void __acpi_pci_root_release_info(struct acpi_pci_root_info *info)
->  		resource_list_destroy_entry(entry);
->  	}
->  
-> -	info->ops->release_info(info);
-> +	if (info->ops && info->ops->release_info)
-> +		info->ops->release_info(info);
->  }
->  
->  static void acpi_pci_root_release_info(struct pci_host_bridge *bridge)
-> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> index b78e0e417324..6e85816ee1c3 100644
-> --- a/drivers/pci/pci-acpi.c
-> +++ b/drivers/pci/pci-acpi.c
-> @@ -1652,17 +1652,6 @@ pci_acpi_setup_ecam_mapping(struct acpi_pci_root *root)
->  	return cfg;
->  }
->  
-> -/* release_info: free resources allocated by init_info */
-> -static void pci_acpi_generic_release_info(struct acpi_pci_root_info *ci)
-> -{
-> -	struct acpi_pci_generic_root_info *ri;
-> -
-> -	ri = container_of(ci, struct acpi_pci_generic_root_info, common);
-> -	pci_ecam_free(ri->cfg);
-> -	kfree(ci->ops);
-> -	kfree(ri);
-> -}
-> -
->  /* Interface called from ACPI code to setup PCI host controller */
->  struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root)
->  {
-> @@ -1683,7 +1672,6 @@ struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root)
->  	if (!ri->cfg)
->  		goto free_root_ops;
->  
-> -	root_ops->release_info = pci_acpi_generic_release_info;
->  	root_ops->prepare_resources = pci_acpi_root_prepare_resources;
->  	root_ops->pci_ops = (struct pci_ops *)&ri->cfg->ops->pci_ops;
->  	bus = acpi_pci_root_create(root, root_ops, &ri->common, ri->cfg);
-> -- 
-> 2.43.0
-> 
+Please split this up into separate unsafe blocks.
+
+> +        Ok(Registration {
+> +            chip: ManuallyDrop::new(chip),
+> +        })
+> +    }
+> +}
+> +
+> +impl Drop for Registration {
+> +    fn drop(&mut self) {
+> +        let chip = &**self.chip;
+> +        let chip_raw: *mut bindings::pwm_chip = chip.as_raw();
+> +
+> +        // SAFETY: `chip_raw` points to a chip that was successfully registered via `Self::new`.
+> +        // `bindings::pwmchip_remove` is the correct C function to unregister it.
+> +        unsafe {
+> +            bindings::pwmchip_remove(chip_raw);
+> +            ManuallyDrop::drop(&mut self.chip); // Drops the ARef<Chip>
+> +        }
+
+Same here, but I don't think ManuallyDrop is needed anyways.
+
+> +    }
+> +}
 
