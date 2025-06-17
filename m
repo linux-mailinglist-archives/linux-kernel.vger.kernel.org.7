@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-690151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D32ADCC83
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:07:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1737BADCBD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 439981889EC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:04:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77F67189656F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6802E3B13;
-	Tue, 17 Jun 2025 13:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7155A2DA766;
+	Tue, 17 Jun 2025 12:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AInaSgjq"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Tt156JyZ"
+Received: from out203-205-221-235.mail.qq.com (out203-205-221-235.mail.qq.com [203.205.221.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499762F2C68;
-	Tue, 17 Jun 2025 13:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4261F1311
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 12:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750165219; cv=none; b=JgWmk9bIuH+zHlZxm5zEfpVJNvXduW3VXKHcFXJZjo/3vfG+lm5izuC+hy3mZMoHU7lepImVPuIGIh+b6SbgnfOAti/uq9WTsSiTZSgWzBTx/uj8jU+jdPByxI4AtjL1Gjsic5ged8r3oHQLILV9oiWye7Up+RlUW+yKek1oPaA=
+	t=1750164507; cv=none; b=FUKmX/eTylhRJnMT6QUTG+ZakeMajLgbim99CUIL0GmUoCAg9PSgaDjjNUjp4Y5iPKd3YSrjLoxbzKhP5FQsa8l5sSOoC5PqR4bpxHnPow2yvEazTJWQNgdPuoXNEbUm2OXNgiXTZSW++40TF5Eqso0eP4JOsHRxsqPvWyi5cYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750165219; c=relaxed/simple;
-	bh=BGmA/bVMJ9ftGI7TvxXUi+QwAR8gKmoQYzQ5tMnoBp4=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=CslEoazknIuTB3tqyK0rUTv8b/LJ0N3JkBgCFAr0jvkEqCyfBvueTKXRJn2rtKGQx348LH/rbvmVSyz9AQJMbvvxYA9pyIi4cJoUesRUdJNhdS2wJQQ91SWSeTZrSAS+fNy+FM6bmDbfXf1rEQpfPoII2mzR9r2GGwQBtGus31I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AInaSgjq; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-451d6ade159so47263105e9.1;
-        Tue, 17 Jun 2025 06:00:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750165215; x=1750770015; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BGmA/bVMJ9ftGI7TvxXUi+QwAR8gKmoQYzQ5tMnoBp4=;
-        b=AInaSgjq+q4hll4PvDY8q5uC5IM0M2xpubCZrF5nPMl5A+ktc3rDq2vUIav1VhZEwa
-         3VWj7k7G93KZNhY7lf7VroYSxW9MGY3jO73Ih3uC2KLlQq8rx3FWNPaVEfpKbSguYlrZ
-         ar76qTXZtJOEWVOPwN5Ze+40F5AmgktlDz9a3HtvX5drH9I+/J7+mfNk9B3/h6ciilaG
-         27Vu7qhVllG7o7YfKHXn3/M4GUa1hiC2vIBl5mIHKCQa0h2zQnx3Zq5tZLXdBJKPrw5w
-         pxuiHub6c4tTNyuBifgigeFufVqe+C7Ioy93xuRT3BaEIOu3Ns7odvYgu9WFDepwFXiz
-         uNnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750165215; x=1750770015;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BGmA/bVMJ9ftGI7TvxXUi+QwAR8gKmoQYzQ5tMnoBp4=;
-        b=DOAW95/nmTOvtngFA3MIioxvh6RDCMlOj5/0Zt9K1JgskyEmv9vwzV6+zMZ+r8Mn3J
-         1Y60BkygNBa0fcmXRRxZxAxYN7N4ZmhJJ9MjdRjbp9PDzPlZj8aH9IHiJHaJHOxtrgO6
-         5xwsEERdxF81v2lZa804dRLz2LJcu0lQiosbRB+myseZeafzKekBKvYflYrb9Rip3wHe
-         XcMMqSFAcItssr34IhcAxFBkth1HHrI4Ir2cSzZeJn4vipdjNl117QzDZt0jI8JWbXUg
-         1+qUrFgx0epsIYteopqx4mWbOF77vlskSYQg08A6eF0v5ajeNQZAZsK74XzaVSWX/6JY
-         SqAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbtdg77InrO2pm/C1/kZ9bnrvWz1BWmoaeJVYNXWjy6wkicglkK9cUjfzzm8bB7qW+wUxMmsYFxPDClV4=@vger.kernel.org, AJvYcCWIrdsv7LnSdpbMWIHBLtPnvKUe3koSgcK8AZ8avitWKl9Xm39EZws3zO4cr6HmfAZFO4UW+Ttw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+7bGNP3PkeiMLyfr6UdiEdMWuDW/TAVsiTsL6ti8Au3Y4l9aC
-	X0WfIfEPkpdZf7aTFxApylM/wQEczgc/THQo2l03IXrfqxrk+mqjAmLI
-X-Gm-Gg: ASbGncuSIzaa5apkf92UJTFj6HdDjWize2pUReioVuwZx2K2rP8LsA+SDqnbwEwF7fZ
-	WRJVIiZNvqDkHZCj2fg94qB2S9prvGvd2Ww6Ko1ACiMl07fURShGEnFh3A8vl4L9gwpQRi/JqwI
-	yAg4blSBIMSMsRZYnEgj+bFB+uHZIib4QeI34Ls3GAhv5JKcGLb+okPr9Gdc8aeqabZyvslI3Cm
-	Hj81JRQMvxPC8xGsMj4k8RnDBgJzU9PIZC9jAB/HQZSRHRz9RS90aE6L/j3y0xDSERniUv7IPcN
-	Ou1m9QH/0hS0U/lwf804Bu1vbu4cNEboAhc7Kj/MjAJ9Js9mAK5+FhfoDXtLt70eA166ak+9q7w
-	COscTsPrkVg==
-X-Google-Smtp-Source: AGHT+IFdwscoFtKDmQDDxuggxEnGBwA789Okb1t+Dl/aRVj/6eU4eWq9IO95AQuPjQQagJ63A6hoHg==
-X-Received: by 2002:a05:600c:1c12:b0:44b:1f5b:8c85 with SMTP id 5b1f17b1804b1-4533caf5e9fmr139557665e9.13.1750165215199;
-        Tue, 17 Jun 2025 06:00:15 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:8931:baa3:a9ed:4f01])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e169d90sm178458845e9.32.2025.06.17.06.00.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 06:00:14 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
- <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
- <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
- Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
- <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
- Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Ruben
- Wauters" <rubenru09@aol.com>,  "Shuah Khan" <skhan@linuxfoundation.org>,
-  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
-  linux-kernel@vger.kernel.org,  lkmm@lists.linux.dev,
-  netdev@vger.kernel.org,  peterz@infradead.org,  stern@rowland.harvard.edu
-Subject: Re: [PATCH v5 12/15] docs: uapi: netlink: update netlink specs link
-In-Reply-To: <33f4626404cc92ee3f3aab481a8d163e9b4a0f6c.1750146719.git.mchehab+huawei@kernel.org>
-Date: Tue, 17 Jun 2025 13:46:16 +0100
-Message-ID: <m2tt4eilif.fsf@gmail.com>
-References: <cover.1750146719.git.mchehab+huawei@kernel.org>
-	<33f4626404cc92ee3f3aab481a8d163e9b4a0f6c.1750146719.git.mchehab+huawei@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1750164507; c=relaxed/simple;
+	bh=4zpcS6wUru/+6aFWN7fu687cdWXnJvlcM9KfgSkXdZ8=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=g30xCqqXBnjbWEvlLcv54CM/fwFOKu2C9d8UIZbFfcK14XGziP8BnwqBjL8jEHqokfvY181ZwtcBY8P5TDMVmXo88G58pZ5nXzNWuOLC8y67g5Bnr2PVxcjkkmnRNi6OJdVxWJ/OYXKJbYotrFgI7w7d91CtT4Yx39D21+gdn/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Tt156JyZ; arc=none smtp.client-ip=203.205.221.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1750164495; bh=4ewfJyVfMnQFyQG6fKQO0JgYuHdUKoj68TAMekZGkts=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Tt156JyZR0snTwNBp0GAtMFEKdj2LICHX0ZD6Qj1HSpKNu07aX7USIBTLzoKCdeu4
+	 4/Ntqal2XoHZLtfZHMd2h7zIXz4KXmwn3km8o5eJFLgH/5YDrOi2rUYztyp/Z+J6KQ
+	 BTMmqDP0bwZiTB/Jyjf92UbkoVBtbn+XJeWfKsZ8=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id BB992888; Tue, 17 Jun 2025 20:46:57 +0800
+X-QQ-mid: xmsmtpt1750164417t2z0pu6pn
+Message-ID: <tencent_5C66A03CF936689664374C4A0A754B765709@qq.com>
+X-QQ-XMAILINFO: Mm/Yx8ZY6QnD0yBpJ/GCrBYF1K9RmFiR1+6yEp2f0g81stUj8sSVtOIGFNZmX5
+	 hPdLnYhb258f8R05oWfGbozeztvyBrgvdtWf/5FeHtq1ha6wihAGtWHmeDGcqRT0UNWQYHrR6jEc
+	 Set+ek5NtunYdOj+jkYhXYBlDIeslSI/4PZH72QSIHfKmN9z3faWYYwTW4gmQs2GS+gzkqworKdj
+	 qZEMR8VkGoTkVT0GbcIGvVTIaSDq3SQbatARhuJRH4twjFWft+WmObXO76ISI9XmEqJx1hR2/M3K
+	 ZhmWF12hAk0Tv1Paz5kUG2qSHZ9l2U+t4B1lk+lYsR5NPfD89oHAh/KoPTwG/dVTBkkzmQ1mI5ON
+	 Ckn9wLv54jq+6L+9Qs5STt94J4ZVQm1egzjM4d0S94acMhB7HMQICFLIHt7Q88vllMm91qQ6XIcX
+	 zN8DdQV9HI+1XTyAhMrzLj06XiWRP+a4ocYcP+bBsfCmpQji8a/QGIJaNcq5s73TJ+7Hd9DFk9hy
+	 CpzNCP6ucdnhf/eYIRfThnrLATUfQx7s8ekG7hPNEYoN8ru6elxxsMOv/DnB81oLhEF8VCdTb1bC
+	 ZqJcvuW/b3jl72vGFoR6M/LjaMLmC3Sy9LdPr2CTGvVfVRygCGEPq4t/qZjJoK8ZIhJ9j4sonhq9
+	 Hm/Ui71Gollb1UeSRJhG+oqyKy06Hrbned2LZbREXHFT+LiOmsGzFBh5zriwI3IRUTyMnJTD9Oay
+	 4jNmPx3UdhJ0Ba7M1c5aJNE+2MXGXuNv9WwDpgcA60+eb+L1JHl0nZcHxbmlaM7VTNpK8ya8hHCN
+	 Jr5m9rkOZT45o+B7Kh6nOrwemEAH/SFUbRXrIyB4SHgb1Z6F4vSGenRwd1LZ5/EWtZVCa7ZneIaW
+	 7YlNwcnxtxo714aFjEPShUSBNmOFiaIgjHuW81aiTxbjHmASuNhQ3IhvOD/VWMG47P5V/4hZmEgv
+	 y//VKf+EcCg/fgTxSXkA==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ntfs3?] general protection fault in pick_link (2)
+Date: Tue, 17 Jun 2025 20:46:58 +0800
+X-OQ-MSGID: <20250617124657.837717-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <685120d8.a70a0220.395abc.0204.GAE@google.com>
+References: <685120d8.a70a0220.395abc.0204.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+#syz test
 
-> With the recent parser_yaml extension, and the removal of the
-> auto-generated ReST source files, the location of netlink
-> specs changed.
->
-> Update uAPI accordingly.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+diff --git a/fs/namei.c b/fs/namei.c
+index f761cafaeaad..5b8a69d882d1 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2005,6 +2005,10 @@ static const char *step_into(struct nameidata *nd, int flags,
+ 		if (path.mnt == nd->path.mnt)
+ 			mntget(path.mnt);
+ 	}
++
++	if (inode && is_bad_inode(inode))
++		return NULL;
++
+ 	return pick_link(nd, &path, inode, flags);
+ }
+ 
+diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
+index 756e1306fe6c..10006241fa8e 100644
+--- a/fs/ntfs3/frecord.c
++++ b/fs/ntfs3/frecord.c
+@@ -3027,8 +3027,10 @@ int ni_rename(struct ntfs_inode *dir_ni, struct ntfs_inode *new_dir_ni,
+ 	err = ni_add_name(new_dir_ni, ni, new_de);
+ 	if (!err) {
+ 		err = ni_remove_name(dir_ni, ni, de, &de2, &undo);
+-		if (err && ni_remove_name(new_dir_ni, ni, new_de, &de2, &undo))
++		if (err) {
++			ni_remove_name(new_dir_ni, ni, new_de, &de2, &undo);
+ 			*is_bad = true;
++		}
+ 	}
+ 
+ 	/*
 
-nit: seems like this could be part of patch 11
-
-Either way,
-
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
 
