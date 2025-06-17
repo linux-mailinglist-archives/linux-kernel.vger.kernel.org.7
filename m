@@ -1,148 +1,136 @@
-Return-Path: <linux-kernel+bounces-690363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD836ADCF7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:21:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 156B6ADCFDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5667E7A18C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:20:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8688C1941F00
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B212E3B16;
-	Tue, 17 Jun 2025 14:18:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1034F2E3B14
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 14:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A2B2EF650;
+	Tue, 17 Jun 2025 14:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vx6BIclc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D3B2EF644;
+	Tue, 17 Jun 2025 14:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750169896; cv=none; b=mFGCk0c/v3nmwa5+ft49hKqjUsiHTzuEn6gM38RdQxt/5KF7SvKhUyayi0NgnpgflMm6d0vLzJBNhZLX3Rm5VLFp5B4m7Qy07gnsq53/FaY7uXH32aObNCesIthaLHzNaCJDOCvaSstg24YOjog/rQxiTnEmhq0Il234/B+czBw=
+	t=1750170054; cv=none; b=TP74NwkFhMkVryIYl2CyYonMwQZE1X3/Rofyz9sLszHpa80YHAIB69e6p9gN6SxNsUUHCeS6HoJpzo2dkFSKAzomenUHpT6vpMYhcUHiPu5OkrPGn0SxOEHCDLsm5DMmbjL8scsUp+dggQp3vIxzFBUl8Wd4JzVenAYY8AtuuHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750169896; c=relaxed/simple;
-	bh=asQ1iN27xLLjtCDv3Ppwn/ikbkJu6bhkI9I+TfYNBgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pvN2olvxWUz31/H+FjLhfFyaw4hcj218FJskufQ5EQwYUI0qCsrvW702dn1giJsE/IvGeP4hKm3E8lBCHoLgWaD83ShsTPNpfJl3yh9DUdX18XOZdE/DkVcMJxkVHgFV626Pck+5zzUhJ9jED3USZz8qv01dod5l73r5em6gcJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20F3A150C;
-	Tue, 17 Jun 2025 07:17:52 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B5BF73F58B;
-	Tue, 17 Jun 2025 07:18:12 -0700 (PDT)
-Date: Tue, 17 Jun 2025 15:18:10 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Yicong Yang <yangyicong@huawei.com>,
-	Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
-	yangyicong@hisilicon.com, James Clark <james.clark@linaro.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Ali Saidi <alisaidi@amazon.com>, Leo Yan <leo.yan@linaro.org>,
-	Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	yangjinqian <yangjinqian1@huawei.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: perf usage of arch/arm64/include/asm/cputype.h
-Message-ID: <20250617141810.GB794930@e132581.arm.com>
-References: <aEyGg98z-MkcClXY@x1>
- <1762acd6-df55-c10b-e396-2c6ed37d16c1@huawei.com>
- <2abcf4ec-4725-4e79-b8d3-a4ddbc00caba@linaro.org>
- <0b839ec1ae89439e95d7069adcbb95ab@huawei.com>
- <20250616130736.GA788469@e132581.arm.com>
- <2dc510b4-ff3d-edff-42be-f8260cd27840@huawei.com>
- <20250616160811.GA794930@e132581.arm.com>
- <aFBYrQgx2m8Nd-iG@J2N7QTR9R3>
+	s=arc-20240116; t=1750170054; c=relaxed/simple;
+	bh=2InmuhCdbeF4xAg1utUzErMQdY9Y+3NdD/RkSD3RA6Y=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=n6CE5/wF1+9MwnDHHlRGBboyfYYM+5AZ88n6bqdSpVaf4qHyJSx2Qt1hzYFbnRyFdQl4USidIVNyekOUD3IOMQhQc2oox85JHiXDDhOIYWGH49Ut/NY1n1rd5bf+m2CR5FYyj2zixyPnToZ7LYgawciJ/oNuAVKMmmE7OiDJ82Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vx6BIclc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A976CC4CEE3;
+	Tue, 17 Jun 2025 14:20:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750170053;
+	bh=2InmuhCdbeF4xAg1utUzErMQdY9Y+3NdD/RkSD3RA6Y=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Vx6BIclc/l3eryk97vgg5S/7dJzXIMmEm4Nt8OItskFEe+xsyWspT+K+fTJUZtZUg
+	 1/esRdpzKV7Tgh2ZbAM/vkn02AP5aeHlTC/+YyNrCvgtA8pt13PhMLa4CoCQixklNb
+	 FeNIYZQNbEEckySCKgKVLLsKgGK7XR9d44QBQazgIZyG422tQUn3zQ+9pgCyYD0TH0
+	 JjIeag5ygGr/ZFjI9ELdKsH1IqWoWsc/qcJSgMJ96pGtozAGP6Wu7ffhSApL8r/jtR
+	 A+uzQQlbSCIZrdrJBDlgy+Iv3uW04xy2NLN3G+Z1PFGT5eXC7k/KjwJhuucGPw11ab
+	 TsfP4fqo76Jpg==
+Date: Tue, 17 Jun 2025 09:20:47 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aFBYrQgx2m8Nd-iG@J2N7QTR9R3>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de, 
+ conor+dt@kernel.org, krzk+dt@kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org
+To: John Clark <inindev@gmail.com>
+In-Reply-To: <20250616212214.139585-1-inindev@gmail.com>
+References: <20250616212214.139585-1-inindev@gmail.com>
+Message-Id: <175016979599.2093448.14784445392861076419.robh@kernel.org>
+Subject: Re: [PATCH v1 0/2] Add FriendlyElec NanoPi M5 support for Rockchip
+ RK3576
 
-On Mon, Jun 16, 2025 at 06:47:25PM +0100, Mark Rutland wrote:
 
-[...]
-
-> > > ok this sounds just like as before except rename the midr check function and modify the
-> > > users in perf. will do in below steps:
-> > > - move cpu_errata_set_target_impl()/is_midr_in_range_list() out of cputype.h
-> > >   since they're only used in the kernel with errata information
-> > > - introduce is_target_midr_in_range_list() in cputype.h to test certain MIDR
-> > >   is within the ranges. (is_perf_midr_in_range_list() only make sense in
-> > >   userspace and is a bit strange to me in a kernel header). maybe reimplement
-> > >   is_midr_in_range_list() with is_target_midr_in_range_list() otherwise there's
-> > >   no users in kernel
-> > > - copy cputype.h to userspace and make users use new is_target_midr_in_range_list()
-> > > 
-> > > this will avoid touching the kernel too much and userspace don't need to implement
-> > > a separate function.
-> > 
-> > My understanding is we don't need to touch anything in kernel side, we
-> > simply add a wrapper in perf tool to call midr_is_cpu_model_range().
-> > 
-> > When introduce is_target_midr_in_range_list() in kernel's cputype.h,
-> > if no consumers in kernel use it and only useful for perf tool, then
-> > it is unlikely to be accepted.
+On Mon, 16 Jun 2025 17:22:12 -0400, John Clark wrote:
+> This series adds device tree support for the FriendlyElec NanoPi M5 board,
+> powered by the Rockchip RK3576 SoC (4x Cortex-A72, 4x Cortex-A53, Mali-G52
+> MC3 GPU, 6 TOPS NPU). The patches enable basic booting and connectivity,
+> including dual 1Gbps Ethernet, USB 3.2, microSD, M.2 PCIe NVMe, and HDMI.
 > 
-> I think all of this is just working around the problem that
-> asm/cputype.h was never intended to be used in userspace. Likewise with
-> the other headers that we copy into tools/.
+> Patch 1 updates the DT bindings in rockchip.yaml.
+> Patch 2 adds the NanoPi M5 device tree and Makefile entry.
 > 
-> If there are bits that we *want* to share with tools/, let's factor that
-> out. The actual MIDR values are a good candidate for that -- we can
-> follow the same approach as with sysreg-defs.h.
+> No MAINTAINERS update is needed, as the new file is covered by the existing
+> ARM/Rockchip SoC entry.
+> 
+> Tested on NanoPi M5 with successful boot and feature validation.
+> 
+> Signed-off-by: John Clark <inindev@gmail.com>
+> ---
+> John Clark (2):
+>   dt-bindings: arm: rockchip: add FriendlyElec NanoPi M5 board
+>   arm64: dts: rockchip: Add FriendlyElec NanoPi M5 support
+> 
+>  .../devicetree/bindings/arm/rockchip.yaml     |   6 +
+>  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+>  .../boot/dts/rockchip/rk3576-nanopi-m5.dts    | 969 ++++++++++++++++++
+>  3 files changed, 976 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-nanopi-m5.dts
+> 
+> --
+> 2.39.5
+> 
+> 
+> 
 
-Thanks for suggestion, Mark.
 
-It makes sense to me for extracting MIDR and sharing between kernel and
-tools/. I have created a task for following up the refactoring.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-> Other than that, I think that userspace should just maintain its own
-> infrastructure, and only pull in things from kernel sources when there's
-> a specific reason to. Otherwise we're just creating busywork.
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-I agree with the methodology.
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-Since Arnaldo is facing build failure when sync headers between kernel
-and perf tool, to avoid long latency, let us split the refactoriing
-into separate steps.
+  pip3 install dtschema --upgrade
 
-As a first step, I think my previous suggestion is valid, we can create a
-header tools/perf/arch/arm64/include/cputype.h with below code:
 
-  #include "../../../../arch/arm64/include/asm/cputype.h"
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/v6.16-rc1-19-gd7ad90d22abe (exact match)
 
-  static bool is_perf_midr_in_range_list(u32 midr,
-                                         struct midr_range const *ranges)
-  {
-          while (ranges->model) {
-                  if (midr_is_cpu_model_range(midr, ranges->model,
-                                  ranges->rv_min, ranges->rv_max))
-                          return true;
-                  ranges++;
-          }
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
 
-          return false;
-  }
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250616212214.139585-1-inindev@gmail.com:
 
-Then, once we can generate a dynamic MIDR header file, we can use that
-header and define the midr_range structure specifically in the perf.
-In the end, perf can avoid to include kernel's cputype.h.
+arch/arm64/boot/dts/rockchip/rk3576-nanopi-m5.dtb: spi-nor@0 (jedec,spi-nor): $nodename:0: 'spi-nor@0' does not match '^(flash|.*sram|nand)(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/mtd/jedec,spi-nor.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-nanopi-m5.dtb: pmic@23 (rockchip,rk806): Unevaluated properties are not allowed ('rk806_dvs1_null', 'rk806_dvs1_pwrdn', 'rk806_dvs1_rst', 'rk806_dvs1_slp', 'rk806_dvs2_dvs', 'rk806_dvs2_gpio', 'rk806_dvs2_null', 'rk806_dvs2_pwrdn', 'rk806_dvs2_rst', 'rk806_dvs2_slp', 'rk806_dvs3_dvs', 'rk806_dvs3_gpio', 'rk806_dvs3_null', 'rk806_dvs3_pwrdn', 'rk806_dvs3_rst', 'rk806_dvs3_slp' were unexpected)
+	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk806.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-nanopi-m5.dtb: hym8563@51 (haoyu,hym8563): $nodename:0: 'hym8563@51' does not match '^rtc(@.*|-([0-9]|[1-9][0-9]+))?$'
+	from schema $id: http://devicetree.org/schemas/rtc/haoyu,hym8563.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-nanopi-m5.dtb: hym8563@51 (haoyu,hym8563): Unevaluated properties are not allowed ('clock-frequency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/rtc/haoyu,hym8563.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-nanopi-m5.dtb: gpio-keys (gpio-keys): 'button@1' does not match any of the regexes: '^(button|event|key|switch|(button|event|key|switch)-[a-z0-9-]+|[a-z0-9-]+-(button|event|key|switch))$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
 
-If no objection, Yicong, do you mind preparing the patch mentioned
-above? Thanks!
 
-Leo
+
+
+
 
