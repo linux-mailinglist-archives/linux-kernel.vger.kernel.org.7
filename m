@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-689737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A17ADC5CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:09:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630CAADC5CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EA47179426
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:08:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C39E1615AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E2129617D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C7F298275;
 	Tue, 17 Jun 2025 09:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="udjkKEhZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUSla1Oi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D466F29552A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BAD296142;
 	Tue, 17 Jun 2025 09:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750151247; cv=none; b=EY1YXGhE5Wpn7qkxs6LfTGNZZI0tSbyf+QszFsK3gJixh6c++ho7oxCKtdneubnzI7r/m5WAOVIayGAsLLrpLzWI2VWNpcmvp3ywBE5rNmsUuMl/SpOG2ED3SGStA5y5qnDc/dXWNCDAQalHqqzrl0WbvqzG+KuKGRN5+ZWoQzo=
+	t=1750151248; cv=none; b=gvZkelp+OgRL/T3mA/oDculXnv/s0zq2nih6I2RnAoPB04sHcUojLa0KyBgl+PpPfKGpjId0r1oa385fXyH9G7h/NSDkbdTEo+htgvUssQHQgO665Ek7IcMyKTJq+WmbmfFiIpS7RDZ9IjoXvVc+PUap/pmUuoUamzMr3qpS7ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750151247; c=relaxed/simple;
-	bh=d+dyV6+8o/m9hnxTruh+bX3GYcHKO9kkCoHEp8YpTPw=;
+	s=arc-20240116; t=1750151248; c=relaxed/simple;
+	bh=SseOVKGpd8b5VDsqaBskNVXohkDASV2r56JlAC/rmKA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t2pYE8tXjyuYema4Rsd8OYMUwnpw23tUT4qLVdMsCl0zTKFhuwJTW8VzAqQMQhhZRkS6v/8BQ076cqiwEIo2asGiuKIh53ahmmZkGGoaCkCXwy8por44kTMaMYlf+iUnLUE+YQ2Kc/LF2PRYuhoskQXYDtjEht0kzhgUkOpYzeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=udjkKEhZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 81874C4CEE3;
+	 In-Reply-To:To:Cc; b=Yt8h+xZT+YHW07oUHU9kboAQFPMyhygmvOxnAK6ZtzassWjsEk1QomU1q+7qBtyGBWAwwLpZVgZ0A2ZzND/+PkoCx2F71t6AkhcXxWd9UqeP975RTrmr5vYL44mzeLOlgr9zwAmAME1qdeJ6ydRJQh9E/kMuNJrY2ySgU3PB/Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUSla1Oi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9EA76C16AAE;
 	Tue, 17 Jun 2025 09:07:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1750151247;
-	bh=d+dyV6+8o/m9hnxTruh+bX3GYcHKO9kkCoHEp8YpTPw=;
+	bh=SseOVKGpd8b5VDsqaBskNVXohkDASV2r56JlAC/rmKA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=udjkKEhZiBJZXRaQOIi+Kte9fF0f4tojEXCYaBXhs52QIkY4vLi1MXUfqt+y5gmU4
-	 4I/90PaR13m07oNHCZG1XpE/ojqRL9Jq+HBqOysop/AiZ2KbsN/6L/MzHZH8nwKrs1
-	 NYuAVTKL9jAYVb7x73jcwMf13xSiLhIUhk4PL2wP5z9YyNVN+7ROcacESHhNo27djh
-	 vg3Wvv1h27kzTGlk62k4yoZW11YspUA6dd5s5LX3j+mLLghQCRy9RgiXqU4sDXofxH
-	 fUs+cau/opTrtqqoo1Y+JLSJmXDFsPeIfF5NhY4Guzej92eDbFZhcSAulBkYTw/Ll/
-	 q0UNJzToEpMXw==
+	b=nUSla1OinD9g1WMOSlNR3qY5wrV3mRJx1Vq1Pgy60sDgy0TEa4XNyI1dR0xwM1jH/
+	 DhMzme7LX+4g4CbuzFHXx9qJ84MEiDvI1asszYfAXvY9dv67q98d8KeZq1AH2Xe/kh
+	 3QbuduN/PxW1WJvBGV4W709RsC9YPzTAXwg3ah0YYTndGSMtodKV6w75/3t4XDRkax
+	 olWNHSpKbkLYPNTzJQL+3aBLNDOI80zjWts5RNQC5uo0F4QrloxNmSIPZe4iOR1jFd
+	 I/a1oDX53yFlHabVbTQTutCR4xiaTWxZ9ZgJrYnTfRNcajyR//YvoahZditFvxSnLa
+	 ++J4ctkkr8xRw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D6BC7115B;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9400DC71136;
 	Tue, 17 Jun 2025 09:07:27 +0000 (UTC)
 From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
-Date: Tue, 17 Jun 2025 10:54:45 +0200
-Subject: [PATCH 4/5] phy: rockchip: phy-rockchip-inno-csidphy: add support
- for rk3588 variant
+Date: Tue, 17 Jun 2025 10:54:46 +0200
+Subject: [PATCH 5/5] arm64: dts: rockchip: add mipi csi-2 dphy nodes to
+ rk3588
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250616-rk3588-csi-dphy-v1-4-84eb3b2a736c@collabora.com>
+Message-Id: <20250616-rk3588-csi-dphy-v1-5-84eb3b2a736c@collabora.com>
 References: <20250616-rk3588-csi-dphy-v1-0-84eb3b2a736c@collabora.com>
 In-Reply-To: <20250616-rk3588-csi-dphy-v1-0-84eb3b2a736c@collabora.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -70,11 +70,11 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-phy@lists.infradead.org, 
  Michael Riesch <michael.riesch@collabora.com>
 X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750150493; l=2785;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750150493; l=1867;
  i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
- bh=wIvkTfx5p7asQqRE6ZowFTwrVX3fTKBqDPaE5VUrGmU=;
- b=WUajPaJyRXJCRO4z/Nr5IJPT1r7i6jSpEW5MfqDZyghW5BslEBXEeXgkw8ocDJ/cjV0k5YCaF
- IwbJL6eadG5A9FtESWu4ZkEHmOs6FBS7pB33AHWXWk914T8WAf+PxMY
+ bh=qrX7R9Yf+higl2wbSf3x1h05wV3AtHIap5SggDm1ypA=;
+ b=c84nks+JEIFvKM2PQXYe5Sigfe8rKm+GsUo6dxEijt2RPl2ZO4XAEDjgHV/Lapw/2TX710uRl
+ gb9OUZeBuxgCbK95HJRW0PI8pg2A3oRvDAL8d5h81ksM11iGvCrd4Gi
 X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
  pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
 X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
@@ -84,79 +84,63 @@ Reply-To: michael.riesch@collabora.com
 
 From: Michael Riesch <michael.riesch@collabora.com>
 
-The Rockchip RK3588 MIPI CSI-2 DPHY can be supported using the existing
-phy-rockchip-inno-csidphy driver, the notable differences being
- - the control bits in the GRF
- - the additional reset line
-Add support for this variant.
+The Rockchip RK3588 features two MIPI CSI-2 DPHYs. Add the device
+tree nodes for them.
 
 Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
 ---
- drivers/phy/rockchip/phy-rockchip-inno-csidphy.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 31 +++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-inno-csidphy.c b/drivers/phy/rockchip/phy-rockchip-inno-csidphy.c
-index 75533d071025..0840be668bfd 100644
---- a/drivers/phy/rockchip/phy-rockchip-inno-csidphy.c
-+++ b/drivers/phy/rockchip/phy-rockchip-inno-csidphy.c
-@@ -30,6 +30,8 @@
- #define RK3568_GRF_VI_CON0		0x0340
- #define RK3568_GRF_VI_CON1		0x0344
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+index 70f03e68ba55..6a4ee0247fcf 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+@@ -621,6 +621,16 @@ php_grf: syscon@fd5b0000 {
+ 		reg = <0x0 0xfd5b0000 0x0 0x1000>;
+ 	};
  
-+#define RK3588_CSIDPHY_GRF_CON0		0x0000
++	csidphy0_grf: syscon@fd5b4000 {
++		compatible = "rockchip,rk3588-csidphy-grf", "syscon";
++		reg = <0x0 0xfd5b4000 0x0 0x1000>;
++	};
 +
- /* PHY */
- #define CSIDPHY_CTRL_LANE_ENABLE		0x00
- #define CSIDPHY_CTRL_LANE_ENABLE_CK		BIT(6)
-@@ -115,6 +117,12 @@ static const struct dphy_reg rk3568_grf_dphy_regs[] = {
- 	[GRF_DPHY_CSIPHY_CLKLANE_EN] = PHY_REG(RK3568_GRF_VI_CON0, 1, 8),
- };
- 
-+static const struct dphy_reg rk3588_grf_dphy_regs[] = {
-+	[GRF_DPHY_CSIPHY_FORCERXMODE] = PHY_REG(RK3588_CSIDPHY_GRF_CON0, 4, 0),
-+	[GRF_DPHY_CSIPHY_DATALANE_EN] = PHY_REG(RK3588_CSIDPHY_GRF_CON0, 4, 4),
-+	[GRF_DPHY_CSIPHY_CLKLANE_EN] = PHY_REG(RK3588_CSIDPHY_GRF_CON0, 1, 8),
-+};
++	csidphy1_grf: syscon@fd5b5000 {
++		compatible = "rockchip,rk3588-csidphy-grf", "syscon";
++		reg = <0x0 0xfd5b5000 0x0 0x1000>;
++	};
 +
- struct hsfreq_range {
- 	u32 range_h;
- 	u8 cfg_bit;
-@@ -373,6 +381,15 @@ static const struct dphy_drv_data rk3568_mipidphy_drv_data = {
- 	.grf_regs = rk3568_grf_dphy_regs,
- };
- 
-+static const struct dphy_drv_data rk3588_mipidphy_drv_data = {
-+	.pwrctl_offset = -1,
-+	.ths_settle_offset = RK3568_CSIDPHY_CLK_WR_THS_SETTLE,
-+	.calib_offset = RK3568_CSIDPHY_CLK_CALIB_EN,
-+	.hsfreq_ranges = rk1808_mipidphy_hsfreq_ranges,
-+	.num_hsfreq_ranges = ARRAY_SIZE(rk1808_mipidphy_hsfreq_ranges),
-+	.grf_regs = rk3588_grf_dphy_regs,
-+};
+ 	pipe_phy0_grf: syscon@fd5bc000 {
+ 		compatible = "rockchip,rk3588-pipe-phy-grf", "syscon";
+ 		reg = <0x0 0xfd5bc000 0x0 0x100>;
+@@ -3052,6 +3062,27 @@ mipidcphy1: phy@fedb0000 {
+ 			 <&cru SRST_S_MIPI_DCPHY1>;
+ 		reset-names = "m_phy", "apb", "grf", "s_phy";
+ 		#phy-cells = <1>;
++	};
 +
- static const struct of_device_id rockchip_inno_csidphy_match_id[] = {
- 	{
- 		.compatible = "rockchip,px30-csi-dphy",
-@@ -394,6 +411,10 @@ static const struct of_device_id rockchip_inno_csidphy_match_id[] = {
- 		.compatible = "rockchip,rk3568-csi-dphy",
- 		.data = &rk3568_mipidphy_drv_data,
- 	},
-+	{
-+		.compatible = "rockchip,rk3588-csi-dphy",
-+		.data = &rk3588_mipidphy_drv_data,
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, rockchip_inno_csidphy_match_id);
-@@ -435,7 +456,7 @@ static int rockchip_inno_csidphy_probe(struct platform_device *pdev)
- 		return PTR_ERR(priv->pclk);
- 	}
++	csi_dphy0: phy@fedc0000 {
++		compatible = "rockchip,rk3588-csi-dphy";
++		reg = <0x0 0xfedc0000 0x0 0x8000>;
++		clocks = <&cru PCLK_CSIPHY0>;
++		clock-names = "pclk";
++		#phy-cells = <0>;
++		resets = <&cru SRST_CSIPHY0>, <&cru SRST_P_CSIPHY0>;
++		rockchip,grf = <&csidphy0_grf>;
++		status = "disabled";
++	};
++
++	csi_dphy1: phy@fedc8000 {
++		compatible = "rockchip,rk3588-csi-dphy";
++		reg = <0x0 0xfedc8000 0x0 0x8000>;
++		clocks = <&cru PCLK_CSIPHY1>;
++		clock-names = "pclk";
++		#phy-cells = <0>;
++		resets = <&cru SRST_CSIPHY1>, <&cru SRST_P_CSIPHY1>;
++		rockchip,grf = <&csidphy1_grf>;
+ 		status = "disabled";
+ 	};
  
--	priv->rst = devm_reset_control_get(dev, "apb");
-+	priv->rst = devm_reset_control_array_get(dev, RESET_CONTROL_EXCLUSIVE);
- 	if (IS_ERR(priv->rst)) {
- 		dev_err(dev, "failed to get system reset control\n");
- 		return PTR_ERR(priv->rst);
 
 -- 
 2.39.5
