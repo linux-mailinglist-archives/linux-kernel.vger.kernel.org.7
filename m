@@ -1,156 +1,126 @@
-Return-Path: <linux-kernel+bounces-689970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60C56ADC95D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:31:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED88ADC974
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136CC1785F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:31:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B7B87AB4C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C5328F924;
-	Tue, 17 Jun 2025 11:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEF92DF3CF;
+	Tue, 17 Jun 2025 11:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKAbfP9z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDGH4viT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8401EDA3C;
-	Tue, 17 Jun 2025 11:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA961A9B24;
+	Tue, 17 Jun 2025 11:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750159851; cv=none; b=NT4miekeSdjRiBjwDQJQeq65ts9dQcSm07QVQ4ckS38eWf0FzOv41PjOgZmsdsL5MFUbJnPSkI39svUpGK9EkOdAddPhLaYeAt8qr1xyCKI3NDRDkf//dlIFa1Wl2u7HOCUCLyTDGwBJ7fOZOfwD8wbpTAPhngkMFf6RzUvv3XQ=
+	t=1750159904; cv=none; b=QAtG+z9EN52V9/Bu3WmthB8fNhMRNaWU+HYKj5fkl8WESEXUw5pu1QnNkzhusTwNAZw3q1+7O3wqMRw4f/I2lZB2kpLpTjQEbrbeo541V/2h+yx1EdmUYqY1iwC5u2gMVrpzqjcdoCvvUQMJy+PC5T1S2kPTDKCX0P7WMwZ4ZpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750159851; c=relaxed/simple;
-	bh=6U82WYyW+bhJEQaJbsyh/F0bmSo9xdIKxkvx8FzUrWg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VVsdeJgGiw1NNxFxj3LxEq6yQ7R+RVPZbTZsFvJr6LLAECc8Ky0r5cG3m3T9n2DY8e7oN02rAln0pI+hPHzJSSQyTGg1y57PfPmpgZmLaK42Z5AY3IwYalRRH/vg4biq5KkiQV4oNY6rjdaxJkElyqSREURMiajrNVAf4sGcmKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKAbfP9z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDD78C4CEE3;
-	Tue, 17 Jun 2025 11:30:47 +0000 (UTC)
+	s=arc-20240116; t=1750159904; c=relaxed/simple;
+	bh=9Mw48Zg0cv0dF4bSYaCiGS8ZVAaR/yW9yOs0j/Ch5ps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b5K+tHE2jCpmcRzunofFAPRvS7xiTY9JTwm2yGWdJgac9NFlLZ5bwbOnuQp4AOfO06yp4y1R5Zw9vig5ATEuzISaVgt2zD0tBmFK2nugD7yTRMFoC50XSTmmaOw4Oel+LtVRKte6QklFg4955lLFZUWYaoGFbvgGr/SowOdZZqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UDGH4viT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA97EC4CEE3;
+	Tue, 17 Jun 2025 11:31:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750159851;
-	bh=6U82WYyW+bhJEQaJbsyh/F0bmSo9xdIKxkvx8FzUrWg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=AKAbfP9zRX8b53yeE8YUQpsTbbsvPXHCVm0IrQQJK5snVEHuHh7R9YwsQD4a07jBL
-	 sslikHOZytcgBHWrniW+akefv103y5y36xjYDsJ+/1mnoXNW/saqijKbsrdBsP8tHn
-	 YAZje4Q4ZdOWW4rKpTp+GGFvFSWSU62cES8f3rO29IdbP77RO0xQWLaXshMMspgI8N
-	 QBpMpzNCsVrApHxk/BOgBhiFaGmQetaT7zObmsev6cEeukZhYQzce3nH/R1vYc7WG5
-	 dIEN3XgcsETdKyHS3dOjic4/d04+l+c6Y4H76TCUiZkpIZUFFqzLtRKbF6287Q0qJB
-	 G/56cJ6H5iJMQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Lyude Paul" <lyude@redhat.com>
-Cc: <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  "Boqun Feng" <boqun.feng@gmail.com>,  "FUJITA Tomonori"
- <fujita.tomonori@gmail.com>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "John Stultz" <jstultz@google.com>,  "Stephen
- Boyd" <sboyd@kernel.org>,  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex
- Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron <bjorn3_gh@protonmail.com>,  "Benno Lossin" <lossin@kernel.org>,
-  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v5 6/7] rust: hrtimer: Add HrTimer::raw_cb_time()
-In-Reply-To: <20250613232754.451450-7-lyude@redhat.com> (Lyude Paul's message
-	of "Fri, 13 Jun 2025 19:22:27 -0400")
-References: <20250613232754.451450-1-lyude@redhat.com>
-	<4TbClQnbyQckuIEF2SqIwmeX5XIEl_pAJVKS5S7JCGA1OCWbA1vTjhPs6NDpQQ9RlUvb79n00_21CV2PTi-ZWQ==@protonmail.internalid>
-	<20250613232754.451450-7-lyude@redhat.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 17 Jun 2025 13:30:43 +0200
-Message-ID: <87plf2a9lo.fsf@kernel.org>
+	s=k20201202; t=1750159903;
+	bh=9Mw48Zg0cv0dF4bSYaCiGS8ZVAaR/yW9yOs0j/Ch5ps=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UDGH4viTAriSsrD4EJMESxN56NOG3wDwakAG2dKKMuWb1Xf4Fvs8de+SewHJNBeF+
+	 W7cf9OOF3XlqlLjV4xjZHyAAIl+2Hmaf5shgfntuUPqxmNZSHVcvSybrEGy/Zs0Sz5
+	 lO5GkdOvkm1p5S1WQdyq44321SulB2Rp0CZfmTegP6pro4gigdlM+qKa2ZDLoXUg2A
+	 qvTS5EICV1TbjXcD1R7gC7TpnfC2RGg+nDK9hvxG4rTP40zQO9iKvwbcyGTSCZCNX2
+	 7Q47oH6NqNjWiMfBYDtaI4poxHP5TZNgcAaAQkxjOwdM6JDXsX/uiM5uicv0SA0HR+
+	 XZly4CVAyOHBw==
+Date: Tue, 17 Jun 2025 13:31:17 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, 
+	Dominique Martinet <asmadeus@codewreck.org>, Christian Schoenebeck <linux_oss@crudebyte.com>, 
+	David Sterba <dsterba@suse.com>, David Howells <dhowells@redhat.com>, 
+	Marc Dionne <marc.dionne@auristor.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Benjamin LaHaise <bcrl@kvack.org>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, "Tigran A . Aivazian" <aivazian.tigran@gmail.com>, 
+	Kees Cook <kees@kernel.org>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
+	Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, Tyler Hicks <code@tyhicks.com>, 
+	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
+	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
+	Hongbo Li <lihongbo22@huawei.com>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, 
+	Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+	Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	Viacheslav Dubeyko <slava@dubeyko.com>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	Yangtao Li <frank.li@vivo.com>, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, David Woodhouse <dwmw2@infradead.org>, 
+	Dave Kleikamp <shaggy@kernel.org>, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, Bob Copeland <me@bobcopeland.com>, 
+	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, 
+	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Zhihao Cheng <chengzhihao1@huawei.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Carlos Maiolino <cem@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, 
+	Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>, 
+	Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-afs@lists.infradead.org, linux-aio@kvack.org, linux-unionfs@vger.kernel.org, 
+	linux-bcachefs@vger.kernel.org, linux-mm@kvack.org, linux-btrfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-um@lists.infradead.org, linux-mtd@lists.infradead.org, 
+	jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org, 
+	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, 
+	linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev
+Subject: Re: [PATCH 00/10] convert the majority of file systems to
+ mmap_prepare
+Message-ID: <20250617-ansetzen-mathematik-08f6d9b51f3d@brauner>
+References: <cover.1750099179.git.lorenzo.stoakes@oracle.com>
+ <20250616161111.74e10321c4c421674f78d689@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250616161111.74e10321c4c421674f78d689@linux-foundation.org>
 
-"Lyude Paul" <lyude@redhat.com> writes:
+On Mon, Jun 16, 2025 at 04:11:11PM -0700, Andrew Morton wrote:
+> On Mon, 16 Jun 2025 20:33:19 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+> 
+> > I am basing this on the mm-new branch in Andrew's tree, so let me know if I
+> > should rebase anything here. Given the mm bits touched I did think perhaps
+> > we should take it through the mm tree, however it may be more sensible to
+> > take it through an fs tree - let me know!
+> 
+> It's more fs/ than mm/ purely from a footprint point of view.  But
+> there any expectation that there will be additional patches which build
+> on this?
+> 
+> I'll scoop it into mm-new for now, see what happens.
 
-> This is a simple private unsafe wrapper for retrieving the current time
-> according to the hrtimer_clock_base struct for a given timer. This will be
-> used for implementing functions such as forward_now(), which rely on
-> retrieving the current time from the hrtimer's clock base.
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->
-> ---
-> V2:
-> - Convert safety comment to invariant comment in from_raw()
-> - Add raw_clock_base() and implement clock_base() on HrTimer<T> as well
->
-> V4:
-> - Drop HrTimerClockBase entirely, reword commit as this is now about adding
->   raw_cb_time()
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  rust/kernel/time.rs         |  1 -
->  rust/kernel/time/hrtimer.rs | 27 +++++++++++++++++++++++++++
->  2 files changed, 27 insertions(+), 1 deletion(-)
->
-> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
-> index eed77297d58a6..27ee78070d72e 100644
-> --- a/rust/kernel/time.rs
-> +++ b/rust/kernel/time.rs
-> @@ -209,7 +209,6 @@ pub(crate) fn into_nanos(self) -> i64 {
->      /// # Safety
->      ///
->      /// The caller promises that `nanos` is in the range from 0 to `KTIME_MAX`.
-> -    #[expect(unused)]
->      #[inline]
->      pub(crate) unsafe fn from_nanos(nanos: i64) -> Self {
->          debug_assert!(nanos >= 0);
-> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
-> index 4a8416fbd187d..79d86e1099a1e 100644
-> --- a/rust/kernel/time/hrtimer.rs
-> +++ b/rust/kernel/time/hrtimer.rs
-> @@ -193,6 +193,33 @@ unsafe fn raw_forward(self_ptr: *mut Self, now: HrTimerInstant<T>, interval: Del
->          }
->      }
->
-> +    /// Retrieve the current time according to the `struct hrtimer_clock_base` for `self_ptr`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// - `self_ptr` must point to a valid `Self`.
-> +    /// - The caller must ensure that the `hrtimer_clock_base` cannot possibly change in the context
-> +    ///   this function is being called in. This means either exclusive access to `self_ptr` is
-> +    ///   required, or we must be from within the timer callback context of `self_ptr`.
-> +    #[expect(unused)]
-> +    unsafe fn raw_cb_time(self_ptr: *const Self) -> HrTimerInstant<T>
-
-Can we call it `raw_clock_base_time`?
-
-> +    where
-> +        T: HasHrTimer<T>,
-> +    {
-> +        // SAFETY: We're guaranteed `self_ptr` points to a valid `Self` by our safety contract.
-> +        let clock_base = unsafe { (*Self::raw_get(self_ptr)).base };
-> +
-> +        // SAFETY: The C API guarantees that `get_time` is initialized to a valid function pointer
-> +        // for as long as we expose hrtimers to users.
-> +        let get_time_fn = unsafe { (*clock_base).get_time.unwrap_unchecked() };
-> +
-> +        // SAFETY:
-> +        // - get_time_fn() returns a ktime_t, so we're guaranteed its return value is between `0`
-> +        //   and `KTIME_MAX`.
-> +        // - get_time_fn() itself has no special requirements.
-> +        unsafe { Instant::from_nanos(get_time_fn()) }
-> +    }
-> +
-
-How does this differ from Instant<C>::now()? Could we do this statically
-by going through `<<T as HasHrTimer<T>>::TimerMode as HrTimerMode>::Clock`?
-
-
-Best regards,
-Andreas Hindborg
-
-
+I'm going to carry this in the vfs-6.17.mmap_prepare branch after fixing
+up the various minor issues spotted in the series.
 
