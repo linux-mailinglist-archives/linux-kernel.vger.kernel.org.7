@@ -1,191 +1,311 @@
-Return-Path: <linux-kernel+bounces-689783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33855ADC667
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:30:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB85ADC657
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80133BD644
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:28:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A6A17A2443
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F3A294A0C;
-	Tue, 17 Jun 2025 09:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336CB293C56;
+	Tue, 17 Jun 2025 09:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7KJbSIC"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cC7Ew+p5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6AD293B53;
-	Tue, 17 Jun 2025 09:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936BC293C44
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750152508; cv=none; b=Mrk6WbQjIJe4CIA2ousmkWUIedXcIME+XH8SkK9Jd+NQXPrOLZrRwFHWelL1thelZQeC0tVFFHBt7ramRjJMGRfidH7PPhsOflOz62sZ33Hcx9pCtDqcFGukOiPTLwpXLM+ZOHMIxrqyq2EqmtBcW6WCkLNPDx6sfSTxkNz/lWQ=
+	t=1750152477; cv=none; b=dcR29oHXbTYIXACseMGy/JfdZE4eoopfYyrmEpfoD457prLWHiA4LHFCiO/1J9g08Wtmg5WkJzk6QmdH9yK+oPql9ETbri+khJTnn0XyGm+echU9APGCArnUK4qaXQG1pZmvS0eERTYvmgKsh+FY+fStTmQme9RUyWVrkhf1pDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750152508; c=relaxed/simple;
-	bh=Q5fd04hqWSCGDEzHOkzetwrrFZNmS/QF+IyVMo8AaK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SRk8lC2NIe42nZDoQzLTUE2MqcaSIUJMyVwt6huefJ5qFy5dCqQ9K5TrJ/0lWcWK76aAWUSlbbOQhd8CIfINIufbjyRK9Y0NcdgRirKn316O72HlnjlBbAOh4fqoxBWIFzaWLq2yYGEUnqUTMDqN7gBKIw1IqMAOyLAa/TwMVds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P7KJbSIC; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e81881bdd55so718800276.0;
-        Tue, 17 Jun 2025 02:28:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750152506; x=1750757306; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gALTqNQrj90wQMFVEUTnuyFeDr4GZi/SD5mn5GfukAs=;
-        b=P7KJbSICWReIJutj8Q447Uisi/eY9mDBt/rX35mXu/U+mx5uFsQrb2V5w4Zwb4ghJu
-         SIR5aUdPWKBHdBGcUsyWTLHJ/VqpTjLa4Z2THi9OHMX34d1EPXg5FhI2mAejE6Z62WDW
-         l7u6v/24E7xrQW0w58biKRD8wyiL+JYjg8R7/kTLmRaWogXiAGcKIoaR8rHWPSL2uKLv
-         Qc0bIHxGG+bgm7HspunnCIsa0yjfGRBSt0Asuzj/WUQ8xtKXnrSoYbh5BzmPKHCfvFqt
-         aZZpdYyVkUU7oGwMKqDPfLkQmmr6bVtSx1P73nwbT0gBDLjjPzB5Jfrq829F2/mBN9Q/
-         sg6A==
+	s=arc-20240116; t=1750152477; c=relaxed/simple;
+	bh=tSOCRe1qXuZiP+HcsTx6Mu0WjCDYKnyV2T5KA0n/8H4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mJhnRssLakDnC8zE8pz+fVwe5aaIYqd52JB7VG8555ZH3aX3W9CGYatf9WUrvI88gJw+9ENVnJ8Ogllimz08kPqSWGHM3fTTsiu7auA3l3+6C3/fSIXDoie9FnsRi5EdK6tVWm7qiDZbzhhUq7zXMSAzXp+SQo0j75PcbyqLj7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cC7Ew+p5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750152474;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4dqrXFsdEZJmhlepEMWXpnIER3w37/a4Vct0FTgsbGo=;
+	b=cC7Ew+p5DNED9yflwjmjUihN6vJiHC6SH0X9ZvCy4pdLSl8QaAj/bZf9qP2SAo5yDGb1xN
+	gwzUS9m4J7pPMRGu+yoFfHXXP/lGGZt6/ed95ZDCO7Jj2CXnYtY8+Fo61Gvf8rjKF3NWe8
+	jodiN84Tt/3hG6lHXvboVViJLxYZ4Js=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-381-nQFieocVNpe2Cm5bKlvagA-1; Tue, 17 Jun 2025 05:27:53 -0400
+X-MC-Unique: nQFieocVNpe2Cm5bKlvagA-1
+X-Mimecast-MFC-AGG-ID: nQFieocVNpe2Cm5bKlvagA_1750152472
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45334219311so20555545e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 02:27:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750152506; x=1750757306;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gALTqNQrj90wQMFVEUTnuyFeDr4GZi/SD5mn5GfukAs=;
-        b=vPXHS3RU6Ee/oerLz7MIEJ+SmOE4Q9ESE1xQ7Suqz0xs7AwPZrZtBotoJA4d7lSpiz
-         ERJHTHq/QS1Cv36Lgl+xjKEPSWLZL4CNo5rxyJ0L9WrhB+/LXAZJsQ/ggkGKTgCCe5i1
-         bk1LG/KjBGL6Z8lrm+ZhPHWhHcvrs4/fbp8jolguO/j5qn249Z1m71clTdWmR9BMx0ie
-         /qWcniGstK9YxblQFJ0TBql1tnij1VFzXfhjJkA2kq8UxrI2BygCivmv/8Vf/PbKTnL+
-         ISq7+A7JZELER91n8ksoxq5+mCEzsYrcXwobALwwE2xew3+AtjhzsO7MWxbCYqzw4wlE
-         WVaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJAMMcqN+FCK8Q/6qRPU1Q0+BvnHlliUK2GHd1IIs0L8f9eGxjJiEgFp6bBPMtYOLHkfCFqALlc6Ai@vger.kernel.org, AJvYcCVtmQPfvGkHP9u2/B8V11bLVt8A5A0FPyM3duGGn9MysDgF4lyYz+ESQPDQEWN7940akgz3to5PEMA7SJ4d@vger.kernel.org, AJvYcCVwo+E8703cFveWx5fLnwohqzaeR4y1GDapDpv4gKOFEJFNHzcjcs59Q4tvXojbk2OppAuDXOeLFZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf8rV3OwUuH55VPuhlXe5Bsg384EQSMoKicwFsk2T9x3VUmjVh
-	d2wIHjX2q6DeqK1s75iwaqwRZI1f+NA22BcfCwGZpUHI/O9Ryg+tUYk9Jr/OP1qJwTTqHI1lC5m
-	zSP5EG2ljr/vcM6ELdClIcslLwjStSRs=
-X-Gm-Gg: ASbGncuhRfiMDWq3zvvUHKbNQGLgRXd0qc4+csSPhtIiV+U7fat6PUCsRrxOUXywMGx
-	hNmLCJpylRK22tBsg6PLEv2Rgf5ILykVn6wBJ5aC78XSA0sXswrBFTjUsDThG4D5ZL/d9vwKf2z
-	OQ46CeiTivMQ70ah+sXjvVDZN3lIYFXZDPqnr+Eq81HhQ=
-X-Google-Smtp-Source: AGHT+IGfEO9KKif1fDX3wWrW5gIl4x+KT/D8NnLSgBbamSDflf/3JpdAOEJzp96RWvwMj+B2D/u2WRFgO85wbi8Vcd8=
-X-Received: by 2002:a05:690c:1d:b0:710:ee89:d34e with SMTP id
- 00721157ae682-7117551588cmr74852627b3.8.1750152506329; Tue, 17 Jun 2025
- 02:28:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750152472; x=1750757272;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4dqrXFsdEZJmhlepEMWXpnIER3w37/a4Vct0FTgsbGo=;
+        b=uG/sh2M8cbrqaVc0Mz/b50OVlY/B70XL5wekJoLNCSS/lmlqubPaxlWiSX7QDH/bzP
+         AFC3u3mU7zHlXovLWsLOtAqtnaQSRqdlTyVj+M96byTs+meR5fi8ySa7Li2N38pw47+a
+         BFyPAS7mXtO8hvOb7mDDIfLAtkIUrIuOzrHgZn6j3iE9gbEBG+DoOgneAg8kxawHR9E8
+         0mVkFA8CBEdu32J+ysckfRcOtJp54lEiVZMnZxjS9nhcItXll+HAJrF4VipNfT0qJaDj
+         8eQHjfVExJHtzRd58x1chJIo4/Hwe3oxXhh/N7aktXPUTxMp399g5BMEgT6j5dIrRydu
+         2TuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJHFsM0QM60g5aBbQp4dqyopBQgU4FDWjsT6m5ZhdR+qRadJLJfULOo/j4QuBI7B5GP+3tCpamqA7jJKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQLxIKc6PYnKPS6WBD1UcjthPYiajGmit6jRQNRI43/PdvZ4/T
+	r8cubmYmK/qQO77epRGRaBjXLk8DydJG2X47BLQaaADjGZtO58Bxatmy4wl+VhmMYZkag7qn5tp
+	UNWTdEpr4gFrduz1mEtLzOMm6LedUr9pHI/duCd2hj85L9/y1xTLINxYvmgPOmLZDYw==
+X-Gm-Gg: ASbGncsGa/N7UgFWjV3ZUfX4V/X07GDxjHWppVlgRL36+dCnuJXopBkwKv053gvF0sE
+	GMG6S0ibNbqVMl6W/lL7WH356wv3lLcLqspK5l3dXLZFHDM8yQJePiijRIArUJoU6sYXl2e77W7
+	3PsMykA3/wmkq//NO1DnT1KoEYIKL4N/ulniZclj02UIs/6/Bo3tnNIjyIUwA8s/83QoRhotTdN
+	ou6yWeuldLCE7RM0wJra3DDeU44fokrD3XjIGNU9kTAgr8zbUlXFZwQgQ8C3ash3jThXc22n0GW
+	QBDiNPCP2bw6G8UjgGNLgTBpzAi/agjohQOwrWNiZoRVm19Amq+Bs0Fsyu598TPovAFaLe2Q1Zu
+	fY15w8EnoRlHmqjB0vhdHX5dhY1sOtWZ3qY2xx6aTdlTCOHo=
+X-Received: by 2002:a05:600c:350c:b0:43d:24d:bbe2 with SMTP id 5b1f17b1804b1-4533cabe314mr91306185e9.28.1750152471918;
+        Tue, 17 Jun 2025 02:27:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IERF6PDjTpiYLNyZ293klVXrcUmv1H35b5KCmj2zdZoET1urMttbqluXFus7g8qKYz3SajZaw==
+X-Received: by 2002:a05:600c:350c:b0:43d:24d:bbe2 with SMTP id 5b1f17b1804b1-4533cabe314mr91305955e9.28.1750152471468;
+        Tue, 17 Jun 2025 02:27:51 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f31:700:3851:c66a:b6b9:3490? (p200300d82f3107003851c66ab6b93490.dip0.t-ipconnect.de. [2003:d8:2f31:700:3851:c66a:b6b9:3490])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e2324c6sm167302745e9.12.2025.06.17.02.27.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jun 2025 02:27:51 -0700 (PDT)
+Message-ID: <e0c741a0-450a-4512-8796-bd83a5618409@redhat.com>
+Date: Tue, 17 Jun 2025 11:27:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250615222258.117771-1-l.rubusch@gmail.com> <20250615222258.117771-4-l.rubusch@gmail.com>
- <CAHp75Vf6sLfVrN30divVqPBnJBQsU5b+SY24yC2PJuuTmRQ1LA@mail.gmail.com>
-In-Reply-To: <CAHp75Vf6sLfVrN30divVqPBnJBQsU5b+SY24yC2PJuuTmRQ1LA@mail.gmail.com>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Tue, 17 Jun 2025 11:27:50 +0200
-X-Gm-Features: AX0GCFtdtyrQdB3K0tsd9fV7juD1I_SYR0hG_EI8QiCnyXtYFHZ8_2mUhT98E2Y
-Message-ID: <CAFXKEHan_NnmMUfuy9cyjgBsdFK+C6V7eVxq_V3--afzQYGDDQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/8] iio: accel: adxl313: add buffered FIFO watermark
- with interrupt handling
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
-	andy@kernel.org, corbet@lwn.net, lucas.p.stankus@gmail.com, lars@metafoo.de, 
-	Michael.Hennerich@analog.com, bagasdotme@gmail.com, linux-iio@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] gup: introduce unpin_user_folio_dirty_locked()
+To: lizhe.67@bytedance.com
+Cc: akpm@linux-foundation.org, alex.williamson@redhat.com,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ peterx@redhat.com
+References: <34560ae6-c598-4474-a094-a657c973156b@redhat.com>
+ <20250617092117.10772-1-lizhe.67@bytedance.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250617092117.10772-1-lizhe.67@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Andy,
+On 17.06.25 11:21, lizhe.67@bytedance.com wrote:
+> On Tue, 17 Jun 2025 09:43:56 +0200, david@redhat.com wrote:
+>   
+>> On 17.06.25 06:18, lizhe.67@bytedance.com wrote:
+>>> From: Li Zhe <lizhe.67@bytedance.com>
+>>>
+>>> When vfio_unpin_pages_remote() is called with a range of addresses that
+>>> includes large folios, the function currently performs individual
+>>> put_pfn() operations for each page. This can lead to significant
+>>> performance overheads, especially when dealing with large ranges of pages.
+>>>
+>>> This patch optimize this process by batching the put_pfn() operations.
+>>>
+>>> The performance test results, based on v6.15, for completing the 16G VFIO
+>>> IOMMU DMA unmapping, obtained through unit test[1] with slight
+>>> modifications[2], are as follows.
+>>>
+>>> Base(v6.15):
+>>> ./vfio-pci-mem-dma-map 0000:03:00.0 16
+>>> ------- AVERAGE (MADV_HUGEPAGE) --------
+>>> VFIO MAP DMA in 0.047 s (338.6 GB/s)
+>>> VFIO UNMAP DMA in 0.138 s (116.2 GB/s)
+>>> ------- AVERAGE (MAP_POPULATE) --------
+>>> VFIO MAP DMA in 0.280 s (57.2 GB/s)
+>>> VFIO UNMAP DMA in 0.312 s (51.3 GB/s)
+>>> ------- AVERAGE (HUGETLBFS) --------
+>>> VFIO MAP DMA in 0.052 s (308.3 GB/s)
+>>> VFIO UNMAP DMA in 0.139 s (115.1 GB/s)
+>>>
+>>> Map[3] + This patchset:
+>>> ------- AVERAGE (MADV_HUGEPAGE) --------
+>>> VFIO MAP DMA in 0.028 s (563.9 GB/s)
+>>> VFIO UNMAP DMA in 0.049 s (325.1 GB/s)
+>>> ------- AVERAGE (MAP_POPULATE) --------
+>>> VFIO MAP DMA in 0.294 s (54.4 GB/s)
+>>> VFIO UNMAP DMA in 0.296 s (54.1 GB/s)
+>>> ------- AVERAGE (HUGETLBFS) --------
+>>> VFIO MAP DMA in 0.033 s (485.1 GB/s)
+>>> VFIO UNMAP DMA in 0.049 s (324.4 GB/s)
+>>>
+>>> For large folio, we achieve an approximate 64% performance improvement
+>>> in the VFIO UNMAP DMA item. For small folios, the performance test
+>>> results appear to show no significant changes.
+>>>
+>>> [1]: https://github.com/awilliam/tests/blob/vfio-pci-mem-dma-map/vfio-pci-mem-dma-map.c
+>>> [2]: https://lore.kernel.org/all/20250610031013.98556-1-lizhe.67@bytedance.com/
+>>> [3]: https://lore.kernel.org/all/20250529064947.38433-1-lizhe.67@bytedance.com/
+>>>
+>>> Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
+>>> ---
+>>>    drivers/vfio/vfio_iommu_type1.c | 35 +++++++++++++++++++++++++++++----
+>>>    1 file changed, 31 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+>>> index e952bf8bdfab..159ba80082a8 100644
+>>> --- a/drivers/vfio/vfio_iommu_type1.c
+>>> +++ b/drivers/vfio/vfio_iommu_type1.c
+>>> @@ -806,11 +806,38 @@ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
+>>>    				    bool do_accounting)
+>>>    {
+>>>    	long unlocked = 0, locked = vpfn_pages(dma, iova, npage);
+>>> -	long i;
+>>>    
+>>> -	for (i = 0; i < npage; i++)
+>>> -		if (put_pfn(pfn++, dma->prot))
+>>> -			unlocked++;
+>>> +	while (npage) {
+>>> +		long nr_pages = 1;
+>>> +
+>>> +		if (!is_invalid_reserved_pfn(pfn)) {
+>>> +			struct page *page = pfn_to_page(pfn);
+>>> +			struct folio *folio = page_folio(page);
+>>> +			long folio_pages_num = folio_nr_pages(folio);
+>>> +
+>>> +			/*
+>>> +			 * For a folio, it represents a physically
+>>> +			 * contiguous set of bytes, and all of its pages
+>>> +			 * share the same invalid/reserved state.
+>>> +			 *
+>>> +			 * Here, our PFNs are contiguous. Therefore, if we
+>>> +			 * detect that the current PFN belongs to a large
+>>> +			 * folio, we can batch the operations for the next
+>>> +			 * nr_pages PFNs.
+>>> +			 */
+>>> +			if (folio_pages_num > 1)
+>>> +				nr_pages = min_t(long, npage,
+>>> +					folio_pages_num -
+>>> +					folio_page_idx(folio, page));
+>>> +
+>>
+>> (I know I can be a pain :) )
+> 
+> No, not at all! I really appreciate you taking the time to review my
+> patch.
+> 
+>> But the long comment indicates that this is confusing.
+>>
+>>
+>> That is essentially the logic in gup_folio_range_next().
+>>
+>> What about factoring that out into a helper like
+>>
+>> /*
+>>    * TODO, returned number includes the provided current page.
+>>    */
+>> unsigned long folio_remaining_pages(struct folio *folio,
+>> 	struct pages *pages, unsigned long max_pages)
+>> {
+>> 	if (!folio_test_large(folio))
+>> 		return 1;
+>> 	return min_t(unsigned long, max_pages,
+>> 		     folio_nr_pages(folio) - folio_page_idx(folio, page));
+>> }
+>>
+>>
+>> Then here you would do
+>>
+>> if (!is_invalid_reserved_pfn(pfn)) {
+>> 	struct page *page = pfn_to_page(pfn);
+>> 	struct folio *folio = page_folio(page);
+>>
+>> 	/* We can batch-process pages belonging to the same folio. */
+>> 	nr_pages = folio_remaining_pages(folio, page, npage);
+>>
+>> 	unpin_user_folio_dirty_locked(folio, nr_pages,
+>> 				      dma->prot & IOMMU_WRITE);
+>> 	unlocked += nr_pages;
+>> }
+> 
+> Yes, this indeed makes the code much more comprehensible. Do you think
+> the implementation of the patch as follows look viable to you? I have
+> added some brief comments on top of your work to explain why we can
+> batch-process pages belonging to the same folio. This was suggested by
+> Alex[1].
+> 
+> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> index e952bf8bdfab..d7653f4c10d5 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -801,16 +801,43 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+>          return pinned;
+>   }
+>   
+> +/* Returned number includes the provided current page. */
+> +static inline unsigned long folio_remaining_pages(struct folio *folio,
+> +               struct page *page, unsigned long max_pages)
+> +{
+> +       if (!folio_test_large(folio))
+> +               return 1;
+> +       return min_t(unsigned long, max_pages,
+> +                    folio_nr_pages(folio) - folio_page_idx(folio, page));
+> +}
 
-On Mon, Jun 16, 2025 at 11:33=E2=80=AFAM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Mon, Jun 16, 2025 at 1:23=E2=80=AFAM Lothar Rubusch <l.rubusch@gmail.c=
-om> wrote:
-> >
-> > Cover the following tasks:
-> > =E2=80=93 Add scan_mask and scan_index to the IIO channel configuration=
-. The
-> > scan_index sets up buffer usage. According to the datasheet, the ADXL31=
-3
-> > uses a 13-bit wide data field in full-resolution mode. Set the
-> > signedness, number of storage bits, and endianness accordingly.
-> >
-> > =E2=80=93 Parse the devicetree for an optional interrupt line and confi=
-gure the
-> > interrupt mapping based on its presence. If no interrupt line is
-> > specified, keep the FIFO in bypass mode as currently implemented.
-> >
-> > =E2=80=93 Set up the interrupt handler. Add register access to detect a=
-nd
-> > evaluate interrupts. Implement functions to clear status registers and
-> > reset the FIFO.
-> >
-> > =E2=80=93 Implement FIFO watermark configuration and handling. Allow th=
-e
-> > watermark level to be set, evaluate the corresponding interrupt, read
-> > the FIFO contents, and push the data to the IIO channel.
->
-> ...
->
-> > +       int_line =3D ADXL313_INT1;
-> > +       irq =3D fwnode_irq_get_byname(dev_fwnode(dev), "INT1");
-> > +       if (irq < 0) {
-> > +               int_line =3D ADXL313_INT2;
-> > +               irq =3D fwnode_irq_get_byname(dev_fwnode(dev), "INT2");
-> > +               if (irq < 0)
-> > +                       int_line =3D ADXL313_INT_NONE;
-> > +       }
-> > +
-> > +       if (int_line !=3D ADXL313_INT_NONE) {
->
-> > +       } else {
->
-> > +       }
->
-> What I meant is something like this:
->
->
->        int_line =3D ADXL313_INT_NONE;
->        irq =3D fwnode_irq_get_byname(dev_fwnode(dev), "INT1");
->        if (irq > 0) {
->               int_line =3D ADXL313_INT1;
->        } else {
->                irq =3D fwnode_irq_get_byname(dev_fwnode(dev), "INT2");
->                if (irq > 0)
->                       int_line =3D ADXL313_INT2;
->        }
->
->        if (int_line =3D=3D ADXL313_INT_NONE) {
->    ...
->        } else {
->    ...
->        }
->
+Note that I think that should go somewhere into mm.h, and also get used 
+by GUP. So factoring it out from GUP and then using it here.
 
-I probably got this wrong. I interpreted Jonathans review [PATCH v3
-06/12] in the above way. Anyway, I did not read his second phrase. I
-agree, flipping if / else case and going by '=3D=3D' instead of '!=3D'
-simplifies it.
-   ...
-    > +
-    > + if (int_line =3D=3D ADXL313_INT1 || int_line =3D=3D ADXL313_INT2) {
+-- 
+Cheers,
 
-    Why not int_line !=3D ADXL313_INT_NONE ?
-    Or flip the logic so that you do that case first.
-    ...
-https://marc.info/?l=3Dlinux-iio&m=3D174817641830144&w=3D2
+David / dhildenb
 
-
-> Obviously with a helper you can unnest the if-else-if above.
->
-> static unsigned int _get_int_type(...)
-> {
->     if (irq > 0)
->         return ...
->     return _NONE;
-> }
->
-
-Well, indeed. That's definitely the obvious simplification needed
-here. Thanks for pointing out.
-
-> --
-> With Best Regards,
-> Andy Shevchenko
 
