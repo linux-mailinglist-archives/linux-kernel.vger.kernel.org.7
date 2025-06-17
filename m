@@ -1,188 +1,245 @@
-Return-Path: <linux-kernel+bounces-689760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A38ADC61D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D241ADC621
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1158177899
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:21:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCCAD16E9CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC9B293C42;
-	Tue, 17 Jun 2025 09:21:23 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFCF29344F;
+	Tue, 17 Jun 2025 09:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eS8MSOHi"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115A8292B47;
-	Tue, 17 Jun 2025 09:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA0423B615
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750152083; cv=none; b=eRBEL6u1SKQtNOtD7YP3mEY0svpnZk7swNW0Xyr01PpDdMoC/W/xNKehsQLVZskDsDx9Y8/pUjwCd2DWekcrMbr7GXz2PAh/DPmrVwTbPkqSzD3Mhej4yMh+IsgSatcV/OdZJScuilAMn7JJiVWz2Uo5mTSfHVANbNmYksyQqsc=
+	t=1750152135; cv=none; b=L8S5W+GQ68aV9yePZcHlWINkwVFuRkzwooMafl1lzYFLrOknhve30cvkzJZ+bBuOFx5O2e45+zfIJ5PSWdMDCXh6iLj9urIXTpdUt0rnZRhgZIfmq8F+5e029SZxbSCJYKG5DIuJY3jMI6wApCRgJ2NrffP5CAvST+HF/ghit7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750152083; c=relaxed/simple;
-	bh=fQhFMXKS1jxzyeyKFyZ012VkcA/YEIuP2eIKV160jxI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dLv0+DBcc5jrM5KLYji0yz8HmdPBRt0tPVc2oe6fLdFDABpQGdFRDL63MxqcqJ4jcTbHtZPDmgFfow3FUapl0SSM1bmb9pLYgFwwgF/YEyh4popJpmlyBR4SOL1LPbDq7Ik+dXvknPGtcYdfUHC9Vvsrmc3sLADRU6qCrQhZeT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69FE2C4CEF6;
-	Tue, 17 Jun 2025 09:21:21 +0000 (UTC)
-Message-ID: <6db6545a-c0b2-427e-8aba-f171c91580ff@xs4all.nl>
-Date: Tue, 17 Jun 2025 11:21:19 +0200
+	s=arc-20240116; t=1750152135; c=relaxed/simple;
+	bh=gGXB13lrWUQFhPpL4EL6VOeiUO/5hI1oH05EdZE0p1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iunszms0g6TuVpUCi4jxx3zDLH0cmq0vzmdLjoKvCK9tQSXbQ5A5HeRJOtfRPLO+Zgq9U02jsJL8onmFOBoecplSJgIrQCRQksXIYWUd4FcDJSLWLSbaxzyPGOgsEuMvqY7S+RQQPMezZEf5TKE07C8zXX7reeTxChUue53ndsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eS8MSOHi; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=R+yEvGkOHGBrwFRPP1Ra1mW4ovud5RNj/OYyQHzRHXo=; b=eS8MSOHiRgu8WYA19ZchHIHnL9
+	ceDla4/ANUkOCpysaIhPAILO0gHJIgShcOnhyesXcytG9v5o3rBqpR8hRRbfj90T2EjxYy6OpHwwa
+	1fY2r5z8A+eF+yf7hPISaPqKIB0PWC7u3hH8D+df4Toa+OpFWJaAr3zBtasnZYI4IMy24Xz/tCjUi
+	p1hYFH4Oyg+0t2QdD9y5cSIne+qcfvhjD5AMD0BDQ2pnB7A9JJfmlXmEuiJCQh5tbAShi/l/aeu9c
+	1ZPi9ya6pQf2wz7vhOY2Q+16FW4PINi//kaZgaEm+8WSfXq6iI0WEttVSLaUOst0TJs0d3Plh0XpE
+	jN6Bkvag==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uRSW9-00000003kqp-2gHm;
+	Tue, 17 Jun 2025 09:22:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 363BD30BDAD; Tue, 17 Jun 2025 11:22:08 +0200 (CEST)
+Date: Tue, 17 Jun 2025 11:22:08 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] sched/fair: Manage lag and run to parity with
+ different slices
+Message-ID: <20250617092208.GQ1613376@noisy.programming.kicks-ass.net>
+References: <20250613140514.2781138-1-vincent.guittot@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/5] media: uvcvideo: Handle locks in
- uvc_queue_return_buffers
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans de Goede <hdegoede@redhat.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hans de Goede <hansg@kernel.org>
-References: <20250616-uvc-fop-v4-0-250286570ee7@chromium.org>
- <20250616-uvc-fop-v4-2-250286570ee7@chromium.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20250616-uvc-fop-v4-2-250286570ee7@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="dg8YfIraIgJZAKwm"
+Content-Disposition: inline
+In-Reply-To: <20250613140514.2781138-1-vincent.guittot@linaro.org>
 
-On 16/06/2025 17:24, Ricardo Ribalda wrote:
-> Most of the calls to uvc_queue_return_buffers() wrap the call with
-> spin_lock_irq()/spin_unlock_irq().
-> 
-> Rename uvc_queue_return_buffers to __uvc_queue_return_buffers to
-> indicate that this is the version that does not handle locks and create
-> a new version of the function that handles the lock.
-> 
-> Reviewed-by: Hans de Goede <hansg@kernel.org>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-Reviewed-by: Hans erkuil <hverkuil@xs4all.nl>
+--dg8YfIraIgJZAKwm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Regards,
+On Fri, Jun 13, 2025 at 04:05:10PM +0200, Vincent Guittot wrote:
+> Vincent Guittot (3):
+>   sched/fair: Use protect_slice() instead of direct comparison
+>   sched/fair: Limit run to parity to the min slice of enqueued entities
+>   sched/fair: Improve NO_RUN_TO_PARITY
 
-	Hans
+Ah. I wrote these here patches and then totally forgot about them :/.
+They take a different approach.
 
-> ---
->  drivers/media/usb/uvc/uvc_queue.c | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_queue.c b/drivers/media/usb/uvc/uvc_queue.c
-> index 72c5494dee9f46ff61072e7d293bfaddda40e615..8f9737ac729546683ca48f5e71ce3dfacbae2926 100644
-> --- a/drivers/media/usb/uvc/uvc_queue.c
-> +++ b/drivers/media/usb/uvc/uvc_queue.c
-> @@ -42,13 +42,15 @@ static inline struct uvc_buffer *uvc_vbuf_to_buffer(struct vb2_v4l2_buffer *buf)
->   *
->   * This function must be called with the queue spinlock held.
->   */
-> -static void uvc_queue_return_buffers(struct uvc_video_queue *queue,
-> -			       enum uvc_buffer_state state)
-> +static void __uvc_queue_return_buffers(struct uvc_video_queue *queue,
-> +				       enum uvc_buffer_state state)
->  {
->  	enum vb2_buffer_state vb2_state = state == UVC_BUF_STATE_ERROR
->  					? VB2_BUF_STATE_ERROR
->  					: VB2_BUF_STATE_QUEUED;
->  
-> +	lockdep_assert_held(&queue->irqlock);
-> +
->  	while (!list_empty(&queue->irqqueue)) {
->  		struct uvc_buffer *buf = list_first_entry(&queue->irqqueue,
->  							  struct uvc_buffer,
-> @@ -59,6 +61,14 @@ static void uvc_queue_return_buffers(struct uvc_video_queue *queue,
->  	}
->  }
->  
-> +static void uvc_queue_return_buffers(struct uvc_video_queue *queue,
-> +				     enum uvc_buffer_state state)
-> +{
-> +	spin_lock_irq(&queue->irqlock);
-> +	__uvc_queue_return_buffers(queue, state);
-> +	spin_unlock_irq(&queue->irqlock);
-> +}
-> +
->  /* -----------------------------------------------------------------------------
->   * videobuf2 queue operations
->   */
-> @@ -171,9 +181,7 @@ static int uvc_start_streaming(struct vb2_queue *vq, unsigned int count)
->  	if (ret == 0)
->  		return 0;
->  
-> -	spin_lock_irq(&queue->irqlock);
->  	uvc_queue_return_buffers(queue, UVC_BUF_STATE_QUEUED);
-> -	spin_unlock_irq(&queue->irqlock);
->  
->  	return ret;
->  }
-> @@ -187,9 +195,7 @@ static void uvc_stop_streaming(struct vb2_queue *vq)
->  	if (vq->type != V4L2_BUF_TYPE_META_CAPTURE)
->  		uvc_video_stop_streaming(uvc_queue_to_stream(queue));
->  
-> -	spin_lock_irq(&queue->irqlock);
->  	uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
-> -	spin_unlock_irq(&queue->irqlock);
->  }
->  
->  static const struct vb2_ops uvc_queue_qops = {
-> @@ -263,7 +269,7 @@ void uvc_queue_cancel(struct uvc_video_queue *queue, int disconnect)
->  	unsigned long flags;
->  
->  	spin_lock_irqsave(&queue->irqlock, flags);
-> -	uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
-> +	__uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
->  	/*
->  	 * This must be protected by the irqlock spinlock to avoid race
->  	 * conditions between uvc_buffer_queue and the disconnection event that
-> 
+The approach I took was to move decision to stick with curr after pick,
+instead of before it. That way we can evaluate the tree at the time of
+preemption.
 
+
+
+--dg8YfIraIgJZAKwm
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="peterz-sched-fair-fix-delayed-requeue.patch"
+
+Subject: sched/fair: Fix requeue_delayed_entity()
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Fri Apr  4 11:23:00 CEST 2025
+
+Since enqueue_task_fair() doesn't call update_curr() before calling
+requeue_delayed_entity(), which means that update_entity_lag() uses a
+slightly out-of-date avg_vruntime() -- which includes current.
+
+Fixes: 54a58a787791 ("sched/fair: Implement DELAY_ZERO")
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ kernel/sched/fair.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6893,6 +6893,8 @@ requeue_delayed_entity(struct sched_enti
+ {
+ 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+ 
++	update_curr(cfs_rq);
++
+ 	/*
+ 	 * se->sched_delayed should imply: se->on_rq == 1.
+ 	 * Because a delayed entity is one that is still on
+
+--dg8YfIraIgJZAKwm
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="peterz-sched-fair-fix-preempt-short.patch"
+
+Subject: sched/eevdf: Re-arrange current protection in pick_eevdf()
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Fri Apr 4 10:15:15 CEST 2025
+
+The way pick_eevdf() limits preemption is by explicitly picking
+current if it is still eligible. It does this without consideration of
+the best in-tree task.
+
+Move current protection to after the tree selection such that a follow
+up patch can change the conditions.
+
+Should be an semantics no-op at this point.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ kernel/sched/fair.c |   33 +++++++++++++++++++++++++--------
+ 1 file changed, 25 insertions(+), 8 deletions(-)
+
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -903,6 +903,26 @@ static inline void cancel_protect_slice(
+ 		se->vlag = se->deadline + 1;
+ }
+ 
++static inline bool __pick_eevdf_curr(struct cfs_rq *cfs_rq, struct sched_entity *best)
++{
++	struct sched_entity *curr = cfs_rq->curr;
++
++	/* only called when this is already checked */
++	WARN_ON_ONCE(!curr || !curr->on_rq);
++
++	/*
++	 * Strictly speaking we should allow current to run until its
++	 * deadline. However allow (wakeup) preemption once it is no longer
++	 * eligible.
++	 */
++	if (sched_feat(RUN_TO_PARITY) &&
++	    protect_slice(curr) &&
++	    entity_eligible(cfs_rq, curr))
++		return true;
++
++	return entity_before(curr, best);
++}
++
+ /*
+  * Earliest Eligible Virtual Deadline First
+  *
+@@ -929,18 +949,15 @@ static struct sched_entity *pick_eevdf(s
+ 	struct sched_entity *curr = cfs_rq->curr;
+ 	struct sched_entity *best = NULL;
+ 
++	if (curr && !curr->on_rq)
++		curr = NULL;
++
+ 	/*
+ 	 * We can safely skip eligibility check if there is only one entity
+ 	 * in this cfs_rq, saving some cycles.
+ 	 */
+ 	if (cfs_rq->nr_queued == 1)
+-		return curr && curr->on_rq ? curr : se;
+-
+-	if (curr && (!curr->on_rq || !entity_eligible(cfs_rq, curr)))
+-		curr = NULL;
+-
+-	if (sched_feat(RUN_TO_PARITY) && curr && protect_slice(curr))
+-		return curr;
++		return curr ?: se;
+ 
+ 	/* Pick the leftmost entity if it's eligible */
+ 	if (se && entity_eligible(cfs_rq, se)) {
+@@ -977,7 +994,7 @@ static struct sched_entity *pick_eevdf(s
+ 		node = node->rb_right;
+ 	}
+ found:
+-	if (!best || (curr && entity_before(curr, best)))
++	if (!best || (curr && __pick_eevdf_curr(cfs_rq, best)))
+ 		best = curr;
+ 
+ 	return best;
+
+--dg8YfIraIgJZAKwm
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="peterz-sched-fair-fix-preempt-short-2.patch"
+
+Subject: sched/eevdf: Fix RUN_TO_PARITY vs PREEMPT_SHORT
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Fri Apr 4 10:25:03 CEST 2025
+
+Vincent noted that RUN_TO_PARITY can prevent preemption by a shorter
+slice under some conditions.
+
+Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ kernel/sched/fair.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -918,7 +918,7 @@ static inline bool __pick_eevdf_curr(str
+ 	if (sched_feat(RUN_TO_PARITY) &&
+ 	    protect_slice(curr) &&
+ 	    entity_eligible(cfs_rq, curr))
+-		return true;
++		return !sched_feat(PREEMPT_SHORT) || curr->slice < best->slice;
+ 
+ 	return entity_before(curr, best);
+ }
+@@ -1195,7 +1195,7 @@ static inline bool did_preempt_short(str
+ 	if (!sched_feat(PREEMPT_SHORT))
+ 		return false;
+ 
+-	if (curr->vlag == curr->deadline)
++	if (protect_slice(curr))
+ 		return false;
+ 
+ 	return !entity_eligible(cfs_rq, curr);
+
+--dg8YfIraIgJZAKwm--
 
