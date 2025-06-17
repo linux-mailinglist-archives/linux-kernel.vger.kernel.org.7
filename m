@@ -1,225 +1,123 @@
-Return-Path: <linux-kernel+bounces-691002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F15ADDF2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:52:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 615B6ADDF23
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0EC117D295
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:52:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD829189BD34
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFB32BD001;
-	Tue, 17 Jun 2025 22:51:20 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE286220F34;
+	Tue, 17 Jun 2025 22:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="K21XFM9n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0954B5383;
-	Tue, 17 Jun 2025 22:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A73D2F5310
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 22:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750200679; cv=none; b=hNAPQaQcBSCxDO3Xj79i0HUuWF3nVXwyXoZeD/gg9gTno2+AnHMLnd06Ut3Fah3S7bE6CTrawwYtuBiPkmSkxRJvbr4Ssxbqt8VonWqZdimQ+XBb5ybMiOnyxFMARsQbePvBR0e9st3ZZPQxVZld1XRQ61CV4cHkz5KFOgX4BlQ=
+	t=1750200658; cv=none; b=hR8ams3ECvFjubyEYKZXodCu0CMn0BhB6OOIehJB5UyA+a1W+BrRkua0/d0CsOJa1F6vKRj1QWubl12xvfS7x55UugUsojpcBt6ZXx2pOHpcZSZT+vMIH6h/pdRjQa78j9mujho5jhEmDJU5klntE8NNVOH3hd0l6q3I5tAilgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750200679; c=relaxed/simple;
-	bh=Kp6RYb5t+RCZ7jokiwYGJB2GAw8QmJKJAuA8NhLPUp4=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=bG8NfJH/mP9c6fmbY5R/nhWFMAmddz1pN6mS9W7NJtofyshtGMakGBSzHhiDdc1VLYNyoYm+BddrUH6vrhK47PfvIjt9lHorBVmEaFh2gNt2Lx3FmKaiIYYzmg3b8hTJBDAVW+Pt2GRqMGBRFEsilXMcpnKUKlhLuaq7U9OiZeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 4C8415F01C;
-	Tue, 17 Jun 2025 22:51:15 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: nevets@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id 46A6860011;
-	Tue, 17 Jun 2025 22:51:12 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uRf9D-00000002L8o-0mIa;
-	Tue, 17 Jun 2025 18:51:19 -0400
-Message-ID: <20250617225119.037842151@goodmis.org>
-User-Agent: quilt/0.68
-Date: Tue, 17 Jun 2025 18:50:21 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org,
- x86@kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>,
- Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>,
- Beau Belgrave <beaub@linux.microsoft.com>,
- Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v6 12/12] unwind_user/sframe: Add .sframe validation option
-References: <20250617225009.233007152@goodmis.org>
+	s=arc-20240116; t=1750200658; c=relaxed/simple;
+	bh=kIJZkon3PpVO1xO+Y1dqXu0EPSWvOnvPVKJ734wyHYI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ZxnqgiAA8N+OnZ+PEaL+YQSXNhlP06ItLcbMoCXaUwV3Kn+zs/apbnggQlr/4s3sfo2WfoP8xoHbC5QMWL1cS9+iyTrZ24oIGzqoleZyd6WEH+0VgtEfMbqsW3KF4lNNbEFCcHZqs0+EmjelaU3480pOyNRliNlLwZNZoD/X/78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=K21XFM9n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55ACAC4CEE3;
+	Tue, 17 Jun 2025 22:50:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1750200657;
+	bh=kIJZkon3PpVO1xO+Y1dqXu0EPSWvOnvPVKJ734wyHYI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=K21XFM9nN0omO6l6y3lzXoFZTDDxsuz+KxauHElK4d6V1eVHhSaIIM/uE0hpXrXpB
+	 IqDnHv383DOUVN0pJHAhRqSS32hMrMpGdLmfgA+4TTtrPz8AOWJzpBCFYgqv+1oZqI
+	 GZ1CPJClQE+KTy7q2cKA1sFam3IU4c9TUdhfBZ24=
+Date: Tue, 17 Jun 2025 15:50:56 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Rasmus Villemoes
+ <linux@rasmusvillemoes.dk>, John Stultz <jstultz@google.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 1/3] bitmap: generalize node_random()
+Message-Id: <20250617155056.5c1d292d8831e7c7a27c8e5f@linux-foundation.org>
+In-Reply-To: <20250617200854.60753-2-yury.norov@gmail.com>
+References: <20250617200854.60753-1-yury.norov@gmail.com>
+	<20250617200854.60753-2-yury.norov@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Rspamd-Queue-Id: 46A6860011
-X-Stat-Signature: jaxhukph5skj4tuhj9qr6q1kq4y4pfmx
-X-Rspamd-Server: rspamout05
-X-Session-Marker: 6E657665747340676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19hQztm/p4BjEUc0SSv37svTRxwDa6q3zM=
-X-HE-Tag: 1750200672-592088
-X-HE-Meta: U2FsdGVkX1/GKRvTwuSUpbwBsWNMWFFyAqxCR4+tyAokYduk8y7ss0FeSNow6H2kcxwMSw9bq9kOubc5r0YUuKQvcATGWF3tT330Uabkhvf6GjL4f/ckhoCfjgByAeVGSLXTO/DYf8Fx+EsYqxbVZDg+aSF9uey5fPxLzaw9H0kV3cUzBfvhJTglyOHSw0n1iy0WG/wUIfPexDLXLFZ8y0snHAGEZ3ECaAA4yFggcsaHq6ozTj6l3h7yqLxy1Mb9WloXhnyg6tmnoQth+dfJhZMqPjyMoS5Vf+RpZUPnwccr9UmSMTIRWzAool5ucyv1BfJ4Mi2sO6EW9WDYhJVDJtRfabRY+cY4oWb1YtdtuF6vV2jtyIKiYw6psRTrkHDIXbo5Tco/J9KNeRDda9XBrUsOcdJOQhTWuA+FUzHjOzk=
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Josh Poimboeuf <jpoimboe@kernel.org>
+On Tue, 17 Jun 2025 16:08:51 -0400 Yury Norov <yury.norov@gmail.com> wrote:
 
-Add a debug feature to validate all .sframe sections when first loading
-the file rather than on demand.
+> From: "Yury Norov [NVIDIA]" <yury.norov@gmail.com>
+> 
+> Generalize node_random() and make it available to general bitmaps and
+> cpumasks users.
+> 
+> Notice, find_first_bit() is generally faster than find_nth_bit(), and we
+> employ it when there's a single set bit in the bitmap.
+> 
+> See commit 3e061d924fe9c7b4 ("lib/nodemask: optimize node_random for
+> nodemask with single NUMA node").
+> 
+> ...
+>
+> --- a/include/linux/nodemask.h
+> +++ b/include/linux/nodemask.h
+> @@ -492,21 +492,7 @@ static __always_inline int num_node_state(enum node_states state)
+>  static __always_inline int node_random(const nodemask_t *maskp)
+>  {
+>  #if defined(CONFIG_NUMA) && (MAX_NUMNODES > 1)
+> -	int w, bit;
+> -
+> -	w = nodes_weight(*maskp);
+> -	switch (w) {
+> -	case 0:
+> -		bit = NUMA_NO_NODE;
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- arch/Kconfig           | 19 ++++++++++
- kernel/unwind/sframe.c | 81 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 100 insertions(+)
+If the mask has no bits set, return -1.
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 0c6056ef13de..86eec85cb898 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -450,6 +450,25 @@ config HAVE_UNWIND_USER_SFRAME
- 	bool
- 	select UNWIND_USER
- 
-+config SFRAME_VALIDATION
-+	bool "Enable .sframe section debugging"
-+	depends on HAVE_UNWIND_USER_SFRAME
-+	depends on DYNAMIC_DEBUG
-+	help
-+	  When adding an .sframe section for a task, validate the entire
-+	  section immediately rather than on demand.
-+
-+	  This is a debug feature which is helpful for rooting out .sframe
-+	  section issues.  If the .sframe section is corrupt, it will fail to
-+	  load immediately, with more information provided in dynamic printks.
-+
-+	  This has a significant page cache footprint due to its reading of the
-+	  entire .sframe section for every loaded executable and shared
-+	  library.  Also, it's done for all processes, even those which don't
-+	  get stack traced by the kernel.  Not recommended for general use.
-+
-+	  If unsure, say N.
-+
- config HAVE_PERF_REGS
- 	bool
- 	help
-diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
-index 3972bce40fc7..6159f072bdb6 100644
---- a/kernel/unwind/sframe.c
-+++ b/kernel/unwind/sframe.c
-@@ -353,6 +353,83 @@ int sframe_find(unsigned long ip, struct unwind_user_frame *frame)
- 	return ret;
- }
- 
-+#ifdef CONFIG_SFRAME_VALIDATION
-+
-+static __always_inline int __sframe_validate_section(struct sframe_section *sec)
-+{
-+	unsigned long prev_ip = 0;
-+	unsigned int i;
-+
-+	for (i = 0; i < sec->num_fdes; i++) {
-+		struct sframe_fre *fre, *prev_fre = NULL;
-+		unsigned long ip, fre_addr;
-+		struct sframe_fde fde;
-+		struct sframe_fre fres[2];
-+		bool which = false;
-+		unsigned int j;
-+		int ret;
-+
-+		ret = __read_fde(sec, i, &fde);
-+		if (ret)
-+			return ret;
-+
-+		ip = sec->sframe_start + fde.start_addr;
-+		if (ip <= prev_ip) {
-+			dbg_sec_uaccess("fde %u not sorted\n", i);
-+			return -EFAULT;
-+		}
-+		prev_ip = ip;
-+
-+		fre_addr = sec->fres_start + fde.fres_off;
-+		for (j = 0; j < fde.fres_num; j++) {
-+			int ret;
-+
-+			fre = which ? fres : fres + 1;
-+			which = !which;
-+
-+			ret = __read_fre(sec, &fde, fre_addr, fre);
-+			if (ret) {
-+				dbg_sec_uaccess("fde %u: __read_fre(%u) failed\n", i, j);
-+				dbg_print_fde_uaccess(sec, &fde);
-+				return ret;
-+			}
-+
-+			fre_addr += fre->size;
-+
-+			if (prev_fre && fre->ip_off <= prev_fre->ip_off) {
-+				dbg_sec_uaccess("fde %u: fre %u not sorted\n", i, j);
-+				return -EFAULT;
-+			}
-+
-+			prev_fre = fre;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int sframe_validate_section(struct sframe_section *sec)
-+{
-+	int ret;
-+
-+	if (!user_read_access_begin((void __user *)sec->sframe_start,
-+				    sec->sframe_end - sec->sframe_start)) {
-+		dbg_sec("section usercopy failed\n");
-+		return -EFAULT;
-+	}
-+
-+	ret = __sframe_validate_section(sec);
-+	user_read_access_end();
-+	return ret;
-+}
-+
-+#else /*  !CONFIG_SFRAME_VALIDATION */
-+
-+static int sframe_validate_section(struct sframe_section *sec) { return 0; }
-+
-+#endif /* !CONFIG_SFRAME_VALIDATION */
-+
-+
- static void free_section(struct sframe_section *sec)
- {
- 	dbg_free(sec);
-@@ -461,6 +538,10 @@ int sframe_add_section(unsigned long sframe_start, unsigned long sframe_end,
- 		goto err_free;
- 	}
- 
-+	ret = sframe_validate_section(sec);
-+	if (ret)
-+		goto err_free;
-+
- 	ret = mtree_insert_range(sframe_mt, sec->text_start, sec->text_end, sec, GFP_KERNEL);
- 	if (ret) {
- 		dbg_sec("mtree_insert_range failed: text=%lx-%lx\n",
--- 
-2.47.2
+> -		break;
+> -	case 1:
+> -		bit = first_node(*maskp);
+> -		break;
+> -	default:
+> -		bit = find_nth_bit(maskp->bits, MAX_NUMNODES, get_random_u32_below(w));
+> -		break;
+> -	}
+> -	return bit;
+> +	return find_random_bit(maskp->bits, MAX_NUMNODES);
+>
+> ...
+>
+> +unsigned long find_random_bit(const unsigned long *addr, unsigned long size)
+> +{
+> +	int w = bitmap_weight(addr, size);
+> +
+> +	switch (w) {
+> +	case 0:
+> +		return size;
 
+If the mask has no bits set, return the mask's size.
 
+> +	case 1:
+> +		/* Performance trick for single-bit bitmaps */
+> +		return find_first_bit(addr, size);
+> +	default:
+> +		return find_nth_bit(addr, size, get_random_u32_below(w));
+> +	}
+> +}
+
+I'm not seeing how this is correct?
 
