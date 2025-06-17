@@ -1,150 +1,107 @@
-Return-Path: <linux-kernel+bounces-690225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041A9ADCD37
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:31:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F20ADCD44
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DBA51898CAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:27:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D0018851CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755082E4279;
-	Tue, 17 Jun 2025 13:25:39 +0000 (UTC)
-Received: from glittertind.blackshift.org (glittertind.blackshift.org [116.203.23.228])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C3A2E265D;
+	Tue, 17 Jun 2025 13:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HTU68KS1"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0EA28D85F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.23.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1CB2E7169;
+	Tue, 17 Jun 2025 13:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750166738; cv=none; b=Vq7sCZL4kJ7muZUfraZM78YhriwsnnJgEG3lS239+BZTiPo00sn12XbPULSsBAqanDbq06+CHJvgNeHKxC6iFxBvbkaNwQ0F/MI0iPoZaZilvgAnab8iwt0sU2MSV4Svb14QdIRWIqY6gzzINyUYJtF8DUCssCb8I5Vz+e4MXHE=
+	t=1750166778; cv=none; b=Pb91nQ4G/+uFGsQxMbdCoYWAFEAdTpqSYW6rEqpzT0qOqbN+/ZkVz2FxtABYxgKauKSmF710zRWoqx0D9aGvNR5l+mXyUKKXQUuNigAnf3HoWJKnbLhjMaUxiPl0PJGsn2vvdQ5xEDNbnSnC9R2CVVoplaeDV01/rhi24Dj4cE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750166738; c=relaxed/simple;
-	bh=fQ4LxAZsa4WZr7runtQggvEmU2rQ7E01a9lhK4ivd8k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VHJW3FDtzkJrJA0NCx8ilCKlcqpciVk1/7bweCZkGASNu9lwk+HwcciS/o0KpOPdq89lXCmfPWjRc2E4lLOCTeAcn0W3Enp7sqckZs95nCxSY1d/DVLJO48q9oRB7xKelvu1Q2PiQTPez6a4Y0ChYI9u6qhFfjVyO8ZCKrZ8Vqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=none smtp.mailfrom=hardanger.blackshift.org; arc=none smtp.client-ip=116.203.23.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hardanger.blackshift.org
-Received: from bjornoya.blackshift.org (unknown [IPv6:2003:e3:7f3d:bb00:e2bf:c3f2:96ab:885d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1)
-	 client-signature RSA-PSS (4096 bits))
-	(Client CN "bjornoya.blackshift.org", Issuer "R10" (verified OK))
-	by glittertind.blackshift.org (Postfix) with ESMTPS id 1C78266ED68
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:25:29 +0000 (UTC)
-Received: from dspam.blackshift.org (localhost [127.0.0.1])
-	by bjornoya.blackshift.org (Postfix) with SMTP id E194A42A84E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:25:28 +0000 (UTC)
-Received: from hardanger.blackshift.org (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bjornoya.blackshift.org (Postfix) with ESMTPS id 74B3342A7B9;
-	Tue, 17 Jun 2025 13:25:22 +0000 (UTC)
-Received: from hardanger.blackshift.org (localhost [::1])
-	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id c7ff7475;
-	Tue, 17 Jun 2025 13:25:20 +0000 (UTC)
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Tue, 17 Jun 2025 15:25:00 +0200
-Subject: [PATCH net-next v3 10/10] net: fec: fec_enet_rx_queue(): factor
- out VLAN handling into separate function fec_enet_rx_vlan()
+	s=arc-20240116; t=1750166778; c=relaxed/simple;
+	bh=wNORk0hXvvkPqbJFbqdS9rN9/qpHWhfNvs+JPPcQAFQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FaI8x0XvEGi23peXnhR6QOvA06He7vZoJ3ZsvmA3o27SlwmkMH9S39dary8MeaHJ4WjUj0LXBD8GCE6FxVJgYD6XfMMy9kmdU3lzgEkGkqYi/fZRHwvi8Xoj9i36Lu64+ysUcnRS3IX6jaiR3UolhvwJ3X32ZXknY/nj5fAHVwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HTU68KS1; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D0D1643B16;
+	Tue, 17 Jun 2025 13:26:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1750166767;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VBP1D5K0x3QxSBaXRPUliaOayaAzgYNXPqHRbr5cqYY=;
+	b=HTU68KS12LI/XmNO8zbV3KybQm3jtMesgHO14kri2Nwge8neq4UBjjtNiN3+gOtjSVY6Kl
+	Fp1fcYU18CvZeoNq4tsOO5ihacbZj4mFee355ktEhS5n+wAwg3Jfnh91JM40yzo+joUcpk
+	DcPYHUXeY/ydrrqQ0mB0Rtkvba4AnZ0bCwoLVv8TH1IsbdudwS5tkoWM+zo/t2CebPcSSB
+	hYjR5yLHtu44WBPSLhtWp6rXeed1XBQnGdUhYsTr65/O3M4wbbty8L3VsYWx9nGn3jG7py
+	8icXHQ2ngbpTmqMyEnnC5yQMQVfrdBt6nt6+NvIU2n6MYk82Jkrdzozgju3fhA==
+From: =?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@bootlin.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?UTF-8?q?Th=C3=A9o=20Lebrun?= <theo.lebrun@bootlin.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: =?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@bootlin.com>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	"Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
+Subject: [PATCH 0/6] Add MMC support for Mobileye EyeQ5 and EyeQ6 SoCs
+Date: Tue, 17 Jun 2025 15:25:50 +0200
+Message-ID: <cover.1750156323.git.benoit.monin@bootlin.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250617-fec-cleanups-v3-10-a57bfb38993f@pengutronix.de>
-References: <20250617-fec-cleanups-v3-0-a57bfb38993f@pengutronix.de>
-In-Reply-To: <20250617-fec-cleanups-v3-0-a57bfb38993f@pengutronix.de>
-To: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
- Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: imx@lists.linux.dev, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel@pengutronix.de, 
- Marc Kleine-Budde <mkl@pengutronix.de>, Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.15-dev-6f78e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2287; i=mkl@pengutronix.de;
- h=from:subject:message-id; bh=fQ4LxAZsa4WZr7runtQggvEmU2rQ7E01a9lhK4ivd8k=;
- b=owEBbQGS/pANAwAKAQx0Zd/5kJGcAcsmYgBoUWy+yiMoeNV/nrWhL7BADIeRU2sAiW0B5gxxk
- RFRkAewp9+JATMEAAEKAB0WIQSf+wzYr2eoX/wVbPMMdGXf+ZCRnAUCaFFsvgAKCRAMdGXf+ZCR
- nOeSB/9u4MKgbtCB1vOWwZM+ZO3wzS8kw7KW343LNISPRQR58GfBA9j+rBwZPgxmna3yckCrLEI
- zJ1NvZdLqSeQgN4dd1HGxv47iI0iUHGbqAgT2GkZX4ug4TUVIoFO8U9FrIhEc84dC6jHsZ3Dc0M
- /VT6W7pPi7XPmDrSXB+Lm+g1DIjaEj3X9rRc/4clBX73C70AYphJUU72sxdCGHkWNp7RA8HYCaz
- 8o18wI5mKPH+ethW64it2evqi/FE3qaKcHOhbOq0NFK3sgBBW5IFp7gWMPZfRlt41bX89O3haxS
- u0MmewuStFTzHycZbfnD2XTTEMyOyg4YvLkD/cia333RrHBe
-X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
- fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpeeuvghnohpfthcuofhonhhinhcuoegsvghnohhithdrmhhonhhinhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkeeuhefhveehuefgteejheffieefhfejffdvteejueefgeegvdfhteehtdeuhfdvnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemudehfeejmehffeehmeelfeeiugemvgelvdehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeduheefjeemfhefheemleefiegumegvledvhedphhgvlhhopehfrhgrmhgvfihorhhkrdhlohgtrghlughomhgrihhnpdhmrghilhhfrhhomhepsggvnhhoihhtrdhmohhnihhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkv
+ ghrnhgvlhdrohhrghdprhgtphhtthhopehvlhgrughimhhirhdrkhhonhgurhgrthhivghvsehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggv
+X-GND-Sasl: benoit.monin@bootlin.com
 
-In order to clean up of the VLAN handling, factor out the VLAN
-handling into separate function fec_enet_rx_vlan().
+The MMC/SDHCI controller found in Mobileye EyeQ5 and EyeQ6 SoCs is 
+based on Cadence cdns sd4hc IP. It supports up to HS400HS mode. The 
+only peculiarity of the hardware is that it needs the preset value
+quirk to configure the clock properly at speed slower than HS200.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
----
- drivers/net/ethernet/freescale/fec_main.c | 32 ++++++++++++++++++-------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
+This patchset adds a compatible device tree binding to cdns sdhci for 
+mobileye then uses it in the sdhci-cadence driver.
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 021cf7c2dcf6..24dd1b280da0 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -1707,6 +1707,22 @@ fec_enet_run_xdp(struct fec_enet_private *fep, struct bpf_prog *prog,
- 	return ret;
- }
- 
-+static void fec_enet_rx_vlan(const struct net_device *ndev, struct sk_buff *skb)
-+{
-+	if (ndev->features & NETIF_F_HW_VLAN_CTAG_RX) {
-+		const struct vlan_ethhdr *vlan_header = skb_vlan_eth_hdr(skb);
-+		const u16 vlan_tag = ntohs(vlan_header->h_vlan_TCI);
-+
-+		/* Push and remove the vlan tag */
-+
-+		memmove(skb->data + VLAN_HLEN, skb->data, ETH_ALEN * 2);
-+		skb_pull(skb, VLAN_HLEN);
-+		__vlan_hwaccel_put_tag(skb,
-+				       htons(ETH_P_8021Q),
-+				       vlan_tag);
-+	}
-+}
-+
- /* During a receive, the bd_rx.cur points to the current incoming buffer.
-  * When we update through the ring, if the next incoming buffer has
-  * not been given to the system, we just set the empty indicator,
-@@ -1853,19 +1869,9 @@ fec_enet_rx_queue(struct net_device *ndev, u16 queue_id, int budget)
- 			ebdp = (struct bufdesc_ex *)bdp;
- 
- 		/* If this is a VLAN packet remove the VLAN Tag */
--		if ((ndev->features & NETIF_F_HW_VLAN_CTAG_RX) &&
--		    fep->bufdesc_ex &&
--		    (ebdp->cbd_esc & cpu_to_fec32(BD_ENET_RX_VLAN))) {
--			/* Push and remove the vlan tag */
--			struct vlan_ethhdr *vlan_header = skb_vlan_eth_hdr(skb);
--			u16 vlan_tag = ntohs(vlan_header->h_vlan_TCI);
--
--			memmove(skb->data + VLAN_HLEN, skb->data, ETH_ALEN * 2);
--			skb_pull(skb, VLAN_HLEN);
--			__vlan_hwaccel_put_tag(skb,
--					       htons(ETH_P_8021Q),
--					       vlan_tag);
--		}
-+		if (fep->bufdesc_ex &&
-+		    (ebdp->cbd_esc & cpu_to_fec32(BD_ENET_RX_VLAN)))
-+			fec_enet_rx_vlan(ndev, skb);
- 
- 		skb->protocol = eth_type_trans(skb, ndev);
- 
+It also adds an emmc entry in the dtsi of each SoC and the config 
+options in each defconfig to allow using an eMMC for the rootfs.
 
--- 
-2.47.2
+Benoît Monin (6):
+  dt-bindings: mmc: cdns: add Mobileye EyeQ MMC/SDHCI controller
+  mmc: sdhci-cadence: add Mobileye eyeQ support
+  MIPS: mobileye: dts: eyeq6h: add the emmc controller
+  MIPS: eyeq6_defconfig: add cadence MMC/SDHCI driver
+  MIPS: mobileye: dts: eyeq5: add the emmc controller
+  MIPS: eyeq5_defconfig: add cadence MMC/SDHCI driver
 
+ .../devicetree/bindings/mmc/cdns,sdhci.yaml   |  1 +
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi        | 22 +++++++++++++++++++
+ arch/mips/boot/dts/mobileye/eyeq6h.dtsi       | 22 +++++++++++++++++++
+ arch/mips/configs/eyeq5_defconfig             |  2 ++
+ arch/mips/configs/eyeq6_defconfig             |  2 ++
+ drivers/mmc/host/sdhci-cadence.c              | 11 ++++++++++
+ 6 files changed, 60 insertions(+)
 
 
