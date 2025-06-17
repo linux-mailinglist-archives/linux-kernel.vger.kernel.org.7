@@ -1,77 +1,85 @@
-Return-Path: <linux-kernel+bounces-690356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D719ADCFC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:29:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 056BCADCFAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E3A13ADAED
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:19:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72C623A8391
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBDB2EE606;
-	Tue, 17 Jun 2025 14:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6A92E974C;
+	Tue, 17 Jun 2025 14:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="drWdpzRp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="oJ3WvqhK"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70412DE1F9;
-	Tue, 17 Jun 2025 14:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEC32E92C9
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 14:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750169679; cv=none; b=EJKGie7PaIeuhUH6FMP3sK8AA6ttBD2hdDLmfqfICUPaBWnjflHvIQUWe7KDIMEyX3UHGipKANPmHhorYEArphZgaSHGFwXoQEQZBnUV5MgODAwPJ41Di9zJiANCR+rIq7cPXAmwavogHyc65NLMSyHVbisnTtzd1OnRkOzdZFc=
+	t=1750169582; cv=none; b=HhXm9uV731b9s4Xxz8HFZh27lTFKven9wFaWCRNjZi6TyrouND1/XN+gAQ++LE1gB3TFkMSEZpcHlAlhiF03qlx4b0kMNz+0DafGxXUnGgII+qEX2K6KcDSvxu8E4jMkBgguP7gYhG1r+/forDCwm95+Cj5Pry8eScumFrwTjsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750169679; c=relaxed/simple;
-	bh=pNelIk0pW9OO+Z6yvti9NhYvMQpkCMlkT9Y/4jcTlFY=;
+	s=arc-20240116; t=1750169582; c=relaxed/simple;
+	bh=iXFWqOrb+/Jnfho8Pu3WTaW8yur5lMtfl0eVlqQfmrk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ozpPY22oAR3P5AH4OThQhG5MkXK/Zb4+Z0HaRukMET8VvCHgTyPvtCX7sw0Fa+817iA1cVkZflNz4vvBGTIfjcSG7gGe9eh/ifHNMsDwfYTq+0P4iIk2zYWYAxTg4OUzAipyqCibAInj1piz7F0QGv49iSTWAFWE9y5/68dzu9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=drWdpzRp; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750169678; x=1781705678;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pNelIk0pW9OO+Z6yvti9NhYvMQpkCMlkT9Y/4jcTlFY=;
-  b=drWdpzRpce3j/CwB4nALs7wn2l8yhI9fa0ul//NZJR5ci1fORKDtElbh
-   PnwiTVCMi9Qr7VuInoCR8z00Ea+ONmjtLRv051nN+t64ZUkwOoAt1pAsr
-   ZW4Obzy6jKei21mGGRZMxhDP8X4ho2oQwqH/gkSwvQNS73XAh/2dn+JLQ
-   GlQdSmAVlhwxFnj2H0k5DSvU8L9wC6pAIS786tDcl7wDim9HEGXUmYM6+
-   srjKLix9RZwjB4X4rbWUARleA/OvV4SUrCrdyvkTBQGlh0rsSOmjfh7ci
-   SxsTnVm+ngDG1MVjXM9R8O+x7YjekT2ZGAYhLbsrSwWLYU5TQkNwOuywV
-   g==;
-X-CSE-ConnectionGUID: hKvsdmyzRE20UTwXe/v/hw==
-X-CSE-MsgGUID: poCgf+ifRQmsx7Q8A9OcAg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="77751066"
-X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="77751066"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 07:14:37 -0700
-X-CSE-ConnectionGUID: r4qahXrTQuW+V0XPog4gPA==
-X-CSE-MsgGUID: JqKykOEgRcGfaGCDTBzSPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="149687143"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 07:14:33 -0700
-Date: Tue, 17 Jun 2025 16:12:30 +0200
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, michal.swiatkowski@linux.intel.com
-Subject: Re: [PATCH V2 net-next 3/8] net: hns3: use hns3_get_ops() helper to
- reduce the unnecessary middle layer conversion
-Message-ID: <aFF3zi+6tL1hr4UR@mev-dev.igk.intel.com>
-References: <20250617010255.1183069-1-shaojijie@huawei.com>
- <20250617010255.1183069-4-shaojijie@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J40VveHZX8Lle4FPkOALClbhOzDeX7YD8/64kT0fF+hECH0xn87NMAstX8qDRI7/qB3hE5Rrqf1PxUiEvfOjggUY4aKNjR/SBwPPNiv9F8KNxybgJeIXtuGvxo3lbUjB/2O6ht4RnKL8KDL247uTfziZirfF8s6yknIS04oKjnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=oJ3WvqhK; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4a58e0b26c4so103127261cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 07:12:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1750169576; x=1750774376; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0s0DAhwLG2vmOgwqQDSJ2RWGZLNBfRIYPMMOb2htwqc=;
+        b=oJ3WvqhKK0jE8ek3aFENWu3zZqU2Dbjs9cC1AncuQ5UIUfgIoW1pVISayxbjS109kM
+         g/krkRI/uQmNyyJ4ceFFdO9/n+TLU9LOPoqXI/ugl364xGwpIR38zA1Rap0/zR6r4Zuz
+         8Rq6I4k+XyScjdgN8n/mMe0bzYxD2biBJwYp1FwuNoHgsmU1aDwmV0649Rk5H8xto7HT
+         9VD9NL+4Td5SW/zCHqzFdg4AO+Hi+E1y6i6/CO4Qf+FoXUTCWFUms8m0s84WU8hu3SfS
+         hSoxHZ9/3zkxRst24oPO+G6PaxclZeoA6Y2NPh/EnPYejz8WrT7jbiffZ2nS4Vcu9NXN
+         VpOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750169576; x=1750774376;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0s0DAhwLG2vmOgwqQDSJ2RWGZLNBfRIYPMMOb2htwqc=;
+        b=ikErSFnHa3C7lAY3JZByLvziSrr8zzXk5vo9Zf60io3kUzaSVsAcF7v9269kCFG5Kq
+         9UrGsvL+ciZl3ddEDjIvUTcqJShnOkbGs0tEpGT7ldjt8KLzaL3XeLjlD+3YK61SukzB
+         R5zFCVZtNlZ/Nd4ru8K1Iq6JOnjt+1Z+i/GDT2pbSUd3EHDj7pqVuS2eMk5GIch/YTQJ
+         1f3krSvVSaWHxBFQolGh3WIIPxEI6n0JqLpxRYbmHN1XsXHaOKTfjMKH00sarWIZ3geO
+         aQu11IClQ6eqMRgXk9nTwJefoykkotC4RzX9iS0/GRF2dhYxYzKtLCkmEJ3Bomz3B4KW
+         7fsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpzmnSoJf5Mt2lD37GK0M/dNVGPBNEcPG2Gps+pUh7ES13UPeU75eoqP2PA5CJeridAVIjrEdQPGvqU1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6e5HIV5V63USxlls7rF0Xumch8K+b7deT4zPzeK1OmGjj0wV6
+	yUU/OPjFZKDrBARQng5F9QKbG0wzboJLy+a81PgUZGEaHpZhIPkcAtLBRHGGe74yeQ==
+X-Gm-Gg: ASbGncs4G0X4Im8yQutlNEVjEwpKFFjMRZwXAe863K9BfW868f4TRm0DmeG5DUOlZ4e
+	LidRSMi7UrYFlBReYgRKAuR3Ec8ZlIPIF6T87Dw1iKCSe3xmH7jww5AiUF3dumaL/WiHjps2MkI
+	lW90Z0haay26Odfxr68gmrwyWalyvlaQfQmK1CpozpaOWIC8Iu61xg9/bluvnmEtzMlUbhPGjdj
+	uFPdrjWupJnAmOOBO922iFbHh6dOB5YV+JaVSthdvQvbLCIghHsvleIhJ9BPw3o5I/oNIC3U2vi
+	RxtJAT8LSbCBxp1d5eCrOyc10njskX+6cylp+2sS4qEJ1yg0NmXYtci5z2vlUXSiZ+1qapPc0QA
+	q1MAm
+X-Google-Smtp-Source: AGHT+IGGcniDBP3SWlANTec+HJ71BhVMTML0YMUxfK7tDS3/o0KB69JVRk+rjJDhnEFWiDvo2nce4Q==
+X-Received: by 2002:a05:622a:1309:b0:4a4:330f:a796 with SMTP id d75a77b69052e-4a73c62dd7amr230360571cf.28.1750169576347;
+        Tue, 17 Jun 2025 07:12:56 -0700 (PDT)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a72a2bf125sm61138851cf.13.2025.06.17.07.12.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 07:12:55 -0700 (PDT)
+Date: Tue, 17 Jun 2025 10:12:53 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: ohci-spear: Remove unnecessary NULL check before
+ clk_disable_unprepare()
+Message-ID: <0a36b344-33dd-47ed-8140-76b9535e34ea@rowland.harvard.edu>
+References: <20250617042050.1930940-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,35 +88,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250617010255.1183069-4-shaojijie@huawei.com>
+In-Reply-To: <20250617042050.1930940-1-nichen@iscas.ac.cn>
 
-On Tue, Jun 17, 2025 at 09:02:50AM +0800, Jijie Shao wrote:
-> There are too many indirection layers in the HNS3 driver code,
-> This issue was previously discussed with the maintainer,
-> who suggested adding a helper function to fix the issue.
-> In fact, the hns3_get_ops() helper is already defined
-> and can fix this issue.
+On Tue, Jun 17, 2025 at 12:20:50PM +0800, Chen Ni wrote:
+> clk_disable_unprepare() already checks NULL by using IS_ERR_OR_NULL.
+> Remove unneeded NULL check for clk here.
 > 
-> This patch uses hns3_get_ops() helper to reduce the unnecessary
-> middle layer conversion. Apply it to the whole HNS3 driver.
-> The former discusstion can be checked from the link.
-
-Thanks for rewording the commit message.
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-
-> 
-> Link: https://patchwork.kernel.org/project/netdevbpf/patch/20230310081404.947-1-lanhao@huawei.com/
-
-I hope you will add getting hns3 device from netdev too in the future
-(as this is main point in the link).
-
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-> ---
-> ChangeLog:
-> v1 -> v2:
->   - Change commit message and title, suggested by Michal Swiatkowski.
->   v1: https://lore.kernel.org/all/20250612021317.1487943-1-shaojijie@huawei.com/
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 > ---
 
-[...]
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+
+>  drivers/usb/host/ohci-spear.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/host/ohci-spear.c b/drivers/usb/host/ohci-spear.c
+> index d7131e5a4477..6843d7cb3f9f 100644
+> --- a/drivers/usb/host/ohci-spear.c
+> +++ b/drivers/usb/host/ohci-spear.c
+> @@ -103,8 +103,7 @@ static void spear_ohci_hcd_drv_remove(struct platform_device *pdev)
+>  	struct spear_ohci *sohci_p = to_spear_ohci(hcd);
+>  
+>  	usb_remove_hcd(hcd);
+> -	if (sohci_p->clk)
+> -		clk_disable_unprepare(sohci_p->clk);
+> +	clk_disable_unprepare(sohci_p->clk);
+>  
+>  	usb_put_hcd(hcd);
+>  }
+> -- 
+> 2.25.1
+> 
 
