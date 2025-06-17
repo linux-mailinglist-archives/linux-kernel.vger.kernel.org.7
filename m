@@ -1,132 +1,250 @@
-Return-Path: <linux-kernel+bounces-690491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A7AADD15F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:29:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9419BADD183
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3635F7A9108
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:28:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE9D3BD3B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9102ECD11;
-	Tue, 17 Jun 2025 15:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFBA2ECD2A;
+	Tue, 17 Jun 2025 15:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRk8J4cG"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VmkrqHCs"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369B8236457;
-	Tue, 17 Jun 2025 15:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691EB1E8332;
+	Tue, 17 Jun 2025 15:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750174137; cv=none; b=tzwK0r3UyJ3YxuSsyH/6m4fUvEPwZXn4cqQjaM/lsrL4CgXY2W+KEecEVfHDow9S+W0CnoLs1s9Btfcj7e1e6vMA5nuAkeiPiH4fmCVVm1W37PbEM91VCBeKdxBf56EMz9drkUcziZsGhxbAwCuUx1Wg/mWn6MEIIevH2JviZ/E=
+	t=1750174293; cv=none; b=kXjzo3J2zZeJEI4TDe5V2TgX72Zr6LF7HKvEBW2WmPFTLZeBZSuU9WVdDks7Lb3YQNeM7pr1jkY9m/TgoQDMiyCIfVg343jaYQfJbLDM/5yA5BbaLcuJ1roMkdFlER0ci6fhP+2YJjaAcrSXJMrEX1hoOtjyrbAdJACCyybObUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750174137; c=relaxed/simple;
-	bh=TdGRs5iTXAhHxPcxu4PNEeCbPjsBGuk+HPcu/c1kMr0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r/TWjeDPSmPduFNd/ehbqKCH71DIiqBbFZIKaDUqjXz4E1ISoRHF8KO8fUW/m+c0PZVyBqiizk6k/SE7xuc0+Mp0bXMbFAESQgkRMS5H+vFHZSqfybJTwB39Me92xcgeYLJ7qV1OfO9Yc2MUf/2yFsx/PcL0dEjZE746zF1yJDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KRk8J4cG; arc=none smtp.client-ip=209.85.216.52
+	s=arc-20240116; t=1750174293; c=relaxed/simple;
+	bh=rqsoueWdM1nAxX6i3TdFvPfMOP8bCIS3N3NGt3+7CO4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PXEhFyUeOc/LRr7vkZutx+Xg7nGNYtTCmpBBjBcS4alwLx3K3T2iPP/lBg4fWTBt91aeDEsNkjdNmMx9PZkxjThQWHPeVTjIM1W0n0FSkRMo0ON9J9OqxwA3XN4Ma9AJwUfrnOKgPMeC16PeSKFBDdM32GGrhYMiqAlYjCxg4iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VmkrqHCs; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-313290ea247so1107950a91.3;
-        Tue, 17 Jun 2025 08:28:56 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-236192f8770so41404835ad.0;
+        Tue, 17 Jun 2025 08:31:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750174135; x=1750778935; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1750174291; x=1750779091; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/Jl/bvQTlSEM9wNIbLl4lqqqlObXLJdt8Y58R9WCaRY=;
-        b=KRk8J4cGoLKkbUZ+sj8yT/2V5UofFQBLrTIfLsWak8bp3q3vbil/dRrQ987n28li/C
-         x3jTqJy4ROzKZJ9UoZLHQL81ywOh4V425l2lsqkXMzcNn3gMMfs0v9rYLLw7wZu62lmf
-         F4ylUImuJVPjz7OCFKCdzvo6Ehy4X/jXXQyd55OTrktaUmoMgMSomUTRFTkKe1jAgLqi
-         1H2t75MvPqYtVOxiooLIuhAaLxVgPCbis3CpFzv3XHjEMsMtHJeyxDkaHoTjMM1e18sY
-         rcTUKHj3MO9vTk4EITtVtryhOxZZ8Cu6JU5cGO9X0QTZlUskHwEVnAjEECeJKP/jvMJL
-         ltdA==
+        bh=vONKiPDQFvOV04sWTQ5N/d0Nqz6jFzaBcRhqCM37kEI=;
+        b=VmkrqHCsYn2fcTK7aYzdHSBxb8fbolgMIe41ZDcwF/tJQ3gl+8mA5l7B8W3K7mrwwL
+         u9gFVCbUbIIph2dR+SpVxej76tYrptfjvXGNRtcEk4Jl5aRwge0r0QicA8Ia6sBzGULE
+         HPq0O5cEGeT7EiIVO000CH6yU8Z2TNQBTDsIDPWpV0JYvOIyFueRVwoEVw4+guDCOu97
+         HLC4W1pHJ2RH+nLrEkt4IJUr/CtBkNBAuGbuH6P7sRr7EsYmApm9f3x0iJydU2OvCHli
+         Y4XCT45nSoQRvqHxQvz8UootX0tt4iRs7NFC04/Phn/VyBjtaZP75xOTyuGAbN8t8nyO
+         kGsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750174135; x=1750778935;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1750174291; x=1750779091;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/Jl/bvQTlSEM9wNIbLl4lqqqlObXLJdt8Y58R9WCaRY=;
-        b=OOa3aNHU5fPrVbP8cgVOQP1SwiLmwYVnq5Q0lqOV6FwhNoF32yJPRNOYBnKxtjkC3k
-         m4nL4GoGSvpZxttV8FgiylhVYKMftLO1hZEHwuBkGWNlQbLPzxP7i8ioK4MSKW1QyOLM
-         sKTdcH1v7SypjIFbqWRz7+CFSjQfnjlr5KR76dPRAdi4PT2hMbAmMlSC8FfgfBf0O9W8
-         68GO5Ju7hDZ/zc6CVhVdMRrQCwZ0SidplQpA3i+E6C1XcOi7rCFcIHE6Ln06gvWOZaHn
-         75shGMRtLlM0GE57ZEAqTev6t8tfn2gJeudyoVEtGGDvlXkIqVLYCspROY92lZwqB35a
-         Y6kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOflcZtoHJZteBQEm1IcR69PCSm3/c7Xm49+7fdvfs4GDOrOPnwYZAw15fb8Oqb1N2lteCm5n78qM465KbVQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV/VEbZucdKHy0XoUBpdjTE9gn6LJtiwloMjPzXlIFKHpJAeXV
-	6WVor8IVPpB2xxBs78C3c6tpUhh8pithA2LTMe6ZAX8alwqrEE/ONqYHdgP9QGJNhI88yNV2lH1
-	o6ouG93Fj1XWOCm3m4uYYQS0pp/EkKhI=
-X-Gm-Gg: ASbGncuT09QZCfJlbMuxd3ye4pGkz3cdKxnElv3ABeHaVeMUijuHKtHIDNoPznv7ATy
-	X+SwTNNMkirKHpN4rCwwG322UmeWBz232bDVdff+iX+520tGk7HUIHMeP4FCu3zpk89fnh2UO/P
-	OUmBNZRuoSFGbBdwLGy9GgbHaQjeJXuDl2uEb12RWq0oI=
-X-Google-Smtp-Source: AGHT+IHz7EHSJNK8P0mXt11Gy3Vb93D7esc/bn47cDuavJY+nxH+F+vwX6BkXRQVgsSgHW7lKSMrgZgLjA69fuKXA9A=
-X-Received: by 2002:a17:90b:2509:b0:314:2d38:3e4d with SMTP id
- 98e67ed59e1d1-3142d383ef1mr730281a91.3.1750174135384; Tue, 17 Jun 2025
- 08:28:55 -0700 (PDT)
+        bh=vONKiPDQFvOV04sWTQ5N/d0Nqz6jFzaBcRhqCM37kEI=;
+        b=RBINeGF2SPSvirpS1Tzab4k1ENcw96h/HhqtXq5ywL8kS19N8tVYGXANOxzw1Po0Ft
+         2gWxnMc5K+b7AGfO5lP6w8EpaPt0EJ4ay3dsmcDRy4Zttu2GKE4oEaZrj8WG+0zGOWVD
+         fqVEtpStiTHB4IEgkDABVT0FpsKN2wBXP0Zf0mGm/uNid67sjAEA04OgJvPZhHffh3mX
+         snkNaG9NRj+iWqbvtyVxnQgkE/kD6tBSZe3GtBoKHTQPXSYKfy+JXZ99aVWZJ/vUFV5H
+         7yQIlT1wp3k/PaK69ik5VlY7UGequiDWuEEqpBdx4b+6JFED9nF079Ap48gBHCxsF5jN
+         iAsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDVz1AQ+QXoHfLlmT79cKfiCyAq9nZ/pYtKkE45m0oTuMX1f3DfCZmkvfId8DHXSDe2FA=@vger.kernel.org, AJvYcCX8MuQC9l/fQQ5TIz4zzkxIOurCFK+5tfnxjm31n5CObYHc4ogYYj6pwfBWIA8hBxpKckUgeb6X@vger.kernel.org, AJvYcCX9G6okYyvV7slndFpgVimyvFXbHMqIJnewEWV5WmKfZUyNnckgt1VduopkVHP/UggLYRfn8jMEO37SUPBL@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhJ/Rc2EcnJsU7BxJhoIshD7n56PZeWz6FEkjEhCDjlPw8xaTW
+	QPTQciBWB6dVsrPcdhzXO6gBM+/3Me9sJCA2WUuQCy+kTwerOLJuUs9B
+X-Gm-Gg: ASbGncubfmHeLfLr3tOFaFh2ry158f2khWQnUZFiVLjR1oQ8RfSx1dqfzqgUsEm92rj
+	XnzfOtlLvW4Mx0/G1dIUhR75eysiJQn94plzCmrzR3sjPuvJqj6Qn+ROdrunmhl0nUfqqJZG/9/
+	4CM+XN11gbfjLvn+eKfWNFVgs+IEPYkG9AKsWRaNi80yH3XjWReaYEsrTB+Rp6jygi+449xlWwo
+	Gdw1jmnlw91hDzxwS4FtGi0QDhFqKsKixaIYGul+yXA2vYvAnbuN3QF8tay37pBZkCJtjBSR2uj
+	sOj9x4KZUogf2MKLL3Ow0UDd+Q2DrGjhNnlmIWDbupqWhet0gJjbPtv2cjjAee6A9NVHP7pUYbp
+	S+UzGSZV5
+X-Google-Smtp-Source: AGHT+IGYJo30uXrZf1g+2eeuGKvcXBXQtOlctiDYvFKA0bX2SqJAcMGk1oSS7fnVY2Di05z0qFETSw==
+X-Received: by 2002:a17:902:d48d:b0:236:71a5:4416 with SMTP id d9443c01a7336-23691eabe15mr41899625ad.20.1750174290520;
+        Tue, 17 Jun 2025 08:31:30 -0700 (PDT)
+Received: from devant.antgroup-inc.local ([47.89.83.0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365de7839dsm81188535ad.127.2025.06.17.08.31.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 08:31:30 -0700 (PDT)
+From: Xuewei Niu <niuxuewei97@gmail.com>
+X-Google-Original-From: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+To: sgarzare@redhat.com
+Cc: davem@davemloft.net,
+	fupan.lfp@antgroup.com,
+	jasowang@redhat.com,
+	kvm@vger.kernel.org,
+	leonardi@redhat.com,
+	linux-kernel@vger.kernel.org,
+	mst@redhat.com,
+	netdev@vger.kernel.org,
+	niuxuewei.nxw@antgroup.com,
+	niuxuewei97@gmail.com,
+	pabeni@redhat.com,
+	stefanha@redhat.com,
+	virtualization@lists.linux.dev,
+	xuanzhuo@linux.alibaba.com
+Subject: Re: [PATCH net-next v3 3/3] test/vsock: Add ioctl SIOCINQ tests
+Date: Tue, 17 Jun 2025 23:31:20 +0800
+Message-Id: <20250617153120.1348774-1-niuxuewei.nxw@antgroup.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <fnznqsbg56rfk7szjcprpo4mxy7e4patmj2u5yxbtj33dlj34w@7t5xylskewa5>
+References: <fnznqsbg56rfk7szjcprpo4mxy7e4patmj2u5yxbtj33dlj34w@7t5xylskewa5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616153604.49418-1-boqun.feng@gmail.com> <20250616153604.49418-2-boqun.feng@gmail.com>
- <CANiq72mZV3Ezxb4FvDdMvn=O+ReUPBx9usUahLgwTKKCFD_+cA@mail.gmail.com> <aFFwumsjuAEIJVUF@Mac.home>
-In-Reply-To: <aFFwumsjuAEIJVUF@Mac.home>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 17 Jun 2025 17:28:41 +0200
-X-Gm-Features: AX0GCFuptDR3g5HiZbpjFL-Mr5gbSNrFwDaY5tm0p7QAQA_x53XmbZs1C5Ik4g8
-Message-ID: <CANiq72k+d3FzM8O7R9_WrpU3o3RygpGAS3S0Z5wPZsvC3k6=WA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] rust: Introduce file_from_location()
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com, 
-	aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org, mingo@redhat.com, 
-	peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, pmladek@suse.com, 
-	fujita.tomonori@gmail.com, mingo@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 17, 2025 at 3:42=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> Will do, one thing though: the comment lines seem to wrap at 78 or 80
-> chars, so do other lines for conditional features in rust/kernel/lib.rs.
-> However I believe in Rust code we use 100 chars text width, any
-> particular reason that I should keep these new lines the same (wrapping
-> at 80 characters)? Otherwise I will make the new lines wrap at 100.
+> On Tue, Jun 17, 2025 at 12:53:46PM +0800, Xuewei Niu wrote:
+> >Add SIOCINQ ioctl tests for both SOCK_STREAM and SOCK_SEQPACKET.
+> >
+> >The client waits for the server to send data, and checks if the SIOCINQ
+> >ioctl value matches the data size. After consuming the data, the client
+> >checks if the SIOCINQ value is 0.
+> >
+> >Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+> >---
+> > tools/testing/vsock/vsock_test.c | 82 ++++++++++++++++++++++++++++++++
+> > 1 file changed, 82 insertions(+)
+> >
+> >diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
+> >index f669baaa0dca..66bb9fde7eca 100644
+> >--- a/tools/testing/vsock/vsock_test.c
+> >+++ b/tools/testing/vsock/vsock_test.c
+> >@@ -1305,6 +1305,58 @@ static void test_unsent_bytes_client(const struct test_opts *opts, int type)
+> > 	close(fd);
+> > }
+> >
+> >+static void test_unread_bytes_server(const struct test_opts *opts, int type)
+> >+{
+> >+	unsigned char buf[MSG_BUF_IOCTL_LEN];
+> >+	int client_fd;
+> >+
+> >+	client_fd = vsock_accept(VMADDR_CID_ANY, opts->peer_port, NULL, type);
+> >+	if (client_fd < 0) {
+> >+		perror("accept");
+> >+		exit(EXIT_FAILURE);
+> >+	}
+> >+
+> >+	for (int i = 0; i < sizeof(buf); i++)
+> >+		buf[i] = rand() & 0xFF;
+> >+
+> >+	send_buf(client_fd, buf, sizeof(buf), 0, sizeof(buf));
+> >+	control_writeln("SENT");
+> >+	control_expectln("RECEIVED");
+> >+
+> >+	close(client_fd);
+> >+}
+> >+
+> >+static void test_unread_bytes_client(const struct test_opts *opts, int type)
+> >+{
+> >+	unsigned char buf[MSG_BUF_IOCTL_LEN];
+> >+	int ret, fd;
+> >+	int sock_bytes_unread;
+> >+
+> >+	fd = vsock_connect(opts->peer_cid, opts->peer_port, type);
+> >+	if (fd < 0) {
+> >+		perror("connect");
+> >+		exit(EXIT_FAILURE);
+> >+	}
+> >+
+> >+	control_expectln("SENT");
+> >+	/* The data has arrived but has not been read. The expected is
+> >+	 * MSG_BUF_IOCTL_LEN.
+> >+	 */
+> >+	ret = ioctl_int(fd, TIOCINQ, &sock_bytes_unread, MSG_BUF_IOCTL_LEN);
+> >+	if (ret) {
+> 
+> Since we are returning a value !=0 only if EOPNOTSUPP, I think we can 
+> just return a bool when the ioctl is supported or not, like for 
+> vsock_wait_sent().
 
-We have both styles, so up to you.
+Will do.
 
-It would have been nice to at least know already if `rustfmt` would
-eventually land on 80 or 100 for this, even if the automatically
-wrapping is not stable :(
+> >+		fprintf(stderr, "Test skipped, TIOCINQ not supported.\n");
+> >+		goto out;
+> >+	}
+> >+
+> >+	recv_buf(fd, buf, sizeof(buf), 0, sizeof(buf));
+> >+	// All date has been consumed, so the expected is 0.
+> 
+> s/date/data
+> 
+> Please follow the style of the file (/* */ for comments)
 
-> Sure, will do, but I'm afraid there is only case, unless I misunderstood
-> you:
+Will do.
 
-I meant the "If `file_with_nul()` is not available" vs. the available
-one (since it is mentioned in the docs already).
+> >+	ioctl_int(fd, TIOCINQ, &sock_bytes_unread, 0);
+> >+	control_writeln("RECEIVED");
+> 
+> Why we need this control barrier here?
 
-> /// use kernel::file_from_location;
+Nice catch! It is not necessary. Will remote it.
 
-I would hide this line, since it is a single import of the item itself.
+Thanks,
+Xuewei
 
-> ///     pr_info!("{}\n", file_from_location(caller));
-
-I would suggest adding a comment on top of this line mentioning the
-output it could potentially show, e.g.
-
-    // Output: ...
-
-Thanks for this!
-
-Cheers,
-Miguel
+> >+
+> >+out:
+> >+	close(fd);
+> >+}
+> >+
+> > static void test_stream_unsent_bytes_client(const struct test_opts *opts)
+> > {
+> > 	test_unsent_bytes_client(opts, SOCK_STREAM);
+> >@@ -1325,6 +1377,26 @@ static void test_seqpacket_unsent_bytes_server(const struct test_opts *opts)
+> > 	test_unsent_bytes_server(opts, SOCK_SEQPACKET);
+> > }
+> >
+> >+static void test_stream_unread_bytes_client(const struct test_opts *opts)
+> >+{
+> >+	test_unread_bytes_client(opts, SOCK_STREAM);
+> >+}
+> >+
+> >+static void test_stream_unread_bytes_server(const struct test_opts *opts)
+> >+{
+> >+	test_unread_bytes_server(opts, SOCK_STREAM);
+> >+}
+> >+
+> >+static void test_seqpacket_unread_bytes_client(const struct test_opts *opts)
+> >+{
+> >+	test_unread_bytes_client(opts, SOCK_SEQPACKET);
+> >+}
+> >+
+> >+static void test_seqpacket_unread_bytes_server(const struct test_opts *opts)
+> >+{
+> >+	test_unread_bytes_server(opts, SOCK_SEQPACKET);
+> >+}
+> >+
+> > #define RCVLOWAT_CREDIT_UPD_BUF_SIZE	(1024 * 128)
+> > /* This define is the same as in 'include/linux/virtio_vsock.h':
+> >  * it is used to decide when to send credit update message during
+> >@@ -2051,6 +2123,16 @@ static struct test_case test_cases[] = {
+> > 		.run_client = test_stream_nolinger_client,
+> > 		.run_server = test_stream_nolinger_server,
+> > 	},
+> >+	{
+> >+		.name = "SOCK_STREAM ioctl(SIOCINQ) functionality",
+> >+		.run_client = test_stream_unread_bytes_client,
+> >+		.run_server = test_stream_unread_bytes_server,
+> >+	},
+> >+	{
+> >+		.name = "SOCK_SEQPACKET ioctl(SIOCINQ) functionality",
+> >+		.run_client = test_seqpacket_unread_bytes_client,
+> >+		.run_server = test_seqpacket_unread_bytes_server,
+> >+	},
+> > 	{},
+> > };
+> >
+> >-- 
+> >2.34.1
+> >
 
