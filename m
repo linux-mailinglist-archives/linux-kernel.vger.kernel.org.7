@@ -1,178 +1,321 @@
-Return-Path: <linux-kernel+bounces-689786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7466ADC679
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:31:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85AA4ADC683
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89B073AAFA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:30:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2499F16568D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F75293C69;
-	Tue, 17 Jun 2025 09:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8682980D0;
+	Tue, 17 Jun 2025 09:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zybM47Jk"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dh9o0Bj9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69062949F4
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8EF2957CD;
+	Tue, 17 Jun 2025 09:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750152620; cv=none; b=j7EIXIsiZtac3EGqRazq+NLwWToCy0IDM10Gc2jm1+LnAK70o7xxSAal9XBqfEHqX5daswhVQaVIBsjRLw7BN42BWozSwM851tXfSBCX8xMun0lObe752+Ehm+F2TloGP4GZuAfEAJlukT6y0HpxXRiFsDZgv4FcjEt173ArxhQ=
+	t=1750152682; cv=none; b=H6OqrWselGYmqtQYO1V3EAaSws5n7ZJJ9OMoUljz3M84VrCAHt1bokSYyfp1L+68xxQV8rxvdukNG9TGRcdISXACWBVjNzQQLe86lM7XO9LIg7KVkQ98g7o3nVdm47FI341/gIsY6hmdWTOagEQhwS3AcERObvI9yGKg2cl3AwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750152620; c=relaxed/simple;
-	bh=zaZ2O9bOumy6WLgWO1r6sqT4gqzW11xkJSkkFy5zOvc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rBghSkraYsvqiO4dNdSMJC66FZjSWxm3IQzMvlwNVBWnuE4OWx7hbkio/Aj2XJcuKSI/ja1YpUhfq3Rbbb8tmDAeXTFJvqyx0qOS6guh+PmDR/j4lwN90kLMpNpVdWKqdAQg/NX6z60vvbhhZvCAkFLZI+HdaY5TEnrIDuDPspE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zybM47Jk; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-451d3f72391so62284285e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 02:30:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750152617; x=1750757417; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xl41cDxLf5qSZURNGABwnShoulmiUtSz5ST04bw9Wkg=;
-        b=zybM47JkwvYMsbbGVEAyPzZoz6r/+bQOtozXo0sx4YGHQWcvS/qdjB88jHLlLoEk6x
-         DV/45Y/RN8tNuMW5Boij2Mw47l+Y/AGdCpYfCdjfs1q7YUGmcSAMWEFyfef42q+PKe2R
-         1uHlYeFfgNtlLSXyjMRb3bJBdpivmRJALHN9OMbdA8MiQExaxjNtt1VIQpuWMw7DTHu5
-         hHd/qbKhyxRqp+XUeFmvWfz0Q6wQQtcUf6aXO8QwLsMqT84d8nfH7dBGSEkkqS/jgv3c
-         AHuS3vrI5dZTlSNRTd2FM4EC0ppaSZkzrdWfuEH1uRtVDTHYAc2eMI1OrVcr8f7G9PX4
-         k7pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750152617; x=1750757417;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xl41cDxLf5qSZURNGABwnShoulmiUtSz5ST04bw9Wkg=;
-        b=rFI2m6iGN6C4bv3/2kxyHYeDE8PSdpQ5FlqF79/ZTS9iBjCeV+KQ1MN2jRINqpO258
-         6HD+EJ3u1FIXyUGL7uyuhoupNlo+RBXdgtAKucBmr+ZIUcxj42PHii+HLhaW1NLBzf5V
-         LONTxEw9qGCkCaIUaRSxJzkt4qmpojDnl8PF1/Ond6t0xTUi/j9KILLegXUgwnOXl1aK
-         43ZV07gVXepIG5Q3BxdvRb8p+FjS9GNcAHQofBaWZ+wVczEhkEkNA/q7971Xgy61pNnb
-         lsYsvzYSQLR744eEXZnxYpxGVJKIlaYsmyKvzHwBb7+Ym1mGDCHggIKCMon9sL5ugKCc
-         cHMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUK2+yGcqszm2Y62cyU8qObfBvU2P866fhMy4ZfGwrjs1f+sCIW7H7V7T+Bh+NQIgIQhKKX9H2fxz7TBsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoDT4J33JbxIdPW+MT9IpBcMfEd2lRBms1GyKqWAsnBUiYMpHB
-	/J5yGGSEfyDQzYWvjmO8jewfYjQ/btoxBqhQLtaTJk0S+vlmI59kD/gBNe4+sfWA5wg=
-X-Gm-Gg: ASbGncsXN0QyeU8M8buMLqxXfjtwzpAdTCKOgRrQ0Nox0K4/Hw6mnQSGFRUVF/uVMGJ
-	9/+zVHtA7Iaja6hz4KjsypnyK+YjVKqJMbr+xqdjAX/NZFO73cXNbjSm4hYFsIJIcEJ9nlmJBqa
-	5vhtr457vboaYLHUXaPr/4VefN/rUgWReMsczhdkbC0xT/DDVAY+bTCrLdkSlKOKbHRy4eJ5Lf3
-	NHEMgWwfx+Y8u9w3tRPVi11CJKK/x6A4QjjtkiVEj00yt+MVGSCXUwM4udswdLVKg40vboGa2jm
-	VWN8ER1DhBRy1AAhOlJ5vPolcU+meSUFjpkW1NeYp2QaSNc4i8v1u+Of+YmMNPQCIhSQ9nWBpxP
-	q3GnI/3Lq96SYowEhQCeHwbGqs8gf+1WzX0Zhqaw=
-X-Google-Smtp-Source: AGHT+IH90fM/Hl2qQnPaSI6dqHDTANiZZutrp7G9byHerpIanfYAuG3VuGrXV1ZLniUQsldJImLpAQ==
-X-Received: by 2002:a05:600c:8b01:b0:441:d437:e3b8 with SMTP id 5b1f17b1804b1-4533cac9179mr105111595e9.23.1750152616870;
-        Tue, 17 Jun 2025 02:30:16 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:3819:3250:4f73:db31? ([2a01:e0a:3d9:2080:3819:3250:4f73:db31])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a54aeasm13662038f8f.14.2025.06.17.02.30.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 02:30:11 -0700 (PDT)
-Message-ID: <9c512a8d-a39e-4b3a-b617-80b2dc7d14b3@linaro.org>
-Date: Tue, 17 Jun 2025 11:30:10 +0200
+	s=arc-20240116; t=1750152682; c=relaxed/simple;
+	bh=GZlLgUIl5lOWdd+wFiEVFZna3MNtcvJ7P2PYvJaY+FU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y3BALZuOBTnqGrSq8aIfcmbbDMkZToaQAexG7cvK2PRc/x1/k6k4PZrPivhfmcEGGD+DFmB9rRD6xoYwpFC//49e15J2QHmhbCmRfoDLIJmTqU0yVQzBLf7RnZIkjsclivUO7e9185TQftwSJAWsohZ3mh7EEPc0SHDWFSGHX+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dh9o0Bj9; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750152680; x=1781688680;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GZlLgUIl5lOWdd+wFiEVFZna3MNtcvJ7P2PYvJaY+FU=;
+  b=Dh9o0Bj94Se9wiuwr+75jV761XywJTLwfu2+qjGiXISRi4sFKe/tQkC4
+   shv+Eo1sVDFFashk9491E5LzRij76IPX9hAvECOWC06iKZ0+0TDfzq6xZ
+   yRbI8CmaP7CZhUGVg31Z7xZQPtDjqgWuVnvG4xT/s46bN3o6IS5NhM02A
+   ngEYX2GKqZA1uC6bWe4EGAXwkZKT56OFkmQ6SjQKZYQ/YYnd61z8LIkYp
+   YYsB1tMjQmA0iADoLLIW/Zp+3c6L7xaSCUD6j0lXH/GE/J8a9RFuyC/yd
+   BRFSeEZknDahggabP5BDwGww/HWJZLcvN0kI3LeFrRjw0PKNgy4zIf8NO
+   w==;
+X-CSE-ConnectionGUID: 7wGZd00NS4ahmPq8ZyuIYg==
+X-CSE-MsgGUID: yEPzzcG8Qv+J11ga3K6TSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="39927600"
+X-IronPort-AV: E=Sophos;i="6.16,242,1744095600"; 
+   d="scan'208";a="39927600"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 02:31:19 -0700
+X-CSE-ConnectionGUID: BfJ+WOBxTtG//SOiMxqeyw==
+X-CSE-MsgGUID: KqJpLp2pS525asif6M3Vaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,242,1744095600"; 
+   d="scan'208";a="154023430"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 17 Jun 2025 02:31:11 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uRSeq-000FpR-2Y;
+	Tue, 17 Jun 2025 09:31:08 +0000
+Date: Tue, 17 Jun 2025 17:30:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexander Kochetkov <al.kochet@gmail.com>,
+	Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Nishad Saraf <nishads@amd.com>, Lizhi Hou <lizhi.hou@amd.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Frank Li <Frank.Li@nxp.com>, Zhou Wang <wangzhou1@hisilicon.com>,
+	Longfang Liu <liulongfang@huawei.com>,
+	Andy Shevchenko <andy@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH v2 2/2] !!! TESTING ONLY !!! Allow compile virt-dma users
+ on ARM64 platform
+Message-ID: <202506171615.p1kpBZuQ-lkp@intel.com>
+References: <20250616124934.141782-3-al.kochet@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH 3/5] phy: rockchip: phy-rockchip-inno-csidphy: allow
- writes to grf register 0
-To: michael.riesch@collabora.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Jagan Teki <jagan@amarulasolutions.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Collabora Kernel Team <kernel@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org
-References: <20250616-rk3588-csi-dphy-v1-0-84eb3b2a736c@collabora.com>
- <20250616-rk3588-csi-dphy-v1-3-84eb3b2a736c@collabora.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250616-rk3588-csi-dphy-v1-3-84eb3b2a736c@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250616124934.141782-3-al.kochet@gmail.com>
 
-On 17/06/2025 10:54, Michael Riesch via B4 Relay wrote:
-> From: Michael Riesch <michael.riesch@collabora.com>
-> 
-> The driver for the Rockchip MIPI CSI-2 DPHY uses GRF register offset
-> value 0 to sort out undefined registers. However, the RK3588 CSIDPHY GRF
-> this offset is perfectly fine (in fact, register 0 is the only one in
-> this register y
-> file).
-> Introduce a boolean variable to indicate valid registers and allow writes
-> to register 0.
-> 
-> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
-> ---
->   drivers/phy/rockchip/phy-rockchip-inno-csidphy.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-csidphy.c b/drivers/phy/rockchip/phy-rockchip-inno-csidphy.c
-> index 2ab99e1d47eb..75533d071025 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-inno-csidphy.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-inno-csidphy.c
-> @@ -87,10 +87,11 @@ struct dphy_reg {
->   	u32 offset;
->   	u32 mask;
->   	u32 shift;
-> +	u8 valid;
->   };
->   
->   #define PHY_REG(_offset, _width, _shift) \
-> -	{ .offset = _offset, .mask = BIT(_width) - 1, .shift = _shift, }
-> +	{ .offset = _offset, .mask = BIT(_width) - 1, .shift = _shift, .valid = 1, }
->   
->   static const struct dphy_reg rk1808_grf_dphy_regs[] = {
->   	[GRF_DPHY_CSIPHY_FORCERXMODE] = PHY_REG(RK1808_GRF_PD_VI_CON_OFFSET, 4, 0),
-> @@ -145,7 +146,7 @@ static inline void write_grf_reg(struct rockchip_inno_csidphy *priv,
->   	const struct dphy_drv_data *drv_data = priv->drv_data;
->   	const struct dphy_reg *reg = &drv_data->grf_regs[index];
->   
-> -	if (reg->offset)
-> +	if (reg->valid)
->   		regmap_write(priv->grf, reg->offset,
->   			     HIWORD_UPDATE(value, reg->mask, reg->shift));
->   }
-> 
+Hi Alexander,
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on vkoul-dmaengine/next]
+[also build test WARNING on shawnguo/for-next sunxi/sunxi/for-next lee-mfd/for-mfd-next linus/master v6.16-rc2 next-20250617]
+[cannot apply to atorgue-stm32/stm32-next lee-mfd/for-mfd-fixes]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Kochetkov/dmaengine-virt-dma-convert-tasklet-to-BH-workqueue-for-callback-invocation/20250616-205118
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git next
+patch link:    https://lore.kernel.org/r/20250616124934.141782-3-al.kochet%40gmail.com
+patch subject: [PATCH v2 2/2] !!! TESTING ONLY !!! Allow compile virt-dma users on ARM64 platform
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20250617/202506171615.p1kpBZuQ-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250617/202506171615.p1kpBZuQ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506171615.p1kpBZuQ-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/dma/qcom/qcom_adm.c:245:7: error: incompatible pointer types assigning to 'u32 *' (aka 'unsigned int *') from 'phys_addr_t *' (aka 'unsigned long long *') [-Werror,-Wincompatible-pointer-types]
+     245 |                 src = &achan->slave.src_addr;
+         |                     ^ ~~~~~~~~~~~~~~~~~~~~~~
+   drivers/dma/qcom/qcom_adm.c:251:7: error: incompatible pointer types assigning to 'u32 *' (aka 'unsigned int *') from 'phys_addr_t *' (aka 'unsigned long long *') [-Werror,-Wincompatible-pointer-types]
+     251 |                 dst = &achan->slave.dst_addr;
+         |                     ^ ~~~~~~~~~~~~~~~~~~~~~~
+   drivers/dma/qcom/qcom_adm.c:309:7: error: incompatible pointer types assigning to 'u32 *' (aka 'unsigned int *') from 'phys_addr_t *' (aka 'unsigned long long *') [-Werror,-Wincompatible-pointer-types]
+     309 |                 src = &achan->slave.src_addr;
+         |                     ^ ~~~~~~~~~~~~~~~~~~~~~~
+   drivers/dma/qcom/qcom_adm.c:313:7: error: incompatible pointer types assigning to 'u32 *' (aka 'unsigned int *') from 'phys_addr_t *' (aka 'unsigned long long *') [-Werror,-Wincompatible-pointer-types]
+     313 |                 dst = &achan->slave.dst_addr;
+         |                     ^ ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/dma/qcom/qcom_adm.c:848:59: warning: implicit conversion from 'unsigned long' to 'unsigned int' changes value from 18446744072371568648 to 2956984328 [-Wconstant-conversion]
+     848 |         writel(ADM_CI_RANGE_START(0x40) | ADM_CI_RANGE_END(0xb0) |
+         |         ~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+     849 |                ADM_CI_BURST_8_WORDS, adev->regs + ADM_CI_CONF(0));
+         |                ~~~~~~~~~~~~~~~~~~~~
+   1 warning and 4 errors generated.
+
+
+vim +848 drivers/dma/qcom/qcom_adm.c
+
+03de6b273805b3 Arnd Bergmann     2021-11-22  745  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  746  static int adm_dma_probe(struct platform_device *pdev)
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  747  {
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  748  	struct adm_device *adev;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  749  	int ret;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  750  	u32 i;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  751  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  752  	adev = devm_kzalloc(&pdev->dev, sizeof(*adev), GFP_KERNEL);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  753  	if (!adev)
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  754  		return -ENOMEM;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  755  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  756  	adev->dev = &pdev->dev;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  757  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  758  	adev->regs = devm_platform_ioremap_resource(pdev, 0);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  759  	if (IS_ERR(adev->regs))
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  760  		return PTR_ERR(adev->regs);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  761  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  762  	adev->irq = platform_get_irq(pdev, 0);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  763  	if (adev->irq < 0)
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  764  		return adev->irq;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  765  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  766  	ret = of_property_read_u32(pdev->dev.of_node, "qcom,ee", &adev->ee);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  767  	if (ret) {
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  768  		dev_err(adev->dev, "Execution environment unspecified\n");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  769  		return ret;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  770  	}
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  771  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  772  	adev->core_clk = devm_clk_get(adev->dev, "core");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  773  	if (IS_ERR(adev->core_clk))
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  774  		return PTR_ERR(adev->core_clk);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  775  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  776  	adev->iface_clk = devm_clk_get(adev->dev, "iface");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  777  	if (IS_ERR(adev->iface_clk))
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  778  		return PTR_ERR(adev->iface_clk);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  779  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  780  	adev->clk_reset = devm_reset_control_get_exclusive(&pdev->dev, "clk");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  781  	if (IS_ERR(adev->clk_reset)) {
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  782  		dev_err(adev->dev, "failed to get ADM0 reset\n");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  783  		return PTR_ERR(adev->clk_reset);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  784  	}
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  785  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  786  	adev->c0_reset = devm_reset_control_get_exclusive(&pdev->dev, "c0");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  787  	if (IS_ERR(adev->c0_reset)) {
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  788  		dev_err(adev->dev, "failed to get ADM0 C0 reset\n");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  789  		return PTR_ERR(adev->c0_reset);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  790  	}
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  791  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  792  	adev->c1_reset = devm_reset_control_get_exclusive(&pdev->dev, "c1");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  793  	if (IS_ERR(adev->c1_reset)) {
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  794  		dev_err(adev->dev, "failed to get ADM0 C1 reset\n");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  795  		return PTR_ERR(adev->c1_reset);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  796  	}
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  797  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  798  	adev->c2_reset = devm_reset_control_get_exclusive(&pdev->dev, "c2");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  799  	if (IS_ERR(adev->c2_reset)) {
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  800  		dev_err(adev->dev, "failed to get ADM0 C2 reset\n");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  801  		return PTR_ERR(adev->c2_reset);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  802  	}
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  803  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  804  	ret = clk_prepare_enable(adev->core_clk);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  805  	if (ret) {
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  806  		dev_err(adev->dev, "failed to prepare/enable core clock\n");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  807  		return ret;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  808  	}
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  809  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  810  	ret = clk_prepare_enable(adev->iface_clk);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  811  	if (ret) {
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  812  		dev_err(adev->dev, "failed to prepare/enable iface clock\n");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  813  		goto err_disable_core_clk;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  814  	}
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  815  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  816  	reset_control_assert(adev->clk_reset);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  817  	reset_control_assert(adev->c0_reset);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  818  	reset_control_assert(adev->c1_reset);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  819  	reset_control_assert(adev->c2_reset);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  820  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  821  	udelay(2);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  822  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  823  	reset_control_deassert(adev->clk_reset);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  824  	reset_control_deassert(adev->c0_reset);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  825  	reset_control_deassert(adev->c1_reset);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  826  	reset_control_deassert(adev->c2_reset);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  827  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  828  	adev->channels = devm_kcalloc(adev->dev, ADM_MAX_CHANNELS,
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  829  				      sizeof(*adev->channels), GFP_KERNEL);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  830  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  831  	if (!adev->channels) {
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  832  		ret = -ENOMEM;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  833  		goto err_disable_clks;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  834  	}
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  835  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  836  	/* allocate and initialize channels */
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  837  	INIT_LIST_HEAD(&adev->common.channels);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  838  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  839  	for (i = 0; i < ADM_MAX_CHANNELS; i++)
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  840  		adm_channel_init(adev, &adev->channels[i], i);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  841  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  842  	/* reset CRCIs */
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  843  	for (i = 0; i < 16; i++)
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  844  		writel(ADM_CRCI_CTL_RST, adev->regs +
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  845  			ADM_CRCI_CTL(i, adev->ee));
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  846  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  847  	/* configure client interfaces */
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14 @848  	writel(ADM_CI_RANGE_START(0x40) | ADM_CI_RANGE_END(0xb0) |
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  849  	       ADM_CI_BURST_8_WORDS, adev->regs + ADM_CI_CONF(0));
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  850  	writel(ADM_CI_RANGE_START(0x2a) | ADM_CI_RANGE_END(0x2c) |
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  851  	       ADM_CI_BURST_8_WORDS, adev->regs + ADM_CI_CONF(1));
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  852  	writel(ADM_CI_RANGE_START(0x12) | ADM_CI_RANGE_END(0x28) |
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  853  	       ADM_CI_BURST_8_WORDS, adev->regs + ADM_CI_CONF(2));
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  854  	writel(ADM_GP_CTL_LP_EN | ADM_GP_CTL_LP_CNT(0xf),
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  855  	       adev->regs + ADM_GP_CTL);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  856  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  857  	ret = devm_request_irq(adev->dev, adev->irq, adm_dma_irq,
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  858  			       0, "adm_dma", adev);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  859  	if (ret)
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  860  		goto err_disable_clks;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  861  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  862  	platform_set_drvdata(pdev, adev);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  863  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  864  	adev->common.dev = adev->dev;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  865  	adev->common.dev->dma_parms = &adev->dma_parms;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  866  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  867  	/* set capabilities */
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  868  	dma_cap_zero(adev->common.cap_mask);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  869  	dma_cap_set(DMA_SLAVE, adev->common.cap_mask);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  870  	dma_cap_set(DMA_PRIVATE, adev->common.cap_mask);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  871  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  872  	/* initialize dmaengine apis */
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  873  	adev->common.directions = BIT(DMA_DEV_TO_MEM | DMA_MEM_TO_DEV);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  874  	adev->common.residue_granularity = DMA_RESIDUE_GRANULARITY_DESCRIPTOR;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  875  	adev->common.src_addr_widths = DMA_SLAVE_BUSWIDTH_4_BYTES;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  876  	adev->common.dst_addr_widths = DMA_SLAVE_BUSWIDTH_4_BYTES;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  877  	adev->common.device_free_chan_resources = adm_free_chan;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  878  	adev->common.device_prep_slave_sg = adm_prep_slave_sg;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  879  	adev->common.device_issue_pending = adm_issue_pending;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  880  	adev->common.device_tx_status = adm_tx_status;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  881  	adev->common.device_terminate_all = adm_terminate_all;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  882  	adev->common.device_config = adm_slave_config;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  883  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  884  	ret = dma_async_device_register(&adev->common);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  885  	if (ret) {
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  886  		dev_err(adev->dev, "failed to register dma async device\n");
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  887  		goto err_disable_clks;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  888  	}
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  889  
+03de6b273805b3 Arnd Bergmann     2021-11-22  890  	ret = of_dma_controller_register(pdev->dev.of_node, adm_dma_xlate,
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  891  					 &adev->common);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  892  	if (ret)
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  893  		goto err_unregister_dma;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  894  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  895  	return 0;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  896  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  897  err_unregister_dma:
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  898  	dma_async_device_unregister(&adev->common);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  899  err_disable_clks:
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  900  	clk_disable_unprepare(adev->iface_clk);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  901  err_disable_core_clk:
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  902  	clk_disable_unprepare(adev->core_clk);
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  903  
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  904  	return ret;
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  905  }
+5c9f8c2dbdbe53 Jonathan McDowell 2020-11-14  906  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
