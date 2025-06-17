@@ -1,145 +1,64 @@
-Return-Path: <linux-kernel+bounces-689299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B58ADBF1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 04:24:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23AE3ADBF27
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 04:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394331713E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 02:24:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 779EE3A9356
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 02:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECDE231835;
-	Tue, 17 Jun 2025 02:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EoNr+nuH"
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F41233D7B;
+	Tue, 17 Jun 2025 02:25:39 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA47F9C0
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 02:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7020E1DE4CE;
+	Tue, 17 Jun 2025 02:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750127080; cv=none; b=ulRk+9sy8GHj8dJX/kgFbdK6PWT4N/Yem50aln08XEvIbR1dq3TWQEWr/kRTuYJkV9ovJhjCifjDbB+v4sW/ngjX6lxNvNPL6P6AYErUZ36NDq6qnEYloUnKbhvdgviLetT4M9gZH+cVYvqUwzfCwmU2hxZv0iUEYjT+HtNYivU=
+	t=1750127139; cv=none; b=fx1XTPKAFwuDAujnASD+XIymxTJOX3xhhTqFwWpOv9ecWjU4gaYKdW4gw2gNuYT3TbpM6pu+R7/FApupdjRih/PooZHtM4i1VbEo852gMKC7JUhubIiCLQk8ilCYzRykBW+EC4m2JwE3jrVE6SF0Byfskq8DVsx5HPJHPMgn4oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750127080; c=relaxed/simple;
-	bh=ORtoJMRuO9d8FhNzxd1oc9GUL1sP4jFktHkJDKU8A3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DeL4IH0BFq/O6lEgNGhnTa3w8NvI/DMZxw9HXex0h/fpy/NvrLcTyAzj5PefJIVub9wqMX7d8L4H8Fbqonbt8eHQYwPEZrkfgU3yuMo/yzXdwl1jompND1O3mcc7oYEIB8fPzlyvFhKis51yx7C44NNBiHKtaqHei8jM4WMSEVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EoNr+nuH; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4e7fadc35b5so744029137.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 19:24:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750127078; x=1750731878; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+llR/BNeUIRrMxKZBOnCg+cMH1nIiPL149ZGVZhcg8g=;
-        b=EoNr+nuHpb0jUppneRAw5eJmYAlp6Lq3gb/tu3k23rJxpr7hyfTOmGWreE5kBScb9I
-         JcxP3SCAwn7Sc+thBqbS6lyB4yv/XrGpNYzqUG4FF4WoeDfSXtSyFCfo4xlokF3EjaPE
-         /MeKaHK/UDArgGhjkTH7FnhBPnEYEA2s5iQV+HfD1qk01P3l1JniDYw5BMK006vv3y2A
-         glia7/Q9Ppjdy7hPdbNymPmam4oUu/ICOuFygwtIpbv8YoR4koTr79J2aRSUoy8zntYS
-         gPh0SK4Nd+GvXZ+6k7Vfv4LiIb7U6fACQscGPkBfDxFNzqpKW11tGU9F6/uLuPG8J/N1
-         +5nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750127078; x=1750731878;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+llR/BNeUIRrMxKZBOnCg+cMH1nIiPL149ZGVZhcg8g=;
-        b=T1HlodM/17xReAn0qvGGN+4ANbZqtCUgH3DMk6nflj3L2GPUqKP3cfZiA7t0vIjbrD
-         5Uc4iWkeCgBgJ5x7dQJASM0DT4txSf8vDdMmcYfUim2GrFTAVkWAAOd/OcYVBYMLMMLs
-         U+0d1zSyeJrxzPNSf5JB4ui9TFabBkLkUqSAWPM2k0YauoeRjbmZNVEGm/CScB5WVIIz
-         zfRxOMxzT9LZGHRowXA5mxYGwhxDrUNPu9N+PwOKkZbGK9d/uUeafiAJgAdDP/D3Qi99
-         Z3583telpgSL8ieg8UurC9/WOW3gANVzfaZfaIXGWf9a4aVfPGX+e0CJCf/KefRN5BaB
-         vwcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdzr02dCa23NCnYzgZwoENS4GfXtJikdv9eQHgmM72CHTWTPCz+WtAU5ohKNM7j8EoCYcUsZYXzMOrbA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqRODIgYVK0m6SNWlAnR5Z+61WIIjiZy7HTFvZz4TNVVcwK5Ir
-	Ikd7DmA7gwkXQKiN+6huBvX5HBvQb2b81ge9zxWw4G2zhVbaiAnW7KtKHI8WT8WmBLHJj2DURhm
-	m0U43IGuvAl00az+XWHQSWsULgbFkzvI=
-X-Gm-Gg: ASbGncs6mH7nXIj2D79YrbGYUSNaTmieCeeI0hwEwjPr7huwiVO3yHyr4sBtmmJfjz2
-	jQ1HxjW2v3mZSjFL7tGorajAaAh9aJ17oHyGTKW/eD94f/GHKYGYLtwb2I/9CcAgEjDI5NvXVIc
-	dN04z2s/5EsbQ8/bPN1BxlX7rm2aV7UlrQNaRJVfAgvFA=
-X-Google-Smtp-Source: AGHT+IE2VeznKeUrIu2MJN9HXLxRlTuuDWOcp0+vOijEMkVUfR6r5zGEunSgQftsDFRXYDkmxG9TKuqWxzTqERNtcKw=
-X-Received: by 2002:a05:6102:5092:b0:4cb:5d6c:9946 with SMTP id
- ada2fe7eead31-4e7f638b30amr7401833137.10.1750127077791; Mon, 16 Jun 2025
- 19:24:37 -0700 (PDT)
+	s=arc-20240116; t=1750127139; c=relaxed/simple;
+	bh=tqxotGWZsCsjHg34A6ge5g1jgleVsq7K/esLtnMMj6Y=;
+	h=From:Subject:Date:Message-ID:To; b=OEmidK2i5GAyHPi52+dH+Eh0uFX0rfKxKlJ9JYaJvY9SQmvSIhAbjL9QbG3uGXui+VU1YhfZEW8wkm3BZ/BZJkg9WnV/RWPtsyhL9AyM+ZeM0reYWOW2fSzcCts9J4dYH4LrmknIWZ9OfERO0ZnYtn8a295hC4ktm60TdbGHBO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAB38C4CEEA;
+	Tue, 17 Jun 2025 02:25:38 +0000 (UTC)
+From: Clark Williams <williams@redhat.com>
+Subject: [ANNOUNCE] 6.6.93-rt55
+Date: Tue, 17 Jun 2025 02:24:46 -0000
+Message-ID: <175012708623.300399.18385688911351346339@demetrius>
+To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <joseph.salisbury@oracle.com>,Luis Claudio R. Goncalves <lgoncalv@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250617020544.57305-1-lance.yang@linux.dev>
-In-Reply-To: <20250617020544.57305-1-lance.yang@linux.dev>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 17 Jun 2025 14:24:26 +1200
-X-Gm-Features: AX0GCFvJjZPoKykRyQX5q5xkTcKG4T0FMe-9XbIqCKfJjs45uTXohqzDxqgwEqY
-Message-ID: <CAGsJ_4ySwMuKGYxywY+RH_FkNvjsThhvFQr+d1++KykOqjxarg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mm/madvise: initialize prev pointer in madvise_walk_vmas
-To: Lance Yang <ioworker0@gmail.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, jannh@google.com, lorenzo.stoakes@oracle.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Lance Yang <lance.yang@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 17, 2025 at 2:05=E2=80=AFPM Lance Yang <ioworker0@gmail.com> wr=
-ote:
->
-> From: Lance Yang <lance.yang@linux.dev>
->
-> The prev pointer was uninitialized, which could lead to undefined behavio=
-r
-> where its address is taken and passed to the visit() callback without bei=
-ng
-> assigned a value.
->
-> Initializing it to NULL makes the code safer and prevents potential bugs
-> if a future callback function attempts to read from it.
+Hello RT-list!
 
-Is there any read-before-write case here? I haven't found one.
+I'm pleased to announce the 6.6.93-rt55 stable release.
 
-It also looks like we're assuming that *prev =3D=3D NULL implies
-a specific condition:
+You can get this release via the git tree at:
 
-*prev =3D NULL;   /* tell sys_madvise we drop mmap_lock */
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-*prev =3D NULL; /* mmap_lock has been dropped, prev is stale */
+  branch: v6.6-rt
+  Head SHA1: 5495197730f86d3227ddfc243ff2980747a321ff
 
->
-> Signed-off-by: Lance Yang <lance.yang@linux.dev>
-> ---
->  mm/madvise.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 267d8e4adf31..c87325000303 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -1536,10 +1536,10 @@ int madvise_walk_vmas(struct mm_struct *mm, unsig=
-ned long start,
->                                    struct vm_area_struct **prev, unsigned=
- long start,
->                                    unsigned long end, void *arg))
->  {
-> +       struct vm_area_struct *prev =3D NULL;
->         struct vm_area_struct *vma;
-> -       struct vm_area_struct *prev;
-> -       unsigned long tmp;
->         int unmapped_error =3D 0;
-> +       unsigned long tmp;
->         int error;
->
->         /*
-> --
-> 2.49.0
->
+Or to build 6.6.93-rt55 directly, the following patches should be applied:
 
-Thanks
-Barry
+  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.6.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.6.93.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/6.6/patch-6.6.93-rt55.patch.xz
+
+
+Enjoy!
+Clark
+
 
