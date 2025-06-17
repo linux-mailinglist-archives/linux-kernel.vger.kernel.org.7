@@ -1,209 +1,297 @@
-Return-Path: <linux-kernel+bounces-690387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4162ADCFFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:35:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9CF2ADD00B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA2B178E59
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:30:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ED2B405993
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC212E2EE5;
-	Tue, 17 Jun 2025 14:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA511D514B;
+	Tue, 17 Jun 2025 14:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="K53yQI+4"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="ehLhXi/Y"
+Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5BB2DE1FF
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 14:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2182516C850;
+	Tue, 17 Jun 2025 14:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750170605; cv=none; b=lKwGHzNkgsF66ic/hiHbjr2Y3JwR4yTumCSnR4Tye8aCXHPNVai1Ip4L657fPgrakCch4uTS2a4iTxFDFEfP3sJ952zUZ62m8taZwMxOrxD4gJMwRwXYf2hr5MarpEjdfoh3Ld4qHxtc1VFV9L8YluQUUby0b7EIXKeXpwEXujc=
+	t=1750170685; cv=none; b=a7Zffg4Cnbr31rfsBHWPxR5ncLV10XpMZYXzJAteg6mF1Ncb7NcJKubfwrlfGH71bzcnde0AmUkq/QLhy+A8uRZ+NK9yxFyYPJEkzrt0ZqS+GnV/4iiQtsaB+NA5NjZh/pRNMimVzG13rtXiGtPEoypsE2kVNkQoJAR9SQY7/D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750170605; c=relaxed/simple;
-	bh=1ht4S85AVwey5d7l0NR7hBt1ryp6HndTt4PB7ev0J5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kYH//Tx8BCmtqglXalMZwEAMY22Ms7hzQmgMcy2eEgJQeFO3omZX+SoRiMCQi8hg568wOJcXny90z9GJP+louq4Yu4MfAprRVNS7R9UBvBnfJv4bwnjmc5RFZlfJPgL7w+ZHCjk8bvShLmHoa8kF+ayciASA7NTokVm9kAknK8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=K53yQI+4; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3de18fdeab0so18428115ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 07:30:01 -0700 (PDT)
+	s=arc-20240116; t=1750170685; c=relaxed/simple;
+	bh=fjblYqco9O2pK2/UG66z+ix0P+/RjiRxHTHn4GLpv6k=;
+	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=Ug116Uwa9bvc64PezFD26Cv01i9TgMp++rV64/H1bOU5tnQH8y6mryY0CBwQRCr23Hk2virWX1yXpaU2MvR2HAKU3KPZdSyYizrq+eOgAHjgwHAqmKY1kCm6ojGpOHv9UftURhJ0pVQho17h3+jsDbkgm3xVLnkFyDF5w0TMyYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=ehLhXi/Y; arc=none smtp.client-ip=23.155.224.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id DF82182856F8;
+	Tue, 17 Jun 2025 09:31:21 -0500 (CDT)
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id 0--oJCWWxd3v; Tue, 17 Jun 2025 09:31:20 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 9211E8286FBD;
+	Tue, 17 Jun 2025 09:31:20 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com 9211E8286FBD
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750170601; x=1750775401; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qm8ZESSFLfTrfNAmN4pCFwQBlQ23CDIRq2yjCkvIDts=;
-        b=K53yQI+4B2PZ4L25WyHx/wS1azXhVGVgbHo8KmWa6tdBZupmdpG/69dJ+PNKIC0enR
-         LVTzZhjA93pKri32gi80H1mo7BKFHfAFVV7qfUru+sELFhFfgS5K5dCugJEpOFBBxONd
-         b/k1/GXKIz/PEgXkE/QnhlWQZ47+cRlLGtpZFl/UdF1gOHXeyzWMbyhw0xEjFqlVQ0SR
-         p0B0Z0Lig1ifg5hX7RSpMP02emad9dv4ffxkDdK39pr6lJI1tLADxnG9TQ1/MdruJUXu
-         HnFvO9xU8hsaElN+2JJSgVFWNwbcB/M9LUQugCyU36rZLR1t7KTaJgK9YnPvGxNn0g14
-         Zl0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750170601; x=1750775401;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qm8ZESSFLfTrfNAmN4pCFwQBlQ23CDIRq2yjCkvIDts=;
-        b=SuSnMiSObEg5OnjmIwjEKOjhBH59aUUl3ZbtdfzHWnacfQc0W4i46zNTzvO9+6JUev
-         /mmn2/7KseTNHCA3xEJs4QURLqXjwhx9wONKJPt5jRBwsRJrPq6lqjEDQGW8fBH2tfdQ
-         MXkQs6MXLQuXXtneytCq8fdsLASm207GgciUgSPE6/vfDPOzy0QSoQRuUszTC66a5F3c
-         jvycM1OC6zELoUj7YUFp+txlUHyQLaZCCCKGcaoQfnerUxsUb0KAbYpIonVPqiATqjNE
-         Vsu5LnHPyqQ/fDVcW1sxuWXVSHb8P+y0bTn1wkymhUL5B3aptkabDn37YblLW/73yYSS
-         a6Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1ZUHrqlbpWuuP3I/mJ+lxotRJ1KFeLqKUALRMhdn3YMPbPr7FwZuEO6gqaAPy3Q94Tn1bcCKyqE5Y1R0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/hsN8rymPrp06yaWXoYUxa2jPlPUItaujon2rT9LC3lN9Baku
-	dmJOlWapdZV1MVcNHjnAs03ICVs/rCT0cGVNzEOisOPXzzdk6VeZwY+fxP/1slD0vSQ=
-X-Gm-Gg: ASbGncvU51AlVRsl7rmAyfjnfj5kinGHvV/E8J9GBTjwh3iG/sJZ5sI1DK/A5lWP6Ek
-	DfctDo4gETfaVwLzaoo4yz7grO8GKi8pHS9IQUle4BTwmqTWcC90KjQ+MUut1P6Ok0LCGxnWtNl
-	Z29+Cxc2MXzKgxS4qmDgH+ZjbFya23FnWEnRcO0UizdUnZoRKnT+xfO++aSUOJ+yW5N1UOhfAxp
-	+9wzo/AWJJSgCdtp/3O4rM2UMHx9rrJvVQnguHmVK4D2yB+0hbEWbVb35mE+7kzSYJtC5xb/IBF
-	uTMoTGsSUPeJ5Ekrv10t/roXdzQ0ybeR+5i8MwjE/mc0t7KKW6nDVj1RdA==
-X-Google-Smtp-Source: AGHT+IGrGXdxWmYblv4T9EhQC7vXeISVu8lyWpXAb/V85ozNTAbFF4tPag0Cl0RdG9Ltkd6m5yvdBA==
-X-Received: by 2002:a05:6e02:1a2b:b0:3dd:d189:6511 with SMTP id e9e14a558f8ab-3de07cd433emr186895695ab.21.1750170600918;
-        Tue, 17 Jun 2025 07:30:00 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3de019b4379sm24654355ab.15.2025.06.17.07.30.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 07:30:00 -0700 (PDT)
-Message-ID: <06a466e2-0904-447e-a0d7-73ddc2da937f@kernel.dk>
-Date: Tue, 17 Jun 2025 08:29:59 -0600
+	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
+	t=1750170680; bh=aunofFWjbhf0ebvsXaS+3/oQyj1Pul1Wqor5cviReNg=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=ehLhXi/YHfQfXpXaWjPddQEuDeGS3q8spg8C8ai4iGm/jfzQn7dwU9toEg1UKEmXq
+	 MwDbyysltHWR7ZK8TrdthPgXXwx23APcc0C/c82PyJ/bTC7ToTtwQSmenMvfiVssjl
+	 80WuuK6paHuD+hNb4Ppm8NS4z+aELtNZwldo6/Bg=
+X-Virus-Scanned: amavisd-new at rptsys.com
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id OsWGbPjsCkx3; Tue, 17 Jun 2025 09:31:20 -0500 (CDT)
+Received: from vali.starlink.edu (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 5449982856F8;
+	Tue, 17 Jun 2025 09:31:20 -0500 (CDT)
+Date: Tue, 17 Jun 2025 09:31:20 -0500 (CDT)
+From: Timothy Pearson <tpearson@raptorengineering.com>
+To: Shawn Anastasio <sanastasio@raptorengineering.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Rob Herring <robh@kernel.o>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, 
+	chaitanya chundru <quic_krichai@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, 
+	Jingoo Han <jingoohan1@gmail.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com, 
+	amitk@kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	jorge.ramirez@oss.qualcomm.com, Dmitry Baryshkov <lumag@kernel.org>
+Message-ID: <1581123048.1308046.1750170680177.JavaMail.zimbra@raptorengineeringinc.com>
+Subject: [PATCH v7] PCI: Add pcie_link_is_active() to determine if the PCIe
+ link
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: fix page leak in io_sqe_buffer_register()
-To: Penglei Jiang <superman.xpt@gmail.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <618aaa53-14a7-4d85-90d4-6e4a8e1ce3a1@kernel.dk>
- <20250617140234.40664-1-superman.xpt@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250617140234.40664-1-superman.xpt@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC137 (Linux)/8.5.0_GA_3042)
+Thread-Index: wD146B6OyvES+Feuh0TpgiI26pdz2Q==
+Thread-Topic: Add pcie_link_is_active() to determine if the PCIe link
 
-On 6/17/25 8:02 AM, Penglei Jiang wrote:
-> On Tue, 17 Jun 2025 06:53:04 -0600, Jens Axboe wrote:
->> On 6/17/25 6:39 AM, Penglei Jiang wrote:
->>> Add missing unpin_user_pages() in the error path
->>>
->>> Fixes: d8c2237d0aa9 ("io_uring: add io_pin_pages() helper")
->>> Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
->>> ---
->>>  io_uring/rsrc.c | 4 +++-
->>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
->>> index c592ceace97d..f5ac1b530e21 100644
->>> --- a/io_uring/rsrc.c
->>> +++ b/io_uring/rsrc.c
->>> @@ -804,8 +804,10 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
->>>  	}
->>>  
->>>  	imu = io_alloc_imu(ctx, nr_pages);
->>> -	if (!imu)
->>> +	if (!imu) {
->>> +		unpin_user_pages(pages, nr_pages);
->>>  		goto done;
->>> +	}
->>>  
->>>  	imu->nr_bvecs = nr_pages;
->>>  	ret = io_buffer_account_pin(ctx, pages, nr_pages, imu, last_hpage);
->>
->> Wouldn't it be better to have the unpin be part of the normal error
->> handling? Not sure why the pin accounting failure doesn't do that
->> already.
->>
->> Totally untested...
->>
->> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
->> index 94a9db030e0e..a68f0cd677a3 100644
->> --- a/io_uring/rsrc.c
->> +++ b/io_uring/rsrc.c
->> @@ -809,10 +809,8 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
->>  
->>  	imu->nr_bvecs = nr_pages;
->>  	ret = io_buffer_account_pin(ctx, pages, nr_pages, imu, last_hpage);
->> -	if (ret) {
->> -		unpin_user_pages(pages, nr_pages);
->> +	if (ret)
->>  		goto done;
->> -	}
->>  
->>  	size = iov->iov_len;
->>  	/* store original address for later verification */
->> @@ -840,6 +838,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
->>  	}
->>  done:
->>  	if (ret) {
->> +		unpin_user_pages(pages, nr_pages);
->>  		if (imu)
->>  			io_free_imu(ctx, imu);
->>  		io_cache_free(&ctx->node_cache, node);
-> 
-> Thank you for taking the time to address this issue!
-> 
-> However, if io_pin_pages() fails, it will also jump to the done label,
-> but at that point, the value of nr_pages is undefined because nr_pages
-> is only assigned a value inside io_pin_pages() if it succeeds.
-> 
-> 	pages = io_pin_pages((unsigned long) iov->iov_base, iov->iov_len,
-> 				&nr_pages);
-> 	if (IS_ERR(pages)) {
-> 		ret = PTR_ERR(pages);
-> 		pages = NULL;
-> 		goto done;
-> 	}
-> 
-> 	...
-> 
-> 	done:
-> 		if (ret) {
-> 			unpin_user_pages(NULL, undefined-value);
-> 			...
-> 
-> I'm not sure what the impact of calling unpin_user_pages() in this way would be.
+is active
 
-We should just check for 'pages' being valid first. Updated below. If
-you want to test and send a v2 based on that, I do think that's the
-better approach as it keeps all the error handling consistent.
+Introduce a common API to check if the PCIe link is active, replacing
+duplicate code in multiple locations.
 
+Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Signed-off-by: Shawn Anastasio <sanastasio@raptorengineering.com>
+Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
+---
+ arch/powerpc/kernel/eeh_driver.c  |  8 +++++++-
+ drivers/pci/hotplug/pciehp.h      |  1 -
+ drivers/pci/hotplug/pciehp_ctrl.c |  2 +-
+ drivers/pci/hotplug/pciehp_hpc.c  | 33 +++----------------------------
+ drivers/pci/pci.c                 | 31 ++++++++++++++++++++++++++---
+ include/linux/pci.h               |  4 ++++
+ 6 files changed, 43 insertions(+), 36 deletions(-)
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 94a9db030e0e..454cd8855c6c 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -809,10 +809,8 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+diff --git a/arch/powerpc/kernel/eeh_driver.c b/arch/powerpc/kernel/eeh_driver.c
+index 441a3562bddd..4fdd62432f2c 100644
+--- a/arch/powerpc/kernel/eeh_driver.c
++++ b/arch/powerpc/kernel/eeh_driver.c
+@@ -1097,8 +1097,14 @@ void eeh_handle_normal_event(struct eeh_pe *pe)
+ 		eeh_pe_dev_mode_mark(pe, EEH_DEV_REMOVED);
  
- 	imu->nr_bvecs = nr_pages;
- 	ret = io_buffer_account_pin(ctx, pages, nr_pages, imu, last_hpage);
--	if (ret) {
--		unpin_user_pages(pages, nr_pages);
-+	if (ret)
- 		goto done;
--	}
- 
- 	size = iov->iov_len;
- 	/* store original address for later verification */
-@@ -840,6 +838,8 @@ static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *ctx,
+ 		pci_lock_rescan_remove();
+-		pci_hp_remove_devices(bus);
++		bus = eeh_pe_bus_get(pe);
++		if (bus)
++			pci_hp_remove_devices(bus);
++		else
++			pr_err("%s: PCI bus for PHB#%x-PE#%x disappeared\n",
++				__func__, pe->phb->global_number, pe->addr);
+ 		pci_unlock_rescan_remove();
++
+ 		/* The passed PE should no longer be used */
+ 		return;
  	}
- done:
- 	if (ret) {
-+		if (pages)
-+			unpin_user_pages(pages, nr_pages);
- 		if (imu)
- 			io_free_imu(ctx, imu);
- 		io_cache_free(&ctx->node_cache, node);
-
+diff --git a/drivers/pci/hotplug/pciehp.h b/drivers/pci/hotplug/pciehp.h
+index debc79b0adfb..79df49cc9946 100644
+--- a/drivers/pci/hotplug/pciehp.h
++++ b/drivers/pci/hotplug/pciehp.h
+@@ -186,7 +186,6 @@ int pciehp_query_power_fault(struct controller *ctrl);
+ int pciehp_card_present(struct controller *ctrl);
+ int pciehp_card_present_or_link_active(struct controller *ctrl);
+ int pciehp_check_link_status(struct controller *ctrl);
+-int pciehp_check_link_active(struct controller *ctrl);
+ bool pciehp_device_replaced(struct controller *ctrl);
+ void pciehp_release_ctrl(struct controller *ctrl);
+ 
+diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
+index bcc938d4420f..6cc1b27b3b11 100644
+--- a/drivers/pci/hotplug/pciehp_ctrl.c
++++ b/drivers/pci/hotplug/pciehp_ctrl.c
+@@ -260,7 +260,7 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
+ 	/* Turn the slot on if it's occupied or link is up */
+ 	mutex_lock(&ctrl->state_lock);
+ 	present = pciehp_card_present(ctrl);
+-	link_active = pciehp_check_link_active(ctrl);
++	link_active = pcie_link_is_active(ctrl->pcie->port);
+ 	if (present <= 0 && link_active <= 0) {
+ 		if (ctrl->state == BLINKINGON_STATE) {
+ 			ctrl->state = OFF_STATE;
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index ebd342bda235..d29ce3715a44 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -221,33 +221,6 @@ static void pcie_write_cmd_nowait(struct controller *ctrl, u16 cmd, u16 mask)
+ 	pcie_do_write_cmd(ctrl, cmd, mask, false);
+ }
+ 
+-/**
+- * pciehp_check_link_active() - Is the link active
+- * @ctrl: PCIe hotplug controller
+- *
+- * Check whether the downstream link is currently active. Note it is
+- * possible that the card is removed immediately after this so the
+- * caller may need to take it into account.
+- *
+- * If the hotplug controller itself is not available anymore returns
+- * %-ENODEV.
+- */
+-int pciehp_check_link_active(struct controller *ctrl)
+-{
+-	struct pci_dev *pdev = ctrl_dev(ctrl);
+-	u16 lnk_status;
+-	int ret;
+-
+-	ret = pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+-	if (ret == PCIBIOS_DEVICE_NOT_FOUND || PCI_POSSIBLE_ERROR(lnk_status))
+-		return -ENODEV;
+-
+-	ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
+-	ctrl_dbg(ctrl, "%s: lnk_status = %x\n", __func__, lnk_status);
+-
+-	return ret;
+-}
+-
+ static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
+ {
+ 	u32 l;
+@@ -467,7 +440,7 @@ int pciehp_card_present_or_link_active(struct controller *ctrl)
+ 	if (ret)
+ 		return ret;
+ 
+-	return pciehp_check_link_active(ctrl);
++	return pcie_link_is_active(ctrl_dev(ctrl));
+ }
+ 
+ int pciehp_query_power_fault(struct controller *ctrl)
+@@ -614,7 +587,7 @@ static void pciehp_ignore_link_change(struct controller *ctrl,
+ 	 * Synthesize it to ensure that it is acted on.
+ 	 */
+ 	down_read_nested(&ctrl->reset_lock, ctrl->depth);
+-	if (!pciehp_check_link_active(ctrl) || pciehp_device_replaced(ctrl))
++	if (!pcie_link_is_active(ctrl_dev(ctrl)) || pciehp_device_replaced(ctrl))
+ 		pciehp_request(ctrl, ignored_events);
+ 	up_read(&ctrl->reset_lock);
+ }
+@@ -921,7 +894,7 @@ int pciehp_slot_reset(struct pcie_device *dev)
+ 	pcie_capability_write_word(dev->port, PCI_EXP_SLTSTA,
+ 				   PCI_EXP_SLTSTA_DLLSC);
+ 
+-	if (!pciehp_check_link_active(ctrl))
++	if (!pcie_link_is_active(ctrl_dev(ctrl)))
+ 		pciehp_request(ctrl, PCI_EXP_SLTSTA_DLLSC);
+ 
+ 	return 0;
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index e9448d55113b..ad639e60f3bd 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -4908,7 +4908,6 @@ int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, char *reset_type)
+ 		return 0;
+ 
+ 	if (pcie_get_speed_cap(dev) <= PCIE_SPEED_5_0GT) {
+-		u16 status;
+ 
+ 		pci_dbg(dev, "waiting %d ms for downstream link\n", delay);
+ 		msleep(delay);
+@@ -4924,8 +4923,7 @@ int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, char *reset_type)
+ 		if (!dev->link_active_reporting)
+ 			return -ENOTTY;
+ 
+-		pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &status);
+-		if (!(status & PCI_EXP_LNKSTA_DLLLA))
++		if (pcie_link_is_active(dev) <= 0)
+ 			return -ENOTTY;
+ 
+ 		return pci_dev_wait(child, reset_type,
+@@ -6230,6 +6228,33 @@ void pcie_print_link_status(struct pci_dev *dev)
+ }
+ EXPORT_SYMBOL(pcie_print_link_status);
+ 
++/**
++ * pcie_link_is_active() - Checks if the link is active or not
++ * @pdev: PCI device to query
++ *
++ * Check whether the physical link is active or not. Note it is
++ * possible that the card is removed immediately after this so the
++ * caller may need to take it into account.
++ *
++ * If the PCI device itself is not available anymore returns
++ * %-ENODEV.
++ *
++ * Return: link state, or -ENODEV if the config read failes.
++ */
++int pcie_link_is_active(struct pci_dev *pdev)
++{
++	u16 lnk_status;
++	int ret;
++
++	ret = pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
++	if (ret == PCIBIOS_DEVICE_NOT_FOUND || PCI_POSSIBLE_ERROR(lnk_status))
++		return -ENODEV;
++
++	pci_dbg(pdev, "lnk_status = %x\n", lnk_status);
++	return !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
++}
++EXPORT_SYMBOL(pcie_link_is_active);
++
+ /**
+  * pci_select_bars - Make BAR mask from the type of resource
+  * @dev: the PCI device for which BAR mask is made
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 05e68f35f392..5d1c9f718ac8 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1993,6 +1993,7 @@ pci_release_mem_regions(struct pci_dev *pdev)
+ 			    pci_select_bars(pdev, IORESOURCE_MEM));
+ }
+ 
++int pcie_link_is_active(struct pci_dev *dev);
+ #else /* CONFIG_PCI is not enabled */
+ 
+ static inline void pci_set_flags(int flags) { }
+@@ -2141,6 +2142,9 @@ pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
+ {
+ 	return -ENOSPC;
+ }
++
++static inline bool pcie_link_is_active(struct pci_dev *dev)
++{ return false; }
+ #endif /* CONFIG_PCI */
+ 
+ /* Include architecture-dependent settings and functions */
 -- 
-Jens Axboe
+2.39.5
 
