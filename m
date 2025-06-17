@@ -1,121 +1,156 @@
-Return-Path: <linux-kernel+bounces-690087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5606FADCBA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:33:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E6CADCBA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6C563A89CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:31:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73A2D167B62
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906BA2E6D3B;
-	Tue, 17 Jun 2025 12:31:27 +0000 (UTC)
-Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3F321B184;
+	Tue, 17 Jun 2025 12:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BOalRmC/"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19912E4253
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 12:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F79A232367;
+	Tue, 17 Jun 2025 12:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750163487; cv=none; b=b9WznfIb2E3fUWrn3NnGOsHKIwvyJ7fEprPdHc5by9DeL8OowCMcF8FxmJvZqYDwtBM07DbKtH5QUN7zAkFGzlW8Xj/JNRwdOj+UnHJ8COfyTggRe3o8+Fabug7uhI/it523l60tLFUKxbLt+LU24hLJezdiEPI5JRurIBWLIQg=
+	t=1750163548; cv=none; b=D1NsDSls4xbltd6ssv92BAq2fdVtfLxAJJXBc50m71gUOV9uRsNXE6RVFVYtS1kT5BsDTKh9r/e9d/fEH5UBBza8lCkAOOtLkc5OJx6M4SzBmn6BococKsY9AxrqjpI0h1g0nMLg06b7ZWsUrU56mN3Oa2X6bhQZXj0gbblUH2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750163487; c=relaxed/simple;
-	bh=fy2VL4pKtNyanGwxQT4C+DgxwFNONrc85a9w8zV59tQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PMLvLQNwCM9ZXuAvheS8z5FzN6rgxh0odMpmQ4qi9kg2NIfh7SThd/u5VKd84zLSnPUgapnU0mddWBBb041Ya4bGqC/TwSNuoE/PE/3VQ+ZQd038euSDV0PUX1MDXyWxgUtKAW4CMehOiUwRM2fK03heJ2SIcFdYs5E95yzPbsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w013.hihonor.com (unknown [10.68.26.19])
-	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4bM5lC6D2bzYlr1M;
-	Tue, 17 Jun 2025 20:28:55 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w013.hihonor.com
- (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 17 Jun
- 2025 20:31:22 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 17 Jun
- 2025 20:31:22 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-	<bintian.wang@honor.com>, <feng.han@honor.com>, <niuzhiguo84@gmail.com>,
-	wangzijie <wangzijie1@honor.com>
-Subject: [f2fs-dev] [PATCH v2 2/2] f2fs: cleanup F2FS_I_SB in f2fs_setattr()
-Date: Tue, 17 Jun 2025 20:31:16 +0800
-Message-ID: <20250617123116.2385828-2-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250617123116.2385828-1-wangzijie1@honor.com>
-References: <20250617123116.2385828-1-wangzijie1@honor.com>
+	s=arc-20240116; t=1750163548; c=relaxed/simple;
+	bh=O110FrdcInpzBMuMy6Lt2c3gYwH5SZpoT2eQ/FzXveQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Fo1w/kcUzoHDUd+g4KpGRf9ooqKowsuVUzMCNG5CnxUBHZz7J5fxakHusff7MNdsbToHFMX3R3BaxMVyuvF9CwgXnLr+PWwIZpksrJWO+QDqwyXyhXlS7pL9wzkmEWdsGjT5gSqFZHOgJ+8cMRGmhweeBcIPhSuONE4CFZfGV04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=BOalRmC/; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1750163546; x=1781699546;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=O110FrdcInpzBMuMy6Lt2c3gYwH5SZpoT2eQ/FzXveQ=;
+  b=BOalRmC/U303TGHapbj1CpCn2mNbNMt8gBfWkrlau/1SETqytPI8CuXc
+   oLqzSCUTQyjVgUYJ84X8sc2q3UQvgm8t+VjtIFGtG1ZEyCCGci+MX+nTH
+   lgDQmj2B+HUMuLd9/6omzbwl0uLkZxKEghQUXRp0Ur1CGRDSpNmspxMDP
+   LGfXIiCcikz1+j1Ds2gn8WcHnIy8Vq8YN0WXBqogjCYfBJDpMas8OEDQG
+   qDkNvL2XopQgQNQ7J2nzA7PgEq9oyl8+Waw3PuS9CqZp5aC0z51V80ten
+   qaOxa5fqoIxh8FCNJfT0KEhEFYP/G2AxSpN19ErDeKPcYCut6X28+t3ju
+   g==;
+X-CSE-ConnectionGUID: ko567VBqSpWsKe4i2Dg+zQ==
+X-CSE-MsgGUID: EObWo+FlRVO7IFxEzXwz2Q==
+X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
+   d="scan'208";a="210375829"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Jun 2025 05:32:19 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 17 Jun 2025 05:31:40 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Tue, 17 Jun 2025 05:31:38 -0700
+Message-ID: <cb110632-435f-4126-bd4b-5b914004fdc0@microchip.com>
+Date: Tue, 17 Jun 2025 14:31:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a011.hihonor.com
- (10.68.31.243)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] ARM: dts: microchip: sama7d65: Add cache
+ configuration for cpu node
+To: Mihai Sain <mihai.sain@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250617104703.45395-1-mihai.sain@microchip.com>
+ <20250617104703.45395-2-mihai.sain@microchip.com>
+Content-Language: en-US, fr
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20250617104703.45395-2-mihai.sain@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-After introduce sbi in f2fs_setattr(), cleanup F2FS_I_SB. No logic change.
+Mihai,
 
-Signed-off-by: wangzijie <wangzijie1@honor.com>
----
- fs/f2fs/file.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+On 17/06/2025 at 12:47, Mihai Sain wrote:
+> Describe the cache memories according with datasheet chapter 15.2:
+> - L1 cache configuration with 32KB for both data and instruction cache.
+> - L2 cache configuration with 256KB unified cache.
+> 
+> Before this patch:
+> [    0.161955] cacheinfo: Unable to detect cache hierarchy for CPU 0
+> 
+> After this patch:
+> [root@sama7d65eb ~]$ ll -h /sys/bus/cpu/devices/cpu0/of_node/l1-cache
+> -r--r--r-- 1 root root 4 Jun 17 11:39 cache-level
+> -r--r--r-- 1 root root 0 Jun 17 11:39 cache-unified
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 09be6e849..3e610db59 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1029,7 +1029,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	int err;
- 
--	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
-+	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
- 
- 	if (unlikely(IS_IMMUTABLE(inode)))
-@@ -1080,12 +1080,11 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	}
- 	if (i_uid_needs_update(idmap, attr, inode) ||
- 	    i_gid_needs_update(idmap, attr, inode)) {
--		f2fs_lock_op(F2FS_I_SB(inode));
-+		f2fs_lock_op(sbi);
- 		err = dquot_transfer(idmap, inode, attr);
- 		if (err) {
--			set_sbi_flag(F2FS_I_SB(inode),
--					SBI_QUOTA_NEED_REPAIR);
--			f2fs_unlock_op(F2FS_I_SB(inode));
-+			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
-+			f2fs_unlock_op(sbi);
- 			return err;
- 		}
- 		/*
-@@ -1095,7 +1094,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		i_uid_update(idmap, attr, inode);
- 		i_gid_update(idmap, attr, inode);
- 		f2fs_mark_inode_dirty_sync(inode, true);
--		f2fs_unlock_op(F2FS_I_SB(inode));
-+		f2fs_unlock_op(sbi);
- 	}
- 
- 	if (attr->ia_valid & ATTR_SIZE) {
-@@ -1156,7 +1155,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	f2fs_mark_inode_dirty_sync(inode, true);
- 
- 	/* inode change will produce dirty node pages flushed by checkpoint */
--	f2fs_balance_fs(F2FS_I_SB(inode), true);
-+	f2fs_balance_fs(sbi, true);
- 
- 	return err;
- }
--- 
-2.25.1
+Nope.
+
+> -r--r--r-- 1 root root 6 Jun 17 11:39 compatible
+> -r--r--r-- 1 root root 4 Jun 17 11:39 d-cache-size
+> -r--r--r-- 1 root root 4 Jun 17 11:39 i-cache-size
+> -r--r--r-- 1 root root 9 Jun 17 11:39 name
+> -r--r--r-- 1 root root 4 Jun 17 11:39 next-level-cache
+> -r--r--r-- 1 root root 4 Jun 17 11:39 phandle
+> 
+> [root@sama7d65eb ~]$ ll -h /sys/bus/cpu/devices/cpu0/of_node/l2-cache
+> -r--r--r-- 1 root root 4 Jun 17 11:39 cache-level
+> -r--r--r-- 1 root root 4 Jun 17 11:39 cache-size
+> -r--r--r-- 1 root root 0 Jun 17 11:39 cache-unified
+> -r--r--r-- 1 root root 6 Jun 17 11:39 compatible
+> -r--r--r-- 1 root root 9 Jun 17 11:39 name
+> -r--r--r-- 1 root root 4 Jun 17 11:39 phandle
+> 
+> Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
+> ---
+>   arch/arm/boot/dts/microchip/sama7d65.dtsi | 17 +++++++++++++++++
+>   1 file changed, 17 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/microchip/sama7d65.dtsi b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+> index d08d773b1cc5..951d7af3ad1c 100644
+> --- a/arch/arm/boot/dts/microchip/sama7d65.dtsi
+> +++ b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+> @@ -32,6 +32,23 @@ cpu0: cpu@0 {
+>   			device_type = "cpu";
+>   			clocks = <&pmc PMC_TYPE_CORE PMC_CPUPLL>;
+>   			clock-names = "cpu";
+> +			next-level-cache = <&L1>;
+> +
+> +			L1: l1-cache {
+> +				compatible = "cache";
+> +				cache-level = <1>;
+> +				d-cache-size = <32768>;
+> +				i-cache-size = <32768>;
+> +				cache-unified;
+
+I don't think unified applied to L1 cache for C-A7.
+
+Regards,
+   Nicolas
+
+> +				next-level-cache = <&L2>;
+> +			};
+> +
+> +			L2: l2-cache {
+> +				compatible = "cache";
+> +				cache-level = <2>;
+> +				cache-size = <262144>;
+> +				cache-unified;
+> +			};
+>   		};
+>   	};
+>   
 
 
