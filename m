@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-690171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A48ADCCBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:15:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E2DBADCCB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5E01189ADA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:09:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7074D40100C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2362ECD13;
-	Tue, 17 Jun 2025 13:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C822ECEB1;
+	Tue, 17 Jun 2025 13:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJGUH/06"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eyV1SvyS"
 Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D912E9739;
-	Tue, 17 Jun 2025 13:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB35D2E9745;
+	Tue, 17 Jun 2025 13:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750165535; cv=none; b=mlZWWSatveAOfU9dz7w867flPf/rjrC/mVq9bTssWRU0ixiRl/+mIJYYzVF8X97UR9xFfTKJn+N4Lgasc6CA6zbcicGvVjlvsmducBXPFFfPBO1cUSEdIzHfojw0ZKbuqIB1EznQuxxEU3GRv5JQok9oLtEbxjTx36az3OZXVzM=
+	t=1750165536; cv=none; b=ZbtDKctqL/TJZAIdwpufcRim2OYwRaBc6kNRRxOn+5EIsFxGJNi1yI9WgDggG2LvU8iLA5wvxCABJUHc7C5N/ZJeZEMiltksGavJ0LZOnYSIcWeJp8SzOh4FMCohnLw9VMehlm1W9rLrHv/R78veppxNdPBFdTjlsT/ex4syIgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750165535; c=relaxed/simple;
-	bh=gy9EihQWUOqWMrDjGs8fJ52CA6yqIfVbRGyKLsziOQU=;
+	s=arc-20240116; t=1750165536; c=relaxed/simple;
+	bh=Y1jhm9G4SP/4vxnYEyVeKD7jxvHJZ383xo4yScrKClI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b8w1F1ch+jAgJyO3luC/sruZC9F7P56KmqPN1TTuzUzP6lDPYFN76ctzoPvTjOZwYZZC7Tz3kzrpq6dyINsxp93gp9ViDdhKwJfindB0FeFTCl+Nb+UcE4vd3J+zy0a8YFzjslvK7tdNlBi+fS8OrcIysAt3fAtRPT5zp2Kk3ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DJGUH/06; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version; b=Si2BUaBdvAOVFVCygUrFziuf95K4ZEY1hy4Z1vVNA7UhcTop8nrzIvV3WAP7OJCH1GhnM8CQVna70IeAgEwX4cehIGtOIs+Ky01La3bcDzSQrzaspUt/LjoKQeoc7PlJ4ut7db7J9/nHOynkkwdfk0ObE7ctYkaeMEmKlwrayHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eyV1SvyS; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-450cfb6a794so33693295e9.1;
-        Tue, 17 Jun 2025 06:05:33 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-451d7b50815so48140505e9.2;
+        Tue, 17 Jun 2025 06:05:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750165532; x=1750770332; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750165533; x=1750770333; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xVnsvGPdp8kOJCNExwlwf+OCamEiwIUeTxxXK2/36vo=;
-        b=DJGUH/06npffG4OLpW3SzAQqQW260IGYm3I8/7CWzr+r/0dKXKrPMjwuPKAJ66021P
-         aVQ5rZxbT4SPH5OhaCPMFk9eRlBjH7VCwD3Tlwohw2oOMBSGDELo1V10Uv4D+MmxPnOM
-         LADs5wBfGJSqnBkXfzXFtsNhQd39+TSg/NJRHHoZliI4T4Y2br2Q9BvZYYcnIudKEF2F
-         2brgN1LkOi5dzXLCqKsGZuDMWLCUIUfH9yhbBChUmO5cgtnsCzVCevru+MTyMXZbCUa2
-         br+vdFGgchi/ZmbnNKh7goFR7Tnn63AtYCm4qLSHTGlTiLElvBtd3FnqVXaqBD2hqIDD
-         3Qlg==
+        bh=HZSWNkllSNOP0Alk5Rg5mB/Z0/Xf3katUWXaq3TCIC0=;
+        b=eyV1SvySAsvQpt7CcD/AV3thLdEkBM0vyrjNJHaRxEGv5ZmiBiOZAv+rjeekVe0ihM
+         w+w+ZjUtIy/vxwPHXR8AjP5y9HmTNa+BltV9CSSehUQlnHB+U4zAPoZ6segQLYN7Twy8
+         v4Sb52jtNiInyVZaTrsNkZ5mRThsxc/6y883c06jTxNferlp4/1Dz6WXYIP785IqN/VS
+         7ry4sQLOZIyzAwnOTZhd/4rURxVMIh66wQNNsqWPo7sP02U+W7u8BsEcD/sVsiPagUjn
+         +zK8rw3bPGlmCrPzLgBQ2VB1FU+E1BNQ4lNi4PYIK7xOB98zSwztOkL0RINAiltsp62K
+         gNSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750165532; x=1750770332;
+        d=1e100.net; s=20230601; t=1750165533; x=1750770333;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xVnsvGPdp8kOJCNExwlwf+OCamEiwIUeTxxXK2/36vo=;
-        b=utU8zgCwoDXb8TCCRrazxnzaJTMfzY1FnJyMo1E2c1uK+iJnpN7RwbqD4X8MSwE2Bu
-         u/X1sHH6KlNAiPcFq+uhBEtJW7BiSgRIvs1UiBZ4wGIR6ST9EOmSEdANZ5BanNKTD0AV
-         kl3OOVI582XQB79/Ml2MTq4A9MtgCePmKhtMw/LOdY607Fb2r6E5pe4RLmWdo6XzIHUf
-         BNF35byzVwmt9hxlhcS1X5u3h2NDKDpBMy4OtrYUQHbmfESghDMpPBeXzCdRUgJbTrk4
-         zAqLyTJoP17DOeCCs9GqyBZF+q/NrtFWDQEEtbbQaGxCWc5gvsbwIBzjG/RVrkIf+zAn
-         OHsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFwxBlNHQ8SqxuOLfQZADgs6o0MEw5q0IBQGmYotHu72T+5FNf8iDw5ADbNuCpkPzyOHbAGSb8BVveVOaf@vger.kernel.org, AJvYcCVTMD8h3CKnPn9IAmcYgbRP+z1FyQaQMAeaSYGwwD7tQYwkYVlzhsncvdnYawTn35KaSfdhehm5zEub@vger.kernel.org, AJvYcCXswxf0sEvgYngkytX9aqdElgnCFMpvUQjInLJdazv77K5+iDAgYbNYIL6ey27UOI1Ke9lhEJc2bn8Q@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvrUWr+ByosEwrBmxbtKkdawunKOO90SEOBKZYD+9sIx7Njkgy
-	KxK4UA5civlE7YLxW2jnfcTIuq5mU2NRngp7qVECkXoJDLQjHPH0oJs0Rh5VOg==
-X-Gm-Gg: ASbGncsCQdCQekUm7MbyHpXVAujW36Z6hA7YXBDgGalP6Ll6QbWdQ2qHw5HARoU4jKc
-	dh6bWNWrBIIBlBDiUFEPVS483JgN/lxjUuzaPP27GHT2lksjj4Ug175WRVwuJgguuDjIhF9MFdO
-	V6ITcAjEK5wVoftGYfMedgwAsZd3psJz6DSk9TTQ6h+lqvi5wvwB4ZvLYSZ3kni/YmrnXC1mmrt
-	kNSe17e4k2+wELt1KmMYaTveBjMQiBtIA4jUIhXjE8UNOpuEdNEdQKxTIx/DNIEIkgyvV7M7VUA
-	EVApJX/YZMBOPlqACCqs2bJ0hwmkDoGZUVWhHkcELfwYwtZUraZC5OChOhHni9vliWhFdGmUGaP
-	uGSqxu9S3Ee8B3fKerHZ3/SKGCxKROGE=
-X-Google-Smtp-Source: AGHT+IEQ0+4uRzmeiRfzysBn9Qv9S1MOcz/99or+Qrwz85swfgbkKOj/nhnsMfJEL+UV5ugmcEqFdA==
-X-Received: by 2002:a05:600c:8b44:b0:451:dee4:cd08 with SMTP id 5b1f17b1804b1-4533cab38b7mr112624025e9.23.1750165531251;
-        Tue, 17 Jun 2025 06:05:31 -0700 (PDT)
+        bh=HZSWNkllSNOP0Alk5Rg5mB/Z0/Xf3katUWXaq3TCIC0=;
+        b=SZwowLdaX+frwz7rXZdUurNHS5U7NtUX7h7SO5rRl7oglZRhkCrMfbZwOGTtwWrTkA
+         jCAkPXfDVHJk32+kGoif5Ky7E7VyVLIxLlNU/LIwhb3Q7E4sN208OxthzWcEyQc9iFHF
+         yd0Fvn+/v3NB0ybKyt7ObQYzYEP9Erw4YB6S7A4LrvdhPWlyw0lU+/oopYs4riq/oXGp
+         t2H5cWTFXF4dDOgUnRBldoYUZMQNITiIMkgD51V8a4i3Gh4w+3Wrxj5li59db6CW7Hca
+         oXtuWsd7C/R11yTLtU2yKr1Sasi1K8ltEyjDhASc6jYLNl68sOLo86HXaDGVVD7n7ySA
+         VvVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVF30OBK0kjcNsQiBZXzA05oTeBaA0xUY+s3XCogmezgCqPwMhQ6nAGjK7hzDovcJGu6kmwp5/pOhpv@vger.kernel.org, AJvYcCVgkXrN1CE+An/C5b7ACWeFS1OlCMXHUuzW12IOPycbvCm7tEPu78O0jxN058GX9uy64K+XCGhHl9RF@vger.kernel.org, AJvYcCXWfsfhXCk4OSIKxH9JWtSkcxv/CyaEieoimSyCR0ELQxaFe8MUJo6hMX2jrrGiUm5ZB0m5Zfl5m3Pg9FuC@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAPuPJvkcDpy5x/cNKAuB56401gyCv0Kky3KqCOqe6xJLrTQuP
+	0bPGEuGsA02GeSAKWkqIL9jTchT9+zPzENjg0TlD76g+8GQOeJBl8YRo
+X-Gm-Gg: ASbGncuTg213Nv/O4ciiY6fy5K8RRQGP5OxOb2wvzyTTa+ZUxbMFio0EdEqmo3oUtsz
+	z2pY+UGHvEdQwhHU7oQXPReErPW3AWXPM4zP8+0tW4+MZXFz4n5e4IfRI2ibhFkSLgI3FijCt2T
+	FbIzMqebbiisE4z3n/pHjQjTK/dKWZsekQGAt+RfKcLeBOkWAepsh1oWyyIAbjbavRkWOK0ElJr
+	anhJztA4h21hFj9ubbkI8WGssLKXMAKwONSpCWNEp50YS8ACnnn7x3llpm5DzIpffiSafbfqDYG
+	sJdg5l8XuQm86cmZ5v5Tyr0NriDKTI9TkjCOR9C5fmGsux5fGs/X2n0O3++GkPJtSErq8C0AZyL
+	qCZgBCEL8+e7rMXVB/AK8Y0NXZ5duKbc=
+X-Google-Smtp-Source: AGHT+IHINz6TP2OxYogxHsV9z7CWehOy9zUSrxOanKAqSJpCphw+YmrXFCvLl6RW2RuWZgVEtbJ7VA==
+X-Received: by 2002:a05:600c:6388:b0:43c:f513:9591 with SMTP id 5b1f17b1804b1-4533d49b94amr127487045e9.14.1750165532339;
+        Tue, 17 Jun 2025 06:05:32 -0700 (PDT)
 Received: from localhost.localdomain (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4532e24b0c8sm173809435e9.24.2025.06.17.06.05.30
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4532e24b0c8sm173809435e9.24.2025.06.17.06.05.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 06:05:30 -0700 (PDT)
+        Tue, 17 Jun 2025 06:05:31 -0700 (PDT)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -84,9 +84,9 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH v2 05/10] clk: en7523: permit to reference Chip SCU from phandle
-Date: Tue, 17 Jun 2025 15:04:48 +0200
-Message-ID: <20250617130455.32682-6-ansuelsmth@gmail.com>
+Subject: [PATCH v2 06/10] dt-bindings: clock: airoha: Document new property airoha,chip-scu
+Date: Tue, 17 Jun 2025 15:04:49 +0200
+Message-ID: <20250617130455.32682-7-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250617130455.32682-1-ansuelsmth@gmail.com>
 References: <20250617130455.32682-1-ansuelsmth@gmail.com>
@@ -98,40 +98,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for support of AN7583 and to make Chip SCU reference more
-robust, permit to reference the Chip SCU syscon regmap also with the
-"airoha,chip-scu" property in DT.
-
-Legacy implementation is kept by fallbacking in the absence of
-"airoha,chip-scu" property.
+Document new property airoha,chip-scu used on new Airoha SoC to
+reference the Chip SCU syscon node used for PCIe configuration.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/clk/clk-en7523.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/clock/airoha,en7523-scu.yaml      | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index 54c0462c0dee..a768ba71feec 100644
---- a/drivers/clk/clk-en7523.c
-+++ b/drivers/clk/clk-en7523.c
-@@ -846,11 +846,16 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
- 			      const struct en_clk_soc_data *soc_data,
- 			      struct clk_hw_onecell_data *clk_data)
- {
-+	struct device *dev = &pdev->dev;
- 	struct regmap *map, *clk_map;
- 	void __iomem *base;
- 	int err;
+diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+index fe2c5c1baf43..bce77a14c938 100644
+--- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
++++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+@@ -49,6 +49,11 @@ properties:
+     description: ID of the controller reset line
+     const: 1
  
--	map = syscon_regmap_lookup_by_compatible("airoha,en7581-chip-scu");
-+	if (of_property_present(dev->of_node, "airoha,chip-scu"))
-+		map = syscon_regmap_lookup_by_phandle(dev->of_node,
-+						      "airoha,chip-scu");
-+	else
-+		map = syscon_regmap_lookup_by_compatible("airoha,en7581-chip-scu");
- 	if (IS_ERR(map))
- 		return PTR_ERR(map);
++  airoha,chip-scu:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: Phandle to the Chip SCU syscon node for PCIe
++      configuration
++
+ required:
+   - compatible
+   - reg
+@@ -66,6 +71,8 @@ allOf:
  
+         '#reset-cells': false
+ 
++        airoha,chip-scu: false
++
+   - if:
+       properties:
+         compatible:
+@@ -97,5 +104,6 @@ examples:
+         reg = <0x0 0x1fb00000 0x0 0x970>;
+               #clock-cells = <1>;
+               #reset-cells = <1>;
++        airoha,chip-scu = <&chip_scu>;
+       };
+     };
 -- 
 2.48.1
 
