@@ -1,73 +1,55 @@
-Return-Path: <linux-kernel+bounces-689336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE9FADBFDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 05:28:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C13ADBFD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 05:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75ACE3B557A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:27:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A3403B489A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A9123B602;
-	Tue, 17 Jun 2025 03:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="mYUSlCsT"
-Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD8B20C024;
+	Tue, 17 Jun 2025 03:24:11 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4421E1DFC
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 03:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1818BEC;
+	Tue, 17 Jun 2025 03:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750130863; cv=none; b=BBykRoeHtadDr4EsFtwcc2ELOHKIefWtCb8B46hg46nQukoDm0Qr2EXAyv9mmqCyQAD3n55vEcYOY5IqxG8OmwwCaQvyUCkf31Mt0fkaEMXeBHGTPGpVAz5o24Ob6cT/fFvteZ5+cNBeOwBH6LlR2F1SbMfgBKDYvDugej9i2P0=
+	t=1750130650; cv=none; b=uBhbBNfm8wrP1pA80XL02vSRaYGf/vSt2/vSYoQJE8Q6Q/HnzTPkJnv4pNP8puZ1/Du0myscTp04LFME2voS6/b5rM6MGy0FclsUAwKfiOD4wSR+TJDUlYSIKtlMwN0rKkYeRU+gpT/mpt7x3jf+wGf+zaDKa2ZKt5BxjPhF8Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750130863; c=relaxed/simple;
-	bh=jgjxO/7clUSYOJ3hEGHAiq1dZeIebExF4Lno9l04xXw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=UWWNomyeKkXgQAsFj4TNIsfsH3eDKxrPj6p/3RtpGRfiJG19gi8yqH/uijZzWaLEtGS1jYIvzrv9z+g3UyIyyCyE0Iffr8vyGVWa+G+9kIp/rGgFuME/yquZ27252X8k8BfmhYdi6NsKkkyuoXssxv9lbfmeGXU2SYqx6FyYeCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=mYUSlCsT; arc=none smtp.client-ip=203.205.221.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1750130855; bh=EHB/nKe3H6oNehWCjTnKytYQyFXIqU682RBCgDLU448=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=mYUSlCsTAaS1RucXKO36k6N8FGmWG9fZygVEd8Jo7XmH2QnVXf9/Iae1yArfgPj+o
-	 NM8n8vBDYifCVDI5wL650Bk5hkMn0OfL1HKpfdvUyqXIgLHet5ClEricpxCicUW4JH
-	 JUxuyAOukr0r2gzX6Mr0bWv937G0gpkyt1q1qob8=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 4F88BC3D; Tue, 17 Jun 2025 11:19:56 +0800
-X-QQ-mid: xmsmtpt1750130396tbcgx4cp5
-Message-ID: <tencent_279220DDBEDD93995BCF998D8B25B18D8B07@qq.com>
-X-QQ-XMAILINFO: MhK4DKsBP06if8MPSwrVCdWpm74FUszJnySk2ZCmHvLprutXp1AvspMspqJx8Q
-	 BFqtuQAseR3kHWNXp91IQKn/r1PDaLoX0Cpd1ui16Prh7LspeaUTMdiKxu4YRSvQ7ra4SMtMmxvT
-	 RHGdO7jqB8dRplXxB/POb8aCMz9u871bMovBZT763J6P2yNciuxkzDs3S8dong3wZj0xGvEiRCUJ
-	 tg6P9E5tv04cWvAJtv7gYQ9UFqxOpxQZJyVP6XeCCVqzEi7BN7op0Mo4SLfdHHZhmW8yM9wVTDJG
-	 4Cg4BLzVIHBJyo0r8zM7d8gq/SEn+Ja1lBSPoFndn7xs8brtIDgfa4Ni6dgRTrHSSqEoxiDKNgpS
-	 SkwoOiBeXxga6QyzSlwZI1Aic6RZXJE2KCEX2aLV4FxsP09cZZqowp4wUUNFcQdxQVUY1Gk1EH/7
-	 KP/YBaV/OpqyYajBNIMSZN593WOG1ZjD2Ql2zp2aK8Rfc5H6is60ZiWqmegLm6sT56DAGW8BLwus
-	 2zHduwdTD7rHb+Iif2iWXsyhKq3coGVosCpzXSBOTqA+l/YmtussyoTBc+TUNiCOg2ZuUyuevxlr
-	 ZPZpj+zHFjA7dmPiL6ncdQfwHbXALAtD7nMJSI8Ci2b+aRsia5PV16EirCPrO6Pxby5ve+LA73m4
-	 C8HFfG7yek+GYAvqz7noHVWKhUeRJXrSFGrSTwt2DCMvC0PXZzzSjPvdOlK2Haj9WinUI6vD5uuO
-	 pdoflCtc9UZIJ/SyR/2c/BySUnp0XhW4Nq4SrtKH4RBxBo2mZly6m/NzURjDBQRUDQ5eSmxDWMXC
-	 YVTMh051mctFpzGY6A1JnGUXz2UQDtpxINkZMQBI++QFoJFwz0jpvArlUfK4D6MnNu614oqrVicZ
-	 gxLa/OV2Npon3ynDOKZqhO3vqSpsg9sav8xyYO3XXmenckNjpY889UTrCQInol28Ar1lahXVfaUA
-	 ssQyD12wSoYbAzTVsu2HkIpOJxxH5mhHZQGz9mfOZ5LR/Ra5GTuyMngQXCI0lmmS5JivO9OZE=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+077d9ebda84f426a6a1e@syzkaller.appspotmail.com
-Cc: jfs-discussion@lists.sourceforge.net,
+	s=arc-20240116; t=1750130650; c=relaxed/simple;
+	bh=fbgflbP71TGZLWdFRM/j1rCbvkeR66kA5FCEtT6NQtE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QNoQzjr8jswFme79GhrsUeJgtUyv+HDn0HPyUYAVpMOkxhRfzC3zBOQKYLqxsulNduk8oHD5mTvzOL0XgsP3Ao1gIzC1D7AHa7uUCEzXZ0xJ94muVMA16yjKbVfXV2UBq3muzIWxwodqnF2cbSB+zS44wfPpqGmHuqef+0v6BXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowACH2FDD31Boih8RBw--.25716S2;
+	Tue, 17 Jun 2025 11:23:47 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	sheetal@nvidia.com,
+	u.kleine-koenig@baylibre.com,
+	mkumard@nvidia.com,
+	rituc@nvidia.com,
+	ruc_gongyuanjun@163.com
+Cc: linux-sound@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	shaggy@kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] jfs: Issue a warning when leafidx is too large
-Date: Tue, 17 Jun 2025 11:19:57 +0800
-X-OQ-MSGID: <20250617031956.334239-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <6850d37f.a70a0220.395abc.01f9.GAE@google.com>
-References: <6850d37f.a70a0220.395abc.01f9.GAE@google.com>
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] ASoC: tegra: AHUB: Remove unneeded semicolon
+Date: Tue, 17 Jun 2025 11:21:03 +0800
+Message-Id: <20250617032103.1725040-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,37 +57,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACH2FDD31Boih8RBw--.25716S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZFWDuF4rXFy7tFyUuF18Grg_yoWxCrg_Aw
+	40gw4xX3y5GFWakFn8Jr4Iyw1jv39xGa1xKryjvFsrW34UuF4rZry8Wr47urWUZw4kAFyx
+	Wa4jqrs8Jr4YgjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbf8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r48MxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjm9aPUUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-When it is clear that leafidx is too large, a warn is triggered to
-distinguish it from other sizes.
+Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
+semantic patch at scripts/coccinelle/misc/semicolon.cocci.
 
-Reported-by: syzbot+077d9ebda84f426a6a1e@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=077d9ebda84f426a6a1e
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- fs/jfs/jfs_dmap.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ sound/soc/tegra/tegra210_ahub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index 35e063c9f3a4..7e3c5f6826d8 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -2856,9 +2856,13 @@ static int dbJoin(dmtree_t *tp, int leafno, int newval, bool is_ctl)
- static void dbAdjTree(dmtree_t *tp, int leafno, int newval, bool is_ctl)
- {
- 	int lp, pp, k;
--	int max, size;
-+	int max, size, max_idx;
+diff --git a/sound/soc/tegra/tegra210_ahub.c b/sound/soc/tegra/tegra210_ahub.c
+index 2376cc76e684..21aeaeba0b10 100644
+--- a/sound/soc/tegra/tegra210_ahub.c
++++ b/sound/soc/tegra/tegra210_ahub.c
+@@ -2066,7 +2066,7 @@ static bool tegra264_ahub_wr_reg(struct device *dev, unsigned int reg)
+ 			return true;
+ 		default:
+ 			break;
+-		};
++		}
+ 	}
  
- 	size = is_ctl ? CTLTREESIZE : TREESIZE;
-+	max_idx = is_ctl ? LPERCTL : LPERDMAP;
-+
-+	if (WARN_ON_ONCE(le32_to_cpu(tp->dmt_leafidx) >= max_idx))
-+		return;
- 
- 	/* pick up the index of the leaf for this leafno.
- 	 */
+ 	return false;
 -- 
-2.43.0
+2.25.1
 
 
