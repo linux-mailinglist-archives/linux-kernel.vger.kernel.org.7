@@ -1,214 +1,215 @@
-Return-Path: <linux-kernel+bounces-690404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C123CADD031
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:43:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEBF5ADD02E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B838189E401
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:41:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3234118970DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511EF209F5A;
-	Tue, 17 Jun 2025 14:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C532F20299B;
+	Tue, 17 Jun 2025 14:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BAKxBJ+o"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dd/OpOql"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F391AA1DB;
-	Tue, 17 Jun 2025 14:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19ABE2EF650;
+	Tue, 17 Jun 2025 14:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750171249; cv=none; b=XiVYfWrjPDvwUcRkIJk6sQcsTPkpIpnIQIIq2BHpTEbbX/dv8VwMCz7c8k1HTJaew+F79w8ATAj3JOMbHDxnNosQq35PQupci8S5bOxLIM0YHWiCBNOq528RlOnSf1erQJIceh8r+1PkDodfJiqCLQqByyWFDEdANtCgoBXUf/w=
+	t=1750171229; cv=none; b=GaUkQhvXDZuqw5bAGTNeL0U5MY3ZnewDL7LwKq4aLF77NsplGbV6hh+3Snlf2FrZkelStojUdmNhSWz/2eAswxswKgGfjWsO+lw75LtfdP8K3s6UFCn6ZvySXRFeb7fNANUJST9G8XIhCn9UBIOqIx0bdIbx5dEu5Veyvyq4sB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750171249; c=relaxed/simple;
-	bh=0mb3vGBaE0i3M/SUNhFjCQPgtSzD466nZlwMNKnyljA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VzdxU6iq5zlHQz78oag1VZYQWHV4+zwERNBxxzh3r22DjYNm07IBCYAb+8U+4FPKxlnkvRari9QDICPrTfHs99rdC67DBaVa5aq7tJeSlfIafF/3yniGjoiqHkXEakLtqMuLh2u8vdlQUBI0BfJo2dVfTxv0riEMan6vn3TxxgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BAKxBJ+o; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32aabfd3813so50183671fa.3;
-        Tue, 17 Jun 2025 07:40:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750171246; x=1750776046; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nA6qtEQYSObjmTSjXfycB+WycPATkd4P72jiPnHCAA4=;
-        b=BAKxBJ+oh49SUWdP7uSbWB8VFlU9MA5hSvKeIjAz6IFdh73Ji3BKX243i2m2vblQE1
-         bXpVK6pP11myeoWq80Yq2dktPvc2WVFjuVSSEMa5m0MuAsJHccXM3l78e9rVNfF8sP4r
-         ZF8lAy3SjA9sdp28LyOVdAKMvDsRC6mvlMLJuumjW3+FJW1AVAfOVEiT4ZilEHelPxvO
-         Yt/Kw1MzWJmT3FzLndABsEqtmgDdkwBlWI7gDwj8MUTIFiBvSpF2i0rsYCARZXRtp3r1
-         CRyfBpvtmYQjJzVCyN6f8xZBz/q+gU2+DDq8A6c0GmlokVYdnzkp3/NXWCHFd1xFBqyv
-         abnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750171246; x=1750776046;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nA6qtEQYSObjmTSjXfycB+WycPATkd4P72jiPnHCAA4=;
-        b=uTVUXChb9FGlEELZyNBQ/2qporOEttZx4ZDzpOXKWIxhYZj6klG8sYcueTrAVY1NYT
-         pLz6JxTzis6wLuMDW9vFEVzP3Htr0uik+vJKRUksh8kFrgYbOIlitCnXWOMeRhVsMZUK
-         9fP/LGWzQHp0XjgAk/MwDd2W+Xfoa5ie8Esu9IIwe+paJtZ8fkkg2hUNk3906qeXZSeY
-         fSA5Y0Vd9GIe/K/OvZbwWw7I1E605aH67FxX9LHP9EiVJNKkjvFkPwmDYzbXEBpcFLl3
-         WxzYd1/2UYiid/UWR5a7/VIMgKC+nl8/xN6aBZtVcqZkMlYRjJJGjLXkmelBQTkN7PG5
-         ygRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCSJfSbzLTPCQxvAduIKxXHSl3WoS84vRlgVKH0g3w+pKfRI9CFmM1WDBMat2y4AoAKUXjgF9pFJLAFgz/sZU=@vger.kernel.org, AJvYcCUk0y6RxSAtqlt4ilsJ8QhjdqrETnUqrLxzWYojJ4qwbYuZZnu8vaC9Rl3MpNYd32CmOlp4rGKg9rB6rrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvutypLY+CDOSqfNzVnekkSj3/HaQ2SNqDS+NmLLc7x9mI+JTp
-	iz2+lRCiylPtJOFpI+7XEwo2Lb+XxcbYhdU9ZTecN4m+D8jM/LogoxsuZZDzR8upsvGPnbkWXTL
-	NQm8jHrvwGqGVq2otbK5KvlP3k9i5QyA=
-X-Gm-Gg: ASbGncsnROBNWWkBt+1Yfex2cakwnDlqSh5fkQ6qHpu39Wzo8amwvGUEMxgG3k9kLdt
-	4SRm9NGUVMpwCx07nOdLvmxdSD6wVaXrNoh/gl1vqncNrFOoXUTd/bZRGmTeSlKoERTLsG+aWqC
-	Pq7fyjWOajtqEDZxmzZKMqh4kUSVeliLiQXe/4zD7P0+E4S5v7hCwIW0sHjMQ=
-X-Google-Smtp-Source: AGHT+IGkuuKjtvKBNl3QmjTudRGbGevTIb7oBUqZsL6XetkWnP5IqJY5hvQVch1DK/G++9+iLJKtCSGjfz4FCwve8jA=
-X-Received: by 2002:a2e:bc15:0:b0:32a:7122:58cc with SMTP id
- 38308e7fff4ca-32b4a2e24cbmr39908461fa.6.1750171245443; Tue, 17 Jun 2025
- 07:40:45 -0700 (PDT)
+	s=arc-20240116; t=1750171229; c=relaxed/simple;
+	bh=1sJ5uWIyOK0PQu9DY5SEJMP6Y603O+MTzVrgiX+WWWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eqh3V5ibS8EKUPgLgwPdIZ/D7/+nAvuKG4uE5TT5ynhYAgSwmaMPKYY+qImTYc+7re/H7+XBuNhGGzIF2cZdRjNoahmkR1XauM5nx94N/9E0z8tC8VhB1PRHuvjeje2QHAzC+VxVVDns0mx+RSodVexrdbIPdq7i4Zw8Ex7Q0nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dd/OpOql; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59DECC4CEE3;
+	Tue, 17 Jun 2025 14:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750171228;
+	bh=1sJ5uWIyOK0PQu9DY5SEJMP6Y603O+MTzVrgiX+WWWE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dd/OpOqle3v9pBIn0wbR/lhVL7fG5NubWL79DTXE8GaZhu7yETpIVDN1UDnzdPoTt
+	 u53t5A2GG4VvYecoFkbiXWQuwi28VVIhuN22J/CPVAcG+dVfwUcaHC64fxXIqEcf6M
+	 mGV0pioxsB1tDCqt085N5f2Q5Q+85XjfZlpFQu0o11snNphd/ml/2FxFOxUqIv5BBw
+	 yt+8jrLV/JfgOchJA/DNn6WY+V/ARiVCUDS+Kdz41HVOZ8Zkj0DTb0ouvA35I3H4uz
+	 CCqoQe7TThtnBq3KGhg23lJz1aEmnd0iJglNJxBcHkqI82kEpEl3aRmCNvPHM3fgv5
+	 rJ3Cb6E5uaXoA==
+Date: Tue, 17 Jun 2025 17:40:24 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Prachotan Bathi <prachotan.bathi@arm.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Stuart Yoder <stuart.yoder@arm.com>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/1] tpm_crb_ffa: handle tpm busy return code
+Message-ID: <aFF-WNSolTdV9PZG@kernel.org>
+References: <20250613233132.4167653-1-prachotan.bathi@arm.com>
+ <20250613233132.4167653-2-prachotan.bathi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250617-opaque-from-raw-v1-1-a2e99efa3ba2@google.com>
-In-Reply-To: <20250617-opaque-from-raw-v1-1-a2e99efa3ba2@google.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 17 Jun 2025 10:40:09 -0400
-X-Gm-Features: AX0GCFv7lU3SvnR9E3OzendU9NdImRIdabiEAKbvNCS_347sx3bZCnind6a_fJU
-Message-ID: <CAJ-ks9=Sy3S8Rir-RftkF7_ZCV4WVsCOPHYX3WN41MY1ukFwKQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: types: add Opaque::from_raw
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Miguel Ojeda <ojeda@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, dri-devel@lists.freedesktop.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250613233132.4167653-2-prachotan.bathi@arm.com>
 
-On Tue, Jun 17, 2025 at 9:38=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> Since commit b20fbbc08a36 ("rust: check type of `$ptr` in
-> `container_of!`") we have enforced that the field pointer passed to
-> container_of! must match the declared field. This caused mismatches when
-> using a pointer to bindings::x for fields of type Opaque<bindings::x>.
->
-> This situation encourages the user to simply pass field.cast() to the
-> container_of! macro, but this is not great because you might
-> accidentally pass a *mut bindings::y when the field type is
-> Opaque<bindings::x>, which would be wrong.
->
-> To help catch this kind of mistake, add a new Opaque::from_raw that
-> wraps a raw pointer in Opaque without changing the inner type.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-
-Reviewed-by: Tamir Duberstein <tamird@gmail.com>
-
+On Fri, Jun 13, 2025 at 06:31:32PM -0500, Prachotan Bathi wrote:
+> For CRB over FF-A interface, if the firmwre TPM or TPM service [1] shares
+> its Secure Partition (SP) with another service, message requests may
+> fail with a -EBUSY error. Platforms supporting direct message request v2[1]
+>  can support secure partitions that support multiple services.
+> 
+> To handle this, replace the single check and call with a retry loop
+> that attempts the TPM message send operation until it succeeds or a
+> configurable timeout is reached. The retry mechanism introduces a
+> module parameter (`busy_timeout`, default: 2000ms) to control how long
+> to keep retrying on -EBUSY responses. Between retries, the code waits
+> briefly (50-100 microseconds) to avoid busy-waiting and handling
+> TPM BUSY conditions more gracefully.
+> 
+> [1] TPM Service Command Response Buffer Interface Over FF-A
+> https://developer.arm.com/documentation/den0138/latest/
+> 
+> Signed-off-by: Prachotan Bathi <prachotan.bathi@arm.com>
 > ---
->  rust/kernel/drm/device.rs  | 4 +---
->  rust/kernel/drm/gem/mod.rs | 4 +---
->  rust/kernel/lib.rs         | 7 +++++++
->  rust/kernel/types.rs       | 5 +++++
->  4 files changed, 14 insertions(+), 6 deletions(-)
->
-> diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
-> index 624d7a4c83ead64b93325189f481d9b37c3c6eae..763c825d53aaba4f874361b78=
-5587b2c5129d49a 100644
-> --- a/rust/kernel/drm/device.rs
-> +++ b/rust/kernel/drm/device.rs
-> @@ -135,11 +135,9 @@ pub(crate) fn as_raw(&self) -> *mut bindings::drm_de=
-vice {
->      ///
->      /// `ptr` must be a valid pointer to a `struct device` embedded in `=
-Self`.
->      unsafe fn from_drm_device(ptr: *const bindings::drm_device) -> *mut =
-Self {
-> -        let ptr: *const Opaque<bindings::drm_device> =3D ptr.cast();
-> -
->          // SAFETY: By the safety requirements of this function `ptr` is =
-a valid pointer to a
->          // `struct drm_device` embedded in `Self`.
-> -        unsafe { crate::container_of!(ptr, Self, dev) }.cast_mut()
-> +        unsafe { crate::container_of!(Opaque::from_raw(ptr), Self, dev) =
-}.cast_mut()
->      }
->
->      /// Not intended to be called externally, except via declare_drm_ioc=
-tls!()
-> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-> index 4cd69fa84318c3ff2cec57949e9bab05559a3c2f..5b80c248761bb39914a63ad79=
-47aa8d3779054ef 100644
-> --- a/rust/kernel/drm/gem/mod.rs
-> +++ b/rust/kernel/drm/gem/mod.rs
-> @@ -125,11 +125,9 @@ fn as_raw(&self) -> *mut bindings::drm_gem_object {
->      }
->
->      unsafe fn as_ref<'a>(self_ptr: *mut bindings::drm_gem_object) -> &'a=
- Self {
-> -        let self_ptr: *mut Opaque<bindings::drm_gem_object> =3D self_ptr=
-.cast();
-> -
->          // SAFETY: `obj` is guaranteed to be in an `Object<T>` via the s=
-afety contract of this
->          // function
-> -        unsafe { &*crate::container_of!(self_ptr, Object<T>, obj) }
-> +        unsafe { &*crate::container_of!(Opaque::from_raw(self_ptr), Obje=
-ct<T>, obj) }
->      }
+>  drivers/char/tpm/tpm_crb_ffa.c | 74 +++++++++++++++++++++++-----------
+>  1 file changed, 50 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+> index 4ead61f01299..e47e110bac9e 100644
+> --- a/drivers/char/tpm/tpm_crb_ffa.c
+> +++ b/drivers/char/tpm/tpm_crb_ffa.c
+> @@ -10,6 +10,8 @@
+>  #define pr_fmt(fmt) "CRB_FFA: " fmt
+>  
+>  #include <linux/arm_ffa.h>
+> +#include <linux/delay.h>
+> +#include <linux/moduleparam.h>
+>  #include "tpm_crb_ffa.h"
+>  
+>  /* TPM service function status codes */
+> @@ -178,6 +180,17 @@ int tpm_crb_ffa_init(void)
 >  }
->
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 6b4774b2b1c37f4da1866e993be6230bc6715841..d2402d42b8776c9399a7dfdbe=
-7bd61de7ef8dba3 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -204,6 +204,13 @@ fn panic(info: &core::panic::PanicInfo<'_>) -> ! {
->
->  /// Produces a pointer to an object from a pointer to one of its fields.
->  ///
-> +/// If you encounter a type mismatch due to the [`Opaque`] type, then us=
-e [`Opaque::raw_get`] or
-> +/// [`Opaque::from_raw`] to resolve the mismatch.
-> +///
-> +/// [`Opaque`]: crate::types::Opaque
-> +/// [`Opaque::raw_get`]: crate::types::Opaque::raw_get
-> +/// [`Opaque::from_raw`]: crate::types::Opaque::from_raw
-> +///
->  /// # Safety
->  ///
->  /// The pointer passed to this macro, and the pointer returned by this m=
-acro, must both be in
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index 22985b6f69820d6df8ff3aae0bf815fad36a9d92..a79295500b3c812326cea8a9d=
-339a8545a7f457d 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-> @@ -413,6 +413,11 @@ pub const fn get(&self) -> *mut T {
->      pub const fn raw_get(this: *const Self) -> *mut T {
->          UnsafeCell::raw_get(this.cast::<UnsafeCell<MaybeUninit<T>>>()).c=
-ast::<T>()
->      }
+>  EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
+>  
+> +static unsigned int busy_timeout = 2000;
+> +/**
+> + * busy_timeout - Maximum time to retry before giving up on busy
+> + *
+> + * This parameter defines the maximum time in milliseconds to retry
+> + * sending a message to the TPM service before giving up.
+> + */
+> +module_param(busy_timeout, uint, 0644);
+> +MODULE_PARM_DESC(busy_timeout,
+> +		 "Maximum time to retry before giving up on busy");
+
+
+
 > +
-> +    /// The opposite operation of [`Opaque::raw_get`].
-> +    pub const fn from_raw(this: *const T) -> *const Self {
-> +        this.cast()
-> +    }
+>  static int __tpm_crb_ffa_send_recieve(unsigned long func_id,
+
+there's BTW a typo ;-) s/recieve/receive
+
+Not your fault but maybe it would make sense to correct that anyhow...
+
+>  				      unsigned long a0,
+>  				      unsigned long a1,
+> @@ -191,34 +204,47 @@ static int __tpm_crb_ffa_send_recieve(unsigned long func_id,
+
+Maybe this would be less exhausting if you instead would work out the
+existing function something like __tpm_crb_ffa_try_send_receive() and
+call that in a loop? It would be then similar organization as with
+tpm_transmit().
+
+>  
+>  	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
+>  
+> -	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
+> -		memset(&tpm_crb_ffa->direct_msg_data2, 0x00,
+> -		       sizeof(struct ffa_send_direct_data2));
+> +	ktime_t start;
+> +	ktime_t stop;
+> +
+> +	start = ktime_get();
+> +	stop = ktime_add(start, ms_to_ktime(busy_timeout));
+> +
+> +	do {
+> +		if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
+> +			memset(&tpm_crb_ffa->direct_msg_data2, 0x00,
+> +			       sizeof(struct ffa_send_direct_data2));
+
+nit: could use memzero() instead.
+
+>  
+> -		tpm_crb_ffa->direct_msg_data2.data[0] = func_id;
+> -		tpm_crb_ffa->direct_msg_data2.data[1] = a0;
+> -		tpm_crb_ffa->direct_msg_data2.data[2] = a1;
+> -		tpm_crb_ffa->direct_msg_data2.data[3] = a2;
+> +			tpm_crb_ffa->direct_msg_data2.data[0] = func_id;
+> +			tpm_crb_ffa->direct_msg_data2.data[1] = a0;
+> +			tpm_crb_ffa->direct_msg_data2.data[2] = a1;
+> +			tpm_crb_ffa->direct_msg_data2.data[3] = a2;
+>  
+> -		ret = msg_ops->sync_send_receive2(tpm_crb_ffa->ffa_dev,
+> +			ret = msg_ops->sync_send_receive2(tpm_crb_ffa->ffa_dev,
+>  				&tpm_crb_ffa->direct_msg_data2);
+> -		if (!ret)
+> -			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data2.data[0]);
+> -	} else {
+> -		memset(&tpm_crb_ffa->direct_msg_data, 0x00,
+> -		       sizeof(struct ffa_send_direct_data));
+> -
+> -		tpm_crb_ffa->direct_msg_data.data1 = func_id;
+> -		tpm_crb_ffa->direct_msg_data.data2 = a0;
+> -		tpm_crb_ffa->direct_msg_data.data3 = a1;
+> -		tpm_crb_ffa->direct_msg_data.data4 = a2;
+> -
+> -		ret = msg_ops->sync_send_receive(tpm_crb_ffa->ffa_dev,
+> -				&tpm_crb_ffa->direct_msg_data);
+> -		if (!ret)
+> -			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
+> -	}
+> +			if (!ret)
+> +				ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data2.data[0]);
+> +		} else {
+> +			memset(&tpm_crb_ffa->direct_msg_data, 0x00,
+> +			       sizeof(struct ffa_send_direct_data));
+>  
+> +			tpm_crb_ffa->direct_msg_data.data1 = func_id;
+> +			tpm_crb_ffa->direct_msg_data.data2 = a0;
+> +			tpm_crb_ffa->direct_msg_data.data3 = a1;
+> +			tpm_crb_ffa->direct_msg_data.data4 = a2;
+> +
+> +			ret = msg_ops->sync_send_receive(tpm_crb_ffa->ffa_dev,
+> +				&tpm_crb_ffa->direct_msg_data);
+> +			if (!ret)
+> +				ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
+> +		}
+> +		if (ret == -EBUSY)
+> +			pr_err("TPM says busy, trying again, value, ret: %d\n",
+> +			       ret);
+
+This is not an error condition but instead a legit condition, as far as
+kernel is considered. Please, remove pr_err().
+
+> +		else
+> +			break;
+> +		usleep_range(50, 100);
+> +	} while (ktime_before(ktime_get(), stop));
+>  
+>  	return ret;
 >  }
->
->  /// Types that are _always_ reference counted.
->
-> ---
-> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-> change-id: 20250617-opaque-from-raw-ac5b8ef6faa2
->
-> Best regards,
-> --
-> Alice Ryhl <aliceryhl@google.com>
+> -- 
+> 2.43.0
+> 
+
+BR, Jarkko
+
 
