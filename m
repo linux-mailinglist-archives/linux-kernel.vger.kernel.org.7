@@ -1,152 +1,105 @@
-Return-Path: <linux-kernel+bounces-690818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D08ADDCD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:01:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2CBADDCD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99E9402FB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:01:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A838C189F939
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB6A2EE985;
-	Tue, 17 Jun 2025 20:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7600A2EE98D;
+	Tue, 17 Jun 2025 20:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Izo9Lf2a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXcepmYR"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAA928A737
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 20:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7852EE986
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 20:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750190485; cv=none; b=CbfLCUPaB/ZRlvbto30y69t35Ep8oTdqb39PmKxa7DSOjIwlu64etyHGqPUpSfHz+5FFv6voDq9e0Frta49k4UOBv6c9SzFmfbg7y8YTdqVUJgr+ARR4c7ToyGodLEPlJTl0Qft2AcEFea/k/JeZilsQ+R5X/10IxQr3DiAETX0=
+	t=1750190500; cv=none; b=a9JQBZ9H4uM2Yy2kZqkSw/9vFauGs1kWQFF9l+7nF3LkfMjcDd7sqtSVixTfV4ZzdESpnPUdcJqfnaVVcIG965VcEHEzvXsd6gqLRG6YSON//WcIi3vc3Udn52eE+OKBxl9RuYl36pNA0heCRBu9zxAC74ZNvpKYXzsDHAupvb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750190485; c=relaxed/simple;
-	bh=9qlryhIHS0Cc2X2BC+ex+dW7dnay/Akl42iZ5dW4L3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m2NwsXMCBxXVjeZLxclMvzKXWuTuwBA1pgMjOfa9xszq46v3t4kTwa4w10Gp/Z3rQ64ZY+1q6tyif/QyWKHiuy4XWhiIhrlw6J54Dwhjtuc20pSbbxcs5M2r3tA55tsU1V990tu1Nna1pl+S1QwZjm9B0zsPUHHAcwcUuBpTewk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Izo9Lf2a; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750190482;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0Dm/YTY2gnD+c/gsISARFM2WYB8H4Eho9ZAM8VM6ubM=;
-	b=Izo9Lf2aRuwAaoeDYJtN9dVUxN+ws7MxI7mGIB72hux1TJ7+S3pOUuSdTVM9SnFcikN298
-	2A/b3FZdrEs5+17WXK1BmA/3S4sLp/pw3Vagmz5kvn1QL2PiX7PMpT4HUvtKcnKDZx2zaa
-	+c98ThmahiVslaKF/Nf1nVWWp2aWAyA=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-649-cQ3T6vEoOwSv6ktlD3R0tA-1; Tue, 17 Jun 2025 16:01:18 -0400
-X-MC-Unique: cQ3T6vEoOwSv6ktlD3R0tA-1
-X-Mimecast-MFC-AGG-ID: cQ3T6vEoOwSv6ktlD3R0tA_1750190478
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3138f5e8ff5so5912705a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:01:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750190478; x=1750795278;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1750190500; c=relaxed/simple;
+	bh=LxLRIM3c0qdb2zOAm+rduDpDgZAMBgw5SL6tNGivXSQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uYrqRW5okYxLxyKwmd9csUGfVT42eObjPFKtZj/8xcXKK+FndWHOyWUZbFUrOl14nIgiPSymoXCR98wVVinLRMNzB9Bhs+lIcSnuU92//tWEKJeCSGCZzZNrjRsJ807amu5+Crp+3pG/Tn58ODzGDqCXS6amLzAjqptH6XHqHtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nXcepmYR; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-312efc384fcso1076128a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:01:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750190499; x=1750795299; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0Dm/YTY2gnD+c/gsISARFM2WYB8H4Eho9ZAM8VM6ubM=;
-        b=k3UnD2IvPiy5I89hN0pqvGtbHkIdH6FfSSQ0EToYS0/7YCfykCcI3RWeVn8IDuX4Xv
-         2B99YROv/YPif2dRB4lIgg7L7YxumgiQiqEJ6ANlOQla4VuxGdggG9Z3OVZv5eBaVGZn
-         Wj+w+gNseWzc4ql4eK0XIDpBeXFV/PEo4MLfHf7LeWfmcUGiaehntueuqOvagl0yGan/
-         jjNo+D6WqC51G4qSXVeEsZH+lmSx0pD2ABFRJPM1rNjGCJQ8X1cVZM0SXjpbjESpkYuK
-         rIyssSpErQeyGnjlw5N3FFw2wS9+G2fBWBzaJr2hAJztYk7EEN/tQbCvbJIG/DXadzKu
-         ovrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxw2lo4sL1z7vqAoj6oUnlqKtP15wOYYycxggzM8S/AotitulV0pA+1d+lgzUMdt9O/wYIxg6kl6cZgk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywsi6MhY8vwaN7rSF4acNPiknkrfJ/6hn+0KV5aJDilom+iWgbX
-	6deJtSVV32IOj6pH8hjD4b1/mdW3gKJxQMBYEbHK4lBvcYkRG7pYMvoavag7JrtR3MwyoBXcGkv
-	pj0j5nio5xsuQnGfpVMqanFw+eUkhTnKb9d5mp5Qy9twoJeadlAKRAkuJCNoP6O/QMQ==
-X-Gm-Gg: ASbGnctP6hi1JhjW/bMM9fa/sgOZzAXXuQsavBY60N3u4l1pB8CnE3I3IfZSXf2oTJe
-	gap/IbrIF5+AL6PFeleatwRwtroeJO9G1t58z0OgSHGA63imV2DFBFFIZm8fMDPCTLS/nIfh/hy
-	dEdliXMgP37C9r1JEMKHlAc1E5IJTEcSNsErvYZumd6QB8wpnrtlGY8ugWr+lIfhyoJyVRcx5El
-	UeJZYyIrcB2N7RaroJq01iNk+/HkdzQkxeRSCzSUrJIwOgIdN16FebVeh1oTn4COY1kalD0dLXW
-	Gonkc3frJirZLQ==
-X-Received: by 2002:a17:90b:39cb:b0:312:ec:412f with SMTP id 98e67ed59e1d1-313f1cc6475mr24162736a91.14.1750190477478;
-        Tue, 17 Jun 2025 13:01:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE9mPY0K5+r6ESf4SrogrsmJ9SaqRUqc0sTfpN2AxqMlGxDMB0nD5J8Sn7aF0/Lb+05TfOe/g==
-X-Received: by 2002:a17:90b:39cb:b0:312:ec:412f with SMTP id 98e67ed59e1d1-313f1cc6475mr24162674a91.14.1750190477030;
-        Tue, 17 Jun 2025 13:01:17 -0700 (PDT)
-Received: from x1.local ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3142874a4f3sm2156795a91.22.2025.06.17.13.01.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 13:01:16 -0700 (PDT)
-Date: Tue, 17 Jun 2025 16:01:11 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: kernel test robot <lkp@intel.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kvm@vger.kernel.org,
-	oe-kbuild-all@lists.linux.dev,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Zi Yan <ziy@nvidia.com>, Alex Mastro <amastro@fb.com>,
-	David Hildenbrand <david@redhat.com>,
-	Nico Pache <npache@redhat.com>
-Subject: Re: [PATCH 4/5] vfio: Introduce vfio_device_ops.get_unmapped_area
- hook
-Message-ID: <aFHJh7sKO9CBaLHV@x1.local>
-References: <20250613134111.469884-5-peterx@redhat.com>
- <202506142215.koMEU2rT-lkp@intel.com>
- <aFGMG3763eSv9l8b@x1.local>
- <20250617154157.GY1174925@nvidia.com>
- <aFGcJ-mjhZ1yT7Je@x1.local>
- <aFHEZw1ag6o0BkrS@x1.local>
- <20250617194621.GA1575786@nvidia.com>
+        bh=LxLRIM3c0qdb2zOAm+rduDpDgZAMBgw5SL6tNGivXSQ=;
+        b=nXcepmYRusl0Yl9e+9nF3DDb1IfnNA5RGQUGPFefccO2SvCIcCZqWMRKTQctVVLv2Y
+         upw8RGM1mQQqU6FuUW33Vew3xOBGYUelPck2fPiKQ57HYzbbJmLHRbERkRkZmObdm44J
+         /SQSvsfB3ncUe2jQFersvaRRHy9qBZPA7Ga8NcB/W67EkqoleZIobhDGU6ZHDx79Y5er
+         NQYooM6WNZvtwLdOv/e7PKTBaGVeRz5+IJij1ESd0Tnr8ZvPV7ya7KzTvSsrzJrrAD6A
+         xpse4ZSJM12yE6VZG9I+see82RzgRHuH8owjNWewml/iWTYnWy3LOEFKlk3c5+gJtHbg
+         0Rig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750190499; x=1750795299;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LxLRIM3c0qdb2zOAm+rduDpDgZAMBgw5SL6tNGivXSQ=;
+        b=EP9xSn2xniyqpldphRfZdJBGQ8I9K879GJy6BOEfiQtiskqmMcxtyn+op9eOC1WmHH
+         Qt+yw1Qmr2a6akyXhLSsEEq8BrXNYKweeGQ3ZvxouzzhiUtisu05MysV9peSFvHmuBuY
+         KVF57ck/KKXApLM6xjF38yOu/WK4gFEjrXViil7rCk0kxs3h+zHmScxXKv/Z5SLiyGAS
+         /5C4HgM5eOCZ6aDpaNZVnYxxawnl2l3j2kQd4agzRw+YxX9iIeTxxg1f5kj/QZgfIACs
+         6Z5qrN6uuYxm+VfdlB0nJ4rrIQ4szSKSnDmtsHrYPkz3rPs2RK5qM/hDmFmKoTgzEMSy
+         X3iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWr9mqVR9T7+MD9Ri9ZrQ4NWj8YY2o05/X+psgBoHnODFpeVirXSHnp/fhYysD10ke10246KMx+hgN8vms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPVkr4S0271Z+M3KpfHHkb/XlQKXrrBKBq2Fwn9k25eULLDZRE
+	oyheyzqt2IJq7Cn1Y9UFbvQF6pM3QBcjB04EuvZT/WEJaFPwau9n/g9sOAWJoyKg7IW5q13c0VM
+	mX90Elj4ENrvpRCKNp+17kVX2td+Ya4c=
+X-Gm-Gg: ASbGncsSSdRJbPV62293gaHBFt0Jq9+xso3MnTx+SfrllSxTWaisyxe+AHdSx4QD8Ta
+	TJ4f7l2RsHlPK7ftrg4jXoa1o1zye9TKmc4zCAelBF7f4iXFzbXsAm7y29Lzv6h8hCCejrIXM5S
+	T3AA/WaM+sJ3gbATGTwQGNLinUKNsdHwiI/bG9k2/1k4A=
+X-Google-Smtp-Source: AGHT+IFgC2I+mbHQVN+fSr3xWk3eFtw9MnutDVKO3nQ3T78YvMy5t79nTBwDkDa3QpiEK4FD6YchBOI9OvZY6cd+YrQ=
+X-Received: by 2002:a17:90b:4d12:b0:310:8d79:dfe4 with SMTP id
+ 98e67ed59e1d1-31425ae54f4mr2636350a91.4.1750190498555; Tue, 17 Jun 2025
+ 13:01:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250617194621.GA1575786@nvidia.com>
+References: <20250613213311.GA1445087@ax162>
+In-Reply-To: <20250613213311.GA1445087@ax162>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 17 Jun 2025 22:01:26 +0200
+X-Gm-Features: Ac12FXwbba_z7Hxge2JAspnJDfASZGJUakU9W_NQuGn9BHnBtJV6Vo9PzZ6YHf0
+Message-ID: <CANiq72kUt41pCtJSUP+H5bxWpduoEYit4HT2k4jOTFMHuASqXA@mail.gmail.com>
+Subject: Re: Prebuilt LLVM 20.1.7 uploaded
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: llvm@lists.linux.dev, linux-kernel@vger.kernel.org, ojeda@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 17, 2025 at 04:46:21PM -0300, Jason Gunthorpe wrote:
-> > I just noticed this is unfortunate and special; I yet don't see a way to
-> > avoid the fallback here.
-> > 
-> > Note that this is the vfio_device's fallback, even if the new helper
-> > (whatever we name it..) could do fallback internally, vfio_device still
-> > would need to be accessible to mm_get_unmapped_area() to make this config
-> > build pass.
-> 
-> I don't understand this remark?
-> 
-> get_unmapped_area is not conditional on CONFIG_ARCH_SUPPORTS_HUGE_PFNMAP?
-> 
-> Some new mm_get_unmapped_area_aligned() should not be conditional on
-> CONFIG_ARCH_SUPPORTS_HUGE_PFNMAP? (This is Lorenzo's and Liam's remark)
+On Fri, Jun 13, 2025 at 11:33=E2=80=AFPM Nathan Chancellor <nathan@kernel.o=
+rg> wrote:
+>
+> I have built and uploaded LLVM 20.1.7 to
+> https://mirrors.edge.kernel.org/pub/tools/llvm/.
+>
+> If there are any issues found, please let us know via email or
+> https://github.com/ClangBuiltLinux/linux/issues/new. This will likely
+> be the last 20.x release according to Discourse [1] but it is still
+> worth reporting issues in case there is another release.
 
-Yes, this will be addressed.
+Thanks as usual! Works for Rust:
 
-> 
-> So what is VFIO doing that requires CONFIG_ARCH_SUPPORTS_HUGE_PFNMAP?
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-It's the fallback part for vfio device, not vfio_pci device.  vfio_pci
-device doesn't need this special treatment after moving to the new helper
-because that hides everything.  vfio_device still needs it.
-
-So, we have two ops that need to be touched to support this:
-
-        vfio_device_fops
-        vfio_pci_ops 
-
-For the 1st one's vfio_device_fops.get_unmapped_area(), it'll need its own
-fallback which must be mm_get_unmapped_area() to keep the old behavior, and
-that was defined only if CONFIG_MMU.
-
-IOW, if one day file_operations.get_unmapped_area() would allow some other
-retval to be able to fallback to the default (mm_get_unmapped_area()), then
-we don't need this special ifdef.  But now it's not ready for that..
-
--- 
-Peter Xu
-
+Cheers,
+Miguel
 
