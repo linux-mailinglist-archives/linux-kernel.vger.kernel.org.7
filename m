@@ -1,110 +1,110 @@
-Return-Path: <linux-kernel+bounces-689228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D45ADBE57
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:00:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4ADADBE5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D65CA1715AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 01:00:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A6431750D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 01:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028AC136327;
-	Tue, 17 Jun 2025 01:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZOBjTVJY"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55564194124;
+	Tue, 17 Jun 2025 01:09:59 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0893A2BF014
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 01:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E4C2BF01B;
+	Tue, 17 Jun 2025 01:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750122030; cv=none; b=C6ZDw3wd9GA659xAnhGM1J348dyue4QjPlOpqV/Nsyb21vxraZIYvwBvYd3Tk9WnPrHvYvOYsGLCzIyMh02dGSTA9/18pN+FQUOudkclQSk63Y9O9l2Y7CRUQUjYeV6jCpoYaGMFI/VTTdtfAlXZstPWVLfrqBSlRnfnhjwmDc4=
+	t=1750122599; cv=none; b=A/MPbzRtBU2V0An2fBks+VRJc3CHzVznSzcO3PNXFJCtuNZC6slc77kOd1XGL76cqqwiMfKOgKvGPu2GBfInzHIDMbNik5DGnhGU+iRRGqGWBMSzcCw3iutASY9i2i4ZsB0Dt96bNcwsFbOOl42hc3mA9t4UtIh4yxW/3yDBvyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750122030; c=relaxed/simple;
-	bh=rCJZ6Rqv6x39AZNnhWIkJ3xXooq3Nkcuhlj6QT7sXAA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KzZqH0gr4OpW9rxxFX/9NcL6s1Aw1Me++lwmKpJZJBSCJMNPvPUYWl7V4GArKjo71HnlkLkEqfSjt3+8GlqYKFlgi9qIvbZvWgzeEfc3l3VHDScl8KWAg1V4IHOmpZuD+Iocx2xfngjG3oyswQH+OPopFRa4Nz+BvlPY4daUTC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZOBjTVJY; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3ddd1a3e659so33715ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 18:00:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750122028; x=1750726828; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rCJZ6Rqv6x39AZNnhWIkJ3xXooq3Nkcuhlj6QT7sXAA=;
-        b=ZOBjTVJYaXSTy46DDAMVCLH/cCXuqN3wlM1MQOpCtG/5aoSgoC8BNqKy1VdO0Gu1Dt
-         NYn3N1cTC5liNF3KupGuTcup/GRaNj1E029gZhgOASIxdvziRmm/zQRpxDzHRo5m8M7M
-         Oufm4Bk8feJpqWRjdp8/ecIbtU3K81wr1hnHFec1Z06zrsgXJeigPQ8BWECxQ+71gTud
-         f0CAuZ8uD58rQ0gKhP+v0PDNoJmdmvTSbXexhLDLJyaAwNg0y2Du3HiHkx3fir53k9OF
-         g4LheQvhP5BNZVyEvp/lIgcUolY3J/6prUdf1scUNLrrU6oFIUgA8+zIJ1iEjr94V5EN
-         a75g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750122028; x=1750726828;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rCJZ6Rqv6x39AZNnhWIkJ3xXooq3Nkcuhlj6QT7sXAA=;
-        b=uO82pjVY3/M2Z5S87tFXOa0V14P9pvAfLAXkjzWVx5ltqH/bsNuHkqNngZhTZKgKAV
-         i8IVkXMALKONlhZfecM36HySD+sbXoVgBIYpMXusDIBWTdVkhQaPwBUw3FzFgahf85MH
-         /XIjkLT1n2EOU/DiahlOCN7BBs0GWdAdDqfzw5X/ljWWwfBeuK2rYba9WmtqOTnvPWIt
-         fxjPPbTF+MtkG7jTGV6SZ+f8RAcjN39AaLvHUpdBBkIEuT5gvwd03X1bmLkkDJCDfyR1
-         IrTW/FriWRnj5Pcu568Qi3bsclr3AxGXwsmeo9dra4CDUMmBpYjkZMdy/PNSOohUGxKj
-         E9Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0haVUf6WF6egpBTj9tJR9ZR0OQ9qz9YSIIOYQexSuE2+/poUMXQNCW/MMe+Rkkua9vrBUoW6m7L/o03Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8ypxlBtlBpz0YHxldeBXLyZqXHSh/uF5Maki4ZDlTTYp3AF82
-	yCMgkdqsQ1TEHa1StR8apafiIsX/1qCoir3hg78eusElB/bRg5CZ8SRO6W+IrxxTn9+c411WIHw
-	+wr8ZN7lF3Yi7X+83YswueJzUCaZMqDoiY1VWV71C
-X-Gm-Gg: ASbGncudrl6IbVQjzidrc6TgweCvb6MW8gBXN0uaugPpp2Ieal/BXxoRF37ve5auHwx
-	2/rCtJyHC2NkcIrVkT40PvZyKTl61io6cmFZMnfBFo6bYLvbeWNyG3Ifq+XF9mVXFpu9+NxPbzD
-	Mc++OLKz/0pBjeeGJMh3RLPbV6tM3jozxXlniJW7ED3GgOZhVm+LqZbS1tcj79fWw7JQTp2z4=
-X-Google-Smtp-Source: AGHT+IFWGG1GvEPulDx+6oNJ7f9HQRdMOh99zpdWks3kbOikvI4fMesxkMc8GTdGuC3PYyPK0BdP8LykZjEQ8Q2gM3I=
-X-Received: by 2002:a05:6e02:378b:b0:3dc:7e19:fcc4 with SMTP id
- e9e14a558f8ab-3de08d958aemr8594435ab.8.1750122027976; Mon, 16 Jun 2025
- 18:00:27 -0700 (PDT)
+	s=arc-20240116; t=1750122599; c=relaxed/simple;
+	bh=AQhDa7n5uATpCYj9Iz8vGOiSb2YuSaeo8cQ//4swucE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Nc0iC78kqh/xhePns41ukVERM1bvqvvhMFxoVL/gGgIE4hqS1DvEy3voMghDEyTEvEpqynHiwAS7fEM6zxDBv57NHUg6qqZmBiKvvvanDlx8+uoU7/IBK9962GTlTn9W8DbptoSnbnvgy9MXX3Legq7pBhVLBiG076zOzzntDQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bLpbD06Rtz2Cfdh;
+	Tue, 17 Jun 2025 09:06:00 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id C002714010D;
+	Tue, 17 Jun 2025 09:09:53 +0800 (CST)
+Received: from localhost.localdomain (10.90.31.46) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 17 Jun 2025 09:09:52 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
+CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <michal.swiatkowski@linux.intel.com>,
+	<shaojijie@huawei.com>
+Subject: [PATCH V2 net-next 0/8] There are some cleanup for hns3 driver
+Date: Tue, 17 Jun 2025 09:02:47 +0800
+Message-ID: <20250617010255.1183069-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250614044133.660848-1-ebiggers@kernel.org> <20250614044133.660848-2-ebiggers@kernel.org>
- <CAP-5=fXLCAN_8PpPRYcLpLXG0oPDqGMzn8VwuxPdg63+zFNTUQ@mail.gmail.com> <20250616011353.GA58711@sol>
-In-Reply-To: <20250616011353.GA58711@sol>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 16 Jun 2025 18:00:16 -0700
-X-Gm-Features: AX0GCFuoBbLWShxHQk1-i-SRmkr0kDu5TzkmagUdaARsIve2zgwyVQ68YjUwUV8
-Message-ID: <CAP-5=fUA-AvH29tS25P3-C4U9Wbou931P+A-K=yTpULdxcaRbA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] perf build: enable -fno-strict-aliasing
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Liang Kan <kan.liang@linux.intel.com>, 
-	Yuzhuo Jing <yuzhuo@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-On Sun, Jun 15, 2025 at 6:14=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
-wrote:
->
-> As far as I know, the packed struct method of doing unaligned memory acce=
-sses is
-> obsolete these days, and memcpy() generates the desired code on all suppo=
-rted
-> architectures and compilers.
+There are some cleanup for hns3 driver
 
-Thanks Eric, I sent:
-https://lore.kernel.org/lkml/20250617005800.1410112-1-irogers@google.com/
-let's see how it goes.
+---
+ChangeLog:
+v1 -> v2:
+  - Change commit message and title, suggested by Michal Swiatkowski.
+  v1: https://lore.kernel.org/all/20250612021317.1487943-1-shaojijie@huawei.com/
+---
 
-Thanks,
-Ian
+Jian Shen (1):
+  net: hns3: set the freed pointers to NULL when lifetime is not end
+
+Jijie Shao (4):
+  net: hns3: fix spelling mistake "reg_um" -> "reg_num"
+  net: hns3: use hns3_get_ae_dev() helper to reduce the unnecessary
+    middle layer conversion
+  net: hns3: use hns3_get_ops() helper to reduce the unnecessary middle
+    layer conversion
+  net: hns3: add complete parentheses for some macros
+
+Peiyang Wang (2):
+  net: hns3: add \n at the end when print msg
+  net: hns3: clear hns alarm: comparison of integer expressions of
+    different signedness
+
+Yonglong Liu (1):
+  net: hns3: delete redundant address before the array
+
+ .../hns3/hns3_common/hclge_comm_cmd.c         |  2 +-
+ .../ethernet/hisilicon/hns3/hns3_debugfs.c    | 10 +--
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 38 +++++-----
+ .../net/ethernet/hisilicon/hns3/hns3_enet.h   |  4 +-
+ .../ethernet/hisilicon/hns3/hns3_ethtool.c    | 75 ++++++++++---------
+ .../hisilicon/hns3/hns3pf/hclge_debugfs.c     | 15 ++--
+ .../hisilicon/hns3/hns3pf/hclge_main.c        | 38 +++++-----
+ .../hisilicon/hns3/hns3pf/hclge_mbx.c         |  7 +-
+ .../hisilicon/hns3/hns3pf/hclge_mdio.c        |  2 +-
+ .../hisilicon/hns3/hns3pf/hclge_ptp.h         |  2 +-
+ .../hisilicon/hns3/hns3vf/hclgevf_main.c      |  8 +-
+ .../hisilicon/hns3/hns3vf/hclgevf_mbx.c       |  2 +-
+ .../hisilicon/hns3/hns3vf/hclgevf_regs.c      | 27 +++----
+ 13 files changed, 120 insertions(+), 110 deletions(-)
+
+-- 
+2.33.0
+
 
