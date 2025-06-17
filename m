@@ -1,158 +1,143 @@
-Return-Path: <linux-kernel+bounces-691033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66B1ADDF7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 01:18:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D685ADDF87
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 01:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD93F1742C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 23:18:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1E0C16B0AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 23:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614A9298275;
-	Tue, 17 Jun 2025 23:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915FC298CD2;
+	Tue, 17 Jun 2025 23:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XlAmBFu5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OUmhq80p"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281662957A7;
-	Tue, 17 Jun 2025 23:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D28B295D85;
+	Tue, 17 Jun 2025 23:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750202321; cv=none; b=jR+sxAmg+8cSEcytZ93DJOkPA8tU7er+uS5M9n+lMG5kwYR3+trGIRrZrG5msNLUbDhkWUz/IvCpDm1O34g2g3MekxsACQupe5DHQIM4RtGUyAVk5csPXJLszu9rpp5AAmUVvyGP2zRh5JLVpAe7UYhrAQFMfsWLojTeR93e4kw=
+	t=1750202391; cv=none; b=Bvj+WIuOakfI9eNVlNRnyJHAwnkac4WlZbkh75xwTx3r/UC1uk+p2ll7POdh00zD++q4PLF14gSAasVlK3xiZWOsxQgHsU7bd6PHVRZulXKa4RetSu2mFyEhxi/8NBWtWYy5MEkr1oDG8SxOzbnzGvThJymNpQrlA7CZ55CBmU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750202321; c=relaxed/simple;
-	bh=/vMmGBqzE24P8FsLP9s5W+/tB04dPiPU+BJNaUonudc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XWZkOR+wSnxvNZWt+89YE0J5gV6F8MbdthMhPlckbfyBfyFzEn4MGg44stoDNp8UNG8D9qe2JoXHZhMcln7yFVjNz4FGij9wLMmWMAoNMaD0DYT9tR4p0GFSzf1Ho3rydyBNOi2eIVQ2GRGGSQnHN4ct9AMFcoFOYZGWHXEPp3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XlAmBFu5; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750202320; x=1781738320;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=/vMmGBqzE24P8FsLP9s5W+/tB04dPiPU+BJNaUonudc=;
-  b=XlAmBFu5xno0RhDR/unlkEb0BlTxY62qYFkSOk+/nozQfv8lY1v1v+ug
-   jrt4RllkzfZ/5oT7GuOtzFQiRJTWFmFmx9zH6W/MQtNveQIviU/kX0vzz
-   lUtw8cwRgLE35Ryu5Uxyq/aQJ1GHBXxk85v5XUFlq+fakCDjcaphnnUJV
-   mbHxat453uzWOQiCX0T+g+FOi7T8zhenPKbmAkSQMtAHhfjVu/If67oKU
-   LCNJT55fzxVlfr8fS+sVFeEAbx7u1rACQPWMwJQarUR8jvLID2MZWDpH2
-   spF6HkkmmWNjtZDfSJyVrKEaVgKIEaHH4Q7Jg9Kgn9PVHVzJCyqMzOKIx
-   A==;
-X-CSE-ConnectionGUID: KYuM1V5wS+OLuK5ulcOpdg==
-X-CSE-MsgGUID: BgvPeZ1rTfu1CgxDNOh3HA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="63821385"
-X-IronPort-AV: E=Sophos;i="6.16,244,1744095600"; 
-   d="scan'208";a="63821385"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 16:18:38 -0700
-X-CSE-ConnectionGUID: h3Yt53drQwKSeUK2twuIow==
-X-CSE-MsgGUID: IfZEbRw/RVyShptRRlV8KQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,244,1744095600"; 
-   d="scan'208";a="179928707"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
-  by orviesa002.jf.intel.com with ESMTP; 17 Jun 2025 16:18:39 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rafael@kernel.org,
-	rui.zhang@intel.com
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] ACPI: DPTF: Support for Wildcat Lake
-Date: Tue, 17 Jun 2025 16:18:24 -0700
-Message-ID: <20250617231824.3314507-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1750202391; c=relaxed/simple;
+	bh=72RiHssNvDFQJNQq4LIcMB+q+Uc4lLwzNNUsDHHaPag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cESDcWhSvygWSHNC/DCYRSg4YmXynRCJ8UbHV0Ps7TuDa+8qF2VxQaJgeKFFdRs9WDV719BNA9UN7lIP7HqFc0IeJzt/1778JYJ1gTu46ovianGPFYa3shEbq10Dp+B6W/oYO3QP3H0O4Ft/fgnHXwRx7KluMV/yAT6XSfscGJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OUmhq80p; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-23602481460so61731955ad.0;
+        Tue, 17 Jun 2025 16:19:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750202390; x=1750807190; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=c8kqTpESSgpiUk9q9r1gwFAkl1Q36FcCmMv3qMR5ZJs=;
+        b=OUmhq80pZFqs0MbizXnBpqzixTOei6T/+6Dw2b6/SH1TKjqPCF+X0RBqs+JybuGefO
+         jAUuOE/3Oy1Rj03HdTRe06uyQ/icyKfnvzoIzecTh53z9NQ8jaJighs+j0CXdGc1zD8B
+         HuTP9MFfMWgc4wWgF0YOScTg9CLFbGswU+7gKteVdWHRRQ+tKRHofJymhsbTCsBQYV2g
+         uzRinzKzrNnAevquhcsnnuZ9/M0QzKtMMIarMzh/kNvfWIzc0crxRBI2UTw+qwsmEO07
+         DSFdnsFfIdXZZgfGglRWL78nge50de/W6b1RpNxRbfkrLzR+sNGWfTjqBo5WzT723w+r
+         SAwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750202390; x=1750807190;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c8kqTpESSgpiUk9q9r1gwFAkl1Q36FcCmMv3qMR5ZJs=;
+        b=Rw9CSdkbKzuM2GRUXMOdnzH6zho4eEi6gV/fNKNyBSTgoQBa+4/BuEc39iO8KdRuTw
+         or7SlpKvwaRu+F1qZbdS1ftVgtApcG0pekSgOavkpoMNen+6t+IJLxlp0LXf1Np50Fah
+         MnxgpgwHuEXFIYEGzMpmro5k/ilx3uVbp8H9Nqc13N0AD0UnkqgcFPZ5IoZET4yJcazK
+         HQM3U9IJ8sRlHcp9vlgIQ3/8IdjWpk1+RRWwQCAIiE1roOEQLXF91gThRDzW1ZYC+Y4h
+         5aXY03DY/W/tdOIJZi0Ir1R53nn7LTY/HSeg9dKe4AxEDMTmHrpfMFya07mRpo3S9anO
+         oVPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMNjzHheEE3Vgh8p+bOBPcdwuS/2Kt+vZacRC4V9jsReFLKSVu5mKccluvQ4+dFEQsCEZAnCGTutHv@vger.kernel.org, AJvYcCUoZ6FCTse48JDcn7DE+gYiJ9YH17CjhCk1xfqgf7m2BhmMlN5Q2ln8KUNjCZGtZpgOfrAzVW5tsKYhIVnc@vger.kernel.org, AJvYcCVjXKBa4HPR97w3ZmO7uK9slD6j+h6W13j5UpZYQoozK4BhFmOcUHL89v0RcQaGcg4bZ8urjResBT4P@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ5ApPoUl+44P9547TzPU7Qxik/aM+a4IAZcfYn/aDWNnFFKJe
+	5JcjA9g9J0u14Pe4vrLDinbH2n1+Kn05tGwn0ZZcFiKG0H+mFnad9Alb
+X-Gm-Gg: ASbGnctRsPGcf7ufaQORvMk97PaecsxKLfyzUdrf618KE/Jf1t7kBygXhdWfLXT1TbY
+	n/RZcx2IVCUuKNAXVf1QsDZiMFkfM1UH1DQ1hDF1mgJ7jI1khd709Ne47yHG5+V45Otma5TNxY8
+	boNGhyLFtHu4PX708Q76ZM4xIt/VeQ3A5blIexpqK8kqpjPpSPvwzz6uHrBN5NV/qiZZJCPRIQz
+	Ajx6vP8GTz6YrE8T+F+++7IT80WSuxjZS+hXl1Ac6YSqOx9JeniSBZxWVXkdULbeGa5dZEmyTQz
+	j6y58Id2ncpwF4JTO9J5jRrXFBJNDD12pzacZrFu2a8ocrKtVtNQnYhOodGNjg==
+X-Google-Smtp-Source: AGHT+IHnlTzH8mh8gEyI3HuM9I4iPM9eqDaoTtYmvsv4BhKj8WV44E0nTVYmDn94/Ci0M7hmdQfhAg==
+X-Received: by 2002:a17:902:f68e:b0:234:cf24:3be8 with SMTP id d9443c01a7336-2366b12f541mr253789605ad.28.1750202389638;
+        Tue, 17 Jun 2025 16:19:49 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2365d88c239sm86423235ad.11.2025.06.17.16.19.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 16:19:49 -0700 (PDT)
+Date: Wed, 18 Jun 2025 07:18:32 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Rob Herring <robh@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, sophgo@lists.linux.dev, Jingbao Qiu <qiujingbao.dlmu@gmail.com>, 
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Move sophgo,cv1800b-rtc to rtc directory
+Message-ID: <mig7k5zyhmata6uvjwlwlompwf22qffwvma2nhjww3cmsmxnas@y2t5ukucs76q>
+References: <20250608224252.3902421-1-robh@kernel.org>
+ <ywln42bb3i5hyzlsmfbx3xt2kjbefqmcxytcqxdcgah77gcesi@2cdw3cgxbg4c>
+ <20250617130924.GA1678432-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250617130924.GA1678432-robh@kernel.org>
 
-Add Wildcat Lake ACPI IDs for DPTF.
+On Tue, Jun 17, 2025 at 08:09:24AM -0500, Rob Herring wrote:
+> On Mon, Jun 09, 2025 at 06:49:38AM +0800, Inochi Amaoto wrote:
+> > On Sun, Jun 08, 2025 at 05:42:51PM -0500, Rob Herring (Arm) wrote:
+> > > The $id path for the sophgo,cv1800b-rtc binding was missing part of the
+> > > path 'soc'. However, the correct place for RTC bindings (even if it's
+> > > also a "syscon") is the rtc directory, so move the binding there while
+> > > fixing the $id value.
+> > > 
+> > > Fixes: 76517429dbfd ("dt-bindings: soc: sophgo: add RTC support for Sophgo CV1800 series")
+> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > > ---
+> > >  .../bindings/{soc/sophgo => rtc}/sophgo,cv1800b-rtc.yaml        | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >  rename Documentation/devicetree/bindings/{soc/sophgo => rtc}/sophgo,cv1800b-rtc.yaml (96%)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/soc/sophgo/sophgo,cv1800b-rtc.yaml b/Documentation/devicetree/bindings/rtc/sophgo,cv1800b-rtc.yaml
+> > > similarity index 96%
+> > > rename from Documentation/devicetree/bindings/soc/sophgo/sophgo,cv1800b-rtc.yaml
+> > > rename to Documentation/devicetree/bindings/rtc/sophgo,cv1800b-rtc.yaml
+> > > index 5cf186c396c9..c695d2ff9fcc 100644
+> > > --- a/Documentation/devicetree/bindings/soc/sophgo/sophgo,cv1800b-rtc.yaml
+> > > +++ b/Documentation/devicetree/bindings/rtc/sophgo,cv1800b-rtc.yaml
+> > > @@ -1,7 +1,7 @@
+> > >  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > >  %YAML 1.2
+> > >  ---
+> > > -$id: http://devicetree.org/schemas/sophgo/sophgo,cv1800b-rtc.yaml#
+> > > +$id: http://devicetree.org/schemas/rtc/sophgo,cv1800b-rtc.yaml#
+> > >  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> > >  
+> > >  title: Real Time Clock of the Sophgo CV1800 SoC
+> > > -- 
+> > > 2.47.2
+> > > 
+> > 
+> > As the rtc syscon has a sub function for remoteproc, is it proper to
+> > move this binding into rtc subsystem?
+> 
+> Does that affect the binding (is there more to add)? Looks like an RTC 
+> from the binding.
+> 
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- drivers/acpi/dptf/dptf_power.c                          | 2 ++
- drivers/acpi/dptf/int340x_thermal.c                     | 7 +++++++
- drivers/acpi/fan.h                                      | 1 +
- drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 1 +
- drivers/thermal/intel/int340x_thermal/int3403_thermal.c | 1 +
- 5 files changed, 12 insertions(+)
+I think at least "resets" property may be added for the this, but I am
+not sure whether there will be more.
 
-diff --git a/drivers/acpi/dptf/dptf_power.c b/drivers/acpi/dptf/dptf_power.c
-index e8caf4106ff9..776914f31b9e 100644
---- a/drivers/acpi/dptf/dptf_power.c
-+++ b/drivers/acpi/dptf/dptf_power.c
-@@ -238,6 +238,8 @@ static const struct acpi_device_id int3407_device_ids[] = {
- 	{"INTC10A5", 0},
- 	{"INTC10D8", 0},
- 	{"INTC10D9", 0},
-+	{"INTC1100", 0},
-+	{"INTC1101", 0},
- 	{"", 0},
- };
- MODULE_DEVICE_TABLE(acpi, int3407_device_ids);
-diff --git a/drivers/acpi/dptf/int340x_thermal.c b/drivers/acpi/dptf/int340x_thermal.c
-index aef7aca2161d..a222df059a16 100644
---- a/drivers/acpi/dptf/int340x_thermal.c
-+++ b/drivers/acpi/dptf/int340x_thermal.c
-@@ -61,6 +61,13 @@ static const struct acpi_device_id int340x_thermal_device_ids[] = {
- 	{"INTC10D7"},
- 	{"INTC10D8"},
- 	{"INTC10D9"},
-+	{"INTC10FC"},
-+	{"INTC10FD"},
-+	{"INTC10FE"},
-+	{"INTC10FF"},
-+	{"INTC1100"},
-+	{"INTC1101"},
-+	{"INTC1102"},
- 	{""},
- };
- 
-diff --git a/drivers/acpi/fan.h b/drivers/acpi/fan.h
-index 15eba1c70e66..8a28a72a7c6a 100644
---- a/drivers/acpi/fan.h
-+++ b/drivers/acpi/fan.h
-@@ -20,6 +20,7 @@
- 	{"INTC106A", }, /* Fan for Lunar Lake generation */ \
- 	{"INTC10A2", }, /* Fan for Raptor Lake generation */ \
- 	{"INTC10D6", }, /* Fan for Panther Lake generation */ \
-+	{"INTC10FE", }, /* Fan for Wildcat Lake generation */ \
- 	{"PNP0C0B", } /* Generic ACPI fan */
- 
- #define ACPI_FPS_NAME_LEN	20
-diff --git a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-index 0e07693ecf59..ecb4ea443b9b 100644
---- a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-+++ b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-@@ -690,6 +690,7 @@ static const struct acpi_device_id int3400_thermal_match[] = {
- 	{"INTC1068", 0},
- 	{"INTC10A0", 0},
- 	{"INTC10D4", 0},
-+	{"INTC10FC", 0},
- 	{}
- };
- 
-diff --git a/drivers/thermal/intel/int340x_thermal/int3403_thermal.c b/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
-index 5a925a8df7b3..ba63796761eb 100644
---- a/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
-+++ b/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
-@@ -276,6 +276,7 @@ static const struct acpi_device_id int3403_device_ids[] = {
- 	{"INTC1069", 0},
- 	{"INTC10A1", 0},
- 	{"INTC10D5", 0},
-+	{"INTC10FD", 0},
- 	{"", 0},
- };
- MODULE_DEVICE_TABLE(acpi, int3403_device_ids);
--- 
-2.49.0
-
+Regards,
+Inochi
 
