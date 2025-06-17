@@ -1,87 +1,93 @@
-Return-Path: <linux-kernel+bounces-690201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330A7ADCD08
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:24:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 122C5ADCD05
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 813383A2D52
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:18:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBB6216C86B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE751509AB;
-	Tue, 17 Jun 2025 13:19:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE1B2E06DB;
+	Tue, 17 Jun 2025 13:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSWSeLSJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEB32E717A
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE892E717B;
+	Tue, 17 Jun 2025 13:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750166345; cv=none; b=e06/cJIXEbc5qzPlOOwVxMyjZa24wqoRK9VWNxEyFtA451/hfqDIQCCsI9/82xUCAejNTkpPsZhOcF8hhKRnv/vBX0H5hlqTFhfNmJuUBUf0aPsuY/vihP/c92WY3F6juguslJ+6EBe4bvBvLcfub14GYf7GJL1TumXmDQsqD04=
+	t=1750166401; cv=none; b=Nw4jsjTt+1Mi5V7R+kRL2FAAquBSWgckw6/pXTwzGxslznlHBFWu4cQCgNPvwFf8rSQugoQlFkiQO4oUjrO6qfmGg8BvVJreoUueDnwQGFFjgn0/MyUiqa9aTITAO6VgZ3C3gcdGiPF0giQRRscGxiSA2mB4GmFuUKXPRBx+g8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750166345; c=relaxed/simple;
-	bh=TyyrTw3NmEN7mhIHwCxdbVCQN9JcVNVgZPjsXpka6So=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UTGALHMwl/fQlTKqvb+pxRzJWlf1ilq+qB/HZbZ2cgyU6QA+FcbgfyWzCqR9UvLj3Nh/NOy0+Yvqjy0llbegZBeTrCZdUawC3ZV2OwiY5sUDsxFwxJEutb9gd2wMUkZwJAvlSCHHKrpwaGU5KmaiK3bdkVd91KDK5+oz7vEnzPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ddbb34fc1cso67760095ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 06:19:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750166343; x=1750771143;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CGJVVR9eAKrY7klNRCMqQBge3menrrFL04+xC0mi52w=;
-        b=h/BVzbpL1XOdxYToKKpaBRmS+hpBu7sYxh5XWvRwZK+BoFRs55M191kvP1eJupspZg
-         X99f6tk0MSNX0d+OfiLrvQ20bknabgkV6V277nz/s/PzMUdq09ivCki/VCgd/+YZGaEZ
-         ROjOypDbyMloutCL7JSeY7uJbcjlyYHlKK14+HqxpDUgMNpvjiWR3NgPiP9vIlBRf+M6
-         haRxI5gc5Oj9RURqWy3XfBEEdEuZSdeI3deu3IZW0kT+jj+S3dlQM9zlkFdMKpcN5ub2
-         R5889Q990JCSLNXpEXo6kjXll7RuO96cUV2EJdG3FRXaRB7f36d0pA6vj+XSdrJiILHS
-         QEHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxBVIdVLH0GuJS7fps5SSoa5HR3F8Ay9HzLvnc7PdC36ODXmEXM3nc4P21AAi4le8bJfNdl7Du8DKaBk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrrD0jXhhNOmNc429Um2PrkBPDbaVJa50Dg+EUlGOLo1TlapAx
-	186Hl8fcckuxp1CyxfbI9yAr2R/tcd+wProBNNuwowGenbXAero4MPQvCvcZy95U2/N49VxzI5x
-	W95Ect82XAsj2p/6xkizGuIt6nzzNeiO+mousfI1TRQtsVIdW9rOkeWG1Q5Q=
-X-Google-Smtp-Source: AGHT+IEsCpdND2d8+4FVYeeLD9JC7tfKQdkB7zgRrCUI4UM3e8C8sUBKdV5mCHx90e6tkTGy3Rx9v5I+FSlefWWgqQ1meKsUXMml
+	s=arc-20240116; t=1750166401; c=relaxed/simple;
+	bh=rT+q1cuJk4X808ltKP0mkhT3jOCWnDD6rLSYm7eJiSU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=j6njA9hPTqDfuwQDUToL5tFoOjw/5UFOkxgjxDWIGwjmm7qxS47mUEC5AwkfRreXwfAYKCL/sNh+qmZDRBZMXF3+ghhgAnpOVo2ZMtmbNF54a+0ISbYOGwEqU8QsEC6VOgVIEcpWbRUvZG7SMnscrTn7NOsJ0+uAP60MO+L3uZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSWSeLSJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20AAAC4CEE3;
+	Tue, 17 Jun 2025 13:20:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750166401;
+	bh=rT+q1cuJk4X808ltKP0mkhT3jOCWnDD6rLSYm7eJiSU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=OSWSeLSJ6MXSVQhDACyJSWXbm0jojPUBCKBQR149UO1tEgpfAM2kRGgx0dwZeJz2D
+	 3IqjELK5sY6fK6ZPiRamigQDDhtW0Lczth9VK4E8vfwGCSOh4rV7wr1DaErBPtUpYj
+	 gUXn4kZyrCYiYR5MDR5HbzpksmN+KGsNScuxPifEpgQJ3tvms+jvD/JvykAB3u+pJL
+	 PhI/TysnqJq8COWLyDCFPap0d98nxzivib/5zohS/s1hB/60yDzNMPqtxY7yZgHGQ0
+	 OupkFIyU41Z0r6eTpKYxHG8DllzpJEVRCjVg1sEjj4slZoGHjgAkRvtJUPwnyek6aW
+	 uYd8YSjGtr6Mg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF25380DBF0;
+	Tue, 17 Jun 2025 13:20:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:5e0e:b0:3de:12ff:3617 with SMTP id
- e9e14a558f8ab-3de12ff40dcmr78918675ab.15.1750166343232; Tue, 17 Jun 2025
- 06:19:03 -0700 (PDT)
-Date: Tue, 17 Jun 2025 06:19:03 -0700
-In-Reply-To: <tencent_5C66A03CF936689664374C4A0A754B765709@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68516b47.a70a0220.395abc.021c.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] general protection fault in pick_link (2)
-From: syzbot <syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3] net: phy: Add c45_phy_ids sysfs directory
+ entry
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175016642975.3127577.11877299160287159944.git-patchwork-notify@kernel.org>
+Date: Tue, 17 Jun 2025 13:20:29 +0000
+References: <20250613131903.2961-1-yajun.deng@linux.dev>
+In-Reply-To: <20250613131903.2961-1-yajun.deng@linux.dev>
+To: Yajun Deng <yajun.deng@linux.dev>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+Hello:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Reported-by: syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com
-Tested-by: syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com
+On Fri, 13 Jun 2025 21:19:03 +0800 you wrote:
+> The phy_id field only shows the PHY ID of the C22 device, and the C45
+> device did not store its PHY ID in this field.
+> 
+> Add a new phy_mmd_group, and export the mmd<n>_device_id for the C45
+> device. These files are invisible to the C22 device.
+> 
+> Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
+> 
+> [...]
 
-Tested on:
+Here is the summary with links:
+  - [net-next,v3] net: phy: Add c45_phy_ids sysfs directory entry
+    https://git.kernel.org/netdev/net-next/c/170e4e3944aa
 
-commit:         9afe6529 Merge tag 'x86_urgent_for_6.16-rc3' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14eac50c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6a237c32900fc479
-dashboard link: https://syzkaller.appspot.com/bug?extid=1aa90f0eb1fc3e77d969
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1098c370580000
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Note: testing is done by a robot and is best-effort only.
+
 
