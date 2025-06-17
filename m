@@ -1,110 +1,144 @@
-Return-Path: <linux-kernel+bounces-690589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 183A3ADD710
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:40:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9574DADD6E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE63B19E3A23
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:26:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DDE840233A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484E02F94AB;
-	Tue, 17 Jun 2025 16:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZ9QONYY"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3752EE615;
+	Tue, 17 Jun 2025 16:21:40 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2302F94A5;
-	Tue, 17 Jun 2025 16:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADCC2DFF02
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 16:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750177265; cv=none; b=LZ81R0ATxgL8P1rYNreVRHgFB0AFrfiqHACUVG5vJ0h8ApHagXpMys360y31PIa6c8f5i7eVMeIoKRnqFvoITEoiZ9fbCS56kXE3SkgWvQyZKYhiP6yn97wadAP6emRzvps5uW5Pwd12aznQD/1dCJFhmyL/+0rtMiHOMu3aoFA=
+	t=1750177299; cv=none; b=MfVHUbEz7D2c6eM2sOpxPBNnJ5yMfz9FjlnuF//OYj3lwSpi3ABKwugfvBVJDduPczwFRgPiqm2YRphoD8linz5f+OkM3b5M22cf4LQ/8j02darfmKXM0EX6p7LG9JPhJAg7aGzRfSFpNauzmtYLcovtpZf9pf5NsKOQPFImLIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750177265; c=relaxed/simple;
-	bh=+0EiuodKDjQRXvKmnKZvg2BPcSQjv+ftIpd/mBBfX5Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lnn7lAGpk2Qo4mswvMoWfuQzk3Vo8otIknhpJcl8wgmJBvAJN8QGJ+SMjJCQTZiJsjtlV8l+YiCVh8hj/Cbvkm/p1b58L75FNE1CntJ5s3ZV15cqTdP8fE/QTeVOthZCVk7UTuhL/q6EXiEbx1/HtvKDWHjK1XylwZqszdr32D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KZ9QONYY; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54e98f73850so5632762e87.1;
-        Tue, 17 Jun 2025 09:21:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750177262; x=1750782062; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+0EiuodKDjQRXvKmnKZvg2BPcSQjv+ftIpd/mBBfX5Y=;
-        b=KZ9QONYYqo3XWngH09LTo8CzLHphXlOOxpydfoZ3ldJpy6WQyzy1X5hyqOb1abgUZM
-         76xsrMFKUu1dh6ZoIr9dWB+XCpDzPHmqWlkAwAqK6C8x6/Cq4r3yudYNX+aa7cTwW+d2
-         3lmWOm+Iq+mHhK+WscbZIRpaNaZi8rUeIu75j0KrNvfOKt8yDTs+dhV8yruMrp4tOl1V
-         vkzfTYQGoACGUNbc+Gq2YBD2+RnjjfDDLt0mVDBXNzbPnbcwd/Q3g3U+OQ0KxHAHH2QG
-         Ob3zUHIRt8e9G5JDwADwhtukesk/VVzn+DCz/MnT9/+4h3KzhlUZkW8QgnS1zAOiKjk7
-         0ihw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750177262; x=1750782062;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+0EiuodKDjQRXvKmnKZvg2BPcSQjv+ftIpd/mBBfX5Y=;
-        b=QhmbLAz/sPEncr3HuYIxKEGzvIkKWdDbOmr3z8jokQO/sMdOU3JLYHPUWqyV6EM2lv
-         SmATPIGSAcRNAad5Lg62lETYmsbxDpfgZhezSx0c+Q4P1M2XpzkDeDGHUyItW6J7FdJA
-         ztN5OBRRRRwOPIDhgLMhayh9/rOoD/UjJCyac9aSpMt77Szni2gZjMDeQyHDfF0MYLpc
-         x8Pje9i9e+q+Q7Oz4QenJoXf9Wi2o1MzosRvB7iOGLZEjhuYXxgg592mXoWwGQKWVhZT
-         gNEoLk71cKjW5ywCNfJO9cIf2gb74Yu/brmnVCpd79M3QbnzuGcg3s4GXALR0k47u5X6
-         jwRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWN87DixxNUiRzDa1qkTOQl+HuCsbNr0m0dhs2SHRY1vfPtZW/X7Vhy6Xr/jqsARLCXHWFL/sMqmDR322A=@vger.kernel.org, AJvYcCXdAwYqrA0OHi+d/WLRgC7xaXcIN2K8z52+hhvRyPHbszOJUzGJRV1qdcqE7AHS3T/AcOBG3zFgvoxX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYkC86htlrpJ7NEVrGWorhtgAQ6I/NvK5FhGL3vbYMO2Ik7jNM
-	a+WUjrLHLlpIBnOm3BEUAb99R3p+kizSpKzzLTsZUmvKRDXHCfpI6EmCjE/LiacE5IL410dqZXP
-	tEGEkOnCFYLo4/9seDF11vqvyZseMiRcAJkZ4
-X-Gm-Gg: ASbGncvfnUcaviMm61hQJvJoQjf+BgxAnl6XBVTrcqbY7f9K4MEmw+XE/wN/xkvJtBH
-	Ft0zIji3YN0s4o0fKRHaEy8sujsKJE/TWrRM99kl6S+jnDnkl/jYzjVfY/7tfQiZ84IYh3DbvBI
-	8N2J+/K15aAJOWx9Q06br+dSPRTbzEiN0J2lDenT+4288=
-X-Google-Smtp-Source: AGHT+IG7kHn9wUASuEcAGOhvKtnrgjD7mWSbEvFbsJd8/yns37+K9r/fTfUXYJJ/xsadGrc4iYFuZmtHhigig7Rgln8=
-X-Received: by 2002:a05:6512:e9d:b0:553:35ad:2f2d with SMTP id
- 2adb3069b0e04-553b6ea582amr3508106e87.18.1750177261784; Tue, 17 Jun 2025
- 09:21:01 -0700 (PDT)
+	s=arc-20240116; t=1750177299; c=relaxed/simple;
+	bh=jo2vquKKceSel2RP+1YQD3H1nFoRTttsM34gR8sNwvU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tNjkA2tK507kfAl5K5PAG/m2DDOCT6zwKftgJOlpJOMDt04GPB3UUAMZB2DnFTk9xKNZ3uBVGg0TpaK3rTID6b+pqOO227+KUpV96n367hk5ZazSnNbOAw4AZ4cc9x+Hg9BEsnDZ9yd8yzzymT8FDv2IXng/HzKCzavl+sPdde8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bMBs74qxvz6L5Sh;
+	Wed, 18 Jun 2025 00:19:23 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 31098140119;
+	Wed, 18 Jun 2025 00:21:34 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 17 Jun
+ 2025 18:21:33 +0200
+Date: Tue, 17 Jun 2025 17:21:32 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J . Wysocki"
+	<rafael@kernel.org>, <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
+	Ben Horgan <ben.horgan@arm.com>
+Subject: Re: [PATCH 4/5] cacheinfo: Expose the code to generate a cache-id
+ from a device_node
+Message-ID: <20250617172132.00002844@huawei.com>
+In-Reply-To: <20250613130356.8080-5-james.morse@arm.com>
+References: <20250613130356.8080-1-james.morse@arm.com>
+	<20250613130356.8080-5-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616085716.158942-1-ubizjak@gmail.com> <aFF_UwJ2XlFQSZOi@kernel.org>
- <26b8939e-796a-4581-a41c-42e3582326bd@intel.com>
-In-Reply-To: <26b8939e-796a-4581-a41c-42e3582326bd@intel.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Tue, 17 Jun 2025 18:20:49 +0200
-X-Gm-Features: AX0GCFsaTkmgLY1QIqNbjCnp1LLkhTXDjUbXGOfS6PB_sPpWoSZ6_PXBBrayjys
-Message-ID: <CAFULd4YzC1xe0mVmJhWAk=sxhsctpZUxQGyRKccW-VF7OhkjKg@mail.gmail.com>
-Subject: Re: [PATCH] x86/sgx: Use ENCLS mnemonic in <kernel/cpu/sgx/encls.h>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	"H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Jun 17, 2025 at 5:01=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
- wrote:
->
-> On 6/17/25 07:44, Jarkko Sakkinen wrote:
-> > I don't really see how this is that useful. That said, f a bug fix or
-> > feature used encls mnemonic, I'd had no problems with acking it.
->
-> It's not _that_ useful.
->
-> But old assemblers that we still want to use *NEVER* have support for
-> newfanlged instructions, so we always add new instructions with ".byte".
-> Then, a few years down the road when we've moved to just old assemblers
-> instead of super old assemblers, we move to the real instruction names.
+On Fri, 13 Jun 2025 13:03:55 +0000
+James Morse <james.morse@arm.com> wrote:
 
-That, and the code becomes self-documenting. You don't have to scratch
-your head what the .byte stream represents when reading assembly.
+> The MPAM driver identifies caches by id for use with resctrl. It
+> needs to know the cache-id when probe-ing, but the value isn't set
+> in cacheinfo until the corresponding CPU comes online.
+> 
+> Expose the code that generates the cache-id. This allows the MPAM
+> driver to determine the properties of the caches without waiting
+> for all CPUs to come online.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+Feels to me like this needs to come with the user.
+The earlier patches at least expose it via existing infrastructure
+this isn't used at all yet...
 
-Uros.
+> ---
+>  drivers/base/cacheinfo.c  | 15 +++++++++++----
+>  include/linux/cacheinfo.h |  1 +
+>  2 files changed, 12 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+> index d8e5b4c7156c..6316d80abab8 100644
+> --- a/drivers/base/cacheinfo.c
+> +++ b/drivers/base/cacheinfo.c
+> @@ -188,7 +188,7 @@ static bool cache_node_is_unified(struct cacheinfo *this_leaf,
+>  #define arch_compact_of_hwid(_x)	(_x)
+>  #endif
+>  
+> -static void cache_of_set_id(struct cacheinfo *this_leaf, struct device_node *np)
+> +unsigned long cache_of_get_id(struct device_node *np)
+Bit confusing to have cache_of_set_id() call cache_of_get_id() like this because
+they are in no way mirrors of each other.   Rename?
+(and naturally I'm providing no suggestions :)
+
+>  {
+>  	struct device_node *cpu;
+>  	u32 min_id = ~0;
+> @@ -200,7 +200,7 @@ static void cache_of_set_id(struct cacheinfo *this_leaf, struct device_node *np)
+>  		id = arch_compact_of_hwid(id);
+>  		if (FIELD_GET(GENMASK_ULL(63, 32), id)) {
+>  			of_node_put(cpu);
+> -			return;
+> +			return ~0UL;
+>  		}
+>  		while (1) {
+>  			if (!cache_node)
+> @@ -214,8 +214,15 @@ static void cache_of_set_id(struct cacheinfo *this_leaf, struct device_node *np)
+>  		}
+>  	}
+>  
+> -	if (min_id != ~0) {
+> -		this_leaf->id = min_id;
+> +	return min_id;
+> +}
+> +
+> +static void cache_of_set_id(struct cacheinfo *this_leaf, struct device_node *np)
+> +{
+> +	unsigned long id = cache_of_get_id(np);
+> +
+> +	if (id != ~0UL) {
+> +		this_leaf->id = id;
+>  		this_leaf->attributes |= CACHE_ID;
+>  	}
+>  }
+> diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
+> index c8f4f0a0b874..9c959caf8af8 100644
+> --- a/include/linux/cacheinfo.h
+> +++ b/include/linux/cacheinfo.h
+> @@ -112,6 +112,7 @@ int acpi_get_cache_info(unsigned int cpu,
+>  #endif
+>  
+>  const struct attribute_group *cache_get_priv_group(struct cacheinfo *this_leaf);
+> +unsigned long cache_of_get_id(struct device_node *np);
+>  
+>  /*
+>   * Get the cacheinfo structure for the cache associated with @cpu at
+
 
