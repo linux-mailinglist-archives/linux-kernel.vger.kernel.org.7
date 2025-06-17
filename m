@@ -1,142 +1,235 @@
-Return-Path: <linux-kernel+bounces-690716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C8AADDB5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:34:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54CC4ADDB66
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5231E3B68F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:34:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E728417A754
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D67278165;
-	Tue, 17 Jun 2025 18:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E16A2F94B2;
+	Tue, 17 Jun 2025 18:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCuFygZp"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="k5DEhCJ8"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE452219A79;
-	Tue, 17 Jun 2025 18:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8614B285059;
+	Tue, 17 Jun 2025 18:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750185266; cv=none; b=lDrQeQ83lHiohx3yXSILYHKBpB+rVm2//SvxC68nFB+Vw8p6dkZ6+ZNfVUwsK4FNUXb/wiXLLwMAIqbWUWq18yra+NkwzH+LRDmmwxEiQSRQbKAREXQQx6BSxwOsonH070zTaQoyhGBALT8dZ0DSQVv61+sr8FmJ/6C/OTOrSH8=
+	t=1750185328; cv=none; b=guGIf1BHFMtsJ2Y1MJtz/9TckVA45KQDmVXMP3tikLOwcHOSZ4KfpRKErLyKWhBSkpbMo+Pw5/Vd9wTklVvBk7HsFthZFQk9MOIjf3XqlFrryvi+kgeZuwwFmB7dYigUGcMarJrlC3YVARDbfBEAy9mpBKqgjNGzCzdc9s4FiD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750185266; c=relaxed/simple;
-	bh=lKT+LivCZpChLEpwppAaxNEigjPq2YzeLeNedsDCFu4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hVQYHYVWsWrS/EN05zi7SzOqZgT7raI81zVTl05CvP1QW8f0To/5wA3ljd5nmlqfCe421h+/NeIhlLblJ1tjFnU4KqjkBDGwoB9IET0hiXJdG+bRUStZIjGMxOsz/Psif/CteliwgRLV8uOI2CPzPN3Hh+6krTOeXRZT9KWElTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jCuFygZp; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ad93ff9f714so1096939666b.2;
-        Tue, 17 Jun 2025 11:34:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750185263; x=1750790063; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lKT+LivCZpChLEpwppAaxNEigjPq2YzeLeNedsDCFu4=;
-        b=jCuFygZpRSIjAut91bwBlAafs92kKU5yPwM+5YyxQou3DBJcAtXQYrblXhzZah2KnZ
-         7RS0GtZpdEyL4CnOhiACHYJ3quGPsA6My++iLGRyoHIim488oOeN3SthrM3lOQNgFU2J
-         cc00mjgfvPvzkFs180FX+QbltyD17BBDkjtyRH11dMI/qlinQyZ4C13IYZXIGzpqNvGR
-         Al+uPcYaTDPDMtp+27q79TXBPQ/CbXfGAbE9AKRkzJ+dpTp5n8uWZqJhpOx5O0DChZSX
-         d5ulq+jFsso5O0MXF+YHHFF61wOhClcVPbwuKpTt1k20sKrUHZsTr6tT1PHLqEbzBzWb
-         IOKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750185263; x=1750790063;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lKT+LivCZpChLEpwppAaxNEigjPq2YzeLeNedsDCFu4=;
-        b=lGhDBASZ/edQ7FkKWyWa5YcT65JshBgqT5vyjaQXm4Q+uQcYz4zdzoAk8AZDBTImvd
-         Kb4G4uHxQmCIIpUxENp0820xrHGJ8i91c+b9T/v4Oo3fFaQRBRoAYtw6AwcKTaLBkPYs
-         PX6mjq7rpD/VLklMjCHCqUiDzUNLbSHiIznsC1RmAJ3vA/LmepOuIm+2A9EBR74hb7TN
-         S5unwVmjky3OxUg7O2if8IrUgBCRcbCLR4wge6bk4vlslpFYlx5ORd1o/NYBkPB1qLm6
-         MXBJmD0K/oJDjtkLamvLdAdvxq82tAG1vmsyuoC/67qpQERmNPJ4MbWDXw9X0AqOnd0o
-         V/sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUULCqAFSVMudGqNgJRvl3N0EUuNrZ55nlhfOFqBULToO2A6Grz2Bj8D7o1bkcl/IHoY1rUPjiiw68=@vger.kernel.org, AJvYcCW/LFW9XlrYi/0uZDutc4UgPbhdMkZY0xCV/cYjYkcZXUbFCyQXC3aKBmbfh/vbs45ZzbEsl98fwm5p8T1r@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTzucXsXmfBrg7ZHMV501WeKI/FaYVOdkMi1ASdfzSI6aHxxhi
-	kUYvzGTpFZxHTVd4jXtsDoW1akvpuvD5WYDsUDJDDlTaZ5O0xn2Zb23rHiifObhUvsMwfrEKHKp
-	xy8GV0ir+qYbfw+fqqn9V2BuwQmWjWDhmv3W2
-X-Gm-Gg: ASbGncvFizoS15JExNXeiuUNyffxIn6oKLV5iVoEi3OmFwdawWzl8VOIT8NQ8G0YRaZ
-	i3ifS4QGderPcka2qdb0OvEnWLDWXLPMejdl1pC8McklKB1fC2WHZCnSVhhrey0ygea/Y+soCnQ
-	11rgzy2lYWWZUbK3c0m8N1TuoGIplrKdbM0QjPowMdP3o=
-X-Google-Smtp-Source: AGHT+IHpKXFzdzDT6KNbCdcOO5MoI7epaUZvX6IPgz0Yb0HPyzXTrHxEJLjX3+yQBj8mcAwUbIikY6JJtqMplZviVVk=
-X-Received: by 2002:a17:907:72cc:b0:acf:15d:2385 with SMTP id
- a640c23a62f3a-adfad357b7bmr1483062166b.16.1750185263083; Tue, 17 Jun 2025
- 11:34:23 -0700 (PDT)
+	s=arc-20240116; t=1750185328; c=relaxed/simple;
+	bh=/WPYtty7a8Dms1a0jcXXWobkgi0frATWzN65+CF7Yj4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GYn9e5xRkH/H8NfUjIWID77w90ovG8rz7T6OxCvFBmojTTVhdiL74TAcnL00pYdZ2c4BudwQtttyRACNeRKXjVZsKjGIZU6BNYFiajyJYZc81/1NTA9BJc4YzD09GVFu0nK93CdwtWEwWgx+L8dC+D6r7ivWAUtgUlLTRGtR/cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=k5DEhCJ8; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=T9pQy4VMXN9wbBGoA72Os1QUPdTimwEEzZgUSWsowo4=; b=k5DEhCJ8qZjQStm10oTMtpfcWx
+	CcUWDxG6CsVAUTmwUqNh82zw0r8uGpIwGdsh/G9hVeNKmfC0XEzAMfEufBAXo/hMKK31wa3LntWQm
+	gH1KTiRN6rkv68etAhJu65MuNPLFSeeJgHXvbdbLJyne+HVMyFcntggZb9D5NBX5ZVnf7bxzQE97n
+	N+TTygMAQU1aa1xvEqJujE8C4wjl8vnBUqPXpLMn0YsfMt5BP/UZr3mT7WUQYPspQMqddDKjFmH/5
+	q4Voi9TEvdL3Z0uRmQ8gwLAXCCOpvn+hZlpSUv5w2nGyy/IR0Ml8icWhv1McJiN8Ddxr20E10yKtY
+	LaaJ3fnQ==;
+Received: from [191.204.192.64] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uRb99-004j89-TX; Tue, 17 Jun 2025 20:35:00 +0200
+From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH RESEND v4 0/7] futex: Create set_robust_list2
+Date: Tue, 17 Jun 2025 15:34:17 -0300
+Message-Id: <20250617-tonyk-robust_futex-v4-0-6586f5fb9d33@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616090423.575736-1-andriy.shevchenko@linux.intel.com>
- <FR3P281MB1757C6A610D39EA737A19EFBCE70A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
- <CAHp75Ve68H448v3Tgv930yoMYCCKVC3kefuP+Rermj7SaiP41g@mail.gmail.com> <FR3P281MB175775DBE90C5469637F3C66CE73A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-In-Reply-To: <FR3P281MB175775DBE90C5469637F3C66CE73A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 17 Jun 2025 21:33:46 +0300
-X-Gm-Features: AX0GCFsDji8BZdcobaIKwiBIkoOAcTydMFV4jTG0Oi7REx-n2SYPb2Qz9s_nj4Q
-Message-ID: <CAHp75Ve0aQLaRS1-J5WoCxUAfX+Y=s2oj4ZkVvUG1XysXopZxw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] iio: imu: inv_icm42600: Convert to uXX and sXX
- integer types
-To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
+ Davidlohr Bueso <dave@stgolabs.net>, Shuah Khan <shuah@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+ Waiman Long <longman@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-api@vger.kernel.org, kernel-dev@igalia.com, 
+ =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+X-Mailer: b4 0.14.2
 
-On Tue, Jun 17, 2025 at 5:43=E2=80=AFPM Jean-Baptiste Maneyrol
-<Jean-Baptiste.Maneyrol@tdk.com> wrote:
-> >From: Andy Shevchenko <andy.shevchenko@gmail.com>
-> >Sent: Monday, June 16, 2025 16:33
-> >On Mon, Jun 16, 2025 at 5:16=E2=80=AFPM Jean-Baptiste Maneyrol
-> ><Jean-Baptiste.Maneyrol@tdk.com> wrote:
-> >
-> >> thanks a lot for having done all the work.
-> >
-> >Please, avoid top-posting!
-> >
-> >> Do you think it is possible to add a fixes tag so it can be backported=
- to ease automatic backport of further patches?
-> >> Otherwise for sure all further fixes will have to be backported manual=
-ly.
-> >
-> >The idea behind the series that it may depend on some kind of
-> >cleanups. In such a case (according to Greg KH) no need to have Fixes
-> >tag on a cleanup, because it's confusing. On the contrary the
-> >infrastructure for stable kernels will catch this up. You need to
-> >follow the Documentation on how to submit for stable (basically the
-> >main hint is to use stable@ in the Cc line _inside_ the commit
-> >message, as a tag).
-> >
-> >> The driver code is full of intXX_t and uintXX_t types which is
-> >> not the pattern we use in the IIO subsystem. Switch the driver
-> >> to use kernel internal types for that. No functional changes.
+This patch adds a new robust_list() syscall. The current syscall
+can't be expanded to cover the following use case, so a new one is
+needed. This new syscall allows users to set multiple robust lists per
+process and to have either 32bit or 64bit pointers in the list.
 
-> >> As noted before the pattern is used in less than 10% files in IIO,
-> >> So it's safe to assume that IIO prefers uXX/sXX types over C99 ones.
-> >
->
-> it is good for me if we can add Cc to stable.
-> I don't know if I need to add the Cc tag here or when a fixed patch will
-> require the rework. In doubt, here it is.
->
-> Acked-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-> Cc: stable@vger.kernel.org
+* Use case
 
-It makes no sense here. This is a standalone change. It's not part of
-any "fixes" series. You need to attach this patch to your series as
-patch 1 and mark Cc stable all of the patches.
+FEX-Emu[1] is an application that runs x86 and x86-64 binaries on an
+AArch64 Linux host. One of the tasks of FEX-Emu is to translate syscalls
+from one platform to another. Existing set_robust_list() can't be easily
+translated because of two limitations:
 
---=20
-With Best Regards,
-Andy Shevchenko
+1) x86 apps can have 32bit pointers robust lists. For a x86-64 kernel
+   this is not a problem, because of the compat entry point. But there's
+   no such compat entry point for AArch64, so the kernel would do the
+   pointer arithmetic wrongly. Is also unviable to userspace to keep
+   track every addition/removal to the robust list and keep a 64bit
+   version of it somewhere else to feed the kernel. Thus, the new
+   interface has an option of telling the kernel if the list is filled
+   with 32bit or 64bit pointers.
+
+2) Apps can set just one robust list (in theory, x86-64 can set two if
+   they also use the compat entry point). That means that when a x86 app
+   asks FEX-Emu to call set_robust_list(), FEX have two options: to
+   overwrite their own robust list pointer and make the app robust, or
+   to ignore the app robust list and keep the emulator robust. The new
+   interface allows for multiple robust lists per application, solving
+   this.
+
+* Interface
+
+This is the proposed interface:
+
+	long set_robust_list2(void *head, int index, unsigned int flags)
+
+`head` is the head of the userspace struct robust_list_head, just as old
+set_robust_list(). It needs to be a void pointer since it can point to a normal
+robust_list_head or a compat_robust_list_head.
+
+`flags` can be used for defining the list type:
+
+	enum robust_list_type {
+	 	ROBUST_LIST_32BIT,
+		ROBUST_LIST_64BIT,
+	 };
+
+`index` is the index in the internal robust_list's linked list (the naming
+starts to get confusing, I reckon). If `index == -1`, that means that user wants
+to set a new robust_list, and the kernel will append it in the end of the list,
+assign a new index and return this index to the user. If `index >= 0`, that
+means that user wants to re-set `*head` of an already existing list (similarly
+to what happens when you call set_robust_list() twice with different `*head`).
+
+If `index` is out of range, or it points to a non-existing robust_list, or if
+the internal list is full, an error is returned.
+
+* Implementation
+
+The implementation re-uses most of the existing robust list interface as
+possible. The new task_struct member `struct list_head robust_list2` is just a
+linked list where new lists are appended as the user requests more lists, and by
+futex_cleanup(), the kernel walks through the internal list feeding
+exit_robust_list() with the robust_list's.
+
+This implementation supports up to 10 lists (defined at ROBUST_LISTS_PER_TASK),
+but it was an arbitrary number for this RFC. For the described use case above, 4
+should be enough, I'm not sure which should be the limit.
+
+It doesn't support list removal (should it support?). It doesn't have a proper
+get_robust_list2() yet as well, but I can add it in a next revision. We could
+also have a generic robust_list() syscall that can be used to set/get and be
+controlled by flags.
+
+The new interface has a `unsigned int flags` argument, making it
+extensible for future use cases as well.
+
+It refuses unaligned `head` addresses. It doesn't have a limit for elements in a
+single list (like ROBUST_LIST_LIMIT), it destroys the list as it is parsed to be
+safe against circular lists.
+
+* Testing
+
+This patcheset has a selftest patch that expands this one:
+https://lore.kernel.org/lkml/20250212131123.37431-1-andrealmeid@igalia.com/
+
+Also, FEX-Emu added support for this interface to validate it:
+https://github.com/FEX-Emu/FEX/pull/3966
+
+Feedback is very welcomed!
+
+Thanks,
+	André
+
+[1] https://github.com/FEX-Emu/FEX
+
+Changelog:
+- Rebased on top of new futex work (private hash)
+v4: https://lore.kernel.org/lkml/20250225183531.682556-1-andrealmeid@igalia.com/
+
+- Refuse unaligned head pointers
+- Ignore ROBUST_LIST_LIMIT for lists created with this interface and make it
+  robust against circular lists
+- Fix a get_robust_list() syscall bug for getting the list from another thread
+- Adapt selftest to use the new interface
+v3: https://lore.kernel.org/lkml/20241217174958.477692-1-andrealmeid@igalia.com/
+
+- Old syscall set_robust_list() adds new head to the internal linked list of
+  robust lists pointers, instead of having a field just for them. Remove
+  tsk->robust_list and use only tsk->robust_list2
+v2: https://lore.kernel.org/lkml/20241101162147.284993-1-andrealmeid@igalia.com/
+
+- Added a patch to properly deal with exit_robust_list() in 64bit vs 32bit
+- Wired-up syscall for all archs
+- Added more of the cover letter to the commit message
+v1: https://lore.kernel.org/lkml/20241024145735.162090-1-andrealmeid@igalia.com/
+
+---
+André Almeida (7):
+      selftests/futex: Add ASSERT_ macros
+      selftests/futex: Create test for robust list
+      futex: Use explicit sizes for compat_exit_robust_list
+      futex: Create set_robust_list2
+      futex: Wire up set_robust_list2 syscall
+      futex: Remove the limit of elements for sys_set_robust_list2 lists
+      selftests: futex: Expand robust list test for the new interface
+
+ arch/alpha/kernel/syscalls/syscall.tbl             |   1 +
+ arch/arm/tools/syscall.tbl                         |   1 +
+ arch/m68k/kernel/syscalls/syscall.tbl              |   1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl        |   1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl          |   1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl          |   1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl          |   1 +
+ arch/parisc/kernel/syscalls/syscall.tbl            |   1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl           |   1 +
+ arch/s390/kernel/syscalls/syscall.tbl              |   1 +
+ arch/sh/kernel/syscalls/syscall.tbl                |   1 +
+ arch/sparc/kernel/syscalls/syscall.tbl             |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl             |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl             |   1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl            |   1 +
+ include/linux/compat.h                             |  12 +-
+ include/linux/futex.h                              |  16 +-
+ include/linux/sched.h                              |   5 +-
+ include/uapi/asm-generic/unistd.h                  |   2 +
+ include/uapi/linux/futex.h                         |  24 +
+ kernel/futex/core.c                                | 165 ++++-
+ kernel/futex/futex.h                               |   5 +
+ kernel/futex/syscalls.c                            |  85 ++-
+ kernel/sys_ni.c                                    |   1 +
+ scripts/syscall.tbl                                |   1 +
+ .../testing/selftests/futex/functional/.gitignore  |   1 +
+ tools/testing/selftests/futex/functional/Makefile  |   3 +-
+ .../selftests/futex/functional/robust_list.c       | 706 +++++++++++++++++++++
+ tools/testing/selftests/futex/include/logging.h    |  38 ++
+ 29 files changed, 1026 insertions(+), 53 deletions(-)
+---
+base-commit: 3ee84e3dd88e39b55b534e17a7b9a181f1d46809
+change-id: 20250225-tonyk-robust_futex-60adeedac695
+
+Best regards,
+-- 
+André Almeida <andrealmeid@igalia.com>
+
 
