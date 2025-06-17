@@ -1,250 +1,150 @@
-Return-Path: <linux-kernel+bounces-689645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E95B6ADC48E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:22:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5CAFADC485
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1AE91888CD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:22:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25EBF16CA21
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56490296173;
-	Tue, 17 Jun 2025 08:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564D7292908;
+	Tue, 17 Jun 2025 08:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W9+d0LI8"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hwL1srMU"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5B029615C
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 08:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A136290BCC
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 08:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750148425; cv=none; b=AcrI8TACi625BdIxcWGZWK/ZVe9I8Jnms2YsjPoZNWx3c1IZm6Xn5V/y0YrPg1gWkqvXMi/GemIhaKyXM5VklWbNZUTZLuRDKO0Y6R5WWCd1chETMPuC/U9F01m1tKUzJC9YIHSNIP0DHXpErQiLBsfRRRvCgZFyMESpQJF9ozE=
+	t=1750148414; cv=none; b=eKrqwtAw9DOgMYumtZI5/BRVDFfwtcFp7JvyNlDIA2iC6Bha/xLnEkQQ0PrgWLRMW98qSGp/Zf7nLbQQXd4EuGK9cykLaynHKEE2pnypkjR/H4Ee85VHxhd15SgGb9L9ZREj4pOXDpbDD8P5djDsHz8fGk6OIAkckJ9hBKLRKuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750148425; c=relaxed/simple;
-	bh=8yYHhsk6aMkF+7LDvlU62jXCOJIeWXFnbuZRr/rWNfI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oiTbkj1NhwYoU8qo4N0hpjLgbgQyD1a+DinurZBIxAqFN/pIF/64g9QO3r79DODAxJ9hQ/tOeqpCW6jq0OxmrLPNPL2SiGyoq0JFWAjCZePY11WyVZHfTqsC7e1iHTWJZTSGhbvJEKpQ2KQTXBaztrYnhVq/pRSLDO4Amk4gxh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=W9+d0LI8; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2351227b098so44284955ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 01:20:23 -0700 (PDT)
+	s=arc-20240116; t=1750148414; c=relaxed/simple;
+	bh=jfrHVPVwZuVj1ovd2L+ozV8XNY7vboPGx71pXYGp+TE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NLwhV6E/A49/yDBgH4lMbCysdG9CgtTzIKiMn2bb9Jg923npJIU53Kb5PwbOz5enr/aBk5vCULWQ3IBaF2DkJXnXGTjbuN+Bk1ciY+J5KvUukJmB/nnkaRzsUEuwvom4xyQc8sXlhg7I/whrstEz0bRzu7QlZd+k9hUAjsZJsOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hwL1srMU; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a525eee2e3so4094181f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 01:20:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750148423; x=1750753223; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t0zl5UgUMJioINXEhfKw/OPFCjl4142IWY9RjIGoGFw=;
-        b=W9+d0LI8+UdMHmzRSI819lrmhq8Z/1urzXKx/QhCCgI5Kr73XTflATW40xQRb7pR7r
-         8Wge0OBuNquzzBLYDm/fmJH75fwSDY3ijAZnTtaRr4b6MxSDqd1FyfXyGTSplLjDcp8/
-         HkVpmaTvORVcevstAv2mBshgvutS2d1jGzJ4g=
+        d=linaro.org; s=google; t=1750148411; x=1750753211; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GkVwaOohG3MfzfFBPLux7z0WS8bc7+WHf5B4x4aLoAA=;
+        b=hwL1srMU3nIlX/K8x/ohh4W1FK8euRKXX93tmOxstYXEJ7O8WSFzAKxvxJxeCGDlm0
+         2O/yBJRoTWTD+i55gEamkltkC1xscL8flDY9RLXf0ZX2UtJ++eluq9dxAQiFkfesvWTM
+         XrLAf8gbYrIesZb0VvP33htDxHeQRIl2X/0AI+AGFqqLXFw89lillnGrqLAB7GkibOUq
+         Q8TLgQMNflSmlpR4HtbeQQxuj/dvUKfdG6PszZNM9OoN3ErJXZO5XlZFQOiP/75Pu9Jf
+         GCveWDb7l4VjJF/xgO5fLKzUx5PWx+4OQAV/MjQqy1QcRDUNwZ8QEN+I0fccRONNGLGo
+         lFrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750148423; x=1750753223;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t0zl5UgUMJioINXEhfKw/OPFCjl4142IWY9RjIGoGFw=;
-        b=tUzJ7Dblg1brK+gNZptXKavdjnc7huGOEGQBezF0Musn9Fixr9cNaG6U8hgK+Rfc74
-         iTFJHegTlKOAMkrU8ninjpTUFAM+LtUSdLVdtIg0c81Is5RTlK630Esk6tw8DToxQdHA
-         1O2/9SfRnn2axRxu6H3f8o7odd9eGsF7SsCxM14nzaEmJfQsrV4hHOfRhcnTiv1HvlyL
-         zaWFALh6L3qyR5n+PM6E1OehMypdheD0kwDaSfsHFiy9YdHCyhcFExscjzl5Bw77A/xg
-         cSiNEIAHYdoJE+I1nfxsAkReIp40KKIw3VZtaYv99+VpePhKvdj11icBEPFVA4kzmMqC
-         Mf7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWZVvscYTTbCuIfKJJs08MDLr2rEjbrrHP4RC2eA5MsezHMUqzFMugMkKCNdp+h0wB3DA4knxHkePRA2Q4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHidw6hpZ8Z57iEIZldemzSak8walh9pKMtbfqu21q0Dtcmwhh
-	VIRRDb2p/vX0mv+zJUgOaT+poBS8IbInVOe8cWiRpfpGVP1Ij+QeX2AQdal7WMGFvw==
-X-Gm-Gg: ASbGncvVGy3C+oWqZA1TMbTSJv8Kho07yFnaMvhSCaFf9rRyClkLIDcx4vtI3XOsnWr
-	7wJxxcEhvkYsg/It4ifp+w4adKeAsJYiHNpjj6ElFgk9X9IYF70viBLOUP6o2RN6BiPZCyLendv
-	cpoXALSx8u2A6D6pds+ci/O9qwmHguSMu1e3WEzmvADSMeukHbzsVL/4tqmHHeMv+RFI7k4dlso
-	sz8NWsxAWGWVV6a/aIK495reoqAFPFpSjNCRWJCSF0m2zHtTYsu/tS7TdhSjvHh1jA3cqcFgvcN
-	WRJoPpapu79o7aWWOlKDqXJXei9Dl7diWspP9CW25iUX3h8WYMP5HOXw0Eh84xKbp9VZSCY8gpg
-	AiiSF
-X-Google-Smtp-Source: AGHT+IF4kxUCNX955eBUeMtmUp09tZHq5eVY7way6VVQf06qYS7+0eKNuGC1EFb0EH+rMHbB8Kt5lw==
-X-Received: by 2002:a17:903:440f:b0:235:60e:3704 with SMTP id d9443c01a7336-2366b32ccafmr198804545ad.12.1750148423221;
-        Tue, 17 Jun 2025 01:20:23 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:24a1:2596:1651:13d8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365de781f7sm74598885ad.110.2025.06.17.01.20.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 01:20:22 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-input@vger.kernel.org
-Subject: [PATCH v3 6/6] arm64: dts: mediatek: mt8186: Add Squirtle Chromebooks
-Date: Tue, 17 Jun 2025 16:20:03 +0800
-Message-ID: <20250617082004.1653492-7-wenst@chromium.org>
-X-Mailer: git-send-email 2.50.0.rc2.692.g299adb8693-goog
-In-Reply-To: <20250617082004.1653492-1-wenst@chromium.org>
-References: <20250617082004.1653492-1-wenst@chromium.org>
+        d=1e100.net; s=20230601; t=1750148411; x=1750753211;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GkVwaOohG3MfzfFBPLux7z0WS8bc7+WHf5B4x4aLoAA=;
+        b=gAAQLM6uBCFYj4uzlQKTcyN1Tuu3UKD71YF8T6Q6tuhzjyR5ZZ3Z1awGOjfrjhk9IF
+         301SJwQKYO7T+RHK+nf7Amv7qOeMnn/Z530CODJs0exI5UG83ioRPMaXW+TfH45XJ12v
+         Xqsctxq19YjPdL+wwht4JPCw/3mT+BGWHNF/YbY1YI1M+aWpvTH+iLlNarerij/Bxi3D
+         9eKBtLOj/Zlw/gRfMrw5ImlX1ZKb29+d0DcZ7ruIKQCmu23Jk4+DOQihfkw3e9A+90lL
+         y+DptxMQihdZw3Lptor/fxobVI5iEh7ZKaX+iuhHY1LwaeG6ynbxAzVMCrnZugPgPd6K
+         mpvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUkrvfw/EoVnbRPFGuGnFJvqDOYxPvlcd8sq5kWZATZ51bqGfMAkRxcgB7ivUGbF+GEheBFASZWPQ6g6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbNhEfANMUOUY9pgYKKHJpc0Iy7NWd/OHMMjKi3hN7eGOS9VXW
+	mjmz9WKWaUm+YywcI++3RHwp0pfSzvI4Up+46ypz61QpZ/ck/DpveLD0rY+mTf3v0Ak=
+X-Gm-Gg: ASbGncv1ZHIX4gvsxOEfqCWuxs8nNKJQNkSh/X6c8x1frt3xY8Mc1VRlqhoBEpSENmq
+	o1UusdJ6/EnYXY92HyXjWgwWEAf1fohreiKnbYEP1HPRYpJpp6m0ynken5SfuYwcTb0unD8Zduo
+	qvfL+hQJgQu64TTiywxikfzvr/NBmGTrB1N3xpPxS/X7wcHBj7AHzSJl5K1MxajP7i5VstHosJq
+	GM6/GIAD5dUl+yzoUt2h6OSbNMakUxldOfj5A9vF68ayEjXDVZGCH4APuYs8PRG6tl9gWsREcKe
+	DkjmNAHDH1XTkmig2Zt34tAL0SlovdhzyK6ILD60UV6X75/lDOHUajBa1fEj4Qm8jgLWnWtdsui
+	S9oSIZuOOY8NPG91r2Oy0MxbDpLp3RP3pIm072qw=
+X-Google-Smtp-Source: AGHT+IEyBF145eH2dJ1PxI0G9a7I/RUJi+8WJK1aUMpDYBQovwrNcHxPiIYgLUElIHbiSAdNqIPEuw==
+X-Received: by 2002:a05:6000:40cb:b0:3a5:2fe2:c9e1 with SMTP id ffacd0b85a97d-3a572e8243dmr8394556f8f.30.1750148410854;
+        Tue, 17 Jun 2025 01:20:10 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:3819:3250:4f73:db31? ([2a01:e0a:3d9:2080:3819:3250:4f73:db31])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b74313sm13346954f8f.96.2025.06.17.01.20.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jun 2025 01:20:10 -0700 (PDT)
+Message-ID: <5aa6d6ee-0af5-4625-a616-868919ac36c7@linaro.org>
+Date: Tue, 17 Jun 2025 10:20:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] phy: qcom: m31-eusb2: drop registration printk
+To: Johan Hovold <johan+linaro@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+ Wesley Cheng <quic_wcheng@quicinc.com>,
+ Melody Olvera <melody.olvera@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250617080401.11147-1-johan+linaro@kernel.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250617080401.11147-1-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add a device tree for the MT8186 based Squirtle Chromebooks, also known
-as the Acer Chromebook Spin 311 (R724T). The device is a 2-in-1
-convertible.
+On 17/06/2025 10:04, Johan Hovold wrote:
+> Drivers should generally be quiet on successful probe so drop the
+> registration printk from the recently added M31 EUSB2 driver.
+> 
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>   drivers/phy/qualcomm/phy-qcom-m31-eusb2.c | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c b/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c
+> index 9f02b8a78f6e..9b987911fcdb 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c
+> @@ -288,8 +288,6 @@ static int m31eusb2_phy_probe(struct platform_device *pdev)
+>   				     "failed to get repeater\n");
+>   
+>   	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> -	if (!IS_ERR(phy_provider))
+> -		dev_info(dev, "Registered M31 USB phy\n");
+>   
+>   	return PTR_ERR_OR_ZERO(phy_provider);
+>   }
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
- arch/arm64/boot/dts/mediatek/Makefile         |   1 +
- .../dts/mediatek/mt8186-corsola-squirtle.dts  | 107 ++++++++++++++++++
- .../dts/mediatek/mt8186-corsola-steelix.dtsi  |   2 +-
- 3 files changed, 109 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-squirtle.dts
-
-diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-index a8b8796276aa..a4df4c21399e 100644
---- a/arch/arm64/boot/dts/mediatek/Makefile
-+++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -68,6 +68,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-magneton-sku393218.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-ponyta-sku0.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-ponyta-sku1.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-rusty-sku196608.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-squirtle.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-starmie-sku0.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-starmie-sku1.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8186-corsola-steelix-sku131072.dtb
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-squirtle.dts b/arch/arm64/boot/dts/mediatek/mt8186-corsola-squirtle.dts
-new file mode 100644
-index 000000000000..f721ad4e5c97
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-squirtle.dts
-@@ -0,0 +1,107 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2024 Google LLC
-+ */
-+
-+/dts-v1/;
-+#include "mt8186-corsola-voltorb.dtsi"
-+
-+/ {
-+	model = "Google squirtle board";
-+	compatible = "google,squirtle", "mediatek,mt8186";
-+	chassis-type = "convertible";
-+};
-+
-+&i2c1 {
-+	touchscreen@10 {
-+		compatible = "elan,ekth6915";
-+		reg = <0x10>;
-+		interrupts-extended = <&pio 12 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&touchscreen_pins>;
-+		reset-gpios = <&pio 60 GPIO_ACTIVE_LOW>;
-+		vcc33-supply = <&pp3300_s3>;
-+		status = "fail-needs-probe";
-+	};
-+
-+	touchscreen@16 {
-+		compatible = "elan,ekth8d18", "elan,ekth6a12nay";
-+		reg = <0x16>;
-+		interrupts-extended = <&pio 12 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&touchscreen_pins>;
-+		reset-gpios = <&pio 60 GPIO_ACTIVE_LOW>;
-+		vcc33-supply = <&pp3300_s3>;
-+		status = "fail-needs-probe";
-+	};
-+};
-+
-+&i2c2 {
-+	trackpad@68 {
-+		compatible = "hid-over-i2c";
-+		reg = <0x68>;
-+		hid-descr-addr = <0x20>;
-+		interrupts-extended = <&pio 11 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&trackpad_pin>;
-+		vdd-supply = <&pp3300_s3>;
-+		wakeup-source;
-+		status = "fail-needs-probe";
-+	};
-+};
-+
-+&i2c5 {
-+	clock-frequency = <400000>;
-+
-+	/delete-node/ codec@1a;
-+
-+	rt5650: codec@1a {
-+		compatible = "realtek,rt5650";
-+		reg = <0x1a>;
-+		interrupts-extended = <&pio 17 IRQ_TYPE_EDGE_BOTH>;
-+		avdd-supply = <&mt6366_vio18_reg>;
-+		cpvdd-supply = <&mt6366_vio18_reg>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&speaker_codec_pins_default>;
-+		cbj-sleeve-gpios = <&pio 150 GPIO_ACTIVE_HIGH>;
-+		#sound-dai-cells = <0>;
-+		realtek,dmic1-data-pin = <2>;
-+		realtek,jd-mode = <2>;
-+	};
-+};
-+
-+&sound {
-+	compatible = "mediatek,mt8186-mt6366-rt5650-sound";
-+	model = "mt8186_rt5650";
-+
-+	audio-routing =
-+		"Headphone", "HPOL",
-+		"Headphone", "HPOR",
-+		"HDMI1", "TX";
-+
-+	hs-playback-dai-link {
-+		codec {
-+			sound-dai = <&rt5650>;
-+		};
-+	};
-+
-+	hs-capture-dai-link {
-+		codec {
-+			sound-dai = <&rt5650>;
-+		};
-+	};
-+
-+	spk-hdmi-playback-dai-link {
-+		codec {
-+			sound-dai = <&it6505dptx>;
-+		};
-+	};
-+};
-+
-+&speaker_codec {
-+	status = "disabled";
-+};
-+
-+&trackpad_steelix {
-+	status = "disabled";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-steelix.dtsi b/arch/arm64/boot/dts/mediatek/mt8186-corsola-steelix.dtsi
-index 822a177e7c19..8a196dc9a96b 100644
---- a/arch/arm64/boot/dts/mediatek/mt8186-corsola-steelix.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-steelix.dtsi
-@@ -118,7 +118,7 @@ &i2c2 {
- 	i2c-scl-internal-delay-ns = <22000>;
- 
- 	/* second source component */
--	trackpad@2c {
-+	trackpad_steelix: trackpad@2c {
- 		compatible = "hid-over-i2c";
- 		reg = <0x2c>;
- 		hid-descr-addr = <0x20>;
--- 
-2.50.0.rc2.692.g299adb8693-goog
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
