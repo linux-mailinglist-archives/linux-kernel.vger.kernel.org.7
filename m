@@ -1,147 +1,103 @@
-Return-Path: <linux-kernel+bounces-690179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A48ADCCCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:17:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD46ADCBB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C64189EA0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:11:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF293BACA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912392E06F9;
-	Tue, 17 Jun 2025 13:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC0C2DF3D8;
+	Tue, 17 Jun 2025 12:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QCxAKO3r"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kcep2lKz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4185B23535C
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8922DE201;
+	Tue, 17 Jun 2025 12:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750165647; cv=none; b=q+VGuuqhLmGxeXntnRoGcbuT27pDH15i9XtW+sxLZs9yB8I0mgIICE1jVaxwnEoyRWD4UYSU+EPU5I8nUqVsfhOvLfKg94W7kJ6R0XhRYxhJKOdOGIT4GWuW+iHvjkttWVgPrbrDid0IBxN23XRQJ2uGPXqjKAQ3vbw5Va3Cb7E=
+	t=1750163985; cv=none; b=bBMGKOFeM/czKmTjJ8KLZiptV9mkShlHb32xUxAOFqzszJYmEtjkOU0sBqUOLcfP52ptR7ctSDWgvP7ke8cbiKMKh7Ne7CYuzy/tpHFaEM1boMKJ9geTMPnkHSleXs91rtButcIAgBwYByXbQuS5VUDoYwJ9ZncEkdAO0eDf46U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750165647; c=relaxed/simple;
-	bh=j36Zta3izKvKxPSQvXAlWrAFcq3pvsGWqUpxUn+IHaA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=Xn4eNAUuyfC1tPt5fGdnsMhAjSlkLKGfj+V+PK2QN75czd3AsbM4HsK4tZrjf8KXytB8Djo5FZnBf3khOBPC1mK2w8c7tLrYxad7BUAXSb60roFl9ybVyjWPy+mg1/DEDBolFQ51jZIOBZrKTKoF+5w9HAOkfVJ79t8Of4c5ufg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QCxAKO3r; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250617130006epoutp02fccdc3c7e0e67e7bb19500718e742602~J1fuIczt12463524635epoutp02L
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:00:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250617130006epoutp02fccdc3c7e0e67e7bb19500718e742602~J1fuIczt12463524635epoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1750165206;
-	bh=p/dqSkNurVPjaHecprDGz3Q7UCZTQntvnPImFH09uak=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QCxAKO3rqCs6zXqbnXeRbqOr/kswRZw7Je1feadMowKqEQCakrclqiNF1C1KWztJb
-	 M5JOd0ZmGi1sn053MrJZGxe1G1QbvJXYbvE8GhlLglSJTHAztwF/v+EquRsvJcYZJF
-	 nnlViZtVLCx9UzTMYvMlo2zU43vhObpuePjaOfmI=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250617130005epcas5p1eb3c1872102cbf29b2677c75d352e79d~J1fthDYmL2452824528epcas5p1r;
-	Tue, 17 Jun 2025 13:00:05 +0000 (GMT)
-Received: from epcpadp1new (unknown [182.195.40.141]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4bM6R95pvkz3hhT7; Tue, 17 Jun
-	2025 13:00:05 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250617124037epcas5p2efa5e8ac19df70cdeb7330404eed385f~J1OtftcNc0930409304epcas5p2u;
-	Tue, 17 Jun 2025 12:40:37 +0000 (GMT)
-Received: from test-PowerEdge-R740xd.samsungds.net (unknown [107.99.41.79])
-	by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250617124034epsmtip26c7fab31e6dc2ec8ac78c94bee6a01dd~J1Oq-xB2b2558225582epsmtip2C;
-	Tue, 17 Jun 2025 12:40:34 +0000 (GMT)
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: dan.j.williams@intel.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com
-Cc: a.manzanares@samsung.com, nifan.cxl@gmail.com, anisa.su@samsung.com,
-	vishak.g@samsung.com, krish.reddy@samsung.com, arun.george@samsung.com,
-	alok.rathore@samsung.com, s.neeraj@samsung.com, neeraj.kernel@gmail.com,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev, gost.dev@samsung.com, cpgs@samsung.com
-Subject: [RFC PATCH 11/20] nvdimm/region_label: Export routine to fetch
- region information
-Date: Tue, 17 Jun 2025 18:09:35 +0530
-Message-Id: <1353170030.261750165205802.JavaMail.epsvc@epcpadp1new>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250617123944.78345-1-s.neeraj@samsung.com>
+	s=arc-20240116; t=1750163985; c=relaxed/simple;
+	bh=FxF78pfUEwcnldmVITYLPHptbKq/FCT9ZAiwHo4FQvA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=hyHAfa2z/VA9oimMjA7451E2iIhu3pZWQepk3PF+jG8d/0Xyse0pMqra9GX9dv/ooGHhxuQhrsXAkj4YzUbE2F+WdtNpqhkMdB0kEldE2B8Fc/aJ8D9sSUQgIBAo/jGdu0rSuQT2kRMSv2GkQmOoheT8Y5KJwhcTTa601O9xt9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kcep2lKz; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750163984; x=1781699984;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=FxF78pfUEwcnldmVITYLPHptbKq/FCT9ZAiwHo4FQvA=;
+  b=kcep2lKzO9DlSmjqNL5P6MKMJoSFuZDF85IH83LYODN6iu06B0PfSmeb
+   lX6M5CXFENdDHIzwVCw+064rPFstKSSNHHmvBu/VqHoL5j3zLQONBpa3w
+   s61KtP3RgALd4mPhcCvFRrD8+DHIPOA+wRADrDSj4WAuT3EbMEgoMcAKa
+   0DWr0O9qeqy7bpDLzrL7wZKDg0zTeM4R+CjKI8TQsxSwDv/SkjJXxSU5I
+   yKVCnKzv6A5jLSJaovAQxp+om9YDt3UvtynXX4PjXusVJa7jhD1ynmGVP
+   ftNk+PC1ZtPc7IerV52/eqsdeyhi1c86MTJF6+qTjWADSOuJqklgA0vZu
+   Q==;
+X-CSE-ConnectionGUID: bO9J0mIWRIi7U2B45fHhlA==
+X-CSE-MsgGUID: ur0EjqlHQvKvkALU8nz0nA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="62945778"
+X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
+   d="scan'208";a="62945778"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 05:39:43 -0700
+X-CSE-ConnectionGUID: SZO0S/QESiy0O1aJJMZNAw==
+X-CSE-MsgGUID: sQeJtb+uQv2jnSbdzfq1KA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
+   d="scan'208";a="149134140"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.164])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 05:39:40 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: vadimp@nvidia.com, Hans de Goede <hansg@kernel.org>, 
+ David Thompson <davthompson@nvidia.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel test robot <lkp@intel.com>
+In-Reply-To: <20250613214608.2250130-1-davthompson@nvidia.com>
+References: <20250613214608.2250130-1-davthompson@nvidia.com>
+Subject: Re: [PATCH v1] platform/mellanox: mlxbf-tmfifo: fix vring_desc.len
+ assignment
+Message-Id: <175016397593.2117.2399113137810241629.b4-ty@linux.intel.com>
+Date: Tue, 17 Jun 2025 15:39:35 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250617124037epcas5p2efa5e8ac19df70cdeb7330404eed385f
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-X-Hop-Count: 3
-X-CMS-RootMailID: 20250617124037epcas5p2efa5e8ac19df70cdeb7330404eed385f
-References: <20250617123944.78345-1-s.neeraj@samsung.com>
-	<CGME20250617124037epcas5p2efa5e8ac19df70cdeb7330404eed385f@epcas5p2.samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-cxl region information preserved from LSA need to be exported so as to
-use by cxl driver for cxl region re-creation
+On Fri, 13 Jun 2025 21:46:08 +0000, David Thompson wrote:
 
-Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
----
- drivers/nvdimm/dimm_devs.c | 18 ++++++++++++++++++
- include/linux/libnvdimm.h  |  2 ++
- 2 files changed, 20 insertions(+)
+> Fix warnings reported by sparse, related to incorrect type:
+> drivers/platform/mellanox/mlxbf-tmfifo.c:284:38: warning: incorrect type in assignment (different base types)
+> drivers/platform/mellanox/mlxbf-tmfifo.c:284:38:    expected restricted __virtio32 [usertype] len
+> drivers/platform/mellanox/mlxbf-tmfifo.c:284:38:    got unsigned long
+> 
+> 
 
-diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
-index e8f545f889fd..0edcb6b558e5 100644
---- a/drivers/nvdimm/dimm_devs.c
-+++ b/drivers/nvdimm/dimm_devs.c
-@@ -283,6 +283,24 @@ void *nvdimm_provider_data(struct nvdimm *nvdimm)
- }
- EXPORT_SYMBOL_GPL(nvdimm_provider_data);
- 
-+bool nvdimm_has_cxl_region(struct nvdimm *nvdimm)
-+{
-+	if (nvdimm)
-+		return nvdimm->is_region_label;
-+
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(nvdimm_has_cxl_region);
-+
-+void *nvdimm_get_cxl_region_param(struct nvdimm *nvdimm)
-+{
-+	if (nvdimm)
-+		return &nvdimm->cxl_region_params;
-+
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(nvdimm_get_cxl_region_param);
-+
- static ssize_t commands_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
-diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
-index cdabb43a8a7f..9a5d17c4b89b 100644
---- a/include/linux/libnvdimm.h
-+++ b/include/linux/libnvdimm.h
-@@ -325,6 +325,8 @@ int nvdimm_in_overwrite(struct nvdimm *nvdimm);
- bool is_nvdimm_sync(struct nd_region *nd_region);
- int nd_region_label_update(struct nd_region *nd_region);
- int nd_region_label_delete(struct nd_region *nd_region);
-+bool nvdimm_has_cxl_region(struct nvdimm *nvdimm);
-+void *nvdimm_get_cxl_region_param(struct nvdimm *nvdimm);
- 
- static inline int nvdimm_ctl(struct nvdimm *nvdimm, unsigned int cmd, void *buf,
- 		unsigned int buf_len, int *cmd_rc)
--- 
-2.34.1
 
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] platform/mellanox: mlxbf-tmfifo: fix vring_desc.len assignment
+      commit: 109f4d29dade8ae5b4ac6325af9d1bc24b4230f8
+
+--
+ i.
 
 
