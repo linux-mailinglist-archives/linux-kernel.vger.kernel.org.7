@@ -1,174 +1,123 @@
-Return-Path: <linux-kernel+bounces-689542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C0D4ADC362
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:33:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88357ADC36E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019411891F7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:33:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 322533BB1A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C9C293C61;
-	Tue, 17 Jun 2025 07:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8B528DF28;
+	Tue, 17 Jun 2025 07:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XCGFuS5h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xhxWABFc"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72697288C06;
-	Tue, 17 Jun 2025 07:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAC022AE45
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 07:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750145503; cv=none; b=oBpBfYUo49QxrVkwEWu2x4LGiJGhv2LSEkbdO7sYMLk1K2R4RSbE4EJYgJLkPbhHcuok5eKCHZntLIG+J/K5N0kF1E5TTj97H1p6DlpF5lJ+EzHSEPptL/T/wIwYWB55eLgrndxUbLxmRd/O4kmxalnK7AeV3sR5Ut6tc6agJ0I=
+	t=1750145537; cv=none; b=hgD7vHWe9iD0Q6w+FRCQEt9g2J35lydTY+LM0XTHyix2aw+luNrnMQ6bXahlMze/JqVDvuw1t1kHhZsmjwn2em60ywsKUkAzvLfYt4yB8Kv0deV2X4TERKBPjsGDjTzvvg8kzyYMF1hLyeTMuNWaU6aFKG5QCK+woQ7Fe5PTgBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750145503; c=relaxed/simple;
-	bh=u0EumBQgKw9tRo8pqtn52kIAYiMwEBU7JZR3hZra7Is=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lCn1RcX2mpUAWtDVH1hghcXSLi1SQbInjnL/J23QoWF1WlZSotoVnVWfE/q7khFis/SJNlC7JJSkB0SSBSPw0Tx5Q43TbMHzTEKWdVFwekD27rGOy1cViEpm8ADk2gy1bXS1RkM2y1tnNMz8TmVn7Yj5Q5NrJe7mAgqhnLD9RlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XCGFuS5h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4CB2BC113CF;
-	Tue, 17 Jun 2025 07:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
-	t=1750145503; bh=u0EumBQgKw9tRo8pqtn52kIAYiMwEBU7JZR3hZra7Is=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=XCGFuS5hBYCwlYFw1Y3fgv0PsACKMp9WD4NnXUCS1RsgSXzDBxUA4qC/yXGYronur
-	 F2Iv82L2Bx8Kd+0ECt5jGSoCiWd+XuCzYpe/dwWu7Tw6/TMssq1S8JG8S8JMNkSlUZ
-	 KmNSh8dEXjBYsSCPwKb354KaZp+t/fiS8kXsFBf8=
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43077C7115E;
-	Tue, 17 Jun 2025 07:31:43 +0000 (UTC)
-From: Richard Leitner <richard.leitner@linux.dev>
-Date: Tue, 17 Jun 2025 09:31:44 +0200
-Subject: [PATCH v5 10/10] media: i2c: ov9282: dynamic flash_duration
- maximum
+	s=arc-20240116; t=1750145537; c=relaxed/simple;
+	bh=rMddHsA3nzBTFN0QMqBt9MpSn7HX6CFwqw9BP1SyU0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EsUWw8H6aaT60GItah7fzbecAJlPbsHC401K4IIy7M3xJPJKA9S7CYIHgeBF7tnoHbTsJcfBjKOojw7eKZ93fcOCz/hXdjC8tsjG7locMap/WIpOABABd73xx6MFQznCwUp2qEt1ke5akQtecHukhayFZxRA7VLJG3plOVTYG4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xhxWABFc; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60179d8e65fso9750774a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 00:32:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750145534; x=1750750334; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DitCPFk6i35uURXkN5+J10Jk6mGckO0efyDQ/Ffatgo=;
+        b=xhxWABFcIZeFn8Pt8t83WJmt64nDnT0T0VTvlOAp/BH4BTLM3lGm/h+5rm9elimzEb
+         EBVJuja2f9E36/+xSe81Z9+ffnI1g9vp8Wvo0IpKFE+dsbjk5ekDdaB6n648KFWwaFYn
+         /rQHkOXrKr7Xagn+E9jFrJG5KqbQ9/PqXZjvnQCQ96saCYdLgx9YlDsxhrKZXqaLvF8o
+         d6s6WTFVp/FrwbHGVGIgLQzQ3lf/DZI5vROwOp8QbXrA9AxSe30n3uYTiCDlaxsT2N2s
+         VeF/qWs/cqdpOHNYlioQ7s/3Rc86eEXW9+30jHT9hzsKNxBfNgNQOjLhjrTIHQF6uW8S
+         nxGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750145534; x=1750750334;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DitCPFk6i35uURXkN5+J10Jk6mGckO0efyDQ/Ffatgo=;
+        b=EJ0y0mQ2r5aJHbgx2oE3meHGLVQuTh5qPVFx8Pfl2uiOkuPHo5NN8t7I11QNYImM9m
+         YA9SLoAktq8wlLfyjSylRIIoFp7OW3CMs7FPdLn2VLIrQXdzaK0Ryanycn9Ohz3YWiTc
+         HDX6qhfBHoJ34HPXk4uEZMPl6WhfVq1n6OvsqM/G69rFJayH+hZE55O95qSUbxeVR63N
+         Mv2+xC0UrfjAswYvF/Vtts/avw0226kdep8j+Hme0iHUGH6Qxcb/dUk2y/GrwPqy1uha
+         stO/2dMpSJ6Wz+VhUOU+8LKYCm2opTcRDKEwKzZdvvRmPwqbr/KH2fmVVIdfPP7liai4
+         Gfeg==
+X-Gm-Message-State: AOJu0YzYHr+yvL0qOQx9W3v2C17LquZDnTXrG2gUJ60KZseRLCx77Xta
+	qwmz+8KsYgfPz0asF9dhttV4+BU14gMSzicM/l144XMJuXM8GSsjbbrwSMEaAhHtvojH/0zcp+e
+	9LjaB
+X-Gm-Gg: ASbGncvk/fvgK0EIJirxPdnaEid4gLzXI9YoaEswhfUpDURdfgVu/C5yo3G1jvIX8uB
+	8IXU7PolnGZxa1U0AFnjn07iJXKUZQ91oOsH29p5rh+9skYM0ZVJsPD5Xvhy37uUrlQvrf2N3p4
+	AgRjHJ/JpHGYz5PynkLJQa5Iot9QiLKX2pzzDQLcxyfQ2y0JW4iu6OpIpw4PK3skDCyqsULNFUy
+	kBs3VRWIuNPxYbxNTKfJe6IDKZ3CeLempp0zXWamlGrrFzDRTf7796d/X1hGqWIrnpJDbMOQZhk
+	BsjvmliFUCWMrWyJUSiL4jsiJRNwP9AtfMghxGq1A/2PVDFJyAXXXDjQg81zSkkwc6+10K6qp6+
+	T6aTNrdBpdEDSV+hSQHbEBGa0aTyZ
+X-Google-Smtp-Source: AGHT+IH9/yGt1B2R5aOqGlO4giU7a4MpvEhipVbdlnV+bODahZF4ciyHZm2yTFfr8OIZsO0wiR54nQ==
+X-Received: by 2002:a05:6402:4402:b0:607:d234:7d8f with SMTP id 4fb4d7f45d1cf-608d09af98emr11886262a12.33.1750145533721;
+        Tue, 17 Jun 2025 00:32:13 -0700 (PDT)
+Received: from rayden (h-98-128-140-123.A175.priv.bahnhof.se. [98.128.140.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b4a5e72csm7605436a12.48.2025.06.17.00.32.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 00:32:13 -0700 (PDT)
+Date: Tue, 17 Jun 2025 09:32:11 +0200
+From: Jens Wiklander <jens.wiklander@linaro.org>
+To: arm@kernel.org, soc@kernel.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	op-tee@lists.trustedfirmware.org
+Subject: [GIT PULL] OP-TEE fix for 6.16
+Message-ID: <20250617073211.GA1005592@rayden>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250617-ov9282-flash-strobe-v5-10-9762da74d065@linux.dev>
-References: <20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev>
-In-Reply-To: <20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
- Richard Leitner <richard.leitner@linux.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750145501; l=3576;
- i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
- bh=u0EumBQgKw9tRo8pqtn52kIAYiMwEBU7JZR3hZra7Is=;
- b=/smZRi59dZATDPo+9atyjcxBHAC0WosfiTD+9aXjXRMdnnm1P/xAhwInYBkmUB2XwJY2lsD8N
- TSgOKWvD3ITDu4IYepSKddgDmHRuP6Nb/bDtec4ci3t8gbHUQ1AwmxM
-X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
- pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
-X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
- with auth_id=350
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-This patch sets the current exposure time as maximum for the
-flash_duration control. As Flash/Strobes which are longer than the
-exposure time have no effect.
+Hello arm-soc maintainers,
 
-Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
----
- drivers/media/i2c/ov9282.c | 30 ++++++++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
+Please pull this patch for the optee driver. It relates to the FF-A driver
+PR https://lore.kernel.org/all/20250609105207.1185570-1-sudeep.holla@arm.com
+but it makes sense on its own and can be applied independently.
 
-diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-index 1f4bca29cd793e99c473aff9c8b7e200e3d598bc..2fd0d63b8071d434c05a98f4d0169c4fb83f7cfe 100644
---- a/drivers/media/i2c/ov9282.c
-+++ b/drivers/media/i2c/ov9282.c
-@@ -198,6 +198,7 @@ struct ov9282_mode {
-  * @exp_ctrl: Pointer to exposure control
-  * @again_ctrl: Pointer to analog gain control
-  * @pixel_rate: Pointer to pixel rate control
-+ * @flash_duration: Pointer to flash duration control
-  * @vblank: Vertical blanking in lines
-  * @noncontinuous_clock: Selection of CSI2 noncontinuous clock mode
-  * @cur_mode: Pointer to current selected sensor mode
-@@ -220,6 +221,7 @@ struct ov9282 {
- 		struct v4l2_ctrl *again_ctrl;
- 	};
- 	struct v4l2_ctrl *pixel_rate;
-+	struct v4l2_ctrl *flash_duration;
- 	u32 vblank;
- 	bool noncontinuous_clock;
- 	const struct ov9282_mode *cur_mode;
-@@ -611,6 +613,15 @@ static int ov9282_update_controls(struct ov9282 *ov9282,
- 					mode->vblank_max, 1, mode->vblank);
- }
- 
-+static u32 ov9282_exposure_to_us(struct ov9282 *ov9282, u32 exposure)
-+{
-+	/* calculate exposure time in µs */
-+	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
-+	u32 trow_us = (frame_width * 1000000UL) / ov9282->pixel_rate->val;
-+
-+	return exposure * trow_us;
-+}
-+
- /**
-  * ov9282_update_exp_gain() - Set updated exposure and gain
-  * @ov9282: pointer to ov9282 device
-@@ -622,9 +633,10 @@ static int ov9282_update_controls(struct ov9282 *ov9282,
- static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
- {
- 	int ret;
-+	u32 exposure_us = ov9282_exposure_to_us(ov9282, exposure);
- 
--	dev_dbg(ov9282->dev, "Set exp %u, analog gain %u",
--		exposure, gain);
-+	dev_dbg(ov9282->dev, "Set exp %u (~%u µs), analog gain %u",
-+		exposure, exposure_us, gain);
- 
- 	ret = ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 1);
- 	if (ret)
-@@ -635,6 +647,12 @@ static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
- 		goto error_release_group_hold;
- 
- 	ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, gain);
-+	if (ret)
-+		goto error_release_group_hold;
-+
-+	ret = __v4l2_ctrl_modify_range(ov9282->flash_duration,
-+				       0, exposure_us, 1,
-+				       OV9282_FLASH_DURATION_DEFAULT);
- 
- error_release_group_hold:
- 	ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 0);
-@@ -1420,6 +1438,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
- 	struct v4l2_fwnode_device_properties props;
- 	struct v4l2_ctrl *ctrl;
- 	u32 hblank_min;
-+	u32 exposure_us;
- 	u32 lpfr;
- 	int ret;
- 
-@@ -1495,8 +1514,11 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
- 			       (1 << V4L2_FLASH_LED_MODE_TORCH),
- 			       V4L2_FLASH_LED_MODE_NONE);
- 
--	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
--			  0, 13900, 1, 8);
-+	exposure_us = ov9282_exposure_to_us(ov9282, OV9282_EXPOSURE_DEFAULT);
-+	ov9282->flash_duration = v4l2_ctrl_new_std(ctrl_hdlr,
-+						   &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
-+						   0, exposure_us,
-+						   1, OV9282_FLASH_DURATION_DEFAULT);
- 
- 	ctrl = v4l2_ctrl_new_std_menu(ctrl_hdlr, &ov9282_ctrl_ops,
- 				      V4L2_CID_FLASH_STROBE_SOURCE,
+Thanks,
+Jens
 
--- 
-2.47.2
+The following changes since commit 0ff41df1cb268fc69e703a08a57ee14ae967d0ca:
 
+  Linux 6.15 (2025-05-25 16:09:23 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jenswi/linux-tee.git tags/optee-fix-for-v6.16
+
+for you to fetch changes up to 312d02adb959ea199372f375ada06e0186f651e4:
+
+  optee: ffa: fix sleep in atomic context (2025-06-12 12:04:57 +0200)
+
+----------------------------------------------------------------
+A fix in the OP-TEE driver for v6.16
+
+Fixing a sleep in atomic context in the FF-A notification callback by
+adding a work queue to process in a non-atomic context.
+
+----------------------------------------------------------------
+Jens Wiklander (1):
+      optee: ffa: fix sleep in atomic context
+
+ drivers/tee/optee/ffa_abi.c       | 41 ++++++++++++++++++++++++++++++---------
+ drivers/tee/optee/optee_private.h |  2 ++
+ 2 files changed, 34 insertions(+), 9 deletions(-)
 
