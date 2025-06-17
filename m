@@ -1,145 +1,246 @@
-Return-Path: <linux-kernel+bounces-689229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AB0CADBE5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:07:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29CF4ADBE77
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C29A71640E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 01:07:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D318316D50E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 01:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3599F1465B4;
-	Tue, 17 Jun 2025 01:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73049F9C0;
+	Tue, 17 Jun 2025 01:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="MBnfwFX6"
-Received: from esa1.hc1455-7.c3s2.iphmx.com (esa1.hc1455-7.c3s2.iphmx.com [207.54.90.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="aJ6ClQAX"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2032BF014
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 01:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.90.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B402E85260;
+	Tue, 17 Jun 2025 01:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750122467; cv=none; b=n9M+c6PL96IdVSzm71jeyYMJ8CcrPIY8J8z2iRX4w3RX+vn3UsknIdrEg7DbBhU63oJUKgv+kYYiELN4/dq5cybnNJw8SwBTZMnuB7VgaDOEu3bVAYAapK/dJ10vlXm3htBV3LG7X2bcc/ar+5bLAo56ozpJb/dVj3VdcrvFnLM=
+	t=1750122755; cv=none; b=fKIiFlfITO1o7TMp3usfd406+cuixLaLmikb79w6jICaPgMWxuf13i1u+jiwWMo4iZoud8ZTWrvTz/ANNOhPfuEtorKbgJU9c2aL2lwa8XsQagClxXkez/J0EsFN8GAtTcxd26wl/RfvbtICc9g1G+zxDiVvkFxIa6g3++fM0J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750122467; c=relaxed/simple;
-	bh=AMbFJF773v6MXMZuZIEHM7FTlzlVUDfnGjPmW4p3nPM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aa5/6BOIzwpUKfsrA4TyTUdUSq/d08eiHdsEz1IDO2I1kLNtpbV2HwSQbjMW5eAcq/20WwueZmIxgOZt7iBaC+v0HYVLYtcQ3nOS9gTkDKU5F7WLiYyKnDfuFzUA9CGIyFQrxtnRjz7rYzZRjKtcUYFm4y8T7gm9iLzWQIeDdOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jp.fujitsu.com; spf=pass smtp.mailfrom=jp.fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=MBnfwFX6; arc=none smtp.client-ip=207.54.90.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jp.fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jp.fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1750122465; x=1781658465;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=AMbFJF773v6MXMZuZIEHM7FTlzlVUDfnGjPmW4p3nPM=;
-  b=MBnfwFX6JVnC0saHJf3MX+EuwSPYS+EeVFAN16Nb29JCCKu2HdYXIxOD
-   vA8CMAjoM/LXUmDW7eJLXwExVSvpXZyr4tIBCnFnyXypcd7lR1QOjPBeM
-   q2+i1fsQN0bmgqMAcsLfoYQBCHfZgi9zPYV6BOMUmn6ilkpEHlBqOcODr
-   eo/F5N6jU6BIX6Vo9PqtwDVJ6sCVUegiiGTQOre/Uvs2XELETLI5VcQfB
-   URLTzSAENpPOrFirYgM2irZa0XxpA1js25Eod/Fb+4OGosdPLCtA4le66
-   26cReJnetWKWx0X3IZBhunQyiTPueP1L97xLQZUDWeemfxSMKgjmBHraO
-   A==;
-X-CSE-ConnectionGUID: ELHiP8FwReSg0b3xKMtgNQ==
-X-CSE-MsgGUID: MKkT5rVvTkiG2hR3xyTWjA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="202966254"
-X-IronPort-AV: E=Sophos;i="6.16,241,1744038000"; 
-   d="scan'208";a="202966254"
-Received: from unknown (HELO oym-r2.gw.nic.fujitsu.com) ([210.162.30.90])
-  by esa1.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 10:06:34 +0900
-Received: from oym-m4.gw.nic.fujitsu.com (oym-nat-oym-m4.gw.nic.fujitsu.com [192.168.87.61])
-	by oym-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id 01DE5D4C31
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 10:06:32 +0900 (JST)
-Received: from oym-om1.fujitsu.com (oym-om1.o.css.fujitsu.com [10.85.58.161])
-	by oym-m4.gw.nic.fujitsu.com (Postfix) with ESMTP id BF268D4C14
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 10:06:31 +0900 (JST)
-Received: from sm-x86-amd03.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
-	by oym-om1.fujitsu.com (Postfix) with ESMTP id BD4604007A465;
-	Tue, 17 Jun 2025 10:06:30 +0900 (JST)
-From: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Dave Martin <dave.martin@arm.com>,
-	fenghuay@nvidia.com,
-	peternewman@google.com,
-	Babu Moger <Babu.Moger@amd.com>,
-	Borislav Petkov <bp@alien8.de>,
-	shameerali.kolothum.thodi@huawei.com,
-	bobo.shaobowang@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com,
-	Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	baolin.wang@linux.alibaba.com,
-	lcherian@marvell.com,
-	amitsinght@marvell.com,
-	Ingo Molnar <mingo@redhat.com>,
-	David Hildenbrand <david@redhat.com>,
-	H Peter Anvin <hpa@zytor.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	dfustini@baylibre.com,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] fs/resctrl: Optimize code in rdt_get_tree()
-Date: Tue, 17 Jun 2025 10:06:00 +0900
-Message-ID: <20250617010625.3805259-1-tan.shaopeng@jp.fujitsu.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1750122755; c=relaxed/simple;
+	bh=oefOgSc1Z039uTfN1C6ysnyJt0su6eLbpzjAuLMfzVs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QR1CelPGdS7AT+NCauzoUmgWDf7fV+PXeTMEZ82RtSVZkB9wIR2AyTfcWMtL/Vy+9w+rZbfrDdYWgG+uEq3yTe9XK3F1z1OcBLm8qk0J+y5DineiJQCnkLoh88A8gMnvHjZtWZvdeITuRYFqt32sK3KLs5jVBhDRjLAajWYQkrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=aJ6ClQAX; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 55H1B4pG41349268, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1750122664; bh=7ZvcDqtfgtaeywsuOoqwrM09yTIb0YVKK5xMuDws+d0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=aJ6ClQAXiSoZTR1EBEIhWlrvTXa50CDvs7LRaUZxYrpclb72k50bmdNFqLxNtcsyi
+	 bPGM0EKXRKPB97V9hx5spjYaKxeoCQzyB8Y2Dfp3+hpdeDdSK07n6p8vqn1fCFH8AS
+	 f62ppZPmAlOj6t4dVL1Gz5H7YJeLVcdvuNTjowjeLSHWueGrx67VPMfADCto241Xz6
+	 EdDJDbZ0C84UAU8v0oefQpdeuYXjo3JGhDjelby0DeMU9OkyoE5H44LbMh+vIkwI8s
+	 XTTryJR/67vATFJCFSmKXcn38BLiVFMFADlp0lSu4+nlillJ5ltL4FVuaivQKLN3YY
+	 8hHLzXVzvyuFA==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 55H1B4pG41349268
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Jun 2025 09:11:04 +0800
+Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 17 Jun 2025 09:11:10 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 17 Jun 2025 09:11:09 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
+ RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
+ 15.01.2507.035; Tue, 17 Jun 2025 09:11:09 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Daniil Dulov <d.dulov@aladdin.ru>, Hin-Tak Leung <hintak.leung@gmail.com>
+CC: Larry Finger <Larry.Finger@lwfinger.net>,
+        "John W. Linville"
+	<linville@tuxdriver.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: RE: [PATCH 1/2] rtl818x: Fix potential data race in rtl8187_tx_cb()
+Thread-Topic: [PATCH 1/2] rtl818x: Fix potential data race in rtl8187_tx_cb()
+Thread-Index: AQHb3qk786dJTgtSZESHoKjQfcrgl7QGghzQ
+Date: Tue, 17 Jun 2025 01:11:09 +0000
+Message-ID: <a139c0c192ff4f1fbc14dafc37c54bab@realtek.com>
+References: <20250616101050.6911-1-d.dulov@aladdin.ru>
+ <20250616101050.6911-2-d.dulov@aladdin.ru>
+In-Reply-To: <20250616101050.6911-2-d.dulov@aladdin.ru>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-schemata_list_destroy() has to be called if schemata_list_create() fails.
+Daniil Dulov <d.dulov@aladdin.ru> wrote:
+> There is a potential data race between rtl8187_tx_cb() and rtl8187_stop()=
+.
+> It is possible for rtl8187_stop() to clear the queue right after rtl8187_=
+tx_cb()
+> checks that queue has more than 5 elements, but before it dequeues any sk=
+b.
+> This results in skb_dequeue() returns NULL and the pointer is dereference=
+d
+> in ieee80211_tx_status_irqsafe().
 
-rdt_get_tree() calls schemata_list_destroy() in two different ways:
-directly if schemata_list_create() itself fails and
-on the exit path via the out_schemata_free goto label.
+Is there a way to flush rtl8187_tx_cb() before rtl8187_stop() clear queue?
+It looks risky that rtl8187_tx_cb() can still be running after rtl8187_stop=
+().
+Maybe you only treat this patch as a workaround?
 
-Remove schemata_list_destroy() call on schemata_list_create() failure.
-Use existing out_schemata_free goto label instead.
+>=20
+>  BUG: kernel NULL pointer dereference, address: 0000000000000080
+>  #PF: supervisor read access in kernel mode
+>  #PF: error_code(0x0000) - not-present page
+>  PGD 0 P4D 0
+>  Oops: Oops: 0000 [#1] SMP NOPTI
+>  CPU: 7 UID: 0 PID: 0 Comm: swapper/7 Not tainted 6.15.0 #8 PREEMPT(volun=
+tary)
+>  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/=
+2015
+>  RIP: 0010:ieee80211_tx_status_irqsafe+0x21/0xc0 [mac80211]
+>  Call Trace:
+>   <IRQ>
+>   rtl8187_tx_cb+0x116/0x150 [rtl8187]
+>   __usb_hcd_giveback_urb+0x9d/0x120
+>   usb_giveback_urb_bh+0xbb/0x140
+>   process_one_work+0x19b/0x3c0
+>   bh_worker+0x1a7/0x210
+>   tasklet_action+0x10/0x30
+>   handle_softirqs+0xf0/0x340
+>   __irq_exit_rcu+0xcd/0xf0
+>   common_interrupt+0x85/0xa0
+>   </IRQ>
+>=20
+> In order to avoid potential data races and leading dereference of a NULL
+> pointer, acquire the queue lock before any work with the queue is done an=
+d
+> replace all skb_* calls with their lockless versions.
+>=20
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Signed-off-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-Reviewed-by: James Morse <james.morse@arm.com>
----
- fs/resctrl/rdtgroup.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Do you have a real hardware and tested this patchset? If not, please mentio=
+n
+compile tested only in commit message.=20
 
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index 1beb124e25f6..592d4f69fce9 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -2608,10 +2608,8 @@ static int rdt_get_tree(struct fs_context *fc)
- 		goto out_root;
- 
- 	ret = schemata_list_create();
--	if (ret) {
--		schemata_list_destroy();
--		goto out_ctx;
--	}
-+	if (ret)
-+		goto out_schemata_free;
- 
- 	ret = closid_init();
- 	if (ret)
-@@ -2683,7 +2681,6 @@ static int rdt_get_tree(struct fs_context *fc)
- 	closid_exit();
- out_schemata_free:
- 	schemata_list_destroy();
--out_ctx:
- 	rdt_disable_ctx();
- out_root:
- 	rdtgroup_destroy_root();
--- 
-2.43.5
+>=20
+> Fixes: 3517afdefc3a ("rtl8187: feedback transmitted packets using tx clos=
+e descriptor for 8187B")
+> Signed-off-by: Daniil Dulov <d.dulov@aladdin.ru>
+> ---
+>  .../net/wireless/realtek/rtl818x/rtl8187/dev.c    | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
+> b/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
+> index 220ac5bdf279..8fe6fdc32e56 100644
+> --- a/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
+> +++ b/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
+> @@ -189,6 +189,7 @@ static void rtl8187_tx_cb(struct urb *urb)
+>         struct ieee80211_tx_info *info =3D IEEE80211_SKB_CB(skb);
+>         struct ieee80211_hw *hw =3D info->rate_driver_data[0];
+>         struct rtl8187_priv *priv =3D hw->priv;
+> +       unsigned long flags;
+>=20
+>         skb_pull(skb, priv->is_rtl8187b ? sizeof(struct rtl8187b_tx_hdr) =
+:
+>                                           sizeof(struct rtl8187_tx_hdr));
+> @@ -196,7 +197,8 @@ static void rtl8187_tx_cb(struct urb *urb)
+>=20
+>         if (!(urb->status) && !(info->flags & IEEE80211_TX_CTL_NO_ACK)) {
+>                 if (priv->is_rtl8187b) {
+> -                       skb_queue_tail(&priv->b_tx_status.queue, skb);
+> +                       spin_lock_irqsave(&priv->b_tx_status.queue.lock, =
+flags);
+> +                       __skb_queue_tail(&priv->b_tx_status.queue, skb);
+>=20
+>                         /* queue is "full", discard last items */
+>                         while (skb_queue_len(&priv->b_tx_status.queue) > =
+5) {
+> @@ -205,9 +207,11 @@ static void rtl8187_tx_cb(struct urb *urb)
+>                                 dev_dbg(&priv->udev->dev,
+>                                         "transmit status queue full\n");
+>=20
+> -                               old_skb =3D skb_dequeue(&priv->b_tx_statu=
+s.queue);
+
+Another simple way could be just to check if old_skb is NULL here.
+
+    if (!old_skb)
+       break;
+
+No need to adjust spin_lock.
+
+> +                               old_skb =3D __skb_dequeue(&priv->b_tx_sta=
+tus.queue);
+>                                 ieee80211_tx_status_irqsafe(hw, old_skb);
+>                         }
+> +
+> +                       spin_unlock_irqrestore(&priv->b_tx_status.queue.l=
+ock, flags);
+>                         return;
+>                 } else {
+>                         info->flags |=3D IEEE80211_TX_STAT_ACK;
+> @@ -893,6 +897,7 @@ static void rtl8187_work(struct work_struct *work)
+>                                     work.work);
+>         struct ieee80211_tx_info *info;
+>         struct ieee80211_hw *dev =3D priv->dev;
+> +       unsigned long flags;
+>         static u16 retry;
+>         u16 tmp;
+>         u16 avg_retry;
+> @@ -900,6 +905,8 @@ static void rtl8187_work(struct work_struct *work)
+>=20
+>         mutex_lock(&priv->conf_mutex);
+>         tmp =3D rtl818x_ioread16(priv, (__le16 *)0xFFFA);
+> +
+> +       spin_lock_irqsave(&priv->b_tx_status.queue.lock, flags);
+>         length =3D skb_queue_len(&priv->b_tx_status.queue);
+>         if (unlikely(!length))
+>                 length =3D 1;
+> @@ -909,13 +916,15 @@ static void rtl8187_work(struct work_struct *work)
+>         while (skb_queue_len(&priv->b_tx_status.queue) > 0) {
+>                 struct sk_buff *old_skb;
+>=20
+> -               old_skb =3D skb_dequeue(&priv->b_tx_status.queue);
+> +               old_skb =3D __skb_dequeue(&priv->b_tx_status.queue);
+
+And here as well.=20
+
+    if (!old_skb)
+       break;
+
+>                 info =3D IEEE80211_SKB_CB(old_skb);
+>                 info->status.rates[0].count =3D avg_retry + 1;
+>                 if (info->status.rates[0].count > RETRY_COUNT)
+>                         info->flags &=3D ~IEEE80211_TX_STAT_ACK;
+>                 ieee80211_tx_status_irqsafe(dev, old_skb);
+>         }
+> +       spin_unlock_irqrestore(&priv->b_tx_status.queue.lock, flags);
+> +
+>         retry =3D tmp;
+>         mutex_unlock(&priv->conf_mutex);
+>  }
+> --
+> 2.34.1
+>=20
 
 
