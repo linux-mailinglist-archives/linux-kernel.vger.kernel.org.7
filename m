@@ -1,95 +1,123 @@
-Return-Path: <linux-kernel+bounces-690895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A8C6ADDD89
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 23:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ABEBADDDB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 23:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E879C1639A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 21:01:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27BB617D35D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 21:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB31A2E3AF8;
-	Tue, 17 Jun 2025 21:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60CD2EF9D3;
+	Tue, 17 Jun 2025 21:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ePieN2wh"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="GehDkvdi"
+Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65882EFDA8
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 21:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967372EAB62
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 21:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750194072; cv=none; b=PfDGxwo+kscPSJ+P3xFmjTtFaX06CKs7ZYhPWpu1motfm+7jI7KBRRPGHlglInnVZBTBMsvD7i5JHMi1KVb9Cx9d3AgqjZ70UZuDitnbsP2triqywunUHKhNNb29OePZkTfZT5B9Zz9zw160LTNOencW8sf18rb7ZOInS9FkMig=
+	t=1750194685; cv=none; b=t5pRcQCHbeiHi+JcDAiUGQLNSEAxYpMdCpv0UfCSh2/IjVTjE4YnYRZiJTIih/s833vfV37FlGfCkgNzslcVkKHVOHNUZlQb97JkO2rz94cvKmEiiBFIqYiKv2r67xcwEC0pDksrIKSGmxh4dCmhqNFBAU0HFR/xtvBFRQZd4T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750194072; c=relaxed/simple;
-	bh=avEJxZ+89MufZP0SLyU7euqYnGXLsVOUMkRS8Ko+SH8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=XguAgVVhtcMteV6tHPhAeARR+pe/iswGuENDwYT0L9WXooQxWVosMJ85ggpTb9Z/johWrU1rOFURauzoCgZx8mdDOp+LC0LwHDSqTpo5IAa705K6Zqw9rdW1exT0R3bZc1WOG1Ve17w47YXMWp1sZyNmtlimIBvqX3FGVpWhDdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ePieN2wh; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-312df02acf5so62544a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 14:01:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750194070; x=1750798870; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TWy9lkoAMNiIrASQ8hATfQAjClcrpl+Y1yZ0Ab8XMS4=;
-        b=ePieN2wh8gC7ItDJ2jPbSEuFL2D21fJ+9UErWN9MqgNRdGnn/oxqNHXViCItI6mxi5
-         1oRAGtxEJKC/UdG6vbtom++QL1fWNQuRTKfj2ZLCLq3q7Tk33Cs4qtQWTBfGzSdO+4CJ
-         msOQgmwoAyoXPfB2e0HROo73O6EH2PYxeAQd0m2TohKRTGE/+MjKDDYzi9GoY3L08EAy
-         rsyCx5Oz8wtJLKbv3hrG+bNOhADFR3+qni8u+0BDnyzGAdkDMDENFCUb5CkDTqgTJN+A
-         91JmWSzaiVwL14hxkUatbviXDy4OkQILdFG/lU+s9BUFiT/3AxKfGrwKiMkK56j9zf7Z
-         4rVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750194070; x=1750798870;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TWy9lkoAMNiIrASQ8hATfQAjClcrpl+Y1yZ0Ab8XMS4=;
-        b=tuBHc2JEqiFZY9zQZH0cnOwmszn57fprwj6GcWcCwKBskmwDAz5+kvIL6G+5e2rd4H
-         vK2378mWtUHzB2DPpMKWVTzu5kCZVD375uKcwCDoJ5jpv0NxShgRRMIi4006meBLh+9q
-         MFkPzCVAV/A+DYHrRRTwkqaFSipm8Q5jb5iWrk1re5DmxPsy24Z5bDenQZTOISQNDk6Q
-         YLhm3QOD/iU+tItmY4dyInOpseGUyfrgBSMdsqh+H+duYNecHlVXfewlnRnlpUqIxP6a
-         4VSWH5Vmu5q+CrSq20urJmqnq/Pcc3eNRbFXlkBF9SeIDutP9jMjjhMc/op7yzTyODMd
-         lVIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmmFZqMe8OWpwhmy4yyDuFDblzmMVBFQVjyfFNDpg50PmTjJ0sgUOUS/z+hK4Qax+0saPt3YQwA4Y3Qpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykJPr91G9a7nZZoH7wxnuShC3vrQI2pDFTyDbHO6AYe9LF8LML
-	9pyE42xr1nu0fuwh4g5WT5OWhY0uV4Bc+cVSwGaZs3U3+JEgH7+nY9tmxxLZ5eAUgjWRSFWAvGH
-	l0eor/g==
-X-Google-Smtp-Source: AGHT+IEE4tk5CdXgmXoq0+BZG4nzsKOX62wsnsfVghGqvjHwEY84uaPun9CQUeH3vVGqWrPA6SHXwsPuLAc=
-X-Received: from pjbqa3.prod.google.com ([2002:a17:90b:4fc3:b0:308:6685:55e6])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:ec8d:b0:311:83d3:fd9c
- with SMTP id 98e67ed59e1d1-3157bee54a1mr113685a91.0.1750194070127; Tue, 17
- Jun 2025 14:01:10 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 17 Jun 2025 14:01:00 -0700
+	s=arc-20240116; t=1750194685; c=relaxed/simple;
+	bh=tCT/IkQxcE0Vbq14CwG/Hp5G6xxf/831Jyydl3V67Zw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=nLcCmiSf3d4T3UF1G0OZMlLoCHl5ZANaJ5t94YM+hc/dOHnRuhtbt4GZ48PtloBMJeOMAZ0jEDU26ZtB9JJZvLFxm7GLztakRV34ELKXZX6/8J1e/brh/9ceA94feQsbXNM4KnapeGNevZiIVwZ8z+xZ7iDcB512FYYKIbojagQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=GehDkvdi; arc=none smtp.client-ip=66.163.186.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750194682; bh=AK3vqdHMB3C88L5thv0zFgtAigMgw0Q4QfxeUz6vjpE=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=GehDkvdiEYxw6cCBCZ64pQ/I+8a52zdIih9MdhwCWfboiHM7GfCXPz/Ao7hRsW8qbjZdz9Ht9gqxd34cTMqNghnM9Yzqg4H09V4Iu0C0vqX/lc5D5+hBNyGog702W+G9crUY5SMM3IooahejfoBi+SHxgPBbQVq+rnsc8lxGze8B1rK00hQZzU2ePXhR1y3A48w+5XUI4C6CO0koN/vwsPJQcbO6xK6VDzcFZkQbAAxqGA83nKy1ofoIN9btygznrgfzywFtEV6M2kaa54woIkuIdu+c/O+rZ9mxlJfb01FzcMl7N7s3fdGWfdR+1kZ1Vo+zo6cKmebDCtngtIez9Q==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1750194682; bh=OhTku8or6z9r5yMHb8kcc019wjP+eEsqcREhRcir7YJ=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=f5nPX3PIKTytJwSC7b8Z+T4tGdIgC9qZ74xRVlcQeEKUdoheQkQ51fueuWMIHLqml04ZiHa1Vg27mCMEIeSpWFTtZTQPvj2cgTkTgfJODmKjs526IOHYwfasBczdsfuI7/BlmHQaCw2cDCo2Bwu22Db91hh2W6niam0oacQ2RGA6YFg9XLPtU/Q3DZ6CWFuMzWCkXw3uLFlttJsbaRfG5+0oYDsKBRYFwrk/Npprq82dzgC6xPHNRi020u8+mGniPjuzaBWL9r5/8PRl/GiVxUkz5AMooRwYjtN/Q+HvSKVxjoCtr1KDt+r0eAhbip52ww5QimQJnaHRJjIMgF0w9g==
+X-YMail-OSG: _hgOV7kVM1n4ZMKNDdy4PekzRCpTxDP9kddLdxBfz_qoLBkpRVTQxWTTc7adBQg
+ JSANU4Mq1AeCT7Pq.P.Oq1xmQ5osBNuXz3yAH2wtTwPt4O0OEVv7qJ83Er0e5FcWRsH4HKExPm4z
+ ikc1lhEaJjaXYWKMqa5stGcHPHLVun4IUHQZdS5FZWs3EGHPjpuSl.tLx64WylX2P6RBd1s0gNmK
+ 2dmisQu_arHAbxBz3MMMHdQWsyEn05wZIm4sCyukdceu2CD9BYCu3ks_5jt0HRO9jZkWF1mPMazQ
+ 3WM8ha.7b7FFJZ7b8dRq0NoJp4TiNix0VU.lpAMzyUKEQ4M.gtKCq2qnGX21ANMCLBBXa3mLjsQv
+ rLt3ulFnkNsykJCMxzHapi_tm2y.LYmSKBM1XnEEN.eS1_du2hnvk0X34wuOVpb8WGzvKqFkoXMb
+ 9p_fb_7L3HbOOi55kWS16FDV6w1NbCR2QaQyDG2PUjfkL_LXwlA2MlDuMOsmyclxlt7JlEPXa8JO
+ rkZ7v8A6nddkG7p6TNFPb0Ok0TPunTZCuW9tFER4_paFwRG3T76sL7f7FSYDw8NtkQ9SujzcN9lW
+ YzLZoiPsN_Zc9ujvcLaBA7.0.Qn72OtoJ8mapePAtesWmZWcm3pekz5MluyTI_q8G.TLJCUiWoeN
+ 9sBT1bHfHl7HxP74MEdXXl8NOuILcMMyLMDYB7FxH.ju3VHFVza_TWpG1dKKPBkJiz7RHoXLuJbU
+ HgtZduGxhNxbHn1lyCtQ2pznmkKwNps77.wn5efDXGNSyMY5.4GrcQjm.povo64ZpAg_iujvpbPt
+ T3JV4PnavJ2ben__G.6Xofcw3cPh6HqXYScTcxfMl4Rjsrh4bRvZrTh6Lit1vnozoOIfSicKxBnd
+ btoz55lDNPZshLiIfVEi1B1VT9RzQG_P6A4DRBC1TImRnOHPbsZQ4RFXAl9B2v1ToOiRVDRuM1u0
+ YsSgNxV7dePB4mJqN.1dUVP3w1wy2Zc5MmrtA35oCgpQYPl2lPRBtlO.hyvxe7VtVhVuUfw1.lIB
+ W0XbDAhYS5Yk1xgNB9mKqEgR0A.qgLT0sQVJB.Ng9dPNKw1VmbccoJhbji4RqxypHcVGy23Jn7aW
+ TbfW7xZOWVgf6NVG37hrS4KrrqjyE4_QwePWd20SJ4ryUdxxtaqMa.hkwjCeG9A0RXzsXif5wdgR
+ 8Wqo.TZLNeQhes2T4TTqJAbe_UK9zORGnEgaeOrUndQ9atrFi9tYCturZdvVFgL9yL03d8cVJubF
+ .GqVCTjZE4RG7oi1tKD3_CgDC3xL8SSzq2Uv6p.PqfWvWv4DJBiyxnkRtN4ZjIP5VVqdrhAoMgEl
+ nxSWtkDfgmbMOZ.oJbjqbfCHvIquxBknfapiUo149anlvpr3SQO0s87iXU6JBLHYIgDz5gyoz.mR
+ NyQ.teUdlb_ghkBm7w.hyUKXmS4PydTUOkUzQKAQeu.ApvxV_U3grkY2tg7s191vRsqWbZpmhq9L
+ uLS_52Z0cQK9Zwb.of7GjEAJXF5v_guITiUvBJRzow6LpIsEJM9xhVZZE_W5dWsf_PUMsaMZe_fj
+ a_ybaGis9WujqtMxrssOVXdzYPLmw8.PXBfWBoBc0vRiMAZtBIJDgb3D1zQ.99sLtkwHBX8uYCaK
+ JhvNC0KzbPgO4RahJfR4D3hmfpYuoXmYHftkJ4Z9Feb8L3ZfzhvonvG8BRRHnAWtxxK3u1hg5s6n
+ vywNEoNOuajKtigOwyI1jrELBzvFTdIVELm.V5SP0nIUbREk5znILTTXxq7Yvd4BVa6alTsZO8pu
+ 5MIXbDHr2PGL237sqn4rwFTfqRCl9.Zi5NydwvU8Cy2JCA0ieZt1gTaR97AaLEwU9Wq5WhiN2sBq
+ bEKH.AuPAIMDoUH4.MsKYdazp_2Y0ZrYK7qhD7sqdtEWUDG.1wmo0b4OhEUHilYg28j9MNETloRN
+ 1BARNFrn6UR_0KhAFE0dDhJwkpWdQ9pXYj86aehGzjNub9GxdXECB11b9zY8QoNjSpF5pxWm_HWK
+ x85ncHnnULOOugYJOUQXIs79WYbe1nwnVYd53gbpxKfZBIFDtC6mp.l9BsZ05XFYcUqb2HDjAOBi
+ lBgFFA6rL.68ImcUtPFIK9fpGVcYJfcIsoj_YcQpNQGxS2FypEsbe6Zf.qQiLcDt5KQ56HzOVQew
+ LbY24tDaeFZ0xRPaIDiCFu_kyD5o.goZb0yIoN1jzX_6HF4D6.rp0jnxMSrj16cRZWhvh.An.Jw3
+ Tu95kNjX704vnyMPKJxd40hcgomJcQTnIhxBa4TOYsLyGPKSxEPX4zHMXndL3FR.K35aWvdmaIEg
+ q7O9RFuEPihKTw2qEXmCM.A--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: bbaa3d12-d970-4f7f-8d3e-d76350235311
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Tue, 17 Jun 2025 21:11:22 +0000
+Received: by hermes--production-gq1-74d64bb7d7-f4j4n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5c2f63bee58180d330568dcd5f1b3323;
+          Tue, 17 Jun 2025 21:01:09 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	eparis@redhat.com,
+	linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH 0/3] LSM: Multiple LSM mount options
+Date: Tue, 17 Jun 2025 14:01:02 -0700
+Message-ID: <20250617210105.17479-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.rc2.696.g1fc2a0284f-goog
-Message-ID: <20250617210100.514888-1-seanjc@google.com>
-Subject: [ANNOUNCE] PUCK Agenda - 2025.06.18 - Any topics?
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Michael Roth <michael.roth@amd.com>, Jon Kohler <jon@nutanix.com>, 
-	Amit Shah <Amit.Shah@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Liam Merwick <liam.merwick@oracle.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+References: <20250617210105.17479-1-casey.ref@schaufler-ca.com>
 
-I won't be able to make PUCK tomorrow, but that doesn't mean y'all can't meet
-without me.  I _think_ if someone hits "Record", it will show up in my Google
-Drive (because I'm the meeting owner), and then I can get it uploaded to the
-shared drive.  So, someone just needs to take charge tomorrow :-)
+Linux Security Module (LSM) that support mount options, currently SELinux
+and Smack, allocate their own data for those options. This patch set
+moves the handling of mount option data out of the individual LSMs and
+into the LSM infrastructure. This allows for multiple LSMs to support
+mount options at the same time.
 
-Alternatively, if no one has anything to discuss, we can just cancel outright.
-But IIRC, Paolo is out the next two weeks, so this may be your last chance to
-pester him for a while.
+https://github.com/cschaufler/lsm-stacking#mount-opts-6.16-rc1
 
-Sorry for the late notice, this week has been a bit hectic.
+Based on patches Paul Moore's LSM initialization patchset.
+https://lore.kernel.org/all/20250409185019.238841-31-paul@paul-moore.com/v3
+
+Casey Schaufler (3):
+  LSM: Add mount opts blob size tracking
+  LSM: allocate mnt_opts blobs instead of module specific data
+  LSM: Infrastructure management of the mnt_opts security blob
+
+ include/linux/lsm_hooks.h  |  2 ++
+ security/lsm_init.c        |  2 ++
+ security/security.c        | 26 ++++++++++-----
+ security/selinux/hooks.c   | 65 +++++++++++++++++++++++++-------------
+ security/smack/smack_lsm.c | 62 +++++++++++++++++++++++++-----------
+ 5 files changed, 108 insertions(+), 49 deletions(-)
+
+-- 
+2.47.0
+
 
