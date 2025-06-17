@@ -1,104 +1,166 @@
-Return-Path: <linux-kernel+bounces-690095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46117ADCBB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:39:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A18BBADCCCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD9947A3956
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EE383A911F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA552E06FA;
-	Tue, 17 Jun 2025 12:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069472E338B;
+	Tue, 17 Jun 2025 13:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mtFTTrbf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dT6onQII"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9606828C5D2;
-	Tue, 17 Jun 2025 12:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840922E7197
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750163978; cv=none; b=kuaauEQegE2YuYWXf7Acd6mG88BYn++VQElz/oXRJIQhEXz7/kvIY8Hq9ur6piFRc1DWCMuLP+/LO/2WvR2MeAteZG+Z6laJB/7IkiqrslBZkRpDbkZFaYwq7+gN63Z0N30VN+0s0Th2JVjIAzHjarp4eaAK0YZbdJt/iTMqvQs=
+	t=1750165647; cv=none; b=ipdPfFrxiI3icMKH1ARshUMGmTg1jCwZ4lB2/VSj7FMliCQGVexeLkjF+cDg4pfznYqswaR2UG5nV0knkojZBpk5v057GuzC1tOzPrLAvUaiVimoBIMIVXPiES9iSMD5WpHf/nJH9YBtK8YGJxT/sq8TSYpx9yH1F1+wfAvqlv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750163978; c=relaxed/simple;
-	bh=mQVcwAj9KJX+DfsLdHR0JpvHr/BZjuZTw8oHM3W7400=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PoAmKanTTs/gFFplbV9AzM6zqYY8POEoYlrluf5h+ib5Ni+ry+MP/0PZ5jwRF7lyLukgrmu/fthtolMgCcIuePIkorosI2PCcoIc/G00cJsWFNBQOIrNHfdVCGywP+UMfzeRDehwnHd7spZvz8vlZnTQctPDgIW3GEbv0y7AE6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mtFTTrbf; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750163977; x=1781699977;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=mQVcwAj9KJX+DfsLdHR0JpvHr/BZjuZTw8oHM3W7400=;
-  b=mtFTTrbfH86879Oy/7J/fRggjvzBzvLb3JSCwAmWwm/ILT/78ZN1tlDI
-   N12ZHx3Kk6/fbdfvZo4CbbnLZAB3z39B3JpNOsrWjUZ8Q9MNHc86cmVJn
-   K6RunYZ8c5gwwiA+KnH3lNWkw8n8OpyPjbznWVPk/EyLx2TvrVb+/NtnM
-   DrvBPHMU2g2p4fLvDNg8ugC5JkKXvU3fiNi/l7Zf7XPX0E8e5/hdvsUwx
-   E73RSSs5rUItXCeRE+VHqmxjdHZe0Xe76aFVusg0lcgc6589OYEUO7lGz
-   kxTtSkvIxmvjQCSszlYdqDiNiRefpfcRTZtiITt8X7GrgAhlCnkcSjh/N
-   A==;
-X-CSE-ConnectionGUID: rJnVgViSRhC2Y6lCX9ga9A==
-X-CSE-MsgGUID: plTmsah5SL6dO3qkiEl6tw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="52253752"
-X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="52253752"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 05:39:36 -0700
-X-CSE-ConnectionGUID: zu2EWTxSQ8WneoFKNjY+0w==
-X-CSE-MsgGUID: jqkK+rf2S1maxoLEO2S/HA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="148608273"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.164])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 05:39:33 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: jesse.huang@portwell.com.tw, Hans de Goede <hansg@kernel.org>, 
- Ivan Hu <ivan.hu@canonical.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250616074819.63547-1-ivan.hu@canonical.com>
-References: <20250616074819.63547-1-ivan.hu@canonical.com>
-Subject: Re: [PATCH v2] platform/x86: portwell-ec: Move watchdog device
- under correct platform hierarchy
-Message-Id: <175016396784.2117.17760069143731319818.b4-ty@linux.intel.com>
-Date: Tue, 17 Jun 2025 15:39:27 +0300
+	s=arc-20240116; t=1750165647; c=relaxed/simple;
+	bh=SXglxYJm3kykRFcg2mUYP7HlJ5JimJdAoRTYsOeEBZI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=QV2h3PinvJZanzL+DRfc1be7rGaam7eTSZU3HFxywmeYSf++zennqgulfFJ1D25o6QSJHmgpfxSzmLYF9VI55rGBhS4UDOnQQk0lLkuLsdb89TA0Xbhbe+tbws9K+vhEuuTg31jvCfC4BSU/ADfUGYGQIeacG4mrbwyg+rItQSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dT6onQII; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250617130005epoutp0211b2c2032f109d9f79ac90958c1411ec~J1fsvBszW2363523635epoutp02r
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:00:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250617130005epoutp0211b2c2032f109d9f79ac90958c1411ec~J1fsvBszW2363523635epoutp02r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1750165205;
+	bh=7H8FItXHZnyaOwFyXZ68yq7arH/yEadM3eU/M988Hms=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dT6onQII9oBwohhcT4bUPP0SmwOrfx4ZTgK7kd4z+C7oTpRy4FiY+WlFS43VRp80f
+	 bGoVGUv9qSZdb2i3ciOmG3gXyDTdIlgA0yyOIU8eGAAfpMw42NGM2z1K8UJ9bTQMfm
+	 9KuvBrumvvBCljoqhQ0ugKtO0aUItod+mr0NWVNA=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250617130004epcas5p10ae12ee0b4673ae2da3d20c4d7aaef2b~J1fsEYvNb2452824528epcas5p1k;
+	Tue, 17 Jun 2025 13:00:04 +0000 (GMT)
+Received: from epcpadp1new (unknown [182.195.40.141]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4bM6R81s4Sz3hhTB; Tue, 17 Jun
+	2025 13:00:04 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250617124013epcas5p3c241c626448fcf7851a100fdf2816160~J1OXewFJB2103821038epcas5p3S;
+	Tue, 17 Jun 2025 12:40:13 +0000 (GMT)
+Received: from test-PowerEdge-R740xd.samsungds.net (unknown [107.99.41.79])
+	by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250617124011epsmtip20589d4013bbfae3a6988883eb57982fe~J1OU-Of5k2544925449epsmtip2k;
+	Tue, 17 Jun 2025 12:40:11 +0000 (GMT)
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com
+Cc: a.manzanares@samsung.com, nifan.cxl@gmail.com, anisa.su@samsung.com,
+	vishak.g@samsung.com, krish.reddy@samsung.com, arun.george@samsung.com,
+	alok.rathore@samsung.com, s.neeraj@samsung.com, neeraj.kernel@gmail.com,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	nvdimm@lists.linux.dev, gost.dev@samsung.com, cpgs@samsung.com
+Subject: [RFC PATCH 03/20] nvdimm/namespace_label: Add namespace label
+ changes as per CXL LSA v2.1
+Date: Tue, 17 Jun 2025 18:09:27 +0530
+Message-Id: <1279309678.121750165204255.JavaMail.epsvc@epcpadp1new>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250617123944.78345-1-s.neeraj@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250617124013epcas5p3c241c626448fcf7851a100fdf2816160
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250617124013epcas5p3c241c626448fcf7851a100fdf2816160
+References: <20250617123944.78345-1-s.neeraj@samsung.com>
+	<CGME20250617124013epcas5p3c241c626448fcf7851a100fdf2816160@epcas5p3.samsung.com>
 
-On Mon, 16 Jun 2025 15:48:19 +0800, Ivan Hu wrote:
+CXL 3.2 Spec mentions CXL LSA 2.1 Namespace Labels at section 9.13.2.5
+Modified __pmem_label_update function using setter functions to update
+namespace label as per CXL LSA 2.1
 
-> Without explicitly setting a parent for the watchdog device, the device is
-> registered with a NULL parent. This causes device_add() (called internally
-> by devm_watchdog_register_device()) to register the device under
-> /sys/devices/virtual, since no parent is provided. The result is:
-> 
-> DEVPATH=/devices/virtual/watchdog/watchdog0
-> 
-> [...]
+Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+---
+ drivers/nvdimm/label.c |  3 +++
+ drivers/nvdimm/nd.h    | 27 +++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
 
+diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+index 30bccad98939..d5cfaa99f976 100644
+--- a/drivers/nvdimm/label.c
++++ b/drivers/nvdimm/label.c
+@@ -923,6 +923,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
+ 	memset(nd_label, 0, sizeof_namespace_label(ndd));
+ 
+ 	ns_label = &nd_label->ns_label;
++	nsl_set_type(ndd, ns_label);
+ 	nsl_set_uuid(ndd, ns_label, nspm->uuid);
+ 	nsl_set_name(ndd, ns_label, nspm->alt_name);
+ 	nsl_set_flags(ndd, ns_label, flags);
+@@ -934,7 +935,9 @@ static int __pmem_label_update(struct nd_region *nd_region,
+ 	nsl_set_lbasize(ndd, ns_label, nspm->lbasize);
+ 	nsl_set_dpa(ndd, ns_label, res->start);
+ 	nsl_set_slot(ndd, ns_label, slot);
++	nsl_set_alignment(ndd, ns_label, 0);
+ 	nsl_set_type_guid(ndd, ns_label, &nd_set->type_guid);
++	nsl_set_region_uuid(ndd, ns_label, NULL);
+ 	nsl_set_claim_class(ndd, ns_label, ndns->claim_class);
+ 	nsl_calculate_checksum(ndd, ns_label);
+ 	nd_dbg_dpa(nd_region, ndd, res, "\n");
+diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+index 2ead96ac598b..07d665f18bf6 100644
+--- a/drivers/nvdimm/nd.h
++++ b/drivers/nvdimm/nd.h
+@@ -295,6 +295,33 @@ static inline const u8 *nsl_uuid_raw(struct nvdimm_drvdata *ndd,
+ 	return nd_label->efi.uuid;
+ }
+ 
++static inline void nsl_set_type(struct nvdimm_drvdata *ndd,
++				struct nd_namespace_label *ns_label)
++{
++	uuid_t tmp;
++
++	if (ndd->cxl) {
++		uuid_parse(CXL_NAMESPACE_UUID, &tmp);
++		export_uuid(ns_label->cxl.type, &tmp);
++	}
++}
++
++static inline void nsl_set_alignment(struct nvdimm_drvdata *ndd,
++				     struct nd_namespace_label *ns_label,
++				     u32 align)
++{
++	if (ndd->cxl)
++		ns_label->cxl.align = __cpu_to_le16(align);
++}
++
++static inline void nsl_set_region_uuid(struct nvdimm_drvdata *ndd,
++				       struct nd_namespace_label *ns_label,
++				       const uuid_t *uuid)
++{
++	if (ndd->cxl)
++		export_uuid(ns_label->cxl.region_uuid, uuid);
++}
++
+ bool nsl_validate_type_guid(struct nvdimm_drvdata *ndd,
+ 			    struct nd_namespace_label *nd_label, guid_t *guid);
+ enum nvdimm_claim_class nsl_get_claim_class(struct nvdimm_drvdata *ndd,
+-- 
+2.34.1
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/1] platform/x86: portwell-ec: Move watchdog device under correct platform hierarchy
-      commit: c8892c2a5b27d4026cda60409c393ba0d6c88df9
-
---
- i.
 
 
