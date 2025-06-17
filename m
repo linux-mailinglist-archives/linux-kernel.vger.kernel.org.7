@@ -1,81 +1,139 @@
-Return-Path: <linux-kernel+bounces-689726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C2AADC5AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:06:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 357E9ADC5B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5521C1897C9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:06:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6023F1897DAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1CB290D8E;
-	Tue, 17 Jun 2025 09:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576F7292B3A;
+	Tue, 17 Jun 2025 09:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RNKLrWUy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Njy4D0by"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E32156CA;
-	Tue, 17 Jun 2025 09:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D86B290DBB
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750151173; cv=none; b=aDx98A2Xk/DoYalCzx2qNUkO98K8Lb5MAkHu32JbKRkcw3yQ/ItStWvV1f9DZmpLGAT+olm2kkd+lF0US3Iz0kqdzhDk3RpzBCf+bzt43zGYCCexreCdI21oa3L3FFlZQIC/zBI3Lx5Jh/rbv4rBz1VhCbLcgNhwf/BXImB3wHY=
+	t=1750151226; cv=none; b=GdIIa+53bbBeoZ033wfxzmUubOWLaLAV1STuIb1Pz4DNN9J66RzBfjs/aS7rsYAaK3ReqFUjSoYkAfh+kpnjQg7cNtBbR0yd6RwQfZ+hOJlQSGLozr8LxQvl9NU2Onex1rQ5tRFN22Wcb57VMCDEPj6ccR1oSu/yW7lc8g7dnZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750151173; c=relaxed/simple;
-	bh=jZgOoYFpNvwzgzRt3ysPnLed5AmQcMwnqp+UrepIMDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R0y1fTVUtI7C4SIKDo8lFyY1x2gYYMnUcQs3MjvFdnfpOMZjwwYcGtfQHOGtJXs6m3Y/1T+0nxOVW0J8pz0EOi3z0u2rVX80Bo3LvoqeGf13uB0hUEd4p8yw10hshVBcHatSLftJ7stwt/VO8sC5bB3KSP0L335yRoJRt3Gqiuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RNKLrWUy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FDACC4CEE3;
-	Tue, 17 Jun 2025 09:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750151171;
-	bh=jZgOoYFpNvwzgzRt3ysPnLed5AmQcMwnqp+UrepIMDQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RNKLrWUy9kJXRbzPfLc9Dvk3y9Zp4eiu77yCQZarASu49VVh1oLA5pAIM0C3Aj+BG
-	 5Gq75R3i4HEWNc+imFZteVmCCOu4QlLfMxxGUXPb/brqzs68v+11ZDtE0gU5jXbfVc
-	 NBPTosA2R10QBdJ0adyzadIXTyunia8+sAO9kv8qyRDu7pkypfSMznDstgTEd5i6ut
-	 U/gSU/3E+HMs477dGBrRFCJ7GlvtgNpSD3kTpdeSpswjz+WXbx4yaVj8viuW5CL8re
-	 Aw+G7+ZkpCLeuQMtB3iB0Tm0cAQsadtVqY7Gj0e8t1lbpPNqAoWGdBTPdgxQo2LXkx
-	 veBTwXAfjYhgg==
-Date: Tue, 17 Jun 2025 11:06:08 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Waqar Hameed <waqar.hameed@axis.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, kernel@axis.com, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: iio: proximity: Add Nicera D3-323-AA
- PIR sensor
-Message-ID: <20250617-vagabond-fulmar-of-penetration-dbe048@kuoka>
-References: <cover.1749938844.git.waqar.hameed@axis.com>
- <e2b1b56fbee07047f3fb549f17257dc3764af395.1749938844.git.waqar.hameed@axis.com>
+	s=arc-20240116; t=1750151226; c=relaxed/simple;
+	bh=XNU86N9EHwH8cVHeT2hJe29cwljaIdUhr0t4VCXYkAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lgScXlJupI8n1JcEh1RnhEjeoQ9qscpbtDDrMqtErYPtY6Gpq1hKrZwlR6PkODUObFk/+jggRjH8zML9/iPUXhIqG21r12BgpgwBMjsd+c7eRzdlnHyMCKNc9eD9u7Qv1ZhHCSrCkNeDDpoz5P66JP7m64HYzmx1mvOCo8a91R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Njy4D0by; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55H6RjDu028912
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:07:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=fmqvmK9k/AKo5SNpLwgroPGZIonaKg0+c1g
+	g9XdcTz8=; b=Njy4D0by1rKz8FFXMBXuK4wYuGwJAfQohg0EidBRNaXef5i83to
+	7SNicNaPQogiJ+3kP5VFIu88ODWHn2bKOc/Vn9Ua/LaXULw0k8cis/1RWMI43gmi
+	4/Pgi/2vlzZCl/iudMc/yMAmNj09S48uTpw1yF5Lcffs6PRRTntMW7s2fDyXNn1X
+	jz0UuDA5DeSpsLC3h/kq2cN7nKRLmlNV71tlv58Y+vVfkY4iN7pegkUPzkvK7pGM
+	Uo+nZnOIxIfsSs/QiKR73u4LwJ5FwZOK6pv9YrmntGuod1SdngXTS/1uJUT5K/1K
+	gGLvRf2qMWNCz5fGPey0Bq4yzK4V5FukyWA==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791h97muf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:07:04 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3132c1942a1so8941731a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 02:07:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750151223; x=1750756023;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fmqvmK9k/AKo5SNpLwgroPGZIonaKg0+c1gg9XdcTz8=;
+        b=D9KLQLNYStZ+Z9pjBpcuAqJjkqBuqxOFQU0vumhBKz7aSEZwL7bGnbMYBnfc6nnxF4
+         waJf2zDrmmQLrPJM8VFoqCgId8koObDeNAbOQ1XEBz+OGM2J5gLD4kj+0jYfFCrf76jj
+         INzE+ESj4Pg3VgQlsrV7sW4b7oRV8YadJU/0XX6dPjX4loYE9HiHkHshK8oLxMoZsj/T
+         4sUqmQUrneKLqbz9aCaAZ8oKADtCI0KSf/RJtPsYCPKYwNlPDxTafiHIkXp7ATfuYjPJ
+         pkKmNn7x6bjBOwdkf03MZB7DMI9qMl34BtpQ5LXad0ajuKkR97ChFPzhesP0cquErrLW
+         YPmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXf5UMPv8yYPQZkDsIM2ia1Tb2j5BAmoCoqvafwvxqc2b/M4wYrgHj84N3V9b7rMXhm3eJDJKAvoUDGWBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywj8tIxeFXqnJkvLJfkqIQsM/KdtJp51M4h0Upa229gCfKx9tR
+	rQMNSx9cXXkf6TMYpDBPpn2fkR+aIRS9qMJJ9XipFOC211K+wFm+cYsCbur0ZWsKepTAo/MIg4D
+	DHh7e48FZhEaQy2Rguw2GXGtSzmvillqLtUxzKQK+ykgvSNoLG5n/1iq932/8K6ZGDv0=
+X-Gm-Gg: ASbGncvnYyweujTmkN+YDTMk7jdEMN4EWPRlQ+bkKBjTgfUBGEPuRWARuJdSgeQejFX
+	m031zFv4arTO68CA6mGReYq02FQK9B4vsCvXu+AYwOhc/cIz+202SQ4gm0CnglQYgUG2kzzGsrt
+	AqMQG+j5cvrpz1Yc7Sh7buAD/TsMN1culYgFfVror8TKem7uiAbXm9BunkzUgqS1UDDAO1q3Ggo
+	M0mNaAzJ0foV0XmmQmfn4xNzXchcI5qKCjoVCVkIk6aZqKU1UkHQd16dI3WI3kstFbJXLTQqGYz
+	kSOfkltOGtxIsC8GQn2kZx7XzyKl5aRwwoePKND8pnAkkwkIlvnZrJAu/lzYLQ==
+X-Received: by 2002:a17:90a:dfcd:b0:311:c1ec:7d12 with SMTP id 98e67ed59e1d1-313f1df631amr16365961a91.23.1750151222819;
+        Tue, 17 Jun 2025 02:07:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IENDak9/m3y1Z+lHpFAZozMSnCXvpiXSdunaaZ8aIr66QWZk842CKABwPXtHP1IzwXStJ+syQ==
+X-Received: by 2002:a17:90a:dfcd:b0:311:c1ec:7d12 with SMTP id 98e67ed59e1d1-313f1df631amr16365925a91.23.1750151222358;
+        Tue, 17 Jun 2025 02:07:02 -0700 (PDT)
+Received: from cb9a88ed5d41.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313c1bdb39bsm10017370a91.20.2025.06.17.02.06.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 02:07:02 -0700 (PDT)
+From: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>,
+        Mike Tiption <mdtipton@quicinc.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] Add EPSS L3 provider support on QCS8300 SoC
+Date: Tue, 17 Jun 2025 09:06:48 +0000
+Message-ID: <20250617090651.55-1-raviteja.laggyshetty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e2b1b56fbee07047f3fb549f17257dc3764af395.1749938844.git.waqar.hameed@axis.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: aTZXpQO8YVCjjTxvaawEreoJNFURYqFs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE3MDA3MyBTYWx0ZWRfX4xHgpEVdhN+1
+ 8Wlsq+1i4HcvlNr1HYDCSzvkhRbdO0eVTH1FMpW9r0t0btLDk7O7SXhpgYJ6lsfTehZ5EyTBS+p
+ kfKHYU/+BFObWPc28Rv7AD5kMw2hT64NNPrMn9F7Nhj07xWeUm6xDGL14v3VDxGBRpBAatvAOyK
+ kENWI2Q05oRAK6Iw6u7vODgvZ/mGEHqYy+HlG7/6N3yIf/RubJ4tkFw+gHixt+VPMYhU8bpvh4W
+ q7zfdC/vrZi1IVd0xGh+cC4raf9ZRq1/0iOUrFrc05lZuftVtpb6AXnNNTEyiqck/Id8aUEpdgV
+ gY1OzgRAuNRIqAN3xyAUn+vcaG3lwz5AX9MFQOfBhJW/gxTZG1a4Y+xcVpZ3XwH5GETc9Hg5AZS
+ k377RL+Ko0DAWeetd0J5iP9kmZTE2iRhawn89O6I5YVPlbu1NV26f8x90OpPSGfsZdM+W/DL
+X-Authority-Analysis: v=2.4 cv=UL/dHDfy c=1 sm=1 tr=0 ts=68513038 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=6IFa9wvqVegA:10 a=0wEiu_sYbdzYxkl5siMA:9 a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-GUID: aTZXpQO8YVCjjTxvaawEreoJNFURYqFs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-17_03,2025-06-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 clxscore=1011 suspectscore=0 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0 mlxlogscore=999
+ malwarescore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506170073
 
-On Sun, Jun 15, 2025 at 12:14:02AM GMT, Waqar Hameed wrote:
-> +examples:
-> +  - |
-> +    proximity {
-> +        compatible = "nicera,d3323aa";
-> +        vdd-supply = <&regulator_3v3>;
-> +        vout-clk-gpios = <&gpio 78 0>;
-> +        data-gpios = <&gpio 76 0>;
+Add Epoch subsystem (EPSS) L3 scaling support on QCS8300 SoC.
 
-Same comment as before.
+Raviteja Laggyshetty (3):
+  dt-bindings: interconnect: Add EPSS L3 compatible for QCS8300 SoC
+  interconnect: qcom: Add EPSS L3 support on QCS8300 SoC
+  arm64: dts: qcom: qcs8300: Add EPSS l3 interconnect provider node
 
-> +    };
-> +...
-> -- 
-> 2.39.5
-> 
+ .../bindings/interconnect/qcom,osm-l3.yaml      |  1 +
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi           | 17 +++++++++++++++++
+ drivers/interconnect/qcom/osm-l3.c              |  1 +
+ 3 files changed, 19 insertions(+)
+
+-- 
+2.43.0
+
 
