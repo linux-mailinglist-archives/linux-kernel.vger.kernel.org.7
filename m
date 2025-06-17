@@ -1,61 +1,97 @@
-Return-Path: <linux-kernel+bounces-690389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64DB0ADD001
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:35:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E28ADCFDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 046FD17AD72
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:30:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C5817D0BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1881F098F;
-	Tue, 17 Jun 2025 14:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553FC2EF654;
+	Tue, 17 Jun 2025 14:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDe3FgWK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="HkjTSDm5"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26842EF664;
-	Tue, 17 Jun 2025 14:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D03733F9
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 14:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750170618; cv=none; b=CQY6n1YPYARtAGB2q9QQ2BLFMZldH3n9YjLDKtHTQgosdZMInxBpF2KO7SxKGyP0P2sfKK3VG/AyX1O5Nxm23FnljWyG4g2SJKAyd6MAdQvxyI7bQSDofwHc93nRHjhEiP2dcxP82Y4j2H86kz6MWwlJW6H/MBOfXKqxhP5JolY=
+	t=1750170314; cv=none; b=eovp3Hr/OEvFmL+dgH1grpzkkuia33n4o6aFOYPk4dndTV17zRpCSJ1mjAveK7yUR7SZkil6+gvbFfA9WALUitbxTHJF2irJVogHK7WF2UKjJPZ+i5T3KENQVrvl7v0Y8fdGu9GiurhhR/JbLfy0JsM/8pOjXhgQ07x/2YDCdmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750170618; c=relaxed/simple;
-	bh=fr2XMAsOts3e2z91VRBihiSkUtLYOX60usFN8g0EWAQ=;
+	s=arc-20240116; t=1750170314; c=relaxed/simple;
+	bh=MJVh9FqFD3KJCh1Pp9qSs5ITe7Bdy58pKCW4efESyDc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S2+RdkCtpMA6XlGtruNHEVsWhzfbYMtTVstXkLHtbIFNmfL1q+QuHynAz3JviQw7yMz4gWkJqhavOB/vfQ6Re92STD3+o/i9iyOTRnFtXj70aJy+6ggPjizYnbGTA9LgD8vqPUSOsWTSIbph/y14LEZajEyvpn9qDHNEOMtJAVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDe3FgWK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9838C4CEE7;
-	Tue, 17 Jun 2025 14:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750170618;
-	bh=fr2XMAsOts3e2z91VRBihiSkUtLYOX60usFN8g0EWAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QDe3FgWKdRYt+BIzMKBQF3t5wcdsgovRo8kcvLAZPRvtxyXl1IvJ1uNlEJh8U4szk
-	 WfnBWWcVDZzqXI61sDtZK990vZVY38xyHXdM8ZsdmGlYrWlwx9hSAd5jzQh+JAMcXz
-	 4UEuHs04KEVpn53uSj9FF9SyIfJ2TnYQ0oGXkwZw7S2c7eR/8u3FrqK1UJ/EVyn7J2
-	 FFrE/9UrKWA1xYiEFfIF+1CF254i3hvfP53fi2s9JlXyyKs/yG9t+uET8HDMiY7EM9
-	 lWYelt+tdc7MIPGZhMbltC42Afg6OnmSi0RmZVMPObkuYfe1NmfQf1XhBBxdk4SbUw
-	 0Rrk2MzTfwCJA==
-Date: Tue, 17 Jun 2025 19:55:01 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, 
-	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, Sairaj Kodilkar <sarunkod@amd.com>, 
-	Vasant Hegde <vasant.hegde@amd.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Joao Martins <joao.m.martins@oracle.com>, Francesco Lavra <francescolavra.fl@gmail.com>, 
-	David Matlack <dmatlack@google.com>
-Subject: Re: [PATCH v3 12/62] KVM: SVM: Inhibit AVIC if ID is too big instead
- of rejecting vCPU creation
-Message-ID: <bmx43lru6mwdyun3ktcmoeezqw6baih7vgtykolsrmu5q2x7vu@xp5jrbbqwzej>
-References: <20250611224604.313496-2-seanjc@google.com>
- <20250611224604.313496-14-seanjc@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tlK5400Ae+eAeFmB4baNZfg4CVzLjHs2Od53UjTFJFSxHGidTYcgMeKQSodtGdlDWxqeSvqivsZgBWjzvRG0PmCIPsxN8rq/nNOuaR6icnoM5qr/axe7YbdQmam040OPGTaDoE9/Bkvo4NYAXCD5rX1H8U2OXqtrURpvIc3tBcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=HkjTSDm5; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a52874d593so5604689f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 07:25:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1750170311; x=1750775111; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XXt3dy96emDfUbi5YZOyss2yuwnnqq07rcmYyztRQSY=;
+        b=HkjTSDm56M1RXnax/YZpIqRl69wafE///BIz0HQYmHIb4wN43hxE8R47tK+DbzUyaH
+         PI0eBQvWEjdEV+YBfpiYLl2h5EOWhFoPWsa2e3ynDruSgde9QP674K2dW1ZxcnL9k0h3
+         UsOaDdbaMw1XnwxC7gE6AHodyOJG6ITgJjhHs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750170311; x=1750775111;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XXt3dy96emDfUbi5YZOyss2yuwnnqq07rcmYyztRQSY=;
+        b=ZBFLASe0iPj0VHp343HvrSed3+E53AYRQ0jJUkRNVpuPY3CekqhgwXGg2thAm9GGBE
+         RbytYT79s5WBTxApmmIxXtcxvP8qRj8KT293QGFJz59pOUKA3i/1f0Qr59H3XHHHPgLz
+         GPKmfvPN7bnSvZqv5YBurNICmywJWnU59dXcxHj3Dwi67RsI5NTA9JluhPIi88TO9BY4
+         dgKstZj86rVXVkG7MfYPfsWJ1FJr6NDQFm1F0ZGhzrnVFacMAt7XxEDmYGIhUiQ7ZgMh
+         zbJaxW2kG2ZtOyRCVH48BX+LsaAiFI5ECkiwAK32kwqYWO8I6WPIaK4BOFxgffeBRJuc
+         /Yfw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeVxuyYxRoCSDhXallstsFfAb6XAVzsYyOowybYp9RU8IOEE64RzsFzg6mht2BYybgxEpYz68IcxnuxaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkNS8o3G055e9jKsusIhiPDDi038BFwrcCZhretMHQ/159+Fsm
+	ZpQYKjXHuBt8L97MHGCiuE/J5Z/96HQvofDrtu7KZrGbNICPhEh0yatKMq2QmzOv8fQ=
+X-Gm-Gg: ASbGnctXPVSKtXlhEDP70eohs+fBzDN0aQ1CxJ6KKqgIWI45nsdAV/2I9nTkOEX+/LF
+	E1U1B18MZrUeOixz+dHVHQCGF9btJurXDMUZ7CoTjlB2Zuyl3GOFhwkn5uM034zc/tVKI9KRaMy
+	/hlukZnMXNQZnSArAvFkjJ2TTaCyfyqjIyKl7OnVOESqe5s1UZkXfpM1xtJp7ZCWfTNLkCfonuX
+	ZvsQb7oRzCYEeuYTEcw8+0YNX5/MFbfRcgNosCkYBSDZRh0lOoSag9lO286dWzioWHFjpYKgJC6
+	1kFZmo2gIwp07PK1E8+pc8I4/QlmNWBm699PynrC+CMCdRnmVswtLyDclMLXu/Itwp/Xn1A6BQ=
+	=
+X-Google-Smtp-Source: AGHT+IEbdYZbQa6vrYSOaM4WdmPVqMOqkP9lVIxOcii3jXSSMba4JKehblrgcpHlbRQBeXzMM6KpFQ==
+X-Received: by 2002:a5d:64ee:0:b0:3a4:e1e1:7779 with SMTP id ffacd0b85a97d-3a5723a2be9mr10791911f8f.32.1750170311421;
+        Tue, 17 Jun 2025 07:25:11 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b1bc97sm14245947f8f.68.2025.06.17.07.25.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 07:25:10 -0700 (PDT)
+Date: Tue, 17 Jun 2025 16:25:09 +0200
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Philipp Stanner <phasta@kernel.org>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: Re: [PATCH v2] drm/sched: Clarify scenarios for separate workqueues
+Message-ID: <aFF6xeu78cXTGFH0@phenom.ffwll.local>
+Mail-Followup-To: Danilo Krummrich <dakr@kernel.org>,
+	Philipp Stanner <phasta@kernel.org>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+References: <20250612144953.111829-2-phasta@kernel.org>
+ <aFFy5aG1eOeMU44S@phenom.ffwll.local>
+ <aFF3YIAFkgsAKvQV@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,98 +100,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250611224604.313496-14-seanjc@google.com>
+In-Reply-To: <aFF3YIAFkgsAKvQV@pollux>
+X-Operating-System: Linux phenom 6.12.30-amd64 
 
-On Wed, Jun 11, 2025 at 03:45:15PM -0700, Sean Christopherson wrote:
-> Inhibit AVIC with a new "ID too big" flag if userspace creates a vCPU with
-> an ID that is too big, but otherwise allow vCPU creation to succeed.
-> Rejecting KVM_CREATE_VCPU with EINVAL violates KVM's ABI as KVM advertises
-> that the max vCPU ID is 4095, but disallows creating vCPUs with IDs bigger
-> than 254 (AVIC) or 511 (x2AVIC).
+On Tue, Jun 17, 2025 at 04:10:40PM +0200, Danilo Krummrich wrote:
+> On Tue, Jun 17, 2025 at 03:51:33PM +0200, Simona Vetter wrote:
+> > On Thu, Jun 12, 2025 at 04:49:54PM +0200, Philipp Stanner wrote:
+> > > + * NOTE that sharing &struct drm_sched_init_args.submit_wq with the driver
+> > > + * theoretically can deadlock. It must be guaranteed that submit_wq never has
+> > > + * more than max_active - 1 active tasks, or if max_active tasks are reached at
+> > > + * least one of them does not execute operations that may block on dma_fences
+> > > + * that potentially make progress through this scheduler instance. Otherwise,
+> > > + * it is possible that all max_active tasks end up waiting on a dma_fence (that
+> > > + * can only make progress through this schduler instance), while the
+> > > + * scheduler's queued work waits for at least one of the max_active tasks to
+> > > + * finish. Thus, this can result in a deadlock.
+> > 
+> > Uh if you have an ordered wq you deadlock with just one misuse. I'd just
+> > explain that the wq must provide sufficient forward-progress guarantees
+> > for the scheduler, specifically that it's on the dma_fence signalling
+> > critical path and leave the concrete examples for people to figure out
+> > when the design a specific locking scheme.
 > 
-> Alternatively, KVM could advertise an accurate value depending on which
-> AVIC mode is in use, but that wouldn't really solve the underlying problem,
-> e.g. would be a breaking change if KVM were to ever try and enable AVIC or
-> x2AVIC by default.
+> This isn't a concrete example, is it? It's exactly what you say in slightly
+> different words, with the addition of highlighting the impact of the workqueue's
+> max_active configuration.
 > 
-> Cc: Maxim Levitsky <mlevitsk@redhat.com>
-> Tested-by: Sairaj Kodilkar <sarunkod@amd.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/include/asm/kvm_host.h |  9 ++++++++-
->  arch/x86/kvm/svm/avic.c         | 14 ++++++++++++--
->  arch/x86/kvm/svm/svm.h          |  3 ++-
->  3 files changed, 22 insertions(+), 4 deletions(-)
+> I think that's relevant, because N - 1 active tasks can be on the dma_fence
+> signalling critical path without issues.
 > 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 2a6ef1398da7..a9b709db7c59 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1314,6 +1314,12 @@ enum kvm_apicv_inhibit {
->  	 */
->  	APICV_INHIBIT_REASON_LOGICAL_ID_ALIASED,
->  
-> +	/*
-> +	 * AVIC is disabled because the vCPU's APIC ID is beyond the max
-> +	 * supported by AVIC/x2AVIC, i.e. the vCPU is unaddressable.
-> +	 */
-> +	APICV_INHIBIT_REASON_PHYSICAL_ID_TOO_BIG,
-> +
->  	NR_APICV_INHIBIT_REASONS,
->  };
->  
-> @@ -1332,7 +1338,8 @@ enum kvm_apicv_inhibit {
->  	__APICV_INHIBIT_REASON(IRQWIN),			\
->  	__APICV_INHIBIT_REASON(PIT_REINJ),		\
->  	__APICV_INHIBIT_REASON(SEV),			\
-> -	__APICV_INHIBIT_REASON(LOGICAL_ID_ALIASED)
-> +	__APICV_INHIBIT_REASON(LOGICAL_ID_ALIASED),	\
-> +	__APICV_INHIBIT_REASON(PHYSICAL_ID_TOO_BIG)
->  
->  struct kvm_arch {
->  	unsigned long n_used_mmu_pages;
-> diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-> index ab228872a19b..f0a74b102c57 100644
-> --- a/arch/x86/kvm/svm/avic.c
-> +++ b/arch/x86/kvm/svm/avic.c
-> @@ -277,9 +277,19 @@ static int avic_init_backing_page(struct kvm_vcpu *vcpu)
->  	int id = vcpu->vcpu_id;
->  	struct vcpu_svm *svm = to_svm(vcpu);
->  
-> +	/*
-> +	 * Inhibit AVIC if the vCPU ID is bigger than what is supported by AVIC
-> +	 * hardware.  Immediately clear apicv_active, i.e. don't wait until the
-> +	 * KVM_REQ_APICV_UPDATE request is processed on the first KVM_RUN, as
-> +	 * avic_vcpu_load() expects to be called if and only if the vCPU has
-> +	 * fully initialized AVIC.
-> +	 */
->  	if ((!x2avic_enabled && id > AVIC_MAX_PHYSICAL_ID) ||
-> -	    (id > X2AVIC_MAX_PHYSICAL_ID))
-> -		return -EINVAL;
-> +	    (id > X2AVIC_MAX_PHYSICAL_ID)) {
-> +		kvm_set_apicv_inhibit(vcpu->kvm, APICV_INHIBIT_REASON_PHYSICAL_ID_TOO_BIG);
-> +		vcpu->arch.apic->apicv_active = false;
+> We could change
+> 
+> 	"if max_active tasks are reached at least one of them must not execute
+> 	 operations that may block on dma_fences that potentially make progress
+> 	 through this scheduler instance"
+> 
+> to 
+> 
+> 	"if max_active tasks are reached at least one of them must not be on the
+> 	 dma_fence signalling critical path"
+> 
+> which is a bit more to the point I think.
 
-This bothers me a bit. kvm_create_lapic() does this:
-          if (enable_apicv) {
-                  apic->apicv_active = true;
-                  kvm_make_request(KVM_REQ_APICV_UPDATE, vcpu);
-	  }
+My point was to more state that the wq must be suitable for the scheduler
+jobs as the general issue, and specifically then also highlight the
+dma_fence concurrency issue. But it's not the only one, you can have
+driver locks and other fun involved here too.
 
-But, setting apic->apicv_active to false here means KVM_REQ_APICV_UPDATE 
-is going to be a no-op.
-
-This does not look to be a big deal given that kvm_create_lapic() itself 
-is called just a bit before svm_vcpu_create() (which calls the above 
-function through avic_init_vcpu()) in kvm_arch_vcpu_create(), so there 
-isn't that much done before apicv_active is toggled.
-
-But, this made me wonder if introducing a kvm_x86_op to check and 
-enable/disable apic->apicv_active in kvm_create_lapic() might be cleaner 
-overall. Maybe even have it be the initialization point for APICv: 
-apicv_init(), so we can invoke avic_init_vcpu() right away?
-
-
-- Naveen
-
+Also since all the paragraphs above talk about ordered wq as the example
+where specifying your own wq makes sense, it's a bit confusing to now
+suddenly only talk about the concurrent wq case without again mentioned
+that the ordered wq case is really limited.
+-Sima
+-- 
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
