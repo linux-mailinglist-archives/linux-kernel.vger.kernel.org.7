@@ -1,94 +1,185 @@
-Return-Path: <linux-kernel+bounces-690277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3393ADCE21
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:50:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6805ADCE70
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EEAF172932
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:49:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB4E61605A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1882E764B;
-	Tue, 17 Jun 2025 13:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900C52900B0;
+	Tue, 17 Jun 2025 13:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPo3mMxF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="RqvNwIGS"
+Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFD72E266C;
-	Tue, 17 Jun 2025 13:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C65E2E7173;
+	Tue, 17 Jun 2025 13:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750168120; cv=none; b=eKR3ILGtoF5vGd/20CQ+DVvSl0QOjcvjVmk9Yfh+BN2dJVNfMM7f692IuyyEfCyGBrPfvd/Z3f1PPJ5iqXCeal+j54d37of+JJRdGmAAsNd6ughnt8kyU6F7pGiBhnwojchi9NGF+IHqC49nTSarr9Mv9MM/95HwG608ZES2IlI=
+	t=1750168685; cv=none; b=daSKrw7mQ7rvcv2QJbnsKY0ogVPqnG5LczFN3Rmg+VhWxUqRQbeyRgQ0tkHpsa1UmF+vp9uTfbArjpiTX7tGdfmTQ2eyM/FugAMprUgPLz2DGswKsYzB4eXz/OMP5BrN0uP27HkGQedRZx8W7YGg6m4nMRP2Bjt7dbFCHSirsSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750168120; c=relaxed/simple;
-	bh=CC0pQmZOifV+kXRbEIORrVEDtXPMfO7f7/1stjrjXiM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZZO9GY7Vssq4Cs5AnmJAIIwfwrv+8h0sKn6/tXGUuJS8EBVEMqjuQv051uy27VXR1+vmPFtfdWWNr33DerWJwXOqMCyh+w3zU4SHs6ZKLX61Aj1kR6mNsxvxJQgU3XB8xHNh1p1Fu+B01B0uKH1qh+eeIW6PZ1qEyW0QMhLoOOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPo3mMxF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD46C4CEE3;
-	Tue, 17 Jun 2025 13:48:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750168119;
-	bh=CC0pQmZOifV+kXRbEIORrVEDtXPMfO7f7/1stjrjXiM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nPo3mMxFDXUTJA5p3aSGonT/Ar7T710bZtU3yL/w0GY5uc9pExDGlTZGbLNJSz+L9
-	 T5KmmvlpaXGw4iV1hZaXnYkRo6D2CcpJ0zkKsjXVP1Ljc8Hyr/5ca3BMcc/v8jb0s5
-	 e/s7oGvcbKQaMM2NVBYYrtQVZWh4jTWjWBGkygy+/vrFi6bBgKIo8Bc2HCMVslbvMk
-	 o8dtRf2xS8H1Rjh1SET86k18k1UYq+EHD4b23eAt/6y0h2hCUlWulRoPXNz56vptB8
-	 SoqAArWFA80/7gpylEkqyr9CBkCmy1CvXUrdc83+aCrtDptSe6NLxXb8RybvSmRzWv
-	 sZ/agH8cBl4Cw==
-From: Chuck Lever <cel@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>,
-	NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3][next] NFSD: Avoid multiple -Wflex-array-member-not-at-end warnings
-Date: Tue, 17 Jun 2025 09:48:34 -0400
-Message-ID: <175016808512.336273.15483620286888395120.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <aFCbJ7mKFOzJ8VZ6@kspp>
-References: <aFCbJ7mKFOzJ8VZ6@kspp>
+	s=arc-20240116; t=1750168685; c=relaxed/simple;
+	bh=OulGcH1UWVL91nQXXpZ1AohB7T6eGwSLmAiup62xQso=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VEi9DJh1iOdFgtsObSkhQ/Fo15dSBhQEnldaRW1Z7u1xt3p3Wsfijt7y8+xDvgoh8TB3Pi4AvK3ddEe5h3rI9kEjkV303znRvvWZMJX7uCvGsMLVh1o/YgXMbvZskDresZmOMrOHqa1RlRKMPPnXHItGTfuN9/3fbiLWiAB9psc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=RqvNwIGS; arc=none smtp.client-ip=81.19.3.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+	s=20160406-ysoft-com; t=1750168120;
+	bh=6L86m2idLx54i+AuHViJVCNmZf9ivZtdqsaOK2Nildk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RqvNwIGSotcdxW9c27bhgyCIf0nJf6SFzdjY9cY1iT2GBR+tq0VRUeS/4S/JoQEEr
+	 +/c2EZGTcqtzmVtnZkEommezv4awt1H885fPV57grXBUxL43DRhFEa/jTqH/tauUMR
+	 w0wodKpNMfBNP8WBDzVyPq8lZavlxhwIPhKoIjyM=
+Received: from [10.1.8.111] (unknown [10.1.8.111])
+	by uho.ysoft.cz (Postfix) with ESMTP id C84F1A0246;
+	Tue, 17 Jun 2025 15:48:39 +0200 (CEST)
+Message-ID: <7139baaf-cfa8-41f3-8870-2337fb6b37a7@ysoft.com>
+Date: Tue, 17 Jun 2025 15:48:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC RESEND] leds: lp55xx: led-cur property is not properly
+ applied to multi-led
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>, Christian Marangi
+ <ansuelsmth@gmail.com>, linux-leds@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250523093142.1498846-1-michal.vokac@ysoft.com>
+ <20250612105712.GD381401@google.com>
+Content-Language: en-US
+From: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+In-Reply-To: <20250612105712.GD381401@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Chuck Lever <chuck.lever@oracle.com>
-
-On Mon, 16 Jun 2025 16:31:03 -0600, Gustavo A. R. Silva wrote:
-> Replace flexible-array member with a fixed-size array.
+On 12. 06. 25 15:48, Lee Jones wrote:
+> On Fri, 23 May 2025, Michal Vokáč wrote:
 > 
-> With this changes, fix many instances of the following type of
-> warnings:
+>> Hi,
+>>
+>> I am trying to wrap my head around the implementation of the multicolor
+>> LED support in the lp55xx family drivers.
+>>
+>> The situation is quite straight forward when each LED is registered
+>> and controlled individually but it gets quite messy once you use
+>> the multi-color LED binding.
+>>
+>> I am working with the imx6dl-yapp43-pegasus.dts board (in-tree). There
+>> is one RGB LED driven by a LP5562 LED controller. Currently the RGB LED
+>> is modeled as three separate LEDs and each of the LEDs has
+>> individually tuned led-cur property. I would like to change the device
+>> tree and use the multi-led binding to be able to use triggers on a chosen
+>> RGB color.
+>>
+>> When I was experimenting with that, I realized there is something wrong
+>> with the colors and identified that the led-cur property is not properly
+>> applied in case the multi-led binding is used. What ultimately happens is
+>> that the led_current of the first LED in the multi-led group is set to
+>> the value of led-cur property of the last LED in the group.
+>> All the other LEDs in the group are left with the default reset value
+>> of the controller (0xaf in my case).
 > 
-> fs/nfsd/nfsfh.h:79:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> fs/nfsd/state.h:763:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> fs/nfsd/state.h:669:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> fs/nfsd/state.h:549:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> fs/nfsd/xdr4.h:705:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> fs/nfsd/xdr4.h:678:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> Does this help you:
 > 
-> [...]
+> https://lore.kernel.org/r/20250526-led-fix-v4-1-33345f6c4a78@axis.com
+> 
 
-Applied to nfsd-testing, thanks!
+Unfortunately not.
 
-[1/1] NFSD: Avoid multiple -Wflex-array-member-not-at-end warnings
-      commit: 9aa83533d2e694c84d7d09f9c8eab29ad9f2adef
+The problem here is that the LP55xx family of LED controllers support
+individually tuned current/max current for each channel but the multicolor
+LED class driver was not designed with this in mind. Even though it was
+actually introduced in the same series with all the relevant changes to
+the lp55xx drivers.
 
---
-Chuck Lever
+The problem starts in lp55xx_of_populate_pdata():
 
+	// One RGB LED connected to the controller = one multiled node = one child.
+	num_channels = of_get_available_child_count(np);
+	if (num_channels == 0) {
+		dev_err(dev, "no LED channels\n");
+		return ERR_PTR(-EINVAL);
+	}
+
+	// So we allocate space for only one lp55xx_device_config structure.
+	cfg = devm_kcalloc(dev, num_channels, sizeof(*cfg), GFP_KERNEL);
+	if (!cfg)
+		return ERR_PTR(-ENOMEM);
+
+	pdata->led_config = &cfg[0];
+	pdata->num_channels = num_channels;
+	cfg->max_channel = chip->cfg->max_channel;
+
+Later on in lp55xx_parse_common_child():
+
+	// This is called 3-times (for each LED color in the multi-led node)
+	// led_number = 0 for each call (because we have one multiled node)
+	// np = led@[0,1,2]
+	int ret;
+
+	// Size of the cfg is "1 lp55xx_led_config"
+	// led_number = 0 for each call
+	// So the name, led_current and max_current struct members are being
+	// overwritten until values from the last led@ subnode are stored.
+	// This seems buggy to me and we should not do that.
+	of_property_read_string(np, "chan-name",
+				&cfg[led_number].name);
+	of_property_read_u8(np, "led-cur",
+			    &cfg[led_number].led_current);
+	of_property_read_u8(np, "max-cur",
+			    &cfg[led_number].max_current);
+
+	// This part is OK. The reg property (chan_nr) is stored in
+	// output_num[num_colors] field member of the cfg structure.
+	ret = of_property_read_u32(np, "reg", chan_nr);
+	if (ret)
+		return ret;
+
+And finally in lp55xx_register_leds():
+
+	// num_channels = 1 (one multi-led node)
+	for (i = 0; i < num_channels; i++) {
+
+		/* do not initialize channels that are not connected */
+		if (pdata->led_config[i].led_current == 0)
+			continue;
+
+		// The pdata->led_config[0].led_current contains the led-cur
+		// property value of the last LED from the multi-led node.
+		// Here we call the lp55xx_init_led() just once so we initialize
+		// just the first LED connected to the controller with a wrong
+		//  value. The others are left with their default register values.
+		led_current = pdata->led_config[i].led_current;
+		each = led + i;
+		ret = lp55xx_init_led(each, chip, i);
+
+My first idea was that we need to enhance the lp55xx_led_config structure
+so that the led_current and max_current will be fields of [num_colors] size.
+It will be also needed to add led_current and max_current members to
+the mc_subled structure and the whole led-class-multiclolor.c must be
+adapted accordingly.
+
+There is also quite big difference that when the LEDs are registered individually,
+max_current and led_current attributes of each LED are available in /sys.
+Once you register the RGB LED as a multi-led, only the multi_intensity can be
+changed but the current control is gone. But that is a different story.
+
+
+It is pretty difficult to describe for me. Hopefully you get the idea what
+is wrong here.
+
+Best regards,
+Michal
 
