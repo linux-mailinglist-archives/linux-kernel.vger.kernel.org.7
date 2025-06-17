@@ -1,112 +1,92 @@
-Return-Path: <linux-kernel+bounces-689239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29AE7ADBE70
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:12:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82190ADBE83
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B044165207
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 01:12:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35C011738B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 01:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAAB1C860A;
-	Tue, 17 Jun 2025 01:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470401891AB;
+	Tue, 17 Jun 2025 01:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZDUz+tgm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="gb13RLGT"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF2915B0EC;
-	Tue, 17 Jun 2025 01:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E47BE4A
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 01:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750122711; cv=none; b=olD5bYR8I39YumzmsWiLq22w2xvtabhEU83yPfJKnecBl34r7+SWso9zR5Rwr45IXOYw3TYb0cbrkYXVtjwxFboAqvi40jiLSrWrQVOOh5nHD8flZdsL9E2Ip4n2HbxIHySxevaemo/uFZ8JcwnmOLSD2RfQh+AcuWprX5vGGGU=
+	t=1750123244; cv=none; b=h/PPjJr4+jmxJShwykyG0E3nVb39a1CeRqjfN9s47StS4omnVMZsNO04LvG74mRiUjbGWPJNxJtU4h9PwXBiZv8ncJ3zJI53OYUOzxOmstLc1OnMVArg7+akgqme6WbCVS4PVBxxFeLoNkG4C2AqkyhRD9U3q9Q3y484/r9G/gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750122711; c=relaxed/simple;
-	bh=iVaWv2RzWaaVpLuDLobgnSNSuWym8RHkG55Fpi0YUmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I2pMR5cN/Urpmch8nFkkn8IyH2BYgW2Tx9VQLt6H6WsVozODryMzL1Zgbv4L2S+3cY6GiMTT1qWmFEyUygFpULIrykT0iy+jvVJCRUN/gLdw2e4Ie3l33gnHVpgmc2G8ZLPJnH2aln2eU1NkPiXjC+uN9s4Y/XLlghtX1Zs1KNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZDUz+tgm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FE66C4CEEA;
-	Tue, 17 Jun 2025 01:11:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750122710;
-	bh=iVaWv2RzWaaVpLuDLobgnSNSuWym8RHkG55Fpi0YUmI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZDUz+tgmmat53i4A+5QK7mFlGbgaBHM2POFECs9Tkk4AWrIz7JOaEfJskAUaum+oW
-	 4O6FJx5D5oAtBuWaPZPUFPlmKOrip8yd8026FEsnB+qyo5o0VeOPWy+xSZA64ZEZGw
-	 PmzX/vZJHfYY5T31ZpqfrXWu3f/PRzAq/dkpQo3K6GAXHJYvqkzFDRW6W7S/ALevJM
-	 mT89C+Tv37QjS0UF4x58lvSnig0A47YWCnkC8GnMkaa3+MhANIRZndmi56+aKqnoI/
-	 zeG4OQKyWFF3Li1Cct2omWAFieEmrVJbgeNQV8LNma7YzgOPTGRgyTs926/PnDfZUA
-	 wou35Gs6DxCug==
-Date: Mon, 16 Jun 2025 18:11:48 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Nipun Gupta <nipun.gupta@amd.com>, Yury Norov
- <yury.norov@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Cameron
- <Jonathan.Cameron@huwei.com>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Kevin Tian <kevin.tian@intel.com>, Long Li
- <longli@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas
- <bhelgaas@google.com>, Rob Herring <robh@kernel.org>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Krzysztof Wilczy???~Dski
- <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Dexuan Cui
- <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Haiyang Zhang
- <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Andrew
- Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Konstantin
- Taranov <kotaranov@microsoft.com>, Simon Horman <horms@kernel.org>, Leon
- Romanovsky <leon@kernel.org>, Maxim Levitsky <mlevitsk@redhat.com>, Erni
- Sri Satya Vennela <ernis@linux.microsoft.com>, Peter Zijlstra
- <peterz@infradead.org>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- Paul Rosswurm <paulros@microsoft.com>, Shradha Gupta
- <shradhagupta@microsoft.com>
-Subject: Re: [PATCH v6 0/5] Allow dyn MSI-X vector allocation of MANA
-Message-ID: <20250616181148.2aed5dfe@kernel.org>
-In-Reply-To: <20250612061055.GA20126@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1749650984-9193-1-git-send-email-shradhagupta@linux.microsoft.com>
-	<20250611085416.2e09b8cd@kernel.org>
-	<20250612061055.GA20126@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	s=arc-20240116; t=1750123244; c=relaxed/simple;
+	bh=ISppZOBZmOoBXSZrSQ4ZrLMBQWK/RmHidvfzBzoO/bg=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=uVZmpbVqNtaNRrriiz3NyBH8UDeAvEQwrtDGOMdaJDAXGLW5xtOYqiyWClMd0Q6Op8B8PK54lS4g3juRngk3PNFf+1gvg9gifqMkSl9zPrN58rpArBXg8uxm6ubnh3SI7lKbNdmhyBzNch1t4DTZGuyMME5CIgA871EKpQsKs1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=gb13RLGT; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1750123230; bh=iY0bpYzY/UPVyhMhofVNx3l+tr2kpYXCWotOHPYocnY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=gb13RLGTvuP7Em7+7gwdKMf9XybJgiGZKNq+dl/UDfVZEs0VnePH0jjFjl74cZJc+
+	 sicn8KUvW+XZS9zX5tHGKMh7RLCjLlRz29QXl6BBR6BplN+YYffz0JQF1bfEzb0VeE
+	 Ads/6Igcq8OLAsFSNCsaEi9JV0TmwQzoNbKHBo4s=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 30E35EBD; Tue, 17 Jun 2025 09:12:14 +0800
+X-QQ-mid: xmsmtpt1750122734t0ori7lc1
+Message-ID: <tencent_E537B64A4A759576C7662A3C9D3784977009@qq.com>
+X-QQ-XMAILINFO: MmPNY57tR1XnKo04IUVr9r5LloQuof3TbtpcMlto1HomD+pkynpp0jK/x1+b4n
+	 hrZOjyCMbd+2pcEO3YS2epPOMSyxZIDnKCvb9rFVEdl33BKdypWzDEiCojZT7+/dUtmnhBcWyCVE
+	 qWSZvOvKRhheE3H0phHDEb+IhQwcSchO/h3YcBF7dmr3Sfj22KDI9zpYyNOEsbjiIbv0w/DKERK+
+	 IzU7NCM798UOg2Pv1lBjLjqRPUod6yhe3cdYqEbxvnUxmcyMJgmw1gZsqe8/1rl/QC7ZEzllV1vr
+	 H5pnDbDneXLaGizb+4q3uAf5PAsTaLbSM66JjkqXF1lKivAqE/dcUjCKaaIYzLBXcRTeFm68FJGy
+	 WXmMRNiJQpi61VXpRjOVJe5XGjC7hiu59OiZJJAVdjfK+M4kH9ucbGhZJsn25dI4bBM4933Uza83
+	 dt9cTnhEht71bdaiEAM5TvI61wGYp8uGOOsnsoF0DgwoxqWr3Jd5N/Cu5kK9F68lZqi1N4ZKhycz
+	 y5oJ24wJF0gOWGmo5Wvkvfm54oqq3bGbQNbY6vvQoz5XihgRwXWTRX7JzbDzEAldNUGwnzUECdRy
+	 oWASBHB1qLf6B2DMWM/dLy4ybGYwB+zoes2/azPeGo0nsCFuVwpLCEjXYBE6nJO1ddWf4eN1+APU
+	 Fs/lhjbgMkjJrBjeWe3lt7V6UB4b/Xhvte/0e+5gQ1df5bamfmLTtmgOGRNJQv+r8Pmcc93gky8v
+	 ein8EPV3ZUYdCCX0E5yhkhP9bd8g6EYMD0rgM9aS404RBYEAS4jrV836HVdH56408h+wVhZFZ0uG
+	 pFwSHeOKM0manlTqjOW47eSftvAfN/nC7kXKYEEYBncFvIMUaYYyyEeHbEIlqpSWBFlGJkHpTUrm
+	 R40n51tXBd7uGH3aev+7CTveZ3R5gua0kNxxfunos1p937XY6zIe+Z2yKFCbifBazoGzHxQ+E1
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+6554b492c7008bcd3385@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [wireless?] UBSAN: array-index-out-of-bounds in ieee80211_rx_mgmt_beacon
+Date: Tue, 17 Jun 2025 09:12:15 +0800
+X-OQ-MSGID: <20250617011214.220675-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <68504add.a70a0220.395abc.01e7.GAE@google.com>
+References: <68504add.a70a0220.395abc.01e7.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 11 Jun 2025 23:10:55 -0700 Shradha Gupta wrote:
-> On Wed, Jun 11, 2025 at 08:54:16AM -0700, Jakub Kicinski wrote:
-> > On Wed, 11 Jun 2025 07:09:44 -0700 Shradha Gupta wrote:  
-> > > Changes in v6
-> > >  * rebased to linux-next's v6.16-rc1 as per Jakub's suggestion  
-> > 
-> > I meant a branch, basically apply the patches on the v6.16-rc1 tag
-> > and push it out to GitHub, kernel.org or somewhere else public.
-> > Then we can pull it in and maintain the stable commit IDs.
-> > No need to repost the patches, FWIW, just share the branch here
-> > once you pushed it out..  
-> 
-> Oh, understood. Thanks for the clarity. Here is a github repo branch
-> with the changes on v6.16-rc1 tag
-> https://github.com/shradhagupta6/linux/tree/shradha_v6.16-rc1
+#syz test
 
-The tag was good, but when I pulled it my check scripts complained:
+diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
+index 2d46d4af60d7..c370352b7d7d 100644
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -7222,7 +7222,7 @@ static void ieee80211_rx_mgmt_beacon(struct ieee80211_link_data *link,
+ 	if (ieee80211_is_s1g_beacon(mgmt->frame_control)) {
+ 		struct ieee80211_ext *ext = (void *) mgmt;
+ 		variable = ext->u.s1g_beacon.variable +
+-			   ieee80211_s1g_optional_len(ext->frame_control);
++			   ieee80211_s1g_optional_len(ext->frame_control) - 1;
+ 	}
+ 
+ 	baselen = (u8 *) variable - (u8 *) mgmt;
 
-Commit a19036b86845 ("net: mana: Allocate MSI-X vectors dynamically")
-	committer Signed-off-by missing
-	author email:    shradhagupta@linux.microsoft.com
-	committer email: shradhagupta@microsoft.com
-	Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-
-etc. You seem to have committed the patches with a slightly different
-email address. Not a huge deal but better to fix it if we can.
-
-So please base the tag. The code can stay the same just adjust the
-committer or author/signoff email addrs. We can use this as an
-opportunity to add Bjorn's email.
-
-No need to repost the code just ping here once you updated the tag.
 
