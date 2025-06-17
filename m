@@ -1,90 +1,96 @@
-Return-Path: <linux-kernel+bounces-689348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0064ADBFFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 05:43:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B463ADC001
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 05:46:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAEB23ADA58
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:43:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51C293AFEAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238D7207DEF;
-	Tue, 17 Jun 2025 03:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C34520CCFB;
+	Tue, 17 Jun 2025 03:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAcrH6Xb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VHee/lKW"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7682BEFF1;
-	Tue, 17 Jun 2025 03:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28151E49F
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 03:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750131831; cv=none; b=fJPinA7IwjEhmlGWMcOXPHVH52yMhJjufgu9jVn9GnSwNOz9nL5tvkEuwh+3QZOTr6H+G9MZDXnW66KI3ZvaMIwDI53GShyaD1qIa1UpxMJnUUXjmn6ZdmyUqrJwkIqrs+lBxVKDrAC+cOGz/grwKiAAm8fF0FM1IIu5yzbUxZg=
+	t=1750131964; cv=none; b=Je4fWoTnIHEVM8S6OWkLhYfTVrZiDMwi0ZW3VlCSkFjHzn/KSjRcbVqdujU0zNTEecTMzsfhhlj3fJug5OUwnAV80lDHU++VjfQZyKP7JsYi7+nSYXKg/o1O7KlwaaTCpCR2lrMU4AAzS21rLLsSmBsvCKTizYf6ECY8PZmNQRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750131831; c=relaxed/simple;
-	bh=IVM+SBWwe+LMKFMWidQm7buxQDhFKeBN3mUZ21V7TPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uPeTMlc7zpaTKuY5l9Inp49VRZV2YAt4Mtz0qZDAbjUSYg1/izB/4DsRT5psvw9qCsaDpC3FRoTaVbmzDbFo9TkkDmVDtqiOorT+Zt9DvKnVcj68BG8aNjG6pdOGFPlivxg2qW1lCmZsiE6sF3ynkNOvicoKExnfrskIvVaIo0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAcrH6Xb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FBD3C4CEEA;
-	Tue, 17 Jun 2025 03:43:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750131831;
-	bh=IVM+SBWwe+LMKFMWidQm7buxQDhFKeBN3mUZ21V7TPI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JAcrH6XbiAwgi+V5HDUMIjbGBiQoZGczC2WI3Q6KOTaKlAMEd48zKG0fEeIUPmLyi
-	 a7AzEBlj7k9gJaW3HgAlzzhCpT1UcfYr+wrM6HOmgAPB0KKkm4R5ioKZckwcQBTE0H
-	 qeFqgTIFzK5t6/b260r6yViE8AzxSV+8ytzyGzRCVcUIsxC4x88fo6T84WFKktE9h9
-	 ImIVeKg5goPrcFuOvOlachVs3piFEwFDU8oxEh8COOa7PwvXV34wysv+QCIPzeQJp7
-	 Yizf+HBuxBCSgCcN8+gFY+OTYStn2l7Gy8OEiyMc7IH4kdtDtO9eFVnHSyIWFmsI4G
-	 B41fu0bpo89MA==
-Date: Mon, 16 Jun 2025 20:43:21 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH] PCI/PTM: Build debugfs code only if CONFIG_DEBUG_FS is
- enabled
-Message-ID: <20250617034321.GF8289@sol>
-References: <20250608033305.15214-1-manivannan.sadhasivam@linaro.org>
+	s=arc-20240116; t=1750131964; c=relaxed/simple;
+	bh=EVmPOSuwAmSIzBpYblPdbnWUzE8rHXEf3JdvJyVg1V8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jS7u9p8MZZqbmg5qFeaUR1Zbyo7dmWV2PK9JmJWhHchcN+kCRste0taT78lfomPJaQ+HMoSoFH48lT0BiARNdZjdkYkh3RXufT6X+V6iMez0ZRm4bl6Y+7KIZCionX1kNNhAEd8M1SNqmqkvIP8WRCttF+sw082S0o/KD2ZX6pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VHee/lKW; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1750131952; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=su8AjYq1mTXuvuqEJMcdWzV7oOfzvL5oojBam3qcnoE=;
+	b=VHee/lKWEvI5+/S/iQS3SuxbsHiLOlU5ows0s+Xs0YLM7IjMOnNdowuAyyQNTCjJ9sIPHl0w8cjdMTyHo1SaagJeW/ZX8LjMn64bJBUbFWctnUnZi1A5DYZQBUt1il81bfKrZOriveuYLonHyPJOwF1GfeqtFOlwL9lO7u8VnBQ=
+Received: from 30.221.144.119(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0We7Hh50_1750131951 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 17 Jun 2025 11:45:52 +0800
+Message-ID: <cc276140-8214-42d2-9224-619906364982@linux.alibaba.com>
+Date: Tue, 17 Jun 2025 11:45:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250608033305.15214-1-manivannan.sadhasivam@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ocfs2: reset folio to NULL when get folio fails
+To: Lizhi Xu <lizhi.xu@windriver.com>,
+ syzbot+c2ea94ae47cd7e3881ec@syzkaller.appspotmail.com,
+ akpm <akpm@linux-foundation.org>
+Cc: jlbec@evilplan.org, linux-kernel@vger.kernel.org, mark@fasheh.com,
+ ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com
+References: <684efdcd.050a0220.be214.02c1.GAE@google.com>
+ <20250616013140.3602219-1-lizhi.xu@windriver.com>
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20250616013140.3602219-1-lizhi.xu@windriver.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jun 08, 2025 at 09:03:05AM +0530, Manivannan Sadhasivam wrote:
-> Otherwise, the following build error will happen for CONFIG_DEBUG_FS=n &&
-> CONFIG_PCIE_PTM=y.
+
+
+On 2025/6/16 09:31, Lizhi Xu wrote:
+> The reproducer uses FAULT_INJECTION to make memory allocation fail, which
+> causes __filemap_get_folio() to fail, when initializing w_folios[i] in
+> ocfs2_grab_folios_for_write(), it only returns an error code and the value
+> of w_folios[i] is the error code, which causes ocfs2_unlock_and_free_folios()
+> to recycle the invalid w_folios[i] when releasing folios.
 > 
->     drivers/pci/pcie/ptm.c:498:25: error: redefinition of 'pcie_ptm_create_debugfs'
->       498 | struct pci_ptm_debugfs *pcie_ptm_create_debugfs(struct device *dev, void *pdata,
->           |                         ^
->     ./include/linux/pci.h:1915:2: note: previous definition is here
->      1915 | *pcie_ptm_create_debugfs(struct device *dev, void *pdata,
->           |  ^
->     drivers/pci/pcie/ptm.c:546:6: error: redefinition of 'pcie_ptm_destroy_debugfs'
->       546 | void pcie_ptm_destroy_debugfs(struct pci_ptm_debugfs *ptm_debugfs)
->           |      ^
->     ./include/linux/pci.h:1918:1: note: previous definition is here
->      1918 | pcie_ptm_destroy_debugfs(struct pci_ptm_debugfs *ptm_debugfs) { }
->           |
-> 
-> Fixes: 132833405e61 ("PCI: Add debugfs support for exposing PTM context")
-> Reported-by: Eric Biggers <ebiggers@kernel.org>
-> Closes: https://lore.kernel.org/linux-pci/20250607025506.GA16607@sol
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Reported-by: syzbot+c2ea94ae47cd7e3881ec@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=c2ea94ae47cd7e3881ec
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+
+Looks good.
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+
 > ---
->  drivers/pci/pcie/ptm.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  fs/ocfs2/aops.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+> index 40b6bce12951..89aadc6cdd87 100644
+> --- a/fs/ocfs2/aops.c
+> +++ b/fs/ocfs2/aops.c
+> @@ -1071,6 +1071,7 @@ static int ocfs2_grab_folios_for_write(struct address_space *mapping,
+>  			if (IS_ERR(wc->w_folios[i])) {
+>  				ret = PTR_ERR(wc->w_folios[i]);
+>  				mlog_errno(ret);
+> +				wc->w_folios[i] = NULL;
+>  				goto out;
+>  			}
+>  		}
 
-This is still broken in mainline.  Bjorn, can you apply this?
-
-- Eric
 
