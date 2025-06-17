@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-689930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E81ADC886
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:39:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D382ADC888
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92B131894BE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:39:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 437213BA046
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71FE295DA5;
-	Tue, 17 Jun 2025 10:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DBC291C13;
+	Tue, 17 Jun 2025 10:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQxBUAiN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+On8oym"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7C3292B5F;
-	Tue, 17 Jun 2025 10:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E472292B5F;
+	Tue, 17 Jun 2025 10:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750156744; cv=none; b=h+08OU+oyfAXm8bNoCOmTufL9e4KYH/9IHr5db+1QJzYfNuQF+tcAFHYfFX9SAUdck/epRs7310+FyZ0vCXwZ3wtuCUbJmoWfXLnqERcShZBtOzjIUwvX6XuelB72lZGw1FPfNHa5c652AihqDglSm1KGuIh59SGQhNnWzZFuY8=
+	t=1750156753; cv=none; b=SdRIuMVYYfs/DNr6lLZt9eIUoMQTK6lfYYMpnTO0qfG91/p7fuLAOTOPUp7XeerQSrkc2yoZwKe/0XzWYd/mJSgjx9V+loSCqgCyHmN329geOMW1MIkzgXH9ZDBMJu61aVOu56KsieGrHD/xM4IcyQAZetoZNMBUimo/J3YE5R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750156744; c=relaxed/simple;
-	bh=RsH4Sym15dcXnNebVqP1yRIHkdWmwF51AUuOOr9xu4g=;
+	s=arc-20240116; t=1750156753; c=relaxed/simple;
+	bh=FleFdjelk7yyBYWQ6JVbeglnWYrWNBj04sqXSabvHGw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fZtVjGEDEW6psAJoz0FVrW0ENloS3fXRsr2vB/F3bD097D1fTjORSCWYI9idOtsZe8Cq4G0++I+n1RTabozNHe7cKOyUpgCjQMZwcfmrq3IcI+4o00CkgmJ/Q2VCMCyzu4Y0qysfQjVjgVXzH9GheKyr89EEQaQ29ACo1YnGWbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQxBUAiN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25AAEC4CEED;
-	Tue, 17 Jun 2025 10:38:59 +0000 (UTC)
+	 MIME-Version:Content-Type; b=RIAnU9/stAbyCbNb5jIkX8WbbMaSQIMumXFj6pYurJcNKpmH8E5s57ZdxYP+YRG0rTdL5cGGD05Fx+fQ5Nu2ZkhLNKF+gaVGge50SfHqvgcBVHKDG7QoY5eF9FOhAc4IripidJu9yl3lxl+h2VFHARi3KnzEcEJQfuhk3vf1rIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+On8oym; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39CBEC4CEE3;
+	Tue, 17 Jun 2025 10:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750156743;
-	bh=RsH4Sym15dcXnNebVqP1yRIHkdWmwF51AUuOOr9xu4g=;
+	s=k20201202; t=1750156752;
+	bh=FleFdjelk7yyBYWQ6JVbeglnWYrWNBj04sqXSabvHGw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=iQxBUAiNieTRCSnjpC9Z4n/rXUAjQxxz6cQjwH/bRPH1QKj1SOh6uLEztHf5vqMGc
-	 NBLrM1/66cbdJ4S9adQVm29SHciTMDl11JucAOg+1urBfhaJPk+XqQqvnQJ5BjHrB1
-	 01L/+8LglSWgP1Nf/f+ZuG4s1ddNTgzKTYKwyreyhFy4Quyz+uEHonNyrrevtAvWVI
-	 zsVhChUxHCrfpI0RzrzA7LaywwllgBEjbotPXmx2jkgJ+5DRaSY7VBBbdgJW+ZZSMx
-	 EdKhrDqBBII64wR8nzD1So4CShs65luFjs1FmWfndS9nABG2dnPmuKq59pVEoza/Ej
-	 mq8h3qCDSOQgg==
+	b=P+On8oymKc8Ykp2KlmVKawF/wf8bS8Fm3/gEh0wRl7RyhbzcQD8XM96laLnSNBt+2
+	 q5LVONZkeWPhz6o3Ivz4ycfq1dzisRz2RsIkeo5YkdQSVXxf8w3+keLaONZHLn5bXt
+	 OK8lbRz8Zh3BIVAS+bVvbk/cHXG8bXKyVqI1MvkOdBwMjy85vklhF56NWfUWi/ZjNr
+	 UoBhV4MCBBP1gBfVnZ0j7a29i2KXJzlkKz8jZBhoiAZEwkRo7S+w894aL78qdS6FEg
+	 NdRW0E4VAQ0j7jsTX48/OTfpwl7VPYx3qTXdwnFsD8eBG3IbGoU1EHyQ2hWNe/o08b
+	 6ojOm6bT5wXww==
 From: Andreas Hindborg <a.hindborg@kernel.org>
-To: alex.gaynor@gmail.com, ojeda@kernel.org, 
+To: rust-for-linux@vger.kernel.org, 
  FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: aliceryhl@google.com, anna-maria@linutronix.de, 
- bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org, 
- frederic@kernel.org, gary@garyguo.net, jstultz@google.com, 
- linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com, 
- rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
- tmgross@umich.edu
-In-Reply-To: <20250610132823.3457263-1-fujita.tomonori@gmail.com>
-References: <20250610132823.3457263-1-fujita.tomonori@gmail.com>
-Subject: Re: [PATCH v3 0/5] rust: time: Convert hrtimer to use Instant and
- Delta
-Message-Id: <175015666837.277659.5038961663728008472.b4-ty@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Boqun Feng <boqun.feng@gmail.com>, 
+ linux-kernel@vger.kernel.org, frederic@kernel.org, lyude@redhat.com, 
+ tglx@linutronix.de, anna-maria@linutronix.de, jstultz@google.com, 
+ sboyd@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, 
+ bjorn3_gh@protonmail.com, aliceryhl@google.com, tmgross@umich.edu, 
+ chrisi.schrefl@gmail.com, linux@armlinux.org.uk, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Benno Lossin <lossin@kernel.org>
+In-Reply-To: <20250502004524.230553-1-fujita.tomonori@gmail.com>
+References: <20250502004524.230553-1-fujita.tomonori@gmail.com>
+Subject: Re: [PATCH v2] rust: time: Avoid 64-bit integer division on 32-bit
+ architectures
+Message-Id: <175015666839.277659.16490602570734103126.b4-ty@kernel.org>
 Date: Tue, 17 Jun 2025 12:37:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -66,33 +67,21 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Tue, 10 Jun 2025 22:28:18 +0900, FUJITA Tomonori wrote:
-> Convert hrtimer to use `Instant` and `Delta`; remove the use of
-> `Ktime` from the hrtimer code, which was originally introduced as a
-> temporary workaround.
+On Fri, 02 May 2025 09:45:24 +0900, FUJITA Tomonori wrote:
+> Avoid 64-bit integer division that 32-bit architectures don't
+> implement generally. This uses ktime_to_us() and ktime_to_ms()
+> instead.
 > 
-> hrtimer uses either an `Instant` or a `Delta` as its expiration value,
-> depending on the mode specified at creation time. This patchset
-> replaces `HrTimerMode` enum with a trait-based abstraction and
-> associates each mode with either an `Instant` or a `Delta`. By
-> leveraging Rust's type system, this change enables `HrTimer` to be
-> statically associated with a specific `HrTimerMode`, the corresponding
-> `Instant` or `Delta`, and a `ClockSource`.
+> The time abstraction needs i64 / u32 division so C's div_s64() can be
+> used but ktime_to_us() and ktime_to_ms() provide a simpler solution
+> for this time abstraction problem on 32-bit architectures.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/5] rust: time: Rename Delta's methods from as_* to into_*
-      commit: 2ed94606a0fea693e250e5b8fda11ff8fc240d37
-[2/5] rust: time: Replace HrTimerMode enum with trait-based mode types
-      commit: 1d1102d098879b5c8fcd9babeadd2930b0a19259
-[3/5] rust: time: Add HrTimerExpires trait
-      commit: f7fe342fc72915f5eb2280d6ea38bc75d480bed0
-[4/5] rust: time: Make HasHrTimer generic over HrTimerMode
-      commit: ab57261bb9dea0e552a5cf8440e0688e6967163d
-[5/5] rust: time: Remove Ktime in hrtimer
-      commit: 994393295c89711531583f6de8f296a30b0d944a
+[1/1] rust: time: Avoid 64-bit integer division on 32-bit architectures
+      commit: 1b7bbd5975279a1cf8d907fbc719f350031194c2
 
 Best regards,
 -- 
