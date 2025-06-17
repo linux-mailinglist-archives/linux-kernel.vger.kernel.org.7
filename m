@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-690623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB8EADD990
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 19:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A99D5ADD6A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F32834A6052
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:45:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446484A1327
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E192EA75E;
-	Tue, 17 Jun 2025 16:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F8B2ED17E;
+	Tue, 17 Jun 2025 16:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1AE5qfyV"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RXONdyWX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6BF2FA658;
-	Tue, 17 Jun 2025 16:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B93F235071;
+	Tue, 17 Jun 2025 16:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750178498; cv=none; b=OZ+g3zDRtAFPll1rax1DYAihoPxdWJAOmVLEK4yG4M/2Ufezs53kDv6/x0Ifcj/x7GAUVQvtUyJyMmb/IP+MQOpWFEgpAm+oN61MjayKGL6ihBnse5j2C1nmsWd8InWOoUH8hLOtk68RXeoCed271VANKWbc9zdfuinXlVLrkgo=
+	t=1750177268; cv=none; b=j8Geie0CWZTy+bURK/Q9BZLAnRUUVdKCfv1yvkYg7+n3f3wcLA/Kk/I/+6x3495CODjlb5kosSmnswBFGbJw2VQzvO0CV4ZBDUfrd81qFAu8FuJv6r1DGc3oSP5863L+7ov+pKcp+H1l5/J4EYn9cRocPyNrCCAlQyJzEFwTuD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750178498; c=relaxed/simple;
-	bh=wnUcnUrHCtNAofhwaWj0RqNYScisFk9XZXennVYc114=;
+	s=arc-20240116; t=1750177268; c=relaxed/simple;
+	bh=s6hvmo/MHvveAowtmfmbS+yemRNjBrS/ci8HUdPHP2g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ODs6CGdAGqW65DyDH2OJuu/AMYUFPEmiIjRhFkfeGyCqTpuHBONdPnjqOPDPwL2tj91flhCeNv7M41faMegYRzOg7P1IYg+iUZ2E87mEI6HSOe5lnVGyonb46s9DDe4E1Av+PRi8+nA1W98FR3uzhkJFoRhhsR5auO3f/rQJzbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1AE5qfyV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CDA0C4CEE3;
-	Tue, 17 Jun 2025 16:41:37 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Oifvsrt68NdJYpogbo0thHP3uUZzBnhb7UHfTvNFbDuxYjIDJZluhj2cmpFn6mKThQV2nkEe1fMxewYjjZ/BJYOQ9DbEmRQ6XDU0OtuJw9oEGcAqU65KBVohky0YRco8/muielYOEV7N+5HR/TqH1NsHc7Rsb5qNJHSeWLRg4Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RXONdyWX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA6E7C4CEE3;
+	Tue, 17 Jun 2025 16:21:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750178498;
-	bh=wnUcnUrHCtNAofhwaWj0RqNYScisFk9XZXennVYc114=;
+	s=korg; t=1750177268;
+	bh=s6hvmo/MHvveAowtmfmbS+yemRNjBrS/ci8HUdPHP2g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=1AE5qfyVRCsvIjJVfI7gn68292Jn0apzjVGj4y9fN8bHFfavjkPChRabCoXuJA/Su
-	 DDPA320UqaWFeh6JXRezOmWxh+MID2nzeB5+tnmLftZuFpY55/s94l8w9DFB7AnZsb
-	 rpePbx0fmi7cmhDUdwx1wC+pl1XWQGZrnn1vR6zQ=
+	b=RXONdyWXt5qNjdz8OIUEYM76VQFOKEvfjF0OOjoELkxsO6gFQbfVWwZ87I9qdSIpE
+	 F0DvaZlZCjTmQ6ikBjoybRgJzkF3fbZa+rcJOuxmCB++yvq6YU9k72vLzllIQn6jEa
+	 FggHfdaaWOjFeehRZrGAjknPNIQGXSgc7uAC7iio=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -72,12 +72,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-perf-users@vger.kernel.org,
 	Arnaldo Carvalho de Melo <acme@redhat.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.15 468/780] perf symbol: Fix use-after-free in filename__read_build_id
-Date: Tue, 17 Jun 2025 17:22:56 +0200
-Message-ID: <20250617152510.547482531@linuxfoundation.org>
+Subject: [PATCH 6.12 297/512] perf symbol: Fix use-after-free in filename__read_build_id
+Date: Tue, 17 Jun 2025 17:24:23 +0200
+Message-ID: <20250617152431.630745004@linuxfoundation.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250617152451.485330293@linuxfoundation.org>
-References: <20250617152451.485330293@linuxfoundation.org>
+In-Reply-To: <20250617152419.512865572@linuxfoundation.org>
+References: <20250617152419.512865572@linuxfoundation.org>
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -90,7 +90,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-6.15-stable review patch.  If anyone has any objections, please let me know.
+6.12-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
