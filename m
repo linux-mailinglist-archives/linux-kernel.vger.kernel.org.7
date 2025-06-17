@@ -1,140 +1,110 @@
-Return-Path: <linux-kernel+bounces-690586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0085AADD65B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:32:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183A3ADD710
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76D7F2C71A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:24:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE63B19E3A23
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A599D2EBDC0;
-	Tue, 17 Jun 2025 16:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484E02F94AB;
+	Tue, 17 Jun 2025 16:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="C9OyXwPm"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZ9QONYY"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3ADD21018A
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 16:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2302F94A5;
+	Tue, 17 Jun 2025 16:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750177100; cv=none; b=jQHk3TOxniH7tLVpPIUri6NLNgwRGGkKevnztus+2P1cVc/6aun9+XouHjGblvZjY8UalLccRjzNImmz2K2iupAno7RlvB7N30aquORiiMJC37+/m53JhyZbQFiU6zzu7skEG12MszRhvrZnycFhyoN3cmDGEidv+eIj9tKPywM=
+	t=1750177265; cv=none; b=LZ81R0ATxgL8P1rYNreVRHgFB0AFrfiqHACUVG5vJ0h8ApHagXpMys360y31PIa6c8f5i7eVMeIoKRnqFvoITEoiZ9fbCS56kXE3SkgWvQyZKYhiP6yn97wadAP6emRzvps5uW5Pwd12aznQD/1dCJFhmyL/+0rtMiHOMu3aoFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750177100; c=relaxed/simple;
-	bh=BDk9NerncGTKWnCMkEh4NcxNRABqig9U0sMgwlclsFc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ptLMv2vVr7sTAOLTnYeSTU4wLGQc1cgorfvHbhS+mn4XUC93azQVzTnmdo4MwTgP/YHSIAVu1j0c1TamMEK5+JLwtMaWsb06ISVBUS79BcN+FEfmmbmDb8oopmCS7JKK4NBJOCdqr/nc7CO305iH7uYjp93Vei6QD5ORPKKhtlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=C9OyXwPm; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3141f9ce4d1so1788776a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:18:18 -0700 (PDT)
+	s=arc-20240116; t=1750177265; c=relaxed/simple;
+	bh=+0EiuodKDjQRXvKmnKZvg2BPcSQjv+ftIpd/mBBfX5Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lnn7lAGpk2Qo4mswvMoWfuQzk3Vo8otIknhpJcl8wgmJBvAJN8QGJ+SMjJCQTZiJsjtlV8l+YiCVh8hj/Cbvkm/p1b58L75FNE1CntJ5s3ZV15cqTdP8fE/QTeVOthZCVk7UTuhL/q6EXiEbx1/HtvKDWHjK1XylwZqszdr32D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KZ9QONYY; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54e98f73850so5632762e87.1;
+        Tue, 17 Jun 2025 09:21:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1750177098; x=1750781898; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZBTZgEr/jdYE4IOPEYCC1EEPCPcizM+4dIMiF/rIsPI=;
-        b=C9OyXwPmTycTftesLyFM4ly2lENSGSS5j8YmPrgrLWuC8bGyhY2toGQK466ReVZ+DT
-         AkOIMub1KxkcuA2koa8oh2atWq96cl9RVmirA3t30tGTXOwWwiDcy+BaCuPBr0YuX2FJ
-         5KCvygLYOF5e4wPcJUOXz3rUFdJunYF1EHnJU=
+        d=gmail.com; s=20230601; t=1750177262; x=1750782062; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+0EiuodKDjQRXvKmnKZvg2BPcSQjv+ftIpd/mBBfX5Y=;
+        b=KZ9QONYYqo3XWngH09LTo8CzLHphXlOOxpydfoZ3ldJpy6WQyzy1X5hyqOb1abgUZM
+         76xsrMFKUu1dh6ZoIr9dWB+XCpDzPHmqWlkAwAqK6C8x6/Cq4r3yudYNX+aa7cTwW+d2
+         3lmWOm+Iq+mHhK+WscbZIRpaNaZi8rUeIu75j0KrNvfOKt8yDTs+dhV8yruMrp4tOl1V
+         vkzfTYQGoACGUNbc+Gq2YBD2+RnjjfDDLt0mVDBXNzbPnbcwd/Q3g3U+OQ0KxHAHH2QG
+         Ob3zUHIRt8e9G5JDwADwhtukesk/VVzn+DCz/MnT9/+4h3KzhlUZkW8QgnS1zAOiKjk7
+         0ihw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750177098; x=1750781898;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZBTZgEr/jdYE4IOPEYCC1EEPCPcizM+4dIMiF/rIsPI=;
-        b=HRz90McrNC7YmIUVFWwJMmP0pcueIuiyJOUl6jVnbIXmp+gfcoX0V1gHa8ALEeyaCY
-         GJLF1oXtpLq5dQUp4edp5MqRJ76n9AFjdacX9EcQF+mhDInL5q0rTQ0UbsY5s6qFWeF4
-         bhJv7YwktZr4+qAwxE3Z0AUzT+Grl2Waf3yRnieimBBg68kkjUHchXsD1hHrbYTWnPFs
-         xyrooCWsdcRZAjlUnMxnzLtIOCioHMXwf3qGBf3g1LolNnCvJqXjdKSRglOwkCXjgNey
-         uBfXGpp0U3pLxOSiaexe+KcFKBy1Lg7W7k5W3xq/PT5OYIvwPVPhMj7kNJws5ajpHMqk
-         YqIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWxGuW+qB+vvy0LtnxbcnxMq3AVhaWMMai8NRcy3toQnyZkrEe9zEnsYBtIt/kfovwLzvyPNxrmDAbHaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk9VChhWIzN0x6NWaP203bn3oZDoc8g7NG6puC6m6k1h5gFpCl
-	fhJUPh7uormnK6bmWRZn9+D83EvnwdTeNsdN8mHbEXTlnn1J46oZESArwe7IXnL6FQ==
-X-Gm-Gg: ASbGncu6cc0BJWVA4lpWXK9PULufJ7JjbBfcCyAwJn9xLljLnqy3jjQSiKVdNPQ7yPl
-	gM4wrTlbuEo4oZmGe1HiMvEgJ2gSiZn5gX6KCo5dZEUTkIg/ntHa+DJml6LNdzf7UMcfJT+Snay
-	RtFzWZ05XswA6hxJlc8tCioK+cR7HaByp2T6Z3BZhkh7u6HeiYOZtT25BkmlFKUIT61iWwx8YHO
-	n9mN45YDlNZR6kI0vtVZbt/DLLkYQn0P8G29qEn3QtFFu8HymFBKqbuBbtvrZkWYmdDvBJNJFHp
-	OYfEGrnYTC/2dWGyhuMJdkRQMAXCno933uX7KbfQTjSMdJNwteWkGnZUyJV+O5CglOdL/uePZXo
-	a5ojHzmGhyO+5airZ79QStQnrcA==
-X-Google-Smtp-Source: AGHT+IFOgj9cKNRmusfNs/8i1W+vPbt1qmsmD7dSd8TjsTe+5kY3DJx4i4oWbfmwAaPvyr3fdv5lRw==
-X-Received: by 2002:a17:90b:3ec5:b0:311:e8cc:4248 with SMTP id 98e67ed59e1d1-313f1e51737mr24178526a91.33.1750177097908;
-        Tue, 17 Jun 2025 09:18:17 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313c1b6d4c8sm10841327a91.48.2025.06.17.09.18.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 09:18:16 -0700 (PDT)
-Message-ID: <de8cd4e8-144d-468c-9267-51d642800cdf@broadcom.com>
-Date: Tue, 17 Jun 2025 09:18:15 -0700
+        d=1e100.net; s=20230601; t=1750177262; x=1750782062;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+0EiuodKDjQRXvKmnKZvg2BPcSQjv+ftIpd/mBBfX5Y=;
+        b=QhmbLAz/sPEncr3HuYIxKEGzvIkKWdDbOmr3z8jokQO/sMdOU3JLYHPUWqyV6EM2lv
+         SmATPIGSAcRNAad5Lg62lETYmsbxDpfgZhezSx0c+Q4P1M2XpzkDeDGHUyItW6J7FdJA
+         ztN5OBRRRRwOPIDhgLMhayh9/rOoD/UjJCyac9aSpMt77Szni2gZjMDeQyHDfF0MYLpc
+         x8Pje9i9e+q+Q7Oz4QenJoXf9Wi2o1MzosRvB7iOGLZEjhuYXxgg592mXoWwGQKWVhZT
+         gNEoLk71cKjW5ywCNfJO9cIf2gb74Yu/brmnVCpd79M3QbnzuGcg3s4GXALR0k47u5X6
+         jwRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWN87DixxNUiRzDa1qkTOQl+HuCsbNr0m0dhs2SHRY1vfPtZW/X7Vhy6Xr/jqsARLCXHWFL/sMqmDR322A=@vger.kernel.org, AJvYcCXdAwYqrA0OHi+d/WLRgC7xaXcIN2K8z52+hhvRyPHbszOJUzGJRV1qdcqE7AHS3T/AcOBG3zFgvoxX@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYkC86htlrpJ7NEVrGWorhtgAQ6I/NvK5FhGL3vbYMO2Ik7jNM
+	a+WUjrLHLlpIBnOm3BEUAb99R3p+kizSpKzzLTsZUmvKRDXHCfpI6EmCjE/LiacE5IL410dqZXP
+	tEGEkOnCFYLo4/9seDF11vqvyZseMiRcAJkZ4
+X-Gm-Gg: ASbGncvfnUcaviMm61hQJvJoQjf+BgxAnl6XBVTrcqbY7f9K4MEmw+XE/wN/xkvJtBH
+	Ft0zIji3YN0s4o0fKRHaEy8sujsKJE/TWrRM99kl6S+jnDnkl/jYzjVfY/7tfQiZ84IYh3DbvBI
+	8N2J+/K15aAJOWx9Q06br+dSPRTbzEiN0J2lDenT+4288=
+X-Google-Smtp-Source: AGHT+IG7kHn9wUASuEcAGOhvKtnrgjD7mWSbEvFbsJd8/yns37+K9r/fTfUXYJJ/xsadGrc4iYFuZmtHhigig7Rgln8=
+X-Received: by 2002:a05:6512:e9d:b0:553:35ad:2f2d with SMTP id
+ 2adb3069b0e04-553b6ea582amr3508106e87.18.1750177261784; Tue, 17 Jun 2025
+ 09:21:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 12/14] net: dsa: b53: fix unicast/multicast
- flooding on BCM5325
-To: =?UTF-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>,
- jonas.gorski@gmail.com, andrew@lunn.ch, olteanv@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, vivien.didelot@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, dgcbueu@gmail.com
-References: <20250614080000.1884236-1-noltari@gmail.com>
- <20250614080000.1884236-13-noltari@gmail.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250614080000.1884236-13-noltari@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250616085716.158942-1-ubizjak@gmail.com> <aFF_UwJ2XlFQSZOi@kernel.org>
+ <26b8939e-796a-4581-a41c-42e3582326bd@intel.com>
+In-Reply-To: <26b8939e-796a-4581-a41c-42e3582326bd@intel.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Tue, 17 Jun 2025 18:20:49 +0200
+X-Gm-Features: AX0GCFsaTkmgLY1QIqNbjCnp1LLkhTXDjUbXGOfS6PB_sPpWoSZ6_PXBBrayjys
+Message-ID: <CAFULd4YzC1xe0mVmJhWAk=sxhsctpZUxQGyRKccW-VF7OhkjKg@mail.gmail.com>
+Subject: Re: [PATCH] x86/sgx: Use ENCLS mnemonic in <kernel/cpu/sgx/encls.h>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, linux-sgx@vger.kernel.org, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	"H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/14/25 00:59, Álvaro Fernández Rojas wrote:
-> BCM5325 doesn't implement UC_FLOOD_MASK, MC_FLOOD_MASK and IPMC_FLOOD_MASK
-> registers.
-> This has to be handled differently with other pages and registers.
-> 
-> Fixes: a8b659e7ff75 ("net: dsa: act as passthrough for bridge port flags")
-> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+On Tue, Jun 17, 2025 at 5:01=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
+ wrote:
+>
+> On 6/17/25 07:44, Jarkko Sakkinen wrote:
+> > I don't really see how this is that useful. That said, f a bug fix or
+> > feature used encls mnemonic, I'd had no problems with acking it.
+>
+> It's not _that_ useful.
+>
+> But old assemblers that we still want to use *NEVER* have support for
+> newfanlged instructions, so we always add new instructions with ".byte".
+> Then, a few years down the road when we've moved to just old assemblers
+> instead of super old assemblers, we move to the real instruction names.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+That, and the code becomes self-documenting. You don't have to scratch
+your head what the .byte stream represents when reading assembly.
+
+Uros.
 
