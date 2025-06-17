@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-689260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F825ADBEB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:42:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D57BADBEB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149983AE7CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 01:42:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C8B3B7B39
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 01:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9D7218ABD;
-	Tue, 17 Jun 2025 01:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0E92264A9;
+	Tue, 17 Jun 2025 01:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VwBgqN5g"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VjyeUN0Z"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A281FDA7B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BF32010EE;
 	Tue, 17 Jun 2025 01:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750124459; cv=none; b=LP8xGp55yln/VC3QOqdQ+TaE72QueFtwU7i3nY0OcgmyOhGwgzcSrxyOxUjaUvRd0LYvz5miFQ2wRif4l3zCpwRJtqMZ9tIaFwR74p8iNAfiYTHMYc6Aw6K8P2uuyVT3P8nwRUA6akeX/V2p9JoDFsWl3p97BHzWu3xX9iJp3JQ=
+	t=1750124460; cv=none; b=sH6nLrAhDpz4sXeV4RZ5L/QzyHaYbnjSnEYV2LEVES50b5741qr7rpH4Vq8Rayl1FK8GCmXNmwgiS6jlxROkUa+d16wzeWw+PuHw3kWVjqh+0dH8LBqGz4TN9RpV/JW6SVJu3T/HFLuki22hWsCTy0DLLnT5xR0AgzpzhKaAVls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750124459; c=relaxed/simple;
-	bh=XflA3He/uIQWKsjj58cuT+fiN2doM1NxpPliAQNNeWI=;
+	s=arc-20240116; t=1750124460; c=relaxed/simple;
+	bh=QbW3m4ePlHXKehqEkU3b4OCzHU2mwQpqGiXnyVLTuNE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cA4edb1E4FbGJMrQZRI0Ny5AegrpBTsXPRSSdAIfQkqPV7Dwzaf5NflHwyW42N1kipvaFtk7sabwp5SGuzd6FqjJLmkzCpEV076ccmcrpDbEQSFtycYQNVwjMZytBHWltixSS33/nU6B8MPClv553JfWZ97ahRrNog3WY2zXSZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VwBgqN5g; arc=none smtp.client-ip=198.175.65.11
+	 MIME-Version:Content-Type; b=DwET103HoVtgu78fDGa3wTwbMBpexEWWkb8RFL0UHjITMphs5F79W14RUZ0GUxptemKnnziPEYGGZFnD9SpBRxhZlxUK0qw4eLlSEqoBqwAhubFMRjkymxhYncJRBf5kQm7mlv0XJpqGNeCcdD3uhdDbMhOOmshNGPQUkpwFobo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VjyeUN0Z; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,28 +35,28 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1750124458; x=1781660458;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=XflA3He/uIQWKsjj58cuT+fiN2doM1NxpPliAQNNeWI=;
-  b=VwBgqN5gfyypoYy6YAX3SFqIBPHuJj9l8s6ihMMSx/N0oMFRJPXzUJY2
-   T/zoVKZy30+hHWZJdq+vHL+8bg9hPOSsGXfpAxTGpPLw34u32KN9SY56I
-   B8XxQtWdFsSfmwYHf7fI2iYr85HdWOdddF2acKbLdwwl1UobIOXFOWwjN
-   nx8HtzsjrjYicA6El+9lRvZA1YTtpR+nFTAq4TRHJ3/5KTIusAUN5WqTF
-   gPOOXfdQYtNP/9thmrukTGaxz9iApftZ+qdW7ucNMO+ZnKQRU1PxSbyr0
-   03fCe8vWTIlaoHE/aYSuAHdrd3lxC6YDH245ZGnINDNBELXfvLfoNnE/g
-   Q==;
-X-CSE-ConnectionGUID: RJQqFsGnRbatxv0PWxrPgg==
-X-CSE-MsgGUID: 8gWL1g/MRrSOasIZ7OG8+Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="62556570"
+  bh=QbW3m4ePlHXKehqEkU3b4OCzHU2mwQpqGiXnyVLTuNE=;
+  b=VjyeUN0Zx8i/dc6EY/MU6Nr4EA1C8FGX0Q/tPhbn8k3iLdSWZtQlG0j1
+   q/LNNTSyTGapkhc4XhEh1Hfgy1EfKDUGPF51Atfjq62t4Z7Nu1TxJWJ8E
+   k/lSECRtAmotd0i3LRr9bqZdRYl4lWtMqFz5i8dkqh+MV24tq6xEB+RLS
+   AlJ6DYfO2UK31TIr7HKFtxqUaC828dclpmsxD3KmrlSNSgz45/YAcyokn
+   eEBUkmk2P2spvJE8LuSxYn9wQbuRmq0+UwoSJJB7ofPFPwLAhDvgKsF69
+   3dF5pj7ZHj9y61wt/NoLjgha32axuGeRO88lRJKaYkrAo30C9JnZB7J2Q
+   A==;
+X-CSE-ConnectionGUID: enE2s6O6QmebmLvkGbWRGw==
+X-CSE-MsgGUID: 2Btn3M1XRk6S9S+RNLMH2w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="62556575"
 X-IronPort-AV: E=Sophos;i="6.16,242,1744095600"; 
-   d="scan'208";a="62556570"
+   d="scan'208";a="62556575"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
   by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 18:40:54 -0700
-X-CSE-ConnectionGUID: O4jfocQ7SoGkJAujRTwtYQ==
-X-CSE-MsgGUID: O0z7k+4pQ52mCb+eW+1mGg==
+X-CSE-ConnectionGUID: +YD9SBPAR4qRKRN9rmpZbg==
+X-CSE-MsgGUID: SRGIwLayRBaQpal6aFHOtw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,242,1744095600"; 
-   d="scan'208";a="148989481"
+   d="scan'208";a="148989486"
 Received: from spandruv-desk2.amr.corp.intel.com (HELO debox1-desk4.intel.com) ([10.124.223.117])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 18:40:52 -0700
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 18:40:53 -0700
 From: "David E. Box" <david.e.box@linux.intel.com>
 To: linux-kernel@vger.kernel.org,
 	platform-driver-x86@vger.kernel.org,
@@ -67,9 +67,9 @@ To: linux-kernel@vger.kernel.org,
 	tony.luck@intel.com,
 	xi.pardee@linux.intel.com
 Cc: hdegoede@redhat.com
-Subject: [PATCH V2 09/15] docs: Add ABI documentation for intel_pmt feature directories
-Date: Mon, 16 Jun 2025 18:40:33 -0700
-Message-ID: <20250617014041.2861032-10-david.e.box@linux.intel.com>
+Subject: [PATCH V2 10/15] platform/x86/intel/tpmi: Relocate platform info to intel_vsec.h
+Date: Mon, 16 Jun 2025 18:40:34 -0700
+Message-ID: <20250617014041.2861032-11-david.e.box@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250617014041.2861032-1-david.e.box@linux.intel.com>
 References: <20250617014041.2861032-1-david.e.box@linux.intel.com>
@@ -82,194 +82,292 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Add a new sysfs ABI documentation file describing the layout and content of
-the features-<PCI BDF>/ directory used by Intel PMT (Platform Monitoring
-Technology). This directory exposes telemetry and control feature details
-for a given PMT PCI device.
+The TPMI platform information provides a mapping of OOBMSM PCI devices to
+logical CPUs. Since this mapping is consistent across all OOBMSM features
+(e.g., TPMI, PMT, SDSi), it can be leveraged by multiple drivers. To
+facilitate reuse, relocate the struct intel_tpmi_plat_info to intel_vsec.h,
+renaming it to struct oobmsm_plat_info, making it accessible to other
+features. While modifying headers, place them in alphabetical order.
 
 Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
 ---
 
 Changes in v2:
-  - Spell out RMID and add description of the feature.
-  - Add a description of the watcher API
-  - Update example to use snake case for pmt_sp_policy
+  - Add change for uncore-frequency-tmpi 6.16-rc1
+  - In intel_tpmi.h add newline after headers
+=20=20
+ drivers/platform/x86/intel/plr_tpmi.c         |  3 ++-
+ .../intel/speed_select_if/isst_tpmi_core.c    |  9 ++++---
+ .../uncore-frequency/uncore-frequency-tpmi.c  |  7 ++---
+ drivers/platform/x86/intel/vsec_tpmi.c        |  4 +--
+ drivers/powercap/intel_rapl_tpmi.c            |  9 ++++---
+ include/linux/intel_tpmi.h                    | 27 +++----------------
+ include/linux/intel_vsec.h                    | 22 +++++++++++++++
+ 7 files changed, 43 insertions(+), 38 deletions(-)
 
- .../testing/sysfs-class-intel_pmt-features    | 134 ++++++++++++++++++
- MAINTAINERS                                   |   1 +
- 2 files changed, 135 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-intel_pmt-features
-
-diff --git a/Documentation/ABI/testing/sysfs-class-intel_pmt-features b/Doc=
-umentation/ABI/testing/sysfs-class-intel_pmt-features
-new file mode 100644
-index 000000000000..cddb30e5bdf6
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-intel_pmt-features
-@@ -0,0 +1,134 @@
-+What:          /sys/class/intel_pmt/features-<PCI BDF>/
-+Date:          2025-04-24
-+KernelVersion: 6.16
-+Contact:       david.e.box@linux.intel.com
-+Description:
-+               The `features-<PCI BDF>/` directory represents the "feature=
-s"
-+               capability exposed by Intel PMT (Platform Monitoring Techno=
-logy)
-+               for the given PCI device.
-+
-+               Each directory corresponds to a PMT feature and contains
-+               attributes describing the available telemetry, monitoring, =
-or
-+               control functionalities.
-+
-+Directory Structure:
-+
-+  /sys/class/intel_pmt/features-<PCI BDF>/
-+  =E2=94=9C=E2=94=80=E2=94=80 accelerator_telemetry/		# Per-accelerator te=
-lemetry data
-+  =E2=94=9C=E2=94=80=E2=94=80 crash_log/			# Contains system crash telemet=
-ry logs
-+  =E2=94=9C=E2=94=80=E2=94=80 per_core_environment_telemetry/	# Environmen=
-tal telemetry per core
-+  =E2=94=9C=E2=94=80=E2=94=80 per_core_performance_telemetry/	# Performanc=
-e telemetry per core
-+  =E2=94=9C=E2=94=80=E2=94=80 per_rmid_energy_telemetry/	# Energy telemetr=
-y for RMIDs
-+  =E2=94=9C=E2=94=80=E2=94=80 per_rmid_perf_telemetry/		# Performance tele=
-metry for RMIDs
-+  =E2=94=9C=E2=94=80=E2=94=80 tpmi_control/			# TPMI-related controls and =
-telemetry
-+  =E2=94=9C=E2=94=80=E2=94=80 tracing/				# PMT tracing features
-+  =E2=94=94=E2=94=80=E2=94=80 uncore_telemetry/			# Uncore telemetry data
-+
-+Common Files (Present in all feature directories):
-+
-+  caps
-+    - Read-only
-+    - Lists available capabilities for this feature.
-+
-+  guids
-+    - Read-only
-+    - Lists GUIDs associated with this feature.
-+
-+Additional Attributes (Conditional Presence):
-+
-+  max_command_size
-+    - Read-only
-+    - Present if the feature supports out-of-band MCTP access.
-+    - Maximum supported MCTP command size for out-of-band PMT access (byte=
-s).
-+
-+  max_stream_size
-+    - Read-only
-+    - Present if the feature supports out-of-band MCTP access.
-+    - Maximum supported MCTP stream size (bytes).
-+
-+  min_watcher_period_ms
-+    - Read-only
-+    - Present if the feature supports the watcher API.
-+      The watcher API provides a writable control interface that allows us=
-er
-+      configuration of monitoring behavior, such as setting the sampling or
-+      reporting interval.
-+    - Minimum supported time period for the watcher interface (millisecond=
-s).
-+
-+  num_rmids
-+    - Read-only
-+    - Present if the feature supports RMID (Resource Monitoring ID) teleme=
-try.
-+      RMIDs are identifiers used by hardware to track and report resource =
-usage,
-+      such as memory bandwidth or energy consumption, on a per-logical-ent=
-ity
-+      basis (e.g., per core, thread, or process group).
-+    - Maximum number of RMIDs tracked simultaneously.
-+
-+Example:
-+For a device with PCI BDF `0000:00:03.1`, the directory tree could look li=
-ke:
-+
-+  /sys/class/intel_pmt/features-0000:00:03.1/
-+  =E2=94=9C=E2=94=80=E2=94=80 accelerator_telemetry/
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 caps
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 guids
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 max_command_size
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 max_stream_size
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 min_watcher_period_ms
-+  =E2=94=9C=E2=94=80=E2=94=80 crash_log/
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 caps
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 guids
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 max_command_size
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 max_stream_size
-+  =E2=94=9C=E2=94=80=E2=94=80 per_core_environment_telemetry/
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 caps
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 guids
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 max_command_size
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 max_stream_size
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 min_watcher_period_ms
-+  =E2=94=9C=E2=94=80=E2=94=80 per_rmid_energy_telemetry/
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 caps
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 guids
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 max_command_size
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 max_stream_size
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 min_watcher_period_ms
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 num_rmids
-+  =E2=94=9C=E2=94=80=E2=94=80 tpmi_control/
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 caps
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 guids
-+  =E2=94=9C=E2=94=80=E2=94=80 tracing/
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 caps
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 guids
-+  =E2=94=9C=E2=94=80=E2=94=80 uncore_telemetry/
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 caps
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 guids
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 max_command_size
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 max_stream_size
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 min_watcher_period_ms
-+
-+Notes:
-+  - Some attributes are only present if the corresponding feature supports
-+    the capability (e.g., `max_command_size` for MCTP-capable features).
-+  - Features supporting RMIDs include `num_rmids`.
-+  - Features supporting the watcher API include `min_watcher_period_ms`.
-+  - The `caps` file provides additional information about the functionality
-+    of the feature.
-+
-+Example 'caps' content for the 'tracing' feature:
-+
-+  /sys/class/intel_pmt/features-0000:00:03.1/
-+  =E2=94=9C=E2=94=80=E2=94=80 tracing/
-+  =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 caps
-+
-+	telemetry                                Available: No
-+	watcher                                  Available: Yes
-+	crashlog                                 Available: No
-+	streaming                                Available: No
-+	threashold                               Available: No
-+	window                                   Available: No
-+	config                                   Available: Yes
-+	tracing                                  Available: No
-+	inband                                   Available: Yes
-+	oob                                      Available: Yes
-+	secure_chan                              Available: No
-+	pmt_sp                                   Available: Yes
-+	pmt_sp_policy                            Available: Yes
-+	mailbox                                  Available: Yes
-+	bios_lock                                Available: Yes
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b704107859a6..31ab584890cc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12387,6 +12387,7 @@ INTEL PMT DRIVERS
- M:	David E. Box <david.e.box@linux.intel.com>
- S:	Supported
- F:	Documentation/ABI/testing/sysfs-class-intel_pmt
-+F:	Documentation/ABI/testing/sysfs-class-intel_pmt-features
- F:	drivers/platform/x86/intel/pmt/
+diff --git a/drivers/platform/x86/intel/plr_tpmi.c b/drivers/platform/x86/i=
+ntel/plr_tpmi.c
+index 2b55347a5a93..58132da47745 100644
+--- a/drivers/platform/x86/intel/plr_tpmi.c
++++ b/drivers/platform/x86/intel/plr_tpmi.c
+@@ -14,6 +14,7 @@
+ #include <linux/err.h>
+ #include <linux/gfp_types.h>
+ #include <linux/intel_tpmi.h>
++#include <linux/intel_vsec.h>
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
+ #include <linux/kstrtox.h>
+@@ -256,7 +257,7 @@ DEFINE_SHOW_STORE_ATTRIBUTE(plr_status);
 =20
- INTEL PRO/WIRELESS 2100, 2200BG, 2915ABG NETWORK CONNECTION SUPPORT
+ static int intel_plr_probe(struct auxiliary_device *auxdev, const struct a=
+uxiliary_device_id *id)
+ {
+-	struct intel_tpmi_plat_info *plat_info;
++	struct oobmsm_plat_info *plat_info;
+ 	struct dentry *dentry;
+ 	int i, num_resources;
+ 	struct resource *res;
+diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/=
+drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+index 18c035710eb9..34bff2f65a83 100644
+--- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
++++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+@@ -22,6 +22,7 @@
+ #include <linux/auxiliary_bus.h>
+ #include <linux/delay.h>
+ #include <linux/intel_tpmi.h>
++#include <linux/intel_vsec.h>
+ #include <linux/fs.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+@@ -1546,7 +1547,7 @@ int tpmi_sst_dev_add(struct auxiliary_device *auxdev)
+ {
+ 	struct tpmi_per_power_domain_info *pd_info;
+ 	bool read_blocked =3D 0, write_blocked =3D 0;
+-	struct intel_tpmi_plat_info *plat_info;
++	struct oobmsm_plat_info *plat_info;
+ 	struct device *dev =3D &auxdev->dev;
+ 	struct tpmi_sst_struct *tpmi_sst;
+ 	u8 i, num_resources, io_die_cnt;
+@@ -1698,7 +1699,7 @@ EXPORT_SYMBOL_NS_GPL(tpmi_sst_dev_add, "INTEL_TPMI_SS=
+T");
+ void tpmi_sst_dev_remove(struct auxiliary_device *auxdev)
+ {
+ 	struct tpmi_sst_struct *tpmi_sst =3D auxiliary_get_drvdata(auxdev);
+-	struct intel_tpmi_plat_info *plat_info;
++	struct oobmsm_plat_info *plat_info;
+=20
+ 	plat_info =3D tpmi_get_platform_data(auxdev);
+ 	if (!plat_info)
+@@ -1720,7 +1721,7 @@ void tpmi_sst_dev_suspend(struct auxiliary_device *au=
+xdev)
+ {
+ 	struct tpmi_sst_struct *tpmi_sst =3D auxiliary_get_drvdata(auxdev);
+ 	struct tpmi_per_power_domain_info *power_domain_info;
+-	struct intel_tpmi_plat_info *plat_info;
++	struct oobmsm_plat_info *plat_info;
+ 	void __iomem *cp_base;
+=20
+ 	plat_info =3D tpmi_get_platform_data(auxdev);
+@@ -1748,7 +1749,7 @@ void tpmi_sst_dev_resume(struct auxiliary_device *aux=
+dev)
+ {
+ 	struct tpmi_sst_struct *tpmi_sst =3D auxiliary_get_drvdata(auxdev);
+ 	struct tpmi_per_power_domain_info *power_domain_info;
+-	struct intel_tpmi_plat_info *plat_info;
++	struct oobmsm_plat_info *plat_info;
+ 	void __iomem *cp_base;
+=20
+ 	plat_info =3D tpmi_get_platform_data(auxdev);
+diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-t=
+pmi.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+index 1c7b2f2716ca..d92afcfd34cc 100644
+--- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
++++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+@@ -22,9 +22,10 @@
+ #include <linux/auxiliary_bus.h>
+ #include <linux/bitfield.h>
+ #include <linux/bits.h>
++#include <linux/intel_tpmi.h>
++#include <linux/intel_vsec.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+-#include <linux/intel_tpmi.h>
+=20
+ #include "../tpmi_power_domains.h"
+ #include "uncore-frequency-common.h"
+@@ -448,7 +449,7 @@ static void remove_cluster_entries(struct tpmi_uncore_s=
+truct *tpmi_uncore)
+ }
+=20
+ static void set_cdie_id(int domain_id, struct tpmi_uncore_cluster_info *cl=
+uster_info,
+-		       struct intel_tpmi_plat_info *plat_info)
++			struct oobmsm_plat_info *plat_info)
+ {
+=20
+ 	cluster_info->cdie_id =3D domain_id;
+@@ -465,7 +466,7 @@ static void set_cdie_id(int domain_id, struct tpmi_unco=
+re_cluster_info *cluster_
+ static int uncore_probe(struct auxiliary_device *auxdev, const struct auxi=
+liary_device_id *id)
+ {
+ 	bool read_blocked =3D 0, write_blocked =3D 0;
+-	struct intel_tpmi_plat_info *plat_info;
++	struct oobmsm_plat_info *plat_info;
+ 	struct tpmi_uncore_struct *tpmi_uncore;
+ 	bool uncore_sysfs_added =3D false;
+ 	int ret, i, pkg =3D 0;
+diff --git a/drivers/platform/x86/intel/vsec_tpmi.c b/drivers/platform/x86/=
+intel/vsec_tpmi.c
+index 5c383a27bbe8..d95a0d994546 100644
+--- a/drivers/platform/x86/intel/vsec_tpmi.c
++++ b/drivers/platform/x86/intel/vsec_tpmi.c
+@@ -116,7 +116,7 @@ struct intel_tpmi_info {
+ 	struct intel_vsec_device *vsec_dev;
+ 	int feature_count;
+ 	u64 pfs_start;
+-	struct intel_tpmi_plat_info plat_info;
++	struct oobmsm_plat_info plat_info;
+ 	void __iomem *tpmi_control_mem;
+ 	struct dentry *dbgfs_dir;
+ };
+@@ -187,7 +187,7 @@ struct tpmi_feature_state {
+ /* Used during auxbus device creation */
+ static DEFINE_IDA(intel_vsec_tpmi_ida);
+=20
+-struct intel_tpmi_plat_info *tpmi_get_platform_data(struct auxiliary_devic=
+e *auxdev)
++struct oobmsm_plat_info *tpmi_get_platform_data(struct auxiliary_device *a=
+uxdev)
+ {
+ 	struct intel_vsec_device *vsec_dev =3D auxdev_to_ivdev(auxdev);
+=20
+diff --git a/drivers/powercap/intel_rapl_tpmi.c b/drivers/powercap/intel_ra=
+pl_tpmi.c
+index af2368f4db10..82201bf4685d 100644
+--- a/drivers/powercap/intel_rapl_tpmi.c
++++ b/drivers/powercap/intel_rapl_tpmi.c
+@@ -9,9 +9,10 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+=20
+ #include <linux/auxiliary_bus.h>
+-#include <linux/io.h>
+-#include <linux/intel_tpmi.h>
+ #include <linux/intel_rapl.h>
++#include <linux/intel_tpmi.h>
++#include <linux/intel_vsec.h>
++#include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
+=20
+@@ -48,7 +49,7 @@ enum tpmi_rapl_register {
+=20
+ struct tpmi_rapl_package {
+ 	struct rapl_if_priv priv;
+-	struct intel_tpmi_plat_info *tpmi_info;
++	struct oobmsm_plat_info *tpmi_info;
+ 	struct rapl_package *rp;
+ 	void __iomem *base;
+ 	struct list_head node;
+@@ -253,7 +254,7 @@ static int intel_rapl_tpmi_probe(struct auxiliary_devic=
+e *auxdev,
+ 				 const struct auxiliary_device_id *id)
+ {
+ 	struct tpmi_rapl_package *trp;
+-	struct intel_tpmi_plat_info *info;
++	struct oobmsm_plat_info *info;
+ 	struct resource *res;
+ 	u32 offset;
+ 	int ret;
+diff --git a/include/linux/intel_tpmi.h b/include/linux/intel_tpmi.h
+index ff480b47ae64..94c06bf214fb 100644
+--- a/include/linux/intel_tpmi.h
++++ b/include/linux/intel_tpmi.h
+@@ -8,6 +8,8 @@
+=20
+ #include <linux/bitfield.h>
+=20
++struct oobmsm_plat_info;
++
+ #define TPMI_VERSION_INVALID	0xff
+ #define TPMI_MINOR_VERSION(val)	FIELD_GET(GENMASK(4, 0), val)
+ #define TPMI_MAJOR_VERSION(val)	FIELD_GET(GENMASK(7, 5), val)
+@@ -26,30 +28,7 @@ enum intel_tpmi_id {
+ 	TPMI_INFO_ID =3D 0x81,	/* Special ID for PCI BDF and Package ID informati=
+on */
+ };
+=20
+-/**
+- * struct intel_tpmi_plat_info - Platform information for a TPMI device in=
+stance
+- * @cdie_mask:       Mask of all compute dies in the partition
+- * @package_id:      CPU Package id
+- * @partition:       Package partition id when multiple VSEC PCI devices p=
+er package
+- * @segment:         PCI segment ID
+- * @bus_number:      PCI bus number
+- * @device_number:   PCI device number
+- * @function_number: PCI function number
+- *
+- * Structure to store platform data for a TPMI device instance. This
+- * struct is used to return data via tpmi_get_platform_data().
+- */
+-struct intel_tpmi_plat_info {
+-	u16 cdie_mask;
+-	u8 package_id;
+-	u8 partition;
+-	u8 segment;
+-	u8 bus_number;
+-	u8 device_number;
+-	u8 function_number;
+-};
+-
+-struct intel_tpmi_plat_info *tpmi_get_platform_data(struct auxiliary_devic=
+e *auxdev);
++struct oobmsm_plat_info *tpmi_get_platform_data(struct auxiliary_device *a=
+uxdev);
+ struct resource *tpmi_get_resource_at_index(struct auxiliary_device *auxde=
+v, int index);
+ int tpmi_get_resource_count(struct auxiliary_device *auxdev);
+ int tpmi_get_feature_status(struct auxiliary_device *auxdev, int feature_i=
+d, bool *read_blocked,
+diff --git a/include/linux/intel_vsec.h b/include/linux/intel_vsec.h
+index a07796d7d43b..cd78d0b2e623 100644
+--- a/include/linux/intel_vsec.h
++++ b/include/linux/intel_vsec.h
+@@ -144,6 +144,28 @@ struct intel_vsec_device {
+ 	unsigned long cap_id;
+ };
+=20
++/**
++ * struct oobmsm_plat_info - Platform information for a device instance
++ * @cdie_mask:       Mask of all compute dies in the partition
++ * @package_id:      CPU Package id
++ * @partition:       Package partition id when multiple VSEC PCI devices p=
+er package
++ * @segment:         PCI segment ID
++ * @bus_number:      PCI bus number
++ * @device_number:   PCI device number
++ * @function_number: PCI function number
++ *
++ * Structure to store platform data for a OOBMSM device instance.
++ */
++struct oobmsm_plat_info {
++	u16 cdie_mask;
++	u8 package_id;
++	u8 partition;
++	u8 segment;
++	u8 bus_number;
++	u8 device_number;
++	u8 function_number;
++};
++
+ int intel_vsec_add_aux(struct pci_dev *pdev, struct device *parent,
+ 		       struct intel_vsec_device *intel_vsec_dev,
+ 		       const char *name);
 --=20
 2.43.0
 
