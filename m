@@ -1,110 +1,134 @@
-Return-Path: <linux-kernel+bounces-689757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A39AADC60F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:20:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC09ADC5E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D24DE3B9F2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:20:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3BE01891A46
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8D7292B47;
-	Tue, 17 Jun 2025 09:20:38 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1160E292908;
-	Tue, 17 Jun 2025 09:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D3F29188C;
+	Tue, 17 Jun 2025 09:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="YCEjUtBY"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C368290D8B
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750152037; cv=none; b=Zo8mx6aKdxJaja8I0hqLLo65UWv+S3OXu/Zaufku6hNf+c5Uk0BdQrOuMVEUNPY80muesOwyTv6PzTe8AhLlPAiYuOu2RDpONcjeo8iLH4jSRvpYovyqzehYHOWmo3didcIFWRQMTjrfQF9LIfMqrrKHbh9p8QwP27ndZVAnoZI=
+	t=1750151663; cv=none; b=CoB3SiF6KuQ51GMoz0RQAnAYhjoNYFsbQ2ao/5o7NI+7pgXLgU18lgTaksEBXUPZ/XbGzuQov+9fdrSy2kuuSNNWBUZctDCJrx/14XPhYOKX6DfQLOrDX1K7/RFxHFf5Xn3zNlgOhbsIWM3YkT3kGA+mBC5dfjQ2Iqj8RNqEtEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750152037; c=relaxed/simple;
-	bh=1rW3HyzSPxA0/G9x8QtoS7aCPRrs9W8sVGPbPsEVwEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NYClOlQbPYBU8/8D8SsllbjIRh4PSu8tv2ARaLJ3Qhe+sbN3f5z0JiWWS4geIAruF0T4aff+oZtqxHGElio57czdLBcejVZaZUfARpZ3LfEfmjs2cUs20VStt/4h2V16s8lLpOg2ofwCSleYUL9ZwnC60mmWoVOlkZGAnmZ4ufI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bM1Pg14fhz9t0K;
-	Tue, 17 Jun 2025 11:13:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id ezM8RTf2JjnU; Tue, 17 Jun 2025 11:13:27 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bM1Pg09FTz9syQ;
-	Tue, 17 Jun 2025 11:13:27 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 007768B77E;
-	Tue, 17 Jun 2025 11:13:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Vgg_-T-pTeIY; Tue, 17 Jun 2025 11:13:26 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9CA048B776;
-	Tue, 17 Jun 2025 11:13:26 +0200 (CEST)
-Message-ID: <cc895e8c-5dd5-4207-bb35-58e6b923b7bc@csgroup.eu>
-Date: Tue, 17 Jun 2025 11:13:26 +0200
+	s=arc-20240116; t=1750151663; c=relaxed/simple;
+	bh=Pg+a11153qJ1ibrfg8vK0qJ81vAzJN95tmjWPPAy6Iw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KkPl+N/fEpBnAEpr/O5rJ/TmsnBaDE2vHEMGtaZyP9GwPvjVXvoWGkASJ/WsRTk+mBCwJxqNhD3zKMKWMST1y38yodir9RNi2z1ctlZerZ9/Nng6g/yCTBA3eIvdRzIN04SKy125bnJa2fq4qinHnNKik1v/NLjsF4E0cdb89L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=YCEjUtBY; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a54700a463so408945f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 02:14:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750151660; x=1750756460; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UnaoVN6uaaPExRjDgZo8b3KkCScwP4IUmjW/6H1GBX0=;
+        b=YCEjUtBYQRSjsyyi0+bN2bxbBRgBocCrj6p65LOMSZlCyBry9mFsAUTfWdC0J5ZwhM
+         p/R0L/eAc8n1gkb6fFX9Xy3LtYq9FRLjjbHWZzLp5no9x0PO2AxT2bVsmL0gr9yx4DdW
+         T3oKYA/dtUYnIdz21a4MCHuuywHr04pDvUHFnAWo76VAtDKETVzcLfaFJtJT/vrLNuOT
+         IsmXdOHtHt1AlDsWrC4grYd6OZ55mGGh17mujWWeO2xVmza00jDeh1lU+Y8kAmV8iSr3
+         BJCwt5YUl3NaXlRlYhSn/KunIZt/bsJNBcStNtxsj6/NfQPf+A8fBx2nQ9kjYl1askgA
+         hGsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750151660; x=1750756460;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UnaoVN6uaaPExRjDgZo8b3KkCScwP4IUmjW/6H1GBX0=;
+        b=bBeaLJbqCGTYxa7fMWFcWXWu5WNb7Mo9/sg0cj2CWUCf3AtNnozwvb3gqH9a/LjRV1
+         I0PhIktbVV6l8RhasZQITeZsNLi2X98BCIWR2iEvohEzRrJKlHNBUh40g9jWqapjYeb7
+         JYYgZYf4HI954fhOukkweB5l1eBmiNhb9BOS8fZBudGnzcGzr6VpHDSYhQhzx/UKCVA2
+         D60A/Hn4pglJlylob1QMwO/bMpP7lztrse+HFeW9geZ61m/aKCQuBcP0QmU737EzliW2
+         m77xItj3Sl/GaWBidUPKao1uMJtN0PAd6+SX1j2U68wS6csddl95kOcl+XXmpY+IJArx
+         42hA==
+X-Gm-Message-State: AOJu0YxY+8U0/G9iylX+8TqMiATsqHyNhzIo1ub2shlb/RAdBEHhjeR2
+	TSHCbgAj2pO6XLvlLmk5BIq9cc/wXKP4qNJ+fn2LO1lslJunPfOXQuPooED/hfPpD1iETbU/Mb/
+	OTLOGK74=
+X-Gm-Gg: ASbGncu4o1fJlKyinEGlyRouTH/9e2VapGm2EUXxw+XySzmeY+dA+WwFba/1pCdJDTk
+	Z3KtMw7q1GvE6swX8VznGTp6h92GlFKRCmF6D+w9uBybRUiRVLxA3hpaNrPy0W7gTnfaPBhUBy5
+	ggh0gc2pLmdasvBEpbHz4ueKu2Az9yn6SdGAPWS8vly7VX8iudNhiLecqJkNaxPaAygX8+7NV3i
+	R2L0GoXQAj9QBjKV8ozM2bdpRCPqFC8ioIyLw1YFv/SZzDhdotEIzSoyCnd45XBkbJXKRv6n2U7
+	XTcfwxGOLP2F3mhVR4PD5nROGus+0wLVxhzq7m4lsaDoTRDwHGwgn/kLaHb+iC0=
+X-Google-Smtp-Source: AGHT+IHTn2wDMsbvMniANLwl39rjbgUv/TbrwZjrJk9B4M+SEDhL4V7ekAYBvqmllDgC3dCpG6O08g==
+X-Received: by 2002:a05:6000:2504:b0:3a4:e624:4ec9 with SMTP id ffacd0b85a97d-3a572384087mr10329583f8f.3.1750151660151;
+        Tue, 17 Jun 2025 02:14:20 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:90df:ded7:9cbf:4074])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a633ddsm13280685f8f.26.2025.06.17.02.14.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 02:14:19 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-kernel@vger.kernel.org,
+	monstr@monstr.eu,
+	git@xilinx.com,
+	Michal Simek <michal.simek@amd.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Moritz Fischer <mdf@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Tom Rix <trix@redhat.com>,
+	Wu Hao <hao.wu@intel.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"open list:FPGA MANAGER FRAMEWORK" <linux-fpga@vger.kernel.org>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v3] dt-bindings: gpio: gpio-xilinx: Mark clocks as required property
+Date: Tue, 17 Jun 2025 11:14:16 +0200
+Message-ID: <175015165194.21779.15497760973651030426.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <94151cfbcff5e4ae05894981c7e398b605d4b00a.1750059796.git.michal.simek@amd.com>
+References: <94151cfbcff5e4ae05894981c7e398b605d4b00a.1750059796.git.michal.simek@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] vdso: Switch get/put unaligned from packed struct
- to memcpy
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Yuzhuo Jing <yuzhuo@google.com>,
- Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Arnaldo Carvalho de Melo <acme@redhat.com>, Al Viro
- <viro@zeniv.linux.org.uk>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <20250617005800.1410112-1-irogers@google.com>
- <20250617005800.1410112-2-irogers@google.com>
- <c57de5bf-d55c-48c5-9dfa-e2fb844dafe9@csgroup.eu> <20250617063236.GI8289@sol>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250617063236.GI8289@sol>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-+linuxppc list
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Le 17/06/2025 à 08:32, Eric Biggers a écrit :
-> On Tue, Jun 17, 2025 at 07:22:57AM +0200, Christophe Leroy wrote:
->>
->>
->> Le 17/06/2025 à 02:57, Ian Rogers a écrit :
->>> Type punning is necessary for get/put unaligned but the use of a
->>> packed struct violates strict aliasing rules, requiring
->>> -fno-strict-aliasing to be passed to the C compiler. Switch to using
->>> memcpy so that -fno-strict-aliasing isn't necessary.
->>
->> VDSO build fails with this patch:
->>
->>    VDSO32L arch/powerpc/kernel/vdso/vdso32.so.dbg
->> arch/powerpc/kernel/vdso/vdso32.so.dbg: dynamic relocations are not
->> supported
->> make[2]: *** [arch/powerpc/kernel/vdso/Makefile:79:
->> arch/powerpc/kernel/vdso/vdso32.so.dbg] Error 1
->>
->> Behind the relocation issue, calling memcpy() for a single 4-bytes word
->> kills performance.
+
+On Mon, 16 Jun 2025 09:43:18 +0200, Michal Simek wrote:
+> On Microblaze platforms there is no need to handle clocks because the
+> system is starting with clocks enabled (can be described via fixed clock
+> node or clock-frequency property or not described at all).
+> With using soft IPs with SOC platforms there is mandatory to handle clocks
+> as is explained in commit 60dbdc6e08d6 ("dt-bindings: net: emaclite: Add
+> clock support").
+> That's why make clock as required in dt binding because it is present in
+> both configurations and should be described even there is no way how to
+> handle it on Microblaze systems.
 > 
-> memcpy() does normally do the right thing for unaligned accesses of 1, 2, 4, or
-> 8-byte values.  The snag here seems to be that the VDSO is built with
-> -fno-builtin (and -ffreestanding which implies -fno-builtin).  That causes the
-> compiler to no longer optimize out the calls to memcpy().  If __builtin_memcpy()
-> is used instead of memcpy(), it does work and generates the same code as before.
+> [...]
 
-Yes right, changing memcpy() to __builtin_memcpy() seems to work, the 
-exact same code is generated.
+Applied, thanks!
 
-Christophe
+[1/1] dt-bindings: gpio: gpio-xilinx: Mark clocks as required property
+      https://git.kernel.org/brgl/linux/c/d03b53c9139352b744ed007bf562bd35517bacff
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
