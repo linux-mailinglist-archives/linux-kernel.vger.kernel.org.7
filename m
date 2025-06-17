@@ -1,192 +1,105 @@
-Return-Path: <linux-kernel+bounces-690156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113E6ADCC93
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:10:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2820FADCCEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BACE189E177
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:06:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C400403099
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3649B2E88A7;
-	Tue, 17 Jun 2025 13:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nk3DxSVy"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1126F2E2664;
+	Tue, 17 Jun 2025 13:13:26 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C622E2F18
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093F92E7168;
+	Tue, 17 Jun 2025 13:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750165343; cv=none; b=pHGstM2KuXtbDGtvgVLSIWRfXi/ehLMGW3je+Nvh7dPB30eLnEk13hBcYuKmRscgcrEXxfBwtOozfOescsIpT/5pT5NgM+loYCIkHnC9KfchGDQGmSOwCls9/WmlwWNjRecMLWdkpOQPHy2PCWcYNo9rxHpEZJX+XWTOn64gvg8=
+	t=1750166005; cv=none; b=lDJ3iQLQc80opfUpV/Fj7lcdHXeQtyCndOSp5RWjLo1TgQvZCo/huL4RJ50LP8/LE135qN1FHzkhqyc5NdihSiKSmBTslT2U08tQjWjwbncSirnvgBbAa6158WW1XkxfA+TF+ju2q56Ue/ajTTkVI3QqSBqQZaM3aIAzoqSP5eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750165343; c=relaxed/simple;
-	bh=hivB+dXHgRfjrGL6GmS+WrnxltFxrNiXvd8BH0IhvP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U4WIZQ9jfakQO6WgVtFNhOAL8aKv29m3IbwZNMgpvbFk2s6tBuh98NVcRuGplsrs7pR4Xf0lx4qrIpnbKq+o0w1JbkGvQq7K7/SCjrHNpmIPEBkKeBtM1JDC6Nm1bS++MutjZDiBforAGoBoKW6mB00C0EsMQ4jRoL0XQrUStEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nk3DxSVy; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54b10594812so5870494e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 06:02:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750165338; x=1750770138; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QwCxDdGoBWfUjiiVuZKb9ARlDqK974ap4X+wrWrD4eE=;
-        b=nk3DxSVy458PuWJk54MLn1nfgoiZI10Sc2XiRVyIFL9PJF+1DCSxBnnwelDRXrsH+P
-         rw97qIzigJ5QPpn/lhv2mqydY2nkzqSL4KfKlCPiOo7xFvJcT190hkqrV3jNZOzCcA/E
-         gPm1xf4xLrW6sHWHYBdCFuYTdtwwVIAauGvIs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750165338; x=1750770138;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QwCxDdGoBWfUjiiVuZKb9ARlDqK974ap4X+wrWrD4eE=;
-        b=na7g6Pb5UWPj2wRASN3JSPB6ZxVca+AohloS043VoUnhncLgrKI7FYEkxEJeHZK3Rl
-         HDHj0ijP4q++Ch3nUjKvC0slfn8pVyWFpZ8whLwJrWZkZ9Zuwi/3qGXwWD4epU/I0RoU
-         kMqzyaQ+CHVQ55MTbRESiQmMwbTExbLOVjs+MrHHQFlMpWih+AzWzqA26XHMHWl8Xbc1
-         OVrFylaxddG7kJdLKrPKHzNp0+Pr2SszLOINDlpw+5et+aA6AtXnlTzrknfeZ/JNbknG
-         3cXiMcPzxyiSK61ejKYnWDnSuG1aTRErGI8b5f/xQ7oGd6pLoEg2we77muFilmEUKfqu
-         BJug==
-X-Forwarded-Encrypted: i=1; AJvYcCU6m455xm9uJ3j0B+6b0xprPTE918sJQiRVJROEKWRbtjAvhI7SFMjX+HftmOAJvhS7ecWU6w4yEdhyFi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf5q0LxFs4LUptRV+5WEJDoYoEwd2c5zLjgIGJKvmoFYGI1EcO
-	T6eC8CE7W7xeiiQ7osDLjc3R0RO7c4jU3ziJt0FZIwrcHULFkQovVFM8fkYOgE8iPiE3lP9h7FM
-	76wU=
-X-Gm-Gg: ASbGncvlgUHeTqJhpRzAoZ0jCHlFRY0qd76bvtQ2fYyoMCJel7gI/EUii4v0QxnPX9c
-	eM20vYUTFhGI2+YlkRRRGZI9IeX/TmawMLajWROuDQu30oQXhlvCBlqAn+2hZdjnkiTTs93zt87
-	H9tYkcU83wTD5vhjtlmV9PQQ2ubCiL+//eNI4rdK05l4dLP7mqahxbapx2az/di7ECVDRqJZ+Ft
-	OxnHTCL/qXYMbtChyUuwb0VeEixKKvyyHkFR52cOl4a7d+lQEaP0okUbCWXgWrJd3UBExgkV7c7
-	zDtKWUgKZ9CiDEkYfbpsKHTBLR4i+ZjQbRIrrbXvJ8gKgGNunxPl5gHklze7xXZ2DLONTgkKjvT
-	J8eILy8CfVDi5iwqIhxzliQoy
-X-Google-Smtp-Source: AGHT+IFeucp4vLOq8TzGobA8jtAyBOVPE38Mafjdl+xhU6F3aqGvV8jY8EN4ygvx/CjmginLhUvgBQ==
-X-Received: by 2002:a05:6512:10d0:b0:553:2ef3:f72b with SMTP id 2adb3069b0e04-553b6e68a16mr3855193e87.3.1750165336758;
-        Tue, 17 Jun 2025 06:02:16 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac13f0besm1924867e87.84.2025.06.17.06.02.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jun 2025 06:02:16 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-553c31542b1so2235585e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 06:02:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVRL+OfwCL1cq2u1jxZ3BFtFVquHrtbPLcBvRz552+jpIpEzje7DyHY/O758JUO22NGR6E0Imgj5HM8/6g=@vger.kernel.org
-X-Received: by 2002:a05:6512:2314:b0:549:5866:6489 with SMTP id
- 2adb3069b0e04-553b6f31234mr3198961e87.47.1750165334708; Tue, 17 Jun 2025
- 06:02:14 -0700 (PDT)
+	s=arc-20240116; t=1750166005; c=relaxed/simple;
+	bh=2QQlzIeQjLr36zCapGUnPjkf3+Sk1qRs9LPAKl1DBRk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bak21mNvjweL/HYJw5VOjYq1a8w3u4lFw6djW1/CypBjLbclwFR+IsZa6sglTc7JHismmP762X5TW8wpN5sp9Azix55rti80ESbSonHiG8+WBzUl6AbB+kAkuB7fABvrCUAyu6CVn7mZuG52KVSd5/pPrhop64Y4YeFcTeWjchc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from zq-Legion-Y7000.. (unknown [180.110.114.155])
+	by APP-05 (Coremail) with SMTP id zQCowACHCgniaVFopu48Bw--.10997S2;
+	Tue, 17 Jun 2025 21:13:06 +0800 (CST)
+From: zhouquan@iscas.ac.cn
+To: anup@brainfault.org,
+	ajones@ventanamicro.com,
+	atishp@atishpatra.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	Quan Zhou <zhouquan@iscas.ac.cn>
+Subject: [PATCH] RISC-V: KVM: Use find_vma_intersection() to search for intersecting VMAs
+Date: Tue, 17 Jun 2025 21:04:23 +0800
+Message-Id: <230d6c8c8b8dd83081fcfd8d83a4d17c8245fa2f.1731552790.git.zhouquan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429-keep-sorted-v1-0-2fa3538c0315@chromium.org>
- <f9275079-842a-406e-8bb7-b22a22b7c7e6@kernel.org> <CANiDSCt18PUWo2Z-9T2nBMMJfpRcdAGhO5S0jE85-1ZPO1qD7g@mail.gmail.com>
- <b78cde8b-23b2-48c5-b8c6-b935a403963f@kernel.org> <CANiDSCuPP+EOCps0gjH_bpJWsbyJDBcD+NoOeTB-sSUjUr0=Sg@mail.gmail.com>
- <61600bf6-92dc-49cd-bad9-a7342ce2fef9@kernel.org> <08a426ae-be6e-4cbc-aaaf-7197bf839632@jjverkuil.nl>
- <20250617125343.GB10006@pendragon.ideasonboard.com>
-In-Reply-To: <20250617125343.GB10006@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 17 Jun 2025 15:02:00 +0200
-X-Gmail-Original-Message-ID: <CANiDSCvTQzur1UqEKdwkd9vKcPQhG1sjWvbtwyf0jokFY-S2tA@mail.gmail.com>
-X-Gm-Features: AX0GCFvXv_wP2CeSoip02hb0L6n1uKzrxqB73o9WKz_cufCcvR4pJCu5P3eXUss
-Message-ID: <CANiDSCvTQzur1UqEKdwkd9vKcPQhG1sjWvbtwyf0jokFY-S2tA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] media: uvcvideo: Enable keep-sorted
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans Verkuil <hans@jjverkuil.nl>, Hans de Goede <hansg@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACHCgniaVFopu48Bw--.10997S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7XrWxCrW7Xw1UKF4Uur17ZFb_yoWfGFX_CF
+	WxJa4kGry7JF1xZa1DCw1fWF4kW3y0yF4xXr129r4UGrnrGwnIyws8KrWUXrW8XF4xXF15
+	Jr98JrZ3tr9rtjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+	cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUFVyIDUUUU
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiDAYQBmhRLHXKVQAAsj
 
-On Tue, 17 Jun 2025 at 14:54, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Tue, Jun 17, 2025 at 01:52:50PM +0200, Hans Verkuil wrote:
-> > On 16/06/2025 15:38, Hans de Goede wrote:
-> > > On 16-Jun-25 15:31, Ricardo Ribalda wrote:
-> > >> On Mon, 16 Jun 2025 at 15:26, Hans de Goede <hansg@kernel.org> wrote:
-> > >>> On 16-Jun-25 15:22, Ricardo Ribalda wrote:
-> > >>>> On Mon, 16 Jun 2025 at 15:05, Hans de Goede <hansg@kernel.org> wrote:
-> > >>>>> On 29-Apr-25 15:47, Ricardo Ribalda wrote:
-> > >>>>>> When committers contribute quirks to the uvc driver, they usually add
-> > >>>>>> them out of order.
-> > >>>>>>
-> > >>>>>> We can automatically validate that their follow our guidelines with the
-> > >>>>>> use of keep-sorted.
-> > >>>>>>
-> > >>>>>> This patchset adds support for keep-sorted in the uvc driver. The two
-> > >>>>>> patches can be squashed if needed.
-> > >>>>>>
-> > >>>>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > >>>>>
-> > >>>>> I've no objections against these 2 patches, but these need to be
-> > >>>>> rebased on top of the latest uvc/for-next. Can you send out a new
-> > >>>>> version please ?
-> > >>>>
-> > >>>> I was waiting for HansV to say that keep-sorted was useful and then
-> > >>>> add it to the CI.
-> > >>>
-> > >>> Ok, so should we drop this series from patchwork then ?
-> > >>
-> > >> If the series does not bother you too much in patchwork let it stay
-> > >> there until HansV replies to the makefile series.
-> >
-> > I did that. Basically I don't like the keep-sorted annotation unless it
-> > is rolled out kernel-wide. It's not something we should do just in the
-> > media subsystem.
-> >
-> > That doesn't mean that a patch fixing the uvc_ids order isn't welcome,
-> > but just drop the annotation.
-> >
-> > If we do that, then patch 1/2 is also no longer needed. Although it
-> > feels more logical that match_flags is at the end. I leave that to
-> > HdG and Laurent to decide.
->
-> .match_flags is first to match the order of the fields in the
-> usb_device_id structure. Is there a need to move it last, or is only the
->
->         }, {
->
-> construct that the tool doesn't like ?
+From: Quan Zhou <zhouquan@iscas.ac.cn>
 
-The },{ construct is fine.
+There is already a helper function find_vma_intersection() in KVM
+for searching intersecting VMAs, use it directly.
 
-The tool sorts all the content in the block
+Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+---
+ arch/riscv/kvm/mmu.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Eg:
-{
- tail= AA;
- head = BBB;
-}
-
-is sorted before:
-{
- tail = CC;
- head= AAAA;
-}
-It can be tuned with a regex:
-https://github.com/google/keep-sorted?tab=readme-ov-file#regular-expressions
-But the syntax is not particularly nice.
-
-This is why I moved "head" to the beginning of every struct.
-
-Anyway, since keep-sorted is not going to be part of the CI unless it
-is adopted by other subsystems we can ignore this for now.
-
-Regards!
-
->
-> > > Sure that works for me.
->
-> --
-> Regards,
->
-> Laurent Pinchart
-
-
-
+diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+index b63650f9b966..3452a8b77af3 100644
+--- a/arch/riscv/kvm/mmu.c
++++ b/arch/riscv/kvm/mmu.c
+@@ -487,10 +487,11 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ 	 *     +--------------------------------------------+
+ 	 */
+ 	do {
+-		struct vm_area_struct *vma = find_vma(current->mm, hva);
++		struct vm_area_struct *vma;
+ 		hva_t vm_start, vm_end;
+ 
+-		if (!vma || vma->vm_start >= reg_end)
++		vma = find_vma_intersection(current->mm, hva, reg_end);
++		if (!vma)
+ 			break;
+ 
+ 		/*
 -- 
-Ricardo Ribalda
+2.34.1
+
 
