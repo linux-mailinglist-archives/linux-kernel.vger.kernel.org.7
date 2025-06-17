@@ -1,51 +1,81 @@
-Return-Path: <linux-kernel+bounces-690283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736EDADCE33
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:51:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8A8ADCE42
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4961178E8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:51:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EF62188771A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B018E2E3AEE;
-	Tue, 17 Jun 2025 13:50:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978902E3AE5;
-	Tue, 17 Jun 2025 13:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5375E2C08B8;
+	Tue, 17 Jun 2025 13:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="S0BlEGlF"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347661DE2CF;
+	Tue, 17 Jun 2025 13:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750168258; cv=none; b=HO58TZItBNyeMg2nf2D+hdCwF3YadfDFBgrgGllWRpWMldbf6dP8PbSEyQkBGm0tVKaMs5uutMHm5LGBrgQHRdB699vPOCQS6t+AgqRN6HxTW3yYSYXrLSNCgMEvg/019yPwcmuaJfun2FZ6HjYSZKGz4Kh0xFJ9iBQ4fYM/e4c=
+	t=1750168252; cv=none; b=JY1lWvF+8Au+RVCWQMw00WX+dZDL5NoFUlef5yRodszntwdxsMgdyyL9THlYwGFTAE+eTZIOjN2t6cJgh/po/KzMs0XOqaLnjVpR1i21G0RVOympV5m8XSDLD4trM0KCk3OXEbKtatfrNr6HdiBnTSwSpgJyIR9Ug8Am6Luj3T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750168258; c=relaxed/simple;
-	bh=U0Jjt1r36fUgdjcebPQwAxxXWivmsipZeBUEx96MtI4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s9keyYlpPm34fIl4vqX7Nc0eglBgX6Y44hjNpuWXM05ar4nwHSZM/tTG2GFBGfPgzIlELKdhiJIGe9Vz+JyqSJsGiJvwr1okVXQTSi83mIrzHt8hq2ncvmnUAYS3Q8Iq/6IZPr8jWbzOpDlR/Hv5LqqtbpxvbMMdu7JbFrEc+Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 995FC150C;
-	Tue, 17 Jun 2025 06:50:34 -0700 (PDT)
-Received: from pluto.guest.local (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A3E443F673;
-	Tue, 17 Jun 2025 06:50:54 -0700 (PDT)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: peng.fan@oss.nxp.com
-Cc: arm-scmi@vger.kernel.org,
-	cristian.marussi@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	peng.fan@nxp.com,
-	sudeep.holla@arm.com
-Subject: [PATCH] [NOT_FOR_MERGE] firmware: arm_scmi: Optimize notifiers registration
-Date: Tue, 17 Jun 2025 14:50:38 +0100
-Message-ID: <20250617135038.2439818-1-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250613095059.GA10033@nxa18884-linux>
-References: <20250613095059.GA10033@nxa18884-linux>
+	s=arc-20240116; t=1750168252; c=relaxed/simple;
+	bh=Z2pUNZV7ejqeMoUK9N+A8VOh/Mc3PC2hOjG0koOyeX4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JBakJvMQFLTckQXfMd9Ip659My3cugSfdmtTSZ8EWQPLxmbXnAiSFqEFIAJc9V06sSenXmgb+yuwUaUrU5Sdcn3Fe1OynFq9OvQwN5uX2jqgtMmaKCfJyU2Yz3Rc9p6FvM3nCDMXns8SJgp++OA4mPbhKIYYwQ0pYjY1yGPm/xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=S0BlEGlF; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55HAn6v2013475;
+	Tue, 17 Jun 2025 13:50:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=brzwTQBukgwH38K5nXiOxo3rws5TNPpiceRr0jglg
+	CM=; b=S0BlEGlFdHCw2jKI07A7TnpNY60+vIpRCo5mQa2qwZxYf6IEm8+GblUwa
+	YasRr8PJDc9OzvDtEqAPSRZOMHVNgQfNvz7Et23sGuUn62lJcXtMomC5Fa3yxj9o
+	MfksI0F8A3hWzFtqVXxqV5SVnaAIg8Sc9sxmXuWgDGu20fqbFXpMXjzTsbN5qryN
+	ut1gnol/P7yvipFXjKb+K6t2HwtwR2O4+bHP9g0mgxnUoc2LQuIsXwDFjrIum1Pr
+	U/M7R526kmOcIQQTjhISrKezHgK2Fk1UZBtw4qlH9jSS6u1fXYo5IFc23rz0qM6+
+	R+4UBuS4zJZsxfMBreHrxqO90uWaA==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4790r20806-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Jun 2025 13:50:48 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55HBu4Yh027463;
+	Tue, 17 Jun 2025 13:50:47 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 479ksyuvu3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Jun 2025 13:50:47 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55HDohM052232626
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Jun 2025 13:50:43 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 679EB20040;
+	Tue, 17 Jun 2025 13:50:43 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 11C032004B;
+	Tue, 17 Jun 2025 13:50:43 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 17 Jun 2025 13:50:43 +0000 (GMT)
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Ingo Molnar <mingo@redhat.com>, Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Anders Roxell <anders.roxell@linaro.org>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: [PATCH 0/2] bugs/s390: Fix compile error with old gcc versions
+Date: Tue, 17 Jun 2025 15:50:40 +0200
+Message-ID: <20250617135042.1878068-1-hca@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,130 +83,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: r9F1hEPrStcqjl0Wv6y7QvyjXIPIqyv5
+X-Proofpoint-ORIG-GUID: r9F1hEPrStcqjl0Wv6y7QvyjXIPIqyv5
+X-Authority-Analysis: v=2.4 cv=AqTu3P9P c=1 sm=1 tr=0 ts=685172b8 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=6IFa9wvqVegA:10 a=mjnkfGu_it_hZ3drrnIA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE3MDEwNyBTYWx0ZWRfXzPi+Y4C4Gv6B jqk7qlrDqyqZyEZJWh/27zyzpIjnH7eJAi8DSui/bHsEvPPqvH6hTH8owYN5GIrAmVhgRnWUVwS jrxS8NDykGkfoFdGYz0MBTZbmEpU/AxxDH2BABF9I92y304fKXcPvoAi1JL4qaWDIeE0hADekFV
+ hrDaCGGziomm3iwYMkD7Vai8rxs2ntCIFi+Xf89bEtf1upl3F9DoCR/lqNAUOLFOTVglBiZgjOL SdB0X8YK3GQWabng8JLnQdEgdjxpgDWVJ/HjWAUbVxtFtaF+grWAPqmeqdNj+M//LB0oA2McjtZ Mm+1h3abT3KoRTRA4TswM/rrEeFGsNxQacR+wJJGvQ+XUPnvzE1pqf1+9S9wqZCbiq9ckv+vn15
+ 4oqbm+63qcHeMwc3XrrIozAAQW6uvUfrCR5Utwa/9ogB6np8QsKkIDNp6V30El0c6HqNBNCl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-17_06,2025-06-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 suspectscore=0 adultscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 mlxlogscore=825 mlxscore=0 spamscore=0
+ bulkscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506170107
 
-Some platforms could be configured not to support notification events from
-specific sources and such a case is already handled properly by avoiding
-even to attempt to send a notification enable request since it would be
-doomed to fail anyway.
+As reported by Naresh and Anders old gcc variants cannot handle
+strings as input operands for inline assemblies. Rewrite the s390
+generic bug support very similar to arm64 and loongarch to fix this.
 
-In an extreme scenario, though, a platform could support not even one
-single source on a specific event: in such a case would be meaningless to
-even allow to register a notifier and we can bail-out immediately, saving
-a lot of needless computation.
+Also use the opportunity to drop the rather pointless s390 specific
+WARN_ON() implementation.
 
-Flag such condition, when detected at protocol initialization time, and
-reject upfront any attempt to register a notifier for such completely
-unsupported events with -ENOTSUPP.
+Ingo, I think the two patches should also go via the core/bugs branch
+of the tip repository.
 
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
-NOT FOR MERGE until tested properly even with late loaded protocols.
-DOES NOT address the issues with verobosity of messages and lack of
-details about failures (which protos ? which resources ?)
----
- drivers/firmware/arm_scmi/notify.c | 39 +++++++++++++++++++++++-------
- 1 file changed, 30 insertions(+), 9 deletions(-)
+Thanks,
+Heiko
 
-diff --git a/drivers/firmware/arm_scmi/notify.c b/drivers/firmware/arm_scmi/notify.c
-index e160ecb22948..dee9f238f6fd 100644
---- a/drivers/firmware/arm_scmi/notify.c
-+++ b/drivers/firmware/arm_scmi/notify.c
-@@ -318,6 +318,9 @@ struct scmi_registered_events_desc {
-  *	    customized event report
-  * @num_sources: The number of possible sources for this event as stated at
-  *		 events' registration time
-+ * @not_supported_by_platform: A flag to indicate that not even one source was
-+ *			       found to be supported by the platform for this
-+ *			       event
-  * @sources: A reference to a dynamically allocated array used to refcount the
-  *	     events' enable requests for all the existing sources
-  * @sources_mtx: A mutex to serialize the access to @sources
-@@ -334,6 +337,7 @@ struct scmi_registered_event {
- 	const struct scmi_event	*evt;
- 	void		*report;
- 	u32		num_sources;
-+	bool		not_supported_by_platform;
- 	refcount_t	*sources;
- 	/* locking to serialize the access to sources */
- 	struct mutex	sources_mtx;
-@@ -811,10 +815,19 @@ int scmi_register_protocol_events(const struct scmi_handle *handle, u8 proto_id,
- 		if (!r_evt->report)
- 			return -ENOMEM;
- 
--		for (id = 0; id < r_evt->num_sources; id++)
--			if (ee->ops->is_notify_supported &&
--			    !ee->ops->is_notify_supported(ph, r_evt->evt->id, id))
--				refcount_set(&r_evt->sources[id], NOTIF_UNSUPP);
-+		if (ee->ops->is_notify_supported) {
-+			int supported = 0;
-+
-+			for (id = 0; id < r_evt->num_sources; id++) {
-+				if (!ee->ops->is_notify_supported(ph, r_evt->evt->id, id))
-+					refcount_set(&r_evt->sources[id], NOTIF_UNSUPP);
-+				else
-+					supported++;
-+			}
-+
-+			/* Not even one source has been found to be supported */
-+			r_evt->not_supported_by_platform = !supported;
-+		}
- 
- 		pd->registered_events[i] = r_evt;
- 		/* Ensure events are updated */
-@@ -936,6 +949,11 @@ static inline int scmi_bind_event_handler(struct scmi_notify_instance *ni,
- 	 * of protocol instance.
- 	 */
- 	hash_del(&hndl->hash);
-+
-+	/* Bailout if event is not supported at all */
-+	if (r_evt->not_supported_by_platform)
-+		return -EOPNOTSUPP;
-+
- 	/*
- 	 * Acquire protocols only for NON pending handlers, so as NOT to trigger
- 	 * protocol initialization when a notifier is registered against a still
-@@ -1060,6 +1078,9 @@ __scmi_event_handler_get_ops(struct scmi_notify_instance *ni,
- 	r_evt = SCMI_GET_REVT(ni, KEY_XTRACT_PROTO_ID(evt_key),
- 			      KEY_XTRACT_EVT_ID(evt_key));
- 
-+	if (r_evt && r_evt->not_supported_by_platform)
-+		return ERR_PTR(-EOPNOTSUPP);
-+
- 	mutex_lock(&ni->pending_mtx);
- 	/* Search registered events at first ... if possible at all */
- 	if (r_evt) {
-@@ -1087,7 +1108,7 @@ __scmi_event_handler_get_ops(struct scmi_notify_instance *ni,
- 				hndl->key);
- 			/* this hndl can be only a pending one */
- 			scmi_put_handler_unlocked(ni, hndl);
--			hndl = NULL;
-+			hndl = ERR_PTR(-EINVAL);
- 		}
- 	}
- 	mutex_unlock(&ni->pending_mtx);
-@@ -1370,8 +1391,8 @@ static int scmi_notifier_register(const struct scmi_handle *handle,
- 	evt_key = MAKE_HASH_KEY(proto_id, evt_id,
- 				src_id ? *src_id : SRC_ID_MASK);
- 	hndl = scmi_get_or_create_handler(ni, evt_key);
--	if (!hndl)
--		return -EINVAL;
-+	if (IS_ERR(hndl))
-+		return PTR_ERR(hndl);
- 
- 	blocking_notifier_chain_register(&hndl->chain, nb);
- 
-@@ -1416,8 +1437,8 @@ static int scmi_notifier_unregister(const struct scmi_handle *handle,
- 	evt_key = MAKE_HASH_KEY(proto_id, evt_id,
- 				src_id ? *src_id : SRC_ID_MASK);
- 	hndl = scmi_get_handler(ni, evt_key);
--	if (!hndl)
--		return -EINVAL;
-+	if (IS_ERR(hndl))
-+		return PTR_ERR(hndl);
- 
- 	/*
- 	 * Note that this chain unregistration call is safe on its own
+Heiko Carstens (2):
+  bugs/s390: Remove private WARN_ON() implementation
+  bugs/s390: Use inline assembly without input operands
+
+ arch/s390/include/asm/bug.h | 94 ++++++++++++++++---------------------
+ 1 file changed, 41 insertions(+), 53 deletions(-)
+
 -- 
-2.47.0
+2.48.1
 
 
