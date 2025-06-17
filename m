@@ -1,54 +1,89 @@
-Return-Path: <linux-kernel+bounces-689727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4B3ADC5AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:07:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4926CADC5B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2DC13ABF20
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:06:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A301E1897F4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EAB290DAC;
-	Tue, 17 Jun 2025 09:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD04293C5B;
+	Tue, 17 Jun 2025 09:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frG4H7uC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="v/0UHZ8U"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A221156CA;
-	Tue, 17 Jun 2025 09:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0550B291161
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750151224; cv=none; b=eDFEyp+8VxKJtLWIXZsl2qyvd4B0ePzam/6nTodDof9B0ZYtflVublQSkQyv65RAN/boGSz+tpf3EENotPH9wkX+hMzqQxaNLlL0siZcXQrjzsR70Izxkswx2R/Dxumrm8knaR0aN2hMbCm8kGKiU5x/4lqCqOEEP5ilN4kcQXI=
+	t=1750151235; cv=none; b=Zoo8/JBHCEMBy5L6N98Tm4MeFX7lOczFvK26I19XGyEsCm8BiNf7V4D2orfsYCNr9Pgyxwbq9U46H3u3ec2xU1V//vncxGKLiorwOvK3Lga1H5/iukRmURCmKL9OGLoqMz8evEfvK/BfQHntYf16b21PfduubgAXCzWp6hF/ouo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750151224; c=relaxed/simple;
-	bh=QJLiXROGIvQwuM4ojw3rsLJXVIV36PkVK5wy0ON0z40=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=oXhppdjrslJcsp8694GVbj3QWMgUMMurmrmNDmeNfRQHGjp15yZJWVuINiJcgkt4HsFnKOjliXZCjlIoDwwSJeFNALWvB74ZpjCSz9z7uG4kynYP/earv88lkH9ltjQciLldYhVuXr07HehAC88D1GPVcI4PiPBTFBEyzZ7+Ck0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frG4H7uC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB005C4CEE3;
-	Tue, 17 Jun 2025 09:07:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750151224;
-	bh=QJLiXROGIvQwuM4ojw3rsLJXVIV36PkVK5wy0ON0z40=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=frG4H7uCSOwmWaJmnoJUuQZkYR/x255EI54nMTZFtt2N+HyqznM/+vjPVWzEQtAVn
-	 VIoUqJNR3BggMiiG/ERdKhKyJt6Kd+qBUNVmdrBXjy0TjozaS9xVXykrQGUQhjA8O2
-	 L9p1y5JOkbDX/DH9mXIg906V1q3Ry/9FhhNMXan6xKQG8ZgnjnOW2SpRKrMKg0QVZm
-	 vEqIZFOLYAQFx9JeZUeGJbICSsqejW3kMwn+sQ5J6YuaHbFPHheR9GUdTqxD1Jp83C
-	 qi4DwdB/Cb9OxtaQ9xnoD7zRSpYNiXQmp+I5Wl3U42IZidlRF5FtKjKryU3WwJ5Yiq
-	 uYb23jP2LH0OQ==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: johan+linaro@kernel.org, mhi@lists.linux.dev, 
- Manivannan Sadhasivam <mani@kernel.org>, Slark Xiao <slark_xiao@163.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250606095019.383992-1-slark_xiao@163.com>
-References: <20250606095019.383992-1-slark_xiao@163.com>
-Subject: Re: [PATCH] bus: mhi: host: pci_generic: Change T99W515 to T99W640
-Message-Id: <175015122147.21818.13498820747290372997.b4-ty@kernel.org>
-Date: Tue, 17 Jun 2025 14:37:01 +0530
+	s=arc-20240116; t=1750151235; c=relaxed/simple;
+	bh=xxgZ7R/ukDFm8UgWJQf1d2zRkqYHl3X/OWibR2cLpqU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l6WKyRSHKflKGIvMBE5kQeJXMrqwPILBgOSiuClRiOkZvv+rRkwXDlnpyDtvyfnVGhXrNtgF6zxKnIHIDFOCB/vX9lLs/xoy6VA0aeBl1ODGLpcKnwaBO6rlgfc7jJdQcI8u5g4k5yomt7Rt7MK/42b1GlYf5/gMUVpiHjxnCEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=v/0UHZ8U; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-450d668c2a1so43540525e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 02:07:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750151232; x=1750756032; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d8O6+umHZPO/Ii67p4kZdXXLm9+0GF0Bsp3J+Rdwo5s=;
+        b=v/0UHZ8UmlgwN2h15PhYMLo3UEX0Jpnt/SkcwO0xg7XPpWPdtuzPjaEGpYLrws3HB9
+         4x3XpSzegORKNxruo8cM+E/bmxl4/8OyP3UmqCDGG9UGYraztXAQiCbeFqu7t1wUjlnK
+         DHX3oEAyP9ddrHdtBOR5PYzNQHcccd0zyrMB4W6hrLaKGjjeu73V8w+qCyShRiSRr9cD
+         kksCsIKGpiWEbNLsqgx2D5aorep9LchyxUbzZPlL/qJjZyP1XMuBBIGk0BazJcAK2e6n
+         s4UJDgMkgAu70VgQCogUxRa/UTVvdDtgmmUsqiOovCx5GWMjeDfqgAhLnvGhi6sHoNG7
+         upmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750151232; x=1750756032;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d8O6+umHZPO/Ii67p4kZdXXLm9+0GF0Bsp3J+Rdwo5s=;
+        b=fiirBpqFqzTv7saB8Kd6bVNYB+vtX3Li3Tp3s1pCDaX8PYtZrE82F+fEd5y0/ItDjA
+         MXOcshcAK6xehCFg49nnQh3FQwvAzqTEKoFgyp4nRLHl0qAEVca1iFGsuc45p3uiQMB+
+         EVX7t9eG7SX21Q8RFqlWsma7T5UEMzfa0oP4iGCgxzJ9Pc2evbpK4u2bfHfbu+6OSnMR
+         674KuxBZpnC/gfI+ZijEJ3vdrIDgV5kipR2Hagn/HXfWP8alidnLQZxQMwG++I0M/ZL7
+         7IhKt9NZhwHHSOypJMxcfHrzSMQiJsrYTzIVixS04MgsHufLE/ho8N12zU/sXBKkILFK
+         HtPw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5IQfYpOpDwLWEmeV0S6HFvcarCTYEn06GaliJcIRWMdsFa7vwxIIP9bPXu6FxGfdLpkeFggrcXaIKb58=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOEATIuAZX7wwx555yuygT7dRUvR7pEfSTDFkwMm7hdkTwYAEF
+	c1nkEnzN+brHIR4RO5EMEZHl+b7nnT5g+2YeAQKa6Z/NEt3oMDOn9iP9zxAXGv4tct0=
+X-Gm-Gg: ASbGnctvsHrWBNmARczcQaSTQMj4z1cbX9nvqV9EuAiFigD8qAkU9KWQC/RsUXnKRWM
+	4jdh2P2ELLEAfmSMXnFLN8oVP6yoCbf5Z0yynoeV/P/HP0KmWmGMAxISoCyxeEI9bMHYCctQ3zV
+	ljR3RHimbvOMJbKiHIHu8aZbfVaKa5OxhFNNGRyISefReix0duNiWEM9VjXJB2ZrNIqQiQYxJPw
+	WHQ+Oy7Vw7Z4ahe9ndrdQNuB7fY0QV5nrMVrQCGqNNrUmUorIHaDgKXsQ3xfZ40/BnNwC6n2Hw0
+	K66PZl442OlCFXMg0bCosBDOu3mTtsAk/S8fs1H2PPgCXLRmKJvm+vrMTUKfxiU=
+X-Google-Smtp-Source: AGHT+IGGnLF+aL3LK+xHmsD10MB4lnkkqmE1vMtMPtoum903Wlqks60RJraEkuA7LpVAWBl6qRxRMg==
+X-Received: by 2002:a05:600c:8587:b0:44a:b468:87b1 with SMTP id 5b1f17b1804b1-4533ca0a5cfmr82676745e9.4.1750151232139;
+        Tue, 17 Jun 2025 02:07:12 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:90df:ded7:9cbf:4074])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e24b0c8sm167213005e9.24.2025.06.17.02.07.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 02:07:11 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-gpio@vger.kernel.org,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: pca953x: fix wrong error probe return value
+Date: Tue, 17 Jun 2025 11:07:09 +0200
+Message-ID: <175015122727.20962.12230915650495330768.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250616134503.1201138-1-s.hauer@pengutronix.de>
+References: <20250616134503.1201138-1-s.hauer@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,23 +91,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-On Fri, 06 Jun 2025 17:50:19 +0800, Slark Xiao wrote:
-> T99W515 is a LGA device but not a M.2 modem device.
-> So correct this name in case a name mismatch issue.
+On Mon, 16 Jun 2025 15:45:03 +0200, Sascha Hauer wrote:
+> The second argument to dev_err_probe() is the error value. Pass the
+> return value of devm_request_threaded_irq() there instead of the irq
+> number.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] bus: mhi: host: pci_generic: Change T99W515 to T99W640
-      commit: 105e6a6810bf1399a5f4eebec18bdf429648b733
+[1/1] gpio: pca953x: fix wrong error probe return value
+      https://git.kernel.org/brgl/linux/c/0a1db19f66c0960eb00e1f2ccd40708b6747f5b1
 
 Best regards,
 -- 
-Manivannan Sadhasivam <mani@kernel.org>
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
