@@ -1,327 +1,183 @@
-Return-Path: <linux-kernel+bounces-690311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D87ADCE97
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:00:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16077ADCE30
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E90E27A622E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:59:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 113A13A90A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB162E2676;
-	Tue, 17 Jun 2025 13:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C1E2E2666;
+	Tue, 17 Jun 2025 13:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aPIO2alt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CGO5gPQb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877A32E4253
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81502E266C
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750168785; cv=none; b=GACkudp5fT9iIsaOdA85LLRWjgZ7MRaPtihfxO8Ak/4D8zaXJ8DXjYBjj7rqje0hXxMku1SgnlQaAuLY3I+ACXWq0K7HGvfgMlUI3V4iSnfspGte/6D5fFMwojENAym8vlbr60vXqbjDdXIhf9d5ME34OBKkncGLniAG7Y5G6HY=
+	t=1750167938; cv=none; b=omcmcWVGkChgExk3QZ315jrZleg5i+2RYBGZn/BxVI3I5LMbj5mrzf18IRLFaH+MwTaJH9Rt5yHLKebKKbpmnJev0F+RgeRoEL9wY2g+PBVisdNPthBBRj8bXnmPj6ohiHF9uYsxckuckSUzJXUntwFqNWyv/D7l9r5Dsergd+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750168785; c=relaxed/simple;
-	bh=q0hWiCYmWKAaZmB913NuWi2bGtvj235TysVC+ofT7zg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zznb9RCYjbcmTpqCd9xg6GAUbtvIG2cm2UNhRH1NTQDWFTIlTiJPeFNN/74AzrAXqpwvPTmHW8TuKZzruze5nneS/0IKeiXlrbnsk18O6k9dHS68SeAiv2MKhjRDZCbeT6ChR4PalhvdiIvvsJmnDOTKpx98X4UgU1aLX+hr6Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aPIO2alt; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750168784; x=1781704784;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=q0hWiCYmWKAaZmB913NuWi2bGtvj235TysVC+ofT7zg=;
-  b=aPIO2altna8Ip+LpVxJyVAJlyuxpfMcrKDYwlfsAKuGQMzWZvOyM/lk4
-   aXLFczeDTYJ+5EZBDCq2GHNcFY5EyhVUBl29zSdMvftv4dmqjxA+ebMNU
-   08hP0U6+kIa14SJwrbxRIID0P7oOv9XwtvcaRHJGQl7Hri7zsK8sWTSEN
-   SkN/dK/3f0C+mxDnYw3CYKc1cjcHVcp83sJyxOnzsC9K/NiQfP+F4gSRu
-   kDPwk44RI5OG4dI5nPO9C5rPqF0+wuoFAq2kmlATDYfY9LkmPtCc/ZoZW
-   hIVhJ/Myt3bDPe0kI7u1t5YHTClDqjEwKOQb+KH4KywVHH/2PRlR3CdPG
-   Q==;
-X-CSE-ConnectionGUID: 7EB6c8uQS3qR9rF/TP5TOg==
-X-CSE-MsgGUID: vuLuyX4uSIW+gI1ERBkjMw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="56026567"
-X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="56026567"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 06:59:43 -0700
-X-CSE-ConnectionGUID: Mw7D4kP0RlaIFsOMDRwH1Q==
-X-CSE-MsgGUID: gnq+P81GQHqzX+BSEZXwRg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="153739542"
-Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 06:59:37 -0700
-From: Alexander Usyskin <alexander.usyskin@intel.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Karthik Poosa <karthik.poosa@intel.com>,
-	Raag Jadav <raag.jadav@intel.com>
-Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
-	linux-mtd@lists.infradead.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Tomas Winkler <tomasw@gmail.com>
-Subject: [PATCH v13 06/10] drm/i915/nvm: add nvm device for discrete graphics
-Date: Tue, 17 Jun 2025 16:45:28 +0300
-Message-ID: <20250617134532.3768283-7-alexander.usyskin@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250617134532.3768283-1-alexander.usyskin@intel.com>
-References: <20250617134532.3768283-1-alexander.usyskin@intel.com>
+	s=arc-20240116; t=1750167938; c=relaxed/simple;
+	bh=TqaxM3lVFv3UZrbMUL0llG0fYT1f+jhbJEl2XZa355k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WikXsS87r6DH29ph15rnpHRRmWDpl9bPgRxn/ZMfMccL1YZJfCplG/A3IguQC6NmPXlfXkusoQp/1OuzyvfT1eGeYkpkOWJnS/zAxiwvCE8TOYpQ35X9hdr6786FkbWvvriLG8reEsHrrItI85idDov7hdZks4VD597NlO3h+4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CGO5gPQb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750167934;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2wJZWv7tce/7bX9eEyOCO+Maxcn57Hdvffo3J3KjQro=;
+	b=CGO5gPQbo6L1HM7kFbaRxXFWjJkXTqcVbh1KnMpxtGE7h916dZY8uF0Ck6+atYEXaL2CII
+	9auu3jM7erodDTaMvz2DZtTBDcTGnVKXCKVPvqPK3axYqtZGdFkun/iO79b0jOo1+cgEzX
+	1wqXU2GnYDyxIMq/2Hwtked816+diQU=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-32-WQVd9qzXNvaNDwGySaBS1w-1; Tue, 17 Jun 2025 09:45:32 -0400
+X-MC-Unique: WQVd9qzXNvaNDwGySaBS1w-1
+X-Mimecast-MFC-AGG-ID: WQVd9qzXNvaNDwGySaBS1w_1750167931
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4ff581df3so472464f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 06:45:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750167931; x=1750772731;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2wJZWv7tce/7bX9eEyOCO+Maxcn57Hdvffo3J3KjQro=;
+        b=BIxzefwMuW4vHjy/q8FlrCmm4iRFFHG3Uuy8sbwGYrorhiw0ciovY1AaiQ3+g2ELGE
+         P/urZxPLr6yHBqLfgnA0OYMR8AKujq4LeGHbLHH2V/l6sog4bsmpmjFwbaiE1WC7FBo7
+         w9KqzR4uK19KCeVOru36VzqaXuo2675tdM74fLzHjigVaEDXW5M9AdpoF+bOI3eyBOxA
+         g6tXY2Hg3iIV7IhoAUdIp45rUWmIUxyTcnxKFpWsgNR2hHDlMc6Vz2N+fS89THyTk/Wq
+         vVeZZMSrclRRrtuXRT4agLzQmMThbEwtr1aTCUTKmGzDXdJLTzCTOaqD1+0OR72SU3CF
+         YzZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXh2zbyFAe/Ysice4pXzCOgcOFvJ8e+u4mMYvGvKLb6btERvpGkK2FvvS8Ar3pWUnXN4R2dNGMHs6AiHrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlj+l2S5rkH9SlAqlOmxfZICq+/zarbQ795MdDcY8Kbbm4sLZz
+	osPxZtR5tWXBYZBZdgnWbFRWas4WwphMikfSMezC7wZ8w/WJUr5y7jwzuRIIDqltClMpEjOJM3r
+	CjtY41Ic1AxpIeTZmj39aZw/WJOEHPkfJuEG2LohohTc96tQ227vxM4bfu+IGIA3MXg==
+X-Gm-Gg: ASbGnct8FQBM5nVEGBnVB90bs2lL8HONOAHUGDqdqVGaM7ZKOMFhcWwWvWd2BLeWtTm
+	VXwfFIhXSOoCJECDx+wsvl8UpIEhUrwf23LvM2vwQrpoPwdHA2zJykb27v46/qGSRALnOhhGZqA
+	8eggQfYJ8oUWPS20Nf/sfo17hJFh6bmNuT2j+XKI8dRRDMj8lXdVOzgrL6/SldRhOJiwsBvhLc7
+	nKzDdvvYwXSR6HSn47nU79OQ5ZrOzczTOJtNQc1fwNhhU8Cz2/vYu2R3sViq1HBRFUMhFd9HQhX
+	+IcgNfIGK7CTy0t6RFzvvnVtmxOko4fJdgrwbs2gckdY6DBx4Sm+iRzQlznJsPkFSNUwP00Gz4J
+	Im/UXmZomoUhJfMxfbzvGeLe64+rCiTsFMj7u9o25vq65bGE=
+X-Received: by 2002:a05:6000:2dc8:b0:3a5:24cc:6d5e with SMTP id ffacd0b85a97d-3a56d7bb11fmr11538950f8f.3.1750167930863;
+        Tue, 17 Jun 2025 06:45:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEbypEBaDDs19Bl9DuY1V8Qu3UyMIidLu0nEN7nOfiU5+Gdehh5BsZJgxN4zYE3IqruYL0KHw==
+X-Received: by 2002:a05:6000:2dc8:b0:3a5:24cc:6d5e with SMTP id ffacd0b85a97d-3a56d7bb11fmr11538930f8f.3.1750167930520;
+        Tue, 17 Jun 2025 06:45:30 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f31:700:3851:c66a:b6b9:3490? (p200300d82f3107003851c66ab6b93490.dip0.t-ipconnect.de. [2003:d8:2f31:700:3851:c66a:b6b9:3490])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4534172d2b0sm108385935e9.35.2025.06.17.06.45.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jun 2025 06:45:30 -0700 (PDT)
+Message-ID: <460e16a0-c8d9-493a-b54f-2c793c969eb1@redhat.com>
+Date: Tue, 17 Jun 2025 15:45:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] gup: introduce unpin_user_folio_dirty_locked()
+To: Jason Gunthorpe <jgg@ziepe.ca>, lizhe.67@bytedance.com
+Cc: alex.williamson@redhat.com, akpm@linux-foundation.org, peterx@redhat.com,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20250617041821.85555-1-lizhe.67@bytedance.com>
+ <20250617041821.85555-3-lizhe.67@bytedance.com>
+ <20250617134251.GA1376515@ziepe.ca>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250617134251.GA1376515@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Enable access to internal non-volatile memory on
-DGFX devices via a child device.
-The nvm child device is exposed via auxiliary bus.
+On 17.06.25 15:42, Jason Gunthorpe wrote:
+> On Tue, Jun 17, 2025 at 12:18:20PM +0800, lizhe.67@bytedance.com wrote:
+> 
+>> @@ -360,12 +360,7 @@ void unpin_user_page_range_dirty_lock(struct page *page, unsigned long npages,
+>>   
+>>   	for (i = 0; i < npages; i += nr) {
+>>   		folio = gup_folio_range_next(page, npages, i, &nr);
+>> -		if (make_dirty && !folio_test_dirty(folio)) {
+>> -			folio_lock(folio);
+>> -			folio_mark_dirty(folio);
+>> -			folio_unlock(folio);
+>> -		}
+>> -		gup_put_folio(folio, nr, FOLL_PIN);
+>> +		unpin_user_folio_dirty_locked(folio, nr, make_dirty);
+>>   	}
+> 
+> I don't think we should call an exported function here - this is a
+> fast path for rdma and iommfd, I don't want to see it degrade to save
+> three duplicated lines :\
 
-CC: Lucas De Marchi <lucas.demarchi@intel.com>
-Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Co-developed-by: Tomas Winkler <tomasw@gmail.com>
-Signed-off-by: Tomas Winkler <tomasw@gmail.com>
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
----
- drivers/gpu/drm/i915/Makefile      |  4 ++
- drivers/gpu/drm/i915/i915_driver.c |  6 ++
- drivers/gpu/drm/i915/i915_drv.h    |  3 +
- drivers/gpu/drm/i915/i915_reg.h    |  1 +
- drivers/gpu/drm/i915/intel_nvm.c   | 98 ++++++++++++++++++++++++++++++
- drivers/gpu/drm/i915/intel_nvm.h   | 15 +++++
- 6 files changed, 127 insertions(+)
- create mode 100644 drivers/gpu/drm/i915/intel_nvm.c
- create mode 100644 drivers/gpu/drm/i915/intel_nvm.h
+Any way to quantify? In theory, the compiler could still optimize this 
+within the same file, no?
 
-diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makefile
-index 7c6075bc483c..ed4d15ad4cdf 100644
---- a/drivers/gpu/drm/i915/Makefile
-+++ b/drivers/gpu/drm/i915/Makefile
-@@ -211,6 +211,10 @@ i915-y += \
- i915-y += \
- 	gt/intel_gsc.o
- 
-+# graphics nvm device (DGFX) support
-+i915-y += \
-+	intel_nvm.o
-+
- # graphics hardware monitoring (HWMON) support
- i915-$(CONFIG_HWMON) += \
- 	i915_hwmon.o
-diff --git a/drivers/gpu/drm/i915/i915_driver.c b/drivers/gpu/drm/i915/i915_driver.c
-index c6263c6d3384..6d83f8d1a957 100644
---- a/drivers/gpu/drm/i915/i915_driver.c
-+++ b/drivers/gpu/drm/i915/i915_driver.c
-@@ -85,6 +85,8 @@
- #include "soc/intel_dram.h"
- #include "soc/intel_gmch.h"
- 
-+#include "intel_nvm.h"
-+
- #include "i915_debugfs.h"
- #include "i915_driver.h"
- #include "i915_drm_client.h"
-@@ -645,6 +647,8 @@ static int i915_driver_register(struct drm_i915_private *dev_priv)
- 	/* Depends on sysfs having been initialized */
- 	i915_perf_register(dev_priv);
- 
-+	intel_nvm_init(dev_priv);
-+
- 	for_each_gt(gt, dev_priv, i)
- 		intel_gt_driver_register(gt);
- 
-@@ -687,6 +691,8 @@ static void i915_driver_unregister(struct drm_i915_private *dev_priv)
- 
- 	i915_hwmon_unregister(dev_priv);
- 
-+	intel_nvm_fini(dev_priv);
-+
- 	i915_perf_unregister(dev_priv);
- 	i915_pmu_unregister(dev_priv);
- 
-diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
-index 5e4c49f0d5d4..ba75e7651c5e 100644
---- a/drivers/gpu/drm/i915/i915_drv.h
-+++ b/drivers/gpu/drm/i915/i915_drv.h
-@@ -65,6 +65,7 @@ struct drm_i915_clock_gating_funcs;
- struct intel_display;
- struct intel_pxp;
- struct vlv_s0ix_state;
-+struct intel_dg_nvm_dev;
- 
- #define GEM_QUIRK_PIN_SWIZZLED_PAGES	BIT(0)
- 
-@@ -289,6 +290,8 @@ struct drm_i915_private {
- 
- 	struct i915_perf perf;
- 
-+	struct intel_dg_nvm_dev *nvm;
-+
- 	struct i915_hwmon *hwmon;
- 
- 	struct intel_gt *gt[I915_MAX_GT];
-diff --git a/drivers/gpu/drm/i915/i915_reg.h b/drivers/gpu/drm/i915/i915_reg.h
-index 52a902532e6f..ea9b90d59cd3 100644
---- a/drivers/gpu/drm/i915/i915_reg.h
-+++ b/drivers/gpu/drm/i915/i915_reg.h
-@@ -277,6 +277,7 @@
- #define DG2_GSC_HECI2_BASE	0x00374000
- #define MTL_GSC_HECI1_BASE	0x00116000
- #define MTL_GSC_HECI2_BASE	0x00117000
-+#define GEN12_GUNIT_NVM_BASE	0x00102040
- 
- #define HECI_H_CSR(base)	_MMIO((base) + 0x4)
- #define   HECI_H_CSR_IE		REG_BIT(0)
-diff --git a/drivers/gpu/drm/i915/intel_nvm.c b/drivers/gpu/drm/i915/intel_nvm.c
-new file mode 100644
-index 000000000000..ae7f9f2c01bf
---- /dev/null
-+++ b/drivers/gpu/drm/i915/intel_nvm.c
-@@ -0,0 +1,98 @@
-+// SPDX-License-Identifier: MIT
-+/*
-+ * Copyright(c) 2019-2024, Intel Corporation. All rights reserved.
-+ */
-+
-+#include <linux/intel_dg_nvm_aux.h>
-+#include <linux/irq.h>
-+#include <linux/pci.h>
-+#include "i915_reg.h"
-+#include "i915_drv.h"
-+#include "intel_nvm.h"
-+
-+#define GEN12_GUNIT_NVM_SIZE 0x80
-+
-+static const struct intel_dg_nvm_region regions[INTEL_DG_NVM_REGIONS] = {
-+	[0] = { .name = "DESCRIPTOR", },
-+	[2] = { .name = "GSC", },
-+	[11] = { .name = "OptionROM", },
-+	[12] = { .name = "DAM", },
-+};
-+
-+static void i915_nvm_release_dev(struct device *dev)
-+{
-+}
-+
-+int intel_nvm_init(struct drm_i915_private *i915)
-+{
-+	struct pci_dev *pdev = to_pci_dev(i915->drm.dev);
-+	struct auxiliary_device *aux_dev;
-+	struct intel_dg_nvm_dev *nvm;
-+	int ret;
-+
-+	/* Only the DGFX devices have internal NVM */
-+	if (!IS_DGFX(i915))
-+		return 0;
-+
-+	/* Nvm pointer should be NULL here */
-+	if (WARN_ON(i915->nvm))
-+		return -EFAULT;
-+
-+	i915->nvm = kzalloc(sizeof(*nvm), GFP_KERNEL);
-+	if (!i915->nvm)
-+		return -ENOMEM;
-+
-+	nvm = i915->nvm;
-+
-+	nvm->writable_override = true;
-+	nvm->bar.parent = &pdev->resource[0];
-+	nvm->bar.start = GEN12_GUNIT_NVM_BASE + pdev->resource[0].start;
-+	nvm->bar.end = nvm->bar.start + GEN12_GUNIT_NVM_SIZE - 1;
-+	nvm->bar.flags = IORESOURCE_MEM;
-+	nvm->bar.desc = IORES_DESC_NONE;
-+	nvm->regions = regions;
-+
-+	aux_dev = &nvm->aux_dev;
-+
-+	aux_dev->name = "nvm";
-+	aux_dev->id = (pci_domain_nr(pdev->bus) << 16) | pci_dev_id(pdev);
-+	aux_dev->dev.parent = &pdev->dev;
-+	aux_dev->dev.release = i915_nvm_release_dev;
-+
-+	ret = auxiliary_device_init(aux_dev);
-+	if (ret) {
-+		drm_err(&i915->drm, "i915-nvm aux init failed %d\n", ret);
-+		goto err;
-+	}
-+
-+	ret = auxiliary_device_add(aux_dev);
-+	if (ret) {
-+		drm_err(&i915->drm, "i915-nvm aux add failed %d\n", ret);
-+		auxiliary_device_uninit(aux_dev);
-+		goto err;
-+	}
-+	return 0;
-+
-+err:
-+	kfree(nvm);
-+	i915->nvm = NULL;
-+	return ret;
-+}
-+
-+void intel_nvm_fini(struct drm_i915_private *i915)
-+{
-+	struct intel_dg_nvm_dev *nvm = i915->nvm;
-+
-+	/* Only the DGFX devices have internal NVM */
-+	if (!IS_DGFX(i915))
-+		return;
-+
-+	/* Nvm pointer should not be NULL here */
-+	if (WARN_ON(!nvm))
-+		return;
-+
-+	auxiliary_device_delete(&nvm->aux_dev);
-+	auxiliary_device_uninit(&nvm->aux_dev);
-+	kfree(nvm);
-+	i915->nvm = NULL;
-+}
-diff --git a/drivers/gpu/drm/i915/intel_nvm.h b/drivers/gpu/drm/i915/intel_nvm.h
-new file mode 100644
-index 000000000000..a9e4046b830f
---- /dev/null
-+++ b/drivers/gpu/drm/i915/intel_nvm.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: MIT */
-+/*
-+ * Copyright(c) 2019-2024 Intel Corporation. All rights reserved.
-+ */
-+
-+#ifndef __INTEL_NVM_H__
-+#define __INTEL_NVM_H__
-+
-+struct drm_i915_private;
-+
-+int intel_nvm_init(struct drm_i915_private *i915);
-+
-+void intel_nvm_fini(struct drm_i915_private *i915);
-+
-+#endif /* __INTEL_NVM_H__ */
+> 
+> Make the new function an inline?
+
+That of course also works.
+
 -- 
-2.43.0
+Cheers,
+
+David / dhildenb
 
 
