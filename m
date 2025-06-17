@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-690310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BEFDADCEAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:05:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1504BADCEB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1138A3B1049
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:59:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CB193B24DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2164D2E3B16;
-	Tue, 17 Jun 2025 13:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B078E2E3AE1;
+	Tue, 17 Jun 2025 13:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hOKbt8pN"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PGDzQiCI"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5682E3B14
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945A22E267E
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 13:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750168778; cv=none; b=bqH0tfgMSPHdRAqAtEVnQ8oLLeXffqivAGtrtK7eDsRtzi1i+nkIR9aPTuc893BOCTy0L1AiC80k1YLPSBg/MRXM6U4UrWBRchXn950YhIimIwAPa5z0l7TYALSFKskvUyB41nNoFjkFdrPXvuaEIdJI6EMtGKejMdrQa+w2Jv4=
+	t=1750168791; cv=none; b=YnPabiAfUKzPizwYyWP38A9PK5dchpbDIGl6khvJayfGf3XXyGeZMGapSRrk2It8Ed+ilDOP02UiZMKuPOK7EtYjXSZL7HEE7H6SQSxwXzdWia0L5Z+dBhesivPzjZB2YEUF3IoCOWEAZkBisnIRRqYZjCKHfYv6NuXE8dfrpME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750168778; c=relaxed/simple;
-	bh=MkAaleCQCNNCm9AdIhhOV9O8nKl/pJB/jBgEA4uGWKQ=;
+	s=arc-20240116; t=1750168791; c=relaxed/simple;
+	bh=brHnIOdScb0KxCyYh6StjKNndkZEaHPzreNgxMkxZxU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Enaum1Stxid+1eFo4zTXl4ZoxXOrzrABB8wmxYMZaI+zdaDn2M+S0sc6DQFv5itqshGFPRUDja3Jo4MW5ewom1Nld/dB5WmRsSxnilvNDhFZ4h0GEoihdaR5WJf7g8j3L3nHBrSTXpPIJAs0dvl4XJmkfa8cEzEepqQae5vv3VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hOKbt8pN; arc=none smtp.client-ip=198.175.65.15
+	 MIME-Version; b=Hwh9IhaVzS9bMSTxR3ciSoOEadLU8js3a4quovEqE0XaOt88STdZupbOTbBp2DitZnPX7Qa8fjJarn3BZ3kQ1roS97Q92YvjX+RhfSWz6oDUGerwWvLdXVw03p7534svbUB4nJrnq0XWzFconPzmT0FhlujgO+RueT0WOmWIJTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PGDzQiCI; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750168777; x=1781704777;
+  t=1750168790; x=1781704790;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=MkAaleCQCNNCm9AdIhhOV9O8nKl/pJB/jBgEA4uGWKQ=;
-  b=hOKbt8pN8zyGQf2D3Lu6pUGg6Hflr54GU4lcj2ee5MyDxvfKj2sFmzNs
-   CzCGMlO3M6lVwFdb9F1CknxEbqZKPmllIobT40X5CO3/B3Ijkf5yJD8Bl
-   DQ4Ev9FtD8HTZMiKHJW0RTZSc3ebWhDIDC31xVVwPWjz59qRXKkeMHcQu
-   ZMk455HDahZ63RmWQuLIE9/tA93z0Y2L73j3uCdxnBGrg7XqMzC7ZETPz
-   fAFvm+kv3qLk6dEtH6g2mxRY9b4LLtdNjcoPhv0JjbolYbr75HaJ5QGr7
-   vy9DiKz7KeVeKLW3Y3nKShyYbh7GepYCeXaqdMzEA9NxwOKQ7SCXa0FLM
-   w==;
-X-CSE-ConnectionGUID: 7L73qfNLSYmlHC75f2yQdQ==
-X-CSE-MsgGUID: 1fwpcGOCTny/Fwl8LqFu8w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="56026546"
+  bh=brHnIOdScb0KxCyYh6StjKNndkZEaHPzreNgxMkxZxU=;
+  b=PGDzQiCILF+ErBHaI7GdSz3FZW9nRcSRy/PaTmJSASMySLAAH3bzT9Wg
+   la0IJXW8VFkvf7d0ABo91g7g4P/Lu3fhI6UspQl/Bry13INegfpx1T9Mw
+   NcfXZNjUx7/DA4+I03TGNnODVVIiEd8dGqLYjEJrpnut11Snaq30UUtWs
+   cEhKX6RYz1lcOs+jlAG7Gci5IYtEfPE7Ej1OHBI2DpjzKo+T0m3H4O+xg
+   oc0xm+DP6r5vfpLVY4rmJ4aKfBcqR0fqst8BfXEb9GpGVlCb9vCkf/bzF
+   Vd4tn7Ky8k3E32/nt/ZcJN8PGP4qdItBEoKQAjxRO8E/7oCAntMR4HkZ+
+   g==;
+X-CSE-ConnectionGUID: 70xAjLH2RuaTOnBnxVhmVw==
+X-CSE-MsgGUID: 6Cpe5BQxQD27fq8r3qHlnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="56026582"
 X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="56026546"
+   d="scan'208";a="56026582"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 06:59:37 -0700
-X-CSE-ConnectionGUID: PbhM4P2yTgCbvnOoS790gA==
-X-CSE-MsgGUID: JXDj5XcwRMOH719PZLtkww==
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 06:59:49 -0700
+X-CSE-ConnectionGUID: kVM6VBcbTL24Dzz690BmJQ==
+X-CSE-MsgGUID: SteaBKKCRLeHZUO7Whk3Ig==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
-   d="scan'208";a="153739519"
+   d="scan'208";a="153739554"
 Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 06:59:30 -0700
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 06:59:43 -0700
 From: Alexander Usyskin <alexander.usyskin@intel.com>
 To: Miquel Raynal <miquel.raynal@bootlin.com>,
 	Richard Weinberger <richard@nod.at>,
@@ -81,9 +81,9 @@ Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
 	intel-gfx@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Alexander Usyskin <alexander.usyskin@intel.com>
-Subject: [PATCH v13 05/10] mtd: intel-dg: align 64bit read and write
-Date: Tue, 17 Jun 2025 16:45:27 +0300
-Message-ID: <20250617134532.3768283-6-alexander.usyskin@intel.com>
+Subject: [PATCH v13 07/10] drm/i915/nvm: add support for access mode
+Date: Tue, 17 Jun 2025 16:45:29 +0300
+Message-ID: <20250617134532.3768283-8-alexander.usyskin@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250617134532.3768283-1-alexander.usyskin@intel.com>
 References: <20250617134532.3768283-1-alexander.usyskin@intel.com>
@@ -95,69 +95,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-GSC NVM controller HW errors on quad access overlapping 1K border.
-Align 64bit read and write to avoid readq/writeq over 1K border.
+Check NVM access mode from GSC FW status registers
+and overwrite access status read from SPI descriptor, if needed.
 
-Reviewed-by: Raag Jadav <raag.jadav@intel.com>
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
 ---
- drivers/mtd/devices/mtd_intel_dg.c | 35 ++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ drivers/gpu/drm/i915/intel_nvm.c | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/devices/mtd_intel_dg.c b/drivers/mtd/devices/mtd_intel_dg.c
-index 6d971fb77938..97e1dc1ada5d 100644
---- a/drivers/mtd/devices/mtd_intel_dg.c
-+++ b/drivers/mtd/devices/mtd_intel_dg.c
-@@ -246,6 +246,24 @@ static ssize_t idg_write(struct intel_dg_nvm *nvm, u8 region,
- 		len_s -= to_shift;
- 	}
+diff --git a/drivers/gpu/drm/i915/intel_nvm.c b/drivers/gpu/drm/i915/intel_nvm.c
+index ae7f9f2c01bf..4624cba26fa7 100644
+--- a/drivers/gpu/drm/i915/intel_nvm.c
++++ b/drivers/gpu/drm/i915/intel_nvm.c
+@@ -11,6 +11,7 @@
+ #include "intel_nvm.h"
  
-+	if (!IS_ALIGNED(to, sizeof(u64)) &&
-+	    ((to ^ (to + len_s)) & GENMASK(31, 10))) {
-+		/*
-+		 * Workaround reads/writes across 1k-aligned addresses
-+		 * (start u32 before 1k, end u32 after)
-+		 * as this fails on hardware.
-+		 */
-+		u32 data;
+ #define GEN12_GUNIT_NVM_SIZE 0x80
++#define HECI_FW_STATUS_2_NVM_ACCESS_MODE BIT(3)
+ 
+ static const struct intel_dg_nvm_region regions[INTEL_DG_NVM_REGIONS] = {
+ 	[0] = { .name = "DESCRIPTOR", },
+@@ -23,6 +24,28 @@ static void i915_nvm_release_dev(struct device *dev)
+ {
+ }
+ 
++static bool i915_nvm_writable_override(struct drm_i915_private *i915)
++{
++	bool writable_override;
++	resource_size_t base;
 +
-+		memcpy(&data, &buf[0], sizeof(u32));
-+		idg_nvm_write32(nvm, to, data);
-+		if (idg_nvm_error(nvm))
-+			return -EIO;
-+		buf += sizeof(u32);
-+		to += sizeof(u32);
-+		len_s -= sizeof(u32);
++	if (IS_DG1(i915)) {
++		base = DG1_GSC_HECI2_BASE;
++	} else if (IS_DG2(i915)) {
++		base = DG2_GSC_HECI2_BASE;
++	} else {
++		drm_err(&i915->drm, "Unknown platform\n");
++		return true;
 +	}
 +
- 	len8 = ALIGN_DOWN(len_s, sizeof(u64));
- 	for (i = 0; i < len8; i += sizeof(u64)) {
- 		u64 data;
-@@ -303,6 +321,23 @@ static ssize_t idg_read(struct intel_dg_nvm *nvm, u8 region,
- 		from += from_shift;
- 	}
++	writable_override =
++		!(intel_uncore_read(&i915->uncore, HECI_FWSTS(base, 2)) &
++		  HECI_FW_STATUS_2_NVM_ACCESS_MODE);
++	if (writable_override)
++		drm_info(&i915->drm, "NVM access overridden by jumper\n");
++	return writable_override;
++}
++
+ int intel_nvm_init(struct drm_i915_private *i915)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(i915->drm.dev);
+@@ -44,7 +67,7 @@ int intel_nvm_init(struct drm_i915_private *i915)
  
-+	if (!IS_ALIGNED(from, sizeof(u64)) &&
-+	    ((from ^ (from + len_s)) & GENMASK(31, 10))) {
-+		/*
-+		 * Workaround reads/writes across 1k-aligned addresses
-+		 * (start u32 before 1k, end u32 after)
-+		 * as this fails on hardware.
-+		 */
-+		u32 data = idg_nvm_read32(nvm, from);
-+
-+		if (idg_nvm_error(nvm))
-+			return -EIO;
-+		memcpy(&buf[0], &data, sizeof(data));
-+		len_s -= sizeof(u32);
-+		buf += sizeof(u32);
-+		from += sizeof(u32);
-+	}
-+
- 	len8 = ALIGN_DOWN(len_s, sizeof(u64));
- 	for (i = 0; i < len8; i += sizeof(u64)) {
- 		u64 data = idg_nvm_read64(nvm, from + i);
+ 	nvm = i915->nvm;
+ 
+-	nvm->writable_override = true;
++	nvm->writable_override = i915_nvm_writable_override(i915);
+ 	nvm->bar.parent = &pdev->resource[0];
+ 	nvm->bar.start = GEN12_GUNIT_NVM_BASE + pdev->resource[0].start;
+ 	nvm->bar.end = nvm->bar.start + GEN12_GUNIT_NVM_SIZE - 1;
 -- 
 2.43.0
 
