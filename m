@@ -1,141 +1,97 @@
-Return-Path: <linux-kernel+bounces-690948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1CCBADDE3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 23:52:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9986FADDE39
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 23:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3407F3BD96F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 21:52:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CA723BBE25
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 21:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB558292B4F;
-	Tue, 17 Jun 2025 21:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E800228F523;
+	Tue, 17 Jun 2025 21:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eCpXaUe8"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="N/+RE1FO"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18153261584
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 21:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717792F5302;
+	Tue, 17 Jun 2025 21:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750197136; cv=none; b=o0Nr1VDwJ8lzsx3lmYn4REQJDNOk5LoWCC0bXE2BDwME4KJ0u+sYDh05z9yRHY8o4jQXo0/i487hNB+NMRwl++VcuzNk2N0gJfnsldvuH80qx66sMGN/jaBWKg4pu9D0W08I7i0ooQ4PTBdyzyYLhDsu3Ngt6GZ1/dQKw0QjO1I=
+	t=1750197095; cv=none; b=dJNCEaRwtSWCc4RphtXN3N7kzOgw08lDevD8IpV4jXivUCP9qy3cPgnbtpN02G2klXPUuEtsgUj+8nTqiwV3apCk2ndu7yt0zpNQpo5dF/c5wkOrlVSQe7Chd8L26QE4Hc0n0S/tGLCGDlet7VL3vHA2QU4vZELa/xLbIsWSqzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750197136; c=relaxed/simple;
-	bh=OLfr+FjabWyxMYerPlgVHisNdZNdT+c/fmhZ7112qy0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=gUYrg67WxMXyIRZIx2Gx/bNJyZWd2SrR+rw2T9cNpXLp9rCcwSzOoWyOvyGKZLATAUdHefkzEqRNixqyNdYuT1460rnBk57Ll0MyQggjmevRdPlqD+4R13khvnKepjBXg+59jYQfkkxPc/9QlmBiZibkQQ2z/UvYvcIJYkmUblk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eCpXaUe8; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750197130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OLfr+FjabWyxMYerPlgVHisNdZNdT+c/fmhZ7112qy0=;
-	b=eCpXaUe8tmDlFSsUUH1fzrudqDrTjmKWNjCh9zEEtqDCdqLtusjGT/0CGY5Ih7a60aQ94v
-	pSPsZMGweLY+0RdtfW/jDtZIoZif0pA8wbbihBNdvVkIub9sgTtyuwwVjiAZC+1WuHDCUU
-	wm6ketwuJ4TrHnR7NCdYcr8smwngsJU=
+	s=arc-20240116; t=1750197095; c=relaxed/simple;
+	bh=7rtHWg82JqPoc/R1c0Z4yTbnEX2uP7bi9HFESJVgt6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KsJ1DWS0rbqQxGscoDFlQTrm38gKeil0JK5SvRPsFrch4OJHEzKwMAlxa0xERTRimbpstXXjOvslEYllI6cKHRidCJVhlrxW37tpWd8Rs4rlfwhXtsm45RVcVK6sWRVOeMQF2bnJHRHQZ6SQs+6wZhrVYyNd93ZxyYRF822LEUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=N/+RE1FO; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1750197089;
+	bh=vljL/WIvTBMPII0zAoYA4dc4BqDldv47RGEnHEigWqY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=N/+RE1FOF5GpcKtXgKGdLe64BigiblLSGn5VdjRBoci0jpDGcKTGPMmr6zA6tiupA
+	 hheDxXkCUnUKBuBVpm8tQR/CqjAdJRfZ4pdVp9ZC/vUvVaHM6wdklsHtO+qe60JMfk
+	 +Y8hPt8e56+Hyu8Anm387yNvQ+59FezddY9IAkggfCr4rhSLv8dqQ0OvX6lIVepwoU
+	 ZOye2IPPmh4fDjSGG9PE0liBe/uIgYpsL/IXtWd1w5JIuXfhngTFywRpqhA8Q7FkH6
+	 POo47QCgmQMJd1iYYTb2A6v3ZkyuuTC4+83kjixEIvLSFuHyh/G+pQU430NrTsoi9X
+	 YLp9CzEnvuOdg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bMLDK2s5Mz4wc3;
+	Wed, 18 Jun 2025 07:51:28 +1000 (AEST)
+Date: Wed, 18 Jun 2025 07:51:28 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the landlock tree
+Message-ID: <20250618075128.2a8e9fcd@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3853.100.6.1.1\))
-Subject: Re: [PATCH 0/2] Add nokbdwakeup quirk and enable it for MSI Claw
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Matthew Schwartz <matthew.schwartz@linux.dev>
-In-Reply-To: <lgedr3vr65tlmdt6p7gsd4cqlhgtadu5gj63ibwpzjuaxgrnwt@vlp3utkui3fh>
-Date: Tue, 17 Jun 2025 14:50:07 -0700
-Cc: linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/8BvRhMsJ1EgJSmM.q9TvfTG";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/8BvRhMsJ1EgJSmM.q9TvfTG
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <72732EC5-5244-40D5-8928-1FA7F161EFE6@linux.dev>
-References: <20250617051930.3376981-1-matthew.schwartz@linux.dev>
- <5isz34mtyxezwrhmvtedygszhhnstsqa4dmcttb33p5dgw47st@3n6wswp2p6di>
- <98727492-5E7C-41A5-B0EF-1A21852FFB05@linux.dev>
- <lgedr3vr65tlmdt6p7gsd4cqlhgtadu5gj63ibwpzjuaxgrnwt@vlp3utkui3fh>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
+Hi all,
 
+Commit
 
-> On Jun 17, 2025, at 2:45=E2=80=AFPM, Dmitry Torokhov =
-<dmitry.torokhov@gmail.com> wrote:
->=20
-> On Tue, Jun 17, 2025 at 02:33:34PM -0700, Matthew Schwartz wrote:
->>=20
->>=20
->>> On Jun 17, 2025, at 1:50=E2=80=AFPM, Dmitry Torokhov =
-<dmitry.torokhov@gmail.com> wrote:
->>>=20
->>> Hi Matthew,
->>>=20
->>> On Mon, Jun 16, 2025 at 10:19:28PM -0700, Matthew Schwartz wrote:
->>>> This patch series aims to solve an issue on the MSI Claw, a series =
-of
->>>> handheld gaming PCs, where their volume buttons will wake the =
-system out
->>>> of s2idle because they are registered via an i8042 keyboard device. =
-This
->>>> is not expected behavior on a handheld device that lacks an actual
->>>> keyboard, as it is very easy to press the volume buttons while =
-handling
->>>> the device in its suspended state.=20
->>>>=20
->>>> To solve this, introduce a new quirk based on DMI match that will =
-disable
->>>> the wakeup property of an i8042 keyboard device and enable it for =
-current
->>>> MSI Claw models.
->>>=20
->>> Why does this need to be done in kernel instead of having a udev =
-rule
->>> to toggle this through sysfs:
->>>=20
->>> /sys/devices/platform/i8042/serio0/power/wakeup
->>>=20
->>> Thanks.
->>=20
->> Yes this would work, but it would also mean relying on individual
->> distros to discover such a udev rule is necessary and figure out how
->> to ship this as a device specific workaround within userspace such
->> that it won=E2=80=99t apply to other devices that do want to maintain =
-i8042
->> keyboard wakeup functionality.
->=20
-> If you submit the rule to systemd repository then distributions will
-> get it when they update to the new systemd release. Very similar to =
-the
-> kernel.
->=20
->=20
->> I will investigate implementing this
->> via udev in some sort of packaged fashion, but a kernel quirk seemed
->> like the better option here in my opinion, especially because a quirk
->> system is already in place for i8042 within the kernel.
->>=20
->=20
-> Quirks in the kernel should be used when they are needed for booting.
-> When configuration can be delayed to [early] userspace then we should
-> try to use userspace solutions. This way we are not wasting =
-unswappable
-> kernel memory.
+  4213018f5f77 ("selftests/landlock: Fix readlink check")
 
-I see, I will look into implementing this via systemd in that case. =
-Thanks!
+is missing a Signed-off-by from its author and committer.
 
->=20
-> Thanks.
->=20
-> --=20
-> Dmitry
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/8BvRhMsJ1EgJSmM.q9TvfTG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhR42AACgkQAVBC80lX
+0GyJewf/YzwFd2tFxw7B/4+oqCEavklj+Uu3aqCAgIYGKdnBgGUBTk+uIX0Wr9Ly
+ZpLVCwoxkWPXnUOROWwV3JlHu5P+Z8uFaM/rjsC9w3Jy3LKLucqMDEPWLeRAViGA
+lThqVfGQ76JmtNvMBfAF0z70f3x/i1HTNh4joFUqYJiuefw/p+E3L1IXb+C2op+j
+3SyesmkBImY7qg+hR0rX86htyi06WA7EbNsv1CbVQ7xOqUdLp89wZhoMs8hORz2C
+g22CaU7Se0f27tbP3wsaefXZuKNA+M9SnpsPQIMj9+ZvDAxqABGjLgUiDv7ObUs5
+V19uZvZU41k3yJwb15Ohhj1D+ETVjg==
+=AlKj
+-----END PGP SIGNATURE-----
+
+--Sig_/8BvRhMsJ1EgJSmM.q9TvfTG--
 
