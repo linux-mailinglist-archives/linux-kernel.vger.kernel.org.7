@@ -1,134 +1,168 @@
-Return-Path: <linux-kernel+bounces-689756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22152ADC60D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:20:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDAFDADC603
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE3A03BA228
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:19:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B04423B95E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A69B293C5F;
-	Tue, 17 Jun 2025 09:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4A728FFFB;
+	Tue, 17 Jun 2025 09:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IfYYbDVa"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXjOG/DR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F82293B4F;
-	Tue, 17 Jun 2025 09:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED15123B601;
+	Tue, 17 Jun 2025 09:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750151986; cv=none; b=OQM2oNbpYdCTSaOV6KxGd/pABMsTEneFGn7FZD4t7RtSivMo7CPSoKjboZKC8TdHcPuCUg7qw2wUVOneShQNFRogLVUOG+QzL0s12ulPkhtRhnjn+Vh7YwRHhhUdKty8DwgokAR9pF6z85gSKyz2gk3lO4e+sZP190N68/arp3Q=
+	t=1750151978; cv=none; b=WBk2Bl3BkSyl5QfXCeBw5aOEMItVd+ivPRzyBKeQYkweBnGZI/DB2I1Z1g9pRYuMsPPGmyLJYAun9ZZ4qOeN4tFKiNpvjcL8QcmD8RBpFtAJGcOFLKXd4pvISa+a9ZdETPwJyb9FN8R/ckCZ1py97xgbBEqGjjCYYK+IbZXIpLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750151986; c=relaxed/simple;
-	bh=d817WHPRcBKfQfiW+A6CorvDlxwqX4wjsZu8u9kQApo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UjF4AT4sm1Aom1CNJ8NW/NoDhL0NL0BBWq1daGNduEzHxMfNR3vRoGtuyMX9b+JjZWdCN5wLoPNUM00/JL1e6D8d5qHwArpiawGaoIwtoQ6CWWy6W7fr590v4uE84vW77rHDCQF1ybQPSl0Wqpn0WE+V7TrpxviEPUDoNn1cFCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IfYYbDVa; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a4eb4dfd8eso470163f8f.2;
-        Tue, 17 Jun 2025 02:19:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750151983; x=1750756783; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ffPakIq+8CljNOP8FRUg8NLCeNR7y2dpIo5YjZ1J2YE=;
-        b=IfYYbDVafm31f6p+eUlkzOVDnOxg7/GipJlxi0o9dBTTr9vMjA+Ljajp21oMjLScrA
-         tmzJiJKFkmlmAgMfcz5EBeShWtrWDjKwtV8CkXwZBIHU/HzK1ujo/m+FupoRPZb3l4zW
-         Ly0Y+L2AzeXJtt9fxe1t6W9qaR2CVoy4fBry3KqJUQSDQrvfQ9u5ZqZxVF3yPkNNm71e
-         1jUdKhBU+C5QNvxWKsCts2vM5DUbBYr+SWYigaDLv3ZSnPqsXJ9zVh3Lz3yMHwL5we23
-         SUd82/1aVLErelQZVdcxu9i6WRU4ffGt23XAOdzvITiOnzSpUUxLB8oMJc46T//rmGOC
-         /cpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750151983; x=1750756783;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ffPakIq+8CljNOP8FRUg8NLCeNR7y2dpIo5YjZ1J2YE=;
-        b=LgYapx2iZ7uYkQvaqXUj3J2+teXLm825lvgLMI6CNEWTpvNvNCd2/2eXSdvV/AA9R+
-         IE/t1kDVA4OoPHTrwukgTlrc647KEYXwkD+A5iDAj4IHfGawoa8eTkx/vqI6xkNVDO5j
-         jkyCaBZudQhPyuzUGTywBpLI+319nPqeux20eBTMwp4Tjtrx34GYeNsCCLOVipVcz0Ry
-         0BB3eHKc56fVhuibLHTyVar6HzltTHg0FoFZcvwQvrDkQ9/ySAalEyBnmBsfuIKFHtI5
-         9uvc0ePsS6ir/RC5AI2Hi27bKy2PMr5eUxg3l7jYACHo813K3/YmevCIBW0xe8HHtEgW
-         Dnbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXO5F2ojVeUVbdzbrAx29HWZylBJg/omeq50UeYfx92ikEdzGctpZ0w94xyFjemNOSrywMk4Mp@vger.kernel.org, AJvYcCWIu5LYUO6DXlyfS5IfchyAWFKCHmuIwq8iXisqZhfDSpb2uZJlS4gBrQPovPyMnpWqRMVfsgEuPQHQluMG@vger.kernel.org, AJvYcCXLE5OTA+yPIQVOMBfIxdXQteL0F0GQBtugUP4YWKcTk9NSHLsyA3Q4kT71nlF5MMqJLoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzuLmEOByqs8jXF6mHeFv2yGzVfvqBOhTVvOQ50jFfCQO0k7MD
-	oCDTS8+gNB8YI/wrDsBJxrGmncp1tuJJxBYYiaYivg6A5ncNVAws7chV
-X-Gm-Gg: ASbGnctNZFMmsZUBaXyhBFV0dJOz11JlY4qmeK0mEnBSIcQMbnnADuP7r7eiorNgbCT
-	UNzyPnwjksUj81Cv2HWc8Sp/U4DtxrS24GNiHgyCHJTstQVxMYX5Feo0WcN0sTdAfjQnAhRtBbX
-	8oAQT4jUV3auVXBiFkD6l+y69ApSuxEd0588PnlHUtZ3aqqy3bFkTouKXoZQ5lJHN+/UX/8Ngcd
-	gFNjXy/8KLWIJt8gKxYAGHITMJrb30DF4pp1G9dC/jW0Gd4sTKqJnV+As1FhJXPGT3ZIEu21XG3
-	6WTLeUraoNglG4rHckG5IqL/V36Ropug9ERXpddP6Mf5zFOoeDAAovYNlmA5Va1rnKZEhaoPYpB
-	zPTxVC1Ou54xgS64tdxE8ko1T69dH2V1cFoM7+1Z0Bb/LKKCVWcshJzmsnNeAnE9wQkk+nDNfzS
-	I=
-X-Google-Smtp-Source: AGHT+IGrmxAXUpkAP9gIxBWotWeEjVIywLjm4/Q3f32fA+oSWwZ/qUgnwqs0P+b9qfskQVl5NoE7Sw==
-X-Received: by 2002:a05:600c:8b45:b0:439:90f5:3919 with SMTP id 5b1f17b1804b1-4533cabba48mr40846875e9.4.1750151982801;
-        Tue, 17 Jun 2025 02:19:42 -0700 (PDT)
-Received: from thomas-precision3591.home (2a01cb00014ec300db8a476a69bb81ed.ipv6.abo.wanadoo.fr. [2a01:cb00:14e:c300:db8a:476a:69bb:81ed])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4532e14fc98sm175260815e9.29.2025.06.17.02.19.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 02:19:42 -0700 (PDT)
-From: Thomas Fourier <fourier.thomas@gmail.com>
-To: 
-Cc: Thomas Fourier <fourier.thomas@gmail.com>,
-	Shannon Nelson <shannon.nelson@amd.com>,
-	Brett Creeley <brett.creeley@amd.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	Taehee Yoo <ap420073@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH net] ethernet: ionic: Fix DMA mapping test in `ionic_xdp_post_frame()`
-Date: Tue, 17 Jun 2025 11:18:36 +0200
-Message-ID: <20250617091842.29732-2-fourier.thomas@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1750151978; c=relaxed/simple;
+	bh=4KUYIV6SZlEja+Pg1akvLLX7vi5cpb/CJh39gaHB/dw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C/mr6t4quzxznLITP7On4CJw6RsFwaecAwDEgB9E83wViySCRBU9verleFnn11i3cXzwaBulv1KH3bHg4QNkk2jZNlTSy5iiW7HeZr/6aaTz3HTLz8bRW4IvTEXu67YdEIeo0Hq/bj048F5QTB4epiHFX1X55+ruvOboYqZdjuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uXjOG/DR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7552DC4CEE3;
+	Tue, 17 Jun 2025 09:19:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750151977;
+	bh=4KUYIV6SZlEja+Pg1akvLLX7vi5cpb/CJh39gaHB/dw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uXjOG/DRrQEwqXPdzif6cWhErEsTTfQZtVq2RMLAmyxozUWlUs4m4DmZLrHB//CUs
+	 AsEQx3UzDzro7hwMDSuuBaLRCAJi4aSMzkVPP9YdO2b28MsDUMrSlNNqtjmvCvx09+
+	 P4k6RP074fKZkwC7n/vw5swJBthCk6RUlLp1Rft6haNLawa4eFiFp1GDdIaUh3ytNO
+	 c73VVZMYcv+GLdl6uI12odB7gmIeXBr8RwV1ogc82EOWMp1yoE/hVnlxBA2VtwrLSt
+	 MKEEBx6VQHsfhQjujA3CmK58xEpDgpEQ6Ya5QE6HxnXwCaIOTUypQFj3YfnP7ovx7C
+	 m2JrXYgvHDekw==
+Date: Tue, 17 Jun 2025 14:49:30 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Qiang Yu <qiang.yu@oss.qualcomm.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	jeff.hugo@oss.qualcomm.com, mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_bqiang@quicinc.com, can.guo@oss.qualcomm.com, 
+	Mayank Rana <mayank.rana@oss.qualcomm.com>
+Subject: Re: [PATCH v2] mhi: host: Add standard elf image download
+ functionality
+Message-ID: <5g6j4guzrbhl4zqmt7amdgewdusycccsh5rdxlpjbkhjdhbdoa@h6tlwam4i3kq>
+References: <20250603-standard_elf_image_load_support-v2-1-cce97644e99e@oss.qualcomm.com>
+ <sdhop6vyvt4y63tbbtorqfd5xa4ckbiwxdad5g6zzwlljqvd6q@eoaqmairdeey>
+ <aEKefb87GTR/scbO@hu-qianyu-lv.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aEKefb87GTR/scbO@hu-qianyu-lv.qualcomm.com>
 
-The `ionic_tx_map_frag()` wrapper function is used which returns 0 or a
-valid DMA address.  Testing that pointer with `dma_mapping_error()`could
-be eroneous since the error value exptected by `dma_mapping_error()` is
-not 0 but `DMA_MAPPING_ERROR` which is often ~0.
+On Fri, Jun 06, 2025 at 12:53:33AM -0700, Qiang Yu wrote:
+> On Thu, Jun 05, 2025 at 10:34:50PM +0530, Manivannan Sadhasivam wrote:
+> > On Tue, Jun 03, 2025 at 02:05:44AM -0700, Qiang Yu wrote:
+> > > From: Mayank Rana <mayank.rana@oss.qualcomm.com>
+> > > 
+> > > Currently, the FBC image is a non-standard ELF file that contains a single
+> > > ELF header, followed by segments for SBL, RDDM, and AMSS. Some devices are
+> > > unable to process this non-standard ELF format and therefore require
+> > > special handling during image loading.
+> > > 
+> > 
+> > What are those "some devices"? Why are they not able to process this format
+> 
+> Eg. QCC2072
 
-Fixes: ac8813c0ab7d ("ionic: convert Rx queue buffers to use page_pool")
-Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
----
- drivers/net/ethernet/pensando/ionic/ionic_txrx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is it a new kind of WLAN chipset using the ath12k driver?
 
-diff --git a/drivers/net/ethernet/pensando/ionic/ionic_txrx.c b/drivers/net/ethernet/pensando/ionic/ionic_txrx.c
-index 2ac59564ded1..beefdc43013e 100644
---- a/drivers/net/ethernet/pensando/ionic/ionic_txrx.c
-+++ b/drivers/net/ethernet/pensando/ionic/ionic_txrx.c
-@@ -357,7 +357,7 @@ static int ionic_xdp_post_frame(struct ionic_queue *q, struct xdp_frame *frame,
- 			} else {
- 				dma_addr = ionic_tx_map_frag(q, frag, 0,
- 							     skb_frag_size(frag));
--				if (dma_mapping_error(q->dev, dma_addr)) {
-+				if (!dma_addr) {
- 					ionic_tx_desc_unmap_bufs(q, desc_info);
- 					return -EIO;
- 				}
+> 
+> > which is used across the rest of the Qcom devices?
+> 
+> These devices include TME-L (Trust Management Engine Lite).
+> Currently, the FBC image is a non-standard ELF file containing an ELF
+> header followed by segments for SBL and WLAN firmware. The ELF header and
+> SBL segment within the first 512KB are loaded via BHI, while the full FBC
+> image is loaded via BHIe.
+> 
+> Due to TME-L limitations, the full FBC image loaded via BHIe cannot be
+> processed, as it does not conform to the standard ELF format. 
+
+Okay. These information should be part of the patch description.
+
+> > 
+> > > Add standard_elf_image flag to determine whether the device can process
+> > > the non-standard ELF format. If this flag is set, a standard ELF image
+> > > must be loaded, meaning the first 512 KB of the FBC image should be
+> > > skipped when loading the AMSS image over the BHIe interface.
+> > 
+> > Please explain what is present in the first 512KiB and why skipping that is
+> > required.
+> 
+> ELF header and SBL segment are in the first 512KiB.
+> 
+> New FBC image format adds second ELF header in the start of WLAN FW
+> segment on top of current format. After loading SBL, second ELF header
+> and WLAN FW segment is loaded using BHIe.
+> > 
+> > > Note that
+> > > this flag does not affect the SBL image download process.
+> > > 
+> > > Signed-off-by: Mayank Rana <mayank.rana@oss.qualcomm.com>
+> > > Co-developed-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> > > Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> > > ---
+> > > Changes in v2:
+> > > - V1 patch is paused because of no user. WLAN team plan to add support for
+> > >   new WLAN chip that requires this patch, so send v2.
+> > > - Change author and SOB with new mail address.
+> > > - Reword commit message.
+> > > - Place standard_elf_image flag after wake_set in struct mhi_controller
+> > > - Link to v1: https://lore.kernel.org/mhi/1689907189-21844-1-git-send-email-quic_qianyu@quicinc.com/
+> > > ---
+> > >  drivers/bus/mhi/host/boot.c | 7 +++++++
+> > >  include/linux/mhi.h         | 4 ++++
+> > >  2 files changed, 11 insertions(+)
+> > > 
+> > > diff --git a/drivers/bus/mhi/host/boot.c b/drivers/bus/mhi/host/boot.c
+> > > index efa3b6dddf4d2f937535243bd8e8ed32109150a4..f1686a8e0681d49f778838820b44f4c845ddbd1f 100644
+> > > --- a/drivers/bus/mhi/host/boot.c
+> > > +++ b/drivers/bus/mhi/host/boot.c
+> > > @@ -584,6 +584,13 @@ void mhi_fw_load_handler(struct mhi_controller *mhi_cntrl)
+> > >  	 * device transitioning into MHI READY state
+> > >  	 */
+> > >  	if (fw_load_type == MHI_FW_LOAD_FBC) {
+> > > +		dev_dbg(dev, "standard_elf_image:%s\n",
+> > > +			(mhi_cntrl->standard_elf_image ? "True" : "False"));
+> > 
+> > This print is just a noise even for debug.
+> 
+> Will drop it.
+> 
+> > 
+> > > +		if (mhi_cntrl->standard_elf_image) {
+> > > +			fw_data += mhi_cntrl->sbl_size;
+> > > +			fw_sz -= mhi_cntrl->sbl_size;
+> > 
+> > Is it possible to detect the image type during runtime instead of using a flag?
+> > Also, the flag is currently unused. So it should come along an user.
+> 
+> Perhaps we can check the second ELF Magic Number, but I don't think it's
+> safe to determine the format by doing such check. Using a flag is simple
+> and safe.
+
+Why do you think it is not safe? IMO, relying on a flag is the not so safe
+option. What would happen if an user has used old FW? The driver would blindly
+assume that the FW is always of the new format, but the user is not aware of it.
+It may lead to weird FW crash that would be difficult to debug.
+
+- Mani
+
 -- 
-2.43.0
-
+மணிவண்ணன் சதாசிவம்
 
