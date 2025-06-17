@@ -1,95 +1,103 @@
-Return-Path: <linux-kernel+bounces-690975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E04ADDEB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:28:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B763AADDEFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31CFC189C3EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:28:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6295217808A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF37C294A15;
-	Tue, 17 Jun 2025 22:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243202F3C02;
+	Tue, 17 Jun 2025 22:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bRnDxeEY"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HF8NQaqd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD612F5312;
-	Tue, 17 Jun 2025 22:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B14420D4FF;
+	Tue, 17 Jun 2025 22:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750199297; cv=none; b=qiMVTMSDU7rzOJXGqkyOOoIp4cOwk4tndpO276Kj0jMsul4wjCRTR6KRAbL5TCw0gR79t9HpDV+di7319KOLbqhpa82ZqkVrxHYvYwA8x4fzDAbsVn0xFCR7yC4ooGhnRFfU0rzsSbOqCTgIyRQF7jztAibqm9dIA9ynZuVAxmI=
+	t=1750199407; cv=none; b=mAfE2H8dO8EZgkCZCZdGE83lnmghxB8252Yid4VIo4c5KeKP7DyAkPqx6vFhET/Ysc1O23JBb4I9iI+U7fTpDAitJvly3fQKRkvP+IfKxhdLG1Qt1vALJ8gXKPNm5XJ817eTrRN8fWQDkxMJ4fzEbwQRollXI9PztLt6/kOihgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750199297; c=relaxed/simple;
-	bh=2ygcoiPdg5tXbbjhveGnMjSSG6kQpW//H1KxZ2agnv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kRUKtUqoVN+A16psdCgZG7q9RTKoIZfNyZyJQ3AaI2+O0duVWf019Csfn0ESRoZs6Yd2hpVeETY9OW9g7sUelx01tbZAjvSZIKdMdRrY3xHXWtstCqftMO+G7crk/0KfWhUkz1p8JGqKlOVngUbE1Gb7lqTaHWdSSxg/kf2FLzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=bRnDxeEY; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=W0OOXNAeUJvkfL1jvOAbJIXmDdUCK0qiD8aREElX9bc=; b=bRnDxeEYmtsxBY/dzVEQPU1g7+
-	ybaEFJ+5Qx9x/CkDvIRHJnI3/ZBw+f5Np7a1T/GbvA8DptM/IyP87exa/esIAncJaVSyrJ7AIsEXB
-	zp7cY25R5I8JCmbn3tL59sRxarYH/mdnmbe6rA9axu7dgZJ2b0WOL7+6M6K3kih8BewDESCVjI4OD
-	MjosC+jV8GuYPv4Hw1Pp6sBmOi6TvFZdBu8aOcNyv1DDwvT06RZg5OlZ5cjKoo54NUHFwOusSG689
-	9QRAzefeesRcgpvSqoRwS+kiA7oJlOi8DN31ofoc6oEnrOMudCHvBUvCFRH8K7b+ICr/pdkIYq/B7
-	A1U/qVAQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60834)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uRemn-0005eV-1B;
-	Tue, 17 Jun 2025 23:28:09 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uReml-0006As-0G;
-	Tue, 17 Jun 2025 23:28:07 +0100
-Date: Tue, 17 Jun 2025 23:28:06 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jayesh Choudhary <j-choudhary@ti.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
-	devarsht@ti.com, linux-kernel@vger.kernel.org,
-	tomi.valkeinen@ideasonboard.com
-Subject: Re: [PATCH] clk: Add clk_determine_rate function call
-Message-ID: <aFHr9sVnU3Nx6yh0@shell.armlinux.org.uk>
-References: <20250616103527.509999-1-j-choudhary@ti.com>
+	s=arc-20240116; t=1750199407; c=relaxed/simple;
+	bh=SGGyiCoTGoTxw00KV1kNaqflYtCwj4p1ZTrArbPnXIg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=S+xqcn834W0501ZV4J0Qk70Eghx0F/jybGsEhs3roKdtuwaIT51x9KpmDs14r/pe8r13+gD2FuPSJZYFwTya7FLMNLmXDN+1V2HNOXRUPh7hBjs7CQcSr90pYbGkBwWv4SLnpJtEmxcG3HsHPfvLEU+BSqeMkX5IEkDwFpB9jg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HF8NQaqd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFDD7C4CEE3;
+	Tue, 17 Jun 2025 22:30:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750199407;
+	bh=SGGyiCoTGoTxw00KV1kNaqflYtCwj4p1ZTrArbPnXIg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HF8NQaqdgVNbeHkHl3F1yA+9mKX3t6FafblUPQ6vixdZRiOBXLamWK1sgcmtAQWdP
+	 wcdIlJekyyZibdEs78WcHv4n/5GYwJrI54JPxp67dy48ssMlHjdpOFVcprQUsXBCY8
+	 AubqlKue0z0/rGlkLM0zsXdZCB68odDs1AaWTNtod2ppAW+UbHR3Llhz7oHQIocz2D
+	 0cRTGWiXnm+mwRJi1nJ5eqIG+lT047LaTVf+ZlOrD4032jf+KCfxgIuWdNz99tck4r
+	 2SYBG4JBnGoNY2F93E8Ax9MLSW3cf+mpa0+NZFMP0rWrRgZZZn8V6a9GHnV6tj9MKy
+	 IcgF9wKcy3rOQ==
+From: SeongJae Park <sj@kernel.org>
+To: Bijan Tabatabai <bijan311@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Gregory Price <gourry@gourry.net>,
+	David Hildenbrand <david@redhat.com>,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	corbet@lwn.net,
+	ziy@nvidia.com,
+	matthew.brost@intel.com,
+	joshua.hahnjy@gmail.com,
+	rakie.kim@sk.com,
+	byungchul@sk.com,
+	ying.huang@linux.alibaba.com,
+	apopple@nvidia.com,
+	bijantabatab@micron.com,
+	venkataravis@micron.com,
+	emirakhur@micron.com,
+	ajayjoshi@micron.com,
+	vtavarespetr@micron.com,
+	damon@lists.linux.dev
+Subject: Re: [RFC PATCH 1/4] mm/mempolicy: Expose policy_nodemask() in include/linux/mempolicy.h
+Date: Tue, 17 Jun 2025 15:30:05 -0700
+Message-Id: <20250617223005.2526-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAMvvPS7yQPoXxAecSi6B74a1Bgm1H06i+MqNDgdsZODEZSYFuw@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250616103527.509999-1-j-choudhary@ti.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 16, 2025 at 04:05:27PM +0530, Jayesh Choudhary wrote:
-> Add a function to determine if a particular rate can be set for a clock
-> with its argument being the clock and the desired rate so that it could
-> be exposed to other peripherals.
-> For example, the display controllers typically has to perform multiple
-> checks for supported display resolutions including those related to
-> clock rates. The controller has to check this way before it actually
-> enables the clock and has to do it multiple times (typically for each
-> mode), and therefore using the clk_set_rate when its not needed, does
-> not make sense.
+On Tue, 17 Jun 2025 14:54:39 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
 
-So what's up with using clk_round_rate(), which returns the clock rate
-that one would actually get if one calls clk_set_rate() with the the
-value passed into clk_round_rate() ?
+[...]
+> Given this discussion, as well as Joshua's comments earlier [1], it
+> sounds like while people aren't exactly opposed to using mempolicy for
+> this, the building consensus is that it would be best not to. I will
+> move the interleave logic to DAMON for the next revision. However, I
+> still think it makes sense to use the global weights (probably via
+> get_il_weight) for now to avoid allocating pages a certain way and
+> then migrating them soon after.
 
-Why is clk_round_rate() not sufficient?
+Makes sense to me :)
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> 
+> I'll try to send the next version of the patch set by the end of the week.
+
+Looking forwrd to it!
+
+
+Thanks,
+SJ
+
+[...]
 
