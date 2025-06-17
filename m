@@ -1,128 +1,82 @@
-Return-Path: <linux-kernel+bounces-690164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE91ADCCA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:13:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B47ADCC1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6219D3BA7C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:07:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB23D3B8148
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AA62E2655;
-	Tue, 17 Jun 2025 13:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C004C2DA753;
+	Tue, 17 Jun 2025 12:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFpJ1kjM"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfpONRB2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63F22E2641;
-	Tue, 17 Jun 2025 13:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C19B28BAA4;
+	Tue, 17 Jun 2025 12:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750165510; cv=none; b=keSK4dWo3/uoL8KIp5+6fDzhLjaT8eEBJch9x+US33nLEbY062cIObXOyKT4Xd8tUNppULAUfIOPXScGPsYYhO3Yc6vCAzUn692cmkgIfVTsWtq7eVlhdKAgxll75/0C+fHR3zspEM4lDSw53/HIGCGq8tzDdUapDM2CJVMkW8E=
+	t=1750165176; cv=none; b=DcfgOYAnLj/F+Vo/r0F0MbyWRi0QtQLTx7+WfD3w2xQd3XmAf25GAfGYTU1xvy4vK79v4sYPBnwqEPDn80n+gnHUPSpXxR6z7MI4UYCgqCTzaP52lhFy0v4nV+XSYljY+/IC0xTyjTL5QqfgQ0JRcVHW/l6GpHljJtLN54pV6bE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750165510; c=relaxed/simple;
-	bh=xUevxqP7qeHQyrqc8eeur3FyUDeFXsqRS6sO3KTeE1s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HNWdlsg4zOEIMtqiGt9aBbT6/shQ4P9Km8O4V44cliw+ZARfeFybys0i1ud7hzgDAnQvi8UxwNe86tGcF11gRgirlTGnRXqdhbcEE79tZjuF/wZkx6cyv1r/mRYwYm3dXq3rXImV6DkaUydoWiNrOFU1Hh+z4JVao86JtqGdtNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mFpJ1kjM; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-553be4d2fbfso2760078e87.0;
-        Tue, 17 Jun 2025 06:05:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750165507; x=1750770307; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hQ7rt4e14DyPGgHQFy3EQy+5G7wFsrLkDEYIps9brIY=;
-        b=mFpJ1kjMUtq7TTL3NIxllOppRvClAn2qAeHE0EOYP4PuE/JeLxUyfI+P16t6AmDEaT
-         bD9GhHgbpuPQz0l2XSGq9GOQUL00V0/XCExL0kJiCuIoSrHTE9ccDigfR8WrcIDhsMwb
-         IA7/q3vlA8Ppo2LkcgWRl4H/SPwNwWoP3pHjGsNsFYuM/hp6eodu2rLLhxZ8W5byzILD
-         Uwlly9uXTtg5yK1QHTff8lr09M1ZhISPhVXh+lXBoYkTCwApBW25yR4KcBUIX+YR+JuK
-         4x1yXJSVl/hYinXCgXjiPlhUKQ40o31NS8lBFrcYPsegVZN0nW95cRjDBe+8Uzy9ztrZ
-         tgmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750165507; x=1750770307;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hQ7rt4e14DyPGgHQFy3EQy+5G7wFsrLkDEYIps9brIY=;
-        b=Kh9k5XSCbKONoCGMFgChv5LiA5/qPMu2sPtP+JEg5QeBNdtn0hPRwVJW0+abWHfPcs
-         eWONetTkNZiKoTXtd+wtbjE35SgiE0iUnO8G1R5089obmZiQ2nSr9JyIxYOp1u9eE1B9
-         7x9aoit/iqpZ+wiDbrLvZGINtm5ur+wWp1rwibATAZnquBe27rYY/OxMa3HA5XaBHGUq
-         FDZLnanbS42bYvW5kpXHfAqeCyzDH1pvNrM0eY8kq7lpqUOHc6l5QDEj6ZCyxyQxbBC/
-         akiW+NSPa4gcpvDtbFecFRxvAWqWDrmBqlFaccJmktWQiHMHap+4UqD+22QqNKvZChj4
-         BDnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8NvdvMGt1ChVgl0cjtCzt1eG367C6N/0Lb/WHAQsKvz/KlhYC9IvIBow7Q06OQwZjXerhYUvj@vger.kernel.org, AJvYcCXwm7vroIx8qCsBeScma4DrB61d5g/FLr9Z8jcQUzKPHZAa19aOA33u3utlQPBZNciKUgvHfkAvH0/DvW8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgQm9l4BcThJyvX+PcMwP6Pv3tBKQNUkwMiH1Hvg0yebshE5HG
-	4bpQv2VqEw+76Cf7Zrt9nQMzm8mqmGKbD4lY660xqXI67wDwrv+tfu+b
-X-Gm-Gg: ASbGncu5+MzBxwhmOJF7MEslvMO+wQD+xH271OJQHzmce9gMY5XQXGzMLB/MUw5RSjS
-	GUNssieKfzx+fk3bYyuXIuI/d3/BSF6C+VLKn9JzcYm8+PmYqwDUcYqy7YQEODE3IWciT8pkkOb
-	fdFjAzJL11sMqSEfGNTmdqhwbwFYB9UIutSANtdTGNbqqzH5bKkRSDxiOBJicmVdM7uwRLDO86f
-	9saz+GIzr5bcl2XlTfe8QS4f935Ag0ZcFMWVkc6vqgUQ/hHmfK1YmpTVeW4Du+FJmXKv9AlmOJm
-	K5SikhQyge35TVbWFa0tSOCcvVQi1Zx2nE+pe47y2pmYUP/Vblag+vpF62/8uuOn+AfCA01+ZKA
-	VAV8cTb5RO+oQFihqYQ==
-X-Google-Smtp-Source: AGHT+IHHo3gWM8jne4M/ik8SRuW9s/CXCSDuf5VVjjbmz065W7Ty2nNpgRR2fJksE2eb2m1Q59uOcg==
-X-Received: by 2002:a05:6512:15a2:b0:553:2ef3:f73d with SMTP id 2adb3069b0e04-553b6e8851amr3027873e87.14.1750165506269;
-        Tue, 17 Jun 2025 06:05:06 -0700 (PDT)
-Received: from localhost.localdomain (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac1f91ddsm1900394e87.250.2025.06.17.06.05.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 06:05:05 -0700 (PDT)
-From: Klara Modin <klarasmodin@gmail.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	conor.dooley@microchip.com,
-	valentina.fernandezalanis@microchip.com
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Klara Modin <klarasmodin@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] riscv: export boot_cpu_hartid
-Date: Tue, 17 Jun 2025 14:58:47 +0200
-Message-ID: <20250617125847.23829-1-klarasmodin@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750165176; c=relaxed/simple;
+	bh=aIK2wnwgcxtmTmwtKOfHykGGdw3wB5ydycAxXeFYp+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NvepmLeh5KmM5H9ceibZtb9CHKdZFe4BL4n+Oak5trK1SXarUxX17y7L2lEXApG7DAUKBAvuZC77fatelbllBVdV5yS6kMZo+Q5kz/Kz/nwMOWUpDXg9xiVfv24I6qLE16OoSLGz6HW+bQjeaN7WA5Ls2kgfbAQRZlLTplbSs5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfpONRB2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63DB3C4CEE3;
+	Tue, 17 Jun 2025 12:59:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750165175;
+	bh=aIK2wnwgcxtmTmwtKOfHykGGdw3wB5ydycAxXeFYp+M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QfpONRB2dfHGZnqXZHUWKaABo/6hD3MxxLOaZJrN4+zrF39+c4PAShKgsSzKqcIvH
+	 rSIV7AE9VpX24GffCXbfqzMXKEHqgP7ZpsfISiUDuwxV4UVLGudKeq3rkE2qIj+FfJ
+	 AjJUoHqIO1KzVBNexEx75vdt6nYniFae5k9Xcz5wfWFGasDVhp8ZCZ1xhENJeYOjVr
+	 IFdcT92yEFhRiExqHoPPegEx3v4pSZmLu/vWx1tpFGV919U8m2K0QdQpAQW8kfCd61
+	 ACPcDL0tJe/F1oezbwnNysoF3AA08GiLKbhb6dUbHJD/pVZrqEPeIftninpxG0M9V5
+	 E2iThAsBFEBmw==
+Date: Tue, 17 Jun 2025 05:59:34 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, David Wei <dw@davidwei.uk>, Shuah Khan
+ <shuah@kernel.org>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, gustavold@gmail.com
+Subject: Re: [PATCH net-next v3 4/4] netdevsim: account dropped packet
+ length in stats on queue free
+Message-ID: <20250617055934.3fd9d322@kernel.org>
+In-Reply-To: <20250617-netdevsim_stat-v3-4-afe4bdcbf237@debian.org>
+References: <20250617-netdevsim_stat-v3-0-afe4bdcbf237@debian.org>
+	<20250617-netdevsim_stat-v3-4-afe4bdcbf237@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The mailbox controller driver for the Microchip Inter-processor
-Communication can be built as a module. It uses cpuid_to_hartid_map and
-commit 4783ce32b080 ("riscv: export __cpuid_to_hartid_map") enables that
-to work for SMP. However, cpuid_to_hartid_map uses boot_cpu_hartid on
-non-SMP kernels and this driver can be useful in such configurations[1].
+On Tue, 17 Jun 2025 01:19:00 -0700 Breno Leitao wrote:
+> -static void nsim_queue_free(struct nsim_rq *rq)
+> +static void nsim_queue_free(struct net_device *dev, struct nsim_rq *rq)
+>  {
+>  	hrtimer_cancel(&rq->napi_timer);
+> +	dev_dstats_rx_dropped_add(dev, rq->skb_queue.qlen);
 
-Export boot_cpu_hartid so the driver can be built as a module on non-SMP
-kernels as well.
+here we are in process context and debug checks complain about the use
+of this_cpu_ptr(). Let's wrap this in local_bh_disable() / enable() ?
 
-Link: https://lore.kernel.org/lkml/20250617-confess-reimburse-876101e099cb@spud/ [1]
-Cc: stable@vger.kernel.org
-Fixes: e4b1d67e7141 ("mailbox: add Microchip IPC support")
-Signed-off-by: Klara Modin <klarasmodin@gmail.com>
----
- arch/riscv/kernel/setup.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-index f7c9a1caa83e..14888e5ea19a 100644
---- a/arch/riscv/kernel/setup.c
-+++ b/arch/riscv/kernel/setup.c
-@@ -50,6 +50,7 @@ atomic_t hart_lottery __section(".sdata")
- #endif
- ;
- unsigned long boot_cpu_hartid;
-+EXPORT_SYMBOL_GPL(boot_cpu_hartid);
- 
- /*
-  * Place kernel memory regions on the resource tree so that
+>  	skb_queue_purge_reason(&rq->skb_queue, SKB_DROP_REASON_QUEUE_PURGE);
+>  	kfree(rq);
+>  }
 -- 
-2.49.0
-
+pw-bot: cr
 
