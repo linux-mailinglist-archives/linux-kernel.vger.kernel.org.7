@@ -1,159 +1,153 @@
-Return-Path: <linux-kernel+bounces-689405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83998ADC140
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:10:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF9BADC132
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BD531893857
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 05:10:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D37C1720A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 05:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1963A23B62B;
-	Tue, 17 Jun 2025 05:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4966B23D283;
+	Tue, 17 Jun 2025 05:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z2Nd4Hg5"
-Received: from mail-lj1-f201.google.com (mail-lj1-f201.google.com [209.85.208.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l9HfzlYr"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4AFF23B624
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 05:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1698223B63E;
+	Tue, 17 Jun 2025 05:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750136937; cv=none; b=mcQCuWhY5ATLpKjzbd6mTV7HQQ9GtrbscGoIcfmWl0JHGXZDCdumD5cSw8DYCrb3jSfzpJK1ZowjYwL0ecO8zIpDDH+/I08FVMULt1opiPXRFpk2/wOAsDuo5i3fDozIsdikVGFmoKl4IpNnxpDDyy1SaCgk7Js/MAsFE9P+jqY=
+	t=1750136926; cv=none; b=FA8kgBD5J9SSdfH6i/FLsuunO/1Ckyak/rLHfccTYXQl12jLCHvrCQqJHs/8PiZ/WrGpVVNevHV4eD3wdCtUWhRC9bSEmJjemTyPiXhhV2wAwAoIoW5rRGBX0YVZ7Od5usrDwSzNj9BlwdOqAOxsIVFbfIDvefZVs3XLir+txcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750136937; c=relaxed/simple;
-	bh=YoOKZWDe3bgJ0VNg0eea3oWFhS1QY5GJUZB2g124DaM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SbVDvDDdtGagp4NVUFJvqJtUvzXsoIcZ3gJtWobJlbRfz2vvYyoSJLg1OCj+1CBkC7DxgtdFDJsCqdJg24hHL0B83LgXkoKYQQ+7divwaCg1+gFudjf/0GLGq1SarOWPdr59R7m/SKFms+LW+kRtcQIv7vnqMUi0p4mGvEBp2dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z2Nd4Hg5; arc=none smtp.client-ip=209.85.208.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com
-Received: by mail-lj1-f201.google.com with SMTP id 38308e7fff4ca-32b5226e697so2093801fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 22:08:55 -0700 (PDT)
+	s=arc-20240116; t=1750136926; c=relaxed/simple;
+	bh=8cWRihSV8hdi/ZTF/kts/Yi3Lmi7Mkj2nrwo2OnssFg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V1TJjTlCqkcYNGRhfCR89B7i+I/w5m/ddHtQPIp5M2/7VtNA+Hd13KyjeB0GEt9ZnxwnxuoDP2D1vmACSW/FayDr6FZoHX4AiEubJ3NpetukaHDoKyhtfNDvJoZtxgRUk/ELQUH6IVCNK97xdT5sBtigDzyGKRQwD8lkKcFM57s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l9HfzlYr; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-236192f8770so36388845ad.0;
+        Mon, 16 Jun 2025 22:08:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750136934; x=1750741734; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1f3cBdI8xhkfW1PldN25AHnH1CARokeiI9s7jI03ZKc=;
-        b=z2Nd4Hg5HqvusKgpB32GJ1XMbAfQqFY5ncKCgWb3l7CqCyVvlXnKZX8Lp+1Z8M7FtO
-         0fqXzxfT9iZ/0j+b+kSe8CVleph3y4kUTClpT2BleMkDc5Cey9Fn2rLRjyG4yMJMAlBP
-         Vi/Ymt/1q8z/7WdBke5bioCNP2Po5/zpaCKY6Z/WnLrtu7pwF7enTGE2tf8ZsVXXdupc
-         /T2ruzjPW1FGIQfemPWzr35xaqvoyd/Np4z8DFmlaOlEWGIdbP14hGMAwOgs5dQT+/Fx
-         j/l8cmhBXtByPbrcoOf3kDE8nRmPrO9K9v0HBXNMIuprIbofklnu1QrY520dCUcXZKFM
-         cmnA==
+        d=gmail.com; s=20230601; t=1750136924; x=1750741724; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+8a5FK3kQzpqiKJGUPwyQmhurnkoWDXPmVMG0kYx2X4=;
+        b=l9HfzlYroH931lM0wJws+wMsJgWf+4LsmRIcK2bLbXPW87D6jv7W6c8d8sAK++UwNk
+         WDA2qjq1f0FkX0bCBLaBChwEN80Ad7+fSghMIgfQDnC4P9ypjvt78AsPezsFQkPNDMJo
+         nWiT8CsD3NlWamYoImwYJrlKSWCvvAdaHYe+BHqfW2k7TR58Xc2ML/+gnHtaLFkDLc9V
+         q+h14zj7LUAHzbuYAYxUblhJraa7Jr5d3QLGhd5CFm0C1qGAh3ymZTRFPPTO3Ey5d18b
+         lKgDF9A41S8uHoUxAaP+NWim0wSZmehIwKqB6pxH8JYiDXcOtRpmCUFPXGxlmyQuVws9
+         hrww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750136934; x=1750741734;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1f3cBdI8xhkfW1PldN25AHnH1CARokeiI9s7jI03ZKc=;
-        b=veXSTimIeb0Qm05+QYIYwFWuuhADiy7NGtky+s/P4GlhzmYRdXJcpjCm3s/ltKavXa
-         9xTep3PEXnX39SS/ENDV8ENtBgD8wsoxiaNFHZDmarIvaOCSW2mlHQREG24RpCZQxpZE
-         QsIGWSgz2igHNUGTX4UeG2JIZNlEACmtl7SQJ4y/YuslSckyfcyyOL18Lw6sh7vn4xWa
-         4G5KslTno7EmKtZEWmcey/8F+J97gYWEAh9m8H66j9c/LIZNehHwGgFb5g8/BLVRMH09
-         EzqA+aFJ/kkFkjRmMMZc6FgaOcrwRItfcL4YioY5Cd/iSlhAS/jyYtFSvMxNoAawy8xs
-         O6hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUH/6zsygssObVCqpLWSd77yI51a5iwRkBrQR+KwpcT6vT9xhoU6yRrT+sWObvoar2TvvycOsz/CxSMDFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgQBLY0W+Pm2waW6P162RVWnMiqpvRwF8gHxGHChb81ngTJcpB
-	GEat+qt9QLwVJI+U7gpWgV8htIsUdnlPsps/t7guP6wB8aCnELyLNm1XtL3DFH2kMunUGKTZND1
-	m1BguIg==
-X-Google-Smtp-Source: AGHT+IFYSpjBdNE9GBi8neTP2Ze6oQSxzs3XDaNIiK3QW1FHbqEsFzdEHcQZ/oyym4KEV3rZRaUJ4kszYmQ=
-X-Received: from ljqj16.prod.google.com ([2002:a2e:a910:0:b0:32a:807c:a3a7])
- (user=khtsai job=prod-delivery.src-stubby-dispatcher) by 2002:a05:651c:154b:b0:32b:4932:d5ad
- with SMTP id 38308e7fff4ca-32b49508ae0mr28534501fa.10.1750136933782; Mon, 16
- Jun 2025 22:08:53 -0700 (PDT)
-Date: Tue, 17 Jun 2025 13:07:12 +0800
-In-Reply-To: <20250617050844.1848232-1-khtsai@google.com>
+        d=1e100.net; s=20230601; t=1750136924; x=1750741724;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+8a5FK3kQzpqiKJGUPwyQmhurnkoWDXPmVMG0kYx2X4=;
+        b=EPTNt2PSZoExGlm7piJ3uDcGDf/XZRGS3yvaMvbncmCN/BgnFC7QQocalsbGAX2nA9
+         bKe8hNwgVbzQdrJSo/gn2hD0DsG6l91ufB6Fvgnb7sb7eYXOBHPUvFgR+9VcEoe/uLZ3
+         PGFTYPp62J+scg4XRGG/tM4JlXYitqP8Ue7tm0J2QI7f0ZEuEw6DpUK3pedDugXmueLm
+         WXt7XTbJS2faJ8bVle4dnzdd/c+2TXUacrDI3nkvCNBPifGT47LxedFyWE5XMNoQC6Ic
+         C/T4twRKvZfPibtSMIfdkHUU4DOsToAB1oLeSb3EpX/b5C3DYO0C86BsVtGTHEbhYY+y
+         0uCg==
+X-Forwarded-Encrypted: i=1; AJvYcCURcdPmN++BVChEtOns/2u4gooaT79aDjr1VO2KbL3yXadZyBxqtNG0Jf1G90AVCWBX7OcVQ4Tk14+zWnyp@vger.kernel.org, AJvYcCWlciaLlIIeVno4wzfxPEcz/z/auhkDx3rOdOGJ8ITs/Shht/SeDMvX9GHSee/m7pxes7vJLd0t@vger.kernel.org, AJvYcCXyGQdtWAJSUrvhup0E0Ch4Q9jYbvDQGYyPWh3JntzFhVmSBtFO7NEXNvY6cyDUfa6b0vWlx0bwdJLJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM9dXyguDag0we3O2K4XEu4URIUnHyPsmKtiEC/bFG43xYXB2r
+	dOI2OULKWQZyNQRx8fll18yM5h2hy1vuA9TIKVIoAj04eK76Be6CJ83T
+X-Gm-Gg: ASbGncuHJQtVBrXUyiDBQqsWPNZDFT5jUeQ3bgl8m0rSQXs0hpXltR107SYKl6pW3W6
+	MtrhCeNZr1vF6uDQvFNjLzO5zesTyK1GNmyo+ds43c6gcqr46SIsF6dYdnHtCDqTp+sewDCZ+Ld
+	SlAYXQtN2F5OuV3SjZ1L8YVsh+Wlym/WDm3WFMBmJR9L3NLbfplqoRq/Exga9AtimxheEkj52VW
+	RnJ+NHJS9XJqXofIDNEAeL0lmn6zfYKzLPetpKyAvtmvpYjcChS8n8IqNIsCNlM5zO1RPg6CzZG
+	31k0i9M+FnWMJCDpfOnVJx1CiIkU3h5Qj0bGkWpK8AipmFIlQITJ4XLqyA+wTQ==
+X-Google-Smtp-Source: AGHT+IEssrqaSfoOP/FGQlXeEDhOtAtWAeKGb5++EjqTQbQnP1cJDjcvN7caFzDjVdHbkmrf/+DupA==
+X-Received: by 2002:a17:902:cec4:b0:231:9817:6ec1 with SMTP id d9443c01a7336-2366ae551a4mr176657755ad.17.1750136924089;
+        Mon, 16 Jun 2025 22:08:44 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2365d8a4d6csm70981135ad.88.2025.06.16.22.08.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 22:08:43 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Longbin Li <looong.bin@gmail.com>,
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: Han Gao <rabenda.cn@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Yixun Lan <dlan@gentoo.org>
+Subject: Re: [PATCH 00/11] riscv: sophgo: sg2044: add DTS support for all available devices
+Date: Tue, 17 Jun 2025 13:07:21 +0800
+Message-ID: <175013680588.1018298.5174289579188996071.b4-ty@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250608232836.784737-1-inochiama@gmail.com>
+References: <20250608232836.784737-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250617050844.1848232-1-khtsai@google.com>
-X-Mailer: git-send-email 2.50.0.rc2.692.g299adb8693-goog
-Message-ID: <20250617050844.1848232-2-khtsai@google.com>
-Subject: [PATCH v2 2/2] usb: gadget: u_serial: Fix race condition in TTY wakeup
-From: Kuen-Han Tsai <khtsai@google.com>
-To: gregkh@linuxfoundation.org, prashanth.k@oss.qualcomm.com, 
-	khtsai@google.com, hulianqin@vivo.com, krzysztof.kozlowski@linaro.org, 
-	mwalle@kernel.org, jirislaby@kernel.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-A race condition occurs when gs_start_io() calls either gs_start_rx() or
-gs_start_tx(), as those functions briefly drop the port_lock for
-usb_ep_queue(). This allows gs_close() and gserial_disconnect() to clear
-port.tty and port_usb, respectively.
+On Mon, 09 Jun 2025 07:28:24 +0800, Inochi Amaoto wrote:
+> As the clock driver for SG2044 got merged, it is possible to add
+> dts node for all support devices of SG2044.
+> 
+> Inochi Amaoto (9):
+>   riscv: dts: sophgo: sg2044: Add system controller device
+>   riscv: dts: sophgo: sg2044: Add clock controller device
+>   riscv: dts: sophgo: sg2044: Add GPIO device
+>   riscv: dts: sophgo: sg2044: Add I2C device
+>   riscv: dts: sophgo: sg2044: add DMA controller device
+>   riscv: dts: sophgo: sg2044: Add MMC controller device
+>   riscv: dts: sophgo: sophgo-srd3-10: add HWMON MCU device
+>   riscv: dts: sophgo: sg2044: Add ethernet control device
+>   riscv: dts: sophgo: sg2044: Add pinctrl device
+> 
+> [...]
 
-Use the null-safe TTY Port helper function to wake up TTY.
+Applied to for-next, thanks!
 
-Example
-  CPU1:			      CPU2:
-  gserial_connect() // lock
-  			      gs_close() // await lock
-  gs_start_rx()     // unlock
-  usb_ep_queue()
-  			      gs_close() // lock, reset port.tty and unlock
-  gs_start_rx()     // lock
-  tty_wakeup()      // NPE
+[01/11] riscv: dts: sophgo: sg2044: Add system controller device
+        https://github.com/sophgo/linux/commit/50fa2633c143d857a68128da387e0bb09c6cd362
+[02/11] riscv: dts: sophgo: sg2044: Add clock controller device
+        https://github.com/sophgo/linux/commit/acd836a65b8cdebb007df0c3e08ac5710f0994e7
+[03/11] riscv: dts: sophgo: sg2044: Add GPIO device
+        https://github.com/sophgo/linux/commit/8fc13510b3540481d291e28172b41b571ea078c2
+[04/11] riscv: dts: sophgo: sg2044: Add I2C device
+        https://github.com/sophgo/linux/commit/b0d0b60bc906160aa3a1654de82c24bd55a801b3
+[05/11] riscv: dts: sophgo: sg2044: add DMA controller device
+        https://github.com/sophgo/linux/commit/e40105024f078269a9729f7488945c11f4f3422e
+[06/11] riscv: dts: sophgo: sg2044: Add MMC controller device
+        https://github.com/sophgo/linux/commit/4a678cc75d580a6478bcfae60907fa732d485368
+[07/11] riscv: dts: sophgo: sophgo-srd3-10: add HWMON MCU device
+        https://github.com/sophgo/linux/commit/62d6db9792ff7ddec27a61df8223395b22860c0d
+[08/11] riscv: dts: sophgo: sg2044: Add ethernet control device
+        https://github.com/sophgo/linux/commit/67970c99f040c3e26677178f323993ddf11cab1c
+[09/11] riscv: dts: sophgo: sg2044: Add pinctrl device
+        https://github.com/sophgo/linux/commit/d32d3c657f4f8b45ace6dbdb48ad602fc9a44be8
+[10/11] riscv: dts: sophgo: add SG2044 SPI NOR controller driver
+        https://github.com/sophgo/linux/commit/502ade8b6fd981ba3694000e684686954d73c3bb
+[11/11] riscv: dts: sophgo: add pwm controller for SG2044
+        https://github.com/sophgo/linux/commit/ea389214c01b2767ed2bbd4e9a03573394b33fd3
 
-Fixes: 35f95fd7f234 ("TTY: usb/u_serial, use tty from tty_port")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
----
-v2:
-- Move the example up to the changelog
-
-Traces:
-[   51.494375][  T278] ttyGS1: shutdown
-[   51.494817][  T269] android_work: sent uevent USB_STATE=DISCONNECTED
-[   52.115792][ T1508] usb: [dm_bind] generic ttyGS1: super speed IN/ep1in OUT/ep1out
-[   52.516288][ T1026] android_work: sent uevent USB_STATE=CONNECTED
-[   52.551667][ T1533] gserial_connect: start ttyGS1
-[   52.565634][ T1533] [khtsai] enter gs_start_io, ttyGS1, port->port.tty=0000000046bd4060
-[   52.565671][ T1533] [khtsai] gs_start_rx, unlock port ttyGS1
-[   52.591552][ T1533] [khtsai] gs_start_rx, lock port ttyGS1
-[   52.619901][ T1533] [khtsai] gs_start_rx, unlock port ttyGS1
-[   52.638659][ T1325] [khtsai] gs_close, lock port ttyGS1
-[   52.656842][ T1325] gs_close: ttyGS1 (0000000046bd4060,00000000be9750a5) ...
-[   52.683005][ T1325] [khtsai] gs_close, clear ttyGS1
-[   52.683007][ T1325] gs_close: ttyGS1 (0000000046bd4060,00000000be9750a5) done!
-[   52.708643][ T1325] [khtsai] gs_close, unlock port ttyGS1
-[   52.747592][ T1533] [khtsai] gs_start_rx, lock port ttyGS1
-[   52.747616][ T1533] [khtsai] gs_start_io, ttyGS1, going to call tty_wakeup(), port->port.tty=0000000000000000
-[   52.747629][ T1533] Unable to handle kernel NULL pointer dereference at virtual address 00000000000001f8
----
- drivers/usb/gadget/function/u_serial.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
-index c043bdc30d8a..540dc5ab96fc 100644
---- a/drivers/usb/gadget/function/u_serial.c
-+++ b/drivers/usb/gadget/function/u_serial.c
-@@ -295,8 +295,8 @@ __acquires(&port->port_lock)
- 			break;
- 	}
-
--	if (do_tty_wake && port->port.tty)
--		tty_wakeup(port->port.tty);
-+	if (do_tty_wake)
-+		tty_port_tty_wakeup(&port->port);
- 	return status;
- }
-
-@@ -574,7 +574,7 @@ static int gs_start_io(struct gs_port *port)
- 		gs_start_tx(port);
- 		/* Unblock any pending writes into our circular buffer, in case
- 		 * we didn't in gs_start_tx() */
--		tty_wakeup(port->port.tty);
-+		tty_port_tty_wakeup(&port->port);
- 	} else {
- 		/* Free reqs only if we are still connected */
- 		if (port->port_usb) {
---
-2.50.0.rc2.692.g299adb8693-goog
+Thanks,
+Inochi
 
 
