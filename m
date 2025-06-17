@@ -1,72 +1,127 @@
-Return-Path: <linux-kernel+bounces-689983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6320ADC998
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:39:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE34DADC97C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E1907AB66F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:37:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEFFC3A3371
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BE22DF3CD;
-	Tue, 17 Jun 2025 11:38:40 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965872E06D0;
-	Tue, 17 Jun 2025 11:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76046293B5F;
+	Tue, 17 Jun 2025 11:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WI9WNo5u"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8B51EDA3C;
+	Tue, 17 Jun 2025 11:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750160320; cv=none; b=RGSpUJeomradSkIkKox7qL0zi8znqoVQIoEGCmK0ZBE1LwfbBHFIIutsmrjM8LmVArfbQ9y5sMuPxD4vRvMiNctQrriJcHxCmaL2Htn2UtRWGT/l8NgPJr/pW7IN9wU/OGvcmHJMwI5pHxbf4oBGDodBPCdNOa8FXSczT7+axPQ=
+	t=1750160024; cv=none; b=olTcUWZLIApVob6RCIpGj/J/9XhMg1kF0hQepAYAmglAcMpHGZyLpLO5qb6CRlMTQnen+uJhciUPjr89BOpVnf2Wt2fT8hvhtmBclqtSPNhWSA8FMNE/UL5DwysAJ/39liUve/xjLupP5GVBTdGB34KoxlDMGImez+MhpSrrmso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750160320; c=relaxed/simple;
-	bh=fllwykX6hHfEhv+mLpuPo9l2X/Ngge9J44t9X9fGQGc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=VDHAOefORlp4NLU3FXD4VY1C6/b+rIhKroq3kg2dPMWgeBB7e+Xt/+3XDq2F5ncS716ZAxFVC5RjupRw4sx9JbI87ZsW0UuYaFuZfKuYrOkOnE1yTiN59qjmHAeGEt/cNA3pz0kghW9UTYED8Jr1zg6gp9BsUwcalZ8xbV+B9f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id F307692009C; Tue, 17 Jun 2025 13:32:48 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id EBB0D92009B;
-	Tue, 17 Jun 2025 12:32:48 +0100 (BST)
-Date: Tue, 17 Jun 2025 12:32:48 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 29/33] serial: 8250: drop DEBUG_AUTOCONF() macro
-In-Reply-To: <20250611100319.186924-30-jirislaby@kernel.org>
-Message-ID: <alpine.DEB.2.21.2506171216090.37405@angie.orcam.me.uk>
-References: <20250611100319.186924-1-jirislaby@kernel.org> <20250611100319.186924-30-jirislaby@kernel.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1750160024; c=relaxed/simple;
+	bh=jrgGdbP5apEQcDQ6yICK0dFB5pKV+9fGdc5AglGKEA0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=S1J/M9lt70DKaq/xGCYKnELbMGvKmg1O2ShhXGrg8dktOd+iP2kDucQIaUqJM6SfSgD51mbrkKU5FdViEsYdEpi0x9wweh3sVsQVesq7xieNIAO3LK+p5Qg6GYrwuhdQuyAyvFmJCR0Lt4/yKdo0KI4cW8odPK6Mr4ZIw9tZ2Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WI9WNo5u; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id 16A1A2117F96; Tue, 17 Jun 2025 04:33:43 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 16A1A2117F96
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1750160023;
+	bh=mKTNlW0AkzZv+T51lkhj5+K+zcs0xhJdeNPYEm/GAs4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WI9WNo5uIStGKShk9LQnljONwGpcrCZKMnaGmNxfChSOW/r5f9cGRuHrC/9+sBzH2
+	 ZpplGvcYcJ9VgOFhXKrNgnV/aoBWGc2EdulBjkzYtNL1RgQKiZaFpzKkSU31+G9A83
+	 F+0Hdo8jKAOMWOYkGkiu+fa0x+CgAgTvwlDy5OeM=
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: Dexuan Cui <decui@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
+	Long Li <longli@microsoft.com>,
+	Dipayaan Roy <dipayanroy@linux.microsoft.com>,
+	Shiraz Saleem <shirazsaleem@microsoft.com>
+Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	netdev@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Paul Rosswurm <paulros@microsoft.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: [PATCH net-next] net: mana: Set tx_packets to post gso processing packet count
+Date: Tue, 17 Jun 2025 04:33:41 -0700
+Message-Id: <1750160021-24589-1-git-send-email-shradhagupta@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 
-On Wed, 11 Jun 2025, Jiri Slaby (SUSE) wrote:
+Allow tx_packets and tx_bytes counter in the driver to represent
+the packets transmitted post GSO processing.
 
-> DEBUG_AUTOCONF() is always disabled (by "#if 0"), so one would need to
-> recompile the kernel to use it. And even if they did, they would find
-> out it is broken anyway:
->   error: variable 'scratch' is used uninitialized whenever 'if' condition is false
+Currently they are populated as bigger pre-GSO packets and bytes
 
- This is removing useful debugging aids.
+Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+---
+ drivers/net/ethernet/microsoft/mana/mana_en.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
- The issue with compilation is related to commit 3398cc4f2b15 ("serial: 
-8250: Add IIR FIFOs enabled field properly"), which removed the assignment 
-of IIR to `scratch' (although a path did exist before it that bypassed the 
-assignment anyway), and can be trivially fixed by bringing the assignment 
-back and moving the debug statement next to it.
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+index e68b8190bb7a..c3b6478cb1d3 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_en.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+@@ -251,10 +251,10 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 	struct netdev_queue *net_txq;
+ 	struct mana_stats_tx *tx_stats;
+ 	struct gdma_queue *gdma_sq;
++	int err, len, num_gso_seg;
+ 	unsigned int csum_type;
+ 	struct mana_txq *txq;
+ 	struct mana_cq *cq;
+-	int err, len;
+ 
+ 	if (unlikely(!apc->port_is_up))
+ 		goto tx_drop;
+@@ -407,6 +407,7 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 	skb_queue_tail(&txq->pending_skbs, skb);
+ 
+ 	len = skb->len;
++	num_gso_seg = skb_is_gso(skb) ? skb_shinfo(skb)->gso_segs : 1;
+ 	net_txq = netdev_get_tx_queue(ndev, txq_idx);
+ 
+ 	err = mana_gd_post_work_request(gdma_sq, &pkg.wqe_req,
+@@ -431,10 +432,13 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 	/* skb may be freed after mana_gd_post_work_request. Do not use it. */
+ 	skb = NULL;
+ 
++	/* Populated the packet and bytes counters based on post GSO packet
++	 * calculations
++	 */
+ 	tx_stats = &txq->stats;
+ 	u64_stats_update_begin(&tx_stats->syncp);
+-	tx_stats->packets++;
+-	tx_stats->bytes += len;
++	tx_stats->packets += num_gso_seg;
++	tx_stats->bytes += len + ((num_gso_seg - 1) * gso_hs);
+ 	u64_stats_update_end(&tx_stats->syncp);
+ 
+ tx_busy:
 
- I agree that "#if 0" isn't very useful as it requires patching the source 
-to activate; changing it to "#ifdef DEBUG" would make more sense nowadays.
+base-commit: 8909f5f4ecd551c2299b28e05254b77424c8c7dc
+-- 
+2.34.1
 
-  Maciej
 
