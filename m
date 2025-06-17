@@ -1,206 +1,261 @@
-Return-Path: <linux-kernel+bounces-690043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C6ADADCAAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:12:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF21ADCAB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9AD3B2606
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:10:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A33C316AC5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07D42E06FC;
-	Tue, 17 Jun 2025 12:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822E32E425E;
+	Tue, 17 Jun 2025 12:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gD1tcwYZ"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gQjlm63I"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2F12206A6
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 12:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5092D130C;
+	Tue, 17 Jun 2025 12:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750162240; cv=none; b=CjInT583GekQzYcMs4vGEQM1/hf3UPs7NgEvatdoSfsMQgcKkRIrwBmsBO6Dy+mcsVboVr7vr6jyDo2mnVRhMzlN4pxZP1SvGkQYLwukMOKSb1HnmOxbPNL5mIEICnfFWENhmCveWXDos6MtRDeB6IrtBCO5sXLuO1TvbUXEWss=
+	t=1750162344; cv=none; b=ltZFd5P0BZc+neVHwzTUUtQ4g4CIkgCPusHVVfvqSEq1DQ3h6Ldl92Neui/SvYYJUHM5/gioR6Wev+6BlGUcwR/IQJSGoKTqlFBXG3Y2ECfzdVNCBvzqbG+aQIqvRJ/SvsFzf0CAHLVWJYU4e122J34/i/+sIahQZtvrkSYbzhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750162240; c=relaxed/simple;
-	bh=eQbtgAXVim/V7lKvfBJCMdtJg5asI7FbXt5KYJh6f+s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L/3F/ht1Efws4CA8o/MLt3c9Qq1dtkc6WJcXkpufoyq5+OTpvtBteJzTASlcMcwlDfEe8bgBmabQzKe0LTKOyeYE6HKp3xV0ftLQkS7gLI/9Q8GiXue/02dWaeiCgwQjNB3ZvguanL93VhydcHb0rzjApirqF6k7+8nUCJhOv4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gD1tcwYZ; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7d0976776dcso613763285a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 05:10:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750162237; x=1750767037; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=03J8IjZSa7RJs746bHjxfihX5+FUeZTPfOgcNc5eBLg=;
-        b=gD1tcwYZHSF0BuSGF5QfkRrbjlWxapVlp7F6cxx4SX5/ZG3eZzMXH894FpiV1O9OUQ
-         KrEKjxHi9udATRgXNvKlk2QW46BpKHSR5/ZTFizXhsfrsAMIFg0xigj+Z6SsLfgXpHXZ
-         6WRwzbh21H4gkRPzz6mN+QTTSGVeU19IgPUSroFqnYSAPEjZI3gfZ9runKID5djHmp6m
-         pkZujb/Hn/Ixiz6jJ0ZWfWnduCzYiIopNnSQHr7QDkmPvCZRov49dtXWNm3cX8nRBq4H
-         oJtuGZS1RAlFTS9DwdhUfGyABGJSdIonMjTdabpAu7Va/s5G1vnFjRNF+NRALX4+2PF7
-         vJtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750162237; x=1750767037;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=03J8IjZSa7RJs746bHjxfihX5+FUeZTPfOgcNc5eBLg=;
-        b=byDzSuShm6hGuk0SWn6G1raBA85TbtHX9/XtSL4j4Dr8wiPrEBytVGqk3Z/zmElD9R
-         T31B031H1oS0myxk23TaR5AZb5QiAoJkdbkmsQxX9gNumBFXOtIFPQ5HZRTRET4hfmRm
-         mGGMItNOa6oyBxtx/EMnLQWZo02JkXFficRBKg6qVKe2jhwyv3/2jr2PBcC/dfx33raz
-         Bi7/SvIXAfKmQ5m6qkWs3biUswUsI+IEm0QQtiwHkVClbLV34rdyDoNA/9GSIuAsdmQW
-         yBJ2EambpL4pVNVkOqCselaL2+l6XZCZ7ZDGoAA3km94XjLvNs7zF1fnZULhqt3eUliS
-         Ntxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBx7ZzSe72j8pXd8/N/zdA1O0R1/ida7YTPmmK6LjKofOWuSty7LFsgB0sv7Ms5s4Gsr964Wo1WIgbOkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYrlP/KGB7qzZQieLSyeGnTo/Z8iJqKrFo+Kou3pPwANrXV4Of
-	NWR1L/ND0YFVUmQobSrvMkGFZ9QhipNqdhwl390yl/lSP7aTput7XuyHQqW7ief2tIC3LyoIiis
-	+zHNQSgY3RzumArjj8zgiyjXx4+chRqDa9hIBoHd64g==
-X-Gm-Gg: ASbGncvHQ/y+SM1n8jtpKnm5qfUOuvC31Wr8xOAEbnr/D57/e+ZUgsgGyK7U9j9tL+5
-	gPqAbKr0wnZIMy8aASFhox0A/9E+UJZijP7mizq3dArmJXsd3EuwX3ek+v9iS3XJioQAj+GY7Um
-	yje4JCtxB5sccnJtZXTX3RNv3fY2I7KlIHCau3QbshHJZWZNmCUU1K5crIG+s9NYRh6gR8JMsHs
-	vz3
-X-Google-Smtp-Source: AGHT+IH1N0alZSpS2og/YRtrO6BJSrFoQcgwn2EAt1dnwxk6JId43IAh6DG97xNIAsNPpYTwM0BzsECiOdp6WxQ9Kck=
-X-Received: by 2002:a05:620a:4156:b0:7d3:9ecb:74ee with SMTP id
- af79cd13be357-7d3c6c20910mr1798287185a.20.1750162236905; Tue, 17 Jun 2025
- 05:10:36 -0700 (PDT)
+	s=arc-20240116; t=1750162344; c=relaxed/simple;
+	bh=zfXuh5LChNxin0NOuK+KJycuot0waWJOHQU7nNX9Vc4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hz1x0TCdlclbbuk56+5WJFUl0YhfTUUQ7eS5DqDzOYqe2cUIlvEhRwgrLF3Mqj0ZVqUyjWuJMYAWZ/ycavI0QSEml9m+pz7kV6o0DtyvWgYaOK9Ts+yKEEoqN9+4Cn/xfHnHS0YY2TcGgo+wqEl7HmMj6vLtOhBpRsaqYZ22f1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gQjlm63I; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F298F4330B;
+	Tue, 17 Jun 2025 12:12:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1750162333;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3jAgYafGml+HhjgOeowwsKz9h8DBM7eX6esJMDyooYc=;
+	b=gQjlm63ISAln/6toDCSB81RCZUTPnqLuX4kIfS3RclmSS2lEvI0vBYKv36vPQeu0rqOEqt
+	3yBAHJ4PR+hCcpV8DjBEuoWQklvOcdeelkOH62QIOIflHVJ6Vn3whLx5w/Cvv2XVv7ztdR
+	0EeFQiYy3eGkdy4YzEf912I/gWOfT5TAmCwivigSHZ+syJ1kQfJoWpCI6XHG4/lmpapESM
+	S9ki8oM3yrpNnBfcp8RtgosIR3/kgvOcIOd1/IL0kclXLtb+OO8GPYSsvXV5lO9bO3K8X3
+	gkucQc975UdvMYaKHaixQYyvpuZTkp4fluU7zS/4McO8gbtWOL/t6JKEBHgJ2Q==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH net-next v14 00/13] Add support for PSE budget evaluation
+ strategy
+Date: Tue, 17 Jun 2025 14:11:59 +0200
+Message-Id: <20250617-feature_poe_port_prio-v14-0-78a1a645e2ee@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYsLu0roY3DV=tKyqP7FEKbOEETRvTDhnpPxJGbA=Cg+4w@mail.gmail.com>
- <20250609220934.2c3ed98ba8c624fc7cb45172@kernel.org> <CA+G9fYsoCc3DnNGoavFiBdymVpdJiEfUSEq967GgThVQW7bTPA@mail.gmail.com>
- <20250610105337.68df01f4@gandalf.local.home> <CA+G9fYv+1FPMD8e1ZadA3nLcfSRDAWvPRW-A3bGrV0y1VP2zLQ@mail.gmail.com>
- <20250613172753.3479f786d40c29ec7b51df0a@kernel.org> <20250616163659.d372cf60ee0c476168cd448e@kernel.org>
- <20250617194159.d74b9cde9268ee8ace8e9018@kernel.org>
-In-Reply-To: <20250617194159.d74b9cde9268ee8ace8e9018@kernel.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 17 Jun 2025 17:40:25 +0530
-X-Gm-Features: Ac12FXxoVZqyTzWtPceVbJMbpvfCSWZtPP8iCGPF7196lDnB0gKWM5O37iKTTJw
-Message-ID: <CA+G9fYtuiFHYBuRpB5MVwnZqc+WVRnnYMRHUExXAyu3_jMVurQ@mail.gmail.com>
-Subject: Re: next-20250605: Test regression: qemu-x86_64-compat mode ltp
- tracing Oops int3 kernel panic
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, open list <linux-kernel@vger.kernel.org>, 
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAI9bUWgC/3XSzWrDMAwA4FcpOS/Dkv932nuMURxbXg1bUpIsd
+ JS++5zASEbigw+28GfJ0r0aqE80VC+ne9XTlIbUtXkD4ulU+YtrP6hOIR9UyFAwC7yO5Mbvns7
+ Xbl79eL72qaudBEdBc47kq3z32lNMtwV+q1oa65ZuY/WeI5c0jF3/s7w4wRKfbWAMC/YENau10
+ UyKqAUF+dp03fiZ2mfffS3mhBuHs5KD2bFSWoVIJLTbO3x1AKHk8OwYjtZGp6zSfu+IP0eynFD
+ JEdkJ3oLjnnkweu/I1UEwJUdmhwcnjCIZgxJ7R6+OYEVHz/8TZfSWcnU+7B2zcUCVHJMdIZTnN
+ niuudk7duNgse92dkBHz5iWGg/yAbZCkhUTApYlKZW2+ZOsjPZAgo2ExRGCeRabxkUhNEGDB7U
+ BbiVRlOZpDGpuGISo3UH3ga+SgnJO8zx6ScGDaiwR/pcej8cv58A30ucDAAA=
+To: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ Simon Horman <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, 
+ Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.15-dev-8cb71
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddugecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtkeertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudfhveduteffgfekvdfhveehgeehtdelgefhffduiefffedvheefgeeiiedvkeetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvkedprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghom
+ hdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhihlhgvrdhsfigvnhhsohhnsegvshhtrdhtvggthh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Hi Masami,
+From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 
-On Tue, 17 Jun 2025 at 16:12, Masami Hiramatsu <mhiramat@kernel.org> wrote:
->
-> On Mon, 16 Jun 2025 16:36:59 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
->
-> > > So the fundamental issue is that smp_text_poke_batch missed
-> > > handling INT3.
-> > >
-> > > I guess some text_poke user do not get text_mutex?
-> >
-> > Hmm, I've checked the smp_text_poke_* users, but it seems no problem.
-> > Basically, those smp_text_poke* user locks text_mutex, and another
-> > suspicious ftrace_start_up is also set under ftrace_lock.
-> > ftrace_arch_code_modify_post_process() is also paired with
-> > ftrace_arch_code_modify_prepare() and under ftrace_lock.
->
-> Eventually, I found a bug in text_poke, and jump_label
-> (tracepoint) hit the bug.
->
-> The jump_label uses 2 different APIs (single and batch)
-> which independently takes text_mutex lock.
->
-> smp_text_poke_single()
->   __jump_label_transform()
->     jump_label_transform() --> lock text_mutex
->
-> smp_text_poke_batch_add()
->   arch_jump_label_transform_queue() -> lock text_mutex
->
-> smp_text_poke_batch_finish()
->   arch_jump_label_transform_apply() -> lock text_mutex
->
-> This is allowed by commit 8a6a1b4e0ef1 ("x86/alternatives:
-> Remove the mixed-patching restriction on smp_text_poke_single()"),
-> but smp_text_poke_single() still expects that the batched
-> APIs are run in the same text_mutex lock region.
-> Thus if user calls those APIs in the below order;
->
-> arch_jump_label_transform_queue(addr1)
-> jump_label_transform(addr2)
-> arch_jump_label_transform_apply()
->
-> And if the addr1 > addr2, the bsearch on the array
-> does not work, and failed to handle int3!
->
-> This can explain the disappeared int3 case. If it happens
-> right before int3 is overwritten, that int3 will be
-> overwritten when the int3 handler dumps the code, but
-> text_poke_array_refs is still 1.
->
-> It seems that commit c8976ade0c1b ("x86/alternatives:
-> Simplify smp_text_poke_single() by using tp_vec and existing APIs")
-> introduced this problem, because it shares the global array in
-> the text_poke_batch and text_poke_single. Before that commit,
-> text_poke_single (text_poke_bp) uses its local variable.
->
-> To fix this issue, Use smp_text_poke_batch_add() in
-> smp_text_poke_single(), which checks whether the array
-> sorted and the array index does not overflow.
->
-> Please test below;
->
+This series brings support for budget evaluation strategy in the PSE
+subsystem. PSE controllers can set priorities to decide which ports should
+be turned off in case of special events like over-current.
 
-Do you mean only this single patch on top of the Linux next ?
+This patch series adds support for two budget evaluation strategy.
+1. Static Method:
 
->
-> From e2a49c7cefb4148ea3142c752396d39f103c9f4d Mon Sep 17 00:00:00 2001
-> From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-> Date: Tue, 17 Jun 2025 19:18:37 +0900
-> Subject: [PATCH] x86: alternative: Fix int3 handling failure from broken
->  text_poke array
->
-> Since smp_text_poke_single() does not expect there is another
-> text_poke request is queued, it can make text_poke_array not
-> sorted or cause a buffer overflow on the text_poke_array.vec[].
-> This will cause an Oops in int3, or kernel page fault if it causes
-> a buffer overflow.
->
-> Use smp_text_poke_batch_add() instead of __smp_text_poke_batch_add()
-> so that it correctly flush the queue if needed.
->
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Closes: https://lore.kernel.org/all/CA+G9fYsLu0roY3DV=tKyqP7FEKbOEETRvTDhnpPxJGbA=Cg+4w@mail.gmail.com/
-> Fixes: 8976ade0c1b ("x86/alternatives: Simplify smp_text_poke_single() by using tp_vec and existing APIs")
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  arch/x86/kernel/alternative.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> index ecfe7b497cad..8038951650c6 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -3107,6 +3107,6 @@ void __ref smp_text_poke_batch_add(void *addr, const void *opcode, size_t len, c
->   */
->  void __ref smp_text_poke_single(void *addr, const void *opcode, size_t len, const void *emulate)
->  {
-> -       __smp_text_poke_batch_add(addr, opcode, len, emulate);
-> +       smp_text_poke_batch_add(addr, opcode, len, emulate);
->         smp_text_poke_batch_finish();
->  }
-> --
-> 2.50.0.rc2.692.g299adb8693-goog
->
->
->
->
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+   This method involves distributing power based on PD classification.
+   It’s straightforward and stable, the PSE core keeping track of the
+   budget and subtracting the power requested by each PD’s class.
+
+   Advantages: Every PD gets its promised power at any time, which
+   guarantees reliability.
+
+   Disadvantages: PD classification steps are large, meaning devices
+   request much more power than they actually need. As a result, the power
+   supply may only operate at, say, 50% capacity, which is inefficient and
+   wastes money.
+
+2. Dynamic Method:
+
+   To address the inefficiencies of the static method, vendors like
+   Microchip have introduced dynamic power budgeting, as seen in the
+   PD692x0 firmware. This method monitors the current consumption per port
+   and subtracts it from the available power budget. When the budget is
+   exceeded, lower-priority ports are shut down.
+
+   Advantages: This method optimizes resource utilization, saving costs.
+
+   Disadvantages: Low-priority devices may experience instability.
+
+The UAPI allows adding support for software port priority mode managed from
+userspace later if needed.
+
+Patches 1-2: Add support for interrupt event report in PSE core, ethtool
+	     and ethtool specs.
+Patch 3: Adds support for interrupt and event report in TPS23881 driver.
+Patches 4,5: Add support for PSE power domain in PSE core and ethtool.
+Patches 6-8: Add support for budget evaluation strategy in PSE core,
+	     ethtool and ethtool specs.
+Patches 9-11: Add support for port priority and power supplies in PD692x0
+	      drivers.
+Patches 12,13: Add support for port priority in TPS23881 drivers.
+
+Signed-off-by: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+---
+Changes in v14:
+- Remove useless extacks messages.
+- Forgot to release the pse_pw_d_mutex in __pse_pw_d_release.
+- Move ethnl_pse_send_ntf() under rtnl_lock following Jakub suggestion.
+- Add pse_control_get_netdev() helper.
+- Removed Oleksij reviewed-by on patch 2 due to few code change.
+- Link to v13: https://lore.kernel.org/r/20250610-feature_poe_port_prio-v13-0-c5edc16b9ee2@bootlin.com
+
+Changes in v13:
+- Small change, no need for >0 condition check for unsigned variables.
+- Link to v12: https://lore.kernel.org/r/20250524-feature_poe_port_prio-v12-0-d65fd61df7a7@bootlin.com
+
+Changes in v12:
+- Rebase on net-next.
+- Link to v11: https://lore.kernel.org/r/20250520-feature_poe_port_prio-v11-0-bbaf447e1b28@bootlin.com
+
+Changes in v11:
+- Move the PSE events enum description fully in the ethtool spec.
+- Remove the first patch which was useless as not used.
+- Split the second patch to separate the attached_phydev introduction to
+  the PSE interrupt support.
+- Link to v10: https://lore.kernel.org/r/20250506-feature_poe_port_prio-v10-0-55679a4895f9@bootlin.com
+
+Changes in v10:
+- Change patch 2 and 7 due to possible used after free scenario or
+  deadlock scenario. Move the PSE notification send management to a
+  workqueue to protect it from the deadlock scenario.
+- Link to v9: https://lore.kernel.org/r/20250422-feature_poe_port_prio-v9-0-417fc007572d@bootlin.com
+
+Changes in v9:
+- Add a missing check after skb creation.
+- Link to v8: https://lore.kernel.org/r/20250416-feature_poe_port_prio-v8-0-446c39dc3738@bootlin.com
+
+Changes in v8:
+- Rename a few functions for better clarity.
+- Add missing kref_init in PSE power domain support and a wrong error
+  check condition.
+- Link to v7: https://lore.kernel.org/r/20250408-feature_poe_port_prio-v7-0-9f5fc9e329cd@bootlin.com
+
+Changes in v7:
+- Add reference count and mutex lock for PSE power domain.
+- Add support to retry enabling port that failed to be powered in case of
+  port disconnection or priority change.
+- Use flags definition for pse events in ethtool specs.
+- Small changes in the TPS23881 driver.
+- Link to v6: https://lore.kernel.org/r/20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com
+
+Changes in v6:
+- Few typos.
+- Use uint instead of bitset for PSE_EVENT.
+- Remove report of budget evaluation strategy in the uAPI.
+- Link to v5: https://lore.kernel.org/r/20250218-feature_poe_port_prio-v5-0-3da486e5fd64@bootlin.com
+
+Changes in v5:
+- Remove the first part of the patch series which tackled PSE
+  improvement and already gets merged:
+  https://lore.kernel.org/netdev/20250110-b4-feature_poe_arrange-v3-0-142279aedb94@bootlin.com/
+- Remove the PSE index support which is useless for now. The PSE power
+  domain ID is sufficient.
+- Add support for PD692x0 power supplies other than Vmain which was already
+  in the patch series.
+- Few other small fixes.
+- Link to v4: https://lore.kernel.org/r/20250103-feature_poe_port_prio-v4-0-dc91a3c0c187@bootlin.com
+
+Changes in v4:
+- Remove disconnection policy.
+- Rename port priority mode to budget evaluation strategy.
+- Add cosmetic changes in PSE core.
+- Add support for port priority in PD692x0 driver.
+- Link to v3: https://lore.kernel.org/r/20241121-feature_poe_port_prio-v3-0-83299fa6967c@bootlin.com
+
+Changes in v3:
+- Move power budget to regulator core.
+- Add disconnection policies with PIs using the same priority.
+- Several fixes on the TPS23881 drivers.
+- Several new cosmetic patches.
+- Link to v2: https://lore.kernel.org/r/20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com
+
+Changes in v2:
+- Rethink the port priority management.
+- Add PSE id.
+- Add support for PSE power domains.
+- Add get power budget regulator constraint.
+- Link to v1: https://lore.kernel.org/r/20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com
+
+---
+Kory Maincent (13):
+      net: pse-pd: Introduce attached_phydev to pse control
+      net: pse-pd: Add support for reporting events
+      net: pse-pd: tps23881: Add support for PSE events and interrupts
+      net: pse-pd: Add support for PSE power domains
+      net: ethtool: Add support for new power domains index description
+      net: pse-pd: Add helper to report hardware enable status of the PI
+      net: pse-pd: Add support for budget evaluation strategies
+      net: ethtool: Add PSE port priority support feature
+      net: pse-pd: pd692x0: Add support for PSE PI priority feature
+      net: pse-pd: pd692x0: Add support for controller and manager power supplies
+      dt-bindings: net: pse-pd: microchip,pd692x0: Add manager regulator supply
+      net: pse-pd: tps23881: Add support for static port priority feature
+      dt-bindings: net: pse-pd: ti,tps23881: Add interrupt description
+
+ .../bindings/net/pse-pd/microchip,pd692x0.yaml     |   22 +-
+ .../bindings/net/pse-pd/ti,tps23881.yaml           |    8 +
+ Documentation/netlink/specs/ethtool.yaml           |   76 ++
+ Documentation/networking/ethtool-netlink.rst       |   49 +
+ drivers/net/mdio/fwnode_mdio.c                     |   26 +-
+ drivers/net/pse-pd/pd692x0.c                       |  225 +++++
+ drivers/net/pse-pd/pse_core.c                      | 1066 +++++++++++++++++++-
+ drivers/net/pse-pd/tps23881.c                      |  403 +++++++-
+ include/linux/ethtool_netlink.h                    |    7 +
+ include/linux/pse-pd/pse.h                         |  106 +-
+ include/uapi/linux/ethtool_netlink_generated.h     |   40 +
+ net/ethtool/pse-pd.c                               |   64 ++
+ 12 files changed, 2038 insertions(+), 54 deletions(-)
+---
+base-commit: 1770343cde9b1cd2c1890abd909c441c322be386
+change-id: 20240913-feature_poe_port_prio-a51aed7332ec
+
+Best regards,
+-- 
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
 
