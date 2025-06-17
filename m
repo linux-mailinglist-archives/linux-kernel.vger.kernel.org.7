@@ -1,227 +1,206 @@
-Return-Path: <linux-kernel+bounces-689548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31353ADC370
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:35:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3402ADC379
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E7B03AD456
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:34:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 057397A6C5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD9628F95E;
-	Tue, 17 Jun 2025 07:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB03D28F508;
+	Tue, 17 Jun 2025 07:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="xf9Ma34l"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="nAsG7NAk"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011052.outbound.protection.outlook.com [52.101.65.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775DA1E22FC;
-	Tue, 17 Jun 2025 07:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750145628; cv=none; b=kr+Atp71xZyPLRMeCWRHPKoE2f2xpHTF344bqXFzUlkTy7pyztdon4MtyvaO6Vm4i3y3vvalo2ufffHzPkIflYYDnntvvljmQ0DJeGcFyMzLPpBN/HLNsHLbZ5DgP3qnhkuLEtNTFxmLQNZXLpMPoUYSutj0xYmnv2TYgdvXHiU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750145628; c=relaxed/simple;
-	bh=SjPjqhJUo5tnTLAx9gehS2WYxidqB/n4ashPnn4A23c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FzfZ5bAOh9PHsGzTviyr2UwsKpOptVJgtHvfZFU9XxwN2eDbawliRYsIqtPOIiVIqI3XkZgLOgQCvdD360hmablHNlUMuYgEignEWKh4iP4wK8pJMU4fbNoniERmqkBX1hHrUi82xk10olUOh0T++De4u+qJnakSBvu4A/PpVag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=xf9Ma34l; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55H7WY901020658
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Tue, 17 Jun 2025 00:32:39 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55H7WY901020658
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025052101; t=1750145560;
-	bh=qaHWaR3qS+VvBjhBQiLm25PU4KqdjLMxlrG3QnDM/6c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=xf9Ma34lhmlCiTJKHLkI2fxVy55T2Igy/PPE/WbwHAr/rq+yB/pJzd8Nd3AwM8y3R
-	 Ns6u5aWKbEXTaoLzNF1AvwJ1gKAe+uIO5arCwuwQdOapjaLANj3elfLlQUanGoo+QA
-	 /AxKqiuEN6fUIxrtBmCUekBTvoSCEuElM2hy6g9vlUewNq97ms7N7jQRRMIcKfhBH0
-	 SgnwjL5L9ysquzN8N7co0xljDm8ekkE76UfSNHUKklIVlcCyULxljIAWOHGKXSri8/
-	 edrI+W1Fs26lV8UTISLoYR+DDCYbgN0Hfpr7wT5zyP3jFQmdhpctp9CnDcmcl4haER
-	 JPEdn29h/AHAA==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        seanjc@google.com, pbonzini@redhat.com, peterz@infradead.org,
-        sohil.mehta@intel.com, brgerst@gmail.com, tony.luck@intel.com,
-        fenghuay@nvidia.com
-Subject: [PATCH v2 2/2] x86/traps: Initialize DR7 by writing its architectural reset value
-Date: Tue, 17 Jun 2025 00:32:34 -0700
-Message-ID: <20250617073234.1020644-3-xin@zytor.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250617073234.1020644-1-xin@zytor.com>
-References: <20250617073234.1020644-1-xin@zytor.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5490288C06;
+	Tue, 17 Jun 2025 07:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750145811; cv=fail; b=uLDQqmnSbaX+USFxpp20E7gnXRfsv5PdAwx0wnmt6x0MxjiZTqpGpM3ZW0O9+JalBGhYM18SlWs7Y14eE8g5IbCuVCjWcXeRftgZwx7XYuASfzlS1KbA3SJ6eQQENanUt/9bqtm4f8ZRYVpeqNHSMi3QPbq6aQCFgLp6+fReVHM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750145811; c=relaxed/simple;
+	bh=2RBx5q2nKmjjl8cXzzf7HO9AuSDnInGHBP8P4ENgFDU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=bO6Xi0uzxV3xHL/SkA6eaONeBI1xDxm58jXZOu8XPWmLXOPmyuC82wgPhmAbGNdX5rtLXJ/+zGcK9vtIkOJ1p2viyzhumw4GfV5McTCMdTvrxSS6smYJSSe1xxYttJwlSEDKHSA4ds16G4B3VqLJP+0KbDycgdGe5a1TwRz6hRI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=nAsG7NAk; arc=fail smtp.client-ip=52.101.65.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bLfTBtknCVAVdXVCN1ItsGtZ352tJ8I6KwP0OXzlJR1KVNKBXqOpQb06xJO8ryxLZ54UmR44CNsHqnROr6W2yDUdEpuGimyXX27wEzJSpo16Z1vty1vaEQtFHt4/MYcK+v0ByK/KNkOX5gXrv6xE0wGr3/QopUFjhRD9XPMpojDYCzLGWf7i+Kbrs9EfVoEuN7lWByCi2VdRRrfv6LPsZlqFjoy5nOQjEHnFsT2gXbOpc3KdY4bXGpyEL8qTJKZDtpUHJtayXg/hA+JkjUgsjK80Rcir/qtYeS0CLGOBBmRx+iyLsMoM1QoIn+dtGnJCFVEDnpThB89v3CJxbRU6cA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NaG7TdRK4qA/us1zaqr2Pg7TG2FCT7VQUiqEoXFRiN0=;
+ b=NPegTf10MbI4WOtyGDydTZY16ZU2hdrcQiIHeaLNKxQ/tI9BTq0Jbn+oGKHSfdSWoLhT5hI4Sb/xiVyeFJlT8FJvDCbPtdcDH0QPjefqj8sx9vFRyHzQPSfz2/O92TPZ7/OyxxgtFtZFK/dtQcRPoMXghNMZWyUYLdM+OG+8rnqNoCp734QL06WvZoOBGohsqZNXnM9xDQDh1XJkbs1vjBphpJI41xncxTy9aRkZdT9tr7c4plwqlpp9/3StKIw4WiTrWQGc6R1rI6pAMGHcEW1kdrg4ul2Ty8t1s144zgchxew4/SAGKX8yOfFfMyffSChDhlNqeFBa9ltmTWnIMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NaG7TdRK4qA/us1zaqr2Pg7TG2FCT7VQUiqEoXFRiN0=;
+ b=nAsG7NAkOE5RcPWkFHZyXNp4maN/k0oZn58q90DmzF6M9DS5anvnN7DDuG/JFzsVIokuZoBy+zxZD/Becou2LzZipi2hvQOgu1ZepYwofj45V0BuyNWiQKWVpR1AIM9pk2m3vLdRbsD6m9MbFZOSwX0N+lyNn8M36oiAsZ3/ybaD5+4wg3xXHtMTrGpJEZF1qSi/NClY7iCVVinvvppO1Q/Ok7cqhD/hXSEMmvOOESmDpMtUdp2UX+EpUecsnBoP3px7TJ06C3HtVx5lbiKofEhHn4/u39tHrpVfUsaQ16qdqZQ4vr8rmvilgzWjOlATwppWTkJ17/HPpypaqswacg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8676.eurprd04.prod.outlook.com (2603:10a6:20b:42b::10)
+ by PAWPR04MB10032.eurprd04.prod.outlook.com (2603:10a6:102:38d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Tue, 17 Jun
+ 2025 07:36:47 +0000
+Received: from AS8PR04MB8676.eurprd04.prod.outlook.com
+ ([fe80::28b2:de72:ad25:5d93]) by AS8PR04MB8676.eurprd04.prod.outlook.com
+ ([fe80::28b2:de72:ad25:5d93%4]) with mapi id 15.20.8835.027; Tue, 17 Jun 2025
+ 07:36:46 +0000
+From: Richard Zhu <hongxing.zhu@nxp.com>
+To: frank.li@nxp.com,
+	l.stach@pengutronix.de,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com
+Cc: linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH v2] PCI: imx6: Correct the epc_features of i.MX8M chips
+Date: Tue, 17 Jun 2025 15:34:41 +0800
+Message-Id: <20250617073441.3228400-1-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0037.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::6)
+ To AS8PR04MB8676.eurprd04.prod.outlook.com (2603:10a6:20b:42b::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8676:EE_|PAWPR04MB10032:EE_
+X-MS-Office365-Filtering-Correlation-Id: 19183ef6-2e1a-44ef-bdd5-08ddad71b692
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|376014|52116014|366016|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?AJxIlscAPfxw9eZIoKdJqnEzj7CrQx1RIHMOLBt9UMxbDkg98fSgVekCEM7k?=
+ =?us-ascii?Q?x7M/evp0WjaytiHEt7nRelRi5d3kyRRhy+4CA9VulMq3fDZfnVsyowOgMENx?=
+ =?us-ascii?Q?2jB6PxaP9qlfJBBJgaHAZ5PgHuWfRY/6tg3TFmuKa2gJ0QAU7Ywu5K1f/Hz1?=
+ =?us-ascii?Q?Ml2Mi1PKqSArqmCYyKMwTDWgzFbx0EMnSxP3YuuJOZ5pqXqa4hTvVPB0fa2d?=
+ =?us-ascii?Q?Vaz3gF4zIl2DeMZk5/GV/ukD8jjgLA06Dpx/ZL9i31HiRLK5KHMl8IAwlUS/?=
+ =?us-ascii?Q?3qyk32erygAXSf73G5IVlvkYUYtVSN1VSg0phqfutZzUyzrKQgWRYwvVkQwi?=
+ =?us-ascii?Q?zcMlxiPrXlQCvm37T9esd4NwojA9uOoqhxouXDUGV8xN2vyHokUOZ7pfMjJE?=
+ =?us-ascii?Q?tv4FZWz7BiMmuo21x0xPfDU4ss+WyPWA7T6DqxmCaezpqSDndLFVIr1KleRN?=
+ =?us-ascii?Q?TavmOHKbJYSvSzPohttzHx4uh/s22/PREYb2dG29tiwy21Jl9R/8qevXPntl?=
+ =?us-ascii?Q?CHboosta5Fp6VmR/bHKiP1kjx7FfK1crKq8CvuEW2w2JIAEW6CawgFsgpZDc?=
+ =?us-ascii?Q?UOFiIlh53CYP5ZUzcA2LiOOyqkgKr9HYjZCh0NaebJ0dhfGKs+D2JtlTSLdl?=
+ =?us-ascii?Q?3iu+qP/WV5yKQ/OONGn2lwEYl8VC54hwC2ZW8hIVamwe8VuhvEH/VLK0vvgY?=
+ =?us-ascii?Q?ixzzHIfJsK4RDV7wRWcfGJJ9flm5T9gE9dw7D3LlwvTuSIkzxyvT8qoE5kB7?=
+ =?us-ascii?Q?097o53Bnuc4CH8vURDG8RCbBMLOX/t8Bi73M1rpqXof9cHy9kej1mZbpfr9k?=
+ =?us-ascii?Q?jnV7Um9LlUEwWI4R+8Ojys2LGW2mC97CYKxQRYcnkrrtF/TK3b23jaMo7o+N?=
+ =?us-ascii?Q?SR19JXRvr1luyW/ebJ0gw04FTontLA/n6ga1WprVDHqYUFSOn4AGr+zG3qhg?=
+ =?us-ascii?Q?5DEwS1PZgflnWtGBLJgeiMAIoZJfHGGemXzLggSqdOs6GFAVUY0AatvGxivI?=
+ =?us-ascii?Q?ajwha/WQ4aS5SyG/XePgirIMODOL3AclvVgxvfVLzIgGAyy5Mnbw3SxXP3yj?=
+ =?us-ascii?Q?8umLP++WQtA1EPRhFlFJhTMIfGj42wgvRQwujalTSRj3jIsVLNJrqqxF+DHw?=
+ =?us-ascii?Q?yrTsh+hYA1p1S32Ib3jyHhNr00mqctZSdbeuN0XbV4pQIywsFt2Z/57t+mFr?=
+ =?us-ascii?Q?Sohs3shgcauIpSfSWj06VMmZFiSJcR9vFp8rwHsWbg8GBvkmBYFBFhc9cTiq?=
+ =?us-ascii?Q?qB2gF/XgYntYlfShEcOg1cQJKN3tT+YQvAkfTIvi9noiKDakCJl8r5exHXvd?=
+ =?us-ascii?Q?3vRUn9PQqhNISsKjZx8MC/KCRR9blBT/zJ6uaR6Jgr5mnRZfGXUreyM3+LwM?=
+ =?us-ascii?Q?CTLvD5l4otUhw9hpi/kBye0NW9mzPsa5L/SDLPSwo0vvpvmY9sgSk3yNeLDs?=
+ =?us-ascii?Q?hKXRltfgUEUgbxjV/bUg8S6P7owgQgyo0eaGwUvDBE9I/0Hqwztca3jpV1UH?=
+ =?us-ascii?Q?Xv6U4sSs1gxOKr0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8676.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(52116014)(366016)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?2nMhlVShz/QqlMZBvLzlBluPkNYrFw5Yl+ceTIMooOgy0vBOIkZVs5q2RXPF?=
+ =?us-ascii?Q?qdjAE+KQro0iFybJBTUPVlGDKMxEkvtXWKcZmMZ1azZPLuG/u4NeEcVjkiiY?=
+ =?us-ascii?Q?RiAyQD2/XsmfzX5cBh6EW5I/D1IYx4/nHsTiXEwdZgkPu/7e3tJ3cZYI06XL?=
+ =?us-ascii?Q?g8WKPn9spSBhdvhohQxO3kA6hAJRdJ/KD+15IoqoQg3c23krzvkbzqbgGK/4?=
+ =?us-ascii?Q?swm4mM8vNaJ8IWprAq4MDSC+3TPwVNqj0Utoh2PVhcyTbCp8QkYBiG5yDyGt?=
+ =?us-ascii?Q?NmkUH6LlgQLUGr9hGqcKHxlhgJHWBjOrTLq47Td+bfRIpHu6+atXeTi6TKZd?=
+ =?us-ascii?Q?lZsScybJf28LfLadrT2IDkG8SuVHURL0A0SfTwyYC580KdLqWjmpuOU2ws+E?=
+ =?us-ascii?Q?eqAvokjK263xvt0CvbrkV6bGdqdPn6omz/UTvc5mVI+kgc+4fp6yrcM0gUxK?=
+ =?us-ascii?Q?/BCWseKEKfjyHhPbq4x1PTQrpYBlqKXhtOKqSAl/1YhCv908k+fR9WOK6v3o?=
+ =?us-ascii?Q?WYHq+8nQuYTg7RMgxd+kvqCZKBp7Le60H9abgwBNVwjDZcp+gmkKuiOvTbdh?=
+ =?us-ascii?Q?Xa0pInOxRKql8Z9Lzy1ZTcT7jvKUDrKOfSRcEAqYXRHQH8CTesWj5ZK4qmWQ?=
+ =?us-ascii?Q?2VLuKW4I6yM48nb+4bdInT0vvCmS0jy63kVdw+nK8uVakJNzNVbgpBdLf6iv?=
+ =?us-ascii?Q?xyLnE6xxfkQC5cPue6snLmmDhnWC8DNBHGBYpTNpK28dQ1YSxjTtLQ4Fszvg?=
+ =?us-ascii?Q?88Avad4ZUL0eZ3Li72m6ZvipZIqfTZjUmpkP3oQHxyLaMhYpRtoRVzq4gN7A?=
+ =?us-ascii?Q?S26mg1iAiwQ7fzOyuaTaJqzs6ZHT8h/vO+WSKiX6h3j4Emn4FGV5RNy90n0g?=
+ =?us-ascii?Q?bK6qSK8rAUU5rWOysMkKHj7DgTatfDEQ569LWz0rqp2Kn3E1CxnWAiC7yy2o?=
+ =?us-ascii?Q?biIxhX9PoBUQ0Ega1c+RY8s2eHbRCEweO/lk4e2J2awQmUS7vU1LQQWDBFjD?=
+ =?us-ascii?Q?yZjNx6OEHx9vGj184DdsmuLMI2PvpJy0W1cp3a3cvs2SrUxkFOITh6UxAin/?=
+ =?us-ascii?Q?Y556mInVHvpOtdQ+TXyvucMt3X+zcu64urymsOolTPzi8bziiEicnowh8Q1K?=
+ =?us-ascii?Q?uH4TXwDX/ON6LDpvgR0CdJHqIM7EmqCPDTYyi88qJ4KCLDo2Ar2NyN/sPsgL?=
+ =?us-ascii?Q?o3RQoauResBIrOvZZKvIi5dR6jYXv2e1vSGQwHAumrMrFEXXZGcK5NJAn5vN?=
+ =?us-ascii?Q?hjIay6ag4WJRJflzi4Yucoa5tc6WBo4QYM8F5XD5z6iA1w3TdkTLMqbyMP9K?=
+ =?us-ascii?Q?N1V9BVutiLpVeHvb/zPOmmZpRjl6xUZviRGkKjkORm6giNz91P16Vb+zVyuZ?=
+ =?us-ascii?Q?BM+5+TNdaC1GkkK4UimGy6l52WUsaIiX6ofzA754lF879ZVGA1SgNSLiE4OY?=
+ =?us-ascii?Q?iQFKjshJDjKWyADlYaJ9zqtY0w5TQO3Amtbw0PYnk10gkcIGZo6zgTUUSVNR?=
+ =?us-ascii?Q?mKWVnIjKFYYVs4Ry0/QnJkVxzjhcHD/jZ2xyMkQtgbd1CukKHPSpgthvsgX6?=
+ =?us-ascii?Q?r4FVDDKbcUHkyEbFUSTF3yVYRbtcjt+gAqC5QNS3?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 19183ef6-2e1a-44ef-bdd5-08ddad71b692
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8676.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2025 07:36:46.4594
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VQrAx/H+7xJyCDjIDyrmtV14exVnwo7Jge9V9z9bfe+7msAXBtC1FfBZ8VJDiZgiDwLWtVBD0zKL3uVa5uEvwA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB10032
 
-Initialize DR7 by writing its architectural reset value to ensure
-compliance with the specification.
+i.MX8MQ PCIes have three 64-bit BAR0/2/4 capable and programmable BARs.
+But i.MX8MM and i.MX8MP PCIes only have BAR0/BAR2 64bit programmable
+BARs, and one 256 bytes size fixed BAR4.
 
-Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+Correct the epc_features for i.MX8MM and i.MX8MP PCIes here. i.MX8MQ is
+the same as i.MX8QXP, so set i.MX8MQ's epc_features to
+imx8q_pcie_epc_features.
+
+Fixes: 75c2f26da03f ("PCI: imx6: Add i.MX PCIe EP mode support")
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 ---
+ drivers/pci/controller/dwc/pci-imx6.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Changes in v2:
-*) Use debug register index 7 rather than DR_CONTROL (PeterZ and Sean).
-*) Use DR7_FIXED_1 as the architectural reset value of DR7 (Sean).
----
- arch/x86/include/asm/debugreg.h | 14 ++++++++++----
- arch/x86/include/asm/kvm_host.h |  2 +-
- arch/x86/kernel/cpu/common.c    |  2 +-
- arch/x86/kernel/kgdb.c          |  2 +-
- arch/x86/kernel/process_32.c    |  2 +-
- arch/x86/kernel/process_64.c    |  2 +-
- arch/x86/kvm/x86.c              |  4 ++--
- 7 files changed, 17 insertions(+), 11 deletions(-)
-
-diff --git a/arch/x86/include/asm/debugreg.h b/arch/x86/include/asm/debugreg.h
-index 363110e6b2e3..3acb85850c19 100644
---- a/arch/x86/include/asm/debugreg.h
-+++ b/arch/x86/include/asm/debugreg.h
-@@ -9,6 +9,9 @@
- #include <asm/cpufeature.h>
- #include <asm/msr.h>
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index 5a38cfaf989b..9754cc6e09b9 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -1385,6 +1385,8 @@ static const struct pci_epc_features imx8m_pcie_epc_features = {
+ 	.msix_capable = false,
+ 	.bar[BAR_1] = { .type = BAR_RESERVED, },
+ 	.bar[BAR_3] = { .type = BAR_RESERVED, },
++	.bar[BAR_4] = { .type = BAR_FIXED, .fixed_size = SZ_256, },
++	.bar[BAR_5] = { .type = BAR_RESERVED, },
+ 	.align = SZ_64K,
+ };
  
-+/* DR7_FIXED_1 is also used as the init/reset value for DR7 */
-+#define DR7_FIXED_1	0x00000400
-+
- DECLARE_PER_CPU(unsigned long, cpu_dr7);
- 
- #ifndef CONFIG_PARAVIRT_XXL
-@@ -100,8 +103,8 @@ static __always_inline void native_set_debugreg(int regno, unsigned long value)
- 
- static inline void hw_breakpoint_disable(void)
- {
--	/* Zero the control register for HW Breakpoint */
--	set_debugreg(0UL, 7);
-+	/* Reset the control register for HW Breakpoint */
-+	set_debugreg(DR7_FIXED_1, 7);
- 
- 	/* Zero-out the individual HW breakpoint address registers */
- 	set_debugreg(0UL, 0);
-@@ -125,9 +128,12 @@ static __always_inline unsigned long local_db_save(void)
- 		return 0;
- 
- 	get_debugreg(dr7, 7);
--	dr7 &= ~0x400; /* architecturally set bit */
-+
-+	/* Architecturally set bit */
-+	dr7 &= ~DR7_FIXED_1;
- 	if (dr7)
--		set_debugreg(0, 7);
-+		set_debugreg(DR7_FIXED_1, 7);
-+
- 	/*
- 	 * Ensure the compiler doesn't lower the above statements into
- 	 * the critical section; disabling breakpoints late would not
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index b4a391929cdb..639d9bcee842 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -31,6 +31,7 @@
- 
- #include <asm/apic.h>
- #include <asm/pvclock-abi.h>
-+#include <asm/debugreg.h>
- #include <asm/desc.h>
- #include <asm/mtrr.h>
- #include <asm/msr-index.h>
-@@ -249,7 +250,6 @@ enum x86_intercept_stage;
- #define DR7_BP_EN_MASK	0x000000ff
- #define DR7_GE		(1 << 9)
- #define DR7_GD		(1 << 13)
--#define DR7_FIXED_1	0x00000400
- #define DR7_VOLATILE	0xffff2bff
- 
- #define KVM_GUESTDBG_VALID_MASK \
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 3bd7c9ac7576..183765fdb56b 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -2248,7 +2248,7 @@ static void initialize_debug_regs(void)
- 	int i;
- 
- 	/* Control register first */
--	set_debugreg(0, 7);
-+	set_debugreg(DR7_FIXED_1, 7);
- 	set_debugreg(DR6_RESERVED, 6);
- 
- 	/* Ignore db4, db5 */
-diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-index 102641fd2172..8b1a9733d13e 100644
---- a/arch/x86/kernel/kgdb.c
-+++ b/arch/x86/kernel/kgdb.c
-@@ -385,7 +385,7 @@ static void kgdb_disable_hw_debug(struct pt_regs *regs)
- 	struct perf_event *bp;
- 
- 	/* Disable hardware debugging while we are in kgdb: */
--	set_debugreg(0UL, 7);
-+	set_debugreg(DR7_FIXED_1, 7);
- 	for (i = 0; i < HBP_NUM; i++) {
- 		if (!breakinfo[i].enabled)
- 			continue;
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index a10e180cbf23..3ef15c2f152f 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -93,7 +93,7 @@ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode,
- 
- 	/* Only print out debug registers if they are in their non-default state. */
- 	if ((d0 == 0) && (d1 == 0) && (d2 == 0) && (d3 == 0) &&
--	    (d6 == DR6_RESERVED) && (d7 == 0x400))
-+	    (d6 == DR6_RESERVED) && (d7 == DR7_FIXED_1))
- 		return;
- 
- 	printk("%sDR0: %08lx DR1: %08lx DR2: %08lx DR3: %08lx\n",
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 8d6cf25127aa..b972bf72fb8b 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -133,7 +133,7 @@ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode,
- 
- 	/* Only print out debug registers if they are in their non-default state. */
- 	if (!((d0 == 0) && (d1 == 0) && (d2 == 0) && (d3 == 0) &&
--	    (d6 == DR6_RESERVED) && (d7 == 0x400))) {
-+	    (d6 == DR6_RESERVED) && (d7 == DR7_FIXED_1))) {
- 		printk("%sDR0: %016lx DR1: %016lx DR2: %016lx\n",
- 		       log_lvl, d0, d1, d2);
- 		printk("%sDR3: %016lx DR6: %016lx DR7: %016lx\n",
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index b58a74c1722d..a9d992d5652f 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -11035,7 +11035,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 
- 	if (unlikely(vcpu->arch.switch_db_regs &&
- 		     !(vcpu->arch.switch_db_regs & KVM_DEBUGREG_AUTO_SWITCH))) {
--		set_debugreg(0, 7);
-+		set_debugreg(DR7_FIXED_1, 7);
- 		set_debugreg(vcpu->arch.eff_db[0], 0);
- 		set_debugreg(vcpu->arch.eff_db[1], 1);
- 		set_debugreg(vcpu->arch.eff_db[2], 2);
-@@ -11044,7 +11044,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 		if (unlikely(vcpu->arch.switch_db_regs & KVM_DEBUGREG_WONT_EXIT))
- 			kvm_x86_call(set_dr6)(vcpu, vcpu->arch.dr6);
- 	} else if (unlikely(hw_breakpoint_active())) {
--		set_debugreg(0, 7);
-+		set_debugreg(DR7_FIXED_1, 7);
- 	}
- 
- 	vcpu->arch.host_debugctl = get_debugctlmsr();
+@@ -1912,7 +1914,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
+ 		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
+ 		.mode_off[1] = IOMUXC_GPR12,
+ 		.mode_mask[1] = IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE,
+-		.epc_features = &imx8m_pcie_epc_features,
++		.epc_features = &imx8q_pcie_epc_features,
+ 		.init_phy = imx8mq_pcie_init_phy,
+ 		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
+ 	},
 -- 
-2.49.0
+2.37.1
 
 
