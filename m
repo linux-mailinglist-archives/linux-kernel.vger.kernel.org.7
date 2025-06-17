@@ -1,222 +1,104 @@
-Return-Path: <linux-kernel+bounces-689900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE813ADC812
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:24:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D2DAADC82C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D24016C4D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:24:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D487C174CD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C0F2C08C2;
-	Tue, 17 Jun 2025 10:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2435293B53;
+	Tue, 17 Jun 2025 10:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="cdkKjN97"
-Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012060.outbound.protection.outlook.com [52.101.71.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d4Tu15w9"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11424216E2A;
-	Tue, 17 Jun 2025 10:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750155846; cv=fail; b=usN+zspGdw2Ht3l3T0i7esE2NK1v8CvYkgUi0jXWZoRSpz7P04RkCvscQPwUFnS/0C4t10uwtJmAtlQPApYkX1za8e/NT1jWAUZuTvz+q6kuquAz8as3yfN6hbck9PfLcbu2ij2xio3PGc13pzR7qlP7d+iM5FRTzxcno8hL9gU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750155846; c=relaxed/simple;
-	bh=zSBCmZH2vxcHGgdqFfBALqcoYNOaTn0v9/CUCN+n/Ek=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=oIQtDfPrd0iv2XkJIsmvSx84kMGS7pyrDkNLL+cpAAOCkOqNEbt4ouSNZgLlqdXz6EdexmwZLnvvd71aIjL5P+qD08KmoT6In9gNaGYzr56neZLrH+SwPqF4irixRDkXb7tIlASNmWh2JQko1VkUmgWQr40miLdjjKX2f3Qx/9Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=cdkKjN97; arc=fail smtp.client-ip=52.101.71.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RUtlZvUqGjK0kEUfud1HaNNNq60bOqzVHM6yRQS/husNOPOpA2IygQKc/NEZO1PJxT/uYN5FGczGHV27MEx30iLvRwvNzK7DySlv0ISLDSRzl+vWH1OtFlu7dEM3b+OAWzPchF1s+SmSur5CC/V70ptbob3HvsBc+Ip8mQjCqwA1sceCVkzukEA8DGCUCp2XCAERaNC1vKiLtP2ieKkrPSuSCDffb7XWtNkrSEUTYseka9GMf5XEEK8Xuv+X0N1rh1DkS7gxMy6YOsG6QIHBhrkMnD8qCzxzavgkEt2Fu/EE7/us3IU13v/cVZHw628fgQj3NeX3TgU7JUDbmXuIEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ekA463wGXDLjl33aKQP7+7BuiKijAtkzQnkBYiudE8w=;
- b=S3vayBJFBP3X7ibVmd3EHEnTnbk6uGZe5yzvstv7FzDu/DmgDwh+fAheXYDeUIu5iBBgoZZMcC+VcL92DjkMfd72GsJV7gM+ASmq5edWEtQCK+9R8lfnMaw0t/Sqwf8qb6zCIPS5q7QCS2jEU0qk4jEAgv4CCZfCg2p/xibGPZfcADyVUZoyupgSwX383EAoWsQAcg/JOmCPhpOjCfS9QlPvzbS5U4zY8Jj054yTbRRuzl2wwx6Qn4QGGaNcfApSUZO+fU2LnWhweU4qN8M9ON4hmXB2600GqScmu7LrA15CoqwGygZ0VWlbDAqPqkRI3GORZ7T4ws9W8pMx4hsEhA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=gmail.com smtp.mailfrom=axis.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=axis.com; dkim=none (message
- not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ekA463wGXDLjl33aKQP7+7BuiKijAtkzQnkBYiudE8w=;
- b=cdkKjN97TpyUDOQeVrHI8lyRXhUFggBICodEb1J1iy/fNTFN1DTGwFVOplheQxY78viSXiZgGDONP8QUngzeCs47mZLOql79TTyQVXDHblpwsGMgyKtUzptm31dYXtWNvw7VKrLmrB2PJBGvQJmwj2iM4EilsXIH0aQa1sTqkc8=
-Received: from AM9P193CA0021.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:21e::26)
- by PAXPR02MB7296.eurprd02.prod.outlook.com (2603:10a6:102:1bd::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Tue, 17 Jun
- 2025 10:24:01 +0000
-Received: from AM3PEPF0000A793.eurprd04.prod.outlook.com
- (2603:10a6:20b:21e:cafe::30) by AM9P193CA0021.outlook.office365.com
- (2603:10a6:20b:21e::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.27 via Frontend Transport; Tue,
- 17 Jun 2025 10:24:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- AM3PEPF0000A793.mail.protection.outlook.com (10.167.16.122) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8835.15 via Frontend Transport; Tue, 17 Jun 2025 10:24:01 +0000
-Received: from SE-MAILARCH01W.axis.com (10.20.40.15) by se-mail01w.axis.com
- (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Tue, 17 Jun
- 2025 12:23:55 +0200
-Received: from se-mail01w.axis.com (10.20.40.7) by SE-MAILARCH01W.axis.com
- (10.20.40.15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Tue, 17 Jun
- 2025 12:23:55 +0200
-Received: from se-intmail01x.se.axis.com (10.4.0.28) by se-mail01w.axis.com
- (10.20.40.7) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Tue, 17 Jun 2025 12:23:55 +0200
-Received: from pc51235-2237.se.axis.com (pc51235-2237.se.axis.com [10.96.29.3])
-	by se-intmail01x.se.axis.com (Postfix) with ESMTP id 7E5D8278A;
-	Tue, 17 Jun 2025 12:23:55 +0200 (CEST)
-Received: by pc51235-2237.se.axis.com (Postfix, from userid 3319)
-	id 6E9034033836; Tue, 17 Jun 2025 12:23:55 +0200 (CEST)
-From: Johan Adolfsson <johan.adolfsson@axis.com>
-Date: Tue, 17 Jun 2025 12:23:55 +0200
-Subject: [PATCH v7 2/2] dt-bindings: leds: lp50xx: Document child reg, fix
- example
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25C7293C64;
+	Tue, 17 Jun 2025 10:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750156014; cv=none; b=Q4rV1ZCcOUsrz+cI1E5RuzT4B54E9qKq2OLN18f2CKU9FBM8lhRaJHKTC1FGE5rNYHzkl5X6/X2fCU+h3nz3wotpPe2HMTaXqvGbVu0jGCaiagnxJVJlUYQPmoPDig5R+9m9YhY2WSXkDdWQGwAWcUqP2z0OWNt1HBN2mGG4d5o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750156014; c=relaxed/simple;
+	bh=c7SJ8S5i0EZ71+KLteXSUyF3nQXE2e502C4Rl9OAeiY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YwXVCrI9wCiUg9s3ArKXyByr8m+gIKKPnUXf4fwLmBqXdBNzU+ZXn0LTQuq1ouspEzdV4ouLGxd68zl9LJxoU18zYKtIXxDbn/Co7LAZf1MOWOPrcfE1Jd2n3EzbRV9jKrC5ip1NevEuouORz3mXuUicAxJJPIDvYtZ6r8zQ0xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d4Tu15w9; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3137c20213cso6608848a91.3;
+        Tue, 17 Jun 2025 03:26:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750156012; x=1750760812; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HZz6MHsNO6dIlJ6aj/tvnzfPrgOsbHqDiUlqtB5Es+k=;
+        b=d4Tu15w9mPe4I9AiESzvjNTZjHcABRB9mYznpgNwxg5Q7X50dgIh1rtJbz6FlJYpjr
+         NhPKvR6/fdai0yvtB9+akEOR31ya4rwvykY9xyhaKMRnhv9RAJX9GS4tLTeThRQoVXA2
+         9+uQLUT5AGBB+jYqopFx2BcA1b6hB/njt1+5yCph9vW8p+wsJbfUq0Asb3/EUKyv66rw
+         kiWn9Dzr0SFZtrCacWckNAGGx+rXlOWQT7bGp9NvPGkZLhhU9Vxxy6xoc/QeONois+fN
+         48skoBSTBDXb3CXkCTi8h+JLPijXL2+OM0XH0df8D3LQMs0FCaP/+LqV0Sqw8qbqqtbd
+         JfXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750156012; x=1750760812;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HZz6MHsNO6dIlJ6aj/tvnzfPrgOsbHqDiUlqtB5Es+k=;
+        b=qUPnxNVHp7OHLBDgvTSu6bCEsaKiH9qpX8s+X29ZOVxVX7yWyot0rcM7y1UjVnkB5o
+         MqMSxXy8FO6FR2oNXZhFEDcEvJrFcEOj97ZrTsU/5wEFEGkGG3ATyLrcX6V/RdHa385J
+         PgyuXUETEbo/63PXYzO4+eQ7t+Z06rc42O/4ubjDhPPB2yoVr4IEhVb9BC0N46slsC/m
+         Yz7EAPgP+SG4BGWGfqj/pkzYydK0Sun3S0gsPHUjTq0bR125m09F6FWOknMy/UNSMXzI
+         FPDyn/psUdwyswRSgkPyxp8QjO4H9fkd5IHmhF94vuR/IciAT4k8iyYhhhWU4sXFt1MI
+         PRkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUeiUGY4iIjjDG0QRm+aeUZN2yNmouG5BMlIbGMEOdjMAx1qKgt6UlmJx7XbfLaXt1phgtpn5A9ZEG9GlQIOsVCr/F69w==@vger.kernel.org, AJvYcCUosPFmW9rQTgd2vfQFZRvjzHoS+J3hKolfPzmog+ro7l3TnlY4xHEoXK/KRHYrapvTlk1zXfz6+5RMmdw=@vger.kernel.org, AJvYcCVTmodj5cCTX4HV2RSiiMW2C/WVfVK4M99XfG5pBDFlohSFqeWWzVy2qZBCKxseoaHCfraDGGff@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY2/sU+QuvvM/90LTrjiX9MjPpSRdojfeJXKy+j9EQmG7cXEHb
+	aH0mAHmi95lJK7mvxkkA6XqGFQ6xYxb7il+B3xtVtZ6GfkJtpAOZKZ0f
+X-Gm-Gg: ASbGncvC+/HZMXPOrrrps2X072qdEK2as66Y+g0WmYjMmmnMHEzhZvCuc/J42ul/ErV
+	wiq/bOnFajcnhkFkk/icQ4RRkHuxvDANReH+FskDqeUtrBDpCiYeJ0VRMMXXuNZEmzvFx0XpuO4
+	u0Y6RGOhLrcED+3XANcrurSBVRQensBWxMAjcCsGaFHvUGK8viLCh5RoBrtF2NbwM/sZ8PJZFib
+	l6/A8ARPKxKTS9iMFWJ8E74pKmjYAqEe8JkzXdE1rwI/3QRdxNUo3sgEJMfSUBgDHAVUFCKhJJP
+	nnSM1EeJCJqCd+0fnEQHVk1GnOoPcZCTSy+XputnuRW5EkOWEtS9ASy68dwyzzjlfYBCtrjCJY/
+	riIXb
+X-Google-Smtp-Source: AGHT+IEvpo0maN0m+gyRmMErklVTxeyTK+JnMtREA8aMyFe7PwoLhFvswRDMfRFhsxdH7wrvpIfxhw==
+X-Received: by 2002:a17:90b:274d:b0:312:959:dc4d with SMTP id 98e67ed59e1d1-313f1beafdcmr21027180a91.7.1750156011965;
+        Tue, 17 Jun 2025 03:26:51 -0700 (PDT)
+Received: from localhost.localdomain ([104.28.254.76])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365d88bf0esm76165935ad.31.2025.06.17.03.26.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 03:26:51 -0700 (PDT)
+From: Hai Tran <hoanghaivn0406@gmail.com>
+To: i@rong.moe
+Cc: hdegoede@redhat.com,
+	i@hack3r.moe,
+	ikepanhc@gmail.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	stable@vger.kernel.org,
+	Hai Tran <hoanghaivn0406@gmail.com>
+Subject: Re: [PATCH] platform/x86: ideapad-laptop: use usleep_range() for EC polling
+Date: Tue, 17 Jun 2025 17:25:22 +0700
+Message-ID: <20250617102522.2524-1-hoanghaivn0406@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250525201833.37939-1-i@rong.moe>
+References: <20250525201833.37939-1-i@rong.moe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250617-led-fix-v7-2-cdbe8efc88fa@axis.com>
-References: <20250617-led-fix-v7-0-cdbe8efc88fa@axis.com>
-In-Reply-To: <20250617-led-fix-v7-0-cdbe8efc88fa@axis.com>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Andrew Davis <afd@ti.com>, Jacek Anaszewski
-	<jacek.anaszewski@gmail.com>
-CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, Johan Adolfsson <johan.adolfsson@axis.com>,
-	<kernel@axis.com>
-X-Mailer: b4 0.13.0
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF0000A793:EE_|PAXPR02MB7296:EE_
-X-MS-Office365-Filtering-Correlation-Id: b9650365-27b5-45b8-3b5a-08ddad8913fd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TE9yTWE5Ui80dWhPTHE1SVI5QnA5SWJkYzJTc3VQVGNkYnZxQWIrU1hNWVhO?=
- =?utf-8?B?bmM4ejduRStBWThVQUtjcnJhb3N0OExJVWhWKzBNVTBVdjI0YVJOY3FrN1Zz?=
- =?utf-8?B?YU1GNXpOa0tqZjNkeWxubGM0UWhYRHRqdE14aGprQTBVMForZThpSWxpd0xL?=
- =?utf-8?B?OVJmZGxxelFmbk1HY3loQkFQYlNnMkNPcTZsbnFKUDd2aEpSRDdCaWwvSERP?=
- =?utf-8?B?bXR4WFZScktZbG54WDdlRGNMRDZVQk82akg4Ry9LeXpmem1HaWhUbEZZdE8z?=
- =?utf-8?B?d2ZIZFArTTFsUm9TWkNKcjI3SmVKSDR2WGxrZ1ZzdFhyelpyVG9DZGR2Y1Vk?=
- =?utf-8?B?K0d5MHVzWHZrd0IyVXRQdnZTbmlGYWtYNURpL0F5Q29QcE9yMzdnS3RDSVJU?=
- =?utf-8?B?YWVZTnd4cWVmVGJqK1MyTUR2Q01LWmEvRmZMeUNuQXF0eWFrMHJoS2xNMnY2?=
- =?utf-8?B?WVE1VUtmV1VPLzNoMGVJUFc0aVZsdi9sKzRqWHRteDNnMVdQNTR4UVFIMDFK?=
- =?utf-8?B?bHNOWC9iYkk1emptR0lWa25lQ1E2UHhFQ1RMU0JNK0tXTEZIaUhza3lzUEdp?=
- =?utf-8?B?M3B5MHBnK0NNb2hCZVpRdGtQbENUQnlyY0hyM1hDdmJOV0RQMnphbVFGTmhn?=
- =?utf-8?B?TWxHRG1YRXdHbTdxRXZwNlBYZ1c1dUVvYW0xYWlTNGN2TVk2S0JFbjVmUlZL?=
- =?utf-8?B?d2RTQndEb0VkL1lZN3FmUXB1UXdCU3RHOUl6dDJZdDFuU0FJcm5HamxYUHlz?=
- =?utf-8?B?V210UHF1eDVwYmRPN1EyNmw2Z2UxK3B3SnBCN1N3NEVsa3RPUlZGODBWZlRi?=
- =?utf-8?B?bGhBem9Gdms1c0k4bVBBZ2ljOS9SRGFCb2IvSXZHeCtEd2srSWxCYkdsY3JW?=
- =?utf-8?B?bWRKQlVnV0l5bEEzRi8xaUlMeEtnbjVZQk8rWU9RS2YwMUN6cVgwdzVTaTZD?=
- =?utf-8?B?b1I0UXRkTFdrQ3FreU5SNzIydVJDaWRKMmRndXliTEJNb0xJMVV4OXhDVytl?=
- =?utf-8?B?QnBVd3Y2NEZWWHhPYW1Ea1o0L3g3aU1JWjloY3VDNUxxRG5Tc3hsZUtweVll?=
- =?utf-8?B?cDNlM0JCaVN6VFFucnBsZWpuZXhvanh3bmVxUjF1dzdrNXlzYlRCc3pOMUNu?=
- =?utf-8?B?QVNaalJCWSthanpFb3h0OFhIaUpVR0tUSmhSWC91VXJvRE9yc01mSDNRcm1O?=
- =?utf-8?B?aDBrbitVN2hka3NBTUl6TTJEdWZBSHhkQ0VuTVV6MXhVc0s1MDEwcGczaTFa?=
- =?utf-8?B?T1A5c3NnL241WXpyT2crVTErMHBmVU5xZzV6Y2ROVWFLRHl5Zmk4VWRWTjJj?=
- =?utf-8?B?eFNRcmlnNW1FRTVndzFOcTYyZ3dYYWhLNzJ3VEdyOWhYUVRLWlNvYXF2UDdz?=
- =?utf-8?B?V2RXN3N5aXhadDRVSm1FYkRHQTNsSjVvUXNYc0FIdy8rcTROTXNOMC92dTJ5?=
- =?utf-8?B?bjVXL1pLbm9wNmlIdG0xKzN6VVRMR0JLQmkzM0xRb1k5WTlJTlVYUnBmWHFz?=
- =?utf-8?B?cFI2V3kxYTEyZGRKRFFKT3NIaDA5TXhYMVNxTU0za1kzdWZOVVZQOWVPL1Bk?=
- =?utf-8?B?bW5rV3hQSTQ0am5yWlVpVXpNdlB1dzZjeFhBeENqaVNJYzBsTUkxTEphdG81?=
- =?utf-8?B?ZXlKcWRVK3ZkSWNsVzFhS3dTK0t4OWdKVmRrSmJXOFFwb1VwTTVTWlE4S0p1?=
- =?utf-8?B?OW5kQ2NzbmhacG1abWxoK0d3UDFSNHVUdFlNMWt3emkvREp3bjNaUXphK1Bv?=
- =?utf-8?B?TWNqN3ZHNm5xall0RWxHVmYwdEQyMVVxendJd2lPdzlnVVZXcmkvZWNvbEN6?=
- =?utf-8?B?UHNGS0gxQ09aeHozTzRBc1lMMGE4RkZRNlYvOXo0dTMvT3lCMks4TUFmRFZh?=
- =?utf-8?B?c24yUG00SkQyUkRrTXNuTld3S0RlRzlHVXI0ejNmN3NlNDlxQlV6TDJKOEZi?=
- =?utf-8?B?UjNhWmNXbFhNMDQwQUswNlZWTGpMQ1E0VUFrd2d3bWlIdkJES0FIc0F2eUt0?=
- =?utf-8?B?cjFkRm9QeTk2MU1idmo3eUZUK28xajZWR1F1eFNqcnExbm55Vy93Z29adGsx?=
- =?utf-8?Q?CN754V?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2025 10:24:01.3532
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9650365-27b5-45b8-3b5a-08ddad8913fd
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM3PEPF0000A793.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR02MB7296
+Content-Transfer-Encoding: 8bit
 
-The led child reg node is the index within the bank, document that
-and update the example accordingly.
-The reg property in child node is limited to 0-2 since there are 3 leds
-per bank, previous value in example was speculative.
+Tested on my ThinkBook 16 G6+ AHP and everything is working fine now with:
+- Fn+F5/F6 inputs to change brightness are not shutdown unexpectedly anymore.
+- Sleep is working after closing the lid or via power button.
 
-Signed-off-by: Johan Adolfsson <johan.adolfsson@axis.com>
----
- .../devicetree/bindings/leds/leds-lp50xx.yaml         | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml b/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
-index 402c25424525..23f809906ba7 100644
---- a/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
-+++ b/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
-@@ -81,7 +81,12 @@ patternProperties:
- 
-         properties:
-           reg:
--            maxItems: 1
-+            items:
-+              - minimum: 0
-+                maximum: 2
-+
-+            description:
-+              This property denotes the index within the LED bank.
- 
-         required:
-           - reg
-@@ -138,18 +143,18 @@ examples:
-                 color = <LED_COLOR_ID_RGB>;
-                 function = LED_FUNCTION_STANDBY;
- 
--                led@3 {
--                    reg = <0x3>;
-+                led@0 {
-+                    reg = <0x0>;
-                     color = <LED_COLOR_ID_RED>;
-                 };
- 
--                led@4 {
--                    reg = <0x4>;
-+                led@1 {
-+                    reg = <0x1>;
-                     color = <LED_COLOR_ID_GREEN>;
-                 };
- 
--                led@5 {
--                    reg = <0x5>;
-+                led@2 {
-+                    reg = <0x2>;
-                     color = <LED_COLOR_ID_BLUE>;
-                 };
-             };
-
--- 
-2.30.2
-
+Tested-by: Hai Tran <hoanghaivn0406@gmail.com> 
 
