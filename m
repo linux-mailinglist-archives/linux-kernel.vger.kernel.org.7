@@ -1,135 +1,79 @@
-Return-Path: <linux-kernel+bounces-689880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB13BADC7A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:11:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97423ADC7B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DCA616E5BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:11:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5FC6189060C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AC82C08D3;
-	Tue, 17 Jun 2025 10:11:09 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCB32DF3D3;
+	Tue, 17 Jun 2025 10:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="QSN30ksR"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC52F2951C8;
-	Tue, 17 Jun 2025 10:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6A72DF3CB;
+	Tue, 17 Jun 2025 10:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750155069; cv=none; b=WJ2tuf7DddK2apK8rPw2x04FdB0ozEwJW450dAb8NtHtukzeFS5aRb6Vt7H1QM1Vj5dGLruzV2KcLFSShWnBEWTx4l56BzCqh7dLGZdP5umu4JJ5a3dJJuFPVO9eRfZT0ChumqhL+IXlLG0Kz8pmftI5gwrQfxdaYETMs/cze7Y=
+	t=1750155076; cv=none; b=J87DvzkSoTym6NQohPJ6swmf4f85b0G3rRlAyqgq61CkP8N+QMg3jv/YYcUb6vvaXp+ezV81cHm1xDyeMywh7lo5gwbGETjsDcC3nG4Brv1MpMiT0hZILq2T1mC5+tk00rTOew5nOxHRLfZ8ZSfsZbFrJNEWHcxocoY1avAEEMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750155069; c=relaxed/simple;
-	bh=VhqtVe/12RyNdzwO39QyuBj46xkJKX8jJtYoD60M2rE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vGEM/q6icFlSDaGdisN4GAYDZkOlIMNIAnC2twz/0K/nVSS6EJe8m6g27q1wkSjqFMrwiK81Czr87kCT33g04rcNvNXMf9dwUlNSB8362jfZPg8oog7m+yeBJ1Or+Hmj/QnFT+ts+Eqqtpoq8srzha25O3oo+0EkYXgdirRBl9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.33.151] (unknown [210.73.43.2])
-	by APP-03 (Coremail) with SMTP id rQCowACnvFQoP1FokJcgBw--.2075S2;
-	Tue, 17 Jun 2025 18:10:50 +0800 (CST)
-Message-ID: <fd9b3bbc-3318-4845-90ca-7f245049665e@iscas.ac.cn>
-Date: Tue, 17 Jun 2025 18:10:48 +0800
+	s=arc-20240116; t=1750155076; c=relaxed/simple;
+	bh=cUKbbU/oS3Cg7lShc7Ki9J5+9Zrxia79qJwxm5GCJsY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TnCFN/mAsuzSAID55b0F7SBa5vKsAMDR7m2nrvfnLRritfhKIs9OJAXzBJJnSEd4gUUZ5PttLElFLqWEsn9jGpyCV1hChclyeC5aYr0oCx+nkZhr3a5VM+DdA6GbKF+O47w+uegyndGqA1Wlux9xW/QDvQRZgkxuhHpee6pkOu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=QSN30ksR; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=cUKbbU/oS3Cg7lShc7Ki9J5+9Zrxia79qJwxm5GCJsY=;
+	t=1750155075; x=1751364675; b=QSN30ksRHX52XiNxPdbhNT+9X62W5FKMYdv+ReNrXwdTlN0
+	9QZvJp9qfx5LGJvXSvQwTnSgUPB5aGsjsT/TH8VM9GIwc5Ms7Z9ltOJh9wWweWffBy6TTRAlZZ8wI
+	F6N6R8jxGXjHS994+S7FcVVci2embCOnuhX4rGuGDy3Nvgm4/g3GPjoVwYZt0dS79RS6Q+TESLjGc
+	1xVw072k+pne4c+y98Mp8o05mSljUvlFY0WiXEmNFZzqKMtBDxbGnpWTCgBgkpxp/BJNoWwb82SwO
+	qrOAhzvNnkkeJvqx1lWrL0oX1lPmvLDitUsPFaEdJrFLeoHZEE/dhFTSIPHvYweA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uRTHT-0000000EGoc-3uts;
+	Tue, 17 Jun 2025 12:11:04 +0200
+Message-ID: <67fa81579ed1e4bf289235863eb5728b243a58ba.camel@sipsolutions.net>
+Subject: Re: [syzbot] [wireless?] INFO: task hung in
+ rfkill_global_led_trigger_worker (3)
+From: Johannes Berg <johannes@sipsolutions.net>
+To: syzbot <syzbot+50499e163bfa302dfe7b@syzkaller.appspotmail.com>, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Date: Tue, 17 Jun 2025 12:11:02 +0200
+In-Reply-To: <000000000000114385061d997d9c@google.com>
+References: <000000000000114385061d997d9c@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] riscv: dts: spacemit: Add DMA translation buses for
- K1
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Vivian Wang <wangruikang@iscas.ac.cn>, Yixun Lan <dlan@gentoo.org>,
- Guodong Xu <guodong@riscstar.com>, Ze Huang <huangze@whut.edu.cn>,
- spacemit@lists.linux.dev
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250617-k1-dma-buses-rfc-wip-v1-1-c8ec192fbf58@iscas.ac.cn>
- <74e3c488-4457-4026-9597-806b98fd4e11@kernel.org>
- <10ab212f-e06b-4214-99cd-a687659fcf71@iscas.ac.cn>
- <2dc8ab35-4f58-49d3-8e8b-3e463fa592ae@kernel.org>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <2dc8ab35-4f58-49d3-8e8b-3e463fa592ae@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowACnvFQoP1FokJcgBw--.2075S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCrWfKrWrJFyDJrW3Xw15twb_yoW5GFy7pF
-	Z3GF9akFZ2yFyxWrs2vrnrW340yws7Z3W5Jrs5GryrAFZ8WFySgrs7tw1Y934UXr4rJay7
-	ZF4UZ3s7uF45ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY
-	04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUb8hL5UUUUU==
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+X-malware-bazaar: not-scanned
 
-On 6/17/25 17:35, Krzysztof Kozlowski wrote:
-> On 17/06/2025 10:48, Vivian Wang wrote:
->> Hi Krzysztof,
->>
->> On 6/17/25 14:21, Krzysztof Kozlowski wrote:
->>> On 17/06/2025 07:21, Vivian Wang wrote:
->>>> The SpacemiT K1 has various static translations of DMA accesses. Add
->>>> these as simple-bus nodes. Devices actually using these translation will
->>>> be added in later patches.
->>>>
->>>> The bus names are assigned according to consensus with SpacemiT [1].
->>> Read the feedback there:
->>>
->>> "So, as you are submitting the first node(s) under network_bus: bus@5, you
->>> should have this added into your patchset, instead of sending out with
->>> none."
->> As mentioned in the patch extra message, this is an RFC meant for
->> achieving consensus on what the bus nodes should look like, not an
->> actual patch meant to be taken. I was hoping I was clear on that, but I
->> guess that paragraph was buried too deep. Well...
->>> Plus simple bus within MMIO node needs unit address. IOW, don't mix MMIO
->>> with non-MMIO. I also suspect this does not pass checks, so the tools
->>> can do our review...
->> This DT passes "make dtbs_check" fine, with only unrelated warnings on
->> sec_uart1 that was already there before:
->>
->>   DTC [C] arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dtb
->> .../arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dtb: serial@f0612000
->> (spacemit,k1-uart): 'clock-names' is a required property
->>         from schema $id: http://devicetree.org/schemas/serial/8250.yaml#
->>   DTC [C] arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dtb
->> .../arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dtb: serial@f0612000
->> (spacemit,k1-uart): 'clock-names' is a required property
->>         from schema $id: http://devicetree.org/schemas/serial/8250.yaml#
->>
->> To be honest, I don't understand what "within MMIO node" means here.
->> Should the buses be taken out of /soc and added as its siblings?
-> These looks like children of simple-bus. If that's right: children of
-> simple-bus are supposed to have unit addresses (see also simple-bus in
-> the DT schema).
+On Fri, 2024-07-19 at 06:15 -0700, syzbot wrote:
+>=20
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D50499e163bfa302=
+dfe7b
 
-The history of the simple-bus.yaml bindings file suggests that a
-simple-bus with empty ranges and no unit address as a child of a parent
-simple-bus is intentionally allowed [1]. The commit message also
-suggests that even in older versions of the same file it was not the
-intention to disallow such nested buses.
+#syz dup: INFO: task hung in rfkill_unregister (3)
+#syz set label: nfc
 
-[1]: https://github.com/devicetree-org/dt-schema/commit/ed9190d20f146d13e262cc9138506326f7d4da91
-
-Regards,
-Vivian "dramforever" Wang
-
+johannes
 
