@@ -1,178 +1,196 @@
-Return-Path: <linux-kernel+bounces-689739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41155ADC5CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:10:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CD1ADC5D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0678D1768A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:09:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6758916B03F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 09:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BB329008E;
-	Tue, 17 Jun 2025 09:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A14293C55;
+	Tue, 17 Jun 2025 09:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fby11LH4"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KUb8QgmT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NPrQeILg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5014E2116E9
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 09:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57460293C43;
+	Tue, 17 Jun 2025 09:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750151305; cv=none; b=aCtRnmD3nxU1Xl3LOHeBjA2WJgGN2uicevg9NP+byPdEee9psS4Wr86F/P3efgKDaeXe/s1EM6HPtYDXB2dqQAhTRFrslolXlkHvtvjkhGm4Ac4KrY2GGcVMyB4dfebfC+9xqqM+URwhZbBDOi1MrbYXF/AtypYM/tOaCQOiX/c=
+	t=1750151332; cv=none; b=Tt+Kcb8dBj9R9k/ltRPcEeC0kAsk7Z5OlsX/3WJo3vCxa9S9CqI8DwnAteA7g1dS+Ef0uiSvSPibi9yQJw9ES05wiBf+pakbUzv2TimSSiRtsu82WNnim9mduXSrPj+ONk1sZbn1e/99dhLhe7XVir5Gy03CPSEExtLbc/P1wBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750151305; c=relaxed/simple;
-	bh=z0fKOYwV+dsFs21nS2jxYOO5t4aC6ljU0NF3BjIkz5o=;
+	s=arc-20240116; t=1750151332; c=relaxed/simple;
+	bh=+LSwdzi7iFB7WX4cH5+zM8FDjhuEN9oGKbGlFg7oMac=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=llBtBM/NMsr6KfTGfPLK+hPgBXFfjwBrAoIDVSc7k4KBOX5lCAZHO5kzVeotAwfAntCKNOQGPaYH1P2sTwghq8uU3eV6zN12Ewkh+spkQSZyzukUHRzL14wnwJWL3IFSbio/Bm/2o30DSOx53bCc+pPkUTFjJu3TOUOyt0g8Zgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fby11LH4; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-3a53359dea5so3729961f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 02:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750151302; x=1750756102; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gKAD3svXOw7buq7HtIEdYKllqfFeijr7NxfdlNG4wcY=;
-        b=fby11LH4Wt3FtCM6ebjWHIb+SlIvq+3hOl1Vyr23S8WpyRU9CU7V96JQujTyJsIpVo
-         jfxLDPyovDLDvY+4LqXuNVtKDlEDME2dzx9TPdb1jwrvv7ACVCNm0Qy0HDaLHusdncdV
-         eT9dZvtN7Fe4DQTVXbr78dGf1Q9Y8ouop9sOz+rLPaBID/hedM5EZT6oKwwkwP8ccqoO
-         FiR51C7qvCn+FXbDwJi+rawRsEFl+H2ZzLjvBn2Ey00SFept7ACNSwlhOtspPwoytK8l
-         L3A8b7fBAU8MmcsjAyvuKvxpSfwSQpHJe78PUj50WO6w3qk8K/kdRUP7XrQI0Qh+6sOI
-         lG7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750151302; x=1750756102;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gKAD3svXOw7buq7HtIEdYKllqfFeijr7NxfdlNG4wcY=;
-        b=c75rDiAOfiHiJf4lnL3lICqFLtDPXkVxcinB9OES7G65nW4p0GmpKLTHv8+I+Bkcmp
-         vj0cB0WCeLNScJstHXs8K9jR5geNo5uYgp1wwM0uMs16s+cyq0W/+3OTNt/eDbJqlz8c
-         xEJmqrkDaIHNhSe7eL25T8A+4DaqrhSPVU1isEGfi2qtGboQvkSFevkyNokEFLan7beL
-         FDmXPaKsyrZhgZWcuUJ8WXY0puv5z4DtfsZ+SpBRJK8+42EipIvMOUNSR1cRT1rpbuOF
-         hGhU5q0TcO3hFSbu5BBf7jmWKKNnKFPiNOoetYHzlJ+g2/ajq8m6KyRs3GaAYHuGcnNT
-         PvMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgk7AW4Eou33HkZj2/2eKlpJyes8gcdOrofwS1GiYUPhrpN0UzClMFcus4aiR5xXBNDkWThl4poRGuNqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIgsYKEWB/CvXNBTTxYN8f/wD1TkHyXZdfM5wLqhfb08shFRc6
-	CJtqHV+sU7+X0GG99MbBE3PCfRtGMWUp9D36msIVDO8t8zaInyWiJ/GrtDtT3dppcMU=
-X-Gm-Gg: ASbGncsVxtW+E+8waZBokmRE/dAdagLfsXOeTIz22iIvLd2i4lSAdrrs5i9QlYI45/i
-	6z5Wf71MGVLviT4g+oF/J/2wKMpMs+MSc8Qz8KyEOormhcM+beXLifUQyMCH4VbUW5Uu0JEfivb
-	dehZhU8FWYHTWKxlsNZuJZdOgQ6KSmBmIyhS9q/LUc2w4RCIX+cmUg0TcyeqJy2JSRK8heMjMCN
-	q2d7SH/9Fzhrh265ySWksrenlAiHvYrWIGGvJX0uAQ1W8sK9mhd1o86v1VsNhZ/54ImNLXmvJqq
-	sofK6DbY0Qo1INU6Dpwie2ASCO4tMZD3waoEzNGvfiquVtWfS/xwi5WAWiVj8WtU
-X-Google-Smtp-Source: AGHT+IHZD55Cs3Zu1HygCPmxe5Uy/nwrwnFD2un/64EwIJaV4i4CI3mWQiyOSmwe7CiHE9VlU6rzCQ==
-X-Received: by 2002:a05:6000:65c:b0:3a5:8a68:b81b with SMTP id ffacd0b85a97d-3a58a68bcc4mr888857f8f.44.1750151301539;
-        Tue, 17 Jun 2025 02:08:21 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e16a097sm174029075e9.33.2025.06.17.02.08.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 02:08:21 -0700 (PDT)
-Date: Tue, 17 Jun 2025 11:08:19 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Jemmy Wong <jemmywong512@gmail.com>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>
-Cc: Waiman Long <longman@redhat.com>, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] cgroup: Add lock guard support
-Message-ID: <2dd7rwkxuirjqpxzdvplt26vgfydomu56j3dkmr37765zk67pd@aou7jw4d6wtq>
-References: <20250606161841.44354-1-jemmywong512@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n+gkW80Xt++pu8L4Lv39OCd7yi4v8k8Tc6bC8ckS+2HKoAHIRfWMWjQ3mZhwhDNrEclHhAaExB+hVIqm/DvD0ZMRmkRQgY+51mvb3vl1MoAYwTOzuyIADsTdBN0dZ6PLb5EPK0E4nI5kS7LDfu7WsZq/LQXxMyDSw5XaIOVg0+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KUb8QgmT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NPrQeILg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 17 Jun 2025 11:08:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750151328;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=25pCXzxkNTMYHHMTY+X+tnzwjC+bKUvyR61NQn/zjBc=;
+	b=KUb8QgmTBfXmGSLRFurMn9NhvTz/C8RtHdjjjCq6cF84pLIiPpPLNZ9S5C0+18WKySLs3Q
+	pnSxbWTMCFtvOZSjfl9zs/Pk6CMEklcJMYjgclRqoEEHERQiR4qzPb8yq2/LwdjDX9QPB/
+	Li/TSegb9OAzQgqW7bUdgW0LBOcYM1xh4R3827K2tw/oB6+5Oqe0xNRDg0cMzM6usKymlb
+	/1JzqLn4eYjzgpq4rYHnvJgv9xFVtpHpvFmwIRZbDlbdtYrjM0OoDStRS9Hg5VZSyTS24+
+	qYtlpuC9FDe9l8HqBWcrSM65oHVkkNK0dtIZRqpiilFYpQoBHMvFNGK/cvzOWg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750151328;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=25pCXzxkNTMYHHMTY+X+tnzwjC+bKUvyR61NQn/zjBc=;
+	b=NPrQeILgql6i20io6NJngC6jglNiJ/wcZJMjjkxJ7is3IUNVdQBMHIZQZhKYUFRrR6qWUF
+	03LIThUV/6LnUIBg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Marc =?utf-8?Q?Str=C3=A4mke?= <marc.straemke@eltropuls.de>
+Cc: linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Subject: Re: Latency spikes on V6.15.1 Preempt RT and maybe related to intel?
+ IGB
+Message-ID: <20250617090846.cxnYD_fg@linutronix.de>
+References: <20250613145434.T2x2ML8_@linutronix.de>
+ <E1uQ6I0-000000003aa-37uJ@smtprelay05.ispgateway.de>
+ <20250613195838.0-gZ6bqS@linutronix.de>
+ <97638b0b-cd96-40e2-9dc2-5e6f767b90a4@eltropuls.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="toh6m6x3hhh3r2az"
-Content-Disposition: inline
-In-Reply-To: <20250606161841.44354-1-jemmywong512@gmail.com>
-
-
---toh6m6x3hhh3r2az
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 0/3] cgroup: Add lock guard support
-MIME-Version: 1.0
+In-Reply-To: <97638b0b-cd96-40e2-9dc2-5e6f767b90a4@eltropuls.de>
 
-Hello.
+On 2025-06-14 10:52:36 [+0200], Marc Str=C3=A4mke wrote:
+> Sebastian,
+Hi,
 
-I understand why this might have been controversial but I'm surprised it
-remains so when the lock guards are already used in the kernel code.
-Documentation/process/coding-style.rst isn't partisan in either way.
-
-Johannes:
-> heebeejeebees - it's asymmetric and critical sections don't stand out
-> visually at all.
-- I'd say that's the point of it for functions that are made to
-  manipulate data structures under the lock. Not to spoil the code.
-- Yes, it's a different coding style that one has to get used to.
-
-> extra indentation
-- deeper indentation =3D=3D deeper locking, wary of that
-- although I admit, in some cases of the reworked code, it's overly deep
-
-Further reasoning is laid out in include/linux/cleanup.h. I noticed
-there exists no_free_ptr() macro and that suggests an idea for analogous
-no_exit_class() (or unguard()) macro (essential an unlock + signal for
-compiler to not call cleanup function after this BB).
-
-Tejun:
-> There are no practical benefits to converting the code base at this point.
-
-I'd expect future backports (into such code) to be more robust wrt
-pairing errors.
-At the same time this is also my biggest concern about this change, the
-wide-spread diff would make current backporting more difficult.  (But
-I'd counter argue that one should think forward here.)
-
-
-Further benefits I see:
-- it is fewer lines (code is to the point),
-- reliable cleanup paths,
-- it is modern and evolution step forward (given such constructs
-  eventually emerge in various languages).
-
-
-On Sat, Jun 07, 2025 at 12:18:38AM +0800, Jemmy Wong <jemmywong512@gmail.co=
-m> wrote:
-> v1 changes:
-> - remove guard support for BPF
-> - split patch into parts
+> i tried that in the past (rtla top auto analysis). But i do not really
+> understand the result:
 >=20
-> v0 link:
-> https://lore.kernel.org/all/20250605211053.19200-1-jemmywong512@gmail.com/
+> rtla timerlat hit stop tracing
+> ## CPU 1 hit stop tracing, analyzing it ##
+> =C2=A0 IRQ handler delay:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0.00 us (0.00
+> %)
+> =C2=A0 IRQ latency:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 709.25 us
+> =C2=A0 Blocking thread:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 ip:3567
+> =C2=A0=C2=A0=C2=A0 Blocking thread stack trace
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> timerlat_irq
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> __hrtimer_run_queues
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> hrtimer_interrupt
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> __sysvec_apic_timer_interrupt
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> sysvec_apic_timer_interrupt
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> asm_sysvec_apic_timer_interrupt
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> igb_update_mc_addr_list
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> igb_set_rx_mode
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> __dev_change_flags
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> netif_change_flags
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> do_setlink.constprop.0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> rtnl_newlink
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> rtnetlink_rcv_msg
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> netlink_rcv_skb
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> netlink_unicast
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> netlink_sendmsg
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> ____sys_sendmsg
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> ___sys_sendmsg
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> __sys_sendmsg
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> do_syscall_64
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 -> entry_SYSCALL_64_after_hwframe
+> ------------------------------------------------------------------------
+> =C2=A0=C2=A0=C2=A0=C2=A0 IRQ latency:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 709.25 us (100=
+%)
 >=20
-> Jemmy Wong (3):
->   cgroup: add lock guard support for cgroup_muetx
->   cgroup: add lock guard support for css_set_lock and rcu
->   cgroup: add lock guard support for others
+>=20
+> I do not really understand where the IRQ/Preemption disabling is happenin=
+g.
+> What would the next thing be to do? Function (graph?) tracing on all the
+> functions visible in the backtrace?
 
-As for the series in general
-- I'm still in favor of pursuing it (with remarks to individual
-  patches),
-- it's a good opportunity to also to append sparse __acquires/__releases
-  cleanup to it (see also [1]).
+So somewhere between entry_SYSCALL_64_after_hwframe() and timerlat_irq()
+something happened that led to the spike. Up to __dev_change_flags() it
+is mostly regular and asm_sysvec_apic_timer_interrupt() is already the
+interrupt.=20
+There is only one calling site for igb_update_mc_addr_list() and
+everything before that looks harmless.
+igb_update_mc_addr_list() has these loops where it writes to FIFO
+register. This is followed by wrfl() which reads the status register.
+This read forces the writes to go through the bus. What might happen is
+that all the writes are "cached" and scheduled for a better time. That
+read will force the writes to actually happen and the CPU will stall
+until this done.
+My guess would be one the writes cause the stall here.
 
-Regards,
-Michal
+> I tried to look at the event race output starting with the call to
+> igb_set_rx_mode. I have attached the trace with all events and a function
+> filter on igb on only the cpu executing ip.=C2=A0 I cannot understand wha=
+t is
+> happening between timestasmp 700.149995 and the IRQ disable event on
+> 700.150795....
+>=20
+>               ip-4931    [001] b...3   700.149994: igb_set_rx_mode <-__de=
+v_change_flags
+>               ip-4931    [001] b...3   700.149995: kmalloc: call_site=3Di=
+gb_set_rx_mode+0x4f8/0x5a0 ptr=3D00000000b0b4e5c8 bytes_req=3D12 bytes_allo=
+c=3D16 gfp_flags=3DGFP_ATOMIC|__GFP_ZERO node=3D-1 accounted=3Dfalse
+>               ip-4931    [001] b...3   700.149995: igb_update_mc_addr_lis=
+t <-igb_set_rx_mode
+>               ip-4931    [001] Dn..3   700.150795: irq_disable: caller=3D=
+irqentry_enter+0x2a/0x60 parent=3D0x0
 
-[1] https://lore.kernel.org/r/Z_6z2-qqLI7dbl8h@slm.duckdns.org
+The CPU is somewhere in igb_update_mc_addr_list(). Based on the
+timestamps it was there for 800us before the irq_disable() occurred.
+This did not happen within igb_update_mc_addr_list() but due to an
+interrupt.
 
+> Thanks for your help,
+>=20
+> Marc
 
---toh6m6x3hhh3r2az
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaFEwewAKCRB+PQLnlNv4
-CK2vAQD5wq0LatsmiHUSbsmOJCpcGVFHuDfH/0uJGeQSmsKWFAD/bb7kMZdxWv52
-HASiX8FCeJv9AO+0Oc7OQOOKl9+Rlgw=
-=luDQ
------END PGP SIGNATURE-----
-
---toh6m6x3hhh3r2az--
+Sebastian
 
