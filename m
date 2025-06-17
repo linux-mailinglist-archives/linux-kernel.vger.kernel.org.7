@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-690110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2441ADCBF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CCC2ADCBF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94E367AB363
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:49:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F4897ABA56
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0F2290D96;
-	Tue, 17 Jun 2025 12:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A472E3395;
+	Tue, 17 Jun 2025 12:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="lcwt4GNH"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="hMTNzwAq"
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984D72DE1E2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985092DE1F7
 	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 12:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750164625; cv=none; b=gLnWd8aeD8YRAL3nXOy9Io/bAfxYKTOPccY9BY0Ol4susX+nmEwSSHgnBRmovjEKTurSd2FfWGhNJZ1DfkZ8ns41em+Fb1sOZiR0H59Uyht/eP6pkbl6c8t7M+LUfoRvp15x33AbahWqrosff1BPud7/CeI74zplQtja6T3GKUY=
+	t=1750164627; cv=none; b=mLn56ht+6nYN2kIWoADlwn1nlf/UmstIxZqaf+t7n8ycrNtNfIvtgtFojNmo+khpgZ3jHGSfNQgcJEYqC/W2xLcWiqa++zcBK7khNn+5Xnx+cu4q88XqscdfKSQG/5xVSS3bLwU8OD+B0WRDn6rpTe9uZ0fyeN6NfqaiMhvp/3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750164625; c=relaxed/simple;
-	bh=D2pX+T/9Z4AhwOQrFVvq4pwh1k+kQ/6T961Ac0+jWOg=;
+	s=arc-20240116; t=1750164627; c=relaxed/simple;
+	bh=SOIaepdpXz3UcMi6KhwDvhR3KJhTOWvH/emZbM9rZ7w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GZiQ83m7ACLq1wzeJPPf5sHbEQ8f2FGjG7pGJfq5ptTRPPxveOuruJKoCK/wEYHIkq282AcExQ7davnGee/Jruqvx87fD/X3O8m0c6cFHvmELslTe1bHqe16uawkhVUYxYCy22bybgn7ifa8GJpPx/d9BjiOW46s/vEw0BUiAGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=lcwt4GNH; arc=none smtp.client-ip=213.97.179.56
+	 MIME-Version:Content-Type; b=js2FvV1SwpnwEru1Do6gtzEm9CBaj2u5t8yj0E1S+xi4M8SZ6+8oiPSlr7GeyaFK21cx5p/oIcKVZ1+hvsqXo2LlHrfzx0HvwugRGkGWpHcfEwCs5Cwc3k1xoudlreA4aptopK4TMucAmJBFl/+vFlKM/NJfZMhAO9pjZ/m/8w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=hMTNzwAq; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -36,16 +36,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=yrfDzOT2kIl7hEsjyNVf8qR8CQoShiARpH5JLckqStg=; b=lcwt4GNHHejK7Yucp1nwlPtmO3
-	/SnV2hmq66V2+D3YE6T7zCdhrmH0mUfx/0SE4//A82ZdqXmiKrouvypINmRZV9ZTcfsJMLzfJWvSg
-	227qsOh1Z/JqUS7K1i+mMIx0VqUGqY72/8FIpWGhZTrPI1LgCtiAeXik8RytUYmgSNrJufgMf2NWw
-	/CLxsJaxuhNRhpnMS/NK10TimdUqISWeHxR42QEa1bUepFs3xX0QZKWlUDl4BXN8oPONtrZtqECPZ
-	0L/GX4sSUSspbcxb5ilAHJQABXi964+Sfvcig3bL/zPNw6LB2l+eTAX7ccjStNzjGUGRP5GBM1W8z
-	KSEIqD8g==;
+	bh=cqvcCLuXGWcxG6oSMTaVulETfZYDdZYBrWK87jUAr00=; b=hMTNzwAqeJzZCpuTIJ3I54+FPb
+	IIUHTq8PswZ8T1oAOi77OXc9u9ZOSza4ImeE+QmB4PGkW2j3VNWf9akbTb980uUgp0Zjuxwxdnwv9
+	R5TQ3gwJx5rC8Z9TYLV9RKNin51kN8ti23cXzOrg/VWssxj7KKU1hKInDTpixFacQ5grfBHeoZhPr
+	yFo5VhujOn6Hrdh+N2J0FlIJOFo8y7aQMP86G6i/7Dl3ATmQ9jRvIMIvnroRkrix7wu8bC1vyruy8
+	PBVfaC3gyVZoKARxKCxchCy8k1uQrDc1cq2Ii0lzbGfcaEMU3l19kHx4SVSOxPt3o0BxU4aGzIDc5
+	bMVpIoLA==;
 Received: from [191.204.192.64] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uRVlM-004ans-Mu; Tue, 17 Jun 2025 14:50:05 +0200
+	id 1uRVlQ-004ans-LH; Tue, 17 Jun 2025 14:50:09 +0200
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
 To: "Alex Deucher" <alexander.deucher@amd.com>,
 	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
@@ -64,9 +64,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	intel-xe@lists.freedesktop.org,
 	intel-gfx@lists.freedesktop.org,
 	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v9 1/6] drm: amdgpu: Allow NULL pointers at amdgpu_vm_put_task_info()
-Date: Tue, 17 Jun 2025 09:49:44 -0300
-Message-ID: <20250617124949.2151549-2-andrealmeid@igalia.com>
+Subject: [PATCH v9 2/6] drm: amdgpu: Create amdgpu_vm_print_task_info()
+Date: Tue, 17 Jun 2025 09:49:45 -0300
+Message-ID: <20250617124949.2151549-3-andrealmeid@igalia.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250617124949.2151549-1-andrealmeid@igalia.com>
 References: <20250617124949.2151549-1-andrealmeid@igalia.com>
@@ -79,32 +79,147 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Allow NULL pointers at amdgpu_vm_put_task_info() as it common practice
-for "put" or "free" functions. This avoid an extra check for NULL for
-callers.
+To avoid repetitive code in amdgpu, create a function that prints the
+content of struct amdgpu_task_info.
 
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
 ---
-v9: use if (task) instead of if (ZERO_OR_NULL_PTR(task))
-v8: New patch
+v8: drop the inline
+v7: new patch
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_job.c | 4 +---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c  | 9 +++++++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.h  | 3 +++
+ drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c  | 5 +----
+ drivers/gpu/drm/amd/amdgpu/gmc_v11_0.c  | 5 +----
+ drivers/gpu/drm/amd/amdgpu/gmc_v12_0.c  | 5 +----
+ drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c   | 4 +---
+ drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c   | 5 +----
+ 8 files changed, 18 insertions(+), 22 deletions(-)
 
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+index 75262ce8db27..3d887428ca2b 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+@@ -124,9 +124,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+ 
+ 	ti = amdgpu_vm_get_task_info_pasid(ring->adev, job->pasid);
+ 	if (ti) {
+-		dev_err(adev->dev,
+-			"Process information: process %s pid %d thread %s pid %d\n",
+-			ti->process_name, ti->tgid, ti->task_name, ti->pid);
++		amdgpu_vm_print_task_info(adev, ti);
+ 		amdgpu_vm_put_task_info(ti);
+ 	}
+ 
 diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-index 3911c78f8282..de914a39e3f6 100644
+index de914a39e3f6..3bf63eee2d4e 100644
 --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
 +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-@@ -2447,7 +2447,8 @@ amdgpu_vm_get_vm_from_pasid(struct amdgpu_device *adev, u32 pasid)
-  */
- void amdgpu_vm_put_task_info(struct amdgpu_task_info *task_info)
+@@ -3157,3 +3157,12 @@ bool amdgpu_vm_is_bo_always_valid(struct amdgpu_vm *vm, struct amdgpu_bo *bo)
  {
--	kref_put(&task_info->refcount, amdgpu_vm_destroy_task_info);
-+	if (task_info)
-+		kref_put(&task_info->refcount, amdgpu_vm_destroy_task_info);
+ 	return bo && bo->tbo.base.resv == vm->root.bo->tbo.base.resv;
  }
++
++void amdgpu_vm_print_task_info(struct amdgpu_device *adev,
++			       struct amdgpu_task_info *task_info)
++{
++	dev_err(adev->dev,
++		" Process %s pid %d thread %s pid %d\n",
++		task_info->process_name, task_info->tgid,
++		task_info->task_name, task_info->pid);
++}
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.h
+index f3ad687125ad..9ec5d94200aa 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.h
+@@ -668,4 +668,7 @@ void amdgpu_vm_tlb_fence_create(struct amdgpu_device *adev,
+ 				 struct amdgpu_vm *vm,
+ 				 struct dma_fence **fence);
  
- /**
++void amdgpu_vm_print_task_info(struct amdgpu_device *adev,
++			       struct amdgpu_task_info *task_info);
++
+ #endif
+diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c
+index a3e2787501f1..7923f491cf73 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c
+@@ -164,10 +164,7 @@ static int gmc_v10_0_process_interrupt(struct amdgpu_device *adev,
+ 		entry->src_id, entry->ring_id, entry->vmid, entry->pasid);
+ 	task_info = amdgpu_vm_get_task_info_pasid(adev, entry->pasid);
+ 	if (task_info) {
+-		dev_err(adev->dev,
+-			" in process %s pid %d thread %s pid %d\n",
+-			task_info->process_name, task_info->tgid,
+-			task_info->task_name, task_info->pid);
++		amdgpu_vm_print_task_info(adev, task_info);
+ 		amdgpu_vm_put_task_info(task_info);
+ 	}
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v11_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v11_0.c
+index 72211409227b..f15d691e9a20 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v11_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v11_0.c
+@@ -134,10 +134,7 @@ static int gmc_v11_0_process_interrupt(struct amdgpu_device *adev,
+ 			entry->src_id, entry->ring_id, entry->vmid, entry->pasid);
+ 		task_info = amdgpu_vm_get_task_info_pasid(adev, entry->pasid);
+ 		if (task_info) {
+-			dev_err(adev->dev,
+-				" in process %s pid %d thread %s pid %d)\n",
+-				task_info->process_name, task_info->tgid,
+-				task_info->task_name, task_info->pid);
++			amdgpu_vm_print_task_info(adev, task_info);
+ 			amdgpu_vm_put_task_info(task_info);
+ 		}
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v12_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v12_0.c
+index b645d3e6a6c8..de763105fdfd 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v12_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v12_0.c
+@@ -127,10 +127,7 @@ static int gmc_v12_0_process_interrupt(struct amdgpu_device *adev,
+ 			entry->src_id, entry->ring_id, entry->vmid, entry->pasid);
+ 		task_info = amdgpu_vm_get_task_info_pasid(adev, entry->pasid);
+ 		if (task_info) {
+-			dev_err(adev->dev,
+-				" in process %s pid %d thread %s pid %d)\n",
+-				task_info->process_name, task_info->tgid,
+-				task_info->task_name, task_info->pid);
++			amdgpu_vm_print_task_info(adev, task_info);
+ 			amdgpu_vm_put_task_info(task_info);
+ 		}
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+index 99ca08e9bdb5..b45fa0cea9d2 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+@@ -1458,9 +1458,7 @@ static int gmc_v8_0_process_interrupt(struct amdgpu_device *adev,
+ 
+ 		task_info = amdgpu_vm_get_task_info_pasid(adev, entry->pasid);
+ 		if (task_info) {
+-			dev_err(adev->dev, " for process %s pid %d thread %s pid %d\n",
+-				task_info->process_name, task_info->tgid,
+-				task_info->task_name, task_info->pid);
++			amdgpu_vm_print_task_info(adev, task_info);
+ 			amdgpu_vm_put_task_info(task_info);
+ 		}
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+index 282197f4ffb1..78f65aea03f8 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+@@ -641,10 +641,7 @@ static int gmc_v9_0_process_interrupt(struct amdgpu_device *adev,
+ 
+ 	task_info = amdgpu_vm_get_task_info_pasid(adev, entry->pasid);
+ 	if (task_info) {
+-		dev_err(adev->dev,
+-			" for process %s pid %d thread %s pid %d)\n",
+-			task_info->process_name, task_info->tgid,
+-			task_info->task_name, task_info->pid);
++		amdgpu_vm_print_task_info(adev, task_info);
+ 		amdgpu_vm_put_task_info(task_info);
+ 	}
+ 
 -- 
 2.49.0
 
