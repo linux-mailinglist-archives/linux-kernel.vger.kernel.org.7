@@ -1,160 +1,145 @@
-Return-Path: <linux-kernel+bounces-690747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63F9ADDBA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:49:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46DB4ADDBAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DADD1940328
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:49:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D969401973
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 18:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9990B28504C;
-	Tue, 17 Jun 2025 18:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C80B2EAB63;
+	Tue, 17 Jun 2025 18:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y4vyDUn/"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e2B/byCM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26A3277008
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 18:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2B02E7654
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 18:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750186150; cv=none; b=arU+sjZ7QI8bK3VCQsVGnKLqJAdV5ZseKWHrCPRriQebteBBQwN1Rptymm+X+Ela861x/se1gsQUYc8ovTbwlN9XpZr4DyiqHDU75vb542dVWIyzpVPC7D44pnIW1OR82lsPGWRbZ2V/wV5TvIc2R368d3Gdq1VFNl19KByi6to=
+	t=1750186367; cv=none; b=XC47W8Dq9i+RmKrfLeOd78OPgL1+4I5BS+YYJSw1IwVFDiwHKCm/X11QCVxn6z/1IrNsM0+BeqG5FikeTEHY49iyViVKnBeCl3bVFD3TKZe8eZJtiLJpGK995WtzM6SpLJQkAjwDCkVU97UssuPToc5dYfWtuepmmB8mCCns5Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750186150; c=relaxed/simple;
-	bh=KwqSD/mvRel9xI3T5LRWWp1qv/dt+bofRF5gsGxGzwY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iM2rjnLU1nuC5VxN8WO2HglvXZfkTJO6cQg2vEq9kkgyvg/yJSHR9Nwnw/7KwIGSfiMey8l2GxYPRnpilQHODozk+WvumSBAdoQePmqaHj9hSl3Bw1/Q1ucZCNOh0iKm5IDAV1SaVwScmLaW/On0c2pTnDPOStr9k0ugwK7ei7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y4vyDUn/; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3de210e6076so19005ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 11:49:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750186147; x=1750790947; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q8EJ5NTBcmp1K+DlZlLHbsBISbfgOHA/1xl7u6O9rkw=;
-        b=Y4vyDUn/WDsPTuUnxBSM9qdYXy5w18OKHDjxgvpcFP0B2veSRcvPZ1aJ5k+6jpWQ34
-         ayMssVNN9tLeQNiXEGIx6MRuWQkT2l8HZRjTn1Glgegm3cjNtPtxe58+OG+JXioZWS+F
-         qPI1ALFKc/KJxzkC5/JWJpf6l/C82L3/OsGNG5h9/CMqQ92QRKFT/5yCfhjwivSRjEel
-         zEFRSxDtJxP8yyJwSvBHgv9Y1k3H1YN7d/pqWiyiGB2aXFfWZctss4oYy6lN48lTs3RS
-         8qEaZFxoClgG74O6Ku6kByHu6T+AjRRsTUA22qCu7qFix4jAmtQLgIL4B/b+4NTz96z6
-         jYaw==
+	s=arc-20240116; t=1750186367; c=relaxed/simple;
+	bh=+toRoMC/6o3ABSZSoj6kwUB+0AHRoQQb9StmVaDTJuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cthL9NTac1wjE8/GBYmXAmvS/68EadjgOIc3yI3Mp9W/mmM6uec2QPqNcEo3HakNNAdyBqkYNR0O7upX3nw/fKCk7Y4hFi4I4so896vJUhVhyYMCZiRRbL9cFvinsT02aNR33JeEkm71fvMiDI9m8BRjsmKk7lNRMc61X1NYprw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e2B/byCM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750186364;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j7GR8b6oq+VKsS7zEblPcoLobXIu9Z0EZdf91JZ1evE=;
+	b=e2B/byCMD7aBifT1H+OrbHywDacGT8tbvYL+K2YVbRI9iF1nNG+885k8XtXs0gjfbfEv5N
+	QnDIwqxC/E/3C1PXKhOQCuahmiP3A/7ZpwMpIQAsky4QJnPt1/BYscboippZg1zqCiNDUY
+	4qnVILC2IIjP9kDYMdHEBoCfqO3Xm7E=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-672-FVv_HUy0Olic-WW3855SRA-1; Tue, 17 Jun 2025 14:52:43 -0400
+X-MC-Unique: FVv_HUy0Olic-WW3855SRA-1
+X-Mimecast-MFC-AGG-ID: FVv_HUy0Olic-WW3855SRA_1750186363
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-875fff8c797so2020139f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 11:52:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750186147; x=1750790947;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1750186362; x=1750791162;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q8EJ5NTBcmp1K+DlZlLHbsBISbfgOHA/1xl7u6O9rkw=;
-        b=gK6V3lgfydKsyeZ1ci3FshTBLCtFoiL1rh6dAVDlinA1gTPqRHET5MAGydbWO6KArE
-         CACkVdN8COqVYYCvY+cAFwAEqhrYqacMTbTfXpMg42M2mgdiavTbyTr6RGhCP4dag5Ga
-         Ba0jzi0Os5P+4YuDLUV9iDtPxmEniRIoE5JPYIrZFWYh5XcPEOua7EiZ1ose8WIfJ7km
-         aoxyLttyVnfq9wnlP8D8q4QJ8I4ej3wv9iqN+2brt2CKj7vJei2wQiKfV3xzkGdErAhv
-         y/9NUTUoShyB7k8h3U7IESawyXfmPGhOfE/nVMKTXWW+C8vzN9CD1e1cEanDroYTuEgM
-         vX3g==
-X-Gm-Message-State: AOJu0YxgNy5Yv89OmHm8vs85IsW9eCD8h8vuCSSpGnSpYdGwRpw8nBz/
-	pvlbnQRXrSww/AeoRYsMVVwyhcElf17gfG2llK+A1swaT7EvQWspFohgFAGVptycWMkhJbrujtB
-	pxBrASdL2z6Bq4tG2Xkglb67QsAy78wvZOY2JkrnH
-X-Gm-Gg: ASbGncv6Bt8y3HdzGiguFDi2+iDPGi+BRsXIgnssUVieibd183bQ7lz1Lu3ovOIvoqA
-	5b6PLZhup47tDOGPY1To1xAp6gg7KByOsm8g9RvSTPge+qvaSmB1zPk7Q/k1Q6Cwk20TmVvXiJI
-	MJ7t/ZD3rnDFTfLr8huB2inCJPecNcJMpUcu6qv6DU/nM8vG6IeBFR5/WiYn8/Oo3BycgW8L7Q
-X-Google-Smtp-Source: AGHT+IFzrUwC9gszj0tD9vuBEBQF9n3D4Q3WJTaRCUVhXGHHOddGa1pIqtmbyT4XwSHM/7FECm5kvyzNP+0l4d7kUpg=
-X-Received: by 2002:a92:ca47:0:b0:3dc:8596:b15 with SMTP id
- e9e14a558f8ab-3de08e309cemr12018435ab.20.1750186146706; Tue, 17 Jun 2025
- 11:49:06 -0700 (PDT)
+        bh=j7GR8b6oq+VKsS7zEblPcoLobXIu9Z0EZdf91JZ1evE=;
+        b=GLd7LhPx2SY9HfPPyhw3SkKxSDF9YoeUwJfIvmf0fGLTYQ6DAljMyJ4LeotkKk6qw/
+         v7ZN5Jhoe6k/QA2+KkGYUVP9mJTm743tyx9iEqEUA3oqBT6evpGwlB5iN+AF5jYOYSMF
+         AcnzxQkCNsmhKEzt/vxzMqeyjzkvdU64MRlYCFjXfZoqTF2bZJ1MB9bnjZOf/ZDuDyP7
+         Vv6vTua9yumQ3XNUIZm7ssKMhrLsyIP2QJyZnxqO8VixvdsPtNF3zFY9k543dy13si+O
+         TUrl8q9NMIS30oCpHATMuoXt/8TkR/KQBd1cDJgBgYA0nV13SICw4yJQUJPXkRjfqWPJ
+         3oKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVyFKFknEum72JhNnA5tMeChboOpqWoO79MRMpkSpRQxRbwMU/+OcD+arg6zDFCrcA1i+5D3insh0mKSLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVXvXx33T/6DvuQh576ciUiYaG/N3xeYFSdkCq3/qOT867WSND
+	pDhXdP8ZH1hTuTZJWfvrx8xvd4IQtiRH2ilVPsdSE3iY/6bOT7DZ4LrkPK77psqC0vEVVFegtlo
+	185PYXp1XFWApgmX7QSkscKE9Vr5oQoFI64RZ0umDLv4ur+6RdMW7YFNUhNVWbWtLYQ==
+X-Gm-Gg: ASbGncvKuKYF3H9i2xOP8655ze6IaHgjAWtJvBivS3jENPiZ+KNNwQ8wNG6rVapeVl5
+	l/r+pH6dVQOwPaEL8DEqbTsRSv9EXFnLJLzAkpTekRHWGrqUnHBmDvCyOhX3MNFj7WoUgtl4UkK
+	fQOyNaakq+DlcMEirtPUmVcbjaBIEooeupYNqxvy8tLz2UOkVSbz1+Eu9D9YY6c8emMNpza+El4
+	v/Ivkn+POoTTuwqfoeXIbxCpf3DJyTU3xs/dgbY6KVtPjF1+HDhGs7NkqyxnufOUcudxwhc//dC
+	Qay7LVjSF40p+a4IjMwcULL9Ng==
+X-Received: by 2002:a05:6602:3414:b0:86a:24c0:8829 with SMTP id ca18e2360f4ac-87601391479mr183502339f.0.1750186362591;
+        Tue, 17 Jun 2025 11:52:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEKthDmryWBtQYhqN8X3vXXpFX6gedZAuw/STdWF8X1NR60JiUUJho0FZmRHCrhQiS9JYovUQ==
+X-Received: by 2002:a05:6602:3414:b0:86a:24c0:8829 with SMTP id ca18e2360f4ac-87601391479mr183500639f.0.1750186362211;
+        Tue, 17 Jun 2025 11:52:42 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-875d5842a19sm225353839f.44.2025.06.17.11.52.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 11:52:40 -0700 (PDT)
+Date: Tue, 17 Jun 2025 12:52:35 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Alex Deucher
+ <alexander.deucher@amd.com>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Lukas Wunner <lukas@wunner.de>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Woodhouse
+ <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel
+ <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
+ <robin.murphy@arm.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+ <tiwai@suse.com>, dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+ linux-kernel@vger.kernel.org (open list), iommu@lists.linux.dev (open
+ list:INTEL IOMMU (VT-d)), linux-pci@vger.kernel.org (open list:PCI
+ SUBSYSTEM), kvm@vger.kernel.org (open list:VFIO DRIVER),
+ linux-sound@vger.kernel.org (open list:SOUND), Daniel Dadap
+ <ddadap@nvidia.com>, Mario Limonciello <mario.limonciello@amd.com>, Bjorn
+ Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH v2 2/6] vfio/pci: Use pci_is_display()
+Message-ID: <20250617125235.13017540.alex.williamson@redhat.com>
+In-Reply-To: <20250617175910.1640546-3-superm1@kernel.org>
+References: <20250617175910.1640546-1-superm1@kernel.org>
+	<20250617175910.1640546-3-superm1@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250617133614.24e2ba7f@gandalf.local.home> <20250617174107.GB1613376@noisy.programming.kicks-ass.net>
- <3201A571-6F08-4E26-AC33-39E0D1925D27@goodmis.org> <20250617180023.GC1613376@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250617180023.GC1613376@noisy.programming.kicks-ass.net>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 17 Jun 2025 11:48:53 -0700
-X-Gm-Features: AX0GCFv1wtGvcgVGSD1sgzvmQHC0HhNLOA8sTZ3tUy13Qbfl9q8mNJDIZ58ROyM
-Message-ID: <CAP-5=fVH1HfdXT7HLZhav9k6m7t7Ji-=y2Gw13h1qMtgW8cRQA@mail.gmail.com>
-Subject: Re: [RFC][PATCH] tracing: Deprecate auto-mounting tracefs in debugfs
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, 
-	"linux-trace-users@vger.kernel.org" <linux-trace-users@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Namhyung Kim <namhyung@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 17, 2025 at 11:00=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
->
-> On Tue, Jun 17, 2025 at 01:54:46PM -0400, Steven Rostedt wrote:
-> >
-> >
-> > On June 17, 2025 1:41:07 PM EDT, Peter Zijlstra <peterz@infradead.org> =
-wrote:
-> > >On Tue, Jun 17, 2025 at 01:36:14PM -0400, Steven Rostedt wrote:
-> > >> From: Steven Rostedt <rostedt@goodmis.org>
-> > >>
-> > >> In January 2015, tracefs was created to allow access to the tracing
-> > >> infrastructure without needing to compile in debugfs. When tracefs i=
-s
-> > >> configured, the directory /sys/kernel/tracing will exist and tooling=
- is
-> > >> expected to use that path to access the tracing infrastructure.
-> > >>
-> > >> To allow backward compatibility, when debugfs is mounted, it would
-> > >> automount tracefs in its "tracing" directory so that tooling that ha=
-d hard
-> > >> coded /sys/kernel/debug/tracing would still work.
-> > >>
-> > >> It has been over 10 years since the new interface was introduced, an=
-d all
-> > >> tooling should now be using it. Start the process of deprecating the=
- old
-> > >> path so that it doesn't need to be maintained anymore.
-> > >
-> > >I've always used /debug/tracing/ (because /debug is the right place to
-> > >mount debugfs). You're saying this is going away and will break all my
-> > >scripts?!
-> >
-> > You could mount tracefs in /tracing too:
-> >
-> >   # mount -t tracefs nodev /tracing
-> >
-> > And update you scripts with a simple sed script.
->
-> If I have to edit the mount table, I'll just keep it at /debug/tracing/.
-> Tracing is very much debug stuff anyway. While I knew there was tracefs,
-> I never knew there was another mount point.
->
-> Just annoying I now have to add two entries to every new machine.. Oh
-> well.
+On Tue, 17 Jun 2025 12:59:06 -0500
+Mario Limonciello <superm1@kernel.org> wrote:
 
-It seems cleaning this up is a good thing wrt permission issues. On my
-local debian derived machine:
-```
-$ ls  /sys/kernel/debug/tracing/events
-ls: cannot access '/sys/kernel/debug/tracing/events': Permission denied
-$ ls  /sys/kernel/tracing/events
-alarmtimer        fib             irq            nmi             sunrpc
-...
-```
-I see a number of references to debug/tracing in places like perf testing:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/tests/shell/common/init.sh?h=3Dperf-tools-next#n122
-are you planning patches for these?
+> From: Mario Limonciello <mario.limonciello@amd.com>
+> 
+> The inline pci_is_display() helper does the same thing.  Use it.
+> 
+> Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/vfio/pci/vfio_pci_igd.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/vfio/pci/vfio_pci_igd.c b/drivers/vfio/pci/vfio_pci_igd.c
+> index ef490a4545f48..988b6919c2c31 100644
+> --- a/drivers/vfio/pci/vfio_pci_igd.c
+> +++ b/drivers/vfio/pci/vfio_pci_igd.c
+> @@ -437,8 +437,7 @@ static int vfio_pci_igd_cfg_init(struct vfio_pci_core_device *vdev)
+>  
+>  bool vfio_pci_is_intel_display(struct pci_dev *pdev)
+>  {
+> -	return (pdev->vendor == PCI_VENDOR_ID_INTEL) &&
+> -	       ((pdev->class >> 16) == PCI_BASE_CLASS_DISPLAY);
+> +	return (pdev->vendor == PCI_VENDOR_ID_INTEL) && pci_is_display(pdev);
+>  }
+>  
+>  int vfio_pci_igd_init(struct vfio_pci_core_device *vdev)
 
-Thanks,
-Ian
+Acked-by: Alex Williamson <alex.williamson@redhat.com>
+
 
