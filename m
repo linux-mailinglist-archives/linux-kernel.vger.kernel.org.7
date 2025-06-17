@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-689253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C2FADBEA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:41:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F84ADBEAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4F993B68AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 01:40:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F3EE18928D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 01:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E628D1C8FBA;
-	Tue, 17 Jun 2025 01:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D651F5828;
+	Tue, 17 Jun 2025 01:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JBnQX9Nq"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iC4c1cpu"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB2233993;
-	Tue, 17 Jun 2025 01:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB7C1AAE28;
+	Tue, 17 Jun 2025 01:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750124453; cv=none; b=URXqTCNxKj30OOws3125NBci9vHhREjkCW1/Etff9uONp7wLm9kMLmj1guwL2r4tboX/IpViRtp+YonA277PubxJXFoUa064evYLTV9feHoSHdHBEmv9ULgca/R8EkvRYpn3R2e2xH1/J6an39mQzgU18aA1yqHBzikWhmueq4c=
+	t=1750124456; cv=none; b=GcuJVOAy1f5LFoX95cu/1yTgJt9cQtZ++UczqNxilf4SLnJurH07DL4uSXMSwfWY6DNGykkXjSSNqbcKM6ME/oNw3dJo+GgMZoMdLMkwdQ4zvxoCioGIpxtl01b2+HKDlGGZ0cUAhCOWJCtUCFX5z4mPkkIY6Y8ciUdB/hjkS+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750124453; c=relaxed/simple;
-	bh=da8Jwzo2ic5R94yd+CIBR13juhRPWVZW26d2H4D0CW0=;
+	s=arc-20240116; t=1750124456; c=relaxed/simple;
+	bh=/Ku3TWzldVp5WnY1hn7KSGDKfB7WyO09oblg2SxFtuc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SvjUE7i59arNLHmSdYm9C7PVpIreFPqiEwsA77SU89bp9z1hyOnLLdMcI8hkX+ho3SvqfNoNcGHtyTX2fj6gG/LCbJjogSQut2alN98Zyq7TBB+BvwYy16QvUCXcPZII5sktST8Ln8LfLUZ0Y2uylUPE0zHys8AIksXmx6/Y5iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JBnQX9Nq; arc=none smtp.client-ip=198.175.65.11
+	 MIME-Version:Content-Type; b=ZwE9alKS8sdm+1BNMboMYWbgNwpVV42jKPOk/vEajg2vzNfYsD2PzGM57jetMQypW7NuWfF6ZYGK8XFOklxTEWmAZGQ3yel5B3QbbkqrhbLRVm8ZKnUhRNSHQ8zSF6inmnMUva/dZQ57rp1HCHb50aX58kE0EB3uaJxL+1ACLg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iC4c1cpu; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750124452; x=1781660452;
+  t=1750124453; x=1781660453;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=da8Jwzo2ic5R94yd+CIBR13juhRPWVZW26d2H4D0CW0=;
-  b=JBnQX9Nq/bxZdHP1dqYmDlkuEThXNb82juoVns1zEfRQUR4izDpzM30x
-   r4EFyxE4nltsewxcGE7yQYOLHLgQ1bYAdyHKgrX4Sp1ZjyYeHgemhB6Pw
-   d17HuFFdXPSE2i2M4YQOMoo1zYyA+6X5UcqNLYxEmKHUMyhF+XT8VEm7x
-   bheMal73gWsopjj6jtbakWTPOAjFgPvWRU08gZdpOG8DFCbdPpfxmDix+
-   DsA6TZOv/hPqH/f8YWXHjbsAFklIpENsJOn6TQUF6rpai50UO4JbwocFN
-   7eQX4oisk3uMuUJ4dH5TkHugmHf6p82wwVSb2/n5tn2pDqzFxHM0GAB6a
+  bh=/Ku3TWzldVp5WnY1hn7KSGDKfB7WyO09oblg2SxFtuc=;
+  b=iC4c1cpuuFkM7ONb8AGfoS9SC+QfFLWWczXfNop0lpcAS5PZLgQDuvPO
+   6oXfCM60WjWed4T4UpxLxFWj26AGgTT0kVCLZCKANli8qrs/6WHrtRObt
+   XLUpIRkRoZ/GLiOp5EB6aQdeejNqYKUnMEFYOAuxoj0H5nMu8jqNlqjbP
+   s6qEU0uOfiHL7iyQVGhRH9rJKNMUxuVsWM/GFL+mSi47CgznfCM3XBXYQ
+   Dlqd0OyT3MPeA6dM/gFSXOcNacwG14DcdMB5g9yqcpTLKLghxN4Ou1eBs
+   MXKy/Rde6SvL2yk8/exjw7/RBpGaUljfXD2Uy4RXCGzs7cj3vYymRaO5V
    g==;
-X-CSE-ConnectionGUID: LYCxFfG6TQiiNKQxq5hDmA==
-X-CSE-MsgGUID: dwdbvbHdRjq4BQxsA0CCUA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="62556530"
+X-CSE-ConnectionGUID: 6BDiCWqOR/+AqbD6C8oiWA==
+X-CSE-MsgGUID: /AE7yHJJR0SZ/WExnzK/og==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="62556531"
 X-IronPort-AV: E=Sophos;i="6.16,242,1744095600"; 
-   d="scan'208";a="62556530"
+   d="scan'208";a="62556531"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 18:40:50 -0700
-X-CSE-ConnectionGUID: QdsZ0PMkQyeWCXHl4eEkUA==
-X-CSE-MsgGUID: joqf27UNSmuLoEHfq5vxUA==
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 18:40:51 -0700
+X-CSE-ConnectionGUID: rkR4FrdFQP+72BuTrXK32w==
+X-CSE-MsgGUID: SBp7cebKR0m9xpx/oaG7Ew==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,242,1744095600"; 
-   d="scan'208";a="148989437"
+   d="scan'208";a="148989443"
 Received: from spandruv-desk2.amr.corp.intel.com (HELO debox1-desk4.intel.com) ([10.124.223.117])
   by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2025 18:40:49 -0700
 From: "David E. Box" <david.e.box@linux.intel.com>
@@ -67,9 +67,9 @@ To: linux-kernel@vger.kernel.org,
 	tony.luck@intel.com,
 	xi.pardee@linux.intel.com
 Cc: hdegoede@redhat.com
-Subject: [PATCH V2 01/15] MAINTAINERS: Add link to documentation of Intel PMT ABI
-Date: Mon, 16 Jun 2025 18:40:25 -0700
-Message-ID: <20250617014041.2861032-2-david.e.box@linux.intel.com>
+Subject: [PATCH V2 02/15] platform/x86/intel/vsec: Add private data for per-device data
+Date: Mon, 16 Jun 2025 18:40:26 -0700
+Message-ID: <20250617014041.2861032-3-david.e.box@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250617014041.2861032-1-david.e.box@linux.intel.com>
 References: <20250617014041.2861032-1-david.e.box@linux.intel.com>
@@ -79,10 +79,14 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Add a link to the documentation for the Intel Platform Monitoring
-Technology ABI in Documentation/ABI/testing/sysfs-class-intel_pmt
+Introduce a new private structure, struct vsec_priv, to hold a pointer to
+the platform-specific information. Although the driver didn=E2=80=99t previ=
+ously
+require this per-device data, adding it now lays the groundwork for
+upcoming patches that will manage such data. No functional changes.
 
 Signed-off-by: David E. Box <david.e.box@linux.intel.com>
 ---
@@ -90,21 +94,49 @@ Signed-off-by: David E. Box <david.e.box@linux.intel.com>
 Changes in v2:
   - No changes
 
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/platform/x86/intel/vsec.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a92290fffa16..b704107859a6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12386,6 +12386,7 @@ F:	include/linux/mfd/intel_soc_pmic*
- INTEL PMT DRIVERS
- M:	David E. Box <david.e.box@linux.intel.com>
- S:	Supported
-+F:	Documentation/ABI/testing/sysfs-class-intel_pmt
- F:	drivers/platform/x86/intel/pmt/
+diff --git a/drivers/platform/x86/intel/vsec.c b/drivers/platform/x86/intel=
+/vsec.c
+index 055ca9f48fb4..59fb6568a855 100644
+--- a/drivers/platform/x86/intel/vsec.c
++++ b/drivers/platform/x86/intel/vsec.c
+@@ -32,6 +32,10 @@ static DEFINE_IDA(intel_vsec_ida);
+ static DEFINE_IDA(intel_vsec_sdsi_ida);
+ static DEFINE_XARRAY_ALLOC(auxdev_array);
 =20
- INTEL PRO/WIRELESS 2100, 2200BG, 2915ABG NETWORK CONNECTION SUPPORT
++struct vsec_priv {
++	struct intel_vsec_platform_info *info;
++};
++
+ static const char *intel_vsec_name(enum intel_vsec_id id)
+ {
+ 	switch (id) {
+@@ -348,6 +352,7 @@ EXPORT_SYMBOL_NS_GPL(intel_vsec_register, "INTEL_VSEC");
+ static int intel_vsec_pci_probe(struct pci_dev *pdev, const struct pci_dev=
+ice_id *id)
+ {
+ 	struct intel_vsec_platform_info *info;
++	struct vsec_priv *priv;
+ 	bool have_devices =3D false;
+ 	int ret;
+=20
+@@ -360,6 +365,13 @@ static int intel_vsec_pci_probe(struct pci_dev *pdev, =
+const struct pci_device_id
+ 	if (!info)
+ 		return -EINVAL;
+=20
++	priv =3D devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->info =3D info;
++	pci_set_drvdata(pdev, priv);
++
+ 	if (intel_vsec_walk_dvsec(pdev, info))
+ 		have_devices =3D true;
+=20
 --=20
 2.43.0
 
