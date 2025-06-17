@@ -1,601 +1,249 @@
-Return-Path: <linux-kernel+bounces-689318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8912AADBF5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 04:49:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B828ADBF77
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 05:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82AEC7A7449
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 02:48:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD5F3ABFD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E881624DD;
-	Tue, 17 Jun 2025 02:48:46 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2268F236A9C;
+	Tue, 17 Jun 2025 03:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GASaUkve"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010067.outbound.protection.outlook.com [52.101.84.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC58E84A3E;
-	Tue, 17 Jun 2025 02:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750128525; cv=none; b=eh6T2aeDTYJxmIzBsZss2DBXwwONkDh/xuFXnbRuJN7XhQnLLYjtXXXebH5T/8Tu9f0IPti5J6bJ6lsnzVTZYBu63cQODpRC+j9l1EKOIreoFK1yeOQcolyPzoBM8qCEAzTD2c2yoekE2LkMM0IZSIv6N9xTMFZWfHTf5yRowqY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750128525; c=relaxed/simple;
-	bh=s1KsivD3GmypnlmpNyd6cA4QIDM/EaAaySIfeEGCcEc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dSuBg58+b/rnChz3UJOatXfwybOKC3+gdhMfMDuy1sNaEgIV8iLKFN6/HIB3vJIsC1kBxW1SSmt7neWKx17itujMhxd3PLP1GfyktoHaBo7bixfyyf4L/hiuKJ6zBnGhxmXp5iYO80Mm4GDacWNi9pIgN4KlAOxYpQ2RXymx/SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bLrq82v17z13MTq;
-	Tue, 17 Jun 2025 10:46:28 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 55B99140154;
-	Tue, 17 Jun 2025 10:48:38 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 17 Jun
- 2025 10:48:37 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <marcel@holtmann.org>, <luiz.dentz@gmail.com>, <yuehaibing@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>
-Subject: [PATCH -next] Bluetooth: hci_ll: Introduce hci_ll.h
-Date: Tue, 17 Jun 2025 11:06:16 +0800
-Message-ID: <20250617030616.3642576-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1764A186E2E;
+	Tue, 17 Jun 2025 03:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750129637; cv=fail; b=rEByNUdeFX83NlG6qhh2HKUUR5IhwHkIB9+7RoubjPBA/rd87Ihc+qMvEtPO9zfYaCupCfIZdQvICT6aPPg/4yFH3/gnlAAE0x/T+iyC42JCiexxWSn0+NF6TOJw7D62upvnhYVxw9vX6rQC86PKMMZf/uN+9obzkwTHEagMlCc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750129637; c=relaxed/simple;
+	bh=QpcmXr67hefMnVN4X4x9+5DnBmrMLOWID6QE0HgZh/A=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=U/T8Rmy/D4ykS1b1/IHwZI3SGY/wAcHzwVeosB3yCMp4zLQTbaFLmIWWe3LlmQ37iHsR0sc0rPYrhqScphxAzpn04Sv316alU7nQJvqcle8R1IpGxdBjLR9yBVNcFlwNmP0x+xiMinddaOA8M01/QwIimEGQxFwTG/ey8W6B1Aw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GASaUkve; arc=fail smtp.client-ip=52.101.84.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Wvr9oMFIJUgYiJG2gG6GCvRdzuxD8hoqjVOjRH90HnBcPqgtv0C9vbPa+VGNgboTh64mqph8x2UdqxoCTPSznDsdJuTuW9zlHs5j/p/8TCikfT4Syx0fxJVj+mkh3Xv/CcKiF7WUy1ApjFsLfKQJ3jLmkK0pkR3mnX2rjGRAvnCFkRqlatCZQvUycwYEIa/+cx3itqKjMakLplGCuMVnLeeveob1/ekVyveczMQHBuhxnMRbww6bAKIa8Ey5wQ3t3m5DAEFoOjU0fh4AxotPVwPcupr2kIv3k5ZMY6CQ+PsXw+mZ5XcVqSv6rKGICPmookU+nACZg7S1ke+RKHX4Bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QpcmXr67hefMnVN4X4x9+5DnBmrMLOWID6QE0HgZh/A=;
+ b=jjceWAG0LUFF1PeIOoJVhKe/xfTmoWmV+BcCZOeyGs12qaE6lOwUqNAQITla+PVYSe10BZMhzXJZSLFnTayY40x4JeRzDe4FMSccCJ8yK34r4SZa6aDOGh0Rqkx3+R61Bb59D1xlD+/Ko/uUx3/wqKPY9SKVBwaySXEi6ez7JDQaVJTR3sWfM79guaiPZkeZELvmJ0v9UMD2egRC+/p6TpQxykTZ6PTTaeZLAQo1ES9vIu5hHEmPoq+CXevWRa4SX489HYQVpyL7aZLXocqDYBLRAUkNIdsyPWyMe5QJxQvNFL0XSBanHcdt3hMLvtLmigclzRgB9Ld0imuVjzxC/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QpcmXr67hefMnVN4X4x9+5DnBmrMLOWID6QE0HgZh/A=;
+ b=GASaUkveR6aZi+xVO/ogiop9atrosBAVCIFpncpYIz/CGjMKcmjtDuKpPHZU5OgRaRJF97zoq6qyYxYDE1R/J5ynn9956FZj+Nr8oOrMTO1JZAIfR6Fxh3MBfO1+ogGvaoJIGg4gPxv5rdlZCwPMNvdeDXE9L1XDnS5kTMuRxqIfsTlOMf/dQhOSQ/M+DjxyHGD+xoPUp1w6rXzbv859m8inyIQ78Ce6obhiD/97rdB5pndaqytVp436YFHx+aYH3WePqDOcOqelxdaCBismYyOss1PPJGQGdFkWFPlAfMwnYE+lblpEKNvcNyN0416ngIQwVYeRd2GrQgcw94gPRg==
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
+ by PAXPR04MB9254.eurprd04.prod.outlook.com (2603:10a6:102:2bc::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Tue, 17 Jun
+ 2025 03:07:11 +0000
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334]) by DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334%3]) with mapi id 15.20.8835.027; Tue, 17 Jun 2025
+ 03:07:11 +0000
+From: Bough Chen <haibo.chen@nxp.com>
+To: Jonathan Cameron <jic23@kernel.org>, David Lechner
+	<dlechner@baylibre.com>, =?utf-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+CC: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] iio: adc: imx93_adc: load calibrated values even
+ calibration failed
+Thread-Topic: [PATCH] iio: adc: imx93_adc: load calibrated values even
+ calibration failed
+Thread-Index: AQHbtCXgJqu9eggsy0WsgRqrVmHGkrQHAUYg
+Date: Tue, 17 Jun 2025 03:07:11 +0000
+Message-ID:
+ <DU0PR04MB94962C741E378CAC3F8910E69073A@DU0PR04MB9496.eurprd04.prod.outlook.com>
+References: <20250423-adcpatch-v1-1-b0e84c27ae98@nxp.com>
+In-Reply-To: <20250423-adcpatch-v1-1-b0e84c27ae98@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9496:EE_|PAXPR04MB9254:EE_
+x-ms-office365-filtering-correlation-id: bedf4d67-a750-48d1-4507-08ddad4c0d7c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?dDJLMmpoSWVlRDR6U0pqQ21za2NCS1BES0NYWEo5SDhhQkxVSEZQdE5xaVIv?=
+ =?utf-8?B?MTFYYklZMVgyeGRnQkdaUU81VE1sWjdNb2R3UThxZy9zMFBSVU9QeDdkUFc3?=
+ =?utf-8?B?T1JhQkgwMnFLRitzWjJQVHBESWVMYnUyREtvNmhMTE1XR0RHeFRzalRCMGRY?=
+ =?utf-8?B?QWVUREEvQWl1MXRVeW5BbFh4bXdkMThRUUtwNFgxTy9Zelg4MDg5TmsxaGFq?=
+ =?utf-8?B?WHN6enhKUVk4Sk9MTUpEaDNVM016NGZoWUJTVGtMSlNOOS8vOXF0NUZnNjFx?=
+ =?utf-8?B?M3VCMW03U05GM2JiRis1RzFTMzNjeDVmZkxoYVNYMHpWdTNyK3lTc2ppeDQ0?=
+ =?utf-8?B?K1Y0aTNRUGdrWWJUNXJCN1YrVno0NDFtazlBMU1neXc2M3pOVHV6bHNydFI0?=
+ =?utf-8?B?N0Z1WEVjODkzb0dZMi8vOUIxa08zVXpSZk5DSlJnVEYxRllremhqMlR3Wk81?=
+ =?utf-8?B?L2F5VGVyd1pLWWZrdmtaMGJudzBaMFoyMm9zUDNrS1NYbHRvaFhuQ2NKWEEz?=
+ =?utf-8?B?MVR6MzlWU2xHaHRTK2hNZSszSWNIR25ldm5YU2NKODBDaHZDbWlBcFhqWmdk?=
+ =?utf-8?B?OGJKQnpicWs4Uy9GcnExL2lhaEorS1M0d1piWkx0OHV4UkFqT3BJTEhsRFpn?=
+ =?utf-8?B?TFN2YjZEM2lDS3pzd1BHdFRXeE5oVXNEZStUUm96Y2FITkFYWkxEcXdobG42?=
+ =?utf-8?B?bWthVE5DdnQ0UUtyNU84N0szWGExRVVrdXJZTm4vTStEa21GejkxbUZzdTZR?=
+ =?utf-8?B?U3k3T2k2bXkxbWJlU3oybytpWnFaMzloVTdEYkxacVYzdXpOdkMyNHptclA4?=
+ =?utf-8?B?THA5bmVMVFNzQ0JLZWdMRHNlRVBjODBwRzRRSzd6dTMxWERzc2xtYUFqUTdR?=
+ =?utf-8?B?SzRlZDNka0FTYlY4VW5WaVoyenl4ejZ3VDhOSXdRUjZjMHVlc0hObkE4RlVs?=
+ =?utf-8?B?TzlyWHp2cjlZT1FSano0dnRrZHowY0UvK0ZSdENQamhraDBrb0FRYTRhZE1H?=
+ =?utf-8?B?bTd1cUd3VTQwS2Y3bVM1OWZLbWFrN24wUW9PSDZFak1OT2N6My9qbHpDd3Fq?=
+ =?utf-8?B?cmtwbndaZHZ0RnZ3c3VZbEppVUJ2SThIOE5VcjA5RkR0N0R0OWkvZ2NqRm5w?=
+ =?utf-8?B?ckNuZUk3bHBKNk5NOFNzWGpqVUp5NXQ2SkZrUUFEaTE0UUhuT3RZTmxrM0dV?=
+ =?utf-8?B?Tm9VbW1UM040T2NPdVI1UkhNVjhsd2JxMWRVWEhzZVlnb28yRklXQTcrNUQ1?=
+ =?utf-8?B?V3cweTMrRDBJNExVNzJYeDM3c3ZjcTU1VlJubWIxUktLbFVWTkFvM0ZkL1pO?=
+ =?utf-8?B?Z0hSSzMydTBBZmthMWQxQkgzQnZ4L0ZVdGpLQTdCcUR6a0xKSTYyZmN4TVA5?=
+ =?utf-8?B?akpzZEtTQTFPTEI2b09qY0tZcFU1TFJ0clptNzNzbG5vRUN0Wk9OZkdHaXZr?=
+ =?utf-8?B?TlMzcUNpZlEvam50R3Y3MkQveElIemxHYXFER1BRNkhSVkFIcjA5cE5pSzNn?=
+ =?utf-8?B?RmxRZER1YjNrd1kwWEVnZ01JSWFNQXNnNmlpWVdQMStydS9FMnNBUDhTSkRo?=
+ =?utf-8?B?REV5MEwzU1M4aWRSaDFZVjlMT294VVRPNVRlL0ltR0xVWi9FTGF3VnI5L1k2?=
+ =?utf-8?B?VGVreE9aQ0pSUkNtWGVtS0xxWHVWRnVLYXB5RnJNeklDTTJXOVBlZnkrZjdn?=
+ =?utf-8?B?dXVFdG1jSi9TRVFNUVJMK3Q2SXpUYlNaSjVkK2p3aGJueFNKQUthWlNUaVF6?=
+ =?utf-8?B?aEJ1MjZmbTNDQkk4RmkzNjZITXVSQzBwcW9xQ2hGSllqWWNVK21id0VMMU5z?=
+ =?utf-8?B?YU1JZlJtS1U1c2l2dG9lVTBzVkZNbmJwOGdUUHhqR2ZTK0dGa21Cdjh6UDlX?=
+ =?utf-8?B?U1doRWN4cURuYTcwK25OZWNuaHZyL3dUcW4vUGk1eVBENDd5bmx6aVg5Wjc0?=
+ =?utf-8?B?OTdqb2Nsa1U5Ny9mZmN6amVPRTZVVlBHZkRkeS9VYUpJWFJNa2dvQXpFdHRa?=
+ =?utf-8?B?MG1mNDVoTFFBPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?ak1XQ1FMVktORnVQLzJFc0YzTy9BYU9HTytDNUlkbWpuSEFtSVQ5RExjdGlS?=
+ =?utf-8?B?RzF3Tytnak9pZi9oME5uaENDTUN2dGhDR0Q4K25MbThRRVpFdjdkUnpKR0Mz?=
+ =?utf-8?B?Y1lEWllCb3lBWjFpYThvdUsyL2Z5Nm03OTVkaUFnNWl4SDlNS3pCaVc5R1hu?=
+ =?utf-8?B?cHl3MjRxbC9PRVhicHlkOHZaTGl0ekxMU1VsRkkvbjhmSjZjV2NBeloxeTEy?=
+ =?utf-8?B?bkpubERkSjM2aXYxM0hCRVR6QTJXTVpBN0ZTZFpMSTF2MFR3YkFEQkh0dHY5?=
+ =?utf-8?B?WUFRcE1YQ29VV29KTVlxL2NDM2REaUlqVkhwMzhYTzdpaXdjS2JGQ2pNREN1?=
+ =?utf-8?B?cDN5MzlESUtBYXNOdFk5bERpMStZVnAvNnZVWGRFa2RLZ2d2OEtmYlE0akw1?=
+ =?utf-8?B?czNYUTJ6d0RQeGZ4MGlnZ0JmbUs4aUtmOXRiVmk3K2VORUl5bm8xYUNNUU5R?=
+ =?utf-8?B?aktCbzk2bTdJaUdkL2RlUWZWTGg1MlM3QUlNcFJnOUNtQ2ZrMEV5ME5XTitm?=
+ =?utf-8?B?WjVxZSsyN1Z4YmwxSDl3c1l4SDAyRUNHRXVaaWNTSlpNMStDKzd1ZVBPZll6?=
+ =?utf-8?B?d0EyMzlwZHVKbkc0SkpuU1l6RjlIcUlJWTNQZGpiaTlrdlhmM2I4aFdGaXgw?=
+ =?utf-8?B?TW45bTQyZFBVQW8waFp0TlJTWDg0RlFRL3JCMUtaQ1Y1NUhmM1ZtQno1aE5o?=
+ =?utf-8?B?cFlZN2F1SUpsNm5ZczFkd2MrcHowNHMxMityaW1zRmEzQlNqdzVmdHg3Yzda?=
+ =?utf-8?B?UFR3eTcvUEpPUmJ2eDltSVpLcS9uQXljN2xQSmRRZDhscXI4TFBWcmNGZWQ1?=
+ =?utf-8?B?RlgrZktsSUZyTk5YNFFMWDhXT29QK1U0dzRQUHdlTVZnNDR4eEpSdFFOQ1hQ?=
+ =?utf-8?B?eHNDWkI2dFl0REhFM0JsVEU4bS9WWEdzdVNoNDVQK05BOHVUemFPNjlVMjND?=
+ =?utf-8?B?dEUyQWxrSHhyc3BSNHJYSTlwVm5pTUlUYmJQMkJtOHNKVU9pTUtjQ2tWaTZ4?=
+ =?utf-8?B?WGwybmM4VU5LUzFtNGI4dHdud1JQNFdjS1dnSDJhTEE5NkFiV3AzVlhPQVNy?=
+ =?utf-8?B?NEtiT3ZKMm5nWmRhcEZCQkV0OFg0eWFOQ1R3cWx4Z1Z0ekZNODV5U0ZZallH?=
+ =?utf-8?B?RzhwdE96SzhsWFhCZ2lSay9WSlFFdDdnd1NjaloyaC9OeG1wejlvZWxZLzVJ?=
+ =?utf-8?B?TFV3RWZnY3BYaUxYSkdLcEE4eWpnU05tdUgwWVhsZWE2V0RDanc5VGZJUjMy?=
+ =?utf-8?B?aVI2QnhnYjIxT2laWFlHdnQwUSt2NUhEei9iOFRKL3pObFY2UlprN2Fhamxr?=
+ =?utf-8?B?RG9aTzZOZUZxNVVDaHBtK01YNFlDOFhmY3lUL1UyUTZJS1Y3eCtaRmRMaWRJ?=
+ =?utf-8?B?cGl1QkVWVmpHRkpoU2ZMZWFoaTl1alJjSHZnc1NuVUVtTFk3Q2lYVGdZLzBK?=
+ =?utf-8?B?RUdydDZ6OXMvcCtMK01ZV1VyR2loNXBFVkZ1ZzhBeGNYMUp0WUYvY3dtTXFl?=
+ =?utf-8?B?dFY1YXd3clQzV0U1ZHZXQXpMbTBQeWlQZjJXTGtkZXNvV3NNbjRHUE1WclBt?=
+ =?utf-8?B?QWlYTGZpSXUyZ0NYRW9zUXJOWUpIb3ovMStIVEZOYVUrV21keVkxeDdhVUNU?=
+ =?utf-8?B?SE1helYvS1R1N2w1dFgxSmI1VUlva1BQUm1vbWVKV0J6a1F0SEJjZzNUcWpK?=
+ =?utf-8?B?MXFVNEg0bGtBYWUxSGdEL3BjRmNqb05LMEdHdFBRV2lYc1VrUStTZWJpQktj?=
+ =?utf-8?B?Y3FseWs4L0pTYUt1T0hyYXRQOHNibGlxRFB3Yko3MnVEZ1V0Y3RzMFA0N09m?=
+ =?utf-8?B?RHViY2pmOEdYM1hGbnVKL3VwV0VlWFA1RXdGVG15Y1J5VkVpK1NBM01VSWtE?=
+ =?utf-8?B?TENQZzN4RVNzRlJJQzFLVVFGek42Uy9CeWswaEJGNldZU25HcEROTU5ZU0tJ?=
+ =?utf-8?B?ajFQYXlxZU9uVS9vcHo2VXVGcjJLSVVHSjk3dTh0S1NWNzZZVjhYQitsTGF6?=
+ =?utf-8?B?a1Fab3pFRUFwYXpjUFdrQlBybUdlQk93NXA5NloxTzBZQlNGNVgyZEhUTGFh?=
+ =?utf-8?B?TmpSRFhhcklaQVBCaFo5MStPcmdYL3llZGExMHlxcmFTOFBSaXdoRWF3dlJp?=
+ =?utf-8?Q?azCA=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bedf4d67-a750-48d1-4507-08ddad4c0d7c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2025 03:07:11.1386
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vMhJkOCt9SumJk/M2bQKhz78iRLteO84Xb28Tz8lSMofRhlZXqu6P5VZmYt/h/xu98jfukVMIDq7Dvo/qqlP5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9254
 
-Since commit 78fe66360ed6 ("misc: ti-st: st_kim: remove the driver")
-ti_wilink_st.h is only used in hci_ll.c, cleanup unused st code
-and move other to hci_ll.h
-
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- drivers/bluetooth/hci_ll.c   |   2 +-
- drivers/bluetooth/hci_ll.h   |  56 +++++
- include/linux/ti_wilink_st.h | 439 -----------------------------------
- 3 files changed, 57 insertions(+), 440 deletions(-)
- create mode 100644 drivers/bluetooth/hci_ll.h
- delete mode 100644 include/linux/ti_wilink_st.h
-
-diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
-index e19e9bd49555..6c089e6f7c40 100644
---- a/drivers/bluetooth/hci_ll.c
-+++ b/drivers/bluetooth/hci_ll.c
-@@ -34,7 +34,6 @@
- #include <linux/of.h>
- #include <linux/serdev.h>
- #include <linux/skbuff.h>
--#include <linux/ti_wilink_st.h>
- #include <linux/clk.h>
- 
- #include <net/bluetooth/bluetooth.h>
-@@ -42,6 +41,7 @@
- #include <linux/gpio/consumer.h>
- #include <linux/nvmem-consumer.h>
- 
-+#include "hci_ll.h"
- #include "hci_uart.h"
- 
- /* Vendor-specific HCI commands */
-diff --git a/drivers/bluetooth/hci_ll.h b/drivers/bluetooth/hci_ll.h
-new file mode 100644
-index 000000000000..b0e525bab64b
---- /dev/null
-+++ b/drivers/bluetooth/hci_ll.h
-@@ -0,0 +1,56 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef HCI_LL_H
-+#define HCI_LL_H
-+
-+/*
-+ * BTS headers
-+ */
-+#define ACTION_SEND_COMMAND     1
-+#define ACTION_WAIT_EVENT       2
-+#define ACTION_SERIAL           3
-+#define ACTION_DELAY            4
-+#define ACTION_RUN_SCRIPT       5
-+#define ACTION_REMARKS          6
-+
-+/**
-+ * struct bts_header - the fw file is NOT binary which can
-+ *	be sent onto TTY as is. The .bts is more a script
-+ *	file which has different types of actions.
-+ *	Each such action needs to be parsed by the KIM and
-+ *	relevant procedure to be called.
-+ */
-+struct bts_header {
-+	u32 magic;
-+	u32 version;
-+	u8 future[24];
-+	u8 actions[];
-+} __packed;
-+
-+/**
-+ * struct bts_action - Each .bts action has its own type of
-+ *	data.
-+ */
-+struct bts_action {
-+	u16 type;
-+	u16 size;
-+	u8 data[];
-+} __packed;
-+
-+struct bts_action_delay {
-+	u32 msec;
-+} __packed;
-+
-+/**
-+ * struct hci_command - the HCI-VS for intrepreting
-+ *	the change baud rate of host-side UART, which
-+ *	needs to be ignored, since UIM would do that
-+ *	when it receives request from KIM for ldisc installation.
-+ */
-+struct hci_command {
-+	u8 prefix;
-+	u16 opcode;
-+	u8 plen;
-+	u32 speed;
-+} __packed;
-+
-+#endif /* HCI_LL_H */
-diff --git a/include/linux/ti_wilink_st.h b/include/linux/ti_wilink_st.h
-deleted file mode 100644
-index 10642d4844f0..000000000000
---- a/include/linux/ti_wilink_st.h
-+++ /dev/null
-@@ -1,439 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- *  Shared Transport Header file
-- *	To be included by the protocol stack drivers for
-- *	Texas Instruments BT,FM and GPS combo chip drivers
-- *	and also serves the sub-modules of the shared transport driver.
-- *
-- *  Copyright (C) 2009-2010 Texas Instruments
-- *  Author: Pavan Savoy <pavan_savoy@ti.com>
-- */
--
--#ifndef TI_WILINK_ST_H
--#define TI_WILINK_ST_H
--
--#include <linux/skbuff.h>
--
--/**
-- * enum proto-type - The protocol on WiLink chips which share a
-- *	common physical interface like UART.
-- */
--enum proto_type {
--	ST_BT,
--	ST_FM,
--	ST_GPS,
--	ST_MAX_CHANNELS = 16,
--};
--
--/**
-- * struct st_proto_s - Per Protocol structure from BT/FM/GPS to ST
-- * @type: type of the protocol being registered among the
-- *	available proto_type(BT, FM, GPS the protocol which share TTY).
-- * @recv: the receiver callback pointing to a function in the
-- *	protocol drivers called by the ST driver upon receiving
-- *	relevant data.
-- * @match_packet: reserved for future use, to make ST more generic
-- * @reg_complete_cb: callback handler pointing to a function in protocol
-- *	handler called by ST when the pending registrations are complete.
-- *	The registrations are marked pending, in situations when fw
-- *	download is in progress.
-- * @write: pointer to function in ST provided to protocol drivers from ST,
-- *	to be made use when protocol drivers have data to send to TTY.
-- * @priv_data: privdate data holder for the protocol drivers, sent
-- *	from the protocol drivers during registration, and sent back on
-- *	reg_complete_cb and recv.
-- * @chnl_id: channel id the protocol driver is interested in, the channel
-- *	id is nothing but the 1st byte of the packet in UART frame.
-- * @max_frame_size: size of the largest frame the protocol can receive.
-- * @hdr_len: length of the header structure of the protocol.
-- * @offset_len_in_hdr: this provides the offset of the length field in the
-- *	header structure of the protocol header, to assist ST to know
-- *	how much to receive, if the data is split across UART frames.
-- * @len_size: whether the length field inside the header is 2 bytes
-- *	or 1 byte.
-- * @reserve: the number of bytes ST needs to reserve in the skb being
-- *	prepared for the protocol driver.
-- */
--struct st_proto_s {
--	enum proto_type type;
--	long (*recv) (void *, struct sk_buff *);
--	unsigned char (*match_packet) (const unsigned char *data);
--	void (*reg_complete_cb) (void *, int data);
--	long (*write) (struct sk_buff *skb);
--	void *priv_data;
--
--	unsigned char chnl_id;
--	unsigned short max_frame_size;
--	unsigned char hdr_len;
--	unsigned char offset_len_in_hdr;
--	unsigned char len_size;
--	unsigned char reserve;
--};
--
--extern long st_register(struct st_proto_s *);
--extern long st_unregister(struct st_proto_s *);
--
--
--/*
-- * header information used by st_core.c
-- */
--
--/* states of protocol list */
--#define ST_NOTEMPTY	1
--#define ST_EMPTY	0
--
--/*
-- * possible st_states
-- */
--#define ST_INITIALIZING		1
--#define ST_REG_IN_PROGRESS	2
--#define ST_REG_PENDING		3
--#define ST_WAITING_FOR_RESP	4
--
--/**
-- * struct st_data_s - ST core internal structure
-- * @st_state: different states of ST like initializing, registration
-- *	in progress, this is mainly used to return relevant err codes
-- *	when protocol drivers are registering. It is also used to track
-- *	the recv function, as in during fw download only HCI events
-- *	can occur , where as during other times other events CH8, CH9
-- *	can occur.
-- * @tty: tty provided by the TTY core for line disciplines.
-- * @tx_skb: If for some reason the tty's write returns lesser bytes written
-- *	then to maintain the rest of data to be written on next instance.
-- *	This needs to be protected, hence the lock inside wakeup func.
-- * @tx_state: if the data is being written onto the TTY and protocol driver
-- *	wants to send more, queue up data and mark that there is
-- *	more data to send.
-- * @list: the list of protocols registered, only MAX can exist, one protocol
-- *	can register only once.
-- * @rx_state: states to be maintained inside st's tty receive
-- * @rx_count: count to be maintained inside st's tty receieve
-- * @rx_skb: the skb where all data for a protocol gets accumulated,
-- *	since tty might not call receive when a complete event packet
-- *	is received, the states, count and the skb needs to be maintained.
-- * @rx_chnl: the channel ID for which the data is getting accumalated for.
-- * @txq: the list of skbs which needs to be sent onto the TTY.
-- * @tx_waitq: if the chip is not in AWAKE state, the skbs needs to be queued
-- *	up in here, PM(WAKEUP_IND) data needs to be sent and then the skbs
-- *	from waitq can be moved onto the txq.
-- *	Needs locking too.
-- * @lock: the lock to protect skbs, queues, and ST states.
-- * @protos_registered: count of the protocols registered, also when 0 the
-- *	chip enable gpio can be toggled, and when it changes to 1 the fw
-- *	needs to be downloaded to initialize chip side ST.
-- * @ll_state: the various PM states the chip can be, the states are notified
-- *	to us, when the chip sends relevant PM packets(SLEEP_IND, WAKE_IND).
-- * @kim_data: reference to the parent encapsulating structure.
-- *
-- */
--struct st_data_s {
--	unsigned long st_state;
--	struct sk_buff *tx_skb;
--#define ST_TX_SENDING	1
--#define ST_TX_WAKEUP	2
--	unsigned long tx_state;
--	struct st_proto_s *list[ST_MAX_CHANNELS];
--	bool is_registered[ST_MAX_CHANNELS];
--	unsigned long rx_state;
--	unsigned long rx_count;
--	struct sk_buff *rx_skb;
--	unsigned char rx_chnl;
--	struct sk_buff_head txq, tx_waitq;
--	spinlock_t lock;
--	unsigned char	protos_registered;
--	unsigned long ll_state;
--	void *kim_data;
--	struct tty_struct *tty;
--	struct work_struct work_write_wakeup;
--};
--
--/*
-- * wrapper around tty->ops->write_room to check
-- * availability during firmware download
-- */
--int st_get_uart_wr_room(struct st_data_s *st_gdata);
--/**
-- * st_int_write -
-- * point this to tty->driver->write or tty->ops->write
-- * depending upon the kernel version
-- */
--int st_int_write(struct st_data_s*, const unsigned char*, int);
--
--/**
-- * st_write -
-- * internal write function, passed onto protocol drivers
-- * via the write function ptr of protocol struct
-- */
--long st_write(struct sk_buff *);
--
--/* function to be called from ST-LL */
--void st_ll_send_frame(enum proto_type, struct sk_buff *);
--
--/* internal wake up function */
--void st_tx_wakeup(struct st_data_s *st_data);
--
--/* init, exit entry funcs called from KIM */
--int st_core_init(struct st_data_s **);
--void st_core_exit(struct st_data_s *);
--
--/* ask for reference from KIM */
--void st_kim_ref(struct st_data_s **, int);
--
--#define GPS_STUB_TEST
--#ifdef GPS_STUB_TEST
--int gps_chrdrv_stub_write(const unsigned char*, int);
--void gps_chrdrv_stub_init(void);
--#endif
--
--/*
-- * header information used by st_kim.c
-- */
--
--/* time in msec to wait for
-- * line discipline to be installed
-- */
--#define LDISC_TIME	1000
--#define CMD_RESP_TIME	800
--#define CMD_WR_TIME	5000
--#define MAKEWORD(a, b)  ((unsigned short)(((unsigned char)(a)) \
--	| ((unsigned short)((unsigned char)(b))) << 8))
--
--#define GPIO_HIGH 1
--#define GPIO_LOW  0
--
--/* the Power-On-Reset logic, requires to attempt
-- * to download firmware onto chip more than once
-- * since the self-test for chip takes a while
-- */
--#define POR_RETRY_COUNT 5
--
--/**
-- * struct chip_version - save the chip version
-- */
--struct chip_version {
--	unsigned short full;
--	unsigned short chip;
--	unsigned short min_ver;
--	unsigned short maj_ver;
--};
--
--#define UART_DEV_NAME_LEN 32
--/**
-- * struct kim_data_s - the KIM internal data, embedded as the
-- *	platform's drv data. One for each ST device in the system.
-- * @uim_pid: KIM needs to communicate with UIM to request to install
-- *	the ldisc by opening UART when protocol drivers register.
-- * @kim_pdev: the platform device added in one of the board-XX.c file
-- *	in arch/XX/ directory, 1 for each ST device.
-- * @kim_rcvd: completion handler to notify when data was received,
-- *	mainly used during fw download, which involves multiple send/wait
-- *	for each of the HCI-VS commands.
-- * @ldisc_installed: completion handler to notify that the UIM accepted
-- *	the request to install ldisc, notify from tty_open which suggests
-- *	the ldisc was properly installed.
-- * @resp_buffer: data buffer for the .bts fw file name.
-- * @fw_entry: firmware class struct to request/release the fw.
-- * @rx_state: the rx state for kim's receive func during fw download.
-- * @rx_count: the rx count for the kim's receive func during fw download.
-- * @rx_skb: all of fw data might not come at once, and hence data storage for
-- *	whole of the fw response, only HCI_EVENTs and hence diff from ST's
-- *	response.
-- * @core_data: ST core's data, which mainly is the tty's disc_data
-- * @version: chip version available via a sysfs entry.
-- *
-- */
--struct kim_data_s {
--	long uim_pid;
--	struct platform_device *kim_pdev;
--	struct completion kim_rcvd, ldisc_installed;
--	char resp_buffer[30];
--	const struct firmware *fw_entry;
--	unsigned nshutdown;
--	unsigned long rx_state;
--	unsigned long rx_count;
--	struct sk_buff *rx_skb;
--	struct st_data_s *core_data;
--	struct chip_version version;
--	unsigned char ldisc_install;
--	unsigned char dev_name[UART_DEV_NAME_LEN + 1];
--	unsigned flow_cntrl;
--	unsigned baud_rate;
--};
--
--/**
-- * functions called when 1 of the protocol drivers gets
-- * registered, these need to communicate with UIM to request
-- * ldisc installed, read chip_version, download relevant fw
-- */
--long st_kim_start(void *);
--long st_kim_stop(void *);
--
--void st_kim_complete(void *);
--void kim_st_list_protocols(struct st_data_s *, void *);
--void st_kim_recv(void *disc_data, const u8 *data, size_t count);
--
--
--/*
-- * BTS headers
-- */
--#define ACTION_SEND_COMMAND     1
--#define ACTION_WAIT_EVENT       2
--#define ACTION_SERIAL           3
--#define ACTION_DELAY            4
--#define ACTION_RUN_SCRIPT       5
--#define ACTION_REMARKS          6
--
--/**
-- * struct bts_header - the fw file is NOT binary which can
-- *	be sent onto TTY as is. The .bts is more a script
-- *	file which has different types of actions.
-- *	Each such action needs to be parsed by the KIM and
-- *	relevant procedure to be called.
-- */
--struct bts_header {
--	u32 magic;
--	u32 version;
--	u8 future[24];
--	u8 actions[];
--} __attribute__ ((packed));
--
--/**
-- * struct bts_action - Each .bts action has its own type of
-- *	data.
-- */
--struct bts_action {
--	u16 type;
--	u16 size;
--	u8 data[];
--} __attribute__ ((packed));
--
--struct bts_action_send {
--	u8 data[0];
--} __attribute__ ((packed));
--
--struct bts_action_wait {
--	u32 msec;
--	u32 size;
--	u8 data[];
--} __attribute__ ((packed));
--
--struct bts_action_delay {
--	u32 msec;
--} __attribute__ ((packed));
--
--struct bts_action_serial {
--	u32 baud;
--	u32 flow_control;
--} __attribute__ ((packed));
--
--/**
-- * struct hci_command - the HCI-VS for intrepreting
-- *	the change baud rate of host-side UART, which
-- *	needs to be ignored, since UIM would do that
-- *	when it receives request from KIM for ldisc installation.
-- */
--struct hci_command {
--	u8 prefix;
--	u16 opcode;
--	u8 plen;
--	u32 speed;
--} __attribute__ ((packed));
--
--/*
-- * header information used by st_ll.c
-- */
--
--/* ST LL receiver states */
--#define ST_W4_PACKET_TYPE       0
--#define ST_W4_HEADER		1
--#define ST_W4_DATA		2
--
--/* ST LL state machines */
--#define ST_LL_ASLEEP               0
--#define ST_LL_ASLEEP_TO_AWAKE      1
--#define ST_LL_AWAKE                2
--#define ST_LL_AWAKE_TO_ASLEEP      3
--#define ST_LL_INVALID		   4
--
--/* different PM notifications coming from chip */
--#define LL_SLEEP_IND	0x30
--#define LL_SLEEP_ACK	0x31
--#define LL_WAKE_UP_IND	0x32
--#define LL_WAKE_UP_ACK	0x33
--
--/* initialize and de-init ST LL */
--long st_ll_init(struct st_data_s *);
--long st_ll_deinit(struct st_data_s *);
--
--/**
-- * enable/disable ST LL along with KIM start/stop
-- * called by ST Core
-- */
--void st_ll_enable(struct st_data_s *);
--void st_ll_disable(struct st_data_s *);
--
--/**
-- * various funcs used by ST core to set/get the various PM states
-- * of the chip.
-- */
--unsigned long st_ll_getstate(struct st_data_s *);
--unsigned long st_ll_sleep_state(struct st_data_s *, unsigned char);
--void st_ll_wakeup(struct st_data_s *);
--
--/*
-- * header information used by st_core.c for FM and GPS
-- * packet parsing, the bluetooth headers are already available
-- * at net/bluetooth/
-- */
--
--struct fm_event_hdr {
--	u8 plen;
--} __attribute__ ((packed));
--
--#define FM_MAX_FRAME_SIZE 0xFF	/* TODO: */
--#define FM_EVENT_HDR_SIZE 1	/* size of fm_event_hdr */
--#define ST_FM_CH8_PKT 0x8
--
--/* gps stuff */
--struct gps_event_hdr {
--	u8 opcode;
--	u16 plen;
--} __attribute__ ((packed));
--
--/**
-- * struct ti_st_plat_data - platform data shared between ST driver and
-- *	platform specific board file which adds the ST device.
-- * @nshutdown_gpio: Host's GPIO line to which chip's BT_EN is connected.
-- * @dev_name: The UART/TTY name to which chip is interfaced. (eg: /dev/ttyS1)
-- * @flow_cntrl: Should always be 1, since UART's CTS/RTS is used for PM
-- *	purposes.
-- * @baud_rate: The baud rate supported by the Host UART controller, this will
-- *	be shared across with the chip via a HCI VS command from User-Space Init
-- *	Mgr application.
-- * @suspend:
-- * @resume: legacy PM routines hooked to platform specific board file, so as
-- *	to take chip-host interface specific action.
-- * @chip_enable:
-- * @chip_disable: Platform/Interface specific mux mode setting, GPIO
-- *	configuring, Host side PM disabling etc.. can be done here.
-- * @chip_asleep:
-- * @chip_awake: Chip specific deep sleep states is communicated to Host
-- *	specific board-xx.c to take actions such as cut UART clocks when chip
-- *	asleep or run host faster when chip awake etc..
-- *
-- */
--struct ti_st_plat_data {
--	u32 nshutdown_gpio;
--	unsigned char dev_name[UART_DEV_NAME_LEN]; /* uart name */
--	u32 flow_cntrl; /* flow control flag */
--	u32 baud_rate;
--	int (*suspend)(struct platform_device *, pm_message_t);
--	int (*resume)(struct platform_device *);
--	int (*chip_enable) (struct kim_data_s *);
--	int (*chip_disable) (struct kim_data_s *);
--	int (*chip_asleep) (struct kim_data_s *);
--	int (*chip_awake) (struct kim_data_s *);
--};
--
--#endif /* TI_WILINK_ST_H */
--- 
-2.34.1
-
+QW55IGNvbW1lbnQgZm9yIHRoaXMgcGF0Y2g/DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
+LS0NCj4gRnJvbTogQm91Z2ggQ2hlbiA8aGFpYm8uY2hlbkBueHAuY29tPg0KPiBTZW50OiAyMDI1
+5bm0NOaciDIz5pelIDE2OjAzDQo+IFRvOiBKb25hdGhhbiBDYW1lcm9uIDxqaWMyM0BrZXJuZWwu
+b3JnPjsgRGF2aWQgTGVjaG5lcg0KPiA8ZGxlY2huZXJAYmF5bGlicmUuY29tPjsgTnVubyBTw6Eg
+PG51bm8uc2FAYW5hbG9nLmNvbT47IEFuZHkgU2hldmNoZW5rbw0KPiA8YW5keUBrZXJuZWwub3Jn
+PjsgU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPjsgU2FzY2hhIEhhdWVyDQo+IDxzLmhh
+dWVyQHBlbmd1dHJvbml4LmRlPjsgUGVuZ3V0cm9uaXggS2VybmVsIFRlYW0NCj4gPGtlcm5lbEBw
+ZW5ndXRyb25peC5kZT47IEZhYmlvIEVzdGV2YW0gPGZlc3RldmFtQGdtYWlsLmNvbT4NCj4gQ2M6
+IGxpbnV4LWlpb0B2Z2VyLmtlcm5lbC5vcmc7IGlteEBsaXN0cy5saW51eC5kZXY7DQo+IGxpbnV4
+LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVs
+Lm9yZzsgQm91Z2gNCj4gQ2hlbiA8aGFpYm8uY2hlbkBueHAuY29tPg0KPiBTdWJqZWN0OiBbUEFU
+Q0hdIGlpbzogYWRjOiBpbXg5M19hZGM6IGxvYWQgY2FsaWJyYXRlZCB2YWx1ZXMgZXZlbiBjYWxp
+YnJhdGlvbg0KPiBmYWlsZWQNCj4gDQo+IEFEQyBjYWxpYnJhdGlvbiBtaWdodCBmYWlsIGJlY2F1
+c2Ugb2YgdGhlIG5vaXNlIG9uIHJlZmVyZW5jZSB2b2x0YWdlLg0KPiBUbyBhdm9pZCBjYWxpYnJh
+dGlvbiBmYWlsLCBuZWVkIHRvIG1lZXQgdGhlIGZvbGxvd2luZyByZXF1aXJlbWVudDoNCj4gQURD
+IHJlZmVyZW5jZSB2b2x0YWdlIE5vaXNlIDwgMS44ViAqIDEvMl5FTk9CDQo+IA0KPiBGb3IgdGhl
+IGNhc2Ugd2hpY2ggdGhlIEFEQyByZWZlcmVuY2Ugdm9sdGFnZSBvbiBib2FyZCBkbyBub3QgbWVl
+dCB0aGUNCj4gcmVxdWlyZW1lbnQsIHN0aWxsIGxvYWQgdGhlIGNhbGlicmF0ZWQgdmFsdWVzLCBz
+byBBREMgY2FuIGFsc28gd29yayBidXQgbWF5YmUNCj4gbm90IHRoYXQgYWNjdXJhdGUuDQo+IA0K
+PiBTaWduZWQtb2ZmLWJ5OiBIYWlibyBDaGVuIDxoYWliby5jaGVuQG54cC5jb20+DQo+IC0tLQ0K
+PiAgZHJpdmVycy9paW8vYWRjL2lteDkzX2FkYy5jIHwgMjEgKysrKysrKysrKysrKysrKy0tLS0t
+DQo+ICAxIGZpbGUgY2hhbmdlZCwgMTYgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkNCj4g
+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lpby9hZGMvaW14OTNfYWRjLmMgYi9kcml2ZXJzL2lp
+by9hZGMvaW14OTNfYWRjLmMgaW5kZXgNCj4gN2ZlYWFmZDIzMTZmMjQ2YmQwYzMyZmVhOTkzMDk5
+MDBiNWM2NTA5OS4uZWJmOTc2ZGI3NDZmMDI0MzFhMzE1YjFmYWENCj4gODZmMTUxYmI2NzEzMmUg
+MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvaWlvL2FkYy9pbXg5M19hZGMuYw0KPiArKysgYi9kcml2
+ZXJzL2lpby9hZGMvaW14OTNfYWRjLmMNCj4gQEAgLTM4LDYgKzM4LDcgQEANCj4gICNkZWZpbmUg
+SU1YOTNfQURDX1BDRFI2CQkweDExOA0KPiAgI2RlZmluZSBJTVg5M19BRENfUENEUjcJCTB4MTFj
+DQo+ICAjZGVmaW5lIElNWDkzX0FEQ19DQUxTVEFUCTB4MzlDDQo+ICsjZGVmaW5lIElNWDkzX0FE
+Q19DQUxDRkcwCTBYM0EwDQo+IA0KPiAgLyogQURDIGJpdCBzaGlmdCAqLw0KPiAgI2RlZmluZSBJ
+TVg5M19BRENfTUNSX01PREVfTUFTSwkJCUJJVCgyOSkNCj4gQEAgLTU4LDYgKzU5LDggQEANCj4g
+ICNkZWZpbmUgSU1YOTNfQURDX0lNUl9FQ0hfTUFTSwkJCUJJVCgwKQ0KPiAgI2RlZmluZSBJTVg5
+M19BRENfUENEUl9DREFUQV9NQVNLCQlHRU5NQVNLKDExLCAwKQ0KPiANCj4gKyNkZWZpbmUgSU1Y
+OTNfQURDX0NBTENGRzBfTERGQUlMX01BU0sJCUJJVCg0KQ0KPiArDQo+ICAvKiBBREMgc3RhdHVz
+ICovDQo+ICAjZGVmaW5lIElNWDkzX0FEQ19NU1JfQURDU1RBVFVTX0lETEUJCQkwDQo+ICAjZGVm
+aW5lIElNWDkzX0FEQ19NU1JfQURDU1RBVFVTX1BPV0VSX0RPV04JCTENCj4gQEAgLTE0NSw3ICsx
+NDgsNyBAQCBzdGF0aWMgdm9pZCBpbXg5M19hZGNfY29uZmlnX2FkX2NsayhzdHJ1Y3QgaW14OTNf
+YWRjDQo+ICphZGMpDQo+IA0KPiAgc3RhdGljIGludCBpbXg5M19hZGNfY2FsaWJyYXRpb24oc3Ry
+dWN0IGlteDkzX2FkYyAqYWRjKSAgew0KPiAtCXUzMiBtY3IsIG1zcjsNCj4gKwl1MzIgbWNyLCBt
+c3IsIGNhbGNmZzsNCj4gIAlpbnQgcmV0Ow0KPiANCj4gIAkvKiBtYWtlIHN1cmUgQURDIGluIHBv
+d2VyIGRvd24gbW9kZSAqLyBAQCAtMTU4LDYgKzE2MSwxMSBAQCBzdGF0aWMNCj4gaW50IGlteDkz
+X2FkY19jYWxpYnJhdGlvbihzdHJ1Y3QgaW14OTNfYWRjICphZGMpDQo+IA0KPiAgCWlteDkzX2Fk
+Y19wb3dlcl91cChhZGMpOw0KPiANCj4gKwkvKiBFbmFibGUgbG9hZGluZyBvZiBjYWxpYnJhdGVk
+IHZhbHVlcyBldmVuIGluIGZhaWwgY29uZGl0aW9uICovDQo+ICsJY2FsY2ZnID0gcmVhZGwoYWRj
+LT5yZWdzICsgSU1YOTNfQURDX0NBTENGRzApOw0KPiArCWNhbGNmZyB8PSBJTVg5M19BRENfQ0FM
+Q0ZHMF9MREZBSUxfTUFTSzsNCj4gKwl3cml0ZWwoY2FsY2ZnLCBhZGMtPnJlZ3MgKyBJTVg5M19B
+RENfQ0FMQ0ZHMCk7DQo+ICsNCj4gIAkvKg0KPiAgCSAqIFRPRE86IHdlIHVzZSB0aGUgZGVmYXVs
+dCBUU0FNUC9OUlNNUEwvQVZHRU4gaW4gTUNSLA0KPiAgCSAqIGNhbiBhZGQgdGhlIHNldHRpbmcg
+b2YgdGhlc2UgYml0IGlmIG5lZWQgaW4gZnV0dXJlLg0KPiBAQCAtMTc5LDExICsxODcsMTQgQEAg
+c3RhdGljIGludCBpbXg5M19hZGNfY2FsaWJyYXRpb24oc3RydWN0IGlteDkzX2FkYw0KPiAqYWRj
+KQ0KPiANCj4gIAkvKiBjaGVjayB3aGV0aGVyIGNhbGJyYXRpb24gaXMgc3VjY2VzcyBvciBub3Qg
+Ki8NCj4gIAltc3IgPSByZWFkbChhZGMtPnJlZ3MgKyBJTVg5M19BRENfTVNSKTsNCj4gLQlpZiAo
+bXNyICYgSU1YOTNfQURDX01TUl9DQUxGQUlMX01BU0spIHsNCj4gKwlpZiAobXNyICYgSU1YOTNf
+QURDX01TUl9DQUxGQUlMX01BU0spDQo+ICsJCS8qDQo+ICsJCSAqIE9ubHkgZ2l2ZSB3YXJuaW5n
+IGhlcmUsIHRoaXMgbWVhbnMgdGhlIG5vaXNlIG9mIHRoZQ0KPiArCQkgKiByZWZlcmVuY2Ugdm9s
+dGFnZSBkbyBub3QgbWVldCB0aGUgcmVxdWlyZW1lbnQ6DQo+ICsJCSAqICAgICBBREMgcmVmZXJl
+bmNlIHZvbHRhZ2UgTm9pc2UgPCAxLjhWICogMS8yXkVOT0INCj4gKwkJICogQW5kIHRoZSByZWF1
+bHQgb2YgQURDIGlzIG5vdCB0aGF0IGFjY3VyYXRlLg0KPiArCQkgKi8NCj4gIAkJZGV2X3dhcm4o
+YWRjLT5kZXYsICJBREMgY2FsaWJyYXRpb24gZmFpbGVkIVxuIik7DQo+IC0JCWlteDkzX2FkY19w
+b3dlcl9kb3duKGFkYyk7DQo+IC0JCXJldHVybiAtRUFHQUlOOw0KPiAtCX0NCj4gDQo+ICAJcmV0
+dXJuIDA7DQo+ICB9DQo+IA0KPiAtLS0NCj4gYmFzZS1jb21taXQ6IGJjOGFhNmNkYWRjYzAwODYy
+ZjJiNTcyMGU1ZGUyZTE3ZjY5NmEwODENCj4gY2hhbmdlLWlkOiAyMDI1MDQyMy1hZGNwYXRjaC1j
+YjU5YzUyNTU5NjENCj4gDQo+IEJlc3QgcmVnYXJkcywNCj4gLS0NCj4gSGFpYm8gQ2hlbiA8aGFp
+Ym8uY2hlbkBueHAuY29tPg0KDQo=
 
