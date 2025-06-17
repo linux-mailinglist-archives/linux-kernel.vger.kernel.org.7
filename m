@@ -1,140 +1,136 @@
-Return-Path: <linux-kernel+bounces-689400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28A3ADC129
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:00:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B59ADC137
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 07:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C631E3B281B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 05:00:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3963A172289
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 05:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27C11DE2BF;
-	Tue, 17 Jun 2025 05:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E3D23F294;
+	Tue, 17 Jun 2025 05:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cARlHsoc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QtriyEwb"
+Received: from mail-lj1-f202.google.com (mail-lj1-f202.google.com [209.85.208.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101502C18A
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 05:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277B523770A
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 05:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750136428; cv=none; b=ntWEYJEo2R7jqYRaBGDkymXzlLqnb3zAYaopTi3zclxQcIsrmsOaf7/sO3mN8nufrp5YcxGxw1AIS4omftWl0FvzfclWYAM9hS1bfdyb+2VArCa2kWQnU0DKSFkdUJ4vgMxVBA+xMVzX6U46EDQKJfg9NmA7Qf2623w2mLaZDYI=
+	t=1750136932; cv=none; b=EHQdxiVDfMijudfnPz0jsdivu1qnX/NBRKLqTr2JuEe0C3m/99LwTxVR+MapPZU3HV7Do8cmkQAFZ2ZCdoFgJ6ton4hg7CmDBny44RSU5TXSVzTkBTENUco4veFJiajWaKy4tY06Zb4yigBzI2ebcvGjmfSq8yvvIv6kA5O0HXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750136428; c=relaxed/simple;
-	bh=V+Z9viGW2mQHUgAQAM4wmU9u5Q1wfMoJw+aGoGLrovI=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kwyIGzeqZX4RK5O1a5SNyAuidS8CUOlJr7Xl/blySnoxojhwleJKKMavCoHtF4rhm2ORdFCLmlvMtM8IjniDh9498C+X6fZl2FfD514NMtEj7xemdSFpcXk1UV/saEha40TNDOD1R1y4tWjjmDrpilMwkZTmnBuxpEhlkbdk3aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cARlHsoc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750136424;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1NyyrjVp7x7bd0ZYGuL5yez7PypbZT8ag8gXavULDWU=;
-	b=cARlHsocE57LT+oNcw7ny5KYFCEMXjk2/Q12JMHyPcngN29KFs08YpnwlywlMfMbA246nG
-	xa4St/lsGsxUQVaLGw2wE+wgKDrV0cW9e5txSVcoP3PgZADG/hW0yGb1ANEj2iAq8PzW6A
-	2yqUkcqaarVcoulsd5pP9BNw1U9BRvo=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-674-T_tOuXE5MQunv9WluzSEjQ-1; Tue, 17 Jun 2025 01:00:22 -0400
-X-MC-Unique: T_tOuXE5MQunv9WluzSEjQ-1
-X-Mimecast-MFC-AGG-ID: T_tOuXE5MQunv9WluzSEjQ_1750136422
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d099c1779dso910300685a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 22:00:22 -0700 (PDT)
+	s=arc-20240116; t=1750136932; c=relaxed/simple;
+	bh=+7dQxfUhGAy4SS1ZpusUklS9/5+phcCn7k7KJyX8YGk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=t3As310OA4hWt2gppKqbHGZUv+JOZ2GLN8ihQ1+Np7G3hV3soZZUkhHw3WDRrH4BOfixhQ2D9yX2Hz640R3+1HxzSVuAc7CWpdhJJ/fWV4ux2o0TbaEy8INPg5F9DjtPzc2tbHcJ3LtDR+mgRbER/oa8TA54d7PRm4N7v6AMjCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QtriyEwb; arc=none smtp.client-ip=209.85.208.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com
+Received: by mail-lj1-f202.google.com with SMTP id 38308e7fff4ca-32b378371b1so21942771fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jun 2025 22:08:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750136928; x=1750741728; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=i4dXhN7ywt5V6z7FHvJ0Inv2dYG936KTwLKv+c4EnAc=;
+        b=QtriyEwboByUju6vVYF/5SO9P9TVo30yx270KgBvhSwB4IrkQNlaLH/aQqhuBa9UyA
+         n7FkFTpgdrLLWEwGnZLPjtofqNHcUAKEa4GikOlYxi7jFlvF67Rpvvil1kIoL8Y897VN
+         4KkzMwnU0rcu2TE+h3mX1WRP1OaLXMguKc++S9wWuqC4OYvhcOAFJYm7Wfa5bWNo54Fv
+         Pjs9znkUitRXmbVHfyGDiEeWC/9Bk82eyzJxYUQwPUOqCoe1dmyMRzN4SKWEPvlGo7Bm
+         8dkrYcbOkvD61RIneuLbrV98CFapRgaFcXevo3SG0ds3dZwi3+aLHNKd5pbgGAgX6fb/
+         jYAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750136422; x=1750741222;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1NyyrjVp7x7bd0ZYGuL5yez7PypbZT8ag8gXavULDWU=;
-        b=fj6JMlrOn65ymksQy8CKU/+yw9DeZBJ5s11nDE0bXl/5IJCA6+biXmY9uh9RXNIlxT
-         jGCW5QebvLsxyCLANJXGJDxHr9ZEi0i6Hp9Tim7Xwdwd5kNs43dakK0CFX2Wyxf5yufi
-         jecWKWL8uFkhZSkolpXlHeSZbCE9nEvDvidZ4p+fChO92B0Bt2HmaPp52pNHbTcOV0Nn
-         Rg1BwwEFBVrQWW1Xq6X9diSCnVJMxAhx6Wv5hl5i/LkWuJByvVqkYoxQjBoaPP4av6pP
-         E+JW1KBGBVyTZHAYO/5JOOJUxeDq105GEHBTFIOFnnKwBcquUxQ2jTWsyJYpYzg853dD
-         qK/A==
-X-Gm-Message-State: AOJu0YwwMNr4t5gqGe0Nxd6KBHm6VbgNyGs5AvnUWyFu6yCVB8Yj1Gcb
-	ojf+VwOrc06Ahz2fvF7z298YOhszJTQLsnulNGbSGEBDjeV55z8g3AFiDqU6IAABbnLOVWngoKH
-	gqj9n983eaAKGdl6WBrTInEX0RWogDMrKABy2CfXb/yTj4iEEg1wmVqR4NkvPRCIrXQ==
-X-Gm-Gg: ASbGncvNb5OJpq2Woa6QxJM6R5O3TZUi5skBYM/zWpRz1hMhWwCxoZ+eLIaF9LNcJys
-	E1qKLeb2fr7wCee4D3pLgTz1aEG57R4TrOEXGSCGnG5DhbGJUnDb1FpATb/9w0lgFvI8hIJ3myn
-	Rf7TDeMlTCspIU8rgEK5YDGOFFdVhIeMsVbI+th+oxeWfYxLQDtEGyN7fxpPP+wCS46JqOsicu5
-	V8rL604JxM7tjNI8j92Vn6HW0/edThCicTA/bDD8QTmgKht9n8KUkPgGOhcdqykFGv8DqGLHJO1
-	51cqj0DJSI4lRhJZXQ==
-X-Received: by 2002:a05:620a:1b90:b0:7c5:49e3:3347 with SMTP id af79cd13be357-7d3c6cdfc36mr1906793585a.35.1750136421892;
-        Mon, 16 Jun 2025 22:00:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGWt3mL2iPG6Mtb+S9nFMv063s+W6wfyZG0t6TruzJS9fy8nsWTcjT0oQazpLajvLMysHRzBQ==
-X-Received: by 2002:a05:620a:1b90:b0:7c5:49e3:3347 with SMTP id af79cd13be357-7d3c6cdfc36mr1906788585a.35.1750136421520;
-        Mon, 16 Jun 2025 22:00:21 -0700 (PDT)
-Received: from [192.168.21.4] ([4.8.26.34])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3b8dce5d3sm609299885a.16.2025.06.16.22.00.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jun 2025 22:00:20 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <407f7b2b-cb60-4cd6-be4f-8ad335ad2e38@redhat.com>
-Date: Tue, 17 Jun 2025 01:00:19 -0400
+        d=1e100.net; s=20230601; t=1750136928; x=1750741728;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i4dXhN7ywt5V6z7FHvJ0Inv2dYG936KTwLKv+c4EnAc=;
+        b=K2eNUAtogEVXAqnN11Wt8YwWkDMLQxXNLVd/AZLok0RTawylj21z0St1LLGDNR4op5
+         haLIiHndd1ttjnHmFc0s2KUmAAZa1z5xgOLMGee90GcMXIlqUtCAJeCQRPfj7VK9twuA
+         dIBjM+ltsX5O763gYir/t8wXjAlicJynQl8DXtrRhH+GYMHzhfMhj+lYfHKXinr1Cgnn
+         WY70IMqim//TofrX8G7qhaVVmghue0IbxHnf7ylphFoerxBAtP7EEq4MC6s1AJs/qou4
+         keHkkZV2Bo+2enHwWXJ5Bi1IDo5LQSGYAMbKCT06BoPD5PnVIDvJ03kFIbnMvzaLGQKJ
+         Ljaw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1UZcdhFylPoxLyzNBsvzQcpxJazdSqxLXW16Lfjvc8XwWUuBwR65sKlW0IJv5CaUZPHD/40yr251Km/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywr8AAEB03431Q0pvQhVarwSqwEK8PQ0FMN4y/wW4iGYxPOrW6
+	IszmxMSH+Omd8TLHNOiGpE+S0qTi94mhwJZDgkiTZXNujRaCgjIW2ZeTmxRwW/7zCYZN8D9ViPz
+	jV85HFA==
+X-Google-Smtp-Source: AGHT+IH4I8plCvioKdZPJMsYCNlKjSMJlVrKTpGxX4/Kq8vkc4UpNbDk8MhbJk4PV7yT/LvA0ujCcpLOmy4=
+X-Received: from ljbq21.prod.google.com ([2002:a2e:a015:0:b0:32b:3deb:7b97])
+ (user=khtsai job=prod-delivery.src-stubby-dispatcher) by 2002:a05:651c:b20:b0:32a:847c:a1c0
+ with SMTP id 38308e7fff4ca-32b4a0c5893mr29872581fa.6.1750136928270; Mon, 16
+ Jun 2025 22:08:48 -0700 (PDT)
+Date: Tue, 17 Jun 2025 13:07:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] workqueue: Initialize wq_isolated_cpumask in
- workqueue_init_early()
-To: Chuyi Zhou <zhouchuyi@bytedance.com>, tj@kernel.org,
- jiangshanlai@gmail.com
-Cc: linux-kernel@vger.kernel.org
-References: <20250617044216.1401878-1-zhouchuyi@bytedance.com>
-Content-Language: en-US
-In-Reply-To: <20250617044216.1401878-1-zhouchuyi@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.rc2.692.g299adb8693-goog
+Message-ID: <20250617050844.1848232-1-khtsai@google.com>
+Subject: [PATCH v2 1/2] Revert "usb: gadget: u_serial: Add null pointer check
+ in gs_start_io"
+From: Kuen-Han Tsai <khtsai@google.com>
+To: gregkh@linuxfoundation.org, prashanth.k@oss.qualcomm.com, 
+	khtsai@google.com, hulianqin@vivo.com, krzysztof.kozlowski@linaro.org, 
+	mwalle@kernel.org, jirislaby@kernel.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+This reverts commit ffd603f214237e250271162a5b325c6199a65382.
 
-On 6/17/25 12:42 AM, Chuyi Zhou wrote:
-> Now when isolcpus is enabled via the cmdline, wq_isolated_cpumask does
-> not include these isolated CPUs, even wq_unbound_cpumask has already
-> excluded them. It is only when we successfully configure an isolate cpuset
-> partition that wq_isolated_cpumask gets overwritten by
-> workqueue_unbound_exclude_cpumask(), including both the cmdline-specified
-> isolated CPUs and the isolated CPUs within the cpuset partitions.
->
-> Fix this issue by initializing wq_isolated_cpumask properly in
-> workqueue_init_early().
->
-> Fixes: fe28f631fa94 ("workqueue: Add workqueue_unbound_exclude_cpumask() to exclude CPUs from wq_unbound_cpumask")
-> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
-> ---
->   kernel/workqueue.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> index 97f37b5bae669..9f91480758288 100644
-> --- a/kernel/workqueue.c
-> +++ b/kernel/workqueue.c
-> @@ -7767,7 +7767,8 @@ void __init workqueue_init_early(void)
->   		restrict_unbound_cpumask("workqueue.unbound_cpus", &wq_cmdline_cpumask);
->   
->   	cpumask_copy(wq_requested_unbound_cpumask, wq_unbound_cpumask);
-> -
-> +	cpumask_andnot(wq_isolated_cpumask, cpu_possible_mask,
-> +						housekeeping_cpumask(HK_TYPE_DOMAIN));
->   	pwq_cache = KMEM_CACHE(pool_workqueue, SLAB_PANIC);
->   
->   	unbound_wq_update_pwq_attrs_buf = alloc_workqueue_attrs();
+Commit ffd603f21423 ("usb: gadget: u_serial: Add null pointer check in
+gs_start_io") adds null pointer checks at the beginning of the
+gs_start_io() function to prevent a null pointer dereference. However,
+these checks are redundant because the function's comment already
+requires callers to hold the port_lock and ensure port.tty and port_usb
+are not null. All existing callers already follow these rules.
 
-Right, the wq_isolated_cpumask isn't initialized properly. Thank for 
-fixing that.
+The true cause of the null pointer dereference is a race condition. When
+gs_start_io() calls either gs_start_rx() or gs_start_tx(), the port_lock
+is temporarily released for usb_ep_queue(). This allows port.tty and
+port_usb to be cleared.
 
-Reviewed-by: Waiman Long <longman@redhat.com>
+Fixes: ffd603f21423 ("usb: gadget: u_serial: Add null pointer check in gs_start_io")
+Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
+---
+v2:
+- Remove Cc: stable
+
+---
+ drivers/usb/gadget/function/u_serial.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
+index ab544f6824be..c043bdc30d8a 100644
+--- a/drivers/usb/gadget/function/u_serial.c
++++ b/drivers/usb/gadget/function/u_serial.c
+@@ -544,20 +544,16 @@ static int gs_alloc_requests(struct usb_ep *ep, struct list_head *head,
+ static int gs_start_io(struct gs_port *port)
+ {
+ 	struct list_head	*head = &port->read_pool;
+-	struct usb_ep		*ep;
++	struct usb_ep		*ep = port->port_usb->out;
+ 	int			status;
+ 	unsigned		started;
+
+-	if (!port->port_usb || !port->port.tty)
+-		return -EIO;
+-
+ 	/* Allocate RX and TX I/O buffers.  We can't easily do this much
+ 	 * earlier (with GFP_KERNEL) because the requests are coupled to
+ 	 * endpoints, as are the packet sizes we'll be using.  Different
+ 	 * configurations may use different endpoints with a given port;
+ 	 * and high speed vs full speed changes packet sizes too.
+ 	 */
+-	ep = port->port_usb->out;
+ 	status = gs_alloc_requests(ep, head, gs_read_complete,
+ 		&port->read_allocated);
+ 	if (status)
+--
+2.50.0.rc2.692.g299adb8693-goog
 
 
