@@ -1,136 +1,137 @@
-Return-Path: <linux-kernel+bounces-689968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47198ADC95C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:30:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73047ADC98F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C32067A67AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:28:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6373C3B5A04
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8468283124;
-	Tue, 17 Jun 2025 11:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6BA2DF3CE;
+	Tue, 17 Jun 2025 11:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tqFpopGy"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b="dqWinhLw"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E2F2DBF7E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 11:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A912DBF62
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 11:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750159736; cv=none; b=K9LCS13VAUDPiIsYWBixz/BZJcsbo+OuEX0F7l+4nuTkNuMKXK+GZKLwiJHMabUgJa71lIYILuLS+TvGunW6iScTa+I1XTqfLRMQdHv/OWO1YRF15pjG306D1lWH6UXBdluhJyzBn33hEv0jlIGjK+cCMC2KikjrPRi+tes9EVA=
+	t=1750160311; cv=none; b=OaK/IIpifuodygH+842f6qiyeSm0LM8urKiT45quiyl4nPVkkaZF7rpxYLU1Wm7d54FKM/Lceu0GjSqPRe3lAftCvIHP2zspwaeZfWvZYRzBYqV7ASC9wnptoLsiWypcFG1NpMMVIvWwm5uorjaboqjiV+WO6uVDrO43qJ2GAqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750159736; c=relaxed/simple;
-	bh=rKqVvNw5lyKW3LX2+iL06fE/DI23RpfEtx3Z3DoV+vw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=orjOefPdFOey4SzUjPBEwqJ1vVYDWssBwNzpk9SF9rcI9ItOekLXZt10xmtxPVUgCjiCxBQ8LNJP9b5apSPpikiQP3XOE4Wk/b+T7J1oo5EXGFIKf1SmomKzp/UYzsOkaZticzNAVgExV59rZVCGmmXhQHbpLzs2+sAx4QWcgL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tqFpopGy; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553b60de463so3886412e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 04:28:54 -0700 (PDT)
+	s=arc-20240116; t=1750160311; c=relaxed/simple;
+	bh=P4AbCE9HwyQ2ZcfXU7Rbe5yrBL7FeZqCxZ4VA6G9DXo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=q7AQBUr5iAE2LnbanyfNLOY2tRiS0sMtc6IarihxS5yDPUfHm2VkfM61DMSx7gA4aKiPihLEX3xruKMvyvbnTUAf5d8P7yutr16H8T+KAkxkqdSMNFpvyX8GHAtcTjD+hW47keXcqPPhr+EFnvm5Bbd/ESIVQn8hnRZGMZk2Vjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com; spf=pass smtp.mailfrom=inventec.com; dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b=dqWinhLw; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-742c7a52e97so4638547b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 04:38:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750159733; x=1750764533; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=inventec.com; s=google; t=1750160308; x=1750765108; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rKqVvNw5lyKW3LX2+iL06fE/DI23RpfEtx3Z3DoV+vw=;
-        b=tqFpopGy8Cc73b4pE/J+FwS4fvtgJgIyDHR6WwxuUSk/q4YGBxay1eBzs0oV2z8/3q
-         xCdbk/zp5tnNqqCF81SxWGBiiM+ISgp+Xf8q9lQ2u9HkKhUuOB0bszOh28KgQHEyj6kB
-         wWvcZhgc9V9yHPjZYt5GWOsGjWtkVJL6c74Nx7vpCxmtX+tCLp0wgGrbLTpecSVfw7F7
-         Ld6iDua1M+BrxBlupe2aVtZn6L63yZT5w7knAy3x8ZM6KldeNXFFt+7hywXOXoDIMrLo
-         YpR7fviFSaLiSk6GNvO5QH9k1Jj4babKrVuix90RlBYFMkIeoc9DlZMJMGCpiTLaR/zX
-         1KPg==
+        bh=iXTA6O2icv0/6SSOuEbzQHDT98BuIAlkIFUd19y22YY=;
+        b=dqWinhLwbKlmmE8JIM/AN+Y+NAg+CRJbjV3IemjHoyPOfTIRgQQTBVKRTivPm6F5v6
+         lPlpxOWyqLlJVhhzbvs4jrsqUG4XCbTVioSm3qXJnjM0iTqVwdcdR+P/8kTb5BsUT3bW
+         zoXPz2MeungZEx0m3/arNQSBlQdhF84/T9FOqw6jDcodmZ4MrXMtHHVCKNa6RF4GKYzw
+         dx8K7e6fGZeqim12lg4BDvprvk9USCzcOcvvWzBG3EBGL/9BRS06DVEWs3ms4o4+yiVr
+         2VMKqtXELwDJk9RDJSqve5bgSL3ywZc8oSVUXmmPnb/XPs5IVF0mMhRFQ4adJHrhiChX
+         RJsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750159733; x=1750764533;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1750160308; x=1750765108;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rKqVvNw5lyKW3LX2+iL06fE/DI23RpfEtx3Z3DoV+vw=;
-        b=M7qFHvQMoRhCYhsr9mzq4DRM/sjfI+9YWP2zmeJOaKpp04MMnhOyPwvFyb4wXG0Dhb
-         YDAveYDrniDaitdCWjzg+F9C/fTXeXwIpu/F8xm+Ckuxc5GRHE6QZU13SmxX6F5B+6TG
-         3TLItIbfIY4dgJ0dUbbH6xRbTuUMJ8KpA6gV7jHSv8YV7CVGCuoYw4J1YQ3dFhsEOLEX
-         RMtLnxv3W5XY6bWuni54u6o9cTXpYbX73yES77fm87WBWx14CoTJle74dXHZTTN8TDs/
-         j312cOs51t5iBQjr19urVXBV+KDryTYVT2oaA/uf0GvaXVioxbf0n7sBBnMTQmds4Bc1
-         94CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWrtduqkHM7kvzd9Yx+qII0orJx9CfL8QeNsuicx/Cb/3uhIgYCCuq8K2H/50Tjds3kdOsJTEC0sr9EYZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvgFfrFlflWG6E5j6aMXGuawYQ+7KsLmACbQEYkwIZQajwg/Wd
-	apxw7PEyfobbkhCNotVR6SgPiWOzP72jNRdJd+wuizyJUe82g1JkO5EW6u1j73TtDVE3SElz6cC
-	XQltcsx+6s9OSo3aJKL3aT059ayNHtEs4djEJpf70f/hE1+3Nmzi7nsY=
-X-Gm-Gg: ASbGncvct8vlB83d65rSbufCrmy7irHqVcsPoYaXGR75NgOHFTlH67EvgVxtU9qeFjR
-	ZKVBx8IUMbESUsSwtFn8PUGw+N53027mjrRyrjRcRiz9Z4SwLX3gFQChsoO65F35I7zMw4+iCAT
-	Xc1GIiFZxjF4p2qiYA634PkZpy6Oo8hyg3RYUJTQ1J9s3Vdj9eULKiRm4zCnw15JLntI118P4aR
-	+k=
-X-Google-Smtp-Source: AGHT+IHFBHasejrt+vYHa1q+yyWQGNzh3xU6idx339UYt4amSi8DXGKZ9NJfBKCdaCs39R8/W/TUJxSI6bT+G4W5cw4=
-X-Received: by 2002:a05:6512:3c84:b0:553:2159:8718 with SMTP id
- 2adb3069b0e04-553b6f34ec5mr2709376e87.40.1750159732568; Tue, 17 Jun 2025
- 04:28:52 -0700 (PDT)
+        bh=iXTA6O2icv0/6SSOuEbzQHDT98BuIAlkIFUd19y22YY=;
+        b=oD0t3VNrgJvBS0gtVa9iC7ql85bD9A/IMf8I58U7f1cdkdqMy6jskkWYAg9oNVMKS3
+         MHnajiSAcG1JJvD/2cgLlA78s+28ZSUDNnOhfHT+RSaX8ksOThMn6rrDSIELkOTsHugQ
+         RcOEnSYuJw5ZdwmKM5+F5cgz8UzKTicFWYceFbmMnWWz/bZCR0BPrRvpioetPjh9EnK/
+         oSI+ub69/PeO4T341yy7fpbaspTgfe/oeiCFrGTdFMFH+IxFpatbvh9FxQ2d5f6pLkI4
+         32Z9QiFsHFZmEzFBcE39+9JucU0yE5MeSpeLP/qJPUUMHsnAe6aUOxcpSTLsl/muswyN
+         areA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKeOv05Xe9Pf0LdZ9jhGE/UG2tWJxmxFM5ClvTU3v8ffPK8U9QSkB4QcHgpUDQ2bO26J62dLhqYzkNt3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjiYQ5lVX15WRkcWT9+sHW99IhbtWgYE6vKeSxRpdTPcr0U8y/
+	xX4VR3svSPDqqHEng3mfcJkD6YhNt2+KrVFLe5buaN6bz0mDHZ68hx1aOpopdOKC4pY=
+X-Gm-Gg: ASbGncsY5C4B4bzIjT+QM5QqIXLBiPdNg7x5eEZ3Rbn1yki2mtnaKEYXwY65r7nto6a
+	XcDfdmS2c4sqLiAJLWInuRCP9S5GtKTAMbUjbjTsYxsG2UGksTeDgFcSSW61rmiGBhMnOl3bKJ+
+	nUZ5a9DSeXnTaWH2v2/Jab3tjPRmrXYBmCurBc4RPPbqZdlODcPfj3H00V3SdHcHlk6mHxD95oC
+	jZfScHh5ObqMXcF9+9d5M4YVB423FbpXhBzO+6PUZfPcBTNGAtrk5XRzjBoKmjK0Y1z63FX45Gn
+	u1IHfbopUHneK92bJTuIiPyYNjLOc1+YsKxQtU+t9kjU8bsyFiX6fcOKgPlobx+6bNJH6fEjsZo
+	BA49TzsQ=
+X-Google-Smtp-Source: AGHT+IFy8vG0i552QCOGwslBhMlllbWowf+/C3BEda62UX6idzHbM3JUGCvEtXfh71U/+1SbpbVjVQ==
+X-Received: by 2002:a05:6a00:4b4f:b0:747:ab61:e4fa with SMTP id d2e1a72fcca58-7489cfffda6mr17768841b3a.14.1750160308466;
+        Tue, 17 Jun 2025 04:38:28 -0700 (PDT)
+Received: from localhost.localdomain ([123.51.235.216])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748900d1d07sm8549091b3a.160.2025.06.17.04.38.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 04:38:27 -0700 (PDT)
+From: Brian Chiang <chiang.brian@inventec.com>
+X-Google-Original-From: Brian Chiang <Chiang.Brian@inventec.com>
+To: krzk+dt@kernel.org
+Cc: chiang.brian@inventec.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org
+Subject: Re: [PATCH v9 2/2] hwmon: (pmbus/tps53679) Add support for TPS53685
+Date: Tue, 17 Jun 2025 19:28:42 +0800
+Message-Id: <20250617112842.459037-1-Chiang.Brian@inventec.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <f193825b-f6d8-4c27-b1f5-286af7affee1@linaro.org>
+References: <f193825b-f6d8-4c27-b1f5-286af7affee1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616143341.51944-1-brgl@bgdev.pl> <713cd518-935f-4501-9753-d33c9ea6aef7@oss.qualcomm.com>
- <CAMRc=MceV-HgyFFvqytXAiuY+y10PQbdPBxuvd57NCeSLVLXCg@mail.gmail.com> <vyr6s4wzw5jc5gt7mywu4s4xob6aeca5aclbe5tdr4v3yng2tn@yb7rn2b2btb7>
-In-Reply-To: <vyr6s4wzw5jc5gt7mywu4s4xob6aeca5aclbe5tdr4v3yng2tn@yb7rn2b2btb7>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 17 Jun 2025 13:28:41 +0200
-X-Gm-Features: AX0GCFuz6389iQUm3yW4uW2Du3zW54O1SWWkQeThcuXo-yttR-Q71TT_q21DHSU
-Message-ID: <CAMRc=MccuJe144NcwapPPRXtQOZbPW8qmybuEA2O9EtfKzs7oQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: qcom: add debug UART pins to reserved GPIO
- ranges on RB2
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 17, 2025 at 5:18=E2=80=AFAM Bjorn Andersson <andersson@kernel.o=
-rg> wrote:
+On Wed, 11 Jun 2025 08:19:46 +0200, Krzysztof Kozlowski wrote:
+>On 10/06/2025 12:41, Chiang Brian wrote:
+>>> On 10/06/2025 12:41, Krzysztof Kozlowski wrote:
+>>>
+>>> On 10/06/2025 12:25, Chiang Brian wrote:
+>>>> Add device type support for tps53685
+>>>>
+>>>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>> Signed-off-by: Chiang Brian <chiang.brian@inventec.com>
+>>>> ---
+>>>> v8 -> v9:
+>>>> - No code changed, correct the order of Acked-by tag
+>>>> - Link to v8: https://lore.kernel.org/all/20250602042454.184643-2-chiang.brian@inventec.com/
+>>> Stop sending this to me 6 or more times. Every version you send multiple
+>>> times, that's way too much.
+>> 
+>> But how do I avoid sending to you even though I need to send this patch 
+>> series?
+>> I apologize for the spamming due to familiar with the workflow.
 >
-> On Mon, Jun 16, 2025 at 06:43:16PM +0200, Bartosz Golaszewski wrote:
-> > On Mon, Jun 16, 2025 at 6:20=E2=80=AFPM Konrad Dybcio
-> > <konrad.dybcio@oss.qualcomm.com> wrote:
-> > >
-> > > On 6/16/25 4:33 PM, Bartosz Golaszewski wrote:
-> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > >
-> > > > GPIO12 and GPIO13 are used for the debug UART and must not be avail=
-able
-> > > > to drivers or user-space. Add them to the gpio-reserved-ranges.
-> > > >
-> > > > Fixes: 8d58a8c0d930c ("arm64: dts: qcom: Add base qrb4210-rb2 board=
- dts")
-> > > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > > ---
-> > >
-> > > That also makes them unavailable to the kernel though, no?
-> > >
-> >
-> > Yes. They could only be used by QUP - I2C or SPI #4 - on sm6115 but
-> > none of these are used on RB2. I just noticed that my console froze
-> > when I accidentally requested GPIO12 and figured that it makes sense
-> > to make them unavailable. Let me know if this should be dropped.
-> >
+>You sent three times previous version to me ONLY, for testing or
+>whatever other process. Now you did the same.
 >
-> I'm guessing that this would be a problem for any pin that is used for
-> some other function. Should we instead prevent userspace from being able
-> to request pins that are not in "gpio" pinmux state?
->
+>How to avoid it? Well, you type things into the keyboard, so type things
+>which will do not perform above action. E.g. when executing git
+>send-email it shows you recipients and then ABORT and correct the git
+>send-email cc-list so it won't add CC based on tags (see manual).
 
-That's supported by the "strict" flag in struct pinmux_ops. However
-the two pins in question are muxed to GPIOs as far as the msm pinctrl
-driver is concerned so it wouldn't help. Turning on the strict flag at
-the global level of the pinctrl-msm driver would be risky though as it
-would affect so many platforms, I'm sure it would break things. So IMO
-it's either this change or let's drop it and leave it as is.
+Thank you for the explanation. I understand the issue now - git send-email 
+was automatically adding you to CC because of the "Acked-by" tag in the 
+commit message, in addition to the normal maintainer CC from get_maintainer.pl.
 
-Bartosz
+For future patch submissions, I'll use --suppress-cc=misc-by to prevent 
+automatic CC generation from commit message tags like "Acked-by", while 
+still maintaining proper maintainer CCs through get_maintainer.pl.
+
+I apologize for the duplicate emails.
+
+Best Regards,
+Brian Chiang
 
