@@ -1,133 +1,125 @@
-Return-Path: <linux-kernel+bounces-690421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72279ADD08A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:52:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08DFCADD06F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F96F19409A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:47:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDCEB16E6DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E517F201004;
-	Tue, 17 Jun 2025 14:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224562E264E;
+	Tue, 17 Jun 2025 14:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PQD8erj0"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZk0NH1v"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3581A1EB1AF
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 14:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4FC2DE201;
+	Tue, 17 Jun 2025 14:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750171548; cv=none; b=Vw/mr+T/xolUUHaqk/hIaBSHAJNHn+6JtE5ZUUkRYY7T8OyqOPGTGO7/4fNARw05keHijLT1t+qnFNQjB3XShk87YHDDzbox+GZg/+LLrQqRrt2fKr18K/hgzelhPr5jVaUijpVhWxKjEf4CLP4mVK72P2/cJ8923urrNpxzEgY=
+	t=1750171653; cv=none; b=GLAuqSVQCih+71VJAlwRfwTsISt3Vyu6RdbE25EyvUfrO+WH2NavKMghGqTp4oeegijT+yMdNE7dVOwT2ubNsuCroN2XBZzXISXwYhXVihDuRywX1sWbM692MjRYaK9ORlOAscaO7t/JwWfkf9BfeRe90kLz4uyu1M9ivSaoxwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750171548; c=relaxed/simple;
-	bh=ULFNwYQca9wWdUwi5WouClDI7RzoaTU1rxQ8ju3xMX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bl8E1oM7DzzYzjBQH/mSP/GmUONx1mH6HLVm/tkvehq7FtlwqfAFKJ8UDwTrzc5NNtZot7uY64bdyBj0u1L7dTZjFNjMl9DoABgahp3WkRPnkXZuB1LrZVWTLR/EfbxtSEEwkJyMWjvvd68YgIPxCPJFYxZLSB0vdDejZmO51pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PQD8erj0; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750171544;
-	bh=ULFNwYQca9wWdUwi5WouClDI7RzoaTU1rxQ8ju3xMX4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PQD8erj0C7Hy+ryhmlFfeBMXd63QxZtIVk28bKTsFyrdpP0vqNI2BWU1C3FVzkMzw
-	 TBIdDrGu70jJM1n36OG9XgxQ1na2IXCgdmOshBU41BQs7mnfLYW6wh6Hb6KPi5ynO9
-	 2fW0hfxwsfJLu4cVvzmcYk0uj6sLFPxvCR03+3NTSqneClVFxSubbvrMqMCl0+7qx8
-	 OSZxtc/+lAAhP8xQMIf9ADsfJsqaEj6Nt5tn59QsFjfzvEYGb8jJNPOXiWgdSZRcDI
-	 42s2FZ8c5LbMJ8PCvD8UabhPc4ei38SYwuyslHDgo1XE/UdPUkUys+BQekNY8v3pN/
-	 MssXb3HnHbAoA==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9512717E06BF;
-	Tue, 17 Jun 2025 16:45:43 +0200 (CEST)
-Date: Tue, 17 Jun 2025 16:45:40 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Ashley Smith <ashley.smith@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org (open list:ARM MALI PANTHOR DRM DRIVER),
- linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH v5 1/2] drm/panthor: Reset queue slots if termination
- fails
-Message-ID: <20250617164540.4fb196d4@collabora.com>
-In-Reply-To: <20250603094952.4188093-2-ashley.smith@collabora.com>
-References: <20250603094952.4188093-1-ashley.smith@collabora.com>
-	<20250603094952.4188093-2-ashley.smith@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1750171653; c=relaxed/simple;
+	bh=IzkVodiKGqG2Hx0dNaL9Ea7qx63st4euoU75dM7/X6c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IHMSe/KsijnA3xP3OzbQamyFT7AX2KgO/dVqWXcOQz+t95kPmxar7Rz80GmlHEKRr6n96EYpnNxs4BVvM6KloFmQ/x+TWuDVTrj0jfUZpfaEsBUrtcBSkcXwMWpgItl39qNgy7h9pHlOvZbx2i8Eh8SptV9rqVOSlisCYTNXqSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZk0NH1v; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6077dea37easo11280335a12.3;
+        Tue, 17 Jun 2025 07:47:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750171650; x=1750776450; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lpygrMPmKf1mO8Jd5/JcuJM9Ew7b30x4jhAAfy50YQU=;
+        b=gZk0NH1veydBEihXWuZM0I0btFDdsdSYzw/9N1JdsJK9Ln/GM9knVsE1JmelBCd6oB
+         sPiH/YLItLISQvmuaFjFgiK9YSULbZPyPFNUUhmJLZ7crPzZ//iZtdllB39sJqnXu4nB
+         hQdfQDr/oowJdcyKcfbcULNZqREAAMVM9MV5+LSMEA64M8pMX+rs/JhoOnwN3YR6f7ck
+         AIwgS1VGiop8LCwmEaTbm6RCKMa+nfiZ967rEMso9J4+BUuywsyyaJvOjt5KpL5WZsPB
+         bSACiHMIsy4HB6g5uTsjM9HgjZHPCCUcRcxl4wNuzsrnzWWIla98o6f3Ctvwqj2q418s
+         WPUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750171650; x=1750776450;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lpygrMPmKf1mO8Jd5/JcuJM9Ew7b30x4jhAAfy50YQU=;
+        b=nvUAO6fiE2/W5a3/YwTznJBqN+10vKq67cAHMfprKgindNMrBhVOFQuafGHt6K4iMb
+         Jd+iD8Jyah8xZRIJzM6naC6+YlvZP/S1PX7JHI3IaBwRCSmFedXumAxQCZNQWXwd/DTw
+         68I5tI7kMjS/gvP3hFnlptTPLe3huCYsHuMA5Rvbfn4auCulnT2XdJyJ5lifIjNwYcWK
+         m7izrsD/NFobPRII4fr0lK7B6YQt7YcB6NlcNFG2R+WgNn2rsN52uFtdihNEzDbcbpFv
+         Ai5FDAoS+DctoIs1DBm6kfneR/274WWJxIY/I45vDLiCuBFPhDjx+W4ah5V+Vjx/yUQI
+         AOyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrV0r9L/ThX0rlNjn6uSTIfZhVWWq9FzJQRV5tgrATitvjf75pjvUFpccIZTFvg5VWAKEqvp9bI+p1NJw=@vger.kernel.org, AJvYcCV2Ija5tiMZwbKFfBSPxmPchuX0FIotk1VY+IOIN/7kv40jBdEKIb4sWgd6aAGdt4cxf0+oD3eAtDh8byiZ@vger.kernel.org, AJvYcCXYUKieKoLYu36iTXs+5dmKq3awduX4RP+yzMP81s784W6z25GMJTbdOG51x4NZ5OWw8kH/Cygs/66h@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzpp2AafP07bPOAmheuEpP9s6TRlZqxRdugUv0AHJ4KtoFDYnrl
+	D/q3pQmrVLvF7Mux9a1i1fsoO4L91IMLZ0eKB15dSeQ3tyjOBy8PhlDN
+X-Gm-Gg: ASbGncuJYZULmbS9cEvv6q441KRQFSVhq0C8/pp3Sv+eA8pMysztxN8yx+fqXIZ6fmG
+	fz3Ycxh9YOrQ1xJQaFQkCUirh40ZUlePivXRgT4KzS95u2NdPmVVCzboNrmg9ebC+uPhTdEAwcL
+	aV/RUrxrwiqJum5sL6wmQ0emLsmmpN+GWxk7LSbbcLmwKT5fFvqzuAeEE6q7Hnig3TwowMqqS+z
+	0stjjF+yMDVqKBM7lcvjsvpZN5aulwdcwmuxjse6vJDNZd421b6gdmdATH0CdjSoIZK0/HhmKZb
+	r/XF/XnKAiXhPq/i6HjuskjejhI/kpr/8klKa5N1DlIhnKQCLULaxWIcESWKLZjibOVLqaMekvz
+	ERHjFL/e1Scm6k4kg891MQ24=
+X-Google-Smtp-Source: AGHT+IF3WK+xyeui9KpM2p+MQ7Ua6+TKDxyMbvyFbkcNlgQr4Pi+4jrdhRTMADxvhfCUjXE8zzU+ug==
+X-Received: by 2002:a17:907:94cc:b0:add:fd7c:ae9 with SMTP id a640c23a62f3a-adfad4a480dmr1438507166b.45.1750171650135;
+        Tue, 17 Jun 2025 07:47:30 -0700 (PDT)
+Received: from playground.localdomain ([82.79.237.69])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b48dd68fsm8261210a12.22.2025.06.17.07.47.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 07:47:29 -0700 (PDT)
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+To: David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: patches@opensource.cirrus.com,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: dt-bindings: cirrus,cs42xx8: add 'port' property
+Date: Tue, 17 Jun 2025 10:46:19 -0400
+Message-Id: <20250617144619.1130857-1-laurentiumihalcea111@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue,  3 Jun 2025 10:49:31 +0100
-Ashley Smith <ashley.smith@collabora.com> wrote:
+From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-> This fixes a bug where if we timeout after a suspend and the termination
-> fails, due to waiting on a fence that will never be signalled for
-> example, we do not resume the group correctly. The fix forces a reset
-> for groups that are not terminated correctly.
-> 
-> Signed-off-by: Ashley Smith <ashley.smith@collabora.com>
-> Fixes: de8548813824 ("drm/panthor: Add the scheduler logical block")
-> ---
->  drivers/gpu/drm/panthor/panthor_sched.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index 43ee57728de5..65d8ae3dcac1 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -2727,8 +2727,17 @@ void panthor_sched_suspend(struct panthor_device *ptdev)
->  			 * automatically terminate all active groups, so let's
->  			 * force the state to halted here.
->  			 */
-> -			if (csg_slot->group->state != PANTHOR_CS_GROUP_TERMINATED)
-> +			if (csg_slot->group->state != PANTHOR_CS_GROUP_TERMINATED) {
->  				csg_slot->group->state = PANTHOR_CS_GROUP_TERMINATED;
-> +
-> +				/* Reset the queue slots manually if the termination
-> +				 * request failed.
-> +				 */
-> +				for (i = 0; i < group->queue_count; i++) {
+The cs42xx8 codecs may be used with audio graph card and thus may require
+an additional property: 'port'. Add it.
 
-group is used uninitialized which leads to a random (most likely NULL)
-pointer deref. Either we go:
+Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+---
+ Documentation/devicetree/bindings/sound/cirrus,cs42xx8.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-				for (i = 0; i < csg_slot->group->queue_count; i++) {
-
-and we move the group variable to the last for loop, so we're not
-tempted to use it again in places where it's not initialized, or
-we use the group variable consistently accross this function by having
-
-		group = csg_slot->group;
-
-assignments where csg_slot->group is currently used.
-
-We might also want to consider splitting this huge function in
-sub-functions, but probably not in a patch that's flagged for
-backporting.
-
-
-> +					if (group->queues[i])
-> +						cs_slot_reset_locked(ptdev, csg_id, i);
-> +				}
-> +			}
->  			slot_mask &= ~BIT(csg_id);
->  		}
->  	}
+diff --git a/Documentation/devicetree/bindings/sound/cirrus,cs42xx8.yaml b/Documentation/devicetree/bindings/sound/cirrus,cs42xx8.yaml
+index 725b47e82062..cd47905eb20a 100644
+--- a/Documentation/devicetree/bindings/sound/cirrus,cs42xx8.yaml
++++ b/Documentation/devicetree/bindings/sound/cirrus,cs42xx8.yaml
+@@ -41,6 +41,10 @@ properties:
+     description: This pin is connected to the chip's RESET pin.
+     maxItems: 1
+ 
++  port:
++    $ref: audio-graph-port.yaml#
++    unevaluatedProperties: false
++
+ required:
+   - compatible
+   - reg
+-- 
+2.34.1
 
 
