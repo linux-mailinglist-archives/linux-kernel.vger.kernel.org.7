@@ -1,112 +1,112 @@
-Return-Path: <linux-kernel+bounces-689605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E42ADC41E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:07:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1821DADC425
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C54B61609A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:05:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 373273A2A5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F602BF3E4;
-	Tue, 17 Jun 2025 08:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2562DF3CA;
+	Tue, 17 Jun 2025 08:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZyIK/Ta"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WkLEpF1x"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47BF28FAB5;
-	Tue, 17 Jun 2025 08:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBF229DB7E;
+	Tue, 17 Jun 2025 08:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750147352; cv=none; b=lxTep79uFI8QE1qVpvRpHCSAtL6D1HZk09fL5vcNRjMRSDaRuna9iwZLmJScNdpMI1c6L0CEwrI45KABR2eepBphrsLc8nqg+tBd+b8ssyqTe8g71iWGAklZ8Ye3X0YmM2Beil5Sbohix5ihFUtMxSNC4x/sCRdzYC4tW4HWb9A=
+	t=1750147357; cv=none; b=Xe2VajlXdRD1tokNM9lzkDl+TNNncInXnU9WdYCIVpYtzvdcBbaU+eGkEOzNOQkQQWfUM85wKK6/XjoD/UXf3yCfqQJZbXxaMBkZsiXjy7A6PMr4/3T/T5pepYltxnBUr5XIPm3tGaDNERgVdIT/fE53QtDWio5ZLKpJ6tBiKNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750147352; c=relaxed/simple;
-	bh=2wpS1pJgr4e8EIQ3/QK7bcd03hAN/nvcFh7aQufz/C8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V1+LYKK2WqU6zfQNj8FbcuE1ufO7hgm0ltMaFqeIncpprn5ieHmcRRMjkddWmb6Ce89Vcz1Th9RX9sFuFtLCxRCHL2p3ieLQW20cqpTJuSTpf0CX2FQOH4+YLU2X3OX27qcTh7ZpQKOZkwhHsV7hv2TS0i/YUJyepAHxZauholA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZyIK/Ta; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A778C4CEFA;
-	Tue, 17 Jun 2025 08:02:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750147352;
-	bh=2wpS1pJgr4e8EIQ3/QK7bcd03hAN/nvcFh7aQufz/C8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NZyIK/TalGBKsKZzFsFFlNCwzfFsIiVf9mLw0FUGE1ZoIyqeTHB3mX1VyAgAmjMWA
-	 3h9pZAadJU6Pq4URI3Ukz9AWepHXnlWCoRcOmespX3Tj9THY+FpUUhcEvHEm/pBcZ+
-	 +FSLWy/qn2FgCJU5l3bR/+WgfJV25zBbtZPW4Ox2VU8aEFEiwaKkxMcet9VqWSZTN6
-	 QVnC4xgeb6nrGArVP/JS41VtGyjUDhOS+KV1zzkltB/Tc3M6UelGzCas5T6fnyJUbu
-	 5p6uLK47lrM6k6EhRJksY50sHw6a8VUsZBtkeQdvUj/KhttLcSjpKzVfQJTY2Pt1LJ
-	 IPlOToNcYTimA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uRRH4-00000001vdk-1Gaq;
-	Tue, 17 Jun 2025 10:02:30 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>,
-	"Breno Leitao" <leitao@debian.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Donald Hunter" <donald.hunter@gmail.com>,
-	"Eric Dumazet" <edumazet@google.com>,
-	"Ignacio Encinas Rubio" <ignacio@iencinas.com>,
-	"Jan Stancek" <jstancek@redhat.com>,
-	"Marco Elver" <elver@google.com>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	"Paolo Abeni" <pabeni@redhat.com>,
-	"Ruben Wauters" <rubenru09@aol.com>,
-	"Shuah Khan" <skhan@linuxfoundation.org>,
-	joel@joelfernandes.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	lkmm@lists.linux.dev,
-	netdev@vger.kernel.org,
-	peterz@infradead.org,
-	stern@rowland.harvard.edu
-Subject: [PATCH v5 15/15] MAINTAINERS: add netlink_yml_parser.py to linux-doc
-Date: Tue, 17 Jun 2025 10:02:12 +0200
-Message-ID: <0db3a4962bfba8eca4a7e0404331ce1398701f5d.1750146719.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1750146719.git.mchehab+huawei@kernel.org>
-References: <cover.1750146719.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1750147357; c=relaxed/simple;
+	bh=YowyLAJdvaGSFtQcwvYz9C46N3KUQ87WRTTq4W0CK+U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JtR4LGjvFUSLRzGWYuSnPBAgnif7WEFLJljrPSnhLBeM9m7118q8d4nQjmjGg3z9Ji6aBhPegPk+eNkm7ujRl+8z5U7gmZHKivIibC9/Hqh1s7kJFqI4ohxfZjodrkyKt+zttLJ5PxpqKp+Mt84JnmDHvYiQh2NdamXSST7mgbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WkLEpF1x; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-234a45e69c8so3835025ad.2;
+        Tue, 17 Jun 2025 01:02:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750147355; x=1750752155; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A4QfHLbe3t8h1nBqhkMwci51K0hGySst45gh0x+/MZw=;
+        b=WkLEpF1xbTf8P56zR4BwClx2w6uoq1r45E9nnXmQR1F+G6tSsYOubMI0g/3tX7RTQa
+         DNC9QW+PFPNDkcv5tOL4p3Iif3RXUPVK16SfhMc1OKXDCFIYbrPeqWuL0YiLUC3Jmv7T
+         pLmFzu6EgNBjIEvNBobDi3TnhMmG8yAjpcxe+xVb3nWeaY7TO/tpruNGdEIaHf7U4OU8
+         bC80sfMgmAaQ0HhVzO7IjHi8v23iHBYpJd6zUhBRIbz04f2lPvkxcH0A+k/BJMAFRzqn
+         mVZ1LwCalp8Uv1a/9y2Po7t9U4mhUjkaZVr4MIjm9++Kg4hIfutpBxkN1hb2ZXK80j70
+         oDoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750147355; x=1750752155;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A4QfHLbe3t8h1nBqhkMwci51K0hGySst45gh0x+/MZw=;
+        b=odneEzD9x2iAzFS9+ee5rXOA25yV1zS6jS/Fa7nqUixqFWaIlk0i4iwMLPpAMFVTUZ
+         mEqO75YDHNNcyd23IvqxTbJvPy96qTrmaftpgSRSWg3voYTyGwKrPPnyDshYasHcaOFw
+         ng1HczrQHfUleQ5COT1SfpOOERNr6np1cnF2f5+tSm+Ah5gdislXeIfeCpi81OTDp/+e
+         U5vrSP1TWEPyRVm17seXenjef4KsjGr9DZzvzbtAlCMa/OP0qg8vOKdDbLbqpNLtGjhn
+         Lu8UzOztjgJg+QhNcPSk1XOkPzjTcnxNB7k2vzgSUbW4YRNs6g4NIATeRyeSIf2ywcaN
+         bH8w==
+X-Forwarded-Encrypted: i=1; AJvYcCU4LGQQAxnube6Lh3r/LBiVCQwaKL7V7hacTNNnCWeG2ceRnBu7JkyI7fbkeAzFXA5PXgXPWiQ97PCTTcTkS6o=@vger.kernel.org, AJvYcCVz14Ged6GwllQk9aXuWYKqq/aH1uBqkFOb1URyIo3L0TYtYz7I8Y2RgyHEE8Kf3LeCJ5l9VMxI2pd7Gpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHglo+1ZPPgSg34S9o/RDcB7CQanQqntcFiLqIi+HOy/HqCchq
+	dWWdUkNlgYgBnZmPAdlj1sXBmWyukQn3/Qp4hM5oXk62zdHq1F4tYw4LoJO+MbpLJkFhMcG1RoP
+	qM+emqGj3XjQ/KH7TpTlgvCt9Auor1Po=
+X-Gm-Gg: ASbGnctkgkDFboqWt34gvAwdX4OLe4T4dJ7+F1M2NIL33Vaa3UAAkXy572OI3NfCi50
+	hflYXVngTgmHBC3AcK7p0+vXBIr6uKDj9O1A4Y44zwya5ge14GJ3XG7lqKlowXyUZBa2iFiuMhM
+	a84r7mse/FGax8bzHDc7tcr/BTm1IS8kzdcDk0wiCZSIw=
+X-Google-Smtp-Source: AGHT+IE9Y1Quhv3vHwJj61PiVkeCG9+l2m52l/QkhOWmDyJ1PXuCBt8XYd6aMaToeAvNfrbJRLedUx778wvZOgZkkic=
+X-Received: by 2002:a17:902:d486:b0:231:c9bb:6105 with SMTP id
+ d9443c01a7336-2368eaa6b5emr15343475ad.0.1750147354863; Tue, 17 Jun 2025
+ 01:02:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+References: <20250616153604.49418-1-boqun.feng@gmail.com> <20250616153604.49418-3-boqun.feng@gmail.com>
+ <CANiq72mES+dPBuhsdh0-hJcV69AO74j6W5vhCeo+yV5S-Zp+yg@mail.gmail.com> <20250617.120453.1403624234989149033.fujita.tomonori@gmail.com>
+In-Reply-To: <20250617.120453.1403624234989149033.fujita.tomonori@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 17 Jun 2025 10:02:22 +0200
+X-Gm-Features: AX0GCFshvH8jdS2U4z-D_S4Wp3zw2WqEku03xiGYr0kIDRQ98ngBwep5D0EjCnA
+Message-ID: <CANiq72kB4hxsyi9D-PV0YDc9KEgfC9iYCTJVEOosZv3fg1+mYA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] rust: task: Add Rust version of might_sleep()
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: boqun.feng@gmail.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	a.hindborg@samsung.com, aliceryhl@google.com, tmgross@umich.edu, 
+	dakr@kernel.org, mingo@redhat.com, peterz@infradead.org, 
+	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	pmladek@suse.com, mingo@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The documentation build depends on the parsing code
-at ynl_gen_rst.py. Ensure that changes to it will be c/c
-to linux-doc ML and maintainers by adding an entry for
-it. This way, if a change there would affect the build,
-or the minimal version required for Python, doc developers
-may know in advance.
+On Tue, Jun 17, 2025 at 5:05=E2=80=AFAM FUJITA Tomonori
+<fujita.tomonori@gmail.com> wrote:
+>
+> How about adding a link to the header file where the might_sleep macro
+> is defined, like this?
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Sounds good to me. Though, for APIs that have rendered docs, we
+typically point to those instead:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a92290fffa16..caa3425e5755 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7202,6 +7202,7 @@ F:	scripts/get_abi.py
- F:	scripts/kernel-doc*
- F:	scripts/lib/abi/*
- F:	scripts/lib/kdoc/*
-+F:	tools/net/ynl/pyynl/netlink_yml_parser.py
- F:	scripts/sphinx-pre-install
- X:	Documentation/ABI/
- X:	Documentation/admin-guide/media/
--- 
-2.49.0
+    https://docs.kernel.org/driver-api/basics.html#c.might_sleep
 
+(Ideally those kernel.org docs would then have a source view
+themselves, but that is a different problem... :)
+
+Cheers,
+Miguel
 
