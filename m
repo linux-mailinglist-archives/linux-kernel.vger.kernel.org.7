@@ -1,277 +1,192 @@
-Return-Path: <linux-kernel+bounces-689619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12709ADC456
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:14:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C339ADC434
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 10:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E8C5178D2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:10:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E54C57A32A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 08:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E12F8528E;
-	Tue, 17 Jun 2025 08:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NuRkwCfV"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012049.outbound.protection.outlook.com [52.101.66.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FB328F942;
+	Tue, 17 Jun 2025 08:11:34 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B44E291166;
-	Tue, 17 Jun 2025 08:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750147755; cv=fail; b=qE3L9+aOwP7tSJh6Ot7D9uAbJRE5tqz7STCQMJLR/l/+hpt2W8hsKx+I2xf9QzUQNVOTwFH0YRrCIHvo+8qhf13SZYHwbwsmGOvutj4TMHXL8H2oipoDmPVR7itCbHfQOoPHRrk4avlznD3sAgHNasEFRdox3G8pNdvBMCaGMXA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750147755; c=relaxed/simple;
-	bh=xHoNGmU/XfLKIw32zNRxQQP/ZxZymyOlKViL4Sdw6Nk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ud2ZrnNtErwtsHR0YoOFxTquoYdZgZUL2ORGPPqdRa3IZQS0LWf9ufQVWrATMFFHFfX5DfzTcTsm9ePdmsPOumdrqac8ukUcKUbVQO6/lfzJ2taNWhWJrl774D4ttf7HlPaCljeNaZy1RNey+nbu7ql5mgXg/Dco55QW6adXSl0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NuRkwCfV; arc=fail smtp.client-ip=52.101.66.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f/4sW4xgl2qO6Xm+qAm8d19pYMFiEhSEWN3vZETaQJC/7MPbuu6V8Wd2Lb+kqq2kKT6RkW2+p3qc9ul/BRt/fHrftvVT7qjox8+rLF3BG4b0+kkqWQoK+u5/+rJ4S3phIqZRkxAPZZSgsE6E0ozvg8VaAumJIZ+fjK8HdJZXMgM8y1g2sOfMWnfKBvR3BM9nn+NASkeHHcx/uEfKemshtR0J/Gp4MlOq+X9A5lvCkBXvhbKJpoLSisvYGBD6AGZ5parSIauWgS7DlyGMzoncFfEpiWGysifdtL+/BCobjg+SIyeW5h2urFGpCEhgMEY8f8WLj7Zc9G0NS4Wk1X4rxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bSK5mj89dQXwlW+W5oHpKWxB7hIv9hboTnHU8IskhqA=;
- b=gA/981bvVZ9qftXou6cKeHByvMARQtTfZkeLWXUtdF8/smXsSZ/1Gpp+GtNSXE1ByVTuoAQzHN9SqPglV5ZaG0YhGTgh0HzYG4WQZV/0gAvBI9dhcgSkq+EXmSsGP2EPxnqUP9jwveExUihS4bafRjtHYlErXtGwrBL8pGM+P5EZEpTTIRKhNPVzVI2bnlTttvkYf5It1NoIRe9VVpFb2oqwP/cYCPS01b+6fvGHemgzAzFd01a5axTjHy280i3JKF9oiMllAir1PUGz1RQdvjTKi2oyLNfbCp3Y9lVKPEahttCUVUoR81jgmZKmbZ6+mSvHmZARrGtdAHLEpMAk3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bSK5mj89dQXwlW+W5oHpKWxB7hIv9hboTnHU8IskhqA=;
- b=NuRkwCfVxMSIceDA6PE7DoqN+Oh2S+VDKS0O+2vv6W5E8ejyjuQJthnWcO+kBxBztwF/j8vDvotWhAhRgW0e6Dvb2ydwpCqWpBHeYt7IfrhsnKHp0rgBcozXkAQMdBkRuRFwV4sTG6sQq1+k1s5F9rFWlTT+oTPS+RpZ2xkfT5Yn3TMrO4xsG8t58MoYF99m2ykjVRuQux7/aBdxsTkNkudJ2KNjNlL/ojl0EtkskH3W9AkwqhQEDqNIs5mVOTISBwfFUaUpfd7BnVs5V7/zHX2qvec5qRO3S/p3jb36+p3aLakl92sIMiTjyBNJtme5iRB8vcHqO5XyfQaJoLOAag==
-Received: from AS4PR04MB9386.eurprd04.prod.outlook.com (2603:10a6:20b:4e9::8)
- by AS8PR04MB8328.eurprd04.prod.outlook.com (2603:10a6:20b:3fc::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Tue, 17 Jun
- 2025 08:09:10 +0000
-Received: from AS4PR04MB9386.eurprd04.prod.outlook.com
- ([fe80::261e:eaf4:f429:5e1c]) by AS4PR04MB9386.eurprd04.prod.outlook.com
- ([fe80::261e:eaf4:f429:5e1c%7]) with mapi id 15.20.8835.026; Tue, 17 Jun 2025
- 08:09:10 +0000
-From: Joy Zou <joy.zou@nxp.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "edumazet@google.com" <edumazet@google.com>, Peng Fan
-	<peng.fan@nxp.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "shawnguo@kernel.org"
-	<shawnguo@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Jacky Bai <ping.bai@nxp.com>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, Ye Li <ye.li@nxp.com>,
-	"richardcochran@gmail.com" <richardcochran@gmail.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "festevam@gmail.com"
-	<festevam@gmail.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>, "mcoquelin.stm32@gmail.com"
-	<mcoquelin.stm32@gmail.com>, "linux-stm32@st-md-mailman.stormreply.com"
-	<linux-stm32@st-md-mailman.stormreply.com>, "s.hauer@pengutronix.de"
-	<s.hauer@pengutronix.de>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Frank Li <frank.li@nxp.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-	"will@kernel.org" <will@kernel.org>, "ulf.hansson@linaro.org"
-	<ulf.hansson@linaro.org>, Aisheng Dong <aisheng.dong@nxp.com>, Clark Wang
-	<xiaoning.wang@nxp.com>
-Subject: RE: Re: [PATCH v5 0/9] Add i.MX91 platform support
-Thread-Topic: Re: [PATCH v5 0/9] Add i.MX91 platform support
-Thread-Index: AQHb318amoI2njSFi0289legb0w7BQ==
-Date: Tue, 17 Jun 2025 08:09:10 +0000
-Message-ID:
- <AS4PR04MB93863494863F595F74B12129E173A@AS4PR04MB9386.eurprd04.prod.outlook.com>
-References: <20250613100255.2131800-1-joy.zou@nxp.com>
- <175011005057.2433615.9910599057752637741.robh@kernel.org>
-In-Reply-To: <175011005057.2433615.9910599057752637741.robh@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS4PR04MB9386:EE_|AS8PR04MB8328:EE_
-x-ms-office365-filtering-correlation-id: cc859da0-94bd-4097-9c49-08ddad763d5e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?YNUrASlyyKBNyneCLmo1UGtsi3i9HfbKDbEO8awprK01pWuXeLCP3vHkXHUi?=
- =?us-ascii?Q?1WjY5RQ7yZIo0mV4e52EtlxewfYesaGTszVs8lc9bYk3IzXj2kELN0C2Hr6p?=
- =?us-ascii?Q?nYQ+xiUokHLfSyyIaSaKFx0HlJJZKj1IBjpCzlNShbU5hGSSBYmYhSQe7+/Q?=
- =?us-ascii?Q?QO5g159rqLiHa4kEG8l8UEX/JIJ3oiRabe7qUHnBo/BOyefkIdIaQosuIUYe?=
- =?us-ascii?Q?gqecq/kuc33ZrxbbJGWdY9rhH6yHkhJ+vmt6POCFPJs3TNJB/bS7lrNMH5ZO?=
- =?us-ascii?Q?l1D2SMn80feFb/oj04YL2LVnigiJsg9GKezzUFM1ps0ZTWj9U5f79uCTcSvI?=
- =?us-ascii?Q?Fr1ZEZxm8TS4gNPzRG7UamEpZLoPxQ1zZD8FNKRxwwdc08aKmS4nuDo3WJny?=
- =?us-ascii?Q?D/wn//Syjg58AB4ZRpskIq6Liz46ephMa8mygkb3sW1FmolcO49Zio3XNsIg?=
- =?us-ascii?Q?fqJ+/+UMpISbQPU4n9QWWG30G2u0pWlFKw06FmjbGsrKPo5fuNN/oUL5DQJX?=
- =?us-ascii?Q?CK2zv+Avf7JZ/AqxsHfGWEIITVJA+IbhZ6TQW/8iVCMyH4TlVR7FQaHacmp+?=
- =?us-ascii?Q?q2IwVwnFgk2ikOTwMpzVGAZH5atHFSzFmqddZ8AMSXgnmwoNXZA8vhcoKlWV?=
- =?us-ascii?Q?Pg8+NB3FC1uENDls/heLHk/lZ6uyIKU9LsYSZEyuHOUxCP/W3GWPSFB7QTo7?=
- =?us-ascii?Q?LDuKeFW8kAfL0UG9AhnHKqe2WDhgXyefLJmzvAnTu0arSrRW15YTQ+YqBWeU?=
- =?us-ascii?Q?MXi8wqVX4UVWLM+t3taP2nk5sWNMnmyMMwZXKG+hCJznPUMXbVJDBLq4zLgL?=
- =?us-ascii?Q?7MQP/ew9Xd3rqXfDAnxoZBk1bhCRk4YRk5Ukcxrdntgh3gdnoAM13B6QYZnX?=
- =?us-ascii?Q?o5IeIV/IXQqrV5XxBzcsP4PMXkd1UR+bu36Y61cWg9+57ULpKH124YQ8wcCR?=
- =?us-ascii?Q?+GjATQBHjDSLYQVRms01bYvm96ktfPVRNSGw5azEUKh8jLN51ffRT5EeEVgx?=
- =?us-ascii?Q?IJpjb7AHFz6TshjnBKt2mv2aW6tllkuJV1pMBNqKKoRRGCnExvU6fY3ru2E4?=
- =?us-ascii?Q?6ZaClaCbUL/2WBHO/JxijlGyKJKTmtX7a+UbVrKFOlU2eFcrTmdr2oxNGGT4?=
- =?us-ascii?Q?jCfzrw82ZmC5lAvWZlMETyY1oWSYyLllSbiX+XAmatXdeeUXdH5A/d3oV0zt?=
- =?us-ascii?Q?LgTGcyIllFNAtJVnYE5YzAJ/DVqYhIWddSLsQDmxZtJqLoMbi0xIE6gVkJ0o?=
- =?us-ascii?Q?11SmjtFjKSkWFTQKB+SSz3gPABr+aTa9MIn3RWqtFzTC+Pp40SDy33CCW79V?=
- =?us-ascii?Q?BLXWt411IPMrOEBXUE7hPHAd/S+JWMyvi09Nx57ehhL9wXBeoi7qUYpI8+MO?=
- =?us-ascii?Q?hRu31HuUGDTDJ/2Doooddk9EJZZuXaG5BwzFHAxV848dMGjwtA+RkssXoG4S?=
- =?us-ascii?Q?9pzzCPrTqhoFIzomk4xKRoGyxJQp4yxLinGKcb2GCkeLCo6tcGvhxIQXVu3f?=
- =?us-ascii?Q?TLS/e5NexH24hLM=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9386.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?0lQ8uOV+eaUJX6NbCphYh1b/TqpIc57AtcLjVAj3vmz+uN7//B2Z0fGzJwnp?=
- =?us-ascii?Q?1+bhIW9a8DexP4Mfz8J44kF3ABd0ZRyn8yYZd/KZs8xwbPZ+C5k9TWEGOSAf?=
- =?us-ascii?Q?knlYn0F7RzVdu4GIsYeu69oabTsbIrznSOQ1woPTRC4w+sFtRtPYawRmPexk?=
- =?us-ascii?Q?FyhORP+mxGapDEPpFnBZNFq3HBOrpB27zpgXp6OcoDX8MV58sKHbdtUyJO+b?=
- =?us-ascii?Q?xpUP6oGv3lkcUnaO662KTc4wulUHXylYDXqRAGX2BnjjXHVcvDk3ycFtkQSY?=
- =?us-ascii?Q?HFvUN1JFXeavt96CkkmYTAAJROajZE865bczx+ZaSOp4mHghIdBqkDlzpXCp?=
- =?us-ascii?Q?qagXyIhAMSsuoYffZJI6nyyzQ6TVJT3Uxu6odroytTbxpVF6FTJPDC6WDmjs?=
- =?us-ascii?Q?9vUT0QqBR5DSwjzEtIu0DbVMTmVGxhPm2gGLIt6pnzz+1iwzJQIkIBD70xQx?=
- =?us-ascii?Q?g1EwRWmKMhCxBZvC3XPo8zdJPIUpRA+HY92uy9Lf8wKGqhJysw1kCjHjizQw?=
- =?us-ascii?Q?4wGVeTgkyVu3l9ZvsgCabYlxWKFNIU/5dsAt5IPW0t3JueU0Qy7otiqySfU4?=
- =?us-ascii?Q?bFDj8aMsOqvYtQQ6tggKfMo7cIIQE4KhpukqUIsivC1xSEm9j7pr+zTh9j7K?=
- =?us-ascii?Q?HZsPfdD8Af8nO7FEnAq4KSvTXRbRrCX/V4pspafGRBoEE5L0hgHL0blkWkza?=
- =?us-ascii?Q?SmhJZ+Kia3YhBpdAlPSXzmC5v8GWnzZlm2MswIPjeac1pVf/C9iYAyCj2FKU?=
- =?us-ascii?Q?nRwDcSYVj/3KBNpfgmuW3ahCtIayrvwcf4UkKpYhmhwSLSMHntM+vqmFoUNz?=
- =?us-ascii?Q?Y90Ux6JIiOcualRXW+fK43NB/kTLFsXiyvBjcPymy6X0sZLF/FSgg7ZrFluS?=
- =?us-ascii?Q?BDdg1xJBY2juA3dYVEoj8BdOXHINQuLF+4MJd2AZxrJL5Y+Uj3pEJPWyubcH?=
- =?us-ascii?Q?Mw2dvmSPuweTkDcpo6ggWcP1C8FhXEpSvHcUPwzdntjQ2NuPuCMx9/a3n1Ar?=
- =?us-ascii?Q?WEC2qZRfokeLbxGwZZeEXrjirmdCWCd3e40GfjzTwmFHtTStyQUI4Mh+6L26?=
- =?us-ascii?Q?QENOmKYYwxcfLyCS19pHb4TIFHu3duYebaqRMnMXuSS7Tfik8zrxZizjK0/4?=
- =?us-ascii?Q?x82VaVQpquexIWHGUSsaVQu461QC0jQjm7gVFFCB8eRg4YFX+O7Plm0IV+G1?=
- =?us-ascii?Q?xUHfcAKJObxQ9ixQu6psz7KOW0u5C+HWcdb/Lhk0nJakYVcwXv2reb+1x8Q6?=
- =?us-ascii?Q?on6kitDId+uDqk7+FT72qo5azBfqhLcJ0/iSYLmqMa1rTBksT+/VFaP2Wocw?=
- =?us-ascii?Q?1O6AjCu8o67XPYhdrVABABxI+3fh89KAWD/qbgxNxW0CKvgO393KsdOC+7Sl?=
- =?us-ascii?Q?R5ADJRZTgbK9WdCrmjxV2/lAN/Il/5fdgGK0YpG0G42cHuaTtM2CPj4bVUJ5?=
- =?us-ascii?Q?ilQWHvG+ruuDZYC8tBj0OZWLpgaloR2IGSFs45Atkbt65+safO4pPmc+ISBf?=
- =?us-ascii?Q?jBnPBofQcyUZQBZ5PXC5Jos6sMwQxJI/tnsrerDZiCy/TpQKFm9p90Ar/B1G?=
- =?us-ascii?Q?/X3Y071ct5RzT8R++nQ=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5961CD2FB
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 08:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750147894; cv=none; b=NbNXsTC1Gbbe5U62Yh41gWzQyJMwpnz6htb82vLzy+lDak/+/+GzFq2+do1PAymDid15+4HZzAKllOJ3Kr5CelD5WRwVU1JXbYkId+Be0zvOATwqFGJyb1PuoJMbBrJp+mMsF85ifx0J1GKqCmR4twZUy9sB3BXhK4YEUnhd1ro=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750147894; c=relaxed/simple;
+	bh=aJDMKLvSD4FsH9IzZ8n5o90Yxqp4mzXt9RIHIAdAX/s=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=opE69qRqgZi7wh5GOLRVUROXi81IITzMHg9Myb9ZR31SK3aiNqlWprFqukTk3bH5xpav4Rel+95yi2XmKXbyo4RuACpePOOEE7eRDTYJZGGZgNLLVVYOdX2GotmPzXDYxavOPvDxfUCovsdbqh14Xsin2HEFqy6Gxt/T++hA9FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ddd03db24dso45725885ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 01:11:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750147891; x=1750752691;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aYzFrCMb6kG6IH/YxFgUA1tFuW21p0F2EED3xtBQjvE=;
+        b=WeWpemMByEcaA/AoBXK1hMKh6bbB6GoGyiWyIRqG5SrP/9OOWygfBi9hKGHjkYQ3+k
+         hZoqxUvyrmOIwx/xuY48q77/p8qgpZep4hnie7lDJzI4I96mhqbT3m+KrW75rlAcRgz5
+         /hlM0KTmCGyzqKlNMb3wNJ43pyNqQjwUH1kiOw/Rz0mN+w4sNda3BtFJDyX5QWCorw5/
+         cSU10YSPhgnb15Wt4UhDLa+82hor4Tvsy3+MBCHuMUy/b2YOK8xMvu3N3RPJPkq+JWa6
+         CbrymdVVI2hTM+PtJ2x6azIXKROCooTEwAd5SxzM7MNdzGsuLOs+0rtNiZlaxXmZZ61N
+         3MDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcrmezmqQZMoYzT/zLGvggO3c9qhtSr959V/EjP8w0JMQ/CwQiOwaQgsmHAQhmY2kY/Vd2N8q/RwK9WoM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQMN+CdNgTOSZB02GQmmXxSZtCOjIKjo8AbmX5AK6PgE+9hHzK
+	OgiZFYVZVt/tcAPkQwmSeMssGFd1k6DqskqudrzNzI8S/5eV0h8Da99+CU98jaKReOrzumKCQeT
+	DlDSrywy2PqzYCFU+ls+v+jjBaDGoNb5ZVr9jUkf5bupKNoLqIYopU8tUh0g=
+X-Google-Smtp-Source: AGHT+IGNguvuLEC/zxZL/TOlNFNAS8BFX0Utgu1krU1KL/N49/lokGZz8LJNMOEzaujIQUutWHecFwJTuUypvDV+MUPxUSoS2ZJq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9386.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc859da0-94bd-4097-9c49-08ddad763d5e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2025 08:09:10.3509
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rlRexoDHS48AvLrMgbBMdHmDf6+nGGrh9nEET6kS4I5+07cRWMf4+0eAoF83OrK0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8328
+X-Received: by 2002:a05:6e02:1449:b0:3dd:d7ea:ae4c with SMTP id
+ e9e14a558f8ab-3de07d34057mr158515775ab.21.1750147891443; Tue, 17 Jun 2025
+ 01:11:31 -0700 (PDT)
+Date: Tue, 17 Jun 2025 01:11:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68512333.a70a0220.395abc.0206.GAE@google.com>
+Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in __bch2_alloc_v4_to_text
+From: syzbot <syzbot+8eb51728519f6659ef7b@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    e04c78d86a96 Linux 6.16-rc2
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16fdc90c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=db26f33438d76de9
+dashboard link: https://syzkaller.appspot.com/bug?extid=8eb51728519f6659ef7b
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fdc90c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=132995d4580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c0f064a5f302/disk-e04c78d8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b71205c143e3/vmlinux-e04c78d8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2abdee22b79e/bzImage-e04c78d8.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/3838d178b843/mount_2.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8eb51728519f6659ef7b@syzkaller.appspotmail.com
+
+    cached_sectors       0
+    stripe               0
+    stripe_redundancy    0
+    io_time[READ]        1
+    io_time[WRITE]       1024
+    fragmentation     0
+    bp_start          7
+  
+  incorrectly set at freespace:0:37:0 (free 0, genbits 0 should be 0), fixing
+=====================================================
+BUG: KMSAN: uninit-value in __bch2_alloc_v4_to_text+0x7a4/0xdf0 fs/bcachefs/alloc_background.c:355
+ __bch2_alloc_v4_to_text+0x7a4/0xdf0 fs/bcachefs/alloc_background.c:355
+ bch2_alloc_v4_to_text+0x181/0x1f0 fs/bcachefs/alloc_background.c:380
+ bch2_val_to_text fs/bcachefs/bkey_methods.c:321 [inline]
+ bch2_bkey_val_to_text+0x1e8/0x280 fs/bcachefs/bkey_methods.c:331
+ bch2_check_discard_freespace_key+0xe35/0x1a30 fs/bcachefs/alloc_background.c:1436
+ try_alloc_bucket fs/bcachefs/alloc_foreground.c:272 [inline]
+ bch2_bucket_alloc_freelist fs/bcachefs/alloc_foreground.c:420 [inline]
+ bch2_bucket_alloc_trans+0x225d/0x3a40 fs/bcachefs/alloc_foreground.c:544
+ bch2_bucket_alloc_set_trans+0xebb/0x1c10 fs/bcachefs/alloc_foreground.c:728
+ __open_bucket_add_buckets+0x21f8/0x37b0 fs/bcachefs/alloc_foreground.c:925
+ open_bucket_add_buckets+0x347/0x580 fs/bcachefs/alloc_foreground.c:957
+ bch2_alloc_sectors_start_trans+0x1de1/0x3560 fs/bcachefs/alloc_foreground.c:-1
+ __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:320 [inline]
+ bch2_btree_reserve_get+0x9fd/0x2120 fs/bcachefs/btree_update_interior.c:534
+ bch2_btree_update_start+0x2cf3/0x3620 fs/bcachefs/btree_update_interior.c:1289
+ bch2_btree_node_rewrite+0x1cd/0x1b50 fs/bcachefs/btree_update_interior.c:2245
+ bch2_btree_node_rewrite_key fs/bcachefs/btree_update_interior.c:2311 [inline]
+ async_btree_node_rewrite_work+0x6e8/0x10d0 fs/bcachefs/btree_update_interior.c:2368
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xb91/0x1d80 kernel/workqueue.c:3321
+ worker_thread+0xedf/0x1590 kernel/workqueue.c:3402
+ kthread+0xd5c/0xf00 kernel/kthread.c:464
+ ret_from_fork+0x1e0/0x310 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4154 [inline]
+ slab_alloc_node mm/slub.c:4197 [inline]
+ __do_kmalloc_node mm/slub.c:4327 [inline]
+ __kmalloc_noprof+0x95f/0x1310 mm/slub.c:4340
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ __bkey_cached_alloc fs/bcachefs/btree_key_cache.c:139 [inline]
+ bkey_cached_alloc fs/bcachefs/btree_key_cache.c:162 [inline]
+ btree_key_cache_create fs/bcachefs/btree_key_cache.c:231 [inline]
+ btree_key_cache_fill+0x784/0x4780 fs/bcachefs/btree_key_cache.c:344
+ bch2_btree_path_traverse_cached+0x10d7/0x1870 fs/bcachefs/btree_key_cache.c:399
+ bch2_btree_path_traverse_one+0x6db/0x4060 fs/bcachefs/btree_iter.c:1179
+ bch2_btree_path_traverse fs/bcachefs/btree_iter.h:250 [inline]
+ bch2_btree_iter_peek_slot+0xd74/0x3910 fs/bcachefs/btree_iter.c:2781
+ __bch2_bkey_get_iter fs/bcachefs/btree_iter.h:632 [inline]
+ bch2_bkey_get_iter fs/bcachefs/btree_iter.h:646 [inline]
+ bch2_check_discard_freespace_key+0x321/0x1a30 fs/bcachefs/alloc_background.c:1414
+ try_alloc_bucket fs/bcachefs/alloc_foreground.c:272 [inline]
+ bch2_bucket_alloc_freelist fs/bcachefs/alloc_foreground.c:420 [inline]
+ bch2_bucket_alloc_trans+0x225d/0x3a40 fs/bcachefs/alloc_foreground.c:544
+ bch2_bucket_alloc_set_trans+0xebb/0x1c10 fs/bcachefs/alloc_foreground.c:728
+ __open_bucket_add_buckets+0x21f8/0x37b0 fs/bcachefs/alloc_foreground.c:925
+ open_bucket_add_buckets+0x347/0x580 fs/bcachefs/alloc_foreground.c:957
+ bch2_alloc_sectors_start_trans+0x1de1/0x3560 fs/bcachefs/alloc_foreground.c:-1
+ __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:320 [inline]
+ bch2_btree_reserve_get+0x9fd/0x2120 fs/bcachefs/btree_update_interior.c:534
+ bch2_btree_update_start+0x2cf3/0x3620 fs/bcachefs/btree_update_interior.c:1289
+ bch2_btree_node_rewrite+0x1cd/0x1b50 fs/bcachefs/btree_update_interior.c:2245
+ bch2_btree_node_rewrite_key fs/bcachefs/btree_update_interior.c:2311 [inline]
+ async_btree_node_rewrite_work+0x6e8/0x10d0 fs/bcachefs/btree_update_interior.c:2368
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xb91/0x1d80 kernel/workqueue.c:3321
+ worker_thread+0xedf/0x1590 kernel/workqueue.c:3402
+ kthread+0xd5c/0xf00 kernel/kthread.c:464
+ ret_from_fork+0x1e0/0x310 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+CPU: 1 UID: 0 PID: 4181 Comm: kworker/u8:21 Not tainted 6.16.0-rc2-syzkaller #0 PREEMPT(undef) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Workqueue: btree_node_rewrite async_btree_node_rewrite_work
+=====================================================
 
 
-> -----Original Message-----
->=20
-> On Fri, 13 Jun 2025 18:02:46 +0800, Joy Zou wrote:
-> > The design of i.MX91 platform is very similar to i.MX93.
-> > Extracts the common parts in order to reuse code.
-> >
-> > The mainly difference between i.MX91 and i.MX93 is as follows:
-> > - i.MX91 removed some clocks and modified the names of some clocks.
-> > - i.MX91 only has one A core.
-> > - i.MX91 has different pinmux.
-> > - i.MX91 has updated to new temperature sensor same with i.MX95.
-> >
-> > Joy Zou (8):
-> >   dt-bindings: soc: imx-blk-ctrl: add i.MX91 blk-ctrl compatible
-> >   arm64: dts: freescale: rename imx93.dtsi to imx91_93_common.dtsi
-> >   arm64: dts: imx93: move i.MX93 specific part from
-> imx91_93_common.dtsi
-> >     to imx93.dtsi
-> >   arm64: dts: imx91: add i.MX91 dtsi support
-> >   arm64: dts: freescale: add i.MX91 11x11 EVK basic support
-> >   arm64: defconfig: enable i.MX91 pinctrl
-> >   pmdomain: imx93-blk-ctrl: mask DSI and PXP PD domain register on
-> >     i.MX91
-> >   net: stmmac: imx: add i.MX91 support
-> >
-> > Pengfei Li (1):
-> >   dt-bindings: arm: fsl: add i.MX91 11x11 evk board
-> >
-> >  .../devicetree/bindings/arm/fsl.yaml          |    6 +
-> >  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     |   55 +-
-> >  arch/arm64/boot/dts/freescale/Makefile        |    1 +
-> >  .../boot/dts/freescale/imx91-11x11-evk.dts    |  878 ++++++++++
-> >  arch/arm64/boot/dts/freescale/imx91-pinfunc.h |  770 +++++++++
-> >  arch/arm64/boot/dts/freescale/imx91.dtsi      |  124 ++
-> >  .../boot/dts/freescale/imx91_93_common.dtsi   | 1215 ++++++++++++++
-> >  arch/arm64/boot/dts/freescale/imx93.dtsi      | 1412 ++---------------
-> >  arch/arm64/configs/defconfig                  |    1 +
-> >  .../net/ethernet/stmicro/stmmac/dwmac-imx.c   |    2 +
-> >  drivers/pmdomain/imx/imx93-blk-ctrl.c         |   15 +
-> >  11 files changed, 3166 insertions(+), 1313 deletions(-)  create mode
-> > 100644 arch/arm64/boot/dts/freescale/imx91-11x11-evk.dts
-> >  create mode 100644 arch/arm64/boot/dts/freescale/imx91-pinfunc.h
-> >  create mode 100644 arch/arm64/boot/dts/freescale/imx91.dtsi
-> >  create mode 100644
-> arch/arm64/boot/dts/freescale/imx91_93_common.dtsi
-> >
-> > --
-> > 2.37.1
-> >
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
-Thanks for your reminder!
-Have run DT checks and found this warning. The temperature bindings and dri=
-ver patch v6 is reviewing.
-So add note to the " [PATCH v5 5/9] arm64: dts: imx91: add i.MX91 dtsi supp=
-ort" patch.
-Refer to the link: https://patchwork.kernel.org/project/linux-arm-kernel/pa=
-tch/20250407-imx91tmu-v6-0-e48c2aa3ae44@nxp.com/
-BR
-Joy Zou
->=20
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings =
-are
-> fixed by another series. Ultimately, it is up to the platform maintainer =
-whether
-> these warnings are acceptable or not. No need to reply unless the platfor=
-m
-> maintainer has comments.
->=20
-> If you already ran DT checks and didn't see these error(s), then make sur=
-e
-> dt-schema is up to date:
->=20
->   pip3 install dtschema --upgrade
->=20
->=20
-> This patch series was applied (using b4) to base:
->  Base: attempting to guess base-commit...
->  Base: tags/v6.16-rc1-6-g8a22d9e79cf0 (best guess, 6/7 blobs matched)
->=20
-> If this is not the correct base, please add 'base-commit' tag (or use b4 =
-which
-> does this automatically)
->=20
-> New warnings running 'make CHECK_DTBS=3Dy for
-> arch/arm64/boot/dts/freescale/' for
-> 20250613100255.2131800-1-joy.zou@nxp.com:
->=20
-> arch/arm64/boot/dts/freescale/imx91-11x11-evk.dtb:
-> /soc@0/bus@44000000/thermal-sensor@44482000: failed to match any
-> schema with compatible: ['fsl,imx91-tmu']
->=20
->=20
->=20
->=20
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
