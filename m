@@ -1,260 +1,601 @@
-Return-Path: <linux-kernel+bounces-689329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67426ADBF72
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 05:05:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8912AADBF5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 04:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D88C1891DD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:05:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82AEC7A7449
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 02:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775EE22AE7A;
-	Tue, 17 Jun 2025 03:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KsWxhDSn"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2053.outbound.protection.outlook.com [40.107.100.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E881624DD;
+	Tue, 17 Jun 2025 02:48:46 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB19E186E2E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 03:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750129507; cv=fail; b=Qo8N4LhttYHdpNmra6U0pRlieCrVQhK3ZuhSTZj1y5TUd9p5FTyVOg0sj0Hsy7BtBT4MUsZld9DFh7TQ2LJ0Kokm4BVOxupjU4wd3LC0ZUFuB6HWL4hyF47kmi7EEXbZouXHz4phRWFDpwun9acyqKU1w/uEeoaUO2Q30o6s0Ac=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750129507; c=relaxed/simple;
-	bh=MpGkruPnEtzSIvRnWG9t+BYiO3Yjn5+VGxStHWo2oq4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WZc/Q7dysP96SJgM90o21djto+8V53qyyt+Ek385AUrAJdt8bgQhn60b8iJzqiudFRNLk6QrzMKZ5qU0EXh/Rvw2QeLc89lhrW+mpYje3p1ZS8Uyqyv14mLcSoBMXfZ5oGTTo8t9rqHXQzp99QSvoJ44tLrBN4WP4hMwra6Oneo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KsWxhDSn; arc=fail smtp.client-ip=40.107.100.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LIkrRiU8GI8X4H3t2Yg68cti89LkXad3BJLBkah1Y1OQ5W+b5ZcvxZAn7wMPkG/6J3tFnAjet047a4BNW80N0xEVihloNtKUIDxSW1icpRtjiInRD72wLWAPUWUaMWYcLHI81CdNtq3fnlN2wkOe2qSkbHwBsmdzVPWPNT1wzHeLn5KismgRGYyfQrQtjUswv/wIPIKBcToaTV69SXCZNaJ4X99qtb8nDNY1Klmc+eDdOk8fatOQ2DEnw2h+0Wa9NoxLHYDZGEcbNkXO2RYz+YCdx+KqwUojXDGXVnLYo7UJ7Y8dTHCAE5vBN6YiGFJQukN0TjDKmj/+Q7OOvSixPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HI5q67TaN/BNk3UCKdGi8VgPVanCo5KjuZk4AhpZ4Rg=;
- b=Nag4c7WyW6VOtyiksmBdeAb6sp/a6b/EUcozQZuU5K+yEQEmQ6nO2ILQkPKyC/oO0/uKzI5Ty1xhTrlC0wgPp612L22V8VzguvzQoFe36C3IlGc8z44m6sIUO/weJFrkUacSwcr3Ndbz0OyqbN4x1b01Lla4Po4nSNaoeRtW4lSIyjLwDXCQwUEcq/temf5B3v6LFykDQeIQtadSKh882avs/6ocjk9eGOuSy4XlI9KGN43v2xbUkIbRd7w701jl/G5cg9YarJvZ8rgXzT2eTZ0Z0A2xVh8JIVT3pgjxZ1WxfkU5fJqqbj/TZvEz2UcbqY27xIASe8PRsyVg2nWcpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HI5q67TaN/BNk3UCKdGi8VgPVanCo5KjuZk4AhpZ4Rg=;
- b=KsWxhDSn7NF1N8vVrp4hsNo6UIkVWrbFl2tqN/DII3F/Z5iTUttonUVtGM55gBhTtqu0NEjQvUtIlyWo9LN0UQe1mFtTZjL/RKPbjr/ob5lRs1NdG2j5HD3jyRB47lzd2nw+gLf9S0IfVqzbnE/S+NUuk42bylUi9xG7Va96i/Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH3PR12MB8658.namprd12.prod.outlook.com (2603:10b6:610:175::8)
- by SJ2PR12MB9242.namprd12.prod.outlook.com (2603:10b6:a03:56f::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.27; Tue, 17 Jun
- 2025 03:05:03 +0000
-Received: from CH3PR12MB8658.namprd12.prod.outlook.com
- ([fe80::d5cc:cc84:5e00:2f42]) by CH3PR12MB8658.namprd12.prod.outlook.com
- ([fe80::d5cc:cc84:5e00:2f42%4]) with mapi id 15.20.8835.025; Tue, 17 Jun 2025
- 03:05:02 +0000
-Message-ID: <b1ff9a6d-4593-4120-b989-5a0fdba8329a@amd.com>
-Date: Tue, 17 Jun 2025 08:34:53 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] sched/topology: improve topology_span_sane speed
-To: Steve Wahl <steve.wahl@hpe.com>, Leon Romanovsky <leon@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- linux-kernel@vger.kernel.org, Vishal Chourasia <vishalc@linux.ibm.com>,
- samir <samir@linux.ibm.com>, Naman Jain <namjain@linux.microsoft.com>,
- Saurabh Singh Sengar <ssengar@linux.microsoft.com>, srivatsa@csail.mit.edu,
- Michael Kelley <mhklinux@outlook.com>, Russ Anderson <rja@hpe.com>,
- Dimitri Sivanich <sivanich@hpe.com>
-References: <a5da2e4d-c042-4d01-bfc3-f50ca674247b@amd.com>
- <20250610123618.GB10669@unreal>
- <4110e533-6cab-4845-bd11-11279ebc9150@app.fastmail.com>
- <aEiKCqoaEWnZvlCI@swahl-home.5wahls.com> <20250611060607.GM10669@unreal>
- <f5fad97d-f880-49a4-9595-ca3f5b41d9bb@amd.com>
- <20250612074157.GO10669@unreal>
- <5a673979-e96c-4dc2-b84b-849c6c8084ae@amd.com>
- <223b16a5-8532-4f5b-b34a-c7a0448f2454@amd.com>
- <20250615064207.GA750234@unreal> <aFAnwZLdGn8zrrqG@swahl-home.5wahls.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <aFAnwZLdGn8zrrqG@swahl-home.5wahls.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BM1P287CA0007.INDP287.PROD.OUTLOOK.COM
- (2603:1096:b00:40::36) To CH3PR12MB8658.namprd12.prod.outlook.com
- (2603:10b6:610:175::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC58E84A3E;
+	Tue, 17 Jun 2025 02:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750128525; cv=none; b=eh6T2aeDTYJxmIzBsZss2DBXwwONkDh/xuFXnbRuJN7XhQnLLYjtXXXebH5T/8Tu9f0IPti5J6bJ6lsnzVTZYBu63cQODpRC+j9l1EKOIreoFK1yeOQcolyPzoBM8qCEAzTD2c2yoekE2LkMM0IZSIv6N9xTMFZWfHTf5yRowqY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750128525; c=relaxed/simple;
+	bh=s1KsivD3GmypnlmpNyd6cA4QIDM/EaAaySIfeEGCcEc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dSuBg58+b/rnChz3UJOatXfwybOKC3+gdhMfMDuy1sNaEgIV8iLKFN6/HIB3vJIsC1kBxW1SSmt7neWKx17itujMhxd3PLP1GfyktoHaBo7bixfyyf4L/hiuKJ6zBnGhxmXp5iYO80Mm4GDacWNi9pIgN4KlAOxYpQ2RXymx/SI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bLrq82v17z13MTq;
+	Tue, 17 Jun 2025 10:46:28 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 55B99140154;
+	Tue, 17 Jun 2025 10:48:38 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 17 Jun
+ 2025 10:48:37 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <marcel@holtmann.org>, <luiz.dentz@gmail.com>, <yuehaibing@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>
+Subject: [PATCH -next] Bluetooth: hci_ll: Introduce hci_ll.h
+Date: Tue, 17 Jun 2025 11:06:16 +0800
+Message-ID: <20250617030616.3642576-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8658:EE_|SJ2PR12MB9242:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7c207f54-a40c-4d75-847f-08ddad4bc092
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eVZvUFpFbGw5MkpxSmROZFBUeGFTVTFNY094bndRdnZnTG5hNUYxSnM5WGZ0?=
- =?utf-8?B?YXQxdlBaZXBnTUV6ZjI0bkJiSkp0RkVDV1Q0WEtEMVpQOHVTQVQwakIzQUNq?=
- =?utf-8?B?ajdOaUdaRWQwbzBFTmNscXVlL05UQjBpQ1RyVjV2V0VEdm5Tcnpld1UxcGZS?=
- =?utf-8?B?MkZmTHFjd1VJR1pUVUI5TTdVUWk3U1JGd25xbko0VnJrUGt2ZnZMZnJNQjE5?=
- =?utf-8?B?dG5IV3VWYVdMeHBkSWd6dE1pbmQ3aWJXUDhmYTU5RXkzeXBaQW1lWTF3b3Nu?=
- =?utf-8?B?QncrU1A1b2k0VG5QQ01SZFRwNHNuUHFMUmtZbllFckZ6NzA4QkQyaEZ5b3BN?=
- =?utf-8?B?cXZmS0N5Z3lRSkRDN0xOMFpHSDZyWmJMZlAyVmFXVGdERXlxY1owUkRqditE?=
- =?utf-8?B?YlNqMmFlS04waUE4QWpUUzV3M0JKN1ZINGFHdkZXYlVFK0E3Yy9QbVQ3TWZL?=
- =?utf-8?B?OWdJSndQZmxJN2UxQ3J2RTR6Vy95V2dzclZkYVRCbVNNdURYWDhpSHRja1JM?=
- =?utf-8?B?TFh0b2xXOGtldnFpdHVEYmVqVmVsUUpIeVRyRmViUUV2YXorTGZLVU9idVAr?=
- =?utf-8?B?MjVTdU4yWVBPRDl4QXNWMnlCQ0V4K3gzMndpYW1wQUhaYUNsOUFpVXdxcWkx?=
- =?utf-8?B?QUE4alpHbmhZWThETzRLTDZEa1FHZHRncXpCNjhiZjdWVUd1ai9zK2JLOEh4?=
- =?utf-8?B?VXV4L1JpNzluMzFHWU5qR2xxWjJoRXJiMlhydDNWbm1pZ3FhQ202dkdSejRm?=
- =?utf-8?B?V1JvQmsyWUxOVDRVdlgyakVGRlU3Zkc4YTFSbHNoMWlGN0czdjdQa0xUL2Rq?=
- =?utf-8?B?MkFMZEY1VUwySmVOazZCdlRTK1lGZjR6WWNWb0J6ekMrR2kxQ0dHVWQ1d1JQ?=
- =?utf-8?B?UlZHclRuTklRdVBXci9lamNEb2hhdUFxRGVxUkpwb05qQjlQKy82NTYrYzVz?=
- =?utf-8?B?RmVWWVhtbjB0eXJ4aElOaHozbXVvRUdwWjQzM2dreTZ0SWVCd3JPR2xIUlA1?=
- =?utf-8?B?MU9kb3U4eTU1THlJdDY3MGdPNVByQW4vSXZGOU1IUmZib0Z5RTlNYTdIcmNu?=
- =?utf-8?B?Sjh0azltVDVyUytVWU9KZWJvTXI4dm9VTnNaanZaZ2Q4UkxNZENMb2VydXlp?=
- =?utf-8?B?Yng0NjR5Uk1JbEFvQ3o0eDRJMGtJL29OUmJnaStWYUFDVzBxWUpLNmVJTzVT?=
- =?utf-8?B?bjUySVJPTlgreW5ldVR0NlpJWmRwZDdBVmJXRmN3VUMwbzRVWVY5ZGdLYnY1?=
- =?utf-8?B?L3hCRFF2VXpTQ0N5cS96eFpvbXRWMHltVmlpL1ZWRk1aS3FSeUZwUmREaDdw?=
- =?utf-8?B?Q2d5aEFXN1IvQVRvQ3NzRG9vcE5JRHY3RzEyRDh3YmRja1pyRCt1QzRZaUp3?=
- =?utf-8?B?Unk0YUVRdE50dUd6cnBtVUZCQ1g2TDU0M3hIelVXTDR3SGhYN1JicWR2T1Fi?=
- =?utf-8?B?MnlYL016L25UNEk3QkN5czRxSktKOU82UlpPN0RvSmVPZXZ3bkZXUWgvQkwz?=
- =?utf-8?B?a1N1ekxmY2ZrSldIMkdZQkFDNVVta0kwSXg1VGlrcmYydzZaWDIyL1kyMGZa?=
- =?utf-8?B?Tk9kRERiSHduU1pFcjY2cW1rUk5UTmVzL2pMYktkMXAweE5XdW0zSDd3ZUxM?=
- =?utf-8?B?QkRIUU5VYktweit0RnhQSVhRSzNiMDBidmhkSFU1NDRWbkNiaThzcldXbkJW?=
- =?utf-8?B?ZGhiTXBaN1dERG5DbDhhUTlJR0sxc3c3aFZqSVpOLzhmMjB0WFZNb2RUNkNF?=
- =?utf-8?B?KzdWbDZ2dDF1Z2JGT2s3aTg5LzZMOW9Ca3prTVhVcTNGVHFPOC91UnNMV3E3?=
- =?utf-8?B?WjIyZW9KWnk3T0JkMkFkMXI4eUdsQzFyeFhzZmRxVGF1dzA0Ti84NU9qRUdR?=
- =?utf-8?B?NE9pNnNWM0ZKc0NxTjZEQk1aaVNVNVYwL2ZNbDJzZG44TGp4VmhCd3h0b3k5?=
- =?utf-8?Q?gB7/U5UiuXk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8658.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TS8ycmQ4NzdPZnM4WTUxSGc5UFRhQ3RRTmY2dDJKUERGMitENDFJUmNSRldV?=
- =?utf-8?B?aWR0RFRLcEh1cUh1YkxNQWdjeHB5LzFFUVVjVmZUckNPMlo3TStMRjFHYVU0?=
- =?utf-8?B?MSt4S3U3eTdmNngxOHhOSktnN01qM3hlNTMycGJhRU1Wb0ZDUUIwcXQwdkRu?=
- =?utf-8?B?Qm1nbS8yM2xvalFtam54V0drRUt1L0NGc0pXejhrNzhYRVAyZ2JjSWxYWnNR?=
- =?utf-8?B?em5STFJBNkRjTXU3S3BGcUVtSzhXUUVZTlNJcXBWRnBZbDdyTDY3OVMvNFMv?=
- =?utf-8?B?NHVad0lyc2pRcDVsK0ZXVTlQMWNHaDVLenpmaDV6UnRhZVJ5Nnl0Nm9NbFkv?=
- =?utf-8?B?WHlvUFYwMThNMytucUJPQmIrdjRBVXF2VUlObXZHandDbS9ZeEx3dzVoYlJT?=
- =?utf-8?B?Wm9UNFU4djREYVlPa3dUc0I5YmdTQmhlRkh3Nkg1UE9ER2tGdTBtRGZyZWxr?=
- =?utf-8?B?MXpWa3haL3B2Y3BDWEVkOTBYODlRdVp6cE9IdXpFTGxHUWYxcFh0WU9IT0x5?=
- =?utf-8?B?S2ZiTUhjUU5lWlRDeCtyVHI1WWZkbVhURmN5M3ozVGkxNUFwSVJFMkhtYU8z?=
- =?utf-8?B?NkpkRGZ0dS9UZ04xZ2RyL1ZBUUR5MkVSMlJ5dGkzeStoR21WVXR3VldJaWg3?=
- =?utf-8?B?bWkvQnRPdjNvUWhYRkFKeTcvTnM4TGJ4d1ZwNVRPQ1JIZTFzd3d6Nmg5MWlC?=
- =?utf-8?B?YnFsZlN3K1RZMXlpVElYQ0hlbTRVYmg1VGx0anZORmFlaVVPMFNQakpaRGhM?=
- =?utf-8?B?d09CbXY0OEhNVkFiNmtJSEc1R3hraTFUVGdIRnlCQ01WT0syM0NJQ3Fwcisv?=
- =?utf-8?B?UlJKS2NaeDIwQTg3ZVZDeEZnTWs0VHc4SEJPQml6S0ova3h6enQ1eDhpTWVT?=
- =?utf-8?B?eXY0a0Z1aForRGF5Q0lSbUJXOVo2SnBCOVlQajhSd1R4MXpvaVFnZFFEdnBV?=
- =?utf-8?B?ekZzSjgrQjQrWTZQTHZOZ2lUdmxFNVVLUmlLcVZaa05QdkVzVFNRQmFwRjBO?=
- =?utf-8?B?STBsbUJlUnp6VjF5YmQ0ZkZmVXl5VUFYdG1Scy84ajdwT0IzNmNZTVYzNkNB?=
- =?utf-8?B?Ulg5NW1qODg5dUNhQkQ3ZmVGZDB3THZ4R0hBVzltNSsydnZMbXhOMno2Z3Vo?=
- =?utf-8?B?S1hHeXRTOVVra05FenRvTjVUM1BsSkhPWHNVdE9sT1owRko4V1V5elE1QjVZ?=
- =?utf-8?B?ak9hdHhUV2hhQ09NZ010SkxYUFl6OTQrZjlsblAycmxwVEU0SnVGLzZWQWJj?=
- =?utf-8?B?OThBcVRCN2QrOU5OR2NTY2dYMllBRUhyQmIxNGkxVXB1dDJueW9NTVNmN3B0?=
- =?utf-8?B?N2EySFA3OTdEakRrTmo4eGlIajFPRjRmSWFRNnBjSUNmeTdEVllrbXZpaXBQ?=
- =?utf-8?B?RFpUaFFvQ00wL2lpOEJ1cGpSVjFzTGx3cFpxdzFkVjBxdUJnT3U2K2ZER2RR?=
- =?utf-8?B?YVFIYWpWenZSNkorUkpzMlBzMG9ZeWhVMDY0ZU9aU0VjRDVDQ2U2anZpN0tO?=
- =?utf-8?B?T1NrQXNFdExDVmc0VlhLVmtyN0JoVTJxdDZuQ0k4QkxjNDRqM05ZRE5WaUp3?=
- =?utf-8?B?eEMvTkpWVDgwMWVlZzBIUENZRGowS2JKRG91YWNOYkpLbkdtdlRjbW0rMmQr?=
- =?utf-8?B?YVJBSHFOb2dlRVpvR25BWDBuL0w2V0orbWlvYWF5S1I1aU9GSzhzYzcvMlpO?=
- =?utf-8?B?ZENEa3puMVZ1OXFrVWVncEs4RFJackNzRDVrbzREOGtLWkh6VjNaZjlKb3o1?=
- =?utf-8?B?WVo0YzFUUG5VbklDQWRJamVoak1USy9UWTM2WGs5NEZjNlpFNFZrZkNiRXRZ?=
- =?utf-8?B?OWJybTI0NW5WWjdJRjVPWENjRXYvN3JyN3pxWEtHNUFwQ3RqcmZpMkNPWm9x?=
- =?utf-8?B?Qkx6TjkyMnFnRXhrU0FoZEkwWHVaZW40SVZPbGs1a2R0NjlWRlV1WUwzQnI5?=
- =?utf-8?B?VVQvd09PRWd1VWJPWngwS1FEOHFXSGcxbHBGQTF4WkFObjdGcFVZVTZvcUhB?=
- =?utf-8?B?NWJYUkxuV2o5Q2U4bFVaaWFPOW5QVlFsR2o3MVpPUTBOd2ZiQ0lGV2U3S2pM?=
- =?utf-8?B?Uk41Y1IwUUlEUGh6QlhHQ1llbFpaVmFwMENJakM1N2phSjAwdWJ1UEdIdVdp?=
- =?utf-8?Q?JIiw1/TsEinwVqPZ24/CrLV4k?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c207f54-a40c-4d75-847f-08ddad4bc092
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8658.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2025 03:05:02.5903
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: spa8wmcefY0veJ4VlcB0+m0ZoOk/WnU0G0di4QsLx/OBXmffomKfKbQ/M3JYLCwa1Iq9sTjkF+YtJQGIY4fDWg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9242
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-Hello Steve,
+Since commit 78fe66360ed6 ("misc: ti-st: st_kim: remove the driver")
+ti_wilink_st.h is only used in hci_ll.c, cleanup unused st code
+and move other to hci_ll.h
 
-On 6/16/2025 7:48 PM, Steve Wahl wrote:
-> On Sun, Jun 15, 2025 at 09:42:07AM +0300, Leon Romanovsky wrote:
->> On Thu, Jun 12, 2025 at 04:11:52PM +0530, K Prateek Nayak wrote:
->>> On 6/12/2025 3:00 PM, K Prateek Nayak wrote:
->>>> Ah! Since this happens so early topology isn't created yet for
->>>> the debug prints to hit! Is it possible to get a dmesg with
->>>> "ignore_loglevel" and "sched_verbose" on an older kernel that
->>>> did not throw this error on the same host?
->>
->> This is dmesg with reverted two commits "ched/topology: Refinement to
->> topology_span_sane speedup" and "sched/topology: improve
->> topology_span_sane speed"
-> 
-> I would be interested in whether there's a difference with only the
-> second patch being reverted.  The first patch is expected to get the
-> exact same results as previous code, only faster.  The second had
-> simplifications suggested by others that could give different results
-> under conditions that were not expected to exist.  The commit message
-> for the second patch explains this.
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ drivers/bluetooth/hci_ll.c   |   2 +-
+ drivers/bluetooth/hci_ll.h   |  56 +++++
+ include/linux/ti_wilink_st.h | 439 -----------------------------------
+ 3 files changed, 57 insertions(+), 440 deletions(-)
+ create mode 100644 drivers/bluetooth/hci_ll.h
+ delete mode 100644 include/linux/ti_wilink_st.h
 
-Since NUMA domains are skipped as a result of SD_OVERLAP, the remaining
-PKG domains don't show any discrepancy that would fail the current
-check:
-
-     CPU0 attaching sched-domain(s):
-      domain-0: span=0-1 level=PKG               id:0    span:0-1
-       groups: 0:{ span=0 }, 1:{ span=1 }
-     CPU1 attaching sched-domain(s):
-      domain-0: span=0-1 level=PKG               id:0    span:0-1
-       groups: 1:{ span=1 }, 0:{ span=0 }
-     CPU2 attaching sched-domain(s):
-      domain-0: span=2-3 level=PKG               id:2    span:2-3
-       groups: 2:{ span=2 }, 3:{ span=3 }
-     CPU3 attaching sched-domain(s):
-      domain-0: span=2-3 level=PKG               id:2    span:2-3
-       groups: 3:{ span=3 }, 2:{ span=2 }
-     CPU4 attaching sched-domain(s):
-      domain-0: span=4-5 level=PKG               id:4    span:4-5
-       groups: 4:{ span=4 }, 5:{ span=5 }
-     CPU5 attaching sched-domain(s):
-      domain-0: span=4-5 level=PKG               id:4    span:4-5
-       groups: 5:{ span=5 }, 4:{ span=4 }
-     CPU6 attaching sched-domain(s):
-      domain-0: span=6-7 level=PKG               id:6    span:6-7
-       groups: 6:{ span=6 }, 7:{ span=7 }
-     CPU7 attaching sched-domain(s):
-      domain-0: span=6-7 level=PKG               id:6    span:6-7
-       groups: 7:{ span=7 }, 6:{ span=6 }
-     CPU8 attaching sched-domain(s):
-      domain-0: span=8-9 level=PKG               id:8    span:8-9
-       groups: 8:{ span=8 }, 9:{ span=9 }
-     CPU9 attaching sched-domain(s):
-      domain-0: span=8-9 level=PKG               id:8    span:8-9
-       groups: 9:{ span=9 }, 8:{ span=8 }
-
-I suspect a topology level that gets degenerated for the failed check
-but looking at the degeneration path, the degenerated domains should
-either have a single CPU in it (SMT,CLS,MC) or it should have the
-same span as PKG (NODE domain) for it to degenerate which should be
-sane.
-
-Leon, could you also paste the output of numactl -H from within the
-guest please. I'm wondering if the NUMA topology makes a difference
-here somehow.
-
+diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
+index e19e9bd49555..6c089e6f7c40 100644
+--- a/drivers/bluetooth/hci_ll.c
++++ b/drivers/bluetooth/hci_ll.c
+@@ -34,7 +34,6 @@
+ #include <linux/of.h>
+ #include <linux/serdev.h>
+ #include <linux/skbuff.h>
+-#include <linux/ti_wilink_st.h>
+ #include <linux/clk.h>
+ 
+ #include <net/bluetooth/bluetooth.h>
+@@ -42,6 +41,7 @@
+ #include <linux/gpio/consumer.h>
+ #include <linux/nvmem-consumer.h>
+ 
++#include "hci_ll.h"
+ #include "hci_uart.h"
+ 
+ /* Vendor-specific HCI commands */
+diff --git a/drivers/bluetooth/hci_ll.h b/drivers/bluetooth/hci_ll.h
+new file mode 100644
+index 000000000000..b0e525bab64b
+--- /dev/null
++++ b/drivers/bluetooth/hci_ll.h
+@@ -0,0 +1,56 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++#ifndef HCI_LL_H
++#define HCI_LL_H
++
++/*
++ * BTS headers
++ */
++#define ACTION_SEND_COMMAND     1
++#define ACTION_WAIT_EVENT       2
++#define ACTION_SERIAL           3
++#define ACTION_DELAY            4
++#define ACTION_RUN_SCRIPT       5
++#define ACTION_REMARKS          6
++
++/**
++ * struct bts_header - the fw file is NOT binary which can
++ *	be sent onto TTY as is. The .bts is more a script
++ *	file which has different types of actions.
++ *	Each such action needs to be parsed by the KIM and
++ *	relevant procedure to be called.
++ */
++struct bts_header {
++	u32 magic;
++	u32 version;
++	u8 future[24];
++	u8 actions[];
++} __packed;
++
++/**
++ * struct bts_action - Each .bts action has its own type of
++ *	data.
++ */
++struct bts_action {
++	u16 type;
++	u16 size;
++	u8 data[];
++} __packed;
++
++struct bts_action_delay {
++	u32 msec;
++} __packed;
++
++/**
++ * struct hci_command - the HCI-VS for intrepreting
++ *	the change baud rate of host-side UART, which
++ *	needs to be ignored, since UIM would do that
++ *	when it receives request from KIM for ldisc installation.
++ */
++struct hci_command {
++	u8 prefix;
++	u16 opcode;
++	u8 plen;
++	u32 speed;
++} __packed;
++
++#endif /* HCI_LL_H */
+diff --git a/include/linux/ti_wilink_st.h b/include/linux/ti_wilink_st.h
+deleted file mode 100644
+index 10642d4844f0..000000000000
+--- a/include/linux/ti_wilink_st.h
++++ /dev/null
+@@ -1,439 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- *  Shared Transport Header file
+- *	To be included by the protocol stack drivers for
+- *	Texas Instruments BT,FM and GPS combo chip drivers
+- *	and also serves the sub-modules of the shared transport driver.
+- *
+- *  Copyright (C) 2009-2010 Texas Instruments
+- *  Author: Pavan Savoy <pavan_savoy@ti.com>
+- */
+-
+-#ifndef TI_WILINK_ST_H
+-#define TI_WILINK_ST_H
+-
+-#include <linux/skbuff.h>
+-
+-/**
+- * enum proto-type - The protocol on WiLink chips which share a
+- *	common physical interface like UART.
+- */
+-enum proto_type {
+-	ST_BT,
+-	ST_FM,
+-	ST_GPS,
+-	ST_MAX_CHANNELS = 16,
+-};
+-
+-/**
+- * struct st_proto_s - Per Protocol structure from BT/FM/GPS to ST
+- * @type: type of the protocol being registered among the
+- *	available proto_type(BT, FM, GPS the protocol which share TTY).
+- * @recv: the receiver callback pointing to a function in the
+- *	protocol drivers called by the ST driver upon receiving
+- *	relevant data.
+- * @match_packet: reserved for future use, to make ST more generic
+- * @reg_complete_cb: callback handler pointing to a function in protocol
+- *	handler called by ST when the pending registrations are complete.
+- *	The registrations are marked pending, in situations when fw
+- *	download is in progress.
+- * @write: pointer to function in ST provided to protocol drivers from ST,
+- *	to be made use when protocol drivers have data to send to TTY.
+- * @priv_data: privdate data holder for the protocol drivers, sent
+- *	from the protocol drivers during registration, and sent back on
+- *	reg_complete_cb and recv.
+- * @chnl_id: channel id the protocol driver is interested in, the channel
+- *	id is nothing but the 1st byte of the packet in UART frame.
+- * @max_frame_size: size of the largest frame the protocol can receive.
+- * @hdr_len: length of the header structure of the protocol.
+- * @offset_len_in_hdr: this provides the offset of the length field in the
+- *	header structure of the protocol header, to assist ST to know
+- *	how much to receive, if the data is split across UART frames.
+- * @len_size: whether the length field inside the header is 2 bytes
+- *	or 1 byte.
+- * @reserve: the number of bytes ST needs to reserve in the skb being
+- *	prepared for the protocol driver.
+- */
+-struct st_proto_s {
+-	enum proto_type type;
+-	long (*recv) (void *, struct sk_buff *);
+-	unsigned char (*match_packet) (const unsigned char *data);
+-	void (*reg_complete_cb) (void *, int data);
+-	long (*write) (struct sk_buff *skb);
+-	void *priv_data;
+-
+-	unsigned char chnl_id;
+-	unsigned short max_frame_size;
+-	unsigned char hdr_len;
+-	unsigned char offset_len_in_hdr;
+-	unsigned char len_size;
+-	unsigned char reserve;
+-};
+-
+-extern long st_register(struct st_proto_s *);
+-extern long st_unregister(struct st_proto_s *);
+-
+-
+-/*
+- * header information used by st_core.c
+- */
+-
+-/* states of protocol list */
+-#define ST_NOTEMPTY	1
+-#define ST_EMPTY	0
+-
+-/*
+- * possible st_states
+- */
+-#define ST_INITIALIZING		1
+-#define ST_REG_IN_PROGRESS	2
+-#define ST_REG_PENDING		3
+-#define ST_WAITING_FOR_RESP	4
+-
+-/**
+- * struct st_data_s - ST core internal structure
+- * @st_state: different states of ST like initializing, registration
+- *	in progress, this is mainly used to return relevant err codes
+- *	when protocol drivers are registering. It is also used to track
+- *	the recv function, as in during fw download only HCI events
+- *	can occur , where as during other times other events CH8, CH9
+- *	can occur.
+- * @tty: tty provided by the TTY core for line disciplines.
+- * @tx_skb: If for some reason the tty's write returns lesser bytes written
+- *	then to maintain the rest of data to be written on next instance.
+- *	This needs to be protected, hence the lock inside wakeup func.
+- * @tx_state: if the data is being written onto the TTY and protocol driver
+- *	wants to send more, queue up data and mark that there is
+- *	more data to send.
+- * @list: the list of protocols registered, only MAX can exist, one protocol
+- *	can register only once.
+- * @rx_state: states to be maintained inside st's tty receive
+- * @rx_count: count to be maintained inside st's tty receieve
+- * @rx_skb: the skb where all data for a protocol gets accumulated,
+- *	since tty might not call receive when a complete event packet
+- *	is received, the states, count and the skb needs to be maintained.
+- * @rx_chnl: the channel ID for which the data is getting accumalated for.
+- * @txq: the list of skbs which needs to be sent onto the TTY.
+- * @tx_waitq: if the chip is not in AWAKE state, the skbs needs to be queued
+- *	up in here, PM(WAKEUP_IND) data needs to be sent and then the skbs
+- *	from waitq can be moved onto the txq.
+- *	Needs locking too.
+- * @lock: the lock to protect skbs, queues, and ST states.
+- * @protos_registered: count of the protocols registered, also when 0 the
+- *	chip enable gpio can be toggled, and when it changes to 1 the fw
+- *	needs to be downloaded to initialize chip side ST.
+- * @ll_state: the various PM states the chip can be, the states are notified
+- *	to us, when the chip sends relevant PM packets(SLEEP_IND, WAKE_IND).
+- * @kim_data: reference to the parent encapsulating structure.
+- *
+- */
+-struct st_data_s {
+-	unsigned long st_state;
+-	struct sk_buff *tx_skb;
+-#define ST_TX_SENDING	1
+-#define ST_TX_WAKEUP	2
+-	unsigned long tx_state;
+-	struct st_proto_s *list[ST_MAX_CHANNELS];
+-	bool is_registered[ST_MAX_CHANNELS];
+-	unsigned long rx_state;
+-	unsigned long rx_count;
+-	struct sk_buff *rx_skb;
+-	unsigned char rx_chnl;
+-	struct sk_buff_head txq, tx_waitq;
+-	spinlock_t lock;
+-	unsigned char	protos_registered;
+-	unsigned long ll_state;
+-	void *kim_data;
+-	struct tty_struct *tty;
+-	struct work_struct work_write_wakeup;
+-};
+-
+-/*
+- * wrapper around tty->ops->write_room to check
+- * availability during firmware download
+- */
+-int st_get_uart_wr_room(struct st_data_s *st_gdata);
+-/**
+- * st_int_write -
+- * point this to tty->driver->write or tty->ops->write
+- * depending upon the kernel version
+- */
+-int st_int_write(struct st_data_s*, const unsigned char*, int);
+-
+-/**
+- * st_write -
+- * internal write function, passed onto protocol drivers
+- * via the write function ptr of protocol struct
+- */
+-long st_write(struct sk_buff *);
+-
+-/* function to be called from ST-LL */
+-void st_ll_send_frame(enum proto_type, struct sk_buff *);
+-
+-/* internal wake up function */
+-void st_tx_wakeup(struct st_data_s *st_data);
+-
+-/* init, exit entry funcs called from KIM */
+-int st_core_init(struct st_data_s **);
+-void st_core_exit(struct st_data_s *);
+-
+-/* ask for reference from KIM */
+-void st_kim_ref(struct st_data_s **, int);
+-
+-#define GPS_STUB_TEST
+-#ifdef GPS_STUB_TEST
+-int gps_chrdrv_stub_write(const unsigned char*, int);
+-void gps_chrdrv_stub_init(void);
+-#endif
+-
+-/*
+- * header information used by st_kim.c
+- */
+-
+-/* time in msec to wait for
+- * line discipline to be installed
+- */
+-#define LDISC_TIME	1000
+-#define CMD_RESP_TIME	800
+-#define CMD_WR_TIME	5000
+-#define MAKEWORD(a, b)  ((unsigned short)(((unsigned char)(a)) \
+-	| ((unsigned short)((unsigned char)(b))) << 8))
+-
+-#define GPIO_HIGH 1
+-#define GPIO_LOW  0
+-
+-/* the Power-On-Reset logic, requires to attempt
+- * to download firmware onto chip more than once
+- * since the self-test for chip takes a while
+- */
+-#define POR_RETRY_COUNT 5
+-
+-/**
+- * struct chip_version - save the chip version
+- */
+-struct chip_version {
+-	unsigned short full;
+-	unsigned short chip;
+-	unsigned short min_ver;
+-	unsigned short maj_ver;
+-};
+-
+-#define UART_DEV_NAME_LEN 32
+-/**
+- * struct kim_data_s - the KIM internal data, embedded as the
+- *	platform's drv data. One for each ST device in the system.
+- * @uim_pid: KIM needs to communicate with UIM to request to install
+- *	the ldisc by opening UART when protocol drivers register.
+- * @kim_pdev: the platform device added in one of the board-XX.c file
+- *	in arch/XX/ directory, 1 for each ST device.
+- * @kim_rcvd: completion handler to notify when data was received,
+- *	mainly used during fw download, which involves multiple send/wait
+- *	for each of the HCI-VS commands.
+- * @ldisc_installed: completion handler to notify that the UIM accepted
+- *	the request to install ldisc, notify from tty_open which suggests
+- *	the ldisc was properly installed.
+- * @resp_buffer: data buffer for the .bts fw file name.
+- * @fw_entry: firmware class struct to request/release the fw.
+- * @rx_state: the rx state for kim's receive func during fw download.
+- * @rx_count: the rx count for the kim's receive func during fw download.
+- * @rx_skb: all of fw data might not come at once, and hence data storage for
+- *	whole of the fw response, only HCI_EVENTs and hence diff from ST's
+- *	response.
+- * @core_data: ST core's data, which mainly is the tty's disc_data
+- * @version: chip version available via a sysfs entry.
+- *
+- */
+-struct kim_data_s {
+-	long uim_pid;
+-	struct platform_device *kim_pdev;
+-	struct completion kim_rcvd, ldisc_installed;
+-	char resp_buffer[30];
+-	const struct firmware *fw_entry;
+-	unsigned nshutdown;
+-	unsigned long rx_state;
+-	unsigned long rx_count;
+-	struct sk_buff *rx_skb;
+-	struct st_data_s *core_data;
+-	struct chip_version version;
+-	unsigned char ldisc_install;
+-	unsigned char dev_name[UART_DEV_NAME_LEN + 1];
+-	unsigned flow_cntrl;
+-	unsigned baud_rate;
+-};
+-
+-/**
+- * functions called when 1 of the protocol drivers gets
+- * registered, these need to communicate with UIM to request
+- * ldisc installed, read chip_version, download relevant fw
+- */
+-long st_kim_start(void *);
+-long st_kim_stop(void *);
+-
+-void st_kim_complete(void *);
+-void kim_st_list_protocols(struct st_data_s *, void *);
+-void st_kim_recv(void *disc_data, const u8 *data, size_t count);
+-
+-
+-/*
+- * BTS headers
+- */
+-#define ACTION_SEND_COMMAND     1
+-#define ACTION_WAIT_EVENT       2
+-#define ACTION_SERIAL           3
+-#define ACTION_DELAY            4
+-#define ACTION_RUN_SCRIPT       5
+-#define ACTION_REMARKS          6
+-
+-/**
+- * struct bts_header - the fw file is NOT binary which can
+- *	be sent onto TTY as is. The .bts is more a script
+- *	file which has different types of actions.
+- *	Each such action needs to be parsed by the KIM and
+- *	relevant procedure to be called.
+- */
+-struct bts_header {
+-	u32 magic;
+-	u32 version;
+-	u8 future[24];
+-	u8 actions[];
+-} __attribute__ ((packed));
+-
+-/**
+- * struct bts_action - Each .bts action has its own type of
+- *	data.
+- */
+-struct bts_action {
+-	u16 type;
+-	u16 size;
+-	u8 data[];
+-} __attribute__ ((packed));
+-
+-struct bts_action_send {
+-	u8 data[0];
+-} __attribute__ ((packed));
+-
+-struct bts_action_wait {
+-	u32 msec;
+-	u32 size;
+-	u8 data[];
+-} __attribute__ ((packed));
+-
+-struct bts_action_delay {
+-	u32 msec;
+-} __attribute__ ((packed));
+-
+-struct bts_action_serial {
+-	u32 baud;
+-	u32 flow_control;
+-} __attribute__ ((packed));
+-
+-/**
+- * struct hci_command - the HCI-VS for intrepreting
+- *	the change baud rate of host-side UART, which
+- *	needs to be ignored, since UIM would do that
+- *	when it receives request from KIM for ldisc installation.
+- */
+-struct hci_command {
+-	u8 prefix;
+-	u16 opcode;
+-	u8 plen;
+-	u32 speed;
+-} __attribute__ ((packed));
+-
+-/*
+- * header information used by st_ll.c
+- */
+-
+-/* ST LL receiver states */
+-#define ST_W4_PACKET_TYPE       0
+-#define ST_W4_HEADER		1
+-#define ST_W4_DATA		2
+-
+-/* ST LL state machines */
+-#define ST_LL_ASLEEP               0
+-#define ST_LL_ASLEEP_TO_AWAKE      1
+-#define ST_LL_AWAKE                2
+-#define ST_LL_AWAKE_TO_ASLEEP      3
+-#define ST_LL_INVALID		   4
+-
+-/* different PM notifications coming from chip */
+-#define LL_SLEEP_IND	0x30
+-#define LL_SLEEP_ACK	0x31
+-#define LL_WAKE_UP_IND	0x32
+-#define LL_WAKE_UP_ACK	0x33
+-
+-/* initialize and de-init ST LL */
+-long st_ll_init(struct st_data_s *);
+-long st_ll_deinit(struct st_data_s *);
+-
+-/**
+- * enable/disable ST LL along with KIM start/stop
+- * called by ST Core
+- */
+-void st_ll_enable(struct st_data_s *);
+-void st_ll_disable(struct st_data_s *);
+-
+-/**
+- * various funcs used by ST core to set/get the various PM states
+- * of the chip.
+- */
+-unsigned long st_ll_getstate(struct st_data_s *);
+-unsigned long st_ll_sleep_state(struct st_data_s *, unsigned char);
+-void st_ll_wakeup(struct st_data_s *);
+-
+-/*
+- * header information used by st_core.c for FM and GPS
+- * packet parsing, the bluetooth headers are already available
+- * at net/bluetooth/
+- */
+-
+-struct fm_event_hdr {
+-	u8 plen;
+-} __attribute__ ((packed));
+-
+-#define FM_MAX_FRAME_SIZE 0xFF	/* TODO: */
+-#define FM_EVENT_HDR_SIZE 1	/* size of fm_event_hdr */
+-#define ST_FM_CH8_PKT 0x8
+-
+-/* gps stuff */
+-struct gps_event_hdr {
+-	u8 opcode;
+-	u16 plen;
+-} __attribute__ ((packed));
+-
+-/**
+- * struct ti_st_plat_data - platform data shared between ST driver and
+- *	platform specific board file which adds the ST device.
+- * @nshutdown_gpio: Host's GPIO line to which chip's BT_EN is connected.
+- * @dev_name: The UART/TTY name to which chip is interfaced. (eg: /dev/ttyS1)
+- * @flow_cntrl: Should always be 1, since UART's CTS/RTS is used for PM
+- *	purposes.
+- * @baud_rate: The baud rate supported by the Host UART controller, this will
+- *	be shared across with the chip via a HCI VS command from User-Space Init
+- *	Mgr application.
+- * @suspend:
+- * @resume: legacy PM routines hooked to platform specific board file, so as
+- *	to take chip-host interface specific action.
+- * @chip_enable:
+- * @chip_disable: Platform/Interface specific mux mode setting, GPIO
+- *	configuring, Host side PM disabling etc.. can be done here.
+- * @chip_asleep:
+- * @chip_awake: Chip specific deep sleep states is communicated to Host
+- *	specific board-xx.c to take actions such as cut UART clocks when chip
+- *	asleep or run host faster when chip awake etc..
+- *
+- */
+-struct ti_st_plat_data {
+-	u32 nshutdown_gpio;
+-	unsigned char dev_name[UART_DEV_NAME_LEN]; /* uart name */
+-	u32 flow_cntrl; /* flow control flag */
+-	u32 baud_rate;
+-	int (*suspend)(struct platform_device *, pm_message_t);
+-	int (*resume)(struct platform_device *);
+-	int (*chip_enable) (struct kim_data_s *);
+-	int (*chip_disable) (struct kim_data_s *);
+-	int (*chip_asleep) (struct kim_data_s *);
+-	int (*chip_awake) (struct kim_data_s *);
+-};
+-
+-#endif /* TI_WILINK_ST_H */
 -- 
-Thanks and Regards,
-Prateek
+2.34.1
 
 
