@@ -1,133 +1,116 @@
-Return-Path: <linux-kernel+bounces-690873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A60BADDD53
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:44:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C11B6ADDD5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 22:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C74454A06B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:44:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3414A4A07BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 20:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161B32E54DC;
-	Tue, 17 Jun 2025 20:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8B32F0022;
+	Tue, 17 Jun 2025 20:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="juijGfqS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="zDH400Cg"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7212EFD8C;
-	Tue, 17 Jun 2025 20:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76AD2EF9C7;
+	Tue, 17 Jun 2025 20:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750193048; cv=none; b=ezkt3OncxtGCC8CpqB0WW/mK3oU5VtjkMADf3NgBP3MUVTAXYb+7rZfUj0YpUF/jdwjz0PT7hczPtWGSTooI+CaSaMDPacjdBpOPVRapLOshnpXZvefBIEfLyw/0x4jFXksD+mjfZucIGCmLqkTHRzlr/2zE1UUkpp7jOd1T/Mc=
+	t=1750193066; cv=none; b=ZeVLG71I660OcbvkGLffWBT5ITp3Rw73QnzIBPX1DAg+5uUCtgDciWl3H+knWnoQ7yEJOm+GCLdn3KuEr93IzIbDhWWC/+2IhqfHQnQIuCWWunzOH9z2soCXfRBsPf2K7V1t/EysnA+agtgeEEdbxmbn+P8HNbWC0EpLkpijfdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750193048; c=relaxed/simple;
-	bh=jFnXARC9BJC9TFd8zA3OkHO9qYcWjJfhhh7sAhe7/oE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=J2OaM5RohvVKWZUpKY5DLiMYIp/Qyv6PLR7mqELL4PaINROpaOAEaXr98AfaVYCfBQrdSa0kvNtXSIuZQbnzLEShI2DURgyGDliiI6jQmxnaT8B6UHNCdMYydVnU9IKib0VUhJUxpzqHKlTTf+Fspaq4OKHmFTITOds2VRocPmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=juijGfqS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C41B6C4CEE3;
-	Tue, 17 Jun 2025 20:44:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750193048;
-	bh=jFnXARC9BJC9TFd8zA3OkHO9qYcWjJfhhh7sAhe7/oE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=juijGfqSThiZkVyVg0Y1zzpbjeFASpdI1Jfglif68aWizzSiJcb+WwC2oHOyxpAPX
-	 QaDW0Eg5VaLvkZbm0+4A9d/7jyne58Jcdov45SyUfds5dq/1b3ddHx+PZb58jVXBMq
-	 PciqjKtLn4dCvFUtYxuMhl/HV6Vr1VPmcnuh6OKzqD/I9oGYPd0fy5XzDxK11Glf8j
-	 nduWjH/drTuzoWT5XxUCX/NZOeAp1fFgZBdAczMyf7y9dfb07XSpwJ6jkcUTts3O9B
-	 iKMRqr1vfsBGakcJpDdf+xISo7E5dz7js9W5YvVEMOqU0U/PjrBYSCFb5mwwuS2NxH
-	 fTADFWiFpF4nA==
-Date: Tue, 17 Jun 2025 15:44:06 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Lukas Wunner <lukas@wunner.de>,
-	kernel test robot <lkp@intel.com>, bhelgaas@google.com,
-	oe-kbuild-all@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jim Quinlan <james.quinlan@broadcom.com>
-Subject: Re: [PATCH v3] PCI/pwrctrl: Move pci_pwrctrl_create_device()
- definition to drivers/pci/pwrctrl/
-Message-ID: <20250617204406.GA1151053@bhelgaas>
+	s=arc-20240116; t=1750193066; c=relaxed/simple;
+	bh=NenoU6iJEOzpUiP+jsIKZvLpP3TvdBXNqcmpwU2kdYk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fO+jkmvhfTz8iZrAcza3SLKz2xF9IHc7BQwDk6G/tTzeWkQP48U5KkJ1PcDj1RjQZ7V/GkBJzLfdzAU4zF5jnTcdOc4RLIPAy2JeuUkUCAdXLJMlfn8a+jLlsEfpJAUWJ676FIER/CHCuNUqToc/oJAYKuODolwUlov/wOr1LA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=zDH400Cg; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bMJkn6z8qzm1HbT;
+	Tue, 17 Jun 2025 20:44:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1750193056; x=1752785057; bh=mXfic0ItqVeP4UWsBKuKWGxL
+	90Cx/yU9vDDLjBUlkbA=; b=zDH400CgWpACsxBmkw4yU6WG7quKVjwGhzRTuE6p
+	MDYGIHZFgTISrbkntnw6Vu3iHyG/Bs7kUR5uidTP755lUQp3ub7yIF5sYZIDe0SP
+	2nwcIBAVTHLBjGQZEdXJebQaMrudFfY5CXsnCB2Ylx/EWCkHmN7J19YgM1mRAdEv
+	B71IEolwc4utFahlLYBoDtu18C40L8FO4P56i8Z6kVIk6hzNAyHqj3NdxKJjql2F
+	045qJHCPAN2nkBx29m9P4d/52i0IOMYdDh83SwDwiCdCVq50ioH3hu6LumWL4fEi
+	FDHwOhdVz3KnV5hzhHCBv5SvG56TRk5Ty2Sq5U3oDtB4jA==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 28xjMBXV75lE; Tue, 17 Jun 2025 20:44:16 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bMJkh5411zm0yVb;
+	Tue, 17 Jun 2025 20:44:11 +0000 (UTC)
+Message-ID: <07c4c84d-0c52-4843-b32d-6806e58892fe@acm.org>
+Date: Tue, 17 Jun 2025 13:44:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <pwb4g7worzsnryimt3ymdfsxu7bxvhlr74rqodmiof5auolhrc@vpi7wzrp7osh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: fix out of bounds error in /drivers/scsi
+To: jackysliu <1972843537@qq.com>, James.Bottomley@HansenPartnership.com
+Cc: martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <tencent_BD16D2DE705D6E27FC5B93ECDEEF9A7B5009@qq.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <tencent_BD16D2DE705D6E27FC5B93ECDEEF9A7B5009@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 16, 2025 at 07:14:50PM +0530, Manivannan Sadhasivam wrote:
-> On Mon, Jun 16, 2025 at 03:30:27PM +0200, Bartosz Golaszewski wrote:
-> > On Mon, Jun 16, 2025 at 3:16 PM Lukas Wunner <lukas@wunner.de> wrote:
-> > >
-> > > On Mon, Jun 16, 2025 at 06:07:48PM +0530, Manivannan Sadhasivam wrote:
-> > > > On Mon, Jun 16, 2025 at 08:21:20PM +0800, kernel test robot wrote:
-> > > > >    ld: drivers/pci/probe.o: in function `pci_scan_single_device':
-> > > > > >> probe.c:(.text+0x2400): undefined reference to `pci_pwrctrl_create_device'
-> > > >
-> > > > Hmm, so we cannot have a built-in driver depend on a module...
-> > > >
-> > > > Bartosz, should we make CONFIG_PCI_PWRCTRL bool then? We can
-> > > > still allow the individual pwrctrl drivers be tristate.
-
-I think I'm OK with making CONFIG_PCI_PWRCTRL bool.  What is the
-argument for making it a module?
-
-When pwrctrl is a module, it seems like we have no way to even
-indicate to the user that "there might be PCI devices here that could
-be powered on and enumerated."  That feels like information users
-ought to be able to get.
-
-I do wonder if we're building a structure parallel to ACPI
-functionality and whether there could/should be some approach that
-unifies both.  But that's a tangent to this current issue.
-
-> > > I guess the alternative is to just leave it in probe.c.  The
-> > > function is optimized away in the CONFIG_OF=n case because
-> > > of_pci_find_child_device() returns NULL.  It's unpleasant that
-> > > it lives outside of pwrctrl/core.c, but it doesn't occupy any
-> > > space in the compiled kernel at least on non-OF (e.g. ACPI)
-> > > platforms.
-
-I don't like having pci_pwrctrl_create_device() in drivers/pci/probe.c
-and relying on the compiler to optimize it out when
-of_pci_find_child_device() returns NULL.  This is in the fundamental
-device enumeration path, and I think it's unnecessary confusion for
-every non-OF reader.
-
-> > And there's a third option of having this function live in a
-> > separate .c file under drivers/pci/pwrctl/ that would be always
-> > built-in even if PWRCTL itself is a module. The best/worst of two
-> > worlds? :)
+On 6/17/25 2:03 AM, jackysliu wrote:
+> Out-of-bounds vulnerability found in ./drivers/scsi/sd.c,
+> sd_read_block_limits_ext Function Due to Unreasonable boundary checks.
+> Out-of-bounds read vulnerability exists in the
+> Linux kernel's SCSI disk driver (./drivers/scsi/sd.c).
+> The flaw occurs in the sd_read_block_limits_ext function
+>   when processing Vital Product Data (VPD) page B7 (Block Limits Extension)
+>   responses from storage devices
 > 
-> I would try to avoid the third option at any cost ;) Because the
-> pwrctrl/core.c would no longer be the 'core' and the code structure
-> would look distorted.
-
-I don't really see adding problem with a file in drivers/pci/pwrctrl/.
-
-Whether it should be "core.c" or not, I dunno.  I think "core.c" could
-make sense for things that must be present always, e.g.,
-pci_pwrctrl_create_device(), and the driver itself could be
-"pwrctrl.c"
-
-If pwrctrl is built as a module, what is the module name?  I assume it
-must be "pwrctrl", though Kconfig doesn't mention it and I don't grok
-enough Makefile to figure it out.  "core" would be useless in the
-print_modules() output.
-
-> Let's see what Bjorn thinks about option 1 and 2. I did not account
-> for the built-in vs modular dependency when Bjorn asked me if the
-> move was possible. And I now vaguely remember that I kept it in
-> probe.c initially because of this dependency.
->  
-> - Mani
+> Signed-off-by: jackysliu <1972843537@qq.com>
+> ---
+>   drivers/scsi/sd.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> -- மணிவண்ணன் சதாசிவம்
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index 3f6e87705b62..eeaa6af294b8 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -3384,7 +3384,7 @@ static void sd_read_block_limits_ext(struct scsi_disk *sdkp)
+>   
+>   	rcu_read_lock();
+>   	vpd = rcu_dereference(sdkp->device->vpd_pgb7);
+> -	if (vpd && vpd->len >= 2)
+> +	if (vpd && vpd->len >= 6)
+>   		sdkp->rscs = vpd->data[5] & 1;
+>   	rcu_read_unlock();
+>   }
+
+Fixes: and Cc: stable tags are missing. Please add these.
+
+How has this been detected? Please mention this in the patch
+description. When I wrote the above code I was assuming that vpd->len
+represents the contents of the PAGE LENGTH field (bytes 2 and 3).
+Apparently vpd->len is the length in bytes of the entire VPD page.
+
+Thanks,
+
+Bart.
 
