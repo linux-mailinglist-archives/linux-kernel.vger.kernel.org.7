@@ -1,110 +1,131 @@
-Return-Path: <linux-kernel+bounces-690021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6CA5ADCA4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:01:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A79ADCA33
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 13:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 757811899AAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 12:01:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD042167868
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 11:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE582E88A9;
-	Tue, 17 Jun 2025 11:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A5C2E06DC;
+	Tue, 17 Jun 2025 11:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gZiK7Um3"
-Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOJ7mniZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AEE2E06D6;
-	Tue, 17 Jun 2025 11:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750161584; cv=none; b=hjJ8La8KYrci27hvlTLUh9BUTNViNPmgj91o+S0Aecu5MMk7bwN/v5jmddspe67v+8jOGr6I40qNJIwH1EqQUVxtATaUwUOo+gVY5sT1e1kCzXh+mBQP+htANngkih3cOtOoxO48XfgQ1wZLehuK/04mKipR+eolCCDHj80Ow8c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750161584; c=relaxed/simple;
-	bh=sg5hFcA5AJD67pL+3h9mhGYook12TaG/km05mOqEqTQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hblOKM2LoPBOMEnKO7kM9B8wpM6aDbrl2z0qJpef8ikWEsumV56Ob8L17AoBr6dlAIwbazVn2ufiNYlpdFdyw5cjTaG1cXamaeU6RfZCEwUPQq4nl5USC1SVGH0KTYl5KRMIjuQOJTri6CMVEue7FRSQeMjPwZv60F6a+7tigD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gZiK7Um3; arc=none smtp.client-ip=217.70.178.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E9C9F44969;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2802DF3C1;
 	Tue, 17 Jun 2025 11:59:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1750161575;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=06HUies5V7PRfoIqtd4meQuakxr9viCcxBP1N+2s1sA=;
-	b=gZiK7Um3Q0+KQDFkCsWIxeV8NF25+hNqIKNy52wxZwKWIc3RZArw0sbiKUmXbOmS4BNJsN
-	+Z4R8xR9wGjo/xw4AJOTFBs9k2l5btv++qn575WgJVMc1WHCqnFH5vAEPjyMncFH5zfY4a
-	D18tU+GQeYJgiF1FXJWIgjwFkLRPdgKSC6MFu3wfJNjfxOsTL3DFX9P+1FXuDwRabUaqXx
-	58itZiG7AqVGd8AsuY/+ooLC5DI/2pXDnpnSyRPFLEaOpZ4SjXpBQvR/PpGTd6TlYJId8t
-	DjYZ1vS/8f1mKdtL5hFt8iFTSfIezWbEvnQ7CJ6NbTxecTpKh9gfulCAi0GTrg==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Tue, 17 Jun 2025 13:59:26 +0200
-Subject: [PATCH v4 3/7] arm: dts: omap: am335x-bone-common: Rename tps to
- generic pmic node
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750161574; cv=none; b=frlTGN06OBd9DZ9q0+JPXBu59HGp83bPhnBU3oFS2f1UziYj/I39M+D02BGtjEYQgggIaGvmUoMGS0qCHYAxXTTJoIItCjU8xEN6DAMSSLsy3PUJvgMbwNNUFJXY2BqkgVxUkowLBtbNy52PXc64g1IwR9xf4pikxa3hAz6GrnY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750161574; c=relaxed/simple;
+	bh=gBH+kampHpHmy4DMMyqIZcw5DfcfBCFtwdQpcTObOnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxiu2gmOM6qILoyWXRu1PY49P7m+1KBQ0M1o5vLDXPI90APIQg6jJr+zKVxFXrV0zDO4lLW3SgC9CseNH3DIB94vZhJSqOIxYcmLhG/hhHqNgn0Bdfq5rO+Tc04iv1gNQerp0vLLoihx2twFCDwOUhdOWzIqb/DcGWtJ+r+9b5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOJ7mniZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3E66C4CEE3;
+	Tue, 17 Jun 2025 11:59:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750161573;
+	bh=gBH+kampHpHmy4DMMyqIZcw5DfcfBCFtwdQpcTObOnI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gOJ7mniZUaKYc8b10FgbwNkGP+WmfJy6/Cay8PK7jWoKyH+/6ChmwaKJ6HS41DRTr
+	 HND8IQ7bC60xAK1fXRbiggUgwr4vPCjEtMTtcmb420hiYv6Po76PVPhscp5cyYFXvM
+	 KdNd0MNogDZf0IMV7vHAGfvR8jc9sCiqib7SCfMYJM4HWs+UoWObi1/MuFLdNTMevH
+	 BZuRkd+OBfilTEp5inIP5dkhNKQnE7RCYH/zaZuo/pcgJt+L1gEd8LtjvmVfYx47Il
+	 NBu7f8TNuN41V5FD7P+8nv654J+b8cq7RfhzFxBeC6+7uzhTPwGWNQBxJMPMjq3UH3
+	 MuPXKMMjI5AnQ==
+Date: Tue, 17 Jun 2025 12:59:27 +0100
+From: Simon Horman <horms@kernel.org>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Akira Yokosawa <akiyks@gmail.com>,
+	Breno Leitao <leitao@debian.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Ignacio Encinas Rubio <ignacio@iencinas.com>,
+	Jan Stancek <jstancek@redhat.com>, Marco Elver <elver@google.com>,
+	Paolo Abeni <pabeni@redhat.com>, Ruben Wauters <rubenru09@aol.com>,
+	Shuah Khan <skhan@linuxfoundation.org>, joel@joelfernandes.org,
+	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
+	lkmm@lists.linux.dev, netdev@vger.kernel.org, peterz@infradead.org,
+	stern@rowland.harvard.edu
+Subject: Re: [PATCH v5 05/15] tools: ynl_gen_rst.py: make the index parser
+ more generic
+Message-ID: <20250617115927.GK5000@horms.kernel.org>
+References: <cover.1750146719.git.mchehab+huawei@kernel.org>
+ <1cd8b28bfe159677b8a8b1228b04ba2919c8aee8.1750146719.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250617-bbg-v4-3-827cbd606db6@bootlin.com>
-References: <20250617-bbg-v4-0-827cbd606db6@bootlin.com>
-In-Reply-To: <20250617-bbg-v4-0-827cbd606db6@bootlin.com>
-To: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
- Roger Quadros <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>, 
- Paul Barker <paul.barker@sancloud.com>, 
- Marc Murphy <marc.murphy@sancloud.com>
-Cc: Jason Kridner <jkridner@gmail.com>, Andrew Davis <afd@ti.com>, 
- Bajjuri Praneeth <praneeth@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-omap@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Kory Maincent <kory.maincent@bootlin.com>
-X-Mailer: b4 0.15-dev-8cb71
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdduvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvefgvdfgkeetgfefgfegkedugffghfdtffeftdeuteehjedtvdelvddvleehtdevnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddvpdhrtghpthhtoheprghnughrvggrsheskhgvmhhnrgguvgdrihhnfhhopdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqohhmrghpsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtp
- hhtthhopehjkhhrihgunhgvrhesghhmrghilhdrtghomhdprhgtphhtthhopehtohhnhiesrghtohhmihguvgdrtghomhdprhgtphhtthhopehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1cd8b28bfe159677b8a8b1228b04ba2919c8aee8.1750146719.git.mchehab+huawei@kernel.org>
 
-Rename tps@24 to the generic pmic@24 node name.
+On Tue, Jun 17, 2025 at 10:02:02AM +0200, Mauro Carvalho Chehab wrote:
+> It is not a good practice to store build-generated files
+> inside $(srctree), as one may be using O=<BUILDDIR> and even
+> have the Kernel on a read-only directory.
+> 
+> Change the YAML generation for netlink files to allow it
+> to parse data based on the source or on the object tree.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  tools/net/ynl/pyynl/ynl_gen_rst.py | 22 ++++++++++++++++------
+>  1 file changed, 16 insertions(+), 6 deletions(-)
+> 
+> diff --git a/tools/net/ynl/pyynl/ynl_gen_rst.py b/tools/net/ynl/pyynl/ynl_gen_rst.py
+> index 7bfb8ceeeefc..b1e5acafb998 100755
+> --- a/tools/net/ynl/pyynl/ynl_gen_rst.py
+> +++ b/tools/net/ynl/pyynl/ynl_gen_rst.py
+> @@ -365,6 +365,7 @@ def parse_arguments() -> argparse.Namespace:
+>  
+>      parser.add_argument("-v", "--verbose", action="store_true")
+>      parser.add_argument("-o", "--output", help="Output file name")
+> +    parser.add_argument("-d", "--input_dir", help="YAML input directory")
+>  
+>      # Index and input are mutually exclusive
+>      group = parser.add_mutually_exclusive_group()
+> @@ -405,11 +406,14 @@ def write_to_rstfile(content: str, filename: str) -> None:
+>      """Write the generated content into an RST file"""
+>      logging.debug("Saving RST file to %s", filename)
+>  
+> +    dir = os.path.dirname(filename)
+> +    os.makedirs(dir, exist_ok=True)
+> +
+>      with open(filename, "w", encoding="utf-8") as rst_file:
+>          rst_file.write(content)
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
+Hi Mauro,
 
-Change in v2:
-- New patch.
----
- arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+With this patch applied I see the following, which did not happen before.
 
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi b/arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi
-index c400b7b70d0d..ad1e60a9b6fd 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi
-+++ b/arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi
-@@ -212,7 +212,7 @@ &i2c0 {
- 	status = "okay";
- 	clock-frequency = <400000>;
- 
--	tps: tps@24 {
-+	tps: pmic@24 {
- 		reg = <0x24>;
- 	};
- 
+$ make -C tools/net/ynl
+...
+Traceback (most recent call last):
+  File ".../tools/net/ynl/generated/../pyynl/ynl_gen_rst.py", line 464, in <module>
+    main()
+    ~~~~^^
+  File ".../tools/net/ynl/generated/../pyynl/ynl_gen_rst.py", line 456, in main
+    write_to_rstfile(content, args.output)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File ".../tools/net/ynl/generated/../pyynl/ynl_gen_rst.py", line 410, in write_to_rstfile
+    os.makedirs(dir, exist_ok=True)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 227, in makedirs
+FileNotFoundError: [Errno 2] No such file or directory: ''
+make[1]: *** [Makefile:55: conntrack.rst] Error 1
 
 -- 
-2.43.0
-
+pw-bot: cr
 
