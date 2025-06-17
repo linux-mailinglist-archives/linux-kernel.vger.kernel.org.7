@@ -1,97 +1,111 @@
-Return-Path: <linux-kernel+bounces-689332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-689336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18FCBADBFA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 05:19:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE9FADBFDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 05:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A7D817175E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:19:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75ACE3B557A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 03:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A2C20CCFB;
-	Tue, 17 Jun 2025 03:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A9123B602;
+	Tue, 17 Jun 2025 03:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xa9T2VGj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="mYUSlCsT"
+Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A081EB2F;
-	Tue, 17 Jun 2025 03:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4421E1DFC
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 03:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750130334; cv=none; b=A5CGsOKAxXrUqxU6YiXD1NoJL/iEHOPmYUXIee6P7Bp2b/B+q+GXGppuB5TUWMXDRNs5UNXUe5UJOl6qGmKD5OPkjFDeLogH+SrS56z2TFxE3fDysj4C51Df5uteg4UPBLR1pIeNEOUfO4BtGLhdbV5OACDCSlbKMJDXFxxAwDA=
+	t=1750130863; cv=none; b=BBykRoeHtadDr4EsFtwcc2ELOHKIefWtCb8B46hg46nQukoDm0Qr2EXAyv9mmqCyQAD3n55vEcYOY5IqxG8OmwwCaQvyUCkf31Mt0fkaEMXeBHGTPGpVAz5o24Ob6cT/fFvteZ5+cNBeOwBH6LlR2F1SbMfgBKDYvDugej9i2P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750130334; c=relaxed/simple;
-	bh=ALZwaXmYqhLFDRldlSM9ss8w9shR+ct4nGkojL7p978=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dleX7ENC4IowRoVDMahSnVWytn7OeGdr5XxSSZkowbgQT84zbx5uS046C4w5k78+gBzkr5XnCIPUVYdYaxZxCFBdwLgw6PZSGU4YgapnvoptTl8jebfy0LiQQZHEyKdv2DFWCiHBEVzdhoYLj87iEtvrbp8I4furDiD7cuXMTC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xa9T2VGj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C693CC4CEEA;
-	Tue, 17 Jun 2025 03:18:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750130333;
-	bh=ALZwaXmYqhLFDRldlSM9ss8w9shR+ct4nGkojL7p978=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xa9T2VGjCYhthpBzI7FsyWMdxukjipcAs0MohIO4GzpxQx6JGqc2fjH75/IBC6KkD
-	 vAxwMaJa8WGj+V1O0r1O8LiG7/+Gql7S0LUNbFhSA9HxsdyMKUQ7gUvx10osmpzJ9e
-	 /vZEHpM5qNUQM9TtCn8GCjAlLGlCdNhlzp4+2iIp+sIoeoWx5dYf0ef0oR8JHO406R
-	 GikxjsaVt5tyfpwZBPTQ8TPFzJd3mKG9uXSput5vxz2QkTSB2focPh8LIsMJ18YH0p
-	 a3ZVRv8XoB/0w8xGUSpH2qg9ibrwAii3cdAjgWvUL/Ztg5vqYPXi5AbONFUf5upBih
-	 I8vpf+1gf5HlA==
-Date: Mon, 16 Jun 2025 22:18:50 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] arm64: dts: qcom: add debug UART pins to reserved GPIO
- ranges on RB2
-Message-ID: <vyr6s4wzw5jc5gt7mywu4s4xob6aeca5aclbe5tdr4v3yng2tn@yb7rn2b2btb7>
-References: <20250616143341.51944-1-brgl@bgdev.pl>
- <713cd518-935f-4501-9753-d33c9ea6aef7@oss.qualcomm.com>
- <CAMRc=MceV-HgyFFvqytXAiuY+y10PQbdPBxuvd57NCeSLVLXCg@mail.gmail.com>
+	s=arc-20240116; t=1750130863; c=relaxed/simple;
+	bh=jgjxO/7clUSYOJ3hEGHAiq1dZeIebExF4Lno9l04xXw=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=UWWNomyeKkXgQAsFj4TNIsfsH3eDKxrPj6p/3RtpGRfiJG19gi8yqH/uijZzWaLEtGS1jYIvzrv9z+g3UyIyyCyE0Iffr8vyGVWa+G+9kIp/rGgFuME/yquZ27252X8k8BfmhYdi6NsKkkyuoXssxv9lbfmeGXU2SYqx6FyYeCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=mYUSlCsT; arc=none smtp.client-ip=203.205.221.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1750130855; bh=EHB/nKe3H6oNehWCjTnKytYQyFXIqU682RBCgDLU448=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=mYUSlCsTAaS1RucXKO36k6N8FGmWG9fZygVEd8Jo7XmH2QnVXf9/Iae1yArfgPj+o
+	 NM8n8vBDYifCVDI5wL650Bk5hkMn0OfL1HKpfdvUyqXIgLHet5ClEricpxCicUW4JH
+	 JUxuyAOukr0r2gzX6Mr0bWv937G0gpkyt1q1qob8=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 4F88BC3D; Tue, 17 Jun 2025 11:19:56 +0800
+X-QQ-mid: xmsmtpt1750130396tbcgx4cp5
+Message-ID: <tencent_279220DDBEDD93995BCF998D8B25B18D8B07@qq.com>
+X-QQ-XMAILINFO: MhK4DKsBP06if8MPSwrVCdWpm74FUszJnySk2ZCmHvLprutXp1AvspMspqJx8Q
+	 BFqtuQAseR3kHWNXp91IQKn/r1PDaLoX0Cpd1ui16Prh7LspeaUTMdiKxu4YRSvQ7ra4SMtMmxvT
+	 RHGdO7jqB8dRplXxB/POb8aCMz9u871bMovBZT763J6P2yNciuxkzDs3S8dong3wZj0xGvEiRCUJ
+	 tg6P9E5tv04cWvAJtv7gYQ9UFqxOpxQZJyVP6XeCCVqzEi7BN7op0Mo4SLfdHHZhmW8yM9wVTDJG
+	 4Cg4BLzVIHBJyo0r8zM7d8gq/SEn+Ja1lBSPoFndn7xs8brtIDgfa4Ni6dgRTrHSSqEoxiDKNgpS
+	 SkwoOiBeXxga6QyzSlwZI1Aic6RZXJE2KCEX2aLV4FxsP09cZZqowp4wUUNFcQdxQVUY1Gk1EH/7
+	 KP/YBaV/OpqyYajBNIMSZN593WOG1ZjD2Ql2zp2aK8Rfc5H6is60ZiWqmegLm6sT56DAGW8BLwus
+	 2zHduwdTD7rHb+Iif2iWXsyhKq3coGVosCpzXSBOTqA+l/YmtussyoTBc+TUNiCOg2ZuUyuevxlr
+	 ZPZpj+zHFjA7dmPiL6ncdQfwHbXALAtD7nMJSI8Ci2b+aRsia5PV16EirCPrO6Pxby5ve+LA73m4
+	 C8HFfG7yek+GYAvqz7noHVWKhUeRJXrSFGrSTwt2DCMvC0PXZzzSjPvdOlK2Haj9WinUI6vD5uuO
+	 pdoflCtc9UZIJ/SyR/2c/BySUnp0XhW4Nq4SrtKH4RBxBo2mZly6m/NzURjDBQRUDQ5eSmxDWMXC
+	 YVTMh051mctFpzGY6A1JnGUXz2UQDtpxINkZMQBI++QFoJFwz0jpvArlUfK4D6MnNu614oqrVicZ
+	 gxLa/OV2Npon3ynDOKZqhO3vqSpsg9sav8xyYO3XXmenckNjpY889UTrCQInol28Ar1lahXVfaUA
+	 ssQyD12wSoYbAzTVsu2HkIpOJxxH5mhHZQGz9mfOZ5LR/Ra5GTuyMngQXCI0lmmS5JivO9OZE=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+077d9ebda84f426a6a1e@syzkaller.appspotmail.com
+Cc: jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	shaggy@kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] jfs: Issue a warning when leafidx is too large
+Date: Tue, 17 Jun 2025 11:19:57 +0800
+X-OQ-MSGID: <20250617031956.334239-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <6850d37f.a70a0220.395abc.01f9.GAE@google.com>
+References: <6850d37f.a70a0220.395abc.01f9.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MceV-HgyFFvqytXAiuY+y10PQbdPBxuvd57NCeSLVLXCg@mail.gmail.com>
 
-On Mon, Jun 16, 2025 at 06:43:16PM +0200, Bartosz Golaszewski wrote:
-> On Mon, Jun 16, 2025 at 6:20 PM Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
-> >
-> > On 6/16/25 4:33 PM, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > GPIO12 and GPIO13 are used for the debug UART and must not be available
-> > > to drivers or user-space. Add them to the gpio-reserved-ranges.
-> > >
-> > > Fixes: 8d58a8c0d930c ("arm64: dts: qcom: Add base qrb4210-rb2 board dts")
-> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > ---
-> >
-> > That also makes them unavailable to the kernel though, no?
-> >
-> 
-> Yes. They could only be used by QUP - I2C or SPI #4 - on sm6115 but
-> none of these are used on RB2. I just noticed that my console froze
-> when I accidentally requested GPIO12 and figured that it makes sense
-> to make them unavailable. Let me know if this should be dropped.
-> 
+When it is clear that leafidx is too large, a warn is triggered to
+distinguish it from other sizes.
 
-I'm guessing that this would be a problem for any pin that is used for
-some other function. Should we instead prevent userspace from being able
-to request pins that are not in "gpio" pinmux state?
+Reported-by: syzbot+077d9ebda84f426a6a1e@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=077d9ebda84f426a6a1e
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/jfs/jfs_dmap.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Regards,
-Bjorn
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index 35e063c9f3a4..7e3c5f6826d8 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -2856,9 +2856,13 @@ static int dbJoin(dmtree_t *tp, int leafno, int newval, bool is_ctl)
+ static void dbAdjTree(dmtree_t *tp, int leafno, int newval, bool is_ctl)
+ {
+ 	int lp, pp, k;
+-	int max, size;
++	int max, size, max_idx;
+ 
+ 	size = is_ctl ? CTLTREESIZE : TREESIZE;
++	max_idx = is_ctl ? LPERCTL : LPERDMAP;
++
++	if (WARN_ON_ONCE(le32_to_cpu(tp->dmt_leafidx) >= max_idx))
++		return;
+ 
+ 	/* pick up the index of the leaf for this leafno.
+ 	 */
+-- 
+2.43.0
+
 
