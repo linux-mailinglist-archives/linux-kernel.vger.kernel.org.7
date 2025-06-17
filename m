@@ -1,114 +1,190 @@
-Return-Path: <linux-kernel+bounces-690433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-690453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10710ADD0B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 16:58:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAE4ADD0F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 17:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6378F189387E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 14:52:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 749C23ADDC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Jun 2025 15:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87611221FC8;
-	Tue, 17 Jun 2025 14:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545FA2E8896;
+	Tue, 17 Jun 2025 15:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="U6NqjxsW"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SZRnD5r9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BE021B195;
-	Tue, 17 Jun 2025 14:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B96A22D790
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 15:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750171930; cv=none; b=JRe1vZuJw0BUFUi4HxxqUat1WO2cgDeyJkVvigr4Qx0XWU4Ox43EqpBwy0wmu52w7tfiYQQMQZiGjTmdDdVrPZ+YeQWGVZ93tG5TtPb+vDf2MTuPdwzhAXR43WbkcWsl/VTGm9J1vhrkGs3EelfIlpAY1ORtIwqOBuP/Yta5KSI=
+	t=1750172732; cv=none; b=cI+sHKK08Mbwz3rJ3llSyPLDvzL5Ni8EcbgZezFhgFmp5DieqeauUPANWfy59rZf3xXeL2Is+0FNVHv+FpBe+gGBaNypbCdtJemP6VnQ1C0AcmBclx6NJDTlSU85fIeKkCypeobcEovPtmhSbix6lOxZ7N41LtGv/nGJv5z2R8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750171930; c=relaxed/simple;
-	bh=VsX4BK5co1HC6Jug9KwYzKm9GLrnoOFDIzHije9R4O8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=STKqEQ5M/j+5OL7XAznkB+y0WZ8XkUCRZQU83txTF6f9MsCXiVh/L9ifomJ7L4MAnGvs0qmd1Cnl3AXNeg8RZoDBfAptoXtWXiDxn3MfkQx0+oiQp9uIn1ymINRytjiai1pFqy7c3QkdDAmsrRikaRAfMj4MkABYVJWdEBgpM0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=U6NqjxsW reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 68E2940E00DD;
-	Tue, 17 Jun 2025 14:52:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id iZ_vovgaj2_k; Tue, 17 Jun 2025 14:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1750171921; bh=4ml0rmeUNs5rZ2x1hKl+QU0ujpUUnFpHGuedE0DaH8k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U6NqjxsWEin738TaCub5Tc3fq7XrJ5LUDAkq2tZnvXgmvLYSHq6xzcnTUrKgaDeu1
-	 j/Bat/c/ugqL7rC42R9az7KmQSRhtFm6sBcTu2dcLWfT7bJS7S9aAKQWwk0BEi50KX
-	 LF/ds1jSTw43y8lj7q9EhD5r2tN/VjcuAT+lTDFNJLaMACvss3KJC134yLOv+3v4vb
-	 wCtnlUFlGT0lnAnRYQ7v/PCA5WCNINhifVBpdTsj5CwwyWUPOolNDhONLDkukrMA1g
-	 p1sfa6C8Y3EJYnK/Zt3fFSB6qjYJNVU8oh4lJbpDWjibe0wyzO9RZTjLNIan5kSr03
-	 0Uv55UFkTSptMSJU6IgddQucjIHO2UzYAArv7juyr/zhLU6rDC9TLzy1y+VP9U/USq
-	 I0bdO4kyzJtcRsuNo5kASjoQwt2q3s+Cnn97W0qQr/kJa2En2g/pZ0dntLLrlyKqpy
-	 x0NtFrsBSSMN3qyDn3Jz0tPpjYKW8xWHi29xLaaZ+prbjbjAB5NaeZt2jxkuX7rY5k
-	 mI0lJjcwNul2UpkZUZEDquEodKcTOpGOdMkgyan5pCMHelUKYnboXLlYeUJUt4pj4L
-	 maFXELW3QzMdJRIQuxXXTC65NNqzHsDAx62dOy+n2PBQaAaDbILjpfCSU7KvWiUIVM
-	 yl37K8OpWsPARZdDtspXT/F0=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 829DC40E00CE;
-	Tue, 17 Jun 2025 14:51:56 +0000 (UTC)
-Date: Tue, 17 Jun 2025 16:51:50 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-Cc: "Luck, Tony" <tony.luck@intel.com>,
-	Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>,
-	"open list:EDAC-IGEN6" <linux-edac@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: NULL pointer dereference in igen6_probe - 6.16-rc2
-Message-ID: <20250617145150.GCaFGBBvUvkrtpO9j_@fat_crate.local>
-References: <aFFN7RlXkaK_loQb@mail-itl>
- <20250617115707.GBaFFYE61vYHNuAkxR@fat_crate.local>
- <CY8PR11MB71345FDE3DF74BAF97B563F08973A@CY8PR11MB7134.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1750172732; c=relaxed/simple;
+	bh=DX0cysxt7A+oa4cRvsJUSUuglXznBhRfZDERFVFd1ek=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cq0fjjO337w7O5pfBu6sk+/5bJrfi841cqcKRMnC9k72XRykQk26R5fwe0P35eP1+hGTd60DG54zNUvL2YszIL2jmORC3XGv+iTNPW/xY7PMPcXJuV5n1jKpPDmtoNBwF0kjkHNCNXissJgy3g5cl609TDtIgaUFMZDVj6YxJuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SZRnD5r9; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750172731; x=1781708731;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DX0cysxt7A+oa4cRvsJUSUuglXznBhRfZDERFVFd1ek=;
+  b=SZRnD5r94syGop2Wx9L+SHvUFP5t6MZwTVZXdNTOf8olpC90TYG8kzTa
+   1A0Rumm5NLWNoCJzrqbAEIsG9BL7edDMC9wXHSbZJiC+DX2gcHe3r5sWB
+   juUPDtrvMx2mKJgMv8Gf/z2iZueRqY/EH7A3VyWoO4bAGVql/jl3N6i+2
+   lClirqhz1VXslpiYxKs/E4tGhB6GY57lPcw20Tx2iPOYqdDrrTr3thM5Z
+   F+jeORR9M2DN7BF+lGYKToQSA2I+qACZH/SNvbiBUVCUC0nKN/R5Iqlcr
+   OAVtM9NFaypn2amgpVJ8RMVb/1bjQ2zHwZqGOazBdnJc46NLiv1IPxZEL
+   A==;
+X-CSE-ConnectionGUID: bjgpSPGNSsmnCE3dC54NVQ==
+X-CSE-MsgGUID: JQgmbPweREWm7B5v/LH5xA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="63008697"
+X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
+   d="scan'208";a="63008697"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 08:05:30 -0700
+X-CSE-ConnectionGUID: lUYQSzGuSgGKTYlYLKHIVA==
+X-CSE-MsgGUID: ouRr0Fn7QaGWRa6lpD92yQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; 
+   d="scan'208";a="152672070"
+Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 08:05:24 -0700
+From: Alexander Usyskin <alexander.usyskin@intel.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Karthik Poosa <karthik.poosa@intel.com>,
+	Raag Jadav <raag.jadav@intel.com>
+Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
+	linux-mtd@lists.infradead.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Usyskin <alexander.usyskin@intel.com>
+Subject: [PATCH v14 0/8] mtd: add driver for Intel discrete graphics
+Date: Tue, 17 Jun 2025 17:51:50 +0300
+Message-ID: <20250617145159.3803852-1-alexander.usyskin@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CY8PR11MB71345FDE3DF74BAF97B563F08973A@CY8PR11MB7134.namprd11.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 17, 2025 at 02:09:42PM +0000, Zhuo, Qiuxu wrote:
-> In the 10nm_edac driver for Intel Xeon server, 'cfg' is non-const, and =
-the field
-> 'cfg->ddr_imc_num' [1] is overwritten with the number of detected DDR m=
-emory
-> controllers at runtime.
->=20
-> Reverting 'cfg' in this igen6_edac driver to non-const, allowing it to =
-be set
-> with the actual number of detected memory controllers seems reasonable.
+Add driver for access to Intel discrete graphics card
+internal NVM device.
+Expose device on auxiliary bus by i915 and Xe drivers and
+provide mtd driver to register this device with MTD framework.
 
-Question is: is that something the driver should allow? Detecting more me=
-mory
-controllers but enabling less. How can that even happen?
+This is a rewrite of "drm/i915/spi: spi access for discrete graphics"
+and "spi: add driver for Intel discrete graphics"
+series with connection to the Xe driver and splitting
+the spi driver part to separate module in mtd subsystem.
 
-> After that then applying Boris' fix above is the simplest way to resolv=
-e the=20
-> issue. =F0=9F=98=8A
+This series intended to be pushed through drm-xe-next.
 
-Right, just prepare a proper patch, please, so that Marek can test and
-confirm.
+V2: Replace dev_* prints with drm_* prints in drm (xe and i915) patches.
+    Enable NVM device on Battlemage HW (xe driver patch)
+    Fix overwrite register address (xe driver patch)
+    Add Rodrigo's r-b
 
-Thx.
+V3: Use devm_pm_runtime_enable to simplify flow.
+    Drop print in i915 unload that was accidentally set as error.
+    Drop HAS_GSC_NVM macro in line with latest Xe changes.
+    Add more Rodrigo's r-b and Miquel's ack.
 
---=20
-Regards/Gruss,
-    Boris.
+V4: Add patch that always creates mtd master device
+    and adjust mtd-intel-dg power management to use this device.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+V5: Fix master device creation to accomodate for devices without
+    partitions (create partitoned master in this case)
+    Rebase over latest drm-xe-next
+    Add ack's
+V6: Fix master device release (use rigth idr in release)
+    Rebase over latest drm-xe-next
+    Grammar and style fixes
+
+V7: Add patch with non-posted erase support (fix hang on BMG)
+    Rebase over latest drm-xe-next
+
+V8: Create separate partition device under master device, if requested
+    and configure parent of usual partitions to this partition.
+    Rebase over drm-tip.
+
+V9: Fix checkpatch warning on non-posted erase patch.
+    Add Rodrigo's review and ack.
+
+V10: Drop master device creation patch as it now in mtd-next.
+     Drop power-management patch, it will be merged lately after
+     master device patch is propagated.
+     Rebase over drm-tip.
+
+V11: Fix review comments.
+     Add reviewed-by.
+     Add cleanup in error path.
+     Add PADDING region that exists on some BMG devices.
+
+V12: Add Raag's r-b.
+     Rebase over drm-tip.
+
+V13: Rebase over drm-tip again to make it mergable.
+
+V14: Drop i915 patches for now by Rodrigo's request.
+     They will be merged later.
+
+Alexander Usyskin (7):
+  mtd: add driver for intel graphics non-volatile memory device
+  mtd: intel-dg: implement region enumeration
+  mtd: intel-dg: implement access functions
+  mtd: intel-dg: register with mtd
+  mtd: intel-dg: align 64bit read and write
+  drm/xe/nvm: add on-die non-volatile memory device
+  drm/xe/nvm: add support for access mode
+
+Reuven Abliyev (1):
+  drm/xe/nvm: add support for non-posted erase
+
+ MAINTAINERS                           |   7 +
+ drivers/gpu/drm/xe/Makefile           |   1 +
+ drivers/gpu/drm/xe/regs/xe_gsc_regs.h |   4 +
+ drivers/gpu/drm/xe/xe_device.c        |   5 +
+ drivers/gpu/drm/xe/xe_device_types.h  |   6 +
+ drivers/gpu/drm/xe/xe_heci_gsc.c      |   5 +-
+ drivers/gpu/drm/xe/xe_nvm.c           | 167 ++++++
+ drivers/gpu/drm/xe/xe_nvm.h           |  15 +
+ drivers/gpu/drm/xe/xe_pci.c           |   6 +
+ drivers/mtd/devices/Kconfig           |  11 +
+ drivers/mtd/devices/Makefile          |   1 +
+ drivers/mtd/devices/mtd_intel_dg.c    | 830 ++++++++++++++++++++++++++
+ include/linux/intel_dg_nvm_aux.h      |  32 +
+ 13 files changed, 1086 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/gpu/drm/xe/xe_nvm.c
+ create mode 100644 drivers/gpu/drm/xe/xe_nvm.h
+ create mode 100644 drivers/mtd/devices/mtd_intel_dg.c
+ create mode 100644 include/linux/intel_dg_nvm_aux.h
+
+-- 
+2.43.0
+
 
