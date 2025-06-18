@@ -1,130 +1,152 @@
-Return-Path: <linux-kernel+bounces-691510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 105A0ADE584
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:28:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D70DADE581
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:26:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74F49189CAB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:28:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 010D7188F799
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C706427EFF1;
-	Wed, 18 Jun 2025 08:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KDvu1NeC"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C75B27EFEF;
+	Wed, 18 Jun 2025 08:26:51 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B2527E071
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13D225CC7B
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750235288; cv=none; b=S7ORGkOENzQK9HwkwTiCgL5MQz7IZetyG63X185F3X7nmlknercRxroHgPZ/HvGYTNqJGAp/AI/E43tTV4g21PlSbNLwZVVikFRP3L8J2rb6yjpV/Z1OnA96qY6mOBxFvnSja3Z6AFgSY9wz9WOcHLM1HpegpYKsQ/4mrxqG6ks=
+	t=1750235211; cv=none; b=Ree5tBMdUtsK7+wBcbMvD3JIm14nebCHVhCVLXTDTGjhKQFpHAX6epxkt7/tJjNAUoJfFyOEgYe5NvtO/m+lHp+4JVVLo+MMg6sZzz+NRi699pWVhfyJpV/gza+tQI/LlxmXEL2Dx61cmWcozmhp8CHpfEMZOwvgl3pZxRwhFn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750235288; c=relaxed/simple;
-	bh=gGBUKK2bGctYiYhiGRujH/YL9B1xckj1cMsjW9vYehw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WHG3E/bI28hDqFnxDpe+lgDwdIQm5GJjtW35KEizlT3Tn1BrbHLQRZyGNFr1ih9263VPC9KY+dH/rFdI7YBf4io14fbQw5wOXFA5HDDL5JMvDBv9cs5CJ9NyAnhdWbQ0LZ0e5cdcwz6eOqxpWPE72OuhkWR07drtOdY/hM5xC5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KDvu1NeC; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a4f71831abso5928097f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 01:28:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750235285; x=1750840085; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7sBltaN88VTY0He+60hiRFLZfZBtquu1S5ICXZnuVmk=;
-        b=KDvu1NeCPR4xbImt1s/lBZV223y/Gd6gsgx6edK420ApQQOsHh4sn623kyAcwnzcGn
-         dELDbnytMgnpnUmBc8eAPd+5mQuC0NA2Y2ySw8XCAcAsUifyZkAkWq6tGbugQq0u1uKH
-         7d2d9BjPHmq0b+ovlN35tTiSR+5NxTq2V2tppDs0zgKa4zyAFnfUMbtojPEkEyp7grF0
-         MpxiCRXIE8ZLEXPkPPXnk2yGhCTvQ4X87kCuzmXBRqaFLXOoQifj20bu4XUZaLKRuSk4
-         I7v1RRV6pveRBMgw4Lzf6Q8V9SdsaBlBkIvIbdFCvw62Fv2FBe0Hz02sMrN3l5bOcH4u
-         Wm0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750235285; x=1750840085;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7sBltaN88VTY0He+60hiRFLZfZBtquu1S5ICXZnuVmk=;
-        b=AJFfB/u0AsYmG3WU0MY15V4VwwK3S3S8CFWeIGHtewnasHxf74zIVc7vnLsMYNo+0/
-         pbwn/hkxZIH7oLYNRcu23vRDk2sK4QOJZe+1I58FnnvRVxlXp/EO17/OV0Ai7EArOYdF
-         4UloSD53aO4b9xEErvz+kcrboyjx6nEOa6/0dbrJsKAP7ZTBrVelmvRw0UIOpg7O3IHd
-         B7vUZF/3C7KY8/i0ZBdhHkQAojdsEhKlwQleHYX4yv6Bjhy8BhXG6724ekgrfQwI2APA
-         PH2Y+6hRimkeo4QcYKC2MarHltv/8AefC+Z/IJZYJwDwGJHEvDaSXJ7fO7O8Ds6Q5UG7
-         RZew==
-X-Forwarded-Encrypted: i=1; AJvYcCVFHxfyJH0RhuKujCx+4DJc+enVYVAfdbulxVsAZw0pkOh3MA8x8YLlMDhjGF8ZCY0a/NxWKaQK5wzLGbA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAlEsYSEDPLEkqJqT2jz6oPukNfeGNkHTRXkRaCcQY97urES2+
-	Rc90EuO3YSvVupMHdq2nJm2w97NElsY0QtAXmnIDxKuad2Z/HznFx1St
-X-Gm-Gg: ASbGncveKE2H9uFKO1Z5dzWBB0mDmC+HJrQ7mDvdsuPgJZZjPvucK6z146p5gKizgeT
-	qKFGNMuHCPNjracQKr9ircPKZKGneKl8hIjiYiJmbGTnV/ks0JTGxd/HY6+H+RksSjYXl/GLzhl
-	/k5AE2p1cbNzwai3wwixhDnq38lSuTiiNrZRSB8/jWZOz+WUuBTnmBBYiA4oR1B5Fx7jyA3dZb4
-	x+BWrMpr4162IwVueNyEsOP7KlBLWYsieMb4/GSQAlVACrNUtdnkNL6SPd0poZecb+0Uzo2mzXw
-	S1klhAOec1OZ7vhPHbQcjQ5a5WD0diVFIG7Wv79uTPAuLBHV7KwnLmrgun4S+hdcRxI+S4dyNoj
-	o
-X-Google-Smtp-Source: AGHT+IFckVzEGoyzAOyEt0UBC4wbSOwJWUKREX4Btf2yi/rU57GSXzyerV4ISS6aJkqhF02TmRD9YQ==
-X-Received: by 2002:a05:6000:2c0d:b0:3a4:bfda:1e9 with SMTP id ffacd0b85a97d-3a5723af27bmr14919929f8f.46.1750235284619;
-        Wed, 18 Jun 2025 01:28:04 -0700 (PDT)
-Received: from localhost.localdomain ([41.79.198.22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e13c192sm200076045e9.26.2025.06.18.01.28.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 01:28:04 -0700 (PDT)
-From: Khalid Ali <khaliidcaliy@gmail.com>
-X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
-To: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org
-Cc: hpa@zytor.com,
-	linux-kernel@vger.kernel.org,
-	Khalid Ali <khaliidcaliy@gmail.com>
-Subject: [PATCH] x86/boot: Avoid writing to cr4 twice in startup_64()
-Date: Wed, 18 Jun 2025 08:26:33 +0000
-Message-ID: <20250618082717.1098-1-khaliidcaliy@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750235211; c=relaxed/simple;
+	bh=cT9RwxiCMu+IlAGTY2n7Gqp2o0G+6VaMmBgqKe6FasE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=biTa+hE8Wfy0/RqqWiWFO3IGTv33xWHx37atWsvI+NRQ+rpUonGdmcyXyd5+3PtmCwQ4qNkOUbl+jcKezIbst9C0a2XcUDUBfR8+33XizqQbl43RNgu+909l/MSRx0HHqqzErzPrqN+MJhWpAdBPqohSWTrrNYprxVHMrNBJe6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bMcKL02LpzKHNbs
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 16:26:46 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 5C6C41A0D53
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 16:26:44 +0800 (CST)
+Received: from [10.174.99.169] (unknown [10.174.99.169])
+	by APP2 (Coremail) with SMTP id Syh0CgBXYWRCeFJoB4kHPw--.35394S2;
+	Wed, 18 Jun 2025 16:26:44 +0800 (CST)
+Subject: Re: [PATCH 3/4] mm/shmem, swap: improve mthp swapin process
+To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>,
+ Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>,
+ Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
+References: <20250617183503.10527-1-ryncsn@gmail.com>
+ <20250617183503.10527-4-ryncsn@gmail.com>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <7e680582-ac35-3d2d-8945-c26410ff4f9b@huaweicloud.com>
+Date: Wed, 18 Jun 2025 16:26:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250617183503.10527-4-ryncsn@gmail.com>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgBXYWRCeFJoB4kHPw--.35394S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KrW3ZrWUtF1DZrWrWrW8Xrb_yoW8Kr1UpF
+	Wag3Z3tFykZrW2kr1aq3W2qrn8K34SqF4YyasrA3yrZ3Z8Ar1jkr1Utw18ZFWxCrZ7AayI
+	qF1Uua4q9a1Dt3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-From: Khalid Ali <khaliidcaliy@gmail.com>
 
-When Initializing cr4 bit PSE and PGE, cr4 is written twice for	
-each bit.
 
-Instead, set both bits first and write CR4 once, avoiding redundant
-writes.
+on 6/18/2025 2:35 AM, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
+> 
+> Tidy up the mTHP swapin workflow. There should be no feature change, but
+> consolidates the mTHP related check to one place so they are now all
+> wrapped by CONFIG_TRANSPARENT_HUGEPAGE, and will be trimmed off by
+> compiler if not needed.
+> 
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+>  mm/shmem.c | 175 ++++++++++++++++++++++++-----------------------------
+>  1 file changed, 78 insertions(+), 97 deletions(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
 
-Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
----
- arch/x86/kernel/head_64.S | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+...
 
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index 4390a28f7dad..dfb5390e5c9a 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -222,12 +222,9 @@ SYM_INNER_LABEL(common_startup_64, SYM_L_LOCAL)
- 
- 	/* Even if ignored in long mode, set PSE uniformly on all logical CPUs. */
- 	btsl	$X86_CR4_PSE_BIT, %ecx
--	movq	%rcx, %cr4
--
--	/*
--	 * Set CR4.PGE to re-enable global translations.
--	 */
-+	/* Set CR4.PGE to re-enable global translations. */
- 	btsl	$X86_CR4_PGE_BIT, %ecx
-+	
- 	movq	%rcx, %cr4
- 
- #ifdef CONFIG_SMP
--- 
-2.49.0
+Hello, here is another potensial issue if shmem swapin can race with folio
+split.
+
+>  alloced:
+> +	/*
+> +	 * We need to split an existing large entry if swapin brought in a
+> +	 * smaller folio due to various of reasons.
+> +	 *
+> +	 * And worth noting there is a special case: if there is a smaller
+> +	 * cached folio that covers @swap, but not @index (it only covers
+> +	 * first few sub entries of the large entry, but @index points to
+> +	 * later parts), the swap cache lookup will still see this folio,
+> +	 * And we need to split the large entry here. Later checks will fail,
+> +	 * as it can't satisfy the swap requirement, and we will retry
+> +	 * the swapin from beginning.
+> +	 */
+> +	swap_order = folio_order(folio);
+> +	if (order > swap_order) {
+> +		error = shmem_split_swap_entry(inode, index, swap, gfp);
+> +		if (error)
+> +			goto failed_nolock;
+> +	}
+> +
+> +	index = round_down(index, 1 << swap_order);
+> +	swap.val = round_down(swap.val, 1 << swap_order);
+> +
+/* suppose folio is splited */
+>  	/* We have to do this with folio locked to prevent races */
+>  	folio_lock(folio);
+>  	if ((!skip_swapcache && !folio_test_swapcache(folio)) ||
+>  	    folio->swap.val != swap.val) {
+>  		error = -EEXIST;
+> -		goto unlock;
+> +		goto failed_unlock;
+>  	}
+>  	if (!folio_test_uptodate(folio)) {
+>  		error = -EIO;
+> @@ -2407,8 +2386,7 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+>  			goto failed;
+>  	}
+>  
+> -	error = shmem_add_to_page_cache(folio, mapping,
+> -					round_down(index, nr_pages),
+> +	error = shmem_add_to_page_cache(folio, mapping, index,
+>  					swp_to_radix_entry(swap), gfp);
+The actual order swapin is less than swap_order and the swap-in folio
+may not cover index from caller.
+
+So we should move the index and swap.val calculation after folio is
+locked.
 
 
