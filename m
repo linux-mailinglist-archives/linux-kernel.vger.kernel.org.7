@@ -1,243 +1,131 @@
-Return-Path: <linux-kernel+bounces-692589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C93ADF3BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:28:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5868ADF3B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B51A4A053E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B153BFDEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCF02F3C20;
-	Wed, 18 Jun 2025 17:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17782F3628;
+	Wed, 18 Jun 2025 17:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="YtH7EC8/"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J0GMLe5i"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841D72F0026;
-	Wed, 18 Jun 2025 17:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FEA2FEE0F;
+	Wed, 18 Jun 2025 17:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750267716; cv=none; b=LWUpsrIx8UyD8I1l0Z9z/vm4kUpxLALf/fxg+ggF3OlRu/TLFJuj8+nxBzJ6PrGnsZRPBv7GxTXGJswe5sjxrrpH17SJHUFqKfA40TBlRr+4oUJqh12A7KREcWG26znvES8EuFJX5FSz2HBBENsNJ8peH79fLxg0r4fUZKckU9o=
+	t=1750267670; cv=none; b=kZY8RTy9iFGxFB0lW2Fv/hEn84+XAbtjSz/pgPZGg8WjA1Sqlz5lpcC9DBv4hTq3U+cboV1mZ79UpMIEW3j1w3SapR3T4yxTVWxDtFoR9TTAerJjzgxG/wW5MD9ZWN7Z7JFGlFYnns6mI2P3Ei0B1ZMxwL9J7b+MrnOwGlEiShc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750267716; c=relaxed/simple;
-	bh=TWqj5vwPjOKTWw6HfIYdZB5Zj3PLckpAGodn3l0SIQ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MjrwOMGFThiS2FfwZcWAhWDneiIgVbxlqEsKsvotaY6lsIB8ZcxGnxURmhAPPpjX3R7eBnMuk48hCSEwAk4ZcBY5p+t2RYTNiHZ3XH6dQRrfeqaJNRrVir9dBjfZk/1KpmYM7mRm36zwkMbfBy8KyOsYQ1Vd5pI/FpC1/70SAnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=YtH7EC8/; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55IHRNLK1651479
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Wed, 18 Jun 2025 10:27:28 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55IHRNLK1651479
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025052101; t=1750267649;
-	bh=mx6Awd2hvb7XWofTRELBbnV9/dT20noFkcjxYneii5c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YtH7EC8/CC1lOCOCvKfcaRQb+SpQ5inL88Glg/dEMmKf/7ECkFV7BgaKJwyBe0852
-	 tvu2yh4u39hnx9U6z0OHCgRjaf23+9RBf2uWxglcm2fbK0JvoU4kjr5YOnuSQdapcQ
-	 h6UA/j1GbmFWw5H/IB+5j5GtkUtDjhHSDR3aEY1uULw44Pdw1/HwiyaojcwqzOBZpr
-	 dMXpJQ344P5jQY3gurcwM/1K3Hu5tIptiU9ehuY9VjdK9FQPlTjsWmTtXZMaiUFJ0B
-	 Tcgwr2exK6564oP6vQwXEnrQoih4NNp5N67AJrrCxbDuuHJGF+ntJOQkwyYPzPtyvN
-	 m8z0yv6eqJO0w==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, stable@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        seanjc@google.com, pbonzini@redhat.com, peterz@infradead.org,
-        sohil.mehta@intel.com, brgerst@gmail.com, tony.luck@intel.com,
-        fenghuay@nvidia.com
-Subject: [PATCH v3 2/2] x86/traps: Initialize DR7 by writing its architectural reset value
-Date: Wed, 18 Jun 2025 10:27:23 -0700
-Message-ID: <20250618172723.1651465-3-xin@zytor.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250618172723.1651465-1-xin@zytor.com>
-References: <20250618172723.1651465-1-xin@zytor.com>
+	s=arc-20240116; t=1750267670; c=relaxed/simple;
+	bh=i6qGqcOLeZ+C33Fl0SoQO/hHSNceE95rDLEGVJmh26g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L8b+k0folKRPYdH3gsYtJYixHDcyzII5BzJqjLG7iPDU51HP72MRN0aS4vW8YfEMPbVJshYfcBWuckHTHQYq7cdD9sGCK/xEe9FqaS6C4oCyDLgdrCA7NLEzrHXNGfAkgWLlkgnJ4CF/M3Yj5pakLv6otVllPLHq+2AH5tl6+No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J0GMLe5i; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-313336f8438so1414779a91.0;
+        Wed, 18 Jun 2025 10:27:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750267664; x=1750872464; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u+q5GpQ2p91YPUwXGOT+L4Iu/3q5RIn50B6DUy0Q7so=;
+        b=J0GMLe5ibmi6acJy4t+xOstgKNyU4Ls6us72KXQ/ONM5Z1FEQgrzcGvQHbksMtFs/l
+         kecjHxqdi1zygRrJckNCsdGZDv5uTEYQo4oCDoSSki8vtVVYcfylbGkpJ5Y6r05WQEhO
+         Si9nO+/MyTcMKO4oP/4XmMCnNkeoTcal2m60Wq9PWl/hK2BO4P3ZvxcWUp26el0hCXks
+         EYIdakmgblUw3V5UqkRXaWCz5ukwyBJGfibzG/wyCjFVOSRuZ/6pDid+Z0C6KGmPOVyw
+         fla95oFxGmaXgEzkLVyp+RQB9agXe5jXSnqZzy1trF9EBAypwnGWoNu1Um3WQPHFDZjt
+         WbOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750267664; x=1750872464;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u+q5GpQ2p91YPUwXGOT+L4Iu/3q5RIn50B6DUy0Q7so=;
+        b=sYg7F97dikc/oI2gxa2BZ3BduzdcKR0uDWK4RpuNCCiFTpRPDUaw3Rzcms5CufSDVn
+         CSbFjjLl7AtSUBFgf+yMEnkCmrm7wScCHMikdZDqsldOpP4RvDt/v7ezXCtsgR7j1Oev
+         /b1Jls9sIAgkuk6os7DQxweEY58VXlGZqKLSznU9PMvidfoZZKGv/z4oIEQSUL7zT324
+         4D+et2hgp4rrz0bfflDcqSgCORrDdEsOYagQ8Mp1/Sp/l2bmdRgKp5WlUTTRqx76ZDsS
+         5atM4MoyCdGR84s72ZGKshCoOqNI8j6XTHT8rlFTwsg5JjY+j9tDFRHTYI3oozFfHLV0
+         RRIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSkrLgRQhhCPfzi2KOapUzOwlZs3ptDbYc2g3rzJYoKm4xZDk+bmYkR4cv3IGKbI2xC+muSS2CklRD470/@vger.kernel.org, AJvYcCV70Fe/5OQXRj4NOKBDa3u/EZj2pjCLPP3F3P5Dnv6Y4Sa8wRldoiDJ+JWDrmu6z5ZPAhBB6JdH@vger.kernel.org, AJvYcCVZjfBKj4ZRVgEVhO6lwSqeF+H4F4dldTBGWrHkAd+tongmAuLIa+qZGM7+BShimplFIGc4KNy4zWyTcGh8u5w=@vger.kernel.org, AJvYcCViwPS3fxjYgoSlB+fWixMJSTXIkZw9zyl1gmkpwPGgIUEPmhPcprkU8/J1Qvk31vNtAXUE/iF8rzIWwdX8jkwi@vger.kernel.org, AJvYcCWEZ3gwZm9n2G+yPkZkq6KELxYzYv8DX7QUliNtlUbIebYXt66+AmVHXNOiDZaAW/Vdu2ergFQMYSs=@vger.kernel.org, AJvYcCWtnU7mPMIfHJaYYpWluXCIPO7Ok3zcpjRZRnCIOiVc+eBz3HSNwhFvv1ei/TpeAA/oUXLDqH6D0LSZ@vger.kernel.org, AJvYcCX83+XdGwZNRoGoa34UrUd7s8zoE4lnji8B1LvVyxTfVjbb+H8O6pnN7R1BNvJUwUkR/ws6bOitZ8bZq7Xc@vger.kernel.org, AJvYcCX9uariTuA4YFF35kFD9fohASw22CU+dwSr657npxYyWzi56b/z2eY12EWoRG2C8JO/15i9fFFOcEJfTNw=@vger.kernel.org, AJvYcCXMuKdOSk8RTrOIquyA9BaN6w4Na6hKzPT+9jx5h0A/1AIATGlC4vM+0NABKq77xod97AGUoJJEHkEb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGCUTYA8MoG0WWyRm3wEsFaWG5muvWq4PcQdBwJED/i7pMdqZ6
+	VTh4tNKP1r7eFcNy0fjT1NDu3NlEJlB2r8oK+Zt551KgaQ9/ycmh7lSMIue1zCeC04EN5bYw0ov
+	VbAe9f6OMYO1hT01yJh9YPU5sWY83f2E=
+X-Gm-Gg: ASbGncsw8GCC5Gk0+8PGYz7Za69uyjTZi2SK9KICaByvy8vdpXZZ2W+iJDIc1VGTqkX
+	WokitcMFEVaO+yijF0ftOA+UPEnsGyOMbVV0KXZ/872tAoCXOcuyo0Z83DIQ0bD7+EaAvbhW0ww
+	vBwq00cl4ZFUXTulEar//+Q5S/mgnA5Y0IhlH5Gspd73g=
+X-Google-Smtp-Source: AGHT+IHgojIF7ZtAWL01BJX9X9RDL/KOffVgqU2TBitLwLXw3+WIYaOCUYiiv/uPX3E3RPRNcpmmIUzrPPvpRfNOxow=
+X-Received: by 2002:a17:90b:53ce:b0:311:fde5:c4ae with SMTP id
+ 98e67ed59e1d1-3158bfee2a1mr70211a91.6.1750267664414; Wed, 18 Jun 2025
+ 10:27:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250615-ptr-as-ptr-v12-0-f43b024581e8@gmail.com> <20250615-ptr-as-ptr-v12-6-f43b024581e8@gmail.com>
+In-Reply-To: <20250615-ptr-as-ptr-v12-6-f43b024581e8@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 18 Jun 2025 19:27:32 +0200
+X-Gm-Features: Ac12FXyjLr8F_PeGOXgNiD3lzcYVOjPw7Oy7KTgQZIrIWl7ZUXuM1dkxLpsBDQ8
+Message-ID: <CANiq72nji33-=cLnEkpsXyovctshNZ5-pheBBxQdNscWdReO_A@mail.gmail.com>
+Subject: Re: [PATCH v12 6/6] rust: enable `clippy::ref_as_ptr` lint
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Frederic Weisbecker <frederic@kernel.org>, Lyude Paul <lyude@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Benno Lossin <lossin@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Breno Leitao <leitao@debian.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-pci@vger.kernel.org, 
+	linux-block@vger.kernel.org, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, linux-mm@kvack.org, 
+	linux-pm@vger.kernel.org, nouveau@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Initialize DR7 by writing its architectural reset value to always set
-bit 10, which is reserved to '1', when "clearing" DR7 so as not to
-trigger unanticipated behavior if said bit is ever unreserved, e.g. as
-a feature enabling flag with inverted polarity.
+On Sun, Jun 15, 2025 at 10:55=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
+> wrote:
+>
+>  rust/kernel/configfs.rs  | 20 ++++++--------------
+>  rust/kernel/device_id.rs |  2 +-
+>  rust/kernel/fs/file.rs   |  2 +-
 
-Tested-by: Sohil Mehta <sohil.mehta@intel.com>
-Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
----
+Andreas, Christian, Danilo, Greg: it would be nice to get Acked-by's
+for your bits.
 
-Changes in v3:
-*) Reword the changelog using Sean's description.
-*) Explain the definition of DR7_FIXED_1 (Sohil).
-*) Collect TB, RB, AB (PeterZ, Sohil and Sean).
+(This particular one can be tricky in other cases due to lifetime extension=
+.)
 
-Changes in v2:
-*) Use debug register index 7 rather than DR_CONTROL (PeterZ and Sean).
-*) Use DR7_FIXED_1 as the architectural reset value of DR7 (Sean).
----
- arch/x86/include/asm/debugreg.h | 19 +++++++++++++++----
- arch/x86/include/asm/kvm_host.h |  2 +-
- arch/x86/kernel/cpu/common.c    |  2 +-
- arch/x86/kernel/kgdb.c          |  2 +-
- arch/x86/kernel/process_32.c    |  2 +-
- arch/x86/kernel/process_64.c    |  2 +-
- arch/x86/kvm/x86.c              |  4 ++--
- 7 files changed, 22 insertions(+), 11 deletions(-)
+Thanks!
 
-diff --git a/arch/x86/include/asm/debugreg.h b/arch/x86/include/asm/debugreg.h
-index 363110e6b2e3..a2c1f2d24b64 100644
---- a/arch/x86/include/asm/debugreg.h
-+++ b/arch/x86/include/asm/debugreg.h
-@@ -9,6 +9,14 @@
- #include <asm/cpufeature.h>
- #include <asm/msr.h>
- 
-+/*
-+ * Define bits that are always set to 1 in DR7, only bit 10 is
-+ * architecturally reserved to '1'.
-+ *
-+ * This is also the init/reset value for DR7.
-+ */
-+#define DR7_FIXED_1	0x00000400
-+
- DECLARE_PER_CPU(unsigned long, cpu_dr7);
- 
- #ifndef CONFIG_PARAVIRT_XXL
-@@ -100,8 +108,8 @@ static __always_inline void native_set_debugreg(int regno, unsigned long value)
- 
- static inline void hw_breakpoint_disable(void)
- {
--	/* Zero the control register for HW Breakpoint */
--	set_debugreg(0UL, 7);
-+	/* Reset the control register for HW Breakpoint */
-+	set_debugreg(DR7_FIXED_1, 7);
- 
- 	/* Zero-out the individual HW breakpoint address registers */
- 	set_debugreg(0UL, 0);
-@@ -125,9 +133,12 @@ static __always_inline unsigned long local_db_save(void)
- 		return 0;
- 
- 	get_debugreg(dr7, 7);
--	dr7 &= ~0x400; /* architecturally set bit */
-+
-+	/* Architecturally set bit */
-+	dr7 &= ~DR7_FIXED_1;
- 	if (dr7)
--		set_debugreg(0, 7);
-+		set_debugreg(DR7_FIXED_1, 7);
-+
- 	/*
- 	 * Ensure the compiler doesn't lower the above statements into
- 	 * the critical section; disabling breakpoints late would not
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index b4a391929cdb..639d9bcee842 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -31,6 +31,7 @@
- 
- #include <asm/apic.h>
- #include <asm/pvclock-abi.h>
-+#include <asm/debugreg.h>
- #include <asm/desc.h>
- #include <asm/mtrr.h>
- #include <asm/msr-index.h>
-@@ -249,7 +250,6 @@ enum x86_intercept_stage;
- #define DR7_BP_EN_MASK	0x000000ff
- #define DR7_GE		(1 << 9)
- #define DR7_GD		(1 << 13)
--#define DR7_FIXED_1	0x00000400
- #define DR7_VOLATILE	0xffff2bff
- 
- #define KVM_GUESTDBG_VALID_MASK \
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 0f6c280a94f0..27125e009847 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -2246,7 +2246,7 @@ EXPORT_PER_CPU_SYMBOL(__stack_chk_guard);
- static void initialize_debug_regs(void)
- {
- 	/* Control register first -- to make sure everything is disabled. */
--	set_debugreg(0, 7);
-+	set_debugreg(DR7_FIXED_1, 7);
- 	set_debugreg(DR6_RESERVED, 6);
- 	/* dr5 and dr4 don't exist */
- 	set_debugreg(0, 3);
-diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-index 102641fd2172..8b1a9733d13e 100644
---- a/arch/x86/kernel/kgdb.c
-+++ b/arch/x86/kernel/kgdb.c
-@@ -385,7 +385,7 @@ static void kgdb_disable_hw_debug(struct pt_regs *regs)
- 	struct perf_event *bp;
- 
- 	/* Disable hardware debugging while we are in kgdb: */
--	set_debugreg(0UL, 7);
-+	set_debugreg(DR7_FIXED_1, 7);
- 	for (i = 0; i < HBP_NUM; i++) {
- 		if (!breakinfo[i].enabled)
- 			continue;
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index a10e180cbf23..3ef15c2f152f 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -93,7 +93,7 @@ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode,
- 
- 	/* Only print out debug registers if they are in their non-default state. */
- 	if ((d0 == 0) && (d1 == 0) && (d2 == 0) && (d3 == 0) &&
--	    (d6 == DR6_RESERVED) && (d7 == 0x400))
-+	    (d6 == DR6_RESERVED) && (d7 == DR7_FIXED_1))
- 		return;
- 
- 	printk("%sDR0: %08lx DR1: %08lx DR2: %08lx DR3: %08lx\n",
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 8d6cf25127aa..b972bf72fb8b 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -133,7 +133,7 @@ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode,
- 
- 	/* Only print out debug registers if they are in their non-default state. */
- 	if (!((d0 == 0) && (d1 == 0) && (d2 == 0) && (d3 == 0) &&
--	    (d6 == DR6_RESERVED) && (d7 == 0x400))) {
-+	    (d6 == DR6_RESERVED) && (d7 == DR7_FIXED_1))) {
- 		printk("%sDR0: %016lx DR1: %016lx DR2: %016lx\n",
- 		       log_lvl, d0, d1, d2);
- 		printk("%sDR3: %016lx DR6: %016lx DR7: %016lx\n",
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index b58a74c1722d..a9d992d5652f 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -11035,7 +11035,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 
- 	if (unlikely(vcpu->arch.switch_db_regs &&
- 		     !(vcpu->arch.switch_db_regs & KVM_DEBUGREG_AUTO_SWITCH))) {
--		set_debugreg(0, 7);
-+		set_debugreg(DR7_FIXED_1, 7);
- 		set_debugreg(vcpu->arch.eff_db[0], 0);
- 		set_debugreg(vcpu->arch.eff_db[1], 1);
- 		set_debugreg(vcpu->arch.eff_db[2], 2);
-@@ -11044,7 +11044,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 		if (unlikely(vcpu->arch.switch_db_regs & KVM_DEBUGREG_WONT_EXIT))
- 			kvm_x86_call(set_dr6)(vcpu, vcpu->arch.dr6);
- 	} else if (unlikely(hw_breakpoint_active())) {
--		set_debugreg(0, 7);
-+		set_debugreg(DR7_FIXED_1, 7);
- 	}
- 
- 	vcpu->arch.host_debugctl = get_debugctlmsr();
--- 
-2.49.0
-
+Cheers,
+Miguel
 
