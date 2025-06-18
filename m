@@ -1,122 +1,136 @@
-Return-Path: <linux-kernel+bounces-692216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422D0ADEE76
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:52:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EE9EADEE77
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 933143A6E3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6170E1BC2644
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779F22EAB63;
-	Wed, 18 Jun 2025 13:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5542EACFD;
+	Wed, 18 Jun 2025 13:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OsYn2KSG"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O4Bbd5nC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BC2295DA6;
-	Wed, 18 Jun 2025 13:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A6C2EA736
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 13:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750254733; cv=none; b=pzMdOvuVuWehO0lUwCEAYvK1VKYzGXfiUPKnu2jQdpZSwwBpb7C7a+viealpuxlf/A9APTQvYEzwnpsZDSJ8dgd4UhR7q3JGnBPQIN3sNNiPBy6f/RZbzi/HYwJDlSNghe8HMoN4LLNcBliv9P2RUDd6Um5XLQYuTrWUVPBR1qY=
+	t=1750254739; cv=none; b=UOJ4T5xgFB4ycW5X8SYzT9iGsu87xOirVxcGmRkF9+dbZIunvI7LNsPATGZoE3T2Da61K4VCyTaxdIfsSQPbMmAEQK5dzzACR1s+wj7Y9Fh7a7g58iWEBqs3B7O0KptC361faEQsvkUHG7wTNNYPOjtrkBGLKJV4dTHV7HKUfSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750254733; c=relaxed/simple;
-	bh=PbtqtR9wSZ7aEx4EBBSExsFB5cqIvCI/kkLHCNFRZeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tDnu+8q9+s7LyKqp3of3TJO9GHINRLLN1V1F/qAJBa2uzMOOX+HGG/iVjoU4bl7FRJdtoBKmAliaHOCnSHROoE8GBbSrmdOPBKpbdUE0T0rQxpSPifWfaPkJct9CnZQxM9y4/wyQULO6jphlIrKy+JKkHmNL0rRuCqpMcRsu28E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OsYn2KSG; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ugwPy802X+iE+6YxHrNntByNdapgPsPvV86x0LfrY4A=; b=OsYn2KSGjD0cGQAf5+sLld2wem
-	OfS0mkYTU0yX2iHiL18VDvQV5EEU3cc6xJEoKrLelOeHABcDy8GyG40il30npPnJVB9Wt7b5x5HI6
-	ka7bxb66FNBbxGpqUQ6xsXR77TFqFdYgMXAqVbLRGXLLWyZ7htjV7xqU9/be0IVpfM3kckYyGD7Sh
-	QvSO/IvVoEk3O4lVzY8DSvT8KN0IekigR1OfZtjldAA6TBdzwreP7m/lf+9iIeaT70fL+wWX9T58G
-	idLoCZVpB31uUA0UIZm3nRx4vbcbNPhlQRjM1NWTmUClOnKeSP9RjwRQJtoJ4q22jRpyR2MckNTj/
-	S8idV7pw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uRtCt-000000044Ux-0Y0f;
-	Wed, 18 Jun 2025 13:52:03 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 116A9307FB7; Wed, 18 Jun 2025 15:52:01 +0200 (CEST)
-Date: Wed, 18 Jun 2025 15:52:01 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, x86@kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v10 02/14] unwind_user: Add frame pointer support
-Message-ID: <20250618135201.GM1613376@noisy.programming.kicks-ass.net>
-References: <20250611005421.144238328@goodmis.org>
- <20250611010428.092934995@goodmis.org>
+	s=arc-20240116; t=1750254739; c=relaxed/simple;
+	bh=YcQczEigCA+00/Vfn5RgoirKqglbhdy79e75P6T2DMk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hXrxTaCPMtH7b4yFUDMDdtKsE4nO3Slb5xb+e6FVdFCUyKa0lx3rz4ZJ/nB5WKDrE9VK3rnlmJN0l+2CTpnxNF4+flWB4/CEdIdrnGap8Nu28Tqhc/hYTb43lmKFNeUaEiTCC6YIQYJuewRbIFFX8pmBlxLqdIGlor6KOqgULWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O4Bbd5nC; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750254738; x=1781790738;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=YcQczEigCA+00/Vfn5RgoirKqglbhdy79e75P6T2DMk=;
+  b=O4Bbd5nCq4zFBMEUR5dr6/iR+MJw9YXPJXF80l6KjeO/WNffvQk4Y3hH
+   EPnrnmWyVjFnTM7wNBMYF8vnCRAOYbRLGHECBGs+MzJxVTonQcMB+ohNv
+   nMTnArjIaWaFk58aJUBa7wmEjVkLo0rGhFg8lsLSQN1EA0Dv0Q/lboJJA
+   wmoNKZ2fe1BOWsvPklLfobUfg4lVDa8Rqn3RYJr/PCMly3a0pp2XUtmhz
+   ehsd1ubXEQRFSfiNXGPIFT0ZIQs0jvcToJX43wF4DCt/r5b2XE791oAT/
+   xRAEud9lQyzjqxFB2lE5cEx0RuAQBifaGK16Nsj3o7NxTBWLws+AoLLT9
+   w==;
+X-CSE-ConnectionGUID: 9cdTGWNGRdG/+YCBBDqV0g==
+X-CSE-MsgGUID: +PnxSfj1Q0aDhHkaeuuqMQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52450050"
+X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
+   d="scan'208";a="52450050"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 06:52:16 -0700
+X-CSE-ConnectionGUID: h8itLsj1T+a/n09iqSTyaQ==
+X-CSE-MsgGUID: seNFEsYhRvenjoLMIhz7EA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
+   d="scan'208";a="150312292"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 06:52:16 -0700
+Received: from [10.246.136.52] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 7DB6720B5736;
+	Wed, 18 Jun 2025 06:52:13 -0700 (PDT)
+Message-ID: <99087e26-192f-4fa6-b43b-0c6a39c45b38@linux.intel.com>
+Date: Wed, 18 Jun 2025 09:52:12 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611010428.092934995@goodmis.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 06/12] perf: Support extension of sample_regs
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "Mi, Dapeng" <dapeng1.mi@linux.intel.com>, mingo@redhat.com,
+ acme@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, irogers@google.com, adrian.hunter@intel.com,
+ jolsa@kernel.org, alexander.shishkin@linux.intel.com,
+ linux-kernel@vger.kernel.org, ak@linux.intel.com, zide.chen@intel.com,
+ broonie@kernel.org
+References: <20250617102813.GS1613376@noisy.programming.kicks-ass.net>
+ <dc084dac-170d-434e-9d8c-ba11cbc8e008@linux.intel.com>
+ <20250617133333.GU1613376@noisy.programming.kicks-ass.net>
+ <20250617140617.GC1613633@noisy.programming.kicks-ass.net>
+ <aFF6gdxVyp36ADOi@J2N7QTR9R3>
+ <20250617144416.GY1613376@noisy.programming.kicks-ass.net>
+ <aFGBxBVFLnkmg3CP@J2N7QTR9R3>
+ <be13b2ce-a8c1-4aa7-9ddf-9ae8daee0ae1@linux.intel.com>
+ <20250618093500.GH1613376@noisy.programming.kicks-ass.net>
+ <0782de41-c8c4-4077-8498-651fb9a10ef5@linux.intel.com>
+ <20250618133003.GC1613200@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250618133003.GC1613200@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 10, 2025 at 08:54:23PM -0400, Steven Rostedt wrote:
->  int unwind_user_next(struct unwind_user_state *state)
->  {
-> +	struct unwind_user_frame *frame;
-> +	unsigned long cfa = 0, fp, ra = 0;
-> +
-> +	if (state->done)
-> +		return -EINVAL;
-> +
-> +	if (fp_state(state))
-> +		frame = &fp_frame;
-> +	else
-> +		goto the_end;
-> +
-> +	cfa = (frame->use_fp ? state->fp : state->sp) + frame->cfa_off;
-> +
-> +	/* stack going in wrong direction? */
-> +	if (cfa <= state->sp)
-> +		goto the_end;
-> +
-> +	if (get_user(ra, (unsigned long *)(cfa + frame->ra_off)))
-> +		goto the_end;
-> +
-> +	if (frame->fp_off && get_user(fp, (unsigned long __user *)(cfa + frame->fp_off)))
-> +		goto the_end;
-> +
-> +	state->ip = ra;
-> +	state->sp = cfa;
-> +	if (frame->fp_off)
-> +		state->fp = fp;
-> +
-> +	return 0;
-> +
-> +the_end:
-> +	state->done = true;
->  	return -EINVAL;
->  }
 
-I'm thinking 'the_end' might be better named 'done' ?
 
-Also, CFA here is Call-Frame-Address and RA Return-Address ?
+On 2025-06-18 9:30 a.m., Peter Zijlstra wrote:
+> On Wed, Jun 18, 2025 at 06:10:20AM -0400, Liang, Kan wrote:
+> 
+>> Maybe we should use a mask to replace the nr_vectors.
+>> Because Dave mentioned that the XSAVES may fail.
+> 
+> XSAVE is a pain in the arse :/
+> 
+>> PERF_SAMPLE_SIMD_REGS := {
+>> 	u64 vectors_mask;
+>> 	u16 vector_length;
+>> 	u64 pred_mask;
+>> 	u16 pred_length;
+> 
+> That is not u64 aligned...
+
+I didn't know we have the alignment requirement for the output.
+If so,
+
+PERF_SAMPLE_SIMD_REGS := {
+	u64 vectors_mask;
+	u64 pred_mask;
+	u64 vector_length:16,
+	    pred_length:16,
+	    reserved:32;
+	u64 data[];
+}
+
+Thanks,
+Kan>
+>> 	u64 data[];
+>> }
+
 
