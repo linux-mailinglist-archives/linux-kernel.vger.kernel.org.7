@@ -1,178 +1,135 @@
-Return-Path: <linux-kernel+bounces-691652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5BB6ADE72A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:38:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C46FADE732
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0B891886362
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:38:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FCD41696B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66092836A3;
-	Wed, 18 Jun 2025 09:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E331E284665;
+	Wed, 18 Jun 2025 09:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EnNlvdeE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gKZ6sPko";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ilO2tgpH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g8DNsxqk"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQeQdmp5"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5471DDC28
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D7B283CB0;
+	Wed, 18 Jun 2025 09:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750239489; cv=none; b=bGwhiGxqcmsFelwv2hMiC357U4aWqglrW5esHFhBXiCLFOz+33AUT58P/3Z0N3//k6V2JzfwOwFZH1wzFaxdfJK5YaR3mtzRUDA1eRmFSeISAdJGVeXCPJvMaGv9okLG6e9U1tyn+OFuLFRkm4t7wiBdcuOQUXR/umhgqN8Ns1w=
+	t=1750239624; cv=none; b=pBX09sy5LMQxzH4tQkCVuNnJ2HsloioYrP9YAmmq8iQtDPS1RD6AX9s3Mss0GiS21e/3RG62ca0OfYwQSCRr9rihQ4HmciKqTmeZfDc4BphJXBmZpyL5atwcGAzv8O2ALiGPzhnsE8LS+WQJuSj4K+AVqVILgX+TGnRqZG1zU00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750239489; c=relaxed/simple;
-	bh=/GLIv0zCJc3UKNsBmZy3RMrTs3+c4Inr6m8eli1mI3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lyGW+gGc4HynqswIdAWcFe9pfQCnRIFw2cOBeZ1H2k2fxyWe9tc9JMHlVE1sTg7kyI0ih21J2QK/dd7pU/0uyL69BYWleLV97M75ieePyiMdfevpUwzd5z6X4svZ7i6jSj6LsLFlUJBqQKtGVoWDxm+smaNJ2ncnrEvU9ZSQF8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EnNlvdeE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gKZ6sPko; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ilO2tgpH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g8DNsxqk; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C40182116E;
-	Wed, 18 Jun 2025 09:37:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750239480; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+PkWLIggAFbYYMkCfHKFv+TTI3PWYDAMRmo1BUIYhMc=;
-	b=EnNlvdeEux/SqCm2e22a5w6PYD1PKKv7QbiZegR9+woINwCfF9gnAom3voUpfvXem9frzm
-	K6bmaOBd5NgF37HukKIJTxgIfifAOoIVG3edchGHz46GkaA4OJJmCMGKhKDNzAwMsSYcnc
-	mH2RC5/9l+zGWZvqvwbe0O1+zU3sJ14=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750239480;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+PkWLIggAFbYYMkCfHKFv+TTI3PWYDAMRmo1BUIYhMc=;
-	b=gKZ6sPkoriHmLuV5jI6Wvfk0kaaitQaG+pvidxhVqJUDIxwuZ4v/OntCMp7jXN+weoHYnt
-	Eg3+8Ip/qx/ZUICg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750239478; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+PkWLIggAFbYYMkCfHKFv+TTI3PWYDAMRmo1BUIYhMc=;
-	b=ilO2tgpHYrddG20QqCEbJWrPIdQiYQv9fm3XAX48S7QR8B58Qyu7Afw9UTnQzBCsmq/tZw
-	hVX+/wtzjUuvKBpgDYOxKum7hKAXq1IHsvPw648J1cx9BIgQwEpPjas91LbWWcWo65umXM
-	Qu5ACAOb4RjqLhi3X8JqW24MyzcdwBk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750239478;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+PkWLIggAFbYYMkCfHKFv+TTI3PWYDAMRmo1BUIYhMc=;
-	b=g8DNsxqkQdnml2L2a3hkrb/D+ILgZP955aBp0bO92CQgTJKAii44lRV60IHYkmEBlcCK5z
-	L/gLfs/KvF7t7XDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B44AE13A99;
-	Wed, 18 Jun 2025 09:37:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vQLUK/aIUmjqHQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 18 Jun 2025 09:37:58 +0000
-Message-ID: <f7ea4fc4-999a-490d-b221-b3b935e4b1bb@suse.cz>
-Date: Wed, 18 Jun 2025 11:39:11 +0200
+	s=arc-20240116; t=1750239624; c=relaxed/simple;
+	bh=OTnlEGQTaKca/djlqzs4ZnMpNa+lx1vDcpsU3Ydt1XU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dDSAqeBaczlcYERb1mdVr92c4Bh3rbSGr+bypxLKGhWYzcPwfc2FtRBGklYoQ+/YfyphYTou8ekoyL2+DPSn4DHLUyd1sY90jKphSDAt5Htzq8aaNRNfL+ns9UN4/EdX9KjJNC1ECfBvNqH/Xvg1B79BRLDt/7OboesZLsUVFsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SQeQdmp5; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-748da522e79so912476b3a.1;
+        Wed, 18 Jun 2025 02:40:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750239622; x=1750844422; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6V40YgN3JCSrvwEwSTqFhPuQ1J7Bi4GuX5wKRadAVp8=;
+        b=SQeQdmp5DkPdsZePAuQeXlR5LhfmyyqSjXJGyE8icoLLpbcvKy/J9ZA3YBCcCRyW7R
+         VwVZnt3sSd3TjQIkQP+ogZg/YzZei7Z1ddRZaoXeRiPWCoFFyG5UcgegRnSfJM7FBGyY
+         VMih0ggHmWs6ddQvS86MkuXof7RFSVSmN+17T1EELTQQXmy/ydHvt0uUPELpwZqfN79b
+         Gx9cRhpSjSyqYvXeLV1QVRNM3Z4uegA5falPiSzLmez47/L9WFzuTkQ+OvoSQ5GwAwYW
+         sQf/0psFzr9Wvdx7NwWmPF10tb1uX0JfQcY27/7bUgyDu3MK9BTe1IVTJsrYiihEyMYI
+         pAFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750239622; x=1750844422;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6V40YgN3JCSrvwEwSTqFhPuQ1J7Bi4GuX5wKRadAVp8=;
+        b=HvWr+FCRqWQ1y6yChcePKYJ/2UUg4x6ucO3nkcFrUm4FMjVka+vZ2dD2aQYHr/6AJ5
+         WDTCwfkvSI0FE2gsFYJV0k+V89/QiYWmFtTea47N03tmAsuyQ6cbcNNGf9lDzt/kNL83
+         N9tgrsUDnp3jjf6q+6+t0fU3W8DQVEjjxyBdtbP+mvyPuu9mnSIvlItgYgfFkiu3iYoZ
+         zhJhNbY2BuipYWDL56IqwbGKRpbxWN3PJYvRa0oIahrW8U5zCijJB0y7gUz1BW2uv0/g
+         x9UI6zyDpqYwWsMjjrlF9roN3DYCmN7Ruvmxie9DeYGxTqLdf8MkhMEX7iBnVgHOcujm
+         neqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOPIlOmjiV8A7B2a0XHw3MqdoiE8COZuvx3PSIggBITRcfJ/j4Ds7GR5f9Rhs515RkGppr4Dt0//wO84AexXZGsYI=@vger.kernel.org, AJvYcCXSlCtYmmmeW2b2veQQfIFZSQ+Ahphix8g/F7tlho5bPk9BLOxMai+eAAeF4Nxga70E3Si/19GCEs6E/87l@vger.kernel.org, AJvYcCXvuW94VX2MlgYUoHC1K8DXRIiiuB3K1i9pGLxxKywRK789WwK6VDAnALH5Y1bhABKpj3Cgu52r9y4THJMCtm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7ASSqhWcIjzoIURpjpxHzFrFdkQObVe8zhTYu/vze4ceNdu1N
+	RiHDST+b+RR1Tf47U2Dopr5dTFJnQ4xZlwmXFarAalzrSWSPaoah0U2V
+X-Gm-Gg: ASbGncvSnEC76XluPu44+oMu2Wx20rXwg/5fq7b5TE8DyQA3oE27Qx92T+xSg5tgZA1
+	LcajX5pYqUsqfmGQJQL/q7pgp3pWyWk/7tCpmHxWqaybDt2l7/DMxW+K4xd4Rw8zp1K+c+kKjec
+	Mi7Fti3ONdHa5dUXik3bRPvXh/T/B3xck7Dpvj+s0qr+H9CuQZVQ/xJFvcmqOt5EvpIJa5XA3xL
+	RsACDXoYZbHxx12kHvZ6AmHbHSGFNezxiTp1xlPSXHyl/7sEvacodBdKwXIjEL74F3vvYJ8KuDX
+	laXdQR+ExbH3d1Cts8MMg0Onpbg8xB0k6Ed78ut8r3LcRORSpP65VAjkF84UEVmLZSGvqQtjbfw
+	4nStv3YB42Zn5ufLUExN8sA9uisL0qCo=
+X-Google-Smtp-Source: AGHT+IFmAvBRfvLjEgPAy4QPPhzpRWWfiaUQs2yaKoSBQwrcGyeXathdmws3LB4L9psUMRmX0wfWdw==
+X-Received: by 2002:a05:6a00:b95:b0:730:75b1:7219 with SMTP id d2e1a72fcca58-7489d006780mr23000088b3a.12.1750239622126;
+        Wed, 18 Jun 2025 02:40:22 -0700 (PDT)
+Received: from [172.17.0.2] (125-227-29-20.hinet-ip.hinet.net. [125.227.29.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7488ffee2aesm10527123b3a.24.2025.06.18.02.40.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 02:40:21 -0700 (PDT)
+From: Leo Wang <leo.jt.wang@gmail.com>
+X-Google-Original-From: Leo Wang <leo.jt.wang@fii-foxconn.com>
+Subject: [PATCH 0/2] ARM: dts: Add support for Meta Clemente BMC
+Date: Wed, 18 Jun 2025 17:40:01 +0800
+Message-Id: <20250618-add-support-for-meta-clemente-bmc-v1-0-e5ca669ee47b@fii-foxconn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Inline vma_needs_copy
-To: Yunshui Jiang <jiangyunshui@kylinos.cn>, linux-kernel@vger.kernel.org,
- linux-mm@vack.org
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com
-References: <20250618014209.1195734-1-jiangyunshui@kylinos.cn>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <20250618014209.1195734-1-jiangyunshui@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kylinos.cn:email,imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+X-B4-Tracking: v=1; b=H4sIAHGJUmgC/x3NTQqDMBBA4avIrB0wqYr2KtJFTMY60PwwSYsg3
+ t3Q5bd574RMwpTh2Zwg9OPMMVSotgG7m/AmZFcNutNDN6oJjXOYvylFKbhFQU/FoP2Qp1AIV29
+ x7pXpx3m1g35A7SShjY//Y3ld1w240TVkcwAAAA==
+X-Change-ID: 20250618-add-support-for-meta-clemente-bmc-941a469bc523
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Kees Cook <kees@kernel.org>, 
+ Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ bruce.jy.hung@fii-foxconn.com, george.kw.lee@fii-foxconn.com, 
+ Leo Wang <leo.jt.wang@fii-foxconn.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750239618; l=815;
+ i=leo.jt.wang@fii-foxconn.com; s=20250618; h=from:subject:message-id;
+ bh=OTnlEGQTaKca/djlqzs4ZnMpNa+lx1vDcpsU3Ydt1XU=;
+ b=1KW8ySCD1lwOEWatymBInvgFZuKSAzEDiUjjNsKMpzBXo3w6/oThvGLzJ+lhEBQwV4vpQyNeG
+ x+aTVtGRByCBMpJ7qfGgfxJFPMKDEVTnYCfzsgOMohBlUUAbl+ku1p+
+X-Developer-Key: i=leo.jt.wang@fii-foxconn.com; a=ed25519;
+ pk=x+DKjAtU/ZbbMkkAVdwfZzKpvNUVgiV1sLJbidVIwSQ=
 
-On 6/18/25 3:42 AM, Yunshui Jiang wrote:
-> From: jiangyunshui <jiangyunshui@kylinos.cn>
-> 
-> Since commit bcd51a3c679d ("hugetlb: lazy page table copies
-> in fork()"), the logic about judging whether to copy
-> page table inside func copy_page_range has been extracted
-> into a separate func vma_needs_copy. While this change
-> improves code readability, it also incurs more function call
-> overhead, especially where fork() were frequently called.
-> 
-> Inline func vma_needs_copy to optimize the copy_page_range
-> performance. Given that func vma_needs_copy is only called
-> by copy_page_range, inlining it would not cause unacceptable
-> code bloat.
+This series adds initial support for the Meta Clemente BMC based on the ASPEED AST2600 SoC.
 
-I'm surprised the compiler doesn't inline it already, if there's a
-single caller. In fact, mine (gcc-14.3 on x86) already does.
+Patch 1 documents the compatible string.
+Patch 2 adds the device tree for the board.
 
-So I wonder to which extent should we force override wrong compiler
-heuristics? Maybe just inline instead of __always_inline would be OK? Is
-that enough of a hint for your compiler?
+Signed-off-by: Leo Wang <leo.jt.wang@fii-foxconn.com>
+---
+Leo Wang (2):
+      Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+      ARM: dts: aspeed: clemente: add Meta Clemente BMC
 
-> Testing was done with the byte-unixbench spawn benchmark
-> (which frequently calls fork). I measured 1.7% improvement
-> on x86 and 1.8% improvement on arm64.
-> 
-> Signed-off-by: jiangyunshui <jiangyunshui@kylinos.cn>
-> ---
->  mm/memory.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 8eba595056fe..d15b07f96ab1 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -1337,7 +1337,7 @@ copy_p4d_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
->   * false when we can speed up fork() by allowing lazy page faults later until
->   * when the child accesses the memory range.
->   */
-> -static bool
-> +static __always_inline bool
->  vma_needs_copy(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
->  {
->  	/*
+ .../devicetree/bindings/arm/aspeed/aspeed.yaml     |    1 +
+ arch/arm/boot/dts/aspeed/Makefile                  |    1 +
+ .../dts/aspeed/aspeed-bmc-facebook-clemente.dts    | 1254 ++++++++++++++++++++
+ 3 files changed, 1256 insertions(+)
+---
+base-commit: 52da431bf03b5506203bca27fe14a97895c80faf
+change-id: 20250618-add-support-for-meta-clemente-bmc-941a469bc523
+
+Best regards,
+-- 
+Leo Wang <leo.jt.wang@fii-foxconn.com>
 
 
