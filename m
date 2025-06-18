@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-692069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FCBAADEC78
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:34:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE62ADEC53
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 653DC171ABF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:30:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6219C16EABC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020E02EA74F;
-	Wed, 18 Jun 2025 12:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179632E06C9;
+	Wed, 18 Jun 2025 12:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fDVkYnnc"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="udknWNOl"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A842EA141
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759BF2DFF26
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750249689; cv=none; b=m/yw2SZOd4pZMw2f1oIE3O8fXvODuzrcS7JPvMwSRyEIRkNRMJ+e0KSZMW0vvr5RzQ8WYEtN9gAcMjIUARNC3vXW5QGIr2NDJ5+suxax1WzuJ92L3l6oiLejoczQf097xMd3nV5wifxy8hgHGxSSQubDO7YJGwnclasu8g6goV0=
+	t=1750249618; cv=none; b=myhVYxBiefS7Xnc0RpHe2z1lFEp1R20wuk8i6+H2vq0bHV4wQALw3AyT4foAJXA49yDZ+Sgx7xYaNVTFI/H5NxtUxvD16v3ysWjIHwzQO45sXSx2ngZqbfLngwxS7ppOE0ubpUYji21K6/p40KIps34Xl5D6QtjJf5+PA0ZtFj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750249689; c=relaxed/simple;
-	bh=sJFwL2wUca0QYwD8Pj9OIydWF7+2FJd07aMaOq8ap9I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VrfvPTCVhsTDc+sBnvzGHjMSlkjeoInolji+3hc0YrHK/PqrKoe4ESHPE8vDtfNEJjlfa0GWL5kBh/BwKG3INKpPc2Kj45mW133dUjMEXF8/o5wSV2yrLfLCP+KeTDmkzVs820KGjpiDyNEd1HsWceTPz3SzPeIthtvDQxT1nZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fDVkYnnc; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a588da60dfso1361471f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 05:28:05 -0700 (PDT)
+	s=arc-20240116; t=1750249618; c=relaxed/simple;
+	bh=MeMY6ZvITBPQwHI52jDYCf35TLcxWMfuS+SdIkf7zyY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aFZT5ll6Vd4Vg/uA1y6KZI9ANzCAIovFtxjigU5LAxlrLAefL6JrNZHueMup3AL6nbj/Vi6zzVdo5seGkDQme+yb+3eHUav4uDAJkilUAAo42SlERDvUXYn/LTk+X/+nJUGZaHF5kwU9yDdJbtOJ24CIK0q+FpGoDB6EdMTd33U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=udknWNOl; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32add56e9ddso55732991fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 05:26:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750249684; x=1750854484; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1750249614; x=1750854414; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cRM2k4b/KnNzcC5gORTj3uJESJo1D4SQEzR4jn8n2v8=;
-        b=fDVkYnnc/pfSGlbh0ngllTQbfwPijtUnj8p271zkeBEiU7E0LEzXgV4okXbGM+teD/
-         hMUjYeGAlko64xAHUoCHbxaYs3QPm+Hr1LnZHJcPsRsn0kNCn6QLeBiXDXxtMRRCb36+
-         7Ptm4mzcAhLKbWRyg+O0wUUpi3CGdxRn0YUGA70AWH7FNJq1GlqLxLva1959LAufsg2M
-         EHFgfgFfS4gD5PU/aKcOxPnVaZ0WSFfj6paDTmZ92+AZvyG3aX04n0pRXNQi9G4PZgtc
-         /0BlkgagUQXRyxjWyBYhOVQCga8KmTmKyazItENRMQXdMfSWvzb/snL+R2EEe1Cd3w4M
-         fhIA==
+        bh=MeMY6ZvITBPQwHI52jDYCf35TLcxWMfuS+SdIkf7zyY=;
+        b=udknWNOlq1p+HLe0dsmC4jceUTWZ6MbqLrM2DE+ll+5PtE55I+GjyiNrnmzOkplk6x
+         dyHCCUSAq25RV6+dgbHFV5VlsIRFAyHnyfQvfJntB5MCjIewhBy3J9Zuj/SrC+csCSzf
+         KK9PIvHrROUJBkRghh7JsFKj6434/Hw6KkQI7ZTzyTtIgul5uTsnlw0WoKWbyRtCijA4
+         Ub0sYjgunMwypytL52brArI0HGCNrhijVoN+QU+qgYM5l8xrFHOX46i7H+3I/YAgx0Qe
+         pIMQ4446kjKFRDnILNXosSSJBStRIl4LOBcWO8vzuCof4ORQr6IQjH8qVpYxwfmsSeDT
+         mhgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750249684; x=1750854484;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1750249614; x=1750854414;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cRM2k4b/KnNzcC5gORTj3uJESJo1D4SQEzR4jn8n2v8=;
-        b=I+q6HZO/yFy8tygErfg7+AtHPZpEJMZWsTpYwePdxzx+dMjOnZ/ovY/A6jfx8xZkaK
-         opWJRaoBCMqwkxqJXEF0gvSmR8QarDJWQ8V47RgufDeX7W3LRT++JQXZCiY2JIaADuAn
-         eIPdmckDj4G4mLaSbgFYRjjagKWiNB8Q63+bvieya0a+lcz0engF5DiM5dBQbLDHl5u1
-         giSVR/SSKSD7Ujju525SyP+mKcw3Dm/bhNQZmVn+hiQfp8n0tAo54lRwlA1yoNUsHE/+
-         74mf1ZHh9q+hke7WU77Sx0wj7t3uUptkZaJMpu7LE42yZv9oaWVqKkJxaJfA/yZ2Raew
-         3aWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxNnVsANiyc1uDpL53698PkxTIYsZrrToRcuHh4z4b3Z/vhJtIpYxXXIg55rhCKRQp0Plz/3KFG+mNSjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYCN2emZ5lZ45XrlV7dhskCTCWWpEgLyNEXJZoU3Zz2vNxBtUI
-	zCc9Tl8cQPPRa7jkh42MAm5n+iMb4qOBCphIFkaEFre2SYSi3Ox+eOqWKwCXkOvLDBw=
-X-Gm-Gg: ASbGncsi4NqNQgvMfsSUCcefxSECbjlBvdKOEMQjnqJtLkbKL77CQZvOhd5O/fr444U
-	Rc/J1zCR0KIj+o5qn36UvzAojP9a2GRCkF5UdeeBBNue63MDKyZVSfhNkbVfNUrVSlFDVjJ/s+y
-	AsBWoq/w7O5xY94LXJlRFHGBFqD7aYvpsHHEbdPQHx6bl+IxhxBnwG4NsK3p/PYuUen8agXugdM
-	U4lQ7Ing3tsn5k/Qhkgot02zsVhcHRPp+PSwQrdqNl1sEwaJ/4syUPgY8H/ghLkjWknL4hec0X4
-	m0eU6ysCkXQ+ZQdZYJETqANUeXx/G48cA3lA6ApsI2uPQnyQeS/BDqutJuks9w==
-X-Google-Smtp-Source: AGHT+IH4wVSBvwNbg/+cKiE2lTnfF+YpA69MTC2nxpQFt2JGNdEN+L/IvpFGedjfc/H5h/HkCtSvgA==
-X-Received: by 2002:a05:6000:230e:b0:3a4:ebc4:45a4 with SMTP id ffacd0b85a97d-3a572398fbbmr14222009f8f.5.1750249684002;
-        Wed, 18 Jun 2025 05:28:04 -0700 (PDT)
-Received: from zovi.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e2449f1sm211215125e9.23.2025.06.18.05.28.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 05:28:03 -0700 (PDT)
-From: Petr Pavlu <petr.pavlu@suse.com>
-To: Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>
-Cc: linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] module: Avoid unnecessary return value initialization in move_module()
-Date: Wed, 18 Jun 2025 14:26:27 +0200
-Message-ID: <20250618122730.51324-3-petr.pavlu@suse.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250618122730.51324-1-petr.pavlu@suse.com>
-References: <20250618122730.51324-1-petr.pavlu@suse.com>
+        bh=MeMY6ZvITBPQwHI52jDYCf35TLcxWMfuS+SdIkf7zyY=;
+        b=gKPpD64yqrcLFWiIre6XIEoKUwAZN5aeL1Yi0zlzB0rfvQ0RnZ2uTi85/qVwBTz2iv
+         TyuofRBrAAM6+V5ZI+m/Gih/Z4WQO9SeC2lIMqCtzodppyu5HS/DZzdoY2u7e0PA8qg7
+         eKjB4xJrHdBn8OpEQTiVzG6Xzai9uxQhXy5RqNjvUCcLP2iAUc3rkDzWE9tPyeGvUMLu
+         en9nEr4lrkRUHx5KBGTImggfG1XOYgqO/OBgTtmwOZgs2aZXtvLzOWnf9yZPeyRP5LC7
+         TQi7eq3GzONcVnqX+cH+rGFHM3i+SAbz2Al4h1xobze7u6wlA++3DgPA2k81bPpR+HyS
+         APpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUg6fWWuaC6BPANqEZUUFGC/cJ4pcaIwsRnHftdGRdBeQgLeyYm2arWLwiyz5naTpAIt2VyKQi0pYZa/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoQ0g/kS7gO/EA5bDZxrdNvn/kwoiX/ls4hLdEFFjR8/yLLJ8H
+	SCSOTN0G+fNGbKeibgKrU8CSe+vU16rMYl6iU8GJo3GfO1A87JcFORbR5993N+hlEZNIHxQtcbQ
+	NW2hJU0Fkumgfug+fiTSNDG01XCUYKoTxQf6iRU0CTA==
+X-Gm-Gg: ASbGncuOwgm+g74nrxxXtRrfAZ02vmulIfqpLfOsGZgY+UdlrOSMjUNdkXj+jCycUhm
+	QD/AniFNuIQGHKf9VcRYEfgmEpr2bPf5L0d0AJNCiBDkMRQoIV6hdVjHq1uRw6tUaFwsMrc6A5i
+	jJcGHcRFj/niicBu+MYDBI4h6PuNJz9wxOL9sU1DG6bM0=
+X-Google-Smtp-Source: AGHT+IGmpRGkPvcBAzQa2VYDunxKmHXXLzf37cM2KPcBdZgVLj8USxefk+Q+eVf5G/Wn/kDbl2XwzYwXpcHTfZnY1T0=
+X-Received: by 2002:a05:651c:1101:b0:32b:82bf:cc55 with SMTP id
+ 38308e7fff4ca-32b82bfdff4mr2950681fa.31.1750249614434; Wed, 18 Jun 2025
+ 05:26:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250616-gpiochip-set-rv-media-v2-0-6825114f18b0@linaro.org>
+In-Reply-To: <20250616-gpiochip-set-rv-media-v2-0-6825114f18b0@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 18 Jun 2025 14:26:42 +0200
+X-Gm-Features: AX0GCFslsN-cSw-dqPdU5r6A6ilGsRmidmHeaF2HfeRbo7EfHKHVSPh6Y3Xsvmo
+Message-ID: <CACRpkdb0y9cBpxjefWpqj=S=0eXKZ_SeeKGKL5ePLNHkk_Wj8w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] media: use new GPIO line value setter callbacks
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Bluecherry Maintainers <maintainers@bluecherrydvr.com>, Andrey Utkin <andrey_utkin@fastmail.com>, 
+	Ismael Luceno <ismael@iodev.co.uk>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Julien Massot <julien.massot@collabora.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-All error conditions in move_module() set the return value by updating the
-ret variable. Therefore, it is not necessary to the initialize the variable
-when declaring it.
+On Mon, Jun 16, 2025 at 9:18=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 
-Remove the unnecessary initialization.
+> Commit 98ce1eb1fd87e ("gpiolib: introduce gpio_chip setters that return
+> values") added new line setter callbacks to struct gpio_chip. They allow
+> to indicate failures to callers. We're in the process of converting all
+> GPIO controllers to using them before removing the old ones. This series
+> converts all GPIO chips implemented under drivers/media/.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
-Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
----
- kernel/module/main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The series:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 9ac994b2f354..7822b91fca6b 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2696,9 +2696,8 @@ static int find_module_sections(struct module *mod, struct load_info *info)
- 
- static int move_module(struct module *mod, struct load_info *info)
- {
--	int i;
-+	int i, ret;
- 	enum mod_mem_type t = MOD_MEM_NUM_TYPES;
--	int ret = -ENOMEM;
- 	bool codetag_section_found = false;
- 
- 	for_each_mod_mem_type(type) {
--- 
-2.49.0
-
+Yours,
+Linus Walleij
 
