@@ -1,164 +1,129 @@
-Return-Path: <linux-kernel+bounces-691398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04E87ADE420
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:00:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92607ADE3C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78C6617466D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:00:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BA811760EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 06:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A010625E445;
-	Wed, 18 Jun 2025 07:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30789207E1D;
+	Wed, 18 Jun 2025 06:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="QVema8Vm"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="g51kPjpm"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B702F25A624
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 07:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2953F1891AB
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 06:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750230030; cv=none; b=DdYh+22KZ/nze1vsrq2rdxnJTbnTnQdTUzMFrhJNf1USqk+45fpfqexj0rSykEbSPttPeECN7SHiZ2AIYH5fRT/1U6byAYjvsmmmhcUDkxL4YtLJGoGv/mJq2/F0Ce1A8eQsoRaxXq4si430yWFKDzPf2LmNc8QmCjDIheh6fkY=
+	t=1750228508; cv=none; b=WMXlm8iQD8u0dHgAXAH3n1jc7cRwPihUeUU5LfxvGwniGMKVRFVZNAh/9ImX2Pxir8Do++41y9s3MVegjoKTw+70tkYcw1oK11xN0T2JrWEkLZCc7TBC/jRZbOJdU6r1jONAAE2oXyWQOwoJfzS7wc7kYzXfnQSVvd1CBW/P9LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750230030; c=relaxed/simple;
-	bh=nQXNcN2ZDhBljS47g4YebHyRqQY2ppfolwrHq/5nX8I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QmeWY9G/aKvk38Tdl+v35bnQGpRYgbX4wkBCMgjOcfA5HNB/XKuR6KLn9fg6DLN8w4P8z8De+XQonDWwrEfzsHJRtwepDPc+2nOdZOxYxN94mAFt7BdeEm2n7wVBxrTMtKmR/HJxXVqMKuEJ3wqlnqqXjyydexsRcdcSkBpKp8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=QVema8Vm; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=9zhvXqUsin6iaQ6kq9DwAc/1oZ6JFzQ51gNsfu9Q8pY=; b=QVema8VmwevIygcSjGzGgWPu2u
-	DP0+eY5H0T6TnUUIdh2jHAtKGJ8JxNblt9bSxhx5dYRj8a/Bw/THTujtkqS5j2Z9tMWZtNn07e8d/
-	+cNtQyXgRweClr5pa65n8++AKf3gTh4nBrGzi9Y/YBGOMCtJuxIFMB+aWhwYbPKZ9J/unQQ9Fiitr
-	ukAj36U7dKS98BQnAIQO1IGMEs3k6TidJCy34zYMaVcYBlhVx3qDOV6s/Szgq7TBzfM3t/ZH04cPN
-	lPv6BP7PM1s8j7GV3h9YoBD7Tjj2p0EnYBlOFOuQLFAMct1a4nduekb6laEvbqExddCzVxfaZiuSt
-	BDogt7/Q==;
-Received: from [89.212.21.243] (port=37146 helo=localhost.localdomain)
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <primoz.fiser@norik.com>)
-	id 1uRmMe-009bzw-0F;
-	Wed, 18 Jun 2025 08:33:39 +0200
-From: Primoz Fiser <primoz.fiser@norik.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-Cc: Joy Zou <joy.zou@nxp.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] regulator: pca9450: Support PWM mode also for pca9451a
-Date: Wed, 18 Jun 2025 08:33:39 +0200
-Message-Id: <20250618063339.2508893-1-primoz.fiser@norik.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750228508; c=relaxed/simple;
+	bh=ByH+GehF+7AQqxVrVYR9J0AR97qRkoBK7j98J7tqV3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uw9qT/9rnJAW0iP0TDa7l1LJZBwpdZ/moji9N4/xYhuqdXDZCqlKJBvekXC/HldTaSIKkbvvuBYkx8M6WjSqr5nefMZTzmLANKUWXcJhfPsRATlJwQhMR9Evc1N6v4Lk7EoeRToRiaEuiHZVLszMVVENtZGtK0qeL0dmLJx7jag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=g51kPjpm; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
+	by cmsmtp with ESMTPS
+	id RkuuuUDzGAfjwRmO1uZBZR; Wed, 18 Jun 2025 06:35:05 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id RmO0uYMHYSPIxRmO1uHjMg; Wed, 18 Jun 2025 06:35:05 +0000
+X-Authority-Analysis: v=2.4 cv=MdZquY/f c=1 sm=1 tr=0 ts=68525e19
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=8e0ScQSuYsqgW4bfh7MA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/3XgzfU9xPdnPwA+n0vnE0mDOoy0irOqWJ5i/GyRTVA=; b=g51kPjpmVkPSqNjEJy8nj5m2LP
+	8R7NR4CHsC5MHBgOmuzDYChxOyOLlnhR7Z2yTDUN44mw5KZaGgKFAYP+ZefkafI4+XYOTGqvdNRq+
+	lOh8kebr6mUNmbKFpRa7wXUvsasBPx2KFjjRtiUNLo6M7NkpFGFPlTdc9VUqwjhUonuIkKhhPPNm5
+	CPbI/zzlXeCoxf2x6O/vPtOlAQitY9sJagk9q8DrlhDh25720HhECcsMzs2E+yNOQ/HVDjW09qV7Y
+	tXHMqfTTNMkM6dwjJnI8RZdB/1grvNKVg10u4V+4+/XbSQpABbYb/bcN/EHaTI7kyfbKTpjmmrBct
+	Sks5Rnjw==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:35296 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uRmNy-00000002wxV-1zLj;
+	Wed, 18 Jun 2025 00:35:02 -0600
+Message-ID: <9d27d032-d050-4ee6-beaa-6523cb4ce3e2@w6rz.net>
+Date: Tue, 17 Jun 2025 23:34:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/356] 6.6.94-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250617152338.212798615@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250617152338.212798615@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
 X-AntiAbuse: Original Domain - vger.kernel.org
 X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
-X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1uRmNy-00000002wxV-1zLj
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:35296
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 54
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfG+M0txGEN2gBL1wRz2LccCsjEC918OjSaxgbYv0CjVYJcpGq3gvpaI7LOFm5eZ5cC05XePhxXMuweTE7thUSHNQg2EQXv45GoO4Sau8gsI0AvbDDYaM
+ VzfHJ93a3tzmis4kzEfer+Qhow1qCUPg+5OJfOa+dSsrMkWZPAtBei9A33ZV1qpyLd+Wzeqx7ircWQM/mCm297N2HE63NGne4vE=
 
-Previous commit 548d770c330c ("regulator: pca9450: Add support for mode
-operations") added support for setting forced PWM mode on the buck
-regulators for pca9450a and pca9450bc parts. However part pca9451a also
-supports this feature, thus add support for it.
+On 6/17/25 08:21, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.94 release.
+> There are 356 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 19 Jun 2025 15:22:33 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.94-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Fixes: 548d770c330c ("regulator: pca9450: Add support for mode operations")
-Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
----
- drivers/regulator/pca9450-regulator.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-diff --git a/drivers/regulator/pca9450-regulator.c b/drivers/regulator/pca9450-regulator.c
-index f6faf14a9c53..feadb21a8f30 100644
---- a/drivers/regulator/pca9450-regulator.c
-+++ b/drivers/regulator/pca9450-regulator.c
-@@ -873,12 +873,15 @@ static struct pca9450_regulator_desc pca9451a_regulators[] = {
- 			.n_ramp_values = ARRAY_SIZE(pca9450_dvs_buck_ramp_table),
- 			.owner = THIS_MODULE,
- 			.of_parse_cb = pca9450_set_dvs_levels,
-+			.of_map_mode = pca9450_map_mode,
- 		},
- 		.dvs = {
- 			.run_reg = PCA9450_REG_BUCK1OUT_DVS0,
- 			.run_mask = BUCK1OUT_DVS0_MASK,
- 			.standby_reg = PCA9450_REG_BUCK1OUT_DVS1,
- 			.standby_mask = BUCK1OUT_DVS1_MASK,
-+			.mode_reg = PCA9450_REG_BUCK1CTRL,
-+			.mode_mask = BUCK1_FPWM,
- 		},
- 	},
- 	{
-@@ -902,12 +905,15 @@ static struct pca9450_regulator_desc pca9451a_regulators[] = {
- 			.n_ramp_values = ARRAY_SIZE(pca9450_dvs_buck_ramp_table),
- 			.owner = THIS_MODULE,
- 			.of_parse_cb = pca9450_set_dvs_levels,
-+			.of_map_mode = pca9450_map_mode,
- 		},
- 		.dvs = {
- 			.run_reg = PCA9450_REG_BUCK2OUT_DVS0,
- 			.run_mask = BUCK2OUT_DVS0_MASK,
- 			.standby_reg = PCA9450_REG_BUCK2OUT_DVS1,
- 			.standby_mask = BUCK2OUT_DVS1_MASK,
-+			.mode_reg = PCA9450_REG_BUCK2CTRL,
-+			.mode_mask = BUCK2_FPWM,
- 		},
- 	},
- 	{
-@@ -927,6 +933,11 @@ static struct pca9450_regulator_desc pca9451a_regulators[] = {
- 			.enable_mask = BUCK4_ENMODE_MASK,
- 			.enable_val = BUCK_ENMODE_ONREQ,
- 			.owner = THIS_MODULE,
-+			.of_map_mode = pca9450_map_mode,
-+		},
-+		.dvs = {
-+			.mode_reg = PCA9450_REG_BUCK4CTRL,
-+			.mode_mask = BUCK4_FPWM,
- 		},
- 	},
- 	{
-@@ -946,6 +957,11 @@ static struct pca9450_regulator_desc pca9451a_regulators[] = {
- 			.enable_mask = BUCK5_ENMODE_MASK,
- 			.enable_val = BUCK_ENMODE_ONREQ,
- 			.owner = THIS_MODULE,
-+			.of_map_mode = pca9450_map_mode,
-+		},
-+		.dvs = {
-+			.mode_reg = PCA9450_REG_BUCK5CTRL,
-+			.mode_mask = BUCK5_FPWM,
- 		},
- 	},
- 	{
-@@ -965,6 +981,11 @@ static struct pca9450_regulator_desc pca9451a_regulators[] = {
- 			.enable_mask = BUCK6_ENMODE_MASK,
- 			.enable_val = BUCK_ENMODE_ONREQ,
- 			.owner = THIS_MODULE,
-+			.of_map_mode = pca9450_map_mode,
-+		},
-+		.dvs = {
-+			.mode_reg = PCA9450_REG_BUCK6CTRL,
-+			.mode_mask = BUCK6_FPWM,
- 		},
- 	},
- 	{
--- 
-2.34.1
+Tested-by: Ron Economos <re@w6rz.net>
 
 
