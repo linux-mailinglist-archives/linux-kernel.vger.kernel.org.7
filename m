@@ -1,101 +1,119 @@
-Return-Path: <linux-kernel+bounces-691912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD6BADEA79
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F01ADEA81
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F330F3BEFF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:39:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E07403279
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3612DA764;
-	Wed, 18 Jun 2025 11:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyqeBfE5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE492DFF20;
+	Wed, 18 Jun 2025 11:37:20 +0000 (UTC)
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EEA2E9EBD;
-	Wed, 18 Jun 2025 11:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C482DE1EF;
+	Wed, 18 Jun 2025 11:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750246601; cv=none; b=j1JMW7XMktnXpVpmHk6o4MJ+sw0gPG6LPsZVkcHCxLV6P46tYV+FIKSHYUvlk69ZbtbRNltHGsDAvYpHR08fB6ywQk4JNv5A85Dt8u7IzKTZ46tIg/nRihBY6I1wDhn7dV76qEFo5gk08Qni7gLDFLF8/sH62CXtJaV3rs4ZZ1I=
+	t=1750246639; cv=none; b=mmxmYnNE0zUtWWLrv9W6psQBpbfXZyOfLWdNmou8AatMmNcHb8rJq/QMw1INonhJRmud+vQedSQz4iMet4P91E828/onMcmxODkzxcijBCO6dMVE8T9V5dOToEp1DD37gf7z+0IqcFyIlNRI8iCH1w3VRgoAaiW1ZG/2wnx9ID8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750246601; c=relaxed/simple;
-	bh=GVLbSPQbFmJsEWhBuQd4bgNbK7h2cLmm5XbplIfuN3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aNolWQ+qU4gdGhWegxeb9LHW4/L7t9cnismnLYDODEDXzjjPzLHK7Nf3NzRn3QN591pvUeoNz3gaxe0SOS5sfV0RncltSQQ+fJimqdypRaAXUnXmR4Ccd/svxC2T4kbLku3fjhx4bMmucs1gCMBff2xIGfbJ/mn+GUe7NOtXT3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyqeBfE5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C19FC4CEE7;
-	Wed, 18 Jun 2025 11:36:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750246600;
-	bh=GVLbSPQbFmJsEWhBuQd4bgNbK7h2cLmm5XbplIfuN3M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NyqeBfE5keSm2NQskHcY9R6uGqvLEzDOJ3+hjLlMh84TIBIekDCJsZzMH3PTRFu5s
-	 PuMbvAdmCmbjdQaSRnl7F8zBAZPHk2ATcxpAhGd0VAgHClRKxIySDw3DZXzkgEDuP5
-	 shDp5G7odvpIwid+hL3WzrJOJD+1rhbtE5rvPRX3KsJfEJLOcg2/8ukA+vjK21O8Gs
-	 kAhHDZRU3aQgPS24WmPyN3f9so4JHOEFG8C2qVfBTurRGJxVzvuYW3AEI5F9AT1+aw
-	 FuM43AEMTiUBIvD1V+kVORu+6sYsIzjRISoRwShC4ZktfYYS5bCWCMMTOV2TQIPULe
-	 hjbm4xloU2njA==
-Date: Wed, 18 Jun 2025 12:36:36 +0100
-From: Will Deacon <will@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: Re: [PATCH] arm64/ptdump: Ensure memory hotplug is prevented during
- ptdump_check_wx()
-Message-ID: <20250618113635.GA20157@willie-the-truck>
-References: <20250609041214.285664-1-anshuman.khandual@arm.com>
- <20250612145808.GA12912@willie-the-truck>
- <5c22c792-0648-4ced-b0ed-86882610b4be@arm.com>
+	s=arc-20240116; t=1750246639; c=relaxed/simple;
+	bh=miWVdcEmACn9TbAvm2+Yx19kNh+0z9kIGEcvC9jyLfs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=HNM5McU1KovxmLW1i2Kf952SmPtIlM51ODt+WT7A16fv2IGQUlmOHxoJ8AyecrfWdogxOOSLWbkQdeYrX/ELjh4fZGhRyKca4PFFCwjcllXxRNNit3Q5mKfvSsYrHu2kapVtJG5mZImUx8Mc07HyoOZdmns3VeYmyaw2sW8HHzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bMhY56J3rz9tNN;
+	Wed, 18 Jun 2025 13:37:13 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c22c792-0648-4ced-b0ed-86882610b4be@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 18 Jun 2025 13:37:08 +0200
+Message-Id: <DAPMND2X0QHE.1N0NF7R1F8J1G@buenzli.dev>
+From: "Remo Senekowitsch" <remo@buenzli.dev>
+To: "Danilo Krummrich" <dakr@kernel.org>, "Rob Herring" <robh@kernel.org>
+Cc: "Saravana Kannan" <saravanak@google.com>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Mark
+ Brown" <broonie@kernel.org>, "Dirk Behme" <dirk.behme@de.bosch.com>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v1 3/3] samples: rust: platform: Add property child and
+ reference args examples
+References: <20250616154511.1862909-1-remo@buenzli.dev>
+ <20250616154511.1862909-4-remo@buenzli.dev>
+ <CAL_JsqKXrsdGjTE5KDkqmVHUK5urMJnWSLWgEi8H1yM21gcOCA@mail.gmail.com>
+ <aFFpmKLKR2hGs1I1@pollux>
+In-Reply-To: <aFFpmKLKR2hGs1I1@pollux>
 
-On Fri, Jun 13, 2025 at 10:39:02AM +0530, Anshuman Khandual wrote:
-> 
-> 
-> On 12/06/25 8:28 PM, Will Deacon wrote:
-> > On Mon, Jun 09, 2025 at 05:12:14AM +0100, Anshuman Khandual wrote:
-> >> The arm64 page table dump code can race with concurrent modification of the
-> >> kernel page tables. When a leaf entries are modified concurrently, the dump
-> >> code may log stale or inconsistent information for a VA range, but this is
-> >> otherwise not harmful.
-> >>
-> >> When intermediate levels of table are freed, the dump code will continue to
-> >> use memory which has been freed and potentially reallocated for another
-> >> purpose. In such cases, the dump code may dereference bogus addresses,
-> >> leading to a number of potential problems.
-> >>
-> >> This problem was fixed for ptdump_show() earlier via commit 'bf2b59f60ee1
-> >> ("arm64/mm: Hold memory hotplug lock while walking for kernel page table
-> >> dump")' but a same was missed for ptdump_check_wx() which faced the race
-> >> condition as well. Let's just take the memory hotplug lock while executing
-> >> ptdump_check_wx().
-> > 
-> > How do other architectures (e.g. x86) handle this? I don't see any usage
-> > of {get,put}_online_mems() over there. Should this be moved into the core
-> > code?
-> 
-> Memory hot remove on arm64 unmaps kernel linear and vmemmap mapping while
-> also freeing page table pages if those become empty. Although this might
-> not be true for all other architectures, which might just unmap affected
-> kernel regions but does not tear down the kernel page table.
+On Tue Jun 17, 2025 at 3:11 PM CEST, Danilo Krummrich wrote:
+> On Tue, Jun 17, 2025 at 08:01:08AM -0500, Rob Herring wrote:
+>> On Mon, Jun 16, 2025 at 10:45=E2=80=AFAM Remo Senekowitsch <remo@buenzli=
+.dev> wrote:
+>> > @@ -91,6 +95,13 @@ fn properties_parse(dev: &device::Device) -> Result=
+ {
+>> >          let prop: KVec<i16> =3D fwnode.property_read_array_vec(name, =
+4)?.required_by(dev)?;
+>> >          dev_info!(dev, "'{name}'=3D'{prop:?}' (KVec)\n");
+>> >
+>> > +        for child in fwnode.children() {
+>> > +            let name =3D c_str!("test,ref-arg");
+>> > +            let nargs =3D NArgs::N(2);
+>> > +            let prop: FwNodeReferenceArgs =3D child.property_get_refe=
+rence_args(name, nargs, 0)?;
+>>=20
+>> Is there some reason we can just pass 2 in rather than nargs? Seems
+>> overly verbose for my tastes.
+>
+> It's because you could also pass NArgs::Prop("foo-bar") to indicate the t=
+he
+> name of the property telling the number of arguments.
+>
+> NArgs is defined as
+>
+> 	pub enum NArgs<'a> {
+> 	    /// The name of the property of the reference indicating the number =
+of
+> 	    /// arguments.
+> 	    Prop(&'a CStr),
+> 	    /// The known number of arguments.
+> 	    N(u32),
+> 	}
+>
+> and FwNode::property_get_reference_args() can match against the correspon=
+ding
+> enum variant to cover both cases.
 
-... that sounds like something we should be able to give a definitive
-answer to?
+I guess we could make the function generic if that's deemed worth it?
+A trait and an implementation for `u32` and `&CStr` each. Similar to how
+we made `property_read` generic.
 
-Will
+>> > +            dev_info!(dev, "'{name}'=3D'{prop:?}'\n");
+>> > +        }
+>> > +
+>> >          Ok(())
+>> >      }
+>> >  }
+>> > --
+>> > 2.49.0
+>> >
+
 
