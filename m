@@ -1,154 +1,90 @@
-Return-Path: <linux-kernel+bounces-692461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE557ADF1DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:53:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 567C6ADF17B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 775673B90E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:52:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 224233ADDDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF542F3C06;
-	Wed, 18 Jun 2025 15:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqtK1aCE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1782EF9DC;
+	Wed, 18 Jun 2025 15:38:32 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8F42F1982;
-	Wed, 18 Jun 2025 15:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D155028FA85;
+	Wed, 18 Jun 2025 15:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750261850; cv=none; b=SLomo+Deqbklr/fyVj+2g6mYciUQVgnBLbjvN2ujVkeqFzoCfqPSTGGwvcWrkTXiVCKCkipJ8Nf+myHPTTmzqfmLNEG5mmuYHaVpKsl7SXhGQJULOebOCdFRlliSuwYqwtY51SO8HS38kdgjKgZgaoLOX7kpoD6HDpMFR0gapL8=
+	t=1750261111; cv=none; b=fUJnzXWC9OAst59j2i4s7kakv+47uZvi7Iw0Kj79DnPggh/KTY+OSdvl+UTktWSeI1mCzYG3LofVN+ThRRRDbxhTrGQ+BapS65m2MOVj0MNne/gfjNdWQA9WFt9bdk5JqidKv6Ed236ZXGDpnFfjahzCOoWWGQBHPp0aAUm8AlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750261850; c=relaxed/simple;
-	bh=rZujrf8cJQS+I89btYoSUMkKofWIINtOzhrn5MbArYQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EFnCdHk/6AyQOCPE1xuUjNnIGO5uXh2BoDTdGVF03uFD7UuCi0mBgn8F6aqjZxQn1Rrzbv9CPQKmY/jWTBr77g+AlzJaNgA3NtCxSQROptNwUJvO9V8x3qpOt3HcdwzkE42PyPHMC4Y+/6AthE7BLvJA8VAUGHs3l1H2f+7gzyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqtK1aCE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0005AC4CEFC;
-	Wed, 18 Jun 2025 15:50:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750261850;
-	bh=rZujrf8cJQS+I89btYoSUMkKofWIINtOzhrn5MbArYQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=TqtK1aCE4tV9SmBCEd+oJZ0P0+f7cgth2F2mBswKO+Ob5zK2957jPgAKhi5G+br3c
-	 3JF/x3w1OJECjIGQVcB32GR48y3pQogPGTBMfvyfZ4qGe9rF8uxUSnm7pTRN0cQHlx
-	 vZPM3Q3ift0ruO/6e6TDit6hjpnFXlbJ0DdnksEE8ZDdGDCsbFyajiehTyv5nNEZfm
-	 XR7uHRgOaVfuM6/SMTUHq4sTGeuD58dE2AzOD6u7sJfDPfnKJQDYNLP+ZfGiFCZzJD
-	 EgxRvUA6Ap3K3CDkwnvhhnfJUdtVAcopTiPROrXokGRzpm07LcuFQrnJFJe2ikgm2p
-	 S4aeGP5XaNfRA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8435C7115A;
-	Wed, 18 Jun 2025 15:50:49 +0000 (UTC)
-From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
-Date: Wed, 18 Jun 2025 17:38:08 +0200
-Subject: [PATCH v9 13/13] arm64: dts: rockchip: enable vicap dvp on
- wolfvision pf5 io expander
+	s=arc-20240116; t=1750261111; c=relaxed/simple;
+	bh=cKSFSoxnitAjZGgvNgqUq5XLSDt0L0l7BTH00fNZQyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ojpF50eljr42vqxQsuFyEJ5Q3jas6WRJB8JG4mnw9EOLcoDZjCEgskEqtY4xr0e4ucYNsN7Ps5yxUHBN3lP6sR1X4TJdEa/fZ5+EQtT9TOEDfpFjLXucwZ966nyWy865MMtjEKfR8WeMhGASUgKlS8BH6elHXEIwCyilEUxtAkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id 513DF8030A;
+	Wed, 18 Jun 2025 15:38:27 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id 8AC9A18;
+	Wed, 18 Jun 2025 15:38:23 +0000 (UTC)
+Date: Wed, 18 Jun 2025 11:38:31 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
+ Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>
+Subject: Re: [PATCH v10 06/14] unwind_user/deferred: Add deferred unwinding
+ interface
+Message-ID: <20250618113831.1e26bb8f@gandalf.local.home>
+In-Reply-To: <20250618113706.2eb46544@gandalf.local.home>
+References: <20250611005421.144238328@goodmis.org>
+	<20250611010428.770214773@goodmis.org>
+	<20250618142000.GS1613376@noisy.programming.kicks-ass.net>
+	<20250618113706.2eb46544@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240220-rk3568-vicap-v9-13-ace1e5cc4a82@collabora.com>
-References: <20240220-rk3568-vicap-v9-0-ace1e5cc4a82@collabora.com>
-In-Reply-To: <20240220-rk3568-vicap-v9-0-ace1e5cc4a82@collabora.com>
-To: Mehdi Djait <mehdi.djait@linux.intel.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Gerald Loacker <gerald.loacker@wolfvision.net>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Markus Elfring <Markus.Elfring@web.de>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Kever Yang <kever.yang@rock-chips.com>, 
- Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Collabora Kernel Team <kernel@collabora.com>, 
- Paul Kocialkowski <paulk@sys-base.io>, 
- Alexander Shiyan <eagle.alexander923@gmail.com>, 
- Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, 
- Michael Riesch <michael.riesch@collabora.com>, 
- Michael Riesch <michael.riesch@collabora.com>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750261092; l=1661;
- i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
- bh=tkvGHWW1RXCremqXv1+qTo26zNWU0UHQFUaztf+p/DI=;
- b=XqyCIQ3Brf1VeGWUXB+ZXIaeF0HDCkqFjyzkAVTcbxsYQT6o+KVZ7DSahoLdPWniN9fuO2SrZ
- aAma1XwO2PBBwfkRWmUvBr2IFBmfUSJ6KrDj5usbF8U0wbYcjf3xD5N
-X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
- pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
-X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
- with auth_id=371
-X-Original-From: Michael Riesch <michael.riesch@collabora.com>
-Reply-To: michael.riesch@collabora.com
+X-Rspamd-Queue-Id: 8AC9A18
+X-Stat-Signature: 9iom6z8i66zini513gfg4cfdddsds1ej
+X-Rspamd-Server: rspamout05
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/ghWbw4OhlNrQUhRvEjr4WTJdnB8xIu9E=
+X-HE-Tag: 1750261103-260494
+X-HE-Meta: U2FsdGVkX1+Zb3aFmTig2sc9oHDxGzoxPAPVRMMDMdGsNcMwCVfCIq9cb5qeHdR9cf1rgXOoKdMI11YFVKGsQW7Hp6dXNkA2V82gofI8VLhDAr30CUBkbuwOSuRwOP82/pPxKL+3NYChbGNQ5PMTNiIoUD+VWuaHz8vouUcyKD525ahAgre4dQ2bMdbG/VBsWaTSUx1dLIJmwWwRxUz7gfm7PcbOWclEnyCBCTODpqi2ixk9w+ohsQrpMq4Ag6dm1YzrIJiv/kVmNCfiGI1uReR03BlrLa8TCyUsPJJfHxbE3j0II8hfVVeqKSxhmgQW8uyE22llU25FLW5ANafbO6wPFjB/KqmWKOa+Q1yB6DMK4voYlIeVQeH4S0vB1ydC
 
-From: Michael Riesch <michael.riesch@collabora.com>
+On Wed, 18 Jun 2025 11:37:06 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-The Digital Video Port (DVP, the 16-bit variant) of the RK3568 VICAP
-is broken out to the PF5 mainboard expansion header.
-Enable it in the device tree overlay for the WolfVision PF5 IO
-Expander board.
+> > What about two CPUs managing to request an unwind at exactly the same
+> > time?  
+> 
+> It's mapped to a task. As long as each timestamp is unique for a task it
+> should be fine. As the trace can record the current->pid along with the
+> timestamp to map to the unique user space stack trace.
+> 
+> As for resolution, as long as there can't be two system calls back to back
+> within the same time stamp. Otherwise, yeah, we have an issue.
 
-Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
-Reviewed-by: Gerald Loacker <gerald.loacker@wolfvision.net>
-Tested-by: Gerald Loacker <gerald.loacker@wolfvision.net>
-Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
----
- .../rockchip/rk3568-wolfvision-pf5-io-expander.dtso  | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+I'll add a comment that states this as a constraint.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3568-wolfvision-pf5-io-expander.dtso b/arch/arm64/boot/dts/rockchip/rk3568-wolfvision-pf5-io-expander.dtso
-index 048933de2943..8cfce71dd318 100644
---- a/arch/arm64/boot/dts/rockchip/rk3568-wolfvision-pf5-io-expander.dtso
-+++ b/arch/arm64/boot/dts/rockchip/rk3568-wolfvision-pf5-io-expander.dtso
-@@ -11,6 +11,7 @@
- #include <dt-bindings/clock/rk3568-cru.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/media/video-interfaces.h>
- #include <dt-bindings/pinctrl/rockchip.h>
- 
- &{/} {
-@@ -134,3 +135,22 @@ &usb2phy0_host {
- 	phy-supply = <&usb_host_vbus>;
- 	status = "okay";
- };
-+
-+&vicap {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&cif_clk &cif_dvp_clk &cif_dvp_bus16>;
-+	status = "okay";
-+};
-+
-+&vicap_dvp {
-+	vicap_dvp_input: endpoint {
-+		bus-type = <MEDIA_BUS_TYPE_BT656>;
-+		bus-width = <16>;
-+		pclk-sample = <MEDIA_PCLK_SAMPLE_DUAL_EDGE>;
-+		rockchip,dvp-clk-delay = <10>;
-+	};
-+};
-+
-+&vicap_mmu {
-+	status = "okay";
-+};
-
--- 
-2.39.5
-
-
+-- Steve
 
