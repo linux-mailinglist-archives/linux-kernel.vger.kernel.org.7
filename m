@@ -1,139 +1,194 @@
-Return-Path: <linux-kernel+bounces-691676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14608ADE779
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:52:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04CF7ADE77E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBF7F3AD7B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC4D1890043
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF5B284B35;
-	Wed, 18 Jun 2025 09:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8701285040;
+	Wed, 18 Jun 2025 09:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cYgg0bqN"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="q+BXvvVc"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36DF186294
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E4C1FECB1
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750240355; cv=none; b=nEcuhhJXaxrPfBPe77Zme5zsyq0OMKxrGNKzOFeqbEWtHg52DpUuGOBwa+s503bP1ewJ8RgDzP7SBCGYSIM1++BOqkvAAO/jRNj9UgO9T1ldrIHjdocsf0IcwYztSvCGTxdoXEiXN54fwsWdX+W0yPtEtLupihSfoAkf/SK75yE=
+	t=1750240458; cv=none; b=Xtdod9GRn+v3XtZr4+sXcmJV6/HShH40ZN0wVUA7RMesgdrCB9jk9084zZwBNaeOVcbOAzcfaczAjxFlf3ZZtdAs24+vy3PftxEv8/qWnQjAynXm+ehXwxCchRFkq2AHy5qJEVwmyuIssNpWHsCpRck/QkKeMTaFbFRofZXJ8XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750240355; c=relaxed/simple;
-	bh=5bEnpNZFMrj7qCJtwgu60iTdn6bjP4AVMamgtkgw4qw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Np5RsOOHruupWqb0EWPk3vjSdY8dK5qAFCqgt68tF0fF0uc4cc4ujtPAUrkUz1GMo8sowxI+Waovfq/rq7DPj2o2A7HejT7cOmuJAY8DBs0HBus2bSuoXREJy37WeR81s5lUObSx2nQuSbNCgtbMcqWdSQ1dWPD0jeMuUvjGRqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cYgg0bqN; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3a4f8fd1856so3273203f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 02:52:33 -0700 (PDT)
+	s=arc-20240116; t=1750240458; c=relaxed/simple;
+	bh=rDGQP2zCSI3Kq8k2nJx7sTz5HituVm2R46poLrOXUCg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aFf3gddxYOAwLWxYhtvRcJ5OAjbO+NXh52C9Gv99/zSQhZoEC+QTieaSmet6tU7TspT1NZ5lPrHcpZwJQ9T0s/2UxtwO0MO+pLbIgIHUNzS74+tpRdUblTf6PiCdoxieyBecs0XgOFjAWIHWwsDSWOtmdG1CX8TjPYLDMsFLE4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=q+BXvvVc; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b1396171fb1so4148427a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 02:54:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750240352; x=1750845152; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5bEnpNZFMrj7qCJtwgu60iTdn6bjP4AVMamgtkgw4qw=;
-        b=cYgg0bqNQij2+8nKOQbrbv7lxoh/XgsxLMhMBqvdBPePcYR6mQOqz/Gnr8TJhO/uof
-         I5bvH78jzzcnXX2LaiU58vV14G6BSBjWg5ayJhfx5vUyAmI84dyD5NinGvyu8d84jRku
-         +6WpkT5xkDnbLGfoEW3KILOR4Yatstsux4UBVIkrbhz4Gw6PoY+aryatcUpXeU8b/K1S
-         x+yTtXSvZv9FlKgF4PlMJ8WK1OeiI2swrab1MNSYegkUK28UQmhx7DeV/yRgQzjzQLpV
-         K7kgNH7Ztpt+J1wb/YwkZlVUXJGJkwCZfqbLNAWLTByWeS2SJo1ETn4URRsKyGzEk5Xu
-         ib7Q==
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1750240455; x=1750845255; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z7OM2ZSW1/KdTPjxcHsJwOgBjGchYE7u2a2qkQ9RN0Q=;
+        b=q+BXvvVcU9FAemX77HEnPsDobCc0eYyAMYVU6/ZxHZuv81og2Au4qhNFa1N6lWwzbD
+         KeBf7451acytjEJhC1nUUx78oCMoRoCxivYyPReOOrS30jahfjZ0CpvVQ43IwJdcZ407
+         RLtl9P4g+MhgiDRHHg91QV52KKJcKm0QBF1MvOjUjiOfey5cZ4S1v+1d61xdu66/TBJQ
+         prXdzjwoV4LDHAA3+ZmkagDVNa5Ivs5VV36GOvaz2DQjPorHnAOiZ3z7jrxmTA5/2hzx
+         9vxSBxASB7J9AMNZa4BgMfXQGij/lwRF+tXr8+W/9tFjxmOdFcmsyoYzVRwkHS+wmzdi
+         CGiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750240352; x=1750845152;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5bEnpNZFMrj7qCJtwgu60iTdn6bjP4AVMamgtkgw4qw=;
-        b=HF61NJ3fYaudPSkwz87WvYtDWnDPPan+UOOhJ8C/3In/SF29FbUXwhI/kh78+7AhAg
-         gUhX3h95zt61dZUyFNIDbe9g7hRILai9aDcUeRMYMgce0n6xUfBdF/2+M/eKBxegMC3k
-         QE/mtPR8/J6Y7SEIRm+95YcY+xj/vPlC9YTGIH3wxXIpa9RJKvBUi9VYmDJLotVVTnK3
-         2fqcFMJyHh5sgtjfRCF3iyN+knHCvguflm/QuyYLcV7NwStWpbWALZhqw4cRPVflgFyd
-         mm55KX/2hMmGoT3j2mWRnwl20YTZF/RwH+BgBE9wBpKhMHk7+icdzAsujPtviEMgzTWe
-         o/ug==
-X-Forwarded-Encrypted: i=1; AJvYcCVoRYG3GmF+4ZvtXdcBgXZbMZgjalHwWhokGluDgGOK3EHjpyQ1W5zh8PDYrTIzP0J3aViSRediRtecvqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcxr/DBj8Rj8zLRFoVOAv4eZREtxoqvzp/wcmGQtHZB30pPxpS
-	6y1lgmgEHIBdbvdemrjjwoP2eQWrtMxMumxbfB1J5yyqdpsXFPPWF//ncY2egZ/vkkPbX7pZ1g0
-	Amf73S7kEhqATWYeXgg==
-X-Google-Smtp-Source: AGHT+IE3kYpXlFdUKU3nwq2/d/ISrrwVjPKX3MaqFovbery7s8OVJiNXEcZ8fmoH61Jbhx+Lgcv8YDANMjz6Ec8=
-X-Received: from wrvk10.prod.google.com ([2002:a5d:518a:0:b0:3a5:75cb:ae])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:64cb:0:b0:3a4:ff01:218a with SMTP id ffacd0b85a97d-3a572e45e20mr12738829f8f.50.1750240352358;
- Wed, 18 Jun 2025 02:52:32 -0700 (PDT)
-Date: Wed, 18 Jun 2025 09:52:30 +0000
-In-Reply-To: <CANiq72nP+dKugMv3KXdJJsFE0oD01+zYgWbjz3e04kmhj_5MbQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1750240455; x=1750845255;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z7OM2ZSW1/KdTPjxcHsJwOgBjGchYE7u2a2qkQ9RN0Q=;
+        b=ALTlN5fbu2Gr93tHe7RZOnwKPKewFTWqhHCT/HajDQH4/OB8xtTKCKobGQz1LjYNXG
+         f87pqgAaC03F0FXWEe3ZYRx56Q0gmsEpWlJC2mn7FqIZDoXGejcevWFK+0X0hZiER34D
+         m3kBgzIXjxe/uDxikQoIlzQv8zel/nAcsjAtadVNnpaUkTK+Shp3Qd2vlfC3amlrRJgc
+         ivftDs8vrd/O8sU0nx0WtFgrdMY5uSeKtbrhCf/rGUafdQE/7TtWZfpjk7eDaiNJWL++
+         t4G0nQjepaX95knHvFvZOJ38pXwQVIOKffA514gGvh9lhmmWh4ObqRmxLtXIaAY0Bkoo
+         83ng==
+X-Forwarded-Encrypted: i=1; AJvYcCVZOifYwmJQGPKqOhF08X01LLaeqACEtL1J/8wcbOj4y5CtUCf2ci7zFgGlu9437qhPJ30vm1EXrTFbIgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywtcd2A7cXzOWTi82iD6jD2u66D7D1RovpbalquMww3FWoKZ+0b
+	GQLVGNta18cHs43iFyKwk8TnJlW1SEru21YUyuH4HESfEN7p9/D8+6zDVxBx712D2Q==
+X-Gm-Gg: ASbGncsgSGH7atRUJ1wrBiM3nnIfEWhv+idqHGTyTsAbRwwXVY+QB9Cd/eMjdAObT4x
+	ON/VPYrDvuQZgdt0MNFS8u8PzbNdK4/vuVM0A5UfB1OPMrJw7+k1cOt0ERsq/kurctU2zZoSSTx
+	N9HNAG4wic68xYJ5msOSso0//AGbkmvY3ech4md+1UkI9Ei4kLw3EPdXAF3O6dqFDe2XDnJxOo4
+	+KqrOJq4u9MceyCNx1inJl2mNk+02iWWFsOeYznJIrN4uLTcx9kMP/rNAlDG2Ga80NUJsMN2VKK
+	jLilNGXBSxsJYBKtIPHuYv/CkgvOhLBQUubZ+2XisVMMUQrVYrCyH4ObekFMxe//8UlKkQ3rQHX
+	mldp/U1nE3txzuEI8pvep931ZcYwCjgY98WOv
+X-Google-Smtp-Source: AGHT+IEgJPUsk65beOkZu9M0cr+8y71f3ifPEHacorAq6usiSGZY6JEZWC/qRdPN6wX01NsRo8kQRg==
+X-Received: by 2002:a05:6a20:5491:b0:1f5:8cdb:2777 with SMTP id adf61e73a8af0-21fbd48c508mr24739236637.3.1750240454808;
+        Wed, 18 Jun 2025 02:54:14 -0700 (PDT)
+Received: from ?IPV6:2401:4900:1c80:d33:6370:709d:bd1e:2cb9? ([2401:4900:1c80:d33:6370:709d:bd1e:2cb9])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7488fff68b7sm10498243b3a.7.2025.06.18.02.54.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Jun 2025 02:54:14 -0700 (PDT)
+Message-ID: <ed6beb97-12f1-4d71-b4dc-b34d4d611b81@beagleboard.org>
+Date: Wed, 18 Jun 2025 15:24:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250617144155.3903431-1-fujita.tomonori@gmail.com>
- <20250617144155.3903431-2-fujita.tomonori@gmail.com> <aFJzNCCERjKHIVty@google.com>
- <CANiq72nP+dKugMv3KXdJJsFE0oD01+zYgWbjz3e04kmhj_5MbQ@mail.gmail.com>
-Message-ID: <aFKMXqak-mHraxU_@google.com>
-Subject: Re: [PATCH v1 1/2] rust: time: Rename Delta's methods as_micros_ceil
- and as_millis
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, a.hindborg@kernel.org, alex.gaynor@gmail.com, 
-	ojeda@kernel.org, anna-maria@linutronix.de, bjorn3_gh@protonmail.com, 
-	boqun.feng@gmail.com, dakr@kernel.org, frederic@kernel.org, gary@garyguo.net, 
-	jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org, 
-	lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org, 
-	tglx@linutronix.de, tmgross@umich.edu
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] dt-bindings: Add support for export-symbols node
+To: Herve Codina <herve.codina@bootlin.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ David Gibson <david@gibson.dropbear.id.au>, Rob Herring <robh@kernel.org>
+Cc: Andrew Davis <afd@ti.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
+ devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20250430125154.195498-1-herve.codina@bootlin.com>
+ <20250430125154.195498-2-herve.codina@bootlin.com>
+ <0770a47e-fd2f-4b6f-9a9a-b0d539ace30c@kernel.org>
+ <20250528185740.4bf91bef@bootlin.com>
+ <49e1e1fc-412d-4334-8337-16e352a34788@kernel.org>
+ <20250618113232.6d237208@bootlin.com>
+Content-Language: en-US
+From: Ayush Singh <ayush@beagleboard.org>
+In-Reply-To: <20250618113232.6d237208@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 18, 2025 at 11:29:26AM +0200, Miguel Ojeda wrote:
-> On Wed, Jun 18, 2025 at 10:05=E2=80=AFAM Alice Ryhl <aliceryhl@google.com=
-> wrote:
-> >
-> > Why are we renaming them? The stdlib always uses as_* or to_* for copy
-> > types. In my mind, into_* means that you want to emphasize that you are
-> > performing a transformation that consumes self and transfers ownership
-> > of some resource in the process.
-> >
-> > See the api guidelines:
-> > https://rust-lang.github.io/api-guidelines/naming.html#ad-hoc-conversio=
-ns-follow-as_-to_-into_-conventions-c-conv
->=20
-> We may be going in circles here... I think the confusion is all on
-> what to do for "owned -> owned" `Copy` non-expensive conversions.
->=20
-> I think Tomo sent a patch to change the `as_` and `is_` methods to
-> take `&self` to be consistent with the guidelines, since they say
-> there is no "owned -> owned" case for `as_`. Then you mentioned that
-> `self` is OK and Andreas agreed, and I guess Tomo ended up with
-> `into_` since `to_` is only for the expensive case, even though it is
-> not meant for `Copy` types.
->=20
-> In other words, either we say in the kernel we are OK with `as_` for
-> "owned -> owned" too, or we take `&self`.
->=20
-> Did I get that right, everyone?
 
-Yeah I think using as_* naming for cases other than borrowed->borrowed
-is relatively common for Copy types. Looking at the stdlib, the rules
-I'm seeing are more or less these:
+On 6/18/25 15:02, Herve Codina wrote:
+> Hi Krzysztof,
+>
+> On Wed, 4 Jun 2025 20:35:51 +0200
+> Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> ...
+>
+>>> Symbols are exported only when an overlay is applied on the node where the
+>>> export-symbols node is available. Those symbols are visible only from the
+>>> overlay applied. Symbols exported thanks to export-symbols are not global
+>>> to the all device-tree (it is not __symbols__) but local to a node.
+>>>
+>>> If an overlay is applied at connector1 node, it can use the 'connector'
+>>> symbols and thanks to export-symbols, the 'connector' symbol will be
+>>> resolved to foo_connector.
+>>>
+>>> If the overlay is applied at connector2 node, the 'connector' symbol is then
+>>> resolved to bar_connector.
+>> OK, this explains a lot. Unless I missed it, would be nice to include it
+>> in binding description.
+> Sure, I will add something in the next iteration.
+>
+> ...
+>
+>>>>> +patternProperties:
+>>>>> +  "^[a-zA-Z_]?[a-zA-Z0-9_]*$":
+>>>> This messes up with coding style which I would prefer keep intact.
+>>>> Basically these properties will be using label style.
+>>> Yes, those properties remap phandles.
+>>>
+>>> Their names are the name of the label used from the overlay and their
+>>> values are the phandle mapped.
+>>>
+>>> You already have this kind properties using label style in __symbols__,
+>>> __fixups__, __local_fixups__ nodes.
+>> I have them in DTB, but I don't have these in DTS. The exported-symbols
+>> would be in the DTS and that is what coding style is about.
+>>
+> I think export-symbols has to be in DTS.
+> Maybe it could be described in an other way in order to avoid the coding style
+> issue you reported.
+>
+> Hardware:
+>    i2c0 from SoC --------- connector 1, I2C A signals
+>    i2c1 from SoC --------- connector 1, I2C B signals
+>
+>    connector1 {
+>        export-symbols {
+> 	  i2c_a = <&i2c0>;
+> 	  i2c_b = <&i2c1>;
+>        };
+>    };
+>
+> In order to avoid the coding style issue, this could be replace
+> with:
+>   connector1 {
+>        export-symbols {
+> 	  symbol-names = "i2c_a", "i2c_b";
+> 	  symbols = <&i2c0>, <&i2c1>;
+>        };
+>    };
+>
+> Krzysztof, Rob, do you think this could be accepted ?
+>
+> Ayush, David, do you thing this could be easily implemented in fdtoverlay ?
+>
+> Best regards,
+> Hervé
+>
 
-First, if the method is expensive the naming is to_* or a verb without a
-prefix. We only use into_* for expensive operations if the call also
-transfers ownership of some resource. Example: CStr::to_bytes()
+Well, it is possible.
 
-Otherwise, if the method is something that looks inside the type (i.e.
-it peels away a layer of abstraction), then we using as_* naming. Or we
-might use a noun with no prefix if we want it to feel like a field
-access. Example: Duration::as_millis()
+However, on connectors like pb2 header, there will be 50-100 export 
+symbols. So it will start becoming difficult to maintain.
 
-On the other hand, if the method transforms the value while staying at
-the same layer of abstraction, then we may call the method to_* (or just
-use a verb without a prefix). Example: f64::to_radians()
+Additionally, the further away we move from __symbols__ style, the more 
+difficult the implementation will become since we can currently very 
+easily piggy-back on __symbols__ resolution implementation.
 
-Alice
+
+Best Regards,
+
+Ayush Singh
+
 
