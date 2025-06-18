@@ -1,98 +1,129 @@
-Return-Path: <linux-kernel+bounces-692265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36900ADEF18
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:23:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC8BADEF1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91DD43AFBC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:22:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58AD4189804D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48ED02EA750;
-	Wed, 18 Jun 2025 14:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FBD2EB5AF;
+	Wed, 18 Jun 2025 14:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="LzYoS/8K"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DFE1991CA
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 14:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="czIhzIDv"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC3B2E8E00;
+	Wed, 18 Jun 2025 14:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750256580; cv=none; b=mu2vKzbkJKbstVIk/OLYHiA3EWI/tuEBCpDJgJbmE2bJohGOVd2uzV52ifnSx0J4ql0GfHJ1vwebhSx+v87ZoVXtqaYp0hIdH5pXogeFjWJJp690U26yTp66UHKeTIloEV1DMPhZSNw4vu7OigERsdckNPAuTdtpzXeyh5frl3o=
+	t=1750256597; cv=none; b=j1poCJ1KWLK9Bm6MI6ciIpwsbmnHcj2Y0DApRne/yIlTxWxLx4DHZj3TX8DElN5b78UZnqYoOo5RF15EH089zljBp1dXADj+cxYJdbOTdjZedQ46j++MUVNRd9107WKdq7Cn2dXKzc13FnkWOHnKp3o7FLlA+PgrYhfc07l0DME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750256580; c=relaxed/simple;
-	bh=AI/cg3j/Ut/+fhoqRaaZNhb79nXzboVuf5gmypEfKWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WDvZtdAFlIDETQWJEkNWnR447JFo6kkHLqRwYVvGenIAZX7PTZvW1EcPXDYRkWpuZNgXij25Z0vwK8qVSAMTWBGdfCtzMINsAE9kO1uvgvU2rh5KhvskkS+XOQdJA0u9YD7zd5P8x6+mb/q6hDUrFNjT8yRuldYXUHpCgiROEJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=LzYoS/8K; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=4SL9nDZol3vs1cqOSgVmLrfLfF1zwBsP/o0wOZK4nMI=; b=LzYoS/8K+xp4/lhbEcGDSbZO+u
-	laJCqBSzveNaPlUQYEVydU0Yv93W/KpRmxEzRTRg/3ZuH5YAlo0d3Vv+H7UkMLBZeZ08SQH0wvyRN
-	6Z9OcBuJqqKeL0f9/VBbOz0Wnsj0suvU8LcE5ENbptedFzshcqmZBV5fOe9/G6/447zzFoIIdTOoO
-	YsKwF2NgPpMXSTui1/5/wP+73U8tB/xULk1yZpKGzNgltdqI66s/nlezRmMK8EaxJh77BuOEMnFrl
-	V1qCgAOAyZPWFPin9K5PcMy3Gw7pWlfP5vKqRhTNPNhRulcn0LcYh2c4ob+51rL9DbdFVG/Qrn1OU
-	vzGZIk5Q==;
-Received: from [191.204.192.64] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uRtgY-0056EK-58; Wed, 18 Jun 2025 16:22:42 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, airlied@gmail.com, simona@ffwll.ch, " Raag Jadav " <raag.jadav@intel.com>,
-	Krzysztof Karas <krzysztof.karas@intel.com>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH 2/2] drm: Add missing struct drm_wedge_task_info kernel doc
-Date: Wed, 18 Jun 2025 11:22:30 -0300
-Message-ID: <20250618142230.2407354-2-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250618142230.2407354-1-andrealmeid@igalia.com>
-References: <20250618142230.2407354-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1750256597; c=relaxed/simple;
+	bh=/kCZED307PxRlzLUByha5TboyLgGFMQyb8rQaxCxbi8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fANY8Tw80BdPuVH6/nPgYiw+YsdyHShQ3y4GSA8/f9Ej+6J2Idpy1lD0Hc4L4t6IbqinTIHQNj4aHS+jA/tWFQvq6gYS/Sm0A8qe5Bj2djB6R+csWvOiKYvBtmyeWWnBITmVsSO4fqhbD+1PW/rCS/msDXyDIUz7s5HestC0+qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=czIhzIDv; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=aKN5Xb4pqwecPj9X55VM7S0C9aEQ1Y9s1xKnCpxeegI=;
+	b=czIhzIDv0vExDetuwquUJKrYUO53fjMO4UCjAlc9rWtkNKUKWDmbGcZxmkhrGh
+	pnVWLb7puWTNmuknm9dqGRZtgrsybZ+88DaATFV0/JRgcx8iCPy7iUUimCAGkcHN
+	lGHrmbBJ2B4ybopt7h8vv/1qloEhAX9KLlMwIyFMJb5T8=
+Received: from [IPV6:240e:b8f:919b:3100:8440:da7c:be7e:927f] (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgAn_qq1y1JonKCoAA--.5729S2;
+	Wed, 18 Jun 2025 22:22:46 +0800 (CST)
+Message-ID: <9203cf6e-ca59-416a-9c98-a2d6a5c6ce6f@163.com>
+Date: Wed, 18 Jun 2025 22:22:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: PCI: Extend max-link-speed to support
+ PCIe Gen5/Gen6
+To: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ krzk+dt@kernel.org, manivannan.sadhasivam@linaro.org, conor+dt@kernel.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250529021026.475861-1-18255117159@163.com>
+ <20250529021026.475861-2-18255117159@163.com>
+ <q5ltnilbdhfxwh6ucjnm3wichrmu5wyjsx6eheiazqypveu3sm@euuvpjwu77h4>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <q5ltnilbdhfxwh6ucjnm3wichrmu5wyjsx6eheiazqypveu3sm@euuvpjwu77h4>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:PygvCgAn_qq1y1JonKCoAA--.5729S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJF1rJFW5ur48Zr4fuF4rZrb_yoW8CFWDpa
+	y5Ja1xKFyrZFySqrZ7Wr1F9r45AanrJ3y0yr45Gry7A3sxXF1rJFZaga1rWr17trZ5AFyx
+	uF1UZwnxGa15AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRepBDUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWx9wo2hSygcmiQAAsP
 
-Fix the following kernel doc warning:
 
-include/drm/drm_device.h:40: warning: Function parameter or struct member 'pid' not described in 'drm_wedge_task_info'
-include/drm/drm_device.h:40: warning: Function parameter or struct member 'comm' not described in 'drm_wedge_task_info'
 
-Fixes: 183bccafa176 ("drm: Create a task info option for wedge events")
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- include/drm/drm_device.h | 2 ++
- 1 file changed, 2 insertions(+)
+On 2025/6/18 00:45, Manivannan Sadhasivam wrote:
+> On Thu, May 29, 2025 at 10:10:24AM +0800, Hans Zhang wrote:
+>> Update the device tree binding documentation for PCI to include
+>> PCIe Gen5 and Gen6 support in the `max-link-speed` property.
+>> The original documentation limited the value to 1~4 (Gen1~Gen4),
+>> but the kernel now supports up to Gen6. This change ensures the
+>> documentation aligns with the actual code implementation.
+>>
+>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>> ---
+>>   dtschema/schemas/pci/pci-bus-common.yaml | 2 +-
+> 
+> As Rob commented in v1, this file lives in dtschema project. So update it there:
+> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/pci/pci-bus-common.yaml
+> 
 
-diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
-index 08b3b2467c4c..aae0800ccef1 100644
---- a/include/drm/drm_device.h
-+++ b/include/drm/drm_device.h
-@@ -33,6 +33,8 @@ struct pci_controller;
- 
- /**
-  * struct drm_wedge_task_info - information about the guilty task of a wedge dev
-+ * @pid:	the pid of the task
-+ * @comm:	the command name of the task
-  */
- struct drm_wedge_task_info {
- 	pid_t pid;
--- 
-2.49.0
+Dear Mani,
+
+I made the patch based on the latest dtschema code pulled from github.
+
+Also, I saw similar submissions as follows:
+https://lore.kernel.org/linux-pci/advhonmqnxm4s6r3cl7ll5y3jfc566fcjvetvlzvy7bztzetev@t75xmo5fktde/
+
+I don't know if Rob obtained this patch from here and then applied it to 
+the dtschema project? Is there still a special process to submit this patch?
+
+
+Dear Rob,
+
+Can you apply this patch directly to the dtschema project?
+
+Best regards,
+Hans
+
+> - Mani
+> 
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/dtschema/schemas/pci/pci-bus-common.yaml b/dtschema/schemas/pci/pci-bus-common.yaml
+>> index ca97a00..413ef05 100644
+>> --- a/dtschema/schemas/pci/pci-bus-common.yaml
+>> +++ b/dtschema/schemas/pci/pci-bus-common.yaml
+>> @@ -121,7 +121,7 @@ properties:
+>>         unnecessary operation for unsupported link speed, for instance, trying to
+>>         do training for unsupported link speed, etc.
+>>       $ref: /schemas/types.yaml#/definitions/uint32
+>> -    enum: [ 1, 2, 3, 4 ]
+>> +    enum: [ 1, 2, 3, 4, 5, 6 ]
+>>   
+>>     num-lanes:
+>>       description: The number of PCIe lanes
+>> -- 
+>> 2.25.1
+>>
+> 
 
 
