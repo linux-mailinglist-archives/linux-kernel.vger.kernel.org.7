@@ -1,125 +1,143 @@
-Return-Path: <linux-kernel+bounces-692408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B8BADF140
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F32A1ADF159
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 607391BC1B78
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:23:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D0981BC39D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F052F0C57;
-	Wed, 18 Jun 2025 15:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAE72EF2AA;
+	Wed, 18 Jun 2025 15:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r3rKuG+x"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XeTZJ0SQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DCF2EFD83
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 15:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4722EF2AE
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 15:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750260105; cv=none; b=N+0VrHJbTmqlrS/AAsbOrq+tLPCC/Ekqi5bfXMHb6jw1EwN5qRaO0dfw/toRKoA7wbtmE4bjdN4bQHiUyLKIh7GIt2xaFqJw1TWsb3WClcUxR/L2TspCb7Yfnp0LhlfoPhofHLDZeTL8yopsh63d8wMmnOqqUIuTo99cduby0xs=
+	t=1750260176; cv=none; b=h9Bla78Sd4jWWvFqv+jwQ0ITvqxo5XfvIvqE1pKy+w+ktsWL2HfQ+gkGRNGhh3KmqgSlSplgnXRhF7ZBpKP9CF/IyVUMB47N9s4JrfgZxu/e4/Ouwq6kf4vjY/+Ne4Ihn1QJZ+3NsC2PveF7wpBPb+abnTORwDrpoBJBDouPNwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750260105; c=relaxed/simple;
-	bh=g07THXNWgAdEHWIqoiEHlcfwthoxZVyVXkEAgRexV0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ii0O0fxNsK4jM/lEdAT6u9sdfKi61jO3xtjqbOY8YR5MO6EFYBt+MhV/B7zf2sISdXAy7jkfhxow/X+y/woL/MffGppmoW7O+Bk18aZEln9Kf/8yPegIJyoDHfiYnqeKtgz1LqUrh+BV275iHsf6frReVHRtTTap5BdHO+iQfl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r3rKuG+x; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-4091180d3e5so3378207b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:21:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750260102; x=1750864902; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9AxwiK4VYo3D71UIHkicDqC7/83I7Lbnvvk8W3WY5b4=;
-        b=r3rKuG+xt/6fjUipvT17u93EVUlVMjQfpT7D05ucLAMebOFy9CQU5VMPaRb0oi7TqG
-         ObTwduvkwcmOdPoXYIZ7v00uhzdYrqBkS7gPWCG7HUEgSePqKFIyPD6bfYossU3Uiy8h
-         Ym/CawwMPi5XR2Fes6RHUXQGdzg7znAYpWbsEvvxibHpwhVgmD6+irjzgWqp45gVRzko
-         +ATEuaEd231fsiA5Taog/NIImPA9KgXcl0O7UhCVqPTjjW1IvyGS88dp8pd4S2gQBMLK
-         Pnl7CbNM3RSZ2EHZsVoSM8/wbuWl+tmm414+raqdpIV3s4CsLhJzvlrNRfzSLyNj6bJa
-         DUxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750260102; x=1750864902;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9AxwiK4VYo3D71UIHkicDqC7/83I7Lbnvvk8W3WY5b4=;
-        b=VW2eQ2wZTN5lLxQmCnsJeSxlCu2ch9trCCWyWOV1c211OCVdyUUp5IQ7aVNKUP257+
-         +XslRw108BQvoKSQ+PUS8sruMA72lCk8w3Zn1KcHjzV5XzIhwyaeua/+Ouqxjv9QL3dd
-         7+i8e7bZBZ9k5FTyQ9Ps2P1ERJqFVejKNiIfKDEuJC0jODGaaHsNDDfQPT5cx9nFxdQN
-         wbuJBQNqIH+MxAgN1mCmwir0uMLo3HRKnjVXjnTu2WlsrBH9MzMRAVzCfOO1bgYt12jm
-         jaIYUKjNvMFxv2EH8Vj/mfwKgP8JVAw0DJvdR77BfY+D9fjhGQBZCX2LoGP6x3uD91ig
-         Wpcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXe72YLAzn4S4U5AReVtSK0iiNC1n3z2x28TEARMM9oLgWKB9qTpfiwhmDsK6n7wrnSdaVNi4zFpaKkhp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGE5Ud8d133jwkvpdtuuWBWJrqv+Stv2uKYcjI0pka2cWtrzHf
-	yG764KOyOOJiTn6OJI69BcqrNyF2YSs2MjGPHYn6pkvwJVJrAhN5inuGOtoJ1R/uCpg=
-X-Gm-Gg: ASbGnctZIJ+ZxQ+UDcpW9lNSCqRh0lCMqYYf8IlXIHpbEJrp820C2+M7bevHSgDpIjT
-	33WqsoQK7d939+WOYoIQeXkZVb+wNy0dyTIsKZLh7gT/nvulI1quzZoZFsS8nYzMv10e5/BdyH2
-	Zvls1ddFOtkbZv5Cu66LeeaxgtXgpu8HAyaOLkDnkJBArBUFASmyBQ+MxpxfpPmLpx3XonJVlh7
-	ewK5LSthlgmyWwQqNAr0cpm73m7s6KhQHwxm17iZ7Wb3K141doe8+CvliA1T6fszQtSMfo51OjA
-	XGl96uHQH4NpKNCljs9ly2ykKIi8REDoQ6sJekPuXHzJw1rSOyW3jt9tbTG7xIUcEXw8eA==
-X-Google-Smtp-Source: AGHT+IGrf/owYOZYoHFe51D4S6Sh3ECbMUim7WjOpYzkcX3/wGxlPvEhosTHB9TtV8xPJwEvEZoZLA==
-X-Received: by 2002:a05:6808:238a:b0:3f6:a1f8:ce3 with SMTP id 5614622812f47-40a7c1160b3mr10691931b6e.14.1750260102438;
-        Wed, 18 Jun 2025 08:21:42 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:1b3b:c162:aefa:da1b])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40a741b8588sm2371576b6e.49.2025.06.18.08.21.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 08:21:40 -0700 (PDT)
-Date: Wed, 18 Jun 2025 18:21:39 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Zaid Alali <zaidal@os.amperecomputing.com>
-Cc: rafael@kernel.org, lenb@kernel.org, james.morse@arm.com,
-	tony.luck@intel.com, bp@alien8.de, kees@kernel.org,
-	gustavoars@kernel.org, Jonathan.Cameron@huawei.com,
-	sudeep.holla@arm.com, jonathanh@nvidia.com,
-	u.kleine-koenig@baylibre.com, viro@zeniv.linux.org.uk,
-	ira.weiny@intel.com, alison.schofield@intel.com,
-	dan.j.williams@intel.com, gregkh@linuxfoundation.org,
-	peterz@infradead.org, dave.jiang@intel.com,
-	Benjamin.Cheatham@amd.com, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v9 5/7] ACPI: APEI: EINJ: Create debugfs files to enter
- device id and syndrome
-Message-ID: <3a143d53-8731-4afc-9117-bac49ea96db1@suswa.mountain>
-References: <20250612231327.84360-1-zaidal@os.amperecomputing.com>
- <20250612231327.84360-6-zaidal@os.amperecomputing.com>
+	s=arc-20240116; t=1750260176; c=relaxed/simple;
+	bh=s7Q/jo6lw2NXu3jvqDEp4oeMIpbrrPjBrhRL9F76kbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VF3zb/fAGk5k0b3s2DVClctvgc1Q6t0qLYKTA1NrBPXcnldlfZ5t+h+OVfsy5xRaYbd7zTa19buwJIUOLSs7nJPD0dqMOnyZmbUc6rqfPjfAh0GTDoPMnw+3+v2Yp2MkJObKoM8rDy4NQNw4koCaCiO1ZL4cvFqG2TIULOaQfkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XeTZJ0SQ; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750260175; x=1781796175;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=s7Q/jo6lw2NXu3jvqDEp4oeMIpbrrPjBrhRL9F76kbg=;
+  b=XeTZJ0SQEbghjIodAJG+wdcP3zgRHYKnzoKV9EB1hKewh82qHQnq6HXd
+   a78A6XIBILYgfpPEZ0vUtLH484X4ZjF1HKtHrzdcKaZPW9/RxdIht+Y3z
+   cHfY0bJWGHRP+nJ+xGjPMm8cik5JxH/3KGWqiq88PGOla13ii6xWNHsx/
+   V948iUTN5IZGRJpFw9wKNiM4G8GmIzcVoR3qi3++OKY3SXsX/K3PIQdsu
+   81E6OgYkd027hQTixFDYfUGkalEwFLHWxmTW3a2ASgOhA7Zyz2/HC9CgB
+   RdYT80nv/lR9j7GP26SpqcrqNcaggqZehJWRef96bToJjQqjgYrdwBxrn
+   g==;
+X-CSE-ConnectionGUID: CnIwILYNROOG2C8sq8HZ4Q==
+X-CSE-MsgGUID: isTmDR/bR/2PxK/mUWHDSA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52407067"
+X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
+   d="scan'208";a="52407067"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 08:22:54 -0700
+X-CSE-ConnectionGUID: s+21155eQhKgTz1GWKayTQ==
+X-CSE-MsgGUID: 6VrcT5KZTCqXiBAkJZrjRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
+   d="scan'208";a="150371729"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 08:22:53 -0700
+Received: from [10.246.136.52] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id C029C20B5736;
+	Wed, 18 Jun 2025 08:21:00 -0700 (PDT)
+Message-ID: <0d131415-4921-45ac-bcd9-cedff17f34f5@linux.intel.com>
+Date: Wed, 18 Jun 2025 11:22:50 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250612231327.84360-6-zaidal@os.amperecomputing.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 06/12] perf: Support extension of sample_regs
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "Mi, Dapeng" <dapeng1.mi@linux.intel.com>, mingo@redhat.com,
+ acme@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, irogers@google.com, adrian.hunter@intel.com,
+ jolsa@kernel.org, alexander.shishkin@linux.intel.com,
+ linux-kernel@vger.kernel.org, ak@linux.intel.com, zide.chen@intel.com,
+ broonie@kernel.org
+References: <20250617133333.GU1613376@noisy.programming.kicks-ass.net>
+ <20250617140617.GC1613633@noisy.programming.kicks-ass.net>
+ <aFF6gdxVyp36ADOi@J2N7QTR9R3>
+ <20250617144416.GY1613376@noisy.programming.kicks-ass.net>
+ <aFGBxBVFLnkmg3CP@J2N7QTR9R3>
+ <be13b2ce-a8c1-4aa7-9ddf-9ae8daee0ae1@linux.intel.com>
+ <20250618093500.GH1613376@noisy.programming.kicks-ass.net>
+ <0782de41-c8c4-4077-8498-651fb9a10ef5@linux.intel.com>
+ <20250618133003.GC1613200@noisy.programming.kicks-ass.net>
+ <99087e26-192f-4fa6-b43b-0c6a39c45b38@linux.intel.com>
+ <20250618144545.GD1613200@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250618144545.GD1613200@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 12, 2025 at 04:13:25PM -0700, Zaid Alali wrote:
-> +static ssize_t u128_read(struct file *f, char __user *buf, size_t count, loff_t *off)
-> +{
-> +	char output[2 * COMPONENT_LEN + 1];
-> +	u8 *data = f->f_inode->i_private;
-> +	int i;
-> +
-> +	if (*off >= sizeof(output))
-> +		return 0;
 
-No need for this check.  simple_read_from_buffer() will do the
-right thing.
 
-regards,
-dan carpenter
+On 2025-06-18 10:45 a.m., Peter Zijlstra wrote:
+> On Wed, Jun 18, 2025 at 09:52:12AM -0400, Liang, Kan wrote:
+> 
+>> I didn't know we have the alignment requirement for the output.
+> 
+> Perf buffer is in u64 units.
 
-> +
-> +	for (i = 0; i < COMPONENT_LEN; i++)
-> +		sprintf(output + 2 * i, "%.02x", data[COMPONENT_LEN - i - 1]);
-> +	output[2 * COMPONENT_LEN] = '\n';
-> +
-> +	return simple_read_from_buffer(buf, count, off, output, sizeof(output));
-> +}
+Sure.
+
+> 
+>> If so,
+>>
+>> PERF_SAMPLE_SIMD_REGS := {
+>> 	u64 vectors_mask;
+>> 	u64 pred_mask;
+>> 	u64 vector_length:16,
+>> 	    pred_length:16,
+>> 	    reserved:32;
+>> 	u64 data[];
+>> }
+> 
+> I really don't think we need this complication; XSAVE is a real pain in
+> the arse, but I think we have enough bits in XSTATE_BV to tell what is
+> what.
+
+I just realized that XSAVE takes the vector as a whole.
+It's impossible that XMM0 can be retrieved but XMM1 fails via XSAVE.
+I will use the suggested output format.
+
+PERF_SAMPLE_SIMD_REGS := {
+	u16 nr_vectors;
+	u16 vector_length;
+	u16 nr_pred;
+	u16 pred_length;
+	u64 data[];
+}
+
+Thanks,
+Kan
 
 
