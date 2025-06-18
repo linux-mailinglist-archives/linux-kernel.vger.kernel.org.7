@@ -1,291 +1,357 @@
-Return-Path: <linux-kernel+bounces-691111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5179EADE09B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 03:19:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9303CADDFE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 02:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E72B617CB91
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 01:19:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 668B43BAF6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B46522F;
-	Wed, 18 Jun 2025 01:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AF92904;
+	Wed, 18 Jun 2025 00:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="W6CnCsQj"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nh9lRUPF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B07D16DEB1
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 01:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750209554; cv=none; b=XNyGmIqYcOCsNvCeI8/zcNibFvEnGqoPc8EtO7tBQudfD1Lheg+YUWt5V92lpnYeHJR4Te2LCO2unModM+lfQmtbZL+CVx4SFYEtQXfmx/y8RooguL6K4J0x8u4oDTRQq2n6YZAGgfImh2FD+xLwneQE0mK51hVsSn1HFtd5ZwY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750209554; c=relaxed/simple;
-	bh=PqAoghHFSkgifxKIV4gNJmQ8uM4VRvMCLv6T6/PM/tw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=h2NJ+2XlV+1XCvYVPQ+FYlsQHVyhL5G/oXTKLrg1I3LTDPxD65DD7xFes0CWhTB456PU8xAk23APCRIMLjKEMjXpY1DxUuUz5KgM3vfzeaq3QTU2znUjpos7pcESuXQ+rlBtPrcW3fqOvdTxtNQphehvvywOGo3Fs8OJiyvQwos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=W6CnCsQj; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250618011910epoutp02f01e4f7ee824f4a9b3404a3b8b5f452c~J-lA7amXC2364323643epoutp02B
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 01:19:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250618011910epoutp02f01e4f7ee824f4a9b3404a3b8b5f452c~J-lA7amXC2364323643epoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1750209550;
-	bh=8pDTKiVf0buqczhEZ05rUoTG7seQHrvr+Tt4AEphfAU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=W6CnCsQjh+k3SSDqsW3U6bVQNnppzWnO7QTSZRX0dKvmF2jNU1uRwZsK7kCJBZ1fD
-	 AOUTRGUNIYBNLriIbPDhrpwoa4eJnHeNMgO3/OZLHOs9xjH2HqEwj2Ri/HpF9+IABv
-	 V8xnk0UvgZ0i+ZP1CP8cbZbMruyulQ7Nnodu3OQ0=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250618011910epcas5p340dc4aefb689e96c521b981c9d4a88cb~J-lAZDyK62482624826epcas5p3n;
-	Wed, 18 Jun 2025 01:19:10 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4bMQqw24vrz3hhT8; Wed, 18 Jun
-	2025 01:19:08 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250617182036epcas5p2f066a3a92613a5b405a941f4d30ca628~J53jVqP-N2257822578epcas5p2x;
-	Tue, 17 Jun 2025 18:20:36 +0000 (GMT)
-Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250617182033epsmtip1fed76ec4f1dea149e9e1d5049707a388~J53gpoMyO2363023630epsmtip1T;
-	Tue, 17 Jun 2025 18:20:33 +0000 (GMT)
-From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
-To: "'Rob Herring \(Arm\)'" <robh@kernel.org>
-Cc: <rosa.pila@samsung.com>, <s.nawrocki@samsung.com>,
-	<linux-samsung-soc@vger.kernel.org>, <conor+dt@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <andre.draszik@linaro.org>,
-	<linux-phy@lists.infradead.org>, <vkoul@kernel.org>, <krzk+dt@kernel.org>,
-	<faraz.ata@samsung.com>, <selvarasu.g@samsung.com>,
-	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
-	<dev.tailor@samsung.com>, <devicetree@vger.kernel.org>, <kishon@kernel.org>,
-	<peter.griffin@linaro.org>, <muhammed.ali@samsung.com>,
-	<linux-arm-kernel@lists.infradead.org>, <alim.akhtar@samsung.com>,
-	<m.szyprowski@samsung.com>
-In-Reply-To: <175011004935.2433563.8726528182523156685.robh@kernel.org>
-Subject: RE: [PATCH v3 0/9] initial usbdrd phy support for Exynosautov920
- soc
-Date: Tue, 17 Jun 2025 23:50:32 +0530
-Message-ID: <000701dbdfb4$854ffa00$8fefee00$@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364EA36B;
+	Wed, 18 Jun 2025 00:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750205114; cv=fail; b=HYny2Ut0DR3fKFoBwN3Uo4LH3N2LxyqRdaOsXn1zT7llwUXunNT+1IkDemkI8lIl3WunMkLSgeGLxFnIGbtXp6Edid8F3Or2pwp6YcDu4ghl721ykwt9yRnKg1gL9AXrza4ab8BRv0ZGdDBhJkJr6naInS/gVDvr8cLXbpVVOyw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750205114; c=relaxed/simple;
+	bh=UhAUp0A0CHLVJ3m6Dj0ndvc0jZPByULH31YDu/K1HI8=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MTK6Z18Z4ivyMSzTZOd+n+omGgGv7nKwOaR9QEOIdH47XFUI+LzL1CEQnEmx0TIgqxDmqSinM3D8Zhxa54q2slcMxcp0J+07Qln/R0MyvWG3wHDk/XOKbb+QdMQM7vGWpdWKMP7qLKm8sUYEcl2HnoWf83Kn6+sJKTFqaN8NtGA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nh9lRUPF; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750205113; x=1781741113;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=UhAUp0A0CHLVJ3m6Dj0ndvc0jZPByULH31YDu/K1HI8=;
+  b=Nh9lRUPF6HXf/6xzq6clHpoKc37rYHaVAsykABTKl7t3+1oQnQnP9chr
+   KmXdx2YMv2YvCuRnzR/v5WIvRv8s6VD8xzeVOF+95hi7dVA5PNbyvjiMO
+   8LBC4vx0EZaCNkltszTxVo9d/0vIZAz0tRnuN1obezJCYrCyOu0XvKont
+   feuHj4/0UQzhpwBmKV+/LAE4kH5Ufcnif1NvhhurY4xZCtUolq32rqlmO
+   ItWyCKJepO7ynDrtaf5VmRWNDH5mfVrM3qWDv69wIXBmMl1M6Zkq0svOx
+   +YgEKB9bJDX9DxEZpSsDfQkAG5dFjaowwGJ3OBQaSycWWtaXdxXyaJJ/y
+   g==;
+X-CSE-ConnectionGUID: gehP/onkTLaoMfIowNjAWQ==
+X-CSE-MsgGUID: dSikEqEeTAqM3INee9f2zw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="63061540"
+X-IronPort-AV: E=Sophos;i="6.16,244,1744095600"; 
+   d="scan'208";a="63061540"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 17:05:08 -0700
+X-CSE-ConnectionGUID: kIYLZjd0QpKpDLqqF91Jrw==
+X-CSE-MsgGUID: uwRM3wkgQG2qYegm+NnPaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,244,1744095600"; 
+   d="scan'208";a="172300334"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 17:05:06 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 17 Jun 2025 17:05:06 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 17 Jun 2025 17:05:06 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.40) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 17 Jun 2025 17:05:05 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VD3iTsgRHs00GVeDxvZMi38jy1yryB6MLVLX5JZJM+HLB3ICSS1ofVJdH16fxB8JCAkp/yLoZzDv6XDrPFdoVhx01894IY3bQ/pshuiW8LCAWstKvNwiZyKs4BQXLbwmgp0/13UuwgP2pn09sMkavEFyCm2F7uPlp1dXsqsS6hMSL2wRTEXSEeBmzj0bbpDY08g7ZAZWODclE/WaVhyMzogaNsjCcKB/reOhM2nG6yajTdh11q5RKYn91CTDH7zGBbZuvuwrJimrxollXTOoK/QHMd90cy4WvIXi3NZWj7SjeOwO6TH0PwlMbEy0skS/fHxs18lHWqxDrdt6JteUQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5wMO4jSfFAdHtwQV/yuESLl0a7DOJq2NkCqhyZwzpLI=;
+ b=YaEY5xw84rSDsPICV3BrVcRoZKaIoRxlrdVLWqRdBPeh5uThGGn4aTSbw9+bAHlbyJVqUJGec08chT4YsoULjqwAGpmt+XmYDjCKc+H65QoL+4aw1I5CbvgT+6+XFitUNqgmbuauiAzjmT7RTWRgD+mYVRuTiheC06EM8KrsSpw1fUeM7xo8oMEF6tAxR/lcf8QfSJ+4odBcvwocMYKNYIKvSUmPDZt+zPq5mQKTJ69QcefH+/ewlnmrgVbbiaO9RJ+HwX3m/d87vd/JECMR48NIW4ubDeLn7N+3O82Dmzqhhf3J7gomH+HtX3nUuShnctMFByZGkP/jVgU57tZ6Vw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MW3PR11MB4538.namprd11.prod.outlook.com (2603:10b6:303:57::12)
+ by SJ0PR11MB7702.namprd11.prod.outlook.com (2603:10b6:a03:4e2::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Wed, 18 Jun
+ 2025 00:04:58 +0000
+Received: from MW3PR11MB4538.namprd11.prod.outlook.com
+ ([fe80::e117:2595:337:e067]) by MW3PR11MB4538.namprd11.prod.outlook.com
+ ([fe80::e117:2595:337:e067%4]) with mapi id 15.20.8835.027; Wed, 18 Jun 2025
+ 00:04:57 +0000
+Message-ID: <16644b14-2101-4e95-a9b8-d1226d52da27@intel.com>
+Date: Tue, 17 Jun 2025 17:04:55 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-next v4 09/15] idpf: refactor idpf to use libie
+ control queues
+Content-Language: en-US
+To: Larysa Zaremba <larysa.zaremba@intel.com>,
+	<intel-wired-lan@lists.osuosl.org>, Tony Nguyen <anthony.l.nguyen@intel.com>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet
+	<corbet@lwn.net>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, Jiri Pirko
+	<jiri@resnulli.us>, Tatyana Nikolova <tatyana.e.nikolova@intel.com>, "Andrew
+ Lunn" <andrew+netdev@lunn.ch>, Alexander Lobakin
+	<aleksander.lobakin@intel.com>, Michael Ellerman <mpe@ellerman.id.au>,
+	"Maciej Fijalkowski" <maciej.fijalkowski@intel.com>, Lee Trager
+	<lee@trager.us>, Madhavan Srinivasan <maddy@linux.ibm.com>, Sridhar Samudrala
+	<sridhar.samudrala@intel.com>, Jacob Keller <jacob.e.keller@intel.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>, Mateusz Polchlopek
+	<mateusz.polchlopek@intel.com>, Ahmed Zaki <ahmed.zaki@intel.com>,
+	<netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, "Karlsson, Magnus"
+	<magnus.karlsson@intel.com>, Madhu Chittim <madhu.chittim@intel.com>, "Josh
+ Hay" <joshua.a.hay@intel.com>, Milena Olech <milena.olech@intel.com>,
+	<pavan.kumar.linga@intel.com>, "Singhai, Anjali" <anjali.singhai@intel.com>,
+	Michal Kubiak <michal.kubiak@intel.com>
+References: <20250516145814.5422-1-larysa.zaremba@intel.com>
+ <20250516145814.5422-10-larysa.zaremba@intel.com>
+From: "Tantilov, Emil S" <emil.s.tantilov@intel.com>
+In-Reply-To: <20250516145814.5422-10-larysa.zaremba@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW2PR16CA0069.namprd16.prod.outlook.com
+ (2603:10b6:907:1::46) To MW3PR11MB4538.namprd11.prod.outlook.com
+ (2603:10b6:303:57::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQK+oFDZ6MKL1K4Z//TlQcphB9UedANTkACKAizhql6yFiSisA==
-Content-Language: en-in
-X-CMS-MailID: 20250617182036epcas5p2f066a3a92613a5b405a941f4d30ca628
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250613055037epcas5p1ce00fda1b535dbeb9a98458d1f0a28ee
-References: <CGME20250613055037epcas5p1ce00fda1b535dbeb9a98458d1f0a28ee@epcas5p1.samsung.com>
-	<20250613055613.866909-1-pritam.sutar@samsung.com>
-	<175011004935.2433563.8726528182523156685.robh@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR11MB4538:EE_|SJ0PR11MB7702:EE_
+X-MS-Office365-Filtering-Correlation-Id: ba217a53-85b8-479d-7249-08ddadfbc2f7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?S283YTJJZXRKOTFBTThtb2FiSSt6YUZ6b2tXT1VlSm1rQ1pQaW1SKzlMVEFE?=
+ =?utf-8?B?ckxyUC9lUU04RU5rYWdlV0luL1A2OWh1cjllTFpONzFUWk5LSlRlZ094Z2U4?=
+ =?utf-8?B?dWxOWkMrQkJuN1c0YzdWWXhOK3p2blFaUFRxbWI3c2l2UjlJc3ltSlhnZjFk?=
+ =?utf-8?B?RDVaMHBYQzAvQmZKTkJUR2RVR2tKRmM4a2pmVWJxRWNWQVVFRThkcGViNVNs?=
+ =?utf-8?B?K3BIZnhTZ3diU2FTdE95Y0paSHorTGVuUTZKbkgreHFqZDZEK0luQ3V6bXpp?=
+ =?utf-8?B?TGJuY0NwVlFYTUtLMEFVVGFnUTcrbGNYSm85Vk5VZW1keEZXNk9mdFZ3ZG0z?=
+ =?utf-8?B?SXFVZXdzM09qdHpXdWRtQ0tsdExxQkNsZGFhcVcrc2Zmb3pGZW5TTTYyTFVQ?=
+ =?utf-8?B?UzJLVlU4bzFxWlpyQnFSODlObFgydUdtbmJSRTEwdHNsdUxENG9UQUJFQmZi?=
+ =?utf-8?B?QkdkV2NYY2JuR0h3ZVQ2eEM0UEd4VXdoRDVLNXl1TXp0MytBdGVsLzJqOHNI?=
+ =?utf-8?B?UDZDQWM0VEpMYUxPNDQ0T1hPVXpseDlNYnltSHZPaEZ3aCs2ZU9QZlMvaFJp?=
+ =?utf-8?B?WVNpYjUyUm1jMDNyNkNRVkNVYkNFaFZBME1lTVpkVitNL0FpWCtUbDRNeDVD?=
+ =?utf-8?B?VGN4QmtKcUI0ZHZvZEdFZXMzRFJKVCtUcnZubHBPczRQN0RtWHVXZUdrRjhw?=
+ =?utf-8?B?UVFTTFNybFd6RkROcHpZTzNBbVdQZ3BDNUhZeFpYSkdPbmY4NkpOS2RLcU53?=
+ =?utf-8?B?NjRLSTZRa0pFQ3ZWTWZFanZtbmpERkYyY3gwazEvTktMWEJsS0ZCcTI5dGdl?=
+ =?utf-8?B?ckwwc0tuaVFNY2hYYjJENGI0SE5KYlI4WUpGaXo4WGh2aHNnNE5uOEZndXZQ?=
+ =?utf-8?B?UWxMNEhBNVZNbHZ4Y1R0a0xsUERob2xZaHg0TXdQb3NqVVZhZk9Zc25Sa3Bi?=
+ =?utf-8?B?OEJyeDhOYzJxUWFIYUt3VU1QbXBuNUtXZTZnMGFvTDROOTMzYUR6dVhiNnRW?=
+ =?utf-8?B?TVV3eHBlYmhCeUpxZzg2U2RDdzlIc2d4anRmMTBaUUhDN1JtQWdscVZqSWNj?=
+ =?utf-8?B?d1Fpdi9VMmt0c3pwUTJoaTBMdnd3clRCUUFDNlUvdms5MFdhb1ZIQm5UMFFH?=
+ =?utf-8?B?VHhZL2FRZjl4QjhFektPL2JRd0sxR1Z5dmowL21FWXlsa1QzMjRWMW5lbmhP?=
+ =?utf-8?B?VVlnY21ObDEwRjJIZmpvdCswQWFuei9FUER4cW9CcDF3a3VSRm1VS3ZZOXpD?=
+ =?utf-8?B?SnQ5ellVY0plK05vZXlnSEw4eENqSnpPaHIzTE5XS1k1c0prMDJacGlpME41?=
+ =?utf-8?B?SlM0aEVYSGpkUGk1OVlRdFhFNnZhb29zVFQ1cHk5WmdzTmdSYzZWUWVzcUxV?=
+ =?utf-8?B?cExIMVkxeElGbHV2LzZYVXduUFViZlZxRmZ4ZlZmV21XeE9Ic1NjSG5URUdr?=
+ =?utf-8?B?TmhicWhVZU55cnpkcXFIdnJXWDdJcVd4OWg1OGRGeWc5SE5BN29zV1d2QVZh?=
+ =?utf-8?B?WHBoSTFzVitWb0xDSzNsL2tzSmFiZElDeHlvYmdMSk5DOW1ZTExLakhyd0ZO?=
+ =?utf-8?B?aFYxOVlvd0NWM1Z3SG5XQzQ4WUM2NUh5VzBvZllwL2dlQW9GVVFhL3ovelha?=
+ =?utf-8?B?ZGk2Tmw5ckxvVE1OaXZLZ3ZNS0NYSHNNK0xKUlpnTHREanVHMURBejdvYmNL?=
+ =?utf-8?B?dG1XRWVEYW85RXpOT1V5MVR1MVRkU3luTTRJTzZuNFBQMXpWQ3lIWHVMZkky?=
+ =?utf-8?B?bjJJcVovbnVXNWM5UUxndldXbzFsL1pORDVaQUx0MDJRN3ZFQTBMOGl6dDRM?=
+ =?utf-8?B?UWkzcS9RcUhnaHdaeUpROVdDSkhjWFpJM2s0MTVhQVdIblAzOEpuSUVjQ2Ix?=
+ =?utf-8?B?eU94bU1kOXJjS3JpQWkrYmVYOTM0eUFoYURzZVdBZkhoR3RLL2RnckxSZnRn?=
+ =?utf-8?Q?yn3HvM2jBhw=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR11MB4538.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WmFvMU9uM3p6Wmt4eTBRdS94Njh5NkIreVhGbmhlRHJJTFVNc0xQS01oNHJQ?=
+ =?utf-8?B?bUxGVE1CZGpBYzIyTzVwQWZjamtIa3NYUzJhQTZmSUk2cC94dnFWT1RWSE9h?=
+ =?utf-8?B?Mjg3SlNVOG1NdFQ4QVBHMTVCcFQ5a0hVbFJzYzdRbkovaDREczRMSndPeE5y?=
+ =?utf-8?B?SjBmcnFRRFR4L1pRbnpPczNSSksvMDgrZUtoYzhiR2xoZ0thRkRMUW9JSEI4?=
+ =?utf-8?B?OWQ5bEJiazVBWk85Q2NpWll5dWJYdlY0bHptUjlpbGlUb290SXJUN1doajNo?=
+ =?utf-8?B?TytjWTBRTzgwbTVWV0JSVjdCTy9oZWxqM3dsZThoVVhGYStUVmFhUExyM21F?=
+ =?utf-8?B?dzRtR24yTzR4YWRpZXpmaDY3QnVuK2twcXRSbUl4Y3pPR0JmUHpZSWphUUh0?=
+ =?utf-8?B?T3BUTEtsOXdzcXc3dHRld1E5MlFuMml0SzB1YlJPRzhSZHhVa2JSb0JzSnZm?=
+ =?utf-8?B?Tm1vUGhzYnY2ZTVQQjVtSG1xdnlkUHBoVFU1U25TajF1NjdXQmlEbG1lN3Vk?=
+ =?utf-8?B?RHZJYzhvczZwMytWTWVMZTVnRmtXenRlamdvK0lyNDhUMXo5anF3NmRLRWlj?=
+ =?utf-8?B?Uk1vK0doNEZEU09pcWJMazJjdVRvYjBCM1RQUTFEUC8raVNJOXRSMEpaclZS?=
+ =?utf-8?B?Q3M4NllRbWZ2T28rTHhqTE0wTjI0SytTL3F3azFoSUl6YVkxSE1EOGRvbnlj?=
+ =?utf-8?B?NGlvenJWTXZOblBWcjVBNFFQNWt3NDlxeVNueXVDMGFiNmZuUDN6NTUvTU1C?=
+ =?utf-8?B?RHBuUVZGWVA5aDlkb3ByZDRnSGVZTkw4UC8ySlV1QzNkYlgvTkt6ampQTmpX?=
+ =?utf-8?B?bDAvMFJyQndMRFZlM2dkYWxQR1dCcnRvN1dqSXR6czdBdlpwd2FvNU9vRnBF?=
+ =?utf-8?B?a1AycVQzUFRhL2cvNXdlSUIwQWVvR1ZKTEt3MVNERkNvdWZUdktBSnorbXN4?=
+ =?utf-8?B?T1BJYXNZY0dCUlZkKzRnc1JWOTBXNjJ0T2pCYkZFZ2UwOEI0d2hCbEJtc3FE?=
+ =?utf-8?B?cDNjQ0ZVRndlakliWTBZSXhtaXBVTSt1ZjE4TGFVMWpkSC8yekZIbXE4bjZz?=
+ =?utf-8?B?MncyRXpLcVJqc1ZCdmRjT2Q0R2RNdkpLd1JOMFF5QlUyNW5VZjFydXpSS2xl?=
+ =?utf-8?B?bUowdzNCWVVwdElsWmJTMXZXNmxzcXhLcGVZNUV2NEZmY0ZxUWdWd3ByejBG?=
+ =?utf-8?B?eHNVdGZHWHc2VnJ2Mm1pNURTeVVCWHFBaXhSSFg0MjZRZW8vVy9nelVxdVVL?=
+ =?utf-8?B?THh2MXdua3p3UVNpUVo4TnJBYTZwczRtVUJMalRZTlVSODFXK0I0ZzJVa1pG?=
+ =?utf-8?B?b1M1Nzc1NGZGS3ZkSFk0dzVTKy9hV0pDWmxqRUg1NEFWM0xQNWpQd0NacE9v?=
+ =?utf-8?B?S3pESjFGVWhSaHgvZHE3S2xidEF1STBHZWVWMTZKTlFqdWRtRzMwUHZ2dWxa?=
+ =?utf-8?B?YjZFclRVdzloOHlua24rZTBGbVA0TVVUYnhJT1ZXY041N1lFYit5MnRITHNs?=
+ =?utf-8?B?WjRPNUp1RVFYaENYZ1BkSWFSWGJzbzNrLys0TS8xVkNLeFlSUjhVdGIvbWpR?=
+ =?utf-8?B?S2s4Wm1FZ2dyVzMzMDA5RFJNdWFCME5QV2dzK2dsazZoQkhrMTI2bEFCU0Zo?=
+ =?utf-8?B?UUNEbDFxR0RqcitXU2xCaXh5RHRMeWV3YmZSQUV6THVnbjlMeU5obS9GY01s?=
+ =?utf-8?B?cXhGRnlBMS9PU3VUOUpXVUNZdGtYSTgwb2dGdk9HT2l3L3VLMHpUOWFpcmRZ?=
+ =?utf-8?B?N3FsVmxnWHNEWDlFOFAyTDlmajNvbzVJck5aV085bjkxRjNZcmhOV3BxTkR5?=
+ =?utf-8?B?OGk0N2pQRHJORm9JcnFMbmpERmZkeHY5NVQrekdtVzd6amg3SFR2YWU3ZHlM?=
+ =?utf-8?B?aVNoNUdaLzNKSFNOWEZsekVGdkpBVGJ5bFZuMjNtNDNmdVY3SnJzbGt2bG40?=
+ =?utf-8?B?b2tiaFJjQmpOQXl3VkRzUlU0QTllb3FvSVphV0Y2SkUxa201VXFDL0ZhVXdJ?=
+ =?utf-8?B?V0NXeW9scDZxTlhDWFZVVHpWRC9TaTg5MEM2ZGVpdGNkbVVjZmlPbDJNZGhC?=
+ =?utf-8?B?SkUvRFlNbmg4VWNqNFQrODl4N08wM0k4UFpCd0hBUmQzRnk4WDBkUkU1UlFD?=
+ =?utf-8?B?OW1UQUNnYUw5cGR3Z216WmVGMWtrUTd4QlluMDN0ZHNnQXRsMDEzRGhxUmZv?=
+ =?utf-8?B?UkE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba217a53-85b8-479d-7249-08ddadfbc2f7
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR11MB4538.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 00:04:57.7737
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6fvSiswd+H4kG3/FhjSaxFhNP3zgAZxJFp3ScmVC6z8Et/150npLij3qR00UNsv6AKgL9Y+gAWz4fNzFhoANPb7yuGdeuDX0yQ/VM8xoCkg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB7702
+X-OriginatorOrg: intel.com
 
-Hi Rob,=20
 
-> -----Original Message-----
-> From: Rob Herring (Arm) <robh=40kernel.org>
-> Sent: 17 June 2025 03:17 AM
-> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> Cc: rosa.pila=40samsung.com; s.nawrocki=40samsung.com; linux-samsung-
-> soc=40vger.kernel.org; conor+dt=40kernel.org; linux-kernel=40vger.kernel.=
-org;
-> andre.draszik=40linaro.org; linux-phy=40lists.infradead.org; vkoul=40kern=
-el.org;
-> krzk+dt=40kernel.org; faraz.ata=40samsung.com; selvarasu.g=40samsung.com;
-> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
-> dev.tailor=40samsung.com; devicetree=40vger.kernel.org; kishon=40kernel.o=
-rg;
-> peter.griffin=40linaro.org; muhammed.ali=40samsung.com; linux-arm-
-> kernel=40lists.infradead.org; alim.akhtar=40samsung.com;
-> m.szyprowski=40samsung.com
-> Subject: Re: =5BPATCH v3 0/9=5D initial usbdrd phy support for Exynosauto=
-v920
-> soc
->=20
->=20
-> On Fri, 13 Jun 2025 11:26:04 +0530, Pritam Manohar Sutar wrote:
-> > This SoC has a single USB 3.1 DRD combo phy and three USB2.0 only DRD
-> > phy controllers
-> >
-> >   - Combo phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
-> >     compatible to the USB3.0 SS(5Gbps). 'Add-on USB2.0' phy is added
-> >     to support USB2.0 HS(480Mbps), FS(12Mbps) and LS(1.5Mbps) data
-> >     rates. These two phys are combined to form a combo phy as mentioned
-> >     below.
-> >
-> >    USB30DRD_0 port
-> >
-> >      +-----------------------------------------------------+
-> >      =7C                                                     =7C
-> >      =7C           (combo) USB PHY controller                =7C
-> >      =7C     +-----------------------------------------+     =7C
-> >      =7C     =7C               USB HSPHY                 =7C     =7C
-> >      =7C     =7C  (samsung,exynosautov920-usbdrd-hsphy)  =7C     =7C
-> >      =7C     +-----------------------------------------+     =7C
-> >      =7C                                                     =7C
-> >      =7C   +---------------------------------------------+   =7C
-> >      =7C   =7C               USB SSPHY                     =7C   =7C
-> >      =7C   =7C   (samsung,exynosautov920-usb31drd-ssphy)   =7C   =7C
-> >      =7C   +---------------------------------------------+   =7C
-> >      =7C                                                     =7C
-> >      +-----------------------------------------------------+
-> >      =7C                                                     =7C
-> >      =7C                USBDRD30 Link                        =7C
-> >      =7C                  Controller                         =7C
-> >      =7C                                                     =7C
-> >      +-----------------------------------------------------+
-> >
-> >   - USB2.0 phy supports only UTMI+ interface. USB2.0DRD phy
-> >     is very similar to the existing Exynos850 support in this driver.
-> >
-> >     USB20DRD_0/1/2 ports
-> >
-> >
-> >       +---------------------------------------------------+
-> >       =7C                                                   =7C
-> >       =7C                USB PHY controller                 =7C
-> >       =7C    +-----------------------------------------+    =7C
-> >       =7C    =7C              USB HSPHY                  =7C    =7C
-> >       =7C    =7C  (samsung,exynosautov920-usbdrd-phy)    =7C    =7C
-> >       =7C    +-----------------------------------------+    =7C
-> >       =7C                                                   =7C
-> >       +---------------------------------------------------+
-> >       =7C                                                   =7C
-> >       =7C             USBDRD20_* Link                       =7C
-> >       =7C                Controller                         =7C
-> >       =7C                                                   =7C
-> >       +---------------------------------------------------+
-> >
-> > This patchset only supports device mode and same is verified with as
-> > NCM device with below configfs commands
-> >
-> > changelog
-> > ----------
-> > Changes in v2:
-> > - Used standard GENMASK() and FIELD_GET() to get the major version
-> >   from controller version register.
-> >   link for v1:
-> > https://lore.kernel.org/linux-phy/20250514134813.380807-1-pritam.sutar
-> > =40samsung.com/
-> >
-> > Changes in v3:
-> > - Updated dt-bindings for USB2.0 only.
-> > - Added dt-bindings for combo phy.
-> > - Added implementation for combo phy (SS and HS phy).
-> > - Added added DTS nodes for all the phys.
-> >   link for v2:
-> > https://lore.kernel.org/linux-phy/20250516102650.2144487-1-pritam.suta
-> > r=40samsung.com/
-> >
-> > Pritam Manohar Sutar (9):
-> >   dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 HS phy
-> >     compatible
-> >   phy: exyons5-usbdrd: support HS phy for ExynosAutov920
-> >   arm64: dts: exynos: ExynosAutov920: add USB and USB-phy nodes
-> >   dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo HS
-> >     phy
-> >   phy: exyons5-usbdrd: support HS combo phy for ExynosAutov920
-> >   arm64: dts: exynos: ExynosAutov920: add USB and USB HS combo phy
-> nodes
-> >   dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo SS
-> >     phy
-> >   phy: exyons5-usbdrd: support SS combo phy for ExynosAutov920
-> >   arm64: dts: exynos: ExynosAutov920: add USB and USB SS combo phy
-> > nodes
-> >
-> >  .../bindings/phy/samsung,usb3-drd-phy.yaml    =7C   6 +
-> >  .../boot/dts/exynos/exynosautov920-sadk.dts   =7C  53 ++
-> >  .../arm64/boot/dts/exynos/exynosautov920.dtsi =7C 155 +++++
-> >  drivers/phy/samsung/phy-exynos5-usbdrd.c      =7C 529
-> ++++++++++++++++++
-> >  4 files changed, 743 insertions(+)
-> >
-> > --
-> > 2.34.1
-> >
-> >
-> >
->=20
->=20
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->=20
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform maintai=
-ner
-> whether these warnings are acceptable or not. No need to reply unless the
-> platform maintainer has comments.
->=20
-> If you already ran DT checks and didn't see these error(s), then make sur=
-e dt-
-> schema is up to date:
->=20
->   pip3 install dtschema --upgrade
->=20
->=20
-> This patch series was applied (using b4) to base:
->  Base: attempting to guess base-commit...
->  Base: tags/v6.16-rc1-6-g8a22d9e79cf0 (exact match)
->=20
-> If this is not the correct base, please add 'base-commit' tag (or use b4 =
-which
-> does this automatically)
->=20
-> New warnings running 'make CHECK_DTBS=3Dy for
-> arch/arm64/boot/dts/exynos/' for 20250613055613.866909-1-
-> pritam.sutar=40samsung.com:
->=20
-> arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb=4016600000
-> (samsung,exynosautov920-dwusb3): 'vdd33-supply' is a required property
-> 	from schema =24id: https://protect2.fireeye.com/v1/url?k=3Da398ebb0-
-> c213fe83-a39960ff-000babff9bb7-8d9cc7c90d9462da&q=3D1&e=3D59f25a9c-244f-
-> 45e8-a7cb-
-> 211aa2722987&u=3Dhttp%3A%2F%2Fdevicetree.org%2Fschemas%2Fusb%2Fsa
-> msung%2Cexynos-dwc3.yaml%23
-> arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb=4016700000
-> (samsung,exynosautov920-dwusb3): 'vdd33-supply' is a required property
-> 	from schema =24id: https://protect2.fireeye.com/v1/url?k=3Dc803d102-
-> a988c431-c8025a4d-000babff9bb7-2f005fe0951204df&q=3D1&e=3D59f25a9c-244f-
-> 45e8-a7cb-
-> 211aa2722987&u=3Dhttp%3A%2F%2Fdevicetree.org%2Fschemas%2Fusb%2Fsa
-> msung%2Cexynos-dwc3.yaml%23
-> arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb=4016800000
-> (samsung,exynosautov920-dwusb3): 'vdd33-supply' is a required property
-> 	from schema =24id: https://protect2.fireeye.com/v1/url?k=3D1f0616ff-
-> 7e8d03cc-1f079db0-000babff9bb7-3473467f8f5ba11c&q=3D1&e=3D59f25a9c-244f-
-> 45e8-a7cb-
-> 211aa2722987&u=3Dhttp%3A%2F%2Fdevicetree.org%2Fschemas%2Fusb%2Fsa
-> msung%2Cexynos-dwc3.yaml%23
-> arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb=4016900000
-> (samsung,exynosautov920-dwusb3): 'vdd33-supply' is a required property
-> 	from schema =24id: https://protect2.fireeye.com/v1/url?k=3D989abcf3-
-> f911a9c0-989b37bc-000babff9bb7-7f2e26e2d23d90b1&q=3D1&e=3D59f25a9c-
-> 244f-45e8-a7cb-
-> 211aa2722987&u=3Dhttp%3A%2F%2Fdevicetree.org%2Fschemas%2Fusb%2Fsa
-> msung%2Cexynos-dwc3.yaml%23
->=20
->=20
->=20
->=20
-LDO regulators are always on. USB don=E2=80=99t=20control=20them=20for=20Ex=
-ynosAutov920.=20Hence=20vdd33-supply=20is=20omitted=20from=20dts.=20=0D=0A=
-=0D=0AWill=20try=20to=20add=20dummy=20regulator=20to=20add=20required=20fie=
-ld=20and=20patch=20will=20be=20updated=20in=20next=20version=20of=20the=20p=
-atch-set=20(v4)=0D=0A=0D=0AThank=20you,=20=0D=0A=0D=0ARegards,=0D=0APritam=
-=0D=0A=0D=0A
+
+On 5/16/2025 7:58 AM, Larysa Zaremba wrote:
+> From: Pavan Kumar Linga <pavan.kumar.linga@intel.com>
+> 
+> Support to initialize and configure controlqs, and manage their
+> transactions was introduced in libie. As part of it, most of the existing
+> controlq structures are renamed and modified. Use those APIs in idpf and
+> make all the necessary changes.
+> 
+> Previously for the send and receive virtchnl messages, there used to be a
+> memcpy involved in controlq code to copy the buffer info passed by the send
+> function into the controlq specific buffers. There was no restriction to
+> use automatic memory in that case. The new implementation in libie removed
+> copying of the send buffer info and introduced DMA mapping of the send
+> buffer itself. To accommodate it, use dynamic memory for the larger send
+> buffers. For smaller ones (<= 128 bytes) libie still can copy them into the
+> pre-allocated message memory.
+> 
+> In case of receive, idpf receives a page pool buffer allocated by the libie
+> and care should be taken to release it after use in the idpf.
+> 
+> The changes are fairly trivial and localized, with a notable exception
+> being the consolidation of idpf_vc_xn_shutdown and idpf_deinit_dflt_mbx
+> under the latter name. This has some additional consequences that are
+> addressed in the following patches.
+
+There is an issue with this approach that impacts the ability of the 
+driver to force a reset. See below ...
+
+> 
+> This refactoring introduces roughly additional 40KB of module storage used
+> for systems that only run idpf, so idpf + libie_cp + libie_pci takes about
+> 7% more storage than just idpf before refactoring.
+> 
+> We now pre-allocate small TX buffers, so that does increase the memory
+> usage, but reduces the need to allocate. This results in additional 256 *
+> 128B of memory permanently used, increasing the worst-case memory usage by
+> 32KB but our ctlq RX buffers need to be of size 4096B anyway (not changed
+> by the patchset), so this is hardly noticeable.
+> 
+> As for the timings, the fact that we are mostly limited by the HW response
+> time which is far from instant, is not changed by this refactor.
+> 
+> Reviewed-by: Michal Kubiak <michal.kubiak@intel.com>
+> Signed-off-by: Pavan Kumar Linga <pavan.kumar.linga@intel.com>
+> Co-developed-by: Larysa Zaremba <larysa.zaremba@intel.com>
+> Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
+> ---
+>   drivers/net/ethernet/intel/idpf/Kconfig       |    2 +-
+>   drivers/net/ethernet/intel/idpf/Makefile      |    2 -
+>   drivers/net/ethernet/intel/idpf/idpf.h        |   27 +-
+>   .../net/ethernet/intel/idpf/idpf_controlq.c   |  624 -------
+>   .../net/ethernet/intel/idpf/idpf_controlq.h   |  130 --
+>   .../ethernet/intel/idpf/idpf_controlq_api.h   |  177 --
+>   .../ethernet/intel/idpf/idpf_controlq_setup.c |  171 --
+>   drivers/net/ethernet/intel/idpf/idpf_dev.c    |   54 +-
+>   .../net/ethernet/intel/idpf/idpf_ethtool.c    |   37 +-
+>   drivers/net/ethernet/intel/idpf/idpf_lib.c    |   44 +-
+>   drivers/net/ethernet/intel/idpf/idpf_main.c   |    4 -
+>   drivers/net/ethernet/intel/idpf/idpf_mem.h    |   20 -
+>   drivers/net/ethernet/intel/idpf/idpf_txrx.h   |    2 +-
+>   drivers/net/ethernet/intel/idpf/idpf_vf_dev.c |   60 +-
+>   .../net/ethernet/intel/idpf/idpf_virtchnl.c   | 1617 ++++++-----------
+>   .../net/ethernet/intel/idpf/idpf_virtchnl.h   |   90 +-
+>   .../ethernet/intel/idpf/idpf_virtchnl_ptp.c   |  204 +--
+>   17 files changed, 765 insertions(+), 2500 deletions(-)
+>   delete mode 100644 drivers/net/ethernet/intel/idpf/idpf_controlq.c
+>   delete mode 100644 drivers/net/ethernet/intel/idpf/idpf_controlq.h
+>   delete mode 100644 drivers/net/ethernet/intel/idpf/idpf_controlq_api.h
+>   delete mode 100644 drivers/net/ethernet/intel/idpf/idpf_controlq_setup.c
+>   delete mode 100644 drivers/net/ethernet/intel/idpf/idpf_mem.h
+> 
+
+<snip>
+
+> diff --git a/drivers/net/ethernet/intel/idpf/idpf_lib.c b/drivers/net/ethernet/intel/idpf/idpf_lib.c
+> index 68330b884967..500bff1091d9 100644
+> --- a/drivers/net/ethernet/intel/idpf/idpf_lib.c
+> +++ b/drivers/net/ethernet/intel/idpf/idpf_lib.c
+> @@ -1190,6 +1190,7 @@ void idpf_statistics_task(struct work_struct *work)
+>    */
+>   void idpf_mbx_task(struct work_struct *work)
+>   {
+> +	struct libie_ctlq_xn_recv_params xn_params = {};
+>   	struct idpf_adapter *adapter;
+>   
+>   	adapter = container_of(work, struct idpf_adapter, mbx_task.work);
+> @@ -1200,7 +1201,11 @@ void idpf_mbx_task(struct work_struct *work)
+>   		queue_delayed_work(adapter->mbx_wq, &adapter->mbx_task,
+>   				   msecs_to_jiffies(300));
+>   
+> -	idpf_recv_mb_msg(adapter, adapter->hw.arq);
+> +	xn_params.xnm = adapter->xn_init_params.xnm;
+> +	xn_params.ctlq = adapter->arq;
+> +	xn_params.ctlq_msg_handler = idpf_recv_event_msg;
+> +
+> +	libie_ctlq_xn_recv(&xn_params);
+>   }
+>   
+>   /**
+> @@ -1757,7 +1762,6 @@ static int idpf_init_hard_reset(struct idpf_adapter *adapter)
+>   		idpf_vc_core_deinit(adapter);
+>   		if (!is_reset)
+
+Since one of the checks in idpf_is_reset_detected() is !adapter->arq, 
+this will never be possible through the event task. I think we may be 
+able to remove this check altogether, but as-is this patch introduces 
+large delays in the Tx hang recovery and depending on the cause may not 
+recover at all.
+
+>   			reg_ops->trigger_reset(adapter, IDPF_HR_FUNC_RESET);
+> -		idpf_deinit_dflt_mbx(adapter);
+>   	} else {
+>   		dev_err(dev, "Unhandled hard reset cause\n");
+>   		err = -EBADRQC;
+> @@ -1825,7 +1829,7 @@ void idpf_vc_event_task(struct work_struct *work)
+>   	return;
+>   
+>   func_reset:
+> -	idpf_vc_xn_shutdown(adapter->vcxn_mngr);
+> +	idpf_deinit_dflt_mbx(adapter);
+
+This is not a straightforward swap, whereas previously we just discard 
+messages knowing that we cannot communicate with the CP in a reset, this 
+goes much further as it dismantles the MBX resources, and as a result 
+the check `if (!is_reset)` in idpf_init_hard_reset() will never be true.
+
+<snip>
+
+Thanks,
+Emil
+
 
