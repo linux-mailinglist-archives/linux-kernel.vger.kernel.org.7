@@ -1,133 +1,128 @@
-Return-Path: <linux-kernel+bounces-692394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86707ADF102
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:19:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F708ADF10A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7FE43BA70C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:18:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D96FF7A7CC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72ED92EF29F;
-	Wed, 18 Jun 2025 15:18:52 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC932EA724;
-	Wed, 18 Jun 2025 15:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3B62EF2A1;
+	Wed, 18 Jun 2025 15:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="qJOXrnFW"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B0B2EE99E;
+	Wed, 18 Jun 2025 15:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750259932; cv=none; b=WifL6HUBw4rpMBGUJUfF7DS6QynG9jTkC8FcdElbdEsKLc/InBcj0MRrKmeijmQ9ddTkGfHfOBZLsL0d8/2fSNUqiUTVbEXlLbYeNUy9uj8DpYhb6C4lQize93hWtW7CXWxrzG++UyI2bAnr7BNAAtO5O9fYKJu8wdgu1WhFXMo=
+	t=1750260032; cv=none; b=iXg9vGBqM1u5d4U7JY3kfikOFrGfVLBdcZBWCWg7TJJiHI0fqM7EILOOZQ+81ST/VOdppnxTOXoLKR6CEP1Q3/+q5X55z6xD6QKE3KBOgRNDkBJRxvv5HfIt+eedIWZ1zcqD6UI3T4dBU/L67PNEOZnrzBL0duPJmLhjuu0PITE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750259932; c=relaxed/simple;
-	bh=Gh0v9Sq6hmQCc+/tG7k5ip84sNa2fop55rBiVVgpsjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MT3Ja6yRfjzQgORfLo+V9NMOjV0rd115GM7/vw7Zp5rz1Q6E43bbLS4BYAX3jwIyI3/utC7VQNcGNEHeVXJlZtEKOXSiSyi1aKceaXBxGVPp+BuRYHr2cI0ytKY4hRG+WW75YFsxlCUgzkQqPyGffdec2BvHI4LGwvjezC1bI28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf11.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 43FEC80274;
-	Wed, 18 Jun 2025 15:18:37 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf11.hostedemail.com (Postfix) with ESMTPA id 4F9602002D;
-	Wed, 18 Jun 2025 15:18:33 +0000 (UTC)
-Date: Wed, 18 Jun 2025 11:18:40 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
- Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Subject: Re: [PATCH v10 03/14] unwind_user: Add compat mode frame pointer
- support
-Message-ID: <20250618111840.24a940f6@gandalf.local.home>
-In-Reply-To: <20250618134758.GK1613376@noisy.programming.kicks-ass.net>
-References: <20250611005421.144238328@goodmis.org>
-	<20250611010428.261095906@goodmis.org>
-	<20250618134758.GK1613376@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1750260032; c=relaxed/simple;
+	bh=dBMetiDqRwuA7EYSG1BxFLtDf2bO5RsAThvIYbtXxoU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kQPSK16OkKgY2aj72H/EiZ77kUXn1cM+LBl3XLuhlY5fQEbOdDOu5OT22AvhSlX6vHSlh19E+3VifgSCgzKAqvaxOvCtZmca8TKJirXcHz4yZy/YXhJK6AiHIid8bdtFewhFnGeviCiVdyZV+zb2CQhsqX4Er2e3jXQeKeT7Kyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=qJOXrnFW; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=eZXPwb9W2kal/+I9MYTP/YSPhsVDBv6emckwljPlJ/g=;
+	b=qJOXrnFW88lIR1+4/5aE//cQL5bJBvIeY0OkeSwSsC/soyYMWhZdNXghqZnTPv
+	ipJFgM13II3OATtyQxGgHvT+rdM/EdmJCIvrYuRw/uzXsAQYSGOwiDvewqgAvga6
+	hlFwHrYIC7TfAvEwx9QGfNmGoGvRZuyg13dvKQnnZcsZM=
+Received: from [IPV6:240e:b8f:919b:3100:8440:da7c:be7e:927f] (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDnT_IR2VJooCEIAQ--.14627S2;
+	Wed, 18 Jun 2025 23:19:46 +0800 (CST)
+Message-ID: <927e3030-756c-4b1b-a797-5f556ba2b101@163.com>
+Date: Wed, 18 Jun 2025 23:19:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: 4F9602002D
-X-Stat-Signature: iafc33sogu1x5ojhjxzjmzhkj3hpyfpf
-X-Rspamd-Server: rspamout05
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/VEB1AvzoDBoRkcbB9Zv/Ta/DbqKl+qYw=
-X-HE-Tag: 1750259913-886977
-X-HE-Meta: U2FsdGVkX19EpqP1YJ80kg0CNMkxNA/Kh9qLyQ7T+tbirmYKyY0vcIrQ4tgy/RKET6sH6Vxc/H8/xdX/JnWYFdZ3P2HwQBnG5I3959ejJ7pM45pAo1qaIBek1rhoGosa+i3eKhLXlvIB//R1OUnMwqM32JvzzSDXO9PC6nCU51WERdLNiitNzjR+zZ042s0iKvueltSqNCmQBHFmHBpvBuFLx87wvyOi1HAUVfNMe+8D4w2/kvbwkwdJLLjC3qASe/D01mM/NsIpFOmrjd0RIVeoRtB7m2a/u27yoG0B/L5TUszvo1+Enx2FQeKWGXBJx83Ss2Xe6Ex2hMC1I1qxVGMACpZRrdhHhpMfPuPRdtbtZi4JhbYlxG98wr5lRaZrCJk06NIqi67xdM1BgDppD6cuC+sjKejiwMamyY//NgU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/13] PCI: dwc: Refactor register access with
+ dw_pcie_clear_and_set_dword helper
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, lpieralisi@kernel.org,
+ bhelgaas@google.com, mani@kernel.org, kwilczynski@kernel.org,
+ robh@kernel.org, jingoohan1@gmail.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250611204011.GA868320@bhelgaas>
+ <c31c3834-247d-4a28-bd2c-4a39ea719625@163.com> <aFLTwWG5lOTunEq3@ryzen>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <aFLTwWG5lOTunEq3@ryzen>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wDnT_IR2VJooCEIAQ--.14627S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WFy7Ar1rKw4xXrWrJw1DJrb_yoW8Zry5pa
+	yYqa1Yka1DJFWUKF4Iyw15ZFyjq3s3t3sIqrn8J34Utrn8ZrWYgr9ayF4jkr97GrnI9w4a
+	v3yYqas5Ca4YyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UrnYwUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWwlwo2hS1QJYCQAFs4
 
-On Wed, 18 Jun 2025 15:47:58 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
 
-> On Tue, Jun 10, 2025 at 08:54:24PM -0400, Steven Rostedt wrote:
->=20
-> > +#ifndef arch_unwind_user_init
-> > +static inline void arch_unwind_user_init(struct unwind_user_state *sta=
-te, struct pt_regs *reg) {}
-> > +#endif
-> > +
-> > +#ifndef arch_unwind_user_next
-> > +static inline void arch_unwind_user_next(struct unwind_user_state *sta=
-te) {}
-> > +#endif =20
->=20
-> The purpose of these arch hooks is so far mysterious. No comments, no
-> changelog, no nothing.
 
-I'll add comments.
+On 2025/6/18 22:57, Niklas Cassel wrote:
+> Hello Hans,
+> 
+> On Thu, Jun 12, 2025 at 09:07:40AM +0800, Hans Zhang wrote:
+>>
+>>
+>> On 2025/6/12 04:40, Bjorn Helgaas wrote:
+>>> On Thu, Jun 12, 2025 at 12:30:47AM +0800, Hans Zhang wrote:
+>>>> Register bit manipulation in DesignWare PCIe controllers currently
+>>>> uses repetitive read-modify-write sequences across multiple drivers.
+>>>> This pattern leads to code duplication and increases maintenance
+>>>> complexity as each driver implements similar logic with minor variations.
+>>>
+>>> When you repost this, can you fix whatever is keeping this series from
+>>> being threaded?  All the patches should be responses to the 00/13
+>>> cover letter.  Don't repost until at least a couple of days have
+>>> elapsed and you make non-trivial changes.
+>>>
+>>
+>> Dear Bjorn,
+>>
+>> Every time I send an email to the PCI main list, I will send it to myself
+>> first, but I have encountered the following problems:
+>> Whether I send my personal 163 email, Outlook email, or my company's cixtech
+>> email, only 10 patches can be sent. So in the end, I sent each patch
+>> separately.
+>>
+>> This is the first time I have sent an email with a series of more than 10
+>> patches. My configuration is as follows:
+>> smtpserver = smtp.163.com
+>> smtpserverport = 25
+>> smtpenablestarttlsauto = true
+>> smtpuser = 18255117159@163.com
+>> smtppass = xxx
+>>
+>> I suspect it's a problem with China's 163 email. Next, I will try to send it
+>> using the company's environment. Or when I send this series of patches next
+>> time, I will paste the web link address of each patch in by replying
+>> 0000-cover-letter.patch.
+> 
+> Perhaps the git-send-email options --batch-size and --relogin-delay can be
+> of help to you:
+> https://git-scm.com/docs/git-send-email#Documentation/git-send-email.txt---batch-sizenum
+> 
+> 
 
-It's used later in the x86 compat code to allow the architecture to do any
-special initialization or to handling moving to the next frame.
+Dear Niklas,
 
-=46rom patch 14:
+Wow! Thank you very much for your help. My local test is normal.
 
-+#define in_compat_mode(regs) !user_64bit_mode(regs)
-+
-+static inline void arch_unwind_user_init(struct unwind_user_state *state,
-+					 struct pt_regs *regs)
-+{
-+	unsigned long cs_base, ss_base;
-+
-+	if (state->type !=3D UNWIND_USER_TYPE_COMPAT_FP)
-+		return;
-+
-+	scoped_guard(irqsave) {
-+		cs_base =3D segment_base_address(regs->cs);
-+		ss_base =3D segment_base_address(regs->ss);
-+	}
-+
-+	state->arch.cs_base =3D cs_base;
-+	state->arch.ss_base =3D ss_base;
-+
-+	state->ip +=3D cs_base;
-+	state->sp +=3D ss_base;
-+	state->fp +=3D ss_base;
-+}
-+#define arch_unwind_user_init arch_unwind_user_init
-+
-+static inline void arch_unwind_user_next(struct unwind_user_state *state)
-+{
-+	if (state->type !=3D UNWIND_USER_TYPE_COMPAT_FP)
-+		return;
-+
-+	state->ip +=3D state->arch.cs_base;
-+	state->fp +=3D state->arch.ss_base;
-+}
-+#define arch_unwind_user_next arch_unwind_user_next
+Best regards,
+Hans
 
--- Steve
+> Kind regards,
+> Niklas
+
 
