@@ -1,174 +1,140 @@
-Return-Path: <linux-kernel+bounces-691671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE03CADE760
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:45:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD09ADE770
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455521650A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:45:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 937CE189B4FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E101281365;
-	Wed, 18 Jun 2025 09:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5217628466C;
+	Wed, 18 Jun 2025 09:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XpDDpXPn"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPgDL5YQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE77ABA27;
-	Wed, 18 Jun 2025 09:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A058D27F01C;
+	Wed, 18 Jun 2025 09:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750239893; cv=none; b=U9BCC5lpf8VE8AoAFo9XLqB12fB1qvgEkMztMV1AA0CEbFKGDgflbUvZX1pfeDzVj5mKwFirJQoRupeJXPCIs50Ha5IIY21ABiaVwN5vqMejoCHxQqxU7LEjGSj7APWmYimTqJbjTKRMGBR85Q2CBXKCTPojCjQ7ZaECKAlMoWw=
+	t=1750239996; cv=none; b=rJPqpOs0Jd6nplspGiXMx4KUzZzU8yi0GqA8mqH/1Pc8syFt+jWtg6oAx0s7Ke582QXHHSeAFKBHT2lL18pOLA54gPXzzxF95toIGsj0yUxIz+LkBYC+8tHmdoUwOr+jYrwT8APPZFheZlHaU/qbrKXEsgQj/FEopkM1IgYucTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750239893; c=relaxed/simple;
-	bh=sFpOWYXshkQpPlzSxedcoc/wnEsD43hfCXIO/sJKvrQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e7GTIB4thLkn9lyLbB1buKtSAf6eRl/KBKRaFQfpzOm4WHdic9JEccvzA7gp08zBSo7iy614ctRJlky+clcaXG+YFwgLayVDYBeMb6YIT0C9HetBoijp9xr4Qx5WTW3gZ4Nln6MIalmvinflO9TD5odcJ6jGPJm9wa4YERmWrpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XpDDpXPn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55I8CvgP031861;
-	Wed, 18 Jun 2025 09:44:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=dGHxe/4dO5PqPpeX1XcV1iTak41bwpepmqG
-	4zojzuHo=; b=XpDDpXPnhbzlBJ69q1kzeybNKo4if+pf2WDJHl42YjpAu82oSYW
-	Qn1fXo8zzqbhGzg5VXpVBsQVCRs26+OnPLtGM+aNiMFBM6Zjk6EiMKYZrlqO8m8S
-	3BeX8e2mgjrXlxadYlRHGk1RskeahuT0avbKVjbPJdK++hlhT+XcTnfzq4HZnS5I
-	MNpokneOGTi0sW7RmmZ/CsJOwy3/NIaRsnpSR/gWYMj3SC6t2d9qr5ykna5TO7cI
-	5NM2Wh/rHREBgGjpHIM7k8S2rM0I7JTr90/CogHh3wSOPCYiC7o+zNpQYoMNGX0Y
-	dcLgIkNtJ2w1+YVpzaL2AdAwxj3BNm9rRbg==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791enkhn1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Jun 2025 09:44:47 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 55I9ihUd001024;
-	Wed, 18 Jun 2025 09:44:43 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 479jy55q4r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Jun 2025 09:44:43 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55I9ihIU001016;
-	Wed, 18 Jun 2025 09:44:43 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-schowdhu-hyd.qualcomm.com [10.213.97.56])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 55I9ihuS001013
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Jun 2025 09:44:43 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2365959)
-	id 99D655A8; Wed, 18 Jun 2025 15:14:42 +0530 (+0530)
-From: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Subject: [PATCH v6] remoteproc: Add device awake calls in rproc boot and shutdown path
-Date: Wed, 18 Jun 2025 15:14:41 +0530
-Message-Id: <20250618094441.1994965-1-quic_schowdhu@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750239996; c=relaxed/simple;
+	bh=icA8i4l8ZKZjcy0dBRrGW3a8Bg7+G+XFL+rrIP25wXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J0BBgafVOsnfTWDTnCfJuFDN1OkXqJnVJJjC+xXqse4bHnXIcjmxysrwKV3hDl2pPlXcuiczvH2ZeCRtkGScc8s79C/jAORHmaL31LhZRVUqvjAYrkE5AexLZ8T7m1qfJR1WVPC8gqIZzO1ZQdf8kE4hCl2a/OjxDdx0lgaKFmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPgDL5YQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB62C4CEE7;
+	Wed, 18 Jun 2025 09:46:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750239996;
+	bh=icA8i4l8ZKZjcy0dBRrGW3a8Bg7+G+XFL+rrIP25wXg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vPgDL5YQlKJc2F0HIFaOcOHCRbiujXcmboYZ26D4x2Perm89UtXVjJrA6tR6oKAm2
+	 PIij+iqsUw3rRPcTKXjDfEBTz3i86UHY4wGREMatcEnUMU6X4YNdIy7SHhojbyZ1D/
+	 73mJ1x84RaMSYipHSQVARX2+wuoIfZLJX9r4DVaCGtCku0w9PO13+Am2CjsI7Y7Q4Z
+	 K+jusiOuEsJjeZB/wlaYHMGfpXV/3ktV9QHaB/VgIdyprRFO/MV4aty0aODJxrrtJE
+	 EbGE6XR52Vq3xNB7X+xQUYaYUpcvUS2q6yVHQ9QB5pWKj8aPqbaX8bb+WdLsfEhmwk
+	 zfjPHrMR649UQ==
+Message-ID: <7bb375c8-1a43-40e2-891c-8815c9cc94ff@kernel.org>
+Date: Wed, 18 Jun 2025 11:46:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: N38TyoJN50llmAZPtTHIt4KhnsxuMaKi
-X-Authority-Analysis: v=2.4 cv=D6RHKuRj c=1 sm=1 tr=0 ts=68528a8f cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=XxzzxGOHeBMF7Ba7Dy4A:9
- a=Lht6sO32AvJXS5sg:21 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: N38TyoJN50llmAZPtTHIt4KhnsxuMaKi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE4MDA4NCBTYWx0ZWRfX4zkBQR5OJMYT
- J5U5/ifb0TL+84cXOihf975b3MuJ1ItPPWuwnV6FDdu79ROmslKXKcvek3eac4Eu9unoSTR+TFZ
- ybQ/GzWY1yR0MWxnbokxudkvXBqoyTZU3J2MFx77Das7litmmriLLWcP//lZdErLBqSreQNRvOV
- CTOaMCBxj4qkBQClsitWFiC6ccS8Dw4j+mGnQ0TEjRZnJxD7bBkOOnvN6w0s/r2MhVYz4xi08+O
- CDEeAaeMqEpEpP8B6Z/+xyea3px1/ab7iFdBew9c9iFZpBeDs0I4CBFa0SSvjbKeN3iI4E6kmXz
- eX17mAN1QGsqdS5vdiDDu06zcJ1MrFfwvaXd5YzBO71RSA9OcD7AyYhpkSFNou0lSCkG7XSXkZL
- Izw4fNNr2BftIm4dhiuCe9VWJn9idLUDMwo9ECXp5YTu2cAOGrJ7AffSlje6wFVprzgPS9WQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-18_03,2025-06-18_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 impostorscore=0 phishscore=0 adultscore=0
- suspectscore=0 mlxlogscore=999 clxscore=1011 mlxscore=0 lowpriorityscore=0
- spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506180084
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: samsung: exynos-sysreg: add exynos7870
+ sysregs
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250612-exynos7870-drm-dts-v1-0-88c0779af6cb@disroot.org>
+ <20250612-exynos7870-drm-dts-v1-1-88c0779af6cb@disroot.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250612-exynos7870-drm-dts-v1-1-88c0779af6cb@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Device awake calls are only present in the recovery path of remoteproc.
-If an user stops and starts rproc by using the sysfs interface, then on
-pm suspension the firmware fails to load as the request_firmware call
-under adsp_load relies on usermodehelper process which gets freezed on
-pm suspension. Add device awake calls in the rproc boot and shutdown path
-to fix this.
+On 12/06/2025 17:23, Kaustabh Chakraborty wrote:
+> Add sysreg compatible strings for the Exynos7870 SoC. Two sysregs are
+> added, used for the SoC MIPI PHY's CSIS and DSIM blocks.
+> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+>  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml      | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> index d27ed6c9d61ea9db77229eca60b6b9a0abc5d305..174bdb8ee932ff965de6fc17aef004a3cedffeb3 100644
+> --- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> @@ -52,6 +52,12 @@ properties:
+>                - samsung,exynosautov9-sysreg
+>            - const: syscon
+>          deprecated: true
+> +      - items:
+> +          - enum:
+> +              - samsung,exynos7870-cam-sysreg
+> +              - samsung,exynos7870-disp-sysreg
+> +          - const: samsung,exynos7870-sysreg
 
-Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
-Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
----
-Changes in v6
 
-*Add some correction to commit message
+Drop. These are not really compatible or your commit msg is incomplete.
+Don't use deprecated syntax and backwards compatible solutions for new
+hardware.
 
-Changes in v5
-
-*Added more details to commit description
-
-Changes in v4
-
-*Remove stability from mailing list
-*Remove the extra tab in v3
-*Change the commit description
-
- drivers/remoteproc/remoteproc_core.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index c2cf0d277729..5d6c4e694b4c 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1917,6 +1917,7 @@ int rproc_boot(struct rproc *rproc)
- 		return -EINVAL;
- 	}
- 
-+	pm_stay_awake(rproc->dev.parent);
- 	dev = &rproc->dev;
- 
- 	ret = mutex_lock_interruptible(&rproc->lock);
-@@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
- 		atomic_dec(&rproc->power);
- unlock_mutex:
- 	mutex_unlock(&rproc->lock);
-+	pm_relax(rproc->dev.parent);
- 	return ret;
- }
- EXPORT_SYMBOL(rproc_boot);
-@@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
- 	struct device *dev = &rproc->dev;
- 	int ret = 0;
- 
-+	pm_stay_awake(rproc->dev.parent);
- 	ret = mutex_lock_interruptible(&rproc->lock);
- 	if (ret) {
- 		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-@@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
- 	rproc->table_ptr = NULL;
- out:
- 	mutex_unlock(&rproc->lock);
-+	pm_relax(rproc->dev.parent);
- 	return ret;
- }
- EXPORT_SYMBOL(rproc_shutdown);
--- 
-2.34.1
-
+Best regards,
+Krzysztof
 
