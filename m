@@ -1,127 +1,141 @@
-Return-Path: <linux-kernel+bounces-691800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA17ADE8DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:28:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85DB7ADE8E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E08C1886165
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:28:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B9C67A2286
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCF02E9EA4;
-	Wed, 18 Jun 2025 10:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D592874ED;
+	Wed, 18 Jun 2025 10:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="j04e/btX"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fLXrOwT1"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35032E7622
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B0827E7C0;
+	Wed, 18 Jun 2025 10:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750242161; cv=none; b=D3yngqrHVzX2BK/h/61JecTGVgeakaI1ygX2PLvwHtt2xmkCi3/aSirFi0hu7rExYPm1AxMEENva9qI4kW1Kp38pA5dqqhGu/V7U/IzP+RHwnpGLeFhxq5LSGFdvTejDs5bQ3i2Lrm5k7vxbDSCjGgDAR9qZpGnGbKlEmCCb8Bc=
+	t=1750242262; cv=none; b=njANGiKaLSkj0B63C/gN6hcOOoTQm9lh55K+4vg8jzKVEATeXWLD4IzcBWaXOK23ARAqOFoMT1X3H4rqXv3MQgaV/thoG5h04jmGrj1voeUzNMPMR0tozSaKD8lyA2b7XxJxMrlk1wIYzuTIKo2jcXD90YZOZv7WVHiPak4roX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750242161; c=relaxed/simple;
-	bh=Z1eQ/GUQiN4jxjZCX7Yswa1y9CgWC5cTrf8WNnn9IMo=;
-	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=H939mOso9YM/Ui2O2zKWirEDTcHiMZmUtHl9QaGRFKIeOs854myWoGz1FbTTMLW1eUrz/PGdSFZjkJ+hv6G9WnXybaeFNVewkEetmBdAwm/tY3zwqj+L9GzfaF6zbCeMdx4/NoCDSrHkldtsX0GO1p5jfU/D7RLSz1RuX1Oc5rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=j04e/btX; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250618102234euoutp01b3e60f89d0ed1d17fe95b578f37ed3fe~KG-d86h0R1794717947euoutp01a
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:22:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250618102234euoutp01b3e60f89d0ed1d17fe95b578f37ed3fe~KG-d86h0R1794717947euoutp01a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1750242154;
-	bh=JYJBKhF2v7bBNigZ2HXUlSgsH/gCPb2a5CyAJ0JNsB8=;
-	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=j04e/btXNi8Ji11HKhAS3wDGDW2yMiQE3HS7ZLUxpDVg5hVvQN9wkd4/wWEorSbxl
-	 rA/GiV25041t5K01iNJtY4ydFGIgybKrCkXxMCYn1Y7/3bL6DjfqHHQAJu2JHuZQ8h
-	 IODlOfwZlZ14IPkkB++wkUUAEzNhhKefh9KJL6xw=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250618102234eucas1p2a1899b494c5ed75e0f39ea517d81c81d~KG-dMKK5z1803418034eucas1p25;
-	Wed, 18 Jun 2025 10:22:34 +0000 (GMT)
-Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
-	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250618102233eusmtip19348d4038a9799137d47f88522c45772~KG-cMZhq41210412104eusmtip1r;
-	Wed, 18 Jun 2025 10:22:33 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Wed, 18 Jun 2025 12:22:14 +0200
-Subject: [PATCH v5 8/8] drm/imagination: Enable PowerVR driver for RISC-V
+	s=arc-20240116; t=1750242262; c=relaxed/simple;
+	bh=X3GP0rFGQWYb7D9EofmWO4CkjJb3nRBnJ4sS25K5GGQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UFXAy223eERRqJC/Jzy1GK7i/B/sOXg1WEh+SavnJs3aEfZ9FlNd1st+xUPCrgE7ZZ+ICPhXrJ3+VNYUouz8WssXbAo6+dFNUAX446FWICbw3LW9JDrvtBU7ZHpELuvHpXBOqlp+kdU4gOO7RhbqQYAB6v38zmHeS09znpyBkkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fLXrOwT1; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a51481a598so3907860f8f.3;
+        Wed, 18 Jun 2025 03:24:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750242259; x=1750847059; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X/r6nOkep5bcePWw/OmX8epaR10E2HZMsLJvTHOobc0=;
+        b=fLXrOwT1J5Y8bdFyDn/70qn+YD5ESDAh50Ptgk8VAKKuaPGParp0fHlgNvJGj99tsp
+         adOuC0cVcgBgwb8JeitA1HmvYQGB2QqTMJgkdFRaO/+fvQC/gGZuK4kGfnUl6H2Twakf
+         wxVc4ENtBJSAWQKxb7DpRWfJISXxCbdGg3i+68qs4sF+1HmwoPx2tuoPB1ahgermF58P
+         SgeL3mY1R9BIl7MV1KRwFf4iC0h5DJSwi+rQ+I6lPfZDzKGo9kVInQ8I0UORSGFjtvkD
+         97Di5So1LSpReZ5+417M0mDGWW0umuUv1EsqzRUsMg4iXqwW+03Hb++neEv+G0+z4Tum
+         sGxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750242259; x=1750847059;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=X/r6nOkep5bcePWw/OmX8epaR10E2HZMsLJvTHOobc0=;
+        b=qswKrS4ZM+jR+8YskIDB5WzpY4OZ9Xx9fDqVPoCX7/hO06Y2K7S7J9COyk63pXsU9D
+         i3C79FrH/BydSguNIauZ/FUiTo9KL18/bTfuJoZ5Y5xQZq45Svlv3vy5l1wtb68SANds
+         2f0nqh2vr1LBysl/fJhr97Y6/bh6ypncbBbCy1gfuv3GolcZhnp15mmt+fdSs3ifA1H6
+         4QMIKu2Mt0TjtJSFzOwzKcNo+bP8xbI19PPFx87W8tmmPjfOBJXI+A5i6IVDXypjTC2A
+         VAphdnlIxByHyLiLyRZfnbAJodO3RmO3KDrTuHHzWouZjwljbRLco20xaP2l55EtH703
+         H77w==
+X-Forwarded-Encrypted: i=1; AJvYcCUSLsu9g2mcKtCl3zcUTaiWZ2F4KkO0fCL6HzUneKfeY/YzNTOEfifmJrhzn94cbNSiZvG3S0gUQZPU@vger.kernel.org, AJvYcCUZjuScDyQPe9SNHyBOlGWccMXHq8ETjBFr4lVWbodbcxTfn1aQPnI2Y1+/BS/15GBwCCfyRrEyHuHkGtMVxvY=@vger.kernel.org, AJvYcCW9dvT5Ni2bc454p+VkuVCx3ueWuH9KubxYdGnokKJI9tCo18WpdckG7DU8Y33ZtxekaYuGV3OY7NK5b7mQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdO76FCbTc0H/A9IABUzGX57ZMV5HzpPpc67rdPZuC8jvBXyfv
+	H5t2JSR9wubZ4/YTSJURXYQs4BV5FJWzkgwTCnwlc+dtTxWIQTUm5iVwp0Kd4OWuJ68=
+X-Gm-Gg: ASbGncuLKk1SPM6vwr9/XuWnthz1NIppkU7Mt9HISwwAWsD4dAekSczOquKqqC5H83t
+	LJTp9yCb1tjfi/IpYGNbcNi6XjcByLB81v0vDuuFdRZsOaLvsI6jDYTFURvP2j2AmQpJ/wShgF7
+	VwKsCQnX8+7CHWTkiTQ81vcbJmbrOjF8QD0+ad+Hpi16QmkshbSDgo89he10rttw/8Ubk1/Fsec
+	tTIWHJqtyzVB+TdeF2h0oK5Wk3hVqtmgoPm7SIaXE0mtYnudtPkKM6mAQpsGjT4CCpDEeXhyr8J
+	S3CXLmiLd6+5UzGCW1VCeJzDyv/io9M+R5mIayKcO5iD/4l5aavANmuNHb7KrhRLacYxLCYa2r1
+	jNx0s7PwPnXRDQnFkoiyqh9M0fomoDELwOJEC
+X-Google-Smtp-Source: AGHT+IEWJFosgYtVST8+ChR8BDeP/SmvQxlvk4F/BE7rA8OuYv9evRFDiLtSxCZZLKuCzhAMhcHWNw==
+X-Received: by 2002:a05:6000:144e:b0:3a4:f975:30f7 with SMTP id ffacd0b85a97d-3a572e58f6fmr13346541f8f.56.1750242258788;
+        Wed, 18 Jun 2025 03:24:18 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b08c7csm16769840f8f.50.2025.06.18.03.24.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 03:24:18 -0700 (PDT)
+Sender: Igor Korotin <igorkor.3vium@gmail.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	rafael@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	lenb@kernel.org,
+	wedsonaf@gmail.com,
+	viresh.kumar@linaro.org,
+	alex.hung@amd.com,
+	dingxiangfei2009@gmail.com
+Subject: [PATCH v7 7/9] rust: platform: Set `OF_ID_TABLE` default to `None` in `Driver` trait
+Date: Wed, 18 Jun 2025 11:22:16 +0100
+Message-ID: <20250618102216.3049450-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250618100221.3047133-1-igor.korotin.linux@gmail.com>
+References: <20250618100221.3047133-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250618-apr_14_for_sending-v5-8-27ed33ea5c6f@samsung.com>
-In-Reply-To: <20250618-apr_14_for_sending-v5-0-27ed33ea5c6f@samsung.com>
-To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,  Fu Wei
-	<wefu@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Michal
-	Wilczynski <m.wilczynski@samsung.com>,  Bartosz Golaszewski <brgl@bgdev.pl>,
-	Philipp Zabel <p.zabel@pengutronix.de>,  Frank Binns
-	<frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,  Maarten
-	Lankhorst <maarten.lankhorst@linux.intel.com>,  Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,  Paul Walmsley
-	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson
-	<ulf.hansson@linaro.org>,  Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20250618102234eucas1p2a1899b494c5ed75e0f39ea517d81c81d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250618102234eucas1p2a1899b494c5ed75e0f39ea517d81c81d
-X-EPHeader: CA
-X-CMS-RootMailID: 20250618102234eucas1p2a1899b494c5ed75e0f39ea517d81c81d
-References: <20250618-apr_14_for_sending-v5-0-27ed33ea5c6f@samsung.com>
-	<CGME20250618102234eucas1p2a1899b494c5ed75e0f39ea517d81c81d@eucas1p2.samsung.com>
+Content-Transfer-Encoding: 8bit
 
-Several RISC-V boards feature Imagination GPUs that are compatible with
-the PowerVR driver. An example is the IMG BXM-4-64 GPU on the Lichee Pi
-4A board. This commit adjusts the driver's Kconfig dependencies to allow
-the PowerVR driver to be compiled on the RISC-V architecture.
+Provide a default value of `None` for `Driver::OF_ID_TABLE` to simplify
+driver implementations.
 
-By enabling compilation on RISC-V, we expand support for these GPUs,
-providing graphics acceleration capabilities and enhancing hardware
-compatibility on RISC-V platforms.
+Drivers that do not require OpenFirmware matching no longer need to
+import the `of` module or define the constant explicitly.
 
-Add a dependency on MMU to fix a build warning on RISC-V configurations
-without an MMU and enable COMPILE_TEST to improve build coverage.
+This reduces unnecessary boilerplate and avoids pulling in unused
+dependencies.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
 ---
- drivers/gpu/drm/imagination/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ rust/kernel/platform.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/imagination/Kconfig b/drivers/gpu/drm/imagination/Kconfig
-index 5f9fff43d6baadc42ebf48d91729bfbf27e06caa..48fd31c031628c70b1e0952271baccf7f4694810 100644
---- a/drivers/gpu/drm/imagination/Kconfig
-+++ b/drivers/gpu/drm/imagination/Kconfig
-@@ -3,9 +3,10 @@
+diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+index 5923d29a0511..2436f55b579b 100644
+--- a/rust/kernel/platform.rs
++++ b/rust/kernel/platform.rs
+@@ -162,7 +162,7 @@ pub trait Driver: Send {
+     type IdInfo: 'static;
  
- config DRM_POWERVR
- 	tristate "Imagination Technologies PowerVR (Series 6 and later) & IMG Graphics"
--	depends on ARM64
-+	depends on (ARM64 || RISCV) || COMPILE_TEST
- 	depends on DRM
- 	depends on PM
-+	depends on MMU
- 	select DRM_EXEC
- 	select DRM_GEM_SHMEM_HELPER
- 	select DRM_SCHED
-
+     /// The table of OF device ids supported by the driver.
+-    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>>;
++    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
+ 
+     /// Platform driver probe.
+     ///
 -- 
-2.34.1
+2.43.0
 
 
