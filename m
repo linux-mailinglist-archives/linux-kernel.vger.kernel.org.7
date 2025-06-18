@@ -1,222 +1,340 @@
-Return-Path: <linux-kernel+bounces-692090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8280ADECBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:40:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 941ADADECC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6055E1BC3C90
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:36:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 717B51891D7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C942E9EC1;
-	Wed, 18 Jun 2025 12:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SFMg8b+J"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411BB2C08B5
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605E62EA726;
+	Wed, 18 Jun 2025 12:34:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717512EA165;
+	Wed, 18 Jun 2025 12:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750250038; cv=none; b=b7jN1jlupzRZIaKgYCqYiK2Kn2xrBlLoo1gxZogiiO9AEk9GNqOBxYvWGKvQLsZUsO6Qn97JmedMRHDwGQJplbxjNzqgyeCDCSp77JDODDPdHR4K8+m4h5P1fGcxaSdef1pJhojlXKD57t91R+BuDTFkjY66+kbRs7XCp6lFanU=
+	t=1750250052; cv=none; b=J//21tklbokyHPGx4pxWjkPn19+X6ex4Gvd5oOnYagVoria9p7INj63CIJE4hOrF7y3lyDlMKrFF5Vdxio+REEj1Jq1cpWh9FN70fecpfdpHLvYbtnfbIzLSGdLoOM/9JOT+OS1uY/Pem/W7KUmQOADP6jC5fOap1QmeEvM0Ors=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750250038; c=relaxed/simple;
-	bh=A6NjSmVsSO2npuGJxvk9PvX0G4YIisDe+7dizzTEci0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=f7/yICXxhCEaaig1WaI+I0tSv4InqcJhXvGnZuHDXKtuaapzHsF329snKEFI2dzSB2XgnK03Odq+61lqVjCCKyJAuGBUx3tDxubUOqt2Tepz7PNR/lgDHqQ0AToDnidj04XW7lAvIAikBgN7JMmN4GMSg9C6Z2XprXONf0OsiLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SFMg8b+J; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55I93Aem013835
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:33:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	g0cZJ9wdJVEr+Iy5G1RNIzGoPSb9HC/vXx1omHgkSqk=; b=SFMg8b+JtCUqNQb5
-	AEGC9NXcyWl8/LBX8K3W/UHViMVdau80S6KW0FsXvtNnnU5arwf5lB3xkMSkSpzM
-	cFU0VtV7W/DQRb07I0JEh4kpmrfX6STXmhYCC1TisSdawLk510lWViFrjEVlptfN
-	6+CZ2FU0nO4SjMkqOS9fUr9yKC5OLq/NjuvvT6wa00L1s6jr6q4ncWVGQhvIGubu
-	JbVI3Tbx/b1lbElMlOu1kBUOc4FWQoDrPhO7m0iw3EQ8moUInvX6NXuJLBVYZ3hH
-	lO1d/FrkFRHu3Ifi6OtEWPGROl2EjYK+hZ5QOK/JN0ObGCYRoLFijQqlA5WJZeKZ
-	4CbnXQ==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791hd47au-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:33:56 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c53e316734so156462285a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 05:33:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750250035; x=1750854835;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g0cZJ9wdJVEr+Iy5G1RNIzGoPSb9HC/vXx1omHgkSqk=;
-        b=MBZge7PBRf3h3kYVMjHvN7lcOYBdmijHjBoNB0C5UM/p/r9VFmdZ3GJF8MF2xZ1jL/
-         gu1HVC30DUxG8umdccHjAdHnYDOOAdJszF9W9gPpl0CT35RB/uXUb+iCfzUG9/scbD/Y
-         kQRvUpmxrzmlSUn7BKlTlsPCv0g3OX5nn4gsgIntharv0/9pTzGlKNdrZPGG8YKN3tUv
-         28e7SHODpW0tz5AIbSqYZRzhjrq7IRy2aP6pCxY1x8s72Ldaxcc8/QIQcodFjXms7BsW
-         ti0fB6YaQsc82vQ/Mv2vPJ6SXFSqOM2NJ0P77+sT8M4IRre68EQna0agxoVybdGMStKB
-         k8sA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyQcNhbioACLjswSZ58zM2ToVEEwpLgWp8HRm+0SiZzcQcYnsh/Vw/X0bg6ivjU4NCOlJQ5PUs9J7vARQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrAC4JpiImAO7LAoPNIDHe2LeFjN+XRslV4fWGZ0FpN+uWbsfr
-	7soTJRO1gM51ilKq1sWDwkJabpQgKtnDfyhKQgcFWzuQgBYkVMo99Mnf6gYEjrRXjHHqW1FBlqf
-	OgjY3kDxaWeyk+XuILKG3x+0FGsYdRUCBv//qX/q4E+u0q3T52XqFg8EJ2dQklR7RQ0c=
-X-Gm-Gg: ASbGncvsZv3JmvGKdDowcxDZdoUJr6Nb2lEg5LdgNh0wcnxdqamdx45A0FXr0fuaGj6
-	ctIPteZOvASue24vPVJMJdEahp6bbz2IyIqwTGj/6Fvwod0ilZBzDcOMv6yRrRsKmua9IfOPVMB
-	XnLG+WtAIjzO9oWVC/fLbEXoywWtQ7RM18HnnXXKhVcO5QFyI5C/xB6GYke1E7ZZVuKxRwgZWa5
-	JTvoSSyxb/svbl753OyIKmEdQYpw8TsNYT9JJtJLU6dY1snHGk6+NK+vDU2Jr68BVWEksHRF9FQ
-	RHUNCx7xSwqQCu5z+BEO7pMZm+RJ74z3LeGXxQagCulit1L2
-X-Received: by 2002:a05:620a:2983:b0:7d2:1930:52a4 with SMTP id af79cd13be357-7d3c6ced9e7mr2424726485a.46.1750250034864;
-        Wed, 18 Jun 2025 05:33:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEI+AWOdi/ZgaHOvkfAm6gX6AJORuDaq8N+TiWh2ZVfC8kbV6/9mB2L8oD1BL0NI9UN0eauDw==
-X-Received: by 2002:a05:620a:2983:b0:7d2:1930:52a4 with SMTP id af79cd13be357-7d3c6ced9e7mr2424722885a.46.1750250034480;
-        Wed, 18 Jun 2025 05:33:54 -0700 (PDT)
-Received: from [192.168.68.111] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4532ddd29ffsm204308935e9.0.2025.06.18.05.33.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jun 2025 05:33:53 -0700 (PDT)
-Message-ID: <1317c3c5-967d-4013-9c0b-f68844c63908@oss.qualcomm.com>
-Date: Wed, 18 Jun 2025 13:33:52 +0100
+	s=arc-20240116; t=1750250052; c=relaxed/simple;
+	bh=82jJoSKNfDCk8X5+WmO81pBflXQZP7LLoe+PJ7aYcb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MAX8b0eQFRGqrkT2zb7SKhS1BrzfmnqDHPGZ2G4fV2btCp1+Ude+rMTYYZVe040HSRNoSXeHZ9+qcUoVYkgNtpU8EtzwgXdyZNeVPMXxpyetsagi3RCtFstnP5ITm3FC0apG2c+rQIMWdcUjZvi18VQb19//bo6MMpsI5sWLsms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0365C14BF;
+	Wed, 18 Jun 2025 05:33:49 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 08B5B3F66E;
+	Wed, 18 Jun 2025 05:34:05 -0700 (PDT)
+Date: Wed, 18 Jun 2025 13:33:55 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev, Catalin Marinas
+ <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>, Will Deacon
+ <will@kernel.org>, James Morse <james.morse@arm.com>, Oliver Upton
+ <oliver.upton@linux.dev>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Zenghui Yu <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>, Alexandru
+ Elisei <alexandru.elisei@arm.com>, Christoffer Dall
+ <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev, Ganapatrao Kulkarni
+ <gankulkarni@os.amperecomputing.com>, Gavin Shan <gshan@redhat.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>, Emi
+ Kisanuki <fj0570is@fujitsu.com>
+Subject: Re: [PATCH v9 15/43] arm64: RME: Allow VMM to set RIPAS
+Message-ID: <20250618133355.2af1dcc4@donnerap.manchester.arm.com>
+In-Reply-To: <20250611104844.245235-16-steven.price@arm.com>
+References: <20250611104844.245235-1-steven.price@arm.com>
+	<20250611104844.245235-16-steven.price@arm.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Subject: Re: [PATCH RFC 1/2] ALSA: compress: add raw opus codec define and
- struct snd_dec_opus
-To: Alexey Klimov <alexey.klimov@linaro.org>, Vinod Koul <vkoul@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: Patrick Lai <plai@qti.qualcomm.com>,
-        Annemarie Porter <annemari@quicinc.com>, linux-sound@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        kernel@oss.qualcomm.com, Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-References: <20250616-opus_codec_rfc_v1-v1-0-1f70b0a41a70@linaro.org>
- <20250616-opus_codec_rfc_v1-v1-1-1f70b0a41a70@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250616-opus_codec_rfc_v1-v1-1-1f70b0a41a70@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE4MDEwNiBTYWx0ZWRfXxFo3+bd0zOyT
- ASNnnZ6jLZ2atYOvc8esIcm/BwJTukBvqmn7p9MeV0wdtYruJfGFKn/BEgAFqU4YiEipfX2fP5c
- Z0b6O7fijw9vXZ3eF+mgLPqRcBLrpYYskIiGpG9ZEx/VGG7jvk3lWXV+GBYK4IfLhcz+fw90g8i
- qtj/3WtSxm4hbsQR2tORoN89rVWIPcBsfx+zMQLdeRSwRGGxZ/CPrvzwdrhDuV4GYgQM2VacZql
- sdkODyoVbmCxrj4eXOxS2B9wm2AoxGwz4y5eiDqjVaK0WCgeofVMs/1DZxlroObBo9yqGmh0JM/
- E1vFxZ0tg9jfMbARijfRX0a0lw4xfBDraMbTbCfcnzg/DhHRTgJYpOQk+hUtMYHbJ3XtEJu4WBe
- 8bEjeI8PXDqX4133ongCsBv0Vg8oGQHo9EphD7NXszJU1q5BqDoDPIE2YMMMSlm3RgdPuv4H
-X-Authority-Analysis: v=2.4 cv=PtaTbxM3 c=1 sm=1 tr=0 ts=6852b234 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=BqEg4_3jAAAA:8 a=COk6AnOGAAAA:8
- a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=LhU3g7bnflL2ouMbDHkA:9 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=0mFWnFbQd5xWBqmg7tTt:22 a=TjNXssC_j7lpFel5tvFf:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: SBuFBGIUwQe5C7i2lABz_u0abexhETdy
-X-Proofpoint-GUID: SBuFBGIUwQe5C7i2lABz_u0abexhETdy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-18_05,2025-06-18_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0 malwarescore=0
- lowpriorityscore=0 impostorscore=0 adultscore=0 spamscore=0
- priorityscore=1501 phishscore=0 mlxscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506180106
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, 11 Jun 2025 11:48:12 +0100
+Steven Price <steven.price@arm.com> wrote:
 
+Hi Steven,
 
-On 6/16/25 4:26 PM, Alexey Klimov wrote:
-> Adds a raw opus codec define and raw opus decoder struct.
-> This is for raw OPUS packets not packed in any type of container
-> (for instance OGG container). The decoder struct fields
-> are taken from corresponding RFC document.
-> 
-> This is based on earlier work done by
-> Annemarie Porter <annemari@quicinc.com>
-> 
-May be co-dev by would be good option.
+one build error below, on my machine (with GCC10):
 
-> Cc: Annemarie Porter <annemari@quicinc.com>
-> Cc: Srinivas Kandagatla <srini@kernel.org>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> Each page within the protected region of the realm guest can be marked
+> as either RAM or EMPTY. Allow the VMM to control this before the guest
+> has started and provide the equivalent functions to change this (with
+> the guest's approval) at runtime.
+>=20
+> When transitioning from RIPAS RAM (1) to RIPAS EMPTY (0) the memory is
+> unmapped from the guest and undelegated allowing the memory to be reused
+> by the host. When transitioning to RIPAS RAM the actual population of
+> the leaf RTTs is done later on stage 2 fault, however it may be
+> necessary to allocate additional RTTs to allow the RMM track the RIPAS
+> for the requested range.
+>=20
+> When freeing a block mapping it is necessary to temporarily unfold the
+> RTT which requires delegating an extra page to the RMM, this page can
+> then be recovered once the contents of the block mapping have been
+> freed.
+>=20
+> Signed-off-by: Steven Price <steven.price@arm.com>
 > ---
->  include/uapi/sound/compress_params.h | 21 ++++++++++++++++++++-
->  1 file changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/uapi/sound/compress_params.h b/include/uapi/sound/compress_params.h
-> index bc7648a30746f4632ecf6695868e79550a431dfa..f80989f7bdd2f1bfad843b1dc30fa263e083d17a 100644
-> --- a/include/uapi/sound/compress_params.h
-> +++ b/include/uapi/sound/compress_params.h
-> @@ -43,7 +43,8 @@
->  #define SND_AUDIOCODEC_BESPOKE               ((__u32) 0x0000000E)
->  #define SND_AUDIOCODEC_ALAC                  ((__u32) 0x0000000F)
->  #define SND_AUDIOCODEC_APE                   ((__u32) 0x00000010)
-> -#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_APE
-> +#define SND_AUDIOCODEC_OPUS_RAW              ((__u32) 0x00000011)
-> +#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_OPUS_RAW
->  
->  /*
->   * Profile and modes are listed with bit masks. This allows for a
-> @@ -324,6 +325,23 @@ struct snd_dec_ape {
->  	__u32 seek_table_present;
->  } __attribute__((packed, aligned(4)));
->  
-> +/*
-> + * RFC with info on below OPUS decoder fields:
-> + * https://www.rfc-editor.org/rfc/rfc7845#section-5
-> + */
-> +struct snd_dec_opus {
-> +	__u8 version;		/* must be 1 */
-> +	__u8 num_channels;
-> +	__u16 pre_skip;
-> +	__u32 sample_rate;
-> +	__u16 output_gain;	/* in Q7.8 format */
-> +	__u8 mapping_family;
+> Changes from v8:
+>  * Propagate the 'may_block' flag to allow conditional calls to
+>    cond_resched_rwlock_write().
+>  * Introduce alloc_rtt() to wrap alloc_delegated_granule() and
+>    kvm_account_pgtable_pages() and use when allocating RTTs.
+>  * Code reorganisation to allow init_ipa_state and set_ipa_state to
+>    share a common ripas_change() function,
+>  * Other minor changes following review.
+> Changes from v7:
+>  * Replace use of "only_shared" with the upstream "attr_filter" field
+>    of struct kvm_gfn_range.
+>  * Clean up the logic in alloc_delegated_granule() for when to call
+>    kvm_account_pgtable_pages().
+>  * Rename realm_destroy_protected_granule() to
+>    realm_destroy_private_granule() to match the naming elsewhere. Also
+>    fix the return codes in the function to be descriptive.
+>  * Several other minor changes to names/return codes.
+> Changes from v6:
+>  * Split the code dealing with the guest triggering a RIPAS change into
+>    a separate patch, so this patch is purely for the VMM setting up the
+>    RIPAS before the guest first runs.
+>  * Drop the useless flags argument from alloc_delegated_granule().
+>  * Account RTTs allocated for a guest using kvm_account_pgtable_pages().
+>  * Deal with the RMM granule size potentially being smaller than the
+>    host's PAGE_SIZE. Although note alloc_delegated_granule() currently
+>    still allocates an entire host page for every RMM granule (so wasting
+>    memory when PAGE_SIZE>4k).
+> Changes from v5:
+>  * Adapt to rebasing.
+>  * Introduce find_map_level()
+>  * Rename some functions to be clearer.
+>  * Drop the "spare page" functionality.
+> Changes from v2:
+>  * {alloc,free}_delegated_page() moved from previous patch to this one.
+>  * alloc_delegated_page() now takes a gfp_t flags parameter.
+>  * Fix the reference counting of guestmem pages to avoid leaking memory.
+>  * Several misc code improvements and extra comments.
+> ---
+>  arch/arm64/include/asm/kvm_rme.h |   6 +
+>  arch/arm64/kvm/mmu.c             |   8 +-
+>  arch/arm64/kvm/rme.c             | 447 +++++++++++++++++++++++++++++++
+>  3 files changed, 458 insertions(+), 3 deletions(-)
+>=20
 
-This is where optional Channel Mapping Table starts in the structure.
+[ ... ]
 
-Should this all these channel mapping memnbers go into a dedicated
-struct snd_dec_opus_ch_map?
+> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
+> index 25705da6f153..fe75c41d6ac3 100644
+> --- a/arch/arm64/kvm/rme.c
+> +++ b/arch/arm64/kvm/rme.c
 
-> +	__u8 stream_count;	/* part of channel mapping */
-> +	__u8 coupled_count;	/* part of channel mapping */
-Comments are bit misleading. Either we document them in detail or point to
-the rfc which has this documented in more detail.
+[ ... ]
 
-> +	__u8 channel_map;
-
-Channel Mapping is (8*C bits), one octet per output channel.
-
-The way this is represented/split in this struct is confusing should it
-be just channel_map[8]
-
-
-> +	__u8 reserved[7];	/* space for channel mapping */
-Any reason only 7?
-
-> +} __attribute__((packed, aligned(4)));
+> @@ -318,6 +619,140 @@ static int realm_create_rd(struct kvm *kvm)
+>  	return r;
+>  }
+> =20
+> +static void realm_unmap_private_range(struct kvm *kvm,
+> +				      unsigned long start,
+> +				      unsigned long end,
+> +				      bool may_block)
+> +{
+> +	struct realm *realm =3D &kvm->arch.realm;
+> +	unsigned long next_addr, addr;
+> +	int ret;
 > +
->  union snd_codec_options {
->  	struct snd_enc_wma wma;
->  	struct snd_enc_vorbis vorbis;
-> @@ -334,6 +352,7 @@ union snd_codec_options {
->  	struct snd_dec_wma wma_d;
->  	struct snd_dec_alac alac_d;
->  	struct snd_dec_ape ape_d;
-> +	struct snd_dec_opus opus_d;
->  	struct {
->  		__u32 out_sample_rate;
->  	} src_d;
-> 
+> +	for (addr =3D start; addr < end; addr =3D next_addr) {
+> +		ret =3D realm_unmap_private_page(realm, addr, &next_addr);
+> +
+> +		if (ret)
+> +			break;
+> +
+> +		if (may_block)
+> +			cond_resched_rwlock_write(&kvm->mmu_lock);
+> +	}
+> +
+> +	realm_fold_rtt_level(realm, get_start_level(realm) + 1,
+> +			     start, end);
+> +}
+> +
+> +void kvm_realm_unmap_range(struct kvm *kvm, unsigned long start,
+> +			   unsigned long size, bool unmap_private,
+> +			   bool may_block)
+> +{
+> +	unsigned long end =3D start + size;
+> +	struct realm *realm =3D &kvm->arch.realm;
+> +
+> +	end =3D min(BIT(realm->ia_bits - 1), end);
+> +
+> +	if (!kvm_realm_is_created(kvm))
+> +		return;
+> +
+> +	realm_unmap_shared_range(kvm, find_map_level(realm, start, end),
+> +				 start, end, may_block);
+> +	if (unmap_private)
+> +		realm_unmap_private_range(kvm, start, end, may_block);
+> +}
+> +
+> +enum ripas_action {
+> +	RIPAS_INIT,
+> +	RIPAS_SET,
+> +};
+> +
+> +static int ripas_change(struct kvm *kvm,
+> +			struct kvm_vcpu *vcpu,
+> +			unsigned long ipa,
+> +			unsigned long end,
+> +			enum ripas_action action,
+> +			unsigned long *top_ipa)
+> +{
+> +	struct realm *realm =3D &kvm->arch.realm;
+> +	phys_addr_t rd_phys =3D virt_to_phys(realm->rd);
+> +	phys_addr_t rec_phys;
+> +	struct kvm_mmu_memory_cache *memcache =3D NULL;
+> +	int ret =3D 0;
+> +
+> +	if (vcpu) {
+> +		rec_phys =3D virt_to_phys(vcpu->arch.rec.rec_page);
+> +		memcache =3D &vcpu->arch.mmu_page_cache;
+> +
+> +		WARN_ON(action !=3D RIPAS_SET);
+> +	} else {
+> +		WARN_ON(action !=3D RIPAS_INIT);
+> +	}
+> +
+> +	while (ipa < end) {
+> +		unsigned long next;
+> +
+> +		switch (action) {
+> +		case RIPAS_INIT:
+> +			ret =3D rmi_rtt_init_ripas(rd_phys, ipa, end, &next);
+> +			break;
+> +		case RIPAS_SET:
+> +			ret =3D rmi_rtt_set_ripas(rd_phys, rec_phys, ipa, end,
+> +						&next);
+> +			break;
+> +		}
+> +
+> +		switch (RMI_RETURN_STATUS(ret)) {
+> +		case RMI_SUCCESS:
+> +			ipa =3D next;
+> +			break;
+> +		case RMI_ERROR_RTT:
+> +			int err_level =3D RMI_RETURN_INDEX(ret);
+
+This breaks the build on GCC <=3D v10:
+
+/src/linux/arch/arm64/kvm/rme.c: In function =E2=80=98ripas_change=E2=80=99:
+/src/linux/arch/arm64/kvm/rme.c:1190:4: error: a label can only be part of =
+a statement and a declaration is not a statement
+ 1190 |    int err_level =3D RMI_RETURN_INDEX(ret);
+      |    ^~~
+/src/linux/arch/arm64/kvm/rme.c:1191:4: error: expected expression before i=
+nt=E2=80=99
+ 1191 |    int level =3D find_map_level(realm, ipa, end);
+      |    ^~~
+/src/linux/arch/arm64/kvm/rme.c:1193:21: error: =E2=80=98level=E2=80=99 und=
+eclared (first use in this function)
+ 1193 |    if (err_level >=3D level)
+      |                     ^~~~~
+
+With GCC 11 and later I see this still as a warning when using -Wpedantic,
+but it vanishes when also paired with -std=3Dgnu2x.
+
+So either hoist the variable declaration up, or use brackets, this worked
+for me as well, and I see it in other places:
+
+		case RMI_ERROR_RTT: {
+			....
+		}
+		default:
+
+Cheers,
+Andre
+
+
+> +			int level =3D find_map_level(realm, ipa, end);
+> +
+> +			if (err_level >=3D level)
+> +				return -EINVAL;
+> +
+> +			ret =3D realm_create_rtt_levels(realm, ipa,
+> err_level,
+> +						      level, memcache);
+> +			if (ret)
+> +				return ret;
+> +			/* Retry with the RTT levels in place */
+> +			break;
+> +		default:
+> +			WARN_ON(1);
+> +			return -ENXIO;
+> +		}
+> +	}
+> +
+> +	if (top_ipa)
+> +		*top_ipa =3D ipa;
+> +
+> +	return 0;
+> +}
+> +
+> +static int realm_init_ipa_state(struct kvm *kvm,
+> +				unsigned long ipa,
+> +				unsigned long end)
+> +{
+> +	return ripas_change(kvm, NULL, ipa, end, RIPAS_INIT, NULL);
+> +}
+> +
+> +static int kvm_init_ipa_range_realm(struct kvm *kvm,
+> +				    struct arm_rme_init_ripas *args)
+> +{
+> +	gpa_t addr, end;
+> +
+> +	addr =3D args->base;
+> +	end =3D addr + args->size;
+> +
+> +	if (end < addr)
+> +		return -EINVAL;
+> +
+> +	if (kvm_realm_state(kvm) !=3D REALM_STATE_NEW)
+> +		return -EPERM;
+> +
+> +	return realm_init_ipa_state(kvm, addr, end);
+> +}
+> +
+>  /* Protects access to rme_vmid_bitmap */
+>  static DEFINE_SPINLOCK(rme_vmid_lock);
+>  static unsigned long *rme_vmid_bitmap;
+> @@ -441,6 +876,18 @@ int kvm_realm_enable_cap(struct kvm *kvm, struct
+> kvm_enable_cap *cap) case KVM_CAP_ARM_RME_CREATE_REALM:
+>  		r =3D kvm_create_realm(kvm);
+>  		break;
+> +	case KVM_CAP_ARM_RME_INIT_RIPAS_REALM: {
+> +		struct arm_rme_init_ripas args;
+> +		void __user *argp =3D u64_to_user_ptr(cap->args[1]);
+> +
+> +		if (copy_from_user(&args, argp, sizeof(args))) {
+> +			r =3D -EFAULT;
+> +			break;
+> +		}
+> +
+> +		r =3D kvm_init_ipa_range_realm(kvm, &args);
+> +		break;
+> +	}
+>  	default:
+>  		r =3D -EINVAL;
+>  		break;
 
 
