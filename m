@@ -1,237 +1,194 @@
-Return-Path: <linux-kernel+bounces-691161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3579DADE12F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 04:40:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 440B8ADE135
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 04:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 700C4189D0A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 02:40:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C735189D0FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 02:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A811A316E;
-	Wed, 18 Jun 2025 02:40:30 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF001A705C;
+	Wed, 18 Jun 2025 02:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Pv1l3igq"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010063.outbound.protection.outlook.com [52.101.69.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3AA18027;
-	Wed, 18 Jun 2025 02:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750214429; cv=none; b=uHBCi/lXk3jAShqpYNTowD55sH4baU8gqHWGX9vQSlM8cYMW/k+6WiiwB+jKNwynTOQ8kF2DGMyp7qtvVForjC7gxtwo2JbdaVhLAHvH50951vFQ3tPJxzi3ueSXu1Ib8WuKB8UsTfkecbnbKctpXiRNyeMJZeaiiY5UuRkRPrU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750214429; c=relaxed/simple;
-	bh=qsIA6mNPxnb7OXWg4kd4mkPdogx2qiMHk/5aIJp3TQY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AyO/QXlJ1BWCjc6VtVqtarmy3vMVFbJxpd51NvTBZUHzxI0kbfdmZ1JTwIPoVZmeqiYs+BPJITSiuuXbnogszg/n4TtM1Jok9y31rk16LmZ6jt/gVwxCgXote7NSs/AsoCF8LjKI6nmZbBI2r/M/ANs8Y+n0MdQAci4mipc0xDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bMSY91Ymnz2Cfbr;
-	Wed, 18 Jun 2025 10:36:29 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7B72C1800B2;
-	Wed, 18 Jun 2025 10:40:23 +0800 (CST)
-Received: from kwepemq500002.china.huawei.com (7.202.195.240) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 18 Jun 2025 10:40:22 +0800
-Received: from kwepemq200002.china.huawei.com (7.202.195.90) by
- kwepemq500002.china.huawei.com (7.202.195.240) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 18 Jun 2025 10:40:22 +0800
-Received: from kwepemq200002.china.huawei.com ([7.202.195.90]) by
- kwepemq200002.china.huawei.com ([7.202.195.90]) with mapi id 15.02.1544.011;
- Wed, 18 Jun 2025 10:40:21 +0800
-From: duchangbin <changbin.du@huawei.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-CC: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
-	<linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mark Rutland
-	<mark.rutland@arm.com>, duchangbin <changbin.du@huawei.com>
-Subject: Re: [PATCH] fgraph: Do not enable function_graph tracer when setting
- funcgraph-args
-Thread-Topic: [PATCH] fgraph: Do not enable function_graph tracer when setting
- funcgraph-args
-Thread-Index: AQHb3/pWjfZBtRicskuT1WyP/TidDQ==
-Date: Wed, 18 Jun 2025 02:40:21 +0000
-Message-ID: <ad0745b53e5046b79378bdc12ddfdd51@huawei.com>
-References: <20250617120830.24fbdd62@gandalf.local.home>
-In-Reply-To: <20250617120830.24fbdd62@gandalf.local.home>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-imapappendstamp: kwepemq200002.china.huawei.com (15.02.1544.011)
-x-ms-exchange-messagesentrepresentingtype: 1
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <98A46D4A86E7C845BBD920D113FB6E88@huawei.com>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EAF1922DE;
+	Wed, 18 Jun 2025 02:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750214601; cv=fail; b=q2d1fbqSlHs9wK2xvc7F3at4mxTu/fNMxTJ5yB2PvnWJichC/QieTf5YEXol4Ov8me+hh/EhaIavph1+t4x0Z0FyE1qv7SgpfPbS6b3LJs5aNcDdakjBy3c025UnPYQESm6OFyi7Sf4HTc/jqH9PEOm+uYExlxzT3LAixrPANJY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750214601; c=relaxed/simple;
+	bh=Io5TXybbao2RA34ePJ2jKATWKN7VVT/DMDSCiPcI6Gg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=cAcUbvtXleQTJJQoF/y2PzzRKn6fQEYPrWgieI4YoHjur1sROuhu/d6sRdmrrFGN0eo1eSnz3W+1XtslmY0LuvdoPh8Q03w6tR5fV3SyIYMdDVSnr2YHZqVm1iJyB68zHil5mtz6r5q7nqSgeEm2t8s5wM8bXYmCVPbNj06TvHM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Pv1l3igq; arc=fail smtp.client-ip=52.101.69.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yFjcDYr9JeQd8dsyBbuv06cN3v0Y/5a79OVtfqQzeCc/rgfktk8yH2IXos2lOD2duVPlzW/wHwhErdBnHsFF6xXDYIIv6kCwMWAlAH+EH9Y2ZkOArkryIxcMCrpleTTf6X5TI+m1syn8wBGkjNtUwlGwFNMcuo7bOMllm73nsZe4utroUyYi9qLh5cxwRZ9TDc07+zWbZp4zV8+Q1wn3ZSRmiosOrEHTkZEosTr6aUHZLPxCuI3Zqs5zHSqdiVaB/Xma14FU6SPDGBDz95ZTvZvR+Is+iHkEUZRft/ruGJly5ZEOvYxTuzNuQNxwL7LVb60nzZolZ220iy4IZMBikQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wGFD82Med0+nIKF9yi8+bzMww+6GnMANxV2u8ukE/Fk=;
+ b=u1sYBKS+qdPiojkGj+8kHmudWYY4klMJjD+YCfeXmSKvPeYstYzb7zSavJ5qF34QHBy/6ixQlHAlzzW+XxxRzTLdPLfiXQlbcM2teBhy4EYKcUfS/3hQ3txNVrQ5Dm+0iufAgNKeUCjh4KjPWtDH/H/Z1B/UKZFT+2DtOoqF1ihQCZPxDfY8OIMf82nVeID+lsi0Ds1xOrlwHEjmlVge+pFDiUyQ73FHQtM2QDe1rm4K0eeMFt2iVU9sqnBiGXh8lalru5xnXIEKx41kssqdKl6YXy20nYALIB+6Lrz6uPddNQ+Q+FdCqkLxFmeT4/ME4Ip44wUW3HN+pwqBERilcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wGFD82Med0+nIKF9yi8+bzMww+6GnMANxV2u8ukE/Fk=;
+ b=Pv1l3igqkHAHhdLfLjAU1Y1Z8kYqd37se9K6w2HAsCN8Em2NyavZprvb9Oz0G2k+RMnkf+7BXEwue8vaW1l7QuOlDzphI6nhUH+MaiqN+Nm0Yk8rqVbeGf0+1nfnGHulU84qlvbb/E4MayY6jKi/tnXj9h34n2Gi2LUxkrZqiguH+L0w5RTuMz2K/vTaDND2G8oZ0/kdukbC9Ed0mvpb+iCHeOMdfj30Bg5KZ4Z2lQih2sE6SA32nh3IXKrmjPOXLTi+L46MKoQ6M2q02ZYhKZJfUy4aXagZmS7VwTF8CSF+BRJZlxhI6YG+2bQ+Za8kJ6lspDJ9LQzBZ4JZNq+1Dg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8676.eurprd04.prod.outlook.com (2603:10a6:20b:42b::10)
+ by DU4PR04MB10960.eurprd04.prod.outlook.com (2603:10a6:10:585::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Wed, 18 Jun
+ 2025 02:43:16 +0000
+Received: from AS8PR04MB8676.eurprd04.prod.outlook.com
+ ([fe80::28b2:de72:ad25:5d93]) by AS8PR04MB8676.eurprd04.prod.outlook.com
+ ([fe80::28b2:de72:ad25:5d93%4]) with mapi id 15.20.8835.027; Wed, 18 Jun 2025
+ 02:43:16 +0000
+From: Richard Zhu <hongxing.zhu@nxp.com>
+To: frank.li@nxp.com,
+	l.stach@pengutronix.de,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com
+Cc: linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] Add quirks to proceed PME handshake in DWC PM
+Date: Wed, 18 Jun 2025 10:41:11 +0800
+Message-Id: <20250618024116.3704579-1-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG3P274CA0011.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::23)
+ To AS8PR04MB8676.eurprd04.prod.outlook.com (2603:10a6:20b:42b::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8676:EE_|DU4PR04MB10960:EE_
+X-MS-Office365-Filtering-Correlation-Id: f873179f-632f-4aa9-afb4-08ddae11e058
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|52116014|366016|1800799024|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LAupJ/tLGH7NpDa8hv2LT4bC7UozdCxCpn+VcKopuAVlGJb6/1wQNHGo0mXO?=
+ =?us-ascii?Q?3mAiSt+WePP2zHo3J8LKnKJIB7LRgL2NPCTY487LP/mAn/rwN+N5+Av7o0HZ?=
+ =?us-ascii?Q?LZxL+kS1bznSGTxjj8nzu3oqBfS+6x/bRe0XcGqtO3L0PwLEQ+Kyhw2o0Qsv?=
+ =?us-ascii?Q?XOh1mqFltS03m+Q/JvhCfvXKJ1E4ziRmGmtHigxKW9dUJrPirAdQMnbG2RXH?=
+ =?us-ascii?Q?OaOVxqF/iCK1+ao3dZOKXy8GqQhsPAhF9kYjsFanOEhMwstWIAVQjmk0jvkS?=
+ =?us-ascii?Q?wpUr0jWHGyL1kNCHSiaPMEengVe0szI70lL1+Tgg9MIb3AooDWtmQjSfx1yM?=
+ =?us-ascii?Q?SxM6Hkgn+6aKsSTslr54RssvRdKxj1TTpuKfgmpoCximBZvXBQB7fMoh6nXA?=
+ =?us-ascii?Q?dAWh78+8NwSKUHRXcvu60HIFraMQec18BJvnPYKrIOzRo3hO1HCrFiWZr8jx?=
+ =?us-ascii?Q?YmROaefd0nI6FNAG4DwLfzIB6EtzlUj6AD96ljeunNhMpww8yX/dzuE7tcjV?=
+ =?us-ascii?Q?cqsvS0O7eizA4nABsATkSlbeHdWc7ZixMPPZovVxzs2aLjnGCq7yEsiyl3k7?=
+ =?us-ascii?Q?X/dywa9ga8T55c61/4c9Vo4isMJzi5CdEldN7CYPcU7LqLC/1DOf99qoP/Mj?=
+ =?us-ascii?Q?ffS/KYJ0BuAGziwGU/qyrgUJbUS09psCwpGNKyN7Jm+oCPI+8/B8LEAmkP0l?=
+ =?us-ascii?Q?riBkE7gObJ0HblJlzDtHWn8ZV1N4etswPqpM68opZDjiG2q+h2RGlGdbVf7E?=
+ =?us-ascii?Q?m2fDtxtKxJma3AU/UV89lWXMJhsAZFcFx0TGRNsEd9DflZTpm58Wf/k0Gb48?=
+ =?us-ascii?Q?sAqUpAMM4WFO5+VnMLPbHVG9y9sz3Sd4YK46i/7clJ3xpjwrUd6XIjBUtPB3?=
+ =?us-ascii?Q?12U38fhawRmMT4cXTuypv5nXgcMx0S1mNbGVFKsMoqAhaaz+eAtAufANGEGT?=
+ =?us-ascii?Q?wxbyxyoD0J4ydQF8/rNiYEGI3qHCd/uF+cp7oxxBCYy9bow0VZUzpeHal2CU?=
+ =?us-ascii?Q?YW+YUpjb2R6VHBydUitZjMhLlMcVkZI6XE4U3/wtx9plwv88vy2ezUBMf+tq?=
+ =?us-ascii?Q?cfwbt5DDee36QCIWyC3rTdvu1Ljag1lRo/Ew+gRTiPKxZaoohrjGRCz/Hv5R?=
+ =?us-ascii?Q?KiVbXRehN21uhkbTzfo2YR3S554n+Y4nLv1hEPkvY3qu8a+449/GvEDxLf6O?=
+ =?us-ascii?Q?fmxtAx2owHXWKVsryChbUt7pkwSElm5GWkz7M8Coe6ZV2wHepjbJUDKwtz0P?=
+ =?us-ascii?Q?jjSv2o3MclamOgB0JIjpwWvvPFjdq+Z7SJHeSruRG2Mwq/2MZoq0GZWOb7h9?=
+ =?us-ascii?Q?COv09rgQrlKc38BACTEGV5G1+fJVHo7pwU5NGbhrvd9G3nFSNynwrNCb6dDn?=
+ =?us-ascii?Q?mmaAWU6C2mRN2J1CDUcgf5LqYXiWltJ9dqcaLQO1rUAKRjvK0Kh2rcDuQYlG?=
+ =?us-ascii?Q?WVcj/M+Vfn2o0Cn04nsnC3wU0oBdNQK/2cJPCUIiAKM9VLVjU93HPJP+B+FV?=
+ =?us-ascii?Q?vbsvxV+ZM/sejnOIxRWknLkBV/LUgydbk+t+?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8676.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?XMad7y/hTY1Kigm60WJWS6ISC/xK2olNCSX8onp5Ir0b1oOq0NWSPVs+8RA7?=
+ =?us-ascii?Q?cR8C9QNZt0r7O9s+iLi7U+smsedtV4U7UMFL8Ezuqb0TIMNxhBFytoYabA/c?=
+ =?us-ascii?Q?jlUeE4WMnaGuchR9x0JY8VrP5baQkxMB7mY8x8NRFn+P4QNiOzF0oYw5pNnr?=
+ =?us-ascii?Q?kqWwJQxG5XM0ElKL+lnqm1n9gnAytRYWOp8EOzHsXkYLzkVDuOZqNIa+psUf?=
+ =?us-ascii?Q?OstlQYmYRxy5s0oO05TcT1QYaB5McfCzW9bSMUCG4bCINyxoNxZ8juANKH6f?=
+ =?us-ascii?Q?kB2FWXXatmYtuANc8rg2O1ri9saMqW2kBnw09LogElOl66Am3ihBr4CboPki?=
+ =?us-ascii?Q?zUxSd4d+Tu/KlKzSru3HV5hZmt+kuoUEi5nCQLFV0eY3PalVUhui0ziL2geD?=
+ =?us-ascii?Q?ieCrVM/9GuM6ySnoyccqwkpScCLGGsfc6rMDRJXIWX07IRi4aj9s+80CMlbF?=
+ =?us-ascii?Q?UVZLx47+u/nquOMsIaF3bjQkrMx8hw/GFfOH4pMRG7/jOHqJ40JRWlbSf/ez?=
+ =?us-ascii?Q?EDxkxrl2juoQ/7OFRUefQVBRp8f+Btp6snTCLFl+pHfLbvT106TISS8wTKhe?=
+ =?us-ascii?Q?pcP8lE8atB1jQOYR8ferv+C+ZG4i0YmS8pM4tiwPLW0VYpMkNOK2OL2bkso6?=
+ =?us-ascii?Q?Qt09ylcV2QVC9Ev55eUazgUgGW1FJCONQfgv3iXg2S6yzR+duQMwNcQk5mcm?=
+ =?us-ascii?Q?YalvvUKoRIJgO+bdMYJhn4eJclHHULulhix8nbXOFc6ji0KCaaRAHhsmJZ/x?=
+ =?us-ascii?Q?0Vpm0LBtc1xfR/cg9MeG5UP62BjgF2sKqxPtMXWqNZ0cyjurqwuYtW1MYm0+?=
+ =?us-ascii?Q?HlxlcRx6Z08aUh99kpFuh8jLaoiM/ZEVxyR0h4fdndVw2adHbDJTBPeov5XY?=
+ =?us-ascii?Q?zizhF8UFYT2rU2Ox3CEIxIOFDFt6iY0RpXkcqAsV61wojQI1OoKV+zfqbX9u?=
+ =?us-ascii?Q?nPeD5ODVPJzqkLXnPeimfYILOpGF5gixsq4z1uXKnT5g3n6VQNVcC30Mxz/d?=
+ =?us-ascii?Q?gxDyD64D9rLR1VkRzGKg49hLWLD3U+Zxmg0aC2IqK2Usav6dKg0RCrBz0V+L?=
+ =?us-ascii?Q?5MQABoshRAgkqkh7q0BmL1wtNaYrE/wSV56A1sU8frcTAx6xZLtsbJsK1PGk?=
+ =?us-ascii?Q?o2SNXIB+P3TgS+d0JFprxLPMT/yHUV4Bn9e2Ky91Ca5KIfQpCvjQPzjeEKm6?=
+ =?us-ascii?Q?siCd0YXXPD4QQZEUvhf1HjG5idRyc0GIQWC5SsBPz93xJREA/fCWwsucc+jw?=
+ =?us-ascii?Q?mw7XgvFf4c0D9MtNBjoO2Li3YP+iEqWV0pGuOuYKm2NVZeJxOPT1rmUopU7V?=
+ =?us-ascii?Q?gRfbfmaIZPjZHpikiSac5yLq5BuSkYrd4M/wUR0biTlb2yPGsb9wc/KgOxRh?=
+ =?us-ascii?Q?bqa/QRH1FJoQ9W45+SMI+3L34LiwU/4MN1hBndMHwyIt4YXI+h4T9lhAfZ/F?=
+ =?us-ascii?Q?ncYwHl+8UEBMZPkUlNBZnu9BBzBfTujDgF3nz8FeEbDAFQGVPW91fRhGhu8k?=
+ =?us-ascii?Q?efbx/fB+MRL0NRrUdNC4dIZU0TSjJl2sZDiq8Wz2ROQworVNFBCYRATzD5rD?=
+ =?us-ascii?Q?aMO75ByFcTetbmfsW1QeoaffD7+lbklbuX0L3kBu?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f873179f-632f-4aa9-afb4-08ddae11e058
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8676.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 02:43:16.0418
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EySn77SvGwLnPCNuaTfRNNoG0gRCgRiSNeVDYETbWVCqdFYlp2Lscqjnl/lfngi0nTJWhGqYx9UNvVSafbr26g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10960
 
-Hi, Steven,
-On Tue, Jun 17, 2025 at 12:08:30PM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
->=20
-> When setting the funcgraph-args option when function graph tracer is net
-> enabled, it incorrectly enables it. Worse, it unregisters itself when it
-> was never registered. Then when it gets enabled again, it will register
-> itself a second time causing a WARNing.
->=20
->  ~# echo 1 > /sys/kernel/tracing/options/funcgraph-args
->  ~# head -20 /sys/kernel/tracing/trace
->  # tracer: nop
->  #
->  # entries-in-buffer/entries-written: 813/26317372   #P:8
->  #
->  #                                _-----=3D> irqs-off/BH-disabled
->  #                               / _----=3D> need-resched
->  #                              | / _---=3D> hardirq/softirq
->  #                              || / _--=3D> preempt-depth
->  #                              ||| / _-=3D> migrate-disable
->  #                              |||| /     delay
->  #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
->  #              | |         |   |||||     |         |
->            <idle>-0       [007] d..4.   358.966010:  7)   1.692 us    |  =
-        fetch_next_timer_interrupt(basej=3D4294981640, basem=3D357956000000=
-, base_local=3D0xffff88823c3ae040, base_global=3D0xffff88823c3af300, tevt=
-=3D0xffff888100e47cb8);
->            <idle>-0       [007] d..4.   358.966012:  7)               |  =
-        tmigr_cpu_deactivate(nextexp=3D357988000000) {
->            <idle>-0       [007] d..4.   358.966013:  7)               |  =
-          _raw_spin_lock(lock=3D0xffff88823c3b2320) {
->            <idle>-0       [007] d..4.   358.966014:  7)   0.981 us    |  =
-            preempt_count_add(val=3D1);
->            <idle>-0       [007] d..5.   358.966017:  7)   1.058 us    |  =
-            do_raw_spin_lock(lock=3D0xffff88823c3b2320);
->            <idle>-0       [007] d..4.   358.966019:  7)   5.824 us    |  =
-          }
->            <idle>-0       [007] d..5.   358.966021:  7)               |  =
-          tmigr_inactive_up(group=3D0xffff888100cb9000, child=3D0x0, data=
-=3D0xffff888100e47bc0) {
->            <idle>-0       [007] d..5.   358.966022:  7)               |  =
-            tmigr_update_events(group=3D0xffff888100cb9000, child=3D0x0, da=
-ta=3D0xffff888100e47bc0) {
->=20
-> Notice the "tracer: nop" at the top there. The current tracer is the "nop=
-"
-> tracer, but the content is obviously the function graph tracer.
->=20
-> Enabling function graph tracing will cause it to register again and
-> trigger a warning in the accounting:
->=20
->  ~# echo function_graph > /sys/kernel/tracing/current_tracer
->  -bash: echo: write error: Device or resource busy
->=20
-> With the dmesg of:
->=20
->  ------------[ cut here ]------------
->  WARNING: CPU: 7 PID: 1095 at kernel/trace/ftrace.c:3509 ftrace_startup_s=
-ubops+0xc1e/0x1000
->  Modules linked in: kvm_intel kvm irqbypass
->  CPU: 7 UID: 0 PID: 1095 Comm: bash Not tainted 6.16.0-rc2-test-00006-gea=
-03de4105d3 #24 PREEMPT
->  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1=
-.16.3-2 04/01/2014
->  RIP: 0010:ftrace_startup_subops+0xc1e/0x1000
->  Code: 48 b8 22 01 00 00 00 00 ad de 49 89 84 24 88 01 00 00 8b 44 24 08 =
-89 04 24 e9 c3 f7 ff ff c7 04 24 ed ff ff ff e9 b7 f7 ff ff <0f> 0b c7 04 2=
-4 f0 ff ff ff e9 a9 f7 ff ff c7 04 24 f4 ff ff ff e9
->  RSP: 0018:ffff888133cff948 EFLAGS: 00010202
->  RAX: 0000000000000001 RBX: 1ffff1102679ff31 RCX: 0000000000000000
->  RDX: 1ffffffff0b27a60 RSI: ffffffff8593d2f0 RDI: ffffffff85941140
->  RBP: 00000000000c2041 R08: ffffffffffffffff R09: ffffed1020240221
->  R10: ffff88810120110f R11: ffffed1020240214 R12: ffffffff8593d2f0
->  R13: ffffffff8593d300 R14: ffffffff85941140 R15: ffffffff85631100
->  FS:  00007f7ec6f28740(0000) GS:ffff8882b5251000(0000) knlGS:000000000000=
-0000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: 00007f7ec6f181c0 CR3: 000000012f1d0005 CR4: 0000000000172ef0
->  Call Trace:
->   <TASK>
->   ? __pfx_ftrace_startup_subops+0x10/0x10
->   ? find_held_lock+0x2b/0x80
->   ? ftrace_stub_direct_tramp+0x10/0x10
->   ? ftrace_stub_direct_tramp+0x10/0x10
->   ? trace_preempt_on+0xd0/0x110
->   ? __pfx_trace_graph_entry_args+0x10/0x10
->   register_ftrace_graph+0x4d2/0x1020
->   ? tracing_reset_online_cpus+0x14b/0x1e0
->   ? __pfx_register_ftrace_graph+0x10/0x10
->   ? ring_buffer_record_enable+0x16/0x20
->   ? tracing_reset_online_cpus+0x153/0x1e0
->   ? __pfx_tracing_reset_online_cpus+0x10/0x10
->   ? __pfx_trace_graph_return+0x10/0x10
->   graph_trace_init+0xfd/0x160
->   tracing_set_tracer+0x500/0xa80
->   ? __pfx_tracing_set_tracer+0x10/0x10
->   ? lock_release+0x181/0x2d0
->   ? _copy_from_user+0x26/0xa0
->   tracing_set_trace_write+0x132/0x1e0
->   ? __pfx_tracing_set_trace_write+0x10/0x10
->   ? ftrace_graph_func+0xcc/0x140
->   ? ftrace_stub_direct_tramp+0x10/0x10
->   ? ftrace_stub_direct_tramp+0x10/0x10
->   ? ftrace_stub_direct_tramp+0x10/0x10
->   vfs_write+0x1d0/0xe90
->   ? __pfx_vfs_write+0x10/0x10
->=20
-> Have the setting of the funcgraph-args check if function_graph tracer is
-> the current tracer of the instance, and if not, do nothing, as there's
-> nothing to do (the option is checked when function_graph tracing starts).
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: c7a60a733c373 ("ftrace: Have funcgraph-args take affect during tra=
-cing")
-> Reported-by: duchangbin <changbin.du@huawei.com>
-> Closes: https://lore.kernel.org/all/4ab1a7bdd0174ab09c7b0d68cdbff9a4@huaw=
-ei.com/
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/trace_functions_graph.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_fu=
-nctions_graph.c
-> index 9234e2c39abf..b6211c304c7f 100644
-> --- a/kernel/trace/trace_functions_graph.c
-> +++ b/kernel/trace/trace_functions_graph.c
-> @@ -455,10 +455,16 @@ static int graph_trace_init(struct trace_array *tr)
->  	return 0;
->  }
-> =20
-> +static struct tracer graph_trace;
-> +
->  static int ftrace_graph_trace_args(struct trace_array *tr, int set)
->  {
->  	trace_func_graph_ent_t entry;
-> =20
-> +	/* Do nothing if the current tracer is no this tracer */
-typo: no -> not
+Refer to PCIe r6.0, sec 5.2, fig 5-1 Link Power Management State Flow
+Diagram. Both L0 and L2/L3 Ready can be transferred to LDn directly.
 
-> +	if (tr->current_trace !=3D &graph_trace)
-> +		return 0;
-> +
-This can fix the issue. But how are tr->current_trace and &graph_trace link=
-ed?
-When are they equal?
+It's harmless to let dw_pcie_suspend_noirq() proceed suspend after the
+PME_Turn_Off is sent out, whatever the LTSSM state is in L2 or L3 after
+a recommended 10ms max wait refer to PCIe r6.0, sec 5.3.3.2.1 PME
+Synchronization.
 
->  	if (set)
->  		entry =3D trace_graph_entry_args;
->  	else
-> --=20
-> 2.47.2
->=20
->=20
+The LTSSM states of i.MX6QP PCIe is inaccessible after the PME_Turn_Off
+is kicked off. To handle this case, don't poll L2 state and add one max
+10ms delay if QUIRK_NOL2POLL_IN_PM flag is existing in suspend.
 
---=20
-Cheers,
-Changbin Du
+Main chenages in v2:
+Add the following two patches.
+- Skip PME_Turn_Off message if there is no endpoint connected.
+- Don't return error when wait for link up.
+v1:https://patchwork.kernel.org/project/linux-pci/cover/20250408065221.1941928-1-hongxing.zhu@nxp.com/
+
+[PATCH v2 1/5] PCI: imx6: Don't poll LTSSM state of i.MX6QP PCIe in
+[PATCH v2 2/5] PCI: imx6: Don't poll LTSSM state of i.MX7D PCIe in PM
+[PATCH v2 3/5] PCI: dwc: Don't poll L2 if QUIRK_NOL2POLL_IN_PM is
+[PATCH v2 4/5] PCI: dwc: Skip PME_Turn_Off message if there is no
+[PATCH v2 5/5] PCI: dwc: Don't return error when wait for link up
+
+drivers/pci/controller/dwc/pci-imx6.c             |  4 ++++
+drivers/pci/controller/dwc/pcie-designware-host.c | 50 +++++++++++++++++++++++++++++++-------------------
+drivers/pci/controller/dwc/pcie-designware.h      |  4 ++++
+3 files changed, 39 insertions(+), 19 deletions(-)
+
+
 
