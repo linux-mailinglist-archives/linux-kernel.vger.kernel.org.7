@@ -1,130 +1,174 @@
-Return-Path: <linux-kernel+bounces-691711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C90ADE7EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:05:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7454ADE6C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4CD517BCEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:05:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA0697A7A76
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5421285C88;
-	Wed, 18 Jun 2025 09:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1858A28152B;
+	Wed, 18 Jun 2025 09:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nwkmFmBk"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WoLFDR8i"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951842E54C9
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952F0280A56
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750240799; cv=none; b=kQ4NFVsA4/nPS5+rheWW+sefFv7/A13u8rRZlxvmhWVgTXTsL6kCD1h60gNaO3MLL2XyOIT304Z2cmF15EvLOryidz0d3c+5mhG0R19nGeIgOmh5blGMgyVxpWuWZohJBDOVUym35QR4YiKS+MCzRQHYxPPIpNomd1ceFkicUCA=
+	t=1750238666; cv=none; b=uaroLBFTgzPiQbUDRZ025cnLkuiZoBYGu1qPYJEl6wn5Ua0UtSOc1NlIzzl+qvXEmL+CGQ7CblCxEE3TznAuDnUQd2CrzJDXcahVL6r8rw81l5tdT+m4sNllK+nnWnx/FW8NTmc0Ck9nI36EEzfLEi8YHwXLJmShpQ60+NBkhVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750240799; c=relaxed/simple;
-	bh=BfOuS4S0Uv2jTTiGjUIA+jDJR/WYF9LdxpY+1sPAlnM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FPWruZTR1tvBtmTvlJoEgPrYpEQkwSZWtVk5XmYICBb58r8my8l8SaWJCw5gGhXNHnaB2cKVMIvRz1JdJP3i0o/IVmZbmJv/RgDwwkPWYVyKlMYb7lrSsaQ2GjSTkSA/79EzXNyc2D9PQbfIPopjIWjE4idH5Wjlv+8+WC0RZ74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nwkmFmBk; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C34A3527C;
-	Wed, 18 Jun 2025 11:59:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1750240774;
-	bh=BfOuS4S0Uv2jTTiGjUIA+jDJR/WYF9LdxpY+1sPAlnM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=nwkmFmBkOu267VY14AaxenosDVugbL+oSCyNLVTjcqA0pABqjVLAp5eRMZRT+1oZx
-	 cIwx69nUTv+/iEZXILYQyhI4Rs3h50vBXu4O/aQPqzbjw+i3Mdgez2iFFkppTHwUGb
-	 vsDfDnSAjks7e8g1WG7WqU7Fh2w02xhCUrCbWLVU=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Wed, 18 Jun 2025 12:59:15 +0300
-Subject: [PATCH v4 12/17] drm/bridge: cdns-dsi: Adjust mode to negative
- syncs
+	s=arc-20240116; t=1750238666; c=relaxed/simple;
+	bh=stlKD8TMt2RHQpIMrF+XfM/1DcDXWqKH+tWALVeME38=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E2chQeX3gSrYTdnoA6qQtX3ZS38BUM2YZR0wKs7XfAI2xVJXLuNwTR2vcvC5Qlefi9llBp0VrNKvCSfGhPT9CgxQRLV6WY9tjZjISxQG1rrUkXur37GRCLMlKki3vyfSEe6Wa2uNk3dXY6A5WFjVyqEwMhcEdZf2JddGhpQUy0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=WoLFDR8i; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso5141826b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 02:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1750238664; x=1750843464; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=POgVgQOHyY5JFhC7ZUirzBX59J0Bo8DjMxk+7VX8j3Y=;
+        b=WoLFDR8iJLt1OL5SDXnzr2iMaObNxbXNHST8XWvSxMZvSZ7KOVIWCZdPzmP0f5/swM
+         oMZCPGoUz2u+KnapF+Rrt+h0Pb+L60SiTxgvNU1KngrrVeFm+/KhoGa2aDPQm0cFaXXh
+         JWT1JOH0nCbVcPOX/NP2d5/tw18XSDEZgeE9s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750238664; x=1750843464;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=POgVgQOHyY5JFhC7ZUirzBX59J0Bo8DjMxk+7VX8j3Y=;
+        b=MUYcnwX+sH43u8/yQCpwkQ1EJGCEjja/09yMh27gVZ7VbnWNuZC9J2eyPWfw0v7qIk
+         A2C/xxfv0Ces6f8mcA5nkPc8A19xB3uuCfyjDAVs+q4ElBFihVQhxetCRpSbcZE4zzBa
+         +Z+7yEkX8u+1O1LBSZij2xqdfvI5UF2i0cSr+i9i/rCVsIL2YVPgW9EZX+Nsbt97fAwE
+         FYlQQnZtXLaRPlnqM85PG+N3BhUcBiUmq31pZZvxhZVaDWX1Ja/211T+rRLfIeHl8aPu
+         xvK7ZFFKCfhXlN1ChBVivXeP1cyE3F7SuzYbJroSr83Tj8cb2LTovNbo/wPWhaQiFt9m
+         ++MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIIIhfu710tySx/w6Q3j4GgxYQ7VQSoK+d1kH4Ltuu9Bo0qN6G3/A/OQw4banYyy4Er46lYWKEi7O7dUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytlGaGtxRC+v0o2pANZCxkptO2oY5lO2Q2+qY8RSoDoGxjLFMv
+	EChi4aMq6Be7Vr7pliuPpHjTnZz7DwESB6ZgenIPHh8NKC/lKZJVXwdIPJ1jGZyvQQ==
+X-Gm-Gg: ASbGncvhCP8crYBQ8udFGOAjSRkl0WOwk9QjSlGCNx69cNha5O5VgMHqDbe9PRNPUv6
+	p8nFslAusuy9r+esZTVMcCxqiidF6OS24QMwhBEBeJN8m0Fh40YdBQNemnVsHT8IS2ZGrbhh/jC
+	nwtWe1PoWr0+dRSS6NGuiuJ1lHkDkEq8PrqT5nVit5Xv8R5eGoVLF/qXetF7MOQ845l4yoRaGVb
+	XxbfqqKGY6P3eO9QxL3eWyX3qD+SsA0gO87MmMXtRHQ3IsygUGWQDaHRl0sqgAVgFu675Z8qKhJ
+	C/RS8M7DhAFEdR+bbOYc5aiXuRreq1XukdSToO2u1m969kvoRtKb0AEBaNywlaZJeYk/fVOINhX
+	QwusyuF1SdOWRtjP9VEiO5mfCR6mtzI2slkUek3M=
+X-Google-Smtp-Source: AGHT+IEEXCf9tYsKSdb5r4gM4NhS9cCtxK0XcjZ6Yra6MbUTOtw6mZPoZlZe+86e1KbOYl4Ew/DSEw==
+X-Received: by 2002:a05:6a00:2181:b0:746:2ae9:fc42 with SMTP id d2e1a72fcca58-7489cfc37a3mr22044526b3a.19.1750238663731;
+        Wed, 18 Jun 2025 02:24:23 -0700 (PDT)
+Received: from localhost.localdomain ([192.19.203.250])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7488ffecd08sm10408993b3a.27.2025.06.18.02.24.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 02:24:23 -0700 (PDT)
+From: Vikas Gupta <vikas.gupta@broadcom.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	andrew+netdev@lunn.ch,
+	horms@kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	michael.chan@broadcom.com,
+	pavan.chebbi@broadcom.com,
+	vsrama-krishna.nemani@broadcom.com,
+	Vikas Gupta <vikas.gupta@broadcom.com>
+Subject: [net-next, 00/10] Introducing Broadcom BNGE Ethernet Driver
+Date: Wed, 18 Jun 2025 14:47:30 +0000
+Message-ID: <20250618144743.843815-1-vikas.gupta@broadcom.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250618-cdns-dsi-impro-v4-12-862c841dbe02@ideasonboard.com>
-References: <20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com>
-In-Reply-To: <20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com>
-To: Jyri Sarha <jyri.sarha@iki.fi>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Jayesh Choudhary <j-choudhary@ti.com>, Dmitry Baryshkov <lumag@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-phy@lists.infradead.org, Francesco Dolcini <francesco@dolcini.it>, 
- Aradhya Bhatia <aradhya.bhatia@linux.dev>, 
- Devarsh Thakkar <devarsht@ti.com>, 
- Parth Pancholi <parth.pancholi@toradex.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1608;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=BfOuS4S0Uv2jTTiGjUIA+jDJR/WYF9LdxpY+1sPAlnM=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBoUo4AQf/UerQXlT4K+PKstjvu6hzvb29c4HX6t
- bWWG9uEo8mJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaFKOAAAKCRD6PaqMvJYe
- 9UieD/sHr4pjZ79k5hvLqhBY2NWkzYiJGcE2M90SswRbagQHDWoV+cCVPTyD9WVAy9rsSv3poWz
- 7/70zSE6qDVj4tevy0WuLDSOUpBb/UXyTA0Ihowsb2lQknYZpwAu0u9b1c7R0g5I+iMkVP2Lw+O
- 3MbAlC2x6KfKEppkAiHO9y2fiYVZvSKGeWX19yOm/21Jyja+0vA8oGo7HjUsgbW68Lx740+R+oB
- DoA2gdHSL/p0um/6hYIH5OrcdbVrjr5LSYyl9kG9bAB2T5sWQqv9/lLL0BrFOF7qbiwcPxW6SAr
- gMPFokgoiBtTSl9mWa94N2cRRlI2qMnHwU20o0onoSNIk3XeIh/JbwhSB+wrTWkdJPhy/k9r72L
- WySwYt+Ph19iBLjvjWHifjtv3R8oHjOLZeU+hqbLqE6JYMyPCdftmrZOsse0lSdMEEaZ09agKu4
- 2khuMqP3cUzMUKKhQKJw0zZX3HZefoYp1nEWMUKLL8XNTto/EGBw1r+JKtMLZkujQjnXhcxVU1T
- 0SRcF3aJ86ud6eHbBjZp0hwDXuv71cMOGa9jy8M/rzlSDKG+Beemk3wd4O8eqjPTjcrdwJN8WI6
- +PeWc3rKzNxWijgWdNbcH89nswIPE9xFw/R61KtKV/agZwR8VTLt/kNj1YQYywsDahMdrxuBVHI
- rxJ7fpaJk54+5nQ==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The Cadence DSI requires negative syncs from the incoming video signal,
-but at the moment that requirement is not expressed in any way. If the
-crtc decides to use positive syncs, things break down.
+Hi,
 
-Use the adjusted_mode in atomic_check to set the sync flags to negative
-ones.
+This patch series introduces the Ethernet driver for Broadcom’s
+BCM5770X chip family, which supports 50/100/200/400/800 Gbps
+link speeds. The driver is built as the bng_en.ko kernel module.
 
-Reviewed-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-Tested-by: Parth Pancholi <parth.pancholi@toradex.com>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
----
- drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+To keep the series within a reviewable size (~5K lines of code), this initial
+submission focuses on the core infrastructure and initialization, including:
+1) PCIe support (device IDs, probe/remove)
+2) Devlink support
+3) Firmware communication mechanism
+4) Creation of network device
+5) PF Resource management (rings, IRQs, etc. for netdev & aux dev)
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-index f7d7d277367e..d49b4789a074 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-@@ -908,9 +908,13 @@ static int cdns_dsi_bridge_atomic_check(struct drm_bridge *bridge,
- 	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
- 	struct cdns_dsi *dsi = input_to_dsi(input);
- 	struct cdns_dsi_bridge_state *dsi_state = to_cdns_dsi_bridge_state(bridge_state);
--	const struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
-+	struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
- 	struct cdns_dsi_cfg *dsi_cfg = &dsi_state->dsi_cfg;
- 
-+	/* cdns-dsi requires negative syncs */
-+	adjusted_mode->flags &= ~(DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC);
-+	adjusted_mode->flags |= DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC;
-+
- 	return cdns_dsi_check_conf(dsi, adjusted_mode, dsi_cfg);
- }
- 
+Support for Tx/Rx datapaths, link management, ethtool/devlink operations and
+additional features will be introduced in the subsequent patch series.
+
+The bng_en driver shares the bnxt_hsi.h file with the bnxt_en driver, as the bng_en
+driver leverages the hardware communication protocol used by the bnxt_en driver.
+
+Thanks,
+Vikas
+
+
+Vikas Gupta (10):
+  bng_en: Add PCI interface
+  bng_en: Add devlink interface
+  bng_en: Add firmware communication mechanism
+  bng_en: Add initial interaction with firmware
+  bng_en: Add ring memory allocation support
+  bng_en: Add backing store support
+  bng_en: Add resource management support
+  bng_en: Add irq allocation support
+  bng_en: Initialize default configuration
+  bng_en: Add a network device
+
+ MAINTAINERS                                   |   6 +
+ drivers/net/ethernet/broadcom/Kconfig         |   9 +
+ drivers/net/ethernet/broadcom/Makefile        |   1 +
+ drivers/net/ethernet/broadcom/bnge/Makefile   |  12 +
+ drivers/net/ethernet/broadcom/bnge/bnge.h     | 218 ++++++
+ .../net/ethernet/broadcom/bnge/bnge_core.c    | 395 ++++++++++
+ .../net/ethernet/broadcom/bnge/bnge_devlink.c | 267 +++++++
+ .../net/ethernet/broadcom/bnge/bnge_devlink.h |  18 +
+ .../net/ethernet/broadcom/bnge/bnge_ethtool.c |  33 +
+ .../net/ethernet/broadcom/bnge/bnge_ethtool.h |   9 +
+ .../net/ethernet/broadcom/bnge/bnge_hwrm.c    | 503 +++++++++++++
+ .../net/ethernet/broadcom/bnge/bnge_hwrm.h    | 117 +++
+ .../ethernet/broadcom/bnge/bnge_hwrm_lib.c    | 703 ++++++++++++++++++
+ .../ethernet/broadcom/bnge/bnge_hwrm_lib.h    |  27 +
+ .../net/ethernet/broadcom/bnge/bnge_netdev.c  | 266 +++++++
+ .../net/ethernet/broadcom/bnge/bnge_netdev.h  | 206 +++++
+ .../net/ethernet/broadcom/bnge/bnge_resc.c    | 604 +++++++++++++++
+ .../net/ethernet/broadcom/bnge/bnge_resc.h    |  94 +++
+ .../net/ethernet/broadcom/bnge/bnge_rmem.c    | 438 +++++++++++
+ .../net/ethernet/broadcom/bnge/bnge_rmem.h    | 188 +++++
+ 20 files changed, 4114 insertions(+)
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/Makefile
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge.h
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_core.c
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_devlink.c
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_devlink.h
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_ethtool.c
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_ethtool.h
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_hwrm.c
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_hwrm.h
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_hwrm_lib.c
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_hwrm_lib.h
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_netdev.c
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_netdev.h
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_resc.c
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_resc.h
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_rmem.c
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_rmem.h
 
 -- 
-2.43.0
+2.47.1
 
 
