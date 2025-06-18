@@ -1,120 +1,285 @@
-Return-Path: <linux-kernel+bounces-691436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4774BADE495
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:29:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE6FADE499
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6605A3B55DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:29:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4B08175574
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226A127EFE1;
-	Wed, 18 Jun 2025 07:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9610027F171;
+	Wed, 18 Jun 2025 07:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiDFZHaT"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5VbrXsgg"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2045.outbound.protection.outlook.com [40.107.101.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A5727E7EF;
-	Wed, 18 Jun 2025 07:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750231733; cv=none; b=UiFNYZ+sDUxQID3htyUeZVCZ45K7Lr7WUEi6aiDgr4kJd6CtfUeX9QV7JxZa27LuCQmZrVmM4zvndMx5yspE92ClgBIGt5M237V4Pp5Er6mwJLEQlnEurn+zLzzosDo4aj4YXlJrAXO0ijekLVk6WChEE+IuQvbL2abaWaTJdq8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750231733; c=relaxed/simple;
-	bh=PRE6FGSN1BjPHjBVI17kEB92rC2rRHP8mT7w0OsphZs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hdNnFjmJbnO5lfb29GIPi4BZg2Oo+jo7r+MSYFCVqTMbP59t1itb8MheyOEyFfMdQjcVPC8PsD95wyJsIFKQzERGSwNnNj9UmdSOELLT3bMWSATyvZy0ij5ZWItzkCx6Yu+9kc5QZRCbJkY/Tz2C8Z0HGQE9AFFl+XG8RCIoM6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MiDFZHaT; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2360ff7ac1bso46317725ad.3;
-        Wed, 18 Jun 2025 00:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750231731; x=1750836531; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=X1MuiMHWsnV5QufWLYV35SMTTVf4gaMpZv1rpKrIrTw=;
-        b=MiDFZHaTcMeQyzbCU46k1mGBVUnbzSKCChbmoqPLO7olV9PTXnxNKBJNhj+NfThChQ
-         HVUeA0xWMvUye4oZqQ3ND68JGr4TEetmHKj3Fi6eWNJbgiDAaUZ/i/AyyMvk3iPoC+B4
-         +B1pF7mcRj8iq25JzCeqe07b6vnMGiqqi1dLDPMoCKCjQW+Kh5whpPXa4kKXcUICYNjr
-         SanJW8Bj1+ohR20XTicsurePKpB3tDoj2Zmc5JVb0LpbROLJqnPAv/kq+2LMqT6VvQjL
-         Q2k2lL9ygOzHTtl0AixMslwlbsw+dgT9y+bsYUv7CKPn/w96QcFELOzRWs0ZlNZk+Spj
-         SPew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750231731; x=1750836531;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X1MuiMHWsnV5QufWLYV35SMTTVf4gaMpZv1rpKrIrTw=;
-        b=o5fpi2TL8HnjPPLta1QdImpyTmU55xG0aR0XRV1lVfqdX8kQ1u2qrUh3zvz6uUnYDi
-         ISh9QcQD6iRBDgZuSmUNU9r38VfxjhWkrlgZxhWLe1D857GGdMjBR2aiqdPSKZma07LO
-         tIf77DjJO5csQ2+MqPI0GwRGd077zB+2tEo4VLsXOCcAEQI4jwcL3xAM537aip2BAH2I
-         mEs+80OKTNQWsDpNmt6MpYL/YO83jfs1DDF4L75LOKvt7Hm63pdxsdB0zFjXEVWgHYcx
-         qGUYEy0s+K5R+AZE8dFimnQUsX4pBXu44Uk5NaWTTX5DyQRb5BY65Xu0acgmxzkWG1QN
-         F4hg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/ABIp5uAwib98Zl81dkX1PCIFnYlHFhz+i+QOgpT/sO4jxv0urSLyNGwgNyc2MrCE5NP/jgcZiImCJWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5/ODiWljC0Bj3viP17QQ+6UL/jOZO+mhvJz3mJFdvWvevTxwG
-	QN2aBbHC/vFXfG/3vtwMPD1QHO4Yb+7erOn4HHT8D4DoQI8gGzhX6s3XwEYM4i+L4Pwj4g==
-X-Gm-Gg: ASbGncuD/XGebW4TgRAudzcfJt5jkicc5yglQfaDrvF7/mkhEo6yl8tUMT/6CCrB7sJ
-	/DM4ONZuYoep+Bobd+UD+oE/d287zMZ7z6zfCY2xSowECQp6GFyMMZEQBZ/fnIUrF6naiHFErhL
-	FPR6k6dHFOnZ5wN2wGzP/MyHbel+1HVubVFXlg0vQZaXqHW+yJmvToG8X81hJQzBhVB/Y7XGqGv
-	xkGaYx0yxX468/UXMeHvceGV6L5fQVyrmaWyb0L1ugIhFhC8A9785T/agnSYMS4JxpdoYrbPcZy
-	nmtJaFzPR1SBwEkYQQA8Ea2hIyy2WFGPi2U4xF7NeXr8ggTO2fTOPciRTV9wMqDWDwjEpmowYsj
-	q
-X-Google-Smtp-Source: AGHT+IEZqPp646+YAn+PQWp2CWdcGvqah4RLQRfACStnYbm3Uare7jzimo3ZkmAr0nB7Fi9GnVCzew==
-X-Received: by 2002:a17:903:228b:b0:234:a139:11ee with SMTP id d9443c01a7336-2366b144e21mr238950505ad.37.1750231731326;
-        Wed, 18 Jun 2025 00:28:51 -0700 (PDT)
-Received: from archlinux.lan ([2409:8a20:7f41:bed8:eed6:9106:2c6d:6a36])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365deb87ddsm93173025ad.177.2025.06.18.00.28.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 00:28:50 -0700 (PDT)
-From: dongfengweixiao@gmail.com
-To: jdelvare@suse.com,
-	linux@roeck-us.ne
-Cc: linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dee.H.Y" <dongfengweixiao@gmail.com>
-Subject: [PATCH] hwmon: (corsair-cpro) Change dependency from HID to HIDRAW
-Date: Wed, 18 Jun 2025 15:28:45 +0800
-Message-ID: <20250618072845.233204-1-dongfengweixiao@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CED205E2F
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 07:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750231758; cv=fail; b=pvROOLaaudcFrKX2tHK1SsiC83P6XbzuSAgmQ7WbAuRUinAeyjucYZ/8GZ3UPs1oCUSgINOIF0IEKZMKz0ncfBhWNQSLXcctJwZzf2Pm+Yu0Nm4rAthXYxK5s5QvqrIaiY0INahJ21arLMpfOQ4KWZZ/5rgJNJjwRky89ogVxmw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750231758; c=relaxed/simple;
+	bh=dytOv5kE/MBRhnIW30233YCJNbJDKcTQ9p2Of+PE5hg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=eyEGIYw1h54KKwl+fR593xTd8NVIFAU4ng+elA2DbLn42k6OZ8aV2j3vGFpAEpQRmSRRG90KzLHYuQlCaV8zK8IBk3pJFbMD351QjFnnZgT50TRSqfoziyCzkRahywQo/Ip+b4dNq3GcIuROGRy1GQ3qPEoAMiAiDrl4NzfxNnA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5VbrXsgg; arc=fail smtp.client-ip=40.107.101.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U0IGDFg8MOhcenfjcTOXX9VOoVed7SDmXyg3jstb/gHq+d4WahyMA+B8zTDFYJtor1e/dR9gCe0R4VqqRFYvZqVF0Af4FCuarRviJzKXTl7nuk5qvjL+9AGqMknFBa/Fi+49rfioeaFMkFEeZXSqHMOhRT1QlZhpX6YccYDviBL/fE7Jtj0Gc34+eJpnrWJlsOkyOyDhhXKXii4D1FxfpNug/AJHObo3UVXSTLxEXQz1Olsj77trkRW5TfeQZeJmkiuaEUQ685nZjTDozHRQBe9m8e+3fZKo/+MMxsBi0eFXzbbJUq4l3qYXZM8+vQNi+YRnU2bdPord9cW6lK/Iyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xTlODWDU7PG0AH1sTNRCX2TH9F+61eB/LcmV/fb8USc=;
+ b=U1mls943wEgKNi+6MaYu9utVPIepsMorvRa8u7KWCDXtgg5l+KhuQbPSCF/GlAoV/j1MG0BBTu1Z0fwWzBf5PHesqUfmw3Zt72Z9MDm/u95F/km1QA4LLwcz3AjrvT7pbnWvRXtH3vanQU57F53OQ2Wm865HCp+mvUT8gEPeCySGV7NuQ1Btmu9zy3h9XZd3yhCKfJ13O7w5vYdWTKI5k6cNSaNVxNl/bxvvyLFA/ISVzmsIlKhhqbAsXvtABcBZ0EImkPB5HPmEhBcyjUt4z/QtB0JvMuKSj4AkVmj351QbnmE8rvBlYcWeqiD8Uezl+oZAA7LAM/VZEgb3LyYWqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xTlODWDU7PG0AH1sTNRCX2TH9F+61eB/LcmV/fb8USc=;
+ b=5VbrXsgg3R3s/uOr+tXTTUER/Fl82MDt7czfS9gYQEg2noUMkW2AsE5rqxocwohyceAOsne6Ji8ucuw84kxFl9pcnsUjcpG2jUY9YYGx4nxle+iHSFeW5r3Utl+ydGUIbWWGboTsAZSmxoO2M8UQnAwQdEXe7nW9iF/ebtfAVSk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by LV8PR12MB9155.namprd12.prod.outlook.com (2603:10b6:408:183::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Wed, 18 Jun
+ 2025 07:29:12 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%7]) with mapi id 15.20.8722.031; Wed, 18 Jun 2025
+ 07:29:12 +0000
+Message-ID: <a0f508fd-3277-4839-a4b6-e6bc56546f6c@amd.com>
+Date: Wed, 18 Jun 2025 09:29:04 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 6/6] drm/amdgpu: Make use of drm_wedge_task_info
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ Alex Deucher <alexander.deucher@amd.com>, siqueira@igalia.com,
+ airlied@gmail.com, simona@ffwll.ch, Raag Jadav <raag.jadav@intel.com>,
+ rodrigo.vivi@intel.com, jani.nikula@linux.intel.com,
+ Xaver Hugl <xaver.hugl@gmail.com>,
+ Krzysztof Karas <krzysztof.karas@intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-dev@igalia.com, amd-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
+References: <20250617124949.2151549-1-andrealmeid@igalia.com>
+ <20250617124949.2151549-7-andrealmeid@igalia.com>
+ <5db1dda6-0cd7-4fc7-9a22-8ed57b12ada1@amd.com>
+ <63b4fb79-8132-4c05-bcac-3238366899d9@igalia.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <63b4fb79-8132-4c05-bcac-3238366899d9@igalia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0434.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:d1::7) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|LV8PR12MB9155:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1a61e61e-5d2e-4bbe-3336-08ddae39d252
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U1BUanBlTWRmdi9VeXE2N1VkK3QyK1JpN09YVTl6TGVUVG9tNm5KYzMxT2lQ?=
+ =?utf-8?B?Q3BRb1ZWTCtpV2FoUHZvS3BjWkplQVpUTjVjQlBhaVRuREF0Z2dZdWFwNm5z?=
+ =?utf-8?B?S1BYNHl2QkpTTXhuZ3VBVFNva2FiYjhCcExTM3pydk5FdUcvTjBsWVFCQjlQ?=
+ =?utf-8?B?QUtsR0hHVzNFcm9QTnlUSTB3d0VhemExQjJTSVZKcjBXcnVwd1RtVnoxc2Ey?=
+ =?utf-8?B?TXRETlNCd3BRNUNDcDBRMEdQbU5DMkFoUmNHR2lvQ3M3ek0zdlIvak52T1Zx?=
+ =?utf-8?B?N0lBN20yaHIyVW11aC9RTWJCcWJvVUFNOUt3cGlFeWZtVkt0dkVabFp2N1Bu?=
+ =?utf-8?B?UWxvRlNoRzhaeFFyRkxMZ1VaTVFlZTZBWFRlNnAyVFVGTEtDTDZZdXJlclRQ?=
+ =?utf-8?B?VlNSNDJnU0FPWkduLzd0UlZJMlY5anRiekZMSUtzNXhhR0xGRTRFVDYvZVJl?=
+ =?utf-8?B?cDZjY2RqTHVwQmdxVjhWUm50ZlpKRzVINXl3Mm9xY04rMW45Ry9xN2M5K0Rv?=
+ =?utf-8?B?MnpxZnUzU1ZkTnhiZmg0SUNOQ0xOWWducWhYdDJxN0FybzM0YW9pZjBGUnVu?=
+ =?utf-8?B?TWJDV0wwMG91SGpRbFRIOVBSZUdaZVM4MnZBc2l3THVsNjgrZGNmOFE1cklQ?=
+ =?utf-8?B?ekphRDVRMU9KbEdHKzRzU1FuMHh4WklzYS9CQmFtbXNKUnRnRm91WU5VUkZa?=
+ =?utf-8?B?YVZEekFDOXdTNHJoQmMvWk5uNWQxd3g4Nm9nOUp3Tjg1WnQ0eUxQNzlESVBR?=
+ =?utf-8?B?RGtsbWlyVnkwNC80Y2ZmQ0s4UEUwMGJGV2U2VEphdnBrNklmRm5BVFE0WG1i?=
+ =?utf-8?B?SVZBbjhiVHN3OG1rdko1V1FDeG1RYUFwTVZrQWNTUUJEN05MV2FXMEthckhX?=
+ =?utf-8?B?V1lNYXp2dlgySVprTm8wbDZoOWljSFVjV285R0pGN2ZiNEtUVk5TdzBnOWQx?=
+ =?utf-8?B?Rmh4b3ZYMWM5QksxNWNrOEpENjUramhOU1QyRjJuTkV5S2k4R1dZcENQRXFn?=
+ =?utf-8?B?SzFOWmMxemg3WFdYRmtjRnVyWE5lSUxWZkRQME5pbkRRUjVtbFhqLzQ4amk5?=
+ =?utf-8?B?RXRmTjFNR2RVTkpobGFSdllZdk5VM3N5eFd6eUlaQWVJclFzMmNxRGVrcWlw?=
+ =?utf-8?B?ZnNrN0tQZHBLaDhncm9ILzdaRXRRYk9sSy9RVmVBUWFSTDNMOXNKRS96bTJx?=
+ =?utf-8?B?Qk1wWDNkV1ljR3E5YU9lVGc5b0JrYzFrU1Y1Yllma3MwWDFUV2RqZndLdVA2?=
+ =?utf-8?B?VTBWS0xuMWtQSkNtTzdEQVVJcVFKVlQ0TEJtMlBlbHlFWUk3aUVWcnkvR2lz?=
+ =?utf-8?B?cG9rd2k3eXZYK3ZWQkZSNVhNOTBoQnRwNHNSdnN0dUZkalRhMytFUWQvMmwx?=
+ =?utf-8?B?RW1HLy93U0hlS3NwVXViZU5qWmIxOTdqYW1PbjdkelNhaFpOWHEzcXZ1RG5o?=
+ =?utf-8?B?SHQ3WnRjL2ZQQTMxUXhRNCtBeEFyUjF6VUVLMW9LejBESGJpOGVDeWtZZmFG?=
+ =?utf-8?B?YWRIM3JJM3BHZ1pHeFV6U2tuK0FUWkdSN2lJVWxrZ2IwOTVuaFVUcEJGOFV3?=
+ =?utf-8?B?TTcvZXVBOExXUUVER2VIUjdxeHQ4MVM1VWkrbS9adDNBaFVpUHg5dDg2dkZ3?=
+ =?utf-8?B?K3UxV092NFZRRlZhdExtSXFEVkxNaEJEdkpIVmRmbE9GQ0JBUy9YTU9iYUcv?=
+ =?utf-8?B?ZHRVYm8xOW8wczUwYWs0eW5mSGRPN1BMMkJZK1dzcDdGQm9hcVZJaUZSQ05R?=
+ =?utf-8?B?ZnRsaHlrQXJHako2REhRc0hTTHNjeVp5dHg2VDJPZzdkK2JKak1Qc1hlSEVh?=
+ =?utf-8?B?WW9nTVdjM2VGYVVERVFQY3RqSzk1MHU2MnlKenZZT21sMzVQalJjaWE0QWtv?=
+ =?utf-8?B?WlJBMTF6UnpGRndDL1loRW9KZnBLeXM1ZjZaMGRnN0dIc29rTXNuWUdFakhP?=
+ =?utf-8?B?TEZOYTJTM0NOVWIvODRPV1FPSVpxb2Z2VmZlSEZxYnlBVFRVcS9LWmlqc1VM?=
+ =?utf-8?B?dmFSZFk2MXJRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?REJ6SUN1K01uT1pCU3hoSE55SjB3RUpKVnRjeDNKZUszU2x5NkMrMlhoN3I2?=
+ =?utf-8?B?cUt5YW9Kb3FzODM1cHFPOXdwRFk0K1lPalQ0WG1FNnJtbWttSGRwbnh2VWRz?=
+ =?utf-8?B?SW10Z1FFRHNsellUSEZKa0pPSGh1aDgwdDlqSWZ5OWkxeFlBQzZxZHJwS05S?=
+ =?utf-8?B?RithRlJ3N2pWNURVRGFOckRTTnNMYUozeWRscDhNdzBDNzM2anNjWXZpMU55?=
+ =?utf-8?B?dlNVNDRsUzRrK09yMW9wZ2dxUENIMzJhM0RxUFd3US9CaGV0MlRoNmZCTGJQ?=
+ =?utf-8?B?djY2L05KQkVqRkVYWDhUSVZqK0JrTHFlWXQ5YXhrWEFBbDVHUmE3VGdNa3pR?=
+ =?utf-8?B?eUVtODQvWkhEUjg3Tnk5endlZ1d4clZRRU5ZaUVtQTZidWVJV1N6anJmdzE1?=
+ =?utf-8?B?elRKTHVKSUtHOFVwTDJwellxWURGbmQ1TXkwdXVGeUpJZlZObWQxa2pkbThB?=
+ =?utf-8?B?UjJoOVJES3lkTFhCcU5Fei9jUjk0eGNDbDMycFIwSFh1bk1VcGlOM0x5aGJx?=
+ =?utf-8?B?dHozSWtCbUkzRytLTjcxd0d1MlB2YWlqUWsrR2prQWJiTDdPWUxTRm4yeklK?=
+ =?utf-8?B?TU56VEpOajNlMDZaOEYrbWxpaFhqMzQ4TTVRd0g0WVU0ZEwxcFcrWTEvSVk5?=
+ =?utf-8?B?bmU4RVA4WG9ZZ3A3SnpQYWFYSmtIN0tQMzlQVUIrZnJ1cU9xempOU2RQL3h1?=
+ =?utf-8?B?S2VETHc4eDFZai9wbTNBRzByaGJhQitWc2N4U3Q1b1FQYUtjWHJRZHgxaXls?=
+ =?utf-8?B?VzFzbU56ODlsT2NONlJYWmVlZklHU1BQejRnZUIxb1Byb0lCVVh4WTArc1pU?=
+ =?utf-8?B?RzlIWmE0WnlHK2NvMlZrN08zeWJCbWJDU0J0N01udnpEamFYdnZGRUQyWlk3?=
+ =?utf-8?B?ay8xclB5Nlh5RWI2Nkt6ZExqVXY2LytQVjc5RC9TaWd3ak9LamU1cjBPWnF0?=
+ =?utf-8?B?cFVFdHp0RHBSRys3UjJUMUp5MEJSb1BnM0l3Y21CVHJIK0s5Y0JBZVNVZUU3?=
+ =?utf-8?B?SzJqRnl0RTZ1ZkQvVTA2ZXNiTWhOanlkNVNONHM0aEJmeVJkUGltVWczZHYx?=
+ =?utf-8?B?dXRFalZ1UzNwY0lFdWxDRWYySnUwS0drMUdZcVg5bkNTSXF5R0tGS1psamJn?=
+ =?utf-8?B?SkV3cnp0c1R2QW9IMkNtMnpWaXJSbVJLbG1NcGpUeFZaQXBLZGg3R0M5d3RK?=
+ =?utf-8?B?cDhNa1JCTFZwZ3czcnI3MVJFUWw5VEI5RktOeUd2UUt2WnpRK1Y4WVE3bWRN?=
+ =?utf-8?B?Q2pva2krRis2SUZEdEZJWXVIcngwNDRpQ1hHNTB6UENOQU1CUzRtNHpoMm1i?=
+ =?utf-8?B?NzNzSHBLZWtJRHBrSFdSQ3VjMG56ekZrcVErVTR6TVE2Qkh2VUhldHZYT0Ji?=
+ =?utf-8?B?V3lnSEMrNzdraDRlOHNJMjFLVi96SWUvLzF5QTFrRUROek96NnhpaFA1cG5n?=
+ =?utf-8?B?b1pLZW1yQ0Q0QWV3c09CMVRydEIyR2tIb3hWNkRSS1BEYmRMSGFGTEpIOTBB?=
+ =?utf-8?B?V1EyRmV3dGNzZnJkeTlFaGdoS1VHQ3FHaFI3Z1FmZmkveml6ai9UL054QU9S?=
+ =?utf-8?B?SGgvaUE5WTNWbTRwK0xxcHdJVU1kdXJOSVhUNlpoWWxZL2RVRHNibG1Yall1?=
+ =?utf-8?B?Q2FPOWNCZ3QzRkFlVVVzUlM0RUd4SnZ3aEdHSFFKdWRCQndHNmVsVzgwbGRE?=
+ =?utf-8?B?NzhYcXp3bUovVTE4ZGVEbGRBUTdST09ndjFhVFVyZjBLR015MFNWaXlyT2No?=
+ =?utf-8?B?ZkZOMnQ1eEZ5UHpoUGhXWE9HSU9BSVZmRCtjZWRENmdaR28xdXg1VjIwWlFo?=
+ =?utf-8?B?a3pkSldoL1hkbUJWRjlzbWd2WGgvSjRLQ3FGQ29XZmY2QUlPanU2R3NYVk5P?=
+ =?utf-8?B?UjN1Z3NWZ0ptOGh3alBJMzhoNkF1VHMxU2tzdVZ4S0ZidGduY2g0bGVBWkdl?=
+ =?utf-8?B?YisvVjlwbUZLSE5hY2Jxb2RXanNDSXNEbG5sd01taG9OeHZRdWRZMy94b3pS?=
+ =?utf-8?B?Wm0wY1hkL3hScWFTbmQ1MHUvKzlIemNGbE9LU3BZWXhQUURmdnZoWXpxa2xw?=
+ =?utf-8?B?TWZQdmt6RWl3Z0Z4OW9GS3EvSlNiTWNjVE1qOFcxUzRHaURsdU9NSEthN3p1?=
+ =?utf-8?Q?Dmjui+9P2bIKVk1zE89IpCFrY?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a61e61e-5d2e-4bbe-3336-08ddae39d252
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 07:29:12.4052
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: llz9h4gSo6McW7WlpvX87v6A4YnaiImFfxCLtB34roqk8ytZ61MKM06dwI763b3L
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9155
 
-From: "Dee.H.Y" <dongfengweixiao@gmail.com>
+On 6/17/25 15:22, André Almeida wrote:
+> Em 17/06/2025 10:07, Christian König escreveu:
+>> On 6/17/25 14:49, André Almeida wrote:
+>>> To notify userspace about which task (if any) made the device get in a
+>>> wedge state, make use of drm_wedge_task_info parameter, filling it with
+>>> the task PID and name.
+>>>
+>>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+>>
+>> Reviewed-by: Christian König <christian.koenig@amd.com>
+>>
+>> Do you have commit right for drm-misc-next?
+>>
+> 
+> Thanks for the reviews!
+> 
+> I do have access, but if you don't mind, can you push this one?
 
-This patch updates the dependency of the CORSAIR_CPRO driver in the
-hwmon subsystem. Previously, the driver relied on HID, but now it
-depends on HIDRAW. This change is aligned with the implementation
-in the `ccp_probe()` function, where `HID_CONNECT_HIDRAW` is used,
-indicating that the HID raw interface is required for proper operation.
+Sure, but give me till the end of today.
 
-Signed-off-by: Dee.H.Y <dongfengweixiao@gmail.com>
----
- drivers/hwmon/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+(And maybe ping me next week should I forget about it).
 
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index 08a3c863f80a..3f128cacb486 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -475,7 +475,7 @@ config SENSORS_CHIPCAP2
- 
- config SENSORS_CORSAIR_CPRO
- 	tristate "Corsair Commander Pro controller"
--	depends on HID
-+	depends on HIDRAW
- 	help
- 	  If you say yes here you get support for the Corsair Commander Pro
- 	  controller.
--- 
-2.49.0
+Regards,
+Christian.
+
+> 
+>> Regards,
+>> Christian.
+>>
+>>> ---
+>>> v8:
+>>>   - Drop check before calling amdgpu_vm_put_task_info()
+>>>   - Drop local variable `info`
+>>> v7:
+>>>   - Remove struct cast, now we can use `info = &ti->task`
+>>>   - Fix struct lifetime, move amdgpu_vm_put_task_info() after
+>>>     drm_dev_wedged_event() call
+>>> ---
+>>>   drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 13 +++++++++++--
+>>>   drivers/gpu/drm/amd/amdgpu/amdgpu_job.c    |  7 +++++--
+>>>   2 files changed, 16 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+>>> index 8a0f36f33f13..a59f194e3360 100644
+>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+>>> @@ -6363,8 +6363,17 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
+>>>         atomic_set(&adev->reset_domain->reset_res, r);
+>>>   -    if (!r)
+>>> -        drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, NULL);
+>>> +    if (!r) {
+>>> +        struct amdgpu_task_info *ti = NULL;
+>>> +
+>>> +        if (job)
+>>> +            ti = amdgpu_vm_get_task_info_pasid(adev, job->pasid);
+>>> +
+>>> +        drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE,
+>>> +                     ti ? &ti->task : NULL);
+>>> +
+>>> +        amdgpu_vm_put_task_info(ti);
+>>> +    }
+>>>         return r;
+>>>   }
+>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+>>> index 0c1381b527fe..1e24590ae144 100644
+>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+>>> @@ -89,6 +89,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+>>>   {
+>>>       struct amdgpu_ring *ring = to_amdgpu_ring(s_job->sched);
+>>>       struct amdgpu_job *job = to_amdgpu_job(s_job);
+>>> +    struct drm_wedge_task_info *info = NULL;
+>>>       struct amdgpu_task_info *ti;
+>>>       struct amdgpu_device *adev = ring->adev;
+>>>       int idx;
+>>> @@ -125,7 +126,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+>>>       ti = amdgpu_vm_get_task_info_pasid(ring->adev, job->pasid);
+>>>       if (ti) {
+>>>           amdgpu_vm_print_task_info(adev, ti);
+>>> -        amdgpu_vm_put_task_info(ti);
+>>> +        info = &ti->task;
+>>>       }
+>>>         /* attempt a per ring reset */
+>>> @@ -164,13 +165,15 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
+>>>               if (amdgpu_ring_sched_ready(ring))
+>>>                   drm_sched_start(&ring->sched, 0);
+>>>               dev_err(adev->dev, "Ring %s reset succeeded\n", ring->sched.name);
+>>> -            drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, NULL);
+>>> +            drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE, info);
+>>>               goto exit;
+>>>           }
+>>>           dev_err(adev->dev, "Ring %s reset failure\n", ring->sched.name);
+>>>       }
+>>>       dma_fence_set_error(&s_job->s_fence->finished, -ETIME);
+>>>   +    amdgpu_vm_put_task_info(ti);
+>>> +
+>>>       if (amdgpu_device_should_recover_gpu(ring->adev)) {
+>>>           struct amdgpu_reset_context reset_context;
+>>>           memset(&reset_context, 0, sizeof(reset_context));
+>>
+> 
 
 
