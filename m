@@ -1,110 +1,140 @@
-Return-Path: <linux-kernel+bounces-691628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4602ADE6FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:32:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448EAADE725
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3973F402C22
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:29:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A246717D92C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3352857CD;
-	Wed, 18 Jun 2025 09:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B12B2836B0;
+	Wed, 18 Jun 2025 09:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YWX9IMvN"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="LOxDWUda"
+Received: from forward204b.mail.yandex.net (forward204b.mail.yandex.net [178.154.239.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0955D1F4191;
-	Wed, 18 Jun 2025 09:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1DB281531;
+	Wed, 18 Jun 2025 09:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750238860; cv=none; b=Zchs6uHnwr53ZloLzrPCrRms7GbHzZfsvZvBtjDhoFKxCJquFrFl035QjdNjuIaO5eDTAuoRBNOBC90A0cvh35d7kmd2sso0vTkeV2pXsElGsZFHRDYzp8yDQUrrkd8uKUdIkGYfPpqo5aYbfRC6lIrCxCm41p0R7R61lnDUNEA=
+	t=1750239332; cv=none; b=UyzPEBNZ4wlySd5JGtFYGP4lgFQQ0W56vu+KJz4rwGp/FvHnN6a3Ka7Ia1HSzyUuqlseMY/lEdbdDeSF+KtpGvnxbRBo8cptD7nWXQ20+1q5rinOfmqv3FOWBbz311cDz78hE3ovQeLnfKhb6bHlV3AN29gVrBZwZghceJe+RNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750238860; c=relaxed/simple;
-	bh=9hozI163u2f82HHc3jXhzCXVCkRVx1ctJhVQOE/MT/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ePW9fYv0FQTYJ4ijL4xgJbVZDlGCGlcM+uHwSkN/DeP/azuVo+QTq4cX9TNXTGz+zGQy/3dQL5HJmXOSmBvJWqcogbAbW50OuNCv6jRWTc39ZPGwjRFfZ8tW9XYJyjQSOMqN0Ydxay4ziGQ55xhwHVWpaGW4dV/7bQ6lm6liDnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YWX9IMvN; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=14CLd2utreHeC5HTSpw3bBPTjKNLFfN1oL1hjjz73BE=; b=YWX9IMvNaqQ0XlpYJ5dIVWeioL
-	/UxiraohaeqnUgyhiVbK9UlvYPX1M1l+1A0wBapD4jGThPBBCTJ1LAVCVvqFxhUHksi4/CTS+6i1U
-	DAaf3hgDzbkmDAOI20bhWBnGxhghqd6EdIdim6mSBenDU5kMwQjIKkkLT6A3UgV4N73r2MlI4JHTB
-	i5VX0F0HTLhILBySvA9YoUnxpcs2/d+Plfno0AnbHsiRzzTd/wVpgGtvTptiq/pstVYY1eUINv3lV
-	i9G4wdOptpFscsn09QUqZQFvhiXZuYabXRCNdi3Z+UYPauxH/C8RDKpNtSGO0QgEdoR1I6IrKMjiH
-	BOC1FpBA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uRp4q-00000002YmE-2dlP;
-	Wed, 18 Jun 2025 09:27:28 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 391C3307D9B; Wed, 18 Jun 2025 11:27:28 +0200 (CEST)
-Date: Wed, 18 Jun 2025 11:27:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
-	"linux-trace-users@vger.kernel.org" <linux-trace-users@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Frederic Weisbecker <fweisbec@gmail.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>
-Subject: Re: [RFC][PATCH] tracing: Deprecate auto-mounting tracefs in debugfs
-Message-ID: <20250618092728.GG1613376@noisy.programming.kicks-ass.net>
-References: <20250617133614.24e2ba7f@gandalf.local.home>
- <20250617174107.GB1613376@noisy.programming.kicks-ass.net>
- <3201A571-6F08-4E26-AC33-39E0D1925D27@goodmis.org>
- <20250617180023.GC1613376@noisy.programming.kicks-ass.net>
- <20250618072102.1fnuVt8d@linutronix.de>
+	s=arc-20240116; t=1750239332; c=relaxed/simple;
+	bh=yP0+8GmbtpPKWcM1m16ilybPZ3Jwzm+ZXhYXis/MEcc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H76YAja70zycYt+BFSfkqD827TbY2QANNMBBTZovz0n0Jsio5NTMRQvsFqaObgKWpeg6DyrB+Oz69x7lM81GadhTjs8w8BGx0gEyKYT5VtaquEBF+N1RyQOZ3vr6V4Pqht+dpVCxUDhLjeMqxxVIbSk/ww5/JckEldVMTLbAsG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=LOxDWUda; arc=none smtp.client-ip=178.154.239.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from forward102b.mail.yandex.net (forward102b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d102])
+	by forward204b.mail.yandex.net (Yandex) with ESMTPS id 0C2E264C39;
+	Wed, 18 Jun 2025 12:28:31 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:aaac:0:640:94d6:0])
+	by forward102b.mail.yandex.net (Yandex) with ESMTPS id 6C21960D12;
+	Wed, 18 Jun 2025 12:28:23 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id HSJfHFFLlOs0-oEA26d2T;
+	Wed, 18 Jun 2025 12:28:22 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1750238902;
+	bh=nLy/zmKoPAJaNBFhjjOaDK0vOCitRXvt18tMyA0z2/s=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=LOxDWUdaWYl9IlKfoU7InmzQpu07ULulEVheZimN/CryD3uTemSR6Rprp2mBQu3AI
+	 c4n+A3dxxSOR44VtGtDNns0HoB8K6KSPfyLsG2ZTWqDRGS4L34zCCbnRSJgXcXp5GN
+	 cU42cG8/0+pLAuSs0EuSpdtg1RAACdi+iJjinSU8=
+Authentication-Results: mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+To: rust-for-linux@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+Subject: [PATCH] rust: replace literals with constants in `clk::Hertz`
+Date: Wed, 18 Jun 2025 12:28:10 +0300
+Message-ID: <20250618092810.29370-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618072102.1fnuVt8d@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 18, 2025 at 09:21:02AM +0200, Sebastian Andrzej Siewior wrote:
-> On 2025-06-17 20:00:23 [+0200], Peter Zijlstra wrote:
-> > If I have to edit the mount table, I'll just keep it at /debug/tracing/.
-> > Tracing is very much debug stuff anyway. While I knew there was tracefs,
-> > I never knew there was another mount point.
-> > 
-> > Just annoying I now have to add two entries to every new machine.. Oh
-> > well.
-> 
-> I don't know what you run but since Debian 11/ Bullseye (v5.10) this happens
-> more or less on its own. systemd has the proper mount units:
-> | # mount | grep trace
-> | tracefs on /sys/kernel/tracing type tracefs (rw,nosuid,nodev,noexec,relatime)
-> | # ls -lh /sys/kernel/debug/tracing/ > /dev/null
-> | # mount | grep trace
-> | tracefs on /sys/kernel/tracing type tracefs (rw,nosuid,nodev,noexec,relatime)
-> | tracefs on /sys/kernel/debug/tracing type tracefs (rw,nosuid,nodev,noexec,relatime)
-> 
-> This of course doesn't work if you manually mount it to /debug. While a
-> symlink would work, you still have to touch the boxes.
+Replaces repeated numeric literals in `Hertz` conversions
+with named constants.
 
-Mostly debian/testing. I prefer a mount from /etc/fstab, I tried a
-symlink once but that is weird with tab completion for some reason.
+Signed-off-by: Onur Özkan <work@onurozkan.dev>
+---
+ rust/kernel/clk.rs | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+index 6041c6d07527..b8c5dafdc29c 100644
+--- a/rust/kernel/clk.rs
++++ b/rust/kernel/clk.rs
+@@ -30,19 +30,23 @@
+ pub struct Hertz(pub c_ulong);
+
+ impl Hertz {
++    const KHZ_TO_HZ: c_ulong = 1_000;
++    const MHZ_TO_HZ: c_ulong = 1_000_000;
++    const GHZ_TO_HZ: c_ulong = 1_000_000_000;
++
+     /// Create a new instance from kilohertz (kHz)
+     pub fn from_khz(khz: c_ulong) -> Self {
+-        Self(khz * 1_000)
++        Self(khz * Self::KHZ_TO_HZ)
+     }
+
+     /// Create a new instance from megahertz (MHz)
+     pub fn from_mhz(mhz: c_ulong) -> Self {
+-        Self(mhz * 1_000_000)
++        Self(mhz * Self::MHZ_TO_HZ)
+     }
+
+     /// Create a new instance from gigahertz (GHz)
+     pub fn from_ghz(ghz: c_ulong) -> Self {
+-        Self(ghz * 1_000_000_000)
++        Self(ghz * Self::GHZ_TO_HZ)
+     }
+
+     /// Get the frequency in hertz
+@@ -52,17 +56,17 @@ pub fn as_hz(&self) -> c_ulong {
+
+     /// Get the frequency in kilohertz
+     pub fn as_khz(&self) -> c_ulong {
+-        self.0 / 1_000
++        self.0 / Self::KHZ_TO_HZ
+     }
+
+     /// Get the frequency in megahertz
+     pub fn as_mhz(&self) -> c_ulong {
+-        self.0 / 1_000_000
++        self.0 / Self::MHZ_TO_HZ
+     }
+
+     /// Get the frequency in gigahertz
+     pub fn as_ghz(&self) -> c_ulong {
+-        self.0 / 1_000_000_000
++        self.0 / Self::GHZ_TO_HZ
+     }
+ }
+2.49.0
+
 
