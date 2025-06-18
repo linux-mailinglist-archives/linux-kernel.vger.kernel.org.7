@@ -1,368 +1,306 @@
-Return-Path: <linux-kernel+bounces-692413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C421BADF156
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:25:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A0C5ADF184
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1706A1BC2444
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:24:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B5517DD29
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7C82F237C;
-	Wed, 18 Jun 2025 15:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8722F0037;
+	Wed, 18 Jun 2025 15:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="AXZHDQVb"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7F22EE981;
-	Wed, 18 Jun 2025 15:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750260123; cv=none; b=LXneU2zpO2SQ3fmC+8F68bkV9IjVDhb08/4Y/k9bb6pBiSICwIfdrPMmLmwZPia0lMn775Z8e4PwUjbiUynxHfJ7JjFsQe0q5OQWsr4LinoKCYQXvucu3Uh83GYeP1Z14Vh1BjbbpTzz57wlw3dPqc/zNeARsUWUgtqUuAB2c5A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750260123; c=relaxed/simple;
-	bh=faM7ArohF9ySz3He9yNCX6OKTYTs+8Y3O0FLFiCc2vc=;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GyHQ820a"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013017.outbound.protection.outlook.com [40.107.159.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3864F2EFDAB;
+	Wed, 18 Jun 2025 15:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750261158; cv=fail; b=dkfkyv/kRiLUCrC1V+KELhJmfAREocLPcbFG1twjTKQgKLjEtUEPuTyXt6LS8/0Vwqkac1J9MY8vpi0O0yjbJrHOR4bwuNsrhIIffgrYKcNoT6HZsBgLlNXntMSOBXN2h8hIHIu6NFuwOtfunrkIsUO3M2/OIohKzI87tdcyXaA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750261158; c=relaxed/simple;
+	bh=6UDsXPkMOhvO2nP/Z3lMsNiFW1d37kmYb+Ov1O+li44=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eePz/B9J/Ks5SB9JjIAKJM0P4cDpSXiChYdtKBMA1jvu4o4vMYf/6tGctxShch5d9uNi6krTua6+OA8U1IhPv7d81FytYobMjKuKcFVmGPr7tVtvXdaquKhM+DQqJVU++RKEMEcYkM2sAhK4PJpqvgevf+QBhtoiTm0UuoIDp+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=AXZHDQVb; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=5q
-	XqETQd2PNkfZLHj4KgigghIhxiyg3po4s7tKNm+fg=; b=AXZHDQVb7EALDQv7P1
-	GIzHOVUAEUEAcnDFdlCGvpzMpoQeR7e1MPi0/Hl/q+T7JhWyW0O/7hQEOcOZLms2
-	GZ1si6oddwGtYXONdAn0SN9zWhDSZ/ACCcgAzfME+KwPul3Wi+f6J3GeT9RH8JKV
-	165sZMGzP7CgfUKyMdHeT932Y=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgBnr96E2VJo_+eqAA--.17078S5;
-	Wed, 18 Jun 2025 23:21:43 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org,
-	bhelgaas@google.com,
-	mani@kernel.org,
-	kwilczynski@kernel.org
-Cc: robh@kernel.org,
-	jingoohan1@gmail.com,
-	linux-pci@vger.kernel.org,
+	 Content-Type:MIME-Version; b=QZ3TpOZgEeiA4weI6Zzx1YY7sk/Lv2bcieG28SUBxPwcqlBlV28M9BcDTcRrKhLFpVmVm6M3ciWAX4FXfzJq4ExIOLRHlZTc6ZLHxQY2FyOc9T/i8sWqIEe2vgHnuODohxIAez4qgSeQHSYLW5phv8QPJzAdGRUw61yQ0e1h8Ps=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GyHQ820a; arc=fail smtp.client-ip=40.107.159.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n7/koNrGLNBqCcs+GuuP3DGdfY4jHxYQHcc/roh1CEmfydm1pSS7+5ZXF848usMUu1EKvf2VAbRfjXxlYFMB05Z81yL3kQnUMOUTJHcIRr8zDlWOpzuFgxHEdSsmnnteWEXNt85qIzYZ3JrNJbTDLf76LWa6njjlyQxVBGES/ouq5gdxT7hLb9a4el7XLxzOzyBeEdtaYeWWfl5tRJWPDc8AA6HjFrRmBsXHvEjWBkzWkpqnkAa0gG2a6KjxCRmt/tjDa7fnt1/Wwb3EGw4vD0DmSGzMIWyDmy+ffZ8jXPXadHyaD/YZPt4nnnS4cBqUXNDB6f7yNbkgv+zwB3659w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SeshOZT1ES9ZJVaLYVSmpPCM4Bdi7+yKFfnRhNW2FOY=;
+ b=f2Wb022uXFCQS977papJcv+zGn5I/1/F/WWw5o3WuEdwU4Jbm0zr3qOsb52M4V6FKq5Zagv4jKALUUwK0RPvih9jmQVhKdIA8LTyWwjM4mPv1TipC0Gg9niIIvO9Ndh19my+CESAxe8qyViLvqe1vup54Czyw1UW3mzvN2Lid/6ny44gPubj3qt3OWVscNjda+dxYMBJ5+gM+L7iiGyZOqUBQRHr6XY2zKvtVslNnrDYcQ1emxytvyTIujuXhsF8CR4VS1NdKFIhz39LUHkDtUzUnXYKIRmbxLORLGpmYkAOqsEE31i8rVz9S+IkA0mds0nn41LWlo+3EaREzzvliw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SeshOZT1ES9ZJVaLYVSmpPCM4Bdi7+yKFfnRhNW2FOY=;
+ b=GyHQ820aS8VgaVWxdSvz0/QzpHphrd8ghit55J9HqK4AFeVzmnRm3uxdvuW8FtAzGfZKfXu76TrzNVwmtbPzMQT6cWI9ZDI2Atapv2g4qpzdfp4Ze9bcZK4oqifbLimrHmwyw4SYNqX/6wcEM7AVRkKfM6YX/0221FWb415ewJHECqWFMleqW0iVX1FJnFMGDapI6+S4k1SkwsOtQ7JSVvoYHpmyMXfXCjbgDLu6K9gMfKhkghbKFeaxqxr09hnRi0atzOOkl0Yh9zyUUrcrbU98VcDmxW5N/r5QV4JkX+A51JCyHJlObZoC2HadlRPL4FuFMr5tMXQaYXuSR754RQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::20)
+ by GV1PR04MB10775.eurprd04.prod.outlook.com (2603:10a6:150:213::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Wed, 18 Jun
+ 2025 15:39:13 +0000
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299]) by AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299%5]) with mapi id 15.20.8835.027; Wed, 18 Jun 2025
+ 15:39:13 +0000
+From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-bluetooth@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v2 13/13] PCI: tegra194: Refactor code by using dw_pcie_clear_and_set_dword()
-Date: Wed, 18 Jun 2025 23:21:12 +0800
-Message-Id: <20250618152112.1010147-14-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250618152112.1010147-1-18255117159@163.com>
-References: <20250618152112.1010147-1-18255117159@163.com>
+	devicetree@vger.kernel.org,
+	amitkumar.karwar@nxp.com,
+	neeraj.sanjaykale@nxp.com,
+	sherry.sun@nxp.com,
+	manjeet.gupta@nxp.com
+Subject: [PATCH v3 2/2] Bluetooth: btnxpuart: Add support for 4M baudrate
+Date: Wed, 18 Jun 2025 20:51:13 +0530
+Message-Id: <20250618152113.25500-2-neeraj.sanjaykale@nxp.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250618152113.25500-1-neeraj.sanjaykale@nxp.com>
+References: <20250618152113.25500-1-neeraj.sanjaykale@nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AM0PR10CA0003.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:208:17c::13) To AS4PR04MB9692.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4fe::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgBnr96E2VJo_+eqAA--.17078S5
-X-Coremail-Antispam: 1Uf129KBjvAXoW3ur47Xw15Gr1xXry3AFy5urg_yoW8JF4UZo
-	ZrJ3WkW3W7Jr1xta4YyFn3Kry7Jr4YvayrArZ2y3yj9as7KF15A393Kas8Aw12kr4fC34f
-	Xw4kG3W3AFW7XryUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4RA739UUUUU
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxVwo2hS1QJtrwABsz
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9692:EE_|GV1PR04MB10775:EE_
+X-MS-Office365-Filtering-Correlation-Id: aa340d82-6c9f-4489-aa68-08ddae7e4654
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?u5Wp6PllcRvSQQ+kJMrbARPl5VA2Ktlk8zdgdnVqEpzFGaMIWMQCjrBoPRIa?=
+ =?us-ascii?Q?xwdkT9XZPP1i1Q74A8hXkwbRe1ok8rCtZSLqOOXqGsHfJWEO72Ie6VG58kJK?=
+ =?us-ascii?Q?8FgI9eepiPQC1oMqVMY1/RvQ2BA5snvrf+w5fADOWdsA9g2Xg9mCmx+sKNtk?=
+ =?us-ascii?Q?HOab8xqsCP50uKUSNKNjJUZWaVpbvicxjbQHn6q8hdtPkGe3FaYxmSz85jar?=
+ =?us-ascii?Q?PhHcZfGN98REYHtXvGMMnLulksmYKi5/X8zLLHz9HLcOX9J3Vffbcdb2lbgo?=
+ =?us-ascii?Q?QvMYihimGaakpW6v108PV/8QxIqhpyOKo3bR0z9YvLXwioEemtGr3xY9cNBK?=
+ =?us-ascii?Q?b/u0uyInVc9eDECkbS8S/Z8vZ0eafE/NT+fq0QGJ9zMKyfaKWEoXHITKRfwe?=
+ =?us-ascii?Q?ckV3CKEmnWI88t1QWNskXXf5QlHM4hWKj+JiDSFijkC3ziYhyizoPDz/CJdn?=
+ =?us-ascii?Q?0MoOYMExTKHTlv0+3LK731F717Gzxl9xksDrGCKCIFWBlUpTsrk3U41a5Vo2?=
+ =?us-ascii?Q?+KrWXF8Oh1HUCsBaHH4GLSje17lSqOLcxF3xJq2TrNBH8Lh+Kxnh/X4feAXc?=
+ =?us-ascii?Q?jy5peCTqetaz2xkttFYXUccEUH5F2RN9a/wSXbxE/elZ7bMifrpsoFw4Sirh?=
+ =?us-ascii?Q?MAD8W21rHMKUTy0yAHRKXGX6K1i2+PgJZECoH/Otmefxqs549yvILDfDE/04?=
+ =?us-ascii?Q?CSjN22Qdd+kMdy36Y6p+yvOH3mlbwlsbZZCbsV5z+DsST+Wjij/B7/EUKsiG?=
+ =?us-ascii?Q?oCJag4s0wdSAJKsVgm2sUn/8wEEHseyYeT11quSTXF73b8R2LcS4GN6ZXtJe?=
+ =?us-ascii?Q?oOxRiGv57VtyxllmZgtpeksSzOpuXqsW7pQacZ3Fp/T9TJloUAdCUQbmn4d/?=
+ =?us-ascii?Q?CJFDa+xJemCyapb5/oRscAP8/XnyQ+ZTsdQ0wL8GDZbx1xUeGfXpwTTOScEa?=
+ =?us-ascii?Q?ZVzXrBBCaPWx6u4+oxMCHbSVhHff5DZ+hwmRvBcYavRCqV2P8RwVAMAQi1uT?=
+ =?us-ascii?Q?GZvitsc5Ll1I3dCxgi7F7KUEtSOW647Sv50AzGMpQMTPDSYJdHeiCcSqtn7l?=
+ =?us-ascii?Q?nsLiy1MI0wEwZBLPz17rasItDDU9YHs43z6/sgK7Pa7oE8f0qohPffonehxU?=
+ =?us-ascii?Q?np4Me7dmDVm+2uHeSIoUjdQkgdj0EULW+RldIsd5M2CbS6jYapQ/SkTmysyp?=
+ =?us-ascii?Q?/5pyjBqGrAH1sPK8wy7v3LUGSBHBuuokadaeJNlAiQ2YE/UNy6SMqbLUgLwj?=
+ =?us-ascii?Q?XTe4xrHxKesDXzR+N/m3d5L1pL+bkQm3Ze2U4LBtwmHHZXQVvsatMWAk9YXs?=
+ =?us-ascii?Q?6Cjf4Vu8D2jnYM2a1RoLDKIMrB/NA2bNdNFBLWkKnB+m6L6CkuSDTMCZ1t/S?=
+ =?us-ascii?Q?qWsp0rGoc3qOyQSkNnH/2VZoPz9wG0k8SbzJXf+wLHoEBX7DazwPwRiY6Isf?=
+ =?us-ascii?Q?4ect/XPCIVUir9O541N6DGC/nYXG7IOSgb/6TM1MQnLGxO5emr7QoQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9692.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QCkHKY/RYz5FbSQaTyJmyE1RcboVcdcUykAkA0vhZuBasJ9vXCkTg5Ly7yIA?=
+ =?us-ascii?Q?b+ZP71Hr1aVrsIDGFxgBR28ILtN1Vl70VNeCDOdyeGdi/i295vlU85sKQssG?=
+ =?us-ascii?Q?oU6WYwyJzSKY+HsLJsirXBIp+y1iF2gMB41jsMUXvJ+aBTFbTL4iOx3xiPni?=
+ =?us-ascii?Q?1FQTpCz4kl+/fJGB8Bn7OPgYaHCmptQsH88jfy7iNYiAqnuimDIgDiHKPRCE?=
+ =?us-ascii?Q?+bdAk2TlPEyl4GipiTKdXKxEDcqlx1pC3fe/yhyB7Irnsb6DqzPe1m3ZY4e5?=
+ =?us-ascii?Q?E/r1CiPqRSRX/OsaWnLVyOGNhX90et+7V0mGiAxmlg/BMzytr95evTTBsUTO?=
+ =?us-ascii?Q?nIcKwNZ9TWkQ3CMUhgAfnY3/znzryVRA3jcU5malWs9T8IUHVxCGIw4+f6zZ?=
+ =?us-ascii?Q?E8+KzSlDz2aBqeXcFdcPvR11S30zPNtSDbYxASp+tS8TMO4VRu7oceo+5R9b?=
+ =?us-ascii?Q?3zhvsWFmLQSFgchzl1g3VYx6kM2ogg3pGBvi2qRT2WVlfy5V2L5X2sd3FEYO?=
+ =?us-ascii?Q?jY1UtEBZt7rGv9eQdAz5ScGs0q3sYuzrxyY5Hpi2ib4mIpE6XSOJRZ45XmLM?=
+ =?us-ascii?Q?SY3OB6PETSgDEbDx18KfkemP/BAvoqGe8T57aX8sBI4759RGNsIsDmJLo//7?=
+ =?us-ascii?Q?zZwlVsbN3E0zA9Px/EZ2MRMf5ErdhXI+bGZo884YtdzW6Ux9+nMHKeD7SNm2?=
+ =?us-ascii?Q?po4e+204R92F5moJquSx+CpcTDkUrQlOMedlkHDTvZZMhdJVEFwFO+mrvZsA?=
+ =?us-ascii?Q?i8fTD5bm07BLZ98arOkcKIjnTo1W1G7efeyx4LVK4dFBIbMmPSpx4JrbuOjp?=
+ =?us-ascii?Q?EO8fXSy3qNIzP/A2TJOJWAxQAW/GogYoiSFqDUxlsthtpBE3MrykBGJBC9bv?=
+ =?us-ascii?Q?/nYSg4k2MUqdB9gQxDXliZFrAA8S00nGT7LQJkQ0QUgeg81CntAOz1azfE+T?=
+ =?us-ascii?Q?o/YnC5fBagkx7bKuTCq/y3fcql53RjNBMFjt20QIDEjnpgLwOe7O7Q2xims/?=
+ =?us-ascii?Q?p8JnG8SL8mwUxE2uSwy4THEpJos14umxZJZUoaeiFB3sApoTEblnvfTIQIiO?=
+ =?us-ascii?Q?l9opDmFOaIqQp8mVvN5yAzLF9PWOe0Tzx5yW6AUQCr5mJQTJewKIXAND+GZ9?=
+ =?us-ascii?Q?C3EN1osa75ySVbkbV7dYZlaAmkfxUILUWbPQ9ds/pFpQbJKfKOXhDfEk7jfr?=
+ =?us-ascii?Q?Dmx8+st940yuMEo0ST+76YwgbBCM/0lpmm3SaOw7KsO32UdrmIzQ3jEzKc1P?=
+ =?us-ascii?Q?omaybqSW11NOMD/gWvHtA1dXKrZEUYhmlCZ9jCEGlJxU6Q6uuOwe0hPY4WFE?=
+ =?us-ascii?Q?618PI9j2oIOUEbUwhJfe//PLkdtQKsil4yJJbGyMVgn1t1HQie8YJYFQEUVU?=
+ =?us-ascii?Q?DLbr1oOAPzB2vjun/q0LAcvNfHj6SoD0+6J2RNpifzmz2RQq/Zg9pAZHmLTp?=
+ =?us-ascii?Q?XB+mSL2dZQ8R4ZtiAwlf/87AoazXm54gCd/scNXn+aAVCcnNXMZnomF58n9j?=
+ =?us-ascii?Q?V+sYu6nfQE7bfI2TaAvzkdXmsZYGzX9NwD/LmSUb7QAnqQ4tyliyvADPym5p?=
+ =?us-ascii?Q?9TK7Kqp9+l8WZoiSOGFEN5+7klmDZtaPvxGEIKCLmPFMfz12hndYQJsLoP/M?=
+ =?us-ascii?Q?zQ=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa340d82-6c9f-4489-aa68-08ddae7e4654
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9692.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 15:39:13.0121
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BppMqFmFPquI6oSk25ey5RpxbczhuEjyAe2IX6ON1d6cHwc0q+TO3mD7KvY8A6O4xdNWYxR4FwQ0nRKGyBJ0fYi+kyBnZDOEQIUej6OxTx0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10775
 
-Tegra194 PCIe driver contains extensive manual bit manipulation across
-interrupt handling, ASPM configuration, and controller initialization.
-The driver implements complex read-modify-write sequences with explicit
-bit masking, leading to verbose and hard-to-maintain code.
+This adds support for 4000000 as secondary baudrate.
 
-Refactor interrupt handling, ASPM setup, capability configuration, and
-controller initialization using dw_pcie_clear_and_set_dword(). Replace
-multi-step register modifications with single helper calls, eliminating
-intermediate variables and reducing code size by ~100 lines. For CDMA
-error handling, initialize the value variable to zero before setting
-status bits.
+This value is selected from device tree property "max-speed"
+which is then used to download FW chunks, and as operational baudrate after
+HCI initialization is done.
 
-This comprehensive refactoring significantly improves code readability
-and maintainability. Standardizing on the helper ensures consistent
-register access patterns across all driver components and reduces the
-risk of bit manipulation errors in this complex controller driver.
+Earlier, the secondary baudrate was fixed to 3000000 in driver, but now
+with "max-speed" property, this secondary baudrate can be set to
+4000000.
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
+The secondary baudrate is set by the driver by sending a vendor command
+(3F 09) to the firmware, with secondary baudrate parameter, in
+nxp_post_init().
+
+Any other value set for max-speed other than 3000000 or 4000000 will
+default to 3000000, which is supported by all legacy and new NXP chipsets.
+
+This feature is applicable for all new V3 bootloader chips and w8987 V1
+bootloader chip.
+
+This property does not apply for w8997 compatible device, since it
+downloads a helper.bin FW file that sets secondary baudrate as 3000000
+only.
+
+The switch to 4000000 baudrate is validated using a Saleae Logic Analyzer
+and imx8m-mini with AW693 M.2 module.
+
+Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
 ---
- drivers/pci/controller/dwc/pcie-tegra194.c | 155 +++++++++------------
- 1 file changed, 64 insertions(+), 91 deletions(-)
+v2: Change DT property to 'max-speed'. (Krzysztof)
+    Add support for 4M baudrate to w8987. Update commit message.
+(Sherry)
+v3: Add check for 'max-speed' and set default to 3000000. (Sherry)
+    Add functional and testing details in commit message. (Paul)
+---
+ drivers/bluetooth/btnxpuart.c | 32 +++++++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 4f26086f25da..c6f5c35a4be4 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -378,9 +378,8 @@ static irqreturn_t tegra_pcie_rp_irq_handler(int irq, void *arg)
- 			val |= APPL_CAR_RESET_OVRD_CYA_OVERRIDE_CORE_RST_N;
- 			appl_writel(pcie, val, APPL_CAR_RESET_OVRD);
+diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+index 6b13feed06df..a9a53e6b35cb 100644
+--- a/drivers/bluetooth/btnxpuart.c
++++ b/drivers/bluetooth/btnxpuart.c
+@@ -73,7 +73,8 @@
+ #define FW_AUTH_ENC		0xc0
  
--			val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
--			val |= PORT_LOGIC_SPEED_CHANGE;
--			dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
-+			dw_pcie_clear_and_set_dword(pci, PCIE_LINK_WIDTH_SPEED_CONTROL,
-+						    0, PORT_LOGIC_SPEED_CHANGE);
+ #define HCI_NXP_PRI_BAUDRATE	115200
+-#define HCI_NXP_SEC_BAUDRATE	3000000
++#define HCI_NXP_SEC_BAUDRATE_3M	3000000
++#define HCI_NXP_SEC_BAUDRATE_4M	4000000
+ 
+ #define MAX_FW_FILE_NAME_LEN    50
+ 
+@@ -201,6 +202,7 @@ struct btnxpuart_dev {
+ 	u32 new_baudrate;
+ 	u32 current_baudrate;
+ 	u32 fw_init_baudrate;
++	u32 secondary_baudrate;
+ 	enum bootloader_param_change timeout_changed;
+ 	enum bootloader_param_change baudrate_changed;
+ 	bool helper_downloaded;
+@@ -802,7 +804,10 @@ static bool nxp_fw_change_baudrate(struct hci_dev *hdev, u16 req_len)
+ 		nxpdev->fw_v3_offset_correction += req_len;
+ 	} else if (req_len == sizeof(uart_config)) {
+ 		uart_config.clkdiv.address = __cpu_to_le32(clkdivaddr);
+-		uart_config.clkdiv.value = __cpu_to_le32(0x00c00000);
++		if (nxpdev->new_baudrate == HCI_NXP_SEC_BAUDRATE_4M)
++			uart_config.clkdiv.value = __cpu_to_le32(0x01000000);
++		else
++			uart_config.clkdiv.value = __cpu_to_le32(0x00c00000);
+ 		uart_config.uartdiv.address = __cpu_to_le32(uartdivaddr);
+ 		uart_config.uartdiv.value = __cpu_to_le32(1);
+ 		uart_config.mcr.address = __cpu_to_le32(uartmcraddr);
+@@ -966,12 +971,13 @@ static int nxp_recv_fw_req_v1(struct hci_dev *hdev, struct sk_buff *skb)
+ 			goto free_skb;
  		}
- 	}
- 
-@@ -412,7 +411,7 @@ static irqreturn_t tegra_pcie_rp_irq_handler(int irq, void *arg)
- 
- 	if (status_l0 & APPL_INTR_STATUS_L0_CDM_REG_CHK_INT) {
- 		status_l1 = appl_readl(pcie, APPL_INTR_STATUS_L1_18);
--		val = dw_pcie_readl_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS);
-+		val = 0;
- 		if (status_l1 & APPL_INTR_STATUS_L1_18_CDM_REG_CHK_CMPLT) {
- 			dev_info(pci->dev, "CDM check complete\n");
- 			val |= PCIE_PL_CHK_REG_CHK_REG_COMPLETE;
-@@ -425,7 +424,8 @@ static irqreturn_t tegra_pcie_rp_irq_handler(int irq, void *arg)
- 			dev_err(pci->dev, "CDM Logic error\n");
- 			val |= PCIE_PL_CHK_REG_CHK_REG_LOGIC_ERROR;
+ 		if (nxpdev->baudrate_changed != changed) {
++			nxpdev->new_baudrate = nxpdev->secondary_baudrate;
+ 			if (nxp_fw_change_baudrate(hdev, len)) {
+ 				nxpdev->baudrate_changed = changed;
+ 				serdev_device_set_baudrate(nxpdev->serdev,
+-							   HCI_NXP_SEC_BAUDRATE);
++							   nxpdev->secondary_baudrate);
+ 				serdev_device_set_flow_control(nxpdev->serdev, true);
+-				nxpdev->current_baudrate = HCI_NXP_SEC_BAUDRATE;
++				nxpdev->current_baudrate = nxpdev->secondary_baudrate;
+ 			}
+ 			goto free_skb;
  		}
--		dw_pcie_writel_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS, val);
-+		dw_pcie_clear_and_set_dword(pci, PCIE_PL_CHK_REG_CONTROL_STATUS,
-+					    PORT_LOGIC_SPEED_CHANGE, val);
- 		val = dw_pcie_readl_dbi(pci, PCIE_PL_CHK_REG_ERR_ADDR);
- 		dev_err(pci->dev, "CDM Error Address Offset = 0x%08X\n", val);
- 	}
-@@ -610,34 +610,27 @@ static struct pci_ops tegra_pci_ops = {
- #if defined(CONFIG_PCIEASPM)
- static void disable_aspm_l11(struct tegra_pcie_dw *pcie)
- {
--	u32 val;
--
--	val = dw_pcie_readl_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub);
--	val &= ~PCI_L1SS_CAP_ASPM_L1_1;
--	dw_pcie_writel_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub, val);
-+	dw_pcie_clear_and_set_dword(&pcie->pci, pcie->cfg_link_cap_l1sub,
-+				    PCI_L1SS_CAP_ASPM_L1_1, 0);
- }
- 
- static void disable_aspm_l12(struct tegra_pcie_dw *pcie)
- {
--	u32 val;
--
--	val = dw_pcie_readl_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub);
--	val &= ~PCI_L1SS_CAP_ASPM_L1_2;
--	dw_pcie_writel_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub, val);
-+	dw_pcie_clear_and_set_dword(&pcie->pci, pcie->cfg_link_cap_l1sub,
-+				    PCI_L1SS_CAP_ASPM_L1_2, 0);
- }
- 
- static inline u32 event_counter_prog(struct tegra_pcie_dw *pcie, u32 event)
- {
--	u32 val;
-+	u32 val = 0;
- 
--	val = dw_pcie_readl_dbi(&pcie->pci, pcie->ras_des_cap +
--				PCIE_RAS_DES_EVENT_COUNTER_CONTROL);
--	val &= ~(EVENT_COUNTER_EVENT_SEL_MASK << EVENT_COUNTER_EVENT_SEL_SHIFT);
- 	val |= EVENT_COUNTER_GROUP_5 << EVENT_COUNTER_GROUP_SEL_SHIFT;
- 	val |= event << EVENT_COUNTER_EVENT_SEL_SHIFT;
- 	val |= EVENT_COUNTER_ENABLE_ALL << EVENT_COUNTER_ENABLE_SHIFT;
--	dw_pcie_writel_dbi(&pcie->pci, pcie->ras_des_cap +
--			   PCIE_RAS_DES_EVENT_COUNTER_CONTROL, val);
-+	dw_pcie_clear_and_set_dword(&pcie->pci, pcie->ras_des_cap +
-+				    PCIE_RAS_DES_EVENT_COUNTER_CONTROL,
-+				    EVENT_COUNTER_EVENT_SEL_MASK << EVENT_COUNTER_EVENT_SEL_SHIFT,
-+				    val);
- 	val = dw_pcie_readl_dbi(&pcie->pci, pcie->ras_des_cap +
- 				PCIE_RAS_DES_EVENT_COUNTER_DATA);
- 
-@@ -697,18 +690,20 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
- 			   PCIE_RAS_DES_EVENT_COUNTER_CONTROL, val);
- 
- 	/* Program T_cmrt and T_pwr_on values */
--	val = dw_pcie_readl_dbi(pci, pcie->cfg_link_cap_l1sub);
--	val &= ~(PCI_L1SS_CAP_CM_RESTORE_TIME | PCI_L1SS_CAP_P_PWR_ON_VALUE);
-+	val = 0;
- 	val |= (pcie->aspm_cmrt << 8);
- 	val |= (pcie->aspm_pwr_on_t << 19);
--	dw_pcie_writel_dbi(pci, pcie->cfg_link_cap_l1sub, val);
-+	dw_pcie_clear_and_set_dword(pci, pcie->cfg_link_cap_l1sub,
-+				    PCI_L1SS_CAP_CM_RESTORE_TIME |
-+				    PCI_L1SS_CAP_P_PWR_ON_VALUE,
-+				    val);
- 
- 	/* Program L0s and L1 entrance latencies */
--	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
--	val &= ~PORT_AFR_L0S_ENTRANCE_LAT_MASK;
-+	val = 0;
- 	val |= (pcie->aspm_l0s_enter_lat << PORT_AFR_L0S_ENTRANCE_LAT_SHIFT);
- 	val |= PORT_AFR_ENTER_ASPM;
--	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
-+	dw_pcie_clear_and_set_dword(pci, PCIE_PORT_AFR,
-+				    PORT_AFR_L0S_ENTRANCE_LAT_MASK, val);
- }
- 
- static void init_debugfs(struct tegra_pcie_dw *pcie)
-@@ -860,31 +855,26 @@ static void config_gen3_gen4_eq_presets(struct tegra_pcie_dw *pcie)
- 		dw_pcie_writeb_dbi(pci, offset + i, val);
+@@ -992,7 +998,7 @@ static int nxp_recv_fw_req_v1(struct hci_dev *hdev, struct sk_buff *skb)
+ 			nxpdev->helper_downloaded = true;
+ 			serdev_device_wait_until_sent(nxpdev->serdev, 0);
+ 			serdev_device_set_baudrate(nxpdev->serdev,
+-						   HCI_NXP_SEC_BAUDRATE);
++						   HCI_NXP_SEC_BAUDRATE_3M);
+ 			serdev_device_set_flow_control(nxpdev->serdev, true);
+ 		} else {
+ 			clear_bit(BTNXPUART_FW_DOWNLOADING, &nxpdev->tx_state);
+@@ -1216,12 +1222,13 @@ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
  	}
  
--	val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
--	val &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
--	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
-+	dw_pcie_clear_and_set_dword(pci, GEN3_RELATED_OFF,
-+				    GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK, 0);
- 
--	val = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
--	val &= ~GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC;
--	val |= FIELD_PREP(GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC, 0x3ff);
--	val &= ~GEN3_EQ_CONTROL_OFF_FB_MODE;
--	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, val);
-+	dw_pcie_clear_and_set_dword(pci, GEN3_EQ_CONTROL_OFF,
-+				    GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC |
-+				    GEN3_EQ_CONTROL_OFF_FB_MODE,
-+				    FIELD_PREP(GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC, 0x3ff));
- 
--	val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
--	val &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
--	val |= (0x1 << GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT);
--	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
-+	dw_pcie_clear_and_set_dword(pci, GEN3_RELATED_OFF,
-+				    GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK,
-+				    0x1 << GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT);
- 
--	val = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
--	val &= ~GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC;
--	val |= FIELD_PREP(GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC,
--			  pcie->of_data->gen4_preset_vec);
--	val &= ~GEN3_EQ_CONTROL_OFF_FB_MODE;
--	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, val);
-+	dw_pcie_clear_and_set_dword(pci, GEN3_EQ_CONTROL_OFF,
-+				    GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC |
-+				    GEN3_EQ_CONTROL_OFF_FB_MODE,
-+				    FIELD_PREP(GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC,
-+					       pcie->of_data->gen4_preset_vec));
- 
--	val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
--	val &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
--	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
-+	dw_pcie_clear_and_set_dword(pci, GEN3_RELATED_OFF,
-+				    GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK, 0);
- }
- 
- static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
-@@ -892,7 +882,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
- 	u32 val;
--	u16 val_16;
- 
- 	pp->bridge->ops = &tegra_pci_ops;
- 
-@@ -900,32 +889,25 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
- 		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
- 							      PCI_CAP_ID_EXP);
- 
--	val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
--	val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
--	dw_pcie_writel_dbi(pci, PCI_IO_BASE, val);
-+	dw_pcie_clear_and_set_dword(pci, PCI_IO_BASE,
-+				    IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8, 0);
- 
--	val = dw_pcie_readl_dbi(pci, PCI_PREF_MEMORY_BASE);
--	val |= CFG_PREF_MEM_LIMIT_BASE_MEM_DECODE;
--	val |= CFG_PREF_MEM_LIMIT_BASE_MEM_LIMIT_DECODE;
--	dw_pcie_writel_dbi(pci, PCI_PREF_MEMORY_BASE, val);
-+	dw_pcie_clear_and_set_dword(pci, PCI_PREF_MEMORY_BASE, 0,
-+				    CFG_PREF_MEM_LIMIT_BASE_MEM_DECODE |
-+				    CFG_PREF_MEM_LIMIT_BASE_MEM_LIMIT_DECODE);
- 
- 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0);
- 
- 	/* Enable as 0xFFFF0001 response for RRS */
--	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT);
--	val &= ~(AMBA_ERROR_RESPONSE_RRS_MASK << AMBA_ERROR_RESPONSE_RRS_SHIFT);
--	val |= (AMBA_ERROR_RESPONSE_RRS_OKAY_FFFF0001 <<
--		AMBA_ERROR_RESPONSE_RRS_SHIFT);
--	dw_pcie_writel_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT, val);
-+	dw_pcie_clear_and_set_dword(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT,
-+				    AMBA_ERROR_RESPONSE_RRS_MASK << AMBA_ERROR_RESPONSE_RRS_SHIFT,
-+				    AMBA_ERROR_RESPONSE_RRS_OKAY_FFFF0001 <<
-+				    AMBA_ERROR_RESPONSE_RRS_SHIFT);
- 
- 	/* Clear Slot Clock Configuration bit if SRNS configuration */
--	if (pcie->enable_srns) {
--		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
--					   PCI_EXP_LNKSTA);
--		val_16 &= ~PCI_EXP_LNKSTA_SLC;
--		dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
--				   val_16);
--	}
-+	if (pcie->enable_srns)
-+		dw_pcie_clear_and_set_dword(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
-+					    PCI_EXP_LNKSTA_SLC, 0);
- 
- 	config_gen3_gen4_eq_presets(pcie);
- 
-@@ -937,17 +919,13 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
- 		disable_aspm_l12(pcie);
+ 	if (nxpdev->baudrate_changed != changed) {
++		nxpdev->new_baudrate = nxpdev->secondary_baudrate;
+ 		if (nxp_fw_change_baudrate(hdev, len)) {
+ 			nxpdev->baudrate_changed = cmd_sent;
+ 			serdev_device_set_baudrate(nxpdev->serdev,
+-						   HCI_NXP_SEC_BAUDRATE);
++						   nxpdev->secondary_baudrate);
+ 			serdev_device_set_flow_control(nxpdev->serdev, true);
+-			nxpdev->current_baudrate = HCI_NXP_SEC_BAUDRATE;
++			nxpdev->current_baudrate = nxpdev->secondary_baudrate;
+ 		}
+ 		goto free_skb;
  	}
+@@ -1447,8 +1454,8 @@ static int nxp_post_init(struct hci_dev *hdev)
+ 	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+ 	struct ps_data *psdata = &nxpdev->psdata;
  
--	if (!pcie->of_data->has_l1ss_exit_fix) {
--		val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
--		val &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
--		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
--	}
-+	if (!pcie->of_data->has_l1ss_exit_fix)
-+		dw_pcie_clear_and_set_dword(pci, GEN3_RELATED_OFF,
-+					    GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL, 0);
- 
--	if (pcie->update_fc_fixup) {
--		val = dw_pcie_readl_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF);
--		val |= 0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT;
--		dw_pcie_writel_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF, val);
--	}
-+	if (pcie->update_fc_fixup)
-+		dw_pcie_clear_and_set_dword(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF,
-+					    0, 0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT);
- 
- 	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
- 
-@@ -1018,9 +996,8 @@ static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
- 		reset_control_deassert(pcie->core_rst);
- 
- 		offset = dw_pcie_find_ext_capability(pci, PCI_EXT_CAP_ID_DLF);
--		val = dw_pcie_readl_dbi(pci, offset + PCI_DLF_CAP);
--		val &= ~PCI_DLF_EXCHANGE_ENABLE;
--		dw_pcie_writel_dbi(pci, offset + PCI_DLF_CAP, val);
-+		dw_pcie_clear_and_set_dword(pci, offset + PCI_DLF_CAP,
-+					    PCI_DLF_EXCHANGE_ENABLE, 0);
- 
- 		tegra_pcie_dw_host_init(pp);
- 		dw_pcie_setup_rc(pp);
-@@ -1847,11 +1824,9 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
- 
- 	reset_control_deassert(pcie->core_rst);
- 
--	if (pcie->update_fc_fixup) {
--		val = dw_pcie_readl_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF);
--		val |= 0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT;
--		dw_pcie_writel_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF, val);
--	}
-+	if (pcie->update_fc_fixup)
-+		dw_pcie_clear_and_set_dword(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF,
-+					    0, 0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT);
- 
- 	config_gen3_gen4_eq_presets(pcie);
- 
-@@ -1863,11 +1838,9 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
- 		disable_aspm_l12(pcie);
+-	if (nxpdev->current_baudrate != HCI_NXP_SEC_BAUDRATE) {
+-		nxpdev->new_baudrate = HCI_NXP_SEC_BAUDRATE;
++	if (nxpdev->current_baudrate != nxpdev->secondary_baudrate) {
++		nxpdev->new_baudrate = nxpdev->secondary_baudrate;
+ 		nxp_set_baudrate_cmd(hdev, NULL);
  	}
+ 	if (psdata->cur_h2c_wakeupmode != psdata->h2c_wakeupmode)
+@@ -1773,6 +1780,13 @@ static int nxp_serdev_probe(struct serdev_device *serdev)
+ 	if (!nxpdev->fw_init_baudrate)
+ 		nxpdev->fw_init_baudrate = FW_INIT_BAUDRATE;
  
--	if (!pcie->of_data->has_l1ss_exit_fix) {
--		val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
--		val &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
--		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
--	}
-+	if (!pcie->of_data->has_l1ss_exit_fix)
-+		dw_pcie_clear_and_set_dword(pci, GEN3_RELATED_OFF,
-+					    GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL, 0);
++	device_property_read_u32(&nxpdev->serdev->dev, "max-speed",
++				 &nxpdev->secondary_baudrate);
++	if (!nxpdev->secondary_baudrate ||
++	    (nxpdev->secondary_baudrate != HCI_NXP_SEC_BAUDRATE_3M &&
++	     nxpdev->secondary_baudrate != HCI_NXP_SEC_BAUDRATE_4M))
++		nxpdev->secondary_baudrate = HCI_NXP_SEC_BAUDRATE_3M;
++
+ 	set_bit(BTNXPUART_FW_DOWNLOADING, &nxpdev->tx_state);
  
- 	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
- 						      PCI_CAP_ID_EXP);
+ 	crc8_populate_msb(crc8_table, POLYNOMIAL8);
 -- 
-2.25.1
+2.34.1
 
 
