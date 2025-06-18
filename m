@@ -1,196 +1,119 @@
-Return-Path: <linux-kernel+bounces-692270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2E4ADEF21
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:24:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9471CADEF5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4E177A6A2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:23:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BCA6405E4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AAD2EBBAB;
-	Wed, 18 Jun 2025 14:24:10 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392842E8DED;
-	Wed, 18 Jun 2025 14:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154102EE980;
+	Wed, 18 Jun 2025 14:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="U67lLJ8g"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249D42EE983;
+	Wed, 18 Jun 2025 14:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750256650; cv=none; b=N/8tA9F9nIBeuC/ICR5H1jIP7wky6wDNf7V19zv34f17mvShi+3sXxlfdL12P6Sieya8lBWoP3ChotJwJQzBK1UFsOM8MbBaGT3nYyNjYaPdwUd9M+jU88rQXrQvD9D+8KjkKKOKXAebyZ/9EXEND84v2HDquooa9lwUMQop2wQ=
+	t=1750256692; cv=none; b=eNtNuE10GEIpoHjb86t6c8N78VuXtrjspzbl0Hbt6ge4rQaBQVn4rEDn9QodYdkghVyuSxb6HZCM2fuwiMzGJ7nMgtcpFlc6prUyZYJgC9ohVh6/1B/Fc+ACsHXN+vRbSB/ddPWqZww317Y+tZUDdVhJ6Y58GWz5GdVuGzf//lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750256650; c=relaxed/simple;
-	bh=bi81rDOTqtPi0s6oEwF6JDygTavaOvX9oS5mne9wc4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oIQaBvDKNKErke52aei5lsov9V4SQjfZ+0BVIKo4iJ8aSY1CeKAV5nBFN0x4XM7MYWM+HuJj0zxYpy8ulbD9cOP8DDXetdZxXKPj3Xx0YdL/OB2dSKtFZVgp4zW45C+mlGpgw505ztoos98ie5Su7ggdN3URObAMFNzdrOnubEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1uRtZL-000000003nZ-3dHt;
-	Wed, 18 Jun 2025 14:23:57 +0000
-Date: Wed, 18 Jun 2025 16:23:49 +0200
-From: Daniel Golle <daniel@makrotopia.org>
-To: Frank Wunderlich <linux@fw-web.de>
-Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Frank Wunderlich <frank-w@public-files.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, Simon Horman <horms@kernel.org>,
-	arinc.unal@arinc9.com
-Subject: Re: [net-next v5 2/3] net: ethernet: mtk_eth_soc: add consts for irq
- index
-Message-ID: <aFLL9Uhu6zmovd2O@pidgin.makrotopia.org>
-References: <20250618130717.75839-1-linux@fw-web.de>
- <20250618130717.75839-3-linux@fw-web.de>
+	s=arc-20240116; t=1750256692; c=relaxed/simple;
+	bh=2DJvhQxFzEg6ADcIM1XmAmUVjvyMbKPZgoLzfUZ0cxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q1fGxYanE1FjEolkmp8ElZbqfanCmdq8aRYwWmQCMqYmHp4lkh3ryvKHYZ1GsDPQgBLAK6+AND+O4FQX/dSPOwh1lTJ0ysXDhdb5e56V6WOevNY9XivWWihNjXdaxVSjS2HBPxq9NSgpW8UiQx4mxQ8XcjFsvBXlI7fSWowPywM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=U67lLJ8g; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=+pGl/jrl761RiW9nxGM87f6KLL0RhF44OQat3XVOQyI=;
+	b=U67lLJ8gK2NC55sPi4QCQlSCWlz8xjhXGxNKAuNWd8vKXnxyrYSaofFIdqJQQ1
+	t/q54Qt9VJGVxI6dCeQlGPlZIOjol5peYgxyrBUikw1Klso9I1L4sw9Wcp5Xpb2q
+	UJls5cVEbHgwfCMcIKPoL4l18krsWk9DB4NGC8Hzjuj/Y=
+Received: from [IPV6:240e:b8f:919b:3100:8440:da7c:be7e:927f] (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgBHMBgNzFJovnUQAA--.2192S2;
+	Wed, 18 Jun 2025 22:24:13 +0800 (CST)
+Message-ID: <145c8616-d595-4caf-980d-20eadc39d0bd@163.com>
+Date: Wed, 18 Jun 2025 22:24:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618130717.75839-3-linux@fw-web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] PCI: of: Relax max-link-speed check to support
+ PCIe Gen5/Gen6
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ krzk+dt@kernel.org, manivannan.sadhasivam@linaro.org, conor+dt@kernel.org,
+ robh@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250529021026.475861-1-18255117159@163.com>
+ <20250529021026.475861-4-18255117159@163.com>
+ <5baxv7vnmm46ye6egf6i54letsl6c6zcsle4aoaigxnve33pfk@qn33xy5wfghv>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <5baxv7vnmm46ye6egf6i54letsl6c6zcsle4aoaigxnve33pfk@qn33xy5wfghv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PSgvCgBHMBgNzFJovnUQAA--.2192S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AFWUAr1kJr1DCr4xAr45Awb_yoW8JFyUpa
+	y7AryruF48XF43XF4UW3WrZa4jgas5WrZ7JryrW3WDuFnxJFsxta42vFWfuFn29FnrZr1S
+	q3W2qr47Jr45JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UenQUUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOgBwo2hSykUnrgAAsV
 
-On Wed, Jun 18, 2025 at 03:07:13PM +0200, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> Use consts instead of fixed integers for accessing IRQ array.
-> 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> Reviewed-by: Simon Horman <horms@kernel.org>
 
-Reviewed-by: Daniel Golle <daniel@makrotopia.org>
 
-> ---
-> v5:
-> - rename consts to be compatible with upcoming RSS/LRO changes
->   MTK_ETH_IRQ_SHARED => MTK_FE_IRQ_SHARED
->   MTK_ETH_IRQ_TX => MTK_FE_IRQ_TX
->   MTK_ETH_IRQ_RX => MTK_FE_IRQ_RX
->   MTK_ETH_IRQ_MAX => MTK_FE_IRQ_NUM
-> v4:
-> - calculate max from last (rx) irq index and use it for array size too
-> ---
->  drivers/net/ethernet/mediatek/mtk_eth_soc.c | 22 ++++++++++-----------
->  drivers/net/ethernet/mediatek/mtk_eth_soc.h |  7 ++++++-
->  2 files changed, 17 insertions(+), 12 deletions(-)
+On 2025/6/18 00:50, Manivannan Sadhasivam wrote:
+> On Thu, May 29, 2025 at 10:10:26AM +0800, Hans Zhang wrote:
+>> The existing code restricted `max-link-speed` to values 1~4 (Gen1~Gen4),
+>> but current SOCs using Synopsys/Cadence IP may require Gen5/Gen6 support.
+>> This patch updates the validation in `of_pci_get_max_link_speed` to allow
+>> values up to 6, ensuring compatibility with newer PCIe generations.
+>>
+>> Signed-off-by: Hans Zhang <18255117159@163.com>
 > 
-> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> index 39b673ed7495..875e477a987b 100644
-> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> @@ -3342,9 +3342,9 @@ static int mtk_get_irqs(struct platform_device *pdev, struct mtk_eth *eth)
->  	int i;
->  
->  	/* future SoCs beginning with MT7988 should use named IRQs in dts */
-> -	eth->irq[1] = platform_get_irq_byname(pdev, "tx");
-> -	eth->irq[2] = platform_get_irq_byname(pdev, "rx");
-> -	if (eth->irq[1] >= 0 && eth->irq[2] >= 0)
-> +	eth->irq[MTK_FE_IRQ_TX] = platform_get_irq_byname(pdev, "tx");
-> +	eth->irq[MTK_FE_IRQ_RX] = platform_get_irq_byname(pdev, "rx");
-> +	if (eth->irq[MTK_FE_IRQ_TX] >= 0 && eth->irq[MTK_FE_IRQ_RX] >= 0)
->  		return 0;
->  
->  	/* legacy way:
-> @@ -3353,9 +3353,9 @@ static int mtk_get_irqs(struct platform_device *pdev, struct mtk_eth *eth)
->  	 * On SoCs with non-shared IRQs the first entry is not used,
->  	 * the second is for TX, and the third is for RX.
->  	 */
-> -	for (i = 0; i < 3; i++) {
-> +	for (i = 0; i < MTK_FE_IRQ_NUM; i++) {
->  		if (MTK_HAS_CAPS(eth->soc->caps, MTK_SHARED_INT) && i > 0)
-> -			eth->irq[i] = eth->irq[0];
-> +			eth->irq[i] = eth->irq[MTK_FE_IRQ_SHARED];
->  		else
->  			eth->irq[i] = platform_get_irq(pdev, i);
->  
-> @@ -3421,7 +3421,7 @@ static void mtk_poll_controller(struct net_device *dev)
->  
->  	mtk_tx_irq_disable(eth, MTK_TX_DONE_INT);
->  	mtk_rx_irq_disable(eth, eth->soc->rx.irq_done_mask);
-> -	mtk_handle_irq_rx(eth->irq[2], dev);
-> +	mtk_handle_irq_rx(eth->irq[MTK_FE_IRQ_RX], dev);
->  	mtk_tx_irq_enable(eth, MTK_TX_DONE_INT);
->  	mtk_rx_irq_enable(eth, eth->soc->rx.irq_done_mask);
->  }
-> @@ -4907,7 +4907,7 @@ static int mtk_add_mac(struct mtk_eth *eth, struct device_node *np)
->  	eth->netdev[id]->features |= eth->soc->hw_features;
->  	eth->netdev[id]->ethtool_ops = &mtk_ethtool_ops;
->  
-> -	eth->netdev[id]->irq = eth->irq[0];
-> +	eth->netdev[id]->irq = eth->irq[MTK_FE_IRQ_SHARED];
->  	eth->netdev[id]->dev.of_node = np;
->  
->  	if (MTK_HAS_CAPS(eth->soc->caps, MTK_SOC_MT7628))
-> @@ -5184,17 +5184,17 @@ static int mtk_probe(struct platform_device *pdev)
->  	}
->  
->  	if (MTK_HAS_CAPS(eth->soc->caps, MTK_SHARED_INT)) {
-> -		err = devm_request_irq(eth->dev, eth->irq[0],
-> +		err = devm_request_irq(eth->dev, eth->irq[MTK_FE_IRQ_SHARED],
->  				       mtk_handle_irq, 0,
->  				       dev_name(eth->dev), eth);
->  	} else {
-> -		err = devm_request_irq(eth->dev, eth->irq[1],
-> +		err = devm_request_irq(eth->dev, eth->irq[MTK_FE_IRQ_TX],
->  				       mtk_handle_irq_tx, 0,
->  				       dev_name(eth->dev), eth);
->  		if (err)
->  			goto err_free_dev;
->  
-> -		err = devm_request_irq(eth->dev, eth->irq[2],
-> +		err = devm_request_irq(eth->dev, eth->irq[MTK_FE_IRQ_RX],
->  				       mtk_handle_irq_rx, 0,
->  				       dev_name(eth->dev), eth);
->  	}
-> @@ -5240,7 +5240,7 @@ static int mtk_probe(struct platform_device *pdev)
->  		} else
->  			netif_info(eth, probe, eth->netdev[i],
->  				   "mediatek frame engine at 0x%08lx, irq %d\n",
-> -				   eth->netdev[i]->base_addr, eth->irq[0]);
-> +				   eth->netdev[i]->base_addr, eth->irq[MTK_FE_IRQ_SHARED]);
->  	}
->  
->  	/* we run 2 devices on the same DMA ring so we need a dummy device
-> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-> index 6f72a8c8ae1e..8cdf1317dff5 100644
-> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
-> @@ -642,6 +642,11 @@
->  
->  #define MTK_MAC_FSM(x)		(0x1010C + ((x) * 0x100))
->  
-> +#define MTK_FE_IRQ_SHARED	0
-> +#define MTK_FE_IRQ_TX		1
-> +#define MTK_FE_IRQ_RX		2
-> +#define MTK_FE_IRQ_NUM		(MTK_FE_IRQ_RX + 1)
-> +
->  struct mtk_rx_dma {
->  	unsigned int rxd1;
->  	unsigned int rxd2;
-> @@ -1292,7 +1297,7 @@ struct mtk_eth {
->  	struct net_device		*dummy_dev;
->  	struct net_device		*netdev[MTK_MAX_DEVS];
->  	struct mtk_mac			*mac[MTK_MAX_DEVS];
-> -	int				irq[3];
-> +	int				irq[MTK_FE_IRQ_NUM];
->  	u32				msg_enable;
->  	unsigned long			sysclk;
->  	struct regmap			*ethsys;
-> -- 
-> 2.43.0
+> DT binding validation should be sufficient. But still...
 > 
+> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+> 
+
+Dear Mani，
+
+Thank you very much for your review.
+
+Best regards,
+Hans
+
+
+> - Mani
+> 
+>> ---
+>>   drivers/pci/of.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+>> index ab7a8252bf41..379d90913937 100644
+>> --- a/drivers/pci/of.c
+>> +++ b/drivers/pci/of.c
+>> @@ -890,7 +890,7 @@ int of_pci_get_max_link_speed(struct device_node *node)
+>>   	u32 max_link_speed;
+>>   
+>>   	if (of_property_read_u32(node, "max-link-speed", &max_link_speed) ||
+>> -	    max_link_speed == 0 || max_link_speed > 4)
+>> +	    max_link_speed == 0 || max_link_speed > 6)
+>>   		return -EINVAL;
+>>   
+>>   	return max_link_speed;
+>> -- 
+>> 2.25.1
+>>
+> 
+
 
