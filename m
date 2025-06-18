@@ -1,84 +1,104 @@
-Return-Path: <linux-kernel+bounces-691321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F8CADE335
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:52:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7DA6ADE34A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BB2017B6B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 05:52:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 851FD16C27E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 05:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC251FFC48;
-	Wed, 18 Jun 2025 05:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CB81FC109;
+	Wed, 18 Jun 2025 05:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b="SbfxFKa3"
-Received: from mx.nixnet.email (mx.nixnet.email [5.161.67.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zao22/0Q"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDEA1E98E3;
-	Wed, 18 Jun 2025 05:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.161.67.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70A7522F;
+	Wed, 18 Jun 2025 05:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750225914; cv=none; b=bga+lkOzIx/VN6xeuNTFyZhdEiwmI4zCQKu1cp1ERYxMLa1zhu+g8S/p+kHqHJ4qLe4Nwm2GiLcx3/w+X5y0pv6KGJD4yLQF5veIiFz+aIuRI4/DszEJInj3LA1HNP2PBmPwGyszoGrn9eJfrbeKNtbHSrAtCht9XSNA+EC+yho=
+	t=1750226181; cv=none; b=YxnJWgzxJW9R4fgA8p6NVf9+C9+cQ4LSmyp5sygkb9ustL045XGvHAz1tKaYevMzBdfF68dSI+02Wj2qbICl7NB8T1GHUrWS0ggOYCRg24nkSed9Ye+LaAX8lt2m3d05KTcEUloR1suFRjYaBFlrRhwk3GoSqRl4HZ3gjlF8I3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750225914; c=relaxed/simple;
-	bh=VblScn+VHpVJ5tYvYcoJfh8x8io4nmUmEEvEpkfw98w=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=uv3zxGYpj5Dbhs6hyREDvJd5fSAesu5JhHXt/lH//vIEf+ni2wk7p8AFumwaM/Tkxunpm7d3XejLXqDLGe/p7ARaBeTJ5hkNjWoY08XgDu0cInap/xSyW665EUoKB06DmS9Ub+rhBxLGc5pWVxbb5pfTrCb6uPfNMHgpuYpUhh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life; spf=pass smtp.mailfrom=pwned.life; dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b=SbfxFKa3; arc=none smtp.client-ip=5.161.67.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pwned.life
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by mx.nixnet.email (Postfix) with ESMTPSA id 3FCBA7D326;
-	Wed, 18 Jun 2025 07:51:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pwned.life; s=202002021149;
-	t=1750225903;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xtrHyj1OhX8LsdJLOiGICZLEnGht4gXw2jkwnEUt48g=;
-	b=SbfxFKa3e+ahyfmz4k8BXmkNLpjVmEvhqkTh7/7Umki6SYiLOpiczRdoWphMnCO8cec6Xt
-	CAslcSUc1Rp0zNkXB4wCca0Rybi9WtcFXD5oJbBbG5ZfuqtyRGOmK+c1ycOGXISj+C4pIN
-	Gt+qU8BgC/2q6eLSTapaZLFiasoPSmQ=
+	s=arc-20240116; t=1750226181; c=relaxed/simple;
+	bh=SMjAnSKocpk1xDh9knIAN42NfOw/SV8S2Pj/S8JAgPs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u4QqR3uG1mY5XK3FqIilHdFB2BnoBZi7JxU7v8e/Rh/qLscUfENj4qDBnWvkUQmqkO60QrEhbcGzGRcMMQ0l7mrQv+lyqHuAD/2MS5txIxnZsXN27rNo08dRSBK6cs6E4evML1mC28NLAVx+mw4/qxHZKIJxoLtpio6rBCmbCEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zao22/0Q; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ad89c32a7b5so1020060266b.2;
+        Tue, 17 Jun 2025 22:56:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750226178; x=1750830978; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SMjAnSKocpk1xDh9knIAN42NfOw/SV8S2Pj/S8JAgPs=;
+        b=Zao22/0QhLTEYDnyA7UGydSZIxTkDBgDT6/CXQcnXbdc87rufWFV6MkG7lFxZNNp7H
+         CSTE+cRCdqPegXS70NawSzVBl5pgQCRRXR7WaeRMthUxzfartHHSzjbe/YmXffKHgGM2
+         QYE7SPf9M2HRuNE4hQ4UDGbBK5mUSJ7XsTwvwBHmjDOxOcvbpyTl55qH4BkbKl95K8N3
+         wGuoRWEseP8n0+uE89lRh2WggrSbnsGMIYX+BQudml3CrbAVx3l/H6gk64B8ycGolYCY
+         UXdphsebw4lw4se4gWIVLi5vbM6c7/TMdqQ9x8Yz5zBuMIk3YAsnD51cWq3ffwkX9G4f
+         4Mcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750226178; x=1750830978;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SMjAnSKocpk1xDh9knIAN42NfOw/SV8S2Pj/S8JAgPs=;
+        b=YjV5KxmLWcaBlSllBdkpVNAp64e3bCz/dZGv3XDc09ud6LhRjrB8UH5n9Sxiecv6Zt
+         RnpoA+aOh8kuzpGpqSpzD7InDKXuJyEZs85Lrq00gIff0KOXrCqIwL77EdhW8bybvBcm
+         5k/TPeXyy69usfll+7TQgDY+6nU9BUXj6lQQOKNXYtzyf0li7GiT9GzsHKKqEQjQCLSo
+         LGTNCRXXGopL81SIaUKLTucam7sL/aYMsKh70/s5wR/bcxNHFjfQjFhO5GOA1Pg6p51c
+         QEpg1wcynwS+cBxqe8sSmac8NoL0GG1tV02QqTZXWpjPfhfzAIXh7ygoIumwAKOY81dy
+         sFeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFvJBpA6NZuI17e7SfXSYqPUr0UEA2qZ/4EVpHIJhhMi8OuaH7f8YBN/jHD6WsKVBk2TdpDrxzPIk=@vger.kernel.org, AJvYcCUyxDvzFY+fOUqe9LEbhxBn5e/9vSQz85fHqrciopSEn5vEUWeuQe8tys+MTNNIDZ2F+ZCEOwZVkhC8RmQO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5VhA8w6lPye4fbQSSSbJNy772QTn4Tqjplx5jnGnakUwW10wd
+	H+CjLaYMY1bxCTI++fN0Qx3gB3lGzvIhDazJEpA15SMEWpKvJWhMnwrf7PIrrmQ3TYhvPTEWDjE
+	YUQx6nAyF9+UVI5+7rGvkfZCi57kXNAU=
+X-Gm-Gg: ASbGncs7mrFFTkFXXYSr2KZqgW8L85HzJe51xf9JP5LIwXrjRXGPlwART3uJ+kBigzD
+	vY+phQAgL8f403QSqnJJJEDp1zhmJ635GtSHXJzSVJxcDgWShEUHgFG5Uza3cmQ/xmSzmumPvZj
+	o7Y0R/GCk+s4VPQoPdUkJwpf9f7ogSDHlYbcD5K7fs9aqHCg==
+X-Google-Smtp-Source: AGHT+IFoVWJ7cfQrRuHMwZrlUWuEF4hXXhBaw9OoFPGWE8lerIM5kZ0T0pu12IV9aEokgZxew3Df0CuZG764YUpMu3k=
+X-Received: by 2002:a17:906:c10c:b0:ad5:59ef:7f56 with SMTP id
+ a640c23a62f3a-adfad4d4efbmr1676549466b.48.1750226177825; Tue, 17 Jun 2025
+ 22:56:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250618031638.26477-1-andrew.lopes@alumni.usp.br>
+In-Reply-To: <20250618031638.26477-1-andrew.lopes@alumni.usp.br>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 18 Jun 2025 08:55:41 +0300
+X-Gm-Features: Ac12FXw0MpyTquAEiH7h4Pb6yZKDeOceKWmAcPSZYIyrQTZ4hrj4dbdhd8qFs2c
+Message-ID: <CAHp75Ve4yAp6sViUWZY+0abRoNZ0W+rQLCmsbijEcrh8kguVOA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/4] iio: accel: sca3000: simplify by using newer infrastructure
+To: Andrew Ijano <andrew.ijano@gmail.com>
+Cc: jic23@kernel.org, andrew.lopes@alumni.usp.br, gustavobastos@usp.br, 
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, 
+	jstephan@baylibre.com, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 18 Jun 2025 07:51:37 +0200
-Message-Id: <DAPFATGF5VF3.3RCRSMSFLR5SM@pwned.life>
-Cc: <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
- <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
- <lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
- <f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>,
- <srw@sladewatkins.net>, <rwarsow@gmx.de>, <conor@kernel.org>,
- <hargar@microsoft.com>, <broonie@kernel.org>
-Subject: Re: [PATCH 6.15 000/780] 6.15.3-rc1 review
-From: "Achill Gilgenast" <fossdd@pwned.life>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <stable@vger.kernel.org>
-X-Greeting: Hi mom! Look, I'm in somebodys mail client!
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250617152451.485330293@linuxfoundation.org>
-In-Reply-To: <20250617152451.485330293@linuxfoundation.org>
 
-On Tue Jun 17, 2025 at 5:15 PM CEST, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.3 release.
-> There are 780 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Jun 18, 2025 at 6:17=E2=80=AFAM Andrew Ijano <andrew.ijano@gmail.co=
+m> wrote:
 >
-> Responses should be made by Thu, 19 Jun 2025 15:22:30 +0000.
-> Anything received after that time might be too late.
+> The sca3000 driver is old and could be simplified by using newer
+> infrastructure.
 
-Tested-By: Achill Gilgenast <fossdd@pwned.life>
+I haven't found any reference to a base commit here. Have you
+forgotten to use --base when preparing the series?
+In any case, please clarify what this series is based on.
 
-Tested with Alpine Linux' configs. Thanks!
+--=20
+With Best Regards,
+Andy Shevchenko
 
