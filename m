@@ -1,154 +1,218 @@
-Return-Path: <linux-kernel+bounces-691490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC769ADE55B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:19:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB6DADE55F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47F8317A900
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:19:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75CE63B9EC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAF6214814;
-	Wed, 18 Jun 2025 08:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A2F1BCA0E;
+	Wed, 18 Jun 2025 08:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4lDTnAqy"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="hYa2XR+2"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6EC35963
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0FD35963
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750234754; cv=none; b=oInOh+adpAZjiCWkGPRbjYUjuyROZbB0sZ16dyMn7TY5v8dggHbs+qAz/c4ymnJGwwBKcAGk//q3SF091NRj2V83VCZHU/3+SbsxkNLi/ddQOfbgjbj0M0PJA6gnQyA0OTcP+6ts/HC9sFfWiO9JbXLgjTODBdzOlWpBldd5TVk=
+	t=1750234810; cv=none; b=rDcyP7Ye+MOt/l8eK1hQi0JU34XAvC4ipPRb5dy+ULzg00WVS6lZcCwFxg//9NaIAsro8IGMFvnF8AxQM8Ux+eGMWiBVF2L4hn25jyZpWW57raPRWz0B9oclYGudACKOB8cnCr6P8EtuvjzQicpHaRLfRt1jpLqvPxW1ZVZcPRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750234754; c=relaxed/simple;
-	bh=LSNhtgb4bGx+huxENi51BzSjcnT5El3b84UX/Aphoe4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SP4+W8rPE95hPMG+zGSOaR7jlFKMhB7BG1sA6enMJuQr8pa217lW8th9y1hdEW8JGsV65wQjutMZxKSkpjEVBJOgqwoSoTuZImBQ2P5zgpHSjW57/yU0eU9MmYVn2iq3dGenpkfR4Jx/3G9i4TOgfHhJEp6sYyfyx5ryjYYf8Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4lDTnAqy; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3a4f6cc5332so3752826f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 01:19:12 -0700 (PDT)
+	s=arc-20240116; t=1750234810; c=relaxed/simple;
+	bh=sSzijDomvwY+BoJDSSFd73Fm/khDE+ijJB+tl0HgFAQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K7fFOAP8yfRczqfKn4yqG9cjbfRKERWBMRXFdFkjTOkwlhPtGGTNkv9BEPwzGF11eJf8IZxcZ8/QtQkTCuSBBbcMVweHkPnYf2tm4/SLScfR3hzGCMP8RyQ9OcKFwynsk33V1WYkrd3YbXAzl7cCtx2NdPPHZX8kwy47af0zLIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=hYa2XR+2; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b2c4476d381so390271a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 01:20:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750234751; x=1750839551; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EjaDW4eapCYtRtB2VTdwiBDlT26AJNq0bD2fmpFHne0=;
-        b=4lDTnAqyTVvguEEGAM/rLVzFh8Cac2TsCUmBFkLVZXOUKohqLpmESvOgdSo3U4qRFr
-         LqE+Mcp6aLN1Sx7nIsEsq6K5IQhEm8+zzw6u9EF+d6VqX3b33wosbpNnbvMnvTdCnA0r
-         fSrbrXUY5fIADYWUsdg6K/KbwfdVzanbnnNGFrq3h8+eRgkqISE8hvjL0IapqxDev23f
-         8A93RkyDTmX1PUupbCCbG04g3zVbl1UYHA41xqEJLmCAZOF0nTNzREnridiX8t1kPdg/
-         YwmMMRmb07nC91KH4NOY63YPku2XPdSJhXJhSVIAX47aqyXaoF9kqPE5MUIHMTRCWTh3
-         StNQ==
+        d=bytedance.com; s=google; t=1750234807; x=1750839607; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7h1a483XeBDxgXookMteKeLGCVhv2lQx7q42szKUky0=;
+        b=hYa2XR+2DQCK74rgw2OgoRj/PJKMS12iy0E1f57YlG+55XM0jMyvqGsVtogeCeyjtO
+         8rC96oqxLSKlI7m+FaLZ1pLV9fAkeO3LQoPvIyL2IuKKFpekIcmNLXlPhmjmP2K2ApHa
+         Ydpz46Xr0GQHwC84ZigGnU484DMGtTk34KnyHhkWZILvgCSLF5j+qmbGUDo1ary5dxa5
+         bbNkb9H8WFt4o2ZSKGWFh3OouNzPGpsdnU9jxkkcbw95lfTrnha2IwqROMC2OLRTq55z
+         r+nulv+5v5VnG2NwuYNE5Q9WPxJG/nBTJZ092BpJaKrKb7Nv1h6bocnll1MiaehAvLeO
+         v3Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750234751; x=1750839551;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EjaDW4eapCYtRtB2VTdwiBDlT26AJNq0bD2fmpFHne0=;
-        b=ONe+NJoNk+0iIGMYxUWblhDGNB5fQrtVx2JRd1AD2J5tC9tDJNJqJPXp3srZFGkxIT
-         JHPnnuG1p3pJRNFscpcohOjI78W6JwgOkpEVTsSw47fDO7A4AKHEcDemZUnqW1sBneYL
-         +uLmTo8Vfuq1jYXoPJ+wjWL3C2bKekxrPfUjkMc0oeM48VodGTdBghQgdOm4Bs9N/Tp0
-         GPl9sqnNyTn25VxJT97jGEAJ3noLR7OXFbcAWdByqFUJaRGU6Rb4faeExDO+mIJfkW7S
-         n+fGsLDELVp1d+nSZgvB7NVFOU3GzWYc/OaU6v54Wxz6VAPrHwrjGI8UQTvbV2eDJVZN
-         PITA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcwweEJtPDU5/m+iOrnj90QTIk7qGOzbmux24oLRT2ivRJe6J5r+catslzt2XbL738lFRAlj9nkLbRbcs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVSo6W1U3Q01jejz58ym5St3p1yb1QFy3yqBy7zzy/IlEy+mM5
-	41/zgNNEDwburK9D+AJv0EqNzJJb8na4Efj4DBSv4OlbLogEh9VHQTGEyfvM+09SsFj5jPA3vOY
-	HmzTZ2dCMHpD2XeZQsg==
-X-Google-Smtp-Source: AGHT+IEbUxwSHnhD0Ea4dL9XedV3QIyfupV5dWJUxquI4u3Z0Ik2mWqnx9KiiP/8Eb5Sr7sOGbkv8UDICYkg2Ko=
-X-Received: from wmtg6.prod.google.com ([2002:a05:600c:8b56:b0:451:d70f:eb87])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2088:b0:3a5:3e47:8af5 with SMTP id ffacd0b85a97d-3a5723a26d6mr13759868f8f.27.1750234750702;
- Wed, 18 Jun 2025 01:19:10 -0700 (PDT)
-Date: Wed, 18 Jun 2025 08:19:08 +0000
-In-Reply-To: <20250618-debugfs-rust-v6-3-72cae211b133@google.com>
+        d=1e100.net; s=20230601; t=1750234807; x=1750839607;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7h1a483XeBDxgXookMteKeLGCVhv2lQx7q42szKUky0=;
+        b=Wj5/4tYwdcGEiEQJNJKqJLHMV/nXEXc9igm47bu/Utfiv2CVxg169Op+HElcFP80ZE
+         jqUEBdCSAalhihXPlvIOh2MSxEEIpIzCTmg2m+u19UTPlHq0TOL5VVUzUCC8cM65A10T
+         ULjwm2t8gEJ1Ze6N6ROaft+sxOzruaa95catIuoL2MmNZqgc43JzB6MFfCyJHIt/kzHO
+         FmlRzfzcEZsxMbuLDce73LPkA2yEeNuR+3bo7nLGhUN5pHzB05PztepRLKEnLmgmjJvT
+         DxOi8ZWUThuiSBuBwjKXMh/MD2GWZHGJlhEvSnVdtk1G7vk38KX6KLlDoPfL+ATggM/h
+         6FnQ==
+X-Gm-Message-State: AOJu0YyoEH1jnTU56BGUufWbPBc8zjlJ+LMvnV8hFueEy+H+OgITTcrb
+	/4sgAjk7+AY7S4mpM9IYnjHuEwHSOO3ofClX6M7jbGKx2xUroqmJ2R4riRvjhuzWVw==
+X-Gm-Gg: ASbGnctoA/0o0nV/8ay2OHQXgYVnYCwfM5FkDOT3KVjyx/WzDIk9glAZGyDyY5y+Tl3
+	CUHcoDlLbAME+clWd1liPEwWPWNOA/y94XclgypcHhpZfINEzrz/+xnHG/AV3s3dDC4VbOkUk71
+	mg/OCGIJbvYkzun7pxAZ43+nM/eGvFEgDKzhdke08iFqJZqS9GAkBS+ukH6PMFWe61fNcF24/gh
+	91bvSvar4UgZwxAl4zWRZxTVWmyOePe6FPuHKBe3B0lX1SU0BanIXhfd4897hny7UnCr/i8gT+f
+	rU+t6jSetoOF4ItDlHLGM6Je39OrzwHb/ReU3Ae/Jc68BA+WlBiLdZUP/fiyBmVCfF+B/L1+Rpb
+	VvbHxSYoG7xxhvsD5bI6FDam4vnMjUk2r
+X-Google-Smtp-Source: AGHT+IGBUkNU5BHBsm54+1PSG/6lclwWff4KIv0p28uAEOpl8zGSN9+9v6feCHyEwuOCStdBSrFiDQ==
+X-Received: by 2002:a05:6a20:7d9e:b0:218:2b6e:711f with SMTP id adf61e73a8af0-220037599admr2820601637.14.1750234807233;
+        Wed, 18 Jun 2025 01:20:07 -0700 (PDT)
+Received: from 5CG4011XCS-JQI.bytedance.net ([61.213.176.55])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe1691d7fsm10432084a12.69.2025.06.18.01.20.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 01:20:06 -0700 (PDT)
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>
+Subject: [PATCH v2 0/5] Defer throttle when task exits to user
+Date: Wed, 18 Jun 2025 16:19:35 +0800
+Message-Id: <20250618081940.621-1-ziqianlu@bytedance.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250618-debugfs-rust-v6-0-72cae211b133@google.com> <20250618-debugfs-rust-v6-3-72cae211b133@google.com>
-Message-ID: <aFJ2fJ_pX8mWCQo6@google.com>
-Subject: Re: [PATCH v6 3/5] rust: debugfs: Support arbitrary owned backing for File
-From: Alice Ryhl <aliceryhl@google.com>
-To: Matthew Maurer <mmaurer@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Timur Tabi <ttabi@nvidia.com>, 
-	Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 18, 2025 at 02:28:15AM +0000, Matthew Maurer wrote:
-> This allows `File`s to be backed by `Deref<Target=T>` rather than just
-> `&'static T`. This means that dynamically allocated objects can be
-> attached to `File`s without needing to take extra steps to create a
-> pinned reference that's guaranteed to live long enough.
-> 
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
-> ---
->  rust/kernel/debugfs.rs | 51 ++++++++++++++++++++++++++++++++++++++------------
->  1 file changed, 39 insertions(+), 12 deletions(-)
-> 
-> diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
-> index 6a89557d8cf49327d2984d15741ffb6640defd70..cd83f21cf2818f406575941ebbc6c426575643e4 100644
-> --- a/rust/kernel/debugfs.rs
-> +++ b/rust/kernel/debugfs.rs
-> @@ -5,12 +5,13 @@
->  //!
->  //! C header: [`include/linux/debugfs.h`](srctree/include/linux/debugfs.h)
->  
-> -#[cfg(CONFIG_DEBUG_FS)]
-> +use crate::alloc::KBox;
->  use crate::prelude::GFP_KERNEL;
->  use crate::str::CStr;
->  #[cfg(CONFIG_DEBUG_FS)]
->  use crate::sync::Arc;
->  use core::fmt::Display;
-> +use core::ops::Deref;
->  
->  #[cfg(CONFIG_DEBUG_FS)]
->  mod display_file;
-> @@ -61,40 +62,59 @@ fn create(_name: &CStr, _parent: Option<&Dir>) -> Self {
->      }
->  
->      #[cfg(CONFIG_DEBUG_FS)]
-> -    fn create_file<T: Display + Sized>(&self, name: &CStr, data: &'static T) -> File {
-> +    fn create_file<D: Deref<Target = T> + 'static + Send + Sync, T: Display>(
-> +        &self,
-> +        name: &CStr,
-> +        data: D,
-> +    ) -> File {
-> +        let mut file = File {
-> +            _entry: entry::Entry::empty(),
-> +            _data: None,
-> +        };
-> +        let Some(data) = KBox::new(data, GFP_KERNEL).ok() else {
-> +            return file;
-> +        };
+v2:
+- Re-org the patchset to use a single patch to implement throttle
+  related changes, suggested by Chengming;
+- Use check_cfs_rq_runtime()'s return value in pick_task_fair() to
+  decide if throttle task work is needed instead of checking
+  throttled_hierarchy(), suggested by Peter;
+- Simplify throttle_count check in tg_throtthe_down() and
+  tg_unthrottle_up(), suggested by Peter;
+- Add enqueue_throttled_task() to speed up enqueuing a throttled task to
+  a throttled cfs_rq, suggested by Peter;
+- Address the missing of detach_task_cfs_rq() for throttled tasks that
+  get migrated to a new rq, pointed out by Chengming;
+- Remove cond_resched_tasks_rcu_qs() in throttle_cfs_rq_work() as
+  cond_resched*() is going away, pointed out by Peter.
+I hope I didn't miss any comments and suggestions for v1 and if I do,
+please kindly let me know, thanks!
 
-We may want to consider using the ForeignOwnable trait here instead. The
-trait is implemented by anything that can be converted to/from a void
-pointer, so you can:
+Base: tip/sched/core commit dabe1be4e84c("sched/smp: Use the SMP version
+of double_rq_clock_clear_update()")
 
-* When creating the file, convert it to a void pointer that you store in
-  File and pass to debugfs_create_file_full.
-* When displaying the file, create a borrowed version of the void
-  pointer and display that.
-* When freeing the File, convert the void pointer back into an owned
-  value and drop it.
+cover letter of v1:
 
-For cases where a box really is necessary, the user can create a box and
-pass it themselves. But if the user already has a pointer type (e.g. and
-Arc<T> or &'static T) then they can pass that pointer directly and the
-pointer is stored as a void pointer without the Box indirection.
+This is a continuous work based on Valentin Schneider's posting here:
+Subject: [RFC PATCH v3 00/10] sched/fair: Defer CFS throttle to user entry
+https://lore.kernel.org/lkml/20240711130004.2157737-1-vschneid@redhat.com/
 
-Alice
+Valentin has described the problem very well in the above link and I
+quote:
+"
+CFS tasks can end up throttled while holding locks that other,
+non-throttled tasks are blocking on.
+
+For !PREEMPT_RT, this can be a source of latency due to the throttling
+causing a resource acquisition denial.
+
+For PREEMPT_RT, this is worse and can lead to a deadlock:
+o A CFS task p0 gets throttled while holding read_lock(&lock)
+o A task p1 blocks on write_lock(&lock), making further readers enter
+the slowpath
+o A ktimers or ksoftirqd task blocks on read_lock(&lock)
+
+If the cfs_bandwidth.period_timer to replenish p0's runtime is enqueued
+on the same CPU as one where ktimers/ksoftirqd is blocked on
+read_lock(&lock), this creates a circular dependency.
+
+This has been observed to happen with:
+o fs/eventpoll.c::ep->lock
+o net/netlink/af_netlink.c::nl_table_lock (after hand-fixing the above)
+but can trigger with any rwlock that can be acquired in both process and
+softirq contexts.
+
+The linux-rt tree has had
+  1ea50f9636f0 ("softirq: Use a dedicated thread for timer wakeups.")
+which helped this scenario for non-rwlock locks by ensuring the throttled
+task would get PI'd to FIFO1 (ktimers' default priority). Unfortunately,
+rwlocks cannot sanely do PI as they allow multiple readers.
+"
+
+Jan Kiszka has posted an reproducer regarding this PREEMPT_RT problem :
+https://lore.kernel.org/r/7483d3ae-5846-4067-b9f7-390a614ba408@siemens.com/
+and K Prateek Nayak has an detailed analysis of how deadlock happened:
+https://lore.kernel.org/r/e65a32af-271b-4de6-937a-1a1049bbf511@amd.com/
+
+To fix this issue for PREEMPT_RT and improve latency situation for
+!PREEMPT_RT, change the throttle model to task based, i.e. when a cfs_rq
+is throttled, mark its throttled status but do not remove it from cpu's
+rq. Instead, for tasks that belong to this cfs_rq, when they get picked,
+add a task work to them so that when they return to user, they can be
+dequeued. In this way, tasks throttled will not hold any kernel resources.
+When cfs_rq gets unthrottled, enqueue back those throttled tasks.
+
+There are consequences because of this new throttle model, e.g. for a
+cfs_rq that has 3 tasks attached, when 2 tasks are throttled on their
+return2user path, one task still running in kernel mode, this cfs_rq is
+in a partial throttled state:
+- Should its pelt clock be frozen?
+- Should this state be accounted into throttled_time?
+
+For pelt clock, I chose to keep the current behavior to freeze it on
+cfs_rq's throttle time. The assumption is that tasks running in kernel
+mode should not last too long, freezing the cfs_rq's pelt clock can keep
+its load and its corresponding sched_entity's weight. Hopefully, this can
+result in a stable situation for the remaining running tasks to quickly
+finish their jobs in kernel mode.
+
+For throttle time accounting, according to RFC v2's feedback, rework
+throttle time accounting for a cfs_rq as follows:
+- start accounting when the first task gets throttled in its
+  hierarchy;
+- stop accounting on unthrottle.
+
+There is also the concern of increased duration of (un)throttle operations
+in RFC v1. I've done some tests and with a 2000 cgroups/20K runnable tasks
+setup on a 2sockets/384cpus AMD server, the longest duration of
+distribute_cfs_runtime() is in the 2ms-4ms range. For details, please see:
+https://lore.kernel.org/lkml/20250324085822.GA732629@bytedance/
+For throttle path, with Chengming's suggestion to move "task work setup"
+from throttle time to pick time, it's not an issue anymore.
+
+Aaron Lu (2):
+  sched/fair: Task based throttle time accounting
+  sched/fair: Get rid of throttled_lb_pair()
+
+Valentin Schneider (3):
+  sched/fair: Add related data structure for task based throttle
+  sched/fair: Implement throttle task work and related helpers
+  sched/fair: Switch to task based throttle model
+
+ include/linux/sched.h |   5 +
+ kernel/sched/core.c   |   3 +
+ kernel/sched/fair.c   | 445 +++++++++++++++++++++++-------------------
+ kernel/sched/sched.h  |   4 +
+ 4 files changed, 253 insertions(+), 204 deletions(-)
+
+-- 
+2.39.5
 
