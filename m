@@ -1,61 +1,51 @@
-Return-Path: <linux-kernel+bounces-692843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816A4ADF78E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 22:17:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE990ADF791
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 22:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 248BD7A5CC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:16:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7A11BC1610
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7287216E2A;
-	Wed, 18 Jun 2025 20:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342DF21ABCF;
+	Wed, 18 Jun 2025 20:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOARzafB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HO44klwp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DEA33085BA;
-	Wed, 18 Jun 2025 20:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9441120CCD0
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 20:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750277845; cv=none; b=bKKJQLlLArXv1M7K8sMryueZ5pIr1H9LzMFLSUuKyi2HVYfsam3KK3a14bhYXq+Xek86yYFqhiDmsic6ScOdWYm2yKiYlqaD0PnoQoFJJ9u/7qFtONZOYqBNi9KBMbKL+rqpeZCkYM6PxxzyAHTcPjtrRBX4di4uyQaHPMq0jZY=
+	t=1750277948; cv=none; b=Vf+a6hkxGPlaIkHj18NUXMJARZ9IRW5Dx9z+XJsjypStSLyXo+DU29vEPj+qm2p2gI2jpvJZJC3fBdue2/W+5AiAatRaWICFqk+H7DnBPSP6KJwYKHgmEirz2OhvlrXfKSUl5Am+mtDsSck4KnshpcAcupxi3wngxKZigLxRPjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750277845; c=relaxed/simple;
-	bh=xt8r64iKztaGluvYHQ+nEmHkrlN0zD8k22lRNBw+eZk=;
+	s=arc-20240116; t=1750277948; c=relaxed/simple;
+	bh=RLlZe7wBgnp9AZGSaCYB/MIgQNH+Ic21BC/HOLYFQWk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=b03cQu5u08v4Nt2cBCaBvhj2CRDQuH9YKGUy/FT4Ylkv7Ei6rGfeiupMU5scW/3hMLdsgrOsZqCDTZXAJgRZMtsBfS542+FxUYU4j80dpIDRl8giDqep7kh9o4INAf72GscRDsdosnKy+yK/3ocv891Jr/fbgeM0TYvUUbPMa44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FOARzafB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BB27C4CEE7;
-	Wed, 18 Jun 2025 20:17:24 +0000 (UTC)
+	 Content-Disposition; b=YPhEqrfyMXZ1uiU4wY+XWH9DzTyo+8UfEvr1hOYPqkiRAbwfjwDBOfZhcvVo9fsnhLuHqaNdPNtB/42XHtHBd0gdsufXPsyKD0rarmAH0d3ACpa3j7ZPSahfmHdNAfBZnGBEnZz19cLC29REryu90xMggQULpQGzCIHlJHif1Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HO44klwp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1367CC4CEE7;
+	Wed, 18 Jun 2025 20:19:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750277844;
-	bh=xt8r64iKztaGluvYHQ+nEmHkrlN0zD8k22lRNBw+eZk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=FOARzafBQCH4mhbZUSX3MH98F55tLlayT4MS64DrQ26ru2cMm/M+yF+FscGystMAK
-	 0CQma9JT95xIs7U+K1HMp/Z/U9ZfclyD935P5ZdedHfyuuVMdWfGxcjMxVNDL3VZtq
-	 kLYIts2/TIO9aXT4ITDKOIVP7tvcnQnttyhvDkyBX0uRIX6cu8hEVbW11K6/nJVLXU
-	 TYCHVddc6BvT/c1MJHUMD20a7ia6cvoqPypNfuKOeSqB50zMSq1UHzbSgjEKU5yZEN
-	 /uBRVpWVWLcm5YfhOu/Ug21FEc722Jpq7hOGt8MX4XOpYNYWhXfg3DIgM4PzHSPIPD
-	 tf7OpPfRTsrcQ==
-Date: Wed, 18 Jun 2025 15:17:22 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Timothy Pearson <tpearson@raptorengineering.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-pci <linux-pci@vger.kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	christophe leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Anastasio <sanastasio@raptorengineering.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v2 2/6] pci/hotplug/pnv_php: Work around switches with
- broken
-Message-ID: <20250618201722.GA1220739@bhelgaas>
+	s=k20201202; t=1750277948;
+	bh=RLlZe7wBgnp9AZGSaCYB/MIgQNH+Ic21BC/HOLYFQWk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HO44klwpmTgQXUh3Iwrxmj400wkrAUC3qOmSPfPQzQs+Y3iOsinCG8bvAUBCLAnsP
+	 FfldbGLP3X8rYkvcFXk7yzNa9SgwY9prM592sm1IZoczcRM2fbT6JMarK1YxulnSl/
+	 qrfOjt/u1BsCLPwrkhsJgdn7BhGCeVZWc/t7Io20BaTojmdGF3QQhme6AxeDKiUa3Q
+	 MTvhaOiGO0/Z3RjXC6JpbyROhQC5Yo9O3uw00X+Y7RFF1V5QDWLlX9jSUfC6Jq7Mt9
+	 5Uv5yp14uztD4nOBmVzzUoAs+Dkgd8fhRnsPZ1+JN5W7kemqdtldO1Y+dSm5vzFiv9
+	 JDMBSLESbTkUA==
+Date: Wed, 18 Jun 2025 10:19:06 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] workqueue: A fix for v6.16-rc2
+Message-ID: <aFMfOlQ27hGNas7Z@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,51 +54,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1957898084.1311382.1750276204022.JavaMail.zimbra@raptorengineeringinc.com>
 
-On Wed, Jun 18, 2025 at 02:50:04PM -0500, Timothy Pearson wrote:
-> ----- Original Message -----
-> > From: "Bjorn Helgaas" <helgaas@kernel.org>
-> > To: "Timothy Pearson" <tpearson@raptorengineering.com>
-> > Cc: "linuxppc-dev" <linuxppc-dev@lists.ozlabs.org>, "linux-kernel" <linux-kernel@vger.kernel.org>, "linux-pci"
-> > <linux-pci@vger.kernel.org>, "Madhavan Srinivasan" <maddy@linux.ibm.com>, "Michael Ellerman" <mpe@ellerman.id.au>,
-> > "christophe leroy" <christophe.leroy@csgroup.eu>, "Naveen N Rao" <naveen@kernel.org>, "Bjorn Helgaas"
-> > <bhelgaas@google.com>, "Shawn Anastasio" <sanastasio@raptorengineering.com>, "Lukas Wunner" <lukas@wunner.de>
-> > Sent: Wednesday, June 18, 2025 2:44:00 PM
-> > Subject: Re: [PATCH v2 2/6] pci/hotplug/pnv_php: Work around switches with broken
-> 
-> > [+cc Lukas, pciehp expert]
-> > 
-> > On Wed, Jun 18, 2025 at 11:56:54AM -0500, Timothy Pearson wrote:
-> >>  presence detection
-> > 
-> > (subject/commit wrapping seems to be on all of these patches)
-> > 
-> >> The Microsemi Switchtec PM8533 PFX 48xG3 [11f8:8533] PCIe switch system
-> >> was observed to incorrectly assert the Presence Detect Set bit in its
-> >> capabilities when tested on a Raptor Computing Systems Blackbird system,
-> >> resulting in the hot insert path never attempting a rescan of the bus
-> >> and any downstream devices not being re-detected.
-> > 
-> > Seems like this switch supports standard PCIe hotplug?  Quite a bit of
-> > this driver looks similar to things in pciehp.  Is there some reason
-> > we can't use pciehp directly?  Maybe pciehp could work if there were
-> > hooks for the PPC-specific bits?
-> 
-> While that is a good long term goal that Raptor is willing to work
-> toward, it is non-trivial and will require buy-in from other
-> stakeholders (e.g. IBM).  If practical, I'd like to get this series
-> merged first, to fix the broken hotplug on our hardware that is
-> deployed worldwide, then in parallel see what can be done to merge
-> PowerNV support into pciehp.  Would that work?
+The following changes since commit 4663747812d1a272312d1b95cbd128f0cdb329f2:
 
-Yeah, it wouldn't make sense to switch horses at this stage.
+  Merge tag 'platform-drivers-x86-v6.16-2' of git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86 (2025-06-17 11:31:53 -0700)
 
-I guess I was triggered by this patch, which seems to be a workaround
-for a defect in a device that is probably also used on non-PPC
-systems, and pciehp would need a similar workaround.  But I guess you
-go on to say that pciehp already does something similar, so it guess
-it's already covered.
+are available in the Git repository at:
 
-Bjorn
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git/ tags/wq-for-6.16-rc2-fixes
+
+for you to fetch changes up to 261dce3d64021e7ec828a17b4975ce9182e54ceb:
+
+  workqueue: Initialize wq_isolated_cpumask in workqueue_init_early() (2025-06-17 08:58:29 -1000)
+
+----------------------------------------------------------------
+workqueue: A fix for v6.16-rc2
+
+Fix missed early init of wq_isolated_cpumask.
+
+----------------------------------------------------------------
+Chuyi Zhou (1):
+      workqueue: Initialize wq_isolated_cpumask in workqueue_init_early()
+
+ kernel/workqueue.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+-- 
+tejun
 
