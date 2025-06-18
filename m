@@ -1,79 +1,75 @@
-Return-Path: <linux-kernel+bounces-692950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1D4ADF8E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 23:46:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF68ADF8F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 23:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFE573BFAD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:45:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17E2F7A717E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4919327E1C6;
-	Wed, 18 Jun 2025 21:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3DF27E048;
+	Wed, 18 Jun 2025 21:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SoXZL2BB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhJO2H3G"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB7F21CFEF;
-	Wed, 18 Jun 2025 21:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2354628682;
+	Wed, 18 Jun 2025 21:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750283172; cv=none; b=cCSDMT/nTdn4z8NzNDqZsVmGS/YSgoa31VD4T7z1MenAbZohlbi3uVHcgxrWHZs1MURr3d8pjoHqJeTklp/VAugcENypJUkCfL4x5XL3OUvvIuetZQF2Pg3oZdcr1Eo7sFgiqPd87Ew+D5XWnsxlkhz7Te7GzG+HhZgNlutXuZM=
+	t=1750283612; cv=none; b=YCIj3idweE4fIv+ss3pMYN3OYgUQ1oa9CACzTg+2GBSqlrTlqUGdNJTg2PUKv+uWZLL0jXLaP1KyNctVSEZIR18CmgTD/YQY8iG2qv8ODZlEuqqr0GBplgSRH34cV+Pcdb4+WVyvQE5wqJM9vpahIykMIyHVA63R+J9PTN0P+k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750283172; c=relaxed/simple;
-	bh=niemzDV5RgTw4WjvIlphznf2tzfL71cvZ32XTWyNCmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G38Vhp76Ea/hyECYpUMFkXT0fgu4HXS2Wb0VYc1dxWjsiwLPm19O196y1PBzq1jmjj3ypesbALQ32PRAi/v7BNpQdvOvDEuVFKPzBrH3PUjAcmh/zQcndGOFUlkiM8j+OWIR4A/lNSwLpj1Ay5UeAixtLs8ihHJqoNLbz3U92bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SoXZL2BB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F413C4CEE7;
-	Wed, 18 Jun 2025 21:46:09 +0000 (UTC)
+	s=arc-20240116; t=1750283612; c=relaxed/simple;
+	bh=wXtVusAp3+QiMEIYqRg9Vl6bCRKV2LLfzhRzLsjob9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AeDxsfA8rn3f11fWYlzszYl2ftda2FF6d7lmnMJaMLD850lB82WFJd/Nt6vPdG9sLfIf7mBP+0H0LJYsadpZ8ewrA3i91lsMeqLLHaI11c618HJ/WdFReKvC3CJCFW+SnuD2EoKdaBmYe0BvPnKbP96Dk9zhSLlX1WuOZaN+lKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhJO2H3G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6193EC4CEE7;
+	Wed, 18 Jun 2025 21:53:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750283172;
-	bh=niemzDV5RgTw4WjvIlphznf2tzfL71cvZ32XTWyNCmY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SoXZL2BBMXeILCHlyI5UGOEb26Us4j+BJFkTgyOePhHtWOJLhR5c5q0HTqz2rH4Os
-	 XEmvmyU41kPsBGyFWsecZcusnOwnwUM3ld7GVqoKSadYhYVHHYeLWg5GiplBvkvOi7
-	 VyDsrZvabJvJDFBiQw8xCHOxHBQpbM4oqq7mcmQx8eu0a9hfvG9BZxuSrvutiZ6Qpr
-	 cgl30go5iDLle26yFcPL0VT5xJfa640o3o9XGPlLd/EKgbbBAv8V8dVIFH4HXPxaUO
-	 v9IZsVMjIldS3oa56YcAHIDDc63f346AzeQghqU03BAbgs6Gl0OnLRC2Z7KT/FCG11
-	 Pi9BZD4HqJaOA==
-Date: Wed, 18 Jun 2025 23:46:06 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/7] rust: alloc: implement `Borrow` and `BorrowMut`
- for `KBox`
-Message-ID: <aFMzntPTp29J72PL@pollux>
-References: <20250616-borrow_impls-v4-0-36f9beb3fe6a@nvidia.com>
- <20250616-borrow_impls-v4-3-36f9beb3fe6a@nvidia.com>
+	s=k20201202; t=1750283611;
+	bh=wXtVusAp3+QiMEIYqRg9Vl6bCRKV2LLfzhRzLsjob9w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DhJO2H3GZYNsUHx0LMLE5Fls0eTyfMNnoQLmwYviESb1WWJPdRitbjF36PFQeByn2
+	 BnRngd3AQhxuqE+ApR0C96PpCF0e+BaSnAIK/KVyyzbjwEnMzXMpfiAt+27sRMEXS/
+	 x8+ByI0b6GGuUqpt6Modf6UOJhryCcPwcUXqcdflsnTEGqV60IRlUmu+mGT9YcTyjk
+	 ueSHH1vs65tGjZVCbZ2cI4c0aUcg6dEoeyHaLxeGI6tmCovJL9PTTie3NQjyzkwjAl
+	 bJGvrZS8lkNSvLrmzBx2HSO0Z01Z9BzYW8ZinnO4avwQ9MGCi9zZSeSowc19OL3S1N
+	 +d/1qQHQ8y+9Q==
+Date: Wed, 18 Jun 2025 14:53:30 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, ap420073@gmail.com
+Subject: Re: [PATCH net v1] netmem: fix skb_frag_address_safe with
+ unreadable skbs
+Message-ID: <20250618145330.2584636e@kernel.org>
+In-Reply-To: <20250617210950.1338107-1-almasrymina@google.com>
+References: <20250617210950.1338107-1-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250616-borrow_impls-v4-3-36f9beb3fe6a@nvidia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 16, 2025 at 12:34:07PM +0900, Alexandre Courbot wrote:
-> Implement `Borrow<T>` and `BorrowMut<T>` for `KBox<T>`. This allows
-> `KBox<T>` to be used in generic APIs asking for types implementing those
-> traits. `T` and `&mut T` also implement those traits allowing users to
-> use either owned, borrowed and heap-owned values.
-> 
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+On Tue, 17 Jun 2025 21:09:50 +0000 Mina Almasry wrote:
+> +	void *ptr;
+> +
+> +	if (!skb_frag_page(frag))
+> +		return NULL;
+> +
+> +	ptr = page_address(skb_frag_page(frag));
 
-Applied to alloc-next, thanks!
+Sorry, noticed mid-push that we're calling skb_frag_page() twice.
+Let's save the return value and pass it to page_address?
+-- 
+pw-bot: cr
 
