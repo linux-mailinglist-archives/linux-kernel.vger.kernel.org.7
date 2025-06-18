@@ -1,165 +1,124 @@
-Return-Path: <linux-kernel+bounces-692546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6460AADF320
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:55:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DEDDADF31F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEEA11883DCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:54:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BB673BFD70
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9A92FEE1A;
-	Wed, 18 Jun 2025 16:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD872FEE12;
+	Wed, 18 Jun 2025 16:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AJfsT/wk"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="B0EFl+B5"
+Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571CD2FEE19;
-	Wed, 18 Jun 2025 16:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6681C2FEE11;
+	Wed, 18 Jun 2025 16:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750265649; cv=none; b=UK45MSlfPhShLdHoz5QbaTv4YR0Ptj6I+6r6lBDkrmFSSucfr9X/iOLa6mMD5di3l7n5/q38NxAfCCPALN8B2/3vQs5etqlHIiOcbM1cS0AUwnudzFu5E90w4WsniYS13hWOroC+l5G1YLHeuEUfpTRQc2wemFUAswu6CKW7p7o=
+	t=1750265676; cv=none; b=IPIOYgyISdRGxuzTKFNYPSph4JvZyK2T4oyUVP8AkPlR6mH8lAj/xwZQxax/7pJ3vVjEsyUWhiJzKLTh4A8gTHtOoUAJWJHPCNFrbbeQdk+VJR5KrjYZchhdAtNZiqNcR67C7ihAkOeIv7Qdr16dE7GAKs4zUtOBpW0dxw5hAx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750265649; c=relaxed/simple;
-	bh=kBiRr8MyVCDx2IHSe1QbON+d3OAAkqPRo1XDBFOzGA4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JqN9btaDNcQxKaOjl0WglIO/xsAq7x9op1RMWV8mFEEEbyimvKkZWcwHog0VNd0sEzTvczcL2T4d5BqaxNmeS/6MsFDxX7Y38onRwrzu6fO/OUofRbWgb9iIrQ5XUfAr+IrL/Qs7RbEF7onhC0e1qdIJJfvv1sdeK1DdqRKdFoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AJfsT/wk; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750265645;
-	bh=kBiRr8MyVCDx2IHSe1QbON+d3OAAkqPRo1XDBFOzGA4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=AJfsT/wk398JAIgFfr5V6YyaDGkK8LzNxoxZts9xXcxdB8Gy2wod6/9/NvZ/LzwH+
-	 YhYF1FGUI6l/uuoiYVfR5uVLkigBmJFAnD7z1MVG0Ke0St9/ZOyxwe2TDZ0CR3cQXb
-	 2c7H1Z5zmy5LfpuVQ6sSqSRGgoJyyzcTGCwUr5axQ66KkvD7xm/88GhocP8cKQNM5b
-	 Huly3QLWcM5hsJ9Bp/6aknCsKYhf41oEn2SoSXXOkT3UnUERs+C2DdYBQ17ajjU+Se
-	 tHABZWkj+HeMuMa20MkSqiC10pNLswp5hXlA6/Q8l2EAfnGCCYWtCu+iJB+z2wcgLw
-	 FMxIs4rbA+w8Q==
-Received: from [IPv6:2606:6d00:17:b699::5ac] (unknown [IPv6:2606:6d00:17:b699::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9C48D17E06BF;
-	Wed, 18 Jun 2025 18:54:03 +0200 (CEST)
-Message-ID: <2f63c39a3b9f16c47dfe7f62338ef17839d1b286.camel@collabora.com>
-Subject: Re: [PATCH v2 2/5] dt-bindings: iommu: verisilicon: Add binding for
- VSI IOMMU
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Conor Dooley <conor@kernel.org>, Benjamin Gaignard
-	 <benjamin.gaignard@collabora.com>
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, robh@kernel.org,
- 	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, jgg@ziepe.ca, 
-	iommu@lists.linux.dev, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, 	kernel@collabora.com
-Date: Wed, 18 Jun 2025 12:54:01 -0400
-In-Reply-To: <20250618-tighten-morphing-47953075b131@spud>
-References: <20250618140923.97693-1-benjamin.gaignard@collabora.com>
-	 <20250618140923.97693-3-benjamin.gaignard@collabora.com>
-	 <20250618-tighten-morphing-47953075b131@spud>
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-H4420/eJuZI3vRrv3ALH"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1750265676; c=relaxed/simple;
+	bh=ttUWxnOPsj1wH58g8SY5eUP5jJTbSwomk5rwycGlWw8=;
+	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=EGN2+WZk4pv3+HoD7+pEFKDMTT62clTtHQSCEbui354gZWE5qPunm6sQh/Dk7RsyHzQkQLMQpbDj6rRsGcBizFSjrpkKMhy6gnNaA3sm2MdO0sZBblTB45Vp/DQ31DmVpePOaCsgZkZoVtACOktSZNV6eUd1yM1MzOTH7qblPHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=B0EFl+B5; arc=none smtp.client-ip=23.155.224.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 0AE7282879F3;
+	Wed, 18 Jun 2025 11:54:33 -0500 (CDT)
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id ueuYGyDCQRzD; Wed, 18 Jun 2025 11:54:31 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id F0DEF8286F81;
+	Wed, 18 Jun 2025 11:54:30 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com F0DEF8286F81
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
+	t=1750265671; bh=TXK4nvk3hVRfTyVxrU16zW6M8nI8oDPJzdJIGj8kYsc=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=B0EFl+B5U0qK16MIf1a72t4z5arjFFgr3ibazQtLKE8gz+ZjP6wwrA/8vIGSqI4UP
+	 mZCG4AypeO9Wf+/6bCjH9n4uNcUxoWWLVwzwXXl1AKJjeRkR6miLLoBO2HDO6Biki7
+	 tc1l1CTz7SIzYj7E9r78PlC6LjhfcgP8N3f4BC6k=
+X-Virus-Scanned: amavisd-new at rptsys.com
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id sxi47ZWzGdik; Wed, 18 Jun 2025 11:54:30 -0500 (CDT)
+Received: from vali.starlink.edu (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id A84778286AE2;
+	Wed, 18 Jun 2025 11:54:30 -0500 (CDT)
+Date: Wed, 18 Jun 2025 11:54:28 -0500 (CDT)
+From: Timothy Pearson <tpearson@raptorengineering.com>
+To: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-pci <linux-pci@vger.kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, 
+	christophe leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	Shawn Anastasio <sanastasio@raptorengineering.com>
+Message-ID: <581463409.1310624.1750265668004.JavaMail.zimbra@raptorengineeringinc.com>
+Subject: [PATCH v2 0/6] PowerNV PCIe Hotplug Driver Fixes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-H4420/eJuZI3vRrv3ALH
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Le mercredi 18 juin 2025 =C3=A0 16:55 +0100, Conor Dooley a =C3=A9crit=C2=
-=A0:
-> On Wed, Jun 18, 2025 at 04:09:11PM +0200, Benjamin Gaignard wrote:
-> > Add a device tree binding for the Verisilicon (VSI) IOMMU.
-> > This IOMMU sits in front of hardware encoder and decoder
-> > blocks on SoCs using Verisilicon IP, such as the Rockchip RK3588.
-> >=20
-> > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-> > ---
-> > changes in version 2:
-> > - Add a compatible "rockchip,rk3588-av1-iommu"
-> > - Fix clock-names in binding=20
-> > - Remove "vsi_mmu" label in binding example.
-> >=20
-> > =C2=A0.../bindings/iommu/verisilicon,iommu.yaml=C2=A0=C2=A0=C2=A0=C2=A0=
- | 72 +++++++++++++++++++
-> > =C2=A01 file changed, 72 insertions(+)
-> > =C2=A0create mode 100644 Documentation/devicetree/bindings/iommu/verisi=
-licon,iommu.yaml
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/iommu/verisilicon,iommu.=
-yaml
-> > b/Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
-> > new file mode 100644
-> > index 000000000000..9ae4a45d76f4
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
-> > @@ -0,0 +1,72 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/iommu/verisilicon,iommu.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Verisilicon IOMMU
-> > +
-> > +maintainers:
-> > +=C2=A0 - Benjamin Gaignard <benjamin.gaignard@collabora.com>
-> > +
-> > +description: |+
-> > +=C2=A0 A Versilicon iommu translates io virtual addresses to physical =
-addresses for
-> > +=C2=A0 its associated video decoder.
-> > +
-> > +properties:
-> > +=C2=A0 compatible:
-> > +=C2=A0=C2=A0=C2=A0 oneOf:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - verisilicon,i=
-ommu
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - rockchip,rk35=
-88-av1-iommu
->=20
-> This isn't right. Firstly, the "oneOf: - enum" construct doesn't do
-> anything. oneOf one item is just the item. Secondly this still allows
-> verisilicon,iommu in isolation which is not okay. What you actually want
-> here is
-> items:
-> =C2=A0 - const: a
-> =C2=A0 - const: b
->=20
-> Thirdly, Nicolas mentioned that the version of this iommu is 1.2.0,
-> which I would like to see reflected in the compatible.
-
-I believe just 1.2 will be sufficient, the last number is the build number,
-the IP is interface is unchanged.
-
-Nicolas
-
-
---=-H4420/eJuZI3vRrv3ALH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC137 (Linux)/8.5.0_GA_3042)
+Thread-Index: 7ViWVrejj338yZQm64sXoMCfdWvE4A==
+Thread-Topic: PowerNV PCIe Hotplug Driver Fixes
 
------BEGIN PGP SIGNATURE-----
+Hello all,
 
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaFLvKQAKCRBxUwItrAao
-HEIBAJ4+fNWvctsbsGY2hG9WzLfQYcW51QCg2j4bOqlf9fdEsgEh4zPtrR8oLqc=
-=SlrU
------END PGP SIGNATURE-----
+This series includes several fixes for bugs in the PowerNV PCIe hotplug
+driver that were discovered in testing with a Microsemi Switchtec PM8533
+PFX 48xG3 PCIe switch on a PowerNV system, as well as one workaround for
+PCIe switches that don't correctly implement slot presence detection
+such as the aforementioned one. Without the workaround, the switch works
+and downstream devices can be hot-unplugged, but the devices never come
+back online after being plugged in again until the system is rebooted.
+Other hotplug drivers (like pciehp_hpc) use a similar workaround.
 
---=-H4420/eJuZI3vRrv3ALH--
+Also included are fixes for the EEH driver to make it hotplug safe,
+and a small patch to enable all three attention indicator states per
+the PCIe specification.
+
+Thanks,
+
+Shawn Anastasio (2):
+  pci/hotplug/pnv_php: Properly clean up allocated IRQs on unplug
+  pci/hotplug/pnv_php: Work around switches with broken presence
+    detection
+
+Timothy Pearson (5):
+  powerpc/pseries/eeh: Export eeh_unfreeze_pe() and eeh_ops
+  powerpc/eeh: Make EEH driver device hotplug safe
+  pci/hotplug/pnv_php: Fix surprise plug detection and recovery
+  pci/hotplug/pnv_php: Enable third atetntion indicator state
+
+ arch/powerpc/kernel/eeh.c                    |   2 +
+ arch/powerpc/kernel/eeh_driver.c             |  48 ++++--
+ arch/powerpc/kernel/eeh_pe.c                 |  10 +-
+ arch/powerpc/kernel/pci-hotplug.c            |   3 +
+ arch/powerpc/platforms/powernv/eeh-powernv.c |   1 +
+ drivers/pci/hotplug/pciehp.h                 |   1 -
+ drivers/pci/hotplug/pciehp_ctrl.c            |   2 +-
+ drivers/pci/hotplug/pciehp_hpc.c             |  33 +---
+ drivers/pci/hotplug/pnv_php.c                | 172 ++++++++++++++++---
+ drivers/pci/pci.c                            |  31 +++-
+ drivers/pci/pci.h                            |   1 +
+ 11 files changed, 228 insertions(+), 76 deletions(-)
+
+-- 
+2.39.5
 
