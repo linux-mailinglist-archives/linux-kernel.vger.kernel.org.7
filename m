@@ -1,79 +1,94 @@
-Return-Path: <linux-kernel+bounces-691155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5347FADE120
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 04:32:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 374B8ADE124
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 04:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 034BF169F90
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 02:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 131A83BD767
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 02:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5490E19F42C;
-	Wed, 18 Jun 2025 02:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBC01922DE;
+	Wed, 18 Jun 2025 02:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="c8yy43Lx"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="n5WH8/0G"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A615155A4E;
-	Wed, 18 Jun 2025 02:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BAA1854
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 02:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750213969; cv=none; b=LY8hNeq2nSEWOFl+vU02+6A8Q3QerBoxMjBJxl2vAokv2ZqennEMMOCmu2Pw7GWOQziP6UcvhXTGljnmtTpN7j5xNTIL8MZJuI8UDScI0syVZ5CX/kAEOxC8TFUgWjYHZDv7qHBeb9NBplomRrLTO8hU+QWYB858XbM3jb9CQ+E=
+	t=1750214086; cv=none; b=MkAsPvI3sxed0WiJLqj4ZpIs5AaXdGSfhhL2QcxHvr4UCgiiLB3jleU39NwFeO1F9p7j/OkBdfOeWUm9TTOZZ50rdujXhTov8wS6kAYV6Kot6pWU2i9QBU6W7Epj9VYiBCAicSc4c8K8lSKylW9JuDLHJjt6xAv9gqeD93cPKC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750213969; c=relaxed/simple;
-	bh=AR29u6dqmK6ehegRcbbijgUNzEMQNsv2oGLo6lBr3lU=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=U2LHd4bB9u9nb2CUCU8Ip0bnjS/t6FKvN7x5TD+KiVtdmq//X+WbtMufwCZjfnfAM9Ynb2xmvCq/VFbgKdl25sxBsHae8NCOSMD14A7XgGBmTVto8igSCcAdJ241qYtdWwrbNR66wY0CtRgeL8XWqjVoiGkJErtoXotkUH2b6vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=c8yy43Lx; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1750213966;
-	bh=AR29u6dqmK6ehegRcbbijgUNzEMQNsv2oGLo6lBr3lU=;
-	h=Subject:From:To:Date:In-Reply-To:References;
-	b=c8yy43LxWxntWCAOlzFtJQAOwl4vSyG4RXS1nvNxQc2BzJW8ypHz9yJ/Q90//MlXV
-	 Oma6DS17CsIYdYRhl7qtRMRRNMGkjbmYg9nghh3dwVcaQRzZfuxE02c1a5bZjdhAo3
-	 Ly4x5rwRK9gQVoI+Z4+3xall0uLUpOT/BSZd5gP0dZJizBU8SYGXQ/1fxPTjpxg8ps
-	 aP63LasTIY3Wz2orNMECmD7DHxpPJhxCYsqKSZyoTA/wP9rpX3VgIZyn+mkCuw9Cj2
-	 AXoxBORWQHcrQ0M29SNwhxuMI3DwYyC1A5RRqoEODdIkV0n5ewfG0ESnqm4NN0a37C
-	 i2LWYha0Dx0Fw==
-Received: from [192.168.68.112] (unknown [180.150.112.166])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 60A1D640A0;
-	Wed, 18 Jun 2025 10:32:45 +0800 (AWST)
-Message-ID: <100bed083e9a98432888c0b1db8cbc445f96cd64.camel@codeconstruct.com.au>
-Subject: Re: [PATCH 3/8] mmc: sdhci-of-aspeed: Patch HOST_CONTROL2 register
- missing after top reset
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Cool Lee <cool_lee@aspeedtech.com>, adrian.hunter@intel.com, 
-	ulf.hansson@linaro.org, joel@jms.id.au, p.zabel@pengutronix.de, 
-	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
-	linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 18 Jun 2025 12:02:44 +0930
-In-Reply-To: <20250615035803.3752235-4-cool_lee@aspeedtech.com>
-References: <20250615035803.3752235-1-cool_lee@aspeedtech.com>
-	 <20250615035803.3752235-4-cool_lee@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1750214086; c=relaxed/simple;
+	bh=ONgsSjcf0Ph7NvUL/sFpUXeF9RhPxG1ddOiPgnS3bbU=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=hCeZ1zzT1ncijU0hOVniPIxldIoK/SsaK2opixXfzJYD/nmEBnq6YR088v6+GLH/mVnzzrGtg15ClVQeGSzazDiY73uHzEOpIzflkGObVZCfbpLBSbVoHiZsu025sUIXaerc7q7+kJZYH78BNjkJb933Rd7USEdGXjB2u2RgUdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=n5WH8/0G; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1750214071; bh=qVRWt0bjnSRHcquObKyeG8x10x+1fVWd4QKTrfLo0lo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=n5WH8/0GDGtp+0mS2QSiLlhlfRuoknFhFXP6c9BLMPJEX4IGoR06hZmPhpMfcP2r3
+	 gahOsf6zpIDmtHGByO+UzyKsrMErhlR+T8/FQF9gTue3gTpqBRIRDNlLCWNA0oNZVa
+	 gPozghNesAEClcIScmoo7Q2SiUDhY9nvZhqT6Jh4=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 8502345A; Wed, 18 Jun 2025 10:33:16 +0800
+X-QQ-mid: xmsmtpt1750213996t4qgbhg8y
+Message-ID: <tencent_FC196E4F848DEF25B88DCB12125D96DD9307@qq.com>
+X-QQ-XMAILINFO: NY3HYYTs4gYS34szix4HX+Eq0s93HCcaXAs3XuSPWyacaRgsl6DErZThJpqk/5
+	 UeDyUoom58ZUELDFB2wIc/smUCDiAZiGdOidSlqm5CC4QppXr8IyM2D1gAIYHEmrhDyUqPybWEnB
+	 BjS1ojh+0USi7PqiGxHNFcR0i5jZvQtche7I0nZ2c6wWjspcpr4Pz88eKySLR0JIeU/snczOP01D
+	 Ro5pTRz/Xen0ZCqS1CTFTxU9ocVZRqWIkx14cfoKdUFsSdtIljRA4cVzyZ+aXEYpiZWZdRlNY/Vo
+	 he50SjK1v6dAzstkt33muRQ/gmx8IPuGx3eTY+vftKF958TSTU0ke44ajdIKnuWaU7GbRK6Yci3A
+	 tehQGw83gNUII7S0UjjCB5U4VomvaLVQoEI7V1COV7/UbL7dUrKFp+gzKwu6ktYU7ukONGnR6M7X
+	 UWl5GFHvJvgCRaTw12EHtj3F8guYj/wK4FBxMMJvO3akzeCyELakbqlzqyOZ9goya/tYauJTSSm4
+	 sBO8NoHKfZiYdkoafnVV/2V+dSCa3zAebyVa8WBziYFlPy1Vlt7xioAOu52Q4u6QN75k+s67HYOO
+	 TN/eMah/AX38PWH8XkVGUm+eP44yr7Vw2rCY1KHAw1VCPSp49Zdk7+yAppCso35TLWsb4810t3NY
+	 e+2oD3UUqVOCv7TuP3X/+mfmU72vwsZO0KsTMD5fHAAwWMdSjIe7T8svnc8sMMocjjcQVKMYiViE
+	 OcCpFFgKPpq7FnPkwwLWsZIOpXD1jV44v3v0r4NExVGOtpjVdMKNUBtfYrfxOR1isjl9tNPnV82n
+	 LsOLaU9OQIUbyUdrAeMg5xTZs5/Bh/eTgg1VskecmolQYByoBg6p8EL4CgQdopqstEznAoSDa6ER
+	 I6BC1FYbm3sffVuFFhl1n3QmJQ04g97DISxfTpbGzXTISO43H+c/ah5ds6dqlfQwhLd4xQU03t
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ntfs3?] general protection fault in pick_link (2)
+Date: Wed, 18 Jun 2025 10:33:16 +0800
+X-OQ-MSGID: <20250618023315.1082693-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <685120d8.a70a0220.395abc.0204.GAE@google.com>
+References: <685120d8.a70a0220.395abc.0204.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sun, 2025-06-15 at 11:57 +0800, Cool Lee wrote:
-> HOST_CONTROL2 register will be cleared after top reset,
-> it needs to be saved/resotred while reset.
->=20
-> Signed-off-by: Cool Lee <cool_lee@aspeedtech.com>
+#syz test
 
-Please squash this into the first patch.
-
-Andrew
+diff --git a/fs/namei.c b/fs/namei.c
+index 4bb889fc980b..291f29a04e09 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2005,6 +2005,10 @@ static const char *step_into(struct nameidata *nd, int flags,
+ 		if (path.mnt == nd->path.mnt)
+ 			mntget(path.mnt);
+ 	}
++
++	if (inode && !S_ISLINK(inode->mode))
++		return NULL;
++
+ 	return pick_link(nd, &path, inode, flags);
+ }
+ 
 
 
