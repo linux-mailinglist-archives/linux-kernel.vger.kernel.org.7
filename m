@@ -1,103 +1,123 @@
-Return-Path: <linux-kernel+bounces-692246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93756ADEEE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:10:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E71ADEEE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B74E16897A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:10:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 754ED7AE1FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F23E2ECD01;
-	Wed, 18 Jun 2025 14:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12022EAB8F;
+	Wed, 18 Jun 2025 14:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GOjyIbuK"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QBSZx0pj"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA4D2EAB6B;
-	Wed, 18 Jun 2025 14:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D133BA3D;
+	Wed, 18 Jun 2025 14:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750255780; cv=none; b=ur2qCX41KIFWzn9aoP8x+kUwf9oHILXoR1pK3Wh2j7iGSZxu5FYmMrqDCoJVrpFpMolOQ1h0ci9Ag6KzshgJZqvCyr1vqyNUa+h+l85Z/RcebUxsakKIjAOJppGZWKpHwfchmbKrr0x+vjk9zNN8MaNUzuKqbiFuidEWG/6tSt0=
+	t=1750255917; cv=none; b=bAzkCdPKKP+QK/LemUezi+M6nM8s4/X68mjZN4la7aGYvxyi8W7sbR3vxPZ57DpH1rKs1waY+7CGT72oYgnYINJR0/T5/KY0FNiYzS6LzSSrjj2oIEIbYUvvFYaIYmT4s70mVuS3oI4CygjE40AEe912Mx9MdJQA5FpKNrccon0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750255780; c=relaxed/simple;
-	bh=keF4qtNzrgMOTjYFNPm6e0DVoWKRm4eaIoCysbWwg0I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nLTsa9yiblvjP1MlyNC96RshaeJ42T5jnRsgurOuyLUCJyKcMscjrrmOX9140m3BcqW/qqjJbuFWYbcFGyfe0Es1fYQI+eDS0rpBcCET8J3PN5/qYylB8pOptQyo2lbdcb6xAMNs6vLN4v5+KQBBFZfWrd8JSDUwV05FdYLjczs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GOjyIbuK; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750255776;
-	bh=keF4qtNzrgMOTjYFNPm6e0DVoWKRm4eaIoCysbWwg0I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GOjyIbuKXih008ST9b1XsYdBxBz0K1uPl3kiY+oxxU6PHfh8w4xrLOCHpzxBkILTf
-	 Nx+5e8gYQZDa6YkHn1z2dWmULH2JHeVtllgoM0/S+27EDnyIj6o8qILOhU0VnuSGx9
-	 hyshYy4saA5/ak9Zcx5B7nCMIW7+hRf951YFEGCOAENenX4liiPl7hgTZPVmu5J4cK
-	 ll6jDan2SwjZ0+3Qhs1X7Vur04fjIt0S9NY5yIu4vR+yh6XKbj2R5BtSeVw0do0xEV
-	 FyDXIX8BeCFx9qymjJn4eW9j8QPxfuo9h8OZ7O08rUDlh6QXgDWHgwVYBQCjIO8CTm
-	 ygQPL3A+Lyd7A==
-Received: from benjamin-XPS-13-9310.. (unknown [IPv6:2a01:e0a:120:3210:45c6:994a:f902:5c74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: benjamin.gaignard)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BE43417E1580;
-	Wed, 18 Jun 2025 16:09:35 +0200 (CEST)
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-To: joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	nicolas.dufresne@collabora.com,
-	jgg@ziepe.ca
-Cc: iommu@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	kernel@collabora.com,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Subject: [PATCH v2 5/5] arm64: defconfig: enable Verisilicon IOMMU
-Date: Wed, 18 Jun 2025 16:09:14 +0200
-Message-ID: <20250618140923.97693-6-benjamin.gaignard@collabora.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250618140923.97693-1-benjamin.gaignard@collabora.com>
-References: <20250618140923.97693-1-benjamin.gaignard@collabora.com>
+	s=arc-20240116; t=1750255917; c=relaxed/simple;
+	bh=ktqmoqHWAPl0Zq7KIfogS/MbVY1Y4zI40XjkZj5TB6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sJ8/gU4TscDrkakL17ey001frgcib8QiK2bAuWD4szHCqwgQjl2WF7zykbknSv2LSCR0ygBbvcor3ZoaoBIHYa8xURs51dczv6aHZ1pnLAMnyeGEDAay6O8KjEeMGH56dmleI0iTqwYof3NNkMS8DIh3IcxhDL4B/GybCE/JQq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QBSZx0pj; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2463F43137;
+	Wed, 18 Jun 2025 14:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1750255912;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vXF18F4sgIg2jD9ptU1LZHnjRdgQrEW5rmy82LsXF4s=;
+	b=QBSZx0pj5qIxdvnIs5yPuGcY31Ww95QxRTZz5xQ6MvKFyBxJperJouMSpwrLPbXqLnuhFJ
+	yG6Gg95xudBvhnqiDZKbePaRxdU1sQ5xN+tZ7KhJLpwFYT7rXZ5pCdVp2xoKxQGIWbx29a
+	eFK7ji7esOMZDrd92Wj3SuAHjnhL5A1ToFm6eWB2Gyr1ZphaXt5fObdUSS16Jkb3bsTdZu
+	yUM/WpmdN8bnEFXtnrs2i1BBGxO2f7jZY7PlG2q52efBmEBLYDb2Kcbweb26dvPOQThzGH
+	BKONq2bU5FXVly8SXPTW55P9354qyGQELcTETFod+XvGWpHuISxvLBQvHKXtiQ==
+Message-ID: <865fc263-b3c6-470a-9fb8-3d6df51a2b74@bootlin.com>
+Date: Wed, 18 Jun 2025 16:11:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] arm64: dts: rockchip: Fix the panel compatible for
+ the PinePhone Pro
+To: Diederik de Haas <didi.debian@cknow.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250618-dtb_fixes-v1-0-e54797ad2eba@bootlin.com>
+ <20250618-dtb_fixes-v1-1-e54797ad2eba@bootlin.com>
+ <DAPPKP3OWLMU.C6HXTY24NZ4H@cknow.org>
+Content-Language: en-US
+From: Olivier Benjamin <olivier.benjamin@bootlin.com>
+In-Reply-To: <DAPPKP3OWLMU.C6HXTY24NZ4H@cknow.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvkeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepqfhlihhvihgvrhcuuegvnhhjrghmihhnuceoohhlihhvihgvrhdrsggvnhhjrghmihhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedvheejtdeifeejvedvffdtuddtheehtdelvdehvefgjeetveejfeeiveduvdejteenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvfeegmegvtgefkeemvdegvgdtmehfhegtvgemfhefgedvmeeiheekjeemfheiheeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvfeegmegvtgefkeemvdegvgdtmehfhegtvgemfhefgedvmeeiheekjeemfheiheeipdhhvghloheplgfkrfggieemvdgrtddumegvfeegmegvtgefkeemvdegvgdtmehfhegtvgemfhefgedvmeeiheekjeemfheiheeingdpmhgrihhlfhhrohhmpeholhhivhhivghrrdgsvghnjhgrmhhinhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepughiughirdguvggsihgrnhestghknhhofidrohhrghdprhgtphhtthhop
+ ehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhvghikhhosehsnhhtvggthhdruggvpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
+X-GND-Sasl: olivier.benjamin@bootlin.com
 
-Enable Verisilicon IOMMU used by RK3588 AV1 hardware codec.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 897fc686e6a9..ad1515f69b4f 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1451,6 +1451,7 @@ CONFIG_ARM_SMMU=y
- CONFIG_ARM_SMMU_V3=y
- CONFIG_MTK_IOMMU=y
- CONFIG_QCOM_IOMMU=y
-+CONFIG_VSI_IOMMU=y
- CONFIG_REMOTEPROC=y
- CONFIG_IMX_REMOTEPROC=y
- CONFIG_MTK_SCP=m
+On 6/18/25 15:54, Diederik de Haas wrote:
+> On Wed Jun 18, 2025 at 12:32 AM CEST, Olivier Benjamin wrote:
+>> As documented in its bindings, the compatible for the Himax HX8394
+>> MIPI-DSI LCD panel controller is in 2 parts.
+>> The PinePhone Pro DTS currently only specifies the first part of the
+>> compatible, generating a warning.
+>>
+>> Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
+>> ---
+>>   arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+>> index 04ba4c4565d0a205e2e46d7535c6a3190993621d..5ebc380a24df86ba7172b0950b89cac56b61c507 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+>> @@ -479,7 +479,7 @@ mipi_out_panel: endpoint {
+>>   	};
+>>   
+>>   	panel@0 {
+>> -		compatible = "hannstar,hsd060bhw4";
+>> +		compatible = "hannstar,hsd060bhw4", "himax,hx8394";
+>>   		reg = <0>;
+>>   		backlight = <&backlight>;
+>>   		reset-gpios = <&gpio4 RK_PD1 GPIO_ACTIVE_LOW>;
+> 
+> Reviewed-by: Diederik de Haas <didi.debian@cknow.org>
+> 
+Thanks for the review.
+> But I'd actually suggest to combine it with patch 3 and use that
+> opportunity to also fix the property sorting, so you'd get 1 patch which
+> fixes all of the panel issues.
+> 
+Makes sense, I'll integrate your suggestions from the other 2 patches, 
+fix the property sorting, and squash the fixes into 1 commit/patch in v2.
+> Cheers,
+>    Diederik
+
 -- 
-2.43.0
+Olivier Benjamin, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
