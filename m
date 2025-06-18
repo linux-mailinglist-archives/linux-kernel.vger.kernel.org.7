@@ -1,89 +1,156 @@
-Return-Path: <linux-kernel+bounces-691209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7493ADE1B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 05:35:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1DAEADE1C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 05:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D916189ADEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 03:35:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 792997A329B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 03:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70731DA61B;
-	Wed, 18 Jun 2025 03:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="uY/d77SC"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BA71E8323;
+	Wed, 18 Jun 2025 03:41:59 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643BD28E7;
-	Wed, 18 Jun 2025 03:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C41F1D9A5D;
+	Wed, 18 Jun 2025 03:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750217700; cv=none; b=Uwq5aIcAbfT3+5qixBfGiRYmFPk5mztaz2qVKmSGELuFiJ/ADHTVI09KfjSL9PXecEwqqQxfTkCLnsRAy3PygZPhHeNfTIGCmC3ee6fwjv1h+UQt7r0TRUmqDwfSWiTBkWoinKpTUfoLh3BcIAmlefC422HaKmsNGRTcdY72p14=
+	t=1750218119; cv=none; b=Eyi86cKRFgFY2EPsTy9kCMCgQpeP6WUWE2mv70RQkw6VPEYO+1Mhbjt0tttxo1+wInralXF+l5PtaETbYuaKyfMC4OsvyNRv7voMdpf7pM2Es0Q9Qb+QUNwXQpYk8furqE3qXsbwVOrpu8j50okPlFl+dl0jIRTTFCkuH20z0yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750217700; c=relaxed/simple;
-	bh=QADJZu+wYVE4rOxfgnFlkA3juPVE4g6tlhVku56dgKk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=XdCpPNosT1XPPAMIATSwiLMuKDAZCCh7VDWMeWkD2buVqeMRE05tTEbjSY2M5Iwt2qA8NFrONLuze7gW2ZuuoVKFWyzZdpDrrl9N89mx4fy5L1+7z+qggZwu8gajBDn3DVg0EODyfwyWTxQld9w89wX8Yll0A3UA2YvKdR2jAGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=uY/d77SC; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55I3YHB31384936
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 17 Jun 2025 20:34:18 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55I3YHB31384936
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025052101; t=1750217659;
-	bh=QADJZu+wYVE4rOxfgnFlkA3juPVE4g6tlhVku56dgKk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=uY/d77SCwbZHK5KwLWXdhqYYiM2E1LbziCx7+ZC+2oeozKBooOT2Bwad0UW2OlQjL
-	 6hX/j76nPeFUmSIqoUn0X7jGT3nH8w08FllI/eaz+yFivY6B6cLHG+I50Z0BSEYFKR
-	 X3kCVt/3e9rBZ6Mhs+cYSXWn2ErlFMyGU7EmijgUas1N+RGmKzuuGEmVQXuBUrbkdg
-	 W9cQvybFTRe/EfymO8M21dnCYM1ZubRsrLC1ERd3V/MbOpAK8mNYj4JtuYMGgjmHqX
-	 KIdYeyPNLpt2143beD+dlIKquzLI4rsWDZiQ1s+fGmCvye7rfRiYFWQ8yrbeM8rJlH
-	 PzImWPxTxog0Q==
-Date: Tue, 17 Jun 2025 20:34:17 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Xin Li <xin@zytor.com>, Sean Christopherson <seanjc@google.com>
-CC: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, pbonzini@redhat.com, peterz@infradead.org,
-        sohil.mehta@intel.com, brgerst@gmail.com, tony.luck@intel.com,
-        fenghuay@nvidia.com
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_2/2=5D_x86/traps=3A_Initialize_D?=
- =?US-ASCII?Q?R7_by_writing_its_architectural_reset_value?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <1b8095a8-1e65-4508-b874-fa2fce1b00ee@zytor.com>
-References: <20250617073234.1020644-1-xin@zytor.com> <20250617073234.1020644-3-xin@zytor.com> <aFFvECpO3lBCjo1l@google.com> <9720c605-c542-4969-b7f0-b4477bc2ab1e@zytor.com> <1b8095a8-1e65-4508-b874-fa2fce1b00ee@zytor.com>
-Message-ID: <3305378C-7D27-4A89-9DF8-B7F1A1582613@zytor.com>
+	s=arc-20240116; t=1750218119; c=relaxed/simple;
+	bh=mClwktUuIUKCAi9FZnjiyUaJnofqGsQT3KVF0qvMQqU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hGF1GrhMaRIzWnHZbv73Pdxznc3ocE+xYFKo3IaSPVpYG4f0bDIXO9gacBawDD3mBmYeYsHZBu91A+WCAjJOfP51QRp/cEkJZRdMMsbre+Q07FFX8W0YrOq7t/SYSb+K0Mtyhn6nABH3Rk03cilHABGqDvZJRXTyQd05HVNPhcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [127.0.0.2] (unknown [210.73.43.2])
+	by APP-01 (Coremail) with SMTP id qwCowABnFtVpNVJoV95NBw--.6548S2;
+	Wed, 18 Jun 2025 11:41:30 +0800 (CST)
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+Subject: [PATCH net-next v2 0/6] Add Ethernet MAC support for SpacemiT K1
+Date: Wed, 18 Jun 2025 11:40:45 +0800
+Message-Id: <20250618-net-k1-emac-v2-0-94f5f07227a8@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD01UmgC/1WP0W7CMAxFf6XK8xzF6RqgQoj/mHjIghnRaAp2V
+ jGh/vtCgIc9Xl37HPumhDiSqL65KaYpShxTCfatUeHo0xdB3JesrLGdccZBogzfCDT4AC3hEju
+ zJO/eVdk4Mx3itdI+1H0w0TWr3aNhuvwUfH7Wn14IwjgMMffN5DQ64IB3ykAivor7Zv3wYmsQs
+ V1ptAYXxkI54LQn3nKUINmzLqRNNR2j5JF/60MTVtWL8e/2CcFACO6wog6Nc4ttQXnRPuiQ1G6
+ e5z8eKFlJHAEAAA==
+X-Change-ID: 20250606-net-k1-emac-3e181508ea64
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Vivian Wang <wangruikang@iscas.ac.cn>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: Vivian Wang <uwu@dram.page>, Lukas Bulwahn <lukas.bulwahn@redhat.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>, 
+ netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-CM-TRANSID:qwCowABnFtVpNVJoV95NBw--.6548S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxur1fZr1fXr47tFWxCrWxWFg_yoW5CF1xpa
+	y8ZrZxuwnxJr47trs7uws7urWfWa1vy3W5WF1UtryrX3sF9FWUJrnakr15Gr1UZrWrJryS
+	yr4kZw1fCFn8Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK67AK6r48MxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sR_XTm7UUUUU==
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On June 17, 2025 5:15:18 PM PDT, Xin Li <xin@zytor=2Ecom> wrote:
->On 6/17/2025 4:08 PM, Xin Li wrote:
->>=20
->> I hope the bit will be kept reserved to 1 *forever*, because inverted
->> polarity seems causing confusing and complicated code only=2E
->
->BTW, FRED flipped BLD and RTM polarities in its event data:
->
->The event data is not exactly the same as that which will be in DR6
->following delivery of the #DB=2E The polarity of bit 11 (BLD) and bit 16
->(RTM) is inverted in DR6=2E
->
->
->I=2Ee=2E, BLD and RTM are active high in FRED event data=2E
+SpacemiT K1 has two gigabit Ethernet MACs with RGMII and RMII support.
+Add a driver for them, as well as the supporting devicetree and bindings
+updates.
 
-Yes, we designed it so FRED (and VTx) are always active high
+Tested on BananaPi BPI-F3 and Milk-V Jupiter.
+
+I would like to note that even though some bit field names superficially
+resemble that of DesignWare MAC, all other differences point to it in
+fact being a custom design.
+
+Based on SpacemiT drivers [1]. This series depends on reset controller
+support for K1 [2]. These patches can also be pulled from:
+
+https://github.com/dramforever/linux/tree/k1/ethernet/v2
+
+Note on patch 3: I am still fairly certain that such a bus with empty
+ranges is allowed under both the spirit and the letter of simple-bus
+bindings [3].  This also passes "make dtbs_check" with only unrelated
+warnings that was already there.
+
+[1]: https://github.com/spacemit-com/linux-k1x
+[2]: https://lore.kernel.org/all/20250613011139.1201702-1-elder@riscstar.com
+[3]: https://github.com/devicetree-org/dt-schema/commit/ed9190d20f146d13e262cc9138506326f7d4da91
+
+---
+Changes in v2:
+- dts: Put eth0 and eth1 nodes under a bus with dma-ranges
+- dts: Added Milk-V Jupiter
+- Fix typo in emac_init_hw() that broke the driver (Oops!)
+- Reformatted line lengths to under 80
+- Addressed other v1 review comments
+- Link to v1: https://lore.kernel.org/r/20250613-net-k1-emac-v1-0-cc6f9e510667@iscas.ac.cn
+
+---
+Vivian Wang (6):
+      dt-bindings: net: Add support for SpacemiT K1
+      net: spacemit: Add K1 Ethernet MAC
+      riscv: dts: Add network-bus dma-ranges for SpacemiT K1
+      riscv: dts: spacemit: Add Ethernet support for K1
+      riscv: dts: spacemit: Add Ethernet support for BPI-F3
+      riscv: dts: spacemit: Add Ethernet support for Jupiter
+
+ .../devicetree/bindings/net/spacemit,k1-emac.yaml  |   81 +
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    |   46 +
+ arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts  |   46 +
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi       |   48 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi               |   31 +
+ drivers/net/ethernet/Kconfig                       |    1 +
+ drivers/net/ethernet/Makefile                      |    1 +
+ drivers/net/ethernet/spacemit/Kconfig              |   29 +
+ drivers/net/ethernet/spacemit/Makefile             |    6 +
+ drivers/net/ethernet/spacemit/k1_emac.c            | 1934 ++++++++++++++++++++
+ drivers/net/ethernet/spacemit/k1_emac.h            |  416 +++++
+ 11 files changed, 2639 insertions(+)
+---
+base-commit: d9946fe286439c2aeaa7953b8c316efe5b83d515
+change-id: 20250606-net-k1-emac-3e181508ea64
+prerequisite-message-id: <20250613011139.1201702-1-elder@riscstar.com>
+prerequisite-patch-id: 2c73c63bef3640e63243ddcf3c07b108d45f6816
+prerequisite-patch-id: 0faba75db33c96a588e722c4f2b3862c4cbdaeae
+prerequisite-patch-id: 5db8688ef86188ec091145fae9e14b2211cd2b8c
+prerequisite-patch-id: e0fe84381637dc888d996a79ea717ff0e3441bd1
+prerequisite-patch-id: 2fc0ef1c2fcda92ad83400da5aadaf194fe78627
+prerequisite-patch-id: bfa54447803e5642059c386e2bd96297e691d0bf
+
+Best regards,
+-- 
+Vivian "dramforever" Wang
+
 
