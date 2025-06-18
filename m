@@ -1,209 +1,205 @@
-Return-Path: <linux-kernel+bounces-692812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C15C5ADF722
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:47:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B9BADF726
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E7F71BC2B8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:47:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92CCC4A36DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D96E21C187;
-	Wed, 18 Jun 2025 19:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3041D219A8E;
+	Wed, 18 Jun 2025 19:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MdaUMCsn"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OOf0ucIg"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B028C21C173
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 19:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E172E211A2A;
+	Wed, 18 Jun 2025 19:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750275978; cv=none; b=NmfiXNwFi18etX8DRLJ6IYwvmXJDC0Und+Q8eWpiiNNzqtfV3SgFyF9cwxqNBfOVQqrJsioTHFdXfnJKgLPyrP7eVSssAXOCs6SLNwvVylvs3yDOqc9dhZk4zV5THoO/Ti23zpLkofhki9CgajBv/jJ0F9GQkYwTcUQHHIzBB3o=
+	t=1750276057; cv=none; b=Nnzjt0Bpp2rZr7yV9HZ4m1S92x4Kr0zlrDilvrhFLyDjsfDNkOHqEstmMN4iDv7u6T3z2fl0zwZ+G5a10WaAlz8hNbrXpcwqWc2uA8a4d/GXrBYJfECy2BXZhfaaQFp+rnBMW4l5xT9sb60/UjQj2um2S0GbDj4d5VjA+xodWxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750275978; c=relaxed/simple;
-	bh=w3uLYJ3NIkqr5/RFk46ODwQrvXE+YWSkbBK6hI3irA0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vui+q6Lvt2Gi2KKt6OxC6aCl6NoIhxX6FCfeSUKCT1uFds1Cv8Yj4ip0QbwgjOWfCKnCN4Mk2eMQLs23dHTTR/xQx1VCfd9Ge5ZMLPsYbe2Tcl6+pFJewTAjf9Tw73aDBUZNZu52oGqtkMfspdBF/d1iktReLoyfOkA3fQszIng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MdaUMCsn; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54e98f73850so6883917e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:46:16 -0700 (PDT)
+	s=arc-20240116; t=1750276057; c=relaxed/simple;
+	bh=deAaHkl21h0ohvn8v3N4Fp2M9e5xG02VmKncezoInZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WzO5Qi90xMDz0JE0/BAL+coLCuUkF0oH6FoDWLCLhKlDKijFBKeEtCW9zrKaFFATlRWm4/jf69gOJifj414kCmzX0p3ENi8z5Qaop+z/wleIOhyrCOD/SyaKsetOCwqdTtwu0tQCVygExYFc4DYMIH688mcwhyYOBGGQDVXyxo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OOf0ucIg; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b2f62bbb5d6so85562a12.0;
+        Wed, 18 Jun 2025 12:47:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750275975; x=1750880775; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1750276055; x=1750880855; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PWvHiMHTgOAPIc8uIv9IBhWsaldOSguvhvdROMsWe0g=;
-        b=MdaUMCsnSbK7hKr6KtbP76+brYpU3PuhyIHiADb2l26iQ4uBT1k5hxx+3T4J7tgTIi
-         5YkODD/yviXV03UHx7wZmC3h0VUFDxxi81yf2/vwpxyuKn7O9BBBXFZmbUC3RlOLi9eP
-         B/Xoqsi3bEAjjsVyhqwrIeBpDsRa0SXWkRq7o9XzVjjkQX1GF6Sh8Is51Dp/xRXXkc2+
-         zNHe9Frzg/UDAcwCK51e49NEBpeKCoXWaPk7Hke8rTvJgVI2TGSEsV3h8M81leJX6Mpc
-         hqi7qaU7KLPmnCI1M+83vhEisV9+eEuXFPPSmRgmvgOSDQ3ovv0cDFtDkottVfHPn/Fd
-         cLhw==
+        bh=pf8eeO+2z/7Pg7trXIafCOB1C7MRwn5GKRlRkhdvSUU=;
+        b=OOf0ucIgXXhyoiFt3gJRwZmc1GLEOaBLh22VCKFYLZ4AdKsyMz2BOxkedIL9zfTAnd
+         rmwpdG/tgQO8eRdvTb+WOXOtjEqr9rjE9mVp1tbwY8qetSKWVydhEWOPD9UwW4isYbvS
+         OaJZNzN50qEbS+h0/Ju093rvc7CXz9ZD0u4i8Z3nyckkaBCcBY73zw9FgpUO7x6zF5GU
+         gki2uQru07gg+JDC14l8IZsXA7g9hJ9qmonhcEx2DACdy7IVjVGKYWCsk5KtnIlzTglI
+         YVNG9j7owROH84YQYrtCwlAlkJyFwF0H/RkY/5m0sWz9oXyyFP7y9BE6kzOO84PHJUdT
+         K1VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750275975; x=1750880775;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1750276055; x=1750880855;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PWvHiMHTgOAPIc8uIv9IBhWsaldOSguvhvdROMsWe0g=;
-        b=dlWNQcqO91AXDe2s3dssZG0mbvFm/AACMiBfTi66fwgBbMT6K23GIaH9VEkfAuUqFe
-         eVrrh5HEDrM/EPVNXMEsgS1atXA8MzyM3NJ2PaR24VrrhVcX8y7FoBA4PFTQzev7JCU2
-         tQewPhzKlvHs/1QLGmoQNgSd5fTPL+8t/GHKwfD23W+NzeB9282XdqlqGo04iArnjgiZ
-         3foqhm/uqUNbtxyqe8LJ+knV1cf1Rx2APDLcmOIcQ/bSc665Dc+FAUwAyYyav5h6bDS1
-         TUR8NNprfE6ZjgtFw3tdZZJ4RXFyUoWnoAiMcmDoTh6kMeQ8J6gRH3JlBE05dNjqDdrK
-         9cuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9SY5UxvzmUikcCKYpyY+1d7x/heaawJA8CoqxcVaDwPLemUiUKlsWfG1VrmQK82xdVs/ZozoMtclvnzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkQtbv2co/aH/BDgk9emXadAMPFsJC1qJqxwVB1OSg+Ge5Yvnb
-	p1mo2HxXJBvjlvyy8Pu4u5TAay3fFLvi8wnmkmcuNfsUsvYPONhsFwjhHXRQiy41faOz775FITz
-	dtey5mwD9QHkX6bIv0UeouPot60/s6VFj3MBQnfE=
-X-Gm-Gg: ASbGnctwNCurMEJ+UL/MlnEyvjcaW3cGpa9uJWC+hHppnsAIxMXdCibZhwQt3CBij5U
-	EQDzbZHYhhiO0sYj7clX6ewbgBSZhIcFCCYUfAY/qnN6KOZrp9ObrgLwW2pLfOHK25Qqg9lHule
-	1PjLSRO1hCWX6xq5+2Q7wwSATu+FmGfOmiHHr208kFnttyxU4YvRCyjOWY+ADThIg832Mz7UTb
-X-Google-Smtp-Source: AGHT+IHPdx+3fxpJ0DR6n/XRBFuiyzE1w1ppJxiNw05htrhFVe3cOLpbgxBnZwtM5kwSo/F27oMBBGKVd1F/n0eZfpg=
-X-Received: by 2002:a05:6512:2314:b0:553:a60d:6898 with SMTP id
- 2adb3069b0e04-553b6f2bc6emr4879979e87.45.1750275974437; Wed, 18 Jun 2025
- 12:46:14 -0700 (PDT)
+        bh=pf8eeO+2z/7Pg7trXIafCOB1C7MRwn5GKRlRkhdvSUU=;
+        b=KuaJLZpo/yKSDf92tcBLFeXGcfmJeWE8PuJ7Edf2EwzizrC+D3nCE0utn0l6lu+XkR
+         nvlb+VsPqx3tS2sNmonenIVBmxUK+F0mWst7ee3z88yDFIAx2YESy0o1RWpd1G7Mcqgc
+         rdIknlTbWNJEbVrgjMbWG3G2lv+KDpker4O96BUQ3BX/uPhY35/gheKBNQbjImzuWqUb
+         53IGb7AcGEAIaXpSEFzGNIwMHVXDxsdiTqZCqc5FibaFzdCko8XkfdOsORWS2mymcxP5
+         BFgI6aS9/L2JMDoXDhsubCMyBkft7Iybnr8GPugRC3FnfOI6RGwTSMBhu5zahCEb/yMf
+         fxRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWACiDFfi46bN0VtgicIVCNKg/0UI3Pw7l7Y/VRPWi4O5vNlvMSUFO8xMXRktHoIPEtzyewaCkP2qD2Zx8=@vger.kernel.org, AJvYcCWAd72rd4kpcC0kuQL3YmDM99APMX67Dm6b5/y2EM3Q2dXl9F/KWReVytNFv5TSmY8Xj/6Q4v+g@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfZwEDGvXdNK1+UQkfjlsLHgHCR4/G883s+nFYd5yyeIh7/JMg
+	sDeSUuVC96w++vlOpP9ZoCG6zy5Bsva8kpxrZA9LI3lfehtKf0Z5qmk=
+X-Gm-Gg: ASbGncup85QVFbXacVK8T8Q5P2LQi7FHJc06xJSn5fEU6M7gJfUNAGwHafRJ7KFdfoF
+	8uQunIz2qXLI8lYYhFRlLGAsk7toQ0k2jH4c0pppBH+vk6Pm5MnOZq2S0N9nm3mERnVqEtR40kd
+	cr9Hvipl9609D6czmE0b/Yxuh0XvW58+fdsc8LVTLPcrVWayK6cUBphUWIk4/iKTtpF4uXmPwBL
+	JZ3QAQxgr44GoJTHvMjDkoGjlicZG28/VoNBskIicFuGHqYBZvVBQ0Mu+hfT7oEYg6MmI+azNja
+	sjeQHWUpDyj8nSyv+cin0Jv+HSwymplsdt09jJQ=
+X-Google-Smtp-Source: AGHT+IHXfNbvE/9DUQAoYQBRUh4sg9zogi2Yk6H45aA2EA4INQqptGqC/088JwMW4pvwRnMQLqOVSg==
+X-Received: by 2002:a05:6a20:a123:b0:1f5:8de8:3b1a with SMTP id adf61e73a8af0-21fbd5239a0mr29193354637.13.1750276054940;
+        Wed, 18 Jun 2025 12:47:34 -0700 (PDT)
+Received: from fedora.. ([2601:647:6700:3390::c8d1])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe16805c8sm9713109a12.44.2025.06.18.12.47.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 12:47:33 -0700 (PDT)
+From: Kuniyuki Iwashima <kuni1840@gmail.com>
+To: syzbot+8bd335d2ad3b93e80715@syzkaller.appspotmail.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com,
+	kuniyu@google.com
+Subject: Re: [syzbot] [net?] WARNING: proc registration bug in atm_dev_register
+Date: Wed, 18 Jun 2025 12:47:25 -0700
+Message-ID: <20250618194732.835401-1-kuni1840@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <685316de.050a0220.216029.0087.GAE@google.com>
+References: <685316de.050a0220.216029.0087.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250617155355.1479777-1-kuyo.chang@mediatek.com>
- <CANDhNCrUtLCU86hNk4qyfbqn9eXsmbzgzJCxYmXGRCko0r=VbQ@mail.gmail.com> <bbb9a1f3b796e8d7bd0010bf0f4862d67368516a.camel@mediatek.com>
-In-Reply-To: <bbb9a1f3b796e8d7bd0010bf0f4862d67368516a.camel@mediatek.com>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 18 Jun 2025 12:46:03 -0700
-X-Gm-Features: AX0GCFuASm5Kk-lAqXK-5L46ROAuwfALSQP_c8yuQf0EFiqFxlNrc_DV2E-CP5M
-Message-ID: <CANDhNCoT0WDZ4A-OAN5=qu1wuvOdM5F=1skQsS0gnGTZsntinA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] sched/deadline: Fix dl_server runtime calculation formula
-To: Kuyo Chang <kuyo.chang@mediatek.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 17, 2025 at 8:41=E2=80=AFPM Kuyo Chang <kuyo.chang@mediatek.com=
-> wrote:
-> Thanks for cleaner code suggestion, how about this?
+From: syzbot <syzbot+8bd335d2ad3b93e80715@syzkaller.appspotmail.com>
+Date: Wed, 18 Jun 2025 12:43:26 -0700
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    52da431bf03b Merge tag 'libnvdimm-fixes-6.16-rc3' of git:/..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=17c7de82580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4130f4d8a06c3e71
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8bd335d2ad3b93e80715
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=175835d4580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16a7f90c580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/876c709c1090/disk-52da431b.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/05dc22ed6dd4/vmlinux-52da431b.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/564136f4ae57/bzImage-52da431b.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+8bd335d2ad3b93e80715@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> proc_dir_entry 'atm/atmtcp:0' already registered
+> WARNING: CPU: 0 PID: 5919 at fs/proc/generic.c:377 proc_register+0x455/0x5f0 fs/proc/generic.c:377
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5919 Comm: syz-executor284 Not tainted 6.16.0-rc2-syzkaller-00047-g52da431bf03b #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+> RIP: 0010:proc_register+0x455/0x5f0 fs/proc/generic.c:377
+> Code: 48 89 f9 48 c1 e9 03 80 3c 01 00 0f 85 a2 01 00 00 48 8b 44 24 10 48 c7 c7 20 c0 c2 8b 48 8b b0 d8 00 00 00 e8 0c 02 1c ff 90 <0f> 0b 90 90 48 c7 c7 80 f2 82 8e e8 0b de 23 09 48 8b 4c 24 28 48
+> RSP: 0018:ffffc9000466fa30 EFLAGS: 00010282
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff817ae248
+> RDX: ffff888026280000 RSI: ffffffff817ae255 RDI: 0000000000000001
+> RBP: ffff8880232bed48 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000001 R12: ffff888076ed2140
+> R13: dffffc0000000000 R14: ffff888078a61340 R15: ffffed100edda444
+> FS:  00007f38b3b0c6c0(0000) GS:ffff888124753000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f38b3bdf953 CR3: 0000000076d58000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  proc_create_data+0xbe/0x110 fs/proc/generic.c:585
+>  atm_proc_dev_register+0x112/0x1e0 net/atm/proc.c:361
+>  atm_dev_register+0x46d/0x890 net/atm/resources.c:113
+>  atmtcp_create+0x77/0x210 drivers/atm/atmtcp.c:369
+>  atmtcp_attach drivers/atm/atmtcp.c:403 [inline]
+>  atmtcp_ioctl+0x2f9/0xd60 drivers/atm/atmtcp.c:464
+>  do_vcc_ioctl+0x12c/0x930 net/atm/ioctl.c:159
+>  sock_do_ioctl+0x115/0x280 net/socket.c:1190
+>  sock_ioctl+0x227/0x6b0 net/socket.c:1311
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>  __se_sys_ioctl fs/ioctl.c:893 [inline]
+>  __x64_sys_ioctl+0x18b/0x210 fs/ioctl.c:893
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f38b3b74459
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f38b3b0c198 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007f38b3bfe318 RCX: 00007f38b3b74459
+> RDX: 0000000000000000 RSI: 0000000000006180 RDI: 0000000000000005
+> RBP: 00007f38b3bfe310 R08: 65732f636f72702f R09: 65732f636f72702f
+> R10: 65732f636f72702f R11: 0000000000000246 R12: 00007f38b3bcb0ac
+> R13: 00007f38b3b0c1a0 R14: 0000200000000200 R15: 00007f38b3bcb03b
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 >
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index f68a158d01e9..3ccffdf4dec6 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -1505,7 +1505,7 @@ static void update_curr_dl_se(struct rq *rq,
-> struct sched_dl_entity *dl_se, s64
->                 return;
->
->         scaled_delta_exec =3D delta_exec;
-> -       if (!dl_se->dl_server)
-> +       if (!dl_server(dl_se))
->                 scaled_delta_exec =3D dl_scaled_delta_exec(rq, dl_se,
-> delta_exec);
->
->         dl_se->runtime -=3D scaled_delta_exec;
 
-This bit above looks good to me.
+#syz test
 
-> @@ -1614,12 +1614,13 @@ static void update_curr_dl_se(struct rq *rq,
-> struct sched_dl_entity *dl_se, s64
->  void dl_server_update_idle_time(struct rq *rq, struct task_struct *p)
->  {
->         s64 delta_exec, scaled_delta_exec;
-> +       struct sched_dl_entity *dl_se =3D &rq->fair_server;
->
-> -       if (!rq->fair_server.dl_defer)
-> +       if (!dl_se->dl_defer)
->                 return;
->
->         /* no need to discount more */
-> -       if (rq->fair_server.runtime < 0)
-> +       if (dl_se->runtime < 0)
->                 return;
->
->         delta_exec =3D rq_clock_task(rq) - p->se.exec_start;
-> @@ -1627,14 +1628,14 @@ void dl_server_update_idle_time(struct rq *rq,
-> struct task_struct *p)
->                 return;
->
->         scaled_delta_exec =3D delta_exec;
-> -       if (!rq->fair_server.dl_server)
-> -               scaled_delta_exec =3D dl_scaled_delta_exec(rq, &rq-
-> >fair_server, delta_exec);
-> +       if (!dl_server(dl_se))
-> +               scaled_delta_exec =3D dl_scaled_delta_exec(rq, dl_se,
-> delta_exec);
->
-> -       rq->fair_server.runtime -=3D scaled_delta_exec;
-> +       dl_se->runtime -=3D scaled_delta_exec;
->
-> -       if (rq->fair_server.runtime < 0) {
-> -               rq->fair_server.dl_defer_running =3D 0;
-> -               rq->fair_server.runtime =3D 0;
-> +       if (dl_se->runtime < 0) {
-> +               dl_se->dl_defer_running =3D 0;
-> +               dl_se->runtime =3D 0;
->         }
-
-Apologies if I'm confused, or my feedback added confusion, but I'm not
-sure I see this chunk as a readability improvement, right off.
-
-The indirection of rq->fair_server to a stack local dl_se makes it
-less obvious what is being acted upon (might be confused for the dl_se
-of the task ptr passed in).
-Further, the dl_server() check is confusing as I think we're only
-considering dl_servers here (the existing fair_server and potentially
-future servers added), right?
-
-I think your original logic for this function of just dropping the
-scaled_delta_exec for the rq->fair_server.runtime addition makes the
-most sense.
-
-When we have additional dl_servers to handle here, I think we can
-refactor/abstract out this logic as makes most sense when they arrive.
-
-
->         p->se.exec_start =3D rq_clock_task(rq);
->
-> If it's ok, should I split it into two separate patches
-> 1.Fix dl_server runtime calculation formula
-> 2.cleaner code patch
->
-> or just submit it as a single patch?
-
-Others can correct me, but I think just a single fix makes sense.
-
-
-> > I'm a little confused on the conditional here. Is
-> > fair_server.dl_server ever not true (after the first call to
-> > dl_server_start())?
-> >
-> For now, it's true.
->
-> But based on our previous discussion,
-> use the dl_server flag to identify and handle a 'fixed time' type of
-> isolation.
-> This approach makes it easier to extend and allows multiple servers to
-> configure it as needed.
-
-So from my read of the previous thread, it sounded like the
-dl_server() check in update_curr_dl_se() is good for now, as there's
-only the fair_server, but when other servers arrive we may need to
-have a configurable bit on the server to determine if we scale or not.
-For dl_server_update_idle_time(), I think each future dl_server will
-need to be handled individually (and the code likely refactored to do
-that cleanly), but I think its premature to try to handle that now, so
-I'd just keep the original simpliciation for that patch.
-
-thanks!
--john
+diff --git a/net/atm/resources.c b/net/atm/resources.c
+index 995d29e7fb13..b19d851e1f44 100644
+--- a/net/atm/resources.c
++++ b/net/atm/resources.c
+@@ -146,11 +146,10 @@ void atm_dev_deregister(struct atm_dev *dev)
+ 	 */
+ 	mutex_lock(&atm_dev_mutex);
+ 	list_del(&dev->dev_list);
+-	mutex_unlock(&atm_dev_mutex);
+-
+ 	atm_dev_release_vccs(dev);
+ 	atm_unregister_sysfs(dev);
+ 	atm_proc_dev_deregister(dev);
++	mutex_unlock(&atm_dev_mutex);
+ 
+ 	atm_dev_put(dev);
+ }
 
