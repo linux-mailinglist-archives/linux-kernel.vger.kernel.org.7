@@ -1,107 +1,192 @@
-Return-Path: <linux-kernel+bounces-691396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61619ADE41D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:00:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DAC8ADE426
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81DAB3AC3EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 06:59:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAFBA1771CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BEE25A326;
-	Wed, 18 Jun 2025 06:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6C2272E41;
+	Wed, 18 Jun 2025 07:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDHLaRNy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f7ykjwsr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA671FF7B3;
-	Wed, 18 Jun 2025 06:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B3D27147E;
+	Wed, 18 Jun 2025 07:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750229992; cv=none; b=cM6BAVpdsLxOpCdWhvS+4OJbGxzcCnT9QZyb1jWB4UAO7dT+dMTBZCu30uhYQF+8oUf5fk71GeBNpBc8XMNRy7HgaQiASYMJWYYuUEEoglb4ud23kKPu9gh9RpTbyHMSeuYwHZgNRAt196LX7oXBl5MHydjX3PN0rtM+mCDKSIg=
+	t=1750230095; cv=none; b=Ly1bMr+k8veSr1Onc6fdXsL/+APNd7YirO1McU7FhQd8LgKxy4+9mkteOkQ+aSeuPkMenqWp+qveUmUDQ4FOGN2GBRgFsuKEb3xwnG3gymA2tI26NX1Z8/G+DzgDGgzLumjtUECPhb8JHCR62Ws5qAFsHJuSlaNWU4kNXnLsEEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750229992; c=relaxed/simple;
-	bh=OhHcdfVoijsiepONmPCsYtD9gB53gFZoE4YRYNkxUbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SRE1mJGEHE+djtxoiJjiHYBcV1LlnikoKb+/BGqkBq4mji1pl72gxBtm6PQ4SHTLhVkM6o9B8pxqyzrcS6mbk3rZ0z9OvBijLG1CeGis1O+NsoJ97y3Ua3y3YQaOqYHoSN+kpbc+H22McM1fHcVuGf4RKLXJa1BhBfF/CYiNVXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDHLaRNy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFC6BC4CEE7;
-	Wed, 18 Jun 2025 06:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750229991;
-	bh=OhHcdfVoijsiepONmPCsYtD9gB53gFZoE4YRYNkxUbU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MDHLaRNyUKCEWaqBYJKIhN5Z4nDFPqaVzVNvBpj3xBafcsT1z7+Tv552hXQgjKkDg
-	 XK1gyAQH0jvVP2Nefwi6Oog9YzxB8T8d8goxyyn1JjzfCpsPeztmgGtdNhidioySVV
-	 5Ox+948AlMrY22nGOjYpDim2s+1SuntGDJzuZbqTc193zZmmt5LotnPkgO5U18JwYq
-	 W9MYRz52PINXfUqALl2ibprDN2Mwo3C5DlPjdq/7oVZSGb+y7eTl4lYk8iR9sURWSd
-	 Z41ly2bjhcTy/5MJG/cLPhvqvogiBY64gnPXoAiF8WMd3upwpNg2Y4IWX/A1nupWYP
-	 H3gqayExhZoxg==
-Date: Wed, 18 Jun 2025 08:59:45 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Donald Hunter <donald.hunter@gmail.com>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, "Akira Yokosawa" <akiyks@gmail.com>, "Breno Leitao"
- <leitao@debian.org>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, "Ignacio Encinas Rubio"
- <ignacio@iencinas.com>, "Jan Stancek" <jstancek@redhat.com>, "Marco Elver"
- <elver@google.com>, "Paolo Abeni" <pabeni@redhat.com>, "Ruben Wauters"
- <rubenru09@aol.com>, "Shuah Khan" <skhan@linuxfoundation.org>,
- joel@joelfernandes.org, linux-kernel-mentees@lists.linux.dev,
- linux-kernel@vger.kernel.org, lkmm@lists.linux.dev, netdev@vger.kernel.org,
- peterz@infradead.org, stern@rowland.harvard.edu
-Subject: Re: [PATCH v5 01/15] docs: conf.py: properly handle include and
- exclude patterns
-Message-ID: <20250618085945.2876f6a1@foz.lan>
-In-Reply-To: <m21prilkkx.fsf@gmail.com>
-References: <cover.1750146719.git.mchehab+huawei@kernel.org>
-	<cca10f879998c8f0ea78658bf9eabf94beb0af2b.1750146719.git.mchehab+huawei@kernel.org>
-	<m21prilkkx.fsf@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1750230095; c=relaxed/simple;
+	bh=JDLqapR7/cZbPpvm2T6Lg0Q1JvQoihR2NWQXSjbPi9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AhGyLPY0XLga2mZyN9wXm9DXizqP0XkWR77T5ZFfh7fQmQ1FsJFL5vNrPV7kA0TtanUUPOmWoCUd0b9FjrVnorR3Upf8qf51xvM62xYlZydiZxue9MA3foFI126shAP6FHx7koOGXeYQtwTCpY4HsZTWEs33clKBy46n/FvIpx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f7ykjwsr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55I45T3w010103;
+	Wed, 18 Jun 2025 07:01:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vfjKqlbFovhKXQWVBQzLCyD+4Kfluz5EtoLnuQ7t9Uo=; b=f7ykjwsrss2yxHT4
+	sD4yw827k79Bywm+m6zXJwHFyDDFKh9SiRWcr3XI82usAJZF/PXFPRAlTmJte5dg
+	qLa0Uvm1KPPQm2WcEWOMtrhAHE4aq9oLmWxQBPz6xAV5OhjEIhO+RdZDqA1L5peb
+	j2iVmVwoyj6XlTVk4VeIDwWM2hhEf2Y3NZHuIcisBJjEKr81PIAnZqTLsGwJr/Lj
+	7aKDM4hSpLJ5mz0iUcCuHy/cR75EVhT9dBNWtRMu7KgK+/rmXm4l2m7e1INcfv0f
+	K280F0z7lRgzYDo1p+UjeZBTms5mTZ6z5HPjLcgLxPJvMU8GNPBLnW+hbkrbfnGJ
+	922qRg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 479qp5spm2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Jun 2025 07:01:24 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55I71NrT029804
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Jun 2025 07:01:23 GMT
+Received: from [10.253.79.108] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 18 Jun
+ 2025 00:01:17 -0700
+Message-ID: <51ba2ae0-50fd-4fbe-acc0-3e9f89a75049@quicinc.com>
+Date: Wed, 18 Jun 2025 15:01:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] arm64: dts: qcom: qcs615-ride: Enable PCIe
+ interface
+To: Manivannan Sadhasivam <mani@kernel.org>
+CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>,
+        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>, <kw@linux.com>,
+        <conor+dt@kernel.org>, <vkoul@kernel.org>, <kishon@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_qianyu@quicinc.com>,
+        <quic_krichai@quicinc.com>, <quic_vbadigan@quicinc.com>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+References: <20250527072036.3599076-1-quic_ziyuzhan@quicinc.com>
+ <20250527072036.3599076-5-quic_ziyuzhan@quicinc.com>
+ <6vfwiii4sawm722odw6hxomtsrd5m64pmjlqm5sr5m3nblih3m@jkn3txak5nix>
+From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+In-Reply-To: <6vfwiii4sawm722odw6hxomtsrd5m64pmjlqm5sr5m3nblih3m@jkn3txak5nix>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-
-Em Tue, 17 Jun 2025 11:38:06 +0100
-Donald Hunter <donald.hunter@gmail.com> escreveu:
-
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
-> 
-> > When one does:
-> > 	make SPHINXDIRS="foo" htmldocs
-> >
-> > All patterns would be relative to Documentation/foo, which
-> > causes the include/exclude patterns like:
-> >
-> > 	include_patterns = [
-> > 		...
-> > 		f'foo/*.{ext}',
-> > 	]
-> >
-> > to break. This is not what it is expected. Address it by
-> > adding a logic to dynamically adjust the pattern when
-> > SPHINXDIRS is used.
-> >
-> > That allows adding parsers for other file types.
-> >
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>  
-> 
-> Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
-
-Thanks for reviewing. At the next version, I'm placing some backward
-compatible code for Sphinx 5.1, based on Akira's feedback.
-
-As the basic logic is the same, I'm keeping your review there.
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: V3s8nWWOqgslY7xCSjz1PZLPS267FGRb
+X-Proofpoint-ORIG-GUID: V3s8nWWOqgslY7xCSjz1PZLPS267FGRb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE4MDA1OSBTYWx0ZWRfX2gxXA1Ta3GQd
+ Upf8izMESJ/vX4JnijiGFWYwDTrnHOZjRqF5s+dp5F9Q0RQMa9DJPiFRiYvCQM4feoWLTnAdq6+
+ vKpBTdlxQ5Z8li5qzvyDCqNG1XzkyKJnAg2quw/WWgCx7xQ5A8yvsFhmJ+JezEVP1HJrNNDSW91
+ 5ahc6N4t7laedsUZMVySB39U5QuqNTHCWnBts6oAgPOumaL5u4DeIqPQhHvHbRPA5y1o+ULpAnz
+ XT9Y4LqH4voXcXwmcN5bhxWvm/Bpg+6wG/tSpKrId5gc1hUAyjtPKRDfBCYoF7bLBV4UacsngFN
+ NHFbPwEHExN3gvd1CnHFxOpIgOT51QjnRk3IAVqEQhIejoZyCpDxPQKTJXWy9d9K42Jc1IioAdu
+ 8/GVjRBmvGVcd+FRoLj7XLe+/0i9QPn4PHLw0/15BCJrkVO002GEXUMnJ9zaI1f/YkeoDSZ4
+X-Authority-Analysis: v=2.4 cv=fMc53Yae c=1 sm=1 tr=0 ts=68526444 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=KTbbhH3lz3gsKtoJeJUA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-18_02,2025-06-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 bulkscore=0 clxscore=1015 malwarescore=0
+ mlxlogscore=999 spamscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 suspectscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506180059
 
 
-Thanks,
-Mauro
+On 6/18/2025 12:33 AM, Manivannan Sadhasivam wrote:
+> On Tue, May 27, 2025 at 03:20:36PM +0800, Ziyue Zhang wrote:
+>> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>>
+>> Add platform configurations in devicetree for PCIe, board related
+>> gpios, PMIC regulators, etc.
+>>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 42 ++++++++++++++++++++++++
+>>   1 file changed, 42 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> index 2b5aa3c66867..c59647e5f2d6 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> @@ -217,6 +217,23 @@ &gcc {
+>>   		 <&sleep_clk>;
+>>   };
+>>   
+>> +&pcie {
+>> +	perst-gpios = <&tlmm 101 GPIO_ACTIVE_LOW>;
+>> +	wake-gpios = <&tlmm 100 GPIO_ACTIVE_HIGH>;
+>> +
+>> +	pinctrl-0 = <&pcie_default_state>;
+>> +	pinctrl-names = "default";
+>> +
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pcie_phy {
+>> +	vdda-phy-supply = <&vreg_l5a>;
+>> +	vdda-pll-supply = <&vreg_l12a>;
+>> +
+>> +	status = "okay";
+>> +};
+>> +
+>>   &pm8150_gpios {
+>>   	usb2_en: usb2-en-state {
+>>   		pins = "gpio10";
+>> @@ -244,6 +261,31 @@ &rpmhcc {
+>>   	clocks = <&xo_board_clk>;
+>>   };
+>>   
+>> +&tlmm {
+>> +	pcie_default_state: pcie-default-state {
+>> +		clkreq-pins {
+>> +			pins = "gpio90";
+>> +			function = "pcie_clk_req";
+>> +			drive-strength = <2>;
+>> +			bias-pull-up;
+>> +		};
+>> +
+>> +		perst-pins {
+>> +			pins = "gpio101";
+>> +			function = "gpio";
+>> +			drive-strength = <2>;
+>> +			bias-pull-down;
+> Are you sure that the default state of the pin should be 'pull down'? Pull down
+> of a PERST# is deassert, which should only happen once the power and refclk are
+> stable.
+>
+> - Mani
+
+Hi Mani,
+
+pull-down is assert, we need to make sure perset is asserted before refclk is
+stable.
+
+BRs
+Ziyue
+
 
