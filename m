@@ -1,114 +1,173 @@
-Return-Path: <linux-kernel+bounces-692638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DE9ADF4B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:48:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A50ADF4D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F8873A9C2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:47:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E0057A6E0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFFE30430C;
-	Wed, 18 Jun 2025 17:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE7B2F94AE;
+	Wed, 18 Jun 2025 17:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SuajJV0x"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VGYT9Q5n"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC314303816;
-	Wed, 18 Jun 2025 17:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9F72F49F2
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 17:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750268485; cv=none; b=Wg/0fj16JcBskcg5LMBulkTBJZ3GO3Ka67N5rfyPx892EOaKugYIg6Rn+L+gu3G+m1d/rVQU4jEVKUr6/bZHdQq0PHhxVcFSL79mhMqt8TKVSoJMpiSNM5Xd5KnpcanQziIiwVkjP2NNfOXEB/YPaTdvEQKMP38BURbhCvV1Ej4=
+	t=1750268526; cv=none; b=szBrQkpR5xTXNfZ+MSag7ceQC99HC1iay6WoTzxkPz4fIEfMhgJj+cWnBqMikx8g4DX8N2WeFPVJiVL3xultXT7/2fBK+eG07gLPdsO5EUk0vWbD5UAG1UTcF7VeILHSmLveq2cJt15ob4O7qbl/iyfxuJrXjbctb/GjGhz49OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750268485; c=relaxed/simple;
-	bh=JMu1Wlmq6ChnFPF7YJWazqaT52K3k8V8s8GmsfUM3nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oO/I1dcd8GUbw2q2rLJlvQL/FHO32DVRCYSKaGqXgZbsSLo7PoUo7987fu3aLPoae6cRI7M85MLlCoANoXXZGq3EfpK291+UYoJel3VQW8VSZ5mOub74/xN5Up9WkbLyYAgcEn2jfTNV3+64HO4SE9LfQQChq4u/xQRWwae4ZEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SuajJV0x; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750268484; x=1781804484;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=JMu1Wlmq6ChnFPF7YJWazqaT52K3k8V8s8GmsfUM3nc=;
-  b=SuajJV0xa/iNwjLmgXXL8LoSbl8dUmoDSIWG7qy1kOLRbgwcRkKb41DL
-   LKgR0gOPu6a/hxko2UZy1UHsZz7NywNEmoPSSKq7ktiDYuOtTyHbvLrBh
-   1aWU9AA0wk6EL/nL4ExFi+OUu0M1VKNhXW1EBV17me9czmkkZK8ZTaLll
-   IT+J627+bhMu5zbOK3Zq8Dq+r/rHGkjpSgML1LluIJJ5kJRDJxuB4YleH
-   y9hnjA7aE7CwfQV5vgnTWfAPivfav9ecO4qhgQ2RjN1RM0zt2JPtpP+E3
-   KETkuF6KOfA4yQJY5QAAPyvlv/CccYz5sZ1kX+by3Hq8qDAFtFiQTxcQL
-   g==;
-X-CSE-ConnectionGUID: HM3vYmksSNmWWbSuwhAxQg==
-X-CSE-MsgGUID: VACEKxoZTcifnIQEBwCzIA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="70075607"
-X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
-   d="scan'208";a="70075607"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 10:41:22 -0700
-X-CSE-ConnectionGUID: JG/bHWfcRVquepWKjGOfNA==
-X-CSE-MsgGUID: fpjdxPPlS9KTs3wv2NcenA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
-   d="scan'208";a="180909963"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 10:41:19 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uRwmi-00000007oWR-32Tx;
-	Wed, 18 Jun 2025 20:41:16 +0300
-Date: Wed, 18 Jun 2025 20:41:16 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Andrew Ijano <andrew.ijano@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, jic23@kernel.org,
-	andrew.lopes@alumni.usp.br, gustavobastos@usp.br,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	jstephan@baylibre.com, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/4] iio: accel: sca3000: simplify by using newer
- infrastructure
-Message-ID: <aFL6PE-8KLLKZun_@smile.fi.intel.com>
-References: <20250618031638.26477-1-andrew.lopes@alumni.usp.br>
- <CAHp75Ve4yAp6sViUWZY+0abRoNZ0W+rQLCmsbijEcrh8kguVOA@mail.gmail.com>
- <CANZih_S9_8OdY=oKyVPBCTSTqYm_z_rkE=xbPym3uHOSsHMv6A@mail.gmail.com>
+	s=arc-20240116; t=1750268526; c=relaxed/simple;
+	bh=MSzvZQ8DcRnKWVEjmAFq3/5Xw2XVlCRN38sv4fKdf+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pZwnDafsE7xZ+gVMynpc/ExDri6ufWnHquSIzTqhtEJUroYPg44mxpeElFjsTt3gBPaLiknRXk5+27Run0TGDbjhTLlmPCIZ/DeR2nj2rEMeoqKPsTVx6KR1eMOzUi6XLTrq4bPnWl1EraGhHWUh7fIq+ROmfpqplAs8o971hkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VGYT9Q5n; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6fafc79bca8so84128516d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:42:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750268523; x=1750873323; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4KtsacfCH4ompyndjxAxteo2uJlXhUngPXY36wLIt+Q=;
+        b=VGYT9Q5n77g7QCdDwvXJeJpPpaUoqgaQSi+y4ZxXrtZ/r4jWHrH73+kKUEvXPN6bFo
+         40AX0z4og55mUy/oQQTA+oaso8XdZu0K21vRBB0jeQsTA9Iowi/hjoGrAWPzay9iM0+P
+         aNMUE/STdoxiesjOqHxdhUrzP5awcSJscVCakNLp330zVw/XQGJej3owtb/oeu2+DF8E
+         EHC0pb/Mk3VW1/ynJEPEB095Rv1sMxzwVQo3XSJtaPwBHyPYrjPClS+PKYcnAy/nKoV3
+         os/ET+i+Xhx1wKNgZD1iEXqUelYFiWFNgq7VcgpxhxwKU5Rbg/OR0YA36OfgQaTxmjWg
+         LSvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750268523; x=1750873323;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4KtsacfCH4ompyndjxAxteo2uJlXhUngPXY36wLIt+Q=;
+        b=OIhHHsxj9S21qRs1y1USAauHn2I2JuDVASosVQR942b7Sei0B0AQdPyjPK028GpOsy
+         vaInaTizqoLI9Z4hshGvA87CSor+2wPsMhlMcDTCX3p8rJ8wU+Icj7x6TiueqwlKtuSf
+         IkRti2ZPxkUy4KW6X2OyBys82rF+a7Ht6DVA5jqjpzqjjSNWgl9w78nai+Bc6skMGoiE
+         9TN+8i9uIqYR31BDAWGkGd8WZXLZ+5hmcUt5hFQicWiPmi5MgZNhAbCcyhlcXRebDkGL
+         3GAgO6p1YW9KRQTEaRFbqN6arqhVmJ1vIuZprgpYM7eqSgnv+7hW/O2nBZG1VuwOULDX
+         95+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXJePiYJ5zpBaBxxvZRm+gx2x1bQeSQJCB3mIM2xTjAs2r03Pg+E6RH6CeQijKcQZSx/PDc9iGGkCZiAt0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxHK5Ir3Dljo4EZQQwjC4ODzbQ+71L+tW+dZ1FJLbr5BQ1F1Jz
+	UQGxXGGTxaDSdi3hr9ITCVSgZ/bab8HuoJgLYZzV3wXbVLHLZX0ALrUAmqQbU3hdZ+V+lyLEaw9
+	pswOzgG07BNwwieLvJONX/JiK/bqbIrA075RSgfRt
+X-Gm-Gg: ASbGncugxgCUiRiED9oizjpmcw9g6noYVLCAqJYb2W+zT+UfSI7YRA2MNxcOIhBdVpU
+	SttGGZb57Cf+1HAuS4Tgw02IJ60tFaxR01sVpi32/vAos3wLdj5wEseXVgrjwgAfV5XXWJxNB3t
+	nxppa5fPuZYcABnSBVQ7/PNQ6OryxNjmLwY2q4bbKGrifr9R4oK4srbpbsZMUXUu9AJi2wgRxj
+X-Google-Smtp-Source: AGHT+IEqixnpKpo8WWVQ7PKmKI/0NKZy0aQGz8wi2uqIHNrjBFilS81Nz0eKUrKDkfKBXuNRsZ1jp02EjFLOfb/W0Wc=
+X-Received: by 2002:a05:6214:2f82:b0:6fa:c81a:6234 with SMTP id
+ 6a1803df08f44-6fb47786b3fmr291387006d6.10.1750268523147; Wed, 18 Jun 2025
+ 10:42:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANZih_S9_8OdY=oKyVPBCTSTqYm_z_rkE=xbPym3uHOSsHMv6A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250416085446.480069-1-glider@google.com> <20250416085446.480069-3-glider@google.com>
+ <CANpmjNNCf+ep-1-jZV9GURy7UkVX5CJF7sE_sGXV8KWoL6QPtQ@mail.gmail.com>
+In-Reply-To: <CANpmjNNCf+ep-1-jZV9GURy7UkVX5CJF7sE_sGXV8KWoL6QPtQ@mail.gmail.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Wed, 18 Jun 2025 19:41:26 +0200
+X-Gm-Features: Ac12FXwkIZeCxG1skmZP_wQUq_V6XjEjYDn0jhV__bms-J4s-zMDCJE6vbE-kG4
+Message-ID: <CAG_fn=W9_QEhwoSwc9efY9cEFkagBTC=Q6u=wtf1rA+aJqa-Zg@mail.gmail.com>
+Subject: Re: [PATCH 2/7] kcov: factor out struct kcov_state
+To: Marco Elver <elver@google.com>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Ingo Molnar <mingo@redhat.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 18, 2025 at 09:24:19AM -0300, Andrew Ijano wrote:
-> On Wed, Jun 18, 2025 at 2:56 AM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Wed, Jun 18, 2025 at 6:17 AM Andrew Ijano <andrew.ijano@gmail.com> wrote:
-> > >
-> > > The sca3000 driver is old and could be simplified by using newer
-> > > infrastructure.
-> >
-> > I haven't found any reference to a base commit here. Have you
-> > forgotten to use --base when preparing the series?
-> > In any case, please clarify what this series is based on.
-> 
-> Thank you for pointing this out! I think I forgot to use --base for
-> it. In this case, should I submit a new version of the whole patchset
-> with this information or is there a better way to do it?
+> > ---
+> >  MAINTAINERS                |   1 +
+> >  include/linux/kcov-state.h |  31 ++++++++
+>
+> Looking at <linux/sched.h>, a lot of the headers introduced to factor
+> out types are called "foo_types.h", so this probably should be
+> "kcov_types.h".
 
-For now just reply here what is the base. I asked this question above.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Yeah, it makes sense, thank you!
 
 
+> > +
+> > +#ifdef CONFIG_KCOV
+> > +struct kcov_state {
+> > +       /* See kernel/kcov.c for more details. */
+> > +       /*
+> > +        * Coverage collection mode enabled for this task (0 if disabled).
+> > +        * This field is used for synchronization, so it is kept outside of
+> > +        * the below struct.
+> > +        */
+> > +       unsigned int mode;
+> > +
+>
+> It'd be nice to have a comment why the below is in an anon struct "s"
+Ack
+
+> - AFAIK it's to be able to copy it around easily.
+Yes, correct.
+
+> However, thinking about it more, why does "mode" have to be in
+> "kcov_state"? Does it logically make sense?
+
+You might be right. Almost everywhere we are accessing mode and
+kcov_state independently, so there isn't too much profit in keeping
+them in the same struct.
+Logically, they are protected by the same lock, but that lock protects
+other members of struct kcov anyway.
+
+> We also have this inconsistency where before we had the instance in
+> "struct kcov" be "enum kcov_mode", and the one in task_struct be
+> "unsigned int". Now they're both unsigned int - which I'm not sure is
+> better.
+
+You are right, this slipped my mind.
+
+> Could we instead do this:
+> - keep "mode" outside the struct (a bit more duplication, but I think
+> it's clearer)
+Ack
+
+> - move enum kcov_mode to kcov_types.h
+Ack
+
+> - define all instances of "mode" consistently as "enum kcov_mode"
+
+There is one tricky place where kcov_get_mode() handily returns either
+an enum, or an error value. Not sure we want to change that (and the
+declaration of "mode" in kcov_ioctl_locked()).
+Or otherwise we could define two modes corresponding to -EINVAL and
+-ENOTSUPP to preserve the existing behavior.
+
+> - make kcov_state just contain what is now in "kcov_state::s", and
+> effectively get rid of the nested "s"
+
+Yeah, this is doable.
+
+
+> > @@ -54,24 +55,16 @@ struct kcov {
+> >          *  - each code section for remote coverage collection
+> >          */
+> >         refcount_t refcount;
+> > -       /* The lock protects mode, size, area and t. */
+> > +       /* The lock protects state and t. */
+>
+> Unlike previously, this implies it also protects "s.sequence" now.
+> (Aside: as-is this will also make annotating it with __guarded_by
+> rather difficult.)
+
+As far as I can see, s.sequence is accessed under the same lock
+anyway, so it is not too late to make it part of the protected state.
+Or am I missing something?
 
