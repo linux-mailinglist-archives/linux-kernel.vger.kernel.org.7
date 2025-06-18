@@ -1,229 +1,199 @@
-Return-Path: <linux-kernel+bounces-692699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0220ADF5AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:19:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B278ADF5B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A477D3BD64C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:19:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3176F175F1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7112F49F6;
-	Wed, 18 Jun 2025 18:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038E52F3C33;
+	Wed, 18 Jun 2025 18:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sBCB2ETU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bUpHZ2GX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sBCB2ETU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bUpHZ2GX"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RpVHEfEQ"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2081.outbound.protection.outlook.com [40.107.223.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3216A224FA
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 18:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750270775; cv=none; b=X3zb8d3672LKO4lGbkNzJb/hFK5djIpiifPi0wMpaL9lLuA4cDuAMLv1Ut6O+zc48XLxuQUlYd3stoP8eNKZ6rf0SedDGQExwwiOxJajkJZ4dktOHRBQxvxqX4Quf12p67WEwdC86ZkFfZvpOAFvEdAko4EIe5hPVViwL9vDN0Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750270775; c=relaxed/simple;
-	bh=MlZoJdg+22hzILIY5pkXr+G/amOejs9cl3kSiFMmC3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qhrhL2EGU5MC8BfbO7SpAeEsifg1RXBA/aLWMRVLUSzRIrdq5sRSvOQ5zhfQx5Exz641kBkBPLSlTZlHJu+cUA3Md89z4T9seFcqeOF13RvFdXAO9WRZ3CHLldWDzb8y5PXPkZT84nbXk3X+A0QjDnAWxio6q5QL6mfmQZRSqdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sBCB2ETU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bUpHZ2GX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sBCB2ETU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bUpHZ2GX; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 13C361F7BD;
-	Wed, 18 Jun 2025 18:19:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750270771; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2qoAqe6Tz+Ixn12xTbWlPEovX8xRcRkaG3QnFbPGW38=;
-	b=sBCB2ETUtaw34+DuQPPHpSrGBsVJpQUu8owr5sMTKIIGGUOXXrNOlkDWI/hq72SkdUQfRA
-	8NsnjfxmFkPYgfFtvaGN2v8LAXksKV71M7w7Ch8mRU2ytNyrpI/wPBUxWhrsyanD4rV1MO
-	08bsGxJYBAiQNTIh1YLM9sZpJsS0AUM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750270771;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2qoAqe6Tz+Ixn12xTbWlPEovX8xRcRkaG3QnFbPGW38=;
-	b=bUpHZ2GXCUtxX5l5Yyz+YWiwGQxe4ldWuSVUM3CLZdoiRquylArkeXwho32B2YoCZCXeuG
-	AaE3RSbrgMiEHkCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=sBCB2ETU;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=bUpHZ2GX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750270771; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2qoAqe6Tz+Ixn12xTbWlPEovX8xRcRkaG3QnFbPGW38=;
-	b=sBCB2ETUtaw34+DuQPPHpSrGBsVJpQUu8owr5sMTKIIGGUOXXrNOlkDWI/hq72SkdUQfRA
-	8NsnjfxmFkPYgfFtvaGN2v8LAXksKV71M7w7Ch8mRU2ytNyrpI/wPBUxWhrsyanD4rV1MO
-	08bsGxJYBAiQNTIh1YLM9sZpJsS0AUM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750270771;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2qoAqe6Tz+Ixn12xTbWlPEovX8xRcRkaG3QnFbPGW38=;
-	b=bUpHZ2GXCUtxX5l5Yyz+YWiwGQxe4ldWuSVUM3CLZdoiRquylArkeXwho32B2YoCZCXeuG
-	AaE3RSbrgMiEHkCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4758113A3F;
-	Wed, 18 Jun 2025 18:19:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xXVlDjIDU2gyRwAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Wed, 18 Jun 2025 18:19:30 +0000
-Date: Wed, 18 Jun 2025 19:19:28 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-mm@kvack.org, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [RFC 1/2] lib/vsprintf: Add support for pte_t
-Message-ID: <zsfblk4nfi6nigfnv7umruhewmg7fqhhtz6fiigezzk2wtn2n7@agpzorfpaywq>
-References: <20250618041235.1716143-1-anshuman.khandual@arm.com>
- <20250618041235.1716143-2-anshuman.khandual@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACC03085D2;
+	Wed, 18 Jun 2025 18:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750270788; cv=fail; b=SNorx2P2wCPM0Ts22oXHTvlyIFohG1QzIip3/3YzxjJL+S0679NKVZd5qlDZEBZJGXlSkm6sW4tTPfBeYHy7ADlQvJpGcKgYiJm/9klBYZlKBoBhrwcoyCFsROSctSHIYR0xF9MclwZTuXiIJltCoSwq/YL+vMhiKDbGO7gehj8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750270788; c=relaxed/simple;
+	bh=sKuBHuKP+wUvo0bVUwDMtBuhSZEAp4QBk4BjywwZBX0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YhvYrL4GOSBUvpGiIfeF2A1StLHfBGlFg4hWGfiuk7VhkBSfgEiwMfbAU635wPEqxPECG9pLKi/4a8Ke7CjKjB6Y2UlhXSdfy87Bfve4W7oN6k3djLbspLW/S9tnL/TU86n4HIUlJR+/f6zKzaRqMeBwsjjgsmsl53Y4SECSiik=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RpVHEfEQ; arc=fail smtp.client-ip=40.107.223.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OCwFUfiB20vQzEtEHG0xKOBnciGwuJv0IeXweiTDfK2uVUCCephBhBDLEo5cddMmaE6Csfo9ih32jdQxvW/Zi2ocspLcu+3ctHQkPxXVNsIMzg+kQU1geb2VkVXNv5hQmFrLpcC1jVyL63EJan4WeAu0mOaA2iHkckJwnHDuoTxgDSg0ryjflPpV+YeMIPORWAV9BmzXJ9s+L2wdnTfG3tOOt8nyGvMmnxSXk/jQri0Ip645luiE+WFtg9ilv6tCn/8/CqJYDdmYL6pqo6exONkv92ynkbPGvNOKu8SNjkzJWq0PeRsWlzhNg1hTJrzciijgk2eJoKtnhioPQl8Zrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aJBYUme/6FspcbncmaTHR1T13wg/R9PVnWpF1C7HVzE=;
+ b=Jq7aAlfFuk2Cn0YooECFUuIlsOHso6oY3dmKeMRgIJqZsMrIv7ihlMzcL8cOgfYKdr0aftn45DIbXZooPAhy8K4PbpMC72YHmRQiZsn8WyzzARLdC/no8/ZK2khW6llajouOstboXvyZln5LnOA9It8URFeojeVGT2+N9djZ6r3WwVlVi8cyaIMxsEieRqc/XS9BVw76VT8d6iz9yC+wIBXjqM/fhr5mSYIZ25FBdTnRdsidwDE9r6xo0tdw5vokra2bG341n3a7VWY154dgcJC75StXFs2diKg8Cs7qbXN1QTQGiDc9dYq4itQ5bzeDpgCqgpbPTXZytqPk6UtqcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aJBYUme/6FspcbncmaTHR1T13wg/R9PVnWpF1C7HVzE=;
+ b=RpVHEfEQqITNW3x9bsv9wEkcJvWyUjcipF2+61fYxlT6p8pBdyC9eyoNhAekRL0cUChqMGMeDze0K8jr+R6EA9ALchbCMB4vl+LdailyeFqPEOUZFqhTC7c2PIB94/vQIwNUEOOSbV/8Fu1sVHYarvmRhnlXcGirz4CnxV5dG7s=
+Received: from SA0PR11CA0096.namprd11.prod.outlook.com (2603:10b6:806:d1::11)
+ by DM4PR12MB5721.namprd12.prod.outlook.com (2603:10b6:8:5c::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Wed, 18 Jun
+ 2025 18:19:42 +0000
+Received: from SN1PEPF0002636B.namprd02.prod.outlook.com
+ (2603:10b6:806:d1:cafe::c5) by SA0PR11CA0096.outlook.office365.com
+ (2603:10b6:806:d1::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.33 via Frontend Transport; Wed,
+ 18 Jun 2025 18:19:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF0002636B.mail.protection.outlook.com (10.167.241.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8857.21 via Frontend Transport; Wed, 18 Jun 2025 18:19:41 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 18 Jun
+ 2025 13:19:40 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 18 Jun
+ 2025 13:19:40 -0500
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 18 Jun 2025 13:19:40 -0500
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tanmay
+ Shah <tanmay.shah@amd.com>
+Subject: [PATCH v3] remoteproc: xlnx: allow single core use in split mode
+Date: Wed, 18 Jun 2025 11:19:33 -0700
+Message-ID: <20250618181933.1253033-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618041235.1716143-2-anshuman.khandual@arm.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 13C361F7BD
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,lwn.net:email,linux-foundation.org:email,goodmis.org:email,arm.com:email,suse.de:dkim,kvack.org:email];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.01
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002636B:EE_|DM4PR12MB5721:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8acbd49a-7829-492a-1358-08ddae94b1d7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?QRiMhxidYVu4p9yv2URcXb7Drm3Dr/4UFCcigpFhba3TbInNrYnTZ3RGLy8H?=
+ =?us-ascii?Q?l02isIwlfvCAQ2RYbEVYEVW/r0WIj0lE1lQUN0nA6aWSMG/L6Jcx38un23+R?=
+ =?us-ascii?Q?O1c8ApXLSzahsO4Op96ECb/C0VTLuxgIAHt37qYYnBWmOW/4+26zNromsKB/?=
+ =?us-ascii?Q?zmyFUWkXo5e1Zd0dQ/idr6MoYZB3jFy/8oLkVofIR/n2Tx97sXYJhEevHpzq?=
+ =?us-ascii?Q?0wvuR7W7I0Uujq3qNx29Phb09xz7y1KVxhJgvgZmCrV0Fjtw5dCMm9ykzyug?=
+ =?us-ascii?Q?HaO1lCvg2ngpfG5LQLUTs3pCBQFa64iGHH5Yf2EgvYrncIrD38gzZiRF99TK?=
+ =?us-ascii?Q?9IDwfXA186F9X7/7BinPVEDPj4ccDL4k2TvW9qAaFJ1V1AEHKblsHySC2KRB?=
+ =?us-ascii?Q?s9H9TZmwApR3KPwSRfhwMzqo3KpKj6aO7u92Inly9PwNv/qbK8ATZfrLo9hh?=
+ =?us-ascii?Q?dGtIje4AAmtuj+WRdcOoGUZx4riljyvdHEi9EP3aizsm1n2uQK/cBEmU9uGU?=
+ =?us-ascii?Q?JXbYbLN9cyj6FOehMiYeP6wjg8N60CRb+qssxDcTQQTc+V3wyRw30U6Io3yk?=
+ =?us-ascii?Q?OprfiU9Fpud7ZerXpUsIkIq2SLcb31xcbu5uUjkLkWGMHQk2RscjIpts+MxI?=
+ =?us-ascii?Q?uTMIUkDsF8NWMnPv8tAjaDbDv1gzgtONv3oYHec5G8jdGgtKgcrTMcLm3Nd1?=
+ =?us-ascii?Q?IM52HcwGxHMQn3tFIfDFmvfALYO+c7MASZ8WNUPugZ/Gn+CH+GKVI5pzby/0?=
+ =?us-ascii?Q?Ca0l2GKNBZHdLQCmAvksh05uA294fHcbJA5t9Vt+nsK+7AqzmiJAvstSToa6?=
+ =?us-ascii?Q?79lo0P/0XX3y+jbneZg84j3I/GlXa8RaccZgkz2OTzIEK4AKeyFwFm7MinLh?=
+ =?us-ascii?Q?yZnEvimKsilu11kSS+aLokmArGO4mFD4sRwU0IZ7CnNAsH4mmXtwpg6WtsZX?=
+ =?us-ascii?Q?CAR4msTbpt+vNZ/iZL6s/lWPmxBIu7fEeA3xMmZ7EyxbT18cVdBgyk/iLjn4?=
+ =?us-ascii?Q?iUHPaL7FW8ePc6+DA5ux/+QXNwq4g1wIjGmJw/JmmU4WCw9AmjrpBuREoS79?=
+ =?us-ascii?Q?gewRPla93MDxoItqiX6OyCKgg/y2uNg1JeyurJPEcp8yHeLu9QRXHd3NSjwZ?=
+ =?us-ascii?Q?/BhYnxuaVo/JU4bVLHh11H9A7Pe9KT2SBP5lY6nRP+fs+LNtGzKVzOi5eKV7?=
+ =?us-ascii?Q?L/2lrNvGH6nCG9X/NXplLw2TSABHjsEGrdIBuTd9/Ux5zKSObmy+/0h45lsZ?=
+ =?us-ascii?Q?flcIaXDvtThWAsLC1rNryQYAGmeuwdZEP4Y/OdUWZSAHTWbfU+aOj4xuow7v?=
+ =?us-ascii?Q?fkodf0dnO8BtOs2FNIWkq3EpKcbO5ty8P/9sDB+f5noIHBlnpZwikYVXJ+zz?=
+ =?us-ascii?Q?/tkS3WYwE3AoU6+ZPCf5jgVr7VJcRLjPXO+Mx8kQ9K3huoqo+6SfUINzLrS8?=
+ =?us-ascii?Q?MJml+DiuT9VFSGPBKGVeqDdy1fWBF67eeVxyzU+Umidx2BhIq41tbLpJcTTA?=
+ =?us-ascii?Q?CCm8fnuGuC/N13oA7FtGEL/EVj7v3wLIPBrr?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 18:19:41.7899
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8acbd49a-7829-492a-1358-08ddae94b1d7
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002636B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5721
 
-On Wed, Jun 18, 2025 at 09:42:34AM +0530, Anshuman Khandual wrote:
-> Add a new format for printing page table entries.
-> 
-> Cc: Petr Mladek <pmladek@suse.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
->  Documentation/core-api/printk-formats.rst | 14 ++++++++++++++
->  lib/vsprintf.c                            | 20 ++++++++++++++++++++
->  mm/memory.c                               |  5 ++---
->  scripts/checkpatch.pl                     |  2 +-
->  4 files changed, 37 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-> index 4b7f3646ec6ce..75a110b059ee1 100644
-> --- a/Documentation/core-api/printk-formats.rst
-> +++ b/Documentation/core-api/printk-formats.rst
-> @@ -689,6 +689,20 @@ Rust
->  Only intended to be used from Rust code to format ``core::fmt::Arguments``.
->  Do *not* use it from C.
->  
-> +Page Table Entry
-> +----------------
-> +
-> +::
-> +        %ppte
-> +
-> +Print standard page table entry pte_t.
-> +
-> +Passed by reference.
-> +
-> +Examples for a 64 bit page table entry, given &(u64)0xc0ffee::
-> +
-> +        %ppte   0x00c0ffee
+When operating in split mode, it is a valid usecase to have
+only one core enabled in the cluster. Remove exact core count
+expecatation from the driver.
 
-Ok, so what's the point of this if you're just printing the number?
+Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+---
 
-Could at least do something like:
+Changes in v3:
+  - Fix commit message
+  - Add details about split mode configuration in comment
 
-%ppte 0xc0ff000|WRITE|DIRTY|PRESENT
+Change in v2:
+  - limit core_count to max 2
 
-no? Otherwise it's a not super useful wrapper around printing pte_val(*pte).
+ drivers/remoteproc/xlnx_r5_remoteproc.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-> +
->  Thanks
->  ======
->  
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index 3d85800757aa5..005490202ffb5 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -2433,6 +2433,9 @@ early_param("no_hash_pointers", no_hash_pointers_enable);
->   *		Without an option prints the full name of the node
->   *		f full name
->   *		P node name, including a possible unit address
-> + * - 'pte'	For a 64 bit page table entry, this prints its contents in
-> + *              a hexa decimal format
-> + *
->   * - 'x' For printing the address unmodified. Equivalent to "%lx".
->   *       Please read the documentation (path below) before using!
->   * - '[ku]s' For a BPF/tracing related format specifier, e.g. used out of
-> @@ -2542,6 +2545,23 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
->  		default:
->  			return error_string(buf, end, "(einval)", spec);
->  		}
-> +	case 'p':
-> +		if (fmt[1] == 't' && fmt[2] == 'e') {
-> +			pte_t *pte = (pte_t *)ptr;
-> +
-> +			spec.field_width = 10;
-> +			spec.precision = 8;
-> +			spec.base = 16;
-> +			spec.flags = SPECIAL | SMALL | ZEROPAD;
-> +			if (sizeof(pte_t) == sizeof(u64)) {
-> +				u64 val = pte_val(*pte);
-> +
-> +				return number(buf, end, val, spec);
-> +			}
+diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+index 1af89782e116..5aa3fd1b0530 100644
+--- a/drivers/remoteproc/xlnx_r5_remoteproc.c
++++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+@@ -1329,19 +1329,23 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
+ 
+ 	/*
+ 	 * Number of cores is decided by number of child nodes of
+-	 * r5f subsystem node in dts. If Split mode is used in dts
+-	 * 2 child nodes are expected.
++	 * r5f subsystem node in dts.
++	 * In split mode maximum two child nodes are expected.
++	 * However, only single core can be enabled too.
++	 * Driver can handle following configuration in split mode:
++	 * 1) core0 enabled, core1 disabled
++	 * 2) core0 disabled, core1 enabled
++	 * 3) core0 and core1 both are enabled.
++	 * For now, no more than two cores are expected per cluster
++	 * in split mode.
+ 	 * In lockstep mode if two child nodes are available,
+ 	 * only use first child node and consider it as core0
+ 	 * and ignore core1 dt node.
+ 	 */
+ 	core_count = of_get_available_child_count(dev_node);
+-	if (core_count == 0) {
++	if (core_count == 0 || core_count > 2) {
+ 		dev_err(dev, "Invalid number of r5 cores %d", core_count);
+ 		return -EINVAL;
+-	} else if (cluster_mode == SPLIT_MODE && core_count != 2) {
+-		dev_err(dev, "Invalid number of r5 cores for split mode\n");
+-		return -EINVAL;
+ 	} else if (cluster_mode == LOCKSTEP_MODE && core_count == 2) {
+ 		dev_warn(dev, "Only r5 core0 will be used\n");
+ 		core_count = 1;
 
-As mentioned elsewhere in the thread, this obviously doesn't work for everything
-32-bit, and 64-bit PAE, and all of the weird page table formats we have around.
-
+base-commit: d293da1e4dbebb40560e4c6a417b29ce3393659a
 -- 
-Pedro
+2.34.1
+
 
