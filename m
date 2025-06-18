@@ -1,189 +1,122 @@
-Return-Path: <linux-kernel+bounces-691103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6A8ADE082
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 03:16:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB22ADE08E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 03:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A71117A990B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 01:15:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD653AB1DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 01:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8135D18FDA5;
-	Wed, 18 Jun 2025 01:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E0717C21C;
+	Wed, 18 Jun 2025 01:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wf4hpB4t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="j7atDkaG"
+Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41D5186294;
-	Wed, 18 Jun 2025 01:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5961D219EB
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 01:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750209395; cv=none; b=O3ZspbkjQsZP5y98mY5UtnstbLBY4vHZy2q0SUbU99uWPDlm7KNIpwDUWqJjFuMz9E1DLy7dkZ4Mw3WL7qxEqQDmFuZBqm3AjcWDn9roMQyNAVa6P7iDP/bq/ErlB5cuDQJtbsxhGyO930omcNN70EEGJ8jxojd81oBLaxAg5x0=
+	t=1750209483; cv=none; b=fpPsOtlyFLrzSPDeY0L6/RMFkvBsVeOfoqkQtTCQErQhUulo/ss4qgdn4pqb0+M0BL8KNpOojcI2huFR98kSkyMEw2KTbFhVww8OS0bXK2cTHkrYQQ8vGLK7kVUI5CB+m4AXffOyyztBjATZjwZjkHHygjbrRNFsvOl8tm3DpL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750209395; c=relaxed/simple;
-	bh=SBDJcf09SwcwG06z/rkKrsCcFxSZMbyKPtB+DVPGYhA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AZvXDo/kHFf5dYrB2id6FS9qqkQidMYD8Q9UL66nntmHakD0OkEPKv1bBMkjD7bVy5HOq9nnNXHb2qMrwlzL+AU/WEMMCETERVBhmfcgPxS0IYQ6dy5XWGdCP7GE2uXrNcCrT1SQ/jGECtH7cPj/DwtsMwCJyg5I5XiP2QPd8fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wf4hpB4t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C92BC4CEF4;
-	Wed, 18 Jun 2025 01:16:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750209395;
-	bh=SBDJcf09SwcwG06z/rkKrsCcFxSZMbyKPtB+DVPGYhA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Wf4hpB4tJy8O25elPcp4jElL23bQfdMwbL9Fk3DmQrcmWBKK9JoS1aGKpV/gSEWpy
-	 8yTAdqLARCWZNz18qgoio2PISfKsdbaB0z1DzTfJkSQKLCdEBuhnBIga8kmBrXGIg+
-	 Ojl3wCJ/C9gfzhG0hnj2cdWK1YZ7r/cgmv5CGqOyTd15Wl6nyPwCcc7dduhxtcZGYa
-	 GjaphDhlBvxuPa9vOFq7auClfHBnSr+lcZANi574+eM4D169J9HwYr9/diRwKWoVvx
-	 C7wl8SyebWKZMYO62StGWDp4t+LWunxvD0TZUYU9qL5AwwNhC+5+ppZqPYvsdVEFGj
-	 QEDF42xpUloGg==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553bcba4ff8so3358872e87.2;
-        Tue, 17 Jun 2025 18:16:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUljt6RYt1NXImKKctjMcw2aJiFpN0iCwOrtqVe4Oa6bCmpPoc9AmRPNCSxuFnkaf6aR2Lfq9UQyHoi7RR4@vger.kernel.org, AJvYcCVVsJ0k/tD80rqvK3kvPjlfkNo+oGvDz7b56XyhgvEWUiUvo2cx0Cy5+O6VeSkrDMeQ1uB4k4CwKtA=@vger.kernel.org, AJvYcCVXhkaYGbjq9VYr6++sg2iqn9gcqd/sqqlD/UsavkbDhLU0AU5wapHRg21kwWJLUs1tqmk77hbx4qnf+q9ycA6G@vger.kernel.org, AJvYcCWravQNrMct1F9N8BcHvkcFUCPdmrUFqnXBavH7CFyw8QvsDpk6Vevx1+iGjWg9Mqjde/HM5pDGIivRlNNR@vger.kernel.org, AJvYcCXPpEHT2uXcVH/GJQqPpnNUBFFiuHNR6uTfvkrUURX11gCkw9GmrVdIHUWRpJ5jep0mLERDpwDU3Kkp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLbo1V3dJ7W01KxCYIfohwUTJdjXMpGFvoeR+CiTgalwNwzVV5
-	AB28Xn381WjioC/D4/9IPRZz2O4xqXyGEdts4Wo7Qm4sjnWQyhKoMSCAHnev2IvT8P0OFlGx/+A
-	AIcO1tk1cg4112+cr1dk0hy7RYTpIPz4=
-X-Google-Smtp-Source: AGHT+IFiIfr5F6VDkk3G3Oh9AbB4n2HtzYAJy/s+BIZll9kvq4oJWZgFM8XLjVs97si6LTR33fQZ3chGvUAjn7TxohA=
-X-Received: by 2002:a05:6512:39d3:b0:553:3073:c38b with SMTP id
- 2adb3069b0e04-553b6e734c9mr3786666e87.1.1750209393856; Tue, 17 Jun 2025
- 18:16:33 -0700 (PDT)
+	s=arc-20240116; t=1750209483; c=relaxed/simple;
+	bh=30ovmPkyUIO+VWTX8LV95YQyDUnszGZNsf0GYOJ6OJQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IDD5r6Mf6RPqiTmQ7xhz9Pq/wpfcaRpe+aR8MNFanaOzoLLACCnwWAxJzkzCWMtx7ldp3+IKahWzRzM6oyPjb04+ex7xrchw49auAEgY3Ju64EbTOrJSBUYZwxiTMfdGFzFa4Z8+FdAu8gCSuf0EqZjuZRjEgaWO0BEyoYDJX3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=j7atDkaG; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=To:From;
+	bh=oivfvuFpSof7V2JHY5dYM3FHV+vS0yRXVZLn+vhja3w=;
+	b=j7atDkaGg3njDntrYxgZlLvtcnXyfIH1PS4qqLkBNj2Vx1dD0A0IainY9ujrFg/suAZOgQ/2n
+	kJByG3Wxm5OUg+x2D0zEKVUCqwgzLRpcTXyZcarG6u/RYApbsT8xdr/5RQfoPvc05mrMHmH4Dvb
+	lIzD+V/PkIXR5ZsnkIBqfpQ=
+Received: from w012.hihonor.com (unknown [10.68.27.189])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4bMQmC55bDzYl8Ws;
+	Wed, 18 Jun 2025 09:15:55 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w012.hihonor.com
+ (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 18 Jun
+ 2025 09:17:57 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 18 Jun
+ 2025 09:17:56 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <wangzijie1@honor.com>
+CC: <chao@kernel.org>, <feng.han@honor.com>, <jaegeuk@kernel.org>,
+	<linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>
+Subject: [f2fs-dev] [PATCH v2 1/2] f2fs: don't allow unaligned truncation to smaller size on pinned file
+Date: Wed, 18 Jun 2025 09:17:56 +0800
+Message-ID: <20250618011756.2451449-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250617123116.2385828-1-wangzijie1@honor.com>
+References: <20250617123116.2385828-1-wangzijie1@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250611-kunit-kselftests-v3-0-55e3d148cbc6@linutronix.de>
- <20250611-kunit-kselftests-v3-4-55e3d148cbc6@linutronix.de>
- <CAK7LNAQUN3hWYh_1=LMzVp1Ddbq3W=yGHZ5__LbcfBajfuhscg@mail.gmail.com> <20250617095102-d3df1c46-3d51-4f77-af0a-8299f5e71ad9@linutronix.de>
-In-Reply-To: <20250617095102-d3df1c46-3d51-4f77-af0a-8299f5e71ad9@linutronix.de>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 18 Jun 2025 10:15:57 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASe0aQdO1m6sUQXEkYxgXT+_2xOVnX4x4f4V4adpaeZ0w@mail.gmail.com>
-X-Gm-Features: AX0GCFvJl9wi9pNxHMzc9efbA-PWAwWgE5oc_vBzkXhWJDp4BubPAbGKLKZ0oL4
-Message-ID: <CAK7LNASe0aQdO1m6sUQXEkYxgXT+_2xOVnX4x4f4V4adpaeZ0w@mail.gmail.com>
-Subject: Re: [PATCH v3 04/16] kbuild: userprogs: add nolibc support
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Willy Tarreau <w@1wt.eu>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	workflows@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: w002.hihonor.com (10.68.28.120) To a011.hihonor.com
+ (10.68.31.243)
 
-On Tue, Jun 17, 2025 at 4:59=E2=80=AFPM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> On Tue, Jun 17, 2025 at 12:35:07AM +0900, Masahiro Yamada wrote:
-> > On Wed, Jun 11, 2025 at 4:38=E2=80=AFPM Thomas Wei=C3=9Fschuh
-> > <thomas.weissschuh@linutronix.de> wrote:
-> > >
-> > > Userprogs are built with the regular kernel compiler $CC.
-> > > A kernel compiler does not necessarily contain a libc which is requir=
-ed
-> > > for a normal userspace application.
-> > > However the kernel tree does contain a minimal libc implementation
-> > > "nolibc" which can be used to build userspace applications.
-> > >
-> > > Introduce support to build userprogs against nolibc instead of the
-> > > default libc of the compiler, which may not exist.
-> > >
-> > > Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de=
->
-> > >
-> > > ---
-> > > This could probably be moved out of the generic kbuild makefiles.
-> > > I think the ergonimics would suffer and this functionality could be
-> > > used by other users of userprogs.
-> > >
-> > > Also this does currently not support out-of-tree builds.
-> > > For that tools/include/nolibc/*.h and usr/include/*.h would need to b=
-e
-> > > installed into the build directory.
->
-> <snip>
->
-> > > --- a/scripts/Makefile.userprogs
-> > > +++ b/scripts/Makefile.userprogs
-> > > @@ -16,10 +16,17 @@ user-csingle        :=3D $(addprefix $(obj)/, $(u=
-ser-csingle))
-> > >  user-cmulti    :=3D $(addprefix $(obj)/, $(user-cmulti))
-> > >  user-cobjs     :=3D $(addprefix $(obj)/, $(user-cobjs))
-> > >
-> > > +user_nolibc_ccflags :=3D -nostdlib -nostdinc -static -fno-ident -fno=
--asynchronous-unwind-tables \
-> > > +                     -ffreestanding -fno-stack-protector \
-> > > +                     -isystem $(objtree)/usr/include -include $(srct=
-ree)/tools/include/nolibc/nolibc.h -isystem $(srctree)/tools/include/nolibc=
-/
-> >
-> > The tools/ directory is a different world, and Kbuild scripts do not kn=
-ow
-> > anything about it.
->
-> Ack.
->
-> How does this statement affect the next patch which creates
-> tools/include/nolibc/Kconfig.nolibc ?
-> Is it fine to create the Kconfig file in tools/ or should I move it?
-> I do want to maintain this file as part of nolibc and not KUnit.
-> The possibilities I see are init/Kconfig.nolibc or lib/Kconfig.nolibc.
+> To prevent scattered pin block generation, don't allow non-section aligned truncation
+> to smaller size on pinned file. But for truncation to larger size, after
+> commit 3fdd89b452c2("f2fs: prevent writing without fallocate() for pinned files"),
+> we only support overwrite IO to pinned file, so we don't need to consider
+> attr->ia_size > i_size case.
+> 
+> Signed-off-by: wangzijie <wangzijie1@honor.com>
+> ---
+> v2:
+> - add comments and change a proper subject
+> ---
+>  fs/f2fs/file.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 6bd3de64f..09be6e849 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -1026,6 +1026,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>  {
+>  	struct inode *inode = d_inode(dentry);
+>  	struct f2fs_inode_info *fi = F2FS_I(inode);
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>  	int err;
+>  
+>  	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
+> @@ -1047,6 +1048,17 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>  			!IS_ALIGNED(attr->ia_size,
+>  			F2FS_BLK_TO_BYTES(fi->i_cluster_size)))
+>  			return -EINVAL;
+> +		/*
+> +		 * To prevent scattered pin block generation, we don't
+> +		 * allow smaller size unaligned truncation for pinned file.
+> +		 * We only support overwrite IO to pinned file, so don't
+> +		 * care about larger size truncation.
+> +		 */
+> +		if (f2fs_is_pinned_file(inode) &&
+> +			attr->ia_size < i_size_read(inode) &&
+> +			!IS_ALIGNED(attr->ia_size,
+> +			F2FS_BLK_TO_BYTES(CAP_BLKS_PER_SEC(sbi))))
+> +			return -EINVAL;
+>  	}
+>  
+>  	err = setattr_prepare(idmap, dentry, attr);
+> -- 
+> 2.25.1
 
-Personally I like init/Kconfig.nolibc.
-(I am even fine with adding this new entry to init/Kconfig)
-But, this file is not what I maintain. It is up to you after all.
+I missed attr->ia_size == i_size case...I will cover that in next version.
 
 
-
-> > And, you do not need to implement this in scripts/Makefile.userprogs
-> > because you can move this to lib/kunit/Makefile.kunit-uapi or somewhere=
-.
->
-> Understood. This is not unexpected, as hinted in the commit message.
-
-One existing example is lib/vdso/Makefile.include, which is included
-from multiple Makefiles.
-
-
-
-
-
-> > > +user_nolibc_ldflags :=3D -nostdlib -nostdinc -static
-> > > +
-> > >  user_ccflags   =3D -Wp,-MMD,$(depfile) $(KBUILD_USERCFLAGS) $(usercc=
-flags) \
-> > > -                       $($(target-stem)-userccflags)
-> > > -user_ldflags   =3D $(KBUILD_USERLDFLAGS) $(userldflags) $($(target-s=
-tem)-userldflags)
-> > > -user_ldlibs    =3D $(userldlibs) $($(target-stem)-userldlibs)
-> > > +                       $($(target-stem)-userccflags) $(if $($(target=
--stem)-nolibc),$(user_nolibc_ccflags))
-> > > +user_ldflags   =3D $(KBUILD_USERLDFLAGS) $(userldflags) $($(target-s=
-tem)-userldflags) \
-> > > +                       $(if $($(target-stem)-nolibc),$(user_nolibc_l=
-dflags))
-> > > +user_ldlibs    =3D $(userldlibs) $($(target-stem)-userldlibs) \
-> > > +                       $(if $($(target-stem)-nolibc),$(user_nolibc_l=
-dlibs))
-> > >
-> > >  # Create an executable from a single .c file
-> > >  quiet_cmd_user_cc_c =3D CC [U]  $@
->
->
-> Thomas
-
-
---
-Best Regards
-Masahiro Yamada
 
