@@ -1,94 +1,118 @@
-Return-Path: <linux-kernel+bounces-692820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE58CADF739
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:51:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A959ADF732
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A42153B1110
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:50:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57EB17AE1C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90F021ABA5;
-	Wed, 18 Jun 2025 19:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97AB21931B;
+	Wed, 18 Jun 2025 19:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDxGklm3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="ukt6ydpv"
+Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCD31EDA1E;
-	Wed, 18 Jun 2025 19:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8124016B3B7;
+	Wed, 18 Jun 2025 19:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750276230; cv=none; b=mA+gtzvGzPE3kJSefOqTDvReJ2fV0BjcXuPkl8CiGEW+jX4bbnTZlbSV0W7J8b6DguBTLKprhEUPUwFki0kKl6qMv0t7DzfdL896m1l9GY9AE1v0rhKnqwKDKiI8YphMoht0oEaDhB5CeFwIJh5OUSV5tn02LPx2vbAaGpGAxls=
+	t=1750276213; cv=none; b=nKImttBosMJ1UDGR7sVFFjgw9fhnaw72wDlFmolcn31919sEZQaTwZiHU9cFngnbCT7ZVbz9sNAaCOJxFV7W6sZEc8xBNDlRFxrbtgCdq3gpWG0uctW1KLvWe8PKKCFaI7gLwVqBp/At0Ee0afXca/Ua5bu9688rbfXRwFIyqKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750276230; c=relaxed/simple;
-	bh=wKUcMtrvvzK50yYjYJoEi7kJnjIJs9L4uafhlbXlqhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rv+zsz/Bo/bK084xUQpg9q9q0PD2OVOpSwj3siGZfes219brzhXsIqnDr00xTPaoTnRo9ViG83eDrFN6trOdzm623k+MCyHZUYcvOkSGwzLFYLrlkXOyALyggezJHKSiyojEHlWeri051qEOMZzTfmsuxd+g5WD319NhyeshwWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDxGklm3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 686ECC4CEE7;
-	Wed, 18 Jun 2025 19:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750276229;
-	bh=wKUcMtrvvzK50yYjYJoEi7kJnjIJs9L4uafhlbXlqhQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nDxGklm3sq+f3EsmxqAxFrDksuI0cMafbTK02VhqWQ5xaKpjP2+S0ERYh8srQGRJI
-	 kNTf1NX5P23Zvpjcd6/gOCrsBEkOWy8cKRZghwUcu51Mo9OjR6+c0qg+Yw9TJxsyQu
-	 Wqy34piF2m8y1DBZH2Fg2pHeLiMts/jJHwhr4GJcl3gzp65CJnQaQ6Qm07Jg6kyxdT
-	 HPHPhhpr8mU8qFz1z7JvEz4ja69O9h80KcgEKMLMxaLrgdZ7mxSSNe7P59bM6g493m
-	 zObNU+CXgxUdSiIlaWCeLvfEpmv4n5rsqX+8CslhLKcXbEoJVTuYxWK745v4F3cDp3
-	 5C6vV7bxepd/g==
-Date: Wed, 18 Jun 2025 12:49:58 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Kees Cook <kees@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: [GIT PULL] Crypto library fixes for v6.16-rc3
-Message-ID: <20250618194958.GA1312@sol>
+	s=arc-20240116; t=1750276213; c=relaxed/simple;
+	bh=aBchKFwWyd0GBQrBmRwyjrarHmeV8MYL0+Muw8PbLVc=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=sPPQ2LKtKymIM0DL2ckTlY5Ha3iIb0GOupD2xJSoUKRDALd4uQt2kGag7g+fvPxQjsgVz5xM1aV+ykG+V0hdPTPmien0w3So8cxQM5zb4jZjF856PrV4qdh04fRakvWDrUlxzmCR/vBhcxt7YB66Dx3KaYtM3F+LiHI+rOFswSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=ukt6ydpv; arc=none smtp.client-ip=23.155.224.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 8755B82885CC;
+	Wed, 18 Jun 2025 14:50:10 -0500 (CDT)
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id Cw-X6kyH1lKl; Wed, 18 Jun 2025 14:50:07 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 8C6468288C8B;
+	Wed, 18 Jun 2025 14:50:07 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com 8C6468288C8B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
+	t=1750276207; bh=Z2GNqX+0k7pSprsF3zD6eUV76u17QucYwCVB/IypEPg=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=ukt6ydpvmsUs2h/99SLAygWrJTQV0Ww6DXrosK8GMRLMAerec2PGtn9yFicY4Jg7n
+	 aLvcdn0yDsl7P566v8caiKvJlkMp7ugpGCRe0D3vwPChJvq8sseALw4qMB9QMPMIu5
+	 vbhjym68Cv4y1g3DhNg2OwHReQLe2nBGDL53GYbQ=
+X-Virus-Scanned: amavisd-new at rptsys.com
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id aOfRNJqAxjHk; Wed, 18 Jun 2025 14:50:07 -0500 (CDT)
+Received: from vali.starlink.edu (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 11E5E828884B;
+	Wed, 18 Jun 2025 14:50:07 -0500 (CDT)
+Date: Wed, 18 Jun 2025 14:50:04 -0500 (CDT)
+From: Timothy Pearson <tpearson@raptorengineering.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-pci <linux-pci@vger.kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, 
+	christophe leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	Shawn Anastasio <sanastasio@raptorengineering.com>, 
+	Lukas Wunner <lukas@wunner.de>
+Message-ID: <1957898084.1311382.1750276204022.JavaMail.zimbra@raptorengineeringinc.com>
+In-Reply-To: <20250618194400.GA1219576@bhelgaas>
+References: <20250618194400.GA1219576@bhelgaas>
+Subject: Re: [PATCH v2 2/6] pci/hotplug/pnv_php: Work around switches with
+ broken
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC137 (Linux)/8.5.0_GA_3042)
+Thread-Topic: pci/hotplug/pnv_php: Work around switches with broken
+Thread-Index: ea0P+zxqpWPDRHdRnJt8G7RzFtnFrw==
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
 
-are available in the Git repository at:
+----- Original Message -----
+> From: "Bjorn Helgaas" <helgaas@kernel.org>
+> To: "Timothy Pearson" <tpearson@raptorengineering.com>
+> Cc: "linuxppc-dev" <linuxppc-dev@lists.ozlabs.org>, "linux-kernel" <linux-kernel@vger.kernel.org>, "linux-pci"
+> <linux-pci@vger.kernel.org>, "Madhavan Srinivasan" <maddy@linux.ibm.com>, "Michael Ellerman" <mpe@ellerman.id.au>,
+> "christophe leroy" <christophe.leroy@csgroup.eu>, "Naveen N Rao" <naveen@kernel.org>, "Bjorn Helgaas"
+> <bhelgaas@google.com>, "Shawn Anastasio" <sanastasio@raptorengineering.com>, "Lukas Wunner" <lukas@wunner.de>
+> Sent: Wednesday, June 18, 2025 2:44:00 PM
+> Subject: Re: [PATCH v2 2/6] pci/hotplug/pnv_php: Work around switches with broken
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/libcrypto-for-linus
+> [+cc Lukas, pciehp expert]
+> 
+> On Wed, Jun 18, 2025 at 11:56:54AM -0500, Timothy Pearson wrote:
+>>  presence detection
+> 
+> (subject/commit wrapping seems to be on all of these patches)
+> 
+>> The Microsemi Switchtec PM8533 PFX 48xG3 [11f8:8533] PCIe switch system
+>> was observed to incorrectly assert the Presence Detect Set bit in its
+>> capabilities when tested on a Raptor Computing Systems Blackbird system,
+>> resulting in the hot insert path never attempting a rescan of the bus
+>> and any downstream devices not being re-detected.
+> 
+> Seems like this switch supports standard PCIe hotplug?  Quite a bit of
+> this driver looks similar to things in pciehp.  Is there some reason
+> we can't use pciehp directly?  Maybe pciehp could work if there were
+> hooks for the PPC-specific bits?
 
-for you to fetch changes up to 9d4204a8106fe7dc80e3f2e440c8f2ba1ba47319:
-
-  lib/crypto/poly1305: Fix arm64's poly1305_blocks_arch() (2025-06-16 12:51:34 -0700)
-
-----------------------------------------------------------------
-
-- Fix a regression in the arm64 Poly1305 code
-- Fix a couple compiler warnings
-
-----------------------------------------------------------------
-Eric Biggers (1):
-      lib/crypto/poly1305: Fix arm64's poly1305_blocks_arch()
-
-Kees Cook (1):
-      lib/crypto: Annotate crypto strings with nonstring
-
-Nathan Chancellor (1):
-      lib/crypto/curve25519-hacl64: Disable KASAN with clang-17 and older
-
- arch/arm64/lib/crypto/poly1305-glue.c |  4 +--
- lib/crypto/Makefile                   |  4 +++
- lib/crypto/aescfb.c                   |  8 +++---
- lib/crypto/aesgcm.c                   | 46 +++++++++++++++++------------------
- 4 files changed, 33 insertions(+), 29 deletions(-)
+While that is a good long term goal that Raptor is willing to work toward, it is non-trivial and will require buy-in from other stakeholders (e.g. IBM).  If practical, I'd like to get this series merged first, to fix the broken hotplug on our hardware that is deployed worldwide, then in parallel see what can be done to merge PowerNV support into pciehp.  Would that work?
 
