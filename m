@@ -1,219 +1,145 @@
-Return-Path: <linux-kernel+bounces-692308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C974ADEFB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:37:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54307ADEF98
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 407A016954B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:36:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16A4A3AA053
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637782EF9B4;
-	Wed, 18 Jun 2025 14:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CC527817A;
+	Wed, 18 Jun 2025 14:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="haHeYsWA"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7grdHCI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF8A2EF64E
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 14:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16A62EBBAC;
+	Wed, 18 Jun 2025 14:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750257226; cv=none; b=eE7VLhMMEIUXgs88IH8MwDPBstUoncBU37vDr44/Tv72X24NSBreYjIO5PiW0Fuza0Y8m/Ut6Eaw15rfuKCtJw/4VyyL2NLf/0j9tOwhhzAbzVKTEcjbdKh24VyddEODtJEf+xNPacFesltOSrC0gldXdK0iVAkVcCNIEU0zotQ=
+	t=1750257167; cv=none; b=ZL9luTwp5zrQZkvrek0vY96aEfSeHPYZ6zgz4/8PMxV3S4KRx0Pu+2yMrj0w7g9jL68/WJfp7svuKWELkLGBLzGwJ1MhVhISzd1ni8ZEi5gjeK87HLsvdLH2PKA4oXWJ6xetc5+AvDxLlp3WEaHyQf/S3KaQdbfreBzSehlBGiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750257226; c=relaxed/simple;
-	bh=nJt4ADbxIA14pqN4XsVTOJSsLTO3c7LveRnmHeFCRAk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CuKt9lVOlP7wLBvwoPxag5UVybgg8UmkM/5HqfOuYYu953WA/Y8MtZlQhJSbmQRvbCl6vSIzF0gAXYURxqAyP2B5Mewf9gKcyWnFMyWouAe1Gnf3OJ36vZH1DsHEYzYukuDc3iM2yoSWWAIChP2RoPGjv+Zqyp2PH+FIa76Lcic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=haHeYsWA; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ad89c10dfabso200233866b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 07:33:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750257223; x=1750862023; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qlA118QQRrQcU4/5ozkHrMeNhT8icrM9d6BUqE0LJLY=;
-        b=haHeYsWATlB4LvbhO3VbHYW7v2W54VpQn+JeETOGxK+HCCsdIe9CbPjVRf+m/ZZl4W
-         p5UZRs72NknPKWj9qXgeiwaIwT1GoQp0TWNX7PGWUGhmsgqWTGkJyja7YMKaMlQbEeVF
-         keScT4wYY/qrhnJ9hUcR/Ag4BxNdS44f0QRTeaLIxdTxalVaPz1NP3357yBBPUOjWjKR
-         zwTUQwtjGXaUa6AIdPcaN2C5sZkwrdTENqMSHhqqAvrEbaeo81qMcZyHRv78nDBN3NPs
-         KX+OVPgdE4UcZS4QHqow/FaOwcs4DN66J2Jyy87PZ6zsMDHkaSjOVB+4yZNEdN5MS8CB
-         PP1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750257223; x=1750862023;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qlA118QQRrQcU4/5ozkHrMeNhT8icrM9d6BUqE0LJLY=;
-        b=aQpI0xafzA/x2EfoBG0GZYsHBwyxmDB1DJUsQirY5CvT6ieSE8ZAP3tuY8FY5U1Pcz
-         YLNfPaNlE7CSbFGy21nEXtOgX9Ub8t+YLWzl7lOMrIiDG2XQ/si9GL1KH+KkiDV+LrqH
-         Nfw/5SCHWJKrSN1zD8o5M23m99gVNy3WUdlHoOcEJow6lIUsS/R8hRQCGZF062UoLoRQ
-         n17k2/Js1BQ7FUokGXTsovIwSGUaEWVC1DUwSuZPQCwe2aNvwsrlhgb8DqMOiS3SC452
-         thr6oJJWMd8z+lTElVesr25I1VBXkVNdV1cUHH7Ea+3uJf+q57wHaVIKJFoO0SBvuF1A
-         B5FA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1gotrOCq8AypESs3zLP1DMpAHfxaLGuKwAJMBiRh59mP7PU8pl7H6xttjOEuQiDlXvf1w6QIAtJ14bHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc3v7u4ngLyupbezhlvzAKX/sKZdi0cWjVpflpumMqjpsG28DS
-	J5idGprWa7UdQY27ar8MFQlg77mVKsZcRrQQeS1s3vuU+OYQGvt74slTcPEE1uduhis=
-X-Gm-Gg: ASbGncuDZ1D2hUhex82P05y/qLtUOUFlNdls+zZKz1AwiaqXlXPm+zRBB0yEHKodvGy
-	9ORifevCjVSr0fHgEgi5TRjHYUf7qD0zaKX9hFjZRoxWRdfXAML/oY8ICgPrQ250zHc8ps1dI38
-	WRRvph3YzZ6wbrVa8X4wyoF7vS3edhdTfxJHN3jg6yxsLXjostF0x0apmyMWD3Bo0Gr/0UfHqhT
-	TzOLgdqKMQ1kWgAN+9AzNm2FPYERbCq/yUiMWVZHN3TeLFIR+Nk6fM7Sze8yJDsgVcpatkn1GoD
-	WsnSmmAx9rthxwXCi0EapPxiYNCGwoKk6xXIJkdNLlUDGKTcOxwWKg9qeycu3wXhF6H8oFgUWlU
-	X67sMv98=
-X-Google-Smtp-Source: AGHT+IEqWhfZvPBu5eHGUGg8Iwx5XpXuwaeur8bLnZ0cMet2VQIyHL3CTFNYuJDKV/kCjrV7fPGopg==
-X-Received: by 2002:a17:907:e2dc:b0:ae0:1fdf:ea43 with SMTP id a640c23a62f3a-ae01fdfeca3mr99043266b.2.1750257222936;
-        Wed, 18 Jun 2025 07:33:42 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec81c0135sm1052257566b.47.2025.06.18.07.33.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 07:33:42 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 18 Jun 2025 16:32:42 +0200
-Subject: [PATCH v7 13/13] drm/msm/mdss: Add support for SM8750
+	s=arc-20240116; t=1750257167; c=relaxed/simple;
+	bh=KAVdzvilE+pDc1pQTRefxg04/Waau9dPnmCfPrHicBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oH1QpzkacamNFH9cs5QlvcPtAg5CvA4DjG05LT9Qcclm6LJd/uS3JEzZvV9XrV5fXqWc+1g50KfB7TH5cOaB/bdneJilL39JHk2UHy7LkaGk8L90KFS1zFRkuJnVl9AnRzobJv7sl26EuTOepY111H77LNAPXXHFX9MY02yQC/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u7grdHCI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7111CC4CEE7;
+	Wed, 18 Jun 2025 14:32:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750257166;
+	bh=KAVdzvilE+pDc1pQTRefxg04/Waau9dPnmCfPrHicBw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u7grdHCIP8d+bl1OxZxQcEfzA3z5xUaAzWL3MDmFeqelVU8S2eN7EaDLaXNhGoGq1
+	 hGyDyIKpV50u8yx7dAOK5uAB5Upo+yxHd1SVOVEwSjUNADWn0QsAf878+4QFseSjzA
+	 lCqCRfLYtRo7TzgLit++M39YCWtjlfdiBbeu7/nhEfRW4xBgQXU6Le3lPngpd1c23i
+	 P8MvPz8qc/XfjXQjOEdT+YN6DQMtBKRI3l7mWptkJ0vZjY/2rahiovAxYFESero7HO
+	 2udrqN8wsi3S/R2azO6lG5/AXlDvQ1vx1RofNXDL403zb34awDBmW5j4yTfEbey0Dn
+	 Nib15HREGhQhQ==
+Date: Wed, 18 Jun 2025 09:32:44 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Subject: Re: [PATCH v6] remoteproc: Add device awake calls in rproc boot and
+ shutdown path
+Message-ID: <u326j22wteqtadni7wawvwbr6ai3h72iszwtfjwwbaztxj245c@5q4y7xlb3xnk>
+References: <20250618094441.1994965-1-quic_schowdhu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250618-b4-sm8750-display-v7-13-a591c609743d@linaro.org>
-References: <20250618-b4-sm8750-display-v7-0-a591c609743d@linaro.org>
-In-Reply-To: <20250618-b4-sm8750-display-v7-0-a591c609743d@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krishna Manikandan <quic_mkrishn@quicinc.com>, 
- Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Dmitry Baryshkov <lumag@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Clark <robin.clark@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
- Srinivas Kandagatla <srini@kernel.org>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3191;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=nJt4ADbxIA14pqN4XsVTOJSsLTO3c7LveRnmHeFCRAk=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoUs4lO0igoNoiH6lYl9w0oC7YRM14FNNM6kLoi
- l6a8zSzTTSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaFLOJQAKCRDBN2bmhouD
- 14hcD/4qDWghYkiFT0CiyrIzz3YMUrhIppIA4jAgI4Rtzuks02Liq1Ri1cWOFhXvDzJyLNjK3K1
- 3l89O7kPLQ0cn7X02DEWwWra6i2MTHy0qZjt7UCwRkU37jRNomF3xCbx6rkZTgUEXuvu+MumLNi
- 32FRBCTSi35Q52GUqnsgfHZxnb8+7jtX04T5/HPOYZXw57GY0xJ31O0Yy/vlv17qkERjh67z5WC
- WXcrk/tV1kDx3tKAgpqNsO6L+MZcQg72bvi3lhBn/1kc15Aha5GjCEKUEVheu83M3wHkqHgoxBK
- LPudwd4yjqTqID0RenCdjBLJC/i52qaYvIVENqtMaby2dsDw2qPScEX0QE2ONetT2lVUIvVH0Zv
- 12bKSbtW9Anvug7Va6+/+sI9Spl+rq1EA6ywxwXy7de96e8g8NHD3LkvEEeYKAdrCMJaxYXcddr
- 16ClEV2Op04mCLo2WtmgrG045lTq5Tnp3yarphaN98+t1sGae7tkIX7pJxwIWYHjHC6C1KTYC0P
- Iuo6q7j4L1PHKVgUSstV9T3514uzJf37ejRpWcfg0f+c0UFOC9ZrmTDqS4Qaa9YT8GNsulHYcdq
- v7A01L78rBKRTD301acm2fVGyqAPlcSgnQqDsu83BpTKfjhaqybwLy8WZ7JeHmuk2YTKJtiXtln
- 8UxcfxWh+DnTRTA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250618094441.1994965-1-quic_schowdhu@quicinc.com>
 
-Add support for the Qualcomm SM8750 platform.
+On Wed, Jun 18, 2025 at 03:14:41PM +0530, Souradeep Chowdhury wrote:
+> Device awake calls are only present in the recovery path of remoteproc.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/gpu/drm/msm/msm_mdss.c | 33 +++++++++++++++++++++++++++++++++
- drivers/gpu/drm/msm/msm_mdss.h |  1 +
- 2 files changed, 34 insertions(+)
+This is not the problem, this merely documents a related fact. Might be
+worth mention after the problem has been established.
 
-diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
-index 709979fcfab6062c0f316f7655823e888638bfea..422da5ebf802676afbfc5f242a5a84e6d488dda1 100644
---- a/drivers/gpu/drm/msm/msm_mdss.c
-+++ b/drivers/gpu/drm/msm/msm_mdss.c
-@@ -222,6 +222,24 @@ static void msm_mdss_setup_ubwc_dec_40(struct msm_mdss *msm_mdss)
- 	}
- }
- 
-+static void msm_mdss_setup_ubwc_dec_50(struct msm_mdss *msm_mdss)
-+{
-+	const struct msm_mdss_data *data = msm_mdss->mdss_data;
-+	u32 value = MDSS_UBWC_STATIC_UBWC_SWIZZLE(data->ubwc_swizzle) |
-+		    MDSS_UBWC_STATIC_HIGHEST_BANK_BIT(data->highest_bank_bit);
-+
-+	if (data->ubwc_bank_spread)
-+		value |= MDSS_UBWC_STATIC_UBWC_BANK_SPREAD;
-+
-+	if (data->macrotile_mode)
-+		value |= MDSS_UBWC_STATIC_MACROTILE_MODE;
-+
-+	writel_relaxed(value, msm_mdss->mmio + REG_MDSS_UBWC_STATIC);
-+
-+	writel_relaxed(4, msm_mdss->mmio + REG_MDSS_UBWC_CTRL_2);
-+	writel_relaxed(1, msm_mdss->mmio + REG_MDSS_UBWC_PREDICTION_MODE);
-+}
-+
- #define MDSS_HW_MAJ_MIN		\
- 	(MDSS_HW_VERSION_MAJOR__MASK | MDSS_HW_VERSION_MINOR__MASK)
- 
-@@ -339,6 +357,9 @@ static int msm_mdss_enable(struct msm_mdss *msm_mdss)
- 	case UBWC_4_3:
- 		msm_mdss_setup_ubwc_dec_40(msm_mdss);
- 		break;
-+	case UBWC_5_0:
-+		msm_mdss_setup_ubwc_dec_50(msm_mdss);
-+		break;
- 	default:
- 		dev_err(msm_mdss->dev, "Unsupported UBWC decoder version %x\n",
- 			msm_mdss->mdss_data->ubwc_dec_version);
-@@ -732,6 +753,17 @@ static const struct msm_mdss_data sm8550_data = {
- 	.reg_bus_bw = 57000,
- };
- 
-+static const struct msm_mdss_data sm8750_data = {
-+	.ubwc_enc_version = UBWC_5_0,
-+	.ubwc_dec_version = UBWC_5_0,
-+	.ubwc_swizzle = 6,
-+	.ubwc_bank_spread = true,
-+	/* TODO: highest_bank_bit = 2 for LP_DDR4 */
-+	.highest_bank_bit = 3,
-+	.macrotile_mode = true,
-+	.reg_bus_bw = 57000,
-+};
-+
- static const struct msm_mdss_data x1e80100_data = {
- 	.ubwc_enc_version = UBWC_4_0,
- 	.ubwc_dec_version = UBWC_4_3,
-@@ -767,6 +799,7 @@ static const struct of_device_id mdss_dt_match[] = {
- 	{ .compatible = "qcom,sm8450-mdss", .data = &sm8350_data },
- 	{ .compatible = "qcom,sm8550-mdss", .data = &sm8550_data },
- 	{ .compatible = "qcom,sm8650-mdss", .data = &sm8550_data},
-+	{ .compatible = "qcom,sm8750-mdss", .data = &sm8750_data},
- 	{ .compatible = "qcom,x1e80100-mdss", .data = &x1e80100_data},
- 	{}
- };
-diff --git a/drivers/gpu/drm/msm/msm_mdss.h b/drivers/gpu/drm/msm/msm_mdss.h
-index 14dc53704314558841ee1fe08d93309fd2233812..dd0160c6ba1a297cea5b87cd8b03895b2aa08213 100644
---- a/drivers/gpu/drm/msm/msm_mdss.h
-+++ b/drivers/gpu/drm/msm/msm_mdss.h
-@@ -22,6 +22,7 @@ struct msm_mdss_data {
- #define UBWC_3_0 0x30000000
- #define UBWC_4_0 0x40000000
- #define UBWC_4_3 0x40030000
-+#define UBWC_5_0 0x50000000
- 
- const struct msm_mdss_data *msm_mdss_get_mdss_data(struct device *dev);
- 
+> If an user stops and starts rproc by using the sysfs interface, then on
+> pm suspension the firmware fails to load as the request_firmware call
+> under adsp_load relies on usermodehelper process which gets freezed on
+> pm suspension.
 
--- 
-2.45.2
+I asked why is this a problem, what happens when the usermodehelper
+processes gets frozen, why does this cause an issue for the starting
+remoteproc?
 
+Why does it cause issues during shutdown?
+
+Regards,
+Bjorn
+
+> Add device awake calls in the rproc boot and shutdown path
+> to fix this.
+> 
+> Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+> Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
+> Changes in v6
+> 
+> *Add some correction to commit message
+> 
+> Changes in v5
+> 
+> *Added more details to commit description
+> 
+> Changes in v4
+> 
+> *Remove stability from mailing list
+> *Remove the extra tab in v3
+> *Change the commit description
+> 
+>  drivers/remoteproc/remoteproc_core.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index c2cf0d277729..5d6c4e694b4c 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1917,6 +1917,7 @@ int rproc_boot(struct rproc *rproc)
+>  		return -EINVAL;
+>  	}
+>  
+> +	pm_stay_awake(rproc->dev.parent);
+>  	dev = &rproc->dev;
+>  
+>  	ret = mutex_lock_interruptible(&rproc->lock);
+> @@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
+>  		atomic_dec(&rproc->power);
+>  unlock_mutex:
+>  	mutex_unlock(&rproc->lock);
+> +	pm_relax(rproc->dev.parent);
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(rproc_boot);
+> @@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
+>  	struct device *dev = &rproc->dev;
+>  	int ret = 0;
+>  
+> +	pm_stay_awake(rproc->dev.parent);
+>  	ret = mutex_lock_interruptible(&rproc->lock);
+>  	if (ret) {
+>  		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+> @@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
+>  	rproc->table_ptr = NULL;
+>  out:
+>  	mutex_unlock(&rproc->lock);
+> +	pm_relax(rproc->dev.parent);
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(rproc_shutdown);
+> -- 
+> 2.34.1
+> 
 
