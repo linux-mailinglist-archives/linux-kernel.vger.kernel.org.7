@@ -1,131 +1,140 @@
-Return-Path: <linux-kernel+bounces-692271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A8BADEF3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:25:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ACCDADEF39
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:25:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F4D4179A8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:24:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 293D11885A80
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9753C2EAD16;
-	Wed, 18 Jun 2025 14:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AC02EAD1C;
+	Wed, 18 Jun 2025 14:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YS/vSnvn"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMHUvDwn"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D198281341
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 14:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25042E8DED;
+	Wed, 18 Jun 2025 14:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750256666; cv=none; b=bvTkLkvMgTF/D8AtULdtHEWbSb6o4oHvc/q0RwMREFNreClQPFb9N5CI3fdPzzJ0L9EJCOTtfV3ThJoy5nPfVuAOFFsGqcgPxhaWnAxdPyZLh5vRgT/FDS4hirj9hLDQ39LhEmmlq8LLzuRDYYk/+tqmwGm35eMcblLZhbR4tCY=
+	t=1750256644; cv=none; b=YcumIq5DMCrrltn/R/w0xcHsahdPDirQhbAWrVwzGzc22GONJfruPg6JIYr5DVLVb4WpXBF2m8vTPfG/FpPD5vXMv1o8Dm5bu6iYTrmd/UK5CiUwC+VMaBwjUKPQIkHbNT0qCxrQqxhkzJVklbk/OMsxe5X0tuJ2ynbc1DMGwII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750256666; c=relaxed/simple;
-	bh=sr3Z5SQi/c0byycGqZoP+15+8kMGuxUIdam9NQVzQGU=;
+	s=arc-20240116; t=1750256644; c=relaxed/simple;
+	bh=jbtwj0PcQl52Hf+ECRiBFoySeNQq1NFpX1lg20GW3Vs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gzMKGPtnFAgLelQpcJzUCUztV81ADniOJ5iDCqCGicSMqChfVecvP3YvEj66D/eEXDjL9bgMcRSeUU2mGLFCgXKkxCwmQbjEchEVE6mYlu6setpc7mIFq6cbu+uAzdiBzSZPaP6yQH1DP11LawxPQA6D6OYkx27eIRlmLbXjuVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YS/vSnvn; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6ecf99dd567so75584146d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 07:24:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=OfI0/csh8LHSLWwSo9drJFmKiZ6EFijt3PS+ajsq9bpClodTMQ/Tq/mPPEtdi2g1Ls2J2MAtMLUaPyScG1kpN2IZmMLpEpxfTQlYv3VzRKNNoICYJVzouIi5BC6f5oC0i+P+Yad5i9+iKBlL9qgq0Kc13yQEciuYBeKVL1iMhWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMHUvDwn; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32addf54a00so57291111fa.1;
+        Wed, 18 Jun 2025 07:24:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750256663; x=1750861463; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yUcfR2kwkjbsjTzvnqaKQjl0q9VATkRLDawL3wYx9EM=;
-        b=YS/vSnvnoeCxpBViYKhwaAv8nFsmmLZsbwi63LV+78MDziBZJ8NPe5CoZcvF5qJCEs
-         jJXSG7Ek7CpVIIToQ13vXODbGtgqYnW33ocmkDRQTAmFDS64lhagd1WkX9h6PzsftLzS
-         oCMzZbABqu7FIrXhWyZKndUvKB99TPr2UjiZIXZAfyaDBXC3HwOC6WylFyflU2sZ/KaV
-         UDaQL3xKnL6bNN+LljugwnT6UCRL/wTsrj8i+xUfXDsa3kgZaTq+/B9OS5JaGavwUyOc
-         0MRxeZVD9oGfYYkDWZQ+HNiJH6vIUyrdSsubTHumHWfvHK+ERgxilB8kqZLz3O5R4REO
-         WcyQ==
+        d=gmail.com; s=20230601; t=1750256641; x=1750861441; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/IcyrFiwGOWpE62gt/B9Io7YT03yFKnIKHU1p3jqjyk=;
+        b=WMHUvDwnNZBbJvLYppG/yTvEbXerjNgQFdYB7gKGV06xb/B2rqpQ1BgtiaVCdaI3Ju
+         gFnIlFthiGunc+u6LQJ18WPQduttv42WVb8ioe4rQwoxs34zdrt7eruvNhuNxpempojc
+         4Mc9XMpSiVkHyOXPFPkLlSzeayai6U3Hw/LOstu3V+dGT4B1wWsBPJIhEnZhtSDESgDh
+         3agyjiCaQnzHLV9kq/jOMz8FUS4DDxKEtvDAZ+hZuSlFR3wROUkRU+qxG4wKp4ASSKJ7
+         OUO6viH3Yk7NARt+xVJDF7nBJatsOsaCklAVkZn6Wlq8pFCA7j+3VVcsg+8w1fUpQx8T
+         KEHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750256663; x=1750861463;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yUcfR2kwkjbsjTzvnqaKQjl0q9VATkRLDawL3wYx9EM=;
-        b=SRnAfTvsB16fut5V0ZNGEn2hbBPJC4Nn+DF9tBEw9BNxgpa4S+QSK2L6sb1ratomIJ
-         sGGkITZY18iDyfIOCYSZAAFkhGMD9mVTdzkrQRg6gtMgTwiivmHdTqOQ6AMrukH+6zEX
-         izaDf10+Dil2T1g2uMzk7R+mXtwycgVHRDyxu7VVi1IarCpNH8mjLFpBgubBuKCFuAw7
-         Y29VoGBzu9nCIXh0z0kO8Fk9KUKJ5g+0f8zCTkOpiWTi38WLuaVxXv9wcFGlxjIEUWzk
-         z1iwBYGKR8UIPAZDzcywY0Qp/VTNuKniVFluwZAbh+LBubeCQtE+lONAKU05HwwOMpan
-         +7+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWiOlO6B13TcaodgZ3fUNIJ7IqAmLVmILrbBFPYc6Tg9hzZfZNmXWXVTbAs2AiWfTdunq8V3PtfDrN/efQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7QzAvrOnnMY2gpSE78g7P5DcrbMuMtme+RoZOWRFZn+ozgZFT
-	h6UpJ9wuxXuz1LReJyiz+dK0w9Paa5fIrIXxYaYqBjcZTeODz8zryedqxEpbHEum67swiwHLj1i
-	tauGs4dZDmILgsQri4qM+WKtVCryZCUBeh9hV8mNQ
-X-Gm-Gg: ASbGnct4ifGnTfEax0yOTBNJhhU2rJtbg5EEYEb9kelKJPYiQRWiXXRsfu6uf+HMTsu
-	k560GoWnwl5Le8i6t9CMthi3JXbnGWDjqSjpRnR1eG2V4oTCo+ee/csfU28gqufmYbN6em1Yhpt
-	yMHoVACSEG0fXDUv8hylKI+oSSn018Gp5c/yMZ/1BiD+UejkXUUPUNhQ3YT7crlQqDN70VA18D
-X-Google-Smtp-Source: AGHT+IHdIl6hBZ14aq0nr2z6lG2ii3Kcxe/4qSRb9s4mKKYwgN/kx2q0ATe/pPHiSWFigZOI1t1Rna7e6taADfKz5Ac=
-X-Received: by 2002:a05:6214:5249:b0:6fa:c55e:86a with SMTP id
- 6a1803df08f44-6fb47759665mr312049966d6.28.1750256663221; Wed, 18 Jun 2025
- 07:24:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750256641; x=1750861441;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/IcyrFiwGOWpE62gt/B9Io7YT03yFKnIKHU1p3jqjyk=;
+        b=qo1pVoAOOnJ6Uqx3MXglSK2XdZlzjtnFObFMIULsoJETXKhcnh/iPEAu+yT+7VcSkI
+         Lvmd8w7M4OyogeVpWpI9FrLk2Vd56S+0L5GNQqcVK521M4G5yoH2AAnRjAelHg5VX4as
+         4933wilMaYCtTx/HabqYTCS3EtAjJVBPnejbibidWbN0eOvMvK0PPfzxGxDYim3eHrw3
+         PPfvFeL/BzhShnCz3wugnZpQpQxY6K3JuYWJi85NcJC3LMVbYa14gtVuO1k4hnffDWue
+         pCdtRv6ANKKP1ZqPmZCDaoKTT353008ktPUmsOPth0JwT2J+nrBE1My6d1495l1yL2HQ
+         myzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRvW73HCeghYsiESFkyyhvbk4Ur/Hq6r1ZipY67hpVkpIhO+4TSEHc5WjTICTndwVTl4De0+m2@vger.kernel.org, AJvYcCWtS6E1kZYf4cFWU0BP+Aahuoz7uZR7O6J98Ee2wOfENTIv+fc12zp1umD6ittn3S5hu16Im6908vCMcng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKzJtsF99BL7qS+BiudVnycwEXDBX+X5eFsxuSrHlBET+Uzow7
+	mcM6N4s9oKWEz2+OJ9T/r3mi6RX9NuO1FFBI4RtEQ7kKe1469ip5yOVf628m64Av89q5R3W+DUn
+	xOyLlcL6Ko7o27L6sMEV0CEkqAcaq140=
+X-Gm-Gg: ASbGnctimDZ88aDsxjrz1rQf2TTgAohx3KcJFREgT+hmR3j3gUEju841gw5Dkpwwc99
+	IFLutF16qIclUy2TYa43JUJKzSi5qYs4lvXI8yhACTY754+Ia5jcJIOwknIEkAQ72njhseYnTm0
+	+68faypg2cT2FcG6ZiejUSGM93AcbdLxq9sh9GUMfZoxbmAPGoeQEuRKBRCZPCuNpC7vWycU3IZ
+	9nEiQ==
+X-Google-Smtp-Source: AGHT+IEZh5GJLMzXVURg6y/wUKcSU6h1BN8I6BhM2UM98yCfN6NMmxeH65p8HJYUiGNaknluPkCqmJUBhgE91ih5+FI=
+X-Received: by 2002:a05:651c:2120:b0:32b:4773:7a80 with SMTP id
+ 38308e7fff4ca-32b4a4b1834mr62679451fa.25.1750256640657; Wed, 18 Jun 2025
+ 07:24:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250416085446.480069-1-glider@google.com> <20250416085446.480069-2-glider@google.com>
- <CANpmjNPass_tPdjwguw5N+5HRn81FOJm0axLDMxwbZLrHHH8hg@mail.gmail.com>
-In-Reply-To: <CANpmjNPass_tPdjwguw5N+5HRn81FOJm0axLDMxwbZLrHHH8hg@mail.gmail.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Wed, 18 Jun 2025 16:23:45 +0200
-X-Gm-Features: Ac12FXxlhTVNXm_co53abS-moIAJmLryjKY8L53ZBoxurLT46rDjZIdqZcqlZ5g
-Message-ID: <CAG_fn=VmddBTURnLESOQHEWYzsiUJCph9mVKS6W84TPqm3DCyw@mail.gmail.com>
-Subject: Re: [PATCH 1/7] kcov: apply clang-format to kcov code
-To: Marco Elver <elver@google.com>
-Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
-	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Ingo Molnar <mingo@redhat.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+References: <20250617123531.23523-1-pranav.tyagi03@gmail.com> <20250618105413.GF1699@horms.kernel.org>
+In-Reply-To: <20250618105413.GF1699@horms.kernel.org>
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Date: Wed, 18 Jun 2025 19:53:48 +0530
+X-Gm-Features: Ac12FXzbQSWSku9aQkLDSeV-_P6DV8Ph-V1X5OS2vHElwTOgP6u_-N5ZVzKDCk0
+Message-ID: <CAH4c4j+CN552qxSy8OpSzyZysTMW=gRKjLR-GPYV9cPuvduFkA@mail.gmail.com>
+Subject: Re: [PATCH net-next] net/sched: replace strncpy with strscpy
+To: Simon Horman <horms@kernel.org>
+Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > +static inline void kcov_remote_start(u64 handle)
-> > +{
-> > +}
-> > +static inline void kcov_remote_stop(void)
-> > +{
-> > +}
+On Wed, Jun 18, 2025 at 4:24=E2=80=AFPM Simon Horman <horms@kernel.org> wro=
+te:
 >
-> This excessive-new-line style is not an improvement over previously.
-> But nothing we can do about I guess...
-
-I think we'd better stick with whatever clang-format gives us.
-
-
-
-> > @@ -728,13 +730,15 @@ static long kcov_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
-> >                 spin_unlock_irqrestore(&kcov->lock, flags);
-> >                 return 0;
-> >         case KCOV_REMOTE_ENABLE:
-> > -               if (get_user(remote_num_handles, (unsigned __user *)(arg +
-> > -                               offsetof(struct kcov_remote_arg, num_handles))))
-> > +               if (get_user(remote_num_handles,
-> > +                            (unsigned __user *)(arg +
-> > +                                                offsetof(struct kcov_remote_arg,
-> > +                                                         num_handles))))
+> On Tue, Jun 17, 2025 at 06:05:31PM +0530, Pranav Tyagi wrote:
+> > Replace the deprecated strncpy() with strscpy() as the destination
+> > buffer should be NUL-terminated and does not require any trailing
+> > NUL-padding. Also, since NUL-termination is guaranteed,
+> > use sizeof(conf.algo) in place of sizeof(conf.algo) - 1
+> > as the size parameter.
+> >
+> > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+> > ---
+> >  net/sched/em_text.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/net/sched/em_text.c b/net/sched/em_text.c
+> > index 420c66203b17..1d0debfd62e5 100644
+> > --- a/net/sched/em_text.c
+> > +++ b/net/sched/em_text.c
+> > @@ -108,7 +108,7 @@ static int em_text_dump(struct sk_buff *skb, struct=
+ tcf_ematch *m)
+> >       struct text_match *tm =3D EM_TEXT_PRIV(m);
+> >       struct tcf_em_text conf;
+> >
+> > -     strncpy(conf.algo, tm->config->ops->name, sizeof(conf.algo) - 1);
+> > +     strscpy(conf.algo, tm->config->ops->name, sizeof(conf.algo));
 >
-> Ouch. Maybe move the address calculation before and assign to
-> temporary to avoid this mess?
-I factored out offsetof(), because the address calculation looked all
-the same after formatting.
-
-> >         for_each_possible_cpu(cpu) {
-> >                 void *area = vmalloc_node(CONFIG_KCOV_IRQ_AREA_SIZE *
-> > -                               sizeof(unsigned long), cpu_to_node(cpu));
-> > +                                                 sizeof(unsigned long),
-> > +                                         cpu_to_node(cpu));
+> Hi Pranav,
 >
-> Ouch.
+> Because the destination is an array I think we can use the two-argument
+> version of strscpy() here.
+>
+>         strscpy(conf.algo, tm->config->ops->name);
+>
+> >       conf.from_offset =3D tm->from_offset;
+> >       conf.to_offset =3D tm->to_offset;
+> >       conf.from_layer =3D tm->from_layer;
+>
+> --
+> pw-bot: changes-requested
 
-Someday we'll probably switch clang-format to 100 columns
+Hi,
+
+Thanks for the feedback. I'll update the patch accordingly
+and send a v2 for the same.
+
+Regards
+Pranav Tyagi
 
