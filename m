@@ -1,125 +1,146 @@
-Return-Path: <linux-kernel+bounces-691520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097AAADE5A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:35:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC89ADE591
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53D14189E7B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:34:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D078E7A0F88
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BB5DF59;
-	Wed, 18 Jun 2025 08:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TZo+Qjfz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731C127F198;
+	Wed, 18 Jun 2025 08:32:59 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C735619E819;
-	Wed, 18 Jun 2025 08:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5683225B1DA;
+	Wed, 18 Jun 2025 08:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750235617; cv=none; b=R3M7C/CvdfD9x9+JHLysaZ0iPZXB75ucdDD9vTPi4/wj8KVzaHkCmB9L5BxJ8L5Srwv7DH4/GeCIrFfCSzkn+/67eERhekLtYVkHDdqwU9REDEoWfhq2PH8GWHdkcG994xx0Vd6mLOvIqWwxi88t5tp3fMUuxCO6X7SB/S3NIyA=
+	t=1750235579; cv=none; b=p1LHfoMtcprZI40JTlXKdmR7Qg+ClUUF1HjJ6dQRwRRqg30yvD9Awvy+93dM+f3oMIaCyZUlHL47BCIZcLkCKq9Bi0VqVbqdc36H3JhDayjhTHjgG4EB/cijzKldDpEZNKrQ5O5Q9RINHTjLzi2v97TAcDEB6PBtjqDHTA4EQgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750235617; c=relaxed/simple;
-	bh=fIu3H0X1ir+ab5DgfWZw8Zxf2egqeIQlXSOMOU+My5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i4VIhubzAJEKUAe+BobFLMmBSY0E5svDZQc0+jTUXKt1joy07bh6JgkMFo8q7lLLbnSMTRUI/nRb1z6oCi4k0919pJGi3CPvHnt2uAzPBi6mQrxGGwPZvgk3J7DlygJi3hp4kaP18QY4RxNEWVEq+XYQyemEW7S6btFScuXMVvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TZo+Qjfz; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750235616; x=1781771616;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=fIu3H0X1ir+ab5DgfWZw8Zxf2egqeIQlXSOMOU+My5c=;
-  b=TZo+Qjfzi4wCLHB/11wruSp9VA8QxlGISaG66w533v1WSxc0plEdsYs+
-   hkjO9HgyUl/JUZyJm3wc2EovJu+JzqMcKAhEriaMtjq67akzMNj1KIHmD
-   JkdU1/Zk3puJlDlHVqjsZgY9Ayzk1ORsS+CYrkwVbuWk0h4oqiEZ/6f0c
-   BPbxaD9Mt41TjdHdZrN5BBXjIMYvS757sd07ljxPsHwNSZx13Wury3aLx
-   LMpgMVpttEdIn61q9L4rTT8bwABNHd/zfZjr9givGPHYZX+S9VHV98hrO
-   EL0tpav7TZTcKGQoiCIVBa9ecXgQUiSwlNg7rGuD7WIXrCrQAsQyEj5Lc
-   A==;
-X-CSE-ConnectionGUID: m3aupNNSTI222TTctr1y+Q==
-X-CSE-MsgGUID: kOfACOHfRR6RwtxVlSIOCA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="63048642"
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
-   d="scan'208";a="63048642"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 01:32:27 -0700
-X-CSE-ConnectionGUID: XdbUQy3CRfOUfn7iOGHy+w==
-X-CSE-MsgGUID: HBtqD8F8So280xiJlFKgkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
-   d="scan'208";a="149986926"
-Received: from mmowka-mobl.ger.corp.intel.com (HELO [10.245.101.212]) ([10.245.101.212])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 01:32:20 -0700
-Message-ID: <231e4cef-2e44-4e25-9169-f298e72e8e07@linux.intel.com>
-Date: Wed, 18 Jun 2025 10:32:04 +0200
+	s=arc-20240116; t=1750235579; c=relaxed/simple;
+	bh=YZ2owkYi3X0AEVs+LYgxowjgbXXIYv8otbPc+FFdDh0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P9H/r4EneNDzj3e2AiciBmYoKzdDP1GLRUezOWPIT/TdRE7tVNScT686ixjeDxbNfqLVsKlyoyVaFm8kJvZGU6xSL+Z9u0ukd9RVEurMfUBfRpoBmj3jn1PoCmRbaKL1ZCVl6K168qgGcDIzD/RziH9PXUEPiqIsEaasF8Jb6qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-60780d74bbaso871409a12.0;
+        Wed, 18 Jun 2025 01:32:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750235576; x=1750840376;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QidkYVW37CmwUswBeJDb096IVxANRzd4ryyxmJfoTyo=;
+        b=D27H/1feTYIRVKTLQRM0PZKfnGVxfwhBwHnjtTiAMkTpmRXTeEAjcJtvCbgCviuGEf
+         jnSxFbeM72RjrJmqUWCX0X4tL9wvrO2o5+4SFVwvNuBrpxHKg0NgBp96zI/AblAgaS1c
+         TWU894hU7mPMTgyXhBQNgxdE2w5zOQ8yzYFPdERDXdoJam1sqFl8289OtTNzGakLx3wu
+         NGilTfmd+tvhddtafJ2o/cO4Sc76wMnSjzVAF6vXzkm7d4VvZBZd2F/MFJDJwEFu1t25
+         uzjDxsbc5nGmQV6qLwA2B/d7bHdXgY8p9DTCkwqrNEp8XOTGXINjaBgO25XbTV8R2bh8
+         Nexg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6YGVdB7kX6mqVv3Y39lfi/hLgtea5bslYANOjObc/4nf2qzjRlnfsM1CPaolaG1Cim/t1bJAJdQrMcgM=@vger.kernel.org, AJvYcCXJglWyQXUpNTQrx4lANE61wD3zxjECNR5UWn9Ea37T/1C2cW1iZy5bptLdDZK4ZEuyNCErJFMQqhnvGtAyw3Pv@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxOTlqCGCAG4LAl0cZ+KjXzzQTIpB0xwYV4NEMWZrrbQYBsiL2
+	nr5qt6CpT6PHq2/BtfMWfoyyPXw6JLLSY6vQTuX92CPeoeQjbBwjCQvP
+X-Gm-Gg: ASbGncukliT9gISE+29efMkQvQDeNzv2MzhssbkGOXtshGQA2JikiHoaJxgyg58wKHz
+	qFW1o5juiCQULcHyXzUaThH1iKDJrzVRhWnKlwyKSFUMnrTIAI8/98nhJ7eOlfKsgqlXaLBFoS3
+	cInOpaiRMMSqqtJMKvg6bVxZanuwKNgAV2b2jO/ZeW2hnXm+0ohsJIl46RA8EYFEJxqs9YcaV06
+	o8bE/fJo9Gbu5iEQDx3zDniN6xKhfoBGLhMheqFSNeFTodpYD3cUoNCArblCrB1C+6wz8NEyBim
+	oPQC8nXP5rdMMmlGLcxlEo7mqWi4MuMn9P2TW4t+MPA/Yfw2O10y
+X-Google-Smtp-Source: AGHT+IESnlhzm6JY29BbKFKb++BCw4CagU+L4+qKbE73XqGEAhecsxPXDKaJUwi1i/vSUvnQf0x7Qw==
+X-Received: by 2002:a05:6402:5187:b0:604:b87f:88b4 with SMTP id 4fb4d7f45d1cf-609c1873e6cmr1420416a12.2.1750235575356;
+        Wed, 18 Jun 2025 01:32:55 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:2::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608cfadeb92sm7855479a12.13.2025.06.18.01.32.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 01:32:54 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net-next v4 0/4] netdevsim: implement RX statistics using
+ NETDEV_PCPU_STAT_DSTATS
+Date: Wed, 18 Jun 2025 01:32:41 -0700
+Message-Id: <20250618-netdevsim_stat-v4-0-19fe0d35e28e@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 02/19] x86: Secure Launch Kconfig
-To: Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
- linux-efi@vger.kernel.org, iommu@lists.linux.dev
-Cc: dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, ardb@kernel.org,
- mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
- peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
- nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net,
- corbet@lwn.net, ebiederm@xmission.com, dwmw2@infradead.org,
- baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
- andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
-References: <20250421162712.77452-1-ross.philipson@oracle.com>
- <20250421162712.77452-3-ross.philipson@oracle.com>
-Content-Language: pl
-From: "Mowka, Mateusz" <mateusz.mowka@linux.intel.com>
-In-Reply-To: <20250421162712.77452-3-ross.philipson@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKl5UmgC/2XNy2rDMBCF4VcRs/YUXXyTV32PEIJkjRItKhdJi
+ ATjdw+YLNx6ffj+s0KmFCjDxFZIVEMOS4SJtQ2D+WHinTA4mBhILjveC46RiqOaw88tF1NQd1p
+ 3WgriiqBh8JvIh+cevECkgpGeBa4Ng0fIZUmv/amKff9Exf9oFchxFsL23eB0b/23IxtM/FrSf
+ W9VefTq5CVy1KM3ahxVP7fjyaujH05eIUfjqbVutl6q4Y/ftu0NwyG/2jcBAAA=
+X-Change-ID: 20250610-netdevsim_stat-95995921e03e
+To: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Paolo Abeni <pabeni@redhat.com>, David Wei <dw@davidwei.uk>, 
+ Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, Breno Leitao <leitao@debian.org>, 
+ gustavold@gmail.com, Joe Damato <joe@dama.to>
+X-Mailer: b4 0.15-dev-42535
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1862; i=leitao@debian.org;
+ h=from:subject:message-id; bh=YZ2owkYi3X0AEVs+LYgxowjgbXXIYv8otbPc+FFdDh0=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoUnm10E7EUYsctvXTS2FPSCQTDuhoSvHsC2dps
+ aVTjGWR8NWJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaFJ5tQAKCRA1o5Of/Hh3
+ bVoqD/9vZcfM9dVn9HZvGuvP/wNGVEqBTTG0cOA56gJginOOtdgS9KWgya72Svaro3jAfZyMLRC
+ AkhXS1LaAOhOHCmhDSJZDS5SFZnbKX0DoOZAYPtE3Gks98w4Ro7FN9cZxioCh3NWoMjztXeNXCn
+ ovnmvz8pnmwCYj4GxY4wyTyiwZiV0Zb7VP9uDhjVqpcsFy1Vk5zxDegn/7HB01+T5TPxSesGsWY
+ fGdWdi0uyKT8aaP+yB3BhX4X4eq5xBgzJAYyI7phKLye/ZENLM678yknZQ0FRU8JXWitvWTZR0e
+ YIp5zXfbfqPZceNG6B2jArfCp11O1rND/5IDjaYmlh34OCk9CoJ17wJcOq/86Il+eYrdS6DIUxG
+ 7+ovCftIAistr0zg6/VNj+dwwM3OHNe/zP5R2rdMGrtssnWYhb9cTmEU8eWYSA7mQXasHCCQict
+ +1bA6r4CdczAeOix0mpPBi4+spKrP52LOJHBa8eyO8/hHXPv8ZByrVnGzJgDlBzrCvhiZPTi5yy
+ Jryf4ZYOrvGKLxyIlfmjLV7/+mCXUEV6ldQwG/Abr6GzDuLiAGUP0OUMmAqWOUXoehQ/+5o93Zv
+ tJmIKk1L59ipBqjVdRpHY/2rcbvFlW0XkE45zaseJ0AE7Eej39hVCurE9k7OSJ/npWb+sgSdQ2l
+ Dq14Z3/Z9qt41Zg==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
+The netdevsim driver previously lacked RX statistics support, which
+prevented its use with the GenerateTraffic() test framework, as this
+framework verifies traffic flow by checking RX byte counts.
 
-On 21-Apr-25 6:26 PM, Ross Philipson wrote:
-> Initial bits to bring in Secure Launch functionality. Add Kconfig
-> options for compiling in/out the Secure Launch code.
->
-> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+This patch migrates netdevsim from its custom statistics collection to
+the NETDEV_PCPU_STAT_DSTATS framework, as suggested by Jakub. This
+change not only standardizes the statistics handling but also adds the
+necessary RX statistics support required by the test framework.
 
-Acked-by: Mateusz Mowka <mateusz.mowka@linux.intel.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changes in v4:
+- Protect dev_dstats_rx_dropped_add() by disabling BH (Jakub)
+- Link to v3: https://lore.kernel.org/r/20250617-netdevsim_stat-v3-0-afe4bdcbf237@debian.org
 
-> ---
->   arch/x86/Kconfig | 11 +++++++++++
->   1 file changed, 11 insertions(+)
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 4b9f378e05f6..badde1e9742e 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2001,6 +2001,17 @@ config EFI_RUNTIME_MAP
->   
->   	  See also Documentation/ABI/testing/sysfs-firmware-efi-runtime-map.
->   
-> +config SECURE_LAUNCH
-> +	bool "Secure Launch support"
-> +	depends on X86_64 && X86_X2APIC && TCG_TIS && TCG_CRB && CRYPTO_LIB_SHA1 && CRYPTO_LIB_SHA256
-> +	help
-> +	   The Secure Launch feature allows a kernel to be loaded
-> +	   directly through an Intel TXT measured launch. Intel TXT
-> +	   establishes a Dynamic Root of Trust for Measurement (DRTM)
-> +	   where the CPU measures the kernel image. This feature then
-> +	   continues the measurement chain over kernel configuration
-> +	   information and init images.
-> +
->   source "kernel/Kconfig.hz"
->   
->   config ARCH_SUPPORTS_KEXEC
+Changes in v3:
+- Rely on netdev from caller instead of napi->dev in nsim_queue_free().
+- Link to v2: https://lore.kernel.org/r/20250613-netdevsim_stat-v2-0-98fa38836c48@debian.org
+
+Changes in v2:
+- Changed the RX collection place from nsim_napi_rx() to nsim_rcv (Joe Damato)
+- Collect RX dropped packets statistic in nsim_queue_free() (Jakub)
+- Added a helper in dstat to add values to RX dropped packets
+- Link to v1: https://lore.kernel.org/r/20250611-netdevsim_stat-v1-0-c11b657d96bf@debian.org
+
+---
+Breno Leitao (4):
+      netdevsim: migrate to dstats stats collection
+      netdevsim: collect statistics at RX side
+      net: add dev_dstats_rx_dropped_add() helper
+      netdevsim: account dropped packet length in stats on queue free
+
+ drivers/net/netdevsim/netdev.c    | 56 ++++++++++++++++-----------------------
+ drivers/net/netdevsim/netdevsim.h |  5 ----
+ include/linux/netdevice.h         | 10 +++++++
+ 3 files changed, 33 insertions(+), 38 deletions(-)
+---
+base-commit: 3b5b1c428260152e47c9584bc176f358b87ca82d
+change-id: 20250610-netdevsim_stat-95995921e03e
+
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
+
 
