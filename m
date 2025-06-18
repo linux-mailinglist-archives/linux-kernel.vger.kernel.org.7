@@ -1,140 +1,107 @@
-Return-Path: <linux-kernel+bounces-691650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448EAADE725
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:36:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BBD2ADE703
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A246717D92C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1D11403111
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B12B2836B0;
-	Wed, 18 Jun 2025 09:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270B8284B58;
+	Wed, 18 Jun 2025 09:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="LOxDWUda"
-Received: from forward204b.mail.yandex.net (forward204b.mail.yandex.net [178.154.239.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vqkAXk1W"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1DB281531;
-	Wed, 18 Jun 2025 09:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4084284695
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750239332; cv=none; b=UyzPEBNZ4wlySd5JGtFYGP4lgFQQ0W56vu+KJz4rwGp/FvHnN6a3Ka7Ia1HSzyUuqlseMY/lEdbdDeSF+KtpGvnxbRBo8cptD7nWXQ20+1q5rinOfmqv3FOWBbz311cDz78hE3ovQeLnfKhb6bHlV3AN29gVrBZwZghceJe+RNQ=
+	t=1750238905; cv=none; b=FzdRRh8ojxbAG+QyfaMQ6uPeSInAr5VBJrlPsQKlcRfKXB4+53nbNxEGJ0WjTLbSuCPH0D2poLVhg297yRoS77OewsQNg9jfDLY1pLr+LipsDoCpnQ+u/tgjAUoUf7Uc1FWHdJzt6Il/waIYW71aQ/xP6eQIwY0976hkbJHQWKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750239332; c=relaxed/simple;
-	bh=yP0+8GmbtpPKWcM1m16ilybPZ3Jwzm+ZXhYXis/MEcc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H76YAja70zycYt+BFSfkqD827TbY2QANNMBBTZovz0n0Jsio5NTMRQvsFqaObgKWpeg6DyrB+Oz69x7lM81GadhTjs8w8BGx0gEyKYT5VtaquEBF+N1RyQOZ3vr6V4Pqht+dpVCxUDhLjeMqxxVIbSk/ww5/JckEldVMTLbAsG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=LOxDWUda; arc=none smtp.client-ip=178.154.239.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from forward102b.mail.yandex.net (forward102b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d102])
-	by forward204b.mail.yandex.net (Yandex) with ESMTPS id 0C2E264C39;
-	Wed, 18 Jun 2025 12:28:31 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:aaac:0:640:94d6:0])
-	by forward102b.mail.yandex.net (Yandex) with ESMTPS id 6C21960D12;
-	Wed, 18 Jun 2025 12:28:23 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id HSJfHFFLlOs0-oEA26d2T;
-	Wed, 18 Jun 2025 12:28:22 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1750238902;
-	bh=nLy/zmKoPAJaNBFhjjOaDK0vOCitRXvt18tMyA0z2/s=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=LOxDWUdaWYl9IlKfoU7InmzQpu07ULulEVheZimN/CryD3uTemSR6Rprp2mBQu3AI
-	 c4n+A3dxxSOR44VtGtDNns0HoB8K6KSPfyLsG2ZTWqDRGS4L34zCCbnRSJgXcXp5GN
-	 cU42cG8/0+pLAuSs0EuSpdtg1RAACdi+iJjinSU8=
-Authentication-Results: mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-To: rust-for-linux@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-Subject: [PATCH] rust: replace literals with constants in `clk::Hertz`
-Date: Wed, 18 Jun 2025 12:28:10 +0300
-Message-ID: <20250618092810.29370-1-work@onurozkan.dev>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750238905; c=relaxed/simple;
+	bh=BdTd86rD8wGBkEGobCd3dIkyDDHb4Ycg01Tusl+Lv0Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f3eKeUsaOzqL9fBpDSSdA2h1EcPCJ5B5Fy/eGIK4bMsfZo0me5vtmDNqfl9f7B7w2i4cv+AuXsh6XuJIzd4nhK/7p+FFETnOybbDht0ZhKYakzNe5Ll7KC5ENWPaoTE4wAQzt/caO+87qKXynqobsXDc4Dk2bLNJm2VFBC73R5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vqkAXk1W; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54e98f73850so6308611e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 02:28:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750238902; x=1750843702; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BdTd86rD8wGBkEGobCd3dIkyDDHb4Ycg01Tusl+Lv0Q=;
+        b=vqkAXk1WN4j8C7WfZ2pxXm/Ee8GQntNeRJ/0UOFpmjihDoEUU7TQY8QBVmPRFtFS6x
+         D6tdUVKuxDSmyrffgKiZ/zJiHUICj3kooLzbXXijH6bPZnS/CUQ4WJbW2oAsic2malkv
+         7TGstFzXDWREZjnkIylBm4IKd6IqfZ2AIcVAY3rnTUAHC+y+qoMvaEHbtDP4CY5tT+DC
+         j0YiOdJGUfMSRYo7lI7KcPWwj3bloTk09hc0/7dgezdthMN96xkBmuxjo7OxUj4Vzdt1
+         skTWhFRlNS7+C77bODAOtskqOHrnddKJ3fK9qMw93y2g8arjeflNO70/IPSTuFKeOJUf
+         L0kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750238902; x=1750843702;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BdTd86rD8wGBkEGobCd3dIkyDDHb4Ycg01Tusl+Lv0Q=;
+        b=g5FCvzi8HWKCqxtTNAhqbgPDIeiLmKP6bKsdaT/gYcfVqW4QP6JXX2dGIDMuVyn3AW
+         n0Esj16BbSm5Aw1wFeIa/5zjfuIuzkmbczuUrv5vDdpXZ/8Z2ctLT/ACGkJ4/hw6ciRx
+         g+RP1iP7uWSszYz9Y+V+RQj8XUCk6SFfyxUgnAdiYPg7L8RiuLJw+SItFjINmjQOloBE
+         9OdmzHHIRST7YGFiLRgAfLGv70/Aa3XX/abS+meCe9oH3FR6PdYfHXV3zoccSChNFoyW
+         Ivxc3rU6SS+545AblTVKdH9JmMSzkwMeCFtvsdfuHN2I6sy2GgNWMflL9t84cM9wRdpe
+         UcqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHY8wJNDnsZJqGd1xn40NX98imA7MA44rTKP4qCTE52fM6OjNqqVBJAMtMIEeSJYJyKSU7GYrwy1BNmAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzueT7nFiqe0oKkHEd0tH2AA21ZqN/q1WXqxrgapQUOD6cY643m
+	PiCD5hORV2oMda7zGtZ3iAz99UU10ZSRdK71AopK4Cq+jfixVjKhpRz50at7A6bKY/T1pQiYjh0
+	JuyZ6amwIQlevxgpncF0Y/33TlPz+vmPeB417JbgMOw==
+X-Gm-Gg: ASbGncsAsMjx3l3r7XSRI7PT4kdfc6EcXCs8B2PFGDUJ5af+WrrBc7l6PkNCwcFI1AU
+	ihwK3whOxbkt4+AtTd9WaMlewuyqOYvLNiJYjptVsdLeswPWMxyaSCyh7yErPmUXrGa3RJjv/zI
+	cgFO2sTd9qdHJDKQxnfP2pcNRPoPPMT5wMX2nwQgGE8k8=
+X-Google-Smtp-Source: AGHT+IEqIwMIpDCAfC/mp2g5or4udP4zqxj0H5Z8NfKN9pZpGaYnyn1sPYmydRm3962RKwUckswXX8mjoIzWXQbsVfs=
+X-Received: by 2002:a05:6512:3ba5:b0:553:25f4:695c with SMTP id
+ 2adb3069b0e04-553b6f4470cmr4666950e87.50.1750238901764; Wed, 18 Jun 2025
+ 02:28:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250609220900.3035642-1-robh@kernel.org>
+In-Reply-To: <20250609220900.3035642-1-robh@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 18 Jun 2025 11:28:10 +0200
+X-Gm-Features: AX0GCFtHdJldExb7osATG0sE9yc28prRhU8fIk70sNT-r9whXSNHnrPKGLd_oDo
+Message-ID: <CACRpkdYea5F5pvQY1Sv=u3Oe9Bv5bp31Jwvo1uftQYbwF0U1rQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: gpio: arm,pl011: Drop interrupt properties
+ as required
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replaces repeated numeric literals in `Hertz` conversions
-with named constants.
+On Tue, Jun 10, 2025 at 12:09=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org=
+> wrote:
 
-Signed-off-by: Onur Özkan <work@onurozkan.dev>
----
- rust/kernel/clk.rs | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+> It is possible that the PL011 doesn't have any interrupt connected and
+> can't be an interrupt provider, so drop the interrupt properties as
+> required.
+>
+> The LG LG131x SoCs are one example of this.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-index 6041c6d07527..b8c5dafdc29c 100644
---- a/rust/kernel/clk.rs
-+++ b/rust/kernel/clk.rs
-@@ -30,19 +30,23 @@
- pub struct Hertz(pub c_ulong);
+After changing all PL011 to PL061:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
- impl Hertz {
-+    const KHZ_TO_HZ: c_ulong = 1_000;
-+    const MHZ_TO_HZ: c_ulong = 1_000_000;
-+    const GHZ_TO_HZ: c_ulong = 1_000_000_000;
-+
-     /// Create a new instance from kilohertz (kHz)
-     pub fn from_khz(khz: c_ulong) -> Self {
--        Self(khz * 1_000)
-+        Self(khz * Self::KHZ_TO_HZ)
-     }
-
-     /// Create a new instance from megahertz (MHz)
-     pub fn from_mhz(mhz: c_ulong) -> Self {
--        Self(mhz * 1_000_000)
-+        Self(mhz * Self::MHZ_TO_HZ)
-     }
-
-     /// Create a new instance from gigahertz (GHz)
-     pub fn from_ghz(ghz: c_ulong) -> Self {
--        Self(ghz * 1_000_000_000)
-+        Self(ghz * Self::GHZ_TO_HZ)
-     }
-
-     /// Get the frequency in hertz
-@@ -52,17 +56,17 @@ pub fn as_hz(&self) -> c_ulong {
-
-     /// Get the frequency in kilohertz
-     pub fn as_khz(&self) -> c_ulong {
--        self.0 / 1_000
-+        self.0 / Self::KHZ_TO_HZ
-     }
-
-     /// Get the frequency in megahertz
-     pub fn as_mhz(&self) -> c_ulong {
--        self.0 / 1_000_000
-+        self.0 / Self::MHZ_TO_HZ
-     }
-
-     /// Get the frequency in gigahertz
-     pub fn as_ghz(&self) -> c_ulong {
--        self.0 / 1_000_000_000
-+        self.0 / Self::GHZ_TO_HZ
-     }
- }
-2.49.0
-
+Yours,
+Linus Walleij
 
