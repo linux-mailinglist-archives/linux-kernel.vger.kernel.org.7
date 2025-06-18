@@ -1,117 +1,199 @@
-Return-Path: <linux-kernel+bounces-692263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F722ADEF14
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:20:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B70FADEFDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9606E168A06
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:20:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75C87189C2B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85322EAD08;
-	Wed, 18 Jun 2025 14:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B943A285C8E;
+	Wed, 18 Jun 2025 14:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jg90iC/d"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Z6TsKKMp"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013016.outbound.protection.outlook.com [40.107.159.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40702980A1;
-	Wed, 18 Jun 2025 14:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750256411; cv=none; b=NlbvW+QbnamMilAXZe8JA+HazXl+k7KKRFi+9w7Q3RKZoGphPP7MqanfOPD5XqVvAONnX+zOROLvpFMTVOGnDAgdbbwjdXnzmcCRO7Ut66D5+cMrtY8iK1ndOGkJh1rprKTyG0VuJ7HCowQqplwioXG/BDIXYtXuqbmMXHf3rcM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750256411; c=relaxed/simple;
-	bh=uRKG8lv6RJYmAqOvTk+z6wT0OMHIbCwNn7aWXPGcbUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h+KL/loHwbfXteS5/GEoVvh0fHY3BrpqZrGhMTvNNwpCVT8k6spLDtbzgpSyIVGMyd7CI22Fbx7XKmWICppncirzh2Z37HiZUu6F4ZL1kZnVMff3HmPV42wmVJimbK0mJuF0GBUVxK6avxqnCTFel2i3T5A6nsF8ST6jJM0vI6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Jg90iC/d; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4zN3bC4DkftlVvPBzBVft4YUqwC0P2GY66hdLYuFJ2s=; b=Jg90iC/dQ7eO51xKL6I7LV4Ks9
-	/3fc3ZZvS6YogEPJkTsfxXXfGAe3oDHiXfJZtW3/U0pTJhnPWGdCgrjYEX0XEpjSPUdKBeWUh1kdq
-	Q4F5KEF980pOhiRoB8oNPWmfznZciSn13bgKpROljCYjjTOdaetaa35aMvXE1+G7ljCSbmdTe4dQZ
-	roONBtuKAZS1mBpWaZwKlBspZh8XzpmvFyDo2uS5zneyQRpHxdAqumhyFrRWNxDO4l6saLg180Tlp
-	z41v4IU964t0QkJMvHMMc7d6TWK2NeBqSBHpTwDSlchNakqjHAriJNf+BElCE8TVy3O0qOLtSkxs1
-	8pP0Rgzw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uRtdx-000000045iT-1F7Y;
-	Wed, 18 Jun 2025 14:20:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 38D53307FB7; Wed, 18 Jun 2025 16:20:00 +0200 (CEST)
-Date: Wed, 18 Jun 2025 16:20:00 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, x86@kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v10 06/14] unwind_user/deferred: Add deferred unwinding
- interface
-Message-ID: <20250618142000.GS1613376@noisy.programming.kicks-ass.net>
-References: <20250611005421.144238328@goodmis.org>
- <20250611010428.770214773@goodmis.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627662877E3;
+	Wed, 18 Jun 2025 14:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750257496; cv=fail; b=PshGjJKcdvQ4O8Pt1kBwdlTXXIp3yy8DvljxJGvJVGYcoUpJJIqKLGTPiyoZQak2g8DH5c3wF2PyAAGygztMlvKcFs7lEWi5CBMwQkWhn4A/j83ikN+sxKa4NVdU65B04K+AEQS28v67eg0589rZxCczGHICGQmv6k8fCZfXT/g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750257496; c=relaxed/simple;
+	bh=q5GQc2+lJVA3w4T/C5CjzFNpjtDAXbFrlY+DVkR6tmA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=YXPJJ7p5ES00SAFxvvRZMFv1tSvJ7ZLE6TwdkhZJgrtvHniZzWe1X4ako/K+HKFo27OGYlnj4OQ48kbGockzzK63859JvzzSB1Gxg5Cp1iSBDpCNaJpuiQq785Lvd3VydF51PrUgoRQAhGVO/rtFHwJVDi88JE125XBqPuM4hpM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Z6TsKKMp; arc=fail smtp.client-ip=40.107.159.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BoxtsvczcpALAJdpaBuwS2B7DwcZOpyDE4kZguk6rY/aG8M1/WF2TVi+L4ogILx+vFLscp+s4kG27sn7MKdHXta/1FfZ5pg3irV6wN0n7tjII5vRozN9HbQ0WuzJJQmDcACegEZdF+DOltcl2q0iDGyeaYNwRdp6YY/LSVP6wPCnHJGgsXB+AEgAxx4lRnujASERt1yffheQ4r4eBzGTHCDto27PGyFktGRU+dmnBRhBcqUEH0YScGR8upfOM3m97pm5WECIObBC4SJuPYz9ScVgLPhqnb1K9dcj3Tf7bQMos75ZWSyt/VNStBkpG/Fk1rJ0PLMuinGSBxTdB1dUgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OscZ40IRIQDD+LdntDnirY+hXCamg3dMrZe4wU0OR7M=;
+ b=lpbwzWwCAIQmfun8uPGXj5+UAqOU8jzKZSZN4zED1CTmAfkYt7lJBFumFXUcIceGfP/UQx837QH6lx2CXNvboD/795QQ3wUNbBE8u3b4/YDdqZQ6w0NlZJcAbH6mOxxPYKdpXkqK71c7p2cnmHU6Ar82VQSGCMAD2CROtSDZemOKDhC7blgMdvvYyFAW39rE5Tjt5vhyQblNlt6RszgJKYS5WnNDLbYPL2NvuD/x6OjG+Si6ZCK3OCJH3Oml8kLCJ7qAw9vlKANUJEoGq+AKCJF8Bezf2LGsw4PPZR/PXZAAwGSBAdSFJdJ2haQdwAx9mmoJNNV31/+a1oRH8U5Apg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OscZ40IRIQDD+LdntDnirY+hXCamg3dMrZe4wU0OR7M=;
+ b=Z6TsKKMpu5eSGS/+bMkS4XXIPo0QrWtjsVRiQFqL7OsF8yVeCiXD40ESC0hk7OcDrjEhrlFBAryZ7QNNk6WqGCydevTChHCSuUPwP8uLgjkl9mzfHNtT/r0qhc5mWeXn0lda5VbmMQUYRpD6wM6ni/4KUDAgLBzdUtr3gKrNyKpJYK1Igd8LglRIpfciSuPaKtIjTQ9t1LDQXfjj2BiixMCE+JWacotHP9oVJ74joe4EslNBB2vgg3cfEIAtNZ1N7nsEKwFqQekj7oxsO+/Op+4Ja1Tmxar9KclthzgTfPjL5DSK5hFNtnlRJMJWXH7xbu3ah4+ciBxutM2ecENeQQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::20)
+ by PAXPR04MB9571.eurprd04.prod.outlook.com (2603:10a6:102:24e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Wed, 18 Jun
+ 2025 14:38:11 +0000
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299]) by AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299%5]) with mapi id 15.20.8835.027; Wed, 18 Jun 2025
+ 14:38:11 +0000
+From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	amitkumar.karwar@nxp.com,
+	neeraj.sanjaykale@nxp.com,
+	sherry.sun@nxp.com,
+	manjeet.gupta@nxp.com
+Subject: [PATCH v2 1/2] dt-bindings: net: bluetooth: nxp: Add support for 4M baudrate
+Date: Wed, 18 Jun 2025 19:50:11 +0530
+Message-Id: <20250618142012.25153-1-neeraj.sanjaykale@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P251CA0017.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d3::6) To AS4PR04MB9692.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4fe::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611010428.770214773@goodmis.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9692:EE_|PAXPR04MB9571:EE_
+X-MS-Office365-Filtering-Correlation-Id: 77fb44a4-9c0b-41b9-8924-08ddae75bf83
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|1800799024|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?wld8BjBsevUDgaRRjYnHsRwpOIeMeMexQeMBAwfXG0bAqfRy0OGQONQ7rqpW?=
+ =?us-ascii?Q?dOplalTGLINpgzlv+kkd8eeO1Lq0zmLoCDnxYdeFszDeti2jRDGOISV6I3C3?=
+ =?us-ascii?Q?U81AusEGqLtU6dRO6uLC1OLrTicR6RjhlDv+KhZXTIGhdgEyilHPKvjRpTRG?=
+ =?us-ascii?Q?RYoblp0oJhqmmZoEaLoOBZ3weIYy5+EQvto5nOIicNorGrnczI2Qu+76J/UA?=
+ =?us-ascii?Q?Fw8h+LUO6IhUMF4XeUMp6JYgOy1O+qA4ynmqkmq3IuCeS/6uHZcCH9u3sXWf?=
+ =?us-ascii?Q?/5GqA58B6lIEpIO2wAM07V1g/402hYWa52/Tqz632BgufNI+ZFn5OUG2B2FK?=
+ =?us-ascii?Q?a+BaoBNK33NwFt3GFf4K8b9fJ82v623XrTCL56ixMjMXzIzS/GbXdMT11hJo?=
+ =?us-ascii?Q?m3Me1JViZw/E5VQc2wvf0hQISd0WKQh867TlsZwGHOch8f+V6aUb7q9NTsja?=
+ =?us-ascii?Q?PbBoydN0Z4vL23cwgFhfz4dW7IHkUD6agTYUCNiJM0YJ/+eFfIgiax9g+zHS?=
+ =?us-ascii?Q?EiHr+EWnotaB4X72XUgKCvnXW6kNWT6Lr143miyJFSf1CA0tpMw2LRBqp888?=
+ =?us-ascii?Q?OldNPQIaLGCPgDkp3dWHv6jlC3i8xihoCiTF8JHLrzkS3zLN1eDR4fC38CcZ?=
+ =?us-ascii?Q?OXNHf+BsLMJrTLi/hZXYpbrzKOrijeih7uLWoG0lRRexT5vm1L229I1liJDy?=
+ =?us-ascii?Q?zFDxsKRoyAJCRg17AxUL50nAjl8bNuYCD17mIi3l3RrOBz/9VqSWbOvZ2j9X?=
+ =?us-ascii?Q?vhX/6gkFfjI7CnZLVB2K642PeisoiUvZwsqGnKOCYi/tI75ABu1+pFbyiwUY?=
+ =?us-ascii?Q?XMCtGQzk962xgpGF/rC91YGV8WuZspzsrP7C2FMtvHnjMeCQS111tbdG5HHb?=
+ =?us-ascii?Q?GVPzIayhwtlXjG8qpFpGWtEGJy2xj0s82mxV9aaQAm1OuwMYHydwu0V9M4FF?=
+ =?us-ascii?Q?GvIGv/xwgMjN0Y2D6XXlWBr98+Y/aQVod1ZvIF/eqX1R2DiId3wDq+gUPlQo?=
+ =?us-ascii?Q?RkuwDN+3RoVTQr82rTJBiNtLwn2EKHvYGWl0InNTqLCOpaJukX2Z4NGAe+4P?=
+ =?us-ascii?Q?koPazAESY+TbKZ8WDpRxZE2Dxs6CNijd2iCuJocsdqVBYTHvGlIqqPT19G5a?=
+ =?us-ascii?Q?38ylt4BcXyLu/Y0XPd1llauWhweImAt7v3xL8MDwaaD9CLj0DEUtSSN46eKh?=
+ =?us-ascii?Q?KjZm82OggP3HItnxHBm3PF1eWjUWTyzqq5RVIt+0WPl6b+pB2GiseWmGHme2?=
+ =?us-ascii?Q?nWqmBgsCp588j2yut90xXexxysHqSzyI28hZtVmcBm7jB0pmRAugd11kpKV5?=
+ =?us-ascii?Q?BqVOWBTxDk6SoFu7R6L8o1TfGY1e5sz0u6nh0vGVqLEak9y2dLmHRAZbKjUB?=
+ =?us-ascii?Q?Fk09o5h/S7edytVgUbgANf8TRsyzogzkZbpjzxbwO7QiH8UWajkyTPleYHf0?=
+ =?us-ascii?Q?ivUMVOUQXAPCUNASUXG+8geHe3gqAs88CGw7yGMlTbbEbwmIYM2iRg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9692.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(1800799024)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?OfesZW2Se5T04eFVEpgtAKkLsnYvlU28Fxmtkfh4Xshr7sRSwEz26q0ZW8xU?=
+ =?us-ascii?Q?D1ZUdd+B1hfdPwmbv2KUunA5j4b12fzT8Kxs98zONKkFlakcbJFW+GQm2c7T?=
+ =?us-ascii?Q?1ing39jxvXJz8QL4TfVy8ADAurwKCbFwC1w14RYtMP6TnHDpfSabsS6z/5Lo?=
+ =?us-ascii?Q?3ODhNTFST0+KL7OJ/LIAP6wiwYD44vllA32vUDEbYHhN3L9toh/700tUqvVn?=
+ =?us-ascii?Q?l2Rxf7io6mwufMz9SlZh4sh5ArKBDB+TwXZ2BpzaV9J0XjJoCHekbxUDNlxK?=
+ =?us-ascii?Q?OTeNgaS2CVMKFm8Xgq7rmHHBCGqZoeqITiLWFICMBLvKM/HBetWffKeMSB6t?=
+ =?us-ascii?Q?IKIUzzvcViPLSdsWefIv0uNxem+VTXkwzFedKjh4v6OQaWqhBJf2QQ49zjLE?=
+ =?us-ascii?Q?tka5hLE8pnYysVpZdG8WnL4bpfmof145cFARJhxsS6y6HUY/yTAMiFWguG4R?=
+ =?us-ascii?Q?p69t1/zfKGACRznNqeQ4Le1lBIMWGcVh3ft2Xee9K6H++Q8LgxVKjGh7BYVa?=
+ =?us-ascii?Q?ptjQLLZDGWBezyFWcXDsya/eYYt0SeKsq410AOYgfHRAMxMrH26hR5O3qe75?=
+ =?us-ascii?Q?sm3jN9DhLM9Zi5kd+x8KPOIFvit2DVptFN2XHIYlz24sbAZVBn0TdB0qhRbk?=
+ =?us-ascii?Q?MYeg4zNLqFxUpaGRsu0dZXS/blQKrU723TPdmxFn0PfOUmWcCAtqEABxvJzc?=
+ =?us-ascii?Q?x3lV5GDZSZ6aQeTn4IH5VmQuNQQB83YDbdcjx8nIqtez3XiXX982iBMDwWi3?=
+ =?us-ascii?Q?JrePcvt8YsvFANTsg3nA6EeRzYVMjhQVKD6unvqi3C6RP22Yskp5JdM8D9gR?=
+ =?us-ascii?Q?nQAXPpqI5Gggp6VuJcNn6alkUmvgqxosxAMSmqT//yYGwybtoOuW0jrep4vS?=
+ =?us-ascii?Q?BlPHpdKam0GTbWVvgjKB3XtzwP7OE4h05xdF2rJns4w+ijWkshSzwwRhE1Ps?=
+ =?us-ascii?Q?D4pYhoQWNyeAVTpIqM9EfzvNNfenjywTsOa+Rh4mdXtZFDA//vFuSTndTWh9?=
+ =?us-ascii?Q?ReWKyFU5HE0dL3OxNEhrfseFsVkFBPK07ewQXdj6C9am8Ep9CevVCdww7eq3?=
+ =?us-ascii?Q?PHM8+cV5+gTXAUr4jM+JpAkp0KBseGPWXV+VmhWNNglCLxCqqlHK56Y1GTTp?=
+ =?us-ascii?Q?Q1vs1PIS01Kd2cBwUa6dhkDx4BD73VQNGay6/pO8TUv/604DyywEcdelUv42?=
+ =?us-ascii?Q?Wr0yzGNru8oalz+qY/Z8wl79283pO3PSjGsnDXE/H6+e9kg4/yfMz7KhOHHR?=
+ =?us-ascii?Q?lr/eSYD+KmeIJhs2oxKlQ5/1IVrcGWHhOSAbTrVnG+AgxIyFe8QKrn4IQAZf?=
+ =?us-ascii?Q?h5tmNF34p8hZ2FL7KW38Q3PlGOZ8rEgrVxDKliofGXlgkRCqAFpUVV45mEJy?=
+ =?us-ascii?Q?S9a8MAW/MxiFn36h6e32sf6FU1OX85ix4JdwqLQjbyZxGPmGZr8luvu4HjlB?=
+ =?us-ascii?Q?a23TWTBC+KvC9l7exmTy7m0NJLOIpoUTC4UI6rlFv5LRhyuyhB7cv0EzUOCF?=
+ =?us-ascii?Q?wQJfJ4rKb/Ex9pHhqOcm5n+lR5pR8a6Mwka7B7swEj43UEBM4Xdw5QUn6n1P?=
+ =?us-ascii?Q?9EWEN0YurxI0FlQJgwZp4hvOaKcyvO+G2R0KqS2SQgsyWy6M+R6+8Th8TyNZ?=
+ =?us-ascii?Q?Pw=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77fb44a4-9c0b-41b9-8924-08ddae75bf83
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9692.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 14:38:11.0650
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RwnxUfSOKq+jLSAoVnyFDfi5HCQoZ/qZFDht2+RfoCgoq9Ghqzp3n3Cn2jPkhpbY1yW3KAPSg75MUc1BoDvIMTqIwDFM5vNqq6Hw+NRUhuo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9571
 
-On Tue, Jun 10, 2025 at 08:54:27PM -0400, Steven Rostedt wrote:
-> From: Josh Poimboeuf <jpoimboe@kernel.org>
-> 
-> Add an interface for scheduling task work to unwind the user space stack
-> before returning to user space. This solves several problems for its
-> callers:
-> 
->   - Ensure the unwind happens in task context even if the caller may be
->     running in interrupt context.
-> 
->   - Avoid duplicate unwinds, whether called multiple times by the same
->     caller or by different callers.
-> 
->   - Take a timestamp when the first request comes in since the task
->     entered the kernel. This will be returned to the calling function
->     along with the stack trace when the task leaves the kernel. This
->     timestamp can be used to correlate kernel unwinds/traces with the user
->     unwind.
-> 
-> The timestamp is created to detect when the stacktrace is the same. It is
-> generated the first time a user space stacktrace is requested after the
-> task enters the kernel.
-> 
-> The timestamp is passed to the caller on request, and when the stacktrace is
-> generated upon returning to user space, it call the requester's callback
-> with the timestamp as well as the stacktrace.
+Add support for 4000000 as secondary baudrate.
 
-This whole story hinges on there being a high resolution time-stamp
-available... Good thing we killed x86 !TSC support when we did. You sure
-there's no other architectures you're interested in that lack a high res
-time source?
+Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+---
+v2: Use the available 'max-speed' device tree property. (Krzysztof)
+---
+ .../devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml  | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-What about two CPUs managing to request an unwind at exactly the same
-time?
+diff --git a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
+index 3ab60c70286f..4a1b6ea48a2f 100644
+--- a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
++++ b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
+@@ -34,6 +34,12 @@ properties:
+       This property depends on the module vendor's
+       configuration.
+ 
++  max-speed:
++    enum:
++      - 3000000
++      - 4000000
++    default: 3000000
++
+   firmware-name:
+     maxItems: 1
+ 
+@@ -78,6 +84,7 @@ examples:
+         bluetooth {
+             compatible = "nxp,88w8987-bt";
+             fw-init-baudrate = <3000000>;
++            max-speed = <4000000>;
+             firmware-name = "uartuart8987_bt_v0.bin";
+             device-wakeup-gpios = <&gpio 11 GPIO_ACTIVE_HIGH>;
+             nxp,wakein-pin = /bits/ 8 <18>;
+-- 
+2.34.1
 
 
