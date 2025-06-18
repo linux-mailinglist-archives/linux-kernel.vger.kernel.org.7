@@ -1,149 +1,125 @@
-Return-Path: <linux-kernel+bounces-691406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07C9ADE439
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:06:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B587ADE443
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A336B3A5E10
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:06:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ADBD17AC62
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BBD278152;
-	Wed, 18 Jun 2025 07:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TZutrawO"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077CC27E071;
+	Wed, 18 Jun 2025 07:08:20 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AB1277CB8
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 07:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F95277CB8;
+	Wed, 18 Jun 2025 07:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750230385; cv=none; b=JonHAd6CHYOfKeAAUzyzeoJSuKyBPt0hyYZ14PYx8w60KrlM1/a9rAjAWvhQ3dYTD3O6ddislzTowniUjdIaHZl3KNG6d6W5R9pIELFq7dZ+WsRKoLFETIrF/qgRxzFJB7cktoVdWe/a4nJ+sWfb0yM+9RvftRpySFsUE7bFppE=
+	t=1750230499; cv=none; b=SwW9ZOa3eQsh8z5Ag8I5CgLFQTtwnEpUTRecRYNd5SEpvSIrnNpEleqk/tiX6UUixrfbqdLDz9ys5RA/Duy9f7tuad96lnVKApGuOsfdlFwNluCrx56bMW26ko2ZV7WT5NWxzyNt9KgGMJH0JWxrL2jX4aPbmHTTACmc2+HTDfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750230385; c=relaxed/simple;
-	bh=A2xQRh82eLpfV/4XZ2JrVg3cKaAyJ1bR0+eEjm8yzy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Alj/8O1c1Is4DQuNEtOU+juBAMMeOqsT3AggTeoX/eaWJa6/gmynSBz62wrQTi2Gy57dQyju6/iPi7YBcH56uS+avIcX4k6kWhu8IujttC2odIeTo+PEytMpv/qgmsBGK8F6O6GzhRntnbr30kTqCKfnCxwaYGrxyW6ufZzMRgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TZutrawO; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4530921461aso56238035e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 00:06:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750230381; x=1750835181; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P8ak0u57mwKY+la7IosABlsldAqqF1M3hqL1GnHeB7I=;
-        b=TZutrawOsuYe4kSjD9Tt7C6FbAU9HJ/r/Hbw8J8qSZb4piIUi10RSOUC5LfE2DZ+Of
-         t6CsxDlbC1gRq2j88ROLe2iCvVKYcbmbJ1t4QhTYs7S3K6Dj+dYU3auyDyFDjzJNU1Wc
-         FFOllNkmgQKnKORpYdRtkwsQxdEVfzxfh7zriqmRz1vm2A5IGlf3OHBpXRpe/GVPq/7U
-         UM4M/Cxa2S9Iu4NH8G3aonxUNM/GZOVNqqMk5pEofdh2kPZKEHUCznnuIYx5UVPQREMN
-         ydOyqpK2mFgsT7Q4pd32BM159JeFMFbP4v/Inr9D3+TMnkZpD0qHFQfo09Eh6ijRNgMB
-         xjvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750230381; x=1750835181;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P8ak0u57mwKY+la7IosABlsldAqqF1M3hqL1GnHeB7I=;
-        b=E50EP9cfBtITaITkIS+epUwcl9uwsyJwPeDMhDq6wgpdTRecbEEQII+mTS5VGvxatT
-         gMGNfCKeZELOC42lMFQbOVZBkIvz6mtmbS2cpGG5xFrvHVDTMErl2kOQwa5PIVtu5lyA
-         4prEmeZVW2dKJTNOgHGRWKUltN/Xf/7fLg7COgLZGiBDR+q/uQLCaQmm0z4FlzNGXDmi
-         zvQUk6s4BwTXXf1Fc6C40MXwDRXdCV66BzriuyxXumL60fBdYqmbX9Q5gEEz/2mo6Ty1
-         xbgQuhMYsmjc4OHAEoairiXo6pc1HerXS4GX9RNQkfzeAv8wKRp3UoeAc2G+ZeXiTJGI
-         +13A==
-X-Forwarded-Encrypted: i=1; AJvYcCWB3Ax7Znge4lFlyCVQjxqBRycocSAd4EPX8WsHbG15qtsydLotrIHrv3qrsz3p5ckfjTY3GTzgis69gYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmHmSfQPZ0GMTUvi4QMQD9/uiOvflre1PF18+sW5TF6fjFUSrL
-	eGkpmImsg+o+LeLUnOj4Q7dfKHdSqfqRHeno0L6jl1y3bgXFUJpht0Y4NAwBkFIlLfM=
-X-Gm-Gg: ASbGncuXpt/O6sOakWWLAmEX8OIeO2fub/8KTpjlGFqNZGhbHdV3Lnh5C8ovtIXYMQ1
-	JzOGnee2vJL9Fc7cD1mt3dFpQWnt6PSdOQpcL+q52nTwAltrhWAwVLn+Pd7fABb/ObihHfD3NMN
-	2l0KaXQAnbk1j24S+qzUvfs1dAFqPLCgiB9ajPT3Jjcykc0ScB8q0QUHbzw0B25xh5aXvEFE/R/
-	Wy1cHy2QQXtwxF3u4su1yN8PijSudDgF0fmLaMZhApOkhHJsTH0sb6AR9EwbCf3SgvgJt6WGXJu
-	WrDY7v3IIoH0kGYN8YmjmPrFS1yju6/IBo4iyA9L5mGBrr3U/jFJ+MtZF84f6hbxqeJwcx0169o
-	=
-X-Google-Smtp-Source: AGHT+IFimzhLX/ijd7oNELOScBvX3FkMVVc/Tv3+hG5vD6SxptgJFsZJSYZ/wB5n6DFIXSEA+AMKDg==
-X-Received: by 2002:a05:600c:4e0d:b0:453:c39:d0d0 with SMTP id 5b1f17b1804b1-4533ca6905bmr165409335e9.13.1750230381447;
-        Wed, 18 Jun 2025 00:06:21 -0700 (PDT)
-Received: from localhost (109-81-93-212.rct.o2.cz. [109.81.93.212])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a568a54e71sm15794410f8f.1.2025.06.18.00.06.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 00:06:21 -0700 (PDT)
-Date: Wed, 18 Jun 2025 09:06:20 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	David Rientjes <rientjes@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm: add OOM killer maintainer structure
-Message-ID: <aFJlbF9DHb3LfIJE@tiehlicka>
-References: <20250617085819.355838-1-mhocko@kernel.org>
- <002eac51-1185-4a51-94f9-49987db84202@lucifer.local>
- <aFHJYymXpMQu6nEv@tiehlicka>
- <20250617173141.8f7e110aa027fab242f8debc@linux-foundation.org>
+	s=arc-20240116; t=1750230499; c=relaxed/simple;
+	bh=o5QQSAfAdXW8i8puQ8G/ITt2bMNgriuyCE0HZH+Rqlg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aX3B186r+aQJAfbx6Zud2a6XPDj65oJpY4lk+g7NFdgez12vxQD23F3sJVpDn1EV+G/kk6pEd0u2TSWifHM7LJCiKI26Ibu9ygJ8xZd6E1amPrSz7oM59HUCXLJ5r/34/8n1uDxxWRjuXK7YQnwJffkw0Ia7JcYj81v+bDy4osA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowAB3x0_ZZVJoQ1lPBw--.9486S2;
+	Wed, 18 Jun 2025 15:08:09 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: gregkh@linuxfoundation.org,
+	tglx@linutronix.de,
+	u.kleine-koenig@baylibre.com,
+	mingo@kernel.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] usb: gadget: m66592-udc: Use USB API functions rather than constants
+Date: Wed, 18 Jun 2025 15:07:14 +0800
+Message-Id: <20250618070714.817146-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250617173141.8f7e110aa027fab242f8debc@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAB3x0_ZZVJoQ1lPBw--.9486S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tF43KFyxJw47Cr17Ar4fXwb_yoW8CFWxpa
+	n5JaykXrWjyrWUCa98JFn8ZFy5Ca90vryUCa4aga4a9F13tw4SqF1UAw1rKrWDCFWfZan0
+	qw1Yyan2qanxGrUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvm14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Wrv_ZF1lYx0Ex4A2jsIE14v26rkl6F8dMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1lc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+	67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+	z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
+	UI43ZEXa7sREEfO5UUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Tue 17-06-25 17:31:41, Andrew Morton wrote:
-> On Tue, 17 Jun 2025 22:00:35 +0200 Michal Hocko <mhocko@suse.com> wrote:
-> 
-> > Andrew, do you want me to respin with the sugested change or are you
-> > going to pick those up?
-> 
-> 
-> From: Andrew Morton <akpm@linux-foundation.org>
-> Subject: mm-add-oom-killer-maintainer-structure-fix
-> Date: Tue Jun 17 05:26:51 PM PDT 2025
-> 
-> fix mhocko email address (SeongJae), add files (Lorenzo)
-> 
-> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Acked-by: SeongJae Park <sj@kernel.org>
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Use the function usb_endpoint_num() and usb_endpoint_type()
+rather than constants.
 
-Thank you Andrew. LGTM
+The Coccinelle semantic patch is as follows:
 
-> ---
-> 
->  MAINTAINERS |    5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> --- a/MAINTAINERS~mm-add-oom-killer-maintainer-structure-fix
-> +++ a/MAINTAINERS
-> @@ -15851,12 +15851,15 @@ F:	mm/numa_emulation.c
->  F:	mm/numa_memblks.c
->  
->  MEMORY MANAGEMENT - OOM KILLER
-> -M:	Michal Hocko <mhocko@suse.com
-> +M:	Michal Hocko <mhocko@suse.com>
->  R:	David Rientjes <rientjes@google.com>
->  R:	Shakeel Butt <shakeel.butt@linux.dev>
->  L:	linux-mm@kvack.org
->  S:	Maintained
->  F:	mm/oom_kill.c
-> +F:	include/linux/oom.h
-> +F:	include/trace/events/oom.h
-> +F:	include/uapi/linux/oom.h
->  
->  MEMORY MANAGEMENT - PAGE ALLOCATOR
->  M:	Andrew Morton <akpm@linux-foundation.org>
-> _
+@@ struct usb_endpoint_descriptor *epd; @@
 
+- (epd->bEndpointAddress & \(USB_ENDPOINT_NUMBER_MASK\|0x0f\))
++ usb_endpoint_num(epd)
+
+@@ struct usb_endpoint_descriptor *epd; @@
+
+- (epd->bmAttributes & \(USB_ENDPOINT_XFERTYPE_MASK\|3\))
++ usb_endpoint_type(epd)
+
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/usb/gadget/udc/m66592-udc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/m66592-udc.c b/drivers/usb/gadget/udc/m66592-udc.c
+index 715791737499..54885175b8a4 100644
+--- a/drivers/usb/gadget/udc/m66592-udc.c
++++ b/drivers/usb/gadget/udc/m66592-udc.c
+@@ -359,7 +359,7 @@ static void m66592_ep_setting(struct m66592 *m66592, struct m66592_ep *ep,
+ 	ep->pipenum = pipenum;
+ 	ep->ep.maxpacket = usb_endpoint_maxp(desc);
+ 	m66592->pipenum2ep[pipenum] = ep;
+-	m66592->epaddr2ep[desc->bEndpointAddress&USB_ENDPOINT_NUMBER_MASK] = ep;
++	m66592->epaddr2ep[usb_endpoint_num(desc)] = ep;
+ 	INIT_LIST_HEAD(&ep->queue);
+ }
+ 
+@@ -391,7 +391,7 @@ static int alloc_pipe_config(struct m66592_ep *ep,
+ 
+ 	BUG_ON(ep->pipenum);
+ 
+-	switch (desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) {
++	switch (usb_endpoint_type(desc)) {
+ 	case USB_ENDPOINT_XFER_BULK:
+ 		if (m66592->bulk >= M66592_MAX_NUM_BULK) {
+ 			if (m66592->isochronous >= M66592_MAX_NUM_ISOC) {
+@@ -433,7 +433,7 @@ static int alloc_pipe_config(struct m66592_ep *ep,
+ 	}
+ 	ep->type = info.type;
+ 
+-	info.epnum = desc->bEndpointAddress & USB_ENDPOINT_NUMBER_MASK;
++	info.epnum = usb_endpoint_num(desc);
+ 	info.maxpacket = usb_endpoint_maxp(desc);
+ 	info.interval = desc->bInterval;
+ 	if (desc->bEndpointAddress & USB_ENDPOINT_DIR_MASK)
 -- 
-Michal Hocko
-SUSE Labs
+2.25.1
+
 
