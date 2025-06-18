@@ -1,113 +1,99 @@
-Return-Path: <linux-kernel+bounces-691499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A187ADE568
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:21:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F83ADE5E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DC27189D36C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:21:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39C7018829B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E0227F16D;
-	Wed, 18 Jun 2025 08:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1C627F016;
+	Wed, 18 Jun 2025 08:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/8DVKLk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C0zjnj/J"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03AC214814;
-	Wed, 18 Jun 2025 08:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C18925A333
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750234873; cv=none; b=E/jTnzzbieG2QqC2OoPEskDoiTIYlRleJ+/GtnXFJPgQtCxw7xR4l7lromXdjNCpBNZkrKNWQeP6sbiXof77Q2IYqMptp5PeJh3hDJ/v5dxjopv+rhv3vI20OlaWMkxFKBHquahZiz+fACJPZ2n5HBKCRmksNVIJiqxS+3KDdtk=
+	t=1750236218; cv=none; b=MEXgiKBrukkvJr9FeWE9DwP0eqTpfwx1NwC6IpklloxwKDeKuvXClyWeO0cPsUyt34NU+oumGTRbeLa7pKOH8+eM/IUsKFF4dNkUK4fwTdypv/vpV/0CJEYsO3fC1ZKETrus10wlyfZfMY1Xr2Igk8yhZ6dzGTj3LVcmOV3xjp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750234873; c=relaxed/simple;
-	bh=2jmRDv6D0zcNdU19DqnV2thTGn3pGjWksLXvn5+PggA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WIxG1mCQFyYEjQRcfPTg/Dmsa6RMHyVdBKGBdLqQA34ds6IiHpeXVLlbnWJ2JWIRfoHng1StG3vwyqhdIvAe0mYaGfG52b+CNbfL+ZjkWllvNTJn4VnhMtKZ1nrCZsRRGEhPMOJ/EVdOnF/FecOKI8iL2MC49eA2nyshcEWu+pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/8DVKLk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0C3DC4CEE7;
-	Wed, 18 Jun 2025 08:21:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750234872;
-	bh=2jmRDv6D0zcNdU19DqnV2thTGn3pGjWksLXvn5+PggA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=k/8DVKLk1jQCHbK1h5bINp41EjysKV48pO7nmzXin8chccf5giyGW2oCA3VuU0giN
-	 GE+ZhpHpRgFhdmQb4oW+ZEPGWmcXzooJXo5+M75ZzRQGSsGWJkUyByTJvgA8tZn4uu
-	 QJmGRRd9Z6dJkj2jAaSkiKF++lcEPaaucfGzCiCuD6md9NQIVlmtEt2eg7D+vSkO20
-	 QEUu9jve94s9HsY7VtopXIwUmkP8mmoF8Fq4Qf39ztPsBUWr8VEWcr9T9yvtz6VLoq
-	 MEXwkiwKj+ODQh0UIlUd033KTyYFAlpqcenVq8DQ3meW7GKSE+FC68bVBqqhECR/e2
-	 jI1ND8WMXcbsA==
-Date: Wed, 18 Jun 2025 10:21:05 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Donald Hunter <donald.hunter@gmail.com>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, Akira Yokosawa <akiyks@gmail.com>, Breno Leitao
- <leitao@debian.org>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Ignacio Encinas Rubio <ignacio@iencinas.com>, Jan
- Stancek <jstancek@redhat.com>, Marco Elver <elver@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Ruben Wauters <rubenru09@aol.com>, Shuah Khan
- <skhan@linuxfoundation.org>, joel@joelfernandes.org,
- linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
- lkmm@lists.linux.dev, netdev@vger.kernel.org, peterz@infradead.org,
- stern@rowland.harvard.edu
-Subject: Re: [PATCH v5 10/15] docs: sphinx: add a parser for yaml files for
- Netlink specs
-Message-ID: <20250618102105.66ce01f0@foz.lan>
-In-Reply-To: <CAD4GDZzWMoxnatNXYbKOphzVZ4NyedD5FtjxF7cgB1ad-wDFWg@mail.gmail.com>
-References: <cover.1750146719.git.mchehab+huawei@kernel.org>
-	<c407d769c9f47083e8f411c13989522e32262562.1750146719.git.mchehab+huawei@kernel.org>
-	<m27c1ak0k9.fsf@gmail.com>
-	<20250617154049.104ef6ff@sal.lan>
-	<20250617180001.46931ba9@sal.lan>
-	<CAD4GDZzWMoxnatNXYbKOphzVZ4NyedD5FtjxF7cgB1ad-wDFWg@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1750236218; c=relaxed/simple;
+	bh=ahGo0gZhCU3CeDsK6pb/bUJ9TVXFQfyAAc99pp1Tkuk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=L/x8hzY59AJ+m1M9dRmM9iJZq2pbHYVQAs41IRyam8DkbJDyLgbCjDQDTfElZPWxsOQjuWYBQ9srOPS1F+wclYVuKD6F+G4RsZ2tuaEibwBHVU8fSTpyoVzmhLi2LxjySv8FAhPYIejRqR234XL2viKTPY4e4BGO55nlQEei7W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C0zjnj/J; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-451d5600a54so55992005e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 01:43:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750236214; x=1750841014; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ikmadVtxSuGulRLsrZM3Z70EtlcT0yd6ifXpM9KcROA=;
+        b=C0zjnj/Jq5Ot9UuLqUCEb/EDPpV9W1uaLPdukqNjp9YAlXYNhialfl0SAzuATSjC/6
+         PQHCr4TM11edEu3uxObyYzXxeO6mRvoj3TOzJoM056TXWYHQzxCbh77dh9A3VhabaPG9
+         SRXykbCsjXvEabRaJOqBzzF4bnwsIfttXbkfxkdo7gDn13j392q5hfNk+HpTibVRhGAG
+         2RZHLhi+pLytdxBWJwnNDJZNhaNFBI2RuZG0RZlpRinuiseHIRp+MtFKqGwXvD77wKBp
+         6tkQ42pIjA1JpcUUDrGToMXf8DqgdK/9ruDe3yt1s+utDvFaZ2ZWQcwkm1v5B7ItSVpF
+         t6LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750236214; x=1750841014;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ikmadVtxSuGulRLsrZM3Z70EtlcT0yd6ifXpM9KcROA=;
+        b=MnVFKO29fyB4YntgfSWlOvg6RDx97gzhd6YuZRrOWyr1aXYCIpOTItYvmQJCvPzz3e
+         6Qo2RK2j67NWGAwB+IIwuubYwP7TEYSzY2NShJv1DihZvs2WWSRHhXWAY87eaz6v7JSh
+         F3QMpXTlNZyCGOM5jnEs9UUxoEObSOS3Ty9tsGpqncfxUb8Zs2MCg4Arif+4u3Jo7ad/
+         UwPXEjUXAjTyKmiwIp+VUKH1nis3kQVSD3JuHkMyfQom5v9/nxcrGlPrmo3khTMhP916
+         HTUG4PcBngXJwF4SuFQl8F0KbfNKgpHKVgelXw7MJKCJhdiei3EjVkxxf2bm/WTBZBq6
+         6AWw==
+X-Forwarded-Encrypted: i=1; AJvYcCULExURX9Ov0M8bndQ0DKUeDLNeUDHpE6PlCAFi5HXm1MhErPcLRtE4TQxWoz9p/VgsngUrbzLdL/ScxFc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZe6oCzxxs+EO02EsLaRskWXe4V85qYjMsDjib7Qq9Zr/nhATV
+	b5SakAv1yXOZZMJ41bDcaxA6pjRfsKNj/6Nvq0fR3in4XB4xhHkQpMQ1o/qdB2H36/i2GroGvrA
+	e3ZfMFrB6Lg/Zf5Z5pQ==
+X-Google-Smtp-Source: AGHT+IEetsSD1WOYtNY17gx1HGwTCmQudaYjAErSn4cc8fGNGI5dUnFqbwBCgT/0uHY/f0RFOpn5wA9QwUUDcuw=
+X-Received: from wrmk10.prod.google.com ([2002:adf:e3ca:0:b0:3a5:7b08:ede2])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2007:b0:3a4:dbac:2dc1 with SMTP id ffacd0b85a97d-3a572e9a0e8mr14675077f8f.54.1750234895372;
+ Wed, 18 Jun 2025 01:21:35 -0700 (PDT)
+Date: Wed, 18 Jun 2025 08:21:33 +0000
+In-Reply-To: <20250618-debugfs-rust-v6-0-72cae211b133@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250618-debugfs-rust-v6-0-72cae211b133@google.com>
+Message-ID: <aFJ3DZbCwstu38G6@google.com>
+Subject: Re: [PATCH v6 0/5] rust: DebugFS Bindings
+From: Alice Ryhl <aliceryhl@google.com>
+To: Matthew Maurer <mmaurer@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Timur Tabi <ttabi@nvidia.com>, 
+	Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Em Tue, 17 Jun 2025 18:23:22 +0100
-Donald Hunter <donald.hunter@gmail.com> escreveu:
-
-> On Tue, 17 Jun 2025 at 17:00, Mauro Carvalho Chehab
-> <mchehab+huawei@kernel.org> wrote:
-> > >
-> > > (2) is cleaner and faster, but (1) is easier to implement on an
-> > > already-existing code.  
-> >
-> > The logic below implements (1). This seems to be the easiest way for
-> > pyyaml. I will submit as 2 separate patches at the end of the next
-> > version.
-> >
-> > Please notice that I didn't check yet for the "quality" of the
-> > line numbers. Some tweaks could be needed later on.  
+On Wed, Jun 18, 2025 at 02:28:12AM +0000, Matthew Maurer wrote:
+> This series provides safe DebugFS bindings for Rust, with a sample
+> driver using them.
 > 
-> Thanks for working on this. I suppose we might be able to work on an
-> evolution from (1) to (2) in a followup piece of work?
+> Signed-off-by: Matthew Maurer <mmaurer@google.com>
 
-Yes, it shouldn't be hard for you to migrate to (2) in the future. 
+Overall I think this series looks great. I left one comment, but overall
+LGTM.
 
-Currently, the parser is stateless, but, as there's now a class,
-IMO the best would be to store the lines as an array of tuples
-inside the YnlDocGenerator class, like this:
-
-	self.lines = [
-		(line_number1, message_string1),
-		(line_number2, message_string2),
-		(line_number3, message_string3),
-		(line_number4, message_string4),
-		...
-	]
-
-This way, the parse_yaml_file() method would just return self.lines.
-
-Thanks,
-Mauro
+Alice
 
