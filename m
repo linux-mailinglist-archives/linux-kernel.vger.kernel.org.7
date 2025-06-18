@@ -1,230 +1,170 @@
-Return-Path: <linux-kernel+bounces-692644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD68ADF4D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:50:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B91C3ADF441
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E754A2B87
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:49:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 503BD17FF70
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D009830610D;
-	Wed, 18 Jun 2025 17:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19252F948B;
+	Wed, 18 Jun 2025 17:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RbbKPKIa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d8uCOzho"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7611F30554F
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 17:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA002F5473
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 17:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750268501; cv=none; b=GFXe/Ec3BgmGu1iJm2Ht2nZHyQBAdHRXDK5nQCzzCeXydAACQn7ryNuguReamXVWobDqjjMqKkYBd6RpiLSH/yzZWENqTx2UZafqTlL7UsJd0bhVZbAam90rzfLm2u0SwAu/rSQEH/uhyfnO5bYxeZM9gvOMOyzGGjOBovuz+7g=
+	t=1750268435; cv=none; b=ByXxKtyekdEeoqhjf3xYfQ/Asd1TBX/girFZZpEvq/XfMrk39RWliVT9ml+PUBVPqsh6uqzRKWbXeRxhUo6WOxX7sl+Lhv++rVSX0GlBIK6fiha2lZ4k6QGk7Glz0L2AlFUacS/22ZYe/bvRXWFL8Ut7XHw52EZPQ8WmHNWF5k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750268501; c=relaxed/simple;
-	bh=VLtr/75+OgLg5UKJqAhr4SPpTHq3QNsAl+8ocPk3Nhw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l1SUl1bK/0vJj7x/Dw5sGZ3+ph/avqXrD/3iQt/7knLv+D6L5VHjenUcAnCMOmvBYfFtxDu3MM23MNTM5bfSj2mRSXCcoMyCQKVk+1fhKLYUtmss/IjN/YO/t0yC9hTTOgocJmbPgc6eDDZ177fcmfZVDEyw2AWgL/oFB/KtAjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RbbKPKIa; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750268498;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cBlqU3v31THD5gXpB9nn15wD9nofG3PBMtxlPOPDIeI=;
-	b=RbbKPKIamvam59q7i2JUbHN+/91evqGYAK47FwhUsB6vkEErp9wsMZQhpXi4UCgdqsUIPE
-	PLnZHZ1sBJaBs4fnlGEYHJrLCcA+k4n2G7PefHZFLrNOOUg0oRHdxZn0GoteFEfSYALVk0
-	AzZ1CV80CSuj1V2NS06dpd8O5lD1Zm8=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-693-zrQn6tsJNQC5Mc48ctmRYQ-1; Wed, 18 Jun 2025 13:41:37 -0400
-X-MC-Unique: zrQn6tsJNQC5Mc48ctmRYQ-1
-X-Mimecast-MFC-AGG-ID: zrQn6tsJNQC5Mc48ctmRYQ_1750268496
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45311704d22so46556025e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:41:37 -0700 (PDT)
+	s=arc-20240116; t=1750268435; c=relaxed/simple;
+	bh=ac+dj0rndcYqjmn89tRE8u9Zk6zsyI4KTZ3RrPJLnbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LYpDVeW/p8yr/DODkIaSpMUCTz4wmn+qS6c1We5HZItvLBhWS2jQuYUUSHY38F8FH08ViAk9FhQKy6Rw3PvplzehK/VHM4F7NuxRaUIW4jAXMAgl88mRWOlDDbQqx8icBx+W28zIHDTP2OAqvXnPfnQDW1kVEMgrJKwMfkHRyC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d8uCOzho; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-40791b696a2so1944176b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:40:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750268430; x=1750873230; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3jheGvFrRBnUTJ/jqtFbTeeb7vfKBSDeMR+EMHPWYfE=;
+        b=d8uCOzholPdOILO1ieJ9Mi1nasnlFaGilYDpIqeWJQ2/1Q1IisC54hi2XCxF1T1yaA
+         iIUT8sA47bslB8oNIG+TaRLU2h1F2QjM4q2t3Zgl9q6OLE/LPSKLDUPl1L8CvrBDI2KK
+         rxbjJ7erOM/q/9dAENRKxyFzt3NQaUP+KBVnZfWLJDiI1JStcQp4OkXj6a+nos1SXvRf
+         /ajwxEs0FCBKSqBeJCETD9YnkOxmE8gYkoYbu0G6b0Co81dg23uwSEGNANKln2WfANMG
+         sSFMdmbeQdFy6NPSgIe2YEjiN6eMvdkrBGdn8y4S0e9XbBM7KsLae7db/Q/pw9IPf0Oe
+         vgmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750268496; x=1750873296;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cBlqU3v31THD5gXpB9nn15wD9nofG3PBMtxlPOPDIeI=;
-        b=MkqkaWhwo50ufxpbKq1xIjKm/eYEmT6EbVfjVy4WOpKfBBOocaGme2yFdDQALegqpl
-         omvuCjORkhGQ1r9kqadTSTmmMkAP4Xw8eEaHacweYArJri3rzk3oeJ9J/f0z7U1Wrm7Y
-         p0On38kDNOwrJw3PRyLJOkgbqEPUY7btIFqZJ/2YiyBqfdgyfKgDZIl4S2bM3lqvkeGD
-         V7w+8gQmmcFRg/Ep+0deFfIx+iOrKwizJJd69xc//UK5hc/ry2phHMrYtGv1jZGpqpg2
-         vSRF4Bge4QQyYI1Xotk9731oSz/MG9sdQwTx5Oi9yKzcpOtTeTxPcycUHgmCi7kwbqwC
-         2n0Q==
-X-Gm-Message-State: AOJu0Ywxq4Zs4kjqR86UL+2LWgB4tPK8Y3bA6uoOEhkIlWSsDiOufqvS
-	WHKtDWvHlQQnvwLvnm5XOCGux3mpIRX0GlsMSMA/UWt29+fltBaY48eN4eIiTEvN7FrK4sYR2Y2
-	LQwJ/y55z3ObyFq/H3YHdPQickgdx3RKQVyeHw64LEDTvwbuHf9T9unjeSwowuX7ZwTmUkvVOI0
-	Wvbh+tmgLgp51yQ2gg10+Nbz8cOvN+srJ5tG2LeQx6nUCXoH4C
-X-Gm-Gg: ASbGncs4tqua98rPfdw2LGfqbh6joG32bg5hyQu77fypbbHumPbgTciFEo2Dd7dC3cc
-	8vkSOMcPampdUQzbGIRc7MG/urF8z/Ei6pPISBOZzz0IpBjBdofjEB4e0CwDmZ2opjCTxTjpi3y
-	8h7cQdsA1/k/3ERoTY6KuqT/xOl3InoUsLm72OQ87gPEBwoXVwB5ozy4zNc8B0mYs1iq31y3TmR
-	ARz/dynAUcN6nTfIFzJdHtEJYAx51KHfy6EatMWuJQiKGP7oVXxpD0TIap7e/MYrcxpKhVFaP8O
-	v9SBYb2PRimMxqgCMrjjDHEaVlxze+gKtf9ABww/wO5KVt+iBeiEKmrqG/uR1wW7/hShRzEPKlP
-	hLs5CSA==
-X-Received: by 2002:a05:600c:5253:b0:453:66f:b96e with SMTP id 5b1f17b1804b1-4534219a64fmr154424705e9.11.1750268496242;
-        Wed, 18 Jun 2025 10:41:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFQJSoFqz4Qx4eaIpu3abT7lqqTMcn+cWB1r/wxQDnmsMcckQg5l2MzM3eBNzoSDxLAyECFAg==
-X-Received: by 2002:a05:600c:5253:b0:453:66f:b96e with SMTP id 5b1f17b1804b1-4534219a64fmr154423805e9.11.1750268495716;
-        Wed, 18 Jun 2025 10:41:35 -0700 (PDT)
-Received: from localhost (p200300d82f2d2400405203b5fff94ed0.dip0.t-ipconnect.de. [2003:d8:2f2d:2400:4052:3b5:fff9:4ed0])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4535eac8edbsm3459385e9.24.2025.06.18.10.41.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jun 2025 10:41:35 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	virtualization@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Zi Yan <ziy@nvidia.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>,
-	Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Gregory Price <gourry@gourry.net>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Naoya Horiguchi <nao.horiguchi@gmail.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Rik van Riel <riel@surriel.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>
-Subject: [PATCH RFC 29/29] mm/balloon_compaction: provide single balloon_page_insert() and balloon_mapping_gfp_mask()
-Date: Wed, 18 Jun 2025 19:40:12 +0200
-Message-ID: <20250618174014.1168640-30-david@redhat.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250618174014.1168640-1-david@redhat.com>
-References: <20250618174014.1168640-1-david@redhat.com>
+        d=1e100.net; s=20230601; t=1750268430; x=1750873230;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3jheGvFrRBnUTJ/jqtFbTeeb7vfKBSDeMR+EMHPWYfE=;
+        b=XkEbyjIrJ1CV/e5dRI26iCisSxfP+BHSRIMguHdn+ggwNGT5dzLeLFWRwtyxezfT57
+         OPz78Vwi3pQ/gaqnLCqJ/biAXZdrYzXTFD/Xq9k1FHVk4KRv2xqdlI70crzLCymEQ2yK
+         4XvLU8/U3LfXx/sqgFiVm1l71ohicBzwDWGGQdCRjxbdaOArMbXkcO88wJrlXQ05uZ4h
+         4L0QxrWRdfxYRIuKSBPBbC5wwBn/Y72k6WZYZ80MvxCSOiNQzmWvuhFhZT+6B3kBy8k+
+         GC6fiE9Gtc3n2L6L4prGILxGKyttPFfjD8icK1Yq7gPxzBD66IQofnG6S9ZSzybPkbtd
+         aaRA==
+X-Forwarded-Encrypted: i=1; AJvYcCV22IIScnwL56SgeLvYcYOcba46pdy2gUj46kp8ctFhnlOUUAkZlf6MQFiqa3jy8q87sMyCvgvr+YmdXjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywkqc+ZsdMuAJNlPh5OpVxe1ivH6vSsMOl226EJiD8rt1qOa8XY
+	yy1Lvco1SzGyOV9feA5nqC2oh6aq/fcH1LgvH4qE8W+1WT8t5C5qMN5quca+F904O44=
+X-Gm-Gg: ASbGncvcm7Kit51jZZUb07t6kdcqi1vb1N9jg/u9AyXTycKZO0CvckYM6OQp++024pB
+	9n2qAMr/wPT7O6RYdb9qY6URkbmA8D7dODJMFE1Cn34ZEfFAp8jKX7989zclV+FvTCVsvEHk0yA
+	gMEur3SeHkb10ipVWcnYFvebaTvWE+dPdhLtVPFcnAOUf/umcjcXxo2UH/30MknYob5bd+IlZNg
+	I3uyYBZGpdYmgWofzkd4qM+9xymu8PLFo1Bxa6mCiaB/7ddZ0eAX78j4L0rvytoIC+TKCJQ2LfC
+	coyGgoZ8i2mFNBz2Oaw1h/yXqYXvNLZGeMnJw6xEa7LhdKyb6AIKVt3fZ3dwhCucVykBBg==
+X-Google-Smtp-Source: AGHT+IECG3DT0XZa253ZiAtrOyEDWibKqgxLSniShtQDZC/Qv6j2rHi/ZcKJqvX1Mm8kJIJS9Lnp8g==
+X-Received: by 2002:a05:6808:4fec:b0:406:7769:d351 with SMTP id 5614622812f47-40a7c20ba96mr10089279b6e.23.1750268430492;
+        Wed, 18 Jun 2025 10:40:30 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:1b3b:c162:aefa:da1b])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40a7418c881sm2415408b6e.41.2025.06.18.10.40.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 10:40:30 -0700 (PDT)
+Date: Wed, 18 Jun 2025 20:40:28 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev,
+	=?utf-8?B?VG9tw6HFoSBKdcWZZW5h?= <jurenatomas@gmail.com>,
+	dmitry.torokhov@gmail.com
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Tomas Jurena <jurenatomas@gmail.com>
+Subject: Re: [PATCH] Input: tca6416-keypad - Add OF support for driver
+ instantiation
+Message-ID: <eef98df0-5beb-40c1-a4e6-722012635812@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250610154609.1382818-1-jurenatomas@gmail.com>
 
-Let's just special-case based on IS_ENABLED(CONFIG_BALLOON_COMPACTION
-like we did for balloon_page_finalize().
+Hi Tomáš,
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- include/linux/balloon_compaction.h | 42 +++++++++++-------------------
- 1 file changed, 15 insertions(+), 27 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/include/linux/balloon_compaction.h b/include/linux/balloon_compaction.h
-index 2fecfead91d26..7cfe48769239e 100644
---- a/include/linux/balloon_compaction.h
-+++ b/include/linux/balloon_compaction.h
-@@ -77,6 +77,15 @@ static inline void balloon_devinfo_init(struct balloon_dev_info *balloon)
- 
- #ifdef CONFIG_BALLOON_COMPACTION
- extern const struct movable_operations balloon_mops;
-+/*
-+ * balloon_page_device - get the b_dev_info descriptor for the balloon device
-+ *			 that enqueues the given page.
-+ */
-+static inline struct balloon_dev_info *balloon_page_device(struct page *page)
-+{
-+	return (struct balloon_dev_info *)page_private(page);
-+}
-+#endif /* CONFIG_BALLOON_COMPACTION */
- 
- /*
-  * balloon_page_insert - insert a page into the balloon's page list and make
-@@ -91,41 +100,20 @@ static inline void balloon_page_insert(struct balloon_dev_info *balloon,
- 				       struct page *page)
- {
- 	__SetPageOffline(page);
--	SetPageMovableOps(page);
--	set_page_private(page, (unsigned long)balloon);
--	list_add(&page->lru, &balloon->pages);
--}
--
--/*
-- * balloon_page_device - get the b_dev_info descriptor for the balloon device
-- *			 that enqueues the given page.
-- */
--static inline struct balloon_dev_info *balloon_page_device(struct page *page)
--{
--	return (struct balloon_dev_info *)page_private(page);
--}
--
--static inline gfp_t balloon_mapping_gfp_mask(void)
--{
--	return GFP_HIGHUSER_MOVABLE;
--}
--
--#else /* !CONFIG_BALLOON_COMPACTION */
--
--static inline void balloon_page_insert(struct balloon_dev_info *balloon,
--				       struct page *page)
--{
--	__SetPageOffline(page);
-+	if (IS_ENABLED(CONFIG_BALLOON_COMPACTION)) {
-+		SetPageMovableOps(page);
-+		set_page_private(page, (unsigned long)balloon);
-+	}
- 	list_add(&page->lru, &balloon->pages);
- }
- 
- static inline gfp_t balloon_mapping_gfp_mask(void)
- {
-+	if (IS_ENABLED(CONFIG_BALLOON_COMPACTION))
-+		return GFP_HIGHUSER_MOVABLE;
- 	return GFP_HIGHUSER;
- }
- 
--#endif /* CONFIG_BALLOON_COMPACTION */
--
- /*
-  * balloon_page_finalize - prepare a balloon page that was removed from the
-  *			   balloon list for release to the page allocator
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Tom-Ju-ena/Input-tca6416-keypad-Add-OF-support-for-driver-instantiation/20250611-094643
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
+patch link:    https://lore.kernel.org/r/20250610154609.1382818-1-jurenatomas%40gmail.com
+patch subject: [PATCH] Input: tca6416-keypad - Add OF support for driver instantiation
+config: csky-randconfig-r073-20250612 (https://download.01.org/0day-ci/archive/20250614/202506140034.iXbhyNCx-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.3.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202506140034.iXbhyNCx-lkp@intel.com/
+
+smatch warnings:
+drivers/input/keyboard/tca6416-keypad.c:263 tca6416_keypad_probe() error: we previously assumed 'pdata' could be null (see line 253)
+
+vim +/pdata +263 drivers/input/keyboard/tca6416-keypad.c
+
+3da11976b80c663 Uwe Kleine-König             2022-11-18  236  static int tca6416_keypad_probe(struct i2c_client *client)
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  237  {
+c4c4a926acb6b1c Tomas Jurena                 2025-06-10  238  	uint8_t io_size = (uintptr_t)i2c_get_match_data(client);
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  239  	struct tca6416_keys_platform_data *pdata;
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  240  	struct tca6416_keypad_chip *chip;
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  241  	struct input_dev *input;
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  242  	int error;
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  243  	int i;
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  244  
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  245  	/* Check functionality */
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  246  	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE)) {
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  247  		dev_err(&client->dev, "%s adapter not supported\n",
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  248  			dev_driver_string(&client->adapter->dev));
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  249  		return -ENODEV;
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  250  	}
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  251  
+c838cb3d477f797 Jingoo Han                   2013-12-05  252  	pdata = dev_get_platdata(&client->dev);
+c4c4a926acb6b1c Tomas Jurena                 2025-06-10 @253  	if (!pdata && dev_fwnode(&client->dev)) {
+
+Imagine pdata is NULL and so is dev_fwnode()
+
+c4c4a926acb6b1c Tomas Jurena                 2025-06-10  254  		pdata = tca6416_parse_properties(&client->dev, io_size);
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  255  		if (!pdata) {
+c4c4a926acb6b1c Tomas Jurena                 2025-06-10  256  			dev_err(&client->dev,
+c4c4a926acb6b1c Tomas Jurena                 2025-06-10  257  				"Failed to parse device configuration from properties\n");
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  258  			return -EINVAL;
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  259  		}
+c4c4a926acb6b1c Tomas Jurena                 2025-06-10  260  	}
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  261  
+91a4c69052bb660 Yangtao Li                   2023-07-23  262  	chip = devm_kzalloc(&client->dev,
+91a4c69052bb660 Yangtao Li                   2023-07-23 @263  			    struct_size(chip, buttons, pdata->nbuttons),
+                                                                                                               ^^^^^^^^^^^^^^^
+Then it will crash
+
+91a4c69052bb660 Yangtao Li                   2023-07-23  264  			    GFP_KERNEL);
+91a4c69052bb660 Yangtao Li                   2023-07-23  265  	if (!chip)
+91a4c69052bb660 Yangtao Li                   2023-07-23  266  		return -ENOMEM;
+91a4c69052bb660 Yangtao Li                   2023-07-23  267  
+91a4c69052bb660 Yangtao Li                   2023-07-23  268  	input = devm_input_allocate_device(&client->dev);
+91a4c69052bb660 Yangtao Li                   2023-07-23  269  	if (!input)
+91a4c69052bb660 Yangtao Li                   2023-07-23  270  		return -ENOMEM;
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  271  
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  272  	chip->client = client;
+30ba3ead05763b1 Sriramakrishnan Govindarajan 2010-05-03  273  	chip->input = input;
+
 -- 
-2.49.0
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
