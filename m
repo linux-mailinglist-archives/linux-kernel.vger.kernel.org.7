@@ -1,122 +1,124 @@
-Return-Path: <linux-kernel+bounces-691253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 906CFADE23B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 06:13:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C12BADE246
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 06:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A80A179BBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 04:13:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5387C17A711
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 04:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149571F8744;
-	Wed, 18 Jun 2025 04:12:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DFB1F790F;
-	Wed, 18 Jun 2025 04:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46AC31E503D;
+	Wed, 18 Jun 2025 04:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="ee/cpHd0"
+Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EC923A9;
+	Wed, 18 Jun 2025 04:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750219976; cv=none; b=GtQk72Z3haTTPtmUUkcjJGhrZU4xHQz84rnIhOS1cQhXJE/L0o3sCYwI76IjqgGhFbxD3YXWrGJLOlfBYTWihJJCEOiCyjLxx3alxYZ2tKUs1AUDBeSOnlUrP7sFcTY8wmyYrj5BWEnZPVYwNPQN8hYGYw6VR/56iVnoG5LUwvM=
+	t=1750220485; cv=none; b=ZDMwV9k8Y/SUiMSWVFJ999cV/jvuJa/zhd0P/z5XdH0RhbtD0kA3bz0LCNST0/oZJEvmIpVcMonQdnjMc8yu3rDf0kum7w13vId6qjCXtlgLXwJq364ikRrAFEKMbVkzQlFXaENjdZQkdZ9v/pcudg6jGd0MrpZ1dXKXUTiQRBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750219976; c=relaxed/simple;
-	bh=98rJ1//QewKdzC2N/A+aPXJWkJN6PClky/lBVKr74Z8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Lpu7AEGGTMMPjBi8alVHzpR714zRtR2M/45qOrRZLNgQ8IJU20k64cFY3bTg0HYDvFYzjOxdmvD62ikMQAJmFmflL9mEyp5LzjvU0NPX2z6l8wXELwV6zD4SUDhyLFlLj+iy84Ns/C+2NeYdtpEZUKi1qwt6jGp9GSSP1dfzrQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74E7A14BF;
-	Tue, 17 Jun 2025 21:12:33 -0700 (PDT)
-Received: from a076716.blr.arm.com (a076716.blr.arm.com [10.164.21.47])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id ABF7D3F66E;
-	Tue, 17 Jun 2025 21:12:50 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-mm@kvack.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [RFC 2/2] kunit: printf: Add test case for pte_t
-Date: Wed, 18 Jun 2025 09:42:35 +0530
-Message-Id: <20250618041235.1716143-3-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250618041235.1716143-1-anshuman.khandual@arm.com>
-References: <20250618041235.1716143-1-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1750220485; c=relaxed/simple;
+	bh=ttUWxnOPsj1wH58g8SY5eUP5jJTbSwomk5rwycGlWw8=;
+	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=R36JlrVNZZQwCm+UXeoEFOwl3v8CgmRbDavPsq0P64kpKnYMrJTp/Dpdkd3fFApaTZKelDHJrNRUudH+5s9F2pqkYWV7b7JT2yCZMOx3itBqHinNoeaJl+5W2+GermPBfde0kCP1H4wsTNTU5qvojqTEWRVhq6DpIPzCWGpYUWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=ee/cpHd0; arc=none smtp.client-ip=23.155.224.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 6F3FE8288748;
+	Tue, 17 Jun 2025 23:21:21 -0500 (CDT)
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id gVFMjTkUT-DX; Tue, 17 Jun 2025 23:21:20 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 0423E828742D;
+	Tue, 17 Jun 2025 23:21:20 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com 0423E828742D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
+	t=1750220480; bh=TXK4nvk3hVRfTyVxrU16zW6M8nI8oDPJzdJIGj8kYsc=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=ee/cpHd0gCNVtqZnV+ywntrlr58zRVI9VRxMIRLxcPWOVw8+Ax1k5uUCWzxNHk79m
+	 hNpMWOTs+tqTvjn/a9Aqz9CtrPbMj3JDPpVqY61tRkLCmR25a2emu+HpK2fnJNOmKA
+	 SriNg5ixLNGMH0Ygt62s3IWJLtAL75bc+cYPiGRM=
+X-Virus-Scanned: amavisd-new at rptsys.com
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id D7TPnMqQcNQJ; Tue, 17 Jun 2025 23:21:19 -0500 (CDT)
+Received: from vali.starlink.edu (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id C33CC8286D0C;
+	Tue, 17 Jun 2025 23:21:19 -0500 (CDT)
+Date: Tue, 17 Jun 2025 23:21:17 -0500 (CDT)
+From: Timothy Pearson <tpearson@raptorengineering.com>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	tpearson@raptorengineering.com, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	Shawn Anastasio <sanastasio@raptorengineering.com>
+Message-ID: <1970833911.1309763.1750220477118.JavaMail.zimbra@raptorengineeringinc.com>
+Subject: [PATCH 0/6] PowerNV PCIe Hotplug Driver Fixes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.5.0_GA_3042 (ZimbraWebClient - GC137 (Linux)/8.5.0_GA_3042)
+Thread-Index: 8lRcUti9WpN8CCZCIBC2nXslZWbhGA==
+Thread-Topic: PowerNV PCIe Hotplug Driver Fixes
 
-This adds a new test case for pte_t printf format.
+Hello all,
 
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- lib/tests/printf_kunit.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+This series includes several fixes for bugs in the PowerNV PCIe hotplug
+driver that were discovered in testing with a Microsemi Switchtec PM8533
+PFX 48xG3 PCIe switch on a PowerNV system, as well as one workaround for
+PCIe switches that don't correctly implement slot presence detection
+such as the aforementioned one. Without the workaround, the switch works
+and downstream devices can be hot-unplugged, but the devices never come
+back online after being plugged in again until the system is rebooted.
+Other hotplug drivers (like pciehp_hpc) use a similar workaround.
 
-diff --git a/lib/tests/printf_kunit.c b/lib/tests/printf_kunit.c
-index bc54cca2d7a6f..d94c5067e8b0d 100644
---- a/lib/tests/printf_kunit.c
-+++ b/lib/tests/printf_kunit.c
-@@ -763,6 +763,31 @@ errptr(struct kunit *kunittest)
- #endif
- }
- 
-+struct pte_test {
-+	u64 val;
-+	const char *name;
-+};
-+
-+static struct pte_test pte_test_cases[] = {
-+	{ .val = 0xc0ffee,      .name = "0x00c0ffee"},
-+	{ .val = 0xdeadbeef,    .name = "0xdeadbeef"},
-+	{ .val = 0xaabbcc,      .name = "0x00aabbcc"},
-+};
-+
-+static void
-+pte(struct kunit *kunittest)
-+{
-+	char buf[64];
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(pte_test_cases); i++) {
-+		pte_t pte = __pte(pte_test_cases[i].val);
-+
-+		snprintf(buf, sizeof(buf), "%ppte", &pte);
-+		KUNIT_EXPECT_STREQ(kunittest, buf, pte_test_cases[i].name);
-+	}
-+}
-+
- static int printf_suite_init(struct kunit_suite *suite)
- {
- 	total_tests = 0;
-@@ -811,6 +836,7 @@ static struct kunit_case printf_test_cases[] = {
- 	KUNIT_CASE(errptr),
- 	KUNIT_CASE(fwnode_pointer),
- 	KUNIT_CASE(fourcc_pointer),
-+	KUNIT_CASE(pte),
- 	{}
- };
- 
+Also included are fixes for the EEH driver to make it hotplug safe,
+and a small patch to enable all three attention indicator states per
+the PCIe specification.
+
+Thanks,
+
+Shawn Anastasio (2):
+  pci/hotplug/pnv_php: Properly clean up allocated IRQs on unplug
+  pci/hotplug/pnv_php: Work around switches with broken presence
+    detection
+
+Timothy Pearson (5):
+  powerpc/pseries/eeh: Export eeh_unfreeze_pe() and eeh_ops
+  powerpc/eeh: Make EEH driver device hotplug safe
+  pci/hotplug/pnv_php: Fix surprise plug detection and recovery
+  pci/hotplug/pnv_php: Enable third atetntion indicator state
+
+ arch/powerpc/kernel/eeh.c                    |   2 +
+ arch/powerpc/kernel/eeh_driver.c             |  48 ++++--
+ arch/powerpc/kernel/eeh_pe.c                 |  10 +-
+ arch/powerpc/kernel/pci-hotplug.c            |   3 +
+ arch/powerpc/platforms/powernv/eeh-powernv.c |   1 +
+ drivers/pci/hotplug/pciehp.h                 |   1 -
+ drivers/pci/hotplug/pciehp_ctrl.c            |   2 +-
+ drivers/pci/hotplug/pciehp_hpc.c             |  33 +---
+ drivers/pci/hotplug/pnv_php.c                | 172 ++++++++++++++++---
+ drivers/pci/pci.c                            |  31 +++-
+ drivers/pci/pci.h                            |   1 +
+ 11 files changed, 228 insertions(+), 76 deletions(-)
+
 -- 
-2.30.2
-
+2.39.5
 
