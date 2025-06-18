@@ -1,161 +1,395 @@
-Return-Path: <linux-kernel+bounces-692144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5277ADED70
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:07:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 850A1ADED7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F33A3B2A37
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:07:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EF043BCD3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720282E7622;
-	Wed, 18 Jun 2025 13:07:23 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39C52E425F;
+	Wed, 18 Jun 2025 13:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="opbivEj5"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3AB2E54D0
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 13:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4B028A1F5;
+	Wed, 18 Jun 2025 13:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750252043; cv=none; b=owoL983QATZn+MbfCbuOjnntKhVmZOps4gHM+Mgj1EcoILWuvGQSXblpcqDCqG0LnQz07eNbJbegRRe6hl+ZCME33199353XLvqRWdMSNahPnAWYzQHLJY/aObnX8c+iN1OSmZGNLOE31LI65MjA51Q6JnqZQr+B0RR/lopNSZY=
+	t=1750252169; cv=none; b=VVCMBKC+n8nBZcx3iE/B7ybDLdagyTZ5dQc+NsXVjJNeSnYGn5wxZGF3Mhg+K7T37j6qM7y9jvCAwTihcOiNwe5oZC/2BYrXsPLkRl+vouM+1dBfRgO17NPFaHPrZAkEIKgTmzvfI1XtN1OwftBI1XfJcda4cpjpsJY1/E22eCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750252043; c=relaxed/simple;
-	bh=YT4slGZLjT3z3if1pDL1XfyU2P/p1nEtvH/FFrcg1vA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZPKPRGDovMrQeW0VtAia3Zpmu2lsvfGPqYLZXQqMiojiA/MCrVdK5+ZyFUedzaV7gS7+m8Wi28C6caGcehVv8QM0QxWYrE4iN7A9BALRZhEexTnYYu+cJ0+CoSGfcDI0QjU24XbwChShE6WnzaOApgmDSj5HEvNXCdcZw+m5cOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ddc6d66787so92129035ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 06:07:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750252040; x=1750856840;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=29iIlAM/vPeDIyvRyfchXzOgO7DL5UfI/2dgENdz4q0=;
-        b=F2ud21AM+1FrCGqhS+KjJ2ZZZBzHN3LbhxUrUcQahSrdqqrWnmP9L5xsmotblDwGrQ
-         vuKSYmdayVYkT99kqQuSlFGwEXJYlGEsZ3+A+EkgCP/Qq/NkiNJBK+rcr5lzo0g6Lo9P
-         LEdsVrjU8jIjXwHe/DetB4fuFWekY+lnF2LWCB8C6GOBFxupPpAI4lfrOxREZNbxDnYW
-         3Mhu9b7vRCf9Mt3K96g+gkmgfbvSIcWb8yfIYrLLfGmCf9l4F3+AsVWvSMHvCDo+XSQz
-         EhhWmWJbuRQpxHpCc8Rd+K0nNmAXlEMZWiliBj+1Jqp5wJF/2JEJECRauZpEtMFUcgH8
-         T+pw==
-X-Gm-Message-State: AOJu0YwIPFspxFWK+8qolwc7wy/MwK8H37454kBEV3nRgghAkPiGmRPa
-	1hhmcXNvNOruJ0NHKVuafnoiLrOF6/vR/rGtqUFA+MCz2+kiyOITRbnQ5ek4VAbumKs2WezK0G7
-	1DBR4oPIAeLZ+TML8LmqCVvc2ZP+9Rtesl2AvurreB8RxXLt2uV6oUH1MCGcoOg==
-X-Google-Smtp-Source: AGHT+IHsiUSW+UimKk/AACwNTW7uFLE8AyVvAaU7GFns0uX4B+XFPTuTKQ7eXhSqtaLNS2kuy4FNJBMP8ZVgjBPdfwy+pTxt1fpA
+	s=arc-20240116; t=1750252169; c=relaxed/simple;
+	bh=S5oqW1pBvEubAtrW4HiWNgN+tKiViEZG87D2CLMk3r4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cIS8AB1qnOtsTI6Qq7SBHbNv5hAPePsmyzTsTr+qaIkEOl7A0v0lmVdGwW0w8ppx+MLQ3++Y79Q9ZCVvLrUh5fvZn8BDu0UFjdMzGFef2rGRVS4If6AwyLJjuDmNlaN5ijD/GEcU/NRMGP/0TzXCbPz6vrICp9g+oi/YZxFxyV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=opbivEj5; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55ICIeoP032010;
+	Wed, 18 Jun 2025 15:08:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	GEOmT8untl9NInLdtL6sO9U9bHDKDZxqkP6HRCFtkfo=; b=opbivEj588Qkhv44
+	dE9tEBMfzFMCbD0/i72laaHqlExqR73cLB6u66URDp/FwQu6vSB/HD3bLwrF8g1z
+	4MqRlnGlac8MEoWqpnMBZitMZGk32jxFHXFWC25yWmKSye205R9fYpnttfsY1lSV
+	pZqQNXM+RaYuma69okvVFGYiN41YrcZwl6JcNmTTUobDUtxlUGQbNbS+oo6A/2Sz
+	WE7w+9xjC84wid6LZbarHZqdmY/DM2HNxYXzBimy/zGDNMVx7wtKNx1mc8z3xuyk
+	TzyLpl6qfJis29kcuHGPjyFMlEeg+9IPk5oMG0Dmbvb6JbcTiw/M1x02nYhC3i9K
+	aR8heA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47afw1vtey-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Jun 2025 15:08:57 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CEC9740050;
+	Wed, 18 Jun 2025 15:08:04 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 37320B281D2;
+	Wed, 18 Jun 2025 15:07:38 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 18 Jun
+ 2025 15:07:38 +0200
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 18 Jun
+ 2025 15:07:37 +0200
+Message-ID: <f3b99a3d-5d20-4e82-ae5d-75c2c866e118@foss.st.com>
+Date: Wed, 18 Jun 2025 15:07:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2b:b0:3dd:d746:25eb with SMTP id
- e9e14a558f8ab-3de07cd170amr198045805ab.16.1750252040444; Wed, 18 Jun 2025
- 06:07:20 -0700 (PDT)
-Date: Wed, 18 Jun 2025 06:07:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6852ba08.050a0220.216029.0011.GAE@google.com>
-Subject: [syzbot] [selinux?] WARNING in hashtab_init
-From: syzbot <syzbot+bc2c99c2929c3d219fb3@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, omosnace@redhat.com, paul@paul-moore.com, 
-	selinux@vger.kernel.org, stephen.smalley.work@gmail.com, 
-	syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+To: Dawei Li <dawei.li@linux.dev>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <set_pte_at@outlook.com>
+References: <20250609151531.22621-1-dawei.li@linux.dev>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <20250609151531.22621-1-dawei.li@linux.dev>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-18_05,2025-06-18_02,2025-03-28_01
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    52da431bf03b Merge tag 'libnvdimm-fixes-6.16-rc3' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=144635d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4130f4d8a06c3e71
-dashboard link: https://syzkaller.appspot.com/bug?extid=bc2c99c2929c3d219fb3
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a1f50c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1094050c580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-52da431b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0ebc79a3dea1/vmlinux-52da431b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2b1157e117a2/bzImage-52da431b.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bc2c99c2929c3d219fb3@syzkaller.appspotmail.com
-
-WARNING: CPU: 3 PID: 5931 at mm/page_alloc.c:4935 __alloc_frozen_pages_noprof+0x30b/0x23f0 mm/page_alloc.c:4935
-Modules linked in:
-CPU: 3 UID: 0 PID: 5931 Comm: syz-executor128 Not tainted 6.16.0-rc2-syzkaller-00047-g52da431bf03b #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__alloc_frozen_pages_noprof+0x30b/0x23f0 mm/page_alloc.c:4935
-Code: f0 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 83 fe 0a 0f 86 0a fe ff ff 80 3d 83 6e 7a 0e 00 75 0b c6 05 7a 6e 7a 0e 01 90 <0f> 0b 90 45 31 f6 eb 81 4d 85 f6 74 22 44 89 fa 89 ee 4c 89 f7 e8
-RSP: 0018:ffffc90003d87438 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000015 RDI: 0000000000040dc0
-RBP: 0000000200000000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000040000000 R11: 0000000000000001 R12: 0000000000000015
-R13: 1ffff920007b0e9c R14: 0000000200000000 R15: 0000000000000015
-FS:  0000555574b0f380(0000) GS:ffff8880d6a53000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000001000 CR3: 000000002a80f000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __alloc_pages_noprof+0xb/0x1b0 mm/page_alloc.c:4993
- __alloc_pages_node_noprof include/linux/gfp.h:284 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:311 [inline]
- ___kmalloc_large_node+0x84/0x1e0 mm/slub.c:4272
- __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4300
- __do_kmalloc_node mm/slub.c:4316 [inline]
- __kmalloc_noprof.cold+0xc/0x61 mm/slub.c:4340
- kmalloc_noprof include/linux/slab.h:909 [inline]
- kmalloc_array_noprof include/linux/slab.h:948 [inline]
- hashtab_init+0x1b1/0x290 security/selinux/ss/hashtab.c:43
- common_read+0x1c2/0x3d0 security/selinux/ss/policydb.c:1172
- policydb_read+0x874/0x3220 security/selinux/ss/policydb.c:2578
- security_load_policy+0x15c/0x12c0 security/selinux/ss/services.c:2299
- sel_write_load+0x332/0x1bd0 security/selinux/selinuxfs.c:603
- vfs_write+0x2a0/0x1150 fs/read_write.c:684
- ksys_write+0x12a/0x250 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0fd65a5d79
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc49f31638 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000200000000300 RCX: 00007f0fd65a5d79
-RDX: 0000000000002000 RSI: 0000200000000000 RDI: 0000000000000003
-RBP: 0000200000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 000000000000008f R11: 0000000000000246 R12: 00007f0fd65f419c
-R13: 00007f0fd65ef082 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+Hello Dawei,
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Please find a few comments below. It is not clear to me which parts of your
+implementation are mandatory and which are optional "nice-to-have" optimizations.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Based on (potentially erroneous) hypothesis, you will find a suggestion for an
+alternative to the anonymous inode approach, which does not seem to be a common
+interface.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+On 6/9/25 17:15, Dawei Li wrote:
+> Hi,
+> 
+> This is V4 of series which introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL)
+> for rpmsg subsystem.
+> 
+> Current uAPI implementation for rpmsg ctrl & char device manipulation is
+> abstracted in procedures below:
+> - fd = open("/dev/rpmsg_ctrlX")
+> - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
+>   generated.
+> - fd_ep = open("/dev/rpmsgY", O_RDWR) 
+> - operations on fd_ep(write, read, poll ioctl)
+> - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
+> - close(fd_ep)
+> - close(fd)
+> 
+> This /dev/rpmsgY abstraction is less favorable for:
+> - Performance issue: It's time consuming for some operations are
+> invovled:
+>   - Device node creation.
+>     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
+>     overhead is based on coordination between DEVTMPFS and userspace
+>     tools such as udev and mdev.
+> 
+>   - Extra kernel-space switch cost.
+> 
+>   - Other major costs brought by heavy-weight logic like device_add().
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Is this a blocker of just optimization?
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> 
+> - /dev/rpmsgY node can be opened only once. It doesn't make much sense
+>     that a dynamically created device node can be opened only once.
 
-If you want to undo deduplication, reply with:
-#syz undup
+
+I assume this is blocker with the fact that you need to open the /dev/rpmsg<x>
+to create the endpoint.
+
+
+> 
+> - For some container application such as docker, a client can't access
+>   host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
+>   is generated dynamically and whose existence is unknown for clients in
+>   advance, this uAPI based on device node doesn't fit well.
+
+does this could be solve in userspace parsing /sys/class/rpmsg/ directory to
+retreive the device?
+
+You could face same kind of random instantiation for serial peripherals ( UART;
+USb, I2C,...) based on a device tree enumeration. I suppose that user space
+use to solve this.
+
+> 
+> An anonymous inode based approach is introduced to address the issues above.
+> Rather than generating device node and opening it, rpmsg code just creates
+> an anonymous inode representing eptdev and return the fd to userspace.
+
+A drawback is that you need to share fb passed between processes.
+
+
+> 
+> # Performance demo
+> 
+> An simple C application is tested to verify performance of new uAPI.
+> 
+> $ cat test.c
+> 
+> #include <linux/rpmsg.h>
+> 
+> #include <sys/types.h>
+> #include <sys/stat.h>
+> #include <sys/ioctl.h>
+> #include <fcntl.h>
+> #include <string.h>
+> #include <stdio.h>
+> #include <unistd.h>
+> #include <stdlib.h>
+> #include <errno.h>
+> #include <sys/time.h>
+> 
+> #define N (1 << 20)
+> 
+> int main(int argc, char *argv[])
+> {
+> 	int ret, fd, ep_fd, loop;
+> 	struct rpmsg_endpoint_info info; 
+> 	struct rpmsg_endpoint_fd_info fd_info; 
+> 	struct timeval start, end;
+> 	int i = 0;
+> 	double t1, t2;
+> 
+> 	fd = -1;
+> 	ep_fd = -1;
+> 	loop = N;
+> 
+> 	if (argc == 1) {
+> 		loop = N;
+> 	} else if (argc > 1) {
+> 		loop = atoi(argv[1]);
+> 	}
+> 
+> 	printf("loop[%d]\n", loop);
+> 
+> 	strcpy(info.name, "epx");
+> 	info.src = -1;
+> 	info.dst = -1;
+> 
+> 	strcpy(fd_info.name, "epx");
+> 	fd_info.src = -1;
+> 	fd_info.dst = -1;
+> 	fd_info.fd = -1;
+> 
+> 	while (fd < 0) {
+> 		fd = open("/dev/rpmsg_ctrl0", O_RDWR);
+> 		if (fd < 0) {
+> 			printf("open rpmsg_ctrl0 failed, fd[%d]\n", fd);
+> 		}
+> 	}
+> 
+> 	gettimeofday(&start, NULL);
+> 
+> 	while (loop--) {
+> 		ret = ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info);
+> 		if (ret < 0) {
+> 			printf("ioctl[RPMSG_CREATE_EPT_IOCTL] failed, ret[%d]\n", ret);
+> 		}
+> 
+> 		ep_fd = -1;
+> 		i = 0;
+> 
+> 		while (ep_fd < 0) {
+> 			ep_fd = open("/dev/rpmsg0", O_RDWR);
+> 			if (ep_fd < 0) {
+> 				i++;
+> 				printf("open rpmsg0 failed, epfd[%d]\n", ep_fd);
+> 			}
+> 		}
+> 
+> 		//printf("Number of open failed[%d]\n", i);
+> 
+> 		ret = ioctl(ep_fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+> 		if (ret < 0) {
+> 			printf("old ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d], errno[%d]\n", ret, errno);
+> 		}
+> 
+> 		close(ep_fd);
+> 	}
+> 	
+> 	gettimeofday(&end, NULL);
+> 
+> 	printf("time for old way: [%ld] us\n", 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+> 	t1 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+> 
+> 	if (argc == 1) {
+> 		loop = N;
+> 	} else if (argc > 1) {
+> 		loop = atoi(argv[1]);
+> 	}
+> 
+> 	printf("loop[%d]\n", loop);
+> 
+> 	gettimeofday(&start, NULL);
+> 
+> 	while (loop--) {
+
+Do you need to create /close Endpoint sevral times in your real use case with
+high timing
+constraint?
+
+> 		fd_info.fd = -1;
+> 		fd_info.flags = O_RDWR | O_CLOEXEC | O_NONBLOCK;
+> 		ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
+> 		if (ret < 0 || fd_info.fd < 0) {
+> 			printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
+> 		}
+> 
+
+
+> 		ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+> 		if (ret < 0) {
+> 			printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
+> 		}
+> 
+> 		close(fd_info.fd);
+
+It seems strange to me to use ioctl() for opening and close() for closing, from
+a symmetry point of view.
+
+Regarding your implementation, I wonder if we could keep the /dev/rpmsg<x>
+device with specific open() and close() file operations associated with your new
+ioctl.
+
+- The ioctl would create the endpoint.
+- The open() and close() operations would simply manage the file descriptor and
+increment/decrement a counter to prevent premature endpoint destruction.
+
+
+Regards,
+Arnaud
+
+> 	}
+> 	
+> 	gettimeofday(&end, NULL);
+> 
+> 	printf("time for new way: [%ld] us\n", 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+> 	t2 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+> 
+> 	printf("t1(old) / t2(new) = %f\n", t1 / t2);
+> 
+> 	close(fd);
+> }
+> 
+> # Performance benchmark
+> 
+> - Legacy means benchmark based on old uAPI
+> - New means benchmark based on new uAPI(the one this series introduce)
+> - Time are in units of us(10^-6 s)
+> 
+> Test	loops	Total time(legacy)	Total time(new)	legacy/new	
+> 1	1000	218472			2445		89.354601
+> 2	1000	223435			2419		92.366680
+> 3	1000	224263			2487		90.174105
+> 4	1000	218982			2465		88.836511
+> 5	1000	209640			2574		81.445221
+> 6	1000	203816			2509		81.233958
+> 7	1000	203266			2458		82.695688
+> 8	1000	222842			2835		78.603880
+> 9	1000	209590			2719		77.083487
+> 10	1000	194558			2621		74.230446
+> 
+> 11	10000	2129021			31239		68.152662
+> 12	10000	2081722			27997		74.355181
+> 13	10000	2077086			31724		65.473648
+> 14	10000	2073547			28290		73.296112
+> 15	10000	2055153			26957		76.238194
+> 16	10000	2022767			29809		67.857593
+> 17	10000	2054562			25884		79.375753
+> 18	10000	2036320			28511		71.422258
+> 19	10000	2062547			28725		71.803203
+> 20	10000	2110498			26740		78.926627
+> 
+> 21	100000	20802565		260392		79.889417
+> 22	100000	20373178		259836		78.407834
+> 23	100000	20361077		256404		79.410138
+> 24	100000	20207000		256759		78.700260
+> 25	100000	20220358		268118		75.415892
+> 26	100000	20711593		259130		79.927423
+> 27	100000	20301064		258545		78.520428
+> 28	100000	20393203		256070		79.639173
+> 29	100000	20162830		259942		77.566649
+> 30	100000	20471632		259291		78.952343
+> 
+> # Changelog:
+> 
+> Changes in v4:
+> - Build warning of copy_to_user (Dan).
+> - ioctl() branches reorder (Beleswar).
+> - Remove local variable fd and pass &ept_fd_info.fd to rpmsg_anonymous_eptdev_create().
+> - Link to v3: https://lore.kernel.org/all/20250519150823.62350-1-dawei.li@linux.dev/ 
+> 
+> Changes in v3:
+> - s/anon/anonymous (Mathieu)
+> 
+> - API naming adjustment (Mathieu)
+>   - __rpmsg_chrdev_eptdev_alloc ->  rpmsg_eptdev_alloc
+>   - __rpmsg_chrdev_eptdev_add ->  rpmsg_eptdev_add
+> 
+> - Add parameter 'flags' to uAPI so user can specify file flags
+>   explicitly on creating anonymous inode.
+> - Link to v2: https://lore.kernel.org/all/20250509155927.109258-1-dawei.li@linux.dev/ 
+> 
+> Changes in v2:
+> - Fix compilation error for !CONFIG_RPMSG_CHAR config(Test robot).
+> - Link to v1: https://lore.kernel.org/all/20250507141712.4276-1-dawei.li@linux.dev/
+> 
+> Dawei Li (3):
+>   rpmsg: char: Reuse eptdev logic for anonymous device
+>   rpmsg: char: Implement eptdev based on anonymous inode
+>   rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+> 
+>  drivers/rpmsg/rpmsg_char.c | 129 ++++++++++++++++++++++++++++++-------
+>  drivers/rpmsg/rpmsg_char.h |  23 +++++++
+>  drivers/rpmsg/rpmsg_ctrl.c |  35 ++++++++--
+>  include/uapi/linux/rpmsg.h |  27 +++++++-
+>  4 files changed, 182 insertions(+), 32 deletions(-)
+> 
+> ---
+> base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
+> 
+> Thanks,
+> 
+> 	Dawei
 
