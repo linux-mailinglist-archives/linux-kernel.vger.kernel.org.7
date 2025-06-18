@@ -1,156 +1,146 @@
-Return-Path: <linux-kernel+bounces-691607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8848BADE6A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:23:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBB4ADE6C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86DB3ADD8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:22:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DDBD7A70E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931BC283FC7;
-	Wed, 18 Jun 2025 09:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8685285CAA;
+	Wed, 18 Jun 2025 09:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNIDpUmR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="N07rdsTS"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF63B283128;
-	Wed, 18 Jun 2025 09:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213DA28153D
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750238486; cv=none; b=U9ioH7wjkxB/WaPqckCYp0zBZ/ucrhKWpusTFsD/0iB2dGqmvbBNrhxHHzJarCjyaHg1WHqFWwe5nlabGgS/6EbqrJ6xv9vBZHdH8KOFtqAhXF5z6VkR9XG06WgOUxaM1Q2UVIIzAW73P3VW2wpd/0/+AD5C2hW3EjBfGIR3cow=
+	t=1750238643; cv=none; b=azL3THnsaHpgqINVT1mFlh0LL3ONX6RzE35/ubG5ncc6mO1rm8uvERSN09taZlHDu1clfrM/IFuN++Dm0SoZGlvk3bjTFVA3dvM4b077c3zKQmMM1loicDczp0bxT6AGnw3Qy2FQp2Prn7co8ZR+dlkg87LX0VE1vB1W29jP6E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750238486; c=relaxed/simple;
-	bh=zTcgqaF/0GYo093jxGYoUNjPlooySG9s1mcys1CjAgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E35T2rjEEXPXCsoXXaz5FkqC1bgjErGu9bIzJ2Wcd9Qo0ltbtYC/Ve1tRC4w0MBXoDa/VzjU79ZBZmycLVw/yrbByIvtybWlw1Q808aRGG7YLKFChDA8FbfKobDHEDLiPNrN6rk1usHzaUUfTMzGj3zbuqLubuMSfb/trGZlZNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNIDpUmR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE6A4C4CEE7;
-	Wed, 18 Jun 2025 09:21:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750238485;
-	bh=zTcgqaF/0GYo093jxGYoUNjPlooySG9s1mcys1CjAgs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oNIDpUmRpDhMC9ZpBZgtGiBHCtsLuJY4/1tDc2RdaP4LB/xjSyo6FujuGhdh5k2pP
-	 320klkimYNBwl1qgomVOldkyRQV8s1SaokJpa9hF5puefEoEAAdpIddnMZ3f3vz8hR
-	 eohaYoY3bpK3ft1qO8ti2fYhOPR/CQRJDU2D+gjcxhp0x2U6wTQcZXRb+PuD3Q4V44
-	 1TpAFxpbkyGyZpwRV1dZEyotbs8T6S5mDqRZR9UKLVkvbz+Du5kUtg7T4+0kG+6/mU
-	 6KDkd/+MwEydodNjkubO4nvvLGV+Zw0rbNC9MvGwAJrq2Cu9kMQzBgA8po9MeXCOGk
-	 vjKxXAFRzDz8Q==
-Date: Wed, 18 Jun 2025 11:21:22 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jorge Marques <jorge.marques@analog.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	gastmaier@gmail.com
-Subject: Re: [PATCH v3 1/2] dt-bindings: i3c: Add adi-i3c-master
-Message-ID: <20250618-visionary-hawk-of-success-d4aab8@kuoka>
-References: <20250618-adi-i3c-master-v3-0-e66170a6cb95@analog.com>
- <20250618-adi-i3c-master-v3-1-e66170a6cb95@analog.com>
+	s=arc-20240116; t=1750238643; c=relaxed/simple;
+	bh=aEgKfrPrrjMj6t/ipZa1xavX/WMJ6M7ayyrMUoR/xrU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Nag2uA+2DbtFeYDCAPM4sArhZAeEWmeHgCifX/ZTe7CeRtGWTn8RXxm6CXkK9hbfj5uwFXWDHHWqRlmxsMCgqfsRHnLJoO5FYLAyAv5DedtD8GVZeFmG4o0EVRmvjx0Iiy+JU3lYD4D6D+vpFKA3y/Qs9ZTrvmTW0LA5IHwLGCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=N07rdsTS; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55I9MEfN198307;
+	Wed, 18 Jun 2025 04:22:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1750238534;
+	bh=1LSfhMfagWSAA2dImG8G5AnPQY89RbViRu826F453ak=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=N07rdsTSUsg6iBtvzWLHjvurhXqdQbAQHghXSB/YUKrJni01F6UGOuwEy9k1eiUtn
+	 /iz3+62tz8jTcX9UP+/3DhLz2e6SF+/Vi6Z3jl+7GeI6knAbmnFQcG8+fdnV1sUJXb
+	 KXzBqgYDnLZbjfGnP4txOeoOOEAh37FpB+gzA+ZY=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55I9MDfD2619355
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 18 Jun 2025 04:22:13 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 18
+ Jun 2025 04:22:13 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 18 Jun 2025 04:22:13 -0500
+Received: from [172.24.227.143] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.143])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55I9M90f3235850;
+	Wed, 18 Jun 2025 04:22:10 -0500
+Message-ID: <d0854272-fe5e-4977-8526-03a980b348f3@ti.com>
+Date: Wed, 18 Jun 2025 14:52:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250618-adi-i3c-master-v3-1-e66170a6cb95@analog.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/tidss: Decouple max_pclk from tidss feats to remove
+ clock dependency
+To: <jyri.sarha@iki.fi>, <dri-devel@lists.freedesktop.org>, <devarsht@ti.com>,
+        <tomi.valkeinen@ideasonboard.com>
+CC: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+        <linux-kernel@vger.kernel.org>
+References: <20250618075804.139844-1-j-choudhary@ti.com>
+Content-Language: en-US
+From: Jayesh Choudhary <j-choudhary@ti.com>
+In-Reply-To: <20250618075804.139844-1-j-choudhary@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Jun 18, 2025 at 09:16:43AM GMT, Jorge Marques wrote:
-> Add bindings doc for ADI I3C Controller IP core, a FPGA synthesizable IP
-> core that implements the MIPI I3C Basic controller specification.
 
-Here you put outcome of previous questions - why such compatible was
-chosen, that hardware is this and that.
 
+On 18/06/25 13:28, Jayesh Choudhary wrote:
+> TIDSS hardware by itself does not have variable max_pclk for each VP.
+> Each VP supports a fixed maximum pixel clock. K2 devices and AM62*
+> devices uses "ultra-light" version where each VP supports a max of
+> 300MHz whereas J7* devices uses TIDSS where all VP can support a
+> max pclk of 600MHz.
+> The limitation that has been modeled till now comes from the clock
+> (PLL can only be programmed to a particular max value). Due to this
+> we end up using different compatible for each SoC when the clocking
+> architecture changes for VPs, even when the hardware is essentially
+> the same.
+> max_pclk cannot be entirely removed since the display controller
+> should tell if a particular mode clock can be supported or not in crtc's
+> "mode_valid()" call. So remove "max_pclk_khz" from the static display
+> feat and add it to "tidss_device" structure which would be modified in
+> runtime. In mode_valid() call, check if a best frequency match for mode
+> clock can be found or not using "clk_round_rate()". Based on that,
+> propagate "max_pclk" and check max_clk again only if the requested mode
+> clock is greater than saved value. (As the preferred display mode is
+> usually the max resolution, driver ends up checking the maximum clock
+> the first time itself which is used in subsequent checks)
+> Since TIDSS display controller provides clock tolerance of 5%, we use
+> this while checking the max_pclk. Also, move up "dispc_pclk_diff()"
+> before it is called.
 > 
-> Signed-off-by: Jorge Marques <jorge.marques@analog.com>
+> This will make the existing compatibles reusable.
+> 
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
 > ---
->  .../devicetree/bindings/i3c/adi,i3c-master.yaml    | 63 ++++++++++++++++++++++
->  MAINTAINERS                                        |  5 ++
->  2 files changed, 68 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml b/Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..718733bbb450c34c5d4924050cc6f85d8a80fe4b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml
+> Test log on TI's J784S4 SoC with a couple of downstream patches
+> to integrate DSI support on one of the video ports:
+> <https://gist.github.com/Jayesh2000/ad4ab87028740efa60e5eb83fb892097>
+> 
 
-Filename based on the compatible, so adi,i3c-master-1.00.a.yaml
+Hello All,
 
-> @@ -0,0 +1,63 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/i3c/adi,i3c-master.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices I3C Controller
-> +
-> +description: |
-> +  FPGA-based I3C controller designed to interface with I3C and I2C peripherals,
-> +  implementing a subset of the I3C-basic specification.
-> +
-> +  https://analogdevicesinc.github.io/hdl/library/i3c_controller
-> +
-> +maintainers:
-> +  - Jorge Marques <jorge.marques@analog.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: adi,i3c-master-1.00.a
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
+Just noticed that the downstream patches that I used for DSI for testing
+were applied before this patch in my tree due to which this patch does
+not apply cleanly on the linux-next tree.
 
-Why?
+Apologies for that. I am rolling v2 ASAP.
 
-> +    items:
-> +      - description: The AXI interconnect clock.
-> +      - description: The I3C controller clock.
-> +
-> +  clock-names:
+Jayesh
 
-Not synced with clocks.
+>  From the logs, we can see that for CLK ID 218 (DSS), we do not have to
+> call sci_clk_determine_rate() multiple times. So there is very little
+> overhead of this call even with multiple mode_valid() called during
+> display run.
+>  From weston-simple-egl application, I have seen that there is no frame
+> drop or performance impact.
+> 
+> Once this patch gets in, I will send patches for AM62P and J722S DSS
+> support.
+> 
+>   drivers/gpu/drm/tidss/tidss_dispc.c | 76 ++++++++++++-----------------
+>   drivers/gpu/drm/tidss/tidss_dispc.h |  1 -
+>   drivers/gpu/drm/tidss/tidss_drv.h   |  2 +
+>   3 files changed, 34 insertions(+), 45 deletions(-)
+> 
 
-> +    items:
-> +      - const: axi
-> +      - const: i3c
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +
-> +allOf:
-> +  - $ref: i3c.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    i3c@44a00000 {
-> +        compatible = "adi,i3c-master";
-> +        reg = <0x44a00000 0x1000>;
-> +        interrupts = <0 56 4>;
-
-Use proper defines.
-
-Best regards,
-Krzysztof
-
+[...]
 
