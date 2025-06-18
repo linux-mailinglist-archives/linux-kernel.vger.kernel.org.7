@@ -1,97 +1,123 @@
-Return-Path: <linux-kernel+bounces-691979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BE12ADEB43
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:04:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961DAADEB48
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01EE77A5F20
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:02:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79AAF7A3DC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88642BD022;
-	Wed, 18 Jun 2025 12:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iTBkGRPr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF98B2E54CE;
+	Wed, 18 Jun 2025 12:03:17 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AD527FD58;
-	Wed, 18 Jun 2025 12:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CCB2E3B16
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750248138; cv=none; b=OFViq4oCRMn4p72A+FBHVQrjFYs787T7SU0XJPkbUckduGkaAW0WpdghatntsjzbN91HpAuP/+Hm/Q/4Z8uQ7hUVy63mZ352yCn/LJsMheexOQcgWxw0/4IxhdZI/8N1QTQnBillfq7esXzuSSsVJQfLH1Blr3uJst4XuY91zzY=
+	t=1750248197; cv=none; b=IM7JI3XEGWmUwVxHDD0S9WEQ7r3UkV5PGTDLdmIkKyFknPBi4JdA2FRyhz/UaN6uLCyIyCxbxtEQ62nB5dE4FE30q2WyvNNeTYToJ2J2OlkiOsTQK+R6h/LDFkW123tDwFlyHxjSHZ1pg7qFb/ydZBYBvOAnZLveU0+zi6cWP9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750248138; c=relaxed/simple;
-	bh=E2oopE+AJdJ2PktRR3Hrrs/UQJrt5Fpy8sjt0APaBYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GzcMCBUJSiBtHeC6NQ+QPuXTAuy/K8xoQlceFV7izAI5IT3b49y+bql5Jwe1hbHVYR3RMIZiGzyU9Ed+IAepJ604rIf6Sw7ydxtpA19aY443eIHKvOCL9hqNT2WSkZPxATQJWoE9d51QsEVTn7uztFAJqshW4b1RzuI+iBIttrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iTBkGRPr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47CFBC4CEE7;
-	Wed, 18 Jun 2025 12:02:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750248137;
-	bh=E2oopE+AJdJ2PktRR3Hrrs/UQJrt5Fpy8sjt0APaBYE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iTBkGRPr/+vQYaVwlSPjwEhSdW4E7d9HSf0oQHW+1WrOfr1erNaBhxGY9yT0xiaXQ
-	 DGD6LTkETCUbn3nd/XqofkFVxhRJQBTkewb0fJStgqoN9ybeNhjtSScGXQWiem3Ry8
-	 xFjdRHKBMiQ8mBfbI38W0lwhfTiFH5gm18T3OKumSJPJuFN7cEgUGQIDmGxcK7k6lU
-	 gV+m49VlWZU4FGB0aHENDVS0GEyIpvmSBldZLAoEYTdGwHhvbOhENGYi+ZwziDuAQH
-	 j5S3NIopecagV2FJi6N3cZurlf0aF47qjJx8PLnEka5h1c+/WTo5d6JzpKgV3lE+/y
-	 gWL/lupTAeydw==
-Date: Wed, 18 Jun 2025 13:02:11 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 6.6 000/356] 6.6.94-rc1 review
-Message-ID: <4cda41b6-bc4b-4680-8800-89ee9caa193f@sirena.org.uk>
-References: <20250617152338.212798615@linuxfoundation.org>
+	s=arc-20240116; t=1750248197; c=relaxed/simple;
+	bh=kieKHX7Icyd+a5LVpQeQdQRXdlK7iTqy7fQZ7IwgIS8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=O8nbOlRyidgk/zmGxUffmms3lpjCcsmcBsWpFKBUlVzw3BJwMnfNCvo2A20lMOcrNr0eZg0JspSDwSORhb5kNfsbxe1JfvuWyMDrKrF4JdcctgDXSxc2mY+rQCOnRodHAlMJI+eif0xjJ+zoD73wCoj6A0CFoKtFJpFB9WUl5I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uRrVJ-0007EU-Fn; Wed, 18 Jun 2025 14:02:57 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uRrVI-0048CJ-1M;
+	Wed, 18 Jun 2025 14:02:56 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uRrVI-00DBLt-13;
+	Wed, 18 Jun 2025 14:02:56 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>,
+	Guenter Roeck <groeck@chromium.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	chrome-platform@lists.linux.dev
+Subject: [PATCH v11 1/7] power: Extend power_on_reason.h for upcoming PSCRR framework
+Date: Wed, 18 Jun 2025 14:02:49 +0200
+Message-Id: <20250618120255.3141862-2-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250618120255.3141862-1-o.rempel@pengutronix.de>
+References: <20250618120255.3141862-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1omOcL+gB6VXDFQU"
-Content-Disposition: inline
-In-Reply-To: <20250617152338.212798615@linuxfoundation.org>
-X-Cookie: This bag is recyclable.
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Prepare for the introduction of the Power State Change Reason Recorder
+(PSCRR)  framework by expanding the power_on_reason.h header. This
+extension includes new power-on reasons:
+- POWER_ON_REASON_OVER_CURRENT for over-current conditions.
+- POWER_ON_REASON_REGULATOR_FAILURE for regulator failures.
+- POWER_ON_REASON_OVER_TEMPERATURE for over temperature situations.
+- POWER_ON_REASON_EC_PANIC for EC panics
 
---1omOcL+gB6VXDFQU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+changes v10:
+- add Reviewed-by: Sebastian Reichel ...
+changes v6:
+- add POWER_ON_REASON_EC_PANIC
+- s/POWER_ON_REASON_OVERTEMPERATURE/POWER_ON_REASON_OVER_TEMPERATURE
+---
+ include/linux/power/power_on_reason.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On Tue, Jun 17, 2025 at 05:21:55PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.94 release.
-> There are 356 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+diff --git a/include/linux/power/power_on_reason.h b/include/linux/power/power_on_reason.h
+index 95a1ec0c403c..bf9501792696 100644
+--- a/include/linux/power/power_on_reason.h
++++ b/include/linux/power/power_on_reason.h
+@@ -15,5 +15,9 @@
+ #define POWER_ON_REASON_XTAL_FAIL "crystal oscillator failure"
+ #define POWER_ON_REASON_BROWN_OUT "brown-out reset"
+ #define POWER_ON_REASON_UNKNOWN "unknown reason"
++#define POWER_ON_REASON_OVER_CURRENT "over current"
++#define POWER_ON_REASON_REGULATOR_FAILURE "regulator failure"
++#define POWER_ON_REASON_OVER_TEMPERATURE "over temperature"
++#define POWER_ON_REASON_EC_PANIC "EC panic"
+ 
+ #endif /* POWER_ON_REASON_H */
+-- 
+2.39.5
 
-Tested-by: Mark Brown <broonie@kernel.org>
-
---1omOcL+gB6VXDFQU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhSqsIACgkQJNaLcl1U
-h9DgfAf9Fe6MS5Wg43nkB18ob9SsZY6MCHNMKRUiJz64X85W0QAN7xqSVVMSDbx7
-+ySJ4Q0JMiel72jSqt0EiMAn2mZPIw9xoBlbCM9IYCcu36J+Lt0mOUugBaMAiAxZ
-2mSdu9+sEA/dvEZoXRBoDUll/fx+N7RnDhhLnPbAoUc/M+x9PFTzh+C1FGexSd7w
-UHtXCwfD4JUDEe//wG4YHdg35Fay2mRgatAmcPQ1Kt8dkqDXb3nlIfR9oRrxdDvE
-BLQ9BX6SlM+meVR5v6Bu89oi4027/xyAjzENyivkXyNs5zN/6OBmOvEBW+auQxvl
-s9HUvkWO3G9MPP/F1ssUvNIgvivo5w==
-=lIfu
------END PGP SIGNATURE-----
-
---1omOcL+gB6VXDFQU--
 
