@@ -1,582 +1,536 @@
-Return-Path: <linux-kernel+bounces-691376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18282ADE3F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:47:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DED0ADE3F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B6B8168C24
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A81F3B81D3
 	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 06:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48628207A08;
-	Wed, 18 Jun 2025 06:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FB4258A;
+	Wed, 18 Jun 2025 06:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QL1wGG14"
-Received: from mail-yw1-f193.google.com (mail-yw1-f193.google.com [209.85.128.193])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rroeG5g0"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7961E258A
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 06:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BE520F093
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 06:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750229264; cv=none; b=QhyBMA/V0GVSeOkSDVN6UfSTQSYJbUytJpn1XoL96eEf8il4e3YPRv+HO2ybti591w0an07ceJOylhrNhIR4e5lN/R+Mh0Z1tNLxB/2nthJxuc+/kyaqUC2UrAyTC/Tyl6QgxAGikYrPR3ffIGBGmJPc8Qr+IIegSGtqyCCswgI=
+	t=1750229286; cv=none; b=p2O9vpD9GNIe4x+rR0wqGL6wHCJ6BJhlMPjrd8DaK7fdoJfhGx2MF9YjO/q8NnJ14AE0be6npdxTKJ1q2uPwysHuY/+9vyKCR6nSpB6UADVzDqZ/M9NkPhvQ8GuEwT2mOFrVySld4mmnACCsr12Jn59vl6ZH9MxZdGUyLlUv1BM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750229264; c=relaxed/simple;
-	bh=o+fYgj+qIOsDLGzPk6/O2jokCQcdZUGD2hUuzLr3PY0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=Ek6M2HtXKswj6IkfM+bjFG7FElWFFQ7qvHfHwLqSGkEoTmdwZdlDEWK+05k22s68PAQ8YHuUmnjndqvLXorTxTwaEzNUxCyrg3seaUNZ87VkkO3/JzU6tSywOFcW1og/n2zyk4lK7SedkB3i782JiaBFh9k8JV7MMZxd8bTmq7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QL1wGG14; arc=none smtp.client-ip=209.85.128.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f193.google.com with SMTP id 00721157ae682-708d90aa8f9so65025097b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 23:47:42 -0700 (PDT)
+	s=arc-20240116; t=1750229286; c=relaxed/simple;
+	bh=tgCACSjAUK037tofgE+CV10GSdnmAP9aZLkFwg+KQOg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ku5l50qJFM+7KuM+QNIKfDf+VM1J2xRhcZIRmMEqaILpHMOTMY8KKzxwuWSFMBjvhtaUzzoDQ6bOyMltn9puWaBVUhumL/04kHRjR6eDCusjTCzQnOnH8b5tFZz8lGLiy5x+bZrTtNNfRWXrUbYWHSgdrP5Cb9v57QjnHpb5iK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rroeG5g0; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-400fa6eafa9so4565155b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 23:48:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750229261; x=1750834061; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=z+mwDwgQySD0BRlLJGc2eoF9Pr3gymBEMlnX6sBNIXY=;
-        b=QL1wGG14ARMdhQxSA7i2o/kYU1sHDetEhWtAuJnP86Md6HjbaH46cCVLt3HqE30/D4
-         GoTBltDxM8gL3SBqnV4nc4xBrMDnNe3nO6dc+pFSqE+b0k+nljyy9/ysjwL1+sSbbQmY
-         4+bHc1v/lY6EqmzWu+wA3T/dzvZsLxOmJbjG0xnEna5EYO6REOasVtendo6OyjEjNEH/
-         Ci6apiiAviwa3XodyulpXxDNbkx1th2sWcK8uWdWun1DoWslQpOH2bVyl05n0imXqjg2
-         UcY3Ud/eXbSUyjsLRTB0dees1IhIR2F76C7UvjxW6Kg0ESF2usO6Wxl/5wC6tQ3P1Olr
-         V7hA==
+        d=linaro.org; s=google; t=1750229283; x=1750834083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nnsoLmuO3csUx1qg//UCkqDpzxXEFnkU9Btic+XEOTg=;
+        b=rroeG5g0zJijRi7JNrvvWOu4hwnJ/fVyZIZw/n+PIW8Q8ndKe5q652zAdSW9RpzRGz
+         d7kNd6utEKRsMvgp4Zni5IL45uv1yTSBTNtm50x8JH2sm2c49eCz63t9xc/Gmm4YQRT4
+         wTaBZgsQJeb4J0ZOVvT48Uw+66qb/uia10v3ytAPtyj7Ckuwne4TIoZyF2hwTmFm94Ji
+         oc5s591Jp9cUKJPiVrk5mGtLR1UgClTWKNCjHVgKFCYT+sn5jhB6Pt+SQLFghH9MZkHC
+         8w2+6lOczm/3S5VNJIfIydK3MjXqdxwXgiIQsqNNjp/DH/d6a2AkdhUGVMtVpG0y+xGG
+         22SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750229261; x=1750834061;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z+mwDwgQySD0BRlLJGc2eoF9Pr3gymBEMlnX6sBNIXY=;
-        b=NkL02V58+EPo1SR2rAey6/l80tPSwZO2n258fv3QJpkhS17tZyAkkpRv+QO3UfbPVz
-         ALwBuZWtcaXarkvvi/7o6dX2oKZSiUqx7/OQrBHS56tfHhdKtEtEs42va4r05JcbYXfU
-         gxW0B3AmsTwTRo3bm8rT9PkseHs1S8Ru7ndblsqEvOSWwAF8r2CcKY8YviKkxRWi/iWn
-         vbuoyROz+YnaQAzxCnYYFjqD+BL8wGU+CARN6LdlVjCIjyEkOe+bzMjyK85xX9kgSAPN
-         McQKJ/niosGKgXbXJB28FgXaAlQI0PWrksL8czBzElvA3trgBRUIqVQNu9eGQRvbFBmp
-         hZEw==
-X-Gm-Message-State: AOJu0YwyNqbuefo3wHP6CkOJ51u+VqzlcT+NtxYemMXvOCeD9PUQ9VNJ
-	83fAHnIMzzgqXokaCClF7VDMvwTQHflyqgtW4CllMJ5ePVTQn9cyZx7gCGZOKSnbx5S1fbU7kNm
-	BHhciBG3KSP4fkipMkqO6HKQYDSNYOBhgsYRqsIa3mQ==
-X-Gm-Gg: ASbGncs7hZ2atDmmD4Yg7xMsU8Ksj1KqXhhQbdhRSHL9ElHGNkG+KD3k2uooHIktm9m
-	zm+7rEDard5SxeNvoUE2ELtpWpE3NVCw4w1kPfLPrS9L3KgUllUKV+5qlgVV0k5Dq1Exu6LIWB+
-	SfBO7deVFigvhcJgrtbzFGIigHAZ+8k2HCgEr/5pslhfdY7xvhIDN+Qev+Y6/aOuKsRBED6faSK
-	vsoJcpj61Ebvoei
-X-Google-Smtp-Source: AGHT+IEYa8CeYMH0X/deMWd+A12fy5KUb/KnwI/PqQy+ANeqJST8TeKN4TnC+HRYpPEsULc5nQ43AxyxSlZMxBGjUxo=
-X-Received: by 2002:a05:690c:4d09:b0:70d:f47a:7e3f with SMTP id
- 00721157ae682-7117544b8aemr236513357b3.20.1750229260768; Tue, 17 Jun 2025
- 23:47:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750229283; x=1750834083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nnsoLmuO3csUx1qg//UCkqDpzxXEFnkU9Btic+XEOTg=;
+        b=g0UOq5AEnIqdJM3I5/bpadlqNM/HzAD7Ti27uuBquPvuIoFR8f9rgkAhdfYx03ZRfH
+         U93DeoLBh6I+uqD0IG563SzEr8h0mca3S6p5II3tasNHqs9mNlEiRKFVzqvSoBymwOjf
+         qpxBBR265TKfB03uaWEj687VngRR5942Ucaw9UUjd5VA257Z+8h6gP3Eff9/YdSeEZiH
+         EAqBjYe0Af1l5LxQbhbRAKvCmoggw1FMfYRGcfkjlDRRCPwFCmxELlzSJybzoKX3/w60
+         cn33IW2W7K660ccN3BaP1q0GGPuZlEXZigO8Qp0pSMCmODT9uu9Q9dZMomTu/L6pO42p
+         BOmw==
+X-Gm-Message-State: AOJu0YyrI9vFNhBnXiBdj7y835t3678VcZyRxb8i5M2yVHkk+BdCVP6j
+	KOaEaq1pgxt5mJnZG+lsGW2JcH3O04UBtYmTqh/I5fyv0a0T3/aN1ZUpRYDcMvIdhEPNiVBxipT
+	CDN2HDYxEQ09/tRyd7FZzQjNemAwmUDLfIzOW8FMd7A==
+X-Gm-Gg: ASbGncu35/uaRXEmwdJ7ZKto0F+F0tzUuJ3FlWrIAfAqLUT6/IVCDy2fz/VgaQmpfHM
+	cZBK3MH3Y8zVRQXxV68JRELfEjANWcxJJMx38tn/z2xXWah4lbBebVOqVD/o/p0Ny1IVKCk1i9X
+	b4PzO3Ry3AHPN/cTTEOJp4IB7BTr5yhnjS/Wi1ZeyNMdE=
+X-Google-Smtp-Source: AGHT+IFP9EIG3tj0jAgtNhGjoHkRLBhC6oVQyPRvROrony9d3p9WGI2/mxvN0ZbrFjL6zlrp4PgKd9Szo6hKSr5lv8Q=
+X-Received: by 2002:a05:6808:1825:b0:401:e6f0:a8d4 with SMTP id
+ 5614622812f47-40a7c1b1f7emr11398476b6e.5.1750229283226; Tue, 17 Jun 2025
+ 23:48:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Amit <amitchoudhary0523@gmail.com>
-Date: Wed, 18 Jun 2025 12:17:29 +0530
-X-Gm-Features: AX0GCFuUOnLiuR3FqH_CHmV-vF7ZsD2yCz3mNLRRFc2bOz6Xj-KKeqBtawYkI-o
-Message-ID: <CAFf+5zhdK0v6BNXSLGbqmj0gvqqzPHa1rdAwixVeoquZ8E_fBg@mail.gmail.com>
-Subject: Get a substring from a string (Four files: substr.c, substr.h,
- test_substr.c, and ReadMe.txt).
-To: linux-kernel@vger.kernel.org
+References: <20250610131600.2972232-1-jens.wiklander@linaro.org>
+ <20250610131600.2972232-6-jens.wiklander@linaro.org> <aFFIAiU4ZSN1qZXK@sumit-X1>
+In-Reply-To: <aFFIAiU4ZSN1qZXK@sumit-X1>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Wed, 18 Jun 2025 08:47:51 +0200
+X-Gm-Features: AX0GCFtpgp_r9JKq4Jq2B8UGDsgmMBvkUILLhZ3AbZwtRAMSoPIAJ1YqJQTR_AI
+Message-ID: <CAHUa44E=nHjLf2guoG6LzTKZwTQGjEReKUF01PL31BfJ22e9EQ@mail.gmail.com>
+Subject: Re: [PATCH v10 5/9] tee: new ioctl to a register tee_shm from a
+ dmabuf file descriptor
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Simona Vetter <simona.vetter@ffwll.ch>, Daniel Stone <daniel@fooishbar.org>, 
+	Rouven Czerwinski <rouven.czerwinski@linaro.org>, robin.murphy@arm.com, 
+	Etienne Carriere <etienne.carriere@foss.st.com>
 Content-Type: text/plain; charset="UTF-8"
-
-Get a substring from a string (Four files: substr.c, substr.h,
-test_substr.c, and ReadMe.txt).
-
------------
-substr.c
------------
-
-/*
- * License:
- *
- * This file has been released under "unlicense" license
- * (https://unlicense.org).
- *
- * This is free and unencumbered software released into the public domain.
- *
- * Anyone is free to copy, modify, publish, use, compile, sell, or distribute
- * this software, either in source code form or as a compiled binary, for any
- * purpose, commercial or non-commercial, and by any means.
- *
- * For more information about this license, please visit - https://unlicense.org
- */
-
-/*
- * Author: Amit Choudhary
- * Email: amitchoudhary0523 AT gmail DOT com
- */
-
-#include "substr.h"
-
-#include <stdlib.h>
-#include <string.h>
-
-char *substr(const char *str, int start_index, int end_index)
-{
-
-    char *substring = NULL;
-    int len = 0;
-    int substr_len = 0;
-
-    if ((str == NULL) || (str[0] == '\0')) {
-        return NULL;
-    }
-
-    len = (int)(strnlen(str, STR_LIB_MAX_STR_SIZE_ALLOWED));
-
-    if (len == STR_LIB_MAX_STR_SIZE_ALLOWED) {
-        return NULL;
-    }
-
-    if ((end_index < 0) || (end_index > (len - 1))) {
-        end_index = len - 1;
-    }
-
-    if ((start_index < 0) || (start_index > (len - 1)) ||
-        (end_index < start_index)) {
-        return NULL;
-    }
-
-    substr_len = end_index - start_index + 1;
-
-    // extra 1 byte for null terminating character
-    substring = calloc((size_t)(substr_len + 1), 1);
-
-    if (substring == NULL) {
-        return NULL;
-    }
-
-    memmove(substring, str + start_index, (size_t)(substr_len));
-
-    substring[substr_len] = '\0';
-
-    return substring;
-
-} // end of function substr()
-
------------
-substr.h
------------
-
-/*
- * License:
- *
- * This file has been released under "unlicense" license
- * (https://unlicense.org).
- *
- * This is free and unencumbered software released into the public domain.
- *
- * Anyone is free to copy, modify, publish, use, compile, sell, or distribute
- * this software, either in source code form or as a compiled binary, for any
- * purpose, commercial or non-commercial, and by any means.
- *
- * For more information about this license, please visit - https://unlicense.org
- */
-
-/*
- * Author: Amit Choudhary
- * Email: amitchoudhary0523 AT gmail DOT com
- */
-
-#ifndef _SUBSTR_H_
-#define _SUBSTR_H_
-
-// Change this value to process more characters.
-#define STR_LIB_MAX_STR_SIZE_ALLOWED 8192 // includes null terminating character
-
-#define STR_LIB_MIN_STR_SIZE_ALLOWED 1 // includes null terminating character.
-                                       // string returned will be empty if its
-                                       // size is STR_LIB_MIN_STR_SIZE_ALLOWED
-
-#define STR_LIB_SUCCESS  1
-#define STR_LIB_FAILURE -1
-
-#define STR_LIB_NUM_TRUE  2
-#define STR_LIB_NUM_FALSE -2
-
-// The size of the integer string is 10 (including null terminating character)
-// so this means that the max number of digits in this string can be 9. If we
-// keep the max number of digits as 10 then in some cases, all these digits can
-// be 9 and in these cases when we convert the string to integer then there will
-// be integer overflow because 9999999999 (9 is 10 times) is greater than
-// INT_MAX. So, to prevent the integer overflow we have limited the max number
-// of integer digits in the string to 9. Since the string will be null
-// terminated, so accounting for the null terminating character, the size of the
-// integer string becomes 10.
-#define STR_LIB_INTEGER_STR_SIZE 10 // includes null terminating character
-
-/*
- * char *substr(const char *str, int start_index, int end_index):
- *
- * Function substr() allocates memory for the substring and returns a pointer to
- * this substring which is a copy of characters of 'str' from 'start_index' to
- * 'end_index' (including the character at 'end_index'). This substring is
- * terminated by the null character.
- *
- * If the 'end_index' is negative or greater than the last index of 'str' then
- * 'end_index' is normalized which means that 'end_index' is set to the last
- * index of 'str' (length_of_str - 1).
- *
- * This function returns NULL in the following error cases:
- *
- *      ** 'str' is NULL.
- *      ** The first character of 'str' is the null terminating character (means
- *         that 'str' is an empty string).
- *      ** length of 'str' is greater than 'STR_LIB_MAX_STR_SIZE_ALLOWED - 1'.
- *      ** 'start_index' is less than zero (0).
- *      ** 'start_index' is greater than the last index of 'str' (length_of_str
- *         -1).
- *      ** After normalization of 'end_index' (as explained above), 'end_index'
- *         is less than 'start_index'.
- *
- * It is necessary to check the return value of this function for NULL before
- * proceeding ahead.
- *
- * The memory for the substring is allocated using calloc(), so it is the user's
- * responsibility to free this memory.
- */
-char *substr(const char *str, int start_index, int end_index);
-
-#endif
-
-------------------
-test_substr.c
-------------------
-
-/*
- * License:
- *
- * This file has been released under "unlicense" license
- * (https://unlicense.org).
- *
- * This is free and unencumbered software released into the public domain.
- *
- * Anyone is free to copy, modify, publish, use, compile, sell, or distribute
- * this software, either in source code form or as a compiled binary, for any
- * purpose, commercial or non-commercial, and by any means.
- *
- * For more information about this license, please visit - https://unlicense.org
- */
-
-/*
- * Author: Amit Choudhary
- * Email: amitchoudhary0523 AT gmail DOT com
- */
-
-#include "substr.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-static char *get_input_from_stdin_and_discard_extra_characters(char *str,
-                                                               int size);
-static void discard_all_characters_from_stdin(void);
-static int is_str_an_integer(const char *str);
-static int get_integer_input_from_user(char *str, int size, int *integer_ptr);
-
-int main(void)
-{
-
-    char str[STR_LIB_MAX_STR_SIZE_ALLOWED] = {0};
-    char num_str[STR_LIB_INTEGER_STR_SIZE] = {0};
-    int start_index = -1;
-    int end_index = -1;
-    char *arg_str = NULL;
-    char *sub_str = NULL;
-    char *retval_char = NULL;
-    int retval_num = STR_LIB_FAILURE;
-
-    while (1) {
-
-        // get the string from the user
-        while (1) {
-
-            printf("\nPlease input a string from which to get the substring"
-                    " (max %d characters else the input string will be"
-                    " truncated to %d characters) (To enter NULL string, type"
-                    " NULL (in capital letters)): ",
-                    STR_LIB_MAX_STR_SIZE_ALLOWED - 1,
-                    STR_LIB_MAX_STR_SIZE_ALLOWED - 1);
-
-            retval_char = get_input_from_stdin_and_discard_extra_characters(str,
-                                                STR_LIB_MAX_STR_SIZE_ALLOWED);
-
-            if (retval_char == NULL) {
-                printf("\n\nNo input received. Please try again..\n");
-                continue;
-            }
-
-            if (strncmp(str, "NULL", (strlen("NULL") + 1)) == 0) {
-                arg_str = NULL;
-            } else {
-                arg_str = str;
-            }
-
-            break;
-
-        } // end of while (1) loop for getting the string
-
-        printf("\n");
-
-        // get the start_index from the user
-        while (1) {
-
-            printf("Please input the start index from which to start copying"
-                   " the substring: ");
-
-            retval_num = get_integer_input_from_user(num_str,
-                                    STR_LIB_INTEGER_STR_SIZE, &start_index);
-
-            if (retval_num != STR_LIB_SUCCESS) {
-                continue;
-            }
-
-            break;
-
-        } // end of while (1) loop for getting the start_index
-
-        printf("\n");
-
-        // get the end_index from the user
-        while (1) {
-
-            printf("Please input the end index at which to stop copying"
-                   " the substring: ");
-
-            retval_num = get_integer_input_from_user(num_str,
-                                    STR_LIB_INTEGER_STR_SIZE, &end_index);
-
-            if (retval_num != STR_LIB_SUCCESS) {
-                continue;
-            }
-
-            break;
-
-        } // end of while (1) loop for getting the end_index
-
-        printf("\n");
-        printf("\n-------\n");
-        printf("Output:");
-        printf("\n-------\n");
-
-        // using strlen() here is safe because it is guaranteed that 'str' is
-        // null terminated.
-        printf("\nInput parameters: str=\"%s\", start_index=%d, end_index=%d"
-               " (length_of_str = ", arg_str ? arg_str: "(null string)",
-               start_index, end_index);
-        if (arg_str) {
-            printf("%d)\n", (int)(strlen(arg_str)));
-        } else {
-            printf("INVALID)\n");
-        }
-        printf("\n");
-        sub_str = substr(arg_str, start_index, end_index);
-        if (sub_str) {
-            // using strlen() here is safe because it is guaranteed that sub_str
-            // is null terminated.
-            printf("** substr = \"%s\" (length_of_substr = %d)\n", sub_str,
-                   (int)(strlen(sub_str)));
-            free(sub_str);
-            sub_str = NULL;
-        } else {
-            printf("** substr() returned NULL. It looks like one or more user"
-                   " inputs were invalid. **\n");
-        }
-
-        printf("\nPlease press ENTER to continue..");
-        // now clear the stdin input buffer
-        discard_all_characters_from_stdin();
-
-    } // end of outermost while(1) loop
-
-} // end of main
-
-/*
- * get_input_from_stdin_and_discard_extra_characters():
- *
- *      Function get_input_from_stdin_and_discard_extra_characters() reads at
- *      most (size - 1) characters from stdin and stores them in 'str'.
- *      One character is used to null terminate 'str'. The rest of the
- *      remaining characters in stdin are read and discarded, they are not
- *      stored in 'str'. So, when this function returns then there is no
- *      input/characters left in stdin.
- *
- *      If 'str' is NULL then it is an error and nothing is read from stdin and
- *      NULL is returned.
- *
- *      If 'size' is greater than 'STR_LIB_MAX_STR_SIZE_ALLOWED' or less than
- *      'STR_LIB_MIN_STR_SIZE_ALLOWED' then it is an error and nothing is read
- *      from stdin and NULL is returned.
- */
-static char *get_input_from_stdin_and_discard_extra_characters(char *str,
-                                                               int size)
-{
-
-    int c = 0;
-    int i = 0;
-
-    if (str == NULL) {
-        return NULL;
-    }
-
-    if ((size < STR_LIB_MIN_STR_SIZE_ALLOWED) ||
-        (size > STR_LIB_MAX_STR_SIZE_ALLOWED)) {
-        return NULL;
-    }
-
-    for (i = 0; i < (size - 1); i = i + 1) {
-
-        c = getchar();
-
-        if ((c == '\n') || (c == EOF)) {
-            str[i] = 0;
-            return str;
-        }
-
-        str[i] = (char)(c);
-
-    } // end of for loop
-
-    str[i] = 0;
-
-    // discard the rest of the input
-    while ((c = getchar()) && (c != '\n') && (c != EOF));
-
-    return str;
-
-} // end of function get_input_from_stdin_and_discard_extra_characters()
-
-static void discard_all_characters_from_stdin(void)
-{
-
-    int c = 0;
-
-    // discard all characters from stdin
-    while ((c = getchar()) && (c != '\n') && (c != EOF));
-
-    return;
-
-} // end of function discard_all_characters_from_stdin()
-
-/*
- * is_str_an_integer():
- *
- *      Function is_str_an_integer() expects only numeric characters in 'str'
- *      and optionally a leading '+' or '-' character.
- *
- *      This function returns STR_LIB_NUM_TRUE when all of the following
- *      conditions are met:
- *
- *              ** 'str' is not null.
- *              ** The first character of 'str' is not the null terminating
- *                 character (means 'str' is not an empty string).
- *              ** Length of 'str' is less than 'STR_LIB_INTEGER_STR_SIZE'.
- *              ** 'str' contains only numeric characters and optionally a
- *                 leading '+' or '-' character.
- *
- *      In all other cases, this function returns STR_LIB_NUM_FALSE.
- */
-static int is_str_an_integer(const char *str)
-{
-
-    char c = -1;
-
-    if (str == NULL) {
-        return STR_LIB_NUM_FALSE;
-    }
-
-    if (str[0] == '\0') { // empty string
-        return STR_LIB_NUM_FALSE;
-    }
-
-    // If length of 'str' is not less than 'STR_LIB_INTEGER_STR_SIZE' then it is
-    // an error and in this case, return STR_LIB_NUM_FALSE.
-    if (strnlen(str, STR_LIB_INTEGER_STR_SIZE) == STR_LIB_INTEGER_STR_SIZE) {
-        return STR_LIB_NUM_FALSE;
-    }
-
-    if ((*str == '+') || (*str == '-')) {
-        str++;
-    }
-
-    while ((c = *str)) {
-        if ((c < '0') || (c > '9')) {
-            return STR_LIB_NUM_FALSE;
-        }
-        str++;
-    }
-
-    return STR_LIB_NUM_TRUE;
-
-} // end of function is_str_an_integer()
-
-static int get_integer_input_from_user(char *str, int size, int *integer_ptr)
-{
-
-    char *retval = NULL;
-
-    if ((str == NULL) || (integer_ptr == NULL)) {
-        return STR_LIB_FAILURE;
-    }
-
-    if ((size < STR_LIB_MIN_STR_SIZE_ALLOWED) ||
-        (size > STR_LIB_INTEGER_STR_SIZE)) {
-        return STR_LIB_FAILURE;
-    }
-
-    retval = get_input_from_stdin_and_discard_extra_characters(str, size);
-
-    if (retval == NULL) {
-        return STR_LIB_FAILURE;
-    }
-
-    if (is_str_an_integer(str) != STR_LIB_NUM_TRUE) {
-        return STR_LIB_FAILURE;
-    }
-
-    // convert string to int
-    (*integer_ptr) = atoi(str);
-
-    return STR_LIB_SUCCESS;
-
-} // end of function get_integer_input_from_user()
-
-----------------
-ReadMe.txt
-----------------
-
-File "substr.c" implements a function called substr() to get a substring from a
-string. The signature of this function is:
-
-        char *substr(const char *str, int start_index, int end_index)
-
-Function substr() allocates memory for the substring and returns a pointer to
-this substring which is a copy of characters of 'str' from 'start_index' to
-'end_index' (including the character at 'end_index'). This substring is
-terminated by the null character.
-
-If the 'end_index' is negative or greater than the last index of 'str' then
-'end_index' is normalized which means that 'end_index' is set to the last index
-of 'str' (length_of_str - 1).
-
-This function returns NULL in the following error cases:
-
-     ** 'str' is NULL.
-     ** The first character of 'str' is the null terminating character (means
-        that 'str' is an empty string).
-     ** length of 'str' is greater than 'STR_LIB_MAX_STR_SIZE_ALLOWED - 1'.
-     ** 'start_index' is less than zero (0).
-     ** 'start_index' is greater than the last index of 'str' (length_of_str
-        -1).
-     ** After normalization of 'end_index' (as explained above), 'end_index'
-        is less than 'start_index'.
-
-It is necessary to check the return value of this function for NULL before
-proceeding ahead.
-
-The memory for the substring is allocated using calloc(), so it is the user's
-responsibility to free this memory.
-
----- End of ReadMe ----
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jun 17, 2025 at 12:48=E2=80=AFPM Sumit Garg <sumit.garg@kernel.org>=
+ wrote:
+>
+> On Tue, Jun 10, 2025 at 03:13:49PM +0200, Jens Wiklander wrote:
+> > From: Etienne Carriere <etienne.carriere@foss.st.com>
+> >
+> > Add a userspace API to create a tee_shm object that refers to a dmabuf
+> > reference.
+> >
+> > Userspace registers the dmabuf file descriptor as in a tee_shm object.
+> > The registration is completed with a tee_shm returned file descriptor.
+> >
+> > Userspace is free to close the dmabuf file descriptor after it has been
+> > registered since all the resources are now held via the new tee_shm
+> > object.
+> >
+> > Closing the tee_shm file descriptor will eventually release all
+> > resources used by the tee_shm object when all references are released.
+> >
+> > The new IOCTL, TEE_IOC_SHM_REGISTER_FD, supports dmabuf references to
+> > physically contiguous memory buffers. Dmabuf references acquired from
+> > the TEE DMA-heap can be used as protected memory for Secure Video Path
+> > and such use cases. It depends on the TEE and the TEE driver if dmabuf
+> > references acquired by other means can be used.
+> >
+> > A new tee_shm flag is added to identify tee_shm objects built from a
+> > registered dmabuf, TEE_SHM_DMA_BUF.
+> >
+> > Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
+> > Signed-off-by: Olivier Masse <olivier.masse@nxp.com>
+> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > ---
+> >  drivers/tee/tee_core.c    |  63 +++++++++++++++++++++-
+> >  drivers/tee/tee_private.h |  10 ++++
+> >  drivers/tee/tee_shm.c     | 106 ++++++++++++++++++++++++++++++++++++--
+> >  include/linux/tee_core.h  |   1 +
+> >  include/linux/tee_drv.h   |  10 ++++
+> >  include/uapi/linux/tee.h  |  31 +++++++++++
+> >  6 files changed, 217 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+> > index 5259b8223c27..0e9d9e5872a4 100644
+> > --- a/drivers/tee/tee_core.c
+> > +++ b/drivers/tee/tee_core.c
+> > @@ -353,11 +353,49 @@ tee_ioctl_shm_register(struct tee_context *ctx,
+> >       return ret;
+> >  }
+> >
+> > +static int
+> > +tee_ioctl_shm_register_fd(struct tee_context *ctx,
+> > +                       struct tee_ioctl_shm_register_fd_data __user *u=
+data)
+> > +{
+> > +     struct tee_ioctl_shm_register_fd_data data;
+> > +     struct tee_shm *shm;
+> > +     long ret;
+> > +
+> > +     if (copy_from_user(&data, udata, sizeof(data)))
+> > +             return -EFAULT;
+> > +
+> > +     /* Currently no input flags are supported */
+> > +     if (data.flags)
+> > +             return -EINVAL;
+> > +
+> > +     shm =3D tee_shm_register_fd(ctx, data.fd);
+> > +     if (IS_ERR(shm))
+> > +             return -EINVAL;
+> > +
+> > +     data.id =3D shm->id;
+> > +     data.flags =3D shm->flags;
+> > +     data.size =3D shm->size;
+> > +
+> > +     if (copy_to_user(udata, &data, sizeof(data)))
+> > +             ret =3D -EFAULT;
+> > +     else
+> > +             ret =3D tee_shm_get_fd(shm);
+> > +
+> > +     /*
+> > +      * When user space closes the file descriptor the shared memory
+> > +      * should be freed or if tee_shm_get_fd() failed then it will
+> > +      * be freed immediately.
+> > +      */
+> > +     tee_shm_put(shm);
+> > +     return ret;
+> > +}
+> > +
+> >  static int param_from_user_memref(struct tee_context *ctx,
+> >                                 struct tee_param_memref *memref,
+> >                                 struct tee_ioctl_param *ip)
+> >  {
+> >       struct tee_shm *shm;
+> > +     size_t offs =3D 0;
+> >
+> >       /*
+> >        * If a NULL pointer is passed to a TA in the TEE,
+> > @@ -388,6 +426,26 @@ static int param_from_user_memref(struct tee_conte=
+xt *ctx,
+> >                       tee_shm_put(shm);
+> >                       return -EINVAL;
+> >               }
+> > +
+> > +             if (shm->flags & TEE_SHM_DMA_BUF) {
+> > +                     struct tee_shm_dmabuf_ref *ref;
+> > +
+> > +                     ref =3D container_of(shm, struct tee_shm_dmabuf_r=
+ef, shm);
+> > +                     if (ref->parent_shm) {
+> > +                             /*
+> > +                              * The shm already has one reference to
+> > +                              * ref->parent_shm so we are clear of 0.
+> > +                              * We're getting another reference since
+> > +                              * this shm will be used in the parameter
+> > +                              * list instead of the shm we got with
+> > +                              * tee_shm_get_from_id() above.
+> > +                              */
+> > +                             refcount_inc(&ref->parent_shm->refcount);
+> > +                             tee_shm_put(shm);
+> > +                             shm =3D ref->parent_shm;
+> > +                             offs =3D ref->offset;
+> > +                     }
+> > +             }
+> >       } else if (ctx->cap_memref_null) {
+> >               /* Pass NULL pointer to OP-TEE */
+> >               shm =3D NULL;
+> > @@ -395,7 +453,7 @@ static int param_from_user_memref(struct tee_contex=
+t *ctx,
+> >               return -EINVAL;
+> >       }
+> >
+> > -     memref->shm_offs =3D ip->a;
+> > +     memref->shm_offs =3D ip->a + offs;
+> >       memref->size =3D ip->b;
+> >       memref->shm =3D shm;
+> >
+> > @@ -841,6 +899,8 @@ static long tee_ioctl(struct file *filp, unsigned i=
+nt cmd, unsigned long arg)
+> >               return tee_ioctl_shm_alloc(ctx, uarg);
+> >       case TEE_IOC_SHM_REGISTER:
+> >               return tee_ioctl_shm_register(ctx, uarg);
+> > +     case TEE_IOC_SHM_REGISTER_FD:
+> > +             return tee_ioctl_shm_register_fd(ctx, uarg);
+> >       case TEE_IOC_OPEN_SESSION:
+> >               return tee_ioctl_open_session(ctx, uarg);
+> >       case TEE_IOC_INVOKE:
+> > @@ -1300,3 +1360,4 @@ MODULE_AUTHOR("Linaro");
+> >  MODULE_DESCRIPTION("TEE Driver");
+> >  MODULE_VERSION("1.0");
+> >  MODULE_LICENSE("GPL v2");
+> > +MODULE_IMPORT_NS("DMA_BUF");
+> > diff --git a/drivers/tee/tee_private.h b/drivers/tee/tee_private.h
+> > index 6c6ff5d5eed2..308467705da6 100644
+> > --- a/drivers/tee/tee_private.h
+> > +++ b/drivers/tee/tee_private.h
+> > @@ -13,6 +13,16 @@
+> >  #include <linux/mutex.h>
+> >  #include <linux/types.h>
+> >
+> > +/* extra references appended to shm object for registered shared memor=
+y */
+> > +struct tee_shm_dmabuf_ref {
+> > +     struct tee_shm shm;
+> > +     size_t offset;
+> > +     struct dma_buf *dmabuf;
+> > +     struct dma_buf_attachment *attach;
+> > +     struct sg_table *sgt;
+> > +     struct tee_shm *parent_shm;
+> > +};
+> > +
+> >  int tee_shm_get_fd(struct tee_shm *shm);
+> >
+> >  bool tee_device_get(struct tee_device *teedev);
+> > diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
+> > index daf6e5cfd59a..e63095e84644 100644
+> > --- a/drivers/tee/tee_shm.c
+> > +++ b/drivers/tee/tee_shm.c
+> > @@ -4,6 +4,7 @@
+> >   */
+> >  #include <linux/anon_inodes.h>
+> >  #include <linux/device.h>
+> > +#include <linux/dma-buf.h>
+> >  #include <linux/idr.h>
+> >  #include <linux/io.h>
+> >  #include <linux/mm.h>
+> > @@ -45,7 +46,21 @@ static void release_registered_pages(struct tee_shm =
+*shm)
+> >
+> >  static void tee_shm_release(struct tee_device *teedev, struct tee_shm =
+*shm)
+> >  {
+> > -     if (shm->flags & TEE_SHM_POOL) {
+> > +     void *p =3D shm;
+> > +
+> > +     if (shm->flags & TEE_SHM_DMA_BUF) {
+> > +             struct tee_shm_dmabuf_ref *ref;
+> > +
+> > +             ref =3D container_of(shm, struct tee_shm_dmabuf_ref, shm)=
+;
+> > +             p =3D ref;
+> > +             if (ref->attach) {
+> > +                     dma_buf_unmap_attachment(ref->attach, ref->sgt,
+> > +                                              DMA_BIDIRECTIONAL);
+> > +
+> > +                     dma_buf_detach(ref->dmabuf, ref->attach);
+> > +             }
+> > +             dma_buf_put(ref->dmabuf);
+> > +     } else if (shm->flags & TEE_SHM_POOL) {
+> >               teedev->pool->ops->free(teedev->pool, shm);
+> >       } else if (shm->flags & TEE_SHM_DYNAMIC) {
+> >               int rc =3D teedev->desc->ops->shm_unregister(shm->ctx, sh=
+m);
+> > @@ -59,7 +74,7 @@ static void tee_shm_release(struct tee_device *teedev=
+, struct tee_shm *shm)
+> >
+> >       teedev_ctx_put(shm->ctx);
+> >
+> > -     kfree(shm);
+> > +     kfree(p);
+> >
+> >       tee_device_put(teedev);
+> >  }
+> > @@ -169,7 +184,7 @@ struct tee_shm *tee_shm_alloc_user_buf(struct tee_c=
+ontext *ctx, size_t size)
+> >   * tee_client_invoke_func(). The memory allocated is later freed with =
+a
+> >   * call to tee_shm_free().
+> >   *
+> > - * @returns a pointer to 'struct tee_shm'
+> > + * @returns a pointer to 'struct tee_shm' on success, and ERR_PTR on f=
+ailure
+> >   */
+> >  struct tee_shm *tee_shm_alloc_kernel_buf(struct tee_context *ctx, size=
+_t size)
+> >  {
+> > @@ -179,6 +194,91 @@ struct tee_shm *tee_shm_alloc_kernel_buf(struct te=
+e_context *ctx, size_t size)
+> >  }
+> >  EXPORT_SYMBOL_GPL(tee_shm_alloc_kernel_buf);
+> >
+> > +struct tee_shm *tee_shm_register_fd(struct tee_context *ctx, int fd)
+> > +{
+> > +     struct tee_shm_dmabuf_ref *ref;
+> > +     int rc;
+> > +
+> > +     if (!tee_device_get(ctx->teedev))
+> > +             return ERR_PTR(-EINVAL);
+> > +
+> > +     teedev_ctx_get(ctx);
+> > +
+> > +     ref =3D kzalloc(sizeof(*ref), GFP_KERNEL);
+> > +     if (!ref) {
+> > +             rc =3D -ENOMEM;
+> > +             goto err_put_tee;
+> > +     }
+> > +
+> > +     refcount_set(&ref->shm.refcount, 1);
+> > +     ref->shm.ctx =3D ctx;
+> > +     ref->shm.id =3D -1;
+> > +     ref->shm.flags =3D TEE_SHM_DMA_BUF;
+> > +
+> > +     ref->dmabuf =3D dma_buf_get(fd);
+> > +     if (IS_ERR(ref->dmabuf)) {
+> > +             rc =3D PTR_ERR(ref->dmabuf);
+> > +             goto err_kfree_ref;
+> > +     }
+> > +
+> > +     rc =3D tee_heap_update_from_dma_buf(ctx->teedev, ref->dmabuf,
+> > +                                       &ref->offset, &ref->shm,
+> > +                                       &ref->parent_shm);
+> > +     if (!rc)
+> > +             goto out;
+>
+> One odd thing I find here, why do we bail out on success case here?
+> Don't we need the DMA buffer attach and map APIs to be invoked on
+> success case here?
+
+No, because if tee_heap_update_from_dma_buf() succeeds, we know
+everything we need about the buffer. Note that we're returning a valid
+pointer below to indicate success.
+
+Cheers,
+Jens
+
+>
+> -Sumit
+>
+> > +     if (rc !=3D -EINVAL)
+> > +             goto err_put_dmabuf;
+> > +
+> > +     ref->attach =3D dma_buf_attach(ref->dmabuf, &ctx->teedev->dev);
+> > +     if (IS_ERR(ref->attach)) {
+> > +             rc =3D PTR_ERR(ref->attach);
+> > +             goto err_put_dmabuf;
+> > +     }
+> > +
+> > +     ref->sgt =3D dma_buf_map_attachment(ref->attach, DMA_BIDIRECTIONA=
+L);
+> > +     if (IS_ERR(ref->sgt)) {
+> > +             rc =3D PTR_ERR(ref->sgt);
+> > +             goto err_detach;
+> > +     }
+> > +
+> > +     if (sg_nents(ref->sgt->sgl) !=3D 1) {
+> > +             rc =3D -EINVAL;
+> > +             goto err_unmap_attachement;
+> > +     }
+> > +
+> > +     ref->shm.paddr =3D page_to_phys(sg_page(ref->sgt->sgl));
+> > +     ref->shm.size =3D ref->sgt->sgl->length;
+> > +
+> > +out:
+> > +     mutex_lock(&ref->shm.ctx->teedev->mutex);
+> > +     ref->shm.id =3D idr_alloc(&ref->shm.ctx->teedev->idr, &ref->shm,
+> > +                             1, 0, GFP_KERNEL);
+> > +     mutex_unlock(&ref->shm.ctx->teedev->mutex);
+> > +     if (ref->shm.id < 0) {
+> > +             rc =3D ref->shm.id;
+> > +             if (ref->attach)
+> > +                     goto err_unmap_attachement;
+> > +             goto err_put_dmabuf;
+> > +     }
+> > +
+> > +     return &ref->shm;
+> > +
+> > +err_unmap_attachement:
+> > +     dma_buf_unmap_attachment(ref->attach, ref->sgt, DMA_BIDIRECTIONAL=
+);
+> > +err_detach:
+> > +     dma_buf_detach(ref->dmabuf, ref->attach);
+> > +err_put_dmabuf:
+> > +     dma_buf_put(ref->dmabuf);
+> > +err_kfree_ref:
+> > +     kfree(ref);
+> > +err_put_tee:
+> > +     teedev_ctx_put(ctx);
+> > +     tee_device_put(ctx->teedev);
+> > +
+> > +     return ERR_PTR(rc);
+> > +}
+> > +EXPORT_SYMBOL_GPL(tee_shm_register_fd);
+> > +
+> >  /**
+> >   * tee_shm_alloc_priv_buf() - Allocate shared memory for a privately s=
+hared
+> >   *                         kernel buffer
+> > diff --git a/include/linux/tee_core.h b/include/linux/tee_core.h
+> > index 22e03d897dc3..f17710196c4c 100644
+> > --- a/include/linux/tee_core.h
+> > +++ b/include/linux/tee_core.h
+> > @@ -28,6 +28,7 @@
+> >  #define TEE_SHM_USER_MAPPED  BIT(1)  /* Memory mapped in user space */
+> >  #define TEE_SHM_POOL         BIT(2)  /* Memory allocated from pool */
+> >  #define TEE_SHM_PRIV         BIT(3)  /* Memory private to TEE driver *=
+/
+> > +#define TEE_SHM_DMA_BUF              BIT(4)  /* Memory with dma-buf ha=
+ndle */
+> >
+> >  #define TEE_DEVICE_FLAG_REGISTERED   0x1
+> >  #define TEE_MAX_DEV_NAME_LEN         32
+> > diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
+> > index a54c203000ed..824f1251de60 100644
+> > --- a/include/linux/tee_drv.h
+> > +++ b/include/linux/tee_drv.h
+> > @@ -116,6 +116,16 @@ struct tee_shm *tee_shm_alloc_kernel_buf(struct te=
+e_context *ctx, size_t size);
+> >  struct tee_shm *tee_shm_register_kernel_buf(struct tee_context *ctx,
+> >                                           void *addr, size_t length);
+> >
+> > +/**
+> > + * tee_shm_register_fd() - Register shared memory from file descriptor
+> > + *
+> > + * @ctx:     Context that allocates the shared memory
+> > + * @fd:              Shared memory file descriptor reference
+> > + *
+> > + * @returns a pointer to 'struct tee_shm' on success, and ERR_PTR on f=
+ailure
+> > + */
+> > +struct tee_shm *tee_shm_register_fd(struct tee_context *ctx, int fd);
+> > +
+> >  /**
+> >   * tee_shm_free() - Free shared memory
+> >   * @shm:     Handle to shared memory to free
+> > diff --git a/include/uapi/linux/tee.h b/include/uapi/linux/tee.h
+> > index d0430bee8292..d843cf980d98 100644
+> > --- a/include/uapi/linux/tee.h
+> > +++ b/include/uapi/linux/tee.h
+> > @@ -378,6 +378,37 @@ struct tee_ioctl_shm_register_data {
+> >       __s32 id;
+> >  };
+> >
+> > +/**
+> > + * struct tee_ioctl_shm_register_fd_data - Shared memory registering a=
+rgument
+> > + * @fd:              [in] File descriptor identifying dmabuf reference
+> > + * @size:    [out] Size of referenced memory
+> > + * @flags:   [in] Flags to/from allocation.
+> > + * @id:              [out] Identifier of the shared memory
+> > + *
+> > + * The flags field should currently be zero as input. Updated by the c=
+all
+> > + * with actual flags as defined by TEE_IOCTL_SHM_* above.
+> > + * This structure is used as argument for TEE_IOC_SHM_REGISTER_FD belo=
+w.
+> > + */
+> > +struct tee_ioctl_shm_register_fd_data {
+> > +     __s64 fd;
+> > +     __u64 size;
+> > +     __u32 flags;
+> > +     __s32 id;
+> > +};
+> > +
+> > +/**
+> > + * TEE_IOC_SHM_REGISTER_FD - register a shared memory from a file desc=
+riptor
+> > + *
+> > + * Returns a file descriptor on success or < 0 on failure
+> > + *
+> > + * The returned file descriptor refers to the shared memory object in =
+the
+> > + * kernel. The supplied file deccriptor can be closed if it's not need=
+ed
+> > + * for other purposes. The shared memory is freed when the descriptor =
+is
+> > + * closed.
+> > + */
+> > +#define TEE_IOC_SHM_REGISTER_FD      _IOWR(TEE_IOC_MAGIC, TEE_IOC_BASE=
+ + 8, \
+> > +                                  struct tee_ioctl_shm_register_fd_dat=
+a)
+> > +
+> >  /**
+> >   * TEE_IOC_SHM_REGISTER - Register shared memory argument
+> >   *
+> > --
+> > 2.43.0
+> >
 
