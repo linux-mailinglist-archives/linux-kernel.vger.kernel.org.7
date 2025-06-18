@@ -1,200 +1,368 @@
-Return-Path: <linux-kernel+bounces-692429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04ED4ADF180
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:39:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C421BADF156
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0CAB3AAE85
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:39:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1706A1BC2444
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA482EFDAF;
-	Wed, 18 Jun 2025 15:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7C82F237C;
+	Wed, 18 Jun 2025 15:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="H0Knvsl5"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013017.outbound.protection.outlook.com [40.107.159.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC00D2EFDA4;
-	Wed, 18 Jun 2025 15:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750261155; cv=fail; b=CKi7/qQ7aZ31sxhgjCB16KFJ4IWmu01n9WVuVDs2Fxb4O4REplj9ZD5W6U7rkjXmowyqW2wYS+NqBPd3lfBNpaD/FsnZGpLvo+HCB5tT8j1mk/+LNzvCIw0tI2U8R1T+YhjRM/lx38YSsNvRcHgG/F/RB1sKib2vhHOoxxH3BPg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750261155; c=relaxed/simple;
-	bh=UgUr1GgId8vtwwTIxZeoY2GpaA6kL+Eg4Yh3We4aRXE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=N5kYXAOH4ucMoO1QuF5iwIFb+an7/YGBOvP6zcIk89lCjZhdoZBbYWyeg22i73C2syA4lb21n4YTpLadWUDFVoIu7lY6lPIIPRHkS/FBMhfaFxaBIoQeIWvY+ASYHvA1Bsj1BC52It0HZbEr+0HH8sWtB1iUa/JdLYxcoXCoKp8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=H0Knvsl5; arc=fail smtp.client-ip=40.107.159.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fNUtG1WURuSbjP1Z2igd/EQKhrnLOaEAFn7JdcG3aTXsxLZysX3QqIEXu2TmvCFVpuEs+0WhQ6d5If6/ReTQTGkkeh3TP+mcRvtShvxkLbbDpcpDRmj+KQz3P6YNIOTJMbAiqVm0ZLAOVZtlAoZQAqeKdgKzRxpT96yg9kEPKsuSy13MMArOkc5iOgeHfB1YTR8doiLY03ubAAcBOIbMweGb+cQ3PTR4l3EtZMI4sRcHFaZOU9QYN4GYUIxeTgZMnYbZ0+v/jHwOMzZd1TYNiWlF1BVCum6QKpQjeK6UXmOjZc4MHrA0HBJXrmjxWudv2nxPPkCB2tuxbgHBBKxKAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ji673MPRmZfeD0mls1C7qPX/sxfuqNWtWg0XEqhEAOo=;
- b=XKVfIwvpv5dVMcxPXOeOg5V8ydCwnkm/7SpzrJ8rN0UGlsYHjGNGEom+XPNMSaOo1YG2Lk8btu+kGO81EXwrAaK3ceCq5kTIRcw5SUvjJPZxVpn4vp9+5pE6FiSxeIZUPrqLeeL6dhFlLP5QaRFumPeD35rJLL1gRFQPN5p/baKLdbj+Orycup0I2X9BAtNytMWw9+KiARaW/NjS77Br5bdA/2ncqXFVzRskUOu/x/DSJ55xKvM9NSGxv52/4Z1QUkBOVqu207GTEUKA1gldAqaRHmgWnKI0KSm1IIZnxXFJZib0HhZHMaQcUJaMfGS6L/Xgz1DUf2HBH0vNNOAdxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ji673MPRmZfeD0mls1C7qPX/sxfuqNWtWg0XEqhEAOo=;
- b=H0Knvsl5QLJzfOpOB2ze6mdgnD65Zx4OFXvc2OmkGwbJ+MvQKgoeLHneijuvLb513OeBtjRUUgEsvhM7NS2oGJ7NwPTUEgeIRLYhEGhWtvrV8ZlbGgzmqIx4d6oOrr9eJF64m53tYQ4J1aLD602Fvyl/bvAOzjVv2GO1YhchVjCgBompWK1OvAfUbluf31jtyhr0dE6ODT2JeXQEbm2/l4+8zS7T2mQyuSnQqg1Yp7UPocJMw04rfGgcPj9uUsXUEnQHZ9BBNF0o1d8A49j7EtSzZuR1Yc525BVDWcufLDSn/jfiZrYNUGy/YH4JaGsJZktoSeg8f/PBdckf7t9VXw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9692.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::20)
- by GV1PR04MB10775.eurprd04.prod.outlook.com (2603:10a6:150:213::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Wed, 18 Jun
- 2025 15:39:10 +0000
-Received: from AS4PR04MB9692.eurprd04.prod.outlook.com
- ([fe80::a2bf:4199:6415:f299]) by AS4PR04MB9692.eurprd04.prod.outlook.com
- ([fe80::a2bf:4199:6415:f299%5]) with mapi id 15.20.8835.027; Wed, 18 Jun 2025
- 15:39:09 +0000
-From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: linux-bluetooth@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="AXZHDQVb"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7F22EE981;
+	Wed, 18 Jun 2025 15:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750260123; cv=none; b=LXneU2zpO2SQ3fmC+8F68bkV9IjVDhb08/4Y/k9bb6pBiSICwIfdrPMmLmwZPia0lMn775Z8e4PwUjbiUynxHfJ7JjFsQe0q5OQWsr4LinoKCYQXvucu3Uh83GYeP1Z14Vh1BjbbpTzz57wlw3dPqc/zNeARsUWUgtqUuAB2c5A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750260123; c=relaxed/simple;
+	bh=faM7ArohF9ySz3He9yNCX6OKTYTs+8Y3O0FLFiCc2vc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=eePz/B9J/Ks5SB9JjIAKJM0P4cDpSXiChYdtKBMA1jvu4o4vMYf/6tGctxShch5d9uNi6krTua6+OA8U1IhPv7d81FytYobMjKuKcFVmGPr7tVtvXdaquKhM+DQqJVU++RKEMEcYkM2sAhK4PJpqvgevf+QBhtoiTm0UuoIDp+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=AXZHDQVb; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=5q
+	XqETQd2PNkfZLHj4KgigghIhxiyg3po4s7tKNm+fg=; b=AXZHDQVb7EALDQv7P1
+	GIzHOVUAEUEAcnDFdlCGvpzMpoQeR7e1MPi0/Hl/q+T7JhWyW0O/7hQEOcOZLms2
+	GZ1si6oddwGtYXONdAn0SN9zWhDSZ/ACCcgAzfME+KwPul3Wi+f6J3GeT9RH8JKV
+	165sZMGzP7CgfUKyMdHeT932Y=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgBnr96E2VJo_+eqAA--.17078S5;
+	Wed, 18 Jun 2025 23:21:43 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	bhelgaas@google.com,
+	mani@kernel.org,
+	kwilczynski@kernel.org
+Cc: robh@kernel.org,
+	jingoohan1@gmail.com,
+	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	amitkumar.karwar@nxp.com,
-	neeraj.sanjaykale@nxp.com,
-	sherry.sun@nxp.com,
-	manjeet.gupta@nxp.com
-Subject: [PATCH v3 1/2] dt-bindings: net: bluetooth: nxp: Add support for 4M baudrate
-Date: Wed, 18 Jun 2025 20:51:12 +0530
-Message-Id: <20250618152113.25500-1-neeraj.sanjaykale@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AM0PR10CA0003.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:208:17c::13) To AS4PR04MB9692.eurprd04.prod.outlook.com
- (2603:10a6:20b:4fe::20)
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH v2 13/13] PCI: tegra194: Refactor code by using dw_pcie_clear_and_set_dword()
+Date: Wed, 18 Jun 2025 23:21:12 +0800
+Message-Id: <20250618152112.1010147-14-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250618152112.1010147-1-18255117159@163.com>
+References: <20250618152112.1010147-1-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9692:EE_|GV1PR04MB10775:EE_
-X-MS-Office365-Filtering-Correlation-Id: 018da3a3-368a-4e33-4486-08ddae7e4424
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0AoiyxVsOMWLBohibuglsKXNEQ7sCvCf1G/nqp0gNuzItxhEIfF3YMIX6zW7?=
- =?us-ascii?Q?4xrJ3voPwWwq6YfnVYwWNQRYloZQSkbeMVlHQDvBtljYc8MzKTt2DjTPEU2j?=
- =?us-ascii?Q?l8NP0TS+lrM25ZCX3d0bLiRMCuregteoqHROJK666dUlJvf/0mZl+Ah/4mi2?=
- =?us-ascii?Q?y+kqGXYs1JP7AjzdlIZN5HDfzwQtsMjlbTJwPpmPWbA2nd11OiZ/w0ZII04k?=
- =?us-ascii?Q?+ZKO0Y+ga1Z8UOMLbKaSyCDA9s4Wl7f0794LahMQ+m5PvZ+W7M+pQB3SFjhg?=
- =?us-ascii?Q?khuxX+QtaxiCJz+zeQZxsVNJMNyY8r2NgpTDJu4RrHR2Zh+BjmFc/ls++VLS?=
- =?us-ascii?Q?9+6pJJl62BAPhB9IxCIwCjjPtwzsdKSpVov+swmstrl7WS0XfwJ9IjzDkVBD?=
- =?us-ascii?Q?pKqHMTBwo9lMBQM88tgXR7VpHVEKmfJE4RIYbNE60fypSkCEFqdI2NVPOh2p?=
- =?us-ascii?Q?kKvx00Gb/iRAL2bO6ASLOifvUZFGM6KXp+1mD9slhnxaSyqqx+1WytTwoGuX?=
- =?us-ascii?Q?91TsM3Sb6w042VcYZTrI7M3qL3jbPu/Hq3bTIAEipDY1G+OZ2J/RnC57DMGU?=
- =?us-ascii?Q?sMJyvH109/H9sURCPn8r/mybmu8pFi8CwR+MvYqwFd2+qgk6X98zy8ZNJeng?=
- =?us-ascii?Q?uQqmNzxIhB3eBrOS0RE9JioJTYm73IPjGRdsfN/OaUZ7jf16NrGoTF4eXGQ+?=
- =?us-ascii?Q?n5mz6XeYFDCuL0RECPgRDopsW1d3Z+ZqA6ZZ5IvYvDrmbUzMXCz35bjPQXNu?=
- =?us-ascii?Q?KuES0mJ0DmXxpxTh8cMBIhBLd7FjUkp8L3JggklxpJoii6CCP3l/Gm5qu3d7?=
- =?us-ascii?Q?ecRpOIWYJyZS7cJNab8XiakL4uzpAbmPs5zz3/lBYurFoyn9gt6b/N1bNXEC?=
- =?us-ascii?Q?jorxE5g4mYp+KWZCNw6MVY/09qO57+ilarKLTFnTHl+MZQ83vXWD2jAZRXNJ?=
- =?us-ascii?Q?mNZrUwkl4hFzb/wksfRyMwDnDVBW7LgHKKRyFgoeoKVEBnR/Vb2JT6lj+uYg?=
- =?us-ascii?Q?Q/QVVmozmRj40vIBwe/D4jxJKWbc1dp6xbTXoHFi+Uqz3lVovNUZoJvco3eb?=
- =?us-ascii?Q?m2NFJgH4Ny2qoWQBU0MlLdtOuUOxe0QNTw0hiGuPmZgiEg2UdR3jq/ZWfUNQ?=
- =?us-ascii?Q?liPEPi44PlplL9HTVSqhxXOXDMFK1ShsBO3IJWp5D6OB+GuyglL4pRCtdGYa?=
- =?us-ascii?Q?uGuonTp0RX6B0Tovwu1I0YwFN+6UkY0ursd0f7dJdym3UZyJosHJrM9/mFpw?=
- =?us-ascii?Q?HcxMrtLCyBS2t5lJTcXeAi67GmT/ZhnjnG4mXmv8LQcAMXivM788jRCEv0vZ?=
- =?us-ascii?Q?OOD7z1SLMPS62iX3ia++FSorjWsVBNSK2jzx5voOmex5EOMHufIVAxb4UQGg?=
- =?us-ascii?Q?Piy6z+NdDKevH1vuZ+dU6EAflurhqf3fdm0J/dfhZCQyHWfSVCKkjd1Kg5b9?=
- =?us-ascii?Q?w7HBX4+D7ImIj20fy0ZV+v/BaMbrLTyHpGywVgzMbvy1r7FNo7WxTQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9692.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QbztW7ubm2wVIQ26UlcAxmVfWeFpZ7wBG1f+EgUfcKs7vI1WLUo0//CYAGyR?=
- =?us-ascii?Q?wlNxllcbQTIuecC1eBBjZ/cyMnuBd9x5Afb98JDMoKff3yhWM8CDJL71kXCp?=
- =?us-ascii?Q?C1MF3dpHWgkzepORpvPe5K19aZ0dvo3+GmASojpzvne04E+HFjZfgWb5l1Ee?=
- =?us-ascii?Q?aHxhsKD3sYPOp5x1puOi9ITV3gbSeAbcBDq6osMdIKvpkf0AM35PrDxKkIX0?=
- =?us-ascii?Q?dD5E5tSSRWBYdOb78y/zV7yJ2uB6dvTkAL+tssNQXNslKr5T8hc76qKpOlMw?=
- =?us-ascii?Q?VG7Xuc2rUss96EXlXkGwTy8e/KHncJEHJ3GALgtJFMupRykydMyQF1SnnboQ?=
- =?us-ascii?Q?8cWzZYjdO1qURM9aDVlloUf0nFOolk89Dy2NV08rauyNEqlP1uPwaydT8ZCm?=
- =?us-ascii?Q?pXHYOIhJEDDgPdgq2smGiBxUErhc4f6niagKvtjCLO0+Pr5198ednrDkrPwm?=
- =?us-ascii?Q?yfdGSfEKB33i7Vp6D7F4nzKi8nOWFHjTZmomaxJ143Z4DphRG0bTumhZM6ho?=
- =?us-ascii?Q?Ae1M7l8RPrIyVC2zwXB7vh66sMto/CYDlQhpZALyU6/ZtCtGi7m32pX5RTvu?=
- =?us-ascii?Q?Ciz1sXez13fkj9NEiyRDe5aYVb2JSDOTfHfzBYc16FcHJH21THRccbdCO+ps?=
- =?us-ascii?Q?EtkBHeKsnMJx4wtegjKFx7wRK3xh/Y25wtJmztlk5uy9JD1sxK5pUC0lDfy7?=
- =?us-ascii?Q?u3XHQhghSS/yUlYq6mHqvRNmZ+H47tAdxyEJvxYpTUC1WlQmfg77e0t0QgSn?=
- =?us-ascii?Q?xugkwHohIOYtisqZM6HfbuPaUdujZZm/mj2tMnjtsugZNL5O3wsICmsIyY/M?=
- =?us-ascii?Q?WSLst61VBOcK+HWUWbBRcuVbp3OIfCxIW+TqOhYcOEdq4mXXl+mvi3h5rwg5?=
- =?us-ascii?Q?rbo1Q/taIPJBYCOnosl3q3zJlRVfaz0g8Sy0/L9sOwzR+dxp4zAdg5jz6XTb?=
- =?us-ascii?Q?zxPsWygAp28Prx66oskdeYDf3zdw6Y5jbOrCVJnC54SIuZvXistgDnI1hhFl?=
- =?us-ascii?Q?RqNIG2RfYG98PiUdmQR/wWCxAy3IHZMKo6wkDyxuRhZQz38AJsKrjncU0KT+?=
- =?us-ascii?Q?85FyyZmVPTIsQ2bFYRBilCfCXYs8HhkmI4VG1PKPJGUaua02/bWauQcODu6f?=
- =?us-ascii?Q?xpx77hEk3RPa8fbbqIb7Ff7faWwpO1z8UtJRSjocVus+T7SCDYGbnvMb6yfx?=
- =?us-ascii?Q?FYJzwZbGOG+keQ8JCU3bfMvVVl+kp88FDUVlrKyYMndCZOIstFkYID4dUs+d?=
- =?us-ascii?Q?e0OcagH7d5vBpiIQBE1Gwp/AaiNBjFLVFrxW68Ts+sy7QpmiaX30jAbum98x?=
- =?us-ascii?Q?AQqUftpwnQypnvRqCOGIV4nvEPrl6dJfIULmI76+uEDrN7LyZkb9YoJXRToP?=
- =?us-ascii?Q?P32PiYof8Sq0ao/JOvyIyPjhMErl9+aWY/SxhdYttJ8MfahBC8obJdpD9Qqo?=
- =?us-ascii?Q?5Iu/16zDotyy2smkwjy9Ck/u69Y7/NrtWyKCdDgay/JnPRDF+bJwUwk03BwN?=
- =?us-ascii?Q?0NImfhBYYBqBjEr1GJxrmrJYuQHsUvC+gb8nfhxMYdOSmjkghfTpPGYoQpPe?=
- =?us-ascii?Q?EWoAk8Jappv62J4yQ3cpcsX6if4WfWcvIsyOR4dC+5lGDSj4bhbg5VMrKhfQ?=
- =?us-ascii?Q?PQ=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 018da3a3-368a-4e33-4486-08ddae7e4424
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9692.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 15:39:09.3726
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ei5AOPxv7ucBIT4pE97DcvYCPc7oExThl1I9CTBvkGdhyNUpRBYxkhhWpo3CVEaWLBR8edoSuWgpQptolrULDxMQg/clBa7pPkBbgtxQ+Sk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10775
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:QCgvCgBnr96E2VJo_+eqAA--.17078S5
+X-Coremail-Antispam: 1Uf129KBjvAXoW3ur47Xw15Gr1xXry3AFy5urg_yoW8JF4UZo
+	ZrJ3WkW3W7Jr1xta4YyFn3Kry7Jr4YvayrArZ2y3yj9as7KF15A393Kas8Aw12kr4fC34f
+	Xw4kG3W3AFW7XryUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4RA739UUUUU
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxVwo2hS1QJtrwABsz
 
-Add support for 4000000 as secondary baudrate.
+Tegra194 PCIe driver contains extensive manual bit manipulation across
+interrupt handling, ASPM configuration, and controller initialization.
+The driver implements complex read-modify-write sequences with explicit
+bit masking, leading to verbose and hard-to-maintain code.
 
-Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Refactor interrupt handling, ASPM setup, capability configuration, and
+controller initialization using dw_pcie_clear_and_set_dword(). Replace
+multi-step register modifications with single helper calls, eliminating
+intermediate variables and reducing code size by ~100 lines. For CDMA
+error handling, initialize the value variable to zero before setting
+status bits.
+
+This comprehensive refactoring significantly improves code readability
+and maintainability. Standardizing on the helper ensures consistent
+register access patterns across all driver components and reduces the
+risk of bit manipulation errors in this complex controller driver.
+
+Signed-off-by: Hans Zhang <18255117159@163.com>
 ---
-v2: Use the available 'max-speed' device tree property. (Krzysztof)
-v3: No Change
----
- .../devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml  | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/pci/controller/dwc/pcie-tegra194.c | 155 +++++++++------------
+ 1 file changed, 64 insertions(+), 91 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
-index 3ab60c70286f..4a1b6ea48a2f 100644
---- a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
-+++ b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
-@@ -34,6 +34,12 @@ properties:
-       This property depends on the module vendor's
-       configuration.
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 4f26086f25da..c6f5c35a4be4 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -378,9 +378,8 @@ static irqreturn_t tegra_pcie_rp_irq_handler(int irq, void *arg)
+ 			val |= APPL_CAR_RESET_OVRD_CYA_OVERRIDE_CORE_RST_N;
+ 			appl_writel(pcie, val, APPL_CAR_RESET_OVRD);
  
-+  max-speed:
-+    enum:
-+      - 3000000
-+      - 4000000
-+    default: 3000000
-+
-   firmware-name:
-     maxItems: 1
+-			val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
+-			val |= PORT_LOGIC_SPEED_CHANGE;
+-			dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
++			dw_pcie_clear_and_set_dword(pci, PCIE_LINK_WIDTH_SPEED_CONTROL,
++						    0, PORT_LOGIC_SPEED_CHANGE);
+ 		}
+ 	}
  
-@@ -78,6 +84,7 @@ examples:
-         bluetooth {
-             compatible = "nxp,88w8987-bt";
-             fw-init-baudrate = <3000000>;
-+            max-speed = <4000000>;
-             firmware-name = "uartuart8987_bt_v0.bin";
-             device-wakeup-gpios = <&gpio 11 GPIO_ACTIVE_HIGH>;
-             nxp,wakein-pin = /bits/ 8 <18>;
+@@ -412,7 +411,7 @@ static irqreturn_t tegra_pcie_rp_irq_handler(int irq, void *arg)
+ 
+ 	if (status_l0 & APPL_INTR_STATUS_L0_CDM_REG_CHK_INT) {
+ 		status_l1 = appl_readl(pcie, APPL_INTR_STATUS_L1_18);
+-		val = dw_pcie_readl_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS);
++		val = 0;
+ 		if (status_l1 & APPL_INTR_STATUS_L1_18_CDM_REG_CHK_CMPLT) {
+ 			dev_info(pci->dev, "CDM check complete\n");
+ 			val |= PCIE_PL_CHK_REG_CHK_REG_COMPLETE;
+@@ -425,7 +424,8 @@ static irqreturn_t tegra_pcie_rp_irq_handler(int irq, void *arg)
+ 			dev_err(pci->dev, "CDM Logic error\n");
+ 			val |= PCIE_PL_CHK_REG_CHK_REG_LOGIC_ERROR;
+ 		}
+-		dw_pcie_writel_dbi(pci, PCIE_PL_CHK_REG_CONTROL_STATUS, val);
++		dw_pcie_clear_and_set_dword(pci, PCIE_PL_CHK_REG_CONTROL_STATUS,
++					    PORT_LOGIC_SPEED_CHANGE, val);
+ 		val = dw_pcie_readl_dbi(pci, PCIE_PL_CHK_REG_ERR_ADDR);
+ 		dev_err(pci->dev, "CDM Error Address Offset = 0x%08X\n", val);
+ 	}
+@@ -610,34 +610,27 @@ static struct pci_ops tegra_pci_ops = {
+ #if defined(CONFIG_PCIEASPM)
+ static void disable_aspm_l11(struct tegra_pcie_dw *pcie)
+ {
+-	u32 val;
+-
+-	val = dw_pcie_readl_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub);
+-	val &= ~PCI_L1SS_CAP_ASPM_L1_1;
+-	dw_pcie_writel_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub, val);
++	dw_pcie_clear_and_set_dword(&pcie->pci, pcie->cfg_link_cap_l1sub,
++				    PCI_L1SS_CAP_ASPM_L1_1, 0);
+ }
+ 
+ static void disable_aspm_l12(struct tegra_pcie_dw *pcie)
+ {
+-	u32 val;
+-
+-	val = dw_pcie_readl_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub);
+-	val &= ~PCI_L1SS_CAP_ASPM_L1_2;
+-	dw_pcie_writel_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub, val);
++	dw_pcie_clear_and_set_dword(&pcie->pci, pcie->cfg_link_cap_l1sub,
++				    PCI_L1SS_CAP_ASPM_L1_2, 0);
+ }
+ 
+ static inline u32 event_counter_prog(struct tegra_pcie_dw *pcie, u32 event)
+ {
+-	u32 val;
++	u32 val = 0;
+ 
+-	val = dw_pcie_readl_dbi(&pcie->pci, pcie->ras_des_cap +
+-				PCIE_RAS_DES_EVENT_COUNTER_CONTROL);
+-	val &= ~(EVENT_COUNTER_EVENT_SEL_MASK << EVENT_COUNTER_EVENT_SEL_SHIFT);
+ 	val |= EVENT_COUNTER_GROUP_5 << EVENT_COUNTER_GROUP_SEL_SHIFT;
+ 	val |= event << EVENT_COUNTER_EVENT_SEL_SHIFT;
+ 	val |= EVENT_COUNTER_ENABLE_ALL << EVENT_COUNTER_ENABLE_SHIFT;
+-	dw_pcie_writel_dbi(&pcie->pci, pcie->ras_des_cap +
+-			   PCIE_RAS_DES_EVENT_COUNTER_CONTROL, val);
++	dw_pcie_clear_and_set_dword(&pcie->pci, pcie->ras_des_cap +
++				    PCIE_RAS_DES_EVENT_COUNTER_CONTROL,
++				    EVENT_COUNTER_EVENT_SEL_MASK << EVENT_COUNTER_EVENT_SEL_SHIFT,
++				    val);
+ 	val = dw_pcie_readl_dbi(&pcie->pci, pcie->ras_des_cap +
+ 				PCIE_RAS_DES_EVENT_COUNTER_DATA);
+ 
+@@ -697,18 +690,20 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
+ 			   PCIE_RAS_DES_EVENT_COUNTER_CONTROL, val);
+ 
+ 	/* Program T_cmrt and T_pwr_on values */
+-	val = dw_pcie_readl_dbi(pci, pcie->cfg_link_cap_l1sub);
+-	val &= ~(PCI_L1SS_CAP_CM_RESTORE_TIME | PCI_L1SS_CAP_P_PWR_ON_VALUE);
++	val = 0;
+ 	val |= (pcie->aspm_cmrt << 8);
+ 	val |= (pcie->aspm_pwr_on_t << 19);
+-	dw_pcie_writel_dbi(pci, pcie->cfg_link_cap_l1sub, val);
++	dw_pcie_clear_and_set_dword(pci, pcie->cfg_link_cap_l1sub,
++				    PCI_L1SS_CAP_CM_RESTORE_TIME |
++				    PCI_L1SS_CAP_P_PWR_ON_VALUE,
++				    val);
+ 
+ 	/* Program L0s and L1 entrance latencies */
+-	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
+-	val &= ~PORT_AFR_L0S_ENTRANCE_LAT_MASK;
++	val = 0;
+ 	val |= (pcie->aspm_l0s_enter_lat << PORT_AFR_L0S_ENTRANCE_LAT_SHIFT);
+ 	val |= PORT_AFR_ENTER_ASPM;
+-	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
++	dw_pcie_clear_and_set_dword(pci, PCIE_PORT_AFR,
++				    PORT_AFR_L0S_ENTRANCE_LAT_MASK, val);
+ }
+ 
+ static void init_debugfs(struct tegra_pcie_dw *pcie)
+@@ -860,31 +855,26 @@ static void config_gen3_gen4_eq_presets(struct tegra_pcie_dw *pcie)
+ 		dw_pcie_writeb_dbi(pci, offset + i, val);
+ 	}
+ 
+-	val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
+-	val &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
+-	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
++	dw_pcie_clear_and_set_dword(pci, GEN3_RELATED_OFF,
++				    GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK, 0);
+ 
+-	val = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
+-	val &= ~GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC;
+-	val |= FIELD_PREP(GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC, 0x3ff);
+-	val &= ~GEN3_EQ_CONTROL_OFF_FB_MODE;
+-	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, val);
++	dw_pcie_clear_and_set_dword(pci, GEN3_EQ_CONTROL_OFF,
++				    GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC |
++				    GEN3_EQ_CONTROL_OFF_FB_MODE,
++				    FIELD_PREP(GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC, 0x3ff));
+ 
+-	val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
+-	val &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
+-	val |= (0x1 << GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT);
+-	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
++	dw_pcie_clear_and_set_dword(pci, GEN3_RELATED_OFF,
++				    GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK,
++				    0x1 << GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT);
+ 
+-	val = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
+-	val &= ~GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC;
+-	val |= FIELD_PREP(GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC,
+-			  pcie->of_data->gen4_preset_vec);
+-	val &= ~GEN3_EQ_CONTROL_OFF_FB_MODE;
+-	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, val);
++	dw_pcie_clear_and_set_dword(pci, GEN3_EQ_CONTROL_OFF,
++				    GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC |
++				    GEN3_EQ_CONTROL_OFF_FB_MODE,
++				    FIELD_PREP(GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC,
++					       pcie->of_data->gen4_preset_vec));
+ 
+-	val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
+-	val &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
+-	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
++	dw_pcie_clear_and_set_dword(pci, GEN3_RELATED_OFF,
++				    GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK, 0);
+ }
+ 
+ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+@@ -892,7 +882,6 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+ 	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
+ 	u32 val;
+-	u16 val_16;
+ 
+ 	pp->bridge->ops = &tegra_pci_ops;
+ 
+@@ -900,32 +889,25 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+ 		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+ 							      PCI_CAP_ID_EXP);
+ 
+-	val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
+-	val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
+-	dw_pcie_writel_dbi(pci, PCI_IO_BASE, val);
++	dw_pcie_clear_and_set_dword(pci, PCI_IO_BASE,
++				    IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8, 0);
+ 
+-	val = dw_pcie_readl_dbi(pci, PCI_PREF_MEMORY_BASE);
+-	val |= CFG_PREF_MEM_LIMIT_BASE_MEM_DECODE;
+-	val |= CFG_PREF_MEM_LIMIT_BASE_MEM_LIMIT_DECODE;
+-	dw_pcie_writel_dbi(pci, PCI_PREF_MEMORY_BASE, val);
++	dw_pcie_clear_and_set_dword(pci, PCI_PREF_MEMORY_BASE, 0,
++				    CFG_PREF_MEM_LIMIT_BASE_MEM_DECODE |
++				    CFG_PREF_MEM_LIMIT_BASE_MEM_LIMIT_DECODE);
+ 
+ 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0);
+ 
+ 	/* Enable as 0xFFFF0001 response for RRS */
+-	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT);
+-	val &= ~(AMBA_ERROR_RESPONSE_RRS_MASK << AMBA_ERROR_RESPONSE_RRS_SHIFT);
+-	val |= (AMBA_ERROR_RESPONSE_RRS_OKAY_FFFF0001 <<
+-		AMBA_ERROR_RESPONSE_RRS_SHIFT);
+-	dw_pcie_writel_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT, val);
++	dw_pcie_clear_and_set_dword(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT,
++				    AMBA_ERROR_RESPONSE_RRS_MASK << AMBA_ERROR_RESPONSE_RRS_SHIFT,
++				    AMBA_ERROR_RESPONSE_RRS_OKAY_FFFF0001 <<
++				    AMBA_ERROR_RESPONSE_RRS_SHIFT);
+ 
+ 	/* Clear Slot Clock Configuration bit if SRNS configuration */
+-	if (pcie->enable_srns) {
+-		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
+-					   PCI_EXP_LNKSTA);
+-		val_16 &= ~PCI_EXP_LNKSTA_SLC;
+-		dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
+-				   val_16);
+-	}
++	if (pcie->enable_srns)
++		dw_pcie_clear_and_set_dword(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
++					    PCI_EXP_LNKSTA_SLC, 0);
+ 
+ 	config_gen3_gen4_eq_presets(pcie);
+ 
+@@ -937,17 +919,13 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+ 		disable_aspm_l12(pcie);
+ 	}
+ 
+-	if (!pcie->of_data->has_l1ss_exit_fix) {
+-		val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
+-		val &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
+-		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
+-	}
++	if (!pcie->of_data->has_l1ss_exit_fix)
++		dw_pcie_clear_and_set_dword(pci, GEN3_RELATED_OFF,
++					    GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL, 0);
+ 
+-	if (pcie->update_fc_fixup) {
+-		val = dw_pcie_readl_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF);
+-		val |= 0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT;
+-		dw_pcie_writel_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF, val);
+-	}
++	if (pcie->update_fc_fixup)
++		dw_pcie_clear_and_set_dword(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF,
++					    0, 0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT);
+ 
+ 	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
+ 
+@@ -1018,9 +996,8 @@ static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
+ 		reset_control_deassert(pcie->core_rst);
+ 
+ 		offset = dw_pcie_find_ext_capability(pci, PCI_EXT_CAP_ID_DLF);
+-		val = dw_pcie_readl_dbi(pci, offset + PCI_DLF_CAP);
+-		val &= ~PCI_DLF_EXCHANGE_ENABLE;
+-		dw_pcie_writel_dbi(pci, offset + PCI_DLF_CAP, val);
++		dw_pcie_clear_and_set_dword(pci, offset + PCI_DLF_CAP,
++					    PCI_DLF_EXCHANGE_ENABLE, 0);
+ 
+ 		tegra_pcie_dw_host_init(pp);
+ 		dw_pcie_setup_rc(pp);
+@@ -1847,11 +1824,9 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+ 
+ 	reset_control_deassert(pcie->core_rst);
+ 
+-	if (pcie->update_fc_fixup) {
+-		val = dw_pcie_readl_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF);
+-		val |= 0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT;
+-		dw_pcie_writel_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF, val);
+-	}
++	if (pcie->update_fc_fixup)
++		dw_pcie_clear_and_set_dword(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF,
++					    0, 0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT);
+ 
+ 	config_gen3_gen4_eq_presets(pcie);
+ 
+@@ -1863,11 +1838,9 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+ 		disable_aspm_l12(pcie);
+ 	}
+ 
+-	if (!pcie->of_data->has_l1ss_exit_fix) {
+-		val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
+-		val &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
+-		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
+-	}
++	if (!pcie->of_data->has_l1ss_exit_fix)
++		dw_pcie_clear_and_set_dword(pci, GEN3_RELATED_OFF,
++					    GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL, 0);
+ 
+ 	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+ 						      PCI_CAP_ID_EXP);
 -- 
-2.34.1
+2.25.1
 
 
