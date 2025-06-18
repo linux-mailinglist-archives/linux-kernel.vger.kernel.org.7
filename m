@@ -1,278 +1,98 @@
-Return-Path: <linux-kernel+bounces-691585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4815ADE663
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:16:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498B1ADE669
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2A73189235C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:16:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D9243AEF5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E21E280037;
-	Wed, 18 Jun 2025 09:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B304A280A2F;
+	Wed, 18 Jun 2025 09:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PfUFzGEY"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IwwJeJbr"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F26027EC98
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF0027FD62;
+	Wed, 18 Jun 2025 09:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750238187; cv=none; b=FytwqVs/7Qz+6key6S9xVQdwwfH0yB7usMrSpM1ubTQ/nIMWohCKK0+i2eMP1EVAuDEke3wTVYno+1uP0RNY/4P6f6vp/wIzaa7wjTdIrXgjsU6B4EvQwtHkwWQN+V8D8FP3vIPLjVyIlVJyLV6NO+KxdNIwfrpsAj4uX2INhGA=
+	t=1750238241; cv=none; b=qmjmmDJSd4mPefH3KhpFuco4hOvea6NFq+G2MfRX2N0Xt9flcofiYRgkER228Nfq3fuDTZ34iVTtapssPk7m1TNCY4HH4x+jCW4Ftj/7uqN4fIVNKMKbPTfKDeLNpEPGHwKaeYOcMgOfG4Gi/b/vTFMmdRWk/4yhKENGu8EcvLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750238187; c=relaxed/simple;
-	bh=RyV6owYhVXsTw8CuM/zcBqPbEK++ilJXeen2o0N6uys=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=huaKf/SOEkAdcqp/M/QZmHHPidG5FQkyt1WiuMJ2E0q/PBKwbSVcMgt9dU9oOOTsDt5TtO0S/7Iat50axvgc8kfWMDyRoXfeMt+wKY2e7n4tB3OPwIJTbg567JEAhjFwjRx+UM9sZBGmAfWfRrJtapypxCKsKKnk+yc65NF0U3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PfUFzGEY; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-450ce3a2dd5so62799645e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 02:16:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750238184; x=1750842984; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LtB3MrGG5Z6/q4lkRB/z2qB2MecW5jefF/nUUV39+rc=;
-        b=PfUFzGEYnU9MQPWHy6yuD6WWAgSQ2/RN5oyodr78aUTkQrErUUJD5oo8/L3dFsuyir
-         QmRDkxZVVodzy3bxYGeZLnd/TmW6hDOvndkFzYt9o9VxSdS6Chu/F5aIO11N6y2H9Wrc
-         KMoPMBkc7eMoMZ5K6KlrXSt4/97TStMaHlDUbFFs9GqaHa3Ipy+TdbVVvF1WsrxagXLo
-         Ubdo3HWjdhYwLTd/2VZi623F8rFo+nNdj0CHmjXERtWcACQPS130V8dNyUNzjrzJEQdt
-         FrE7Mwy0GuCNCYjq6eVxi4BHqk5k019o4grh7H8fGivAnP76yYlZjZOV80k9eoiF3QQU
-         7iPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750238184; x=1750842984;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LtB3MrGG5Z6/q4lkRB/z2qB2MecW5jefF/nUUV39+rc=;
-        b=B7RHvPxQ4+mffTppuZK1CMXMZnwBP03BdR1xD0rn21A6MfG3TlV00g457nm4xc94I6
-         bftk+UohLpS7uaijRHIHBraF6tskhlGruwnQTBXWxgi9jkB5tG1hV1ofUV4d5DGJF+Ew
-         MAap9M9tHY+IZRXsS5IVo9LXnynGhM25WR8dRJpw9M37YCfuFFpsYbVfxDWPcV+aRoU4
-         kYyI079+2oznyc8ITR9oZNLi8K1bDuE5z+jysqX6GcBEYFNk9AeZnBy7tytk7glCOKDs
-         1s711oxdH4Cqjh+RxBEvHwwzEcxZkyhvQRQmt7cFnYYK8PYeG1uJ96RbY1NeuViQxUSl
-         NSWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGFn2tM7v8lDKkIrVGuLfjP+Cz9ER46tvuZldfDC57pEe730TOvmiLfa/l8hAehiJp08yq1rDoRvcdCAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkP5fsdfrSZs466Aqn7sIwH3Yrqyxf2QFQQD8Jcz8NWGKaPnci
-	mvFCcVl4zQIE4X1gnS5KCLbiGgxkVqPZI7txdArpvJgJgIN1BPyKyZka
-X-Gm-Gg: ASbGnctPSCFJrR8Q8X3+E5ofFrKAdNyMH5o03or4hOp8mJ9564QXXZ6Bz4QwgSz1EDe
-	sAY4I7Iy4NkVTjmkmQ4V4EnffAFG8/LnL7YQDySzQVPrCfH/gWSGKAov44vtklMc3/qm2HcbJaq
-	zdXUXUgxczdqTD4zdb+Ei1OZcoMcfdWjBGW3zwxtaooATaJv2XIXlBJciIKuhseJdcZ38KpaeNy
-	E0Jq0Hj+YO/JY17amGnMe7kaY+bVnlVvsAbgQQkndbeaScoOZzTVFzwFpEONL2tM6W8BK9wbF2V
-	DnoGCTaedv5hjukRq6D9Hj2xDeNUaNlEPdDAPQUjyRqPDN8ThTtqs8YtYsy0oyRdWE1dAnnqkEB
-	q0r+Az8H9zzxb+2fbhDPWJo9x
-X-Google-Smtp-Source: AGHT+IFyAcdxquh0KTurPKL2DmMhOTLxDYI90tOVco4pPbm6RXg02CBvqqjdMw3rR4lNF3PPCT/EMA==
-X-Received: by 2002:a05:600c:1c8c:b0:43d:aed:f7d0 with SMTP id 5b1f17b1804b1-4533cac2319mr127383875e9.28.1750238183489;
-        Wed, 18 Jun 2025 02:16:23 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e224956sm203243265e9.4.2025.06.18.02.16.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 02:16:23 -0700 (PDT)
-Date: Wed, 18 Jun 2025 10:16:20 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Nicolas Pitre <nico@fluxnic.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- u.kleine-koenig@baylibre.com, Oleg Nesterov <oleg@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v3 next 09/10] lib: mul_u64_u64_div_u64() Optimise the
- divide code
-Message-ID: <20250618101620.26533aca@pumpkin>
-In-Reply-To: <7r88r006-o704-7q1q-21o2-6n62o864oo79@syhkavp.arg>
-References: <20250614095346.69130-1-david.laight.linux@gmail.com>
-	<20250614095346.69130-10-david.laight.linux@gmail.com>
-	<os452n92-2p25-2q4r-453r-0ps224s90r98@syhkavp.arg>
-	<7r88r006-o704-7q1q-21o2-6n62o864oo79@syhkavp.arg>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1750238241; c=relaxed/simple;
+	bh=9/y9FHBjcC0+yEMcHt+mytxyJj/uJFFXDYCq6SZ4OtY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=aPqAmB2EdG1v4T/u5Inj/9gHl3HOroBeININIL7+axRc2e6B+D9Y6viWtJw8GCllUe3JdByrAOiPbvly44Lg9K3Fzs1iglNJS+oqfr8ZaRymri2zQiBAWAz87Ejegfo94MD441bsy1wgH/AN7V9o86GmkxQzVZeX5/hMfMuPI08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IwwJeJbr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 053624442B;
+	Wed, 18 Jun 2025 09:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1750238230;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F98ijLO5pi6FUZlWFyCBwYzUs/rP2o8QKYXzxteZsmA=;
+	b=IwwJeJbrTSaW/iHFSqrVITopalqsqiuFHsmPr8fWveZMQRUKIYp0Y6JsIyzINaTKWIMUkE
+	QpQxavje7LE+TvlSs2psHa2HlNcTmDNz4Uwk7gzJn438AExYlRJX5gizS6bnJTL4bZz6d9
+	e6aJUMdvjnp+HvnbDNznUgVqrIQ1BQUCQYCmFR/7EqRYW2DaJvSPW0zAIl90OQOX58Qn5V
+	NF1CSjnJP9+OBMudRR8z+ITAW+RCHz7OlDzNwQlRDWALU+kzeQ74ze9KM0UjoP87MiIZHY
+	BCbq1jrQYtdTGA6IPxSO3b/FVUJGK/tGtzFnThzjNnl16k3IypHJPrGvwfQq+Q==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Richard Weinberger <richard@nod.at>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Frank Li <Frank.Li@nxp.com>
+Cc: imx@lists.linux.dev
+In-Reply-To: <20250602140946.941159-1-Frank.Li@nxp.com>
+References: <20250602140946.941159-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH 1/1] dt-bindings: mtd: convert nxp-spifi.txt to yaml
+ format
+Message-Id: <175023822777.1656646.5704716073431650841.b4-ty@bootlin.com>
+Date: Wed, 18 Jun 2025 11:17:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvvdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevjghfuffkffggtgfgofesthekredtredtjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehieffhfeulefgtdeltefgleevgffgheduledvheduudelgfehlefgheeivedvgeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrdegvddrgeeingdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtoheplhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpr
+ hgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhmgieslhhishhtshdrlhhinhhugidruggvvh
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Tue, 17 Jun 2025 21:33:23 -0400 (EDT)
-Nicolas Pitre <nico@fluxnic.net> wrote:
-
-> On Tue, 17 Jun 2025, Nicolas Pitre wrote:
+On Mon, 02 Jun 2025 10:09:45 -0400, Frank Li wrote:
+> Convert nxp-spifi.txt to yaml format.
 > 
-> > On Sat, 14 Jun 2025, David Laight wrote:
-> >   
-> > > Replace the bit by bit algorithm with one that generates 16 bits
-> > > per iteration on 32bit architectures and 32 bits on 64bit ones.
-> > > 
-> > > On my zen 5 this reduces the time for the tests (using the generic
-> > > code) from ~3350ns to ~1000ns.
-> > > 
-> > > Running the 32bit algorithm on 64bit x86 takes ~1500ns.
-> > > It'll be slightly slower on a real 32bit system, mostly due
-> > > to register pressure.
-> > > 
-> > > The savings for 32bit x86 are much higher (tested in userspace).
-> > > The worst case (lots of bits in the quotient) drops from ~900 clocks
-> > > to ~130 (pretty much independant of the arguments).
-> > > Other 32bit architectures may see better savings.
-> > > 
-> > > It is possibly to optimise for divisors that span less than
-> > > __LONG_WIDTH__/2 bits. However I suspect they don't happen that often
-> > > and it doesn't remove any slow cpu divide instructions which dominate
-> > > the result.
-> > > 
-> > > Signed-off-by: David Laight <david.laight.linux@gmail.com>  
-> > 
-> > Nice work. I had to be fully awake to review this one.
-> > Some suggestions below.  
+> Additional changes:
+> - ref /schemas/spi/spi-controller.yaml.
+> - remove label in example.
+> - change node name to spi in example.
+> - remove child node in example.
 > 
-> Here's a patch with my suggestions applied to make it easier to figure 
-> them out. The added "inline" is necessary to fix compilation on ARM32. 
-> The "likely()" makes for better assembly and this part is pretty much 
-> likely anyway. I've explained the rest previously, although this is a 
-> better implementation.
-> 
-> commit 99ea338401f03efe5dbebe57e62bd7c588409c5c
-> Author: Nicolas Pitre <nico@fluxnic.net>
-> Date:   Tue Jun 17 14:42:34 2025 -0400
-> 
->     fixup! lib: mul_u64_u64_div_u64() Optimise the divide code
-> 
-> diff --git a/lib/math/div64.c b/lib/math/div64.c
-> index 3c9fe878ce68..740e59a58530 100644
-> --- a/lib/math/div64.c
-> +++ b/lib/math/div64.c
-> @@ -188,7 +188,7 @@ EXPORT_SYMBOL(iter_div_u64_rem);
->  
->  #if !defined(mul_u64_add_u64_div_u64) || defined(test_mul_u64_add_u64_div_u64)
->  
-> -static u64 mul_add(u32 a, u32 b, u32 c)
-> +static inline u64 mul_add(u32 a, u32 b, u32 c)
->  {
->  	return add_u64_u32(mul_u32_u32(a, b), c);
->  }
-> @@ -246,7 +246,7 @@ static inline u32 mul_u64_long_add_u64(u64 *p_lo, u64 a, u32 b, u64 c)
->  
->  u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
->  {
-> -	unsigned long d_msig, q_digit;
-> +	unsigned long n_long, d_msig, q_digit;
->  	unsigned int reps, d_z_hi;
->  	u64 quotient, n_lo, n_hi;
->  	u32 overflow;
-> @@ -271,36 +271,21 @@ u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
->  
->  	/* Left align the divisor, shifting the dividend to match */
->  	d_z_hi = __builtin_clzll(d);
-> -	if (d_z_hi) {
-> +	if (likely(d_z_hi)) {
->  		d <<= d_z_hi;
->  		n_hi = n_hi << d_z_hi | n_lo >> (64 - d_z_hi);
->  		n_lo <<= d_z_hi;
->  	}
->  
-> -	reps = 64 / BITS_PER_ITER;
-> -	/* Optimise loop count for small dividends */
-> -	if (!(u32)(n_hi >> 32)) {
-> -		reps -= 32 / BITS_PER_ITER;
-> -		n_hi = n_hi << 32 | n_lo >> 32;
-> -		n_lo <<= 32;
-> -	}
-> -#if BITS_PER_ITER == 16
-> -	if (!(u32)(n_hi >> 48)) {
-> -		reps--;
-> -		n_hi = add_u64_u32(n_hi << 16, n_lo >> 48);
-> -		n_lo <<= 16;
-> -	}
-> -#endif
-> -
->  	/* Invert the dividend so we can use add instead of subtract. */
->  	n_lo = ~n_lo;
->  	n_hi = ~n_hi;
->  
->  	/*
-> -	 * Get the most significant BITS_PER_ITER bits of the divisor.
-> +	 * Get the rounded-up most significant BITS_PER_ITER bits of the divisor.
->  	 * This is used to get a low 'guestimate' of the quotient digit.
->  	 */
-> -	d_msig = (d >> (64 - BITS_PER_ITER)) + 1;
-> +	d_msig = (d >> (64 - BITS_PER_ITER)) + !!(d << BITS_PER_ITER);
+> [...]
 
-If the low divisor bits are zero an alternative simpler divide
-can be used (you want to detect it before the left align).
-I deleted that because it complicates things and probably doesn't
-happen often enough outside the tests cases.
+Applied to mtd/next, thanks!
 
->  
->  	/*
->  	 * Now do a 'long division' with BITS_PER_ITER bit 'digits'.
-> @@ -308,12 +293,17 @@ u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
->  	 * The worst case is dividing ~0 by 0x8000 which requires two subtracts.
->  	 */
->  	quotient = 0;
-> -	while (reps--) {
-> -		q_digit = (unsigned long)(~n_hi >> (64 - 2 * BITS_PER_ITER)) / d_msig;
-> +	for (reps = 64 / BITS_PER_ITER; reps; reps--) {
-> +		quotient <<= BITS_PER_ITER;
-> +		n_long = ~n_hi >> (64 - 2 * BITS_PER_ITER);
->  		/* Shift 'n' left to align with the product q_digit * d */
->  		overflow = n_hi >> (64 - BITS_PER_ITER);
->  		n_hi = add_u64_u32(n_hi << BITS_PER_ITER, n_lo >> (64 - BITS_PER_ITER));
->  		n_lo <<= BITS_PER_ITER;
-> +		/* cut it short if q_digit would be 0 */
-> +		if (n_long < d_msig)
-> +			continue;
+[1/1] dt-bindings: mtd: convert nxp-spifi.txt to yaml format
+      commit: 27b045eb3e30ce9a436b8ee5bcb4869f7e3522a6
 
-I don't think that is right.
-d_msig is an overestimate so you can only skip the divide and mul_add().
-Could be something like:
-		if (n_long < d_msig) {
-			if (!n_long)
-				continue;
-			q_digit = 0;
-		} else {
-			q_digit = n_long / d_msig;
-	  		/* Add product to negated divisor */
-	  		overflow += mul_u64_long_add_u64(&n_hi, d, q_digit, n_hi);		
-		}
-but that starts looking like branch prediction hell.
+Patche(s) should be available on mtd/linux.git and will be
+part of the next PR (provided that no robot complains by then).
 
-> +		q_digit = n_long / d_msig;
-
-I think you want to do the divide right at the top - maybe even if the
-result isn't used!
-All the shifts then happen while the divide instruction is in progress
-(even without out-of-order execution).
-
-It is also quite likely that any cpu divide instruction takes a lot
-less clocks when the dividend or quotient is small.
-So if the quotient would be zero there isn't a stall waiting for the
-divide to complete.
-
-As I said before it is a trade off between saving a few clocks for
-specific cases against adding clocks to all the others.
-Leading zero bits on the dividend are very likely, quotients with
-the low 16bits zero much less so (except for test cases).
-
->  		/* Add product to negated divisor */
->  		overflow += mul_u64_long_add_u64(&n_hi, d, q_digit, n_hi);
->  		/* Adjust for the q_digit 'guestimate' being low */
-> @@ -322,7 +312,7 @@ u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
->  			n_hi += d;
->  			overflow += n_hi < d;
->  		}
-> -		quotient = add_u64_long(quotient << BITS_PER_ITER, q_digit);
-> +		quotient = add_u64_long(quotient, q_digit);
-
-Moving the shift to the top (after the divide) may help instruction
-scheduling (esp. without aggressive out-of-order execution).
-
-	David
-
->  	}
->  
->  	/*
+Kind regards,
+Miquèl
 
 
