@@ -1,141 +1,155 @@
-Return-Path: <linux-kernel+bounces-691827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C0DADE934
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:40:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4774FADE940
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00E32189E584
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:40:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF4717E002
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E5B2868A4;
-	Wed, 18 Jun 2025 10:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2802882D3;
+	Wed, 18 Jun 2025 10:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kXyzDwqV"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="SKYkjvFa"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A03286429;
-	Wed, 18 Jun 2025 10:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FDC287511;
+	Wed, 18 Jun 2025 10:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750243203; cv=none; b=IjUT+DRkVhshSRZzxrvqT2SPUOOPs3GeS8e4TMnjilnDGtnc2ZzU2BzT481J8ilRin6qNnPzEzB3jVqJg1JEN2Oge6t2SXayXiCOXyHh7XnaW7VIkko+Dhpyr6DJZk7mevz6drEALurr2aS1A50uhVnq5hDsWFexEYGaSeyYEqA=
+	t=1750243217; cv=none; b=E4655D7N1lvVZZPSpVYgr49vqorDEuYYHE4dENJt88IaZHzgLTXTFXqBfs37nTDy9KR1OgyiBYwmmtf6/A7bCzDRl83M4ysyqth/HM7Dri1okBjYJq8eVq1GAGLyGDbLJzHZ8BpcMNh1yAClIi+LrnwgMYvm3vN375lgqKQ3cBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750243203; c=relaxed/simple;
-	bh=22QQErwPxlBAJ0KnPlU2RXCt44GQ9my/mq7QEIY/+/4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WGhR9Q5/cx33vZdJpT/Wur4h8kvJUQ2ySO13flIaK5RqZn0hgMApLzqNqoRe1ypJlbUZaLuqPPV7/vyx7Gm7t5k14ffT1MOUA11djmIukcMm1eWM22DWQRU1SqV8sM2sE99T8PxI+wJSKHWjDzwL+2ILO2IoF1bcSBoHsNCD90k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kXyzDwqV; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1750243201; x=1781779201;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=22QQErwPxlBAJ0KnPlU2RXCt44GQ9my/mq7QEIY/+/4=;
-  b=kXyzDwqV5I0QVl4gpLoSBJ8Sm5NTblmcmBBv5bcpbES5vm6yFs8Ivfgk
-   w091BLrzt5Mk4ORpZJcBh6vCRcDWjpbB6R8b5FZF6HNBEfthV0TrKuPzG
-   uBAz80Cr1feYhlehtvYUhXzPdkMOwE0FvJVl4+dP51R121JCDFdIzELrp
-   1Dr4DqN9/RQ9QIowEe8N/0Hme1OgSjfFBpdG8f/aLL6pryycvBqZ2+e6x
-   sbNaZYpewKWb92IZUY2tVcBYP09Q/Ctm4imp/ZguSnjsr7gCwjMaUYSEv
-   ljlfmSYHJv1ko+XFXQ6gFZLz0Dl6ckekDlth2xJT3wqXXJtCpfjuNVxeF
-   Q==;
-X-CSE-ConnectionGUID: 7wtXBdA6TE+fk4S1pxqqTQ==
-X-CSE-MsgGUID: 4zCq3BxjQdmbuXuDHew4Mw==
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
-   d="scan'208";a="42469512"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Jun 2025 03:40:00 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 18 Jun 2025 03:39:29 -0700
-Received: from archlinux.mchp-main.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Wed, 18 Jun 2025 03:39:27 -0700
-From: Mihai Sain <mihai.sain@microchip.com>
-To: <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Mihai Sain <mihai.sain@microchip.com>
-Subject: [PATCH v2 2/2] ARM: dts: microchip: sama7g5: Add cache configuration for cpu node
-Date: Wed, 18 Jun 2025 13:39:14 +0300
-Message-ID: <20250618103914.2712-3-mihai.sain@microchip.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250618103914.2712-1-mihai.sain@microchip.com>
-References: <20250618103914.2712-1-mihai.sain@microchip.com>
+	s=arc-20240116; t=1750243217; c=relaxed/simple;
+	bh=51wCRu03wox33FTIXViaidWRudb0sMds0JcAe+JfauA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UNu8vURWnBW8zCwYMUxI+rE+eAQ+1MF1KYddFGy8cQ18zqPhFncyG3qCf8XTMOo6x8soqIrF9wgd74TN/IG3fX5K3OliIdA2UdHwKfis1b9yp8tjSPou4Tqm4XLGL5ItiqlhbMhlzX4L/l9rPaRIHkStvAHwL1pho/hNs75XwiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=SKYkjvFa; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1750243204;
+	bh=51wCRu03wox33FTIXViaidWRudb0sMds0JcAe+JfauA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SKYkjvFabhz5v3eotyH+VR33rDo8Vn6qp1HQO9AA9JrLi0WHj7nvZDXYrgE6LXftK
+	 70KV5PoR5LINvJhOmMhRHxHEUqmMaYG/xizWBNR2bpgRdf862Z2Wi5ekUOCPGeBEbP
+	 BHnSv0SLZTUYqb3DZBCF37EAevVXAwhzLjwp73ko=
+Date: Wed, 18 Jun 2025 12:40:04 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Sung-Chi Li <lschyi@chromium.org>
+Cc: Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, Jean Delvare <jdelvare@suse.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, 
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] hwmon: (cros_ec) add PWM control over fans
+Message-ID: <179a21f9-c578-46e9-89dd-1b9e32889015@t-8ch.de>
+References: <20250512-cros_ec_fan-v3-0-a9f2b255f0cd@chromium.org>
+ <20250512-cros_ec_fan-v3-2-a9f2b255f0cd@chromium.org>
+ <ca2c10be-3dc4-45e1-b7fc-f8db29a1b6a0@t-8ch.de>
+ <aFJqLkkdI86V3fM9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <aFJqLkkdI86V3fM9@google.com>
 
-Describe the cache memories according with datasheet chapter 15.2:
-- L1 cache configuration with 32KB for both data and instruction cache.
-- L2 cache configuration with 256KB unified cache.
+On 2025-06-18 15:26:38+0800, Sung-Chi Li wrote:
+> On Mon, May 12, 2025 at 09:30:39AM +0200, Thomas Weißschuh wrote:
+> 
+> Sorry for the late reply, I missed mails for this series.
+> 
+> > On 2025-05-12 15:11:56+0800, Sung-Chi Li via B4 Relay wrote:
+> > > From: Sung-Chi Li <lschyi@chromium.org>
+> > >  static int cros_ec_hwmon_read_temp(struct cros_ec_device *cros_ec, u8 index, u8 *temp)
+> > >  {
+> > >  	unsigned int offset;
+> > > @@ -73,7 +117,9 @@ static long cros_ec_hwmon_temp_to_millicelsius(u8 temp)
+> > >  static int cros_ec_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
+> > >  			      u32 attr, int channel, long *val)
+> > >  {
+> > > +	u8 control_method;
+> > >  	struct cros_ec_hwmon_priv *priv = dev_get_drvdata(dev);
+> > > +	u8 pwm_value;
+> > >  	int ret = -EOPNOTSUPP;
+> > >  	u16 speed;
+> > >  	u8 temp;
+> > 
+> > Ordering again.
+> > 
+> > This should be:
+> > 
+> > struct cros_ec_hwmon_priv *priv = dev_get_drvdata(dev);
+> > int ret = -EOPNOTSUPP;
+> > u8 control_method;
+> > u8 pwm_value;
+> > u16 speed;
+> > u8 temp;
+> > 
+> > or:
+> > 
+> > struct cros_ec_hwmon_priv *priv = dev_get_drvdata(dev);
+> > u8 control_method, pwm_value, temp;
+> > int ret = -EOPNOTSUPP;
+> > u16 speed;
+> > 
+> > <snip>
+> > 
+> 
+> Would you mind to share the sorting logic, so I do not bother you with checking
+> these styling issue? Initially, I thought the sorting is based on the variable
+> name, but after seeing your example (which I am appreciated), I am not sure how
+> the sorting works. Is it sorted along with the variable types (
+> "u8 control_method", "u16 speed", etc)? If that is the case, why "u16 speed" is
+> in the middle of the u8 group variables?
 
-Before this patch:
-[    0.171425] cacheinfo: Unable to detect cache hierarchy for CPU 0
+Welp, I really should have explained this, instead of assuming it to be
+obvious, sorry. The sorting is based on the length of the line, AKA
+the "reverse christmas tree".
 
-After this patch:
-[root@sama7g54eb ~]$ ll -h /sys/bus/cpu/devices/cpu0/of_node/l1-cache
--r--r--r-- 1 root root 4 Jun 18 12:39 cache-level
--r--r--r-- 1 root root 6 Jun 18 12:39 compatible
--r--r--r-- 1 root root 4 Jun 18 12:39 d-cache-size
--r--r--r-- 1 root root 4 Jun 18 12:39 i-cache-size
--r--r--r-- 1 root root 9 Jun 18 12:39 name
--r--r--r-- 1 root root 4 Jun 18 12:39 next-level-cache
--r--r--r-- 1 root root 4 Jun 18 12:39 phandle
+While this is not a strict rule, the driver is already using it, so I'd
+like to stick to it. "Bonus points" for preserving preserving
+semantically useful ordering within the line-length based one.
 
-[root@sama7g54eb ~]$ ll -h /sys/bus/cpu/devices/cpu0/of_node/l2-cache
--r--r--r-- 1 root root 4 Jun 18 12:39 cache-level
--r--r--r-- 1 root root 4 Jun 18 12:39 cache-size
--r--r--r-- 1 root root 0 Jun 18 12:39 cache-unified
--r--r--r-- 1 root root 6 Jun 18 12:39 compatible
--r--r--r-- 1 root root 9 Jun 18 12:39 name
--r--r--r-- 1 root root 4 Jun 18 12:39 phandle
+> > > +static inline bool is_cros_ec_cmd_fulfilled(struct cros_ec_device *cros_ec,
+> > > +					    u16 cmd, u8 version)
+> > 
+> > "fulfilled" -> "available" or "present"
+> > 
+> > > +{
+> > > +	int ret;
+> > > +
+> > > +	ret = cros_ec_get_cmd_versions(cros_ec, cmd);
+> > > +	return ret >= 0 && (ret & EC_VER_MASK(version));
+> > > +}
+> > > +
+> > > +static bool cros_ec_hwmon_probe_fan_control_supported(struct cros_ec_device *cros_ec)
+> > > +{
+> > > +	if (!IS_ENABLED(CONFIG_PM))
+> > > +		return false;
+> > 
+> > Why? This should generally work fine without CONFIG_PM.
+> > Only the suspend/resume callbacks are unnecessary in that case.
+> > 
+> 
+> I treat fan control should include restoring the fan setting after resume, so
+> I think if no CONFIG_PM, the fan control is not complete. I am good with
+> removing this check, and if you have any thoughts after this explanation, please
+> share with me, otherwise I will remove it in the next series.
 
-Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
----
- arch/arm/boot/dts/microchip/sama7g5.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+As far as I understand, with CONFIG_PM=n the kernel won't be able to do
+any suspend/resume. So cros_ec_hwmon won't need to handle the
+suspend/resume case. However even then the regular UAPI for fan duty
+management is useful for users.
 
-diff --git a/arch/arm/boot/dts/microchip/sama7g5.dtsi b/arch/arm/boot/dts/microchip/sama7g5.dtsi
-index 17bcdcf0cf4a..a3c8bbf5d1d8 100644
---- a/arch/arm/boot/dts/microchip/sama7g5.dtsi
-+++ b/arch/arm/boot/dts/microchip/sama7g5.dtsi
-@@ -38,6 +38,22 @@ cpu0: cpu@0 {
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu_opp_table>;
- 			#cooling-cells = <2>; /* min followed by max */
-+			next-level-cache = <&L1>;
-+
-+			L1: l1-cache {
-+				compatible = "cache";
-+				cache-level = <1>;
-+				d-cache-size = <32768>;
-+				i-cache-size = <32768>;
-+				next-level-cache = <&L2>;
-+			};
-+
-+			L2: l2-cache {
-+				compatible = "cache";
-+				cache-level = <2>;
-+				cache-size = <262144>;
-+				cache-unified;
-+			};
- 		};
- 	};
- 
--- 
-2.50.0
 
+Thomas
 
