@@ -1,243 +1,193 @@
-Return-Path: <linux-kernel+bounces-692333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD91FADF012
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:48:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34DC1ADF018
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56D48160BA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:48:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF9B63B1405
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EC63B1AB;
-	Wed, 18 Jun 2025 14:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174321FAC4E;
+	Wed, 18 Jun 2025 14:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="D9xxQpHI"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="XGTGHtjH"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E3615855E
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 14:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7351922DE
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 14:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750258090; cv=none; b=BySk7b6Cjzgfzbxa4OtiahPf4IxtIxChLW1dxvdOPJC6mEaONs91czhZE+atzk7WfIER5t2DYbVKfIV8CkpRBZOedanQSKoW5IBtBj1XM/dkFeadFhSgii2oRdf/E0YdWPMHqq5GbklDzl4D5zdg8lbas8lTl6ACTzkC9rzxusw=
+	t=1750258130; cv=none; b=qBiYWhXXY0H9K0ZXfeHibI6uoukrbn97BxN5NkDwpAhHhhGHWVD3iZxXWcc92Ah+gAoq9CK0L8STQCuYFAy+7FQZaf1ajp5QeLbg9Z4fXPDgp16x3hflSEqyhlLNvxdaG3Hig8ZTp3QctO4ga5ZzNbO7nkn0DZpaHoPx31J1zj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750258090; c=relaxed/simple;
-	bh=CFD7EM1B7dveB/n1oenEJQ7ZJyE6MkhdXklOKaK1FTQ=;
+	s=arc-20240116; t=1750258130; c=relaxed/simple;
+	bh=wg+SUdZ3bXxOZknnl2JP3G2rwY0vInxZh1GPisslBOo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ajQnmGHPVclyqcC3Dcme8e/WZ9aYKWOsytXkksaLfI2sRRsP5s4NwFSPKgFijWMNof0CW0dJ/9BCmUxe+2S3VrqljSeePdEePlWZz8100AxvYnX3dFMsD2VC8Ug1Dd8OX+reZ9CNJoNGJXUb93d7PH4iY1Pw8DrJKciVaqBWisM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=D9xxQpHI; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-70f147b5a52so51704477b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 07:48:08 -0700 (PDT)
+	 To:Cc:Content-Type; b=gJ/DOoU2C6Bd8IZcqTz3s2aks3Z+mBtm4qzMHPSthELxvI6l3uLA0P2an2V0YXloRN+TsE5We9X9XCiHGIIJaCjGQFUOS3lwUtL84YWfXfR0metufWJnFvJuVFzwQkeHV/hvpj9/SOCKgc2k6LrVJkLdViwtHF8W0R9azRlRRQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=XGTGHtjH; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7d094ef02e5so88721785a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 07:48:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1750258087; x=1750862887; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0nqmcz+C/uLT2LCqx4O5qi3rcAIoDvN2x0WB8gFKA/s=;
-        b=D9xxQpHIGuFEq7ToaXP9LgQxK2KZb1MIwMHJzg9wT18LBFsg/Ul5aKGw8INkmx5Z8t
-         Wj2aIRtq2QnUmtZkA8i5W3tczx76o7O5TGeiyvvcyrzb3TmQ+0WTnErmYbNQIAceFMSz
-         Ag2etIbM2DuRbpamIUkyz0Zf7d3paVM37M7HXUanYq/DeIsdjefONfoweXNc7A4BpN38
-         k+b8jRNtcWyDFz9KSdSau1/r+D3ChvrRsQNbLKswYkCbiCoRHx2HgtHkHNSsIWFAepqy
-         9xblG89A66krxMM8Z4Hhq0aim/jwYmgRoWQVE0ShaoLsxQFvkKt26WlBycvS65Tesi1I
-         icgQ==
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1750258127; x=1750862927; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R8VeINRsa1OxgNrKUKFRtGWzNViSlD55EzoK83kRcQg=;
+        b=XGTGHtjHlOI9OVCMLCw4R1bgKRKLw0I66vS5xr2+qsfoY4LWptNDG3q+xMOQIc/2wb
+         s/nk241AemLaromGkSrrDPu8v6VIvd+PS068wTQ1iDl46dNSdEnRhqmHkFOPKTAnYR0k
+         fRoviyRyoWCjOT/2Vn/WMXVOVeyGNVmLuWbksSVwE14rpURdkfp/Ijmu+MtVc9/RR/2w
+         nxkL3mdISgSXxO7+mfeXQRghb0sWV1owNs9Tkm5raUCrHDL2ejOQ0cI8P5yleIUYyfeE
+         VAAwORKTuKkcoElR5otv3rxb5lDOfrBF3OAYObOzQme4LBSRbNsIvGxa5giOGcHcx0+w
+         3QyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750258087; x=1750862887;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0nqmcz+C/uLT2LCqx4O5qi3rcAIoDvN2x0WB8gFKA/s=;
-        b=Snlx7s2KzDbYyPJucAYxcIKI535HrJekqSV10nvjcQH5VQZN56aNpP+Y0cG4oVUGE1
-         LcGFKK40IyTAjYuOzwEKIbPmzQNBTRRGZGQIt6BPdB37TUaTt8u3F1tihoSuevvHtn6p
-         9vAKKkOyz7XamFCrCtRTNS96YhIyZ2RSecTPVxIH6yci4CrBIAkMA1aodNDBr0J1Dvnf
-         cETMm7tFNOsLjXNrQZBBTH+oHx9Wh7sC1RUFuaVRjdT+ehNhl/k6MJ0CjbLr0qZoNpmK
-         bz7Irvd5RyjSyABGt0jmqlVpVkGajZ7R8hrmn8di5qWd3TiXWF/L1wjhV58+wNGL9vmV
-         Q9Gg==
-X-Gm-Message-State: AOJu0YzTXpLMxOqerbMzXRYtSnU9mufJf4weYeC/GCQ99EGqFlC+fBVg
-	aZ00T68S/d5p3F7NK3M36PElw36H+JPuNAb0Un3HWgIAt/e3PRtQsLKI9MNdIxeyI86d706XNv5
-	T7hUNAA1awdxWpsde20VzDrrwhT5A8ixQyHayn2AZ
-X-Gm-Gg: ASbGncsym1gyArL16Esh/dp3xmWPTkYR61q4YXisJc4zk15mcvZ4aUwpRoxO3vijpvf
-	DkAk/hobHk04d1yaLBhDm35BrXYHJAXixBpjv5aJGxVjfv2AhX8hPIGK9FD1+l9dEflQF8kvwM7
-	ceJyT8UXyhlTPdmukaYAlqw/bmY6CmZgQhYbK4rE6ptvg=
-X-Google-Smtp-Source: AGHT+IFGjaMfuFyrioLFPLZq08soyqzY+bST42DECvYrqoAALSyrF8BC8JV/KZtqJz9LrXkObOrzesr8ksF2R/H8FyA=
-X-Received: by 2002:a05:690c:3808:b0:70f:83ef:ddff with SMTP id
- 00721157ae682-7117544368dmr269137437b3.30.1750258087575; Wed, 18 Jun 2025
- 07:48:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750258127; x=1750862927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R8VeINRsa1OxgNrKUKFRtGWzNViSlD55EzoK83kRcQg=;
+        b=jihQIHi5mPkXF+nCxbimCFEmmDxTa2TXWMuTJ/KTGqF5NCTcWKExeAZo/XoJ0NFfd9
+         sN3CKRr/9vv2h4VAcow3VAJUV8yUnFLL2xRXP5pA5m+LDDbEOS1tC8sAXwiXpvKSn26y
+         /jD/KgX/1uYqWf9Qi32A61U8FqXEcx9lO/RWFrW5BK0guhYzsRjJ2MJlzHpfDgkZgx0O
+         f05H1vpKDLqYuzqEmTNc4g1Fg6xQc9jKvgbkX/Td9bEXq3+BOaouDuZ4DhfUaqu4jY3w
+         QyVk6xs7ZUqVMVZ1EUe6kyFgN+U0LI2rkzwhwvlqN/a/jsK2MPnW5MoNPPcshH9mHR/c
+         2mSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPVDGiNsrjbv1atmNWn6YHnD9y0lcr1zBKqIDhwH424OvaurlkBePLsVxkCANiU8sVqxRsrW5lwOXBw0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKrwyHaApqLNCr695U4+UGDOBZU7MaqsnKVoeV2xIKEu5Rc9pK
+	xfJN5vQXD/6K5e8LxCWWLHhbBz3GuivkKEfM6V3mJ0KwdPIhmMdadar7LwtyPgamSIfVQn5f5BN
+	uqEAPTbNS4AfzD3gU1EHmBWnFWu1S0lchaQEGW6UK1g==
+X-Gm-Gg: ASbGncvCJ5sv3fT+cHezo/Ldy0llyyPbRbE2J4SYYnM6T/0jwE2pjthcSVDm/s+BNWB
+	X+OAbq4rJZNHF1vK3DgmWzDZ38YIvzQXAG0AwkXXmwKmhgC9ZsBx9hKuGqPQfwoNZYm16E3Ho/R
+	YNPH9nfHOOIxNYPj/zhhiOHU7hG5omJ/gmt8yuj1CV
+X-Google-Smtp-Source: AGHT+IFZ+d0LIRnvuQ/PF2vSUV7/GsXTYRq155Ys06jbKx7qhTIQJlphjp1gq8ybYgdEc5Lt1pO8pAEIGzK2HNg9BCU=
+X-Received: by 2002:a05:620a:600d:b0:7d3:e56e:4fd8 with SMTP id
+ af79cd13be357-7d3e93da631mr425634585a.12.1750258126838; Wed, 18 Jun 2025
+ 07:48:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6852ba08.050a0220.216029.0011.GAE@google.com>
-In-Reply-To: <6852ba08.050a0220.216029.0011.GAE@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 18 Jun 2025 10:47:56 -0400
-X-Gm-Features: Ac12FXwM7ESYUG2Yj4RCDi85hG52oMXHOwbJt5vNBlSML3pPT9Ay9jgQ23PubUg
-Message-ID: <CAHC9VhQkpNAsxy4rDf=qjwBrtCx5sXc74w5A=NU4R+8=FPa3Sw@mail.gmail.com>
-Subject: Re: [syzbot] [selinux?] WARNING in hashtab_init
-To: syzbot <syzbot+bc2c99c2929c3d219fb3@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, omosnace@redhat.com, selinux@vger.kernel.org, 
-	stephen.smalley.work@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: multipart/mixed; boundary="000000000000939fd30637d9b715"
-
---000000000000939fd30637d9b715
+References: <20250515182322.117840-1-pasha.tatashin@soleen.com>
+ <20250515182322.117840-6-pasha.tatashin@soleen.com> <mafs0sekfts2i.fsf@kernel.org>
+ <CA+CK2bA7eAB4PvF0RXtt2DJ+FQ4DVV3x1OZrVo4q3EvgowhvJg@mail.gmail.com>
+ <mafs0sek3n0x8.fsf@kernel.org> <20250617152357.GB1376515@ziepe.ca>
+ <CA+CK2bAtO7BA5iptRfA_oa=5sUz_t-0F3Lu8oae1STnijXrPPQ@mail.gmail.com> <mafs05xgtw5wn.fsf@kernel.org>
+In-Reply-To: <mafs05xgtw5wn.fsf@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 18 Jun 2025 10:48:09 -0400
+X-Gm-Features: AX0GCFtpLB0oTRuEsFuAVbaG8Bvqsh21i0UCcwFP_32oEzA5tqSbuwcLuOtmBNE
+Message-ID: <CA+CK2bDWAPSmTdnD7vw4G00nPsM8R_Zefs_G+9zvSqTJqPb9Lg@mail.gmail.com>
+Subject: Re: [RFC v2 05/16] luo: luo_core: integrate with KHO
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-#syz test
+On Wed, Jun 18, 2025 at 9:12=E2=80=AFAM Pratyush Yadav <pratyush@kernel.org=
+> wrote:
+>
+> On Tue, Jun 17 2025, Pasha Tatashin wrote:
+>
+> > On Tue, Jun 17, 2025 at 11:24=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca>=
+ wrote:
+> >>
+> >> On Fri, Jun 13, 2025 at 04:58:27PM +0200, Pratyush Yadav wrote:
+> >> > On Sat, Jun 07 2025, Pasha Tatashin wrote:
+> >> > [...]
+> >> > >>
+> >> > >> This weirdness happens because luo_prepare() and luo_cancel() con=
+trol
+> >> > >> the KHO state machine, but then also get controlled by it via the
+> >> > >> notifier callbacks. So the relationship between then is not clear=
+.
+> >> > >> __luo_prepare() at least needs access to struct kho_serialization=
+, so it
+> >> > >> needs to come from the callback. So I don't have a clear way to c=
+lean
+> >> > >> this all up off the top of my head.
+> >> > >
+> >> > > On production machine, without KHO_DEBUGFS, only LUO can control K=
+HO
+> >> > > state, but if debugfs is enabled, KHO can be finalized manually, a=
+nd
+> >> > > in this case LUO transitions to prepared state. In both cases, the
+> >> > > path is identical. The KHO debugfs path is only for
+> >> > > developers/debugging purposes.
+> >> >
+> >> > What I meant is that even without KHO_DEBUGFS, LUO drives KHO, but t=
+hen
+> >> > KHO calls into LUO from the notifier, which makes the control flow
+> >> > somewhat convoluted. If LUO is supposed to be the only thing that
+> >> > interacts directly with KHO, maybe we should get rid of the notifier=
+ and
+> >> > only let LUO drive things.
+> >>
+> >> Yes, we should. I think we should consider the KHO notifiers and self
+> >> orchestration as obsoleted by LUO. That's why it was in debugfs
+> >> because we were not ready to commit to it.
+> >
+> > We could do that, however, there is one example KHO user
+> > `reserve_mem`, that is also not liveupdate related. So, it should
+> > either be removed or modified to be handled by LUO.
+>
+> It still depends on kho_finalize() being called, so it still needs
+> something to trigger its serialization. It is not automatic. And with
+> your proposed patch to make debugfs interface optional, it can't even be
+> used with the config disabled.
 
-On Wed, Jun 18, 2025 at 9:07=E2=80=AFAM syzbot
-<syzbot+bc2c99c2929c3d219fb3@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    52da431bf03b Merge tag 'libnvdimm-fixes-6.16-rc3' of git:=
-/..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D144635d458000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D4130f4d8a06c3=
-e71
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dbc2c99c2929c3d2=
-19fb3
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for D=
-ebian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12a1f50c580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1094050c58000=
-0
->
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d=
-900f083ada3/non_bootable_disk-52da431b.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/0ebc79a3dea1/vmlinu=
-x-52da431b.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/2b1157e117a2/b=
-zImage-52da431b.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+bc2c99c2929c3d219fb3@syzkaller.appspotmail.com
->
-> WARNING: CPU: 3 PID: 5931 at mm/page_alloc.c:4935 __alloc_frozen_pages_no=
-prof+0x30b/0x23f0 mm/page_alloc.c:4935
-> Modules linked in:
-> CPU: 3 UID: 0 PID: 5931 Comm: syz-executor128 Not tainted 6.16.0-rc2-syzk=
-aller-00047-g52da431bf03b #0 PREEMPT(full)
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.=
-16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:__alloc_frozen_pages_noprof+0x30b/0x23f0 mm/page_alloc.c:4935
-> Code: f0 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 83 fe 0a 0f 86 0a f=
-e ff ff 80 3d 83 6e 7a 0e 00 75 0b c6 05 7a 6e 7a 0e 01 90 <0f> 0b 90 45 31=
- f6 eb 81 4d 85 f6 74 22 44 89 fa 89 ee 4c 89 f7 e8
-> RSP: 0018:ffffc90003d87438 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000015 RDI: 0000000000040dc0
-> RBP: 0000000200000000 R08: 0000000000000005 R09: 0000000000000000
-> R10: 0000000040000000 R11: 0000000000000001 R12: 0000000000000015
-> R13: 1ffff920007b0e9c R14: 0000000200000000 R15: 0000000000000015
-> FS:  0000555574b0f380(0000) GS:ffff8880d6a53000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000200000001000 CR3: 000000002a80f000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  __alloc_pages_noprof+0xb/0x1b0 mm/page_alloc.c:4993
->  __alloc_pages_node_noprof include/linux/gfp.h:284 [inline]
->  alloc_pages_node_noprof include/linux/gfp.h:311 [inline]
->  ___kmalloc_large_node+0x84/0x1e0 mm/slub.c:4272
->  __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4300
->  __do_kmalloc_node mm/slub.c:4316 [inline]
->  __kmalloc_noprof.cold+0xc/0x61 mm/slub.c:4340
->  kmalloc_noprof include/linux/slab.h:909 [inline]
->  kmalloc_array_noprof include/linux/slab.h:948 [inline]
->  hashtab_init+0x1b1/0x290 security/selinux/ss/hashtab.c:43
->  common_read+0x1c2/0x3d0 security/selinux/ss/policydb.c:1172
->  policydb_read+0x874/0x3220 security/selinux/ss/policydb.c:2578
->  security_load_policy+0x15c/0x12c0 security/selinux/ss/services.c:2299
->  sel_write_load+0x332/0x1bd0 security/selinux/selinuxfs.c:603
->  vfs_write+0x2a0/0x1150 fs/read_write.c:684
->  ksys_write+0x12a/0x250 fs/read_write.c:738
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f0fd65a5d79
-> Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffc49f31638 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 0000200000000300 RCX: 00007f0fd65a5d79
-> RDX: 0000000000002000 RSI: 0000200000000000 RDI: 0000000000000003
-> RBP: 0000200000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 000000000000008f R11: 0000000000000246 R12: 00007f0fd65f419c
-> R13: 00007f0fd65ef082 R14: 0000000000000001 R15: 0000000000000001
->  </TASK>
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+At least for now, it can still be used via LUO going into prepare
+state, since LUO changes KHO into finalized state and reserve_mem is
+registered to be called back from KHO.
 
---=20
-paul-moore.com
+> So if it must be explicitly triggered to be preserved, why not let the
+> trigger point be LUO instead of KHO? You can make reservemem a LUO
+> subsystem instead.
 
---000000000000939fd30637d9b715
-Content-Type: text/x-patch; charset="US-ASCII"; name="01-selinux-hashtab_gfpnowarn.patch"
-Content-Disposition: attachment; 
-	filename="01-selinux-hashtab_gfpnowarn.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mc22gbev0>
-X-Attachment-Id: f_mc22gbev0
+Yes, LUO can do that, the only concern I raised is that  `reserve_mem`
+is not really live update related.
 
-c2VsaW51eDogYWRkIF9fR0ZQX05PV0FSTiB0byBoYXNodGFiX2luaXQoKSBhbGxvY2F0aW9ucwoK
-RnJvbTogUGF1bCBNb29yZSA8cGF1bEBwYXVsLW1vb3JlLmNvbT4KCkFzIHJlcG9ydGVkIGJ5IHN5
-emJvdCwgaGFzaHRhYl9pbml0KCkgY2FuIGJlIGFmZmVjdGVkIGJ5IGFibm9ybWFsbHkKbGFyZ2Ug
-cG9saWN5IGxvYWRzIHdoaWNoIHdvdWxkIGNhdXNlIHRoZSBrZXJuZWwncyBhbGxvY2F0b3IgdG8g
-ZW1pdAphIHdhcm5pbmcgaW4gc29tZSBjb25maWd1cmF0aW9ucy4gIFNpbmNlIHRoZSBTRUxpbnV4
-IGhhc2h0YWJfaW5pdCgpCmNvZGUgaGFuZGxlcyB0aGUgY2FzZSB3aGVyZSB0aGUgYWxsb2NhdGlv
-biBmYWlscywgZHVlIHRvIGEgbGFyZ2UKcmVxdWVzdCBvciBzb21lIG90aGVyIHJlYXNvbiwgd2Ug
-Y2FuIHNhZmVseSBhZGQgdGhlIF9fR0ZQX05PV0FSTiBmbGFnCnRvIHNxdWVsY2ggdGhlc2UgYWJu
-b3JtYWxseSBsYXJnZSBhbGxvY2F0aW9uIHdhcm5pbmdzLgoKUmVwb3J0ZWQtYnk6IHN5emJvdCti
-YzJjOTljMjkyOWMzZDIxOWZiM0BzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tClNpZ25lZC1vZmYt
-Ynk6IFBhdWwgTW9vcmUgPHBhdWxAcGF1bC1tb29yZS5jb20+Ci0tLQogc2VjdXJpdHkvc2VsaW51
-eC9zcy9oYXNodGFiLmMgfCAgICAzICsrLQogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
-KSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL3NlY3VyaXR5L3NlbGludXgvc3MvaGFzaHRh
-Yi5jIGIvc2VjdXJpdHkvc2VsaW51eC9zcy9oYXNodGFiLmMKaW5kZXggMzgzZmQyZDcwODc4Li4x
-MzgyZWIzYmZkZTEgMTAwNjQ0Ci0tLSBhL3NlY3VyaXR5L3NlbGludXgvc3MvaGFzaHRhYi5jCisr
-KyBiL3NlY3VyaXR5L3NlbGludXgvc3MvaGFzaHRhYi5jCkBAIC00MCw3ICs0MCw4IEBAIGludCBo
-YXNodGFiX2luaXQoc3RydWN0IGhhc2h0YWIgKmgsIHUzMiBuZWxfaGludCkKIAloLT5odGFibGUg
-PSBOVUxMOwogCiAJaWYgKHNpemUpIHsKLQkJaC0+aHRhYmxlID0ga2NhbGxvYyhzaXplLCBzaXpl
-b2YoKmgtPmh0YWJsZSksIEdGUF9LRVJORUwpOworCQloLT5odGFibGUgPSBrY2FsbG9jKHNpemUs
-IHNpemVvZigqaC0+aHRhYmxlKSwKKwkJCQkgICAgR0ZQX0tFUk5FTCB8IF9fR0ZQX05PV0FSTik7
-CiAJCWlmICghaC0+aHRhYmxlKQogCQkJcmV0dXJuIC1FTk9NRU07CiAJCWgtPnNpemUgPSBzaXpl
-Owo=
---000000000000939fd30637d9b715--
+> Although to be honest, things like reservemem (or IMA perhaps?) don't
+> really fit well with the explicit trigger mechanism. They can be carried
+
+Agreed. Another example I was thinking about is "kexec telemetry":
+precise time information about kexec, including shutdown, purgatory,
+boot. We are planning to propose kexec telemetry, and it could be LUO
+subsystem. On the other hand, it could be useful even without live
+update, just to measure precise kexec reboot time.
+
+> across kexec without needing userspace explicitly driving it. Maybe we
+> allow LUO subsystems to mark themselves as auto-preservable and LUO will
+> preserve them regardless of state being prepared? Something to think
+> about later down the line I suppose.
+
+We can start with adding `reserve_mem` as regular subsystem, and make
+this auto-preserve option a future expansion, when if needed.
+Presumably, `luoctl prepare` would work for whoever plans to use just
+`reserve_mem`.
 
