@@ -1,99 +1,108 @@
-Return-Path: <linux-kernel+bounces-692052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA1EADEBE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:24:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 247F7ADEBFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 129507A93A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:23:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B42837A5DDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD812857D2;
-	Wed, 18 Jun 2025 12:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEQFVbGt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD992BF013;
+	Wed, 18 Jun 2025 12:26:12 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011CA2F5336;
-	Wed, 18 Jun 2025 12:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892D427FD40
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750249473; cv=none; b=jgVWwxwz0aDDvzmZ6eGzE4nBaws5ZqjfyoZ3z8u0fohXWPMckNvGC+RhZ+uemlXA3lsnOXOjti/yBwBqH5J9ETfAqrNp2JDp0G71N3JcBxilTkHm9lRKGvO9Ugov3F5bpnPyqDNfLIIlUI+yT5jL+SNfSgLLZQT5fe0dCyT/mRg=
+	t=1750249572; cv=none; b=h79NwM15jubmR/3yktDkSNgzZYW1UPJ39RHeJ2xfrsv7MikLXZ6T1gko1W8E3DHo0J639SHK5CZXtZU/dXibm+E7wv4+USFCADuRSaSxEp77jKYRv/+tli0XNzrNVxqhspUP5ldgaOGfHLVgL4jtiSPE01z+J/t0K6saNXtdno0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750249473; c=relaxed/simple;
-	bh=zHK+0dJw9hbKdjwDqLPDdTE7UAQG7bf8mukhi58+Qzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eIp+q7+DnuOkCEglxTW8sjiiQ8iGjzIVj1kGyujcGpGQYl5eMnijGkIZv6VItqfml7c1nXNM4RI2pz+jyigTZFISvpMIg50gABZ6PsSCSQrgr6va3TPFB853cHI5noZtNmUczVuP2mrxL+70a102zeUBF6myUAE29Tm5w6cqHPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bEQFVbGt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 743D8C4CEE7;
-	Wed, 18 Jun 2025 12:24:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750249472;
-	bh=zHK+0dJw9hbKdjwDqLPDdTE7UAQG7bf8mukhi58+Qzs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bEQFVbGtdoxye5TgEDftWMX5K/o7OKZiUL15zhRKaKhGk78Hhc6fBlGGLDsJe/C6V
-	 rjWDcD0pJxgtFb9pHpnu77JJ6Iqp3krYvGlcDJrIBwNlETUn6PKwmsphwpLDxWgKz1
-	 DU/mUrBMWXo42o9des5sO0hq9ljvo2VVN9QF51NqyT0eDAqAOnWVi3PYhmHXeaLRxp
-	 WxXVvbjP5juvlMGUOTLfRza/R0lkhUjbBC6CYXchG+CFMdKARzU7RIqUVEVUg9ABup
-	 Wp9/eJaCjKhVrawaXxnPG6V7n8gDdyswb6nfr6cRshd9zTBsZ40Tn7/H7xrTabAXv9
-	 ZtcFquSzeQh7A==
-Date: Wed, 18 Jun 2025 13:24:27 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, Yogesh S <yogeshs@ti.com>,
-	Santhosh Kumar K <s-k6@ti.com>, Steam Lin <STLin2@winbond.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 1/8] spi: spi-mem: Use picoseconds for calculating the op
- durations
-Message-ID: <a44f8212-1d72-46a1-983b-9f46ed66da03@sirena.org.uk>
-References: <20250618-winbond-6-16-rc1-octal-phy-upstream-v1-0-513202126013@bootlin.com>
- <20250618-winbond-6-16-rc1-octal-phy-upstream-v1-1-513202126013@bootlin.com>
+	s=arc-20240116; t=1750249572; c=relaxed/simple;
+	bh=YlEmZjVfwC6NQSI23/ta9zK73SdMNgWCqQ6iou40KV4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VX0a1T/CtjD5/0YnhqHPcJGlcsmMmHoYtCDk1i3nZ9f20dSwoPOpJBOElsWCw7CYUfIGzvq0/DZzA4HJQpvJKz6V1ldx7mezD/p7k9iL+wqeHnDHHR3iumqTkLshugxTu7uybXOxH1HAqjCLy5BKurJx2jJD/l0Vx21Pv2nBZJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uRrrg-00007g-UU; Wed, 18 Jun 2025 14:26:04 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uRrrf-0048Uo-1V;
+	Wed, 18 Jun 2025 14:26:03 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uRrrf-00DFCf-17;
+	Wed, 18 Jun 2025 14:26:03 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
+	Rengarajan Sundararajan <Rengarajan.S@microchip.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	Phil Elwell <phil@raspberrypi.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Simon Horman <horms@kernel.org>
+Subject: [PATCH net-next v8 0/6] convert lan78xx driver to the PHYLINK
+Date: Wed, 18 Jun 2025 14:25:56 +0200
+Message-Id: <20250618122602.3156678-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lfg94TGuaFvTP94K"
-Content-Disposition: inline
-In-Reply-To: <20250618-winbond-6-16-rc1-octal-phy-upstream-v1-1-513202126013@bootlin.com>
-X-Cookie: This bag is recyclable.
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+This series converts the lan78xx driver to use the PHYLINK framework,
+which enhances PHY and MAC management. The changes also streamline the
+driver by removing unused elements and improving link status reporting.
 
---lfg94TGuaFvTP94K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is the final part of the previously split conversion series:
+https://lore.kernel.org/all/20250428130542.3879769-1-o.rempel@pengutronix.de/
 
-On Wed, Jun 18, 2025 at 02:14:18PM +0200, Miquel Raynal wrote:
-> spi_mem_calc_op_duration() is deriving the duration of a specific op, by
-> multiplying the number of cycles with the time a cycle will last. This
-> time was measured in nanoseconds, which means at high frequencies the
-> delta between two frequencies might not be properly catch due to
-> roundings.
+Tested on EVB_LAN7850.
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+Best Regards, Please review.
+Oleksij
 
---lfg94TGuaFvTP94K
-Content-Type: application/pgp-signature; name="signature.asc"
+Oleksij Rempel (6):
+  net: usb: lan78xx: Convert to PHYLINK for improved PHY and MAC
+    management
+  net: usb: lan78xx: Rename EVENT_LINK_RESET to EVENT_PHY_INT_ACK
+  net: usb: lan78xx: Use ethtool_op_get_link to reflect current link
+    status
+  net: usb: lan78xx: port link settings to phylink API
+  net: usb: lan78xx: Integrate EEE support with phylink LPI API
+  net: usb: lan78xx: remove unused struct members
 
------BEGIN PGP SIGNATURE-----
+ drivers/net/usb/Kconfig   |   3 +-
+ drivers/net/usb/lan78xx.c | 730 ++++++++++++++++++--------------------
+ 2 files changed, 348 insertions(+), 385 deletions(-)
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhSr/oACgkQJNaLcl1U
-h9DxUAf9GvYchrnMdIcTNMB9jdHHlfaLK/FwKb3Ilgyeyek+3ELS/xvAkxnZFvsB
-QZ0R21ZR86JtbgXqo8+s5P7E+y8wbfGRkhuan8C0fpCAppMH7vGbjroYijR9JbaL
-koOZc5Mk9F+zAjKEhPA//OinNX4QLikcrM6BfgasFmmUgnTIlpxVGnv+0qz73bQ6
-zRH+b00aMa0Sy6vYYxKkQaL9nMEWMmvAwMTBHtTChje/jvBOxTA/c3d3KLc6PCld
-5aTehbQXMQdwlvwo/70vl7gR9vy4FmAz/4EPKBcO8YleQ69JL93xV3ub92T6Bv8R
-6IkeyuzONyKWBjgnQ/8BECZmiNNJ0w==
-=b2iI
------END PGP SIGNATURE-----
+--
+2.39.5
 
---lfg94TGuaFvTP94K--
 
