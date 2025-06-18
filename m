@@ -1,145 +1,181 @@
-Return-Path: <linux-kernel+bounces-691783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71151ADE8B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:24:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6116DADE8A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04B021882746
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:24:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 866D0164056
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7DF2E3B0B;
-	Wed, 18 Jun 2025 10:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DEF286D7A;
+	Wed, 18 Jun 2025 10:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GcroIcuB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWBZKlpA"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7AC289E3C;
-	Wed, 18 Jun 2025 10:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD472857CF;
+	Wed, 18 Jun 2025 10:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750242009; cv=none; b=fXDqXHvPGfyTkRtpRGoAN5SWzQInLtH+Kcs0NLHzhIot+57y3e+SXIn14iHj5Js/GrEUvEqm/6o0OVHDMvJtBiJXaM/kF4hVC0HciuWDlx9DO1QNEsxiAP6ebvNwqwA+gvrf9h9lHbhUnJ0WMA9n7TV+kbd+6yG8FuafLGmZ8Gs=
+	t=1750241988; cv=none; b=RL7gq/Lt0iwxcmkWiGVH4JHxyc9CsVWMmm9WW0ogduJpfBwaR2+AyJyZ6axx7rZx1jUHHeoFEsLC4prar0WD3sv0p+GjhCgyzPAD+Jl7APT4Ls3UGDPM6jxzSSMAi312fvuIHtk6l826fJb0wc1ZG2KMcVZfX2h85lbRjmomuaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750242009; c=relaxed/simple;
-	bh=NxD1GAupdFUe2UjdbUAMvLXm1bj4jITeGOSzkPUL8FI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LW+I856TQs5E9O0VfHNHDRaD/xl2ulNu48w1FfWtVH37mUAn5dhA7yj89sEFvQ51CHKqqN2flGVw26uByYLi4oqTTtFphwWXmSBJqFAYK2SP7mx48/+b3HgPJKcg/xPFWi1P/mAR0K1yk3/oY0MyXo2ff0Leep4ufEPv86B3CMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GcroIcuB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85669C4CEF1;
-	Wed, 18 Jun 2025 10:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750242008;
-	bh=NxD1GAupdFUe2UjdbUAMvLXm1bj4jITeGOSzkPUL8FI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=GcroIcuB+z/8xMOqeUYC4Nzh6sc1fXQA8z7eMr8uaMkNV5NPm3VyqQBqsm8cLrzym
-	 nIbcom/UPtDQ9TwfjFC8zEhcEtfYEPMlZdu+aNQcXO/Re1mgVYsBIOyeJLZ2b+iaFo
-	 gzqm0I1vRbhTG6M+5DyltiugMfYyg9z0t34hVGdREtBuR81uEyE0nnwWdde9/+QvUa
-	 UZOiP/NvzKPCt2sUuq7M1hlF/e/UmdHWB9IHBd72FV7cfJkLD3k7I/o8AmBsYYffmt
-	 dW9n3eB4YPaiUP8zI3y+EL2Wdkl3/yjwJb0+LLJ52AuLCV39VmU6diB02B4AtMycB6
-	 H0LdOUESjiL+Q==
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Date: Wed, 18 Jun 2025 12:17:41 +0200
-Subject: [PATCH v5 26/27] docs: arm64: gic-v5: Document booting
- requirements for GICv5
+	s=arc-20240116; t=1750241988; c=relaxed/simple;
+	bh=kdiPdMh5+sRzNgtYRKj/S0sAtUte5v+zpvWVg0DO3wo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FQfo6ZSMJJ+QfcqCHKwwcIcNLM4rnwFDNE1KEo8OwW+uzM8WXMrsEypCT1P3ooJfNVrUBmEfz7eu/5BpVtwhJzlSlQjFWqzY/dzPXrJPRGTJWguPjWm/naPpUPC94zRyEBCh/FnGqnkOzPgLsUE5IBl8W5oTtzDHaaZnXtLkIX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cWBZKlpA; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a50fc7ac4dso3953114f8f.0;
+        Wed, 18 Jun 2025 03:19:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750241985; x=1750846785; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/5X6IDTVHTHpEsUSABa7MSKK8TKkDRNQdpFJlmd5FHY=;
+        b=cWBZKlpA7WK6bTpiP2mJGrl1sFGOD3VQZYQZuYsIV850lUFdRZpyVBfRb3p2ZQ7Utg
+         dIPVncWiZUm8CR6Otyo0QKKwGI9AauDs2r3G0vkAaCGrYilTB9Okk5Am9tPHUVzXCepc
+         klTIGkmcb353yRYunszFMHvrkF9MPkiahDfWGwQs+BZWDmJFlhdtKeX0GiJFkc8keKQH
+         LU27u4Ve9xJDcVoS9tzvky3pj1l0p+IPIVxxcCtpUSzJjTUPJ/yFLvG0WE8B2WFY93Ba
+         3JEyseLtY6IU3DkBKx4QAc7yp89zdz/7IuaVJVR+pCFIm5NGkn8zNeY3WZ1ET+tvfe3g
+         DhgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750241985; x=1750846785;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/5X6IDTVHTHpEsUSABa7MSKK8TKkDRNQdpFJlmd5FHY=;
+        b=MVR0GhKBcWJjQ7+A0qPKIqiLk2O0IgS03Tv+Es4HAiS2vL2S4vrOedcdeL9MVxSf5I
+         gDa3gZwO8gFdup1v15nNBMo0U20Raq8Pk+C6Uoq9+nTKxnluAse5TPObZbzmiPvF8kV+
+         dHC+Bti8XTmaUQHOkDrE7DIq1v9OuaL3feYBPk7IxqORmROnwtjsx9oBYWeuDvNOvuAm
+         ZgNNY5ym5d8YA69ZkJa8zMXXVs90r0Jf27GCG7bA1zO/OhGvwptbYc4cbAMsUzTrAKVK
+         yNOLfr9nAaFoBg+EI1BDPsa5+oVGtLUNQ8LQTqqp2AMqmhd+QXjA5hfExZd+zai5agYf
+         MKVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTUHMeaD2v2sCTADS+ZN4q7+obwAVI/8HQnQhSB6KUrodQwsayESPFwqpeJ8sGF/LShu28F5z77tJvnVkk@vger.kernel.org, AJvYcCUdIHURHQnKTBHktvdas5GOOEHX1F6ExBvQh8JFdAaKZpjac3leSUjGruzGGEogOKMpAn6m4DOAQLKuzTefHss=@vger.kernel.org, AJvYcCXEEd2qp3i1P5kPyTyQp5g+CYxmrcivkKIsEpWqvuOmNJrliPiAlZ19p7fns/pdgE2T+DY5e9MxLeCk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYVz2OTXySsd3P/zCP1zakNPcq+7PhS3o3Ym6HOwaM4/YXbNKO
+	khUzMglhLKoq61pZ5CAka6gITSSSPF4py7QAMnOeKkNzmI2UpcRiF4ut
+X-Gm-Gg: ASbGnctwyFsgfHB2XBUwRO549gfHfd9wZnq/zEOTWp/otuccC4SVZuyzeXjkV5LGE7y
+	3zUCPx6bcQdISGE96+u8UB5hJxCxUKeBJAvXNfyGtvU4N2r51qLf+6E5/3IxygKze9hHd9n+AQ3
+	sdKw32wFh2E1wmRYGMRF/r9B0SLG+RNo4U+7SH6oVVAEqgWTO/0O/uKZHC8dKjmK6elJD6gkR3Q
+	4HwisRNr/UV/5+bFoLIJ/NkXOOjTC4V5+SbvMOsloaxbOLySzFhNeoMCi7/lSoliGOJObV4xSAs
+	uRNi6UsjQUe11GF00pLIp9YPD6AJpglgomIfAl+ocf/YzQihLNkkk92yc1BDa1jg4QN+Ga8C9tf
+	1KuImZohbTckiyBSi3nsygydij6qdiiqnouRE
+X-Google-Smtp-Source: AGHT+IHB+U5DjgKYH28LDRAxh/14b9t99lBDOZmzIa0ejbzDXmc50b8UhG5Om/kD1z7jYZvFiiye4g==
+X-Received: by 2002:a05:6000:4b18:b0:3a4:dcfb:3118 with SMTP id ffacd0b85a97d-3a57236795cmr14608027f8f.10.1750241984501;
+        Wed, 18 Jun 2025 03:19:44 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a68b0esm16274027f8f.29.2025.06.18.03.19.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 03:19:44 -0700 (PDT)
+Sender: Igor Korotin <igorkor.3vium@gmail.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	rafael@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	lenb@kernel.org,
+	wedsonaf@gmail.com,
+	viresh.kumar@linaro.org,
+	alex.hung@amd.com,
+	dingxiangfei2009@gmail.com
+Subject: [PATCH v7 5/9] rust: driver: Consolidate `Adapter::of_id_info` methods using `#[cfg]`
+Date: Wed, 18 Jun 2025 11:17:42 +0100
+Message-ID: <20250618101742.3048622-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250618100221.3047133-1-igor.korotin.linux@gmail.com>
+References: <20250618100221.3047133-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250618-gicv5-host-v5-26-d9e622ac5539@kernel.org>
-References: <20250618-gicv5-host-v5-0-d9e622ac5539@kernel.org>
-In-Reply-To: <20250618-gicv5-host-v5-0-d9e622ac5539@kernel.org>
-To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
- Sascha Bischoff <sascha.bischoff@arm.com>, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- Timothy Hayes <timothy.hayes@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Peter Maydell <peter.maydell@linaro.org>, 
- Mark Rutland <mark.rutland@arm.com>, Jiri Slaby <jirislaby@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>
-X-Mailer: b4 0.15-dev-6f78e
+Content-Transfer-Encoding: 8bit
 
-Document the requirements for booting a kernel on a system implementing
-a GICv5 interrupt controller.
+Refactor the `of_id_info` methods in the `Adapter` trait to reduce
+duplication. Previously, the method had two versions selected
+via `#[cfg(...)]` and `#[cfg(not(...))]`. This change merges them into a
+single method by using `#[cfg]` blocks within the method body.
 
-Specifically, other than DT/ACPI providing the required firmware
-representation, define what traps must be disabled if the kernel is
-booted at EL1 on a system where EL2 is implemented.
-
-Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Marc Zyngier <maz@kernel.org>
+Suggested-by: Benno Lossin <lossin@kernel.org>
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
 ---
- Documentation/arch/arm64/booting.rst | 41 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ rust/kernel/driver.rs | 40 +++++++++++++++++++++-------------------
+ 1 file changed, 21 insertions(+), 19 deletions(-)
 
-diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/arch/arm64/booting.rst
-index dee7b6de864f..4b1d416c6016 100644
---- a/Documentation/arch/arm64/booting.rst
-+++ b/Documentation/arch/arm64/booting.rst
-@@ -223,6 +223,47 @@ Before jumping into the kernel, the following conditions must be met:
+diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+index ec9166cedfa7..cb62b75a0c0e 100644
+--- a/rust/kernel/driver.rs
++++ b/rust/kernel/driver.rs
+@@ -147,30 +147,32 @@ pub trait Adapter {
+     /// Returns the driver's private data from the matching entry in the [`of::IdTable`], if any.
+     ///
+     /// If this returns `None`, it means there is no match with an entry in the [`of::IdTable`].
+-    #[cfg(CONFIG_OF)]
+     fn of_id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
+-        let table = Self::of_id_table()?;
++        #[cfg(not(CONFIG_OF))]
++        {
++            let _ = dev;
++            return None;
++        }
  
-     - SCR_EL3.HCE (bit 8) must be initialised to 0b1.
+-        // SAFETY:
+-        // - `table` has static lifetime, hence it's valid for read,
+-        // - `dev` is guaranteed to be valid while it's alive, and so is `pdev.as_ref().as_raw()`.
+-        let raw_id = unsafe { bindings::of_match_device(table.as_ptr(), dev.as_raw()) };
++        #[cfg(CONFIG_OF)]
++        {
++            let table = Self::of_id_table()?;
  
-+  For systems with a GICv5 interrupt controller to be used in v5 mode:
-+
-+  - If the kernel is entered at EL1 and EL2 is present:
-+
-+      - ICH_HFGRTR_EL2.ICC_PPI_ACTIVERn_EL1 (bit 20) must be initialised to 0b1.
-+      - ICH_HFGRTR_EL2.ICC_PPI_PRIORITYRn_EL1 (bit 19) must be initialised to 0b1.
-+      - ICH_HFGRTR_EL2.ICC_PPI_PENDRn_EL1 (bit 18) must be initialised to 0b1.
-+      - ICH_HFGRTR_EL2.ICC_PPI_ENABLERn_EL1 (bit 17) must be initialised to 0b1.
-+      - ICH_HFGRTR_EL2.ICC_PPI_HMRn_EL1 (bit 16) must be initialised to 0b1.
-+      - ICH_HFGRTR_EL2.ICC_IAFFIDR_EL1 (bit 7) must be initialised to 0b1.
-+      - ICH_HFGRTR_EL2.ICC_ICSR_EL1 (bit 6) must be initialised to 0b1.
-+      - ICH_HFGRTR_EL2.ICC_PCR_EL1 (bit 5) must be initialised to 0b1.
-+      - ICH_HFGRTR_EL2.ICC_HPPIR_EL1 (bit 4) must be initialised to 0b1.
-+      - ICH_HFGRTR_EL2.ICC_HAPR_EL1 (bit 3) must be initialised to 0b1.
-+      - ICH_HFGRTR_EL2.ICC_CR0_EL1 (bit 2) must be initialised to 0b1.
-+      - ICH_HFGRTR_EL2.ICC_IDRn_EL1 (bit 1) must be initialised to 0b1.
-+      - ICH_HFGRTR_EL2.ICC_APR_EL1 (bit 0) must be initialised to 0b1.
-+
-+      - ICH_HFGWTR_EL2.ICC_PPI_ACTIVERn_EL1 (bit 20) must be initialised to 0b1.
-+      - ICH_HFGWTR_EL2.ICC_PPI_PRIORITYRn_EL1 (bit 19) must be initialised to 0b1.
-+      - ICH_HFGWTR_EL2.ICC_PPI_PENDRn_EL1 (bit 18) must be initialised to 0b1.
-+      - ICH_HFGWTR_EL2.ICC_PPI_ENABLERn_EL1 (bit 17) must be initialised to 0b1.
-+      - ICH_HFGWTR_EL2.ICC_ICSR_EL1 (bit 6) must be initialised to 0b1.
-+      - ICH_HFGWTR_EL2.ICC_PCR_EL1 (bit 5) must be initialised to 0b1.
-+      - ICH_HFGWTR_EL2.ICC_CR0_EL1 (bit 2) must be initialised to 0b1.
-+      - ICH_HFGWTR_EL2.ICC_APR_EL1 (bit 0) must be initialised to 0b1.
-+
-+      - ICH_HFGITR_EL2.GICRCDNMIA (bit 10) must be initialised to 0b1.
-+      - ICH_HFGITR_EL2.GICRCDIA (bit 9) must be initialised to 0b1.
-+      - ICH_HFGITR_EL2.GICCDDI (bit 8) must be initialised to 0b1.
-+      - ICH_HFGITR_EL2.GICCDEOI (bit 7) must be initialised to 0b1.
-+      - ICH_HFGITR_EL2.GICCDHM (bit 6) must be initialised to 0b1.
-+      - ICH_HFGITR_EL2.GICCDRCFG (bit 5) must be initialised to 0b1.
-+      - ICH_HFGITR_EL2.GICCDPEND (bit 4) must be initialised to 0b1.
-+      - ICH_HFGITR_EL2.GICCDAFF (bit 3) must be initialised to 0b1.
-+      - ICH_HFGITR_EL2.GICCDPRI (bit 2) must be initialised to 0b1.
-+      - ICH_HFGITR_EL2.GICCDDIS (bit 1) must be initialised to 0b1.
-+      - ICH_HFGITR_EL2.GICCDEN (bit 0) must be initialised to 0b1.
-+
-+  - The DT or ACPI tables must describe a GICv5 interrupt controller.
-+
-   For systems with a GICv3 interrupt controller to be used in v3 mode:
-   - If EL3 is present:
+-        if raw_id.is_null() {
+-            None
+-        } else {
+-            // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and
+-            // does not add additional invariants, so it's safe to transmute.
+-            let id = unsafe { &*raw_id.cast::<of::DeviceId>() };
++            // SAFETY:
++            // - `table` has static lifetime, hence it's valid for read,
++            // - `dev` is guaranteed to be valid while it's alive, and so is `pdev.as_ref().as_raw()`.
++            let raw_id = unsafe { bindings::of_match_device(table.as_ptr(), dev.as_raw()) };
  
-
+-            Some(table.info(<of::DeviceId as crate::device_id::RawDeviceId>::index(id)))
+-        }
+-    }
++            if raw_id.is_null() {
++                None
++            } else {
++                // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and
++                // does not add additional invariants, so it's safe to transmute.
++                let id = unsafe { &*raw_id.cast::<of::DeviceId>() };
+ 
+-    #[cfg(not(CONFIG_OF))]
+-    #[allow(missing_docs)]
+-    fn of_id_info(_dev: &device::Device) -> Option<&'static Self::IdInfo> {
+-        None
++                Some(table.info(<of::DeviceId as crate::device_id::RawDeviceId>::index(id)))
++            }
++        }
+     }
+ 
+     /// Returns the driver's private data from the matching entry of any of the ID tables, if any.
 -- 
-2.48.0
+2.43.0
 
 
