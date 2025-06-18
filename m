@@ -1,135 +1,121 @@
-Return-Path: <linux-kernel+bounces-691450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA77ADE4BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:45:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BEFFADE4A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A3F91897E4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:46:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF2E718865C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264F31E0B86;
-	Wed, 18 Jun 2025 07:45:48 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E7A27EFE5;
+	Wed, 18 Jun 2025 07:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DW+0m7jR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C51E27726;
-	Wed, 18 Jun 2025 07:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2937B277804;
+	Wed, 18 Jun 2025 07:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750232747; cv=none; b=n4bP3Vq+ywgI6L4kpIEZNA3mRnEtW1SpiO/aK5W5ICTAVflfS7cU6zK+tngKT4yAj/TZKZ1ESGTiee4wpFuuKVv1HxCbDhPD0Q4N5e2Im/sqKkBEtCTssEn4sAu6RBqp5/x7B20sVfUsQEZn02Y+kWUP0jB1KsKILsoMmlU5sdo=
+	t=1750231953; cv=none; b=jMYaMtNvEavgvyswJmghqNE5qHmKvjO/OnqHEOgLOCrEO6GD9H98meGnf5yLFVwtcC0mdf4Xa8KV+xfgpyYj2HNvNtqvPkY1sKxx1hQixhMIO0oqgpENOWFAHODJCBLyyyFfEX8xIRSNKoXszPP8J/DDyurdwWoGin053oJ5YTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750232747; c=relaxed/simple;
-	bh=s3stRVI86PiNtFalnZP+84R5foygh190H1muvOIo1pI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B2nbXlQH7qziWsMl/xD2XPIFaP0x2N4Sf+a8w8qgvsJF5AEuu9EikheFCpxkYzghku4kGzsI6kjDMYUu+SIAkOKasQag0ArPLV3FUOME0LK0IIezsK+XxLQwrDfkK/JLOFWZToZdb5XO1cRo/Vi3Hp6tA+yZDctSi9az30DGHQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bMbPy0hmxzYQvtL;
-	Wed, 18 Jun 2025 15:45:42 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 100501A093A;
-	Wed, 18 Jun 2025 15:45:41 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP2 (Coremail) with SMTP id Syh0CgCXoWSTblJo+pwEPw--.55813S2;
-	Wed, 18 Jun 2025 15:45:40 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	rafael.j.wysocki@intel.com,
-	mingo@kernel.org,
-	peterz@infradead.org
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [next] cgroup,freezer: fix incomplete freezing when attaching tasks
-Date: Wed, 18 Jun 2025 07:32:17 +0000
-Message-Id: <20250618073217.2983275-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750231953; c=relaxed/simple;
+	bh=LVwGURChkwBiY5Cp8D81sB5+JCpkpaZuIaeZH9YkgHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lRascUizKidCdAtTY55v9tBbfS8kNmPOwwGB6dlQoFFZDxj/ZDwxUxhSOlzg1H8pGYdt3LopNH4eI6M17/ZtmpSfamO4itJn6atCIOKCwx76Yc8Dp3KvdMbZvEd3DCCt0rUvgTYieM//RgvL2G2GtCxzdtWXFTr6UMFdBDu46j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DW+0m7jR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 515DBC4CEE7;
+	Wed, 18 Jun 2025 07:32:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1750231952;
+	bh=LVwGURChkwBiY5Cp8D81sB5+JCpkpaZuIaeZH9YkgHk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DW+0m7jRs/ZwWQqb9KQfAt2SnRbzJ1aNs3noi5fYOAV7sLyIBY7seJdnXx5EhFXoZ
+	 GERSSH9N4LL0CmXRnhimezKbLk0cvKY/tN3/4CLcM3q5/Q9bzMmjkd1xtCPhE0rTKb
+	 PkedKCSa3CYpS32YUBRIADUXaB+wVbmP7rqqA568=
+Date: Wed, 18 Jun 2025 09:32:29 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: xiehongyu1@kylinos.cn
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	mathias.nyman@intel.com
+Subject: Re: [PATCH v1] xhci: Disable stream for xHC controller with
+ XHCI_BROKEN_STREAMS
+Message-ID: <2025061838-grumbly-basically-d01e@gregkh>
+References: <20250618055133.62638-1-xiehongyu1@kylinos.cn>
+ <2025061801-gosling-urchin-c2cb@gregkh>
+ <b623ea20-84cd-414d-9b5a-f94d972f819f@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCXoWSTblJo+pwEPw--.55813S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJryUCFyrAry3AF17Gw1xZrb_yoW8Wryxpw
-	s8Xw4UWw4FkF1jyryDZ3W0gr95KFs7Ar4UGFyjqr18XF1fXa4qvr4xC345WayUJFWIqrWU
-	Ja1YvryIk34DA3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07
-	UAwIDUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+In-Reply-To: <b623ea20-84cd-414d-9b5a-f94d972f819f@kylinos.cn>
 
-From: Chen Ridong <chenridong@huawei.com>
+On Wed, Jun 18, 2025 at 03:08:09PM +0800, xiehongyu1@kylinos.cn wrote:
+> From: Hongyu Xie
+> 
+> Hi Greg
 
-An issue was found:
+Please do not sent html email, the mailing lists reject it :(
 
-	# cd /sys/fs/cgroup/freezer/
-	# mkdir test
-	# echo FROZEN > test/freezer.state
-	# cat test/freezer.state
-	FROZEN
-	# sleep 1000 &
-	[1] 863
-	# echo 863 > test/cgroup.procs
-	# cat test/freezer.state
-	FREEZING
+> 在 2025/6/18 14:03, Greg KH 写道:
+> 
+>     On Wed, Jun 18, 2025 at 01:51:33PM +0800, xiehongyu1@kylinos.cn wrote:
+> 
+>         From: Hongyu Xie <xiehongyu1@kylinos.cn>
+> 
+>         Disable stream for platform xHC controller with broken stream.
+> 
+>         Signed-off-by: Hongyu Xie
+>         ---
+>          drivers/usb/host/xhci-plat.c | 3 ++-
+>          1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+>         diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+>         index 6dab142e72789..c79d5ed48a08b 100644
+>         --- a/drivers/usb/host/xhci-plat.c
+>         +++ b/drivers/usb/host/xhci-plat.c
+>         @@ -328,7 +328,8 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
+>                 }
+> 
+>                 usb3_hcd = xhci_get_usb3_hcd(xhci);
+>         -       if (usb3_hcd && HCC_MAX_PSA(xhci->hcc_params) >= 4)
+>         +       if (usb3_hcd && HCC_MAX_PSA(xhci->hcc_params) >= 4 &&
+>         +           !(xhci->quirks & XHCI_BROKEN_STREAMS))
+>                         usb3_hcd->can_do_streams = 1;
+> 
+>                 if (xhci->shared_hcd) {
+>         --
+>         2.25.1
+> 
+> 
+> 
+>     Should this be backported to stable kernels?  if so, how far back?
+> 
+> At least 5.4 lts.
 
-When tasks are migrated to a frozen cgroup, the freezer fails to
-immediately freeze the tasks, causing the cgroup to remain in the
-"FREEZING".
+Great, please mark it properly.
 
-The freeze_task() function is called before clearing the CGROUP_FROZEN
-flag. This causes the freezing() check to incorrectly return false,
-preventing __freeze_task() from being invoked for the migrated task.
+>     What commit id does this fix?  Or what hardware does this fix?
+> 
+> I'm not sure. can_do_streams was introduced by 14aec589327a6 ("storage: accept
+> some UAS devices if streams are unavailable") in Feb 11 20:36:04 2014
+> 
+> before XHCI_BROKEN_STREAMS was introduced by 8f873c1ff4ca0 ("xhci: Blacklist
+> using streams on the Etron EJ168 controller") in Fri Jul 25 22:01:18 2014.
 
-To fix this issue, clear the CGROUP_FROZEN state before calling
-freeze_task().
+Pick the proper one as you obviously have hardware here that you have
+tested that needs this change, right?  :)
 
-Fixes: f5d39b020809 ("freezer,sched: Rewrite core freezer logic")
-Reported-by: Zhong Jiawei <zhongjiawei1@huawei.com>
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/cgroup/legacy_freezer.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+thanks,
 
-diff --git a/kernel/cgroup/legacy_freezer.c b/kernel/cgroup/legacy_freezer.c
-index 039d1eb2f215..507b8f19a262 100644
---- a/kernel/cgroup/legacy_freezer.c
-+++ b/kernel/cgroup/legacy_freezer.c
-@@ -188,13 +188,12 @@ static void freezer_attach(struct cgroup_taskset *tset)
- 		if (!(freezer->state & CGROUP_FREEZING)) {
- 			__thaw_task(task);
- 		} else {
--			freeze_task(task);
--
- 			/* clear FROZEN and propagate upwards */
- 			while (freezer && (freezer->state & CGROUP_FROZEN)) {
- 				freezer->state &= ~CGROUP_FROZEN;
- 				freezer = parent_freezer(freezer);
- 			}
-+			freeze_task(task);
- 		}
- 	}
- 
--- 
-2.34.1
-
+greg k-h
 
