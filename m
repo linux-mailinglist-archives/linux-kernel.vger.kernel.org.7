@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-691816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC2CADE91A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:35:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4533CADE938
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC333A92A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:32:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC53C189E5C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EABA28312D;
-	Wed, 18 Jun 2025 10:32:59 +0000 (UTC)
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86502877F2;
+	Wed, 18 Jun 2025 10:40:14 +0000 (UTC)
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A329C3A8F7
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D6328750A
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750242779; cv=none; b=YjgqH25lLS8HE9O/JzB1JUhSoLmKS1F5uIAhM1BsngrDk/upcTHfK1Cw84wU14qZyVYLfy1X2Ss5ecSKM/Tbf61EOXkTGf5LBEqJ+rJ3CSCqsMn+WPAKePmmwOJMPNidLD+iaGB8JxgOIoMcHMOm1N5WnExwn3WYkmKuDIGc4us=
+	t=1750243214; cv=none; b=deekSSqcQgHXqZwwGnHO8MAUwjKWoQj35DOJlfSl1r/mI3Z6g/Eisyt7gqQ8IQhEhBb/AsqubS6w5NZ1FnrPOwA1HNi6dQntDm5yZ4atvK+XBTWso1la5XDU3yjhrAbyDqi3WhvzM3aMLes/afQR0w5ntQDeCgRIkYxCWEPIrrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750242779; c=relaxed/simple;
-	bh=RoUxprTWYp6bt8a6NhcyoQF0P4UOPKXOfvfhvUMjDrM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uRQ6DejtK0TE0HQhxKLuLzqv0s2hsWu1qqXrGwxKh2hkDvy+sqrQfe2guijgv2qxayK9uCW6OZYf9+yr8Qq9PHWJTT5WXZ6ssUgnqvVdgCC90yoRlki9NsR6MfH7vfztZpTzoCcUu3E8Fkl38kIiybqAOhIQ5PwOd7yN2KRlfcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=84.16.66.175
+	s=arc-20240116; t=1750243214; c=relaxed/simple;
+	bh=qPetT8HgiQ4x/Pa4r84PfEmVCaPC3OEu+0eocScxFR0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ZMLtfje6468Bsv4RDyG2nAXNrF+GLtyWn57MXqnQTfy5K/Ug2dKXkavOXbrC5rtxArlZ0xargJT8ESBmSAbaH3Y+spfGmLsyZAb34/6kBrxyaKbERTGXFZMnAr8nwS48h0p6oBkhXSU/mIS1jjL9FHXGzpytCjGCzSUYY/HWBMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=185.125.25.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bMg6t0WC0zW6F;
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bMg6t5dNkzV7j;
 	Wed, 18 Jun 2025 12:32:54 +0200 (CEST)
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bMg6r6KLZzD9N;
-	Wed, 18 Jun 2025 12:32:52 +0200 (CEST)
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bMg6t0QW5zCWg;
+	Wed, 18 Jun 2025 12:32:54 +0200 (CEST)
 From: Quentin Schulz <foss+kernel@0leil.net>
-Subject: [PATCH v3 0/5] rockchip: rk8xx: allow to customize PMIC reset mode
- on RK806
-Date: Wed, 18 Jun 2025 12:32:39 +0200
-Message-Id: <20250618-rk8xx-rst-fun-v3-0-081f02d3d348@cherry.de>
+Date: Wed, 18 Jun 2025 12:32:40 +0200
+Subject: [PATCH v3 1/5] dt-bindings: mfd: rk806: allow to customize PMIC
+ reset mode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,11 +45,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMeVUmgC/3XMQQ6CMBCF4auQrq2ZlrZSV97DuMB2kMYEyBQbC
- OHuFjYaE5fvJd+/sIgUMLJzsTDCFGLouzzKQ8FcW3cP5MHnzSRIDVoaTs9qmjjFkTevjjfSCKf
- gbjw4ls1A2IRp711vebchjj3Nez6J7f1XSoIDx7qyylt1UggX1yLRfPTItlKSH21A/2qZtVClF
- xa0Nd5/63Vd3yy6hw3oAAAA
-X-Change-ID: 20250526-rk8xx-rst-fun-f261c40b6d0c
+Message-Id: <20250618-rk8xx-rst-fun-v3-1-081f02d3d348@cherry.de>
+References: <20250618-rk8xx-rst-fun-v3-0-081f02d3d348@cherry.de>
+In-Reply-To: <20250618-rk8xx-rst-fun-v3-0-081f02d3d348@cherry.de>
 To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
@@ -63,71 +61,78 @@ Cc: Lukasz Czechowski <lukasz.czechowski@thaumatec.com>,
 X-Mailer: b4 0.14.2
 X-Infomaniak-Routing: alpha
 
-This allows to customize the PMIC reset method (also called RST_FUN) on
-RK806 PMIC from Rockchip, mainly found on RK3588 devices but also on
-RK3576.
+From: Quentin Schulz <quentin.schulz@cherry.de>
 
-Finally, this is required on the two RK3588 devices from Theobroma as
-U-Boot changes the silicon-default (which is suitable for us) to
-something that breaks our companion microcontroller's reboot detection
-which breaks a bunch of assumptions in the MCU FW code.
+The RK806 PMIC allows to configure its reset/restart behavior whenever
+the PMIC is reset either programmatically or via some external pins
+(e.g. PWRCTRL or RESETB).
 
-To validate this works on those devices do the following:
+The following modes exist:
+ - 0; restart PMU,
+ - 1; reset all power off reset registers and force state to switch to
+   ACTIVE mode,
+ - 2; same as mode 1 and also pull RESETB pin down for 5ms,
 
-On Tiger:
-i2cset -y -f 6 0x6f 0x9 0x62
-On Jaguar:
-i2cset -y -f 0 0x6f 0x9 0x62
+For example, some hardware may require a full restart (mode 0) in order
+to function properly as regulators are shortly interrupted in this mode.
 
-You hear a nice (loud :) ) beep, then reboot and it should stop right
-before entering U-Boot TPL again.
+This is the case for RK3588 Jaguar and RK3588 Tiger which have a
+companion microcontroller running on an independent power supply and
+monitoring the PMIC power rail to know the state of the main system.
+When it detects a restart, it resets its own IPs exposed to the main
+system as if to simulate its own reset. Failing to perform this fake
+reset of the microcontroller may break things (e.g. watchdog not
+automatically disabled, buzzer still running until manually disabled,
+leftover configuration from previous main system state, etc...).
 
+Some other systems may be depending on the power rails to not be
+interrupted even for a small amount of time[1].
+
+This allows to specify how the PMIC should perform on the hardware level
+and may differ between harwdare designs, so a DT property seems
+warranted. I unfortunately do not see how this could be made generic
+enough to make it a non-vendor property.
+
+[1] https://lore.kernel.org/linux-rockchip/2577051.irdbgypaU6@workhorse/
 Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
-Changes in v3:
-- (hopefully) fixed missing bitfield.h include in driver as reported by
-  Intel's kernel test robot,
-- removed dt-binding header file,
-- removed mentions to constants that used to be in dt-binding header
-  file since they aren't anymore,
-- added (patch 3) header file in arch/arm64/boot/dts/rockchip to make
-  the value of rockchip,reset-mode easier to understand when reading the
-  device tree,
-- Link to v2: https://lore.kernel.org/r/20250605-rk8xx-rst-fun-v2-0-143d190596dd@cherry.de
-
-Changes in v2:
-- moved rst_fun variable declaration out of the switch-case,
-- initialized rst_fun variable to make kernel test robot happy even
-  though the variable wouldn't be used uninitialized due to breaking
-  before using it,
-- renamed rockchip,rst-fun to rockchip,reset-mode
-- rewrote rockchip,reset-mode binding description to not mention the
-  relation to registers or register values,
-- added binding header file to make it easier to understand what the
-  mode is when reading a Device Tree without having to read the binding,
-- Link to v1: https://lore.kernel.org/r/20250526-rk8xx-rst-fun-v1-0-ea894d9474e0@cherry.de
-
----
-Quentin Schulz (5):
-      dt-bindings: mfd: rk806: allow to customize PMIC reset mode
-      mfd: rk8xx-core: allow to customize RK806 reset mode
-      arm64: dts: rockchip: add header for RK8XX PMIC constants
-      arm64: dts: rockchip: force PMIC reset behavior to restart PMU on RK3588 Jaguar
-      arm64: dts: rockchip: force PMIC reset behavior to restart PMU on RK3588 Tiger
-
  .../devicetree/bindings/mfd/rockchip,rk806.yaml     | 21 +++++++++++++++++++++
- arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts      |  2 ++
- arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi      |  2 ++
- arch/arm64/boot/dts/rockchip/rk8xx.h                | 18 ++++++++++++++++++
- drivers/mfd/rk8xx-core.c                            | 15 +++++++++++++++
- include/linux/mfd/rk808.h                           |  2 ++
- 6 files changed, 60 insertions(+)
----
-base-commit: 52da431bf03b5506203bca27fe14a97895c80faf
-change-id: 20250526-rk8xx-rst-fun-f261c40b6d0c
+ 1 file changed, 21 insertions(+)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/mfd/rockchip,rk806.yaml b/Documentation/devicetree/bindings/mfd/rockchip,rk806.yaml
+index 3c2b06629b75ea94f90712470bf14ed7fc16d68d..eb5bca31948ef0d39c46025d0cca65b8b4105a50 100644
+--- a/Documentation/devicetree/bindings/mfd/rockchip,rk806.yaml
++++ b/Documentation/devicetree/bindings/mfd/rockchip,rk806.yaml
+@@ -31,6 +31,27 @@ properties:
+ 
+   system-power-controller: true
+ 
++  rockchip,reset-mode:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 1, 2]
++    description:
++      Mode to use when a reset of the PMIC is triggered.
++
++      The reset can be triggered either programmatically, via one of
++      the PWRCTRL pins (provided additional configuration) or
++      asserting RESETB pin low.
++
++      The following modes are supported
++
++      - 0; restart PMU,
++      - 1; reset all power off reset registers and force state to
++        switch to ACTIVE mode,
++      - 2; same as mode 1 and also pull RESETB pin down for 5ms,
++
++      For example, some hardware may require a full restart (mode 0)
++      in order to function properly as regulators are shortly
++      interrupted in this mode.
++
+   vcc1-supply:
+     description:
+       The input supply for dcdc-reg1.
+
 -- 
-Quentin Schulz <quentin.schulz@cherry.de>
+2.49.0
 
 
