@@ -1,36 +1,37 @@
-Return-Path: <linux-kernel+bounces-691541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023CBADE5EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:45:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB741ADE5F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6186163D35
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:45:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 526631897408
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E4927FB14;
-	Wed, 18 Jun 2025 08:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E756727FD52;
+	Wed, 18 Jun 2025 08:45:22 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D029827F171;
-	Wed, 18 Jun 2025 08:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BBD27FB19;
+	Wed, 18 Jun 2025 08:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750236320; cv=none; b=kslaUIcIA8CpZPvr6mRp9TF4mOYVX11Jz7vV2yHlt72+XNRRUJ1QsXAiEQUT7pxiYRU14hGBTlM1t4fk+WWgIh+lnFrL+TBk5BxpXzidvbjwWHxBy2JTIpIj9U27Xbv90uoGpot+znp9J8LmC9N2sbYGVobavj1npj2IqxAXTnc=
+	t=1750236322; cv=none; b=D97zsXcpGFCRzh/KhwgApyOaRJUTBGBNvj6i1ANO/tfj7Fx8qbLbJ7xmNhU7IFhLSVZFhQazSKaL1fva6vxc0f9oEXJuu/JIyJHT9c41hc605x1KsODPmsKaIfcNjA9GTICnP+2jDgfXKJVAylG8LcYCt0bd85TmO+Vwp6OAQCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750236320; c=relaxed/simple;
-	bh=6ZlyTFiZb6HSGFviLtMDNE4JATVyMgaAIi6GYFIQvhY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YZmEd+rNFH6cq3tpQpUtXypjNn8EtIh/Wh4I0btgztI8GEB5ODC6gvKyp51yJR0IzbIIS+7tSQMgMpTXQSBfoPRdF9Dfa53deohzGSukD2VNoJ1zS5flM1KphqhJ9vsNsKma9Jm/7hfFhaRWZ3S701xLaW1hHHDj2PgAsHHEgRo=
+	s=arc-20240116; t=1750236322; c=relaxed/simple;
+	bh=+JIrPuGS8nUD4SB8FQOcnnhPfYRc/S7ugJdAbyTE1SM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cIykp9rsbU7EdRl72jrYHW67bB5q4kfXPRim9Lm0Mgg2q+YHCEZ7Zg7TptROeX9E1lbHzgy8kwDyYBeLn/dccExx0jzcO70J7syrdZH01/CaKJgnQ+rkQs6S/8y45ZYoHFgFgYXiljEwQg/Pi0N7+lBMoXbtisoYq66a2ZkxXXw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53A1B14BF;
-	Wed, 18 Jun 2025 01:44:57 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8C0F1BC0;
+	Wed, 18 Jun 2025 01:44:59 -0700 (PDT)
 Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AD2B73F66E;
-	Wed, 18 Jun 2025 01:45:15 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3ED393F66E;
+	Wed, 18 Jun 2025 01:45:18 -0700 (PDT)
 From: Yeoreum Yun <yeoreum.yun@arm.com>
 To: catalin.marinas@arm.com,
 	pcc@google.com,
@@ -48,10 +49,12 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v9 00/10] support FEAT_MTE_TAGGED_FAR feature
-Date: Wed, 18 Jun 2025 09:45:03 +0100
-Message-Id: <20250618084513.1761345-1-yeoreum.yun@arm.com>
+Subject: [PATCH v9 01/10] arm64/cpufeature: add FEAT_MTE_TAGGED_FAR feature
+Date: Wed, 18 Jun 2025 09:45:04 +0100
+Message-Id: <20250618084513.1761345-2-yeoreum.yun@arm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250618084513.1761345-1-yeoreum.yun@arm.com>
+References: <20250618084513.1761345-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,108 +63,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The FEAT_MTE_TAGGED_FAR feature provides support for
-reporting all non-address bits during a synchronous MTE tag check fault.
+Add FEAT_MTE_TAGGED_FAR cpucap which makes FAR_ELx report
+all non-address bits on a synchronous MTE tag check fault since Armv8.9
 
-This patchset extends the reporting tag to include
-not only the memory tag (logical tag) but also the address tag via
-si_addr when FEAT_MTE_TAGGED_FAR feature is supported.
+Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Acked-by: Yury Khrustalev <yury.khrustalev@arm.com>
+---
+ arch/arm64/kernel/cpufeature.c | 8 ++++++++
+ arch/arm64/tools/cpucaps       | 1 +
+ 2 files changed, 9 insertions(+)
 
-Patch Sequences
-================
-
-Patch #1 adds cpufeature FEAT_MTE_TAGGED_FAR
-
-Patch #2 adds MTE_FAR hwcaps and export address tag when it supports
-
-Patch #3 expose MTE_FAR feature to guest
-
-Patch #4 adds mtefar hwcap test
-
-Patch #5 to #8 prepares to add mtefar testcase
-
-Patch #9 refactor check_mmap_option using general testcase pattern
-
-Patch #10 adds mtefar test cases corresponding to
-each testcase of check_mmap_options
-
-Patch History
-================
-v8 to v9:
-  - expose MTE_FAR feature to guest
-  - https://lore.kernel.org/linux-arm-kernel/20250611180734.63657-1-yeoreum.yun@arm.com/
-
-v7 to v8:
-  - rewording some comment word.
-  - https://lore.kernel.org/all/20250611135818.31070-1-yeoreum.yun@arm.com/
-
-v6 to v7:
-  - fix some error on testcase.
-  - https://lore.kernel.org/all/20250611094107.928457-1-yeoreum.yun@arm.com/
-
-v5 to v6:
-  - split Patch #4.
-  - refactor check_mmap_option using general testcase pattern
-  - https://lore.kernel.org/linux-arm-kernel/20250610150144.2523945-1-yeoreum.yun@arm.com/
-
-v4 to v5:
-  - rebased on v6.16-rc1
-  - https://lore.kernel.org/linux-arm-kernel/20250507095757.1663684-1-yeoreum.yun@arm.com/
-
-v3 to v4:
-  - fix hwcap string for FEAT_MTE_TAGGED_FAR
-  - split cpufeature and hwcap modification and merge hwcap's
-    modification with exporting address tag patch
-  - add mtefar testcase on check_mmap_options
-  - https://lore.kernel.org/all/20250410074721.947380-1-yeoreum.yun@arm.com/
-
-v2 to v3:
-  - Rebase to 6.15-rc1
-  - https://lore.kernel.org/all/20250403172758.67106-1-yeoreum.yun@arm.com/
-
-v1 to v2:
-  - add hwcap test for MTE_FAR feature.
-  - add MTE_FAR doc into elf_hwcap.rst
-  - https://lore.kernel.org/all/20250403142707.26397-1-yeoreum.yun@arm.com/
-
-
-Yeoreum Yun (10):
-  arm64/cpufeature: add FEAT_MTE_TAGGED_FAR feature
-  arm64: report address tag when FEAT_MTE_TAGGED_FAR is supported
-  arm64/kvm: expose FEAT_MTE_TAGGED_FAR feature to guest
-  tools/kselftest: add MTE_FAR hwcap test
-  kselftest/arm64/mte: register mte signal handler with
-    SA_EXPOSE_TAGBITS
-  kselftest/arm64/mte: check MTE_FAR feature is supported
-  kselftest/arm64/mte: add address tag related macro and function
-  kselftest/arm64/mte: add verification for address tag in signal
-    handler
-  kselftest/arm64/mte: refactor check_mmap_option test
-  kselftest/arm64/mte: add mtefar tests on check_mmap_options
-
- Documentation/arch/arm64/elf_hwcaps.rst       |   3 +
- Documentation/arch/arm64/tagged-pointers.rst  |  11 +-
- arch/arm64/include/asm/hwcap.h                |   1 +
- arch/arm64/include/uapi/asm/hwcap.h           |   1 +
- arch/arm64/kernel/cpufeature.c                |   9 +
- arch/arm64/kernel/cpuinfo.c                   |   1 +
- arch/arm64/kvm/sys_regs.c                     |  14 +-
- arch/arm64/mm/fault.c                         |   7 +-
- arch/arm64/tools/cpucaps                      |   1 +
- tools/testing/selftests/arm64/abi/hwcap.c     |   6 +
- .../selftests/arm64/mte/check_buffer_fill.c   |   2 +-
- .../selftests/arm64/mte/check_child_memory.c  |   4 +-
- .../arm64/mte/check_hugetlb_options.c         |   4 +-
- .../selftests/arm64/mte/check_ksm_options.c   |   4 +-
- .../selftests/arm64/mte/check_mmap_options.c  | 551 +++++++++++++++---
- .../arm64/mte/check_tags_inclusion.c          |   2 +-
- .../selftests/arm64/mte/check_user_mem.c      |   2 +-
- .../selftests/arm64/mte/mte_common_util.c     |  70 ++-
- .../selftests/arm64/mte/mte_common_util.h     |   6 +-
- tools/testing/selftests/arm64/mte/mte_def.h   |   8 +
- 20 files changed, 603 insertions(+), 104 deletions(-)
-
---
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index b34044e20128..af6a6924a3e8 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -320,6 +320,7 @@ static const struct arm64_ftr_bits ftr_id_aa64pfr1[] = {
+ 
+ static const struct arm64_ftr_bits ftr_id_aa64pfr2[] = {
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR2_EL1_FPMR_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR2_EL1_MTEFAR_SHIFT, 4, ID_AA64PFR2_EL1_MTEFAR_NI),
+ 	ARM64_FTR_END,
+ };
+ 
+@@ -2874,6 +2875,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.matches = has_cpuid_feature,
+ 		ARM64_CPUID_FIELDS(ID_AA64PFR1_EL1, MTE, MTE3)
+ 	},
++	{
++		.desc = "FAR on MTE Tag Check Fault",
++		.capability = ARM64_MTE_FAR,
++		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.matches = has_cpuid_feature,
++		ARM64_CPUID_FIELDS(ID_AA64PFR2_EL1, MTEFAR, IMP)
++	},
+ #endif /* CONFIG_ARM64_MTE */
+ 	{
+ 		.desc = "RCpc load-acquire (LDAPR)",
+diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
+index 10effd4cff6b..fe8f4f8ce95c 100644
+--- a/arch/arm64/tools/cpucaps
++++ b/arch/arm64/tools/cpucaps
+@@ -68,6 +68,7 @@ MPAM
+ MPAM_HCR
+ MTE
+ MTE_ASYMM
++MTE_FAR
+ SME
+ SME_FA64
+ SME2
+-- 
 LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
 
