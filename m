@@ -1,129 +1,190 @@
-Return-Path: <linux-kernel+bounces-691642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54DA1ADE720
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:36:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A5AADE755
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEFE24003CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:32:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBAA1401370
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536AF285045;
-	Wed, 18 Jun 2025 09:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E56285045;
+	Wed, 18 Jun 2025 09:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h5MsZdyw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="da6HvsGg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1293D283159;
-	Wed, 18 Jun 2025 09:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D15F283C82
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750239145; cv=none; b=YAuT1uRBiRaK3Uqe+D0cM1XXg0rMukc/y5W/HaJi8b+T1wBJA/dooMK/NpxYDG7FQzZMkZ0rqdLur/anYhg0+x7YrgrH4Ke4UJXka6Adu/S/Bzv7xJ0zUjcJDhXpTHP1HICJlgJQlIjIVnWaVxEXUEBYO/1SQuqWpoqJlrhwXRU=
+	t=1750239641; cv=none; b=fqLsfe5Ekmlthx0FvyD5V9Trvsd0Xb4LbADbPzH1LpT8whBl12jmLOqAAm2nrJAzLout4CTA8b9T/2Ilt4/mebZKdMcZ+5PCCrhzVyYEkemLX3aocHcP3GvXXAWNABYfsBLVrZiEtrk0lESS4KP0Kr5x9S8WnFri2vZfwkP92wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750239145; c=relaxed/simple;
-	bh=KrQ0onIb+7NFb9sUoQzwdd/17n68FZWwYwr631AwQWY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=E9nsLqtK3MTy0l60CsAq/9LPwN9YErW6PTQYVtZ9W2i+c+NVkYJc/YoSFdqLk+2lYy5OpvTDQbQ63vW1ciyID9m5/JvNtVtwd9QyIVxxDgfQg1PNQAP1CsXoN8t/ay5J586IoS+NDucR7cmoAw1x4LRrRgzRQKQGP40Eh2nh5pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h5MsZdyw; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750239144; x=1781775144;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=KrQ0onIb+7NFb9sUoQzwdd/17n68FZWwYwr631AwQWY=;
-  b=h5MsZdywbk2FKIqXn5APi8IDk3XyS3FWD0avqjcs5GVof8gH/O1m22er
-   ew0anYgVQ2toSbfH4x+VXc1CeDhIJP+8BqnmvWxA9js2QWgwzMa628Czr
-   Ibfv0tMZH2UAwwObKZ2y6OV6rzzWVOo+KkwuIe5FZfRpHkScirVvRe+bz
-   Hlbd2bXM3tYpnQsVbIx0ge6Mf+opDeZcVwTyvcMuLSKuh08KrD0rbeObw
-   q7XgjlDLer/0GuqLZNfdyQBGthrPvTKhI5fKmP6nnXZbU4FCXy56WeU7x
-   p/HJ6HQ99ErnqJyCznfOxZjlFSyRpmAIbs2Rfirr5FYfGuFXujvwIUOlT
-   w==;
-X-CSE-ConnectionGUID: PmXeGDRVSniVBF4yHCkoTA==
-X-CSE-MsgGUID: GJSnyGhaSeWTifRKxNma1A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="52591273"
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
-   d="scan'208";a="52591273"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 02:31:15 -0700
-X-CSE-ConnectionGUID: GWlbSQDjQc+KbcqnqSmX5g==
-X-CSE-MsgGUID: DGM5gtY7TOqB5B0Mfp9Dug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
-   d="scan'208";a="149221935"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.62])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 02:31:12 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 18 Jun 2025 12:31:08 +0300 (EEST)
-To: Chris Li <chrisl@kernel.org>
-cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI/MSI: Remove duplicated to_pci_dev() conversion
-In-Reply-To: <20250617-pci-msi-avoid-dup-pcidev-v1-1-ed75b0419023@kernel.org>
-Message-ID: <90e3f84d-860e-74dc-139e-6dc39775e888@linux.intel.com>
-References: <20250617-pci-msi-avoid-dup-pcidev-v1-1-ed75b0419023@kernel.org>
+	s=arc-20240116; t=1750239641; c=relaxed/simple;
+	bh=BVZ9uiylSyK2ZlJW8A+4erLcwSWZ6Evo33+sOYUZvZg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BmpNuLPCpqJy8nq/Tpf0fV2jnbtzwYvwGzFyR0YygoEwoidlvKYdKAydD0RU3DTWn85Tm+gwsELl97cFBUZ4Hb0VmFROVXmdNYJjM6uTC612Wwwx3TCJCrIkVJhhL3hY2cmehc4ZzwCJ+1yOnSKKaEwqNUJYkZc1tTleV/M6tgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=da6HvsGg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750239638;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rDJSn7lZBwyjuX5zqRMyk4Cm9Q70Xmc4Tn4BSpOgdus=;
+	b=da6HvsGgnGzFVRGXyWu9+td36M1II+VyIGuv3ISGdYr3q3YlrNUv1PBZbE5QX6wCnqEgUJ
+	8M7Atrn4Zx+k2IWg9MCUFIYUQIP/N5MUTb67l8KM5YUIFNit6CBOJkjGyPiH1uA6cOUk9u
+	jadZKrBpLibbLerJzZ81KrsiIfXOthk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-602-gSykbj8SNcWm4dq_Rfpqag-1; Wed,
+ 18 Jun 2025 05:40:32 -0400
+X-MC-Unique: gSykbj8SNcWm4dq_Rfpqag-1
+X-Mimecast-MFC-AGG-ID: gSykbj8SNcWm4dq_Rfpqag_1750239630
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1DE3B195608B;
+	Wed, 18 Jun 2025 09:40:29 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.45.225.137])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EACF419560A3;
+	Wed, 18 Jun 2025 09:40:22 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: [PATCH v10 00/10] drm/i915: Add drm_panic support
+Date: Wed, 18 Jun 2025 11:31:18 +0200
+Message-ID: <20250618094011.238154-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-469012803-1750239068=:963"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+This adds drm_panic support for i915 and xe driver.
 
---8323328-469012803-1750239068=:963
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+I've tested it on the 4 intel laptops I have at my disposal.
+ * Haswell with 128MB of eDRAM.
+ * Comet Lake  i7-10850H
+ * Raptor Lake i7-1370P (with DPT, and Y-tiling).
+ * Lunar Lake Ultra 5 228V (with DPT, and 4-tiling, and using the Xe driver.
 
-On Tue, 17 Jun 2025, Chris Li wrote:
+I tested panic in both fbdev console and gnome desktop.
+I think it won't work yet on discrete GPU, but that can be added later.
 
-> In the pci_msi_update_mask() function, "lock =3D &to_pci_dev()" does the
-> "to_pci_dev()" lookup, and there's another one buried inside
-> "msi_desc_to_pci_dev()"
->=20
-> Introduce a local variable to remove that duplication.
->=20
-> Signed-off-by: Chris Li <chrisl@kernel.org>
-> ---
->  drivers/pci/msi/msi.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
-> index 6ede55a7c5e652c80b51b10e58f0290eb6556430..78bed2def9d870d6457514367=
-93238ef2bc8b3ed 100644
-> --- a/drivers/pci/msi/msi.c
-> +++ b/drivers/pci/msi/msi.c
-> @@ -113,7 +113,8 @@ static int pci_setup_msi_context(struct pci_dev *dev)
-> =20
->  void pci_msi_update_mask(struct msi_desc *desc, u32 clear, u32 set)
->  {
-> -=09raw_spinlock_t *lock =3D &to_pci_dev(desc->dev)->msi_lock;
-> +=09struct pci_dev *dev =3D msi_desc_to_pci_dev(desc);
-> +=09raw_spinlock_t *lock =3D &dev->msi_lock;
->  =09unsigned long flags;
-> =20
->  =09if (!desc->pci.msi_attrib.can_mask)
-> @@ -122,8 +123,7 @@ void pci_msi_update_mask(struct msi_desc *desc, u32 c=
-lear, u32 set)
->  =09raw_spin_lock_irqsave(lock, flags);
->  =09desc->pci.msi_mask &=3D ~clear;
->  =09desc->pci.msi_mask |=3D set;
-> -=09pci_write_config_dword(msi_desc_to_pci_dev(desc), desc->pci.mask_pos,
-> -=09=09=09       desc->pci.msi_mask);
-> +=09pci_write_config_dword(dev, desc->pci.mask_pos, desc->pci.msi_mask);
->  =09raw_spin_unlock_irqrestore(lock, flags);
->  }
+Best regards,
 
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+v2:
+ * Add the proper abstractions to build also for Xe.
+ * Fix dim checkpatch issues.
 
---=20
- i.
+v3:
+ * Add support for Y-tiled framebuffer when DPT is enabled.
 
---8323328-469012803-1750239068=:963--
+v4:
+ * Add support for Xe driver, which shares most of the code.
+ * Add support for 4-tiled framebuffer found in newest GPU.
+
+v5:
+ * Rebase on top of git@gitlab.freedesktop.org:drm/i915/kernel.git drm-intel-next
+ * Use struct intel_display instead of drm_i915_private.
+ * Use iosys_map for intel_bo_panic_map().
+
+v6:
+ * Rebase on top of git@gitlab.freedesktop.org:drm/i915/kernel.git drm-intel-next
+ * Use struct intel_display instead of drm_i915_private for intel_atomic_plane.c
+
+v7:
+ * Fix mismatch {} in intel_panic_flush() (Jani Nikula)
+ * Return int for i915_gem_object_panic_map() (Ville Syrjälä)
+ * Reword commit message about alignment/size when disabling tiling (Ville Syrjälä)
+
+v8:
+ * Use kmap_try_from_panic() instead of vmap, to access the framebuffer.
+ * Add ttm_bo_kmap_try_from_panic() for the xe driver, that uses ttm.
+ * Replace intel_bo_panic_map() with a setup() and finish() function,
+   to allow mapping only one page of teh framebuffer at a time.
+ * Configure psr to send the full framebuffer update.
+
+v9:
+ * Fix comment in ttm_bo_kmap_try_from_panic(), this can *only* be called
+   from the panic handler (Christian König)
+ * Fix missing kfree() for i915_panic_pages in i915_gem_object_panic_finish()
+   Also change i915_panic_pages allocation to kmalloc, as kvmalloc is not
+   safe to call from the panic handler.
+ * Fix dim checkpatch warnings.
+
+v10:
+ * Add a private field to struct drm_scanout_buffer
+ * Replace static variables with new fields in struct intel_framebuffer
+   (Maarten Lankhorst)
+ * Add error handling if i915_gem_object_panic_pages() returns NULL
+ * Declare struct drm_scanout_buffer instead of including <drm/drm_panic.h>
+   in intel_bo.h
+
+Jocelyn Falempe (10):
+  drm/panic: Add a private field to struct drm_scanout_buffer
+  drm/i915/fbdev: Add intel_fbdev_get_map()
+  drm/i915/display/i9xx: Add a disable_tiling() for i9xx planes
+  drm/i915/display: Add a disable_tiling() for skl planes
+  drm/ttm: Add ttm_bo_kmap_try_from_panic()
+  drm/i915: Add intel_bo_panic_setup and intel_bo_panic_finish
+  drm/i915/display: Add drm_panic support
+  drm/i915/display: Add drm_panic support for Y-tiling with DPT
+  drm/i915/display: Add drm_panic support for 4-tiling with DPT
+  drm/i915/psr: Add intel_psr2_panic_force_full_update
+
+ drivers/gpu/drm/i915/display/i9xx_plane.c     |  23 +++
+ .../gpu/drm/i915/display/intel_atomic_plane.c | 170 +++++++++++++++++-
+ drivers/gpu/drm/i915/display/intel_bo.c       |  12 ++
+ drivers/gpu/drm/i915/display/intel_bo.h       |   4 +
+ .../drm/i915/display/intel_display_types.h    |  11 ++
+ drivers/gpu/drm/i915/display/intel_fb_pin.c   |   5 +
+ drivers/gpu/drm/i915/display/intel_fb_pin.h   |   2 +
+ drivers/gpu/drm/i915/display/intel_fbdev.c    |   5 +
+ drivers/gpu/drm/i915/display/intel_fbdev.h    |   6 +-
+ drivers/gpu/drm/i915/display/intel_psr.c      |  20 +++
+ drivers/gpu/drm/i915/display/intel_psr.h      |   2 +
+ .../drm/i915/display/skl_universal_plane.c    |  27 +++
+ drivers/gpu/drm/i915/gem/i915_gem_object.h    |   5 +
+ drivers/gpu/drm/i915/gem/i915_gem_pages.c     | 112 ++++++++++++
+ drivers/gpu/drm/i915/i915_vma.h               |   5 +
+ drivers/gpu/drm/ttm/ttm_bo_util.c             |  27 +++
+ drivers/gpu/drm/xe/display/intel_bo.c         |  61 +++++++
+ drivers/gpu/drm/xe/display/xe_fb_pin.c        |   5 +
+ include/drm/drm_panic.h                       |   6 +
+ include/drm/ttm/ttm_bo.h                      |   1 +
+ 20 files changed, 507 insertions(+), 2 deletions(-)
+
+
+base-commit: b2f7e30d2e4a34fcee8111d713bef4f29dc23c77
+-- 
+2.49.0
+
 
