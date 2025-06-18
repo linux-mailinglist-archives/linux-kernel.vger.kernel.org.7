@@ -1,106 +1,93 @@
-Return-Path: <linux-kernel+bounces-691390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A22ADE40F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:56:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF69ADE416
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 967613B8E87
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 06:56:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFC2C3A5CCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 06:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A155C25A2B5;
-	Wed, 18 Jun 2025 06:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7182586C7;
+	Wed, 18 Jun 2025 06:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="B9hlHugq"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2043.outbound.protection.outlook.com [40.107.93.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dOg+TW8l"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10759259CAE
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 06:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750229770; cv=fail; b=GYmTbUKdwnI7qwCL2uajBW5XnqeEFv68Jx1pfg23kXifgExVyDIoRSm1oBVV/ApZFb2eOMga6jQWyA3zoCqS44jj555TPcoiW2kJHIG/q6VE8yGkw3ygBP+Tf3PL2JOslln8Fn1AyQZA61PDiD3/ZZDgMghcjPXOR1DJYEbzirY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750229770; c=relaxed/simple;
-	bh=lj1j5G1raym07vPEAq/nYC3LeIo/7dlz9PYO6nqvba4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XQbYDxaVRob02B8CNnwLVebQ4LcbyCsn8e/v4edeEXoAJUrfkT02ZzTf8CsGOE59bGDrVlvqxumuGUfSJUMIrOUeROqkd5ddWgdwwLNnM9OVcn9ilKQ+xLBZVw+pecHsu9vyV6+/TlYGaquJpCXRL+KlQFNpkkZPT84OLFqi6uw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=B9hlHugq; arc=fail smtp.client-ip=40.107.93.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fEn30JkBxoUxvRc77r7/2sWF38xiPirY0lIlq3ZzvZ8+3rQvHdjishVl9tv9IwHjMDsXWsaWLzoIYahxYlzAOYpPYef2cqFiFVWWFNe9csKzettOihMEUl4N7CxG9+RI4rK9WV4U5lzFk+SFZF5r+wvZKy+wRWBudoH6ziuhqN/PSHFlADxX8i7eJQsDWQgHmD2f5gVmMshggLjKNYrjqMamlomN4m+nnClhQwWRbzXB94mN0voydBTosLIjgwCyZu8tmCHhFWbP5XG5asuhlQfZJSfKYb0Y9X6Fh3L39LbSdc2SFwYgOqofjv1Y+Kb/4FZ/dxs4LJ5W37k4WZWMnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TYgHwaqz7dtM8GcCWTXjx6ztNzQMVJCmYW6NAwCYghI=;
- b=y1I6jxnux30oqJCQlaPzalvSk56aTLL5tRdOHslbLE42mVP8PoAk9ueAb+WVelev3Cwyz4yKUvHyvVGbC6Kf/Xg2PCpWFdWxB0GgWgNQxpvU7uHRSEXdg32wCvq6A5zp3hkSaYlM6LmQipYby+vMoVEVyhHN06Ji6Cfhu8a2K0GUYT/tTrXQyJver64u9rhqzXNsQY/uFLD3XJtuKAm1WzDmMX/PHSQ19zQ91pLvzOgijHzHSrPaXQZ/atYw2JeRcRBuoN07eKGJVG2rwZQYhGCSs2XdPkAuCaKpKWnCkuLW8EetB1DW24viUa+cWQC9LC7ktPMX2NT36u9hxKkTMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TYgHwaqz7dtM8GcCWTXjx6ztNzQMVJCmYW6NAwCYghI=;
- b=B9hlHugqxnzdklgyCylVRs9ryZGcbmzXIpeE87N0u8Pik979Mi3B8PvmtDYb213dvxo1oeaxGYfSIausrvEIcosCsfkbCLpRiW9ndtmmMStkckPBwxZFIpGKsYcuIbHEoQMSDh5iaPo097jJtXcokTJWw9kl6zHRGne4T617A/WaRbO0xpTY54Kda5MQNaYf6pWq7yrppUz9vWv/3GXHBxioOAea0DZBedbTBE1vlCzHLrK7ZeY/ydce/xeSjXuCcSIkGbLSufX0zLVP4vHrd/JBEyELrf9f0kj95bNqQ7L5Zrz5ICpRJInlQlw5GeTLKGGL1xIoo1C3GuvvHkrJ9w==
-Received: from PH7P220CA0111.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:32d::35)
- by IA1PR12MB7760.namprd12.prod.outlook.com (2603:10b6:208:418::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Wed, 18 Jun
- 2025 06:56:05 +0000
-Received: from SA2PEPF000015CC.namprd03.prod.outlook.com
- (2603:10b6:510:32d:cafe::27) by PH7P220CA0111.outlook.office365.com
- (2603:10b6:510:32d::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.28 via Frontend Transport; Wed,
- 18 Jun 2025 06:56:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SA2PEPF000015CC.mail.protection.outlook.com (10.167.241.202) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8857.21 via Frontend Transport; Wed, 18 Jun 2025 06:56:04 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 17 Jun
- 2025 23:55:51 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 17 Jun
- 2025 23:55:50 -0700
-Received: from localhost.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Tue, 17 Jun 2025 23:55:49 -0700
-From: <ankita@nvidia.com>
-To: <ankita@nvidia.com>, <jgg@nvidia.com>, <maz@kernel.org>,
-	<oliver.upton@linux.dev>, <joey.gouly@arm.com>, <suzuki.poulose@arm.com>,
-	<yuzenghui@huawei.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<ryan.roberts@arm.com>, <shahuang@redhat.com>, <lpieralisi@kernel.org>,
-	<david@redhat.com>, <ddutile@redhat.com>, <seanjc@google.com>
-CC: <aniketa@nvidia.com>, <cjia@nvidia.com>, <kwankhede@nvidia.com>,
-	<kjaju@nvidia.com>, <targupta@nvidia.com>, <vsethi@nvidia.com>,
-	<acurrid@nvidia.com>, <apopple@nvidia.com>, <jhubbard@nvidia.com>,
-	<danw@nvidia.com>, <zhiw@nvidia.com>, <mochs@nvidia.com>,
-	<udhoke@nvidia.com>, <dnigam@nvidia.com>, <alex.williamson@redhat.com>,
-	<sebastianene@google.com>, <coltonlewis@google.com>, <kevin.tian@intel.com>,
-	<yi.l.liu@intel.com>, <ardb@kernel.org>, <akpm@linux-foundation.org>,
-	<gshan@redhat.com>, <linux-mm@kvack.org>, <tabba@google.com>,
-	<qperret@google.com>, <kvmarm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<maobibo@loongson.cn>
-Subject: [PATCH v7 5/5] KVM: arm64: Expose new KVM cap for cacheable PFNMAP
-Date: Wed, 18 Jun 2025 06:55:41 +0000
-Message-ID: <20250618065541.50049-6-ankita@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250618065541.50049-1-ankita@nvidia.com>
-References: <20250618065541.50049-1-ankita@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3298020B215;
+	Wed, 18 Jun 2025 06:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750229885; cv=none; b=Br7n9oIs1IAz638XNm10/Ca7cxlrKmh5jRhZGXm6wSDCkJTBa2RZQSkxNoaByquiMI4779ocukK7pin0CygpxGCx9WfYnaCPqvv1QAMely/iV0XQ/swI7sJpWuPhIjHI4XkZ+6GopgDVDop6nzOJu0WLuHUjoN7SB0OOnZ/sG1s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750229885; c=relaxed/simple;
+	bh=tjM7nXQDvrm4aXok7ekeYIc7+Z5Pf4zrD5WRV31r+Oo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dFMxO9mo4e8BxM5IKUd2hDbnjPSpAwIyK+DfyB0gHDFI8hZ7SE58bnCH5oef6lhREyPbFItYjd9xaAk0vta74xUBVOfrBWWGI3cxHOyp8WBw6A5SOV4mAyU5Hvc9reyUuko6icypyzvb2FEh4owaHSyeY+hebjw1LVZaohC8xmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dOg+TW8l; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a52878d37aso1208787f8f.2;
+        Tue, 17 Jun 2025 23:58:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750229882; x=1750834682; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hcrmkRjUYqJwnpl1Ch5OIGjoKPGqpaU2Vsr38iZ8Beo=;
+        b=dOg+TW8lrG9hFYmxkIBI5WhImFhRgETy5gn2jgxrfKDt9PTg5Y0R13B6JoY8F+hGEa
+         7Sgxs4+c//Ik+ri7NLWFDGPz2Vckp16s/g66yGIxCSH4ky1Kr8qmuxKe16QYibxk9aXa
+         XMAezNLPLKr1lOXtgjOdzKfIs/IlOo0SLeAgZAWY4JVSQXPWMHdJI8sX4ws4wx1wt5da
+         07Bcno2Yg+70+BP+ye7iHwhLcs7BMpn65h4cYTeuMz/yzrZtp9WxgO3ewhwhpMnwIuG4
+         PymxY3cKsHHjagp7OqJywJ1aDntAD9mHsiKA9Y88x4NsyHtzAPueoKo1cZAuKB4qwQMr
+         siSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750229882; x=1750834682;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hcrmkRjUYqJwnpl1Ch5OIGjoKPGqpaU2Vsr38iZ8Beo=;
+        b=YF3C8kDUXDpGjU4Xe8Gxm/wIpBArV7/nGSge7C1fkNyIm8NNSdY2B33puwQRS2qUcH
+         ScJlpPpz+4w1+UibuV4deKhLNOvaQz81iR7SCG5CaCNpTOEO7zMvZ2meDYKT8gANZzgt
+         2TlVksomPPrDrIQrwIlUvrX9EiAUIv82UGGZNMOLBeQ+4UN6qXwP3HGlxv6qwKOGWSvJ
+         9XCjhPlhanx57oUOgqfJHQjFdB9zpwWm4MIRjh+PnjFJ9AjwBXhVonMBj9uAUXeMZLNY
+         XETGmB/u2c1i/IITiU9lWtqh/N7i1t71jwI9KVbk2JIszxWWJm5nDm0PZzxRPAZerlIl
+         r9AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3jK9yafVRwtYE3ybsngAnbCxFQWg66kORexcSui8eN5p5ryhnymnsV0ulsDkwH+d5Ss1DFrP41KARAg==@vger.kernel.org, AJvYcCXYC8jMS5LukbYhWlxWdhM8YESJnwU5r2aJ6Ltv0uRmG63mX9Ijd0sZFZRrhOxpqLogFWX04UcFvTE/+pQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJKeue+Ujx+2DKF+TduJasF8ixzHqKeTvwuq4bQ6MERKc15DpX
+	+kH6EAsvbbD6T//YzKubw5sCKNub8rA31GCutfIuJt08NWA6HTu7Hdeo
+X-Gm-Gg: ASbGncuaMmZazt9wZu+AisgEc7aUQsnofVEbemVpQ2/Rmk623W+5cY/FxsyWya7giJP
+	2qyyHChoGIBi0Er9iQ6ha9I8i/iUkmE9b4DIzjeG/7HKg7zD49g6T43tH358PrCmh04KGLe4Ouv
+	7BRPGqKeS00HzJfLwG3nYeGt6KS0XER981W7WAAovtkzsu0MbbpvUMdp3lHG60DD8aSFKd0EDMn
+	H0C1ALX2S7l6Q1TOWoLy6h0Ed+DeUaxKboTmaPJm/NzyIzgfU+IhGfbpOyf+ixjwNK1l/NVleTg
+	yYuUZAPFyz7Nd8qLWWoqMY96OKxtZEDrGdDqJ0MCgTT+JI2iPYvZjXssAgdCWavCj8V2AmAORFm
+	cupn/swUNl+rwWA31JAERzkBeDHG8yTOkCKOv1G0Vnxz6AEOh1NI/jTT1a+j+jGKJKR5kKp8lyj
+	g=
+X-Google-Smtp-Source: AGHT+IGF2cms3CFUDxUkkiMp5ViaH0bho25Dd3n2Re8I3Q+gwxx6REqBoIvxMFMoUP4vLRF2fx1ntg==
+X-Received: by 2002:a05:6000:2507:b0:3a4:f744:e019 with SMTP id ffacd0b85a97d-3a572e55403mr4623040f8f.16.1750229882266;
+        Tue, 17 Jun 2025 23:58:02 -0700 (PDT)
+Received: from thomas-precision3591.home (2a01cb00014ec300f1c5391b39542642.ipv6.abo.wanadoo.fr. [2a01:cb00:14e:c300:f1c5:391b:3954:2642])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a589092d1asm3794488f8f.24.2025.06.17.23.58.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 23:58:01 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	Satish Kharat <satishkh@cisco.com>,
+	Sesidhar Baddela <sebaddel@cisco.com>,
+	Karan Tilak Kumar <kartilak@cisco.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Arulprabhu Ponnusamy <arulponn@cisco.com>,
+	Arun Easi <aeasi@cisco.com>,
+	Gian Carlo Boffa <gcboffa@cisco.com>,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: fnic: fix missing dma mapping error in `fnic_send_frame()`
+Date: Wed, 18 Jun 2025 08:57:04 +0200
+Message-ID: <20250618065715.14740-2-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,153 +95,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015CC:EE_|IA1PR12MB7760:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8dacd5bd-1491-48c4-9f68-08ddae3531ad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rShfu/Q5wNpE5miOakxkvJTfopGWH08LNs88ADyV2MWbKscKnNrX8xFYWKvb?=
- =?us-ascii?Q?xRVQo1f7iOo/sp8AGrdRppQ/FNWeiAq/EOfzaSzT7OexwbygTmSW/HYuu8Hq?=
- =?us-ascii?Q?NF8xFchndPTQKUVMcaJ5i4kSm5jtWMnWirepW8xFPjPoeRc3XJU0EBUX0pBm?=
- =?us-ascii?Q?5YV8vy9XzHDbfuujrfFWkkMKoQQunDI4vpjQ3rGGcFl+ofJGX61fhNda3N3X?=
- =?us-ascii?Q?Ebjt/BqD70Y9I50ugf58ljRoJmv2haASZ74GyGwrR6EI0dE+UL4XWuPbXmUU?=
- =?us-ascii?Q?bhWIKq1yONQsEMOEN9ySHdJqDExQbIhnaKqm/2Dz4XqGnzBrjnHiE/ioZ8NN?=
- =?us-ascii?Q?wVI7ivFILVhkjW4vOlvZNGEJ9AR0tU5cm9SFuxeHs+KUWXrN7JRjEc/oozGZ?=
- =?us-ascii?Q?cPYj90NFhPWvPwfBjGOoqWTsynJ1KMkTAD1tXpxnCNrwFXD02AKeXHtXHxJ6?=
- =?us-ascii?Q?1Ror5g0/g73XIRZ+PM8Yd+zMZVqXkyVBM1/IaCG3ifk1rR40DDjEih2QpPc9?=
- =?us-ascii?Q?C/GsgvJVX2aogPCTOF4tLofMvBQQBB5OlG//XjJplBdXTQn0Cpbm7Ww5dhJF?=
- =?us-ascii?Q?+7gkalsyHhspidYLSkL0TLYRvxlOtBlcOuwlMLtdvRUbJaJI5KXSOQnrZGSi?=
- =?us-ascii?Q?vHo7wKB4oiauyv3jb4PzAnTdtyzjjTRzJik+HqRlWTUEAZ/XaAbdpdLzWnbg?=
- =?us-ascii?Q?KaF8Bzd2KEki1x3WloD/XitwKFIjzYNIdsAR7+H6dUdMDksH2DVQ8nrsQRZk?=
- =?us-ascii?Q?fDVdC99R2njVPMGyx8ykN6Vx0vXFsDZWRDpHxd6tnDsMGy9V0VUrut0SyRt+?=
- =?us-ascii?Q?NgfZss1bHkv7HQXMq80sFNjzITmOs04J8RMI+LcLivH81pBwjBhzeFUU93Qd?=
- =?us-ascii?Q?b9XJRdaUrW7oX2QUrxQWanE9fnHfYHhDIgzM9xj0tt3MschYZcOYIokpnsSr?=
- =?us-ascii?Q?ZOjSnk0cSyUZ/l2gMV765v4l8HHkeWtvJs+0ebR0web9zicsjoVyYrexRLFj?=
- =?us-ascii?Q?U9RR74qcbM8IG99iMJzRQ+P7KgMDuAeVzdudA5pzW7pPF7PJxiQe7TUO3BWO?=
- =?us-ascii?Q?dbrBH8Hkr+pqGOyL3NGGlxe2+Dm4aMMlJbeIR/Y2c0sxLzzTFTQfcVu23o6F?=
- =?us-ascii?Q?Hm8lfFDHtU7b7HAUpEaIHLbK9xJWMEm84SOfaj6IGQbQzjJC94M9GQ5lj49o?=
- =?us-ascii?Q?25fgpiyc59tUHKUpkLwGSHNjiY+1Epc1ehNY9KlIrbFP0h055Z56//PAxlhG?=
- =?us-ascii?Q?WdnNPnzLsJQGtAdFL18mtrezLZicnl+zgzxDmumORonz749gHVaxbjcg1or8?=
- =?us-ascii?Q?JM3BvFoFTmIcLwrR4swk+mQB7Mysgk9vsoLdjOW/e3+zw0+zCnvDXEEnCk/O?=
- =?us-ascii?Q?cceJWecrpl43N/4YJmWTrXJALlhZiHkbGJa76krWai2j0y+UfXJKerWgpfpv?=
- =?us-ascii?Q?U1HPi1OXIVuX+l2a6XD/xbSRhpRMYNbogUST7x1jzQ/8JZT/RlwN/ZiTGLU+?=
- =?us-ascii?Q?4x1rFe9TvojSZamb6yqCkir/2f2el5kvftRvT6+mSmz6pCG7bH518eW+ug?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 06:56:04.5372
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8dacd5bd-1491-48c4-9f68-08ddae3531ad
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015CC.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7760
 
-From: Ankit Agrawal <ankita@nvidia.com>
+`dma_map_XXX()` can fail and should be tested for errors with
+`dma_mapping_error().`
 
-Introduce a new KVM capability to expose to the userspace whether
-cacheable mapping of PFNMAP is supported.
-
-The ability to safely do the cacheable mapping of PFNMAP is contingent
-on S2FWB and ARM64_HAS_CACHE_DIC. S2FWB allows KVM to avoid flushing
-the D cache, ARM64_HAS_CACHE_DIC allows KVM to avoid flushing the icache
-and turns icache_inval_pou() into a NOP. The cap would be false if
-those requirements are missing and is checked by making use of
-kvm_arch_supports_cacheable_pfnmap.
-
-This capability would allow userspace to discover the support.
-This would be used in conjunction with the
-KVM_MEM_ENABLE_CACHEABLE_PFNMAP memslot flag. Userspace is
-required to query this capability before it can set the memslot
-flag.
-
-This cap could also be used by userspace to prevent live-migration
-across FWB and non-FWB hosts.
-
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Jason Gunthorpe <jgg@nvidia.com>
-CC: Oliver Upton <oliver.upton@linux.dev>
-CC: David Hildenbrand <david@redhat.com>
-Suggested-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Ankit Agrawal <ankita@nvidia.com>
+Fixes: a63e78eb2b0f ("scsi: fnic: Add support for fabric based solicited requests and responses")
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
 ---
- Documentation/virt/kvm/api.rst | 13 ++++++++++++-
- arch/arm64/kvm/arm.c           |  7 +++++++
- include/uapi/linux/kvm.h       |  1 +
- 3 files changed, 20 insertions(+), 1 deletion(-)
+ drivers/scsi/fnic/fnic_fcs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index 1bd2d42e6424..615cdbdd505f 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -8528,7 +8528,7 @@ ENOSYS for the others.
- When enabled, KVM will exit to userspace with KVM_EXIT_SYSTEM_EVENT of
- type KVM_SYSTEM_EVENT_SUSPEND to process the guest suspend request.
+diff --git a/drivers/scsi/fnic/fnic_fcs.c b/drivers/scsi/fnic/fnic_fcs.c
+index 1e8cd64f9a5c..103ab6f1f7cd 100644
+--- a/drivers/scsi/fnic/fnic_fcs.c
++++ b/drivers/scsi/fnic/fnic_fcs.c
+@@ -636,6 +636,8 @@ static int fnic_send_frame(struct fnic *fnic, void *frame, int frame_len)
+ 	unsigned long flags;
  
--7.37 KVM_CAP_ARM_WRITABLE_IMP_ID_REGS
-+7.42 KVM_CAP_ARM_WRITABLE_IMP_ID_REGS
- -------------------------------------
+ 	pa = dma_map_single(&fnic->pdev->dev, frame, frame_len, DMA_TO_DEVICE);
++	if (dma_mapping_error(&fnic->pdev->dev, pa))
++		return -ENOMEM;
  
- :Architectures: arm64
-@@ -8557,6 +8557,17 @@ given VM.
- When this capability is enabled, KVM resets the VCPU when setting
- MP_STATE_INIT_RECEIVED through IOCTL.  The original MP_STATE is preserved.
- 
-+7.43 KVM_CAP_ARM_CACHEABLE_PFNMAP_SUPPORTED
-+-------------------------------------------
-+
-+:Architectures: arm64
-+:Target: VM
-+:Parameters: None
-+
-+This capability indicate to the userspace whether a PFNMAP memory region
-+can be safely mapped as cacheable. This relies on the presence of
-+force write back (FWB) feature support on the hardware.
-+
- 8. Other capabilities.
- ======================
- 
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index de2b4e9c9f9f..9fb8901dcd86 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -408,6 +408,13 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_ARM_SUPPORTED_REG_MASK_RANGES:
- 		r = BIT(0);
- 		break;
-+	case KVM_CAP_ARM_CACHEABLE_PFNMAP_SUPPORTED:
-+		if (!kvm)
-+			r = -EINVAL;
-+		else
-+			r = kvm_arch_supports_cacheable_pfnmap();
-+		break;
-+
- 	default:
- 		r = 0;
- 	}
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index d00b85cb168c..ed9a46875a49 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -934,6 +934,7 @@ struct kvm_enable_cap {
- #define KVM_CAP_ARM_EL2 240
- #define KVM_CAP_ARM_EL2_E2H0 241
- #define KVM_CAP_RISCV_MP_STATE_RESET 242
-+#define KVM_CAP_ARM_CACHEABLE_PFNMAP_SUPPORTED 243
- 
- struct kvm_irq_routing_irqchip {
- 	__u32 irqchip;
+ 	if ((fnic_fc_trace_set_data(fnic->fnic_num,
+ 				FNIC_FC_SEND | 0x80, (char *) frame,
 -- 
-2.34.1
+2.43.0
 
 
