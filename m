@@ -1,156 +1,142 @@
-Return-Path: <linux-kernel+bounces-692369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DFE1ADF091
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76081ADF094
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D8011BC04A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0134C1BC3E88
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155632EE970;
-	Wed, 18 Jun 2025 14:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678A61F9A8B;
+	Wed, 18 Jun 2025 15:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DXiNBboK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="h1i8J5py"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863602EE29B;
-	Wed, 18 Jun 2025 14:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375BD2EE5EC
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 15:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750258703; cv=none; b=aUKrUFPAtPzMf/gw+5M7ccZzQ5YjVTEMhiMcj7ry0eTDwGBMWVGoSGo+B6SSQ+T8U610367H3tjgEm2Mi6QG2prcC/jtLZ+uogGRD2/MCynlnv7OBhMJjpno3KXcDFSnOnEUw9GkYj5zyUuH5dQko90JTh0y1LPujaE/JmmnajE=
+	t=1750258822; cv=none; b=k3wLqnsE66ZpHgKHqjL9HqxzEpafDouxpAMR06NlBRTHGEBWpC9q1CSVSKND4zQ7TIDbjBsyT1MKEHLcTuKQXBtEJrlKnUhg1PWmmtbvc6Eph2T0UM/0Qac7xYHzCyE9gfOBdyYcvfEJ4aQ7sodosWFryC3DdFEPB08RsCcd5+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750258703; c=relaxed/simple;
-	bh=ommGErbpAjgqiNvvyfyM1d8Yg7XXKXmLw8GLkxvcH9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qf0vxMlkYNCDFtyELKw8W2iIWgVM68Ak1jKZmTK/O0W6FUpdaZo/HN5Eovlx7rtYvoj+KUhjABlbGnH+8CY9XNEk32x9+a5ayWuUBH5FxNlufPSCQikQnBjnoWnRY3GlTOhD4aZ/wpoQzGiprH3ozRSSQ8nYVl9RqSheLP19to8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DXiNBboK; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750258702; x=1781794702;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ommGErbpAjgqiNvvyfyM1d8Yg7XXKXmLw8GLkxvcH9E=;
-  b=DXiNBboKFkWwDx5n3yi4GDB8aVNLGlM6D/Rh45W1dgXy17nxvz9gBNhK
-   0nUIxYQPACnr9K2H+5KqmAc2v26si2aQGyhwoqcp1w7Teb5RCtrYC6mp1
-   m6c39DkXtn381STVKVvK3iMpyZEW8IfrD9RFW59XliTU2imzXfab6IznE
-   KbSQgDXCxZ4dzEM9A/pFcF9NnaTTyZO2dDtNOLubxFghUiyVzxDPCSYha
-   z2Dol4viRdrTHxPVfIxgREytl1eC6D8vGvGf634BSzCjs54/lHwnZ9/Pc
-   Bo5Cp7cCWQRinI+O2j10YUilE5w1xkDDMuSY1ccdHsBdK+phKk/tMRwaT
-   g==;
-X-CSE-ConnectionGUID: fd97MakGSO+E+U6FBS2GMw==
-X-CSE-MsgGUID: uawIRaErR/KjRZuPVs4Olg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="63088126"
-X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
-   d="scan'208";a="63088126"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 07:58:21 -0700
-X-CSE-ConnectionGUID: KzBtx/eNQRGPrA1Leg5Qew==
-X-CSE-MsgGUID: DhmJ8iDURIaOz2OiEXDsZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
-   d="scan'208";a="149438645"
-Received: from agladkov-desk.ger.corp.intel.com (HELO [10.125.108.97]) ([10.125.108.97])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 07:58:18 -0700
-Message-ID: <68938275-3f6a-46fc-9b38-2c916fdec3d6@intel.com>
-Date: Wed, 18 Jun 2025 07:58:17 -0700
+	s=arc-20240116; t=1750258822; c=relaxed/simple;
+	bh=1XEQ/vx/9M/0Z/ONOs4n2AjYGm4cFrrb8VsMsNtcnFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQ/UYxxlAC0E1yDLoZBotEYbmHSbHelUiWaV44XjLiaJ+9nRbUfD21JUWtzuWtWi4CPLRVoU3QZTUi2NYuNiluGlfKjGX2JE7g/Gr048TFPTe2gBLUbBIFm89nAC4y3gGVD5KlbpWElm2W4Pd4/z549RebGn2ja76GKrVLknTpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=h1i8J5py; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c56a3def84so717437485a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:00:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1750258820; x=1750863620; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vgoqcy77dCbehp2iwR94a5PWkF4ktryddedGtroeuu8=;
+        b=h1i8J5pysj0kqkes3r0sDpAo3XYU36FQDI03BbGvPx6H7klTCgfePtSzr3UifIgc99
+         c3SRlz5hvcZBRjsoIqHBDNqRoMP3BtVrGOP5oAA7XtFNiYJ0Cx+d2s9b5yOPUVqZFSF2
+         VauIcFB6eerAY495fEFmlOoiXSolVYt7VWxdnm9vIMZrRxLGFcjs/wFsffnmD/I26cuZ
+         wgbNjXmBtQJ0iF/jepGJak7spaSnk29Zoj5Un+pcVa4994AKXHBrdzM/nJ45kW8YTA91
+         QPzTnytqbvAL3rCCMOTzo46LGoM9xkeofVskPDegZc1qg+tw9duc07ag225SXlQ/VL+M
+         QWig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750258820; x=1750863620;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vgoqcy77dCbehp2iwR94a5PWkF4ktryddedGtroeuu8=;
+        b=F39JpTDOT4HUzpY7W3luSuzerH81zBTvFH+f75LWfYM9d2Vx/0X4wSn3PupXnmbP0P
+         RBIWlnMHkTWF+FqVc1/Gn0JSZD8zirFdJFN6Twx21ACGHOfsbjXsFPh4Jm28uyG1sOzo
+         2CANxgPGsXAJtSCNogR9gEX1CXrQOfuTdJa/B3vggsCTQ4MPWJwFRXomLJdaxW02X+Ax
+         pWeRJ1ciuasNKAFX9vIXqnla86J/ne6uQMdbFkchO8ekV1zirIGb/u+e3JVVH9HcBmli
+         5SNVsUwe0Lwf5BYRzsBb3VTXZrT05vaGSxiiB/1BnyTcSt5CeWU7FNqP/nWCTUoo80/I
+         IwEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVac1gaxfCbtoT2bRGG7NVtqA6IT6TyRVN8s5/bb50E4t14hcYZ+wRtyasoMy/05/BDjEeKDZqY/PpUUyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2osUM8xr08IrCLzCaceji0lGS8cxG/XmFxyqNmyYbx30cffWA
+	K+ygvcLcB/eG0gIaBEh0aQLfRwo6hgTAl3ZoEaLwRi5Zh0eRMPSYHWOaZZA7vNCfagqz6qfrHv+
+	j6UNv
+X-Gm-Gg: ASbGnctvsq0HkWxD/L4PSfb3Z7SuhoABdyDW7rX5zFkD28Gxqba7KtYwkIvvvGPGNJG
+	jAFXEWqsLCaXEGe0v8cXngE+yQc+PXwysvxEbtqpfRKPFGcYqNNuz0mkzqZ2NvW+pIQ3E6s95yy
+	m6FzH68Ci8PQDtrhYxkD/StwVQCkREjLSTfNbDOJiVT0PrvxfFDFTXuODW8oeU323tI8Mpq4+Rm
+	Su7KQZ8KkUkpBDuXnqJLbBMu6caAnwSUmj1Izsi+HQVzFPpCX1XPj6knGUvCiNUiET95Gvq+bbO
+	6wU14xrs02gztj5ZUqQBmT79j0c4t3YQU3MjI//fjL/riL/54+YZNsbKb1DKxBOemVpaSSwLQhO
+	YWYCArAJTicu1iL1gdaCMyCNr6xeHiqFlFZ6Cfw==
+X-Google-Smtp-Source: AGHT+IEmXnt3uIyq+wbp3haWWpVf5H5IK0A8maNryrSJ2ysQfTpYtx8UqGj3mP+8PAcrc8mbSZcjjw==
+X-Received: by 2002:a05:6214:29e7:b0:6fb:15d2:494a with SMTP id 6a1803df08f44-6fb477a51f7mr239650176d6.41.1750258819801;
+        Wed, 18 Jun 2025 08:00:19 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb525553c3sm38390486d6.104.2025.06.18.08.00.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 08:00:19 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uRuGw-00000006oub-19lH;
+	Wed, 18 Jun 2025 12:00:18 -0300
+Date: Wed, 18 Jun 2025 12:00:18 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
+Cc: "Tian, Kevin" <kevin.tian@intel.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [RFC PATCH] iommufd: Destroy vdevice on device unbind
+Message-ID: <20250618150018.GS1376515@ziepe.ca>
+References: <BN9PR11MB5276B467ADCC57BC6571CA458C77A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20250613124202.GD1130869@ziepe.ca>
+ <yq5abjqotim7.fsf@kernel.org>
+ <BN9PR11MB527633CA2F698E83E12BFBD68C70A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20250616164941.GA1373692@ziepe.ca>
+ <yq5azfe6ssev.fsf@kernel.org>
+ <20250617183452.GG1376515@ziepe.ca>
+ <yq5awm99sjmr.fsf@kernel.org>
+ <20250618133527.GQ1376515@ziepe.ca>
+ <yq5att4drtj7.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] KVM: TDX: Do not clear poisoned pages
-To: Adrian Hunter <adrian.hunter@intel.com>, Tony Luck <tony.luck@intel.com>,
- pbonzini@redhat.com, seanjc@google.com
-Cc: vannapurve@google.com, Borislav Petkov <bp@alien8.de>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- H Peter Anvin <hpa@zytor.com>, linux-edac@vger.kernel.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- kai.huang@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com,
- tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
- isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com
-References: <20250618120806.113884-1-adrian.hunter@intel.com>
- <20250618120806.113884-3-adrian.hunter@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250618120806.113884-3-adrian.hunter@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq5att4drtj7.fsf@kernel.org>
 
-On 6/18/25 05:08, Adrian Hunter wrote:
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -282,10 +282,10 @@ static void tdx_clear_page(struct page *page)
->  	void *dest = page_to_virt(page);
->  	unsigned long i;
->  
-> -	/*
-> -	 * The page could have been poisoned.  MOVDIR64B also clears
-> -	 * the poison bit so the kernel can safely use the page again.
-> -	 */
-> +	/* Machine check handler may have poisoned the page */
-> +	if (PageHWPoison(page))
-> +		return;
+On Wed, Jun 18, 2025 at 08:22:44PM +0530, Aneesh Kumar K.V wrote:
+> > The full sequence I would expect a sane userspace to do is:
+> >
+> > open(vfio_cdev)
+> > ioctl(vfio_cdev, VFIO_DEVICE_BIND_IOMMUFD, iommufd)
+> > ioctl(iommufd, IOMMUFD_CMD_VIOMMU_ALLOC)
+> > ioctl(iommufd, IOMMUFD_CMD_VDEVICE_ALLOC)
+> > ioctl(iommufd, IOMMUFD_CMD_VDEVICE_DEALLOC)
+> > ioctl(iommufd, IOMMUFD_CMD_VIOMMU_DEALLOC)
+> > close(vfio_cdev);
+> >
+> 
+> And if the user does
+> 
+> open(vfio_cdev)
+> ioctl(vfio_cdev, VFIO_DEVICE_BIND_IOMMUFD, iommufd)
+> ioctl(iommufd, IOMMUFD_CMD_VIOMMU_ALLOC)
+> ioctl(iommufd, IOMMUFD_CMD_VDEVICE_ALLOC)
+> close(vfio_cdev);   -> this should call vdevice_destroy because idevice is getting destroyed here (we will put XA_ZERO_ENTRY here).
 
-I think the old comment needs to stay in some form.
+Yes, we have to destroy the vdevice internally here
 
-There are two kinds of poisons here: One from an integrity mismatch and
-the other because the hardware decided the memory is bad. MOVDIR64B
-clears the integrity one, but not the hardware one obviously.
+> ioctl(iommufd, IOMMUFD_CMD_VDEVICE_DEALLOC) -> No error, we convert the XA_ZERO_ENTRY to NULL here?
 
-Could we make that clear in the comment, please?
+This should probably fail since the user has done something wrong and
+it would be the only way to realize it. The failure could clean up the
+tombstone, or it could just leak I don't have a strong feeling.
 
+If you leak then using XA_ZERO_ENTRY is easy, if you want to clean up
+then you'd have to have a global static 'tombstone object' that sits
+in the xarray.
 
+Jason
 
