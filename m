@@ -1,201 +1,155 @@
-Return-Path: <linux-kernel+bounces-691322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3B5ADE349
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:55:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFD5BADE355
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AC8F171F7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 05:55:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFF0417AD2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 06:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C696D1EF39F;
-	Wed, 18 Jun 2025 05:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EAA1FBEBE;
+	Wed, 18 Jun 2025 06:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RIapu7Sk"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011043.outbound.protection.outlook.com [52.101.65.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LwY25vza"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEE1522F
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 05:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750226117; cv=fail; b=qZfckPsf0dW5qF1Zy4SS5Jpb4LG14e/ZK/cWsAiyIomiKpQQoMrgonW2pAGD51N0E+p5dt61m5+06cRvf7Gsu8Wac4bLjDwi6Y7CZrVRIVGSoUA3/9Sk1YaBDse5V08TSXVYEBp6NWXZC3WIS7cedHWouUrf3NtMwEoxqc4kg1A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750226117; c=relaxed/simple;
-	bh=CCASM6FQziHKnWz8ZNpYepaJ51Q1gy+fRv2wwwL7VHM=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=kwqvfWrgKLOoch9I0FEohY94rBp8HytkyZFoZiExQWPh+ym9phDquE3madmMJU4XyTQD91GYGdxhT3q32hVc8iAS3UFjhz/iIajMTSN/MLtVoqoQyPfU4nSvaioXmGnHB5hu7jgUDs6gAqC5q8fZ1RVNWdEc1AvaZrIIsnGVJYY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RIapu7Sk; arc=fail smtp.client-ip=52.101.65.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZJt0L6rtLIIBevJ8yG/sDSa2Gb4G4DNgi+a3hGKR4fUyOVqsea2wBdRmOlDHU+yxSQcY6yXsMvWot4c6km1DPnxKUbZ85bSbSTM5tcKoYni1iijnXVBbZ9bbfqPOp4qmsyL4AeuP+IwgnIoR6WCqWh8cRo10+D/4QPdmkFWYcVNIHftfJZ2FrqJcqAnzjkd7ljxYxpskHmGHNQDv3yJAVtdbBjC2auMStvZ7zT+xr7bUkvDPTHKQ0tOofZnyeupSVx/Bk0TYajDW0V8eG8fpBstpCU5TttfwjWQ5qc6+jdB3yza3vGw7v4TkDz42z2dr4cFstzq0qIxvUMV351SnuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z3gjqESIb0hfedvJANNVJM6LEBHkMS4KZbAbvdEAaLA=;
- b=hu8d2/TvhRT2c84jW2NZ1uL1K9Ct6gH2/bmZ4vcqUkcq2aoZP86lRAunxOx5yiErYFKEiXH2W+c74dtTC/1xbPY2MCv6DLEdpkrpy3tPF2vy3l1CFqZpHh8O2NVt08N3MStmnlhAwK+/6JOS22IYPjMTbtEafQGQCyKPNdAS+YjmtLd5dIJ6whmHJo5ewIiIc7MZdiSaxiP6tve14CcaEiipElpPWmpyjkxq2z0x+w9IkmlKuPdyj9Lv17NxtoU/3U/07UQwTw8xLEjwR3kwVkbyOV/JSPCGpMpWP/5ZmTngSgKizMO1qkAAxXOF5Yg1YiaLCUXQfhmSOij1LO/l3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z3gjqESIb0hfedvJANNVJM6LEBHkMS4KZbAbvdEAaLA=;
- b=RIapu7SkBg9a9uysjAWGwx6uZBqDPvJDqr3DxZRoSc+zGOAi2NqlvAel+DsJRiSI9SNiw8/vlAhB2PFrEXZ4WWp9dRdqMrCKhKOOZ9NarP33mK2S5kZM3Lynk933a5PemqQfVwtP0DWXc8RHpkdJCC07DTasquiRdWpreAZ+C43SMuBEqmb6hzr1pmDOM5OT1SbP2gxRM9IosHmTH5h4lwRoOyUWHc4Qj0psLBowW0CvC0kEQz6yjlFDauzj2Bdqy6L2QEhdvgJtqJEpHrFwonF/wysQww1+3PJ+OY2pwfUqYSbgszMX5a1akV4nKZ9x8q53cgQVnHz9ceW7OHL/xw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AS4PR04MB9267.eurprd04.prod.outlook.com (2603:10a6:20b:4e2::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Wed, 18 Jun
- 2025 05:55:12 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.8857.016; Wed, 18 Jun 2025
- 05:55:12 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Subject: [PATCH] drm/vblank: Fix vbl time for IRQ fired at the end of display active region
-Date: Wed, 18 Jun 2025 13:56:03 +0800
-Message-Id: <20250618055603.2644430-1-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0051.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::6) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FDE15D1
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 06:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750226461; cv=none; b=QoTK3ajfaQRPfLmA9SPAFa+ZudnIVHoEPCZYIy+j7YTI1eth/QYODsWXAaf6ua0ybsSMQ6f8D8LDCmKgYbUnaiR3yBYdNSsCtyOE4CckDn2dUe9K80rap3GnfqdPvZde4VFvA9Stfup7Uqi5SET17TlV4jwz0sTPQ2PlflGKv5I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750226461; c=relaxed/simple;
+	bh=4Zgjd6gnF9v/99etOHsRMTSTYjNQAZRLnd05tXZTvdI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lhgtmCn9xykZyQME+GIQydXSDTj4mEYdaoYv5Zkv/sBA0F8iFiZ00L7Gy59hDspLuvxrgJnAp/js6xuWgQGdSQQXBxlUWTM34dzHR7fgem5B5fJJg8CBOaIyZzV/n90z6zP+/L1AskItbe2jMCJ8vKTFM5ZT6wZD92K8QXdPk7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LwY25vza; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2348ac8e0b4so70055ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 23:00:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750226459; x=1750831259; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Lwi91r3JxBJupBaG+2UOIImxjmJDsRx7zkdQ0Qkg/s=;
+        b=LwY25vzaqbhhK5qSyoNyhD90mGbZGVICQFafbMmTs9rFhCg93gTc/dlOkm+av918m3
+         7kG2/FY+BOYiMzKdRk7UtFrppfrnTGbungUmVrYgwbgeWL0j6n1z9xN1n74KOhTyoNU2
+         qPyXrngk3ug/n7xxJQDde0s3wC6sFPfG9M51go6ZRFCZkQDCOk5Q19LA9+02aEu1cA+7
+         zXSW2454HWj8jFsX//B2fndExK8/WutnyqRx1kzBbBUUIWwtpOqIuNhPrdZJ99RgM5SL
+         WpwBw3YBTdtmmnptduw9oq2K9o9MjlNwR96MasqOT40ubcr7nukKRNXbzvMm89rsSpoo
+         g/iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750226459; x=1750831259;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4Lwi91r3JxBJupBaG+2UOIImxjmJDsRx7zkdQ0Qkg/s=;
+        b=II6U+ijtSGF+/MjCfq/8QfqSDPd9gmGQvhkcoUcL1BDL7MHpflQxDNg4/KLJOfcNY+
+         ib0v+nGb1J8oeWuMxuJ7tahljftpgh1GWGjPLLFmoNmXgnow+YC8Ekd5JWJO+FP+7pum
+         dpanc8cupnEx7KKXXgD5ZTkPRpETT2CxRF4QCK/E7o82CTNCJLOIPuXk4a9FJunhwJR2
+         UFHG//DIVfGTTcTtu6K0Tn3BSRYOUBqJSlHAbcEi9d6FYW4F2JGwm92TPUjXwgZKcR0I
+         VEt7ip2DsOgTHFfAFgpi73dTtZWxGVXZ85f2KvX2PloVtpz47dsjrX+EMfp91RFKyfn9
+         ptbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCRfn/A63zPGTzIGmpHMz/w4lUcewOJVuKhSPVk44U7SRYqcjZs5SM0c1LI4Lq+7jtCHf1ew7dY+SRUXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFQ27Q6kfZZcNFANXmOXRigjVmtXBEtP1PsQSOx6kBymKFrz8/
+	vptsCjpqj06qYiK0vb48oL/Ko8MO91aRk3EMGEowIfDttcDIdDRw1+LSQsBKMv+d5yK36E/Rt5p
+	Ht0Z25udyVOHhC82eJZt+iqF7SECu7DtN5iX9X7LK
+X-Gm-Gg: ASbGncuzSPVbv6RuVTq0r8S37nq023YIJ+LB8XMr/i6ffmHm9/9bbcpAJCN+0pVSdkc
+	HFiFLxZTXWop420YNJllDv7dbMSPCvh3HJv+XeqfS/LFhQAe0eBfhkQDCMApOCOQQSbGyOjfzRm
+	Y6lPF9Rq9S0spAMibdMtSI5ehhOhXZoWHU//YWkr2acA==
+X-Google-Smtp-Source: AGHT+IGd3Cmn404YHuokOrwbSXvVwvjTp57tOUkPzGLs8N+Gdkvo1lOIsdRLB/cl+CQsh3MVqtp3oQixIjk7CTl9D7Q=
+X-Received: by 2002:a17:903:19e4:b0:235:e1fa:1fbc with SMTP id
+ d9443c01a7336-2366c4c2c44mr12285535ad.0.1750226453922; Tue, 17 Jun 2025
+ 23:00:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AS4PR04MB9267:EE_
-X-MS-Office365-Filtering-Correlation-Id: f71823a4-db63-4857-1191-08ddae2cb07e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fB4t8N4i+M9mVZEYBnrbquTwA2Tf/UZDflvldlIsx9G6C6+3MBW7B50/ZWv7?=
- =?us-ascii?Q?uJ4DXqIIw9CKM40nxIyLB8laxrAaKi35iA+sqVb6dIEFfiFprA785UJrfaK5?=
- =?us-ascii?Q?JiJmIAAQYnyxWM9Y4IFUii+X8FVD4ozrwd+XT2y18+A0raSYs+r/mEMSPrhH?=
- =?us-ascii?Q?o/gop/F9alb5pLfhnlbMhEeLV9qFtqDanm0QgtBGHsLdFdcXsRLCQmrTb4qo?=
- =?us-ascii?Q?xXMwyzKwLLvH5i8tLwtx+H4HB6GnI9JNM6SRrfjHAF526zzxL2JOjg18bAIu?=
- =?us-ascii?Q?pdwbZqY7LrTd3dHHo0pEjWB3I94BS0TEUUCwyUbIbjG0UDguDay9TE+T1gNJ?=
- =?us-ascii?Q?VaLqURoMJIAC/p5jgcOsXSiaWemJZ/5XCj6J46Ll0aCDeDLwp1fO8aMqzPcR?=
- =?us-ascii?Q?KSH0xotlgALNcVhhYo2H72AoSgzdP4hBjtC7dNB8UbTF/A0Q034sq0PJhX06?=
- =?us-ascii?Q?f3/YY9+GnUfiocF8Ty5xjDP4ygSOE6fnqb3UpNZmYoXFPVc0SBraByPnONh1?=
- =?us-ascii?Q?NgB3i53ys4hOiyTl7WIRymGMOSjXBzoPpQYToEXLX/rgB0sJf2TOk2Y5QhKS?=
- =?us-ascii?Q?UaG3O7yzUkztzzqhm/y0G0ceKlDtZt0VuS7QstGglsdTJsAj46aEjUU3Acjh?=
- =?us-ascii?Q?zDKwhfv+wcxg5HX6V3+VT+TN0op9D5uFJ0tDuo10PIWOtX/YC8w8OJEYax+c?=
- =?us-ascii?Q?CJ7bMRAQQ9+SuhhpbI9ROeTd2ZstLEv+bezu1CqZTZqQUHbyZrQ4f51GxU1S?=
- =?us-ascii?Q?vIaZGXlqAMucjKfoU5daa/DdWCKMPRjAVXctRGFC8Kilr4+nlaEqhV0QToek?=
- =?us-ascii?Q?HB6sek/0pkapWdyNBxHLaGOVYI2UeDKbYKAr3CZz7hcnwAmKPzJGW9/93nEz?=
- =?us-ascii?Q?BxGWlbEJJOyjViIBE6zBeiCwbo5HMupCKyF9uJLVb2AttEmyt5yX1KCnrK4r?=
- =?us-ascii?Q?yGedcP/1Xw4wjaUKhiwbGjuHeC5R6IDZA8UhWGwO9lauryRn+0xb9xvYWzYi?=
- =?us-ascii?Q?M87TqlxIiIt3gB7+b2+n2U6Dgu5075HT2QTzlelwCSRXzbQEcYuUuiYa0O9C?=
- =?us-ascii?Q?sFzCtLgmaQ6/jh9RQ2KAypXDuZGYLX+b7Ufgg5sjZhcFA81FWLRk2IccDqM/?=
- =?us-ascii?Q?CQ53QltD/1Z8IotCjscYKfwONnC80MIV1lhzr4S2K2dtz6Nd/7W6wuPFkIap?=
- =?us-ascii?Q?xBx7BzJ9uFoFpq7sZBvQ0g/50ct/qmEgQmK5R/HQeTQoI2Py5dm66Rpx96KJ?=
- =?us-ascii?Q?M5sRAlItHsMsqXlpmyOmraEZDX4FJHibWmHklMTAfvyIRQYCE8M7eYPy2xiQ?=
- =?us-ascii?Q?1lZtruYcdeSlfGv7ihyT3q7z/EOWIkmru5g6SyWdqrmxVXVPATUOJyHlEwv4?=
- =?us-ascii?Q?2PaEa1cydJLkt0JaWlr/RbiL78PB5WC2wBypw8cEG8TYeM1i95N1tJ5KWOsB?=
- =?us-ascii?Q?HZ6SrXyp/cHb9YdBgpad9qfVeVgCtG17WbNKvUmHfEoEqO5DnTozGg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Ys2Xx9UlxLveh/6wsnEybLtp1Y3FMtSUaQmmSuVVMczNtVgRrwgRK5P3I/ZA?=
- =?us-ascii?Q?mP+MSTOcNPxBUIyrvwfIW+W+auWf/bJHRVyo/D88vLqaKc+ORHjEi/+IxZjV?=
- =?us-ascii?Q?bY4wWmVlWe85Bogh1H9Z0vycKGusA5RtMISbG4qFhZmhYBOw/M8BS4a+16ud?=
- =?us-ascii?Q?+GK5fSb6V4mvFFWL8yP7nJmSOOfQcikxQwM4cy50HkPMAXTdH+CBTELXmPIQ?=
- =?us-ascii?Q?0CvPFXo3bRneZGUuQHoPR/dKTThEtHoohTZMa2r5KVbr3eMPGRcAff9tB4Gj?=
- =?us-ascii?Q?DPwuiVHTYL3qUOBr0qk0eKg7reW0wMsvm0DDfYLIH5KZgvEDBOfiMFmdyY15?=
- =?us-ascii?Q?Txl5OdHx7lQyrH2Hjr8AAsEf2jLCWIB4v62ETvkwTNhfN1puh0hlPIJgoTXI?=
- =?us-ascii?Q?K5aRmdv0/To4evf6cXWQzDy/LqQGpI/ku0M1dGZrfz+SPLqBkzGFl0OWjbxP?=
- =?us-ascii?Q?+Gi5cS+zZOFr96xgDRdMQ48Agyc2qFIK+80kx5trW+t5pWKlqjHb0QMAopWX?=
- =?us-ascii?Q?dJS8qfHiEJOFJLH+Vg45ctfevn9EEqOBwxXuz7WpydTrTseRaG4z5Qc0pn3q?=
- =?us-ascii?Q?wcBZ0ps0Unh+/M/dSCpi0GbtF0klQBH3A7B0NS/kHHNhJ6W1XlZ16y2dQH3F?=
- =?us-ascii?Q?nr7ewGXq0Uz0IMZrn5CZY8SXV2gLvFr8I2KHLMOKn621njXrmR/FVXsj8eSG?=
- =?us-ascii?Q?6ytGj8ygeWDjO7CpPV9MdO/RjOPArOvFBMPvpw+xwf605rG9g/LM9XISiFkj?=
- =?us-ascii?Q?yLu1cPCl4KtKVlmjjOtGpwlDWznpOSa/chZcugNmR0+UEV4uJgaCOLZRmKg0?=
- =?us-ascii?Q?7ISLmMKfc6mVrfkc6qGVhATnVAnBG2dIhYbTo8ep11gJNKVzgdjUGMFJ49dL?=
- =?us-ascii?Q?Otez01ncGHu1JlV4Fb4ehzR+L3OdNsNAnOjIpYjUxsaoB3y6M0IrwFDvXZsL?=
- =?us-ascii?Q?fMoDaR4/eMl51LE5HgrfcY/tzQsmzDn5CrW+zRrmuVMGT/ziCFAzCtm74e2K?=
- =?us-ascii?Q?GJl6QMMSCkBQ4D9ytHCRyJKmdX84xu09/v8p/lLkrKV1uCch9+IXZL/uKyqN?=
- =?us-ascii?Q?iJLAD/XFoy+OmfdoM9UH6Khx4esfh7WMrqLz4JsHv5gs7XyFIXS+UakB4OCW?=
- =?us-ascii?Q?BIWeXiJ3tkZ748EuYHkeXmW/OeFfrI5RmEIJVWcAlFsEM2aM4T2MEmhXF2EK?=
- =?us-ascii?Q?oTr+J0oepqKYZ8HzVmi7qGscI00sib+a2s0eskDseR3nLKefbRvkZgD3526q?=
- =?us-ascii?Q?7cYKbgphUfj0ZYOy7Ck8PqgvC1UAFnyjrKWFZ/QP1FmaurlmovepTw5UhKq2?=
- =?us-ascii?Q?pl9c8oX8QDzJ1RFbphLYp+kqDY7v4LEHs2XMbp8QMP9qjUOfOv8aUZvkEpuE?=
- =?us-ascii?Q?TvcNSUxFjyHOGn/FhRdgE8JvVTtVd2kFkemL6niSnEZ7yyY9aUFuK+hSUyxa?=
- =?us-ascii?Q?4i6sFH504dYIsnuKlzpf8zy1EsfPXiSu41mPkiAQiPBGga3yKRox8ij3yTqf?=
- =?us-ascii?Q?R1ehLC7TjBQp98MEiOPilh2qkTavxGP94GuIpssgW1pj4TZZkCdv0ZaFdnjE?=
- =?us-ascii?Q?aSjoM4WB9i7n7MBQ/NU/50x6w7yfGW7iZ4EgQ+Kw?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f71823a4-db63-4857-1191-08ddae2cb07e
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 05:55:12.4465
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 25h9FJmcjFcmA3D1UIBJh+j7F4tWcoDjp/3sLjVpC8unSuSC9nJ9BuLt8VWEyiz609bhSX5FPl02Ea2yFTiSug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9267
+References: <20250611095158.19398-1-adrian.hunter@intel.com>
+ <20250611095158.19398-2-adrian.hunter@intel.com> <CAGtprH_cpbPLvW2rSc2o7BsYWYZKNR6QAEsA4X-X77=2A7s=yg@mail.gmail.com>
+ <e86aa631-bedd-44b4-b95a-9e941d14b059@intel.com>
+In-Reply-To: <e86aa631-bedd-44b4-b95a-9e941d14b059@intel.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Tue, 17 Jun 2025 23:00:41 -0700
+X-Gm-Features: AX0GCFvXti2XDNJCtYz-gj21OeTGM_aopJJEoqDhfHGJIJMSIis82dKBQDZiWy8
+Message-ID: <CAGtprH_PwNkZUUx5+SoZcCmXAqcgfFkzprfNRH8HY3wcOm+1eg@mail.gmail.com>
+Subject: Re: [PATCH V4 1/1] KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org, 
+	rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com, 
+	kai.huang@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
+	tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com, 
+	isaku.yamahata@intel.com, linux-kernel@vger.kernel.org, yan.y.zhao@intel.com, 
+	chao.gao@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Helper drm_crtc_vblank_helper_get_vblank_timestamp_internal() aims to
-return the timestamp for end of vblank from the vblank_time pointer.
-For vblank interrupt fired at the end of vblank, it's fine to subtract
-time delta(as a positive value) according to scanout position from
-etime to get the timestamp.  However, for vblank interrupt fired at
-the end of display active region, the read-out scanout position could
-be at the horizontal blank region of the last display active line,
-which causes the calculated timestamp to be one frame eariler.  To fix
-this, subtract the time duration of an entire frame from the time delta
-for the problematic case so that the final timestamp moves forward for
-one frame.
+On Tue, Jun 17, 2025 at 10:50=E2=80=AFPM Adrian Hunter <adrian.hunter@intel=
+.com> wrote:
+> ...
+> >>
+> >> Changes in V4:
+> >>
+> >>         Drop TDX_FLUSHVP_NOT_DONE change.  It will be done separately.
+> >>         Use KVM_BUG_ON() instead of WARN_ON().
+> >>         Correct kvm_trylock_all_vcpus() return value.
+> >>
+> >> Changes in V3:
+> >>
+> >>         Remove KVM_BUG_ON() from tdx_mmu_release_hkid() because it wou=
+ld
+> >>         trigger on the error path from __tdx_td_init()
+> >>
+> >>         Put cpus_read_lock() handling back into tdx_mmu_release_hkid()
+> >>
+> >>         Handle KVM_TDX_TERMINATE_VM in the switch statement, i.e. let
+> >>         tdx_vm_ioctl() deal with kvm->lock
+> >> ....
+> >>
+> >> +static int tdx_terminate_vm(struct kvm *kvm)
+> >> +{
+> >> +       if (kvm_trylock_all_vcpus(kvm))
+> >> +               return -EBUSY;
+> >> +
+> >> +       kvm_vm_dead(kvm);
+> >
+> > With this no more VM ioctls can be issued on this instance. How would
+> > userspace VMM clean up the memslots? Is the expectation that
+> > guest_memfd and VM fds are closed to actually reclaim the memory?
+>
+> Yes
+>
+> >
+> > Ability to clean up memslots from userspace without closing
+> > VM/guest_memfd handles is useful to keep reusing the same guest_memfds
+> > for the next boot iteration of the VM in case of reboot.
+>
+> TD lifecycle does not include reboot.  In other words, reboot is
+> done by shutting down the TD and then starting again with a new TD.
+>
+> AFAIK it is not currently possible to shut down without closing
+> guest_memfds since the guest_memfd holds a reference (users_count)
+> to struct kvm, and destruction begins when users_count hits zero.
+>
 
-This fixes weston assertion on backward timestamp when comparing
-timestamps for consecutive frames.  The issue can be seen with a display
-controller which fires off vblank interrupt at the end of display active
-region.  The display controller driver is not yet upstreamed though.
+gmem link support[1] allows associating existing guest_memfds with new
+VM instances.
 
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
----
- drivers/gpu/drm/drm_vblank.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Breakdown of the userspace VMM flow:
+1) Create a new VM instance before closing guest_memfd files.
+2) Link existing guest_memfd files with the new VM instance. -> This
+creates new set of files backed by the same inode but associated with
+the new VM instance.
+3) Close the older guest memfd handles -> results in older VM instance clea=
+nup.
 
-diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-index 46f59883183d..c228d327bf17 100644
---- a/drivers/gpu/drm/drm_vblank.c
-+++ b/drivers/gpu/drm/drm_vblank.c
-@@ -782,6 +782,15 @@ drm_crtc_vblank_helper_get_vblank_timestamp_internal(
- 	delta_ns = div_s64(1000000LL * (vpos * mode->crtc_htotal + hpos),
- 			   mode->crtc_clock);
- 
-+	/*
-+	 * For vblank interrupt fired off at the end of display active region,
-+	 * subtract time duration of an entire frame if vpos happens to be the
-+	 * display active lines(hpos is in the horizontal blank region).
-+	 */
-+	if (in_vblank_irq && vpos == mode->crtc_vdisplay)
-+		delta_ns -= div_u64(1000000LL * mode->crtc_htotal * mode->crtc_vtotal,
-+				    mode->crtc_clock);
-+
- 	/* Subtract time delta from raw timestamp to get final
- 	 * vblank_time timestamp for end of vblank.
- 	 */
--- 
-2.34.1
-
+[1] https://lore.kernel.org/lkml/cover.1747368092.git.afranji@google.com/#t
 
