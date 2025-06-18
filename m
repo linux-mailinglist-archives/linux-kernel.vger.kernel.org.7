@@ -1,142 +1,128 @@
-Return-Path: <linux-kernel+bounces-692046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1267ADEC0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 257A2ADEC19
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B113D16D00F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:23:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5944E17768E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50522E716B;
-	Wed, 18 Jun 2025 12:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F222E92D1;
+	Wed, 18 Jun 2025 12:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yQsDrIXy"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WnlRXmS9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AA42E54B8
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19E82E265D;
+	Wed, 18 Jun 2025 12:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750249274; cv=none; b=C9+y2deP+X9zBEU+WpG9z+BV44UdgqpsDHwnkKBemUp6wDMGck7nJtbN/pMw4jG5Pdsymh3gXXFfwg0uwT5OUUdbrcnykJ6Hx4UwOZiauMZid5XVEl7JFBbRhEBJ3ENqikcoz1gwoXm0jXr1el7aPYvbSBdbhIFagSOpLdpRlro=
+	t=1750249302; cv=none; b=kyBqTB0UMCtgAum1dX4zxnIL6bIZrBvDhBGFU5f+t1p3wrQ5azJ9hpN35ZReh307CGJ+MH1m1PcRCuMuvkUe0zjnMRVFunHZYITb8o7h8hl5pgOtxL8KinYkA9FdQIrR6xNtDyk/RjRH8lgKCAX33HiDLeuMVq4zRm2+eGFhJjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750249274; c=relaxed/simple;
-	bh=b6LBHyIi5e1ZGbbaIWqJEeHGDHa8TD6jbCAi8i0g/oY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Or1FZu+E3AD7ILlULLTSbowYsAOto5j2WFUexLrQA2Ca8H5IiV6JCpFmqF1SCqi9pzjlnNWkLLyZtUfGK3Q90HxWoVbPqUVdNignyLQM+9NxL2kRmELAvByLuHUWmok82tuN8WDNRx7CNlGmFmXKd8HRrD4PjztvP3+6tu0Af54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yQsDrIXy; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-32b43cce9efso45092401fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 05:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750249270; x=1750854070; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n761KcazBD8NAVChuciBYR6i+PEWOHat/DvKkhEEUwg=;
-        b=yQsDrIXyB7G4LkpsrIocLZHLpqLQw2RFg4qrElRaDYVM2OkHKw5q+z9Wn96k7IVpre
-         SZMMquQhjW9CxaXDy+BwvgtpucdsKr6yE9SoQNya1ziolqNT7CjbPOmJNdEu4FkHGmH4
-         JXEhmgMzUbj9I12TPMZdsKOKy5RgnOMeQ/v4JaUjC9H4jKbeQPoiaxA2kuG6ReNFWp2G
-         zr4igDVs1KyqWS2PQRg4CPW0JW2oTYDlRknI71jn+qmy92OshaOdPcIjYHXzFOGycJcT
-         mYk2hQ3KH8lDb5b3oCqMdJ3PjJ+rVoa3/YU63EO87LwQReTkD2NUQT6Pt8mUhFCuoz2K
-         PdYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750249270; x=1750854070;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n761KcazBD8NAVChuciBYR6i+PEWOHat/DvKkhEEUwg=;
-        b=ClOID/5cSN6bq8U4dT81RArY+iw58PC09Y9cY2ws8FV535ixoB5z4JcBASV5zk1obE
-         47jSThVT6wrqGBC4XFpruj3sT2jxAN+vJOzfFft4rmlpO7F27w4Rp9jUgxuc++qi/zoM
-         h3lJj7MRmDgmFi2fBtxAEZegpp4nEtJcn6pfScerQmEb/otLJXOwwnHrZ5FLQriIpzIy
-         xCwrlntbzPaSE+MMb582UJBa8xbR+OGii5kIcY0sclx4ko+wURHqbJFXXVWP3kxDhs2R
-         IYqqC+eqbROlqXBzYyL5mb4zEHJimEMQSNosd3xR8YOTXYEZNpp4lgL5OYA+uh+mWAhK
-         EOIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJLOjPfVsx5YcTMjb7EqVpX3xPuxyePX4R9gxv4pW9FZdHMw4P9gm4Z2CoUBoJ4FdhQTbPfHDRRT4keyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNKV3jq54klBAfL8jtCWMmt5kdlH+mF/AS3LuLem4/3nmZGvCX
-	KJ2DDWgLgeXU40Lj1wYbdYLFBcxylDoIs+mwMvhsKQ6yIdFqbNglul02XE3SsULRCnXPiBXmHjZ
-	hVamAtiNEC7uhWCDqm/+5GhaqvB4bOhdiEFcxzdOoSA==
-X-Gm-Gg: ASbGncsLEvtfZLYggAiIB6TxBU3GLcPo3n1Ry85dh5bOcxtpO0ITJhociMO8DJ3FlMZ
-	o9cxzYM21XpvWWDAA53sqoFhQEXzG1ho9KlHDO8oBRtCdVePc4O1xdgVhCSak97bupExFRxM9Dj
-	tAnNVvyZnqwq+OmKetVyfDXj3G66HHrT2csyfg+6Q32tc=
-X-Google-Smtp-Source: AGHT+IFxHCRWz//u1od0Lrwty9Yf9DHcSgaAHfAvrbBiimpXB2OEA85EDmSgQGSVRLhnSLdlgZURbr7ybwWz1kTTt2A=
-X-Received: by 2002:a2e:a546:0:b0:32a:6312:bfc1 with SMTP id
- 38308e7fff4ca-32b4a5a5c86mr42763701fa.24.1750249270277; Wed, 18 Jun 2025
- 05:21:10 -0700 (PDT)
+	s=arc-20240116; t=1750249302; c=relaxed/simple;
+	bh=K/1ddQ9lPv3NrU3uazweA8uoUo92c/y5D/tyXqQnQqw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tywzwo23QjnShoXdL5ZDwazDMaJVrrOGPB+BeozvE5VfZfcUzgxtJkxfg+Rt6jXKDO6B2Ipcv/KWCXzLBh7AVUfPhfQwQZ7MZa67jz/bRKvcVGqUhNm1M4f7fFC5xtlyEJHF/mcvwggsiLJq8XKvuF5GVMI3k2G/m54io2wGW6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WnlRXmS9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A41AC4CEE7;
+	Wed, 18 Jun 2025 12:21:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750249301;
+	bh=K/1ddQ9lPv3NrU3uazweA8uoUo92c/y5D/tyXqQnQqw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WnlRXmS9f3pzmLTen9UWXLHC2uAMrwCwAFODb/UltsBIEh7MlFhraXXt+NKAxE7q8
+	 TJPq53MJIkMbUgQffnQYUYXVzV2KXYPujnULYIMPf517TOcbEmlsQ3yn/VX8h6C6AL
+	 gc/UYVVtTtUFqcZ6C1/v/r3vRTYZnouy2C4JyOgbA18XAAul+M2oqxaFBWQAYVWxct
+	 nUDjQ8xGTN4ktgKSphrMlBpNdnyOYl4CuhUT67n08xDZBOx6LbAO8zLFS0xmtP8o1L
+	 2jHHFhk9UrQqRj5J31JNGr0w3yuo86/CD/9KwCeH+8udG89Z/I64GsjutabMNOUvZ3
+	 TemjZDLUHGbcw==
+Message-ID: <b72b5ed1-6d3e-44f0-bab4-1b6aaedd9443@kernel.org>
+Date: Wed, 18 Jun 2025 14:21:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613-hdp-upstream-v5-0-6fd6f0dc527c@foss.st.com> <CAMRc=MeTmwgbHv9R_=GFmjkAV4Nvc-SeSCOz1k6pnGUrF+R9Mg@mail.gmail.com>
-In-Reply-To: <CAMRc=MeTmwgbHv9R_=GFmjkAV4Nvc-SeSCOz1k6pnGUrF+R9Mg@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 18 Jun 2025 14:20:56 +0200
-X-Gm-Features: AX0GCFvzIWiUTEnf7w2o5CriFQLwK7aVK0h_a_ivR8DSarlEz7uy-y-3wDCyAbg
-Message-ID: <CACRpkdax9ojguF1SAfiN9iZi=x3VFpCea6KnhzL3JBD9EXZepw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/9] Introduce HDP support for STM32MP platforms
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] ACPICA: Refuse to evaluate a method if arguments are
+ missing
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
+ Peter Williams <peter@newton.cx>, "Dumbre, Saket" <saket.dumbre@intel.com>
+References: <5909446.DvuYhMxLoT@rjwysocki.net>
+Content-Language: en-US, nl
+From: Hans de Goede <hansg@kernel.org>
+In-Reply-To: <5909446.DvuYhMxLoT@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 16, 2025 at 10:05=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
-> On Fri, Jun 13, 2025 at 12:16=E2=80=AFPM Cl=C3=A9ment Le Goffic
-> <clement.legoffic@foss.st.com> wrote:
-> >
-> > This patch series introduces the Hardware Debug Port (HDP) support for
-> > STM32MP platforms.
-> >
-> > It includes updates to the mmio gpio driver, the addition of device tre=
-e
-> > bindings, the HDP driver, and updates to the device tree files for
-> > STM32MP13, STM32MP15,
-> > and STM32MP25 SoCs.
-> > The series also updates the MAINTAINERS file to include myself as the
-> > maintainer for the STM32 HDP driver and adds the necessary
-> > pinmux configurations for HDP pins on STM32MP157C-DK2 as example.
-> >
-> > Signed-off-by: Cl=C3=A9ment Le Goffic <clement.legoffic@foss.st.com>
-> > ---
->
-> [snip]
->
-> > ---
-> > Cl=C3=A9ment Le Goffic (9):
-> >       gpio: mmio: add BGPIOF_NO_INPUT flag for GPO gpiochip
-> >       dt-bindings: pinctrl: stm32: Introduce HDP
-> >       pinctrl: stm32: Introduce HDP driver
-> >       MAINTAINERS: add Cl=C3=A9ment Le Goffic as STM32 HDP maintainer
-> >       ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp13
-> >       ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp15
-> >       ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp25
-> >       ARM: dts: stm32: add alternate pinmux for HDP pin and add HDP pin=
-ctrl node
-> >       ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp157c-dk2=
- board
-> >
->
-> Patches 1-4 and 5-9 can go upstream independently. I suggest taking
-> patch 1/9 through the GPIO tree and providing an immutable tag to
-> Linus to take patches 2-4 through the pinctrl tree. Linus: are you OK
-> with that?
+Hi,
 
-Yes go ahead if you want, an immutable branch based on v6.16-rc1
-is the best for me, then I pull that in.
+On 18-Jun-25 2:17 PM, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> As reported in [1], a platform firmware update that increased the number
+> of method parameters and forgot to update a least one of its callers,
+> caused ACPICA to crash due to use-after-free.
+> 
+> Since this a result of a clear AML issue that arguably cannot be fixed
+> up by the interpreter (it cannot produce missing data out of thin air),
+> address it by making ACPICA refuse to evaluate a method if the caller
+> attempts to pass fewer arguments than expected to it.
+> 
+> Closes: https://github.com/acpica/acpica/issues/1027 [1]
+> Reported-by: Peter Williams <peter@newton.cx>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I could also just apply it and hope for the best... it usually works.
+Thanks, patch looks good to me and I've also tested it:
 
-Yours,
-Linus Walleij
+Reviewed-by: Hans de Goede <hansg@kernel.org>
+Tested-by: Hans de Goede <hansg@kernel.org> # Dell XPS 9640 with BIOS 1.12.0
+
+Regards,
+
+Hans
+
+
+
+
+
+> ---
+> 
+> This is an exception as it fixes a kernel crash on multiple platforms
+> affected by the defective platform firmware update.
+> 
+> I will take care of submitting an equivalent change to upstream
+> ACPICA later.
+> 
+> ---
+>  drivers/acpi/acpica/dsmethod.c |    7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> --- a/drivers/acpi/acpica/dsmethod.c
+> +++ b/drivers/acpi/acpica/dsmethod.c
+> @@ -483,6 +483,13 @@
+>  		return_ACPI_STATUS(AE_NULL_OBJECT);
+>  	}
+>  
+> +	if (this_walk_state->num_operands < obj_desc->method.param_count) {
+> +		ACPI_ERROR((AE_INFO, "Missing argument for method [%4.4s]",
+> +			    acpi_ut_get_node_name(method_node)));
+> +
+> +		return_ACPI_STATUS(AE_AML_UNINITIALIZED_ARG);
+> +	}
+> +
+>  	/* Init for new method, possibly wait on method mutex */
+>  
+>  	status =
+> 
+> 
+> 
+
 
