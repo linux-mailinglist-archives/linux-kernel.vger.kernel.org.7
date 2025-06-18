@@ -1,281 +1,114 @@
-Return-Path: <linux-kernel+bounces-692625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76002ADF483
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:44:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DE9ADF4B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7102189B20A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:44:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F8873A9C2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8DC2FCFC4;
-	Wed, 18 Jun 2025 17:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFFE30430C;
+	Wed, 18 Jun 2025 17:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eZag3pjP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SuajJV0x"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0F92FD872
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 17:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC314303816;
+	Wed, 18 Jun 2025 17:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750268456; cv=none; b=WyWM7OjJeCF1YNp+Og40fUMo6RZ6YgXgjDVw3QCRr23tr0L+Jly5SiYX46joWD1hpGLmfKoWRk5g0OipYTPDcyaCzmwRgzinSx1EYMByYGVAh0PCVibP20KEY4zOACUs/1K0JJqGcechfr2Yrg24ZiaoMgNFmPEsSLAcmt4GHQw=
+	t=1750268485; cv=none; b=Wg/0fj16JcBskcg5LMBulkTBJZ3GO3Ka67N5rfyPx892EOaKugYIg6Rn+L+gu3G+m1d/rVQU4jEVKUr6/bZHdQq0PHhxVcFSL79mhMqt8TKVSoJMpiSNM5Xd5KnpcanQziIiwVkjP2NNfOXEB/YPaTdvEQKMP38BURbhCvV1Ej4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750268456; c=relaxed/simple;
-	bh=4sFWwkFXi8BvpD8IMU8juMRg7f+DirSsf+Ud/E9pRzw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n25nEXtTMviNKaCE//IH3XNO4IfInQ5i151WV5hPMbrSb6TuUDZsw2yE7wYOkWFpahlMKtnPUFiucC5jxvNQsrn8KqbqjwNja8izC5XHRGAmgWQ5UAGuz3w5a+smvYUto2k7Y1LUATQNlQtnbYqtdU7jFPt96VJmUul7SQ9mAJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eZag3pjP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750268447;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QyjtI6z4LqPR2c4duviV1oQl9DWLYnzH4cNekvsPaJY=;
-	b=eZag3pjPzpiJ9Ut+dhZPNIL3MSRH+NcqXtFtGA28vy/1/lsm9l0dz7FQb7gRuoTb6jFXvS
-	y1+zSPKhA8IOznNG7p/mzRYvONHHYmhxUr5Dvq5oku/9PrTjWTqMuRqltIA+D1+ey+Ak2s
-	OB2K1kvhI658B8z/WpcnIld6CZIRpps=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-325-uJJTNHRhPAyI7aYVQRyFXA-1; Wed, 18 Jun 2025 13:40:44 -0400
-X-MC-Unique: uJJTNHRhPAyI7aYVQRyFXA-1
-X-Mimecast-MFC-AGG-ID: uJJTNHRhPAyI7aYVQRyFXA_1750268442
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ade6fd82263so537631466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:40:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750268442; x=1750873242;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QyjtI6z4LqPR2c4duviV1oQl9DWLYnzH4cNekvsPaJY=;
-        b=w0+dms0SbWkHyqGkfhNwRL8WsluK6UxgizwVfrLhbzDayXOWAqytEp+l7pOkYt8SVu
-         nD6HVWOdJ1wNwHQHI0E+ki7y5kVRumQkAocKab+65LlDPGLB0xMSmXbsNXDUe9JqltWG
-         /BdSr0qd7tiBzYjHIibrq4nx3H/+4SH48PzwvnKkA1PRJLRIzFcrPF6tAvBoGePVpNrV
-         cDy6XGbTOxzUQStGr9wjHT1cyWaC+f5lVogntMgVdT326mBWqEkQf2hWNLbxptfl09Ai
-         SuquPHyT7a7b59zMMdBQ1dkJ6SUoiIbwPk+BgD6SaafMI/tJk2ZM9HrV0ekgqUL8pjkB
-         esAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWr830NdmsQssZy+auKUyrc4egjCR9N7CjKSCPXT7REOiGllxkSi2ZEse08byg0fSlvpm/pvLh3+9kLiFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgZfG7ORqCh6AlBDi/cPa5DtgcqUMDpl0yDdZbeGGmsViqAD+t
-	SnRjkI4KKYA1WplyXjsANVykRuw8KBi1ecgJAmbiTsBcDJYnY2Pdkg/Oko8lfRlXE6fZA9gEAWa
-	3CxJyjaF/uPRpfDVrRSxHOWu1XpT0ApgXaLFGpkbJYhqNhilpqM+apqwhsu37jI4RTA==
-X-Gm-Gg: ASbGncsDH28EqL7kiVrree6aHgDqFXKwODzNIp+dBDOf5zCfQC7mvdxtUKC+3WOGZQ0
-	ukdeCbBz3ty/L0MUskGTeiYzgMKv02LHEPJ+mGdlD3Wl3FsWYcx2f+6mjJZVNS4y80oxKCe77ZI
-	ddqMaYf+Se8wr7f1NIqFaKfGIJfK9pZXYYedNbFKORFovA6LYqQEvWGEUkRee3sRGg91PjFssLa
-	iXrPYUk1PQQDQSXZLgH/LGsuXBmN6CDaUcLCs/n8V8rdh6qM82bziH0KHWx8pWFRcSOo2PiAZS0
-	t8O8fz3DRGVNUQc38pEaDJw5LtltQpdowkKE9Flqo0AxDPT6szClk8alyTtAvQ==
-X-Received: by 2002:a17:907:3f1f:b0:ad2:417b:2ab5 with SMTP id a640c23a62f3a-adfad4f5a5amr1527477666b.60.1750268441551;
-        Wed, 18 Jun 2025 10:40:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJxKyWXcdF99utGWSG81lMA2wUOYJgcYHm0gBuwbodj41pCAPM9kqV+i3SsT8FRKkHC4LNpQ==
-X-Received: by 2002:a17:907:3f1f:b0:ad2:417b:2ab5 with SMTP id a640c23a62f3a-adfad4f5a5amr1527470666b.60.1750268440967;
-        Wed, 18 Jun 2025 10:40:40 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:8998:e0cf:68cc:1b62? ([2a01:e0a:c:37e0:8998:e0cf:68cc:1b62])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec897c397sm1066045766b.167.2025.06.18.10.40.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jun 2025 10:40:40 -0700 (PDT)
-Message-ID: <f6dcf50e-99ee-4e2d-86a8-5ffa2c7aacc7@redhat.com>
-Date: Wed, 18 Jun 2025 19:40:36 +0200
+	s=arc-20240116; t=1750268485; c=relaxed/simple;
+	bh=JMu1Wlmq6ChnFPF7YJWazqaT52K3k8V8s8GmsfUM3nc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oO/I1dcd8GUbw2q2rLJlvQL/FHO32DVRCYSKaGqXgZbsSLo7PoUo7987fu3aLPoae6cRI7M85MLlCoANoXXZGq3EfpK291+UYoJel3VQW8VSZ5mOub74/xN5Up9WkbLyYAgcEn2jfTNV3+64HO4SE9LfQQChq4u/xQRWwae4ZEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SuajJV0x; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750268484; x=1781804484;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=JMu1Wlmq6ChnFPF7YJWazqaT52K3k8V8s8GmsfUM3nc=;
+  b=SuajJV0xa/iNwjLmgXXL8LoSbl8dUmoDSIWG7qy1kOLRbgwcRkKb41DL
+   LKgR0gOPu6a/hxko2UZy1UHsZz7NywNEmoPSSKq7ktiDYuOtTyHbvLrBh
+   1aWU9AA0wk6EL/nL4ExFi+OUu0M1VKNhXW1EBV17me9czmkkZK8ZTaLll
+   IT+J627+bhMu5zbOK3Zq8Dq+r/rHGkjpSgML1LluIJJ5kJRDJxuB4YleH
+   y9hnjA7aE7CwfQV5vgnTWfAPivfav9ecO4qhgQ2RjN1RM0zt2JPtpP+E3
+   KETkuF6KOfA4yQJY5QAAPyvlv/CccYz5sZ1kX+by3Hq8qDAFtFiQTxcQL
+   g==;
+X-CSE-ConnectionGUID: HM3vYmksSNmWWbSuwhAxQg==
+X-CSE-MsgGUID: VACEKxoZTcifnIQEBwCzIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="70075607"
+X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
+   d="scan'208";a="70075607"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 10:41:22 -0700
+X-CSE-ConnectionGUID: JG/bHWfcRVquepWKjGOfNA==
+X-CSE-MsgGUID: fpjdxPPlS9KTs3wv2NcenA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
+   d="scan'208";a="180909963"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 10:41:19 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uRwmi-00000007oWR-32Tx;
+	Wed, 18 Jun 2025 20:41:16 +0300
+Date: Wed, 18 Jun 2025 20:41:16 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Andrew Ijano <andrew.ijano@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, jic23@kernel.org,
+	andrew.lopes@alumni.usp.br, gustavobastos@usp.br,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+	jstephan@baylibre.com, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] iio: accel: sca3000: simplify by using newer
+ infrastructure
+Message-ID: <aFL6PE-8KLLKZun_@smile.fi.intel.com>
+References: <20250618031638.26477-1-andrew.lopes@alumni.usp.br>
+ <CAHp75Ve4yAp6sViUWZY+0abRoNZ0W+rQLCmsbijEcrh8kguVOA@mail.gmail.com>
+ <CANZih_S9_8OdY=oKyVPBCTSTqYm_z_rkE=xbPym3uHOSsHMv6A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 5/6] rust: enable `clippy::cast_lossless` lint
-To: Tamir Duberstein <tamird@gmail.com>,
- Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Brendan Higgins <brendan.higgins@linux.dev>, David Gow
- <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>,
- Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>,
- Abdiel Janulgue <abdiel.janulgue@gmail.com>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Robin Murphy <robin.murphy@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- FUJITA Tomonori <fujita.tomonori@gmail.com>,
- Nicolas Schier <nicolas.schier@linux.dev>,
- Frederic Weisbecker <frederic@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Benno Lossin <lossin@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Breno Leitao
- <leitao@debian.org>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kunit-dev@googlegroups.com, linux-pci@vger.kernel.org,
- linux-block@vger.kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, linux-mm@kvack.org,
- linux-pm@vger.kernel.org, nouveau@lists.freedesktop.org
-References: <20250615-ptr-as-ptr-v12-0-f43b024581e8@gmail.com>
- <20250615-ptr-as-ptr-v12-5-f43b024581e8@gmail.com>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20250615-ptr-as-ptr-v12-5-f43b024581e8@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANZih_S9_8OdY=oKyVPBCTSTqYm_z_rkE=xbPym3uHOSsHMv6A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 15/06/2025 22:55, Tamir Duberstein wrote:
-> Before Rust 1.29.0, Clippy introduced the `cast_lossless` lint [1]:
+On Wed, Jun 18, 2025 at 09:24:19AM -0300, Andrew Ijano wrote:
+> On Wed, Jun 18, 2025 at 2:56 AM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Wed, Jun 18, 2025 at 6:17 AM Andrew Ijano <andrew.ijano@gmail.com> wrote:
+> > >
+> > > The sca3000 driver is old and could be simplified by using newer
+> > > infrastructure.
+> >
+> > I haven't found any reference to a base commit here. Have you
+> > forgotten to use --base when preparing the series?
+> > In any case, please clarify what this series is based on.
 > 
->> Rust’s `as` keyword will perform many kinds of conversions, including
->> silently lossy conversions. Conversion functions such as `i32::from`
->> will only perform lossless conversions. Using the conversion functions
->> prevents conversions from becoming silently lossy if the input types
->> ever change, and makes it clear for people reading the code that the
->> conversion is lossless.
-> 
-> While this doesn't eliminate unchecked `as` conversions, it makes such
-> conversions easier to scrutinize.  It also has the slight benefit of
-> removing a degree of freedom on which to bikeshed. Thus apply the
-> changes and enable the lint -- no functional change intended.
+> Thank you for pointing this out! I think I forgot to use --base for
+> it. In this case, should I submit a new version of the whole patchset
+> with this information or is there a better way to do it?
 
-Thanks, it looks good to me, for the drm_panic_qr.rs part.
+For now just reply here what is the base. I asked this question above.
 
-Acked-by: Jocelyn Falempe <jfalempe@redhat.com>
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> 
-> Link: https://rust-lang.github.io/rust-clippy/master/index.html#cast_lossless [1]
-> Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> Link: https://lore.kernel.org/all/D8ORTXSUTKGL.1KOJAGBM8F8TN@proton.me/
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->   Makefile                             | 1 +
->   drivers/gpu/drm/drm_panic_qr.rs      | 4 ++--
->   drivers/gpu/nova-core/regs.rs        | 2 +-
->   drivers/gpu/nova-core/regs/macros.rs | 2 +-
->   rust/bindings/lib.rs                 | 1 +
->   rust/kernel/net/phy.rs               | 4 ++--
->   rust/uapi/lib.rs                     | 1 +
->   7 files changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index 0ba22c361de8..29cf39be14de 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -481,6 +481,7 @@ export rust_common_flags := --edition=2021 \
->   			    -Wclippy::all \
->   			    -Wclippy::as_ptr_cast_mut \
->   			    -Wclippy::as_underscore \
-> +			    -Wclippy::cast_lossless \
->   			    -Wclippy::ignored_unit_patterns \
->   			    -Wclippy::mut_mut \
->   			    -Wclippy::needless_bitwise_bool \
-> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-> index dd55b1cb764d..6b59d19ab631 100644
-> --- a/drivers/gpu/drm/drm_panic_qr.rs
-> +++ b/drivers/gpu/drm/drm_panic_qr.rs
-> @@ -404,7 +404,7 @@ fn pop3(&mut self) -> Option<(u16, usize)> {
->               let mut out = 0;
->               let mut exp = 1;
->               for i in 0..poplen {
-> -                out += self.decimals[self.len + i] as u16 * exp;
-> +                out += u16::from(self.decimals[self.len + i]) * exp;
->                   exp *= 10;
->               }
->               Some((out, NUM_CHARS_BITS[poplen]))
-> @@ -425,7 +425,7 @@ fn next(&mut self) -> Option<Self::Item> {
->           match self.segment {
->               Segment::Binary(data) => {
->                   if self.offset < data.len() {
-> -                    let byte = data[self.offset] as u16;
-> +                    let byte = u16::from(data[self.offset]);
->                       self.offset += 1;
->                       Some((byte, 8))
->                   } else {
-> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
-> index 5a1273230306..c1cb6d4c49ee 100644
-> --- a/drivers/gpu/nova-core/regs.rs
-> +++ b/drivers/gpu/nova-core/regs.rs
-> @@ -32,7 +32,7 @@ pub(crate) fn architecture(self) -> Result<Architecture> {
->       pub(crate) fn chipset(self) -> Result<Chipset> {
->           self.architecture()
->               .map(|arch| {
-> -                ((arch as u32) << Self::IMPLEMENTATION.len()) | self.implementation() as u32
-> +                ((arch as u32) << Self::IMPLEMENTATION.len()) | u32::from(self.implementation())
->               })
->               .and_then(Chipset::try_from)
->       }
-> diff --git a/drivers/gpu/nova-core/regs/macros.rs b/drivers/gpu/nova-core/regs/macros.rs
-> index 7ecc70efb3cd..6851af8b5885 100644
-> --- a/drivers/gpu/nova-core/regs/macros.rs
-> +++ b/drivers/gpu/nova-core/regs/macros.rs
-> @@ -264,7 +264,7 @@ pub(crate) fn $field(self) -> $res_type {
->           pub(crate) fn [<set_ $field>](mut self, value: $to_type) -> Self {
->               const MASK: u32 = $name::[<$field:upper _MASK>];
->               const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
-> -            let value = ((value as u32) << SHIFT) & MASK;
-> +            let value = (u32::from(value) << SHIFT) & MASK;
->               self.0 = (self.0 & !MASK) | value;
->   
->               self
-> diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
-> index 81b6c7aa4916..7631c9f6708d 100644
-> --- a/rust/bindings/lib.rs
-> +++ b/rust/bindings/lib.rs
-> @@ -25,6 +25,7 @@
->   )]
->   
->   #[allow(dead_code)]
-> +#[allow(clippy::cast_lossless)]
->   #[allow(clippy::ptr_as_ptr)]
->   #[allow(clippy::undocumented_unsafe_blocks)]
->   #[cfg_attr(CONFIG_RUSTC_HAS_UNNECESSARY_TRANSMUTES, allow(unnecessary_transmutes))]
-> diff --git a/rust/kernel/net/phy.rs b/rust/kernel/net/phy.rs
-> index 32ea43ece646..65ac4d59ad77 100644
-> --- a/rust/kernel/net/phy.rs
-> +++ b/rust/kernel/net/phy.rs
-> @@ -142,7 +142,7 @@ pub fn is_autoneg_enabled(&self) -> bool {
->           // SAFETY: The struct invariant ensures that we may access
->           // this field without additional synchronization.
->           let bit_field = unsafe { &(*self.0.get())._bitfield_1 };
-> -        bit_field.get(13, 1) == bindings::AUTONEG_ENABLE as u64
-> +        bit_field.get(13, 1) == u64::from(bindings::AUTONEG_ENABLE)
->       }
->   
->       /// Gets the current auto-negotiation state.
-> @@ -427,7 +427,7 @@ impl<T: Driver> Adapter<T> {
->           // where we hold `phy_device->lock`, so the accessors on
->           // `Device` are okay to call.
->           let dev = unsafe { Device::from_raw(phydev) };
-> -        T::match_phy_device(dev) as i32
-> +        T::match_phy_device(dev).into()
->       }
->   
->       /// # Safety
-> diff --git a/rust/uapi/lib.rs b/rust/uapi/lib.rs
-> index e79a1f49f055..08e68ebef606 100644
-> --- a/rust/uapi/lib.rs
-> +++ b/rust/uapi/lib.rs
-> @@ -14,6 +14,7 @@
->   #![cfg_attr(test, allow(unsafe_op_in_unsafe_fn))]
->   #![allow(
->       clippy::all,
-> +    clippy::cast_lossless,
->       clippy::ptr_as_ptr,
->       clippy::undocumented_unsafe_blocks,
->       dead_code,
-> 
 
 
