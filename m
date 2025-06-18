@@ -1,131 +1,135 @@
-Return-Path: <linux-kernel+bounces-692398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73754ADF112
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:21:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C803CADF119
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEBB71BC0128
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:21:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B17371898778
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854442EF9B2;
-	Wed, 18 Jun 2025 15:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D272EF65F;
+	Wed, 18 Jun 2025 15:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HQv6i/S4"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3FA2EF66E
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 15:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SaGB99ZF"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A2D2EBDEF;
+	Wed, 18 Jun 2025 15:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750260053; cv=none; b=QYrXX1MlpuxmLthQTpzuwLbwc1jYGOr4c1ZiICKqDOKD/LM8JqYQJ8OIM+s/1fc9xf5NBmdkbHUXBZR9PRlYxe2iNhluwryYWPEnRYbE0//iuB3IQ59uHCvvwlB+EYP9mUeiAR9VJHWniGzJZeJNyqQ+/LaDzsLPJ6/jHrv2Thg=
+	t=1750260092; cv=none; b=eP0fRNdW8GjvHyNWigZLd2OZTiHV2GpEVXZUhhYshYT4z3qELb/v2TcBE4zmNHSlSFbRdCFjqLg+fJb4fko9pt1W4IermP7dtdQdXV5u30fwpitxFx9wMdpv1YBeIjF4b90PXQZX4yYg9SEM3fpfgZTNgLioCTZL2kjJKszk3rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750260053; c=relaxed/simple;
-	bh=bu9BXidHNtjmnwyuSNdRj9LB7CpuIo8NlQ/Pqo7N8eg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tpXLKvaLm4HIGa3XxySL4ddROiJ15UI3worHn3AE11p9icz/L6+P81dnfz/sCeGUfIKYks9XroElixKZsp5zs290U3difGVZnHzx8qUDZ1ZVPKhvQpFv3IETDE6SpsGkpVKe1bdjdgUz/OOe2otDWluspmRB0W2nWLh9Tzk/1rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HQv6i/S4; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a536ecbf6fso4787330f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:20:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750260050; x=1750864850; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=R2mixnOIloQHoWX2vcLi6dJzCof8rZSm4l18a4KpDRg=;
-        b=HQv6i/S48uZirMImdmMJ9teZNgbhku2y60AGeaBL6lGDXxXTzKie9GGpw5rYfYND3p
-         ZdcHx5FIp6gIhKo/2ulaLqC7y90B3yomXxQL2XHiIvfHwPS16k0fVQyk4ioWpY66w1Al
-         Bx1KmfOEM5N7uxg5D/NnoNUKjdQ+HzO6khNRzND2IrS8Fcp51wiZNvPbP7WMA1a1y1ii
-         To97blaS0n7tkFf0ApM2XeWKD/MDlIGvlm3wq+XnlFj4lNTq3uFdK5r0S64LmWE12uPv
-         7CSk2Ww9RHs0zzXnyxF5r9rXD+YCd5R5EOLJCHMEeHo3QqKBXJtPGgQCNhrMxn+nbtw2
-         lZrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750260050; x=1750864850;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R2mixnOIloQHoWX2vcLi6dJzCof8rZSm4l18a4KpDRg=;
-        b=e99rleWPigYXs/UiMFn1trfPrF9bYcnWPBbso799jla2UyW9YPpjUaGdtZqM1iMxD9
-         A8s9fkc4H21eI4nqZowCfxFY1dna+g2w4E+lNRwk8lLZtYWCpu2AZIMOThIhD6lonWzN
-         Xh4IJIxd0+YfyZrsZNnx5ghzXmuBQM0DF8vMisMukQRnZLjzGAwIMJ6mB+wsIQ1Ic+pj
-         2KwcLxQrGlrAvq1WcD8YW+vOQ+YG7ywIeziIHLR6QP4wpuccUG6Xwf/edq8JxRja0RSr
-         3R9F4eprqlIbSv3HM+G6NFDQ6qabS5CRtYIykS2To8tF9TpPl073+4Dh1RkOJ2e6vTrG
-         FmZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeh5XQvJIcMvqhUiimJpbCi0nrjYValkGBW0g5EgTbfnUSv1ntqDoAQ+vKPgCP7IuAG/4egQXjNMGpJIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2+tSUeQexm8RL6ISCD8vWWDNrr7uHBtOaRtlRIbdLTxiACTUf
-	HbzkCwrGOn0BkBzXtLj0h15l0ySJkLJDL9jjrLfKOTPFV1Byz1rHVP+/oUoJSwefJWg=
-X-Gm-Gg: ASbGncu5wOwnAI0VVe8SfTUzEbk4JHPU7OCnlaKqUH/FkHf6F5aHf1SfLRxSIS44kW7
-	seu7ROtq8XiBrJPUPrUj1K29rfypA4PVE9pO5/tBq73rnzV+UBaGBa6g66KML1FQ1shBjpkKPVu
-	r5mLKgofiNkI3qMTnPQvOCajM3qRDRcxxuWERMGztrsHxigC5I1QQ3AxBFSEmFOxmOuN7mBcz0/
-	WOMNnU+Kc3RS8PQmxxcWIdxyFq359FbAE16gxOoa/ePsYx3t41wc/XeDZYYReWP6Z0CEZKXrFi3
-	j0FCMz7fgcG5Jwn4PEQ7C50YCD872+wX/CE3R8hymYXZMOCMHRDvVqNgOajS6NSw
-X-Google-Smtp-Source: AGHT+IH/o02+oo3I6UQDONKE+lMSxWW2bFWP8iy5NSan2E4s86/5Ooep9MGM3MBi06jxWJGtRw+Oqg==
-X-Received: by 2002:a05:6000:4304:b0:3a5:1f2:68f3 with SMTP id ffacd0b85a97d-3a572e2e049mr16035090f8f.46.1750260049995;
-        Wed, 18 Jun 2025 08:20:49 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748900cec72sm11126479b3a.150.2025.06.18.08.20.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 08:20:49 -0700 (PDT)
-Date: Wed, 18 Jun 2025 17:20:35 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	John Ogness <jogness@linutronix.de>,
-	David Gow <davidgow@google.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3] printk: ringbuffer: Add KUnit test
-Message-ID: <aFLZQ4jb928NhBly@pathway.suse.cz>
-References: <20250612-printk-ringbuffer-test-v3-1-550c088ee368@linutronix.de>
- <aFGDhxefzuWCwOOV@pathway.suse.cz>
+	s=arc-20240116; t=1750260092; c=relaxed/simple;
+	bh=H4SxOVHWpA+WytbY1ys3zjD433bGw9LydkjAUxEM9tA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r7Jh3GexUV4lTdBsHQ0JUJvq0aVPVBi0dwXg0qIF/Lph58aticpLbocGutD/docyOj1OhAGRfQL6ZhJhGmsFAJhynOnmBh7J9inrDMLLO6gu/9VJl62nqOc/6pKwP8hAYF19Hsz5Zydgk92hC7WFqhZMYQJ1zeQRXtk0oJaaRlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SaGB99ZF; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=9m
+	NC5p+IQWFHt/xuo/+vFezWiDfgz67e96tYDM0ksBc=; b=SaGB99ZFFOAu6jAaXd
+	0NekQG/1FAbUCGHU2ZnFEAJFrEhWn2+yCR638jjUsYmaFOyRQ2LCzasaSu5Y49VO
+	hkjrUjEPSQdg4g/qLrPzGwWe0mo2bJDUx6yV9GG+bCZzsECR62Zpqrys2tjWMFJX
+	5r2yC/XLhaB1ofH2ltITvkhbg=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDHoedq2VJo3qQFAQ--.15407S2;
+	Wed, 18 Jun 2025 23:21:15 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	bhelgaas@google.com,
+	mani@kernel.org,
+	kwilczynski@kernel.org
+Cc: robh@kernel.org,
+	jingoohan1@gmail.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH v2 00/13] PCI: dwc: Refactor register access with dw_pcie_clear_and_set_dword helper
+Date: Wed, 18 Jun 2025 23:20:59 +0800
+Message-Id: <20250618152112.1010147-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aFGDhxefzuWCwOOV@pathway.suse.cz>
+X-CM-TRANSID:_____wDHoedq2VJo3qQFAQ--.15407S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGr1kJFW8ZF47Zr1rAw13urg_yoW5uryrpa
+	y5tFW2kF1xJrZY93ZrXa929r1Yy3Z5AFZrKan3Ka4IgFy3CF9Fqry5tryft347GrWjqF12
+	kr1Utayxu3Z3AFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piq2NLUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQxdwo2hS1CZ5SwABs8
 
-On Tue 2025-06-17 17:03:13, Petr Mladek wrote:
-> On Thu 2025-06-12 08:29:07, Thomas Weiﬂschuh wrote:
-> > The KUnit test validates the correct operation of the ringbuffer.
-> > A separate dedicated ringbuffer is used so that the global printk
-> > ringbuffer is not touched.
-> > 
-> > Co-developed-by: John Ogness <john.ogness@linutronix.de>
-> > Signed-off-by: John Ogness <john.ogness@linutronix.de>
-> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> 
-> Looks good to me:
-> 
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
+Register bit manipulation in DesignWare PCIe controllers currently
+uses repetitive read-modify-write sequences across multiple drivers.
+This pattern leads to code duplication and increases maintenance
+complexity as each driver implements similar logic with minor variations.
 
-JFYI, the patch has been comitted into printk/linux.git,
-branch rework/ringbuffer-kunit-test.
+This series introduces dw_pcie_clear_and_set_dword() to centralize atomic
+register modification. The helper performs read-clear-set-write operations
+in a single function, replacing open-coded implementations. Subsequent
+patches refactor individual drivers to use this helper, eliminating
+redundant code and ensuring consistent bit handling.
 
-I am going to get it into the mainline in the next merge window
-for 6.17.
+The change reduces overall code size by ~350 lines while improving
+maintainability. Each controller driver is updated in a separate
+patch to preserve bisectability and simplify review.
 
-> PS: I have got an idea to count the number of failed prb_reserve()
->     calls. And it really failed from time to time.
-> 
->     I played with it and came up with two more patches. I am going
->     to send them tomorrow. I think that we should solve it separately
->     to avoid too many respins. The current patch is very good as
->     it is now.
+---
+Hi all,
 
-I did not have much time to play with it today. I still have to
-think about it...
+At the beginning, two patches were made, 0001*.patch, and the others were
+one patch. After consideration, I still split the patches. If splitting
+is not necessary, I will recombine them into two patches in future
+versions.
+
+
+Changes for v2:
+- Re-send it in the company environment so that the entire patch series is in the 00/13 cover letter. (Bjorn)
+- Modify the subject. (Bjorn and Frank)
+---
+
+Hans Zhang (13):
+  PCI: dwc: Add dw_pcie_clear_and_set_dword() for register bit
+    manipulation
+  PCI: dwc: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: dra7xx: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: imx6: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: meson: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: armada8k: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: bt1: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: dw-rockchip: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: fu740: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: qcom: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: qcom-ep: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: rcar-gen4: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: tegra194: Refactor code by using dw_pcie_clear_and_set_dword()
+
+ drivers/pci/controller/dwc/pci-dra7xx.c       |  10 +-
+ drivers/pci/controller/dwc/pci-imx6.c         |  26 ++-
+ drivers/pci/controller/dwc/pci-meson.c        |  22 +--
+ drivers/pci/controller/dwc/pcie-armada8k.c    |  48 ++----
+ drivers/pci/controller/dwc/pcie-bt1.c         |   5 +-
+ .../controller/dwc/pcie-designware-debugfs.c  |  67 +++-----
+ .../pci/controller/dwc/pcie-designware-ep.c   |  20 +--
+ .../pci/controller/dwc/pcie-designware-host.c |  27 ++-
+ drivers/pci/controller/dwc/pcie-designware.c  |  74 ++++-----
+ drivers/pci/controller/dwc/pcie-designware.h  |  27 +--
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c |   7 +-
+ drivers/pci/controller/dwc/pcie-fu740.c       |   5 +-
+ drivers/pci/controller/dwc/pcie-qcom-common.c |  59 ++++---
+ drivers/pci/controller/dwc/pcie-qcom-ep.c     |  14 +-
+ drivers/pci/controller/dwc/pcie-rcar-gen4.c   |  23 +--
+ drivers/pci/controller/dwc/pcie-tegra194.c    | 155 ++++++++----------
+ 16 files changed, 239 insertions(+), 350 deletions(-)
+
+
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+-- 
+2.25.1
+
 
