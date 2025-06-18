@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-692267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC8BADEF1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:23:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A8BADEF3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58AD4189804D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:23:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F4D4179A8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FBD2EB5AF;
-	Wed, 18 Jun 2025 14:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9753C2EAD16;
+	Wed, 18 Jun 2025 14:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="czIhzIDv"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC3B2E8E00;
-	Wed, 18 Jun 2025 14:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YS/vSnvn"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D198281341
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 14:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750256597; cv=none; b=j1poCJ1KWLK9Bm6MI6ciIpwsbmnHcj2Y0DApRne/yIlTxWxLx4DHZj3TX8DElN5b78UZnqYoOo5RF15EH089zljBp1dXADj+cxYJdbOTdjZedQ46j++MUVNRd9107WKdq7Cn2dXKzc13FnkWOHnKp3o7FLlA+PgrYhfc07l0DME=
+	t=1750256666; cv=none; b=bvTkLkvMgTF/D8AtULdtHEWbSb6o4oHvc/q0RwMREFNreClQPFb9N5CI3fdPzzJ0L9EJCOTtfV3ThJoy5nPfVuAOFFsGqcgPxhaWnAxdPyZLh5vRgT/FDS4hirj9hLDQ39LhEmmlq8LLzuRDYYk/+tqmwGm35eMcblLZhbR4tCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750256597; c=relaxed/simple;
-	bh=/kCZED307PxRlzLUByha5TboyLgGFMQyb8rQaxCxbi8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fANY8Tw80BdPuVH6/nPgYiw+YsdyHShQ3y4GSA8/f9Ej+6J2Idpy1lD0Hc4L4t6IbqinTIHQNj4aHS+jA/tWFQvq6gYS/Sm0A8qe5Bj2djB6R+csWvOiKYvBtmyeWWnBITmVsSO4fqhbD+1PW/rCS/msDXyDIUz7s5HestC0+qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=czIhzIDv; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=aKN5Xb4pqwecPj9X55VM7S0C9aEQ1Y9s1xKnCpxeegI=;
-	b=czIhzIDv0vExDetuwquUJKrYUO53fjMO4UCjAlc9rWtkNKUKWDmbGcZxmkhrGh
-	pnVWLb7puWTNmuknm9dqGRZtgrsybZ+88DaATFV0/JRgcx8iCPy7iUUimCAGkcHN
-	lGHrmbBJ2B4ybopt7h8vv/1qloEhAX9KLlMwIyFMJb5T8=
-Received: from [IPV6:240e:b8f:919b:3100:8440:da7c:be7e:927f] (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgAn_qq1y1JonKCoAA--.5729S2;
-	Wed, 18 Jun 2025 22:22:46 +0800 (CST)
-Message-ID: <9203cf6e-ca59-416a-9c98-a2d6a5c6ce6f@163.com>
-Date: Wed, 18 Jun 2025 22:22:45 +0800
+	s=arc-20240116; t=1750256666; c=relaxed/simple;
+	bh=sr3Z5SQi/c0byycGqZoP+15+8kMGuxUIdam9NQVzQGU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gzMKGPtnFAgLelQpcJzUCUztV81ADniOJ5iDCqCGicSMqChfVecvP3YvEj66D/eEXDjL9bgMcRSeUU2mGLFCgXKkxCwmQbjEchEVE6mYlu6setpc7mIFq6cbu+uAzdiBzSZPaP6yQH1DP11LawxPQA6D6OYkx27eIRlmLbXjuVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YS/vSnvn; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6ecf99dd567so75584146d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 07:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750256663; x=1750861463; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yUcfR2kwkjbsjTzvnqaKQjl0q9VATkRLDawL3wYx9EM=;
+        b=YS/vSnvnoeCxpBViYKhwaAv8nFsmmLZsbwi63LV+78MDziBZJ8NPe5CoZcvF5qJCEs
+         jJXSG7Ek7CpVIIToQ13vXODbGtgqYnW33ocmkDRQTAmFDS64lhagd1WkX9h6PzsftLzS
+         oCMzZbABqu7FIrXhWyZKndUvKB99TPr2UjiZIXZAfyaDBXC3HwOC6WylFyflU2sZ/KaV
+         UDaQL3xKnL6bNN+LljugwnT6UCRL/wTsrj8i+xUfXDsa3kgZaTq+/B9OS5JaGavwUyOc
+         0MRxeZVD9oGfYYkDWZQ+HNiJH6vIUyrdSsubTHumHWfvHK+ERgxilB8kqZLz3O5R4REO
+         WcyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750256663; x=1750861463;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yUcfR2kwkjbsjTzvnqaKQjl0q9VATkRLDawL3wYx9EM=;
+        b=SRnAfTvsB16fut5V0ZNGEn2hbBPJC4Nn+DF9tBEw9BNxgpa4S+QSK2L6sb1ratomIJ
+         sGGkITZY18iDyfIOCYSZAAFkhGMD9mVTdzkrQRg6gtMgTwiivmHdTqOQ6AMrukH+6zEX
+         izaDf10+Dil2T1g2uMzk7R+mXtwycgVHRDyxu7VVi1IarCpNH8mjLFpBgubBuKCFuAw7
+         Y29VoGBzu9nCIXh0z0kO8Fk9KUKJ5g+0f8zCTkOpiWTi38WLuaVxXv9wcFGlxjIEUWzk
+         z1iwBYGKR8UIPAZDzcywY0Qp/VTNuKniVFluwZAbh+LBubeCQtE+lONAKU05HwwOMpan
+         +7+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWiOlO6B13TcaodgZ3fUNIJ7IqAmLVmILrbBFPYc6Tg9hzZfZNmXWXVTbAs2AiWfTdunq8V3PtfDrN/efQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7QzAvrOnnMY2gpSE78g7P5DcrbMuMtme+RoZOWRFZn+ozgZFT
+	h6UpJ9wuxXuz1LReJyiz+dK0w9Paa5fIrIXxYaYqBjcZTeODz8zryedqxEpbHEum67swiwHLj1i
+	tauGs4dZDmILgsQri4qM+WKtVCryZCUBeh9hV8mNQ
+X-Gm-Gg: ASbGnct4ifGnTfEax0yOTBNJhhU2rJtbg5EEYEb9kelKJPYiQRWiXXRsfu6uf+HMTsu
+	k560GoWnwl5Le8i6t9CMthi3JXbnGWDjqSjpRnR1eG2V4oTCo+ee/csfU28gqufmYbN6em1Yhpt
+	yMHoVACSEG0fXDUv8hylKI+oSSn018Gp5c/yMZ/1BiD+UejkXUUPUNhQ3YT7crlQqDN70VA18D
+X-Google-Smtp-Source: AGHT+IHdIl6hBZ14aq0nr2z6lG2ii3Kcxe/4qSRb9s4mKKYwgN/kx2q0ATe/pPHiSWFigZOI1t1Rna7e6taADfKz5Ac=
+X-Received: by 2002:a05:6214:5249:b0:6fa:c55e:86a with SMTP id
+ 6a1803df08f44-6fb47759665mr312049966d6.28.1750256663221; Wed, 18 Jun 2025
+ 07:24:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: PCI: Extend max-link-speed to support
- PCIe Gen5/Gen6
-To: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
- krzk+dt@kernel.org, manivannan.sadhasivam@linaro.org, conor+dt@kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250529021026.475861-1-18255117159@163.com>
- <20250529021026.475861-2-18255117159@163.com>
- <q5ltnilbdhfxwh6ucjnm3wichrmu5wyjsx6eheiazqypveu3sm@euuvpjwu77h4>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <q5ltnilbdhfxwh6ucjnm3wichrmu5wyjsx6eheiazqypveu3sm@euuvpjwu77h4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:PygvCgAn_qq1y1JonKCoAA--.5729S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJF1rJFW5ur48Zr4fuF4rZrb_yoW8CFWDpa
-	y5Ja1xKFyrZFySqrZ7Wr1F9r45AanrJ3y0yr45Gry7A3sxXF1rJFZaga1rWr17trZ5AFyx
-	uF1UZwnxGa15AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRepBDUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWx9wo2hSygcmiQAAsP
+References: <20250416085446.480069-1-glider@google.com> <20250416085446.480069-2-glider@google.com>
+ <CANpmjNPass_tPdjwguw5N+5HRn81FOJm0axLDMxwbZLrHHH8hg@mail.gmail.com>
+In-Reply-To: <CANpmjNPass_tPdjwguw5N+5HRn81FOJm0axLDMxwbZLrHHH8hg@mail.gmail.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Wed, 18 Jun 2025 16:23:45 +0200
+X-Gm-Features: Ac12FXxlhTVNXm_co53abS-moIAJmLryjKY8L53ZBoxurLT46rDjZIdqZcqlZ5g
+Message-ID: <CAG_fn=VmddBTURnLESOQHEWYzsiUJCph9mVKS6W84TPqm3DCyw@mail.gmail.com>
+Subject: Re: [PATCH 1/7] kcov: apply clang-format to kcov code
+To: Marco Elver <elver@google.com>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Ingo Molnar <mingo@redhat.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+
+> > +static inline void kcov_remote_start(u64 handle)
+> > +{
+> > +}
+> > +static inline void kcov_remote_stop(void)
+> > +{
+> > +}
+>
+> This excessive-new-line style is not an improvement over previously.
+> But nothing we can do about I guess...
+
+I think we'd better stick with whatever clang-format gives us.
 
 
 
-On 2025/6/18 00:45, Manivannan Sadhasivam wrote:
-> On Thu, May 29, 2025 at 10:10:24AM +0800, Hans Zhang wrote:
->> Update the device tree binding documentation for PCI to include
->> PCIe Gen5 and Gen6 support in the `max-link-speed` property.
->> The original documentation limited the value to 1~4 (Gen1~Gen4),
->> but the kernel now supports up to Gen6. This change ensures the
->> documentation aligns with the actual code implementation.
->>
->> Signed-off-by: Hans Zhang <18255117159@163.com>
->> ---
->>   dtschema/schemas/pci/pci-bus-common.yaml | 2 +-
-> 
-> As Rob commented in v1, this file lives in dtschema project. So update it there:
-> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/pci/pci-bus-common.yaml
-> 
+> > @@ -728,13 +730,15 @@ static long kcov_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+> >                 spin_unlock_irqrestore(&kcov->lock, flags);
+> >                 return 0;
+> >         case KCOV_REMOTE_ENABLE:
+> > -               if (get_user(remote_num_handles, (unsigned __user *)(arg +
+> > -                               offsetof(struct kcov_remote_arg, num_handles))))
+> > +               if (get_user(remote_num_handles,
+> > +                            (unsigned __user *)(arg +
+> > +                                                offsetof(struct kcov_remote_arg,
+> > +                                                         num_handles))))
+>
+> Ouch. Maybe move the address calculation before and assign to
+> temporary to avoid this mess?
+I factored out offsetof(), because the address calculation looked all
+the same after formatting.
 
-Dear Mani,
+> >         for_each_possible_cpu(cpu) {
+> >                 void *area = vmalloc_node(CONFIG_KCOV_IRQ_AREA_SIZE *
+> > -                               sizeof(unsigned long), cpu_to_node(cpu));
+> > +                                                 sizeof(unsigned long),
+> > +                                         cpu_to_node(cpu));
+>
+> Ouch.
 
-I made the patch based on the latest dtschema code pulled from github.
-
-Also, I saw similar submissions as follows:
-https://lore.kernel.org/linux-pci/advhonmqnxm4s6r3cl7ll5y3jfc566fcjvetvlzvy7bztzetev@t75xmo5fktde/
-
-I don't know if Rob obtained this patch from here and then applied it to 
-the dtschema project? Is there still a special process to submit this patch?
-
-
-Dear Rob,
-
-Can you apply this patch directly to the dtschema project?
-
-Best regards,
-Hans
-
-> - Mani
-> 
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/dtschema/schemas/pci/pci-bus-common.yaml b/dtschema/schemas/pci/pci-bus-common.yaml
->> index ca97a00..413ef05 100644
->> --- a/dtschema/schemas/pci/pci-bus-common.yaml
->> +++ b/dtschema/schemas/pci/pci-bus-common.yaml
->> @@ -121,7 +121,7 @@ properties:
->>         unnecessary operation for unsupported link speed, for instance, trying to
->>         do training for unsupported link speed, etc.
->>       $ref: /schemas/types.yaml#/definitions/uint32
->> -    enum: [ 1, 2, 3, 4 ]
->> +    enum: [ 1, 2, 3, 4, 5, 6 ]
->>   
->>     num-lanes:
->>       description: The number of PCIe lanes
->> -- 
->> 2.25.1
->>
-> 
-
+Someday we'll probably switch clang-format to 100 columns
 
