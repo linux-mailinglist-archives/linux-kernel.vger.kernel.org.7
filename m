@@ -1,167 +1,268 @@
-Return-Path: <linux-kernel+bounces-691883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADEDAADE9DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:25:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3777EADE9DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F40027A9DA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:23:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95260188EEBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAF829C35A;
-	Wed, 18 Jun 2025 11:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC26C29DB64;
+	Wed, 18 Jun 2025 11:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="PI3DPhEu"
-Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQtJ8PqX"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A11029B221
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 11:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3606128000E;
+	Wed, 18 Jun 2025 11:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750245891; cv=none; b=PafweKuvZegrtphOeLdWTyfl2b7oYJk+fKLXF2wilGM6VkXRx2d5XtpAfm88HNH37IK9l8gekSlcATFNRlmYwXSFsLBDaqjRpp0LZBPdfeQHYiyiIa2Ss8pT2pdDFjc3scSLuAKPzxTDUfCgyYB8sAYGKV71NmnJDf7Ev5pcMKs=
+	t=1750245880; cv=none; b=Ep+UMlFSwHoMOs2Z1S/vJI4PeggoXpcMXEVa0hAgnjoTRs/Y3Bq0PF6JatV095qiqsUe5Uii2g78UVjnwXEXFA7A6goR/PnhEvePvf5wrId1HHVY0YuJ9qX4/s5akguAcG+X9YeWxiPMmafFUrUQ5IMR3rSYku9d3eXWXmX7d1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750245891; c=relaxed/simple;
-	bh=/O71vnYL2AmztOqSaMJx01um/n4HH/mPFxfjJa81TVg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=APpESTMHCrt2p3Ig6Snt/Z7l7hdNQneaX9nWohaj7vWOu+S/5fQ1B/3SVlHTAFh9PJdww7xDox0Ad11ITU8FfmVT0bnTECN1ZE5u7QsNVWVHOU0pyNzllI9XlDx0rDvx3N1HBECjuNG9PGAIeuV19DKs9FQezeeNLEaqf5uQsPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=PI3DPhEu; arc=none smtp.client-ip=78.40.148.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap5-20230908; h=Sender:MIME-Version:
-	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
-	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/O71vnYL2AmztOqSaMJx01um/n4HH/mPFxfjJa81TVg=; b=PI3DPhEuBIOvn8vdhiQMk3S3I0
-	71XjjmghhsiJ/ep2wBUjzuBnM68iEqmKcE4Gjh3BeSe+ExlA149vit7/6w32uvoDjjvYIEdX0d2w4
-	xfr9DEHNUAZCdT5pswqXHHxi0t/Xsjswo6cMqRInd1YEUuGJLatYjpXpRB8ddUhnxXIoAIKcqOj1c
-	uUw4JfqmmCEynPyhUY+52TPWHyABW6Avtko9hMFNUFDGB4y2ov0/u3eLg+oYCKtJ7vymE9z9D4Efy
-	ejWZINpAunrO7KisiZmeV3rJQGWpLRn87iJ5bLCllp3Qe3H73RUmzlB9YF84ICzgy2EK228rrkowI
-	N2MYeWHA==;
-Received: from [167.98.27.226] (helo=[10.35.4.135])
-	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1uRquA-004fJ6-3H; Wed, 18 Jun 2025 12:24:34 +0100
-Message-ID: <880890e699117e02d984ba2bb391c63be5fd71e8.camel@codethink.co.uk>
-Subject: Re: SCHED_DEADLINE tasks missing their deadline with
- SCHED_FLAG_RECLAIM jobs in the mix (using GRUB)
-From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: luca abeni <luca.abeni@santannapisa.it>, linux-kernel@vger.kernel.org, 
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vineeth Pillai	 <vineeth@bitbyteword.org>
-Date: Wed, 18 Jun 2025 12:24:33 +0100
-In-Reply-To: <aFFdseGAqImLtVCH@jlelli-thinkpadt14gen4.remote.csb>
-References: <ce8469c4fb2f3e2ada74add22cce4bfe61fd5bab.camel@codethink.co.uk>
-	 <aBTO3r6Py_emwf1Y@jlelli-thinkpadt14gen4.remote.csb>
-	 <f532441d8b3cf35e7058305fd9cd3f2cbd3a9fac.camel@codethink.co.uk>
-	 <20250507222549.183e0b4a@nowhere>
-	 <92690eb9158c1019dc0945f8298800cad17cae05.camel@codethink.co.uk>
-	 <20250523214603.043833e3@nowhere>
-	 <c91a117401225290fbf0390f2ce78c3e0fb3b2d5.camel@codethink.co.uk>
-	 <aDgrOWgYKb1_xMT6@jlelli-thinkpadt14gen4.remote.csb>
-	 <8d6dd3013b05225541821132398cb7615cdd874e.camel@codethink.co.uk>
-	 <aFFdseGAqImLtVCH@jlelli-thinkpadt14gen4.remote.csb>
-Organization: Codethink
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (by Flathub.org) 
+	s=arc-20240116; t=1750245880; c=relaxed/simple;
+	bh=7ACZf7bBeGAcZRWIxVGihw+TZKw06M2AlWWMsxJonvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rlazsFU8H3/qIVmMrWlxfObfQkHxqZEf8cJJjotIn0rIXesOCO8F7lK+4fjA4TJ4ajVIF9fCJBWSw1HuSs4JExTzCn1XhPuAvh+i9IZFq7sU+d/LNinquDJxr7oSKO9/JLv/V2X+414Pzh7k8t/687r5t5EgBWdMSUVCHVWwGec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQtJ8PqX; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a582e09144so1953425f8f.1;
+        Wed, 18 Jun 2025 04:24:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750245876; x=1750850676; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fPWMD5GnnTJDibzdh+mzKkJMnzYLCpJuUgnOjbrn81Q=;
+        b=OQtJ8PqXCRDyVK8z+dzYklh3a3ekeYxnYSgS8VhjFvHo56hp4S5lo7P1dQcdKqqy6r
+         LXaHfEm/tc7q5hob1xCpnpFP5t/YrQGDzYhgGqr7aUhWruksHjltfJcxwDo7LmkLEhV6
+         zJ4gSyg0swpkhQ1gLE6egcm0AmqlHd8hrp2o6Pq2Oja5bQim2zr0REO4DF2mtcuW4LPR
+         F7Y0ErRvIiq5BICmD3e4BiPW9BtMelxLDojzy7bo51kPwwmpuudL8DUadH/lbR/coVpf
+         hfL9Gbp/l9R0FAeUi+djfnhIHf16Ls8Y4mXXgfqkSl9iHLwRXDF2+5Epnx/dsGvuufks
+         uxaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750245876; x=1750850676;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fPWMD5GnnTJDibzdh+mzKkJMnzYLCpJuUgnOjbrn81Q=;
+        b=c2XBlD4wpgzebc2gX55oUXm2BQZWW5AOba/7ZvtGxgR/IT74isdPcCt5HHksYbsej+
+         CZIQe9hq1g2d/EfVbNzwnOhKtOFQt9+qsFDZM6vS3GacWccnib6dTnFhnihWAwJIV1Lw
+         K0x87GBdJEVw7TP5eDc1iGxK/yoCi2Crd57SNSmJgdBqPfjk4v3othDkdHpFw2+2kMr4
+         0qVonrq2iv8X4U4VcHdgKvc38gefyhUHBTBxOI/I1amTmcX1yR7S+K2ojg63S7KGL8Q6
+         j9eeOR1soKosKx/80mLDuhNtiPT1OezomSGqpTX7vGsVwitjcmKTzq0dPvmCPaTrKhdn
+         pYEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOzEf6dnea1cV5ypskNmdf3ZIBZfdr4KMyg4SNzDkLZ/ElmlLsRrC3ljsUqcA/nuoJAQg=@vger.kernel.org, AJvYcCXUrPUuGyZ/1We2mTkJ4DnXyXh9HYae5Zry6bzAyMDD5vkDXkXyR3Xlg8k1E/JqRXLjTKLGYF5TE/6ttFvo@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFOQhOlo9U7bEgOAJgabGPhYMPRguiF/cmetKHJlaxtj79OO5N
+	cjrtQZ1YYy1RrzM2j1zehZvI/OZhYc6yGRv7o+xdeCYd5dkgrIQ9ECY=
+X-Gm-Gg: ASbGncsdanD93tmpkRvFvkz7yPrZykfP4Z2BBLP47V6uS9z1NwjE5xiQWnwDv7x/qfZ
+	6jWN+rWyKLS4rrmEa9LWzpphepSIxxj3tPdZ8KIS6QW68UYWHjkQNzHAlahh24PZDoGn9StUWDF
+	u3MZXcbCKbkaeWyM/Aa1oZxnZEaYrWKz6LxaPvUTGMOyH3CGTGf3ec/gZUjJs4s1tMGCgQkmExB
+	w6n0kWWk+YJWQ+WnDSvqiXaNXd3iwpSv3TGIsWHQHROhjqJzu1EvriV2LM+wu+YyWvoi2l9e2Zi
+	f31mCDBdcEFA849Yc+dNaG1gtI8g0JK8zUkejSmTSN6xQ57+ZvLd9X8WM3Adf08TlMQC5phwMo2
+	GniHPUWAtVSuWfpU2cYBh6pYdWg==
+X-Google-Smtp-Source: AGHT+IFr9nIlOeyDXs/NnvoTCm2pWEILjPkDMo4Gn/hyt9XzDRoeC8fpAgei+rZyezV9G+4iEDrVNQ==
+X-Received: by 2002:a05:6000:2010:b0:3a4:f70d:8673 with SMTP id ffacd0b85a97d-3a57237dc6cmr14609605f8f.25.1750245876169;
+        Wed, 18 Jun 2025 04:24:36 -0700 (PDT)
+Received: from localhost (ast-epyc5.inf.ethz.ch. [129.132.161.180])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a7ddefsm16701542f8f.39.2025.06.18.04.24.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 04:24:35 -0700 (PDT)
+Date: Wed, 18 Jun 2025 13:24:34 +0200
+From: Hao Sun <sunhao.th@gmail.com>
+To: Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>
+Cc: ast@kernel.org, m.shachnai@rutgers.edu, srinivas.narayana@rutgers.edu,
+	santosh.nagarakatte@rutgers.edu,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] bpf, verifier: Improve precision for BPF_ADD and
+ BPF_SUB
+Message-ID: <20250618112339.ezhjt25lnztck6ye@ast-epyc5.inf.ethz.ch>
+Mail-Followup-To: Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>,
+	ast@kernel.org, m.shachnai@rutgers.edu,
+	srinivas.narayana@rutgers.edu, santosh.nagarakatte@rutgers.edu,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250617231733.181797-1-harishankar.vishwanathan@gmail.com>
+ <20250617231733.181797-2-harishankar.vishwanathan@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: marcel.ziswiler@codethink.co.uk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250617231733.181797-2-harishankar.vishwanathan@gmail.com>
 
-Hi Juri
+On Tue, Jun 17, 2025 at 07:17:31PM -0400, Harishankar Vishwanathan wrote:
+[...]
+> 
+> There are three cases to consider when adding two u64 ranges [dst_umin,
+> dst_umax] and [src_umin, src_umax]. Consider a value x in the range
+> [dst_umin, dst_umax] and another value y in the range [src_umin,
+> src_umax].
+> 
+> (a) No overflow: No addition x + y overflows. This occurs when even the
+> largest possible sum, i.e., dst_umax + src_umax <= U64_MAX.
+> 
+> (b) Partial overflow: Some additions x + y overflow. This occurs when
+> the largest possible sum overflows (dst_umax + src_umax > U64_MAX), but
+> the smallest possible sum does not overflow (dst_umin + src_umin <=
+> U64_MAX).
+> 
+> (c) Full overflow: All additions x + y overflow. This occurs when both
+> the smallest possible sum and the largest possible sum overflow, i.e.,
+> both (dst_umin + src_umin) and (dst_umax + src_umax) are > U64_MAX.
+> 
+> The current implementation conservatively sets the output bounds to
+> unbounded, i.e, [umin=0, umax=U64_MAX], whenever there is *any*
+> possibility of overflow, i.e, in cases (b) and (c). Otherwise it
+> computes tight bounds as [dst_umin + src_umin, dst_umax + src_umax]:
+> 
+> if (check_add_overflow(*dst_umin, src_reg->umin_value, dst_umin) ||
+>     check_add_overflow(*dst_umax, src_reg->umax_value, dst_umax)) {
+> 	*dst_umin = 0;
+> 	*dst_umax = U64_MAX;
+> }
+> 
+> Our synthesis-based technique discovered a more precise operator.
+> Particularly, in case (c), all possible additions x + y overflow and
+> wrap around according to eBPF semantics, and the computation of the
+> output range as [dst_umin + src_umin, dst_umax + src_umax] continues to
+> work. Only in case (b), do we need to set the output bounds to
+> unbounded, i.e., [0, U64_MAX].
+> 
+ 
+In case anyone is interested, the above (case c) can also be proved by
+the following SMT formula directly, which may ease the reasoning here:
 
-On Tue, 2025-06-17 at 14:21 +0200, Juri Lelli wrote:
-> On 02/06/25 16:59, Marcel Ziswiler wrote:
-> > Hi Juri
-> >=20
-> > On Thu, 2025-05-29 at 11:39 +0200, Juri Lelli wrote:
->=20
-> ...
->=20
-> > > It should help us to better understand your setup and possibly reprod=
-uce
-> > > the problem you are seeing.
->=20
-> OK, it definitely took a while (apologies), but I think I managed to
-> reproduce the issue you are seeing.
+```
+; ================================================================
+;  Unsigned 32- and 64-bit interval addition & subtraction
+;  with wrap-around semantics and endpoint overflow / underflow.
+; ================================================================
+(set-logic ALL)
 
-No need to apologies, I know how hard it can be trying to bring up random s=
-tuff in the Linux world : )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ----------  u32  (32-bit)  ----------
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(declare-const l0_32 (_ BitVec 32))
+(declare-const h0_32 (_ BitVec 32))
+(declare-const l1_32 (_ BitVec 32))
+(declare-const h1_32 (_ BitVec 32))
 
-> I added SCHED_FLAG_RECLAIM support to rt-app [1], so it's easier for me
-> to play with the taskset and got to the following two situations when
-> running your coreX taskset on CPU1 of my system (since the issue is
-> already reproducible, I think it's OK to ignore the other tasksets as
-> they are running isolated on different CPUs anyway).
->=20
-> This is your coreX taskset, in which the last task is the bad behaving on=
-e that
-> will run without/with RECLAIM in the test.
->=20
-> > sched_deadline =3D sched_period | sched_runtime | CP max run time 90% o=
-f sched_runtime | utilisation |
-> > reclaim |
-> > -- | -- | -- | -- | -- |
-> > =C2=A05 ms=C2=A0 | 0.15 ms | 0.135 ms |=C2=A0 3.00% | no |
-> > 10 ms=C2=A0 | 1.8 ms=C2=A0 | 1.62 ms=C2=A0 | 18.00% | no |
-> > 10 ms=C2=A0 | 2.1 ms=C2=A0 | 1.89 ms=C2=A0 | 21.00% | no |
-> > 14 ms=C2=A0 | 2.3 ms=C2=A0 | 2.07 ms=C2=A0 | 16.43% | no |
-> > 50 ms=C2=A0 | 8.0 ms=C2=A0 | 7.20 ms=C2=A0 | 16:00% | no |
-> > 10 ms=C2=A0 | 0.5 ms=C2=A0 | **1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 =
-5.00% | no |
->=20
-> Without reclaim everything looks good (apart from the 1st tasks that I
-> think suffers a bit from the granularity/precision of rt-app runtime
-> loop):
->=20
-> https://github.com/jlelli/misc/blob/main/deadline-no-reclaim.png
+; Well-formed input ranges
+(assert (bvule l0_32 h0_32))
+(assert (bvule l1_32 h1_32))
 
-Yeah, granularity/precision is definitely a concern. We initially even star=
-ted off with 1 ms sched_deadline =3D
-sched_period for task 1 but neither of our test systems (amd64-based Intel =
-NUCs and aarch64-based RADXA
-ROCK5Bs) was able to handle that very well. So we opted to increase it to 5=
- ms which is still rather stressful.
+; ----- Addition -----
+(define-fun lowSum32  () (_ BitVec 32) (bvadd l0_32 l1_32))
+(define-fun highSum32 () (_ BitVec 32) (bvadd h0_32 h1_32))
 
-> Order is the same as above, last tasks gets constantly throttled and
-> makes no harm to the rest.
->=20
-> With reclaim (only last misbehaving task) we indeed seem to have a proble=
-m:
->=20
-> https://github.com/jlelli/misc/blob/main/deadline-reclaim.png
->=20
-> Essentially all other tasks are experiencing long wakeup delays that
-> cause deadline misses. The bad behaving task seems to be able to almost
-> monopolize the CPU. Interesting to notice that, even if I left max
-> available bandwidth to 95%, the CPU is busy at 100%.
+; Both endpoint sums overflow (wrap) ⇒ result < first addend
+(assert (bvult lowSum32  l0_32))
+(assert (bvult highSum32 h0_32))
 
-Yeah, pretty much completely overloaded.
+; Soundness of addition
+(assert
+  (forall ((x (_ BitVec 32)) (y (_ BitVec 32)))
+    (=> (and (bvule l0_32 x) (bvule x h0_32)
+             (bvule l1_32 y) (bvule y h1_32))
+        (and (bvule lowSum32  (bvadd x y))
+             (bvule (bvadd x y) highSum32)))))
 
-> So, yeah, Luca, I think we have a problem. :-)
->=20
-> Will try to find more time soon and keep looking into this.
+; ----- Subtraction -----
+(define-fun lowDiff32  () (_ BitVec 32) (bvsub l0_32 h1_32))
+(define-fun highDiff32 () (_ BitVec 32) (bvsub h0_32 l1_32))
 
-Thank you very much and just let me know if I can help in any way.
+; Both endpoint differences underflow ⇒ result > minuend
+(assert (bvugt lowDiff32  l0_32))
+(assert (bvugt highDiff32 h0_32))
 
-> Thanks,
-> Juri
->=20
-> 1 - https://github.com/jlelli/rt-app/tree/reclaim
+; Soundness of subtraction
+(assert
+  (forall ((x (_ BitVec 32)) (y (_ BitVec 32)))
+    (=> (and (bvule l0_32 x) (bvule x h0_32)
+             (bvule l1_32 y) (bvule y h1_32))
+        (and (bvule lowDiff32  (bvsub x y))
+             (bvule (bvsub x y) highDiff32)))))
 
-BTW: I will be talking at the OSS NA/ELC next week in Denver should any of =
-you folks be around.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ----------  u64  (64-bit)  ----------
+;; Basically the same as above but for u64
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(declare-const l0_64 (_ BitVec 64))
+(declare-const h0_64 (_ BitVec 64))
+(declare-const l1_64 (_ BitVec 64))
+(declare-const h1_64 (_ BitVec 64))
 
-Cheers
+; Well-formed input ranges
+(assert (bvule l0_64 h0_64))
+(assert (bvule l1_64 h1_64))
 
-Marcel
+; ----- Addition -----
+(define-fun lowSum64  () (_ BitVec 64) (bvadd l0_64 l1_64))
+(define-fun highSum64 () (_ BitVec 64) (bvadd h0_64 h1_64))
+
+(assert (bvult lowSum64  l0_64))
+(assert (bvult highSum64 h0_64))
+
+(assert
+  (forall ((x (_ BitVec 64)) (y (_ BitVec 64)))
+    (=> (and (bvule l0_64 x) (bvule x h0_64)
+             (bvule l1_64 y) (bvule y h1_64))
+        (and (bvule lowSum64  (bvadd x y))
+             (bvule (bvadd x y) highSum64)))))
+
+; ----- Subtraction -----
+(define-fun lowDiff64  () (_ BitVec 64) (bvsub l0_64 h1_64))
+(define-fun highDiff64 () (_ BitVec 64) (bvsub h0_64 l1_64))
+
+(assert (bvugt lowDiff64  l0_64))
+(assert (bvugt highDiff64 h0_64))
+
+(assert
+  (forall ((x (_ BitVec 64)) (y (_ BitVec 64)))
+    (=> (and (bvule l0_64 x) (bvule x h0_64)
+             (bvule l1_64 y) (bvule y h1_64))
+        (and (bvule lowDiff64  (bvsub x y))
+             (bvule (bvsub x y) highDiff64)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(check-sat)
+(exit)
+```
+
+Both cvc5 and z3 can prove the above, and one can try this and expect
+it producing SAT on:
+https://cvc5.github.io/app/#temp_a95e25c4-88c5-4257-96c8-0bd74125b179
+
+In addition, the unsoundness of partial case-b can also be proved by
+the following formula, and the counter examples generated may be used
+as test cases if needed:
+https://pastebin.com/raw/qrT7rC1P
+
+Regards
+Hao
 
