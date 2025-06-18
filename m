@@ -1,120 +1,97 @@
-Return-Path: <linux-kernel+bounces-692911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6644ADF87E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 23:10:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D0C1ADF873
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 23:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E56D4A3E47
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:10:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9EB1BC3B15
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84421267F48;
-	Wed, 18 Jun 2025 21:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99F1262FE2;
+	Wed, 18 Jun 2025 21:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RdAjw1GQ"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="XEMaxdj7"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1C9267AF1
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 21:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5EE260576
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 21:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750280961; cv=none; b=k//C6CAPRVgjiaVT5CHGjIiTg/2LcTdRLZ5q4vriHS7+p6/9YU6v6MNC5Ja/05wJ66oLXHjIffPe3ELCKF1pGOHMec/F+MFzUnis4DqQRetDm3QmsObgwxntmK9SA2BEWIxTcQ+7cZ5oOww9LTZCfP6yP7X6pYoX5uIH6/9kXY0=
+	t=1750280946; cv=none; b=R37oNsh0RJMhnmUfKpAxWFpurK5evjamiZDW8wuhhFq+/r0pP3Qx6yEh6BbXTTUNlyCFqB1gAFj1Erxyzz82JGtNhjG7YdIaBHgPZTCCVZTotmzM09xlPFK22AfnYp+EwCFBN9PdUsicUfDJkeORcKbJYkx9PH+dA9SX9J4HaAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750280961; c=relaxed/simple;
-	bh=FXb5Ooh1SoKLFB+GF1YDuF7hepy8ALKLUWQZf6h1mvk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Yaq3N8/nDM7sVczv+n4kyZSd72qnor/+8dWT0wjHYshqOv6DJYOuv4lL/smP8OOWWuzFqNln00hStcMbm6H3+wgQWSuWZ3i+VYwi4fnKnUdOK2XpgUZ0koxgKo+GjfYF8HYxR0HV4f0HAIGESbCN9Hedzic2ovd6ZaQRR78jd28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RdAjw1GQ; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2eb60594e8so84579a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 14:09:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750280959; x=1750885759; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qsGE8lw3KH/D0SLaONE7VxsA+KaDyJNSSOZHiKLjPmQ=;
-        b=RdAjw1GQmLoiyB5hyBWcoD6R85Y3CXu2kO+sDt4EqJyZ90b2OR1BX4X3L1y/TIzcKy
-         AZybyR8UqNGNeSuS6g92UWfkVp8pT3BEVbDdZlNYaBu03cZ1sQYW4P+po4N3CaHZ6lEK
-         DhgQyCus9rYpO3BddekEPyvvTbowtR69DzNXjX88kTOr6A1Snk/8OsEnswpmD2bGJR74
-         2NSF1udqTKaDhN9exgpRSPgWxo6CL05EhbPj57dztADmLwG91OhHkvo/l03RCjDK0KOs
-         xQ6bL9b2cygCvtrURtKTJ9xYcFdp3hHKaifOkoA0FsXWjlObeo6JR/nKDrViEdV+rZS0
-         7Sgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750280959; x=1750885759;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qsGE8lw3KH/D0SLaONE7VxsA+KaDyJNSSOZHiKLjPmQ=;
-        b=OI8OixJVzJ9dlHI+MHJ6XcF7hKnCxeV6xz3Devaj5hD6TH9mqa2VUqasb+3LwP2vMu
-         Qww7raG+cwf1FReCZ7UqFrIDjCnrWihuNF637omR1A3scHjwU6w2D0j7kxLZ3IVwaC4+
-         1ZfWwJvOt5aE4IlJzhN5SMizW14zIyUxuF/0L0VEnYfk73Qqbj62zxq7PFTN3CePjo7x
-         eghjYJYHzNNrlbQkDmqEY3a8o/a+qegLUFS2jIshmFeD792P+rUlQ0yyYaeyRyFvRgpc
-         5kVBVXFlJeozawNBMFfwXthGr9DeNHnha5bA/96YAk6UuoMw7WEKC5c6Aqddh12lHPIm
-         //Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUY2KLRzImxJYmDu4MkoVx1MwJTkYMc3NLWEKqqP9ywwM96UdFX3PwsYAVYl/yvdJ6yTAgShwmEyReLEX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPWMBuZLfG5qO5UU6Hc3kEeACEs06iV3NGyCWt2HuOMGIeN8I7
-	PhxrfY0cIFPuduejSrAyhfm/1Hs8Oz+Rt5ZklsngQU+cLxaRiqjEHKECrYolJY1gO6HfkLD1ryP
-	joKY+kqox9cLILe48TPMCaiKZiWWVhw==
-X-Google-Smtp-Source: AGHT+IGY3GT0ocfBJmJq08AJGD95U1laah8rswBwXGAH9V+lUNOhBR7Cym5NnrFN413oXgb7BGxavodvCRnnP6tKZZo=
-X-Received: from pfbjs2.prod.google.com ([2002:a05:6a00:9182:b0:748:da37:7e37])
- (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:790:b0:1f5:7f56:a649 with SMTP id adf61e73a8af0-21fbd57fc15mr29674578637.13.1750280959620;
- Wed, 18 Jun 2025 14:09:19 -0700 (PDT)
-Date: Wed, 18 Jun 2025 14:08:43 -0700
-In-Reply-To: <20250618210851.661527-1-willmcvicker@google.com>
+	s=arc-20240116; t=1750280946; c=relaxed/simple;
+	bh=Sz6aQbaQwZIG9liuFsaksla45UWFZygI4wPqJGpKwFw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tFsmI8GG92fVjKlgnSJhMc+2ImZFupaCQdSky18ZBDJ4LSetz1ud4xoBrp+TW21OJFmozyNx490pK+ObluMCvIwZnqCnXbxTEFtEzDI7JEdZoUBO7iBq4UT/mR6TBmgD8V940QogC6IhMPsCqpXjUJwvyiXVOJOT/45ZLEQQ52o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=XEMaxdj7; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=Sz6aQbaQwZIG9liuFsaksla45UWFZygI4wPqJGpKwFw=;
+	t=1750280944; x=1751490544; b=XEMaxdj7ehLh7VfQYEOLQl84rpJ1P8StYXlylo76JOtjKiC
+	r8ePWBcd+UU51CVgeB2t/AbeNPOlqZUvWIUgatCjMKm8odvEjbD/PyKyjqzldVREGqZ1ppeTW/Box
+	Fq+4kVM++pNJX4uANeKlmwz3dEJ8BHPVwqS+uCt8pRIeM4Ql8u2Xb/gPwTLriHh5qiBwggzYIohxv
+	ZNtG/moiLwXvDmAvdysL6CfVLervLzbgCCldbwToc2RIk1JwzevkuH081nRiYR2l9mNgGJaYSuGVb
+	fTr+/5SqI9U8aG/x816kUkmUHWLybOOiCiL7HxmdFoRJKVQgPsTbRiMwZ5hJRvZw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uS01j-0000000GyqB-3MMy;
+	Wed, 18 Jun 2025 23:09:01 +0200
+Message-ID: <8bdd635e6b8ba42b16f355f9d4ee67d5c2f8b47e.camel@sipsolutions.net>
+Subject: Re: [PATCH] scripts: gdb: move MNT_* constants to gdb-parsed
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Stephen Brennan <stephen.s.brennan@oracle.com>, 
+	linux-kernel@vger.kernel.org
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham
+ <kbingham@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>, Benjamin
+ Berg <benjamin.berg@intel.com>
+Date: Wed, 18 Jun 2025 23:08:58 +0200
+In-Reply-To: <a01d8c8e-21b7-488d-8fa2-0a8710bc1e9a@oracle.com>
+References: <20250618134629.25700-2-johannes@sipsolutions.net>
+	 <a01d8c8e-21b7-488d-8fa2-0a8710bc1e9a@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250618210851.661527-1-willmcvicker@google.com>
-X-Mailer: git-send-email 2.50.0.rc2.761.g2dc52ea45b-goog
-Message-ID: <20250618210851.661527-7-willmcvicker@google.com>
-Subject: [PATCH 6/6] arm64: exynos: Drop select CLKSRC_EXYNOS_MCT
-From: Will McVicker <willmcvicker@google.com>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>
-Cc: Will McVicker <willmcvicker@google.com>, Donghoon Yu <hoony.yu@samsung.com>, 
-	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	John Stultz <jstultz@google.com>, Youngmin Nam <youngmin.nam@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-malware-bazaar: not-scanned
 
-Since the Exynos MCT driver can be built as a module for some Arm64 SoCs
-like gs101, drop force-selecting it as a built-in driver by ARCH_EXYNOS
-and instead depend on `default y if ARCH_EXYNOS` to select it
-automatically. This allows platforms like Android to build the driver as
-a module if desired.
+On Wed, 2025-06-18 at 14:06 -0700, Stephen Brennan wrote:
+> On 6/18/25 06:46, Johannes Berg wrote:
+> > From: Johannes Berg <johannes.berg@intel.com>
+> >=20
+> > Since these are now no longer defines, but in an enum.
+> >=20
+> > Fixes: 101f2bbab541 ("fs: convert mount flags to enum")
+> > Reviewed-by: Benjamin Berg <benjamin.berg@intel.com>
+> > Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+>=20
+> The exact same change was already submitted and discussed here:
+>=20
+> https://lore.kernel.org/all/20250601055027.3661480-1-tony.ambardar@gmail.=
+com/
 
-Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
-Tested-by: Youngmin Nam <youngmin.nam@samsung.com>
-Signed-off-by: Will McVicker <willmcvicker@google.com>
----
- arch/arm64/Kconfig.platforms | 1 -
- 1 file changed, 1 deletion(-)
+Oh, I missed that, sorry.
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index a541bb029aa4..46825b02d099 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -109,7 +109,6 @@ config ARCH_BLAIZE
- config ARCH_EXYNOS
- 	bool "Samsung Exynos SoC family"
- 	select COMMON_CLK_SAMSUNG
--	select CLKSRC_EXYNOS_MCT
- 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
- 	select EXYNOS_PMU
- 	select PINCTRL
--- 
-2.50.0.rc2.761.g2dc52ea45b-goog
+> I don't know what tree this would go through, so I can't tell whether it
+> was picked up or not. But I think there's consensus that it's a good
+> fix, and several folks have written or reviewed the change.
 
+It looks like previously Andrew picked up patches to this which is why I
+Cc'ed him, but I'm perfectly happy for that other patch (or mine) to
+take any path available :)
+
+johannes
 
