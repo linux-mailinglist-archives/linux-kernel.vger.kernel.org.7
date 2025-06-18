@@ -1,157 +1,305 @@
-Return-Path: <linux-kernel+bounces-691076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD5CADDFF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 02:25:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE6FADE006
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 02:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E29C7A9316
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 832AC1894EEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 00:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA68A94F;
-	Wed, 18 Jun 2025 00:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1C47261B;
+	Wed, 18 Jun 2025 00:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BORxnhy4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XBWyivqX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A722F5301
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 00:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750206348; cv=none; b=ZMWAQ1XRKw16Ncgnl9v4R7bamjv7z7EQf2Vtjg8xFD2IL4faZXnX6QnbrArQ2Tvur/ds0QfdJSd+PDAKAYfoigEIlTZNHos8NBvjRg/jXfX5i9Bcbcrf+pVKc3CA98yiZMwFNueZEzPNmZ1p5hpqhDlPpTHTwxVWQfyC+a3DWx8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750206348; c=relaxed/simple;
-	bh=grNSdOh7xltwFNxLMxeS/rpygzEfyl+lh904ZKR+HhA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=gHs50EEMM9tC7dyzf60ngxSkn76xG5elVR0SJeTEh/hDsjUIQxhke6DkGbexTH6ljS0etVVC7Rtoqm/1SPNHRf9yBYfSnki3eaZNM2xtsRrKvs8Oiml48Unv4PNVEfKhx5U519/VX2TnmJEDNuz1d0WWiV9U6Kc7WJ+6Bfb+f5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BORxnhy4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C8E5C4CEE3;
-	Wed, 18 Jun 2025 00:25:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1750206348;
-	bh=grNSdOh7xltwFNxLMxeS/rpygzEfyl+lh904ZKR+HhA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BORxnhy4BuuGukVUZdMqQ65TPjm3pQsgu5w7kMNTfGP2+P951TGchMDUjzcyuxtWZ
-	 H3gALD8kHa9AFEL69dJ1QJVmLPvCYEJMr8/9LIf7Ko4b7PBR3NTcUQ9NCxnSX6uv0p
-	 pX33s74HN622kx50CUGLJDgrqIXHzQAWzBbczZak=
-Date: Tue, 17 Jun 2025 17:25:47 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Zhiguo Jiang <justinjiang@vivo.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- opensource.kernel@vivo.com
-Subject: Re: [PATCH] mm: rt-threads retry mempool allocation without delay
-Message-Id: <20250617172547.25af99b0f195379f6d6df9f8@linux-foundation.org>
-In-Reply-To: <20250617091044.1062-1-justinjiang@vivo.com>
-References: <20250617091044.1062-1-justinjiang@vivo.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1837DA932;
+	Wed, 18 Jun 2025 00:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750206863; cv=fail; b=dRe3giRWEKkX4Q4uRr2qAX92X0L/mLX5fDRFfj0yIcJyKk9eaGtoYvt80YkX+zALF+clOK7ycZMPiBhHOl1sWhaw4D42WWrG7XWPUwsuy2JCrb71hqsrI9V8oMXEr8VmXJi/t3SaS/k+po3jCy2f2qckyZTxeHgbt/JwH7+gsXE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750206863; c=relaxed/simple;
+	bh=+bDQxKVkM4FFy4QaK1Nj7oPu5v62iKXftnM+WWJKdBA=;
+	h=Date:From:To:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=cHy0XxQi/ejqzlPxxemgbMAPI5l7jpI4QlqdulLet/gfwU4p94xONFV7xrfE0IOxRfhdNsGw/ZHJnHQZ3nW817WlyiQIlMzkhhTQzUwSVupdZ9unzncvFqn4yT6v0n92WnlaB+VmWFXXdpXjlvqVeQQmO8ASKVy+AKKkr5tJ9Ik=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XBWyivqX; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750206862; x=1781742862;
+  h=date:from:to:subject:message-id:reply-to:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=+bDQxKVkM4FFy4QaK1Nj7oPu5v62iKXftnM+WWJKdBA=;
+  b=XBWyivqX225pZa8xC8nhVI6ifUtWxyfInaWlZmK4zBOGSIvgLz5FWxnC
+   rimnxqWIlcR1gD8+Il1/aPMl2ZD9fgpap0buQx4c1Via0b6pckKLso6Xb
+   GAFL4dXn9MfQIbHMpKP7WRUIL1vKUTpFt1324PEJM5jACRaE6BwquVJOm
+   KQY7qaA2cPOv2cjdwsRGqEiASpBeS2/laepbZKfOwljNRWVLgHl6D9qTa
+   OumqpCUuW8eGStv4mfre5FHIe7rJ34WU6eUAl7XYmcFH2K+s1z+mJn7u0
+   9cxS3VyvdbJAxhPmOO5+dxvTx/DzLvx0rKw/aDNduOY5J/08wvpgE87iC
+   g==;
+X-CSE-ConnectionGUID: dm1EF0c/Qpm5TMsbIHh8Mw==
+X-CSE-MsgGUID: XcpobGEqTceCEOfvTwQWYQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="52322265"
+X-IronPort-AV: E=Sophos;i="6.16,244,1744095600"; 
+   d="scan'208";a="52322265"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 17:34:16 -0700
+X-CSE-ConnectionGUID: K4PmkHNSReWSv/YBq7ChOQ==
+X-CSE-MsgGUID: gJHxAvIxRxO4EqDQ/Em/Kw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,244,1744095600"; 
+   d="scan'208";a="154469468"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 17:34:05 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 17 Jun 2025 17:34:04 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 17 Jun 2025 17:34:04 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.65)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 17 Jun 2025 17:34:04 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CzoFZRmpF2GqQXjvLJ3BeL+kfIqwlanJJOnE7EyPpmNkdaUF6kjYvxS34IImKJxvj3cXZRV/mY8Jq43JQxS9irzxlDzU1pXMGt2wN3CfyeKe06q56Drvhyv9BDbKgzPjPQt/cEujdnE54ZKXhshcz2dZ39fNfTNwIvGCYr6lLLAxuIK/SwDXhDQehgqD8CRKd0RPoeP9Nj/sNxnlf2v1dSzKXDZwVq8AoVd8oTZHX84npLPmz/mBBG59sN52EWVKtcMqm2Gw+n3a38sC9oXc+k2z71fzfTHyWPr603Z3sPD2awyqnB22oUd8s3bAStt4cWrnbWM82CPJYbmaM2+dgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=q9OBPTEPTvEWj7SRLvQwDQQFhljgxwB4pK1/5RA1bhw=;
+ b=CCcsSNiV95vjziOEv/S6PAHJx3jWummObRlvigsruBPBOBYZSIcRr+6MLcm4DtbY7MjcZS/wikAPy5P7AIhhAciwC/o6V9Dyw0HqI2d0M7njMxCtFtvZ3/H/m4ujVIbku05LXOcLJzqf83oQhbiq+Oq69fCNFyCSwjlYZHfaiu5Gghzc93U+PnfByhLkP4vhu98NyqhCUU/XTGzflrdeyvxHOdUpZ9J5yqwErPwYwsm6cp+96HMS746Y3JJCMq0kOMdk7/WoWl+XALzcoarCQFzubKeC2qBdE9HVh+LBTxj9pMzaDfBaMgM51yn86Jc4Ch3hLhOE1Ma++6HYcPmlBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ SJ0PR11MB6744.namprd11.prod.outlook.com (2603:10b6:a03:47d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Wed, 18 Jun
+ 2025 00:33:12 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%5]) with mapi id 15.20.8835.027; Wed, 18 Jun 2025
+ 00:33:12 +0000
+Date: Wed, 18 Jun 2025 08:30:41 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "Du, Fan"
+	<fan.du@intel.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, "Huang, Kai"
+	<kai.huang@intel.com>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>,
+	"Hansen, Dave" <dave.hansen@intel.com>, "david@redhat.com"
+	<david@redhat.com>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+	"vbabka@suse.cz" <vbabka@suse.cz>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
+	"Shutemov, Kirill" <kirill.shutemov@intel.com>, "michael.roth@amd.com"
+	<michael.roth@amd.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
+	"Peng, Chao P" <chao.p.peng@intel.com>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "Weiny, Ira" <ira.weiny@intel.com>, "Yamahata, Isaku"
+	<isaku.yamahata@intel.com>, "binbin.wu@linux.intel.com"
+	<binbin.wu@linux.intel.com>, "ackerleytng@google.com"
+	<ackerleytng@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"Annapurve, Vishal" <vannapurve@google.com>, "tabba@google.com"
+	<tabba@google.com>, "jroedel@suse.de" <jroedel@suse.de>, "Miao, Jun"
+	<jun.miao@intel.com>, "pgonda@google.com" <pgonda@google.com>,
+	"x86@kernel.org" <x86@kernel.org>
+Subject: Re: [RFC PATCH 09/21] KVM: TDX: Enable 2MB mapping size after TD is
+ RUNNABLE
+Message-ID: <aFIIsSwv5Si+rG3Z@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <d9bf81fc03cb0d92fc0956c6a49ff695d6b2d1ad.camel@intel.com>
+ <aEt0ZxzvXngfplmN@google.com>
+ <4737093ef45856b7c1c36398ee3d417d2a636c0c.camel@intel.com>
+ <aEt/ohRVsdjKuqFp@yzhao56-desk.sh.intel.com>
+ <cbee132077fd59f181d1fc19670b72a51f2d9fa1.camel@intel.com>
+ <aEyj_5WoC-01SPsV@google.com>
+ <4312a9a24f187b3e2d3f2bf76b2de6c8e8d3cf91.camel@intel.com>
+ <aE+L/1YYdTU2z36K@yzhao56-desk.sh.intel.com>
+ <ffb401e800363862c5dd90664993e8e234c7361b.camel@intel.com>
+ <aFC8YThVdrIyAsuS@yzhao56-desk.sh.intel.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aFC8YThVdrIyAsuS@yzhao56-desk.sh.intel.com>
+X-ClientProxiedBy: SI2P153CA0028.APCP153.PROD.OUTLOOK.COM (2603:1096:4:190::9)
+ To DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SJ0PR11MB6744:EE_
+X-MS-Office365-Filtering-Correlation-Id: d29fe739-a43b-4f7f-80f2-08ddadffb518
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014|921020;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?FgDr527Pe2mQqX+2dnFOQD+zrFKNf36Ge7shsvmvvIHAIy325laQWaEn3s?=
+ =?iso-8859-1?Q?J3cboNvcWdOSPDNBLefJPmChtcMSO4F6lGyNTIu33xD994c0EWkNhhTmYb?=
+ =?iso-8859-1?Q?cfCgvNPTuy99rvJ4ExRJ5pzU/0ZELFf+gqc06tRzs3WrlKcuoSfnLJhDcx?=
+ =?iso-8859-1?Q?IU7gznuCDnhilXRY1xq8CMpv7yQbip0W0VkKtqMJGRyWjYT2pzg7SklKYQ?=
+ =?iso-8859-1?Q?csJ6dF4t7B5gEin6agZdXl+l/akqMSOXtLt9pCajl4qxgFi4BXGXPKnU9p?=
+ =?iso-8859-1?Q?YdYTzH3jQaCiikBHNmu6TwbYmCgTihFxwjQbSVyOUUi3FOQ9LkJwnpyTAV?=
+ =?iso-8859-1?Q?kltrtNyCcX+EdlGfcOc6HOKPzS2z7lGwipEGN4OuojUl02uZTqje6EUW8I?=
+ =?iso-8859-1?Q?b6pFUUrrlT1nyUa3WzsU0029M97TtDZsgbHQodmYSl4evZygGOw3FwFV+M?=
+ =?iso-8859-1?Q?GkCW3cL1wn0jEhP6xvqRZ9EYOrhK06TZNx+ydG2kcTCLROvO3nfqfWO0O2?=
+ =?iso-8859-1?Q?+/jQqp4XFs2ezAOGxC+lWc40vdY4uQ5Ki4JCN92pm8teQp7yYUMkA7b6Bk?=
+ =?iso-8859-1?Q?k1OtMpwKiiHO2Qck1hSdg/xZE0lt1wdzcDuigpaKCiSHjC+1G6sMg491Nv?=
+ =?iso-8859-1?Q?UWdoIRMyECQILA5cPZCaPn7ES65p6bS4zvq7ylIvOE5vqIjbE/jZJJukI7?=
+ =?iso-8859-1?Q?kq552GHwkwYIgJ/zg6S+yz0JV4ysxwR/EWeHwzBQ77e+EKsP7zjJh0WXmb?=
+ =?iso-8859-1?Q?QdU6at4PT25Onz8HOBvPBfDtiPBUmLACe2GhBGtQNY1AyFo6O/ENtkY/1R?=
+ =?iso-8859-1?Q?HZAlM4mNT/t5jj67Vh3FN0iOUUCgPu7E3rnXTl2GrBy+3P7+s4v3NmCYS6?=
+ =?iso-8859-1?Q?e/zovSSLgBWzNzMgcdRon/xjoOaaonksOf+7dYErVY8eVqZ9o5s8bQbsW4?=
+ =?iso-8859-1?Q?lpzKB9wY9+FEet1wPOFGFrreTel1Eexb3WdRvRZUOQuuZYshbQSg5UJ2ch?=
+ =?iso-8859-1?Q?BS2xHc6xvmvht4oov4OALsFDKcASy06n4rXNut8+1IHQK3076oAxcEg/Vq?=
+ =?iso-8859-1?Q?dtCg2Zl0t/8yiLv0eHO1YZSJcwDYt8TAJ+hKsXzC155M5BwKRxMKT3RQ5+?=
+ =?iso-8859-1?Q?5+pEfpPu1blEU2EAN+jNKQAAtP/v7Roz7cqJUlkNlDTZFO/4W+w33UZKq0?=
+ =?iso-8859-1?Q?frjDMpjsOosNkveYn+9NQWAoJ9gBYHCjekojYpPDfJenJ8pWO5NAbyOCE3?=
+ =?iso-8859-1?Q?WIelsnn9JVqWgdsyCl6bjtaRD5hekEYUiwH1gwuieCHzb9NYNK7Pv+jEbS?=
+ =?iso-8859-1?Q?1X8DmV6dbFcaA3moCGUUR6ekfzAesKWRamqhHFJBaM567TSVr9hytstzV/?=
+ =?iso-8859-1?Q?Zh8/E6FyrWNyvQduVYJ+IONnodkDKaOePENsah5lG0RTdhFOMKAuYi2fj3?=
+ =?iso-8859-1?Q?dPsF9boaWB1tZSpx5rqQ2ksBgpcc0eunkv/6GaC/5l8pVH/U5C44eheNMP?=
+ =?iso-8859-1?Q?8CF88xnl9jM9aRzBgX566ij6BPSs6K2uFbj+Czh+HF3Q=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?WYRCqnMCiU0lrJM63oicqaj3s4h5T5ZeGeAGSqcqeQNtmsQmTlTcO7oTJB?=
+ =?iso-8859-1?Q?et3r4BU3pg/vk4diEOAEdvmWYIwlIZb1wEgOk8chS++UhcemUwY6K2KB9/?=
+ =?iso-8859-1?Q?W6ErP1sJj4nfrz6omDj0vOmjVcSlAf0EEku3QjDpwezki0mcQqBRK7xYQN?=
+ =?iso-8859-1?Q?HFcup3KBkPfvqKsEJ9nk54Pndf/BxuVGatj4oip8EOY0Uf1ZIslRvuEUvR?=
+ =?iso-8859-1?Q?7ad5OCpM5RvuFL1qEu4rbImdvN2eT1IW1Y6TKW7CmvuOPpbFKu6Z9MwwGY?=
+ =?iso-8859-1?Q?6NlgyaXQTo7I7I58ftSZ2IjoguZaW4Ovrx5gvJkOrz8PXp2H0l09ouQlIZ?=
+ =?iso-8859-1?Q?k0+35Gn1xmxJVX0aEyJqVEmctKGt6bI6aWqOoAIa2RZ8zd8SrZ7TZYiLtU?=
+ =?iso-8859-1?Q?Z1Aw5s4Mqm3WjhmxpaJzP/MBThCk8177Ud/PgclQZCMGM5BuS4a5p2rDLO?=
+ =?iso-8859-1?Q?75JbNe7ZOz0CgW3ARgyCVoyKmenYg2vSED8r3KX0FflZ1e8cUPZBMyW8Te?=
+ =?iso-8859-1?Q?8l0rvYFP1WTkuUCwEPU42p/kJMcDtUSm2RPhRlJELqm9usjmL4c9rvw3Cc?=
+ =?iso-8859-1?Q?7OlufVK40HKCJ0RqCsghUTv/jsG9s278Np4pHnjH5teK2WGkX48kIJGowd?=
+ =?iso-8859-1?Q?JZUafZ1Ueq8agbN94slo+tjpINqhT42iVf/6G+2TtQgsoNvOTYAV6tdAs3?=
+ =?iso-8859-1?Q?sreilP0p/liw2RTVZQa9TX7zqLeuZYQEuds3gqd3y2IjLeFmQddmOU7hOX?=
+ =?iso-8859-1?Q?WNbwbEdVTSdGlfolNX7iBQoIHK/WC08lagb5EVmoFbDP9IIJjJOZ8nRFQu?=
+ =?iso-8859-1?Q?RX+2Bz4r/gTBEXnSppCCvYk0Ic9tVu/lAgCQXV1eYYLmN/mBJmWpuAvOB+?=
+ =?iso-8859-1?Q?gLOPPFRcuNvD82MBM6Ly9PIoJdne40tK/HdxBPRX3NJ1O1L8BXJXWliJ65?=
+ =?iso-8859-1?Q?NMCMlsbagL4QXUGtS1Lg1nOUywytgD8pYL2XUhkAlSXSitX9FEcVfwLKGQ?=
+ =?iso-8859-1?Q?sS9aR4vOPlDC/njTg42jrfuYk+ZyZ8QjUoUC71ZI270QNm1IKnrFIzMZHP?=
+ =?iso-8859-1?Q?cVy6+GUoD7RAyJSLvZY3GoAu1DSm+q2Ys1iLKLSYdcBhbJX6KAWIVBqATC?=
+ =?iso-8859-1?Q?RPrwQfU9NTPdqabwchSEa7XoZeqYsNFJwYlML/QqNcC3yZkZsVegOIZe77?=
+ =?iso-8859-1?Q?DH2kBrJlUQhHaYX/QglrZ4M04XqNlRd2CJagXhbMU2vejYJaQvReB2D3cr?=
+ =?iso-8859-1?Q?pdxyC5rI9McaFsvj/E0+LwemJZwC6GiV7tPjJ9TkfyzalTq4+6RjVR++q/?=
+ =?iso-8859-1?Q?cQlkJ35LKxowhpzDZKPJN0EoTqylEt4QN8DiVAdzUiwgpzXO4ADM2sbUf9?=
+ =?iso-8859-1?Q?BcyVcVrY/ADC4VFy1AFjh7BKWsYlk9aqhyPPZuIDjPSC1/ZY0IHM8McjUl?=
+ =?iso-8859-1?Q?9tI7jEaqkRIGImmvUwgMGK19ZoBDuCi+lPp79I/JjakCcA/E2fohbt0dOt?=
+ =?iso-8859-1?Q?Vu+cIywIeblPEaIJdzz51TMKdynzLSX581FeirUSnyXzk+txlyRtKlv0jJ?=
+ =?iso-8859-1?Q?0+vvPyVlyfwsAu3Rs6Zeku3YhUl9v59FyKIRB+rYyUa/uOxgTiktNNf5Yx?=
+ =?iso-8859-1?Q?z0cNUOf67TimnVJj5/xoiCg1nMGpGGIZtB?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d29fe739-a43b-4f7f-80f2-08ddadffb518
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 00:33:12.6243
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LGjE0ii0bH8rZCqmgrI3Rurxx7D+e1ZCFRefbJ71lDD2bqqm8OgVo2b9IaB5+cqi+Qfnu4/E6xmhY43u6rLTmw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6744
+X-OriginatorOrg: intel.com
 
-On Tue, 17 Jun 2025 17:10:44 +0800 Zhiguo Jiang <justinjiang@vivo.com> wrote:
+On Tue, Jun 17, 2025 at 08:52:49AM +0800, Yan Zhao wrote:
+> On Tue, Jun 17, 2025 at 06:49:00AM +0800, Edgecombe, Rick P wrote:
+> > On Mon, 2025-06-16 at 11:14 +0800, Yan Zhao wrote:
+> > > > Oh, nice. I hadn't seen this. Agree that a comprehensive guest setup is
+> > > > quite
+> > > > manual. But here we are playing with guest ABI. In practice, yes it's
+> > > > similar to
+> > > > passing yet another arg to get a good TD.
+> > > Could we introduce a TD attr TDX_ATTR_SEPT_EXPLICIT_DEMOTION?
+> > > 
+> > > It can be something similar to TDX_ATTR_SEPT_VE_DISABLE except that we don't
+> > > provide a dynamical way as the TDCS_CONFIG_FLEXIBLE_PENDING_VE to allow guest
+> > > to
+> > > turn on/off SEPT_VE_DISABLE.
+> > > (See the disable_sept_ve() in ./arch/x86/coco/tdx/tdx.c).
+> > > 
+> > > So, if userspace configures a TD with TDX_ATTR_SEPT_EXPLICIT_DEMOTION, KVM
+> > > first
+> > > checks if SEPT_EXPLICIT_DEMOTION is supported.
+> > > The guest can also check if it would like to support SEPT_EXPLICIT_DEMOTION to
+> > > determine to continue or shut down. (If it does not check
+> > > SEPT_EXPLICIT_DEMOTION,
+> > > e.g., if we don't want to update EDK2, the guest must accept memory before
+> > > memory accessing).
+> > > 
+> > > - if TD is configured with SEPT_EXPLICIT_DEMOTION, KVM allows to map at 2MB
+> > > when
+> > >   there's no level info in an EPT violation. The guest must accept memory
+> > > before
+> > >   accessing memory or if it wants to accept only a partial of host's mapping,
+> > > it
+> > >   needs to explicitly invoke a TDVMCALL to request KVM to perform page
+> > > demotion.
+> > > 
+> > > - if TD is configured without SEPT_EXPLICIT_DEMOTION, KVM always maps at 4KB
+> > >   when there's no level info in an EPT violation.
+> > > 
+> > > - No matter SEPT_EXPLICIT_DEMOTION is configured or not, if there's a level
+> > > info
+> > >   in an EPT violation, while KVM honors the level info as the max_level info,
+> > >   KVM ignores the demotion request in the fault path.
+Hi Sean,
+Could you please confirm if this matches what you think?
+i.e.,
 
-> The real-time(rt) threads are delayed for 5 seconds in mempool_alloc,
-> which will seriously affect the timeliness of front-end applications
-> and the user experience lag issues.
+  when an EPT violation carries an ACCEPT level info
+  KVM maps the page at map level <= the specified level.
+  (If KVM finds a shadow-present lead SPTE, it will not try to merge/split it.)
+  Guest's ACCEPT will succeed or return PAGE_SIZE_MATCH if map level < the
+  specified level.
 
-Oh God, do we really do that?
+This can keep linux guests (with SEPT_VE_DISABLE being true) more efficient.
+So, for linux guests, if it only wants to accept at 4KB, the flow is
+1. guest ACCEPT 4KB
+2. KVM maps it at 4KB
+3. ACCEPT 4KB returns success
 
-Yes we do!  I'm surprised this wasn't reported some time over the
-intervening 13 years.
+As the ACCEPT comes before KVM actually maps anything, we can avoid the complex
+flow:
+1. guest ACCEPT 4KB
+2. KVM maps it at 2MB
+3. ACCEPT 4KB returns PAGE_SIZE_MATCH.
+4.(a) guest ACCEPT 2MB or
+4.(b) guest triggers TDVMCALL to demote
+5. KVM demotes the 2MB mapping
+6. guest ACCEPT at 4KB
+7. ACCEPT 4KB returns success 
 
-Yes, a hard-coded 5 second delay might be a slight problem in a
-realtime kernel.
+For non-linux guests (with SEPT_VE_DISABLE being false), I totally agree with
+your suggestions!
 
-> The real-time(rt) threads should retry mempool allocation without
-> delay and in order to obtain the required memory resources as soon as
-> possible.
+Thanks
+Yan
 
-Well, does this actually work in your testing?
-
-I guess it can improve the situation, some of the time.  If it's a
-uniprocessor non-preemptible then perhaps interrupt-time writeback
-completion might save us, otherwise it's time to hit the power button.
-
-> The following example shows that the real-time(rt) QoSCoreThread
-> prio=98 blocks 5 seconds in mempool_alloc, seriously affecting the
-> user experience.
+> > I think this is what Sean was suggesting. We are going to need a qemu command
+> > line opt-in too.
+> > 
+> > > 
+> > > > We can start with a prototype the host side arg and see how it turns out. I
+> > > > realized we need to verify edk2 as well.
+> > > Current EDK2 should always accept pages before actual memory access.
+> > > So, I think it should be fine.
+> > 
+> > It's not just that, it needs to handle the the accept page size being lower than
+> > the mapping size. I went and looked and it is accepting at 4k size in places. It
+> As it accepts pages before memory access, the "accept page size being lower than
+> the the mapping size" can't happen. 
 > 
-> Running process:	system_server (pid 2245)
-> Running thread:	QoSCoreThread 2529
-> State:	Uninterruptible Sleep - Block I/O
-> Start:	12,859.616 ms
-> Systrace Time:	100,063.057104
-> Duration:	5,152.591 ms
-> On CPU:
-> Running instead:	kswapd0
-> Args:	{kernel callsite when blocked:: "mempool_alloc+0x130/0x1e8"}
-> 
->    QoSCoreThread-2529  (   2245) [000] d..2. 100063.057104: sched_switch:
->    prev_comm=QoSCoreThread prev_pid=2529 prev_prio=000255001000098
->    prev_state=D ==> next_comm=kswapd0 next_pid=107
->    next_prio=000063310000120
->  [GT]ColdPool#14-23937 (  23854) [000] dNs2. 100068.209675: sched_waking:
->  comm=QoSCoreThread pid=2529 prio=98 target_cpu=000
->  [GT]ColdPool#14-23937 (  23854) [000] dNs2. 100068.209676:
->  sched_blocked_reason: pid=2529 iowait=1 caller=mempool_alloc+0x130/0x1e8
->  [GT]ColdPool#14-23937 (  23854) [000] dNs3. 100068.209695: sched_wakeup:
->  comm=QoSCoreThread pid=2529 prio=98 target_cpu=000
->  [GT]ColdPool#14-23937 (  23854) [000] d..2. 100068.209732: sched_switch:
->  prev_comm=[GT]ColdPool#14 prev_pid=23937 prev_prio=000003010342130
->  prev_state=R ==> next_comm=QoSCoreThread next_pid=2529
->  next_prio=000255131000098
-
-Do you have a call trace for these stalls?  I'm interested to see who
-is calling mempool_alloc() here.  Perhaps a suitable solution is to
-teach the caller(s) to stop passing __GFP_DIRECT_RECLAIM and to handle
-the NULL return.
-
-> --- a/mm/mempool.c
-> +++ b/mm/mempool.c
-> @@ -18,6 +18,7 @@
->  #include <linux/export.h>
->  #include <linux/mempool.h>
->  #include <linux/writeback.h>
-> +#include <linux/sched/prio.h>
->  #include "slab.h"
->  
->  #ifdef CONFIG_SLUB_DEBUG_ON
-> @@ -386,7 +387,7 @@ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
->  	void *element;
->  	unsigned long flags;
->  	wait_queue_entry_t wait;
-> -	gfp_t gfp_temp;
-> +	gfp_t gfp_temp, gfp_src = gfp_mask;
->  
->  	VM_WARN_ON_ONCE(gfp_mask & __GFP_ZERO);
->  	might_alloc(gfp_mask);
-> @@ -433,6 +434,16 @@ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
->  		return NULL;
->  	}
->  
-> +	/*
-> +	 * We will try to direct reclaim cyclically, if the rt-thread
-
-"synchronously"
-
-> +	 * is without __GFP_NORETRY.
-> +	 */
-> +	if (!(gfp_src & __GFP_NORETRY) && current->prio < MAX_RT_PRIO) {
-> +		spin_unlock_irqrestore(&pool->lock, flags);
-> +		gfp_temp = gfp_src;
-> +		goto repeat_alloc;
-> +	}
-> +
->  	/* Let's wait for someone else to return an element to @pool */
->  	init_wait(&wait);
->  	prepare_to_wait(&pool->wait, &wait, TASK_UNINTERRUPTIBLE);
-
+> > hopefully is just handling accepting a whole range that is not 2MB aligned. But
+> > I think we need to verify this more.
+> Ok.
 
