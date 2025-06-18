@@ -1,140 +1,97 @@
-Return-Path: <linux-kernel+bounces-692124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9039EADED2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:59:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC6B2ADED33
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1162218932D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:00:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8D1C16F114
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20712E3B0D;
-	Wed, 18 Jun 2025 12:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3012E889D;
+	Wed, 18 Jun 2025 13:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0u449kP"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNSS3Y02"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218DA2E06EF;
-	Wed, 18 Jun 2025 12:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F2A2E7639;
+	Wed, 18 Jun 2025 13:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750251587; cv=none; b=hVnos8KxI5UNRR3FEoO8FQBaU4JgO1BOG40RO7wFSfwezShI9Bvu225aFYgHlJfNNYRBH7+nZyyQJuNLO+VrXJdLNBtiiJhi3pXNn8h3nvH4mKbLw/jPlv8S7zhItHdODQ+3Zfy8efs5SyQSNfpxm9q0HvpvFRENfSzXtf6PMbA=
+	t=1750251607; cv=none; b=QKfeGwNQt2S/24FDT+6LF4uRQaorRqqGAvAIaau9wiQGiPfAhnCx3Qorf6aEcc0LBLM6Rgus+L7LFXu7z8+ZTuF8b8syBS9J38xI+J3spqGOTesgENG8BbIIXmMXzV+GelfcEQJVyBFeABgrb4G681YlJVWW/AvwQNzHU1wWp9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750251587; c=relaxed/simple;
-	bh=jpls8L+8uQegmdKvyIFRZ1rhINWMqc49kXdsyT/MuEM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f+t6z620BrTSY79tidmmv3ueyZVQW334+jNov4RuvAqqle6pnzEmOyRaJC4sL/ZIAZrzgTfI2hJh5CJqk4LkAdawyfay+5esvVGUqptWmsaQAim3EKEZsx3YXd2fR3gk0iUgP9yvtUjepw8XSM0qwQ470dmVmgy4toqgFQUU+d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0u449kP; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-60789b450ceso13403243a12.2;
-        Wed, 18 Jun 2025 05:59:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750251583; x=1750856383; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qq2+/adGDB0VmTZ24qXNIpW4sZc4xuYs5fBPLMCb+Oo=;
-        b=e0u449kPlhWDmlo9WxcjKTN9PYldz92l0aREj7nxBLiPCt1AcoyjDnBiarWpFhdCF/
-         r0tprPxLQJKDb0efxDMbOrZXCsN+5c5tXUE2kBotmYmYDjpHEpaJ74wAydb+7r/aLZ92
-         WYzlXms2v7gM5+M/BJupDbOqecAVyLXPdwjiYNKmGfp97VRWzn46wSVl9ujVLWCsXGHT
-         bsQkWSAsSh8gE1RcojqPNF1XUZbvsT6Y7dKR+7MCQH3OUnJYcp8DR8it+GimEKRoTUNf
-         AmxCpPyVF6V1sYEjLy+awLbBf0iDtX5fV6JZBDotircuDohaxRHEjTDrvgn/KKnx8xWb
-         3x6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750251583; x=1750856383;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qq2+/adGDB0VmTZ24qXNIpW4sZc4xuYs5fBPLMCb+Oo=;
-        b=EBytCqwsa93sdsDeSHr9KXO0Dm5NuHTH9D316pOVEZmFmaMdLFB35WxuGYcQCI1F3y
-         wJY6ZStY5BOzxHEYpzCzPPPxbkJdh//tDok1cSaRM69Tek1QCD/JRE80d+gSXJShNvak
-         szm0gBaq3ZLUudLHNS8LS87DUbJdDLRPsBJxm4K1hzDyM+rHa//DRX6s4WkZygy7tfG5
-         vun+MH9EAxnYjTtkCECsjJxV717AXT4WnT1wxh3bqwGn1tWnKtVGeBctnakpMSAIMGvt
-         JAqJ6SorX6wrLQIG4OfbG5Bb9HmvPAJWovOvx14dcK4ZNcrPGTcxvgbkywkZq1FJ0q07
-         02Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkt2ed1L0zm6EqNpuGNIKpXxyx77BOghmyeIHI6vfv853pdddmco18Tj9wSL6hXedNm1s9D+HU4o1STG1f@vger.kernel.org, AJvYcCWXUAt2y33kVtnTr/DGkhANGwMrsEjeJAvCCWVVeiKgyUyTNGEKFGPEizWEK11RlcrPAb5OM/CjlWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvPqr2vytdtTghHL66JZbpseUQ5qlhYakIfhRif+92x00jpNNg
-	51l0AgIjaowSTznGZiucDkeH7aywHblUiGn/g9Xsupi4S/KNH7jmnQQZa+p/LueWtEBOsHflXZ3
-	/7vmm5TfkPS30+fGhxTOan3Orh1mFw9A=
-X-Gm-Gg: ASbGncu7OuQ0H/nqq4p0Y/naxUh9XcspLOgfGVV3G/9jTFf7OxK+E+6WpU3mYO+sdWz
-	FEr/4vBzOA+rXI8CxdmLMiN+iX3FVweH7jC5r8yuQI3d7N655AMatpaWFixv2i95Buaz3VMiFsr
-	dn7AbwkEssuy4lDSyF7DCQ41x9T7b23W11vVugH+TykI0=
-X-Google-Smtp-Source: AGHT+IGyUhM+KgyxTIvqWyOzWLTSsKgqaGyZQ0JDk5kKAJf/zyENpJ2QvU/cjisgddEXfxSCX5AYb7vh3YtGwUDxnvY=
-X-Received: by 2002:a05:6402:50cc:b0:5fa:fcda:bf57 with SMTP id
- 4fb4d7f45d1cf-608d09bfb1bmr16933764a12.17.1750251582919; Wed, 18 Jun 2025
- 05:59:42 -0700 (PDT)
+	s=arc-20240116; t=1750251607; c=relaxed/simple;
+	bh=BFtGtfz8CaBRAJNMtWNqPNVb80xkQMh1TasnboFQ6sw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oXEr640Y4jzwmIY2Rx3206R+XPZOGEFgXJ6EyK7JzkF272domLjD8nIMiBbFXcBjdrCQO8qZQNw14c9dWSm6Mem8IrUJhZW5IvvpJZri5vSSsPAOTrujzVxgssN+g/FNrAvzEijntP9K/qAXfHJauKx4o+5LMZrSQqxXxHXsYB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNSS3Y02; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38ADFC4CEE7;
+	Wed, 18 Jun 2025 13:00:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750251606;
+	bh=BFtGtfz8CaBRAJNMtWNqPNVb80xkQMh1TasnboFQ6sw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=iNSS3Y026myeYYrid0cJSEw5YE3x8ciX0g0J+aKzhED2oPZVrf8OyWzkWhZbWcS1B
+	 sKu/3AreJCyahdt91jlGikvI363/OyNT2hh2NAWcQOA6gHiAN3OxFzbW0zTAhLKdIP
+	 cyIKd7Tyzl4cJK96CYVQ2eR7A2cvt+6jBSljppfTQrQxymQeezqlOHWSy5OcrSuvnf
+	 89kH+UhEKnP8lUcSssXCjs1C+Rucgo1WDGfuNlwGImVBoOAZ3rimInmiLhWoKxvSfs
+	 NBBEbD6Ie3N/4kMCJZr6R1QFwMxWmLkCK3dQhE69ZVHh6qlp+cccwpkCnxR5a8MoLq
+	 hx6mh2jLvBZtw==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 6.15 000/780] 6.15.3-rc1 review
+Date: Wed, 18 Jun 2025 14:59:52 +0200
+Message-ID: <20250618125952.1920952-1-ojeda@kernel.org>
+In-Reply-To: <20250617152451.485330293@linuxfoundation.org>
+References: <20250617152451.485330293@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616134003.3981866-1-dzm91@hust.edu.cn> <9aa4278e-0f43-420b-b6b5-78a32263d7ec@linux.dev>
-In-Reply-To: <9aa4278e-0f43-420b-b6b5-78a32263d7ec@linux.dev>
-From: Alex Shi <seakeel@gmail.com>
-Date: Wed, 18 Jun 2025 20:59:05 +0800
-X-Gm-Features: AX0GCFtrwa1LBBshh64SHqQgycceaj7zSQ9yLJ2KdpypAVaeG1GqkzsXjVfJVdE
-Message-ID: <CAJy-Amn99xopAHTwc0ZUFfGKDmjq9Oo==Shy5Jn-YC6XcgE5zg@mail.gmail.com>
-Subject: Re: [PATCH] docs/zh_CN: update git command examples in how-to.rst
-To: Yanteng Si <si.yanteng@linux.dev>
-Cc: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Applied! Thanks!
+On Tue, 17 Jun 2025 17:15:08 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.15.3 release.
+> There are 780 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 19 Jun 2025 15:22:30 +0000.
+> Anything received after that time might be too late.
 
-Yanteng Si <si.yanteng@linux.dev> =E4=BA=8E2025=E5=B9=B46=E6=9C=8817=E6=97=
-=A5=E5=91=A8=E4=BA=8C 09:44=E5=86=99=E9=81=93=EF=BC=9A
->
->
-> =E5=9C=A8 6/16/25 9:40 PM, Dongliang Mu =E5=86=99=E9=81=93:
-> > This patch leverages `checkout -b` to shorten branch & checkout
-> > and fix the missing checkout.
-> >
-> > Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
->
-> Acked-by: Yanteng Si <si.yanteng@linux.dev>
->
->
-> Thanks,
->
-> Yanteng
->
-> > ---
-> >   Documentation/translations/zh_CN/how-to.rst | 5 ++---
-> >   1 file changed, 2 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Documentation/translations/zh_CN/how-to.rst b/Documentatio=
-n/translations/zh_CN/how-to.rst
-> > index 569b0209385a..0896f13d8b8d 100644
-> > --- a/Documentation/translations/zh_CN/how-to.rst
-> > +++ b/Documentation/translations/zh_CN/how-to.rst
-> > @@ -177,8 +177,7 @@ git=E5=92=8C=E9=82=AE=E7=AE=B1=E9=85=8D=E7=BD=AE
-> >   =E8=AF=B7=E6=89=A7=E8=A1=8C=E4=BB=A5=E4=B8=8B=E5=91=BD=E4=BB=A4=EF=BC=
-=8C=E6=96=B0=E5=BB=BA=E5=BC=80=E5=8F=91=E5=88=86=E6=94=AF::
-> >
-> >       git checkout docs-next
-> > -     git branch my-trans
-> > -     git checkout my-trans
-> > +     git checkout -b my-trans
-> >
-> >   =E8=AF=91=E6=96=87=E6=A0=BC=E5=BC=8F=E8=A6=81=E6=B1=82
-> >   ------------
-> > @@ -286,7 +285,7 @@ warning =E4=B8=8D=E9=9C=80=E8=A6=81=E8=A7=A3=E5=86=
-=B3::
-> >   =E7=84=B6=E5=90=8E=E6=89=A7=E8=A1=8C=E4=BB=A5=E4=B8=8B=E5=91=BD=E4=BB=
-=A4=E4=B8=BA=E8=A1=A5=E4=B8=81=E8=BF=BD=E5=8A=A0=E6=9B=B4=E6=94=B9::
-> >
-> >       git checkout docs-next
-> > -     git branch test-trans
-> > +     git checkout -b test-trans-new
-> >       git am 0001-xxxxx.patch
-> >       ./scripts/checkpatch.pl 0001-xxxxx.patch
-> >       =E7=9B=B4=E6=8E=A5=E4=BF=AE=E6=94=B9=E6=82=A8=E7=9A=84=E7=BF=BB=
-=E8=AF=91
+For arm64, with Clang 18, I found the same issue as for 6.12.y:
+
+    https://lore.kernel.org/stable/20250618125710.1920658-1-ojeda@kernel.org/
+
+Otherwise, boot-tested under QEMU for Rust x86_64 and riscv64;
+built-tested for loongarch64.
+
+Thanks!
+
+Cheers,
+Miguel
 
