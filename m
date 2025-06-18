@@ -1,145 +1,300 @@
-Return-Path: <linux-kernel+bounces-692428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06773ADF17F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:39:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF1F2ADF187
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 256557A3D35
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:37:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71F1B1896328
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE912EFD8F;
-	Wed, 18 Jun 2025 15:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478C42EBDF6;
+	Wed, 18 Jun 2025 15:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhsmriF9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="tBR6mgXJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GIiKcDdq"
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E1C2EE26E;
-	Wed, 18 Jun 2025 15:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0A32EFD94
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 15:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750261151; cv=none; b=tOqscMIRsfEo7pUnxPXrZZ1UJwqXU9/qj67N6b+AQ07Mlsx0NKzUY9Vcd58oYl0hOWJQlEsdCN6Tz2oTVSgUCQCOzGDZAmHa8oql4aPfRWhIEc+EPW1YHGKUJR2nPWgUip7RQs6hppWuK3hv3KoJ6dcfoO303F4UpECmp8sjaUQ=
+	t=1750261166; cv=none; b=SgV4vjvRVbMOove2OLpl2hRMb1wwNuOxKkkdcUXaYuaegV6IBj0cFtsBc7N9k8XpxOTsqPbAZ/UnOmtsK44OxL31HW+3aWEOm+5AUO8DCg0gXUJAMozTnXX9qeiThahAP3/xzoWrXVg+LSywvqY60Qz+/tloKWSG68TGmoaX94M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750261151; c=relaxed/simple;
-	bh=JFhh7AKrOKzUvlarIRdE++QBY1DcQFVTi2V5HaWpvx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iv6IiwsR8ibCFT/mQghq1oU5LRI4UkE7NZepVS+4vAMMcr1UomiV9+nJi/1W8os9ivOyxFpuMQay1FYk2dClIkUFuuflp6ZArlzFyxmfR/ejj89PwShfJoK1R450sH42+t3148706m4ObLnTPa3F6YaSqkUEDu8dPZozvNA+UXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhsmriF9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9C62C4CEE7;
-	Wed, 18 Jun 2025 15:39:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750261151;
-	bh=JFhh7AKrOKzUvlarIRdE++QBY1DcQFVTi2V5HaWpvx8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HhsmriF9FnTh9MW53Z58uEg37HWWlwyNmE4wdGHezwXX2E+2JLj92AKSg6bF7zcGD
-	 l0gKVdL8Zzq/YKnlTTSqBWNa4sxZkFrKeUiIumyD0XS1FBc5kPDKUlT5+W6vYj52uI
-	 9zRwbrj0d7IQksCxU+doEkSWgSiaYkJ7eTMhoCUhsre0ucbCM1HqG3GdOFofou1VDk
-	 Mtg/sQow7zbSR0S5LI5hfma4kezfmrl4mmNOZ2HMhLrt3lneiBASXLwbU4XKyqVFwS
-	 EozLEjRzVk5srE4khhRd66rmiuohplGtHpuyiz1n3TA0TDxUraGKsONIifmHdSwIO+
-	 WL085dnbz7BzQ==
-Date: Wed, 18 Jun 2025 17:39:05 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Matthew Maurer <mmaurer@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Timur Tabi <ttabi@nvidia.com>, Benno Lossin <lossin@kernel.org>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v6 2/5] rust: debugfs: Bind file creation for long-lived
- Display
-Message-ID: <aFLdmYLyDucTAiZx@pollux>
-References: <20250618-debugfs-rust-v6-0-72cae211b133@google.com>
- <20250618-debugfs-rust-v6-2-72cae211b133@google.com>
+	s=arc-20240116; t=1750261166; c=relaxed/simple;
+	bh=+UzWFv/amBd0mJp4NxhLr3Ooq/Utg9NnK0p9JDzGF90=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=VUlK8dlUxJzu4HfnuWDwVYZOBoZpnLtF/XQaM3CGVazyvVozpXG0kwyh6EUlF86uKvdoht8hKuke0ShzlQkhaMQyeisJoakK8aAYFQFxNeEeaOvaAfvMrUOBeA29fP3eUTFRH92WY8s/FVOMeylZVZ/o7FO39M4eO+HMUU3gMzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=tBR6mgXJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GIiKcDdq; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 508A2114011B;
+	Wed, 18 Jun 2025 11:39:23 -0400 (EDT)
+Received: from phl-frontend-02 ([10.202.2.161])
+  by phl-compute-05.internal (MEProxy); Wed, 18 Jun 2025 11:39:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1750261163; x=1750347563; bh=DRBImzuc9d
+	Exg1G4Ug2N7cCw9Jt4HpQZz9+ybxuJOho=; b=tBR6mgXJ7B19gaZ+CdGjCwJHP9
+	o0FTDJDYPA0peHWuvtTvjC33qpTDtopfbGH7V3ewmN/4rJFOCCd+LD9Nhl2zE72m
+	11a6DuUuumOvogmlx+nf1Sqpsf3niVY44cSjvBftwEZ+Im6wXYdyNzLGIoCBwx2d
+	fOCf4kGOfoJWVwcA10rYn0TWuHYYlCfpmUKRaHdTI7Ftvq8tKGoihnhh9OQaKOvv
+	pMU7YUahWs0Z8BQMZFdclCJvwf5hniw38j3ANwE9xQ1fqm252D5LpsMkXGe35ZGA
+	t2nU9Nt6ArSdPWGX/L7+IJ/fBoQoOfZM3YZcuA5t/rUDFPcLlmczcidgbAAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1750261163; x=1750347563; bh=DRBImzuc9dExg1G4Ug2N7cCw9Jt4HpQZz9+
+	ybxuJOho=; b=GIiKcDdqZ1UMf+FOhQ04NXX2I9w7DrDvuXcqtioE7J39Wzcq2ut
+	DrYvp8fHZGWeZYil4fk+y7KwIqbxbtmq9DS9F7XeDy/iIuS/N5DyiIJrMgpCdebi
+	Sl6lwocvJXQGfOmbKOGIHeqHzN+MzQR0/WC+bjOWvjSzmr5IBanngrn5bYUwWsJc
+	kPj/S4t6jnwo/B0aH2ukc+4SQzItMDjGXoRIhcoupFiC+hgIBaV1eEvb/VAmA/ol
+	RsGCZi+gIZiw+jHkunCxxAF47M5MnDjt8IT+sFexs3j4IFPkb4OKFHjfrwPF3DUl
+	CrguL+nQ9qfX+u/9UF9S/xTEJF2WcndIaZg==
+X-ME-Sender: <xms:qt1SaHG-sxjm4IFB0u_zMt2itF6xf1JvQkrw90Yb0780IP68vvMxtw>
+    <xme:qt1SaEW4w9dcymbLZYMphpRVCxWlKrDDpInb2Jq0OSRBPY4-E0M04l_0OHPq-gqKn
+    zdlMq_Lg6yRoBrzuCM>
+X-ME-Received: <xmr:qt1SaJLL32K-rBKw1LH9qPFa5b95fDwIMiAGM7_Te03LYzI_G96HRbLzYV_lsSRQlgLaWaV-wb2N3AZpF10_00v4ah4ytQEWtBd2Hd0tVUyZxCMX5w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdeftddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecu
+    hfhrohhmpefpihgtohhlrghsucfrihhtrhgvuceonhhitghosehflhhugihnihgtrdhnvg
+    htqeenucggtffrrghtthgvrhhnpefgvedvhfefueejgefggfefhfelffeiieduvdehffdu
+    heduffekkefhgeffhfefveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehnihgtohesfhhluhignhhitgdrnhgvthdpnhgspghrtghpthhtohep
+    jedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuhdrkhhlvghinhgvqdhkohgvnh
+    highessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepsghijhhurdgurghsrdhjiies
+    sghprdhrvghnvghsrghsrdgtohhmpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrd
+    hlihhnuhigsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgr
+    uggvrggurdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtih
+    honhdrohhrghdprhgtphhtthhopeholhgvghesrhgvughhrghtrdgtohhmpdhrtghpthht
+    oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:qt1SaFFFqrWDV3SiLSFvMLmVJKtuJsYNxuRfJecqOwHDDOf3YFg-Jw>
+    <xmx:qt1SaNUNtrRoL1bi1h9BGQld-o3TRNgZGAKND1merilYkwkrThlgqA>
+    <xmx:qt1SaAPeM3mANpaQq5iRGn1Y1VgZiHCACIO3Q35snCmD2v7QXiVIAw>
+    <xmx:qt1SaM3K7euT2GO0phBQx_j9FnJwaf7OOSGok_8nhRWwSLNRjyrl0w>
+    <xmx:q91SaKXouFvPqUsLNDbbt4XznJP4js0l1VtaMgidxQD8CGms7QhbHSGe>
+Feedback-ID: i58514971:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 18 Jun 2025 11:39:21 -0400 (EDT)
+Received: from xanadu (xanadu.lan [192.168.1.120])
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 11A1511FB457;
+	Wed, 18 Jun 2025 11:39:21 -0400 (EDT)
+Date: Wed, 18 Jun 2025 11:39:20 -0400 (EDT)
+From: Nicolas Pitre <nico@fluxnic.net>
+To: David Laight <david.laight.linux@gmail.com>
+cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+    u.kleine-koenig@baylibre.com, Oleg Nesterov <oleg@redhat.com>, 
+    Peter Zijlstra <peterz@infradead.org>, 
+    Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v3 next 09/10] lib: mul_u64_u64_div_u64() Optimise the
+ divide code
+In-Reply-To: <20250618101620.26533aca@pumpkin>
+Message-ID: <s919qno2-782s-ooqq-0p19-sr754osn8n02@syhkavp.arg>
+References: <20250614095346.69130-1-david.laight.linux@gmail.com> <20250614095346.69130-10-david.laight.linux@gmail.com> <os452n92-2p25-2q4r-453r-0ps224s90r98@syhkavp.arg> <7r88r006-o704-7q1q-21o2-6n62o864oo79@syhkavp.arg> <20250618101620.26533aca@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618-debugfs-rust-v6-2-72cae211b133@google.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Jun 18, 2025 at 02:28:14AM +0000, Matthew Maurer wrote:
-> diff --git a/rust/kernel/debugfs/display_file.rs b/rust/kernel/debugfs/display_file.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..65e37e34d7b587482492dc296637a3bc517b9fe3
-> --- /dev/null
-> +++ b/rust/kernel/debugfs/display_file.rs
-> @@ -0,0 +1,60 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2025 Google LLC.
-> +
-> +use crate::seq_file::SeqFile;
-> +use crate::seq_print;
-> +use core::fmt::Display;
-> +
-> +/// Implements `open` for `file_operations` via `single_open` to fill out a `seq_file`.
-> +///
-> +/// # Safety
-> +///
-> +/// * `inode`'s private pointer must point to a value of type `T` which will outlive the `inode`
-> +///   and will not be mutated during this call.
-> +/// * `file` must point to a live, not-yet-initialized file object.
-> +pub(crate) unsafe extern "C" fn display_open<T: Display>(
-> +    inode: *mut bindings::inode,
-> +    file: *mut bindings::file,
-> +) -> i32 {
+On Wed, 18 Jun 2025, David Laight wrote:
 
-Please use kernel::ffi::c_int instead.
+> On Tue, 17 Jun 2025 21:33:23 -0400 (EDT)
+> Nicolas Pitre <nico@fluxnic.net> wrote:
+> 
+> > On Tue, 17 Jun 2025, Nicolas Pitre wrote:
+> > 
+> > > On Sat, 14 Jun 2025, David Laight wrote:
+> > >   
+> > > > Replace the bit by bit algorithm with one that generates 16 bits
+> > > > per iteration on 32bit architectures and 32 bits on 64bit ones.
+> > > > 
+> > > > On my zen 5 this reduces the time for the tests (using the generic
+> > > > code) from ~3350ns to ~1000ns.
+> > > > 
+> > > > Running the 32bit algorithm on 64bit x86 takes ~1500ns.
+> > > > It'll be slightly slower on a real 32bit system, mostly due
+> > > > to register pressure.
+> > > > 
+> > > > The savings for 32bit x86 are much higher (tested in userspace).
+> > > > The worst case (lots of bits in the quotient) drops from ~900 clocks
+> > > > to ~130 (pretty much independant of the arguments).
+> > > > Other 32bit architectures may see better savings.
+> > > > 
+> > > > It is possibly to optimise for divisors that span less than
+> > > > __LONG_WIDTH__/2 bits. However I suspect they don't happen that often
+> > > > and it doesn't remove any slow cpu divide instructions which dominate
+> > > > the result.
+> > > > 
+> > > > Signed-off-by: David Laight <david.laight.linux@gmail.com>  
+> > > 
+> > > Nice work. I had to be fully awake to review this one.
+> > > Some suggestions below.  
+> > 
+> > Here's a patch with my suggestions applied to make it easier to figure 
+> > them out. The added "inline" is necessary to fix compilation on ARM32. 
+> > The "likely()" makes for better assembly and this part is pretty much 
+> > likely anyway. I've explained the rest previously, although this is a 
+> > better implementation.
+> > 
+> > commit 99ea338401f03efe5dbebe57e62bd7c588409c5c
+> > Author: Nicolas Pitre <nico@fluxnic.net>
+> > Date:   Tue Jun 17 14:42:34 2025 -0400
+> > 
+> >     fixup! lib: mul_u64_u64_div_u64() Optimise the divide code
+> > 
+> > diff --git a/lib/math/div64.c b/lib/math/div64.c
+> > index 3c9fe878ce68..740e59a58530 100644
+> > --- a/lib/math/div64.c
+> > +++ b/lib/math/div64.c
+> > @@ -188,7 +188,7 @@ EXPORT_SYMBOL(iter_div_u64_rem);
+> >  
+> >  #if !defined(mul_u64_add_u64_div_u64) || defined(test_mul_u64_add_u64_div_u64)
+> >  
+> > -static u64 mul_add(u32 a, u32 b, u32 c)
+> > +static inline u64 mul_add(u32 a, u32 b, u32 c)
+> >  {
+> >  	return add_u64_u32(mul_u32_u32(a, b), c);
+> >  }
+> > @@ -246,7 +246,7 @@ static inline u32 mul_u64_long_add_u64(u64 *p_lo, u64 a, u32 b, u64 c)
+> >  
+> >  u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
+> >  {
+> > -	unsigned long d_msig, q_digit;
+> > +	unsigned long n_long, d_msig, q_digit;
+> >  	unsigned int reps, d_z_hi;
+> >  	u64 quotient, n_lo, n_hi;
+> >  	u32 overflow;
+> > @@ -271,36 +271,21 @@ u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
+> >  
+> >  	/* Left align the divisor, shifting the dividend to match */
+> >  	d_z_hi = __builtin_clzll(d);
+> > -	if (d_z_hi) {
+> > +	if (likely(d_z_hi)) {
+> >  		d <<= d_z_hi;
+> >  		n_hi = n_hi << d_z_hi | n_lo >> (64 - d_z_hi);
+> >  		n_lo <<= d_z_hi;
+> >  	}
+> >  
+> > -	reps = 64 / BITS_PER_ITER;
+> > -	/* Optimise loop count for small dividends */
+> > -	if (!(u32)(n_hi >> 32)) {
+> > -		reps -= 32 / BITS_PER_ITER;
+> > -		n_hi = n_hi << 32 | n_lo >> 32;
+> > -		n_lo <<= 32;
+> > -	}
+> > -#if BITS_PER_ITER == 16
+> > -	if (!(u32)(n_hi >> 48)) {
+> > -		reps--;
+> > -		n_hi = add_u64_u32(n_hi << 16, n_lo >> 48);
+> > -		n_lo <<= 16;
+> > -	}
+> > -#endif
+> > -
+> >  	/* Invert the dividend so we can use add instead of subtract. */
+> >  	n_lo = ~n_lo;
+> >  	n_hi = ~n_hi;
+> >  
+> >  	/*
+> > -	 * Get the most significant BITS_PER_ITER bits of the divisor.
+> > +	 * Get the rounded-up most significant BITS_PER_ITER bits of the divisor.
+> >  	 * This is used to get a low 'guestimate' of the quotient digit.
+> >  	 */
+> > -	d_msig = (d >> (64 - BITS_PER_ITER)) + 1;
+> > +	d_msig = (d >> (64 - BITS_PER_ITER)) + !!(d << BITS_PER_ITER);
+> 
+> If the low divisor bits are zero an alternative simpler divide
+> can be used (you want to detect it before the left align).
+> I deleted that because it complicates things and probably doesn't
+> happen often enough outside the tests cases.
 
-> +    // SAFETY:
-> +    // * `file` is acceptable by caller precondition.
-> +    // * `print_act` will be called on a `seq_file` with private data set to the third argument,
-> +    //   so we meet its safety requirements.
-> +    // * The `data` pointer passed in the third argument is a valid `T` pointer that outlives
-> +    //   this call by caller preconditions.
-> +    unsafe { bindings::single_open(file, Some(display_act::<T>), (*inode).i_private) }
-> +}
-> +
-> +/// Prints private data stashed in a seq_file to that seq file.
-> +///
-> +/// # Safety
-> +///
-> +/// `seq` must point to a live `seq_file` whose private data is a live pointer to a `T` which is
-> +/// not being mutated.
-> +pub(crate) unsafe extern "C" fn display_act<T: Display>(
-> +    seq: *mut bindings::seq_file,
-> +    _: *mut core::ffi::c_void,
-> +) -> i32 {
+Depends. On 32-bit systems that might be worth it. Something like:
 
-kernel::ffi::c_int
+	if (unlikely(sizeof(long) == 4 && !(u32)d))
+		return div_u64(n_hi, d >> 32);
 
-> +    // SAFETY: By caller precondition, this pointer is live, points to a value of type `T`, and
-> +    // is not being mutated.
-> +    let data = unsafe { &*((*seq).private as *mut T) };
-> +    // SAFETY: By caller precondition, `seq_file` points to a live `seq_file`, so we can lift
-> +    // it.
-> +    let seq_file = unsafe { SeqFile::from_raw(seq) };
-> +    seq_print!(seq_file, "{}", data);
-> +    0
-> +}
-> +
-> +// Work around lack of generic const items.
-> +pub(crate) trait DisplayFile: Display + Sized {
-> +    const VTABLE: bindings::file_operations = bindings::file_operations {
-> +        read: Some(bindings::seq_read),
-> +        llseek: Some(bindings::seq_lseek),
-> +        release: Some(bindings::single_release),
-> +        open: Some(display_open::<Self> as _),
+> >  	/*
+> >  	 * Now do a 'long division' with BITS_PER_ITER bit 'digits'.
+> > @@ -308,12 +293,17 @@ u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
+> >  	 * The worst case is dividing ~0 by 0x8000 which requires two subtracts.
+> >  	 */
+> >  	quotient = 0;
+> > -	while (reps--) {
+> > -		q_digit = (unsigned long)(~n_hi >> (64 - 2 * BITS_PER_ITER)) / d_msig;
+> > +	for (reps = 64 / BITS_PER_ITER; reps; reps--) {
+> > +		quotient <<= BITS_PER_ITER;
+> > +		n_long = ~n_hi >> (64 - 2 * BITS_PER_ITER);
+> >  		/* Shift 'n' left to align with the product q_digit * d */
+> >  		overflow = n_hi >> (64 - BITS_PER_ITER);
+> >  		n_hi = add_u64_u32(n_hi << BITS_PER_ITER, n_lo >> (64 - BITS_PER_ITER));
+> >  		n_lo <<= BITS_PER_ITER;
+> > +		/* cut it short if q_digit would be 0 */
+> > +		if (n_long < d_msig)
+> > +			continue;
+> 
+> I don't think that is right.
+> d_msig is an overestimate so you can only skip the divide and mul_add().
 
-Why the cast? That shouldn't be needed.
+That's what I thought initially. But `overflow` was always 0xffff in 
+that case. I'd like to prove it mathematically, but empirically this 
+seems to be true with all edge cases I could think of.
 
-> +        // SAFETY: `file_operations` supports zeroes in all fields.
-> +        ..unsafe { core::mem::zeroed() }
-> +    };
-> +}
+I also have a test rig using random numbers validating against the 
+native x86 128/64 div and it has been running for an hour.
+
+> Could be something like:
+> 		if (n_long < d_msig) {
+> 			if (!n_long)
+> 				continue;
+> 			q_digit = 0;
+> 		} else {
+> 			q_digit = n_long / d_msig;
+> 	  		/* Add product to negated divisor */
+> 	  		overflow += mul_u64_long_add_u64(&n_hi, d, q_digit, n_hi);		
+> 		}
+> but that starts looking like branch prediction hell.
+
+... and so far unnecessary (see above).
+
+
+> 
+> > +		q_digit = n_long / d_msig;
+> 
+> I think you want to do the divide right at the top - maybe even if the
+> result isn't used!
+> All the shifts then happen while the divide instruction is in progress
+> (even without out-of-order execution).
+
+Only if there is an actual divide instruction available. If it is a 
+library call then you're screwed.
+
+And the compiler ought to be able to do that kind of shuffling on its 
+own when there's a benefit.
+
+> It is also quite likely that any cpu divide instruction takes a lot
+> less clocks when the dividend or quotient is small.
+> So if the quotient would be zero there isn't a stall waiting for the
+> divide to complete.
+> 
+> As I said before it is a trade off between saving a few clocks for
+> specific cases against adding clocks to all the others.
+> Leading zero bits on the dividend are very likely, quotients with
+> the low 16bits zero much less so (except for test cases).
+
+Given what I said above wrt overflow I think this is a good tradeoff.
+We just need to measure it.
+
+
+Nicolas
 
