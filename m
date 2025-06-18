@@ -1,187 +1,117 @@
-Return-Path: <linux-kernel+bounces-691986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C76FADEB66
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:09:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70EDBADEB6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 840B13AE38D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:04:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BC0B406171
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260D02E6D1E;
-	Wed, 18 Jun 2025 12:03:18 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8923A2DFF12;
+	Wed, 18 Jun 2025 12:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jidkm8EA"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE74E2E3B1C
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1C42C3247
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750248197; cv=none; b=J3AqTmzWNL+sBPJw0oEhomxqu/KQX66lkz1BaeSIgCEmd6NIRJtlBkNcve+YScj/tN6iK9nExztk8ayIdmn6RAy7gQ8L45+UFyw7+++V+Qnt/0h8bCvxwsTYFOeIbBZ2pJZ5PFyn9uqXFO25Ar6hETobxZQ7kf7DF5uL98g89Lo=
+	t=1750248249; cv=none; b=ucSLh8za5OOA6fxRWh+X7+cDEwEN/8e3UBemg6TkO7S9yGmj8ZVtWgEA07WIbsbL2gPsyIrFJgJmZzuxUi6i+ZzO/nf4G62OCS2yis7K5bxPZyeBGKUsKx8h+RF1oNY17IHGEwJsK5borQ6yMO1Z8g/e/kO6GQe6lKYXZ239+m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750248197; c=relaxed/simple;
-	bh=penylcrZjRjoRlt2DxZgzg5QOoQPPyQfH7KISVKYXtg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=X4kgZNYqoxoD1IKO6R3w8TimwcytYfisO8JkF/qjycDpcx2EWlU6hDv0QUeEtiomzxwhMs6yxNfKz2zPUO3deQSQJYHUxKJDY78YsbhtjZpZ9VAQOpAkQyKeHQG4DDEH82B54QDK+ptZlJp0ENh7fjrjtwsPL/CL/LNGAoNg1hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uRrVJ-0007Ea-Fn; Wed, 18 Jun 2025 14:02:57 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uRrVI-0048CR-1r;
-	Wed, 18 Jun 2025 14:02:56 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uRrVI-00DBMr-1Q;
-	Wed, 18 Jun 2025 14:02:56 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Sebastian Reichel <sre@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org,
-	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>,
-	Guenter Roeck <groeck@chromium.org>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	chrome-platform@lists.linux.dev
-Subject: [PATCH v11 7/7] Documentation: Add sysfs documentation for PSCRR reboot reason tracking
-Date: Wed, 18 Jun 2025 14:02:55 +0200
-Message-Id: <20250618120255.3141862-8-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250618120255.3141862-1-o.rempel@pengutronix.de>
-References: <20250618120255.3141862-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1750248249; c=relaxed/simple;
+	bh=PTmy0HiGv1t5sWFCZ17SXK1kqhYyZoQXdPJkkAc72Vg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uCue7Tz1j1gFk3fL4TYlnLSq2T0tbB41ZmPK5YfAJ38TT5IrnjJOVkimpAxuyrsX98UTmPWwVFx6OW0uEdAp64Sw1VZoj0eWjObYEcg2Epi5K3cJkfW9yUahbMvMynm7myWCPVGsIqSjc/ITU0cis3W2IvIcp5UUNDbVxRlbCcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jidkm8EA; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54e7967cf67so6995130e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 05:04:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750248245; x=1750853045; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pw5lDMVe5PLgX2ttnQHBMbMYq8dC4LdNA8jYmEuyK2s=;
+        b=Jidkm8EATPRg5VHH9TIMoiDnXjer4MuzmtdWCu8ovDjoAewYtg0zRrCaCnA7GwrbRo
+         utF38UuVM8BP673WDjLNIhX4SsS6OPbZvCBNI5fpl4xUqmKh9yotim8urM6kosvGPgon
+         a5npIovo9kYBfOynwlUzLAjJRehzQXiNWmWThS782P/qxdIiKZ1LCb0WnLE28oCRmaZI
+         +Ue3+9zmBrW4cUKL7kgaitpg6VGu6gBU3BHjL8E0ghjbiHEbF38RLWIXUiDWiPYZMvce
+         qyiZIpDOeQ3wKT2o4P7WmSWZ6oYe1ja3y9hclBcaztzb4c0krzIBBlf6JrXNr+HMXxyA
+         0jkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750248245; x=1750853045;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pw5lDMVe5PLgX2ttnQHBMbMYq8dC4LdNA8jYmEuyK2s=;
+        b=sONWd/zm1JqaaXoCQRRFiJMDilbfRA+iRcH4QyHjqXCtkBzoM0qf/6/aHzg8rvLpOR
+         JWGO+5maM2MsVLUXYCvvA3A3qyvEwFhctQwzJCkS5mngXKmHHu+6H7Blnj14H0Cc6I/K
+         lssBjgcGJCPMyOuggxJjTUYFcu3QqisxH/DYeV5oUr9wGIMUqVqxqcgct2iQNkgmAjuG
+         MsfnowDpj0hoWDI33d4+Ba+x2eYv7fSxfIhOdrZdMlL7j/xKp20q2zjDuGVzDUcYmNp8
+         R5K8WYnf0/7YEd+VY+WLpGGplvri6wQEbnoonLSUsEpOIgpMkhorVp3067KK0UGItXb2
+         i58g==
+X-Forwarded-Encrypted: i=1; AJvYcCUd8Oufs3W1Uwpd+IwYC5hUIFBRGq4rG1L6iL4K3QNeVmrbZO5UIonJ9kYNGlvKj7+RWeXqWZqWMTJpwtc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6FOVBbaKQjAAiK8yfq6+/xvc+pwUsHazTxZa/2Fje8bgfEPwk
+	nGHgqcl0wsXxvVVsGA57lwRIZLJWW6GR1PFi2ghW2m5tFwwE2FHEBmVeFDSyR+/4xINVkH2TXj3
+	b6Q6oyrTKPMCmCz+R4dJJaDTF9Ac5jItMYIXEo+i0tQ==
+X-Gm-Gg: ASbGncs/2OJCC/IGBTYh0q7y4UsCsXYXU0jdRoDlxpTvOUHnOpvrS1BHewGIFiFXNzd
+	IRIUaZlXkz+1WBk09ZcszdnQHKisJsiDXz0onanevecyih9KHQ5sNHrrQOVsgAO270Rwd3pnAPF
+	2OdzifLNqu3BaMAMPGKQqauTodLGNTaV/nXu/6HsWvr7M=
+X-Google-Smtp-Source: AGHT+IEU7+cVw8RWzajvpd9J/titbwGwZeEUiqB65UOF2F1fN9VnyfLkaqO2QVzTwOrXfsDFPTbPA6/Eswa3w/UmtNQ=
+X-Received: by 2002:a05:6512:3e0d:b0:553:2375:c6d9 with SMTP id
+ 2adb3069b0e04-553b6f4ee07mr4818857e87.55.1750248244152; Wed, 18 Jun 2025
+ 05:04:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20250612104539.2011-1-luyulin@eswincomputing.com>
+In-Reply-To: <20250612104539.2011-1-luyulin@eswincomputing.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 18 Jun 2025 14:03:53 +0200
+X-Gm-Features: AX0GCFu7uLyX_FQipTQ9KLFWtnjX7fYjtMWgaWxutCWJs9ZMNam2b8u2qEvrRTQ
+Message-ID: <CACRpkdYQBdkeJjAkTikxgQBHJLQUmgGSq45kGMGzJ9Hm9OAERQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] ESWIN EIC7700 pinctrl driver
+To: Yulin Lu <luyulin@eswincomputing.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kees@kernel.org, gustavoars@kernel.org, 
+	brgl@bgdev.pl, linux-hardening@vger.kernel.org, ningyu@eswincomputing.com, 
+	linmin@eswincomputing.com, zhengyu@eswincomputing.com, 
+	huangyifeng@eswincomputing.com, fenglin@eswincomputing.com, 
+	lianghujun@eswincomputing.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add documentation for the Power State Change Reason Recorder (PSCRR)
-sysfs interface, which allows tracking of system shutdown and reboot
-reasons. The documentation provides details on available sysfs entries
-under `/sys/kernel/pscrr/`, explaining their functionality, example usage,
-and how they interact with different backend storage options (e.g., NVMEM).
+On Thu, Jun 12, 2025 at 12:45=E2=80=AFPM Yulin Lu <luyulin@eswincomputing.c=
+om> wrote:
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
-changes v8:
-- Simplify and clarify example sysfs value comments
-- Add note that not all values are meaningful on every system
-changes v7:
-- document expected values
----
- .../ABI/testing/sysfs-kernel-reboot-pscrr     | 74 +++++++++++++++++++
- 1 file changed, 74 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
+>   Implements support for the Eswin eic7700 SoC pinctrl controller.
+>   Provides API to manage pinctrl for the eic7700 SoC.
+>   Integration with the Linux pinctrl subsystem for consistency and
+>   scalability.
+>
+>   Supported chips:
+>     Eswin eic7700 SoC.
+>
+>   Test:
+>     Tested this patch on the Sifive HiFive Premier P550 (which uses
+>     the EIC7700 SoC), including system boot, networking, EMMC, display,
+>     and other peripherals. The drivers for these modules all use the
+>     pinctrl module, so this verifies that this pinctrl driver
+>     patch is working properly.
 
-diff --git a/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
-new file mode 100644
-index 000000000000..96369422ed6e
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
-@@ -0,0 +1,74 @@
-+What:		/sys/kernel/pscrr/reason
-+Date:		April 2025
-+KernelVersion:  6.16
-+Contact:	Oleksij Rempel <o.rempel@pengutronix.de>
-+Description:
-+		This file provides access to the current power state
-+		change reason. If supported, the reason may be stored
-+		persistently in an NVMEM cell or another backend.
-+
-+		Reading this file returns an integer representing the
-+		current shutdown or reboot cause.
-+
-+		Writing an integer value to this file sets the reason
-+		to be stored for system analysis on next reboot.
-+
-+		Example usage:
-+		  Read:
-+			$ cat /sys/kernel/pscrr/reason
-+			1   # (Example: Under-voltage shutdown)
-+
-+		  Write:
-+			$ echo 4 > /sys/kernel/pscrr/reason
-+			# Sets the reason to 4 (Example: Over-temperature shutdown)
-+
-+		Note:
-+		  Not all systems support all reason values. Hardware or
-+		  configuration may limit which reasons are applicable.
-+
-+		Values are defined in:
-+		  - include/linux/reboot.h (enum psc_reason)
-+
-+		Supported Values:
-+		  (from include/linux/reboot.h)
-+
-+		+-------+---------------------------+--------------------------+
-+		| Value | Symbol                    | Description              |
-+		+-------+---------------------------+--------------------------+
-+		| 0     | PSCR_UNKNOWN              | Unknown or unspecified   |
-+		|       |                           | power state change reason|
-+		+-------+---------------------------+--------------------------+
-+		| 1     | PSCR_UNDER_VOLTAGE        | Supply voltage dropped   |
-+		|       |                           | below safe threshold     |
-+		+-------+---------------------------+--------------------------+
-+		| 2     | PSCR_OVER_CURRENT         | Excessive current draw or|
-+		|       |                           | potential short circuit  |
-+		+-------+---------------------------+--------------------------+
-+		| 3     | PSCR_REGULATOR_FAILURE    | Voltage regulator failure|
-+		|       |                           | preventing stable supply |
-+		+-------+---------------------------+--------------------------+
-+		| 4     | PSCR_OVER_TEMPERATURE     | Unsafe system temperature|
-+		|       |                           | detected by sensors      |
-+		+-------+---------------------------+--------------------------+
-+		| 5     | PSCR_EC_PANIC             | Reboot triggered by EC   |
-+		|       |                           | (Embedded Controller)    |
-+		+-------+---------------------------+--------------------------+
-+
-+What:		/sys/kernel/pscrr/reason_boot
-+Date:		April 2025
-+KernelVersion:  6.16
-+Contact:	Oleksij Rempel <o.rempel@pengutronix.de>
-+Description:
-+		This file provides the last recorded power state change
-+		reason from before the current boot. If a supported backend
-+		is configured (e.g., NVMEM), the value is retained across
-+		reboots.
-+
-+		Example usage:
-+		  Read:
-+			$ cat /sys/kernel/pscrr/reason_boot
-+			4   # (Example: Over-temperature shutdown)
-+
-+		Supported values:
-+		  Same as /sys/kernel/pscrr/reason (see above).
-+
--- 
-2.39.5
+This v5 patch set applied, any further comments or snags can certainly
+be addressed in-tree.
 
+Yours,
+Linus Walleij
 
