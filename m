@@ -1,98 +1,83 @@
-Return-Path: <linux-kernel+bounces-691311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29103ADE31C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:40:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0F7ADE317
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 972D5189A7F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 05:41:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C66C7A2EEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 05:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D04C1EF363;
-	Wed, 18 Jun 2025 05:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFA51EEA40;
+	Wed, 18 Jun 2025 05:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="d+HtGLNk"
-Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AhWyVqsA"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C423C155382;
-	Wed, 18 Jun 2025 05:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C680155382;
+	Wed, 18 Jun 2025 05:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750225245; cv=none; b=Rsvkj9vtISoawpvxomQlKIK/nqKDk6i/OWTVRSOIX0Ekm4zMBBqA8xs4Ocr0Asbuzu2RLYEpQZgmMxj/KarUflPOh1uwgZe4PDupCT5sI0gslXCckZBsm3TYnJMWzX0L+aZ4zu9d7tTV3LYGCIRg1WQ6Y3QwbZgfVwUC/p3mXZ8=
+	t=1750225140; cv=none; b=owAKXh63a7jcvRyzVIpAZD21MbrMK5iAG7Rsq9ns4DyCiVts83w7tMntiFK0FI4iS6wtzfjq7OX4pataAevYgJX/SPhheX/FeiE7w7zUzzJTkk5WO2cw/mC9oCy8DFJ2YleDhEp17S1/nD803kEIDzwo43d1+m044wT7TO+ODfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750225245; c=relaxed/simple;
-	bh=drwRVsq1D9HCEgfVG2exmBXKfcTJ78pOWC0Q/ERY1NM=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=n+hpSll1Hmf3y6hQTikgG8NtVrl0YZrZHRH2WWmcyI4oU/Jh8N5yzkpmryXabjXawy/NcjM4oqyHERyMW+YvNmgbZy0q21VaqfFzb+cUxvmU98os2IqDi8QSws2iiPyeTZT4Y68tCSTe7MoErrV95Wt/5BKmo51Mf9C9UayumLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=d+HtGLNk; arc=none smtp.client-ip=162.62.57.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1750225230; bh=iONSASwJQ5J5Bw7IaUISLLS33rv+vLFEwjuOkUKF1lQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=d+HtGLNkAG2R0nVTJUWX1Z+VGDzPj3EuNxPxHmvXXhzZGgVRJ0rt7Bdk3BQC/CZk0
-	 3QSOQarK+sgFhiLH3Trclbn+uqw4rpKXz+sz/OPGSByZw9tE3Qokq1hhhYWOYgphqE
-	 gBbvwJa/d6hKuyJFLdFIlbEKf4SAmkWSFchClA4Q=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 89132049; Wed, 18 Jun 2025 13:34:17 +0800
-X-QQ-mid: xmsmtpt1750224857t3app1r4s
-Message-ID: <tencent_9DDC9378E363A961A3BEA440376237718605@qq.com>
-X-QQ-XMAILINFO: MyirvGjpKb1j68GC9Fp5X6/vCJwOlXaYoJW1t3bF4LU/BETGZiWftbGA9sH6IB
-	 Hm1sd2ZTFxklv7ofJkATHEeYa7Dsx8CtJ9RmG6SC1qb9g9+fy4yFXv39BCMI0cENFJ0dP8weAggY
-	 XbBSfpq0NJuTH8wUzbXUdaMpza6QciTZflWb/5eyFnvRt3cFAqu6vCOsNgQ7g0Qm4kHWbJbcyUwL
-	 XIutEiNeqmEBVKA8Xq3lykR9T4pIPYcg8d237AazvOlYdYCO/V+CqsrkyXqm/IBC3DfjeGKNvoJ/
-	 96EdkRwLTa7mwdEd47H1S4v/hvKvtNd7pFC58Zev7vqsp4mLpAbSBX/YbjeJlui4OrT2HF/AZRqj
-	 GjUD6XMAsCKqdCdJgcShq3Ahs7ScuN6WfWCrKa9cGX0ionFAN7OdUf7ZmpFEwchG0VhNK8W4+Wxz
-	 V9ujivp5R+EHl+ESeCscNmilhPvPFL3UENnzSLQrElFR/QHfmUOZpd5+lho5Mc5FbxNmtGpiYon4
-	 I8G6dCrUDFg16msRtrCBadlZ+CFCLsB8+I4zNCOvq5Tv3sHE2CViWoDEyqIjOw2lmCMoO5uHQSMB
-	 QzyAA9ywPeGdC33YcW+NCkrS27pVCfUsCycOG19IjmQwioi9Q6YDROCg3mkuTFtfQtisfPMYb/BI
-	 RcyEWcY4YSMjAZZv5HHW3b0r3Qyut7Vglp766oH3ochBwyHQqSek3zFRZP93tEx5Sq3/Iy1i3mUK
-	 skpOQDMlD4OigAG10re9i/oLcd9q/RMZQ6Gcyk4QToBPfVecyZ/VQPafJgNabUYZhqsX+jntCR33
-	 FHwHjLFsLJCdCuOdTq92IR5mK5rNiyIatoKTIEUtkeB82Mgxram5I7pzIH/4FUv4Nxm8iVXwph/q
-	 vOegtQW2gSeO82djukWyZ0I7hsQ0pzbXq4RdOB4LnnOYVKwl7uJL5eXphvQl/yhYADfC3hlFeLad
-	 FYMJlCix+0L90kGib/t+wtUD7AO4dRdWP7/HBeQXs=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: viro@zeniv.linux.org.uk
-Cc: almaz.alexandrovich@paragon-software.com,
-	brauner@kernel.org,
-	eadavis@qq.com,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ntfs3@lists.linux.dev,
-	syzbot+1aa90f0eb1fc3e77d969@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] fs: Prevent non-symlinks from entering pick link
-Date: Wed, 18 Jun 2025 13:34:18 +0800
-X-OQ-MSGID: <20250618053417.1250534-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250618052747.GQ1880847@ZenIV>
-References: <20250618052747.GQ1880847@ZenIV>
+	s=arc-20240116; t=1750225140; c=relaxed/simple;
+	bh=M74KaXEkB7xVptKIShssQZ1N2d0tX1uMlJHUqumUNSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pJOhJzsSyWfiwbmoPGyfEkcE6mNgWm4bA4PKaJgX/eYkANxnwjlVYn1hvc+nq1nx09ENvUflvSXAidKmeKaRm+VHlhT4K2RzahMlPOpms7RuQXXXOgjFi5WS4/9CWpdk3LRlKQko8pQRC6Hh19C/OTj8mLl0xOMZe1WvMDvMhTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AhWyVqsA; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0VfDKR79Vtwn5VxJOChmtPjWAJZfi4MTkhv0klH8VUU=; b=AhWyVqsA3j3LhyCrTsVnb6uTsn
+	9r6eUym64zHlFvMOujpVErXmuxZQzBpGAHf1t8TqLy87/VyIOL9uzm/ZdUVdiz/B19k2KVu7Ye40r
+	mbAeh0+vhywNjZniEURh0ncL8SIKwNm3DZU75mlqhPVHVZQY5qONFOShAFrwqXsxxwbGSEp2nsqis
+	sqMQZI/VXqT+yY4NrSb1Srah+zvhVs4VmAgrGpwwANoFS+Qy4WjpXkCUfgvPrD2Dcw7GG3iyEJEJY
+	l22KO9U5zP3AOTEuow7mmc/cEjcZVJnC4idkyj4mM2zRrVK9hm0cZbS8yFg3Hw7OO91YpFwVHUP90
+	HxZfSLCw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uRlVg-000000096Bv-3dIB;
+	Wed, 18 Jun 2025 05:38:56 +0000
+Date: Tue, 17 Jun 2025 22:38:56 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Timothy Pearson <tpearson@raptorengineering.com>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-pci <linux-pci@vger.kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	christophe leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Anastasio <sanastasio@raptorengineering.com>
+Subject: Re: [PATCH 3/8] powerpc/pseries/eeh: Export eeh_unfreeze_pe() and
+ eeh_ops
+Message-ID: <aFJQ8AtYlKx1t_ri@infradead.org>
+References: <946966095.1309769.1750220559201.JavaMail.zimbra@raptorengineeringinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <946966095.1309769.1750220559201.JavaMail.zimbra@raptorengineeringinc.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, 18 Jun 2025 06:27:47 +0100, Al Viro wrote:
-> Note that anything that calls __d_add(dentry, inode) with is_bad_inode(inode)
-> (or d_add(), or d_instantiate(), or d_splice_alias() under the same conditions)
-> is also FUBAR.
-> 
-> So's anything that calls make_bad_inode() on a struct inode that might be
-> in process of being passed to one of those functions by another thread.
-> 
-> This is fundamentally wrong; bad inodes are not supposed to end up attached
-> to dentries.
-As far as I know, pick_link() is used to resolve the target path of a
-symbolic link (symlink). Can you explain why pick_link() is executed on
-a directory or a regular file?
+On Tue, Jun 17, 2025 at 11:22:39PM -0500, Timothy Pearson wrote:
+>  /* Platform dependent EEH operations */
+>  struct eeh_ops *eeh_ops = NULL;
+> +EXPORT_SYMBOL(eeh_ops);
+
+Exporting ops vectors is generally a really bad idea.  Please build a
+proper abstraction instead.
+
+And use EXPORT_SYMBOL_GPL for any kind of low-level API.
 
 
