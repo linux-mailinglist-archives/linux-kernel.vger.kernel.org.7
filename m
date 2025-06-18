@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-691698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4465FADE7C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:02:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08966ADE7C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E12727ABAE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:01:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B7107ABB05
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9945295D99;
-	Wed, 18 Jun 2025 09:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9D0293C42;
+	Wed, 18 Jun 2025 09:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YVsmBqoP"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CvMv2RWD"
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EB328CF7A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2925828A737
 	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750240787; cv=none; b=acaixAbl2RZE20dQZ4C2BQ/xM40UYLkoPl1AFulx5/npIb+65xKdMl4+sUupx2WKjFsa9q7oe+2HEWqEccm2NHbGP9Bu8vqgYiSaBI2ddVUXcIknqQ8yNySgogwPl+Hx7Z8UMNAZTjLUlnoL1mV4yboH6H2KM/LpVPms9sIEioQ=
+	t=1750240785; cv=none; b=d48ULkGQ4e8Zr8q4+yfcKFmurnoN97OoK0dnrnc0/EQX6EKvRBTBBy5qAZ/9QA40IcyG+PompjCPtvTezVGHz0A5mcdxoXgzQ8p+JOoZnyt15Oksi/nKaQ2xDITg9RLT4hgHq96WdBUUP8ueN/Q5fzMMiNNhjCLT2pLlsaBm+ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750240787; c=relaxed/simple;
-	bh=SdsFxcP7kgRnccaBenP8n2NR26UZV0KXLNKJ22UARi0=;
+	s=arc-20240116; t=1750240785; c=relaxed/simple;
+	bh=SYQpfUDGcUI4Fjl3I7lrF+Wp1Q4tFzZwD9sXJK2XFV8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gZoPZudl4Sql2WcDqr2wwCZOOEh863odPr9Z0MM2CFjBvZ6ghNRF0Uc96oWuplhPcPTFMbdeSFLe5RWd8qnpSbK2GIqHtVshneTs3dsTCKcv+gGaLD3raRWx7pphwbghdXjXDZea6FoSokdSlhVGVwTszD15K807A7AI6EaCULA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YVsmBqoP; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:To:Cc; b=tVQVOsluTw6u7PUDNS0SXCl33+PJ089cheSoWk2eEbx5ht+1V8jOqi1C3JzqE10KI2Kp1/jVR/Id2fGyjg8vKjowTTDa4aYwqbtVUdossUOO/MQotAqaHh3Aw9u238nlZzlZi+EnnIY8ySs1VZslm2CuahH50sWfjEi4pFIDhRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CvMv2RWD; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 79BFA156F;
-	Wed, 18 Jun 2025 11:59:23 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BAB1D17EB;
+	Wed, 18 Jun 2025 11:59:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1750240764;
-	bh=SdsFxcP7kgRnccaBenP8n2NR26UZV0KXLNKJ22UARi0=;
+	s=mail; t=1750240765;
+	bh=SYQpfUDGcUI4Fjl3I7lrF+Wp1Q4tFzZwD9sXJK2XFV8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YVsmBqoPGA3QhrXuNpkcqjwiWH1rnIWZUoKC8Bq73lg8IGWPM0mFkcD++pPczLSWn
-	 /b2gLDhLOu11yEnLLSDZOG9+IfLudpAxLjZZOJ5CK6ypaXwh8eAJOwF2X034s6J5rW
-	 oEhqmdZSPa812uHI43L0P9xJ1AQWPzqu7+395cts=
+	b=CvMv2RWDkGmJADN6SKWWihtOVW54n4or+EIOa53d8gkRgIhDxsqERaNrPzvcmllh7
+	 6dgRbF6HjpzdXZEiDq7FNCj9JZf2iYYCwuPfCo2MzQH3eUNDc89/Gpl9h6qB8E7LX8
+	 IC4BbdLC8uADXycBr9Sps2gHXSJzdH+08DE6HYgI=
 From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Wed, 18 Jun 2025 12:59:07 +0300
-Subject: [PATCH v4 04/17] phy: cdns-dphy: Store hs_clk_rate and return it
+Date: Wed, 18 Jun 2025 12:59:08 +0300
+Subject: [PATCH v4 05/17] phy: cdns-dphy: Remove leftover code
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250618-cdns-dsi-impro-v4-4-862c841dbe02@ideasonboard.com>
+Message-Id: <20250618-cdns-dsi-impro-v4-5-862c841dbe02@ideasonboard.com>
 References: <20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com>
 In-Reply-To: <20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com>
 To: Jyri Sarha <jyri.sarha@iki.fi>, 
@@ -71,66 +71,86 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  Parth Pancholi <parth.pancholi@toradex.com>, 
  Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1374;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2285;
  i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=SdsFxcP7kgRnccaBenP8n2NR26UZV0KXLNKJ22UARi0=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBoUo39r9sodyAJ2tcO/X69aOfndhCXQftZPghxE
- Hmwz/4yT/qJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaFKN/QAKCRD6PaqMvJYe
- 9XrCD/9a3slbZN2powiZp5L/w9sEKj/2HZcjA2+hVNNc0EKvkmPweq7VVf7hKsLSBbcRDcK08q5
- Dkqb6QRx93vi+9qkPSTFHveZmMWswfJkFN4lWSyNS+h1UeuNpFovZBQL2EozuDYEmFRsdTg/eqI
- dIM/Xegbc6M5kcENYqQSGQrEfzamkDdsOYp59hUqgHe6TXzi4jgMvtpWk9q8y1fMBDLm/jnKFXa
- H54kvMYKjH1zyBQF6oOJBrBsdBky3HgqXzzfSi7FW7FJNOItnDHZ368viXhNr4x/Vp5cI6BQY4z
- 1m1wFcdkIAk/6uZRynKGX+ncUJ+2829f1yrZrgREcwm+j3gfOkInMwCi7qj9TwIJFMRCDmqJyh7
- KfRiEGSIMxg3QwAuw17/tFryeqH3htPTFQ9nDzuLVt9VznH0J6X4DvFqvLYU6QSTrOe0QWdMk3r
- PO7IbEP3KbO2k4D+zo/jeLjMD5tE/cWyhgrCyv049NQ/NKf+RT0uRY9s+o8FTta2aYOIg1LOhMi
- N2crEp63tVBSlSH9zpvzutnzelhKSWyKWem4d5v9RlwUBe88/CItMxDys823sJsD7GzaeX9njl9
- /MO/X30FJaPvbeFLBqnRTsXDpudHRjrdrvEGOhnJpn1y+F7oRXWzvLJLnRw1TYvsrrRSTefliyN
- a6aSda0/qL5KuJQ==
+ bh=SYQpfUDGcUI4Fjl3I7lrF+Wp1Q4tFzZwD9sXJK2XFV8=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBoUo3+e0RBS4Kze29yVEHMxrbIx+D1OSdIr+dA5
+ cMRf0EHcnyJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaFKN/gAKCRD6PaqMvJYe
+ 9UUND/9NRombRCIFomalMb4a0VX77dNdBckwFwdSbXbnt+iJgItXp11qEFzDji7Hgoa5Ch3lSYX
+ ybMc1A5RE85MSv9QdU9SrId4ck1cqBPXBBYCYmVx3OROoEsX2jtZ122gkLe7uD4snwteKsNjVLR
+ JfzBZJw4OynVvZfternW65/9UYTjRRZenNEgo192pvrZ3HszgSgDYJY0ihrLgVnTM1SjFYuWlsC
+ RDYfwYPNpRsm3plEjRhVrIRF6epSy0Kz0+EeTgXwPuWurvI9IZnYtYbShiwfTx/GNeG+/6wzyY2
+ JSkljoaSkQZZwKcFGY+WArNHVdHBYYcLIbGfV5dfOyOuNuhw+0wAwPZ2wXeTwKOx+jK/3vMWQII
+ F8fzx8GzpLKz+1FLVvZg/L1Z0l1gHV9yGbhodztTg8lIM/ph5kGIWdPlrYc3kE6lBeDYwMXUB4V
+ hpDzBW6r+bS9UW9GulM88EJtm2OolyABVtE++pVRLQbjfzxlrqVycJFcnNGiPqMMi0+Ln37ehAw
+ EJGg6z1agOB6c9/bFDBQ8qm4K51W16GGZYZy3I3qy65dAtoTkCMFjXOkS/eaEwYsts+IgiMr772
+ hitnLWK9h923lbPomP6P/S+FN+qIiOeiphNvW3PwcjMBoTwcynKY2yhqHt1K/KIjqJmO9GQ35G0
+ zp0Hqr9eEwuRoaQ==
 X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
  fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-The DPHY driver does not return the actual hs_clk_rate, so the DSI
-driver has no idea what clock was actually achieved. Set the realized
-hs_clk_rate to the opts struct, so that the DSI driver gets it back.
+The code in cdns-dphy has probably been part of a DSI driver in the
+past. Remove DSI defines and variables which are not used or do not
+actually do anything. Also rename cdns_dsi_get_dphy_pll_cfg() to
+cdns_dphy_get_pll_cfg(), i.e. drop the "dsi", as it's not relevant here.
 
 Reviewed-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 Tested-by: Parth Pancholi <parth.pancholi@toradex.com>
-Tested-by: Jayesh Choudhary <j-choudhary@ti.com>
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 ---
- drivers/phy/cadence/cdns-dphy.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/phy/cadence/cdns-dphy.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/phy/cadence/cdns-dphy.c b/drivers/phy/cadence/cdns-dphy.c
-index ed87a3970f83..f79ec4fab409 100644
+index f79ec4fab409..33a42e72362e 100644
 --- a/drivers/phy/cadence/cdns-dphy.c
 +++ b/drivers/phy/cadence/cdns-dphy.c
-@@ -79,6 +79,7 @@ struct cdns_dphy_cfg {
- 	u8 pll_ipdiv;
- 	u8 pll_opdiv;
- 	u16 pll_fbdiv;
-+	u32 hs_clk_rate;
- 	unsigned int nlanes;
+@@ -55,14 +55,6 @@
+ #define DPHY_PSM_CFG_FROM_REG		BIT(0)
+ #define DPHY_PSM_CLK_DIV(x)		((x) << 1)
+ 
+-#define DSI_HBP_FRAME_OVERHEAD		12
+-#define DSI_HSA_FRAME_OVERHEAD		14
+-#define DSI_HFP_FRAME_OVERHEAD		6
+-#define DSI_HSS_VSS_VSE_FRAME_OVERHEAD	4
+-#define DSI_BLANKING_FRAME_OVERHEAD	6
+-#define DSI_NULL_FRAME_OVERHEAD		6
+-#define DSI_EOT_PKT_SIZE		4
+-
+ #define DPHY_TX_J721E_WIZ_PLL_CTRL	0xF04
+ #define DPHY_TX_J721E_WIZ_STATUS	0xF08
+ #define DPHY_TX_J721E_WIZ_RST_CTRL	0xF0C
+@@ -117,10 +109,9 @@ static const unsigned int tx_bands[] = {
+ 	870, 950, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2500
  };
  
-@@ -154,6 +155,9 @@ static int cdns_dsi_get_dphy_pll_cfg(struct cdns_dphy *dphy,
- 					  cfg->pll_ipdiv,
- 					  pll_ref_hz);
+-static int cdns_dsi_get_dphy_pll_cfg(struct cdns_dphy *dphy,
+-				     struct cdns_dphy_cfg *cfg,
+-				     struct phy_configure_opts_mipi_dphy *opts,
+-				     unsigned int *dsi_hfp_ext)
++static int cdns_dphy_get_pll_cfg(struct cdns_dphy *dphy,
++				 struct cdns_dphy_cfg *cfg,
++				 struct phy_configure_opts_mipi_dphy *opts)
+ {
+ 	unsigned long pll_ref_hz = clk_get_rate(dphy->pll_ref_clk);
+ 	u64 dlane_bps;
+@@ -289,15 +280,13 @@ static int cdns_dphy_config_from_opts(struct phy *phy,
+ 				      struct cdns_dphy_cfg *cfg)
+ {
+ 	struct cdns_dphy *dphy = phy_get_drvdata(phy);
+-	unsigned int dsi_hfp_ext = 0;
+ 	int ret;
  
-+	cfg->hs_clk_rate = div_u64((u64)pll_ref_hz * cfg->pll_fbdiv,
-+				   2 * cfg->pll_opdiv * cfg->pll_ipdiv);
-+
- 	return 0;
- }
- 
-@@ -297,6 +301,7 @@ static int cdns_dphy_config_from_opts(struct phy *phy,
+ 	ret = phy_mipi_dphy_config_validate(opts);
  	if (ret)
  		return ret;
  
-+	opts->hs_clk_rate = cfg->hs_clk_rate;
- 	opts->wakeup = cdns_dphy_get_wakeup_time_ns(dphy) / 1000;
+-	ret = cdns_dsi_get_dphy_pll_cfg(dphy, cfg,
+-					opts, &dsi_hfp_ext);
++	ret = cdns_dphy_get_pll_cfg(dphy, cfg, opts);
+ 	if (ret)
+ 		return ret;
  
- 	return 0;
 
 -- 
 2.43.0
