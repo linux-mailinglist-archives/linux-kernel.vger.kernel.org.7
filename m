@@ -1,253 +1,795 @@
-Return-Path: <linux-kernel+bounces-691794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29845ADE8EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:29:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4614FADE8BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F595402913
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:26:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22B0A188B3F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCBDD2BCF5D;
-	Wed, 18 Jun 2025 10:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A9D28F924;
+	Wed, 18 Jun 2025 10:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mO1Kvifh"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kPAphW6/"
+Received: from mail-yb1-f194.google.com (mail-yb1-f194.google.com [209.85.219.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF64B295510
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11926288C1A
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750242151; cv=none; b=QjEjspktY/mg8FGmkc3oPgpLJTa6CXLV4F9Vol/Yr5/f8smcSenL47SN65AQQyTBacsWAXg/bJ5IeJxaWxQ882asp4HVjARwP4/BTtIiEkiuZUwHmmcE3/lG2zaIxqoIGQN9jqG+2tJZru4Mcv6bZPrwZ507N9ll7VuC3AVMPCs=
+	t=1750242141; cv=none; b=WA6oYX+6g6SbSqnJ3qKyEvCWbo+1HcMBDlFwEt7WQW9DEGEP2LJkBBlZl0ZIh3T/fr4Wq9N8891o8TjaqkV5jqUwIoKzNqsLozajHh/UB7Tf2vs4SkqMx40qemGE+kwdoADRnShBex4sgH6D53YzONK6sEGyjoEwcUr/svVfke4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750242151; c=relaxed/simple;
-	bh=0+Yen1OIUHIQQFlpd/ujrhH8147ivWsnLJlDdt+Tv9c=;
-	h=From:Subject:Date:Message-Id:MIME-Version:To:Cc:Content-Type:
-	 References; b=EI2tgSA+S7M4H9v5/yqHqgQen1zAfUGZ4JTHzxYzPRMX7Wrf1WRHH/cYaoL8VJiObTweynkGFG+T3N0jryhByCujQGOLCxf8WtthVJqcBS3YbGRePycZ7Bk09rTn8Qf9tlxDE1mjeIU312PjNyrtnau2dYr32E6xTlIwJ7vHW/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mO1Kvifh; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250618102226euoutp0220c8570a893359776ae4d3cd7ffc9d84~KG-VsuTus2447824478euoutp02Y
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:22:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250618102226euoutp0220c8570a893359776ae4d3cd7ffc9d84~KG-VsuTus2447824478euoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1750242146;
-	bh=0TcTLlvTNXnhdi09fFERR1bR8C5OCa05BlXUBy02BfU=;
-	h=From:Subject:Date:To:Cc:References:From;
-	b=mO1KvifhXurpQsTa5kb8jnKuDORAQ1Q0yjh6qBE2nXT/pKBcf+vnr+V50XAF43VjD
-	 tWCpkm5J4UZh/x8Z7gimkuihNTN2wJJ2wXEwcfNkMQbz7W4gqK5U1oZC8qlxbBI9Yo
-	 gsPaLyjHKgqKbkL5cpPeqWuE/UMBflFG+vvSbvA8=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250618102225eucas1p129b1172bf54521c1eb0f718cb31af468~KG-U2pE4g1594115941eucas1p1W;
-	Wed, 18 Jun 2025 10:22:25 +0000 (GMT)
-Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
-	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250618102223eusmtip1122d5fc54046bf201876d71a690fa28d~KG-TeGlmQ1170811708eusmtip1H;
-	Wed, 18 Jun 2025 10:22:23 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-Subject: [PATCH v5 0/8] Add TH1520 GPU support with power sequencing
-Date: Wed, 18 Jun 2025 12:22:06 +0200
-Message-Id: <20250618-apr_14_for_sending-v5-0-27ed33ea5c6f@samsung.com>
+	s=arc-20240116; t=1750242141; c=relaxed/simple;
+	bh=gagXRV4HnE51QrpMsDWghMxPXgbHAxikOYMmRU8F1/o=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=sPXkGNx/54yscwZ/+fQtzh6V3vVRF+mmjt6xyYGSKwLWVnL+hGcjHt4IIiKFm8tfYJjuOQC17maNd6iVhsWtPyxOiZRPl9NsO8lwAAPEnGGcic4bj9Vy/9LOksRxCcMHkzySLVYf5bDaI62qRlpVM7hhyvlBMCcEBYeeIXuR3WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kPAphW6/; arc=none smtp.client-ip=209.85.219.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f194.google.com with SMTP id 3f1490d57ef6-e733e25bfc7so5880455276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 03:22:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750242138; x=1750846938; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lIgLwvf2hJLlx86dw4qDZMzeC9ho3E/koj0OVMetnkc=;
+        b=kPAphW6/J3ZaWrLcm/1JXtXI1mszU+bgZF7TDRoSzvPg8uTWhjA6Qkg0Egh1k8vRIy
+         HTSrIjsVvB4ES6GpdXIBZbzriyNPDy2upw1F7Yjcc71A+i49Xct51/Kvd3utm6Cgmax1
+         wGgwe2aF1rXDQG8yYS2adwxA5bX2L9QTXA/i2gnACsdjQ/J8TwJd/7uG4Klp42K8CctW
+         VsqpIUfVkliQKaXHDnbihsjjBkh7+NNWsdQTJ9F0eV99VN/Vy5xCL42D/A+3Dlp5cQFv
+         IK8iPlNgLRuAlfNWiUfjyhakr7CdctKtRboCq2V7+9dzbxm2GiQArsKIWjtzjFmnFiXJ
+         IYHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750242138; x=1750846938;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lIgLwvf2hJLlx86dw4qDZMzeC9ho3E/koj0OVMetnkc=;
+        b=SIxIKTnkYB8mbUTWBrkDII2L7VZEiuuatTrx0hZ60fymwYi41G9Tz88E/f7wLo5KD+
+         WdSIUZ7gFBy5Ce45jO0M1oWJWTfC2xSrVwiPky01gpHwK13ERzSxLbE1WhwOxm8S0DaC
+         qULOpC3YmnK3umctZcWhZnhMSEl3wb75X1b/uOqCaLjdarOL9YCJKCibb2Aw5FAIB8TE
+         RwCh7Y8kaKALmvh1NvrZT/qFITK/frbLovMup229De7dl0BS/bqzUEmotH9fXq1tg/Q3
+         IJZjNER8ZF7oKFl4wIHsIhR3vscsMROp4NFAf6aT/YgcgSE8s+3+CC7BdzEnl4qv1qrv
+         50Ug==
+X-Gm-Message-State: AOJu0YzcIW7WbbynoRo49ZvSIH26f8eSSS2dEk+G6rVkWKBjrRsdNl+B
+	N/u9WiJA1rZdq+ZRxRpigOUFsvcn0zpcIJSIDzCOTJYFpNMrtQourxrpKLPeAb1REXg64iT5AK+
+	A9O924YdFkfOdQ54fQY27dTIn9506E6j1QU4QJe/P7Q==
+X-Gm-Gg: ASbGncvlRT4v8Orz4zxn2HaTrcMXArGE4OVz2R7rYljB9wubd778wxUJMtZpOR+lpLs
+	XDu0HV8jXPYSR24goEjLMJzemJULgw2/PLzvu+CYVUiOQtT9eL08jbWk5jtsoz6AV5grHcbWU0b
+	CEhDKV1oWV+2qp6dw1dj3cb7r3juF4CK4dO/70BggzdPZoHZOJgPcCYZU7Lyh5AVZtas4HNP5A/
+	AYQVA==
+X-Google-Smtp-Source: AGHT+IHBth5spvkJRNVTYpcrGMyCdif5hg4R526MGORYh/cPMJqnxvQzgoXWYmoKGZJ5EkgJ5yIGlh4nFs4tRkiixWs=
+X-Received: by 2002:a05:6902:2493:b0:e82:fd2:717f with SMTP id
+ 3f1490d57ef6-e822acab893mr23641704276.4.1750242137542; Wed, 18 Jun 2025
+ 03:22:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAE+TUmgC/33OSw7CIBCA4as0rMXwLMWV9zCmQaAtC6EBJZqmd
-	5d205hUl/8k881MINnobAKnagLRZpdc8CX4oQJ6UL630JnSgCDCEcMMqjG2mLVdiG2y3jjfQ36
-	jEosGC6U1KItjtJ17rejlWnpw6RHie72RyTL9y2UCERRIc9UR1clan5O6p6fvjzrcwQJmuiGco
-	l2EFqShhgvGjJRiB2EbUv/4hC2IpZJx3WCpzTcyz/MHzvG97kABAAA=
-X-Change-ID: 20250414-apr_14_for_sending-5b3917817acc
-To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,  Fu Wei
-	<wefu@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Michal
-	Wilczynski <m.wilczynski@samsung.com>,  Bartosz Golaszewski <brgl@bgdev.pl>,
-	Philipp Zabel <p.zabel@pengutronix.de>,  Frank Binns
-	<frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,  Maarten
-	Lankhorst <maarten.lankhorst@linux.intel.com>,  Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,  Paul Walmsley
-	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson
-	<ulf.hansson@linaro.org>,  Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org,  Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20250618102225eucas1p129b1172bf54521c1eb0f718cb31af468
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250618102225eucas1p129b1172bf54521c1eb0f718cb31af468
-X-EPHeader: CA
-X-CMS-RootMailID: 20250618102225eucas1p129b1172bf54521c1eb0f718cb31af468
-References: <CGME20250618102225eucas1p129b1172bf54521c1eb0f718cb31af468@eucas1p1.samsung.com>
+From: Amit <amitchoudhary0523@gmail.com>
+Date: Wed, 18 Jun 2025 15:52:06 +0530
+X-Gm-Features: Ac12FXzOnsTNhXwUPG5Q5Mgv1dTrNPZzIHPONaDnRhMay6cKk8-uWx6DuT0rwAs
+Message-ID: <CAFf+5zgVYZGRhbEb4-Mn1o2s=Qj+DTK7w2Uit8+q9WgFw3PHbQ@mail.gmail.com>
+Subject: Program (basically, a framework) to present a text menu to the user
+ and get the user input and process the user input (Two files:
+ text_menu_for_user.c and ReadMe.txt).
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-This patch series introduces support for the Imagination IMG BXM-4-64
-GPU found on the T-HEAD TH1520 SoC. A key aspect of this support is
-managing the GPU's complex power-up and power-down sequence, which
-involves multiple clocks and resets.
+Program (basically, a framework) to present a text menu to the user
+and get the user input and process the user input (Two files:
+text_menu_for_user.c and ReadMe.txt).
 
-The TH1520 GPU requires a specific sequence to be followed for its
-clocks and resets to ensure correct operation. Initial discussions and
-an earlier version of this series explored managing this via the generic
-power domain (genpd) framework. However, following further discussions
-with kernel maintainers [1], the approach has been reworked to utilize
-the dedicated power sequencing (pwrseq) framework.
+------------------------------
+text_menu_for_user.c
+------------------------------
 
-This revised series now employs a new pwrseq provider driver
-(pwrseq-thead-gpu.c) specifically for the TH1520 GPU. This driver
-encapsulates the SoC specific power sequence details. The Imagination
-GPU driver (pvr_device.c) is updated to act as a consumer of this power
-sequencer, requesting the "gpu-power" target. The sequencer driver,
-during its match phase with the GPU device, acquires the necessary clock
-and reset handles from the GPU device node to perform the full sequence.
+/*
+ * License:
+ *
+ * This file has been released under "unlicense" license
+ * (https://unlicense.org).
+ *
+ * This is free and unencumbered software released into the public domain.
+ *
+ * Anyone is free to copy, modify, publish, use, compile, sell, or distribute
+ * this software, either in source code form or as a compiled binary, for any
+ * purpose, commercial or non-commercial, and by any means.
+ *
+ * For more information about this license, please visit - https://unlicense.org
+ */
 
-This approach aligns with the goal of abstracting SoC specific power
-management details away from generic device drivers and leverages the
-pwrseq framework as recommended.
+/*
+ * Author: Amit Choudhary
+ * Email: amitchoudhary0523 AT gmail DOT com
+ */
 
-The series is structured as follows:
+/*
+ * ==== README ====
+ *
+ * You can use this program if you want to present a text menu to the user and
+ * process the user input and keep repeating this cycle until the user exits
+ * this program.
+ *
+ * If you want to use this program according to your requirements then you have
+ * to make some changes in this program. These changes are not a lot. You need
+ * to make the changes listed below:
+ *
+ *      ** Change the value of 'TOTAL_NUMBER_OF_MENU_ITEMS' according to the
+ *         number of menu items that you have.
+ *
+ *      ** Change the value of 'MENU_ITEM_STRING_SIZE' according to your
+ *         requirements.
+ *
+ *      ** Check other defined constants to see if you need to modify their
+ *         values because of your requirements.
+ *
+ *      ** Modify the menu items details in create_menu() function according
+ *         to your requirements and implement your new functions.
+ *
+ *      ** Delete dummy_function() and its declaration.
+ *
+ * This program presents a menu to the user and asks the user to input a valid
+ * menu option. After the user has inputted a valid menu option, this program
+ * executes the function associated with that menu option. After the associated
+ * function finishes, this program presents the menu again to the user and this
+ * goes on in a cycle until the user exits this program.
+ */
 
-Patch 1: Introduces the pwrseq-thead-gpu auxiliary driver to manage the
-         GPU's power-on/off sequence.
-Patch 2: Adds device tree bindings for the gpu-clkgen reset to the
-         existing thead,th1520-aon binding.
-Patch 3: Extends the pm-domains driver to detect the gpu-clkgen reset
-         and spawn the pwrseq-thead-gpu auxiliary driver.
-Patch 4: Updates the Imagination DRM driver to utilize the pwrseq
-         framework for TH1520 GPU power management.
-Patch 5: Adds the thead,th1520-gpu compatible string to the PowerVR GPU
-         device tree bindings.
-Patch 6: Adds the gpu-clkgen reset property to the aon node in the
-         TH1520 device tree source.
-Patch 7: Adds the device tree node for the IMG BXM-4-64 GPU and its
-         required fixed-clock.
-Patch 8: Enables compilation of the Imagination PowerVR driver on the
-         RISC-V architecture.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
 
-This patchset finishes the work started in bigger series [2] by adding
-all remaining GPU power sequencing piece. After this patchset the GPU
-probes correctly.
+// Change this value to process more characters.
+#define MAX_STR_SIZE_ALLOWED 8192 // including null terminating character
 
-This series supersedes the previous genpd based approach. Testing on
-T-HEAD TH1520 SoC indicates the new pwrseq based solution works
-correctly.
+#define MIN_STR_SIZE_ALLOWED 2 // including null terminating character
 
-An open point in Patch 7/8 concerns the GPU memory clock (gpu_mem_clk),
-defined as a fixed-clock. The specific hardware frequency for this clock
-on the TH1520 could not be determined from available public
-documentation. Consequently, clock-frequency = <0>; has been used as a
-placeholder to enable driver functionality.
+#define STR_NUM_TRUE  1
+#define STR_NUM_FALSE 0
 
-Link to v4 of this series - [3].
+// TM stands for Text Menu
+#define TM_TRUE  1
+#define TM_FALSE 0
 
-v5:
+#define TM_SUCCESS  0
+#define TM_FAILURE -1
 
-- reworked the pwrseq-thead-gpu driver, now using manual resource
-  management in .match and a .remove callback
-- refactored the drm/imagination driver to use function pointers for
-  power management instead of a boolean flag
-- switched the pmdomain driver to use the generic
-  device_property_match_string() helper
-- added MMU and COMPILE_TEST dependencies to Kconfig to fix RISC-V
-  build warnings.
+// Menu starts with option number 1. Change the below value to the number of
+// menu items that you have.
+#define TOTAL_NUMBER_OF_MENU_ITEMS 5
 
-v4:
+// change this value according to your requirements
+#define MENU_ITEM_STRING_SIZE 1024 // including null terminating character
 
-- the pwrseq driver is now an auxiliary driver with a robust match
-  function based on the power-domains property, spawned from the AON
-  node 
-- Imagination DRM driver now uses of_device_id match data to
-  conditionally probe for the pwrseq, solving the cross platform
-  probe deferral issue
-- add Reviewed-by from Ulf for the entire series
+// You don't need to change this value because the value of '8' can handle
+// (10^7 - 1) option numbers (that is, (10^7 - 1) menu items).
+#define OPTION_NUMBER_SIZE 8 // including null terminating character
 
-v3:
+#define CONFIRMATION_STR_SIZE 8 // including null terminating character
 
-- re-worked cover letter completely
-- complete architectural rework from using extended genpd callbacks to a
-  dedicated pwrseq provider driver
-- introduced pwrseq-thead-gpu.c and associated DT bindings
-   (thead,th1520-gpu-pwrseq)
-- the Imagination driver now calls devm_pwrseq_get() and uses
-  pwrseq_power_on() / pwrseq_power_off() for the TH1520 GPU
-- removed the platform_resources_managed flag from dev_pm_info and
-  associated logic
-- the new pwrseq driver's match() function now acquires consumer-specific
-  resources (GPU clocks, GPU core reset) directly from the consumer device
+#define NUMERIC_INPUT_STR_SIZE 5 // including null terminating character
 
-v2:
+struct menu_item
+{
+    // string that will be displayed when this menu item is displayed
+    char menu_item_string[MENU_ITEM_STRING_SIZE];
 
-Extended the series by adding two new commits:
- - introduced a new platform_resources_managed flag in dev_pm_info along
-   with helper functions, allowing drivers to detect when clocks and resets
-   are managed by the platform
- - updated the DRM Imagination driver to skip claiming clocks when
-   platform_resources_managed is set
+    // You can set and use 'arg' whenever you want. You can set it at init time
+    // in create_menu() function or at run time.
+    void *arg;
 
-Split the original bindings update:
- - the AON firmware bindings now only add the GPU clkgen reset (the GPU
-   core reset remains handled by the GPU node)
+    // Function that will be called when the user inputs a valid menu option
+    // number. 'func' is a function pointer.
+    void *(*func)(struct menu_item *mis_arr, int index_in_mis_arr);
+};
 
-Reworked the TH1520 PM domain driver to:
- - acquire GPU clocks and reset dynamically using attach_dev/detach_dev
-   callbacks
- - handle clkgen reset internally, while GPU core reset is obtained from
-   the consumer device node
- - added a check to enforce that only a single device can be attached to
-   the GPU PM domain
+// function prototypes for gcc flag -Werror-implicit-function-declaration
+static char *get_input_from_stdin_and_discard_extra_characters(char *str,
+                                                               int size);
+static void discard_all_characters_from_stdin(void);
+static int is_str_a_number(const char *str);
+static char *get_string_input_from_user(char *str, int size);
+static int get_numeric_input_from_user(char *str, int size,
+                                       int *number_ptr);
+static int get_valid_option_from_user(void);
 
-[1] - https://lore.kernel.org/all/CAPDyKFpi6_CD++a9sbGBvJCuBSQS6YcpNttkRQhQMTWy1yyrRg@mail.gmail.com/
-[2] - https://lore.kernel.org/all/20250219140239.1378758-1-m.wilczynski@samsung.com/
-[3] - https://lore.kernel.org/all/20250614-apr_14_for_sending-v4-0-8e3945c819cd@samsung.com/
+// mis_arr means menu items array
+static void print_menu(struct menu_item *mis_arr);
+static void create_menu(struct menu_item *mis_arr);
+static void create_and_display_menu_and_process_user_input(void);
 
----
-Changes in v5:
-- EDITME: describe what is new in this series revision.
-- EDITME: use bulletpoints and terse descriptions.
-- Link to v4: https://lore.kernel.org/r/20250614-apr_14_for_sending-v4-0-8e3945c819cd@samsung.com
+static void *get_number_from_user(struct menu_item *mis_arr,
+                                  int index_in_mis_arr);
+static void *show_saved_number(struct menu_item *mis_arr, int index_in_mis_arr);
+static void *show_sum_of_digits_of_number(struct menu_item *mis_arr,
+                                          int index_in_mis_arr);
+static void *delete_saved_number(struct menu_item *mis_arr,
+                                 int index_in_mis_arr);
+static void *exit_program(struct menu_item *mis_arr, int index_in_mis_arr);
 
----
-Michal Wilczynski (8):
-      power: sequencing: Add T-HEAD TH1520 GPU power sequencer driver
-      dt-bindings: firmware: thead,th1520: Add resets for GPU clkgen
-      pmdomain: thead: Instantiate GPU power sequencer via auxiliary bus
-      drm/imagination: Use pwrseq for TH1520 GPU power management
-      dt-bindings: gpu: img,powervr-rogue: Add TH1520 GPU compatible
-      riscv: dts: thead: th1520: Add GPU clkgen reset to AON node
-      riscv: dts: thead: th1520: Add IMG BXM-4-64 GPU node
-      drm/imagination: Enable PowerVR driver for RISC-V
+/*
+ * get_input_from_stdin_and_discard_extra_characters():
+ *
+ *      Function get_input_from_stdin_and_discard_extra_characters() reads at
+ *      most (size - 1) characters from stdin and stores them in 'str'.
+ *      One character is used to null terminate 'str'. The rest of the
+ *      remaining characters in stdin are read and discarded, they are not
+ *      stored in 'str'. So, when this function returns then there is no
+ *      input/characters left in stdin.
+ *
+ *      If 'str' is NULL then it is an error and nothing is read from stdin and
+ *      NULL is returned.
+ *
+ *      If 'size' is greater than 'MAX_STR_SIZE_ALLOWED' or less than
+ *      'MIN_STR_SIZE_ALLOWED' then it is an error and nothing is read from
+ *      stdin and NULL is returned.
+ */
+static char *get_input_from_stdin_and_discard_extra_characters(char *str,
+                                                               int size)
+{
 
- .../bindings/firmware/thead,th1520-aon.yaml        |   7 +
- .../devicetree/bindings/gpu/img,powervr-rogue.yaml |   9 +-
- MAINTAINERS                                        |   1 +
- arch/riscv/boot/dts/thead/th1520.dtsi              |  25 +++
- drivers/gpu/drm/imagination/Kconfig                |   4 +-
- drivers/gpu/drm/imagination/pvr_device.c           |  31 ++-
- drivers/gpu/drm/imagination/pvr_device.h           |  19 ++
- drivers/gpu/drm/imagination/pvr_drv.c              |  30 ++-
- drivers/gpu/drm/imagination/pvr_power.c            | 112 ++++++----
- drivers/gpu/drm/imagination/pvr_power.h            |   6 +
- drivers/pmdomain/thead/Kconfig                     |   1 +
- drivers/pmdomain/thead/th1520-pm-domains.c         |  51 +++++
- drivers/power/sequencing/Kconfig                   |   8 +
- drivers/power/sequencing/Makefile                  |   1 +
- drivers/power/sequencing/pwrseq-thead-gpu.c        | 231 +++++++++++++++++++++
- 15 files changed, 487 insertions(+), 49 deletions(-)
----
-base-commit: 4774cfe3543abb8ee98089f535e28ebfd45b975a
-change-id: 20250414-apr_14_for_sending-5b3917817acc
+    int c = 0;
+    int i = 0;
 
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+    if (str == NULL) {
+        return NULL;
+    }
 
+    if ((size < MIN_STR_SIZE_ALLOWED) || (size > MAX_STR_SIZE_ALLOWED)) {
+        return NULL;
+    }
+
+    for (i = 0; i < (size - 1); i = i + 1) {
+
+        c = getchar();
+
+        if ((c == '\n') || (c == EOF)) {
+            str[i] = 0;
+            return str;
+        }
+
+        str[i] = (char)(c);
+
+    } // end of for loop
+
+    str[i] = 0;
+
+    // discard the rest of the input
+    while ((c = getchar()) && (c != '\n') && (c != EOF));
+
+    return str;
+
+} // end of function get_input_from_stdin_and_discard_extra_characters()
+
+static void discard_all_characters_from_stdin(void)
+{
+
+    int c = 0;
+
+    // discard all characters from stdin
+    while ((c = getchar()) && (c != '\n') && (c != EOF));
+
+    return;
+
+} // end of function discard_all_characters_from_stdin()
+
+/*
+ * is_str_a_number():
+ *
+ *      Function is_str_a_number() expects only numeric characters in 'str'.
+ *
+ *      This function returns STR_NUM_TRUE only when all the following
+ *      conditions are met:
+ *
+ *              ** 'str' is not null.
+ *              ** The first character of 'str' is not the null terminating
+ *                 character.
+ *              ** Length of 'str' is less than MAX_STR_SIZE_ALLOWED.
+ *              ** 'str' contains only numeric characters before the null
+ *                 terminating character.
+ *
+ *      In all other cases, this function returns STR_NUM_FALSE.
+ */
+static int is_str_a_number(const char *str)
+{
+
+    char c = -1;
+
+    if (str == NULL) {
+        return STR_NUM_FALSE;
+    }
+
+    if (str[0] == '\0') { // empty string
+        return STR_NUM_FALSE;
+    }
+
+    // If length of 'str' is not less than MAX_STR_SIZE_ALLOWED then it is an
+    // error and in this case, return STR_NUM_FALSE.
+    if (strnlen(str, MAX_STR_SIZE_ALLOWED) == MAX_STR_SIZE_ALLOWED) {
+        return STR_NUM_FALSE;
+    }
+
+    while ((c = *str)) {
+        if ((c < '0') || (c > '9')) {
+            return STR_NUM_FALSE;
+        }
+        str++;
+    }
+
+    return STR_NUM_TRUE;
+
+} // end of function is_str_a_number()
+
+static char *get_string_input_from_user(char *str, int size)
+{
+
+    char *retval = NULL;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    if ((size < MIN_STR_SIZE_ALLOWED) || (size > MAX_STR_SIZE_ALLOWED)) {
+        return NULL;
+    }
+
+    retval = get_input_from_stdin_and_discard_extra_characters(str, size);
+
+    // If retval is NULL then print an error message and exit.
+    if (retval == NULL) {
+        printf("\n\nError: %s(): %s() returned NULL. Some BUG in this program."
+               " Exiting..\n\n", __FUNCTION__,
+               "get_input_from_stdin_and_discard_extra_characters");
+
+        exit(1);
+    }
+
+    return str;
+
+} // end of function get_string_input_from_user()
+
+static int get_numeric_input_from_user(char *str, int size,
+                                       int *number_ptr)
+{
+
+    char *retval = NULL;
+
+    if ((str == NULL) || (number_ptr == NULL)) {
+        return TM_FAILURE;
+    }
+
+    if ((size < MIN_STR_SIZE_ALLOWED) || (size > MAX_STR_SIZE_ALLOWED)) {
+        return TM_FAILURE;
+    }
+
+    retval = get_string_input_from_user(str, size);
+
+    // If retval is NULL then print an error message and exit.
+    if (retval == NULL) {
+        printf("\n\nError: %s(): get_string_input_from_user() returned NULL."
+               " Some BUG in this program. Exiting..\n\n", __FUNCTION__);
+        exit(1);
+    }
+
+    if (is_str_a_number(str) != STR_NUM_TRUE) {
+        return TM_FAILURE;
+    }
+
+    // convert string to int
+    (*number_ptr) = atoi(str);
+
+    return TM_SUCCESS;
+
+} // end of function get_numeric_input_from_user()
+
+static int get_valid_option_from_user(void)
+{
+
+    char str[OPTION_NUMBER_SIZE] = {0};
+    int option = -1;
+    int retval = -1;
+
+    printf("\n");
+
+    // keep looping until a valid option is received
+    do {
+
+        printf("Please enter a valid option (1 - %d) (only numeric characters"
+               " allowed): ", TOTAL_NUMBER_OF_MENU_ITEMS);
+
+        retval = get_numeric_input_from_user(str, OPTION_NUMBER_SIZE, &option);
+
+        if (retval != TM_SUCCESS) {
+            continue;
+        }
+
+    } while ((option < 1) || (option > TOTAL_NUMBER_OF_MENU_ITEMS));
+
+    return option;
+
+} // end of function get_valid_option_from_user()
+
+// mis_arr means menu items array
+static void print_menu(struct menu_item *mis_arr)
+{
+
+    int i = 0;
+
+    if (mis_arr == NULL) {
+        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
+               " program. Exiting..\n\n", __FUNCTION__);
+        exit(1);
+    }
+
+    printf("\n\n");
+
+    printf("----\n");
+    printf("Menu\n");
+    printf("----\n");
+    printf("\n");
+
+    for (i = 0; i < TOTAL_NUMBER_OF_MENU_ITEMS; i++) {
+        printf("%d. %s\n", (i + 1), mis_arr[i].menu_item_string);
+    }
+
+    return;
+
+} // end of function print_menu()
+
+static void create_menu(struct menu_item *mis_arr)
+{
+
+    if (mis_arr == NULL) {
+        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
+               " program. Exiting..\n\n", __FUNCTION__);
+        exit(1);
+    }
+
+    // 1st menu item
+    strncpy(mis_arr[0].menu_item_string, "Input a number (this number will be"
+            " saved)", MENU_ITEM_STRING_SIZE);
+    mis_arr[0].menu_item_string[MENU_ITEM_STRING_SIZE - 1] = 0;
+    mis_arr[0].arg = NULL;
+    mis_arr[0].func = get_number_from_user;
+
+    // 2nd menu item
+    strncpy(mis_arr[1].menu_item_string, "Show the saved number",
+            MENU_ITEM_STRING_SIZE);
+    mis_arr[1].menu_item_string[MENU_ITEM_STRING_SIZE - 1] = 0;
+    mis_arr[1].arg = NULL;
+    mis_arr[1].func = show_saved_number;
+
+    // 3rd menu item
+    strncpy(mis_arr[2].menu_item_string, "Show the sum of the digits of the"
+            " saved number", MENU_ITEM_STRING_SIZE);
+    mis_arr[2].menu_item_string[MENU_ITEM_STRING_SIZE - 1] = 0;
+    mis_arr[2].arg = NULL;
+    mis_arr[2].func = show_sum_of_digits_of_number;
+
+    // 4th menu item
+    strncpy(mis_arr[3].menu_item_string, "Delete the saved number",
+            MENU_ITEM_STRING_SIZE);
+    mis_arr[3].menu_item_string[MENU_ITEM_STRING_SIZE - 1] = 0;
+    mis_arr[3].arg = NULL;
+    mis_arr[3].func = delete_saved_number;
+
+    // 5th menu item
+    strncpy(mis_arr[4].menu_item_string, "Exit this program",
+            MENU_ITEM_STRING_SIZE);
+    mis_arr[4].menu_item_string[MENU_ITEM_STRING_SIZE - 1] = 0;
+    mis_arr[4].arg = NULL;
+    mis_arr[4].func = exit_program;
+
+    return;
+
+} // end of function create_menu()
+
+static void create_and_display_menu_and_process_user_input(void)
+{
+
+    struct menu_item *mis_arr = NULL;
+    char confirm_str[CONFIRMATION_STR_SIZE] = {0};
+    int option = -1;
+    char *retval = NULL;
+    char confirmation = -1;
+
+    // Allocate memory for the array of menu items.
+    // This memory will be freed automatically by the system when this program
+    // exits. As long as this program is running, this memory will not be freed.
+    mis_arr = calloc(TOTAL_NUMBER_OF_MENU_ITEMS, sizeof(*mis_arr));
+
+     if (mis_arr == NULL) {
+        printf("\n\nError: %s(): No memory available. Exiting..\n\n",
+               __FUNCTION__);
+        exit(1);
+    }
+
+    // create menu
+    create_menu(mis_arr);
+
+    // infinite loop, keep processing until user exits
+    while (1) {
+
+        print_menu(mis_arr);
+
+        option = get_valid_option_from_user();
+
+        printf("\n");
+
+        // confirm that the user want to proceed with the selected option
+        while (1) {
+
+            printf("You selected option number %d (\"%s\"). Do you want to"
+                   " proceed (only 'y' and 'n' allowed): ", option,
+                   mis_arr[option - 1].menu_item_string);
+
+            retval = get_string_input_from_user(confirm_str,
+                                                CONFIRMATION_STR_SIZE);
+
+            // If retval is NULL then print an error message and exit.
+            if (retval == NULL) {
+                printf("\n\nError: %s(): get_string_input_from_user() returned"
+                       " NULL. Some BUG in this program. Exiting..\n\n",
+                       __FUNCTION__);
+                exit(1);
+            }
+
+            if ((strncmp(confirm_str, "y", CONFIRMATION_STR_SIZE) == 0) ||
+                (strncmp(confirm_str, "n", CONFIRMATION_STR_SIZE) == 0)) {
+                confirmation = confirm_str[0];
+                break;
+            }
+
+        } // end of inner while (1) loop
+
+        if (confirmation == 'n') {
+            // Wait for the user to press the ENTER key before showing the menu
+            // again.
+            printf("\n\nPress the ENTER key to see the menu again.. ");
+            discard_all_characters_from_stdin();
+            continue;
+        }
+
+        // call the appropriate function
+        (mis_arr[option - 1].func)(mis_arr, option - 1);
+
+        // Wait for the user to press the ENTER key before showing the menu
+        // again.
+        printf("\n\nPress the ENTER key to see the menu again.. ");
+
+        discard_all_characters_from_stdin();
+
+    } // end of outer while (1) loop
+
+    // unreachable code
+    return;
+
+} // end of function create_and_display_menu_and_process_user_input()
+
+static void *get_number_from_user(struct menu_item *mis_arr,
+                                  int index_in_mis_arr)
+{
+
+    char str[NUMERIC_INPUT_STR_SIZE] = {0};
+    int number = -1;
+    int retval = -1;
+    int i = 0;
+
+    if (mis_arr == NULL) {
+        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
+               " program. Exiting..\n\n", __FUNCTION__);
+        exit(1);
+    }
+
+    if (index_in_mis_arr < 0) {
+        printf("\n\nError: %s(): Argument 'index_in_mis_arr' is less than zero."
+               " Some BUG in this program. Exiting..\n\n", __FUNCTION__);
+        exit(1);
+    }
+
+    printf("\n");
+
+    // keep looping until a positive number is received
+    while (1) {
+
+        printf("Please enter a positive number (only numeric characters"
+               " allowed) (the number will be truncated to 4 digits)(the"
+               " previously saved number will be replaced): ");
+
+        retval = get_numeric_input_from_user(str, NUMERIC_INPUT_STR_SIZE,
+                                             &number);
+
+        if (retval == TM_SUCCESS) {
+            break;
+        }
+
+    } // end of while (1) loop
+
+    // Make the number available to all menu items functions.
+    for (i = 0; i < TOTAL_NUMBER_OF_MENU_ITEMS; i++) {
+           mis_arr[i].arg = (void *)((long)(number));
+    }
+
+    printf("\n\nThe number you entered is: %d\n", number);
+
+    return NULL;
+
+} // end of function get_number_from_user()
+
+static void *show_saved_number(struct menu_item *mis_arr, int index_in_mis_arr)
+{
+
+    if (mis_arr == NULL) {
+        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
+               " program. Exiting..\n\n", __FUNCTION__);
+        exit(1);
+    }
+
+    if (index_in_mis_arr < 0) {
+        printf("\n\nError: %s(): Argument 'index_in_mis_arr' is less than zero."
+               " Some BUG in this program. Exiting..\n\n", __FUNCTION__);
+        exit(1);
+    }
+
+    if (mis_arr[index_in_mis_arr].arg == NULL) {
+        printf("\n\nThere is no saved number. Please first input a number by"
+               " selecting menu option 1.\n");
+        return NULL;
+    }
+
+    printf("\n\nThe saved number is: %d\n",
+           (int)((long)(mis_arr[index_in_mis_arr].arg)));
+
+    return NULL;
+
+} // end of function show_saved_number()
+
+static void *show_sum_of_digits_of_number(struct menu_item *mis_arr,
+                                          int index_in_mis_arr)
+{
+
+    int num = -1;
+    int sum_of_digits = 0;
+
+    if (mis_arr == NULL) {
+        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
+               " program. Exiting..\n\n", __FUNCTION__);
+        exit(1);
+    }
+
+    if (index_in_mis_arr < 0) {
+        printf("\n\nError: %s(): Argument 'index_in_mis_arr' is less than zero."
+               " Some BUG in this program. Exiting..\n\n", __FUNCTION__);
+        exit(1);
+    }
+
+    if (mis_arr[index_in_mis_arr].arg == NULL) {
+        printf("\n\nThere is no saved number. Please first input a number by"
+               " selecting menu option 1.\n");
+        return NULL;
+    }
+
+    num = (int)((long)(mis_arr[index_in_mis_arr].arg));
+
+    while (num) {
+        sum_of_digits = sum_of_digits + (num % 10);
+        num = num/10;
+    }
+
+    printf("\n\nThe sum of the digits of the saved number (%d) is: %d\n",
+           (int)((long)(mis_arr[index_in_mis_arr].arg)), sum_of_digits);
+
+    return NULL;
+
+} // end of function show_sum_of_digits_of_number()
+
+static void *delete_saved_number(struct menu_item *mis_arr,
+                                 int index_in_mis_arr)
+{
+
+    int i = 0;
+
+    if (mis_arr == NULL) {
+        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
+               " program. Exiting..\n\n", __FUNCTION__);
+        exit(1);
+    }
+
+    if (index_in_mis_arr < 0) {
+        printf("\n\nError: %s(): Argument 'index_in_mis_arr' is less than zero."
+               " Some BUG in this program. Exiting..\n\n", __FUNCTION__);
+        exit(1);
+    }
+
+    if (mis_arr[index_in_mis_arr].arg == NULL) {
+        printf("\n\nThere is no saved number. Please first input a number by"
+               " selecting menu option 1.\n");
+        return NULL;
+    }
+
+    // Remove the number from all mis_arr array elements
+    for (i = 0; i < TOTAL_NUMBER_OF_MENU_ITEMS; i++) {
+           mis_arr[i].arg = NULL;
+    }
+
+    printf("\n\nThe saved number has been deleted.\n");
+
+    return NULL;
+
+} // end of function delete_saved_number()
+
+static void *exit_program(struct menu_item *mis_arr, int index_in_mis_arr)
+{
+
+    if (mis_arr == NULL) {
+        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
+               " program. Exiting..\n\n", __FUNCTION__);
+        exit(1);
+    }
+
+    if (index_in_mis_arr < 0) {
+        printf("\n\nError: %s(): Argument 'index_in_mis_arr' is less than zero."
+               " Some BUG in this program. Exiting..\n\n", __FUNCTION__);
+        exit(1);
+    }
+
+    printf("\n\nYou chose the option number: %d\n", index_in_mis_arr + 1);
+
+    printf("The text of this option is: \"%s\"\n",
+           mis_arr[index_in_mis_arr].menu_item_string);
+
+    printf("\n\nExiting..\n\n\n");
+
+    exit(0);
+
+} // end of function exit_program()
+
+int main(void)
+{
+
+    create_and_display_menu_and_process_user_input();
+
+    return 0;
+
+} // end of function main()
+
+-----------------
+ReadMe.txt
+-----------------
+
+You can use this program (text_menu_for_user.c) if you want to present a text
+menu to the user and process the user input and keep repeating this cycle until
+the user exits this program.
+
+If you want to use this program according to your requirements then you have
+to make some changes in this program. These changes are not a lot. You need
+to make the changes listed below:
+
+     ** Change the value of 'TOTAL_NUMBER_OF_MENU_ITEMS' according to the
+        number of menu items that you have.
+
+     ** Change the value of 'MENU_ITEM_STRING_SIZE' according to your
+        requirements.
+
+     ** Check other defined constants to see if you need to modify their
+        values because of your requirements.
+
+     ** Modify the menu items details in create_menu() function according
+        to your requirements and implement your new functions.
+
+     ** Delete dummy_function() and its declaration.
+
+This program presents a menu to the user and asks the user to input a valid
+menu option. After the user has inputted a valid menu option, this program
+executes the function associated with that menu option. After the associated
+function finishes, this program presents the menu again to the user and this
+goes on in a cycle until the user exits this program.
+
+---- End of ReadMe ----
 
