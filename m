@@ -1,199 +1,121 @@
-Return-Path: <linux-kernel+bounces-692701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B278ADF5B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:20:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA8EADF5B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3176F175F1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:20:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9607A189EFAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038E52F3C33;
-	Wed, 18 Jun 2025 18:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13642F3C37;
+	Wed, 18 Jun 2025 18:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RpVHEfEQ"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2081.outbound.protection.outlook.com [40.107.223.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMut1qku"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACC03085D2;
-	Wed, 18 Jun 2025 18:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750270788; cv=fail; b=SNorx2P2wCPM0Ts22oXHTvlyIFohG1QzIip3/3YzxjJL+S0679NKVZd5qlDZEBZJGXlSkm6sW4tTPfBeYHy7ADlQvJpGcKgYiJm/9klBYZlKBoBhrwcoyCFsROSctSHIYR0xF9MclwZTuXiIJltCoSwq/YL+vMhiKDbGO7gehj8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750270788; c=relaxed/simple;
-	bh=sKuBHuKP+wUvo0bVUwDMtBuhSZEAp4QBk4BjywwZBX0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YhvYrL4GOSBUvpGiIfeF2A1StLHfBGlFg4hWGfiuk7VhkBSfgEiwMfbAU635wPEqxPECG9pLKi/4a8Ke7CjKjB6Y2UlhXSdfy87Bfve4W7oN6k3djLbspLW/S9tnL/TU86n4HIUlJR+/f6zKzaRqMeBwsjjgsmsl53Y4SECSiik=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RpVHEfEQ; arc=fail smtp.client-ip=40.107.223.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OCwFUfiB20vQzEtEHG0xKOBnciGwuJv0IeXweiTDfK2uVUCCephBhBDLEo5cddMmaE6Csfo9ih32jdQxvW/Zi2ocspLcu+3ctHQkPxXVNsIMzg+kQU1geb2VkVXNv5hQmFrLpcC1jVyL63EJan4WeAu0mOaA2iHkckJwnHDuoTxgDSg0ryjflPpV+YeMIPORWAV9BmzXJ9s+L2wdnTfG3tOOt8nyGvMmnxSXk/jQri0Ip645luiE+WFtg9ilv6tCn/8/CqJYDdmYL6pqo6exONkv92ynkbPGvNOKu8SNjkzJWq0PeRsWlzhNg1hTJrzciijgk2eJoKtnhioPQl8Zrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aJBYUme/6FspcbncmaTHR1T13wg/R9PVnWpF1C7HVzE=;
- b=Jq7aAlfFuk2Cn0YooECFUuIlsOHso6oY3dmKeMRgIJqZsMrIv7ihlMzcL8cOgfYKdr0aftn45DIbXZooPAhy8K4PbpMC72YHmRQiZsn8WyzzARLdC/no8/ZK2khW6llajouOstboXvyZln5LnOA9It8URFeojeVGT2+N9djZ6r3WwVlVi8cyaIMxsEieRqc/XS9BVw76VT8d6iz9yC+wIBXjqM/fhr5mSYIZ25FBdTnRdsidwDE9r6xo0tdw5vokra2bG341n3a7VWY154dgcJC75StXFs2diKg8Cs7qbXN1QTQGiDc9dYq4itQ5bzeDpgCqgpbPTXZytqPk6UtqcQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aJBYUme/6FspcbncmaTHR1T13wg/R9PVnWpF1C7HVzE=;
- b=RpVHEfEQqITNW3x9bsv9wEkcJvWyUjcipF2+61fYxlT6p8pBdyC9eyoNhAekRL0cUChqMGMeDze0K8jr+R6EA9ALchbCMB4vl+LdailyeFqPEOUZFqhTC7c2PIB94/vQIwNUEOOSbV/8Fu1sVHYarvmRhnlXcGirz4CnxV5dG7s=
-Received: from SA0PR11CA0096.namprd11.prod.outlook.com (2603:10b6:806:d1::11)
- by DM4PR12MB5721.namprd12.prod.outlook.com (2603:10b6:8:5c::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Wed, 18 Jun
- 2025 18:19:42 +0000
-Received: from SN1PEPF0002636B.namprd02.prod.outlook.com
- (2603:10b6:806:d1:cafe::c5) by SA0PR11CA0096.outlook.office365.com
- (2603:10b6:806:d1::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.33 via Frontend Transport; Wed,
- 18 Jun 2025 18:19:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF0002636B.mail.protection.outlook.com (10.167.241.136) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8857.21 via Frontend Transport; Wed, 18 Jun 2025 18:19:41 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 18 Jun
- 2025 13:19:40 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 18 Jun
- 2025 13:19:40 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 18 Jun 2025 13:19:40 -0500
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tanmay
- Shah <tanmay.shah@amd.com>
-Subject: [PATCH v3] remoteproc: xlnx: allow single core use in split mode
-Date: Wed, 18 Jun 2025 11:19:33 -0700
-Message-ID: <20250618181933.1253033-1-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8672F49E2;
+	Wed, 18 Jun 2025 18:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750270823; cv=none; b=bPtFbx5tjlIRovE+AXcsJuelprqw0//sJMCaq/7HJ9nMgCYpGf6w28hV3M/sNkGZmba+nB9H6ewG6I5M8of0bxAnYtqIMYK5jtdfkNFJYDAvwa0EvK5tRIMrAhOaqelKfI16qjeFS1Gu/SbMMwMO+DZ6F535t3z8n1Sjjrob09o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750270823; c=relaxed/simple;
+	bh=dV4QW3Qy+OGsq+8aGVg5K0nRXDR4y2yCvxMhddwqyLk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CUm/bJWTV8ZIgFtNvIkq+S+WBBFzGnrZ7uc/oA4vigJTJpJpUsD3vrQikiYEj5g86k5cW/CFq4akn16PIf6nqsQgTW1381NmWNXhRfg9mMuAahQdQIsS+aivAQl6k2mvZbqtL0DtJFVNy0lKnlipu0AWGi0yjQ2/uhRZ9jTlIv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMut1qku; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4e7fc3309f2so1190872137.2;
+        Wed, 18 Jun 2025 11:20:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750270818; x=1750875618; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dV4QW3Qy+OGsq+8aGVg5K0nRXDR4y2yCvxMhddwqyLk=;
+        b=CMut1qkuJwtYVjArlT+9nkd7mz8lrhjzAwq960CDUZ7WUq3GlmRb0twCsiESwSQzQe
+         XYU1HGzbd4ebLfDiQL/sEU02ILfFhUQd+CE9WDC1VFri9MpXFCjarusBn96kwYaDrrAb
+         strzQ5FkfdNr/KB292wLyp89pSVzzLDa4rCyhkRx4FeBfIazWOtOsVj78KzsaUFkxOY/
+         fG0RStfGjZ1tneFLMhFV9vQyxHglWiWlMy3BRtmsZMWqUBSKzvsW7h/urx9RBOKkogJv
+         ZNzXTwMI1+lM0hp+mC5slThbsQeMwKR7Nb06xfH/7NJz0AQpW+J1BpBUcrWU4OFQYTGn
+         aCbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750270818; x=1750875618;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dV4QW3Qy+OGsq+8aGVg5K0nRXDR4y2yCvxMhddwqyLk=;
+        b=WTr7M/OWs8aLklco+JPtzsnEXwm+pg3jvNccVs2EADAW6bzR5OD+aoVzyqBMKhde5C
+         J6VhEYs5fwA/IS8/P5Nar3MZG/xOwVsNgJRHaMe8B/r8FEtJTJIoG5WdLAnTeg2In3yR
+         pfBhPDqj4kveX+Efp4r5IQi4tMRGgR8zPo3+j4r1E7UoUak0HUi5NXQbCyaT/BFA1L68
+         +6vJg2GDrxecb75Sse/+vPOBNbppavyivI8hv4UwlflIK/3fEpnG9wRJOmXzhOXWdgJy
+         e2FfPkPEYRO2eO0dRF3pYHiznUwzzvEAe7K72A4P3fVUI69xoof3B9qnC1E/W2sNrBOP
+         D7OA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaOZyNZ77wUinlCeGIeZKKHuJ/Dd+CKCa12PEluc7yN4MAY67ht+GYy+Cx78WThAL8rAZmvkgvJVJ87scI@vger.kernel.org, AJvYcCXmW5OzfmJimFimqHyMUKO2PHYF7IgjEvzD3bNFwrWvcixhON8+RW8vb/vEc3i2YpuSCvbvQtg6eJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrOJyBVgfXynADOSUUso+W1Ma/e40cAOT/SVp56J10sW1pvXtC
+	yWm7QLC5gRdqCLBlCNGD+vS77sqiTutspB4Dr8uiR2DzuVUmkrg74nnMJ/C2KSnruKmvlO8lccC
+	KnIb7wfRTtpwSUrL3NC8vxGgz0aH867E=
+X-Gm-Gg: ASbGncs9aKK+FJnvIIFGjgvZ1n8LXs9oxuVlussmhfNou0ozzJ2IvXlO7p511Ci9Ify
+	ky5M6dujuxuYtcdsJK+9knjpZ9WDKGllnok9hNdoI0uGWiDlLN8o3mUjj6YXz/5Lo85Kg2D9FCk
+	w5yDh9aIqKdCrLc8gZghdjrUblZan7hnfwjNot8I3DhQ==
+X-Google-Smtp-Source: AGHT+IEr2xqcFOjJxl8R13uHHf7Xf0O/FujSmB6g56UD0DbKN/2CM1jQ03oqnfrVHd2ArdwBZ4OeKRU5BfPgS8F2mIY=
+X-Received: by 2002:a05:6102:6a91:b0:4e5:59ce:471b with SMTP id
+ ada2fe7eead31-4e7f63eacdbmr15474820137.23.1750270818512; Wed, 18 Jun 2025
+ 11:20:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002636B:EE_|DM4PR12MB5721:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8acbd49a-7829-492a-1358-08ddae94b1d7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QRiMhxidYVu4p9yv2URcXb7Drm3Dr/4UFCcigpFhba3TbInNrYnTZ3RGLy8H?=
- =?us-ascii?Q?l02isIwlfvCAQ2RYbEVYEVW/r0WIj0lE1lQUN0nA6aWSMG/L6Jcx38un23+R?=
- =?us-ascii?Q?O1c8ApXLSzahsO4Op96ECb/C0VTLuxgIAHt37qYYnBWmOW/4+26zNromsKB/?=
- =?us-ascii?Q?zmyFUWkXo5e1Zd0dQ/idr6MoYZB3jFy/8oLkVofIR/n2Tx97sXYJhEevHpzq?=
- =?us-ascii?Q?0wvuR7W7I0Uujq3qNx29Phb09xz7y1KVxhJgvgZmCrV0Fjtw5dCMm9ykzyug?=
- =?us-ascii?Q?HaO1lCvg2ngpfG5LQLUTs3pCBQFa64iGHH5Yf2EgvYrncIrD38gzZiRF99TK?=
- =?us-ascii?Q?9IDwfXA186F9X7/7BinPVEDPj4ccDL4k2TvW9qAaFJ1V1AEHKblsHySC2KRB?=
- =?us-ascii?Q?s9H9TZmwApR3KPwSRfhwMzqo3KpKj6aO7u92Inly9PwNv/qbK8ATZfrLo9hh?=
- =?us-ascii?Q?dGtIje4AAmtuj+WRdcOoGUZx4riljyvdHEi9EP3aizsm1n2uQK/cBEmU9uGU?=
- =?us-ascii?Q?JXbYbLN9cyj6FOehMiYeP6wjg8N60CRb+qssxDcTQQTc+V3wyRw30U6Io3yk?=
- =?us-ascii?Q?OprfiU9Fpud7ZerXpUsIkIq2SLcb31xcbu5uUjkLkWGMHQk2RscjIpts+MxI?=
- =?us-ascii?Q?uTMIUkDsF8NWMnPv8tAjaDbDv1gzgtONv3oYHec5G8jdGgtKgcrTMcLm3Nd1?=
- =?us-ascii?Q?IM52HcwGxHMQn3tFIfDFmvfALYO+c7MASZ8WNUPugZ/Gn+CH+GKVI5pzby/0?=
- =?us-ascii?Q?Ca0l2GKNBZHdLQCmAvksh05uA294fHcbJA5t9Vt+nsK+7AqzmiJAvstSToa6?=
- =?us-ascii?Q?79lo0P/0XX3y+jbneZg84j3I/GlXa8RaccZgkz2OTzIEK4AKeyFwFm7MinLh?=
- =?us-ascii?Q?yZnEvimKsilu11kSS+aLokmArGO4mFD4sRwU0IZ7CnNAsH4mmXtwpg6WtsZX?=
- =?us-ascii?Q?CAR4msTbpt+vNZ/iZL6s/lWPmxBIu7fEeA3xMmZ7EyxbT18cVdBgyk/iLjn4?=
- =?us-ascii?Q?iUHPaL7FW8ePc6+DA5ux/+QXNwq4g1wIjGmJw/JmmU4WCw9AmjrpBuREoS79?=
- =?us-ascii?Q?gewRPla93MDxoItqiX6OyCKgg/y2uNg1JeyurJPEcp8yHeLu9QRXHd3NSjwZ?=
- =?us-ascii?Q?/BhYnxuaVo/JU4bVLHh11H9A7Pe9KT2SBP5lY6nRP+fs+LNtGzKVzOi5eKV7?=
- =?us-ascii?Q?L/2lrNvGH6nCG9X/NXplLw2TSABHjsEGrdIBuTd9/Ux5zKSObmy+/0h45lsZ?=
- =?us-ascii?Q?flcIaXDvtThWAsLC1rNryQYAGmeuwdZEP4Y/OdUWZSAHTWbfU+aOj4xuow7v?=
- =?us-ascii?Q?fkodf0dnO8BtOs2FNIWkq3EpKcbO5ty8P/9sDB+f5noIHBlnpZwikYVXJ+zz?=
- =?us-ascii?Q?/tkS3WYwE3AoU6+ZPCf5jgVr7VJcRLjPXO+Mx8kQ9K3huoqo+6SfUINzLrS8?=
- =?us-ascii?Q?MJml+DiuT9VFSGPBKGVeqDdy1fWBF67eeVxyzU+Umidx2BhIq41tbLpJcTTA?=
- =?us-ascii?Q?CCm8fnuGuC/N13oA7FtGEL/EVj7v3wLIPBrr?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 18:19:41.7899
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8acbd49a-7829-492a-1358-08ddae94b1d7
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002636B.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5721
+References: <20250618031638.26477-1-andrew.lopes@alumni.usp.br>
+ <CAHp75Ve4yAp6sViUWZY+0abRoNZ0W+rQLCmsbijEcrh8kguVOA@mail.gmail.com>
+ <CANZih_S9_8OdY=oKyVPBCTSTqYm_z_rkE=xbPym3uHOSsHMv6A@mail.gmail.com> <aFL6PE-8KLLKZun_@smile.fi.intel.com>
+In-Reply-To: <aFL6PE-8KLLKZun_@smile.fi.intel.com>
+From: Andrew Ijano <andrew.ijano@gmail.com>
+Date: Wed, 18 Jun 2025 15:20:06 -0300
+X-Gm-Features: Ac12FXwpg4CNYOuxa2JcTEKqX7ZLV2AYXm393GaS56j-3RyW3-9KyDOaipftXX4
+Message-ID: <CANZih_QeeA_G5mFOAb=TMNYiR4eo9SUD5iW1G-5LBGL27NpTRw@mail.gmail.com>
+Subject: Re: [PATCH v6 0/4] iio: accel: sca3000: simplify by using newer infrastructure
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, jic23@kernel.org, andrew.lopes@alumni.usp.br, 
+	gustavobastos@usp.br, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, jstephan@baylibre.com, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When operating in split mode, it is a valid usecase to have
-only one core enabled in the cluster. Remove exact core count
-expecatation from the driver.
+On Wed, Jun 18, 2025 at 2:41=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+>
+> On Wed, Jun 18, 2025 at 09:24:19AM -0300, Andrew Ijano wrote:
+> > On Wed, Jun 18, 2025 at 2:56=E2=80=AFAM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > > On Wed, Jun 18, 2025 at 6:17=E2=80=AFAM Andrew Ijano <andrew.ijano@gm=
+ail.com> wrote:
+> > > >
+> > > > The sca3000 driver is old and could be simplified by using newer
+> > > > infrastructure.
+> > >
+> > > I haven't found any reference to a base commit here. Have you
+> > > forgotten to use --base when preparing the series?
+> > > In any case, please clarify what this series is based on.
+> >
+> > Thank you for pointing this out! I think I forgot to use --base for
+> > it. In this case, should I submit a new version of the whole patchset
+> > with this information or is there a better way to do it?
+>
+> For now just reply here what is the base. I asked this question above.
+>
 
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
----
+Ok! No problem. So the base for this patchset is the commit
+3c23416f69f2870bea83697d7ab03c6a8497daa7.
 
-Changes in v3:
-  - Fix commit message
-  - Add details about split mode configuration in comment
-
-Change in v2:
-  - limit core_count to max 2
-
- drivers/remoteproc/xlnx_r5_remoteproc.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 1af89782e116..5aa3fd1b0530 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -1329,19 +1329,23 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
- 
- 	/*
- 	 * Number of cores is decided by number of child nodes of
--	 * r5f subsystem node in dts. If Split mode is used in dts
--	 * 2 child nodes are expected.
-+	 * r5f subsystem node in dts.
-+	 * In split mode maximum two child nodes are expected.
-+	 * However, only single core can be enabled too.
-+	 * Driver can handle following configuration in split mode:
-+	 * 1) core0 enabled, core1 disabled
-+	 * 2) core0 disabled, core1 enabled
-+	 * 3) core0 and core1 both are enabled.
-+	 * For now, no more than two cores are expected per cluster
-+	 * in split mode.
- 	 * In lockstep mode if two child nodes are available,
- 	 * only use first child node and consider it as core0
- 	 * and ignore core1 dt node.
- 	 */
- 	core_count = of_get_available_child_count(dev_node);
--	if (core_count == 0) {
-+	if (core_count == 0 || core_count > 2) {
- 		dev_err(dev, "Invalid number of r5 cores %d", core_count);
- 		return -EINVAL;
--	} else if (cluster_mode == SPLIT_MODE && core_count != 2) {
--		dev_err(dev, "Invalid number of r5 cores for split mode\n");
--		return -EINVAL;
- 	} else if (cluster_mode == LOCKSTEP_MODE && core_count == 2) {
- 		dev_warn(dev, "Only r5 core0 will be used\n");
- 		core_count = 1;
-
-base-commit: d293da1e4dbebb40560e4c6a417b29ce3393659a
--- 
-2.34.1
-
+Thanks,
+Andrew
 
