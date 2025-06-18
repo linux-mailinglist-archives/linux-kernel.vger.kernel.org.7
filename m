@@ -1,91 +1,133 @@
-Return-Path: <linux-kernel+bounces-692769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A8FADF68A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:58:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF59DADF68F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98EA11BC260F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:58:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C1D177AE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BEB2FCE14;
-	Wed, 18 Jun 2025 18:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E882F9482;
+	Wed, 18 Jun 2025 18:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwjKnCm+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lDjsx6jh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sXITTsBs"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983DB2FCE1B;
-	Wed, 18 Jun 2025 18:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FE63085C7;
+	Wed, 18 Jun 2025 18:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750273020; cv=none; b=FP6TCaGtT988q/9PxdPMRotWgM915IuOk1YXc8hLbSaSzxqZ+N5kx7TYp+zoI8Yj/S0nuy+UGJrS8ZKZTHapFJHGTJKQE5Xr+/OksYtED/S6wxgH4bNIqhOQ2O6Wi1ltOdYjJg6puV+oypEnuS/l/7b7zXSSfO1PDIsMw8/jkTE=
+	t=1750273063; cv=none; b=rd089zDqSAeG3iA6MrILN4xVc+doPTSoSPKkxHE0csZboauDVKQLwO9DXKNQqRXBJg4B9Of+gNWln7LFMbpf7eWdApdaufMtUTB6Ef4ULmSbsAXg804vwP04Dvh0hs7nN+GMp2+yXqRcUwdKjtG78HtZfNO+k89niSNmu9lnFNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750273020; c=relaxed/simple;
-	bh=J1oaDCl0btmib2TF2x64Gp/aTFdcwOsZmN0AYQsV/aA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbMPA098H3yDuN+vp7A9lVM7pCHw/yJvuB6EQ9r/viCEKdsZIyQA4RsGpyr0Dwo1yA6txvyvzBm0fCezgXA74e2ovvQH2q0hC1wX8Td9b+DTUYP0owISP6TbJPh13hgE6HJI6s5QDmqwy1z8+VoaoVcrXf9Pf9i4DFd57fSn0jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwjKnCm+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30BCEC4CEE7;
-	Wed, 18 Jun 2025 18:56:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750273020;
-	bh=J1oaDCl0btmib2TF2x64Gp/aTFdcwOsZmN0AYQsV/aA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KwjKnCm+IEuYL9+7rJDCrbBlbOWtuzx82HjCb9oODKRV8t2NoQ1ZU08JftBj6MEOJ
-	 JlXHEJopBynPhzGjNQq80f46e7lSPfNtAwvZqYL+IQMKYcekQ2dds9p+6RdE9lHvlr
-	 CFWwqWNuHYJvZxLBxfoNoxXzz+Exq+AHIQzXhSFxJoKk14/ZTCTnjNyMgwNJM5Ob4g
-	 GfLp6oD3H/OL66MI5rWb795gZ1vC1lGUOyWbbAmPfAcDR1+CxkbljeCZoNs/onhHx+
-	 sWm4LCWVwZH1jHikm5SSSwoDhhLjZzK4kY4tJfIQRv0xTwqikN5pnIaE7Vd8SNvs4O
-	 oK7dB3JlBCWVQ==
-Date: Wed, 18 Jun 2025 19:56:56 +0100
-From: Simon Horman <horms@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2] net: gianfar: Use
- device_get_named_child_node_count()
-Message-ID: <20250618185656.GZ1699@horms.kernel.org>
-References: <3a33988fc042588cb00a0bfc5ad64e749cb0eb1f.1750248902.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1750273063; c=relaxed/simple;
+	bh=N367C3NSyuYpiAnA0ejNpbLNZMUkvZFZQstaYqW+p2Q=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=P3K2w/ouv3wqLopNLu3Gh+bPI//2efb/3GQtApn/bx8joqVcmghzy+pWqHaxu6nSCmg3cLXF0+6R58KGsBFwPSR3kNdf8BHDEpDWYVt/RB0uaYdAwnkUQCAtotEv5Iyn36/XC0a0/OZbv9kPMrCPjawY3NV5T9LT3sEzJ9Ka+KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lDjsx6jh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sXITTsBs; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 18 Jun 2025 18:57:38 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750273059;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LTRx/vVMZ26Qml2HVIkFo2aTTcCycCrwn1A715lThMM=;
+	b=lDjsx6jhWVfmiHcjpv75xdhVVbwQA8+Lai5KEg8X2kmSrlLedvOahkxNlPdofQo7HG8wer
+	gcGNuXR5bGFGXxlsVHydI58PuB9BZjJwQW5+9V3Z5XtdAeQcH4grjvaTrz0FzAK4smheBu
+	lGSMVX8bL28Syhff6RPMOhv1Y+zdwS5i3NkJtwljZl4J2uCSsT9gfnlg+NWngtdqNBq00N
+	JWJGd3UlYGNukeSE7si3af275vhgkEC0RPWg40Q1jyHS9uAB9/bB/cjFB82UcurY3O9/kY
+	cid7015f1tupgTN5MmO2e+HptcGeJ+bpxcjuUoEeP9Y9s6cZ7YNjH317Dlxzqw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750273059;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LTRx/vVMZ26Qml2HVIkFo2aTTcCycCrwn1A715lThMM=;
+	b=sXITTsBsMfHv/ITN1dTbl0D06ETjpY1m2kNVcH+04Y70Lzek/4rO3lLJdqDriT9wWzApMN
+	MpmvQ+m4SMDZTHAg==
+From: "tip-bot2 for Chris Li" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/msi] PCI/MSI: Remove duplicated to_pci_dev() conversion
+Cc: Chris Li <chrisl@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ ilpo.jarvinen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250617-pci-msi-avoid-dup-pcidev-v1-1-ed75b0419023@kernel.org>
+References: <20250617-pci-msi-avoid-dup-pcidev-v1-1-ed75b0419023@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3a33988fc042588cb00a0bfc5ad64e749cb0eb1f.1750248902.git.mazziesaccount@gmail.com>
+Message-ID: <175027305832.406.5307204713998818037.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 18, 2025 at 03:22:02PM +0300, Matti Vaittinen wrote:
-> We can avoid open-coding the loop construct which counts firmware child
-> nodes with a specific name by using the newly added
-> device_get_named_child_node_count().
-> 
-> The gianfar driver has such open-coded loop. Replace it with the
-> device_get_child_node_count_named().
-> 
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> Previously sent as part of the BD79124 ADC series:
-> https://lore.kernel.org/all/95b6015cd5f6fcce535982118543d47504ed609f.1742225817.git.mazziesaccount@gmail.com/
-> 
-> All dependencies should be in net-next now.
-> 
-> Compile tested only!
+The following commit has been merged into the irq/msi branch of tip:
 
-Thanks for resending.
+Commit-ID:     4a089c0b3f55b400689a5c35f7dfa0a74c363dae
+Gitweb:        https://git.kernel.org/tip/4a089c0b3f55b400689a5c35f7dfa0a74c3=
+63dae
+Author:        Chris Li <chrisl@kernel.org>
+AuthorDate:    Tue, 17 Jun 2025 16:57:30 -07:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 18 Jun 2025 20:50:04 +02:00
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+PCI/MSI: Remove duplicated to_pci_dev() conversion
 
+In pci_msi_update_mask(), "lock =3D &to_pci_dev()" does the to_pci_dev()
+lookup, and there's another one buried inside msi_desc_to_pci_dev().
 
+Introduce a local variable to remove that duplication.
+
+Signed-off-by: Chris Li <chrisl@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+Link: https://lore.kernel.org/all/20250617-pci-msi-avoid-dup-pcidev-v1-1-ed75=
+b0419023@kernel.org
+
+---
+ drivers/pci/msi/msi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
+index 6ede55a..78bed2d 100644
+--- a/drivers/pci/msi/msi.c
++++ b/drivers/pci/msi/msi.c
+@@ -113,7 +113,8 @@ static int pci_setup_msi_context(struct pci_dev *dev)
+=20
+ void pci_msi_update_mask(struct msi_desc *desc, u32 clear, u32 set)
+ {
+-	raw_spinlock_t *lock =3D &to_pci_dev(desc->dev)->msi_lock;
++	struct pci_dev *dev =3D msi_desc_to_pci_dev(desc);
++	raw_spinlock_t *lock =3D &dev->msi_lock;
+ 	unsigned long flags;
+=20
+ 	if (!desc->pci.msi_attrib.can_mask)
+@@ -122,8 +123,7 @@ void pci_msi_update_mask(struct msi_desc *desc, u32 clear=
+, u32 set)
+ 	raw_spin_lock_irqsave(lock, flags);
+ 	desc->pci.msi_mask &=3D ~clear;
+ 	desc->pci.msi_mask |=3D set;
+-	pci_write_config_dword(msi_desc_to_pci_dev(desc), desc->pci.mask_pos,
+-			       desc->pci.msi_mask);
++	pci_write_config_dword(dev, desc->pci.mask_pos, desc->pci.msi_mask);
+ 	raw_spin_unlock_irqrestore(lock, flags);
+ }
+=20
 
