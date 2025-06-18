@@ -1,100 +1,129 @@
-Return-Path: <linux-kernel+bounces-691563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8958ADE623
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08024ADE62F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786AB3A2EC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:55:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EF9C3A58B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4139F27F00B;
-	Wed, 18 Jun 2025 08:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA63327FB14;
+	Wed, 18 Jun 2025 08:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ci+LKuB9"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1l7Oqut"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47C8202965
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819342747B;
+	Wed, 18 Jun 2025 08:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750236973; cv=none; b=BtHOU10rn/LlxPkkDdAKf+Au7iblQZ8MhQ8dp90dbi9mXw2MJ+czoTkZCZQ7gctrYMFrpsIooi+ffvia33PTElqzvf57wik1pzN6+PkOS1GlICh7imN+EiDiyV20KFFbQBeFK23A51VeysCOiLzJoLTtEZij4z9fJfk+h3cGwSA=
+	t=1750237112; cv=none; b=WWyiiYoSTwIdTGLW/s5NSdEJbe6FZJ9BasLl8QxDWSE78w3ndq5ekgAxE/IerbUffpbeGtxGtwDXLLXM8vqLoEVi9VZc3cR9PwuFaBqtwpRKKjb8byhH1VVXctbMjtAvjVgh1/0UCFaIDPvl5P76zhD9vp/pO29p0XibCz0RLgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750236973; c=relaxed/simple;
-	bh=6BYDznB4RlQc+mhxufVxTPJ5Wx3KeL1CGpPkr2rksDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qiaUK1gxSW72aaGrb7aDEQ12bXBI6zuXRt8ryxwHIcHLPSF1t7IPPuYo2NeaLG1J8m64HkVJx9mRh4zF3NA5fVLU2U4EKN5hKURuzSXqsRXvlaC8CDqCz9olqqm6smR70nRhrM7ITCFOEzYGbXQNHPG+dJB41QtEYD5ibUUSZEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ci+LKuB9; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A1012593;
-	Wed, 18 Jun 2025 10:55:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1750236950;
-	bh=6BYDznB4RlQc+mhxufVxTPJ5Wx3KeL1CGpPkr2rksDM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ci+LKuB9+BLJf8defbnolBzBEb49WwnAsDr/a1CEepJks+H5U9q5NGNBjPdobiYfQ
-	 AOYXT54RwVxYlkqrjhJ5MpsqZaVLT+tRdS1f3xSDEc9Xek0YZhDzu3CzB4XlgCNUrc
-	 9w7gyBDLTtUn/G9oLjUvR9JeOT+C871+ubH2ZBL4=
-Date: Wed, 18 Jun 2025 11:55:45 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dharma.B@microchip.com
-Cc: asrivats@redhat.com, dri-devel@lists.freedesktop.org,
-	Manikandan.M@microchip.com, neil.armstrong@linaro.org,
-	rfoss@kernel.org, jonas@kwiboo.se, jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	linux-kernel@vger.kernel.org
-Subject: Re: bridge/microchip_lvds panel usage
-Message-ID: <20250618085545.GC28826@pendragon.ideasonboard.com>
-References: <CAN9Xe3RV9aZLJ3zV3zip5MQweGbBghdOFGohd6Qg-XjvFoGing@mail.gmail.com>
- <20250617233623.GB22102@pendragon.ideasonboard.com>
- <f10ee1ce-5362-4dc9-8e61-726db9c27d64@microchip.com>
+	s=arc-20240116; t=1750237112; c=relaxed/simple;
+	bh=klImNFDVViKVjStvzRatdsVt/GzjfRZdsiS8aBAEf08=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iKaV3eMB/ebB4kqjK8ZsYufozfP8M8X2aNb7O1bXzevMR6B4q8gmEtyGgfWzuXjuHPBWm9CVILYrFhUpn9KJAUph95T7wwzOdo6oOCJWg2Bw0771zaTSO5ys+GBpPjr3ALE//8bSXW+gTcvx1XZSS1IUEwWjMGD03P+g6k1sXY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1l7Oqut; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-235f9ea8d08so65185835ad.1;
+        Wed, 18 Jun 2025 01:58:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750237110; x=1750841910; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eOhnJO46k2hLoOA1evvqSEhjXrTN3jrr3AHVjZDMyD4=;
+        b=K1l7OqutrAR0Mt+M2rdVSQ9mvVTjdeHB+0hMLwviueuaNUm3lSKBxqHfrKoTwmkqLN
+         VQaR6aV30oLFqx08djhyTZkusRI97o9I2g3BETfTgIrBvuUYG7qDf47UtUlEEtwpkC0a
+         62/xLY1/STNrUESPMQGXDRK7qcqz62MPma/84iRIP7HhbxqeXq7IlvRT7vyDCRc86v3r
+         KFbS4FFzsEd/0ekvO6qvum5uijZC8KC29Hm5c1oN+tkTs3wOy2j5bezGuMBOHomoYgtW
+         Q20ZhDjywoTlJZw+opjp7AgWsGfBe/iw1jqIhE78+ECRfvhmmb1wDB+w5rDvYV5/p6/G
+         Qctw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750237110; x=1750841910;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eOhnJO46k2hLoOA1evvqSEhjXrTN3jrr3AHVjZDMyD4=;
+        b=HGnvDFHxRYLTixT8/1G6mzAeXeVt40gTPp6fzn2s+xegmB6E2A2IVPZE5XNy5hJNnk
+         0uXrI7OoGPFHBE4oyEDiCr0hgFciaNyqA/ICS71Wt/6CsllzbY8/5I1//sU8EerQkE1Z
+         m63NdO1xki1hfr6/4nF49n+Yn+Llv61s23wr/BhwdVruorSL03/UwmfS5m27F8CztfBD
+         ya5Dmtsj8OEbCUw13mUa+NKYJrstWXTwf07+YE0C1l935FXeka3Z0EepjwrjquUvfWZ4
+         4cQjZticYz64NQ59QoSrzUHzOFr2krTE8/qUSpIDKszJVuKDQeVHoeybLXAylZJWsQ4t
+         YCJg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6fFO87MTk733xVGFjc5fuMtB5x0nsj84aJna6ztF02p/VqtJFmGS1VYn3KKIe1PtG9RJSR3T8itaHA3FS@vger.kernel.org, AJvYcCUtBEL4XX873FDS5NZjwi4+oHlug74r4YaHXbyEOmVvKDslIoWKlhn32AL5IBBUUl/fgVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx875Kj7yPTQxhrwxsV+YzQqPctLzItnRcxyofuSZnu7X3lTLaO
+	CoZpn7StR8/wBbiL843V/1OXZVV8Ufd4jHrYpeeODzhUW6UbjLSRNfqIuIp4kypJcU4=
+X-Gm-Gg: ASbGncug+CiO5yg0CWDCifnYwyDCzTL0gLy7pjm6NcVMi6CCaHeXo9+CAJA1Fa3u14y
+	OwaSbUM+XtsRLEDgerWPsWcQ6+jyvnVCixTqbBArqzQH06JC+GvHbfGAewMJWuCnxzZUm0eBQXg
+	bb+GozaWqWMuapU/gIGYJ8UDGUwCmW95P1rBT9jUQHoR7XbczqQgsMIE07zavczmfUxCmSNwcnY
+	xut47ZuhjULPdYckYKzys6L9wLoV9yG1vvpCZs7VE57lPeKRyzBvwaS6e0Tt4so0NTU2x7G5Z20
+	3YSj69dJaYFFAZoC4glG50gmtn4PKxeR+XFpy1P/ooA7xQpE3PxRa5yk8+N2GqLWDZ0psSRZv+F
+	NGSEdFAQiTUqLxQ==
+X-Google-Smtp-Source: AGHT+IFs5h0U9hceINh0qwCd633ljXbi6FxxN77HV1zhafIKWrO3Zc3AdHi9WDeBMtg0lqAZoynLJw==
+X-Received: by 2002:a17:903:166e:b0:234:ed31:fc94 with SMTP id d9443c01a7336-2366b12219fmr244997935ad.26.1750237109668;
+        Wed, 18 Jun 2025 01:58:29 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365decb846sm94652895ad.227.2025.06.18.01.58.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 01:58:29 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: alexei.starovoitov@gmail.com
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Menglong Dong <dongml2@chinatelecom.cn>
+Subject: [PATCH bpf-next] bpf: make update_prog_stats always_inline
+Date: Wed, 18 Jun 2025 16:56:09 +0800
+Message-Id: <20250618085609.1876111-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f10ee1ce-5362-4dc9-8e61-726db9c27d64@microchip.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 18, 2025 at 03:50:11AM +0000, Dharma.B@microchip.com wrote:
-> On 18/06/25 5:06 am, Laurent Pinchart wrote:
-> > On Tue, Jun 17, 2025 at 10:36:34AM -0500, Anusha Srivatsa wrote:
-> >> Hey folks,
-> >>
-> >> Can someone please explain why the driver looks for a panel here:
-> >> https://elixir.bootlin.com/linux/v6.14.11/source/drivers/gpu/drm/bridge/
-> >> microchip-lvds.c#L182 and doesnt use it or set it up anywhere?
-> >>
-> >> I bumped into this while working on converting of_drm_find_panel() callers and
-> >> the lvds->panel usage in this driver felt off. Am I missing something?
-> > 
-> > That doesn't seem needed.
-> 
-> Currently the LVDS controller driver is hardcoded to map LVDS lanes to 
-> the JEIDA format.
-> 
-> In order to support the other format "VESA", we need this to query the 
-> panel driver and set the appropriate format accordingly.
-> 
-> "drm_panel_get_modes(lvds->panel, connector)"
+The function update_prog_stats() will be called in the bpf trampoline.
+Make it always_inline to reduce the overhead.
 
-It would be nice if this could be done using the bridge API instead. An
-LVDS sink does not necessarily need to be a panel.
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+---
+ kernel/bpf/trampoline.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> We'll be submitting the patch upstream shortly.
-> 
-> > By the way, please use plain text when posting to kernel mailing lists.
-
+diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
+index c4b1a98ff726..134bcfd00b15 100644
+--- a/kernel/bpf/trampoline.c
++++ b/kernel/bpf/trampoline.c
+@@ -911,8 +911,8 @@ static u64 notrace __bpf_prog_enter_recur(struct bpf_prog *prog, struct bpf_tram
+ 	return bpf_prog_start_time();
+ }
+ 
+-static void notrace update_prog_stats(struct bpf_prog *prog,
+-				      u64 start)
++static __always_inline void notrace update_prog_stats(struct bpf_prog *prog,
++						      u64 start)
+ {
+ 	struct bpf_prog_stats *stats;
+ 
 -- 
-Regards,
+2.39.5
 
-Laurent Pinchart
 
