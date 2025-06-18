@@ -1,127 +1,189 @@
-Return-Path: <linux-kernel+bounces-692158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4E3ADED94
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:15:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61531ADED98
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E3DE3B24FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:15:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 904C2189DACA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09982E7165;
-	Wed, 18 Jun 2025 13:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D912E8DFF;
+	Wed, 18 Jun 2025 13:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ThJH5l5k"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ankVo7Tz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D1A1FF1D1
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 13:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A112E6D1E;
+	Wed, 18 Jun 2025 13:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750252534; cv=none; b=rFhRnydtxU96SnQ3NwrWhqPReuQTX4pTdicf1c1uM24zY0sWdROeqFciz5QNlZcqLAn/SEH9S9r25As5kp4QsvqAvcl+pYqLublNDUNPtRZsSKobx4pjSbVL1I6QOyRnXDJp9IXkVW4KaC44UoKoAJ1YHxXn8RCXikl/FaCCxbo=
+	t=1750252592; cv=none; b=BIVBuNm0wm99Oby88IngmRgGMtviRYFNsNeJ3WnNEYMGT8vzRBFU7WWRVybOCPTp0ZUdLaB7fyYv3hjnzc4/+AGPQ8Vv00OPHdy/SrdUX2dxCKj+NQhVfr8HygmqXcaZqACxhFXBZtdcqFcOhinO+AF0l3ErODGRofXKvxkUmVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750252534; c=relaxed/simple;
-	bh=5kWEeoNfBAbEPXOLp6+1nV2aiGnT6yHyaFHBl1gVcws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ANYagoFdZjFTqR8UHfBYqejMg3EKxWS64MVxjFf/rO/BEaES1lUsiEf9rV91PLtFPU4JfVlWQcVwjBvi4SE3iOdSSQV8ULPPpVRLilrO4xkFTV4RwM7ae+UlaR3hRWlCdGUiT91lF8335nCrJwlctutra5KBMtYbPEDW7vmL19M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ThJH5l5k; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750252533; x=1781788533;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5kWEeoNfBAbEPXOLp6+1nV2aiGnT6yHyaFHBl1gVcws=;
-  b=ThJH5l5k05SviFtDc0w4jb47rb8fVe3UZpeiO1K7vTUIKuOwGFVsu8wN
-   wPbbMA3QQlNxx2VVHsRfHAHLzgJifSbBoZWptUeR5E/VdmXyjvayJiYBd
-   P9OPYBkzeYAzLzHimIu9RXEXikT8OmX4ZYo3LUl0z0mw3VHreBAjm4+2z
-   GGWCdpepx9ShKmd5TRTCB4TC0sJ8qHtV0JUG/yfCGthRXVACPf3mNHsgO
-   12ZWrca4XoZeVO6iWTSu1vuCpXacuiVmcM1QCf0i2zWnB7Mqc2P0fMQQa
-   0w9QTSYenFwJYCk7LNoltoeVFfaeoRVpVpy/1wx9PbMv09af+se6VZfC4
-   A==;
-X-CSE-ConnectionGUID: Byeu0llqREeL6VOj4cFYig==
-X-CSE-MsgGUID: 4dH4gQuSQhuFvZr+fqhxXw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="56287012"
-X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
-   d="scan'208";a="56287012"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 06:15:31 -0700
-X-CSE-ConnectionGUID: pyPXT9rFSdK7bdM3ltYt4g==
-X-CSE-MsgGUID: 8PhR8gw9TgCe5S0ucqiyBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
-   d="scan'208";a="149403503"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 06:15:30 -0700
-Received: from [10.246.136.52] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.52])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 6507520B5736;
-	Wed, 18 Jun 2025 06:15:28 -0700 (PDT)
-Message-ID: <5aabcb15-0def-4f73-b4dd-03c958192d67@linux.intel.com>
-Date: Wed, 18 Jun 2025 09:15:27 -0400
+	s=arc-20240116; t=1750252592; c=relaxed/simple;
+	bh=xjecfFW5v6eKSOI6V0Czl6riZVUJooaKA8suMig3d4k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mkeZMft46f3LbVTuGbObBZ0VbCbjRU4/NPtJVL/sPGKFMs07e7E+2WcSd+QVKjNAYdxzh88VEjFDIzy0onpSd2eA9A91L3qVa2VGVFexO8FEYyZYRUoqHx+y99BKr5dWaGHMkEBUVy/SAvqqttmViug+l3RmUsKT3sdOsWvj5DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ankVo7Tz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94324C4CEE7;
+	Wed, 18 Jun 2025 13:16:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750252592;
+	bh=xjecfFW5v6eKSOI6V0Czl6riZVUJooaKA8suMig3d4k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ankVo7Tz1dI7sCR33wFCuIARshHMf2jU+/ch40Gue8vBjlnfhiTW8pUW/m6gwht9e
+	 SzxnWzkJsxnJCThpoj+YcpqsKgZn1K2NjfKzuLyK0fflpMWhWv15VBHgcHqTOOAOSP
+	 guzb8ACWx8Si8roiR/wOdJAIeFWhuf1cmRoW1sgkLuPUtIX/bXQ1Ob6XxeKvYzojPV
+	 bga3jJkrX+/p0QxYuE1k22WTOeEXeYO9VO+QqrEL/iZO5/NIAGov//Ybshyha58WmZ
+	 u2Odxs0G+IuzobOT67lYvX5eljcDYHLuKLnNhKWGS1JjUpOJo7Ka+eD3QrTds9yUSM
+	 SLQMhdbwNsW4w==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  jasonmiu@google.com,
+  graf@amazon.com,  changyuanl@google.com,  rppt@kernel.org,
+  dmatlack@google.com,  rientjes@google.com,  corbet@lwn.net,
+  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
+  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
+  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
+  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
+  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
+  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com
+Subject: Re: [RFC v2 09/16] luo: luo_files: implement file systems callbacks
+In-Reply-To: <CA+CK2bBcgkrM0D0w77+UpDZsF2rDOc15iAcEJ7PMw52HQDipvA@mail.gmail.com>
+References: <20250515182322.117840-1-pasha.tatashin@soleen.com>
+	<20250515182322.117840-10-pasha.tatashin@soleen.com>
+	<mafs0y0u6rx8y.fsf@kernel.org>
+	<CA+CK2bCigGJJqtSt1-4GP0JPVCZrTa6WS4LiMTT0J=04G64e5w@mail.gmail.com>
+	<mafs0h60jmzzc.fsf@kernel.org>
+	<CA+CK2bA6zsdARkRMQwadD__qXOzjABcRnwdZjfdnvLf26hsz9w@mail.gmail.com>
+	<mafs0a568vuf5.fsf@kernel.org>
+	<CA+CK2bBcgkrM0D0w77+UpDZsF2rDOc15iAcEJ7PMw52HQDipvA@mail.gmail.com>
+Date: Wed, 18 Jun 2025 15:16:23 +0200
+Message-ID: <mafs01prhw5p4.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/12] Support vector and more extended registers in
- perf
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- tglx@linutronix.de, dave.hansen@linux.intel.com, irogers@google.com,
- adrian.hunter@intel.com, jolsa@kernel.org,
- alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
- ak@linux.intel.com, zide.chen@intel.com
-References: <20250613134943.3186517-1-kan.liang@linux.intel.com>
- <20250617082423.GK1613376@noisy.programming.kicks-ass.net>
- <60c18595-c6a8-4c39-98fe-0822755fbdb7@linux.intel.com>
- <20250617142952.GX1613376@noisy.programming.kicks-ass.net>
- <893f1888-b8cb-4976-a0d6-606460438d73@linux.intel.com>
- <1121293d-777e-4c21-b1ad-d34516d2cd3a@linux.intel.com>
- <a116761e-30bc-49bf-a1f8-9cc0ec1faae2@linux.intel.com>
- <4d4d1ca5-aab6-45be-9485-43c39b30fd62@linux.intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <4d4d1ca5-aab6-45be-9485-43c39b30fd62@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jun 16 2025, Pasha Tatashin wrote:
 
-
-On 2025-06-18 8:28 a.m., Mi, Dapeng wrote:
->>>>> Not sure, it eats up a whole byte. Dapeng seemed to favour separate
->>>>> intr/user vector width (although I'm not quite sure what the use would
->>>>> be).
->>> The reason that I prefer to add 2 separate "words" item is that user could
->>> sample interrupt and user space SIMD regs (but with different bit-width)
->>> simultaneously in theory, like "--intr-regs=YMM0, --user-regs=XMM0".
->> I'm not sure why the user wants a different bit-width. The
->> --user-regs=XMM0" doesn't seem to provide more useful information.
+> On Mon, Jun 16, 2025 at 6:43=E2=80=AFAM Pratyush Yadav <pratyush@kernel.o=
+rg> wrote:
 >>
->> Anyway, I believe the tool can handle this case. The tool can always ask
->> YMM0 for both --intr-regs and --user-regs, but only output the XMM0 for
->> --user-regs. The only drawback is that the kernel may dump extra
->> information for the --user-regs. I don't think it's a big problem.
-> If we intent to handle it in user space tools, I'm not sure if user space
-> tool can easily know which records are from user space and filter out the
-> SIMD regs from kernel space and how complicated would the change be. IMO,
-> adding an extra u16 "words" would be much easier and won't consume too much
-> memory.
+>> On Fri, Jun 13 2025, Pasha Tatashin wrote:
+>>
+>> > On Fri, Jun 13, 2025 at 11:18=E2=80=AFAM Pratyush Yadav <pratyush@kern=
+el.org> wrote:
+>> >>
+>> >> On Sun, Jun 08 2025, Pasha Tatashin wrote:
+>> >>
+>> >> > On Thu, Jun 5, 2025 at 12:04=E2=80=AFPM Pratyush Yadav <pratyush@ke=
+rnel.org> wrote:
+>> >> >>
+>> >> >> On Thu, May 15 2025, Pasha Tatashin wrote:
+>> >> >>
+>> >> >> > Implements the core logic within luo_files.c to invoke the prepa=
+re,
+>> >> >> > reboot, finish, and cancel callbacks for preserved file instance=
+s,
+>> >> >> > replacing the previous stub implementations. It also handles
+>> >> >> > the persistence and retrieval of the u64 data payload associated=
+ with
+>> >> >> > each file via the LUO FDT.
+>> >> >> >
+>> >> >> > This completes the core mechanism enabling registered filesystem
+>> >> >> > handlers to actively manage file state across the live update
+>> >> >> > transition using the LUO framework.
+>> >> >> >
+>> >> >> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+>> >> >> > ---
+>> >> >> >  drivers/misc/liveupdate/luo_files.c | 105 +++++++++++++++++++++=
+++++++-
+>> >> >> >  1 file changed, 103 insertions(+), 2 deletions(-)
+>> >> >> >
+>> >> >> [...]
+>> >> >> > @@ -305,7 +369,29 @@ int luo_do_files_prepare_calls(void)
+>> >> >> >   */
+>> >> >> >  int luo_do_files_freeze_calls(void)
+>> >> >> >  {
+>> >> >> > -     return 0;
+>> >> >> > +     unsigned long token;
+>> >> >> > +     struct luo_file *h;
+>> >> >> > +     int ret;
+>> >> >> > +
+>> >> >> > +     xa_for_each(&luo_files_xa_out, token, h) {
+>> >> >>
+>> >> >> Should we also ensure at this point that there are no open handles=
+ to
+>> >> >> this file? How else would a file system ensure the file is in quie=
+scent
+>> >> >> state to do its final serialization?
+>> >> >
+>> >> > Do you mean check refcnt here? If so, this is a good idea, but first
+>> >> > we need to implement the lifecycle of liveupdate agent correctectly,
+>> >> > where owner of FD must survive through entering into reboot() with
+>> >> > /dev/liveupdate still open.
+>> >>
+>> >> Yes, by this point we should ensure refcnt =3D=3D 1. IIUC you plan to
+>> >> implement the lifecycle change in the next revision, so this can be
+>> >> added there as well I suppose.
+>> >
+>> > Yes, I am working on that. Current, WIP patch looks like this:
+>> > https://github.com/soleen/linux/commit/fecf912d8b70acd23d24185a8c05047=
+64e43a279
+>> >
+>> > However, I am not sure about refcnt =3D=3D 1 at freeze() time. We can =
+have
+>> > programs, that never terminated while we were still in userspace (i.e.
+>> > kexec -e -> reboot() -> freeze()), in that case refcnt can be anything
+>> > at the time of freeze, no?
+>>
+>> Do you mean the agent that controls the liveupdate session? Then in that
+> Yes
+>> case the agent can keep running with the /dev/liveupdate FD open, but it
+>> must close all of the FDs preserved via LUO before doing kexec -e.
+>
+> Right, but in this case the agent would have to basically kill all the
 
-The filter is always done in kernel for --user-regs. The only difference
-is that the YMM (after filter) will be dumped to the perf.data. The tool
-just show the XMM registers to the end user.
+Or the participating processes can be cooperative and simply exit
+cleanly, or at least close the FDs before triggering the kexec. The
+whole live update process needs a lot of parts to cooperate anyway.
 
-Thanks,
-Kan
+> processes the regestred FDs through it prior to 'kexec -e', I am not
+> sure it is its job. However, we can add some pr_warn_once() when rfcnt
+> !=3D 1, I think this is a minor change. Lets do that once we have a more
+> developed userspace setup. We need to start working on liveupdated
 
+Sure, makes sense.
+
+> that would through some sort of RPCs calls store and restore FDs.
+
+I have been playing around with some ideas on how to do this. Will try
+some things out and see if I can come up with a PoC soon.
+
+--=20
+Regards,
+Pratyush Yadav
 
