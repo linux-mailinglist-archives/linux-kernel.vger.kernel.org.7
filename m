@@ -1,109 +1,144 @@
-Return-Path: <linux-kernel+bounces-692101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF30FADECDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:44:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88DCDADECD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:43:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0184E188D119
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:40:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 156083B6506
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBD2296153;
-	Wed, 18 Jun 2025 12:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3CA29C33D;
+	Wed, 18 Jun 2025 12:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4q4dPAS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KsTR72qF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B0F145FE0;
-	Wed, 18 Jun 2025 12:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD7F28B503;
+	Wed, 18 Jun 2025 12:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750250379; cv=none; b=LTu0XJwykwQmr9+YV9BFoG+djmJNGZrcDpTJ2B1RxMgeLtz0Kyup+KNgJv8cCE6RBfelOQNVW04HXU6VFImlgMCCL9OQX+mtYr3++GgHl1AFZIQAe1N1/XstgHt+FDTxWvDurGN9Hoh7YinuB5qgC8vM2ran+H7onQ3K2UtXOQI=
+	t=1750250403; cv=none; b=FcJnSAA6mdZayYs5IXzqv3vWwNum3w9ZQ6A8/wVUyG0L6easi66/EU7QtiRH5bH6x6BnhqZYkfs3pjThAEyW5noUjaDZCD8MCCtd6fziBcQSVp7i+Y3XxGlRfybOE/j7H6EaDRyR772wsNO6dIsSQGt8La6Q7LqHAsJx3Hziuxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750250379; c=relaxed/simple;
-	bh=WG7j8G6GOIk4GTEuTb80cckRD2B1MQmBRHVOT434W38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hi2us/brEnk3yyQs066B10wvLpK7ON4uhI6eFcVH+FfXh+dObuDYs0TOcFzlVkRL1SKpV0TMjkL4Lbwo2gb+nfNDDSDy5A+/ltGR398dRFz2M7ImxKzzITH5NWEzAB8zBFQqlFd38W5rXBslqKNcqvwfFu6EitHEXCAeybRfUik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4q4dPAS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD17BC4CEE7;
-	Wed, 18 Jun 2025 12:39:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750250379;
-	bh=WG7j8G6GOIk4GTEuTb80cckRD2B1MQmBRHVOT434W38=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S4q4dPASMsbovjTlxIqD3yC4iPmDJDtuKDOHClUD084oQrFRwVfB5RPk9youEtp8q
-	 LxAS8xZpTtBGT4/bq2CvIc+4tE9IL9uUx+hj+6mThaDE73v1VrPWjtifDEbDg5+5ie
-	 KrAzDPUey8kV3gAK7upUCpF25Pr824GFimEjbkBJHf4gKXhgVk27I6Y64J3H+Sl3qZ
-	 A6T3eIKgPlOUb8xuta5CHXlka1gbAAB4vbSKOh8aaBDjr1AmybJLydgHelPLRUuH8w
-	 opgUL6KCNR5tlwkgzwz/etBVcsL/scCEh+5gkriE0bLX/AoCjwNo/LyIuiXvMo/hWY
-	 NyBtEMBv9tnYA==
-Date: Wed, 18 Jun 2025 13:39:33 +0100
-From: Simon Horman <horms@kernel.org>
-To: Frank Wunderlich <frank-w@public-files.de>
-Cc: linux@fw-web.de, nbd@nbd.name, sean.wang@mediatek.com,
-	lorenzo@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, daniel@makrotopia.org,
-	arinc.unal@arinc9.com
-Subject: Re: Re: [net-next v4 2/3] net: ethernet: mtk_eth_soc: add consts for
- irq index
-Message-ID: <20250618123933.GP1699@horms.kernel.org>
-References: <20250616080738.117993-1-linux@fw-web.de>
- <20250616080738.117993-3-linux@fw-web.de>
- <20250618083623.GF2545@horms.kernel.org>
- <trinity-86a5b58b-a74a-48be-80ae-aa306e95f214-1750238697100@trinity-msg-rest-gmx-gmx-live-b647dc579-2m42j>
+	s=arc-20240116; t=1750250403; c=relaxed/simple;
+	bh=gtPi66+hfTTTDE0soYLd3r6RNixK6xtDDPTsnM7s8AI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pLVub+NWSnVH+ybUNqqywbHW80gtjY2APuxyodM1XFOokLrhjUDtT2lWekq989wu7I9Q+p1rYXzqUUI3Qejbn9wEI6/tsfO+OUnOPgquhjzcyeja/3kKGciiz4zZAJzA8TAe2hLpthUaeXBmGrhqpGnURHTUyIAyCfB+EOCfrf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KsTR72qF; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750250402; x=1781786402;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=gtPi66+hfTTTDE0soYLd3r6RNixK6xtDDPTsnM7s8AI=;
+  b=KsTR72qFfNWvN2A7jU/fDRFJEgUkNcdaOI+rd9dr9Fv0ehyjk2rxgBwR
+   WgOkP1lu38JxZuwjwDYRAc19bMdGzUtR72YNV33S7vLR24kJlK4vXoZYY
+   xExR1sP6TAV7OuSVrHcmXwXtv5LPwQ1U0T73dxfq8tQx/nd0vmGji+ErS
+   ZOQ5IYgGkAlVumG6hdXLpfz1NCgIH5la7eJB5zdxsWXwVJ2fdYO4q+wwN
+   bmTHQeZ9P+t2JZYfwKyeWKhkNTHTnsVMGKcGNQAYWP7BCb3c91epInDX7
+   p4YLCGmcEaxFU6wb+YNmbaMO42qKN78+9EWTD3GvHBq/yk41h7jjPDdCK
+   g==;
+X-CSE-ConnectionGUID: 9bJXNDKMTd+RvM01ZtThag==
+X-CSE-MsgGUID: oF6zxxobRoufNIAB+wLCtw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="51690100"
+X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
+   d="scan'208";a="51690100"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 05:40:01 -0700
+X-CSE-ConnectionGUID: Aj2E/VTBRu++q7aFtIp7iQ==
+X-CSE-MsgGUID: nCSKsEt0RXaxnLgpFD+xMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
+   d="scan'208";a="150262264"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 05:39:53 -0700
+Message-ID: <27b983f2-a6da-4b2c-a5d4-c84e2c80f193@intel.com>
+Date: Wed, 18 Jun 2025 20:39:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <trinity-86a5b58b-a74a-48be-80ae-aa306e95f214-1750238697100@trinity-msg-rest-gmx-gmx-live-b647dc579-2m42j>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] KVM: TDX: Do not clear poisoned pages
+To: Adrian Hunter <adrian.hunter@intel.com>, Tony Luck <tony.luck@intel.com>,
+ pbonzini@redhat.com, seanjc@google.com
+Cc: vannapurve@google.com, Borislav Petkov <bp@alien8.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ H Peter Anvin <hpa@zytor.com>, linux-edac@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
+ kai.huang@intel.com, reinette.chatre@intel.com,
+ tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
+ isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com
+References: <20250618120806.113884-1-adrian.hunter@intel.com>
+ <20250618120806.113884-3-adrian.hunter@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250618120806.113884-3-adrian.hunter@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 18, 2025 at 09:24:57AM +0000, Frank Wunderlich wrote:
-> Hi,
+On 6/18/2025 8:08 PM, Adrian Hunter wrote:
+> Skip clearing a private page if it is marked as poisoned.
 > 
-> > Gesendet: Mittwoch, 18. Juni 2025 um 10:36
-> > Von: "Simon Horman" <horms@kernel.org>
-> > Betreff: Re: [net-next v4 2/3] net: ethernet: mtk_eth_soc: add consts for irq index
-> >
-> > On Mon, Jun 16, 2025 at 10:07:35AM +0200, Frank Wunderlich wrote:
-> > > From: Frank Wunderlich <frank-w@public-files.de>
-> > > 
-> > > Use consts instead of fixed integers for accessing IRQ array.
-> > > 
-> > > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> > > ---
-> > > v4:
-> > > - calculate max from last (rx) irq index and use it for array size too
-> > 
-> > Reviewed-by: Simon Horman <horms@kernel.org>
+> The machine check architecture may have the capability to recover from
+> memory corruption in SEAM non-root (i.e. TDX VM guest) mode.  In that
+> case the page is marked as poisoned, and the TDX Module puts the TDX VM
+> into a FATAL error state where the only operation permitted is to tear it
+> down.
 > 
-> thanks for review and the RB
+> During tear down, reclaimed pages are cleared which, in some cases,  helps
+> to avoid integrity violation or TD bit mismatch detection when later being
+> read using a shared HKID.
 > 
-> i thinking about changing the const names to this:
+> However a poisoned page will never be allocated again, so clearing is not
+> necessary, and in any case poisoned pages should not be touched.
 > 
-> MTK_ETH_IRQ_SHARED	=> MTK_FE_IRQ_SHARED
-> MTK_ETH_IRQ_TX		=> MTK_FE_IRQ_TX
-> MTK_ETH_IRQ_RX		=> MTK_FE_IRQ_RX
-> MTK_ETH_IRQ_MAX		=> MTK_FE_IRQ_NUM
+> Note that while it is possible that memory corruption arises from integrity
+> violation which could be cleared by MOVDIR64B, that is not necessarily the
+> cause of the machine check.
 > 
-> because of i currently working on RSS/LRO patches and here MTK_FE_IRQ_NUM is used as name 
-> with same meaning like my current MTK_ETH_IRQ_MAX (where max should be same as RX and NUM
-> is one more because it is a count).
-> Current IRQs also target the MTK frame-engine which is different to the PDMA RX engine
-> used for RSS/LRO later, so MTK_ETH_IRQ_RX and MTK_ETH_IRQ_MAX are maybe misleading when RSS/LRO 
-> support will come in.
+> Suggested-by: Kai Huang <kai.huang@intel.com>
+> Fixes: 8d032b683c299 ("KVM: TDX: create/destroy VM structure")
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> ---
+>   arch/x86/kvm/vmx/tdx.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> can i change the consts like this and keep your RB?
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 457f91b95147..f4263f7a3924 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -282,10 +282,10 @@ static void tdx_clear_page(struct page *page)
+>   	void *dest = page_to_virt(page);
+>   	unsigned long i;
+>   
+> -	/*
+> -	 * The page could have been poisoned.  MOVDIR64B also clears
+> -	 * the poison bit so the kernel can safely use the page again.
+> -	 */
+> +	/* Machine check handler may have poisoned the page */
 
-Yes, no objections from my side.
+This doesn't read correct. The page is not poisoned by the machine check 
+handler. Machine check handler just marks the page as poisoned.
+
+With it fixed,
+
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+
+> +	if (PageHWPoison(page))
+> +		return;
+> +
+>   	for (i = 0; i < PAGE_SIZE; i += 64)
+>   		movdir64b(dest + i, zero_page);
+>   	/*
+
 
