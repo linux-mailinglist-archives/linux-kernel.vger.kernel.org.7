@@ -1,164 +1,104 @@
-Return-Path: <linux-kernel+bounces-691317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C972EADE32E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:51:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A3CFADE333
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8985F3BC543
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 05:50:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 968353A62C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 05:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD241FF1C7;
-	Wed, 18 Jun 2025 05:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="juhs/ZzI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242601FF1C7;
+	Wed, 18 Jun 2025 05:51:45 +0000 (UTC)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11201E5B60;
-	Wed, 18 Jun 2025 05:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15731E5B60;
+	Wed, 18 Jun 2025 05:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750225868; cv=none; b=kNfAGqYleai+lYQwiXVhBWv9DmyO0ybEn4mcJWv9W6g090Mw4ZKnrFDZ5Z8IplF7cdd++XdB59uHNb8Iv+spu0NO6pat+WAJCqgcqApo5KxZ/E9RIk+Hpsh38/13suSIZ+Y4ZEXB4iJRI8tlshkeIb5PNuG2ufOjDt1bYXIQWJ4=
+	t=1750225904; cv=none; b=nd6O8863ARN4P+y2ZsHh0PJmNX6HOMPeL8Ma1MJ5hqfzWQ5iU32PrmJHKZQUF8QDxXhsRXhpUKpg7x6aoHGH3Hrcczx0XIII/MuTggnEgcPYTPvRWG6h2lJWqTQXUtqauXgAzAzpmxkNUytXNx1a17wG7hHNB/mOhs0BiMB1kKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750225868; c=relaxed/simple;
-	bh=Tdgx2liwsIplwezdt/eFKC4vMNxOqHp4aQ+BcUH8kBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QrcECnvIT4oCG/DyeKaQe+NIqqTJ1bewiu383BV2epA1ezJFHY620DmfvpI5Spq4C1D4YmWBeOCJ+e5yGvHSjpPLO7/fxuH0JY3TGA3uldpPewEqXjz5IYWfcSk0rTn0QoO0Hmg2ipq+YRnAIUSfcWT31oS58k3LWW9bG6SpVRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=juhs/ZzI; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750225865; x=1781761865;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Tdgx2liwsIplwezdt/eFKC4vMNxOqHp4aQ+BcUH8kBQ=;
-  b=juhs/ZzI6BKbAIj5jkdRhNNc3+zU2jJcjqKOVaAz1lvvQ5zvPrLnRipj
-   YVkK/x0wrOQjPezVNNXK403LClM2PswchZBuwbcur677Cvsd3fyPRETf7
-   /bmuPUgBH66JlFTGOXAgjo+k88GtBlwr3cstKOzhTS/4Nf7xWAtZ0aO9R
-   ISwcGJwbw/Hc7zsmOQtW1D3MXTVCqOtpXE7mCBY1Rz4ZDp7rf5d2nFJBY
-   fEMrCgAsaU8Jywwr0q4HX2dFGaf7R1SQyiHOC8Tn6YleNFzyu2qUGd28D
-   otDfew0UQf0vMny9eCYPvMFFy3aZAwFXE+2g7i2QcKbuwjkqYK6qU77xG
-   Q==;
-X-CSE-ConnectionGUID: 73ha6hyuSe2Y48IgQDIw0Q==
-X-CSE-MsgGUID: dt38bHOMSMSq/0tlhUzRAQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="52129818"
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
-   d="scan'208";a="52129818"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 22:51:05 -0700
-X-CSE-ConnectionGUID: y++iQIilS0CcpPuztu0urw==
-X-CSE-MsgGUID: A71+k8qsTsWnOtKAkWParg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
-   d="scan'208";a="149202854"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 17 Jun 2025 22:51:04 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uRlhM-000JRS-26;
-	Wed, 18 Jun 2025 05:51:00 +0000
-Date: Wed, 18 Jun 2025 13:50:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Guillaume Gomez <guillaume1.gomez@gmail.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	ojeda@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 1/1] Use new `--output-format=doctest` rustdoc command
- line flag to improve doctest handling
-Message-ID: <202506181334.f0STx6ta-lkp@intel.com>
-References: <20250617140032.1133337-2-guillaume1.gomez@gmail.com>
+	s=arc-20240116; t=1750225904; c=relaxed/simple;
+	bh=2xyOVvq1JWwubLx2N4PQv+4xr+CIeNVHXgasbtLWbH8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SiRHzXv+/MIeFqt5HYmOYlXRbYgyaot3y974A0IikDI1YY+aNIVlaCrfAAMT3dBfEbnm3WOuZ8Is9RpiVR/LeaKGpEG3Di4djz9G0r8ZyIBAMVMasg/wYcboAGpXXx2nI5eisBr+wIKhcywAwQANKwVgIOSAQF3wK7Rin9mLgro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-23636167b30so58503635ad.1;
+        Tue, 17 Jun 2025 22:51:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750225901; x=1750830701;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QPtIhKj+67MKXvsdqiR5TldExHdcv6/Kt+rfIgkMSeM=;
+        b=nFfUcDpLkE7q6S3qNP4BKxlawDz7SraPqZY8JGlssw2Yrc5B5A0HBWBRA35Evh6rch
+         gFR3PX7BtTNMyei//RyQBdMAIsVKNGlq4lT8tqpmBmXqlkJ4UQKXWOq1zNjUxxUNny3X
+         4PW4UrI+0yoDrpifeUGhRDmP4JTsDUSighm/ySr9S29q42DRw0pRfCRYfk2q7xWIF/Gx
+         9KfzJBykM2yKhFenj2tLeH9SXBDqxMG2BpIfdKaZ7eL2t4SEIv26tzOQGeJouJYVcsMa
+         rBUZ+Xfh55+oGUA/1UGOy8Ftt2tNDm10M+qldEFK/fGcuDvkEj2pETog7HOAwWwl7/fr
+         UU1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXB1zdi2OgVia9OQGdVWuyIk0TkiXVhFTyBrjJRVEel0RwrfzXkTxIt687VcG2T2FZyFJpJvNpj+/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEyrT5U9GL74EhTkKuNFXmxcaxlGWY4AEaLPT4UsXEuAjbPfNX
+	HKcEqI1Tjcod0md+jQJMJxM38Ti4cnGAeCQEW8F1bPCXqQLbEIP55hhVYUYZC91a
+X-Gm-Gg: ASbGncsr817Mq2+w9RAhKHRZDrqIRvLNrEgpQDhXGQjBQqWwHbSVK79+alVI+pkhgMp
+	wpL5S79sqTEerr1Vm+1oKR5lEdlP9ONyqpDquphjJ/cOMqABz7bVyETpY+WTSXpWkBcoWRWxyNl
+	hfURfPo2ZKnILremQ4D1aO+TMuCwMqPmYxNKxzb3Xfs6+53O46eUE79nqAQ2b8DW12j6uuHOSeV
+	r/w2bJ1XNY5LlzKbAUkJoLq7EOJWveict1Zvnmjvsw2p4u0Th/9o9X+lrA+6MzrUxIu+wyzo8wT
+	7LKpMX0uwmtLNBilSeSmm1wbYPi18H6MmwbKxILNEDQmdQqflIGxxNuHJntGwwjrxRGl/Ex1RUj
+	97Ow=
+X-Google-Smtp-Source: AGHT+IFUy22ub/r8aKY00hTcYEgVpeG/IueXtowQ0b6l02Zhp7g1ZBDcHI09gKOz+n6sFAvuCoKyZw==
+X-Received: by 2002:a17:902:d58d:b0:235:6f7:b918 with SMTP id d9443c01a7336-2366b3c5bdamr278928005ad.28.1750225901260;
+        Tue, 17 Jun 2025 22:51:41 -0700 (PDT)
+Received: from localhost.localdomain ([116.128.244.169])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365e0d0b12sm91243645ad.253.2025.06.17.22.51.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 22:51:40 -0700 (PDT)
+From: xiehongyu1@kylinos.cn
+To: mathias.nyman@intel.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	Hongyu Xie <xiehongyu1@kylinos.cn>
+Subject: [PATCH v1] xhci: Disable stream for xHC controller with XHCI_BROKEN_STREAMS
+Date: Wed, 18 Jun 2025 13:51:33 +0800
+Message-Id: <20250618055133.62638-1-xiehongyu1@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250617140032.1133337-2-guillaume1.gomez@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Guillaume,
+From: Hongyu Xie <xiehongyu1@kylinos.cn>
 
-kernel test robot noticed the following build errors:
+Disable stream for platform xHC controller with broken stream.
 
-[auto build test ERROR on rust/rust-next]
-[also build test ERROR on shuah-kselftest/kunit shuah-kselftest/kunit-fixes linus/master v6.16-rc2 next-20250617]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Hongyu Xie <xiehongyu1@kylinos.cn>
+---
+ drivers/usb/host/xhci-plat.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Guillaume-Gomez/Use-new-output-format-doctest-rustdoc-command-line-flag-to-improve-doctest-handling/20250617-220502
-base:   https://github.com/Rust-for-Linux/linux rust-next
-patch link:    https://lore.kernel.org/r/20250617140032.1133337-2-guillaume1.gomez%40gmail.com
-patch subject: [PATCH 1/1] Use new `--output-format=doctest` rustdoc command line flag to improve doctest handling
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250618/202506181334.f0STx6ta-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250618/202506181334.f0STx6ta-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506181334.f0STx6ta-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   PATH=/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   INFO PATH=/opt/cross/rustc-1.78.0-bindgen-0.65.1/cargo/bin:/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   /usr/bin/timeout -k 100 12h /usr/bin/make KCFLAGS= -Wno-error=return-type -Wreturn-type -funsigned-char -Wundef W=1 --keep-going LLVM=1 -j32 -C source O=/kbuild/obj/consumer/x86_64-rhel-9.4-rust ARCH=x86_64 SHELL=/bin/bash rustfmtcheck
-   make: Entering directory '/kbuild/src/consumer'
-   make[1]: Entering directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
->> Diff in scripts/rustdoc_test_builder.rs at line 16:
-    //! the `gen` script (done there since we need to be aware of all the tests in a given file).
-    
-    use std::collections::HashMap;
-   -use std::io::Read;
-    use std::fs::create_dir_all;
-   +use std::io::Read;
-    
-    use json::JsonValue;
-    
-   Diff in scripts/rustdoc_test_builder.rs at line 25:
-    
-    fn generate_doctest(file: &str, line: i32, doctest_code: &HashMap<String, JsonValue>) -> bool {
-        // FIXME: Once let chain feature is stable, please use it instead.
-   -    let Some(JsonValue::Object(wrapper)) = doctest_code.get("wrapper") else { return false };
-   -    let Some(JsonValue::String(before)) = wrapper.get("before") else { return false };
-   -    let Some(JsonValue::String(after)) = wrapper.get("after") else { return false };
-   -    let Some(JsonValue::String(code)) = doctest_code.get("code") else { return false };
-   -    let Some(JsonValue::String(crate_level_code)) = doctest_code.get("crate_level") else { return false };
-   +    let Some(JsonValue::Object(wrapper)) = doctest_code.get("wrapper") else {
-   +        return false;
-   +    };
-   +    let Some(JsonValue::String(before)) = wrapper.get("before") else {
-   +        return false;
-   +    };
-   +    let Some(JsonValue::String(after)) = wrapper.get("after") else {
-   +        return false;
-   +    };
-   +    let Some(JsonValue::String(code)) = doctest_code.get("code") else {
-   +        return false;
-   +    };
-   +    let Some(JsonValue::String(crate_level_code)) = doctest_code.get("crate_level") else {
-   +        return false;
-   +    };
-    
-        // For tests that get generated with `Result`, `rustdoc` generates an `unwrap()` on
-        // the return value to check there were no returned errors. Instead, we use our assert macro
-   make[1]: Leaving directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
-   make[2]: *** [Makefile:1825: rustfmt] Error 123
-   make[2]: Target 'rustfmtcheck' not remade because of errors.
-   make[1]: *** [Makefile:248: __sub-make] Error 2
-   make[1]: Target 'rustfmtcheck' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2
-   make: Target 'rustfmtcheck' not remade because of errors.
-   make: Leaving directory '/kbuild/src/consumer'
-
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 6dab142e72789..c79d5ed48a08b 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -328,7 +328,8 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
+ 	}
+ 
+ 	usb3_hcd = xhci_get_usb3_hcd(xhci);
+-	if (usb3_hcd && HCC_MAX_PSA(xhci->hcc_params) >= 4)
++	if (usb3_hcd && HCC_MAX_PSA(xhci->hcc_params) >= 4 &&
++	    !(xhci->quirks & XHCI_BROKEN_STREAMS))
+ 		usb3_hcd->can_do_streams = 1;
+ 
+ 	if (xhci->shared_hcd) {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
