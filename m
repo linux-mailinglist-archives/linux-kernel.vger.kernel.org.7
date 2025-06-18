@@ -1,271 +1,208 @@
-Return-Path: <linux-kernel+bounces-691211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA81ADE1BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 05:41:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8409ADE1D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 05:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 399023BC626
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 03:41:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9CD917CBC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 03:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A857F1DB551;
-	Wed, 18 Jun 2025 03:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3A01E51FE;
+	Wed, 18 Jun 2025 03:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="iC8+uMw+"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="NfDho2Z6"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazolkn19010003.outbound.protection.outlook.com [52.103.43.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBB02F5313
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 03:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750218082; cv=none; b=DdsWK55AvhTUgoawdGAygRieTLZWZ+ZHsjl2ufDFL2ybFo5LX+UCQFilcQL2oF/Ze2qk/EJXWSuOvcZQ+/ycJoxuN+/AfZor1AFhwzPzCGuONOdBUSbdBm52t3wTp9dmH61G7IAcxG8rgbYr2EY45iF9gSBqyX49GF+2brBAUUw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750218082; c=relaxed/simple;
-	bh=jJ6Rn2VcBI2pFg/H97oG9nA6P2Njoqqtp/BQ4BhQzHg=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZAAzJ2l5o4EtDhl65yn5tWXJkRT778aYyB+337EIfxXtcsuqQgYLpTdijh2jnLvWl6I52fGV6Qk6SBaeuLkom6bWd/wP0nY/mH+hnoEV9lzL1WL0oFDfqnwlCNsOzDt9gjMfbPhkjBpMfhUDOH+SMQPD/RGMWFY8yZy9GmIg8Pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=iC8+uMw+; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 1467f4604bf611f0b910cdf5d4d8066a-20250618
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=0mo63V3QovSHkpNE8wUbgfm1mAKC72zCbSTyRHS1N38=;
-	b=iC8+uMw+daTGob0NNqe25JWr1gmfaYe/do1VzhKVvzpFEnX+30gLRSI+4q42i8dQJDdU1a3WSGgQBJlB3rn0DrLoM9LY8/wBfhQnkVUfIrrjhDzYT0rmC2c11TBEOVdy/BGyuJVaZ6STDqLvk1kflG646eMUZ2ZCcjKvyJNGqzc=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.3,REQID:dc3d16c2-3651-4111-95a2-28de5dc3eb48,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:09905cf,CLOUDID:1f99cd58-abad-4ac2-9923-3af0a8a9a079,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|50,
-	EDM:-3,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0
-	,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 1467f4604bf611f0b910cdf5d4d8066a-20250618
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
-	(envelope-from <kuyo.chang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 600500351; Wed, 18 Jun 2025 11:41:12 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Wed, 18 Jun 2025 11:41:11 +0800
-Received: from [10.233.130.16] (10.233.130.16) by mtkmbs11n1.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1258.39 via Frontend
- Transport; Wed, 18 Jun 2025 11:41:11 +0800
-Message-ID: <bbb9a1f3b796e8d7bd0010bf0f4862d67368516a.camel@mediatek.com>
-Subject: Re: [PATCH v2 1/1] sched/deadline: Fix dl_server runtime
- calculation formula
-From: Kuyo Chang <kuyo.chang@mediatek.com>
-To: John Stultz <jstultz@google.com>
-CC: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, "Mel
- Gorman" <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Matthias
- Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-Date: Wed, 18 Jun 2025 11:41:11 +0800
-In-Reply-To: <CANDhNCrUtLCU86hNk4qyfbqn9eXsmbzgzJCxYmXGRCko0r=VbQ@mail.gmail.com>
-References: <20250617155355.1479777-1-kuyo.chang@mediatek.com>
-	 <CANDhNCrUtLCU86hNk4qyfbqn9eXsmbzgzJCxYmXGRCko0r=VbQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042E11E1E0B;
+	Wed, 18 Jun 2025 03:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.43.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750218159; cv=fail; b=e0u4fxIU28f6ltyEssxIk+DT7hw+uELVXawXo2OrtIYsTFLrrja3U8Lng6tvYJH6GB3cj3c2wumC7tGOppT8XsM8UVeJulDRXean/4sItur4zVjETcVEg5f92ALBOv3Ks00GwqGJJJncaTvVKcNbQZDt2F85aL0qiOHkAZv+Fq0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750218159; c=relaxed/simple;
+	bh=/N6YU4/FGOmzaphAw4SFpmJxSfkhD3tobUJfiI7jLiM=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OSSdKGJgVzB5Dobw7/o+lnt4i23iEANi9ziMsG8GvqRfYiPmCntXUYlAn0rJ2jIJsP5/sRFZDGagndY8+Vt7pRgR1cOvZjhZVrz+KDoJKb/8nEnZ+BoDx9w9RJRiN2PZk/iVcMTNAn8Q95bvcQQAaLFC3YUn8Q3O642GR4RgXlk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=NfDho2Z6; arc=fail smtp.client-ip=52.103.43.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CBn2KJNjTXOVXLk+EAHdb0iz/iV+cviETKZg1jqd3JUH3JOrrOC+XpDzzbPRJgLxy8AKjnpAQhp4tDgEqXo3ss7Cveo0jeo/XpAfGehhB/SmH3BUq4e2d853OK8KU9sx6gjK5Z1qkktVACxi2O+rA1IiVJrUdlrUsXAtp7MdXRJPkIfbKgYI3osrl2OlGc6mD4AJS6D2tv8Fu2UXAA3xQUn3XTm7VCHJ3a+fmK82btz9oJ4xQ+AYzma4ADIcSnWYUBpaaEuM4qk0OpNQq3qFml/rEzU8xvo79mIRF45rMW01K69Qpfjr688/YA7FHhg7ymhWgt+jyA0fhZp2LGT2zA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SpzSRT/qcLuRfUQEkuRF9ffcbC534KSswQw3UDqANBk=;
+ b=Zru0Xj4PRjF5F77JTUP82YQ8NtOQFEDftszXFf9V4ftqJRSarbKnu0GLZkEBK0QFxFwtMFNGCTe6bmATtuj2ZH4tw2m+3y5CvPa/1sXBS27FC3h0darWBlCePdHL3fzBpTWUD8lW9GhN0Mz7gQQuw79XZUJDsAk9YKGDUXmQc8xVMtDZw3a4qPh5BJZRGDEBIOCIG9pbp5xu+drjgNqGAu4wbjySI1XKvuvw4YiqzCnkP2U9RKhHHvYxRLcmATLv1opUYbP2VDPl8Dd4PG3JlyIHGMMVOcsP8owEAqbr1txVJW1K4FqF61Z9PYFz3ZXBl7KkAOyBN9OyFN9AWeNILQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SpzSRT/qcLuRfUQEkuRF9ffcbC534KSswQw3UDqANBk=;
+ b=NfDho2Z6Xp7Yj8VFMM5+S4rj15OD2uKfmVzARIk06WgC6wUcBh5Q9uCUfPLbFTxd1KrMbbWZUXffqlefNLftnBH01RFtlPXXj8/0yKjWZjadbNc+4UTvtflD8kciirVPEa+bZVhTTL0NPaUBIgba3i+Xg2QqfT7/UdUAVpcA6vxsKahXzAXO8lUnIrOrbrcMetqq1YHDAraVgJrriZvzfnNs6ap4L6XhNuoTE3WIhn4hc6gwiF2zK+AyfPx1BALCWUEkWRRSiKdByCay/0bbX5MuoWM6jJE57maVfZAbWPdQFLixj8tspt0EupUhj1FQHpfuwCd6wBPxeecdvp1+Xg==
+Received: from OSBPR01MB1670.jpnprd01.prod.outlook.com (2603:1096:603:2::18)
+ by TYCPR01MB6477.jpnprd01.prod.outlook.com (2603:1096:400:93::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.19; Wed, 18 Jun
+ 2025 03:42:34 +0000
+Received: from OSBPR01MB1670.jpnprd01.prod.outlook.com
+ ([fe80::c00:ec4e:ee7e:9b7f]) by OSBPR01MB1670.jpnprd01.prod.outlook.com
+ ([fe80::c00:ec4e:ee7e:9b7f%7]) with mapi id 15.20.8857.016; Wed, 18 Jun 2025
+ 03:42:34 +0000
+From: Shiji Yang <yangshiji66@outlook.com>
+To: linux-mips@vger.kernel.org
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Shiji Yang <yangshiji66@outlook.com>
+Subject: [PATCH 1/3] mips: pci-mt7620: fix bridge register access
+Date: Wed, 18 Jun 2025 11:42:05 +0800
+Message-ID:
+ <OSBPR01MB1670555F549B69B9A5E7F133BC72A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
+X-Mailer: git-send-email 2.50.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0125.apcprd02.prod.outlook.com
+ (2603:1096:4:188::13) To OSBPR01MB1670.jpnprd01.prod.outlook.com
+ (2603:1096:603:2::18)
+X-Microsoft-Original-Message-ID:
+ <20250618034207.22118-1-yangshiji66@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OSBPR01MB1670:EE_|TYCPR01MB6477:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8ca9651-a88a-4179-8819-08ddae1a2914
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|5072599009|19110799006|461199028|5062599005|15080799009|41001999006|8060799009|7092599006|3412199025|39105399003|440099028|40105399003|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7iz0m+BTI4/b2vwf7rJZTnyybPL8wkTxCdlSfWuNxyFnHazZxITDz0KhERYT?=
+ =?us-ascii?Q?wzk5jori7hjTTaFePoWIpEaQ5QXxth8QmKGtAYu27FlA59rPgk0xFK08crj0?=
+ =?us-ascii?Q?SofRs6QYqZnBin/LOEiC18WUifmzYt26O8MQhxWTDAI280GNBpYsVOSOPXSJ?=
+ =?us-ascii?Q?kzuXGnBZvEFyK49xKRCp5j5+/yP6Bp+ILSxcLRuByXE5dFU45/89SIEOAgZS?=
+ =?us-ascii?Q?3A6JYwC70ovwurVx9jVMekDVAZkK4fQnprwBgf623d7C6XvQwIeW4bL3jz/w?=
+ =?us-ascii?Q?oWph4M0UPN5LvGx/jm22nPcTD66FecvdykCP9DNLIRmS/noUxVjRh+2fVQOZ?=
+ =?us-ascii?Q?pVycM1DU6BNOzdJDigiMFP6iTOXbU3TiMPNruGS0qeKareMXk1CQhRirQID7?=
+ =?us-ascii?Q?gCL6JYFYVwowmFhKLlQREoUHxRi8m2QgicqEmElBFVFNIAPrrJsHI9KYfch/?=
+ =?us-ascii?Q?/h1aoOCllokGCBL/jRDoDCKoreHFI6e1ATaECcqc0Vf1Ef+TkZF0VMsabbq3?=
+ =?us-ascii?Q?yBSSg6YfiW6AEZ7kZp5gNCsN18+y8fTrz3h7r+W5SJt+Pf2kVw3uJv44BWor?=
+ =?us-ascii?Q?3uP9wzJClsuLaE7peKAzvC8oAeukFZYu5/iSCIHpbq5N9DFSdKR4X4cEk2jO?=
+ =?us-ascii?Q?Jh9ug3wTpYJgJG8+X4I38dwykQhqI3jGkz8AODPYM0qw1JUPGdlXuSdcsyUU?=
+ =?us-ascii?Q?eUClghYulTX0Y7OQuI/evlTrkFhJF2OZ4EAksr3ZbTSmhOh+I6RRYFvti7EB?=
+ =?us-ascii?Q?JlwCp1MLhA7PdIkcSUNSmjjjLiKlUQ4NkXXMP9a5L8tk0ExnYY/fP1ccNQrb?=
+ =?us-ascii?Q?OMHJbx1pXjJVfrX3O4GjwiWpn9WHBqm/PlzAfGO4tKBiNq15XOF07U3zM/FJ?=
+ =?us-ascii?Q?uErHMtF7IuC8BQknlPX8i/lInZSPB8NNe7ZDMwNaZcvGfD5zkZeW3uCVQK6P?=
+ =?us-ascii?Q?v4whMYwVgvzkfS39Byzfh6+XfVAdsQfkIGceQjdLHzUx6xNZ+Z2EcQJJcs1a?=
+ =?us-ascii?Q?q8yPNSmvUIXMW6w9w4pY3V1Ie0R+bDVIJemTYj1sC41BZbxq/zzSjf8RgY9n?=
+ =?us-ascii?Q?b2VPfD55DBOBPrFWhgkLPf6jkMmdei0qU17fJ/pO2uxjoA7G3P/KO+ZsUAuP?=
+ =?us-ascii?Q?4cRKwmYfR+fqCqnu4GOuDIeiz5SON44mGDDAt7XYsBiK5fCWEfkd8JYTiFfE?=
+ =?us-ascii?Q?usRHwLrYiZYmRCF5tGPcbDMThFywno8u0j5Gn/o+VrHLUmYNqO/eJnMoxvgM?=
+ =?us-ascii?Q?eL2qVVh6rnXlUBjI/O6KJBR1HBakFCc+NqkzvsGVSA=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Kb2aSAd3eOE5zpAgpRXVGCIUfb85kqne4/LXigDrALzMIRKhm2FIJUa8cguo?=
+ =?us-ascii?Q?OHYTVPyzQ4Vzk0754koFusVoT1MK/pfSlpiLBj/Xkj5lSYCfl0lsEetKc4we?=
+ =?us-ascii?Q?oCoUBF4COwv3T5m/EHbq+ObS3vmf8uUMz2i+PGs7yMiwwjPIAAJh1SVTCYrL?=
+ =?us-ascii?Q?TtJaNDXOVqTx4YZeVPoBZphQao9ALGDBZd1Bu/hDeO0Ttm6UoF44MkhB72nf?=
+ =?us-ascii?Q?I4EORVbhzr3Czlif0k/b5XYMhXgljFdnhyQCWyLmSmZylEHH+3f8rpBfbcMk?=
+ =?us-ascii?Q?aWSskEEAlgUeZLtIhdNaWDEnJ6UpmjPM9DXEojALRTHk1rWmI40h49ADYQa4?=
+ =?us-ascii?Q?gu1aNktBwDKumHEGJF/N3OUU+Yfd6/nBASogHIrwzbQwpWdn1kdjXslAUmGM?=
+ =?us-ascii?Q?QQ/B7TYFZ1EU34finPBEPPQE7NH8E4zIJGMlDcD3JZ4CKn2XPh6idqS7wF3l?=
+ =?us-ascii?Q?+r+DpRcz7RZ9V9QUfh8ZIj8uaDwvuqcUrmnlDod4/nECMKIl5cFaYbc5tZy6?=
+ =?us-ascii?Q?noWHYIsqsc9bQuh0ej4VfGhLBkRBTsOcR5+NNsHNNmFnLFpSrONyod9Gxw8/?=
+ =?us-ascii?Q?XpcdrekmRHBMBDDev7hzeIOvevtZ94kyzpCKC1znvx/grWFXQjj/zlzIOIex?=
+ =?us-ascii?Q?OjlMSgWiUl3OeB185vZQS8TiEuIPlS/LADKY+eilq6psWPoqo1wXL0+syMan?=
+ =?us-ascii?Q?IPwTirH7VnLqm1RP+LNx7ODkFfDrFRAO2MxLB1N3+L9wZirrNJ+1ZPyppLki?=
+ =?us-ascii?Q?sJElIHFInObED9A/ouqxQ1CkvvrNf4zlfxG5OH+E2gS4L58i5Or53zTJfo2f?=
+ =?us-ascii?Q?cqxUBYTVdy4BgRIILr1fRsmY/qb4aH0nFyBg2myKSng7qux9oU7Fpgboxtob?=
+ =?us-ascii?Q?7aIX2h33y5Mq8gMSJNthU2ZBp7G4It5mZ1J7ycetNBhNwYLCLgjrHy8H+xq0?=
+ =?us-ascii?Q?Men6YBblnssF2LzvgbyYz7I2vI3b2CDLDQ9oAIqb62bJZT6xZw9+9WiFen34?=
+ =?us-ascii?Q?ptIWizHknU3cbOC3gzG8mJ0SBGxdNKT3NwXKKNpYQby3MSAZKBop0cnI+W4x?=
+ =?us-ascii?Q?Trfl4biKkMsgtefUCaCcPCZEpVJMiPB1ou/k15EegPssx7muguS0kHM1KJEs?=
+ =?us-ascii?Q?E5pTsHF+9AXPt6jig51/kHus/qI0Yv8R1QKs9lnAsXYwG1MF4UGhUpNX44He?=
+ =?us-ascii?Q?7CgHpM6B8w4q+dwhqu6B7AguPi+Anpkr6gFU1MhyrKAQ9LNrPk0eN9LdiUao?=
+ =?us-ascii?Q?QU1gLOXOQ7geW06LnYCD?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8ca9651-a88a-4179-8819-08ddae1a2914
+X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB1670.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 03:42:34.3180
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB6477
 
-On Tue, 2025-06-17 at 14:02 -0700, John Stultz wrote:
->=20
-> External email : Please do not click links or open attachments until
-> you have verified the sender or the content.
->=20
->=20
-> On Tue, Jun 17, 2025 at 8:54=E2=80=AFAM Kuyo Chang <kuyo.chang@mediatek.c=
-om>
-> wrote:
-> >=20
-> > From: kuyo chang <kuyo.chang@mediatek.com>
-> >=20
-> > [Symptom]
-> > The calculation formula for dl_server runtime is based on
-> > Frequency/capacity scale-invariance.
-> > This will cause excessive RT latency (expect absolute time).
-> >=20
-> > [Analysis]
-> > Consider the following case under a Big.LITTLE architecture:
-> >=20
-> > Assume the runtime is: 50,000,000 ns, and Frequency/capacity
-> > scale-invariance defined as below:
-> >=20
-> > Frequency scale-invariance: 100
-> > Capacity scale-invariance: 50
-> > First by Frequency scale-invariance,
-> > the runtime is scaled to 50,000,000 * 100 >> 10 =3D 4,882,812
-> > Then by capacity scale-invariance,
-> > it is further scaled to 4,882,812 * 50 >> 10 =3D 238,418.
-> >=20
-> > So it will scaled to 238,418 ns.
-> >=20
-> > [Solution]
-> > The runtime for dl_server should be fixed time
-> > asis RT bandwidth control.
-> > Fix the runtime calculation formula for the dl_server.
->=20
-> Thanks again for iterating on this patch! I've got a few minor nits
-> below.
->=20
-> > Signed-off-by: kuyo chang <kuyo.chang@mediatek.com>
-> > Acked-by: Juri Lelli <juri.lelli@redhat.com>
-> > Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> >=20
-> > v1:
-> > https://lore.kernel.org/all/20250614020524.631521-1-kuyo.chang@mediatek=
-.com/
-> >=20
-> > ---
-> > =C2=A0kernel/sched/deadline.c | 8 ++++++--
-> > =C2=A01 file changed, 6 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> > index ad45a8fea245..f68a158d01e9 100644
-> > --- a/kernel/sched/deadline.c
-> > +++ b/kernel/sched/deadline.c
-> > @@ -1504,7 +1504,9 @@ static void update_curr_dl_se(struct rq *rq,
-> > struct sched_dl_entity *dl_se, s64
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (dl_entity_is_special(dl_=
-se))
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 return;
-> >=20
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 scaled_delta_exec =3D dl_scaled_d=
-elta_exec(rq, dl_se,
-> > delta_exec);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 scaled_delta_exec =3D delta_exec;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!dl_se->dl_server)
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 scaled_delta_exec =3D dl_scaled_delta_exec(rq, dl_se,
-> > delta_exec);
->=20
-> Just a nit, but would
-> =C2=A0=C2=A0=C2=A0 if (!dl_server(dl_se))
->=20
-> be a little cleaner/consistent with other readers?
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dl_se->runtime -=3D scaled_d=
-elta_exec;
-> >=20
-> > @@ -1624,7 +1626,9 @@ void dl_server_update_idle_time(struct rq
-> > *rq, struct task_struct *p)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (delta_exec < 0)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 return;
-> >=20
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 scaled_delta_exec =3D dl_scaled_d=
-elta_exec(rq, &rq-
-> > >fair_server, delta_exec);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 scaled_delta_exec =3D delta_exec;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!rq->fair_server.dl_server)
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 scaled_delta_exec =3D dl_scaled_delta_exec(rq, &rq-
-> > >fair_server, delta_exec);
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rq->fair_server.runtime -=3D=
- scaled_delta_exec;
->=20
-Thanks for cleaner code suggestion, how about this?
+Host bridge registers and PCI RC control registers have different
+memory base. pcie_m32() is used to write the RC control registers
+instead of bridge registers. This patch introduces bridge_m32()
+and use it to operate bridge registers to fix the access issue.
 
+Signed-off-by: Shiji Yang <yangshiji66@outlook.com>
+---
+ arch/mips/pci/pci-mt7620.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index f68a158d01e9..3ccffdf4dec6 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1505,7 +1505,7 @@ static void update_curr_dl_se(struct rq *rq,
-struct sched_dl_entity *dl_se, s64
- 		return;
-=20
- 	scaled_delta_exec =3D delta_exec;
--	if (!dl_se->dl_server)
-+	if (!dl_server(dl_se))
- 		scaled_delta_exec =3D dl_scaled_delta_exec(rq, dl_se,
-delta_exec);
-=20
- 	dl_se->runtime -=3D scaled_delta_exec;
-@@ -1614,12 +1614,13 @@ static void update_curr_dl_se(struct rq *rq,
-struct sched_dl_entity *dl_se, s64
- void dl_server_update_idle_time(struct rq *rq, struct task_struct *p)
+diff --git a/arch/mips/pci/pci-mt7620.c b/arch/mips/pci/pci-mt7620.c
+index 5c4bdf691..94b3c96a1 100644
+--- a/arch/mips/pci/pci-mt7620.c
++++ b/arch/mips/pci/pci-mt7620.c
+@@ -87,6 +87,15 @@ static inline u32 bridge_r32(unsigned reg)
+ 	return ioread32(bridge_base + reg);
+ }
+ 
++static inline void bridge_m32(u32 clr, u32 set, unsigned reg)
++{
++	u32 val = bridge_r32(reg);
++
++	val &= ~clr;
++	val |= set;
++	bridge_w32(val, reg);
++}
++
+ static inline void pcie_w32(u32 val, unsigned reg)
  {
- 	s64 delta_exec, scaled_delta_exec;
-+	struct sched_dl_entity *dl_se =3D &rq->fair_server;
-=20
--	if (!rq->fair_server.dl_defer)
-+	if (!dl_se->dl_defer)
- 		return;
-=20
- 	/* no need to discount more */
--	if (rq->fair_server.runtime < 0)
-+	if (dl_se->runtime < 0)
- 		return;
-=20
- 	delta_exec =3D rq_clock_task(rq) - p->se.exec_start;
-@@ -1627,14 +1628,14 @@ void dl_server_update_idle_time(struct rq *rq,
-struct task_struct *p)
- 		return;
-=20
- 	scaled_delta_exec =3D delta_exec;
--	if (!rq->fair_server.dl_server)
--		scaled_delta_exec =3D dl_scaled_delta_exec(rq, &rq-
->fair_server, delta_exec);
-+	if (!dl_server(dl_se))
-+		scaled_delta_exec =3D dl_scaled_delta_exec(rq, dl_se,
-delta_exec);
-=20
--	rq->fair_server.runtime -=3D scaled_delta_exec;
-+	dl_se->runtime -=3D scaled_delta_exec;
-=20
--	if (rq->fair_server.runtime < 0) {
--		rq->fair_server.dl_defer_running =3D 0;
--		rq->fair_server.runtime =3D 0;
-+	if (dl_se->runtime < 0) {
-+		dl_se->dl_defer_running =3D 0;
-+		dl_se->runtime =3D 0;
- 	}
-=20
- 	p->se.exec_start =3D rq_clock_task(rq);
-
-If it's ok, should I split it into two separate patches
-1.Fix dl_server runtime calculation formula
-2.cleaner code patch
-
-or just submit it as a single patch?
-
-> I'm a little confused on the conditional here. Is
-> fair_server.dl_server ever not true (after the first call to
-> dl_server_start())?
->=20
-For now, it's true.
-
-But based on our previous discussion,
-use the dl_server flag to identify and handle a 'fixed time' type of
-isolation.
-This approach makes it easier to extend and allows multiple servers to
-configure it as needed.
-
-> Also, in the discussion on your first version, it seemed there might
-> be a need for different servers to have different requirements, but
-> it
-> seemed like fair_server would always not want to be scaled.
->=20
-> thanks
-> -john
+ 	iowrite32(val, pcie_base + reg);
+@@ -228,7 +237,7 @@ static int mt7620_pci_hw_init(struct platform_device *pdev)
+ 	pcie_phy(0x68, 0xB4);
+ 
+ 	/* put core into reset */
+-	pcie_m32(0, PCIRST, RALINK_PCI_PCICFG_ADDR);
++	bridge_m32(PCIRST, PCIRST, RALINK_PCI_PCICFG_ADDR);
+ 	reset_control_assert(rstpcie0);
+ 
+ 	/* disable power and all clocks */
+@@ -318,7 +327,7 @@ static int mt7620_pci_probe(struct platform_device *pdev)
+ 	mdelay(50);
+ 
+ 	/* enable write access */
+-	pcie_m32(PCIRST, 0, RALINK_PCI_PCICFG_ADDR);
++	bridge_m32(PCIRST, 0, RALINK_PCI_PCICFG_ADDR);
+ 	mdelay(100);
+ 
+ 	/* check if there is a card present */
+@@ -340,7 +349,7 @@ static int mt7620_pci_probe(struct platform_device *pdev)
+ 	pcie_w32(0x06040001, RALINK_PCI0_CLASS);
+ 
+ 	/* enable interrupts */
+-	pcie_m32(0, PCIINT2, RALINK_PCI_PCIENA);
++	bridge_m32(PCIINT2, PCIINT2, RALINK_PCI_PCIENA);
+ 
+ 	/* voodoo from the SDK driver */
+ 	pci_config_read(NULL, 0, 4, 4, &val);
+-- 
+2.39.5
 
 
