@@ -1,192 +1,95 @@
-Return-Path: <linux-kernel+bounces-691464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD14ADE4FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:54:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF3EADE4E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CD7F189BDAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62E393BCC3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4739D27FB15;
-	Wed, 18 Jun 2025 07:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H//lwHnr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P5G7mtx1"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735E527EFE7;
+	Wed, 18 Jun 2025 07:53:00 +0000 (UTC)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E203E27EFE6;
-	Wed, 18 Jun 2025 07:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A9E7E105;
+	Wed, 18 Jun 2025 07:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750233237; cv=none; b=Q5icAO28k3SYqgJMc7ItSViBJeOWPSmGnX95K3Aw7kXE2zvs6koLdXT1gJO70kOqpOfS0dJNCynkcExglIP6to7C1Xo5atVET0bSO6appKFo0T3skYR+Ikmq9gQkRj5IKhKtDMadU4dQyMODbVohtT3fOL+6VT+ommADCCdEytE=
+	t=1750233180; cv=none; b=A+/ydjmCjheJUPXsCYtg/U5TV0m7hSyPheIqFaEqw26wXaKRaptuEj2FKP72d49A+k+hiOjMzyJI0/WrnXYXR4HFtsfEnY13DCcpTbHuIHD9RJzgd+TNpl6b7cKw95s7FfKryDjC53rEM6IuEx4JLVw7dVDA1hGoFQfC0IZVyQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750233237; c=relaxed/simple;
-	bh=+2X4ysqtRsTHUcY7E66k0quE5SROmLVa6c2NEYuHLu8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DJ60e4acW+tqbM0UsLIpY0iZP6sWaWCItXHrjCxLHNjSMOKPY2xeEoUY1GuQb3bNuSoUhJdgrXh5m8UVnWdUpduWVpymmPSUgU4xIWq7OCi+29h49MPr4tDIaCWwPYDBP7OGBRNgIfRW7WbHHtqWs0GPXN+fqwE8KjMFxpUvT9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H//lwHnr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P5G7mtx1; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750233234;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hRSi6LPnJlewbz9+M2YF21yD0hWG5s8j8Ev4VekeCS4=;
-	b=H//lwHnrCxwgr5Qyne1dSebZ0C/TyDzHnxgNkRFUbl7V9Foo1dPQAUyndYYFRSCve24JFX
-	+U9gITtVlgE+7icVecD1ruTrs8B1ggford7mBnDhhcfkXaKQiOenSTkKfdHtKErvXHr2XB
-	w+45928VjRAOcQlJZdr2j+y20Pm2ghWlXG84ccC/DWt+8bQnmtnMSX9IFOoYsK0lVnfxi+
-	uJFCp42Jf5r3Qo9P9YIiNofXWn736P+O17Rcmzy7GVZD8tPg7ZvVVgnKsUxm9bqTHw8XKs
-	wHH6f/WEy/TK+k7+qfG6YVagctnRjA7zvJ9rVAMlmv/yAxA1v1Tps/lDHa1xlg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750233234;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hRSi6LPnJlewbz9+M2YF21yD0hWG5s8j8Ev4VekeCS4=;
-	b=P5G7mtx1ZaQLqKuTMGNxDi36WMAI+1JfQ/MuzORfSpbSJ49TWx3v/9mFK4n2WTbB6gO3fC
-	Zm2GV+ALFLNk5bDQ==
-Date: Wed, 18 Jun 2025 09:52:22 +0200
-Subject: [PATCH 3/3] drm/msm: Don't use %pK through printk
+	s=arc-20240116; t=1750233180; c=relaxed/simple;
+	bh=BhDhfB0EHERvmRjIgnoNbnxG/iyNgwscUl+OqQOwjz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dIwgdnHgSBD1hn4vznNCsX0Nm5mIVyjY91Gv6Xuzy7mdSz0mI0L7JDOGoG+729xzUowsK4bqVUVPwnDsVQmdVtHFe+fG2MgoD4GZf1IBWcm660wRSqr/ueGjUwU4fD4ErIQH2cIz2Hb49+h5bAaF1kYp56QXEG8CVeRjozXOxp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6097de2852aso3139988a12.0;
+        Wed, 18 Jun 2025 00:52:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750233177; x=1750837977;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JYPJwRlvGFyO8GmZ8lgMNLMh8RXy2GtDgrAPOS61rlg=;
+        b=nE8oJnoj1d3bZpKIDZCRE+dTx1RYJ0Wo/Q/T+1Oi5X+pwvMIE+RSkTRZy14ceur9rU
+         iGx8T+h5rdp5ZbgcrWJ2uvKQ6cogA17roQnBQPuhquF2mGaVbic5/dt08jCLD9KzFstd
+         pbIZsmMOjwonr5dk8Nrn7OYY8+4B/0y3hAlAeKPTBmhnb8qgYmQJFPQW0SwlQmUjuea+
+         wuwJuCkxohI2lxEoMq9CfKUpFviHPDJmPPEytereXcabAZGDJHx1Xb9Kkd/b8n/5BbdN
+         2uwZzWIhQO2AHKNA2Xg9VpxxyYYUjgPoLJh//xAvQq7+lusFD9tCw2nOdR+QKnAjfPIg
+         Qi4g==
+X-Forwarded-Encrypted: i=1; AJvYcCU1L01hqa5KzIIT3bn7RSRDPGprTnRX9bOYqvOA387vuR6Jct/SfKvjW5spPyolvJJ9C3svhxtIcCzV60viViT6@vger.kernel.org, AJvYcCUjoXWUW2qz+PXjBi2m+HoDXtRxxdFIHIdZOamjBNFzym3+G5QluzLNXePsUwl7SPd1nVIhGdFc6XctzBOw@vger.kernel.org, AJvYcCVdtIvnKjH32VlRI61BwDuQnt8l29XkMPnJbiehLrIzpvg+mcyHQsZ2aD3AcldoBBsY6xn9PTx1@vger.kernel.org, AJvYcCWNyUs9/0kzJ3sHiEd6ehlf57O7L5jxu6qGkdMOYXyWfr9T5mTS99FBWUQyQgqDQBiQGMK39Qbr4aE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxozW6uBzC69s5H0wLqqCRhanDDvYsxCWja8M3W21leJar/gz1Y
+	IzBCGHOc2x4TlCxtreZEPbRCL9RZ9vos1Jhtx8Gn6BqAgYGumXAZ+WWNuhXrFg==
+X-Gm-Gg: ASbGnctj5ELT+jFhtP18A4Sg9vVdcCOoG3OJw5JSrQlTW1oT4k6fM3sRofs84hSQOLr
+	3GxSB9FdRg97AQ+fk9jBCA77fIiv2tnXkZgKwga67yd73iEZwgRdVMs327AIgpxckV4pQoKlxpi
+	7NHbDM/oiD0BGibn66ZNLAqxjt7ySLiI6AFtPKxMZWSG3unMRA5gt4i7XGjV2crugqyu474vcWc
+	mjPavfjIdC00suL5tidYHVDfXWE0oX3xU6+2tQnTMIH0SLTr4OlQajxu+BrxHz3u3Ex7a1BMP5S
+	YmRGVnIFzJq3aBLjtbJvq7QO8u8mOpQ8h/7HQxRB5a62ZFnI8rKSZQ==
+X-Google-Smtp-Source: AGHT+IFquzN0jTq3aWguPML5Ppdg3RWLEm95IqKfqZSkaLBrv73foyJdfdkjasK9HTDWDamdeHShmQ==
+X-Received: by 2002:a17:906:6a0a:b0:ad5:372d:87e3 with SMTP id a640c23a62f3a-adfad36811fmr1515638366b.27.1750233176393;
+        Wed, 18 Jun 2025 00:52:56 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:74::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec88ff06fsm1010988966b.102.2025.06.18.00.52.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 00:52:55 -0700 (PDT)
+Date: Wed, 18 Jun 2025 00:52:53 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Gustavo Luiz Duarte <gustavold@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v3 4/5] selftests: netconsole: Add tests for
+ 'msgid' feature in sysdata
+Message-ID: <aFJwVXOwl0WRG3JZ@gmail.com>
+References: <20250616-netconsole-msgid-v3-0-4d2610577571@gmail.com>
+ <20250616-netconsole-msgid-v3-4-4d2610577571@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250618-restricted-pointers-drm-v1-3-781e0d88cd92@linutronix.de>
-References: <20250618-restricted-pointers-drm-v1-0-781e0d88cd92@linutronix.de>
-In-Reply-To: <20250618-restricted-pointers-drm-v1-0-781e0d88cd92@linutronix.de>
-To: Inki Dae <inki.dae@samsung.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750233231; l=3885;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=+2X4ysqtRsTHUcY7E66k0quE5SROmLVa6c2NEYuHLu8=;
- b=MeeQzXgwzNU70goRi3hW4b0ZRIX5paYKudW6CbBEdnXyP3jia+DNmdrTI96uSVghsbe/qLu+G
- rR+U5ckgaEMAZhybeZ7KstPqWrBTAGqWMDI8Grel1fif13GmYkJa2OT
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250616-netconsole-msgid-v3-4-4d2610577571@gmail.com>
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through printk(). They can still unintentionally leak raw pointers or
-acquire sleeping locks in atomic contexts.
+On Mon, Jun 16, 2025 at 10:08:38AM -0700, Gustavo Luiz Duarte wrote:
+> Extend the self-tests to cover the 'msgid' feature in sysdata.
+> 
+> Verify that msgid is appended to the message when the feature is enabled
+> and that it is not appended when the feature is disabled.
+> 
+> Signed-off-by: Gustavo Luiz Duarte <gustavold@gmail.com>
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
-
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c | 4 ++--
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c     | 4 ++--
- drivers/gpu/drm/msm/msm_mdss.c              | 2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index a4b0fe0d9899b32141928f0b6a16503a49b3c27a..9aa635f9462df6e496635e3316217f0245e03157 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -565,7 +565,7 @@ static void _dpu_crtc_complete_flip(struct drm_crtc *crtc)
- 
- 	spin_lock_irqsave(&dev->event_lock, flags);
- 	if (dpu_crtc->event) {
--		DRM_DEBUG_VBL("%s: send event: %pK\n", dpu_crtc->name,
-+		DRM_DEBUG_VBL("%s: send event: %p\n", dpu_crtc->name,
- 			      dpu_crtc->event);
- 		trace_dpu_crtc_complete_flip(DRMID(crtc));
- 		drm_crtc_send_vblank_event(crtc, dpu_crtc->event);
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-index 829ca272873e45b122c04bea7da22dc569732e10..08cb1014299bcc9ce146b564721a6058df824cf0 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c
-@@ -31,14 +31,14 @@ static void dpu_setup_dspp_pcc(struct dpu_hw_dspp *ctx,
- 	u32 base;
- 
- 	if (!ctx) {
--		DRM_ERROR("invalid ctx %pK\n", ctx);
-+		DRM_ERROR("invalid ctx %p\n", ctx);
- 		return;
- 	}
- 
- 	base = ctx->cap->sblk->pcc.base;
- 
- 	if (!base) {
--		DRM_ERROR("invalid ctx %pK pcc base 0x%x\n", ctx, base);
-+		DRM_ERROR("invalid ctx %p pcc base 0x%x\n", ctx, base);
- 		return;
- 	}
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index 1fd82b6747e9058ce11dc2620729921492d5ebdd..4290ef3004985376ebd13afd1f014265cf887490 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -1345,7 +1345,7 @@ static int dpu_kms_mmap_mdp5(struct dpu_kms *dpu_kms)
- 		dpu_kms->mmio = NULL;
- 		return ret;
- 	}
--	DRM_DEBUG("mapped dpu address space @%pK\n", dpu_kms->mmio);
-+	DRM_DEBUG("mapped dpu address space @%p\n", dpu_kms->mmio);
- 
- 	dpu_kms->vbif[VBIF_RT] = msm_ioremap_mdss(mdss_dev,
- 						  dpu_kms->pdev,
-@@ -1380,7 +1380,7 @@ static int dpu_kms_mmap_dpu(struct dpu_kms *dpu_kms)
- 		dpu_kms->mmio = NULL;
- 		return ret;
- 	}
--	DRM_DEBUG("mapped dpu address space @%pK\n", dpu_kms->mmio);
-+	DRM_DEBUG("mapped dpu address space @%p\n", dpu_kms->mmio);
- 
- 	dpu_kms->vbif[VBIF_RT] = msm_ioremap(pdev, "vbif");
- 	if (IS_ERR(dpu_kms->vbif[VBIF_RT])) {
-diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
-index 709979fcfab6062c0f316f7655823e888638bfea..c5e6e98e0ced3adae9086b220fc9d5d026ac3fd1 100644
---- a/drivers/gpu/drm/msm/msm_mdss.c
-+++ b/drivers/gpu/drm/msm/msm_mdss.c
-@@ -456,7 +456,7 @@ static struct msm_mdss *msm_mdss_init(struct platform_device *pdev, bool is_mdp5
- 	if (IS_ERR(msm_mdss->mmio))
- 		return ERR_CAST(msm_mdss->mmio);
- 
--	dev_dbg(&pdev->dev, "mapped mdss address space @%pK\n", msm_mdss->mmio);
-+	dev_dbg(&pdev->dev, "mapped mdss address space @%p\n", msm_mdss->mmio);
- 
- 	ret = msm_mdss_parse_data_bus_icc_path(&pdev->dev, msm_mdss);
- 	if (ret)
-
--- 
-2.49.0
-
+Reviewed-by: Breno Leitao <leitao@debian.org>
 
