@@ -1,165 +1,91 @@
-Return-Path: <linux-kernel+bounces-692758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7AF9ADF650
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:55:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A8FADF68A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A8883A430E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:54:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98EA11BC260F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D661A2F5474;
-	Wed, 18 Jun 2025 18:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BEB2FCE14;
+	Wed, 18 Jun 2025 18:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="doIhaOZs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwjKnCm+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3593085C7;
-	Wed, 18 Jun 2025 18:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983DB2FCE1B;
+	Wed, 18 Jun 2025 18:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750272904; cv=none; b=lOr2Bc3q0+mndtSvO+SeCXXkgwurWGTS+i1Qs76apVI+thmQROvsTTRWUqeWqRrDiWknXGM+5TPh55aQJKl1L+Wdq0Xuu5MdAjnWRUTU1Vezjap/Kuu7P2D9mYq9wTVGM469jHJ7Hq0GbcWlb01PBXDGBzJCQmdBJ9SBja2m18U=
+	t=1750273020; cv=none; b=FP6TCaGtT988q/9PxdPMRotWgM915IuOk1YXc8hLbSaSzxqZ+N5kx7TYp+zoI8Yj/S0nuy+UGJrS8ZKZTHapFJHGTJKQE5Xr+/OksYtED/S6wxgH4bNIqhOQ2O6Wi1ltOdYjJg6puV+oypEnuS/l/7b7zXSSfO1PDIsMw8/jkTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750272904; c=relaxed/simple;
-	bh=85QQjICIurux2YN6mW3BFkT+PPwpAF8dNyOf5+nfzJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XbkLRvQI1yr1azJQU8tlZiNdMFVgwfi+7djujo9+1VigEg2SvalA/cBGWtf+LGfWJE7a9CbAGnGav5n3CcIdzWksmTRj25RyHW89eRkHZo7sT6mpT1EZKKX4TU0KZCQugxdiX24zSMq/GN+v3/o2K84rpaJSJXPL8xmgM8EtJ0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=doIhaOZs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B29F7C4CEE7;
-	Wed, 18 Jun 2025 18:55:03 +0000 (UTC)
+	s=arc-20240116; t=1750273020; c=relaxed/simple;
+	bh=J1oaDCl0btmib2TF2x64Gp/aTFdcwOsZmN0AYQsV/aA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CbMPA098H3yDuN+vp7A9lVM7pCHw/yJvuB6EQ9r/viCEKdsZIyQA4RsGpyr0Dwo1yA6txvyvzBm0fCezgXA74e2ovvQH2q0hC1wX8Td9b+DTUYP0owISP6TbJPh13hgE6HJI6s5QDmqwy1z8+VoaoVcrXf9Pf9i4DFd57fSn0jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwjKnCm+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30BCEC4CEE7;
+	Wed, 18 Jun 2025 18:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750272903;
-	bh=85QQjICIurux2YN6mW3BFkT+PPwpAF8dNyOf5+nfzJM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=doIhaOZsJrDBCZbcvGNNSX2p+xSd0Q3/Pbo/cOzD11vkUS6z3Eu5Kk0MtZsn0syoo
-	 oQ5D/Tj+OZmHsBLbUapyA3zhTVXXT+4qr8IdhsRAwity0ClDdXqTjUIxzWg0YekiZb
-	 fnLMiMXqvFRo0whxw17KD63EKMV7QAfzXeNE/0/6kqtXUJLHYAThHdDTO5kcUyTAOI
-	 C48AjcRzJ1xYXqIzNSOftMmc0nC2l9iSOilN6JHvbZEEwnSU8WHqLNk1XP0BgDN18W
-	 cJA04ncZWHK7d1y4VrUWaoQxlH/n1YLtXXTa/O14wAtcgnInu0v1Tr0ELDvTHkElra
-	 6rJNFdxPkXs3w==
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-407a3c10d03so4512922b6e.2;
-        Wed, 18 Jun 2025 11:55:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVRcbgWycV1lE9H4/1lmTuLbmwO+kI/E+zhNc57Xwub/BUzTuljUrG/3qSHfjOlVqkE34T6pCoUGUt9oiqm@vger.kernel.org, AJvYcCVTs7RGdlW5GGdX8eMqbqbXr7wKPsef/T0v6Bexytrp+2XNtxle3OxHX+WRnh/SY5T+c1kcL9AtG6mg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs2RtXyl2YBcIQcdgXJUcZ3fzsEyNqi4qdtXX0zA2fbGBoOpXT
-	zRxUA9FHMMvHXJclBiArCr2nG00kU1OCssVEMcRJHqMj1xK9xkpZsZHbrk5vY4paerb1M7jAc+P
-	4vN3x9hiYKRCE/kDgUQWEO8e7JGd/GPs=
-X-Google-Smtp-Source: AGHT+IG4w4VEQKYKg1rmq4AhXseetHUTRpBeIKfM053pFoyC2Jnx81M5P0/XVnmD5B64Fgsz9jwS3O6hl10SORn7THo=
-X-Received: by 2002:a05:6808:4fe2:b0:401:e5fc:e726 with SMTP id
- 5614622812f47-40a7c257553mr12506594b6e.31.1750272903069; Wed, 18 Jun 2025
- 11:55:03 -0700 (PDT)
+	s=k20201202; t=1750273020;
+	bh=J1oaDCl0btmib2TF2x64Gp/aTFdcwOsZmN0AYQsV/aA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KwjKnCm+IEuYL9+7rJDCrbBlbOWtuzx82HjCb9oODKRV8t2NoQ1ZU08JftBj6MEOJ
+	 JlXHEJopBynPhzGjNQq80f46e7lSPfNtAwvZqYL+IQMKYcekQ2dds9p+6RdE9lHvlr
+	 CFWwqWNuHYJvZxLBxfoNoxXzz+Exq+AHIQzXhSFxJoKk14/ZTCTnjNyMgwNJM5Ob4g
+	 GfLp6oD3H/OL66MI5rWb795gZ1vC1lGUOyWbbAmPfAcDR1+CxkbljeCZoNs/onhHx+
+	 sWm4LCWVwZH1jHikm5SSSwoDhhLjZzK4kY4tJfIQRv0xTwqikN5pnIaE7Vd8SNvs4O
+	 oK7dB3JlBCWVQ==
+Date: Wed, 18 Jun 2025 19:56:56 +0100
+From: Simon Horman <horms@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2] net: gianfar: Use
+ device_get_named_child_node_count()
+Message-ID: <20250618185656.GZ1699@horms.kernel.org>
+References: <3a33988fc042588cb00a0bfc5ad64e749cb0eb1f.1750248902.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250617231824.3314507-1-srinivas.pandruvada@linux.intel.com>
-In-Reply-To: <20250617231824.3314507-1-srinivas.pandruvada@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 18 Jun 2025 20:54:52 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jim=krcEXvUHKvhjT5bZL8--bs=dK4VTpBEx_+OYn1vA@mail.gmail.com>
-X-Gm-Features: AX0GCFs_TqzVg4hvOFhnSg4UdF1LEAuluZWtVR5LkLbblc_1bWh17SOE0_zo_IA
-Message-ID: <CAJZ5v0jim=krcEXvUHKvhjT5bZL8--bs=dK4VTpBEx_+OYn1vA@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: DPTF: Support for Wildcat Lake
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: rafael@kernel.org, rui.zhang@intel.com, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3a33988fc042588cb00a0bfc5ad64e749cb0eb1f.1750248902.git.mazziesaccount@gmail.com>
 
-On Wed, Jun 18, 2025 at 1:18=E2=80=AFAM Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
->
-> Add Wildcat Lake ACPI IDs for DPTF.
->
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+On Wed, Jun 18, 2025 at 03:22:02PM +0300, Matti Vaittinen wrote:
+> We can avoid open-coding the loop construct which counts firmware child
+> nodes with a specific name by using the newly added
+> device_get_named_child_node_count().
+> 
+> The gianfar driver has such open-coded loop. Replace it with the
+> device_get_child_node_count_named().
+> 
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
->  drivers/acpi/dptf/dptf_power.c                          | 2 ++
->  drivers/acpi/dptf/int340x_thermal.c                     | 7 +++++++
->  drivers/acpi/fan.h                                      | 1 +
->  drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 1 +
->  drivers/thermal/intel/int340x_thermal/int3403_thermal.c | 1 +
->  5 files changed, 12 insertions(+)
->
-> diff --git a/drivers/acpi/dptf/dptf_power.c b/drivers/acpi/dptf/dptf_powe=
-r.c
-> index e8caf4106ff9..776914f31b9e 100644
-> --- a/drivers/acpi/dptf/dptf_power.c
-> +++ b/drivers/acpi/dptf/dptf_power.c
-> @@ -238,6 +238,8 @@ static const struct acpi_device_id int3407_device_ids=
-[] =3D {
->         {"INTC10A5", 0},
->         {"INTC10D8", 0},
->         {"INTC10D9", 0},
-> +       {"INTC1100", 0},
-> +       {"INTC1101", 0},
->         {"", 0},
->  };
->  MODULE_DEVICE_TABLE(acpi, int3407_device_ids);
-> diff --git a/drivers/acpi/dptf/int340x_thermal.c b/drivers/acpi/dptf/int3=
-40x_thermal.c
-> index aef7aca2161d..a222df059a16 100644
-> --- a/drivers/acpi/dptf/int340x_thermal.c
-> +++ b/drivers/acpi/dptf/int340x_thermal.c
-> @@ -61,6 +61,13 @@ static const struct acpi_device_id int340x_thermal_dev=
-ice_ids[] =3D {
->         {"INTC10D7"},
->         {"INTC10D8"},
->         {"INTC10D9"},
-> +       {"INTC10FC"},
-> +       {"INTC10FD"},
-> +       {"INTC10FE"},
-> +       {"INTC10FF"},
-> +       {"INTC1100"},
-> +       {"INTC1101"},
-> +       {"INTC1102"},
->         {""},
->  };
->
-> diff --git a/drivers/acpi/fan.h b/drivers/acpi/fan.h
-> index 15eba1c70e66..8a28a72a7c6a 100644
-> --- a/drivers/acpi/fan.h
-> +++ b/drivers/acpi/fan.h
-> @@ -20,6 +20,7 @@
->         {"INTC106A", }, /* Fan for Lunar Lake generation */ \
->         {"INTC10A2", }, /* Fan for Raptor Lake generation */ \
->         {"INTC10D6", }, /* Fan for Panther Lake generation */ \
-> +       {"INTC10FE", }, /* Fan for Wildcat Lake generation */ \
->         {"PNP0C0B", } /* Generic ACPI fan */
->
->  #define ACPI_FPS_NAME_LEN      20
-> diff --git a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c b/dr=
-ivers/thermal/intel/int340x_thermal/int3400_thermal.c
-> index 0e07693ecf59..ecb4ea443b9b 100644
-> --- a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-> +++ b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-> @@ -690,6 +690,7 @@ static const struct acpi_device_id int3400_thermal_ma=
-tch[] =3D {
->         {"INTC1068", 0},
->         {"INTC10A0", 0},
->         {"INTC10D4", 0},
-> +       {"INTC10FC", 0},
->         {}
->  };
->
-> diff --git a/drivers/thermal/intel/int340x_thermal/int3403_thermal.c b/dr=
-ivers/thermal/intel/int340x_thermal/int3403_thermal.c
-> index 5a925a8df7b3..ba63796761eb 100644
-> --- a/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
-> +++ b/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
-> @@ -276,6 +276,7 @@ static const struct acpi_device_id int3403_device_ids=
-[] =3D {
->         {"INTC1069", 0},
->         {"INTC10A1", 0},
->         {"INTC10D5", 0},
-> +       {"INTC10FD", 0},
->         {"", 0},
->  };
->  MODULE_DEVICE_TABLE(acpi, int3403_device_ids);
-> --
+> Previously sent as part of the BD79124 ADC series:
+> https://lore.kernel.org/all/95b6015cd5f6fcce535982118543d47504ed609f.1742225817.git.mazziesaccount@gmail.com/
+> 
+> All dependencies should be in net-next now.
+> 
+> Compile tested only!
 
-Applied as 6.17 material, thanks!
+Thanks for resending.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+
 
