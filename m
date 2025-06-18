@@ -1,114 +1,91 @@
-Return-Path: <linux-kernel+bounces-692958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F709ADF8FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 23:57:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA337ADF903
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 23:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63E6C1BC296F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:57:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BE2E7AAA18
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCA427D786;
-	Wed, 18 Jun 2025 21:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D59727E078;
+	Wed, 18 Jun 2025 21:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gQvASPe9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="K0kISPpG"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2075.outbound.protection.outlook.com [40.107.243.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87E93085CC
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 21:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C30721CC48;
+	Wed, 18 Jun 2025 21:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.75
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750283806; cv=fail; b=cfEvG6ZVtrhSV45vUsSnHaodlxHVgOQOTIo8J3MvhPofLVqekbGsyNJtSrD632V6XtFN+qPTP3YgBZegpimBy6nlHrtbr3Lz767UKoK7JMyDbq9ivr5EI59o4xkeUQf2bnGLWxHqGGKI1BD6FeQ6dKzFnodcmeHnU04wcVJ9lHE=
+	t=1750283851; cv=fail; b=bCrHJNzPY4mmwte+iqqLKsywZSxd1enY6+rJTRVLqyviAF5koDfCYXf1UofKsOHhYL5cJG5S4XIuxMhxd8Ry6oEFIkzfuBEmruwxQgfgtEuTiS9KKUHtMXAuTvEMXkK1TKtWhGR0CQeq0L+QZF2ZyqPMpF+LL/ReGQBYrjRCAvM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750283806; c=relaxed/simple;
-	bh=6iabzk9W+RLjriwyW2dNlTYYwOYA17NbDA7sypuxAvs=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Lk1s/zP7sn0WnUhRGMmBZy8aTIO75PYG0eCa9qmwO4Ha4v1gx2H2UB6syvbHgvJkT5YaELPgWd+W1oHXT0eYE7GCiEG70CPS40d+DTXuX0/u4HZzagthXe1QuicVOtRoe3uSGtbTmoN+iQpbhHPMTV3fQMoGVhRfrvOBFzxniJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gQvASPe9; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750283804; x=1781819804;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=6iabzk9W+RLjriwyW2dNlTYYwOYA17NbDA7sypuxAvs=;
-  b=gQvASPe9Os8r9OJQUa4BUSUSUE8mUu9B49zii3lPTnBd2Iz+pCp056Zr
-   RCFjrsodWVdrni7zP8LbRmDzBHOpLfBAni69vzNq/lLehgVqfBzAvYMH1
-   V4riK1yUTD84Fe6HHXiWbPV5marAeJEfk/w/AUyvB4R90unMv3cHTqP5P
-   IbnW/O7rgVrBpjEJkAW0sYKTcnN47nAIfZyja+1VcsktmwdhRiy2FaKov
-   LclUvkh0XxhVyFmvt7N5JxYDfWZf+ws6gRSa3IFbxznx4kFxhSKg+klxF
-   dDPfycBJNlAgp8nm+A0/JyzWQ9pwoggvGeEkOvU/j+YKjQPB1bQXr5SC2
-   A==;
-X-CSE-ConnectionGUID: AINl6ORaSMqDHGS+Yue+zw==
-X-CSE-MsgGUID: hWF9xRlUR2Gnwk+8V8D0/Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52394189"
-X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
-   d="scan'208";a="52394189"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 14:56:44 -0700
-X-CSE-ConnectionGUID: kwmwjfkjR6OrGcffvcMVEw==
-X-CSE-MsgGUID: SoZgLI50RH6z43uHStKlZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
-   d="scan'208";a="154971543"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 14:56:45 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 18 Jun 2025 14:56:43 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 18 Jun 2025 14:56:43 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.61) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 18 Jun 2025 14:56:43 -0700
+	s=arc-20240116; t=1750283851; c=relaxed/simple;
+	bh=JDy+DMPw20RiL7HJjXxVtQ1k2QA9dombUGEHmmmfvf0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fr+qJs3lKB0CO+r4DBohCrfRdhKLqdDIgMsvKoluU5l7k7kT0qjrdFq0tPH4NiTTN267ioL+AmKcstOMvwPgsrvSOhbZ0BGTfiyp7D5iTGtqvlgQwXDg48HCuVQmR0t4aKUpILk8v4sqYSMOp1F3qeLYGC+F71WNUiHQ0byVqDc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=K0kISPpG; arc=fail smtp.client-ip=40.107.243.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xg2bbTYofMuX+CTzRV2SH1gQqxWxGZG3yOKIjnIhhBFyx9k9nyYlJuIDiTZ3D6KG6eSNcwA7t1nrYOyiEaFhTENH/RELdQ5dwvYg4mXrON54gq3tq1g1VdOR7oTK9yUftVSJbO92APuGsfdXs5/i9JYSvmiwlIwcTlSpI4X/HV/hVao7AQHowkiQzhZHD3L6Sz/6MIJ1BUOYZX+FxpyD37VDh8HQ/hd7RLSQXgmaqlqRkaLJmPye0a40weymyEZddLbhomdGimlECJCrc2ENB2NLchp/qKW2BxUX4Jg32rAHQZELShZwrzUgGN5znmvsH9Sy70xFyKPnR9h07z32Jw==
+ b=Jvo5VabwGiWxMZh/IDQieYkl8Cf3vaOkiUjKg/WzynvJZ7NKz7jMEtHHRAxIWnlS3b3wh/PGgqp1mDbFLytFXeJqQxh+lnDBHDz1OqKxKa8566ZITYMfASpD7EulvShBD0OP8Z7WvZ/5vpKbaofTkarf/ZmRx6ZXRYdsS/eBwA4mtgp0OOGQvOLBONzLX61cjpMi7M4745hAH8jlaovDudBb7K28bPM1WfF+iX4Ey+T2dyR7f0z35QUq7kGE2D/2l26GUVwJDEGlrxvkhFNq++BD32K63/tUPkUXoqSH348HMyCdVX2sf4qhkPTXDWXlVa/fXBgjcJm3zZ8WbK2vgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Inh1JbjyW5piHIU5peODvlsd11fM1xR7wv8l6m9oyWY=;
- b=CxhRaa7r1mEBm5cggK7O71MLeXuXcaRbcwdkPn5KXhmJQgx4qhodwclnJAimJqVKu9NnxMtIqKPaCvk5Yay7PiMAtIwyd8eM6+LytOTqRaLa9TTPhbK+/WaEBY1nSjoNfA7SLcJJKk58b298/IwI5ShWwIvVhpWMjXTxjccrBGW0a0tL56tW8gz7Uldr+PIXoF4u+vBoLkH56MVTZlz4KlWZCEepGUW0Wkx5YFlZe1/xITBOkPDzg3i4gfcn87CvY3gRDk63Vpe68vw1fV7Osc1IzEeARVDpEGvC7SaIttCx/sEJ2vjm/pFb9IwFn8VmXS3eh8VvtGzvpzOCNdtwYA==
+ bh=7k+EAyJS32FgedkTvGWaAOJkXuVbIeHXXoPMU0x+7Cg=;
+ b=Lt3+HMvIOTnYNoTUFvNofLl3KSH497UilG5Q2AxiGZGuWn57ThKFqnvC4G/jSyj1stYWBStql/9wUNDFe/3WQHNBsP8lEv3edhkrqiOOLjgB01RqpmO7n01bMQCDJefyxkAZyMnOEnDI97SmD9AjH2GrmSYSU7KhUFxulPd9vn7bhYHxoOBsPnidz+Jc0Y7zoZPxrT13WIH5LL/b+zVWxyTyt8FPP1rKuwYFAur7jwkfeklvXysh0VQpK1L4atydrXNONyqpWgIWGilxz8PmfW0K+tJXOGcWF64Sk8W01nplUy+m4rO5AtNI96n0MVJdDQqdRTZSgjSBYImSjgihTA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7k+EAyJS32FgedkTvGWaAOJkXuVbIeHXXoPMU0x+7Cg=;
+ b=K0kISPpGvdYctXQpIPsMOnzlcoH/1MQ03xRRKBNcmmwcoDVppShFqtXgeWwGG63eLO3fJRh+gN87iQjujS03JZ4/qYyJ9UOzEQkN74TQHKiHtXBSQNXPoW7fHrvKnB5xlsCM+q0yyXso/H1HhrkF/GO4xdfGYE2yhNKVOtMq6AA=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB7605.namprd11.prod.outlook.com (2603:10b6:510:277::5)
- by SA1PR11MB7064.namprd11.prod.outlook.com (2603:10b6:806:2b7::11) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by MN2PR12MB4302.namprd12.prod.outlook.com (2603:10b6:208:1de::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.30; Wed, 18 Jun
- 2025 21:56:41 +0000
-Received: from PH7PR11MB7605.namprd11.prod.outlook.com
- ([fe80::d720:25db:67bb:6f50]) by PH7PR11MB7605.namprd11.prod.outlook.com
- ([fe80::d720:25db:67bb:6f50%4]) with mapi id 15.20.8835.027; Wed, 18 Jun 2025
- 21:56:41 +0000
-Message-ID: <994ba1b4-281a-46bd-9431-7bdef5970ed3@intel.com>
-Date: Wed, 18 Jun 2025 14:56:40 -0700
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Wed, 18 Jun
+ 2025 21:57:25 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%7]) with mapi id 15.20.8835.026; Wed, 18 Jun 2025
+ 21:57:25 +0000
+Message-ID: <f5e679bc-ac84-426b-987e-ade14229f7b0@amd.com>
+Date: Wed, 18 Jun 2025 16:57:16 -0500
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/10] drm/xe/xe_late_bind_fw: Extract and print
- version info
-To: Badal Nilawar <badal.nilawar@intel.com>, <intel-xe@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC: <anshuman.gupta@intel.com>, <rodrigo.vivi@intel.com>,
-	<alexander.usyskin@intel.com>, <gregkh@linuxfoundation.org>, <jgg@nvidia.com>
-References: <20250618190007.2932322-1-badal.nilawar@intel.com>
- <20250618190007.2932322-10-badal.nilawar@intel.com>
+Subject: Re: [PATCH v6 4/8] x86/resctrl: Implement "io_alloc" enable/disable
+ handlers
+To: Reinette Chatre <reinette.chatre@intel.com>, babu.moger@amd.com,
+ corbet@lwn.net, tony.luck@intel.com, Dave.Martin@arm.com,
+ james.morse@arm.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, akpm@linux-foundation.org,
+ paulmck@kernel.org, rostedt@goodmis.org, thuth@redhat.com, ardb@kernel.org,
+ gregkh@linuxfoundation.org, seanjc@google.com, thomas.lendacky@amd.com,
+ pawan.kumar.gupta@linux.intel.com, perry.yuan@amd.com,
+ yosry.ahmed@linux.dev, kai.huang@intel.com, xiaoyao.li@intel.com,
+ peterz@infradead.org, kan.liang@linux.intel.com, mario.limonciello@amd.com,
+ xin3.li@intel.com, sohil.mehta@intel.com, chang.seok.bae@intel.com,
+ andrew.cooper3@citrix.com, ebiggers@google.com, ak@linux.intel.com,
+ xin@zytor.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1749677012.git.babu.moger@amd.com>
+ <548b542ff537936cc8a20f721f6f2472189c536d.1749677012.git.babu.moger@amd.com>
+ <7521ab39-73c8-4d11-b12f-bf67a7031d7f@intel.com>
+ <d7e64ce3-e27a-4fdc-911f-bc33df743696@amd.com>
+ <9927b988-47b0-4937-9d6e-5dca767504fd@intel.com>
 Content-Language: en-US
-From: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
-In-Reply-To: <20250618190007.2932322-10-badal.nilawar@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BY5PR17CA0010.namprd17.prod.outlook.com
- (2603:10b6:a03:1b8::23) To PH7PR11MB7605.namprd11.prod.outlook.com
- (2603:10b6:510:277::5)
+From: "Moger, Babu" <bmoger@amd.com>
+In-Reply-To: <9927b988-47b0-4937-9d6e-5dca767504fd@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA0PR11CA0155.namprd11.prod.outlook.com
+ (2603:10b6:806:1bb::10) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -116,393 +93,206 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB7605:EE_|SA1PR11MB7064:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf247c93-72a4-4819-7a2d-08ddaeb3022a
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|MN2PR12MB4302:EE_
+X-MS-Office365-Filtering-Correlation-Id: eeba0885-dbd6-4054-1be7-08ddaeb31bf5
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?NGIwcEsxK2xjOEZjTW5pRTlGMkkveUtUT1d3SEZSVnBybG55RHBHUnlUNGp2?=
- =?utf-8?B?bHRoUUZBYnJWVWMvN3Fadlk5NW1ZZTlTRlI3b0swK2JCaUlWYzlrSytzdW1P?=
- =?utf-8?B?aW9RTjNtYXdJNHhkMTRmbkFlMU1zSG5GSlFkR3QrTXhveVYzdWltdURTUERG?=
- =?utf-8?B?QVFMNmtIRXplTUVORmlMOG1kRXpLMFBuTURtaDRFTnJ4MUZjZ2k4dGRxQmF1?=
- =?utf-8?B?cGVzMWtjYXp6eTNFRldhRCtJblRabWw1Z3Ird1Fmc0FocnZ0UDRBRDhzTU5W?=
- =?utf-8?B?UlVtYzhTL3JXVUpOek1WdFNUZDZqdm1xK0hKZXduMjYxb2ZPU25rTlp0ekpU?=
- =?utf-8?B?L1duMlJ0bUR2SU9wcmdYRkhBMWVqdTE3L24vK1krNytVVm41VWJ0M2hpQVpl?=
- =?utf-8?B?SkRZOERVZFRUdlN5N0tzVit6M1VoeHpEYzZvbElzbjI5OVZ3RDgrK3UzaTJk?=
- =?utf-8?B?S3lBaUJwY3ZEd3JVTmJUWkxyc3YwSUNxcHdsTjlSNDAzRlBibzhVRXRTazJC?=
- =?utf-8?B?S2gzVXRSRnVvMytpdHdUTzhGcGNvMXpXT3lnNktvMkJsYlhFbVBOYlYyWWtz?=
- =?utf-8?B?dlEyRjZhVmxDSW5NUU1RU3B4d0NUTGdtb2dEczJtWWhsWldrbTBPcFc0c0w0?=
- =?utf-8?B?aktPUU9jTkpGTGZOYXJnK1RPTS9lb2l5K0ZzWjM5NkFOSTZmQlVyWkxsQ1lh?=
- =?utf-8?B?ZVZ3NWVBSUxuYUtZbFpja0ROSDZVUWM1cjZyWjBRZjE1K2VXOUxuRG4wUXlo?=
- =?utf-8?B?VnVIMWF0ZTRyMVNPU0pWdDZucnVhWTNtZ1lwV2EzWEdaYnU3Z1ZDbUoyaUpO?=
- =?utf-8?B?Mk9nUHhTeDlKSEtiSnRtNThMbEljRkVSMWsrOHY0bEhlZENNSFVqYkw2MEpW?=
- =?utf-8?B?ejMyMHpqWUVZb0RaS3Q1dEdIYThqUE5tTTY3SmlXR1hXbjA3a0FmTnBFNDVK?=
- =?utf-8?B?T0hYZ0xlV1psV2RESDJsa3JKZmc5c1hQcEJDcEZKdUFWQ2VuUThxeUprMkxY?=
- =?utf-8?B?cFRpVUVUdlpnY3ZmVlhSVUY0aWhPQWN4dm12b1F0b2JUL1RtTE8zNC9nRWRx?=
- =?utf-8?B?dk5Fc0ErR2xMNmV1RHpFbVorVFFReVB5M1FpYkNoTmNFT0JlWEg4K3V2ZUda?=
- =?utf-8?B?V1k2ZldFdWFDZ01LbERPTW0zQ1NXeWIwY3c1aGlJZmE4QWhPRlg4dU9IS1lh?=
- =?utf-8?B?RFlYd1gzUk1zZUExeGNrbDlrV2wzVVpIUmNWSUt2MWY1RExocjhYeWE0OVhw?=
- =?utf-8?B?UFlSVXBoUE9idjE4VU4za1lQM24zSG5SZVd5ZTlVbW1HS3JmMC9NM2hUVGgx?=
- =?utf-8?B?cWZnemR5Yjl2bUpvcm9xOS9PVFVuRSt6akU2MGVleWt5RGFXNi9rUXpNZWtO?=
- =?utf-8?B?M2MyUDM3QkhybktwZUdoc1NLZVZoUE9ubzA0YmNCN1luSnlOQitSTms3OGpL?=
- =?utf-8?B?aG5uc0lrc1gySVRYOHk3OHppa1k1UzNLQmNhR0YrdTkrRmluK0h2M3BJN1g0?=
- =?utf-8?B?MWtTYXh4SXE5Z3d4V0ZiYlF1K2JCdDhoendaamhGTkUvQXhxQWRScSt0Vmta?=
- =?utf-8?B?aXNWNmIvZi9sZzJ5a1g4b05ieVlYMkQraWIxRlVpdVFNZjZucXZvaTVZYlND?=
- =?utf-8?B?M3N4dDFvVDQ0Y0s2VjlXcEp5UEliL0JCRVdEVHFZZmxVYmgxWm1xVUY5L1VY?=
- =?utf-8?B?NDlYMml2dGREVG1mZ3FIV1F1L0J3WXM4eVVnbDAyUFZITkFTOTJ0TDlEVzJi?=
- =?utf-8?B?QWFqNVd2dU9MR0NPWCt4Z0dTSDFtcU92N3FQSHlNS0wrWEk3UCtDdzVoS1BC?=
- =?utf-8?B?QWk2Z0RPQjltd1B0U003ZkN0YzFOV0E0bjB3ekp5MnE4RVprb1U1TVFwNytU?=
- =?utf-8?B?eDdFZGZCRWRGSnlIc0hiV0w3Uyt3TUxXVy9UR1Q4U2ttMXdEbi92Sllua2h5?=
- =?utf-8?Q?8P8Ktz6F6EU=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB7605.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bDV6d1JhYU0xYURQMTFLd0NVU2dHd2tTMlFTVTBGTXE1S090akI3bktKbHZ5?=
+ =?utf-8?B?djlXVEVIN3RvRDE2UW92VWpkbi9yNmZsUTk4S3hqS1I0MXE2V0Vzc1VBVnZO?=
+ =?utf-8?B?VjhGRFdhWExMRitPbzdYcFdXSWViZjh5RXhCbjJ5clNFRDhHVEt0U3NZTy9Y?=
+ =?utf-8?B?bmxLMzhLNTA3eVhBcUdGZTI5UVhVVm1HS2JzYUltRDFwczFSMSs1TTJkZUFk?=
+ =?utf-8?B?Z25RUUs1RlcwZXpSUnZ0ZWxnV0lQNW1nT2I5YUZZdmczSGgvMEZkNFBTZ2NS?=
+ =?utf-8?B?aHRMTFZzTndWK0dRMXJXbVNkcnk5WldiOHVXUlo0a3pyL0VNUmxsNzV0YitS?=
+ =?utf-8?B?eDk3K3RMODlTSEhZM24vMlhVNXJvNHdaQnkvSENvWnlRbVVwc29IVWhCdVVM?=
+ =?utf-8?B?ZnZjdVZsakh4anJCUktWZXg3S0VWeU1iT3JtY0FaSDM1aXZXOXB1WDBhdUh5?=
+ =?utf-8?B?R3Z6Z1ByNmxQTjJNaGV1MEhnbUYyZ3NyaVRkMG81OUk3U2NqbFVrczc4ZTRR?=
+ =?utf-8?B?cjFLSnFKY1gycXV6RDZkUG45TGlubE8yL2ZWZDZaMHhCZ1JWOXptUUI1K2t3?=
+ =?utf-8?B?ZUdIVk5XVmt4dDRac0dvbXltUG9hUldJQU5wZVRyYlU0TnF6Qlp3UXZwY0I4?=
+ =?utf-8?B?MmlwcFdZYlBNWlkvL2ltd1RHejh3clMxZmhEZlBLTVBKSys2NENyaFNvSkk3?=
+ =?utf-8?B?YVQ0Y3Q0ZmZrcWt4UTYraDFUdVcxV0ZPWEJ0V3Fib1NoRDBEeG81U1VOcjRr?=
+ =?utf-8?B?ZEtUSjE1QUUvenBndGJZZGJUamt6UlBkQ2dFVnRCaHJna3IvMVRVM3cvbHFO?=
+ =?utf-8?B?amVpUUYzWEppaWVSQVAxOTYzM0JZNmxYc3F6ZHFsR2w3Z2JFMUdDdFRjcERu?=
+ =?utf-8?B?MkIvTVF6WTJjVEZMV01ZKzNtby9MeGNkN0V2L0lrRlpES0FOZGFEN3VOd05r?=
+ =?utf-8?B?MDVFSzdKUTRheFp2ejdyRmNoYmdvYVFVc25hU09ISDNtMVlSdm1BQTFKczVK?=
+ =?utf-8?B?MitjeW1WdGZ4TTFZTUJZZ2NZdFFGVnh4U3ByWURYZy9DM1BUSkNraEF1YXRz?=
+ =?utf-8?B?Z05xbXJFcGZPMFZnMmhhVll0a3pZbmVwVjhlTkVGVkdwTHJWZ0pLd3I1dHRo?=
+ =?utf-8?B?Y3ZaVTEwbmx3V0h1QU14VEtLbUxTT0pFZ0g1NEdBRjhOM285dDIzREo5K3BB?=
+ =?utf-8?B?bFJxMHY5ZURZS1VkUmJwd3kyN090c1I4QnFPZWpiNGNhejJIaXpoWERqd01K?=
+ =?utf-8?B?ME5VZ2xJVUtxaDc2SHpVSXIvazF5eXFxZFA2c3RET3F0TGhYQk55SCtSWTJM?=
+ =?utf-8?B?dDYwc3ZSN3gxVmxCQnlLRVgxNndlZEVQTVVucE1yKzg4dTh3SnBsbDREM0lU?=
+ =?utf-8?B?ZjFyME5kYjdnQTBNSG1UOUpvaXgyalRVcHZOU1IydXZnMVRzMFBEM3hQTWNs?=
+ =?utf-8?B?ODFiNjVlRDN1ZTVwdVd3WDdMSWYxVklGcjdhRWZuQWNFNDVYeEYwWXFNNVZs?=
+ =?utf-8?B?VjNmQ1FOemV3YVpTNVhBd0hqVi94elhxM1hkWWZnTjFyaTlhMDRlY1ZRaGFK?=
+ =?utf-8?B?VVNmNnRnR2dvKzIydGswVnRPWTFVNEE0Mm5xTnNQVDQ1dFczWWtkMzlsTnh4?=
+ =?utf-8?B?NDJtaExkcVl0M3E2UCthZzU1RGhFN011MkQ0dzNaYVEvc3k5QmNhWWtYT3ZS?=
+ =?utf-8?B?Rk9OK1RreVpWTEhZVU9SYXFXclZPR1FBUHZBTmZ2MGEzbmFpcXU5RzRyTU9O?=
+ =?utf-8?B?bjdPbG4wZ3F4a3YxMk5Va2x3ZDFPZ0wzY2RNeWNoNnpUT092R0VEQ2RYOU84?=
+ =?utf-8?B?eXBiYmtQSlZZSW9uL2FJNmV3cXZGcEpJSlN3cDBnM1F6VWtWZ2xFV25zb0Nj?=
+ =?utf-8?B?WkMxcVZQaFFnaE9kbGdNY0F1dlhWZzJwYkxvamdFZ3UvM3BqM2c2N20xSC9W?=
+ =?utf-8?Q?2iUXM7HboLg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RGMvUURSVnJBbnE2RjdXWXJ2UVlHOEE2YXVQQXRidFI3WWY5Ry9YaWNFQklY?=
- =?utf-8?B?ZEc3SkJncU1EUUhFZEJCM1oyeDVFYkdIN3JxYUpCZStMZEc5OUtzVEF0V2o1?=
- =?utf-8?B?Q2VoZGpNQlhIVTBZRUZnUFE3clZzZUVZZ3pxZzAwamdleDZ3TEZxYmpsa2lU?=
- =?utf-8?B?YTZpQnZkVXBqNDFkNExNTld6Qmt0aDZ1Uzc5Q1dWd2o4U0t2TlFydWtUOVAy?=
- =?utf-8?B?anROcXlXcTdxNDJ3RkUraU10REZlRW1jSDE4UXUwVUxpeFBjcXhHcWJpRTcr?=
- =?utf-8?B?emtlS3VQVEVNUDdVUUNtWVVEZHkvemxFNzJmdnlyam45dHY5UEpFYng1cnhp?=
- =?utf-8?B?TXc5eHhsVGRYVTZiaWpNWmk5SzU0TUhHUXdzUGpWUkpoSDF2cmtBM1FBdFYy?=
- =?utf-8?B?OHdHNGlhKzAwY3pyZTBUY1doZTJrSGxaR25VaERDcExZSDBjRHMyRGtTQWRT?=
- =?utf-8?B?emY1OHFHV0l6azlaWWxGR1A1S3A3NTh3U2J3bWhub3htZzRaY0FZR29TVlI3?=
- =?utf-8?B?SUJ3Uy90MmRKd2kwM0lIdEo1UDQzbGdoZDFNeWl0TjVwSXF5Z2w3bm1aTXg4?=
- =?utf-8?B?dWNheDRCZXVSUG1QZy84ZTdEMHdaK3kvaFlYMFJubGxtWUdVYlUxNFczaGdi?=
- =?utf-8?B?YzlYNFB2M1pQUXNpZXcrVTNqMllDR1FGb0FOOXAyZEdkVzNBZkxaZUFVV0px?=
- =?utf-8?B?OWxzeFZGT1lCT0RpYUMxTi9DWVRrM0RmVEc5cjhrbEpGc2xFc2NrUWcrMkpt?=
- =?utf-8?B?SjhzOVRhQVQ4b0s4TlAzRjlEdEQyaWVObEp0UFprSm9IUHBTS3FXaE5GdlJS?=
- =?utf-8?B?RkFpdEM5TTJNbk5ka1lsYzRnOGJQdy9XbFBqU05BTXRtYmNMMjNTQTRxRDk3?=
- =?utf-8?B?UDNGN0dTNkQxY1ZTZW9vVTRaQWFVcVQ2Q0IxMXd1ejZxdVJUMlkrN2dPbmJQ?=
- =?utf-8?B?aldYTTAxaXJXb0lJOThqRTRzSkhNejc4UHF0ZWxWZ3QwZjhWR25oc2JnR1p6?=
- =?utf-8?B?bVV1UUpZdW9yY0NicXp4QUZDMTVmYjAwbWgwZG1mZmNMOFIyekc1bm9lYVd5?=
- =?utf-8?B?NVkvZkI2L0VsSk5sZ0FuR05SRERqd2s0anpHN2UxOGorRjR6QVJWbmpuZEwr?=
- =?utf-8?B?M0dkeXpab1RUZ1JUQUtocXd5cHFYaEgzNkdBK0hFTzMreGlWRE1SVjFjMk9n?=
- =?utf-8?B?ZGxCeENxM2lRb1IyOURjU0NtWDljdVRiV2ZsVERKWkMxRFlPc2dCVkJJMEgv?=
- =?utf-8?B?MTZldCtyS1JLWHNhNHFqems4YUVraERVem1iUG5pRFQrMzBZWmlGNFI5VVFp?=
- =?utf-8?B?L3lqQkVCaHB5WksrcTR3TkVRQXhmd1RBYzJrZW9aYVBtdkNMNXhyOUlOS25a?=
- =?utf-8?B?QmFkMFhEVUwyVlJhcy9kUzZOTzByV1pSQUlsRXJzV3VQamhZdUJTUkEyaVNF?=
- =?utf-8?B?bGI1T2kyZWhXQkdNNjMrMnFTeUZ6aXF1RHY1NDZvRFFmU2c0SjlxTklVdUZ2?=
- =?utf-8?B?ZXdzNSt1YTZ3aEpNaUNkWUUrSEc2eUNieTZoRVZ5aXlaajdrSVhpOGptWTBy?=
- =?utf-8?B?VmQ2enVsMlBGa05kanl0L0xheEltNjNmVnNOUGFsR3VPQjJsQlhyY1IxTWVv?=
- =?utf-8?B?alBCMWNTUHROSmNQMU1ReDU5dHU5Slp6RXcvdDI4VVFBQm9acHV6N0d6Sys2?=
- =?utf-8?B?YVdEclcrR0F6ZjlPOHZ4RmUrbVdQT2xOK2xNTFlLTDFyZXFqV1pVemhJV3B2?=
- =?utf-8?B?MDdLY1ZaNURBL1BZQ3poa1dhU2hIZFJSSGNlRzhYSjJoVzRPWVRxM3diN0Zx?=
- =?utf-8?B?elFwNGdrMTJwM3FSWVdybWorRWViRDdLR3JrbktSWDE5ajB1U3l6UDBkb0xR?=
- =?utf-8?B?NDJUSDYyamhwVkI5bWR5cWtJOUV1cGFHZjg2T3FodklyVUphd1YybjM0OURZ?=
- =?utf-8?B?dExuVzhpQ25Od2FpaFFUZE1XWW9PT1VBWi9QOVE5SXowNm4yQjRLZGc3Szgr?=
- =?utf-8?B?T3NoUms1bWx5V3RPYm1rY1UxVlpYQUJydk1HS29xU2lDWkdmNTJ2Vko4MU9B?=
- =?utf-8?B?WjJBeXVnL0dOcXFTMXZPdGo5VDZLWUFrdnVLT3NMN2J3K3hsVnB6aDhxMWFV?=
- =?utf-8?B?SWlpcTNUdmd5NjczRlAyOThsMXczaWk3cVlBWkN6TDhuekdzVGk3RmRvWW1M?=
- =?utf-8?Q?dstRtKc1689ecEc7wCjT+e4=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf247c93-72a4-4819-7a2d-08ddaeb3022a
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB7605.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZkNHc0VlVDFmdU5VU21GZHVGT0lVVGp6OE9FRmxJWUZ2MXNxYkRyOG9YWWdB?=
+ =?utf-8?B?MGtkVkY3dkdQNHgvYk9vdlZqSVZBbHlOc3V2dTQ2ZnVsMThLc29qZmdhQ0VT?=
+ =?utf-8?B?SGFseHhoZXFOdk1GQmd3Q2lhUmpzelNZSHNabDJxUTMzQ0MyM1BOdlRzaGhJ?=
+ =?utf-8?B?eGpJVSsvN2kvQm9BNzBNRjIrQ2QzZE8yaXNEbnIwYVRhcVpsOUJwbE8rZUhO?=
+ =?utf-8?B?WlJ1VkE3SWZSNDcxdEk3Ny9FUHduSUsycWQ4bWNSUzlWMGZwaWFHOFBncXph?=
+ =?utf-8?B?TWVyNVhFVG1OZ0loVHpZS2RwS3gvNVBRU2ZxRlFjK0l1N1JLSUtYSFNjV1Ji?=
+ =?utf-8?B?MEpNdzNOaGZSTm4yVUJtQUJlVFdxczBEWlhVVDNXQ05NZzc3Qks0RGc3TWFl?=
+ =?utf-8?B?Z28zZERpWlVqSGJlM2g0WDB0L00ycklsbDZiL0FCeWljU2NpVWI2cEowQU9o?=
+ =?utf-8?B?MVRhQjNnYzRGRHlmNTkyWTFBYmtodUJVTXNkOVBzanpyd0wyYzRNZFNRZm5I?=
+ =?utf-8?B?bTNYODVZUTVzUWZJMkc2V3VOV1JwQmN0WVI1ZUtwY2dWRmMrWWpNenFIMGpt?=
+ =?utf-8?B?b28rMU1wK2svbWw5ZnFqQzVYcWpJa3FJNjlHZWhFdmxSRkxDTnBhcmhmZjV5?=
+ =?utf-8?B?UHZlQXYzWWZnU3J4MWY3MmhUYmtJTTdNVFVITkVpYnV0TmoxTU5Qb2RLNGt0?=
+ =?utf-8?B?TXhwRmhYRmlrRDRoQmxWV3FITCtaS2NLeFBsQVlOL1lXVng5L05jOHpnL1pU?=
+ =?utf-8?B?bzdNMDNMWkFkcHdMTXVaTHVzdEMyTllIM0tEZjViTGFtNjd5b1p0a1d1MkpZ?=
+ =?utf-8?B?alJWbldHS2R0d1pzeUlMMDdBSllxYkRNcnozY0ZscmlxUkZxQm1HQU1GdmU2?=
+ =?utf-8?B?UE9PRlUwUGU4dWpWTTNkYTBhQnpnc3JNcDRXUldicnRDSmM2endtcjJ4ZEFs?=
+ =?utf-8?B?QWNEek14dGtxeEdaSks0L3ZQUkdySXIzdk81ZUJlTGxWbXBueGcxYzBhZEJ4?=
+ =?utf-8?B?cnJSSkhDYmsrSlZPd08xQlhIVDRBWm1PQU90VEorWEFOWWNWWmQ0ZXJjeDRP?=
+ =?utf-8?B?NnpjRmlYZzZvc0RrWnowTWVIRW5JZWhnd0Z5dTRERGR6VEFXRTNpc2RVQVJq?=
+ =?utf-8?B?RnNLbXNvQ3JPSEptYnowVHJnM1ZyOVNQNk8yenYrVUMyZlFwN1poU0lYZ1VW?=
+ =?utf-8?B?S3gycXNjU05ZdGdvMkxZcW1ZNDlvaDBZeUxLcnBlNW1mbm1iMVAzMDZLSXY5?=
+ =?utf-8?B?UmhCS3lqbjB3V0lzRFNDNFhuSTNqNzZIQ0dDVTFLQVU4QmdPQ2t5NWxmTzVz?=
+ =?utf-8?B?Y2dpam0vZUkzSTBDT21ZUm9kZEsxTy9UeXp0Y1BFTWZnbUFlWEFCZmJGY1hw?=
+ =?utf-8?B?RXNoRTEvQjBGemNLR3U0UUJsOE5kdlRkL3R3QjNBa2duajdLVW1iaGNHc3Vp?=
+ =?utf-8?B?cWZQWEM2SWdlcFpaOE81SHhLQklTRHEzdE5NZkZpTzQrdkVMU05jWDFZdzUy?=
+ =?utf-8?B?VVN3cFY4bFUvcWYwaTJnaS9UTlZEUG1LbXBDbW1mL3dvdUtEbkMwL0FlTWVm?=
+ =?utf-8?B?UmFmVGZ0MTNpRDJnS2FXSzVZc3lQUE82VVpjNlV1RkFlbC9jN1diSnhKRk5R?=
+ =?utf-8?B?LzFJK3BKcWp3TXExM0ZGSm5MTkMyQzNqck5qQXVQbzBFd1Z6d2MxNnhJOGxY?=
+ =?utf-8?B?S1liNlZJUnFYZ2RHY0RpNzNYKy9ncXhjZm5UMi9ZbFVJcnk5SkpLVFdSN1VX?=
+ =?utf-8?B?eE5yTXA3a2lxbEprYWhFTXYyUGRjLzEzeWFoZEp4VVQ0ZzBQZFhjVGJIOEZ3?=
+ =?utf-8?B?KzUxRkRHRDQwT2Z5bVhzcDdzaHVHV2F6K2U4dGd5QUJsZ2dodVhveTJ1VGda?=
+ =?utf-8?B?czNkd2xtZE10SHI3TzlJTEhzelcxNFppdWJPRXEvVXkrdC9mS05zS2REbGlL?=
+ =?utf-8?B?b0RtN0s3SDFlOGY3SDBtTWtzdXJrbEtWMzBnaXdOQW9MOHlKWmJqOXpVWUVL?=
+ =?utf-8?B?TENyRzYvM1NiZVlod1hnSTBWeXNueDAxSk1Ub2oxNEYyNjlzMDF5OEdITlps?=
+ =?utf-8?B?MEZscDFvNDdoQVJvRjdoL3ZJaEViQ1Vlc1RqNXplemU0OVVpem9HU0ZkUnh0?=
+ =?utf-8?Q?Owas=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eeba0885-dbd6-4054-1be7-08ddaeb31bf5
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 21:56:41.6217
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 21:57:25.3130
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ATGVnp7KJBMDfwhso3/GPaQpFs7pxZUdWz4OOYhyTU679oiEnvCWXiMk90bSkGwrcR6lQ23u+zHI+bgu4EXSEUnZqsZ6pIWaRVAJvxz6ux0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7064
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: H++RQehj0PBq5L4Jh5h9U8HAIFn7U+1gWCjzQozklZi2VGCXTlwP8TdUdWJIEnQB
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4302
 
+Hi Reinette,
 
-
-On 6/18/2025 12:00 PM, Badal Nilawar wrote:
-> Extract and print version info of the late binding binary.
->
-> Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
-> ---
->   drivers/gpu/drm/xe/xe_late_bind_fw.c       | 132 ++++++++++++++++++++-
->   drivers/gpu/drm/xe/xe_late_bind_fw_types.h |   3 +
->   drivers/gpu/drm/xe/xe_uc_fw_abi.h          |  69 +++++++++++
->   3 files changed, 203 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw.c b/drivers/gpu/drm/xe/xe_late_bind_fw.c
-> index 001e526e569a..f71d5825ac5b 100644
-> --- a/drivers/gpu/drm/xe/xe_late_bind_fw.c
-> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw.c
-> @@ -45,6 +45,129 @@ late_bind_to_xe(struct xe_late_bind *late_bind)
->   	return container_of(late_bind, struct xe_device, late_bind);
->   }
+On 6/18/2025 3:32 PM, Reinette Chatre wrote:
+> Hi Babu,
+> 
+> On 6/18/25 12:27 PM, Moger, Babu wrote:
 >   
-> +/* Refer to the "Late Bind based Firmware Layout" documentation entry for details */
-> +static int parse_cpd_header(struct xe_late_bind *late_bind, u32 fw_id,
-> +			    const void *data, size_t size, const char *manifest_entry)
+>> On 6/17/25 22:51, Reinette Chatre wrote:
+> 
+>>> On 6/11/25 2:23 PM, Babu Moger wrote:
+> 
+>>>>   static inline struct rdt_hw_resource *resctrl_to_arch_res(struct rdt_resource *r)
+>>>> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>>>> index 885026468440..3bdcd53b3ce3 100644
+>>>> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>>>> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>>>> @@ -229,6 +229,46 @@ bool resctrl_arch_get_cdp_enabled(enum resctrl_res_level l)
+>>>>   	return rdt_resources_all[l].cdp_enabled;
+>>>>   }
+>>>>   
+>>>> +inline bool resctrl_arch_get_io_alloc_enabled(struct rdt_resource *r)
+>>>
+>>> As indicated by lkp the inline usage needs to be fixed.
+>>
+>> I am assuming that you are referring to
+>> https://www.kernel.org/doc/html/next/process/coding-style.html#the-inline-disease
+> 
+> No. I am referring to the lkp test report of an issue detected by sparse. Looks like
+> the message was not cc'd to lkml so I cannot provide link. I paste it below. You are in
+> "To:".
 
-We'll need to try and make this common between the uc_fw code and this 
-code to reduce duplication, but we can do that as a follow up.
+Yes. I saw that report. It's strange why it was not cc'd to lkml. 
+Happened few times before.
 
-> +{
-> +	struct xe_device *xe = late_bind_to_xe(late_bind);
-> +	const struct gsc_cpd_header_v2 *header = data;
-> +	const struct gsc_manifest_header *manifest;
-> +	const struct gsc_cpd_entry *entry;
-> +	size_t min_size = sizeof(*header);
-> +	struct xe_late_bind_fw *lb_fw;
-> +	u32 offset;
-> +	int i;
-> +
-> +	if (fw_id >= MAX_FW_ID)
-> +		return -EINVAL;
-> +	lb_fw = &late_bind->late_bind_fw[fw_id];
-> +
-> +	/* manifest_entry is mandatory */
-> +	xe_assert(xe, manifest_entry);
-> +
-> +	if (size < min_size || header->header_marker != GSC_CPD_HEADER_MARKER)
-> +		return -ENOENT;
-> +
-> +	if (header->header_length < sizeof(struct gsc_cpd_header_v2)) {
-> +		drm_err(&xe->drm, "%s late binding fw: Invalid CPD header length %u!\n",
-> +			fw_id_to_name[lb_fw->id], header->header_length);
-> +		return -EINVAL;
-> +	}
-> +
-> +	min_size = header->header_length + sizeof(struct gsc_cpd_entry) * header->num_of_entries;
-> +	if (size < min_size) {
-> +		drm_err(&xe->drm, "%s late binding fw: too small! %zu < %zu\n",
-> +			fw_id_to_name[lb_fw->id], size, min_size);
-> +		return -ENODATA;
-> +	}
-> +
-> +	/* Look for the manifest first */
-> +	entry = (void *)header + header->header_length;
-> +	for (i = 0; i < header->num_of_entries; i++, entry++)
-> +		if (strcmp(entry->name, manifest_entry) == 0)
-> +			offset = entry->offset & GSC_CPD_ENTRY_OFFSET_MASK;
-> +
-> +	if (!offset) {
-> +		drm_err(&xe->drm, "%s late binding fw: Failed to find manifest_entry\n",
-> +			fw_id_to_name[lb_fw->id]);
-> +		return -ENODATA;
-> +	}
-> +
-> +	min_size = offset + sizeof(struct gsc_manifest_header);
-> +	if (size < min_size) {
-> +		drm_err(&xe->drm, "%s late binding fw: too small! %zu < %zu\n",
-> +			fw_id_to_name[lb_fw->id], size, min_size);
-> +		return -ENODATA;
-> +	}
-> +
-> +	manifest = data + offset;
-> +
-> +	lb_fw->version.major = manifest->fw_version.major;
-> +	lb_fw->version.minor = manifest->fw_version.minor;
-> +	lb_fw->version.hotfix = manifest->fw_version.hotfix;
-> +	lb_fw->version.build = manifest->fw_version.build;
+> 
+>>
+>> I will remove inline attribute.
+> 
+> The goal was to fix the broken usage of inline, but you are right that it may
+> not be needed here.
 
-not: here you can just do:
+Sure. Will remove inline.
 
-     lb_fw->version = manifest->fw_version;
+> 
+> Here is the original report:
 
-since both variables are of type struct gsc_version.
+Thanks
 
-> +
-> +	return 0;
-> +}
-> +
-> +/* Refer to the "Late Bind based Firmware Layout" documentation entry for details */
-> +static int parse_lb_layout(struct xe_late_bind *late_bind, u32 fw_id,
+Babu
 
-IMO it'd be cleaner to just pass xe and xe_late_bind_fw, instead of 
-xe_late_bind and fw_id.
-You should also be able to do a lb_fw_to_xe() call if you want with 
-something like:
-
-container_of(lb_fw, struct xe_device, late_bind.late_bind_fw[lb_fw->id])
-
-> +			   const void *data, size_t size, const char *fpt_entry)
-> +{
-> +	struct xe_device *xe = late_bind_to_xe(late_bind);
-> +	const struct csc_fpt_header *header = data;
-> +	const struct csc_fpt_entry *entry;
-> +	size_t min_size = sizeof(*header);
-> +	struct xe_late_bind_fw *lb_fw;
-> +	u32 offset;
-> +	int i;
-> +
-> +	if (fw_id >= MAX_FW_ID)
-> +		return -EINVAL;
-> +
-> +	lb_fw = &late_bind->late_bind_fw[fw_id];
-> +
-> +	/* fpt_entry is mandatory */
-> +	xe_assert(xe, fpt_entry);
-> +
-> +	if (size < min_size || header->header_marker != CSC_FPT_HEADER_MARKER)
-> +		return -ENOENT;
-> +
-> +	if (header->header_length < sizeof(struct csc_fpt_header)) {
-> +		drm_err(&xe->drm, "%s late binding fw: Invalid FPT header length %u!\n",
-> +			fw_id_to_name[lb_fw->id], header->header_length);
-> +		return -EINVAL;
-> +	}
-> +
-> +	min_size = header->header_length + sizeof(struct csc_fpt_entry) * header->num_of_entries;
-> +	if (size < min_size) {
-> +		drm_err(&xe->drm, "%s late binding fw: too small! %zu < %zu\n",
-> +			fw_id_to_name[lb_fw->id], size, min_size);
-> +		return -ENODATA;
-> +	}
-> +
-> +	/* Look for the manifest first */
-
-Here you're looking for the cpd header, not the manifest.
-
-> +	entry = (void *)header + header->header_length;
-> +	for (i = 0; i < header->num_of_entries; i++, entry++)
-> +		if (strcmp(entry->name, fpt_entry) == 0)
-> +			offset = entry->offset;
-> +
-> +	if (!offset) {
-> +		drm_err(&xe->drm, "%s late binding fw: Failed to find fpt_entry\n",
-> +			fw_id_to_name[lb_fw->id]);
-> +		return -ENODATA;
-> +	}
-> +
-> +	min_size = offset + sizeof(struct gsc_cpd_header_v2);
-> +	if (size < min_size) {
-> +		drm_err(&xe->drm, "%s late binding fw: too small! %zu < %zu\n",
-> +			fw_id_to_name[lb_fw->id], size, min_size);
-> +		return -ENODATA;
-> +	}
-> +
-> +	return parse_cpd_header(late_bind, fw_id, data + offset, size - offset, "LTES.man");
-> +}
-> +
->   static int xe_late_bind_fw_num_fans(struct xe_late_bind *late_bind)
->   {
->   	struct xe_device *xe = late_bind_to_xe(late_bind);
-> @@ -185,8 +308,15 @@ static int __xe_late_bind_fw_init(struct xe_late_bind *late_bind, u32 fw_id)
->   		return -ENODATA;
->   	}
->   
-> -	lb_fw->payload_size = fw->size;
-> +	ret = parse_lb_layout(late_bind, fw_id, fw->data, fw->size, "LTES");
-> +	if (ret)
-> +		return ret;
-> +
-> +	drm_info(&xe->drm, "Using %s firmware from %s version %d.%d.%d\n",
-> +		 fw_id_to_name[lb_fw->id], lb_fw->blob_path,
-> +		 lb_fw->version.major, lb_fw->version.minor, lb_fw->version.hotfix);
-
-You need to log the build number as well, as that needs to be relevant 
-for this type of headers (we do log it for GSC for example).
-
->   
-> +	lb_fw->payload_size = fw->size;
->   	memcpy(lb_fw->payload, fw->data, lb_fw->payload_size);
->   	release_firmware(fw);
->   	INIT_WORK(&lb_fw->work, late_bind_work);
-> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
-> index f79f0c0b2c4a..3fc4f350c81f 100644
-> --- a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
-> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
-> @@ -10,6 +10,7 @@
->   #include <linux/mutex.h>
->   #include <linux/types.h>
->   #include <linux/workqueue.h>
-> +#include "xe_uc_fw_abi.h"
->   
->   #define MAX_PAYLOAD_SIZE (1024 * 4)
->   
-> @@ -41,6 +42,8 @@ struct xe_late_bind_fw {
->   	size_t payload_size;
->   	/** @late_bind_fw.work: worker to upload latebind blob */
->   	struct work_struct work;
-> +	/** @late_bind_fw.version: late binding blob manifest version */
-> +	struct gsc_version version;
->   };
->   
->   /**
-> diff --git a/drivers/gpu/drm/xe/xe_uc_fw_abi.h b/drivers/gpu/drm/xe/xe_uc_fw_abi.h
-> index 87ade41209d0..13da2ca96817 100644
-> --- a/drivers/gpu/drm/xe/xe_uc_fw_abi.h
-> +++ b/drivers/gpu/drm/xe/xe_uc_fw_abi.h
-> @@ -318,4 +318,73 @@ struct gsc_manifest_header {
->   	u32 exponent_size; /* in dwords */
->   } __packed;
->   
-> +/**
-> + * DOC: Late binding Firmware Layout
-> + *
-> + * The Late binding binary starts with FPT header, which contains locations
-> + * of various partitions of the binary. Here we're interested in finding out
-> + * manifest version. To the manifest version, we need to locate CPD header
-> + * one of the entry in CPD header points to manifest header. Manifest header
-> + * contains the version.
-> + *
-> + *      +================================================+
-> + *      |  FPT Header                                    |
-> + *      +================================================+
-> + *      |  FPT entries[]                                 |
-> + *      |      entry1                                    |
-> + *      |      ...                                       |
-> + *      |      entryX                                    |
-> + *      |          "LTES"                                |
-> + *      |          ...                                   |
-> + *      |          offset  >-----------------------------|------o
-> + *      +================================================+      |
-> + *                                                              |
-> + *      +================================================+      |
-> + *      |  CPD Header                                    |<-----o
-> + *      +================================================+
-> + *      |  CPD entries[]                                 |
-> + *      |      entry1                                    |
-> + *      |      ...                                       |
-> + *      |      entryX                                    |
-> + *      |          "LTES.man"                            |
-> + *      |           ...                                  |
-> + *      |           offset  >----------------------------|------o
-> + *      +================================================+      |
-> + *                                                              |
-> + *      +================================================+      |
-> + *      |  Manifest Header                               |<-----o
-> + *      |      ...                                       |
-> + *      |      FW version                                |
-> + *      |      ...                                       |
-> + *      +================================================+
-> + */
-> +
-> +/* FPT Headers */
-> +struct csc_fpt_header {
-> +	u32 header_marker;
-> +#define CSC_FPT_HEADER_MARKER 0x54504624
-> +	u32 num_of_entries;
-> +	u8 header_version;
-> +	u8 entry_version;
-> +	u8 header_length; /* in bytes */
-> +	u8 flags;
-> +	u16 ticks_to_add;
-> +	u16 tokens_to_add;
-> +	u32 uma_size;
-> +	u32 crc32;
-> +	u16 fitc_major;
-> +	u16 fitc_minor;
-> +	u16 fitc_hotfix;
-> +	u16 fitc_build;
-
-For other headers we grouped the version values in a gsc_version struct. 
-So here instead of the 4 separate versions you could have:
-
-struct gsc_version fitc_version;
-
-Which makes it easier to read as all headers have the same type for the 
-version. We don't read this one though, so not a blocker.
-
-Daniele
-
-> +} __packed;
-> +
-> +struct csc_fpt_entry {
-> +	u8 name[4]; /* partition name */
-> +	u32 reserved1;
-> +	u32 offset; /* offset from beginning of CSE region */
-> +	u32 length; /* partition length in bytes */
-> +	u32 reserved2[3];
-> +	u32 partition_flags;
-> +} __packed;
-> +
->   #endif
+> 
+>> Date: Fri, 13 Jun 2025 12:18:35 +0800
+>> From: kernel test robot <lkp@intel.com>
+>> To: Babu Moger <babu.moger@amd.com>, corbet@lwn.net, tony.luck@intel.com, reinette.chatre@intel.com, Dave.Martin@arm.com, james.morse@arm.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
+>> CC: oe-kbuild-all@lists.linux.dev, x86@kernel.org, hpa@zytor.com, akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org, thuth@redhat.com, ardb@kernel.org, gregkh@linuxfoundation.org, seanjc@google.com, thomas.lendacky@amd.com, pawan.kumar.gupta@linux.intel.com, perry.yuan@amd.com, yosry.ahmed@linux.dev, kai.huang@intel.com, xiaoyao.li@intel.com, peterz@infradead.org, kan.liang@linux.intel.com, mario.limonciello@amd.com, xin3.li@intel.com, sohil.mehta@intel.com
+>> Subject: Re: [PATCH v6 5/8] fs/resctrl: Add user interface to enable/disable io_alloc feature
+>> Message-ID: <202506131104.d1oo8NWe-lkp@intel.com>
+>> In-Reply-To: <b3d8e2ccd23b295f3735fc9f5420458cfc18a896.1749677012.git.babu.moger@amd.com>
+>>
+>> Hi Babu,
+>>
+>> kernel test robot noticed the following build warnings:
+>>
+>> [auto build test WARNING on brauner-vfs/vfs.all]
+>> [also build test WARNING on linus/master v6.16-rc1 next-20250612]
+>> [cannot apply to tip/x86/core aegl/next]
+>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>> And when submitting patch, we suggest to use '--base' as documented in
+>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>>
+>> url:    https://github.com/intel-lab-lkp/linux/commits/Babu-Moger/x86-cpufeatures-Add-support-for-L3-Smart-Data-Cache-Injection-Allocation-Enforcement/20250612-053050
+>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+>> patch link:    https://lore.kernel.org/r/b3d8e2ccd23b295f3735fc9f5420458cfc18a896.1749677012.git.babu.moger%40amd.com
+>> patch subject: [PATCH v6 5/8] fs/resctrl: Add user interface to enable/disable io_alloc feature
+>> config: i386-randconfig-061-20250613 (https://download.01.org/0day-ci/archive/20250613/202506131104.d1oo8NWe-lkp@intel.com/config)
+>> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250613/202506131104.d1oo8NWe-lkp@intel.com/reproduce)
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <lkp@intel.com>
+>> | Closes: https://lore.kernel.org/oe-kbuild-all/202506131104.d1oo8NWe-lkp@intel.com/
+>>
+>> sparse warnings: (new ones prefixed by >>)
+>>     fs/resctrl/rdtgroup.c: note: in included file:
+>>>> include/linux/resctrl.h:553:46: sparse: sparse: marked inline, but without a definition
+>>>> include/linux/resctrl.h:553:46: sparse: sparse: marked inline, but without a definition
+>>>> include/linux/resctrl.h:553:46: sparse: sparse: marked inline, but without a definition
+>>>> include/linux/resctrl.h:553:46: sparse: sparse: marked inline, but without a definition
+>>
+>> vim +553 include/linux/resctrl.h
+>>
+>> 48e63934badb71 Babu Moger 2025-06-11  545
+>> 48e63934badb71 Babu Moger 2025-06-11  546  /**
+>> 48e63934badb71 Babu Moger 2025-06-11  547   * resctrl_arch_get_io_alloc_enabled() - Get io_alloc feature state.
+>> 48e63934badb71 Babu Moger 2025-06-11  548   * @r:		The resctrl resource.
+>> 48e63934badb71 Babu Moger 2025-06-11  549   *
+>> 48e63934badb71 Babu Moger 2025-06-11  550   * Return:
+>> 48e63934badb71 Babu Moger 2025-06-11  551   * true if io_alloc is enabled or false if disabled.
+>> 48e63934badb71 Babu Moger 2025-06-11  552   */
+>> 48e63934badb71 Babu Moger 2025-06-11 @553  inline bool resctrl_arch_get_io_alloc_enabled(struct rdt_resource *r);
+>> 48e63934badb71 Babu Moger 2025-06-11  554
+>>
+>> -- 
+>> 0-DAY CI Kernel Test Service
+>> https://github.com/intel/lkp-tests/wiki
+> 
+> Reinette
+> 
 
 
