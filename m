@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-692388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED4BADF0DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:13:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1E1ADF0E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 776E2169536
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:13:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08D207A4970
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8373B2EE986;
-	Wed, 18 Jun 2025 15:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDBB2EF285;
+	Wed, 18 Jun 2025 15:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="3Hk42bHI"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="cAXE5pvd"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5914B13957E
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 15:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84809F510
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 15:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750259630; cv=none; b=bC5zUPu0mrjo9ZKfAdzo287h7S1eiEOblB+abAKWIz+Axnotc9PNUgLmoMfkwQyWVZ5Zb87DfZpelA9nTG1JgXFZfk5+eHzZ9wx6vP+TC6h96y5M2jpl026amKqqQenzHlfM86ey8uHQn29zZ0/6VOLxnXn7pp6t5BErxlHvHL4=
+	t=1750259653; cv=none; b=Uil/Kf2h4miiKmczYbaqwvHKfG7rNQwP23NB0gPLmsxJ9AFVLzlhUAJHt+YL9tqLKXMw9IFtnPAXTJXJifglDcNr7kwwH733mjwW1kphcokcy646eXiYK3ulW+2CUzBAcDhR5ZhsnDutQfygA0ShVdA6K8iXqJXcgk91Ncmj+o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750259630; c=relaxed/simple;
-	bh=Vn9iBRZx/9vbTN0sjYLHUj8pAqYVdflJQ14VCJDqr/E=;
+	s=arc-20240116; t=1750259653; c=relaxed/simple;
+	bh=OHrir3aF+muHdTCqQ6G0ZKUnxcCBUpS6B1dB8OgPAEA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CKh0mX6A6ESK3GyXknIHkk+kXbfrgkBoqCY37eZWi4GzE0Ornl5/hgQRCCEkuKV1GW3dIGLucYhRmLVXCrCStDzpErvfxwMVjBdcQqJO1t5i4RrbvHSwbt+lsBM+I+mckn4/Poh8twxTmAqhsHCSAJrLXoKE5lv7QR8IzDZYNQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=3Hk42bHI; arc=none smtp.client-ip=209.85.218.52
+	 In-Reply-To:Content-Type; b=tQ4mhz/34ph5C8BEBVs+b3U7lf9qTwjiwzrwhcunQwbyeh0GXoqgniNmvAy1Wdm760AoOF3B/4mWnMO1lcyT4JrHZHYPzIefEoold5FCsQ3WaMg96QUKVx0WY/5E49t8dbmLMsnalIesu6LiB6VWCgOMMgEezru3dbDPrOpqMwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=cAXE5pvd; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ade5ca8bc69so1085346766b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:13:49 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6077dea37easo13672463a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:14:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1750259628; x=1750864428; darn=vger.kernel.org;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1750259650; x=1750864450; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=O+F9qb0WoqT4O8g9mE9Zc/ggeTeVcLZ0CP5p+3+ztus=;
-        b=3Hk42bHIdT8jPgeEuQ0o05zRHi6b+0+CdPEkcYgqnYRDXvN+FXh/R0204Ny+Ej3rEj
-         2+YiWi0f4mDRssrYmSCmvzftRYaepNx7p0sQAqXEE6bk8EBaDuR1MyX7bg2oi6SbkGIt
-         6dR1PbfYcTu79b5GUbyzNeaXQPFaNaM2WOmWPONcfSueOpb4PYzMH4IGyTfKnKy+1Cwm
-         jLimWSFuXVv5VlOBu8wmAxBI+4lsU/MFY7JRygZRyRAlGxSgW+d7md9pEd29tBWzpwZD
-         HPe8FvSfRARiJRWg4ghHwZZbsQA3QePa6mge04sdEu1Vt4u9CLXqBTAjpVVrKPotjPfj
-         3/1w==
+        bh=+S+UmywS1cMQlzcb0xKkbPVLyMmpj3IBlRdMtTw736I=;
+        b=cAXE5pvdWrB+tKsNUHmxmRykRjlOz2u4k5zL4uTzSoj6Fqf/+u6KV49THicObdq/vO
+         KN/XvoAEc9XMZniPfOwk9cljU0AsSAEp17uVtGoZJbOEo9GDGkdKfsv6+gCTZAhIIH1/
+         x/psxYC9fHKp8IKFyGWlDBL/Y8/e6VGEjrUr+rXPvQBX/C6eIn2nNxEwpQf2BZs9gyxn
+         RkZoKVIL8VZRPVoHsmGpteT52yoky6FtSEZMojzYt01i4TVsIchcsM0dMimqCj3ffpf4
+         F9x+AVOgKHQ5X+9vrwyoB+01bdx3hLk0Kw466HwnnffeUV3SJI4gtGS/a36mW5mukZf3
+         H73Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750259628; x=1750864428;
+        d=1e100.net; s=20230601; t=1750259650; x=1750864450;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O+F9qb0WoqT4O8g9mE9Zc/ggeTeVcLZ0CP5p+3+ztus=;
-        b=oG/8Jk6pYO8EE2CIylwlYWap6Es8fFAieQGLsJmzxJrdcPsWr/IWETI61ZHavSn8yr
-         tZpvFCCKxsCFK4A9TDuWDWPn3TkhnDPyc1QlEXohSeA9IX0pttpJ4/gtBhfoJQIgsAr+
-         TzrrthIw0RmdD9fTg71WfRHANJF5VV+nvpFu8QsVDhuwje07OezDmZtNMTKBDUvnNi69
-         1C/NKlwwvwB3sMF/0EN8sYwrvnEdduuKwYc+FU7nEJ3jPYYpL0icrhQ+hNvr0zKCyp+r
-         776Yxmz2Kqe+JVzQ3NzGpN7lutzHDRTFjlGCBh/EiU8KZy4cFRQf85yI+mBxqr0IF0EI
-         o5+A==
-X-Forwarded-Encrypted: i=1; AJvYcCU2bQ8jZFEKJBJPp+jD0d0pIpEVjyMOcG+NwG1Q9EGzZPtMK1R5eRi5FSIu5yPJusQk/cE/mCOjtkf3eI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLWZFkYzcq+EetYhchfOZpzUPQBcKExgAE0RJI2i4Fn7vUjCIT
-	WPkwgwpsuhJsvC98yXqVFB0MB4t1Qbi0YRx9h1UKTlu328EJWXobGElPRcy3yIlZ4Mg=
-X-Gm-Gg: ASbGnctaTZbz/RtCUI3JdnpyRezV8Rj2Ul/tVhfgOSsfl4lnx+bI4he1u4YjWQFv2DE
-	e8yVDAbKQAmtPsSWEftmTMiz0HmEN0NpCxFKAHOiSOiOSCpTAUobxaMRo4ftctBsfq0fb//gdZM
-	GjaaCf8E/hRV25WAR0bv09+d58d7ZMtja0R+vngd8x6kN77kUYYLbuoLMZTPIJ4qklJRQllSdZE
-	nJyFkYFMiltkmb89wteLImRDVZ0li1BYzwz7E3F8ce/vYxfxyb6XXOiU1zGHFNX44JNnc5NU4o2
-	bhyRXtKM/dTxHnSE/W8Iqxw+a4m/p29FbiYr72BD6zGVOW4ECLU0Bbau82svGv4/N4Po15yIBcV
-	jhZNSUS/cXFa13vORVw==
-X-Google-Smtp-Source: AGHT+IFP5VYYTJdfIK01Sjykg0ObgRPDVxQKO2zjJ45JW2hF+daM15wGjp6eoU5BXmzHVJq/enFDkw==
-X-Received: by 2002:a17:907:3c94:b0:ad5:5210:749c with SMTP id a640c23a62f3a-adfad3cda7dmr1548731566b.22.1750259627178;
-        Wed, 18 Jun 2025 08:13:47 -0700 (PDT)
+        bh=+S+UmywS1cMQlzcb0xKkbPVLyMmpj3IBlRdMtTw736I=;
+        b=mmfIC7v59Tq+5gVQxs4VN+nKQg2qS2JahsHTK3rQADL6WjAAqOGRQKKbPaRXj++fFd
+         +CARX8txSvFSyadjd/UZ7CeG3jzfvtMQHLNwyC/xLqJpQuiXK6BPy8j9SuM4vV9qQpsX
+         tEdnGZHK7p4OxB4H+xCI2+Ju6NP1sG5854yi6hcAMkp0htsaLdaBZcR5rTi+EPpa561H
+         p2ZOSkmXGLMKxk//NpzjS67F/uwNCxsXgFjX3RYCU/4aVd+8YeUAiQ3o3VjwH/mMKkwb
+         P3v/+phFJad4ZinTwHXtGX5XY3Wo7qA/2a9agc7nJkaARf93GZf1BImeDj5IPG6q7rfi
+         CQ8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUMQP6Qt47wW2Kk4soFSXglCRHtFMnc7qzr8+TkSS9VayKOCvPGeMGfdxQJlCOOVVijLYFkLCpOGT+yD7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDiBPuZVagS4tT1k0DD5tyeGPXJowOyCCnnVNfBuWhLa2BQJER
+	zysrWHi7NaZirz3X2FXiM6BkkZADvzgKUzcwf2ADnuAwryZtfDqv9HyhJb2QWJlbNuA=
+X-Gm-Gg: ASbGncuAT/LkApIC8tz8Nz5nn/qCGxHgMEk0tODnNmprugR92oqge+c0zrq3xs+LT9R
+	Xus7rtWODa7a14GEMKXFWLoW33BqQHZXM9ILROUOBCXFL8a17PGF+gjOSG5284Uk6ufCvc/g9+i
+	ufpL5MUHPrIYwb4PWzJ2PKGSwz8omzLYYcFpvV+vIXMUCZ0fEb0WXwEpQ2/ItDVm+PfoMM+vE7v
+	+XCVW8GcDVw0zHDFgJZY9XXNr0mbDCuVJdFEtyX9Yz9jKfcs0hfKzDM9LwHK2IWfQoARKJWp9Xe
+	pAk4SvE2CYJSTCLsQl70QgvscFzi2h6ZIFIZgrF9fmBEWPHkp4v9fxg3CotP/8Fhl4es2MQ/Vpo
+	eds3J2yBj/LpN9ZVzHg==
+X-Google-Smtp-Source: AGHT+IEnxsS/Uvtcf+zcb/7M6kEE3A6RliSG0ulwTdKyTBE8eC4slu4mGjug2HX09alf/gW+PK3nnQ==
+X-Received: by 2002:a05:6402:348f:b0:602:225e:1d46 with SMTP id 4fb4d7f45d1cf-608d0835bf5mr17037976a12.3.1750259649535;
+        Wed, 18 Jun 2025 08:14:09 -0700 (PDT)
 Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec88fe907sm1076757366b.93.2025.06.18.08.13.44
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b48cd687sm9869313a12.18.2025.06.18.08.14.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jun 2025 08:13:46 -0700 (PDT)
-Message-ID: <82caca13-7970-4f44-a68f-1efcf3e9a0f9@blackwall.org>
-Date: Wed, 18 Jun 2025 18:13:44 +0300
+        Wed, 18 Jun 2025 08:14:08 -0700 (PDT)
+Message-ID: <22ec7ed6-9c38-4f81-9ec4-024da12b8710@blackwall.org>
+Date: Wed, 18 Jun 2025 18:14:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,7 +81,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5 2/6] vxlan: drop sock_lock
+Subject: Re: [PATCH net-next v5 1/6] geneve: rely on rtnl lock in
+ geneve_offload_rx_ports
 To: Stanislav Fomichev <stfomichev@gmail.com>, netdev@vger.kernel.org
 Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
  pabeni@redhat.com, skalluru@marvell.com, manishc@marvell.com,
@@ -98,26 +99,58 @@ Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
  oss-drivers@corigine.com, linux-net-drivers@amd.com,
  linux-kselftest@vger.kernel.org, leon@kernel.org
 References: <20250616162117.287806-1-stfomichev@gmail.com>
- <20250616162117.287806-3-stfomichev@gmail.com>
+ <20250616162117.287806-2-stfomichev@gmail.com>
 Content-Language: en-US
 From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20250616162117.287806-3-stfomichev@gmail.com>
+In-Reply-To: <20250616162117.287806-2-stfomichev@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 6/16/25 19:21, Stanislav Fomichev wrote:
-> We won't be able to sleep soon in vxlan_offload_rx_ports and won't be
-> able to grab sock_lock. Instead of having separate spinlock to
-> manage sockets, rely on rtnl lock. This is similar to how geneve
-> manages its sockets.
+> udp_tunnel_push_rx_port will grab mutex in the next patch so
+> we can't use rcu. geneve_offload_rx_ports is called
+> from geneve_netdevice_event for NETDEV_UDP_TUNNEL_PUSH_INFO and
+> NETDEV_UDP_TUNNEL_DROP_INFO which both have ASSERT_RTNL.
+> Entries are added to and removed from the sock_list under rtnl
+> lock as well (when adding or removing a tunneling device).
 > 
 > Signed-off-by: Stanislav Fomichev <stfomichev@gmail.com>
 > ---
->  drivers/net/vxlan/vxlan_core.c      | 35 ++++++++++++-----------------
->  drivers/net/vxlan/vxlan_private.h   |  2 +-
->  drivers/net/vxlan/vxlan_vnifilter.c | 18 ++++++---------
->  3 files changed, 22 insertions(+), 33 deletions(-)
+>  drivers/net/geneve.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
+> diff --git a/drivers/net/geneve.c b/drivers/net/geneve.c
+> index ffc15a432689..9efedc6758bf 100644
+> --- a/drivers/net/geneve.c
+> +++ b/drivers/net/geneve.c
+> @@ -41,6 +41,7 @@ MODULE_PARM_DESC(log_ecn_error, "Log packets received with corrupted ECN");
+>  /* per-network namespace private data for this module */
+>  struct geneve_net {
+>  	struct list_head	geneve_list;
+> +	/* sock_list is protected by rtnl lock */
+>  	struct list_head	sock_list;
+>  };
+>  
+> @@ -1179,8 +1180,9 @@ static void geneve_offload_rx_ports(struct net_device *dev, bool push)
+>  	struct geneve_net *gn = net_generic(net, geneve_net_id);
+>  	struct geneve_sock *gs;
+>  
+> -	rcu_read_lock();
+> -	list_for_each_entry_rcu(gs, &gn->sock_list, list) {
+> +	ASSERT_RTNL();
+> +
+> +	list_for_each_entry(gs, &gn->sock_list, list) {
+>  		if (push) {
+>  			udp_tunnel_push_rx_port(dev, gs->sock,
+>  						UDP_TUNNEL_TYPE_GENEVE);
+> @@ -1189,7 +1191,6 @@ static void geneve_offload_rx_ports(struct net_device *dev, bool push)
+>  						UDP_TUNNEL_TYPE_GENEVE);
+>  		}
+>  	}
+> -	rcu_read_unlock();
+>  }
+>  
+>  /* Initialize the device structure. */
 
 Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
 
