@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-691911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB2DADEA67
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E15ADEA6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7A10189DFDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:39:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0F97189E542
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB952E9EB8;
-	Wed, 18 Jun 2025 11:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460212EA151;
+	Wed, 18 Jun 2025 11:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="IzM/ZEo5"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="l6r5mBq3"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58B42DBF4C
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 11:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA6C2E9EB9
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 11:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750246599; cv=none; b=GlB/Fixl5m/gpOltAJjGAF/+u8cEUDGBobZ9Wzwr0lKUTHKIA/4hQj6HyneePrMTBIuCanlpPJbi7nLQ/BQBIRevkifoGoUVsDM90n4H/ZJlp1UgO5HGAWYkW4mDkBcRR4CC+CfKV3FUboAbbwii/pFyeVo1u1pKPI5Zno6tgXY=
+	t=1750246603; cv=none; b=aNa4x4F9dmu9h8euchMmGDdD1R6LPNkiv/FvD03wFz7uItql6oXFkUlnFD/wvP3ejckZdd2iKCYEpshV9jvoSIaBFE9snxmIEXLxsC5PkSOzIMJwLw3TUsOG0iExTcMT7qrwP0erv/1vVv8MEhKAHvg6TkScuxADwRe0P2Sff/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750246599; c=relaxed/simple;
-	bh=9DkH1MnmKplYHcxUKPSWXUR9/q6pa0raZeD0CabKAcM=;
+	s=arc-20240116; t=1750246603; c=relaxed/simple;
+	bh=X0N8wDjIxKazhYu/6fsz/Bdqc7YSzKG8rGrYZT7tAuI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SetTIjH0FZYvsIAkBJPVQziLRnMU1GXKWf0hEm5Vl++A7k7liANRsAod/J4U6WvYoEZj57ux+ku3czNpP2V7oAO6FQeN7RJNAA2q69jpSk/C1qvDEkEw+IlaJrr6b91CWt4nTmzyU8h50guDYlSLP3kvBsu74AdKDDKQSmLwzYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=IzM/ZEo5; arc=none smtp.client-ip=209.85.214.179
+	 MIME-Version; b=T3Od5PhtA3PQVFZLULcO4yCgP2vyNsoC9urMpvKHnmcZ3cfuFNFzTjD0fXjziX8bqAELwLZ/AKduuNXRVsNmDjbVo1wpJ+82m8t20tntOxhfRpDN3fA7Cq9c5bjSjlSZuOl4A1wUsMIi9iTe8UeM7uGTxj/pGHlcQJOE0RnGt4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=l6r5mBq3; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2353a2bc210so59860495ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 04:36:35 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-236470b2dceso60709235ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 04:36:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1750246595; x=1750851395; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1750246600; x=1750851400; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wv2Dv1D3mRBWch3U2QfEIQG6aPxPGFrtjz75yYPWcVQ=;
-        b=IzM/ZEo5d4+FVrnCR3TYOO3BBK0QT93GQpbSlRA5liM5icaOONCS9KR/ZuVeN4SgJ9
-         uTasFjgwgrMFydL10qhxK3KreE66el+N+yKfJxO6DM5lFy/JRFMjlQPn3fQKBTYRyMRI
-         DIeQmE/fY/ZvNBJR8d0Wd5RIciMAn0VkGWMXcIReNhCykitdNFhz87zJwv6zurdwbFYP
-         ZVh/kB680G5uFgg1TAL/6UjCYq2vd2QCtu28IaLgQgS0iroaE3mHUL1Wmx0Bs8V3X1ec
-         H3EcKcTWYXAV/wfcOOVCp8OBrnLVhx9Iq5xxjfuhlnhvvQL+6v7YBbE9MOc62IBquMNQ
-         xFVQ==
+        bh=82BM7Lr/w5wu8VyfjUmTApgJjDkQfTzaQ0EY82JI9q8=;
+        b=l6r5mBq3w0E0mAd+sHX+WGpk8s/HrRm64iFludS1HbgAUIa0f+oUij7sK1kuDxJBJq
+         0wf7mgw7s5yOq4gyVk7sC5uSkuCxdARCHLZNyas7sbt+y5zYSOr1sAeERJV4RlIwZmQx
+         lKNSrZJH4aMQz3UQPOb9zqksKxvWASp+Pw1YVEKskcpZ3fuAEApUGATSMrYqgVgruSHy
+         LT6ktfpKjJbvcAw+ocHRt9xXk70BDYgVxLwDi7AQDfd8XIZV9sCb3zljd1eVQktYx5Cq
+         HfxQT/CQmsaWqlZCBzbWKCjBQ3BB82vb2n77WDZ/8MVZxS+atiDrntcw4EWn8X+/96f4
+         3JDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750246595; x=1750851395;
+        d=1e100.net; s=20230601; t=1750246600; x=1750851400;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wv2Dv1D3mRBWch3U2QfEIQG6aPxPGFrtjz75yYPWcVQ=;
-        b=mM0WszlB5db2jdbJgGj73nwOkVbHE1ikR8tNPfxvsQq08tbYUaL5y0GvArLAsB1ZBp
-         btZ00BLL78OOMAZpUNYVnwCzKH2KcBM9y5S52TcXwk4R5jsVypMU8TazIM4zoQo0ELYk
-         KbsB4uIwWXAr2gvIY7VmbxMjbp99+r4a9rGcAIGkAMEeAL8H7XvuBAuT6TlZcPW0PerM
-         ECAucu9SaGxZ60kTc7EKewBwqpaaIrPJFP0F8rVxXHqG04tCVW2TKQdhcUuuKLNyUpg+
-         fSRnqKwRRlK1uMLjSgZ3KX1oBAaB21fNcDMmBZsO9Qu+YxtTAfgv4wRCzWBwfXG4UycY
-         4QOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWP+dQfVf8Oo079Oz6OklZm4TYFTBcAYVqTmkkPETva+C/YW1q86c0XFl6frXeOKxkuaxf792kxjZs4OK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYKLzaRSeOmQLH4YIkUvuWMYmvmskoWeWeDzGVoT4d9HeYVWyy
-	qGYcEO1NVE7qtxhce+U/L5GnQjriIeMUpdWhD8+rB6GLQ6nVmr/+DRL5onJa1dq51HE=
-X-Gm-Gg: ASbGncsIEvJMsqQ03jNSZFJiLVB0llOd5xRNXLZgr8LWZvFezb7t8KibA4PMeaBI5Dx
-	Y8ARgzbyf2AGTtJZDS7c3cAsMQW99VuBFcltQdNDVPjMVZDODhm0rBNAJnsTi7Gn1mxbb6HtDe+
-	+nuW6QZtFVC7ymHZIchcoswuPmeFYruKv3vxBt7P4T1NPzAtoDKmO1Ta11ulJteqmXVtbamslLE
-	xD/LfJG7UgorNKkT2j/o+mwhZkXFY5e8zquoXNoQbkDK7yrLy0QpyZO9uL5CM/38SoZ0sUo2ol0
-	434pkzq6VW/OTQGx6+wDbGRbJ7m89pZymoWERpXep5LwuvHe3NTtukx6OJ7HBYBhW1wmpAwoR2A
-	6OGpVtilBZyfhJKVQNw==
-X-Google-Smtp-Source: AGHT+IHj3Fmtrtd3/iR0RBFJ3K5R+ndUPF941cuYVZNiiA3rRlmLdRt/HqLMxHP7frHFlTuPO9nuwA==
-X-Received: by 2002:a17:903:41c8:b0:234:f580:a11 with SMTP id d9443c01a7336-2366b344b39mr298672495ad.19.1750246594829;
-        Wed, 18 Jun 2025 04:36:34 -0700 (PDT)
+        bh=82BM7Lr/w5wu8VyfjUmTApgJjDkQfTzaQ0EY82JI9q8=;
+        b=RCTc89CJkNXgpO6In16DhmxppqwP09jIp0xlzi+dKWw1tOUOvc0zLel6T700JPiT1A
+         v5cmYIrt91pFal0FOtrCkM+oCgDUyhO513wBGTZYSjrKFJAcFTAMa3cmMGudQfryT3M4
+         N5ru9IDg5gUimqeJPkvDA6ICWgeBpHDMVmgbLbdf6XECj1QLe69Tw3npnMCoGudkgUo8
+         p5VCIaLoeRUwPjPdpjSYj46UQ7soUoFDXD9doHN2DeGmEINlKSTr5/DZ3hyifGCDlbeZ
+         OqUyhboKKItDPqePAHIweqE6QoqVwvrCWFz0DqtC6+cD+RktPPKksOqNLIhVwVhYT6h9
+         EBlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUNO5UWbzGTkP2ZeFvlXvmi6eOIXmEsadwLKNA62y7DTO9yokqdnnjDkRrYQyxxipLj31UWO+F4Tfn7jg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzkf3PbdRDzCH9IcV8+TIY8TCh7EiZyxvc0KDpyoQtpS9LqGLQN
+	A6o1p/ifnJV4j5EGJjDLXdBJJpn7diSZajHHUUg2HD/LneL6iLXrFbuJB7CD/+cRCB7W3aV527Z
+	D1O8F
+X-Gm-Gg: ASbGncsnOHJc02gs1JRuZtsJQKcO+AqrSFE0kqOAk1uu2hWdvSlBzRnw/sQr/1usTOx
+	a9PjhvO0e3Jx4mHSfS2zWZ4Ww2Et80H2Y2iH72kC1C78sKscsj2BZ7mNyqj7xDXDhS6YzCk0G35
+	FGMHZnv3xTUk0GsXZ3tj47YRI02S4T59S90hreG1ot8t11p0yzyc0RgrYGIBtdvkNheyFDCWobu
+	BQADBa25D2itzqbTCaVn4OuC13twK1LYU8j7fLUjeSNFQrv+GVr8+verpEy22QgHkNP6lKTmSqa
+	U3qwkd2Wot1zVdODUuQ8Uhk/8+pLFiVwrMrai+iYYIMJuB9HlG0HDpciaTYWugOChPHCZm3Q4jE
+	IZ+JQuNiReHuJA621HPjUyFUS2loX
+X-Google-Smtp-Source: AGHT+IFtTqBIHy1eDXsLGZscx1YuytvMsKNqPDwplEMCMcqmhs6mPxTzAbcafirh9yc0wLabklItOQ==
+X-Received: by 2002:a17:902:f642:b0:234:c549:d9f1 with SMTP id d9443c01a7336-2366b3df960mr245881045ad.47.1750246599668;
+        Wed, 18 Jun 2025 04:36:39 -0700 (PDT)
 Received: from localhost.localdomain ([122.171.23.44])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237c57c63efsm9112475ad.172.2025.06.18.04.36.30
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237c57c63efsm9112475ad.172.2025.06.18.04.36.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 04:36:34 -0700 (PDT)
+        Wed, 18 Jun 2025 04:36:38 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Atish Patra <atish.patra@linux.dev>
 Cc: Palmer Dabbelt <palmer@dabbelt.com>,
@@ -83,11 +84,10 @@ Cc: Palmer Dabbelt <palmer@dabbelt.com>,
 	kvm-riscv@lists.infradead.org,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>,
-	Atish Patra <atishp@rivosinc.com>
-Subject: [PATCH v3 10/12] RISC-V: KVM: Add vmid field to struct kvm_riscv_hfence
-Date: Wed, 18 Jun 2025 17:05:30 +0530
-Message-ID: <20250618113532.471448-11-apatel@ventanamicro.com>
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH v3 11/12] RISC-V: KVM: Factor-out g-stage page table management
+Date: Wed, 18 Jun 2025 17:05:31 +0530
+Message-ID: <20250618113532.471448-12-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250618113532.471448-1-apatel@ventanamicro.com>
 References: <20250618113532.471448-1-apatel@ventanamicro.com>
@@ -99,145 +99,1316 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, the struct kvm_riscv_hfence does not have vmid field
-and various hfence processing functions always pick vmid assigned
-to the guest/VM. This prevents us from doing hfence operation on
-arbitrary vmid hence add vmid field to struct kvm_riscv_hfence
-and use it wherever applicable.
+The upcoming nested virtualization can share g-stage page table
+management with the current host g-stage implementation hence
+factor-out g-stage page table management as separate sources
+and also use "kvm_riscv_mmu_" prefix for host g-stage functions.
 
-Reviewed-by: Atish Patra <atishp@rivosinc.com>
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 ---
- arch/riscv/include/asm/kvm_tlb.h |  1 +
- arch/riscv/kvm/tlb.c             | 30 ++++++++++++++++--------------
- 2 files changed, 17 insertions(+), 14 deletions(-)
+ arch/riscv/include/asm/kvm_gstage.h |  72 ++++
+ arch/riscv/include/asm/kvm_mmu.h    |  32 +-
+ arch/riscv/kvm/Makefile             |   1 +
+ arch/riscv/kvm/aia_imsic.c          |  11 +-
+ arch/riscv/kvm/gstage.c             | 337 +++++++++++++++++++
+ arch/riscv/kvm/main.c               |   2 +-
+ arch/riscv/kvm/mmu.c                | 492 ++++++----------------------
+ arch/riscv/kvm/vcpu.c               |   4 +-
+ arch/riscv/kvm/vcpu_exit.c          |   5 +-
+ arch/riscv/kvm/vm.c                 |   6 +-
+ 10 files changed, 530 insertions(+), 432 deletions(-)
+ create mode 100644 arch/riscv/include/asm/kvm_gstage.h
+ create mode 100644 arch/riscv/kvm/gstage.c
 
-diff --git a/arch/riscv/include/asm/kvm_tlb.h b/arch/riscv/include/asm/kvm_tlb.h
-index cd00c9a46cb1..f67e03edeaec 100644
---- a/arch/riscv/include/asm/kvm_tlb.h
-+++ b/arch/riscv/include/asm/kvm_tlb.h
-@@ -19,6 +19,7 @@ enum kvm_riscv_hfence_type {
- struct kvm_riscv_hfence {
- 	enum kvm_riscv_hfence_type type;
- 	unsigned long asid;
+diff --git a/arch/riscv/include/asm/kvm_gstage.h b/arch/riscv/include/asm/kvm_gstage.h
+new file mode 100644
+index 000000000000..595e2183173e
+--- /dev/null
++++ b/arch/riscv/include/asm/kvm_gstage.h
+@@ -0,0 +1,72 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2019 Western Digital Corporation or its affiliates.
++ * Copyright (c) 2025 Ventana Micro Systems Inc.
++ */
++
++#ifndef __RISCV_KVM_GSTAGE_H_
++#define __RISCV_KVM_GSTAGE_H_
++
++#include <linux/kvm_types.h>
++
++struct kvm_gstage {
++	struct kvm *kvm;
++	unsigned long flags;
++#define KVM_GSTAGE_FLAGS_LOCAL		BIT(0)
 +	unsigned long vmid;
- 	unsigned long order;
- 	gpa_t addr;
- 	gpa_t size;
-diff --git a/arch/riscv/kvm/tlb.c b/arch/riscv/kvm/tlb.c
-index 6fc4361c3d75..349fcfc93f54 100644
---- a/arch/riscv/kvm/tlb.c
-+++ b/arch/riscv/kvm/tlb.c
-@@ -237,49 +237,43 @@ static bool vcpu_hfence_enqueue(struct kvm_vcpu *vcpu,
++	pgd_t *pgd;
++};
++
++struct kvm_gstage_mapping {
++	gpa_t addr;
++	pte_t pte;
++	u32 level;
++};
++
++#ifdef CONFIG_64BIT
++#define kvm_riscv_gstage_index_bits	9
++#else
++#define kvm_riscv_gstage_index_bits	10
++#endif
++
++extern unsigned long kvm_riscv_gstage_mode;
++extern unsigned long kvm_riscv_gstage_pgd_levels;
++
++#define kvm_riscv_gstage_pgd_xbits	2
++#define kvm_riscv_gstage_pgd_size	(1UL << (HGATP_PAGE_SHIFT + kvm_riscv_gstage_pgd_xbits))
++#define kvm_riscv_gstage_gpa_bits	(HGATP_PAGE_SHIFT + \
++					 (kvm_riscv_gstage_pgd_levels * \
++					  kvm_riscv_gstage_index_bits) + \
++					 kvm_riscv_gstage_pgd_xbits)
++#define kvm_riscv_gstage_gpa_size	((gpa_t)(1ULL << kvm_riscv_gstage_gpa_bits))
++
++bool kvm_riscv_gstage_get_leaf(struct kvm_gstage *gstage, gpa_t addr,
++			       pte_t **ptepp, u32 *ptep_level);
++
++int kvm_riscv_gstage_set_pte(struct kvm_gstage *gstage,
++			     struct kvm_mmu_memory_cache *pcache,
++			     const struct kvm_gstage_mapping *map);
++
++int kvm_riscv_gstage_map_page(struct kvm_gstage *gstage,
++			      struct kvm_mmu_memory_cache *pcache,
++			      gpa_t gpa, phys_addr_t hpa, unsigned long page_size,
++			      bool page_rdonly, bool page_exec,
++			      struct kvm_gstage_mapping *out_map);
++
++enum kvm_riscv_gstage_op {
++	GSTAGE_OP_NOP = 0,	/* Nothing */
++	GSTAGE_OP_CLEAR,	/* Clear/Unmap */
++	GSTAGE_OP_WP,		/* Write-protect */
++};
++
++void kvm_riscv_gstage_op_pte(struct kvm_gstage *gstage, gpa_t addr,
++			     pte_t *ptep, u32 ptep_level, enum kvm_riscv_gstage_op op);
++
++void kvm_riscv_gstage_unmap_range(struct kvm_gstage *gstage,
++				  gpa_t start, gpa_t size, bool may_block);
++
++void kvm_riscv_gstage_wp_range(struct kvm_gstage *gstage, gpa_t start, gpa_t end);
++
++void kvm_riscv_gstage_mode_detect(void);
++
++#endif
+diff --git a/arch/riscv/include/asm/kvm_mmu.h b/arch/riscv/include/asm/kvm_mmu.h
+index 91c11e692dc7..5439e76f0a96 100644
+--- a/arch/riscv/include/asm/kvm_mmu.h
++++ b/arch/riscv/include/asm/kvm_mmu.h
+@@ -6,28 +6,16 @@
+ #ifndef __RISCV_KVM_MMU_H_
+ #define __RISCV_KVM_MMU_H_
  
- void kvm_riscv_hfence_process(struct kvm_vcpu *vcpu)
+-#include <linux/kvm_types.h>
++#include <asm/kvm_gstage.h>
+ 
+-struct kvm_gstage_mapping {
+-	gpa_t addr;
+-	pte_t pte;
+-	u32 level;
+-};
+-
+-int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t gpa,
+-			     phys_addr_t hpa, unsigned long size,
+-			     bool writable, bool in_atomic);
+-void kvm_riscv_gstage_iounmap(struct kvm *kvm, gpa_t gpa,
+-			      unsigned long size);
+-int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+-			 struct kvm_memory_slot *memslot,
+-			 gpa_t gpa, unsigned long hva, bool is_write,
+-			 struct kvm_gstage_mapping *out_map);
+-int kvm_riscv_gstage_alloc_pgd(struct kvm *kvm);
+-void kvm_riscv_gstage_free_pgd(struct kvm *kvm);
+-void kvm_riscv_gstage_update_hgatp(struct kvm_vcpu *vcpu);
+-void kvm_riscv_gstage_mode_detect(void);
+-unsigned long kvm_riscv_gstage_mode(void);
+-int kvm_riscv_gstage_gpa_bits(void);
++int kvm_riscv_mmu_ioremap(struct kvm *kvm, gpa_t gpa, phys_addr_t hpa,
++			  unsigned long size, bool writable, bool in_atomic);
++void kvm_riscv_mmu_iounmap(struct kvm *kvm, gpa_t gpa, unsigned long size);
++int kvm_riscv_mmu_map(struct kvm_vcpu *vcpu, struct kvm_memory_slot *memslot,
++		      gpa_t gpa, unsigned long hva, bool is_write,
++		      struct kvm_gstage_mapping *out_map);
++int kvm_riscv_mmu_alloc_pgd(struct kvm *kvm);
++void kvm_riscv_mmu_free_pgd(struct kvm *kvm);
++void kvm_riscv_mmu_update_hgatp(struct kvm_vcpu *vcpu);
+ 
+ #endif
+diff --git a/arch/riscv/kvm/Makefile b/arch/riscv/kvm/Makefile
+index 06e2d52a9b88..07197395750e 100644
+--- a/arch/riscv/kvm/Makefile
++++ b/arch/riscv/kvm/Makefile
+@@ -14,6 +14,7 @@ kvm-y += aia.o
+ kvm-y += aia_aplic.o
+ kvm-y += aia_device.o
+ kvm-y += aia_imsic.o
++kvm-y += gstage.o
+ kvm-y += main.o
+ kvm-y += mmu.o
+ kvm-y += nacl.o
+diff --git a/arch/riscv/kvm/aia_imsic.c b/arch/riscv/kvm/aia_imsic.c
+index 40b469c0a01f..ea1a36836d9c 100644
+--- a/arch/riscv/kvm/aia_imsic.c
++++ b/arch/riscv/kvm/aia_imsic.c
+@@ -704,9 +704,8 @@ void kvm_riscv_vcpu_aia_imsic_release(struct kvm_vcpu *vcpu)
+ 	 */
+ 
+ 	/* Purge the G-stage mapping */
+-	kvm_riscv_gstage_iounmap(vcpu->kvm,
+-				 vcpu->arch.aia_context.imsic_addr,
+-				 IMSIC_MMIO_PAGE_SZ);
++	kvm_riscv_mmu_iounmap(vcpu->kvm, vcpu->arch.aia_context.imsic_addr,
++			      IMSIC_MMIO_PAGE_SZ);
+ 
+ 	/* TODO: Purge the IOMMU mapping ??? */
+ 
+@@ -786,9 +785,9 @@ int kvm_riscv_vcpu_aia_imsic_update(struct kvm_vcpu *vcpu)
+ 	imsic_vsfile_local_clear(new_vsfile_hgei, imsic->nr_hw_eix);
+ 
+ 	/* Update G-stage mapping for the new IMSIC VS-file */
+-	ret = kvm_riscv_gstage_ioremap(kvm, vcpu->arch.aia_context.imsic_addr,
+-				       new_vsfile_pa, IMSIC_MMIO_PAGE_SZ,
+-				       true, true);
++	ret = kvm_riscv_mmu_ioremap(kvm, vcpu->arch.aia_context.imsic_addr,
++				    new_vsfile_pa, IMSIC_MMIO_PAGE_SZ,
++				    true, true);
+ 	if (ret)
+ 		goto fail_free_vsfile_hgei;
+ 
+diff --git a/arch/riscv/kvm/gstage.c b/arch/riscv/kvm/gstage.c
+new file mode 100644
+index 000000000000..9c7c44f09b05
+--- /dev/null
++++ b/arch/riscv/kvm/gstage.c
+@@ -0,0 +1,337 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2019 Western Digital Corporation or its affiliates.
++ * Copyright (c) 2025 Ventana Micro Systems Inc.
++ */
++
++#include <linux/bitops.h>
++#include <linux/errno.h>
++#include <linux/kvm_host.h>
++#include <linux/module.h>
++#include <linux/pgtable.h>
++#include <asm/kvm_gstage.h>
++
++#ifdef CONFIG_64BIT
++unsigned long kvm_riscv_gstage_mode __ro_after_init = HGATP_MODE_SV39X4;
++unsigned long kvm_riscv_gstage_pgd_levels __ro_after_init = 3;
++#else
++unsigned long kvm_riscv_gstage_mode __ro_after_init = HGATP_MODE_SV32X4;
++unsigned long kvm_riscv_gstage_pgd_levels __ro_after_init = 2;
++#endif
++
++#define gstage_pte_leaf(__ptep)	\
++	(pte_val(*(__ptep)) & (_PAGE_READ | _PAGE_WRITE | _PAGE_EXEC))
++
++static inline unsigned long gstage_pte_index(gpa_t addr, u32 level)
++{
++	unsigned long mask;
++	unsigned long shift = HGATP_PAGE_SHIFT + (kvm_riscv_gstage_index_bits * level);
++
++	if (level == (kvm_riscv_gstage_pgd_levels - 1))
++		mask = (PTRS_PER_PTE * (1UL << kvm_riscv_gstage_pgd_xbits)) - 1;
++	else
++		mask = PTRS_PER_PTE - 1;
++
++	return (addr >> shift) & mask;
++}
++
++static inline unsigned long gstage_pte_page_vaddr(pte_t pte)
++{
++	return (unsigned long)pfn_to_virt(__page_val_to_pfn(pte_val(pte)));
++}
++
++static int gstage_page_size_to_level(unsigned long page_size, u32 *out_level)
++{
++	u32 i;
++	unsigned long psz = 1UL << 12;
++
++	for (i = 0; i < kvm_riscv_gstage_pgd_levels; i++) {
++		if (page_size == (psz << (i * kvm_riscv_gstage_index_bits))) {
++			*out_level = i;
++			return 0;
++		}
++	}
++
++	return -EINVAL;
++}
++
++static int gstage_level_to_page_order(u32 level, unsigned long *out_pgorder)
++{
++	if (kvm_riscv_gstage_pgd_levels < level)
++		return -EINVAL;
++
++	*out_pgorder = 12 + (level * kvm_riscv_gstage_index_bits);
++	return 0;
++}
++
++static int gstage_level_to_page_size(u32 level, unsigned long *out_pgsize)
++{
++	int rc;
++	unsigned long page_order = PAGE_SHIFT;
++
++	rc = gstage_level_to_page_order(level, &page_order);
++	if (rc)
++		return rc;
++
++	*out_pgsize = BIT(page_order);
++	return 0;
++}
++
++bool kvm_riscv_gstage_get_leaf(struct kvm_gstage *gstage, gpa_t addr,
++			       pte_t **ptepp, u32 *ptep_level)
++{
++	pte_t *ptep;
++	u32 current_level = kvm_riscv_gstage_pgd_levels - 1;
++
++	*ptep_level = current_level;
++	ptep = (pte_t *)gstage->pgd;
++	ptep = &ptep[gstage_pte_index(addr, current_level)];
++	while (ptep && pte_val(ptep_get(ptep))) {
++		if (gstage_pte_leaf(ptep)) {
++			*ptep_level = current_level;
++			*ptepp = ptep;
++			return true;
++		}
++
++		if (current_level) {
++			current_level--;
++			*ptep_level = current_level;
++			ptep = (pte_t *)gstage_pte_page_vaddr(ptep_get(ptep));
++			ptep = &ptep[gstage_pte_index(addr, current_level)];
++		} else {
++			ptep = NULL;
++		}
++	}
++
++	return false;
++}
++
++static void gstage_tlb_flush(struct kvm_gstage *gstage, u32 level, gpa_t addr)
++{
++	unsigned long order = PAGE_SHIFT;
++
++	if (gstage_level_to_page_order(level, &order))
++		return;
++	addr &= ~(BIT(order) - 1);
++
++	if (gstage->flags & KVM_GSTAGE_FLAGS_LOCAL)
++		kvm_riscv_local_hfence_gvma_vmid_gpa(gstage->vmid, addr, BIT(order), order);
++	else
++		kvm_riscv_hfence_gvma_vmid_gpa(gstage->kvm, -1UL, 0, addr, BIT(order), order);
++}
++
++int kvm_riscv_gstage_set_pte(struct kvm_gstage *gstage,
++			     struct kvm_mmu_memory_cache *pcache,
++			     const struct kvm_gstage_mapping *map)
++{
++	u32 current_level = kvm_riscv_gstage_pgd_levels - 1;
++	pte_t *next_ptep = (pte_t *)gstage->pgd;
++	pte_t *ptep = &next_ptep[gstage_pte_index(map->addr, current_level)];
++
++	if (current_level < map->level)
++		return -EINVAL;
++
++	while (current_level != map->level) {
++		if (gstage_pte_leaf(ptep))
++			return -EEXIST;
++
++		if (!pte_val(ptep_get(ptep))) {
++			if (!pcache)
++				return -ENOMEM;
++			next_ptep = kvm_mmu_memory_cache_alloc(pcache);
++			if (!next_ptep)
++				return -ENOMEM;
++			set_pte(ptep, pfn_pte(PFN_DOWN(__pa(next_ptep)),
++					      __pgprot(_PAGE_TABLE)));
++		} else {
++			if (gstage_pte_leaf(ptep))
++				return -EEXIST;
++			next_ptep = (pte_t *)gstage_pte_page_vaddr(ptep_get(ptep));
++		}
++
++		current_level--;
++		ptep = &next_ptep[gstage_pte_index(map->addr, current_level)];
++	}
++
++	if (pte_val(*ptep) != pte_val(map->pte)) {
++		set_pte(ptep, map->pte);
++		if (gstage_pte_leaf(ptep))
++			gstage_tlb_flush(gstage, current_level, map->addr);
++	}
++
++	return 0;
++}
++
++int kvm_riscv_gstage_map_page(struct kvm_gstage *gstage,
++			      struct kvm_mmu_memory_cache *pcache,
++			      gpa_t gpa, phys_addr_t hpa, unsigned long page_size,
++			      bool page_rdonly, bool page_exec,
++			      struct kvm_gstage_mapping *out_map)
++{
++	pgprot_t prot;
++	int ret;
++
++	out_map->addr = gpa;
++	out_map->level = 0;
++
++	ret = gstage_page_size_to_level(page_size, &out_map->level);
++	if (ret)
++		return ret;
++
++	/*
++	 * A RISC-V implementation can choose to either:
++	 * 1) Update 'A' and 'D' PTE bits in hardware
++	 * 2) Generate page fault when 'A' and/or 'D' bits are not set
++	 *    PTE so that software can update these bits.
++	 *
++	 * We support both options mentioned above. To achieve this, we
++	 * always set 'A' and 'D' PTE bits at time of creating G-stage
++	 * mapping. To support KVM dirty page logging with both options
++	 * mentioned above, we will write-protect G-stage PTEs to track
++	 * dirty pages.
++	 */
++
++	if (page_exec) {
++		if (page_rdonly)
++			prot = PAGE_READ_EXEC;
++		else
++			prot = PAGE_WRITE_EXEC;
++	} else {
++		if (page_rdonly)
++			prot = PAGE_READ;
++		else
++			prot = PAGE_WRITE;
++	}
++	out_map->pte = pfn_pte(PFN_DOWN(hpa), prot);
++	out_map->pte = pte_mkdirty(out_map->pte);
++
++	return kvm_riscv_gstage_set_pte(gstage, pcache, out_map);
++}
++
++void kvm_riscv_gstage_op_pte(struct kvm_gstage *gstage, gpa_t addr,
++			     pte_t *ptep, u32 ptep_level, enum kvm_riscv_gstage_op op)
++{
++	int i, ret;
++	pte_t old_pte, *next_ptep;
++	u32 next_ptep_level;
++	unsigned long next_page_size, page_size;
++
++	ret = gstage_level_to_page_size(ptep_level, &page_size);
++	if (ret)
++		return;
++
++	WARN_ON(addr & (page_size - 1));
++
++	if (!pte_val(ptep_get(ptep)))
++		return;
++
++	if (ptep_level && !gstage_pte_leaf(ptep)) {
++		next_ptep = (pte_t *)gstage_pte_page_vaddr(ptep_get(ptep));
++		next_ptep_level = ptep_level - 1;
++		ret = gstage_level_to_page_size(next_ptep_level, &next_page_size);
++		if (ret)
++			return;
++
++		if (op == GSTAGE_OP_CLEAR)
++			set_pte(ptep, __pte(0));
++		for (i = 0; i < PTRS_PER_PTE; i++)
++			kvm_riscv_gstage_op_pte(gstage, addr + i * next_page_size,
++						&next_ptep[i], next_ptep_level, op);
++		if (op == GSTAGE_OP_CLEAR)
++			put_page(virt_to_page(next_ptep));
++	} else {
++		old_pte = *ptep;
++		if (op == GSTAGE_OP_CLEAR)
++			set_pte(ptep, __pte(0));
++		else if (op == GSTAGE_OP_WP)
++			set_pte(ptep, __pte(pte_val(ptep_get(ptep)) & ~_PAGE_WRITE));
++		if (pte_val(*ptep) != pte_val(old_pte))
++			gstage_tlb_flush(gstage, ptep_level, addr);
++	}
++}
++
++void kvm_riscv_gstage_unmap_range(struct kvm_gstage *gstage,
++				  gpa_t start, gpa_t size, bool may_block)
++{
++	int ret;
++	pte_t *ptep;
++	u32 ptep_level;
++	bool found_leaf;
++	unsigned long page_size;
++	gpa_t addr = start, end = start + size;
++
++	while (addr < end) {
++		found_leaf = kvm_riscv_gstage_get_leaf(gstage, addr, &ptep, &ptep_level);
++		ret = gstage_level_to_page_size(ptep_level, &page_size);
++		if (ret)
++			break;
++
++		if (!found_leaf)
++			goto next;
++
++		if (!(addr & (page_size - 1)) && ((end - addr) >= page_size))
++			kvm_riscv_gstage_op_pte(gstage, addr, ptep,
++						ptep_level, GSTAGE_OP_CLEAR);
++
++next:
++		addr += page_size;
++
++		/*
++		 * If the range is too large, release the kvm->mmu_lock
++		 * to prevent starvation and lockup detector warnings.
++		 */
++		if (!(gstage->flags & KVM_GSTAGE_FLAGS_LOCAL) && may_block && addr < end)
++			cond_resched_lock(&gstage->kvm->mmu_lock);
++	}
++}
++
++void kvm_riscv_gstage_wp_range(struct kvm_gstage *gstage, gpa_t start, gpa_t end)
++{
++	int ret;
++	pte_t *ptep;
++	u32 ptep_level;
++	bool found_leaf;
++	gpa_t addr = start;
++	unsigned long page_size;
++
++	while (addr < end) {
++		found_leaf = kvm_riscv_gstage_get_leaf(gstage, addr, &ptep, &ptep_level);
++		ret = gstage_level_to_page_size(ptep_level, &page_size);
++		if (ret)
++			break;
++
++		if (!found_leaf)
++			goto next;
++
++		if (!(addr & (page_size - 1)) && ((end - addr) >= page_size))
++			kvm_riscv_gstage_op_pte(gstage, addr, ptep,
++						ptep_level, GSTAGE_OP_WP);
++
++next:
++		addr += page_size;
++	}
++}
++
++void __init kvm_riscv_gstage_mode_detect(void)
++{
++#ifdef CONFIG_64BIT
++	/* Try Sv57x4 G-stage mode */
++	csr_write(CSR_HGATP, HGATP_MODE_SV57X4 << HGATP_MODE_SHIFT);
++	if ((csr_read(CSR_HGATP) >> HGATP_MODE_SHIFT) == HGATP_MODE_SV57X4) {
++		kvm_riscv_gstage_mode = HGATP_MODE_SV57X4;
++		kvm_riscv_gstage_pgd_levels = 5;
++		goto skip_sv48x4_test;
++	}
++
++	/* Try Sv48x4 G-stage mode */
++	csr_write(CSR_HGATP, HGATP_MODE_SV48X4 << HGATP_MODE_SHIFT);
++	if ((csr_read(CSR_HGATP) >> HGATP_MODE_SHIFT) == HGATP_MODE_SV48X4) {
++		kvm_riscv_gstage_mode = HGATP_MODE_SV48X4;
++		kvm_riscv_gstage_pgd_levels = 4;
++	}
++skip_sv48x4_test:
++
++	csr_write(CSR_HGATP, 0);
++	kvm_riscv_local_hfence_gvma_all();
++#endif
++}
+diff --git a/arch/riscv/kvm/main.c b/arch/riscv/kvm/main.c
+index b861a5dd7bd9..67c876de74ef 100644
+--- a/arch/riscv/kvm/main.c
++++ b/arch/riscv/kvm/main.c
+@@ -135,7 +135,7 @@ static int __init riscv_kvm_init(void)
+ 			 (rc) ? slist : "no features");
+ 	}
+ 
+-	switch (kvm_riscv_gstage_mode()) {
++	switch (kvm_riscv_gstage_mode) {
+ 	case HGATP_MODE_SV32X4:
+ 		str = "Sv32x4";
+ 		break;
+diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+index 806614b3e46d..9f7dcd8cd741 100644
+--- a/arch/riscv/kvm/mmu.c
++++ b/arch/riscv/kvm/mmu.c
+@@ -6,9 +6,7 @@
+  *     Anup Patel <anup.patel@wdc.com>
+  */
+ 
+-#include <linux/bitops.h>
+ #include <linux/errno.h>
+-#include <linux/err.h>
+ #include <linux/hugetlb.h>
+ #include <linux/module.h>
+ #include <linux/uaccess.h>
+@@ -17,342 +15,28 @@
+ #include <linux/sched/signal.h>
+ #include <asm/kvm_mmu.h>
+ #include <asm/kvm_nacl.h>
+-#include <asm/page.h>
+-#include <asm/pgtable.h>
+-
+-#ifdef CONFIG_64BIT
+-static unsigned long gstage_mode __ro_after_init = (HGATP_MODE_SV39X4 << HGATP_MODE_SHIFT);
+-static unsigned long gstage_pgd_levels __ro_after_init = 3;
+-#define gstage_index_bits	9
+-#else
+-static unsigned long gstage_mode __ro_after_init = (HGATP_MODE_SV32X4 << HGATP_MODE_SHIFT);
+-static unsigned long gstage_pgd_levels __ro_after_init = 2;
+-#define gstage_index_bits	10
+-#endif
+-
+-#define gstage_pgd_xbits	2
+-#define gstage_pgd_size	(1UL << (HGATP_PAGE_SHIFT + gstage_pgd_xbits))
+-#define gstage_gpa_bits	(HGATP_PAGE_SHIFT + \
+-			 (gstage_pgd_levels * gstage_index_bits) + \
+-			 gstage_pgd_xbits)
+-#define gstage_gpa_size	((gpa_t)(1ULL << gstage_gpa_bits))
+-
+-#define gstage_pte_leaf(__ptep)	\
+-	(pte_val(*(__ptep)) & (_PAGE_READ | _PAGE_WRITE | _PAGE_EXEC))
+-
+-static inline unsigned long gstage_pte_index(gpa_t addr, u32 level)
+-{
+-	unsigned long mask;
+-	unsigned long shift = HGATP_PAGE_SHIFT + (gstage_index_bits * level);
+-
+-	if (level == (gstage_pgd_levels - 1))
+-		mask = (PTRS_PER_PTE * (1UL << gstage_pgd_xbits)) - 1;
+-	else
+-		mask = PTRS_PER_PTE - 1;
+-
+-	return (addr >> shift) & mask;
+-}
+ 
+-static inline unsigned long gstage_pte_page_vaddr(pte_t pte)
+-{
+-	return (unsigned long)pfn_to_virt(__page_val_to_pfn(pte_val(pte)));
+-}
+-
+-static int gstage_page_size_to_level(unsigned long page_size, u32 *out_level)
+-{
+-	u32 i;
+-	unsigned long psz = 1UL << 12;
+-
+-	for (i = 0; i < gstage_pgd_levels; i++) {
+-		if (page_size == (psz << (i * gstage_index_bits))) {
+-			*out_level = i;
+-			return 0;
+-		}
+-	}
+-
+-	return -EINVAL;
+-}
+-
+-static int gstage_level_to_page_order(u32 level, unsigned long *out_pgorder)
+-{
+-	if (gstage_pgd_levels < level)
+-		return -EINVAL;
+-
+-	*out_pgorder = 12 + (level * gstage_index_bits);
+-	return 0;
+-}
+-
+-static int gstage_level_to_page_size(u32 level, unsigned long *out_pgsize)
+-{
+-	int rc;
+-	unsigned long page_order = PAGE_SHIFT;
+-
+-	rc = gstage_level_to_page_order(level, &page_order);
+-	if (rc)
+-		return rc;
+-
+-	*out_pgsize = BIT(page_order);
+-	return 0;
+-}
+-
+-static bool gstage_get_leaf_entry(struct kvm *kvm, gpa_t addr,
+-				  pte_t **ptepp, u32 *ptep_level)
+-{
+-	pte_t *ptep;
+-	u32 current_level = gstage_pgd_levels - 1;
+-
+-	*ptep_level = current_level;
+-	ptep = (pte_t *)kvm->arch.pgd;
+-	ptep = &ptep[gstage_pte_index(addr, current_level)];
+-	while (ptep && pte_val(ptep_get(ptep))) {
+-		if (gstage_pte_leaf(ptep)) {
+-			*ptep_level = current_level;
+-			*ptepp = ptep;
+-			return true;
+-		}
+-
+-		if (current_level) {
+-			current_level--;
+-			*ptep_level = current_level;
+-			ptep = (pte_t *)gstage_pte_page_vaddr(ptep_get(ptep));
+-			ptep = &ptep[gstage_pte_index(addr, current_level)];
+-		} else {
+-			ptep = NULL;
+-		}
+-	}
+-
+-	return false;
+-}
+-
+-static void gstage_remote_tlb_flush(struct kvm *kvm, u32 level, gpa_t addr)
+-{
+-	unsigned long order = PAGE_SHIFT;
+-
+-	if (gstage_level_to_page_order(level, &order))
+-		return;
+-	addr &= ~(BIT(order) - 1);
+-
+-	kvm_riscv_hfence_gvma_vmid_gpa(kvm, -1UL, 0, addr, BIT(order), order);
+-}
+-
+-static int gstage_set_pte(struct kvm *kvm,
+-			  struct kvm_mmu_memory_cache *pcache,
+-			  const struct kvm_gstage_mapping *map)
+-{
+-	u32 current_level = gstage_pgd_levels - 1;
+-	pte_t *next_ptep = (pte_t *)kvm->arch.pgd;
+-	pte_t *ptep = &next_ptep[gstage_pte_index(map->addr, current_level)];
+-
+-	if (current_level < map->level)
+-		return -EINVAL;
+-
+-	while (current_level != map->level) {
+-		if (gstage_pte_leaf(ptep))
+-			return -EEXIST;
+-
+-		if (!pte_val(ptep_get(ptep))) {
+-			if (!pcache)
+-				return -ENOMEM;
+-			next_ptep = kvm_mmu_memory_cache_alloc(pcache);
+-			if (!next_ptep)
+-				return -ENOMEM;
+-			set_pte(ptep, pfn_pte(PFN_DOWN(__pa(next_ptep)),
+-					      __pgprot(_PAGE_TABLE)));
+-		} else {
+-			if (gstage_pte_leaf(ptep))
+-				return -EEXIST;
+-			next_ptep = (pte_t *)gstage_pte_page_vaddr(ptep_get(ptep));
+-		}
+-
+-		current_level--;
+-		ptep = &next_ptep[gstage_pte_index(map->addr, current_level)];
+-	}
+-
+-	if (pte_val(*ptep) != pte_val(map->pte)) {
+-		set_pte(ptep, map->pte);
+-		if (gstage_pte_leaf(ptep))
+-			gstage_remote_tlb_flush(kvm, current_level, map->addr);
+-	}
+-
+-	return 0;
+-}
+-
+-static int gstage_map_page(struct kvm *kvm,
+-			   struct kvm_mmu_memory_cache *pcache,
+-			   gpa_t gpa, phys_addr_t hpa,
+-			   unsigned long page_size,
+-			   bool page_rdonly, bool page_exec,
+-			   struct kvm_gstage_mapping *out_map)
+-{
+-	pgprot_t prot;
+-	int ret;
+-
+-	out_map->addr = gpa;
+-	out_map->level = 0;
+-
+-	ret = gstage_page_size_to_level(page_size, &out_map->level);
+-	if (ret)
+-		return ret;
+-
+-	/*
+-	 * A RISC-V implementation can choose to either:
+-	 * 1) Update 'A' and 'D' PTE bits in hardware
+-	 * 2) Generate page fault when 'A' and/or 'D' bits are not set
+-	 *    PTE so that software can update these bits.
+-	 *
+-	 * We support both options mentioned above. To achieve this, we
+-	 * always set 'A' and 'D' PTE bits at time of creating G-stage
+-	 * mapping. To support KVM dirty page logging with both options
+-	 * mentioned above, we will write-protect G-stage PTEs to track
+-	 * dirty pages.
+-	 */
+-
+-	if (page_exec) {
+-		if (page_rdonly)
+-			prot = PAGE_READ_EXEC;
+-		else
+-			prot = PAGE_WRITE_EXEC;
+-	} else {
+-		if (page_rdonly)
+-			prot = PAGE_READ;
+-		else
+-			prot = PAGE_WRITE;
+-	}
+-	out_map->pte = pfn_pte(PFN_DOWN(hpa), prot);
+-	out_map->pte = pte_mkdirty(out_map->pte);
+-
+-	return gstage_set_pte(kvm, pcache, out_map);
+-}
+-
+-enum gstage_op {
+-	GSTAGE_OP_NOP = 0,	/* Nothing */
+-	GSTAGE_OP_CLEAR,	/* Clear/Unmap */
+-	GSTAGE_OP_WP,		/* Write-protect */
+-};
+-
+-static void gstage_op_pte(struct kvm *kvm, gpa_t addr,
+-			  pte_t *ptep, u32 ptep_level, enum gstage_op op)
+-{
+-	int i, ret;
+-	pte_t old_pte, *next_ptep;
+-	u32 next_ptep_level;
+-	unsigned long next_page_size, page_size;
+-
+-	ret = gstage_level_to_page_size(ptep_level, &page_size);
+-	if (ret)
+-		return;
+-
+-	BUG_ON(addr & (page_size - 1));
+-
+-	if (!pte_val(ptep_get(ptep)))
+-		return;
+-
+-	if (ptep_level && !gstage_pte_leaf(ptep)) {
+-		next_ptep = (pte_t *)gstage_pte_page_vaddr(ptep_get(ptep));
+-		next_ptep_level = ptep_level - 1;
+-		ret = gstage_level_to_page_size(next_ptep_level,
+-						&next_page_size);
+-		if (ret)
+-			return;
+-
+-		if (op == GSTAGE_OP_CLEAR)
+-			set_pte(ptep, __pte(0));
+-		for (i = 0; i < PTRS_PER_PTE; i++)
+-			gstage_op_pte(kvm, addr + i * next_page_size,
+-					&next_ptep[i], next_ptep_level, op);
+-		if (op == GSTAGE_OP_CLEAR)
+-			put_page(virt_to_page(next_ptep));
+-	} else {
+-		old_pte = *ptep;
+-		if (op == GSTAGE_OP_CLEAR)
+-			set_pte(ptep, __pte(0));
+-		else if (op == GSTAGE_OP_WP)
+-			set_pte(ptep, __pte(pte_val(ptep_get(ptep)) & ~_PAGE_WRITE));
+-		if (pte_val(*ptep) != pte_val(old_pte))
+-			gstage_remote_tlb_flush(kvm, ptep_level, addr);
+-	}
+-}
+-
+-static void gstage_unmap_range(struct kvm *kvm, gpa_t start,
+-			       gpa_t size, bool may_block)
+-{
+-	int ret;
+-	pte_t *ptep;
+-	u32 ptep_level;
+-	bool found_leaf;
+-	unsigned long page_size;
+-	gpa_t addr = start, end = start + size;
+-
+-	while (addr < end) {
+-		found_leaf = gstage_get_leaf_entry(kvm, addr,
+-						   &ptep, &ptep_level);
+-		ret = gstage_level_to_page_size(ptep_level, &page_size);
+-		if (ret)
+-			break;
+-
+-		if (!found_leaf)
+-			goto next;
+-
+-		if (!(addr & (page_size - 1)) && ((end - addr) >= page_size))
+-			gstage_op_pte(kvm, addr, ptep,
+-				      ptep_level, GSTAGE_OP_CLEAR);
+-
+-next:
+-		addr += page_size;
+-
+-		/*
+-		 * If the range is too large, release the kvm->mmu_lock
+-		 * to prevent starvation and lockup detector warnings.
+-		 */
+-		if (may_block && addr < end)
+-			cond_resched_lock(&kvm->mmu_lock);
+-	}
+-}
+-
+-static void gstage_wp_range(struct kvm *kvm, gpa_t start, gpa_t end)
+-{
+-	int ret;
+-	pte_t *ptep;
+-	u32 ptep_level;
+-	bool found_leaf;
+-	gpa_t addr = start;
+-	unsigned long page_size;
+-
+-	while (addr < end) {
+-		found_leaf = gstage_get_leaf_entry(kvm, addr,
+-						   &ptep, &ptep_level);
+-		ret = gstage_level_to_page_size(ptep_level, &page_size);
+-		if (ret)
+-			break;
+-
+-		if (!found_leaf)
+-			goto next;
+-
+-		if (!(addr & (page_size - 1)) && ((end - addr) >= page_size))
+-			gstage_op_pte(kvm, addr, ptep,
+-				      ptep_level, GSTAGE_OP_WP);
+-
+-next:
+-		addr += page_size;
+-	}
+-}
+-
+-static void gstage_wp_memory_region(struct kvm *kvm, int slot)
++static void mmu_wp_memory_region(struct kvm *kvm, int slot)
  {
--	unsigned long vmid;
- 	struct kvm_riscv_hfence d = { 0 };
--	struct kvm_vmid *v = &vcpu->kvm->arch.vmid;
+ 	struct kvm_memslots *slots = kvm_memslots(kvm);
+ 	struct kvm_memory_slot *memslot = id_to_memslot(slots, slot);
+ 	phys_addr_t start = memslot->base_gfn << PAGE_SHIFT;
+ 	phys_addr_t end = (memslot->base_gfn + memslot->npages) << PAGE_SHIFT;
++	struct kvm_gstage gstage;
++
++	gstage.kvm = kvm;
++	gstage.flags = 0;
++	gstage.vmid = READ_ONCE(kvm->arch.vmid.vmid);
++	gstage.pgd = kvm->arch.pgd;
  
- 	while (vcpu_hfence_dequeue(vcpu, &d)) {
- 		switch (d.type) {
- 		case KVM_RISCV_HFENCE_UNKNOWN:
- 			break;
- 		case KVM_RISCV_HFENCE_GVMA_VMID_GPA:
--			vmid = READ_ONCE(v->vmid);
- 			if (kvm_riscv_nacl_available())
--				nacl_hfence_gvma_vmid(nacl_shmem(), vmid,
-+				nacl_hfence_gvma_vmid(nacl_shmem(), d.vmid,
- 						      d.addr, d.size, d.order);
- 			else
--				kvm_riscv_local_hfence_gvma_vmid_gpa(vmid, d.addr,
-+				kvm_riscv_local_hfence_gvma_vmid_gpa(d.vmid, d.addr,
- 								     d.size, d.order);
- 			break;
- 		case KVM_RISCV_HFENCE_VVMA_ASID_GVA:
- 			kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_HFENCE_VVMA_ASID_RCVD);
--			vmid = READ_ONCE(v->vmid);
- 			if (kvm_riscv_nacl_available())
--				nacl_hfence_vvma_asid(nacl_shmem(), vmid, d.asid,
-+				nacl_hfence_vvma_asid(nacl_shmem(), d.vmid, d.asid,
- 						      d.addr, d.size, d.order);
- 			else
--				kvm_riscv_local_hfence_vvma_asid_gva(vmid, d.asid, d.addr,
-+				kvm_riscv_local_hfence_vvma_asid_gva(d.vmid, d.asid, d.addr,
- 								     d.size, d.order);
- 			break;
- 		case KVM_RISCV_HFENCE_VVMA_ASID_ALL:
- 			kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_HFENCE_VVMA_ASID_RCVD);
--			vmid = READ_ONCE(v->vmid);
- 			if (kvm_riscv_nacl_available())
--				nacl_hfence_vvma_asid_all(nacl_shmem(), vmid, d.asid);
-+				nacl_hfence_vvma_asid_all(nacl_shmem(), d.vmid, d.asid);
- 			else
--				kvm_riscv_local_hfence_vvma_asid_all(vmid, d.asid);
-+				kvm_riscv_local_hfence_vvma_asid_all(d.vmid, d.asid);
- 			break;
- 		case KVM_RISCV_HFENCE_VVMA_GVA:
- 			kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_HFENCE_VVMA_RCVD);
--			vmid = READ_ONCE(v->vmid);
- 			if (kvm_riscv_nacl_available())
--				nacl_hfence_vvma(nacl_shmem(), vmid,
-+				nacl_hfence_vvma(nacl_shmem(), d.vmid,
- 						 d.addr, d.size, d.order);
- 			else
--				kvm_riscv_local_hfence_vvma_gva(vmid, d.addr,
-+				kvm_riscv_local_hfence_vvma_gva(d.vmid, d.addr,
- 								d.size, d.order);
- 			break;
- 		default:
-@@ -336,10 +330,12 @@ void kvm_riscv_hfence_gvma_vmid_gpa(struct kvm *kvm,
- 				    gpa_t gpa, gpa_t gpsz,
- 				    unsigned long order)
+ 	spin_lock(&kvm->mmu_lock);
+-	gstage_wp_range(kvm, start, end);
++	kvm_riscv_gstage_wp_range(&gstage, start, end);
+ 	spin_unlock(&kvm->mmu_lock);
+ 	kvm_flush_remote_tlbs_memslot(kvm, memslot);
+ }
+ 
+-int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t gpa,
+-			     phys_addr_t hpa, unsigned long size,
+-			     bool writable, bool in_atomic)
++int kvm_riscv_mmu_ioremap(struct kvm *kvm, gpa_t gpa, phys_addr_t hpa,
++			  unsigned long size, bool writable, bool in_atomic)
  {
-+	struct kvm_vmid *v = &kvm->arch.vmid;
- 	struct kvm_riscv_hfence data;
+ 	int ret = 0;
+ 	unsigned long pfn;
+@@ -362,6 +46,12 @@ int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t gpa,
+ 		.gfp_zero = __GFP_ZERO,
+ 	};
+ 	struct kvm_gstage_mapping map;
++	struct kvm_gstage gstage;
++
++	gstage.kvm = kvm;
++	gstage.flags = 0;
++	gstage.vmid = READ_ONCE(kvm->arch.vmid.vmid);
++	gstage.pgd = kvm->arch.pgd;
  
- 	data.type = KVM_RISCV_HFENCE_GVMA_VMID_GPA;
- 	data.asid = 0;
-+	data.vmid = READ_ONCE(v->vmid);
- 	data.addr = gpa;
- 	data.size = gpsz;
- 	data.order = order;
-@@ -359,10 +355,12 @@ void kvm_riscv_hfence_vvma_asid_gva(struct kvm *kvm,
- 				    unsigned long gva, unsigned long gvsz,
- 				    unsigned long order, unsigned long asid)
+ 	end = (gpa + size + PAGE_SIZE - 1) & PAGE_MASK;
+ 	pfn = __phys_to_pfn(hpa);
+@@ -374,12 +64,12 @@ int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t gpa,
+ 		if (!writable)
+ 			map.pte = pte_wrprotect(map.pte);
+ 
+-		ret = kvm_mmu_topup_memory_cache(&pcache, gstage_pgd_levels);
++		ret = kvm_mmu_topup_memory_cache(&pcache, kvm_riscv_gstage_pgd_levels);
+ 		if (ret)
+ 			goto out;
+ 
+ 		spin_lock(&kvm->mmu_lock);
+-		ret = gstage_set_pte(kvm, &pcache, &map);
++		ret = kvm_riscv_gstage_set_pte(&gstage, &pcache, &map);
+ 		spin_unlock(&kvm->mmu_lock);
+ 		if (ret)
+ 			goto out;
+@@ -392,10 +82,17 @@ int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t gpa,
+ 	return ret;
+ }
+ 
+-void kvm_riscv_gstage_iounmap(struct kvm *kvm, gpa_t gpa, unsigned long size)
++void kvm_riscv_mmu_iounmap(struct kvm *kvm, gpa_t gpa, unsigned long size)
  {
-+	struct kvm_vmid *v = &kvm->arch.vmid;
- 	struct kvm_riscv_hfence data;
++	struct kvm_gstage gstage;
++
++	gstage.kvm = kvm;
++	gstage.flags = 0;
++	gstage.vmid = READ_ONCE(kvm->arch.vmid.vmid);
++	gstage.pgd = kvm->arch.pgd;
++
+ 	spin_lock(&kvm->mmu_lock);
+-	gstage_unmap_range(kvm, gpa, size, false);
++	kvm_riscv_gstage_unmap_range(&gstage, gpa, size, false);
+ 	spin_unlock(&kvm->mmu_lock);
+ }
  
- 	data.type = KVM_RISCV_HFENCE_VVMA_ASID_GVA;
- 	data.asid = asid;
-+	data.vmid = READ_ONCE(v->vmid);
- 	data.addr = gva;
- 	data.size = gvsz;
- 	data.order = order;
-@@ -374,10 +372,12 @@ void kvm_riscv_hfence_vvma_asid_all(struct kvm *kvm,
- 				    unsigned long hbase, unsigned long hmask,
- 				    unsigned long asid)
+@@ -407,8 +104,14 @@ void kvm_arch_mmu_enable_log_dirty_pt_masked(struct kvm *kvm,
+ 	phys_addr_t base_gfn = slot->base_gfn + gfn_offset;
+ 	phys_addr_t start = (base_gfn +  __ffs(mask)) << PAGE_SHIFT;
+ 	phys_addr_t end = (base_gfn + __fls(mask) + 1) << PAGE_SHIFT;
++	struct kvm_gstage gstage;
++
++	gstage.kvm = kvm;
++	gstage.flags = 0;
++	gstage.vmid = READ_ONCE(kvm->arch.vmid.vmid);
++	gstage.pgd = kvm->arch.pgd;
+ 
+-	gstage_wp_range(kvm, start, end);
++	kvm_riscv_gstage_wp_range(&gstage, start, end);
+ }
+ 
+ void kvm_arch_sync_dirty_log(struct kvm *kvm, struct kvm_memory_slot *memslot)
+@@ -425,7 +128,7 @@ void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen)
+ 
+ void kvm_arch_flush_shadow_all(struct kvm *kvm)
  {
-+	struct kvm_vmid *v = &kvm->arch.vmid;
- 	struct kvm_riscv_hfence data;
+-	kvm_riscv_gstage_free_pgd(kvm);
++	kvm_riscv_mmu_free_pgd(kvm);
+ }
  
- 	data.type = KVM_RISCV_HFENCE_VVMA_ASID_ALL;
- 	data.asid = asid;
-+	data.vmid = READ_ONCE(v->vmid);
- 	data.addr = data.size = data.order = 0;
- 	make_xfence_request(kvm, hbase, hmask, KVM_REQ_HFENCE,
- 			    KVM_REQ_HFENCE_VVMA_ALL, &data);
-@@ -388,10 +388,12 @@ void kvm_riscv_hfence_vvma_gva(struct kvm *kvm,
- 			       unsigned long gva, unsigned long gvsz,
- 			       unsigned long order)
+ void kvm_arch_flush_shadow_memslot(struct kvm *kvm,
+@@ -433,9 +136,15 @@ void kvm_arch_flush_shadow_memslot(struct kvm *kvm,
  {
-+	struct kvm_vmid *v = &kvm->arch.vmid;
- 	struct kvm_riscv_hfence data;
+ 	gpa_t gpa = slot->base_gfn << PAGE_SHIFT;
+ 	phys_addr_t size = slot->npages << PAGE_SHIFT;
++	struct kvm_gstage gstage;
++
++	gstage.kvm = kvm;
++	gstage.flags = 0;
++	gstage.vmid = READ_ONCE(kvm->arch.vmid.vmid);
++	gstage.pgd = kvm->arch.pgd;
  
- 	data.type = KVM_RISCV_HFENCE_VVMA_GVA;
- 	data.asid = 0;
-+	data.vmid = READ_ONCE(v->vmid);
- 	data.addr = gva;
- 	data.size = gvsz;
- 	data.order = order;
+ 	spin_lock(&kvm->mmu_lock);
+-	gstage_unmap_range(kvm, gpa, size, false);
++	kvm_riscv_gstage_unmap_range(&gstage, gpa, size, false);
+ 	spin_unlock(&kvm->mmu_lock);
+ }
+ 
+@@ -450,7 +159,7 @@ void kvm_arch_commit_memory_region(struct kvm *kvm,
+ 	 * the memory slot is write protected.
+ 	 */
+ 	if (change != KVM_MR_DELETE && new->flags & KVM_MEM_LOG_DIRTY_PAGES)
+-		gstage_wp_memory_region(kvm, new->id);
++		mmu_wp_memory_region(kvm, new->id);
+ }
+ 
+ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+@@ -472,7 +181,7 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ 	 * space addressable by the KVM guest GPA space.
+ 	 */
+ 	if ((new->base_gfn + new->npages) >=
+-	    (gstage_gpa_size >> PAGE_SHIFT))
++	    (kvm_riscv_gstage_gpa_size >> PAGE_SHIFT))
+ 		return -EFAULT;
+ 
+ 	hva = new->userspace_addr;
+@@ -528,9 +237,8 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ 				goto out;
+ 			}
+ 
+-			ret = kvm_riscv_gstage_ioremap(kvm, gpa, pa,
+-						       vm_end - vm_start,
+-						       writable, false);
++			ret = kvm_riscv_mmu_ioremap(kvm, gpa, pa, vm_end - vm_start,
++						    writable, false);
+ 			if (ret)
+ 				break;
+ 		}
+@@ -541,7 +249,7 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ 		goto out;
+ 
+ 	if (ret)
+-		kvm_riscv_gstage_iounmap(kvm, base_gpa, size);
++		kvm_riscv_mmu_iounmap(kvm, base_gpa, size);
+ 
+ out:
+ 	mmap_read_unlock(current->mm);
+@@ -550,12 +258,18 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ 
+ bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
+ {
++	struct kvm_gstage gstage;
++
+ 	if (!kvm->arch.pgd)
+ 		return false;
+ 
+-	gstage_unmap_range(kvm, range->start << PAGE_SHIFT,
+-			   (range->end - range->start) << PAGE_SHIFT,
+-			   range->may_block);
++	gstage.kvm = kvm;
++	gstage.flags = 0;
++	gstage.vmid = READ_ONCE(kvm->arch.vmid.vmid);
++	gstage.pgd = kvm->arch.pgd;
++	kvm_riscv_gstage_unmap_range(&gstage, range->start << PAGE_SHIFT,
++				     (range->end - range->start) << PAGE_SHIFT,
++				     range->may_block);
+ 	return false;
+ }
+ 
+@@ -564,14 +278,19 @@ bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
+ 	pte_t *ptep;
+ 	u32 ptep_level = 0;
+ 	u64 size = (range->end - range->start) << PAGE_SHIFT;
++	struct kvm_gstage gstage;
+ 
+ 	if (!kvm->arch.pgd)
+ 		return false;
+ 
+ 	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE && size != PUD_SIZE);
+ 
+-	if (!gstage_get_leaf_entry(kvm, range->start << PAGE_SHIFT,
+-				   &ptep, &ptep_level))
++	gstage.kvm = kvm;
++	gstage.flags = 0;
++	gstage.vmid = READ_ONCE(kvm->arch.vmid.vmid);
++	gstage.pgd = kvm->arch.pgd;
++	if (!kvm_riscv_gstage_get_leaf(&gstage, range->start << PAGE_SHIFT,
++				       &ptep, &ptep_level))
+ 		return false;
+ 
+ 	return ptep_test_and_clear_young(NULL, 0, ptep);
+@@ -582,23 +301,27 @@ bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
+ 	pte_t *ptep;
+ 	u32 ptep_level = 0;
+ 	u64 size = (range->end - range->start) << PAGE_SHIFT;
++	struct kvm_gstage gstage;
+ 
+ 	if (!kvm->arch.pgd)
+ 		return false;
+ 
+ 	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE && size != PUD_SIZE);
+ 
+-	if (!gstage_get_leaf_entry(kvm, range->start << PAGE_SHIFT,
+-				   &ptep, &ptep_level))
++	gstage.kvm = kvm;
++	gstage.flags = 0;
++	gstage.vmid = READ_ONCE(kvm->arch.vmid.vmid);
++	gstage.pgd = kvm->arch.pgd;
++	if (!kvm_riscv_gstage_get_leaf(&gstage, range->start << PAGE_SHIFT,
++				       &ptep, &ptep_level))
+ 		return false;
+ 
+ 	return pte_young(ptep_get(ptep));
+ }
+ 
+-int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+-			 struct kvm_memory_slot *memslot,
+-			 gpa_t gpa, unsigned long hva, bool is_write,
+-			 struct kvm_gstage_mapping *out_map)
++int kvm_riscv_mmu_map(struct kvm_vcpu *vcpu, struct kvm_memory_slot *memslot,
++		      gpa_t gpa, unsigned long hva, bool is_write,
++		      struct kvm_gstage_mapping *out_map)
+ {
+ 	int ret;
+ 	kvm_pfn_t hfn;
+@@ -611,13 +334,19 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+ 	bool logging = (memslot->dirty_bitmap &&
+ 			!(memslot->flags & KVM_MEM_READONLY)) ? true : false;
+ 	unsigned long vma_pagesize, mmu_seq;
++	struct kvm_gstage gstage;
+ 	struct page *page;
+ 
++	gstage.kvm = kvm;
++	gstage.flags = 0;
++	gstage.vmid = READ_ONCE(kvm->arch.vmid.vmid);
++	gstage.pgd = kvm->arch.pgd;
++
+ 	/* Setup initial state of output mapping */
+ 	memset(out_map, 0, sizeof(*out_map));
+ 
+ 	/* We need minimum second+third level pages */
+-	ret = kvm_mmu_topup_memory_cache(pcache, gstage_pgd_levels);
++	ret = kvm_mmu_topup_memory_cache(pcache, kvm_riscv_gstage_pgd_levels);
+ 	if (ret) {
+ 		kvm_err("Failed to topup G-stage cache\n");
+ 		return ret;
+@@ -684,11 +413,11 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+ 
+ 	if (writable) {
+ 		mark_page_dirty(kvm, gfn);
+-		ret = gstage_map_page(kvm, pcache, gpa, hfn << PAGE_SHIFT,
+-				      vma_pagesize, false, true, out_map);
++		ret = kvm_riscv_gstage_map_page(&gstage, pcache, gpa, hfn << PAGE_SHIFT,
++						vma_pagesize, false, true, out_map);
+ 	} else {
+-		ret = gstage_map_page(kvm, pcache, gpa, hfn << PAGE_SHIFT,
+-				      vma_pagesize, true, true, out_map);
++		ret = kvm_riscv_gstage_map_page(&gstage, pcache, gpa, hfn << PAGE_SHIFT,
++						vma_pagesize, true, true, out_map);
+ 	}
+ 
+ 	if (ret)
+@@ -700,7 +429,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+ 	return ret;
+ }
+ 
+-int kvm_riscv_gstage_alloc_pgd(struct kvm *kvm)
++int kvm_riscv_mmu_alloc_pgd(struct kvm *kvm)
+ {
+ 	struct page *pgd_page;
+ 
+@@ -710,7 +439,7 @@ int kvm_riscv_gstage_alloc_pgd(struct kvm *kvm)
+ 	}
+ 
+ 	pgd_page = alloc_pages(GFP_KERNEL | __GFP_ZERO,
+-				get_order(gstage_pgd_size));
++				get_order(kvm_riscv_gstage_pgd_size));
+ 	if (!pgd_page)
+ 		return -ENOMEM;
+ 	kvm->arch.pgd = page_to_virt(pgd_page);
+@@ -719,13 +448,18 @@ int kvm_riscv_gstage_alloc_pgd(struct kvm *kvm)
+ 	return 0;
+ }
+ 
+-void kvm_riscv_gstage_free_pgd(struct kvm *kvm)
++void kvm_riscv_mmu_free_pgd(struct kvm *kvm)
+ {
++	struct kvm_gstage gstage;
+ 	void *pgd = NULL;
+ 
+ 	spin_lock(&kvm->mmu_lock);
+ 	if (kvm->arch.pgd) {
+-		gstage_unmap_range(kvm, 0UL, gstage_gpa_size, false);
++		gstage.kvm = kvm;
++		gstage.flags = 0;
++		gstage.vmid = READ_ONCE(kvm->arch.vmid.vmid);
++		gstage.pgd = kvm->arch.pgd;
++		kvm_riscv_gstage_unmap_range(&gstage, 0UL, kvm_riscv_gstage_gpa_size, false);
+ 		pgd = READ_ONCE(kvm->arch.pgd);
+ 		kvm->arch.pgd = NULL;
+ 		kvm->arch.pgd_phys = 0;
+@@ -733,12 +467,12 @@ void kvm_riscv_gstage_free_pgd(struct kvm *kvm)
+ 	spin_unlock(&kvm->mmu_lock);
+ 
+ 	if (pgd)
+-		free_pages((unsigned long)pgd, get_order(gstage_pgd_size));
++		free_pages((unsigned long)pgd, get_order(kvm_riscv_gstage_pgd_size));
+ }
+ 
+-void kvm_riscv_gstage_update_hgatp(struct kvm_vcpu *vcpu)
++void kvm_riscv_mmu_update_hgatp(struct kvm_vcpu *vcpu)
+ {
+-	unsigned long hgatp = gstage_mode;
++	unsigned long hgatp = kvm_riscv_gstage_mode << HGATP_MODE_SHIFT;
+ 	struct kvm_arch *k = &vcpu->kvm->arch;
+ 
+ 	hgatp |= (READ_ONCE(k->vmid.vmid) << HGATP_VMID_SHIFT) & HGATP_VMID;
+@@ -749,37 +483,3 @@ void kvm_riscv_gstage_update_hgatp(struct kvm_vcpu *vcpu)
+ 	if (!kvm_riscv_gstage_vmid_bits())
+ 		kvm_riscv_local_hfence_gvma_all();
+ }
+-
+-void __init kvm_riscv_gstage_mode_detect(void)
+-{
+-#ifdef CONFIG_64BIT
+-	/* Try Sv57x4 G-stage mode */
+-	csr_write(CSR_HGATP, HGATP_MODE_SV57X4 << HGATP_MODE_SHIFT);
+-	if ((csr_read(CSR_HGATP) >> HGATP_MODE_SHIFT) == HGATP_MODE_SV57X4) {
+-		gstage_mode = (HGATP_MODE_SV57X4 << HGATP_MODE_SHIFT);
+-		gstage_pgd_levels = 5;
+-		goto skip_sv48x4_test;
+-	}
+-
+-	/* Try Sv48x4 G-stage mode */
+-	csr_write(CSR_HGATP, HGATP_MODE_SV48X4 << HGATP_MODE_SHIFT);
+-	if ((csr_read(CSR_HGATP) >> HGATP_MODE_SHIFT) == HGATP_MODE_SV48X4) {
+-		gstage_mode = (HGATP_MODE_SV48X4 << HGATP_MODE_SHIFT);
+-		gstage_pgd_levels = 4;
+-	}
+-skip_sv48x4_test:
+-
+-	csr_write(CSR_HGATP, 0);
+-	kvm_riscv_local_hfence_gvma_all();
+-#endif
+-}
+-
+-unsigned long __init kvm_riscv_gstage_mode(void)
+-{
+-	return gstage_mode >> HGATP_MODE_SHIFT;
+-}
+-
+-int kvm_riscv_gstage_gpa_bits(void)
+-{
+-	return gstage_gpa_bits;
+-}
+diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+index 8ad7b31f5939..fe028b4274df 100644
+--- a/arch/riscv/kvm/vcpu.c
++++ b/arch/riscv/kvm/vcpu.c
+@@ -632,7 +632,7 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 		}
+ 	}
+ 
+-	kvm_riscv_gstage_update_hgatp(vcpu);
++	kvm_riscv_mmu_update_hgatp(vcpu);
+ 
+ 	kvm_riscv_vcpu_timer_restore(vcpu);
+ 
+@@ -717,7 +717,7 @@ static void kvm_riscv_check_vcpu_requests(struct kvm_vcpu *vcpu)
+ 			kvm_riscv_reset_vcpu(vcpu, true);
+ 
+ 		if (kvm_check_request(KVM_REQ_UPDATE_HGATP, vcpu))
+-			kvm_riscv_gstage_update_hgatp(vcpu);
++			kvm_riscv_mmu_update_hgatp(vcpu);
+ 
+ 		if (kvm_check_request(KVM_REQ_FENCE_I, vcpu))
+ 			kvm_riscv_fence_i_process(vcpu);
+diff --git a/arch/riscv/kvm/vcpu_exit.c b/arch/riscv/kvm/vcpu_exit.c
+index 6b4694bc07ea..0bb0c51e3c89 100644
+--- a/arch/riscv/kvm/vcpu_exit.c
++++ b/arch/riscv/kvm/vcpu_exit.c
+@@ -43,8 +43,9 @@ static int gstage_page_fault(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ 		};
+ 	}
+ 
+-	ret = kvm_riscv_gstage_map(vcpu, memslot, fault_addr, hva,
+-		(trap->scause == EXC_STORE_GUEST_PAGE_FAULT) ? true : false, &host_map);
++	ret = kvm_riscv_mmu_map(vcpu, memslot, fault_addr, hva,
++				(trap->scause == EXC_STORE_GUEST_PAGE_FAULT) ? true : false,
++				&host_map);
+ 	if (ret < 0)
+ 		return ret;
+ 
+diff --git a/arch/riscv/kvm/vm.c b/arch/riscv/kvm/vm.c
+index 8601cf29e5f8..66d91ae6e9b2 100644
+--- a/arch/riscv/kvm/vm.c
++++ b/arch/riscv/kvm/vm.c
+@@ -32,13 +32,13 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+ {
+ 	int r;
+ 
+-	r = kvm_riscv_gstage_alloc_pgd(kvm);
++	r = kvm_riscv_mmu_alloc_pgd(kvm);
+ 	if (r)
+ 		return r;
+ 
+ 	r = kvm_riscv_gstage_vmid_init(kvm);
+ 	if (r) {
+-		kvm_riscv_gstage_free_pgd(kvm);
++		kvm_riscv_mmu_free_pgd(kvm);
+ 		return r;
+ 	}
+ 
+@@ -200,7 +200,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 		r = KVM_USER_MEM_SLOTS;
+ 		break;
+ 	case KVM_CAP_VM_GPA_BITS:
+-		r = kvm_riscv_gstage_gpa_bits();
++		r = kvm_riscv_gstage_gpa_bits;
+ 		break;
+ 	default:
+ 		r = 0;
 -- 
 2.43.0
 
