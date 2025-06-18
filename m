@@ -1,131 +1,123 @@
-Return-Path: <linux-kernel+bounces-691890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB4F7ADEA17
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75026ADEA26
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EA1D189DC38
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:32:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC359189DC8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C4E2DFF30;
-	Wed, 18 Jun 2025 11:30:50 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6669F2E6D33;
+	Wed, 18 Jun 2025 11:31:16 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C567B2DF3D9;
-	Wed, 18 Jun 2025 11:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870192E54A5;
+	Wed, 18 Jun 2025 11:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750246250; cv=none; b=Y4zsoOPLOHFdg7sXCC6+BLvRhBPzEBqmcFw/NMUx6N3yHxKUy69VFDJX8vuJ1HX1F60WfYNPtOlbxtBH2JOtYNoKSOSLbEHNKhiD65JaXIdHgitJpHHiNxYqBU2Fyh2IiryQB6MmQ55kMQP1yCnTqopsBQrE/iB+PAqMI4aa/Cc=
+	t=1750246276; cv=none; b=fzDj6sO+y8S27/N90qPp0o4NDT1Vz1Kp7F5TyCNDpez1UYnJml1fjRUV46nM1GkD1eluTzyj+EwXqOGBVmvy8Xn8BsOduoQ7WJ+Fcrcoa/yMmLv3opzbjbjL1DccPFBWP0qb/Ll20t/iINaf28gZhve2q/Md3jmXzWEVUTSc50s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750246250; c=relaxed/simple;
-	bh=AKzZJsNK3kGCOdfHetbvbaTi98iPP+YfVScP9LEqBA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tvHlHQUBZMja0E2YUi/drYeZ1hMTYgc59WrYyoWKu3Cong02taol2sBrrzlojNPAm5PdTSStCr8FwbS4SheUgWcg4/N8BsdOG4svy20YtNoDIvzu127N03z7tplo+807aAuEDXeIXch+IO0ODfVgEmH/Rdld62kznapaFrBWxWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: a781b34e4c3711f0b29709d653e92f7d-20250618
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:c1a1dc15-7e44-4ff4-8265-f2581780a041,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:4fc89cfed55a2a893fbecc6f623ad388,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: a781b34e4c3711f0b29709d653e92f7d-20250618
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 20915265; Wed, 18 Jun 2025 19:30:36 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 43CA0E008900;
-	Wed, 18 Jun 2025 19:30:36 +0800 (CST)
-X-ns-mid: postfix-6852A35C-8396723
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id C637CE008900;
-	Wed, 18 Jun 2025 19:30:23 +0800 (CST)
-Message-ID: <7d70334a-2e0a-4d1e-b4d0-64d0e3aa5439@kylinos.cn>
-Date: Wed, 18 Jun 2025 19:30:23 +0800
+	s=arc-20240116; t=1750246276; c=relaxed/simple;
+	bh=9dW14Xdbu0kEZtNE1OYSmjDkQI66n9K60BpD8Qdr2EM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=f8cpY+j8rwfznXNAkoRxagQChieo0C/klneAQY9/dZlF67zVriPZb2btltvBij7G5Q16b30M/ZFejsERwLIF/2a5JqZUAcor6o9SqLd3b/srBD2NjdQ68ZSHQWdDS3egohghqKrCd75IszZlTwGJmXpWuNOo7HJcEgeENJ1JLRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf17.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id E41A11A141D;
+	Wed, 18 Jun 2025 11:31:11 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf17.hostedemail.com (Postfix) with ESMTPA id 11E1A18;
+	Wed, 18 Jun 2025 11:31:09 +0000 (UTC)
+Date: Wed, 18 Jun 2025 07:31:17 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH] fgraph: Keep track of when fgraph_ops are registered or not
+Message-ID: <20250618073117.024efb2e@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] PM: Optionally block user fork during freeze to
- improve performance
-To: David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, rafael@kernel.org,
- len.brown@intel.com, pavel@kernel.org, kees@kernel.org, mingo@redhat.com,
- juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20250606062502.19607-1-zhangzihuan@kylinos.cn>
- <20250606082244.GL30486@noisy.programming.kicks-ass.net>
- <83513599-e007-4d07-ac28-386bc5c7552d@kylinos.cn>
- <cd548b13-620e-4df5-9901-1702f904d470@redhat.com>
- <a4370ebc-b1ce-46ba-b3a4-cb628125d7d0@kylinos.cn>
- <aEvNqY5piB02l20T@tiehlicka>
- <ee1de994-e59f-4c6c-96f3-66056b002889@kylinos.cn>
- <775aaf10-3d19-4d5a-bf2b-703211166be4@redhat.com>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <775aaf10-3d19-4d5a-bf2b-703211166be4@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 11E1A18
+X-Stat-Signature: 5ckgk9qkt8mmft3hir1ufycnirzxb4wx
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18SMXOUaXQIGfWFH4hw4wEd0EKRZxhTG+k=
+X-HE-Tag: 1750246269-15902
+X-HE-Meta: U2FsdGVkX1+P1C/OQvYh1/Dp2qydXHXdDThwPY7OdyuhyDLj8Khs/DAiGUCQ7Hhq6PI491CCIMIuB44pZ1YUGHGVpD0mVomXAX+qDO/f0RhyX1Fx5sSWYO5tX4O6kr2QoeHPVw5Kt/eXswwaDnXGsSIe+NSMQRbpO4KsePuPKwX7CvdZ6exFff+pjTLE0kHJDJpnnBOUxogljuu+U+K+sCmYvC2B9GMgIldoSoQehw1U21/A9LY/V/HqDNd/dL+M6xj+A+fBIzjRhBACEkUpuWhQIT/6G52iDXTGZtKuCYauTjnmKMwi3IZYfzkRSVSQl9nQRCKbIgCer5+2k04gjvFc6c5NZhFbt2/pqe/s1US7mAc3yrbGOxuPBXvfkUjiabXLLDd4igRtCnI8kf4Ina37/EXxrYqcwkppaICnzEQC/UcgkasXyQ==
 
-Hi David,
+From: Steven Rostedt <rostedt@goodmis.org>
 
-=E5=9C=A8 2025/6/16 15:45, David Hildenbrand =E5=86=99=E9=81=93:
->
->>> [...]
->> In our test scenario, although new processes can indeed be created
->> during the usleep_range() intervals between freeze iterations, it=E2=80=
-=99s
->> actually difficult to make the freezer fail outright. This is because
->> user processes are forcibly frozen: when they return to user space and
->> check for pending signals, they enter try_to_freeze() and transition
->> into the refrigerator.
->>
->> However, since the scheduler is fair by design, it gives both newly
->> forked tasks and yet-to-be-frozen tasks a chance to run. This
->> competition for CPU time can slightly delay the overall freeze process=
-.
->> While this typically doesn=E2=80=99t lead to failure, it does cause mo=
-re retries
->> than necessary, especially under CPU pressure.
->
-> I think that goes back to my original comment: why are we even=20
-> allowing fork children to run at all when we are currently freezing=20
-> all tasks?
->
-> I would imagine that try_to_freeze_tasks() should force any new=20
-> processes (forked children) to start in the frozen state directly and=20
-> not get scheduled in the first place.
->
-Thanks again for your comments and suggestion.
+Add a warning if unregister_ftrace_graph() is called without ever
+registering it, or if register_ftrace_graph() is called twice. This can
+detect errors when they happen and not later when there's a side effect:
 
-We understand the motivation behind your idea: ideally, newly forked=20
-tasks during freezing should either be immediately frozen or prevented=20
-from running at all, to avoid unnecessary retries and delays. That makes=20
-perfect sense.
+Link: https://lore.kernel.org/all/20250617120830.24fbdd62@gandalf.local.home/
 
-However, implementing this seems non-trivial under the current freezer=20
-model, as it relies on voluntary transitions and lacks a mechanism to=20
-block forked children from being scheduled.
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/fgraph.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-Any insights or pointers would be greatly appreciated.
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index c5b207992fb4..c6bb6c68764f 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -1325,6 +1325,10 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+ 	int ret = 0;
+ 	int i = -1;
+ 
++	if (WARN_ONCE(gops->ops.flags & FTRACE_OPS_FL_GRAPH,
++		      "function graph ops registered again"))
++		return -EBUSY;
++
+ 	guard(mutex)(&ftrace_lock);
+ 
+ 	if (!fgraph_stack_cachep) {
+@@ -1401,17 +1405,21 @@ void unregister_ftrace_graph(struct fgraph_ops *gops)
+ {
+ 	int command = 0;
+ 
++	if (WARN_ONCE(!(gops->ops.flags & FTRACE_OPS_FL_GRAPH),
++		      "function graph ops unregistered without registering"))
++		return;
++
+ 	guard(mutex)(&ftrace_lock);
+ 
+ 	if (unlikely(!ftrace_graph_active))
+-		return;
++		goto out;
+ 
+ 	if (unlikely(gops->idx < 0 || gops->idx >= FGRAPH_ARRAY_SIZE ||
+ 		     fgraph_array[gops->idx] != gops))
+-		return;
++		goto out;
+ 
+ 	if (fgraph_lru_release_index(gops->idx) < 0)
+-		return;
++		goto out;
+ 
+ 	fgraph_array[gops->idx] = &fgraph_stub;
+ 
+@@ -1434,4 +1442,6 @@ void unregister_ftrace_graph(struct fgraph_ops *gops)
+ 		unregister_trace_sched_switch(ftrace_graph_probe_sched_switch, NULL);
+ 	}
+ 	gops->saved_func = NULL;
++ out:
++	gops->ops.flags = 0;
+ }
+-- 
+2.47.2
 
-Best regards,
-Zihuan Zhang
 
