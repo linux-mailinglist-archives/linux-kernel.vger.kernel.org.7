@@ -1,79 +1,64 @@
-Return-Path: <linux-kernel+bounces-691512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F10ADE58B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:29:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 097AAADE5A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1FDD3B0D13
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:28:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53D14189E7B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9477F25CC7B;
-	Wed, 18 Jun 2025 08:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BB5DF59;
+	Wed, 18 Jun 2025 08:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r+EYnoHs"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TZo+Qjfz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2C22586EE
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C735619E819;
+	Wed, 18 Jun 2025 08:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750235342; cv=none; b=IJNQO0SOr5usDnaW9MdDoBvgPTY1t1PCYh0a0rp/Kh9L+gUXXycxu5GlnLps7CbLvuEYqUDn8a4lzG5x/d0rsCAihXAbi3gYu6DH83nXatzWyOHCRaovx/hVqeQ+fWbR3p/14wpFidDlSabPZepJvXduKUtf+vaH2XbF2j4Rplo=
+	t=1750235617; cv=none; b=R3M7C/CvdfD9x9+JHLysaZ0iPZXB75ucdDD9vTPi4/wj8KVzaHkCmB9L5BxJ8L5Srwv7DH4/GeCIrFfCSzkn+/67eERhekLtYVkHDdqwU9REDEoWfhq2PH8GWHdkcG994xx0Vd6mLOvIqWwxi88t5tp3fMUuxCO6X7SB/S3NIyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750235342; c=relaxed/simple;
-	bh=aAQahM2nioQ9Gls/T+c0FETRDrE+kZs96QLGJ8lrCzY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=AcR/0H+djxN5sRgVwPmfnsk+0QxwpjpleAmusF52A3E2NeRzHa0aztzkJlSxOv/QRIZbF3IQ3CTKZ5nHx5n0XfvFNLA9HjGajIFKjskH5P3SgxkzeFSj4hJHVVSM5RTZe/ZgoNbB2RgdEDisI0cvstAjaWGqOcqtXnbkmG/x+PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r+EYnoHs; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a575a988f9so2704720f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 01:29:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750235339; x=1750840139; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7gcJo3/wfaTJZNHwp70Ko9JmEHSNZ37Pbopm46n4G2g=;
-        b=r+EYnoHst+B2UGLZ2cyacN5s2z3AoA+Fh4wOzhy83zzlZK8F4ES7mGsMwuzg+ue7bV
-         p9W8o/vegpuiG3lGFchZZXVUAHVZT+Pc8Lb8vNolcIZZNIFm6taCPgWVm0huw4RH2DP5
-         1wn+ZHKWoxiTYYM8duRP9VRUD7a82PyrftD0aTI9w+VwF/CBPf/iIneIjMiSftAjczSY
-         5hEuzACmvficjhyKLKgWbMkPPu6lMZ680z1nd9M8toXQNBPGk8kFqyh54HVD1n2rejzH
-         BBE+z/NQNV6kcyp8X/5OaZp9pDqpQHqFz/8lzJudHPftZJLqzAkSwNLG1wFe1HnQrie/
-         0uGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750235339; x=1750840139;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7gcJo3/wfaTJZNHwp70Ko9JmEHSNZ37Pbopm46n4G2g=;
-        b=GJdXvXF2vF7yCObSCamonjlhQUAXpZF2OpUR6mVS3a13iwdfLDFKWDpGfT+SgJB4X0
-         o7Bvn2BNM+T1cQE4pIe/fIV76BNGkZoNPirruwGbjuKWFDbf1bKZ41kEb+s95QVZgD55
-         eJqNJE24WP8Hk7IrlVINtcg+a+hWXyUSrVgdM7aYWPU1pw7ZIREgeBsSDFmIba01pulJ
-         iv8UW/m/rT/rD16ucwRr0N/bhKp4kVgkYFvc/Vk2/qIbHbI88VFhNhyMCwiV/bf+AV9D
-         RN2lXDC/Ynl/J+fS34JPV+KkPUhS0BBp0Y9bmzVSxpKuXg3F2NI1fioLQzuhZQzeewBE
-         Leug==
-X-Forwarded-Encrypted: i=1; AJvYcCWJMp6G7V9/oWKsjSC4L3kJjvKc3d4ZbyP0uU3JNM6LUlGUVW7GbQwsBImFJH41F6AmdifPLd6dS19dcc4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy92gZbrG1ROL4u5IbOcb7rpyC3IsIOKwX1Sa9EVgpBefsaI92K
-	0+E89lcHMoouMVDsLDTKC/nkySYwrKpFEJXM1p20rg+urs7+6gGrr26hLNIrM7z6cpo=
-X-Gm-Gg: ASbGncvvqc7J1gKXp7T5OdaJGpmmNDRIslLF71CxJIFEbqJffBVyVHUq1uRBnvxjLgD
-	WG98rqSu7sxG7zD8KDPOD1IQqkZ5Dx9r9raiO57SB1/nZLtg1/SY3x1sZ/mJv3SV9bg/caX3c4Z
-	ZBhlUicqGgZbwXY7x+5hRfXIBl6QMHxFgwJDBCqHdubmAtB6Euzx9+7G0RAALnGBC8Sg48jHw0c
-	2zjoGAhZF+CiH85FxIQGTCxR/J3bHeuQTfg0+qNlSFR+MGitf1/x5ZQzk+ycpYLphHOkv+5Qp2w
-	CpRrg5OYBq85xYyZAP9gv8L8kQ2jV8ymFGgIt3G5KwWXxfnl8sxPM41VWWbcThxoR+ijicUiTGL
-	CkA==
-X-Google-Smtp-Source: AGHT+IGpz2E6KVPtFNpmns5QY+sc36eVwHYTe8Cv7AENssFnzG+4sIXaEKXOzytVt6DU/O/AkTkN3A==
-X-Received: by 2002:a05:6000:2313:b0:3a5:51a3:3a2 with SMTP id ffacd0b85a97d-3a572e9390bmr13067498f8f.45.1750235338630;
-        Wed, 18 Jun 2025 01:28:58 -0700 (PDT)
-Received: from [192.168.1.3] ([37.18.136.128])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a54d74sm16476380f8f.10.2025.06.18.01.28.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jun 2025 01:28:58 -0700 (PDT)
-Message-ID: <0060a6d7-ceee-4ecd-b4b7-1c9fc422efc7@linaro.org>
-Date: Wed, 18 Jun 2025 09:28:56 +0100
+	s=arc-20240116; t=1750235617; c=relaxed/simple;
+	bh=fIu3H0X1ir+ab5DgfWZw8Zxf2egqeIQlXSOMOU+My5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i4VIhubzAJEKUAe+BobFLMmBSY0E5svDZQc0+jTUXKt1joy07bh6JgkMFo8q7lLLbnSMTRUI/nRb1z6oCi4k0919pJGi3CPvHnt2uAzPBi6mQrxGGwPZvgk3J7DlygJi3hp4kaP18QY4RxNEWVEq+XYQyemEW7S6btFScuXMVvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TZo+Qjfz; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750235616; x=1781771616;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=fIu3H0X1ir+ab5DgfWZw8Zxf2egqeIQlXSOMOU+My5c=;
+  b=TZo+Qjfzi4wCLHB/11wruSp9VA8QxlGISaG66w533v1WSxc0plEdsYs+
+   hkjO9HgyUl/JUZyJm3wc2EovJu+JzqMcKAhEriaMtjq67akzMNj1KIHmD
+   JkdU1/Zk3puJlDlHVqjsZgY9Ayzk1ORsS+CYrkwVbuWk0h4oqiEZ/6f0c
+   BPbxaD9Mt41TjdHdZrN5BBXjIMYvS757sd07ljxPsHwNSZx13Wury3aLx
+   LMpgMVpttEdIn61q9L4rTT8bwABNHd/zfZjr9givGPHYZX+S9VHV98hrO
+   EL0tpav7TZTcKGQoiCIVBa9ecXgQUiSwlNg7rGuD7WIXrCrQAsQyEj5Lc
+   A==;
+X-CSE-ConnectionGUID: m3aupNNSTI222TTctr1y+Q==
+X-CSE-MsgGUID: kOfACOHfRR6RwtxVlSIOCA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="63048642"
+X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
+   d="scan'208";a="63048642"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 01:32:27 -0700
+X-CSE-ConnectionGUID: XdbUQy3CRfOUfn7iOGHy+w==
+X-CSE-MsgGUID: HBtqD8F8So280xiJlFKgkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
+   d="scan'208";a="149986926"
+Received: from mmowka-mobl.ger.corp.intel.com (HELO [10.245.101.212]) ([10.245.101.212])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 01:32:20 -0700
+Message-ID: <231e4cef-2e44-4e25-9169-f298e72e8e07@linux.intel.com>
+Date: Wed, 18 Jun 2025 10:32:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,73 +66,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf vendor events arm64: Update FUJITSU-MONAKA pmu event
-To: "Kotaro, Tokai" <fj0635gf@aa.jp.fujitsu.com>
-References: <20250618063618.1244363-1-fj0635gf@aa.jp.fujitsu.com>
-Content-Language: en-US
-Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250618063618.1244363-1-fj0635gf@aa.jp.fujitsu.com>
+Subject: Re: [PATCH v14 02/19] x86: Secure Launch Kconfig
+To: Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+ linux-efi@vger.kernel.org, iommu@lists.linux.dev
+Cc: dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, ardb@kernel.org,
+ mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
+ peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
+ nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net,
+ corbet@lwn.net, ebiederm@xmission.com, dwmw2@infradead.org,
+ baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
+ andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+References: <20250421162712.77452-1-ross.philipson@oracle.com>
+ <20250421162712.77452-3-ross.philipson@oracle.com>
+Content-Language: pl
+From: "Mowka, Mateusz" <mateusz.mowka@linux.intel.com>
+In-Reply-To: <20250421162712.77452-3-ross.philipson@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
+On 21-Apr-25 6:26 PM, Ross Philipson wrote:
+> Initial bits to bring in Secure Launch functionality. Add Kconfig
+> options for compiling in/out the Secure Launch code.
+>
+> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
 
-On 18/06/2025 7:35 am, Kotaro, Tokai wrote:
-> Update pmu events for FUJITSU-MONAKA.
-> And, also updated common-and-microarch.json.
-> 
-> FUJITSU-MONAKA PMU Events Specification v1.1 and Errata v1.0 URL:
-> https://github.com/fujitsu/FUJITSU-MONAKA
-> 
-> Arm Architecture Reference Version L.b URL:
-> https://developer.arm.com/documentation/ddi0487/lb/?lang=en
-> 
-> Signed-off-by: Kotaro, Tokai <fj0635gf@aa.jp.fujitsu.com>
+Acked-by: Mateusz Mowka <mateusz.mowka@linux.intel.com>
+
 > ---
->   .../arch/arm64/common-and-microarch.json      | 70 +++++++++++++
->   .../arm64/fujitsu/monaka/core-imp-def.json    |  2 +-
->   .../fujitsu/monaka/cycle_accounting.json      |  4 +-
->   .../arch/arm64/fujitsu/monaka/exception.json  |  2 +-
->   .../arm64/fujitsu/monaka/fp_operation.json    | 98 +++++++++++++++----
->   .../arch/arm64/fujitsu/monaka/l1d_cache.json  | 10 +-
->   .../arch/arm64/fujitsu/monaka/l1i_cache.json  |  8 +-
->   .../arch/arm64/fujitsu/monaka/l2_cache.json   | 28 +++---
->   .../arch/arm64/fujitsu/monaka/l3_cache.json   | 63 ++++++------
->   .../arch/arm64/fujitsu/monaka/ll_cache.json   |  2 +-
->   .../arch/arm64/fujitsu/monaka/pipeline.json   |  6 +-
->   .../arm64/fujitsu/monaka/spec_operation.json  | 12 +--
->   .../arch/arm64/fujitsu/monaka/stall.json      |  4 +-
->   .../arch/arm64/fujitsu/monaka/sve.json        | 44 ++++-----
->   .../arch/arm64/fujitsu/monaka/tlb.json        | 56 +++++------
->   15 files changed, 265 insertions(+), 144 deletions(-)
-> 
-[...]
-> diff --git a/tools/perf/pmu-events/arch/arm64/fujitsu/monaka/fp_operation.json b/tools/perf/pmu-events/arch/arm64/fujitsu/monaka/fp_operation.json
-> index a3c368959199..2ffdc16530dd 100644
-> --- a/tools/perf/pmu-events/arch/arm64/fujitsu/monaka/fp_operation.json
-> +++ b/tools/perf/pmu-events/arch/arm64/fujitsu/monaka/fp_operation.json
-> @@ -2,7 +2,7 @@
->       {
->           "EventCode": "0x0105",
->           "EventName": "FP_MV_SPEC",
-> -        "BriefDescription": "This event counts architecturally executed floating-point move operations."
-> +        "BriefDescription": "This event counts architecturally executed floating-point move operation."
-
-The original was more grammatically correct, but the updates are just 
-from the pdf so:
-
-Reviewed-by: James Clark <james.clark@linaro.org>
-
-
+>   arch/x86/Kconfig | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
+>
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 4b9f378e05f6..badde1e9742e 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2001,6 +2001,17 @@ config EFI_RUNTIME_MAP
+>   
+>   	  See also Documentation/ABI/testing/sysfs-firmware-efi-runtime-map.
+>   
+> +config SECURE_LAUNCH
+> +	bool "Secure Launch support"
+> +	depends on X86_64 && X86_X2APIC && TCG_TIS && TCG_CRB && CRYPTO_LIB_SHA1 && CRYPTO_LIB_SHA256
+> +	help
+> +	   The Secure Launch feature allows a kernel to be loaded
+> +	   directly through an Intel TXT measured launch. Intel TXT
+> +	   establishes a Dynamic Root of Trust for Measurement (DRTM)
+> +	   where the CPU measures the kernel image. This feature then
+> +	   continues the measurement chain over kernel configuration
+> +	   information and init images.
+> +
+>   source "kernel/Kconfig.hz"
+>   
+>   config ARCH_SUPPORTS_KEXEC
 
