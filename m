@@ -1,305 +1,117 @@
-Return-Path: <linux-kernel+bounces-691472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86131ADE519
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:04:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DEADADE51E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20EBC179FC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:04:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEE21189B446
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E08420C000;
-	Wed, 18 Jun 2025 08:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0D827F00B;
+	Wed, 18 Jun 2025 08:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j/TCyPmO"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gjrxtSt7"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FEA078F36
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3404A78F36;
+	Wed, 18 Jun 2025 08:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750233868; cv=none; b=qmwCvGxzByuO1PwRFVYTgPjEWViYmwe9Uwrhhx4bn4tG4ZXr5U4WcGW6YM1G+9fBS5TwOwS/PAZx0haZF1TT8R67oQ7qKATaWqSMMpd8I97Bg5+3/4UPr8vj1o1k90w5AhBqsVuKA2bqdMvq1haewMzAssfFjCkOcGcqY7f6aDc=
+	t=1750233910; cv=none; b=u9au9BKJ8PTV2ddcrGrxbct9g2ahqQzWX8FdF6O96aVwNkPwarDqFCgx5Yk/cRo/NQ+2h29msjTEa6Fm9VmwkJaSInaZO+CCea18UoV8ER49WS19RrJ5ZbMETNX9R0lP8n4rTN+vKlNQZqILv5wWrC1MYKlM+BhqmLWsLRY+3Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750233868; c=relaxed/simple;
-	bh=yl5dCt2p9NgRBQN0acGkIFARIah1SNLIIvQPjlua74M=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jDulZj98+D77dGsddW1/lEV2NbOlooqy3PBFzKfh9MQgFWUpljajzozsF8mYLyRZ1Y6Wmwj1X78yDnRtIaRuR504v8+jNksQeHqV/Cdz3G3WwTxjLnXMreOTPhDiOMk5m7oUSWVS+ayCZ52whujwOeyqRYP6S3UMScGQYTlFV80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j/TCyPmO; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3138e65efe2so6616972a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 01:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750233866; x=1750838666; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Z/DwVRQ3b1y1TzMnYgvk64L2l0CSiGtFg3i8HFqfIzs=;
-        b=j/TCyPmOpQ12nXWM5sQjGMuSrkDBXhXISJYag05iko5yVuCbIS3/ydAu66MuGKsAX8
-         axW1SRHNTQefTX7ZhQZi4loyJuODmkcXOFcbNPAlq8EkSCj7x4RDcShiE5MqsjYdnTiy
-         tTmA+hQq8Sc+c2Bu6WDgNGzcyBKZ5FVVBq3KF12TF9zxl15QqLNjBjFVX9wJv8WaR46L
-         +bZBcZ2LsFCg5rRG7o/M5+gwteQgjfNKVNkjPVcgoVumD/kCbH02Z3uwX1A/fk9EHCPq
-         1YOu5GegDVfSl2VtwusMLeH6+1pJJGOLMTt5ia2BRHT2PaHAPVuG2zv/AUMPK4v5nJPw
-         Uu8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750233866; x=1750838666;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z/DwVRQ3b1y1TzMnYgvk64L2l0CSiGtFg3i8HFqfIzs=;
-        b=nw33Ow5dIxueM+1X8ECf/qGojkWar1dXbSjah9YKpK5s1aO5u4GJeiKOVaEAcJXkpK
-         67OPQ49y1O7b7A/+6UreGDcvU+ILpWAVLjxkesDnFCn7qIMEs3lnY7EQF+chhdlHFIc+
-         f4suGsHHpF7IGlZblBI3OoKH7nc3jL8919XvtHjqcWduvRmO51+RA+IxvyIYEG8rN9OH
-         w1q/7VPrIbPqtfTkLfkt6D/347tVPsILxAZpD/4lgEwPjwlN2hvV9+9zR4T7Fl7wSRgl
-         s4iKsJSz8vbfe9xRozjjqRjnSJ2InoVbMoBRblkaFGyq4pmPSsAiT3dHq7hQF/KLBfi3
-         KsqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaOJ868N65e8dLWZFXx8AHK7JS4VWsvQDYDvwSNSRxGDgnx2Yy1T3aNr7vtE5dbcNRC+NwzyZLThlZZ6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvbLdL4kKL1mD8goNzqXExOF6yennp7hQLwBYtNeqonjxtQerF
-	x4MBNw0Eyhcg0YjULYqSA7vseYNIiJ6zg+/Tk9dfRHa2g0H4CJbPiG4AfXDcb6WF2sMrbERipEp
-	X6QF9D95VMd8UQ1o6QFz/aYrEug==
-X-Google-Smtp-Source: AGHT+IFX2fr9n0BZiK9URUlErAOmKdogNjRgm0OvFTLs0f8wPxFtW8UY6TmwvI1z1uPU6OMzK6bkw26PaxHua05yGg==
-X-Received: from pjzz13.prod.google.com ([2002:a17:90b:58ed:b0:2fe:800f:23a])
- (user=joonwonkang job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:3842:b0:312:1ae9:1529 with SMTP id 98e67ed59e1d1-313f1daf6d2mr23563450a91.27.1750233866516;
- Wed, 18 Jun 2025 01:04:26 -0700 (PDT)
-Date: Wed, 18 Jun 2025 08:03:39 +0000
+	s=arc-20240116; t=1750233910; c=relaxed/simple;
+	bh=6/3qHFdiaMsBTrQbhD+mcQD74rIaA69OMemwtiFZ/+I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Y9Oi8XVdGtEXhZS1bzk5I/qbB+9j5Cm2CMVIZaGy5jJVQvRFpZQb1uvx9yWOi9mxG6yTkZnfbUteGLytIeJ1heUSX46bJ2JbiozUcy3ha6Om/IEC6yAQkXnaB1282smpTHBCPQUFkFZ/VqpfUA5MJ6KbDeIhenR4tpiimm3BHYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=gjrxtSt7; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55I8509d258388;
+	Wed, 18 Jun 2025 03:05:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1750233900;
+	bh=iAAvYxuuuYgZ6Udi3MqCZJcu5QStsstjQ/LkjzAIDBw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=gjrxtSt7FvQkXkHpVC5Uo2xcKnofCv6Ehf8qWIJw5uEl06UjNterpP3Dm/Yu2K32D
+	 sQRwzyqu30rrMEdd8EJIyydxx+jNTtLYeLssmXvSUsbNRm/pYCtyaJi1mYuWRtguTz
+	 4AqqXhaC5mTbS9xBzQgTBHAMSnAurR3N6bv8RCqA=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55I850so2735878
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 18 Jun 2025 03:05:00 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 18
+ Jun 2025 03:04:59 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 18 Jun 2025 03:04:59 -0500
+Received: from [172.24.20.171] (lt2k2yfk3.dhcp.ti.com [172.24.20.171])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55I84sLG3131069;
+	Wed, 18 Jun 2025 03:04:55 -0500
+Message-ID: <fabe8565-cd27-4117-ba64-23022f1942ae@ti.com>
+Date: Wed, 18 Jun 2025 13:34:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.rc2.696.g1fc2a0284f-goog
-Message-ID: <20250618080339.969173-1-joonwonkang@google.com>
-Subject: [PATCH 1/2] mailbox: Use per-thread completion to fix wrong
- completion order
-From: Joonwon Kang <joonwonkang@google.com>
-To: jassisinghbrar@gmail.com, thierry.reding@gmail.com
-Cc: alexey.klimov@arm.com, sudeep.holla@arm.com, jonathanh@nvidia.com, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	Joonwon Kang <joonwonkang@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/17] dmaengine: ti: k3-udma: move static inline
+ helper functions to header file
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+CC: Peter Ujfalusi <peter.ujfalusi@gmail.com>, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>, <dmaengine@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <praneeth@ti.com>,
+        <vigneshr@ti.com>, <u-kumar1@ti.com>, <a-chavda@ti.com>,
+        <p-mantena@ti.com>
+References: <20250612071521.3116831-1-s-adivi@ti.com>
+ <20250612071521.3116831-4-s-adivi@ti.com>
+ <acc1217d-50ce-4851-829d-38294b0a4d81@ti.com>
+Content-Language: en-US
+From: "Adivi, Sai Sree Kartheek" <s-adivi@ti.com>
+In-Reply-To: <acc1217d-50ce-4851-829d-38294b0a4d81@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Previously, a sender thread in mbox_send_message() could be woken up at
-a wrong time in blocking mode. It is because there was only a single
-completion for a channel whereas messages from multiple threads could be
-sent in any order; since the shared completion could be signalled in any
-order, it could wake up a wrong sender thread.
+Hi Siddharth,
 
-This commit resolves the false wake-up issue with the following changes:
-- Completions are created as many as the number of concurrent sender
-  threads
-- A completion is created in a sender thread's stack
-- Each slot of the message queue, i.e. `msg_data`, contains a pointer to
-  its target completion
-- tx_tick() signals the completion of the currently active slot of the
-  message queue
+On 6/12/2025 4:35 PM, Siddharth Vadapalli wrote:
+> On Thu, Jun 12, 2025 at 12:45:07PM +0530, Sai Sree Kartheek Adivi wrote:
+>> Move static inline helper functions in k3-udma.c to k3-udma.h header
+>> file for better separation and re-use.
+>>
+>> Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+>> ---
+>>   drivers/dma/ti/k3-udma.c | 108 --------------------------------------
+>>   drivers/dma/ti/k3-udma.h | 109 +++++++++++++++++++++++++++++++++++++++
+> 
+> Since this patch and the previous two patches seem to have the same
+> objective of moving contents from "k3-udma.c" to "k3-udma.h" for the
+> purpose of re-use, could they be squashed?
 
-Link: https://lore.kernel.org/all/1490809381-28869-1-git-send-email-jaswinder.singh@linaro.org
-Signed-off-by: Joonwon Kang <joonwonkang@google.com>
----
- drivers/mailbox/mailbox.c          | 43 +++++++++++++++++++-----------
- drivers/mailbox/tegra-hsp.c        |  2 +-
- include/linux/mailbox_controller.h | 20 +++++++++-----
- 3 files changed, 43 insertions(+), 22 deletions(-)
+I split them up to make the changes easier to review, bisect or revert 
+if needed. They're logically distinct changes even if the overall goal 
+is similar.
 
-diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-index 5cd8ae222073..80cd310964a8 100644
---- a/drivers/mailbox/mailbox.c
-+++ b/drivers/mailbox/mailbox.c
-@@ -22,7 +22,7 @@
- static LIST_HEAD(mbox_cons);
- static DEFINE_MUTEX(con_mutex);
- 
--static int add_to_rbuf(struct mbox_chan *chan, void *mssg)
-+static int add_to_rbuf(struct mbox_chan *chan, void *mssg, struct completion *tx_complete)
- {
- 	int idx;
- 
-@@ -33,7 +33,8 @@ static int add_to_rbuf(struct mbox_chan *chan, void *mssg)
- 		return -ENOBUFS;
- 
- 	idx = chan->msg_free;
--	chan->msg_data[idx] = mssg;
-+	chan->msg_data[idx].data = mssg;
-+	chan->msg_data[idx].tx_complete = tx_complete;
- 	chan->msg_count++;
- 
- 	if (idx == MBOX_TX_QUEUE_LEN - 1)
-@@ -51,7 +52,7 @@ static void msg_submit(struct mbox_chan *chan)
- 	int err = -EBUSY;
- 
- 	scoped_guard(spinlock_irqsave, &chan->lock) {
--		if (!chan->msg_count || chan->active_req)
-+		if (!chan->msg_count || chan->active_req >= 0)
- 			break;
- 
- 		count = chan->msg_count;
-@@ -61,14 +62,14 @@ static void msg_submit(struct mbox_chan *chan)
- 		else
- 			idx += MBOX_TX_QUEUE_LEN - count;
- 
--		data = chan->msg_data[idx];
-+		data = chan->msg_data[idx].data;
- 
- 		if (chan->cl->tx_prepare)
- 			chan->cl->tx_prepare(chan->cl, data);
- 		/* Try to submit a message to the MBOX controller */
- 		err = chan->mbox->ops->send_data(chan, data);
- 		if (!err) {
--			chan->active_req = data;
-+			chan->active_req = idx;
- 			chan->msg_count--;
- 		}
- 	}
-@@ -82,11 +83,17 @@ static void msg_submit(struct mbox_chan *chan)
- 
- static void tx_tick(struct mbox_chan *chan, int r)
- {
--	void *mssg;
-+	int idx;
-+	void *mssg = NULL;
-+	struct completion *tx_complete = NULL;
- 
- 	scoped_guard(spinlock_irqsave, &chan->lock) {
--		mssg = chan->active_req;
--		chan->active_req = NULL;
-+		idx = chan->active_req;
-+		if (idx >= 0) {
-+			mssg = chan->msg_data[idx].data;
-+			tx_complete = chan->msg_data[idx].tx_complete;
-+			chan->active_req = -1;
-+		}
- 	}
- 
- 	/* Submit next message */
-@@ -100,7 +107,7 @@ static void tx_tick(struct mbox_chan *chan, int r)
- 		chan->cl->tx_done(chan->cl, mssg, r);
- 
- 	if (r != -ETIME && chan->cl->tx_block)
--		complete(&chan->tx_complete);
-+		complete(tx_complete);
- }
- 
- static enum hrtimer_restart txdone_hrtimer(struct hrtimer *hrtimer)
-@@ -113,7 +120,7 @@ static enum hrtimer_restart txdone_hrtimer(struct hrtimer *hrtimer)
- 	for (i = 0; i < mbox->num_chans; i++) {
- 		struct mbox_chan *chan = &mbox->chans[i];
- 
--		if (chan->active_req && chan->cl) {
-+		if (chan->active_req >= 0 && chan->cl) {
- 			txdone = chan->mbox->ops->last_tx_done(chan);
- 			if (txdone)
- 				tx_tick(chan, 0);
-@@ -244,11 +251,18 @@ EXPORT_SYMBOL_GPL(mbox_client_peek_data);
- int mbox_send_message(struct mbox_chan *chan, void *mssg)
- {
- 	int t;
-+	struct completion tx_complete;
- 
- 	if (!chan || !chan->cl)
- 		return -EINVAL;
- 
--	t = add_to_rbuf(chan, mssg);
-+	if (chan->cl->tx_block) {
-+		init_completion(&tx_complete);
-+		t = add_to_rbuf(chan, mssg, &tx_complete);
-+	} else {
-+		t = add_to_rbuf(chan, mssg, NULL);
-+	}
-+
- 	if (t < 0) {
- 		dev_err(chan->mbox->dev, "Try increasing MBOX_TX_QUEUE_LEN\n");
- 		return t;
-@@ -265,7 +279,7 @@ int mbox_send_message(struct mbox_chan *chan, void *mssg)
- 		else
- 			wait = msecs_to_jiffies(chan->cl->tx_tout);
- 
--		ret = wait_for_completion_timeout(&chan->tx_complete, wait);
-+		ret = wait_for_completion_timeout(&tx_complete, wait);
- 		if (ret == 0) {
- 			t = -ETIME;
- 			tx_tick(chan, t);
-@@ -318,9 +332,8 @@ static int __mbox_bind_client(struct mbox_chan *chan, struct mbox_client *cl)
- 	scoped_guard(spinlock_irqsave, &chan->lock) {
- 		chan->msg_free = 0;
- 		chan->msg_count = 0;
--		chan->active_req = NULL;
-+		chan->active_req = -1;
- 		chan->cl = cl;
--		init_completion(&chan->tx_complete);
- 
- 		if (chan->txdone_method	== TXDONE_BY_POLL && cl->knows_txdone)
- 			chan->txdone_method = TXDONE_BY_ACK;
-@@ -461,7 +474,7 @@ void mbox_free_channel(struct mbox_chan *chan)
- 	/* The queued TX requests are simply aborted, no callbacks are made */
- 	scoped_guard(spinlock_irqsave, &chan->lock) {
- 		chan->cl = NULL;
--		chan->active_req = NULL;
-+		chan->active_req = -1;
- 		if (chan->txdone_method == TXDONE_BY_ACK)
- 			chan->txdone_method = TXDONE_BY_POLL;
- 	}
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index ed9a0bb2bcd8..de7494ce0a9f 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -497,7 +497,7 @@ static int tegra_hsp_mailbox_flush(struct mbox_chan *chan,
- 			mbox_chan_txdone(chan, 0);
- 
- 			/* Wait until channel is empty */
--			if (chan->active_req != NULL)
-+			if (chan->active_req >= 0)
- 				continue;
- 
- 			return 0;
-diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_controller.h
-index ad01c4082358..ae29fba3bc46 100644
---- a/include/linux/mailbox_controller.h
-+++ b/include/linux/mailbox_controller.h
-@@ -102,16 +102,25 @@ struct mbox_controller {
-  */
- #define MBOX_TX_QUEUE_LEN	20
- 
-+/**
-+ * struct mbox_message - Internal representation of a mailbox message
-+ * @data:		Data packet
-+ * @tx_complete:	Pointer to the transmission completion
-+ */
-+struct mbox_message {
-+	void *data;
-+	struct completion *tx_complete;
-+};
-+
- /**
-  * struct mbox_chan - s/w representation of a communication chan
-  * @mbox:		Pointer to the parent/provider of this channel
-  * @txdone_method:	Way to detect TXDone chosen by the API
-  * @cl:			Pointer to the current owner of this channel
-- * @tx_complete:	Transmission completion
-- * @active_req:		Currently active request hook
-+ * @active_req:		Index of the currently active slot in the queue
-  * @msg_count:		No. of mssg currently queued
-  * @msg_free:		Index of next available mssg slot
-- * @msg_data:		Hook for data packet
-+ * @msg_data:		Queue of data packets
-  * @lock:		Serialise access to the channel
-  * @con_priv:		Hook for controller driver to attach private data
-  */
-@@ -119,10 +128,9 @@ struct mbox_chan {
- 	struct mbox_controller *mbox;
- 	unsigned txdone_method;
- 	struct mbox_client *cl;
--	struct completion tx_complete;
--	void *active_req;
-+	int active_req;
- 	unsigned msg_count, msg_free;
--	void *msg_data[MBOX_TX_QUEUE_LEN];
-+	struct mbox_message msg_data[MBOX_TX_QUEUE_LEN];
- 	spinlock_t lock; /* Serialise access to the channel */
- 	void *con_priv;
- };
--- 
-2.50.0.rc2.696.g1fc2a0284f-goog
+If there's a strong preference to squash them, I can do that but I'd 
+prefer keeping them separate.
+
+> 
+> Regards,
+> Siddharth.
 
 
