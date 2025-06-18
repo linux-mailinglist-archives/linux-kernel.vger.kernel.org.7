@@ -1,106 +1,194 @@
-Return-Path: <linux-kernel+bounces-692247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67756ADEEE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:11:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E720ADEEC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF72B1672A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:11:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB050189FF59
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8C02EAB87;
-	Wed, 18 Jun 2025 14:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2602EAB70;
+	Wed, 18 Jun 2025 14:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b="crQbKVX2"
-Received: from 0.smtp.remotehost.it (0.smtp.remotehost.it [213.190.28.75])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C7n0slu3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835322EAB6B;
-	Wed, 18 Jun 2025 14:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.190.28.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F1427F01C;
+	Wed, 18 Jun 2025 14:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750255875; cv=none; b=lE2oVQlSCLBtd8KNbngtvFF5YLfjsIdG/a3F+diJa0LJVVH6D77JBeglm2/LpTuweiVYQ3OrnysVFTZjPFNdkCnwKuK7rHkEMnOVzYyc9VkrSP8pjw8epdw81J9GkzR0vVxrqM26waIDRCCvUY9f1rcz3NXysjmIlEi8zfLjYSc=
+	t=1750255553; cv=none; b=GAWoQezIVAOnpEo4EkjzytLThS+++s+jENvEGAXEEJSOJwqyRyN2Ccagy3uB6RE4++/mmM1p+Otm6TDvAPnadqlkyj9KL9PC1Ti6JUJn1qq9DMgbOH8otbYlLivD4phDlYp6qkaC1yBjp7st/YxO69ENolY3WCygigERZp0Z2NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750255875; c=relaxed/simple;
-	bh=cUKuuxowFo1SZ9wawpwIJTY3SBMVpGZMBpEpAWMaqts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EyHqMzbQoY9MMVIOYzVmlP1/NecmYbZ5kBQ9pi/lz2HMPb9Rep8o7m2FordVuNb9V6KXgddPL+UNfEzlu6JCSvGP4i8+uSyfjIUqRzEOyMlSCUQ6WrhW9Rz2mk/BGKHSIEGKtXNITdIveSB2BE98CE5aAs15WE96rL/1/UCujgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net; spf=pass smtp.mailfrom=hardfalcon.net; dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b=crQbKVX2; arc=none smtp.client-ip=213.190.28.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hardfalcon.net
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=hardfalcon.net;
-	s=dkim_2024-02-03; t=1750253526;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X+Xs3mSWwiOpW/TKAW/a32e3EA51rUtpxiGBCMeOCZo=;
-	b=crQbKVX2y4JSe09683eSQOfdkasLhpKvU6LGOlUbcT34eN0lu+nkTHw8RU3xyoa4w0OIh9
-	bS1c++lL8p3qxRDQ==
-Message-ID: <c8e4e868-aafb-4df1-8d07-62126bfe2982@hardfalcon.net>
-Date: Wed, 18 Jun 2025 15:32:03 +0200
+	s=arc-20240116; t=1750255553; c=relaxed/simple;
+	bh=W59sWljTo31n0OteBWneyzCr/mv5go6jVJu0eiSWH4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VWUrG2MflArMZMZOko5lTtGSwAVRwFANzQc1+ZA0+FzRzH4pEAVMIPy7wXPr3GSLHmu0RgBhnXQ/TTWQTrjNC4iRf2iCns7xf0djUNwz4zZrxHBgE/4NAbDhHMrBxx7bKb48A45bDhxl19LkAuVjDt78S6RsNQF2re5mHMVUlq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C7n0slu3; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750255549; x=1781791549;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=W59sWljTo31n0OteBWneyzCr/mv5go6jVJu0eiSWH4k=;
+  b=C7n0slu3fT5k1E9wsO15CdNpOAYo9+KnqR30xTpMHFYfrAfD5thhvUTY
+   quA7kVgdVzEpiTRuWxcM4pG5lK/C9K6dUxn3O6gu1dcvvPeayHnCDvGNo
+   Gl2NPI3apJLbYgtgRKbzDhzVPa5Xb1rkLsah9zmGHIn306qNlSSIDO7JL
+   avJ4xTK17iKZCzB2a9/WUyjW6YhoAsZejFG/45YaLs3UJA1qGNBxTWDq+
+   4/vKyFRpbfwl40DD27xCSXLJD9HDQcBXr5Ur5S4NFLI5c7S3jRIlmDmxo
+   2mNGX21w8w3VyTnI5yNRwyuVbSgn+xl4WYjBBhQ5GTWujkkbLfzO2rgQq
+   w==;
+X-CSE-ConnectionGUID: h5BS2rRcRo+ZzrkRqT/Hyw==
+X-CSE-MsgGUID: 1QVZw8N1QUmut5nIkV2vFA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="40082830"
+X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
+   d="scan'208";a="40082830"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 07:05:48 -0700
+X-CSE-ConnectionGUID: w3Z7ccvaTDWPakvQ4a/4xw==
+X-CSE-MsgGUID: iPpkbhTtSeeaZTW+ams0lw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
+   d="scan'208";a="150075214"
+Received: from linux-pnp-server-11.sh.intel.com ([10.239.176.178])
+  by fmviesa008.fm.intel.com with ESMTP; 18 Jun 2025 07:05:45 -0700
+From: Wangyang Guo <wangyang.guo@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: wangyang.guo@intel.com,
+	Tianyou Li <tianyou.li@intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>
+Subject: [PATCH] x86/paravirt: add backoff mechanism to virt_spin_lock
+Date: Wed, 18 Jun 2025 22:04:24 +0800
+Message-ID: <20250618140424.3873939-1-wangyang.guo@intel.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 6.15 000/780] 6.15.3-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ronald Warsow <rwarsow@gmx.de>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, conor@kernel.org, hargar@microsoft.com,
- broonie@kernel.org
-References: <20250617152451.485330293@linuxfoundation.org>
- <f2b87714-0ef6-4210-9b30-86b4c79d1ed8@gmx.de>
- <2025061848-clinic-revered-e216@gregkh>
-Content-Language: en-US, de-DE, en-US-large
-From: Pascal Ernster <git@hardfalcon.net>
-In-Reply-To: <2025061848-clinic-revered-e216@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-[2025-06-18 07:42] Greg Kroah-Hartman:
-> On Tue, Jun 17, 2025 at 08:27:03PM +0200, Ronald Warsow wrote:
->> Hi Greg
->>
->> Kernel panic here on x86_64 (RKL, Intel 11th Gen. CPU)
->>
->> all others kernels were okay. nothing was changed in my compile config.
->>
->> Tested-by: Ronald Warsow <rwarsow@gmx.de>
-> 
-> Any chance you can use 'git bisect' to find the offending commit?
-> 
-> thanks,
-> 
-> greg k-h
+When multiple threads waiting for lock at the same time, once lock owner
+releases the lock, waiters will see lock available and all try to lock,
+which may cause an expensive CAS storm.
 
+Binary exponential backoff is introduced. As try-lock attempt increases,
+there is more likely that a larger number threads compete for the same
+lock, so increase wait time in exponential.
 
-Hi, I've just come across the exact same bug on my x86_64 machines, but 
-unfortunately I won't have the time to start bisecting this before 
-tonight or tomorrow morning.
+The optimization can improves SpecCPU2017 502.gcc_r benchmark by ~4% for
+288 cores VM on Intel Xeon 6 E-cores platform.
 
-In any case, the culprit must be one of these patches:
+For micro benchmark, the patch can have significant performance gain
+in high contention case. Slight regression is found in some of mid-
+conetented cases because the last waiter might take longer to check
+unlocked. No changes to low contented scenario as expected.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/diff/queue-6.15?id=9cc80b684b4f77d6c54fc0f1d34ecfe559838702&id2=f724d2960e671efa0e5bcb51327690f791923e4b
+Micro Bench: https://github.com/guowangy/kernel-lock-bench
+Test Platform: Xeon 8380L
+First Row: critical section length
+First Col: CPU core number
+Values: backoff vs linux-6.15, throughput based, higher is better
 
-I had built a 6.15.2 kernel with the patch queue from tree id 
-f724d2960e671efa0e5bcb51327690f791923e4b a few days ago and that kernel 
-works flawlessly.
+non-critical-length: 1
+       0     1     2     4     8    16    32    64   128
+1   1.01  1.00  1.00  1.00  1.01  1.01  1.01  1.01  1.00
+2   1.02  1.01  1.02  0.97  1.02  1.05  1.01  1.00  1.01
+4   1.15  1.20  1.14  1.11  1.34  1.26  0.99  0.93  0.98
+8   1.59  1.71  1.18  1.80  1.95  1.45  1.05  0.99  1.17
+16  1.04  1.37  1.08  1.31  1.85  1.50  1.24  0.99  1.24
+32  1.24  1.36  1.23  1.40  1.50  1.86  1.45  1.18  1.48
+64  1.12  1.24  1.11  1.31  1.34  1.37  2.01  1.60  1.43
 
-Today, I built a kernel with the patch queue from tree id 
-9cc80b684b4f77d6c54fc0f1d34ecfe559838702 and that kernel crashes when 
-trying to boot on x86_64 with the same error messages that Ronald 
-reported yesterday.
+non-critical-length: 32
+       0     1     2     4     8    16    32    64   128
+1   1.00  1.00  1.00  1.00  1.00  0.99  1.00  1.00  1.01
+2   1.00  1.00  1.00  1.00  1.00  1.00  1.00  0.99  1.00
+4   1.12  1.25  1.09  1.07  1.12  1.16  1.13  1.16  1.09
+8   1.02  1.16  1.03  1.02  1.04  1.07  1.04  0.99  0.98
+16  0.97  0.95  0.84  0.96  0.99  0.98  0.98  1.01  1.03
+32  1.05  1.03  0.87  1.05  1.25  1.16  1.25  1.30  1.27
+64  1.83  1.10  1.07  1.02  1.19  1.18  1.21  1.14  1.13
 
+non-critical-length: 128
+       0     1     2     4     8    16    32    64   128
+1   1.00  1.00  1.00  1.00  1.00  1.00  1.00  1.00  1.00
+2   0.99  1.02  1.00  1.00  1.00  1.00  1.00  1.00  1.00
+4   0.98  0.99  1.00  1.00  0.99  1.04  0.99  0.99  1.02
+8   1.08  1.08  1.08  1.07  1.15  1.12  1.03  0.94  1.00
+16  1.00  1.00  1.00  1.01  1.01  1.01  1.36  1.06  1.02
+32  1.07  1.08  1.07  1.07  1.09  1.10  1.22  1.36  1.25
+64  1.03  1.04  1.04  1.06  1.13  1.18  0.82  1.02  1.14
 
-Regards
-Pascal
+Reviewed-by: Tianyou Li <tianyou.li@intel.com>
+Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Wangyang Guo <wangyang.guo@intel.com>
+---
+ arch/x86/include/asm/qspinlock.h | 28 +++++++++++++++++++++++++---
+ 1 file changed, 25 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
+index 68da67df304d..ac6e1bbd9ba4 100644
+--- a/arch/x86/include/asm/qspinlock.h
++++ b/arch/x86/include/asm/qspinlock.h
+@@ -87,7 +87,7 @@ DECLARE_STATIC_KEY_FALSE(virt_spin_lock_key);
+ #define virt_spin_lock virt_spin_lock
+ static inline bool virt_spin_lock(struct qspinlock *lock)
+ {
+-	int val;
++	int val, locked;
+ 
+ 	if (!static_branch_likely(&virt_spin_lock_key))
+ 		return false;
+@@ -98,11 +98,33 @@ static inline bool virt_spin_lock(struct qspinlock *lock)
+ 	 * horrible lock 'holder' preemption issues.
+ 	 */
+ 
++#define MAX_BACKOFF 64
++	int backoff = 1;
++
+  __retry:
+ 	val = atomic_read(&lock->val);
++	locked = val;
++
++	if (locked || !atomic_try_cmpxchg(&lock->val, &val, _Q_LOCKED_VAL)) {
++		int spin_count = backoff;
++
++		while (spin_count--)
++			cpu_relax();
++
++		/*
++		 * Here not locked means lock tried, but fails.
++		 *
++		 * When multiple threads waiting for lock at the same time,
++		 * once lock owner releases the lock, waiters will see lock available
++		 * and all try to lock, which may cause an expensive CAS storm.
++		 *
++		 * Binary exponential backoff is introduced. As try-lock attempt
++		 * increases, there is more likely that a larger number threads
++		 * compete for the same lock, so increase wait time in exponential.
++		 */
++		if (!locked)
++			backoff = (backoff < MAX_BACKOFF) ? backoff << 1 : backoff;
+ 
+-	if (val || !atomic_try_cmpxchg(&lock->val, &val, _Q_LOCKED_VAL)) {
+-		cpu_relax();
+ 		goto __retry;
+ 	}
+ 
+-- 
+2.43.5
+
 
