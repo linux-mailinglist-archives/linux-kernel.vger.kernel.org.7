@@ -1,223 +1,222 @@
-Return-Path: <linux-kernel+bounces-692015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B5CADEBB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:20:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2535ADEBF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5DCA3A548F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:16:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A11D16DB00
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E452E7165;
-	Wed, 18 Jun 2025 12:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182612ECD1A;
+	Wed, 18 Jun 2025 12:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T6ukrPeP"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CkjT2qfZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541892DE1EC;
-	Wed, 18 Jun 2025 12:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C009296160
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750248935; cv=none; b=O0O0ngl60aChPajzPJenjmdZmzv4nWrx0TPjmcDfB7W1bsyBrGeCy4kIn9JGoXRVQfWOcVfSfm6YeXoUzDHyz7umIY2w4WlsiSxfw4xcWDizAfnwiHdlLfccrQXapMINg5kOxDciZhmsKTuncCZ9hMMQbMIpZX9Y5iYhHzWZTq0=
+	t=1750249057; cv=none; b=iH5t8XftrxHWjeR6d/UvIXa6NxokoP05L3vaNoN1NPUXDwZklq+4th1C250RWRdBju60Ma33d4qR+qgysPnTj1JXD49faE2TpFx3hMuzs4WaH9Mt9xDZbfwArMwx/x0QvcCyRlk9oTn9ovleG8rHc+Sd//Y1V19EHpFfyH6uwFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750248935; c=relaxed/simple;
-	bh=q0xCXsq5/VQMh0RUMEkGA3SijeZinqDCKVKsIPIgqhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qDO546ZwmqYiV2QazkChJYAYMFHhWS4sko3zVGa+wB7ETBr1BpR5b9GjgyrrwEMoCyJP9UKCroOedn11pjiZWr9XF9NF4Dr5EjI4NA8Z5/Uyvj40O0T3U1lzAsm7WwvO1WnjzUsKT1PhAwXpcBPtPQNCWhXCC1HQGRUIcjXEfXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T6ukrPeP; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-450cea01b9cso32309815e9.0;
-        Wed, 18 Jun 2025 05:15:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750248932; x=1750853732; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ywQo6SUFx1lzN34W/DgqqJaDCnFkQLp/0M82nR/3jtk=;
-        b=T6ukrPePe+Vdt7VlMU4cYtIspWg7SwEyO7nMBxYe85Q2whGmcDUQ/jw+Fk8Rmf/TZD
-         tEa5mUG6Vq2P29/zlaucMDjadf5ZcbdPQGcmBiZ4yy2CLIbFbre9j2MNnoaqPoLUqg0Y
-         u+1cu5844q0srW/xlECNI0V/fBdM2DCyv8DvWc3yIPyLGz8jga89kFdlkIw1+E5DoNdQ
-         oz/1dLTQNK5y7LB6o4UqF/OYsVLQZLjc93xm+9sr04wkO963jmRxHR2N69XGKDb4K+iy
-         2t3+qSGy8bKPYiW9bb8ZXmAm4hsS/afK99TxbG8VaBQ6qYgG8JT4EBqvADQlUCtFRoWN
-         It5Q==
+	s=arc-20240116; t=1750249057; c=relaxed/simple;
+	bh=GbNLi+EZjPkYRvt7zqESy62VDQOUsYYsEM6aI2Vw3Ac=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=owXlFYg9OxZXqBfdRt/BDEB1mx1AcST/zX5cS80sZV/TbQ7F/NzXLoBykjgcZHAY5xLLyVFfcRGk9C7p996XzUjxJ2mevLuBSlBgJQxh/GPnP9hYsi6ORAkdIQIfVAc1dUsrlKq/QAzhOQ4Oa2WDTahfHYnFrjMfEsK606FxdwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CkjT2qfZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750249054;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GbNLi+EZjPkYRvt7zqESy62VDQOUsYYsEM6aI2Vw3Ac=;
+	b=CkjT2qfZ55WneZ4ULfkb8/PDorUkKjbqsG/oRuRKf8Tq5Ks3JY84Kbu9nYCg0EUPRJ0qCS
+	quGVP6rSJLVlhAWCFuQu5EtchQhRgYjA65UbJiasw/3QBsRzMXcQXz9C9JC7jflyH8WzJm
+	Q8UBjqAS+eVNT57olM4CPMjh0aVsfoo=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-417-wUSajpV8NemIW039hb5uUA-1; Wed, 18 Jun 2025 08:17:32 -0400
+X-MC-Unique: wUSajpV8NemIW039hb5uUA-1
+X-Mimecast-MFC-AGG-ID: wUSajpV8NemIW039hb5uUA_1750249051
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ade6db50b98so659492466b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 05:17:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750248932; x=1750853732;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ywQo6SUFx1lzN34W/DgqqJaDCnFkQLp/0M82nR/3jtk=;
-        b=bdFu/5EhDpbCyyscKeBOn4766iic9Nitn41hzZjXpbw9/dvG/vecnf7Uq+Eq65M3/M
-         QOiaTetqqs6rzbIKsv0yA8KlGIAk/G8iwJZWPHAMiobKOHTM6XaL4aqc8yNo41s+/WAX
-         G1mn9zMzeCU6xJWcax02Yu4EQT6Hh7gYbDBb6Dmg9nGtZdaZclteyfNzVnv6ArTz5CiK
-         s/7+n6lIaNOF2Nnrr/1ds7cVqJoi7pH15BvxKIjGigA2xi+YzQu5JgBDLmyepXCrtYyV
-         8sF0P/HXT+r3wVWZ58zbD06JwU6i5FPCMkql3oSUbSkj1QS6irnMMHSbKIhQCI283JgX
-         jGGw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6KjaKbUTTpKO/pDuCTf6vU7w+WhA9NTFtxLDHUZPd/fbdb71WfTyTslz7csNZOw1mCsnQ+MHC7JRgjfwA@vger.kernel.org, AJvYcCXKpMVgIbXHUNGzCO3U2fWQT8hPO1V+6Cck9AOqHRagYeQ9qLJz+hbKH6VFfM/YYfpRoPyzBrC5B+ce@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8AMj/Nj6vE54KAPie7EOfet+co3uPdna5Igm5WJbIrK8hzv+I
-	kXyQMlcN8fuUduudAyM5u6G1qiwLWoepgH2B1X2bPkVIBsbTM97ZdipgsGiMoAEY4cY=
-X-Gm-Gg: ASbGnct9ExAwqlL+ErLBNB+mnV5j/gXptxjnCq0kWuwTIGnTE68tUyJNZWN7i0SxRXC
-	oqf6OVr+ItQtbwK29SYdsiOSTUB0wjUGLq0CDOBmgzvJBPSNtwSpyZ1tI/XRQmGkMQbEQMZR/Lp
-	uVh+bTASqziJA/Sl1PNwFcNYvFfxCOj83gEW6kl71dnbd0oQjH4PBRQ18zG+nh5zkXXn9jc6o1A
-	qsoI940Fd2rE4uohTs6IbwTFCBOP3dsbTgmv27tjt5ukO4M+x7yS02J7NpNzArdfaBcvpiwfkdT
-	qQRk1zA04TxcU83KkTnRiXwXzHxXpo3poi/ExySz8404w4VsfznLpYL3LGFCUYnhHaJwDP7dLsW
-	5oF4dJQQ=
-X-Google-Smtp-Source: AGHT+IEHOSjPWSh00P12zW7jYpqc5E8nsqDH1nPj9D8MDJOQ7SCMRaKJlqbVi+qZDnUXj/RLD7r7yA==
-X-Received: by 2002:a05:600c:8b25:b0:44a:b7a3:b95f with SMTP id 5b1f17b1804b1-4533cac9674mr143842665e9.25.1750248931315;
-        Wed, 18 Jun 2025 05:15:31 -0700 (PDT)
-Received: from HYB-DlYm71t3hSl.ad.analog.com ([137.71.226.91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e253f64sm203769495e9.27.2025.06.18.05.15.29
+        d=1e100.net; s=20230601; t=1750249051; x=1750853851;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GbNLi+EZjPkYRvt7zqESy62VDQOUsYYsEM6aI2Vw3Ac=;
+        b=fi1TTpw0DmQXzhEwwiBRq/Y9MW9YBBit4DP9N9PQvCqodsTz1I7QP2mUS0weFgPCZM
+         aA2Zlm+dlPe5OPkDVg2uSGD4gHbwqe/CwI0qTKCJEU7ApwEdnZyaRKbfnCJVak+0pvYt
+         KSO0Ny+GLlJVceIWi+snjFl0Wy6lx1ZWEzJ3Ymufxv9oZ/eNyvqAUegfTP6bRplXg3Ge
+         RLPUPN9RfZb4e8NWDEVJPs3Tew0wXwQ7d594JT8AW4ANwdLQqnLElisPlQ5+hsv56pPt
+         PPaXpXcccbQnCMW+A7XOlwc3N3ix7JKGVcKXWs67ViYfeKf7cw7yaUNsr/RM4dyKyCah
+         Jotg==
+X-Gm-Message-State: AOJu0YzccqOBgHe1E3ndux5qtnNi7UPL3g6YbI3JhDfmkPNw42YyCozf
+	H+Fm5VScILR8c29rdXF1B1eS6bdYcy7IXFnZTa/vgSPfzM/bdBTWdP70ucMgJZ+QJu9Y1/3fMoV
+	i165F5Tc9e1Rw1jQaqH4Ejhod+OY26UyUcDPb3CVnnR6UQjH1+l43AnY1Ms0RXm86W/7iffZyER
+	TfB4tyW9Gl9Hy7ovbpmtIBvAuxPaEcaYWVUGURo0Wm2A2L4KtGnIs=
+X-Gm-Gg: ASbGncs0fZwiH9+7wXDwA8qZIXozLb58IpAdAJVgxtZJFDdz5L2UMJEyTBGNyeBwWAJ
+	/IvThzmVSAorFKpiXjF7kKebc6GEOJqQJGlQyqnKndioQQd6lxe41RH/YbLMRc5Es5wZvFqJhqp
+	I/8ggw+WoonADUxOHn3O2KS629xh3bP3w3/KVUFR5V+xrVB6nC0mG1v2CbuJbrEGZnbeDbrgkvD
+	y20gIOcHcUoSCrhSP9GzJTdZE9dly8OyKz53DOuMcGP+b9jo9Jxth1HNaO6NSp634SMRSHZiiq1
+	IT6+Eb9HbfOxhRHj+mtU7yat4HvCOP4BM5O0O/cq+DuBo0k9+ps=
+X-Received: by 2002:a17:906:7310:b0:ad8:a41a:3cd2 with SMTP id a640c23a62f3a-adfad434544mr1659008266b.16.1750249051406;
+        Wed, 18 Jun 2025 05:17:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEBCx2aY3FI7wEWRK+AkPspj3Fa7PpXhGxZQMiPGrmFIF7fP4FDlwLVBKWh2P7l6zVQkCIXJA==
+X-Received: by 2002:a17:906:7310:b0:ad8:a41a:3cd2 with SMTP id a640c23a62f3a-adfad434544mr1659004966b.16.1750249050953;
+        Wed, 18 Jun 2025 05:17:30 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([195.174.132.161])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec8159e24sm1039424866b.34.2025.06.18.05.17.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 05:15:30 -0700 (PDT)
-Date: Wed, 18 Jun 2025 14:15:24 +0200
-From: Jorge Marques <gastmaier@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jorge Marques <jorge.marques@analog.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: i3c: Add adi-i3c-master
-Message-ID: <ymmn2jgpa4bia2wl4d32ccipybxt4nylz4hspdf2svivk5ao7s@vv7v3soq2e65>
-References: <20250618-adi-i3c-master-v3-0-e66170a6cb95@analog.com>
- <20250618-adi-i3c-master-v3-1-e66170a6cb95@analog.com>
- <20250618-visionary-hawk-of-success-d4aab8@kuoka>
+        Wed, 18 Jun 2025 05:17:30 -0700 (PDT)
+Message-ID: <d9e3238e78a0384a6ba0651574522f44c6f2fb76.camel@redhat.com>
+Subject: Re: [PATCH v6 0/6] timers: Exclude isolated cpus from timer migation
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>,  Frederic Weisbecker	 <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Waiman Long	 <longman@redhat.com>
+Date: Wed, 18 Jun 2025 14:17:29 +0200
+In-Reply-To: <20250530142031.215594-1-gmonaco@redhat.com>
+References: <20250530142031.215594-1-gmonaco@redhat.com>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618-visionary-hawk-of-success-d4aab8@kuoka>
 
-On Wed, Jun 18, 2025 at 11:21:22AM +0200, Krzysztof Kozlowski wrote:
-> On Wed, Jun 18, 2025 at 09:16:43AM GMT, Jorge Marques wrote:
-> > Add bindings doc for ADI I3C Controller IP core, a FPGA synthesizable IP
-> > core that implements the MIPI I3C Basic controller specification.
-> 
-> Here you put outcome of previous questions - why such compatible was
-> chosen, that hardware is this and that.
-> 
-> > 
-> > Signed-off-by: Jorge Marques <jorge.marques@analog.com>
-> > ---
-> >  .../devicetree/bindings/i3c/adi,i3c-master.yaml    | 63 ++++++++++++++++++++++
-> >  MAINTAINERS                                        |  5 ++
-> >  2 files changed, 68 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml b/Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..718733bbb450c34c5d4924050cc6f85d8a80fe4b
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml
-> 
-> Filename based on the compatible, so adi,i3c-master-1.00.a.yaml
-> 
-I agree, but I ended up following the pattern for the other adi,
-bindings. I will move for v4. IMO the version suffix has no much use
-since IP updates are handled in the driver.
-> > @@ -0,0 +1,63 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/i3c/adi,i3c-master.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Analog Devices I3C Controller
-> > +
-> > +description: |
-> > +  FPGA-based I3C controller designed to interface with I3C and I2C peripherals,
-> > +  implementing a subset of the I3C-basic specification.
-> > +
-> > +  https://analogdevicesinc.github.io/hdl/library/i3c_controller
-> > +
-> > +maintainers:
-> > +  - Jorge Marques <jorge.marques@analog.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: adi,i3c-master-1.00.a
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    minItems: 1
-> 
-> Why?
-> 
-The IP core requires a clock, and the second is optional.
-minItems sets the minimum number of required clocks and the maxItems is
-inferred from the number of items.
+On Fri, 2025-05-30 at 16:20 +0200, Gabriele Monaco wrote:
+> The timer migration mechanism allows active CPUs to pull timers from
+> idle ones to improve the overall idle time. This is however undesired
+> when CPU intensive workloads run on isolated cores, as the algorithm
+> would move the timers from housekeeping to isolated cores, negatively
+> affecting the isolation.
+>=20
+> [...]
+>=20
+> Exclude isolated cores from the timer migration algorithm, extend the
+> concept of unavailable cores, currently used for offline ones, to
+> isolated ones:
+> * A core is unavailable if isolated or offline;
+> * A core is available if isolated and offline;
+>=20
+> A core is considered unavailable as isolated if it belongs to:
+> * the isolcpus (domain) list
+> * an isolated cpuset
+> Except if it is:
+> * in the nohz_full list (already idle for the hierarchy)
+> * the nohz timekeeper core (must be available to handle global
+> timers)
 
-On the IP core itself, one clock is required (axi), and if it is the
-only provided, it means that the same clock for the AXI bus is used
-also for the rest of the RTL logic.
+Frederic, Thomas, Waiman, would you have time to review this series?
+Thanks,
+Gabriele
 
-If a second clock is provided, i3c, it means it drives the RTL logic and is
-asynchronous to the axi clock, which then just drives the register map logic.
-For i3c specified nominal speeds, the RTL logic should run with a speed of
-100MHz. Some FPGAs, such as Altera CycloneV, have a default bus clock speed of
-50MHz. Changing the bus speed is possible, but affects timing and it may not be
-possible from users to double the bus speed since it will affect timing of all
-IP cores using the bus clock.
-> > +    items:
-> > +      - description: The AXI interconnect clock.
-> > +      - description: The I3C controller clock.
-I will update the descriptions to:
+>=20
+> Due to how the timer migration algorithm works, any CPU part of the
+> hierarchy can have their global timers pulled by remote CPUs and have
+> to
+> pull remote timers, only skipping pulling remote timers would break
+> the
+> logic.
+> For this reason, we prevent isolated CPUs from pulling remote global
+> timers, but also the other way around: any global timer started on an
+> isolated CPU will run there. This does not break the concept of
+> isolation (global timers don't come from outside the CPU) and, if
+> considered inappropriate, can usually be mitigated with other
+> isolation
+> techniques (e.g. IRQ pinning).
+>=20
+> The first 3 patches are preparatory work to change the concept of
+> online/offline to available/unavailable, keep track of those in a
+> separate cpumask and change a function name in cpuset code.
+>=20
+> Patch 4 and 5 adapt isolation and cpuset to prevent domain isolated
+> and
+> nohz_full from covering all CPUs not leaving any housekeeping one.
+> This
+> can lead to problems with the changes introduced in this series
+> because
+> no CPU would remain to handle global timers.
+>=20
+> Patch 6 extends the unavailable status to domain isolated CPUs, which
+> is the main contribution of the series.
+>=20
+> Changes since v5:
+> * Remove fallback if no housekeeping is left by isolcpus and
+> nohz_full
+> * Adjust condition not to activate CPUs in the migration hierarchy
+> * Always force the nohz tick CPU active in the hierarchy
+>=20
+> Changes since v4 [1]:
+> * use on_each_cpu_mask() with changes on isolated CPUs to avoid races
+> * keep nohz_full CPUs included in the timer migration hierarchy
+> * prevent domain isolated and nohz_full to cover all CPUs
+>=20
+> Changes since v3:
+> * add parameter to function documentation
+> * split into multiple straightforward patches
+>=20
+> Changes since v2:
+> * improve comments about handling CPUs isolated at boot
+> * minor cleanup
+>=20
+> Changes since v1 [2]:
+> * split into smaller patches
+> * use available mask instead of unavailable
+> * simplification and cleanup
+>=20
+> [1] -
+> https://lore.kernel.org/lkml/20250506091534.42117-7-gmonaco@redhat.com
+> [2] -
+> https://lore.kernel.org/lkml/20250410065446.57304-2-gmonaco@redhat.com
+>=20
+> Gabriele Monaco (6):
+> =C2=A0 timers: Rename tmigr 'online' bit to 'available'
+> =C2=A0 timers: Add the available mask in timer migration
+> =C2=A0 cgroup/cpuset: Rename update_unbound_workqueue_cpumask() to
+> =C2=A0=C2=A0=C2=A0 update_exclusion_cpumasks()
+> =C2=A0 sched/isolation: Force housekeeping if isolcpus and nohz_full don'=
+t
+> =C2=A0=C2=A0=C2=A0 leave any
+> =C2=A0 cgroup/cpuset: Fail if isolated and nohz_full don't leave any
+> =C2=A0=C2=A0=C2=A0 housekeeping
+> =C2=A0 timers: Exclude isolated cpus from timer migation
+>=20
+> =C2=A0include/linux/timer.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 +++
+> =C2=A0include/trace/events/timer_migration.h |=C2=A0 4 +-
+> =C2=A0kernel/cgroup/cpuset.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 71 ++++++++++++++++++=
++--
+> =C2=A0kernel/sched/isolation.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 12 ++++
+> =C2=A0kernel/time/timer_migration.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 88 ++++++++++++++++++++++--
+> --
+> =C2=A0kernel/time/timer_migration.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+> =C2=A06 files changed, 165 insertions(+), 21 deletions(-)
+>=20
+>=20
+> base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
 
-        - description: The AXI interconnect clock, drives the register map.
-        - description: The I3C controller clock. AXI clock drives all logic if not provided.
-
-> > +
-> > +  clock-names:
-> 
-> Not synced with clocks.
-> 
-I will add `minItems: 1`.
-> > +    items:
-> > +      - const: axi
-> > +      - const: i3c
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - clock-names
-> > +  - interrupts
-> > +
-> > +allOf:
-> > +  - $ref: i3c.yaml#
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    i3c@44a00000 {
-> > +        compatible = "adi,i3c-master";
-> > +        reg = <0x44a00000 0x1000>;
-> > +        interrupts = <0 56 4>;
-> 
-> Use proper defines.
-> 
-The following can added:
-
-  #include <dt-bindings/interrupt-controller/irq.h>
-
-  interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
-
-Is there any other to be replaced?
-
-> Best regards,
-> Krzysztof
-> 
-
-Best regards,
-Jorge
 
