@@ -1,183 +1,246 @@
-Return-Path: <linux-kernel+bounces-692360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D9AADF08B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:59:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB30ADF048
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5DA53A97B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:57:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB06517FDA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7413B2F19B9;
-	Wed, 18 Jun 2025 14:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98ED2EA495;
+	Wed, 18 Jun 2025 14:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="lnnp4f96"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazolkn19011037.outbound.protection.outlook.com [52.103.66.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SP/+6VO9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BEC2F199A;
-	Wed, 18 Jun 2025 14:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.66.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750258498; cv=fail; b=kz1D7Qm8Y0wXzcHnPkHNInSadehTOzZBF0bOcfL7gDeqtDXvQPekJeVel1s1tBaZljq9wGe42b2XyzXVdWFg1EIFM3y4GxjySExxhsiG8+ptGDdSmZ2fZsWtxxmns/ur1sBeagrA+X2vcvj13m4zFfYRDz1am4Mmj+A/l9ogKEo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750258498; c=relaxed/simple;
-	bh=DwD7wEqWK+IK1EKkpu1uT/OUt3toPPDRljIyhl6O7Yo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sS8Q3hQH6oPkRgvWbVYROt9TZNRPFfF+eKAHHwW5irDe+enVg9SIYP4P0uniCPMGg/hTy410qTstESTu7FC7ZnhSP48Tcn1s89nTCoK7qDCvgE/prPEts5N4vKDTS6VuddGFGvXSXePYmIH1PBHJX7pjiT6BA1hyHAPW674VV1I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=lnnp4f96; arc=fail smtp.client-ip=52.103.66.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OKlrMdbRITrFMD0qRxEE5TVkwZOo88lP5jgwF1CsMr5LADb0SgIbY0DRDKJGunIgHBKNtsn9AYCQG7l0AWLTj6D4RTTF9oc+oObAmuNGDVHvrRzxgkSx4gjaOG2NbEjHnbt0cxhoWhQcr39bnZhG6JWDVMahLAl2w7lbAn4xsdsUuDq6UQdrYFMD5o7TJKGev+EhgNq0DR8Um3XcsAzHtz0ZVaZo/kHFatGHxZzWf8wggfI/mu6MtqOGkrt6CQ26uhGOx6EuFXuR11im6GQefl9WkCsb6l8SWN9EG5EjP0FnFHSi/bMG1GfYEOD5TTyguvnW384YyeNGD1wioWx77A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MDUbyxu+FYyGVVLp5OG997qJ5uM03qOJENpsefKGSi8=;
- b=bWMqMipZjlyKqBrkPu3dD/3gof8++mbESECNvvuvs+WuGe/whwQnmIGd44jUvp0i2u05WLXN42AKVGUWSJWlA9nUZYSjkie47hDwbDBDJaO6WTBo/fulVR6EUgw1wqlIcPhTNmKVGQ9zymBmWNLaIpY2thiEoSrmIq7rK8kyGXyCZQS5sUJvgDz+kikPYOtH4n01TtAYG2YsyVrPzb1qiwl5ulQL8D6fmsBsSS8Nsth95ZXIP+21JkpxlSNF9qrEf/z3RMb4qav01f6iTnpXoG9/d/9R3HUjjN+Db8GM/XKLavILtNz3fiEAd38soKUf12DaGgpZZsQzjsm0Tkezwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MDUbyxu+FYyGVVLp5OG997qJ5uM03qOJENpsefKGSi8=;
- b=lnnp4f96ptTpdamHe6H+6E88CUMGs63RkHThh/S7aXaPcMBnQ8d6aoOa4KXkZQi2BgzG5JZu4WRBhVyAPdKmhdTFIFUsu/sOIh53BVHFHO4f/kdbW7/4g0tBQ16TI4SwKXiZhWKRGLSexvUE+A8X0/hgVDS5DVZReQiS1Ke2AtHnxOrcq1oQmjU60p1qsw60V7wQwBp7npqXdy6LVctjKwhfgQEz0qRfKyENs3M2OoPjYl5Klx7Ao3JELGQs9sPofkFsXunb1QlFVJAhdnKYhIi1smNLRfiNSp1wiXIvTwxWqsl4Ea9dta3QriAkkwt8iDc1lpWrYI4qnkK75RT22g==
-Received: from OSBPR01MB1670.jpnprd01.prod.outlook.com (2603:1096:603:2::18)
- by TYYPR01MB10545.jpnprd01.prod.outlook.com (2603:1096:400:30e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.30; Wed, 18 Jun
- 2025 14:54:53 +0000
-Received: from OSBPR01MB1670.jpnprd01.prod.outlook.com
- ([fe80::c00:ec4e:ee7e:9b7f]) by OSBPR01MB1670.jpnprd01.prod.outlook.com
- ([fe80::c00:ec4e:ee7e:9b7f%7]) with mapi id 15.20.8857.016; Wed, 18 Jun 2025
- 14:54:53 +0000
-From: Shiji Yang <yangshiji66@outlook.com>
-To: linux-mips@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	John Crispin <john@phrozen.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Shiji Yang <yangshiji66@outlook.com>
-Subject: [PATCH 16/16] spi: falcon: mark falcon_sflash_xfer() as static
-Date: Wed, 18 Jun 2025 22:53:29 +0800
-Message-ID:
- <OSBPR01MB16705BE87E549B6210CD6BCABC72A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <OSBPR01MB1670163BDCA60924B3671D45BC72A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
-References: <OSBPR01MB1670163BDCA60924B3671D45BC72A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0054.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::22) To OSBPR01MB1670.jpnprd01.prod.outlook.com
- (2603:1096:603:2::18)
-X-Microsoft-Original-Message-ID:
- <20250618145329.25517-17-yangshiji66@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6702EE980;
+	Wed, 18 Jun 2025 14:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750258450; cv=none; b=Zr81Z+QJlUhCEMkikLgAasr5PrYGZqr1cLyHcz+CRVLRJOo59SZJFtM4SSndCXhY4EqHxhlGudvIeP8HiGGwHlZognS4vdUG5c1jlwwrm99t2AaoWukyncYoqWoFLGTxZ4s0ajAVIx5IDqug2bB2Sry4lE1iauMTMgF6e1BBS3A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750258450; c=relaxed/simple;
+	bh=Yhsltc1CyEN1UPsawbTXAY11+DGqgw+wyOFu+wS3V7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nPBUOvySiWJcEIaN4nu8ATiQEpsgOF5EE2toEaHM8Hw8TZWo6uJdQ1aCGHrTHM3GnzhG4LJtLE6gpp/FdWDiogVsEN3eVh2zqsVgFSLYEDv3rOBmZh36sgvDEJS7P00FJLnPo6ksEl8q6Hwg1V/59a597V5JA1NuFhA/jg9ysz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SP/+6VO9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 667D7C4CEF1;
+	Wed, 18 Jun 2025 14:54:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750258449;
+	bh=Yhsltc1CyEN1UPsawbTXAY11+DGqgw+wyOFu+wS3V7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SP/+6VO9a6ahuI5Z7FbBg+6D8kmUz7AunECCT31OcIf5eWQ5QgUdipsjhTpMplk5i
+	 ghSgxBM0+yEVVGfscj8m96Qt8fLccYpkda83eNXfNWeAk4Atm8UBJWMDQvQfVeW4p7
+	 P4r5Tvo8326+aGSjv0C2JAneaeXnea2W+CaFe9bQDvwZ+WxasaW3PLy9b8EOc7eqtY
+	 9xpkwSNTXBSaBsSco5rNCI4/a0H0+HSimwKePDvaKNCQWKjYx4OUeoniTHI3srzRWR
+	 Qsy8dqnQqIxfEdG3hEbJhortiwPU8CSf0q3fabdzJJsjHoOMV9/ptsGgDj6CJCfcib
+	 RDq8gDK3BQgwQ==
+Date: Wed, 18 Jun 2025 16:54:07 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Hans Verkuil <hans@jjverkuil.nl>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Mats Randgaard <matrandg@cisco.com>, Alain Volmat <alain.volmat@foss.st.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] media: tc358743: Fix the RGB MBUS format
+Message-ID: <20250618-dancing-rare-skua-eb7ffd@houat>
+References: <20250612-csi-bgr-rgb-v1-0-dc8a309118f8@kernel.org>
+ <20250612-csi-bgr-rgb-v1-3-dc8a309118f8@kernel.org>
+ <CAPY8ntCYG8ufxpMkgBj1ZpSW-H2HObpcbQNg9tj+EXUM4PGkfQ@mail.gmail.com>
+ <e9b61666-6bf0-4ec2-8524-0b6d94f028ef@jjverkuil.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSBPR01MB1670:EE_|TYYPR01MB10545:EE_
-X-MS-Office365-Filtering-Correlation-Id: 962a9db9-f1ca-4146-2d9f-08ddae7814fe
-X-MS-Exchange-SLBlob-MailProps:
-	quCBMN2EvO/3DulB83avQEM5mXo46VcBd525QhmmLboPealE7d++ie95uj02iMI7DadW/T3Jc/77wgvb1VKh3MWjxfC/pa5d8tJvMPKoDmGBv0gEbEiF00jfELgpph2ZnJ0SMAMIR/vWa/lozQpiB67WJQeK8+j5W7UUuFyhfe5buaEVuoKbg1RXD4PVPOb5xFxc7aB2DWQfsUZkMPIIDVw1BwomK8B8BOzhlgZDeWeaooCHlUlqSLxDU4gqS1FZa2ZqL2aOeuJwTMcS7LCkl6X9lUKeeG5KEoZipiYFppjMhknU9UqSGFki+4Nz4RG1xN4xfVfng13oa+GazzfifGekQiXCOcBQ+hKgYqJjXwswtYRkmT+QgSsdH5oaWHBuQV2p4TqPHUrt9R2w1jBPc4675e909QhRZM3iPuF+7mx/U3kHpSlzo+qvdgre3lD5tDH4jvhWoMLPpkxONkKTgQlNWUEWkNUBOkXP3ojnULKEcO8UGW4Og0Cx+nUvctAt34+lhz0olvl7Hae+IqcVAPKWNXk8u41ZCC1cDCM4tqnlZ5H0Ayx2g9h4ykfzAuj3AEBp4DzUYQk/SCKT+uURBwoHRlaXzsFSh6jQufspfjuGj4a0jaPIAgt9MVlPPuaJYN6/RKvAyRcFb9bYJ12fSx+v8qYIJ1+4UpvbIiqinyluOC4U2VRvsgDaG7PEVM/LAmbWEAyENfvQ3JVYRgC3nA==
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|7092599006|12121999007|8060799009|19110799006|15080799009|5072599009|461199028|3412199025|440099028|40105399003|51005399003|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZlmaWg0ytqOOqwBbuIWXkKoHurd8qbGuoYvaAkjChJ/DgbfFwKQD5agN+iAy?=
- =?us-ascii?Q?Mkq8NL/hJ2Fj7ZHQyfiiXifb4zUWH5usIMOcpOr0zuH3l38cfqT3CRasybnw?=
- =?us-ascii?Q?btn82q/sXLA2SAEgLzmt493MkwUJajDjtpFEIbhMOPkJ4zKAiB+AeJMf+FRH?=
- =?us-ascii?Q?5KnlMOGLW+Otel11Q8wCDJ18FkJzE105VQ1XIHwUbZfS7DLlsxv7ZGGUjETG?=
- =?us-ascii?Q?u9QdCpjg9TKljdATIqpCNJH5LSZ7+Mf/kB2dhXqegOWAIYoc4JJQnIXLVtrr?=
- =?us-ascii?Q?sI73giAUN2A3cEcGLBSeUhzggSQ6JIOhRhH1Ta+Ie9DefW3559QwsNqJ8BDZ?=
- =?us-ascii?Q?28HfPi91kRgqTdXYY5XG6sXJJ9D7yq9rlEi0fjWE4ZDm9KCS/Ua0YIe1bT1l?=
- =?us-ascii?Q?9fae8mwwFBdIDjlCj0Nuovg53pc2K8VboPorhLY39MgLydlBZ6RB/22IU68e?=
- =?us-ascii?Q?N/kkDN/fIwZIfcRW87Gy0fxRqQ8s1bQ6BJrCunVGXIqMXuTLmCDbgBplWjD5?=
- =?us-ascii?Q?5Tj+uyN5yb7TkjyhUuDN/Fn8UZBpBjhepb9wo9IAog3tiHRap6GwfuMU0Bmp?=
- =?us-ascii?Q?0X1Uspz1/isE6Y06Sfp2N5ty1sofMs7MVSwPTkBDXwJWUm2Z+J4Sc7D+9vVx?=
- =?us-ascii?Q?M58cdF67Eb5BZR1+vemuyFmZGVmxeoADx+e0Bioarau+6CuH9yPhXleK8rpQ?=
- =?us-ascii?Q?9zUUTpsceLEtYzlGJGacmRZafEXm3B4Uvww3XvnWQ1QRC+ndMF2d5Ki4khqN?=
- =?us-ascii?Q?FURmup9IQVyfWB2lMrK3N0vfGxZiAK1rUdcHw9z86xmC/YaTY98H0a7k4bEC?=
- =?us-ascii?Q?jZFbNW1cCj+O+6DEwL/cx4jZ5xI8HTKQHkANSB8EExlKLSed9Ap9Ez+4R/zD?=
- =?us-ascii?Q?6jA7kqdn2H25Hczq/i4PR+VLv3RyxP296ZLH3cBbPhBGw7Gqga+dyuAJbTfi?=
- =?us-ascii?Q?ldgeuQaslsk7qspj1k5qg58tzjNGAukX0Wnpk3JMenkFCc8Z3xZrWhMwgIcO?=
- =?us-ascii?Q?98hnacEk4a77eQBSTiLpVivhfqiz1uLr1qKhV5PBgZNpPQi4OeeX/rbPQ+Mi?=
- =?us-ascii?Q?0zCjNiVaTYDZeuoA+T4Hv3WqX8LGv30eV39gvduU4jHUMu7dc0rRmYkTBeo6?=
- =?us-ascii?Q?uYMzGRDLVd/WhI+9lHuOphH6FiaL/0Z78f2xrkLKedq5MbyacCh2kW1uIyQT?=
- =?us-ascii?Q?p7FEuu+69eNJepLGmp6tRwFUXk8+2fhXvag8lJSFPJXVBZ89kQI2cTRxtqw?=
- =?us-ascii?Q?=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Axr1GCgPukn5QvCsaiSQau2J9UwCRshK1AfA+9HiJVFBSJRpZs7PaVoB+toN?=
- =?us-ascii?Q?TGy2k2r3ySwpmNro69Fwc21C8LHlnb0c/+RxsFm4X8xBm6BJPVvEfbkl8yGT?=
- =?us-ascii?Q?p3vpRkFNLFaAuyw1RyQf1Q6nJd42YNPirvv0rMomm3c+Esx0yP6PyVNkNJDk?=
- =?us-ascii?Q?kazvnLHbfDuN+igVkj222FKZ7gimlinV3v5FEXydWnRsCAGSgJQYfvyirWk/?=
- =?us-ascii?Q?HMukXEOfRtuBHhbwlwWVuccQwEEXpYSt8gAHi1WGuX8ahnAsbiz3kiNhqwYT?=
- =?us-ascii?Q?HVx4jU/T2PKUdhlxQYXYOMGCt+1TXKiHuz/Mn82UU9OsDakeOjgBeClcIVKe?=
- =?us-ascii?Q?BmCbCS3FNlCDO0MKUWKR/B8pPU4diqWJpjc7xXKKHg/O3SoeomB6+H6vXlBh?=
- =?us-ascii?Q?5fj+NF4nSQRIHPHelqYFUfPKmgpOY9UBtbcChNHu33xoMrGkt5jkAp/eVO7f?=
- =?us-ascii?Q?UVjnM3P2oGgXrpbYherczkkzZmlaMmXBnXUdWXa+T/7B5r/WXddp/gsLqaeV?=
- =?us-ascii?Q?hosxJqKrTvWUexwhVisboPe0Lk8uOEMoO1x82pWSYjY+2y7T6nZpCFlmjv0j?=
- =?us-ascii?Q?8cr7XIb10ZB6FXLzpS0HsIaZ+KVY43kRtMKSBJ1fREvpG4x+BxWCqXon2z06?=
- =?us-ascii?Q?DaoVKG7j61KRLy8ugLEL2QqwBOPZuub6CNkPQ30LhjIKG0Sd5zqHPm6PVkpI?=
- =?us-ascii?Q?pBOUqr9G1dZp+ULf1AaZwQtki42c2Uj1Sd9lF0MHfDhxNXheCt2p/Ug0Q1+t?=
- =?us-ascii?Q?U3IYZb0xiHbRy4bQw8PUCdT1c/demPJsntTc0YV4rbTU9JlydhjDqNzah+80?=
- =?us-ascii?Q?mvw89HmTuSPfkA6O678jTtSHlbs3yYLRbEORKtYRp48bvjHG7LcSp0B9KAUg?=
- =?us-ascii?Q?JEjAiDL0eoiFEwfCRaaRI0lY9UNtslZyveuh2sIfwOZYI0dfGhqUxy5axryz?=
- =?us-ascii?Q?1wWlPr8vbORV6H3Lzqdvft70ZZGr45ntR0XVQxFZRyF8KAueDdy92HbUZUhg?=
- =?us-ascii?Q?yGPvcKgpPaeIuyKxhqb5QbLCyetj3Atvs7A5r5DT+b4OB2jDMRCpK8IUd8YH?=
- =?us-ascii?Q?Xd7TAegl6nYkicuEhgxITsd5ghJ/0/r1ihnyjKMTbakjMhWMKvfpWE7N6dok?=
- =?us-ascii?Q?a4aMHIRNt3X6GKNIA9wj74c1cr341YsteWJ1IS1QFffZQej5DyIzvC52Jdxo?=
- =?us-ascii?Q?ASRIKCXdYljMKxPD0x3ICqGEGoU1uEG8dfdjXSw0gOV3pjekZyKETaqkomL5?=
- =?us-ascii?Q?kgV2E3YXzsqlbQJrp2Um?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 962a9db9-f1ca-4146-2d9f-08ddae7814fe
-X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB1670.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 14:54:53.1759
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB10545
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="wjvoetypzbh3p6du"
+Content-Disposition: inline
+In-Reply-To: <e9b61666-6bf0-4ec2-8524-0b6d94f028ef@jjverkuil.nl>
 
-Fix the following missing-prototypes build warning:
 
-drivers/spi/spi-falcon.c:97:5: error: no previous prototype for 'falcon_sflash_xfer' [-Werror=missing-prototypes]
-   97 | int falcon_sflash_xfer(struct spi_device *spi, struct spi_transfer *t,
-      |     ^~~~~~~~~~~~~~~~~~
+--wjvoetypzbh3p6du
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 3/4] media: tc358743: Fix the RGB MBUS format
+MIME-Version: 1.0
 
-Signed-off-by: Shiji Yang <yangshiji66@outlook.com>
----
- drivers/spi/spi-falcon.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On Mon, Jun 16, 2025 at 10:02:17AM +0200, Hans Verkuil wrote:
+> On 12/06/2025 19:01, Dave Stevenson wrote:
+> > On Thu, 12 Jun 2025 at 13:54, Maxime Ripard <mripard@kernel.org> wrote:
+> >>
+> >> The tc358743 is an HDMI to MIPI-CSI2 bridge. It supports two of the
+> >> three HDMI 1.4 video formats: RGB 4:4:4 and YCbCr 422.
+> >>
+> >> RGB 4:4:4 is converted to the MIPI-CSI2 RGB888 video format, and listed
+> >> in the driver as MEDIA_BUS_FMT_RGB888_1X24.
+> >>
+> >> Most CSI2 receiver drivers then map MEDIA_BUS_FMT_RGB888_1X24 to
+> >> V4L2_PIX_FMT_RGB24.
+> >>
+> >> However, V4L2_PIX_FMT_RGB24 is defined as having its color components =
+in
+> >> the R, G and B order, from left to right. MIPI-CSI2 however defines the
+> >> RGB888 format with blue first.
+> >>
+> >> This essentially means that the R and B will be swapped compared to wh=
+at
+> >> V4L2_PIX_FMT_RGB24 defines.
+> >>
+> >> The proper MBUS format would be BGR888, so let's use that.
+> >=20
+> > I know where you're coming from, but this driver has been in the tree
+> > since 2015, so there is a reasonable expectation of users. I've had an
+> > overlay for it in our kernel tree since 4.14 (July 2018), and I know
+> > of at least PiKVM [1] as a product based on it. I don't know if Cisco
+> > are still supporting devices with it in.
+>=20
+> Those are all EOL, so no need to be concerned about that.
+>=20
+> But it is the most commonly used HDMI-to-CSI bridge, so breaking uAPI is
+> a real concern.
 
-diff --git a/drivers/spi/spi-falcon.c b/drivers/spi/spi-falcon.c
-index 84279058f..faa893f83 100644
---- a/drivers/spi/spi-falcon.c
-+++ b/drivers/spi/spi-falcon.c
-@@ -94,8 +94,9 @@ struct falcon_sflash {
- 	struct spi_controller *host;
- };
- 
--int falcon_sflash_xfer(struct spi_device *spi, struct spi_transfer *t,
--		unsigned long flags)
-+static int
-+falcon_sflash_xfer(struct spi_device *spi, struct spi_transfer *t,
-+		   unsigned long flags)
- {
- 	struct device *dev = &spi->dev;
- 	struct falcon_sflash *priv = spi_controller_get_devdata(spi->controller);
--- 
-2.50.0
+Is it really broken?
 
+Discussing it with Laurent and Sakari last week, we couldn't find any
+example of a userspace where the media format was set in stone and not
+propagated across the pipeline.
+
+The uAPI however is *definitely* broken with unicam right now.
+
+> See more in my review comment in the code below.
+>=20
+> > Whilst the pixel format may now be considered to be incorrect,
+> > changing it will break userspace applications that have been using it
+> > for those 10 years if they're explicitly looking for
+> > MEDIA_BUS_FMT_RGB888_1X24 or the mapping of it through to
+> > V4L2_PIX_FMT_RGB24.
+> > The kernel docs at [2] quote Linus as saying
+> > "If you break existing user space setups THAT IS A REGRESSION.
+> > It's not ok to say "but we'll fix the user space setup"
+> > Really. NOT OK."
+> >=20
+> > I'm thinking of GStreamer if the format has been specified explicitly
+> > - it'll fail to negotiate due to v4l2src saying it can't handle the
+> > caps.
+> >=20
+> > Yes it sucks as a situation, but I'm not sure what the best solution
+> > is. Potentially accepting both MEDIA_BUS_FMT_RGB888_1X24 and
+> > MEDIA_BUS_FMT_BGR888_1X24 as valid MBUS codes for RGB, alongside
+> > MEDIA_BUS_FMT_UYVY8_1X16 for UYVY?
+> >=20
+> >   Dave
+> >=20
+> > [1] https://pikvm.org/
+> > [2] https://www.kernel.org/doc/html/latest/process/handling-regressions=
+=2Ehtml#quotes-from-linus-about-regression
+> >=20
+> >> Fixes: d32d98642de6 ("[media] Driver for Toshiba TC358743 HDMI to CSI-=
+2 bridge")
+> >> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> >> ---
+> >>  drivers/media/i2c/tc358743.c | 10 +++++-----
+> >>  1 file changed, 5 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc358743=
+=2Ec
+> >> index ca0b0b9bda1755313f066ba36ab218873b9ae438..a1c164a7716a10b0cb9ff3=
+8f88c0513b45f24771 100644
+> >> --- a/drivers/media/i2c/tc358743.c
+> >> +++ b/drivers/media/i2c/tc358743.c
+> >> @@ -688,11 +688,11 @@ static void tc358743_set_csi_color_space(struct =
+v4l2_subdev *sd)
+> >>                 mutex_lock(&state->confctl_mutex);
+> >>                 i2c_wr16_and_or(sd, CONFCTL, ~MASK_YCBCRFMT,
+> >>                                 MASK_YCBCRFMT_422_8_BIT);
+> >>                 mutex_unlock(&state->confctl_mutex);
+> >>                 break;
+> >> -       case MEDIA_BUS_FMT_RGB888_1X24:
+> >> +       case MEDIA_BUS_FMT_BGR888_1X24:
+> >>                 v4l2_dbg(2, debug, sd, "%s: RGB 888 24-bit\n", __func_=
+_);
+> >>                 i2c_wr8_and_or(sd, VOUT_SET2,
+> >>                                 ~(MASK_SEL422 | MASK_VOUT_422FIL_100) =
+& 0xff,
+> >>                                 0x00);
+> >>                 i2c_wr8_and_or(sd, VI_REP, ~MASK_VOUT_COLOR_SEL & 0xff,
+> >> @@ -1353,11 +1353,11 @@ static int tc358743_log_status(struct v4l2_sub=
+dev *sd)
+> >>                         (i2c_rd16(sd, CSI_STATUS) & MASK_S_HLT) ?
+> >>                         "yes" : "no");
+> >>         v4l2_info(sd, "Color space: %s\n",
+> >>                         state->mbus_fmt_code =3D=3D MEDIA_BUS_FMT_UYVY=
+8_1X16 ?
+> >>                         "YCbCr 422 16-bit" :
+> >> -                       state->mbus_fmt_code =3D=3D MEDIA_BUS_FMT_RGB8=
+88_1X24 ?
+> >> +                       state->mbus_fmt_code =3D=3D MEDIA_BUS_FMT_BGR8=
+88_1X24 ?
+> >>                         "RGB 888 24-bit" : "Unsupported");
+> >>
+> >>         v4l2_info(sd, "-----%s status-----\n", is_hdmi(sd) ? "HDMI" : =
+"DVI-D");
+> >>         v4l2_info(sd, "HDCP encrypted content: %s\n",
+> >>                         hdmi_sys_status & MASK_S_HDCP ? "yes" : "no");
+> >> @@ -1691,11 +1691,11 @@ static int tc358743_enum_mbus_code(struct v4l2=
+_subdev *sd,
+> >>                 struct v4l2_subdev_state *sd_state,
+> >>                 struct v4l2_subdev_mbus_code_enum *code)
+> >>  {
+> >>         switch (code->index) {
+> >>         case 0:
+> >> -               code->code =3D MEDIA_BUS_FMT_RGB888_1X24;
+> >> +               code->code =3D MEDIA_BUS_FMT_BGR888_1X24;
+>=20
+> So would this change break or fix the formats[] table in:
+>=20
+> drivers/media/platform/raspberrypi/rp1-cfe/cfe-fmts.h
+
+It's pretty much the same table than unicam, and I don't believe it
+does. For both those drivers the pixels are stored in memory in the CSI
+wire order, so the proper format to use is BGR24 for CSI, not RGB24.
+
+> Are there other bridge drivers that misinterpret MEDIA_BUS_FMT_RGB888_1X24
+> and/or MEDIA_BUS_FMT_RGB888_1X24?
+
+Yes, it's kind of a mess.
+
+adv748x, ds90ub960 and tc358743 report RGB888, and ov5640 reports
+BGR888.
+
+Then we have alvium CSI2 that supports both, and can swap color
+components, so that one isn't a concern.
+
+And finally, we have st-mipid02 which is also affected, but is a
+receiver so it's easier to solve.
+
+For RGB565, ov5640, mt9m114 and gc2145 are in that list, but the pixel
+representation isn't the same than RGB888, so it's not clear to me how
+they are affected.
+
+For RGB666, no v4l2 drivers are affected, but a fair bit of KMS drivers
+that use media bus formats still might.
+
+Maxime
+
+--wjvoetypzbh3p6du
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaFLTCgAKCRAnX84Zoj2+
+dokaAXkBJ/myGXq+sMRiwrLkp0m/tKS5T6bgTwZx10WLW9rFuX1dThTAYyIGM43F
+2uSU9N8BfA++uZPWfPwfC8I+PKY8TwXM6yjVCZf7TQtPKOTxTpFWlgh1knpR6kYI
+7X2+D6+s2g==
+=8wbf
+-----END PGP SIGNATURE-----
+
+--wjvoetypzbh3p6du--
 
