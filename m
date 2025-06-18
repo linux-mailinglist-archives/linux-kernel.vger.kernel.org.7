@@ -1,218 +1,302 @@
-Return-Path: <linux-kernel+bounces-691130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6260FADE0D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 03:49:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3460DADE0DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 03:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9960C189A23F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 01:49:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07C853B0BA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 01:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF841990A7;
-	Wed, 18 Jun 2025 01:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E792199230;
+	Wed, 18 Jun 2025 01:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZYK+eJyN";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="MQCqQoWe"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Pr9P612X"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544AD2F530D;
-	Wed, 18 Jun 2025 01:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750211356; cv=fail; b=DXhcF8ErB0UOwm6bVGBiKJ3xVwKWU1dfnrv/511fkaLV4teJ4pfmsEcCrkt1cD5uY08/MwFhJWFcnRX56c+EZVJ43TP+sRdc+lTOT4NlEQIARaJCR7tEK6D7PCdvZPAN/IGEFUisUdWcKQ3If5NmXmhO3kQIPYhxe/455VgUdAE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750211356; c=relaxed/simple;
-	bh=D9Uew9PDXwt9NAIgnCy2xuq/0py/boq3+wkiyb8gf/g=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=I2xfEuQAqalDuKr+nOv0NSKk/fKkWhRAHbaD9JR+0lpg3Ox03v56+ligtVeGcH9AVgYTjgP3YdCM6pclNqF9sQYXW4cqxtcsGqtwT98rOpIB2EYrZtspEQuetRP0GwBesy5RN4plicHqTaY2MPHO1sTSxe8VWUaWgOL3WUjaUS4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ZYK+eJyN; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=MQCqQoWe; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55HLSwjv001282;
-	Wed, 18 Jun 2025 01:48:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=l3QA4dklbFG0vz6arf
-	3f4CrnaIOOZpcueD1G/KZaSBU=; b=ZYK+eJyNDfMeXWqsRsxJEO+pklR3QZOez1
-	YrdmBiiu6jwqVCtyPmUizFcHb5aepXIFK9efDUBi+rRnZIgaA/s+zH63zTUsI+FN
-	evJcU2X7nD4UXqIv3RVDmjcNOF7Qeh3/C58YsItUrH8/juhknB28jlvJjXG9nzM0
-	dHvl8wWJIi9xTzbGiyNBMBTZYAIoiMAmJtsJG58Ayr5PJHsg/x1wdgEBaQr0Ii/M
-	sueF/0yzkDNiZnUV6mAFGcLWXoSHsPUeJFGt61Mzg4rkk9PipC3FzeXI6xa7UMcM
-	ci4KmakmP3Sk7fDbedo355mazZmwHPwuTOHG6uHMqnE8OEa1voSw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4790yd6s9c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 18 Jun 2025 01:48:56 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55I1QOxA036275;
-	Wed, 18 Jun 2025 01:48:55 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2047.outbound.protection.outlook.com [40.107.94.47])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 478yhghdcs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 18 Jun 2025 01:48:54 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eAUq3oZu6eShT8cA3YNba5dcNZRN5mFdqBiDmy8biP52OeovKFf9mzIKV8gnbBdazvjC6t5LAsFEefj4qSJ5vHHXBcM4gRxLWEfiBPfDF4e8MPsixBEy/025o4DhBXieK2f1Z4s8+KOy9/0MDUBt259gU5Aj3/LVwLUOiuSar5ou0C/rGRM2aJCpMHWsyjHcFJDM8fgR5KkLKWk/RC8wABKyrTxExsQ6iGFaeNzInsXYm9GN7EEOFque3XvIAdfB9IgikjTDmmZ0TveBbWv/fhi7G93R09hVE+xjVSHSKRj4cRuvSFMcW1BAn9ejQJvaEgudLNgIVgInhyz7PuO16A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l3QA4dklbFG0vz6arf3f4CrnaIOOZpcueD1G/KZaSBU=;
- b=rfIYd12KvrCtyUz4f/y4AOf+OTBFly0hwmh7dG1fH0CW1x0TMXJpMVJY8lv7ikmVSqz6wz3zsju5oI7EpHR41HLB/AZH5clzKSqn/q7QBNDeohgd5hAqm0ng1YxSEIpfsalxko21W/02W01po96tc2xVFhZeX1QhnEJWiAk8cBSuDtvabFgvy57NZ7FOuEnSHiVVFNZDePnCYJLfZmo52UBavIec1jqRDDFPY3bsq5P18Ef7kxKEzTeA1a+qrTrNF5pT38L5dGNqdyQbmtt0hrAnus2LxxRfBcd8qSPPI+Vr5pChI1rXfFBI6yxPIitKx4GIm0jAqucmxnJ2SiiUIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l3QA4dklbFG0vz6arf3f4CrnaIOOZpcueD1G/KZaSBU=;
- b=MQCqQoWedZwCrcrhFsJWIj3bN1x77ql0/Q8aeFkDHyPLhBexI+GHK8p0z9QFRvzRGHu5ywlGhN+emgpQ2lO1e2GDi+laVTNpWAVTRezD0XJFE3/a7Zb95SweC/Wi6HMx4aEDgHVKaRKlu3j2+Q0GTyLdmPnAjR5ModbHyoa7GF4=
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
- by SA6PR10MB8039.namprd10.prod.outlook.com (2603:10b6:806:446::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.30; Wed, 18 Jun
- 2025 01:48:52 +0000
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf%7]) with mapi id 15.20.8857.016; Wed, 18 Jun 2025
- 01:48:52 +0000
-To: Pankaj Raghav <p.raghav@samsung.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        Christian Brauner <brauner@kernel.org>,
-        "Martin K . Petersen"
- <martin.petersen@oracle.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@pankajraghav.com>
-Subject: Re: [PATCH] fs/buffer: fix comments to reflect logical block size
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20250617115138.101795-1-p.raghav@samsung.com> (Pankaj Raghav's
-	message of "Tue, 17 Jun 2025 13:51:38 +0200")
-Organization: Oracle Corporation
-Message-ID: <yq1msa5x218.fsf@ca-mkp.ca.oracle.com>
-References: <20250617115138.101795-1-p.raghav@samsung.com>
-Date: Tue, 17 Jun 2025 21:48:50 -0400
-Content-Type: text/plain
-X-ClientProxiedBy: BL1PR13CA0334.namprd13.prod.outlook.com
- (2603:10b6:208:2c6::9) To CH0PR10MB5338.namprd10.prod.outlook.com
- (2603:10b6:610:cb::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D575238DF9
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 01:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750211971; cv=none; b=EXzGZCp+TcIuv6gCoMv0tGBy4bUvSkEDjjr33+CzdsdcUImHiUlnjL1AULOGEgl+fKJNXe6bQGtwblfqwORMCvu1l9tWEhZK5sNotqx0YeMVdVmWKlz62imeP8dgrWRG8o5Ecrs/znjvpZodVthzZFygA7gtvm1shkgDYhJtDws=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750211971; c=relaxed/simple;
+	bh=NABcZCJSqgru+wgFx1gkI+l4366ZQbGHgicxLpEJsEU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cW4TqYOegzJxnu1Vx4rwelmqsPilZi9Eq0zdIphqhRrOc71o+2S0zZu0C/po25Gc4BgqU5MCV4N551vwO/ajKg7JuMKFzLGzU7EFXxLNNx/IrQBKuOmvrgX8FHhNQKv5yUIQjK3FFcHZjshcM0kOnJUAuyMHJBU852bAlTE35tU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Pr9P612X; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750211956;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4YkGGoAQBua6hRJRSgqt3H8l8obDCItnoS7Y47UiU6M=;
+	b=Pr9P612XaZ1SHipbhkb8Ec+U4PUAEI0K/qA8cpP42XZ5Bl9BwvPE3LgYKYLV4p7OLx5a0n
+	0q3AyhNQSFQzuHbj7fAgQWd7lC3JRznk4D1WZZOQFif5gumAbHmZFcKzkGi8bI1PBSMRWP
+	ECwlDwHn5LDBT8fctFZjivakqUWDgJY=
+From: Hao Ge <hao.ge@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-alpha@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	Hao Ge <hao.ge@linux.dev>,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH v6] mm/percpu: Conditionally define _shared_alloc_tag via CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU
+Date: Wed, 18 Jun 2025 09:58:09 +0800
+Message-Id: <20250618015809.1235761-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|SA6PR10MB8039:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22b1083e-9d0d-4638-68e4-08ddae0a46b1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ctnra7QeVGKpmH3X8q0cj4kNik/MNhoo1PIamTysG3yHvlMG7dVxGIjE9OBn?=
- =?us-ascii?Q?GQZEoITwN5y5vBqLRFGm9Mj0BvVn53kXBx4l0K/fwld9kPwGFo6lb+YXYtqm?=
- =?us-ascii?Q?Qtg42mryqrAM8H1XjeCO02OvGPyfTFQIWovG5DAk/ttXw1XjmqHrPlIag+TW?=
- =?us-ascii?Q?Pk5NZODj0CMI/JLm6OtMHJn2YPV1uQJfvcbvwS4eoSfSWV/3bx7jnuwmj/eW?=
- =?us-ascii?Q?PmANhfT692pqUbs8gQULUzjd7/o3UO/J9PeODUUc+XCJhyMYWh5dO1upBpZy?=
- =?us-ascii?Q?FVwmtH16J876IWwRKocRys+jhT7OG9md8KR9F2Fz1OI3TCjE7Kw47E09Rkvm?=
- =?us-ascii?Q?G+OGj+ivBzLTIU0UQoOsfsaGNbgIqgKveg2pGx3HmvoHL5Rek2AhCLXm1Yya?=
- =?us-ascii?Q?3eAwiHpPiISgFKFHhzwauIABxzoDQxVFLVYbxvUEMeoQgUoE6Y2NvQZTuK2W?=
- =?us-ascii?Q?Qi5i0qmEg7rnwuVEB7j+NKPdMRW2b0Rw/meMEO2OaWnNV7hg0KqQ3vOPXQPy?=
- =?us-ascii?Q?TICH2cLsuv4MJrAO3CFHfQ0MGqj8SGhuGw70+I2FG5cA6xEu+GKKWvdNbtsN?=
- =?us-ascii?Q?h83U+3KwAQhkKLQlQvBl/WLQroGZdtVQpJW8Ut+/u0a3Xnx6MfjABVjUs7tx?=
- =?us-ascii?Q?VJ3KuDAURte8//Edzie8qXGYQ0j2Z/Yprpbd58yJavwTYUgY/cp6TIb8lO1B?=
- =?us-ascii?Q?jc+0S/Y/wX/1Gvp+OPU9pmSXiz/jkPRk/1w++Birvg422qGyAmDxa/16wFv0?=
- =?us-ascii?Q?9knO8QvwzgbMS5C6DC9yOoqYbRq4TIPGWfSsFL7VHGvaVE+UXWF0S+peqNvY?=
- =?us-ascii?Q?GrvtmSOOutHeXGsItqFThj0DjL0VofJIeolVYkpqrD+x2p41FksoWr1sONB6?=
- =?us-ascii?Q?bdBfvIlcBYX5wzgNOshzVpM+yxSTlyZulUbvC0ufyPurtdJJsQ92GwBMZIXg?=
- =?us-ascii?Q?PpFt3T5wNbdOl++lHrryA+vvY/dVTeFL3D0xD6hGAtLkuEgj1KZnTQavdse7?=
- =?us-ascii?Q?NF6k78JFejOBkrBi7Y0UHOp8L14sX75rMQAT0H0sRueDMY9aQZwIRUL8th5C?=
- =?us-ascii?Q?KQ46BgyQaOkr3JQyzK62nlXxnONF6Wlua1fcW0OHNBOdHMC0yoqCc5bTU/9L?=
- =?us-ascii?Q?nFPXKrZjax69NARAHB3j/grVkusomqKT8RtVf9tUcQ7mCrvriuktzDoBlNbo?=
- =?us-ascii?Q?ZaDq5Kz3iZsTh4PrXFilM6oo2WzzyzMpkKWhXG0Yn2GgXJHk2nXqgBYap+j/?=
- =?us-ascii?Q?lZvoxbG+wbRdN+ZHJZm3ugCCuQlHe+SkvyVGHomMSBby26WbGXKd+j1ode1K?=
- =?us-ascii?Q?WKYuUPNk3RGtuTzvr7DJx0VBccZBhpIo/QamWNCPpqVMDzBllugCpXoXkzqw?=
- =?us-ascii?Q?J8CAB+F/A8Nzc2dovwn6U47aPKDwQh/BGPJbrn0IIqoJDb7q4A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GJ9FUxq5WxZcoioMLEfdlPyhQNZ1NULdbWJTOTtVwCp+r1dmcueT1jU+ef1D?=
- =?us-ascii?Q?SLDrFRHqoOG+ksB15whwPzD8vL5QJuCMAbAOX9+UxNvNdc/iIGXpG25xuenJ?=
- =?us-ascii?Q?mFM39jOYhz/Hj3KjgUla2Ndq0oOLRX5BvTSvjiToa2gcANeavniwDs1gRm7E?=
- =?us-ascii?Q?jMHHyc2WaA2Xvkq/EtUHZ1kn/al5ndWRV1TY6THhYe3QrjlgfE82MpcbLIJJ?=
- =?us-ascii?Q?J4s9I8aLmu0wWwDI+fALr+HTtQpjPjYi5RC+2KWl9Qxwe6t0BgcdM9X0Y/6H?=
- =?us-ascii?Q?X/lY70lymM5Iqz5/hRQOSS2wztAPGr9iThsvNWS8Cgxg8pxCD0k8DvprB+Hv?=
- =?us-ascii?Q?uaff1IUEHN5gmDs6N6YtrjoJHNJu7MA+WHjbTP8nHrESAt+M1jj8ysEjw1mK?=
- =?us-ascii?Q?sbmxZPQHRgA/ofzhUk1d1IurlN/qhgAA/XRk7OYEw/YpgIZ923/wknxMRBZ3?=
- =?us-ascii?Q?uZzHP7Ato5Fi98NlGuvWOav9rQFJI8KsO2J6X3O6frHkAVIljrCzSWBPwXMw?=
- =?us-ascii?Q?SOFTCnnhwrXRGI0f9H+LNU63XT3GcRKhuw/NtEONvMwF/9OZ1AwVM965Ge79?=
- =?us-ascii?Q?7jNvCvlGUINz+yAEjVQeEfhFt+37C64utcw6u7b4OakXeeHVZ/prw+qrCE4l?=
- =?us-ascii?Q?HZ0iTGn547g1qDtoEK159xrQhYDiBj5fqcOTphpxnl/P22IxriktQZHPzpdK?=
- =?us-ascii?Q?l9ivrNB5dIvSooYwGsE7989EgsdJFL1A4HA44W/cPI0kAqatrxH1KgbFaZq6?=
- =?us-ascii?Q?PPHfSvVQStoc3Rva1MxIgYq2DdPksAQxNj/isFpBdb4aPvwyjbZCPkj7qbn/?=
- =?us-ascii?Q?4M8DLDGMLon7czXxnxyycHEu+eDj1+lvo88HmniR1bIrOsZRMsuJQlOWYVL/?=
- =?us-ascii?Q?oU5GWaZVUKGIU6bmN+2sgFsODYiu+TicwNSBe2GWXIzdIVT620IKSSkr1Fi2?=
- =?us-ascii?Q?bpcCUBwjj/EPf740Fy8nnBFPwpb9JXshBkCsowsMg5KLkMkgzsjZszgeUpbe?=
- =?us-ascii?Q?fmzxbSa/QDAgWdtEl3UvPcPDLzUKpM101hf2oI4CunODzy+tjSghzXScfu2d?=
- =?us-ascii?Q?+cvzxs5DmMA+KibjljZ6pgKSfbc8OSlxeJ4AgspLsUDsI8L3qLyNWhnM9Avr?=
- =?us-ascii?Q?b9FFO9weTK+g6OAEHtmL0OTiy1aObDeBKg7iI1wgYK0zA/uArlK2BJNBLC4w?=
- =?us-ascii?Q?3991sLX0hwFArEv1CeLNnOK9lF1MeMIefYDqcDoqG7s78MwtYzall6+znBGj?=
- =?us-ascii?Q?RPuUV18SVACk8OFkm0OomB427Ft9+GjxHEzlhYH9vS/7Szv7Opo1yRlb3ixr?=
- =?us-ascii?Q?2m+Qg76pfg97fCUAjLznms0+oOknd+WFElA/Fan8UakLCWKaT/WdehK8oHQX?=
- =?us-ascii?Q?fJp+DVRwPqQSGCr6Xy7vcekvLf+1CoseH4rRdMD4ZYkvkTVCw/bdYVVCnj8N?=
- =?us-ascii?Q?mbP/lSQHdTNUwdOxt9M38gOQs1GUMDNro2PjG/GMw9p/rwiDPsWnDS795boh?=
- =?us-ascii?Q?Ps2RHtTPhAOLbs8C4LvjbV00fFH9qCSCJy8zwQ1L/1dLTKYCCFAcCMTHtaJ7?=
- =?us-ascii?Q?81d8D+5xiU1e5xJ+oUzMjTBzzz1ERDFLb0OOsvRN+KF7Wnr3eFS27VXyECBb?=
- =?us-ascii?Q?VQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	8uEiVKV2M+neg+C+oxM9NcCuy9H3NgBdelN4NJYU/sNwODbg4Mxeg5yK07fVLoZHQBeyhXMQyfs8ELXXoXl7w8Yap/JC24gckss68ntM/TbxtwjG1KMaB07ShHJbzb1BfiApw+jG8OCjEiyuraiNKB+yDj0uaeP4NoHIaJbKn11HjZDPcbndc4xlhmIN5EIOel3x+9NWwi4n2SD76qJeE5uZVvMj+a5PYlj1R6c10lUgtW+/QIytML7hENO4FCwa0aphaQ2zuPJtSB/kI2wan+DO65N9WGxJ2WR0aLneKk9ytfbQtTxVfLnMXFF2XmAM86bYAUYj39QcgF6xspVUTNQCB/XsggwFIGXU4S8H908akbq3hozDny98lgId/+PkShnbzL17M3sVyn8jc9P1Edxd185UCXsmjFoBpSXUSfsktFo/JSfoiIO903O04EAZyn4cPEtcDx6OP1OKfIvBUyAhclbSJLUKi8g5aCigfc0fZ+v7fL9iX52vfwG51P/1cfQL8TlMjoMdb3R9g0Q1FkGyGwaGiqFImz4RptnZt9zunUk1uOhh3shVbf4oIqtyYwh4cL2I4HxEpmyh9HxIJzPWDnSJ1dub6J8zI/qNK+E=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22b1083e-9d0d-4638-68e4-08ddae0a46b1
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 01:48:51.9127
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CpinaiABHY0dowTc1mNrvLN/4LORkqVShya+YxirWYfpLLe4WDqQgiiMcIZOtvUdEb5qpmoSx+iZRvyH/n++jD3jsPc9GSR2IoMi39KSUnY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR10MB8039
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-18_01,2025-06-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=953 bulkscore=0
- phishscore=0 spamscore=0 suspectscore=0 malwarescore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2506180014
-X-Proofpoint-GUID: YLX9Kj4U1qb5vO3XEJHDVnvLD9oqL30V
-X-Proofpoint-ORIG-GUID: YLX9Kj4U1qb5vO3XEJHDVnvLD9oqL30V
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE4MDAxNCBTYWx0ZWRfXxXSunLaRDGM9 jiEw479Zfq1WtcIxI/dItu3GD7JsoKMjb5otrVVOWswtnW47zIU0szZRrlomHLoqLyDmvbBK2JM h/w3lqJQ4tbXpO4Z+LNeVSPa0kWtWdTWr7mIuMTytSIgdV1SVX22drfZE1WqvMloyCLcNeHm5TB
- 3M3EPctJGR5EZhsOmEy8Y5FgdrT8BP3kHbm7Zz4GDEUDrWlNorPduyMl4BydHG+ux8INR86W56q 5gE4bfxFU4g2tQq9+gAHa5Vn6PfpzTYtWKaHhWl9IMP3CDRJEqnPl8rJhSt911kdaEoG7265gN4 +cqnQk7DyAhntGDRsJzsob1hlFKxP6/oMqTrhUY89MyLD72cEhGS5ujp45rJpOFzIfjtBVjJq2w
- VYN/rXJmxr+kTl7ZanV26kkZrD5PepU2zESes95IxWeT+23eQIDpxB/kb3KtV2UhHer8I5V+
-X-Authority-Analysis: v=2.4 cv=XZGJzJ55 c=1 sm=1 tr=0 ts=68521b08 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=k09an1wQQ9CMLg0MnfAA:9 a=ZXulRonScM0A:10 cc=ntf awl=host:14714
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+From: Hao Ge <gehao@kylinos.cn>
 
-Hi Pankaj!
+Recently discovered this entry while checking kallsyms on ARM64:
+ffff800083e509c0 D _shared_alloc_tag
 
-> -	/* Size must be multiple of hard sectorsize */
-> +	/* Size must be multiple of logical block size */
->  	if (unlikely(size & (bdev_logical_block_size(bdev)-1) ||
->  			(size < 512 || size > PAGE_SIZE))) {
->  		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
+If ARCH_NEEDS_WEAK_PER_CPU is not defined(it is only defined for
+s390 and alpha architectures), there's no need to statically define
+the percpu variable _shared_alloc_tag.
 
-OK with me. However, maybe that comment should just go away? The code on
-the following line articulates the constraint very clearly.
+Therefore, we need to implement isolation for this purpose.
 
-If you tweak things, please fix the spacing for "(bdev)-1".
+When building the core kernel code for s390 or alpha architectures,
+ARCH_NEEDS_WEAK_PER_CPU remains undefined (as it is gated
+by #if defined(MODULE)). However, when building modules for these
+architectures, the macro is explicitly defined.
 
-Either way:
+Therefore, we remove all instances of ARCH_NEEDS_WEAK_PER_CPU from
+the code and introduced CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU to
+replace the relevant logic. We can now conditionally define the perpcu
+variable _shared_alloc_tag based on CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU.
+This allows architectures (such as s390/alpha) that require weak
+definitions for percpu variables in modules to include the definition,
+while others can omit it via compile-time exclusion.
 
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+Suggested-by: Suren Baghdasaryan <surenb@google.com>
+Acked-by: Alexander Gordeev <agordeev@linux.ibm.com> # s390
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+---
+v6: Add Acked-by: Alexander Gordeev <agordeev@linux.ibm.com> # s390
+    As Suren pointed out, enclose defined(CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU)
+    && defined(MODULE) part of the condition in parentheses.
+    As Andrew suggested, I'll consolidate it into a standalone patch.
+    Thanks to Alexander, Suren, and Andrew.
 
+v5: Regarding the omission of defined(MODULE) in alloc_tag.h where
+    only #ifdef CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU was used,
+    I apologize for this error.
+    Please find version 5 attached to address this issue.
+
+v4:
+   Merge previous patches into a single patch.
+   Remove all instances of ARCH_MODULE_NEEDS_WEAK_PER_CPU from v3
+   and use CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU to
+   replace the relevant logic.
+   Replace CONFIG_ARCH_NEEDS_WEAK_PER_CPU with
+   CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU in v3, as weak percpu support
+   is only required for modules ,making the name more
+   semantically accurate.
+   David, Mike, Matthew, Kent, Heiko and Suren have all
+   provided valuable input. Thanks for this.
+
+v3:
+    Suren pointed out that patches 1-2 can be merged into a single patch
+    in version 2. And the commit message for patch 3 can be made more
+    concise.Make corresponding modifications based on the pointed-out
+    issues and update the corresponding commit message.
+
+v2:
+    Heiko pointed out that when defining MODULE_NEEDS_WEAK_PER_CPU,
+    the CONFIG_ARCH_NEEDS_WEAK_PER_CPU condition in the v1 version
+    should be removed,as it is always true for s390 and alpha
+    architectures.And He also pointed out that patches 2-4 need to
+    be merged into one patch. Modify the code according to the suggestions
+    and update the corresponding commit message
+---
+ arch/alpha/Kconfig              | 1 +
+ arch/alpha/include/asm/percpu.h | 5 ++---
+ arch/s390/Kconfig               | 1 +
+ arch/s390/include/asm/percpu.h  | 5 ++---
+ include/linux/alloc_tag.h       | 6 +++---
+ include/linux/percpu-defs.h     | 7 ++++---
+ lib/alloc_tag.c                 | 2 ++
+ mm/Kconfig                      | 7 +++++++
+ 8 files changed, 22 insertions(+), 12 deletions(-)
+
+diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
+index 109a4cddcd13..80367f2cf821 100644
+--- a/arch/alpha/Kconfig
++++ b/arch/alpha/Kconfig
+@@ -7,6 +7,7 @@ config ALPHA
+ 	select ARCH_HAS_DMA_OPS if PCI
+ 	select ARCH_MIGHT_HAVE_PC_PARPORT
+ 	select ARCH_MIGHT_HAVE_PC_SERIO
++	select ARCH_MODULE_NEEDS_WEAK_PER_CPU if SMP
+ 	select ARCH_NO_PREEMPT
+ 	select ARCH_NO_SG_CHAIN
+ 	select ARCH_USE_CMPXCHG_LOCKREF
+diff --git a/arch/alpha/include/asm/percpu.h b/arch/alpha/include/asm/percpu.h
+index 6923249f2d49..4383d66341dc 100644
+--- a/arch/alpha/include/asm/percpu.h
++++ b/arch/alpha/include/asm/percpu.h
+@@ -9,10 +9,9 @@
+  * way above 4G.
+  *
+  * Always use weak definitions for percpu variables in modules.
++ * Therefore, we have enabled CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU
++ * in the Kconfig.
+  */
+-#if defined(MODULE) && defined(CONFIG_SMP)
+-#define ARCH_NEEDS_WEAK_PER_CPU
+-#endif
+ 
+ #include <asm-generic/percpu.h>
+ 
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 0c16dc443e2f..b652cb952f31 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -132,6 +132,7 @@ config S390
+ 	select ARCH_INLINE_WRITE_UNLOCK_IRQ
+ 	select ARCH_INLINE_WRITE_UNLOCK_IRQRESTORE
+ 	select ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE
++	select ARCH_MODULE_NEEDS_WEAK_PER_CPU
+ 	select ARCH_STACKWALK
+ 	select ARCH_SUPPORTS_ATOMIC_RMW
+ 	select ARCH_SUPPORTS_DEBUG_PAGEALLOC
+diff --git a/arch/s390/include/asm/percpu.h b/arch/s390/include/asm/percpu.h
+index 84f6b8357b45..96af7d964014 100644
+--- a/arch/s390/include/asm/percpu.h
++++ b/arch/s390/include/asm/percpu.h
+@@ -16,10 +16,9 @@
+  * For 64 bit module code, the module may be more than 4G above the
+  * per cpu area, use weak definitions to force the compiler to
+  * generate external references.
++ * Therefore, we have enabled CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU
++ * in the Kconfig.
+  */
+-#if defined(MODULE)
+-#define ARCH_NEEDS_WEAK_PER_CPU
+-#endif
+ 
+ /*
+  * We use a compare-and-swap loop since that uses less cpu cycles than
+diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+index 8f7931eb7d16..9ef2633e2c08 100644
+--- a/include/linux/alloc_tag.h
++++ b/include/linux/alloc_tag.h
+@@ -88,7 +88,7 @@ static inline struct alloc_tag *ct_to_alloc_tag(struct codetag *ct)
+ 	return container_of(ct, struct alloc_tag, ct);
+ }
+ 
+-#ifdef ARCH_NEEDS_WEAK_PER_CPU
++#if defined(CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU) && defined(MODULE)
+ /*
+  * When percpu variables are required to be defined as weak, static percpu
+  * variables can't be used inside a function (see comments for DECLARE_PER_CPU_SECTION).
+@@ -102,7 +102,7 @@ DECLARE_PER_CPU(struct alloc_tag_counters, _shared_alloc_tag);
+ 		.ct = CODE_TAG_INIT,						\
+ 		.counters = &_shared_alloc_tag };
+ 
+-#else /* ARCH_NEEDS_WEAK_PER_CPU */
++#else /* CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU && MODULE */
+ 
+ #ifdef MODULE
+ 
+@@ -123,7 +123,7 @@ DECLARE_PER_CPU(struct alloc_tag_counters, _shared_alloc_tag);
+ 
+ #endif /* MODULE */
+ 
+-#endif /* ARCH_NEEDS_WEAK_PER_CPU */
++#endif /* CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU && MODULE */
+ 
+ DECLARE_STATIC_KEY_MAYBE(CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT,
+ 			mem_alloc_profiling_key);
+diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
+index 0aeb0e276a3e..1669c9f4fd50 100644
+--- a/include/linux/percpu-defs.h
++++ b/include/linux/percpu-defs.h
+@@ -63,14 +63,15 @@
+  * 1. The symbol must be globally unique, even the static ones.
+  * 2. Static percpu variables cannot be defined inside a function.
+  *
+- * Archs which need weak percpu definitions should define
+- * ARCH_NEEDS_WEAK_PER_CPU in asm/percpu.h when necessary.
++ * Archs which need weak percpu definitions should set
++ * CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU when necessary.
+  *
+  * To ensure that the generic code observes the above two
+  * restrictions, if CONFIG_DEBUG_FORCE_WEAK_PER_CPU is set weak
+  * definition is used for all cases.
+  */
+-#if defined(ARCH_NEEDS_WEAK_PER_CPU) || defined(CONFIG_DEBUG_FORCE_WEAK_PER_CPU)
++#if (defined(CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU) && defined(MODULE)) || \
++	defined(CONFIG_DEBUG_FORCE_WEAK_PER_CPU)
+ /*
+  * __pcpu_scope_* dummy variable is used to enforce scope.  It
+  * receives the static modifier when it's used in front of
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index c7f602fa7b23..ab0936ebf38e 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -24,8 +24,10 @@ static bool mem_profiling_support;
+ 
+ static struct codetag_type *alloc_tag_cttype;
+ 
++#ifdef CONFIG_ARCH_MODULE_NEEDS_WEAK_PER_CPU
+ DEFINE_PER_CPU(struct alloc_tag_counters, _shared_alloc_tag);
+ EXPORT_SYMBOL(_shared_alloc_tag);
++#endif
+ 
+ DEFINE_STATIC_KEY_MAYBE(CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT,
+ 			mem_alloc_profiling_key);
+diff --git a/mm/Kconfig b/mm/Kconfig
+index e113f713b493..00514df3eae4 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -929,6 +929,13 @@ config ARCH_SUPPORTS_PUD_PFNMAP
+ 	def_bool y
+ 	depends on ARCH_SUPPORTS_HUGE_PFNMAP && HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+ 
++#
++# Architectures that always use weak definitions for percpu
++# variables in modules should set this.
++#
++config ARCH_MODULE_NEEDS_WEAK_PER_CPU
++       bool
++
+ #
+ # UP and nommu archs use km based percpu allocator
+ #
 -- 
-Martin K. Petersen
+2.25.1
+
 
