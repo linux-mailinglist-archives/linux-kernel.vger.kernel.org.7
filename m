@@ -1,115 +1,103 @@
-Return-Path: <linux-kernel+bounces-692075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D5FADEC8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:35:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E54BADEC7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5A7F4A12AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:31:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B943C3AA97C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607792EBBA2;
-	Wed, 18 Jun 2025 12:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7912EA748;
+	Wed, 18 Jun 2025 12:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dYakY6J5"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="fhZ82mRS"
+Received: from mail-24417.protonmail.ch (mail-24417.protonmail.ch [109.224.244.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E7A2EA726
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B03F2EA495
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750249693; cv=none; b=Q5WJ+DpI/ZhaL55FG92aFCt/bOA0eSQqMOXc+bfcPI4Ydxnk7AcCbyoyOvexaXyBLZtQRMf+EbqlXRzZZlZ5QQAwwW6cosaOJDN101ePXWUTIZNtLno8TYZaEoJgSKQeobjPRHJN5vX++LlaKV9XJ8EfVX8xvOi4X6rrnqdCLW8=
+	t=1750249691; cv=none; b=cZWwG97CCTUtDadzxC0Cr5HCXv8mdIg6vw+DmJMwl7p4m3lj6x8wNEwunPgfsiNLVTm2YIALtz2Nyicpubq/B+VXwJs2l4PG3NsOCh75ds862lsaLwfKXeNW1VuyCtEJSf2kMv9a7nLSPvQgyfu/V6av2q6Sh56AZEtYW64L0KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750249693; c=relaxed/simple;
-	bh=lvDeYY1tyHLW44AqHwWF82BKnD0o1q8Cao4PGtdqJcc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VaOgj8n3kdJ+QH4tKmHglxEKtjhKAFF5KjbEAB+WA4nQa+V6IiY170LBI4xbRv0tYqSRV79WNV49e3J0YU4H3sKJZwT95qDE57u9133WuUIU7kCP+Dpc4EhfLheLfWEP9FzLSIiJrCPYU6eI4kaNRs/dHpZmHPcnQYG7dox+ryk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dYakY6J5; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-553644b8f56so7049322e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 05:28:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750249687; x=1750854487; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lvDeYY1tyHLW44AqHwWF82BKnD0o1q8Cao4PGtdqJcc=;
-        b=dYakY6J5RcYzb6omLmKYYIz3TI3xl/KZHg1mfJgQ/ArkezRGWpHZALVwx2Ssm3uIux
-         dwfgA8QHt1H6TGPmDx/nQ1Co8QKFzoAB0r4PhB6A+8q4CzbNhzMkxycx8MiiFOHXfy0F
-         Y0P9YQL21+lWZD/v4hB1eQXMmPF9TgEyik/eH3A98lbfmNu2CGv/GNLhylgIkeLugSHZ
-         ffxHVk2Zxp1mK6kUOo6pA4ZwGh0Ov0nLJXiaJ2GSXuLCJ7gruSeeKZZOAGDm7+WZhQBA
-         TbPig0qdgIAQ+bC+XSuiSJ+ihuc/wDfQK4MHfw34BPC2uit/IjfFuxSShOvjqYxTuLAs
-         eXdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750249687; x=1750854487;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lvDeYY1tyHLW44AqHwWF82BKnD0o1q8Cao4PGtdqJcc=;
-        b=qeyIwFL32qZ4WsxaUU03Hf2z/J0XCvUG4r/GE/Xbp2HB9bU/dlgJojoWseR6Llgryi
-         CNsGp2VNJTqNbgjY1q4hdwDUBhc7uG6+F3uRiGQPBGPA2yMRekBWiZUpIzpG2Pyra+Es
-         dTO7reRBkHj+HeJKZ6Y/NVabU+4Qbovx3TMzqwLGx5khyOdytnQGVcmIQI/73hcIQiRa
-         9sgCo6KdT2ylVy4LPQjJWIogQau4L4WIHnWppSVVuhWymfHXrJUtUL67EolJvTyBHPa5
-         N+YA5Q/vrJXXTzHdWGQaCu2TKPdVJufFpmr2hIXBWVDiLoR+cXy7tH+nb0KJrEJBze9+
-         Pvyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmI34E0Gs4MjZoxOOA/M2Z95W2a1m21JRWFyCaC1xyrXhvC6m7ByptQawyWZeW/DJwympD/1rOXsr+F0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5GQ6NfatDOAb+VrQdCLRZsBBK6SbEkoUCiKjqPiEY98hAHEeQ
-	ZJaJk6zsIW1ugNM+FbtTjQ6il0GMLfW2FLf1G79aam9tcNRcN7GydlrrRRt3obIXnkmNsPN6rKD
-	XlnyE/2aOWR6c1rmM0Z/s1KcswdQKTIgmtfBFRFbMEQ==
-X-Gm-Gg: ASbGncvayHDU4UkOfYYfbx7ubvQJvJUxX82oNtO/A5G3RwnoQtik95Ik2j7mxTkuxGJ
-	KJ4xp9XdzQGrdVsXnDy0H0I8E4n7q+vakqHlRBW0LDoPH1uoo2lel2cZNE6mM/7zXakrYAyHaNq
-	MajqFblg7DrfKbbYIIAgtOffAbDpyFrfsb9ImjFlRyjqA=
-X-Google-Smtp-Source: AGHT+IEqcYdJwMh4FSJGyni6X0wxHGpPoUz/ob8ESveA1VpUKphDYobFyqmST5aw3MNHLgS47EAGeONWHSlMXxk934Q=
-X-Received: by 2002:a05:6512:2315:b0:553:adf2:38bb with SMTP id
- 2adb3069b0e04-553b6f42459mr4514077e87.46.1750249687261; Wed, 18 Jun 2025
- 05:28:07 -0700 (PDT)
+	s=arc-20240116; t=1750249691; c=relaxed/simple;
+	bh=PoENILfftPuKovdbTf1s6VqO1XZgvziz6Eq/RLvuL6k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R6RU8Y/zM39nL8+CSD7JR1FjTkmDR0X71uSmTgHGMeGaeiOftOPVUYF7O9Kmc0bFUjNAukxVo4l+jqTpvPREHnudyJl4S70zUutvmetkazG7PQzST2zgLP4JiJBD+iahN7joidvf+4wW8OcpgDmUY5ivBo1vuibVKpmIytAqWsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=fhZ82mRS; arc=none smtp.client-ip=109.224.244.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1750249681; x=1750508881;
+	bh=EUK7UbppZKvXdNuoTpuczW050PGsMvbPwEvZ2b3BRjk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=fhZ82mRSd0oyCtUsVTOgSZhMvQeq+nIMXSzcveD49s4eJMvA808h3cWDcxL0Y93GY
+	 TwIxqJEHRGy0t/XFKFnKHuYH4gN3UudgNz+esiVppzqkAC/em04TCCreEPIt/BnN17
+	 IHr5YViO29ZAkT41vrJ1r8Xpqq5ldYgwA4xg0FxaGzC8d/zqCAJtAtDpBwGu429SOq
+	 FigUMNpbeYVu1taByq9dagT3R+jjq0kFHbzape2Z0vujRytKBYG+Vkh2lWGHq8V3w/
+	 xCzVdAjnDvLjUoi8Z6d4ZtPKi7f8TtnmqNTBqRUwvslMFxq3lr1FqsY14rtuwA6Rn5
+	 KkBYFtkzddG0g==
+Date: Wed, 18 Jun 2025 12:27:55 +0000
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>, Asahi Lina <lina+kernel@asahilina.net>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Mangold <oliver.mangold@pm.me>
+Subject: [PATCH v11 3/4] rust: Add missing SAFETY documentation for `ARef` example
+Message-ID: <20250618-unique-ref-v11-3-49eadcdc0aa6@pm.me>
+In-Reply-To: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 76c778666a390c4fcd86d43530e3c2afc02800ae
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616-gpiochip-set-rv-net-v2-0-cae0b182a552@linaro.org> <20250616-gpiochip-set-rv-net-v2-2-cae0b182a552@linaro.org>
-In-Reply-To: <20250616-gpiochip-set-rv-net-v2-2-cae0b182a552@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 18 Jun 2025 14:27:53 +0200
-X-Gm-Features: AX0GCFtOmBUtsD4jP5iXZmqQJNmNp3Xkluag7JKU4cjSCOXhD78FpOnWyAbPHYM
-Message-ID: <CACRpkdYi0oVa3uek7zcb2Jy_YPded6jfEKoXUp=BL01V5XX1MQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] net: dsa: mt7530: use new GPIO line value setter callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"Chester A. Unal" <chester.a.unal@arinc9.com>, Daniel Golle <daniel@makrotopia.org>, 
-	DENG Qingfang <dqfext@gmail.com>, Sean Wang <sean.wang@mediatek.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-can@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 16, 2025 at 9:24=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
+SAFETY comment in rustdoc example was just 'TODO'. Fixed.
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+---
+ rust/kernel/types.rs | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index 40c0138bd336057e7d3a835a9e81391baa2fd2b1..a22d5d39d89edfe357fdfe903ef=
+42e5d5404237f 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -526,7 +526,9 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+     ///
+     /// struct Empty {}
+     ///
+-    /// # // SAFETY: TODO.
++    /// // SAFETY: The `RefCounted` implementation for `Empty` does not co=
+unt references and
++    /// // never frees the underlying object. Thus we can act as having a =
+refcount on the object
++    /// // that we pass to the newly created `ARef`.
+     /// unsafe impl RefCounted for Empty {
+     ///     fn inc_ref(&self) {}
+     ///     unsafe fn dec_ref(_obj: NonNull<Self>) {}
+@@ -534,7 +536,7 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+     ///
+     /// let mut data =3D Empty {};
+     /// let ptr =3D NonNull::<Empty>::new(&mut data).unwrap();
+-    /// # // SAFETY: TODO.
++    /// // SAFETY: We keep `data` around longer than the `ARef`.
+     /// let data_ref: ARef<Empty> =3D unsafe { ARef::from_raw(ptr) };
+     /// let raw_ptr: NonNull<Empty> =3D ARef::into_raw(data_ref);
+     ///
 
-Yours,
-Linus Walleij
+--=20
+2.49.0
+
+
 
