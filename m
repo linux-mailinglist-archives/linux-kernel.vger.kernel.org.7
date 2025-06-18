@@ -1,278 +1,146 @@
-Return-Path: <linux-kernel+bounces-691145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F23ADE10D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 04:18:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA6C8ADE1F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 06:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F7FD1881A5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 02:19:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89F20178C45
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 04:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13AF19DFA2;
-	Wed, 18 Jun 2025 02:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE391E1E1C;
+	Wed, 18 Jun 2025 04:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="byoVeCZu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZVX7BXm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F0512E5B;
-	Wed, 18 Jun 2025 02:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3342F533A
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 04:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750213120; cv=none; b=SoUYm/lEIfPd8K2acVqHfWAK3f1oQIV34dChwYmGB56dSUoGuVE7KweTxXgoLaOYFgkdq+9Ve1rsz7zbjE/hAHPektGyY0GUkM0KfNU7bTOqGTAXC7I4EtrKvV8Ct5Y41gQmFEJGk3r57ak0LpPGqUpu9HsduMzbOHMXxKZ4itM=
+	t=1750219514; cv=none; b=aGRxmxuX7My2tsAhJOW/QA+rj71cDC/necc/IMFZ9xZSKBdNxxQcckBv/jWP41VRjhx/KgIdVbh1luyj6Z9S46cp306qfrtd6IkKNrb3HYoB3IwCwKXb36lbFXGmCtWBsIcSDjpSbsCVZZx48njr0NNDpRbGrKab1RSw0SAX1qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750213120; c=relaxed/simple;
-	bh=FeQphIc5D1myg11vQruSQmO3Z93PdqqImp9iOYt4LXA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gYmAK9JRqb9qpSGO3f08vcO8OX9rfjpWLwa0djAJG/8rLTr3G3P85dK4RrTnzs+W9sJ+OlRqyf+ScyMq/eBLqIz1iJXRkQ3+0dgyot+Wq09FaZI6r48mRSF3/Vsp1Nz2pA3HJRbnn6MIZacrqwGpYDnWW50L1vboOyOh+SB3OIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=byoVeCZu; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750213119; x=1781749119;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=FeQphIc5D1myg11vQruSQmO3Z93PdqqImp9iOYt4LXA=;
-  b=byoVeCZuDYHFVtLDQatUw0Rzb6CtBFeA5oyXVIg9qYQGcDsRpMYizpld
-   ZgPVOYhAphvnKk4KZSEJKWDI3UFRNkFj6ZPwtcm++iixAjpU/XVJ1ofav
-   s0iL656Q49cIWaUCFXw7EjRUvgJlgrmVOKBs7gDRabs0lRDLp7JH3TWt6
-   YwCOrxL6cBUioY+sQGyW4HdSqadRvExYFF+f24E3O86GojZdvHgEWWV+m
-   UahXiWkCnNsjlnqfiPaeCXIiSFLIze7xWF2Zk1HfNtWtOJkrb7hiSTgUs
-   s2IX975vlOiyMJP8+mcSRLPCi/Fz1HReVskkOvKST2MvLn23uUz4tMtaY
-   w==;
-X-CSE-ConnectionGUID: hJPn5559RF2GEpqUwXu6mg==
-X-CSE-MsgGUID: qOJyEes4S3CErVtZTxfOdA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="56217704"
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
-   d="scan'208";a="56217704"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2025 19:18:38 -0700
-X-CSE-ConnectionGUID: PVpardVjR1eUwYbuL/jfqg==
-X-CSE-MsgGUID: 4lRf095TRCO1+tzLM2P/TA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
-   d="scan'208";a="153918946"
-Received: from unknown (HELO CannotLeaveINTEL.bj.intel.com) ([10.238.153.146])
-  by fmviesa005.fm.intel.com with ESMTP; 17 Jun 2025 19:18:35 -0700
-From: Jun Miao <jun.miao@intel.com>
-To: kuba@kernel.org,
-	sbhatta@marvell.com,
-	oneukum@suse.com
-Cc: netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	qiang.zhang@linux.dev,
-	jun.miao@intel.com
-Subject: [PATCH v5] net: usb: Convert tasklet API to new bottom half workqueue mechanism
-Date: Wed, 18 Jun 2025 01:05:59 -0400
-Message-ID: <20250618050559.64974-1-jun.miao@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1750219514; c=relaxed/simple;
+	bh=7a7G6Dl97BM3ChtHIr4rSU8yy6jJ3BvwF0Jy5TyQVWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DqFmyqqvzKtmk+VNdlpzZu5fIHy/lXhLZH5cohEtZMSujvYy5d2hWofJHkldumIz1N21OqtBj9awBkvWcCFPi9/fN6QUvQeC4Tc8VkNSFDgNnexKrSqC8Gbd9IJG9SWQLeepL+oPdblgLMkXvb/fhnOKwTh7PWy/YBOdLJAX3fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dZVX7BXm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76812C4CEE7;
+	Wed, 18 Jun 2025 04:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750219514;
+	bh=7a7G6Dl97BM3ChtHIr4rSU8yy6jJ3BvwF0Jy5TyQVWM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dZVX7BXmD/B7LGZa/P6a92a1ZGmr+fBDFOeDWEPKNfxUvY9wKodsAYPZRxJNn+xrs
+	 Gv5I3yGaINrv8uX6dplQ5lki3ynUkwhWcqEQRiHrtdg59brHeD6v4HyxM5TsfYGyFp
+	 kz9Ev9lIvDfatLA+DiMh3xdxaafbhgLyhyFfrSjoaGQ8dUbGGVR8UCrvahO/Qb4cY0
+	 hbo+otyDD258WsAgKKIIUmNTuCKIqxWqDF+A730UHfSfpQrmuFVXXE/GS5Kuxzovu3
+	 1nMyR3DwVWS0GoGH2r9pThme5FeCIPnEInQvrdI6Py6DQpQeSZL8amidICRwthNYDZ
+	 +ajKQXGyWWaeg==
+Date: Wed, 18 Jun 2025 09:30:56 +0530
+From: Naveen N Rao <naveen@kernel.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Sairaj Kodilkar <sarunkod@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
+	Babu Moger <babu.moger@amd.com>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: Re: [PATCH 2/2] x86/cpu/topology: Use initial APICID from XTOPOEXT
+ on AMD/HYGON
+Message-ID: <2vanc3xxtjx3ytcl2dwcu3vmn7d2ixpco3mj6p7qyloga5j25p@5ldwqxycaeko>
+References: <20250612072921.15107-1-kprateek.nayak@amd.com>
+ <20250612072921.15107-3-kprateek.nayak@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612072921.15107-3-kprateek.nayak@amd.com>
 
-Migrate tasklet APIs to the new bottom half workqueue mechanism. It
-replaces all occurrences of tasklet usage with the appropriate workqueue
-APIs throughout the usbnet driver. This transition ensures compatibility
-with the latest design and enhances performance.
+On Thu, Jun 12, 2025 at 07:29:21AM +0000, K Prateek Nayak wrote:
+> Prior to the topology parsing rewrite and the switchover to the new
+> parsing logic for AMD processors in commit c749ce393b8f ("x86/cpu: Use
+> common topology code for AMD"), the "initial_apicid" on these platforms
+> was:
+> 
+> - First initialized to the LocalApicId from CPUID leaf 0x1 EBX[31:24].
+> 
+> - Then overwritten by the ExtendedLocalApicId in CPUID leaf 0xb
+>   EDX[31:0] on processors that supported topoext.
+> 
+> With the new parsing flow introduced in commit f7fb3b2dd92c ("x86/cpu:
+> Provide an AMD/HYGON specific topology parser"), parse_8000_001e() now
+> unconditionally overwrites the "initial_apicid" already parsed during
+> cpu_parse_topology_ext().
+> 
+> Although this has not been a problem on baremetal platforms, on
+> virtualized AMD guests that feature more than 255 cores, QEMU 0's out
+> the CPUID leaf 0x8000001e on CPUs with "CoreID" > 255 to prevent
+> collision of these IDs in EBX[7:0] which can only represent a maximum of
+> 255 cores [1].
+> 
+> This results in the following FW_BUG being logged when booting a guest
+> with more than 255 cores:
+> 
+>     [Firmware Bug]: CPU 512: APIC ID mismatch. CPUID: 0x0000 APIC: 0x0200
+> 
+> Rely on the APICID parsed during cpu_parse_topology_ext() from CPUID
+> leaf 0x80000026 or 0xb and only use the APICID from leaf 0x8000001e if
+> cpu_parse_topology_ext() failed (has_topoext is false).
+> 
+> On platforms that support the 0xb leaf (Zen2 or later, AMD guests on
+> QEMU) or the extended leaf 0x80000026 (Zen4 or later), the
+> "initial_apicid" is now set to the value parsed from EDX[31:0].
+> 
+> On older AMD/Hygon platforms that does not support the 0xb leaf but
+> supports the TOPOEXT extension (Fam 0x15, 0x16, 0x17[Zen1], and Hygon),
+> the current behavior is retained where "initial_apicid" is set using
+> the 0x8000001e leaf.
+> 
+> Link: https://github.com/qemu/qemu/commit/35ac5dfbcaa4b [1]
+> Debugged-by: Naveen N Rao (AMD) <naveen@kernel.org>
+> Debugged-by: Sairaj Kodilkar <sarunkod@amd.com>
+> Fixes: c749ce393b8f ("x86/cpu: Use common topology code for AMD")
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> ---
+>  arch/x86/kernel/cpu/topology_amd.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/topology_amd.c b/arch/x86/kernel/cpu/topology_amd.c
+> index fec849fff82f..2ff6988e020a 100644
+> --- a/arch/x86/kernel/cpu/topology_amd.c
+> +++ b/arch/x86/kernel/cpu/topology_amd.c
+> @@ -80,7 +80,13 @@ static bool parse_8000_001e(struct topo_scan *tscan, bool has_topoext)
+>  
+>  	cpuid_leaf(0x8000001e, &leaf);
+>  
+> -	tscan->c->topo.initial_apicid = leaf.ext_apic_id;
+> +	/*
+> +	 * Prefer initial_apicid parsed from CPUID leaf 0x8000026 or 0xb
+> +	 * if available. Otherwise prefer the one from leaf 0x8000001e
+> +	 * over 0x1.
+> +	 */
+> +	if (!has_topoext)
+> +		tscan->c->topo.initial_apicid = leaf.ext_apic_id;
 
-As suggested by Jakub, we have used the system workqueue to schedule on
-(system_bh_wq), so the action performed is usbnet_bh_work() instead of
-usbnet_bh_workqueue() to replace the usbnet_bh_tasklet().
+My understanding is that the rest of this function continues to work 
+properly with an all-zero return value from CPUID leaf 0x8000001e - data 
+from topoext is preferred where available, and other sources are used 
+for llc_id.
 
-Signed-off-by: Jun Miao <jun.miao@intel.com>
----
-v1->v2:
-    Check patch warning, delete the more spaces.
-v2->v3:
-    Fix the kernel test robot noticed the following build errors:
-    >> drivers/net/usb/usbnet.c:1974:47: error: 'struct usbnet' has no member named 'bh'
-v3->v4:
-	Keep "GFP_ATOMIC" flag as it is.
-	If someone want to change the flags (which Im not sure is correct) it should be a separate commit.
+And, this fixes the firmware bug warning seen during a guest boot in 
+qemu for me, so for this patch:
+Tested-by: Naveen N Rao (AMD) <naveen@kernel.org>
 
-v4->v5:
-	As suggested by Jakub, we have used the system workqueue to schedule on(system_bh_wq), 
-	replace the workqueue with work in usbnet_bh_workqueue() and the comments.
----
- drivers/net/usb/usbnet.c   | 36 ++++++++++++++++++------------------
- include/linux/usb/usbnet.h |  2 +-
- 2 files changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index c39dfa17813a..234d47bbfec8 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -461,7 +461,7 @@ static enum skb_state defer_bh(struct usbnet *dev, struct sk_buff *skb,
- 
- 	__skb_queue_tail(&dev->done, skb);
- 	if (dev->done.qlen == 1)
--		tasklet_schedule(&dev->bh);
-+		queue_work(system_bh_wq, &dev->bh_work);
- 	spin_unlock(&dev->done.lock);
- 	spin_unlock_irqrestore(&list->lock, flags);
- 	return old_state;
-@@ -549,7 +549,7 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
- 		default:
- 			netif_dbg(dev, rx_err, dev->net,
- 				  "rx submit, %d\n", retval);
--			tasklet_schedule (&dev->bh);
-+			queue_work(system_bh_wq, &dev->bh_work);
- 			break;
- 		case 0:
- 			__usbnet_queue_skb(&dev->rxq, skb, rx_start);
-@@ -709,7 +709,7 @@ void usbnet_resume_rx(struct usbnet *dev)
- 		num++;
- 	}
- 
--	tasklet_schedule(&dev->bh);
-+	queue_work(system_bh_wq, &dev->bh_work);
- 
- 	netif_dbg(dev, rx_status, dev->net,
- 		  "paused rx queue disabled, %d skbs requeued\n", num);
-@@ -778,7 +778,7 @@ void usbnet_unlink_rx_urbs(struct usbnet *dev)
- {
- 	if (netif_running(dev->net)) {
- 		(void) unlink_urbs (dev, &dev->rxq);
--		tasklet_schedule(&dev->bh);
-+		queue_work(system_bh_wq, &dev->bh_work);
- 	}
- }
- EXPORT_SYMBOL_GPL(usbnet_unlink_rx_urbs);
-@@ -861,14 +861,14 @@ int usbnet_stop (struct net_device *net)
- 	/* deferred work (timer, softirq, task) must also stop */
- 	dev->flags = 0;
- 	timer_delete_sync(&dev->delay);
--	tasklet_kill(&dev->bh);
-+	disable_work_sync(&dev->bh_work);
- 	cancel_work_sync(&dev->kevent);
- 
- 	/* We have cyclic dependencies. Those calls are needed
- 	 * to break a cycle. We cannot fall into the gaps because
- 	 * we have a flag
- 	 */
--	tasklet_kill(&dev->bh);
-+	disable_work_sync(&dev->bh_work);
- 	timer_delete_sync(&dev->delay);
- 	cancel_work_sync(&dev->kevent);
- 
-@@ -955,7 +955,7 @@ int usbnet_open (struct net_device *net)
- 	clear_bit(EVENT_RX_KILL, &dev->flags);
- 
- 	// delay posting reads until we're fully open
--	tasklet_schedule (&dev->bh);
-+	queue_work(system_bh_wq, &dev->bh_work);
- 	if (info->manage_power) {
- 		retval = info->manage_power(dev, 1);
- 		if (retval < 0) {
-@@ -1123,7 +1123,7 @@ static void __handle_link_change(struct usbnet *dev)
- 		 */
- 	} else {
- 		/* submitting URBs for reading packets */
--		tasklet_schedule(&dev->bh);
-+		queue_work(system_bh_wq, &dev->bh_work);
- 	}
- 
- 	/* hard_mtu or rx_urb_size may change during link change */
-@@ -1198,11 +1198,11 @@ usbnet_deferred_kevent (struct work_struct *work)
- 		} else {
- 			clear_bit (EVENT_RX_HALT, &dev->flags);
- 			if (!usbnet_going_away(dev))
--				tasklet_schedule(&dev->bh);
-+				queue_work(system_bh_wq, &dev->bh_work);
- 		}
- 	}
- 
--	/* tasklet could resubmit itself forever if memory is tight */
-+	/* work could resubmit itself forever if memory is tight */
- 	if (test_bit (EVENT_RX_MEMORY, &dev->flags)) {
- 		struct urb	*urb = NULL;
- 		int resched = 1;
-@@ -1224,7 +1224,7 @@ usbnet_deferred_kevent (struct work_struct *work)
- fail_lowmem:
- 			if (resched)
- 				if (!usbnet_going_away(dev))
--					tasklet_schedule(&dev->bh);
-+					queue_work(system_bh_wq, &dev->bh_work);
- 		}
- 	}
- 
-@@ -1325,7 +1325,7 @@ void usbnet_tx_timeout (struct net_device *net, unsigned int txqueue)
- 	struct usbnet		*dev = netdev_priv(net);
- 
- 	unlink_urbs (dev, &dev->txq);
--	tasklet_schedule (&dev->bh);
-+	queue_work(system_bh_wq, &dev->bh_work);
- 	/* this needs to be handled individually because the generic layer
- 	 * doesn't know what is sufficient and could not restore private
- 	 * information if a remedy of an unconditional reset were used.
-@@ -1547,7 +1547,7 @@ static inline void usb_free_skb(struct sk_buff *skb)
- 
- /*-------------------------------------------------------------------------*/
- 
--// tasklet (work deferred from completions, in_irq) or timer
-+// work (work deferred from completions, in_irq) or timer
- 
- static void usbnet_bh (struct timer_list *t)
- {
-@@ -1601,16 +1601,16 @@ static void usbnet_bh (struct timer_list *t)
- 					  "rxqlen %d --> %d\n",
- 					  temp, dev->rxq.qlen);
- 			if (dev->rxq.qlen < RX_QLEN(dev))
--				tasklet_schedule (&dev->bh);
-+				queue_work(system_bh_wq, &dev->bh_work);
- 		}
- 		if (dev->txq.qlen < TX_QLEN (dev))
- 			netif_wake_queue (dev->net);
- 	}
- }
- 
--static void usbnet_bh_tasklet(struct tasklet_struct *t)
-+static void usbnet_bh_work(struct work_struct *work)
- {
--	struct usbnet *dev = from_tasklet(dev, t, bh);
-+	struct usbnet *dev = from_work(dev, work, bh_work);
- 
- 	usbnet_bh(&dev->delay);
- }
-@@ -1742,7 +1742,7 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
- 	skb_queue_head_init (&dev->txq);
- 	skb_queue_head_init (&dev->done);
- 	skb_queue_head_init(&dev->rxq_pause);
--	tasklet_setup(&dev->bh, usbnet_bh_tasklet);
-+	INIT_WORK(&dev->bh_work, usbnet_bh_work);
- 	INIT_WORK (&dev->kevent, usbnet_deferred_kevent);
- 	init_usb_anchor(&dev->deferred);
- 	timer_setup(&dev->delay, usbnet_bh, 0);
-@@ -1971,7 +1971,7 @@ int usbnet_resume (struct usb_interface *intf)
- 
- 			if (!(dev->txq.qlen >= TX_QLEN(dev)))
- 				netif_tx_wake_all_queues(dev->net);
--			tasklet_schedule (&dev->bh);
-+			queue_work(system_bh_wq, &dev->bh_work);
- 		}
- 	}
- 
-diff --git a/include/linux/usb/usbnet.h b/include/linux/usb/usbnet.h
-index 0b9f1e598e3a..208682f77179 100644
---- a/include/linux/usb/usbnet.h
-+++ b/include/linux/usb/usbnet.h
-@@ -58,7 +58,7 @@ struct usbnet {
- 	unsigned		interrupt_count;
- 	struct mutex		interrupt_mutex;
- 	struct usb_anchor	deferred;
--	struct tasklet_struct	bh;
-+	struct work_struct	bh_work;
- 
- 	struct work_struct	kevent;
- 	unsigned long		flags;
--- 
-2.43.0
+Thanks,
+Naveen
 
 
