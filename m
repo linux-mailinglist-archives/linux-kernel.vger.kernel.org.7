@@ -1,109 +1,81 @@
-Return-Path: <linux-kernel+bounces-691724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B9DADE80E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:08:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D11ADE80F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F3217229E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2DA217B007
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1DF2877F4;
-	Wed, 18 Jun 2025 10:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB91288520;
+	Wed, 18 Jun 2025 10:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jGM5EuQ/"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="q9DBmO5R"
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C808A287503
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B97285066
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750240857; cv=none; b=Eh/hv4SVLwZQZIGpuwoK1XyjQChlHMfrYWgCIwYMAyRiQ5tIHMR0l1Ti4ke1BVqBYGeUl5VefAr/JM7M+xLugC4K/+8FrQHlU4qVM0oEc4re/2JyRR+Dl6cBFRdLBVY/fiovCb5rgGifLIPP0B7QaUlLp1NfgxKdIktEDdAMQ3I=
+	t=1750240906; cv=none; b=Uunpewh87AGovnSAvTK+4pylNA+gN9Ta61nIMCZHjAUx4BcxPA4lTR8FOdtreQu6PgYx0pmffHyqPy3lyV/UJP0BDa2h6Cs+3W5t2yc8SZcxvQOZYB/fYQ0s8Hg44gI87blIHEskD/OtDrG6j+F5hjY2FiG++VYCdHzOPn+XdIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750240857; c=relaxed/simple;
-	bh=VN13H3zCDLcqYd40jQvYLahvkzgxzbof0QHpQngN6ys=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eQaV1lC2SfMwFzEfCtWMJbG8920IeBlwKLYmPKlrrxDPznPpS+xU3HCJZymThnYwBVOQERu1JBuQJeJHRLwVSO9Z0CWe+KHbNRpZ3OesXoJjTYVcrZoqaqGxyndQDLx8ZsPjaXokqQ8TLvE4QQBaSr4D7YnrbNBkujk7guWy4Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jGM5EuQ/; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a50049f8eeso2767917f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 03:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750240854; x=1750845654; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gXsKhSThWoiUF4CvpkQnu6NVTTM0tjBOOvGWcPTBWI=;
-        b=jGM5EuQ/3lAZ1jvg1PHda76oGvXfmzV/k1j3feP9IMBoEerD/t4TzZXi1RndF0aMDa
-         q2hGAAiOtoY2Juro9DFjHMrVsba8lmE5mWCck9EDkKNp2JthPVSM5xrASwxqO375fXNy
-         UEJEs3XDH7lv5+8Ct98bn1bfnBMN4ZOR4W9wxAKL3ldMrlM0ozW0psHgUStOjDiemw/2
-         AkjM+3HzvrPc/UQa7kixMKNvc3OwI8pEzzZM61SgZVsJXdpqjeYZM6T29rGlmOsg1l5G
-         Uca0tiuadTNO1DUSVDKvrQs0YpmO8988F6/5DiFG8faCzfeTh7keGCUwX95a07BMy5mk
-         Rm+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750240854; x=1750845654;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gXsKhSThWoiUF4CvpkQnu6NVTTM0tjBOOvGWcPTBWI=;
-        b=vvGxoZZ0m5s2VHRUDmF8xUT44c3rQeoWieP9g3xUFp53dSdgcIa156rVpge8gc+QCS
-         SLMckyWqlFFCpF+lxJ8ck1AMmG/ePYm7xN+HJPHBo60Jz51ciRwihTeW1vi6nyd3V69C
-         ypJmH45nUWcivfPJGZ204emQWO0MNZmub41b/YFM+ZqjV+yPm2x6hZrohPjDUVSa55Vl
-         vmnw+69ej0y7ICb3ZqFjNT2AVtfz0nbKf9a7RC3wcJnpC8QZCN0iOCKgX0pDB4jIFams
-         P+8ldJDwkK9zIjxocStg+wKHoUycKPyPXGHsIqRic+KfOVTokbIG58hOAv17rzEeFyZ3
-         BUJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUYM35I1JwfqLqfp+0i7APHaGK2NC3fUGSqwi25FPoqlJ4zViyi3yTdAwILAtY0G3H7U2Bc9K2JoxmFJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG1SmZv5G6Wh6KnPYgAkjio61OQdDXoTKrFX18qj6ycH57JGTe
-	9D7trNQ9VmUwwBg7ZCzPwtMzekkjcYJviXbLzf++15l2w6k436PwUt9B8Zlrt5ciF9ag9V78xGj
-	b7uW68w5EA4yp8w==
-X-Google-Smtp-Source: AGHT+IEFSgudHg7Y7cHjEgvEWYvKJum1y7AdKSBurV7AIvTuNOuv1zf2A9OMmkY37R7Vx351TJtubM5Ukn5P4Q==
-X-Received: from wmbdq13.prod.google.com ([2002:a05:600c:64cd:b0:43d:1873:dbaf])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:5c84:0:b0:3a5:1cc5:4a17 with SMTP id ffacd0b85a97d-3a572e925e1mr13213215f8f.42.1750240851242;
- Wed, 18 Jun 2025 03:00:51 -0700 (PDT)
-Date: Wed, 18 Jun 2025 10:00:49 +0000
-In-Reply-To: <aFGkVh-rs2ZqcL6g@x1.local>
+	s=arc-20240116; t=1750240906; c=relaxed/simple;
+	bh=WCVF2Ik6cQiyZrN1eJ2hI7RX/6WB/o9Hq3Z0S/EjNpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FwjzByd7G315FTVJZI3TNYS7Y6aPk+YvrrvywCKPV9rHcg55LPJG3dlui9kQbYOQJhBltEO+6KUFRjGOrhZy7qHOHBCc+YCpf8i7aWAKVEW8V41kET9ZnTBFqDDgGHARuLO+yIA4x92FQHaB9ih+6ygwo9zqXuAzY6F78ciAPB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=q9DBmO5R; arc=none smtp.client-ip=185.125.25.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bMfQp2GrJzBS3;
+	Wed, 18 Jun 2025 12:01:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1750240898;
+	bh=nEHEmzkiwXFLv1SbStj09UkDIZNvmgynLKahQDMXZD0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q9DBmO5RWzllCwu7QyGb1MOtgsgdYaS4jYucZFI6GTA0YQZw2BJlEMPctfsJsAcis
+	 FjScahc+tG58mpgXAHUKeksKJUTsqD/WOBR1rc0Y2K9UY8O9A9MS86g5QxPtiS0Qhi
+	 tjoYtTaw/gxsRqTpyfa1/jbuqDqhCGkEJnKYXJSQ=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bMfQn5gtrzHCJ;
+	Wed, 18 Jun 2025 12:01:36 +0200 (CEST)
+Date: Wed, 18 Jun 2025 12:01:36 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the landlock tree
+Message-ID: <20250618.ohsahpoo4It4@digikod.net>
+References: <20250618075128.2a8e9fcd@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250501163827.2598-1-ujwal.kundur@gmail.com> <20250616100406.2853-1-ujwal.kundur@gmail.com>
- <20250616172618.0609127a8b1e406d4c228d24@linux-foundation.org>
- <aFGPVPDKGLOIEucg@x1.local> <aFGkVh-rs2ZqcL6g@x1.local>
-X-Mailer: aerc 0.20.1
-Message-ID: <DAPKLM86IC4F.1MCOR35P2D9VV@google.com>
-Subject: Re: [PATCH v5 1/1] selftests/mm/uffd: Refactor non-composite global
- vars into struct
-From: Brendan Jackman <jackmanb@google.com>
-To: Peter Xu <peterx@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Ujwal Kundur <ujwal.kundur@gmail.com>, <shuah@kernel.org>, 
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>, 
-	<linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250618075128.2a8e9fcd@canb.auug.org.au>
+X-Infomaniak-Routing: alpha
 
-On Tue Jun 17, 2025 at 5:22 PM UTC, Peter Xu wrote:
-> ERROR: munmap (errno=22, @uffd-common.c:277)
+On Wed, Jun 18, 2025 at 07:51:28AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commit
+> 
+>   4213018f5f77 ("selftests/landlock: Fix readlink check")
+> 
+> is missing a Signed-off-by from its author and committer.
 
-Looks the same as what I reported here:
+Thanks, fixed.
 
-https://lore.kernel.org/all/DAITJKYRQMFD.OLOUWS7UPGVD@google.com/
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-> Ujwal, can you reproduce these issues and have a look?
 
-The script I mentioned in that other mail should help with this:
-
-https://github.com/bjackman/linux/blob/github-base/.github/scripts/run_local.sh
-
-That's my hacky attempt at a "hermetic" runner for these tests, it
-ought to let you get the exact Kconfig, userspace, and QEMU command
-that I used when I hit the issue. 
-
-The GitHub workflow definition shows how to get its dependencies
-installed on a Debian-alike:
-
-https://github.com/bjackman/linux/blob/github-base/.github/workflows/test.yaml
 
