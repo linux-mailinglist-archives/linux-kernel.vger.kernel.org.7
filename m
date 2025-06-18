@@ -1,66 +1,106 @@
-Return-Path: <linux-kernel+bounces-691566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABD1ADE62D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:58:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA617ADE631
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A2673A4642
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:57:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9958174692
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC79427FB0C;
-	Wed, 18 Jun 2025 08:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DFC224220;
+	Wed, 18 Jun 2025 08:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Th1bX929"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FiBWNpGP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WJVXBVHn";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FiBWNpGP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WJVXBVHn"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149202556E;
-	Wed, 18 Jun 2025 08:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6097D215F42
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750237081; cv=none; b=lIxOWiYcfxaGgre+nkt4adGmG8H2/OMwnGgbGjB0yRVnUoR6RfIGV9G0a6gX+TfFTjFi9LZNj/zXeH+MS8Iz5v2W1peWioUbk3GZJm2LGMgFzaJOL/lUEwhTquXCfUbDkUav4zkwAbYWQe93ZfDFpKMcDyNWA5TRB/d9JofeayI=
+	t=1750237120; cv=none; b=vBPNtSsI2r81sUgrrK/csc6IKBw+L/jVEEu26fIzep4pThNGY/t2TKHcU02LJrmfLgzteLPWqn9vF0EfM/k6Dk5jB9dil60aJtyQJx38i92EazH+BD/3Gs8tnE1iBp+Sfpc13rIz/KU/gD+C6LOoCELskYMmjITbvtWtyf727TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750237081; c=relaxed/simple;
-	bh=wqrA8bKqxtN3oLYl0+ONBhmLPe1OSnjffCbLNpdz1kg=;
+	s=arc-20240116; t=1750237120; c=relaxed/simple;
+	bh=z3yuffy1eALNXrkmrwmqI6TkfvCQquUhQsYjlbPmOT4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oYpiFv4AMdSfu7o3vO4dsiHAEwVQCByld9LkM86jRNhGF0xfpMsnWl7L5M4NBFFREQzkVY46GBLX6fjIWNyac74acLBDajHdio29183ou1DdlD9lVOgMAzQQssmeu2NS2vtkX5t/joBGs2OFClCOoj1fiKOlewtwdNRwXPrxBN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Th1bX929; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6783DC4CEE7;
-	Wed, 18 Jun 2025 08:58:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750237080;
-	bh=wqrA8bKqxtN3oLYl0+ONBhmLPe1OSnjffCbLNpdz1kg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Th1bX929khRVUWpVsv5RPOq70HqpzMbAWPN0PsLo7//IZKJRWrBq+Fe3HVWzymrwK
-	 hK9f/BQi1o15BjH9kDRRIb37zeNnkzM5o+8ONhM6EfYMXfgh647tIrhZYqoU/IG1qB
-	 dP0mL9tuETQEAx4YKjkemIc+afhaLP0HxT0YDkByN+dVXT/upjq4C9A62gjZUwK3ic
-	 n0j7st3u4XQ5KfMVaE9seunzMCMmPWWzesgCUAFf21lscBqYYMhoCuMIi9KmhmCJQi
-	 ogMKEpFQ02H+zlKYVdKw8ExRS+AVjMc6t/nGrIUPR+cg19J5mh4bMFE4G8PCW1fROb
-	 7mxTqxBNPFTuQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uRocJ-000000002S6-0sc6;
-	Wed, 18 Jun 2025 10:57:59 +0200
-Date: Wed, 18 Jun 2025 10:57:59 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Baochen Qiang <quic_bqiang@quicinc.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org,
-	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: Re: [PATCH ath-next v3 5/6] wifi: ath11k: choose default PM policy
- for hibernation
-Message-ID: <aFJ_l_BbjxXDBJDD@hovoldconsulting.com>
-References: <20250328-ath11k-bring-hibernation-back-v3-0-23405ae23431@quicinc.com>
- <20250328-ath11k-bring-hibernation-back-v3-5-23405ae23431@quicinc.com>
- <d0cd065c-1cd1-4e56-8c57-60777b1f3664@oss.qualcomm.com>
- <aFJ-SwT1g500h3kC@hovoldconsulting.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QwkbXh4ZslJuLtYF2udi77sOeePOVcFZMQnih61UGePHVkz5nlB2Ecy5CRtgAxyfXtvNylr0ChHToLXSdE5kOT28WzhAA8FP0fOIMRcQnx7tfrJVcNuHbkxIyBT+XnxqIXB7g0Gw7qKh8p7FTthtmviDEYPRc84125a9YRTsyTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FiBWNpGP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WJVXBVHn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FiBWNpGP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WJVXBVHn; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6DA681F7C7;
+	Wed, 18 Jun 2025 08:58:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750237115;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6ESdoJ1xH5fOmnegw7v0Kss6JCi/Yc1YGw1HrlbZJ+g=;
+	b=FiBWNpGPkNZuI9pBGbEfIE8tn7cUbkzS5N0uUni7wDXdmVgoCcyGEG6i0xSiovCIsY4wD1
+	jzboZAptVip0iWtNgVs7bkJUTrmH1pa1+w8AjF6Kna/4EIipD4jwGyWQc/zQ8pPFY1BCap
+	b3GuxF7LPdPlEpUwWucuiW6ySqXnB8s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750237115;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6ESdoJ1xH5fOmnegw7v0Kss6JCi/Yc1YGw1HrlbZJ+g=;
+	b=WJVXBVHnksrwQpupP9c65Z1aKIGFunc0/U0QARYrWzlf48F608G8BKDY0cznu1XNEOqGZL
+	zJ4R7QGIYp8yFuAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750237115;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6ESdoJ1xH5fOmnegw7v0Kss6JCi/Yc1YGw1HrlbZJ+g=;
+	b=FiBWNpGPkNZuI9pBGbEfIE8tn7cUbkzS5N0uUni7wDXdmVgoCcyGEG6i0xSiovCIsY4wD1
+	jzboZAptVip0iWtNgVs7bkJUTrmH1pa1+w8AjF6Kna/4EIipD4jwGyWQc/zQ8pPFY1BCap
+	b3GuxF7LPdPlEpUwWucuiW6ySqXnB8s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750237115;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6ESdoJ1xH5fOmnegw7v0Kss6JCi/Yc1YGw1HrlbZJ+g=;
+	b=WJVXBVHnksrwQpupP9c65Z1aKIGFunc0/U0QARYrWzlf48F608G8BKDY0cznu1XNEOqGZL
+	zJ4R7QGIYp8yFuAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3645513721;
+	Wed, 18 Jun 2025 08:58:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6Zm0DLt/UmjGEgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 18 Jun 2025 08:58:35 +0000
+Date: Wed, 18 Jun 2025 10:58:33 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>, linux-btrfs@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>
+Subject: Re: [PATCH 2/2] crypto/crc32[c]: register only "-lib" drivers
+Message-ID: <20250618085833.GG4037@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20250613183753.31864-1-ebiggers@kernel.org>
+ <20250613183753.31864-3-ebiggers@kernel.org>
+ <20250617201748.GE4037@suse.cz>
+ <20250617202050.GB1288@sol>
+ <20250617204756.GD1288@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,54 +109,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aFJ-SwT1g500h3kC@hovoldconsulting.com>
+In-Reply-To: <20250617204756.GD1288@sol>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[]
+X-Spam-Level: 
 
-On Wed, Jun 18, 2025 at 10:52:27AM +0200, Johan Hovold wrote:
-> On Wed, Jun 18, 2025 at 02:15:04AM +0200, Konrad Dybcio wrote:
-> > On 3/28/25 6:32 AM, Baochen Qiang wrote:
-> > > Now WoWLAN mode is chosen for those machines listed in the quirk table.
-> > > This works for suspend (S3) but breaks for hibernation (S4), because
-> > > WoWLAN mode requires WLAN power to be sustained, which is not the case
-> > > during hibernation. For hibernation, the default mode should be used.
+On Tue, Jun 17, 2025 at 01:47:56PM -0700, Eric Biggers wrote:
+> On Tue, Jun 17, 2025 at 01:20:50PM -0700, Eric Biggers wrote:
+> > On Tue, Jun 17, 2025 at 10:17:48PM +0200, David Sterba wrote:
+> > > On Fri, Jun 13, 2025 at 11:37:53AM -0700, Eric Biggers wrote:
+> > > > From: Eric Biggers <ebiggers@google.com>
+> > > > 
+> > > > For the "crc32" and "crc32c" shash algorithms, instead of registering
+> > > > "*-generic" drivers as well as conditionally registering "*-$(ARCH)"
+> > > > drivers, instead just register "*-lib" drivers.  These just use the
+> > > > regular library functions crc32_le() and crc32c(), so they just do the
+> > > > right thing and are fully accelerated when supported by the CPU.
+> > > > 
+> > > > This eliminates the need for the CRC library to export crc32_le_base()
+> > > > and crc32c_base().  Separate patches make those static functions.
+> > > > 
+> > > > Since this patch removes the "crc32-generic" and "crc32c-generic" driver
+> > > > names which crypto/testmgr.c expects to exist, update crypto/testmgr.c
+> > > > accordingly.  This does mean that crypto/testmgr.c will no longer
+> > > > fuzz-test the "generic" implementation against the "arch" implementation
+> > > > for crc32 and crc32c, but this was redundant with crc_kunit anyway.
+> > > > 
+> > > > Besides the above, and btrfs_init_csum_hash() which the previous patch
+> > > > fixed, no code appears to have been relying on the "crc32-generic" or
+> > > > "crc32c-generic" driver names specifically.
+> > > > 
+> > > > btrfs does export the checksum driver name in
+> > > > /sys/fs/btrfs/$uuid/checksum.  This patch makes that file contain
+> > > > "crc32c-lib" instead of "crc32c-generic" or "crc32c-$(ARCH)".  This
+> > > > should be fine, since in practice the purpose of this file seems to have
+> > > > been just to allow users to manually check whether they needed to enable
+> > > > the optimized CRC32C code.  This was needed only because of the bug in
+> > > > old kernels where the optimized CRC32C code defaulted to off and even
+> > > > needed to be explicitly added to the ramdisk to be used.  Now that it
+> > > > just works in Linux 6.14 and later, there's no need for users to take
+> > > > any action and this file is basically obsolete.
 > > > 
-> > > Register a PM notifier with which kernel can notify us of the actual PM
-> > > operation: if system is going to suspend, the original PM policy is
-> > > honored; while if it is hibernation, overwrite it with default policy.
-> > > 
-> > > To summarize: for suspend (S3), WoWLAN mode is chosen for machines listed
-> > > in the quirk table, non-WoWLAN mode for others; for hibernation (S4),
-> > > non-WoWLAN mode is chosen for all.
-> > > 
-> > > Tested-on: WCN6855 hw2.0 PCI WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.30
-> > > 
-> > > Tested-by: Takashi Iwai <tiwai@suse.de>
-> > > Signed-off-by: Baochen Qiang <quic_bqiang@quicinc.com>
-> > > ---
+> > > Well, not the whole file, because it says which checksumming algo is
+> > > used for the filesystem, but the implementation part is.
 > > 
-> > I've bisected the following splat to this patch, still happening on
-> > linux-next/master, WCN6855 + SC8280XP CRD, 100% reproducibility 
+> > Oh, right.  It's one of those sysfs files that don't follow the normal sysfs
+> > convention and contain multiple values.  I'll update the paragraph above to
+> > clarify that it's referring to the driver name part of the file.
 > 
-> WFIW, I'm not seeing this with 6.16-rc2 (which has this patch) on either
-> the X13s or sc8280xp-crd (ath11k now fails to resume on the latter
-> because of missing regulatory data, but that appears to be a separate
-> regression).
-
-Scratch that bit about failing to resume, it's just a warning that's
-new.
-
-> > [root@sc8280xp-crd ~]# echo mem > /sys/power/state 
-> > [   20.267830] fb0: Framebuffer is not in virtual address space.
-> > [   39.863070] PM: suspend entry (s2idle)
-> > [   39.908067] Filesystems sync: 0.035 seconds
-> > [   39.934453] ------------[ cut here ]------------
-> > [   39.939259] Invalid notifier called!
-> > [   39.939268] WARNING: CPU: 5 PID: 513 at kernel/notifier.c:79 notifier_call_chain+0x84/0x1a4
-> > [   39.951566] Modules linked in:
-> > [   39.954732] CPU: 5 UID: 0 PID: 513 Comm: bash Not tainted 6.14.0-rc4longbois-01215-g32d93b51bc7e #12177
+> I revised it to:
 > 
-> 6.14?
-> 
-> > [   39.964396] Hardware name: Qualcomm QRD, BIOS 6.0.230525.BOOT.MXF.1.1.c1-00114-MAKENA-1 05/25/2023
+> btrfs does export the checksum name and checksum driver name in
+> /sys/fs/btrfs/$uuid/checksum.  This commit makes the driver name portion
+> of that file contain "crc32c-lib" instead of "crc32c-generic" or
+> "crc32c-$(ARCH)".  This should be fine, since in practice the purpose of
+> the driver name portion of this file seems to have been just to allow
+> users to manually check whether they needed to enable the optimized
+> CRC32C code.  This was needed only because of the bug in old kernels
+> where the optimized CRC32C code defaulted to off and even needed to be
+> explicitly added to the ramdisk to be used.  Now that it just works in
+> Linux 6.14 and later, there's no need for users to take any action and
+> the driver name portion of this is basically obsolete.  (Also, note that
+> the crc32c driver name already changed in 6.14.)
 
-Johan
+This is OK, thanks.
 
