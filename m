@@ -1,132 +1,78 @@
-Return-Path: <linux-kernel+bounces-692312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DEE1ADEFCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:38:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38947ADEFBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1BF16B469
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:38:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 033C616529D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6EA2ECD38;
-	Wed, 18 Jun 2025 14:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SmCHxPUT"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C052B2DFF3C;
+	Wed, 18 Jun 2025 14:35:18 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6F72ECD05;
-	Wed, 18 Jun 2025 14:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632FD2877E3;
+	Wed, 18 Jun 2025 14:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750257424; cv=none; b=J0FRfTrsVa0qkNgA8muMlGwc6LBvNi7Dowfog9ZCCxKaitV5m6iJeb89YgsAHazBrxw1ZA9Hs2ETmCZLieDUL6j+1GcDJ83OLsJDU1b8jPNOYq53OgCISpzJo8RpMGxV/bvvstCTHj3hDmTYLhQ7vb2zEFRJhsZtNNtu4lkC5PA=
+	t=1750257318; cv=none; b=ZwLwEHghN7p7DMqQikjMAupJr8LlAej3cRFnPM9lOMSM0tfDeGzs7F15yxeuBShww7KWEq/Kjs2uylScxcSKnkGJbvZY1NbxRpK2uhl/efZmTZMs4xk4iPXXjSP71xU7PlKd/VQ6wjGJB8nh+hLeHQh1FosoIaRQHuzze3AmLKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750257424; c=relaxed/simple;
-	bh=vyr/GHGO6xfTWq6buMng2zgyugvAz16GZ1LMGwzKwlY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Qpg0Mg36tqxSc2gLkzs1Yox251bNc18Nk5B7uqSNiWXdySA+I7nSOrR2nivJdMazTtorN4Ze+UTvJ4VlE4k2Ow2msX/YpsXXSCCFQZiuSq9mvD8GGwK/g+M+sFeAZKE+9S25bxh9t4oHtaoB5G63wMPxj0xpnUr2O25BML+RsNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SmCHxPUT; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3138e64b42aso8028842a91.0;
-        Wed, 18 Jun 2025 07:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750257421; x=1750862221; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kd3C6/3Ctr7DBwFDySkUZ6vFzUEoBWHbZrpLkfWxSyk=;
-        b=SmCHxPUT3OqjhX99Kcumn9bpz5492JtPdBFPL1whv6foTADi1u8nhry2I4MouUgFQF
-         W70eoPSgZbX3dd/MCZNi/HE6LqVDfcddtXngxAD9dQTFgWspEb2m/BicSN8UDxcJ/SAI
-         Zg/JjFRePrKs++dFi+JpVqTaRTWqAsENO81hiYF/4qYIV3PgjCpS+wmcekuxxESVB29r
-         3q6IG+b1nUjfCCYeuwMvoQFOKgqtSkYDwwqNja6BQxGUwWbY5VHMxOG/49WAXWLcxsxy
-         R+Q+Ex05UN2IOIcPzXB8Shz2wcE+K1fByCKm8ZEElhLoUy0Tt6OZe9wRZBozD7nKyPWE
-         U3VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750257421; x=1750862221;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kd3C6/3Ctr7DBwFDySkUZ6vFzUEoBWHbZrpLkfWxSyk=;
-        b=m6Y7//0spz/Ip+Gj+fR3jRvTbNE6Q8S3/sLuM/ncVgnmYLZN2BQRXEdgMz1bDTVdRv
-         PiO5x5mm5bNeGmzwtlnf0aFsHdUiOoC/ASHo3OGW1D0EzNPZo9tHhgHIZXHdSvwivwO0
-         kWij0PzyeUi71P1LSPmCrjwJ2kIA9ZuGW1tpPjaKXY/Pnw4E7tISl3LBYuXs2cr2i618
-         ZbWlG4IBZt4KrbuWBOl2Pc0ar2TzxhEMz/iNMeJFlf71aIb73nhZruDwAU+U/jqqk9r9
-         DHMUuyhYuQ+HZ6oGEfv1hfN7I9qg0Li4vZ766yPYC4Lj8XAj/QW8zkdZks67FYNAc+fj
-         BOZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYfGbNOQiKBKZqCtfipfjTe/ppMTXv28EhyBXpLV6x0JAaGbftQ51fgnvuoEkRlbraukFPSH7GYMRzfdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFmgM9+C3T9PlNXlwN0VhuhAuQ3uxGXH+vfyUd47ZGi/+9nciG
-	8Y6kkDN2DPgXlqZwptVrdCzcE+3ciznQlyAz4KIcTeKVT0KkkLwRshQD
-X-Gm-Gg: ASbGncsA6YTsKtzVIoqlgrCMfiSOuJ8QEFfzewGXCePNk816e//Ik/G9S24YZLiGlYu
-	yrgRnMpqy8X1Wvl0yZpuGuSyjuVbTDIkb0a/DookqLTX0eVDuEffTpZGB9MHwyggZU+JlNFZ1Bv
-	4YZZe/NEa0TyovPQRAMJS8Y4wMFh0l8zepGdv2oyvYybEJPpuclAXbUvMWtUVENh7EEfkYRWre/
-	rswf8a4iEtewVmoZPZMb5fUvQD8v+ElCSNWxvLW1SvgieSMf60ZdpPZDe3okgFuhxgQIEeltQU5
-	1vKiGGUbllXWd/lst8x3RnWXiQFbBLa2clFFiNYjBAG7IoolItkfSE+uS7aS
-X-Google-Smtp-Source: AGHT+IF4PFBEgS42FhKIoke8rPoBIVhGT5/T0QrFVR80PDyAFSLZkjMc9mwlCqeSuoGjRMwER4MFSA==
-X-Received: by 2002:a17:90b:3c8e:b0:308:7270:d6ea with SMTP id 98e67ed59e1d1-313f1d2f830mr29006301a91.30.1750257421149;
-        Wed, 18 Jun 2025 07:37:01 -0700 (PDT)
-Received: from zinc.. ([182.216.63.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365deaaa05sm100699905ad.174.2025.06.18.07.36.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 07:37:00 -0700 (PDT)
-From: Kisub Choe <kisub.choe.0x1@gmail.com>
-To: sudipm.mukherjee@gmail.com,
-	teddy.wang@siliconmotion.com,
-	gregkh@linuxfoundation.org
-Cc: linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kisub.choe.0x1@gmail.com
-Subject: [PATCH] staging: sm750fb: rename 'hwCursor'
-Date: Wed, 18 Jun 2025 23:33:42 +0900
-Message-Id: <20250618143342.6517-1-kisub.choe.0x1@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750257318; c=relaxed/simple;
+	bh=IX2MDoOm1kWwcARKzwFsPOZ7vwlSkraLHEHhna4OJ1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pxnAM0Y5rPO4QNyyISxUuHHDvTK5eYunZiYrj8zxSMEWzoSMCeVjnUScDkvWMPcMduUUpUOovPBFKNaHDzgO89wSBdXTUd1E5Sarb9MQezMUykAg9mtFN1/6OK/Uhueq5l/EeZqvQYsGCzWb7R1jcNTNTvDebs1hT1+0r0FL2pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B7A5C4CEE7;
+	Wed, 18 Jun 2025 14:35:10 +0000 (UTC)
+Date: Wed, 18 Jun 2025 15:35:08 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: ankita@nvidia.com
+Cc: jgg@nvidia.com, maz@kernel.org, oliver.upton@linux.dev,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	will@kernel.org, ryan.roberts@arm.com, shahuang@redhat.com,
+	lpieralisi@kernel.org, david@redhat.com, ddutile@redhat.com,
+	seanjc@google.com, aniketa@nvidia.com, cjia@nvidia.com,
+	kwankhede@nvidia.com, kjaju@nvidia.com, targupta@nvidia.com,
+	vsethi@nvidia.com, acurrid@nvidia.com, apopple@nvidia.com,
+	jhubbard@nvidia.com, danw@nvidia.com, zhiw@nvidia.com,
+	mochs@nvidia.com, udhoke@nvidia.com, dnigam@nvidia.com,
+	alex.williamson@redhat.com, sebastianene@google.com,
+	coltonlewis@google.com, kevin.tian@intel.com, yi.l.liu@intel.com,
+	ardb@kernel.org, akpm@linux-foundation.org, gshan@redhat.com,
+	linux-mm@kvack.org, tabba@google.com, qperret@google.com,
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, maobibo@loongson.cn
+Subject: Re: [PATCH v7 1/5] KVM: arm64: Rename symbols to reflect whether CMO
+ may be used
+Message-ID: <aFLOnN_Ha3s724rK@arm.com>
+References: <20250618065541.50049-1-ankita@nvidia.com>
+ <20250618065541.50049-2-ankita@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250618065541.50049-2-ankita@nvidia.com>
 
-Rename 'hwCursor' to 'hw_cursor' to
-conform with kernel style guidelines as reported by checkpatch.pl
+On Wed, Jun 18, 2025 at 06:55:37AM +0000, ankita@nvidia.com wrote:
+> -static bool kvm_is_device_pfn(unsigned long pfn)
+> +static bool kvm_can_use_cmo_pfn(unsigned long pfn)
+>  {
+> -	return !pfn_is_map_memory(pfn);
+> +	return pfn_is_map_memory(pfn);
+>  }
 
-CHECK: Avoid CamelCase: <hwCursor>
+I wonder, why not just use pfn_is_map_memory() directly? At a quick
+grep, it's only used in one place and your patches don't seem to modify
+this function further.
 
-Signed-off-by: Kisub Choe <kisub.choe.0x1@gmail.com>
----
- drivers/staging/sm750fb/sm750.c | 2 +-
- drivers/staging/sm750fb/sm750.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-index bb2ade6030c2..612c982bacd7 100644
---- a/drivers/staging/sm750fb/sm750.c
-+++ b/drivers/staging/sm750fb/sm750.c
-@@ -598,7 +598,7 @@ static int sm750fb_set_drv(struct lynxfb_par *par)
- 		crtc->vidmem_size >>= 1;
- 
- 	/* setup crtc and output member */
--	sm750_dev->hwCursor = g_hwcursor;
-+	sm750_dev->hw_cursor = g_hwcursor;
- 
- 	crtc->line_pad = 16;
- 	crtc->xpanstep = 8;
-diff --git a/drivers/staging/sm750fb/sm750.h b/drivers/staging/sm750fb/sm750.h
-index 40051798efbf..d7e02ff3d6c6 100644
---- a/drivers/staging/sm750fb/sm750.h
-+++ b/drivers/staging/sm750fb/sm750.h
-@@ -113,7 +113,7 @@ struct sm750_dev {
- 	 * 2: secondary crtc hw cursor enabled
- 	 * 3: both ctrc hw cursor enabled
- 	 */
--	int hwCursor;
-+	int hw_cursor;
- };
- 
- struct lynx_cursor {
 -- 
-2.34.1
-
+Catalin
 
