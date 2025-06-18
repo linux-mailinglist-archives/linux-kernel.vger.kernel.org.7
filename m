@@ -1,191 +1,88 @@
-Return-Path: <linux-kernel+bounces-692951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C551ADF8EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 23:50:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB8BADF8A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 23:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D1A84A076C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:50:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB25D1BC276A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F3121CFEF;
-	Wed, 18 Jun 2025 21:50:06 +0000 (UTC)
-Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCFB27A455;
+	Wed, 18 Jun 2025 21:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvyI5ehK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDC828682
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 21:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0726C215077;
+	Wed, 18 Jun 2025 21:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750283406; cv=none; b=Os4Hc88U0Euudi+5cbzj9uIXfE3Q+MAPDmbAZXjxzJzudXy9qy7Dyn2tHH0U134I8BacpdQ6Gp0ujc3qlLP3nMm8s4xUP8CKcVcTt3SCofK5xPv6jv6yg2Cft0IeMvyDrdfreNxm9vY0Q1aD9vpKr9D+nAeoCqE5qsUajpcgIIM=
+	t=1750281684; cv=none; b=ssxf5qgwC92fcynYKgWAGPjj0eDYRT32OVTHBpfyFZZF7eaHqXZv00VmsWd7CXW+6LzWlZp5MMdUNTNSTnYm3VbiPcAy/cGErO90GfkTXMxyMPT9eq24MjEVtcNnSEFilanoG2oHqTqEagCSW83sJizQiP/214i5PSHIWSvbIE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750283406; c=relaxed/simple;
-	bh=lmytkayaHXHHnnkVZO//4fm3YitzDT4IQzdaHgfv6qM=;
+	s=arc-20240116; t=1750281684; c=relaxed/simple;
+	bh=W2qCaLbLrzw5iXSFwbU8t/i5VVdV/ifM6YljafRDdNE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FOafzYsHHsndgPztYqVw3HGd0wfcTsp50xdzMLoGDowtWjnDmSUCgt6VLZK9e/JXV+uPNqrJH+rajf6LTKlv5kPG71/WfduQcGi+8ILNkCLfWy4HEngMeORyBkpX85WKCXs14cUj0jHiKdwSUI96HzH4rtFO/635Qyv6Cgs38IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
-	by finn.localdomain with esmtp (Exim 4.95)
-	(envelope-from <tharvey@gateworks.com>)
-	id 1uS0Do-007yeJ-8r;
-	Wed, 18 Jun 2025 21:21:28 +0000
-From: Tim Harvey <tharvey@gateworks.com>
-To: Stefano Babic <sbabic@denx.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"NXP i.MX U-Boot Team" <uboot-imx@nxp.com>,
-	Tim Harvey <tharvey@gateworks.com>,
-	Tom Rini <trini@konsulko.com>,
-	Marek Vasut <marex@denx.de>,
-	u-boot@lists.denx.de
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] usb: common: allow dr_mode to come from gpio-id based usb-connector
-Date: Wed, 18 Jun 2025 14:21:19 -0700
-Message-Id: <20250618212120.1548575-2-tharvey@gateworks.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250618212120.1548575-1-tharvey@gateworks.com>
-References: <20250618212120.1548575-1-tharvey@gateworks.com>
+	 MIME-Version:Content-Type; b=ieSIwrVhurhH/WWjk0WqEB4S+Gb0BhQ/Al9Z+1r2X5tgkriqtUqclrSA/lSIaPkSQulu6c3YMBg76QEOEHcLtd8UpuGFzc2gvo/pFuK4vt6qmJSVPP2Kzor8nsC0pS2zyxirbj/cu/k4Rqubh22u1DxK7mCx8L88CFAiD9BL/wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvyI5ehK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D207EC4CEE7;
+	Wed, 18 Jun 2025 21:21:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750281683;
+	bh=W2qCaLbLrzw5iXSFwbU8t/i5VVdV/ifM6YljafRDdNE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dvyI5ehKproYSJoF4mNCOnBMVpQjDO2/rtidzskORUQHpjGLHlE0/RjTloRBVUz/x
+	 fZ+LKy4xIw1eu3Tq+7qzLPPnsdS/tZDqx86QyHdHVUqk8aK2b0r9R9wHlWaeATCXz0
+	 K2qyy/aR3fwp4GyTVq8rJgXVfbEO3SC8hq2Ix7uF/nxGf9Ki/QmXRvivv8IqjEyyEW
+	 0kSWsGPJwGDSVkFqBmp6YC6iwZv7CMrZ5y5bA3qqEaRaAdawOZnkYAiFl/OAye5Jaf
+	 vfW0fdNEAtRR8TlxT6pfW6ZsLEK9Ghdt1L2+5Z9m1d1Ag8UWWnIPAB6chA38E2L3uZ
+	 430fewKvGb7Bw==
+From: Kees Cook <kees@kernel.org>
+To: Peter Rosin <peda@axentia.se>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Kees Cook <kees@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH RESEND] mux: Convert mux_control_ops to a flex array member in mux_chip
+Date: Wed, 18 Jun 2025 14:21:20 -0700
+Message-Id: <175028167750.3187549.3330233881854530836.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250610104106.1948-2-thorsten.blum@linux.dev>
+References: <20250610104106.1948-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-If a usb host with dr_mode of "otg" has a usb-connector using a GPIO ID
-pin use this to determine host vs peripheral.
+On Tue, 10 Jun 2025 12:40:59 +0200, Thorsten Blum wrote:
+> Convert mux_control_ops to a flexible array member at the end of the
+> mux_chip struct and add the __counted_by() compiler attribute to
+> improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> CONFIG_FORTIFY_SOURCE.
+> 
+> Use struct_size() to calculate the number of bytes to allocate for a new
+> mux chip and to remove the following Coccinelle/coccicheck warning:
+> 
+> [...]
 
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
----
- drivers/usb/common/common.c | 96 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 95 insertions(+), 1 deletion(-)
+Applied to for-next/hardening, thanks!
 
-diff --git a/drivers/usb/common/common.c b/drivers/usb/common/common.c
-index 13e9a61072a9..1e5f9620e6b1 100644
---- a/drivers/usb/common/common.c
-+++ b/drivers/usb/common/common.c
-@@ -8,6 +8,7 @@
- 
- #include <dm.h>
- #include <asm/global_data.h>
-+#include <asm/gpio.h>
- #include <linux/printk.h>
- #include <linux/usb/otg.h>
- #include <linux/usb/ch9.h>
-@@ -22,6 +23,99 @@ static const char *const usb_dr_modes[] = {
- 	[USB_DR_MODE_OTG]		= "otg",
- };
- 
-+/**
-+ * get_remote_node_from_graph - Resolve the remote node from a graph binding
-+ * @node: Starting ofnode (e.g., connector)
-+ * @port_id: Port unit address (e.g., 0 for port@0, or -1 for first port)
-+ * @endpoint_id: Endpoint unit address (e.g., 0 for endpoint@0, or -1 for first endpoint)
-+ * Return: ofnode of the remote node, or ofnode_null() on failure
-+ */
-+static ofnode get_remote_node_from_graph(ofnode node, int port_id, int endpoint_id)
-+{
-+	ofnode port_node, endpoint_node, remote_node;
-+	u32 phandle_value;
-+	char port_name[16];
-+	char endpoint_name[16];
-+
-+	/* Validate the starting node */
-+	if (!ofnode_valid(node)) {
-+		printf("Invalid starting node\n");
-+		return ofnode_null();
-+	}
-+
-+	/* Construct port name (e.g., "port" or "port@0") */
-+	if (port_id == -1)
-+		strcpy(port_name, "port");
-+	else
-+		snprintf(port_name, sizeof(port_name), "port@%d", port_id);
-+
-+	/* Find the port node */
-+	port_node = ofnode_find_subnode(node, port_name);
-+	if (!ofnode_valid(port_node)) {
-+		printf("No '%s' node found\n", port_name);
-+		return ofnode_null();
-+	}
-+
-+	/* Construct endpoint name (e.g., "endpoint" or "endpoint@0") */
-+	if (endpoint_id == -1)
-+		strcpy(endpoint_name, "endpoint");
-+	else
-+		snprintf(endpoint_name, sizeof(endpoint_name), "endpoint@%d", endpoint_id);
-+
-+	/* Find the endpoint node */
-+	endpoint_node = ofnode_find_subnode(port_node, endpoint_name);
-+	if (!ofnode_valid(endpoint_node)) {
-+		printf("No '%s' node found under '%s'\n", endpoint_name, port_name);
-+		return ofnode_null();
-+	}
-+
-+	/* Read the remote-endpoint phandle */
-+	phandle_value = ofnode_read_u32_default(endpoint_node, "remote-endpoint", 0);
-+	if (phandle_value == 0) {
-+		printf("No valid 'remote-endpoint' phandle in '%s'\n", endpoint_name);
-+		return ofnode_null();
-+	}
-+
-+	/* Resolve the phandle to the remote node */
-+	remote_node = ofnode_get_by_phandle(phandle_value);
-+	if (!ofnode_valid(remote_node)) {
-+		printf("Failed to resolve phandle %u\n", phandle_value);
-+		return ofnode_null();
-+	}
-+
-+	return remote_node;
-+}
-+
-+static enum usb_dr_mode get_connector_drmode(ofnode node)
-+{
-+	struct gpio_desc id;
-+	enum usb_dr_mode dr_mode = USB_DR_MODE_OTG;
-+	ofnode conn;
-+
-+	/* get remote endpoint */
-+	conn = get_remote_node_from_graph(node, -1, -1);
-+	/* get port endpoint */
-+	if (ofnode_valid(conn))
-+		conn = ofnode_get_parent(conn);
-+	/* get connector */
-+	if (ofnode_valid(conn))
-+		conn = ofnode_get_parent(conn);
-+	if (ofnode_valid(conn) &&
-+	    ofnode_device_is_compatible(conn, "gpio-usb-b-connector") &&
-+	    !gpio_request_by_name_nodev(conn, "id-gpios", 0, &id, GPIOD_IS_IN)) {
-+		if (dm_gpio_get_value(&id))
-+			dr_mode = USB_DR_MODE_PERIPHERAL;
-+		else
-+			dr_mode = USB_DR_MODE_HOST;
-+		gpio_free_list_nodev(&id, 1);
-+		pr_debug("%s got dr_mode from connector %s dr_mode=%s\n", __func__,
-+			 ofnode_get_name(node),
-+			 dr_mode == USB_DR_MODE_HOST ? "host" : "peripheral");
-+	}
-+
-+	return dr_mode;
-+}
-+
- enum usb_dr_mode usb_get_dr_mode(ofnode node)
- {
- 	const char *dr_mode;
-@@ -35,7 +129,7 @@ enum usb_dr_mode usb_get_dr_mode(ofnode node)
- 
- 	for (i = 0; i < ARRAY_SIZE(usb_dr_modes); i++)
- 		if (!strcmp(dr_mode, usb_dr_modes[i]))
--			return i;
-+			return (i == USB_DR_MODE_OTG) ?  get_connector_drmode(node) : i;
- 
- 	return USB_DR_MODE_UNKNOWN;
- }
+[1/1] mux: Convert mux_control_ops to a flex array member in mux_chip
+      https://git.kernel.org/kees/c/4bfbc2691de8
+
+Take care,
+
 -- 
-2.25.1
+Kees Cook
 
 
