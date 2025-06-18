@@ -1,117 +1,159 @@
-Return-Path: <linux-kernel+bounces-691641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0763ADE710
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:34:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18672ADE723
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 825FB168680
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1E364038B6
 	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E67E188CCA;
-	Wed, 18 Jun 2025 09:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10085281503;
+	Wed, 18 Jun 2025 09:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fyWZozvw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="k8PmZYfo"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B581E2312;
-	Wed, 18 Jun 2025 09:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEC825486E;
+	Wed, 18 Jun 2025 09:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750239101; cv=none; b=hTxVvomaXmKkDy+VLpiYnt7yXQTpD/fLDWOXNitL+s5Z1BgqZJPcQpEE6Tqy57C+/hVqSDBEZP730S1esaep0ZHDaesCBjwfBnG5izAudNx/i36tYwyTLAyfYnIKlF3XJrzWk3F9b7MIqh38Pxw6dsuzZeCarCiQIGGJ8osPyzE=
+	t=1750239161; cv=none; b=I6HzIVyu9H46g1D1PVAytLAY02EQHD7PI4gOpGUu3QE/3BEx9yTco75CI/oOBkk5zdaZFzj1SaaBNhG9lbEQpM/cOeK8SdGc7J2mHDI0JoTp9hJpmbiJY/Pt9MtgSBdbBNPnK/d8p7ak4zf/ClBNyEuam9xAjiX6r1bzCVauYhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750239101; c=relaxed/simple;
-	bh=3Z0xQCvFb/abBaZUrRdrq6mu6yGaXylQBFf0l9XBU5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qwtEUa7hn8OiWTOsnvi0dM99/I/rhR/a6v9z3Ex1NGXfLUsmc0NyUPr4Bsp1rtgkLVWR3gk8y99y0mUkpea9quRlgapaAnHsvD8cZHNqWdFD1JBH+IF8pypUdAixfwXOw9FQFP9TyjoffY1l7Fos6+GuR6VU/G1OttHMf38JS2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fyWZozvw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D58C4CEF0;
-	Wed, 18 Jun 2025 09:31:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750239101;
-	bh=3Z0xQCvFb/abBaZUrRdrq6mu6yGaXylQBFf0l9XBU5Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fyWZozvwhojXFUFfkGR/0tn0UBw+AyB9Uuj1H1lTEZBzD/zwLVoXIFR9tNmG9mVZL
-	 fwcy/iR8gH3WpYEcuRNN6iY5Fe6qtQBljvu6ZYj43nIybx497g/7kjqIQ/0lK5B3Za
-	 hB3rmGiu6R+sTaQRo3fgzUTB27rb6xUvhh6Krb9U=
-Date: Wed, 18 Jun 2025 11:31:38 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: xiehongyu1@kylinos.cn
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	mathias.nyman@intel.com, oneukum@suse.de, stable@vger.kernel.org
-Subject: Re: [PATCH v2] xhci: Disable stream for xHC controller with
- XHCI_BROKEN_STREAMS
-Message-ID: <2025061826-slapstick-duration-6221@gregkh>
-References: <20250618074648.109879-1-xiehongyu1@kylinos.cn>
+	s=arc-20240116; t=1750239161; c=relaxed/simple;
+	bh=JdojFS5/z7GIDAsap+z4JgrlAQemx2IMwtmPu+k/DxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o/VHKMX3HJnP2zKFv5X8jXkCg0/VqsDkvVt1Z4d7ebjy+JC44JjdSvYgnm0eQ6upvVmfiyxHUOb32f3FQtNYe9n2ffYo+LmNEeLkHtMcojAslf4DS/u5Hc9oqNGZ3qfz0snCsg7r2lsspT2/4YtxxspcZmY/etpNZaaGqTVFF+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=k8PmZYfo; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 83B542047A;
+	Wed, 18 Jun 2025 09:32:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1750239157;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vhlZhFy2yqBw+bfXv9cjrck9pl38ef3/+s+sDwfdRYE=;
+	b=k8PmZYfoOPSqpGRhk+lnKhojrkayOMFwAjCVwFcnLbNRms/bvFBQoK7RjBHqCcQa1A69ce
+	/F9Np2VNFQSEhcPUiqGo4u74S9+pbclLkWD9NaUfFYXLivrPwOxOe3buVEPvAXBjUEAzNN
+	rjIwQw80hzD5oZ9Pa+/2MifPtKcLq0mnURVpH0JmYBEpIWt1nKC0kfYhakBf1l2Z9qygM7
+	2UWORpAhAvswoXC7duuB8Jwv3G+UaKuCzMN+doNpOtPOOD0I2olFcGU2RNdFTdHhnmtNwp
+	t724tXJkwGs3p4m0+6VUFlr+uTqF8lVWGL/+Pl/Tm4VbpXQM28o5oSc99s45Dw==
+Date: Wed, 18 Jun 2025 11:32:32 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, David Gibson
+ <david@gibson.dropbear.id.au>, Ayush Singh <ayush@beagleboard.org>, Rob
+ Herring <robh@kernel.org>
+Cc: Andrew Davis <afd@ti.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>,
+ devicetree@vger.kernel.org, devicetree-compiler@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: Add support for export-symbols node
+Message-ID: <20250618113232.6d237208@bootlin.com>
+In-Reply-To: <49e1e1fc-412d-4334-8337-16e352a34788@kernel.org>
+References: <20250430125154.195498-1-herve.codina@bootlin.com>
+	<20250430125154.195498-2-herve.codina@bootlin.com>
+	<0770a47e-fd2f-4b6f-9a9a-b0d539ace30c@kernel.org>
+	<20250528185740.4bf91bef@bootlin.com>
+	<49e1e1fc-412d-4334-8337-16e352a34788@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618074648.109879-1-xiehongyu1@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvvdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhhiugesghhisghsohhnrdgurhhophgsvggrrhdrihgurdgruhdprhgtphhtthhopegrfhgusehtihdrtghomhdprhgtphhtthhopegrhihushhhsegsvggrghhlvggsohgrrhgurdhorhhgpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdro
+ hhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Wed, Jun 18, 2025 at 03:46:48PM +0800, xiehongyu1@kylinos.cn wrote:
-> From: Hongyu Xie <xiehongyu1@kylinos.cn>
+Hi Krzysztof,
+
+On Wed, 4 Jun 2025 20:35:51 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
+
+...
+
+> > 
+> > Symbols are exported only when an overlay is applied on the node where the
+> > export-symbols node is available. Those symbols are visible only from the
+> > overlay applied. Symbols exported thanks to export-symbols are not global
+> > to the all device-tree (it is not __symbols__) but local to a node.
+> > 
+> > If an overlay is applied at connector1 node, it can use the 'connector'
+> > symbols and thanks to export-symbols, the 'connector' symbol will be
+> > resolved to foo_connector.
+> > 
+> > If the overlay is applied at connector2 node, the 'connector' symbol is then
+> > resolved to bar_connector.  
 > 
-> Disable stream for platform xHC controller with broken stream.
+> OK, this explains a lot. Unless I missed it, would be nice to include it
+> in binding description.
+
+Sure, I will add something in the next iteration.
+
+...
+
+> >>> +patternProperties:
+> >>> +  "^[a-zA-Z_]?[a-zA-Z0-9_]*$":    
+> >>
+> >> This messes up with coding style which I would prefer keep intact.
+> >> Basically these properties will be using label style.  
+> > 
+> > Yes, those properties remap phandles.
+> > 
+> > Their names are the name of the label used from the overlay and their
+> > values are the phandle mapped.
+> > 
+> > You already have this kind properties using label style in __symbols__,
+> > __fixups__, __local_fixups__ nodes.  
 > 
-> Fixes: 14aec589327a6 ("storage: accept some UAS devices if streams are unavailable")
-> Cc: stable@vger.kernel.org # 5.4
-> Signed-off-by: Hongyu Xie <xiehongyu1@kylinos.cn>
-> ---
->  drivers/usb/host/xhci-plat.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-> index 6dab142e72789..c79d5ed48a08b 100644
-> --- a/drivers/usb/host/xhci-plat.c
-> +++ b/drivers/usb/host/xhci-plat.c
-> @@ -328,7 +328,8 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
->  	}
->  
->  	usb3_hcd = xhci_get_usb3_hcd(xhci);
-> -	if (usb3_hcd && HCC_MAX_PSA(xhci->hcc_params) >= 4)
-> +	if (usb3_hcd && HCC_MAX_PSA(xhci->hcc_params) >= 4 &&
-> +	    !(xhci->quirks & XHCI_BROKEN_STREAMS))
->  		usb3_hcd->can_do_streams = 1;
->  
->  	if (xhci->shared_hcd) {
-> -- 
-> 2.25.1
-> 
+> I have them in DTB, but I don't have these in DTS. The exported-symbols
+> would be in the DTS and that is what coding style is about.
 > 
 
-Hi,
+I think export-symbols has to be in DTS.
+Maybe it could be described in an other way in order to avoid the coding style
+issue you reported.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Hardware:
+  i2c0 from SoC --------- connector 1, I2C A signals
+  i2c1 from SoC --------- connector 1, I2C B signals
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+  connector1 {
+      export-symbols {
+	  i2c_a = <&i2c0>;
+	  i2c_b = <&i2c1>;
+      };
+  };
 
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
+In order to avoid the coding style issue, this could be replace
+with:
+ connector1 {
+      export-symbols {
+	  symbol-names = "i2c_a", "i2c_b";
+	  symbols = <&i2c0>, <&i2c1>;
+      };
+  };
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+Krzysztof, Rob, do you think this could be accepted ?
 
-thanks,
+Ayush, David, do you thing this could be easily implemented in fdtoverlay ?
 
-greg k-h's patch email bot
+Best regards,
+Hervé
+
 
