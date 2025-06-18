@@ -1,276 +1,257 @@
-Return-Path: <linux-kernel+bounces-692340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D1FFADF038
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:52:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A05ADF227
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 828F818951A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:52:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FD481889899
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745C02EE5EB;
-	Wed, 18 Jun 2025 14:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008962F0023;
+	Wed, 18 Jun 2025 16:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kyxde150"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bnaBaAcF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6152EE28F;
-	Wed, 18 Jun 2025 14:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750258323; cv=none; b=LRnHrJJgLxISjtnINFZZnMjv6dEJM4/yCMNSel+jcsAgC8u8Yy4pfA+Bl8QBb6n+M866NPrCvEkhTYkRiF95TIjEEkgLM9oXs6bQ054s1ZtSdqPqUZIaffrHUyfJ8jqzqJJTeKF5TVwQ2xoGesGq69Dx4c3Za8Je3Gqf/vXZmCs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750258323; c=relaxed/simple;
-	bh=ZR0aYzFLYzw8xtKJTwgv2QhyruI/blScqAFzbyXCJRo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qwc0ATRkRBC3P12TYMNHY1MalYbE32+T+TAKQDXj63dZR372mmxgcuccY5nFX8IHLbG7FsG+Yfu29FzAQ+2e6xh10ja04z6eH7r5s1uM8Q7gw85wT40B6kxyuTCwqhpJgN6AC3eL/ok9e2ZiH76QiaQMryA2MvDokgsGEmudWPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kyxde150; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533CA1E47A5;
+	Wed, 18 Jun 2025 16:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750262781; cv=fail; b=PIcP2T4WaQiJVbi8tw7oM9xpgvNGnHnhI1x8X6MsZt0iIrca21sjV4rIk/83G8kH5iTwEAbgGTAuzcqhEOcQrbPxBbVXA1rPKu/USEHNL1xDS+tWTpzpUnusSxllF8SYLchskRIM9r/MD0/ZoLyogH/AeU76pCQuBWttDu7yfqQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750262781; c=relaxed/simple;
+	bh=6sqmWeacOHqjWX/8vzzpiOhFmc025Rmm4vhYDfe6uJE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dAmTpWGxu5Ezvzy9Hex7t1zTQy6qWt76Sa2Zwq44DpAJXSmKx5LdVts17t4yRUtDIY0YJ34c/MGKhxAQAKft/GrHR4TcLYnEMpSY9y2Ig5rs8LjXG9HNgxmdU9imy8l51C8LP7agb54+WbilSn+sMmIeoyEp8P1SkDOXwJHrC60=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bnaBaAcF; arc=fail smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750258322; x=1781794322;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ZR0aYzFLYzw8xtKJTwgv2QhyruI/blScqAFzbyXCJRo=;
-  b=Kyxde150Sy6mB5L7x9Tx/xfC5yVSs2P1GPE3/BInT/QooYn8FpwcviRH
-   O1g6GK05ewTRyDeHF2nDAVMTEuX1YW4X/fFdUGgA+hAkEKcQEx0DHcgNk
-   I4HA+CAfyWnV619tRW6M9xf024rPZaH9gJWMImh5ZATHmsW0aFkKX8WbS
-   P7KOz8pxYR58LiTHSiMYFPvnu2eKjo9ZAzkFEarY9GEMnmUIVxNxHtDht
-   lYv2eqiDplhLnmFQk18a7PcBzVbknCqi8KbKrsKT7xWpCJZyepnw1CMNM
-   pg2D0zLnooljVi+hFMvC3343Mw3PYUd/OoLk7aQUJ3jAiUKerDFKANYWF
-   w==;
-X-CSE-ConnectionGUID: ejFpLlK1SrWgmU/FLAAnkw==
-X-CSE-MsgGUID: /Y9fiyT1Svar6POj0ygo+g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="63906560"
+  t=1750262779; x=1781798779;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=6sqmWeacOHqjWX/8vzzpiOhFmc025Rmm4vhYDfe6uJE=;
+  b=bnaBaAcFSWJc3YsrjVQbKzXRlKzRoJLBd/tA8uvK5Nx2d4MU6RPHnk35
+   n6oT/xabEA8m6NlRv7Oe+shjlkPyv/RoXrcpwL+ExSAqh5oZPGTGUXRmL
+   mb2lUuC/eBROuVY/D1G1B+Pa1QPQ7DOAHQ+AxeNivDNcBFcGiRZEFrhbC
+   LwlKxuW13esxMrINJMJUb3rDvsh+QCDHHZ2+JvH4Itsw7CM6XilaoMsk+
+   qBJKs/DeNqkqOHtiggbDNoFNYTygYeoqie/IavE9uDY7CKhV7b+97llMt
+   fmB3z23XumIwtWC+MN8FFJKqCWhz27VnzVI7cqC3TN+HeBBbeLzTvpAkL
+   Q==;
+X-CSE-ConnectionGUID: 6EvzNee9Sn+zYhOx9sAPHA==
+X-CSE-MsgGUID: Ore3RbCvRnuPL6yrRaEdoQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52410944"
 X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
-   d="scan'208";a="63906560"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 07:52:01 -0700
-X-CSE-ConnectionGUID: cbVYe/VMSBS5k7xHh7+T1g==
-X-CSE-MsgGUID: eJMYhv7SQSuJeDYu6iY72Q==
+   d="scan'208";a="52410944"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 09:06:18 -0700
+X-CSE-ConnectionGUID: +DOiss8VSieLA23MQeV//Q==
+X-CSE-MsgGUID: cyvDDw5XSNyuWdfczRKTtw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,246,1744095600"; 
-   d="scan'208";a="180709387"
-Received: from unknown (HELO CannotLeaveINTEL.bj.intel.com) ([10.238.153.146])
-  by fmviesa001.fm.intel.com with ESMTP; 18 Jun 2025 07:51:59 -0700
-From: Jun Miao <jun.miao@intel.com>
-To: sbhatta@marvell.com,
-	kuba@kernel.org,
-	oneukum@suse.com
-Cc: netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	qiang.zhang@linux.dev,
-	jun.miao@intel.com
-Subject: [PATCH v6] net: usb: Convert tasklet API to new bottom half workqueue mechanism
-Date: Wed, 18 Jun 2025 13:39:23 -0400
-Message-ID: <20250618173923.950510-1-jun.miao@intel.com>
-X-Mailer: git-send-email 2.43.0
+   d="scan'208";a="150399333"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 09:06:18 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 18 Jun 2025 09:06:17 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Wed, 18 Jun 2025 09:06:17 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.45)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 18 Jun 2025 09:06:16 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vn7AWoWYo3hsd1LhQZ9eE37SdL/0EYB1aoONRAu97fFdigNhYO3pOoyL0HXrMOsjbyB+IKtfgeu53r1UROCAzq9WCMjzhP7JtCkHHnUgpkYJVZnnTFbnTOwDjoUtqSYNZsq3MQ1K2mEwwD//5D83HwMY4CB27gxJtpKjEnq4nF99IbQLZ3wxWDgIhWXwYrQPM6uM8x+OKDjDSYJVPO39rsM9yKWuJy95WgL4MkpV5BIsfwqKUW8qUmzajWP2cvOdgJ+0105/mhFNvCEO1rIhJ/mfXOLc7U9YeR4kMjmERHUS4DZH/i1UP+202k5vVntR99wHz3s9SSmEK1zz0wSCWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gbjOabSeIPf79sHKJz3A9J1pPPax1gTAejXTRCkVy9k=;
+ b=er6s1EMu5uH8ga5sXOp28dBs9t4f/2UwVlr7zT6aMzVDDgMGuaeOyyEbBdhkTmp045yo8ylyE9bMumiqp4OaYGw3hS/gD9OBCC3XgdB3tpuzO431xSLHQwew1zMcowOyscbQFucZBezBHJMdiQPfgsYDSSQrE3P4JdR+KTfQRLeRuFqDwtb4EUoDoz17PTsHpbSaXVsbNrUj0KpOysV45B+8M5afYiRmZo3Ektg9/TtKBTocGr5TdQ1wpFBKYn1+6B8SLnO/KGDd9wPZfKQG6Xv2ytcNFyfUq6cnt2MX6MwipEm3wOl//tIjIfvUpKUA6iqZs16AnyA7Z190EyLK+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CH3PR11MB7894.namprd11.prod.outlook.com (2603:10b6:610:12c::17)
+ by IA0PR11MB7282.namprd11.prod.outlook.com (2603:10b6:208:43a::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.27; Wed, 18 Jun
+ 2025 16:05:45 +0000
+Received: from CH3PR11MB7894.namprd11.prod.outlook.com
+ ([fe80::4d2:ecb9:b88:6c9a]) by CH3PR11MB7894.namprd11.prod.outlook.com
+ ([fe80::4d2:ecb9:b88:6c9a%5]) with mapi id 15.20.8835.027; Wed, 18 Jun 2025
+ 16:05:45 +0000
+From: "Wlodarczyk, Bertrand" <bertrand.wlodarczyk@intel.com>
+To: JP Kobryn <inwardvessel@gmail.com>
+CC: "tj@kernel.org" <tj@kernel.org>, "hannes@cmpxchg.org"
+	<hannes@cmpxchg.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
+	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] cgroup/rstat: change cgroup_base_stat to atomic
+Thread-Topic: [PATCH] cgroup/rstat: change cgroup_base_stat to atomic
+Thread-Index: AQHb33LUrIYV3Cvt2k+rQD7YLlN2JLQH2D+AgAE1cTA=
+Date: Wed, 18 Jun 2025 16:05:45 +0000
+Message-ID: <CH3PR11MB78947E610456E1EDE1EE8B21F172A@CH3PR11MB7894.namprd11.prod.outlook.com>
+References: <20250617102644.752201-2-bertrand.wlodarczyk@intel.com>
+ <5f055416-9c49-42c0-9ba0-e45f6aaeac04@gmail.com>
+In-Reply-To: <5f055416-9c49-42c0-9ba0-e45f6aaeac04@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR11MB7894:EE_|IA0PR11MB7282:EE_
+x-ms-office365-filtering-correlation-id: 5cc25925-25a3-403d-073a-08ddae81fbe4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?I+FXSaxgoTAD1wjlGgpFccIW8oSL6/XJQZcSkMbwggQ+XKUY9T5gLNmGMDaO?=
+ =?us-ascii?Q?kVdPMevKeD8bUl1fjIOqO88kxNIj4QJIuEjNmKt8Z/DJLUvDzPVXOImXGhMm?=
+ =?us-ascii?Q?9kUAUNkFKjGTXxpIokOKCCMVfSj7TItYdSXlnuxZaykHNl3r+bgEt5FuWPsH?=
+ =?us-ascii?Q?1Vvbs+4rjY/xl1PiKN9CFmyYOCe6yhiLT/e2dRn1kUkaaFh6SnCJwnXMBFdd?=
+ =?us-ascii?Q?nKHYYdga+aHQr9GUemgIlppNBSZbQLlvZYI99Ije/oOaBM9MxmkorAAJOz4J?=
+ =?us-ascii?Q?it0HjmLGI1qmldFbfLZL59wudxEIRO9onk0QvPQx0DLOGOK+WsRddluu8RC2?=
+ =?us-ascii?Q?3H+EPvD6EJgwZCRTpl2itVMs7pH6d7pMRpXTVHLObLn2XE4/jYHpKgsDoBC6?=
+ =?us-ascii?Q?WP6op/wiuslU0j26GGgzWKUVi+sF/G5Yo+TZl8B1fxh+i0xU+hLz2IzOd8C+?=
+ =?us-ascii?Q?Qwx0x6wEKunUBdj+jV9YrfvKInzC8kp6wu3t3p/vWyVj4RvZBc97uHOD8rNX?=
+ =?us-ascii?Q?UFRNFz3fE8r9HjNS29Ct4XMKLkHrD0g4bvqDWbnk7ORuklQDAHGHwo3vZ5y7?=
+ =?us-ascii?Q?WhX4E1/O65cyVc91nCbQZRysj94IpwRDwmAm0M9FfAq/+S9B8Dmwdy0vbo/p?=
+ =?us-ascii?Q?Lt2yEGLh5/933X1Tia50fxnhWAWrbonxIskLq3uSrZt2r7p+J6L7r1osrAa3?=
+ =?us-ascii?Q?5eZk9M/KomD+GmT+MZ0rDdI2lQMe6eMQU8ihlXfPEqKM90qXEVUdV+Do8elV?=
+ =?us-ascii?Q?JgwQjA8zlWQy578Jn8jaPjOMVPjHlSWxelhPZnbyXfNNjBOEhsPwKst4zhX1?=
+ =?us-ascii?Q?fnPpL2YGXpy0OIP0YC6r7wSVxp6fRUnqn0UZUMnJ6x9o8ScKMwjLpL4Wv3Sn?=
+ =?us-ascii?Q?hZ1K95zA9+9wo7jqEzxLQC8oEvBtp9WG07f1+8C6gVdBRyNUxeYQq8Xn1Ijs?=
+ =?us-ascii?Q?VJpl7h/sK15Y7sLP+0lnjc+X22soxlW/w7Wp0QIW8klqYYZAAHmikS86ayO2?=
+ =?us-ascii?Q?/BH9puUf27BeIGmQtQd+CDIOe+AqgJhwEo+6+KSrz57KskjQZbhIXKLc80oa?=
+ =?us-ascii?Q?8ac1PMRhE+iNo7M6cTQyu3urX7iFFqnmBqd3saQIu7IfWFflukX/ip9VCg1I?=
+ =?us-ascii?Q?Gteln8gBvxGO3J/nZs+eR1fJJX8E+btt3kGUn/W+P7hw9hnFtpYnO0wlHnt0?=
+ =?us-ascii?Q?Vl8jEnU8EkCLC24fhkI4sQXkc2rhqFfrBgKgmaH/S6b+6o2V8/MzwLTQYh3M?=
+ =?us-ascii?Q?XKGcn22zrvQ5q+tnIze67aVDFJy4xx5PX13BKP1l4rnlpdPWbm/4ZCCMuioZ?=
+ =?us-ascii?Q?YRrA+IAr3sfV6HJSGJUqOlI6KER3wauadCQG123IQZbZDuoeV8qrxErcv8sX?=
+ =?us-ascii?Q?ljTdnFgieUQ8p9EEy/u1+Ld5Xj9WAhwKz/oCFWfv/wr0By4pbzafsnY4dEot?=
+ =?us-ascii?Q?UBt+T2yBqAZJGB0aRU/iAXQB3bGo4PyKO+J2gCJXz6j7vldj6fHj1A=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB7894.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?5EIT1ghnefSDcGAZGnJkMVR2YHf4UFP2YyoMj0wTbYiSyK+tLnr4jtt+AtIM?=
+ =?us-ascii?Q?kKEFbw/1fAAQVvflveRY/pe501xHP5qIY3zCq7ggXKq198/y9NKBYcXYOY96?=
+ =?us-ascii?Q?Qg4hFsMFilYCXteGdfQYnV083tLXeNGyr1FkZEPi+h3imrr1F3/RooueQQ43?=
+ =?us-ascii?Q?1edQiq8CGYwMKwXCkYyzzmUeGMdc49t8bVZt0VybGyhukscgEH71DAKd+pkG?=
+ =?us-ascii?Q?Xb4Kwq+kZKZQ7tnJV534g8pT0FnsG/BJqR5SyfkjHq9McTX62T8MQOFBnJ63?=
+ =?us-ascii?Q?zesNHvcdMzai6Sb+7Abr+6WzKxgxk/Tf1rOOI5uAfj/PXhSyYoRI4GsWiBGA?=
+ =?us-ascii?Q?urOGiHqyfeB9yqWlDZOOX3P2rm20zQTmNPFKuyNMiR5+n3EVtIw/vxd3mxc3?=
+ =?us-ascii?Q?//LiQEjX7ZNqG/gNT+ljZMJGUJd7UWY0BfGyhRZFGrlJWPxqOg9I+QRwPxEy?=
+ =?us-ascii?Q?CXEHlbZjwOKdpijROXaiwIXEbyYpBw2ApgsNGd/+glZ7JPQG5nJREeONU1tg?=
+ =?us-ascii?Q?I7W4siR/PkhoYh346OHRGKaGkxr/rYv1ueOMmuBh98/AGbjPVxMjoZdqUznF?=
+ =?us-ascii?Q?d0ARrj2iQHBBBbnkXxvnUrBlbYFSgm4jS8jmu1JpIzyVz9qBHg525uvEWEz3?=
+ =?us-ascii?Q?XXE6orqPadl1/Mmg0D+4D9o0jPUo3dlpHj5jAPguzlZ6uXg4l8GlaoscNlCL?=
+ =?us-ascii?Q?C4pywY8ZYG2e1aSz7EbNJj9ii+BaAR5lBMkLIZl/F+q5vwGn9kuPvq+o9+EU?=
+ =?us-ascii?Q?y5+Dg6DMpPvzkNA3zEvVWP8lKqn2QQ8qwd2SFKEQ90yTn4W0WolEQWUUdvXY?=
+ =?us-ascii?Q?sQYFvFVa4WcmFcS5KggD9FQi3wbb8ZP64SZSs8A7tH1dWAXZ9ElZ7CGpgUui?=
+ =?us-ascii?Q?rGzGvH8BALTxl5VSl/QjeFIZ7CpdqrLn843EbxCzd3ajoKLeO8Ftqf3oGA/d?=
+ =?us-ascii?Q?15YWcs6KE0XdijgC7RctGh2KdJZ6Jy7UClvPr7ajEPX3kFgAnAbuuLmCR9g1?=
+ =?us-ascii?Q?ngmgHJzbQp+3mYUTshZ2EEfFeJy0eHaMqMS4jJtt8edZU8OiMdrZxRT3Y9cF?=
+ =?us-ascii?Q?WTl6d/oBG6wny4Go22K/4vq0yms+RXGnTfa7+MOOo3GH+l2Fswtj5u5OMe+1?=
+ =?us-ascii?Q?s+vPe3/HLKFJrFvArwwBTZJ5UijHGdQsWC5zx39pcpsqweiHMeth9YHCcVou?=
+ =?us-ascii?Q?keAkALynSgJ7w9Jh6wol04K/mIjNUTuZ0XWNdtvaUI++mlFsj8GHSN7o2b1R?=
+ =?us-ascii?Q?hJ0b/AN5nXGpoLiNsW/Z98fWJaah4k178QPKKZP/lvHylyOGQ31uJfWDinRt?=
+ =?us-ascii?Q?66hAqTksqSGl3wfkWd7Iv7hn+F/OHGIIPZYbfzUTHRB9ZnQpDasY3f10TItW?=
+ =?us-ascii?Q?zbgsg/rjTN3z0OFUUxhAOpHcfn4ZSZ94AsN4v9WrA73GMTreS8r6oRYFAFLQ?=
+ =?us-ascii?Q?+C/rkybLr+xTpVMXjB2QeUf2jrMF/QltkgES2jTfLsQTvwy2ge6hVOHBk0KK?=
+ =?us-ascii?Q?aRlfdROTqL52whURbsFP4T8wk404FEDQMd59oaRrXcMnImNq8MQNuI8vZVZq?=
+ =?us-ascii?Q?kYyiog0ZfwErpwfFD6NUq6JOSpuHbl6Dm/0wFp8WwaGSnBekwFmRR11/ztu8?=
+ =?us-ascii?Q?eg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB7894.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5cc25925-25a3-403d-073a-08ddae81fbe4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2025 16:05:45.6079
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 42ZlXBPlvGLeuVPZXGV7raDE+jLhcm9vtqjZMfZXwwgA5FlzUqJsMIFX0/L631Bd+Y060nyMwg9wdrIIcAM2yy7dd68+mlP9ZEp6KiQyhMo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7282
+X-OriginatorOrg: intel.com
 
-Migrate tasklet APIs to the new bottom half workqueue mechanism. It
-replaces all occurrences of tasklet usage with the appropriate workqueue
-APIs throughout the usbnet driver. This transition ensures compatibility
-with the latest design and enhances performance.
+Thank you for your time and review.=20
 
-Signed-off-by: Jun Miao <jun.miao@intel.com>
----
-v1->v2:
-	Check patch warning, delete the more spaces.
-v2->v3:
-	Fix the kernel test robot noticed the following build errors:
-	>> drivers/net/usb/usbnet.c:1974:47: error: 'struct usbnet' has no member named 'bh'
-v3->v4:
-	Keep "GFP_ATOMIC" flag as it is.
-	If someone want to change the flags (which Im not sure is correct) it should be a separate commit.
-v4->v5:
-	As suggested by Jakub, we have used the system workqueue to schedule on(system_bh_wq),
-	replace the workqueue with work in usbnet_bh_workqueue() and the comments.
-v5->v6:
-	Delete the "suggested by" review comments in commit message.
+> The kernel currently faces scalability issues when multiple userspace=20
+> programs attempt to read cgroup statistics concurrently.
+>=20
+> The primary bottleneck is the css_cgroup_lock in cgroup_rstat_flush,=20
+> which prevents access and updates to the statistics of the css from=20
+> multiple CPUs in parallel.
+>=20
+> Given that rstat operates on a per-CPU basis and only aggregates=20
+> statistics in the parent cgroup, there is no compelling reason why=20
+> these statistics cannot be atomic.
 
----
- drivers/net/usb/usbnet.c   | 36 ++++++++++++++++++------------------
- include/linux/usb/usbnet.h |  2 +-
- 2 files changed, 19 insertions(+), 19 deletions(-)
+> Have you considered the "tearing" that will occur when writes and reads a=
+re happening in parallel?
+> The existing state is more of a snapshot approach. Changing the fields in=
+volved to atomic and lockless reading/writing can result in inconsistent va=
+lues, i.e. fieldA might be more current than fieldB.
 
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index c39dfa17813a..234d47bbfec8 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -461,7 +461,7 @@ static enum skb_state defer_bh(struct usbnet *dev, struct sk_buff *skb,
- 
- 	__skb_queue_tail(&dev->done, skb);
- 	if (dev->done.qlen == 1)
--		tasklet_schedule(&dev->bh);
-+		queue_work(system_bh_wq, &dev->bh_work);
- 	spin_unlock(&dev->done.lock);
- 	spin_unlock_irqrestore(&list->lock, flags);
- 	return old_state;
-@@ -549,7 +549,7 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
- 		default:
- 			netif_dbg(dev, rx_err, dev->net,
- 				  "rx submit, %d\n", retval);
--			tasklet_schedule (&dev->bh);
-+			queue_work(system_bh_wq, &dev->bh_work);
- 			break;
- 		case 0:
- 			__usbnet_queue_skb(&dev->rxq, skb, rx_start);
-@@ -709,7 +709,7 @@ void usbnet_resume_rx(struct usbnet *dev)
- 		num++;
- 	}
- 
--	tasklet_schedule(&dev->bh);
-+	queue_work(system_bh_wq, &dev->bh_work);
- 
- 	netif_dbg(dev, rx_status, dev->net,
- 		  "paused rx queue disabled, %d skbs requeued\n", num);
-@@ -778,7 +778,7 @@ void usbnet_unlink_rx_urbs(struct usbnet *dev)
- {
- 	if (netif_running(dev->net)) {
- 		(void) unlink_urbs (dev, &dev->rxq);
--		tasklet_schedule(&dev->bh);
-+		queue_work(system_bh_wq, &dev->bh_work);
- 	}
- }
- EXPORT_SYMBOL_GPL(usbnet_unlink_rx_urbs);
-@@ -861,14 +861,14 @@ int usbnet_stop (struct net_device *net)
- 	/* deferred work (timer, softirq, task) must also stop */
- 	dev->flags = 0;
- 	timer_delete_sync(&dev->delay);
--	tasklet_kill(&dev->bh);
-+	disable_work_sync(&dev->bh_work);
- 	cancel_work_sync(&dev->kevent);
- 
- 	/* We have cyclic dependencies. Those calls are needed
- 	 * to break a cycle. We cannot fall into the gaps because
- 	 * we have a flag
- 	 */
--	tasklet_kill(&dev->bh);
-+	disable_work_sync(&dev->bh_work);
- 	timer_delete_sync(&dev->delay);
- 	cancel_work_sync(&dev->kevent);
- 
-@@ -955,7 +955,7 @@ int usbnet_open (struct net_device *net)
- 	clear_bit(EVENT_RX_KILL, &dev->flags);
- 
- 	// delay posting reads until we're fully open
--	tasklet_schedule (&dev->bh);
-+	queue_work(system_bh_wq, &dev->bh_work);
- 	if (info->manage_power) {
- 		retval = info->manage_power(dev, 1);
- 		if (retval < 0) {
-@@ -1123,7 +1123,7 @@ static void __handle_link_change(struct usbnet *dev)
- 		 */
- 	} else {
- 		/* submitting URBs for reading packets */
--		tasklet_schedule(&dev->bh);
-+		queue_work(system_bh_wq, &dev->bh_work);
- 	}
- 
- 	/* hard_mtu or rx_urb_size may change during link change */
-@@ -1198,11 +1198,11 @@ usbnet_deferred_kevent (struct work_struct *work)
- 		} else {
- 			clear_bit (EVENT_RX_HALT, &dev->flags);
- 			if (!usbnet_going_away(dev))
--				tasklet_schedule(&dev->bh);
-+				queue_work(system_bh_wq, &dev->bh_work);
- 		}
- 	}
- 
--	/* tasklet could resubmit itself forever if memory is tight */
-+	/* work could resubmit itself forever if memory is tight */
- 	if (test_bit (EVENT_RX_MEMORY, &dev->flags)) {
- 		struct urb	*urb = NULL;
- 		int resched = 1;
-@@ -1224,7 +1224,7 @@ usbnet_deferred_kevent (struct work_struct *work)
- fail_lowmem:
- 			if (resched)
- 				if (!usbnet_going_away(dev))
--					tasklet_schedule(&dev->bh);
-+					queue_work(system_bh_wq, &dev->bh_work);
- 		}
- 	}
- 
-@@ -1325,7 +1325,7 @@ void usbnet_tx_timeout (struct net_device *net, unsigned int txqueue)
- 	struct usbnet		*dev = netdev_priv(net);
- 
- 	unlink_urbs (dev, &dev->txq);
--	tasklet_schedule (&dev->bh);
-+	queue_work(system_bh_wq, &dev->bh_work);
- 	/* this needs to be handled individually because the generic layer
- 	 * doesn't know what is sufficient and could not restore private
- 	 * information if a remedy of an unconditional reset were used.
-@@ -1547,7 +1547,7 @@ static inline void usb_free_skb(struct sk_buff *skb)
- 
- /*-------------------------------------------------------------------------*/
- 
--// tasklet (work deferred from completions, in_irq) or timer
-+// work (work deferred from completions, in_irq) or timer
- 
- static void usbnet_bh (struct timer_list *t)
- {
-@@ -1601,16 +1601,16 @@ static void usbnet_bh (struct timer_list *t)
- 					  "rxqlen %d --> %d\n",
- 					  temp, dev->rxq.qlen);
- 			if (dev->rxq.qlen < RX_QLEN(dev))
--				tasklet_schedule (&dev->bh);
-+				queue_work(system_bh_wq, &dev->bh_work);
- 		}
- 		if (dev->txq.qlen < TX_QLEN (dev))
- 			netif_wake_queue (dev->net);
- 	}
- }
- 
--static void usbnet_bh_tasklet(struct tasklet_struct *t)
-+static void usbnet_bh_work(struct work_struct *work)
- {
--	struct usbnet *dev = from_tasklet(dev, t, bh);
-+	struct usbnet *dev = from_work(dev, work, bh_work);
- 
- 	usbnet_bh(&dev->delay);
- }
-@@ -1742,7 +1742,7 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
- 	skb_queue_head_init (&dev->txq);
- 	skb_queue_head_init (&dev->done);
- 	skb_queue_head_init(&dev->rxq_pause);
--	tasklet_setup(&dev->bh, usbnet_bh_tasklet);
-+	INIT_WORK(&dev->bh_work, usbnet_bh_work);
- 	INIT_WORK (&dev->kevent, usbnet_deferred_kevent);
- 	init_usb_anchor(&dev->deferred);
- 	timer_setup(&dev->delay, usbnet_bh, 0);
-@@ -1971,7 +1971,7 @@ int usbnet_resume (struct usb_interface *intf)
- 
- 			if (!(dev->txq.qlen >= TX_QLEN(dev)))
- 				netif_tx_wake_all_queues(dev->net);
--			tasklet_schedule (&dev->bh);
-+			queue_work(system_bh_wq, &dev->bh_work);
- 		}
- 	}
- 
-diff --git a/include/linux/usb/usbnet.h b/include/linux/usb/usbnet.h
-index 0b9f1e598e3a..208682f77179 100644
---- a/include/linux/usb/usbnet.h
-+++ b/include/linux/usb/usbnet.h
-@@ -58,7 +58,7 @@ struct usbnet {
- 	unsigned		interrupt_count;
- 	struct mutex		interrupt_mutex;
- 	struct usb_anchor	deferred;
--	struct tasklet_struct	bh;
-+	struct work_struct	bh_work;
- 
- 	struct work_struct	kevent;
- 	unsigned long		flags;
--- 
-2.43.0
+Yes, I considered it. In our scenario, "tearing" means that we have the new=
+er data then the last "snapshot" and the output doesn't sum up in
+sum_exec_runtime. The "snapshot" suggests that these stats not need to be s=
+uper precise because we're accepting outdated state.
+I'm not considering "tearing" issue as very bad here.=20
+Additionally, I'm sure that the "tearing" can happen but I didn't observe t=
+hem during the benchmark runs.
+That suggests that's a rare occurrence or I didn't trigger the right condit=
+ion to expose the issue.
+
+When multiple cpus tries to access the rstat the slowdown caused by css_bas=
+e_lock is so massive that atomic change is preferable.
+ It's better to get even "teared" result than spinlock cpus and disable irq=
+ for such long time.=20
+=20
+
+> By eliminating the lock, each CPU can traverse its rstat hierarchy=20
+> independently, without blocking. Synchronization is achieved during=20
+> parent propagation through atomic operations.
+
+> Even if the tearing scenario mentioned above is acceptable, removing the =
+lock will break synchronization of flushing non-base stat subsystems.
+
+> -static spinlock_t *ss_rstat_lock(struct cgroup_subsys *ss) -{
+> -	if (ss)
+> -		return &ss->rstat_ss_lock;
+
+> This was needed for non-base stat subsystems like memory and io.
+
+From what I could find in code the flush with css and cpu arguments is impl=
+emented only in two subsystems: memory and io.
+Both memory and io have its own locks for them.
+I tested the benchmark (provided in gist) with memory.stat and io.stat hier=
+archies.
+In both cases the KCSAN doesn't have any issues, and performance is unchang=
+ed in comparison to the commit
+e04c78d86a9699d1 (Linux 6.16-rc2).
+For cpu stats the performance is much better after patch.=20
+
+I can't find a scenario when lack of this locks triggering some kind of iss=
+ues.
+Maybe you can help me with that?
+
+Thanks,
+Bertrand
 
 
