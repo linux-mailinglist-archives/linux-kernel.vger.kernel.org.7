@@ -1,194 +1,121 @@
-Return-Path: <linux-kernel+bounces-691187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9605ADE175
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 05:07:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57324ADE17B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 05:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00807189983B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 03:08:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 325E63BAB47
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 03:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986401A7AE3;
-	Wed, 18 Jun 2025 03:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0521D514B;
+	Wed, 18 Jun 2025 03:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O85x+yTT"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSOhZlwL"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2367613E02D
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 03:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A879F1BD9F0;
+	Wed, 18 Jun 2025 03:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750216067; cv=none; b=PO+kKEU08mtxi9k3/YiymoJ7zdBf6ocp01Nr3IKl3FaDBggQocEg8hSybUp4hhtJ0PxHmB+Ii5ZbwCvyiUScv1aKl0qzyNorB3KQlxiCyHrNI75tcH0icAdDkjx5Yg9pSpclvjsxqhp41FzUmMw/u92f1/jc/W7VwyCwAu5TVqE=
+	t=1750216373; cv=none; b=jvelXFfab6p702MmOU1+4N0Y0MWYTtVvDk+TyvJk0UXiup/PlZdSZ50OzDqX5i4sE/56hyhfSGVOFfEzmntl+tPMQkv0i9wayknNGK+doX7P18wAv2xNKne5PyMqT03ZT2qtjXmeaRzFFeXPawMnpnLnvMYF8mENmVvZkwLz5hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750216067; c=relaxed/simple;
-	bh=MA+NPme0bnTwJ/T+fVWWMMcGIF45T/TIufZDuY4NEj8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QJr+YEnLjKW/c1dQMkyMNjqnda6VhBWDl3ztI/en0Gpm8Lq1g9zjdBGMGqybhQsqdqCkRn3AaUyHZ7QpWgfC5NsCz8PjmcX66DRKKiQfqXjFZk0o6GXeQqCtoc5PDeWBvwOqORYOyGMtGSp0k3t1y6PDh6Ppj8BIB1Hks810x08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O85x+yTT; arc=none smtp.client-ip=209.85.208.174
+	s=arc-20240116; t=1750216373; c=relaxed/simple;
+	bh=snU775//kiO8hT9dWLIma8QLQBoQGPOkDX0gzwV8JmQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RDn3P5tERhuEvXz3CBSg+tB5iiuttVHhn0wTHlF6mOwra+B5L3lNQpbQB8j6Q0kSGsUhN/cPVt/lJ30t6EL32N4MLvptBDZgzBSZqm8zimxfD4qbXm9lBQxMnb83QHKhFIsY0fms2kEK2rjLoJ5Jyb7MByngF6tZwOUOL0mUC4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BSOhZlwL; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-32918fe5334so59258891fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jun 2025 20:07:44 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-236470b2dceso57162785ad.0;
+        Tue, 17 Jun 2025 20:12:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750216063; x=1750820863; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e3zUICPhinkw3JOiRXbperRYmBshkcCwZWbIoyWDapw=;
-        b=O85x+yTTvjtNwFcJwNAKKNH4j6xvtXbA3lHdrelzkilAOK9P4lMujKS4ta2iKFmfDd
-         rDP5nM2dUKtsNzdPyNNbDX1c3hGeYp041jq1fKhDJ+drcB7FasKjFqR6rAdJ3+yErIdc
-         mpglJ6moTjnEoKKT895rc1zFHNCWO5oKwlV/aoJnFAkvkEcy8mksjwHhdFyj9vBiFL7T
-         L4AnKTLy4iF7sG2u+mGjaHLuLzbB3zKJi+edIzjjm+Q+fOMj4TuDVAeAi/iDjx04/fH5
-         gQd8116vJ8PBn5SnJtXzDGN3u6VglSDxBoxUE1Dvb0ltg+1hmqJy+t+3MizMSG3j3zVH
-         fJRQ==
+        d=gmail.com; s=20230601; t=1750216371; x=1750821171; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bN1ufSIz6Wdr6sIyj7BRHf668iy1Pf2mMb4+ZdyIh2E=;
+        b=BSOhZlwLVpoeXI79DEyR9FTpQZgye0Pfk1ovW8z1VT3ErqTENvuVP5PQQG/R7j73TS
+         zgsNxnVw81+I/YhL5MVtnHsmLXJ2Nfkk5hTd+kwpQDBOQQZVhqotW13VyMV990l+BPWU
+         IxlAceQed0tnp95vVS2oKGWiJ4tIujVcPebRiCuN2x/ic960TZQ+P+bcguBDcoKCprQ8
+         1+F1NMBdFbu3o1Mh0n66GHj9pD1pj4YpABmf/dgxOSui8fIkpSMuMiwvQCxV48EOCbhf
+         udBQrKseMhqPoqv8nsJkDJ09O9HEg6QYP6ZAugZ1E8kxehaxE1MdnkGeE/uWawl+60lM
+         f3jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750216063; x=1750820863;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e3zUICPhinkw3JOiRXbperRYmBshkcCwZWbIoyWDapw=;
-        b=sg8zB+7+noWHM/4yxv5etpNERcsXuxWjmSdV6wLpMA2sKlJMG1JHjHrHu4n2JIVsEd
-         J7NBtaymjyTMp/fDMGjUZC+2Rrbpj9C1WpRYhOsQz4dUjTJ+3LnyzPd+d02ZdW5EvA+k
-         RHzOuCLxctu1V/60SUxFtYImYZMY/Cu48PnxuhcDGPDYtivd4sflyFvHYdtOB3t+5cyX
-         fEwS7NHG3GhJM43UCizQjvxbOxHuhkKqgIn0NJpW6FcApTsazi5oWD9gGgeZLWY5nfFg
-         TpDqdWV6Bhfpl8Bxv2O1zZzXwSZxrNNWDAm/X8XRnx/5TJefFTFMZMfnyilzrQFnrUQ5
-         5GSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMUVFX4tV7xUUbtFLekiBF4hicB9IMFd2FCQBvH+Tv8fZt/WxW2vrWZ6y0myAV6rouXrRd47N8lKi1w6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOzFuMo9ZofGST8nY/OLPghZRRL+wl/Eg12uFy/5044V9jMe18
-	5ABEhU/pMRSxW/YoYm15JmkBy/7QI5nT6FBnts+oOl+b3ViprT1KT7MTYez+IxE4il77UEReATG
-	BVt8/pj93Jt1DscpOZncuC5/CvXU5bUQ=
-X-Gm-Gg: ASbGncugpntCi8qLPTFFQJu02yGxm+OQfv0at6jKbObpyQ+fVwD4z2p3jOTwgyMFTBY
-	XEU6Mg5xq/ooOhRjkYdaqUpe5nXY/uyvs/0+bkffkLlRFvWcCAftJMd572AQM0hJOFAjEMx5vyB
-	Mnkh3Zl7ue1SuZsqM8/yP7IiKuPpPclyuKwCM+CjNfhW0=
-X-Google-Smtp-Source: AGHT+IGew/TsNPIq+Nroxr/dllhfSRSorwJkVcKVlL7nROnf5CDMeRSk0OAOCw4BMEH+9FlTlm7krtYWlIejHsTFydg=
-X-Received: by 2002:a05:651c:b2a:b0:30b:a20b:6667 with SMTP id
- 38308e7fff4ca-32b4a41e9cfmr49284001fa.9.1750216062834; Tue, 17 Jun 2025
- 20:07:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750216371; x=1750821171;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bN1ufSIz6Wdr6sIyj7BRHf668iy1Pf2mMb4+ZdyIh2E=;
+        b=Mh/BTiAET1ceXGLUPyrfGtmKzrUHhY6OtnYad9yXwF3gn4LRq678zl0npl1iZbWtmW
+         LoryNXQQbtOEhnsGlN/XKJdOyfFVN9Z+AMdKfsGwvbxkQ8zDE/C+l29JAqJV30ivncnf
+         Bn3ClEiUICcb3zFRpy8936UlVvF+2IoteE2Qw9bM1Scoq5sHUs4IOvdO1CqWojdlXwHi
+         YDn+9hZ+iIwywkiw5YOEVII+RfkpBiDqIed9W1qh/+yni/kBZJhQimhHRQAYLQJGQyOo
+         trDaPgJ8uwWHaiDBOICzky2G02mL2x1/Di4hhK4UN1cKR5O4Ne04o3TvExFcbAZr+kw9
+         LKSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwTEdu7H4Or+JfQM2hpnN01buuawJ2NEThGpKoP91NfKY8phqpsScdKxej05oDwL5B6H9sdCuWFTGb@vger.kernel.org, AJvYcCXjfcD0YQ3i8yBfdTt0dfepIxYpgCdoqGuKhklbYUgUGzSQdf8wGAQp/3Xs0pT7tf3rqb7mbctuuancx63t@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxwt3yyYek/mpeUdGBjw1/taJRmhb5y8ELASiFe/oqLUpyRaPe8
+	UU4KBKuXYUgn99nOk1g3Mx6wtsM9zMQuk/UkbzzYs2lldoFslkHVi5za
+X-Gm-Gg: ASbGncs7N/qEYPUBMafnj8bAhK3Jc3I2uIAygIyTaFRyqMn4uiuQ5nPqb4GDVFavsDd
+	N9wkHuKSQuzr5o6NLLYyUgoFA7J1hcZukPhH6njpy0J3g8mRf9fie5PsxdofYvI5L5N69EZB8p5
+	EwA13tiDdu1UxZGqavWzD0bT7xPg7ccm/clr36HWjZgCjBw/JWWp0Gb58G9oKSvuQzmQIFFAOb6
+	YHJ+Lrolh5a16xrsaSA3s4BR0Gtdr9kzVJvrLu2OXtq84GTLDO+PsJOslLTknLv1+u7IjHsq1gI
+	emthKLjiBaNt88SmFEJaaSVsyaVfwV4IEY/AiqufGu/3iRFs/FfzL2rYcGY6eA==
+X-Google-Smtp-Source: AGHT+IGlk8EgvUOrNowxfJO2EgnlRzNvjbjQNVRsCmwDyUQL2qNF7QpmdsaUlm4gLUxNgjcVNHsS2A==
+X-Received: by 2002:a17:903:46cb:b0:234:dd3f:80fd with SMTP id d9443c01a7336-2366b316c17mr244719105ad.2.1750216370686;
+        Tue, 17 Jun 2025 20:12:50 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2365d8a1847sm89028055ad.67.2025.06.17.20.12.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jun 2025 20:12:50 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Minas Harutyunyan <hminas@synopsys.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	sophgo@lists.linux.dev,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH 0/2] riscv: sophgo: rename compatible string of the USB device for cv18xx
+Date: Wed, 18 Jun 2025 11:11:28 +0800
+Message-ID: <20250618031132.373216-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250617183503.10527-1-ryncsn@gmail.com> <20250617183503.10527-3-ryncsn@gmail.com>
- <17bdc50c-1b2c-bb3b-f828-bd9ce93ea086@huaweicloud.com>
-In-Reply-To: <17bdc50c-1b2c-bb3b-f828-bd9ce93ea086@huaweicloud.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Wed, 18 Jun 2025 11:07:25 +0800
-X-Gm-Features: AX0GCFuKCXNr4NMt0l97oNd1EFA7bv0HDzZgopeZgfTh4Zz3W_HMm72pCEe3P4o
-Message-ID: <CAMgjq7BR=99KDiSy7o_L0u_DYsnZunyokPc6FycrdExSdrdB_w@mail.gmail.com>
-Subject: Re: [PATCH 2/4] mm/shmem, swap: avoid redundant Xarray lookup during swapin
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 18, 2025 at 10:49=E2=80=AFAM Kemeng Shi <shikemeng@huaweicloud.=
-com> wrote:
-> on 6/18/2025 2:35 AM, Kairui Song wrote:
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > Currently shmem calls xa_get_order to get the swap radix entry order,
-> > requiring a full tree walk. This can be easily combined with the swap
-> > entry value checking (shmem_confirm_swap) to avoid the duplicated
-> > lookup, which should improve the performance.
-> >
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > ---
-> >  mm/shmem.c | 33 ++++++++++++++++++++++++---------
-> >  1 file changed, 24 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index 4e7ef343a29b..0ad49e57f736 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -505,15 +505,27 @@ static int shmem_replace_entry(struct address_spa=
-ce *mapping,
-> >
-> >  /*
-> >   * Sometimes, before we decide whether to proceed or to fail, we must =
-check
-> > - * that an entry was not already brought back from swap by a racing th=
-read.
-> > + * that an entry was not already brought back or split by a racing thr=
-ead.
-> >   *
-> >   * Checking folio is not enough: by the time a swapcache folio is lock=
-ed, it
-> >   * might be reused, and again be swapcache, using the same swap as bef=
-ore.
-> > + * Returns the swap entry's order if it still presents, else returns -=
-1.
-> >   */
-> > -static bool shmem_confirm_swap(struct address_space *mapping,
-> > -                            pgoff_t index, swp_entry_t swap)
-> > +static int shmem_swap_check_entry(struct address_space *mapping, pgoff=
-_t index,
-> > +                               swp_entry_t swap)
-> >  {
-> > -     return xa_load(&mapping->i_pages, index) =3D=3D swp_to_radix_entr=
-y(swap);
-> > +     XA_STATE(xas, &mapping->i_pages, index);
-> > +     int ret =3D -1;
-> > +     void *entry;
-> > +
-> > +     rcu_read_lock();
-> > +     do {
-> > +             entry =3D xas_load(&xas);
-> > +             if (entry =3D=3D swp_to_radix_entry(swap))
-> > +                     ret =3D xas_get_order(&xas);
-> > +     } while (xas_retry(&xas, entry));
-> > +     rcu_read_unlock();
-> > +     return ret;
-> >  }
-> >
-> >  /*
-> > @@ -2256,16 +2268,20 @@ static int shmem_swapin_folio(struct inode *ino=
-de, pgoff_t index,
-> >               return -EIO;
-> >
-> >       si =3D get_swap_device(swap);
-> > -     if (!si) {
-> > -             if (!shmem_confirm_swap(mapping, index, swap))
-> > +     order =3D shmem_swap_check_entry(mapping, index, swap);
-> > +     if (unlikely(!si)) {
-> > +             if (order < 0)
-> >                       return -EEXIST;
-> >               else
-> >                       return -EINVAL;
-> >       }
-> > +     if (unlikely(order < 0)) {
-> > +             put_swap_device(si);
-> > +             return -EEXIST;
-> > +     }
-> Can we re-arrange the code block as following:
->         order =3D shmem_swap_check_entry(mapping, index, swap);
->         if (unlikely(order < 0))
->                 return -EEXIST;
->
->         si =3D get_swap_device(swap);
->         if (!si) {
->                 return -EINVAL;
-> ...
+Old days I added the USB support with a wildcard compatible string.
+It is not formal and it is more clear to use a compatible for a
+real world SoC. As the usb device is not used in any board device
+tree (The patch for USB phy is under review), I think it is good
+to correct this mistake before submitting the device node.
 
-Hi, thanks for the suggestion.
+Inochi Amaoto (2):
+  dt-bindings: usb: dwc2: rename sophgo usb compatible string
+  usb: dwc2: follow compatible string change for Sophgo CV18XX/SG200X
+    series SoC
 
-This may lead to a trivial higher chance of getting -EINVAL when it
-should return -EEXIST, leading to user space errors.
+ Documentation/devicetree/bindings/usb/dwc2.yaml | 2 +-
+ drivers/usb/dwc2/params.c                       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-For example if this CPU get interrupted after `order =3D
-shmem_swap_check_entry(mapping, index, swap);`, and another CPU
-swapoff-ed the device. Next, we get `si =3D NULL` here, but the entry is
-swapped in already, so it should return -EEXIST. Not -EINVAL.
+--
+2.49.0
 
-The chance is really low so it's kind of trivial, we can do a `goto
-failed` if got (!si) here, but it will make the logic under `failed:`
-more complex. So I'd prefer to not change the original behaviour,
-which looks more correct.
 
