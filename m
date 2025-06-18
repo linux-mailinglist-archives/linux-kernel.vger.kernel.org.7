@@ -1,140 +1,128 @@
-Return-Path: <linux-kernel+bounces-692831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C37ADF75C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 22:00:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CDC7ADF764
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 22:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99F491BC0B28
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:00:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 286281BC0920
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6180A219E8F;
-	Wed, 18 Jun 2025 20:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEA821A424;
+	Wed, 18 Jun 2025 20:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="f+HQw1a8"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ieseRAba"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E8721A424
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 20:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B05E3085A6;
+	Wed, 18 Jun 2025 20:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750276814; cv=none; b=RmJL7WKKD6/e6ln8RvnjGg36vWYRbyG1krPdPWrsoBPu4jJLXmwovMemHUsHSTSEMsxHxB42YZCD3BQXk71i4ImRT7cp9/KE5mC6LgFgMW8rV+lxNNqtSwCojYVc6k/zBm9d0rn0dCDybb3LiCX0phFCQrtJ/7PHns+vK75+xp4=
+	t=1750277055; cv=none; b=Towz8McBOLd4Y9MYSJs6H7ZsAmuDuIMzcLXtsSZHICs/qwuq6T11D+P5AyORftfzfSCka7JytIRb4fDtiJhl8tVwd1DJ+t46HAJ1y45WdL9l1Pyxus3QnhUJ+5CoD0Aed1E6QK/BxdJfhAitsceRMe3XpvZ4U+iQInuuh/nRJQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750276814; c=relaxed/simple;
-	bh=Thq4Q06cdpVu9pDEN+/3JBZrpgyjUXOgoUe0gvNvhSk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kLS+dFogbzYwvepLTJlXuoln3mxh32Y30CiCoNSj6GdvpGFOWZ5Tv8TixU9WRBG2ximrUAR3smeTtNXXoqiwKdOvT+wDixT7hkT1Dl/PZemAnDCVMBtEXvuNTWTec4TXaHtZ3r25GWirhXwhE9mvMTNJQiD2dYqMTc8uPgJp3HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=f+HQw1a8; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b271f3ae786so81927a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 13:00:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1750276812; x=1750881612; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KiOzVfjBcF1fRtJg0Y1H//g4cNADDmQDLTn0mBy9kzo=;
-        b=f+HQw1a8sMcwX9xo2U1ygWT+QWYLU0F4HBcOvrIkAhCmztVGuDaq3zoVf/NAP0kpfw
-         b//W5zthQDGjYjyaDRMyN+Vcnbe3zV5Nr6eA5NBgoD21zoiEIKj5XGz8UmEKhmkhSSjP
-         5UIZtEbw8qUOmBAgLNSxnqYCIRQKGVfkxQQ+5PAhVTqCJspZmoDvMZLberAIxHiWb9+8
-         E17c2hE79UE6tIXmsD2oGjxPt9ffdno7l/yYSpPPiVPQf6+bZWgsejQCwpSAiGcirihs
-         6odCbGg5ExPNl15Tr/DCA2ExS8YbnMOl0bMF1ygsFr+6j1t2ZuD4YEvoosB6mIduVVnD
-         +Giw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750276812; x=1750881612;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KiOzVfjBcF1fRtJg0Y1H//g4cNADDmQDLTn0mBy9kzo=;
-        b=ijqWDvL6Hnn84XD6O4//lVtvuCNgf76Ft6EKJQU6gpzJWIFD2+Gt5ZiCLSKAt1I2Nc
-         kQjG36ZlVkduCSpz1Cu9dnyX0agybpvGdoqmlY8Swljx3u+ypG/MVIi0SiZKbjDyGdW4
-         DCyfR7IcDmZYv03dOeyxCHY4iLgS1FrikeMyGEXgTvvp4vBO+AVprrvR3glrKF3SyIEB
-         ABfyJIBggVNdp9Pw8fiOb2rvi8Rqzj20JbykNql/LLK7oZsVkrb/cuGnKu38/xz985zT
-         pfPy/r58n53d4KtRVyL7ryCMNdhf4JFF84TZKQs+mE6MuuuQSLIDaIBMpkzAU22fbrtb
-         aMdA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0GSLUM/5RGC6tbaFt+oKBo+ypCTzNtGVtr79lda44WdzqM34yfFOIoLpV1dvzIhNi3O38thJDCUDoAG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaTGuZ6kQgrhNL6JpVGh8exKZK4jb21zNHUq8QFX8uCbXGC107
-	CTt0n8WRD1owx7toaiDOt6xPjO5FvpNXDLwD73G4Nt8WRAnAkW/aT6ZsGeUQqfZFKSw=
-X-Gm-Gg: ASbGncsfZcmxeQdMLd2SiRzksLtEWaWxoos1YZfuVeLk7yFdv+p0h7N6bT4gKJhJ1k8
-	iBowln2KaPcNUpyIdMk1lY0JF9hlIfI4ijRFzcL72kcG5GVLumVK51KF70Y6+z6MGq4HE4JIj2Y
-	eJmD41J8edwwgZ0zR6Dfb9xswr0nSpBYQ6aVeepYBJ31OP1JDPZlArWh2BEvMkBeBVmnDu6ovrt
-	uUr5/S1yGTKbZ+t9wKohk/IgJL4C8/yWAiOUnvrk2MEX0FS2Hki2eLIRkrkQ0pQzzm/BwtTRJsm
-	P422Pzxwsct30+fqwopUzsZbMrLXZ3ShCnZzoQNLIrBbKHgHYe48LccW2nqi
-X-Google-Smtp-Source: AGHT+IH3xjpyQ4ebVaMo9DbY1gh/tZqYj3qhoffl3icr75QW+zCNKAPlpcq7GyNn9O1WQp4oMM2scw==
-X-Received: by 2002:a17:90b:2dd2:b0:312:f88d:25f9 with SMTP id 98e67ed59e1d1-313f1c7dacfmr29693399a91.7.1750276811912;
-        Wed, 18 Jun 2025 13:00:11 -0700 (PDT)
-Received: from localhost ([97.126.182.119])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3157a605f21sm1629583a91.0.2025.06.18.13.00.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 13:00:11 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-pm@vger.kernel.org, arm-scmi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 2/2] pmdomain: core: add support for subdomains
- using power-domain-map
-In-Reply-To: <e463a278-7e6e-4287-9093-42d0a0d365d2@suswa.mountain>
-References: <20250613-pmdomain-hierarchy-onecell-v3-0-5c770676fce7@baylibre.com>
- <20250613-pmdomain-hierarchy-onecell-v3-2-5c770676fce7@baylibre.com>
- <CAPDyKFrO9rb0eDb2qO+EGaVjOFG=7emgca8511XACDhWY=dt5g@mail.gmail.com>
- <7hsejzp4xg.fsf@baylibre.com>
- <CAPDyKFo-iPBPgkM43q+5cGR2sptkLk4E6TAERCQbCu24o1RfFQ@mail.gmail.com>
- <7hcyb1os9y.fsf@baylibre.com>
- <e463a278-7e6e-4287-9093-42d0a0d365d2@suswa.mountain>
-Date: Wed, 18 Jun 2025 13:00:10 -0700
-Message-ID: <7h5xgsq0qd.fsf@baylibre.com>
+	s=arc-20240116; t=1750277055; c=relaxed/simple;
+	bh=6ZkxjQapZUXSy1w/otyjvrDRv9aX4E97f9yHVY3kDe8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lpSdaEML+MA89oTbkdtWES5TZzrJouJFeyhX0Rn4SEnvSHCUEBv/ArQmphJrNPT0LE7vzdNJXOClDC9njtxJbwmILMUsnHST8iRnWtAdzv1lTQDmpm0DpmfYCt+XXTuAjeIw1Rthq5W5jr3mC1NaPcxJLYrM+KuGqxou8GwxMoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ieseRAba; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=r+yILtYkX3FnYrUMXwUjtoYSq4aCkMrSL4SJ7/KGbLA=; b=ieseRAbaE2EB/gg0UrA4lAg0ya
+	OMIrk68qActWNIrlU4+o3MUxlOdzs0sAzy8pvh0C+/FzDPucczlLfYPfD00o24KCkCuH+FFOkwmhp
+	R1YimiUoY/XcQ89JvDBIwxhHk6PC6vuXgeyDcRBuG+/scNqdcGd/AmB3MCUJEVczHYhsFH/HtCuBD
+	QUWwg5HM3SO54YGjy9XPxlOrywxz6rlNYI4GbAr78NL3JYgieExT9cy4hxQWUtJGM3OQ5TZX+EmC6
+	ynJh94nA0G2clxmoy3o2IEFglpHpJc0flDhE2COS7zRIswWNpdaBNi0IJZT6aqdC3OgNSoC27mXmb
+	kXWvpJxQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uRz0r-00000004xfj-0q6I;
+	Wed, 18 Jun 2025 20:04:01 +0000
+Date: Wed, 18 Jun 2025 21:04:01 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Zi Yan <ziy@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-doc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, virtualization@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+	Peter Xu <peterx@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>,
+	Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>
+Subject: Re: [PATCH RFC 08/29] mm/migrate: rename putback_movable_folio() to
+ putback_movable_ops_page()
+Message-ID: <aFMbsdPYhcL8fyOo@casper.infradead.org>
+References: <20250618174014.1168640-1-david@redhat.com>
+ <20250618174014.1168640-9-david@redhat.com>
+ <AD158968-D369-4884-806A-18AEE2293C8B@nvidia.com>
+ <aFMQ65hUoOoLaXms@casper.infradead.org>
+ <DABB8764-8656-44A8-B252-0240F53BC0E3@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DABB8764-8656-44A8-B252-0240F53BC0E3@nvidia.com>
 
-Hi Dan,
+On Wed, Jun 18, 2025 at 03:25:46PM -0400, Zi Yan wrote:
+> On 18 Jun 2025, at 15:18, Matthew Wilcox wrote:
+> >> Why not use page version of lock, unlock, and put? Especially you are
+> >> thinking about not using folio for these pages. Just a question,
+> >> I am OK with current patch.
+> >
+> > That would reintroduce unnecessary calls to compound_head().
+> 
+> Got it. But here page is not folio, so it cannot be a compound page.
+> Then, we will need page versions without compound_head() for
+> non compound pages. Could that happen in the future when only folio
+> can be compound and page is only order-0?
 
-Dan Carpenter <dan.carpenter@linaro.org> writes:
-
-> On Wed, Jun 18, 2025 at 10:48:09AM -0700, Kevin Hilman wrote:
->> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
->> index 88819659df83..3ede4baa4bee 100644
->> --- a/drivers/pmdomain/core.c
->> +++ b/drivers/pmdomain/core.c
->> @@ -3220,6 +3220,40 @@ int of_genpd_parse_idle_states(struct device_node *dn,
->>  }
->>  EXPORT_SYMBOL_GPL(of_genpd_parse_idle_states);
->>  
->> +int of_genpd_add_subdomain_map(struct device_node *np,
->> +			       struct generic_pm_domain *domain,
->> +			       int index)
->> +{
->> +	struct of_phandle_args parent_args;
->> +	struct generic_pm_domain *parent_pd;
->> +	struct device *dev = &domain->dev;
->> +	int ret;
->> +
->> +	if (!domain)
->> +		return -ENODEV;
->> +
->> +	/*
->> +	 * Check for power-domain-map, which implies the primary
->> +	 * power-doamin is a subdomain of the parent found in the map.
->> +	 */
->> +	ret = of_parse_phandle_with_args_map(np, NULL, "power-domain",
->> +					     index, &parent_args);
->> +	if (!ret && parent_args.np) {
->
-> Sorry for the pedanticry but could we flip this around?
-
-Sure.  This is early prototype code for discsussing the big-picture
-approach, but I appreciate the review.  I'll clean that up when I get
-past the RFC phase.
-
-Thanks!
-
-Kevin
+I think the assumption that we'll only see compound pages as part of
+folios is untrue.  For example, slabs will still allocate multiple
+pages (though slabs aren't migratable at this point).  The sketch at
+https://kernelnewbies.org/MatthewWilcox/Memdescs supports "misc pages"
+with an order stored in bits 12-17 of the memdesc.  I don't know
+how useful that will turn out to be; maybe we'll never implement that.
 
