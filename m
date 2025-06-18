@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-691687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA895ADE7AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:00:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B32DAADE7BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A78583A73D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:00:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0277401677
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F28B28505C;
-	Wed, 18 Jun 2025 09:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549C128A1C8;
+	Wed, 18 Jun 2025 09:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NMZY4BLO"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cgHDAz5A"
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847FF28640D
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5FD2882B2
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750240779; cv=none; b=fljukHghH/sCOA++Q/dKyFuiIz4z3cv1SAYSd+j6icv8M+uwjEKPKL2Pnbc/oc4cDLpx5pUSest2FdaacEtKC1dqnQvTFn0NlNEhx+tBGUpNFQTXi4rHg5Az1lxy8RJsvXAk+jScDWa5T51COGdsV/PWEHEhL7fAqgtDrSrN7/c=
+	t=1750240782; cv=none; b=PMrB37iFz2gPkJBOsPLVTp/XS4KU73fQWDOGyrNDq5jkIikgZvPCZ7zVadIbeHYXCSHdhzSh/f+maaO3a1ChmkBiicfqWbexfX6v9d1McKLv/0B2Xd+1yS7B2XW8ADipGdIPqYgLvgN6dkMlMsHLf17wfeFbg4ZNlOLxbBvhttU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750240779; c=relaxed/simple;
-	bh=2epr8ao5TAgZA57K71+fCAJlw3g10O4XWpdyeMJVQgI=;
+	s=arc-20240116; t=1750240782; c=relaxed/simple;
+	bh=TUWjk/+TL9jYKTUj3GcjEHPOCFzwRG3GYqF9h5mNZlw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RQOz0rGZgRZPxs6DhXboMkGFTg0Ak0QQ+UUFxBp1ma09E8DXISdVuXS2Vcw5LM9A0Nu6TIH101i2Zq+FMlj/NUpxJEoAk9SbuzmGjEFspe7qK2wCxLTIZZt0wd8gWM8awDKy2H27gdYWe2DWrpgwHOheoNvi8Vtrd7Ka0GI/5Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NMZY4BLO; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:To:Cc; b=arl7Cbenpdsom6DDlueP/oQSzvx0JO3KIDDzn5zm4h947zJKvQE2SL7LxKzf684o0UHDeFxKba+cQRJh7NQAjJ17twBbe4kWNQ17vRqcpH9CCPTTTuKG6ronXJTJOprloloyLTH9v9UxJQoayeSplzsH8VbKMHs/LVWTZSVfCP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cgHDAz5A; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9FCC8111D;
-	Wed, 18 Jun 2025 11:59:19 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E543E752;
+	Wed, 18 Jun 2025 11:59:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1750240760;
-	bh=2epr8ao5TAgZA57K71+fCAJlw3g10O4XWpdyeMJVQgI=;
+	s=mail; t=1750240762;
+	bh=TUWjk/+TL9jYKTUj3GcjEHPOCFzwRG3GYqF9h5mNZlw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=NMZY4BLOr6GDkKjrrVYFz1V4+/4HLXQy+SSfJ4E1Dggty75JUPmC9Zp8DxRDQGjpC
-	 n2nLzWRA/iQzn1c0BElwzK8O3RaN2xt631nGRoSiHydf/bR9RGKDqPL0l5KYo8eDlq
-	 sApgXdwuB+jsPrUpprahNIsYpAbq2leB52VW5FXM=
+	b=cgHDAz5AO0cJnQV3HJYDZyjgFXisLZFVYDWQr/JxZsPqRVJQTVZ8PtFuheyqBF1LR
+	 if557w53H7JrtNj7C9pUQM6oo07IP9luQmQz/rKwGIPpygn8BMs4n2f5GNtSO7Hc2M
+	 rIbnxd5zSOnsmfZ0c/C5DOP4d/bhoDZzUqHmItj4=
 From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Wed, 18 Jun 2025 12:59:04 +0300
-Subject: [PATCH v4 01/17] drm/bridge: cdns-dsi: Fix the _atomic_check()
+Date: Wed, 18 Jun 2025 12:59:05 +0300
+Subject: [PATCH v4 02/17] drm/tidss: Fix missing includes and struct decls
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250618-cdns-dsi-impro-v4-1-862c841dbe02@ideasonboard.com>
+Message-Id: <20250618-cdns-dsi-impro-v4-2-862c841dbe02@ideasonboard.com>
 References: <20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com>
 In-Reply-To: <20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com>
 To: Jyri Sarha <jyri.sarha@iki.fi>, 
@@ -71,58 +71,96 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  Parth Pancholi <parth.pancholi@toradex.com>, 
  Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1662;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2280;
  i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=SXe0VxRuPHAxO1Ko/oDsuelobFJsNH8ZVsNaLWN6Eow=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBoUo38amO3S0OMdIxHt3vE1hoJ0QkvgnTqfHdwk
- mbxJ98ktTaJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaFKN/AAKCRD6PaqMvJYe
- 9YSxD/95pwOCPNQnxndxfh7yb0dGnav6xqwiy1eFN9I8tGO9J6IgitbhzE/obVA8Byr+3ZSlW91
- Rfs159+V0ToKFAkd4fU9dPDbfxoRg0ILCeV/VM0SERw3K8uTdyiyALhUnmhAlcJFlmPRGVsGZ3+
- Bz7DFfBk9R4sG8nxfphqd0qklsxjkbAMDzOUNwfscD+5kwUYzxYAWZr8mzd1gaj8BQvyxtFv4pb
- x03MYldbisGIKuK+EvGNqSILppqGwz7BCBELPAdKgwB+t3+ClqVzOAkiauvZPQ2Y1Wx/xqE7Y54
- OUM/wELqb1/g/DQA1DZltEHdu6EeExXJgMyiYLi3qL3XHPG8ITbVwNmLOw9RIsQS+e54988mG3q
- uOX408tXUa4NbbN0SyRzoKX7wmFaGCYUfIlf48D7zID5LGy4+TuqDjHeRAZqpZVO3UgCa0ommfo
- CQUfjYn1nKcg0VjF6PmOpEBI8QCUfsikU/jtTPq0IHFjcZ70S+MIUG2vw7061zz7A+D5Y5Lh7Ze
- GGSZ7tv/qpsSpK6uttDSRiByV6sgbE5TT5y5d4NQIyhPOTaH2VvbJV2d/vURUNGCg1rPq/ULKTE
- SlmqrccIQiLX5UVm3XZar+xn13TbAGjwRf+PBseJgihbwHmL3cbF2NkBdBVpx+06yuMqdLJleIp
- knbwmeevZzWbrEA==
+ bh=TUWjk/+TL9jYKTUj3GcjEHPOCFzwRG3GYqF9h5mNZlw=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBoUo38C5zhrKujmVy6XgKslKFTxAnDEoAl2YpVw
+ IlQjNaaQr6JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaFKN/AAKCRD6PaqMvJYe
+ 9fw7D/9twN8cK5mpKNgpPNI4yEkWEu7tBOUDGh0Ui1SJOqapy6FDhLpiwzzDaDNb8Tk4tZ31LCl
+ HMAhvqw88IlcoOarNcRgwFe5jcH5KQMLG5RYv1b0rAywhs9cRigrRXs9PybpwTXGBHEWtm0RUX/
+ xjK1cZv4Dtkz0vxow2utBckIrfoLMS5mMxVxYqIhwqTbpcSwLyNQFVwO0ilISlWnn5p49LXOj+5
+ UPQeESHxzK9YQgXzPlR59145SQbp2hIpepi23a+oiUePVeX6T/SbpwIPQE5dh2GVibh670T9BvJ
+ SPflI321mZsnqMfj+e/eyj7X5YdjTfGFqSBEHhbctN/nz4m/0Kkq2sVOk7Mfh2R9QJJm52Lk8dm
+ 2Jm+eGyzuAj7XFzNQT+jU7bJokJkoK+4Szqg2z1mXn4Pt5mY/nNp/xl+1CKFgjMkhh0v5rz7R3w
+ yVNMn1xHIlEC2Y0TMnKtjwuRUk5OqHGiF9uin1PDQUf+p0zW2xKFVBkHeHdXqiMW3icgBvv5z31
+ mBlejpNfcR2foNqvGwSfsrCeM3mIljVAsLoYyCVST1gAyGEPHkcv1syFTeBFcIAKwkZttYq/lYn
+ E0cEVx8xkIBLwapfVfUZJ5bc8aFWQTqQlFSB/abRX1N4WqUj5Hz/ALFO9RTnke2qiADf0m7wDJn
+ qFENzb+28JoYUoQ==
 X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
  fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+Fix missing includes and struct declarations. Even if these don't cause
+any compile issues at the moment, it's good to have them correct.
 
-Use the "adjusted_mode" for the dsi configuration check, as that is the
-more appropriate display_mode for validation, and later bridge enable.
-
-Also, fix the mode_valid_check parameter from false to true, as the dsi
-configuration check is taking place during the check-phase, and the
-crtc_* mode values are not expected to be populated yet.
-
-Fixes: a53d987756ea ("drm/bridge: cdns-dsi: Move DSI mode check to _atomic_check()")
-Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Reviewed-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+Tested-by: Parth Pancholi <parth.pancholi@toradex.com>
+Tested-by: Jayesh Choudhary <j-choudhary@ti.com>
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 ---
- drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/tidss/tidss_dispc.h       | 3 +++
+ drivers/gpu/drm/tidss/tidss_drv.h         | 2 ++
+ drivers/gpu/drm/tidss/tidss_plane.h       | 2 ++
+ drivers/gpu/drm/tidss/tidss_scale_coefs.h | 2 ++
+ 4 files changed, 9 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-index a57ca8c3bdae..695b6246b280 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-@@ -997,10 +997,10 @@ static int cdns_dsi_bridge_atomic_check(struct drm_bridge *bridge,
- 	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
- 	struct cdns_dsi *dsi = input_to_dsi(input);
- 	struct cdns_dsi_bridge_state *dsi_state = to_cdns_dsi_bridge_state(bridge_state);
--	const struct drm_display_mode *mode = &crtc_state->mode;
-+	const struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
- 	struct cdns_dsi_cfg *dsi_cfg = &dsi_state->dsi_cfg;
+diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
+index 28958514b8f5..be0b42e49b09 100644
+--- a/drivers/gpu/drm/tidss/tidss_dispc.h
++++ b/drivers/gpu/drm/tidss/tidss_dispc.h
+@@ -7,11 +7,14 @@
+ #ifndef __TIDSS_DISPC_H__
+ #define __TIDSS_DISPC_H__
  
--	return cdns_dsi_check_conf(dsi, mode, dsi_cfg, false);
-+	return cdns_dsi_check_conf(dsi, adjusted_mode, dsi_cfg, true);
- }
++#include <drm/drm_color_mgmt.h>
++
+ #include "tidss_drv.h"
  
- static struct drm_bridge_state *
+ struct dispc_device;
+ 
+ struct drm_crtc_state;
++struct drm_plane_state;
+ 
+ enum tidss_gamma_type { TIDSS_GAMMA_8BIT, TIDSS_GAMMA_10BIT };
+ 
+diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
+index 7f4f4282bc04..56a2020e20d0 100644
+--- a/drivers/gpu/drm/tidss/tidss_drv.h
++++ b/drivers/gpu/drm/tidss/tidss_drv.h
+@@ -9,6 +9,8 @@
+ 
+ #include <linux/spinlock.h>
+ 
++#include <drm/drm_device.h>
++
+ #define TIDSS_MAX_PORTS 4
+ #define TIDSS_MAX_PLANES 4
+ 
+diff --git a/drivers/gpu/drm/tidss/tidss_plane.h b/drivers/gpu/drm/tidss/tidss_plane.h
+index aecaf2728406..92c560c3a621 100644
+--- a/drivers/gpu/drm/tidss/tidss_plane.h
++++ b/drivers/gpu/drm/tidss/tidss_plane.h
+@@ -7,6 +7,8 @@
+ #ifndef __TIDSS_PLANE_H__
+ #define __TIDSS_PLANE_H__
+ 
++#include <drm/drm_plane.h>
++
+ #define to_tidss_plane(p) container_of((p), struct tidss_plane, plane)
+ 
+ struct tidss_device;
+diff --git a/drivers/gpu/drm/tidss/tidss_scale_coefs.h b/drivers/gpu/drm/tidss/tidss_scale_coefs.h
+index 9c560d0fdac0..9824d02d9d1f 100644
+--- a/drivers/gpu/drm/tidss/tidss_scale_coefs.h
++++ b/drivers/gpu/drm/tidss/tidss_scale_coefs.h
+@@ -9,6 +9,8 @@
+ 
+ #include <linux/types.h>
+ 
++struct device;
++
+ struct tidss_scale_coefs {
+ 	s16 c2[16];
+ 	s16 c1[16];
 
 -- 
 2.43.0
