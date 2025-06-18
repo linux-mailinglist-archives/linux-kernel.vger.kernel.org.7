@@ -1,110 +1,141 @@
-Return-Path: <linux-kernel+bounces-692255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8294FADEEFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:15:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C35ABADEF01
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5417189D58D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:15:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 048A63A1D53
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851AE2EB5A7;
-	Wed, 18 Jun 2025 14:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202DF2EA148;
+	Wed, 18 Jun 2025 14:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="R6eKWMt0"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dv1JLcuM"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495962EAB93;
-	Wed, 18 Jun 2025 14:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3A527F4CE;
+	Wed, 18 Jun 2025 14:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750256113; cv=none; b=aQeuiRJxR4nZU+A1Clg58rX0SQv1wDY1ieN2Hs3p1o+vfsWvztlIhBkqtLFH6+6+XI6Nq1/wLfIO5u+a3behQ8BQfuNmPTm/J8Ejzq52u8+RhBJ9EVISLYbPW6+pdLkjZPtoDMT0zvxrgttZ3lErnpRg5wqqn19OgunnuB8pbj8=
+	t=1750256204; cv=none; b=k86PzPoibfVAkhN/9LFpQ46ZB2jz2BaYqybPv7Kqj22VCwaIbyrn+tZSxDtdYbTSfu1lgATR0TAfSNAdKyajH+AO78B/IDANSGC4kYARYDe4Ik+gNBwntr4tgj5tvifuuP6o/XEhXqy7VGU146gOg/aRrYmJYAp+16orAYgxEcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750256113; c=relaxed/simple;
-	bh=EKTviWYqLv1yK2WFaMCAtqpkvPv1cokIZ4A5bpwZ5C8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9opGkORw1NsNdA+wzJ4GA+Fj8viKnInOlXpoMr6bbTpuEVPCUoE1Ix5NGaO/H/SL71sHYAS6txqk83RXEgVqQGw1s2K1xbIzgl+M2wioqGPhroEno5kxNDPfVuf6c6zb3fLTdXXQ8CW1ikkQaJbvwU2GvF/XamIxXd4/D/W/AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=R6eKWMt0; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1750256110;
-	bh=EKTviWYqLv1yK2WFaMCAtqpkvPv1cokIZ4A5bpwZ5C8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R6eKWMt09qQIp/guJ1Mv/MBoou/bNRlTC0Lve0JDxB6N5E0UwBMbi+Pe5dh+f2M/L
-	 jWaYyw/CYzgBkoIR6RbxWHvYRcxulhlOxqEKWGoJisPuCKy1ihDx3Irgiu8I6ahhEo
-	 qSNV6LJ/pHB4/jTC+lW5200F4EXJgZKZb+sk6pnA=
-Date: Wed, 18 Jun 2025 16:15:09 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mark Brown <broonie@kernel.org>, stable@vger.kernel.org, 
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
-	hargar@microsoft.com, Willy Tarreau <w@1wt.eu>
-Subject: Re: [PATCH 6.15 000/780] 6.15.3-rc1 review
-Message-ID: <1081af30-1273-4a9a-a864-f59f1cb54fd1@t-8ch.de>
-References: <20250617152451.485330293@linuxfoundation.org>
- <cc048abb-fbc0-4a79-b78a-90bfa3f8446d@sirena.org.uk>
- <2025061858-reproduce-revolving-cae0@gregkh>
+	s=arc-20240116; t=1750256204; c=relaxed/simple;
+	bh=vpumWvZEKWirBkxBr6SXpGBrKl0PGlgMdEwZMBbkXvA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IrJpYrhMVjEs9wQ/+kvs7URpIs0ovtiYQiZmfZuD72SAhBKlC5OpgaRj+rGya1kdzhv8nKsbQVYQML4jfEL6f84CRAgSx2NsOn2dPY5iPN6RrbxW4kKpt2tgWa8pO7r3ZAuZAj8ehcyTgDiwX6QtObKNRMM+LQm/huiUjyyieQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dv1JLcuM; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-747c2cc3419so5479576b3a.2;
+        Wed, 18 Jun 2025 07:16:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750256202; x=1750861002; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dN6A+dCRQCTewVwE+vKtlp25E+5/ls+WyGlXJF8/QJI=;
+        b=Dv1JLcuMd8v4ekw7zGZfti0arU8kkwPSSjGAZ0K2lNy5skfGqGZPw0DX+Q3S8+sdqz
+         lJ8eT9bSoazc/FPu8lXGvB81yBEdGr8MDsyLDxdGT885h03cxwaKiHQ3geXdmIMF1JNU
+         cX3BP8Sx1z9onKwphJSXTE0bvs9bvPObebhNqO9OeDhNZjWDYreSZ0qAEc84a8O3SeNv
+         Pt1WIUB7TFcr+J25y5CWhYnnGx8B7qpKy9BCSh8BmlEZEuoBDSzDRt9qF8WGAg6w01lm
+         bnzXLoVttVYAuxcBpgHDhpYhrkpaUxYR1KVScj+SS4ySM2kklxnV30/nS+R3d6pMTePZ
+         VIoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750256202; x=1750861002;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dN6A+dCRQCTewVwE+vKtlp25E+5/ls+WyGlXJF8/QJI=;
+        b=nmWK6vouRPhSkgFXdMIIKWTlXKYSrN746ep7eUSUiJc++BCIwTDxRt1FgObDQ8ErA4
+         9mBnCgBd3a4IAI/6YM//EQV1cu65EQcY0VFw42Mx0m8NYfiGl069yqoDo75hDn1jbkri
+         UY8JnqWxZyQih9BuVYUioGxgsFD937cAwSJAmQKifHYSjwIsTmZDGa7x8NsJz8MfMABQ
+         mQ1uARQkF6I29/LWgX5bDLRdg3QCequnRhVQYlx0+Xf8ll1U6+dRt7q5H2Z5+DAh0jVG
+         DTOFkioR6PwDyh99Sw4vMgWyRQbIt66ZyKjhRJ/cM8nc/Vjxj6BuZpYihcjEZnmn3UN0
+         OTOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVckpdfDhGp/THTLyPpAJUuY+spjqjCG4b6A6ocXtFLIjFTTqZFOe16rIQj1AAOyLJgoVmlHZZrhGSnrzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGWx7Sun1rBoyHPiqjK114+3DsvY676nAM4Tv2sJWURM007NGY
+	W8VjlbOUlWbmUmqQ/FxZVZJru60eu12lKOuy4BV5YagEa71mi3jwcDbv
+X-Gm-Gg: ASbGnctTQ/dj9aPgzg1cZFEoDom8Np5CcgpkjWAOF+9PX7FuNH5a+FwlYmfTZVvdUnL
+	ZZ0mv8FKXm4JXbxt/X8HqBlSPFSuoKexvOvFf78IYbRdnUBJzY5HoBEwuFcnPy3Xo601px9cdgf
+	AtE6qiamz5O6/awlm4oyv6TqdBQy5Tgl7CO/4WGbeYRl2AKCo1ZpNHRLcxGjyoIiSdvURmycIMK
+	7Wx+mheKGoN9S8Fs+wh+Px8oNuRbk8C/4ziGjFgmSWPwiKgLTpMtTi84FclbQDjLpNhnejAFgPk
+	5Opqm7wAzCFQAUfe9a0iKHVHixsj64/R+qgNm8NbDPc3SFrcYm9XNNui6AoT
+X-Google-Smtp-Source: AGHT+IGYEQHH8nI/GaHcGYoU54mp6byytA9Jxq+tLdc8SYm9ueq6KZ56WHIsiHaYQB3yd+AYvGKopg==
+X-Received: by 2002:a05:6a00:14cc:b0:740:4fd8:a2bc with SMTP id d2e1a72fcca58-7489cf5c8e8mr20629514b3a.5.1750256201994;
+        Wed, 18 Jun 2025 07:16:41 -0700 (PDT)
+Received: from zinc.. ([182.216.63.93])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748900b2c1asm11360866b3a.143.2025.06.18.07.16.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 07:16:41 -0700 (PDT)
+From: Kisub Choe <kisub.choe.0x1@gmail.com>
+To: sudipm.mukherjee@gmail.com,
+	teddy.wang@siliconmotion.com,
+	gregkh@linuxfoundation.org
+Cc: linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kisub.choe.0x1@gmail.com
+Subject: [PATCH] staging: sm750fb: rename 'proc_setBLANK'
+Date: Wed, 18 Jun 2025 23:15:55 +0900
+Message-Id: <20250618141555.5434-1-kisub.choe.0x1@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2025061858-reproduce-revolving-cae0@gregkh>
 
-On 2025-06-18 15:19:11+0200, Greg Kroah-Hartman wrote:
-> On Wed, Jun 18, 2025 at 12:58:00PM +0100, Mark Brown wrote:
-> > On Tue, Jun 17, 2025 at 05:15:08PM +0200, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 6.15.3 release.
-> > > There are 780 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > 
-> > This breaks the build of the arm64 selftests due to a change in nolibc,
-> > it appears that "tools/nolibc: properly align dirent buffer" is missing
-> > some dependency:
-> > 
-> > aarch64-linux-gnu-gcc -fno-asynchronous-unwind-tables -fno-ident -s -Os -nostdlib \
-> > 	-include ../../../../include/nolibc/nolibc.h -I../..\
-> > 	-static -ffreestanding -Wall za-fork.c /build/stage/build-work/kselftest/arm64/fp/za-fork-asm.o -o /build/stage/build-work/kselftest/arm64/fp/za-fork
-> > In file included from ./../../../../include/nolibc/nolibc.h:107,
-> >                  from <command-line>:
-> > ./../../../../include/nolibc/dirent.h: In function ‘readdir_r’:
-> > ./../../../../include/nolibc/dirent.h:62:64: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘__nolibc_aligned_as’
-> >    62 |         char buf[sizeof(struct linux_dirent64) + NAME_MAX + 1] __nolibc_aligned_as(struct linux_dirent64);
-> >       |                                                                ^~~~~~~~~~~~~~~~~~~
-> > ./../../../../include/nolibc/dirent.h:62:64: error: implicit declaration of function ‘__nolibc_aligned_as’ [-Wimplicit-function-declaration]
-> > ./../../../../include/nolibc/dirent.h:62:84: error: expected expression before ‘struct’
-> >    62 |         char buf[sizeof(struct linux_dirent64) + NAME_MAX + 1] __nolibc_aligned_as(struct linux_dirent64);
-> >       |                                                                                    ^~~~~~
-> > ./../../../../include/nolibc/dirent.h:63:47: error: ‘buf’ undeclared (first use in this function)
-> >    63 |         struct linux_dirent64 *ldir = (void *)buf;
-> >       |                                               ^~~
-> > ./../../../../include/nolibc/dirent.h:63:47: note: each undeclared identifier is reported only once for each function it appears in
-> 
-> Thanks for the report, I'll go drop all nolibc patches from the queues
-> for now.
+Rename 'proc_setBLANK' to 'proc_setBLANK' to
+conform with kernel style guidelines as reported by checkpatch.pl
 
-Thanks.
+CHECK: Avoid CamelCase: <proc_setBLANK>
 
-Shouldn't the bots apply prerequisite patches from the series automatically?
-This patch comes from [0] and the prerequisite is in there.
+Signed-off-by: Kisub Choe <kisub.choe.0x1@gmail.com>
+---
+ drivers/staging/sm750fb/sm750.c | 4 ++--
+ drivers/staging/sm750fb/sm750.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Also all nolibc patches which should go to stable are tagged as such.
-Can you configure the bots not to pick up any nolibc patches automatically?
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index 1d929aca399c..bb2ade6030c2 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -577,7 +577,7 @@ static int lynxfb_ops_blank(int blank, struct fb_info *info)
+ 	pr_debug("blank = %d.\n", blank);
+ 	par = info->par;
+ 	output = &par->output;
+-	return output->proc_setBLANK(output, blank);
++	return output->proc_set_blank(output, blank);
+ }
+ 
+ static int sm750fb_set_drv(struct lynxfb_par *par)
+@@ -605,7 +605,7 @@ static int sm750fb_set_drv(struct lynxfb_par *par)
+ 	crtc->ypanstep = 1;
+ 	crtc->ywrapstep = 0;
+ 
+-	output->proc_setBLANK = (sm750_dev->revid == SM750LE_REVISION_ID) ?
++	output->proc_set_blank = (sm750_dev->revid == SM750LE_REVISION_ID) ?
+ 				 hw_sm750le_set_blank : hw_sm750_set_blank;
+ 	/* chip specific phase */
+ 	sm750_dev->accel.de_wait = (sm750_dev->revid == SM750LE_REVISION_ID) ?
+diff --git a/drivers/staging/sm750fb/sm750.h b/drivers/staging/sm750fb/sm750.h
+index 9cf8b3d30aac..40051798efbf 100644
+--- a/drivers/staging/sm750fb/sm750.h
++++ b/drivers/staging/sm750fb/sm750.h
+@@ -170,7 +170,7 @@ struct lynxfb_output {
+ 	 */
+ 	void *priv;
+ 
+-	int (*proc_setBLANK)(struct lynxfb_output *output, int blank);
++	int (*proc_set_blank)(struct lynxfb_output *output, int blank);
+ };
+ 
+ struct lynxfb_par {
+-- 
+2.34.1
 
-[0] https://lore.kernel.org/lkml/20250419-nolibc-ubsan-v2-0-060b8a016917@weissschuh.net/
-
-
-Thomas
 
