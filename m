@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-692636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1548CADF4B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:47:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 195BDADF4B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556A91BC146D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:47:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67EB71BC26B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22861303805;
-	Wed, 18 Jun 2025 17:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EAF304306;
+	Wed, 18 Jun 2025 17:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZKS1Xflf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cnYjW/0v"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A41302CD7
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 17:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5DD303817
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 17:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750268482; cv=none; b=AbF3CyVHKpzCkKtksB39ecaUP+LsC97PkjY9JLyUT6wOPWHnBW0UZaavwwdF4LSsw0885D+olyFaj23Mxk+5xRNVEMdxo6fJZ8EJUpfAXLSwmSd24JRYBC8PERNgmTduoEDo1UzLicwAQl2i23Ax6z/DcTuJ7eOhTlf5zDCPSeQ=
+	t=1750268485; cv=none; b=YuQ/neqk09f1fqJG00w9qQrsjsiRIfcjXRb4/pDgXpPyKkj+zz4hM9QNooVZhcnAzvi/xE/D98hkjsA79+mJ1jGEwJYudb+WeU9/jpfjRZOzdDPdINjJAU3ArKGyUFEQG9/SdcMcBhHG4S6/ELgw0Wfkifs2r1uyCrf3fwKrJYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750268482; c=relaxed/simple;
-	bh=7MqWYtvNLDCeRHTl94GzHGrw7bPzHhaA6ax/7SHlO8I=;
+	s=arc-20240116; t=1750268485; c=relaxed/simple;
+	bh=mR4wKIFzNAz9lCxg/2MhGizqJd2oyhLD6gTXEVIJK5k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OWbZEdkPvwwCI71J+wqiAfw4FFUTBKW6BJiPqPfEHOctuZo/NujPjNZTmHp8TdO5v64JlKhAsSA09Nga0OegXeXzbgK3E2KwM2v9pwkNVFBJs++Z87+HjjfCQ1R4pfGEtkUFgJq7WKSG+LzRCbWfskkciv9L6t7JZFdjOyNnqjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZKS1Xflf; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=j3/mKaL9PaCoer8Tdg8PZbCxcByQFKXP9apV6fJswh25nU+fN6P7SzierXPKdoX1jBq+EiDtIgvzJP/1uCeBplJ0kGr5I8arcnW4XFSv9nVEqnp5wpW4rG3RneBVcOz+yLIN3vXC0396oO3bhYhXEXPZBSGVRG/0l0jN54wxlDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cnYjW/0v; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750268479;
+	s=mimecast20190719; t=1750268482;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HKAYn5W/PSf7oEyDpSl452LRf2zvea6hrq0MdbpucUo=;
-	b=ZKS1XflfMbufrjNTh/XCijg4PCf8FU2scUO1BgMqz/LHpVd3LrU4GKeGUIFxFARUzLgFTK
-	rYLoQp4Ktw5D4VaMMoVNm/4KP94itZxx/hD9g1c1zwNC4RIeJ0kPx015c+Zq7U0uh8T44Y
-	0Cbdc3zpRDesQBsDtTgxWx97aiuZ7ik=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=OFGM8ws286HsZ+G2nyb5/sPhilYYDV0QN54X+S74Jfc=;
+	b=cnYjW/0vveQnlf7N5lEvxILby+8nkU6rXMGZlLgddd2ngAta4V9M7fGltXuKUvhFZ0qYlI
+	nMLz0+RxQShOJgLfooSdZmfnQgNjZyHWnml17wEzbFHOqmnrfNpD/i01iBeAmbOyMksW2v
+	B0oTP2mqaewUus7wXN0HUlqCHV7rpPI=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-oVDzh4pSNyeUQlcQcukzTA-1; Wed, 18 Jun 2025 13:41:18 -0400
-X-MC-Unique: oVDzh4pSNyeUQlcQcukzTA-1
-X-Mimecast-MFC-AGG-ID: oVDzh4pSNyeUQlcQcukzTA_1750268477
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-450d64026baso49047205e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:41:18 -0700 (PDT)
+ us-mta-563-wfoRhxuVMFOGe6Mln5M5Lg-1; Wed, 18 Jun 2025 13:41:21 -0400
+X-MC-Unique: wfoRhxuVMFOGe6Mln5M5Lg-1
+X-Mimecast-MFC-AGG-ID: wfoRhxuVMFOGe6Mln5M5Lg_1750268480
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a37a0d1005so4365920f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:41:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750268477; x=1750873277;
+        d=1e100.net; s=20230601; t=1750268480; x=1750873280;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HKAYn5W/PSf7oEyDpSl452LRf2zvea6hrq0MdbpucUo=;
-        b=II5hy7fUgvHsx36a0xKuDtC9FvuBQMVEklJ7Uy9zngh+Si7jHHhg7AVKu5LKNeklz/
-         eXxdcYT1oEXxzitUWtRWON6xrZiObxdq2V8ZJyLbmYSGQIZtN4/moKqrHC8K4niJJ11P
-         py13i+0A7X31BBs0GIcFTf7mq1F+RUnUIZigm3Ikh7804bwtIdnE1CRrIiyNDGwDFx+I
-         PxiQz/ruVSAV1PabQUUNXv6aOzxFkS51QDaioQwyX8AMamQW+0ANdMU4s8VSwWN9omdj
-         yYqs/m1XqpBpi8TPt+vkHK5sNoVlNNwrDZxwY+dbxp7eXH9/dyVtK1NoLxxE36y81b1O
-         K7Bg==
-X-Gm-Message-State: AOJu0YwGA9mu3Ed48IlMyRfvfVW+cksRrILdntx4XGS7pBTy8IeUT7W3
-	BI106xAH+HHGYp4jpQlv0xEsNwt9T9F+qMY9qTqRGU1tWpPY5A+64JQ+YQzVgQKA7aC+bAJPAxA
-	IQTzNbbavQTWI5vejHJFByQHq23w60T1Oep7ktNj1pKkkiYMTq94q7/saRpJ7FWdVRHJp0Sa/wP
-	FACfOEzRiGD65CmhZ1CaxNvJO6bn/fH9iCNLcjhDV2MKIy2LIr
-X-Gm-Gg: ASbGncsQ6BJDFfFXzoNogDRkPQUNQPmwyHkOqXpPZjuEKSvadVeNAF2tpgvfFbd2V8q
-	6CpzMhvMVq9S+KEvLOWpmfoI6SUHxCUVVwsQIxNJF/lm40977SRWxVKyTzDtlOifK+Hi9mlzSGG
-	QjQNRVZFw9GRIxOaExocltcSFXy11Lag2/HdqCHG2iYW52er7v+ZglvzrGiJng3edGOb1RcuwA6
-	hU0zMzx0asBt2MP3O/2lg1kVZ3Vfqhr7lCuPS7XDDKAxQU3iD4HmI8YySIZ0Bfh5q/lDs2YzYe2
-	CVoIl+2mt3Jn+vGJ+WBPhp+iBpB+HiMx5/6e6QnoW65VnpyQs4zgkZSLKTXssJO0JzA9xRa2NVm
-	A/xYOHQ==
-X-Received: by 2002:a05:600c:1c14:b0:43c:fceb:91a with SMTP id 5b1f17b1804b1-453430ececamr157094715e9.11.1750268477219;
-        Wed, 18 Jun 2025 10:41:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENrfq9JZf2w4nH2VRe3EOokVKel4Rw1khN0dggc1dWhdYjdSzsol44AwGmQNvJE5b04zR6vw==
-X-Received: by 2002:a05:600c:1c14:b0:43c:fceb:91a with SMTP id 5b1f17b1804b1-453430ececamr157093925e9.11.1750268476711;
-        Wed, 18 Jun 2025 10:41:16 -0700 (PDT)
+        bh=OFGM8ws286HsZ+G2nyb5/sPhilYYDV0QN54X+S74Jfc=;
+        b=Xxfn7UjC6zoHD4+4XnV25oE7eqXlptfHB3eouImArbvBs2rdR++oKZmjyhmnSOT/81
+         bJpt46xUNUpeNYFCsaCECCJWivUzxcKRbGPEKqTweupVlo24RlllOvI307b5HD+CPYkS
+         8G30qg/WcTEDG0dE4YFYOhM3B1UAX4pYS5SY9Pde3qzNjyNq38H3fnCq4ywwpKRmM+Id
+         tgTCvI3ZiRRgpGdw45Htz6RfxnwMyDiw1KWmii1Am9ZU6nhYfChqfzU8GUEm5G1h2k90
+         OFPUFHEJS4t6QO/McCHzLpE6m89V4mS+4YuNgOJAdPtwQoIp+1txMCPKvYlHsfs3Z70Y
+         SX7g==
+X-Gm-Message-State: AOJu0YyCnJ9Tnd9hlrwLlM1cmAQ2u4Zh8W/mP0JQuXdVY+1xa8wGO/lZ
+	mrah2sMqMGiKrY5zPRbmLGoyIZeF/GPTSkFv0t5LGNA5SWiXNtr3Kwqa5TiEr+zL5cMWPQtbEqW
+	gNCpxmG4yUKqXWkwrsv16qXxqy1mOBreBvRz4XNXFvD7NvPIfYVNlxk2SIgIGU+h/jwGY6RdCAc
+	Gw/DiHLPg2GOiQDcyiBP98E4a/kjNZwSDNEpZWf1IzJa3t/ieS
+X-Gm-Gg: ASbGncus3Hb1H92LVsGwYErZ3d0/bc9ybJm7TXJpgO+UST/Dj3XBwH2NdcaXyoziuno
+	/JKL3tsAuy7FPRnDhQVtT2XQ9GG26OGcueXuZzElZabdI3WsMuYq+D/B8WbJy+M2ypC57mmLkq3
+	B3URp9II77n1mG/xhTqym9INLgXymrfv4Zv8iouyoCdFd5pEVBV3lkLj9oFSOqnIdmL63S11cYo
+	AzRhRgLqlrP4u0XveAb23t7MAeL1tNeliPVLbllJmR5CYXKthLTE/SaUKTVluBFiRKvU/EBUyFG
+	V5HdAHThCUpeOsiYimCqxgLL9aq0pMRVUEXTIy9FYS7NmRcO7lXp5mIykvkRGekWFM1cabu3XgM
+	uJKSzEw==
+X-Received: by 2002:a05:6000:2f88:b0:3a4:f8e9:cef2 with SMTP id ffacd0b85a97d-3a572e6be35mr15379352f8f.36.1750268479954;
+        Wed, 18 Jun 2025 10:41:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHGgOLn/JzQiVrSw8561br8iJzDS6W98mGXalaJQyvnuLaRLghELBqFwLLjepyMMgs/X1CCpA==
+X-Received: by 2002:a05:6000:2f88:b0:3a4:f8e9:cef2 with SMTP id ffacd0b85a97d-3a572e6be35mr15379264f8f.36.1750268479340;
+        Wed, 18 Jun 2025 10:41:19 -0700 (PDT)
 Received: from localhost (p200300d82f2d2400405203b5fff94ed0.dip0.t-ipconnect.de. [2003:d8:2f2d:2400:4052:3b5:fff9:4ed0])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a568b087a9sm17793395f8f.55.2025.06.18.10.41.14
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a568b62ba7sm17866251f8f.91.2025.06.18.10.41.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jun 2025 10:41:16 -0700 (PDT)
+        Wed, 18 Jun 2025 10:41:18 -0700 (PDT)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -134,9 +134,9 @@ Cc: linux-mm@kvack.org,
 	Harry Yoo <harry.yoo@oracle.com>,
 	Qi Zheng <zhengqi.arch@bytedance.com>,
 	Shakeel Butt <shakeel.butt@linux.dev>
-Subject: [PATCH RFC 22/29] mm/page-flags: rename PAGE_MAPPING_MOVABLE to PAGE_MAPPING_ANON_KSM
-Date: Wed, 18 Jun 2025 19:40:05 +0200
-Message-ID: <20250618174014.1168640-23-david@redhat.com>
+Subject: [PATCH RFC 23/29] mm/page-alloc: remove PageMappingFlags()
+Date: Wed, 18 Jun 2025 19:40:06 +0200
+Message-ID: <20250618174014.1168640-24-david@redhat.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250618174014.1168640-1-david@redhat.com>
 References: <20250618174014.1168640-1-david@redhat.com>
@@ -148,45 +148,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-KSM is the only remaining user, let's rename the flag. While at it,
-adjust to remaining page -> folio in the doc.
+We can now simply check for PageAnon() and remove PageMappingFlags().
+
+... and while at it, use the folio instead and operate on
+folio->mapping.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- include/linux/page-flags.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ include/linux/page-flags.h | 5 -----
+ mm/page_alloc.c            | 7 +++----
+ 2 files changed, 3 insertions(+), 9 deletions(-)
 
 diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index aa48b05536bca..abed972e902e1 100644
+index abed972e902e1..f539bd5e14200 100644
 --- a/include/linux/page-flags.h
 +++ b/include/linux/page-flags.h
-@@ -697,10 +697,10 @@ PAGEFLAG_FALSE(VmemmapSelfHosted, vmemmap_self_hosted)
-  * folio->mapping points to its anon_vma, not to a struct address_space;
-  * with the PAGE_MAPPING_ANON bit set to distinguish it.  See rmap.h.
-  *
-- * On an anonymous page in a VM_MERGEABLE area, if CONFIG_KSM is enabled,
-- * the PAGE_MAPPING_MOVABLE bit may be set along with the PAGE_MAPPING_ANON
-+ * On an anonymous folio in a VM_MERGEABLE area, if CONFIG_KSM is enabled,
-+ * the PAGE_MAPPING_ANON_KSM bit may be set along with the PAGE_MAPPING_ANON
-  * bit; and then folio->mapping points, not to an anon_vma, but to a private
-- * structure which KSM associates with that merged page.  See ksm.h.
-+ * structure which KSM associates with that merged folio.  See ksm.h.
-  *
-  * Please note that, confusingly, "folio_mapping" refers to the inode
-  * address_space which maps the folio from disk; whereas "folio_mapped"
-@@ -714,9 +714,9 @@ PAGEFLAG_FALSE(VmemmapSelfHosted, vmemmap_self_hosted)
-  * See mm/slab.h.
-  */
- #define PAGE_MAPPING_ANON	0x1
--#define PAGE_MAPPING_MOVABLE	0x2
--#define PAGE_MAPPING_KSM	(PAGE_MAPPING_ANON | PAGE_MAPPING_MOVABLE)
--#define PAGE_MAPPING_FLAGS	(PAGE_MAPPING_ANON | PAGE_MAPPING_MOVABLE)
-+#define PAGE_MAPPING_ANON_KSM	0x2
-+#define PAGE_MAPPING_KSM	(PAGE_MAPPING_ANON | PAGE_MAPPING_ANON_KSM)
-+#define PAGE_MAPPING_FLAGS	(PAGE_MAPPING_ANON | PAGE_MAPPING_ANON_KSM)
+@@ -723,11 +723,6 @@ static __always_inline bool folio_mapping_flags(const struct folio *folio)
+ 	return ((unsigned long)folio->mapping & PAGE_MAPPING_FLAGS) != 0;
+ }
  
- static __always_inline bool folio_mapping_flags(const struct folio *folio)
+-static __always_inline bool PageMappingFlags(const struct page *page)
+-{
+-	return ((unsigned long)page->mapping & PAGE_MAPPING_FLAGS) != 0;
+-}
+-
+ static __always_inline bool folio_test_anon(const struct folio *folio)
  {
+ 	return ((unsigned long)folio->mapping & PAGE_MAPPING_ANON) != 0;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index a134b9fa9520e..a0ebcc5f54bb2 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1375,10 +1375,9 @@ __always_inline bool free_pages_prepare(struct page *page,
+ 			(page + i)->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
+ 		}
+ 	}
+-	if (PageMappingFlags(page)) {
+-		if (PageAnon(page))
+-			mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
+-		page->mapping = NULL;
++	if (folio_test_anon(folio)) {
++		mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
++		folio->mapping = NULL;
+ 	}
+ 	if (unlikely(page_has_type(page)))
+ 		page->page_type = UINT_MAX;
 -- 
 2.49.0
 
