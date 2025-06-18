@@ -1,111 +1,167 @@
-Return-Path: <linux-kernel+bounces-691953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C80ADEAF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:55:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82E9ADEACA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D93853B4334
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:51:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D427B7A8B25
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464942E06CF;
-	Wed, 18 Jun 2025 11:50:44 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A802C3258;
-	Wed, 18 Jun 2025 11:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD7B296153;
+	Wed, 18 Jun 2025 11:45:52 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB022F5323;
+	Wed, 18 Jun 2025 11:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750247443; cv=none; b=UaIDVaDr4XiVtpsmzOh0kmberU+qo6oXdxODhNixOpi5JET6z/eHbDdfoDa3ObRS6u+VXQUmmh+cLyZOpc+ZTAglJt+mhWAKog48dOgyMv3obKbHsO2Eiw1Krrv1HHjc4GDPc1Ob4Gjr3PlIXZszATQ0LbbXPKcfZ3v7g7mn2J4=
+	t=1750247151; cv=none; b=eHNr88SSAIb1TtbBqYSvphYZVP8koRvGhIzazDLKEc1jHJjjYNhiqv9FYzQcNbA7aDrVwV1zZ8v2hjwnCc4wgsD8HI0p+u1+UWBt7GLt/FVc1DQv/iG/jVJ4cVwisLo2FuHhYgYTDri6vZ05rpx5TLYOhBm2cZxQ4K78mA+qOZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750247443; c=relaxed/simple;
-	bh=58scXsAkA4t48fEoJuCh83iHGTHverEVaA23zpz119U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PLNELBpfJw5FOwfMgK0862TgKkr0IqhNJCvVrohKeWCQz+oDtaBZs567BZG5Rz43ODKMOoSwHEHIBXSEcqdA4kv1Ecl0uMGx9n729e+xFJUncgylkLqUicD6Vb8v9JhNDHTGrjfFczQVYgIeOvXFJ7rlcNwsiUdO9Fg8Ae0d8vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bMhgf51jhz9scZ;
-	Wed, 18 Jun 2025 13:42:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id fmCp2zo6kAVw; Wed, 18 Jun 2025 13:42:54 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bMhgf4Fcxz9scH;
-	Wed, 18 Jun 2025 13:42:54 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8B7228B780;
-	Wed, 18 Jun 2025 13:42:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id KNGxpyBZzbGS; Wed, 18 Jun 2025 13:42:54 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 18F7F8B776;
-	Wed, 18 Jun 2025 13:42:54 +0200 (CEST)
-Message-ID: <51bc73ca-3b1f-4f1a-b75b-7bdeffd7a395@csgroup.eu>
-Date: Wed, 18 Jun 2025 13:42:53 +0200
+	s=arc-20240116; t=1750247151; c=relaxed/simple;
+	bh=WYJ16Alk09q6fIdfKWEBzJa6GAWM1uSoSPLuY7xDDcI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q1GN5sUk+K6xivIRVbIyfMvHLBxRv6o/YhcdnDNiCkbeETFpzYtEWg+4uU1dQTJ8OlcYpxl1nNTbh2UBebwLnb6TSQgjxlXcBT1mndFYY0tJX1Bq7XlSl/g6gUoYlUISLPAE33MAbu6agdm1jNoMgURYbwf5EIlmoti7xQiRD+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from localhost.localdomain (188.234.0.8) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 18 Jun
+ 2025 14:45:30 +0300
+From: d.privalov <d.privalov@omp.ru>
+To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jakub
+ Kicinski <kuba@kernel.org>, <linux-bluetooth@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>, Miklos Szeredi <mszeredi@redhat.com>, Dmitriy
+ Privalov <d.privalov@omp.ru>
+Subject: [PATCH 5.10/5.15 1/1] fuse: don't increment nlink in link()
+Date: Wed, 18 Jun 2025 14:44:09 +0300
+Message-ID: <20250618114409.179601-1-d.privalov@omp.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] Switch get/put unaligned to use memcpy
-To: Ian Rogers <irogers@google.com>, Eric Biggers <ebiggers@google.com>,
- Yuzhuo Jing <yuzhuo@google.com>, Andy Lutomirski <luto@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Arnaldo Carvalho de Melo <acme@redhat.com>, Al Viro
- <viro@zeniv.linux.org.uk>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-References: <20250617205320.1580946-1-irogers@google.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250617205320.1580946-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 06/18/2025 11:27:56
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 194137 [Jun 18 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: d.privalov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 62 0.3.62
+ e2af3448995f5f8a7fe71abf21bb23519d0f38c3
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info:
+	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1
+X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 188.234.0.8
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 06/18/2025 11:29:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 6/18/2025 9:13:00 AM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
+From: Miklos Szeredi <mszeredi@redhat.com>
 
+commit 97f044f690bac2b094bfb7fb2d177ef946c85880 upstream.
 
-Le 17/06/2025 à 22:53, Ian Rogers a écrit :
-> The existing type punning approach with packed structs requires
->   -fno-strict-aliasing to be passed to the compiler for
-> correctness. This is true in the kernel tree but not in the tools
-> directory resulting in this suggested patch from Eric Biggers
->   <ebiggers@google.com>:
-> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Flkml%2F20250614044133.660848-2-ebiggers%40kernel.org%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cf05413010ecc40ad1bdf08ddade1316a%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638857904894967529%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=29QUBLnUowncZiTH4z74Ec1olUlX0OTYnUNGDvWxX1o%3D&reserved=0
-> 
-> Requiring -fno-strict-aliasing seems unfortunate and so this patch
-> makes the unaligned code work via memcpy for type punning rather than
-> the packed attribute.
-> 
-> v2: switch memcpy to __builtin_memcpy to avoid potential/disallowed
->      memcpy calls in vdso caused by -fno-builtin. Reported by
->      Christophe Leroy <christophe.leroy@csgroup.eu>:
->      https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Flkml%2Fc57de5bf-d55c-48c5-9dfa-e2fb844dafe9%40csgroup.eu%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cf05413010ecc40ad1bdf08ddade1316a%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638857904894985987%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=l1LJP3XPKVuhDpiHxxkfWBiNPMYaBT9YXGBFzs6wLpY%3D&reserved=0
-> 
+The fuse_iget() call in create_new_entry() already updated the inode with
+all the new attributes and incremented the attribute version.
 
-Does this new version also fixes the failures reported by the robots:
-- arm64-randconfig with clang 21
-- i386-randconfig with gcc 12
+Incrementing the nlink will result in the wrong count.  This wasn't noticed
+because the attributes were invalidated right after this.
 
-Christophe
+Updating ctime is still needed for the writeback case when the ctime is not
+refreshed.
 
-> Ian Rogers (3):
->    vdso: Switch get/put unaligned from packed struct to memcpy
->    tools headers: Update the linux/unaligned.h copy with the kernel
->      sources
->    tools headers: Remove unneeded ignoring of warnings in unaligned.h
-> 
->   include/vdso/unaligned.h        | 48 ++++++++++++++++++++++++++++-----
->   tools/include/linux/unaligned.h |  4 ---
->   tools/include/vdso/unaligned.h  | 48 ++++++++++++++++++++++++++++-----
->   3 files changed, 84 insertions(+), 16 deletions(-)
-> 
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Dmitriy Privalov <d.privalov@omp.ru>
+---
+ fs/fuse/dir.c | 29 ++++++++++-------------------
+ 1 file changed, 10 insertions(+), 19 deletions(-)
+
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 4488a53a192d..7055fdc1b8ce 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -807,7 +807,7 @@ void fuse_flush_time_update(struct inode *inode)
+ 	mapping_set_error(inode->i_mapping, err);
+ }
+ 
+-void fuse_update_ctime(struct inode *inode)
++static void fuse_update_ctime_in_cache(struct inode *inode)
+ {
+ 	if (!IS_NOCMTIME(inode)) {
+ 		inode->i_ctime = current_time(inode);
+@@ -816,6 +816,12 @@ void fuse_update_ctime(struct inode *inode)
+ 	}
+ }
+ 
++void fuse_update_ctime(struct inode *inode)
++{
++	fuse_invalidate_attr(inode);
++	fuse_update_ctime_in_cache(inode);
++}
++
+ static int fuse_unlink(struct inode *dir, struct dentry *entry)
+ {
+ 	int err;
+@@ -986,25 +992,10 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
+ 	args.in_args[1].size = newent->d_name.len + 1;
+ 	args.in_args[1].value = newent->d_name.name;
+ 	err = create_new_entry(fm, &args, newdir, newent, inode->i_mode);
+-	/* Contrary to "normal" filesystems it can happen that link
+-	   makes two "logical" inodes point to the same "physical"
+-	   inode.  We invalidate the attributes of the old one, so it
+-	   will reflect changes in the backing inode (link count,
+-	   etc.)
+-	*/
+-	if (!err) {
+-		struct fuse_inode *fi = get_fuse_inode(inode);
+-
+-		spin_lock(&fi->lock);
+-		fi->attr_version = atomic64_inc_return(&fm->fc->attr_version);
+-		if (likely(inode->i_nlink < UINT_MAX))
+-			inc_nlink(inode);
+-		spin_unlock(&fi->lock);
+-		fuse_invalidate_attr(inode);
+-		fuse_update_ctime(inode);
+-	} else if (err == -EINTR) {
++	if (!err)
++		fuse_update_ctime_in_cache(inode);
++	else if (err == -EINTR)
+ 		fuse_invalidate_attr(inode);
+-	}
+ 	return err;
+ }
+ 
+-- 
+2.34.1
 
 
