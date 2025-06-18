@@ -1,146 +1,219 @@
-Return-Path: <linux-kernel+bounces-691613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBB4ADE6C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:25:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A74FADE6AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DDBD7A70E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:24:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8C55163F05
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8685285CAA;
-	Wed, 18 Jun 2025 09:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE57280334;
+	Wed, 18 Jun 2025 09:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="N07rdsTS"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZDKThZg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213DA28153D
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12994280A3B;
+	Wed, 18 Jun 2025 09:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750238643; cv=none; b=azL3THnsaHpgqINVT1mFlh0LL3ONX6RzE35/ubG5ncc6mO1rm8uvERSN09taZlHDu1clfrM/IFuN++Dm0SoZGlvk3bjTFVA3dvM4b077c3zKQmMM1loicDczp0bxT6AGnw3Qy2FQp2Prn7co8ZR+dlkg87LX0VE1vB1W29jP6E4=
+	t=1750238581; cv=none; b=oWKrgImmiLlE96iw1DQbaSNddX7ahsImJHxPR/+NIjtcpvf8ecRbaarXOht4WnkFNdwVS0boZZP4lsOuYkZ0jruip5RYo8WcVbvCPjtEXivEB5c5ZUmGwSQF6A8lmftTL9VamxbBGHcPFx7r96VUFdnPIPuAxIQvFri7QTg9wiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750238643; c=relaxed/simple;
-	bh=aEgKfrPrrjMj6t/ipZa1xavX/WMJ6M7ayyrMUoR/xrU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Nag2uA+2DbtFeYDCAPM4sArhZAeEWmeHgCifX/ZTe7CeRtGWTn8RXxm6CXkK9hbfj5uwFXWDHHWqRlmxsMCgqfsRHnLJoO5FYLAyAv5DedtD8GVZeFmG4o0EVRmvjx0Iiy+JU3lYD4D6D+vpFKA3y/Qs9ZTrvmTW0LA5IHwLGCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=N07rdsTS; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55I9MEfN198307;
-	Wed, 18 Jun 2025 04:22:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750238534;
-	bh=1LSfhMfagWSAA2dImG8G5AnPQY89RbViRu826F453ak=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=N07rdsTSUsg6iBtvzWLHjvurhXqdQbAQHghXSB/YUKrJni01F6UGOuwEy9k1eiUtn
-	 /iz3+62tz8jTcX9UP+/3DhLz2e6SF+/Vi6Z3jl+7GeI6knAbmnFQcG8+fdnV1sUJXb
-	 KXzBqgYDnLZbjfGnP4txOeoOOEAh37FpB+gzA+ZY=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55I9MDfD2619355
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 18 Jun 2025 04:22:13 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 18
- Jun 2025 04:22:13 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 18 Jun 2025 04:22:13 -0500
-Received: from [172.24.227.143] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.143])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55I9M90f3235850;
-	Wed, 18 Jun 2025 04:22:10 -0500
-Message-ID: <d0854272-fe5e-4977-8526-03a980b348f3@ti.com>
-Date: Wed, 18 Jun 2025 14:52:09 +0530
+	s=arc-20240116; t=1750238581; c=relaxed/simple;
+	bh=PSShPwrbGtVrVSCJQllIkymRaGdtic3I5Zg3vyJX9w0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d7QE8yAnlOojSFHTpoDXfFmSbR5cTr5e3ODUbomoYvjDieM9UkOYOj9TR3qt3AtXUI11fMoezZe+4X4xh7dNd70pjtjNoHnugyoMwKOnPjlW727ILeer0dIMTl3KexTkJWDwahuCG3ZdumYV2qlPPemoNUc/tSu39/5U/NvSsGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZDKThZg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BC17C4CEE7;
+	Wed, 18 Jun 2025 09:22:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750238580;
+	bh=PSShPwrbGtVrVSCJQllIkymRaGdtic3I5Zg3vyJX9w0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cZDKThZgr9HUEW8OLQXxp8Z2odpNkMyaIKiZvNIlqBETxE7nwRe0TwSqlHm60wX4U
+	 t1T1y/LCqbZLRY6hxIksIiTLfYtigVn30NjQAZJTDUYIh6SY28gAc71O+eJNYNyy36
+	 ia6lhIKBuy/JzXwloIEhd6c69xk7jX+nbRsq0F2wO+Yp8lfF42p0eQeDBx6xCBefS0
+	 h9RgTUekXbiHeOeH9biiPPp20CbE7JbbvONY5bRm1N3vXVaILIPinUOURPiFOBdF66
+	 1DZeyP7Co/4ZJ4e98ENAUaZXymoB5XeJllN8Ph1ZIi7rS/d0oh+wdLSeSoXzUHfDd+
+	 WzW66njYQtf+A==
+Date: Wed, 18 Jun 2025 11:22:57 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Anusha Srivatsa <asrivats@redhat.com>, 
+	Francesco Dolcini <francesco@dolcini.it>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	regressions@lists.linux.dev
+Subject: Re: drm/panel/panel-simple v6.16-rc1 WARNING regression
+Message-ID: <20250618-fantastic-brown-elephant-df0ae4@houat>
+References: <20250612081834.GA248237@francesco-nb>
+ <CAN9Xe3RFEXZuWTZB5E1tJdjXc9o_hB1ArgA5SvqbDUBkwYea8w@mail.gmail.com>
+ <20250618105158.06e42668@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/tidss: Decouple max_pclk from tidss feats to remove
- clock dependency
-To: <jyri.sarha@iki.fi>, <dri-devel@lists.freedesktop.org>, <devarsht@ti.com>,
-        <tomi.valkeinen@ideasonboard.com>
-CC: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-        <linux-kernel@vger.kernel.org>
-References: <20250618075804.139844-1-j-choudhary@ti.com>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <20250618075804.139844-1-j-choudhary@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="5wasac5pi2r2rga2"
+Content-Disposition: inline
+In-Reply-To: <20250618105158.06e42668@booty>
 
 
+--5wasac5pi2r2rga2
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: drm/panel/panel-simple v6.16-rc1 WARNING regression
+MIME-Version: 1.0
 
-On 18/06/25 13:28, Jayesh Choudhary wrote:
-> TIDSS hardware by itself does not have variable max_pclk for each VP.
-> Each VP supports a fixed maximum pixel clock. K2 devices and AM62*
-> devices uses "ultra-light" version where each VP supports a max of
-> 300MHz whereas J7* devices uses TIDSS where all VP can support a
-> max pclk of 600MHz.
-> The limitation that has been modeled till now comes from the clock
-> (PLL can only be programmed to a particular max value). Due to this
-> we end up using different compatible for each SoC when the clocking
-> architecture changes for VPs, even when the hardware is essentially
-> the same.
-> max_pclk cannot be entirely removed since the display controller
-> should tell if a particular mode clock can be supported or not in crtc's
-> "mode_valid()" call. So remove "max_pclk_khz" from the static display
-> feat and add it to "tidss_device" structure which would be modified in
-> runtime. In mode_valid() call, check if a best frequency match for mode
-> clock can be found or not using "clk_round_rate()". Based on that,
-> propagate "max_pclk" and check max_clk again only if the requested mode
-> clock is greater than saved value. (As the preferred display mode is
-> usually the max resolution, driver ends up checking the maximum clock
-> the first time itself which is used in subsequent checks)
-> Since TIDSS display controller provides clock tolerance of 5%, we use
-> this while checking the max_pclk. Also, move up "dispc_pclk_diff()"
-> before it is called.
-> 
-> This will make the existing compatibles reusable.
-> 
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> ---
-> 
-> Test log on TI's J784S4 SoC with a couple of downstream patches
-> to integrate DSI support on one of the video ports:
-> <https://gist.github.com/Jayesh2000/ad4ab87028740efa60e5eb83fb892097>
-> 
+On Wed, Jun 18, 2025 at 10:51:58AM +0200, Luca Ceresoli wrote:
+> Hello Anusha, Francesco,
+>=20
+> On Tue, 17 Jun 2025 11:17:20 -0500
+> Anusha Srivatsa <asrivats@redhat.com> wrote:
+>=20
+> > On Thu, Jun 12, 2025 at 3:24=E2=80=AFAM Francesco Dolcini <francesco@do=
+lcini.it>
+> > wrote:
+> >=20
+> > > Hello all,
+> > >
+> > > Commit de04bb0089a9 ("drm/panel/panel-simple: Use the new allocation =
+in
+> > > place of devm_kzalloc()")
+> > > from 6.16-rc1 introduced a regression with this warning during probe
+> > > with panel dpi described in the DT.
+> > >
+> > > A revert solves the issue.
+> > >
+> > > The issue is that connector_type is set to DRM_MODE_CONNECTOR_DPI in
+> > > panel_dpi_probe() that after that change is called after
+> > > devm_drm_panel_alloc().
+> > >
+> > > I am not sure if there are other implication for this change in the c=
+all
+> > > ordering, apart the one that triggers this warning.
+> > >
+> > > [   12.089274] ------------[ cut here ]------------
+> > > [   12.089303] WARNING: CPU: 0 PID: 96 at
+> > > drivers/gpu/drm/bridge/panel.c:377 devm_drm_of_get_bridge+0xac/0xb8
+> > > [   12.130808] Modules linked in: v4l2_jpeg pwm_imx27(+) imx_vdoa
+> > > gpu_sched panel_simple imx6_media(C) imx_media_common
+> > > (C) videobuf2_dma_contig pwm_bl gpio_keys v4l2_mem2mem fuse ipv6 auto=
+fs4
+> > > [   12.147774] CPU: 0 UID: 0 PID: 96 Comm: kworker/u8:3 Tainted: G
+> > >  C          6.16.0-rc1+ #1 PREEMPT
+> > > [   12.157446] Tainted: [C]=3DCRAP
+> > > [   12.160418] Hardware name: Freescale i.MX6 Quad/DualLite (Device T=
+ree)
+> > > [   12.166953] Workqueue: events_unbound deferred_probe_work_func
+> > > [   12.172805] Call trace:
+> > > [   12.172815]  unwind_backtrace from show_stack+0x10/0x14
+> > > [   12.180598]  show_stack from dump_stack_lvl+0x68/0x74
+> > > [   12.185674]  dump_stack_lvl from __warn+0x7c/0xe0
+> > > [   12.190407]  __warn from warn_slowpath_fmt+0x1b8/0x1c0
+> > > [   12.195567]  warn_slowpath_fmt from devm_drm_of_get_bridge+0xac/0x=
+b8
+> > > [   12.201949]  devm_drm_of_get_bridge from imx_pd_probe+0x58/0x164
+> > > [   12.207976]  imx_pd_probe from platform_probe+0x5c/0xb0
+> > > [   12.213220]  platform_probe from really_probe+0xd0/0x3a4
+> > > [   12.218551]  really_probe from __driver_probe_device+0x8c/0x1d4
+> > > [   12.224486]  __driver_probe_device from driver_probe_device+0x30/0=
+xc0
+> > > [   12.230942]  driver_probe_device from __device_attach_driver+0x98/=
+0x10c
+> > > [   12.237572]  __device_attach_driver from bus_for_each_drv+0x90/0xe4
+> > > [   12.243854]  bus_for_each_drv from __device_attach+0xa8/0x1c8
+> > > [   12.249614]  __device_attach from bus_probe_device+0x88/0x8c
+> > > [   12.255285]  bus_probe_device from deferred_probe_work_func+0x8c/0=
+xcc
+> > > [   12.261739]  deferred_probe_work_func from process_one_work+0x154/=
+0x2dc
+> > > [   12.268371]  process_one_work from worker_thread+0x250/0x3f0
+> > > [   12.274043]  worker_thread from kthread+0x12c/0x24c
+> > > [   12.278940]  kthread from ret_from_fork+0x14/0x28
+> > > [   12.283660] Exception stack(0xd0be9fb0 to 0xd0be9ff8)
+> > > [   12.288720] 9fa0:                                     00000000 000=
+00000
+> > > 00000000 00000000
+> > > [   12.296906] 9fc0: 00000000 00000000 00000000 00000000 00000000 000=
+00000
+> > > 00000000 00000000
+> > > [   12.305089] 9fe0: 00000000 00000000 00000000 00000000 00000013 000=
+00000
+> > > [   12.312050] ---[ end trace 0000000000000000 ]---
+> > >
+> > > #regzbot ^introduced: de04bb0089a96cc00d13b12cbf66a088befe3057
+> > >
+> > > Any advise?
+> > >
+> > > Hey Francesco! =20
+> >=20
+> > This mail reached my spam and I hadn't realised till today. Thanks for
+> > bringing this to attention.
+> >
+> > Thinking out loud here: If we called dpi_probe() before allocating the
+> > panel using devm_drm_panel_alloc()
+> > then we would have the connector type. But  dpi_probe() needs the panel=
+ to
+> > be allocated....
+>=20
+> Reading the panel-simple.c code, the handling of the panel_dsi
+> descriptor feels a bit hacky, and the recent change to
+> devm_drm_panel_alloc() breaks it easily. Perhaps it would be cleaner to
+> assess the whole descriptor before ding any allocation/init.
+>=20
+> You're right tat panel_dpi_probe() needs the panel, but it's only at the
+> very end, to assign the descriptor:
+>=20
+>   panel->desc =3D desc;
+>=20
+> I think a good fix would be to clean it up by having:
+>=20
+>  * panel_dpi_probe() not take a panel pointer but rather returning a
+>    filled descriptor
+>  * panel_simple_probe() call panel_dpi_probe() early [before
+>    devm_drm_panel_alloc()] and get the filled descriptor
+>  * call devm_drm_panel_alloc() with that descriptor in the panel-dsi
+>    case, or with the good old descriptor otherwise
+>=20
+> As a good side effect, it would get rid of a case where
+> devm_drm_panel_alloc() is called with a Unknown connector type.
+>=20
+> Anusha, does it look like a good plan?
 
-Hello All,
+It is, and I'd even go one step further. Like you said, panel_dpi_probe
+kind of exists to allocate and initialize the panel descriptor, and is
+called on the descriptor being equal to the (uninitialized) panel_dpi
+global variable.
 
-Just noticed that the downstream patches that I used for DSI for testing
-were applied before this patch in my tree due to which this patch does
-not apply cleanly on the linux-next tree.
+We should also get rid of that hack, so do something like creating a
+function that returns the descriptor, and is indeed called first in
+panel_simple_probe. It first calls of_device_get_match_data(), and if
+there's no match, and if the device is compatible with panel-dpi, then
+it calls panel_dpi_probe (we should probably change that name too). That
+way, we can get rid of the panel_dpi variable entirely.
 
-Apologies for that. I am rolling v2 ASAP.
+Maxime
 
-Jayesh
+--5wasac5pi2r2rga2
+Content-Type: application/pgp-signature; name="signature.asc"
 
->  From the logs, we can see that for CLK ID 218 (DSS), we do not have to
-> call sci_clk_determine_rate() multiple times. So there is very little
-> overhead of this call even with multiple mode_valid() called during
-> display run.
->  From weston-simple-egl application, I have seen that there is no frame
-> drop or performance impact.
-> 
-> Once this patch gets in, I will send patches for AM62P and J722S DSS
-> support.
-> 
->   drivers/gpu/drm/tidss/tidss_dispc.c | 76 ++++++++++++-----------------
->   drivers/gpu/drm/tidss/tidss_dispc.h |  1 -
->   drivers/gpu/drm/tidss/tidss_drv.h   |  2 +
->   3 files changed, 34 insertions(+), 45 deletions(-)
-> 
+-----BEGIN PGP SIGNATURE-----
 
-[...]
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaFKFbQAKCRAnX84Zoj2+
+diMrAX49jR2F5YwzXSIgY8Dc3IRNsN6JXUTfNI2yfEXLy7iLPI5ea2adZWpPTUcv
+MK28sbkBfRtkWVWkCrzMpmrqfVY4o88+mqpQ3/RTxn5amR5o45qK/kpxhxQMNH8+
+SNXe7JwvJw==
+=ku/C
+-----END PGP SIGNATURE-----
+
+--5wasac5pi2r2rga2--
 
