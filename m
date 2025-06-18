@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-691483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64246ADE549
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:10:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F683ADE54F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12CEE7A8D5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:09:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE04C3B9F88
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA4527EFE6;
-	Wed, 18 Jun 2025 08:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1060927EFF1;
+	Wed, 18 Jun 2025 08:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nS+lvrQN"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="EdntvusL"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FD38635D;
-	Wed, 18 Jun 2025 08:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B14A19539F
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750234250; cv=none; b=QTJo24i+JAmpdSc1JvqqFsfKk/JwceHcZMn/xjjlxmBRVuoWJU6p64yO3dzwtaBaeMaVzkJo6EdqBx7LIuR37L11IA4tSlwVDseDkEMToGtPm7sH/9JBS0yayfLlUTRLH6iwVViO4cpnyUPPNtUJQg91sakgRJc/8DLCI7WFf4w=
+	t=1750234332; cv=none; b=Kc+D5fmQMlz2CZ9MxZ3g9eGQTC76CtPPX93Dq6ejVBC8QtI7KlKqhU7Kl1sjyFazykNG4j5oPrEJVPEWamzwsKDCdt4yztk5wFbajj5P4scLEUSYmuOyG4+Z+4zuJI5MsFf1vaY9zm23B9u/gngv3NMkie9+ORSKvqMPc7wPFS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750234250; c=relaxed/simple;
-	bh=U3t1blzXw4sX6mismk2hqJWRI6VHrorVvBaxSbHqpD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=O4w/3ZBuulfjsN7HlnyeSim1d9DkfxA8DS4DQl0lgL9Y54OlYuUqrqbTSkToNettUaOIiKM5oJy0nKk5jcMaef5BdhEw7sJupAiB2Pgv2QeTASQT/Fa+quRM7CvQq3O+aMg/52G9IjLKcBDTnUPMN9s2nemiBcTbNI3HwPCOVUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nS+lvrQN; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55I8APoF246255;
-	Wed, 18 Jun 2025 03:10:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750234225;
-	bh=EkBJLXLtYiwNEWiqUOgCSgr+Gg10spFbCfTn2yX+wXY=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=nS+lvrQN4jYr+FrzqSrbjVoGCjmF0iyB03C51dVp9ToWiekFX8DMi/JQdIfLwS4jk
-	 zfu4H52rEw3izfkoQn8+efyVhGiQ6abijD5/2wxQ4LjZpwzx8S9bgTz75eyXIDZ7w2
-	 jR4Tmak8pvzjWgQbPG/YY4ASBdDOsgwsRZoyr9kg=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55I8AP7k3738895
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 18 Jun 2025 03:10:25 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 18
- Jun 2025 03:10:25 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 18 Jun 2025 03:10:25 -0500
-Received: from [172.24.227.143] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.143])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55I8AM5u3139529;
-	Wed, 18 Jun 2025 03:10:23 -0500
-Message-ID: <92372da1-0417-48c3-a36d-ca20c946f07b@ti.com>
-Date: Wed, 18 Jun 2025 13:40:21 +0530
+	s=arc-20240116; t=1750234332; c=relaxed/simple;
+	bh=0RQPUVwvAOsk5IBp82srvzdKvozlrwpTmR5FjAY3tkc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Czjrz5fqT+jlEXLDNHYVPfdF5XISvew5qoRzBihll9FQ6K7q8trX0J0ePfolPv7B2iG3gAThNFEMJuIlZkAWYmZlDRPWn9+n/C5eIntu5iFfQ8wqE4qpptloS2NprnRVT+YakCysHCWggN2wMzdMwZ9tiINlCRxnD6YQdC37nKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=EdntvusL; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2363e973db1so3663825ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 01:12:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=futuring-girl.com; s=google; t=1750234329; x=1750839129; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=brjF5TFgyuOObGUl0vP/36GKYjNLHFU9TL+BiTpUMpo=;
+        b=EdntvusLIWNlwvN1hiHkvQOPSq1PSmVx19x9i9cABqQIryizJOks5J1WuMJ6bb6RmU
+         LCn/vzdO6FJPgzqJyaEgfqcYCohpbYvplaI8PsRf1TlXKWyHToV+zm/zns/ZeFGHhEZd
+         IqceooA2hi6ED+Onv+qzTLsTHssHWDsFhgoWCy/43AQbRHHiL3UEeC9+NyfBS83ABKYZ
+         VPlGXBGiLcXEhU4AioSdDKzeUk/m5LOrhJAYfx0h+QxT2D65auorMmbxx6fz18zIWfV7
+         OvQSXpYqkIOlLpDedRCpDfqnov6sMHtQKydl9JU6dJbdOFzenJV2LOVm3me1zFsZC9op
+         6Gqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750234329; x=1750839129;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=brjF5TFgyuOObGUl0vP/36GKYjNLHFU9TL+BiTpUMpo=;
+        b=YaaTRpyFR1umZgPh1DRV+969HI+tBkcaxPGi0Q3v5xq+qUi430KeEmmh5naUTfG3DZ
+         pnr186R+bKt1hFsyUh/m5mE3i4AwYjhs7+INtWCzrIrZy+7uqVi4wg5pbZBgNkAj1oWK
+         Y320IymD4VbOyhXLCEn0YzJ9VSHbJZaXDKPGdbkUFrgyIZKtbD9SH31DRPcVBwORH3A5
+         18TAalLkblfQdq1ycdRXKJ77CpTV95wsIwhtfD2eTkuqEt6mqS7zbKmdzNp4ka6DMJNS
+         LtyXkGTGRH4wgdgsEtNhqi49QhNg8xQmzHSJMkmcJARya9hJeDUmbOZoAJ9aQ7gUxGy4
+         Q9wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVk2AbLaVxOteS0SvIyptXVorshMSJFHYPbswzEGE/hb4pdLiJqxQ0A2DDpOfvxJwPZGeM0QQPS3y0i1NY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFSnTLfsGl7862cUz6E6jdaM7nVyf2Zw9WDMxjTftzG08sfjGD
+	ejjqUl33tThrnItdIhh4+8Qw2hkCrlhaEBIqhBY3eQP6IXByPLU57AflGzJrmuD6hZ8jBaFYRL9
+	PCbUsuHo7oDx5NEH4mXyxJkZvoXt+yuaseEJEOUICwA==
+X-Gm-Gg: ASbGncuV+lZjHsdpQg3buXA8ansJE1e3+XlFzOjxfXkalB/YcRDY3z5j4aupZ5Z9PHB
+	ejCxhCBZhk1Qq06u4+0KhD5klkyHh/M5UWOzL5CDFVr44AWuOvc3/OZ8StwIA5VBJ3Pxcwd77S3
+	DBNolgfFL8hyM/osG4KXI/eupJgnJsLnGZCVNN+BiVf4M=
+X-Google-Smtp-Source: AGHT+IGpJLHZtnqyqQh2JhkwSxrOCuHgk1TDDY09x7fcoLDuh3vm/ooqXWD5JEagbJwkl/efavMkytyKfGh/yNK0AJQ=
+X-Received: by 2002:a17:903:228b:b0:234:11e2:f41 with SMTP id
+ d9443c01a7336-237c2046e94mr26764865ad.6.1750234329638; Wed, 18 Jun 2025
+ 01:12:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: Add clk_determine_rate function call
-To: Brian Masney <bmasney@redhat.com>
-CC: <mturquette@baylibre.com>, <sboyd@kernel.org>, <linux@armlinux.org.uk>,
-        <linux-clk@vger.kernel.org>, <devarsht@ti.com>,
-        <linux-kernel@vger.kernel.org>, <tomi.valkeinen@ideasonboard.com>,
-        Maxime
- Ripard <mripard@kernel.org>
-References: <20250616103527.509999-1-j-choudhary@ti.com> <aFHKGvHlXP-cdC7d@x1>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <aFHKGvHlXP-cdC7d@x1>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250617152451.485330293@linuxfoundation.org>
+In-Reply-To: <20250617152451.485330293@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Wed, 18 Jun 2025 17:11:53 +0900
+X-Gm-Features: AX0GCFvsu6UCDmq2tIZWb5YR-nmqe-aN02_fZ-ldFZkqfeOhcwzzccegmgganmE
+Message-ID: <CAKL4bV7fgF4uFC04rDjjAYVYG9vJHhYzfwq4yB0s7ns-kqdvXA@mail.gmail.com>
+Subject: Re: [PATCH 6.15 000/780] 6.15.3-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Brian,
+Hi Greg
 
-On 18/06/25 01:33, Brian Masney wrote:
-> On Mon, Jun 16, 2025 at 04:05:27PM +0530, Jayesh Choudhary wrote:
->> Add a function to determine if a particular rate can be set for a clock
->> with its argument being the clock and the desired rate so that it could
->> be exposed to other peripherals.
->> For example, the display controllers typically has to perform multiple
->> checks for supported display resolutions including those related to
->> clock rates. The controller has to check this way before it actually
->> enables the clock and has to do it multiple times (typically for each
->> mode), and therefore using the clk_set_rate when its not needed, does
->> not make sense.
->>
->> The driver does have "__clk_determine_rate()" but this cannot be used
->> by other subsystems because of the function arguments used.
->> "clk_hw" is not accessible to other peripherals due to clk and clk_core
->> structure definition in driver instead of include file, so we cannot use
->> already exisiting "__clk_determine_rate()" in other drivers.
->>
->> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> 
-> Do you have a link to how this will be used within the DRM subsystem? If
-> not, could you post a new series to include the user of this new API so
-> that we can see specifically how it will be used.
-> 
-> Thanks,
-> 
-> Brian
-> 
+On Wed, Jun 18, 2025 at 12:29=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.15.3 release.
+> There are 780 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 19 Jun 2025 15:22:30 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.15.3-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Based on the conversation in [1], this patch is no longer required.
-This can be handled with preexisting functions.
+6.15.3-rc1 tested.
 
-[1]: 
-https://lore.kernel.org/all/f2e54128-f7c1-4193-a511-13775559e261@ti.com/
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
 
-Thanks and Warm Regards,
-Jayesh
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+
+[    0.000000] Linux version 6.15.3-rc1rv-gd878a60be557
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 15.1.1 20250425, GNU ld (GNU
+Binutils) 2.44.0) #1 SMP PREEMPT_DYNAMIC Wed Jun 18 16:32:09 JST 2025
+
+Thanks
+
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
