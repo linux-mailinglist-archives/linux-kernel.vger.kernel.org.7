@@ -1,129 +1,172 @@
-Return-Path: <linux-kernel+bounces-692256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E3A8ADEEFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:16:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E657CADEF02
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 086E51BC24E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:16:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC44B4A1D32
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804DA2EA755;
-	Wed, 18 Jun 2025 14:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDD62EB5D5;
+	Wed, 18 Jun 2025 14:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NlzmgwNi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jz5AU4Id"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26A54C9D;
-	Wed, 18 Jun 2025 14:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE5C2EAD1A
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 14:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750256179; cv=none; b=nk7CZjqPPoBANPjGS+LJ/inTgulrORU6VTjprDGEK3eYO/NtwMAjshthSMhP6z/2QjthHFoLu0fGBnniJfJbI2+fM5iT/8NYve9baoPqje5Z5s8S//3ipkQ0bd2C6/1dMYqT66vx1jORi9PBR9Nqihx8b5E0ycqUYBhhBLwnXoQ=
+	t=1750256208; cv=none; b=ltANDcUuVxnnQRkHBpbk56X5KQqvuYp8KY/1Msltzy05rBwW2PqcrjqHmVBamBVESCGaidCIh2Eal6nIX4XtEfYUCob7IoCsQddljQYvbZj/NcaU98+/YR8UhX72kRpC4MTfd3hJkPBd/dQx5rqZwqRrzwMvscEwXSUbxeWrqTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750256179; c=relaxed/simple;
-	bh=AOJIIPCDy2pFBp8SjVbpE+WPNLuRlmHXWTuQl6cyooA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C9Ui5GeQ3XVhHQQXOKL3QwauYvF3rBjg4i9Cn4Q8iGdE1BNEWbp5sOyMaIuocA7uP5cdTkOTZyjZQ1lQIk7bi+tOXGZ83G3qprpX+v2eWoeNAZeJewFwrJHyvUO0ZsZ3Cxe632/rg6yr8mEUU+IX6PMglqd6H/g4h+BJMRd6fjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NlzmgwNi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87A0AC4CEE7;
-	Wed, 18 Jun 2025 14:16:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750256176;
-	bh=AOJIIPCDy2pFBp8SjVbpE+WPNLuRlmHXWTuQl6cyooA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NlzmgwNi54dB6Lh1GR0H3qTJOrKlDkXjmofrM4rxAzydwut2AliMh93e+YqQfW71A
-	 VtUn91tAE5kO58VrrQkY7j3VVh+knjW4mbWvRC/MfmN7FktP75vmew4ljXDQgC55Op
-	 y9SQ4L3s4qysm8SmxZCOqiVItuJ6vtV4kduwwOh+lfFhrN0ibq0DVo82A4O0eDr4kP
-	 7a01OWrIDyTKoRRVECWKsSnD74ghdmYHY6f0a6eS9TwzTg9qnZ5ftPdtUZJfvOXxAi
-	 hpP23zBIuj9VsJGED1ZkXkM6uqIOdtNqnGFc944Uet/Oo5LmFo41X5MWQr/idZOxrA
-	 1qi1joxJNj0tw==
-Date: Wed, 18 Jun 2025 16:16:10 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Remo Senekowitsch <remo@buenzli.dev>,
-	Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Mark Brown <broonie@kernel.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] samples: rust: platform: Add property child and
- reference args examples
-Message-ID: <aFLKKr1bQue9iuTk@pollux>
-References: <20250616154511.1862909-1-remo@buenzli.dev>
- <20250616154511.1862909-4-remo@buenzli.dev>
- <CAL_JsqKXrsdGjTE5KDkqmVHUK5urMJnWSLWgEi8H1yM21gcOCA@mail.gmail.com>
- <aFFpmKLKR2hGs1I1@pollux>
- <DAPMND2X0QHE.1N0NF7R1F8J1G@buenzli.dev>
- <20250618133155.GB1550757-robh@kernel.org>
+	s=arc-20240116; t=1750256208; c=relaxed/simple;
+	bh=SZDsANUEYc3VEP7ESBzjA/Sa7ufHOwvO4id/mlmSuoQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PMcONDSZCTKIcVFnp9awxBItTQ9Wwy7u9v7Y/jdgDTxZzj15kYP+DgkdjlwXt7pLdv4PHeMXsSAIfXe/Ysi1Q53d9Keb5gQzfsqNNs1W9wGpm1oI+JrbiVO9vrzuQvmGz10Tzq9sjjUySadBT3hNW3x2QoFxWvSkZphPj+bmGU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jz5AU4Id; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750256205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pnakAuqpVv27gL/eIRgTWHQ86Cmzoypd6ut3J9M5fpg=;
+	b=Jz5AU4IdUSuTCjWOC+w17s+gK/lIFXzJrd4WsInCEwofyn4MOzqYGwRTaQSo6BD4G2PXb2
+	O/eR3Ksv/BTlDDBdfGC/EAY+PqU73nbX6+hOmgpSXKWyq6ayAmsc/9ximLRo8uBt8eKkL2
+	SzzwYX2DXUottlYlFWXWt05fRFInOV0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-178-OExi4vkGMPOusGgKTNj0Qg-1; Wed, 18 Jun 2025 10:16:44 -0400
+X-MC-Unique: OExi4vkGMPOusGgKTNj0Qg-1
+X-Mimecast-MFC-AGG-ID: OExi4vkGMPOusGgKTNj0Qg_1750256203
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-452ff9e054eso36552485e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 07:16:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750256203; x=1750861003;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pnakAuqpVv27gL/eIRgTWHQ86Cmzoypd6ut3J9M5fpg=;
+        b=RaWQXhTJy1qYAUNmx7zbulw97zr1L+Xnr7RoVGjbRz9TyPrIChjMrznfAHqBzaj1Gt
+         YgcsbODcGSHg+mAnJ9fP6FS9MY30+qO2vr+jolOUyme0yTCI1+JFsCO8QXLF8JnzQapA
+         FhPWRTvQ804uY27jEPwrugaem5jpco/jxcmiOCZZvJCDGOtDG8jPmbEEm/Kv3fhhOMbK
+         p3WVkH8/WXVFreXPE6RsY2v0uScwxyQxd/lIz5oXrLZBuA/VFUc3hsN2UvPW0NdevOnH
+         x/bwRrX2INNw+J43x/eB2K82V/SR/EcMCKSf7EdiUEIKVlSqGCLZZo+RszjE/93X8LFf
+         1OUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVga4JEwN2gXGOFIMGXtU6znT91jhMgosF3XWqIijT4yFv8NYc/i2RmsR2rrUCl4X1KFD/c+oBnFfYOxe4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZhzC5oavFFiTtJuN5KAvqO+1YHNkR8VsA9hYxz9MgruLKRe8u
+	EdKutPiMQDI6XGjinPkKRRKmkqZgwTiE0tLLoUZdjZRuUHG8phq1KedcFaMyzzJYdB9H7aOdeka
+	3SWOXZShdXibGGWnyBkS4bjcUVYf0u/06kt+MHY8MzHUHITzfVUd68dmuQfrTq3NJBQ==
+X-Gm-Gg: ASbGncv/TzStDZUOp4VFZKr5pMznlx5dedipvhhlFj8Xb/yHeuCETyYBwWAUd6pjHLm
+	Afbk/beW7o2U7LhgiFQkcZ/1SXJ1U57V72yzvtE4/4C3VMv9ry0TLp11GkuweBPPATBxq4Xjbai
+	/CzMPke2bBAy6ddLGi+JSxmwK8fTmplnNdP/Ny0jBTuvWdRFoB5hdcLj6fJNqNNONQ3ANIlACrn
+	GMv79mX+sIllC9E8Mb/3R32Xqo+itnT6YfPdi7VPPeEe29zQtr6dIoF4ZUBgVEcn5nAqibhaDpb
+	XKis8lDxuZ95DUrHtG13gFXz/hA+j3tNMwx8IUmacdJV4HLJbN2IPcZPVyc9VLPWSKZs+OBJfjC
+	F+N92Irc5RlnIkHHXCvA1MMsyDgmdT6wPAbaswfzeW6uOP1E=
+X-Received: by 2002:a05:600c:528f:b0:450:d3b9:a5fc with SMTP id 5b1f17b1804b1-4533cab1b53mr150306135e9.27.1750256202660;
+        Wed, 18 Jun 2025 07:16:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH/v9PZpGSZVIsOYlGFsJLgfp6SxTdjtuIyU5QFN7m91Aku2o1fdMeD+2hrNFzALMqWrkamYw==
+X-Received: by 2002:a05:600c:528f:b0:450:d3b9:a5fc with SMTP id 5b1f17b1804b1-4533cab1b53mr150305725e9.27.1750256202270;
+        Wed, 18 Jun 2025 07:16:42 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f2d:2400:4052:3b5:fff9:4ed0? (p200300d82f2d2400405203b5fff94ed0.dip0.t-ipconnect.de. [2003:d8:2f2d:2400:4052:3b5:fff9:4ed0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e14fc98sm215582455e9.29.2025.06.18.07.16.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Jun 2025 07:16:41 -0700 (PDT)
+Message-ID: <b9446db0-0aa2-478d-b5e4-a4eaf2c53e90@redhat.com>
+Date: Wed, 18 Jun 2025 16:16:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250618133155.GB1550757-robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: add missing files to mm page alloc section
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Zi Yan <ziy@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Suren Baghdasaryan <surenb@google.com>, Brendan Jackman
+ <jackmanb@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250618105953.67630-1-lorenzo.stoakes@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250618105953.67630-1-lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 18, 2025 at 08:31:55AM -0500, Rob Herring wrote:
-> On Wed, Jun 18, 2025 at 01:37:08PM +0200, Remo Senekowitsch wrote:
-> > On Tue Jun 17, 2025 at 3:11 PM CEST, Danilo Krummrich wrote:
-> > > On Tue, Jun 17, 2025 at 08:01:08AM -0500, Rob Herring wrote:
-> > >> On Mon, Jun 16, 2025 at 10:45 AM Remo Senekowitsch <remo@buenzli.dev> wrote:
-> > >> > @@ -91,6 +95,13 @@ fn properties_parse(dev: &device::Device) -> Result {
-> > >> >          let prop: KVec<i16> = fwnode.property_read_array_vec(name, 4)?.required_by(dev)?;
-> > >> >          dev_info!(dev, "'{name}'='{prop:?}' (KVec)\n");
-> > >> >
-> > >> > +        for child in fwnode.children() {
-> > >> > +            let name = c_str!("test,ref-arg");
-> > >> > +            let nargs = NArgs::N(2);
-> > >> > +            let prop: FwNodeReferenceArgs = child.property_get_reference_args(name, nargs, 0)?;
-> > >> 
-> > >> Is there some reason we can just pass 2 in rather than nargs? Seems
-> > >> overly verbose for my tastes.
-> > >
-> > > It's because you could also pass NArgs::Prop("foo-bar") to indicate the the
-> > > name of the property telling the number of arguments.
-> > >
-> > > NArgs is defined as
-> > >
-> > > 	pub enum NArgs<'a> {
-> > > 	    /// The name of the property of the reference indicating the number of
-> > > 	    /// arguments.
-> > > 	    Prop(&'a CStr),
-> > > 	    /// The known number of arguments.
-> > > 	    N(u32),
-> > > 	}
-> > >
-> > > and FwNode::property_get_reference_args() can match against the corresponding
-> > > enum variant to cover both cases.
-> > 
-> > I guess we could make the function generic if that's deemed worth it?
-> > A trait and an implementation for `u32` and `&CStr` each. Similar to how
-> > we made `property_read` generic.
-
-I don't think that's worth it; I think the current version is fine as it is.
-
-> There is a case where the cells property is optional and we fallback to 
-> 0 cells if not found. #msi-cells is an example. I imagine NArgs could 
-> express that while a generic could not? In any case, I don't expect 
-> drivers to have to deal with that as it would be subsystem code handling 
-> it.
+On 18.06.25 12:59, Lorenzo Stoakes wrote:
+> There are a number of files within memory management which appear to be
+> most suitably placed within the page allocation section of MAINTAINERS and
+> are otherwise unassigned, so place these there.
 > 
-> As-is is fine I think. This function isn't too widely used that it could 
-> be changed later if we change our minds.
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> Acked-by: Brendan Jackman <jackmanb@google.com>
+> ---
+> 
+> RFC:
+> https://lore.kernel.org/all/20250616202425.563581-1-lorenzo.stoakes@oracle.com/
+> 
 
-Agreed.
+Acked-by: David Hildenbrand <david@redhat.com>
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
