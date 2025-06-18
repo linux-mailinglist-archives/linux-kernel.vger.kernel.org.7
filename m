@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-692616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 809B3ADF442
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:41:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB8CADF43D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 19:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 359B37A8317
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:40:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0EDB188AF7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 17:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FADC2F9494;
-	Wed, 18 Jun 2025 17:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D332F5491;
+	Wed, 18 Jun 2025 17:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bcl6EE/8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bnw2ItgY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B412F5463
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 17:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD692F5469
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 17:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750268435; cv=none; b=Ug5AfOOsQwp5i37eebdY0w1QWFyUvhKEiZLJ54SfCM5Ksn1bPf6ecieJjd08fEuWi+Y6B3VqLRcMNtpIxrAP0VseM6Dh/nnA8g3kzjgL5dT2j6f3w14A2gv1ZLgLZBar+bSuoIM+R50thb4Gj98zvgkDHETAHD2Ibb0uyJ5oP3Q=
+	t=1750268433; cv=none; b=CKD4TsYsorTuYnqJv/IFmNZtEiqkNgPeoXHqKwhCeYSJ3mVoSkhj0Kgtua7gIjevwREz+AkKbwq9+cnTTs0MWWeptytq6woONbPPcPW2Ube8TRRp+ey8NnoaYPSP+DCDCo+neIjadnHlMnTAsGN4CZOQbABpqmaN5Brp+dT9ZUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750268435; c=relaxed/simple;
-	bh=HoU6IkwEzSx0bRpH46YFQR6C5ixdQUXKWK5iDFNMOt0=;
+	s=arc-20240116; t=1750268433; c=relaxed/simple;
+	bh=LoSKhKhxUdNaBIY5unlgO/URzAbM3vnT3E6jz3vT77c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mH/4MlAwBXKuD7C1wjBzGaDcpdT9V1jQqKCtSfAU48q205XLccopd3mzI25ErkjlDpRoZOoh4bUw24zYETSOZT3x0QWvS9xXfTJJhPE/gCtWO2rzyVjOvx+67B/tjOP04Ud0/+EqSNg8oZlwcRMGkHlzCU2HU89IEHoYpfmuHTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bcl6EE/8; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=tQDZk5A+UXthJR6v8bRtVNS4Np9oZIS4WVDN0us5TvaFqBqJfIVZzjYYprLyeZVq56nqRG3oxCSbXmOoMyDDjEzOWlWKwFvbgPlqhOUdzt2iUF++J7Za+S7dCesZCh+/kn8TZLFMKeLycuA28s4upea0G4K4y4+HiNGiqHSw12g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bnw2ItgY; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750268426;
+	s=mimecast20190719; t=1750268428;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hwmXAEBDYo8DkjDdp6VkbgoCuZIqYMKAJtJSkdjCkPU=;
-	b=bcl6EE/87rvRp2sZY3yW4TyWvzk+gmZwkzmagzxpSpSK/sTRlNmotlfC3TIHjL58iqfkgP
-	9takqlkn78UYG4U+Vl6ry6jCiPK/XJVJn7lNEQdplqiRcXmEF+tg1NnxCboZJnEG2meVtQ
-	qD/m52Uznopwjtwf7L1z4f1F7qPfuxY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=S7FgUVlGmmQh/Fden7VOoWF093l0D6F2nUhdFZr7YaQ=;
+	b=bnw2ItgYneYTNugiLoSh7womXWjhX7+jJWrkBqyrZdc8ohR7pEJXeVxJqQ2msEcWaOJS/n
+	UVThEk+LyVvoi/WLXYIuRbRG34RzwtYUC9NsZMSxmCLhlIhWOYif551WXUUYi4KCNAes+B
+	v3+hKeGfvq1dpbR4tpQSAjTwz3Ix9mA=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-257-N7_vIxtROFiJYOy3St1EbA-1; Wed, 18 Jun 2025 13:40:24 -0400
-X-MC-Unique: N7_vIxtROFiJYOy3St1EbA-1
-X-Mimecast-MFC-AGG-ID: N7_vIxtROFiJYOy3St1EbA_1750268423
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4535ad64d30so7580475e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:40:24 -0700 (PDT)
+ us-mta-652-uLJIvNE8MLuQRqeo8GstSw-1; Wed, 18 Jun 2025 13:40:26 -0400
+X-MC-Unique: uLJIvNE8MLuQRqeo8GstSw-1
+X-Mimecast-MFC-AGG-ID: uLJIvNE8MLuQRqeo8GstSw_1750268425
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4535ad64d30so7580695e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:40:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750268423; x=1750873223;
+        d=1e100.net; s=20230601; t=1750268425; x=1750873225;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hwmXAEBDYo8DkjDdp6VkbgoCuZIqYMKAJtJSkdjCkPU=;
-        b=JVoS1KMkm5MTGFv3Q+2Fp3NAF78YgEe+JozEk9Rk07JhbCWQN0sDtU43qvDFZKnA4i
-         IkcMubdx21Lwc24uZprA1kvEUsdJP6Em92btH79IwLpuIuabywnkyrUkZj4erASrnG+k
-         5+wEkDTGHCl2plM1mNHjrC0qMW9AtX6JDj4PHNtj9ulw/vDYMZhC5Ll+sHYDGs97XWBI
-         OeRrW5eE/iTV12iYJLXValtyXkLZ8RPD/cPXsMM2gpZE9zXVkbfYOeFnD23H/1WdR8iN
-         WKaJaWZLT6I7yqq2htAZ5nMVE9UZMZhBJZu+mUfNriAAr4RyQvvQ90awmQj1GauNGIxP
-         s7Fw==
-X-Gm-Message-State: AOJu0Yz8YO/9C7uOw/Za2NSKdz+Y8KUKa9bQL1FMHPaV2DA+OMjiGJ2E
-	7nOsCXpr2aK0QBxzK4NfpH7kEIInNp36DNES56zRQLa2n2hV4tbWHPbQKMznu7TdqLMXLgsro5I
-	8O+q/XEAB5NhWRhhKqsZJYLIclpH5LP6A6eKfnTY1XlhC4xqNeVWjJxOW1uEheKlu3o+51boGgC
-	5jqPk7QbbljbDjUCFbvygkkynyVlN4heoE1LzGhLQuatgBapoQ
-X-Gm-Gg: ASbGncsMAgNd+A061+b+Q35PN++vsvJyVZckK2QhMNMR/X9V7yDvnhWvHNS799BrOlp
-	zTbGHOoSQkAzS2FedOLTnqa/61EAydR+//eBR5aMipPKXm/1lY+X0A1UQGUT/41msBHaU9+9D7a
-	UJHgXEAkbZIgiHfYvg/gddNbb+ICDS8CdPgL3alBUOeSNJYxZVm38fM6A+NHfNvQZRNbxv+cCpn
-	E65/phiy/HtyEdFrx07qQ5TShNE7VhjfeAQJDeHgyyXTlOdKZX7PcmJdxRX6nAazmqhJVaFqmMB
-	VZjQnxcSpJzvN5O6/qIUGKSIMGYRnVTLugfPqOMPPCnAl9LwHOHsz0m0ywxE3vACsEoREkYkriR
-	FOYoG1g==
-X-Received: by 2002:a05:600c:1d8c:b0:43c:e70d:44f0 with SMTP id 5b1f17b1804b1-4533caad0aemr171055925e9.19.1750268423071;
-        Wed, 18 Jun 2025 10:40:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFFNY4J8Mn4IFBBexw6iB/8oHFBQjZ0Pcfadu7y3OlxCDXC24glKPTWmaukP08KWSs+L7QyIw==
-X-Received: by 2002:a05:600c:1d8c:b0:43c:e70d:44f0 with SMTP id 5b1f17b1804b1-4533caad0aemr171055095e9.19.1750268422300;
-        Wed, 18 Jun 2025 10:40:22 -0700 (PDT)
+        bh=S7FgUVlGmmQh/Fden7VOoWF093l0D6F2nUhdFZr7YaQ=;
+        b=bCcQpcnIItIuYk0dMOPyCbW2ew11AR46kZuVEsuJJgZZ8+1fr+lTyV92XK1fcx+R6a
+         7jORZi2dlilVoTxbk5E3s4dgU79PTvgGUOa/wU/SAEYGPwug4pRgKopBSJDY3RhO2B7v
+         aVFfGKkjp9KqNwyOWy6wRPkbcJv30bRLl0pu3WYXbskumUAQmW0Yme+a0wjyX7BsOV6v
+         v+ba/vsMsmYpiuN8S0nPqQfvAlkP4zYcdj6jAINBAldaOTYUWr4xIAu9aFI34K2ERRrp
+         LbBTdprF+B2P9fGGGfB1FpF929toxPNEXYDHBYNq5NSXyupgrkW48208JHkXK9mgQ1Fc
+         5VoQ==
+X-Gm-Message-State: AOJu0YwTOC4nImq8AZ/P/JO4PBWgxckbvx/RFf14+kB84zJXIqSG7jlW
+	xhP4lQ17FNRfc6IPN/nD1dRBopLI93NuqgqXsQ7J3edvre6dAiL3vZwcVPuDtbV1Hdr6QBvhGcS
+	IWwycBiTCQWISm3AERUAY3K1/C4QEj5W4iA9i0wfbmkQlGW568EvLKwQ6TgED9AzkjLmEgboFfn
+	ZRSXW3/gor0AomMx/r00kUL0bzimVURI7Cs71RVIxV5LSO+i6F
+X-Gm-Gg: ASbGnctqq0/rBxWDYF2f+BpXIuiCq9drAAWPBQu4Kjr11yPSqbNHDRTpNzZUBvbTQzU
+	pGB4iC8W1S6WCeE1FFvWsNrIARQypWu9jwFCehtIlgsIgJaAlNsjjDABNViyyIbe82gsgsjPUbP
+	1AJHJ8QNieM+XJ2f8Kw/3wctMS0Wdfvatzgogr8ElG1WvG2wY0CtCRrcZu20S4jGMQ4hD4tdJae
+	5KcTsktxkINdCHNuuqbZoQqtptqMAXRaiJuOr6aatWwnyoN3ia3kZqSLafJUvjpVBhHcNlFDrOZ
+	e15hy7AnaC/sEyd5IX4xOJA3QDGEcSwSTOWsV3Bn40dMS5gG0C3cKGR8q+he2PKVD2BzMFc0n4U
+	u5n6fig==
+X-Received: by 2002:a05:6000:2c0f:b0:3a4:ed2f:e80c with SMTP id ffacd0b85a97d-3a5723a3f92mr15706308f8f.31.1750268425425;
+        Wed, 18 Jun 2025 10:40:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEayKPP2LeH5F/Ng3XTSzlfhGIAIvFkyNEolXxAmF4Ok7MzyUOG21uTMpu2qvZTdT619UlY2Q==
+X-Received: by 2002:a05:6000:2c0f:b0:3a4:ed2f:e80c with SMTP id ffacd0b85a97d-3a5723a3f92mr15706239f8f.31.1750268424824;
+        Wed, 18 Jun 2025 10:40:24 -0700 (PDT)
 Received: from localhost (p200300d82f2d2400405203b5fff94ed0.dip0.t-ipconnect.de. [2003:d8:2f2d:2400:4052:3b5:fff9:4ed0])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4535ebcecdcsm3339075e9.36.2025.06.18.10.40.20
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a568a547ecsm17734777f8f.17.2025.06.18.10.40.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jun 2025 10:40:21 -0700 (PDT)
+        Wed, 18 Jun 2025 10:40:24 -0700 (PDT)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -134,9 +134,9 @@ Cc: linux-mm@kvack.org,
 	Harry Yoo <harry.yoo@oracle.com>,
 	Qi Zheng <zhengqi.arch@bytedance.com>,
 	Shakeel Butt <shakeel.butt@linux.dev>
-Subject: [PATCH RFC 02/29] mm/balloon_compaction: convert balloon_page_delete() to balloon_page_finalize()
-Date: Wed, 18 Jun 2025 19:39:45 +0200
-Message-ID: <20250618174014.1168640-3-david@redhat.com>
+Subject: [PATCH RFC 03/29] mm/zsmalloc: drop PageIsolated() related VM_BUG_ONs
+Date: Wed, 18 Jun 2025 19:39:46 +0200
+Message-ID: <20250618174014.1168640-4-david@redhat.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250618174014.1168640-1-david@redhat.com>
 References: <20250618174014.1168640-1-david@redhat.com>
@@ -148,167 +148,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Let's move the removal of the page from the balloon list into the single
-caller, to remove the dependency on the PG_isolated flag and clarify
-locking requirements.
-
-We'll shuffle the operations a bit such that they logically make more sense
-(e.g., remove from the list before clearing flags).
-
-In balloon migration functions we can now move the balloon_page_finalize()
-out of the balloon lock and perform the finalization just before dropping
-the balloon reference.
-
-Document that the page lock is currently required when modifying the
-movability aspects of a page; hopefully we can soon decouple this from the
-page lock.
+Let's drop these checks; these are conditions the core migration code
+must make sure will hold either way, no need to double check.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- arch/powerpc/platforms/pseries/cmm.c |  2 +-
- drivers/misc/vmw_balloon.c           |  3 +-
- drivers/virtio/virtio_balloon.c      |  4 +--
- include/linux/balloon_compaction.h   | 43 +++++++++++-----------------
- mm/balloon_compaction.c              |  3 +-
- 5 files changed, 21 insertions(+), 34 deletions(-)
+ mm/zpdesc.h   | 5 -----
+ mm/zsmalloc.c | 5 -----
+ 2 files changed, 10 deletions(-)
 
-diff --git a/arch/powerpc/platforms/pseries/cmm.c b/arch/powerpc/platforms/pseries/cmm.c
-index 5f4037c1d7fe8..5e0a718d1be7b 100644
---- a/arch/powerpc/platforms/pseries/cmm.c
-+++ b/arch/powerpc/platforms/pseries/cmm.c
-@@ -532,7 +532,6 @@ static int cmm_migratepage(struct balloon_dev_info *b_dev_info,
- 
- 	spin_lock_irqsave(&b_dev_info->pages_lock, flags);
- 	balloon_page_insert(b_dev_info, newpage);
--	balloon_page_delete(page);
- 	b_dev_info->isolated_pages--;
- 	spin_unlock_irqrestore(&b_dev_info->pages_lock, flags);
- 
-@@ -542,6 +541,7 @@ static int cmm_migratepage(struct balloon_dev_info *b_dev_info,
- 	 */
- 	plpar_page_set_active(page);
- 
-+	balloon_page_finalize(page);
- 	/* balloon page list reference */
- 	put_page(page);
- 
-diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index c817d8c216413..6653fc53c951c 100644
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -1778,8 +1778,7 @@ static int vmballoon_migratepage(struct balloon_dev_info *b_dev_info,
- 	 * @pages_lock . We keep holding @comm_lock since we will need it in a
- 	 * second.
- 	 */
--	balloon_page_delete(page);
--
-+	balloon_page_finalize(page);
- 	put_page(page);
- 
- 	/* Inflate */
-diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-index 89da052f4f687..e299e18346a30 100644
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@ -866,15 +866,13 @@ static int virtballoon_migratepage(struct balloon_dev_info *vb_dev_info,
- 	tell_host(vb, vb->inflate_vq);
- 
- 	/* balloon's page migration 2nd step -- deflate "page" */
--	spin_lock_irqsave(&vb_dev_info->pages_lock, flags);
--	balloon_page_delete(page);
--	spin_unlock_irqrestore(&vb_dev_info->pages_lock, flags);
- 	vb->num_pfns = VIRTIO_BALLOON_PAGES_PER_PAGE;
- 	set_page_pfns(vb, vb->pfns, page);
- 	tell_host(vb, vb->deflate_vq);
- 
- 	mutex_unlock(&vb->balloon_lock);
- 
-+	balloon_page_finalize(page);
- 	put_page(page); /* balloon reference */
- 
- 	return MIGRATEPAGE_SUCCESS;
-diff --git a/include/linux/balloon_compaction.h b/include/linux/balloon_compaction.h
-index 5ca2d56996201..b9f19da37b089 100644
---- a/include/linux/balloon_compaction.h
-+++ b/include/linux/balloon_compaction.h
-@@ -97,27 +97,6 @@ static inline void balloon_page_insert(struct balloon_dev_info *balloon,
- 	list_add(&page->lru, &balloon->pages);
+diff --git a/mm/zpdesc.h b/mm/zpdesc.h
+index d3df316e5bb7b..5cb7e3de43952 100644
+--- a/mm/zpdesc.h
++++ b/mm/zpdesc.h
+@@ -168,11 +168,6 @@ static inline void __zpdesc_clear_zsmalloc(struct zpdesc *zpdesc)
+ 	__ClearPageZsmalloc(zpdesc_page(zpdesc));
  }
  
--/*
-- * balloon_page_delete - delete a page from balloon's page list and clear
-- *			 the page->private assignement accordingly.
-- * @page    : page to be released from balloon's page list
-- *
-- * Caller must ensure the page is locked and the spin_lock protecting balloon
-- * pages list is held before deleting a page from the balloon device.
-- */
--static inline void balloon_page_delete(struct page *page)
+-static inline bool zpdesc_is_isolated(struct zpdesc *zpdesc)
 -{
--	__ClearPageOffline(page);
--	__ClearPageMovable(page);
--	set_page_private(page, 0);
--	/*
--	 * No touch page.lru field once @page has been isolated
--	 * because VM is using the field.
--	 */
--	if (!PageIsolated(page))
--		list_del(&page->lru);
+-	return PageIsolated(zpdesc_page(zpdesc));
 -}
 -
- /*
-  * balloon_page_device - get the b_dev_info descriptor for the balloon device
-  *			 that enqueues the given page.
-@@ -141,12 +120,6 @@ static inline void balloon_page_insert(struct balloon_dev_info *balloon,
- 	list_add(&page->lru, &balloon->pages);
- }
- 
--static inline void balloon_page_delete(struct page *page)
--{
--	__ClearPageOffline(page);
--	list_del(&page->lru);
--}
--
- static inline gfp_t balloon_mapping_gfp_mask(void)
+ static inline struct zone *zpdesc_zone(struct zpdesc *zpdesc)
  {
- 	return GFP_HIGHUSER;
-@@ -154,6 +127,22 @@ static inline gfp_t balloon_mapping_gfp_mask(void)
+ 	return page_zone(zpdesc_page(zpdesc));
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 999b513c7fdff..7f1431f2be98f 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -1719,8 +1719,6 @@ static bool zs_page_isolate(struct page *page, isolate_mode_t mode)
+ 	 * Page is locked so zspage couldn't be destroyed. For detail, look at
+ 	 * lock_zspage in free_zspage.
+ 	 */
+-	VM_BUG_ON_PAGE(PageIsolated(page), page);
+-
+ 	return true;
+ }
  
- #endif /* CONFIG_BALLOON_COMPACTION */
+@@ -1739,8 +1737,6 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+ 	unsigned long old_obj, new_obj;
+ 	unsigned int obj_idx;
  
-+/*
-+ * balloon_page_finalize - prepare a balloon page that was removed from the
-+ *			   balloon list for release to the page allocator
-+ * @page: page to be released to the page allocator
-+ *
-+ * Caller must ensure that the page is locked.
-+ */
-+static inline void balloon_page_finalize(struct page *page)
-+{
-+	if (IS_ENABLED(CONFIG_BALLOON_COMPACTION)) {
-+		__ClearPageMovable(page);
-+		set_page_private(page, 0);
-+	}
-+	__ClearPageOffline(page);
-+}
-+
- /*
-  * balloon_page_push - insert a page into a page list.
-  * @head : pointer to list
-diff --git a/mm/balloon_compaction.c b/mm/balloon_compaction.c
-index fcb60233aa35d..ec176bdb8a78b 100644
---- a/mm/balloon_compaction.c
-+++ b/mm/balloon_compaction.c
-@@ -94,7 +94,8 @@ size_t balloon_page_list_dequeue(struct balloon_dev_info *b_dev_info,
- 		if (!trylock_page(page))
- 			continue;
+-	VM_BUG_ON_PAGE(!zpdesc_is_isolated(zpdesc), zpdesc_page(zpdesc));
+-
+ 	/* The page is locked, so this pointer must remain valid */
+ 	zspage = get_zspage(zpdesc);
+ 	pool = zspage->pool;
+@@ -1811,7 +1807,6 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
  
--		balloon_page_delete(page);
-+		list_del(&page->lru);
-+		balloon_page_finalize(page);
- 		__count_vm_event(BALLOON_DEFLATE);
- 		list_add(&page->lru, pages);
- 		unlock_page(page);
+ static void zs_page_putback(struct page *page)
+ {
+-	VM_BUG_ON_PAGE(!PageIsolated(page), page);
+ }
+ 
+ static const struct movable_operations zsmalloc_mops = {
 -- 
 2.49.0
 
