@@ -1,240 +1,234 @@
-Return-Path: <linux-kernel+bounces-692330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF49ADF00C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:47:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353A8ADEFEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24BD93A3EFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:46:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6141188DE38
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C7F1ACECE;
-	Wed, 18 Jun 2025 14:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDA12EBB96;
+	Wed, 18 Jun 2025 14:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="X7ZHrxrP"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2045.outbound.protection.outlook.com [40.107.92.45])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+4tQe71"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53734F9CB;
-	Wed, 18 Jun 2025 14:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750258008; cv=fail; b=qkD5i7jjPWchV92nxEMUn9BNM0UBEOyQ76jYQvH90VCU+rPbhM35nebkR1Lo+wCKaO47mn9QzJN5DamjVZlZz999w+no+iXoCFZriFumqf4+GXylVdnyR9iyfckOkC3Uzuk1YBx1J9IDBLJwoiVYafaMX40jzIDjHHYUOoZzek0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750258008; c=relaxed/simple;
-	bh=EDB70jokEyTJPUMM1+0EA2lecSV6bQVRi8wNhKoZ8+w=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AAJGFUbiomsOyYU1Ae4co17HKm0c7WiPUpojr2vnSLrO7H4KlOcAGNLSJxFBs8XRWy3XEAcFPCb5WP3f6yScION2dvZnFhqhQUmDB0WU7vv6zeQQYBbjSkDxRaSCofdrC7IreznTQjDvkB20G+T3PBQDmpLJ9j/aHOkGblqYmmA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=X7ZHrxrP; arc=fail smtp.client-ip=40.107.92.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZbudpYY9D8ikai6w8ge5v3I+yiiLBeEMOzmM8R3lpqlZp0fG5zBNNfK6EII4M8sMCgXfqZivsheJxRl7hQzlPpCO1NnnTCiu9ZwJu+zbjP6VOwhmftxbQ/ZzwDZ0nfk2LdpIFqUjuZKAaRWZY9Bg+IWX9l0FvV9KTVLDLMwLoN4pozRpcIOxkbtszGb+o1v4qYQNFeiJkgzhFWUBY4400QVJhkrEzn7MVwdyWkZDXCbXj6HP3/lZ7K7U407lBD7oI2nUVGS46qB5sbycAUbhp4hwEeLB4R6yQVI0voEiX4PRmxkMmUg8x+gH0WRmijvYNCy7jMZyhgyyMYOfe3Z5GA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NwSvsnNKLrW5de5000QFGLz22toQoXNueYjK8uKTfzU=;
- b=kMR9DpP7H33incic9rBpJ3+/c3KL+ZVewXEYBECd6RLbOsX2NSYzW1wjUu9yrWy6g0tXNSUH7FKnw67GUzi770zR74Zt36TqcWY2Gyi4KVtZ5CdyLzdH4kHy7d2CeiFTueypntFdsdVgTBu2cJNpFMxz+IPJ4+ZwKE1ETgSKINYehTT7Q2E5X8LB48ofyBNg78tIFYR2MpAlL9imx6Zb2w+ok+6HxU6r4tnz+z7fpYlazzpO712wYVZ6D+nMTy2qYw+SitlnyrVWY8JlwrHCLga1gQ1aBD4mgvxQzkeZXm2RcikUMTYHOFnkKeYq+A1xRplt6rW0SFACfs8pj+RwgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NwSvsnNKLrW5de5000QFGLz22toQoXNueYjK8uKTfzU=;
- b=X7ZHrxrP0n3HkEurD4OlZkYwc7AxShl0SPnRGXYIZUCrt9ccgIwgp1icBYOxN5vqcrqi0luVwXKfZ7lDcDzTOukJFCRfKH6GmpmKf2HdR/HWdKqn0ZPJCYo3qe10R+aUX9shdLFvc3Nj60cZlogQUoa9zfv1BkYhUqdiQfJpYes=
-Received: from MW4PR03CA0008.namprd03.prod.outlook.com (2603:10b6:303:8f::13)
- by MN2PR12MB4392.namprd12.prod.outlook.com (2603:10b6:208:264::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Wed, 18 Jun
- 2025 14:46:43 +0000
-Received: from CO1PEPF000075ED.namprd03.prod.outlook.com
- (2603:10b6:303:8f:cafe::e0) by MW4PR03CA0008.outlook.office365.com
- (2603:10b6:303:8f::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.35 via Frontend Transport; Wed,
- 18 Jun 2025 14:46:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000075ED.mail.protection.outlook.com (10.167.249.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8857.21 via Frontend Transport; Wed, 18 Jun 2025 14:46:42 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 18 Jun
- 2025 09:46:41 -0500
-Received: from localhost (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 18 Jun 2025 09:45:11 -0500
-Date: Wed, 18 Jun 2025 20:09:57 +0530
-From: Naveen N Rao <naveen.rao@amd.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, "David
- Woodhouse" <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
-	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
-	<kvm@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, Sairaj Kodilkar <sarunkod@amd.com>, "Vasant
- Hegde" <vasant.hegde@amd.com>, Maxim Levitsky <mlevitsk@redhat.com>, "Joao
- Martins" <joao.m.martins@oracle.com>, Francesco Lavra
-	<francescolavra.fl@gmail.com>, David Matlack <dmatlack@google.com>
-Subject: Re: [PATCH v3 13/62] KVM: SVM: Drop redundant check in AVIC code on
- ID during vCPU creation
-Message-ID: <4f7d3pbe4s52twxaddjwlpca3mlb6htxi3ozze7n2sv4d3cafn@o3cyq3tmjhbx>
-References: <20250611224604.313496-2-seanjc@google.com>
- <20250611224604.313496-15-seanjc@google.com>
- <qusmkqqsvc7hyuemddv66mooach7mdq66mxbk7qbr6if6spguj@k57k5lqmvt5u>
- <aFGY0KVUksf1a6xB@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9276285C8E;
+	Wed, 18 Jun 2025 14:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750257611; cv=none; b=MMTRkXoZ9axzi/AbTsUafHvLov+qKC1McFhv+3EkmOzAzVQdGR7Xp3FISXKAbBRkH7ixFDUvrZ9GJ5WBdyUSSUxjN0uxU7Jws2hIU99fPIs1jpJRm7CiZTBgbGU7ipt+2EBTTHguCGMIU4QmjjCv6fFM7IGoWUZ1En1ishobxoA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750257611; c=relaxed/simple;
+	bh=Hvjt5mvmBXT7F/XR96SVx2NWm++TIC0IAHqhT8Dl+DU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u8HLzRkJa94LmhSJhd5gOPUfzNyN3jo7Bz+JAsVZnkGqbSgbWSaFC8Aawp1/8eUvjVe+Hkfkj2vpUGlME7OgOuBgcgvZcDTv6rLhIRc5/C0a0HNF+7VYGLk6CNlOgpk2ffJ2KF7uEKuReLQj9QxDNizTHWb7lZLgaWCMOnp9NIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+4tQe71; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF497C4CEE7;
+	Wed, 18 Jun 2025 14:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750257610;
+	bh=Hvjt5mvmBXT7F/XR96SVx2NWm++TIC0IAHqhT8Dl+DU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=a+4tQe71pzIVfYwLGd/4H7AlntOQ3YgtfA3mtG/ffElIWzdvfR1Pfl20EgsW0ewjD
+	 bfAoS9+/xZgP23hFLRu82thEbLjC/p/Vh5Nm03knKRjv6SLOHhcgri3Y2DKhdvOH/S
+	 eRIepCF8P5HwdZFISKsyiQ1YVB6b7733nGnKFB3i2O5aBRzRUmZCwBUesmtqJZ/5/W
+	 6vyZbJeA1By88Zx6pt1Yiz3EXIvNq+L25kQvRp1QbxbCJIchbKw1YFVlAG2zwgW+Lq
+	 h6me0sUSklS4XyBNwiBiMVeTGmigxl+rIeDouLYX+ZAoSLmbXRyf9adG3r+Ba3/VM3
+	 Tg9yK1F2stvfA==
+Date: Wed, 18 Jun 2025 16:40:02 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: "Alexandre Courbot" <gnurou@gmail.com>
+Cc: "Albert Esteve" <aesteve@redhat.com>, "Michael S. Tsirkin"
+ <mst@redhat.com>, "Mauro Carvalho Chehab" <mchehab@kernel.org>, "Hans
+ Verkuil" <hverkuil@xs4all.nl>, "Jason Wang" <jasowang@redhat.com>, "Xuan
+ Zhuo" <xuanzhuo@linux.alibaba.com>, Eugenio =?UTF-8?B?UMOpcmV6?=
+ <eperezma@redhat.com>, <gurchetansingh@google.com>,
+ <daniel.almeida@collabora.com>, <adelva@google.com>,
+ <changyeon@google.com>, <nicolas.dufresne@collabora.com>,
+ <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+ <virtualization@lists.linux.dev>
+Subject: Re: [PATCH v3] media: add virtio-media driver
+Message-ID: <20250618164002.10220d81@sal.lan>
+In-Reply-To: <DAPQ1LPH05P4.HLIMQEJCRHLX@gmail.com>
+References: <20250412-virtio-media-v3-1-97dc94c18398@gmail.com>
+	<20250526141316.7e907032@foz.lan>
+	<DA6Q0LZPGS2D.2QCV889PQL2A7@gmail.com>
+	<20250527111311.105246f2@sal.lan>
+	<CAAVeFu+=RpEfu3i_Fh9_eq_g=cmDFF0gcurT0gU9AX1UX+UNVA@mail.gmail.com>
+	<20250527153547.6603eaf4@sal.lan>
+	<CAAVeFuJtp=UEEULeMSVpmYDmH81Y6OQgj6NCeuPUhabSRHw4dA@mail.gmail.com>
+	<20250617104938.09d21b7c@foz.lan>
+	<DAPQ1LPH05P4.HLIMQEJCRHLX@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aFGY0KVUksf1a6xB@google.com>
-Received-SPF: None (SATLEXMB04.amd.com: naveen.rao@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000075ED:EE_|MN2PR12MB4392:EE_
-X-MS-Office365-Filtering-Correlation-Id: bad62481-28a5-4a21-3ed6-08ddae76f106
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NGI0KzgxeE1GTnVxWDd3ajRrcUo5aytFZm8raStMZy9PM1NWNENOOG53aDdi?=
- =?utf-8?B?SDNMcmdScWlSTkliS0tNb0k5aFIwRXRQb0tsdVg2NWFFRHA2M0VHTkt1emhq?=
- =?utf-8?B?VGVCTy9vT09GdXNBRmJON09ibU1EYTI4bExBK0ZBYlp5NFJsbS8wN1FRb3FJ?=
- =?utf-8?B?ancyelkxcUlGRVlwM0FEd1pBZkQ2NUpPUkdpZlYwVVpocy9Rd3dObjNkY1pa?=
- =?utf-8?B?end0ZXREaWc1YS95U29WOEhxOWFiZ0taMGFyVkpBRlNXSTlCU1pxTlp0Mkd1?=
- =?utf-8?B?a2RrWEVoSG5Wa2dhVnNyQ0trcXQrUGQ1VEpJb0lSeHViRG9DaWNEVXM3dnRl?=
- =?utf-8?B?Zlp4MHh5RkxFbyt3U3FWcEZwUkRzbHNmMHpZcmJwL2ZGZ0lSNktGVGhEOEhN?=
- =?utf-8?B?WHNLWnltV0ZnaGFBK3pzejIvN2VUNHllaWVyMFJIc1IzdzMyU0ViMHBPcDk4?=
- =?utf-8?B?ZWhKK2ZqM1drVUxsTitidGFxeWMxZWVWdzRVRk9rUXcwQVpRcytBanpkaGtW?=
- =?utf-8?B?UUwyalZDc1duNDNYbTBUVXZab251M2VxdGFLaFZvSHJpLzFDVFRSVStCdG8v?=
- =?utf-8?B?aEU1VzJpWVRDYVNxeFRObTJlanFWSE5KNXlZS1hGOFN5VmV0eHJIS2dILzZx?=
- =?utf-8?B?SE5JVXRrZlRLYTZZRFZQeGhndlFXVVF2VmRCRFU2Si8vOTY1SGhDU0FZMWNq?=
- =?utf-8?B?RTRaMXZPTWRGQThBK2MrMjgxWWJyZGV5clNSNHVpcGM1WlFZWHJRZk1LK0ZO?=
- =?utf-8?B?amZOeHhJSmQyb0xKSmlFVmo0cVF3YStRWHR1V2NIblNLOHJaanhMdjVJbkJ2?=
- =?utf-8?B?WlYvTUFQMkR2SFNVWkhxYXVLNW1LQTUwSFcxZHRnUjJOdTBUVGNzU3hGYWVJ?=
- =?utf-8?B?Mnh6TVBFQUEzS2kvUUNGR1dSSmFYd3pVdkpRZDBZMzFURitNeXdGNXdxd05N?=
- =?utf-8?B?SG5MeHVSU0ZBUHhIYjlnWGxOdkRWc0VaamdmRmdxRnZyelZBbHVBWVdEU00v?=
- =?utf-8?B?cEpNZndaZXU2VWdKSFlJTjRCcDg4MGJET3pWUVVPU1c1Y2ROcm9oTzBoWFYz?=
- =?utf-8?B?bzkxWlBtRDc3WnM0SW16VytLQXVtWnRyTHFjWURNeXFsZ1pmbUZVaml6RnF0?=
- =?utf-8?B?dXZ5Q1N6ZllJc3U1cHhESlAyck42N3lJWExuSlpZbkxNeUtrTE9oRUlWN0ht?=
- =?utf-8?B?eDRWNDRGWjhEOWNhY3VTMFRoZTNESUNUajhDY0ZFd1NKMm04MkhvekhIaHpn?=
- =?utf-8?B?MUZoSDV3QVB1cXoyRDVaR2RCSnVHUFlMK01pNjNLVDhWdnBJM1BzVWFWeFNi?=
- =?utf-8?B?OEQ3ZFpHUjJFWnVscUk3eFVaamdoSFpNMDFqS0VITUh2V0xOVE43M1ZsbXl0?=
- =?utf-8?B?VzBydlRwMFBGR0hYek00bVpxcWlFVWpQY1R6djJLSUlZNkhRK0RsMzlhdUlI?=
- =?utf-8?B?YXFHWFJGT0FseHFWNVFzdHh1d0pFSXg2MmhpRXBGU3RMY1hOajFJd3B3Q3ZZ?=
- =?utf-8?B?T3IwV3BqRGg1TVdzZ3o1M1NpdWV5Zis4UGR6SDQyeFlOeE5JZ2RJUnNnelM3?=
- =?utf-8?B?U1ZlSncvbi8wVVlRTERKZTlnR1UxOHZ5KytuTnU2dGNhaUpSRm9rTkg3VXdu?=
- =?utf-8?B?dEFGRFVseHVoYkhIVmk3MG5zb2FlSkhBWTcyemRhUVYyV0xtbjRlRkxKbjRL?=
- =?utf-8?B?NUNzZy9rZWR1TEZBWHpYWlE1MFBQRkxRakJKcktCMHBFckFXZ1d1b0hPN2FM?=
- =?utf-8?B?Z3NzOVJLV3VkbFFVdnN0V0tlU2VWanIyOFlDbTBsQzgwa3F5VWdHUmNRbEU4?=
- =?utf-8?B?OXhpbFJET3VxeEpxRUpZcFJveGxHZGh0ZUpHOXBTektteDVyQWQyc0dlMk94?=
- =?utf-8?B?dkhyYjdUdEhybEdDL0lDUnFGNjhrRUFneVJLZE9jbThrZnBuZFNEOW8rdnEv?=
- =?utf-8?B?TlRUQmt2b1duL0xKcndaTWgraGcyUi9Tbk9FMW05RFRQSm1Vb2Yvb2JaUEVJ?=
- =?utf-8?B?T1U4czVjZEtTZUVSbmMrMjRDK0tFWnMraW5icG4rdXNGN0ZLQ3JZRmZGVlUv?=
- =?utf-8?Q?VdIZxa?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2025 14:46:42.8229
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bad62481-28a5-4a21-3ed6-08ddae76f106
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000075ED.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4392
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 17, 2025 at 09:33:20AM -0700, Sean Christopherson wrote:
-> On Tue, Jun 17, 2025, Naveen N Rao wrote:
-> > On Wed, Jun 11, 2025 at 03:45:16PM -0700, Sean Christopherson wrote:
-> > >  static int avic_init_backing_page(struct kvm_vcpu *vcpu)
-> > >  {
-> > > -	u64 *entry, new_entry;
-> > > -	int id = vcpu->vcpu_id;
-> > > +	struct kvm_svm *kvm_svm = to_kvm_svm(vcpu->kvm);
-> > >  	struct vcpu_svm *svm = to_svm(vcpu);
-> > > +	u32 id = vcpu->vcpu_id;
-> > > +	u64 *table, new_entry;
-> > >  
-> > >  	/*
-> > >  	 * Inhibit AVIC if the vCPU ID is bigger than what is supported by AVIC
-> > > @@ -291,6 +277,9 @@ static int avic_init_backing_page(struct kvm_vcpu *vcpu)
-> > >  		return 0;
-> > >  	}
-> > >  
-> > > +	BUILD_BUG_ON((AVIC_MAX_PHYSICAL_ID + 1) * sizeof(*table) > PAGE_SIZE ||
-> > > +		     (X2AVIC_MAX_PHYSICAL_ID + 1) * sizeof(*table) > PAGE_SIZE);
-> > 						    ^^^^^^^^^^^^^^
-> > Renaming new_entry to just 'entry' and using sizeof(entry) makes this 
-> > more readable for me.
-> 
-> Good call, though I think it makes sense to do that on top so as to minimize the
-> churn in this patch.  I'll post a patch, unless you want the honors?
+Em Wed, 18 Jun 2025 23:16:47 +0900
+"Alexandre Courbot" <gnurou@gmail.com> escreveu:
 
-Not at all, please feel free to add a patch (or not, given that this 
-will be a trivial change).
+> Hi Mauro,
+> 
+> On Tue Jun 17, 2025 at 5:49 PM JST, Mauro Carvalho Chehab wrote:
+> > Hi Alex,
+> >
+> > Em Tue, 27 May 2025 23:03:39 +0900
+> > Alexandre Courbot <gnurou@gmail.com> escreveu:
+> >  
+> >> > > > Btw, I was looking at:
+> >> > > >
+> >> > > >         https://github.com/chromeos/virtio-media
+> >> > > >
+> >> > > > (I'm assuming that this is the QEMU counterpart, right?)    
+> >> > >
+> >> > > crosvm actually, but QEMU support is also being worked on.    
+> >> >
+> >> > Do you have already QEMU patches? The best is to have the Kernel driver
+> >> > submitted altogether with QEMU, as Kernel developers need it to do the
+> >> > tests. In my case, I never use crosvm, and I don't have any Chromebook
+> >> > anymore.    
+> >> 
+> >> IIRC Albert Esteve was working on this, maybe he can share the current status.  
+> >
+> > Any news regards to it?  
+> 
+> Albert shared the latest status. There is one in-flight patch series
+> required in qemu [1], and then this branch of vhost-device should
+> contain the necessary support [2]. Albert is waiting for the virtio spec
+> to get merged before sending a pull request IIUC.
+> 
+> [1] https://patchew.org/QEMU/20250217164012.246727-1-aesteve@redhat.com/
+> [2] https://github.com/aesteve-rh/vhost-device/tree/virtio-media
+> 
+> >  
+> >> Note that crosvm does not require a Chromebook, you can build and run
+> >> it pretty easily on a regular PC. I have put together a document to
+> >> help with that:
+> >> 
+> >> https://github.com/chromeos/virtio-media/blob/main/TRY_IT_OUT.md  
+> >
+> > I started looking on it today. Already installed crossvm (I had to
+> > install libcap-devel to build it). Still, I'm not familiar with
+> > crossvm, which is a little be painful. In particular, how can I
+> > enable network on it and speedup it?  
+> 
+> There is a "./tools/examples/setup_network" in the crosvm repository that
+> will setup a TAP device. Once this is done, you can pass the "--net
+> tap-name=crosvm_tap" argument to crosvm, and the network device should
+> be visible and usable.
+> 
+> Let me reply to the rest of your questions in your latest mail, with the
+> most recent logs.
 
-> 
-> > Otherwise, for this patch:
-> > Reviewed-by: Naveen N Rao (AMD) <naveen@kernel.org>
-> > 
-> > As an aside, there are a few static asserts to validate some of the 
-> > related macros. Can this also be a static_assert(), or is there is 
-> > reason to prefer BUILD_BUG_ON()?
-> 
-> For this particular assertion, static_assert() would be fine.  That said,
-> BUILD_BUG_ON() is slightly preferred in this context.
-> 
-> The advantage of BUILD_BUG_ON() is that it works so long as the condition is
-> compile-time constant, whereas static_assert() requires the condition to an
-> integer constant expression.  E.g. BUILD_BUG_ON() can be used so long as the
-> condition is eventually resolved to a constant, whereas static_assert() has
-> stricter requirements.
-> 
-> E.g. the fls64() assert below is fully resolved at compile time, but isn't a
-> purely constant expression, i.e. that one *needs* to be BUILD_BUG_ON().
-> 
-> --
-> arch/x86/kvm/svm/avic.c: In function ‘avic_init_backing_page’:
-> arch/x86/kvm/svm/avic.c:293:45: error: expression in static assertion is not constant
->   293 |         static_assert(__PHYSICAL_MASK_SHIFT <=
-> include/linux/build_bug.h:78:56: note: in definition of macro ‘__static_assert’
->    78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
->       |                                                        ^~~~
-> arch/x86/kvm/svm/avic.c:293:9: note: in expansion of macro ‘static_assert’
->   293 |         static_assert(__PHYSICAL_MASK_SHIFT <=
->       |         ^~~~~~~~~~~~~
-> make[5]: *** [scripts/Makefile.build:203: arch/x86/kvm/svm/avic.o] Error 1
-> --
-> 
-> The downside of BUILD_BUG_ON() is that it can't be used at global scope, i.e.
-> needs to be called from a function.
-> 
-> As a result, when adding an assertion in a function, using BUILD_BUG_ON() is
-> slightly preferred, because it's less likely to break in the future.  E.g. if
-> X2AVIC_MAX_PHYSICAL_ID were changed to something that is a compile-time constant,
-> but for whatever reason isn't a pure integer constant.
+Heh, I just managed to get it work maybe 10 minutes before your e-mail...
 
-Understood, thanks for the explanation.
+I'm building crossvm with:
 
+	cargo build --release --features  "gpu,media,virgl_renderer,x"
 
-- Naveen
+To also have GPU working.
 
+Network setup required a rather complex script to set it up without
+breaking my ssh section with the machine where I'm running crossvm.
+
+In case you need, I'm enclosing it.
+
+Now, I need to allocate another time slot for tests and review.
+
+---
+
+#!/bin/bash
+
+PHY=enp0s25
+BRIDGE=crossvm_br
+TAP=crossvm_tap
+
+IP_MASK=$(ip -br addr show $PHY | awk '{print $3}' | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/[0-9]+')
+if [ -z "$IP_MASK" ]; then
+  echo "Failed to detect IP address on $PHY. Exiting."
+  exit 1
+fi
+
+GW=$(ip -br route show default dev $PHY | awk '{print $3}')
+if [ -z "$GW" ]; then
+  echo "Failed to detect default gateway on $PHY. Exiting."
+  exit 1
+fi
+
+restore_network() {
+  echo "Restoring original network config on $PHY..."
+  sudo ip link set dev $BRIDGE down || true
+  sudo ip link del $BRIDGE || true
+  sudo ip link set dev $TAP down || true
+  sudo ip tuntap del dev $TAP mode tap || true
+
+  sudo ip addr flush dev $PHY
+  sudo ip addr add ${IP_MASK} dev $PHY
+  sudo ip link set dev $PHY up
+  sudo ip route add default via $GW
+}
+
+if ! lsmod | grep -q '^bridge'; then
+    sudo modprobe bridge
+fi
+
+trap 'catch $LINENO "$BASH_COMMAND"' ERR
+
+catch() {
+    echo "Error on line $1: $2"
+    restore_network
+    exit 1
+}
+
+if ip link show $TAP &>/dev/null; then
+  echo "Removing existing tap $TAP"
+  sudo ip link set dev $TAP down
+  sudo ip tuntap del dev $TAP mode tap
+fi
+
+if ip link show $BRIDGE &>/dev/null; then
+  echo "Removing existing bridge $BRIDGE"
+  sudo ip link set dev $BRIDGE down
+  sudo ip link del $BRIDGE
+fi
+
+# Create bridge device
+sudo ip link add name $BRIDGE type bridge
+sudo ip link set dev $BRIDGE up
+sudo ip link set dev $BRIDGE type bridge forward_delay 0
+
+# Add physical interface to bridge
+sudo ip link set dev $PHY master $BRIDGE
+
+# Create tap device
+sudo ip tuntap add dev $TAP mode tap
+sudo ip link set dev $TAP up
+
+# Add tap to bridge
+sudo ip link set dev $TAP master $BRIDGE
+
+# Get an address to the bridge
+sudo dhclient $BRIDGE
+
+# Start crossvm
+
+sudo ./crosvm/target/release/crosvm run \
+  linux/arch/x86/boot/bzImage \
+  -c 4 -m size=4096 \
+  --disable-sandbox \
+  --block debian-12.img \
+  -p "root=/dev/vda1" \
+  --v4l2-proxy /dev/video0 \
+  --gpu backend=virglrenderer \
+  --net tap-name=crossvm_tap,vhost-net
 
