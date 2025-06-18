@@ -1,75 +1,120 @@
-Return-Path: <linux-kernel+bounces-691127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C04BAADE0CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 03:42:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF5DADE0D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 03:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3779E189C833
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 01:42:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C508F7AA72C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 01:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CEB1991CA;
-	Wed, 18 Jun 2025 01:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgJ+FTQW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39C278F36;
+	Wed, 18 Jun 2025 01:47:01 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5BF3A1DB;
-	Wed, 18 Jun 2025 01:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917832F5318
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 01:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750210939; cv=none; b=VLMa9U7Lgg9DXFtL4z/FDZf/pTuyji90UaE5HXKnUdwp5kaxGDmQlpdmra00HzC79SnkqmjVS96slopQ75Ee0zmCWJ/UqkKXcCpVUzQ9P2R8DYTrXLW/B3iFReo34JAFGAeDcDCY0nlWvGqG9JrqTQGNVzxvHPnW0vn9q/Ct5BM=
+	t=1750211221; cv=none; b=rC+DS7LYXtUr8fRE5aCGFUoPuaW7gP5ZKxh5jtZgg++KFSmcRYTFzYMYaqpFvcCOWraWPINL+SKyGYaLgFGDNiLB3LfFdae6pw2IWXKVKTooAgG5AiqvAJjRXZDmH9zWCjxm0dbgO0Xnbv9+iajBGO/BQx9fMQpJsH5E5DK2W8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750210939; c=relaxed/simple;
-	bh=FEyHRwPserWIMl0bLcXdk0UTDFt6hxGSfxHzMK/qJTc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=odIgD3vQ4++92lWbVSBAHmkc5sKxQOXwrdz1tzcs4IwY2NOjoA0pVa5XuRnwVkWadT/IrnThyWVHwyrQrTREw0c7a0XIJZB2pzr1ldhMWAetstknnjEWISV9WhCmuaQ+v01ipMVcSp8QeuBsH6J/WUl0OrHn18dvyxBShhjuXvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgJ+FTQW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6414EC4CEE3;
-	Wed, 18 Jun 2025 01:42:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750210939;
-	bh=FEyHRwPserWIMl0bLcXdk0UTDFt6hxGSfxHzMK/qJTc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qgJ+FTQW1nJrT+v/Lu3IbgYhL2oW9SwyCtb+5WptJLw0WyKvEADL68iJ1ZuFiDsfq
-	 x022DVq8Uruvv815u2aFYcGURA9ob9plHAU+OYhZLZUS3BxirzdsqobnjErTZQJlUo
-	 T4YRNBmGn7mXiWBMJJ0RsQRydeGJQd6ENgjFE4odjJCavUBrea3uuVw8s6Mh1vPh+T
-	 U4Jt02xMj1SrR7c1LrQQmPt7z6v77ETLakS5lzptmAOL/s4Kj4FhJ4A8s7MZs0EYlk
-	 5+H69iYMYGF00S1kH6HOOj+Q7gC0as28hKlhGExcDuVmPXYDqYPDQhxFrLtVtwRtby
-	 D27ohDuhYaZQQ==
-Date: Tue, 17 Jun 2025 18:42:17 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Gustavo Luiz Duarte <gustavold@gmail.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
- <shuah@kernel.org>, Simon Horman <horms@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH net-next v3 0/5] netconsole: Add support for msgid in
- sysdata
-Message-ID: <20250617184217.63c068f2@kernel.org>
-In-Reply-To: <20250616-netconsole-msgid-v3-0-4d2610577571@gmail.com>
-References: <20250616-netconsole-msgid-v3-0-4d2610577571@gmail.com>
+	s=arc-20240116; t=1750211221; c=relaxed/simple;
+	bh=IkbfYb/RF0ZIP6sNS/KjbcqAQD2zZbXRas7o6VH2RRs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fdl2ScOSyKkUayhbyHYKZTUdcQBOinbqbAbhZ7QMOJ1a77YiUXCpJG7EIcVqYlH0a8if17I2dSbcQ15nSYRHDxlUBxlPHCJShMRoLlm+S4jnXTQQaR3wi8F23gN77osKtFTEr6F+xH3S6G5AO5838zbyylhUTbbF15GJusiYV+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bMRPC1mJKz1W3TX;
+	Wed, 18 Jun 2025 09:44:31 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+	by mail.maildlp.com (Postfix) with ESMTPS id CC1B018005F;
+	Wed, 18 Jun 2025 09:46:55 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 18 Jun 2025 09:46:55 +0800
+Message-ID: <68eb3c3b-b67c-46e7-a6a5-044d4415e2b7@huawei.com>
+Date: Wed, 18 Jun 2025 09:46:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] erofs: impersonate the opener's credentials when
+ accessing backing file
+To: Tatsuyuki Ishi <ishitatsuyuki@google.com>, Gao Xiang <xiang@kernel.org>,
+	Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, Jeffle Xu
+	<jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>
+CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<shengyong1@xiaomi.com>, <wangshuai12@xiaomi.com>
+References: <20250612-b4-erofs-impersonate-v1-1-8ea7d6f65171@google.com>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <20250612-b4-erofs-impersonate-v1-1-8ea7d6f65171@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 
-On Mon, 16 Jun 2025 10:08:34 -0700 Gustavo Luiz Duarte wrote:
-> This patch series introduces a new feature to netconsole which allows
-> appending a message ID to the userdata dictionary.
+
+
+On 2025/6/12 18:18, Tatsuyuki Ishi wrote:
+> Previously, file operations on a file-backed mount used the current
+> process' credentials to access the backing FD. Attempting to do so on
+> Android lead to SELinux denials, as ACL rules on the backing file (e.g.
+> /system/apex/foo.apex) is restricted to a small set of process.
+> Arguably, this error is redundant and leaking implementation details, as
+> access to files on a mount is already ACL'ed by path.
 > 
-> If the msgid feature is enabled, the message ID is built from a per-target 32
-> bit counter that is incremented and appended to every message sent to the target.
+> Instead, override to use the opener's cred when accessing the backing
+> file. This makes the behavior similar to a loop-backed mount, which
+> uses kworker cred when accessing the backing file and does not cause
+> SELinux denials.
+> 
+> Signed-off-by: Tatsuyuki Ishi <ishitatsuyuki@google.com>
+> ---
+>   fs/erofs/fileio.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
+> index 7d81f504bff08f3d5c5d44d131460df5c3e7847d..df5cc63f2c01eb5e7ec4afab9e054ea12cea7175 100644
+> --- a/fs/erofs/fileio.c
+> +++ b/fs/erofs/fileio.c
+> @@ -47,6 +47,7 @@ static void erofs_fileio_ki_complete(struct kiocb *iocb, long ret)
+>   
+>   static void erofs_fileio_rq_submit(struct erofs_fileio_rq *rq)
+>   {
+> +	const struct cred *old_cred;
+>   	struct iov_iter iter;
+>   	int ret;
+>   
+> @@ -60,7 +61,9 @@ static void erofs_fileio_rq_submit(struct erofs_fileio_rq *rq)
+>   		rq->iocb.ki_flags = IOCB_DIRECT;
+>   	iov_iter_bvec(&iter, ITER_DEST, rq->bvecs, rq->bio.bi_vcnt,
+>   		      rq->bio.bi_iter.bi_size);
+> +	old_cred = override_creds(rq->iocb.ki_filp->f_cred);Yeah, rq->iocb.ki_filp keep the opener's cred, so:
 
-Breno, could you review the last 3 patches? 
-These LGTM
+Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
+
+Thanks,
+Hongbo
+
+>   	ret = vfs_iocb_iter_read(rq->iocb.ki_filp, &rq->iocb, &iter);
+> +	revert_creds(old_cred);
+>   	if (ret != -EIOCBQUEUED)
+>   		erofs_fileio_ki_complete(&rq->iocb, ret);
+>   }
+> 
+> ---
+> base-commit: cd2e103d57e5615f9bb027d772f93b9efd567224
+> change-id: 20250612-b4-erofs-impersonate-d6c2926c56ca
+> 
+> Best regards,
 
