@@ -1,144 +1,139 @@
-Return-Path: <linux-kernel+bounces-691948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF08AADEAE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:53:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D74ADEAEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AE097A1784
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:49:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFEC37A3B6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 11:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE71D2EBBB2;
-	Wed, 18 Jun 2025 11:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0A32C031D;
+	Wed, 18 Jun 2025 11:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjEpijrh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kmgZ7zvT"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2732DE215;
-	Wed, 18 Jun 2025 11:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5431293C78;
+	Wed, 18 Jun 2025 11:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750247212; cv=none; b=N2tOJfOvYZbYC/tycSeMMCAJTnhibLZf5QfU12omgyYB1sqEE5cWAku/FnBOx/+DW57Yufl+pTNjl1CZS+fsJxbL6d426brnqdIDvvC0ucUHDMTc2VvBxC7plC8GjvzdW41rhjZNPb+AOdOaN1SaBMKfyOF9gzxPdbeV7Ejfxtk=
+	t=1750247239; cv=none; b=YXclgjEQg9lMCDaZosBRRWPrqPnQIkwCfVsEukRHlg3psvHKgNlqW23Lto82rel7cuy0LbC9CCrQBzG/DDb8T9snYpb806GTZm6ujOD8TcPSm3/1QYUfYsrOshKbCoxxQ9Cgxam2Iqd2042yryxulEZ5qMbxN/gXAgfM96zOgQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750247212; c=relaxed/simple;
-	bh=Eu6NvKMYNdmD8XfJnfUGiXHKuW5qDdQasrskHf5QPZ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O/38wzLXqEMtP7TPta0CAsbiXyrzWZ1BgzQV0WWP2BYTlBLDlWSyZJ1gOTJOFE1HtnY4B8iycwFCHJBc7JgmkHyCp2XU3+D39vNidxcCuA7ODUZeeHckN5UJ+pv8a49CUkWPtqU1yL1VhJ1O85rD0L9nW+y5EZDAKz1126vZ6iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjEpijrh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 920EDC116B1;
-	Wed, 18 Jun 2025 11:46:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750247211;
-	bh=Eu6NvKMYNdmD8XfJnfUGiXHKuW5qDdQasrskHf5QPZ8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fjEpijrhqmBNi8KU6pghGSfrWjrHcK2mBeSSvc2NDXzB7WXtrfLdwY8ITSuZ0SLW4
-	 UOflw5ezusNQkSFMEDNC7Lin8D068h2KUvM9OXhpG6uMfCZKWAwxbd/X8pGTRtUM5f
-	 xxSn8zU6tdbY/GvwUziDCZHUxFyIH4YrtSLbpPKCCy8uKkOnoG/71aCc1i5k7ZkjcC
-	 0WyFGvHe9i51p1Y8hXnnh+3hM/uYlsVEQGfw8fkirnoyVe5qxoByk3xrPJp4Q20KK4
-	 Sfr4Sy7eDT/yGeAHl7Y5DOJXXYpsMmct0qoA5o4fy7lMEtttq6T9dimECUthi6IHQV
-	 Iuxlo5NIn76lA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uRrFh-000000036VE-3W9N;
-	Wed, 18 Jun 2025 13:46:49 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>,
-	"Breno Leitao" <leitao@debian.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Donald Hunter" <donald.hunter@gmail.com>,
-	"Eric Dumazet" <edumazet@google.com>,
-	"Ignacio Encinas Rubio" <ignacio@iencinas.com>,
-	"Jan Stancek" <jstancek@redhat.com>,
-	"Marco Elver" <elver@google.com>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	"Paolo Abeni" <pabeni@redhat.com>,
-	"Ruben Wauters" <rubenru09@aol.com>,
-	"Shuah Khan" <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	joel@joelfernandes.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	lkmm@lists.linux.dev,
-	netdev@vger.kernel.org,
-	peterz@infradead.org,
-	stern@rowland.harvard.edu
-Subject: [PATCH v6 15/15] docs: sphinx: add a file with the requirements for lowest version
-Date: Wed, 18 Jun 2025 13:46:42 +0200
-Message-ID: <e5666ba0c2867a0e78ff91727e827d706ce08668.1750246291.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1750246291.git.mchehab+huawei@kernel.org>
-References: <cover.1750246291.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1750247239; c=relaxed/simple;
+	bh=e9U0n3o6Pcz4xU0TkYwH6TgkEelJaXWWf/uNPsoHr0s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eTesnnMgJsf8+j65oQY82A1F67KqsegWVo9ivzuYSOA3I7YYdJR7vJosmSz7oucdtmhmJPqLpGev6MSyi4Q1sid4CQ6tKhjlHrLfZK5x0AqUmEkxivGAzBOiPMf2mif0rC8dsSc/eSpZtga9EQxFd7iBdu3LkvMmh5pdCL64YM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kmgZ7zvT; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b26df8f44e6so7441085a12.2;
+        Wed, 18 Jun 2025 04:47:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750247237; x=1750852037; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FQfwPBYxs3p+u6aXaKNnP0EG9aszC5zPogIUvJ9ZXbY=;
+        b=kmgZ7zvTxuyJm7pITWbzf9CdwgAAcSCr172l/8RMAxyWsZP5h6OsGBscRKsujbwU6P
+         lFn9pXpCZCiTTqaCNok+XC41/wICpr7LKqmnAeWKnnD1WY3J1tynXJODM26E4H9I9LoJ
+         K6NMI8iAtkolRBpT5bScjUz3GGoMgaJntmSleawZOh74ZO9YS3K9b+Iis1bxmLYzuFaN
+         CGYwooDx7FIG26B+xUhsX0AoB5STfyeY1f+B/xsqzR3gya2t+zTcSC4STbSADaBxIAeY
+         gLdk8QynBW8oUCmRRrsyOpmY+UZeX7B9RbxnwsOPt3sbf3Qxgc/6z3B8Xz6vPxrxVfEk
+         RzQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750247237; x=1750852037;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FQfwPBYxs3p+u6aXaKNnP0EG9aszC5zPogIUvJ9ZXbY=;
+        b=OfV49KMLk0092b8f11jfy4jLIJu5pOCG7q4xJHRJWD/ab4SbZJu0h1yCO+dqZNE3V0
+         NMyhFLQNSmltMKV3/WaEL8WGEIBa+W6QZoOPpaTV2C4dflEcCd0r4wLcnzDXEzGBhB8+
+         ioKgpjJSOoVUEDy58jmnXkwgRZb8B5Gq2Ff02Hx7885acLxSgjjgsCh+8qRF1LGt3hf1
+         ZLOIa0zDffbkefMe2CHkl3g6JKDSgZnQ4nMb7qUt0j9mcMMyEIQzhnm2XOlfabNTUC0w
+         481c4oGB1QK1lwtWcj3TJ/Kij6jF3iLGUMA75w2haCuHk2wRHn3oybl58Agh4oDHmPhA
+         iIkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVSGWRgoloICh4PHXubtQ+Cm8e24tDs3pOtwSVWXh1aGPuPTn7uMBwlARUjWVkiuurHFf6MxlXb8ver8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxufyFh+zpkWrSB1s1ZQpTO+TmNYjbYAeB4q49IYuphG/Mu3VpK
+	Un9O+wn+Aa02dlxT5jd1wY2ZUTySH2cKRYwkQRFRp5k/Fiuww4l3B1zg
+X-Gm-Gg: ASbGnctLHGoqw1SXdepC3OCemCI450FH8Da+XyOtcHic75vscL7UQMWAYbDkvXOgUoe
+	YMvMhOCMiHW+F7NAhiPiei4/89jromcJpbRyjEesh1Mey+itE/qqR1a+6vH3U5mDlctFQNaAQND
+	h5KXmq6Z0NqwDUa14TT29RhclliC9sUYkTU3/M+livlP1G9zGyhyaK+LYbTBDvr7myK8wMe6oqC
+	z9Du/FzV/OItJ5kaNxcDeOimeoG2MNuZ4+UZ2u16jcMgVYx+lvZl/DkpnhIB2iljsL8xxIaqXx/
+	6bD9TDdnB3z2hvPwaOnrrxvptqNtUUy/ENlYf4yfvWhu
+X-Google-Smtp-Source: AGHT+IF0uhweeaSnklYVCzHzfOVC4PIDrn4Uv4wiU4Ph2g+9+GzDQmh5vM9BoHbZraXPrfBr9NWc+A==
+X-Received: by 2002:a17:90b:3a05:b0:313:62ee:45a with SMTP id 98e67ed59e1d1-313f1cd69femr24532130a91.13.1750247236929;
+        Wed, 18 Jun 2025 04:47:16 -0700 (PDT)
+Received: from [127.0.0.1] ([2403:2c80:6::3058])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313c1b595aesm14097154a91.35.2025.06.18.04.47.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Jun 2025 04:47:16 -0700 (PDT)
+Message-ID: <d6481ddf-67e3-41ed-8ecf-d11ffdc6f4aa@gmail.com>
+Date: Wed, 18 Jun 2025 19:47:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] md/raid1: Fix stack memory use after return in
+ raid1_reshape
+Content-Language: en-US
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Song Liu <song@kernel.org>, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250611090203.271488-1-wangjinchao600@gmail.com>
+ <5143c5c3-3a77-919f-0d38-8adb0e8923e9@huaweicloud.com>
+ <06935480-a959-4e3f-8e41-286d7f54754a@gmail.com>
+ <9c7d5e66-4f5f-b984-c291-f19c3d568b85@huaweicloud.com>
+ <938b0969-cace-4998-8e4a-88d445c220b1@gmail.com>
+ <8a876d8f-b8d1-46c0-d969-cbabb544eb03@huaweicloud.com>
+ <726fe46d-afd5-4247-86a0-14d7f0eeb3b3@gmail.com>
+ <c328bc72-0143-d11c-2345-72d307920428@huaweicloud.com>
+ <9275145b-3066-41e5-a971-eba219ef0d3c@gmail.com>
+ <a4f9b5a2-bf83-482e-e1fe-589f9ff004a1@huaweicloud.com>
+ <0ccb9479-92ac-4c8e-afdc-a1e3f14fe401@gmail.com>
+ <351b7dc4-7a2c-4032-bf2c-2edaa9da9300@gmail.com>
+ <d7022eb3-4dee-8d15-1018-051b882467b2@huaweicloud.com>
+From: Wang Jinchao <wangjinchao600@gmail.com>
+In-Reply-To: <d7022eb3-4dee-8d15-1018-051b882467b2@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Those days, it is hard to install a virtual env that would
-build docs with Sphinx 3.4.3, as even python 3.13 is not
-compatible anymore with it.
+On 6/16/25 19:32, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/06/16 18:11, Wang Jinchao 写道:
+>> On 6/13/25 19:53, Wang Jinchao wrote:
+>>> On 2025/6/13 17:15, Yu Kuai wrote:
+>>>> Hi,
+>>>>
+>>>> 在 2025/06/12 20:21, Wang Jinchao 写道:
+>>>>> BTW, I feel raid1_reshape can be better coding with following：
+>>>>
+>>>> And another hint:
+>>>>
+>>>> The poolinfo can be removed directly, the only other place to use it
+>>>> is r1buf_pool, and can covert to pass in conf or &conf->raid_disks.
+>>> Thanks, I'll review these relationships carefully before refactoring.
+>>>>
+>>>> Thanks,
+>>>> Kuai
+>>>>
+Hi,
+I’ve changed r1bio_pool to a pointer type and sent the patch.
+As for the other two optimization suggestions, I found it challenging
+to implement proper error rollback after the changes.
+I tried a few times but couldn't come up with code I’m happy with,
+so I’ve decided to put it on hold for now.
 
-	/usr/bin/python3.9 -m venv sphinx_3.4.3
-	. sphinx_3.4.3/bin/activate
-	pip install -r Documentation/sphinx/min_requirements.txt
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/doc-guide/sphinx.rst        | 15 +++++++++++++++
- Documentation/sphinx/min_requirements.txt |  8 ++++++++
- 2 files changed, 23 insertions(+)
- create mode 100644 Documentation/sphinx/min_requirements.txt
-
-diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
-index 5a91df105141..13943eb532ac 100644
---- a/Documentation/doc-guide/sphinx.rst
-+++ b/Documentation/doc-guide/sphinx.rst
-@@ -131,6 +131,21 @@ It supports two optional parameters:
- ``--no-virtualenv``
- 	Use OS packaging for Sphinx instead of Python virtual environment.
- 
-+Installing Sphinx Minimal Version
-+---------------------------------
-+
-+When changing Sphinx build system, it is important to ensure that
-+the minimal version will still be supported. Nowadays, it is
-+becoming harder to do that on modern distributions, as it is not
-+possible to install with Python 3.13 and above.
-+
-+The recommended way is to use the lowest supported Python version
-+as defined at Documentation/process/changes.rst, creating
-+a venv with it with, and install minimal requirements with::
-+
-+	/usr/bin/python3.9 -m venv sphinx_min
-+	. sphinx_min/bin/activate
-+	pip install -r Documentation/sphinx/min_requirements.txt
- 
- Sphinx Build
- ============
-diff --git a/Documentation/sphinx/min_requirements.txt b/Documentation/sphinx/min_requirements.txt
-new file mode 100644
-index 000000000000..89ea36d5798f
---- /dev/null
-+++ b/Documentation/sphinx/min_requirements.txt
-@@ -0,0 +1,8 @@
-+Sphinx==3.4.3
-+jinja2<3.1
-+docutils<0.18
-+sphinxcontrib-applehelp==1.0.4
-+sphinxcontrib-devhelp==1.0.2
-+sphinxcontrib-htmlhelp==2.0.1
-+sphinxcontrib-qthelp==1.0.3
-+sphinxcontrib-serializinghtml==1.1.5
--- 
-2.49.0
+Thanks for your guidance.
+>> .
+>>
+> 
 
 
