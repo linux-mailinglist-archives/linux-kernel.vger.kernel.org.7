@@ -1,157 +1,148 @@
-Return-Path: <linux-kernel+bounces-691435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A385ADE493
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:29:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19772ADE497
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0BC5174FE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:29:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A83A13B61F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7927627E1C6;
-	Wed, 18 Jun 2025 07:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F59B27F00B;
+	Wed, 18 Jun 2025 07:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TNNr0NEp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="aLX4I420"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7093B27FB2E;
-	Wed, 18 Jun 2025 07:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4AF2046B3;
+	Wed, 18 Jun 2025 07:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750231721; cv=none; b=hyx4xMwcHN0cBTXEJsmDP/t/RfNLxR5/vAszLJcrJnwGFIfIeGVjn8b3JLdgpWrj5BjKc0vqY5q4o43SFHPsUOpaSqbmAZ9B9swVQpxblGV9E8jn3viiOlNAOEtscUIqPa/4HTuFCRdrV7yDcsryQfKJeowpr0WhOVPfwdUvpDg=
+	t=1750231749; cv=none; b=KKoykxybxdwtEThOlg9NhPOWY+qkz4gq69ANG0a0To9fl+zM20iFhT3pHdsE3cSVpOq7j47OQ/6aXOigR0bBcCz2hhuNY4IPbTunip5BHvqDXQmzmd4PYqpTBbsV/QVXF1rEWZY58zgGPd2Akw3LrY2UqjRxopkbeF+DpTrOTFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750231721; c=relaxed/simple;
-	bh=b+HMcj2ek0nB7t/THuyAIn1KCdSizhm44JgQ4PKMQ+8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KSAh1EB/4UiH5OZqhLwRlbe8LTz9YRRMfE/J3wsD/NGo6lHY/V9D5S9fODkW2C1efI7mwlZ5/NwUxtOxIY1XpGNx8ewfa6epqpJuK40+Dh8DNezoVb3BPa+9ddHdGeVrnRS/ORLKee0dNRx1c1MVoXwx9/MxHY47hZWKwZMyaA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TNNr0NEp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55I1Q6vU015543;
-	Wed, 18 Jun 2025 07:28:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=I9W+fzRJ4P7
-	Z+rK1AuztPn1ghFhOvkRoQaGwG5maVq4=; b=TNNr0NEpUjNXm4UK0U8/rKCJPSL
-	t7BqYAJa2JJgWysOadBFkaBFoKnMMa818AxaW9uTuzTVswTz5jOA8+gx31JQMg6+
-	Hx68n0iauLv6a/QMLjEcST0zWaPQb2c4D3XM0KSNVTcf0lG5kZU/FSTxlf6uzSMt
-	0fcKKAtJh7opwwXh7TIW3+pcLi5/VckvS6CjLMF/enBAwumsUkvytbYvhLxP8g8T
-	2HTG+6Wp9I+jaxhVYSRIxZ3END7rEmkZD6+zC7gm94LuVVFKjGiHpZKf9XLYICZq
-	iXFBmDWIvN8YiRL54uMBcwf93gfr24jOlUakCvg212cFsYxNfyNriBbapVA==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791hfk7ub-1
+	s=arc-20240116; t=1750231749; c=relaxed/simple;
+	bh=vbqCH5bqQ1AIc3Vn7Y7IkzuSaS7vImzq2PcScFKzkLM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VcNDKt7dkeIE2rBCG9wB2ogqCIx53Pd9RLexXI85fJgvl5PnxX1JiqekcqrL25bYF9c5gRoOe+Qorrwes+N9OsD+pk4WlYVSGCeBwKCRTfZ5zL+rbi09q9yMLBGWnDc3Cy9tJECiH7j2Lk06NiM5rTpU5xxvEOcHfu0DlMHMP9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=aLX4I420; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55I5Gfm3021060;
+	Wed, 18 Jun 2025 00:28:51 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=j/1ti6TbzFKoUASfVh2csn+pm
+	T/Ygcnd7my2w4/SjRY=; b=aLX4I420Gk5oU0f2oJ2UUL0zK6DPiJOqmVhjdCUt7
+	kwhg4T3cuic1o3eNOXzO/f0DDe638aUQkBRjA2wukep3KB0wtxDj4Wi4IzBK1iHo
+	CYwmaHzOCXwgf+YiA7Djm959cm5bBrkYC/KBUEAQi24wCpHUhakXx2PXniOJOGH3
+	On3gEI6FPDoQt2HEJ4nE/sOLVp3gyQKfoftS+T7rSQwyZT5RGqpe0M1nm0OHGOI0
+	kxWfFLANNSThYUAdN+9nceBFf2wVv+Uq3K18QYQ9v1im/wzfD6yNEVCD9K265L4p
+	6bjXcmbMBnU1BkoZfGNb7FnKU+TaD51MA57yJYlubetgA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 47bgt9gxs1-2
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Jun 2025 07:28:37 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 55I7SNjp024603;
-	Wed, 18 Jun 2025 07:28:33 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 479k1gnd99-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Jun 2025 07:28:33 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55I7SXP3025018;
-	Wed, 18 Jun 2025 07:28:33 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-sartgarg-hyd.qualcomm.com [10.147.242.251])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 55I7SWnh025007
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Jun 2025 07:28:33 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2339771)
-	id C88205C1; Wed, 18 Jun 2025 12:58:31 +0530 (+0530)
-From: Sarthak Garg <quic_sartgarg@quicinc.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
-        quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
-        quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
-        quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com,
-        Sarthak Garg <quic_sartgarg@quicinc.com>
-Subject: [PATCH V3 4/4] arm64: dts: qcom: sm8550: Remove SDR104/SDR50 broken capabilities
-Date: Wed, 18 Jun 2025 12:58:18 +0530
-Message-Id: <20250618072818.1667097-5-quic_sartgarg@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250618072818.1667097-1-quic_sartgarg@quicinc.com>
-References: <20250618072818.1667097-1-quic_sartgarg@quicinc.com>
+	Wed, 18 Jun 2025 00:28:51 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 18 Jun 2025 00:28:49 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 18 Jun 2025 00:28:49 -0700
+Received: from maili.marvell.com (unknown [10.28.36.165])
+	by maili.marvell.com (Postfix) with SMTP id 1918A3F7043;
+	Wed, 18 Jun 2025 00:28:46 -0700 (PDT)
+Date: Wed, 18 Jun 2025 12:58:45 +0530
+From: Ratheesh Kannoth <rkannoth@marvell.com>
+To: Mina Almasry <almasrymina@google.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <linyunsheng@huawei.com>
+Subject: Re: [RFC]Page pool buffers stuck in App's socket queue
+Message-ID: <20250618072845.GB824830@maili.marvell.com>
+References: <20250616080530.GA279797@maili.marvell.com>
+ <CAHS8izN6M3Rkm_woO9kiqPfHxb6g+=gNo7NEjQBZdA4d+rPPnQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE4MDA2MiBTYWx0ZWRfX+4UU0eZ9eK4s
- tBWftHeN6PBwDB19U1o23yWARs38rs8zAMmUyMejPbo9sJ/YV3wBJ8MmpZQyksKE8rmwpml2avb
- p2W+KQW7sR70wKMyykuOefT1UFdkASTHQSxVmxU7NvovUwH+BgIrK47jSoz5mIPHsy6bi3pTIHT
- 4ehS6kC/i4cQ+Er0XtYdtAnRQJP+3FzUsxtALPr72Lq8qewJvX88k7BRQkwNZmTO9vwn+GV2HMi
- rdwPfuUlktoiklt2hViYXjEEwLcYG2iRSawOVmI20lCRXpg73FUmxaJDPRxzpTHBAzsutVLxAzn
- 4W4h01yZb1zH4j8mqZNx7gi+BL69u+J00DhnYobYRx7JwAY7qksDhvsmiD7GNj/nlnUcE2SpyLv
- P3DlRCNIJHV/EmahoYuU6qGzi4FsijS7jdzf85YaOdXjsgUEUNnDvFhzcaPj9lCa5WXUIfl8
-X-Authority-Analysis: v=2.4 cv=VvEjA/2n c=1 sm=1 tr=0 ts=68526aa5 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=V56PYd9v_U8fUFI648UA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: Y9Jjw3IIg1SBr2fvQobulZGXaqIkjZ9r
-X-Proofpoint-ORIG-GUID: Y9Jjw3IIg1SBr2fvQobulZGXaqIkjZ9r
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAHS8izN6M3Rkm_woO9kiqPfHxb6g+=gNo7NEjQBZdA4d+rPPnQ@mail.gmail.com>
+X-Authority-Analysis: v=2.4 cv=IrYecK/g c=1 sm=1 tr=0 ts=68526ab3 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=1XWaLZrsAAAA:8 a=LbbWhBTsJFo73-GiDgsA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: MojllMER0MWFaBD6ieN4vKsoXe28a3O-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE4MDA2MyBTYWx0ZWRfX/JOIEACFYP1L ojSEd6/Vut5H2J7xPih6MS2HeL5Z1vurqzlJZi8Too7zAGfLW7sxnZiEKRFjZELYNfSHhXMhdCz uVu039ZwvToZXSYyTwuhxKmoaOi5tFWa2Y2yGxWV9oROezJ1iwVpBaYEeBIAvoyB/14V7Np6LgH
+ UeDDR5kx5IjfAV3u7hRVQnzTD7HJ3dZ4J8emoJWz9CwytsUKnB2wiNXMNfi4W0s9mIc/v0yhpxF Xw5ReNjPpQsGOtyicQGuTiyIrWI9Gbr0Tj7ZpWU64iE3j3IW8+arfOKgsQJjHFtHsh+LmfVleUa ZLtdJHo/rF6tGW9i1gB+tFYkSOOYjT4wcIR6JTjmApoZ8Amq0ngl0PnQ4Xbjvl7qLeVg1AYyGVl
+ P3hYLCQwgGROUYXscXcM1FUmxsUG2a8VrjQ2yc21BW4zpfS0p0iUNtvBMIqBWroGVbWxtKtz
+X-Proofpoint-ORIG-GUID: MojllMER0MWFaBD6ieN4vKsoXe28a3O-
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-18_02,2025-06-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=999
- malwarescore=0 impostorscore=0 clxscore=1015 bulkscore=0 suspectscore=0
- priorityscore=1501 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506180062
 
-Kernel now handles all level shifter limitations related to SD card
-modes.
-As a result, the broken hardware capabilities for SDR104 and SDR50 modes
-can be removed from the device tree.
-Additionally, due to level shifter constraints, set the maximum
-frequency for High Speed (HS) mode to 37.5 MHz using the
-max-sd-hs-frequency property for sm8550.
+On 2025-06-18 at 02:30:04, Mina Almasry (almasrymina@google.com) wrote:
+> >
+> > Those packets will never gets processed. And if customer does a interface down/up, page pool
+> > warnings will be shown in the console.
+> >
+>
+> Right, I have a few recommendations here:
+>
+> 1. Check that commit be0096676e23 ("net: page_pool: mute the periodic
+> warning for visible page pools") is in your kernel. That mutes
+> warnings for visible page_pools.
 
-Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sm8550.dtsi | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Thanks. netdevice is not gettting unregistered in octeontx2 driver while interface
+is brought down; but page pool is destroyed.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-index 82cabf777cd2..2c770c979d39 100644
---- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-@@ -3180,6 +3180,7 @@ sdhc_2: mmc@8804000 {
- 			iommus = <&apps_smmu 0x540 0>;
- 			qcom,dll-config = <0x0007642c>;
- 			qcom,ddr-config = <0x80040868>;
-+			max-sd-hs-frequency = <37500000>;
- 			power-domains = <&rpmhpd RPMHPD_CX>;
- 			operating-points-v2 = <&sdhc2_opp_table>;
- 
-@@ -3191,9 +3192,6 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
- 			bus-width = <4>;
- 			dma-coherent;
- 
--			/* Forbid SDR104/SDR50 - broken hw! */
--			sdhci-caps-mask = <0x3 0>;
--
- 			status = "disabled";
- 
- 			sdhc2_opp_table: opp-table {
--- 
-2.34.1
+>
+> 2. Fix the application to not leave behind these RAW6 socket data.
+> Either processing the data incoming in the socket or closing the
+> socket itself would be sufficient.
 
+Customer is using opensource ping (from iptutils). They run a
+ping to an ipv4 address (ping 192.x.x.x -A &). Here the app opens both
+RAW4 and RAW6 sockets. IPv6 router advertisement messages from the network
+lands up in this RAW6 socket qeueue. And ping App never dequeue from this RAW6
+socket queue. They want to avoid killing and starting the ping APP.
+Customer creates  RAW6 socket with other Apps also (third party) and page pool
+issues pops up there as well.  Ping App reproduction steps are shared to us;
+so quoting the same.
+
+>
+> > Customer was asking us for a mechanism to drain these sockets, as they dont want to kill their Apps.
+> > The proposal is to have debugfs which shows "pid  last_processed_skb_time  number_of_packets  socket_fd/inode_number"
+> > for each raw6/raw4 sockets created in the system. and
+> > any write to the debugfs (any specific command) will drain the socket.
+> >
+> > 1. Could you please comment on the proposal ?
+>
+> Oh boy. I don't think this would fly at all. The userspace simply
+> closing the RAW6 socket would 'fix' the issue, unless I'm missing
+> something.
+>
+> Having a roundabout debugfs entry that does the same thing that
+> `close(socket_fd);` would do is going to be a very hard sell upstream.
+
+>
+> I think we could also mute the page_pool warning or make it less
+> visible. The kernel usually doesn't warn when the userspace is leaking
+> data.
+>
+> We could also do what Yunsheng suggests and actually disconnect the
+> pages from the page_pool and let the page_pool clean up, but that may
+> be a complicated change.
+>
+> Honsetly there are a lot of better solutions here than this debugfs file.
+Thanks a lot !. Could you suggest some solutions. I will try to work on those.
+
+>
+> --
+> Thanks,
+> Mina
 
