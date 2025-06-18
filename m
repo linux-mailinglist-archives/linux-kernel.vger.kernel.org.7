@@ -1,148 +1,124 @@
-Return-Path: <linux-kernel+bounces-692478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08CDAADF21E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:02:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9B23ADF223
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D57618944AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:02:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 522043AC20C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACA82EFD9C;
-	Wed, 18 Jun 2025 16:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D072F0043;
+	Wed, 18 Jun 2025 16:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LijKba0L"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M/AfatNx"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDD116EB42
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 16:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877BE7080D
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 16:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750262551; cv=none; b=fdOsAZocLRhfpYtb1/Hw+42VPdLhqbLhfNyKhYP5j51ybbQwWggVp1ASDX+lT1u3IyNKqqX9YUeidHcq4zH2QHUTQYUwO69T7yzK9oN+j1ivP5UG9e4HhayzLK3VSQ0Hs1XXpIl9jZeHx3TOB3U5yyVMRWVVCMZVxx/Pri8Lvpc=
+	t=1750262620; cv=none; b=MBkkzYWVoZ7Lt+rMCLGBC0o5u7kWhk5zUoN+RV4bwqgM4EiP4evfyyYUVGigY5V/sj7PoBbLfO9ro55JdDo1ETTPYLY9cEDmSo7vSg2VnK7LoZTgpEmd9QljiSsuggbHTG0vKKqqCQXTNgIKzA1tmIsJc2AvxX6IgxQrP3VnWwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750262551; c=relaxed/simple;
-	bh=szpCxpm/j2ZbcXcfCS9kCbBVMGO+lYR+TOvNQfWht2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rtp/MClrQsMcsk//Z+0GiJf1f9nf9xkHao93UUEiKDMU6Fpp+wHxIUH+U1CMD6eHnSRbJ/+JuChdQWtS8Yuir9sdm6xqIw+2D8oZm4ZTRH8wHWlkUbPhrRYGvMWZzQrH6LwqZOurmyTEbHwRQNhuwMqMOWNyF78qihZgi5SsYs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LijKba0L; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-401f6513cb2so511911b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 09:02:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750262549; x=1750867349; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yHWHgwA/STLjiBuexUHGmnhpSwfTae10x6GG0C7Yl58=;
-        b=LijKba0LwOio5PKcfPJHGJj8p/7ATCv3EVfcxwvX1Swv95zZWG3k/ayHqEZOm8YnNc
-         XQkrxq/6pjXIEnq6PTtgBHTVS8y1sYGJNqhJQBwsyNjwAPblhm2iRrVxU62FxCRMY6rZ
-         D2g8Y1RLT3KtJrp66E9ORS+efui1VtIhjo8upE6jqyRBivRli42hRJ6eDhzNfcLeAN7U
-         K9PtSXtWT5mGya8OFt0dIZ/XdSemPHNhBz7WDHsx8JHm5VJl22mwph7ESUccg2I0Uk5V
-         7Hn243BsD/HZI//gcF9Eo/MqAhtYQXUU51EYCNZTLSx+WW0yX5KbSEabwud28+cRqiEB
-         sqDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750262549; x=1750867349;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yHWHgwA/STLjiBuexUHGmnhpSwfTae10x6GG0C7Yl58=;
-        b=WfoR3Evj8vRdqnrikig59Tkz3qOWCEtB4UY5F1PYVhNLE6pbEOJOG052besfFZviZF
-         a4nDw1SYSrW2TTfTq+oT8Wt5N2RHB2h/CxKzTkr4up4wYHP6EbhKXVLSxzxecqOLpFi6
-         Mvj+vabuZmJbN7DXSi2dEAGpt4RyEXSuE+VjD0ulfZg5VWKlP4pUUu2xpmfFoRBwdNwP
-         MEdmIi3+3pmZgSOMbMIB5nrAB68DSQr89CN8OISo1dtQGVximFW5XLgt576gZvT/j73F
-         Jt+HpcZOWHIyBX2lEQTOdgPulIf6RefjTvMY0t+CwOb51ViSE2atcYuNwCHC7Pc1RAx/
-         dH8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVSh2peXbl+2U00cRAsK+nJ80gyWQgRZEH6f+xxxaP3yGjo8H60pfoOm+Plg8ss4nFFzmJK+/KVCGhAxiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUhSMvBT5kb6YCmCZvKsubu0mrnyDeKEKnlR3DA2J95LAm5/wy
-	atnCIHK/rZY/UL1XE+uDXeaIu5+PXXVTz9wF0PQm/mM3a1FITX99nVN+FimkIitPM7k=
-X-Gm-Gg: ASbGncvMDlrsVxhl+8d6BuFpe8PXJMNu9E8EnYjNIxRFiPN1kT4Pdjlk4Le13D+855k
-	olH756IS4wkxwbBbgomlGJdqGQScu7HBsnyRjUYq4GSUPhoTc2kviK7z0F5OAEispIiI8kAJQGW
-	VazxtMJV3gr4cj+REcQuexr23sQtQM8snsFgej7E8Uukq42sxxe/zxmn5Vo4sm8SZFnREpJtfGn
-	sea5t6/Yukj3EeMJJvRfn9oAE2IYu/fK22p7xnpQSwtc4k5tTO+b6NErwA2auAo32MU8aY+ucSR
-	BDGXAsaHBjzyeOUbxq3g5KCQV+rR3hGjZy+msNg1NBa12/CwLT/TRrFDU3s4bH299BHDqg==
-X-Google-Smtp-Source: AGHT+IFdKAGH3Dc73tUBzIIxeMD+asyvvqOBafuZVazwZnURkN8zz0IH1vKpB9D7wWwudeN/TRUMfQ==
-X-Received: by 2002:a05:6808:4f26:b0:40a:5380:b8d1 with SMTP id 5614622812f47-40ab510f58emr105690b6e.3.1750262549102;
-        Wed, 18 Jun 2025 09:02:29 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:1b3b:c162:aefa:da1b])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73a283dc98asm2012193a34.11.2025.06.18.09.02.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 09:02:28 -0700 (PDT)
-Date: Wed, 18 Jun 2025 19:02:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Zhe Qiao <qiaozhe@iscas.ac.cn>
-Cc: rafael@kernel.org, bhelgaas@google.com, lenb@kernel.org,
-	kwilczynski@kernel.org, sashal@kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v2] PCI/ACPI: Fix double free bug in pci_acpi_scan_root()
- function
-Message-ID: <f04d01a7-28f5-41ea-85f6-ba0e67c80428@suswa.mountain>
-References: <20250617023738.779081-1-qiaozhe@iscas.ac.cn>
+	s=arc-20240116; t=1750262620; c=relaxed/simple;
+	bh=CkQui/iAGxp6S+CzKSa5KWLirrEnWTIi4v/gfG64Fyk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=XGBgT5Jmi+KRHQEl7xihL3B4hyXYlF1hMSiyuh7xl6sjKxI7AQfK2vOi6kIIaz/PtlAd4OQkWMR9QJBMzWnkR3QO8Aa+ybvP/l7ExlC3lppRqEH0GSVrqNVYn9FsTLWuG0encI5lAOphpRJiU5FwalTmtKSzn4EOlXZ9lMn9qDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M/AfatNx; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6d22bce3-4533-4cfa-96ba-64352b715741@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750262614;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=N+As7v86FfW5dyH0yTHR/0jy/hl5exca0Y0pIraN7Ds=;
+	b=M/AfatNxtuJweITMRdOfooVNBh2U2kJV41MtXTqOoQWc7MyY8lkldZ6vUQ633BaRdJ1LB3
+	Pwhpt0UKzDHJIynRUDSCatjNhzT+tO1CjYUdwzyJjjD1I7Ag9TIIFFs4uykcB/kod+uRK8
+	ipWfX9amimmUnQDa0Q+jULG7MNr3B4E=
+Date: Thu, 19 Jun 2025 00:03:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250617023738.779081-1-qiaozhe@iscas.ac.cn>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zenghui Yu <zenghui.yu@linux.dev>
+Subject: [report] DMA-API: platform vgem: mapping sg segment longer than
+ device claims to support [len=1048576] [max=65536]
+To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Wait, what?  We can't just delete pci_acpi_generic_release_info().
-What's going to free all those things on the success path?  I
-don't understand.
+Hi all,
 
-I had suggested you do something like this:
+Running the dmabuf-heap test [*] on mainline kernel triggers the
+following splat:
 
-diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
-index 74ade4160314..ff5799b696d6 100644
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -1012,20 +1012,20 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
- 		 root->segment, busnum);
- 
- 	if (ops->init_info && ops->init_info(info))
--		goto out_release_info;
-+		return NULL;
- 	if (ops->prepare_resources)
- 		ret = ops->prepare_resources(info);
- 	else
- 		ret = acpi_pci_probe_root_resources(info);
- 	if (ret < 0)
--		goto out_release_info;
-+		goto cleanup_init_info;
- 
- 	pci_acpi_root_add_resources(info);
- 	pci_add_resource(&info->resources, &root->secondary);
- 	bus = pci_create_root_bus(NULL, busnum, ops->pci_ops,
- 				  sysdata, &info->resources);
- 	if (!bus)
--		goto out_release_info;
-+		goto cleanup_acpi_pci_probe_root_resources;
- 
- 	host_bridge = to_pci_host_bridge(bus->bridge);
- 	if (!(root->osc_control_set & OSC_PCI_EXPRESS_NATIVE_HP_CONTROL))
-@@ -1053,8 +1053,10 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
- 		dev_printk(KERN_DEBUG, &bus->dev, "on NUMA node %d\n", node);
- 	return bus;
- 
-+cleanup_acpi_pci_probe_root_resources:
-+	free_something_with_probe();
- out_release_info:
--	__acpi_pci_root_release_info(info);
-+	free_something_info();
- 	return NULL;
- }
- 
+ ------------[ cut here ]------------
+ DMA-API: platform vgem: mapping sg segment longer than device claims to
+support [len=1048576] [max=65536]
+ WARNING: CPU: 7 PID: 1126 at kernel/dma/debug.c:1174
+debug_dma_map_sg+0x348/0x3e4
+ Modules linked in: vgem drm_shmem_helper drm_kms_helper rfkill drm fuse
+backlight sha3_ce sha512_ce ipv6
+ CPU: 7 UID: 0 PID: 1126 Comm: dmabuf-heap Kdump: loaded Not tainted
+6.16.0-rc2-00024-g9afe652958c3-dirty PREEMPT
+ Hardware name: QEMU QEMU Virtual Machine, BIOS
+edk2-stable202408-prebuilt.qemu.org 08/13/2024
+ pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+ pc : debug_dma_map_sg+0x348/0x3e4
+ lr : debug_dma_map_sg+0x348/0x3e4
+ sp : ffff800084313a50
+ x29: ffff800084313a50 x28: ffff0000c0a62480 x27: 0000000000000001
+ x26: ffffffffffffffff x25: 0000000000000000 x24: ffff0000c0985f20
+ x23: ffff8000815ab058 x22: 0000000000000001 x21: 0000000000000001
+ x20: 0000000000000000 x19: ffff0000c2797010 x18: 0000000000000020
+ x17: 0000000000000000 x16: 0000000000000000 x15: 00000000ffffffff
+ x14: ffff8000815c6390 x13: 00000000000005bb x12: 00000000000001e9
+ x11: fffffffffffe8360 x10: ffff80008161e390 x9 : 00000000fffff000
+ x8 : ffff8000815c6390 x7 : ffff80008161e390 x6 : 0000000000000000
+ x5 : ffff0001fee21308 x4 : 0000000000000001 x3 : 0000000000000000
+ x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0000c5ea4600
+ Call trace:
+  debug_dma_map_sg+0x348/0x3e4 (P)
+  __dma_map_sg_attrs+0xbc/0x118
+  dma_map_sgtable+0x28/0x44
+  system_heap_map_dma_buf+0x2c/0x64
+  dma_buf_map_attachment+0x60/0x184
+  dma_buf_map_attachment_unlocked+0x3c/0x7c
+  drm_gem_prime_import_dev.part.0+0x58/0x130 [drm]
+  drm_gem_prime_import+0x48/0xc4 [drm]
+  drm_gem_prime_fd_to_handle+0x180/0x220 [drm]
+  drm_prime_fd_to_handle_ioctl+0x38/0x44 [drm]
+  drm_ioctl_kernel+0xb8/0x12c [drm]
+  drm_ioctl+0x204/0x4ec [drm]
+  __arm64_sys_ioctl+0xac/0x104
+  invoke_syscall+0x48/0x110
+  el0_svc_common.constprop.0+0x40/0xe0
+  do_el0_svc+0x1c/0x28
+  el0_svc+0x34/0x108
+  el0t_64_sync_handler+0xc8/0xcc
+  el0t_64_sync+0x198/0x19c
+ ---[ end trace 0000000000000000 ]---
 
-But you'd need to replace the dummy code with actual code and
-change the callers etc.  And I haven't looked at the actual
-code to verify it's a good idea.
+The kernel is built with arm64's virtconfig and
 
-regards,
-dan carpenter
++CONFIG_DMABUF_HEAPS=y
++CONFIG_DMABUF_HEAPS_SYSTEM=y
++CONFIG_DRM_VGEM=m
++CONFIG_DMA_API_DEBUG=y
 
+[*] linux/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
+
+Thanks,
+Zenghui
 
