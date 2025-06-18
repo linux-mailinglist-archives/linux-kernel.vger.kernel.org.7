@@ -1,795 +1,401 @@
-Return-Path: <linux-kernel+bounces-691790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4614FADE8BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:26:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1AC1ADE8C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22B0A188B3F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:26:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65BD87A239A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A9D28F924;
-	Wed, 18 Jun 2025 10:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED4D291C0C;
+	Wed, 18 Jun 2025 10:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kPAphW6/"
-Received: from mail-yb1-f194.google.com (mail-yb1-f194.google.com [209.85.219.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NHiRQYL4"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11926288C1A
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C491295D90
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750242141; cv=none; b=WA6oYX+6g6SbSqnJ3qKyEvCWbo+1HcMBDlFwEt7WQW9DEGEP2LJkBBlZl0ZIh3T/fr4Wq9N8891o8TjaqkV5jqUwIoKzNqsLozajHh/UB7Tf2vs4SkqMx40qemGE+kwdoADRnShBex4sgH6D53YzONK6sEGyjoEwcUr/svVfke4=
+	t=1750242151; cv=none; b=ptZxh/v/57j/r9AUwRZh9TRtSWQUBteMaDV8Wyp/AWH0GVjgi8BQuwqgjKLHeWG94MAwXjhoBKGz+16f3pY5mbefUArGt9irG6wziQZGCmXiT0IJ7/LmbtjQhfvJWEwP7CAS/Rb/UMleOaDEG0OpZ39F/IvHvmknTn1I0IKr7NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750242141; c=relaxed/simple;
-	bh=gagXRV4HnE51QrpMsDWghMxPXgbHAxikOYMmRU8F1/o=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=sPXkGNx/54yscwZ/+fQtzh6V3vVRF+mmjt6xyYGSKwLWVnL+hGcjHt4IIiKFm8tfYJjuOQC17maNd6iVhsWtPyxOiZRPl9NsO8lwAAPEnGGcic4bj9Vy/9LOksRxCcMHkzySLVYf5bDaI62qRlpVM7hhyvlBMCcEBYeeIXuR3WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kPAphW6/; arc=none smtp.client-ip=209.85.219.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f194.google.com with SMTP id 3f1490d57ef6-e733e25bfc7so5880455276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 03:22:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750242138; x=1750846938; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lIgLwvf2hJLlx86dw4qDZMzeC9ho3E/koj0OVMetnkc=;
-        b=kPAphW6/J3ZaWrLcm/1JXtXI1mszU+bgZF7TDRoSzvPg8uTWhjA6Qkg0Egh1k8vRIy
-         HTSrIjsVvB4ES6GpdXIBZbzriyNPDy2upw1F7Yjcc71A+i49Xct51/Kvd3utm6Cgmax1
-         wGgwe2aF1rXDQG8yYS2adwxA5bX2L9QTXA/i2gnACsdjQ/J8TwJd/7uG4Klp42K8CctW
-         VsqpIUfVkliQKaXHDnbihsjjBkh7+NNWsdQTJ9F0eV99VN/Vy5xCL42D/A+3Dlp5cQFv
-         IK8iPlNgLRuAlfNWiUfjyhakr7CdctKtRboCq2V7+9dzbxm2GiQArsKIWjtzjFmnFiXJ
-         IYHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750242138; x=1750846938;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lIgLwvf2hJLlx86dw4qDZMzeC9ho3E/koj0OVMetnkc=;
-        b=SIxIKTnkYB8mbUTWBrkDII2L7VZEiuuatTrx0hZ60fymwYi41G9Tz88E/f7wLo5KD+
-         WdSIUZ7gFBy5Ce45jO0M1oWJWTfC2xSrVwiPky01gpHwK13ERzSxLbE1WhwOxm8S0DaC
-         qULOpC3YmnK3umctZcWhZnhMSEl3wb75X1b/uOqCaLjdarOL9YCJKCibb2Aw5FAIB8TE
-         RwCh7Y8kaKALmvh1NvrZT/qFITK/frbLovMup229De7dl0BS/bqzUEmotH9fXq1tg/Q3
-         IJZjNER8ZF7oKFl4wIHsIhR3vscsMROp4NFAf6aT/YgcgSE8s+3+CC7BdzEnl4qv1qrv
-         50Ug==
-X-Gm-Message-State: AOJu0YzcIW7WbbynoRo49ZvSIH26f8eSSS2dEk+G6rVkWKBjrRsdNl+B
-	N/u9WiJA1rZdq+ZRxRpigOUFsvcn0zpcIJSIDzCOTJYFpNMrtQourxrpKLPeAb1REXg64iT5AK+
-	A9O924YdFkfOdQ54fQY27dTIn9506E6j1QU4QJe/P7Q==
-X-Gm-Gg: ASbGncvlRT4v8Orz4zxn2HaTrcMXArGE4OVz2R7rYljB9wubd778wxUJMtZpOR+lpLs
-	XDu0HV8jXPYSR24goEjLMJzemJULgw2/PLzvu+CYVUiOQtT9eL08jbWk5jtsoz6AV5grHcbWU0b
-	CEhDKV1oWV+2qp6dw1dj3cb7r3juF4CK4dO/70BggzdPZoHZOJgPcCYZU7Lyh5AVZtas4HNP5A/
-	AYQVA==
-X-Google-Smtp-Source: AGHT+IHBth5spvkJRNVTYpcrGMyCdif5hg4R526MGORYh/cPMJqnxvQzgoXWYmoKGZJ5EkgJ5yIGlh4nFs4tRkiixWs=
-X-Received: by 2002:a05:6902:2493:b0:e82:fd2:717f with SMTP id
- 3f1490d57ef6-e822acab893mr23641704276.4.1750242137542; Wed, 18 Jun 2025
- 03:22:17 -0700 (PDT)
+	s=arc-20240116; t=1750242151; c=relaxed/simple;
+	bh=fYNXlCNwyuEbQScQsevuxONnVgNTSbpGFdxOc7K6chA=;
+	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
+	 Content-Type:References; b=IUD34ptOG/JM5gzljaW3ECigeJBhbObumwXiKdESFIcNRV1+etlaBCaLikFcqvvjPFcc/b2zUrf5yc3cdHB6a+0d1RUTH1QpSGBmW85iipN3Zx1wiEfujlYMa+JNnh6ay4Utcr+eBlgEK5i8UcwlM+9ZAolSswO8HIPTEBL13t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NHiRQYL4; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250618102226euoutp016f7bbacdc74bbac6c62b04b9f8e21f9e~KG-WfN5lv1751217512euoutp01T
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:22:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250618102226euoutp016f7bbacdc74bbac6c62b04b9f8e21f9e~KG-WfN5lv1751217512euoutp01T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1750242146;
+	bh=/67mCK0ZSXmBOeW8Mw1yKpyFad/acxv6px4aOh27e+Q=;
+	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
+	b=NHiRQYL4ryJm4IZhvqgK7h+Kat6C/Ek980MM8SSJ0lw38FVJ21iKpAoZjQ+WtZyqW
+	 NMo9Ot4S5zF19scoKZdUyiOjg/vbyeSb+NtK3azkCCyi+GVR7/WKkTZ6Spi6z4l/51
+	 BHaA5361l5OLznnpcHKdVYPW8ou30HRmClTErRZc=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250618102226eucas1p112dacf9670f68b4a8581aa1a8b5ced9d~KG-V4i4TB2808928089eucas1p1p;
+	Wed, 18 Jun 2025 10:22:26 +0000 (GMT)
+Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
+	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250618102225eusmtip1192586a6509e599e9452f2079923d4e3~KG-U6t27r1353913539eusmtip1Z;
+	Wed, 18 Jun 2025 10:22:25 +0000 (GMT)
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+Date: Wed, 18 Jun 2025 12:22:07 +0200
+Subject: [PATCH v5 1/8] power: sequencing: Add T-HEAD TH1520 GPU power
+ sequencer driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Amit <amitchoudhary0523@gmail.com>
-Date: Wed, 18 Jun 2025 15:52:06 +0530
-X-Gm-Features: Ac12FXzOnsTNhXwUPG5Q5Mgv1dTrNPZzIHPONaDnRhMay6cKk8-uWx6DuT0rwAs
-Message-ID: <CAFf+5zgVYZGRhbEb4-Mn1o2s=Qj+DTK7w2Uit8+q9WgFw3PHbQ@mail.gmail.com>
-Subject: Program (basically, a framework) to present a text menu to the user
- and get the user input and process the user input (Two files:
- text_menu_for_user.c and ReadMe.txt).
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250618-apr_14_for_sending-v5-1-27ed33ea5c6f@samsung.com>
+In-Reply-To: <20250618-apr_14_for_sending-v5-0-27ed33ea5c6f@samsung.com>
+To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,  Fu Wei
+	<wefu@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Michal
+	Wilczynski <m.wilczynski@samsung.com>,  Bartosz Golaszewski <brgl@bgdev.pl>,
+	Philipp Zabel <p.zabel@pengutronix.de>,  Frank Binns
+	<frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,  Maarten
+	Lankhorst <maarten.lankhorst@linux.intel.com>,  Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,  Paul Walmsley
+	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson
+	<ulf.hansson@linaro.org>,  Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org
+X-Mailer: b4 0.15-dev
+X-CMS-MailID: 20250618102226eucas1p112dacf9670f68b4a8581aa1a8b5ced9d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250618102226eucas1p112dacf9670f68b4a8581aa1a8b5ced9d
+X-EPHeader: CA
+X-CMS-RootMailID: 20250618102226eucas1p112dacf9670f68b4a8581aa1a8b5ced9d
+References: <20250618-apr_14_for_sending-v5-0-27ed33ea5c6f@samsung.com>
+	<CGME20250618102226eucas1p112dacf9670f68b4a8581aa1a8b5ced9d@eucas1p1.samsung.com>
+
+Introduce the pwrseq-thead-gpu driver, a power sequencer provider for
+the Imagination BXM-4-64 GPU on the T-HEAD TH1520 SoC. This driver
+controls an auxiliary device instantiated by the AON power domain.
+
+The TH1520 GPU requires a specific sequence to correctly initialize and
+power down its resources:
+ - Enable GPU clocks (core and sys).
+ - De-assert the GPU clock generator reset (clkgen_reset).
+ - Introduce a short hardware-required delay.
+ - De-assert the GPU core reset. The power-down sequence performs these
+   steps in reverse.
+
+Implement this sequence via the pwrseq_power_on and pwrseq_power_off
+callbacks.
+
+Crucially, the driver's match function is called when a consumer (the
+Imagination GPU driver) requests the "gpu-power" target. During this
+match, the sequencer uses clk_bulk_get() and
+reset_control_get_exclusive() on the consumer's device to obtain handles
+to the GPU's "core" and "sys" clocks, and the GPU core reset.  These,
+along with clkgen_reset obtained from parent aon node, allow it to
+perform the complete sequence.
+
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+---
+ MAINTAINERS                                 |   1 +
+ drivers/power/sequencing/Kconfig            |   8 +
+ drivers/power/sequencing/Makefile           |   1 +
+ drivers/power/sequencing/pwrseq-thead-gpu.c | 231 ++++++++++++++++++++++++++++
+ 4 files changed, 241 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0183c028fa18c397d30ec82fd419894f1f50a448..3283ff592215249bcf702dbb4ab710477243477e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -21395,6 +21395,7 @@ F:	drivers/mailbox/mailbox-th1520.c
+ F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+ F:	drivers/pinctrl/pinctrl-th1520.c
+ F:	drivers/pmdomain/thead/
++F:	drivers/power/sequencing/pwrseq-thead-gpu.c
+ F:	drivers/reset/reset-th1520.c
+ F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
+ F:	include/dt-bindings/power/thead,th1520-power.h
+diff --git a/drivers/power/sequencing/Kconfig b/drivers/power/sequencing/Kconfig
+index ddcc42a984921c55667c46ac586d259625e1f1a7..7fa912c9af2479cdce909467c29fe335788f0bd7 100644
+--- a/drivers/power/sequencing/Kconfig
++++ b/drivers/power/sequencing/Kconfig
+@@ -27,4 +27,12 @@ config POWER_SEQUENCING_QCOM_WCN
+ 	  this driver is needed for correct power control or else we'd risk not
+ 	  respecting the required delays between enabling Bluetooth and WLAN.
+ 
++config POWER_SEQUENCING_THEAD_GPU
++	tristate "T-HEAD TH1520 GPU power sequencing driver"
++	depends on ARCH_THEAD && AUXILIARY_BUS
++	help
++	  Say Y here to enable the power sequencing driver for the TH1520 SoC
++	  GPU. This driver handles the complex clock and reset sequence
++	  required to power on the Imagination BXM GPU on this platform.
++
+ endif
+diff --git a/drivers/power/sequencing/Makefile b/drivers/power/sequencing/Makefile
+index 2eec2df7912d11827f9ba914177dd2c882e44bce..647f81f4013ab825630f069d2e0f6d22159f1f56 100644
+--- a/drivers/power/sequencing/Makefile
++++ b/drivers/power/sequencing/Makefile
+@@ -4,3 +4,4 @@ obj-$(CONFIG_POWER_SEQUENCING)		+= pwrseq-core.o
+ pwrseq-core-y				:= core.o
+ 
+ obj-$(CONFIG_POWER_SEQUENCING_QCOM_WCN)	+= pwrseq-qcom-wcn.o
++obj-$(CONFIG_POWER_SEQUENCING_THEAD_GPU) += pwrseq-thead-gpu.o
+diff --git a/drivers/power/sequencing/pwrseq-thead-gpu.c b/drivers/power/sequencing/pwrseq-thead-gpu.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..31283d23d8bdec2e0ee3b5c573e8921b98ee0adb
+--- /dev/null
++++ b/drivers/power/sequencing/pwrseq-thead-gpu.c
+@@ -0,0 +1,231 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * T-HEAD TH1520 GPU Power Sequencer Driver
++ *
++ * Copyright (c) 2025 Samsung Electronics Co., Ltd.
++ * Author: Michal Wilczynski <m.wilczynski@samsung.com>
++ *
++ * This driver implements the power sequence for the Imagination BXM-4-64
++ * GPU on the T-HEAD TH1520 SoC. The sequence requires coordinating resources
++ * from both the sequencer's parent device node (clkgen_reset) and the GPU's
++ * device node (clocks and core reset).
++ *
++ * The `match` function is used to acquire the GPU's resources when the
++ * GPU driver requests the "gpu-power" sequence target.
++ */
++
++#include <linux/auxiliary_bus.h>
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/pwrseq/provider.h>
++#include <linux/reset.h>
++
++#include <dt-bindings/power/thead,th1520-power.h>
++
++struct pwrseq_thead_gpu_ctx {
++	struct pwrseq_device *pwrseq;
++	struct reset_control *clkgen_reset;
++	struct device_node *aon_node;
++
++	/* Consumer resources */
++	struct clk_bulk_data *clks;
++	int num_clks;
++	struct reset_control *gpu_reset;
++};
++
++static int pwrseq_thead_gpu_enable(struct pwrseq_device *pwrseq)
++{
++	struct pwrseq_thead_gpu_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
++	int ret;
++
++	if (!ctx->clks || !ctx->gpu_reset)
++		return -ENODEV;
++
++	ret = clk_bulk_prepare_enable(ctx->num_clks, ctx->clks);
++	if (ret)
++		return ret;
++
++	ret = reset_control_deassert(ctx->clkgen_reset);
++	if (ret)
++		goto err_disable_clks;
++
++	/*
++	 * According to the hardware manual, a delay of at least 32 clock
++	 * cycles is required between de-asserting the clkgen reset and
++	 * de-asserting the GPU reset. Assuming a worst-case scenario with
++	 * a very high GPU clock frequency, a delay of 1 microsecond is
++	 * sufficient to ensure this requirement is met across all
++	 * feasible GPU clock speeds.
++	 */
++	udelay(1);
++
++	ret = reset_control_deassert(ctx->gpu_reset);
++	if (ret)
++		goto err_assert_clkgen;
++
++	return 0;
++
++err_assert_clkgen:
++	reset_control_assert(ctx->clkgen_reset);
++err_disable_clks:
++	clk_bulk_disable_unprepare(ctx->num_clks, ctx->clks);
++	return ret;
++}
++
++static int pwrseq_thead_gpu_disable(struct pwrseq_device *pwrseq)
++{
++	struct pwrseq_thead_gpu_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
++
++	if (!ctx->clks || !ctx->gpu_reset)
++		return -ENODEV;
++
++	reset_control_assert(ctx->gpu_reset);
++	reset_control_assert(ctx->clkgen_reset);
++	clk_bulk_disable_unprepare(ctx->num_clks, ctx->clks);
++
++	return 0;
++}
++
++static const struct pwrseq_unit_data pwrseq_thead_gpu_unit = {
++	.name = "gpu-power-sequence",
++	.enable = pwrseq_thead_gpu_enable,
++	.disable = pwrseq_thead_gpu_disable,
++};
++
++static const struct pwrseq_target_data pwrseq_thead_gpu_target = {
++	.name = "gpu-power",
++	.unit = &pwrseq_thead_gpu_unit,
++};
++
++static const struct pwrseq_target_data *pwrseq_thead_gpu_targets[] = {
++	&pwrseq_thead_gpu_target,
++	NULL
++};
++
++static int pwrseq_thead_gpu_match(struct pwrseq_device *pwrseq,
++				  struct device *dev)
++{
++	struct pwrseq_thead_gpu_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
++	static const char *const clk_names[] = { "core", "sys" };
++	struct of_phandle_args pwr_spec;
++	int i, ret;
++
++	/* We only match the specific T-HEAD TH1520 GPU compatible */
++	if (!of_device_is_compatible(dev->of_node, "thead,th1520-gpu"))
++		return 0;
++
++	ret = of_parse_phandle_with_args(dev->of_node, "power-domains",
++					 "#power-domain-cells", 0, &pwr_spec);
++	if (ret)
++		return 0;
++
++	/* Additionally verify consumer device has AON as power-domain */
++	if (pwr_spec.np != ctx->aon_node || pwr_spec.args[0] != TH1520_GPU_PD) {
++		of_node_put(pwr_spec.np);
++		return 0;
++	}
++
++	of_node_put(pwr_spec.np);
++
++	if (ctx->gpu_reset || ctx->clks)
++		return 1;
++
++	ctx->num_clks = ARRAY_SIZE(clk_names);
++	ctx->clks = kcalloc(ctx->num_clks, sizeof(*ctx->clks), GFP_KERNEL);
++	if (!ctx->clks)
++		return -ENOMEM;
++
++	for (i = 0; i < ctx->num_clks; i++)
++		ctx->clks[i].id = clk_names[i];
++
++	ret = clk_bulk_get(dev, ctx->num_clks, ctx->clks);
++	if (ret)
++		goto err_free_clks;
++
++	ctx->gpu_reset = reset_control_get_shared(dev, NULL);
++	if (IS_ERR(ctx->gpu_reset)) {
++		ret = PTR_ERR(ctx->gpu_reset);
++		goto err_put_clks;
++	}
++
++	return 1;
++
++err_put_clks:
++	clk_bulk_put(ctx->num_clks, ctx->clks);
++err_free_clks:
++	kfree(ctx->clks);
++	ctx->clks = NULL;
++
++	return ret;
++}
++
++static int pwrseq_thead_gpu_probe(struct auxiliary_device *adev,
++				  const struct auxiliary_device_id *id)
++{
++	struct device *dev = &adev->dev;
++	struct device *parent_dev = dev->parent;
++	struct pwrseq_thead_gpu_ctx *ctx;
++	struct pwrseq_config config = {};
++
++	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++
++	ctx->aon_node = parent_dev->of_node;
++
++	ctx->clkgen_reset =
++		devm_reset_control_get_exclusive(parent_dev, "gpu-clkgen");
++	if (IS_ERR(ctx->clkgen_reset))
++		return dev_err_probe(
++			dev, PTR_ERR(ctx->clkgen_reset),
++			"Failed to get GPU clkgen reset from parent\n");
++
++	config.parent = dev;
++	config.owner = THIS_MODULE;
++	config.drvdata = ctx;
++	config.match = pwrseq_thead_gpu_match;
++	config.targets = pwrseq_thead_gpu_targets;
++
++	ctx->pwrseq = devm_pwrseq_device_register(dev, &config);
++	if (IS_ERR(ctx->pwrseq))
++		return dev_err_probe(dev, PTR_ERR(ctx->pwrseq),
++				     "Failed to register power sequencer\n");
++
++	auxiliary_set_drvdata(adev, ctx);
++
++	return 0;
++}
++
++static void pwrseq_thead_gpu_remove(struct auxiliary_device *adev)
++{
++	struct pwrseq_thead_gpu_ctx *ctx = auxiliary_get_drvdata(adev);
++
++	if (ctx->gpu_reset)
++		reset_control_put(ctx->gpu_reset);
++	if (ctx->clks) {
++		clk_bulk_put(ctx->num_clks, ctx->clks);
++		kfree(ctx->clks);
++	}
++}
++
++static const struct auxiliary_device_id pwrseq_thead_gpu_id_table[] = {
++	{ .name = "th1520_pm_domains.pwrseq-gpu" },
++	{},
++};
++MODULE_DEVICE_TABLE(auxiliary, pwrseq_thead_gpu_id_table);
++
++static struct auxiliary_driver pwrseq_thead_gpu_driver = {
++	.driver = {
++		.name = "pwrseq-thead-gpu",
++	},
++	.probe = pwrseq_thead_gpu_probe,
++	.remove = pwrseq_thead_gpu_remove,
++	.id_table = pwrseq_thead_gpu_id_table,
++};
++module_auxiliary_driver(pwrseq_thead_gpu_driver);
++
++MODULE_AUTHOR("Michal Wilczynski <m.wilczynski@samsung.com>");
++MODULE_DESCRIPTION("T-HEAD TH1520 GPU power sequencer driver");
++MODULE_LICENSE("GPL");
+
+-- 
+2.34.1
 
-Program (basically, a framework) to present a text menu to the user
-and get the user input and process the user input (Two files:
-text_menu_for_user.c and ReadMe.txt).
-
-------------------------------
-text_menu_for_user.c
-------------------------------
-
-/*
- * License:
- *
- * This file has been released under "unlicense" license
- * (https://unlicense.org).
- *
- * This is free and unencumbered software released into the public domain.
- *
- * Anyone is free to copy, modify, publish, use, compile, sell, or distribute
- * this software, either in source code form or as a compiled binary, for any
- * purpose, commercial or non-commercial, and by any means.
- *
- * For more information about this license, please visit - https://unlicense.org
- */
-
-/*
- * Author: Amit Choudhary
- * Email: amitchoudhary0523 AT gmail DOT com
- */
-
-/*
- * ==== README ====
- *
- * You can use this program if you want to present a text menu to the user and
- * process the user input and keep repeating this cycle until the user exits
- * this program.
- *
- * If you want to use this program according to your requirements then you have
- * to make some changes in this program. These changes are not a lot. You need
- * to make the changes listed below:
- *
- *      ** Change the value of 'TOTAL_NUMBER_OF_MENU_ITEMS' according to the
- *         number of menu items that you have.
- *
- *      ** Change the value of 'MENU_ITEM_STRING_SIZE' according to your
- *         requirements.
- *
- *      ** Check other defined constants to see if you need to modify their
- *         values because of your requirements.
- *
- *      ** Modify the menu items details in create_menu() function according
- *         to your requirements and implement your new functions.
- *
- *      ** Delete dummy_function() and its declaration.
- *
- * This program presents a menu to the user and asks the user to input a valid
- * menu option. After the user has inputted a valid menu option, this program
- * executes the function associated with that menu option. After the associated
- * function finishes, this program presents the menu again to the user and this
- * goes on in a cycle until the user exits this program.
- */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
-
-// Change this value to process more characters.
-#define MAX_STR_SIZE_ALLOWED 8192 // including null terminating character
-
-#define MIN_STR_SIZE_ALLOWED 2 // including null terminating character
-
-#define STR_NUM_TRUE  1
-#define STR_NUM_FALSE 0
-
-// TM stands for Text Menu
-#define TM_TRUE  1
-#define TM_FALSE 0
-
-#define TM_SUCCESS  0
-#define TM_FAILURE -1
-
-// Menu starts with option number 1. Change the below value to the number of
-// menu items that you have.
-#define TOTAL_NUMBER_OF_MENU_ITEMS 5
-
-// change this value according to your requirements
-#define MENU_ITEM_STRING_SIZE 1024 // including null terminating character
-
-// You don't need to change this value because the value of '8' can handle
-// (10^7 - 1) option numbers (that is, (10^7 - 1) menu items).
-#define OPTION_NUMBER_SIZE 8 // including null terminating character
-
-#define CONFIRMATION_STR_SIZE 8 // including null terminating character
-
-#define NUMERIC_INPUT_STR_SIZE 5 // including null terminating character
-
-struct menu_item
-{
-    // string that will be displayed when this menu item is displayed
-    char menu_item_string[MENU_ITEM_STRING_SIZE];
-
-    // You can set and use 'arg' whenever you want. You can set it at init time
-    // in create_menu() function or at run time.
-    void *arg;
-
-    // Function that will be called when the user inputs a valid menu option
-    // number. 'func' is a function pointer.
-    void *(*func)(struct menu_item *mis_arr, int index_in_mis_arr);
-};
-
-// function prototypes for gcc flag -Werror-implicit-function-declaration
-static char *get_input_from_stdin_and_discard_extra_characters(char *str,
-                                                               int size);
-static void discard_all_characters_from_stdin(void);
-static int is_str_a_number(const char *str);
-static char *get_string_input_from_user(char *str, int size);
-static int get_numeric_input_from_user(char *str, int size,
-                                       int *number_ptr);
-static int get_valid_option_from_user(void);
-
-// mis_arr means menu items array
-static void print_menu(struct menu_item *mis_arr);
-static void create_menu(struct menu_item *mis_arr);
-static void create_and_display_menu_and_process_user_input(void);
-
-static void *get_number_from_user(struct menu_item *mis_arr,
-                                  int index_in_mis_arr);
-static void *show_saved_number(struct menu_item *mis_arr, int index_in_mis_arr);
-static void *show_sum_of_digits_of_number(struct menu_item *mis_arr,
-                                          int index_in_mis_arr);
-static void *delete_saved_number(struct menu_item *mis_arr,
-                                 int index_in_mis_arr);
-static void *exit_program(struct menu_item *mis_arr, int index_in_mis_arr);
-
-/*
- * get_input_from_stdin_and_discard_extra_characters():
- *
- *      Function get_input_from_stdin_and_discard_extra_characters() reads at
- *      most (size - 1) characters from stdin and stores them in 'str'.
- *      One character is used to null terminate 'str'. The rest of the
- *      remaining characters in stdin are read and discarded, they are not
- *      stored in 'str'. So, when this function returns then there is no
- *      input/characters left in stdin.
- *
- *      If 'str' is NULL then it is an error and nothing is read from stdin and
- *      NULL is returned.
- *
- *      If 'size' is greater than 'MAX_STR_SIZE_ALLOWED' or less than
- *      'MIN_STR_SIZE_ALLOWED' then it is an error and nothing is read from
- *      stdin and NULL is returned.
- */
-static char *get_input_from_stdin_and_discard_extra_characters(char *str,
-                                                               int size)
-{
-
-    int c = 0;
-    int i = 0;
-
-    if (str == NULL) {
-        return NULL;
-    }
-
-    if ((size < MIN_STR_SIZE_ALLOWED) || (size > MAX_STR_SIZE_ALLOWED)) {
-        return NULL;
-    }
-
-    for (i = 0; i < (size - 1); i = i + 1) {
-
-        c = getchar();
-
-        if ((c == '\n') || (c == EOF)) {
-            str[i] = 0;
-            return str;
-        }
-
-        str[i] = (char)(c);
-
-    } // end of for loop
-
-    str[i] = 0;
-
-    // discard the rest of the input
-    while ((c = getchar()) && (c != '\n') && (c != EOF));
-
-    return str;
-
-} // end of function get_input_from_stdin_and_discard_extra_characters()
-
-static void discard_all_characters_from_stdin(void)
-{
-
-    int c = 0;
-
-    // discard all characters from stdin
-    while ((c = getchar()) && (c != '\n') && (c != EOF));
-
-    return;
-
-} // end of function discard_all_characters_from_stdin()
-
-/*
- * is_str_a_number():
- *
- *      Function is_str_a_number() expects only numeric characters in 'str'.
- *
- *      This function returns STR_NUM_TRUE only when all the following
- *      conditions are met:
- *
- *              ** 'str' is not null.
- *              ** The first character of 'str' is not the null terminating
- *                 character.
- *              ** Length of 'str' is less than MAX_STR_SIZE_ALLOWED.
- *              ** 'str' contains only numeric characters before the null
- *                 terminating character.
- *
- *      In all other cases, this function returns STR_NUM_FALSE.
- */
-static int is_str_a_number(const char *str)
-{
-
-    char c = -1;
-
-    if (str == NULL) {
-        return STR_NUM_FALSE;
-    }
-
-    if (str[0] == '\0') { // empty string
-        return STR_NUM_FALSE;
-    }
-
-    // If length of 'str' is not less than MAX_STR_SIZE_ALLOWED then it is an
-    // error and in this case, return STR_NUM_FALSE.
-    if (strnlen(str, MAX_STR_SIZE_ALLOWED) == MAX_STR_SIZE_ALLOWED) {
-        return STR_NUM_FALSE;
-    }
-
-    while ((c = *str)) {
-        if ((c < '0') || (c > '9')) {
-            return STR_NUM_FALSE;
-        }
-        str++;
-    }
-
-    return STR_NUM_TRUE;
-
-} // end of function is_str_a_number()
-
-static char *get_string_input_from_user(char *str, int size)
-{
-
-    char *retval = NULL;
-
-    if (str == NULL) {
-        return NULL;
-    }
-
-    if ((size < MIN_STR_SIZE_ALLOWED) || (size > MAX_STR_SIZE_ALLOWED)) {
-        return NULL;
-    }
-
-    retval = get_input_from_stdin_and_discard_extra_characters(str, size);
-
-    // If retval is NULL then print an error message and exit.
-    if (retval == NULL) {
-        printf("\n\nError: %s(): %s() returned NULL. Some BUG in this program."
-               " Exiting..\n\n", __FUNCTION__,
-               "get_input_from_stdin_and_discard_extra_characters");
-
-        exit(1);
-    }
-
-    return str;
-
-} // end of function get_string_input_from_user()
-
-static int get_numeric_input_from_user(char *str, int size,
-                                       int *number_ptr)
-{
-
-    char *retval = NULL;
-
-    if ((str == NULL) || (number_ptr == NULL)) {
-        return TM_FAILURE;
-    }
-
-    if ((size < MIN_STR_SIZE_ALLOWED) || (size > MAX_STR_SIZE_ALLOWED)) {
-        return TM_FAILURE;
-    }
-
-    retval = get_string_input_from_user(str, size);
-
-    // If retval is NULL then print an error message and exit.
-    if (retval == NULL) {
-        printf("\n\nError: %s(): get_string_input_from_user() returned NULL."
-               " Some BUG in this program. Exiting..\n\n", __FUNCTION__);
-        exit(1);
-    }
-
-    if (is_str_a_number(str) != STR_NUM_TRUE) {
-        return TM_FAILURE;
-    }
-
-    // convert string to int
-    (*number_ptr) = atoi(str);
-
-    return TM_SUCCESS;
-
-} // end of function get_numeric_input_from_user()
-
-static int get_valid_option_from_user(void)
-{
-
-    char str[OPTION_NUMBER_SIZE] = {0};
-    int option = -1;
-    int retval = -1;
-
-    printf("\n");
-
-    // keep looping until a valid option is received
-    do {
-
-        printf("Please enter a valid option (1 - %d) (only numeric characters"
-               " allowed): ", TOTAL_NUMBER_OF_MENU_ITEMS);
-
-        retval = get_numeric_input_from_user(str, OPTION_NUMBER_SIZE, &option);
-
-        if (retval != TM_SUCCESS) {
-            continue;
-        }
-
-    } while ((option < 1) || (option > TOTAL_NUMBER_OF_MENU_ITEMS));
-
-    return option;
-
-} // end of function get_valid_option_from_user()
-
-// mis_arr means menu items array
-static void print_menu(struct menu_item *mis_arr)
-{
-
-    int i = 0;
-
-    if (mis_arr == NULL) {
-        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
-               " program. Exiting..\n\n", __FUNCTION__);
-        exit(1);
-    }
-
-    printf("\n\n");
-
-    printf("----\n");
-    printf("Menu\n");
-    printf("----\n");
-    printf("\n");
-
-    for (i = 0; i < TOTAL_NUMBER_OF_MENU_ITEMS; i++) {
-        printf("%d. %s\n", (i + 1), mis_arr[i].menu_item_string);
-    }
-
-    return;
-
-} // end of function print_menu()
-
-static void create_menu(struct menu_item *mis_arr)
-{
-
-    if (mis_arr == NULL) {
-        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
-               " program. Exiting..\n\n", __FUNCTION__);
-        exit(1);
-    }
-
-    // 1st menu item
-    strncpy(mis_arr[0].menu_item_string, "Input a number (this number will be"
-            " saved)", MENU_ITEM_STRING_SIZE);
-    mis_arr[0].menu_item_string[MENU_ITEM_STRING_SIZE - 1] = 0;
-    mis_arr[0].arg = NULL;
-    mis_arr[0].func = get_number_from_user;
-
-    // 2nd menu item
-    strncpy(mis_arr[1].menu_item_string, "Show the saved number",
-            MENU_ITEM_STRING_SIZE);
-    mis_arr[1].menu_item_string[MENU_ITEM_STRING_SIZE - 1] = 0;
-    mis_arr[1].arg = NULL;
-    mis_arr[1].func = show_saved_number;
-
-    // 3rd menu item
-    strncpy(mis_arr[2].menu_item_string, "Show the sum of the digits of the"
-            " saved number", MENU_ITEM_STRING_SIZE);
-    mis_arr[2].menu_item_string[MENU_ITEM_STRING_SIZE - 1] = 0;
-    mis_arr[2].arg = NULL;
-    mis_arr[2].func = show_sum_of_digits_of_number;
-
-    // 4th menu item
-    strncpy(mis_arr[3].menu_item_string, "Delete the saved number",
-            MENU_ITEM_STRING_SIZE);
-    mis_arr[3].menu_item_string[MENU_ITEM_STRING_SIZE - 1] = 0;
-    mis_arr[3].arg = NULL;
-    mis_arr[3].func = delete_saved_number;
-
-    // 5th menu item
-    strncpy(mis_arr[4].menu_item_string, "Exit this program",
-            MENU_ITEM_STRING_SIZE);
-    mis_arr[4].menu_item_string[MENU_ITEM_STRING_SIZE - 1] = 0;
-    mis_arr[4].arg = NULL;
-    mis_arr[4].func = exit_program;
-
-    return;
-
-} // end of function create_menu()
-
-static void create_and_display_menu_and_process_user_input(void)
-{
-
-    struct menu_item *mis_arr = NULL;
-    char confirm_str[CONFIRMATION_STR_SIZE] = {0};
-    int option = -1;
-    char *retval = NULL;
-    char confirmation = -1;
-
-    // Allocate memory for the array of menu items.
-    // This memory will be freed automatically by the system when this program
-    // exits. As long as this program is running, this memory will not be freed.
-    mis_arr = calloc(TOTAL_NUMBER_OF_MENU_ITEMS, sizeof(*mis_arr));
-
-     if (mis_arr == NULL) {
-        printf("\n\nError: %s(): No memory available. Exiting..\n\n",
-               __FUNCTION__);
-        exit(1);
-    }
-
-    // create menu
-    create_menu(mis_arr);
-
-    // infinite loop, keep processing until user exits
-    while (1) {
-
-        print_menu(mis_arr);
-
-        option = get_valid_option_from_user();
-
-        printf("\n");
-
-        // confirm that the user want to proceed with the selected option
-        while (1) {
-
-            printf("You selected option number %d (\"%s\"). Do you want to"
-                   " proceed (only 'y' and 'n' allowed): ", option,
-                   mis_arr[option - 1].menu_item_string);
-
-            retval = get_string_input_from_user(confirm_str,
-                                                CONFIRMATION_STR_SIZE);
-
-            // If retval is NULL then print an error message and exit.
-            if (retval == NULL) {
-                printf("\n\nError: %s(): get_string_input_from_user() returned"
-                       " NULL. Some BUG in this program. Exiting..\n\n",
-                       __FUNCTION__);
-                exit(1);
-            }
-
-            if ((strncmp(confirm_str, "y", CONFIRMATION_STR_SIZE) == 0) ||
-                (strncmp(confirm_str, "n", CONFIRMATION_STR_SIZE) == 0)) {
-                confirmation = confirm_str[0];
-                break;
-            }
-
-        } // end of inner while (1) loop
-
-        if (confirmation == 'n') {
-            // Wait for the user to press the ENTER key before showing the menu
-            // again.
-            printf("\n\nPress the ENTER key to see the menu again.. ");
-            discard_all_characters_from_stdin();
-            continue;
-        }
-
-        // call the appropriate function
-        (mis_arr[option - 1].func)(mis_arr, option - 1);
-
-        // Wait for the user to press the ENTER key before showing the menu
-        // again.
-        printf("\n\nPress the ENTER key to see the menu again.. ");
-
-        discard_all_characters_from_stdin();
-
-    } // end of outer while (1) loop
-
-    // unreachable code
-    return;
-
-} // end of function create_and_display_menu_and_process_user_input()
-
-static void *get_number_from_user(struct menu_item *mis_arr,
-                                  int index_in_mis_arr)
-{
-
-    char str[NUMERIC_INPUT_STR_SIZE] = {0};
-    int number = -1;
-    int retval = -1;
-    int i = 0;
-
-    if (mis_arr == NULL) {
-        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
-               " program. Exiting..\n\n", __FUNCTION__);
-        exit(1);
-    }
-
-    if (index_in_mis_arr < 0) {
-        printf("\n\nError: %s(): Argument 'index_in_mis_arr' is less than zero."
-               " Some BUG in this program. Exiting..\n\n", __FUNCTION__);
-        exit(1);
-    }
-
-    printf("\n");
-
-    // keep looping until a positive number is received
-    while (1) {
-
-        printf("Please enter a positive number (only numeric characters"
-               " allowed) (the number will be truncated to 4 digits)(the"
-               " previously saved number will be replaced): ");
-
-        retval = get_numeric_input_from_user(str, NUMERIC_INPUT_STR_SIZE,
-                                             &number);
-
-        if (retval == TM_SUCCESS) {
-            break;
-        }
-
-    } // end of while (1) loop
-
-    // Make the number available to all menu items functions.
-    for (i = 0; i < TOTAL_NUMBER_OF_MENU_ITEMS; i++) {
-           mis_arr[i].arg = (void *)((long)(number));
-    }
-
-    printf("\n\nThe number you entered is: %d\n", number);
-
-    return NULL;
-
-} // end of function get_number_from_user()
-
-static void *show_saved_number(struct menu_item *mis_arr, int index_in_mis_arr)
-{
-
-    if (mis_arr == NULL) {
-        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
-               " program. Exiting..\n\n", __FUNCTION__);
-        exit(1);
-    }
-
-    if (index_in_mis_arr < 0) {
-        printf("\n\nError: %s(): Argument 'index_in_mis_arr' is less than zero."
-               " Some BUG in this program. Exiting..\n\n", __FUNCTION__);
-        exit(1);
-    }
-
-    if (mis_arr[index_in_mis_arr].arg == NULL) {
-        printf("\n\nThere is no saved number. Please first input a number by"
-               " selecting menu option 1.\n");
-        return NULL;
-    }
-
-    printf("\n\nThe saved number is: %d\n",
-           (int)((long)(mis_arr[index_in_mis_arr].arg)));
-
-    return NULL;
-
-} // end of function show_saved_number()
-
-static void *show_sum_of_digits_of_number(struct menu_item *mis_arr,
-                                          int index_in_mis_arr)
-{
-
-    int num = -1;
-    int sum_of_digits = 0;
-
-    if (mis_arr == NULL) {
-        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
-               " program. Exiting..\n\n", __FUNCTION__);
-        exit(1);
-    }
-
-    if (index_in_mis_arr < 0) {
-        printf("\n\nError: %s(): Argument 'index_in_mis_arr' is less than zero."
-               " Some BUG in this program. Exiting..\n\n", __FUNCTION__);
-        exit(1);
-    }
-
-    if (mis_arr[index_in_mis_arr].arg == NULL) {
-        printf("\n\nThere is no saved number. Please first input a number by"
-               " selecting menu option 1.\n");
-        return NULL;
-    }
-
-    num = (int)((long)(mis_arr[index_in_mis_arr].arg));
-
-    while (num) {
-        sum_of_digits = sum_of_digits + (num % 10);
-        num = num/10;
-    }
-
-    printf("\n\nThe sum of the digits of the saved number (%d) is: %d\n",
-           (int)((long)(mis_arr[index_in_mis_arr].arg)), sum_of_digits);
-
-    return NULL;
-
-} // end of function show_sum_of_digits_of_number()
-
-static void *delete_saved_number(struct menu_item *mis_arr,
-                                 int index_in_mis_arr)
-{
-
-    int i = 0;
-
-    if (mis_arr == NULL) {
-        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
-               " program. Exiting..\n\n", __FUNCTION__);
-        exit(1);
-    }
-
-    if (index_in_mis_arr < 0) {
-        printf("\n\nError: %s(): Argument 'index_in_mis_arr' is less than zero."
-               " Some BUG in this program. Exiting..\n\n", __FUNCTION__);
-        exit(1);
-    }
-
-    if (mis_arr[index_in_mis_arr].arg == NULL) {
-        printf("\n\nThere is no saved number. Please first input a number by"
-               " selecting menu option 1.\n");
-        return NULL;
-    }
-
-    // Remove the number from all mis_arr array elements
-    for (i = 0; i < TOTAL_NUMBER_OF_MENU_ITEMS; i++) {
-           mis_arr[i].arg = NULL;
-    }
-
-    printf("\n\nThe saved number has been deleted.\n");
-
-    return NULL;
-
-} // end of function delete_saved_number()
-
-static void *exit_program(struct menu_item *mis_arr, int index_in_mis_arr)
-{
-
-    if (mis_arr == NULL) {
-        printf("\n\nError: %s(): Argument 'mis_arr' is NULL. Some BUG in this"
-               " program. Exiting..\n\n", __FUNCTION__);
-        exit(1);
-    }
-
-    if (index_in_mis_arr < 0) {
-        printf("\n\nError: %s(): Argument 'index_in_mis_arr' is less than zero."
-               " Some BUG in this program. Exiting..\n\n", __FUNCTION__);
-        exit(1);
-    }
-
-    printf("\n\nYou chose the option number: %d\n", index_in_mis_arr + 1);
-
-    printf("The text of this option is: \"%s\"\n",
-           mis_arr[index_in_mis_arr].menu_item_string);
-
-    printf("\n\nExiting..\n\n\n");
-
-    exit(0);
-
-} // end of function exit_program()
-
-int main(void)
-{
-
-    create_and_display_menu_and_process_user_input();
-
-    return 0;
-
-} // end of function main()
-
------------------
-ReadMe.txt
------------------
-
-You can use this program (text_menu_for_user.c) if you want to present a text
-menu to the user and process the user input and keep repeating this cycle until
-the user exits this program.
-
-If you want to use this program according to your requirements then you have
-to make some changes in this program. These changes are not a lot. You need
-to make the changes listed below:
-
-     ** Change the value of 'TOTAL_NUMBER_OF_MENU_ITEMS' according to the
-        number of menu items that you have.
-
-     ** Change the value of 'MENU_ITEM_STRING_SIZE' according to your
-        requirements.
-
-     ** Check other defined constants to see if you need to modify their
-        values because of your requirements.
-
-     ** Modify the menu items details in create_menu() function according
-        to your requirements and implement your new functions.
-
-     ** Delete dummy_function() and its declaration.
-
-This program presents a menu to the user and asks the user to input a valid
-menu option. After the user has inputted a valid menu option, this program
-executes the function associated with that menu option. After the associated
-function finishes, this program presents the menu again to the user and this
-goes on in a cycle until the user exits this program.
-
----- End of ReadMe ----
 
