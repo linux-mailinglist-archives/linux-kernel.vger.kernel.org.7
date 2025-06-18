@@ -1,168 +1,190 @@
-Return-Path: <linux-kernel+bounces-692049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A0ABADEC03
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:26:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84AEDADEC0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4823188418A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:24:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3DF1188B812
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6DC2E9EB7;
-	Wed, 18 Jun 2025 12:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BAC2E9ED0;
+	Wed, 18 Jun 2025 12:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ohlgtAWT"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XukT4AiT"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934C62E265D;
-	Wed, 18 Jun 2025 12:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE80F9CB;
+	Wed, 18 Jun 2025 12:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750249318; cv=none; b=LXm6QiqkoGdxdAiwpyu10l9V3u8XKBVKxxlRZ3TRjaW6UQz/RBM9NtWLnV1+WaeuJalfvSlkwWpRqcZ53MSdb7W0YiPHRcftV4YQFw5NwcwUsPkRMgVYe09eTR8WqSNFiRDu436/CHWFhweL4bq9AyywO3j7RsA+lfK+lML1iVI=
+	t=1750249335; cv=none; b=tGOTD6XRISn67KFbGsRAwMvIK26p1LPP/TTI2maA7n/Ro7UzOd2SjCZ1l1h3of6Q0LMc/aDmvrGBo6hjO61tfGMGdwELE6i6kV4rvPunrNc22VhL0+5ukFmSMXQs0STG0W+ZFcvfhdYJsCa4BfLb+XVWyezKC1d18yCQnfgVDo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750249318; c=relaxed/simple;
-	bh=Ih5zjiRGwMAvZQPX9KEr/plji2ng+jsO/q4Yt/O5IRU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pfqryyDbWKdww6oCfoz8LEn3OAnyDHmNmHbcwHIGGZIK6WeGl2/D9pywX0zN2bD832wIe8jOS0fD9TV0WGZRjqpiveZbzOtmHVb4KqcLUu8rypaK6nZDJEetfp8Hh8GUC90Sk/z7N+f74B49YV4lQgKoKtR+oStsjUcYILazg/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ohlgtAWT; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750249313;
-	bh=Ih5zjiRGwMAvZQPX9KEr/plji2ng+jsO/q4Yt/O5IRU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ohlgtAWT7yjpPcE/xEv1XBO2m6bmo3mg0DJxG6HAaeNer6gFJzTrUtR24807KK1L9
-	 RGxCKVMFvq+n8MX8gL+l/JQjRrsco0O1EuykFJ6hnvegjFKVcGzTBnucvh4p+w5Tj6
-	 LLw2EUydJU/Mu0tdsHjfRUcujDaGZk7L39eit/oeNYZDqDWkqy39t3qzuoj5Y507yL
-	 6VHI6/U44lBH0Vh5YmmqbBsBzRTbZ+8YLLXmaY6Ll7K/12zENr0WcM2yHOqP6HeE5R
-	 6Las4LiVbTzVkZzTZ3lvuB9kFCQRKppNfNcXFwKtngTRXlqAVkEMS2qUHqNSj1ftxY
-	 w9GQZiHKvbvHQ==
-Received: from [10.40.0.100] (185-251-200-162.lampert.tv [185.251.200.162])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mriesch)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3C17D17E0CEE;
-	Wed, 18 Jun 2025 14:21:52 +0200 (CEST)
-Message-ID: <5d3418a3-70f5-46d8-a538-72e6958d5d02@collabora.com>
-Date: Wed, 18 Jun 2025 14:21:51 +0200
+	s=arc-20240116; t=1750249335; c=relaxed/simple;
+	bh=AkOJGHFfJ0D1Hi2CzC1gFV13rZ2OfQfKVC5qrPuOvQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nI4xBgn3673Vk85FdrZ+qoXyEebngQTKrAVWWA5sddUuHRTsvq0rQXxOEZVDBYyeQTAsRb1cxSv540lujmoOS5y3g6LqNNjhQwC+AUBxi9473ivv/oh0XiU3jCr2B1QXYWI8R8pZAGfQZjWsKR1r8dsMHjZypomXJUDH0+PVTz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XukT4AiT; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5533303070cso6551632e87.2;
+        Wed, 18 Jun 2025 05:22:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750249332; x=1750854132; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YX5uE2UWP9Ptw7Kk9zAitIAFib0/p57/vRRfmjUetJ4=;
+        b=XukT4AiT05nir0bLDw3EghBZSLTkWIZ/AKeT3C6O6ApqXCFxcLSGU0Dbk0aCCDoPG3
+         A5sUrQWges20sQLHTX0qCCq+K6VEukhy7fvSuGJ48reVFGRtsbqujRszcNtZm4lZREPF
+         t1lhX05PYrqgaG088HeTJnGyZGRc/UQP1CGuzt+ZZijuqwIDeySd7hQ5rC6oE9po1rtJ
+         EOMYOLZjhytn9cK9W75Yx7S45exIdt+MviauQRVlYHa7jgzGRQeekGR96gk77TtnI+wr
+         uu/v6sd3n4G8P6jm6DGGC6imG/EnKhjh0jrHof6PvRikoTzgSJPVEg0VHtn4fDcIjQHd
+         Gneg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750249332; x=1750854132;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YX5uE2UWP9Ptw7Kk9zAitIAFib0/p57/vRRfmjUetJ4=;
+        b=Ib/mwyZ416XS/HrZZ4MM8swOQiyv3zDiOjZWp3431ymB7pgv1RIhfp/scJ5CV5wyst
+         OUChHvURJuKq1Sm6x7e09Z8HFraBa/MqNvm3DLOCTUPovh3D32wR7us21Y3GGZjNNKPl
+         95LL1qfidZo4PvyNIcUqFe7dBEFryABxHQM8CiVpJmWnL0EDjoDBNSmiuFNSKqVjXi/I
+         SN/dEcufAn/xTGPX0p1ZUbr5BTWJnPBW3ZWawkd/mDW4fPkyWyVYhNPd5GxoAGdSEbG9
+         nz5SBkg19AXdAhdN8JxsKDcf/91Mm91K6T+RJjhdKINWSWe36seEaePwhR7JHyfCF/hs
+         emQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQxbV0Koza8LUQW/1ATa5bWpyb4MyTOHmBRrO19zOf8IUS7yCmXu+Wd8InvBszb6HrM7mY4OAq@vger.kernel.org, AJvYcCWdWOrVKI7ke3bUicIA/YeRDsuDUrJEQ+CMCWD3NQfhGuQcGDngMJ13jxpg6Eggwy2QeeFw1yoNYhDvI/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuAn6QhJIjIwGvPjBUhUPSwj8KGv8w3tbS48MBkHDU+0N3ko+3
+	VkBmQsT3g6tHEn5y9VWaHzywrscfVThb68A8qAzZtDFvloDETE1HP2CP
+X-Gm-Gg: ASbGncsQ4q/Se4SkYp/3KR7fymQYLJLDiB12kxwx1BVQrVcCedxI0GJLBEcqS9Efn3k
+	vPpkGlh6PT/vM1kwyNwOSQt6UPXKlEAmpyrcCRta4lRPhmq2E4C3a/n8PV+W0RNnfy7/Ul5AgHQ
+	w/NxLDktwAiHWm2xeKtf73OoFgU2W8WWxJW7zBcnKeLa2hjEPapQnucT0kCWv2d2GiMC+N+qdCc
+	uV1rcffRD9iVmA8EqMfHNrlXmT1WzrbkIktegOjX2GA+O+Knlgprex4PM2uavzYD7vzDWwIcZlF
+	T4m6s/E1HVX6UEqYXfpR0nY2HTwe6m53yZwUcPDCvJHDyJC/8pQ9voezPhKFkz0EmKoQi8S2aDp
+	t9Bs=
+X-Google-Smtp-Source: AGHT+IGJ1vZmmV2E3HMazrFPTb/BZIZ9ZVcruq8NwutkVwOcMvDD2EOlPnoGnZTqlnhGwGI9Cs9rNA==
+X-Received: by 2002:a05:6512:15a4:b0:553:3178:2928 with SMTP id 2adb3069b0e04-553b6e8834bmr4675292e87.16.1750249331405;
+        Wed, 18 Jun 2025 05:22:11 -0700 (PDT)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac1c1d1csm2235445e87.160.2025.06.18.05.22.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 05:22:10 -0700 (PDT)
+Date: Wed, 18 Jun 2025 15:22:02 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	horms@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2] net: gianfar: Use
+ device_get_named_child_node_count()
+Message-ID: <3a33988fc042588cb00a0bfc5ad64e749cb0eb1f.1750248902.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 06/13] media: rockchip: add a driver for the rockchip
- camera interface
-To: Mehdi Djait <mehdi.djait@linux.intel.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Gerald Loacker <gerald.loacker@wolfvision.net>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Markus Elfring <Markus.Elfring@web.de>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Kever Yang <kever.yang@rock-chips.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Collabora Kernel Team <kernel@collabora.com>,
- Paul Kocialkowski <paulk@sys-base.io>,
- Alexander Shiyan <eagle.alexander923@gmail.com>,
- Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- Mehdi Djait <mehdi.djait@bootlin.com>
-References: <20240220-rk3568-vicap-v8-0-9d9cbc4b524d@collabora.com>
- <20240220-rk3568-vicap-v8-6-9d9cbc4b524d@collabora.com>
- <656zxutvwytnd5i5l3nknni47r3wofmmwtxycleekjtrkbgfeo@xm7xbzirh3ce>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@collabora.com>
-In-Reply-To: <656zxutvwytnd5i5l3nknni47r3wofmmwtxycleekjtrkbgfeo@xm7xbzirh3ce>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-Hi Mehdi,
-
-On 6/13/25 14:33, Mehdi Djait wrote:
-> Hi Michael,
-> 
-> [...]
-
-Let's cut the long story short, shall we :-)
-
->> +static void rkcif_stream_fill_format(struct rkcif_stream *stream,
->> +				     struct v4l2_pix_format_mplane *pix)
->> +{
->> +	const struct rkcif_output_fmt *fmt;
->> +	u32 height, width;
->> +
->> +	fmt = rkcif_stream_find_output_fmt(stream, true, pix->pixelformat);
->> +	height = clamp_t(u32, pix->height, CIF_MIN_HEIGHT, CIF_MAX_HEIGHT);
->> +	width = clamp_t(u32, pix->width, CIF_MIN_WIDTH, CIF_MAX_WIDTH);
->> +	v4l2_fill_pixfmt_mp(pix, fmt->fourcc, width, height);
-> 
-> The rkcif supports the SRGGB10P: the packed version of the SRGGB10.
-> 
-> When you try to capture with SRGGB10P, the following fails in
-> v4l2_fill_pixfmt_mp()
-> 
-> 	info = v4l2_format_info(pixelformat);
-> 	if (!info)
-> 		return -EINVAL;
-> 
-> The return value is not checked in rkcif_stream_fill_format() resulting
-> in a call to queue_setup returning with sizes[0] = 0
-
-Thanks for pointing that out. I failed to realize that this helper
-function may return an error. What I can do is to implement the error
-propagation correctly. Of course this will only avoid the kernel
-warning, you still won't be able to stream.
-
-> This will cause a kernel Warning in the vb2_core_reqbufs() because
-> plane_size = 0
-> 
-> Exactly here:
-> 
-> 	for (i = 0; i < num_planes; i++)
-> 		if (WARN_ON(!plane_sizes[i])) {
-> 			ret = -EINVAL;
-> 			goto error;
-> 		}
-> 
-> I still don't have the solution here but wanted to let you know about
-> it.
-
-I only had a quick look at it, but apparently the compact formats are
-missing in the format list here:
-https://elixir.bootlin.com/linux/v6.16-rc2/source/drivers/media/v4l2-core/v4l2-common.c#L244
-for whatever reason.
-
-Have you by chance tried adding a line like
-{
-	.format = V4L2_PIX_FMT_SRGGB10P,
-	.pixel_enc = V4L2_PIXEL_ENC_BAYER,
-	.mem_planes = 1,
-	.comp_planes = 1,
-	.bpp = { 5, 0, 0, 0 },
-	.bpp_div = { 4, 1, 1, 1 },
-	.hdiv = 1,
-	.vdiv = 1,
-}
-?
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="OEbY+A2xp9C7j9WX"
+Content-Disposition: inline
 
 
-Maybe we can fix this, but please note that this issue should not block
-merging this patch series.
+--OEbY+A2xp9C7j9WX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Michael
+We can avoid open-coding the loop construct which counts firmware child
+nodes with a specific name by using the newly added
+device_get_named_child_node_count().
+
+The gianfar driver has such open-coded loop. Replace it with the
+device_get_child_node_count_named().
+
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+Previously sent as part of the BD79124 ADC series:
+https://lore.kernel.org/all/95b6015cd5f6fcce535982118543d47504ed609f.174222=
+5817.git.mazziesaccount@gmail.com/
+
+All dependencies should be in net-next now.
+
+Compile tested only!
+---
+ drivers/net/ethernet/freescale/gianfar.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/etherne=
+t/freescale/gianfar.c
+index bcbcad613512..7c0f049f0938 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -97,6 +97,7 @@
+ #include <linux/phy_fixed.h>
+ #include <linux/of.h>
+ #include <linux/of_net.h>
++#include <linux/property.h>
+=20
+ #include "gianfar.h"
+=20
+@@ -571,18 +572,6 @@ static int gfar_parse_group(struct device_node *np,
+ 	return 0;
+ }
+=20
+-static int gfar_of_group_count(struct device_node *np)
+-{
+-	struct device_node *child;
+-	int num =3D 0;
+-
+-	for_each_available_child_of_node(np, child)
+-		if (of_node_name_eq(child, "queue-group"))
+-			num++;
+-
+-	return num;
+-}
+-
+ /* Reads the controller's registers to determine what interface
+  * connects it to the PHY.
+  */
+@@ -654,8 +643,10 @@ static int gfar_of_init(struct platform_device *ofdev,=
+ struct net_device **pdev)
+ 		num_rx_qs =3D 1;
+ 	} else { /* MQ_MG_MODE */
+ 		/* get the actual number of supported groups */
+-		unsigned int num_grps =3D gfar_of_group_count(np);
++		unsigned int num_grps;
+=20
++		num_grps =3D device_get_named_child_node_count(&ofdev->dev,
++							     "queue-group");
+ 		if (num_grps =3D=3D 0 || num_grps > MAXGROUPS) {
+ 			dev_err(&ofdev->dev, "Invalid # of int groups(%d)\n",
+ 				num_grps);
+--=20
+2.49.0
+
+
+--OEbY+A2xp9C7j9WX
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmhSr2YACgkQeFA3/03a
+ocWk4wf8DXM53+9i/agAaQTn7ykbmvYReY/KPywU0raYz6xuZdXPAl5YlMMQPIWj
+1X1DyJzDuWWYx4CDUyQNJS035LVkIIpX3FVko1sQbeCpU+lB7yK1WiwRkF2Sy8ay
+xQfnAqRwtEmV/gPNGEgLHyFKxEKx4XnNhJBwkgnNi6asJYE3+fm/y2O6FQDI67gP
+ZjOoNOIWB8qJiUt7vjsPJSbyabHA0TwZfA0AMyIBJ12+tHkcYxh9/rYsDlOBDGAM
+MdF4ontQmgp8UlFd/4P5dMR78y6VtH/9WYxwM0FXEDGVTynUv8HaNO0Baz+XJcaM
+b3wyS6az21Q41ZqejPvsqtjPafu6lQ==
+=7mu5
+-----END PGP SIGNATURE-----
+
+--OEbY+A2xp9C7j9WX--
 
