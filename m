@@ -1,77 +1,97 @@
-Return-Path: <linux-kernel+bounces-692742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD4CADF60C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:39:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C10ADF617
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 20:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 223A7189F614
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:39:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4B0E7A8652
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 18:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EE12F4A1C;
-	Wed, 18 Jun 2025 18:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD51E2F5482;
+	Wed, 18 Jun 2025 18:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HlB/rH/9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dcHTbIDk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mws7jMY6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C16D3085B3
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 18:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280F83085B3;
+	Wed, 18 Jun 2025 18:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750271963; cv=none; b=R8nc5lquHJQxrervcIcTsRjSgePSTPCrHIrz6nw6nRu78qTLQixiRKMesjpIHAkhZROaA7KrwqqjCI+Gy5fcu2Jko4h1Rst5dcmH+kFH9/7mqWDQEL3hoyYKrsstPa6qH30gqmPUe2ucz0gL++w0evOoPr7adgdYozmdy+b7PqQ=
+	t=1750272140; cv=none; b=YR05NvcvjsBbfFpPkSP8Y5HOXz/216bzMD6rndap1m116uLgtWA+lUldVXK8/EMjtIKt3C2eJNGWdm0Aj9SzxXw84ikPsg2kiyi5O5yusBuKx8YsTJB5ZwkG6kQW5wmjN3w7vNGBgBUpr1RKql3n9/p5ovyLnOiQ5naOPmCmFsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750271963; c=relaxed/simple;
-	bh=PQvKTVCGBx2u4smdsQmu6FoHFBrZOQ0B2v/JiNxbRUQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=r45ERH7U+4kE5BUgX80GfSQZ32Hbp9YU80G83qbDIMiyzZkL7c6gTaGZcZgrP5Az1HbaPHb1yxobk8GIHBaJXlf3KGHFp+hYXx++Pc/eHcYZM6p7t1npR160LjFaTusSBBekWYSJC8v6FzOskFT2V9PhuhMmB0vHw2hD/J2uMGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HlB/rH/9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dcHTbIDk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750271960;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PQvKTVCGBx2u4smdsQmu6FoHFBrZOQ0B2v/JiNxbRUQ=;
-	b=HlB/rH/9ABf5yob0lAGkDg8UN1N1uVTgUtY85n8Rhln8OaK+aVXfvBgZw89hL0R4Ex+2wt
-	Sk3yvj4/MbaPy+2aYmAuSKrogUsWcYQWUvK93cFTecYfqR4bdazP4I8ihcqhD24k9SuzOT
-	o+tGiZz5EAi/w79HuukSJs7pPC/e1toCuqpxxhD1mHCTbhtd9VoslZFlI4lKK4FXLLselh
-	YDtwscbbEQSj8ftUB97Cq8e+StMmyt02MqVfh/RsjGYQaCUgnJZqOZxBXVDf78+ts1rN/z
-	15sgU1ZkijHhvmNZ5UwKU5xLAsyMUNLLXkbDR9Z3E9V6CgMIgcRu89OXwDnUsA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750271960;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PQvKTVCGBx2u4smdsQmu6FoHFBrZOQ0B2v/JiNxbRUQ=;
-	b=dcHTbIDkTZRvslinMeFXDU3PSwhaUV5al75Jgw/4ldXaFjpfbHhDOjZ03dCOFHZae4JajC
-	e8QgZfHW1TOHy8BA==
-To: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, "Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: Re: [PATCH] x86/CPU/AMD: Add CPUID faulting support
-In-Reply-To: <20250528213105.1149-1-bp@kernel.org>
-References: <20250528213105.1149-1-bp@kernel.org>
-Date: Wed, 18 Jun 2025 20:39:19 +0200
-Message-ID: <87plf0rj1k.ffs@tglx>
+	s=arc-20240116; t=1750272140; c=relaxed/simple;
+	bh=wE4/WPYWtqDJfV1HOrNScBw/vhgUfaSiNNDqKJCoR/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m/BogYzep7vXukUYRA1eyJJHBbryU6g1b7bb8T/ck71IB0u6Rti1eGcm9siCXgusG/kpzboGXxogosSQBf65GdTMtlTwIYYb8gnq9QfviM/x47LxvCQ1GkwxpAwhmwEuL41zLXEab62+E5Q3oC24fEDaJslObsBmCZcZn0Wdivw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mws7jMY6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05344C4CEE7;
+	Wed, 18 Jun 2025 18:42:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750272139;
+	bh=wE4/WPYWtqDJfV1HOrNScBw/vhgUfaSiNNDqKJCoR/s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Mws7jMY6McrOeNlVES1yw/4TjUstaMsYnOWWhQI3AF8uY80dHcujBFzqjI100tnDW
+	 SN+64mEcUssHZ2xJsgFh3UAH37idYQjkuZA0wL8aB1rhOYs1rlWD2unHA0ZXbbFaca
+	 MFE+Ug9Ghyso7OAI9lwyrURkKrjpO9N2Nox/eQs/tLibl67g+h/5D7jXE2CCyFwq3A
+	 nJ/KUmyzfBVrXS3E+CbNVIaZbwXOLGg1AyziluV7NdhHBuSP1hCj7Z4IdDnBtKapgQ
+	 7mBEjMT5f38m95JSDzzWnGEcc/yYK2tW1BuuhEVixfuD4foQ2okGbJOcrTTrXJFSXt
+	 Kody0JO+P3QQg==
+Date: Wed, 18 Jun 2025 11:42:18 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: George Moussalem via B4 Relay
+ <devnull+george.moussalem.outlook.com@kernel.org>,
+ george.moussalem@outlook.com, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Florian Fainelli <f.fainelli@gmail.com>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Konrad Dybcio <konradybcio@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH RESEND net-next v5 1/2] dt-bindings: net: qca,ar803x:
+ Add IPQ5018 Internal GE PHY support
+Message-ID: <20250618114218.6add7fa3@kernel.org>
+In-Reply-To: <20250613-ipq5018-ge-phy-v5-1-9af06e34ea6b@outlook.com>
+References: <20250613-ipq5018-ge-phy-v5-0-9af06e34ea6b@outlook.com>
+	<20250613-ipq5018-ge-phy-v5-1-9af06e34ea6b@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 28 2025 at 23:31, Borislav Petkov wrote:
-> From: "Borislav Petkov (AMD)" <bp@alien8.de>
->
-> Add CPUID faulting support on AMD using the same user interface.
->
-> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+On Fri, 13 Jun 2025 05:55:07 +0400 George Moussalem via B4 Relay wrote:
+> From: George Moussalem <george.moussalem@outlook.com>
+> 
+> Document the IPQ5018 Internal Gigabit Ethernet PHY found in the IPQ5018
+> SoC. Its output pins provide an MDI interface to either an external
+> switch in a PHY to PHY link scenario or is directly attached to an RJ45
+> connector.
+> 
+> The PHY supports 10/100/1000 mbps link modes, CDT, auto-negotiation and
+> 802.3az EEE.
+> 
+> For operation, the LDO controller found in the IPQ5018 SoC for which
+> there is provision in the mdio-4019 driver.
+> 
+> Two common archictures across IPQ5018 boards are:
+> 1. IPQ5018 PHY --> MDI --> RJ45 connector
+> 2. IPQ5018 PHY --> MDI --> External PHY
+> In a phy to phy architecture, the DAC needs to be configured to
+> accommodate for the short cable length. As such, add an optional boolean
+> property so the driver sets preset DAC register values accordingly.
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Hi DT Maintainers!  Is this in anyone's review queue?
+I see some comments from Rob on v2 but no reviews since.
 
