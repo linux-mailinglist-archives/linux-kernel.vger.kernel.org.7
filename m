@@ -1,86 +1,93 @@
-Return-Path: <linux-kernel+bounces-691454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C73F4ADE4D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:50:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 463ABADE4DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 09:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 271047A92D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B053BCFF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 07:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1D425A33A;
-	Wed, 18 Jun 2025 07:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1RyW1auO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F42127E071;
+	Wed, 18 Jun 2025 07:51:21 +0000 (UTC)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35437944F
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 07:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21945274FC1;
+	Wed, 18 Jun 2025 07:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750233011; cv=none; b=JlaMDz5nFO7XeBUS/LWgKm0LRlXLFCOld1CT03faip4oe+uXevek340EpibKxN858QWFhEYh+QTlcaQRlVo6CiyBAk1spSorXMakwWXhU3KBGPcL5hVlvOlQbrJWIFwZcylBg7UfdqKdIVHu5WmY+Zkl8dKlU7FREWW8ThcOYHw=
+	t=1750233080; cv=none; b=SU4yr5Xm38xfj/HEOUvr9CrCVhXFZAYWBs1a4niFkLsAcnIpmDxzndwDPI9+5OIWhWQIvJAiqQCE8TAmiaSKKkjcHo7HpQ26cZDwWpYf2NFllAw+/PEw9GU9cq5frBahACQJPkH5nQ4DWPf26xLgMcse/rvPyIs0iSJTIg3U1c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750233011; c=relaxed/simple;
-	bh=YYKoGhWqK8k0effHYwtutxoOlYs/CifAQAorgm0Tr2U=;
+	s=arc-20240116; t=1750233080; c=relaxed/simple;
+	bh=rAfrW60BLN+fDfYASvZhfQlbeXXKoxyFtavzHgjUXuQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IEieP24/6DtP11IpJcIJFTbOS72YHZNIRPTq1WalgONaCCMGxD/ivYcJC0Ap8d9XpSXdHGifGOJotX5mVF5/251vR+lQEquvgyenuoXlJNxA/+oP0iKmRd0F18XNYUKE9b4k/v8by8iou6FlIMHGEFjijHX7AHssABwvI1hfKXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1RyW1auO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 502F6C4CEE7;
-	Wed, 18 Jun 2025 07:50:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750233010;
-	bh=YYKoGhWqK8k0effHYwtutxoOlYs/CifAQAorgm0Tr2U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1RyW1auOGtOzYsMDO5i9kuU/vWfsRF8RCsTR0//cg27OMshN454EpV97EE1wN//Gp
-	 Ib2nEsAOrsP3yNYFIRWbIiGLs9l+uooc+blofu2z5852+eB9FeWiAZnVKHq95O+dcl
-	 ZeNusYfPhhPCXqrQTlh8fRUkad/JmdZhwSsmFMCM=
-Date: Wed, 18 Jun 2025 09:50:07 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] sysfs: finalize the constification of 'struct
- bin_attribute'
-Message-ID: <2025061841-vixen-smuggler-9cc4@gregkh>
-References: <20250530-sysfs-const-bin_attr-final-v3-0-724bfcf05b99@weissschuh.net>
- <fa9b1cb8-28a7-4ae0-89c8-8e3f9f149c56@t-8ch.de>
- <2025061702-retention-lion-48c3@gregkh>
- <9797efed-0ece-4817-9a37-9ff225a5df6d@t-8ch.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qEn55u8q6u/ca/OcI2trQ7pPVzDyO9XFTvhIjugxLntk5b/bxLI27ElcCvs4dNhEcn6xWeG8vZsRWZ/F2bLnD65caUvt9rr90Pq75oiWAXf6wONZ96xZSlG8LgpEdoZmoJMFUwh+QQ3uy29Faz3/QlGrTHdyl4dT/yiS4r6OYPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6071ac9dc3eso11484307a12.1;
+        Wed, 18 Jun 2025 00:51:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750233077; x=1750837877;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K2Oawlv3qlJ5B14XZ51kOBRIKyOtdglt4ohJphGiBj4=;
+        b=dqaVDwwweU2tHiG9Bv2WqCV3TtKQnbWylwJ3WjhXG8XJdi2Yr6w3IxxXGmGih1flop
+         EdXxE+1UtuhOHXyLeMolprIF8xrCEPKpwtPWoxbYtIFJEyQ9Xr5EWk7IOVEz3gTzkwGC
+         lh4FHUVvPpkBOcwjfaiE5DbLEzDloHALF1BMojSu1ILX1lVV1XC7z770P1nUsnqfPAaK
+         +lN9gYdoK+N0W6H0DoHsXjv6pjyVeR3AGgQ5M8wIcF4K09O9xqIAWJAEgvi2WR399pVD
+         CSuP/ETq6ALCU/NGZAwvCh09YprT1QTGVEdxOFj7busBWB5abL8M7mX0xsb/elwyAIwD
+         BSiw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6nBc54X0BNqamileJV78i/upr/mE918cXc1APG6hqRoNUpc5bO1hn6H+fAk4Oq2hyKFuyf1KDJvo=@vger.kernel.org, AJvYcCVY0s0xdgoqdifsR7C9MtBJIN1weaU/ts2z6zIVSKIxbvdkz1csHeaa1cdX2ptuzgu5bfHqOxVR@vger.kernel.org, AJvYcCW6TSERJJ33aCC3bq6bdbtVkMY2kpp6iQIKRjqO7XVuQK4+gFjJp6WKilbP2JpouCiAGIN53yaIfBEuv/6H@vger.kernel.org, AJvYcCWRxUGseCAHX2p90aXPv+fihsbVs2efZpg3Y+ypsFokZgDBmpyxwl8EmBR7osfN80he8o/K7K7S+khAK3g9Zm6n@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA/JLZEoNXSHquKgYXwlRI8CULEkWtsd/TDS/F5zyVsT4UhQap
+	5RFHm/xUf5sUgnms3CaLR/xRMIhcNAAH2TvBNdfXRfEHnnCbOvNUK9RG
+X-Gm-Gg: ASbGncsVP+1ORgCdlPbrtWJdRdsIQAvJCwD+UvitvFkOKF9ety/gw6+6LBkOCrSwMoe
+	ALH80YedVSOAX5wX5ay6F2iMWQgR/iYz1IfCYBXqoEYyyY6BPORjYLJiI3mde9UNWIxRrKIwy4i
+	gyxHCFx70gBCEqkxcRPVS2G1a+E21NHLIMNJuv37P1LW8abBz3C4gTw32/d3NYLV9T7Yq+w2riN
+	o8cZwznKDmH/6sff5IRzmywkL0KaZo5WmfSI4SE76jeCDvQ/EQethP9+JsbF4KFh8LmhbwlidXH
+	G4ZW8xOpdmSxI2QX2r2kh3aCxy2/Fmb+cCOW5Gy7BJvxbdnEf77W
+X-Google-Smtp-Source: AGHT+IEROA+4lveuN1ZdmzI6YFzyyJzoc5RM1e8Cc9lT3Mb4GkQQtqkmyGFKaOws5hWV84IJgQt/FQ==
+X-Received: by 2002:a05:6402:5188:b0:607:f55d:7c56 with SMTP id 4fb4d7f45d1cf-608d097a0a3mr16221027a12.25.1750233077168;
+        Wed, 18 Jun 2025 00:51:17 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:8::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b4a92ea2sm9265967a12.60.2025.06.18.00.51.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 00:51:16 -0700 (PDT)
+Date: Wed, 18 Jun 2025 00:51:14 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Gustavo Luiz Duarte <gustavold@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v3 3/5] netconsole: append msgid to sysdata
+Message-ID: <aFJv8gGqCBZr6gOb@gmail.com>
+References: <20250616-netconsole-msgid-v3-0-4d2610577571@gmail.com>
+ <20250616-netconsole-msgid-v3-3-4d2610577571@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9797efed-0ece-4817-9a37-9ff225a5df6d@t-8ch.de>
+In-Reply-To: <20250616-netconsole-msgid-v3-3-4d2610577571@gmail.com>
 
-On Tue, Jun 17, 2025 at 04:06:48PM +0200, Thomas Weißschuh wrote:
-> On 2025-06-17 10:48:00+0200, Greg Kroah-Hartman wrote:
-> > On Sat, Jun 14, 2025 at 08:23:24AM +0200, Thomas Weißschuh wrote:
-> > > friendly ping. You wanted to send this to Linux at around -rc1.
-> > > The changes should now apply cleanly to mainline.
-> > 
-> > I've taken the first 4 patches into driver-core-testing at the moment
-> > (will move to driver-core-next if it passes 0-day testing).  The last 2
-> > I'll hold off of for the next -rc1 as I was way too late here, sorry, my
-> > fault.  I blame travel, which I had to do a bunch of the past few weeks :(
+On Mon, Jun 16, 2025 at 10:08:37AM -0700, Gustavo Luiz Duarte wrote:
+> Add msgcounter to the netconsole_target struct to generate message IDs.
+> If the msgid_enabled attribute is true, increment msgcounter and append
+> msgid=<msgcounter> to sysdata buffer before sending the message.
 > 
-> Works for me.
-> 
-> On the other hand it should be possible to take all patches through the
-> normal -next process right now. This is not a flag-day conversion. The final
-> const variants are already in v6.16-rc1, so everybody can just use those.
+> Signed-off-by: Gustavo Luiz Duarte <gustavold@gmail.com>
 
-There is a flag-day in that new patches could be using the old types,
-right?
-
-thanks,
-
-greg k-h
+Reviewed-by: Breno Leitao <leitao@debian.org>
 
