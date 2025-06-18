@@ -1,299 +1,152 @@
-Return-Path: <linux-kernel+bounces-692335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E71ADF016
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:48:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08BE2ADF021
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5865188489A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:49:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78F937A73B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1711FAC4E;
-	Wed, 18 Jun 2025 14:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1281ACECE;
+	Wed, 18 Jun 2025 14:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8tZY/bB"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="XUp3Gvb1"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA9719ABB6;
-	Wed, 18 Jun 2025 14:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFDAF9CB;
+	Wed, 18 Jun 2025 14:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750258121; cv=none; b=Rq3ylncePgEvOvFbT1ILDT7THA+rb3w4/+uzBXO3SWz2Dk0T7d68RvvgOOqX/i7fIAin+Q2ZOQ0AyCeswUvJUFHZD4K4qwTp0qyTyczF3m/DQsvRRyREtau69mIf6q1W4eeLozPl1trVNTagEaiU/4jn/7CV7ZKI5KKPuD76OGE=
+	t=1750258180; cv=none; b=ZVM/zs0Oi4Ab2T9ZqHyakoPnaRldzkKVc81IXN43k5zGmVarfAvocUyeG52E/ImMTKBt++LyBQah3dkikOMDSle9AFKqNBDldZEEsyNtZE3c8LcFLbVdoWUZJeBDdUysIUF8TVIkEBeg5q+8GsuTPRyNAFfJS9uqKMmyUVShIuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750258121; c=relaxed/simple;
-	bh=Yno15dni2nxubrTcYPTAh7qojMkJ4hRIIIn+p4nqmM8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C8JAfgafu60c2e3ZsvzVIi+MxhEwhWByCyL5XJ/j0y1xWtFafVOg38JB2pMEUJiv1t3DHZGyS8DF3y0KEiz/61lRWQnurGIheEqeyxYpZN5FyzV003tvUkZJloTUmfWZkIIBOx2EF+y2Ir0Sbp65Xb2+nYFgND9Z1ti2Ys+8B94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F8tZY/bB; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4a3db0666f2so151861321cf.1;
-        Wed, 18 Jun 2025 07:48:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750258119; x=1750862919; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9E/uzw/2mWDqrPKrh3O+mIF43zjnsnolCipqhB98e+4=;
-        b=F8tZY/bBPbkNvjMRFWXx5wJXqVFb1Wq2CSw6Z+0Xt5DaX7dJPNTmO/ciPltXwR8bbH
-         pOv9b0EJrp16KfsSPXJobaCHtAT1gntRBnkbGVa8JTv29JSGV1ueOhVMD5HL1LcrqxHx
-         csl8i9FVFBGq9N4DZKsCgAh95gIlJFYHwfRvTASgUvDq7O8iXiTG9v3QZHmS212d28cF
-         EUqpqK2Ph2L6zXIQAI08RRbj8aJ0nCz2v8C3OpzOLmI/bFundShHgZp1T9SRpPi7CCOw
-         ZQr5LH69AvXzZ5/zykvdhP/yDQiC6EJpIYZdvUuo7zQaK9H/DI5KTD2JquGKbd1pRfhx
-         ug3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750258119; x=1750862919;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9E/uzw/2mWDqrPKrh3O+mIF43zjnsnolCipqhB98e+4=;
-        b=lt5lBkKlIHR9kAKGDO+MnYxs8tByZYJXdKfswv8mAt+MKnNY7DNU+xk8oN7X11mVIz
-         nho50/yufkwhp6HQ/K9UWhW82sAP/47UWi9xDc0cAJPniPSHBKELJ38w/wS/xz+oNdJV
-         hQx6M5WmbEQ7QKOBsFMvGhQNskvyofM/eO9+SMGmQXB8F1bBX7+qdqtD8WJRejeW46v5
-         jxkmIA9erZZpIdiH4P5gUZ1flZoNgn6bzn/85hL4R+Nv/CI/w0Oan0BdaFCEYcIIGw2S
-         Uga6lgEjsGfwotRlXIA1OPx26zQbqWJJeYeT9E7ytVawgp3ySRuDpRk5wMo0UwoFpJHJ
-         wj/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWZyEqPzmOaorua+vy7b1BK/p864+S+lHmLrgLeGz+9f7CnjKBS1Gsg0ceYN9GS9lRbPVJctY9/okSp@vger.kernel.org, AJvYcCXQhKRvs9lXjF5MqJgb0wyjNyojaGS9SLNXQQApZqBeh8Huk9lGdRF0zxuAvu10sPDhQTEgLGrdKVc8eQ9b@vger.kernel.org
-X-Gm-Message-State: AOJu0YxATmyHAGizZuhF0oiUsoWeL+KwOzL5z7gQTrg+yftUarCOUK+1
-	FyMnMB7cGAl3XC6XLMDm/fR1MzBMb90GY0+HlX8r5KT2g30xujKenSZCCfSwZJulIcDDcKzCa8h
-	eT2fNSvHB2t4ldih+8+cAKGtjhnycYEc=
-X-Gm-Gg: ASbGncu8Sf5OByunf1qz1W+CQHJRlflCb/PCiuCmKyEo+1UqF3VJwyP11M370EfRigL
-	voO7grqg036FHDgyDzwK4Q/qScO/0wUdFGvX0dHFyQzD/AoAI2J6UEMwFjK7/WWj5N2muHyY7MG
-	mC6GPM0zjlAPH4TSY/npiOXHrwF862WnELT1RfTlwC2fmY
-X-Google-Smtp-Source: AGHT+IEbIb82kGHtuh6ygsi/4BRy8ZstxcD/xdyUKnyNWJ/L/+rSBgep91TjG1bWb6qk0ezqJmvSXC+ZNxOtpoO/Vl0=
-X-Received: by 2002:ac8:7d0e:0:b0:4a6:c5ea:6fc with SMTP id
- d75a77b69052e-4a73c5b0a8bmr237877781cf.42.1750258118686; Wed, 18 Jun 2025
- 07:48:38 -0700 (PDT)
+	s=arc-20240116; t=1750258180; c=relaxed/simple;
+	bh=xCwjGQRZNk8k1ts776Y9Hh6Gp2YJ+EK67MoT9GdAkfU=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=mZWo9b9wiPtAKbxU4PCM8QnUyQoh43aBx1QGmibWaZ+ASclF0TbkoU/97V97YXD2rIXxgXQ1B/24PpWM5YI2Zr/gpWkLn0KYbb2g2ypIeymnH0VzxWwSVf6ha/DVF+vcQ0Urjpc5kIk1CfX1eVK/GKmjo5pbvIuEBQxNkJVEJWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=XUp3Gvb1; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 4F65825F28;
+	Wed, 18 Jun 2025 16:49:37 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id mrkJ_d0x0XTh; Wed, 18 Jun 2025 16:49:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1750258176; bh=xCwjGQRZNk8k1ts776Y9Hh6Gp2YJ+EK67MoT9GdAkfU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=XUp3Gvb1PUc1QieRkDW5TcBwRN/wmT41FC2rHOVMvtJTJoUJTAzzUlrIJ+MEPjKIq
+	 +L9UZ5T3rqMAZBAShOGWAQxtLAeGhe+dNcOldXBfomoyTSdaqmap2vwuYfzyf9WAGb
+	 6zcc5T8JI9ZbR5QoHXLuqQolGnccDjsXt8xEga3zwBrJG1XFy0+dAD1cSNSAdHhIYb
+	 138DtbvYL/9F/QhUKON/3vOoyLsOHf4lQIrrko92mFeaVCBKl6cSYzV+HpYVphmkVJ
+	 M6CAhEsB5LZD7IBqDlw/9PjJQQyrkn4aECO/Izcw3Jfs8X4jh4LjE+/5iTSYYopOKN
+	 Cy9iyx/5NEjbw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250603-sige5-updates-v1-0-717e8ce4ab77@gmail.com>
- <80ACAAAE-F522-4199-9048-ADE69F6E1128@gmail.com> <CABjd4YyVJv0NmF9LsGWQ-O44MGjT5=FFeUjbg5rJ6XkNgjxb+g@mail.gmail.com>
- <3286422.5fSG56mABF@workhorse>
-In-Reply-To: <3286422.5fSG56mABF@workhorse>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Wed, 18 Jun 2025 18:48:27 +0400
-X-Gm-Features: AX0GCFtn17PCAtrv2cU3B3JX5Fm9l__TWgBDoQ7i4VVK1BJdOUr0X0UJ246hzQw
-Message-ID: <CABjd4Yy0rjET+TyA3pNGrzfKd1xKKG1AjWFFLsgb+mgDpu_TRg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] arm64: dts: rockchip: list all CPU supplies on ArmSoM Sige5
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
-	XiaoDong Huang <derrick.huang@rock-chips.com>
-Cc: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Wed, 18 Jun 2025 14:49:36 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: samsung: exynos-sysreg: add exynos7870
+ sysregs
+In-Reply-To: <97a54a9f-8719-4bbd-a1d5-dd398f42ab0c@kernel.org>
+References: <20250612-exynos7870-drm-dts-v1-0-88c0779af6cb@disroot.org>
+ <20250612-exynos7870-drm-dts-v1-1-88c0779af6cb@disroot.org>
+ <7bb375c8-1a43-40e2-891c-8815c9cc94ff@kernel.org>
+ <76df5b2d6b2c8de73519e1862e105c67@disroot.org>
+ <97a54a9f-8719-4bbd-a1d5-dd398f42ab0c@kernel.org>
+Message-ID: <cd0f942a3752053e7569040f9e508b2d@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 18, 2025 at 6:06=E2=80=AFPM Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
->
-> Hello,
->
-> +Cc Jonas Karlman as he is intimately familiar with RK3576 clock shenanig=
-ans by now,
->
-> On Wednesday, 18 June 2025 15:51:45 Central European Summer Time Alexey C=
-harkov wrote:
-> > On Sun, Jun 15, 2025 at 8:00=E2=80=AFPM Piotr Oniszczuk
-> > <piotr.oniszczuk@gmail.com> wrote:
-> > >
-> > >
-> > >
-> > > > Wiadomo=C5=9B=C4=87 napisana przez Alexey Charkov <alchark@gmail.co=
-m> w dniu 9 cze 2025, o godz. 16:05:
-> > > >
-> > > > On Sun, Jun 8, 2025 at 11:24=E2=80=AFAM Piotr Oniszczuk
-> > > > <piotr.oniszczuk@gmail.com> wrote:
-> > > >>> Wiadomo=C5=9B=C4=87 napisana przez Alexey Charkov <alchark@gmail.=
-com> w dniu 5 cze 2025, o godz. 15:42:
-> > > >>>> Alexey,
-> > > >>>> I see you are using rk3576 board like me (nanopi-m5)
-> > > >>>> Have you on your board correctly working cpu dvfs?
-> > > >>>> I mean: [1][desired clocks reported by kernel sysfs are in pair =
-with [2[]cur clocks?
-> > > >>>> In my case i see mine cpu lives totally on it=E2=80=99s own with=
- dvfs:
-> > > >>>
-> > > >>> Hi Piotr,
-> > > >>>
-> > > >>> I haven't tried to validate actual running frequencies vs. reques=
-ted
-> > > >>> frequencies, but subjective performance and power consumption see=
-m to
-> > > >>> be in line with what I expect.
-> > > >>
-> > > >> well - my subjective l&f is that  - currently - my rk3576 seems =
-=E2=80=9Eslower" than i.e. 4xA53 h618.
-> > > >
-> > > > In my experience, native compilation of GCC 14 using 8 threads on
-> > > > RK3576 (mainline with passive cooling and throttling enabled): 2 ho=
-urs
-> > > > 6 minutes, on RK3588 (mainline with passive cooling via Radxa Rock =
-5B
-> > > > case and throttling enabled but never kicking in): 1 hour 10 minute=
-s
-> > >
-> > > by curiosity i looked randomly on 3576 vs 3588:
-> > > multithread passmark: 3675 (https://www.cpubenchmark.net/cpu.php?cpu=
-=3DRockchip+RK3576&id=3D6213)
-> > > multithread passmark: 4530 (https://www.cpubenchmark.net/cpu.php?cpu=
-=3DRockchip+RK3588&id=3D4906)
-> > >
-> > > assuming 3588 as baseline, 3576 is approx 20% slower on multithread p=
-assmark (has ~0,8 comp power of 3588)
-> > > 70 min compile on 3588 should take something like ~86min on 3576.
-> > > In your case 126min compile on 3576 shows 3576 offers 0,55 comp power=
- of 3588.
-> > > Roughly 3576 should do this task in 40min less than you currently see=
- i think
-> > >
-> > >
-> > > > Can't see how u-boot would affect CPU speed in Linux, as long as yo=
-u
-> > > > use comparable ATF images. Do you use the same kernel and dtb in al=
-l
-> > > > these cases? Also, what's your thermal setup?
-> > >
-> > > yes. in all cases only change was: uboot & atf
-> > > thermal is based on recent collabora series (+ recent pooling fix for=
- clocks return from throttling)
-> > >
-> > > >
-> > > >
-> > > > Not sure UX is a particularly good measure of CPU performance, as l=
-ong
-> > > > as you've got a properly accelerated DRM graphics pipeline. More
-> > > > likely 2D/3D and memory.
-> > >
-> > > indeed.
-> > > For quantified look i=E2=80=99m looking on v.simple approach to estim=
-ate real clock is http://uob-hpc.github.io/2017/11/22/arm-clock-freq.html
-> > > by curiosity i looked what it reports on a53/a55/a72/a76 and it is su=
-rprisingly accurate :-)
-> > > on mine 3576 with collabora uboot+mainline atf is hows 800MHz (and in=
- perf. gov it seems to be constant)
-> > >
-> > > >
-> > > > There might be some difference in how PVTPLL behaves on RK3576 vs.
-> > > > RK3588. But frankly first I would check if you are using comparable
-> > > > ATF implementations (e.g. upstream TF-A in both cases), kernels and
-> > > > thermal environment :)
-> > >
-> > > all tests: the same 6.15.2 mainline + some collabora patches
-> > >
-> > > diffs were:
-> > > 1.collabora uboot[1] + mainline atf 2.13
-> > > 2.collabora uboot[1] + rockchip rkbin bl31 blob
-> > > 3.vendor uboot (bin dump from friendlyelec ubuntu image)
-> > >
-> > > on 1/2 i see kind of issue with clock values (i.e. perf gov gives con=
-stant 800MHz on mainline atf).
-> > > 3 seems to perform better - (i.e. perf gov gives constant 1500MHz so =
-all is snappier/faster)
-> >
-> > There is indeed something weird going on. I've tried running sbc-bench
-> > [1], and even though I observe dynamically varying CPU frequencies
-> > after boot with schedutil governor, once sbc-bench switches the
-> > governor to "performance" and goes through the OPPs in descending
-> > frequency order, the CPUs seem to get stuck at the last applied low
-> > frequency. Even after max frequency gets reverted from 408 MHz to
-> > something higher, even after I switch the governor to something else -
-> > no matter what. Only a reboot gets the higher frequencies 'unstuck'
-> > for me.
-> >
-> > These are all observed at around 55C SoC temperature, so throttling is
-> > not an issue. Regulators are stuck at 950000 uV - way above 700000 uV
-> > that the 408 MHz OPP requires (and power readings seem to match: I'm
-> > getting about 2.3W consumption at 408 MHz in idle vs. normal idle
-> > reading of 1.4W at around 1 GHz).
-> >
-> > Not sure what's going on here, and I don't remember seeing anything
-> > similar on RK3588. Thoughts welcome.
->
-> This may once again be a "accidentally uses wrong clock IDs" type
-> situation. The other possibility is that we're getting confused
-> between what we think the clock rate is and what SCMI actually set
-> the clock rate to.
->
-> Things to check is whether the right clock controller (scmi vs cru)
-> and the right clock id (check ATF source for this) is used.
+On 2025-06-18 14:37, Krzysztof Kozlowski wrote:
+> On 18/06/2025 16:32, Kaustabh Chakraborty wrote:
+>> On 2025-06-18 09:46, Krzysztof Kozlowski wrote:
+>>> On 12/06/2025 17:23, Kaustabh Chakraborty wrote:
+>>>> Add sysreg compatible strings for the Exynos7870 SoC. Two sysregs 
+>>>> are
+>>>> added, used for the SoC MIPI PHY's CSIS and DSIM blocks.
+>>>> 
+>>>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>>>> ---
+>>>>  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml      
+>>>> | 6 ++++++
+>>>>  1 file changed, 6 insertions(+)
+>>>> 
+>>>> diff --git 
+>>>> a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml 
+>>>> b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+>>>> index 
+>>>> d27ed6c9d61ea9db77229eca60b6b9a0abc5d305..174bdb8ee932ff965de6fc17aef004a3cedffeb3 
+>>>> 100644
+>>>> --- 
+>>>> a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+>>>> +++ 
+>>>> b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+>>>> @@ -52,6 +52,12 @@ properties:
+>>>>                - samsung,exynosautov9-sysreg
+>>>>            - const: syscon
+>>>>          deprecated: true
+>>>> +      - items:
+>>>> +          - enum:
+>>>> +              - samsung,exynos7870-cam-sysreg
+>>>> +              - samsung,exynos7870-disp-sysreg
+>>>> +          - const: samsung,exynos7870-sysreg
+>>> 
+>>> 
+>>> Drop. These are not really compatible or your commit msg is 
+>>> incomplete.
+>>> Don't use deprecated syntax and backwards compatible solutions for 
+>>> new
+>>> hardware.
+>> 
+>> Are you sure? The deprecated one is actually the item above. From what 
+>> I
+> 
+> Yes. Think why were they added.
+> 
+>> understand, those are generic sysregs and don't mention their 
+>> functions.
+> 
+> And what is a generic sysreg?
 
-Clock IDs in the kernel seem to match those in ATF, but I've noticed
-what appears to be a buffer overflow in some of the SCMI clock names
-defined in the opensource TF-A (thanks GCC 15 and its zealous
-warnings):
+What I meant is, usually compatibles go like this (in order):
 
-alchark@alchark-surface ~/trusted-firmware-a $ make
-CC=3Daarch64-unknown-linux-gnu-gcc PLAT=3Drk3576 -j12
-Building rk3576
-  CC      plat/rockchip/rk3576/scmi/rk3576_clk.c
-plat/rockchip/rk3576/scmi/rk3576_clk.c:1102:154: error:
-initializer-string for array of =E2=80=98char=E2=80=99 truncates NUL termin=
-ator but
-destination lacks =E2=80=98nonstring=E2=80=99 attribute (17 chars into 16 a=
-vailable)
-[-Werror=3Dunterminated-string-initialization]
- 1102 | stimer0_root, p_100m_24m, clk_stimer0_root_info,
-&clk_scmi_ops_com_critical, rk3576_common_rates, false, true);
-      |
-                                              ^
-plat/rockchip/rk3576/scmi/rk3576_clk.c:246:18: note: in definition of
-macro =E2=80=98RK3576_SCMI_CLOCK_COM=E2=80=99
-  246 |         .name =3D #_name,
-         \
-      |                  ^~~~~
-plat/rockchip/rk3576/scmi/rk3576_clk.c:1103:154: error:
-initializer-string for array of =E2=80=98char=E2=80=99 truncates NUL termin=
-ator but
-destination lacks =E2=80=98nonstring=E2=80=99 attribute (17 chars into 16 a=
-vailable)
-[-Werror=3Dunterminated-string-initialization]
- 1103 | stimer1_root, p_100m_24m, clk_stimer1_root_info,
-&clk_scmi_ops_com_critical, rk3576_common_rates, false, true);
-      |
-                                              ^
-plat/rockchip/rk3576/scmi/rk3576_clk.c:246:18: note: in definition of
-macro =E2=80=98RK3576_SCMI_CLOCK_COM=E2=80=99
-  246 |         .name =3D #_name,
-         \
-      |                  ^~~~~
-plat/rockchip/rk3576/scmi/rk3576_clk.c:1107:155: error:
-initializer-string for array of =E2=80=98char=E2=80=99 truncates NUL termin=
-ator but
-destination lacks =E2=80=98nonstring=E2=80=99 attribute (17 chars into 16 a=
-vailable)
-[-Werror=3Dunterminated-string-initialization]
- 1107 | ka_crypto_s, p_350m_175m_116m_24m, clk_pka_crypto_s_info,
-&clk_scmi_ops_com, rk3576_common_rates, false, true);
-      |
-                                              ^
-plat/rockchip/rk3576/scmi/rk3576_clk.c:246:18: note: in definition of
-macro =E2=80=98RK3576_SCMI_CLOCK_COM=E2=80=99
-  246 |         .name =3D #_name,
-         \
-      |                  ^~~~~
-cc1: all warnings being treated as errors
-make: *** [Makefile:1644:
-/home/alchark/trusted-firmware-a/build/rk3576/release/bl31/rk3576_clk.o]
-Error 1
+"samsung,exynos<soc>-<function>-sysreg", "samsung,exynos<soc>-sysreg", 
+"syscon"
 
-And indeed, clock names such as "clk_stimer0_root" don't leave enough
-space in .name for the null terminator (given that .name is defined as
-char name[SCMI_CLOCK_NAME_LENGTH_MAX]; a.k.a. 16).
+But the deprecated item had its compatibles like this:
 
-Not sure if the binary BL31 has a similar issue and if it can lead to
-the observed weirdness in CPU frequency switching. Looping in XiaoDong
-Huang who last touched those lines in the opensource TF-A - any
-insights would be much appreciated!
+"samsung,exynos<soc>-sysreg", "syscon"
 
-Thanks a lot,
-Alexey
+That is what I meant by "generic". It doesn't mention <function>.
+
+And my additions adhere to the former. So does [1], [2], and [3]. None 
+are
+deprecated.
+
+[1] 
+https://elixir.bootlin.com/linux/v6.15.2/source/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml#L40
+[2] 
+https://elixir.bootlin.com/linux/v6.15.2/source/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml#L55
+[3] 
+https://elixir.bootlin.com/linux/v6.15.2/source/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml#L61
+
+> 
+> Best regards,
+> Krzysztof
 
