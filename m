@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-691473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38DEADE51B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:05:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F14ADE51F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 756C67A834D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:03:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1261E189BD61
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 08:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8685020C000;
-	Wed, 18 Jun 2025 08:05:06 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC5E27F4D4;
+	Wed, 18 Jun 2025 08:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H2U2RLUO"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01FE78F36;
-	Wed, 18 Jun 2025 08:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A2627F016
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 08:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750233906; cv=none; b=vArfygyw3BDVHeRiuc3eKYRUQy4Amtlq2K/WaFBxPKiSpkvzZ+0JOwcyxAViEMEs2T0aP8wfuEshZWvvrWMYRZyXtmVBvQoFeeWFSbtF7KtYxkGx1wFsI89x5ogF8kaQpWrwfBgMjfZGv9Z3C+DXt7vsD6fTb8A+4thp3SrHX4U=
+	t=1750233914; cv=none; b=t8Sqx2TBdBFf3LccjM9MtkzlLxdEISAdL4ttOm4ihkPBNSd8VRHjSDaj5MbgjqgM81b67LtGoLRM1KgIg/Hterqgw1nYF2zQyH/bd3NDCRNttSBPPe3AWXP8XUJJUsrl67L+W4ZmQ5sqwgOdPVaCFFYzZ/ehPCorr+s4rIhl/E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750233906; c=relaxed/simple;
-	bh=gXffrMPfgsMCgCQe73pN0NIFepYDPD11srf0ITm5lK4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uRP5ccFIXE+BNYkDkJbgTmIiIrRsxkVJfj6VPmlR5Qa10f/EooD7G8Lm25xYTVz8ABbqkLhXM3/lNWRWhny85+D7SX4mCgDRbIPkVvzIgT7R5HIm1PtXuF/V2J4oeX8WGGJiWVXsf/baK7AV5IKTStBqXcZ4lM1pnlP4l77nIco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bMblB4v1qzRkhZ;
-	Wed, 18 Jun 2025 16:00:38 +0800 (CST)
-Received: from kwepemp200004.china.huawei.com (unknown [7.202.195.99])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0895F18007F;
-	Wed, 18 Jun 2025 16:04:55 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemp200004.china.huawei.com
- (7.202.195.99) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 18 Jun
- 2025 16:04:54 +0800
-From: zhangjian <zhangjian496@huawei.com>
-To: <stfrench@microsoft.com>, <longli@microsoft.com>,
-	<wangzhaolong1@huawei.com>, <metze@samba.org>, <dhowells@redhat.com>,
-	<pc@manguebit.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-cifs@vger.kernel.org>
-Subject: [PATCH] smb: client: fix first command failure during re-negotiation
-Date: Thu, 19 Jun 2025 09:18:29 +0800
-Message-ID: <20250619011829.561614-1-zhangjian496@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1750233914; c=relaxed/simple;
+	bh=xmSXUMfykh4nw/YifTvTlA40+QuG0magFmHqx/bM1SQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eZX4YArXC5FAhjrkN9S58E0+CzB4ZEbO8ZnTXM5PpZXHIr11gzDb4vAS+ON5wu2h49cIElEcmUIgziqBX3x3AtlrRFTsqzbXo9gzUb7ahGkiztmHRzEuIRJ02/TatEVA8rV4fLn2ugvuAFUYIdrioRvy/LPkZYwyD4tt4qHl2wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H2U2RLUO; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-451d7de4ae3so42682645e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 01:05:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750233911; x=1750838711; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Reyy2Vo/aUVZICYuurjbtaW+Kc54btuPia1WyJEBiCI=;
+        b=H2U2RLUOiXehAtddQtSGaxhpxAUmwLBe6LtUcnMVbFkJzL9sS67sSjuH2cvIukQVca
+         h5j3huv15csSZ8oIzLzNRL3ntYgUFAhTIwHA76mm7xcLtvkfeQvRqLp4Ico8lvSfIvk0
+         4cTDJanaPDZusm7/knqfmhdL9MUKbiWwgQwUj2M4yZE5o4DisxVW08trda/HqbLWq8t9
+         dZKTrAzvPRxi3TA+yU2hRPa0tY7JwcT62fY+Nh+xKo+8OvB11Yph5pROkzADBFX18UUf
+         amjJMFWQ9OFTwgFtTAoXXiw0OVCItin7Hml8NK/oMLZv2hcTnqlX710zd+ON66KCCiQ6
+         YvcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750233911; x=1750838711;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Reyy2Vo/aUVZICYuurjbtaW+Kc54btuPia1WyJEBiCI=;
+        b=eA/b3FppHSscXhhorwNH+Z/UrR5q4Lnifc2TDedbqILqGipzrrj/73AlNODRTxT3yg
+         qdP8qYHpmyN9owJyc8KxdO9KmfSKm46S9blPCEBdDhWwa9kUtcbnyBBMQ6vRvOr538ob
+         BTW/SPv/6Y1Jx7CBXpeNIT3HlafM0j6Wp6XYGLJAhVN5ZkA5y4ftYHx5BLZjlVKSN7tt
+         ntiBTShpZcfEpeUimHmnKQPbj/U3PzHIMqzsr1vy6WvLXXjdkq7MGrjR7uCzsrNKJSG+
+         OSK3fqjV++NMq+QWo/P5azG9Krj/3IyiJUZfrzFKbpCFLEXlo2iNPLlvMePHZLXeM6NF
+         wTcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEYq3UIkBO6xrJXYaVqxrVEkPoHqFP2S5ylpvqq3en3hG45khHj2qyPqzMNiNqgP2DyJ5A1LVPwfi788E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4c20FBXpT7I4C/0hnv6dGk42/JwaMIlRABhY7N+unsT89LJld
+	rPdzjUSa6Vs+LFgqtkIK5Ji4/GcvuvwPxWZIP0pyx9GojifNNs8MnFpM9QEO7YQ5rdZu+qIo359
+	+k4THds2gUsUK/n+8mg==
+X-Google-Smtp-Source: AGHT+IHZzoCd5qIoa57TZulv3M1zEGEaPrbzkY3TQYkZxGA8ZmuxEDik7fsdLpNZuWn5aXvctdP9XoTIAiXPWQY=
+X-Received: from wmbel22.prod.google.com ([2002:a05:600c:3e16:b0:450:dcfd:1870])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:6095:b0:43c:fffc:7886 with SMTP id 5b1f17b1804b1-4535627dbe5mr41001925e9.8.1750233910920;
+ Wed, 18 Jun 2025 01:05:10 -0700 (PDT)
+Date: Wed, 18 Jun 2025 08:05:08 +0000
+In-Reply-To: <20250617144155.3903431-2-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemp200004.china.huawei.com (7.202.195.99)
+Mime-Version: 1.0
+References: <20250617144155.3903431-1-fujita.tomonori@gmail.com> <20250617144155.3903431-2-fujita.tomonori@gmail.com>
+Message-ID: <aFJzNCCERjKHIVty@google.com>
+Subject: Re: [PATCH v1 1/2] rust: time: Rename Delta's methods as_micros_ceil
+ and as_millis
+From: Alice Ryhl <aliceryhl@google.com>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org, 
+	anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	dakr@kernel.org, frederic@kernel.org, gary@garyguo.net, jstultz@google.com, 
+	linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com, 
+	rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
+	tmgross@umich.edu
+Content-Type: text/plain; charset="utf-8"
 
-after fabc4ed200f9, server_unresponsive add a condition to check whether client
-need to reconnect depending on server->lstrp. When client failed to reconnect
-for some time and abort connection, server->lstrp is updated for the last time.
-In the following scene, server->lstrp is too old. This cause next command
-failure in re-negotiation rather than waiting for re-negotiation done.
+On Tue, Jun 17, 2025 at 11:41:54PM +0900, FUJITA Tomonori wrote:
+> Rename the Delta struct's methods as_micros_ceil() and as_millis() to
+> into_micros_ceil() and into_millis() respectively, for consistency
+> with the naming of other methods.
+> 
+> Fix the commit 2ed94606a0fe ("rust: time: Rename Delta's methods from
+> as_* to into_*"), wasn't applied as expected, due to the conflict with
+> the commit 1b7bbd597527 ("rust: time: Avoid 64-bit integer division on
+> 32-bit architectures").
+> 
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 
-1. mount -t cifs -o username=Everyone,echo_internal=10 //$server_ip/export /mnt
-2. ssh $server_ip "echo b > /proc/sysrq-trigger &"
-3. ls /mnt
-4. sleep 21s
-5. ssh $server_ip "service firewalld stop"
-6. ls # return EHOSTDOWN
+Why are we renaming them? The stdlib always uses as_* or to_* for copy
+types. In my mind, into_* means that you want to emphasize that you are
+performing a transformation that consumes self and transfers ownership
+of some resource in the process.
 
-If the interval between 5 and 6 is too small, 6 may trigger sending negotiation
-request. Before backgrounding cifsd thread try to receive negotiation response
-from server in cifs_readv_from_socket, server_unresponsive may trigger
-cifs_reconnect which cause 6 to be failed:
+See the api guidelines:
+https://rust-lang.github.io/api-guidelines/naming.html#ad-hoc-conversions-follow-as_-to_-into_-conventions-c-conv
 
-ls thread
-----------------
-  smb2_negotiate
-    server->tcpStatus = CifsInNegotiate
-    compound_send_recv
-      wait_for_compound_request
-
-cifsd thread
-----------------
-  cifs_readv_from_socket
-    server_unresponsive
-      server->tcpStatus == CifsInNegotiate && jiffies > server->lstrp + 20s
-        cifs_reconnect
-          cifs_abort_connection: mid_state = MID_RETRY_NEEDED
-
-ls thread
-----------------
-      cifs_sync_mid_result return EAGAIN
-  smb2_negotiate return EHOSTDOWN
-
-Though server->lstrp means last server response time, it is updated in
-cifs_abort_connection and cifs_get_tcp_session. We can also update server->lstrp
-before switching into CifsInNegotiate state to avoid failure in 6.
-
-Fixes: fabc4ed200f9 ("smb: client: fix hang in wait_for_response() for negproto")
-Signed-off-by: zhangjian <zhangjian496@huawei.com>
----
- fs/smb/client/connect.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
-index 28bc33496..f9aef60f1 100644
---- a/fs/smb/client/connect.c
-+++ b/fs/smb/client/connect.c
-@@ -4193,6 +4193,7 @@ cifs_negotiate_protocol(const unsigned int xid, struct cifs_ses *ses,
- 		return 0;
- 	}
- 
-+	server->lstrp = jiffies;
- 	server->tcpStatus = CifsInNegotiate;
- 	spin_unlock(&server->srv_lock);
- 
--- 
-2.33.0
-
+Alice
 
