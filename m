@@ -1,162 +1,147 @@
-Return-Path: <linux-kernel+bounces-691746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B65B6ADE836
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:13:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1DDADE83B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5B5B161894
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:12:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E60E16EC27
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6774428B503;
-	Wed, 18 Jun 2025 10:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF5C28505F;
+	Wed, 18 Jun 2025 10:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ea2I3wrG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1prG0PP"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394CF27F4CA
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD481E5215;
+	Wed, 18 Jun 2025 10:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750241425; cv=none; b=reLi7R7UKpgOEVuWYFVHuz3SFws3HKcC74Nm5DH29KP8n3/kHnp4BuLoIZZ0rdkJmuGhuwEpvn3HhIICf1gwmLhxywB+hyIXzTC58kOF8M6G8cg6+CvGQSevZkWrB4nK6JZpCLEHt7ZNTNy39Dt2OvDoPaICSAs2zvgU91AL/18=
+	t=1750241597; cv=none; b=l58jvThrc+XjQnfUrakPEd6Mx+qQieLa4dgTQgQL/5xfdFPYlZPZ7iu/lOyBNK9uss0WFfLHbKJnCeFfz1cU1/biQNktuVgZW7k+37prGg9pjPjsyC2ZrNqd/P7KiOqylZN8QZeeX1720Xj2c/7LYQo/I3A6blymfbfCo7pWGqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750241425; c=relaxed/simple;
-	bh=RdXwXdWoJ1VROaERK5qk9Ae02i8ItFcaaTjGIHpluVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pv0iVMDRT+EWYUlErxFIgjwR8jw3aGy+fXQlP6AQzvelRiiMk0X2GSKYYiYvWTVtBMSqESg0+V+2kAMW67HfDioR7BWygLjSVFatx4K103FV6y7OOjOh/uIw6swo3nDJEbfoFeIo7sDfjOqQeMuMLTlZA/HnIJlF93vZkPI39lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ea2I3wrG; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750241425; x=1781777425;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=RdXwXdWoJ1VROaERK5qk9Ae02i8ItFcaaTjGIHpluVE=;
-  b=ea2I3wrGoTxsddy9D7nVsATL9EauSClVjt6LZSQWWq1NrrRysiix2Sxj
-   gPEupq0k5CsRZM8PiC9GwRiQJdjJeoxXuxmNdIbfUrPfB3q7O5KRCw6Yo
-   ij1PcE3tEXgKMsPrd8k85NNolaRWzK0iY1qkhDlfAKNLN/XL26aJzMLoP
-   Y83KgCjtbJH0SyjpxOWLHz0brbCeXtwroQf0d1s1louaTuyjg5vOlXFWz
-   x6mbUtTUOJXNqFm2jWiUF4h/IA7tSeen1LNilpTMsZPzsHYjo03d7rAT1
-   oh+ABPs1bDd4Xoqwl8rUQPiIWiNUd7tqDvoyV4IOCcGkqD4a3QS3lRBzZ
-   w==;
-X-CSE-ConnectionGUID: BBZbXZS5T8WQcRFB89ZF+A==
-X-CSE-MsgGUID: qYh0T46hTEGTtRN+6RsKDw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="63875488"
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
-   d="scan'208";a="63875488"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 03:10:24 -0700
-X-CSE-ConnectionGUID: Xm8Ce/W0TCCiSe1hZIEKDA==
-X-CSE-MsgGUID: G/kjnn2ASvOSrJgiuWAQ2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
-   d="scan'208";a="149399404"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 03:10:24 -0700
-Received: from [10.246.136.52] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.52])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id A62B220B5736;
-	Wed, 18 Jun 2025 03:10:21 -0700 (PDT)
-Message-ID: <0782de41-c8c4-4077-8498-651fb9a10ef5@linux.intel.com>
-Date: Wed, 18 Jun 2025 06:10:20 -0400
+	s=arc-20240116; t=1750241597; c=relaxed/simple;
+	bh=pNNwV/XGoxOQv1CG9hWq28XZ9aN6GRVjgDsVYJmJ5t0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UN5EBxFL+oF8LbsOB/TmoK8gQjh4AnVpKqQC4/4MW1siFfmwK4lld+Qyl1lOWkh5fCkgFWdQaZeEp9XQHJ59d4rz5yzoKyMzOpQuWPfhiiPxFvdR4YLpfmTmlN+G8d9l9K0wQ4D0uHrLNhDmO0AZA3J8eceFjE12OM0Pitu5T4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h1prG0PP; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4531e146a24so41332835e9.0;
+        Wed, 18 Jun 2025 03:13:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750241594; x=1750846394; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JcnlFSZlZ2x3eUss2ZhS1aBPVnMt3wLpmm8ROrRN7RM=;
+        b=h1prG0PPtxMCuTenFbwAPmpP8Xa9geIZMxrSa+bQje+Etbycp7wiCgBIJNZ5HIBOwi
+         TL3dT/+l0ATTLJqNRZPAC2lZz4+TmOJSg58de+wJwncXGeyBEFmGGcOqqTR2j4rDZ7Dt
+         JuboUWcLTp34kVeQ2lMsv9lt7xX8sn3zxksR35zU+TQhy+ob7F3fvVRtXJck/wBoyLZG
+         O/wC6wY5X4XmTsCr6amKUEVfn4RWMC7Ga792a009oVz2dkdquVdLDVM+yDgWBYkC1XcS
+         Kr3zT0Rz6BezFmfN4Y+XfXcwYCVHhp1oPyfgLPKqhuA5zXVIUAjktz1u2YJaFDxyxcPn
+         boow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750241594; x=1750846394;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JcnlFSZlZ2x3eUss2ZhS1aBPVnMt3wLpmm8ROrRN7RM=;
+        b=NPgGuyh4ixjxf6pjdTvUmCCjo3MOt1AYaHowASPj5wA1n8cI/515INUPTnJd6iEGdA
+         H8xbRv+zR0NsOZ6d76TrMZH5NVvLsGwFuvcvNBm4M1hWblC3wFsTkS5Cqx0TnubDMMEt
+         PFyyMPhE7Ev14NxAnCfq9surK31dGgIeJgTcWxlg+42tfhlC4TcG9fPZKC/SCLPpghSu
+         L7ArdebOtjaqKNHJvTncj8crNCdprasPjPaa52yKAK8z5pnEC2D1N7gL5ld35binhxhe
+         SP9Xydjx0JGDjFgsiMNoWQirlF1pCfzYJXUzpESMgvfwmcRFf6JPoVUZlbPV1y7zXEPD
+         BHIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFTPDRH1bPPCNdzLvbXfOhMtXbes1IpuW75re8Z/jJSFAP3Xvx2bHArHxZ5hKZyKUQSSsJKYFOyBAx@vger.kernel.org, AJvYcCUHmN8JLpg0qTqY8l461XMow1weye8v6eW5+VxAdo/TCLUg+gN2g0WvXgzG/rkO4lEzhKI00+Nd0EcNclBR@vger.kernel.org, AJvYcCWswsqz64Ix6ZvGzhNMsKBK6Wl0bQ3EhBuV09VFR2BiEC9sCS53UYPu6OVIUwpyfnVj75+nMtFqN06LvZ7Ob00=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmqj3lMJOSxL/h5tL7lpFLnE47LVo7PqlzBgOCjq1T/gg/GqW6
+	yDzeUnzgwVTn/S1hInIq2IlphOx2mxUhLjEpc9J+HejhDo5D+DnBu8wY
+X-Gm-Gg: ASbGnctiBwJnPniGsKYDVn0zGToCfs/tut96A4bDyNPPVObX9In1H3ULe/ofiRPtcYY
+	LSI50yclAtPKee/1pDdRiAjvtvSq4eCf5e5lziWlqB2Pze7aZ937ohufXust4g+N55ddeEk8ewS
+	gLGE/++i5wm7x9dRKanBpByRm74QzuMadE761gMHt1/rmRXFL+5BniMvBskWaawe2ByuIdpTWHX
+	b//mMCoj3vEaTWXSF5TGVko3gzZOfwDs+xnfx/NuoXKqfYot0iCWnj1xTNOrrxC2XJrwAAeYbv0
+	yzZncma6YFYYLmmLZ26qBjEtlQFm5nV42AVaBADEWidsif2dD0rfa6eKMTpE2yjeg2cUI1H8cAI
+	+FeFEQ25YL2Uzgdl3+2lYG1eScyearR1l/3QRLB4=
+X-Google-Smtp-Source: AGHT+IEwXfOH3FNaIAS2a78UClizMEIMKgdGdRhw9w824FJtI+ggGZqCrs6PgMh0KumZibH7adUEmg==
+X-Received: by 2002:a05:600c:3e8f:b0:442:dc75:5625 with SMTP id 5b1f17b1804b1-4533ca468e9mr157629865e9.5.1750241594282;
+        Wed, 18 Jun 2025 03:13:14 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4532e256b95sm207100275e9.30.2025.06.18.03.13.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 03:13:13 -0700 (PDT)
+Sender: Igor Korotin <igorkor.3vium@gmail.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	rafael@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	lenb@kernel.org,
+	wedsonaf@gmail.com,
+	viresh.kumar@linaro.org,
+	alex.hung@amd.com,
+	dingxiangfei2009@gmail.com
+Subject: [PATCH v7 2/9] samples: rust: platform: don't call as_ref() repeatedly
+Date: Wed, 18 Jun 2025 11:11:11 +0100
+Message-ID: <20250618101111.3047980-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250618100221.3047133-1-igor.korotin.linux@gmail.com>
+References: <20250618100221.3047133-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 06/12] perf: Support extension of sample_regs
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "Mi, Dapeng" <dapeng1.mi@linux.intel.com>, mingo@redhat.com,
- acme@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
- dave.hansen@linux.intel.com, irogers@google.com, adrian.hunter@intel.com,
- jolsa@kernel.org, alexander.shishkin@linux.intel.com,
- linux-kernel@vger.kernel.org, ak@linux.intel.com, zide.chen@intel.com,
- broonie@kernel.org
-References: <20250617081458.GI1613376@noisy.programming.kicks-ass.net>
- <8fbf7fc5-2e38-4882-8835-49869b6dd47f@linux.intel.com>
- <20250617102813.GS1613376@noisy.programming.kicks-ass.net>
- <dc084dac-170d-434e-9d8c-ba11cbc8e008@linux.intel.com>
- <20250617133333.GU1613376@noisy.programming.kicks-ass.net>
- <20250617140617.GC1613633@noisy.programming.kicks-ass.net>
- <aFF6gdxVyp36ADOi@J2N7QTR9R3>
- <20250617144416.GY1613376@noisy.programming.kicks-ass.net>
- <aFGBxBVFLnkmg3CP@J2N7QTR9R3>
- <be13b2ce-a8c1-4aa7-9ddf-9ae8daee0ae1@linux.intel.com>
- <20250618093500.GH1613376@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20250618093500.GH1613376@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Danilo Krummrich <dakr@kernel.org>
 
+In SampleDriver::probe() don't call pdev.as_ref() repeatedly, instead
+introduce a dedicated &Device.
 
-On 2025-06-18 5:35 a.m., Peter Zijlstra wrote:
-> On Tue, Jun 17, 2025 at 04:32:24PM -0400, Liang, Kan wrote:
-> 
->>> Yep, those options may work for us, but we'd need to think harder about
->>> it. Our approach for ptrace and signals has been to have a header and
->>> pack at the active vector length, so padding to a max width would be
->>> different, but maybe it's fine.
->>>
->>> Having another representation feels like a recipe waiting to happen.
->>>
->>
->> I'd like to make sure I understand correctly.
->> If we'd like an explicit predicate register word, the below change in
->> struct perf_event_attr is OK for ARM as well, right?
->>
->> 	__u16 sample_simd_pred_reg_words;
->> 	__u16 sample_simd_pred_reg_intr;
->> 	__u16 sample_simd_pred_reg_user;
->> 	__u16 sample_simd_reg_words;
->> 	__u64 sample_simd_reg_intr;
->> 	__u64 sample_simd_reg_user;
->>
->> BTW: would that be easier for ARM if changing the _words to _type?
->> You may define some types like, stream_sve, n_stream_sve, etc.
->> The output will depend on the types, rather than the max length of
->> registers.
-> 
-> I'm thinking what they're after is something like:
-> 
-> PERF_SAMPLE_SIMD_REGS := {
-> 	u16 nr_vectors;
-> 	u16 vector_length;
-> 	u16 nr_pred;
-> 	u16 pred_length;
-> 	u64 data[];
-> }
+Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+---
+ samples/rust/rust_driver_platform.rs | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Maybe we should use a mask to replace the nr_vectors.
-Because Dave mentioned that the XSAVES may fail.
-Currently, perf gives all 0 for the failing case. But 0 should also be a
-valid output.
-The mask can tell the tool that some regs are failed to be collected. So
-the tool can give proper feedback to the end user.
-
-PERF_SAMPLE_SIMD_REGS := {
-	u64 vectors_mask;
-	u16 vector_length;
-	u64 pred_mask;
-	u16 pred_length;
-	u64 data[];
-}
-
-Thanks,
-Kan>
-> Where the output data also has a length. Such that even if we ask for
-> 512 bit vectors, the thing is allowed to respond with say 128 bit
-> vectors if that is all the machine has at that time.
-> 
+diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
+index c0abf78d0683..000bb915af60 100644
+--- a/samples/rust/rust_driver_platform.rs
++++ b/samples/rust/rust_driver_platform.rs
+@@ -32,13 +32,15 @@ fn probe(
+         pdev: &platform::Device<Core>,
+         info: Option<&Self::IdInfo>,
+     ) -> Result<Pin<KBox<Self>>> {
+-        dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver sample.\n");
++        let dev = pdev.as_ref();
++
++        dev_dbg!(dev, "Probe Rust Platform driver sample.\n");
+ 
+         if let Some(info) = info {
+-            dev_info!(pdev.as_ref(), "Probed with info: '{}'.\n", info.0);
++            dev_info!(dev, "Probed with info: '{}'.\n", info.0);
+         }
+ 
+-        Self::properties_parse(pdev.as_ref())?;
++        Self::properties_parse(dev)?;
+ 
+         let drvdata = KBox::new(Self { pdev: pdev.into() }, GFP_KERNEL)?;
+ 
+-- 
+2.43.0
 
 
