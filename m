@@ -1,269 +1,209 @@
-Return-Path: <linux-kernel+bounces-692215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053C5ADEE75
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:52:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E59CADEE6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 15:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72EDC4A2A27
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:52:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 294574A10D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 13:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B042EAB6B;
-	Wed, 18 Jun 2025 13:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D0D2EA485;
+	Wed, 18 Jun 2025 13:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZOj6UQ91"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/5OGyiQ"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C630C2E7186;
-	Wed, 18 Jun 2025 13:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B096295DA6;
+	Wed, 18 Jun 2025 13:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750254733; cv=none; b=orPDDx9MFmeoEq89VPkolWimfNAsdEhtvDReX26ZUGe2MvGAEk7m7TWvizXgMnaniUmV0uba6uLT1U2fVT8Vx0bjL1SkSrvrXGwesWD/CcARVD01yZkQzJKw2rNhPyf0or/X8jEWkestBpkhhYUYLYzgG5OKiGREE9oQm4TfP2U=
+	t=1750254722; cv=none; b=BfI9wnqMpnMTcoTr3WZr2430YuZtOs5CJ6Et1XgpeDLuY9hCM3BqEYWJfG0Bn8rv+/Vh4sFeLQ2MVEHyS0D3IafHXniebSGuzrKwRSCmCiITmBOsQZX9gmUGeoPylM7Kfw6cTqo/EM4HTTXwbvK00rYpYgz6k2oHvvhod0bXa7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750254733; c=relaxed/simple;
-	bh=oLK9T/B2UDs68r1ZjzISgVE/xE7SFVRU1xoqHtQq9+s=;
+	s=arc-20240116; t=1750254722; c=relaxed/simple;
+	bh=D7Ir/SoPZy5G5UFUiYJ3uQV6HZ/DJSBvw64XWpe6uaw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mKPy6H7MrUha7CLCfCHjl03oaYSHzgxzXAI15cWGte4JObJfeKw6DK006NcfdCi0UyovY+4tXZWpDzf3Ct5+t9VNp6JQaHa6aQtv7kH39xjH15IRI+ThtwzygZmMl9ET6V54pIOHW+fxfnhmndovCtibcmnzRZaPyDP9+OnyjWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZOj6UQ91; arc=none smtp.client-ip=209.85.208.176
+	 To:Cc:Content-Type; b=gTw0Dpf+5fU7dSMbI9NkQREY2FTK5WM39uOF/N105aFgnro1AzrURhaiJHQV9XFEh8xvXUVgV0Y72rvDMk7AaL1T0WllH6O1sltrWM1s3IGX4xPO0fiMkFKf5ena/+WZ6jxWfeRHCVasozSi/HTvLqEEHc6Kg3hdVHv7+mFB9PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/5OGyiQ; arc=none smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-32add56e9ddso56599201fa.2;
-        Wed, 18 Jun 2025 06:52:11 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4a5a196f057so149180261cf.3;
+        Wed, 18 Jun 2025 06:51:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750254730; x=1750859530; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750254716; x=1750859516; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yHetTVGjM9N9vKhqDfTQfQXf30L+g0MXCJcXiaNoNyE=;
-        b=ZOj6UQ91qZ3yjk490+encIDTrZDlyNHQEktxTo3PLv+CwoTuqGBuoBSzAcG6vQ+l7C
-         gdWH8jjJMfxuLajft6M6w+bQzWnFtp5g+TNmyaTZO4UXSqDgxw2fa+o1e03Mw0Mop3Wh
-         Q44TgTfSfMobTUMUFLjsN2uC+aTnTxJocqhV+UuH9P5ihXDBZ2boO/US2/UgFx9XBubs
-         vm1Z5YI+ue8DqY0aT7Z5YkDsHLI1bdBXQS/HoVef5YJ+R/CBWaRF9Jv2ntyagAQk9Dbz
-         XhizJali5b3OUXORaF8rgbukVvMrn6SPb5iLczl+hApe+vM8MT/iTe2LgGobkge/JDpv
-         1QnA==
+        bh=8krqiHD4H6SdO/c1xN2g7T+0SS16eUWDEAWw9hScjck=;
+        b=B/5OGyiQHWF9ACwVEhWXDlNE6dlpVYyZHp7y3YhvCblrHtsHnSKI6zRFcZj3AVqCUz
+         guVq9ECKcgKTotwS2Z+zjARWeRksIwf/vwhIj0HvSZRoP34zzubok6y7uOPhWTU/5El1
+         EVM8gJPl5D3zARz1i2QSAbIawQWga4OmADc3yJT6zyzmq6bfRNTbWcQCI/zLv5f+o3sq
+         djZGt+cN/uvnXjY9eg+M0/v3NYgQYgdMqTLCZU5HZHgopXlbrqXusCw9C3tssvsaR+Ei
+         Uq9zMJFuTmb7CQ3GLYgF0L7d0tgIVskWGZHzfoJm/WIo0WxQnAlEO7IzlG6N6398Gi8A
+         JgEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750254730; x=1750859530;
+        d=1e100.net; s=20230601; t=1750254716; x=1750859516;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yHetTVGjM9N9vKhqDfTQfQXf30L+g0MXCJcXiaNoNyE=;
-        b=mvevnmzdPrgIDmEB8ALL0WjXIHk0UlpWA2l2jYfVOFEdwT7C0JGWKv+C8dfWUAW66C
-         3xMC0NrE1HwKlaM5+h8V0e5wiJEkMi+V711aUTN8ownX2omTBsrHnQpIy8vrj1dZDDcl
-         6trSyuRy5MwBf+kh1wB6CP+cmQbAOlBZlUiq1l6eDsB/E7E9OlPWNAVnQscevnAAJJSi
-         wCr4jpDJ1xlUFxTeIzC8ko04GSb+yoiiPuq9cs0917fymbyd6PnUuIzZXISQKHovvzuC
-         bFwMWow/U1pktTpp4g1vtRKKwzadsvRaj2Ln48HR+hi6tDwCCvAO0O7DMBsCZ3UCMGzU
-         DG+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU+Isn8IanFi6iecGqrHpZXdhH7zSSiJAu88uNtk8oMEt8POzh5GRt9JqCMQzzK0VCJAS22jv+G@vger.kernel.org, AJvYcCVGYQtQB55IbKdNNgcJfAShO/5h3TByrs0KBwjfJurFBDn6/pYrEk/MORGu2uLuY4Oto6f+9y+N7Un8@vger.kernel.org, AJvYcCVNykFbz51KAa9fgSuznPVux9ydYFAhHMwUSH8cfP4bM0fYcqO+0zYIIhPjsjBYGJiaAzFSiby42/3TnqI=@vger.kernel.org, AJvYcCWJBmZaUStWEhWPwfWSuSBt9u9ofkiPKB091N6I+S2wO8yRMF0P5ZsCtxCQqu4m3mKTOQrYeRDsVcs=@vger.kernel.org, AJvYcCWQ2/+LaprrULdHKdi+FGszh051nyienJJINbC1SX9ZRWWq2OshnvSCiCe7ZD8LZuhH75aFSpaW1R5hdwI2@vger.kernel.org, AJvYcCWyuPV7mLCn0ysjlWhtmroN6re6PQ5Ljnp9LcZn5Wfy0aB+9FW7lqq4xvhZi87u512XLzlXR80iDPKRmcgk/FYL@vger.kernel.org, AJvYcCX6+PHlIWRiGXZlcef5/U0HkN4w70iHPyEWt136gPUg6SymOJUB7KrQxbUfYZ2d8HoejpTCRzPOwxX+@vger.kernel.org, AJvYcCXvnRHW4JrfRK1Cwv5S1oSQD23W+S1nuM+F1Yb53AJj7o2R8ASLGEiIVKQMixP6CR3vZYZYAavKYoseudpjoHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0v2wOnKg4FXkbHUTpmXHz/JYGE87vyzd5p0w8GtBw5SGiKhRR
-	LcaX9Ae8z4miMrBTobhwmhDyu6gR+EZAfDJ3axOtw3m8SyAALznZJEz3Up3sQNQILke0XtmoXKS
-	565U1sUET9lynb93u7L+DZnUQOcZ7b18=
-X-Gm-Gg: ASbGncvdpaZciKrGxm/LSwpYhvLia87AlH9xxSzccdfst3pj87UMdoJ94RWWGdN/+bT
-	lgz7DTajUF3UGQEfN9/ahDDjQtHmVnVEWQbnJ9SzCN0VvqFkEbVpOUlLoZl0TvMtuAjNI/dOV6H
-	LSJUiYwPfKP6DexRbwSZW6irEP74Fnrk5b24JpnxfP81Sok0wN8jYA29IVhjU=
-X-Google-Smtp-Source: AGHT+IHjpP0oUsGl8bs9dihRSaXuYuFr91sSYke6woCI9t3nFqjg18OJME02qGfpZHIEHpORU6xHL6DoZtudcacLwZI=
-X-Received: by 2002:a05:651c:2203:b0:30b:edfc:5d8a with SMTP id
- 38308e7fff4ca-32b4a0131c3mr43917741fa.0.1750254729384; Wed, 18 Jun 2025
- 06:52:09 -0700 (PDT)
+        bh=8krqiHD4H6SdO/c1xN2g7T+0SS16eUWDEAWw9hScjck=;
+        b=d8RLhz3bGC8OBgK2tuUHn+SDZn0fykG8M5lThv/6gJC6PjFT+nZhGHGVPO4rJLVLzu
+         cjYCIoRop+AzJsfv5mwXLxT8bdMvdco8PjE30++4BSL29Sawe5RDlTFaILaPK3+xQ6Yf
+         8v1bKQSFXy3W3QftiB98aOn9kvpFfRI/CpaO6t+Si0Ka8oaBNjOizoybhx3oXYl4giQ/
+         0FTUwEo5A8Y1rPdjkcWIC0w1/6/tHxeXyl0SdlFjKLr7bFywZcdkMTY33HIzrZrveC2O
+         EOFUz6SohLIfhVfwES/81HFClh8tGY1LOvC6MY0mPR3v+XzaaBPKSQ09ewkNYFnxtL7T
+         F2uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUx7HNDCTLP7gwY0/a01lzd8ByLvcLagZmK/E0Q9CuLFuS/d25fI6lH4qvNg08PsT6m+n1MsRQBNP9ncpwU@vger.kernel.org, AJvYcCX34jDvurYoeJuZ1HPftlkszEd7o0ZeZoVkj5Po6O5Cea4q+r6oEEdgWd107Z0QFFS0hT028gnrjHQf@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVhBb8596y0/SVGipJQiUal35BctR99gSs2PP/+h2Bb7U/Ga3F
+	Wqaby1yzBe2Bxok4mwycRf37reuDigGl6886z6FwGXjyV7DY+OIef2e5FaMPYdJ/hVaRjCf/ErX
+	OfEPaJJE+0RsY/2P0uhz3BYtViyOMSW8=
+X-Gm-Gg: ASbGncuMPGbwougdvx3Lxu7BwX9CfHiqYkev1KhWixRAUlcRcKuliC9w5FNAP5G+TG4
+	z5b2ZniSpyWF2Mh7Eus3CG7fAiAiMHk8LDb8kBC46xIj6EKJLiUlQ8iqaD/tYnr4OXtfhxlyku0
+	wQVB7oe4CAdjOhvUlso2xae+Q1DY5JojJKTHB2gri3twx6
+X-Google-Smtp-Source: AGHT+IFjLbj9BEdwTMYyliD/R38NY95P1fawYFekYrWxlx0+R36xCe+ioWLBLqW6E3ETOu7kqPcQGiL5wE4zGwh2p+0=
+X-Received: by 2002:ac8:7d56:0:b0:4a7:189a:7580 with SMTP id
+ d75a77b69052e-4a73c596fddmr239579821cf.26.1750254716255; Wed, 18 Jun 2025
+ 06:51:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250615-ptr-as-ptr-v12-0-f43b024581e8@gmail.com> <20250615-ptr-as-ptr-v12-5-f43b024581e8@gmail.com>
-In-Reply-To: <20250615-ptr-as-ptr-v12-5-f43b024581e8@gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 18 Jun 2025 09:51:33 -0400
-X-Gm-Features: AX0GCFugcq7xsGtJtMG4-YlwkWLR_JC0Fxzt1KWhWAbz9DyagkQH0rU9bmUM3y8
-Message-ID: <CAJ-ks9=P=N=5L8yre_C7xKoEt=t0f=Sf3ZY5POHuhb_3+5GO3w@mail.gmail.com>
-Subject: Re: [PATCH v12 5/6] rust: enable `clippy::cast_lossless` lint
-To: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Frederic Weisbecker <frederic@kernel.org>, Lyude Paul <lyude@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Benno Lossin <lossin@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Breno Leitao <leitao@debian.org>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-pci@vger.kernel.org, 
-	linux-block@vger.kernel.org, devicetree@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, linux-mm@kvack.org, 
-	linux-pm@vger.kernel.org, nouveau@lists.freedesktop.org
+References: <20250603-sige5-updates-v1-0-717e8ce4ab77@gmail.com>
+ <20250603-sige5-updates-v1-1-717e8ce4ab77@gmail.com> <6656934.DvuYhMxLoT@workhorse>
+ <CABjd4Yx05SCm+03jWbsEP-A5AuhL14wLj=+VdKyQgqMbnxi3xQ@mail.gmail.com>
+ <512E950E-E8CB-443B-8E47-79F073D217E8@gmail.com> <CABjd4YxGQP=rH15EX12w36b7+82Dedf+rVH3v5V6gBwNv3V3iw@mail.gmail.com>
+ <90218D7B-0CF5-4F5D-969A-909A44E6044F@gmail.com> <CABjd4Yw3FyVS0MBk2WdWKb24vkqrb09Tx3tj6B-xsmG1-Csk7w@mail.gmail.com>
+ <80ACAAAE-F522-4199-9048-ADE69F6E1128@gmail.com>
+In-Reply-To: <80ACAAAE-F522-4199-9048-ADE69F6E1128@gmail.com>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Wed, 18 Jun 2025 17:51:45 +0400
+X-Gm-Features: AX0GCFvqMvYkd-RNYAsYCTEDXbFxfEzQX2sHnuaUv1aDcfcEAiv314iSEAb7Qg8
+Message-ID: <CABjd4YyVJv0NmF9LsGWQ-O44MGjT5=FFeUjbg5rJ6XkNgjxb+g@mail.gmail.com>
+Subject: Re: [PATCH 1/4] arm64: dts: rockchip: list all CPU supplies on ArmSoM Sige5
+To: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 15, 2025 at 4:55=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
+On Sun, Jun 15, 2025 at 8:00=E2=80=AFPM Piotr Oniszczuk
+<piotr.oniszczuk@gmail.com> wrote:
 >
-> Before Rust 1.29.0, Clippy introduced the `cast_lossless` lint [1]:
 >
-> > Rust=E2=80=99s `as` keyword will perform many kinds of conversions, inc=
-luding
-> > silently lossy conversions. Conversion functions such as `i32::from`
-> > will only perform lossless conversions. Using the conversion functions
-> > prevents conversions from becoming silently lossy if the input types
-> > ever change, and makes it clear for people reading the code that the
-> > conversion is lossless.
 >
-> While this doesn't eliminate unchecked `as` conversions, it makes such
-> conversions easier to scrutinize.  It also has the slight benefit of
-> removing a degree of freedom on which to bikeshed. Thus apply the
-> changes and enable the lint -- no functional change intended.
+> > Wiadomo=C5=9B=C4=87 napisana przez Alexey Charkov <alchark@gmail.com> w=
+ dniu 9 cze 2025, o godz. 16:05:
+> >
+> > On Sun, Jun 8, 2025 at 11:24=E2=80=AFAM Piotr Oniszczuk
+> > <piotr.oniszczuk@gmail.com> wrote:
+> >>> Wiadomo=C5=9B=C4=87 napisana przez Alexey Charkov <alchark@gmail.com>=
+ w dniu 5 cze 2025, o godz. 15:42:
+> >>>> Alexey,
+> >>>> I see you are using rk3576 board like me (nanopi-m5)
+> >>>> Have you on your board correctly working cpu dvfs?
+> >>>> I mean: [1][desired clocks reported by kernel sysfs are in pair with=
+ [2[]cur clocks?
+> >>>> In my case i see mine cpu lives totally on it=E2=80=99s own with dvf=
+s:
+> >>>
+> >>> Hi Piotr,
+> >>>
+> >>> I haven't tried to validate actual running frequencies vs. requested
+> >>> frequencies, but subjective performance and power consumption seem to
+> >>> be in line with what I expect.
+> >>
+> >> well - my subjective l&f is that  - currently - my rk3576 seems =E2=80=
+=9Eslower" than i.e. 4xA53 h618.
+> >
+> > In my experience, native compilation of GCC 14 using 8 threads on
+> > RK3576 (mainline with passive cooling and throttling enabled): 2 hours
+> > 6 minutes, on RK3588 (mainline with passive cooling via Radxa Rock 5B
+> > case and throttling enabled but never kicking in): 1 hour 10 minutes
 >
-> Link: https://rust-lang.github.io/rust-clippy/master/index.html#cast_loss=
-less [1]
-> Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> Link: https://lore.kernel.org/all/D8ORTXSUTKGL.1KOJAGBM8F8TN@proton.me/
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> by curiosity i looked randomly on 3576 vs 3588:
+> multithread passmark: 3675 (https://www.cpubenchmark.net/cpu.php?cpu=3DRo=
+ckchip+RK3576&id=3D6213)
+> multithread passmark: 4530 (https://www.cpubenchmark.net/cpu.php?cpu=3DRo=
+ckchip+RK3588&id=3D4906)
+>
+> assuming 3588 as baseline, 3576 is approx 20% slower on multithread passm=
+ark (has ~0,8 comp power of 3588)
+> 70 min compile on 3588 should take something like ~86min on 3576.
+> In your case 126min compile on 3576 shows 3576 offers 0,55 comp power of =
+3588.
+> Roughly 3576 should do this task in 40min less than you currently see i t=
+hink
+>
+>
+> > Can't see how u-boot would affect CPU speed in Linux, as long as you
+> > use comparable ATF images. Do you use the same kernel and dtb in all
+> > these cases? Also, what's your thermal setup?
+>
+> yes. in all cases only change was: uboot & atf
+> thermal is based on recent collabora series (+ recent pooling fix for clo=
+cks return from throttling)
+>
+> >
+> >
+> > Not sure UX is a particularly good measure of CPU performance, as long
+> > as you've got a properly accelerated DRM graphics pipeline. More
+> > likely 2D/3D and memory.
+>
+> indeed.
+> For quantified look i=E2=80=99m looking on v.simple approach to estimate =
+real clock is http://uob-hpc.github.io/2017/11/22/arm-clock-freq.html
+> by curiosity i looked what it reports on a53/a55/a72/a76 and it is surpri=
+singly accurate :-)
+> on mine 3576 with collabora uboot+mainline atf is hows 800MHz (and in per=
+f. gov it seems to be constant)
+>
+> >
+> > There might be some difference in how PVTPLL behaves on RK3576 vs.
+> > RK3588. But frankly first I would check if you are using comparable
+> > ATF implementations (e.g. upstream TF-A in both cases), kernels and
+> > thermal environment :)
+>
+> all tests: the same 6.15.2 mainline + some collabora patches
+>
+> diffs were:
+> 1.collabora uboot[1] + mainline atf 2.13
+> 2.collabora uboot[1] + rockchip rkbin bl31 blob
+> 3.vendor uboot (bin dump from friendlyelec ubuntu image)
+>
+> on 1/2 i see kind of issue with clock values (i.e. perf gov gives constan=
+t 800MHz on mainline atf).
+> 3 seems to perform better - (i.e. perf gov gives constant 1500MHz so all =
+is snappier/faster)
 
-@Danilo Krummrich could you please have a look for drm and nova?
+There is indeed something weird going on. I've tried running sbc-bench
+[1], and even though I observe dynamically varying CPU frequencies
+after boot with schedutil governor, once sbc-bench switches the
+governor to "performance" and goes through the OPPs in descending
+frequency order, the CPUs seem to get stuck at the last applied low
+frequency. Even after max frequency gets reverted from 408 MHz to
+something higher, even after I switch the governor to something else -
+no matter what. Only a reboot gets the higher frequencies 'unstuck'
+for me.
 
-> ---
->  Makefile                             | 1 +
->  drivers/gpu/drm/drm_panic_qr.rs      | 4 ++--
->  drivers/gpu/nova-core/regs.rs        | 2 +-
->  drivers/gpu/nova-core/regs/macros.rs | 2 +-
->  rust/bindings/lib.rs                 | 1 +
->  rust/kernel/net/phy.rs               | 4 ++--
->  rust/uapi/lib.rs                     | 1 +
->  7 files changed, 9 insertions(+), 6 deletions(-)
->
-> diff --git a/Makefile b/Makefile
-> index 0ba22c361de8..29cf39be14de 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -481,6 +481,7 @@ export rust_common_flags :=3D --edition=3D2021 \
->                             -Wclippy::all \
->                             -Wclippy::as_ptr_cast_mut \
->                             -Wclippy::as_underscore \
-> +                           -Wclippy::cast_lossless \
->                             -Wclippy::ignored_unit_patterns \
->                             -Wclippy::mut_mut \
->                             -Wclippy::needless_bitwise_bool \
-> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_=
-qr.rs
-> index dd55b1cb764d..6b59d19ab631 100644
-> --- a/drivers/gpu/drm/drm_panic_qr.rs
-> +++ b/drivers/gpu/drm/drm_panic_qr.rs
-> @@ -404,7 +404,7 @@ fn pop3(&mut self) -> Option<(u16, usize)> {
->              let mut out =3D 0;
->              let mut exp =3D 1;
->              for i in 0..poplen {
-> -                out +=3D self.decimals[self.len + i] as u16 * exp;
-> +                out +=3D u16::from(self.decimals[self.len + i]) * exp;
->                  exp *=3D 10;
->              }
->              Some((out, NUM_CHARS_BITS[poplen]))
-> @@ -425,7 +425,7 @@ fn next(&mut self) -> Option<Self::Item> {
->          match self.segment {
->              Segment::Binary(data) =3D> {
->                  if self.offset < data.len() {
-> -                    let byte =3D data[self.offset] as u16;
-> +                    let byte =3D u16::from(data[self.offset]);
->                      self.offset +=3D 1;
->                      Some((byte, 8))
->                  } else {
-> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.r=
-s
-> index 5a1273230306..c1cb6d4c49ee 100644
-> --- a/drivers/gpu/nova-core/regs.rs
-> +++ b/drivers/gpu/nova-core/regs.rs
-> @@ -32,7 +32,7 @@ pub(crate) fn architecture(self) -> Result<Architecture=
-> {
->      pub(crate) fn chipset(self) -> Result<Chipset> {
->          self.architecture()
->              .map(|arch| {
-> -                ((arch as u32) << Self::IMPLEMENTATION.len()) | self.imp=
-lementation() as u32
-> +                ((arch as u32) << Self::IMPLEMENTATION.len()) | u32::fro=
-m(self.implementation())
->              })
->              .and_then(Chipset::try_from)
->      }
-> diff --git a/drivers/gpu/nova-core/regs/macros.rs b/drivers/gpu/nova-core=
-/regs/macros.rs
-> index 7ecc70efb3cd..6851af8b5885 100644
-> --- a/drivers/gpu/nova-core/regs/macros.rs
-> +++ b/drivers/gpu/nova-core/regs/macros.rs
-> @@ -264,7 +264,7 @@ pub(crate) fn $field(self) -> $res_type {
->          pub(crate) fn [<set_ $field>](mut self, value: $to_type) -> Self=
- {
->              const MASK: u32 =3D $name::[<$field:upper _MASK>];
->              const SHIFT: u32 =3D $name::[<$field:upper _SHIFT>];
-> -            let value =3D ((value as u32) << SHIFT) & MASK;
-> +            let value =3D (u32::from(value) << SHIFT) & MASK;
->              self.0 =3D (self.0 & !MASK) | value;
->
->              self
-> diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
-> index 81b6c7aa4916..7631c9f6708d 100644
-> --- a/rust/bindings/lib.rs
-> +++ b/rust/bindings/lib.rs
-> @@ -25,6 +25,7 @@
->  )]
->
->  #[allow(dead_code)]
-> +#[allow(clippy::cast_lossless)]
->  #[allow(clippy::ptr_as_ptr)]
->  #[allow(clippy::undocumented_unsafe_blocks)]
->  #[cfg_attr(CONFIG_RUSTC_HAS_UNNECESSARY_TRANSMUTES, allow(unnecessary_tr=
-ansmutes))]
-> diff --git a/rust/kernel/net/phy.rs b/rust/kernel/net/phy.rs
-> index 32ea43ece646..65ac4d59ad77 100644
-> --- a/rust/kernel/net/phy.rs
-> +++ b/rust/kernel/net/phy.rs
-> @@ -142,7 +142,7 @@ pub fn is_autoneg_enabled(&self) -> bool {
->          // SAFETY: The struct invariant ensures that we may access
->          // this field without additional synchronization.
->          let bit_field =3D unsafe { &(*self.0.get())._bitfield_1 };
-> -        bit_field.get(13, 1) =3D=3D bindings::AUTONEG_ENABLE as u64
-> +        bit_field.get(13, 1) =3D=3D u64::from(bindings::AUTONEG_ENABLE)
->      }
->
->      /// Gets the current auto-negotiation state.
-> @@ -427,7 +427,7 @@ impl<T: Driver> Adapter<T> {
->          // where we hold `phy_device->lock`, so the accessors on
->          // `Device` are okay to call.
->          let dev =3D unsafe { Device::from_raw(phydev) };
-> -        T::match_phy_device(dev) as i32
-> +        T::match_phy_device(dev).into()
->      }
->
->      /// # Safety
-> diff --git a/rust/uapi/lib.rs b/rust/uapi/lib.rs
-> index e79a1f49f055..08e68ebef606 100644
-> --- a/rust/uapi/lib.rs
-> +++ b/rust/uapi/lib.rs
-> @@ -14,6 +14,7 @@
->  #![cfg_attr(test, allow(unsafe_op_in_unsafe_fn))]
->  #![allow(
->      clippy::all,
-> +    clippy::cast_lossless,
->      clippy::ptr_as_ptr,
->      clippy::undocumented_unsafe_blocks,
->      dead_code,
->
-> --
-> 2.49.0
->
+These are all observed at around 55C SoC temperature, so throttling is
+not an issue. Regulators are stuck at 950000 uV - way above 700000 uV
+that the 408 MHz OPP requires (and power readings seem to match: I'm
+getting about 2.3W consumption at 408 MHz in idle vs. normal idle
+reading of 1.4W at around 1 GHz).
+
+Not sure what's going on here, and I don't remember seeing anything
+similar on RK3588. Thoughts welcome.
+
+Best regards,
+Alexey
+
+[1] https://github.com/ThomasKaiser/sbc-bench
 
