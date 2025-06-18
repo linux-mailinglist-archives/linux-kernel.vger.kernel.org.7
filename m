@@ -1,48 +1,52 @@
-Return-Path: <linux-kernel+bounces-691254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67742ADE23D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 06:13:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A65CADE237
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 06:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F4F9189955C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 04:13:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E68B73B998A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 04:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C4E1EF091;
-	Wed, 18 Jun 2025 04:13:11 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3981EB182;
-	Wed, 18 Jun 2025 04:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DBA1E5702;
+	Wed, 18 Jun 2025 04:12:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17717155757;
+	Wed, 18 Jun 2025 04:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750219991; cv=none; b=eZ/pQGcOqB7k3hiSCCZm6SJbQLl4Rjp62BWqcFwJTNwdv87/6wcfeFZpaDs6Ie0qpEJ8PbSlQB/U54Tuovi4kv3uT+qvR/u/DqEXCAnguI79agjHc/CJMupDwrFrQsUHqdU6y82twT99AWER9Z/EYhIsVp+hum8h2U8LCMcXiuQ=
+	t=1750219969; cv=none; b=Cdp7G62fND2YZqX2Q9/t6hHIZnglqF+vecpctJo4VBARx1+VK+37mxu7GU2vrZB0RfFhnvqlTgjtpv60N0TI6Kr9IhtPcX07PJCKiZLh4Z6TY+7o4XSyepinGap0EyAgsmdudBVD5qP4pKsoYDD3nXeyDBWyRHGE1gQzFH7FdOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750219991; c=relaxed/simple;
-	bh=wLvjh3pCu9KQGwBHwTutcFY0aeOTXXdLuEBCPSdOpTc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dRR0TKfr0Vm5ViRlgltiZcGx9Su4NYNr4y6gnDaV1b4zgNR5d9Iq/9NIEjVQylNe1e67fA/dKOCh4/NKaZyYX+c33y0FB4js1hFtZyF196UdUXq7WcDXbNkr1xq5H2PkwKOs4yBFNbxu+aS5xF8TR2AxgCJ/dNB0J9Ohd+Kw4Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowACH2FDLPFJooa5HBw--.34075S2;
-	Wed, 18 Jun 2025 12:12:59 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: gregkh@linuxfoundation.org,
-	michal.simek@amd.com,
-	u.kleine-koenig@baylibre.com,
-	liqiong@nfschina.com,
-	colin.i.king@gmail.com
-Cc: linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1750219969; c=relaxed/simple;
+	bh=5iy3jpjdE93os/WkQGjSSWQf0eSkKBsaoPQNj+YzYP0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JuWJMtQjZbNw2UhFlRcPaP5Bj7CWRMZjLrEdOtvmH2+FDT59J+1eOOoWPAkK78aRoiz/inwQ4lNAoy7qRqlXJqRvP1wv+dZ8NbnahpKbaZtFX3a9JZlIl+R1f+Rz5Ilc9UjF3+pSRTRaENGEMElG2AxrZMpEPP7f45nduCD0rrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FAF614BF;
+	Tue, 17 Jun 2025 21:12:25 -0700 (PDT)
+Received: from a076716.blr.arm.com (a076716.blr.arm.com [10.164.21.47])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7E06C3F66E;
+	Tue, 17 Jun 2025 21:12:42 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
 	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] usb: gadget: udc-xilinx: Use USB API functions rather than constants
-Date: Wed, 18 Jun 2025 12:12:22 +0800
-Message-Id: <20250618041222.408372-1-nichen@iscas.ac.cn>
+	linux-doc@vger.kernel.org
+Subject: [RFC 0/2] lib/vsprintf: Add support for pte_t
+Date: Wed, 18 Jun 2025 09:42:33 +0530
+Message-Id: <20250618041235.1716143-1-anshuman.khandual@arm.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,63 +55,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowACH2FDLPFJooa5HBw--.34075S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tF43KFyxJw47Cw13Kr4Uurg_yoW8Jw48pF
-	n7Gay8GrWvy3yUX3W5AF1DZFyrGa9F934qyFy2g3yavF1Sqws3tFWrJr1fKrnrCFW3Aa13
-	trs8t3ZFqFW7CrJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWrXVW3AwAv7VC2z280aVAFwI0_GcC_XcWlOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
-	tVW8ZwCY02Avz4vE14v_Gryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
-	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjTRiOz3UUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Use the function usb_endpoint_num() and usb_endpoint_type()
-rather than constants.
+Printing page table entries has been a common requirement both in generic
+and platform memory management for various purposes. Let's just create a
+dedicated printk format for such entries which will also help standardize
+printing across different platforms.
 
-The Coccinelle semantic patch is as follows:
+Also add a test for this new print format in lib/tests/printf_kunit.c via
+CONFIG_PRINTF_KUNIT_TEST.
 
-@@ struct usb_endpoint_descriptor *epd; @@
+This series applies on v6.16-rc2
 
-- (epd->bEndpointAddress & \(USB_ENDPOINT_NUMBER_MASK\|0x0f\))
-+ usb_endpoint_num(epd)
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-mm@kvack.org
 
-@@ struct usb_endpoint_descriptor *epd; @@
+Anshuman Khandual (2):
+  lib/vsprintf: Add support for pte_t
+  kunit: printf: Add test case for pte_t
 
-- (epd->bmAttributes & \(USB_ENDPOINT_XFERTYPE_MASK\|3\))
-+ usb_endpoint_type(epd)
+ Documentation/core-api/printk-formats.rst | 14 ++++++++++++
+ lib/tests/printf_kunit.c                  | 26 +++++++++++++++++++++++
+ lib/vsprintf.c                            | 20 +++++++++++++++++
+ mm/memory.c                               |  5 ++---
+ scripts/checkpatch.pl                     |  2 +-
+ 5 files changed, 63 insertions(+), 4 deletions(-)
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/usb/gadget/udc/udc-xilinx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/gadget/udc/udc-xilinx.c b/drivers/usb/gadget/udc/udc-xilinx.c
-index fa94cc065274..8d803a612bb1 100644
---- a/drivers/usb/gadget/udc/udc-xilinx.c
-+++ b/drivers/usb/gadget/udc/udc-xilinx.c
-@@ -813,10 +813,10 @@ static int __xudc_ep_enable(struct xusb_ep *ep,
- 
- 	ep->is_in = ((desc->bEndpointAddress & USB_DIR_IN) != 0);
- 	/* Bit 3...0:endpoint number */
--	ep->epnumber = (desc->bEndpointAddress & 0x0f);
-+	ep->epnumber = usb_endpoint_num(desc);
- 	ep->desc = desc;
- 	ep->ep_usb.desc = desc;
--	tmp = desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK;
-+	tmp = usb_endpoint_type(desc);
- 	ep->ep_usb.maxpacket = maxpacket = le16_to_cpu(desc->wMaxPacketSize);
- 
- 	switch (tmp) {
 -- 
-2.25.1
+2.30.2
 
 
