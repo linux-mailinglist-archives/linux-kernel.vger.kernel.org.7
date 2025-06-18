@@ -1,199 +1,183 @@
-Return-Path: <linux-kernel+bounces-691834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-691838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D28ADE945
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:41:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8306ADE955
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF307189ECF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:41:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B564F17E4D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 10:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C649327F177;
-	Wed, 18 Jun 2025 10:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WK2kvWoY"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D48B28541A;
+	Wed, 18 Jun 2025 10:43:12 +0000 (UTC)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150D728505F
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 10:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778F343ABC;
+	Wed, 18 Jun 2025 10:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750243240; cv=none; b=eZ12FfCNpIOmUwEis0Ue/r9eZ1y12jw0e8YkxtOG6wsKZyHF9ikbllAMnqPUkE3SwvLd/GceJomg8GJ45Llw1mbdAJCkn6Fn2CMk5QmzBLsBSGRpYfiZceXzNIn3WDBIGyzZuG7wRsH7LwY0LPb+jwJ2Qoi16d4x971bZ/nDiWY=
+	t=1750243392; cv=none; b=MzO6dQkw++XduhwffR+OkAXo7IRCpM4FTtKMoaiRbHn/DONaX1u5AlG1TOYNRSgrdwvmolsWxav72mZKcBOa6XNe8z5oTHp2teIzpZRD1WdhRHzcM4ilZufvPoimHBO7RpRJNtZPDJwiHu1+Hn2jcqLoDCLuVZrRgmPWXHKACFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750243240; c=relaxed/simple;
-	bh=IFrk+Wt+3IOL5c/d/oA9s1HjP/eu3QahRP+hmKMQO48=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=MwWJ0ofnB+w9jSaL/AeyUIqa6XFekM0cv6SMGR4LLpSBHo4nCUFD7KlO4Ph8+XGZf8ihC1nYy96uFQs2TM+pxe8cmMbiac1P+7yQERcI34bcgvv9XZ/P5Cg/oIm06qUP3R9RKd68Av2FMCnGQPXpYERtxaqFwCtufpMvvYTTOjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuyanghuang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WK2kvWoY; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuyanghuang.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-748475d2a79so5052730b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 03:40:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750243236; x=1750848036; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=O5ZRzpxuw236Qa1RlkQYMr8Acq5Mq2S5Ae5QLL/5mzs=;
-        b=WK2kvWoYfJaQgF++P5iaPDbW/BY0ytQCs+vhdngpQSGRgg2xfiHcRSzqRA/4m0mPD0
-         Km+mTIrtuN4GVPFfqgxj8S9iEJoSscsxfUEsDX9MG1w4Phf2jNfcH9WcHK6D1BoIB60y
-         J+zg4Z6e+uYDhRuhVW9gibl14kJ74l2UYqzL0yYIBVNaXw09WjN1asXicGKtNllqEVNp
-         ryD+i4aSTKtMHvakEjAWKpdkYRDWxfmGfIeMYtoCKFZ55IUr2zVvwUcWW6qQRrmVWgq1
-         b4QtiMcZZyKK1PSuvQDeN5pZJM9n3yKQFlKGbJn+4tiUOb5v2JA/Biauq7kYF3QX2d4H
-         T2xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750243236; x=1750848036;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O5ZRzpxuw236Qa1RlkQYMr8Acq5Mq2S5Ae5QLL/5mzs=;
-        b=P3oPJfKIT9ZGT0LEtO6aeMbw+v7wNqGxGAzft46WZbVLyVXB1nR33dVqGzTZprQA/b
-         Kfij0eAuOQDMAsk3FFi1g9zGaK0pVzHXjrfUfX6hTQW26KrcsXNfBLR99dOgzF53k1t9
-         8SBifesXFA5KJHiVKb33gYi5u2EKNuV1SAhXjcGr04DAPA9CznfiyGs38zMdQxpCTKIT
-         02boJ/nHCRhBkUSBgZwYdVyFFldHtk7PzudnUjuB0d5tJwBBz0mKKyFjIdX+2ChRNQCl
-         5uTdNXO8EzgblUF5Kscn5TrijwIdJi2U4BSuZov+SHe5kulkfJKdy68ZOZFLO8EA94xW
-         ypHw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9j/5roo7qU2EU9fYRVLm8ZOr041j8oF3GNJNYUAW0Fz4Cvyo5y6i0n+skgYus0uZKvBA2BE56Yr3PTXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3JdCEFD8KRAHuN6kMscVeV9CE/TPZ26vVH5C2kb5FmVLRHSeF
-	QRAaU0K9uf/2FzCFYK3WY9PBIyGiNzpmveQU47XyTZTZKSHplmDqc+j3eRdFcAqAtq28ayRpL5Q
-	s3zO880zIQgL2HEanSttyAeoh/w==
-X-Google-Smtp-Source: AGHT+IFm6jRnVgcFeMCAYW1rUtQm4z9LOhLiOCwsAqf3bSFUHFjg6zoWoywY8kEyAIzz78G43yBDi8e2+p1zScjWFw==
-X-Received: from pfbgd14.prod.google.com ([2002:a05:6a00:830e:b0:740:5196:b63a])
- (user=yuyanghuang job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:4b4c:b0:740:9d7c:8f5c with SMTP id d2e1a72fcca58-7489cfde7a6mr23990572b3a.18.1750243236415;
- Wed, 18 Jun 2025 03:40:36 -0700 (PDT)
-Date: Wed, 18 Jun 2025 19:40:25 +0900
+	s=arc-20240116; t=1750243392; c=relaxed/simple;
+	bh=HQNzCf9W+TvtTlIVbFrZdcvENFHgVOktxsslslOxWZM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SgxhRH9Sccwz1v3z1QafDoYDixLSJ3JOtMeuNGSfWeFKXdFLEA45m9k53Wheoe0habicnJz7IXivtT7eYsJO6V4w08Xv6RRGXseAz+vyG+DwkmNmNS9hfW8J8loNcnis0Op+0E8H9iaLHTXFSAyuqH8odK2Akc6w1B2LWM5jILk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
+X-QQ-mid: zesmtpsz5t1750243302tc8a57417
+X-QQ-Originating-IP: keGGq+YFE8tuNqfk6RF7BzZPicjKU8gJijQIAgqUiEM=
+Received: from localhost.localdomain ( [116.128.244.171])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 18 Jun 2025 18:41:40 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 7749049518741644067
+From: chenxiaosong@chenxiaosong.com
+To: chuck.lever@oracle.com,
+	jlayton@kernel.org,
+	neilb@suse.de,
+	okorniev@redhat.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	huhai@kylinos.cn,
+	ChenXiaoSong <chenxiaosong@kylinos.cn>
+Subject: [RFC PATCH] nfsd: convert the nfsd_users to atomic_t
+Date: Wed, 18 Jun 2025 18:41:23 +0800
+Message-Id: <20250618104123.398603-1-chenxiaosong@chenxiaosong.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.rc2.761.g2dc52ea45b-goog
-Message-ID: <20250618104025.3463656-1-yuyanghuang@google.com>
-Subject: [PATCH net-next] selftest: add selftest for anycast notifications
-From: Yuyang Huang <yuyanghuang@google.com>
-To: Yuyang Huang <yuyanghuang@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: NDxI9psdf3YVkghZd/8w03o1VRbUTcYZexEEkgrJykEbCTHmo6Zqi28h
+	xuocd2vZcuWl6GpMJRntzueYp2Lao35zevNIj8liiHlgLfEEtjxaZx5oVe+qANtupf20KfI
+	FYFgpXi3Qh/nRgHppEp9lPgl7s0bhwKv6njgbdtTD9XFqoXisQF9kcIqZG0YFcTXz64b27u
+	fgrXiCfNNAHwTCp9AnLXJFOxyoGyZkcIukAcPvVjkJ37iJy+4MDMA75yb++NdV/SJKTK4+B
+	wsV9+/wiXcixPldFEmfK+YlHnKh5+uxNPZ/V5awMfYOXL6/y/4SyWhNYrg4f5nH/NlsQooD
+	YLnfnNsPslTMYSYx+u/T4IE+y3/KD+0zvuguDn1wmMkh33OblixlFK1wuIb2vW0Dl2KSCD8
+	Tv7mc9zZhgje+mRkbL2P6EiLR4cbAbuWoXwjctda51zECDxPWJO7z9etInlwL3zfTztyuqt
+	P+v3xW4ZsbgKxbsinqG+PyD9qOj04I5WkdOFvdAltp/goqUXMxjDy29EsZrgMTLLDZ6zWow
+	CypOsVWLVxs1ykdEJf4SML/S/dVtVy04HEg76KEf1/ogyvG+00Zp5F6WRTBNC2wl/c3srrr
+	efzURwKcj+rOHPIY+MWrXdPYk73D2dBvcAeqHb92CIHzFjYwGRqFp1XsRy0dN3mWbj78Wq5
+	qaADzNTuscaPKf4g8qpkoGVwoPftlYWO5IObRb6Gqj3QjOuLtxHstmpyfYp1VydsN17VwJd
+	QkUbIZMRSSKuAuq3scy+6xI8nCKi60WQ8madN+LLEYTsQmNULxZl72voLnL4WX+atg1vvoi
+	BJf+xUHAZBTHKndFWxm5Z90xRhkxTJYe3UJJfuwjkaoucdIHf2fv1goqjeyWm4Aq8gwZgqW
+	5/ggdzhDkRK/xnX/EDzOjWERCkCtlMET6u2Atgy3xvNueYa4OrdJMIJC9a2kgCD2ZAIcyrW
+	XFtaY/JtQK6aW5TIlUKmVRWUhRCafYC6rXFiSFGnf3evEkBeFp29WHUOpYJJSyF/DyL0=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-This commit adds a new kernel selftest to verify RTNLGRP_IPV6_ACADDR
-notifications. The test works by adding/removing a dummy interface,
-enabling packet forwarding, and then confirming that user space can
-correctly receive anycast notifications.
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 
-The test relies on the iproute2 version to be 6.13+.
+Before commit 38f080f3cd19 ("NFSD: Move callback_wq into struct nfs4_client"),
+we had a null-ptr-deref in nfsd4_probe_callback() (Link[1]):
 
-Tested by the following command:
-$ vng -v --user root --cpus 16 -- \
-make -C tools/testing/selftests TARGETS=net
-TEST_PROGS=rtnetlink_notification.sh \
-TEST_GEN_PROGS="" run_tests
+ nfsd: last server has exited, flushing export cache
+ NFSD: starting 90-second grace period (net f0000030)
+ Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+ ...
+ Call trace:
+  __queue_work+0xb4/0x558
+  queue_work_on+0x88/0x90
+  nfsd4_probe_callback+0x4c/0x58 [nfsd]
+ NFSD: starting 90-second grace period (net f0000030)
+  nfsd4_probe_callback_sync+0x20/0x38 [nfsd]
+  nfsd4_init_conn.isra.57+0x8c/0xa8 [nfsd]
+  nfsd4_create_session+0x5b8/0x718 [nfsd]
+  nfsd4_proc_compound+0x4c0/0x710 [nfsd]
+  nfsd_dispatch+0x104/0x248 [nfsd]
+  svc_process_common+0x348/0x808 [sunrpc]
+  svc_process+0xb0/0xc8 [sunrpc]
+  nfsd+0xf0/0x160 [nfsd]
+  kthread+0x134/0x138
+  ret_from_fork+0x10/0x18
+ Code: aa1c03e0 97ffffba aa0003e2 b5000780 (f9400262)
+ SMP: stopping secondary CPUs
+ Starting crashdump kernel...
+ Bye!
 
-Signed-off-by: Yuyang Huang <yuyanghuang@google.com>
+One of the cases is:
+
+    task A (cpu 1)    |   task B (cpu 2)     |   task C (cpu 3)
+ ---------------------|----------------------|---------------------------------
+ nfsd_startup_generic | nfsd_startup_generic |
+   nfsd_users == 0    |  nfsd_users == 0     |
+   nfsd_users++       |  nfsd_users++        |
+   nfsd_users == 1    |                      |
+   ...                |                      |
+   callback_wq == xxx |                      |
+ ---------------------|----------------------|---------------------------------
+                      |                      | nfsd_shutdown_generic
+                      |                      |   nfsd_users == 1
+                      |                      |   --nfsd_users
+                      |                      |   nfsd_users == 0
+                      |                      |   ...
+                      |                      |   callback_wq == xxx
+                      |                      |   destroy_workqueue(callback_wq)
+ ---------------------|----------------------|---------------------------------
+                      |  nfsd_users == 1     |
+                      |  ...                 |
+                      |  callback_wq == yyy  |
+
+After commit 38f080f3cd19 ("NFSD: Move callback_wq into struct nfs4_client"),
+this issue no longer occurs, but we should still convert the nfsd_users
+to atomic_t to prevent other similar issues.
+
+Link[1]: https://chenxiaosong.com/en/nfs/en-null-ptr-deref-in-nfsd4_probe_callback.html
+Co-developed-by: huhai <huhai@kylinos.cn>
+Signed-off-by: huhai <huhai@kylinos.cn>
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- .../selftests/net/rtnetlink_notification.sh   | 52 +++++++++++++++++--
- 1 file changed, 47 insertions(+), 5 deletions(-)
+ fs/nfsd/nfssvc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/net/rtnetlink_notification.sh b/tools/testing/selftests/net/rtnetlink_notification.sh
-index 39c1b815bbe4..2d938861197c 100755
---- a/tools/testing/selftests/net/rtnetlink_notification.sh
-+++ b/tools/testing/selftests/net/rtnetlink_notification.sh
-@@ -8,9 +8,11 @@
- 
- ALL_TESTS="
- 	kci_test_mcast_addr_notification
-+	kci_test_anycast_addr_notification
- "
- 
- source lib.sh
-+test_dev="test-dummy1"
- 
- kci_test_mcast_addr_notification()
- {
-@@ -18,12 +20,11 @@ kci_test_mcast_addr_notification()
- 	local tmpfile
- 	local monitor_pid
- 	local match_result
--	local test_dev="test-dummy1"
- 
- 	tmpfile=$(mktemp)
- 	defer rm "$tmpfile"
- 
--	ip monitor maddr > $tmpfile &
-+	ip monitor maddr > "$tmpfile" &
- 	monitor_pid=$!
- 	defer kill_process "$monitor_pid"
- 
-@@ -32,7 +33,7 @@ kci_test_mcast_addr_notification()
- 	if [ ! -e "/proc/$monitor_pid" ]; then
- 		RET=$ksft_skip
- 		log_test "mcast addr notification: iproute2 too old"
--		return $RET
-+		return "$RET"
- 	fi
- 
- 	ip link add name "$test_dev" type dummy
-@@ -53,7 +54,48 @@ kci_test_mcast_addr_notification()
- 		RET=$ksft_fail
- 	fi
- 	log_test "mcast addr notification: Expected 4 matches, got $match_result"
--	return $RET
-+	return "$RET"
-+}
-+
-+kci_test_anycast_addr_notification()
-+{
-+	RET=0
-+	local tmpfile
-+	local monitor_pid
-+	local match_result
-+
-+	tmpfile=$(mktemp)
-+	defer rm "$tmpfile"
-+
-+	ip monitor acaddress > "$tmpfile" &
-+	monitor_pid=$!
-+	defer kill_process "$monitor_pid"
-+	sleep 1
-+
-+	if [ ! -e "/proc/$monitor_pid" ]; then
-+		RET=$ksft_skip
-+		log_test "anycast addr notification: iproute2 too old"
-+		return "$RET"
-+	fi
-+
-+	ip link add name "$test_dev" type dummy
-+	check_err $? "failed to add dummy interface"
-+	ip link set "$test_dev" up
-+	check_err $? "failed to set dummy interface up"
-+	sysctl -qw net.ipv6.conf."$test_dev".forwarding=1
-+	ip link del dev "$test_dev"
-+	check_err $? "Failed to delete dummy interface"
-+	sleep 1
-+
-+	# There should be 2 line matches as follows.
-+	# 9: dummy2    inet6 any fe80:: scope global
-+	# Deleted 9: dummy2    inet6 any fe80:: scope global
-+	match_result=$(grep -cE "$test_dev.*(fe80::)" "$tmpfile")
-+	if [ "$match_result" -ne 2 ]; then
-+		RET=$ksft_fail
-+	fi
-+	log_test "anycast addr notification: Expected 2 matches, got $match_result"
-+	return "$RET"
+diff --git a/fs/nfsd/nfssvc.c b/fs/nfsd/nfssvc.c
+index 9b3d6cff0e1e..08b1f9ebdc2a 100644
+--- a/fs/nfsd/nfssvc.c
++++ b/fs/nfsd/nfssvc.c
+@@ -270,13 +270,13 @@ static int nfsd_init_socks(struct net *net, const struct cred *cred)
+ 	return 0;
  }
  
- #check for needed privileges
-@@ -67,4 +109,4 @@ require_command ip
+-static int nfsd_users = 0;
++static atomic_t nfsd_users = ATOMIC_INIT(0);
  
- tests_run
+ static int nfsd_startup_generic(void)
+ {
+ 	int ret;
  
--exit $EXIT_STATUS
-+exit "$EXIT_STATUS"
+-	if (nfsd_users++)
++	if (atomic_fetch_inc(&nfsd_users))
+ 		return 0;
+ 
+ 	ret = nfsd_file_cache_init();
+@@ -291,13 +291,13 @@ static int nfsd_startup_generic(void)
+ out_file_cache:
+ 	nfsd_file_cache_shutdown();
+ dec_users:
+-	nfsd_users--;
++	atomic_dec(&nfsd_users);
+ 	return ret;
+ }
+ 
+ static void nfsd_shutdown_generic(void)
+ {
+-	if (--nfsd_users)
++	if (atomic_dec_return(&nfsd_users))
+ 		return;
+ 
+ 	nfs4_state_shutdown();
 -- 
-2.50.0.rc2.761.g2dc52ea45b-goog
+2.34.1
 
 
