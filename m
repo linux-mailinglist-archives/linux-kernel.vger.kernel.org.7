@@ -1,157 +1,138 @@
-Return-Path: <linux-kernel+bounces-692285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62AFCADEF60
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:31:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FF4ADEF64
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E351407517
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:27:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A205407954
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449FC2EBDF7;
-	Wed, 18 Jun 2025 14:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA9B2EACFF;
+	Wed, 18 Jun 2025 14:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="RYxBhjev"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="M8F939s6"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B0D285417;
-	Wed, 18 Jun 2025 14:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0C6285C8E
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 14:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750256841; cv=none; b=VKMXoKl+vfbknB6hLmOzyEKcGYY64pKKI51sBPmSZqVzLfLaCHnJuBlrCns440UCEergX9Xa7n89C6w2C1Q8eJDBsdhdVZbeno2YKDNtUNWDqMyNuxGpI8oavxgSsRVt8tZNLAlmTHHU0U7mb7AHZmfKw4B4MTjz2pPTmSMzQgY=
+	t=1750256860; cv=none; b=ubu9iPkMetzcnT1iSKu0IkZQ3y88SsA5iAUJxd67HSLYzS2FfOYheFxy3ALIsJtJ8rLRdOd9WVHpWnWuhLy5dJHIPIxTaJmdd8Czn/z2n5pmyipBZ+ELA8SOD1sMStMEMLGZDqjvfEoNMUuuJMKorPZF0T6spaVfA9I9t0edduk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750256841; c=relaxed/simple;
-	bh=UN4+r4XZNFrvRooGsjjEHC4utAW+tfGxUnWe7E/kEZg=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=ufna0Hn9EP5US8r7dg3DZQCE34gQsBpFBxnunz75SXTdAmN2iYQ9Pti33jZbdKVXdaPkbsZmpYrBJT1hOmnLFLOsrjUQEUnBWyA8ImDC3CsGjuui1YWqOuXs9UpOPYnLz2x0II3rRawpOGQhZ6ECxaLXZNh9JPg9kdDlvmVUsZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=RYxBhjev; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id CDC8925F7A;
-	Wed, 18 Jun 2025 16:27:18 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id UXPabypd1lfz; Wed, 18 Jun 2025 16:27:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1750256837; bh=UN4+r4XZNFrvRooGsjjEHC4utAW+tfGxUnWe7E/kEZg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=RYxBhjevfThdOLUFRzhLqaoSxQrAAJJX10YFzY/7DTzTuSQuDgSDAGeL5MqVoDyop
-	 yZKq3Z+ZQoZWeKSOTFlvOindsxL74TAJWqexbnZF7H5/f23C2c9dNCU3D3i1O1ueFQ
-	 AadAn1wP5JOAYtODFq4KaqZrsI4ykYywXaAgQnT+VOJLZONOh/jfxygQ1nKb6ZL7kO
-	 XzASPMLAxr+hlektYmjrN6iy0iXhKgUlpqEvOqhiOvpnA4bNCoy59iizB5WhKomoJ4
-	 VwtwaiqCqkR2rMWNJzxXZNHsu12JRz3WNalpMi3Ny/GZO5RUYt+y3DRnKYxQ+3w4gr
-	 92vQACA6z9Eng==
+	s=arc-20240116; t=1750256860; c=relaxed/simple;
+	bh=0R04X2IxAUZ+Y0jSm7qz0sa4qxhk6NzAtpPdgD8xbVQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DT168LoWruTS/KGmCZ/z+QCMNIl385C7Wc+rMKwbU+5DO07G0vbQZIRu9qhmDdWqs9BTLyEhtF9dOXmK1H5u4yUdPdDPmUGouUwpL0LmnI4SGVqEWAGflz5O/w4zS9UX2B+XVMJwWycWAtPW3erMHyRoJy2FRLJ3u5g+MIpZTmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=M8F939s6; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32addf54a01so73028001fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 07:27:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1750256854; x=1750861654; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0R04X2IxAUZ+Y0jSm7qz0sa4qxhk6NzAtpPdgD8xbVQ=;
+        b=M8F939s6AEUCMyHjj+jeloh3DP6d22N7SImeAmZ0qEzWxA1fhP/5tFCK1U5OsJ0kPG
+         si6gpln635DkGCqpQX7pZ44u0T1Fuqq1LH9OQA18hHD+xgEyNPGZM/p0xXeyn7nowqMK
+         Gfck6hyqQmu2QsIcQVr3qCWVChMW4ZLCEu2RNJypBcfXWSW5G+2TjRkJlUR3TSoVjoBu
+         k4nYslmXfLO03hEHcTl6tfRs8ltl88u1Q9ZGbymcAGajCajMDq039AHx6O9syvYyKim2
+         xWYmI9BA80QODd+z/b+ldOr6YXmrgj5vS2aJNMkxYK9kEn/793ejXhnoj9pKgq+ZdKi1
+         Hq1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750256854; x=1750861654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0R04X2IxAUZ+Y0jSm7qz0sa4qxhk6NzAtpPdgD8xbVQ=;
+        b=Kj61aaKzdDpjdQ5pPtkFbAze1ZSID4ljFO6XdOCwI+fXyvEFIan9uHK/+jiWnH28t7
+         xqA6NSEKzKwgyDCQ9h5MFAH8nXotPZqBHkUy/yXvl1SjfFWjhy8ouSKKYKvcGf7nug81
+         ZqBtm+Ir2dhdE0xactQLppBFyUE2yYEIiNz9Fv0Si8BMwoT0D1yCybBIXYTbs01j7kuf
+         pCZ2ITC3Axd9ryXGduaEt2xEfeMlZ6KbAIMXzXPYOIVfKeBlQY4WXKSPGd1EQJDZeqdM
+         LaWILEZiLE/5+ec+XgGChjCwJRSBzKsHrhxdRB3Mfe4vFNHyWHYyIRLrkcVs0el7yx4s
+         We1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUKEE/26ubU/uZrn6SP0rZGQYE/LAvM2NRD775uVijISddj7ExmfNhyW2ovX8Oy3D+BvFIzmFADJU8RXzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2T+dPmnIJdcG1qFqtKB5qHO5TarSYdCgVOSFOeaqBhN0VT33j
+	/2CDrFuNRem4+NgiinIjlOtbl9dTBJM9MGPqsB1JKXpaRr9/553NmwG5wvSJQg/N6Iy0MvFabD3
+	7/KDzhlXgXgQ/s//NiSiqwEPtLYn//y/4IYqmPJzHUg==
+X-Gm-Gg: ASbGncvuPtVPqM1swYgvLaA+BGnX6F9tnn0Uuf8OsoneP5yDPHW+MWTu+BbSMrUThKt
+	t/AeW34v7z3igo7VZCTbaoyuoYsOT9MBe7Kb1dbMKliCNUGxb735WpMQDViHfU2ja6ih1bYIsiA
+	K8KnrzXascMsc/gTKCVRO4t+v5kKouXOru07WeE5KfRtkUScD8nrHrW3Q7WY+wVw==
+X-Google-Smtp-Source: AGHT+IGGgI3FTwdOcK8RLKdtKdhn3U4LuZlr6R5KwqYquv0mpgnRFvgV/Xu6G6n/cNU5rLBns6CPyI5rMhviN4oJemU=
+X-Received: by 2002:a05:651c:1987:b0:32a:ec98:e15c with SMTP id
+ 38308e7fff4ca-32b4a5ca0f9mr60085391fa.19.1750256854524; Wed, 18 Jun 2025
+ 07:27:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 18 Jun 2025 14:27:17 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Inki Dae <inki.dae@samsung.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park
- <kyungmin.park@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 10/12] dt-bindings: samsung,mipi-dsim: document exynos7870
- DSIM compatible
-In-Reply-To: <5672e2ee-a828-4555-bf78-9d75c58840bd@kernel.org>
-References: <20250612-exynos7870-dsim-v1-0-1a330bca89df@disroot.org>
- <20250612-exynos7870-dsim-v1-10-1a330bca89df@disroot.org>
- <5672e2ee-a828-4555-bf78-9d75c58840bd@kernel.org>
-Message-ID: <9e2f29d3763ea50b30e5a493551627cd@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250616095532.47020-1-matt@readmodwrite.com> <CAPhsuW4ie=vvDSc97pk5qH+faoKjz+b51MDYGA3shaJwNd677Q@mail.gmail.com>
+ <CAENh_SQPLHC8pswTRoqh0bQR84HHQmnO3bM07UQa1Xu9uY_3WA@mail.gmail.com>
+ <CAADnVQ+QyPqi7XJ2p=S9FVDbOxMXvVPU859n+2ApuRQv5T2S5w@mail.gmail.com>
+ <CAENh_SQgZ5yVpshKRhiezhGMDAMvgV7SmwD_8u++mACE33oNrg@mail.gmail.com> <CAADnVQJgOyBCCySnBkTk-VCsz0dy+ppdGHpggxbtDpBBGhaXVg@mail.gmail.com>
+In-Reply-To: <CAADnVQJgOyBCCySnBkTk-VCsz0dy+ppdGHpggxbtDpBBGhaXVg@mail.gmail.com>
+From: Ignat Korchagin <ignat@cloudflare.com>
+Date: Wed, 18 Jun 2025 15:27:23 +0100
+X-Gm-Features: AX0GCFsaM9DGTqH4WJ6Z032fn61el3PhuhfhzVPYIHaWfMnL8mcSuRqckaKRyAc
+Message-ID: <CALrw=nFvUwmpjUMYh5iJqjo6SbAO8fZt8pkys7iDjZHfpF2DxQ@mail.gmail.com>
+Subject: Re: [PATCH] bpf: Call cond_resched() to avoid soft lockup in trie_free()
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Matt Fleming <matt@readmodwrite.com>, Song Liu <song@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-team <kernel-team@cloudflare.com>, Matt Fleming <mfleming@cloudflare.com>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-06-18 10:00, Krzysztof Kozlowski wrote:
-> On 12/06/2025 17:18, Kaustabh Chakraborty wrote:
->> Add compatible string for Exynos7870 DSIM bridge controller. The
->> devicetree node requires four clock sources, named:
->> - bus_clk
->> - phyclk_mipidphy0_bitclkdiv8
->> - phyclk_mipidphy0_rxclkesc0
->> - sclk_mipi
->> 
->> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->> ---
->>  .../bindings/display/bridge/samsung,mipi-dsim.yaml | 26 ++++++++++++++++++++++
->>  1 file changed, 26 insertions(+)
->> 
->> diff --git a/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml b/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml
->> index 1acad99f396527192b6853f0096cfb8ae5669e6b..887f3ba1edd24a177a766b1b523d0c197ff1123a 100644
->> --- a/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml
->> +++ b/Documentation/devicetree/bindings/display/bridge/samsung,mipi-dsim.yaml
->> @@ -24,6 +24,7 @@ properties:
->>            - samsung,exynos5410-mipi-dsi
->>            - samsung,exynos5422-mipi-dsi
->>            - samsung,exynos5433-mipi-dsi
->> +          - samsung,exynos7870-mipi-dsi
->>            - fsl,imx8mm-mipi-dsim
->>            - fsl,imx8mp-mipi-dsim
->>        - items:
->> @@ -144,6 +145,31 @@ required:
->>  
->>  allOf:
->>    - $ref: ../dsi-controller.yaml#
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            const: samsung,exynos7870-mipi-dsi
->> +
->> +    then:
->> +      properties:
->> +        clocks:
->> +          minItems: 4
-> 
-> maxItems: 4
+On Wed, Jun 18, 2025 at 3:01=E2=80=AFPM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Wed, Jun 18, 2025 at 5:29=E2=80=AFAM Matt Fleming <matt@readmodwrite.c=
+om> wrote:
+> >
+> > On Tue, Jun 17, 2025 at 4:55=E2=80=AFPM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Tue, Jun 17, 2025 at 2:43=E2=80=AFAM Matt Fleming <matt@readmodwri=
+te.com> wrote:
+> > > >
+> > >
+> > > > soft lockup - CPU#41 stuck for 76s
+> > >
+> > > How many elements are in the trie that it takes 76 seconds??
+> >
+> > We run our maps with potentially millions of entries, so it's the size
+> > of the map plus the fact that kfree() does more work with KASAN that
+> > triggers this for us.
+> >
+> > > I feel the issue is different.
+> > > It seems the trie_free() algorithm doesn't scale.
+> > > Pls share a full reproducer.
+> >
+> > Yes, the scalability of the algorithm is also an issue. Jesper (CC'd)
+> > had some thoughts on this.
+> >
+> > But regardless, it seems like a bad idea to have an unbounded loop
+> > inside the kernel that processes user-controlled data.
+>
+> 1M kfree should still be very fast even with kasan, lockdep, etc.
+> 76 seconds is an algorithm problem. Address the root cause.
 
-Will replace. maxItems == minItems implicit if maxItems present and
-minItems absent.
+What if later we have 1G? 100G? Apart from the root cause we still
+have "scalability concerns" unless we can somehow reimplement this as
+O(1)
 
-> 
->> +
->> +        clock-names:
->> +          items:
->> +            - const: bus_clk
->> +            - const: phyclk_mipidphy0_bitclkdiv8
->> +            - const: phyclk_mipidphy0_rxclkesc0
->> +            - const: sclk_mipi
-> 
-> Does any existing driver code actually depends on the names? If not, we
-> switched in Samsung in general to names matching the input or the
-> function, not the name of provider. bus, bit (or bitdiv?), rx or esc0, sclk 
-
-Yeah, Exynos5433 uses it. Code is here [1].
-
-Though, I could get around this if you would like to. Would need to add
-a few more patches.
-
-PS: bitdiv8 should actually be byte. bit clock frequency used in data
-transmission divided by 8 covers a byte.
-
-[1] https://elixir.bootlin.com/linux/v6.16-rc2/source/drivers/gpu/drm/bridge/samsung-dsim.c#L227
-
-> 
-> 
-> Best regards,
-> Krzysztof
+Ignat
 
