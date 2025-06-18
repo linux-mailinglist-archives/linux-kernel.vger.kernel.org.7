@@ -1,145 +1,118 @@
-Return-Path: <linux-kernel+bounces-692918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BEACADF893
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 23:18:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F11C4ADF89F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 23:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1DC01629A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:17:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF3291BC3DBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 21:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE02274FFB;
-	Wed, 18 Jun 2025 21:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C911927CCE7;
+	Wed, 18 Jun 2025 21:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FmlWRqHQ"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JO57uXEy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D25274672
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 21:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6F127A46A;
+	Wed, 18 Jun 2025 21:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750281467; cv=none; b=TkGBOxxXIFGGWDIBMzrciwbwtwBn+D2NwMb3QTEumZNRAl7MWjFippzJjZCBWQNpFQ9cxyEr2OpkxN7+ipIApXrMNsDrMYYQpw6MXhZ4B4i7gTUfqfN8rPLrWMxj9D52XKrE2NJT4RgbYwJDQwKY9hY6HaWZgQj6TPDIGqOGYmE=
+	t=1750281600; cv=none; b=Dw/oiK9MDf98WMNXmKRQyBek92A+UAmWM8aPfYPH8PDx+7LC0byWKNk+0vcFdA3Vegdbh1zhtY1r1LIj9SbRqoTtbaEAqxhYPSkmBSRUQPsMH830kiSEk576u0Pd+4st791JNJp6vODU6Aw0PnJdmWSJ8ZAMaIIHlrtRAghzz9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750281467; c=relaxed/simple;
-	bh=CMs2h4kbVtiV15SKFeOJCR6/uSQFgcHkomdTrmd6ICM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XwAqXg15oM19wtsT3Y180OKpF4EoZb6yuc3e9qJLnl2k2CD+TVCK2t6jk9uGTT8FZmO9g9gwa5cGaX337og9x6zrjGG/05As8b4Fskf7IDm0nCjX3QZPshZ4QuMNADobiVwx9J3Et/r6yplKMWJj8b+lFpwoyYLqcIZBV/1welM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FmlWRqHQ; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7394772635dso66647b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 14:17:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750281465; x=1750886265; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SDeX7q/l2+xg1imuGAxKGeggwWOnK+wgg5Zm+bSeJk0=;
-        b=FmlWRqHQXaKSWosrOxrkfXMLMZf0nfBTbax4oS+1dFJqz6txfxDPA9eTkML5FilCa7
-         BmdshjclBUyrVxpKspVrHLRUkB4dhC+5FQrhxkoecPdbfzM2SN/dEPdI8qQS4GXzbrjc
-         calWORmoLLnRaM7oTSEBnlwRaDm35nzwYue9DgdjFq/hK7UHElUcLhHriGmcWoAGMfob
-         B4v7XcF/EO/RBeNEEtnbf+riDWvj0xbLMmnVtL8FGS5KuyaQT1gP6j/UekkYULwx8vgK
-         P3hzDYdRaasYRZpmQOOIMWafcoSApNbaeRQUKE5a9mRZXpBdbaV7pd8tptYT1XMHPyBp
-         CfzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750281465; x=1750886265;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SDeX7q/l2+xg1imuGAxKGeggwWOnK+wgg5Zm+bSeJk0=;
-        b=cZ8THNLhTDzotV7P1pV1p7YuVrSiu8lEEHz01UP0uBhMWmKHJQQjbxImb7NDK0U9FI
-         pbVY8jztiPTAMnIkpp22oNnM4Gg7u5yjkK7RIEVMhDce4+xyFtDi0py2dzwfyB6F3wDR
-         DWOh8f73HGVc7mEL0edCx8C234jKpdf5gNA90MKcdxBHHLuWK8qKYBDe+gvhvUR6GlG8
-         z7KqkrEyuSpAWOLfzt88D60yWkfj5gW48KTf1LI+ItyWihhd5RosdCfxvEqO5wv1minH
-         9NQjTMfkVLP6tDhSILaNsunY4ARVX9Xh4VieTRq5rKizjvu9HgjDD7XFllSkWucugMEV
-         IfaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNz4byX9w1LuWD9Hnhqv5zisNd1YwklSyVZdFZAPGAAKhVBk7B0cnT0HqS4dx18934Ur37b5qaU3ebdW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxHI7sEQQrV/Iq983aZtLvkxck1Z+8nHu/JyxUFNSQZs52C8e9
-	rymFIcBsY2dPPP9MohXdNP40SvPpl7WawATD8gTR0DBoYSp5lonprRgEXXDUtCPb4EJuuI69Bwi
-	qV7PvHQ==
-X-Google-Smtp-Source: AGHT+IFrMBaSJPDppRsJZ5jvlklOZU4VQzs3tJ3F6qMENhjmoLLRaWLyHwVi7GAyrqStyqYxXS8ZDE6slDQ=
-X-Received: from pfbef26.prod.google.com ([2002:a05:6a00:2c9a:b0:747:aac7:7c2])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3399:b0:21a:e091:ac25
- with SMTP id adf61e73a8af0-21fbd505f24mr32186546637.6.1750281465010; Wed, 18
- Jun 2025 14:17:45 -0700 (PDT)
-Date: Wed, 18 Jun 2025 14:17:43 -0700
-In-Reply-To: <aFMS4O2TkWN8nexY@linux.dev>
+	s=arc-20240116; t=1750281600; c=relaxed/simple;
+	bh=EbB/q7SwaM5yceRQWTsTZPY00Jn2CZRLRyHwoouPMjk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=FWGyuHoFpPu0v236KFKv1X1qGS+nQtQcVqKjKW+6t9oozEtPySyEURryi/bIaroPYbzMHrQJhUGyQl22FehrLK1afnaw7nQMdEZ/CF8016mqA1zP/Zlo+EJqj3fllaBRCHPUEFPv3khtj+PEHpHIPvm0Jv0K2yv8yDlDyAdx1KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JO57uXEy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 989E3C4CEE7;
+	Wed, 18 Jun 2025 21:19:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750281600;
+	bh=EbB/q7SwaM5yceRQWTsTZPY00Jn2CZRLRyHwoouPMjk=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=JO57uXEybUK/Jmj/mZoksyy4r/4rZUpThA9wzRSVbwNieiLu/8+IXRkYK+5gTY4nX
+	 G+DI+/gQkky9XgTCQaZdxcKMug9o161UDbRD/nsjfsg+geq7S4fTGxfQOUQO5jZFE7
+	 28BR686y6vupGG6VSkEGJjs91Em3EAQFADpW8FwNN7iR9KJgiAtAa8plHUqIgVaEKq
+	 Ad5Vl3jORribqoRc6+5XkNvPDWepwiQmIqOBuwFVM/YSwZ7PJjsqMIMN/Qs9lCSpzl
+	 qFlgXhRRpytuJPPGmy+mTQwOg06RzaQtR2RRntMuOfPDqz0qBsX6ziXbvS5Yff4h1m
+	 eA56Xv2s6WRew==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250618042424.330664-1-jthoughton@google.com>
- <20250618042424.330664-3-jthoughton@google.com> <aFMS4O2TkWN8nexY@linux.dev>
-Message-ID: <aFMs9_GBVsiRmgz7@google.com>
-Subject: Re: [PATCH v3 02/15] KVM: arm64: Add "struct kvm_page_fault" to
- gather common fault variables
-From: Sean Christopherson <seanjc@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: James Houghton <jthoughton@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Yan Zhao <yan.y.zhao@intel.com>, 
-	Nikita Kalyazin <kalyazin@amazon.com>, Anish Moorthy <amoorthy@google.com>, 
-	Peter Gonda <pgonda@google.com>, Peter Xu <peterx@redhat.com>, 
-	David Matlack <dmatlack@google.com>, wei.w.wang@intel.com, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 18 Jun 2025 23:19:56 +0200
+Message-Id: <DAPZ1KYN5FB6.3C7CI4Y0OKOE0@kernel.org>
+To: "Oliver Mangold" <oliver.mangold@pm.me>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Asahi Lina"
+ <lina@asahilina.net>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 1/5] rust: types: Add Ownable/Owned types
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250502-unique-ref-v10-0-25de64c0307f@pm.me>
+ <20250502-unique-ref-v10-1-25de64c0307f@pm.me>
+ <D9VS2Q4IX7LH.3JLXQUMWYJ2FP@kernel.org> <aFKICIo8L958iFbz@mango>
+In-Reply-To: <aFKICIo8L958iFbz@mango>
 
-On Wed, Jun 18, 2025, Oliver Upton wrote:
-> On Wed, Jun 18, 2025 at 04:24:11AM +0000, James Houghton wrote:
-> > From: Sean Christopherson <seanjc@google.com>
-> > 
-> > Introduce "struct kvm_page_fault" and use it in user_mem_abort() in lieu
-> > of a collection of local variables.  Providing "struct kvm_page_fault"
-> > will allow common KVM to provide APIs to take in said structure, e.g. when
-> > preparing memory fault exits.
-> > 
-> > No functional change intended.
-> > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > Signed-off-by: James Houghton <jthoughton@google.com>
-> > ---
-> >  arch/arm64/include/asm/kvm_host.h |  9 +++++++++
-> >  arch/arm64/kvm/mmu.c              | 32 +++++++++++++++++--------------
-> >  2 files changed, 27 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> > index 6ce2c51734820..ae83d95d11b74 100644
-> > --- a/arch/arm64/include/asm/kvm_host.h
-> > +++ b/arch/arm64/include/asm/kvm_host.h
-> > @@ -413,6 +413,15 @@ struct kvm_vcpu_fault_info {
-> >  	u64 disr_el1;		/* Deferred [SError] Status Register */
-> >  };
-> >  
-> > +struct kvm_page_fault {
-> > +	const bool exec;
-> > +	const bool write;
-> > +	const bool is_private;
-> > +
-> > +	gfn_t gfn;
-> > +	struct kvm_memory_slot *slot;
-> > +};
-> > +
-> 
-> So this seems to cherry-pick "interesting" values into the structure but
+On Wed Jun 18, 2025 at 11:34 AM CEST, Oliver Mangold wrote:
+> On 250514 1132, Benno Lossin wrote:
+>> On Fri May 2, 2025 at 11:02 AM CEST, Oliver Mangold wrote:
+>>=20
+>> > +/// - That the C code follows the usual mutable reference requirement=
+s. That is, the kernel will
+>> > +///   never mutate the [`Ownable`] (excluding internal mutability tha=
+t follows the usual rules)
+>> > +///   while Rust owns it.
+>>=20
+>> I feel like this requirement is better put on the `Owned::from_raw`
+>> function.
+>
+> Thinking about it some more, the problem I see here is that if the type
+> implements `OwnableMut` this requirement changes from "never mutate" to
+> "never access at all".
+>
+> The safety requirements between `Ownable`, `OwnableMut`, `RefCounted`,
+> `OwnableRefCounted` and `AlwaysRefCounted` are interacting, but I agree
+> that, when looking at it a certain way, `Owned::from_raw()` is the place
+> where one would expect these to be. I'm not sure anymore what is best her=
+e
+> :/
 
-s/interesting/necessary.  I literally grabbed only the fields that were needed
-to handle the userfault :-)
+I still think `Owned::from_raw` is the correct place to put this.
 
-> leaves the rest of the abort context scattered about in locals. If we're
-> going to do something like this I'd rather have a wholesale refactoring
-> than just the bits to intersect with x86 (more on that later...)
+>
+>> > +pub unsafe trait OwnableMut: Ownable {}
+>>=20
+>> I don't like the name, but at the same time I also have no good
+>> suggestion :( I'll think some more about it.
+>
+> There was already a bit of discussion about it. I had my own implementati=
+on of this
+> where I used the names `UniqueRefCounted` and `UniqueRef`, but after disc=
+overing
+> this version from Asahi Lina, I took it as it was, keeping the name.
+>
+> No one else came up with different suggestions so far, so maybe we should=
+ just leave it
+> at `Owned`/`Ownable`?
 
-Definitely no objection from me.  How about I send a standalone patch so that we
-can iterate on just that without James having to respin the entire series (for
-changes that have no meaningful impact)?  I'm anticipating we'll need a few rounds
-to strike the right balance between what was done here and "throw everything into
-kvm_page_fault".  E.g. we probably don't want "vma" in kvm_page_fault.
+I'm just hung up on the `Mut` part... Haven't come up with a good
+replacement yet.
 
-Hmm, yeah, and I suspect/hope that moving more things into kvm_page_fault will
-allow for encapsulating the mmap_read_lock() section in a helper without having
-a bajillion boolean flags being passed around.  That would obviate the need to
-nullify vma, because it would simply go out of scope.
+---
+Cheers,
+Benno
 
