@@ -1,123 +1,152 @@
-Return-Path: <linux-kernel+bounces-692104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D114ADECE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:44:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 144C9ADECEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA13189781C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:40:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5E5A188B284
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB9D2BF013;
-	Wed, 18 Jun 2025 12:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF632DF3FB;
+	Wed, 18 Jun 2025 12:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T35oes2F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgFQjueK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F09B258CD0;
-	Wed, 18 Jun 2025 12:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37D52DE1EC;
+	Wed, 18 Jun 2025 12:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750250425; cv=none; b=GVqFqoHQUjzgtDHsHu8go2u6ZZ71z0/DoK32NZsyjv3H4KK0yxcan12qet+cWbbL3VrMAaMDylMmbiwsLd8/KXPFD9SmsXjVEQh+qUv5q1qzOj9eCXH2eKcurSoMFXDjsqlFix7y6U2TeqF6/7cAV+qalhiKKPGEATcKuOL4Bxk=
+	t=1750250606; cv=none; b=H2EbACU8/2C+dwHw6046qte71j5bu9PWLNZ4635/jQ5T8IcxaKQPoLfAxhYNQHRq/DWV+TRE1fatkwBMyp2MJ3zTu6Mqu/GrGju/HRfnjHTcfBgeu9vAMP8RyxTv7pTSTqoCDvAi8BL1oyvLt629aJ5NMlDtyZpW5Ir/FKl1U1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750250425; c=relaxed/simple;
-	bh=lKJkRX5S1J6VtzITZ5xzBjEBLhnqYUnVxruczGLyT08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QpBrawzBhEZTLwy7FJuYvlWdZA4Sdd8eL8og4KKA1BkRsAWXdfD2vfggr5jcGigNrTAMNApIHMGyEOMljSVllZ+8ROXro+lDyVJZi9GPIDOXzJu/OM52qxDoNaT+X9vaUdJo+x7XbsxDUjI/2zdLYetVU4hqmlXsTxcKexiP5d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T35oes2F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F6CDC4CEE7;
-	Wed, 18 Jun 2025 12:40:20 +0000 (UTC)
+	s=arc-20240116; t=1750250606; c=relaxed/simple;
+	bh=sEwTFjUCiBVe4R3iljd5w8GSzTd/qtNXrriFMn9qrO0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SyiwhGzGGhSrCL81eJh2cnAvS+9z3WZ5VkGj+fGgpQTrZaN4RoCuacAS5AqL0lUZHoxVrJ/LD6elWtwjItOaPI+LUkW2xXL3KNWq2ZiYeY0sdGsVgp6dRqyXSzrz5aoEPbE+8XBDoDNFOzGp4mt9ToPoC0lxdAgyN/jH+j8miLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgFQjueK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C75A8C4CEF2;
+	Wed, 18 Jun 2025 12:43:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750250424;
-	bh=lKJkRX5S1J6VtzITZ5xzBjEBLhnqYUnVxruczGLyT08=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T35oes2Fkomfh40d6u66VAQWgiTTkCCDSuXaUmP9wZj+ZvbxEJppK5DeCdXziOEhg
-	 3HEpnVRqlDeTIAfAtsfh8HKcdGHc7Uqpj6S6eN2INZPxSjVIwS2jXPoJjuaciRncRy
-	 Xxm82+PegCaah7+5vTiKGWtGcO+DjQzVo+ZUt7AqelZLpBZY33KdEBNwB5Uaq1WxK2
-	 eOMNofrX6l+G0WeTImkNi69icQxs5GeLX0ZqZP3QGnVRWs1KH+cTaMtewy/RNj2FaO
-	 2cqyu3Mxebizp7QLsFdK6B8Fb+28XA5K2+Ds9lwEFxz13m0Kvrv1ACzaUaSh3pE8vU
-	 lxd9Pi9CUntEQ==
-Date: Wed, 18 Jun 2025 13:40:19 +0100
-From: Simon Horman <horms@kernel.org>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Akira Yokosawa <akiyks@gmail.com>,
-	Breno Leitao <leitao@debian.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Ignacio Encinas Rubio <ignacio@iencinas.com>,
-	Jan Stancek <jstancek@redhat.com>, Marco Elver <elver@google.com>,
-	Paolo Abeni <pabeni@redhat.com>, Ruben Wauters <rubenru09@aol.com>,
-	Shuah Khan <skhan@linuxfoundation.org>, joel@joelfernandes.org,
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
-	lkmm@lists.linux.dev, netdev@vger.kernel.org, peterz@infradead.org,
-	stern@rowland.harvard.edu
-Subject: Re: [PATCH v5 05/15] tools: ynl_gen_rst.py: make the index parser
- more generic
-Message-ID: <20250618124019.GQ1699@horms.kernel.org>
-References: <cover.1750146719.git.mchehab+huawei@kernel.org>
- <1cd8b28bfe159677b8a8b1228b04ba2919c8aee8.1750146719.git.mchehab+huawei@kernel.org>
- <20250617115927.GK5000@horms.kernel.org>
- <20250618085735.7f9aa5a6@foz.lan>
+	s=k20201202; t=1750250605;
+	bh=sEwTFjUCiBVe4R3iljd5w8GSzTd/qtNXrriFMn9qrO0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QgFQjueKKcZsRqeXF7t+tyGl+x6nLtDn14B49OhBEA55yl8XHJDZaL2HnyuxqQ+/X
+	 VvW7RehI4AsLyDQ0HQV6ZaxSICG7HVCR5mSoXxY5p1vrcSzVcJd6CNNsWfOXJZVtlM
+	 6kaviF1wY2vRe3kXwu3UjqXz4jFa/9+nZ2S+kZPpv+wxC2xwK42PvOm7oWpXXaXUtZ
+	 s7HdFaEzhAmPuLWIZEwVbO1OnJme5EDlnRGY2+pO4pqcKIQcs2ISoMdKnnv2l/U1dI
+	 5ISwor4hZfuWh+lotKpcPWwXbLXpejpdnFdPVE5Di9OZYOAeS0YpGgWD0HJkNgNqSi
+	 RL2nwSFyXIehQ==
+From: =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andy Shevchenko <andy@kernel.org>
+Subject: [PATCH] platform: cznic: turris-omnia-mcu: Use new GPIO line value setter callbacks
+Date: Wed, 18 Jun 2025 14:43:19 +0200
+Message-ID: <20250618124319.19220-1-kabel@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618085735.7f9aa5a6@foz.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 18, 2025 at 08:57:35AM +0200, Mauro Carvalho Chehab wrote:
-> Em Tue, 17 Jun 2025 12:59:27 +0100
-> Simon Horman <horms@kernel.org> escreveu:
-> 
-> > On Tue, Jun 17, 2025 at 10:02:02AM +0200, Mauro Carvalho Chehab wrote:
-> > > It is not a good practice to store build-generated files
-> > > inside $(srctree), as one may be using O=<BUILDDIR> and even
-> > > have the Kernel on a read-only directory.
-> > > 
-> > > Change the YAML generation for netlink files to allow it
-> > > to parse data based on the source or on the object tree.
-> > > 
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > > ---
-> > >  tools/net/ynl/pyynl/ynl_gen_rst.py | 22 ++++++++++++++++------
-> > >  1 file changed, 16 insertions(+), 6 deletions(-)
-> > > 
-> > > diff --git a/tools/net/ynl/pyynl/ynl_gen_rst.py b/tools/net/ynl/pyynl/ynl_gen_rst.py
-> > > index 7bfb8ceeeefc..b1e5acafb998 100755
-> > > --- a/tools/net/ynl/pyynl/ynl_gen_rst.py
-> > > +++ b/tools/net/ynl/pyynl/ynl_gen_rst.py
-> > > @@ -365,6 +365,7 @@ def parse_arguments() -> argparse.Namespace:
-> > >  
-> > >      parser.add_argument("-v", "--verbose", action="store_true")
-> > >      parser.add_argument("-o", "--output", help="Output file name")
-> > > +    parser.add_argument("-d", "--input_dir", help="YAML input directory")
-> > >  
-> > >      # Index and input are mutually exclusive
-> > >      group = parser.add_mutually_exclusive_group()
-> > > @@ -405,11 +406,14 @@ def write_to_rstfile(content: str, filename: str) -> None:
-> > >      """Write the generated content into an RST file"""
-> > >      logging.debug("Saving RST file to %s", filename)
-> > >  
-> > > +    dir = os.path.dirname(filename)
-> > > +    os.makedirs(dir, exist_ok=True)
-> > > +
-> > >      with open(filename, "w", encoding="utf-8") as rst_file:
-> > >          rst_file.write(content)  
-> > 
-> > Hi Mauro,
-> > 
-> > With this patch applied I see the following, which did not happen before.
-> 
-> Thanks! this was an intermediate step. I'll just drop this patch and
-> fix conflicts at the next version.
+struct gpio_chip now has callbacks for setting line values that return
+an integer, allowing to indicate failures. Convert the driver to using
+them.
 
-Likewise, thanks.
+Signed-off-by: Marek Behún <kabel@kernel.org>
+---
+ .../platform/cznic/turris-omnia-mcu-gpio.c    | 35 ++++++++++++-------
+ 1 file changed, 22 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/platform/cznic/turris-omnia-mcu-gpio.c b/drivers/platform/cznic/turris-omnia-mcu-gpio.c
+index c2df24ea8686..57c229d70ead 100644
+--- a/drivers/platform/cznic/turris-omnia-mcu-gpio.c
++++ b/drivers/platform/cznic/turris-omnia-mcu-gpio.c
+@@ -439,27 +439,28 @@ static int omnia_gpio_get_multiple(struct gpio_chip *gc, unsigned long *mask,
+ 	return 0;
+ }
+ 
+-static void omnia_gpio_set(struct gpio_chip *gc, unsigned int offset, int value)
++static int omnia_gpio_set(struct gpio_chip *gc, unsigned int offset, int value)
+ {
+ 	const struct omnia_gpio *gpio = &omnia_gpios[offset];
+ 	struct omnia_mcu *mcu = gpiochip_get_data(gc);
+ 	u16 val, mask;
+ 
+ 	if (!gpio->ctl_cmd)
+-		return;
++		return -ENOTSUPP;
+ 
+ 	mask = BIT(gpio->ctl_bit);
+ 	val = value ? mask : 0;
+ 
+-	omnia_ctl_cmd(mcu, gpio->ctl_cmd, val, mask);
++	return omnia_ctl_cmd(mcu, gpio->ctl_cmd, val, mask);
+ }
+ 
+-static void omnia_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+-				    unsigned long *bits)
++static int omnia_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
++				   unsigned long *bits)
+ {
+ 	unsigned long ctl = 0, ctl_mask = 0, ext_ctl = 0, ext_ctl_mask = 0;
+ 	struct omnia_mcu *mcu = gpiochip_get_data(gc);
+ 	unsigned int i;
++	int err;
+ 
+ 	for_each_set_bit(i, mask, ARRAY_SIZE(omnia_gpios)) {
+ 		unsigned long *field, *field_mask;
+@@ -488,13 +489,21 @@ static void omnia_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+ 
+ 	guard(mutex)(&mcu->lock);
+ 
+-	if (ctl_mask)
+-		omnia_ctl_cmd_locked(mcu, OMNIA_CMD_GENERAL_CONTROL,
+-				     ctl, ctl_mask);
++	if (ctl_mask) {
++		err = omnia_ctl_cmd_locked(mcu, OMNIA_CMD_GENERAL_CONTROL,
++					   ctl, ctl_mask);
++		if (err)
++			return err;
++	}
++
++	if (ext_ctl_mask) {
++		err = omnia_ctl_cmd_locked(mcu, OMNIA_CMD_EXT_CONTROL,
++					   ext_ctl, ext_ctl_mask);
++		if (err)
++			return err;
++	}
+ 
+-	if (ext_ctl_mask)
+-		omnia_ctl_cmd_locked(mcu, OMNIA_CMD_EXT_CONTROL,
+-				     ext_ctl, ext_ctl_mask);
++	return 0;
+ }
+ 
+ static bool omnia_gpio_available(struct omnia_mcu *mcu,
+@@ -1015,8 +1024,8 @@ int omnia_mcu_register_gpiochip(struct omnia_mcu *mcu)
+ 	mcu->gc.direction_output = omnia_gpio_direction_output;
+ 	mcu->gc.get = omnia_gpio_get;
+ 	mcu->gc.get_multiple = omnia_gpio_get_multiple;
+-	mcu->gc.set = omnia_gpio_set;
+-	mcu->gc.set_multiple = omnia_gpio_set_multiple;
++	mcu->gc.set_rv = omnia_gpio_set;
++	mcu->gc.set_multiple_rv = omnia_gpio_set_multiple;
+ 	mcu->gc.init_valid_mask = omnia_gpio_init_valid_mask;
+ 	mcu->gc.can_sleep = true;
+ 	mcu->gc.names = omnia_mcu_gpio_names;
+-- 
+2.49.0
+
 
