@@ -1,116 +1,119 @@
-Return-Path: <linux-kernel+bounces-692000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F317ADEB74
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:12:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB72EADEB79
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9940C7AC989
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:10:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59D69189D4CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 12:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C458A296153;
-	Wed, 18 Jun 2025 12:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5A22DE1E2;
+	Wed, 18 Jun 2025 12:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5vAuRht"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="WGEEuCPd"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2568A2F530F;
-	Wed, 18 Jun 2025 12:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7630D2F5307
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 12:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750248720; cv=none; b=owKc3dwSvVigy83Dh4kFsn2/AFwzBfG7yxFfT/Yrs34kNgOiafYYWzMKq0YqcpfzcFWmpNqUZHHc/wEUyhq609c3skdCE4w3VYWv2JaxacjeDs7JZiLGclBahQDeifoKo+uMdsxSghIrpnrXn1uJ2JDJPscSuEMT4j+TSIXqvtA=
+	t=1750248763; cv=none; b=K4JSGnPD3PD7xIC6as7MZhU42M9pUwU4cv3Agke3O4QCfFZq92fMjBS7ZvqPRHGJkXCUA2iYBmJr+hSblMWJR+ZhLBCkjUWmcpQdGsS6X0HgOPd4+PuWeMIudm8xgBmE3ygFZ0qIf549xzr2P9sasnaWvdhBKTXj8Ohtw7w0jlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750248720; c=relaxed/simple;
-	bh=Bm6AlVdy7rJk76AcQQbQ/HxwJZrHOdNInWoHVKdb28A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kE3pUqZSCkD2lqMwYgwkDefKupi0sX9UPMj7sAdnRYw75umoy2YaObEQX2KksSnSLe5j0iEaFqeD2xi6vFjdhJ6EDKjK/3gGBotHc2WM1z3silFHBd6+lZ+9atMOX/WvdGsicL+ZS0YMZrpbjFiGJR0GOSFT7EuUaflny5TJNLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5vAuRht; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 758B8C4CEE7;
-	Wed, 18 Jun 2025 12:11:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750248719;
-	bh=Bm6AlVdy7rJk76AcQQbQ/HxwJZrHOdNInWoHVKdb28A=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=b5vAuRht8JNoykjTL9HCcNJWeOUIAw3LL1/SFi1TpjB7UzJNy6Usv07+Cfd7M8D2e
-	 C4SyOrRGrce4ttdohUxsIT22OXaYqAHAI0v8VzFfgcUmGfalRSBXZdYNrWx41XXEK8
-	 qu44zfOOiodyYjcQdKqbxk1zbKFeRCLS4O4N589CJ069I0sa60sSE5DlDhVuwQQb7N
-	 KCxtXlQ/RiOiFPbb+OXQsD+ZZJ89uYfb1OX4IGxjqq/BknyjI0AUfthQcMNLltEQhX
-	 T0O4gAjKMFhTyjNFAceqNr23GR0F9bw/pGNL1Wm0D0diakiwVpt+J9Krgj4JFJJtvP
-	 M/ZAyziH+cRjQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id B3F84CE0C98; Wed, 18 Jun 2025 05:11:56 -0700 (PDT)
-Date: Wed, 18 Jun 2025 05:11:56 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Haas <t.haas@tu-bs.de>, Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	lkmm@lists.linux.dev, hernan.poncedeleon@huaweicloud.com,
-	jonas.oberhauser@huaweicloud.com,
-	"r.maseli@tu-bs.de" <r.maseli@tu-bs.de>
-Subject: Re: [RFC] Potential problem in qspinlock due to mixed-size accesses
-Message-ID: <84e8e3c1-fc7e-4f6b-9c71-39bf7522a498@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <cb83e3e4-9e22-4457-bf61-5614cc4396ad@tu-bs.de>
- <20250613075501.GI2273038@noisy.programming.kicks-ass.net>
- <0b20c5e8-ef01-4527-9122-8722f96972ae@paulmck-laptop>
+	s=arc-20240116; t=1750248763; c=relaxed/simple;
+	bh=zFk2egmf36IbeczadxJnUHDOOVO8nEoXhdsgsdwa/AU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=qFp48PgwZ68gVGVTkptK4xolkPXIVLbjVtBVm0t8yLSuK7K9mn5d6xrLXIVXsFu1m5tR9SS7/19LSQaYQwjs0qyYSV86M3FFEXjob63AXLmdezx/lQO4yIN103h4LOTMiUkcKL9j1tfUcP9yAw9AvMKkozQkpoFNAhb+PxkByyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=WGEEuCPd; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0b20c5e8-ef01-4527-9122-8722f96972ae@paulmck-laptop>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1750248757;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+fwuhHs7pqnSyoIdYUQwG7qjgQ1CC6dPRZ/xpENoi6E=;
+	b=WGEEuCPdsRaGDkWhC8iz9ZzBxfRVX6fRUXN35unrrg/RSzEOp5Y2YlPQz9Kw46epXq25Kt
+	qKy9OYZjWc3RZI23h2IDLRL354jLZvmJTj80nLS+olZ86dFpaS+GGr0VJafCYbccXUFMNy
+	tAnq4OBc+6/FaeJsHd82Q0oD8vtQZZXtTV/ld4ePnMAaE5eLqXIpMjjoy+SAfPJqAAyWDJ
+	VkrAsh+MbnzD/LLEBxhJCBA5S2DT2iIbfyUNa03gpy4BRs7J8KBkvv/1Rvj4v+kkgZ7CjC
+	06rcd5QPUk45Zffjom8mZLRe/1MTB/Qk76ZzDQ6ns50y9cRikT7plfCxpnw95w==
+Content-Type: multipart/signed;
+ boundary=d094255437ed180642212f2daf7bb7d49bbc773ab458e9a2480ab8cbe8f0;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Wed, 18 Jun 2025 14:12:13 +0200
+Message-Id: <DAPNE849BAON.1DPGBKMHM552V@cknow.org>
+To: "Olivier Benjamin" <olivier.benjamin@bootlin.com>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>
+Cc: "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
+ <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Remove unused property in
+ PinePhone Pro MIPI panel
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+References: <20250618-dtb_fixes-v1-0-e54797ad2eba@bootlin.com>
+ <20250618-dtb_fixes-v1-3-e54797ad2eba@bootlin.com>
+In-Reply-To: <20250618-dtb_fixes-v1-3-e54797ad2eba@bootlin.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jun 17, 2025 at 11:51:49PM -0700, Paul E. McKenney wrote:
-> On Fri, Jun 13, 2025 at 09:55:01AM +0200, Peter Zijlstra wrote:
-> > On Thu, Jun 12, 2025 at 04:55:28PM +0200, Thomas Haas wrote:
-> 
-> [ . . . ]
-> 
-> > >     - put some other read-read barrier between the xchg_tail and the load.
-> > > 
-> > > 
-> > > ### Implications for qspinlock executed on non-ARM architectures.
-> > > 
-> > > Unfortunately, there are no MSA extensions for other hardware memory models,
-> > > so we have to speculate based on whether the problematic reordering is
-> > > permitted if the problematic load was treated as two individual
-> > > instructions.
-> > > It seems Power and RISCV would have no problem reordering the instructions,
-> > > so qspinlock might also break on those architectures.
-> > 
-> > Power (and RiscV without ZABHA) 'emulate' the short XCHG using a full
-> > word LL/SC and should be good.
-> > 
-> > But yes, ZABHA might be equally broken.
-> 
-> All architectures handle eight-bit atomics and stores, but last I checked,
-> there were a few systems still around that failed to support 16-bit
-> atomics and stores.  I will check again.
-> 
-> (But those systems's architectures can simply avoid supporting kernel
-> features requiring these 16-bit operations.)
-> 
-> It would be good to add multiple sizes to LKMM, and even moreso once we
-> have 16-bit support across the board.
+--d094255437ed180642212f2daf7bb7d49bbc773ab458e9a2480ab8cbe8f0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-And Arnd tells me that the Linux kernel might be safe for 16-bit stores
-in core code perhaps as early as the end of this year.  ;-)
+Hi,
 
-							Thanx, Paul
+On Wed Jun 18, 2025 at 12:32 AM CEST, Olivier Benjamin wrote:
+> The MIPI panel definition in the PinePhone Pro DTS includes a
+> "pinctrl-names" property, which is unused in the absence of pinctrl-0.
+>
+> Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch=
+/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+> index 5a7341fb6bcb0613af6f3ac31d99355a0f890e89..405140700208365c8631de86a=
+2d7b6e577b7aa7f 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+> @@ -485,7 +485,6 @@ panel@0 {
+>  		reset-gpios =3D <&gpio4 RK_PD1 GPIO_ACTIVE_LOW>;
+>  		vcc-supply =3D <&vcc2v8_lcd>;
+>  		iovcc-supply =3D <&vcc1v8_lcd>;
+> -		pinctrl-names =3D "default";
+
+Why not define a pinctrl for LCD1_RST for GPIO4_D1 and reference that in
+pinctrl-0? (See page 11 and 16 of the schematics)
+
+Cheers,
+  Diederik
+> =20
+>  		port {
+>  			mipi_in_panel: endpoint {
+
+
+--d094255437ed180642212f2daf7bb7d49bbc773ab458e9a2480ab8cbe8f0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaFKtJQAKCRDXblvOeH7b
+birRAP9UF4IfSII2WRPdY7JTipjbLL5426U7AHmPMYj5ktK2igEAqMjf89ZjcYJi
+y80+OTxY2ljkePaU/MPugTRVg3TTcgk=
+=NOom
+-----END PGP SIGNATURE-----
+
+--d094255437ed180642212f2daf7bb7d49bbc773ab458e9a2480ab8cbe8f0--
 
