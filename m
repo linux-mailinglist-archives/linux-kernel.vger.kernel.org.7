@@ -1,111 +1,106 @@
-Return-Path: <linux-kernel+bounces-692234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-692247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08A6ADEEBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:03:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67756ADEEE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 16:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDB081680A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:03:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF72B1672A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Jun 2025 14:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676432EA751;
-	Wed, 18 Jun 2025 14:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8C02EAB87;
+	Wed, 18 Jun 2025 14:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PriHkIOu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b="crQbKVX2"
+Received: from 0.smtp.remotehost.it (0.smtp.remotehost.it [213.190.28.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17D82E7F34;
-	Wed, 18 Jun 2025 14:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835322EAB6B;
+	Wed, 18 Jun 2025 14:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.190.28.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750255377; cv=none; b=H7XvgRcq1C/8GCIHnARaXlh/Q/M9+WUwl7qSOeCrMohvgDUKW2iH6WNy6o4dmeeaVxpJj50mcPKXUbe4UEDWkf6mTeV76nBBoK4XZMTv8YKKSBqK4Zr51mPoYwzXdDz+BR78PoUIwRQeaNlTvpsx8ffP6h7JQi/HBIEoZWWYvTk=
+	t=1750255875; cv=none; b=lE2oVQlSCLBtd8KNbngtvFF5YLfjsIdG/a3F+diJa0LJVVH6D77JBeglm2/LpTuweiVYQ3OrnysVFTZjPFNdkCnwKuK7rHkEMnOVzYyc9VkrSP8pjw8epdw81J9GkzR0vVxrqM26waIDRCCvUY9f1rcz3NXysjmIlEi8zfLjYSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750255377; c=relaxed/simple;
-	bh=G79munEcYtIpW+6TIz0FYZTbqw1Q12VEgJ/b2Srg43M=;
+	s=arc-20240116; t=1750255875; c=relaxed/simple;
+	bh=cUKuuxowFo1SZ9wawpwIJTY3SBMVpGZMBpEpAWMaqts=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XNKuiFwJ/77uxw91G789GOzKk8ustAjkLMgHQwPwhdDwSvj7LdYiTkRy3TINwcnbWJcqsqKcfoZUXehvmSUqf1oLLwHXXbZUulZPRkqSF7vGtt65HN1bVhuMggemZlnpcotg/Yts8odtG2fhCt8XDoPgAR0YuG3qjVDAlbrVlsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PriHkIOu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDA14C4CEE7;
-	Wed, 18 Jun 2025 14:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750255377;
-	bh=G79munEcYtIpW+6TIz0FYZTbqw1Q12VEgJ/b2Srg43M=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PriHkIOu+8RGIE2DZpBOq20BWXVxnTMcXRwcYgIg8eTi7T7edVakZSQ5x8HeBtipb
-	 WzjfZ02sERcA7W4gpqHUlsq1qWfKYnPXQYjIuj8c5v9x4g6yA8uBlFqhQ4h3U8nVvr
-	 8DlI1PjtYlo/U39bdbYkVL4HR+ASmG4tOmQan/PuNj8HvlSlJ7qEIuxVwHpCxTPT+Y
-	 RYQNroYhj0pOPqNsUOPrPZMZ7hM+0xQDchqtyf4rJSnX+jJSSLgi3Y/HvY8HrPRMVB
-	 Lj1IhNrV1UeEMG6wCch3hjxFhNYb8hJ+m5J6mUyfD+Sc6ARLjY5GbY26b7PQPsUmxL
-	 /ialfmOrjwgiw==
-Message-ID: <c74f3241-1184-49e8-b6c0-7f08c9c63814@kernel.org>
-Date: Wed, 18 Jun 2025 16:02:54 +0200
+	 In-Reply-To:Content-Type; b=EyHqMzbQoY9MMVIOYzVmlP1/NecmYbZ5kBQ9pi/lz2HMPb9Rep8o7m2FordVuNb9V6KXgddPL+UNfEzlu6JCSvGP4i8+uSyfjIUqRzEOyMlSCUQ6WrhW9Rz2mk/BGKHSIEGKtXNITdIveSB2BE98CE5aAs15WE96rL/1/UCujgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net; spf=pass smtp.mailfrom=hardfalcon.net; dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b=crQbKVX2; arc=none smtp.client-ip=213.190.28.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hardfalcon.net
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=hardfalcon.net;
+	s=dkim_2024-02-03; t=1750253526;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X+Xs3mSWwiOpW/TKAW/a32e3EA51rUtpxiGBCMeOCZo=;
+	b=crQbKVX2y4JSe09683eSQOfdkasLhpKvU6LGOlUbcT34eN0lu+nkTHw8RU3xyoa4w0OIh9
+	bS1c++lL8p3qxRDQ==
+Message-ID: <c8e4e868-aafb-4df1-8d07-62126bfe2982@hardfalcon.net>
+Date: Wed, 18 Jun 2025 15:32:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH v2 1/2] module: Fix memory deallocation on error path in
- move_module()
-To: Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250618122730.51324-1-petr.pavlu@suse.com>
- <20250618122730.51324-2-petr.pavlu@suse.com>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <20250618122730.51324-2-petr.pavlu@suse.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 6.15 000/780] 6.15.3-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ronald Warsow <rwarsow@gmx.de>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, conor@kernel.org, hargar@microsoft.com,
+ broonie@kernel.org
+References: <20250617152451.485330293@linuxfoundation.org>
+ <f2b87714-0ef6-4210-9b30-86b4c79d1ed8@gmx.de>
+ <2025061848-clinic-revered-e216@gregkh>
+Content-Language: en-US, de-DE, en-US-large
+From: Pascal Ernster <git@hardfalcon.net>
+In-Reply-To: <2025061848-clinic-revered-e216@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 18/06/2025 14.26, Petr Pavlu wrote:
-> The function move_module() uses the variable t to track how many memory
-> types it has allocated and consequently how many should be freed if an
-> error occurs.
+[2025-06-18 07:42] Greg Kroah-Hartman:
+> On Tue, Jun 17, 2025 at 08:27:03PM +0200, Ronald Warsow wrote:
+>> Hi Greg
+>>
+>> Kernel panic here on x86_64 (RKL, Intel 11th Gen. CPU)
+>>
+>> all others kernels were okay. nothing was changed in my compile config.
+>>
+>> Tested-by: Ronald Warsow <rwarsow@gmx.de>
 > 
-> The variable is initially set to 0 and is updated when a call to
-> module_memory_alloc() fails. However, move_module() can fail for other
-> reasons as well, in which case t remains set to 0 and no memory is freed.
+> Any chance you can use 'git bisect' to find the offending commit?
 > 
-> Fix the problem by initializing t to MOD_MEM_NUM_TYPES. Additionally, make
-> the deallocation loop more robust by not relying on the mod_mem_type_t enum
-> having a signed integer as its underlying type.
+> thanks,
 > 
-> Fixes: c7ee8aebf6c0 ("module: add stop-grap sanity check on module memcpy()")
-> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
-> Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
-> ---
->  kernel/module/main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index 413ac6ea3702..9ac994b2f354 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -2697,7 +2697,7 @@ static int find_module_sections(struct module *mod, struct load_info *info)
->  static int move_module(struct module *mod, struct load_info *info)
->  {
->  	int i;
-> -	enum mod_mem_type t = 0;
-> +	enum mod_mem_type t = MOD_MEM_NUM_TYPES;
->  	int ret = -ENOMEM;
->  	bool codetag_section_found = false;
->  
-> @@ -2776,7 +2776,7 @@ static int move_module(struct module *mod, struct load_info *info)
->  	return 0;
->  out_err:
->  	module_memory_restore_rox(mod);
-> -	for (t--; t >= 0; t--)
-> +	while (t--)
->  		module_memory_free(mod, t);
->  	if (codetag_section_found)
->  		codetag_free_module_sections(mod);
+> greg k-h
 
-Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
+
+Hi, I've just come across the exact same bug on my x86_64 machines, but 
+unfortunately I won't have the time to start bisecting this before 
+tonight or tomorrow morning.
+
+In any case, the culprit must be one of these patches:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/diff/queue-6.15?id=9cc80b684b4f77d6c54fc0f1d34ecfe559838702&id2=f724d2960e671efa0e5bcb51327690f791923e4b
+
+I had built a 6.15.2 kernel with the patch queue from tree id 
+f724d2960e671efa0e5bcb51327690f791923e4b a few days ago and that kernel 
+works flawlessly.
+
+Today, I built a kernel with the patch queue from tree id 
+9cc80b684b4f77d6c54fc0f1d34ecfe559838702 and that kernel crashes when 
+trying to boot on x86_64 with the same error messages that Ronald 
+reported yesterday.
+
+
+Regards
+Pascal
 
