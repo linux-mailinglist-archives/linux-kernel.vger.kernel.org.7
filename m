@@ -1,157 +1,123 @@
-Return-Path: <linux-kernel+bounces-694155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA442AE08BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:28:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFF8AE08C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41E6C1BC4F8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:28:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1B603BCAB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CCE220F24;
-	Thu, 19 Jun 2025 14:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00C128682;
+	Thu, 19 Jun 2025 14:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tu-bs.de header.i=@tu-bs.de header.b="L7RWwqut"
-Received: from pmxout1.rz.tu-bs.de (pmxout1.rz.tu-bs.de [134.169.4.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t1YBwJqW"
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2E81B983F;
-	Thu, 19 Jun 2025 14:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.169.4.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C671E17A30F
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 14:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750343292; cv=none; b=Pjo+WnznqPjuqUWlyhEsS0fFgucTS113qfmvObmvpik3+9krvX7ULMKMItH79/reZCCCxQ2loR90+6QF715QIsWETLzAIhXF3EEeC2WAB5LUVRLstCcglsFaZ/1jaGR0TJLjLi6UhS5lP4j6douaG75PzyQPxWilBC4acHmEizE=
+	t=1750343433; cv=none; b=oF7k7JuImv79I29CZGaS9iFB3VEoYud7YLLx18uH3IPRLmBFW5IaJprA7R7NgTndD1eVtS/Xx7upueRtUcxoBosHbI6sIEp5ANLYiQOJ9zjBFb4loke4FFJjM7X3LsFoD8BpT7MPfWpx1MngBOFPXlMHFcWIE2zotmNER9w/Z24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750343292; c=relaxed/simple;
-	bh=LeC7NFKNGz7OIMUFGvR48t8m5EhftSVQqoGOmYxkBuw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=b6Uy4qP8zBy7zirI8XnFquDiyZ0ZFJpawyIe7RBmXWeSR+/h1LHd2CKcjnjR6wz+YyB1n0KPU8Cp9cpDHIql7QVQzLtHPL30zNHpMJ/z3yXAhuYImgoHuiZznDQDMdjAOisjy3h26skiwtI4dk/lmbrU3sdu1PoNfeWV68Qd5oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-bs.de; spf=pass smtp.mailfrom=tu-braunschweig.de; dkim=pass (2048-bit key) header.d=tu-bs.de header.i=@tu-bs.de header.b=L7RWwqut; arc=none smtp.client-ip=134.169.4.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-bs.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-braunschweig.de
-Received: from Hermes02.ad.tu-bs.de (hermes02.rz.tu-bs.de [134.169.4.130])
-	by pmxout1.rz.tu-bs.de (Postfix) with ESMTPS id EAD024E0705;
-	Thu, 19 Jun 2025 16:28:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-bs.de;
-	s=exchange_neu; t=1750343282;
-	bh=LeC7NFKNGz7OIMUFGvR48t8m5EhftSVQqoGOmYxkBuw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To:From;
-	b=L7RWwqutttlhkrKfQiRYWMj+PjEOaVUm2agttnHsi0Z8EtXeIV3pew7OYGfISXDcn
-	 kct21MpH0WeWxtmjscxu4oX7W0VKxzErv9zL5T7WuJV5mPCqeS901kmvOLiW7exRz8
-	 gDrZSai42iN3KSDjy+gm8K7tkMDRfW3zsHJhBEChS6qohhHibmt93ikbMY7fX5b8Vw
-	 Hvwfb/Mk9YBYTJAVhSMkjhc6P1ysmGflZK7YioZYE6jkpeZI7R16pUm7drkZL91AGq
-	 muoTZsY7gYr+elmJnLXymSKt/QPiJfYGl4mGVXwaRW9d65Q1e/lkfC3n5GM4IlJ5dT
-	 wPFU6lEJAzJXA==
-Received: from [192.168.178.23] (134.169.9.110) by Hermes02.ad.tu-bs.de
- (134.169.4.130) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 19 Jun
- 2025 16:28:02 +0200
-Message-ID: <595209ed-2074-46da-8f57-be276c2e383b@tu-bs.de>
-Date: Thu, 19 Jun 2025 16:27:56 +0200
+	s=arc-20240116; t=1750343433; c=relaxed/simple;
+	bh=g8haI9LrZzRAwDNpd97grl20AHL8yhseMMTWdWFnOIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K4Z61qFVijL14oTHubzXyNCfoM7apyuU72cISrw4Wzuy6z7v0FSaul+9OVDAR791UlG6hkzHFixB+lsdQ3t5nJjAvDtMr7boHB4uQBFkCwGk26UHz3xJkkJsJFe/kurwhykDIlN/FtQX+/I8bVt8FSF9dS4zaTg09yIUYVP7EDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t1YBwJqW; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-6114114daddso386250eaf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:30:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750343431; x=1750948231; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5qy42reb/xe10l3RYfDyIyYy8nirQQxhtcbahwdHka8=;
+        b=t1YBwJqWO2fhfQFqxtYxzcysoqOIuPzwx5ukimTkmL7N9zENC7Sv1oYi7FCk7nesgi
+         gyj8aDmhIHW+6wpD0fRB8O+adtpZOPmAxij+ssjP8sMP0rQy7kZOo7+n/lTcUr/CGjR8
+         rlIk+MA6fF2PqME2E4LKZubTkTkJTKJhawtblShVescLRCL1eTw0bmb+rKvdFbrGzBfp
+         eA3kv/WSOtdffI7NbvrtrVmdCHE1vGOUuSyeBAFLJGU6s2YSFlArFqszeUH3BB7+Qr0o
+         ibfRt0nJ23Z7CnDnQ1CgRJGOciShxo/jQK2Pyr++CPY36JK5Is+KuwQXDEM637WTOEbW
+         ebQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750343431; x=1750948231;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5qy42reb/xe10l3RYfDyIyYy8nirQQxhtcbahwdHka8=;
+        b=X91L1m3vPTKZvscv5Z/XERuEFI5HlXXgVGd7e3fq/fI37Hz3BdJXZt/G6JdfT5tum9
+         XoSmY9BcWptUYShhmR2G815qAveSCKS9U+H+5RoA1BatikwpYcau+K2l71cGFFln2XI2
+         q5GtwgYTUbzvTHFuv9eKMgfrEWXqAsqhT4h1OiN5mplKPXaE0wwrQoJO+7rStDwdljDU
+         we25n+diLTkQDrAZWWO+USXPdlqRemv+C8V2+1BniUfwTumI6CVQGh/yssrOH3lFNmGo
+         Z/PRvoektyZ6DBes26RxkKyPzE6exIMOPgpyOtOjN0Ls1y6hzUutlZ8n/wmYPc7UIH3p
+         /o6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV2BAv9K5RQBC3Q8FMhcXppStG7lhSWTqZ2aWZdglZO8InPmyrxQoAf5XIvMSmW/fBBnZNQsvEKMopxx8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2BsnNOt9gcGytmmP5g+ebJQVVRD2Z2KoGCY+nXwhROd/0rNZ4
+	ydPTGiFQF/sB2Dg1UUyFkjB23msiUM6xaFszpEBWlI8cJpj9tqFTnPSMGxxhAU92qv+0v9/mdu9
+	OP0su
+X-Gm-Gg: ASbGncsmnuJHXchBznqh4ewDaWU0JtRvjH4BrvUmElUscof56gzF82xkYG5+hkgVLmH
+	KgKiB6UtSYEN838yd/hN/SAva4OqSODsZ6Eokow1oPFVGC8lD//3G/yeYe9r264B8Zy3Z8jYjMv
+	r/GBvKOoWO97s1Sf9yDr1jP7AslQLXiyaOlXU7qVFPmXY8HdGq3UofcdtpmuRAwg8hybc3EckCT
+	VmCUqx5zDwsAd1Kl+AnxXLB4CnBApJZ/oDqawb7EvwE62+ioS6WBUJ26n2Cz1y6qGHTpeFYbH/9
+	NBgVHtm0FKieQrADoTVaSc32d3qVdeMc40aI9/Ubtmwj1bbyazmTSEFPuevMH5V4w8xn/Q==
+X-Google-Smtp-Source: AGHT+IG56YN7u7s5Aa17918jH2u+v02dZCDW3BGdDf6jjau6fXqkE6EwtY5ebKvrV1h8cThc6YLJAQ==
+X-Received: by 2002:a05:6820:4ded:b0:611:471b:6439 with SMTP id 006d021491bc7-611471b6a5cmr4269454eaf.3.1750343430854;
+        Thu, 19 Jun 2025 07:30:30 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:67e2:ece8:b2f5:738f])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61108ebd0e5sm1684222eaf.23.2025.06.19.07.30.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jun 2025 07:30:29 -0700 (PDT)
+Date: Thu, 19 Jun 2025 17:30:26 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Zhe Qiao <qiaozhe@iscas.ac.cn>
+Cc: rafael@kernel.org, bhelgaas@google.com, helgaas@kernel.org,
+	lenb@kernel.org, kwilczynski@kernel.org, sashal@kernel.org,
+	linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "PCI/ACPI: Fix allocated memory release on error
+ in pci_acpi_scan_root()"
+Message-ID: <87a513bd-096c-45ab-8f5f-a8d3d6ad6b2e@suswa.mountain>
+References: <20250619072608.2075475-1-qiaozhe@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Potential problem in qspinlock due to mixed-size accesses
-To: Andrea Parri <parri.andrea@gmail.com>, Alan Stern
-	<stern@rowland.harvard.edu>
-CC: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>, David
- Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc
- Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, Joel
- Fernandes <joelagnelf@nvidia.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arch@vger.kernel.org>, <lkmm@lists.linux.dev>,
-	<hernan.poncedeleon@huaweicloud.com>, <jonas.oberhauser@huaweicloud.com>,
-	"r.maseli@tu-bs.de" <r.maseli@tu-bs.de>
-References: <cb83e3e4-9e22-4457-bf61-5614cc4396ad@tu-bs.de>
- <20250613075501.GI2273038@noisy.programming.kicks-ass.net>
- <aEwHufdehlQnBX7g@andrea> <9264df13-36db-4b25-b2c4-7a9701df2f4d@tu-bs.de>
- <aE-3_mJPjea62anv@andrea>
- <357b3147-22e0-4081-a9ac-524b65251d62@rowland.harvard.edu>
- <aFF3NSJD6PBMAYGY@andrea>
-Content-Language: en-US
-From: Thomas Haas <t.haas@tu-bs.de>
-In-Reply-To: <aFF3NSJD6PBMAYGY@andrea>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: Hermes03.ad.tu-bs.de (134.169.4.131) To
- Hermes02.ad.tu-bs.de (134.169.4.130)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250619072608.2075475-1-qiaozhe@iscas.ac.cn>
 
+On Thu, Jun 19, 2025 at 03:26:08PM +0800, Zhe Qiao wrote:
+> This reverts commit 631b2af2f35737750af284be22e63da56bf20139.
+> 
+> The reverted patch causes the 'ri->cfg' and 'root_ops' resources to be
+> released multiple times.
+> 
+> When acpi_pci_root_create() fails, these resources have already been
+> released internally by the __acpi_pci_root_release_info() function.
+> Releasing them again in pci_acpi_scan_root() leads to incorrect behavior
+> and potential memory issues.
+> 
+> We plan to resolve the issue using a more appropriate fix.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/aEmdnuw715btq7Q5@stanley.mountain/
+> Cc: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Zhe Qiao <qiaozhe@iscas.ac.cn>
 
+Acked-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-On 17.06.25 16:09, Andrea Parri wrote:
->> My question is: Do we have enough general knowledge at this point about
->> how the various types of hardware handle mixed-size accesses to come up
->> with a memory model everyone can agree one?
-> 
-> You know, I can imagine a conversation along the following line if I
-> were to turn this question to certain "hardware people":
-> 
->    [Me/LKMM] People, how do you order such and those MSAs?
->     [RTL/DV] What are Linux's uses and requirements?
-> 
-> that is to say that the work mentioned is probably more "interactive"
-> and more dynamic than how your question may suggest.  ;)
-> 
-> Said this, I do like to think that we (LKMM supporters and followers)
-> have enough knowledge to approach that effort.  It would require some
-> changes to herd7 (and klitmus7), starting from teaching the tools the
-> new MSAs syntax and how to generate rf, co and other basic relations
-> (while monitoring potential non-MSA regressions).  Non-trivial maybe,
-> but seems doable.  Suffice it to say that herd7 can't currently parse
-> the following C test, but it can run its "lowerings"/assembly against
-> a bunch of hardware models and implementations, including arm64, x86,
-> powerpc and riscv!  Any volunteers with ocaml expertise interested in
-> contributing to the LKMM?  ;)
-> 
-> C C-thomas-haas
-> 
-> {
-> u32 x;
-> u16 *x_lh = x; // herd7 dialect for "... = &x;"
-> }
-> 
-> P0(u32 *x)
-> {
-> 	WRITE_ONCE(*x, 0x10001);
-> }
-> 
-> P1(u16 **x_lh, u32 *x)
-> {
-> 	u16 r0;
-> 	u32 r1;
-> 
-> 	r0 = xchg_relaxed(*x_lh, 0x2);
-> 	r1 = smp_load_acquire(x);
-> }
-> 
-> exists (1:r0=0x1 /\ 1:r1=0x2)
+Reverting is probably the simplest option.  There is still an issue in
+the code where in acpi_pci_root_create() the goto out_release_info
+doesn't free sysdata except on the last goto.  So there is a small
+leak.  But it's probably more theoretical than real.
 
-I support this endeavor, but from the Dartagnan side :).
-We already support MSA in real C/Linux code and so extending our 
-supported Litmus fragment to MSA does not sound too hard to me.
-We are just missing a LKMM cat model that supports MSA.
-
-We cannot automatically generate and run tests on real hardware though, 
-so the support in herd7 and co. is definitely needed.
-
-
--- 
-=====================================
-
-Thomas Haas
-
-Technische Universität Braunschweig
-Institut für Theoretische Informatik
-Mühlenpfordtstr. 23, Raum IZ 343
-38106 Braunschweig | Germany
-
-t.haas@tu-braunschweig.de
-https://www.tu-braunschweig.de/tcs/team/thomas-haas
+regards,
+dan carpenter
 
 
