@@ -1,103 +1,199 @@
-Return-Path: <linux-kernel+bounces-694192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F21AE0934
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:52:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D74AE0928
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5683A1BC77ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:51:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71E2A4A5298
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159D4235056;
-	Thu, 19 Jun 2025 14:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC754227B83;
+	Thu, 19 Jun 2025 14:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="K3psz1id"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SB9xZ8Lv"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B5922F765
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 14:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDFA1C8611;
+	Thu, 19 Jun 2025 14:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750344603; cv=none; b=X4/YgeTdQQhNkkEKFA5r8DkMHwvZrrpHNX1hf99gOPFjTJWOYMgFnehq29J3btfj/vCzTjwcHmXcmXnyCN8JYv7oTBlGc2PQ4ubqXFT+psgmzpAJlLAgXgjlu/koFw09Y9HpMCqIKy1lRRnuulnenyjLsSYrI628a09//LZ1WLo=
+	t=1750344660; cv=none; b=hx/L/KaUGM5Avds5LGTJzXjliUAK4JtuzTcLGD1Pig7///tHSfYZNoAmMuBA9Ce9NRNWe8gxXrBjEw6ar0mAa8fl6MzPG0F+A1aWRaIg9XTB6dXdE8dekyA5W6RwCHWBwlacoMvKqe4qrj322Iymc7UfIpp/kwGVrSmr9kds/kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750344603; c=relaxed/simple;
-	bh=RmY0Xevw8TVnFstaNyUj2eJowpNdXKcRW6wC6tdkF2E=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=cjhUutcG9Hbnbtt/jQ/RHEsIXtBQqkILr0SZsrtLpUTzEtjHteZ0GMDZebmil5ssqhJCkWb1UUp3pezwVbhesz5nGH2h9U9V6XrhRxMNgWBfaQM9VizFKU9jJ2RhvxdDbwjGzDSrmEaHJVSWpsWTs/U1dwvpxlVg52ZOsW2DBi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=K3psz1id; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-748f54dfa5fso593353b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:50:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1750344600; x=1750949400; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xyLGIeI2pWRWGSJdrrn8FqSqrDl0tOwVhPMyUFPxpmE=;
-        b=K3psz1idNX3kspWDOGvB0I4HG5Gwymsle511CdV00wSCotC7O3aDGY1n8D0h4A9DPk
-         qTO76Hq1nFwh4Y7Dyy+nRrGDsZV/jn1xEjZgWAVMF59USMspyyh2bu3re7ynLBpNWdQD
-         SUM8aeOWLmKDUefA9NMiTIWpsHPUrtS+SSnLs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750344600; x=1750949400;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xyLGIeI2pWRWGSJdrrn8FqSqrDl0tOwVhPMyUFPxpmE=;
-        b=f0LO4EEermi9bK+MBA0liQW9nRsSHhB6lE5WAgu4sP16Dk5Md/KBoKXctyq4Jx4VkZ
-         XRTGYYzo6m7BhWdhW0E5rDmvNBHicZXjfbAapjLxs0H2k7UZvrCdHFHlbcXCfgV71pMO
-         u2Mc1Yr/PWGVDP2YSnePLsjoMyfUrXv2uZKga5kaBveyynuZny13XBPAw/YWTC8C/edV
-         /A86Mq2ni+E4rC6JD7gZTGA4EobtWBYZsEBzDNKw1jvLA7PscxAx8l9QnD7qqZVDjC/D
-         nTNJ9m8n5fs/DUq7SqJ26WUeT3429FYjyMZFC/QDU3Q8cCl0w8/hIKAmQMOlNEX8UASg
-         fmwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRbMtJM/gXnEZmH+/dr3RVWi9t00xn/INaZr0wNB2vpMlTTdJT3ti6O3o71gb5QAvj3bOx/2c5yTaeflk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi3GXLuovQrxN8xG2nKRK+6WBWVvp/hCmt6wvN7e/6uVdwQo0V
-	vzuNiWUMNqh+CkxiBeAZ72Vr/Up1Ms03YDMfv3U65TRV1DjkLCdcJkTch478LN3kcA==
-X-Gm-Gg: ASbGncuTQifusC2fCCtRginnPle/AUz6vbigOvuIeNTQkDW898hGtUVL0Iv31hx91q5
-	b85ixR/YXCpQsdceiqbmsDzwT1zv7CoDVATTCltA8vdGYCeWPg6mP+H6C5QtEEM6DsuV0bfWfVc
-	eLcph/STMxCbo/lVaAZpX3l06gwAjKTC1aJEH2MSaSuW8LnnubtBlMAhzcKjoKoeMBvteiKcmvz
-	K17XblvCaRk+qfPw1qZckSU68jtObA+Avb2lBrdygixUFwlxGU3ylrFA9p9xgp0OnubbB9jYEtF
-	Q9lU2TCP5CK01b98/tHZWBjfYyrWJklKpNO5T0yGK8KPtAXn0wxOTxJWwX2FL0iOeMo3bBGeGia
-	eDIgcO3aUgV4PuT385tlL1pPmCnPGJtt6ZlI=
-X-Google-Smtp-Source: AGHT+IE0IABp03aQi/MMdsx50TsZhfjlS77ZjBf2ZnkWRLyJkwYN80FXKFOnWqqtHBqMUe2X9qwO7Q==
-X-Received: by 2002:a05:6a00:228b:b0:748:fb7c:bbe0 with SMTP id d2e1a72fcca58-748fb7cc2d2mr4770370b3a.24.1750344599760;
-        Thu, 19 Jun 2025 07:49:59 -0700 (PDT)
-Received: from [10.229.43.247] ([192.19.176.250])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7490a46b569sm84792b3a.20.2025.06.19.07.49.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Jun 2025 07:49:59 -0700 (PDT)
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-To: Colin Ian King <colin.i.king@gmail.com>, Kalle Valo <kvalo@kernel.org>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>
-CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Date: Thu, 19 Jun 2025 16:49:53 +0200
-Message-ID: <19788aaee68.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-In-Reply-To: <20250619082554.1834654-1-colin.i.king@gmail.com>
-References: <20250619082554.1834654-1-colin.i.king@gmail.com>
-User-Agent: AquaMail/1.55.1 (build: 105501552)
-Subject: Re: [PATCH][next] wifi: brcmfmac: Make read-only array cfg_offset static const
+	s=arc-20240116; t=1750344660; c=relaxed/simple;
+	bh=VwvqMdaa9NZw6/FN4BrrnCTsukLuvToppo7JfxBzAXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q+LTzNmSDT6MWRBeLQ1pxEJw8crajvTEBoLfdXmG6yrHrFgtIOaPxw57PNWG9hDq2VZk1axOuQxDnpwO11jlwwRxRW+HfCQQaU43eSnTuQxL8WrJ/DG6Tyk3j+jkUBVeMBcZpeDJm5ZSSDbcHBrt4u7ARkrauwacbfFlOlLS2yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SB9xZ8Lv; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lyjCyObuqLYarHT2NF3ZABGgRv6FP79VVqjAGnV/Lrk=; b=SB9xZ8LvbT07yHDi2QBJXj6mrz
+	EEscIKEuvH+S6/2TK/aNwbqSYZmPFAc+xVwggcqHaIaT3tv0scVpqXZWj5vI9w1baNObE8X6ar38r
+	d2r+VReGkKIgvSqxMcf5nm7Zw7KW26gfcE8xrb0aN3RTgBnYcOXHosqPhF4NSYuRK4Yok6OZwJN46
+	EMNOwJ9oRV4w8/kPj547zrMqs5epd9XLAUw+V8ZqwUipI1kiQlvHOrB70WR/0VakgynHXvriXVhB+
+	gXsGQQBIIl/hHyhZHNhRyd6cZeVzaP3lZ2sY22UmG/8NMpJsbzZxTnrK1rs6HJ6D28kcpFtV5ewAA
+	/iNhMmhA==;
+Received: from 2001-1c00-8d82-d000-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d82:d000:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uSGbF-000000097uB-1ys9;
+	Thu, 19 Jun 2025 14:50:45 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A9DA230890E; Thu, 19 Jun 2025 16:50:44 +0200 (CEST)
+Date: Thu, 19 Jun 2025 16:50:44 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, kernel@collabora.com,
+	Jonathan Corbet <corbet@lwn.net>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf/headers: Document PERF_PMU_CAP capability flags
+Message-ID: <20250619145044.GL1613376@noisy.programming.kicks-ass.net>
+References: <20250618-perf-pmu-cap-docs-v1-1-0d34387d6e47@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250618-perf-pmu-cap-docs-v1-1-0d34387d6e47@collabora.com>
 
-On June 19, 2025 10:26:15 AM Colin Ian King <colin.i.king@gmail.com> wrote:
 
-> Don't populate the read-only array cfg_offset on the stack at run time,
-> instead make it static const.
+Mark just linked this thread from another thread:
 
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+  https://lkml.kernel.org/r/20250619144254.GK1613376@noisy.programming.kicks-ass.net
 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+On Wed, Jun 18, 2025 at 09:08:34PM +0200, Nicolas Frattaroli wrote:
+
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index ec9d96025683958e909bb2463439dc69634f4ceb..7d749fd5225be12543df6e475277563bf16c05b1 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -294,16 +294,90 @@ struct perf_event_pmu_context;
+>  /**
+>   * pmu::capabilities flags
+>   */
+> +
+> +/**
+> + * define PERF_PMU_CAP_NO_INTERRUPT - \
+> + *    PMU is incapable of generating hardware interrupts
+> + */
+>  #define PERF_PMU_CAP_NO_INTERRUPT	0x0001
+
+This is not quite right; CAP_NO_INTERRUPT means it is not able to
+generate samples.
+
+While not being able to generate interrupts and not being able to
+generate sample is more or less the same for CPU PMU drivers, this is
+not true for uncore drivers. Even if an uncore driver has interrupt
+capacility to help with counter overflow, it cannot generate samples.
+
+> +/**
+> + * define PERF_PMU_CAP_NO_NMI - \
+> + *    PMU is guaranteed to not generate non-maskable interrupts
+> + */
+>  #define PERF_PMU_CAP_NO_NMI		0x0002
+> +/**
+> + * define PERF_PMU_CAP_AUX_NO_SG - \
+> + *    PMU does not support using scatter-gather as the output
+> + *
+> + * The PERF_PMU_CAP_AUX_NO_SG flag indicates that the PMU does not support
+> + * scatter-gather for its output buffer, and needs a larger contiguous buffer
+> + * to output to.
+> + */
+>  #define PERF_PMU_CAP_AUX_NO_SG		0x0004
+> +/**
+> + * define PERF_PMU_CAP_EXTENDED_REGS - \
+> + *    PMU is capable of sampling extended registers
+> + *
+> + * Some architectures have a concept of extended registers, e.g. XMM0 on x86
+> + * or VG on arm64. If the PMU is capable of sampling these registers, then the
+> + * flag PERF_PMU_CAP_EXTENDED_REGS should be set.
+> + */
+>  #define PERF_PMU_CAP_EXTENDED_REGS	0x0008
+> +/**
+> + * define PERF_PMU_CAP_EXCLUSIVE - \
+> + *    PMU can only have one scheduled event at a time
+> + *
+> + * Certain PMU hardware cannot track several events at the same time. Such
+> + * hardware must set PERF_PMU_CAP_EXCLUSIVE in order to avoid conflicts.
+> + */
+>  #define PERF_PMU_CAP_EXCLUSIVE		0x0010
+> +/**
+> + * define PERF_PMU_CAP_ITRACE - PMU traces instructions
+> + *
+> + * Some PMU hardware does instruction tracing, in that it traces execution of
+> + * each instruction. Setting this capability flag makes the perf core generate
+> + * a %PERF_RECORD_ITRACE_START event, recording the profiled task's PID and TID,
+> + * to allow tools to properly decode such traces.
+> + */
+>  #define PERF_PMU_CAP_ITRACE		0x0020
+> +/**
+> + * define PERF_PMU_CAP_NO_EXCLUDE - \
+> + *    PMU is incapable of excluding events based on context
+> + *
+> + * Some PMU hardware will count events regardless of context, including e.g.
+> + * idle, kernel and guest. Drivers for such hardware should set the
+> + * PERF_PMU_CAP_NO_EXCLUDE flag to explicitly advertise that they're unable to
+> + * help themselves, so that the perf core can reject requests to exclude events
+> + * based on context.
+> + */
+>  #define PERF_PMU_CAP_NO_EXCLUDE		0x0040
+
+More to the point might be saying that it will reject any event that
+has: perf_event_attr::exclude_{user,kernel,hv,idle,host,guest} set.
+
+> +/**
+> + * define PERF_PMU_CAP_AUX_OUTPUT - PMU non-AUX events generate AUX data
+> + *
+> + * Drivers for PMU hardware that supports non-AUX events which generate data for
+> + * AUX events should set PERF_PMU_CAP_AUX_OUTPUT. This flag tells the perf core
+> + * to schedule non-AUX events together with AUX events, so that this data isn't
+> + * lost.
+> + */
+>  #define PERF_PMU_CAP_AUX_OUTPUT		0x0080
+> +/**
+> + * define PERF_PMU_CAP_EXTENDED_HW_TYPE - \
+> + *    PMU supports PERF_TYPE_HARDWARE and PERF_TYPE_HW_CACHE
+> + */
+>  #define PERF_PMU_CAP_EXTENDED_HW_TYPE	0x0100
+> +/**
+> + * define PERF_PMU_CAP_AUX_PAUSE - \
+> + *    PMU can pause and resume AUX area traces based on events
+> + */
+>  #define PERF_PMU_CAP_AUX_PAUSE		0x0200
+> +/**
+> + * define PERF_PMU_CAP_AUX_PREFER_LARGE - PMU prefers contiguous output buffers
+> + *
+> + * The PERF_PMU_CAP_AUX_PREFER_LARGE capability flag is a less strict variant of
+> + * %PERF_PMU_CAP_AUX_NO_SG. PMU drivers for hardware that doesn't strictly
+> + * require contiguous output buffers, but find the benefits outweigh the
+> + * downside of increased memory fragmentation, may set this capability flag.
+> + */
+>  #define PERF_PMU_CAP_AUX_PREFER_LARGE	0x0400
+>  
+>  /**
+> 
 > ---
-> .../broadcom/brcm80211/brcmfmac/pcie.c        | 24 ++++++++++---------
-> 1 file changed, 13 insertions(+), 11 deletions(-)
-
-
+> base-commit: 31d56636e10e92ced06ead14b7541867f955e41d
+> change-id: 20250618-perf-pmu-cap-docs-a13e4ae939ac
+> 
+> Best regards,
+> -- 
+> Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> 
 
