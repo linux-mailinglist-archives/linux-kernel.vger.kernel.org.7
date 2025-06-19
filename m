@@ -1,150 +1,96 @@
-Return-Path: <linux-kernel+bounces-694648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF684AE0EE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:17:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55DD9AE0EFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 224E53B1363
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 21:16:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E03F51891221
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 21:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0540E23183B;
-	Thu, 19 Jun 2025 21:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0573525DCE9;
+	Thu, 19 Jun 2025 21:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pJjn77/y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b="EyTQbxuQ"
+Received: from mta-201a.earthlink-vadesecure.net (mta-201b.earthlink-vadesecure.net [51.81.229.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD5430E852
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 21:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995AB1E7C1C;
+	Thu, 19 Jun 2025 21:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.229.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750367832; cv=none; b=JGjHKTip+X3DyBgQIWZchT7kon8Wev49/QLBfi16aoAf0eUr5MsWJIOQPu5y+ekWIn5z5SnfbJaRzSWU4R5fG5unKmzVdcJU/8mxOVKMkuySFIoM770Kz6YvdsY4jH7Fv8YwElRX8SPQdMABhv6S4oI9la78fguXXPSJy+Nubi0=
+	t=1750368112; cv=none; b=BU5Krkr+zBZuXfpk5aFvJmSN1j6KB6bQNpkanU+2j0Sw2oMQIHLlUmY0OHT0kX+M9/40LigO+ZRJuGsuILrldM+aGOEm+kc+shxTrA//Zop9tRoD1+bJoJhtl0LPS6Q6X76vzGlbiKSeXJn+7IpVjDP9M1M/oosQjPzRkh19VHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750367832; c=relaxed/simple;
-	bh=oOQEXEh2RBd9vP0i7imc+zUjwaH66TSOeWKigQLWB50=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ORCcUG6EvXbRDF9wuqkVeTu2UGMJk0jBNM0gh4qrrn5S2q0cpmf6EscxuVJ3zn9x/Ecy/gF5nvf1B6lqrJsMns6nXduGVBq5w4dUGgxkmPGk5N+HlzWwAdEtQNfEO2Ea1xAoG3RPRtfh0nqncuEuaRGXKOMHhrCOhHXRt5B4KSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pJjn77/y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD771C4CEEA;
-	Thu, 19 Jun 2025 21:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750367831;
-	bh=oOQEXEh2RBd9vP0i7imc+zUjwaH66TSOeWKigQLWB50=;
-	h=From:Date:Subject:To:Cc:From;
-	b=pJjn77/yk3U9e9Qun3PFECIPdGdZ0cOSI11QmVIc0k58DOFXd6C8mOF6CsCZOvqex
-	 BWh6Pyosyb7Ejujk/EvHsq2bjpPYvh0KhrTmJ3kaJdsfWhvn5wejX4zghzzdGLRNet
-	 SSpGY5fI1RwXuEAU6oFa51JdRowyov48AnIJdsHB7TYPwXWhzUcTK776P0IupXubP6
-	 VREU1CAbod9GuvJkPV+LOQA8a/WfoGCxuzaKbX8j94u9EnULC9XrzSN/NYGd1q3Ims
-	 xkO4OQXeph6kk4M9FKWTjHmehqhpP25IgDxaGZpISwA8FS0EGciaM2AltlYhdgkId8
-	 7eEcnTfsLiKGg==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 19 Jun 2025 22:15:41 +0100
-Subject: [PATCH] arm64/gcs: Don't try to access GCS registers if
- arm64.nogcs is enabled
+	s=arc-20240116; t=1750368112; c=relaxed/simple;
+	bh=OCouZ563iybBnAa+5WrnH7Rsa1cCJeJzF5RAPNWT7ns=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GOJHvWH89d9hChP7P2nbsSlLocHUxb1sBDLXxvfxArEdPCeY7bna7PgksnrZ3pbZlgCaVLeK5OV2rJeqnerk1kh7U1nQ2I+/Ux9sjKdcpCG6UwOKpzKKBGT4A+GvmiTOguoepdUK829EzhtfNn5+8yaxHbsdQdF/2MOCvLnbXa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=onemain.com; spf=pass smtp.mailfrom=onemain.com; dkim=pass (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b=EyTQbxuQ; arc=none smtp.client-ip=51.81.229.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=onemain.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onemain.com
+Authentication-Results: earthlink-vadesecure.net;
+ auth=pass smtp.auth=svnelson@teleport.com smtp.mailfrom=sln@onemain.com;
+DKIM-Signature: v=1; a=rsa-sha256; bh=Zth3NOT6hBrmTViZaCMJcSRN9B5Sbk7W2dm4FX
+ pSX3Q=; c=relaxed/relaxed; d=earthlink.net; h=from:reply-to:subject:
+ date:to:cc:resent-date:resent-from:resent-to:resent-cc:in-reply-to:
+ references:list-id:list-help:list-unsubscribe:list-unsubscribe-post:
+ list-subscribe:list-post:list-owner:list-archive; q=dns/txt;
+ s=dk12062016; t=1750367778; x=1750972578; b=EyTQbxuQmY3eG51sU9sYLBAZBg1
+ DCWLCqJICc2xSpDKhI0NOmEHvoSKacKNwX6cqQ6KRWF+6B7lLgGWuM5l1YvyxUhEIRSgO+0
+ M5Eb244yJj86/cMhM/hx/7x9mHgUBST7F7a1g3nYdDRnISTjr+pnh0DAQ+8v5CDG87xmdPN
+ 8/uaVCGuFdqlwGJM+OHe68oJOQoaPq5FqOUNEKOy74Sr9Qz8zSUinb43zsJOVBZKoqaB/2X
+ xgLQa/2AVxJ9VTSMyxJTDtch0doIw9k5DSSGkPUmAxchmSuoVKPxxxXQ5c8MzRonSheWSP3
+ pJDE3YV5DmO5zcwXRlKvVmwgGEXW0Yg==
+Received: from poptart.. ([50.47.159.51])
+ by vsel2nmtao01p.internal.vadesecure.com with ngmta
+ id 71176d0c-184a8e382a193ae9; Thu, 19 Jun 2025 21:16:18 +0000
+From: Shannon Nelson <sln@onemain.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Shannon Nelson <sln@onemain.com>
+Subject: [PATCH net] CREDITS: Add entry for Shannon Nelson
+Date: Thu, 19 Jun 2025 14:16:07 -0700
+Message-Id: <20250619211607.1244217-1-sln@onemain.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250619-arm64-fix-nogcs-v1-1-febf2973672e@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAPx9VGgC/x2MQQqAIBAAvxJ7bkEtlfpKdJDcbA9pKEQQ/j3pO
- AwzLxTKTAXm7oVMNxdOsYHsO9gOFwMh+8aghNLCSIsun2bEnR+MKWwFlZCDN5Ox2gto1ZWpyf+
- 4rLV+E/v7EGEAAAA=
-X-Change-ID: 20250617-arm64-fix-nogcs-2013d69675d0
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-08c49
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2608; i=broonie@kernel.org;
- h=from:subject:message-id; bh=oOQEXEh2RBd9vP0i7imc+zUjwaH66TSOeWKigQLWB50=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoVH5VqNcGDViByaNhlmaX8qdDhYs8rVdJvcjDB
- q7ZIbJ/IiCJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaFR+VQAKCRAk1otyXVSH
- 0EiMB/9AlDj/ViIYNHqxaJVggjR4vVxJk5WUCoeIsDLhGvUg/nujPLPEUctxo3b5HrseC7rvF2N
- GJmWOABxfFTUuio3afvaLZqr9AibN8u4TFqRWDtEIQcP/GG6yd9OUUdU1PayVZax+wtPDIHl5BO
- 2aQMF2828HrCuG6fQm7JaV5NzRh0cu/mWTGpwdUFl03SISHCQHB4GSE3Bf8sRT4RgEVc10VvF6h
- NOqea3IfS/6W1XYPf3FBCGkaYD4SnjfnztFxJRDnnSBJeltk2VXoVJKzFDNbQnIMREUaIEDDOL+
- 5wG2Xy3guVU6gezcH8sUh0zMqVdo3KdvxTkTNlAClODBpeZZ
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
 
-During EL2 setup if GCS is advertised in the ID registers we will reset the
-GCS control registers GCSCR_EL1 and GCSCRE0_EL1 to known values in order to
-ensure it is disabled. This is done without taking into account overrides
-supplied on the command line, meaning that if the user has configured
-arm64.nogcs we will still access these GCS specific registers. If this was
-done because EL3 does not enable GCS this results in traps to EL3 and a
-failed boot which is not what users would expect from having set that
-parameter.
+I'm retiring and have already had my name removed from MAINTAINERS.
+A couple of folks kindly suggested I should have an entry here.
 
-Move the writes to these registers to finalise_el2_state where we can pay
-attention to the command line overrides. For simplicity we leave the
-updates to the traps in HCRX_EL2 and the FGT registers in place since these
-should only be relevant for KVM guests and KVM will manage them itself for
-guests. This follows the existing practice for other similar traps for
-overridable features such as those for TPIDR2_EL0 and SMPRI_EL1.
-
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Shannon Nelson <sln@onemain.com>
 ---
- arch/arm64/include/asm/el2_setup.h | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+ CREDITS | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
-index ba5df0df02a4..9f38340d24c2 100644
---- a/arch/arm64/include/asm/el2_setup.h
-+++ b/arch/arm64/include/asm/el2_setup.h
-@@ -287,17 +287,6 @@
- .Lskip_fgt2_\@:
- .endm
+diff --git a/CREDITS b/CREDITS
+index 45446ae322ec..c30b75f9a732 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -2981,6 +2981,11 @@ S: 521 Pleasant Valley Road
+ S: Potsdam, New York 13676
+ S: USA
  
--.macro __init_el2_gcs
--	mrs_s	x1, SYS_ID_AA64PFR1_EL1
--	ubfx	x1, x1, #ID_AA64PFR1_EL1_GCS_SHIFT, #4
--	cbz	x1, .Lskip_gcs_\@
--
--	/* Ensure GCS is not enabled when we start trying to do BLs */
--	msr_s	SYS_GCSCR_EL1, xzr
--	msr_s	SYS_GCSCRE0_EL1, xzr
--.Lskip_gcs_\@:
--.endm
--
- /**
-  * Initialize EL2 registers to sane values. This should be called early on all
-  * cores that were booted in EL2. Note that everything gets initialised as
-@@ -319,7 +308,6 @@
- 	__init_el2_cptr
- 	__init_el2_fgt
- 	__init_el2_fgt2
--        __init_el2_gcs
- .endm
- 
- #ifndef __KVM_NVHE_HYPERVISOR__
-@@ -371,6 +359,13 @@
- 	msr_s   SYS_MPAMHCR_EL2, xzr		// clear TRAP_MPAMIDR_EL1 -> EL2
- 
- .Lskip_mpam_\@:
-+	check_override id_aa64pfr1, ID_AA64PFR1_EL1_GCS_SHIFT, .Linit_gcs_\@, .Lskip_gcs_\@, x1, x2
++N: Shannon Nelson
++E: sln@onemain.com
++D: Worked on several network drivers including
++D: ixgbe, i40e, ionic, pds_core, pds_vdpa, pds_fwctl
 +
-+.Linit_gcs_\@:
-+	msr_s	SYS_GCSCR_EL1, xzr
-+	msr_s	SYS_GCSCRE0_EL1, xzr
-+
-+.Lskip_gcs_\@:
- 	check_override id_aa64pfr0, ID_AA64PFR0_EL1_SVE_SHIFT, .Linit_sve_\@, .Lskip_sve_\@, x1, x2
- 
- .Linit_sve_\@:	/* SVE register access */
-
----
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-change-id: 20250617-arm64-fix-nogcs-2013d69675d0
-
-Best regards,
---  
-Mark Brown <broonie@kernel.org>
+ N: Dave Neuer
+ E: dave.neuer@pobox.com
+ D: Helped implement support for Compaq's H31xx series iPAQs
+-- 
+2.34.1
 
 
