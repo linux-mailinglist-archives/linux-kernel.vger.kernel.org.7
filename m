@@ -1,104 +1,116 @@
-Return-Path: <linux-kernel+bounces-693461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E219CADFF22
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:51:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 756E0ADFF26
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D86D3AD792
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:50:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 144FC179AE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309D4244664;
-	Thu, 19 Jun 2025 07:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F43235BE8;
+	Thu, 19 Jun 2025 07:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hHL1ioCg"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bnO8TB91"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C0D21D3C5;
-	Thu, 19 Jun 2025 07:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86714218596
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750319473; cv=none; b=SoVyz6SQsKGKLVjJJkDzi+VDfE4YM+Ec2ObUDr0PWSJ031IUVV0ro6DQbzlmVyd/0BOeiIz++9r+Z508hfUO9iwZU5NsdAYWtmyP/93bpJK5VeJ3ofE1HlhzSdv4ctI7kd0AxBRA2de9wbM2W9giuqMB9XISx64nolBavlZfJiA=
+	t=1750319523; cv=none; b=Oe4z1NA6s5nCfgfK5jX6ILMSx/HpG+rGi3Ne3i06QyMqL57EzUBrAXv0vMVy70pkXJBKQ7kChZgFFTjJ+uD2Ul+4EmawIgJfaDEOB45F8EWHe4zZPK5HiKFw5iJ8BaefALbDHu3aIkwBWo0HHrmes0n+kYLcuxSNH6Arkc1BNNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750319473; c=relaxed/simple;
-	bh=irOtMSTe18Nj09WUURiqFn7bJc2qntAyYH0FgwppccE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=foS4jk1cFkQMECCfDha3Q17usvFHcl60av0y8bBcOMouTsKDTJVNvmLp6JW8cwmiWopgRuzOH0JVx8YLCclxupVXnjk8RgxDLQZPCbF7s7uLUngEVprOc9pcgUUJb6h5gvB1KU9XYO7OBZc36ceNklsyRMVrHCPhcg/QwCkJjgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hHL1ioCg; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=h6iVXO5KbYXdSc5S3Hf3L8++PkcBN/CgVnLY1g8EcyI=; b=hHL1ioCgzjArqd4YP/LoPeLWB0
-	yTxZ5UB/w3Jlv19XgSk0QS3Z7n0UVw0RsfAzzvTSBSpxGXupcNaKq/Eb7hd9T03xFmCQOSpzzhxTY
-	gph+gB/bxs1pgeW9Yz21aW0m18KHRzJC/iZTvG+ht9a9GRJID3zWpCx44RAP4Pz6YlmvJ/+G7UGsD
-	ErSH+pEE2SvJ+2BZFcc6F4XSef1uZ/CkmexP3l3Z83deYVNf4cNiGmn3EwC7rZoXMshBsJEBHsko+
-	Je4wG5QwBLey/EVpqBJO41rgDcC1kUx5Tf385J+YJcKmURlQSFBhPwDPrGuyoFiRVA/pwEJ7i7djE
-	3gLQ8jFQ==;
-Received: from 2001-1c00-8d82-d000-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d82:d000:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uSA36-00000004NLc-2jLK;
-	Thu, 19 Jun 2025 07:51:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5B7993088F2; Thu, 19 Jun 2025 09:51:03 +0200 (CEST)
-Date: Thu, 19 Jun 2025 09:51:03 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, x86@kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v10 03/14] unwind_user: Add compat mode frame pointer
- support
-Message-ID: <20250619075103.GV1613376@noisy.programming.kicks-ass.net>
-References: <20250611005421.144238328@goodmis.org>
- <20250611010428.261095906@goodmis.org>
- <20250618134758.GK1613376@noisy.programming.kicks-ass.net>
- <20250618111840.24a940f6@gandalf.local.home>
+	s=arc-20240116; t=1750319523; c=relaxed/simple;
+	bh=7mQQX0g/RXBoYey7jHVoGxTSFtEhgzlZ2xKLsOSPaOg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ReVn0mT0HNpxRXtGm5Mev1TnO8CDNSZmG3TQwSWL8GxTH3HcM0b1VBMneTgzvMU4hkkQqg/+gNdrU9mn88YBmdjhmnxloN24xj6B+8OLdmqB97xn3YJ+P3/A3R56INnAvz3ysvnUuw3Z3yD7JvdEYSN1h783ajrZ5FHZxHtFnVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bnO8TB91; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-553b6a349ccso457118e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 00:52:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1750319519; x=1750924319; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7mQQX0g/RXBoYey7jHVoGxTSFtEhgzlZ2xKLsOSPaOg=;
+        b=bnO8TB91+bqkCFtzVBCIsOhc02OTDTmRRCSBYqU3GSPneYpVvvaff7+B8i9Ez/7W5B
+         FnJRV+isIylWBbWVTd5QPuVKbFOK4wIJDsOvwlFaazre+3Gie4lwgooaXNGTae3YfAN7
+         6WwrQznORydJrN7fGvAvwFi9ugGvRsyHYhMGQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750319519; x=1750924319;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7mQQX0g/RXBoYey7jHVoGxTSFtEhgzlZ2xKLsOSPaOg=;
+        b=ZEoozp3GCs+LfZJ3tggGPuPj1z8YPnAUowOE9u8Llz4ubIyGaFzqkYCphRF37V1ulH
+         p6fk7B19Z6VrjSi3WJupvR4WQjuUAaepNN/S3T2jMdTQ0OLc4Oy5ddGgCpv6fOOcO1UK
+         pqzqjNgISJ1ph6Uw0qb9aj+xxlB/PGfevL9aIPPtdjGGN+BKhLx36FB0OImGZY8Hudqp
+         SOlwpTeBU8bx3zvb+HKfi+Q7W2aE3Fn1FMpkG0T8JpPeAEdyZy8xNqfMnUwKIJWUEgQq
+         ErGCAznL0KtP7TRpi2rVPnFsNyN3QSAIzAQqKmorPle20hhISVzryPo5IiuYSeBlyqXD
+         1lpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWizDxLmyjGj6266UYheT6tZEP361Exc5vmcXCuGQpIxxfT74tg3imG8VVdXlDCXKL9QaQsL7AxUGntjQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBjoJy4HPqk6rd9Tw6ryiVz8wsY0V8bTb73U9DL6msm6xEKoHm
+	E1puDCL3G0U7WZiSA4AC9J8pYgYqkG3D02ZL1B5we+Hoi1LjwRtXlR4CUP5XmarOcpyil9WcO7P
+	78G3komf+i2rteO5H8H6olNB2y+smC8Uuoiyf0FoC
+X-Gm-Gg: ASbGncttArVkQgfLwP5xC0g2WUaoSWnv99wiN6EH29JxkzxOkKMoCoQ02+cloDD2LG4
+	lMWnBZ42qsEm50omQLEEgQh5aM7e33Y+EWO3hlOIboQEhbQb0rEGixh9YL8rPZ1gSdubH6thTYg
+	7pWuiTDNoP1o/+J1b1rC23WEc+eloYna8oL0zqgGdTTBKd8j/h2obBymxG7lwoaciYdpH4whg=
+X-Google-Smtp-Source: AGHT+IGKSw6WMdR9IoIRey67gW5v3Kd28RATCpIk0gj4cgp0HNOfe/nKQSJBKksAip/SsLckx6UbC9sCyZs1uSNHQ90=
+X-Received: by 2002:a05:6512:6ca:b0:553:6488:fa56 with SMTP id
+ 2adb3069b0e04-553b6f42225mr6061529e87.43.1750319519609; Thu, 19 Jun 2025
+ 00:51:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618111840.24a940f6@gandalf.local.home>
+References: <20250318102259.189289-1-laura.nao@collabora.com>
+ <20250318102259.189289-3-laura.nao@collabora.com> <CAGXv+5E-G0BY5q_EsxOkEEJvqXaX5=Y9PWqNbwysLEFfU-UmAg@mail.gmail.com>
+In-Reply-To: <CAGXv+5E-G0BY5q_EsxOkEEJvqXaX5=Y9PWqNbwysLEFfU-UmAg@mail.gmail.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 19 Jun 2025 15:51:48 +0800
+X-Gm-Features: AX0GCFshC_lgMp9vezDeihTD0kDhQFAT31Y9bBRKASrIpMKtnPIy3f3lDgJ-TQs
+Message-ID: <CAGXv+5Ff8jFqURizywr7NedprytSoCz9HvaW__v_Q1LcuzMxrw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: mediatek: mt8192-asurada-spherion: Mark
+ trackpads as fail-needs-probe
+To: angelogioacchino.delregno@collabora.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	nfraprado@collabora.com, kernel@collabora.com, 
+	Laura Nao <laura.nao@collabora.com>, matthias.bgg@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 18, 2025 at 11:18:40AM -0400, Steven Rostedt wrote:
-> On Wed, 18 Jun 2025 15:47:58 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > On Tue, Jun 10, 2025 at 08:54:24PM -0400, Steven Rostedt wrote:
-> > 
-> > > +#ifndef arch_unwind_user_init
-> > > +static inline void arch_unwind_user_init(struct unwind_user_state *state, struct pt_regs *reg) {}
-> > > +#endif
-> > > +
-> > > +#ifndef arch_unwind_user_next
-> > > +static inline void arch_unwind_user_next(struct unwind_user_state *state) {}
-> > > +#endif  
-> > 
-> > The purpose of these arch hooks is so far mysterious. No comments, no
-> > changelog, no nothing.
-> 
-> I'll add comments.
+Hi Angelo,
 
-How about you introduce the hooks when they're actually needed instead?
+On Wed, Mar 19, 2025 at 12:23=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> =
+wrote:
+>
+> On Tue, Mar 18, 2025 at 6:26=E2=80=AFPM Laura Nao <laura.nao@collabora.co=
+m> wrote:
+> >
+> > Different Spherion variants use different trackpads on the same I2C2
+> > bus. Instead of enabling all of them by default, mark them as
+> > "fail-needs-probe" and let the implementation determine which one is
+> > actually present.
+> >
+> > Additionally, move the trackpad pinctrl entry back to the individual
+> > trackpad nodes.
+> >
+> > Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+
+It looks like this patch has fallen through the cracks.
+Could you pick it up?
+
+
+Thanks
+ChenYu
 
