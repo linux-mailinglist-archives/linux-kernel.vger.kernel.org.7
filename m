@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-694402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BEC2AE0BEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:30:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A7EAE0BE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD1084A31A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:30:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8E7E4A32A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA3D28DF0C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7984B28DF08;
 	Thu, 19 Jun 2025 17:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pnErTiIJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlYkaJ3O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E7428C014;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C961D241CB7;
 	Thu, 19 Jun 2025 17:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750354215; cv=none; b=j3DhF5xq6vgK27tvCqHS3GKushR+9fvefycM0IhXc3WtNNJTUJs2Hp1ijbWuTCZAQp7aSWANwXDXcM8V4H9ZqTBSHosOJDpAYngAr79+MFXgNcHpV1bNfDfU5Lnq2i6rOdWOERxyNqONG8XP4rhRFmY+2SPlrF6MeU08ZvM/Bx8=
+	t=1750354214; cv=none; b=o5dlCJTUQ644s2vgdgSx5kDwRlYBihZeuA00jlEZVteNaIraJJbWdlQbYjVfo85iXnujBFJz2pCFLbdM96lA4auD1boWrm5rGJ+skirq6sE3mVZn9mkeRiynLlOaJBfvNqc1vyM6q6nYKuwCLNyXYhNgRLyDAHxc6qI1gFcXK44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750354215; c=relaxed/simple;
-	bh=aIr3qu6ile1nHg+g5aa59zKENPrBn3sv1ZGDJSdnhpA=;
+	s=arc-20240116; t=1750354214; c=relaxed/simple;
+	bh=rz1gZsh7A4S3qN6IuAlTDtQuCkgP2vb88SwwNf0Nq2U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Rn7mkKo++RnQoM/SUioVLkSgttEuZFBAtCC9ujq8CxoumOywevVZNYZxBQ4UW2/wCOKCROIkiGlWMGjbSGBdx5q8lUvC/Vybmbp+F4UhMb1jY8CMYVHsW/xXaXzNqRQi+KKlzqRubgEn6xZixWW3RRMkh5qIbCxlabK7/LxaQCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pnErTiIJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59C5EC4CEED;
+	 MIME-Version; b=PxDQWiCeuYZqEnzNTlErXPVdYUbbWyv58WoOewbRGqFwHx644fguvTGKkdzP68W+HKYgLnXgXoofJwfTuMSOlQX6qs9sibcnLN1bfM5YfAQVCS4p1nT77z2srIoqHxfUv851yCqHtoLY6SOpfHhqdxRP3ZY0lcq7CmqnCNdO6Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlYkaJ3O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD7EC4AF09;
 	Thu, 19 Jun 2025 17:30:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1750354214;
-	bh=aIr3qu6ile1nHg+g5aa59zKENPrBn3sv1ZGDJSdnhpA=;
+	bh=rz1gZsh7A4S3qN6IuAlTDtQuCkgP2vb88SwwNf0Nq2U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pnErTiIJQWLhrFkDH2xNIzoO7E9+xdWsnIw4zWbewhlj0MRFDiCcgP9c6B4F4Mt+R
-	 N8+9L2m0yAb5mulJl37xOEI7jDJCz4pdhfq7LNCORJGeGzn8uFiO7it0RgA8G6ipLp
-	 nt+v339QxXTJyhO8iO2ntQv9teuonONx0EIxmOrYfP69tzeIls5ZocT8bK5oKg7G3w
-	 PjrH5IXxo+1lftGEYYWNL3UeoSzsLeRKOVjR8i1xSWBPnUN3PW8cRf5m/kghMAG4Vq
-	 7gi2etfoBbx0e52alSkD51C4pfr2FpzyoSXHiJHR6G80+XuTHqXtL2h27In0KU/iIu
-	 gbwAf/13nFgyA==
+	b=dlYkaJ3OTDpwCeKrBYMhpeu+Ctm4JFHWkf4GpF969PbSB+fdQ3tpM18wnHtoc8KjY
+	 xAYlT47yv+7DfOgDuEysznix7QLCwPW+4LnFwKlu0/2rKeYy8Btu1J8CmbhbaLXLcb
+	 3GQJRKhKaq7YU/2u0mvxiqcs7E75AIF22W2k7exrZp22dLt8chij53y1xkf+Y+Nrfh
+	 9uNVBG2mAqgVY6D5jOU7xJJ5U60M18PmHR0JRCYCpVMJC/oE7isV96yFpIXPNY7wKe
+	 5MbaAbfFAwoipZgGPgfT9WX5lqyCaFBa6/JcpOBj83DIyEYhx8syjhkfOpoTPw0OY9
+	 RAQpn3zhGs2bA==
 Received: by wens.tw (Postfix, from userid 1000)
-	id 2C81E5FF77; Fri, 20 Jun 2025 01:30:12 +0800 (CST)
+	id 3703F5FFF4; Fri, 20 Jun 2025 01:30:12 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -54,9 +54,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH 3/5] arm64: dts: allwinner: a523: Move rgmii0 pins to correct location
-Date: Fri, 20 Jun 2025 01:30:05 +0800
-Message-Id: <20250619173007.3367034-4-wens@kernel.org>
+Subject: [PATCH 4/5] arm64: dts: allwinner: a523: Add UART1 pins
+Date: Fri, 20 Jun 2025 01:30:06 +0800
+Message-Id: <20250619173007.3367034-5-wens@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250619173007.3367034-1-wens@kernel.org>
 References: <20250619173007.3367034-1-wens@kernel.org>
@@ -70,55 +70,42 @@ Content-Transfer-Encoding: 8bit
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-Nodes are supposed to be sorted by address, or if no addresses
-apply, by node name. The rgmii0 pins are out of order, possibly
-due to multiple patches adding pin mux settings conflicting.
+UART1 is normally used to connect to the Bluetooth side of a Broadcom
+WiFi+BT combo chip. The connection uses 4 pins.
 
-Move the rgmii0 pins to the correct location.
+Add pinmux nodes for UART1, one for the RX/TX pins, and one for the
+RTS/CTS pins.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 20 +++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-index 458d7ecedacd..30613a0b1124 100644
+index 30613a0b1124..6f62201fd739 100644
 --- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
 +++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-@@ -126,16 +126,6 @@ pio: pinctrl@2000000 {
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
- 
--			rgmii0_pins: rgmii0-pins {
--				pins = "PH0", "PH1", "PH2", "PH3", "PH4",
--				       "PH5", "PH6", "PH7", "PH9", "PH10",
--				       "PH14", "PH15", "PH16", "PH17", "PH18";
--				allwinner,pinmux = <5>;
--				function = "emac0";
--				drive-strength = <40>;
--				bias-disable;
--			};
--
- 			mmc0_pins: mmc0-pins {
- 				pins = "PF0" ,"PF1", "PF2", "PF3", "PF4", "PF5";
+@@ -168,6 +168,20 @@ uart0_pb_pins: uart0-pb-pins {
  				allwinner,pinmux = <2>;
-@@ -163,6 +153,16 @@ mmc2_pins: mmc2-pins {
- 				bias-pull-up;
+ 				function = "uart0";
  			};
- 
-+			rgmii0_pins: rgmii0-pins {
-+				pins = "PH0", "PH1", "PH2", "PH3", "PH4",
-+				       "PH5", "PH6", "PH7", "PH9", "PH10",
-+				       "PH14", "PH15", "PH16", "PH17", "PH18";
-+				allwinner,pinmux = <5>;
-+				function = "emac0";
-+				drive-strength = <40>;
-+				bias-disable;
++
++			/omit-if-no-ref/
++			uart1_pins: uart1-pins {
++				pins = "PG6", "PG7";
++				function = "uart1";
++				allwinner,pinmux = <2>;
 +			};
 +
- 			uart0_pb_pins: uart0-pb-pins {
- 				pins = "PB9", "PB10";
- 				allwinner,pinmux = <2>;
++			/omit-if-no-ref/
++			uart1_rts_cts_pins: uart1-rts-cts-pins {
++				pins = "PG8", "PG9";
++				function = "uart1";
++				allwinner,pinmux = <2>;
++			};
+ 		};
+ 
+ 		ccu: clock-controller@2001000 {
 -- 
 2.39.5
 
