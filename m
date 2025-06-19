@@ -1,59 +1,63 @@
-Return-Path: <linux-kernel+bounces-694393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B3CAE0BCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:15:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFF3AE0BCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8804A2AC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:15:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 862AF5A307B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFF8241690;
-	Thu, 19 Jun 2025 17:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1DD1DB54C;
+	Thu, 19 Jun 2025 17:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BL56VD7M"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pQGRxxsp"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902D323534D
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 17:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4B719ABB6
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 17:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750353303; cv=none; b=lE4fIpQRzbs8nN1HF82GKdFTWeUCw1ksS7rnMp42xprn4583bUEtkOcJU4UPi5O4PXkLZxRvqlE0SWMfKaEPMTfA4Ckf0m4XbINdB2+XSZrOSwrIdFexhDLBqCjTRxeBqlSYRDIpPmlwkvmef8rV657RnUlAOA8QTkzEqLsjemM=
+	t=1750353324; cv=none; b=b7cGrzr/juOMvj9ngFdLekvwtKFp2IRXpn1kjU/5tOXF7IhnuU69rtHMBdQptdIrgVKUOM8L1TRd5DHVXhWL9i/s0GDVY9l30A57teamt4XcgYs6NWLKTPicD7rJZO7VZDnq8H9JWNhpi3A2rQ0pL08zz5NtE8hRje6JcbePCBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750353303; c=relaxed/simple;
-	bh=Lx1OZA13bxdhse2uaAcgjkf62XpWijyBrsRGvEfVBYs=;
+	s=arc-20240116; t=1750353324; c=relaxed/simple;
+	bh=7ruCDLYiWzS+bF9ORayYkQg1bEmgjlqtIo4JlbIfn5A=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=G29UuwqwG1Z64M9YrWr2v4s/OroQAuowrS3LQPGyVgdPORUwFRvPWpJmt5hKOsZgEdC7X/5/TvisF03lSGbWhUe3wogIHQEJ6fRkgaz6p30/u9XzF+iT10/nxME9DJSHNBvT5u9gpNwFwi3Dqj0cMaGO2DzQm81CmGKocdFTAgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BL56VD7M; arc=none smtp.client-ip=217.70.183.196
+	 MIME-Version:Content-Type; b=rJSLN8DFwm7HJyER5W8jXpMcC/2Sx7qoc5XifH/4+VXjQu4hK5Br6PyHGsk084Ac2E9/yRr58SrrIhq+YIw5KypjyOY1/OwaXq37q6lv2seDmpiwnevI7DGeMhXswmXSj6NdCzeraeb7uhOUHPozc2O2iy8dAc6L92Sza5lWMPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pQGRxxsp; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 797EB444F8;
-	Thu, 19 Jun 2025 17:14:52 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 07C254441E;
+	Thu, 19 Jun 2025 17:15:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1750353293;
+	t=1750353320;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=z26vtRZXZ0iUY80hTCSWSFa/6H7qzHjCbBvSXzt6qFk=;
-	b=BL56VD7MsFg3AVIJnYbDfvhqfDtUOk/FWYOf7V94nZ4wNrjLrTCDK2X7y9nBNp9bX89CpK
-	1oNBUQqI2WjZKkTS/Cjf4B/mJFXTK/3Can7llnLWJ15cRDhx3nhMqphWSpNd/FEUyHBFsA
-	XPafdvq7hMg0cV7DmJTNj3eUGItFjfJem+lG8541D9uel3SxgWYLa9RxbB9CA6F417s+02
-	wCPXduEFvt+hqnhO1J/2736+7wsKHjwwYNg6RCkZbvMwBI19M9YZLYxyNrvELK8B13B2y9
-	vVSCMw3iVFdgiobK+qopJ6Fuj6vbft3mMQ0PRIqVVx/iI6HF3UwiWZ2Kp9471w==
+	bh=SHKo8qXm+tt/TWv/ujXaaZqRW8HDmht1JJF3FPlOj1Y=;
+	b=pQGRxxspT3wKhuDZgD3MAN466JZi8AZFANK4tfI9ZpH2OZrkiqUkq7hXCX/oaqExSRmXsY
+	QHBhqaWIrHOcbIKhw6U6+Xozp3HVkbC5fqc/Z/uTphdlq346NwEpUSgScb6zqce0crUkb0
+	sy5Z6Un9HjJdbRnZyXtbu1LWSLP+oqgt/Y4SfJ2BGxaVUIMxYxwoPKy9Kg3LyGpm2IfP0b
+	mHjBtHFu3qIBMr5azrhEDShLlxCFG/mhcNgn7ZjUXz9j+U3BUGUnf/zx4M1IG9azwBM885
+	W7DubsMzltvejSziWvg/CaVxfare6bXO1OnLQKAKeDG4TSgl+Pb4n97DMR3Lfg==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Ivan Stepchenko <sid@itb.spb.ru>
-Cc: Richard Weinberger <richard@nod.at>, 
- Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org, 
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-In-Reply-To: <20250619145313.5823-1-sid@itb.spb.ru>
-References: <20250619145313.5823-1-sid@itb.spb.ru>
-Subject: Re: [PATCH] mtd: fix possible integer overflow in erase_xfer()
-Message-Id: <175035329221.438255.2990702769206013816.b4-ty@bootlin.com>
-Date: Thu, 19 Jun 2025 19:14:52 +0200
+To: Brian Norris <computersforpeace@gmail.com>, 
+ Kamal Dasu <kamal.dasu@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Yuesong Li <liyuesong@vivo.com>
+Cc: opensource.kernel@vivo.com
+In-Reply-To: <20250618124948.2822345-1-liyuesong@vivo.com>
+References: <20250618124948.2822345-1-liyuesong@vivo.com>
+Subject: Re: [PATCH v1] mtd: nand: brcmnand: replace manual string choices
+ with standard helpers
+Message-Id: <175035331888.438483.5742721112237943921.b4-ty@bootlin.com>
+Date: Thu, 19 Jun 2025 19:15:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,25 +69,20 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.14.2
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdeitdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevjghfuffkffggtgfgofesthekredtredtjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehieffhfeulefgtdeltefgleevgffgheduledvheduudelgfehlefgheeivedvgeenucfkphepledvrddukeegrdduuddtrdduudejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledvrddukeegrdduuddtrdduudejpdhhvghloheplgduledvrdduieekrddurddutdeingdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeipdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhiugesihhtsgdrshhpsgdrrhhupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpt
- hhtoheplhhvtgdqphhrohhjvggttheslhhinhhugihtvghsthhinhhgrdhorhhg
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdeitdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevjghfuffkffggtgfgofesthekredtredtjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehieffhfeulefgtdeltefgleevgffgheduledvheduudelgfehlefgheeivedvgeenucfkphepledvrddukeegrdduuddtrdduudejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledvrddukeegrdduuddtrdduudejpdhhvghloheplgduledvrdduieekrddurddutdeingdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepsggtmhdqkhgvrhhnvghlqdhfvggvuggsrggtkhdqlhhishhtsegsrhhorggutghomhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihihuhgvshhonhhgsehvihhvohdrtghomhdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgp
+ dhrtghpthhtoheptghomhhpuhhtvghrshhfohhrphgvrggtvgesghhmrghilhdrtghomhdprhgtphhtthhopehkrghmrghlrdgurghsuhessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrth
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Thu, 19 Jun 2025 17:53:13 +0300, Ivan Stepchenko wrote:
-> The expression '1 << EraseUnitSize' is evaluated in int, which causes
-> a negative result when shifting by 31 - the upper bound of the valid
-> range [10, 31], enforced by scan_header(). This leads to incorrect
-> extension when storing the result in 'erase->len' (uint64_t), producing
-> a large unexpected value.
+On Wed, 18 Jun 2025 20:49:47 +0800, Yuesong Li wrote:
+> Use kernel provided standard helper function to replace hard-coded
+> strings
 > 
-> Found by Linux Verification Center (linuxtesting.org) with Svace.
 > 
-> [...]
 
-Applied to mtd/next, thanks!
+Applied to nand/next, thanks!
 
-[1/1] mtd: fix possible integer overflow in erase_xfer()
-      commit: 9358bdb9f9f54d94ceafc650deffefd737d19fdd
+[1/1] mtd: nand: brcmnand: replace manual string choices with standard helpers
+      commit: 4b5532d4581d0e0639023268eeb08f1a31a402d3
 
 Patche(s) should be available on mtd/linux.git and will be
 part of the next PR (provided that no robot complains by then).
