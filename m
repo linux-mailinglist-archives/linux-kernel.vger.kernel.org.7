@@ -1,211 +1,206 @@
-Return-Path: <linux-kernel+bounces-693928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D23AE05C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:29:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE240AE05DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9E118999C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:28:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87F343AE9FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7789123B607;
-	Thu, 19 Jun 2025 12:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB9423E35B;
+	Thu, 19 Jun 2025 12:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ASQtMZ2D"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="h1PsZA+s"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E697824EA9D
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 12:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC21523FC41
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 12:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750336002; cv=none; b=OsDim/q1meS3XUUB9yXB53AKaFIrWrRwFIxanrnYIKl5zm+19q4y/O+u+w//5Qc4YknW8ZXyvMu34qJKI2M9F2UWqCbFqZKJbKnaUNj3dy8T/jcV1BFvn0B7K4ZwnfTvVJdPRQdWlLY+fj8qk8TYLwFTz0o+zeteEmy/2cqPVDI=
+	t=1750336070; cv=none; b=cVcu8W2hQQ0PMTx/PdXt/W6ZJtfgy1WKR0/sib+WJBMxOPaYSa8l+FBb8xn6tPgMPhaZMUOXuAnH9SnvrZE4qOAGOBxVu3Vr+kdbc9Bn1bKkb2LjO/wEfs6BsGUYVkMS2CYYfVzChPQ3cekS+p28mVoN5ZOHdXv2iaA5X2e0svc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750336002; c=relaxed/simple;
-	bh=dKwjOWpmm5jT6lKKjfOs3ZHonBqwA7M/r4fSmqAOfW8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uINlSwrUxI9tdhEuNqX4k/Z7cNa+wAsRa2NUepIzjPxFb2QPy+jj5hHU2zrhX5GpEMqjyy1AdUplmb7fxHcoYXWGXzx1l6zaUM4TEsMClAYyDDkf/kM7gxbjK4ryO5Aa/54B3BytB5u8MGd1imsFbr1SkXpVpNt+pfPshpuIXKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ASQtMZ2D; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750336001; x=1781872001;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=dKwjOWpmm5jT6lKKjfOs3ZHonBqwA7M/r4fSmqAOfW8=;
-  b=ASQtMZ2DAFKYbHFDfF3lNz3WLzMYExjXWesSWY3Ki6q6APuNtOgLAMmQ
-   GwDySYO79PPXVxoFVrK7M0iKpNPfon9oxkDEHdT+yov3MaDlw12iUdGWa
-   S2Si501PyDPwjbduKt4zQER5mpBq1xePoJ3CZMs8jozuoAbJJ8iENBDow
-   yxTQ8TGWV9BvC0X9ckyFyMWAzqzgsoFadx0RlE1w+kV0pNBk2hWyJ/gf1
-   0aHXmpsiKlhrvc/X1SfiFkzL3f3iHGqe6k7ZxmXvFzZ8NvH5qpdOVF4BI
-   0PacyFgpnwygMGRREP9eFItsiHuNarWtdA7IeiMx37TAWqgF9NSaBcqso
-   g==;
-X-CSE-ConnectionGUID: MADLXoKAQ3uTGyyzrxdN/w==
-X-CSE-MsgGUID: Brg5jhOpTlqeWcYsCZDwAA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="52452092"
-X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
-   d="scan'208";a="52452092"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 05:26:40 -0700
-X-CSE-ConnectionGUID: uPQRSNAFT4yf79MPUfiKtg==
-X-CSE-MsgGUID: kbch/8uvRGafkNOmYCFx/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
-   d="scan'208";a="151197771"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.144]) ([10.124.245.144])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 05:26:36 -0700
-Message-ID: <663344cc-9be4-40c2-9708-6b765af8f6e8@linux.intel.com>
-Date: Thu, 19 Jun 2025 20:26:33 +0800
+	s=arc-20240116; t=1750336070; c=relaxed/simple;
+	bh=8ADD2Yq9A6k/GyHmSj98rzZgb1fTetvWsVEiXh3yKRk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=slFn3Z19SiPJZbYsScrLtglB5icJDpHj6oBe2auGM7J7OYX+KtEljmI/q032WHRiOzwC+AdNd9UXXdOwfLENssbVU6STh0D1Y3H3YcrzSPLwlivIRbOits0ssor8TkyBidvQQwGqX5y/vjNVBoEjawzyQpHtIDb3mpwWx+W4MR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=h1PsZA+s; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1B378346;
+	Thu, 19 Jun 2025 14:27:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1750336047;
+	bh=8ADD2Yq9A6k/GyHmSj98rzZgb1fTetvWsVEiXh3yKRk=;
+	h=From:Date:Subject:To:Cc:From;
+	b=h1PsZA+sgy3SWm6BNrvShv6M55fGt0ESk8StihbTrtaF5xEjFoqTHVbucHBFPMsWy
+	 yXcc/bIgHDO37EKBvTknp0NMljvvPHXYBHpPJsz1oubsqKyVISyhdR63COIsWtJRDU
+	 IYuHkn2ZCpW82a6jQefkYkywrfDrb3/gmFLpYCs4=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Date: Thu, 19 Jun 2025 15:27:18 +0300
+Subject: [PATCH] drm/bridge: samsung-dsim: Fix init order
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/12] Support vector and more extended registers in
- perf
-To: "Liang, Kan" <kan.liang@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- tglx@linutronix.de, dave.hansen@linux.intel.com, irogers@google.com,
- adrian.hunter@intel.com, jolsa@kernel.org,
- alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
- ak@linux.intel.com, zide.chen@intel.com
-References: <20250613134943.3186517-1-kan.liang@linux.intel.com>
- <20250617082423.GK1613376@noisy.programming.kicks-ass.net>
- <60c18595-c6a8-4c39-98fe-0822755fbdb7@linux.intel.com>
- <20250617142952.GX1613376@noisy.programming.kicks-ass.net>
- <893f1888-b8cb-4976-a0d6-606460438d73@linux.intel.com>
- <1121293d-777e-4c21-b1ad-d34516d2cd3a@linux.intel.com>
- <a116761e-30bc-49bf-a1f8-9cc0ec1faae2@linux.intel.com>
- <4d4d1ca5-aab6-45be-9485-43c39b30fd62@linux.intel.com>
- <5aabcb15-0def-4f73-b4dd-03c958192d67@linux.intel.com>
- <1bc9de32-2599-483f-8c6a-6da59f8d9549@linux.intel.com>
- <d97fc799-ab9b-4c6a-a77e-8b542ac82efa@linux.intel.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <d97fc799-ab9b-4c6a-a77e-8b542ac82efa@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250619-samsung-dsim-fix-v1-1-6b5de68fb115@ideasonboard.com>
+X-B4-Tracking: v=1; b=H4sIACUCVGgC/x2MQQqAIBAAvxJ7bkELQ/tKdBDdbA9ZuBRB9Pek4
+ wzMPCBUmATG5oFCFwvvuYJuGwirz4mQY2XoVGfUoB2K3+TMCaPwhgvfaGywFKx2PTmo2VGo6n8
+ 5ze/7AYKYwEZiAAAA
+X-Change-ID: 20250619-samsung-dsim-fix-58c8ec8193e9
+To: Inki Dae <inki.dae@samsung.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Aradhya Bhatia <a-bhatia1@ti.com>, Dmitry Baryshkov <lumag@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Hiago De Franco <hiagofranco@gmail.com>, 
+ Francesco Dolcini <francesco@dolcini.it>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4233;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=8ADD2Yq9A6k/GyHmSj98rzZgb1fTetvWsVEiXh3yKRk=;
+ b=kA0DAAgB+j2qjLyWHvUByyZiAGhUAjijfeICgyXX1z6oMncQ9XfnYenwgyEn+2KBCFJ7TNKtv
+ okCMwQAAQgAHRYhBMQ4DD6WXv2BB5/zp/o9qoy8lh71BQJoVAI4AAoJEPo9qoy8lh71P70P/2VT
+ sZ8iuOPaKUFXvcfz+P11XAvAUWbvedf9y5pRfyNvGhSuenxGAeFIlpGGWX8DznwSaWxEPIZI3kd
+ 8VVO2EUYiM3cHTLXAX5yhgQ7Ps2RH7GcTTqowFvSAbQMVrSr+jnsphZyQ/n6WyT5Hx/gXCEWDWv
+ oH6zrlo/B6hLhCDaOxWSPJKNszWwXYWub4LhCcWEblGHFk7Qk7hhfuGWhmmUIhEP++3CkEA07mk
+ YcLoq9COAv4CoA90yhiRLXHXh545eZ7mNTTcItxqHYmicNVcoQG5EVFsdm+HJQ7i3EuJgTVTjJY
+ Q3eZqGyeNeqaJOXXlvIDtmmcjdOMycj6Rk0rg4P1byDQJFJc0vvC6U7T2hThffk+6jqG6ETNIwG
+ K3gRxo+OygZ1r2jiYn92FJPKMmoiC5UjkGV54qIHyYsEa0u4xiaJ5QUP1AKK6FePAIaCbxNWAQ2
+ x9t3QoSnbZrViuiZzV/KRBSf5XixDIUz0gMC3auucd5ENg4VFabs+UBePKsaKTgCTZJsDtFMjL5
+ r4mMOvUg54OjcBdpeO/IVOcEd8w7y5q1IqGA6ktJ/SUCHYkE49ezzid6Uy+FkIUwz9bwWZsMeSe
+ WKVxt/6uRJbB3q9puT5XzjgolxO+/dblS8gyAJ/N+BGrns8f7osh5mtC3vYa+pMY+FWZVB7ckNt
+ 73p60
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
+The commit c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain
+pre-enable and post-disable") changed the order of enable/disable calls.
+Previously the calls (on imx8mm) were:
 
-On 6/19/2025 7:11 PM, Liang, Kan wrote:
->
-> On 2025-06-18 8:41 p.m., Mi, Dapeng wrote:
->> On 6/18/2025 9:15 PM, Liang, Kan wrote:
->>> On 2025-06-18 8:28 a.m., Mi, Dapeng wrote:
->>>>>>>> Not sure, it eats up a whole byte. Dapeng seemed to favour separate
->>>>>>>> intr/user vector width (although I'm not quite sure what the use would
->>>>>>>> be).
->>>>>> The reason that I prefer to add 2 separate "words" item is that user could
->>>>>> sample interrupt and user space SIMD regs (but with different bit-width)
->>>>>> simultaneously in theory, like "--intr-regs=YMM0, --user-regs=XMM0".
->>>>> I'm not sure why the user wants a different bit-width. The
->>>>> --user-regs=XMM0" doesn't seem to provide more useful information.
->>>>>
->>>>> Anyway, I believe the tool can handle this case. The tool can always ask
->>>>> YMM0 for both --intr-regs and --user-regs, but only output the XMM0 for
->>>>> --user-regs. The only drawback is that the kernel may dump extra
->>>>> information for the --user-regs. I don't think it's a big problem.
->>>> If we intent to handle it in user space tools, I'm not sure if user space
->>>> tool can easily know which records are from user space and filter out the
->>>> SIMD regs from kernel space and how complicated would the change be. IMO,
->>>> adding an extra u16 "words" would be much easier and won't consume too much
->>>> memory.
->>> The filter is always done in kernel for --user-regs. The only difference
->>> is that the YMM (after filter) will be dumped to the perf.data. The tool
->>> just show the XMM registers to the end user.
->> Ok. But there could be another case, user may want to sample some APX eGPRs
->> in user space and sample SIMD regs in interrupt, like "--intr-regs=YMM0,
->> --user-regs=R16", then we have to define 2 separate "words" fields.
->>
-> Not for eGPRs. It uses the regular GP regs space, which implies u64 for
-> a 64b kernel. The "words" fields is only for vector and predicate registers.
->
-> I've stated working on the V2. The new interface would be as below.
->
-> diff --git a/include/uapi/linux/perf_event.h
-> b/include/uapi/linux/perf_event.h
-> index 78a362b80027..f7b8971fa99d 100644
-> --- a/include/uapi/linux/perf_event.h
-> +++ b/include/uapi/linux/perf_event.h
-> @@ -382,6 +382,7 @@ enum perf_event_read_format {
->  #define PERF_ATTR_SIZE_VER6			120	/* Add: aux_sample_size */
->  #define PERF_ATTR_SIZE_VER7			128	/* Add: sig_data */
->  #define PERF_ATTR_SIZE_VER8			136	/* Add: config3 */
-> +#define PERF_ATTR_SIZE_VER9			184	/* Add: sample_simd_regs */
->
->  /*
->   * 'struct perf_event_attr' contains various attributes that define
-> @@ -543,6 +544,24 @@ struct perf_event_attr {
->  	__u64	sig_data;
->
->  	__u64	config3; /* extension of config2 */
-> +
-> +
-> +	/*
-> +	 * Defines set of SIMD registers to dump on samples.
-> +	 * The sample_simd_req_enabled !=0 implies the
-> +	 * set of SIMD registers is used to config all SIMD registers.
-> +	 * If !sample_simd_req_enabled, sample_regs_XXX may be used to
-> +	 * config some SIMD registers on X86.
-> +	 */
-> +	union {
-> +		__u16 sample_simd_reg_enabled;
-> +		__u16 sample_simd_pred_reg_qwords;
-> +	};
-> +	__u16 sample_simd_pred_reg_intr;
-> +	__u16 sample_simd_pred_reg_user;
+mxsfb_crtc_atomic_enable()
+samsung_dsim_atomic_pre_enable()
+samsung_dsim_atomic_enable()
 
-This is still a bitmap, right? Is it enough for ARM?
+now the order is:
 
+samsung_dsim_atomic_pre_enable()
+mxsfb_crtc_atomic_enable()
+samsung_dsim_atomic_enable()
 
-> +	__u16 sample_simd_reg_qwords;
-> +	__u64 sample_simd_reg_intr;
-> +	__u64 sample_simd_reg_user;
->  };
->
->  /*
-> @@ -1016,7 +1035,15 @@ enum perf_event_type {
->  	 *      } && PERF_SAMPLE_BRANCH_STACK
->  	 *
->  	 *	{ u64			abi; # enum perf_sample_regs_abi
-> -	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_USER
-> +	 *	  u64			regs[weight(mask)];
-> +	 *	  struct {
-> +	 *	  	u16 nr_vectors;
-> +	 *	  	u16 vector_qwords;
-> +	 *	  	u16 nr_pred;
-> +	 *	  	u16 pred_qwords;
-> +	 *	  	u64 data[nr_vectors * vector_qwords + nr_pred * pred_qwords];
-> +	 *	  } && sample_simd_reg_enabled
-> +	 *	} && PERF_SAMPLE_REGS_USER
->  	 *
->  	 *	{ u64			size;
->  	 *	  char			data[size];
-> @@ -1043,7 +1070,15 @@ enum perf_event_type {
->  	 *	{ u64			data_src; } && PERF_SAMPLE_DATA_SRC
->  	 *	{ u64			transaction; } && PERF_SAMPLE_TRANSACTION
->  	 *	{ u64			abi; # enum perf_sample_regs_abi
-> -	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
-> +	 *	  u64			regs[weight(mask)];
-> +	 *	  struct {
-> +	 *	  	u16 nr_vectors;
-> +	 *	  	u16 vector_qwords;
-> +	 *	  	u16 nr_pred;
-> +	 *	  	u16 pred_qwords;
-> +	 *	  	u64 data[nr_vectors * vector_qwords + nr_pred * pred_qwords];
-> +	 *	  } && sample_simd_reg_enabled
-> +	 *	} && PERF_SAMPLE_REGS_INTR
->  	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
->  	 *	{ u64			cgroup;} && PERF_SAMPLE_CGROUP
->  	 *	{ u64			data_page_size;} && PERF_SAMPLE_DATA_PAGE_SIZE
->
->
-> Thanks,
-> Kan
+On imx8mm (possibly on imx8mp, and other platforms too) this causes two
+issues:
+
+1. The DSI PLL setup depends on a refclk, but the DSI driver does not
+set the rate, just uses it with the rate it has. On imx8mm this refclk
+seems to be related to the LCD controller's video clock. So, when the
+mxsfb driver sets its video clock, DSI's refclk rate changes.
+
+Earlier this mxsfb_crtc_atomic_enable() set the video clock, so the PLL
+refclk rate was set (and didn't change) in the DSI enable calls. Now the
+rate changes between DSI's pre_enable() and enable(), but the driver
+configures the PLL in the pre_enable().
+
+Thus you get a black screen on a modeset. Doing the modeset again works,
+as the video clock rate stays the same.
+
+2. The image on the screen is shifted/wrapped horizontally. I have not
+found the exact reason for this, but the documentation seems to hint
+that the LCD controller's pixel stream should be enabled first, before
+setting up the DSI. This would match the change, as now the pixel stream
+starts only after DSI driver's pre_enable().
+
+The main function related to this issue is samsung_dsim_init() which
+will do the clock and link configuration. samsung_dsim_init() is
+currently called from pre_enable(), but it is also called from
+samsung_dsim_host_transfer() to set up the link if the peripheral driver
+wants to send a DSI command.
+
+This patch fixes both issues by moving the samsung_dsim_init() call from
+pre_enable() to enable().
+
+However, to deal with the case where the samsung_dsim_init() has already
+been called from samsung_dsim_host_transfer() and the refclk rate has
+changed, we need to make sure we re-initialize the DSI with the new rate
+in enable(). This is achieved by clearing the DSIM_STATE_INITIALIZED
+flag and uninitializing the clocks and irqs before calling
+samsung_dsim_init().
+
+Fixes: c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain pre-enable and post-disable")
+Reported-by: Hiago De Franco <hiagofranco@gmail.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+---
+ drivers/gpu/drm/bridge/samsung-dsim.c | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+index f2f666b27d2d..cec383d8946d 100644
+--- a/drivers/gpu/drm/bridge/samsung-dsim.c
++++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+@@ -1473,22 +1473,31 @@ static void samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
+ 	}
+ 
+ 	dsi->state |= DSIM_STATE_ENABLED;
+-
+-	/*
+-	 * For Exynos-DSIM the downstream bridge, or panel are expecting
+-	 * the host initialization during DSI transfer.
+-	 */
+-	if (!samsung_dsim_hw_is_exynos(dsi->plat_data->hw_type)) {
+-		ret = samsung_dsim_init(dsi);
+-		if (ret)
+-			return;
+-	}
+ }
+ 
+ static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
+ 				       struct drm_atomic_state *state)
+ {
+ 	struct samsung_dsim *dsi = bridge_to_dsi(bridge);
++	int ret;
++
++	/*
++	 * The DSI bridge may have already been initialized in
++	 * samsung_dsim_host_transfer(). It is possible that the refclk rate has
++	 * changed after that due to the display controller configuration, and
++	 * thus we need to reinitialize the DSI bridge to ensure the correct
++	 * clock settings.
++	 */
++
++	if (dsi->state & DSIM_STATE_INITIALIZED) {
++		dsi->state &= ~DSIM_STATE_INITIALIZED;
++		samsung_dsim_disable_clock(dsi);
++		samsung_dsim_disable_irq(dsi);
++	}
++
++	ret = samsung_dsim_init(dsi);
++	if (ret)
++		return;
+ 
+ 	samsung_dsim_set_display_mode(dsi);
+ 	samsung_dsim_set_display_enable(dsi, true);
+
+---
+base-commit: 7872997c048e989c7689c2995d230fdca7798000
+change-id: 20250619-samsung-dsim-fix-58c8ec8193e9
+
+Best regards,
+-- 
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
 
