@@ -1,87 +1,99 @@
-Return-Path: <linux-kernel+bounces-693280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3296BADFD30
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:48:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA837ADFD2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C4333A25F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41E8188E647
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB28242D8E;
-	Thu, 19 Jun 2025 05:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E91244664;
+	Thu, 19 Jun 2025 05:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dp3C77lr"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjXP7rVJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D332123D2B0
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 05:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3271D555;
+	Thu, 19 Jun 2025 05:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750312015; cv=none; b=Mj4mtvXDoWK52bZFSB2KZmZGhbAGYOXlqCiogWzVmZnnZUFgqActtxoerIBi0WjRu9eW3nWmzWQ8Rq5F/tu3aoso1HOO/uPsHiysCHUFL9zOU1PLLWR00Yd80KthWg+AAjDRua0mrPALVAmGyCouibMOfVsF2INm7ljjKcVHeZE=
+	t=1750312089; cv=none; b=oq0JgNzCGIZ/fMUtE8amNhkEGH3zcm3D+SyVDr9ghaNBRCNH5OjIqCnSH1VprF/v/HNLZlx/Kc6PLafUeJFsoF/IvjhHGuMbmJ2NFTspv1k+cfgEw3HE5jfR2ua/ahkYK/juegqkzXiHzun9j4KOIgRf5Iqmf0W2/sQcI6xYyxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750312015; c=relaxed/simple;
-	bh=Bn70nPJu3HUp/M+KYcLviCtpjLHOrJf1pcJLvrjQ/Es=;
+	s=arc-20240116; t=1750312089; c=relaxed/simple;
+	bh=naO5r0xMIhdjbn0oOa+SVmj9KjDZ5worxHK7bSVntUk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c5JKJHBabdYAKTpLJkzETXuZDs4leZxhABQA96jRPTaIkqbj4QmpwzTDITsp4+1DKdfzft7eCFmVqZgsSawYcRyNnghogSSERm1KBfbeORl0jLjLBr5LGZoPpD1csnJqFb+z49SdPV0sOxJTNf5XteTKP1Vw9QXdxZmZnJAoAUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dp3C77lr; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7486ca9d396so238746b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 22:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750312013; x=1750916813; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L1Xvm2/dcHJBRt7NYvlZ+VTR+ErXbR50l14mI16oEhY=;
-        b=Dp3C77lrzqGDO6ludV5D8bL0F7AwlrR8crpDyn/Om1g4MUBSXb13znlJ0KhQRNxPO1
-         iHZvLYLhLoCFNdfPbHP7V913x1P470fwT5vyPQU48GeTAUoGkB+iTGucUdcJKqT5xawq
-         NW316AlnSbmqgDW763um18OX0EuUelEzae+qHfrY6RFeyfjbZkZ5BoAD4YSemNfuudb+
-         owq38O0EgaYHC1bsWj3w+hIwWAR/2vWdmg9LokuwCPgIn9X+SN1fpzBOvFdYlaT7ovIe
-         GDRYIAInDBCxR2jqbrBS84ZGk4DhPb6j81zoQFeL59YtCj135C4gO5D9UbBbpTvGdvvO
-         /hIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750312013; x=1750916813;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L1Xvm2/dcHJBRt7NYvlZ+VTR+ErXbR50l14mI16oEhY=;
-        b=bnGxpsf+D1y9OfJnK9YA6ASIu8V3aPcLUxfXroi9Kkto8Be7OhjaB8G8ltbyhwwYJY
-         EOgU3PngAaM7AePXgjNTrMOVeswliglPiEPqMyjjlq0aDSSmeuEha7JZdvHg+b4VZxRU
-         8g4Ko4gzXvAfNeeAUrsGCWMNTtPDLsXkDLa/nnhOR589yorczSqpsEfO3IHaM/Dj+3EF
-         NjwTKf7dlgjgosDaTIxeUN2TftbElkbBC9Q9FUgnXtaxlJsbpcMcYsaezg0rrJZYbbVO
-         OA5HAmuo6M62LBhbs8NDK8Rsv5m9SF5hfGMUz5jHnrd16fpnZjsmyVDA9EPPTWVx4opR
-         lu8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXjDK1iKUVZKZVXpOSuXd+Ur1zaMno+tgij29wdgVjUBhf/Mp+9j4pFygEFwkZEcSzUV58C7iy/swVx0DA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzstCttHJ2AO7qJcBZxIWNNBr8rWy+kTiF2UV0yJk2fH0zXm35E
-	fZJAklasBF7HwUPno4bzZ6c6SiiFYMe+6NgCO55PH1NylrIh/4pkp4ub6v6h7NcH4EU=
-X-Gm-Gg: ASbGncs4t9j4kn3jC4E7xwefBPiPk9TIXdcVrjeyLknmz93p12NN0ZtcI464+UHShsu
-	ifj9bzG39x2YL5VfE8A6jBwhl/OO5CDPV4j67POik4whZk18rgWkOUmRIVbm3BHjPAo4pg6Itn+
-	n9wEmaWIawLMfESQy58+w4blbWpc4VYHkXDKLxC+eqJ2JEPpN8X2mu2QZBnQUx28GnusOiQpzQm
-	x1VKnIpGT+TY+Mw9XOEjOjODlZtN71Cz2JXWB8mP3yz2che2vn+lZH2EEYpAmBeB1s7S5ZHfJrG
-	3pojdQGqWrUS4qsFmFZXoK77q/aSwjNUv6+H8Zrq9soDOfWGhnCRNtzVL1DFXEk=
-X-Google-Smtp-Source: AGHT+IGx25UdEAzlmqfQKTPAu3rI0FpfbMxJfPd/PkIc3VTClQaEGNZW5YGAM1Nh7zWb+auXSU7+sw==
-X-Received: by 2002:a05:6a00:10d2:b0:748:fd94:e62a with SMTP id d2e1a72fcca58-748fd94edb7mr1182029b3a.1.1750312013191;
-        Wed, 18 Jun 2025 22:46:53 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748e86b5527sm2820713b3a.86.2025.06.18.22.46.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 22:46:52 -0700 (PDT)
-Date: Thu, 19 Jun 2025 11:16:50 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Lifeng Zheng <zhenglifeng1@huawei.com>
-Cc: rafael@kernel.org, robert.moore@intel.com, lenb@kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
-	linuxarm@huawei.com, jonathan.cameron@huawei.com,
-	zhanjie9@hisilicon.com, lihuisong@huawei.com,
-	cenxinghai@h-partners.com, yubowen8@huawei.com
-Subject: Re: [PATCH 0/3] cpufreq: CPPC: Some optimizations for cppc_cpufreq.c.
-Message-ID: <20250619054650.pl5ase2l5juu5pm2@vireshk-i7>
-References: <20250526113057.3086513-1-zhenglifeng1@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QxtyFKOdauKgdqpLWbLmvxuGG6gOxa+SqNfWe2mTDxq9zpJBL4YO8FiO4obmJYPPiUVp135wH5/xxar2Mrh92sZ0byZn9WDG86+D8SwpudeQOGYSEuZHTCxIuU4SSuTORp3sP9qlMhQM9eXAeAGmjJfChkN7b+4I7fxmpK8Nxsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjXP7rVJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DCB9C4CEEA;
+	Thu, 19 Jun 2025 05:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750312088;
+	bh=naO5r0xMIhdjbn0oOa+SVmj9KjDZ5worxHK7bSVntUk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IjXP7rVJ7AZnRuppJyLrpp5E8Fh+t+2oljLVnWBBBSn/d1vR0eGIWRYGA9tuTPZxk
+	 1WjJMU7H0LqXwDq8R0BlorxkYnEHHHlDMoVIzC4TN0b7sC1cULh3G+MWJHwVH7xkz9
+	 tCPMfdyKM5V0i4bvNc7Nmlusq60gK1you1vNrbR0OMNiLtHUI3nfQN0juBAxkHM6/o
+	 ts+aKMfmoW7KUXQXeNQG3kObJpnfs/6SAEy+ZvEIdSUbOESxfPgslyESbzwTawbWW0
+	 0p+BbIlpITQh6XRqByB/6dGMmYRgJ3In9Qc8ufkd7ZoKCLwjJIVuYBHy37Sjo6Og4z
+	 FW+uh64HrHsSA==
+Date: Thu, 19 Jun 2025 08:47:46 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] use vm_flags_t consistently
+Message-ID: <aFOkguMF3QJpr4VA@kernel.org>
+References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,24 +102,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250526113057.3086513-1-zhenglifeng1@huawei.com>
+In-Reply-To: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
 
-On 26-05-25, 19:30, Lifeng Zheng wrote:
-> This patch series makes some minor optimizations for cppc_cpufreq.c to
-> makes codes cleaner.
+On Wed, Jun 18, 2025 at 08:42:51PM +0100, Lorenzo Stoakes wrote:
+> The VMA flags field vma->vm_flags is of type vm_flags_t. Right now this is
+> exactly equivalent to unsigned long, but it should not be assumed to be.
 > 
-> Lifeng Zheng (3):
->   cpufreq: CPPC: Remove cpu_data_list
->   cpufreq: CPPC: Return void in populate_efficiency_class()
->   cpufreq: CPPC: Remove forward declaration of
->     cppc_cpufreq_register_em()
+> Much code that references vma->vm_flags already correctly uses vm_flags_t,
+> but a fairly large chunk of code simply uses unsigned long and assumes that
+> the two are equivalent.
 > 
->  drivers/cpufreq/cppc_cpufreq.c | 59 +++++++++-------------------------
->  include/acpi/cppc_acpi.h       |  1 -
->  2 files changed, 15 insertions(+), 45 deletions(-)
+> This series corrects that and has us use vm_flags_t consistently.
+> 
+> This series is motivated by the desire to, in a future series, adjust
+> vm_flags_t to be a u64 regardless of whether the kernel is 32-bit or 64-bit
+> in order to deal with the VMA flag exhaustion issue and avoid all the
+> various problems that arise from it (being unable to use certain features
+> in 32-bit, being unable to add new flags except for 64-bit, etc.)
+> 
+> This is therefore a critical first step towards that goal. At any rate,
+> using the correct type is of value regardless.
+> 
+> We additionally take the opportunity to refer to VMA flags as vm_flags
+> where possible to make clear what we're referring to.
+> 
+> Overall, this series does not introduce any functional change.
+> 
+> Lorenzo Stoakes (3):
+>   mm: change vm_get_page_prot() to accept vm_flags_t argument
+>   mm: update core kernel code to use vm_flags_t consistently
+>   mm: update architecture and driver code to use vm_flags_t
 
-Applied. Thanks.
+For the series
+
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+ 
+>  arch/arm/mm/fault.c                        |   2 +-
+>  arch/arm64/include/asm/mman.h              |  10 +-
+>  arch/arm64/mm/fault.c                      |   2 +-
+>  arch/arm64/mm/mmap.c                       |   2 +-
+>  arch/arm64/mm/mmu.c                        |   2 +-
+>  arch/powerpc/include/asm/book3s/64/pkeys.h |   3 +-
+>  arch/powerpc/include/asm/mman.h            |   2 +-
+>  arch/powerpc/include/asm/pkeys.h           |   4 +-
+>  arch/powerpc/kvm/book3s_hv_uvmem.c         |   2 +-
+>  arch/sparc/include/asm/mman.h              |   4 +-
+>  arch/sparc/mm/init_64.c                    |   2 +-
+>  arch/x86/kernel/cpu/sgx/encl.c             |   8 +-
+>  arch/x86/kernel/cpu/sgx/encl.h             |   2 +-
+>  arch/x86/mm/pgprot.c                       |   2 +-
+>  fs/exec.c                                  |   2 +-
+>  fs/userfaultfd.c                           |   2 +-
+>  include/linux/coredump.h                   |   2 +-
+>  include/linux/huge_mm.h                    |  12 +-
+>  include/linux/khugepaged.h                 |   4 +-
+>  include/linux/ksm.h                        |   4 +-
+>  include/linux/memfd.h                      |   4 +-
+>  include/linux/mm.h                         |  10 +-
+>  include/linux/mm_types.h                   |   2 +-
+>  include/linux/mman.h                       |   4 +-
+>  include/linux/pgtable.h                    |   2 +-
+>  include/linux/rmap.h                       |   4 +-
+>  include/linux/userfaultfd_k.h              |   4 +-
+>  include/trace/events/fs_dax.h              |   6 +-
+>  mm/debug.c                                 |   2 +-
+>  mm/execmem.c                               |   8 +-
+>  mm/filemap.c                               |   2 +-
+>  mm/gup.c                                   |   2 +-
+>  mm/huge_memory.c                           |   2 +-
+>  mm/hugetlb.c                               |   4 +-
+>  mm/internal.h                              |   4 +-
+>  mm/khugepaged.c                            |   4 +-
+>  mm/ksm.c                                   |   2 +-
+>  mm/madvise.c                               |   4 +-
+>  mm/mapping_dirty_helpers.c                 |   2 +-
+>  mm/memfd.c                                 |   8 +-
+>  mm/memory.c                                |   4 +-
+>  mm/mmap.c                                  |  16 +-
+>  mm/mprotect.c                              |   8 +-
+>  mm/mremap.c                                |   2 +-
+>  mm/nommu.c                                 |  12 +-
+>  mm/rmap.c                                  |   4 +-
+>  mm/shmem.c                                 |   6 +-
+>  mm/userfaultfd.c                           |  14 +-
+>  mm/vma.c                                   |  78 +++---
+>  mm/vma.h                                   |  16 +-
+>  mm/vmscan.c                                |   4 +-
+>  tools/testing/vma/vma.c                    | 266 ++++++++++-----------
+>  tools/testing/vma/vma_internal.h           |  12 +-
+>  53 files changed, 298 insertions(+), 297 deletions(-)
+> 
+> --
+> 2.49.0
 
 -- 
-viresh
+Sincerely yours,
+Mike.
 
