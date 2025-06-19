@@ -1,148 +1,182 @@
-Return-Path: <linux-kernel+bounces-693274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81335ADFD1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:45:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA23ADFD25
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA7543ADE40
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:45:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0DCA3BC3D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B53E242D69;
-	Thu, 19 Jun 2025 05:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51DB244662;
+	Thu, 19 Jun 2025 05:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="SC3gmsLK";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="EA0qTvV8"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ldCsBguG"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DF313C918;
-	Thu, 19 Jun 2025 05:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78674242907;
+	Thu, 19 Jun 2025 05:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750311943; cv=none; b=bxRuZURxfazBxbWHeN5vYVHjxGueYr0vYcPIf4Vx82QmaJ5+27cZ/pT+MS2dPcU3UdGBTduBDN1fohrU4cyUDadDjx5bfI62tptDxMXrf91qsNYgpWTgziDr+ov2vZfulQn36UZt3TlakS5pexTc0qV1en9ZhCNZr4XUQLikUzU=
+	t=1750311966; cv=none; b=YtRnPl0RsWGNISKnGTVPzXysHx2pG/rUj+OpHPOwXghydyjdPUAo/sRRSlK/4UiS3zSNy0N8ggLER7PNmPit22qGq2igi1RpxXhN6CNqie4WH5vd30yiSXqDl6Ns7B43NuwwT1zD6R8u3iu79WLmnTSWPxsIIEwadS9wv5hNPDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750311943; c=relaxed/simple;
-	bh=LykC/4ZBPOzMHeLKUB04c2lnziFde8GRpsGni+7FcUQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=isvUgryjoZKyc4vOFUP9uVI24kOgJIHDVj1ZHZlWDD9bTcQkNi7Oe5ub9bFv7b9Qvo44CrF0spsV1ZTOn9YCQKrMoBfrj1HzshNjGWY4vjm18MGQAYO0BIqb38K3NdIlAiofNZiK8Eod49TxusSmEdNrKolhYuKIUDUTQH4eYFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=SC3gmsLK; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=EA0qTvV8 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1750311966; c=relaxed/simple;
+	bh=iKxpVFHCvmLo55+wb51riJhzDaDVFQPCtKeGf70i6D4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LKegK9popfiEdhDdQl+10Cdq6cTzI6PUPoATN+ugIQfVhEdsMO8a6KJ+b2EEoWxu58qGD+mS2vJ4FbAiqsrRjh2N/wRJGA9qNZ0U3MQWGWRmH5Ihtut/KtWNc6Qw0VhkzmEPChSPff/gYHnOQhNT8cRJdlxXW/gna+FrA/+WvmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ldCsBguG; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ad8a8da2376so53728466b.3;
+        Wed, 18 Jun 2025 22:46:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1750311939; x=1781847939;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TTVupIh3/NLv+xYBDsRvUPwD/5Acjy4PdaTxo3ztWzE=;
-  b=SC3gmsLKDueN/M9IBwJiIWhC9WIj5Mb+gPmbE2L80QL7RBlkM44Y9PLY
-   CHUg9wIqPOC2ksrfvbReUv/lsEWcTWtXswmcIZY+KCMHskXXWg6bskdxs
-   u4oJXebDyrsekqFttNJnGmjnsQBS+c8nWMY4m2BtEnyM2IP91jNNaeBBt
-   TrXSJ3W/8TxudCinAuynFHFoUicerIDenfklQnvZwyDY1omBVfgdlQU44
-   Iyxm9mEaWgq7aSa45K0PMJMLf9NGq2qnpyWjKhThcEG0/gJZ7rKzZEP0p
-   JuHiSP0hOVom1YVpTjSHi3b1AqGz65LdxKTSV+vpL9CH3xC+7jnFNVG0T
-   g==;
-X-CSE-ConnectionGUID: WD3UMgvQRs+EzjKKO2jI5Q==
-X-CSE-MsgGUID: KE/UAAHXQ5mhrNJ2FGrXVw==
-X-IronPort-AV: E=Sophos;i="6.16,247,1744063200"; 
-   d="scan'208";a="44731634"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 19 Jun 2025 07:45:30 +0200
-X-CheckPoint: {6853A3FA-3-569BE4A0-ECC5EE08}
-X-MAIL-CPID: 034B6BD5CF42ADFF2113C74676D88493_3
-X-Control-Analysis: str=0001.0A006378.6853A411.0009,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EE378160EBC;
-	Thu, 19 Jun 2025 07:45:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1750311925;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TTVupIh3/NLv+xYBDsRvUPwD/5Acjy4PdaTxo3ztWzE=;
-	b=EA0qTvV8oKUkp8vUNmNET8RoIKQnfWcJ7ND4g4sdTre5HFh8HpcjS3ujQM6PLu6Ap1neEe
-	KnZuaRTuykMQJyx2rgzo4nuOOLVjaS2ujXq22i1wBOTMNXQdchKVOQFP5uwXXX5vuzJaN/
-	B1LLafpTbxHiLnEnK6+plKU1R9Yu4rrF0PNOkgG+zbKEmI0j+v0HXSprIesp7QHn7s8P1e
-	jzX3SxQ8VvKN4uUPIDd8+wScrB0Fad7Qb7VooDycqFlnuFPozJ7NCxXGu/dpBkgJkov7Lt
-	J4souz3Xnw6AGOe/HbdKOFH7MkasIaJLYmzIiwtRmHw/kFzeX/acFEpa5p2mzA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@ew.tq-group.com,
-	Frank Li <Frank.Li@nxp.com>
-Subject: [PATCH v2 1/1] arm64: dts: tqma8mpql-mba8mpxl-lvds: Rename overlay to include display name
-Date: Thu, 19 Jun 2025 07:45:11 +0200
-Message-ID: <20250619054513.2134620-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+        d=gmail.com; s=20230601; t=1750311963; x=1750916763; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rKAUYboHkuuwUmlAEHIaacn6NB6oYrxQ9WGKRISWuqk=;
+        b=ldCsBguGGGYL9xFE+WEn44bcH4wne2TAf3ezjQ72O9a+PCxHzPch5+D3taV3y6KvCW
+         5eTsofOYthLEM4p6VkJ0xb9QHciuOauxMhkNIrItwhQ/8LGTrJQHYa4AXI1r7lisTuMx
+         idHgHFqP7XR4pguABLYzhgsBaj9HM36cgrG/hU7iDwOZH6Cs6hc1c1cY6rUsHPeUT//8
+         EAbAd1/csOMG34tCATRM6SFoOKR/1xNDCSi1GLKHAk6aOS0zMHCi9enlIXWSXkQC1sXN
+         z3s3qABUeTltAmjABIK5LV3QprwMNLSTmGOmHHuFeureo0mIGK1ygClWsLptj02WR1l5
+         wReQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750311963; x=1750916763;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rKAUYboHkuuwUmlAEHIaacn6NB6oYrxQ9WGKRISWuqk=;
+        b=KZZb4M9yVWsrqsUfefFdJfY+NH2fTPq6JHuZv9jSlsU6iQuq4il4KMFUrG0rsP/sex
+         XLQ/qS3toNln+8+/xZYerr+kGNNtnbRuZS87CatFoipRbkIMrP355OWkqhVWVpgepSJh
+         fMEkdq0u88OUrOEz97pzT/uSJ0EYzxQkCrWXquwVegaLsQOSbNqJLNO1hoPeL6IsaAHC
+         tpFdemRS9LVbgQve+qkzmXdCARWWpk6t/6c0+szSpf2PxoAJS+XR5u/tksBYhnntDhoa
+         S+ZEGzHdjtNFRRk8S8qdiGo1+HWNnffNXTT8IddTe/ebzpqLNrpTJVADRg84U+p+R/Q0
+         b7Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeNKM2YvMjEph/yv4XBXZVX5xO9AZB9tzhZ/X5mM7h4YwMMrqYWRrAUs3z9Feg2w7uIUNAFiZd6iNRqWk=@vger.kernel.org, AJvYcCXUDEzQpcTbSeYrzFdp8bj+iVquo9qFJqGKB0TweRINVsbdilSj11i0OIWliGtnicfPdv+OukwDc9U=@vger.kernel.org, AJvYcCXlXuecJjML8ksF7BWSEPGa9DM8Ojo+h2C3xVHCfDaJDsI9EyvtvHbnB3LMFf0dtq7VvOqK50wt4WoLxf59WpGLgBU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKtc7dq6eiKPcO01KrBYH2DnNqKUgeuKxNn1Bz3/cPvK5ky6TK
+	N1KMNjvnqcMXtXUzV80ignWO/nxKOxeHsqbwOgshXnc/TkN+MDG80eOwKKt99N+1RK2Fi+MnLym
+	2jx81RR4Xbto7wkl3dqe6N4EIs9UKEa4=
+X-Gm-Gg: ASbGncuSMiI7GVs+q3qOl2z0jAQYLM9SZnAewSRYdTmjJJHI4DE7Nm1axbNuPVaWlFk
+	RiC9OHIhUP+ctvcsr7/0k/DyDjD83l49BV8lqUGW2+kVp0r6HWvVY+g9lWN1EqJmc3dCtthTNxw
+	VizP60CKEi85qBvU1Yc33xd0dchp3wuhqdgn6OgV73Kw==
+X-Google-Smtp-Source: AGHT+IHqjpV+nZYSmGvYxmGFNRO50Tri+Llb+PMo2Om+LTMx4zqLyhSevKBPdts3VbuB6zf8mJvTk3wNS+h3GEbuDQI=
+X-Received: by 2002:a17:907:3d8b:b0:ad2:43b6:dd75 with SMTP id
+ a640c23a62f3a-adfad2a1ff8mr1916244766b.10.1750311962730; Wed, 18 Jun 2025
+ 22:46:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <CGME20250618115220eucas1p2b9d37e8cdd1997fa010f51cecdea5e4f@eucas1p2.samsung.com>
+ <20250616163831.8138-3-linux.amoon@gmail.com> <20250618115211.2239335-1-m.majewski2@samsung.com>
+In-Reply-To: <20250618115211.2239335-1-m.majewski2@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Thu, 19 Jun 2025 11:15:44 +0530
+X-Gm-Features: AX0GCFvmk_wGVlRXfnhPM_Q_4DB5diREj6R5zYA0aszITzoiDTH5uE97mHC1m7Y
+Message-ID: <CANAwSgRV=JT+qdAN=M46CZdWaSZnjazdw66fQETw7HeEcLSx8A@mail.gmail.com>
+Subject: Re: [RRC v1 2/3] thermal/drivers/exynos: Handle temperature threshold
+ interrupts and clear corresponding IRQs
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: alim.akhtar@samsung.com, bzolnier@gmail.com, daniel.lezcano@linaro.org, 
+	krzk@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, lukasz.luba@arm.com, rafael@kernel.org, 
+	rui.zhang@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-This platform supports several displays, so rename the overlay to reflect
-the actual display being used. This also aligns the name to the other
-TQMa8M* modules. Apply the same change for MBa8MP-RAS314 as well, as it
-uses the same overlay.
+Hi Mateusz,
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
----
-Changes in v2:
-* Rebase to next-20250618
-* Include MBa8MP-RAS314 as well (uses the same overlay)
-* Fix DT order
+On Wed, 18 Jun 2025 at 17:22, Mateusz Majewski <m.majewski2@samsung.com> wrote:
+>
+> Hello :)
+>
+> > +#define INTSTAT_FALL2        BIT(24)
+> > +#define INTSTAT_FALL1        BIT(20)
+> > +#define INTSTAT_FALL0        BIT(16)
+> > +#define INTSTAT_RISE2        BIT(8)
+> > +#define INTSTAT_RISE1        BIT(4)
+> > +#define INTSTAT_RISE0        BIT(0)
+> > +
+> > +#define INTCLEAR_FALL2       BIT(24)
+> > +#define INTCLEAR_FALL1       BIT(20)
+> > +#define INTCLEAR_FALL0       BIT(16)
+> > +#define INTCLEAR_RISE2       BIT(8)
+> > +#define INTCLEAR_RISE1       BIT(4)
+> > +#define INTCLEAR_RISE0       BIT(0)
+>
+> > +     /* Map INTSTAT bits to INTCLEAR bits */
+> > +     if (val_irq & INTSTAT_FALL2)
+> > +             clearirq |= INTCLEAR_FALL2;
+> > +     else if (val_irq & INTSTAT_FALL1)
+> > +             clearirq |= INTCLEAR_FALL1;
+> > +     else if (val_irq & INTSTAT_FALL0)
+> > +             clearirq |= INTCLEAR_FALL0;
+> > +     else if (val_irq & INTSTAT_RISE2)
+> > +             clearirq |= INTCLEAR_RISE2;
+> > +     else if (val_irq & INTSTAT_RISE1)
+> > +             clearirq |= INTCLEAR_RISE1;
+> > +     else if (val_irq & INTSTAT_RISE0)
+> > +             clearirq |= INTCLEAR_RISE0;
+>
+> This implies that only these 6 bits are used. Is this true for all SoCs
+> supported by this driver? My understanding is that Exynos 5433 in particular
+> uses bits 7:0 for rise interrupts and 23:16 for fall interrupts. When I tested
+> this patch (both alone and the whole series) on 5433 by running some CPU load,
+> the interrupt seemed to not fire consistently:
+> /sys/class/thermal/cooling_device1/cur_state would never go above 1 (which is
+> consistent with the interrupt firing once, not getting cleared and never firing
+> again; without this patch, it consistently went up to 6) and I got a quick
+> reboot every time.
+>
+Thanks for the feedback,
 
- arch/arm64/boot/dts/freescale/Makefile               | 12 ++++++------
- ... imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33.dtso} |  0
- 2 files changed, 6 insertions(+), 6 deletions(-)
- rename arch/arm64/boot/dts/freescale/{imx8mp-tqma8mpql-mba8mpxl-lvds.dtso => imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33.dtso} (100%)
+As per the user manual Exynos4412
+INTSTAT and INTCLEAR have a clear mapping with bits
+falling 20, 16, 12 and rising 8 4 0
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 0b473a23d1200..8403253eadb9f 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -260,16 +260,16 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk-lvds1-imx-lvds-hdmi.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk-mx8-dlvds-lcd1.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk-pcie-ep.dtb
- 
--imx8mp-tqma8mpql-mba8mpxl-lvds-dtbs += imx8mp-tqma8mpql-mba8mpxl.dtb imx8mp-tqma8mpql-mba8mpxl-lvds.dtbo
-+imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33-dtbs += imx8mp-tqma8mpql-mba8mpxl.dtb imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33.dtbo
- imx8mp-tqma8mpql-mba8mpxl-lvds-g133han01-dtbs += imx8mp-tqma8mpql-mba8mpxl.dtb imx8mp-tqma8mpql-mba8mpxl-lvds-g133han01.dtbo
- imx8mp-tqma8mpql-mba8mp-ras314-imx219-dtbs += imx8mp-tqma8mpql-mba8mp-ras314.dtb imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtbo
--imx8mp-tqma8mpql-mba8mp-ras314-lvds-dtbs += imx8mp-tqma8mpql-mba8mp-ras314.dtb imx8mp-tqma8mpql-mba8mpxl-lvds.dtbo
--imx8mp-tqma8mpql-mba8mp-ras314-lvds-imx219-dtbs += imx8mp-tqma8mpql-mba8mp-ras314.dtb imx8mp-tqma8mpql-mba8mpxl-lvds.dtbo imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtbo
--dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mpxl-lvds.dtb
-+imx8mp-tqma8mpql-mba8mp-ras314-lvds-tm070jvhg33-dtbs += imx8mp-tqma8mpql-mba8mp-ras314.dtb imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33.dtbo
-+imx8mp-tqma8mpql-mba8mp-ras314-lvds-tm070jvhg33-imx219-dtbs += imx8mp-tqma8mpql-mba8mp-ras314.dtb imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33.dtbo imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtbo
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mpxl-lvds-g133han01.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtb
--dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314-lvds.dtb
--dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314-lvds-imx219.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314-lvds-tm070jvhg33.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314-lvds-tm070jvhg33-imx219.dtb
- 
- dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk.dtb
- imx8mq-evk-pcie1-ep-dtbs += imx8mq-evk.dtb imx-pcie1-ep.dtbo
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl-lvds.dtso b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33.dtso
-similarity index 100%
-rename from arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl-lvds.dtso
-rename to arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl-lvds-tm070jvhg33.dtso
--- 
-2.43.0
+whereas Exyno5422 has
+INTSTAT and INTCLEAR have a clear mapping with bits
+falling 24, 20, 16, and rising 8 4 0
 
+Yes, it could differ for all the SoCs,
+I don't have the user manual or TRM for these SoCs
+to configure correctly.
+
+I tried to configure this, referring to the comment in the driver
+        /*
+         * Clear the interrupts.  Please note that the documentation for
+         * Exynos3250, Exynos4412, Exynos5250 and Exynos5260 incorrectly
+         * states that INTCLEAR register has a different placing of bits
+         * responsible for FALL IRQs than INTSTAT register.  Exynos5420
+         * and Exynos5440 documentation is correct (Exynos4210 doesn't
+         * support FALL IRQs at all).
+         */
+
+By the way, I don't see Exynos5433 and Exynos7 support
+INTSTAT and INTCLEAR registers. We are using TMU_REG_INTPEND
+ to read and update the same register.
+
+        if (data->soc == SOC_ARCH_EXYNOS5260) {
+                tmu_intstat = EXYNOS5260_TMU_REG_INTSTAT;
+                tmu_intclear = EXYNOS5260_TMU_REG_INTCLEAR;
+        } else if (data->soc == SOC_ARCH_EXYNOS7) {
+                tmu_intstat = EXYNOS7_TMU_REG_INTPEND;
+                tmu_intclear = EXYNOS7_TMU_REG_INTPEND;
+        } else if (data->soc == SOC_ARCH_EXYNOS5433) {
+                tmu_intstat = EXYNOS5433_TMU_REG_INTPEND;
+                tmu_intclear = EXYNOS5433_TMU_REG_INTPEND;
+        } else {
+                tmu_intstat = EXYNOS_TMU_REG_INTSTAT;
+                tmu_intclear = EXYNOS_TMU_REG_INTCLEAR;
+        }
+
+> Thank you,
+> Mateusz Majewski
+Thanks
+Anand
 
