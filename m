@@ -1,131 +1,82 @@
-Return-Path: <linux-kernel+bounces-694304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664A7AE0A8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:34:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF40AE0A88
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 140F0189A005
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:31:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 867231886571
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A22231829;
-	Thu, 19 Jun 2025 15:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F8F12EBE7;
+	Thu, 19 Jun 2025 15:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cX2lXSM7"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DJ7Jr3eg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EFC1F0992;
-	Thu, 19 Jun 2025 15:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134C121FF25;
+	Thu, 19 Jun 2025 15:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750347036; cv=none; b=f9aCYvV+3+rD19uKL/dUi5COdw+2pdE3rfBaJbJohJo8ci4Ri5nszMcwR9wPdqmDPY4stOBTiL0eWPDFa1NbqoR88YHUv5zpOJE3ION6U8/WadALsahfz4nmeAKJLf4R7xfX58Tdd0YUjoD6lqBlS3aojb/eJRd4oibTIEymhuY=
+	t=1750347018; cv=none; b=Z8ioZc8Fk43V34TsCX3+QRMkT+YrDphCS5CdWlfK5Z3FKsIj/N9rphzOWVitnv1uVTBVq3MM5oZWuHNc6kN5DeLrBXga5PKSXcu4vcoj8YwE0UUI1UYgxJUic4TjEgxQlbh3NmMJBM3NWfS5Glkx2nTgfxY1OePQz8OQ7GP9j9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750347036; c=relaxed/simple;
-	bh=0fh6espjLEjaSRFixnAFyJrhMUxNyl6iTTMErQ9uzuM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ibsKTEkkyZWEIMEi9xeYO2ybj2UtKWRHsVEDRbECE/Om3+duTXUGEGpsAhOFK8MYa52F/LKM3XaxUJ2D+MdMDD7URcobv8WSt2dXyst6F8dJZt9cV76pRuvxoGDUtOVdSWJHVKkr0WUvCzgs89xSPdg+5ZZ0GRm1u4/t+vI8RKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cX2lXSM7; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32934448e8bso7274931fa.3;
-        Thu, 19 Jun 2025 08:30:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750347032; x=1750951832; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0fh6espjLEjaSRFixnAFyJrhMUxNyl6iTTMErQ9uzuM=;
-        b=cX2lXSM7aTwSMfMs3W95qDh92hHXDtbZFr3VBD8dKj1LOCPv8Yz52xME0l+6lks53E
-         fDf2Bp2z2VUK3h8RKalSPve7zPBK34axqws6Orc8pPDgCTF7j6CNgwlFIoaPiCnfVPlR
-         U90qWM7lfG9w77imxzmc4Z40TyTbuP6gH33s83slIrtXh1djokNxOG0SxGs9s8MveVG9
-         u3TpY7wRJHh9mJW+bxki07KdEg17WJMFmV7gryEwmTvw8VOCzcsG5Bn1iBKauRYhte3g
-         1oCeDrS5gTw95vUNAr2rGSQLLEWI01DmMLxfUkBRQehcfrLsfRWrIsB6YyZ6BwNTwHUs
-         fUnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750347032; x=1750951832;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0fh6espjLEjaSRFixnAFyJrhMUxNyl6iTTMErQ9uzuM=;
-        b=EVLoXqEhVKjNUZ8mIWpttyUfUgLmkVvVBYS8/tA4fJmQoMIWkiYsITtdqZywDZJn8G
-         JhXoNVy7YuLO3dE9MuuF4CCUF4MX462ngzICDTN+jCD+Ex+UtqZPmxbdKE5K90ZEJZBX
-         HtRII9k1nvU+shdvQ/X9w16jS177GSaNNIMVADo47Qq1wH7CIDieMLEb0knMixwZUG3d
-         yiwTkU9Z/pasjxxkKdNV7VfgLfLFx5qydHj0OF5c5b0IQ9r++VvjpGE5oWa6+6OnhAwg
-         8gHH73qMK5Dz8Jjh4pm9roRVO8vfTzJJ0ePsT1uimyTJ7ykw8LvsCVk7Yx2JKK5HF3IG
-         PRxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWI2eMw1+kDwIBtRdv8aNkRPODiWJO/oTd5puVkOPpqPjb7gs5QqTna7M/tlVKHLFVt4PpRhUy3imYbc//HkQA=@vger.kernel.org, AJvYcCX7f8IoXhXytrtF4Ro3g+gBkAiRPmAGMfvsqk4KteEI5Mt7T22ivhXVCTQgU+FX6AXmGb0DkjScQdruppo=@vger.kernel.org, AJvYcCXbFM2yUnyuhj+GYTZsV5GoU2wFkNj+pIe3ZS5FYnhN5GHQ8ghwDVx0GVDFxbe88kqLV0/AwWJC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7QDT3z1IKECvBaQMpQfOX7HV78ke3H+UL5TBhV7CECS8YccVd
-	5ewNOUZic5SCg3f+LJ5Zj9wCbFOseNBSdc3tfpcGPXrAI01Wf5lgDyA1r1dhabKuaLa/rmDRe7I
-	BaVsNyhxVxalAtQOGaoriI1F6JDC2EzQ=
-X-Gm-Gg: ASbGncsdFyKSe0+/GWF1USEqQI1GMGX4Zud9Frzrt0Re7qkvxTODH/yk4R2VRrOhR2f
-	kqR6wDk9Hi/Vn4MobVPhHzChMs6Cly5KUCV1pgq5Q8OVL2spHBU55wfft/5SSI7Dn1dwzf1zfj0
-	nVm3Iqx9pBgmauQyXQxx5jzMYauHFCXSz8ZBdUAqplJbAZcPqnfNPb4qEtL4ap/HzWpP0PFikLW
-	lM39g==
-X-Google-Smtp-Source: AGHT+IEXr6azp2lqbz2V07vRRqpBRe93raFjyVRuV54TirHOCDGMlRMEsS69LHfBi6gvsXCGK2cP39x7vOem4Owyg5s=
-X-Received: by 2002:a2e:bc09:0:b0:32a:714c:12d1 with SMTP id
- 38308e7fff4ca-32b4a0c589emr78876511fa.1.1750347032146; Thu, 19 Jun 2025
- 08:30:32 -0700 (PDT)
+	s=arc-20240116; t=1750347018; c=relaxed/simple;
+	bh=zRoIT/6nK4xLwX17zgEegbn2IQiNh1JQ18P+Kdl11yM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h5DRdL232ueYwX3WWEIocahnpe5wLY2DmMn+PfZUqN2ujGmzViEC3x6DU9/mMGSd/WOFyCktrIh6R3NidFTQ/tgDkFgXMzt6ZilvmQfTFmfx3ZRtSgsyWw+WvByEJLmBHWKWb+EnTM8MTrltj8QYIHEeno91UQK7IC+wpG5kL9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DJ7Jr3eg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 207EAC4CEEA;
+	Thu, 19 Jun 2025 15:30:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1750347016;
+	bh=zRoIT/6nK4xLwX17zgEegbn2IQiNh1JQ18P+Kdl11yM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DJ7Jr3ego+L3rVVigRC1Xpd6JRdEFKnstpksFWR7lph8M174ob9bb69Wi/eDIB3Ei
+	 xjlPl1uVK1Y2RiOLf3GSNYugdKbw7XVjgGMIpujrG//5ASuYBM7PWcPSuj3GE0MeQD
+	 RdszHntc3szF8iwhR5hDFx1fRdgRqiyz526OTnGI=
+Date: Thu, 19 Jun 2025 17:30:13 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Eric Florin <ericflorin@google.com>
+Cc: teddy.wang@siliconmotion.com, sudipm.mukherjee@gmail.com,
+	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] staging: sm750fb: rename `Bpp` parameter
+Message-ID: <2025061949-estrogen-progeny-5553@gregkh>
+References: <cover.1748365488.git.ericflorin@google.com>
+ <5f9c28d0dc0f48151837f11d5f6e7b82f84978ef.1748365488.git.ericflorin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250611-correct-type-cast-v1-1-06c1cf970727@gmail.com>
- <CAH5fLghomO3znaj14ZSR9FeJSTAtJhLjR=fNdmSQ0MJdO+NfjQ@mail.gmail.com>
- <CAJ-ks9m837aTYsS9Qd8bC0_abE_GT9TZUDZbbPnpyOtgrF9Ehw@mail.gmail.com>
- <20250612.094805.256395171864740471.fujita.tomonori@gmail.com> <CAJ-ks9nXwBMNcZLK1uJB=qJk8KsOF7q8nYZC6qANboxmT8qFFA@mail.gmail.com>
-In-Reply-To: <CAJ-ks9nXwBMNcZLK1uJB=qJk8KsOF7q8nYZC6qANboxmT8qFFA@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 19 Jun 2025 11:29:56 -0400
-X-Gm-Features: AX0GCFsBqf-jctJWEanUNO6z5_EE5XXc7yZHCIBnhnkF2fuMrthooPQ_awMNjdg
-Message-ID: <CAJ-ks9mazp=gSqDEzUuh0eTvj6pBET-z2zz7XQzmu9at=4V03A@mail.gmail.com>
-Subject: Re: [PATCH] rust: cast to the proper type
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: aliceryhl@google.com, tmgross@umich.edu, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	dakr@kernel.org, davem@davemloft.net, andrew@lunn.ch, netdev@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5f9c28d0dc0f48151837f11d5f6e7b82f84978ef.1748365488.git.ericflorin@google.com>
 
-On Wed, Jun 11, 2025 at 8:54=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> On Wed, Jun 11, 2025 at 8:48=E2=80=AFPM FUJITA Tomonori
-> <fujita.tomonori@gmail.com> wrote:
-> >
-> > On Wed, 11 Jun 2025 09:30:46 -0400
-> > Tamir Duberstein <tamird@gmail.com> wrote:
-> >
-> > > On Wed, Jun 11, 2025 at 7:42=E2=80=AFAM Alice Ryhl <aliceryhl@google.=
-com> wrote:
-> > >>
-> > >> On Wed, Jun 11, 2025 at 12:28=E2=80=AFPM Tamir Duberstein <tamird@gm=
-ail.com> wrote:
-> > >> >
-> > >> > Use the ffi type rather than the resolved underlying type.
-> > >> >
-> > >> > Fixes: f20fd5449ada ("rust: core abstractions for network PHY driv=
-ers")
-> > >>
-> > >> Does this need to be backported? If not, I wouldn't include a Fixes =
-tag.
-> > >
-> > > I'm fine with omitting it. I wanted to leave a breadcrumb to the
-> > > commit that introduced the current code.
-> >
-> > I also don't think this tag is necessary because this is not a bug
-> > fix. And since this tag points to the file's initial commit, I don't
-> > think it's particularly useful.
->
-> Would you be OK stripping the tag on apply, or would you like me to send =
-v2?
+On Tue, May 27, 2025 at 10:11:27AM -0700, Eric Florin wrote:
+> Rename `Bpp` to `bpp` in `sm750_hw_copyarea` to conform with kernel
+> style guidelines.
+> 
+> Signed-off-by: Eric Florin <ericflorin@google.com>
+> ---
+>  drivers/staging/sm750fb/sm750_accel.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/staging/sm750fb/sm750_accel.c b/drivers/staging/sm750fb/sm750_accel.c
+> index ea64e10d4814..a34d8f6a033d 100644
+> --- a/drivers/staging/sm750fb/sm750_accel.c
+> +++ b/drivers/staging/sm750fb/sm750_accel.c
+> @@ -138,7 +138,7 @@ int sm750_hw_fillrect(struct lynx_accel *accel,
+>   * @sy: Starting y coordinate of source surface
+>   * @d_base: Address of destination: offset in frame buffer
+>   * @d_pitch: Pitch value of destination surface in BYTE
+> - * @Bpp: Color depth of destination surface
+> + * @bpp: Color depth of destination surface
 
-Hi Tomo, gentle ping here. Does this look reasonable to you, with the
-Fixes tag stripped on apply?
+What does "bpp" mean here?  How about "dest_depth"?
+
 
