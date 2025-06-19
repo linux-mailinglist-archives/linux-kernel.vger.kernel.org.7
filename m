@@ -1,221 +1,168 @@
-Return-Path: <linux-kernel+bounces-693771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171F1AE034D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:18:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 618FEAE0357
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B58AB3B317D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:18:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D09797A1328
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985EE22DFA5;
-	Thu, 19 Jun 2025 11:18:29 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC29227EAB;
+	Thu, 19 Jun 2025 11:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="omQiXrPl"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C4C227E94
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 11:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23D3227BAA
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 11:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750331908; cv=none; b=G+9yC1P3/G2Qr7GGZEFGQiMy8qDr0eYDQo97iXJbZ2JeCE+et+PDPUGm8kf0U4hTMPB2+10IFJcA0Vnvq308ur7JA4ANdjkIhsAJvvUe2k2tBzF+ycKzGwo+hMt3Msm9BWHikhTSCRdDpmYJZS76JbSWEuYXssRdShbxqMy1hC0=
+	t=1750332033; cv=none; b=WSM0R4hbzV6Bvso+H8qzDmomkEKYqGtQ4zDZprEhQ8cp58fnkTxeTYk7E6pWBnFP9tR4iSpUH3b+E1TUVIAnixX6jrmZzWGvfbTTMhW7AEdO2gwkpwIYIyNwXqdC2+Bouoqj6vNKwTtZ/ZiWoL4goT2aXTQM+OyzsL88boIgceU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750331908; c=relaxed/simple;
-	bh=fgTJEWDIgLJEB6L603O2U7ZkCtCfHRU4iXl4rqLtf7I=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kY6jH0xSgmc2L0OMCxUm1GaVx5TaZ5gRshUEhzWAhjwP4txlCOYdGVTVRAuxb2IEquUQAW7/5Ve9S/Q/Qwzns8DY3ogFQvXdNLYz2m+mVnoBTlCtrLpcleBv1TNooKsj/LTfXFap4blSfD3OQ5B8O3lIFuJ1QObxSsq8MqR5IrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-875b64cccd6so110024239f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 04:18:26 -0700 (PDT)
+	s=arc-20240116; t=1750332033; c=relaxed/simple;
+	bh=NZ5ua//HRvEUXqDrATHvprzOWGicDxLR60a8JgIYce8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FhLmQQqj5BUKeqoQEPYj2wHy093m0btVaKBAJpA3iKw2AIt5tgqEBfPHWD0O7P1+sonv+b+9XcnWANLpmOO+dK2XptzKsGI6xTVqa1HNe8eieIvRJ0Ukri1c/5GaRJkrx6uq0cnhHx8IA/Ai0CS56AOnxwte9JTVEYycnAZAFA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=omQiXrPl; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e8275f110c6so564831276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 04:20:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750332031; x=1750936831; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=v/7Q/trZ5SbmALMt3c06DmQkKxihbiVngkXZ1QJXJs8=;
+        b=omQiXrPlr0TGWS9dR27S05Pt+YOLpmtTGoS8NpYhDjrSFgb2SbqxuJe7A5e0EGgT+V
+         n34gBrNfJ3EkzotKF/d8cz/S7Da43KFm3kJxQC268JeAEJtcpJkD0kHznCbEG2Rep1aD
+         juMOin+kiGFI5BCX/sRnybPB1HDZvPp8m3vrQLBkQoZUThMRF4OCT1frQAxjUfVBVXCI
+         Wrr3RYyp2eYdGkM9JQFpeXaO+7ACS0whO2WCfKTacj2LHEZ/s01Pdd7EYXrnngzDrOmy
+         7iyA2vW4CzkxWxWiegx1RVubmkvrkAlqPclp5uQV8zjGI6oqEPnbSFAuJ3OY0pU8bbDp
+         05xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750331906; x=1750936706;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KiuthdvB6IXwhrgylKLALiTm1dCzTP5ssA1/QhUUPak=;
-        b=U2ITJu/EDOPf8SWQNUT6Pbk0IxDx+Mnob2ueP/j8NWDP18gY/qAQaXUFsRympLus62
-         Dynv4qPeoWRadiNogXTiLCLRhHr3CMO6RzTp4zhLLLnS7wUIJSxou6Rn4j81h//zuACh
-         /IAOMPJhfin8Mwqg+S333ahTMl3Yc5dz8Tpe5ya+eyR07qwMxm1cACkKDKUSwGPghd/Z
-         Xiwkwtf+K6QIlhmhW/5aW7C3jkDLCn+X78+OtgcPxb6FUxT4zYM+n2j8cDVre1zBsTy4
-         CrpzRHxyEZQ0U91Ba7BytnH+v/zHorZ3TAIyHbTY065dtdw78ANsjNBjI1vxGuztuJkX
-         EwdA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3stqxWtcHIrJZ++nPcKokY/6KjgndD7ty8yE9x5pu1BA11epsfA0AqiBGodEPttWUQH3x24ycmQfsueI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9rN3guo1P0UfcyfL9S9BoirUnAG8q6oc5V3qe5WftEN67iGzN
-	cEBuTNk6HIxYkEXNkoe8GlZz1XAO+21lepDwJnLcldEfhmTiMR5/j6uewDaZRlXD3mdI8lS3KSz
-	kdSORd0dckClzQXqntyUT0tjE3/bQg2ZpK+0yYLPCwVX79p2reokZwvkQgRE=
-X-Google-Smtp-Source: AGHT+IEa61JNLGpN3VEyfjTxtGovGXJcT4/lyn3TsJ23TplE81GxXtxxFgXam2by9YobAUUY+T+SKI9sAL8m0wTTWWkyNiS/X+kG
+        d=1e100.net; s=20230601; t=1750332031; x=1750936831;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v/7Q/trZ5SbmALMt3c06DmQkKxihbiVngkXZ1QJXJs8=;
+        b=StraiaGoxcG13jT1NnqSKkmaTVSh6eB+cQGJdITVxBv3Ld6eBy+x8swzTevpJU7QJa
+         fFL0WrjMCMh6Hj93oSbzINIFJ8fAfL2N6Yb49Ph/hPdeUcykyYVOpgz2gXmVK6HYd8qA
+         8rVwMfDhv64B+FjxUskEX6eHAzLGstJ8tEcyfvhREvt3ZrayoyLV18kaEv5tK21/xllL
+         NqbKPotCHBZMvH/n2FM319vKiBc+/nQKaQ+n4tCDn9SCZdlTW6r0/d8lM0RF/QXnmzT0
+         xDF7UoY03cHb4tPHfWSP8Ck9aRhAfkhTY5P0h3QpPRaWECMMeT5B2hRpAo2FfHDbWP4y
+         lOpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbxDVo/wFZoxLUEOZDmCjp7z/lelzhf1+smdVvl8SDRSkKN5+TH3bh7t8WojqRT9u70GN39jyXyRHpyXY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX2+qbL87UtIMlYZVIBcbq/dAbbyoqxY1Jrr7hce2mE2xW2B/3
+	cn1pavwg1rxvSjYCx9wKgCN/Rfz7Gpe0loxxKdbcyVBAqoyPwXc6DPZx3/8hoHDhvf/bAKhwHbd
+	LXzBDy47sIw8Ln9F0Xt/89Fb1IZ/rZepHyDU/KzOGjw==
+X-Gm-Gg: ASbGnctMf+1/XT5pmE7hwfG4VuReDdkogUIg1sVAOLZN0meoof1gsbULmmS41fzEQtu
+	091tZonKtPkIQqExs9zjXza2A4ywrkslD3WDXO7luRm7ZpDyWos1buj2q1b6ar2dlAlvz8Optic
+	LjRka5xigJ6Sfe55DxlyTQBpgBlZfq9LXea+WBjGUAskeb
+X-Google-Smtp-Source: AGHT+IGY/qzZki/fMsjjuqz3QT3bNQU2e2XUVD7CMMeyaBLxvbqSsIzzLZ3yi5RD+SHlUmmOxvGIAhjFnpWIBIUm4EQ=
+X-Received: by 2002:a05:6902:2189:b0:e82:b91:a7d7 with SMTP id
+ 3f1490d57ef6-e822ac8e43cmr26709534276.29.1750332030811; Thu, 19 Jun 2025
+ 04:20:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:5e0a:b0:3de:1200:219f with SMTP id
- e9e14a558f8ab-3de12002a2fmr152618775ab.22.1750331906191; Thu, 19 Jun 2025
- 04:18:26 -0700 (PDT)
-Date: Thu, 19 Jun 2025 04:18:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6853f202.a00a0220.137b3.0005.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_trans_update_by_path
-From: syzbot <syzbot+210dfbddd64294066983@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250603152245.1068740-1-Frank.Li@nxp.com>
+In-Reply-To: <20250603152245.1068740-1-Frank.Li@nxp.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 19 Jun 2025 13:19:54 +0200
+X-Gm-Features: AX0GCFt2y5yccN4trdKSkYckbzJZTNRqp_GOOavsdhs8BlNDoJbkpBlOUHNguuE
+Message-ID: <CAPDyKFo1dAkvvrO_xb3fk8pguTspB2OWxcA-zdN+Z1yOkbt4ww@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] dt-bindings: mmc: mxs-mmc: change ref to
+ mmc-controller-common.yaml from mmc-controller.yaml
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, 
+	"open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." <linux-mmc@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, wahrenst@gmx.net
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Tue, 3 Jun 2025 at 17:23, Frank Li <Frank.Li@nxp.com> wrote:
+>
+> Change ref to mmc-controller-common.yaml from mmc-controller.yaml because
+> imx23/imx28 use dual mode controller (spi and mmc). So default dts node
+> name use spi instead of mmc. The legacy reason, it use difference
+> compatible string to distringuish work mode (spi / mmc).
+>
+> Fix below CHECK_DTB warnings:
+> arch/arm/boot/dts/nxp/mxs/imx23-olinuxino.dtb: spi@80010000 (fsl,imx23-mmc): $nodename:0: 'spi@80010000' does not match '^mmc(@.*)?$'
+>
+> Additional add clocks property.
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-syzbot found the following issue on:
+Applied for next, thanks!
 
-HEAD commit:    fb4d33ab452e Merge tag '6.16-rc2-ksmbd-server-fixes' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12eb6d0c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d11f52d3049c3790
-dashboard link: https://syzkaller.appspot.com/bug?extid=210dfbddd64294066983
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-fb4d33ab.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/123054ec64c2/vmlinux-fb4d33ab.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5e5e20b8a324/bzImage-fb4d33ab.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+210dfbddd64294066983@syzkaller.appspotmail.com
-
-bcachefs (loop0): no nodes found for btree extents, continuing
-bcachefs (loop0): btree root inodes unreadable, must recover from scan
-bcachefs (loop0): bch2_get_scanned_nodes(): recovery btree=inodes level=0 POS_MIN - SPOS_MAX
-bcachefs (loop0): bch2_get_scanned_nodes(): recovering u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 7589ab5e0c11cc7a written 24 min_key POS_MIN durability: 1 ptr: 0:38:0 gen 0
-bcachefs (loop0): empty interior btree node at btree=inodes level=1
-  u64s 5 type btree_ptr SPOS_MAX len 0 ver 0, fixing
-bcachefs (loop0): bch2_btree_repair_topology_recurse(): error ECHILD
-bcachefs (loop0): empty btree root inodes
-bcachefs (loop0): btree root subvolumes unreadable, must recover from scan
-bcachefs (loop0): bch2_get_scanned_nodes(): recovery btree=subvolumes level=0 POS_MIN - SPOS_MAX
-bcachefs (loop0): bch2_get_scanned_nodes(): recovering u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq c0bef60d07ceb940 written 16 min_key POS_MIN durability: 1 ptr: 0:35:0 gen 0
- done
-bcachefs (loop0): accounting_read... done
-bcachefs (loop0): alloc_read... done
-bcachefs (loop0): snapshots_read... done
-bcachefs (loop0): check_allocations...
-bcachefs (loop0): bucket 0:26 data type btree ptr gen 0 missing in alloc btree
-  while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq ac62141f8dc7e261 written 24 min_key POS_MIN durability: 1 ptr: 0:26:0 gen 0, fixing
-bcachefs (loop0): bucket 0:41 data type btree ptr gen 0 missing in alloc btree
-  while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 9aa2895aefce4bdf written 24 min_key POS_MIN durability: 1 ptr: 0:41:0 gen 0, fixing
-bcachefs (loop0): bucket 0:35 data type btree ptr gen 0 missing in alloc btree
-  while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq c0bef60d07ceb940 written 16 min_key POS_MIN durability: 1 ptr: 0:35:0 gen 0, fixing
-bcachefs (loop0): bucket 0:1 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:1 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:2 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:2 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:3 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:3 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:4 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:4 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:5 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:5 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:6 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:6 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:7 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:7 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:8 gen 0 has wrong data_type: got free, should be sb, fixing
-bcachefs (loop0): bucket 0:8 gen 0 data type sb has wrong dirty_sectors: got 0, should be 8, fixing
-bcachefs (loop0): bucket 0:9 gen 0 has wrong data_type: got free, should be journal, fixing
-bcachefs (loop0): bucket 0:9 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:10 gen 0 has wrong data_type: got free, should be journal, fixing
-bcachefs (loop0): bucket 0:10 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-bcachefs (loop0): bucket 0:11 gen 0 has wrong data_type: got free, should be journal, fixing
-  Ratelimiting new instances of previous error
-bcachefs (loop0): bucket 0:11 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-  Ratelimiting new instances of previous error
- done
-bcachefs (loop0): going read-write
-bcachefs (loop0): journal_replay...
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/btree_update.c:375!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5324 Comm: syz.0.0 Not tainted 6.16.0-rc2-syzkaller-00082-gfb4d33ab452e #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:bch2_trans_update_by_path+0x1efb/0x1f30 fs/bcachefs/btree_update.c:375
-Code: 80 e1 07 fe c1 38 c1 0f 8c 40 f7 ff ff 48 8b 7c 24 28 e8 88 5e fa fd e9 31 f7 ff ff e8 ce df 96 fd 90 0f 0b e8 c6 df 96 fd 90 <0f> 0b e8 be df 96 fd 90 0f 0b e8 b6 df 96 fd 90 0f 0b e8 ae df 96
-RSP: 0018:ffffc9000d6be9c8 EFLAGS: 00010283
-RAX: ffffffff84297c8a RBX: 0000000000008541 RCX: 0000000000100000
-RDX: ffffc9000e002000 RSI: 00000000000b63ac RDI: 00000000000b63ad
-RBP: 1ffff1100a622002 R08: ffffffff844d525f R09: 0000000000000002
-R10: 0000000000000003 R11: 0000000000000002 R12: 1ffff1100a62205e
-R13: ffff888053110010 R14: 0000000000000088 R15: ffff8880531102f0
-FS:  00007f529748d6c0(0000) GS:ffff88808d251000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fffb9f0fabc CR3: 0000000043ca6000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_trans_update_ip+0x9a6/0x1db0 fs/bcachefs/btree_update.c:531
- bch2_trans_update fs/bcachefs/btree_update.h:123 [inline]
- bch2_journal_replay_key+0x46a/0xb10 fs/bcachefs/recovery.c:311
- bch2_journal_replay+0x1727/0x2620 fs/bcachefs/recovery.c:396
- bch2_run_recovery_pass fs/bcachefs/recovery_passes.c:485 [inline]
- __bch2_run_recovery_passes+0x395/0x1010 fs/bcachefs/recovery_passes.c:540
- bch2_run_recovery_passes+0x184/0x210 fs/bcachefs/recovery_passes.c:611
- bch2_fs_recovery+0x25fd/0x3950 fs/bcachefs/recovery.c:989
- bch2_fs_start+0xa99/0xd90 fs/bcachefs/super.c:1203
- bch2_fs_get_tree+0xb02/0x14f0 fs/bcachefs/fs.c:2489
- vfs_get_tree+0x8f/0x2b0 fs/super.c:1804
- do_new_mount+0x24a/0xa40 fs/namespace.c:3885
- do_mount fs/namespace.c:4222 [inline]
- __do_sys_mount fs/namespace.c:4433 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4410
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f52965900ca
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f529748ce68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f529748cef0 RCX: 00007f52965900ca
-RDX: 00002000000000c0 RSI: 0000200000000080 RDI: 00007f529748ceb0
-RBP: 00002000000000c0 R08: 00007f529748cef0 R09: 0000000000818001
-R10: 0000000000818001 R11: 0000000000000246 R12: 0000200000000080
-R13: 00007f529748ceb0 R14: 00000000000059a7 R15: 0000200000000200
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_trans_update_by_path+0x1efb/0x1f30 fs/bcachefs/btree_update.c:375
-Code: 80 e1 07 fe c1 38 c1 0f 8c 40 f7 ff ff 48 8b 7c 24 28 e8 88 5e fa fd e9 31 f7 ff ff e8 ce df 96 fd 90 0f 0b e8 c6 df 96 fd 90 <0f> 0b e8 be df 96 fd 90 0f 0b e8 b6 df 96 fd 90 0f 0b e8 ae df 96
-RSP: 0018:ffffc9000d6be9c8 EFLAGS: 00010283
-RAX: ffffffff84297c8a RBX: 0000000000008541 RCX: 0000000000100000
-RDX: ffffc9000e002000 RSI: 00000000000b63ac RDI: 00000000000b63ad
-RBP: 1ffff1100a622002 R08: ffffffff844d525f R09: 0000000000000002
-R10: 0000000000000003 R11: 0000000000000002 R12: 1ffff1100a62205e
-R13: ffff888053110010 R14: 0000000000000088 R15: ffff8880531102f0
-FS:  00007f529748d6c0(0000) GS:ffff88808d251000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fffb9f0fabc CR3: 0000000043ca6000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Kind regards
+Uffe
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> ---
+> change in v3
+> - add clocks in example to fix dt_binding_check warnings/errors.
+>
+> change in v2
+> - add clocks to required
+> - fix typo legancy in commit message
+> ---
+>  Documentation/devicetree/bindings/mmc/mxs-mmc.yaml | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/mxs-mmc.yaml b/Documentation/devicetree/bindings/mmc/mxs-mmc.yaml
+> index 32e512a68ed61..df07ea3b81d15 100644
+> --- a/Documentation/devicetree/bindings/mmc/mxs-mmc.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/mxs-mmc.yaml
+> @@ -17,7 +17,7 @@ description: |
+>    and the properties used by the mxsmmc driver.
+>
+>  allOf:
+> -  - $ref: mmc-controller.yaml
+> +  - $ref: mmc-controller-common.yaml#
+>
+>  properties:
+>    compatible:
+> @@ -31,6 +31,9 @@ properties:
+>    interrupts:
+>      maxItems: 1
+>
+> +  clocks:
+> +    maxItems: 1
+> +
+>    dmas:
+>      maxItems: 1
+>
+> @@ -41,6 +44,7 @@ required:
+>    - compatible
+>    - reg
+>    - interrupts
+> +  - clocks
+>    - dmas
+>    - dma-names
+>
+> @@ -52,6 +56,7 @@ examples:
+>          compatible = "fsl,imx28-mmc";
+>          reg = <0x80010000 2000>;
+>          interrupts = <96>;
+> +        clocks = <&clks 46>;
+>          dmas = <&dma_apbh 0>;
+>          dma-names = "rx-tx";
+>          bus-width = <8>;
+> --
+> 2.34.1
+>
 
