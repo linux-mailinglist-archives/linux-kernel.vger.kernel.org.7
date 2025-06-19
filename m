@@ -1,88 +1,97 @@
-Return-Path: <linux-kernel+bounces-694433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5B18AE0C35
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:59:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E8BFAE0C3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF14C1BC326E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:00:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8CCD1BC647C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A6328DF12;
-	Thu, 19 Jun 2025 17:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C233228DF3F;
+	Thu, 19 Jun 2025 18:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="YPRCtOAz"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ttx32cRP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351A319D8BE;
-	Thu, 19 Jun 2025 17:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2885028DF06;
+	Thu, 19 Jun 2025 18:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750355976; cv=none; b=teHOQNO+/8jHSIyJCGAUKEomPgHMu7wzbJDpL7HOruxsldJvfpwrQ+B0PWyHD45/Tdk8viU1RkMURFcdcdHA/8zsr4WPSgaGCPgDkzbuyfQswkVZhpo5PWloa7leJ+sLuLjieSYO3rn1pAt6krZ8d+ysLLTg7/AengpoHdDRvxU=
+	t=1750356036; cv=none; b=urmQxIN/sAtDAI9qmyNeRISHAcK3fvp/GwSHs80a8I0o/ri5QEhI6/Xqusl4J8BphQKcrs5qql/MgMRc7ups0A5mHMXFGXck+IzZefEMM3A2Ece9OsLKZUVwWys6KCSZeA3TCkCl1RDnNAfSSvg5SSxSB6Ilth0FE5Hc+Hh7QFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750355976; c=relaxed/simple;
-	bh=2U/l2PnxLrKImL4dUICzMCLm3l/pMEFrrw1mzZW2ckY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZRfKGfmCzBVwDZ/ig1bnMXrskP287DKxeCgc9Po5y1JzrlIHfiD+H2X9uCOS5rUa0Q2Gw7pQKeakj5iCnVlsN+bYcsCvV5uiiSxhN/uJv8LaxvHgEbVYpzt+nektg6DLeG9HW7mkmtbHD0YekLd8BWQNEmAc+dbrKIYaXFaoMEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=YPRCtOAz; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bNSzk2mVXz9sWQ;
-	Thu, 19 Jun 2025 19:59:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
-	t=1750355970;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q9+ckaoJjURrvPx9FWjFciiooMu/1f1K+tszFhwB17Y=;
-	b=YPRCtOAzbpVrVSksy4oKfgYloaiayN2y7SidmDGheBxq5J3+O7zAfd/jwnKXh8Hye8A4Pt
-	OlwNdjGJLDVeEyW40/L+U1xH9kINSGDkNZlrGP32v2m4gzGb6lpFUm/F4wmHg230S43+VK
-	DOR9XZazVEO1JfsWXIlqlGA+g0TyI0BvZHufa3dNiCWWeQ1DJgfyqoSCdKZzE8PyMBv7X+
-	FaUHdtGV40j7i+gzer2ofDAUOKnXpIHvk7exz9SBXhIH6LZDaKQytt0Dqm2P0TYzZDJErQ
-	7LbiqGzISPh33sfUE5CiJo21vW1ZlF24QhYvJgd/elaenldjUP8ljum+KwKkKw==
-Date: Thu, 19 Jun 2025 23:29:23 +0530
-From: Brahmajit Das <listout@listout.xyz>
-To: Mark Harmstone <mark@harmstone.com>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
-	kees@kernel.org, ailiop@suse.com
-Subject: Re: [PATCH v2] btrfs: replace deprecated strcpy with strscpy
-Message-ID: <rbjjfbhrwh4qjfj4pjhb5zzrvyddjlekfed6kfcrtuurj2ovgg@dm6xesb7nuzm>
-References: <20250619140623.3139-1-listout@listout.xyz>
- <20250619153904.25889-1-listout@listout.xyz>
- <b8945d37-3eb9-4ad6-b3eb-2725dbb008ad@harmstone.com>
+	s=arc-20240116; t=1750356036; c=relaxed/simple;
+	bh=O/sgJ5DMqw0a9oBOr7HHivTt3cG4pRfBAotrHBVimfc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=m0V1qPmVIhSg01tXzJSouJiQk8fppQPaL++ENQOwz6ONBELITD5zM5PqyBhx6rOg0v5N/QRLedt3t7Uz5TDYKrfBrh1qEodAgjmPYi0XMWPix+PKuOr9V3J6k24AQupgWfR98adg5WPYYdYQKRc9/VfnFewGJ8NPQSdI1p/JR74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ttx32cRP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF09EC4CEEA;
+	Thu, 19 Jun 2025 18:00:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750356035;
+	bh=O/sgJ5DMqw0a9oBOr7HHivTt3cG4pRfBAotrHBVimfc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Ttx32cRP3w7osl7k/CwbICP+rJ6OxedwmzrXHrMVPQNXKGagAIDiGvlolCKt49ETF
+	 ZI5OeCU1lN+1H+yvdP0RjirSdK6UituS28Ij4L/Pg+DC5iZI/ihNelpcDkB2bGzH10
+	 g/vQS65u7vgTYZWQKPq0y9l/ewd8nKNbQQHAuKRJZEI7jIPnqajLCGzmY4w74KqF35
+	 P8rcteyOg8DCJ7fF955X7rXzl/UnKrQuDzloOvVj4hYmuLXwRY9KsxNywviwtYtUgx
+	 +k8VRxnkrI3pTyrLDkik0wtt9J36NIQXddVPkYHxt3dVHhrnShMKxDRgQH3UdHxEiq
+	 bSKBIhEwM7OoQ==
+From: Mark Brown <broonie@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ patches@opensource.cirrus.com
+In-Reply-To: <20250618145547.152814-1-rf@opensource.cirrus.com>
+References: <20250618145547.152814-1-rf@opensource.cirrus.com>
+Subject: Re: [PATCH] ASoC: doc: cs35l56: Add CS35L63 to the list of
+ supported devices
+Message-Id: <175035603459.283252.6198544705795058801.b4-ty@kernel.org>
+Date: Thu, 19 Jun 2025 19:00:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b8945d37-3eb9-4ad6-b3eb-2725dbb008ad@harmstone.com>
-X-Rspamd-Queue-Id: 4bNSzk2mVXz9sWQ
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-08c49
 
-On 19.06.2025 18:06, Mark Harmstone wrote:
-> On 19/06/2025 4.39 pm, Brahmajit Das wrote:
-...
+On Wed, 18 Jun 2025 15:55:47 +0100, Richard Fitzgerald wrote:
+> Add CS35L63 to the list of parts supported by the cs35l56 driver and
+> mention the CS35L63 where the text refers to the supported part numbers.
 > 
-> Surely this doesn't compile... strscpy takes three parameters.
 > 
-It does, the third parameter is optional. From include/linux/string.h
 
-#define strscpy(dst, src, ...) \
-	CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
+Applied to
 
-But I'm more than happy to add the third parameter.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
--- 
-Regards,
-listout
+Thanks!
+
+[1/1] ASoC: doc: cs35l56: Add CS35L63 to the list of supported devices
+      commit: 6c5b8895c8cab4fdb496b38513ec417588b58596
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
