@@ -1,35 +1,35 @@
-Return-Path: <linux-kernel+bounces-693396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC3DADFE7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:15:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6DCEADFE79
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D754A3B6DC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:14:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE511745A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E47C24A051;
-	Thu, 19 Jun 2025 07:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF23259CBF;
+	Thu, 19 Jun 2025 07:14:09 +0000 (UTC)
 Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C721248F55
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC912494ED
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750317298; cv=none; b=D2dJwzA7VyIhmxblFXCme1K5NymonybU38k9bSuP2KuZDr4mwY36wdlWfpKvSOmcAECUrFAgzi48DMEqvWEPSoVDtT8Lq2GO306w+QbZd3RC5Yw+gRIJwc+Da10N71F6u04W84vc52yGfTr+3IGjlhZKqbmHpKglUoZ0ThFivYE=
+	t=1750317249; cv=none; b=MJ/DsQefKlX7qxVC7ah8ytQubcJgUryTsWSuBquitJm12CNqg3v8XzjdBd8oKiJTn7xNGWmcQitWlZeAVI2e+ljLowcCVqhzQIARhFnLvE+E7JPqTQzieqBrzoKNyvTRUnUdte75grpm2x94duKkDcg4QgkSQHPXPdikTSVuRNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750317298; c=relaxed/simple;
-	bh=eEFc4F7xE1kxOscj3Caa6fs+2Wwo8rF7+/oxQOwlfMQ=;
+	s=arc-20240116; t=1750317249; c=relaxed/simple;
+	bh=AAgvmBqsd+NvBhudgv7M6iRTFypWRRyxHZ/vPM7pEE8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NngHNJu8Ghww6p9KHGjpNWXch63pq1pYy9n/WdWA340qQyjjCNzZ10Yy5Qrjh+HwlAc+q8fNORNFbujfathd7AvASI+xAdMNylK15w1aT3m34R/bqUO+EpXn2IFUuxhD9XHDdttXFa7/3SMfErXncmC2sgnl7n19/bE9/1PUd6Y=
+	 MIME-Version:Content-Type; b=o6bi/0VAFn55ywatwl3F+uMbNS1eWX75pgW2YBS/631G+7tVjRvEpRBaS+16mQsf3wyHCmJvnTR/TMwKKHTR0HSHU3m4Ww7U9j0SZ01bpOu/bImzqHaB9JdmmGsCquxK392/8F93Rg9zx6o4AYjoyH3YlMOTcXK7N79IJQdu8mY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
 Received: from Jtjnmail201618.home.langchao.com
-        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202506191513513446;
+        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202506191513513460;
         Thu, 19 Jun 2025 15:13:51 +0800
 Received: from localhost.localdomain.com (10.94.7.47) by
  Jtjnmail201618.home.langchao.com (10.100.2.18) with Microsoft SMTP Server
@@ -41,12 +41,13 @@ To: Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
  S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
  Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
 CC: <linux-kernel@vger.kernel.org>, chuguangqing <chuguangqing@inspur.com>
-Subject: [PATCH 0/1] check the ioremap return value first (supplementary CC)
-Date: Thu, 19 Jun 2025 15:11:20 +0800
-Message-ID: <20250619071253.3498-1-chuguangqing@inspur.com>
+Subject: [PATCH 1/1] ixgbe: check the ioremap return value first (supplementary CC)
+Date: Thu, 19 Jun 2025 15:11:21 +0800
+Message-ID: <20250619071253.3498-2-chuguangqing@inspur.com>
 X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250618092544.53696-1-chuguangqing@inspur.com>
+In-Reply-To: <20250619071253.3498-1-chuguangqing@inspur.com>
 References: <20250618092544.53696-1-chuguangqing@inspur.com>
+ <20250619071253.3498-1-chuguangqing@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,14 +64,30 @@ Abuse-Reports-To: service@corp-email.com
 X-Complaints-To: service@corp-email.com
 X-Report-Abuse-To: service@corp-email.com
 
-Always check ioremap() return value  before use.
+We should first check whether the ioremap return value is NULL before using it.
 
-chuguangqing (1):
-  ixgbe: check the ioremap return value first
-
+Signed-off-by: chuguangqing <chuguangqing@inspur.com>
+---
  drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+index 6eccfba51fac..97a49463b09d 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -11431,11 +11431,11 @@ static int ixgbe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	hw->hw_addr = ioremap(pci_resource_start(pdev, 0),
+ 			      pci_resource_len(pdev, 0));
+-	adapter->io_addr = hw->hw_addr;
+ 	if (!hw->hw_addr) {
+ 		err = -EIO;
+ 		goto err_ioremap;
+ 	}
++	adapter->io_addr = hw->hw_addr;
+ 
+ 	/* Setup hw api */
+ 	hw->mac.ops   = *ii->mac_ops;
 -- 
 2.43.5
 
