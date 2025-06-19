@@ -1,151 +1,251 @@
-Return-Path: <linux-kernel+bounces-694333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E831DAE0AF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:01:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F4FAE0B04
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 960514A3403
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:01:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0FDF4A4C21
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C42A28A72D;
-	Thu, 19 Jun 2025 16:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7F928BA85;
+	Thu, 19 Jun 2025 16:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlTbdfTm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eOyYdFE+"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7573085B2;
-	Thu, 19 Jun 2025 16:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0CD1C7009;
+	Thu, 19 Jun 2025 16:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750348862; cv=none; b=koPXd8SztQk6RgZ40pUc4pFfVwbLEwf5TVbGgNH7fnMFN99AMEHk+RCgz4V6rjq9HkaRbLVgUwIFhw08rmJnfnEKtKxz4Z79EsG77SEPVKgGgq55XzRGaVprNCXNnYU2VAYp4vxllRzTFHold/M7zGLcv1Ua7ryUHQbBkTKM904=
+	t=1750348994; cv=none; b=p9s5NESvBzWmmL7QLFZ5YPst4HL3/8WVFzV+NgL4Snx9Mj/M/fgiv9Ewtdj1y3lkaYvYMZB2I4L/EiVdNTdNk1bMDZYEvcMr7ur5wKEZVcQZX1oaw5Gt7XK1QWyH6O4sXAGcXPHC8pt7eXxV2vf+4qzy9gQWxgu3SFxj5n0x814=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750348862; c=relaxed/simple;
-	bh=VezOswhZtjHjhkzkvqMrgVzG9huxnG7ySdnWirVyEYA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g/F+kPJFWVCorjC/cdRUztsMoYQflJtnmXbni0Jk2uhsI2h8I0QjDLh5mIVjkeykBDcswMp9rdOJHVsbf9IsOVBtzjI9pYQlVrEZkty4NiW+/eGEMxpy1BjbFM3c6Gd0C+e6F9gGwSqf8GWmCYDss+KBtTw2bP/JxCo/WdtsBH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlTbdfTm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE2D0C4CEEA;
-	Thu, 19 Jun 2025 16:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750348862;
-	bh=VezOswhZtjHjhkzkvqMrgVzG9huxnG7ySdnWirVyEYA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dlTbdfTmEw8bBM8smCGbXBd5GJlOtiUmfIDuzwtyBpRPkK1t4SGMc32dkf8gxxr6Q
-	 TEY2CGOJL7KDJUcaVlMMHsfIlaJvMt/5zAytMyZYCFQ8ppvkrwI8AoDeOORnEZdDVY
-	 KLRzYIpRSzH6iQwy/4Z/SFnfbTIIMoLW1GHETD3U/8/rdXEq9zHnx81drh399CM8KT
-	 +5fkgtlRPWUE6Xhw1wEHh7NjgUjTUR9qOi02nS/GwzR/b3x1lRKNmttRku5C4wn4yc
-	 hZuqxi/Uw7vrxp+Zh4oNUGgwkPolIAWxY+gZ/uIUJLStWYOvFpbHH8ebOcrxq52Gpv
-	 zBS6iJQPsFmqw==
-Date: Thu, 19 Jun 2025 09:01:00 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- workflows@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: [PATCH v2 3/4] scripts/misc-check: check missing #include
- <linux/export.h> when W=1
-Message-ID: <20250619090100.39e37c5a@kernel.org>
-In-Reply-To: <20250601133230.4085512-3-masahiroy@kernel.org>
-References: <20250601133230.4085512-1-masahiroy@kernel.org>
-	<20250601133230.4085512-3-masahiroy@kernel.org>
+	s=arc-20240116; t=1750348994; c=relaxed/simple;
+	bh=r2M0LA0vpAcF4qHQatVHpNoCHvW8P/+5eAr6zd7qrM4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uO1xfQpKqtidbr/XUgZz1Nk1G6pcDLd4aYeugYNxdhFGuO9dTDEnjPSHkumWS6ES09op1y//yxYXOueT8m8H9dsd70j82Gu21hlvWEBE1UQo+s/k/5y2pE/C0Fr76Ju1Z7e/ac38EU3vow7NzdIhXtDwEP7IqezSeD8xMgzLFDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eOyYdFE+; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e819ebc3144so902575276.0;
+        Thu, 19 Jun 2025 09:03:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750348992; x=1750953792; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+xQTwXxD7lGV9pBuwUJX6vU+Txv9GmZYzEqswfTqdeg=;
+        b=eOyYdFE+kx2eNjvpj1UrPtNV+ZD1m3EW2Qz1G1wJvZCwMX6iJXRUmLixGaQBOTUWJQ
+         a8SXqlgEIt+lQM7RHuPkLHX1A2tzWbQfxI+pbadefNyyvAZr6q32dVaz/V6k1nsB8g6g
+         RFRC1G/vOM423+4DJ1DHmgpHEW5eaKsz61L1ZjnhHBwVaNBi13U7aXvDvJIfNTBMIMBL
+         BbJDX+BPbWN1jB/0FT+SCb4lvNx49+bt4BXXmcJJDQhaflGosR01ZyDEP15zpSSIr4Oo
+         oYAKcgPbf2d9+yJqTNrXvo6HkFg1aDnPU1/vtWQdWhdyLJ2jmUh4F0kiaFxDLBhaoQ6Y
+         1Z7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750348992; x=1750953792;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+xQTwXxD7lGV9pBuwUJX6vU+Txv9GmZYzEqswfTqdeg=;
+        b=eD6vrIWrdScAhmvwbGWbEKFbVJEQ34UKvBZSXENuJZjHznZZjZDw5UPeTuNnbckWgC
+         u7RoxFXgo0niPv2rjFWBIHRvlfUAjCWfzQ0/5Qzk9CGuhDm7Zpxy8F8Rls3O/lgArTnq
+         0Bs7EXakf++ltDot0Q8Y3diTbW1X8flHyUvx994xx/PLV2QMxqzft8lqjEnEYEEW+Mi1
+         Z6UDGxKHz9zrOdKh6WYOaYVk8VKybDFBFg/lab8Atx0SzZUt8TnDoW0RPeSm1dm69ugh
+         ZD5tLblds86ylkDDiGK/hZw5p77EZIGba+Gp4AKyvgVQa1dmIr6LC1A1agjx4CPHO02f
+         5Rpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUb/CxhaozC1VBMHOQDabbtR6cqlpPBV0ApMWchHohNRfl5vKruW4ChtP60ViwW0jxUUv+hfthoypVQfQ==@vger.kernel.org, AJvYcCUlBdJfflX6ssbUaWRm1l9H4oPOW83Mf5ZdzgSztEWwxjdI5MrgOJtlILg7f1Ki02B2ZWB+k1Ck4hOB@vger.kernel.org, AJvYcCVWFJNVU7ZOImX6+hdS1sxRJ124zy09sNZpTHggbk/55qLej8cbaAg1QYONCQuoNipFpSUKJhLc78JUooI=@vger.kernel.org, AJvYcCVeMJhvQJvCzNcwdiY+ERFevSeSUA0p6OZ5uuWVgkjLXPN0EqAZ2e/66rQ9lmdnJ8GlSM6OP2JLJmQVsKRP@vger.kernel.org, AJvYcCVla32yOhG9lNhzCOZReQhbjpnRV2G9fTiVvLwuu0suZ/4jpzAsaDW7oD7gq4kbsL0KXKDHiH7koF7MHwE+p60=@vger.kernel.org, AJvYcCWT45kDoUJnAXdKtCIEu5zcHBNRsf3NXpvWboMMVM4j+CAFKq9YQambgk4d9Dry1RlfvQZHsGzP6lQJ@vger.kernel.org, AJvYcCWfZ4lehX2JoggL2YD9U0HoC/uXWOaSjOoJty3kaCDQBA7mBCg1nKswem4Uxs88tOwSSMrCcwPpIHU=@vger.kernel.org, AJvYcCX91Vv77WQC0JJANBCZBk9xY8pA7U3ie6mWV2JaGey6PyhdLf+BHfz6HGXfYGJ3FG0JKL6kV5MmX2c+@vger.kernel.org, AJvYcCXHxYFLWreprEjqHyDIBbVaKS0K6L+q7h4YgIR2DhH/LGZ4k2q8wCSVxqAiB6kCWSCLM2rQTSdy@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRp2u8n6sh89MJ1jIJ/TSt5dFAyr5aed1iruxvpNwS5EADdn0j
+	538YZuxaZDTGLEF+TKE/u88rVp7ldKDW3MWDdHRyUhAV14Fyf0v10z0mRud8ondNRjzfWZQbRoX
+	MAKDj7K1J2OtE9Fa30qTC/K5gQTT5qV0=
+X-Gm-Gg: ASbGnctxUY9I9+3CsSTNR7/d2HA3qjfCj4Yj9N76csUkOeW3+imic/wARB+a1D88t89
+	QUfvgjPbeHGE70EZEjsPx/hsTcydQ9lXf0Vg2coY0DEO7L8EUGIXjIdRxVGBPsKzBaoMgYFQ9DQ
+	V334S6TZ3NI018ygypsLJEb0he6u3onnqSBNCHrhd6
+X-Google-Smtp-Source: AGHT+IGa7tw70P7sGvwQKMUUHWj3QXVyK3ea1FN2fTq6oMO79eMLCTL0cNzeqaB1CCVADOTXLD7G0IohS8aLb91g6EY=
+X-Received: by 2002:a05:690c:3802:b0:70e:73ce:80de with SMTP id
+ 00721157ae682-7117544de8dmr325019227b3.25.1750348991400; Thu, 19 Jun 2025
+ 09:03:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250604041418.1188792-1-tmyu0@nuvoton.com> <20250604041418.1188792-2-tmyu0@nuvoton.com>
+ <20250612140041.GF381401@google.com> <CAOoeyxVvZiD18qbGd5oUnqLNETKw50fJBjJO3vR50kon_a5_kA@mail.gmail.com>
+ <20250612152313.GP381401@google.com> <CAOoeyxV-E_HQOBu0Pzfy0b0yJ2qbrW_C8pATCTWE4+PXqvHL6g@mail.gmail.com>
+ <20250613131133.GR381401@google.com> <CAOoeyxXftk9QX_REgeQhuXSc9rEguzXkKVKDQdawU=NzGbo9oA@mail.gmail.com>
+ <20250619115345.GL587864@google.com> <CAOoeyxXSTeypv2qQjcK1cSPtjch=gJGYzqoMsLQ-LJZ8Kwgd=w@mail.gmail.com>
+ <20250619152814.GK795775@google.com>
+In-Reply-To: <20250619152814.GK795775@google.com>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Fri, 20 Jun 2025 00:03:01 +0800
+X-Gm-Features: Ac12FXx-P2aFA7c6BIgslF9XvC9taDGEdXQ_V2uefNP8obilfmqlElV_z9tezMQ
+Message-ID: <CAOoeyxU7eQneBuxbBqepta29q_OHPzrkN4SKmj6RX72L3Euw5A@mail.gmail.com>
+Subject: Re: [PATCH v12 1/7] mfd: Add core driver for Nuvoton NCT6694
+To: Lee Jones <lee@kernel.org>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org, 
+	mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Ming Yu <tmyu0@nuvoton.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun,  1 Jun 2025 22:31:29 +0900 Masahiro Yamada wrote:
-> The problem was described in commit 5b20755b7780 ("init: move THIS_MODULE
-> from <linux/export.h> to <linux/init.h>").
-> 
-> To summarize it again here: <linux/export.h> is included by most C files,
-> even though only some of them actually export symbols. This is because
-> some headers, such as include/linux/{module.h,linkage}, needlessly
-> include <linux/export.h>.
-> 
-> I have added a more detailed explanation in the comments of
-> scripts/misc-check.
-> 
-> This problem will be fixed in two steps:
-> 
->  1. Add #include <linux/export.h> to C files that use EXPORT_SYMBOL()
->  2. Remove #include <linux/export.h> from header files that do not use
->     EXPORT_SYMBOL()
-> 
-> This commit addresses step 1; scripts/misc-check will warn about *.[ch]
-> files that use EXPORT_SYMBOL() but do not include <linux/export.h>.
-> This check is only triggered when the kernel is built with W=1.
-> 
-> We need to fix 4000+ files. I hope others will help with this effort.
+Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=8819=E6=97=A5 =E9=
+=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8811:28=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On Thu, 19 Jun 2025, Ming Yu wrote:
+>
+> > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=8819=E6=97=A5=
+ =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=887:53=E5=AF=AB=E9=81=93=EF=BC=9A
+> > >
+> > > On Fri, 13 Jun 2025, Ming Yu wrote:
+> > >
+> > > > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=8813=E6=
+=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=889:11=E5=AF=AB=E9=81=93=EF=BC=9A
+> > > > >
+> > > > > On Fri, 13 Jun 2025, Ming Yu wrote:
+> > > > >
+> > > > > > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=8812=
+=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8811:23=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+> > > > > > >
+> > > > > > > On Thu, 12 Jun 2025, Ming Yu wrote:
+> > > > > > >
+> > > > > > > > Dear Lee,
+> > > > > > > >
+> > > > > > > > Thank you for reviewing,
+> > > > > > > >
+> > > > > > > > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=
+=8812=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8810:00=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+> > > > > > > > >
+> > > > > > > > ...
+> > > > > > > > > > +static const struct mfd_cell nct6694_devs[] =3D {
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 0),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 1),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 2),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 3),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 4),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 5),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 6),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 7),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 8),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 9),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 10)=
+,
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 11)=
+,
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 12)=
+,
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 13)=
+,
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 14)=
+,
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 15)=
+,
+> > > > > > > > > > +
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 0),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 1),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 2),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 3),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 4),
+> > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 5),
+> > > > > > > > >
+> > > > > > > > > Why have we gone back to this silly numbering scheme?
+> > > > > > > > >
+> > > > > > > > > What happened to using IDA in the child driver?
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > In a previous version, I tried to maintain a static IDA in =
+each
+> > > > > > > > sub-driver. However, I didn=E2=80=99t consider the case whe=
+re multiple NCT6694
+> > > > > > > > devices are bound to the same driver =E2=80=94 in that case=
+, the IDs are not
+> > > > > > > > fixed and become unusable for my purpose.
+> > > > > > >
+> > > > > > > Not sure I understand.
+> > > > > > >
+> > > > > >
+> > > > > > As far as I know, if I maintain the IDA in the sub-drivers and =
+use
+> > > > > > multiple MFD_CELL_NAME("nct6694-gpio") entries in the MFD, the =
+first
+> > > > > > NCT6694 device bound to the GPIO driver will receive IDs 0~15.
+> > > > > > However, when a second NCT6694 device is connected to the syste=
+m, it
+> > > > > > will receive IDs 16~31.
+> > > > > > Because of this behavior, I switched back to using platform_dev=
+ice->id.
+> > > > >
+> > > > > Each of the devices will probe once.
+> > > > >
+> > > > > The first one will be given 0, the second will be given 1, etc.
+> > > > >
+> > > > > Why would you give multiple IDs to a single device bound to a dri=
+ver?
+> > > > >
+> > > >
+> > > > The device exposes multiple peripherals =E2=80=94 16 GPIO controlle=
+rs, 6 I2C
+> > > > adapters, 2 CAN FD controllers, and 2 watchdog timers. Each periphe=
+ral
+> > > > is independently addressable, has its own register region, and can
+> > > > operate in isolation. The IDs are used to distinguish between these
+> > > > instances.
+> > > > For example, the GPIO driver will be probed 16 times, allocating 16
+> > > > separate gpio_chip instances to control 8 GPIO lines each.
+> > > >
+> > > > If another device binds to this driver, it is expected to expose
+> > > > peripherals with the same structure and behavior.
+> > >
+> > > I still don't see why having a per-device IDA wouldn't render each
+> > > probed device with its own ID.  Just as you have above.
+> > >
+> >
+> > For example, when the MFD driver and the I2C sub-driver are loaded,
+> > connecting the first NCT6694 USB device to the system results in 6
+> > nct6694-i2c platform devices being created and bound to the
+> > i2c-nct6694 driver. These devices receive IDs 0 through 5 via the IDA.
+> >
+> > However, when a second NCT6694 USB device is connected, its
+> > corresponding nct6694-i2c platform devices receive IDs 6 through 11 =E2=
+=80=94
+> > instead of 0 through 5 as I originally expected.
+> >
+> > If I've misunderstood something, please feel free to correct me. Thank =
+you!
+>
+> In the code above you register 6 I2C devices.  Each device will be
+> assigned a platform ID 0 through 5. The .probe() function in the I2C
+> driver will be executed 6 times.  In each of those calls to .probe(),
+> instead of pre-allocating a contiguous assignment of IDs here, you
+> should be able to use IDA in .probe() to allocate those same device IDs
+> 0 through 5.
+>
+> What am I missing here?
+>
 
-IIUC you made the kernel spew nearly 5000 warnings on every W=1 build
-to "encourage" others to help fix a fairly innocuous problem. 
-I appreciate the work that goes into separating the headers but it's
-hardly urgent enough to force others to scroll thru 5k warnings.
+You're absolutely right in the scenario where a single NCT6694 device
+is present. However, I=E2=80=99m wondering how we should handle the case wh=
+ere
+a second or even third NCT6694 device is bound to the same MFD driver.
+In that situation, the sub-drivers using a static IDA will continue
+allocating increasing IDs, rather than restarting from 0 for each
+device. How should this be handled?
 
-Please LMK if I'm missing some context here, otherwise I think this is
-quite antisocial behavior, and the warnings should go back to W=2 until
-someone actually cares to fix most of them.
+Or am I doing something wrong?
 
-Happy to hear from others.. CC: workflows
 
-> diff --git a/scripts/misc-check b/scripts/misc-check
-> index 21551d721079..edc0e44d96de 100755
-> --- a/scripts/misc-check
-> +++ b/scripts/misc-check
-> @@ -9,4 +9,47 @@ check_tracked_ignored_files () {
->  		sed 's/$/: warning: ignored by one of the .gitignore files/' >&2
->  }
->  
-> +# Check for missing #include <linux/export.h>
-> +#
-> +# The rule for including <linux/export.h> is very simple:
-> +# Include <linux/export.h> only when you use EXPORT_SYMBOL(). That's it.
-> +#
-> +# However, some headers include <linux/export.h> even though they are completely
-> +# unrelated to EXPORT_SYMBOL().
-> +#
-> +# One example is include/linux/module.h. Please note <linux/module.h> and
-> +# <linux/export.h> are orthogonal. <linux/module.h> should be included by files
-> +# that can be compiled as modules. In other words, <linux/module.h> should be
-> +# included by EXPORT_SYMBOL consumers. In contrast, <linux/export.h> should be
-> +# included from EXPORT_SYMBOL providers, which may or may not be modular.
-> +# Hence, include/linux/module.h should *not* include <linux/export.h>.
-> +#
-> +# Another example is include/linux/linkage.h, which is completely unrelated to
-> +# EXPORT_SYMBOL(). Worse, it is included by most C files, which means, most C
-> +# files end up including <linux/export.h>, even though only some of them
-> +# actually export symbols. Hence, include/linux/linkage.h should *not* include
-> +# <linux/export.h>.
-> +#
-> +# Before fixing such headers, we must ensure that C files using EXPORT_SYMBOL()
-> +# include <linux/export.h> directly, since many C files currently rely on
-> +# <linux/export.h> being included indirectly (likely, via <linux/linkage> etc.).
-> +#
-> +# Therefore, this check.
-> +#
-> +# The problem is simple - the warned files use EXPORT_SYMBOL(), but do not
-> +# include <linux/export.h>. Please add #include <linux/export.h> to them.
-> +#
-> +# If the included headers are sorted alphabetically, please insert
-> +# <linux/export.h> in the appropriate position to maintain the sort order.
-> +# For this reason, this script only checks missing <linux/export.h>, but
-> +# does not automatically fix it.
-> +check_missing_include_linux_export_h () {
-> +
-> +	git -C "${srctree:-.}" grep --files-with-matches -E 'EXPORT_SYMBOL((_NS)?(_GPL)?|_GPL_FOR_MODULES)\(.*\)' \
-> +	    -- '*.[ch]' :^tools/ :^include/linux/export.h |
-> +	xargs git -C "${srctree:-.}" grep --files-without-match '#include[[:space:]]*<linux/export\.h>' |
-> +	xargs printf "%s: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing\n" >&2
-> +}
-> +
->  check_tracked_ignored_files
-> +check_missing_include_linux_export_h
-
+Thanks,
+Ming
 
