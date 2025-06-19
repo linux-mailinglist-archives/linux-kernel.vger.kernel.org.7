@@ -1,113 +1,126 @@
-Return-Path: <linux-kernel+bounces-693550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF2EAE0049
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:46:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD8FEAE0046
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 814291782A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4EC919E187C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB8E2686A0;
-	Thu, 19 Jun 2025 08:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377FB266581;
+	Thu, 19 Jun 2025 08:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H15O8R4H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=qmon.net header.i=@qmon.net header.b="KhOTjIus"
+Received: from dane.soverin.net (dane.soverin.net [185.233.34.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA2C2673AA;
-	Thu, 19 Jun 2025 08:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F0F265630;
+	Thu, 19 Jun 2025 08:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.34.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750322743; cv=none; b=jHlGIiqAEqNZq3UXLSlA7cVlQOhokoC6hU0LYH90bsQs3+7cH+DirvorL5+Vmx+OUZHDSly6NpAs/hJiqkux58RoQvGWy9wphGT5MqK5ScARHL7jvKQby9gTk8VdFTO0QIxz62lcFuSZHPNF3JhKQuqwZ7isyyVQywg39FFIlpk=
+	t=1750322731; cv=none; b=r6FtnICMKZ3ij0ppYTVnnBymf+uT72Oca5BrAxNDuB6H4a0HoTlmFTFL33GmftBY/lsFZ0eK/LnM4PlzGuwQo+0Fm3vgdnassEYKZBuhN8DSKTccB1R/OR/YoULvk8nR65Y4lPH+BHridKyHDI/CrDq5WY2mYyWsl+Wimm7S8nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750322743; c=relaxed/simple;
-	bh=ETZAfHfnmnB7/VJHWpx7jZwUc3d27vyxp4OFrpnTGNY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I7kwOKshBNOZCZdnNqiwwFvOnN40XOQ+7VqOShxICflWGSEaBNYsXu+NTeSCBdDUjF9OCRbQbcO/4Y8lpQdPWcJQWk0ftA+0p5Z4GTX6LMRi52oCz5K0k33oIT5nayCmILjsusxjNztw6RrACliZSTaP9f4SzgPOHn/DjIYyggs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H15O8R4H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04606C4CEEA;
-	Thu, 19 Jun 2025 08:45:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750322742;
-	bh=ETZAfHfnmnB7/VJHWpx7jZwUc3d27vyxp4OFrpnTGNY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=H15O8R4HsWsWvzkoB8mcKBdWkY/qdSTohtFHiCM8PljYIRIeAXDgaSSYKs2m+ZB+j
-	 StXkAxdlDws7yJpjXOEml/YZndgtt89Pu2ZfcwbtQZ058umd3G6i+IQki8Grn0YeWt
-	 PgtgBj6zPk4oJDhso3ufO+svvOxiV5OnHdqBl/tlA7oQ7ie8L0TkELhcrX6TfnmCHC
-	 hv0CHgRNceqnZ0JWM1+lDtmLwHol2EikLoEDnPTKC6Fl5qAzzHfcAue7CZxcWCaz4m
-	 APzdkSeOCrYs0AnojcTCvwMvwVtDhh/LgqnEkySxPbrfv7Kcm41rYLc2ndvtyEg99b
-	 8Sl4n1na2QGow==
-From: Christian Brauner <brauner@kernel.org>
-To: Shivank Garg <shivankg@amd.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	seanjc@google.com,
-	vbabka@suse.cz,
-	willy@infradead.org,
-	pbonzini@redhat.com,
-	tabba@google.com,
-	afranji@google.com,
-	ackerleytng@google.com,
-	jack@suse.cz,
-	hch@infradead.org,
-	cgzones@googlemail.com,
-	ira.weiny@intel.com,
-	roypat@amazon.co.uk,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	david@redhat.com,
-	akpm@linux-foundation.org,
-	paul@paul-moore.com,
-	rppt@kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] fs: export anon_inode_make_secure_inode() and fix secretmem LSM bypass
-Date: Thu, 19 Jun 2025 10:45:16 +0200
-Message-ID: <20250619-zerstochen-lamellen-b158317258e6@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250619073136.506022-2-shivankg@amd.com>
-References: <20250619073136.506022-2-shivankg@amd.com>
+	s=arc-20240116; t=1750322731; c=relaxed/simple;
+	bh=XLG2cZcQLhx33DVj14NNeTv+QvUPGw8VQgW7jRag7q4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WFC6CEHXnw5I0q/K/zBTSHDCiGbZWoo/aeWtwQjEQLz71esIIMDDdxYCVixpW4RC8seXJSOW+L2JjsNY4zhgDd4qQzC4/rMUE3yFruGB8OAstfA1OHuFWFMysNPRayyIRjBcGTfjVm5XTUjNo0rQgGnA5s67Zgyyku8gSvkLL6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qmon.net; spf=pass smtp.mailfrom=qmon.net; dkim=pass (2048-bit key) header.d=qmon.net header.i=@qmon.net header.b=KhOTjIus; arc=none smtp.client-ip=185.233.34.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qmon.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qmon.net
+Received: from smtp.soverin.net (unknown [10.10.4.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by dane.soverin.net (Postfix) with ESMTPS id 4bNDhH6KQpz1HSZ;
+	Thu, 19 Jun 2025 08:45:19 +0000 (UTC)
+Received: from smtp.soverin.net (smtp.soverin.net [10.10.4.100]) by soverin.net (Postfix) with ESMTPSA id 4bNDhH2XXSzQ4;
+	Thu, 19 Jun 2025 08:45:19 +0000 (UTC)
+Authentication-Results: smtp.soverin.net;
+	dkim=pass (2048-bit key; unprotected) header.d=qmon.net header.i=@qmon.net header.a=rsa-sha256 header.s=soverin1 header.b=KhOTjIus;
+	dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qmon.net; s=soverin1;
+	t=1750322719;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ErW2j+mManyJQM93IRatKSVT+nS/i3cLFDxhg+A0SH4=;
+	b=KhOTjIus5IhKLEu3NQgD51ii5zQKI2gZ8O/ya1kD4Nt36TT2aqkVZ75BZKwRvFqHg4kwc0
+	jBXNadfybHvHhOuyb4Zl0FAiVBZxPfVpc+zWkcXOhVEuKtTMqeht0ithVDAL0IhiEJLmFW
+	KjvFARXu4XckZfUyvlN4e6B51vIkUm7YwgJtSnxAmfQGX0YmslfqC/m1QQa3GPc9bQ2mbu
+	gQHPPM42yJvKaxkoFozd/cjtAgbfQpAy7sX3TAdteoB0XAKFE4975H85KXR/PHLe8EQ2eq
+	ZNo6YceLirVVsJYKOf5LbNe/jntEjvQoPD3FDGNghgCzvCx6pjhnKARZmvB/+Q==
+X-CM-Analysis: v=2.4 cv=UsCZN/wB c=1 sm=1 tr=0 ts=6853ce1f a=IkcTkHD0fZMA:10 a=Byx-y9mGAAAA:8 a=VwQbUJbxAAAA:8 a=alrKA13-IdtXP1y8yCkA:9 a=QEXdDO2ut3YA:10
+Message-ID: <e938ef54-3ea0-4325-9860-477561af6042@qmon.net>
+Date: Thu, 19 Jun 2025 09:45:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1342; i=brauner@kernel.org; h=from:subject:message-id; bh=ETZAfHfnmnB7/VJHWpx7jZwUc3d27vyxp4OFrpnTGNY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQEn1MTW6W6ZIpV9/31tXHvQuf5/ug5y8eQ7brj/sRl+ wOMqy586yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiIuznDX7Ha3VZdL663Wb3r Fpt8OCWwZqeC3KXIif9P/911OrA/spqRYathwLNXS0VvKOeLfWVemD7j7O5bu40kX2yy2Zn/7QX LCz4A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATH v2] bpftool: Fix memory leak in dump_xx_nlmsg on realloc
+ failure
+To: chenyuan <chenyuan_fl@163.com>, ast@kernel.org, andrii@kernel.org
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ chenyuan <chenyuan@kylinos.cn>
+References: <20250619031037.39068-1-chenyuan_fl@163.com>
+ <20250619065713.65824-1-chenyuan_fl@163.com>
+From: Quentin Monnet <qmo@qmon.net>
+Content-Language: en-GB
+In-Reply-To: <20250619065713.65824-1-chenyuan_fl@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spampanel-Class: ham
 
-On Thu, 19 Jun 2025 07:31:37 +0000, Shivank Garg wrote:
-> Export anon_inode_make_secure_inode() to allow KVM guest_memfd to create
-> anonymous inodes with proper security context. This replaces the current
-> pattern of calling alloc_anon_inode() followed by
-> inode_init_security_anon() for creating security context manually.
+2025-06-19 14:57 UTC+0800 ~ chenyuan <chenyuan_fl@163.com>
+> From: chenyuan <chenyuan@kylinos.cn>
 > 
-> This change also fixes a security regression in secretmem where the
-> S_PRIVATE flag was not cleared after alloc_anon_inode(), causing
-> LSM/SELinux checks to be bypassed for secretmem file descriptors.
+> In function dump_xx_nlmsg(), when realloc() fails to allocate memory,
+> the original pointer to the buffer is overwritten with NULL. This causes
+> a memory leak because the previously allocated buffer becomes unreachable
+> without being freed.
 > 
-> [...]
+> Fix: 7900efc19214 ("tools/bpf: bpftool: improve output format for bpftool net")
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Fixes: 7900efc19214 ("tools/bpf: bpftool: improve output format for bpftool net")
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+(Not "Fix:")
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+> Signed-off-by: chenyuan <chenyuan@kylinos.cn>
+> ---
+>  tools/bpf/bpftool/net.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/bpf/bpftool/net.c b/tools/bpf/bpftool/net.c
+> index 64f958f437b0..1abedfe6f33f 100644
+> --- a/tools/bpf/bpftool/net.c
+> +++ b/tools/bpf/bpftool/net.c
+> @@ -366,17 +366,18 @@ static int dump_link_nlmsg(void *cookie, void *msg, struct nlattr **tb)
+>  {
+>  	struct bpf_netdev_t *netinfo = cookie;
+>  	struct ifinfomsg *ifinfo = msg;
+> +	struct ip_devname_ifindex *tmp;
+>  
+>  	if (netinfo->filter_idx > 0 && netinfo->filter_idx != ifinfo->ifi_index)
+>  		return 0;
+>  
+>  	if (netinfo->used_len == netinfo->array_len) {
+> -		netinfo->devices = realloc(netinfo->devices,
+> -			(netinfo->array_len + 16) *
+> +		tmp = realloc(netinfo->devices, (netinfo->array_len + 16) *
+>  			sizeof(struct ip_devname_ifindex));
 
-[1/1] fs: export anon_inode_make_secure_inode() and fix secretmem LSM bypass
-      https://git.kernel.org/vfs/vfs/c/c696307648ea
+
+Nit: Can you please break the line after the comma rather than after the '*' sign,
+like in dump_class_qdisc_nlmsg()?
+
+Otherwise looks good, thanks for this! You can add my tag for v3:
+
+Reviewed-by: Quentin Monnet <qmo@kernel.org>
 
