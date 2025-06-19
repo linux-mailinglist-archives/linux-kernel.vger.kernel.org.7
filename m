@@ -1,135 +1,184 @@
-Return-Path: <linux-kernel+bounces-694261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A14AE09DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:11:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24CF0AE09CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80A08178327
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:11:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E688A178AD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA7B2356A0;
-	Thu, 19 Jun 2025 15:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF3F288C2C;
+	Thu, 19 Jun 2025 15:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="py/zawz7"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC0ADDAD
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 15:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ou8aj/7h";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QwBgeA2p";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ou8aj/7h";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QwBgeA2p"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EC821D3E4
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 15:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750345785; cv=none; b=uBLuDnw3rHuIRMu9A4xTm+UxAmkuDNHx710zBZzg13b9I+QgnbgdAoLXxxWoCWEu06QDAwf2oFqdyhANdxIu0BAUT/1fdMEyeFJBp2Vn7VgXyLf/t78uFIvRvwCNWRSaSDvNv7Ubbi/yT5p3s0cXuV7bMmyf1V5oe5A8CIeA0Yo=
+	t=1750345711; cv=none; b=dsiA/4cKfMyuNAnjT9EVbZb5xzT/ajoad+ajsMayDcpQm27n5G4alJPhwerFn9MOoaK8UFJMyC5wrXVP8mtYnE6M27cd4dwx454PRUwSmqe1Soxfy1MOrUaY1BsmQoNQQSZJcVKqF7JY7OmErWt/wy14tv7UE6kizoMiPnhee58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750345785; c=relaxed/simple;
-	bh=lCx5xNGrom/G8iFDz5pK63/T9nM9G5Kj32uUckHHDUU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LYKI1bauAst03LEA7smVofAOaHIxcf2d+36hz0Z5YprQPfsPAKCJB4OM+wcS+aM7kDD5OCsHd0FpiXjUqj9CXJ5anwAYbvrF27lmXwt1IZLXmpgPMTVgNfRkIpcTpFQZTmeIz78VBJ08K2aVblxtQUziJbEiOvPPNsePLZv7Vqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=py/zawz7; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=dn
-	I0saL/VnDxGEyhN0bnHVZ0uSc84Fgmk+s6JH/vwuo=; b=py/zawz7Cz6Ky77cGm
-	ZWZW3s0GIz19TnAIgYlLoWTKOhx2Eun0i/arArOM+8Xlmxi/eYDwLwpIOVNFguUD
-	zaukyoxwKXo5Vhfyv1sphdNtizuWyuT3ibeE5xigv0pDZvgeo95NbbKKfdMizHMR
-	t0sjJPZge+0p3mJhNErBkIzNQ=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wAnLZ_dJ1RoTEbnAQ--.28406S4;
-	Thu, 19 Jun 2025 23:08:29 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: harry.yoo@oracle.com,
-	surenb@google.com,
-	cachen@purestorage.com
-Cc: ahuang12@lenovo.com,
-	akpm@linux-foundation.org,
-	bhe@redhat.com,
-	hch@infradead.org,
-	kent.overstreet@linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lkp@intel.com,
-	mjguzik@gmail.com,
-	oe-lkp@lists.linux.dev,
-	oliver.sang@intel.com,
-	urezki@gmail.com
-Subject: Re: Kernel crash due to alloc_tag_top_users() being called when !mem_profiling_support?
-Date: Thu, 19 Jun 2025 23:08:09 +0800
-Message-Id: <20250619150809.69482-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <aFQaY4Bxle8-GT6O@harry>
-References: <aFQaY4Bxle8-GT6O@harry>
+	s=arc-20240116; t=1750345711; c=relaxed/simple;
+	bh=2hA+4Ww9WHgKBd3PAkWYifAGMPeE03To9URJw6OxWh4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XaDwqH3Yt65hOrYV9rTtP4EG852PDpJUysjcNw/YhGzeaPla1pX/w5NGhbGTK6cmOdQJEu+Spt0aOjMgV3CempAO/1S/awqszbTdhwt2fFlY/hvlHXghGCpEaPrDMM5JbAfJFnKfwabCDJqSizsc3PkXm+PIbblCqn2nfKDrE5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ou8aj/7h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QwBgeA2p; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ou8aj/7h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QwBgeA2p; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2103F1F38D;
+	Thu, 19 Jun 2025 15:08:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750345708; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qiUTW8EKY7uMeaNwhNHLl9fk6YHAExHTnlrG63mJjvE=;
+	b=Ou8aj/7hAFdlRW+0kqnCds/mpIiL/61CmacQx9NsZmyybmTUEl3grUJct5zfAWUnQbc62G
+	DFLdVoQv+ySvM0DpgNF4Isa0nhViWKMX/EBuvlWZ0Gz9VOfS5ev2jbtj+cQPMGdfrHCZ8B
+	4bN6DedyLB1cxV3nu5xhF09wJHbJ2vU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750345708;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qiUTW8EKY7uMeaNwhNHLl9fk6YHAExHTnlrG63mJjvE=;
+	b=QwBgeA2pUvtbjwCnKLV8uQTAgW/gxs1i26+nXyMits9vJ6xLwnm6GXfHaKfAaGrEUJ6fUK
+	TU8cN1Tsao+TFLBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750345708; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qiUTW8EKY7uMeaNwhNHLl9fk6YHAExHTnlrG63mJjvE=;
+	b=Ou8aj/7hAFdlRW+0kqnCds/mpIiL/61CmacQx9NsZmyybmTUEl3grUJct5zfAWUnQbc62G
+	DFLdVoQv+ySvM0DpgNF4Isa0nhViWKMX/EBuvlWZ0Gz9VOfS5ev2jbtj+cQPMGdfrHCZ8B
+	4bN6DedyLB1cxV3nu5xhF09wJHbJ2vU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750345708;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qiUTW8EKY7uMeaNwhNHLl9fk6YHAExHTnlrG63mJjvE=;
+	b=QwBgeA2pUvtbjwCnKLV8uQTAgW/gxs1i26+nXyMits9vJ6xLwnm6GXfHaKfAaGrEUJ6fUK
+	TU8cN1Tsao+TFLBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E3E5813721;
+	Thu, 19 Jun 2025 15:08:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BbCZN+snVGjhLQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 19 Jun 2025 15:08:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 70A8DA29FA; Thu, 19 Jun 2025 17:08:27 +0200 (CEST)
+Date: Thu, 19 Jun 2025 17:08:27 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	ojaswin@linux.ibm.com, yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, 
+	yangerkun@huawei.com
+Subject: Re: [PATCH v2 1/6] ext4: move the calculation of wbc->nr_to_write to
+ mpage_folio_done()
+Message-ID: <mvfcwyv5vkmsv52jh2gq4u7vjzqiyfal4pu2yawzunjjqv44vt@qgvepto6vr4j>
+References: <20250611111625.1668035-1-yi.zhang@huaweicloud.com>
+ <20250611111625.1668035-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAnLZ_dJ1RoTEbnAQ--.28406S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Kr4rJr48tF4kZw13ZF4Utwb_yoW8uF47pF
-	WrX34UGFZ8Jry7CFs2gr12vry0ga1UJw15KF4Y9ryF9rnIvF4UWrWrtrWaqFyxuF98K3Za
-	qrsFyFyjk34UZaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U6WlkUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBkBtxqmhUJTFZJAAAsF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611111625.1668035-2-yi.zhang@huaweicloud.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-> On Wed, Jun 18, 2025 at 02:25:37PM +0800, kernel test robot wrote:
-> > 
-> > Hello,
-> > 
-> > for this change, we reported
-> > "[linux-next:master] [lib/test_vmalloc.c]  7fc85b92db: Mem-Info"
-> > in
-> > https://lore.kernel.org/all/202505071555.e757f1e0-lkp@intel.com/
-> > 
-> > at that time, we made some tests with x86_64 config which runs well.
-> > 
-> > now we noticed the commit is in mainline now.
+On Wed 11-06-25 19:16:20, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> (Re-sending due to not Ccing people and the list...)
+> mpage_folio_done() should be a more appropriate place than
+> mpage_submit_folio() for updating the wbc->nr_to_write after we have
+> submitted a fully mapped folio. Preparing to make mpage_submit_folio()
+> allows to submit partially mapped folio that is still under processing.
 > 
-> Hi, I'm facing the same error on my testing environment.
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+
+Indeed. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/ext4/inode.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> I think this is related to memory allocation profiling & code tagging
-> subsystems rather than vmalloc, so let's add related folks to Cc.
-> 
-> After a quick skimming of the code, it seems the condition
-> to trigger this is that on 1) MEM_ALLOC_PROFILING is compiled but
-> 2) not enabled by default. and 3) allocation somehow failed, calling
-> alloc_tag_top_users().
-> 
-> I see "Memory allocation profiling is not supported!" in the dmesg,
-> which means it did not alloc & inititialize alloc_tag_cttype properly,
-> but alloc_tag_top_users() tries to acquire the semaphore.
-> 
-> I think the kernel should not call alloc_tag_top_users() at all (or it
-> should return an error) if mem_profiling_support == false?
-> 
-> Does the following work on your testing environment?
-> 
-> (Only did very light testing on my QEMU, but seems to fix the issue for me.)
-> 
-> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-> index d48b80f3f007..57d4d5673855 100644
-> --- a/lib/alloc_tag.c
-> +++ b/lib/alloc_tag.c
-> @@ -134,7 +134,9 @@ size_t alloc_tag_top_users(struct codetag_bytes *tags, size_t count, bool can_sl
->  	struct codetag_bytes n;
->  	unsigned int i, nr = 0;
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index be9a4cba35fd..3a086fee7989 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -2024,7 +2024,10 @@ int ext4_da_get_block_prep(struct inode *inode, sector_t iblock,
 >  
-> -	if (can_sleep)
-> +	if (!mem_profiling_support)
-> +		return 0;
-> +	else if (can_sleep)
->  		codetag_lock_module_list(alloc_tag_cttype, true);
->  	else if (!codetag_trylock_module_list(alloc_tag_cttype))
->  		return 0;
-
-I think you are correct, this was introduced/exposed by
-commit 780138b1 ("alloc_tag: check mem_profiling_support in alloc_tag_init")
-(Before the commit, the BUG would only be triggered when alloc_tag_init failed)
-
-
-David
-
+>  static void mpage_folio_done(struct mpage_da_data *mpd, struct folio *folio)
+>  {
+> -	mpd->first_page += folio_nr_pages(folio);
+> +	unsigned long nr_pages = folio_nr_pages(folio);
+> +
+> +	mpd->first_page += nr_pages;
+> +	mpd->wbc->nr_to_write -= nr_pages;
+>  	folio_unlock(folio);
+>  }
+>  
+> @@ -2055,8 +2058,6 @@ static int mpage_submit_folio(struct mpage_da_data *mpd, struct folio *folio)
+>  	    !ext4_verity_in_progress(mpd->inode))
+>  		len = size & (len - 1);
+>  	err = ext4_bio_write_folio(&mpd->io_submit, folio, len);
+> -	if (!err)
+> -		mpd->wbc->nr_to_write -= folio_nr_pages(folio);
+>  
+>  	return err;
+>  }
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
