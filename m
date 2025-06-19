@@ -1,258 +1,176 @@
-Return-Path: <linux-kernel+bounces-693162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470C8ADFBCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:16:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B2F2ADFBCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52AE23B481E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 03:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3A067A2909
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 03:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86A4239597;
-	Thu, 19 Jun 2025 03:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04C11C7009;
+	Thu, 19 Jun 2025 03:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ImEKXKQ7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KBDfRifw"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B9018B495;
-	Thu, 19 Jun 2025 03:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06432E545
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 03:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750302971; cv=none; b=saR24W8yD9Pj47JHBeFe1HgKubF4elGOQw0lImOaL6jNEnyo66q8+qzdYgNaTIrhCyrNIHKfaHG42yK3Yrq3eJMnCycPIjikigo9fzwvAfTCP4naqFCKK+bzAAUwg4RETz3Y7r0GtaiM9FoazkEI/OQtfyac0qglJr9tZ3KlUlc=
+	t=1750303119; cv=none; b=DZVEjGPoLMl9LIRUnN3sSlndA8/ToCg9UGW44haZhPSwt921qP0406w9u+DMtw+l/RApUa2jpYKOiUkDDrp4TehQ9HT80ibS9Lc9EUNRLkwBsmsQyxELrfCD07IU98sC+xagkjOnnkuShJePaKua4fy8qSxPNcc2vqGv08UDGTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750302971; c=relaxed/simple;
-	bh=+qKbg3X99aXwFswPHKFL5fUn+HrMm8W2484ukQ9POlc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WCcJhtgAQkVviQJ09csvwKYFjRgbeUOzuKjh+ckfNBLxWPdDSYRogWrQsJLpQj+iuG3SUmtJdREIkyLZH65ldqfh0V/KtQEhZZF/yGZ7Doq6yO/ansBALoEfnGQnp4LjerZGvLJGi+Htvcz7Jfbp7aAbJIpv57MXoYxFfUpk12A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ImEKXKQ7; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750302969; x=1781838969;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+qKbg3X99aXwFswPHKFL5fUn+HrMm8W2484ukQ9POlc=;
-  b=ImEKXKQ7OTPu+85IvBpvOWqqbIOkJAre/WPfhY6loI2tz/vtUbk1AFdP
-   hT2WOQOzoQ0+42lUW5IT6EVdyLk95GyIl4vhD8K4Dl2NNaCLlFmak0rQr
-   RAJCDuHL7IjEJQ0T3A+HpEhKUJh4tXlzmtyToyIh5gQjY1XZkvQbGM+dS
-   gKlG3qqc19yz0cAGxAFDCdqw9p04lPj2Fs3pk2Dgw3UzgrY8iRBsOWA62
-   RWQLveQUFhHTJnukCYoac2it2kkh+PfylYZJUTF4K0mgL4/JLhiSbdo19
-   aZ2n86MX267Xzaca2sru2ZfZsVJbpBy9s0gvoagts94bWsxUKiu70z4C3
-   g==;
-X-CSE-ConnectionGUID: dlgkuAJMSISryoFbfN983Q==
-X-CSE-MsgGUID: MBPjmiQ2RNeovvNZuTysFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52411225"
-X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
-   d="scan'208";a="52411225"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 20:16:07 -0700
-X-CSE-ConnectionGUID: 5Y2Rv39FSX6mr218PWMtYQ==
-X-CSE-MsgGUID: gXYm6CJrSJycghKffG51bg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
-   d="scan'208";a="154345808"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 18 Jun 2025 20:16:04 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uS5kw-000KMi-0a;
-	Thu, 19 Jun 2025 03:16:02 +0000
-Date: Thu, 19 Jun 2025 11:15:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Oliver Mangold <oliver.mangold@pm.me>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Benno Lossin <lossin@kernel.org>,
-	Asahi Lina <lina+kernel@asahilina.net>
-Cc: oe-kbuild-all@lists.linux.dev, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Oliver Mangold <oliver.mangold@pm.me>
-Subject: Re: [PATCH v11 2/4] rust: Split `AlwaysRefCounted` into two traits
-Message-ID: <202506191023.smOZ1Mpy-lkp@intel.com>
-References: <20250618-unique-ref-v11-2-49eadcdc0aa6@pm.me>
+	s=arc-20240116; t=1750303119; c=relaxed/simple;
+	bh=kZ7cHOnajterqVY/s4WF2QOzI3LuVWmPmyznXAf9t4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UH/sYQUeXcYOx03lRdjVZLORG5g1IZd+kFhaG6p4QqeNmlBZwKsMFkJp4tq87BZwRidJFYFUmHq2WEqVXKkQEex+hLFX5sBSpvYJG2Ef+LUHXYEE38zx/mMdByZMzDqsjfWzCT/u5djSi5Qa+aJMchA3g97QO9ayTIM/6vD1uLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KBDfRifw; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-553d771435fso277290e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 20:18:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1750303115; x=1750907915; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h6NkPCHYEoZsUFSw6jIHPSK470nj4uo13JKCT/+imIM=;
+        b=KBDfRifwW8mic1Q4GPRyZOYS/KRUfR/kKnQJhACuaHFCAldDiEw3QiIxFRToZEXpHA
+         1ebEw4+OP+F+QQxGCbZMjBPJy1pw4vp5iCEuKGnY4TwiybCwTi0QYT7fkFH7Zx/5Nqdr
+         n9dT00zbRqm5FLkhvElNX4WK3QAZwKMrJnqRD2QVEqS1BGH2lZvx2fAaMQDj1nX7pHhx
+         GG6R3G9wyc6t81N4wzABqEZ+ML3xooHyk1yDKW2m9/6n/cWaIj48PhkCDzdajMl9wHnN
+         dxJZKoL/JplB8geJ5S1dHK0Xaiisd1h9NqRTWbtGhOBWtbz0/kIQTIE45YLSh0MR1wq0
+         lAjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750303115; x=1750907915;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h6NkPCHYEoZsUFSw6jIHPSK470nj4uo13JKCT/+imIM=;
+        b=PB7d2GQ9Z2csqzvKbltOG+fobZVbpdLfQCbnJ3DBWsAI52nU1jUguFbVnOhrTc3rTK
+         2T3SBIxpYa0RzzfvGgg2MH3zNf7FBtlMfq6adbtMxN2MJdMPJOYzO+6h9p3VvjMBbuc3
+         E0nER8CiPTT0UXRSK+8uOsFrAHKXxBUOLsFpWRgbfIBhn+xYHPBIHUkE76gu/kXfgtMe
+         eB+n8jHV6dnsODijxOEHGtOs99CwDKwOxqgnhNAlTq301JS9btGMABOzSJoh7baZq9S1
+         2ic397Oq1GtF80KT308+9STtMRwyWT3wChnc8T7RkpErQgtgqbY1LNIaITryPf7uzZGn
+         JFVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZDk0H5/eAP84UoLCxrVPDMXEVZ+49rAH4RgBAodIg+p8qA387j5DxdbsHgUkkGn6oZp0FDrBXGrpOKPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzJY1FmhvaKyYW+jWem/KMn69hucd5gZxP3IZ/Thr6Bgsg4lzM
+	2VoLzvmMDzrpAIfKv0XB/C4MFpOu77n5FJvYzo6zB78JFvKFDPjnlul5Ko7qXBDUyLOpimNAxGB
+	vpAnE7MyZN75lMXuHKA6hqGDdf1IdCPdZxjy86SN2XA==
+X-Gm-Gg: ASbGncsZL4jRm1O6FtzRBjyUQ/JHYkIDnpvlQ2seAJBz/XXVVfIa6WBH/o59ex0NrwH
+	SMZbsxszQqBtgsLOULLJ9Ab2m8YtuzY8aYqzAOBwcYunddzI/Ips3jDBQMxANrn68rN+MtND+ei
+	CKvNaH95eF6bzDWOoalFFNbunOugBoYMxPTG4nOkTvq7zSLbx99vm+ZlNFcg==
+X-Google-Smtp-Source: AGHT+IHKjrphxhIm9vilp/aQmrbgmu6S+E/zwZTB7dNpu62I00LyyEn65mgpkmnCNH5/lpGLxjtGUxJxYD0Awk5yviI=
+X-Received: by 2002:a05:6512:10d1:b0:550:e608:410b with SMTP id
+ 2adb3069b0e04-553b6f1a12cmr5542468e87.33.1750303114901; Wed, 18 Jun 2025
+ 20:18:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618-unique-ref-v11-2-49eadcdc0aa6@pm.me>
+References: <20250618070328.2192849-1-hezhongkun.hzk@bytedance.com>
+ <20250618164334.54616cb2d70a1ee3c1f28a81@linux-foundation.org> <p6nr56qg7vx72qvaalrvntzstyrkt7z3fytfux5nd4wlvef462@znymqow5qjsr>
+In-Reply-To: <p6nr56qg7vx72qvaalrvntzstyrkt7z3fytfux5nd4wlvef462@znymqow5qjsr>
+From: Zhongkun He <hezhongkun.hzk@bytedance.com>
+Date: Thu, 19 Jun 2025 11:17:58 +0800
+X-Gm-Features: Ac12FXz628ssSehvnNEODzLupA-PZ9JlsOYBcKOKn58kQjOASv9O20Rq0e79bOg
+Message-ID: <CACSyD1P5ksZHHRZwCr48gDVv9Wt9hXfX9PcXqrd5MpDRJkdzHA@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] mm: rename the oldflags and parameter in memalloc_flags_*()
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, mhocko@suse.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Oliver,
+On Thu, Jun 19, 2025 at 8:07=E2=80=AFAM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> On Wed, Jun 18, 2025 at 04:43:34PM -0700, Andrew Morton wrote:
+> > On Wed, 18 Jun 2025 15:03:28 +0800 Zhongkun He <hezhongkun.hzk@bytedanc=
+e.com> wrote:
+> >
+> > > The variable name oldflags can indeed be misleading, because
+> > > it does not store the complete original value of flags.
+> > > Instead, it records which flags from the given set are not
+> > > currently set. So rename it.
+> > >
+> >
+> > Your email client is mangling the patches in strange ways.  Please send
+> > yourself a patch, figure out why it didn't apply?
+> >
+> > > --- a/include/linux/sched/mm.h
+> > > +++ b/include/linux/sched/mm.h
+> > > @@ -322,21 +322,21 @@ static inline void might_alloc(gfp_t gfp_mask)
+> > >  }
+> > >
+> > >  /**
+> > > - * memalloc_flags_save - Add a PF_* flag to current->flags, save old=
+ value
+> > > + * memalloc_flags_save - Add a PF_* flag to current->flags, return s=
+aved flags mask
+> > >   *
+> > >   * This allows PF_* flags to be conveniently added, irrespective of =
+current
+> > >   * value, and then the old version restored with memalloc_flags_rest=
+ore().
+> > >   */
+> > > -static inline unsigned memalloc_flags_save(unsigned flags)
+> > > +static inline unsigned int memalloc_flags_save(unsigned int flags_ma=
+sk)
+> > >  {
+> > > -   unsigned oldflags =3D ~current->flags & flags;
+> > > -   current->flags |=3D flags;
+> > > -   return oldflags;
+> > > +   unsigned int saved_flags_mask =3D ~current->flags & flags_mask;
+> > > +
+> > > +   current->flags |=3D flags_mask;
+> > > +   return saved_flags_mask;
+> > >  }
+> > >
+> > > -static inline void memalloc_flags_restore(unsigned flags)
+> > > +static inline void memalloc_flags_restore(unsigned int flags_mask)
+> > >  {
+> > > -   current->flags &=3D ~flags;
+> > > +   current->flags &=3D ~flags_mask;
+> > >  }
+> >
+> > I guess so.  Maybe.  A bit.  Kent, what do you think?
+>
+> Eesh, seems like pointless verbosity to me. Maybe don't change it if it
+> doesn't need to be changed?
 
-kernel test robot noticed the following build errors:
+Hi Kent, thanks for your feedback.
+How about this version,  only change the 'old' to 'saved'.
+The function does not return the old current->flags value. Instead,
+it returns the subset of flags that were not previously set in current->fla=
+gs,
+so they can later be cleared by memalloc_flags_restore(). The name savedfla=
+gs
+makes this behavior clearer and avoids confusion.
 
-[auto build test ERROR on e04c78d86a9699d136910cfc0bdcf01087e3267e]
+ /**
+- * memalloc_flags_save - Add a PF_* flag to current->flags, save old value
++ * memalloc_flags_save - Add a PF_* flag to current->flags, return saved f=
+lags
+  *
+  * This allows PF_* flags to be conveniently added, irrespective of curren=
+t
+  * value, and then the old version restored with memalloc_flags_restore().
+  */
+ static inline unsigned memalloc_flags_save(unsigned flags)
+ {
+-       unsigned oldflags =3D ~current->flags & flags;
++       unsigned savedflags =3D ~current->flags & flags;
+        current->flags |=3D flags;
+-       return oldflags;
++       return savedflags;
+ }
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Oliver-Mangold/rust-types-Add-Ownable-Owned-types/20250618-203524
-base:   e04c78d86a9699d136910cfc0bdcf01087e3267e
-patch link:    https://lore.kernel.org/r/20250618-unique-ref-v11-2-49eadcdc0aa6%40pm.me
-patch subject: [PATCH v11 2/4] rust: Split `AlwaysRefCounted` into two traits
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250619/202506191023.smOZ1Mpy-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250619/202506191023.smOZ1Mpy-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506191023.smOZ1Mpy-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   PATH=/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   INFO PATH=/opt/cross/rustc-1.78.0-bindgen-0.65.1/cargo/bin:/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   /usr/bin/timeout -k 100 12h /usr/bin/make KCFLAGS= -Wno-error=return-type -Wreturn-type -funsigned-char -Wundef W=1 --keep-going LLVM=1 -j32 -C source O=/kbuild/obj/consumer/x86_64-rhel-9.4-rust ARCH=x86_64 SHELL=/bin/bash rustfmtcheck
-   make: Entering directory '/kbuild/src/consumer'
-   make[1]: Entering directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
->> Diff in rust/kernel/mm/mmput_async.rs at line 48:
-        }
-    }
-    
-   -
-    // SAFETY: We do not implement `Ownable`, thus it is okay to can obtain an `ARef<MmWithUserAsync>`
-    // from a `&MmWithUserAsync`.
-    unsafe impl AlwaysRefCounted for MmWithUserAsync {}
->> Diff in rust/kernel/mm/mmput_async.rs at line 48:
-        }
-    }
-    
-   -
-    // SAFETY: We do not implement `Ownable`, thus it is okay to can obtain an `ARef<MmWithUserAsync>`
-    // from a `&MmWithUserAsync`.
-    unsafe impl AlwaysRefCounted for MmWithUserAsync {}
->> Diff in rust/kernel/mm/mmput_async.rs at line 48:
-        }
-    }
-    
-   -
-    // SAFETY: We do not implement `Ownable`, thus it is okay to can obtain an `ARef<MmWithUserAsync>`
-    // from a `&MmWithUserAsync`.
-    unsafe impl AlwaysRefCounted for MmWithUserAsync {}
-   make[2]: *** [Makefile:1825: rustfmt] Error 123
-   make[2]: Target 'rustfmtcheck' not remade because of errors.
-   make[1]: Leaving directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
-   make[1]: *** [Makefile:248: __sub-make] Error 2
-   make[1]: Target 'rustfmtcheck' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2
-   make: Target 'rustfmtcheck' not remade because of errors.
-   make: Leaving directory '/kbuild/src/consumer'
---
->> error[E0277]: the trait bound `auxiliary::Device: types::RefCounted` is not satisfied
-   --> rust/kernel/device.rs:329:56
-   |
-   329 |         impl ::core::convert::From<&$device<$src>> for $crate::types::ARef<$device> {
-   |                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `types::RefCounted` is not implemented for `auxiliary::Device`
-   |
-   ::: rust/kernel/auxiliary.rs:250:1
-   |
-   250 | kernel::impl_device_context_into_aref!(Device);
-   | ---------------------------------------------- in this macro invocation
-   |
-   = help: the following other types implement trait `types::RefCounted`:
-   block::mq::request::Request<T>
-   cred::Credential
-   device::Device
-   fs::file::File
-   fs::file::LocalFile
-   mm::mmput_async::MmWithUserAsync
-   mm::Mm
-   mm::MmWithUser
-   and 4 others
-   note: required by a bound in `types::ARef`
-   --> rust/kernel/types.rs:478:20
-   |
-   478 | pub struct ARef<T: RefCounted> {
-   |                    ^^^^^^^^^^ required by this bound in `ARef`
-   = note: this error originates in the macro `::kernel::__impl_device_context_into_aref` which comes from the expansion of the macro `kernel::impl_device_context_into_aref` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0277]: the trait bound `auxiliary::Device: types::RefCounted` is not satisfied
-   --> rust/kernel/auxiliary.rs:253:48
-   |
-   253 | unsafe impl crate::types::AlwaysRefCounted for Device {
-   |                                                ^^^^^^ the trait `types::RefCounted` is not implemented for `auxiliary::Device`
-   |
-   = help: the following other types implement trait `types::RefCounted`:
-   block::mq::request::Request<T>
-   cred::Credential
-   device::Device
-   fs::file::File
-   fs::file::LocalFile
-   mm::mmput_async::MmWithUserAsync
-   mm::Mm
-   mm::MmWithUser
-   and 4 others
-   note: required by a bound in `types::AlwaysRefCounted`
-   --> rust/kernel/types.rs:466:36
-   |
-   466 | pub unsafe trait AlwaysRefCounted: RefCounted {}
-   |                                    ^^^^^^^^^^ required by this bound in `AlwaysRefCounted`
---
->> error[E0277]: the trait bound `auxiliary::Device: types::RefCounted` is not satisfied
-   --> rust/kernel/device.rs:330:45
-   |
-   330 |             fn from(dev: &$device<$src>) -> Self {
-   |                                             ^^^^ the trait `types::RefCounted` is not implemented for `auxiliary::Device`
-   |
-   ::: rust/kernel/auxiliary.rs:250:1
-   |
-   250 | kernel::impl_device_context_into_aref!(Device);
-   | ---------------------------------------------- in this macro invocation
-   |
-   = help: the following other types implement trait `types::RefCounted`:
-   block::mq::request::Request<T>
-   cred::Credential
-   device::Device
-   fs::file::File
-   fs::file::LocalFile
-   mm::mmput_async::MmWithUserAsync
-   mm::Mm
-   mm::MmWithUser
-   and 4 others
-   note: required by a bound in `types::ARef`
-   --> rust/kernel/types.rs:478:20
-   |
-   478 | pub struct ARef<T: RefCounted> {
-   |                    ^^^^^^^^^^ required by this bound in `ARef`
-   = note: this error originates in the macro `::kernel::__impl_device_context_into_aref` which comes from the expansion of the macro `kernel::impl_device_context_into_aref` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0277]: the trait bound `auxiliary::Device: types::RefCounted` is not satisfied
-   --> rust/kernel/device.rs:331:17
-   |
-   331 |                 (&**dev).into()
-   |                 ^^^^^^^^^^^^^^^ the trait `types::RefCounted` is not implemented for `auxiliary::Device`
-   |
-   ::: rust/kernel/auxiliary.rs:250:1
-   |
-   250 | kernel::impl_device_context_into_aref!(Device);
-   | ---------------------------------------------- in this macro invocation
-   |
-   = help: the following other types implement trait `types::RefCounted`:
-   block::mq::request::Request<T>
-   cred::Credential
-   device::Device
-   fs::file::File
-   fs::file::LocalFile
-   mm::mmput_async::MmWithUserAsync
-   mm::Mm
-   mm::MmWithUser
-   and 4 others
-   note: required by a bound in `types::ARef`
-   --> rust/kernel/types.rs:478:20
-   |
-   478 | pub struct ARef<T: RefCounted> {
-   |                    ^^^^^^^^^^ required by this bound in `ARef`
-   = note: this error originates in the macro `::kernel::__impl_device_context_into_aref` which comes from the expansion of the macro `kernel::impl_device_context_into_aref` (in Nightly builds, run with -Z macro-backtrace for more info)
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Zhongkun
 
