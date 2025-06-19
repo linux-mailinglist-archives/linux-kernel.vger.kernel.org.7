@@ -1,101 +1,116 @@
-Return-Path: <linux-kernel+bounces-694722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D2BAE0FF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:20:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A3CAE0FFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54EE75A00BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:19:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 451627AE998
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB41B25F98E;
-	Thu, 19 Jun 2025 23:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3252980A1;
+	Thu, 19 Jun 2025 23:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Wwk4E4C2"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DIfz47al"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B75D28DF2B
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 23:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B0F2111;
+	Thu, 19 Jun 2025 23:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750375184; cv=none; b=HsLr92JSRj7Tmb/W68tKaHx222I0ADU+2Chn0m0TN1m/gpUMefmJgn7LShGfdLTOma99f875fY2RzA5aCYOvA7umOzYZu8qsEKSDiKdAMTXCVyRRJN1q2vth1b90M2JHqu5tAkkZK/umuLmUt6+TzrPPUepvHqtN8SKaIH/ukio=
+	t=1750375201; cv=none; b=h1vbLa8yyrgVudMTGcp58IekyAZfajO91sHl+Qtd4YgR/wtTJpw3LwUnRrdYPTL9DXGFFRm+34vDhqaKQqgdVCTtT7FUmah5q5WxRM1V2iML1Mh6mzIVxpZikoVMtT113idYDHMAOFYFmWHBAMfWmZDlqios/ToQpAC3jgO3+6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750375184; c=relaxed/simple;
-	bh=qkF4P7fPLySORTd7l5qaEb+29XEJDlsACaybE1ReOoU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tGmlU4O0wr6Jvc3EjeTykEZOxvT3rLjSBlFUKXUuuV3RlWl+YflxgjP4XRcK+RPncSedOliYkgArzfQTVCfTFzCD+n+eLosqpQ1bAKyjvXUN6IcjfyReX/p+N/lipRkvB9GZDtI66UO/ogW3lYAR9pKtb48IKGBQ79Qv4KsZGUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Wwk4E4C2; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <5a69ba82-813e-4f6f-9f62-7d68a9c74197@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750375164;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jWjprf8y6cAF4Vs6ys1NyVQMZL58pnQZ4Y/NPoHcBJ8=;
-	b=Wwk4E4C2IvGBD9QrcvoNNDOOLPT/KnHLPLgEpFIN6dxZdSEIArJKhd7PM+PP/qFm/SlN+u
-	jw5wupAx8JwpsMMEIxQcZM06V1qD4gLm3l4wJFS8WgWF4Y8HSplK7e2yE3KKMCwT80CaW7
-	x+rlS2wEUJ6DeykVAgqnr+tK0VIFYfA=
-Date: Thu, 19 Jun 2025 19:19:15 -0400
+	s=arc-20240116; t=1750375201; c=relaxed/simple;
+	bh=j8lHpLt7QIx12mDapL4H8Ev9FToLw7SXkTFbGuqECMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z29YkMiK+yr4pOVla84p+AcReYzSpHmnMyohD/T5vlJTTi7w9vNYpEUi32ZSvTJ0so95DbnppR3E7An7p5OHQONLprpn+8mMI/Axa5ie085/zDPUxB9Phtcn8AgBJ7q/UDA8GDKATGGRzw6zW245GDRTQ6fUKI6++TKhxAtvGfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DIfz47al; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750375199; x=1781911199;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=j8lHpLt7QIx12mDapL4H8Ev9FToLw7SXkTFbGuqECMk=;
+  b=DIfz47alhUhI4OJVw1FaJ1TZQXo6FXOosJndC98gpaiMSHUttAX1mQxH
+   C1SVjHFLF7vLNLe7nCjo086qfPFsZOGTqQ3JJdovc4kjTsMojbcRYtzok
+   F52edTqiZ0AdqnvDrI0tiwlbn9AyjhlrJVkkaZftrZrB99dTdwqygdE0S
+   YNx/Eo1C2TCIoXtdKNZULeByPtw2YigxhiKqHNA9OVeM8cWOvrEW+VnOi
+   e2G1MfH+RPmQyjWk7ZWO7nqw752M2O+UGVvtnhj0d5GmOyxnecGlPu/pm
+   nd8vr/90714GvV+UTDfVN43cfRy9WKsjXJ1ChDJXZHdDyaOmOV1OCcktK
+   Q==;
+X-CSE-ConnectionGUID: MGR5adWiREm0rEf1qMIqkw==
+X-CSE-MsgGUID: VawCR+3HSga6y7JhdHVgxQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="62896523"
+X-IronPort-AV: E=Sophos;i="6.16,249,1744095600"; 
+   d="scan'208";a="62896523"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 16:19:58 -0700
+X-CSE-ConnectionGUID: c92D4XivSke6aYKOKXOHig==
+X-CSE-MsgGUID: D4Iv79z1TQKDH2Bpi0fy4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,249,1744095600"; 
+   d="scan'208";a="156559224"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 19 Jun 2025 16:19:56 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uSOXy-000LAQ-00;
+	Thu, 19 Jun 2025 23:19:54 +0000
+Date: Fri, 20 Jun 2025 07:19:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sayali Lokhande <quic_sayalil@quicinc.com>, andersson@kernel.org,
+	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 1/2] arm64: dts: qcom: Add eMMC support for qcs8300
+Message-ID: <202506200608.fGUpDcoG-lkp@intel.com>
+References: <20250619070224.23428-2-quic_sayalil@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net 4/4] net: axienet: Split into MAC and MDIO drivers
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Michal Simek <michal.simek@amd.com>, Saravana Kannan <saravanak@google.com>,
- Leon Romanovsky <leon@kernel.org>, Dave Ertman <david.m.ertman@intel.com>,
- linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
- linux-arm-kernel@lists.infradead.org
-References: <20250619200537.260017-1-sean.anderson@linux.dev>
- <20250619200537.260017-5-sean.anderson@linux.dev>
- <20250619161030.6f14def9@kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20250619161030.6f14def9@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250619070224.23428-2-quic_sayalil@quicinc.com>
 
-On 6/19/25 19:10, Jakub Kicinski wrote:
-> On Thu, 19 Jun 2025 16:05:37 -0400 Sean Anderson wrote:
->> Returning EPROBE_DEFER after probing a bus may result in an infinite
->> probe loop if the EPROBE_DEFER error is never resolved. For example, if
->> the PCS is located on another MDIO bus and that MDIO bus is missing its
->> driver then we will always return EPROBE_DEFER. But if there are any
->> devices on our own MDIO bus (such as PHYs), those devices will be
->> successfully bound before we fail our own probe. This will cause the
->> deferred probing infrastructure to continuously try to probe our device.
->> 
->> To prevent this, split the MAC and MDIO functionality into separate
->> auxiliary devices. These can then be re-probed independently.
-> 
-> There's a, pardon the expression, C++-like build failure here
-> culminating in:
-> 
-> drivers/net/ethernet/xilinx/xilinx_axienet_main.c:3225:1: error: redefinition of '__exittest'
-> drivers/net/ethernet/xilinx/xilinx_axienet_main.c:3225:1: error: redefinition of '__inittest'
-> drivers/net/ethernet/xilinx/xilinx_axienet_main.c:3225:1: error: redefinition of 'init_module'
-> drivers/net/ethernet/xilinx/xilinx_axienet_main.c:3225:1: error: redefinition of 'cleanup_module'
-> 
-> I'm guessing the existing module_platform_driver() and the new
-> module_auxiliary_driver() don't want to be friends when this 
-> code is built as a module?
+Hi Sayali,
 
-Hm, I thought I had built this as a module. I guess not. Will fix.
+kernel test robot noticed the following build errors:
 
---Sean
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on linus/master v6.16-rc2 next-20250619]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Sayali-Lokhande/arm64-dts-qcom-Add-eMMC-support-for-qcs8300/20250619-150421
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250619070224.23428-2-quic_sayalil%40quicinc.com
+patch subject: [PATCH V2 1/2] arm64: dts: qcom: Add eMMC support for qcs8300
+config: arm64-randconfig-053-20250619 (https://download.01.org/0day-ci/archive/20250620/202506200608.fGUpDcoG-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.3.0
+dtschema version: 2025.3.dev28+g49451a5
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250620/202506200608.fGUpDcoG-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506200608.fGUpDcoG-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> Error: arch/arm64/boot/dts/qcom/qcs8300.dtsi:3867.19-20 syntax error
+   FATAL ERROR: Unable to parse input tree
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
