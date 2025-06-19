@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-694356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F09AE0B56
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:26:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B3D0AE0B59
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90CAE166677
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:26:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F08A61BC727E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B64128BA83;
-	Thu, 19 Jun 2025 16:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D471A28C000;
+	Thu, 19 Jun 2025 16:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KuGVlmFY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJEkvDDr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA87422B590;
-	Thu, 19 Jun 2025 16:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351B63085B2;
+	Thu, 19 Jun 2025 16:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750350372; cv=none; b=kh3Oac4BYkuLDc7rLCycTJTe1lyUE8KtWHytQW88gfwP+3iS46ie+gQ9nky1Bp40/NNHt/2mnTGDQD5dbjvYNEhH2dfMHddWiJLs7gOzzHhZCkbdv7NynVXfv2XiOIJoXFalzD+yl4xd7cwU44a0lHfdqF1X+xvhW1BNhyH4s6Q=
+	t=1750350443; cv=none; b=RIhp0MR3p2/qTLViOCRxWwAUYUL6+EuY3cMJ2yAW3WJnKk+U2xKhI36Jv8Wob9uTBGULY+NemvV/KDiDS1UBVA9zZrkIkoCma06t+SJI2nkjxs42ejDo6NspEJq4hkPAM6sFZk5UorOq3WF8S38szPKKO/hQD3YlTzhORJixoj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750350372; c=relaxed/simple;
-	bh=2JYAwQJ/PUM7koPPsRke3N147Ydx6y3F32T6RAk7wCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fxJpNClij/Jl9mmXH8oMy+YrApn5XyNJftgb3QVoZzeF0HiT80KCRvg3h2UYFpQqWAq37XVKvB4UAxiMswedh35/T3UIPTiqpoo0rRWuxx1Nx4TnPaVOKWVrw9Q8uxEjbKaKqH+iA8XO724n8yb1Qs/x/H/3/blfhQ7esAK3a2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KuGVlmFY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B395C4CEEA;
-	Thu, 19 Jun 2025 16:26:12 +0000 (UTC)
+	s=arc-20240116; t=1750350443; c=relaxed/simple;
+	bh=ut7sBnFRrF7Mqh47DfQbuG68oA6w2Zz7sw0xx8b8S6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VnWSQqLk18jJ7qSCMaaiB09q4D7ARe7X9lmQRNb0U6cLl5yuDoaX44NBwLeWllXDk26kdVq+UU1S6H1SBxc1zcBDwn351GnUZh3mWIJjSsMCAkxxXN12M3JdvzEVPd9FmqW5J/54pQt8PsX31rrh6bXdap15UDpzmRxol7dTBYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJEkvDDr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 761E3C4CEEA;
+	Thu, 19 Jun 2025 16:27:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750350372;
-	bh=2JYAwQJ/PUM7koPPsRke3N147Ydx6y3F32T6RAk7wCk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KuGVlmFYIsCWk+GsIywyvOue/tP7dNTlJRowkkyL6sXVmdoYiaSXDKnOJIvG4Bs3e
-	 JKWrqJwa7/hwSxLJVs/wdL0As8OnCk4zqiiH4ZHoQb2aeUarnUuQSfKE5KwXGLMA6M
-	 H3wM0nuzhOidccq+9BufPs6NPe257kOFTDuibXVEsYm2LMukGJ+SzuTn64Il8RbXki
-	 +qlvlwstbE/AhzhuWR4ndao6HNmd02foRqcBCgbsYlbaBYpGXYpeY5bqKd9X2bKQc5
-	 +UMVg76yhUrwKlIMsXKI6Q+9AoluV5Zm86XFgbKvOPyq8p3OCIr0Gqk+6zaiI+APU9
-	 nA2n5bc6Fp96w==
-Date: Thu, 19 Jun 2025 09:26:11 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- workflows@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: [PATCH v2 3/4] scripts/misc-check: check missing #include
- <linux/export.h> when W=1
-Message-ID: <20250619092611.07d2feb8@kernel.org>
-In-Reply-To: <CAK7LNARJdVRcUCKo2zEfJr_0Dc-1fzkjf01OsDpDQLH2+wZHCg@mail.gmail.com>
-References: <20250601133230.4085512-1-masahiroy@kernel.org>
-	<20250601133230.4085512-3-masahiroy@kernel.org>
-	<20250619090100.39e37c5a@kernel.org>
-	<CAK7LNARJdVRcUCKo2zEfJr_0Dc-1fzkjf01OsDpDQLH2+wZHCg@mail.gmail.com>
+	s=k20201202; t=1750350442;
+	bh=ut7sBnFRrF7Mqh47DfQbuG68oA6w2Zz7sw0xx8b8S6g=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FJEkvDDruVAykG1bun51wz0patqolTYo6wGXEy+dzHZmtcmsQ03UAy0Hm012GEORL
+	 MSkpczCrEztNz3k8osJYKaEU7TilWHQtsqxDtRfQwmGJEg7g2CTARWQXiozKWmcdRv
+	 zEjeKFP9QQSXBIHpssKwJVBMMQeVZYKjfz6LAMv1P6YKm4quJWyRkV2RehkBNPxoyW
+	 KNd0bgGglA7uKKPW3KU6iO6kypXn4fCiJpYsCJovkmacX6fAol55yKd4bflvCVh5Fy
+	 eFF1WCzTwIoPaPVhHPtQz5MtMu/61p5uL/OXiAucZlelZw5ThyCNIim78dB3k2FiiK
+	 Ufs/LrsP7yquw==
+Message-ID: <c5e3b6fc-e9dc-4551-b632-25dd2db9ec08@kernel.org>
+Date: Thu, 19 Jun 2025 18:27:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Reply-To: Daniel Gomez <da.gomez@kernel.org>
+Subject: Re: [PATCH 1/3] module: move 'struct module_use' to internal.h
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Brendan Higgins <brendan.higgins@linux.dev>,
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+References: <20250612-kunit-ifdef-modules-v1-0-fdccd42dcff8@linutronix.de>
+ <20250612-kunit-ifdef-modules-v1-1-fdccd42dcff8@linutronix.de>
+Content-Language: en-US
+From: Daniel Gomez <da.gomez@kernel.org>
+Organization: kernel.org
+In-Reply-To: <20250612-kunit-ifdef-modules-v1-1-fdccd42dcff8@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 20 Jun 2025 01:13:28 +0900 Masahiro Yamada wrote:
-> > IIUC you made the kernel spew nearly 5000 warnings on every W=1 build
-> > to "encourage" others to help fix a fairly innocuous problem.
-> > I appreciate the work that goes into separating the headers but it's
-> > hardly urgent enough to force others to scroll thru 5k warnings.
-> >
-> > Please LMK if I'm missing some context here, otherwise I think this is
-> > quite antisocial behavior, and the warnings should go back to W=2 until
-> > someone actually cares to fix most of them.
-> >
-> > Happy to hear from others.. CC: workflows  
+On 12/06/2025 16.53, Thomas WeiÃschuh wrote:
+> The struct was moved to the public header file in
+> commit c8e21ced08b3 ("module: fix kdb's illicit use of struct module_use.").
+> Back then the structure was used outside of the module core.
+> Nowadays this is not true anymore, so the structure can be made internal.
 > 
-> Please see commit a6a7946bd691940cfe7289ae6dfb1f077516df72
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-Thank you.
+Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
 
