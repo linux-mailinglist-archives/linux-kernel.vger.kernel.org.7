@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-694227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4CBAE0998
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:04:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8ABBAE097C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 702941C20C21
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:00:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569E616A003
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CA928C84B;
-	Thu, 19 Jun 2025 14:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D769328640E;
+	Thu, 19 Jun 2025 14:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BO2cFz04"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Q9EDnqq1"
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8266927F166
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 14:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0CC230D2B
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 14:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750345039; cv=none; b=EIXzqh1hH61VKtNI0n5CnZ2xC9XFyGRrFZEhwlZRRVJL/XYfZMoiTdvNIGbecN4NHkFOWyNN/Xphz8cy7g3XhadEuphtA1NHMHorF/vWs4y1ITnndejZ8hvyjdzvQh/DBwnJaO2N5nCFtUOw3Gv+zUKZJzRAo/sGpuvvw2tr8Co=
+	t=1750345037; cv=none; b=C2IS3guIeDtSR5KwTBA9gDk0OTUBmEaDuajZYdbPvQsJJ1TUrz3tnsPfmyfft8Bxi43rb/ZyiUc3dNhlcphyOw47YTO9+xpRxJcn0harZxfHh+rC6d5V9/UqAukoRjFOpM6bdnqJDcFHC5689Yr1fMdifYe5K0Q5oSvNLd+Ccio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750345039; c=relaxed/simple;
-	bh=uFli8qripjOIKS+FVhZZomp//yZqATpNXfvNFflsUhE=;
+	s=arc-20240116; t=1750345037; c=relaxed/simple;
+	bh=ZI9VuxpxL6OkMDZdK7rQxtNCWS9uPNyI/dYz/jzQsKU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IJ4uGFxDJZoyRA4SZm8TWRWzS71fF12pelt+SrHtboFERtqbqcXL6DE5MyuE0pNnIlDRE2A9Gjtsf7VLDrNQAW4dpuo5iwvEmfc/8960AdctdF79EBt4zfmeOBfmVurnt1qnoWOTmrKZTNUD1FjZ1GkaLcOk+l5VqUaQZT3q4l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BO2cFz04; arc=none smtp.client-ip=205.220.165.32
+	 MIME-Version; b=Tv0ZUpUIORsDoL0ZLbLoAz4ew7pdMKWPkoLKfci5EM6N56uOl/OtHoVyAoaFLZIyTUYi2y7CMg6urMpMAlFSrmhxUZ8CbeWjESc6ZY2BB790t1z375O4x2iRq1WLrtNARn5amGUQlsB0G6+KY1fgWWyS77VBp5uK8ltddNxAdKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Q9EDnqq1; arc=none smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55JEMaE0014939;
-	Thu, 19 Jun 2025 14:57:03 GMT
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55JEMbVL029383;
+	Thu, 19 Jun 2025 14:57:05 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=TQjWc
-	pisuoarYkrPpFS4fkXe+RQOPP/UyAZhdCaRaSQ=; b=BO2cFz0431WL7/rIFzb0X
-	1eLKCYvi8rLJzlHY9r8IpACI4JOTSTAvykBkADZjaEttFZjRB4ZDBWM0IaaLUZFJ
-	mMOn0G6O/+iOsvHzuta3NVJXVFE/WGCxAQtp9UNXwr/PrsjlphRcgunkRBQtyqBk
-	rDdPzzn4/+Wlidz8PZr1s5B9lHnbjIwI6ogXesVZbPaYBiriLWtRkposUmXjntoq
-	1zcfICZO+pMzkyuFBVMXTH+W+r3cdU8p2e7CuOBVh9eYVmz8ERZtU9u2ycyp8U20
-	SdWv7qBqy6ffKdwsfi6weN7szQd65l8cEhmWzxualu1v/C/ZZl2fQPwd0Cd0qdB/
-	Q==
+	:mime-version:references:subject:to; s=corp-2025-04-25; bh=QiUiN
+	u83/u8PIbpSz74ANU1xCRgFmpKw89MT6iibuVs=; b=Q9EDnqq1D69zb1mqBY0qk
+	X3Ah3MlcTjBhzpWZIn3TXJt/mzfMIHuZ3MyzkUZFVrYtvKpgA+T6qCDRfZevyaUe
+	dBAywyvazE/S/esW8jRnwiqXImBeDH0llVu6+IxsUYcgHehRyuJrlM42DZxOmIhg
+	WHee3LPY5srkUmCNPYOea/RcurwYhTzJKGoOnF+rHRB91otbL1ZTEOSdiZsY/VZl
+	GM7vr3JMqRr3znRPgt8oT2ATd2XDpArGdgXiZ8kMx0yh8Yu05QVbKQujg4b7NZBK
+	rnBxJPVmGk/uqoEl2kmK5b3N9JQsgvzhyOL4mgz29Rw5RpBptLT2ITJk8z9JunMd
+	w==
 Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 478yp4t4ag-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47b23xwjxc-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 19 Jun 2025 14:57:03 +0000 (GMT)
+	Thu, 19 Jun 2025 14:57:04 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55JDOK9Q022966;
-	Thu, 19 Jun 2025 14:57:02 GMT
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55JDNm1C022907;
+	Thu, 19 Jun 2025 14:57:03 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 478yhj8du6-1
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 478yhj8dun-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 19 Jun 2025 14:57:02 +0000
+	Thu, 19 Jun 2025 14:57:03 +0000
 Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55JEv0JB008257;
-	Thu, 19 Jun 2025 14:57:01 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55JEv0JD008257;
+	Thu, 19 Jun 2025 14:57:02 GMT
 Received: from laptop-dell-latitude7430.nl.oracle.com (dhcp-10-154-180-74.vpn.oracle.com [10.154.180.74])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 478yhj8dta-2;
-	Thu, 19 Jun 2025 14:57:01 +0000
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 478yhj8dta-3;
+	Thu, 19 Jun 2025 14:57:02 +0000
 From: Alexandre Chartre <alexandre.chartre@oracle.com>
 To: linux-kernel@vger.kernel.org, mingo@kernel.org, jpoimboe@kernel.org,
         peterz@infradead.org
 Cc: alexandre.chartre@oracle.com
-Subject: [RFC PATCH v2 01/17] objtool: Move disassembly functions to a separated file
-Date: Thu, 19 Jun 2025 16:56:43 +0200
-Message-ID: <20250619145659.1377970-2-alexandre.chartre@oracle.com>
+Subject: [RFC PATCH v2 02/17] objtool: Create disassembly context
+Date: Thu, 19 Jun 2025 16:56:44 +0200
+Message-ID: <20250619145659.1377970-3-alexandre.chartre@oracle.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250619145659.1377970-1-alexandre.chartre@oracle.com>
 References: <20250619145659.1377970-1-alexandre.chartre@oracle.com>
@@ -81,239 +81,147 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-19_05,2025-06-18_03,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 phishscore=0
- adultscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ adultscore=0 suspectscore=0 mlxscore=0 mlxlogscore=925 bulkscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
  definitions=main-2506190124
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE5MDEyMiBTYWx0ZWRfX5K2m+8rdOrEb wwSG2XbgWmRTntY4STGoVjQxxqnWfqRMSuvZyvNNZ7CSkJX6IagS8hN52KiV1XQnpnbRxVB9N5/ JeDQsq+vARCCksFsM6HBMktMBvdEZU9tU4nd6t2oYSmy9xxgbuxLWThrkNQuvax7gc37C+VGyMy
- USHGLWRV/1YYvYMHKhIUwYEVxWa0Wl+xPlo5I1tEhLKQZA7p5uixwzvysmwb+yTnbifD/xtSaaI cbzwMsU8nYq2YfNDWyVLUrb024UaAHoywBGCY+/ADbLNJyXYUhoJL4Bf5/dZ1BlUQXZ8ff4EfYA Cf3VgaQDg6L8gOpTowSyfkkyGCrEEYINuNU04CJUqiJuS+HSymco5eYfPRshu+67ZtbXKXw/Bk3
- qCvnRIhNERFhW2qMMiZA3lHZtDjojgE3S4Cgj7l4Z6iWZ+t+NXJUy/HRB57xAVByj4fI9yVl
-X-Authority-Analysis: v=2.4 cv=K5EiHzWI c=1 sm=1 tr=0 ts=6854253f b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8 a=20KFwNOVAAAA:8 a=dBVU6wt392Vc8wzyTJAA:9 cc=ntf awl=host:13207
-X-Proofpoint-GUID: gxn8Z8Ab0L1J2-R04nzZWDe_yPANApJC
-X-Proofpoint-ORIG-GUID: gxn8Z8Ab0L1J2-R04nzZWDe_yPANApJC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE5MDEyMiBTYWx0ZWRfX4CMdfiNDraT3 eFuLHCdFpchCHb36mgrK16l0V0ATTifnoF5ZIsPHU1Z8QoQISGM8/jzg61z2fuxJC7XBI6ZCeBu JSS9fdjfUaTAUheClanJ8TN2iD/qZlijKFLn7R0qhqXZkUgXSvlWdrHgp8UT6rhMaDr8G4e8FaJ
+ FRWQlyH9TuaWKxFZ8fTuClAfUWx+hB8s2P/vCylOwypixQbT7ThsDGECAR5otb/IYWW91gao5S2 ivi4p5EiIutrQzq+PRAa/yKOq5WEiwXERzi+wc+M1yxJlmPbyZcqVue7AGmiDSGJ3S61ALXc0U8 HBQjm8iof/bSZWwEoGVw7epY8R9Wdz+IB1A+7ZYkprmEsfLgrDeVme5CTY7zNM6lWwZKvHJVxyM
+ 6bR+cpD4FGu0zH60DjxtICH/1sVf/kI5BeDFvppYDXa7zvDN5xjjarTWsVhDjXhTU7qJWl3D
+X-Authority-Analysis: v=2.4 cv=DM2P4zNb c=1 sm=1 tr=0 ts=68542540 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8 a=-R_vEHidSSj7PnaEDHgA:9 cc=ntf awl=host:13207
+X-Proofpoint-GUID: swcVQduEC-3m3w-w3oyflNBvhJUNFBOP
+X-Proofpoint-ORIG-GUID: swcVQduEC-3m3w-w3oyflNBvhJUNFBOP
 
-objtool disassembles functions which have warnings. Move the code
-to do that to a dedicated file. The code is just moved, it is not
-changed.
+Create a structure to store information for disassembling functions.
+For now, it is just a wrapper around an objtool file.
 
 Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
 ---
- tools/objtool/Build                     |  1 +
- tools/objtool/check.c                   | 81 ----------------------
- tools/objtool/disas.c                   | 90 +++++++++++++++++++++++++
- tools/objtool/include/objtool/objtool.h |  2 +
- 4 files changed, 93 insertions(+), 81 deletions(-)
- create mode 100644 tools/objtool/disas.c
+ tools/objtool/check.c                   |  6 ++++-
+ tools/objtool/disas.c                   | 32 +++++++++++++++++++++++--
+ tools/objtool/include/objtool/disas.h   | 14 +++++++++++
+ tools/objtool/include/objtool/objtool.h |  2 --
+ 4 files changed, 49 insertions(+), 5 deletions(-)
+ create mode 100644 tools/objtool/include/objtool/disas.h
 
-diff --git a/tools/objtool/Build b/tools/objtool/Build
-index a3cdf8af6635..677bf9148cba 100644
---- a/tools/objtool/Build
-+++ b/tools/objtool/Build
-@@ -7,6 +7,7 @@ objtool-y += special.o
- objtool-y += builtin-check.o
- objtool-y += elf.o
- objtool-y += objtool.o
-+objtool-y += disas.o
- 
- objtool-$(BUILD_ORC) += orc_gen.o
- objtool-$(BUILD_ORC) += orc_dump.o
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index f23bdda737aa..bd1974717fa3 100644
+index bd1974717fa3..cef3a32a6747 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -4561,87 +4561,6 @@ static int validate_reachable_instructions(struct objtool_file *file)
- 	return warnings;
+@@ -11,6 +11,7 @@
+ #include <objtool/builtin.h>
+ #include <objtool/cfi.h>
+ #include <objtool/arch.h>
++#include <objtool/disas.h>
+ #include <objtool/check.h>
+ #include <objtool/special.h>
+ #include <objtool/warn.h>
+@@ -4591,6 +4592,7 @@ static void free_insns(struct objtool_file *file)
+ 
+ int check(struct objtool_file *file)
+ {
++	struct disas_context *disas_ctx;
+ 	int ret = 0, warnings = 0;
+ 
+ 	arch_initial_func_cfi_state(&initial_func_cfi);
+@@ -4720,7 +4722,9 @@ int check(struct objtool_file *file)
+ 		if (opts.werror && warnings)
+ 			WARN("%d warning(s) upgraded to errors", warnings);
+ 		print_args();
+-		disas_warned_funcs(file);
++		disas_ctx = disas_context_create(file);
++		disas_warned_funcs(disas_ctx);
++		disas_context_destroy(disas_ctx);
+ 	}
+ 
+ 	return ret;
+diff --git a/tools/objtool/disas.c b/tools/objtool/disas.c
+index 77de46beb496..67eff2a14832 100644
+--- a/tools/objtool/disas.c
++++ b/tools/objtool/disas.c
+@@ -4,10 +4,35 @@
+  */
+ 
+ #include <objtool/arch.h>
++#include <objtool/disas.h>
+ #include <objtool/warn.h>
+ 
+ #include <linux/string.h>
+ 
++struct disas_context {
++	struct objtool_file *file;
++};
++
++struct disas_context *disas_context_create(struct objtool_file *file)
++{
++	struct disas_context *dctx;
++
++	dctx = malloc(sizeof(*dctx));
++	if (!dctx) {
++		ERROR_GLIBC("failed to allocate disassembly context");
++		return NULL;
++	}
++
++	dctx->file = file;
++
++	return dctx;
++}
++
++void disas_context_destroy(struct disas_context *dctx)
++{
++	free(dctx);
++}
++
+ /* 'funcs' is a space-separated list of function names */
+ static void disas_funcs(const char *funcs)
+ {
+@@ -58,12 +83,15 @@ static void disas_funcs(const char *funcs)
+ 	}
  }
  
--/* 'funcs' is a space-separated list of function names */
--static void disas_funcs(const char *funcs)
--{
--	const char *objdump_str, *cross_compile;
--	int size, ret;
--	char *cmd;
--
--	cross_compile = getenv("CROSS_COMPILE");
--	if (!cross_compile)
--		cross_compile = "";
--
--	objdump_str = "%sobjdump -wdr %s | gawk -M -v _funcs='%s' '"
--			"BEGIN { split(_funcs, funcs); }"
--			"/^$/ { func_match = 0; }"
--			"/<.*>:/ { "
--				"f = gensub(/.*<(.*)>:/, \"\\\\1\", 1);"
--				"for (i in funcs) {"
--					"if (funcs[i] == f) {"
--						"func_match = 1;"
--						"base = strtonum(\"0x\" $1);"
--						"break;"
--					"}"
--				"}"
--			"}"
--			"{"
--				"if (func_match) {"
--					"addr = strtonum(\"0x\" $1);"
--					"printf(\"%%04x \", addr - base);"
--					"print;"
--				"}"
--			"}' 1>&2";
--
--	/* fake snprintf() to calculate the size */
--	size = snprintf(NULL, 0, objdump_str, cross_compile, objname, funcs) + 1;
--	if (size <= 0) {
--		WARN("objdump string size calculation failed");
--		return;
--	}
--
--	cmd = malloc(size);
--
--	/* real snprintf() */
--	snprintf(cmd, size, objdump_str, cross_compile, objname, funcs);
--	ret = system(cmd);
--	if (ret) {
--		WARN("disassembly failed: %d", ret);
--		return;
--	}
--}
--
--static void disas_warned_funcs(struct objtool_file *file)
--{
--	struct symbol *sym;
--	char *funcs = NULL, *tmp;
--
+-void disas_warned_funcs(struct objtool_file *file)
++void disas_warned_funcs(struct disas_context *dctx)
+ {
+ 	struct symbol *sym;
+ 	char *funcs = NULL, *tmp;
+ 
 -	for_each_sym(file, sym) {
--		if (sym->warned) {
--			if (!funcs) {
--				funcs = malloc(strlen(sym->name) + 1);
--				if (!funcs) {
--					ERROR_GLIBC("malloc");
--					return;
--				}
--				strcpy(funcs, sym->name);
--			} else {
--				tmp = malloc(strlen(funcs) + strlen(sym->name) + 2);
--				if (!tmp) {
--					ERROR_GLIBC("malloc");
--					return;
--				}
--				sprintf(tmp, "%s %s", funcs, sym->name);
--				free(funcs);
--				funcs = tmp;
--			}
--		}
--	}
--
--	if (funcs)
--		disas_funcs(funcs);
--}
--
- struct insn_chunk {
- 	void *addr;
- 	struct insn_chunk *next;
-diff --git a/tools/objtool/disas.c b/tools/objtool/disas.c
++	if (!dctx)
++		return;
++
++	for_each_sym(dctx->file, sym) {
+ 		if (sym->warned) {
+ 			if (!funcs) {
+ 				funcs = malloc(strlen(sym->name) + 1);
+diff --git a/tools/objtool/include/objtool/disas.h b/tools/objtool/include/objtool/disas.h
 new file mode 100644
-index 000000000000..77de46beb496
+index 000000000000..5c543b69fc61
 --- /dev/null
-+++ b/tools/objtool/disas.c
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
++++ b/tools/objtool/include/objtool/disas.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
 +/*
-+ * Copyright (C) 2015-2017 Josh Poimboeuf <jpoimboe@redhat.com>
++ * Copyright (c) 2025, Oracle and/or its affiliates.
 + */
 +
-+#include <objtool/arch.h>
-+#include <objtool/warn.h>
++#ifndef _DISAS_H
++#define _DISAS_H
 +
-+#include <linux/string.h>
++struct disas_context;
++struct disas_context *disas_context_create(struct objtool_file *file);
++void disas_context_destroy(struct disas_context *dctx);
++void disas_warned_funcs(struct disas_context *dctx);
 +
-+/* 'funcs' is a space-separated list of function names */
-+static void disas_funcs(const char *funcs)
-+{
-+	const char *objdump_str, *cross_compile;
-+	int size, ret;
-+	char *cmd;
-+
-+	cross_compile = getenv("CROSS_COMPILE");
-+	if (!cross_compile)
-+		cross_compile = "";
-+
-+	objdump_str = "%sobjdump -wdr %s | gawk -M -v _funcs='%s' '"
-+			"BEGIN { split(_funcs, funcs); }"
-+			"/^$/ { func_match = 0; }"
-+			"/<.*>:/ { "
-+				"f = gensub(/.*<(.*)>:/, \"\\\\1\", 1);"
-+				"for (i in funcs) {"
-+					"if (funcs[i] == f) {"
-+						"func_match = 1;"
-+						"base = strtonum(\"0x\" $1);"
-+						"break;"
-+					"}"
-+				"}"
-+			"}"
-+			"{"
-+				"if (func_match) {"
-+					"addr = strtonum(\"0x\" $1);"
-+					"printf(\"%%04x \", addr - base);"
-+					"print;"
-+				"}"
-+			"}' 1>&2";
-+
-+	/* fake snprintf() to calculate the size */
-+	size = snprintf(NULL, 0, objdump_str, cross_compile, objname, funcs) + 1;
-+	if (size <= 0) {
-+		WARN("objdump string size calculation failed");
-+		return;
-+	}
-+
-+	cmd = malloc(size);
-+
-+	/* real snprintf() */
-+	snprintf(cmd, size, objdump_str, cross_compile, objname, funcs);
-+	ret = system(cmd);
-+	if (ret) {
-+		WARN("disassembly failed: %d", ret);
-+		return;
-+	}
-+}
-+
-+void disas_warned_funcs(struct objtool_file *file)
-+{
-+	struct symbol *sym;
-+	char *funcs = NULL, *tmp;
-+
-+	for_each_sym(file, sym) {
-+		if (sym->warned) {
-+			if (!funcs) {
-+				funcs = malloc(strlen(sym->name) + 1);
-+				if (!funcs) {
-+					ERROR_GLIBC("malloc");
-+					return;
-+				}
-+				strcpy(funcs, sym->name);
-+			} else {
-+				tmp = malloc(strlen(funcs) + strlen(sym->name) + 2);
-+				if (!tmp) {
-+					ERROR_GLIBC("malloc");
-+					return;
-+				}
-+				sprintf(tmp, "%s %s", funcs, sym->name);
-+				free(funcs);
-+				funcs = tmp;
-+			}
-+		}
-+	}
-+
-+	if (funcs)
-+		disas_funcs(funcs);
-+}
++#endif /* _DISAS_H */
 diff --git a/tools/objtool/include/objtool/objtool.h b/tools/objtool/include/objtool/objtool.h
-index c0dc86a78ff6..4d3e94b70fd8 100644
+index 4d3e94b70fd8..c0dc86a78ff6 100644
 --- a/tools/objtool/include/objtool/objtool.h
 +++ b/tools/objtool/include/objtool/objtool.h
-@@ -47,4 +47,6 @@ int check(struct objtool_file *file);
+@@ -47,6 +47,4 @@ int check(struct objtool_file *file);
  int orc_dump(const char *objname);
  int orc_create(struct objtool_file *file);
  
-+void disas_warned_funcs(struct objtool_file *file);
-+
+-void disas_warned_funcs(struct objtool_file *file);
+-
  #endif /* _OBJTOOL_H */
 -- 
 2.43.5
