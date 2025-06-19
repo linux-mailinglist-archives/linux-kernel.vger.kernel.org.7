@@ -1,167 +1,106 @@
-Return-Path: <linux-kernel+bounces-693601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C83AE0154
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:10:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59C8CAE013C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F4D13A54E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:07:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF85D7AF569
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114ED27F75A;
-	Thu, 19 Jun 2025 09:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECD2265CC6;
+	Thu, 19 Jun 2025 09:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlFosQNB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UD3wIrY+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9FF283FD2;
-	Thu, 19 Jun 2025 09:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0845721CC47;
+	Thu, 19 Jun 2025 09:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750323808; cv=none; b=miaIPDqBSnbj0UvHKJonZxgjszjbIlwIAAfxQvLPgc/j+vr6FBcMxennmG3z9eRyjDZJ2O/5PXH5dfA8XlnLc1dRJfBr3ooqO9K5fUqovnVKBAoJDW+ETgkFWSVUsggEoErvVElMuDfN3wUi2sY/8YxV0GoR1UC8EUrvA4G5nSQ=
+	t=1750323888; cv=none; b=enlC3GUmmpkWrPGBnQhwLUTHH9cxJKuG1UNny2VO8TuIzNm/GyW2cJ/KUUuRRJo3K09yZEQcqLhbN+YVL89Zy2It36DfMLt1GWHqQ1Kpsr8TSVGey5Hk1xR1R5ppot0vVCltjZgUi/xkAyLi2Q053R285Sfz8HTtBJti7+goAkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750323808; c=relaxed/simple;
-	bh=pIXnl8l/FgoZHAvcr8LQug4Br32QI31DC1e/7I5KSL0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p4pKdAjlPVMUpZmUQjM+U65VelHi9pGy5FXnMfevF30/YvcnhYq2XTbIkdFUvmHMSD1k4vcj4d26wjKcCP/+2l1gL7rLkSjMUNtkwuyMYquj2uMsw3bQgFNnp0wXwHPsgbnLPGG32uAVuvYQKyCcek6E0CZowIXMzUJlPBQTAl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlFosQNB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 66E23C4CEEA;
-	Thu, 19 Jun 2025 09:03:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750323808;
-	bh=pIXnl8l/FgoZHAvcr8LQug4Br32QI31DC1e/7I5KSL0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=WlFosQNBz3XNNWyKm9duD7v81Epf+5l0GKlsnVbO7w2LRc9QH0WwCprdv2tAO/a+x
-	 Ds/mZyu/cJgj4zvAJSuScSusyElyDqxdNpG6FkOSUvQHAv2eQ+AlzG4snEOJ0HuVOe
-	 UZUdovvOfNVeO8tze1h9ANBg3NABQ8q0PDFnPqjiBXcWYhfMai9HgG2T0KG8sM2K3a
-	 LvV8ZgNSoU00mvWJK9E/O5w83SW1nu3Lm+MzVo8Sh9CkpTiz3yUka0CbMOCyhjBZlw
-	 /FhQYy7lYHIAoCLb8jTC7wP8SjGlngPb+36efGBZ0qLeX0kfLTMJ8nh0cXGmNvuzzK
-	 6kPNaqDXCEWkQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD55C73C66;
-	Thu, 19 Jun 2025 09:03:28 +0000 (UTC)
-From: Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org>
-Date: Thu, 19 Jun 2025 09:02:59 +0000
-Subject: [PATCH v5 6/6] KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in
- host handler
+	s=arc-20240116; t=1750323888; c=relaxed/simple;
+	bh=TxcuXMVV+aV1+GhdvzFE2xtaQghLDy476d1fX4BrXTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E4r6ZEag+FuExwtIUkmqiTcy5ytbC4olzrEkJheM8ltqZDBMURdRq3MMg64teFareAyGhCECCxciaScVdt5OrISi3Mao9AsiF1XOaJe4ukvLQsxvw1R7uM5hDWgoU6U8hBFGIOeM/4rGKAblPCxFE1xURdclq7FCltL56WHjC08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UD3wIrY+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/kqvh4lUfMoQlrV4TypHYuQcQHe2CtjhOSnu/WvQXTM=; b=UD3wIrY+U78Zz3M2QjaI5kEwF3
+	d+ktMLqdBBS4v4XxS+QAm41wpFi+kz/AsqyW6qkycbE3daHw5YFRC7lt19DshmGP3uGFVehl5OCIi
+	G5SoD+HWlh/Xq0P2FRgJz/cSphsWxedi62u0EW3uYV4Lww8J647oXoTkUWNB19DTXpbm18nBjTJSf
+	WTkgFL0j10Rltd+mKo1+4RMtZOMbh0jHc/O70Fsxud8tiUtwsP7bPFDkckzfcjuF5NI9tDSIhq/A2
+	a8b7ycDTWZLSD+Hxx5jNpe2SJt8TW9l9fgh3wcyKRgTfCmAU3tG3sYXfGu5REMmCj4BL5xXESu8T/
+	biOI9Abg==;
+Received: from 2001-1c00-8d82-d000-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d82:d000:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uSBCH-00000007z3S-2cV9;
+	Thu, 19 Jun 2025 09:04:37 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6218F3088F2; Thu, 19 Jun 2025 11:04:36 +0200 (CEST)
+Date: Thu, 19 Jun 2025 11:04:36 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, x86@kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v10 05/14] unwind_user/deferred: Add unwind cache
+Message-ID: <20250619090436.GE1613200@noisy.programming.kicks-ass.net>
+References: <20250611005421.144238328@goodmis.org>
+ <20250611010428.603778772@goodmis.org>
+ <20250618141345.GR1613376@noisy.programming.kicks-ass.net>
+ <20250618113359.585b3770@gandalf.local.home>
+ <20250619075611.GX1613376@noisy.programming.kicks-ass.net>
+ <20250619044714.5e676bf3@batman.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250619-virtio-msg-ffa-v5-6-412c98558807@google.com>
-References: <20250619-virtio-msg-ffa-v5-0-412c98558807@google.com>
-In-Reply-To: <20250619-virtio-msg-ffa-v5-0-412c98558807@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Zenghui Yu <yuzenghui@huawei.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Per Larsen <perlarsen@google.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750323807; l=3017;
- i=perlarsen@google.com; s=20250508; h=from:subject:message-id;
- bh=HXzQ4CaUHWWMpyY/fRFoKzEJfIwG9a4ZofQnutHpvGA=;
- b=4cj1xT/yvSKWn7LH3R9ElZpkJgBallN/yBzIeSNnFooAZVK25CJMAYj3iNIJ1vblefywm3rUG
- 1uW6+sSeE/fAVFFOyGEV6zZm3fRb5LwJFN+Oap1ucWCpT739fTzT6sK
-X-Developer-Key: i=perlarsen@google.com; a=ed25519;
- pk=jjc/Ta4VmrLRmMoahP6d1mBcKzvWU+nsmdtYe2oS2kQ=
-X-Endpoint-Received: by B4 Relay for perlarsen@google.com/20250508 with
- auth_id=402
-X-Original-From: Per Larsen <perlarsen@google.com>
-Reply-To: perlarsen@google.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250619044714.5e676bf3@batman.local.home>
 
-From: Per Larsen <perlarsen@google.com>
+On Thu, Jun 19, 2025 at 04:47:14AM -0400, Steven Rostedt wrote:
+> On Thu, 19 Jun 2025 09:56:11 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > Well, the trivial solution is to make it 511 and call it a day. Don't
+> > make things complicated if you don't have to.
+> 
+> I don't know if this is more complicated, but it should make it fit
+> nicely in a page:
+> 
+>   /* Make the cache fit in a page */
+>   #define UNWIND_MAX_ENTRIES                                      \
+>         ((PAGE_SIZE - sizeof(struct unwind_cache)) / sizeof(long))
 
-FF-A 1.2 adds the DIRECT_REQ2 messaging interface which is similar to
-the existing FFA_MSG_SEND_DIRECT_{REQ,RESP} functions except that it
-uses the SMC calling convention v1.2 which allows calls to use x4-x17 as
-argument and return registers. Add support for FFA_MSG_SEND_DIRECT_REQ2
-in the host ffa handler.
+Right, that's the fancy way of spelling 511 :-) Except on 32bit, where
+it now spells 1023 instead.
 
-Signed-off-by: Per Larsen <perlarsen@google.com>
----
- arch/arm64/kvm/hyp/nvhe/ffa.c | 24 +++++++++++++++++++++++-
- include/linux/arm_ffa.h       |  2 ++
- 2 files changed, 25 insertions(+), 1 deletion(-)
+Did you want that bitness difference?
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index 7b43279aded7d7ef4cce2c294d208c5a66b684e3..37bde2ea2219e37ea68f859e6f211c868585285d 100644
---- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-+++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -678,7 +678,6 @@ static bool ffa_call_supported(u64 func_id)
- 	case FFA_NOTIFICATION_GET:
- 	case FFA_NOTIFICATION_INFO_GET:
- 	/* Unimplemented interfaces added in FF-A 1.2 */
--	case FFA_MSG_SEND_DIRECT_REQ2:
- 	case FFA_MSG_SEND_DIRECT_RESP2:
- 	case FFA_CONSOLE_LOG:
- 	case FFA_PARTITION_INFO_GET_REGS:
-@@ -860,6 +859,22 @@ static void do_ffa_part_get(struct arm_smccc_1_2_regs *regs,
- 	hyp_spin_unlock(&host_buffers.lock);
- }
- 
-+static void do_ffa_direct_msg2(struct arm_smccc_1_2_regs *regs,
-+			       struct kvm_cpu_context *ctxt,
-+			       u64 vm_handle)
-+{
-+	DECLARE_REG(u32, endp, ctxt, 1);
-+
-+	struct arm_smccc_1_2_regs *args = (void *)&ctxt->regs.regs[0];
-+
-+	if (FIELD_GET(FFA_SRC_ENDPOINT_MASK, endp) != vm_handle) {
-+		ffa_to_smccc_1_2_error(regs, FFA_RET_INVALID_PARAMETERS);
-+		return;
-+	}
-+
-+	arm_smccc_1_2_smc(args, regs);
-+}
-+
- bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id)
- {
- 	struct arm_smccc_1_2_regs regs;
-@@ -918,11 +933,18 @@ bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id)
- 	case FFA_PARTITION_INFO_GET:
- 		do_ffa_part_get(&regs, host_ctxt);
- 		goto out_handled;
-+	case FFA_MSG_SEND_DIRECT_REQ2:
-+		if (hyp_ffa_version >= FFA_VERSION_1_2) {
-+			do_ffa_direct_msg2(&regs, host_ctxt, HOST_FFA_ID);
-+			goto out_handled;
-+		}
-+		goto out_not_supported;
- 	}
- 
- 	if (ffa_call_supported(func_id))
- 		return false; /* Pass through */
- 
-+out_not_supported:
- 	ffa_to_smccc_1_2_error(&regs, FFA_RET_NOT_SUPPORTED);
- out_handled:
- 	ffa_set_retval(host_ctxt, &regs);
-diff --git a/include/linux/arm_ffa.h b/include/linux/arm_ffa.h
-index c0dd6183d956043192114a522b7eef465e7078ac..82a35a3b22de426f7e9a8894e76fdf1e933b3d6b 100644
---- a/include/linux/arm_ffa.h
-+++ b/include/linux/arm_ffa.h
-@@ -269,6 +269,8 @@ bool ffa_partition_check_property(struct ffa_device *dev, u32 property)
- 	(ffa_partition_check_property(dev, FFA_PARTITION_DIRECT_REQ2_RECV) && \
- 	 !dev->mode_32bit)
- 
-+#define FFA_SRC_ENDPOINT_MASK	GENMASK(31, 16)
-+
- /* For use with FFA_MSG_SEND_DIRECT_{REQ,RESP} which pass data via registers */
- struct ffa_send_direct_data {
- 	unsigned long data0; /* w3/x3 */
-
--- 
-2.50.0.rc2.701.gf1e915cc24-goog
-
-
+Also, you ready for some *reaaally* big numbers on Power/ARM with 64K
+pages? :-)
 
