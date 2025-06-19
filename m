@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-694561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D666DAE0D9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 21:20:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1068BAE0E04
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 21:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 153EB1BC5331
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:20:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4F046A5DC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F0A247285;
-	Thu, 19 Jun 2025 19:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDB823B607;
+	Thu, 19 Jun 2025 19:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MET21Rqy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HLEIdVQG"
+Received: from smtp.smtpout.orange.fr (smtp-71.smtpout.orange.fr [80.12.242.71])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CA4246BBB;
-	Thu, 19 Jun 2025 19:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899C617A30F;
+	Thu, 19 Jun 2025 19:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750360762; cv=none; b=U/qT9li04/oOrryDXTfcaSCZaLow0VDzlM5FWOqSlzi9ocYHBg09cR4lsIgKL161aO2wVY7t6Tf9FTbjlZc6P+h4R5N1RYSthpeC4jYvIiA2nZvIVj+9F0GWPpFn+Yij7JDyo0KMpvft3JKgNNQkDvXWmRAMr11a5s2rmXcFLvo=
+	t=1750361350; cv=none; b=GKPB1du8fEYzw6Ry0v7rm4GjGZdQnDF34GAizYDz++Q9x/sypYE9AtCWRU324WPX27YSxudziSoOKO3BrCsBrY4pLEmd4roGFswm6Pal008rFK9zzxZtqirEidEswZsNHdB4VN+GFNDjp4M2Kh+5rih6C6ax/iIICix5NFm7WDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750360762; c=relaxed/simple;
-	bh=LDMXTkVlQDnupG+UBA2IQttq9RHsgsS5cAxbc+ksyEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jq36VpartB0eTcKqveMqitTB9YAukzqcftr8vV3t0x4F8+DWABWLZLf8wRnQzLQG31O0y5mtN4NFpjYkISyko6yzra32Vt4caa0BbAw4+t8N/9Jpnb2oTkCTPPwgunUywf4FpstGzp68Ec9e+VUzJ+VtBeAtW7p7dx5pDDFdd+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MET21Rqy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93C78C4CEEA;
-	Thu, 19 Jun 2025 19:19:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750360761;
-	bh=LDMXTkVlQDnupG+UBA2IQttq9RHsgsS5cAxbc+ksyEU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MET21RqyYxksarZ9F9PT2gpDE69XYycjW9Ai26NHx2xjofzlYsdIJWBnPSUsTIte4
-	 KZ3qAg55yExnPpei/HOwZr9eWGR3RMsqHe5AZW+ea9bUyWsR+6Fmi8WVK0S4xyo5u4
-	 plOfsrR8zwhfbWtehabdm98sa2xjzxvc86txr5T1uB4tK3BTw8D/8RPsef806/+NvX
-	 WEOvkzpul7y/KcV3kqsYz9qvmEIUdNHCqfHWeFmFjpfU9DNPiJGuRKEm6SUdvDQrRF
-	 7yzXNJUDN+hPRxQOueAaVy47CEI6gnIdiUa2u949Plx0G64msh3cJhRWVEzdCFC0re
-	 qWiaJNBXPpIwQ==
-Date: Thu, 19 Jun 2025 12:19:20 -0700
-From: Saeed Mahameed <saeed@kernel.org>
-To: Mark Bloch <mbloch@nvidia.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, saeedm@nvidia.com, gal@nvidia.com,
-	leonro@nvidia.com, tariqt@nvidia.com,
-	Leon Romanovsky <leon@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/5] net/mlx5e: Add support for PCIe congestion
- events
-Message-ID: <aFRiuIPidlx7Qsy9@x130>
-References: <20250619113721.60201-1-mbloch@nvidia.com>
- <20250619075543.1d31f937@kernel.org>
- <d9bcc48d-17a2-4d12-bacd-6bef296b45c6@nvidia.com>
+	s=arc-20240116; t=1750361350; c=relaxed/simple;
+	bh=oKYsIEPG/F2H84UChfpTayAFWAj1v/PKfPopIxoKvoM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=msxV9XAnRJ0M/059B7+RtB91EQx+VUWerpv6SmA0RSh4YPLkRi0XJvNpynKjZUNSIDi5pcm8sFdmqewA0F4d4Fo986kPOR+Q5Ftug6aGxNHJ4EzLmE/Nxhyj7MXqr2iogV7QjdfYEo/3vuOgFaJtG+w5p3L4IyuDK2Xo88XEIvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HLEIdVQG; arc=none smtp.client-ip=80.12.242.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id SKnRunekJCQ8aSKnSuMc8T; Thu, 19 Jun 2025 21:19:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1750360779;
+	bh=tZGcukGSWJ9DLQSqx6SZ6egIb4DHuhct088IYf2fAyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=HLEIdVQGIi3iJtNlEFf3e5KuOsh9G10TnuIT/W6MQeWxWkBRIIRCBYmoAyLceN56z
+	 +sWRwOZkrDe1DxYTSTxkNg+m29dzNpD7/4tJ95nEtAKCJLTAHXzUstmOWjuqA+CznM
+	 bKSUdonQ97wweiFAqxJ0HpZYZOj1Jiw1FzXCTFaxAjQRYbSjQOqkQaBabKcmYiMPVH
+	 OwSIuxFgyKV+ogUovpD+w8SSCsPuF1tXNCUHBRSzjMkJktL7/hLWA5iSF3H4f4nbSH
+	 Uu9pC8V9n2em+U26CgZDrHwtNqCKjytGvZNTHA99PDaP5zpCd+i1DB3G+69kyvexLz
+	 N0NXYbYu8QGGQ==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Thu, 19 Jun 2025 21:19:39 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <4138321d-6019-4bf7-a9a1-43340e1757ac@wanadoo.fr>
+Date: Thu, 19 Jun 2025 21:19:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: debugfs: Replace scnprintf() with
+ sysfs_emit()
+To: Abhinav Ananthu <abhinav.ogl@gmail.com>, andersson@kernel.org,
+ mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250619190410.5852-1-abhinav.ogl@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250619190410.5852-1-abhinav.ogl@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d9bcc48d-17a2-4d12-bacd-6bef296b45c6@nvidia.com>
 
-On 19 Jun 19:00, Mark Bloch wrote:
->
->
->On 19/06/2025 17:55, Jakub Kicinski wrote:
->> On Thu, 19 Jun 2025 14:37:16 +0300 Mark Bloch wrote:
->>> PCIe congestion events are events generated by the firmware when the
->>> device side has sustained PCIe inbound or outbound traffic above
->>> certain thresholds. The high and low threshold are hysteresis thresholds
->>> to prevent flapping: once the high threshold has been reached, a low
->>> threshold event will be triggered only after the bandwidth usage went
->>> below the low threshold.
->>
->> What are we supposed to do with a series half of which is tagged for
->> one tree and half for another? If you want for some of the patches to
->> go via the shared tree - you have to post them separately.
->> Ideally you'd post them to the list in a combined "pull request +
->> patches" format (see for example how Marc posts CAN patches, or Pablo
->> posts netfilter). Once we pull that you can sent the net-next stuff
->> separately as patches.
->
->Miscommunication about the proper process, thanks for the explanation.
->PR + patches seems cleaner and provides more context,
->so I’ll go with that.
->
->>
->> I feel like I just had the same exact conversation with Tariq recently.
->> Really not great when same process explainer has to be given to
->> multiple people from the same company :( I'd like to remind y'all that
->> reading the mailing list is not optional:
->
->I do follow the mailing list and double checked what should be done in
->this scenario. In the end it's my responsibility so it's my fault.
->
+Le 19/06/2025 à 21:04, Abhinav Ananthu a écrit :
+> I apologize for the mistake in the signed-off email address in the previous patch.
+> 
+> Convert the debugfs show() functions in remoteproc_debugfs.c to use
+> sysfs_emit() instead of scnprintf(). The sysfs_emit() helper is the
+> preferred way to format sysfs output as it ensures the output is
+> properly bounded to PAGE_SIZE and simplifies the code.
+> 
+> This patch addresses three instances of scnprintf() usage in the file.
 
-I think what Mark did here is fine, Yes I understand this is not
-applicable to net-next yet, but the point is review and we can do the
-following, when review is done:
+I think that this patch is just wrong.
 
-I can Apply the mlx5-next portion to mlx5-next and Mark on V2 can send the
-net-next stuff + A PR request to the mlx5-next branch, this is how we used
-to do it all the time, but this time review happens all at once for both
-trees.
+The 3 functions below are not related to debugfs show function.
 
-Jakub is this acceptable ? 
+sysfs_emit() expect the buffer to be pages aligned (See [1]).
+In the cases below, the buffers that are used are defined on the stack 
+just a few lines above.
+
+It is really unlikely that this condition will be met.
+
+
+CJ
+
+[1]: https://elixir.bootlin.com/linux/v6.15.2/source/fs/sysfs/file.c#L767
+
+
+> 
+> Signed-off-by: Abhinav Ananthu <abhinav.ogl@gmail.com>
+> ---
+>   drivers/remoteproc/remoteproc_debugfs.c | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+> index b86c1d09c70c..691fd523e0b5 100644
+> --- a/drivers/remoteproc/remoteproc_debugfs.c
+> +++ b/drivers/remoteproc/remoteproc_debugfs.c
+> @@ -46,8 +46,9 @@ static ssize_t rproc_coredump_read(struct file *filp, char __user *userbuf,
+>   	char buf[20];
+>   	int len;
+>   
+> -	len = scnprintf(buf, sizeof(buf), "%s\n",
+> -			rproc_coredump_str[rproc->dump_conf]);
+> +	len = sysfs_emit(buf, "%s\n",
+> +		rproc_coredump_str[rproc->dump_conf]);
+> +
+>   
+>   	return simple_read_from_buffer(userbuf, count, ppos, buf, len);
+>   }
+> @@ -135,7 +136,7 @@ static ssize_t rproc_trace_read(struct file *filp, char __user *userbuf,
+>   	va = rproc_da_to_va(data->rproc, trace->da, trace->len, NULL);
+>   
+>   	if (!va) {
+> -		len = scnprintf(buf, sizeof(buf), "Trace %s not available\n",
+> +		len = sysfs_emit(buf, "Trace %s not available\n",
+>   				trace->name);
+>   		va = buf;
+>   	} else {
+> @@ -160,7 +161,7 @@ static ssize_t rproc_name_read(struct file *filp, char __user *userbuf,
+>   	char buf[100];
+>   	int i;
+>   
+> -	i = scnprintf(buf, sizeof(buf), "%.98s\n", rproc->name);
+> +	i = sysfs_emit(buf, "%.98s\n", rproc->name);
+>   
+>   	return simple_read_from_buffer(userbuf, count, ppos, buf, i);
+>   }
 
 
