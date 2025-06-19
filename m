@@ -1,212 +1,298 @@
-Return-Path: <linux-kernel+bounces-694415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA40AE0C03
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:39:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D95AE0C09
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 971CE1BC5EA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:39:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A1D03AE8C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED0B28D834;
-	Thu, 19 Jun 2025 17:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379AB28D837;
+	Thu, 19 Jun 2025 17:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q8ScjhxR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EwxdnANh"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928E92AF1C;
-	Thu, 19 Jun 2025 17:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3807423ABA6
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 17:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750354758; cv=none; b=DYePTf9r/+mkBDN3Emtacn2qeQfVf6F4YuAdVbsiM5+5UhJSx2mHWEyozRrLqD9rFFsOTybL+9v3klcuTx4vryn++/OZzzWwhLejoXJak55qH+dZCi/xKE8Ici3zv9XDpHdNWNosEhB2ERll10S3L8DGnOZd+XglCoUOlOSHDK0=
+	t=1750354938; cv=none; b=dtRFiu0LRT0bvqmQ9Rzptrj/HospEa6nZK0B/ol6ptRIGUOkMBwCGaBjOdbOgGD3JMUmRe4v9o9tv4BIFRadfmoSTLxl0NZ6KRk2y/ftdk5/TftewMjRf3JI71hAxy1IJe4O2rQPG3jSVkHwLMQ07tbkFNXgtHwAQwDG8R3gFFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750354758; c=relaxed/simple;
-	bh=pRBStzprMVQpdd4OIP73O35IQskVrjlp0foBBFOYXLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sPhyixErgAjnaLDv5vSB78U+KnQ5D/0Is4tQThKk0lKdEixXlACHbcx6Dk57wqa+o1e4uqemrRJRT9BpRC+8SaPYLRR2KZFLFK7G/lEYldOpoISej0YHPkz3eIaDgXAOzyDL19xyxsNJFTbFiTD3lYfg+o94mdwjJbMkhXYjzgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q8ScjhxR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F2DEC4CEF0;
-	Thu, 19 Jun 2025 17:39:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750354758;
-	bh=pRBStzprMVQpdd4OIP73O35IQskVrjlp0foBBFOYXLM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q8ScjhxR+n6D1FFXxPcmAsOicx5kvxOnV/MBY1d5+9OzyDoR9ByqLqF8OQsepE1vZ
-	 pQA9jF0scj8TlOPcaY+B7xXddCNBSr5ARGkpENx96GxUAkLu74C4oa7RAhGZ9v230Z
-	 orB2u90kOoFN8z8IGbpEsuNVMvGiUOc6eCmCNQAftzLmh12MHe6hVDJ/9kh6iHrfkl
-	 2dFR0gO+jExeLcciK2ZfvoIsS35RyX1vEhDv2tSWxXv4YrO8iLDlA5EbVS5DCkm63h
-	 6qk4C9x+spijKTjg8XToKwj9MPIEF+R+z6+NqCo/3RGuxejNa51/zhpOXQ7NII2Es4
-	 Ti4aMrVmU7WWQ==
-Message-ID: <81bd7bd3-46c8-45c0-8266-44316597a406@kernel.org>
-Date: Thu, 19 Jun 2025 19:39:14 +0200
+	s=arc-20240116; t=1750354938; c=relaxed/simple;
+	bh=L/OerO8K7dV84+t/54H44SeC92ZXlm5XpyIgZREAD0c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JMgQlzYsLGYffD/1gd0Qkzox2GkNFM4Y3zyh7zXh9IdmgmPFmqJeNXTV6Z0oMNO79rdcooPJjE7C47FpRlocBx1NIMsPIeXnJnEi/j5u+JCo3t5xNqzl/SV/PCeJWObW8jCnLa2pM3N2KHDPBC6+6bKN0kxV9hrcLvZWHButbjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EwxdnANh; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750354919;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jloEniBJzWZUd3yTjD8bjym70kpKQBVd5Lz0POnC08Y=;
+	b=EwxdnANhsAu7DLNTdnzO4Mj/dCZ4k/BzHHMniYeIbBBVo6Vgjy8Lvhq0LfAGcn7psyC43N
+	WFq9gSXwxfrgW86FEVCS9UwzBRMdfZ5DDjd3l2zk/dCvTxpv6HCBJvEIQHfFASwMLmagQs
+	xNXav/dWYqcoFwqiJY5KKZkuHgmwFhc=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Philipp Stanner <phasta@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Takashi Iwai <tiwai@suse.de>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: emu10k1: Replace deprecated strcpy() with strscpy()
+Date: Thu, 19 Jun 2025 19:40:48 +0200
+Message-ID: <20250619174057.175676-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: reset: eswin: Documentation for
- eic7700 SoC
-To: dongxuyang@eswincomputing.com, p.zabel@pengutronix.de, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- huangyifeng@eswincomputing.com
-References: <20250619075811.1230-1-dongxuyang@eswincomputing.com>
- <20250619080012.1300-1-dongxuyang@eswincomputing.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250619080012.1300-1-dongxuyang@eswincomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 19/06/2025 10:00, dongxuyang@eswincomputing.com wrote:
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#reset-cells':
-> +    const: 2
+strcpy() is deprecated; use strscpy() instead.
 
-What is the meaning of the cells?
+No functional changes intended.
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#reset-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/reset/eswin,eic7700-reset.h>
-> +
-> +    reset-controller@51828000 {
-> +        compatible = "eswin,eic7700-reset";
-> +        reg = <0x51828000 0x80000>;
-> +        #reset-cells = <2>;
-> +    };
-> diff --git a/include/dt-bindings/reset/eswin,eic7700-reset.h b/include/dt-bindings/reset/eswin,eic7700-reset.h
-> new file mode 100644
-> index 000000000000..8c3aa3c87ea4
-> --- /dev/null
+Link: https://github.com/KSPP/linux/issues/88
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ sound/pci/emu10k1/emu10k1.c  |  3 ++-
+ sound/pci/emu10k1/emu10k1x.c | 13 +++++++------
+ sound/pci/emu10k1/emufx.c    | 23 ++++++++++++-----------
+ sound/pci/emu10k1/emumixer.c |  9 +++++----
+ 4 files changed, 26 insertions(+), 22 deletions(-)
 
-> +++ b/include/dt-bindings/reset/eswin,eic7700-reset.h
-> @@ -0,0 +1,460 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright 2024, Beijing ESWIN Computing Technology Co., Ltd.. All rights reserved.
+diff --git a/sound/pci/emu10k1/emu10k1.c b/sound/pci/emu10k1/emu10k1.c
+index dadeda7758ce..548e7d049901 100644
+--- a/sound/pci/emu10k1/emu10k1.c
++++ b/sound/pci/emu10k1/emu10k1.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/init.h>
+ #include <linux/pci.h>
++#include <linux/string.h>
+ #include <linux/time.h>
+ #include <linux/module.h>
+ #include <sound/core.h>
+@@ -154,7 +155,7 @@ static int snd_card_emu10k1_probe(struct pci_dev *pci,
+ 	} else {
+ 		struct snd_emu10k1_synth_arg *arg;
+ 		arg = SNDRV_SEQ_DEVICE_ARGPTR(wave);
+-		strcpy(wave->name, "Emu-10k1 Synth");
++		strscpy(wave->name, "Emu-10k1 Synth");
+ 		arg->hwptr = emu;
+ 		arg->index = 1;
+ 		arg->seq_ports = seq_ports[dev];
+diff --git a/sound/pci/emu10k1/emu10k1x.c b/sound/pci/emu10k1/emu10k1x.c
+index 30ac37b5a214..8c18ad987223 100644
+--- a/sound/pci/emu10k1/emu10k1x.c
++++ b/sound/pci/emu10k1/emu10k1x.c
+@@ -20,6 +20,7 @@
+ #include <linux/pci.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/slab.h>
++#include <linux/string.h>
+ #include <linux/module.h>
+ #include <sound/core.h>
+ #include <sound/initval.h>
+@@ -840,15 +841,15 @@ static int snd_emu10k1x_pcm(struct emu10k1x *emu, int device)
+ 	pcm->info_flags = 0;
+ 	switch(device) {
+ 	case 0:
+-		strcpy(pcm->name, "EMU10K1X Front");
++		strscpy(pcm->name, "EMU10K1X Front");
+ 		map = snd_pcm_std_chmaps;
+ 		break;
+ 	case 1:
+-		strcpy(pcm->name, "EMU10K1X Rear");
++		strscpy(pcm->name, "EMU10K1X Rear");
+ 		map = surround_map;
+ 		break;
+ 	case 2:
+-		strcpy(pcm->name, "EMU10K1X Center/LFE");
++		strscpy(pcm->name, "EMU10K1X Center/LFE");
+ 		map = clfe_map;
+ 		break;
+ 	}
+@@ -1461,7 +1462,7 @@ static int emu10k1x_midi_init(struct emu10k1x *emu,
+ 	spin_lock_init(&midi->open_lock);
+ 	spin_lock_init(&midi->input_lock);
+ 	spin_lock_init(&midi->output_lock);
+-	strcpy(rmidi->name, name);
++	strscpy(rmidi->name, name);
+ 	snd_rawmidi_set_ops(rmidi, SNDRV_RAWMIDI_STREAM_OUTPUT, &snd_emu10k1x_midi_output);
+ 	snd_rawmidi_set_ops(rmidi, SNDRV_RAWMIDI_STREAM_INPUT, &snd_emu10k1x_midi_input);
+ 	rmidi->info_flags |= SNDRV_RAWMIDI_INFO_OUTPUT |
+@@ -1540,8 +1541,8 @@ static int __snd_emu10k1x_probe(struct pci_dev *pci,
+ 
+ 	snd_emu10k1x_proc_init(chip);
+ 
+-	strcpy(card->driver, "EMU10K1X");
+-	strcpy(card->shortname, "Dell Sound Blaster Live!");
++	strscpy(card->driver, "EMU10K1X");
++	strscpy(card->shortname, "Dell Sound Blaster Live!");
+ 	sprintf(card->longname, "%s at 0x%lx irq %i",
+ 		card->shortname, chip->port, chip->irq);
+ 
+diff --git a/sound/pci/emu10k1/emufx.c b/sound/pci/emu10k1/emufx.c
+index 03efc317e05f..7db0660e6b61 100644
+--- a/sound/pci/emu10k1/emufx.c
++++ b/sound/pci/emu10k1/emufx.c
+@@ -12,6 +12,7 @@
+ #include <linux/capability.h>
+ #include <linux/delay.h>
+ #include <linux/slab.h>
++#include <linux/string.h>
+ #include <linux/vmalloc.h>
+ #include <linux/init.h>
+ #include <linux/mutex.h>
+@@ -1175,7 +1176,7 @@ snd_emu10k1_init_mono_control2(struct snd_emu10k1_fx8010_control_gpr *ctl,
+ 			       const char *name, int gpr, int defval, int defval_hr)
+ {
+ 	ctl->id.iface = (__force int)SNDRV_CTL_ELEM_IFACE_MIXER;
+-	strcpy(ctl->id.name, name);
++	strscpy(ctl->id.name, name);
+ 	ctl->vcount = ctl->count = 1;
+ 	if (high_res_gpr_volume) {
+ 		ctl->min = -1;
+@@ -1199,7 +1200,7 @@ snd_emu10k1_init_stereo_control2(struct snd_emu10k1_fx8010_control_gpr *ctl,
+ 				 const char *name, int gpr, int defval, int defval_hr)
+ {
+ 	ctl->id.iface = (__force int)SNDRV_CTL_ELEM_IFACE_MIXER;
+-	strcpy(ctl->id.name, name);
++	strscpy(ctl->id.name, name);
+ 	ctl->vcount = ctl->count = 2;
+ 	if (high_res_gpr_volume) {
+ 		ctl->min = -1;
+@@ -1224,7 +1225,7 @@ snd_emu10k1_init_mono_onoff_control(struct snd_emu10k1_fx8010_control_gpr *ctl,
+ 				    const char *name, int gpr, int defval)
+ {
+ 	ctl->id.iface = (__force int)SNDRV_CTL_ELEM_IFACE_MIXER;
+-	strcpy(ctl->id.name, name);
++	strscpy(ctl->id.name, name);
+ 	ctl->vcount = ctl->count = 1;
+ 	ctl->gpr[0] = gpr + 0; ctl->value[0] = defval;
+ 	ctl->min = 0;
+@@ -1237,7 +1238,7 @@ snd_emu10k1_init_stereo_onoff_control(struct snd_emu10k1_fx8010_control_gpr *ctl
+ 				      const char *name, int gpr, int defval)
+ {
+ 	ctl->id.iface = (__force int)SNDRV_CTL_ELEM_IFACE_MIXER;
+-	strcpy(ctl->id.name, name);
++	strscpy(ctl->id.name, name);
+ 	ctl->vcount = ctl->count = 2;
+ 	ctl->gpr[0] = gpr + 0; ctl->value[0] = defval;
+ 	ctl->gpr[1] = gpr + 1; ctl->value[1] = defval;
+@@ -1325,7 +1326,7 @@ static int _snd_emu10k1_audigy_init_efx(struct snd_emu10k1 *emu)
+ 	/* clear TRAM data & address lines */
+ 	memset(icode->tram_valid, 0xff, 256 / 8);
+ 
+-	strcpy(icode->name, "Audigy DSP code for ALSA");
++	strscpy(icode->name, "Audigy DSP code for ALSA");
+ 	ptr = 0;
+ 	nctl = 0;
+ 	gpr_map[bit_shifter16] = 0x00008000;
+@@ -1563,7 +1564,7 @@ static int _snd_emu10k1_audigy_init_efx(struct snd_emu10k1 *emu)
+ 	 */
+ 	ctl = &controls[nctl + 0];
+ 	ctl->id.iface = (__force int)SNDRV_CTL_ELEM_IFACE_MIXER;
+-	strcpy(ctl->id.name, "Tone Control - Bass");
++	strscpy(ctl->id.name, "Tone Control - Bass");
+ 	ctl->vcount = 2;
+ 	ctl->count = 10;
+ 	ctl->min = 0;
+@@ -1572,7 +1573,7 @@ static int _snd_emu10k1_audigy_init_efx(struct snd_emu10k1 *emu)
+ 	ctl->translation = EMU10K1_GPR_TRANSLATION_BASS;
+ 	ctl = &controls[nctl + 1];
+ 	ctl->id.iface = (__force int)SNDRV_CTL_ELEM_IFACE_MIXER;
+-	strcpy(ctl->id.name, "Tone Control - Treble");
++	strscpy(ctl->id.name, "Tone Control - Treble");
+ 	ctl->vcount = 2;
+ 	ctl->count = 10;
+ 	ctl->min = 0;
+@@ -1849,7 +1850,7 @@ static int _snd_emu10k1_init_efx(struct snd_emu10k1 *emu)
+ 	/* clear TRAM data & address lines */
+ 	memset(icode->tram_valid, 0xff, 160 / 8);
+ 
+-	strcpy(icode->name, "SB Live! FX8010 code for ALSA v1.2 by Jaroslav Kysela");
++	strscpy(icode->name, "SB Live! FX8010 code for ALSA v1.2 by Jaroslav Kysela");
+ 	ptr = 0; i = 0;
+ 	/* we have 12 inputs */
+ 	playback = SND_EMU10K1_INPUTS;
+@@ -2160,7 +2161,7 @@ static int _snd_emu10k1_init_efx(struct snd_emu10k1 *emu)
+ 	 */
+ 	ctl = &controls[i + 0];
+ 	ctl->id.iface = (__force int)SNDRV_CTL_ELEM_IFACE_MIXER;
+-	strcpy(ctl->id.name, "Tone Control - Bass");
++	strscpy(ctl->id.name, "Tone Control - Bass");
+ 	ctl->vcount = 2;
+ 	ctl->count = 10;
+ 	ctl->min = 0;
+@@ -2170,7 +2171,7 @@ static int _snd_emu10k1_init_efx(struct snd_emu10k1 *emu)
+ 	ctl->translation = EMU10K1_GPR_TRANSLATION_BASS;
+ 	ctl = &controls[i + 1];
+ 	ctl->id.iface = (__force int)SNDRV_CTL_ELEM_IFACE_MIXER;
+-	strcpy(ctl->id.name, "Tone Control - Treble");
++	strscpy(ctl->id.name, "Tone Control - Treble");
+ 	ctl->vcount = 2;
+ 	ctl->count = 10;
+ 	ctl->min = 0;
+@@ -2623,7 +2624,7 @@ int snd_emu10k1_fx8010_new(struct snd_emu10k1 *emu, int device)
+ 	err = snd_hwdep_new(emu->card, "FX8010", device, &hw);
+ 	if (err < 0)
+ 		return err;
+-	strcpy(hw->name, "EMU10K1 (FX8010)");
++	strscpy(hw->name, "EMU10K1 (FX8010)");
+ 	hw->iface = SNDRV_HWDEP_IFACE_EMU10K1;
+ 	hw->ops.open = snd_emu10k1_fx8010_open;
+ 	hw->ops.ioctl = snd_emu10k1_fx8010_ioctl;
+diff --git a/sound/pci/emu10k1/emumixer.c b/sound/pci/emu10k1/emumixer.c
+index 05b98d9b547b..d665d5d1ad7c 100644
+--- a/sound/pci/emu10k1/emumixer.c
++++ b/sound/pci/emu10k1/emumixer.c
+@@ -12,6 +12,7 @@
+ 
+ #include <linux/time.h>
+ #include <linux/init.h>
++#include <linux/string.h>
+ #include <sound/core.h>
+ #include <sound/emu10k1.h>
+ #include <linux/delay.h>
+@@ -1983,7 +1984,7 @@ static int remove_ctl(struct snd_card *card, const char *name)
+ {
+ 	struct snd_ctl_elem_id id;
+ 	memset(&id, 0, sizeof(id));
+-	strcpy(id.name, name);
++	strscpy(id.name, name);
+ 	id.iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 	return snd_ctl_remove_id(card, &id);
+ }
+@@ -2188,11 +2189,11 @@ int snd_emu10k1_mixer(struct snd_emu10k1 *emu,
+ 	} else {
+ 	no_ac97:
+ 		if (emu->card_capabilities->ecard)
+-			strcpy(emu->card->mixername, "EMU APS");
++			strscpy(emu->card->mixername, "EMU APS");
+ 		else if (emu->audigy)
+-			strcpy(emu->card->mixername, "SB Audigy");
++			strscpy(emu->card->mixername, "SB Audigy");
+ 		else
+-			strcpy(emu->card->mixername, "Emu10k1");
++			strscpy(emu->card->mixername, "Emu10k1");
+ 	}
+ 
+ 	if (emu->audigy)
+-- 
+2.49.0
 
-2025
-
-> + *
-> + * Device Tree binding constants for EIC7700 reset controller.
-> + *
-> + * Authors:
-> + *	Yifeng Huang <huangyifeng@eswincomputing.com>
-> + *	Xuyang Dong <dongxuyang@eswincomputing.com>
-> + */
-> +
-> +#ifndef __DT_ESWIN_EIC7700_RESET_H__
-> +#define __DT_ESWIN_EIC7700_RESET_H__
-> +
-> +#define SNOC_RST_CTRL 0
-> +#define GPU_RST_CTRL 1
-> +#define DSP_RST_CTRL 2
-> +#define D2D_RST_CTRL 3
-> +#define DDR_RST_CTRL 4
-> +#define TCU_RST_CTRL 5
-> +#define NPU_RST_CTRL 6
-> +#define HSPDMA_RST_CTRL 7
-> +#define PCIE_RST_CTRL 8
-> +#define I2C_RST_CTRL 9
-> +#define FAN_RST_CTRL 10
-> +#define PVT_RST_CTRL 11
-> +#define MBOX_RST_CTRL 12
-> +#define UART_RST_CTRL 13
-
-
-...
-
-> +
-> +/*TIMER1*/
-> +#define SW_TIMER1_RSTN_0 0
-> +#define SW_TIMER1_RSTN_1 1
-> +#define SW_TIMER1_RSTN_2 2
-> +#define SW_TIMER1_RSTN_3 3
-> +#define SW_TIMER1_RSTN_4 4
-> +#define SW_TIMER1_RSTN_5 5
-> +#define SW_TIMER1_RSTN_6 6
-> +#define SW_TIMER1_RSTN_7 7
-> +#define SW_TIMER1_PRSTN 8
-> +
-> +/*TIMER2*/
-> +#define SW_TIMER2_RSTN_0 0
-> +#define SW_TIMER2_RSTN_1 1
-> +#define SW_TIMER2_RSTN_2 2
-> +#define SW_TIMER2_RSTN_3 3
-> +#define SW_TIMER2_RSTN_4 4
-> +#define SW_TIMER2_RSTN_5 5
-> +#define SW_TIMER2_RSTN_6 6
-> +#define SW_TIMER2_RSTN_7 7
-> +#define SW_TIMER2_PRSTN 8
-
-That's unreadable - missing indent before the value. Ids equal to block
-number are not useful anyway.
-
-The problem is: you still do not use this as an ABI. No driver usage at
-all and (comment which I repeat very often) no point to add it to the
-bindings. Look at other bindings how this is supposed to look like.
-
-
-Best regards,
-Krzysztof
 
