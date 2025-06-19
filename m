@@ -1,125 +1,85 @@
-Return-Path: <linux-kernel+bounces-693297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE10EADFD6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:58:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19274ADFD70
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F3EC189CFAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:58:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B71BC3A74C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C67243958;
-	Thu, 19 Jun 2025 05:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tlxp+2tl"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FFC219A6B;
+	Thu, 19 Jun 2025 06:02:04 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CDE242D8E;
-	Thu, 19 Jun 2025 05:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42A114F98
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 06:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750312690; cv=none; b=NjwVGKyQFYEXB1090yg90cqie+Y/0o3vC5z/siAMHyBs/TB9JoyvrwBLVIWDf0ZBXH9GUZrY0NC0EXJdVtfYmMfcbPUGGrmsEFiY/drbZVpudy/7aBs9gioR221agigCb0bdvHWMCCLtQrVBykiLLITxYwJ2RhP9+g3tybd+eWc=
+	t=1750312924; cv=none; b=Vj8bd3j54nuitRYcWWk0q/tAmD0LBkTrRnrkPqqyV9999dq19ZenpQcP81DEXLhpA7ca1Kwwv4CnvgcTKCZ/RHvIPgE3zV/miutAamm1E5ur6eLmrLMblYqPDf5REvyfXVVkP7vB3GiMhMvsGZdal6qVoxLgP7rYl8O5X+vvGm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750312690; c=relaxed/simple;
-	bh=UPM/iUMRZV02JBzFSJZaNVgOriCBzjVhqgGwDNTwmuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t1q8IUvEv65PbTZpfEJuxLjzP737iU+6a+yE99d3hiUn6qplRuNEqnO8WB8UFEUPsp5b58J6OVesh9IA6lBJBh6UnyCfm5B8ZkKiRFr1bGgDGYOtyIpyJC0RY7PhHifTwbWOhWMS2uT69zjrafqxDWMmSizTHAxFngVDvaMLFDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tlxp+2tl; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4a6f3f88613so3466401cf.1;
-        Wed, 18 Jun 2025 22:58:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750312688; x=1750917488; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E6ieeSo4vRKELhw8/rOXktM5LV24RcohaY2mZD0DT+A=;
-        b=Tlxp+2tlcu4fKgRV2Bvd4AFMANmeOYrkStP/ajqSTquahTcfmtkLPzzxAHbwAao/Ey
-         lIJJqye2GjnExvA6Ta3XcXndNKWp62s6lfafpAwSxJsgewtRqtsj1tUQEIULwU1so8mQ
-         3/4dDB6XynU+DQRQrLaAKGCGUEr1F27Q9Feh0mpdv3z4EPYeZsvYwBqPcOoGF0yugNz0
-         qVUwDYkWh/pd8yyVxAktbFryUhYCe9BFw/6AGSKUOF+Xvkm/HSE3EF6N/NRARPq4j9KU
-         B1ylyj1wIzPXwMQcdSoQvwTzD+IXzqF0UacymdbOmfjMAb3JApaQCEkAU/u7ZVnqYkel
-         Ilqw==
+	s=arc-20240116; t=1750312924; c=relaxed/simple;
+	bh=RA+L/EWng3H2TZjKFJWHFe0TLotcExOaInhX4IF758w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TD6FUrcQD+cyJJifEUyzGM96MjaimBkhLX6WbRpto9ClZcQGU3GfKQf/jdVj1H1AyH/uYW2LAI3fXZ8C/ElIas6V2ZugL0cQXHIemfKzpewd3x7/zbw/SGCEF17jAVbjVCI+/fLA511OoRG0b3IB3YyyvctYNCO8bFqcxyEZu9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ddbec809acso5163475ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 23:02:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750312688; x=1750917488;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E6ieeSo4vRKELhw8/rOXktM5LV24RcohaY2mZD0DT+A=;
-        b=ST8XjInVxl3ZrA1UF8oA95necjbsxmiV8dDyzI4O37k/fcIo/jgBagCoHi2rwrx4VQ
-         WAU6UVr8ehnSbKXY/Z7P2z+EQEdt0OJpc34bxX/9BWYG6UAQ1WZ2qlCbpJgdKo/LfspD
-         vmfFWpMe1yORrak/9d2+vAsg4M6g03Dj9S0vUQOZ1hMrsWVT9tvrUEJl1BFNxYnzQSSd
-         g7HfjdRapoagJJUBUV2+5D4vyD+MtQxvswrmqKK6wANMd4sRQPNnZaWtHGQRqz6niU3l
-         9bhSrvKPhi/tc75lM7P36lRFZt9xY2Io9HxbyHxxv3SGzESAzr00FVXDIC8jmGZI7ohB
-         GNww==
-X-Forwarded-Encrypted: i=1; AJvYcCUqBZOMaIU6F1KLFbGgjiDyisySFo0TLkOKYVexM9ZQmEhUbtlDBHvRiscy0k+6scojGTwWn4PlORwq+Qs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzog1ZJeIs2URnod1BNjqaHa5Q8+0B0Hclp8bX6j6z1BG35f56s
-	/yYqoS7/qIl3d2fEpAMd+SDmOR2Uv55S9HBD93VULyQ29oXQEHtYFJnG
-X-Gm-Gg: ASbGnctpkCXDG0HE/bzbPcuQ7js017Gu5yAsmGP9OTlqro1ImNkNO5ZLKz+gef5ZyW6
-	QhhNxaLyKXgwGDQVGeAep7cZNGLtx+RrwB6pKoTxEEHgJCYCsaawacIm6RCFni9+pkUIWPNb7Cm
-	CDqD6hkU0qPQOYb6Enj26a920ygiX+udExXcB+iTcUq8Z7s0PV9TNuYkiTW0m+TkyAacI6NWwdG
-	S+dmZo6nV7II1iqUIjEXpJ+mH96fz0I3SnMjKoZzarEyEOGpG4MhjfhnCVXmewhO5MyvASZ105o
-	xsLhZM3j7r2MaRV9D9IOfMpP4kyhpJLYqCkLEs286/+/d5PSwOOAUENrZ360QkNj2yh5hyzFokG
-	8vrFHI8zdrz0GbOTaWV33W8pw8KWTcKXszu7XrhN1oAaaMcbFjWqd6p695Q==
-X-Google-Smtp-Source: AGHT+IEcgaKg2OtQgkTumlR6bZwenvChQUzb8wcskNs+GOrGozd81FZRDCNpNjG99v/XM9+ZEvANAA==
-X-Received: by 2002:a05:622a:118f:b0:4a4:3449:2b82 with SMTP id d75a77b69052e-4a73c55b6a5mr377120781cf.13.1750312688133;
-        Wed, 18 Jun 2025 22:58:08 -0700 (PDT)
-Received: from seungjin-HP-ENVY-Desktop-TE02-0xxx.dartmouth.edu ([129.170.197.81])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a72a2e750bsm79171421cf.17.2025.06.18.22.58.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 22:58:06 -0700 (PDT)
-From: Seungjin Bae <eeodqql09@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Seungjin Bae <eeodqql09@gmail.com>
-Subject: [PATCH v4] usb: host: xhci-plat: fix incorrect type for of_match variable in xhci_plat_probe()
-Date: Thu, 19 Jun 2025 01:57:47 -0400
-Message-ID: <20250619055746.176112-2-eeodqql09@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <2025061950-frown-cesarean-a1e3@gregkh>
-References: <2025061950-frown-cesarean-a1e3@gregkh>
+        d=1e100.net; s=20230601; t=1750312921; x=1750917721;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Md5fZAX9vnt5Cga4HCnPRlHR0A0egiqUi1CoPwV7PMA=;
+        b=leyLl/0pgGBqYr7YJMA6aFchySu8ee6HJiBc6d+gA8oO/aSNVBf4IoSbn/WCvaDxQf
+         b1sM4GyVMCYCq5dqDkRzqN3pxVvagGP0AWGtA+bjYpiECM1+6ffZQiw4TDKy1EJqtHpu
+         HZh80tFawxfG0QoI90w5iFRf2EG0gH2B0zuJcyy9hjDA3FBfH3AOydrGthMm2sFGwyJH
+         GnbXaGyag6ayx9w6xAfRD7EmetrBhgvvkYgVeKof3ARId2ksITxs7FfVo4ycF2dgt3mW
+         oizqucb9tRbbX7/yhwojsNBzb042xr/ochun9iab2abMVYEq5w7/p1vufjeUdUPJumYm
+         eYHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUW6ybKZxg65hEJU5Uw6X5WSLZPS7UYC75WQIADaYyGwvnZXtTFVG06cN0VrDZ5e1mOyQ7+Ft7VyucPY9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfNri2APjtBDu4TBrjYVJ1qBzZiYvLAQalOXzBRcc99nrKBpMT
+	RIu+OtVSWTeXyZFYCEYqcdQ4WEMA72F/9DFnZon4S/yyTcUiLgmWpdLSxpNAqVOjeRpbqbWur/n
+	z4B6m6Yonq8/Ar4vz9UyPMWBLJS3xtikfbgB3Csd2DZbhQKxAHJv/0/EQ+NU=
+X-Google-Smtp-Source: AGHT+IHV9QzO4kSgNs2f5Ltc+6bROOei/1qRSwFMV5aBIdmaFnD3U5vYFy3ZzqjhAFGTVBc50h22gO0ZNjBCd21dTlBM66r66Ufz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:178b:b0:3dd:a55b:39dd with SMTP id
+ e9e14a558f8ab-3de07cd800cmr217807515ab.19.1750312921743; Wed, 18 Jun 2025
+ 23:02:01 -0700 (PDT)
+Date: Wed, 18 Jun 2025 23:02:01 -0700
+In-Reply-To: <CAGR7w80uuhA7ur91DoV32Ymr-eYpPWNvx9BCMCa_2HuvMTLurg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6853a7d9.050a0220.216029.018c.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in __bch2_alloc_v4_to_text
+From: syzbot <syzbot+8eb51728519f6659ef7b@syzkaller.appspotmail.com>
+To: abhinav.ogl@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The variable `of_match` was incorrectly declared as a `bool`.
-It is assigned the return value of of_match_device(), which is a pointer of
-type `const struct of_device_id *`.
+Hello,
 
-Fixes: 16b7e0cccb243 ("USB: xhci-plat: fix legacy PHY double init")
-Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
----
- v3 -> v4: Corrected a typo in the changelog
- v2 -> v3: Added version of patch and used real name
- v1 -> v2: Updated Fixes tag and corrected Signed-off-by line
- 
- drivers/usb/host/xhci-plat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+syzbot tried to test the proposed patch but the build/boot failed:
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 6dab142e7278..49eb874b1d81 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -152,7 +152,7 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
- 	int			ret;
- 	int			irq;
- 	struct xhci_plat_priv	*priv = NULL;
--	bool			of_match;
-+	const struct of_device_id *of_match;
- 
- 	if (usb_disabled())
- 		return -ENODEV;
--- 
-2.43.0
+fs/bcachefs/btree_key_cache.c:141:13: error: incompatible integer to pointer conversion returning 'int' from a function with result type 'struct bkey_cached *' [-Wint-conversion]
+
+
+Tested on:
+
+commit:         fb4d33ab Merge tag '6.16-rc2-ksmbd-server-fixes' of gi..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=db26f33438d76de9
+dashboard link: https://syzkaller.appspot.com/bug?extid=8eb51728519f6659ef7b
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12866370580000
 
 
