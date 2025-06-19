@@ -1,180 +1,121 @@
-Return-Path: <linux-kernel+bounces-693551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB18AE004D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:46:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 157FDAE0029
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A61033B4BC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:46:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BBCD7AE9E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01123264A9E;
-	Thu, 19 Jun 2025 08:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A31C26528B;
+	Thu, 19 Jun 2025 08:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQ8sXUtf"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F714k0Pr"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A856526560A
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 08:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C4924166E;
+	Thu, 19 Jun 2025 08:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750322746; cv=none; b=UQAtnps94JrfwrowRmHNPvEx7AxEO5PoB9dmijM4tuh4liQar7g5qi3BggtvFWiUVDkWwkfbbuDar3D6Z6QLqavThghnQ9TFp6e1tftBW+QfaPk/v1KNCNUH99Wuy2cNyDHqObMcH2zVNk6MquvlXlquXesgUQwfJHKo46cq+AY=
+	t=1750322678; cv=none; b=udcUj8bGHhrVmq74/7nBCOXKSBYzZzz/c4jfh0XQUwBYhs9QdsX2xRPKChwxzx7mCrtJyLOafiCdcAZTEeNEh7vxMEfDWTbO3Whss2UC+m1uytI35XHFZtXCWx8NKVhWoe3AEDyOi5riQz33/6IgnHedx3ky7QHhsiChyO80EaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750322746; c=relaxed/simple;
-	bh=pZCCuJtMXW+Sk5A05vG608WxmNHl7vWyCGkPb08W+4M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=R3wket0Ax3RdxHPorIHSlKoW6YRHhsx2f7hglWZpoTi4CTW34EydaEtPuQKmo6a77HLRRRmi3yu7atMdLz/c+WMpQxBz24z8foPoDZBNA2KPlFba2xVFrVPjHm/UOQX9YbYaHwUONJIegCkirvYx7P7tGoL0v+eHVwEtH6Ywkv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQ8sXUtf; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-607c5715ef2so795532a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 01:45:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750322743; x=1750927543; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NvaERkbwLq6kAlzor3nDw/43C+87Vnd9ZfjPg7pUV1M=;
-        b=UQ8sXUtfme85oB9C2UM1QGBW4XeFdYvxATDPiWRfZnJ5IhYNn4hqXPF9Tm5Fgu2+pV
-         rGNvF5ooVsOVE7rRw36CmP0knVNF9jMQgtPKh+lB0X2yIPkrwXSOQ/QiEk7YkV+VpzR4
-         2cWrvHVV7QrPeC9DoldMCqYB2qiSba3XCn1AqH1H1rHxdtO6MYpDesRaRzNLed4/EiLU
-         Pp92h07QoPxctcvouSTuNiazJmx/6IHr+ANkEKFysvsH9Wi901pKHFkkhEtd/WDBNZcS
-         g7wSaozE2wx/8YGOK3oxiaMxHczgzeXQYIAOgV4VapW4pTXzt5wOEZsEz6M2EcA9uWPv
-         eMmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750322743; x=1750927543;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NvaERkbwLq6kAlzor3nDw/43C+87Vnd9ZfjPg7pUV1M=;
-        b=dnNUJRO9rjYJOpgO5xPETmezo7J4ll5AvY/ni0u54VrTHnpEUUzHkcwJZIez1+NcW8
-         zu2vKFVzf35qRECUOM2iwPnX6f21jzF3WuhSMQu7GldMSnd8CPZ+AwCYm/QJsy+8ZB6x
-         Als+jMd0caYOgBWHysURlUQYXB+b+M1EDvbSwx6X6QQCg5V4h5/u05BfXeerVmAl1jt8
-         4CkPXIssinQHUsPKIeGtSSk0jeI4IYBWTipk/l19OwKxgZbbQntBJCz5W0+SMbrH3DIX
-         4cqoe1r11J+DDqtws1VB0KUs197H/y8SseT5YOST+Nw/8cdN+rfPZNNLaA1FcKsPpN1B
-         ArIw==
-X-Gm-Message-State: AOJu0YxI7AUR4Yd55ElZH4sqUG+oPSOs7LgS2qogb7Wao7tesh+mSCmc
-	tk+iNDA3ayqjuigRfA44r7UkSKK1vJ9ypADh5P6dBFARWqzQ8ywN6e1G
-X-Gm-Gg: ASbGncta3E9Z67jrSC4I6K/Rxt6s5mIGCzA3FuQG9+IbSReXQekwbhvBRKi30FEctMK
-	myowbB/JL2jMkxeR+scUbxkoipoYk1kJ1+RXPpYshyNOyIq1+6zoebxgBsKrUq40iytp2pkbLwa
-	+McrvA5D8mPZIy+URZSJhquaNS2xdm5mQyuHW02smFXuRNhJMOKrj8WJfUOHvh8CcXHtKXqlbOH
-	TTW1NlBNaVQ19w/IAl5IhTPcuLj3z2QaPQiq0cWfznUioTcxy8G1Vatek9+xp3JlfDpLXI/KC7m
-	LmxHeiA5u3UNSVdUcSfIoFg7RWXque13m44s6aghbuYITP9V5r7KVmS6AP56ptNLrfSbp7lLeNF
-	2OsCEUw==
-X-Google-Smtp-Source: AGHT+IHYZLTg9XnpvbLDURUjKOGqQXoCtaLlfY7KFUrdYfthg5IaAU0Z6abNvqwzCraWQ6H6oY93ZA==
-X-Received: by 2002:a05:6402:d08:b0:607:f257:ad1e with SMTP id 4fb4d7f45d1cf-608d094bfdbmr20431777a12.22.1750322742884;
-        Thu, 19 Jun 2025 01:45:42 -0700 (PDT)
-Received: from chimera.vu.local ([145.108.90.28])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b4a5e6f0sm11276831a12.42.2025.06.19.01.45.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 01:45:42 -0700 (PDT)
-From: Thomas Andreatta <thomasandreatta2000@gmail.com>
-X-Google-Original-From: Thomas Andreatta <thomas.andreatta2000@gmail.com>
-To: hansg@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	Thomas Andreatta <thomas.andreatta2000@gmail.com>
-Subject: [PATCH 4/4 V2] Staging: media: atomisp: i2c: struct definition style
-Date: Thu, 19 Jun 2025 10:44:24 +0200
-Message-Id: <20250619084420.146151-4-thomas.andreatta2000@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250619084420.146151-1-thomas.andreatta2000@gmail.com>
-References: <20250619084420.146151-1-thomas.andreatta2000@gmail.com>
+	s=arc-20240116; t=1750322678; c=relaxed/simple;
+	bh=pAQIs0wPNcKspvealxxLH8x5f2oaCYdGWfWa+mZjI4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxG5qoL8LDmL2rwKYve6/X3lBcw9h4yMdGGJ2LdeANUfoctr6Uk1v/9HHKdtI3EPp9kYfUAjeMxEg2/E21HpPr+URlwmDX/HYekfz68VvVBzq3Q7SuK5OLGmnOeQaIF4NfHUyVQCUOiLBiOZgZc7SjmqSPsDuqySN+/wREgECnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F714k0Pr; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zdSTT5GIAhkhibnh3jBupBeo3fDvg6PoB7Mf0Alg2KA=; b=F714k0PrGY2UjMoRVc/fTj+mfL
+	2gUYFjFXcIEPSCzAIWCjBN4juRyyJxq1o/r9ZcKD5iLLex2ppvReauRReBsygZC4CG8hgKR7iKbqx
+	dvRgVKIlqoc41ISPLD3cJhetQ81pi1S7h4lkYoG2QMy8sxs4MMh6sPGhjD6ETav5b1UhEVPLFhbgW
+	yz5UIGtYwyS7Ihw0/bfPUi7NYFO4P6Bkaz1IwXzBc+oSUy4rqSRk0eayUfB2zixJEZe1uEhlFkRET
+	ejyWOOtBtXO2b/BqJ16PYKwDg0z7bei66XSpFdMtdi+/f0T7DRo7+6YSugk3lwp14yKg8fDKY3p8I
+	fUu3rjbg==;
+Received: from 2001-1c00-8d82-d000-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d82:d000:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uSAsl-00000007v7W-3Pw4;
+	Thu, 19 Jun 2025 08:44:27 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5CD2A3088F2; Thu, 19 Jun 2025 10:44:27 +0200 (CEST)
+Date: Thu, 19 Jun 2025 10:44:27 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, x86@kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v10 07/14] unwind_user/deferred: Make unwind deferral
+ requests NMI-safe
+Message-ID: <20250619084427.GA1613376@noisy.programming.kicks-ass.net>
+References: <20250611005421.144238328@goodmis.org>
+ <20250611010428.938845449@goodmis.org>
+ <20250619083415.GZ1613376@noisy.programming.kicks-ass.net>
+ <20250619043733.2a74d431@batman.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250619043733.2a74d431@batman.local.home>
 
-Reorder const qualifier in array declaration
+On Thu, Jun 19, 2025 at 04:37:33AM -0400, Steven Rostedt wrote:
+> On Thu, 19 Jun 2025 10:34:15 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > Why can't we cmpxchg_local() the thing and avoid this horrible stuff?
+> > 
+> > static u64 get_timestamp(struct unwind_task_info *info)
+> > {
+> > 	u64 new, old = info->timestamp;
+> > 
+> > 	if (old)
+> > 		return old;
+> > 	
+> > 	new = local_clock();
+> > 	old = cmpxchg_local(&info->timestamp, old, new);
+> > 	if (old)
+> > 		return old;
+> > 	return new;
+> > }
+> > 
+> > Seems simple enough; what's wrong with it?
+> 
+> It's a 64 bit number where most 32 bit architectures don't have any
+> decent cmpxchg on 64 bit values. That's given me hell in the ring
+> buffer code :-p
 
-Signed-off-by: Thomas Andreatta <thomas.andreatta2000@gmail.com>
----
- drivers/staging/media/atomisp/i2c/ov2722.h | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Do we really have to support 32bit?
 
-diff --git a/drivers/staging/media/atomisp/i2c/ov2722.h b/drivers/staging/media/atomisp/i2c/ov2722.h
-index bc36133f3722..00317d105305 100644
---- a/drivers/staging/media/atomisp/i2c/ov2722.h
-+++ b/drivers/staging/media/atomisp/i2c/ov2722.h
-@@ -236,7 +236,7 @@ struct ov2722_write_ctrl {
-  * Register settings for various resolution
-  */
- #if 0
--static struct ov2722_reg const ov2722_QVGA_30fps[] = {
-+static const struct ov2722_reg ov2722_QVGA_30fps[] = {
- 	{OV2722_8BIT, 0x3718, 0x10},
- 	{OV2722_8BIT, 0x3702, 0x0c},
- 	{OV2722_8BIT, 0x373a, 0x1c},
-@@ -346,7 +346,7 @@ static struct ov2722_reg const ov2722_QVGA_30fps[] = {
- 
- };
- 
--static struct ov2722_reg const ov2722_480P_30fps[] = {
-+static const struct ov2722_reg ov2722_480P_30fps[] = {
- 	{OV2722_8BIT, 0x3718, 0x10},
- 	{OV2722_8BIT, 0x3702, 0x18},
- 	{OV2722_8BIT, 0x373a, 0x3c},
-@@ -455,7 +455,7 @@ static struct ov2722_reg const ov2722_480P_30fps[] = {
- 	{OV2722_TOK_TERM, 0, 0},
- };
- 
--static struct ov2722_reg const ov2722_VGA_30fps[] = {
-+static const struct ov2722_reg ov2722_VGA_30fps[] = {
- 	{OV2722_8BIT, 0x3718, 0x10},
- 	{OV2722_8BIT, 0x3702, 0x18},
- 	{OV2722_8BIT, 0x373a, 0x3c},
-@@ -565,7 +565,7 @@ static struct ov2722_reg const ov2722_VGA_30fps[] = {
- };
- #endif
- 
--static struct ov2722_reg const ov2722_1632_1092_30fps[] = {
-+static const struct ov2722_reg ov2722_1632_1092_30fps[] = {
- 	{OV2722_8BIT, 0x3021, 0x03}, /* For stand wait for
- 				a whole frame complete.(vblank) */
- 	{OV2722_8BIT, 0x3718, 0x10},
-@@ -667,7 +667,7 @@ static struct ov2722_reg const ov2722_1632_1092_30fps[] = {
- 	{OV2722_TOK_TERM, 0, 0}
- };
- 
--static struct ov2722_reg const ov2722_1452_1092_30fps[] = {
-+static const struct ov2722_reg ov2722_1452_1092_30fps[] = {
- 	{OV2722_8BIT, 0x3021, 0x03}, /* For stand wait for
- 				a whole frame complete.(vblank) */
- 	{OV2722_8BIT, 0x3718, 0x10},
-@@ -769,7 +769,7 @@ static struct ov2722_reg const ov2722_1452_1092_30fps[] = {
- };
- 
- #if 0
--static struct ov2722_reg const ov2722_1M3_30fps[] = {
-+static const struct ov2722_reg ov2722_1M3_30fps[] = {
- 	{OV2722_8BIT, 0x3718, 0x10},
- 	{OV2722_8BIT, 0x3702, 0x24},
- 	{OV2722_8BIT, 0x373a, 0x60},
-@@ -877,7 +877,7 @@ static struct ov2722_reg const ov2722_1M3_30fps[] = {
- };
- #endif
- 
--static struct ov2722_reg const ov2722_1080p_30fps[] = {
-+static const struct ov2722_reg ov2722_1080p_30fps[] = {
- 	{OV2722_8BIT, 0x3021, 0x03}, /* For stand wait for a whole
- 					frame complete.(vblank) */
- 	{OV2722_8BIT, 0x3718, 0x10},
-@@ -983,7 +983,7 @@ static struct ov2722_reg const ov2722_1080p_30fps[] = {
- };
- 
- #if 0 /* Currently unused */
--static struct ov2722_reg const ov2722_720p_30fps[] = {
-+static const struct ov2722_reg ov2722_720p_30fps[] = {
- 	{OV2722_8BIT, 0x3021, 0x03},
- 	{OV2722_8BIT, 0x3718, 0x10},
- 	{OV2722_8BIT, 0x3702, 0x24},
--- 
-2.34.1
+But IIRC a previous version of all this had a syscall counter. If you
+make this a per task syscall counter, unsigned long is plenty.
 
+I suppose that was dropped because adding that counter increment to all
+syscalls blows. But if you really want to support 32bit, that might be a
+fallback.
+
+Luckily, x86 dropped support for !CMPXCHG8B right along with !TSC. So on
+x86 we good with timestamps, even on 32bit.
 
