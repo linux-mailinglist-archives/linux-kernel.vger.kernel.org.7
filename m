@@ -1,113 +1,115 @@
-Return-Path: <linux-kernel+bounces-694066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62538AE0758
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:33:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA70AE0768
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2F4E4A54A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:32:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 124335A7FBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA81263892;
-	Thu, 19 Jun 2025 13:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FCE267B00;
+	Thu, 19 Jun 2025 13:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mariuszachmann.de header.i=@mariuszachmann.de header.b="hNZIv8M1"
-Received: from ms-10.1blu.de (ms-10.1blu.de [178.254.4.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J22gnJhO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E3027D791;
-	Thu, 19 Jun 2025 13:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.254.4.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71C125D1EB;
+	Thu, 19 Jun 2025 13:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750339886; cv=none; b=L8vmQFJmS6V+QD0j49dtU5HVtF0aDlTz3fZo/9/gloXFPsGi01XN/jpwvkKhlEym+J9CcMld8MNfmUD1vSmeECx2wbeVvFyLGvuAfyBRmk8Mt1WeMA1YuuStfpiYy+YLHK9Tezxv/WiPj3nBkGyd1UmIhjdsdE09klx8zAOzFyY=
+	t=1750339743; cv=none; b=QvVNMkMhrPsRIstIJTIxlK8lnC4Ulpx0UBWuWDamN/RGYortr7bd79EYLt8ZXehCCk+nArTxNdKhKC8R7CRTX+VU7blOiu4LjKsvofNGg64ZgnUEMlVQVezk+ZLL2P4kt9Jqe+iJf/uoqWHIo8xai9/c4z8jOGBc1WDQc1xi55w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750339886; c=relaxed/simple;
-	bh=xmUORx34vcfctweY/xF3n1y/gehWOew+uPKkY7apwZQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hxl5OOI/eISOxPKfzLu6QY8oOLE97un/03OWIy7ud9AIUuIoEfpvAneejqYK2CbeHbHbDhVGvI1s9g8IeucdJO+32d/saTPOVnUn9+IRHoE8R213TyXzNph/EJaGJvsO/COO9cOkbJt5y9t1aKFxK1OgjzZFqF59xO2SunyqCT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de; spf=pass smtp.mailfrom=mariuszachmann.de; dkim=pass (2048-bit key) header.d=mariuszachmann.de header.i=@mariuszachmann.de header.b=hNZIv8M1; arc=none smtp.client-ip=178.254.4.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mariuszachmann.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=mariuszachmann.de; s=blu6948523; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=M4ciBTZbZt3WYpm3wULI3WBZIQzltvoouBjAUZOpVV8=; b=hNZIv8M1X5jr6AS73Ll5Qn9pEK
-	yceAaJxMuTOnhArhZYCEdzXdVxL9sg7/19ypgEdeTJt+XqF0cAZrVg+eZE6BIqLxxVGUOT5g84hhI
-	vfNvF3aBd2PsOMJgZ1JVx53dQCatArd92NazSMAkcwV/cKSBECdbn/AhMW857edsy7lEklYhVXA9S
-	WKvOaOa2P1rRGjEHYT5ztWuPxfylB3Virye1wuqfpW4bpWbz9xRnqNwHEKQPD/BpOAOkuwNqEJYlV
-	irARH0K8UJesl3uAHSp04GLXoWxrUu+qIXhlHZNlkJh8T1/JdliXIKnLU70Lry/8EmgknBXg88BoH
-	56vj6C8w==;
-Received: from [2.211.115.98] (helo=marius)
-	by ms-10.1blu.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <mail@mariuszachmann.de>)
-	id 1uSFMO-009unG-9G;
-	Thu, 19 Jun 2025 15:31:20 +0200
-From: Marius Zachmann <mail@mariuszachmann.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Marius Zachmann <mail@mariuszachmann.de>,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jdelvare@suse.com,
-	syzbot+3bbbade4e1a7ab45ca3b@syzkaller.appspotmail.com
-Subject: [PATCH] hwmon: (corsair-cpro) Validate the size of the received input buffer
-Date: Thu, 19 Jun 2025 15:27:47 +0200
-Message-ID: <20250619132817.39764-5-mail@mariuszachmann.de>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1750339743; c=relaxed/simple;
+	bh=jiHebfdNt4UzeD/k4En63OuTpwaiQo6q3ZZN6iNLq4Q=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=cPOMHvT/fhllHqY/HpwnpRq/LgiZGNlopTgb5I57Jp0ah453RUfe5Nn5iWnDQsONwwyt8L4lBjRgy+1O6wdl6zsurrNCoBwLKjezTygyLonf6mVfr4eo4bpq4CdSg9HtDsGdOBPsZKWrlrCeA6ELcXslb3mSufM/qqMTnoCV5Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J22gnJhO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5E5FC4CEEA;
+	Thu, 19 Jun 2025 13:28:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750339743;
+	bh=jiHebfdNt4UzeD/k4En63OuTpwaiQo6q3ZZN6iNLq4Q=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=J22gnJhOAcWcxT0sOPDAjSTJ4bxfM86CqEKwhVaEm37UY4DBfGIHg3OlEhRGOot0v
+	 PTn3t1g3PUPz2nMTp0zE82aLSCTxm14cSGQonFmqYvKE4KUVEXP4opQ3g/eK+XALmS
+	 PxB4Al91QIsS/EVolGuGDtn8chRO0iW/QH/Fwuv7UN8HSeNT3oc6JX1pQklRqw45Tx
+	 uUa1qowr4Noq9knuFk7HdZF9sM995hAS/MkQmbxNZoZfhEi8x+kTHcnn7oh2aPXkn/
+	 Mj0KVGPiURc0KDt1I4XE9kLPopv1LvlOsKx9PPRuN+3GSAw3W68IMT7i3xXcDVyYQd
+	 U9a+UgFFHrs3w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Con-Id: 241080
-X-Con-U: 0-mail
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 19 Jun 2025 15:28:56 +0200
+Message-Id: <DAQJNI4Z04B0.32WEF8E3D3V2@kernel.org>
+Cc: "John Hubbard" <jhubbard@nvidia.com>, "Ben Skeggs" <bskeggs@nvidia.com>,
+ "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ "Alistair Popple" <apopple@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v5 05/23] rust: num: add the `fls` operation
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Alexandre Courbot" <acourbot@nvidia.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>
+X-Mailer: aerc 0.20.1
+References: <20250612-nova-frts-v5-0-14ba7eaf166b@nvidia.com>
+ <20250612-nova-frts-v5-5-14ba7eaf166b@nvidia.com>
+ <DAMHWN6ML8A1.2AUE4UWR58KR2@kernel.org>
+ <DANR43CR8X87.1YWHJK7P75TPQ@nvidia.com>
+ <DAPWKX9V8T26.315LG5OZLLL2M@kernel.org>
+ <DAQJLYKS5AV3.62SL1IRSQE4B@nvidia.com>
+In-Reply-To: <DAQJLYKS5AV3.62SL1IRSQE4B@nvidia.com>
 
-Add buffer_recv_size to store the size of the received bytes.
-Validate buffer_recv_size in send_usb_cmd().
+On Thu Jun 19, 2025 at 3:26 PM CEST, Alexandre Courbot wrote:
+> On Thu Jun 19, 2025 at 4:24 AM JST, Benno Lossin wrote:
+>> On Mon Jun 16, 2025 at 8:41 AM CEST, Alexandre Courbot wrote:
+>>> On Sun Jun 15, 2025 at 4:16 AM JST, Benno Lossin wrote:
+>>>> On Thu Jun 12, 2025 at 4:01 PM CEST, Alexandre Courbot wrote:
+>>>>> +            #[inline(always)]
+>>>>> +            pub const fn [<fls_ $t>](v: $t) -> u32 {
+>>>>
+>>>> Can we name this `find_last_set_bit_ $t`? When the upstream function
+>>>> lands, we should also rename this one.
+>>>
+>>> We can - but as for `align_up`/`next_multiple_of`, I am not sure which
+>>> naming scheme (kernel-like or closer to Rust conventions) is favored in
+>>> such cases, and so far it seems to come down to personal preference. I
+>>> tend to think that staying close to kernel conventions make it easier t=
+o
+>>> understand when a function is the equivalent of a C one, but whichever
+>>> policy we adopt it would be nice to codify it somewhere (apologies if i=
+t
+>>> is already and I missed it).
+>>
+>> I don't think we have it written down anywhere. I don't think that we
+>> should have a global rule for this. Certain things are more in the
+>> purview of the kernel and others are more on the Rust side.
+>>
+>> My opinion is that this, since it will hopefully be in `core` at some
+>> point, should go with the Rust naming.
+>
+> I guess in that case we should go with `last_set_bit`, as `find_` is not
+> really used as a prefix for this kind of operations (e.g.
+> `leading_zeros` and friends).
 
-Reported-by: syzbot+3bbbade4e1a7ab45ca3b@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-hwmon/61233ba1-e5ad-4d7a-ba31-3b5d0adcffcc@roeck-us.net
-Fixes: 40c3a4454225 ("hwmon: add Corsair Commander Pro driver")
-Signed-off-by: Marius Zachmann <mail@mariuszachmann.de>
+Sounds good!
+
 ---
- drivers/hwmon/corsair-cpro.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/hwmon/corsair-cpro.c b/drivers/hwmon/corsair-cpro.c
-index e1a7f7aa7f80..b7b911f8359c 100644
---- a/drivers/hwmon/corsair-cpro.c
-+++ b/drivers/hwmon/corsair-cpro.c
-@@ -89,6 +89,7 @@ struct ccp_device {
- 	struct mutex mutex; /* whenever buffer is used, lock before send_usb_cmd */
- 	u8 *cmd_buffer;
- 	u8 *buffer;
-+	int buffer_recv_size; /* number of received bytes in buffer */
- 	int target[6];
- 	DECLARE_BITMAP(temp_cnct, NUM_TEMP_SENSORS);
- 	DECLARE_BITMAP(fan_cnct, NUM_FANS);
-@@ -146,6 +147,9 @@ static int send_usb_cmd(struct ccp_device *ccp, u8 command, u8 byte1, u8 byte2,
- 	if (!t)
- 		return -ETIMEDOUT;
- 
-+	if (ccp->buffer_recv_size != IN_BUFFER_SIZE)
-+		return -EPROTO;
-+
- 	return ccp_get_errno(ccp);
- }
- 
-@@ -157,6 +161,7 @@ static int ccp_raw_event(struct hid_device *hdev, struct hid_report *report, u8
- 	spin_lock(&ccp->wait_input_report_lock);
- 	if (!completion_done(&ccp->wait_input_report)) {
- 		memcpy(ccp->buffer, data, min(IN_BUFFER_SIZE, size));
-+		ccp->buffer_recv_size = size;
- 		complete_all(&ccp->wait_input_report);
- 	}
- 	spin_unlock(&ccp->wait_input_report_lock);
--- 
-2.50.0
-
+Cheers,
+Benno
 
