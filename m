@@ -1,97 +1,157 @@
-Return-Path: <linux-kernel+bounces-693117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DB5ADFB39
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:28:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B8DFADFB3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D4027AD2C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 02:26:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CC9E189A81A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 02:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877A4223DF9;
-	Thu, 19 Jun 2025 02:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63CC1FF1B5;
+	Thu, 19 Jun 2025 02:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U7BRF3SM"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="HyPCgF1R"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA071FBC8E
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 02:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC5F1F4190
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 02:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750300082; cv=none; b=K++w2TO8VE8SK7j9X5au4JHt43Ya9mje8Jidt5XJPTPkkSbVrysz1t3tl/1BqmfKEncsfGtolj3f66zwQ0yttfXHAZrBuA9QjedB7LQl4pqopozUiC1JDtilfe+OCv89djyhuTOGItMJ4AGoPyX+Ub3aV8cwxTJDKWJEgi73qW0=
+	t=1750300169; cv=none; b=ruRmTCfhG9FVDDrnxUL0Cb0FTqZ5odD6IT/SjRzY2v5rB+b3jD+OUga0EnTtD+PJ17vcnLlSRL81xZB1VrG68YOYYV0ZqUc6iMPaD5HCpagIdS2VozHcRdC2iUGppx7Mz6eA1RZgJbiqI0y9qv7W+elDO3yLNW9DKcAzOJBX6Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750300082; c=relaxed/simple;
-	bh=0XOOewemFS9VXTcTHe5/CMElWD1zPCipCe8NA4Wxhuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qIkgvcOuFrZa92SWj6E5KWCzhvGMLNhcJUD1HDdsIrNmJbAzXyYNEN74B4XnbwxHf09lL0ZpsPvLztLFYmSybW4l3O8nMgoPXkdrnHloKubApi4ZsbQ77yZX8HDa8s2hcyTGZgiDNS8mCYuUBlT60eQFK9uPYtW8S2yWYSK1+iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=U7BRF3SM; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23508d30142so4706765ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 19:28:01 -0700 (PDT)
+	s=arc-20240116; t=1750300169; c=relaxed/simple;
+	bh=L2w4QtkDjTcxS3Jiw42nicI67aVG96GPyXoun25RMB4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QF7VN1vTM5KtEvnQFUATfjjkAsJgb9x4GNxzt/Z0fkCRwUpptq4Oi8uoxQ/n7SbqRViDTTBRg9KhE+rQIsJdkMM33fhq1USB44LBJ8o3T2dCC60zhwVRNxovtCDoqjzLRWppgqNdCp6TnC+DT+E5UATRJIDlCsBYjP+3TBopDgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=HyPCgF1R; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-71173646662so3491427b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 19:29:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750300081; x=1750904881; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XOOewemFS9VXTcTHe5/CMElWD1zPCipCe8NA4Wxhuo=;
-        b=U7BRF3SM410K2AdRZCSdzpRg4QxiZkElYq9jnA10Di/PZtCsTlpVzdnhzBwxI5JzSR
-         aPeAC7JBSEn3CRsZivD5YXLrDaFi8A1W2rV0X/j3u1K1SEewQ+nF/6jI2HnJjSUychjS
-         clJnLYXstwlBxctOoyUYefNWE5y55WFSFVZQo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750300081; x=1750904881;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1750300166; x=1750904966; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0XOOewemFS9VXTcTHe5/CMElWD1zPCipCe8NA4Wxhuo=;
-        b=rMvirLqgQbLsg38AgOr09wdAbJmac4wm6qf4+d4ByWuJWAd5QAjsl7v/+ycqpgttUi
-         PftZXSPWFPOe/oRmaiRI/pzew1/ijQ4iXTHQd0pqDz92MPF4m1vPiqeb4lOQ2MwJvCsZ
-         +L8BjD0nhz3pcrgZMfffaAwn9e+furEwpqO1+9yYil4YWhFofQlUvH7a2mRqH+4b9qB/
-         kxKN11MErEM09UeEpvSKlVYLEP/KPFiYQxbDYnopxvuwSz8Y0z4JHs8da2V+JNXIIX7J
-         97kjpmz8i264dHOOn96j9AgEKILFhNNtj/Sm4cyn+5CqE3IPO4R0rAEuBkFJbTzW2nlp
-         3HLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXa350HhcwmZEqEOjmYKSGyPo98z0KIprlm0NfGnlj7TJYfUehkF5ZGlxV85poMy1qlA29kN5uVpfrRsJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz37Zc8C6nMISlrwfN00IewiBP13TW7+ecouUuQHYDpB40jI7Th
-	X9XDDEe9Sdie9PKZffdpPPiNlzeJaKYIsY1YeoefK17EDvCRjOarde0e9u9P+wlzlY7xJJIHcr4
-	bDfE=
-X-Gm-Gg: ASbGncu3t2OmOKF66LY45sNoLSbp3OxxDM2B2PDKqK5ajosC4JswzibeCEHLk3YirBG
-	hzt0Wo7vuursdlvnLm13WoaP/CFjdqoschaDib5YBWc4YnPw6hZC/if47nHzDQf77mXBQoFtPGo
-	qcuyuwjcAJVi5UiwAsQ6+2qwquEEtolUssjd7yak3NuJla6L4HbkL784veTR0MwcdgNbF2SeVN0
-	RKiubB98KeDaVzOfW1/0zyUlgtB1kZXhTkNqQtgrbMx5tMP0zNVCAWr4Vu/d1WGbegfSKdr4FPU
-	TvGUIGhoSbIGtpPrnJLR8zE3m/it5FC8Jzc37EhX7yoGaviTe4DtPxTj16Ga/TOpZUQP3EmyiT3
-	O
-X-Google-Smtp-Source: AGHT+IHpEGqZGS9BG8qulg8tyMvVsra6tzb35SteIvB1BAFzpEhaq02ChtIgyrlqAUQXPx033jdj5A==
-X-Received: by 2002:a17:902:da85:b0:235:ec11:f0ee with SMTP id d9443c01a7336-2366affb250mr317976015ad.14.1750300080860;
-        Wed, 18 Jun 2025 19:28:00 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:7cb6:ce70:9b77:ed3b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2366e4e7842sm89401965ad.62.2025.06.18.19.27.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 19:28:00 -0700 (PDT)
-Date: Thu, 19 Jun 2025 11:27:55 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Richard Chang <richardycc@google.com>
-Cc: Minchan Kim <minchan@kernel.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Jens Axboe <axboe@kernel.dk>, bgeffon@google.com, 
-	liumartin@google.com, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH] zram: support asynchronous writeback
-Message-ID: <n6sls56srw265fmyuebz6ciqyxqshxyqb53th23kr5d64rwmub@ibdehcnedro6>
-References: <20250618132622.3730219-1-richardycc@google.com>
+        bh=cDeHL9d8vuK42id4GVmvojG1LbxVd4OxULlS/3TaFoo=;
+        b=HyPCgF1RyBNpndkOPPsNC8GhgjEKKSrkzQREGgxvK2MOjk/8YVnE+Lu8kZHhnuQAMF
+         /7g0JoZjbl5FLQNiraieYZxQlBfABokjIHlH4C4QNAxTIY4xgP4xOwFpul1o+CtiOL9H
+         mAnbJj/kSIPvuadDEiAfpd3P16N810BiZHqX14taSWi58YCR7JaiisLCxodghYl9OpNH
+         LRnSGWBo+CmhcSVA7Fw7O1ooZpgPEP/DDJezDZtaZleODYOVEAS5j1jQqa0NOCXxGrK0
+         1K75F1v/ngHtUJ2IdGXlA4mbV9LjkTSvPEpr/1x+dnGEIGh4ANf9mrIlxP5UTmmD+xnN
+         HeiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750300166; x=1750904966;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cDeHL9d8vuK42id4GVmvojG1LbxVd4OxULlS/3TaFoo=;
+        b=T2I3ZyPyagFUyHEJ0Zs/Sb6F2y0l05PJ1Gh+8sHcgiEWLMGoz90RYumbee96m/UeW3
+         uAIKu338f3rR0JU0EYdDBP7vrQ46zvVT/u7iVeVIlst1lF7L+g8kF0SU8BoahaFtTmau
+         xFHkk3RC3QDDKeDUNm8kK3PJegRCmRpe8YVYNf+QFk2yMQmpdmTv2vw++gUJZ1mITQ2b
+         88a/gIsxk9k3rRXC96xXM3mqE6M8/ARkV5m0ZZ6qIQWOIGqYjZ/oj1WlLqE8pxPyPiE5
+         KXMUT6rukCKVL4kk1xWibaXnraCFEMl+sD5/qp2iXC44EiEVj9o98NanOJ9/w7164daN
+         kpow==
+X-Forwarded-Encrypted: i=1; AJvYcCV4qbEVfvmb2nV9x9ixjtie3e4lR7lt5yzDi1z+XBGpflvg2jL4R84x6u/uAvWMM4I0O+7AlGNgem9/SsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuogAu1Wt5359ps6kyk9BkXNyEuksktAhXPJ8fCQbZlHpBjpTm
+	PLAd7dAXKZe1p3HeFLK0fagS/20KrMA4U0LS5nl1Fzmn4z27rsJPejzOQkw6G/uRmX3RBN45PzJ
+	M/7CNve7MEhrAuDoLHLQ7kqcxkOSlgYuVUOFcMjVQHw==
+X-Gm-Gg: ASbGncspv+UQT28VRzOxkDrntj2V5pysoaxQtY4+uWggHE+JSYvHbemdqaJ8Hhtp4uj
+	ZrnMXztdS6nx1OoUYogElQXDPOv6pXnKBFgaUPmG//aY5UBflmP6I4F18mR+TlqCsdAej/Mh/V0
+	hXBu8NbNIG+2+lLps+uUP+gT/bx6PVCkIRieHtwGan2Q==
+X-Google-Smtp-Source: AGHT+IGTWcMJ9e18SuuZAjhMb+1RhUC5KbFMVpAzHRzN1h0rYVrbKTgujtHTi15citzRIXK4WE/50371Bg3VPce6S3o=
+X-Received: by 2002:a05:690c:4442:b0:70e:29af:844a with SMTP id
+ 00721157ae682-711755076b4mr289656047b3.18.1750300166249; Wed, 18 Jun 2025
+ 19:29:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618132622.3730219-1-richardycc@google.com>
+References: <20250611125723.181711-1-guodong@riscstar.com> <20250611125723.181711-3-guodong@riscstar.com>
+ <aFEEhik8x2k5_myN@vaman>
+In-Reply-To: <aFEEhik8x2k5_myN@vaman>
+From: Guodong Xu <guodong@riscstar.com>
+Date: Thu, 19 Jun 2025 10:29:14 +0800
+X-Gm-Features: AX0GCFsoo3SDAFCWa_VQKJiemtWkvUSERAjA5vBX4NjZ4H9AqhsVRRlcUwFSJ3A
+Message-ID: <CAH1PCMaD1muAQWRUfDJNKZL+-y31MBbw=aeD8VgEGxJE3eATbA@mail.gmail.com>
+Subject: Re: [PATCH 2/8] dma: mmp_pdma: Add optional clock support
+To: Vinod Koul <vkoul@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, dlan@gentoo.org, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	alex@ghiti.fr, p.zabel@pengutronix.de, drew@pdp7.com, 
+	emil.renner.berthing@canonical.com, inochiama@gmail.com, 
+	geert+renesas@glider.be, tglx@linutronix.de, hal.feng@starfivetech.com, 
+	joel@jms.id.au, duje.mihanovic@skole.hr, elder@riscstar.com, 
+	dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	spacemit@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On (25/06/18 13:26), Richard Chang wrote:
-> This commit introduces asynchronous writeback to zram, improving the
-> idle writeback speed.
+On Tue, Jun 17, 2025 at 2:00=E2=80=AFPM Vinod Koul <vkoul@kernel.org> wrote=
+:
+>
+> On 11-06-25, 20:57, Guodong Xu wrote:
+> > Add support for retrieving and enabling an optional clock using
+> > devm_clk_get_optional_enabled() during mmp_pdma_probe().
+>
+> Its dmaengine, please tag them as such
 
-Can I please ask for significantly more details here?
-Justification, rationale, testing data/results, etc.
+Got it. I will do.
+
+Thank you, Vinod.
+
+
+>
+> >
+> > Signed-off-by: Guodong Xu <guodong@riscstar.com>
+> > ---
+> >  drivers/dma/mmp_pdma.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/drivers/dma/mmp_pdma.c b/drivers/dma/mmp_pdma.c
+> > index a95d31103d30..4a6dbf558237 100644
+> > --- a/drivers/dma/mmp_pdma.c
+> > +++ b/drivers/dma/mmp_pdma.c
+> > @@ -15,6 +15,7 @@
+> >  #include <linux/device.h>
+> >  #include <linux/platform_data/mmp_dma.h>
+> >  #include <linux/dmapool.h>
+> > +#include <linux/clk.h>
+> >  #include <linux/of_dma.h>
+> >  #include <linux/of.h>
+> >
+> > @@ -1019,6 +1020,7 @@ static int mmp_pdma_probe(struct platform_device =
+*op)
+> >  {
+> >       struct mmp_pdma_device *pdev;
+> >       struct mmp_dma_platdata *pdata =3D dev_get_platdata(&op->dev);
+> > +     struct clk *clk;
+> >       int i, ret, irq =3D 0;
+> >       int dma_channels =3D 0, irq_num =3D 0;
+> >       const enum dma_slave_buswidth widths =3D
+> > @@ -1037,6 +1039,10 @@ static int mmp_pdma_probe(struct platform_device=
+ *op)
+> >       if (IS_ERR(pdev->base))
+> >               return PTR_ERR(pdev->base);
+> >
+> > +     clk =3D devm_clk_get_optional_enabled(pdev->dev, NULL);
+> > +     if (IS_ERR(clk))
+> > +             return PTR_ERR(clk);
+> > +
+> >       if (pdev->dev->of_node) {
+> >               /* Parse new and deprecated dma-channels properties */
+> >               if (of_property_read_u32(pdev->dev->of_node, "dma-channel=
+s",
+> > --
+> > 2.43.0
+>
+> --
+> ~Vinod
 
