@@ -1,71 +1,89 @@
-Return-Path: <linux-kernel+bounces-693326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3125ADFDC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:40:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8A7ADFE2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3FF13B83BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:40:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05EBE1885202
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109CC248F67;
-	Thu, 19 Jun 2025 06:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACFE25D1F5;
+	Thu, 19 Jun 2025 06:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="Tbmbjp+C"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b="Ov+ZbaUx"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728532472A4;
-	Thu, 19 Jun 2025 06:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCC225C81D
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 06:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750315206; cv=none; b=qKVyOl3UjGLMTuCsOR1f0KULDLV1qe+GNAjlyMmwYIbz9u6S8ESQg2mFi5N/PZzn1d1TehzVvbhMQXxlxXxMCiMwR6J0NIhw8u8sQ/cYIMsAzNW16Bt1Oi0Pu0frLDH9y47gkgl6DTGRZ9TR7+SqNEISh5RKI1tvq2baWtfzrHc=
+	t=1750315932; cv=none; b=gCCDrph8VAF4s7qrJt3yk2iJ0cNvsZ+G8zQHKxu/zlWojo6hUeGTuNdtB+RyWNP9JoFw42CJbfaPiyz0fAxP+6SyafXzQQhpJPHp3ZHZZUe+QSOhiaCsgj0d7slOEyQ85rBiM64NDGHEBvZ10mH3j0FxJ+gUMfb0wzc4Hy7xT3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750315206; c=relaxed/simple;
-	bh=B86THT0PXcOn8xm+Sj1/pwGdP/825A5GAtFkH/cue4E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=e6rHSUalX6LMac5OQ4jhfAxSTIflzgnd5fPqY7uTiXzbdV+FCQOTrG6Sgx8yY5iTCqP+/epIeGi76S0hK5AX/2UcBQ9nwbznkZX0E612d/fPqlm88HJAaoj30CMtbZRR2OmFbhCL4qq2lun4ffTmCHymSEhClYKWmIC+A2p1hBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=Tbmbjp+C; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=MdtJuUSyYFoQpkY3gZQ3DL/JZPXVrwJylxxi2w+UrIY=; b=Tbmbjp+CgXtQD60jIitKkWYPOx
-	xOeQBXqwWt9fNVLORCqcBKoPbbOHijuuchsYTm2jMLZOpbvYBpafKWzSRexQzg+21GJgwybaOPOlM
-	i7OnAqpj6oBuohW8qfDLGp7fHkyFcwok/DaXt02mkC+WmiYz/8VA9YGqaVbLv363YaTnQMtUeYKSR
-	5VMZe1HiBEfBdJA9uE3BmC1o+A+PeTrhR9B6NzVMbzCp4akxz3UeoKj6E9BbxB//GzNs0CkKH604p
-	+0IthHyDxX5gaAbdAghwxzhxEbSTwz7WKk79xMv6SzDpVgykKYRFFoPatISYzb6ZSdR8UzSExn9AW
-	p+0E/YTQ==;
-Received: from [89.212.21.243] (port=44058 helo=localhost.localdomain)
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <primoz.fiser@norik.com>)
-	id 1uS8wG-00EVcY-2U;
-	Thu, 19 Jun 2025 08:39:56 +0200
-From: Primoz Fiser <primoz.fiser@norik.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1750315932; c=relaxed/simple;
+	bh=ZbeIJfJ/ESCn7DwHJEDzMv1vN702+0GjKH0UeojPnKg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L4742hCmBIX6B9KVomhaRy01I/uIZWkvjr3oTt9ZYEREy7sIc4jqb1nTGvnDq/tqUEl1YQNg6iDfSSIQ5Sx9k7R3KKGRctCKcRzUZSZcZoJt36rTkjmkGzH4lnlhwOkLMmtAZzszj/stuR8gghe7b4LFHiCulghDQGfeR5pal+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com; spf=pass smtp.mailfrom=inventec.com; dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b=Ov+ZbaUx; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-235e1d710d8so6887865ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 23:52:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=inventec.com; s=google; t=1750315927; x=1750920727; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bxzFBpBUytlnnK/lLY9GLRmiTNoGLuRXi3FVA99B97w=;
+        b=Ov+ZbaUx167t4tsOMh2bqSVuHhl7aLYcAbqxLaVz/lFHXgvQ2fLh+Gte1RPQ7K2uug
+         /pAbwGsdJNH5VcMraCs5Q4gWQaza3f6+o0IUb3Tzi5hcfNIpgJZpAlQ4GPqhpOBxYNOt
+         fjGE3FIqSVYYiatUxHl6BhkYLwowSGPuJIx8dYKQIsZZeKGuSYAmaj9fmG+/oDys+F91
+         lO9GyATM5IN3KTnxJ8+rYNoTYhSfANp3+gMsfLvB9f0BtUxz631J2DpDB5jbzXUxjreo
+         LEq+b46OIu5Ulw1++Nf2bVWA+NRtI/sZkZagvOBhe2qCDHTt/9uULPnEL0dM4mc7x4bW
+         /VeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750315927; x=1750920727;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bxzFBpBUytlnnK/lLY9GLRmiTNoGLuRXi3FVA99B97w=;
+        b=XluM68YSW3ci/iE85v9EcA5mFsIfzCKGAh86gxppFPPJSpgOL7L68tDtxhSfzhLowG
+         OoQcFF6gv5NozZPhRzA1Gj2aV/Hz8Tn++ESQPU5quqeTvxBK3e5squsJsdfgvZN/5zxE
+         IOqOrjFoDghjOAxA4VP21WqqOD3r5Nz3j0ROsawJizUEOdwAgW6ems5FuUBbZRiwEnlI
+         xK0chIOp6hyAtf40lxX0PuH/s5Wpb44uMYCSXRfXqWDmsE3vGhSuAapDyBpsy3c2STLU
+         SwEe4HKssTrY1m46i+R2N82VUqKm3ZwUAupYRkg3t2OKJ6h4X3vyBYn6gy03BVbFXoE/
+         Jj6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWVpi9Yi+3Jm/IRx7iHOmt0k6x2+WKGmEQNn7RkirWx/d1p7wLpHmaE1VeVCDsHhNkQ8/3ghA+jwRyseMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeFBWc58K2t0FjT7mXUaCvnL6BSCmLXhQPlsfFtz9DUu/edZqg
+	/4adbuzwp9ypWcHjUTIDmdoIacDi67E1SRbOfM4h9NHeluTeNkyeQNR4Zj9lT+YJfLU=
+X-Gm-Gg: ASbGncsMwAvTXpH3LhmmM5wMz+zPKD/fe/n4DcMTQ29nB1fLfnjJ8wgF3f9EzibEfbI
+	MbhJ0MTO8yI3rOy9RWOAzbOdG8cn10FYvwCbizVshibaAkUvau9cxzziOIeL9xlXIc2XRAftNxw
+	4TgwKW6W9H3De9nBucWTq71LEMH4O0ViRcdhMQQQeh5NC86OdCcb83SQYfBPTdQWeSostCFS/Jl
+	jVIew/N5Xx+nQhyluaPnp8tmi4fSaF6A5VziNeoxYkvsLZlgHVUNMJHBgmJk84Rmzo9xNpFHkAx
+	bNmDXVX32iZRT3qLmNk7poz3xJSmVZXmL+nkTgmgI9FGrJYYGJnvCcdp61bFP1DMyuqhK6HbuVY
+	WeVUIqSheA7vfV6WNGskVJQqeumH5grdUNDzPKT1X1qg=
+X-Google-Smtp-Source: AGHT+IFqdRyN3wkxE8agtKwY6Dgx5DRr4PCjUWNZp2cRnoINXBsOHLsAXlTT3U1U4d5jOJGB5dbsJQ==
+X-Received: by 2002:a17:902:ce89:b0:220:c164:6ee1 with SMTP id d9443c01a7336-2366b3dd319mr341052095ad.32.1750315927426;
+        Wed, 18 Jun 2025 23:52:07 -0700 (PDT)
+Received: from localhost.localdomain (60-250-242-163.hinet-ip.hinet.net. [60.250.242.163])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365dfdb9a0sm113108155ad.239.2025.06.18.23.52.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 23:52:06 -0700 (PDT)
+From: Chiang Brian <chiang.brian@inventec.com>
+To: jdelvare@suse.com,
+	linux@roeck-us.net,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-hwmon@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] arm64: dts: imx93-phyboard-nash: Add PEB-WLBT-07 overlay
-Date: Thu, 19 Jun 2025 08:39:54 +0200
-Message-Id: <20250619063954.1730231-5-primoz.fiser@norik.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250619063954.1730231-1-primoz.fiser@norik.com>
-References: <20250619063954.1730231-1-primoz.fiser@norik.com>
+	linux-kernel@vger.kernel.org,
+	Chiang Brian <chiang.brian@inventec.com>
+Subject: [PATCH v10 0/2] Add tps53685 support
+Date: Thu, 19 Jun 2025 14:42:21 +0800
+Message-Id: <20250619064223.3165523-1-chiang.brian@inventec.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,139 +91,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
-X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-Add overlay to support PHYTEC PEB-WLBT-07 WiFi/Bluetooth evaluation
-adapter on phyBOARD-Nash-i.MX93 board. Adapter uses the u-blox MAYA-W2
-module (IW612 chipset) which is capable of Wi-Fi 6 and Bluetooth 5.4 LE.
+The TPS53685 is a fully AMD SVI3 compliant step down controller with
+trans-inductor voltage regulator(TLVR) topology support, dual channels,
+built-in non-volatile memory (NVM), PMBus interface, and full compatible
+with TI NexFET smart power stages.
 
-Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+Add support for TPS53685 device to dt-bindings and pmbus driver.
+
 ---
- arch/arm64/boot/dts/freescale/Makefile        |  2 +
- .../imx93-phyboard-nash-peb-wlbt-07.dtso      | 88 +++++++++++++++++++
- 2 files changed, 90 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx93-phyboard-nash-peb-wlbt-07.dtso
+v9 -> v10:
+- Fix the inconsistent indenting in switch case with tab instead of space
+- Run the smatch kchecker to confirm
+- Link to v9: https://lore.kernel.org/all/20250610102556.236300-1-chiang.brian@inventec.com/
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 3166684ab558..699c3b1d80b2 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -325,9 +325,11 @@ dtb-$(CONFIG_ARCH_MXC) += imx93-kontron-bl-osm-s.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-nash.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin.dtb
- 
-+imx93-phyboard-nash-peb-wlbt-07-dtbs += imx93-phyboard-nash.dtb imx93-phyboard-nash-peb-wlbt-07.dtbo
- imx93-phyboard-segin-peb-eval-01-dtbs += imx93-phyboard-segin.dtb imx93-phyboard-segin-peb-eval-01.dtbo
- imx93-phyboard-segin-peb-wlbt-05-dtbs += imx93-phyboard-segin.dtb imx93-phyboard-segin-peb-wlbt-05.dtbo
- imx93-phycore-rpmsg-dtbs += imx93-phyboard-nash.dtb imx93-phyboard-segin.dtb imx93-phycore-rpmsg.dtbo
-+dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-nash-peb-wlbt-07.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin-peb-eval-01.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin-peb-wlbt-05.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-phycore-rpmsg.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-nash-peb-wlbt-07.dtso b/arch/arm64/boot/dts/freescale/imx93-phyboard-nash-peb-wlbt-07.dtso
-new file mode 100644
-index 000000000000..c7553e39e763
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-nash-peb-wlbt-07.dtso
-@@ -0,0 +1,88 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2025 PHYTEC Messtechnik GmbH
-+ * Author: Primoz Fiser <primoz.fiser@norik.com>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include "imx93-pinfunc.h"
-+
-+&{/} {
-+	usdhc3_pwrseq: usdhc3-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&gpio4 29 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&lpuart5 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart5>;
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "nxp,88w8987-bt";
-+	};
-+};
-+
-+/*
-+ * NOTE: When uSDHC3 port is multiplexed on GPIO_IO[27:22] pads, it only
-+ * supports 50 MHz mode, due to introduction of potential variations in
-+ * trace impedance, drive strength, and timing skew. Refer to i.MX 93
-+ * Application Processors Data Sheet, Rev. 3, page 60 for more details.
-+ */
-+&usdhc3 {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&pinctrl_usdhc3>, <&pinctrl_wlbt>;
-+	pinctrl-1 = <&pinctrl_usdhc3_sleep>, <&pinctrl_wlbt>;
-+	mmc-pwrseq = <&usdhc3_pwrseq>;
-+	bus-width = <4>;
-+	keep-power-in-suspend;
-+	non-removable;
-+	wakeup-source;
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl_uart5: uart5grp {
-+		fsl,pins = <
-+			MX93_PAD_DAP_TDO_TRACESWO__LPUART5_TX	0x31e
-+			MX93_PAD_DAP_TDI__LPUART5_RX		0x31e
-+			MX93_PAD_DAP_TCLK_SWCLK__LPUART5_CTS_B	0x31e
-+			MX93_PAD_DAP_TMS_SWDIO__LPUART5_RTS_B	0x31e
-+		>;
-+	};
-+
-+	/* need to config the SION for data and cmd pad, refer to ERR052021 */
-+	pinctrl_usdhc3: usdhc3grp {
-+		fsl,pins = <
-+			MX93_PAD_GPIO_IO22__USDHC3_CLK		0x179e
-+			MX93_PAD_SD3_CMD__USDHC3_CMD 		0x4000178e
-+			MX93_PAD_SD3_DATA0__USDHC3_DATA0	0x4000138e
-+			MX93_PAD_SD3_DATA1__USDHC3_DATA1	0x4000138e
-+			MX93_PAD_SD3_DATA2__USDHC3_DATA2	0x4000138e
-+			MX93_PAD_SD3_DATA3__USDHC3_DATA3	0x4000138e
-+		>;
-+	};
-+
-+	pinctrl_usdhc3_sleep: usdhc3sleepgrp {
-+		fsl,pins = <
-+			MX93_PAD_GPIO_IO22__USDHC3_CLK		0x31e
-+			MX93_PAD_SD3_CMD__USDHC3_CMD 		0x31e
-+			MX93_PAD_SD3_DATA0__USDHC3_DATA0	0x31e
-+			MX93_PAD_SD3_DATA1__USDHC3_DATA1	0x31e
-+			MX93_PAD_SD3_DATA2__USDHC3_DATA2	0x31e
-+			MX93_PAD_SD3_DATA3__USDHC3_DATA3	0x31e
-+		>;
-+	};
-+
-+	pinctrl_wlbt: wlbtgrp {
-+		fsl,pins = <
-+			MX93_PAD_CCM_CLKO2__GPIO3_IO27		0x31e	/* WAKE_DEV */
-+			MX93_PAD_CCM_CLKO3__GPIO4_IO28		0x31e	/* WAKE_HOST */
-+			MX93_PAD_CCM_CLKO4__GPIO4_IO29		0x31e	/* PDn */
-+		>;
-+	};
-+};
+v8 -> v9:
+- dt-bindings: Correct the order of Acked-by tag
+- hwmon: Fix the alignment to match open parenthesis
+- Wrap commit message body at 75 columns
+- Link to v8: https://lore.kernel.org/all/20250602042454.184643-2-chiang.brian@inventec.com/
+
+v7 -> v8:
+- dt-bindings: Include missing Acked-by tag
+- dt-bindings: Patch kept in sync with series version
+- hwmon: Fixed device_id parameter type and test make.cross of i386
+- Link to dt-bindings v3: https://lore.kernel.org/all/20250515081449.1433772-2-chiang.brian@inventec.com/
+- Link to hwmon v7: https://lore.kernel.org/all/20250515081449.1433772-3-chiang.brian@inventec.com/
+
+v6 -> v7:
+- dt-bindings: Fix the order of patches
+- hwmon: Modify the type of device_id from u16 to char *
+- Run make.cross with ARCH nios2, powerpc, and riscv
+- Link to dt-bindings v2: https://lore.kernel.org/all/20250424132538.2004510-3-chiang.brian@inventec.corp-partner.google.com/
+- Link to hwmon v6: https://lore.kernel.org/all/20250424132538.2004510-2-chiang.brian@inventec.corp-partner.google.com/
+
+v5 -> v6:
+- dt-bindings: Correct the subject and commit message
+- hwmon: information about tps53685 into tps53679.rst
+- hwmon: Add additional flags when identifing the chip as tps53685
+- hwmon: Adjust length once returned device id is terminated by null character
+- Link to dt-bindings v1: https://lore.kernel.org/all/20250314032802.3187097-1-chiang.brian@inventec.com/
+- Link to hwmon v5: https://lore.kernel.org/all/20250314033040.3190642-1-chiang.brian@inventec.com/
+
+v4 -> v5: 
+- add support for tps53685 in dt-bindings
+- add the buffer length as argument for %*ph
+- Add Changelog
+- Link to v4: https://lore.kernel.org/all/CAJCfHmW61d2jd_tYpNEqBG_Z58bEnVKAmsvhrEP1zXQoXqrUVw@mail.gmail.com/
+
+v3 -> v4: 
+- Add length comparison into the comparison of "id",or it may be true when
+  the substring of "id" matches device id. 
+- Restore `return 0;` in `tps53679_identify_chip()`
+- Link to v3: https://lore.kernel.org/all/CAJCfHmVyaDPh0_ThPjhBP0zMO1oE1AR=4=Zsa0cMPXU3J4v6dw@mail.gmail.com/
+
+v2 -> v3:
+- Remove the length comparsion in the comparison of "id".
+- Link to v2: https://lore.kernel.org/all/CAJCfHmUteFM+nUZWBWvmwFjALg1QUL5r+=syU1HmYTL1ewQWqA@mail.gmail.com/
+
+v1 -> v2: 
+- Modify subject and description to meet requirements
+- Add "tps53685" into enum chips with numeric order
+- Modify the content of marco "TPS53681_DEVICE_ID" from 0x81 to "\x81" 
+- Add marco "TPS53685_DEVICE_ID" with content "TIShP"
+- Modify the type of "id" from u16 to char* in `tps53679_identify_chip()`
+- Modify the comparison of "id". It will be true if the string "id" matches
+  device ID and compare with type char*
+- Add the length comparsion into the comparison of "id".
+- Modify "len" as return code in `tps53679_identify_chip()`
+- Output device error log with %*ph, instead of 0x%x\n" 
+- Use existing tps53679_identify_multiphase() with argument 
+  "TPS53685_DEVICE_ID" in tps53685_identify() rather than creating one 
+  tps53685_identify_multiphase()
+- Link to v1: https://lore.kernel.org/all/CAJCfHmVy3O4-nz2_PKF7TcXYr+HqTte1-bdUWLBmV7JOS7He1g@mail.gmail.com/
+
+Chiang Brian (2):
+  dt-bindings: trivial: Add tps53685 support
+  hwmon: (pmbus/tps53679) Add support for TPS53685
+
+ .../devicetree/bindings/trivial-devices.yaml  |  2 +
+ Documentation/hwmon/tps53679.rst              |  8 ++++
+ drivers/hwmon/pmbus/tps53679.c                | 37 ++++++++++++++++---
+ 3 files changed, 41 insertions(+), 6 deletions(-)
+
 -- 
-2.34.1
+2.43.0
 
 
