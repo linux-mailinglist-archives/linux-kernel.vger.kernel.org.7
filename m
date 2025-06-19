@@ -1,124 +1,123 @@
-Return-Path: <linux-kernel+bounces-694614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8266AE0E75
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 22:12:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F14AE0E85
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 22:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A0343A5308
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:11:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315AB6A4DD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B9B246BB7;
-	Thu, 19 Jun 2025 20:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345F825C83D;
+	Thu, 19 Jun 2025 20:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0nF/Qs58"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8dyEu3r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089AE230D08;
-	Thu, 19 Jun 2025 20:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E3E23D28E;
+	Thu, 19 Jun 2025 20:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750363917; cv=none; b=TLmN8yRFl3do5bthqwJnTjgpdeHDve0ok26Ks8osra1K7NmjFZ8OwMYkRnGJ/OQ30I5X51gZShArwlms8V43/278tR4J5eEQL3gutyDH+yaG2DyGmwFhL/Fq8PoKhnZhyL6uvtpGcU00acNmh7OwA2sWyXHhrpxDQAjh7NEZwmA=
+	t=1750364332; cv=none; b=j+EdKa7/zGMC5OdvCPXOpkMj+Z0dsJnlCPYcvCqJhAonH23ZAoyRilI+6o02g4BmRq7QqJfAEa+fGxWo+ivtmKkV98WYe08zfQ9dQz2d14LyIaXRN8G+3qapyxS7f20bZk59NxF1lESGpwgDqF6uVOmCrATTqAAB4Jh6zZffJEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750363917; c=relaxed/simple;
-	bh=lKt8A6+QjYnjFL3np6K20XlH4x7ehiuuzMqxVDQaqE0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DNd4ibr/64ds9yKVm7Qo+WA74ZUV3eSBC6Wi5CO75jhd7IvdhDpwqupwMcIhmvDTtf3IG1v1xiWOAXMDxyr6snCcve4LUOs2fz+RNlKBO/T5OeJHpNrR9ulkDcbWscQpbSv77wYZd8uSBHC5mkOdqXMZtOSnTwcKcf7bJqsZMz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0nF/Qs58; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=lKt8A6+QjYnjFL3np6K20XlH4x7ehiuuzMqxVDQaqE0=; b=0nF/Qs58MprQxQpPF81gdBhcaM
-	ZiPwdbLNIv9i7HdS7fcXKCxdpfc1ap8teHa7zc20uFIgBjGOkJ8YWr5BSc+n1ae3FATDOrzK7wPBM
-	fg/gJjxdhtGgMywi3Sbz9+IRBBR8mTOndTBfiE9Vd1ephKjaeN6ThPY8UK226SvDhHu37wBWAzcuh
-	3O9+SlEoKGaBsw5DuMCjcEeX1ny6eb8odrrp2e3cbUUbiJFVf+UH30FPG+9Lussjfa9DJ8kh0xvUu
-	FWVolb6GLAWqFAs4zg8hvWQAPfMX/RXldvaxaCzwP4gxN4Z4Z9Rg+ut3x+Cl6CfyhM56P5+uNVMDm
-	HytK+xPQ==;
-Received: from 85-207-219-154.static.bluetone.cz ([85.207.219.154] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uSLby-0006tx-Lj; Thu, 19 Jun 2025 22:11:50 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Jagan Teki <jagan@amarulasolutions.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Collabora Kernel Team <kernel@collabora.com>,
- Michael Riesch <michael.riesch@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org
-Subject:
- Re: [PATCH 2/5] dt-bindings: phy: rockchip-inno-csi-dphy: add rk3588 variant
-Date: Thu, 19 Jun 2025 22:11:49 +0200
-Message-ID: <17533727.geO5KgaWL5@phil>
-In-Reply-To: <8ba2f458-4a66-44f6-8528-4654cfe379ff@collabora.com>
-References:
- <20250616-rk3588-csi-dphy-v1-0-84eb3b2a736c@collabora.com>
- <0f2b8934-9b3d-4913-b734-b4fe7f0c7d0a@linaro.org>
- <8ba2f458-4a66-44f6-8528-4654cfe379ff@collabora.com>
+	s=arc-20240116; t=1750364332; c=relaxed/simple;
+	bh=w4wRzkSo/usAv+HhkdLgr8lf3ugNk6JlmcksQBrr6sU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FFuuogfVpGXC6Y0h3NVaupfCAcUbTJjQGeqwXg04kHH7wiV4RfzJwJUpB6lyK8NTZoYFCIpc2PF7frFeGGV/FBv3r+GD7KGVCN/ThTbMJm/dYrRHSFHXUQBDElS03RaJWqqUSIM5B4JO7H7197J9QATGqU51mca8kMzcP6vUSSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8dyEu3r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45083C4CEEA;
+	Thu, 19 Jun 2025 20:18:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750364332;
+	bh=w4wRzkSo/usAv+HhkdLgr8lf3ugNk6JlmcksQBrr6sU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=L8dyEu3ru+KmueKEBCpzJUaQ1v4VlB0jxWKBMd38flJgled/kDek2YBdep1dLpiS7
+	 +KJwr5iPrfFFiStjjUJ0rGNoYoJRDnnv9fv5XuiLwad+LI1euMGa4SMLzX5LW7v9fm
+	 tM+uQrM7uK+ZtPfzCKw+VVL/E/2BpHB0MIdC5tIePk+W0288njoibPE3IpS+NERi2V
+	 dX5XuozAJHJuv2pno3v07xwmTnCYhS56En8rJ2kSgjpIZcWf8Lb6VhKgPzoIDKaKdo
+	 8Qh8fdswlQ7+j0tlobb0/CMYm3dYCioHYfcIV8BVbchI6eYbGhjq5OMnkSitBbpTkL
+	 knMuGmfVqFK1Q==
+Message-ID: <23f5da2f-0da1-449a-ab4e-c62fbfd74d4f@kernel.org>
+Date: Thu, 19 Jun 2025 22:18:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] clk: moxart: Make read-only array div_idx static
+ const
+To: Stephen Boyd <sboyd@kernel.org>, Colin Ian King <colin.i.king@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250619083035.1835133-1-colin.i.king@gmail.com>
+ <175036278075.4372.3898345624525344837@lazor>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <175036278075.4372.3898345624525344837@lazor>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am Mittwoch, 18. Juni 2025, 08:32:25 Mitteleurop=C3=A4ische Sommerzeit schr=
-ieb Michael Riesch:
-> Hi Neil,
->=20
-> Thanks for your comments!
->=20
-> On 6/17/25 11:31, neil.armstrong@linaro.org wrote:
-> > On 17/06/2025 10:54, Michael Riesch via B4 Relay wrote:
-> >> From: Michael Riesch <michael.riesch@collabora.com>
-> >>
-> >> The Rockchip RK3588 variant of the CSI-2 DPHY features two reset lines.
-> >> Add the variant and allow for the additional reset.
-> >=20
-> > No names for the new resets on the RK3588 ?
->=20
-> I left the names away because TBH I don't see the value in them (in that
-> case).
->=20
-> Downstream uses reset-names =3D "srst_csiphy0", "srst_p_csiphy0"; and
-> there is no better description. One could guess that the second reset
-> corresponds to "apb" but this is just guessing and we would still have
-> to guess/find a proper name for the first reset.
->=20
-> Amazingly the mainline driver does not seem to do anything with the
-> resets (unless I overlooked some implicit magic). Downstream does a
-> simple reset_control_{assert,deassert} before configuring the PHY. Now
-> if the different resets are handled in bulk mode, does it really make
-> sense to address each reset individually?
+On 19/06/2025 21:53, Stephen Boyd wrote:
+> Quoting Colin Ian King (2025-06-19 01:30:35)
+>> Don't populate the read-only array div_idx on the stack at run time,
+>> instead make it static const.
+> 
+> Why? This is in __init code so it can be thrown away if it stays on the
+> stack.
 
-it might not make sense now, but possibly in the future?
+Indeed previous code could be discarded, now will be in rodata, but we
+save several instructions runtime on copying it. Plus the actual binary
+will be slower (really less code), so also loading it will be faster.
 
-A binding and the attached devicetrees are meant to be "forever", i.e. a
-new kernel _should_ support all those old devicetrees you throw at it -=20
-if they conform to (at some time) established bindings.
-
-So while all drivers might not need the specific resets now, you don't
-know what quirks you'll have discovered in two years ;-)
-
-And instead of trying to update the binding and then carrying both the
-new and the fallback code for the old binding around, why not do it now.
-
-Then when you find a need for a specific reset, things magically just work.
-
-
-Heiko
-
-
+Best regards,
+Krzysztof
 
