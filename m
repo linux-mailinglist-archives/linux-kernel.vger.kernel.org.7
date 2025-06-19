@@ -1,87 +1,95 @@
-Return-Path: <linux-kernel+bounces-694200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B20AE0936
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F3ADAE093B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 798147B0238
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:51:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 078BC7A3B50
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2F1236424;
-	Thu, 19 Jun 2025 14:52:02 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEAC223DC6;
+	Thu, 19 Jun 2025 14:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=itb.spb.ru header.i=@itb.spb.ru header.b="pyp8Cer0"
+Received: from forward101b.mail.yandex.net (forward101b.mail.yandex.net [178.154.239.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C626217A30F;
-	Thu, 19 Jun 2025 14:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709DE20C480
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 14:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750344721; cv=none; b=DGfa4SvWx0AbAiuzXZitM57yzjjy14Kh4bzdzhdgVlY4RGkFNkfIxpAHRipVZ+TKfTfGCUvAdYd2Oqx7TaQ5KwtvOEgUWkI78/xdXcE22tGb04prghXt2FcWXgpQsUtlZPazNvgV2RlUuHhXddBdZyTlxAhnOsrpwlUCqFGLVcE=
+	t=1750344842; cv=none; b=PokzA/Ycx6E4bAv3Hs8aA1uLvm00dCMno/yd0q0gnzxrOm+AnoxCig9TcEt9rjFyHu+ePAC3gwAdZ3n9aO0Rw+FZOTx+0vPHz7VE4XPS94h5icE6Zax4UEfok0tsAnJ7phJ9GgTMe+ia2YDvJ+ZGPCLAtrseq9Tvp0bnsD9Xkw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750344721; c=relaxed/simple;
-	bh=DiKE0GctfAflmziKG348lyHIP5QberAm0uVi5a+CheA=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=oT4m5byEPpFTZzVEtGPXVKrWDZ6VqPOnZfpxwmqRWJSA+Iep5Qt539zbNnjhILMagxsnrPuS1FZYKo5iyIsDXbUOdsoLZCZzRJ5fy3gaQKZcJFLDTcC/QwSBmSOnl+hkCYpFgWMn80lvG6WymyDe8E9vuungy+5i2xWH8t56slc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4bNNqC1csCz501bP;
-	Thu, 19 Jun 2025 22:51:51 +0800 (CST)
-Received: from szxlzmapp03.zte.com.cn ([10.5.231.207])
-	by mse-fl2.zte.com.cn with SMTP id 55JEpn75019165;
-	Thu, 19 Jun 2025 22:51:49 +0800 (+08)
-	(envelope-from yang.yang29@zte.com.cn)
-Received: from mapi (szxlzmapp04[null])
-	by mapi (Zmail) with MAPI id mid14;
-	Thu, 19 Jun 2025 22:51:52 +0800 (CST)
-Date: Thu, 19 Jun 2025 22:51:52 +0800 (CST)
-X-Zmail-TransId: 2b0668542408ffffffffbed-cd742
-X-Mailer: Zmail v1.0
-Message-ID: <20250619225152603EIiJTlhHy4mFMv1dVTzue@zte.com.cn>
-In-Reply-To: <20250619211843633h05gWrBDMFkEH6xAVm_5y@zte.com.cn>
-References: 20250619211843633h05gWrBDMFkEH6xAVm_5y@zte.com.cn
+	s=arc-20240116; t=1750344842; c=relaxed/simple;
+	bh=fzNnnupMA3aKSPvwO5RS9+uw6COJ0OojzE/96IObkHU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s7DvmYmwLrzhdhTKILZEqmgYgQWeHKQOAhjbVOuHWkKxYIBwUmCqlsiUdVa7FBpZRkycNU9UfczVhvuxJyLOb/gGoGslf10evZPkWi21Z1nntDo/fwLISNo0Bpo9soK1QXOF2Dm8gyKNvUgQOYFXE4vr5UTpL+/vH+fV5LeBwX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=itb.spb.ru; spf=pass smtp.mailfrom=itb.spb.ru; dkim=pass (1024-bit key) header.d=itb.spb.ru header.i=@itb.spb.ru header.b=pyp8Cer0; arc=none smtp.client-ip=178.154.239.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=itb.spb.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=itb.spb.ru
+Received: from mail-nwsmtp-smtp-production-main-70.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-70.sas.yp-c.yandex.net [IPv6:2a02:6b8:c24:2213:0:640:2844:0])
+	by forward101b.mail.yandex.net (Yandex) with ESMTPS id 8C69C60B23;
+	Thu, 19 Jun 2025 17:53:46 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-70.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id UrPtqvCLgmI0-dlGck7kH;
+	Thu, 19 Jun 2025 17:53:45 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=itb.spb.ru; s=mail;
+	t=1750344825; bh=TFnT8rksRCUkHgk0vFmvFTJCSDIZN2HPazNQku+gKOY=;
+	h=Message-Id:Date:Cc:Subject:To:From;
+	b=pyp8Cer0jSVMtcjVrgDJqjPpqSsUmcId6ayTUYaow8Vu6AZbjvjoXT/vHUEV5+dP+
+	 ugOEcc0ckV3d0CSSqIXiExUfAvG6SURIinqx8CW1LiND+OG2ue0EnrcPykko83Es/h
+	 xyl8vhdILP8sW6k+wNZsl0OAV5XQA/cj7KF9R1oI=
+Authentication-Results: mail-nwsmtp-smtp-production-main-70.sas.yp-c.yandex.net; dkim=pass header.i=@itb.spb.ru
+From: Ivan Stepchenko <sid@itb.spb.ru>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Ivan Stepchenko <sid@itb.spb.ru>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] mtd: fix possible integer overflow in erase_xfer()
+Date: Thu, 19 Jun 2025 17:53:13 +0300
+Message-Id: <20250619145313.5823-1-sid@itb.spb.ru>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <yang.yang29@zte.com.cn>
-To: <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>
-Cc: <bsingharora@gmail.com>, <akpm@linux-foundation.org>, <david@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-doc@vger.kernel.org>, <wang.yong12@zte.com.cn>,
-        <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
-        <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>,
-        <ye.xingchen@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <jiang.kun2@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCBsaW51eCBuZXh0XSB0b29scy9hY2NvdW50aW5nL2RlbGF5dG9wOiBhZGQgZGVsYXl0b3AKIHRvIHJlY29yZCB0b3AtbiB0YXNrIGRlbGF5?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 55JEpn75019165
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68542407.000/4bNNqC1csCz501bP
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> Solution
-> ========
-> To address these limitations, we introduce the "delaytop" with
-> the following capabilities:
-> 1. system view: monitors latency metrics (CPU, I/O, memory, IRQ,
-> etc.) for all system processes
-> 2. supports field-based sorting (e.g., default sort by CPU latency
-> in descending order)
-> 3. dynamic interactive interface:
-> focus on specific processes with --pid;
-> limit displayed entries with --processes 20;
-> control monitoring duration with --iterations;
-For latency-sensitive scenarios, such as industrial control, communications,
-or automotive, I think this tool is useful. And it may be better if it support
-showing whole delay of system by reading PSI, just like the first few lines of
-information output by the top command.
+The expression '1 << EraseUnitSize' is evaluated in int, which causes
+a negative result when shifting by 31 - the upper bound of the valid
+range [10, 31], enforced by scan_header(). This leads to incorrect
+extension when storing the result in 'erase->len' (uint64_t), producing
+a large unexpected value.
+
+Found by Linux Verification Center (linuxtesting.org) with Svace.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Ivan Stepchenko <sid@itb.spb.ru>
+---
+ drivers/mtd/ftl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/ftl.c b/drivers/mtd/ftl.c
+index 8c22064ead38..f2bd1984609c 100644
+--- a/drivers/mtd/ftl.c
++++ b/drivers/mtd/ftl.c
+@@ -344,7 +344,7 @@ static int erase_xfer(partition_t *part,
+             return -ENOMEM;
+ 
+     erase->addr = xfer->Offset;
+-    erase->len = 1 << part->header.EraseUnitSize;
++    erase->len = 1ULL << part->header.EraseUnitSize;
+ 
+     ret = mtd_erase(part->mbd.mtd, erase);
+     if (!ret) {
+-- 
+2.39.5
+
 
