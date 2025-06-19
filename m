@@ -1,135 +1,166 @@
-Return-Path: <linux-kernel+bounces-693623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A386AE0190
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:17:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB8DAE0196
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B07033AC084
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:15:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8D873AB20A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E22266B40;
-	Thu, 19 Jun 2025 09:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F090925DAF7;
+	Thu, 19 Jun 2025 09:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dv7WycaE"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RuQd/kJW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BB927876A
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 09:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E453221B9E0;
+	Thu, 19 Jun 2025 09:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750324486; cv=none; b=pUBqcGuL2yvCPD2j2Pr5xy/YQl+bs6X0FfDoRQ89pflMlk5KDVvjYqG0JVXKQriK1Rx+ddzSlWy8I6w6XkYaBzVTC44t9/j5rewL6b1xcg+IEAiirXeJPyJQsuhLTtLE79GMA+5dSFXTmku4yvsCOGUaCMNldQPggYEEEHA2E8I=
+	t=1750324750; cv=none; b=rx9GsTzrpngaOMabmU2xITtfSIgmy3JH5wqTvHOqG6bKMJQXZgv++mj58EHYLDTajUC9TpkX3n4tQ9XLokaUWGhPZq1POv4+NHqyTS/kOQbc14M71Sea4GQ8i/BeJjOCNErGnFTBIlOTrj1S7CMeeiXK6bbd4v5Ye3p54AEFN8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750324486; c=relaxed/simple;
-	bh=oskZaqewOdI9Q2vgMTv3V9kHOUv/J7lvDhpMHUc35DM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WoNwCayslgnDUkGcwxG8uX1iZcbvfMAdFjZpfOfzCHfUUU5IGvEjEJg/HksdNwdP0KgJvgOo7BKZ1DxucaEw0DLZ2o/EXnCMu+kxSmgwoC/b2T+G9kMqf1NL8D0vPc8ZxJQl9rUJy1ZtARkZIAgEAjY/aeKnXJxGkYAsixd1Kbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dv7WycaE; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2357c61cda7so88065ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 02:14:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750324482; x=1750929282; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oWamqH4Qzt1P4RdD6HP7YstMpMkIZRoPsNcDiTnzqKM=;
-        b=Dv7WycaEyXueQqTKSG90D4rovykObav7TJQAiW1sEQx62haVBoBiKX3WPYyRQBbGbL
-         8hZQXnpKZanDb5N1CltTayyBnZL1BJQFHkD4g/0176tSaXpCkvuONuc96qP6MNWqXh5r
-         lTPO192S9TTYxQCYs/ux9DTLUS0k7TyDDONPZPnoa68NR9CIPyEQHkTtVKD1nrSLp2k3
-         TFRNJdq0uTJQSHHiHWXKeGSL9EHLAIMgm8zIfcYh+YGyaHCDakyBqNIsSSWgYGRcZKCC
-         RcNfpO84uh0nqkK5B1uERm1X1RvUbC2bpLnBkrRF8TPJiUg7AK1LuGYqQeW8FEM+c579
-         9Zxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750324482; x=1750929282;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oWamqH4Qzt1P4RdD6HP7YstMpMkIZRoPsNcDiTnzqKM=;
-        b=hEg4TPh/iwAczoFgm1WpYutUpa6cDWWuOWzH1K5YRtIe+96B1hONoGC90v4uuzMYHC
-         q0HuDsDELkzNhJY99uRoMB+vxfbxNqIBVAvjxFsL2PJ9+z2Vzw7XNhNKvnljGKbKtZfW
-         NQ6EUP9LzgTDUK4slPatWurQ023crdLBw+kLhHFofNRC2dDJiJqKD51qfALI7pcNAyYy
-         xJnCF5Ii2tJIiO6pEuhf482AHBmUHgrsrMM2DZlr6xRJdHsSKOfut+w/DMK1pjmz7I1v
-         EVxLE/9VH8mBvBOkoQ5SaDj2vYyBNJuMSjyJs9gklKC1AzKT6IWjYgWp6bU9kvZ+ACJO
-         DHhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKNsBtbX1+YtzIARH/SMK7ANY4vf8PFbIVUGqeDrXW7tIQMrujv/2USssllr+ZQhKWoO3sKRnGdBxxGuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfXsNkpHNN552lEutE/AnF7WBxOwCl+AXR0egNvXolWjsWRDQc
-	YoXsUPj7bdS9wjk1buYrq2j2++efE88Wrtyzqv1qPtJ1dYyWeA4bZMC+BuWhhCZd7g==
-X-Gm-Gg: ASbGncsmv1lgI5ueAtDc/Z+Zhd+nEvZSMJnnjMTLH5VgdKk889wasJo86i7D1NgrHez
-	pG1o+M05p2M760SptfnI3MH5ciDUc923JPWpgiWEpL+GWQm15FFzKn8N1lzm0e+cOT9WA6cCXH/
-	YDfU2GZQINUFwJkUCHTOhgL1MqS0SZfZtyp/QjwKmn/T5QdZvDdKPRHqv5GaDeZgx48O30vN4HN
-	usbGHRevU+JJ4I9PzMOJReiq8OYr9ZRphg2F4P8yOqDi+yyY/oLroJ/Gh9NyY0zTvmHpX626P/3
-	kmShXIpGjrJAI/C2CTeo+WQmpL8C55H78dnWaXhpHhBBImSLlxi/EdaoLruNIl6B4UDmZKNa96y
-	knjy6GT3asS425R9c6Xu7
-X-Google-Smtp-Source: AGHT+IEvh8ntAaeawSzvvAW9v54xfOai3SDk6b1VSkUWtSTdDIzpJHZdPCeE04W9I0TDOLd777OhYA==
-X-Received: by 2002:a17:902:da48:b0:234:13ad:7f9f with SMTP id d9443c01a7336-237ccb4af65mr2441805ad.22.1750324481903;
-        Thu, 19 Jun 2025 02:14:41 -0700 (PDT)
-Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365d88c029sm114860565ad.26.2025.06.19.02.14.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 02:14:41 -0700 (PDT)
-Date: Thu, 19 Jun 2025 09:14:29 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, kevin.tian@intel.com, corbet@lwn.net,
-	will@kernel.org, bagasdotme@gmail.com, robin.murphy@arm.com,
-	joro@8bytes.org, thierry.reding@gmail.com, vdumpa@nvidia.com,
-	jonathanh@nvidia.com, shuah@kernel.org, jsnitsel@redhat.com,
-	nathan@kernel.org, peterz@infradead.org, yi.l.liu@intel.com,
-	mshavit@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v6 06/25] iommufd/access: Allow access->ops to be NULL
- for internal use
-Message-ID: <aFPU9TKgU0Lofl-O@google.com>
-References: <cover.1749884998.git.nicolinc@nvidia.com>
- <e6a989c4dd9cb94aa4a98d46ed56a2afcb41b70d.1749884998.git.nicolinc@nvidia.com>
- <20250616133305.GB1174925@nvidia.com>
- <aFDRKEsdVZc2XQ91@nvidia.com>
+	s=arc-20240116; t=1750324750; c=relaxed/simple;
+	bh=VJC27VDTjsSTVk7DExjp2HkvIBK+06bQoOreug3AoUU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pB6hU4QQAbHM5bNRyWUxflDX6JS9upE9tMOM9KxIUqtkSiTs9X1cio0TYlJUZUC6TGEYggWZG1FXrL9d2okwTYHbLupBPg8nH9zBukkRWZrgo1sVWvCPsv5LngJfvbKnXSE0pIp+eYfVVN+W07zWRu7QoQo2UPQmYAnXt0DGtIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RuQd/kJW; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750324748; x=1781860748;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=VJC27VDTjsSTVk7DExjp2HkvIBK+06bQoOreug3AoUU=;
+  b=RuQd/kJW0jy0Y0NIOEchQRmPk9pdDvzA5+cu96LaiUrnf2zAlD6ueQKw
+   xv5mdPoQfBVNpmFrfQkUyaQ0umQtPR3et704PWiZ3tUxZ2es44J0NttCc
+   /2Nooyi3yMV6KgGbpPjtM3tsRJNSyY31IEnUph4fhJAM8lRlrEPUuNGnS
+   F82pmsAL1d6tHNFqiNOjfOinrcpiP5DSHa4xbXd4z2xfyRIRfhkSPu8WX
+   MjBp6WKKyw+1TYRBXES/2iF+ANvNy4LMV/fG7M+Z0YFZ0tjBlOLZ+4f0P
+   o4ThY+WrYY8GEPNMOV2w3RwGSGEsm4Ire6K5WJzF2TWtPqHJwz1ZHzjWd
+   Q==;
+X-CSE-ConnectionGUID: 6fDERFwrRZqQHIk//1VLUw==
+X-CSE-MsgGUID: xIbmmDIzSbiyM2ct+oqyQQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52437263"
+X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
+   d="scan'208";a="52437263"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 02:19:07 -0700
+X-CSE-ConnectionGUID: C2V7ck8pTYagQfSu+uBumw==
+X-CSE-MsgGUID: wzDvlGXjSMufvW0I2In1kA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
+   d="scan'208";a="174138001"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 02:18:47 -0700
+Message-ID: <9b55acfa-688e-49da-9599-f35aee351e3d@intel.com>
+Date: Thu, 19 Jun 2025 17:18:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aFDRKEsdVZc2XQ91@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+To: Yan Zhao <yan.y.zhao@intel.com>, Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com,
+ ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com,
+ anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu,
+ bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org,
+ catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org,
+ dave.hansen@intel.com, david@redhat.com, dmatlack@google.com,
+ dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com,
+ graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+ ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+ james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com,
+ jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
+ jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
+ kent.overstreet@linux.dev, kirill.shutemov@intel.com,
+ liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+ mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
+ michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+ nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+ palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+ pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
+ pgonda@google.com, pvorel@suse.cz, qperret@google.com,
+ quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
+ quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
+ quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
+ richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com,
+ roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com, shuah@kernel.org,
+ steven.price@arm.com, steven.sistare@oracle.com, suzuki.poulose@arm.com,
+ tabba@google.com, thomas.lendacky@amd.com, usama.arif@bytedance.com,
+ vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+ vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+ willy@infradead.org, yilun.xu@intel.com, yuzenghui@huawei.com,
+ zhiquan1.li@intel.com
+References: <cover.1747264138.git.ackerleytng@google.com>
+ <aFPGlAGEPzxlxM5g@yzhao56-desk.sh.intel.com>
+ <d15bfdc8-e309-4041-b4c7-e8c3cdf78b26@intel.com>
+Content-Language: en-US
+In-Reply-To: <d15bfdc8-e309-4041-b4c7-e8c3cdf78b26@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 16, 2025 at 07:21:28PM -0700, Nicolin Chen wrote:
-> On Mon, Jun 16, 2025 at 10:33:05AM -0300, Jason Gunthorpe wrote:
-> > On Sat, Jun 14, 2025 at 12:14:31AM -0700, Nicolin Chen wrote:
-> > > @@ -1321,7 +1328,7 @@ int iommufd_access_pin_pages(struct iommufd_access *access, unsigned long iova,
-> > >  
-> > >  	/* Driver's ops don't support pin_pages */
-> > >  	if (IS_ENABLED(CONFIG_IOMMUFD_TEST) &&
-> > > -	    WARN_ON(access->iova_alignment != PAGE_SIZE || !access->ops->unmap))
-> > > +	    WARN_ON(access->iova_alignment != PAGE_SIZE))
-> > >  		return -EINVAL;
-> > 
-> > I don't want to loose this check, continuing blocking mdevs is still
-> > important. Only the internal access should be able to use this
-> > mechanism.
+On 6/19/2025 4:59 PM, Xiaoyao Li wrote:
+> On 6/19/2025 4:13 PM, Yan Zhao wrote:
+>> On Wed, May 14, 2025 at 04:41:39PM -0700, Ackerley Tng wrote:
+>>> Hello,
+>>>
+>>> This patchset builds upon discussion at LPC 2024 and many guest_memfd
+>>> upstream calls to provide 1G page support for guest_memfd by taking
+>>> pages from HugeTLB.
+>>>
+>>> This patchset is based on Linux v6.15-rc6, and requires the mmap support
+>>> for guest_memfd patchset (Thanks Fuad!) [1].
+>>>
+>>> For ease of testing, this series is also available, stitched together,
+>>> at https://github.com/googleprodkernel/linux-cc/tree/gmem-1g-page- 
+>>> support-rfc-v2
+>> Just to record a found issue -- not one that must be fixed.
+>>
+>> In TDX, the initial memory region is added as private memory during 
+>> TD's build
+>> time, with its initial content copied from source pages in shared memory.
+>> The copy operation requires simultaneous access to both shared source 
+>> memory
+>> and private target memory.
+>>
+>> Therefore, userspace cannot store the initial content in shared memory 
+>> at the
+>> mmap-ed VA of a guest_memfd that performs in-place conversion between 
+>> shared and
+>> private memory. This is because the guest_memfd will first unmap a PFN 
+>> in shared
+>> page tables and then check for any extra refcount held for the shared 
+>> PFN before
+>> converting it to private.
 > 
-> OK. So, it probably should be 
-> 	if (IS_ENABLED(CONFIG_IOMMUFD_TEST) &&
-> 	    WARN_ON(access->iova_alignment != PAGE_SIZE ||
-> 		    (access->ictx && !access->ops->unmap))
+> I have an idea.
 > 
+> If I understand correctly, the KVM_GMEM_CONVERT_PRIVATE of in-place 
+> conversion unmap the PFN in shared page tables while keeping the content 
+> of the page unchanged, right?
+> 
+> So KVM_GMEM_CONVERT_PRIVATE can be used to initialize the private memory 
+> actually for non-CoCo case actually, that userspace first mmap() it and 
+> ensure it's shared and writes the initial content to it, after it 
+> userspace convert it to private with KVM_GMEM_CONVERT_PRIVATE.
+> 
+> For CoCo case, like TDX, it can hook to KVM_GMEM_CONVERT_PRIVATE if it 
+> wants the private memory to be initialized with initial content, and 
+> just do in-place TDH.PAGE.ADD in the hook.
 
-Nit: Probably worth mentioning in a comment that access->ops shouldn't
-be NULL during selftests and hence we avoid checking for !access->ops?
+And maybe a new flag for KVM_GMEM_CONVERT_PRIVATE for user space to 
+explicitly request that the page range is converted to private and the 
+content needs to be retained. So that TDX can identify which case needs 
+to call in-place TDH.PAGE.ADD.
 
-If you feel it's too verbose, you can let be as well.
-
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
-
-> Thanks
-> Nicolin
 
