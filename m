@@ -1,90 +1,143 @@
-Return-Path: <linux-kernel+bounces-694491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31B18AE0C5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:11:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0046AE0C60
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:11:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87FB47AF8F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:09:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 512071BC7A85
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047CE30E82C;
-	Thu, 19 Jun 2025 18:11:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE1330E84E;
+	Thu, 19 Jun 2025 18:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CQOUOu6n"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B74030E820
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 18:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD44230E825;
+	Thu, 19 Jun 2025 18:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750356665; cv=none; b=jEmtW3qe9jwfcQ2zbjh0KTiJ9FbKzIiig71UCIQLr+x1lgM2jdpbySHNcLvbWMamN5VY8vfe9W3KeKHrSeISnTbo2e2/94TcPdrvCgKwslvMKxs9naepd5kFG//Xooj6I9bmPnZ4XpjwtUpep8LhfPQi+yrFCPBI4m2Lk441pLs=
+	t=1750356689; cv=none; b=oNTVhkufQ0icSMg3oBHzQfuFyWjEj5+ZW2FmD07dY2qXXnRXt9ufQ+o6j44/4zntk4s9Kb69aZYqsjBPA+DjwP9bFODJ7h2Bs+tccNer0yYQVkVWxkaoQy0ElaW15SJ3j26L9ZIUPTVNPhnuPPL7joNqbYkMJ1wK//nKHs3hf90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750356665; c=relaxed/simple;
-	bh=keMVWl3tlYdykGYVcqReAyMwGJJijPC2GIjPDK1YdeU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=m/CZvjXmOwux4/fWNgYWep/CnQ7doFgr4/8u0a4+gMoe/mPhKSlCta7BRy4aaqoE8af9scQ9TWCxyPUSxxA4yScTDYRPH+zhIJyLl70hEyU204nAuXXiMsX4qdHb55kVvGyhzKSYHZc5LuWakBYgGIfC0DsjAJhnFoDnfkaVRDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-86f4e2434b6so86772339f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 11:11:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750356663; x=1750961463;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NR3mvQFhXoFMaL/CivSgE+Y2oira8fbZ2+vTXnKv1fU=;
-        b=qA3pH8nSqGM5TjJ+JWFbQvBIocp3xUhfAYTDGYPTe8eTMs8/KqNqRiYDmQ8NK/9KDE
-         hcdqnEBx4VVZ/zAS2I/ogqczBZRya0IzsJe2g2MqtN9sgphoNhoHpJpLsnSAxdId1GA+
-         RZpEAhI3eNzUTDJ/31ko4U0hCgDqiXpyjsYsd98TiAXaDOrfrUboS+7F27x6tR/0JBIe
-         qKeKj/OTiKQyIUddMUoLq3xVe+xhRGpsNXgu1pIPeorG0fMq7vUKS75Xdqal3VUhK4tF
-         xEsHRiJcMCXRM7ZY0PeRBSbhJU6yjOebaqPsQNe3izYlkX/Drg43rKb8zkcyODdlql1J
-         530Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWATKFEzmZ+8NLtNDty/1oVyM3O2to8n/VeOLJJWznhSNez+pDgnbIHgFOMuVPFh5FkTTbToL74by8EFds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFNsH7UuAgbhoX4m9j/r/tV/TZ+CT/TioX23Jxq8vf6hYOVhxn
-	J4Hnjht1LKe0crm900e10fuYnGDElUDvITBz5s0XUc45FU3yxE7Hgm7mpZaAh1Tx/F/8shYoy/e
-	7Ukz1aB5WIRwn5gBKsgIblKiHfa2kdudNHFLtzQnNv1hjbsriK5g/qkCv0dc=
-X-Google-Smtp-Source: AGHT+IHKsN+5EOrcnJLw0wAyYzOh5MMo46S+ZrIXZQ79V0uX7SSwP7HQzJmo3TVRbL/P+6pGCJMRhqoVVZHp//GHmyh8liW3XoRR
+	s=arc-20240116; t=1750356689; c=relaxed/simple;
+	bh=gndn72D5AOE6O4oF4sfccge8o/V0cR4aj2LeYA5Vo5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SRI+yOJCv1O/nue7MseAsJsvRvKVJBCTeBBUu9bB91qY/lgeEITqIrUZkoA3OCNy0XZEWs04Txuzk27uKdIE6Us+ex+zL0WZaa2cznX86b6GxFQ2YYQokoHO2qMnX5RIwJu4FgjKUkgrnggDmEET6W33sp+njVixWky90/vWPRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CQOUOu6n; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55JDYA80002625;
+	Thu, 19 Jun 2025 18:11:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7KF3Rq9p7XDPS8vG/WULk68Pn/cCnnM7nBO7pj/8AOk=; b=CQOUOu6nHUHcD14A
+	S7o9PU3Ms8vyFhy5dxGXjbaD98eGoZpc6I5CafCcqb5IL5uVF6PCo/5NWJ/Ff6la
+	AZGkX7Wo3Vp20gvQRpM/pnrnedkhdzPvlnQ7QK4QJ0draT5OcWF31F+PKw0MMfbr
+	er8PpZujI3NmvQIz8EinYK3nA5AavKZolLBGyAc5JZxl56dCGPQFUf5zfrS/4fNo
+	TiBE9B+ghjqGrqvipUqLwMDZlWquSrBDQz6fZX7sn3Pj13CkQKpFHi78mrr63sGQ
+	hsrwliByl50VEuSCM5L0dhZ2yUuWVVs8yrbx/I4S84MxZ0HnsgcOgla+W9fZtAg/
+	gr31oA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791hd8y38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Jun 2025 18:11:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55JIBM5L008400
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Jun 2025 18:11:22 GMT
+Received: from [10.50.57.163] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 19 Jun
+ 2025 11:11:20 -0700
+Message-ID: <16982155-d51a-82a0-6b16-785cd99ab502@quicinc.com>
+Date: Thu, 19 Jun 2025 23:41:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca0e:0:b0:3dd:d6d5:2d03 with SMTP id
- e9e14a558f8ab-3de07d50c0bmr219466345ab.11.1750356663317; Thu, 19 Jun 2025
- 11:11:03 -0700 (PDT)
-Date: Thu, 19 Jun 2025 11:11:03 -0700
-In-Reply-To: <67b2eaf7.050a0220.173698.001f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685452b7.a00a0220.137b3.0014.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_reconstruct_snapshots
-From: syzbot <syzbot+b4cb4a6988aced0cec4b@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2] media: venus: hfi: explicitly release IRQ during
+ teardown
+To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
+        <quic_vgarodia@quicinc.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250619074830.1708453-1-jorge.ramirez@oss.qualcomm.com>
+Content-Language: en-US
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <20250619074830.1708453-1-jorge.ramirez@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE5MDE0OSBTYWx0ZWRfXy6bUkQd9Apvy
+ So2V1g3ZViBeUrj+EhkPVa0DfkVoQUwE8ltVVp0gKrPoP56QGof2X/1p7swa+7OxcmAr5ivJiom
+ tiLJtuPlgEz16UDnVeFtiyEAC2lp/QyJsgt87oK3btXr4YcKrp+vPlh2waTFZslwHgRTBJl1Obj
+ Wq1Q50dMdPErNTVzPIdHV50TO90l2/9FT149UGE5V061KYp0HCqdi86tRdinlUVO+Acr80g435F
+ k3XpmFx7RGrXzyI8NIE4bmDYyHvxBODXK3o/njvyIQ86jI3z3VbS1ZUJl6mjQVnC9pQ8cQgt3MH
+ D73Z3Xq/pXWFV1G50mGLv9VAcnMTGo8Ot1YH1iLLxxMaggaw1m+izkUCRmLZoQ3iarTdTGy4UAC
+ 9tjlU5DJwz7Q7fq831mwTQrHeCmcx6zi9DyVn8RufRU7iXcilPvwjgA9VlVH1bngyGe4tQj0
+X-Authority-Analysis: v=2.4 cv=PtaTbxM3 c=1 sm=1 tr=0 ts=685452cb cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8
+ a=COk6AnOGAAAA:8 a=KVH4ev5q36qbvSy0r5QA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: KsF7CixRg6lBuvtxuTN8PhVRIDRx0iHP
+X-Proofpoint-GUID: KsF7CixRg6lBuvtxuTN8PhVRIDRx0iHP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-19_06,2025-06-18_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 mlxlogscore=647 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 phishscore=0 mlxscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506190149
 
-syzbot suspects this issue was fixed by commit:
 
-commit 757601ef853359fe2d57d75c00b5045f62efc608
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sun Jun 8 15:40:00 2025 +0000
 
-    bcachefs: Don't put rhashtable on stack
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13b01d0c580000
-start commit:   128c8f96eb86 Merge tag 'drm-fixes-2025-02-14' of https://g..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e55cabe422b4fcaf
-dashboard link: https://syzkaller.appspot.com/bug?extid=b4cb4a6988aced0cec4b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d5d9b0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112099a4580000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: bcachefs: Don't put rhashtable on stack
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On 6/19/2025 1:18 PM, Jorge Ramirez-Ortiz wrote:
+> Ensure the IRQ is disabled - and all pending handlers completed - before
+> dismantling the interrupt routing and clearing related pointers.
+> 
+> This prevents any possibility of the interrupt triggering after the
+> handler context has been invalidated.
+> 
+> Fixes: d96d3f30c0f2 ("[media] media: venus: hfi: add Venus HFI files")
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+> ---
+> 
+>  v2:
+>     disable the handler and block until complete.
+>     allow devres to release and free the allocated irq
+> 
+>  drivers/media/platform/qcom/venus/hfi_venus.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+> index b5f2ea879950..ed003adb0282 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+> @@ -1678,6 +1678,7 @@ void venus_hfi_destroy(struct venus_core *core)
+>  	venus_interface_queues_release(hdev);
+>  	mutex_destroy(&hdev->lock);
+>  	kfree(hdev);
+> +	disable_irq(core->irq);
+>  	core->ops = NULL;
+>  }
+>  
+Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Tested-by: Dikshita Agarwal <quic_dikshita@quicinc.com> # RB5
 
