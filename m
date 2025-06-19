@@ -1,177 +1,173 @@
-Return-Path: <linux-kernel+bounces-694653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A6FAE0EF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:19:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01123AE0EFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D1817ABC7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 21:18:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D54353A879B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 21:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F4723A98E;
-	Thu, 19 Jun 2025 21:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBA325EF87;
+	Thu, 19 Jun 2025 21:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="E+cJDysw"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QB7oRRku"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8C4246BA7
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 21:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C2623183B;
+	Thu, 19 Jun 2025 21:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750367944; cv=none; b=lMl7Au0nvFQkm1ueXc0oQph4npHq/Lh/WXjLWbAKlZI/p4dzlQaoBlyPDqndZXmE9DhJyCe5NDS8kILPbdEaQGvM6mNbJ4hFTz1E54BOI+GFkkL5VSH2G7WUSZJrD/uUrrNTd2aikQ2pBMO4wKDZBR2XUHEh24eMFA73fx8gixs=
+	t=1750368125; cv=none; b=oVJUAULnBOWuBLRoyNwf5wihv5EbZyt40q3JcXQmEXOv2ijZhcn3ZeZ8R47qTvr/cZqBHg6RmPVnbDPIOsfu57+St6DDH0qyBKwiBxfBLIBiFK3LymiUVMwElIjGVTR7T/UwX4ROdSyZZDYgUOFv9bp66hFZWTVJ5em7ecYRoW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750367944; c=relaxed/simple;
-	bh=43N9xSLqG8Mvf1evULiPV3dhUbzzkfegXMMlVgJmLmY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qStg0kvy1WSTT1zW4C1hEZB2sWde5vQ433YlvTPw2PP7S72tqT+s7r+98ceQ8owadwTilRh9jv/WOLK3NWbSxWXRNvXB0aAb0+2Ni3K6PX2RdyrOORwk2CP65K9Qa79AL1cux7zCpV0s0BSgpL7JkwUKp6xuDkGxPLRyxDdy6WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=E+cJDysw; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e84207a8aa3so687787276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 14:19:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1750367940; x=1750972740; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f7reZQjMhm+dclXhsOljn44+uNt88uw72bwAiTZN+zs=;
-        b=E+cJDyswwCd3O1ohVQNJiyY5eOa0jtJG+bh6ZhltL81dbG/GCbHysWF05E4h1ERuRy
-         5m2LKxrLUkSDOCU4dYry+AJq2deT5henQP2QO7rE1MdJgkvzeKRraS1rHCfYuEqOeyl+
-         Hjlc5RK+v4pBI25h7GsrGJLHLw0QRMB/XjYXeFZlNnTt63ug9uX7HYVvVmv3Kx3LgCdA
-         77CKL4E6RMTbTmX2PRTgA4aski0Xm2/BJ+oHVAsTk140fbd0RZ1UrH+RiBIPT9d6L24d
-         KOOFetthlX5SvcTG4XH1ARSDK6BjU5zdRU5XNwSfv9oZOpqzmC3ML9AyGmBjlXX2yJpY
-         ZeOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750367940; x=1750972740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f7reZQjMhm+dclXhsOljn44+uNt88uw72bwAiTZN+zs=;
-        b=Y/GB/1byVG+GKg+K6dWBJfvzKf/b9wnQSnzEysmT9L9ZSIhAN5Jt70OSHrw8Ak3aWu
-         sTSie+Fdl/nvjUAF/CPR4O4skTxGL0z09sDnIWzhmArieLRnfr8wiZq9uRx/JE/apz/m
-         n/Rpa5Eam+GGfHbwhd/jyXTjhp77EUQaKwkrFXePyBYMn8MYuAFiTZSkE0Gpb1Cp+XZn
-         80kzxUEy3lNvdG9eSO409PdoBP4ogtg3k5ymEyHWNi9uYA7bHr1iWj5yjGIy6W5Z4xas
-         51OHAg7d0ytZpFNC6fTUFCW5HgHXkCeMDUtI/7S73P15IGTxQ1MV4+sEu9xiryuMiZjU
-         O+uA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVd5mXIouvkD7hCiWB/JdsBMKANqDg/eMr1v/482QP3DIoJrnJHnut7YjSgJ9PR9vJ6Q25wSZYlDZUPJk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr0VCXevlEXKmgS5tHH1vy+92In+GCfT5aid6igFRkYV3lZh9N
-	m2C1d1V86fzCT4qu9roOBVkP6gZg1dN8DHwoIOV8TdBMdOfDTKBusNaO59/c97hSvfFBbS73kKM
-	n10thIy3IBRLVFg+nwcQFYGTqSBZiKn12o2Xi978a
-X-Gm-Gg: ASbGncuBAMbXISvno79dNVHmKjNEApuv22ApZQ4ZbseTVwe3zl4pIuctcinIQgplR0i
-	B96k2RX5gSwBtuLiyo4suKRGM8S6tJfzhCe1IXS62vhDQhDBdJoJUhS2FFTrID4T91/qyRnmUy2
-	QmPIiXYVJ3rGj8bw5/HoOy8lGRS09PUOCBFiKsozxDYGU=
-X-Google-Smtp-Source: AGHT+IGuYWqaT27fYmWdeDZ9lvr/78HUoiTAJ+pb8mrK6LB7RxNHDSBjtW66gCKrmHYUPLvXFfpMQPNhl/c9KrbuTKM=
-X-Received: by 2002:a05:690c:610f:b0:70e:1aa1:63b4 with SMTP id
- 00721157ae682-712c65125d6mr9891227b3.38.1750367940400; Thu, 19 Jun 2025
- 14:19:00 -0700 (PDT)
+	s=arc-20240116; t=1750368125; c=relaxed/simple;
+	bh=pRuGfH2o8r29IBa31hoMcUPybgxpzd9xd7p/eTD4ucE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ajfDyKAHuaRzUKQc6AcoaiEvCieKEPULNL/tcPGH7NzyzPKxJrwn8QN7F4jnocAEd7pOQ3wLf55bIst3bw/IMhWzWMVHC21UOOUQlCv9R47ItpneOzWBwYZSSu/uv0s0WNqmYNBSSG88s7X1SyjliLhVdmOZ6qodL5bMFGV9XMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QB7oRRku; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6067EC4CEEA;
+	Thu, 19 Jun 2025 21:22:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750368125;
+	bh=pRuGfH2o8r29IBa31hoMcUPybgxpzd9xd7p/eTD4ucE=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=QB7oRRkujF64rco7v1qJSFRQ2UuX/i+bueaLWm8EloYX302qLwPpi60nZiCv2LpFh
+	 b0DqWyUc3mEuw3RZ5fP0k0ZLuNKfRmR2LYyaXB8EPeBv+WVMwOFjx1XhLtP1o4bFPP
+	 3FOfOmk1krrwGqGFisNi5MS7IcHV2SKrsZi3KhXugevEAnx3eXu/tKqswkB3gXv+FW
+	 xWBRJVLKsq2YlDhKlDNPXktdimQm4ainjzAAQCooQvyiX9YpCm6mqHgUetK5UD+D2H
+	 EVFoVU5Jq3bwimQqxyCSK3QW0bFN3hi1SSClf6B+5loLFs5KHPbYZNDgC/Ulh/SSkm
+	 9VArDebKn7jQg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5626BC7115A;
+	Thu, 19 Jun 2025 21:22:05 +0000 (UTC)
+From: Dominique Martinet via B4 Relay <devnull+asmadeus.codewreck.org@kernel.org>
+Date: Fri, 20 Jun 2025 06:22:03 +0900
+Subject: [PATCH v2] net/9p: Fix buffer overflow in USB transport layer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
- <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
- <CAHC9VhQyDX+NgWipgm5DGMewfVTBe3DkLbe_AANRiuAj40bA1w@mail.gmail.com> <6797b694-6c40-4806-9541-05ce6a0b07fc@oracle.com>
-In-Reply-To: <6797b694-6c40-4806-9541-05ce6a0b07fc@oracle.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 19 Jun 2025 17:18:49 -0400
-X-Gm-Features: AX0GCFu9kjUfnfMnqfxH4agmkNzznUIDL4onDD-B6Nh-8MzRljESBgn1ZFaZ0Ts
-Message-ID: <CAHC9VhQsK_XpJ-bbt6AXM4fk30huhrPvvMSEuHHTPb=eJZwoUA@mail.gmail.com>
-Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
- interface
-To: Anna Schumaker <anna.schumaker@oracle.com>
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250620-9p-usb_overflow-v2-1-026c6109c7a1@codewreck.org>
+X-B4-Tracking: v=1; b=H4sIAHp/VGgC/y2NWw6CMBQFt0LutyV90Cb45T4MMQVu4RqgpFXUk
+ O7dSvyck5yZHSIGwgjnYoeAG0XySwZ5KqAb7TIgoz4zSC41N5KzemXP2N78hsFN/sWkbl2nsW7
+ RKcivNaCj92G8NplHig8fPkdgE7/17xJGKKlVXRpVqYoJ1tuF4p1y9DLMlqay8zM0KaUvVTFZO
+ 6UAAAA=
+X-Change-ID: 20250620-9p-usb_overflow-25bfc5e9bef3
+To: Eric Van Hensbergen <ericvh@kernel.org>, 
+ Latchesar Ionkov <lucho@ionkov.net>, 
+ Christian Schoenebeck <linux_oss@crudebyte.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Michael Grzeschik <m.grzeschik@pengutronix.de>
+Cc: stable@vger.kernel.org, Yuhao Jiang <danisjiang@gmail.com>, 
+ security@kernel.org, v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Dominique Martinet <asmadeus@codewreck.org>
+X-Mailer: b4 0.15-dev-7be4f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2874;
+ i=asmadeus@codewreck.org; h=from:subject:message-id;
+ bh=sd75KIQYdSHcNYSxHvOsd/ZrBkByS+On5VAz8Wg9id0=;
+ b=owEBbQKS/ZANAwAKAatOm+xqmOZwAcsmYgBoVH98nfmseHzKhOwth426LG3xCNHGuKrMrPYIS
+ 6knofnzWnuJAjMEAAEKAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCaFR/fAAKCRCrTpvsapjm
+ cKyeD/oCJfejbpmPwkb/cnIW8YPsRFbmsDmvntEQHaill6n6KcyQB3v3oKHUGopejHFtiUl8TYQ
+ NToXHtB3AKIWS7xpi4nHpHT+0QBUKW8TADf4peHz6SC9Mtnz3tUGLcrDMEFEjOBz9z+dQMfzEXT
+ cLulWcIkJfGJQzNr0WON4ekRHI/EH0KSETffLJ5uedpG15CJPSypltjzs2RYIBtHyYiR6rcfSx6
+ /snUGfZrEbSz/XfTLB3LOdxrFPEk6Ue/lJ7i2A4ANJGxL9SNKoF7iOnzPBjqhvgENnn/XgWi1Td
+ +eq24+g3eeygU8qsaYnmtRHZYGa9Tm6ea8a1yG7wBS234sgRNMOfKTjH5nbLmvTDM9uQrbYdb+W
+ vMeOdDJfeTh9ebLmRxdHGBkdZvliQKm/l0uU6G/wJ8DRmprt+sun73E7h90Zd53/u39mH3kj/3i
+ i1l2jIGgVbBCjbxa9Nhdo0cfQcv1EdYRviS7m5azPRYRwKrRxaVXEc0sx9ef3X/iYNpZiewb6J9
+ hxTVpZIe+YgQ1CTyAUlMWpv79xb/B8Ondu6yAX83B1+bfoZlJCRoThx2jtyR10yNjvRg11gY4Bj
+ EDmfB3Zd6juPxcftwIgFSKK8fE1WgtERblihLOmKiO7xz+qjINPl/nurkKs7eF+xY7Zju1y4GX0
+ Vq4Nxjjs6kH9Neg==
+X-Developer-Key: i=asmadeus@codewreck.org; a=openpgp;
+ fpr=B894379F662089525B3FB1B9333F1F391BBBB00A
+X-Endpoint-Received: by B4 Relay for asmadeus@codewreck.org/default with
+ auth_id=435
+X-Original-From: Dominique Martinet <asmadeus@codewreck.org>
+Reply-To: asmadeus@codewreck.org
 
-On Tue, May 27, 2025 at 5:03=E2=80=AFPM Anna Schumaker
-<anna.schumaker@oracle.com> wrote:
-> On 5/20/25 5:31 PM, Paul Moore wrote:
-> > On Tue, Apr 29, 2025 at 7:34=E2=80=AFPM Paul Moore <paul@paul-moore.com=
-> wrote:
-> >> On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Stephen Smalley
-> >> <stephen.smalley.work@gmail.com> wrote:
-> >>>
-> >>> Update the security_inode_listsecurity() interface to allow
-> >>> use of the xattr_list_one() helper and update the hook
-> >>> implementations.
-> >>>
-> >>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.s=
-malley.work@gmail.com/
-> >>>
-> >>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> >>> ---
-> >>> This patch is relative to the one linked above, which in theory is on
-> >>> vfs.fixes but doesn't appear to have been pushed when I looked.
-> >>>
-> >>>  fs/nfs/nfs4proc.c             | 10 ++++++----
-> >>>  fs/xattr.c                    | 19 +++++++------------
-> >>>  include/linux/lsm_hook_defs.h |  4 ++--
-> >>>  include/linux/security.h      |  5 +++--
-> >>>  net/socket.c                  | 17 +++++++----------
-> >>>  security/security.c           | 16 ++++++++--------
-> >>>  security/selinux/hooks.c      | 10 +++-------
-> >>>  security/smack/smack_lsm.c    | 13 ++++---------
-> >>>  8 files changed, 40 insertions(+), 54 deletions(-)
-> >>
-> >> Thanks Stephen.  Once we get ACKs from the NFS, netdev, and Smack
-> >> folks I can pull this into the LSM tree.
-> >
-> > Gentle ping for Trond, Anna, Jakub, and Casey ... can I get some ACKs
-> > on this patch?  It's a little late for the upcoming merge window, but
-> > I'd like to merge this via the LSM tree after the merge window closes.
->
-> For the NFS change:
->     Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
+From: Dominique Martinet <asmadeus@codewreck.org>
 
-Hi Anna,
+A buffer overflow vulnerability exists in the USB 9pfs transport layer
+where inconsistent size validation between packet header parsing and
+actual data copying allows a malicious USB host to overflow heap buffers.
 
-Thanks for reviewing the patch.  Unfortunately when merging the patch
-today and fixing up some merge conflicts I bumped into an odd case in
-the NFS space and I wanted to check with you on how you would like to
-resolve it.
+The issue occurs because:
+- usb9pfs_rx_header() validates only the declared size in packet header
+- usb9pfs_rx_complete() uses req->actual (actual received bytes) for
+memcpy
 
-Commit 243fea134633 ("NFSv4.2: fix listxattr to return selinux
-security label")[1] adds a direct call to
-security_inode_listsecurity() in nfs4_listxattr(), despite the
-existing nfs4_listxattr_nfs4_label() call which calls into the same
-LSM hook, although that call is conditional on the server supporting
-NFS_CAP_SECURITY_LABEL.  Based on a quick search, it appears the only
-caller for nfs4_listxattr_nfs4_label() is nfs4_listxattr() so I'm
-wondering if there isn't some room for improvement here.
+This allows an attacker to craft packets with small declared size
+(bypassing validation) but large actual payload (triggering overflow
+in memcpy).
 
-I think there are two obvious options, and I'm curious about your
-thoughts on which of these you would prefer, or if there is another
-third option that you would like to see merged.
+Add validation in usb9pfs_rx_complete() to ensure req->actual does not
+exceed the buffer capacity before copying data.
 
-Option #1:
-Essentially back out commit 243fea134633, removing the direct LSM call
-in nfs4_listxattr() and relying on the nfs4_listxattr_nfs4_label() for
-the LSM/SELinux xattrs.  I think we would want to remove the
-NFS_CAP_SECURITY_LABEL check and build nfs4_listxattr_nfs4_label()
-regardless of CONFIG_NFS_V4_SECURITY_LABEL.
+Reported-by: Yuhao Jiang <danisjiang@gmail.com>
+Closes: https://lkml.kernel.org/r/20250616132539.63434-1-danisjiang@gmail.com
+Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+---
+Not actually tested, I'll try to find time to figure out how to run with
+qemu for real this time...
 
-Option #2:
-Remove nfs4_listxattr_nfs4_label() entirely and keep the direct LSM
-call in nfs4_listxattr(), with the required changes for this patch.
+Changes in v2:
+- run through p9_client_cb() on error
+- Link to v1: https://lore.kernel.org/r/20250616132539.63434-1-danisjiang@gmail.com
+---
+ net/9p/trans_usbg.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-Thoughts?
+diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
+index 6b694f117aef296a66419fed5252305e7a1d0936..43078e0d4ca3f4063660f659d28452c81bef10b4 100644
+--- a/net/9p/trans_usbg.c
++++ b/net/9p/trans_usbg.c
+@@ -231,6 +231,8 @@ static void usb9pfs_rx_complete(struct usb_ep *ep, struct usb_request *req)
+ 	struct f_usb9pfs *usb9pfs = ep->driver_data;
+ 	struct usb_composite_dev *cdev = usb9pfs->function.config->cdev;
+ 	struct p9_req_t *p9_rx_req;
++	unsigned int req_size = req->actual;
++	int status = REQ_STATUS_RCVD;
+ 
+ 	if (req->status) {
+ 		dev_err(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
+@@ -242,11 +244,19 @@ static void usb9pfs_rx_complete(struct usb_ep *ep, struct usb_request *req)
+ 	if (!p9_rx_req)
+ 		return;
+ 
+-	memcpy(p9_rx_req->rc.sdata, req->buf, req->actual);
++	if (req_size > p9_rx_req->rc.capacity) {
++		dev_err(&cdev->gadget->dev,
++			"%s received data size %u exceeds buffer capacity %zu\n",
++			ep->name, req_size, p9_rx_req->rc.capacity);
++		req_size = 0;
++		status = REQ_STATUS_ERROR;
++	}
+ 
+-	p9_rx_req->rc.size = req->actual;
++	memcpy(p9_rx_req->rc.sdata, req->buf, req_size);
+ 
+-	p9_client_cb(usb9pfs->client, p9_rx_req, REQ_STATUS_RCVD);
++	p9_rx_req->rc.size = req_sizel;
++
++	p9_client_cb(usb9pfs->client, p9_rx_req, status);
+ 	p9_req_put(usb9pfs->client, p9_rx_req);
+ 
+ 	complete(&usb9pfs->received);
 
-[1] https://lore.kernel.org/all/20250425180921.86702-1-okorniev@redhat.com/
---=20
-paul-moore.com
+---
+base-commit: 74b4cc9b8780bfe8a3992c9ac0033bf22ac01f19
+change-id: 20250620-9p-usb_overflow-25bfc5e9bef3
+
+Best regards,
+-- 
+Dominique Martinet <asmadeus@codewreck.org>
+
+
 
