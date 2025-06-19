@@ -1,139 +1,132 @@
-Return-Path: <linux-kernel+bounces-693373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4708FADFE48
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1E1ADFE4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 463534A443C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:57:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DE5F161418
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FBB248F7F;
-	Thu, 19 Jun 2025 06:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AD9248F53;
+	Thu, 19 Jun 2025 06:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a+iB4PHa"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EAE2472AE
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 06:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="mvBfgo58"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D9D21B8F5;
+	Thu, 19 Jun 2025 06:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750316238; cv=none; b=S9m9+7cQZcyof4PRC82nqQnVuZ4zr+X/+JJNCbWrZfNeZ93E2LBG5UxMwPNbuL8Vm9HOoeBuQPoHlrFUHNxK1nNjpXlK+xXm4k4ynOhnUUiv8JY9F9e9qIEyQGuqQvQSFatVwgOF8DkdP/2RW3CF8O2UD1Q3/gtuBmOKk3covM8=
+	t=1750316256; cv=none; b=glaNWRmtKg2hjV0VdIfU92SMVPVZ9cleomMKDl2a6Ze+oS6wqnYK/WU0V23JnZN3vVJOxEaoe3Uh+418uF3U57KNHgOm7KDyyGSHUSPKq97XHXGkoOFNEHryG9nVlm3PqPLhwimYM5eFFORIAFmY1Hk6tt2/GsUkfsARjk/P9wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750316238; c=relaxed/simple;
-	bh=ZpxBiFvNTV24CakR+gqDkbfEBqa7hfmTQr9mkfpyNqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iFD7ZFksXU8Gpo7QCL6kgav/i0HxDB4yQVXE92D9mdK/fBX3zQzNg5LvOGb50RI0xd+D/z6dKBergYWQkvG0jzntJkR78SXTXUJIJw8G/txTFHWGgbGyZ5cxiDaVeaAUzUoNHYXG1GQcsEAdqlWgmiC9QtYNTrP08W1qtEWeddY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a+iB4PHa; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7424ccbef4eso315655b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 23:57:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750316235; x=1750921035; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3wXDhrb5gMp7gMf4JCS4TNzFLsoHKLLOownJ0Qkmwik=;
-        b=a+iB4PHanVN5l90XLRyePv56zs7x0oatjruNiR0U97qR/EKHqQYihxWfQ5D9kX38AT
-         jX/dkTGQGp+0hOZLu/rl2FPD6DUTr3ztK7uSU07PPNeZAwi5FKVrGkJyS41q3bxQut/y
-         LFiB6CI5B3EM1YZIC2KiNuIRQZPCDy4jDBxHZBDPR/4NtuxQ7u6KKMVtzknTiuxAR1ts
-         8JupLugUd0VRRtt8m0g3CWS99Abc5VWD8o+9Gympq6XKbsn2/F/4ywi9r7OCawo8LBDh
-         ZZdTF2gX7nnJw2WzmtaDVdFcdqHqwqyZALgQXHb5EZj69Bm/2LF02BLNL8bobUXJ2KpZ
-         NI0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750316235; x=1750921035;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3wXDhrb5gMp7gMf4JCS4TNzFLsoHKLLOownJ0Qkmwik=;
-        b=a52Rl6R7An/Ps5FWkbwF37NByBfB29N/kVbjrYpBmRpFIOgDmQiXF3WlKSdu5q4UVP
-         cp1HHTEr/yZh7MtGNbCv7RF8BapS/wvX4xACB4eq225pitO0Kt21/vAF8LtP4zTQ+mHk
-         Izg/r4G/40NE3pdcBYpCbvbW3s9+bN8M/GJQBeziO2Ziqj1jPWipbVSw7bVn/C2aaiSx
-         f2qNtqUn7pfZVplQFg5wbYP/6BZ9JjFWPXWuRuBEIs+VgLtDl9OXWlq7Zv+hXh++1dtZ
-         EKR6KCv96I2HHIRfsjeo09NE3T96s3/Mg3HvSDAu+cw+EHkTDpimXGz3dJVsU6rWgzdS
-         JuhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqTXh1nGJSycJu6oOiA7CEOpIF7ssvPrvERJTxJ7yncY8p6UJt+N50R0IfWwox4WzaQ+crVpIYkLMV83c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg/rNITYh8tBKwXT0X0EVbyDwb9bUTW74TvEFt87dCKEgKZ/5Z
-	HkwvoLikaeNAT6Xo9hdCeLRUS3v2l6+A0kBdkTvOxusI4UEEBVyXobrRBGDbcKTp1bQ=
-X-Gm-Gg: ASbGnctfBqauY1gAxhpgEflHnaPiXyI1YNjOunia0RSB0Lgrp8jF+gGssWHZOM7vROq
-	thRZxQmBShpv7nip851bNdwxSPB1OxFJr8/SNPxvAiuHlOZUd9ZPy3KzYDzA+QtqZKa0c8Vvylp
-	VBkq3DLR9j7ipgy6WRshhLVQNF/esZ8kCG0mLwXet0+AY7Dh7cvJvWES5sdPyU+HLX6558AyI+V
-	/9kfsbmHitWnLYAGGwFOdKv1vvCU84eo7aMHraavsh47RrDDTWvNfbmYJ3sCqVf+suCWystBGCX
-	DIy8WBxSHBQEWTzy6GINgSnCRbHWA/WJe364pmrcuVykR+G2BGSGicXW4z9Ya60=
-X-Google-Smtp-Source: AGHT+IGlUdbrNrLWErrn0rW+WYn9rsrB56pXxkDz0+uZxdgPmgRSJkVrVTE8T9ZZyrn/M1TvSJEAvw==
-X-Received: by 2002:a05:6a00:3c89:b0:736:450c:fa54 with SMTP id d2e1a72fcca58-7489cf8b19amr26442033b3a.6.1750316235484;
-        Wed, 18 Jun 2025 23:57:15 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe163a199sm10414785a12.5.2025.06.18.23.57.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 23:57:14 -0700 (PDT)
-Date: Thu, 19 Jun 2025 12:27:13 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Abhinav Ananthu <abhinav.ogl@gmail.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] rust: cpufreq: Ensure C ABI compatibility in all
- unsafe
-Message-ID: <20250619065713.hm5ye2uhikaei2xo@vireshk-i7>
-References: <20250613101815.18092-1-abhinav.ogl@gmail.com>
+	s=arc-20240116; t=1750316256; c=relaxed/simple;
+	bh=QJTn2F0Vi2smMsXBne9dl6Ncd2JRbrjvNoOWX32WxOk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cr5EXkNuK/Vt21uQDahe+MYwsHg9bgxuJmyw+nTuMjcpSMWg1sq9V8yATBb3HcESgdtd8qBjWpORCR/DlSHe2ziSQ6LOc/jsylDjU7soIROdoZ5qGsuVBm934U9K9mgbQtVD90fG4IthV7CM3N3AP30iUIAoY4cPnA4Lh+nbYWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=mvBfgo58; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=JO
+	r6DQk02pP6jKtrUOGXaAcSW5MWXso0pj5iQwFNr+E=; b=mvBfgo582s3DM5kI5W
+	YzWBTtzs6uP0qOjqU1DrNppFJLQJdopxrTOgp5DD5GVQFF7wpXZ14r6FhNieGHM5
+	4YHnrkAOdEF1fxj0kgy140WWbCP4//r71DkENv1VFZ/yb2ejZWInn95NLbJLnjjn
+	lGQdprDSsifzSu83w1e6ELJ3o=
+Received: from 163.com (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wBn7wbQtFNo_eumAQ--.31221S2;
+	Thu, 19 Jun 2025 14:57:21 +0800 (CST)
+From: chenyuan <chenyuan_fl@163.com>
+To: ast@kernel.org,
+	andrii@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chenyuan_fl@163.com,
+	chenyuan <chenyuan@kylinos.cn>
+Subject: [PATH v2] bpftool: Fix memory leak in dump_xx_nlmsg on realloc failure
+Date: Thu, 19 Jun 2025 14:57:13 +0800
+Message-Id: <20250619065713.65824-1-chenyuan_fl@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250619031037.39068-1-chenyuan_fl@163.com>
+References: <20250619031037.39068-1-chenyuan_fl@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250613101815.18092-1-abhinav.ogl@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBn7wbQtFNo_eumAQ--.31221S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tFW5Xry7WryrCF1kGr1kuFg_yoW8try3pa
+	y7Ga40yr15WFyru34kAa1rZFW3Cw1xGrs5Kr43J3y8uw15Xrn3uF1UKa4FvFs0gFyrWFy2
+	yr1FkF9rXF1UAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pioa0DUUUUU=
+X-CM-SenderInfo: xfkh05pxdqswro6rljoofrz/1tbiJwBxvWhTsWdZMgAAst
 
-On 13-06-25, 15:48, Abhinav Ananthu wrote:
-> Update all `unsafe extern "C"` callback functions in the cpufreq module to
-> use `kernel::ffi` types (`c_int`, `c_uint`, etc.) instead of Rust-native
-> types like `i32`, `u32`, or `usize`.
-> 
-> This change ensures that all Rust callbacks have signatures that are
-> ABI-compatible with their corresponding C counterparts, which is critical
-> for FFI correctness and safety.
-> 
-> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1170
-> Signed-off-by: Abhinav Ananthu <abhinav.ogl@gmail.com>
-> ---
->  rust/kernel/cpufreq.rs | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-> index 11b03e9d7e89..481a6d2dc362 100644
-> --- a/rust/kernel/cpufreq.rs
-> +++ b/rust/kernel/cpufreq.rs
-> @@ -1207,8 +1207,8 @@ impl<T: Driver> Registration<T> {
->      /// - The pointer arguments must be valid pointers.
->      unsafe extern "C" fn target_callback(
->          ptr: *mut bindings::cpufreq_policy,
-> -        target_freq: u32,
-> -        relation: u32,
-> +        target_freq: c_uint,
-> +        relation: c_uint,
+From: chenyuan <chenyuan@kylinos.cn>
 
-I think the one in prelude points to core::ffi::* instead, while we
-want to use kernel::ffi::* ?
+In function dump_xx_nlmsg(), when realloc() fails to allocate memory,
+the original pointer to the buffer is overwritten with NULL. This causes
+a memory leak because the previously allocated buffer becomes unreachable
+without being freed.
 
-Miguel ?
+Fix: 7900efc19214 ("tools/bpf: bpftool: improve output format for bpftool net")
+Signed-off-by: chenyuan <chenyuan@kylinos.cn>
+---
+ tools/bpf/bpftool/net.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-Also why does prelude use ::ffi::* instead of kernel::ffi::* ? I was always a
-bit confused about it.
-
+diff --git a/tools/bpf/bpftool/net.c b/tools/bpf/bpftool/net.c
+index 64f958f437b0..1abedfe6f33f 100644
+--- a/tools/bpf/bpftool/net.c
++++ b/tools/bpf/bpftool/net.c
+@@ -366,17 +366,18 @@ static int dump_link_nlmsg(void *cookie, void *msg, struct nlattr **tb)
+ {
+ 	struct bpf_netdev_t *netinfo = cookie;
+ 	struct ifinfomsg *ifinfo = msg;
++	struct ip_devname_ifindex *tmp;
+ 
+ 	if (netinfo->filter_idx > 0 && netinfo->filter_idx != ifinfo->ifi_index)
+ 		return 0;
+ 
+ 	if (netinfo->used_len == netinfo->array_len) {
+-		netinfo->devices = realloc(netinfo->devices,
+-			(netinfo->array_len + 16) *
++		tmp = realloc(netinfo->devices, (netinfo->array_len + 16) *
+ 			sizeof(struct ip_devname_ifindex));
+-		if (!netinfo->devices)
++		if (!tmp)
+ 			return -ENOMEM;
+ 
++		netinfo->devices = tmp;
+ 		netinfo->array_len += 16;
+ 	}
+ 	netinfo->devices[netinfo->used_len].ifindex = ifinfo->ifi_index;
+@@ -395,6 +396,7 @@ static int dump_class_qdisc_nlmsg(void *cookie, void *msg, struct nlattr **tb)
+ {
+ 	struct bpf_tcinfo_t *tcinfo = cookie;
+ 	struct tcmsg *info = msg;
++	struct tc_kind_handle *tmp;
+ 
+ 	if (tcinfo->is_qdisc) {
+ 		/* skip clsact qdisc */
+@@ -406,11 +408,12 @@ static int dump_class_qdisc_nlmsg(void *cookie, void *msg, struct nlattr **tb)
+ 	}
+ 
+ 	if (tcinfo->used_len == tcinfo->array_len) {
+-		tcinfo->handle_array = realloc(tcinfo->handle_array,
++		tmp = realloc(tcinfo->handle_array,
+ 			(tcinfo->array_len + 16) * sizeof(struct tc_kind_handle));
+-		if (!tcinfo->handle_array)
++		if (!tmp)
+ 			return -ENOMEM;
+ 
++		tcinfo->handle_array = tmp;
+ 		tcinfo->array_len += 16;
+ 	}
+ 	tcinfo->handle_array[tcinfo->used_len].handle = info->tcm_handle;
 -- 
-viresh
+2.25.1
+
 
