@@ -1,98 +1,117 @@
-Return-Path: <linux-kernel+bounces-694577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933CCAE0DEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 21:24:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D666DAE0D9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 21:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F2C84A4962
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:23:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 153EB1BC5331
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED812951C6;
-	Thu, 19 Jun 2025 19:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F0A247285;
+	Thu, 19 Jun 2025 19:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gsWHI6uC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MET21Rqy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D533B28E572;
-	Thu, 19 Jun 2025 19:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CA4246BBB;
+	Thu, 19 Jun 2025 19:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750360931; cv=none; b=pQspgrUG3RLq/xukBMNSfU7rN2BOGBErv6hEn1BPmRE3X8UXi0lvHDXorkKYfqYHMvLyPyNBQLu3E6X7wwONINRWJYH6s0ptB1X9RePswvnpXT3qA6cZM1GFHINRWwFP2QwhJ9eRomEIvU+y3iVxVKiAynGmKrKxx4YaS7OOPJw=
+	t=1750360762; cv=none; b=U/qT9li04/oOrryDXTfcaSCZaLow0VDzlM5FWOqSlzi9ocYHBg09cR4lsIgKL161aO2wVY7t6Tf9FTbjlZc6P+h4R5N1RYSthpeC4jYvIiA2nZvIVj+9F0GWPpFn+Yij7JDyo0KMpvft3JKgNNQkDvXWmRAMr11a5s2rmXcFLvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750360931; c=relaxed/simple;
-	bh=TvyRRr0Q9p57RHCbNRzLmr80cK6DSzs3Te1JHJiic8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bfnEuOn0kGYIxyjs27J1SJiHzuKekYSMUCy5dhndePPRUGHgIQrW5n8F5XGpmM5MT18pVzN6TIr3dBghhG8XlXZDEnGYQ+cPBmDyQrlPdis1+taLwNF8kT3K7x3ljNBkCqSbFCybp9SzWAcggkpvu+Pk6fw48nJBGgkDdGb9qTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gsWHI6uC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A7F8C4CEEA;
-	Thu, 19 Jun 2025 19:22:10 +0000 (UTC)
+	s=arc-20240116; t=1750360762; c=relaxed/simple;
+	bh=LDMXTkVlQDnupG+UBA2IQttq9RHsgsS5cAxbc+ksyEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jq36VpartB0eTcKqveMqitTB9YAukzqcftr8vV3t0x4F8+DWABWLZLf8wRnQzLQG31O0y5mtN4NFpjYkISyko6yzra32Vt4caa0BbAw4+t8N/9Jpnb2oTkCTPPwgunUywf4FpstGzp68Ec9e+VUzJ+VtBeAtW7p7dx5pDDFdd+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MET21Rqy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93C78C4CEEA;
+	Thu, 19 Jun 2025 19:19:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750360930;
-	bh=TvyRRr0Q9p57RHCbNRzLmr80cK6DSzs3Te1JHJiic8A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gsWHI6uCzGtgTFS0+9VVGWSKxIlVRoAXr7ncQjaX5JwXgHpNeTiXfuOdhYkgBgHlJ
-	 YQL+IwHGvkSc1iwP/qogzJwScgBGmtDDqgVmXHbv1uR/qUAz+wTmjf+9RfsQ9xDMXt
-	 cx09P6ml5LT5uoXwPMu9X1MNzCP//2MHKBcUUMASgM0/fV4ggydLqclno7rm2SDVnv
-	 ONIUBY64Njs+//9An/TZjwOxs648bB/vuUO+DLFNNZV/7HJSplry+6xHCOjC37RY1I
-	 BLeB2leI6kKtRZ0xNTVxiSLCJo6HP4VbBMk/fOsC2kXM/UVnKAzfqEAO22jUF5/WYU
-	 gM0TVdi6sVQnQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Jason A . Donenfeld " <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mips@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	x86@kernel.org
-Subject: [PATCH v2 9/9] MAINTAINERS: drop arch/*/lib/crypto/ pattern
-Date: Thu, 19 Jun 2025 12:19:08 -0700
-Message-ID: <20250619191908.134235-10-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250619191908.134235-1-ebiggers@kernel.org>
-References: <20250619191908.134235-1-ebiggers@kernel.org>
+	s=k20201202; t=1750360761;
+	bh=LDMXTkVlQDnupG+UBA2IQttq9RHsgsS5cAxbc+ksyEU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MET21RqyYxksarZ9F9PT2gpDE69XYycjW9Ai26NHx2xjofzlYsdIJWBnPSUsTIte4
+	 KZ3qAg55yExnPpei/HOwZr9eWGR3RMsqHe5AZW+ea9bUyWsR+6Fmi8WVK0S4xyo5u4
+	 plOfsrR8zwhfbWtehabdm98sa2xjzxvc86txr5T1uB4tK3BTw8D/8RPsef806/+NvX
+	 WEOvkzpul7y/KcV3kqsYz9qvmEIUdNHCqfHWeFmFjpfU9DNPiJGuRKEm6SUdvDQrRF
+	 7yzXNJUDN+hPRxQOueAaVy47CEI6gnIdiUa2u949Plx0G64msh3cJhRWVEzdCFC0re
+	 qWiaJNBXPpIwQ==
+Date: Thu, 19 Jun 2025 12:19:20 -0700
+From: Saeed Mahameed <saeed@kernel.org>
+To: Mark Bloch <mbloch@nvidia.com>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>, saeedm@nvidia.com, gal@nvidia.com,
+	leonro@nvidia.com, tariqt@nvidia.com,
+	Leon Romanovsky <leon@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/5] net/mlx5e: Add support for PCIe congestion
+ events
+Message-ID: <aFRiuIPidlx7Qsy9@x130>
+References: <20250619113721.60201-1-mbloch@nvidia.com>
+ <20250619075543.1d31f937@kernel.org>
+ <d9bcc48d-17a2-4d12-bacd-6bef296b45c6@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <d9bcc48d-17a2-4d12-bacd-6bef296b45c6@nvidia.com>
 
-From: Eric Biggers <ebiggers@google.com>
+On 19 Jun 19:00, Mark Bloch wrote:
+>
+>
+>On 19/06/2025 17:55, Jakub Kicinski wrote:
+>> On Thu, 19 Jun 2025 14:37:16 +0300 Mark Bloch wrote:
+>>> PCIe congestion events are events generated by the firmware when the
+>>> device side has sustained PCIe inbound or outbound traffic above
+>>> certain thresholds. The high and low threshold are hysteresis thresholds
+>>> to prevent flapping: once the high threshold has been reached, a low
+>>> threshold event will be triggered only after the bandwidth usage went
+>>> below the low threshold.
+>>
+>> What are we supposed to do with a series half of which is tagged for
+>> one tree and half for another? If you want for some of the patches to
+>> go via the shared tree - you have to post them separately.
+>> Ideally you'd post them to the list in a combined "pull request +
+>> patches" format (see for example how Marc posts CAN patches, or Pablo
+>> posts netfilter). Once we pull that you can sent the net-next stuff
+>> separately as patches.
+>
+>Miscommunication about the proper process, thanks for the explanation.
+>PR + patches seems cleaner and provides more context,
+>so I’ll go with that.
+>
+>>
+>> I feel like I just had the same exact conversation with Tariq recently.
+>> Really not great when same process explainer has to be given to
+>> multiple people from the same company :( I'd like to remind y'all that
+>> reading the mailing list is not optional:
+>
+>I do follow the mailing list and double checked what should be done in
+>this scenario. In the end it's my responsibility so it's my fault.
+>
 
-Since all files arch/*/lib/crypto/* have been moved into lib/crypto/,
-remove the arch/*/lib/crypto/ file pattern from MAINTAINERS.
+I think what Mark did here is fine, Yes I understand this is not
+applicable to net-next yet, but the point is review and we can do the
+following, when review is done:
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+I can Apply the mlx5-next portion to mlx5-next and Mark on V2 can send the
+net-next stuff + A PR request to the mlx5-next branch, this is how we used
+to do it all the time, but this time review happens all at once for both
+trees.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a92290fffa163..8ca374b24a806 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6408,11 +6408,10 @@ M:	Jason A. Donenfeld <Jason@zx2c4.com>
- M:	Ard Biesheuvel <ardb@kernel.org>
- L:	linux-crypto@vger.kernel.org
- S:	Maintained
- T:	git https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git libcrypto-next
- T:	git https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git libcrypto-fixes
--F:	arch/*/lib/crypto/
- F:	lib/crypto/
- 
- CRYPTO SPEED TEST COMPARE
- M:	Wang Jinchao <wangjinchao@xfusion.com>
- L:	linux-crypto@vger.kernel.org
--- 
-2.50.0
+Jakub is this acceptable ? 
 
 
