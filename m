@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-693783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F03DAE0378
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:26:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A6CAE037F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33403ACD2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:26:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5287189E958
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED28B2264AF;
-	Thu, 19 Jun 2025 11:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C479922C35D;
+	Thu, 19 Jun 2025 11:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGWRVZe1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="gnMZLThv"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5269D22539D;
-	Thu, 19 Jun 2025 11:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE8622A7E6;
+	Thu, 19 Jun 2025 11:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750332409; cv=none; b=dve5xSHyuhjZQVnEl3VAG1CELIk046a6tJYEs5NpAHnKY+GzmX2VgWLu7LJ0e9WatlgClQVGuUN/RMHhUPmaV6cyJjgtTZYIcdzorkGCxCb6JlY8TpwxL6H/870553dHhxptSkrjIxSFIKTODHR/8+xRu3bme0XnY2oR9DHV2jA=
+	t=1750332542; cv=none; b=G8NFbtc3yZsMxiL0mACXZ5v6MHteoJ58T8w+sRpX7MgtdoLSOXhBs8y1ikJ6zV1/0Gl6Dc//T8MVNSFkIzU+rldyAALJdPSVFYeUkUxWUlZoPzYZvz+gr8Ps9xWOb54Ftc3yOb93p23cA/bljYlcrSB6WlhP2futu895VkPUcUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750332409; c=relaxed/simple;
-	bh=YiyRb7pucNT3+6sXw2ZPl1qiFdH+sijuowL1VDYl3BM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=r+6BREcLPRVpElaGD9lG39fe+56jYZL0K1bnXyTKUJ3sbUdUlj4ZDkFK8GD7DtwJDRzPAY421/xD2h6LnpWTE/oPCpjb8PGGLAP4vWgSEItXUS/KA75fO3ZWVWAPxv7txJ91hCJnoIUlFKt6er6b6NC2q/xdKqTANi3eoVQTYx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGWRVZe1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D299C4CEEA;
-	Thu, 19 Jun 2025 11:26:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750332408;
-	bh=YiyRb7pucNT3+6sXw2ZPl1qiFdH+sijuowL1VDYl3BM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=rGWRVZe1Jq0LFnj/uHkCyf65/ZmMVek9uGDJO2sdON4Q5sqap09KnZe1E5WMa8trC
-	 k82LUXqM6AW0D7jyid1Pj1mhBwxPayfKs0KUwZA1kgwG+A6sm+Izqwx93NCVxbLk/j
-	 2CNCZSS7sosAEuiJITueiPzgUzDd6q8vjVK8WOS4znY9tDxUxORGhI/ETCA7WZHsDX
-	 7J1Nqn2QjHJ6hoKktlYSdsI37cqteX2vBZAVGW6+E5QPIwdbisB9bM7Wy3Gij7noOI
-	 3LKvlSiARObPkAy/oqu8x+jYUpjA73q/oNJ3AhuuSq6ahvATRjfTSGggqFiEbfuXjD
-	 Tu5aei6AOKlIw==
-From: Lee Jones <lee@kernel.org>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Andy Shevchenko <andy@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- Fabrice Gasnier <fabrice.gasnier@foss.st.com>, 
- Gatien Chevallier <gatien.chevallier@foss.st.com>, 
- Jonathan Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>, 
- linux-iio@vger.kernel.org, =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Olivier Moysan <olivier.moysan@foss.st.com>, 
- Antonio Borneo <antonio.borneo@foss.st.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>
-In-Reply-To: <20250610124855.269158-6-antonio.borneo@foss.st.com>
-References: <20250610124855.269158-6-antonio.borneo@foss.st.com>
-Subject: Re: (subset) [PATCH 5/5] mfd: stm32-timers: Fix build warnings
- about export.h
-Message-Id: <175033240599.700502.13443689743832586360.b4-ty@kernel.org>
-Date: Thu, 19 Jun 2025 12:26:45 +0100
+	s=arc-20240116; t=1750332542; c=relaxed/simple;
+	bh=9DCrtg9pL7wGw7+shaY0rq7YP7MG3KxqY8DbSNRb1vU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rw6xyddIih5kiIxKde4hZV56BEwzsh3eY2gWC6SUtzvsH7wCD/7mLfMI0aXzBy3nmT6SWau5nLIFimCuzTbQsgTBY/kpk/fV+5gqQTOJ0Qvd56m+UJ64GvPF37gGaHYbnfuijPigzL86Z4sn7Kzmh8NfkUM0dVxE+ngLM83EcQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=gnMZLThv; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=iKincwA05ZxweoMeUklxZHYyUecsuKPd9x1q+OONCGw=; b=gnMZLThv43dnhLW6D3i8zHegva
+	aR4FXcTt8RGeQ3ikGzjC5M8yg1WbUIFlyQFyBIX4M/KXb3TKTpPyW0HmKE02ThZquorgeo3MMYy2f
+	5q2cn3YpWTe04TwaiggfPTOv3EOWSmvNtaVucxvVj2y7V6xPa7v+0tVIce/eLt+lIOVFGEY+kmFeF
+	9I4lPxs8E1AB3220opYIPmJ2/CSyh96OicCc0VTkQP4YcRKlMa8+o/jYSoKT9EDnWUL/H5eVM8HKQ
+	5B+yQNVge1Y+Jj8Tm6E/eTUhPAbLl5ovnZZmjtCbD+mUvRLjQZN4Bg/JUwQLiCNsIwPky6CTTz9Q/
+	dQUY9olw==;
+Date: Thu, 19 Jun 2025 13:28:29 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Tony Lindgren <tony@atomide.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Roger Quadros <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Paul Barker <paul.barker@sancloud.com>, Marc Murphy
+ <marc.murphy@sancloud.com>, Jason Kridner <jkridner@gmail.com>, Andrew
+ Davis <afd@ti.com>, Bajjuri Praneeth <praneeth@ti.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 2/7] arm: dts: omap: Remove incorrect compatible
+ strings from device trees
+Message-ID: <20250619132829.76abfedb@akair>
+In-Reply-To: <20250619101334.5b67741c@kmaincent-XPS-13-7390>
+References: <20250617-bbg-v4-0-827cbd606db6@bootlin.com>
+	<20250617-bbg-v4-2-827cbd606db6@bootlin.com>
+	<7hzfe4ok9c.fsf@baylibre.com>
+	<20250619101334.5b67741c@kmaincent-XPS-13-7390>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c81fc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 10 Jun 2025 14:48:55 +0200, Antonio Borneo wrote:
-> After commit a934a57a42f6 ("scripts/misc-check: check missing #include
-> <linux/export.h> when W=1") and commit 7d95680d64ac ("scripts/misc-check:
-> check unnecessary #include <linux/export.h> when W=1") we get the build
-> warning with W=1:
+Am Thu, 19 Jun 2025 10:13:34 +0200
+schrieb Kory Maincent <kory.maincent@bootlin.com>:
+
+[...]
+> I am wondering if I will separate my patch series, the cleaning part raises
+> lots of push back.
 > 
-> drivers/mfd/stm32-timers.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-> 
-> [...]
+I think this is a good idea, it is usually a good thing to always clean
+things up when you bring in something new, but if it becomes the main
+work, it is a bit difficult. The /s/tps@/@pmic/ should be done now.
+That is unquestioned.
 
-Applied, thanks!
-
-[5/5] mfd: stm32-timers: Fix build warnings about export.h
-      commit: cf5d2f2deaee5dbfcac2db8758c3e6e0864a0c86
-
---
-Lee Jones [李琼斯]
-
+Regards,
+Andreas
 
