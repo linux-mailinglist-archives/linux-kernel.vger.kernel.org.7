@@ -1,156 +1,204 @@
-Return-Path: <linux-kernel+bounces-693420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4170ADFEBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:31:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30AF2ADFEC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18373A40E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF2B11698A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D8B246783;
-	Thu, 19 Jun 2025 07:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006AF253959;
+	Thu, 19 Jun 2025 07:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WrsIaStf"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZpobqMAz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBD2207DEF
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBF925229E;
+	Thu, 19 Jun 2025 07:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750318307; cv=none; b=nEHfKrMGcwBIJSFVzJQ2pTzo0DX5xFia8Az2AMt694zS4bxc4ZVSJ5DKyeBOodL/VmVuo7cstm2kEnU7LKxB1hkwLOh46OunZtZ9fA3lQKFom39RwvjiH3Dx0Mn8p6/DIpgLnshkUai9jgILM7QvenyZHw07CMrqHyUsYGxdogE=
+	t=1750318352; cv=none; b=amdR73yM12mDsPEOoAnFqXjBBPdUHH7SMk0Wl1exOaYm8t77pc+tY3cEGJhJPERMSuRrAOFS/rj/LKQE7OPw7l97qGQfSfqfc6PVYCdJBB0YfU0pCQy3UYDsy3c9pHzGwhiwW1a0gRkVa9tUkrMyHjc4dS2TnOvh95Aizequ15o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750318307; c=relaxed/simple;
-	bh=h/xAbTgqwuDuCs07xJgrDe0Zl4dSSM0gNNwMrlIxM4w=;
+	s=arc-20240116; t=1750318352; c=relaxed/simple;
+	bh=WZ8Q9CTvAF6JKTjlu5YiVffQn1T/qF7Cg1ysDQSQEFg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YxVfQjv+y0qhbnDGWW8doPGKTVEkODM9Zhia8jT3eBzZCNPdY1CqdNG5fXwP8dUEq5BYv90UhPG2xb5N5EJ/ZMW16HwhoXqiEy8VUmeN4Uxadb8uN3ycIHzZVTar/70iCiuc/ulFxIBlABIF7w+4WxVy0ohkTWzFaoJigI7YyI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WrsIaStf; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7426c44e014so380659b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 00:31:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750318304; x=1750923104; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/6HEeVYXpXU6RreyOy7zn5CfwVrX4q21JdmfX9O+7vE=;
-        b=WrsIaStflcS+BtjUi9gmFHObJuC5gl/OyoV0Lkw36FfPIqBHv5PEuCmMZ9Mpz586+9
-         5ipUOPYEaqxkOuxVxqCtpnck27Ow0XjiJElcwSYBDpbMNCd89NAYSI3ojtOGqYeKqmeD
-         pWadNSYYwoCVk5C4Nzcf8AIoE7lji+/PslNiU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750318304; x=1750923104;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/6HEeVYXpXU6RreyOy7zn5CfwVrX4q21JdmfX9O+7vE=;
-        b=i3QxGZEZ4iqX04wWHrQoQ9kCgEj1DN2mq408UjVZgt3Dm1SPJ9yl7KWWVXqHkfShXK
-         Y4MRfpzLCDH6q7LVurMP7qh23myE8GCzH9cISGp0Jaa6mbfw5avnlYfQyDPRF3ULw33i
-         HXBBEtFdTp+YNOMnrM0iEwY8IWkAe+ose4rbHP7EpCbNTgo8WD+0W9OEEmURu17rr2jI
-         ZJY1dBT9XVJ6h8J2hn2nYHR2jKOX8JagYAz0SE984Uu5GJquDwTI8UYvTpvhKRKl/DBT
-         EwC16QNnHVJqZsxIHw3Xbx+bBBuG1bqDyg17wDAS8nQM+a6xGoSdzOvMZ8oKq5dx7E8m
-         uJjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXj7SJyDsWHalnNCXAwMU473LRdCfcGne7sosSQbZROzwI7WTBtSLk7a2xu3n505a6uqwXNABttvIVueuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDRqBLroqb3P2ncKPNRYYR7EgvaQnR6s8TnQvV0DfGrM9hIyvD
-	aw4Q4KplR6qriGdNGEL225qU9DL1OQAGuNshrgNEjEG4U1W13z50cf5vQBxtASiayA==
-X-Gm-Gg: ASbGnctzzKzDROnTb3nfxW5nDO831BpKragX69aaQgbUUYmI7BTL5PHzqHq0Jbh5kV/
-	VkoccucIlXnH3UTJ7xUTU2hKEJVVKeINjbnVaVu+skhRhRqS57Dwl7h8XMieGuvWQRm2khTAvQo
-	BW8PzC7DwLreM7zul16uUkB4PF6G4oXSBcK4UKuOvUnhVR7ynXSWgeHVgMY0JZB63xXjmbtGI2k
-	f2bXWxU32x9RA+57zPqYwsvGu+CWFUMhP0ggCu2BX6eZrVbSbdKn/4uxcBMq5ow0vMgAkTBq356
-	iMrUOSaEv6ukixMxfBoKp4XvY8Fcx1oi/BCrTwfSRfuK4vKFMcH179Tw
-X-Google-Smtp-Source: AGHT+IF0ZYZgWeMtdv/hdPMG5U98Dqrg1Jl+7X1ZOlhA9cR0wv8e8vSVU5qxSXVj3uoB4yRwTNll9A==
-X-Received: by 2002:a05:6a21:6d8c:b0:21f:53a9:b72c with SMTP id adf61e73a8af0-21fbd5d4e88mr30033304637.38.1750318304219;
-        Thu, 19 Jun 2025 00:31:44 -0700 (PDT)
-Received: from google.com ([2401:fa00:1:10:ccaf:647f:8bd4:277f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe168d7ecsm12385185a12.64.2025.06.19.00.31.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 00:31:43 -0700 (PDT)
-Date: Thu, 19 Jun 2025 15:31:39 +0800
-From: Sung-Chi Li <lschyi@chromium.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] hwmon: (cros_ec) register fans into thermal
- framework cooling devices
-Message-ID: <aFO82_5riDyC0FMs@google.com>
-References: <20250512-cros_ec_fan-v3-0-a9f2b255f0cd@chromium.org>
- <20250512-cros_ec_fan-v3-3-a9f2b255f0cd@chromium.org>
- <7309c804-19e3-4715-b8c9-efa31c8ea9e1@t-8ch.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=K7K+RH05GmsWgExdWm9TZ0qDR7a+Ua6pCU6+rkcOtL6rckk0hPPPXI/KcHswGTLnmGluKljr5SqvIFxRmdu69JPrKIial1Ns0UqVtI2+QrHIqzo5TFb5ndyhlokTQGPeNvG3/OkpCmGn/R/hnkTVObe5360wb/ZvNDdUXDaX3Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZpobqMAz; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750318351; x=1781854351;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WZ8Q9CTvAF6JKTjlu5YiVffQn1T/qF7Cg1ysDQSQEFg=;
+  b=ZpobqMAzpgGOtpo0aiUlI7peujIkIHRs4LXIeulqSauW86XZHUurX6pi
+   KkIBJM/3YhjPR037Hu7Uf6SSNnmrkZzZObJBNybCIqyGu3m3sJQk3x/76
+   Cc0xxaTZ/L3dCOTHFlQo4I/nqfqvPm3MGppqkHr45mreSewTQfPjX0f6A
+   tNBHxfVScegICZ5e+Rnea7mQCz4ns3aaUeTNiILbHtxcQaVHd+9lwtAp1
+   +qKa7QAJYxNKwcXM0QKRgRuBs2eINFw8b2HFX1FOLqCoMXOMlxkh9J64J
+   A4t9t5yFxYABYIX86a/1t4+73pvjriD4byqm+Y/JEg2hl3gDd7JmRtjd3
+   g==;
+X-CSE-ConnectionGUID: 87GXJWUMSr2rdFCSb6NAsw==
+X-CSE-MsgGUID: aztGMdwhT12jXLMLfRUHJg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="62835956"
+X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
+   d="scan'208";a="62835956"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 00:32:30 -0700
+X-CSE-ConnectionGUID: bDyEDibwQGad/pPW24J89g==
+X-CSE-MsgGUID: IHl+3z3tSFCseFzbY5Dl2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
+   d="scan'208";a="150041569"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 19 Jun 2025 00:32:27 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uS9l2-000KWI-3B;
+	Thu, 19 Jun 2025 07:32:24 +0000
+Date: Thu, 19 Jun 2025 15:32:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	kernel@pengutronix.de,
+	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH v5 2/4] clk: add TI CDCE6214 clock driver
+Message-ID: <202506191559.R9E9baqn-lkp@intel.com>
+References: <20250618-clk-cdce6214-v5-2-9938b8ed0b94@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7309c804-19e3-4715-b8c9-efa31c8ea9e1@t-8ch.de>
+In-Reply-To: <20250618-clk-cdce6214-v5-2-9938b8ed0b94@pengutronix.de>
 
-On Mon, May 12, 2025 at 09:35:47AM +0200, Thomas Weißschuh wrote:
-> On 2025-05-12 15:11:57+0800, Sung-Chi Li via B4 Relay wrote:
-> > +	if (!IS_ENABLED(CONFIG_THERMAL))
-> > +		return;
-> > +
-> > +	if (!priv->fan_control_supported)
-> > +		return;
-> > +
-> > +	for (i = 0; i < EC_FAN_SPEED_ENTRIES; i++) {
-> > +		if (!(priv->usable_fans & BIT(i)))
-> > +			continue;
-> > +
-> > +		cpriv = devm_kzalloc(dev, sizeof(*cpriv), GFP_KERNEL);
-> > +		if (!cpriv)
-> > +			return;
-> 
-> The failures are swallowed silently. They should be propagated.
-> 
+Hi Sascha,
 
-After rethinking  about the logic, I think I should try and register all fans
-with best effort, so I should not return immediately; instead, I will log an
-warning log, and continue with the next fan.
+kernel test robot noticed the following build warnings:
 
-> > +
-> > +		type = devm_kasprintf(dev, GFP_KERNEL, "%s-fan%zu", dev_name(dev), i);
-> > +		if (!type)
-> > +			return;
-> > +
-> > +		cpriv->hwmon_priv = priv;
-> > +		cpriv->index = i;
-> > +		cdev = devm_thermal_of_cooling_device_register(dev, NULL, type, cpriv,
-> > +							       &cros_ec_thermal_cooling_ops);
-> > +		if (!cdev)
-> 
-> ..._cooling_device_register() returns an error pointer on failure, not NULL.
-> 
+[auto build test WARNING on e04c78d86a9699d136910cfc0bdcf01087e3267e]
 
-Thank you, will use IS_ERR for checking and %pe to print error.
+url:    https://github.com/intel-lab-lkp/linux/commits/Sascha-Hauer/dt-bindings-clock-add-TI-CDCE6214-binding/20250618-172505
+base:   e04c78d86a9699d136910cfc0bdcf01087e3267e
+patch link:    https://lore.kernel.org/r/20250618-clk-cdce6214-v5-2-9938b8ed0b94%40pengutronix.de
+patch subject: [PATCH v5 2/4] clk: add TI CDCE6214 clock driver
+config: alpha-randconfig-r054-20250619 (https://download.01.org/0day-ci/archive/20250619/202506191559.R9E9baqn-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 8.5.0
 
-> > +			return;
-> > +	}
-> > +}
-> > +
-> >  static int cros_ec_hwmon_probe(struct platform_device *pdev)
-> >  {
-> >  	struct device *dev = &pdev->dev;
-> > @@ -412,6 +489,7 @@ static int cros_ec_hwmon_probe(struct platform_device *pdev)
-> >  	cros_ec_hwmon_probe_temp_sensors(dev, priv, thermal_version);
-> >  	cros_ec_hwmon_probe_fans(priv);
-> >  	priv->fan_control_supported = cros_ec_hwmon_probe_fan_control_supported(priv->cros_ec);
-> > +	cros_ec_hwmon_register_fan_cooling_devices(dev, priv);
-> >  
-> >  	hwmon_dev = devm_hwmon_device_register_with_info(dev, "cros_ec", priv,
-> >  							 &cros_ec_hwmon_chip_info, NULL);
-> > 
-> > -- 
-> > 2.49.0.1015.ga840276032-goog
-> > 
-> > 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506191559.R9E9baqn-lkp@intel.com/
+
+cocci warnings: (new ones prefixed by >>)
+>> drivers/clk/clk-cdce6214.c:682:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
+--
+>> drivers/clk/clk-cdce6214.c:631:2-3: Unneeded semicolon
+   drivers/clk/clk-cdce6214.c:547:2-3: Unneeded semicolon
+   drivers/clk/clk-cdce6214.c:654:2-3: Unneeded semicolon
+   drivers/clk/clk-cdce6214.c:603:2-3: Unneeded semicolon
+   drivers/clk/clk-cdce6214.c:908:2-3: Unneeded semicolon
+   drivers/clk/clk-cdce6214.c:946:2-3: Unneeded semicolon
+
+vim +682 drivers/clk/clk-cdce6214.c
+
+   607	
+   608	static u8 cdce6214_clk_out_get_parent(struct clk_hw *hw)
+   609	{
+   610		struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
+   611		struct cdce6214 *priv = clock->priv;
+   612		unsigned int val, idx;
+   613	
+   614		switch (clock->index) {
+   615		case CDCE6214_CLK_OUT1:
+   616			regmap_read(priv->regmap, R56, &val);
+   617			idx = FIELD_GET(R56_CH1_MUX, val);
+   618			break;
+   619		case CDCE6214_CLK_OUT2:
+   620			regmap_read(priv->regmap, R62, &val);
+   621			idx = FIELD_GET(R62_CH2_MUX, val);
+   622			break;
+   623		case CDCE6214_CLK_OUT3:
+   624			regmap_read(priv->regmap, R67, &val);
+   625			idx = FIELD_GET(R67_CH3_MUX, val);
+   626			break;
+   627		case CDCE6214_CLK_OUT4:
+   628			regmap_read(priv->regmap, R72, &val);
+   629			idx = FIELD_GET(R72_CH4_MUX, val);
+   630			break;
+ > 631		};
+   632	
+   633		return idx;
+   634	}
+   635	
+   636	static int cdce6214_clk_out_set_parent(struct clk_hw *hw, u8 index)
+   637	{
+   638		struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
+   639		struct cdce6214 *priv = clock->priv;
+   640	
+   641		switch (clock->index) {
+   642		case CDCE6214_CLK_OUT1:
+   643			regmap_update_bits(priv->regmap, R56, R56_CH1_MUX, FIELD_PREP(R56_CH1_MUX, index));
+   644			break;
+   645		case CDCE6214_CLK_OUT2:
+   646			regmap_update_bits(priv->regmap, R62, R62_CH2_MUX, FIELD_PREP(R62_CH2_MUX, index));
+   647			break;
+   648		case CDCE6214_CLK_OUT3:
+   649			regmap_update_bits(priv->regmap, R67, R67_CH3_MUX, FIELD_PREP(R67_CH3_MUX, index));
+   650			break;
+   651		case CDCE6214_CLK_OUT4:
+   652			regmap_update_bits(priv->regmap, R72, R72_CH4_MUX, FIELD_PREP(R72_CH4_MUX, index));
+   653			break;
+   654		};
+   655	
+   656		return 0;
+   657	}
+   658	
+   659	static const struct clk_ops cdce6214_clk_out_ops = {
+   660		.prepare = cdce6214_clk_out_prepare,
+   661		.unprepare = cdce6214_clk_out_unprepare,
+   662		.is_prepared = cdce6214_clk_out_is_prepared,
+   663		.recalc_rate = cdce6214_clk_out_recalc_rate,
+   664		.determine_rate = cdce6214_clk_out_determine_rate,
+   665		.set_rate = cdce6214_clk_out_set_rate,
+   666		.get_parent = cdce6214_clk_out_get_parent,
+   667		.set_parent = cdce6214_clk_out_set_parent,
+   668	};
+   669	
+   670	static int pll_calc_values(unsigned long parent_rate, unsigned long out,
+   671				   unsigned long *ndiv, unsigned long *num, unsigned long *den)
+   672	{
+   673		u64 a;
+   674	
+   675		if (out < CDCE6214_VCO_MIN || out > CDCE6214_VCO_MAX)
+   676			return -EINVAL;
+   677	
+   678		*den = 10000000;
+   679		*ndiv = out / parent_rate;
+   680		a = out % parent_rate;
+   681		a *= *den;
+ > 682		do_div(a, parent_rate);
+   683		*num = a;
+   684	
+   685		return 0;
+   686	}
+   687	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
