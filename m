@@ -1,254 +1,164 @@
-Return-Path: <linux-kernel+bounces-693793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28ECEAE03B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:34:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E1BAE0348
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D6AB5A333A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:33:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA2723A4ED3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374D9238178;
-	Thu, 19 Jun 2025 11:31:58 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075D8227E8B;
+	Thu, 19 Jun 2025 11:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lqHabYfS"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3755E238D49;
-	Thu, 19 Jun 2025 11:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB89B21FF24
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 11:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750332717; cv=none; b=gZKRHI/JumITiGVkiHjjQFy3fBrSol/RiHQmJo0tNbfj0D9PrNe5yPhWNugcuFo+lW+v6ExaqhaGLnYhK2HenDLJWvvYhLJhVblG+h+1xKn/qhIYD/pVXg0MTEGeV9MdNlMw/uKdaWW90cgFT99SisCV2ECIuGai52NqZFaKaPI=
+	t=1750331906; cv=none; b=QlGmyEwxpDaF6N+mJ6TByZ/+SYhY25XyW1RIR0WGe5sN7NTERz+81nQvJyXg2EuB4JhDhpCQJ9cQSyGD/tQIjlwuX1K+nkrPZpIjNAUym2nOpKbIb4CqhB2XCVnsk8bKsMjDf6ATjcZUjo9IxGAxNbE+P5u76eSiXTmMHl4N41E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750332717; c=relaxed/simple;
-	bh=vaeUbIf6g70eDUQHH0FVIYwdkXCZDfHjuQwn5m0Q7Ko=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HHw0bzThzWAMQJklIff8SKgAiWv6vvaKbMbPfyEdvqR5HvqRjklXv+agWwjkdUa8Ihmu/JJsd6KRfJqRZLkhprb+rDrgEAM38kEqd59/txyNPvj9zbrwe5HFijk9O9dl7ighZooNaNXnVJk1S7YFxf3CHoOYRGSxDTrUNT3iqcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bNJNV3bY6zYQvHn;
-	Thu, 19 Jun 2025 19:31:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 6BC8C1A0E88;
-	Thu, 19 Jun 2025 19:31:53 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgCH618Y9VNoihn_Pw--.51230S13;
-	Thu, 19 Jun 2025 19:31:53 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	hch@lst.de,
-	tytso@mit.edu,
-	djwong@kernel.org,
-	john.g.garry@oracle.com,
-	bmarzins@redhat.com,
-	chaitanyak@nvidia.com,
-	shinichiro.kawasaki@wdc.com,
-	brauner@kernel.org,
-	martin.petersen@oracle.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH v2 9/9] ext4: add FALLOC_FL_WRITE_ZEROES support
-Date: Thu, 19 Jun 2025 19:18:06 +0800
-Message-ID: <20250619111806.3546162-10-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
-References: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1750331906; c=relaxed/simple;
+	bh=p1fLHj7WBxZzvDsPJQ4utwW8hjFuRfSNWUs+7XlQwHw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=myCQKCbjV9kHHNeIbDDr3njs7+n3ktwJYebluX1DCsYRlwVpfwmU8ncS1zAOys3WvOSbIZQ5H+zBnB5oa0UB6wrGOpjqfe+tqtGB8f4ZY8r00Q9/3nyWl8xk4CwNbWAnIJVljaq0bsPUopmYX+1jjj0ozPKBOWbauCPsOCM/A+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lqHabYfS; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45347d6cba3so1853275e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 04:18:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750331902; x=1750936702; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0j2cSu3NdVpMVKYyw9NJm/4tDS+f0TiyVQZ6Bh9mEhs=;
+        b=lqHabYfSjuuiUwksdvNSg8Lp83ft1QgAmMNA315U1YtusY53vWWYmIKD9Np30StoZE
+         67CO/hHJNMNKTG34Hu/3IIPnFlTlgHzmJLYHdyG6eLHzxKReTah8ha5y9aX5r01MykVS
+         6c+phwHnXriuvm6wBtA7lRZOLvZZCd5VIz1fdWnVqlqwHAGsV1QNe/gl9jorx9zvB93a
+         HpXOF5SdeEOBF3Rn7aVYaA7zBgS+As6qS+TZ2sV/ArfewxpOoEEbk98UXoILTT4sHe+E
+         GPm4k0Pl/0N2jv77adW1YeKt4GXfneWo1JU/8tIYHzVKSJ6v3cRJRCjeXMt6capg3wim
+         zGPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750331902; x=1750936702;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0j2cSu3NdVpMVKYyw9NJm/4tDS+f0TiyVQZ6Bh9mEhs=;
+        b=SDC54nfwMI8rvQ3XXf5SeWOK0e/l6r9GkGkuJh2ijW+gCAPkAUyK6Raqfh/PAIdUbc
+         BOoGMCUyCKcLOvMSMLVKpF+tHwHDcSvLI+m3wI7dkaKVft9abgLF6Ix512qy+JHZRMn/
+         ghnak81Iynmlw/4oZVn3EEpIuQijQVXntjALcwcsLEqxnAi+Hi98llIs0BfCj/KkYJxw
+         +qSPgZyCLSrzKCqzRNVI3A2FJDYZ+/raBn4WJ6bjc5nS83iZNt113m0nvdoQICyfef7K
+         DxHiijTwMzDSIt00PhhhMJYgx1USUQp4keUxfM0vb7aEtcK/1EUHqruAgz7mMAQLnSkc
+         lb2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWYU0n/C54cSi3yb1RkL+o+oevbFwvjTKV89MyhCi9AhmkPk2la6U+QCf2lydp4/CU1UZcCvj9NbmP05oI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9pE16wIeU0oZr3V3HiLD51XeMk4k7tR3/xMG419lyBy1hlIyI
+	TxYkNMtO0kWymPOedAr4R4T4Q1bS5865EKhhdunM+KcV4ODwvbNyqTwSAVjyl6aTSN2tNBoIZrk
+	VVl9H
+X-Gm-Gg: ASbGncsuhHjMgsDI+ShExNjuQIKK992nAp7hYCGwFuj5MJO9Z2m/utf0RlRGw2L8l1b
+	UTt695XiBw7DVkB1gvjgXkDFsNjYWoXZxAjsPmt95bLNII7MlzMlbSkmUzuFb6EcbZ0fcCgZB44
+	t3OID+FBJYDg8hDA9wQMKBv407MRmOWyFd6WNcNn1xz7LCUC+RNRuABf+KRMBHrhptvML1pWXrO
+	VXRormqIH306yWNdbT3+uGkhakTQJ9uzJtOTc4RWVgOMYNKWKx9jtc0xRhYdcP9kOjzTnbRVwKm
+	YoRiPUk6mmy+6xgkFZtve9nIoQYcwaVUhmFxzaXvt0C03mMX84EhD6c+qojKO7DnO0EszH9PBFJ
+	EIFwJlcJlX7p7VykvX0D9TV/mJaY=
+X-Google-Smtp-Source: AGHT+IGwpV5p0m50gZC15PUFj3RIHD8e2fc5imI9ZePiRScXMe39Wj/psDyd7PdgqpyizfOuUnY4mA==
+X-Received: by 2002:a05:6000:2483:b0:3a4:ddd6:427f with SMTP id ffacd0b85a97d-3a5723a50dcmr17516019f8f.35.1750331902026;
+        Thu, 19 Jun 2025 04:18:22 -0700 (PDT)
+Received: from gpeter-l.roam.corp.google.com ([145.224.65.219])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535eac8c41sm25674375e9.26.2025.06.19.04.18.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jun 2025 04:18:21 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH 0/2] Add support for programming gs101 EINT_WAKEUP_MASK
+ registers
+Date: Thu, 19 Jun 2025 12:18:14 +0100
+Message-Id: <20250619-gs101-eint-mask-v1-0-89438cfd7499@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCH618Y9VNoihn_Pw--.51230S13
-X-Coremail-Antispam: 1UD129KBjvJXoW3Xry7Ar1DWF4Dtry7KFyfZwb_yoW7CFyfpF
-	Z8XF1rKa4Iq3429r4fCw4kurn0q3WkKry5WrWSgry0939rJw1fKFn0gFyrZF90gFWUAF45
-	Xa1Y9ryjk3W7A37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0pRiF4iUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPbxU2gC/x3MMQqAMAxA0atIZgNN0YJeRRxqjRrEKo2IIN7d4
+ viG/x9QTsIKbfFA4ktU9phBZQFh8XFmlDEbrLG1cdTgrGQIWeKJm9cVfRWInB25GRzk6kg8yf0
+ fu/59P7knebRhAAAA
+X-Change-ID: 20250619-gs101-eint-mask-a4c1162de9b6
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@android.com, William Mcvicker <willmcvicker@google.com>, 
+ Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1479;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=p1fLHj7WBxZzvDsPJQ4utwW8hjFuRfSNWUs+7XlQwHw=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoU/H73aaGrTalZO8s2XRrswNZuD5hjSmpTXNun
+ XZqkZQxQ8KJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaFPx+wAKCRDO6LjWAjRy
+ utDjD/9jioNxxKYtV9tUtqZXI3eK7B1WKAXFLrnUVJ8PlzLQVmGj6f9fzskWxdst8bePe1CEr/K
+ +++kbEKCHhbeMXGyqspUYFtktkvBzr8sT9WWr+qByXu9eKXwsqlU33UPTt6nGz57Z1BO2t0hWlH
+ yc0ZeDxnK12Zr1q7FAUUywe5XkxUFVevz/xpCVlELbQA0TGfKcpJiOU89f9vf4InxbNc6HZmdoR
+ WP2lwAJCGDCcqVKGDLT0pI9AN0dP3oyyzSQq0JKFV0WRZettpIeXpJeW1cyh/79xJ49k47X1Pmh
+ RZbwSUTowpa7L5fN5rvBztE0zJK8WZYTfVWN5SgDFhHGchmEWNXNpcQ20dSyhTSgG4RIzjwGPM7
+ X7M7SScOZc7FxqTRLxCGi0DrQp/mcCfLW8tFSVNypVBfuzDgqO1Pu7f8qyLzCl882BUUj4lLCTI
+ ADSDwZ4H5ejUFmiauusorMeTPZDU78OWroTv8PzkahQTZ5YfmMJUjgkYPEj32UM5vlkFSy3tI/2
+ J4FXNH3bvDyORynih7Ayx4e2Om3exiitQYMg5iFMhRIpYHktqJEUeFebRxvCE57jSQSJUrQgBeo
+ TGYh8kbwD3jSIxCLTm9cBsyEbOJYK41aD4JLQXv0lSkb2+A4GJ/Q6Qacztm2XkJe0E/P72X3mdF
+ eUMFnkEhlIs6amQ==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Hi folks,
 
-Add support for FALLOC_FL_WRITE_ZEROES if the underlying device enable
-the unmap write zeroes operation. This first allocates blocks as
-unwritten, then issues a zero command outside of the running journal
-handle, and finally converts them to a written state.
+The following series adds support for programming the gs101
+EINT_WAKEUP_MASK registers for the 67 external wakeup interrupts on gpa0 to
+gpa11 (alive and far_alive). gs101 differs to previous SoCs in that it has
+3 EINT_WAKEUP_MASK registers
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+EINT_WAKEUP_MASK  0x3A80 EINT[31:0]
+EINT_WAKEUP_MASK2 0x3A84 EINT[63:32]
+EINT_WAKEUP_MASK3 0x3A88 EINT[66:64]
+
+This is achieved by adding gs101 specific callbacks and a dedicated
+gs101_wkup_irq_chip struct which is triggered from the existing
+google,gs101-wakeup-eint compatible.
+
+This code path can be tested  using:
+echo mem > /sys/power/state
+
+With the functional CPU hotplug, this brings us another step closer to
+having functional suspend to RAM upstream.
+
+kind regards,
+
+Peter
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- fs/ext4/extents.c           | 66 ++++++++++++++++++++++++++++++-------
- include/trace/events/ext4.h |  3 +-
- 2 files changed, 57 insertions(+), 12 deletions(-)
+Peter Griffin (2):
+      pinctrl: samsung: rename exynosautov920_retention_data to no_retention_data
+      pinctrl: samsung: add support for gs101 wakeup mask programming
 
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index b543a46fc809..b43aa82c1b39 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4501,6 +4501,8 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 	struct ext4_map_blocks map;
- 	unsigned int credits;
- 	loff_t epos, old_size = i_size_read(inode);
-+	unsigned int blkbits = inode->i_blkbits;
-+	bool alloc_zero = false;
- 
- 	BUG_ON(!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS));
- 	map.m_lblk = offset;
-@@ -4513,6 +4515,17 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 	if (len <= EXT_UNWRITTEN_MAX_LEN)
- 		flags |= EXT4_GET_BLOCKS_NO_NORMALIZE;
- 
-+	/*
-+	 * Do the actual write zero during a running journal transaction
-+	 * costs a lot. First allocate an unwritten extent and then
-+	 * convert it to written after zeroing it out.
-+	 */
-+	if (flags & EXT4_GET_BLOCKS_ZERO) {
-+		flags &= ~EXT4_GET_BLOCKS_ZERO;
-+		flags |= EXT4_GET_BLOCKS_UNWRIT_EXT;
-+		alloc_zero = true;
-+	}
-+
- 	/*
- 	 * credits to insert 1 extent into extent tree
- 	 */
-@@ -4549,9 +4562,7 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 		 * allow a full retry cycle for any remaining allocations
- 		 */
- 		retries = 0;
--		map.m_lblk += ret;
--		map.m_len = len = len - ret;
--		epos = (loff_t)map.m_lblk << inode->i_blkbits;
-+		epos = (loff_t)(map.m_lblk + ret) << blkbits;
- 		inode_set_ctime_current(inode);
- 		if (new_size) {
- 			if (epos > new_size)
-@@ -4571,6 +4582,21 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 		ret2 = ret3 ? ret3 : ret2;
- 		if (unlikely(ret2))
- 			break;
-+
-+		if (alloc_zero &&
-+		    (map.m_flags & (EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN))) {
-+			ret2 = ext4_issue_zeroout(inode, map.m_lblk, map.m_pblk,
-+						  map.m_len);
-+			if (likely(!ret2))
-+				ret2 = ext4_convert_unwritten_extents(NULL,
-+					inode, (loff_t)map.m_lblk << blkbits,
-+					(loff_t)map.m_len << blkbits);
-+			if (ret2)
-+				break;
-+		}
-+
-+		map.m_lblk += ret;
-+		map.m_len = len = len - ret;
- 	}
- 	if (ret == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
- 		goto retry;
-@@ -4636,7 +4662,11 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 	if (end_lblk > start_lblk) {
- 		ext4_lblk_t zero_blks = end_lblk - start_lblk;
- 
--		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN | EXT4_EX_NOCACHE);
-+		if (mode & FALLOC_FL_WRITE_ZEROES)
-+			flags = EXT4_GET_BLOCKS_CREATE_ZERO | EXT4_EX_NOCACHE;
-+		else
-+			flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN |
-+				  EXT4_EX_NOCACHE);
- 		ret = ext4_alloc_file_blocks(file, start_lblk, zero_blks,
- 					     new_size, flags);
- 		if (ret)
-@@ -4745,11 +4775,18 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 	if (IS_ENCRYPTED(inode) &&
- 	    (mode & (FALLOC_FL_COLLAPSE_RANGE | FALLOC_FL_INSERT_RANGE)))
- 		return -EOPNOTSUPP;
-+	/*
-+	 * Don't allow writing zeroes if the underlying device does not
-+	 * enable the unmap write zeroes operation.
-+	 */
-+	if ((mode & FALLOC_FL_WRITE_ZEROES) &&
-+	    !bdev_write_zeroes_unmap_sectors(inode->i_sb->s_bdev))
-+		return -EOPNOTSUPP;
- 
- 	/* Return error if mode is not supported */
- 	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
--		     FALLOC_FL_COLLAPSE_RANGE | FALLOC_FL_ZERO_RANGE |
--		     FALLOC_FL_INSERT_RANGE))
-+		     FALLOC_FL_ZERO_RANGE | FALLOC_FL_COLLAPSE_RANGE |
-+		     FALLOC_FL_INSERT_RANGE | FALLOC_FL_WRITE_ZEROES))
- 		return -EOPNOTSUPP;
- 
- 	inode_lock(inode);
-@@ -4780,16 +4817,23 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 	if (ret)
- 		goto out_invalidate_lock;
- 
--	if (mode & FALLOC_FL_PUNCH_HOLE)
-+	switch (mode & FALLOC_FL_MODE_MASK) {
-+	case FALLOC_FL_PUNCH_HOLE:
- 		ret = ext4_punch_hole(file, offset, len);
--	else if (mode & FALLOC_FL_COLLAPSE_RANGE)
-+		break;
-+	case FALLOC_FL_COLLAPSE_RANGE:
- 		ret = ext4_collapse_range(file, offset, len);
--	else if (mode & FALLOC_FL_INSERT_RANGE)
-+		break;
-+	case FALLOC_FL_INSERT_RANGE:
- 		ret = ext4_insert_range(file, offset, len);
--	else if (mode & FALLOC_FL_ZERO_RANGE)
-+		break;
-+	case FALLOC_FL_ZERO_RANGE:
-+	case FALLOC_FL_WRITE_ZEROES:
- 		ret = ext4_zero_range(file, offset, len, mode);
--	else
-+		break;
-+	default:
- 		ret = -EOPNOTSUPP;
-+	}
- 
- out_invalidate_lock:
- 	filemap_invalidate_unlock(mapping);
-diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-index 156908641e68..6f9cf2811733 100644
---- a/include/trace/events/ext4.h
-+++ b/include/trace/events/ext4.h
-@@ -92,7 +92,8 @@ TRACE_DEFINE_ENUM(ES_REFERENCED_B);
- 	{ FALLOC_FL_KEEP_SIZE,		"KEEP_SIZE"},		\
- 	{ FALLOC_FL_PUNCH_HOLE,		"PUNCH_HOLE"},		\
- 	{ FALLOC_FL_COLLAPSE_RANGE,	"COLLAPSE_RANGE"},	\
--	{ FALLOC_FL_ZERO_RANGE,		"ZERO_RANGE"})
-+	{ FALLOC_FL_ZERO_RANGE,		"ZERO_RANGE"},		\
-+	{ FALLOC_FL_WRITE_ZEROES,	"WRITE_ZEROES"})
- 
- TRACE_DEFINE_ENUM(EXT4_FC_REASON_XATTR);
- TRACE_DEFINE_ENUM(EXT4_FC_REASON_CROSS_RENAME);
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |   6 +-
+ drivers/pinctrl/samsung/pinctrl-exynos.c       | 100 +++++++++++++++++++++----
+ drivers/pinctrl/samsung/pinctrl-samsung.h      |   4 +
+ include/linux/soc/samsung/exynos-regs-pmu.h    |   1 +
+ 4 files changed, 95 insertions(+), 16 deletions(-)
+---
+base-commit: b27cc623e01be9de1580eaa913508b237a7a9673
+change-id: 20250619-gs101-eint-mask-a4c1162de9b6
+
+Best regards,
 -- 
-2.46.1
+Peter Griffin <peter.griffin@linaro.org>
 
 
