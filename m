@@ -1,86 +1,142 @@
-Return-Path: <linux-kernel+bounces-693426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D8AAADFECC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:34:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 960ABADFED3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 305FB3BC67D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:33:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41D73166E6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3719F246783;
-	Thu, 19 Jun 2025 07:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0545D2566E6;
+	Thu, 19 Jun 2025 07:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="lxTLwirY"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="cElNEALu"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C0F242D96;
-	Thu, 19 Jun 2025 07:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96F7248868;
+	Thu, 19 Jun 2025 07:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750318440; cv=none; b=UkQ1krnOQrXnhUpIcB2OVG2l3g7w6k0soiUrTk93xtg4fCKSZY6zpL9p7MkrYMvmKxQ5FylF3mAuP4uEqR4fLHmtl/w8OysZbRl/PNBQZylALY3vZps19haK8X3Iv9/7rE2WE+i/aISes1+kW7+OCMGgE/4Bh7Cd1nJQUTfzGLc=
+	t=1750318503; cv=none; b=iJD/JG76TlcWsfkOY0+kZ/Sbda2st9bJGW9INh3XYTpnMfIB79r7R250hhYHs31MBlkprwLvHHeSHmJQ+X6IKjOCR7p1fdnw+EMa0/5vjfEL5O8PUm0xAYyV7+bjj555D1e/04kkgzmBEOqhQgZRwJyzZrAnUslljqKZPBCQJZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750318440; c=relaxed/simple;
-	bh=Qrruz0ihY1HWjqyIP6ErG3IY/GM/vgxQHIPcy+7dJyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SL3J1iTHzuZbolaRgu0TCkfXvoYqM/fUEhqGmbVZz/gxS2GHvffIJyY1euOSO9c4vXSaC06Cgt7hgZFvf2MUqDVQKuVIeqQWRa1VG2ybufOcDjKQMVsEUS6ekJBoUPvzOjnIhet31mKadTb/Ty585jiSFQW9Z/3THmNtx5/RboY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=lxTLwirY; arc=none smtp.client-ip=1.95.21.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=qQc8KBNXic1DZnFfIwGfGX0puZguj5Ag4lvx2OkjmOM=;
-	b=lxTLwirY93ccLYht3790YvQzbm2YudORaWDoDB3WQ4mKTfszjLri6EFbpbUF9l
-	x65H8Uhi1E33Ds5odQC0owBP2s0cw3RvxDrcwRx0ajC/wXUMGUxzgbV33MURRIQZ
-	zxh32iF+9i9aIC0XwrDAGyK7TUgkBlwu5RR4AUESYidvo=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgBXVlEzvVNo33X_AA--.29592S3;
-	Thu, 19 Jun 2025 15:33:08 +0800 (CST)
-Date: Thu, 19 Jun 2025 15:33:06 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Primoz Fiser <primoz.fiser@norik.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
-Subject: Re: [PATCH 1/2] arm64: dts: freescale: imx93-phycore-som: Move
- ethernet0 alias to SoM
-Message-ID: <aFO9MpNOSzTGfyJU@dragon>
-References: <20250522083909.533567-1-primoz.fiser@norik.com>
+	s=arc-20240116; t=1750318503; c=relaxed/simple;
+	bh=aH4MYI7c3m+ShgBRS97B9wA9VDRXLN0Ik809nqZTBM8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qFikTPO8DOeVIjz+U9iRMtUAnnf8glLlQXDIQWn25pG1doqZnHxr6Hy/a2nhA/dMwRRHTgOtws+xxV9FEWL1BIkCZAOe6gsdU+uMtDH4RF/qu8PjZ9PeR54vBmIeku7i55lYi6+sWM5piPO2unrTZW2t2Nx9TUte1hkgjMXgRdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=cElNEALu; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1750318502; x=1781854502;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aH4MYI7c3m+ShgBRS97B9wA9VDRXLN0Ik809nqZTBM8=;
+  b=cElNEALuIza3Y0lQhADHm1FV6F3FXCmOT/CfN2ZtcmrdmKJ4kI+NSS7O
+   HaezSHZ9gv/fXjDkh3pX+lzFKDA0MzUXV6Fo5L24/LuEf1UGi7yNllLaJ
+   4eVcHsxQZGREKcJU5Lp/PFtY/PgbmC5XzzlMkPoyQA0yOBi19dRL8WKgV
+   eu9oo4WXJhOnVNT+5s1EdgojMVsmWUbEYBAx+MHmrLsKtuKJn5fPHvFxG
+   +cZxfGTsphKvUfOkZ2VOmd/JnLc85jkJLrV/jeHrs2Mp7C587rg5Zq3Da
+   2B/fnBjN4yqDuysoiigqw6Gy4W7tCJ8ZdiBk96bA0xsf45/yr3yI8GKjN
+   w==;
+X-CSE-ConnectionGUID: Okrbc+Y5Sn2HmFwBqXV6bQ==
+X-CSE-MsgGUID: gNNiB0ORS/Sg5ekHcFUhbA==
+X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
+   d="asc'?scan'208";a="43566381"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Jun 2025 00:35:01 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 19 Jun 2025 00:34:20 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex04.mchp-main.com (10.10.85.152)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44 via Frontend
+ Transport; Thu, 19 Jun 2025 00:34:19 -0700
+Date: Thu, 19 Jun 2025 08:33:10 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Alex Guo <alexguo1023@gmail.com>
+CC: <daire.mcnamara@microchip.com>, <andi.shyti@kernel.org>,
+	<linux-riscv@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] i2c: busses: Fix out-of-bounds bug in
+ mchp_corei2c_smbus_xfer
+Message-ID: <20250619-jubilant-nag-c50bdebdac0c@wendy>
+References: <20250615234919.525431-1-alexguo1023@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="JByXUeaN4Z+QSMXa"
+Content-Disposition: inline
+In-Reply-To: <20250615234919.525431-1-alexguo1023@gmail.com>
+
+--JByXUeaN4Z+QSMXa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250522083909.533567-1-primoz.fiser@norik.com>
-X-CM-TRANSID:Mc8vCgBXVlEzvVNo33X_AA--.29592S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrGw43Kr4fXF4fJr4xJry7ZFb_yoWxArc_CF
-	W8u3WDAw4UAFya9343CFyFy3s3tw1kJr1IvrWagr93t34Fg3s3Gryvvas5CF4xW39xtr13
-	u3WSkFWSqrnagjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjMmh5UUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIRVr0GhTvTVkkAAA3I
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 22, 2025 at 10:39:08AM +0200, Primoz Fiser wrote:
-> Move alias for ethernet0 interface to the phyCORE-i.MX93 SoM include
-> file. The reason behind it is that the physical location of the PHY chip
-> connected to FEC interface is on the SoM itself and alias thus belongs
-> into the SoM device-tree. Consequently, it can be used by all boards
-> based on the phyCORE-i.MX93 SoM (phyBOARD-Segin and phyBOARD-Nash).
-> 
-> This also enables us to mark FEC interface as the primary / first for
-> networking in the bootloader and systemd (predictable interface names).
-> 
-> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+On Sun, Jun 15, 2025 at 07:49:19PM -0400, Alex Guo wrote:
+> The data->block[0] variable comes from user. Without proper check,
+> the variable may be very large to cause an out-of-bounds bug.
+>=20
+> Fix this bug by checking the value of data->block[0] first.
+>=20
+> Similar commit:
+> 1. commit 39244cc7548 ("i2c: ismt: Fix an out-of-bounds bug in
+> ismt_access()")
+> 2. commit 92fbb6d1296 ("i2c: xgene-slimpro: Fix out-of-bounds
+> bug in xgene_slimpro_i2c_xfer()")
+>=20
+> Signed-off-by: Alex Guo <alexguo1023@gmail.com>
+> ---
+>  drivers/i2c/busses/i2c-microchip-corei2c.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-microchip-corei2c.c b/drivers/i2c/bus=
+ses/i2c-microchip-corei2c.c
+> index 492bf4c34722..a79d4d327f20 100644
+> --- a/drivers/i2c/busses/i2c-microchip-corei2c.c
+> +++ b/drivers/i2c/busses/i2c-microchip-corei2c.c
+> @@ -492,6 +492,8 @@ static int mchp_corei2c_smbus_xfer(struct i2c_adapter=
+ *adap, u16 addr, unsigned
+>  		if (read_write =3D=3D I2C_SMBUS_WRITE) {
+>  			int data_len;
+> =20
+> +			if (data->block[0] < 1 || data->block[0] > I2C_SMBUS_BLOCK_MAX)
+> +				return -EINVAL;
 
-Applied both, thanks!
+Seems reasonable, but I'd like to see a blank line here after the
+return. Maybe Andi can do it on application?
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+>  			data_len =3D data->block[0];
+>  			msgs[CORE_I2C_SMBUS_MSG_WR].len =3D data_len + 2;
+>  			for (int i =3D 0; i <=3D data_len; i++)
+> --=20
+> 2.34.1
+>=20
+
+--JByXUeaN4Z+QSMXa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaFO9JwAKCRB4tDGHoIJi
+0oORAPwOMF7HJ4ncK8AJdngYGaRq0iU6yc1gSpPtOdeH4MjGdgEArIT7bXuTG9EK
+znXpn8yenjNsLNWz4BhevGHIXt2A0gA=
+=VSNl
+-----END PGP SIGNATURE-----
+
+--JByXUeaN4Z+QSMXa--
 
