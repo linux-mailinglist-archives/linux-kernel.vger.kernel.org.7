@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-694721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB32AAE0FF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:19:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B813AE0FF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1474A1D9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:19:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156331BC5089
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0642128DF12;
-	Thu, 19 Jun 2025 23:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C9C28E574;
+	Thu, 19 Jun 2025 23:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kHGCIDVT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="alyKC85k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BB420E711;
-	Thu, 19 Jun 2025 23:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686B028DF3B;
+	Thu, 19 Jun 2025 23:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750375179; cv=none; b=gPglQ8qO+vyHvRvYZbyHgg9yhQYALKj2mqAiDwyfEemXM1SCb8mySoxu+nndxcytHJ4yIppKsutJubbDXbiAikhvlJfhxKM3eZENeCQKx4rtRI2kFdmxdgVQJ1+0qb+6sWFNQQPEwWz6nGLTan6X2esmAb8D2WxFy6B1cVIxbBc=
+	t=1750375198; cv=none; b=pNqXI7XZvsptcI1VyYssz25hvgZ3EFYrLKN0JVdEnPLJyrHbKSLIIuskkGV5y8JzV/hyKT3O4EK9cwoWhnJlJo/L2m5UUHoCTYyXavSus4TsS4TWfXcUBIJ3aTDV1Ivx6cylPXuA6MTR6Q9Stwz1wbmDkmsIceW6oUmbTjqLAuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750375179; c=relaxed/simple;
-	bh=1iitjCLE0DZH0hmZdXHmHbGc0acxiTVlORAr7x2Ff2U=;
+	s=arc-20240116; t=1750375198; c=relaxed/simple;
+	bh=vebIs/UoufwnNP8MVgPAlX9dhRYxs9Loe44ZLFLYVlc=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=DUb02xl6sv+jpkpI96r73maMysJonhCLkRFvk7uJHGvlIC/8BRGtr1KFvjgN76jDJ2BHFWCzOvLsfhRA18uliW7o285k9mq2sHWXApS1pXKsuDuVzV5IcQJEskowPPKP4nLlzmjOPTg/HB1oj+Z4j+G5nqtPZDxZDNymKyTKkA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kHGCIDVT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2EB4C4CEEA;
-	Thu, 19 Jun 2025 23:19:38 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=lTOdSrw24B8wyqOMRqaVoz8RjTVMLaAoxDwkD7gXFPAckRgUa1cd7y1Tga9mxIzf8bWurGVJeJ39D2fe2GKXGMWKFmlSV6m3ajoIFSct+fVzeG/+0k+t6hFz2oTFOqw3yrSxDfNVeUIy4Vo9qFT3lHY7yVdmw2xvI7os7wHsM1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=alyKC85k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0D5AC4CEF0;
+	Thu, 19 Jun 2025 23:19:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750375179;
-	bh=1iitjCLE0DZH0hmZdXHmHbGc0acxiTVlORAr7x2Ff2U=;
+	s=k20201202; t=1750375198;
+	bh=vebIs/UoufwnNP8MVgPAlX9dhRYxs9Loe44ZLFLYVlc=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=kHGCIDVTAXuEpNeOWqvBztDwNhtbC83OdZWsNR7VxKi1DmeB59lnsfvgfRSDBi0C1
-	 DDaAdjCmRPIZs+3EMompPWmZpK2yzknxZSoWeAdGJ9z9S2lz8MKsDFgjgL/HPX0NLa
-	 HZC4N/dn7FxZj9FPVK1bqhTj21lPCWtPrZVQVi0pNSLezl+0acGbqD1uFW+MKITodj
-	 5HgaQxtTQdUABL1Pee4+F8KmHyHlFWm8U/2hNicNcM2fuTN1Ce8A8AjC/jE4s9ToKT
-	 +/XP1XOSo+Ktn1d1cM0RpT/gOkzzCs4MvoKk/cldSm9q5Rod3xhRCBFgRyh/ny5Ssk
-	 /2ZaD1IloRHYQ==
+	b=alyKC85ku1caXXj/QcgvZixFReJHQFGjGyv6wv/H1yY58aa4yeFaHYU29EMIQQz/4
+	 NHA30u/Zk7Wdm6wNHmSYJnXdCN87VIFlOwS8+YmUGR50D7OgtVhlHx2kyNVdkVTEyB
+	 CbW/26D6kL1U7W1EdiJMwCwbh1yXpWKdTPgqhzxGOY60l64IFCqb3K8e1bjRnXpgZN
+	 /teLssqz9wfWmWVJCHUAYka1mXujb2GFVqq8olYQ7K9K+9st1U4D3eNQ/0ZX5cuqfI
+	 yqQboEu6818rZflq/crTGe4OqI88RriARiJLj3TPFm4+M3DaO9+2+rsagnCuJwUq8w
+	 iZ6SEGaywy7ug==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E3138111DD;
-	Thu, 19 Jun 2025 23:20:08 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C5038111DD;
+	Thu, 19 Jun 2025 23:20:27 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,46 +51,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [Patch net-next v3] net: mana: Record doorbell physical address
- in PF
- mode
+Subject: Re: [PATCH net-next v4 0/4] netdevsim: implement RX statistics using
+ NETDEV_PCPU_STAT_DSTATS
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175037520700.1016629.11511793485782650744.git-patchwork-notify@kernel.org>
-Date: Thu, 19 Jun 2025 23:20:07 +0000
-References: <1750210606-12167-1-git-send-email-longli@linuxonhyperv.com>
-In-Reply-To: <1750210606-12167-1-git-send-email-longli@linuxonhyperv.com>
-To: Long Li <longli@linuxonhyperv.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, shradhagupta@linux.microsoft.com,
- horms@kernel.org, kotaranov@microsoft.com, schakrabarti@linux.microsoft.com,
- erick.archer@outlook.com, linux-hyperv@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, longli@microsoft.com
+ <175037522573.1016629.13558361368033224988.git-patchwork-notify@kernel.org>
+Date: Thu, 19 Jun 2025 23:20:25 +0000
+References: <20250618-netdevsim_stat-v4-0-19fe0d35e28e@debian.org>
+In-Reply-To: <20250618-netdevsim_stat-v4-0-19fe0d35e28e@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: kuba@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, dw@davidwei.uk, shuah@kernel.org,
+ horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, gustavold@gmail.com, joe@dama.to
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 17 Jun 2025 18:36:46 -0700 you wrote:
-> From: Long Li <longli@microsoft.com>
+On Wed, 18 Jun 2025 01:32:41 -0700 you wrote:
+> The netdevsim driver previously lacked RX statistics support, which
+> prevented its use with the GenerateTraffic() test framework, as this
+> framework verifies traffic flow by checking RX byte counts.
 > 
-> MANA supports RDMA in PF mode. The driver should record the doorbell
-> physical address when in PF mode.
-> 
-> The doorbell physical address is used by the RDMA driver to map
-> doorbell pages of the device to user-mode applications through RDMA
-> verbs interface. In the past, they have been mapped to user-mode while
-> the device is in VF mode. With the support for PF mode implemented,
-> also expose those pages in PF mode.
+> This patch migrates netdevsim from its custom statistics collection to
+> the NETDEV_PCPU_STAT_DSTATS framework, as suggested by Jakub. This
+> change not only standardizes the statistics handling but also adds the
+> necessary RX statistics support required by the test framework.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,v3] net: mana: Record doorbell physical address in PF mode
-    https://git.kernel.org/netdev/net/c/e0fca6f2cebf
+  - [net-next,v4,1/4] netdevsim: migrate to dstats stats collection
+    https://git.kernel.org/netdev/net-next/c/f9e2511d80c2
+  - [net-next,v4,2/4] netdevsim: collect statistics at RX side
+    https://git.kernel.org/netdev/net-next/c/788eb4de608b
+  - [net-next,v4,3/4] net: add dev_dstats_rx_dropped_add() helper
+    https://git.kernel.org/netdev/net-next/c/27480a7c8f02
+  - [net-next,v4,4/4] netdevsim: account dropped packet length in stats on queue free
+    https://git.kernel.org/netdev/net-next/c/2a68a22304f9
 
 You are awesome, thank you!
 -- 
