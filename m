@@ -1,76 +1,66 @@
-Return-Path: <linux-kernel+bounces-693467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD572ADFF30
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:55:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1784ADFF40
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A79E188881E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:54:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0B14189F593
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200312571B3;
-	Thu, 19 Jun 2025 07:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA0C25C6F1;
+	Thu, 19 Jun 2025 07:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n8CwOEx5"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="flQ+1SN9"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E124231837;
-	Thu, 19 Jun 2025 07:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E46B230BF2;
+	Thu, 19 Jun 2025 07:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750319669; cv=none; b=S0XazqmdmohGnEkYLhT+wLjt6V9p9Gh8LjJ5+WqMwwvOtyzz5lvINxznU4JrcCxE6HKCxTfDxZ6ZNVeLhi5fQVbZ7X6rbOnplTRlChXI7PvrGMlvvx+H7EW+DqCFhhZ3am6XuOXwggZhFefNc8ndnJNoa4WhRVytfe3YkmkwRHg=
+	t=1750319810; cv=none; b=SkKpXOxCKiCPSYnKs/EUzt1bwZ3iNAoPuMIiNYyr0Bs+Bigff7ociScltRa231KaHY1rvm1X0X5e6R4bDH0cYkatktfIhhbYp3yLVXZM8yzPgIgFbOSwr7DmQ2kbNjdYPDF7CS05n3w+1+SolILU0F3H2q4I8AGKcTHcVErxMoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750319669; c=relaxed/simple;
-	bh=tOP+atBabNbGYR6Z5UrZUndGasMZB1gx4wcd4JLCyQQ=;
+	s=arc-20240116; t=1750319810; c=relaxed/simple;
+	bh=oyoPhoyqefrB3p9QqeabaAStTKM8c8deF2hGOQdrLlw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GsyYHIbYl5zZVRSta3iZXW1neG/JpqI+2Yz2wpaLiwM5vu/txh6Mu9NNyr9rE0QaFvpH3sKnu7w4Six054U9xd3YgYb50W/hYkzGKCR/BCSD7GVvMmeedqUAv6F0qrynBvVDxh+0u8wZIiseQMzZGi5/UOsLyvxNquBBYLPw0FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n8CwOEx5; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tOP+atBabNbGYR6Z5UrZUndGasMZB1gx4wcd4JLCyQQ=; b=n8CwOEx5xmk1bo/UbhRnasul0x
-	GhWHnaA4nhO0UImFeIG2Xac9nbtU3soSoP5eOKEcRDtJJFGBiveO0tdPm2PDb2gCIckD72g/xh92/
-	SOFCAbhuWBUbIrAdc0SHXeWqTz7tR6LIIWBqlaZHhl0FxnPpQSPcTFepsgxK2tih0LyAIiD97bCMv
-	5KmyBSMZMaNDnz/k02dj/s+i+os2ND1JfXT009E+6QtssDwjI2I5UNmOjzow7YxMiHrcPdBvWQuey
-	qUvVDKHjj8Ot0jpXbEn3/2iTHXuDUhucTnhSIIPtUu33VfbNKSIdIX50PdSLDGSlLsWmmpbVvVPhi
-	cz9VUqqQ==;
-Received: from 2001-1c00-8d82-d000-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d82:d000:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uSA6E-00000007iD3-1eGm;
-	Thu, 19 Jun 2025 07:54:18 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 674DF307FB7; Thu, 19 Jun 2025 09:54:17 +0200 (CEST)
-Date: Thu, 19 Jun 2025 09:54:17 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, x86@kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v10 04/14] unwind_user/deferred: Add
- unwind_deferred_trace()
-Message-ID: <20250619075417.GW1613376@noisy.programming.kicks-ass.net>
-References: <20250611005421.144238328@goodmis.org>
- <20250611010428.433111891@goodmis.org>
- <20250618140247.GQ1613376@noisy.programming.kicks-ass.net>
- <20250618112939.76f4bb87@gandalf.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PASyy6RiiFuUCxqRjfYdtcra8eM6JaU5T+h9DBGv1hGY4HEyj24hXF2R/TZm1aCoX4jiYKVasBDkJJkrbNEv2p9dVKUxYcFu98tPRf/KXhSG5pOLAMDY0Sq9ND37yjKtVX8OL0sB1G/llrzjTgaqJ3OGWjdGHHgucWVTnxLhQXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=flQ+1SN9; arc=none smtp.client-ip=220.197.32.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=dzI0z+Mor5geUtGLZUIfALB2YqIZPR9sIP0s0VrIuhc=;
+	b=flQ+1SN9rSoyu8C/E5IRDER1gqFwqZA+0yErsk5h7gjXXTiptUqS1o5iCkGe6U
+	Q+X+kCjoZJV7aR/KWBnTfgu1fKnMcGvIhIkl1CGk3R6uSk2BrTuK7IZSx+5iSHeA
+	vcfTtHPg0S+iwTy+aOI3xu9SNU7FTM/kU6zwBhJ/Sbfxs=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3l_NpwlNo_koAAQ--.3468S3;
+	Thu, 19 Jun 2025 15:55:23 +0800 (CST)
+Date: Thu, 19 Jun 2025 15:55:21 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Eric Chanudet <echanude@redhat.com>
+Subject: Re: [PATCH] arm64: dts: s32g: add RTC node
+Message-ID: <aFPCaQyXuBlyYcpb@dragon>
+References: <20250526162140.2460122-1-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,19 +69,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250618112939.76f4bb87@gandalf.local.home>
+In-Reply-To: <20250526162140.2460122-1-ciprianmarian.costea@oss.nxp.com>
+X-CM-TRANSID:Ms8vCgD3l_NpwlNo_koAAQ--.3468S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUnD73DUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEg9xZWhThWPlHwAAsu
 
-On Wed, Jun 18, 2025 at 11:29:39AM -0400, Steven Rostedt wrote:
+On Mon, May 26, 2025 at 07:21:40PM +0300, Ciprian Costea wrote:
+> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> 
+> The RTC module on S32G2/S32G3 based SoCs is used as a wakeup source from
+> system suspend.
+> 
+> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 
-> Note, a request from the gcc folks is to add a system call that gives the
-> user space application a backtrace from its current location. This can be
-> handy for debugging as it would be similar to how we use dump_stack().
+Applied, thanks!
 
-That makes very little sense to me; apps can typically unwind themselves
-just fine, no? In fact, they can use DWARFs and all that.
-
-Also, how about we don't make thing complicated and not confuse comments
-with things like this? Focus on the deferred stuff (that's what these
-patches are about) -- and then return-to-user is the one and only place
-that makes sense.
 
