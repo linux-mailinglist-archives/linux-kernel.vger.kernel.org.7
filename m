@@ -1,162 +1,76 @@
-Return-Path: <linux-kernel+bounces-693822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA425AE0436
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:47:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54089AE0439
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 381561896A6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:45:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B59BF1886DDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC8822758F;
-	Thu, 19 Jun 2025 11:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJVagwiB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722A622A7FC;
+	Thu, 19 Jun 2025 11:46:47 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0032C217737;
-	Thu, 19 Jun 2025 11:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900A8217737
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 11:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750333535; cv=none; b=VuQMTgJXNfHlHpc2rjBi2PmSJ033bx+bz5RJBQFmmIH2YSPfxsNkc6jH7v0a6VzfHSrv8vc5DfnOnbcRAvsisIVSq+mu2YHbIEn6jXb+6dvLFxF1w+5AXDWlnL93ekmVYAW6cKryxGV30ToSljuoF/UO4BLi2I5WQRi1LABneu0=
+	t=1750333607; cv=none; b=OuJmLHvUxBvpYOQ8KAHFx5AVE6qAB4Te0Fhbn+2r0PflYsjlT0zH+gp4xl/R35Tf47dno7S073AURxbV5TY4imBKiYwNAJI7cxiaLM475VhZncfC4YrJgFpxQQW7mNRhc4AmEXyYJ03TLlU5ieE+Ap4u9BNfsn8Q2Dmr+esP8Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750333535; c=relaxed/simple;
-	bh=XhR2GRxUYANy2ZjZ4aWduKFRjBbNRnBBbV5m0iHoHGs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G/sImjCMQU3aCV/3Xmy+Ozx8QQxYhUkj/idQC3nXgoabZJ43QoKveTrlrwW3NUh5xMFjPen4JXq8nBDMTuYeI/rSW9j0a+CxoP8osbJ/ecB65E4UJljAcz0ZgH2Yz98gCQgRlc1JZ6I8gPMiaAwAgKESnRaoa8hqBIC0jh9t5fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJVagwiB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66832C4CEEA;
-	Thu, 19 Jun 2025 11:45:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750333533;
-	bh=XhR2GRxUYANy2ZjZ4aWduKFRjBbNRnBBbV5m0iHoHGs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qJVagwiBKkGWrKNGo+bnqpyiVCRj09ly2FQh74U1iltN4oFewlKg0aWp3FH62dDm3
-	 JUybYirHDPvejdTha/QyCLBWvcR/RLcctMTTQosXPO6HgtQvvNM5M2H8Sgpp+e184U
-	 ZbJRYTDhle32cGbXvjM0B//CnzhMs8Jg5H3WjRd051AyDYOUjK5PSFRlfgZgyFnagZ
-	 4ABokr+2fZJIiflKaMGwSWjVavgoZUZyGIF1pNHvkslU/BF8zU3zcMLfSs6lvX3Qm3
-	 OFqyVkkvnMN4fY3QHDAJoXui+ZoBkBjnhIwMHj+1nFKgIe7+z7/p83SmTBlHwZtvRS
-	 DbHw59axHZeEg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uSDhy-008EQG-NY;
-	Thu, 19 Jun 2025 12:45:30 +0100
-Date: Thu, 19 Jun 2025 12:45:30 +0100
-Message-ID: <86jz58c5ut.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Cc: Eric Auger <eauger@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	seanjc@google.com,
-	darren@os.amperecomputing.com
-Subject: Re: [RFC PATCH v2 0/9] KVM: Enable Nested Virt selftests
-In-Reply-To: <3be548bf-aee4-46ab-bcbf-15bf629b24da@os.amperecomputing.com>
-References: <20250512105251.577874-1-gankulkarni@os.amperecomputing.com>
-	<92c7e99c-5574-422c-92f1-62d5cde58fec@redhat.com>
-	<7bf7bd52-7553-42a7-afdb-a5e95f8699b5@os.amperecomputing.com>
-	<86a56veiyy.wl-maz@kernel.org>
-	<3be548bf-aee4-46ab-bcbf-15bf629b24da@os.amperecomputing.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1750333607; c=relaxed/simple;
+	bh=zBYGvX52BxLQ4GUMUxG0DeMTjGwYb+sctll/J9DgxZ0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=h+1sXupzcdmcOdgA2iY8SikWZUSM+2uVZ9idzdkLODwT2dyuDDR+6aNY4YGCm2FDtuGCi+RR9vq4OLGbmca+4QCsM78IjldG7FEVLEXcu04q8m8O8Yylf8HZ8e9zCcX6TQ3UolyKqKpbpY87N8cPtTLS/s3mM+UohDiiGXKhBeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-87326a81ceaso52594839f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 04:46:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750333605; x=1750938405;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zBYGvX52BxLQ4GUMUxG0DeMTjGwYb+sctll/J9DgxZ0=;
+        b=smL5ytcJY6euPRgbyeOpuggGKEjUKuy0IjWUw6+DXOAieJHXaGuRUsWfYQAXT500SY
+         Wi72A2nzrMPZ8s2ZQPxf+nYZeMp7juZep+wD81JKdyE8bg/vQ4+ggAF+yqPpwfd5Qnqo
+         ZwXG9BUuKpPSnF9B3+FQLKx02xXRDWHEIzSw5cdUgUBMscUTnul3+WCsSQ7TLUpJv5dH
+         NB4D8vJ4zifgY8YIIRsE8uViNvoAOmHJjn1ayIjeN0sZc4ik/6KdJ2s4AhvqqMMIRE1b
+         8XnOfY0Cv/OCM3kCA7IHm1ZyzfFxjBnYi4SpBwLuL6Oq3Zrrynk0wasCy0CKl5HiqMzK
+         SOQw==
+X-Gm-Message-State: AOJu0Yzph00SuaiesxQs8BaGFjJcUCiJkva0ymz7xF4NEgJrAHZomhE1
+	5z016KcTyeOl6YvYvfI9vMIRiRmCHMFU77RvDwzPGYxoQ3qwvwR8IkzSb+8n1sR3Port5+jLSjk
+	s9QoqmavLgHhojrUlZLTmqNaMeHMLdBZquoa5fx69jNGQXDtOeiM0Wl3rlGQ=
+X-Google-Smtp-Source: AGHT+IFFUICzEEZtdRdn1/8JbgJaAfkhLzGdoSQ6Jx36GrkmM0Gb5dYR5xgq9hTpOO0sReD/dLHR8PQtU2x4+GVAAFdRN/3qRWH7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: gankulkarni@os.amperecomputing.com, eauger@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, seanjc@google.com, darren@os.amperecomputing.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1a25:b0:3dd:f02d:2d26 with SMTP id
+ e9e14a558f8ab-3de301db2b8mr31328835ab.2.1750333604753; Thu, 19 Jun 2025
+ 04:46:44 -0700 (PDT)
+Date: Thu, 19 Jun 2025 04:46:44 -0700
+In-Reply-To: <68512333.a70a0220.395abc.0206.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6853f8a4.a00a0220.137b3.0007.GAE@google.com>
+Subject: Re: [syzbot] #syz test
+From: syzbot <syzbot+8eb51728519f6659ef7b@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 19 Jun 2025 10:40:15 +0100,
-Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
-> 
-> 
-> [Sorry for late reply]
-> 
-> On 5/29/2025 5:18 PM, Marc Zyngier wrote:
-> > On Thu, 29 May 2025 11:29:58 +0100,
-> > Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
-> >> 
-> >> 
-> >> Hi Eric,
-> >> 
-> >> On 5/28/2025 6:58 PM, Eric Auger wrote:
-> >>> Hi Ganapatrao,
-> >>> 
-> >>> On 5/12/25 12:52 PM, Ganapatrao Kulkarni wrote:
-> >>>> This patch series makes the selftest work with NV enabled. The guest code
-> >>>> is run in vEL2 instead of EL1. We add a command line option to enable
-> >>>> testing of NV. The NV tests are disabled by default.
-> >>> 
-> >>> For commodity, I would add in the coverletter that for all tests
-> >>> enhanced with vEL2 testing "-g 1" option shall be added to force that mode.
-> >> 
-> >> Sure, will do.
-> >> 
-> >>> 
-> >>> I don't really get how you chose tests capable to run at vEL2 and
-> >>> excluded others? Wouldn't it make sense to have a way to run all tests
-> >>> in either mode?
-> >> There is no selection as such. I have worked on around 50% of the tests and sent for the early review.
-> >> Yes, almost all tests can/should run in vEL2 except few.
-> > 
-> > Define EL2. You are so far assuming a E2H RES1 guest, and I don't see
-> > anything that is even trying E2H RES0. After all the complaining that
-> 
-> Sure, I will mention that default test code runs in EL2 with E2H enabled.
-> The tests code is in vEL2 with E2H RES1 by default, since host is booted with VHE.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Sight... You are still confused with what KVM does. With NV, the host
-is *always* VHE. The guest can be VHE (E2H RES1) or nVHE (E2H RES0).
+***
 
-> > E2H0 wasn't initially supported, this is a bit... disappointing.
-> IIRC, I was mentioning about L1 switching between arch mmu table and guest mmu table(VMID 0).
-> I don't remember why It was switching.
+Subject: #syz test
+Author: abhinav.ogl@gmail.com
 
--ENOPARSE.
 
->  > 
-> > Also, running EL2 is the least of our worries, because that's pretty
-> > easy to deal with. It is running at EL1/0 when EL2 is present that is
-> > interesting, and I see no coverage on that front.
-> 
-> Sorry, I did not get this comment fully.
-> When we run selftest on Host with -g option, the guest code will run in vEL2 as L1.
-> This is implemented as per comment in V1.
-> 
-> When we run same selftest from L1 shell, then guest_code will be running in EL0/1 like running from L0.
-
-What good does this bring us if we need to boot a full guest OS to run
-tests? What we need is synthetic tests that implement the whole stack:
-
-- L1 guest hypervisor
-- L2 guest hypervisor
-- L2 guest
-- L3 guest hypervisor
-- L3 guest
-- [...]
-
-This is *one* test. Not a test that runs in a guest. That's what I've
-been asking since day one.
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
