@@ -1,130 +1,105 @@
-Return-Path: <linux-kernel+bounces-693964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86867AE0633
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:49:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03FD3AE0639
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77240189FB56
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:49:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 625C67A3CA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0774923FC41;
-	Thu, 19 Jun 2025 12:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953F323FC41;
+	Thu, 19 Jun 2025 12:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="jzF6xH9v"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u3jv2xZJ"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D523A229B29
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 12:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38A2229B29
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 12:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750337355; cv=none; b=AEC7UqLmZDaKxn2R27C8D9zDHu5dabB6qs7AlZSvJcNEqgJy2JkW141b4pF+xC1fG0b2qQ7B2MN2tqS4oE0YJ7xCGdbIwHP7Cm8CMdLSPUFvj6ma6xQ2UGGGhDjuFoMe5AC6/PN9PUBG9S4PYx08FoJxsxzB6zIzM8TvppJLPQA=
+	t=1750337433; cv=none; b=nADVX7WqjoQlTHmS3mfjtGB7RiO5GKYlVfzlUiJzZTO8bvCsNgMXlUEuUAQT9VeL5Rv8dg2m7mlURDDKTFEChvjiW3KVUalg9mBNOdKuyRI6EeiSr4dugxfZj5vFekjaYKOVBj3K8lvf23iy8t0mz4iYeHIRrS6vv1rU7LQ7I+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750337355; c=relaxed/simple;
-	bh=CQ1Ynby7HjlrMEtuy9V+AUygvAtb7qYcvRXtArHF/QU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aw4Vj795gmcgjzUoG+C4xVU0rl+Q1CXAnRgJ7oIJhJfcat0DcINwA9zrqz+v+IevXHHOOdWBevTTRnKoSzHUujlYbjk29VzghLyho8qG9i96GYkBQRF0ZPAI418iVi9HK5yZUBOtNSMLkvsMBuSTYLAF5t2Y5Yh14RiffUOcRVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=jzF6xH9v; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-235ea292956so8360845ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 05:49:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1750337353; x=1750942153; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Q/lJ+JUjVVRbd58/OtFVRAYdVLmgcDw+VEZqa5SvKA=;
-        b=jzF6xH9vCWfwFKWOtxVQdhTOu+g3pZR1iqe5t5kR0vHkDbJSSQJYcoSbEBqBHruEjP
-         a7DBA0/MBpqPzLdEmDGe9+C9gYq1c7UIQv3iZ/wiSxNNA7COg6/J82p1GzGDhDK3LU6N
-         Kl0CGfabEuH0PjtDzhXg2eH06M9J8LqMb+c7FOfoRpQQ9DAg2eROuj028soRdZTZf2z4
-         MPVIfc1Y7qCwj2wFxIjimjnBQzZlFalzBrbKzsIhLMLSusPNT4bnyCYRxE4ncMUsNZ9+
-         IaF3YFGevQkKsVu+naUS+AjcM6UgpriTM5beTFK2+g5xd7oe17l7q+4Qxa77sNinob2s
-         4hrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750337353; x=1750942153;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Q/lJ+JUjVVRbd58/OtFVRAYdVLmgcDw+VEZqa5SvKA=;
-        b=f2KMs3ZkW/wAo++J8WPc8jPoUGa5i4UBcsFqpr83nLlXmFmD0o6sfQbYeMohmKCcpB
-         JmBT4ha7lLILoTHcXL2jvMhO5CMZX6oql9wo/Fi4UFestU/32mo9zvzyTM9TqsKmJC9y
-         tbHccDH6+Cz/r1f0a+iAN9Q5adklgTWs7hWoTwYrz3rqAf9BYB2No6GotksWVcA42E/m
-         b7EdoxneErT6yMkLhAzfBeltW+2FmGVRwWnCZ8GJQ3nDmB3adCxfdfR2OCdDUM23IcCe
-         Syzl3cW2PHLsTUQKlC+tgak76kaWPPGnmE9323UZAW3MO8buGG/3hA6WiwG2QaX/g8k6
-         3SNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRRODFP9Mx+FUfLrP1ytoQCWMuCITU1PY4fZq0NZe7pWufl2KAo6Dde0sifBS/AC4cWa4aK2JVqXqhkmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpV5LeQx+fWqvekUJzrbggk8XWLka7HuovsVFOmpZvEPUrpvVV
-	QnPfhUpaPWkE1R5FEEcRtmWH8+IJJ8afY9K8ulHRtpNAOt2QyYaGhhoPMNxwHfR/wG4=
-X-Gm-Gg: ASbGncvzmtvtsnGLntkLXTHslpHku86ptDxLZhNIXSt6nSg0fQH596ACNc/otJMjqZc
-	iYGMEmuX8CPyIuJWCA1iEwgQ1cMTBSeU0tZWitkfQTbSDv15gDUfGFacbw5zaXDOEb7IRdzWCg+
-	lfupSMvikfvFp6ee6ditRUHE8gA3wJ+HjNljOxr3ebqbG7Sld+6H0jFdhiwP8EFQ2pfZevng8Rr
-	ZE2shml65EwRPfENTVjs5ww36ndZYaVlwOQbh5CWrPTfB5WIpihQY+emggTlwVv0W9pjfu9Khal
-	j4Dx+B8/3Idxe+bNJ5Ls+3667HTgO/V0BOjS6dShQegp69RKLIvBtcJTulHRr1Tvbr81zyE9D7d
-	ylCewO1gMCv8deA==
-X-Google-Smtp-Source: AGHT+IH69LtPDdAgrBovWhMgrSjTEeMKCzKN63Bmw3qGTAGNPNoBSMtG8u3ZPMyzGP1TzYebG5OJzw==
-X-Received: by 2002:a17:902:d50e:b0:235:1706:2002 with SMTP id d9443c01a7336-2366aeff7a1mr337959005ad.0.1750337353103;
-        Thu, 19 Jun 2025 05:49:13 -0700 (PDT)
-Received: from localhost.localdomain ([203.208.189.11])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365d8a5b4bsm119579195ad.54.2025.06.19.05.49.09
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 19 Jun 2025 05:49:12 -0700 (PDT)
-From: lizhe.67@bytedance.com
-To: jgg@ziepe.ca
-Cc: akpm@linux-foundation.org,
-	alex.williamson@redhat.com,
-	david@redhat.com,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lizhe.67@bytedance.com,
-	peterx@redhat.com
-Subject: Re: [PATCH v4 2/3] gup: introduce unpin_user_folio_dirty_locked()
-Date: Thu, 19 Jun 2025 20:49:04 +0800
-Message-ID: <20250619124906.47505-1-lizhe.67@bytedance.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250619123504.GA1643390@ziepe.ca>
-References: <20250619123504.GA1643390@ziepe.ca>
+	s=arc-20240116; t=1750337433; c=relaxed/simple;
+	bh=yh7QELnRNrptOVJNg1wwEe36hey0I5wSEsKPfvthqBE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=qSq/kAkTJ81uFaC6IKs2Y5EExJ51/KKXTF7aFqlCfAYFl5u0FpufEdpIMhC98LznEPRikPu+vQz4HPsAREC6P/FaKrTSeWThUJpSSPfDTYBIKjGzx+RUzaJ8YgyDbTZpP4m++Jt424ne1bXp4xGVCTGe7ZssgzhgnpaZuMJdndI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u3jv2xZJ; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750337418;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TsJ0nBGHpdZnH6K80AN9JgJCTouRJmJWkXG7NopGTGU=;
+	b=u3jv2xZJb/er2cf6uegzj+1col9ihPUFeBH5xG7I8qVTdX2EnCyPf1boesTApw9XrtFqYo
+	vIh9Gd3fpTtFSQsO57G6KKtfczJVC/quRDqg9wKPbc7HWjJ/60uRXgs1g03tCQ2DhPFv41
+	2l3skikPXF1sFz57xkHQFStamLd6VKU=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH] ALSA: mixer_oss: Replace deprecated strcpy() with
+ strscpy()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <20250618224926.GS1880847@ZenIV>
+Date: Thu, 19 Jun 2025 14:50:04 +0200
+Cc: Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Takashi Iwai <tiwai@suse.de>,
+ linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <DA7484EA-83F7-496A-AB9F-2370BBBC0883@linux.dev>
+References: <20250618223631.1244-2-thorsten.blum@linux.dev>
+ <20250618224926.GS1880847@ZenIV>
+To: Al Viro <viro@zeniv.linux.org.uk>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 19 Jun 2025 09:35:04 -0300, jgg@ziepe.ca wrote:
- 
-> On Thu, Jun 19, 2025 at 05:05:42PM +0800, lizhe.67@bytedance.com wrote:
+On 19. Jun 2025, at 00:49, Al Viro wrote:
+> On Thu, Jun 19, 2025 at 12:36:29AM +0200, Thorsten Blum wrote:
+>> strcpy() is deprecated; use strscpy() instead.
+>> 
+>> No functional changes intended.
 > 
-> > As I understand it, there seem to be some issues with this
-> > implementation. How can we obtain the value of dma->has_reserved
-> > (acquiring it within vfio_pin_pages_remote() might be a good option)
+> Have you actually read the damn thing?  Seriously, look at the uses
+> of 'str' downstream.  The only thing it is ever passed to is strcmp().
 > 
-> Yes, you record it during vfio_pin_pages operations. If VFIO call
-> iommu_map on something that went down the non-GUP path then it sets
-> the flag.
-> 
-> > and ensure that this value remains unchanged from the time of
-> > assignment until we perform the unpin operation? 
-> 
-> Map/unmap are paired and not allowed to race so that isn't an issue.
-> 
-> > I've searched through the code and it appears that there are
-> > instances where SetPageReserved() is called outside of the
-> > initialization phase.  Please correct me if I am wrong.
-> 
-> It should not be relevant here, pages under use by VFIO are not
-> permitted to change it will break things.
+> In other words, why do we need to copy it anywhere?  What's wrong with
+> having char *str instead of that array and replacing strcpy() with
+> plain and simple pointer assignment?
 
-Then this approach appears to be no problem, and there’s no need to
-introduce any new interfaces. All modifications remain internal to
-vfio. I’ll send out a v5 patch based on this approach.
+I read it, but didn't question whether copying was actually necessary.
+
+However, it looks like 'ptr->name' can originate from userland (via proc
+file - see the function comment), which could make using 'char *str'
+directly unsafe, unless I'm missing something.
+
+Something like this would skip one copy while keeping it safe:
+
+char tmp_str[64];
+char *str;
+
+strscpy(tmp_str, ptr->name);
+if (!strcmp(tmp_str, "Master"))
+	str = "Mix";
+else if (!strcmp(tmp_str, "Master Mono"))
+	str = "Mix Mono";
+else
+	str = tmp_str;
 
 Thanks,
-Zhe
+Thorsten
+
 
