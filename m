@@ -1,53 +1,65 @@
-Return-Path: <linux-kernel+bounces-693415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9DCADFEAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:28:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30808ADFE26
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9358175573
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:28:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B61B87A8FE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E0E2566FD;
-	Thu, 19 Jun 2025 07:27:57 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3253F26057E;
+	Thu, 19 Jun 2025 06:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="ohcmyJYq"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C84D24EA90
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7828F25C810;
+	Thu, 19 Jun 2025 06:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750318076; cv=none; b=ikoxZo6IKen+8X3de4jFrhgcx3iX3SF+74HYyaLRZW4jJXoGwsRHhHBLtbw15BNv1NgWpXrgC9DqU5ZI2wpASBVxa45R7dDDkvZHHfQpcuSeVJezyvi7y3RPV3g7uc4oaoOA98xpAvVctgqojbgM0wbNL+66iZLf7UCY1iZ+Zr8=
+	t=1750316087; cv=none; b=BNGpEflwoEUIiuTANp+WubcZSeqzQcm/z6K6PlBQSK8O1lCc2d/Pj10O4VvbVEwO1xow6GC1icnFPgmbCQ+nDUekeDg08nn6R0CUdkWJZgzaBUVUbyhPj1waaFI8oLLMTgr7YfFfeZaY5k+iVoQzWGmiw26dfCKcZ4qQjyX/lB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750318076; c=relaxed/simple;
-	bh=fvOsZaPpKk5Sg0u7ruIHLm20k97N+6kCpd7R2NEfsFE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pqdqb6XE4xfEQB3WkPQXF+20AwQaY3+AMSMYeqMgtQ6SBIkL31csmvKg8L+6t85dZQnKbjbzYvofv5aUuGNV1dJIrxFWwO/NmmPUppsPF8pCXcPqfqyDM+bLN4DuUxv/mSNndVhEK4yCh65n94brSFpuGyBunjcs5wwWkEorimY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ubt.. (unknown [210.73.43.2])
-	by APP-01 (Coremail) with SMTP id qwCowACHNdTuu1NoWfSNBw--.21068S5;
-	Thu, 19 Jun 2025 15:27:42 +0800 (CST)
-From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-riscv@lists.infradead.org,
-	Deepak Gupta <debug@rivosinc.com>,
-	Ved Shanbhogue <ved@rivosinc.com>,
-	linux-kernel@vger.kernel.org,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V8 3/3] riscv: mm: Add uffd write-protect support
-Date: Thu, 19 Jun 2025 14:52:32 +0800
-Message-Id: <20250619065232.1786470-4-zhangchunyan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250619065232.1786470-1-zhangchunyan@iscas.ac.cn>
-References: <20250619065232.1786470-1-zhangchunyan@iscas.ac.cn>
+	s=arc-20240116; t=1750316087; c=relaxed/simple;
+	bh=DKIWEFD7IuiHQJbuY8wGd57bhJyvqmxIfitMGqJ6ZdY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PCY80gSriuQlbJXBn3sr0DdHRky15NnK8jN8mPQs/KD/YRreJD7dy3YycFd9wGKZQYk8aRcQ92vLtgI06IU8PJkR+k/ojUF5B2UAbaK436pvE8fTPd8109thHHNG/IsYZmQPz706sPUgPvb0ctDEGJfWhVTzhTQ/E4pBRv3fgvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=ohcmyJYq; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1750315985;
+	bh=wCgFcf8S1qz6TsKVSV0g1x9/rKEOEW9D85QGwXQvK74=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=ohcmyJYq6nNEquCCKhkprx2Ku2LULev9JfWxpj4W+tS7VN109dWRqKQ6g0vSI0Ah+
+	 vPRQvm282gTOpC9S9dh9fn1IsviucXJZ8DeSNZmX3mfdoZ7492kM0+/d7oijh/RmM8
+	 YVVjbe/1JY07+FCvSHIVITEeZULA0rjzh+/ymYn0=
+X-QQ-mid: zesmtpip4t1750315979t3e7fd250
+X-QQ-Originating-IP: HY7OJzCHKvNXxA3FIXoKz/JEr+i4hyX3SN3hoQqaFSs=
+Received: from avenger-e500 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 19 Jun 2025 14:52:58 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 11116470041164547082
+EX-QQ-RecipientCnt: 10
+From: WangYuli <wangyuli@uniontech.com>
+To: gregkh@linuxfoundation.org,
+	sashal@kernel.org,
+	stable@vger.kernel.org
+Cc: dmitry.torokhov@gmail.com,
+	javier.carrasco.cruz@gmail.com,
+	u.kleine-koenig@baylibre.com,
+	wens@csie.org,
+	wangyuli@uniontech.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 5.4~6.12] Input: sparcspkr - avoid unannotated fall-through
+Date: Thu, 19 Jun 2025 14:52:41 +0800
+Message-ID: <5C0E9B30D2B39A0D+20250619065241.37834-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,171 +67,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACHNdTuu1NoWfSNBw--.21068S5
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF48ZrWDAw1DtrW3Xr48Xrb_yoWrZw48pr
-	s5GayrurWDXr97KayftrWYgrWrZw4fWa4qqr9xCa1kJFy7K3yDXr95Kry3try8JFWvv347
-	WFWrKr1rCw47JFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmmb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-	8067AKxVWUWwA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF
-	64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcV
-	CY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv
-	6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzV
-	Aqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S
-	6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mx
-	kF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCF
-	s4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r
-	1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWU
-	JVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r
-	1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1U
-	YxBIdaVFxhVjvjDU0xZFpf9x07jrhL8UUUUU=
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiCQ4SB2hTjXawsAAAsS
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MRY6qckr/MVJEExJqnp1BH/QKQK1atcuSH4z4HyTlpzMJrsp7E/BS5My
+	osjEk+ik/E+EJiXyG39h8jI5q5PZuq3ybxBqLnTr31gADAFdhAeZGgcQkOteg4FzGrqkjV6
+	8tYOk8/3qjzBuIhZbh36YNPyqhjIn21ka4egylx4GOwJk1NredqdchNB78u0yicRw78dFyA
+	LAotO4U/Wq0xiMOhFEHpHMMD9SHpQkACwI4KaAm3z8Db22eOUbT21mIBvhX0sHXUQs+ywKz
+	GRtL6g0t4Or1lVv9acEkGIF8G5RoCe1yFtepCw4VRBPfGcKqk0kgd/5c/cmraTn+ryA2Q+q
+	laXOobUEnobvpRkYBI2l/m6+iNNn0Bwm9pF395DBIhjdw4FiiqgykESVzeqbP4pmZd53HrA
+	1T9kMvaM0MTYIRRW7XuM9xy6tn6PYbNhUJRRNtzeHkKsWHsEy3+ONacDymlCe4N8eTCCUHR
+	KQk+GCvx+cWXwwo1EaqLoMOCrA0XVg9CB4ANRF3PwvRfuwlsxTniA+5i9ZiwKmGNi4ZUj9y
+	7KDXmA69gmIMmPg1tpEUtRBLFpxrRVhMB+nn4aBDawztNHpMLxIly8Wa/1CsCLrtyEIdfHD
+	JtitWzwVsodGDGGb4oYPNXo7rjXg/xPIrkyTwBnBi2KH3nnE4VK1GuSRfcislbaAMjkHxzc
+	uUvWMlQoJtAo9xp+QBZ5wPrVK0755fp6zDnCAHNokRQrDI24kPjdIYinHmPgB/Ndtpjxc/I
+	7ZrAbmwj40ttBME+VOXvY1O8i2dlMty2d5ezwViyfdaQwdK0PnSxigVWBpwQbkZgMva6AFS
+	fbfzQdE/o6vBrC79t7hW2rRxbOBqgvsoGnpd5UcAv04A0JJSygEXgge/JQFY5TzX+XnRnf9
+	neZC9xMpLWKn8m/H/eIuObVgBrtdLSwIqWtVjT2WnSCwLoKijCbO9qb5nXf1UCYCUmAPfwW
+	yb9hzWOfVt4qpWLN+4RY+IYoW1/yTu8qKK/cWPQZQKf6kMdxgcD0cipU7LdwfUuuh4VX7KV
+	5V7/2Syw==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-The Svrsw60t59b extension allows to free the PTE reserved bits 60 and 59
-for software, this patch uses bit 60 for uffd-wp tracking
+[ Upstream commit 8b1d858cbd4e1800e9336404ba7892b5a721230d ]
 
-Additionally for tracking the uffd-wp state as a PTE swap bit, we borrow
-bit 4 which is not involved into swap entry computation.
+Fix follow warnings with clang-21i (and reformat for clarity):
+  drivers/input/misc/sparcspkr.c:78:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+     78 |                 case SND_TONE: break;
+        |                 ^
+  drivers/input/misc/sparcspkr.c:78:3: note: insert 'break;' to avoid fall-through
+     78 |                 case SND_TONE: break;
+        |                 ^
+        |                 break;
+  drivers/input/misc/sparcspkr.c:113:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+    113 |                 case SND_TONE: break;
+        |                 ^
+  drivers/input/misc/sparcspkr.c:113:3: note: insert 'break;' to avoid fall-through
+    113 |                 case SND_TONE: break;
+        |                 ^
+        |                 break;
+  2 warnings generated.
 
-Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+Link: https://lore.kernel.org/r/6730E40353C76908+20250415052439.155051-1-wangyuli@uniontech.com
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- arch/riscv/Kconfig                    |  1 +
- arch/riscv/include/asm/pgtable-bits.h | 18 ++++++++
- arch/riscv/include/asm/pgtable.h      | 65 +++++++++++++++++++++++++++
- 3 files changed, 84 insertions(+)
+ drivers/input/misc/sparcspkr.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 5c787c09f4dc..2cc2b56c87a5 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -148,6 +148,7 @@ config RISCV
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD if 64BIT && MMU
- 	select HAVE_ARCH_USERFAULTFD_MINOR if 64BIT && USERFAULTFD
-+	select HAVE_ARCH_USERFAULTFD_WP if 64BIT && MMU && USERFAULTFD && RISCV_ISA_SVRSW60T59B
- 	select HAVE_ARCH_VMAP_STACK if MMU && 64BIT
- 	select HAVE_ASM_MODVERSIONS
- 	select HAVE_CONTEXT_TRACKING_USER
-diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
-index a6fa871dc19e..a953a582cd75 100644
---- a/arch/riscv/include/asm/pgtable-bits.h
-+++ b/arch/riscv/include/asm/pgtable-bits.h
-@@ -39,6 +39,24 @@
- #define _PAGE_SWP_SOFT_DIRTY	0
- #endif /* CONFIG_MEM_SOFT_DIRTY */
+diff --git a/drivers/input/misc/sparcspkr.c b/drivers/input/misc/sparcspkr.c
+index 20020cbc0752..a94699f2bbc6 100644
+--- a/drivers/input/misc/sparcspkr.c
++++ b/drivers/input/misc/sparcspkr.c
+@@ -75,9 +75,14 @@ static int bbc_spkr_event(struct input_dev *dev, unsigned int type, unsigned int
+ 		return -1;
  
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+
-+/* ext_svrsw60t59b: Bit(60) for uffd-wp tracking */
-+#define _PAGE_UFFD_WP							\
-+	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
-+	 (1UL << 60) : 0)
-+/*
-+ * Bit 4 is not involved into swap entry computation, so we
-+ * can borrow it for swap page uffd-wp tracking.
-+ */
-+#define _PAGE_SWP_UFFD_WP						\
-+	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
-+	 _PAGE_USER : 0)
-+#else
-+#define _PAGE_UFFD_WP		0
-+#define _PAGE_SWP_UFFD_WP	0
-+#endif
-+
- #define _PAGE_TABLE     _PAGE_PRESENT
+ 	switch (code) {
+-		case SND_BELL: if (value) value = 1000;
+-		case SND_TONE: break;
+-		default: return -1;
++	case SND_BELL:
++		if (value)
++			value = 1000;
++		break;
++	case SND_TONE:
++		break;
++	default:
++		return -1;
+ 	}
  
- /*
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index efc2da97f124..9630d2b2d67e 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -423,6 +423,38 @@ static inline pte_t pte_wrprotect(pte_t pte)
- 	return __pte(pte_val(pte) & ~(_PAGE_WRITE));
- }
+ 	if (value > 20 && value < 32767)
+@@ -113,9 +118,14 @@ static int grover_spkr_event(struct input_dev *dev, unsigned int type, unsigned
+ 		return -1;
  
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+static inline bool pte_uffd_wp(pte_t pte)
-+{
-+	return !!(pte_val(pte) & _PAGE_UFFD_WP);
-+}
-+
-+static inline pte_t pte_mkuffd_wp(pte_t pte)
-+{
-+	return pte_wrprotect(__pte(pte_val(pte) | _PAGE_UFFD_WP));
-+}
-+
-+static inline pte_t pte_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_UFFD_WP));
-+}
-+
-+static inline bool pte_swp_uffd_wp(pte_t pte)
-+{
-+	return !!(pte_val(pte) & _PAGE_SWP_UFFD_WP);
-+}
-+
-+static inline pte_t pte_swp_mkuffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) | _PAGE_SWP_UFFD_WP);
-+}
-+
-+static inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_SWP_UFFD_WP));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- /* static inline pte_t pte_mkread(pte_t pte) */
+ 	switch (code) {
+-		case SND_BELL: if (value) value = 1000;
+-		case SND_TONE: break;
+-		default: return -1;
++	case SND_BELL:
++		if (value)
++			value = 1000;
++		break;
++	case SND_TONE:
++		break;
++	default:
++		return -1;
+ 	}
  
- static inline pte_t pte_mkwrite_novma(pte_t pte)
-@@ -851,6 +883,38 @@ static inline pud_t pud_mkspecial(pud_t pud)
- }
- #endif
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+static inline bool pmd_uffd_wp(pmd_t pmd)
-+{
-+	return pte_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline bool pmd_swp_uffd_wp(pmd_t pmd)
-+{
-+	return pte_swp_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
- static inline bool pmd_soft_dirty(pmd_t pmd)
- {
-@@ -1073,6 +1137,7 @@ static inline pud_t pud_modify(pud_t pud, pgprot_t newprot)
-  *	bit            0:	_PAGE_PRESENT (zero)
-  *	bit       1 to 2:	(zero)
-  *	bit            3:	_PAGE_SWP_SOFT_DIRTY
-+ *	bit            4:	_PAGE_SWP_UFFD_WP
-  *	bit            5:	_PAGE_PROT_NONE (zero)
-  *	bit            6:	exclusive marker
-  *	bits      7 to 11:	swap type
+ 	if (value > 20 && value < 32767)
 -- 
-2.34.1
+2.50.0
 
 
