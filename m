@@ -1,104 +1,91 @@
-Return-Path: <linux-kernel+bounces-694406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9041CAE0BF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:32:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2F1AE0BF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E6045A3B0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:32:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842E61BC5F4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724D128C5C0;
-	Thu, 19 Jun 2025 17:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F9A28C5C0;
+	Thu, 19 Jun 2025 17:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VN0QGBbt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gCzK4Jtq"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA8B1D9A5F;
-	Thu, 19 Jun 2025 17:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD261D9A5F
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 17:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750354339; cv=none; b=QLRB0NsGb05Vr39UavzNctIa9pv7G3XlDZNDJK7i5UNEzVwjjU5p7navKViOrprJdTWF9E1dFQ3iPwQFKzWf0xEHiXRUmamhKjInUybrmMpQUl6JQ+Kl+ZYFrRmA8coaFQSYILddawQA3bkI/f21pVFYyQtdjXS1VwDJU0VZ01w=
+	t=1750354376; cv=none; b=jSVBHtvlCvDnh6rFELpTVb93JvHSqWj85bCRDF1bFeDXKqWACZ6pdIhPjuggm2aqhw5AuIFd1QhcbwbLy7aZdkI0m/4Gw1z65Tg4++eN7VeJaRefs1MOVzjAmcIzOzLQuKV7+gF6z/wHYbA6fPD0QyPwjkkrjuD+/K05Li3u+LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750354339; c=relaxed/simple;
-	bh=dnW/KeOlCCPZwEfbvo8J45kgENPUMKU2wmQYqK2LIGw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rB7CQ2hM+1Q1bHujMXwMkr2JJ4yPKFJVbvA9r+imfnNnqQaWphh6/7dA4BSc0NpWfc3FABSu6mu1aMdZrhxtHyvPp4o8g/hrfuJxud8ef3wTywjKy44DjlFAJRXVrj/qMom15zUwU1HGSfNyPY07nFPEaH3PNaAtGXMLEdYplvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VN0QGBbt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37A1AC4CEEA;
-	Thu, 19 Jun 2025 17:32:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750354337;
-	bh=dnW/KeOlCCPZwEfbvo8J45kgENPUMKU2wmQYqK2LIGw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VN0QGBbt4tRi4gq3NSM17Znien/P1ilBoWwY9IbHVkQ7Bw8Ok2MxdGEEpyKFX1p5R
-	 qNn4Si4thBFEmD/nf2xLyEgupYDj38sOA08a/TGxFzbppC5c1HcGB5qd5/lElsN6Fb
-	 2UZgY0kQ+rtxt2Lgw/KJvFuXaHlOPgahGuGo7H3jEO7h8nU24KDtZzsCKnf0FnsFwM
-	 dUEKqfYWhc67JA+hIKRTa8M4BV5j/hz8+LVtmkGkaiiG6xCSOLe1dsFZZlWuqb91M0
-	 R997NMJqIkXa7KLBcptaXLrVds5lYNuSIrcRdWJYJxnzxH6JxmNudKcrd54mxcDsHv
-	 thMCbil/KaipQ==
-Received: by wens.tw (Postfix, from userid 1000)
-	id CD6D65FEF5; Fri, 20 Jun 2025 01:32:14 +0800 (CST)
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	Chris Morgan <macroalpha82@gmail.com>,
-	Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH] mfd: axp20x: Set explicit ID for AXP313 regulator
-Date: Fri, 20 Jun 2025 01:32:07 +0800
-Message-Id: <20250619173207.3367126-1-wens@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1750354376; c=relaxed/simple;
+	bh=WHFA3dt+gXVNZyOzMwYU23xWVhQTSPBOMqpAAE95nE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T+ayWGLlQ7gEntre/7Z/uLh6rc2X/f1+8rXFmLIhZ4Scv5HbnVyLj/FXw3UnMK4MnkP94AVI8IPpZ+e4SfK+dMf9yCUQmA8ULGPNfDQdqDpN2kWPEtu53jXzPfnhSPTkiyvfgmwY4xpEpnOSrUDit4tgHhw+yN90slA8Y7smE7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gCzK4Jtq; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <38415904-6af7-41ef-9963-fe60cc6560ba@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750354362;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WHFA3dt+gXVNZyOzMwYU23xWVhQTSPBOMqpAAE95nE8=;
+	b=gCzK4JtqUv5MIyP+ZDj2ON8lIxmOCbpEvKPCXR72qskW84oCy5cMRGmvu/92FIbvzzPdI+
+	yOHz6OmDG6qSII8OBnwCqfEImiIflh9WcRFN+Dtxk7BzURMpFVJ8ntZBSh3hjC2NGbelLT
+	/OLy+CCYxsU10mki62CaOvLrxiVkd5I=
+Date: Thu, 19 Jun 2025 10:32:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3 1/2] bpf: Specify access type of bpf_sysctl_get_name
+ args
+Content-Language: en-GB
+To: Jerome Marchand <jmarchan@redhat.com>, bpf@vger.kernel.org
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ linux-kernel@vger.kernel.org
+References: <20250619140603.148942-1-jmarchan@redhat.com>
+ <20250619140603.148942-2-jmarchan@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250619140603.148942-2-jmarchan@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Chen-Yu Tsai <wens@csie.org>
 
-On newer boards featuring the A523 SoC, the AXP323 (related to the
-AXP313) is paired with the AXP717 and serves as a secondary PMIC
-providing additional regulator outputs. However the mfd cells are all
-registered with PLATFORM_DEVID_NONE, which causes the regulator cells
-to conflict with each other.
 
-Commit e37ec3218870 ("mfd: axp20x: Allow multiple regulators") attempted
-to fix this by switching to PLATFORM_DEVID_AUTO so that the device names
-would all be different, however that broke IIO channel mapping, which is
-also tied to the device names. As a result the change was later reverted.
+On 6/19/25 7:06 AM, Jerome Marchand wrote:
+> The second argument of bpf_sysctl_get_name() helper is a pointer to a
+> buffer that is being written to. However that isn't specify in the
+> prototype.
+>
+> Until commit 37cce22dbd51a ("bpf: verifier: Refactor helper access
+> type tracking"), all helper accesses were considered as a possible
+> write access by the verifier, so no big harm was done. However, since
+> then, the verifier might make wrong asssumption about the content of
+> that address which might lead it to make faulty optimizations (such as
+> removing code that was wrongly labeled dead). This is what happens in
+> test_sysctl selftest to the tests related to sysctl_get_name.
+>
+> Add MEM_WRITE flag the second argument of bpf_sysctl_get_name().
+>
+> Signed-off-by: Jerome Marchand <jmarchan@redhat.com>
 
-Instead, here we attempt to make sure the AXP313/AXP323 regulator cell
-does not conflict by explicitly giving it an ID number. This was
-previously done for the AXP809+AXP806 pair used with the A80 SoC.
+You can carry previous ACK if there is no big change. Ack again here.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/mfd/axp20x.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-index e9914e8a29a3..25c639b348cd 100644
---- a/drivers/mfd/axp20x.c
-+++ b/drivers/mfd/axp20x.c
-@@ -1053,7 +1053,8 @@ static const struct mfd_cell axp152_cells[] = {
- };
- 
- static struct mfd_cell axp313a_cells[] = {
--	MFD_CELL_NAME("axp20x-regulator"),
-+	/* AXP323 is sometimes paired with AXP717 as sub-PMIC */
-+	MFD_CELL_BASIC("axp20x-regulator", NULL, NULL, 0, 1),
- 	MFD_CELL_RES("axp313a-pek", axp313a_pek_resources),
- };
- 
--- 
-2.39.5
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
 
 
