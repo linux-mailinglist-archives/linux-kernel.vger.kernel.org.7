@@ -1,121 +1,157 @@
-Return-Path: <linux-kernel+bounces-693639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA42AE01BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:33:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E98CEAE01C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17951173DC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:33:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B4D43A4014
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E3E21CFFD;
-	Thu, 19 Jun 2025 09:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B93721E08D;
+	Thu, 19 Jun 2025 09:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LMlxFSWn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y66VWTwG"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D911E570B;
-	Thu, 19 Jun 2025 09:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DD620E715
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 09:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750325614; cv=none; b=qj/Mlz82kFcJ9OjeaZmFBzYM3R0fOXZ+p7peV45MwQtncLn1imvXnnRhb3H/40dUqTHfi2GpE9zsItAzE8E/pIXHTq7Nutp0oK6vswVqBp1lJeAUXAbTzIZ5Ok2PcafEqT+UHcpP42+SI1kaYvBLTHldhAR9sfjw+cF4wa6eyRs=
+	t=1750325687; cv=none; b=rspDPPvkH47/u12tMDYad+MR+KKi9BeFTgUngy0/D4Ka6ak51hO94W48IZhRAmfU8FcPafkz4JhavcuFtINlCKxtQzBZ20sPW6x2nHpIIWDSGSf9ayu3gbIbw9Jluyh1Suhz5lvpKGmWmnqRLaM0CcIPrhFBL+IB02M5EobtB+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750325614; c=relaxed/simple;
-	bh=BNMqhj72zAplT0S3Q+pS2ssd6wnwL4rZR95IgGtQehM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mUzJD9QQuw5AoBOa+2q4EHQXQz3E2ed3dqTpm8ElyjWcj6UCCdS4fS2xYKCslzwnwCSa9uIvcN3r2p8ZEM3QHFmpjHAdjBQqzAoN87dg/Q7CZYq86A/2rgrSek+qR6hzPkW7d1kfgxpUr4r+xt149T7Sb2hVn4dtLgtX6ZPUOgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LMlxFSWn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A52AFC4CEEA;
-	Thu, 19 Jun 2025 09:33:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750325614;
-	bh=BNMqhj72zAplT0S3Q+pS2ssd6wnwL4rZR95IgGtQehM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=LMlxFSWno8hA2LuuB2ChNYFu8ZN7TTK7TS/wYGnlFhLKZyg73dg35JkJxXwzGzvB1
-	 9SYBRw8OvYc1QbiZDDFpI+4sJu2YOSUfwBAb4yy5l0lTcxAv4YgjxJ2Fpryeqcr1fk
-	 xuLPhsj3Cz275cb7ft0n2MpxyjkQL5OObLQcNrZdKhQ4qEmXb+VpAnSlKDhAv8V79+
-	 pjejGvxp/abqMC0MTMnnyd8JGBSEj7qVbAagHRlJIum/7cCAqF8clfTGNhk1KoKQgj
-	 cs2csXDgkprqLbsgiebSmggIKyIM7SRUatCK8/k9ZrDcgoowSLtV8MLHfedIKekUij
-	 Ga5Mk2HM1Bfaw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
-Cc: "Oliver Mangold" <oliver.mangold@pm.me>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Asahi Lina" <lina@asahilina.net>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 1/5] rust: types: Add Ownable/Owned types
-In-Reply-To: <DAPZ1KYN5FB6.3C7CI4Y0OKOE0@kernel.org> (Benno Lossin's message
-	of "Wed, 18 Jun 2025 23:19:56 +0200")
-References: <20250502-unique-ref-v10-0-25de64c0307f@pm.me>
-	<20250502-unique-ref-v10-1-25de64c0307f@pm.me>
-	<D9VS2Q4IX7LH.3JLXQUMWYJ2FP@kernel.org> <aFKICIo8L958iFbz@mango>
-	<0KbPJp-9Rk5DVetcI8bAv8kiy90arS0GSl4qi8R83fIgPTv0MXRhz06vbuTjt5hXGguPZbL6JsQxDmuj4ejVrA==@protonmail.internalid>
-	<DAPZ1KYN5FB6.3C7CI4Y0OKOE0@kernel.org>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Thu, 19 Jun 2025 11:33:25 +0200
-Message-ID: <877c18849m.fsf@kernel.org>
+	s=arc-20240116; t=1750325687; c=relaxed/simple;
+	bh=EfHfHXOd58iPZEhOfSaCiBNNOoPfV3kB9Fv60eR6I00=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oUDyrdBoxEqv+s9/xfK7n/lK1pMRBxPi8VT5ASI9fj0BvztKoplwkbfHwpmt3xK0+usZWkNDnKwuWE+Nci/PNgAIXMBO2aU1lHmGWgc20HkMlC1TxLzUiz8YyOVnc1HVf9y1Dz7vpdKmdNTs1d69rN8z5AxldvovJ7uy12Px+ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y66VWTwG; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2ea2fee5471so342761fac.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 02:34:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750325684; x=1750930484; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1GEM8aSdK4BbpZsaiGvekI/zZkHOT0NsV54eIKTj0uc=;
+        b=Y66VWTwGci5eeb4An4nmkt8vdBHDMRlvH1GaB6j5K61IwVIppIAsDD+BPFSPOifuyc
+         CqipbDm6RQwx/sUjLdbVJbKbVIZ4xAQpCsdby32zlQbo3V6j4lo9/SzvXa+AwLyORxg2
+         29JQZCatluvCgAlH+IDXEJ27p97DyPG08paBbpP5PG3QRD2xGTpF6C+LTJfCGG561NyU
+         wi3w15vy15OddgTz2auqnTT9A2+mqeh+PmjHTPLLhRkV0VGHlI1jEn8q7G0Ur1T7NQaL
+         9K0Yl/656iB4l00Uk3icWSW24voE2nLTaR4+laaPi4MoywJ1fSfrU81MGiVGjqdAzaB6
+         t0kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750325684; x=1750930484;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1GEM8aSdK4BbpZsaiGvekI/zZkHOT0NsV54eIKTj0uc=;
+        b=QZECQfLuj1zTyX7l+Ny/pNqTL2eKVdQuvf/BFIOswFHXI/Utph8AftG4QRB8FO+AE1
+         MzKeLF7kVyS7fclyxEI6zJ0qlMgue4sUQ/NVsMMrh8rA0iy+Ml/Bbup3nZyuNx5zYB90
+         P0CFhrJDTRCtQKq1HqN4rHYPgdm/mEBKb5bfo3Dvpsn+6FQfM+1LLattEon8bh5xQuy1
+         Aw/D4sO1mOOzVf+hB+Eg5fQc7v7yMqhleC9HsN8lqCg2PJVeOvdX780etBLvgEftXzcA
+         cYleFxWWDOAaVIVEJW/H7h/AlefzKYC7ioKeIRp4vhNUZzRk2N9iznoN5UogSbRo7wMy
+         r5dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUXbQ0rTf7vVFz8KnR1lnRK/R+guApFZ0Rq8nIxUNRHCXVaQmUpcKOJXJbs6SHhTLIU9hOWB5YaJbPvgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL3AwmQTyFggHUrrjuEVpROblnzbTBfu6WQEJgMKhwqby9/lMa
+	lyXbhwS6CU6/YYGLYNLm5XRtZjEW/g0PvqSxhJqHmlNfhD3Py6AdCrTOoj+D3bwgkgwxmwhGyCC
+	UEg+ArSTHlUBFINeRcydWfOKqzJgAIio=
+X-Gm-Gg: ASbGncssqgvzWin09xFvHK3HL86E+kQ5+ILkuzZYcvRTewDftRgx2/em9B8GUy/1yIc
+	BgLDgsqXOYlDdC/4AkzXIZE+E62KNJjl3sL4w3XDnbTYul1EJVCHat0/kTqStWIzO0hpPsHi4Kr
+	vVQ5BO2jgTLPmekOe3qgFUOF7nNS8D3TonWATLtZWwZzsB72ElLmWf7/5ZmdvUq0RoMD+cRVXkR
+	QY=
+X-Google-Smtp-Source: AGHT+IEkvgD+z2fKoSt3oTmo8zIn6oFWTRfRDG+GNL6TOsFM1snRFgZfvo9twtWiiM8jezGNxQE7BUh4k4/Cm+Jc6J4=
+X-Received: by 2002:a05:6871:358d:b0:2d5:2360:4e7d with SMTP id
+ 586e51a60fabf-2eb9e94538fmr2120732fac.8.1750325683778; Thu, 19 Jun 2025
+ 02:34:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250619065232.1786470-1-zhangchunyan@iscas.ac.cn>
+In-Reply-To: <20250619065232.1786470-1-zhangchunyan@iscas.ac.cn>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Thu, 19 Jun 2025 17:34:07 +0800
+X-Gm-Features: Ac12FXz3zKouUq1RGz_ibmj_qkiKm2C6OltBEmZ1_YCX4xaOcj7QnZw62n6NeT0
+Message-ID: <CAAfSe-sQ9fCLR1ixhhJA0=U1EVLX=KiutieL9_rVTO0A_w144A@mail.gmail.com>
+Subject: Re: [PATCH V8 0/3] riscv: mm: Add soft-dirty and uffd-wp support
+To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-riscv@lists.infradead.org, 
+	Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-"Benno Lossin" <lossin@kernel.org> writes:
-
-> On Wed Jun 18, 2025 at 11:34 AM CEST, Oliver Mangold wrote:
->> On 250514 1132, Benno Lossin wrote:
->>> On Fri May 2, 2025 at 11:02 AM CEST, Oliver Mangold wrote:
->>>
->>> > +/// - That the C code follows the usual mutable reference requirements. That is, the kernel will
->>> > +///   never mutate the [`Ownable`] (excluding internal mutability that follows the usual rules)
->>> > +///   while Rust owns it.
->>>
->>> I feel like this requirement is better put on the `Owned::from_raw`
->>> function.
->>
->> Thinking about it some more, the problem I see here is that if the type
->> implements `OwnableMut` this requirement changes from "never mutate" to
->> "never access at all".
->>
->> The safety requirements between `Ownable`, `OwnableMut`, `RefCounted`,
->> `OwnableRefCounted` and `AlwaysRefCounted` are interacting, but I agree
->> that, when looking at it a certain way, `Owned::from_raw()` is the place
->> where one would expect these to be. I'm not sure anymore what is best here
->> :/
+On Thu, 19 Jun 2025 at 15:27, Chunyan Zhang <zhangchunyan@iscas.ac.cn> wrote:
 >
-> I still think `Owned::from_raw` is the correct place to put this.
+> This patchset adds Svrsw60t59b [1] extension support, also soft dirty and userfaultfd
+> write protect tracking for RISC-V.
 >
->>
->>> > +pub unsafe trait OwnableMut: Ownable {}
->>>
->>> I don't like the name, but at the same time I also have no good
->>> suggestion :( I'll think some more about it.
->>
->> There was already a bit of discussion about it. I had my own implementation of this
->> where I used the names `UniqueRefCounted` and `UniqueRef`, but after discovering
->> this version from Asahi Lina, I took it as it was, keeping the name.
->>
->> No one else came up with different suggestions so far, so maybe we should just leave it
->> at `Owned`/`Ownable`?
+> This patchset has been tested with kselftest mm suite in which soft-dirty,
+> madv_populate, test_unmerge_uffd_wp, and uffd-unit-tests run and pass,
+> and no regressions are observed in any of the other tests.
 >
-> I'm just hung up on the `Mut` part... Haven't come up with a good
-> replacement yet.
 
-What do you dislike about the xxxxMut pattern?
+I also tried CRIU below functions and they can work fine with this patch:
 
+- 'criu check --feature mem_dirty_track' returns supported
+- The incremental_dumps works fine (https://www.criu.org/Incremental_dumps)
 
-Best regards,
-Andreas Hindborg
-
-
-
+> This patchset applies on top of v6.16-rc1.
+>
+> V8:
+> - Rebase on v6.16-rc1;
+> - Add dependencies to MMU && 64BIT for RISCV_ISA_SVRSW60T59B;
+> - Use 'Svrsw60t59b' instead of 'SVRSW60T59B' in Kconfig help paragraph;
+> - Add Alex's Reviewed-by tag in patch 1.
+>
+> V7: (https://lore.kernel.org/all/20250409095320.224100-1-zhangchunyan@iscas.ac.cn/)
+> - Add Svrsw60t59b [1] extension support;
+> - Have soft-dirty and uffd-wp depending on the Svrsw60t59b extension to
+>   avoid crashes for the hardware which don't have this extension.
+>
+> V6:
+> - Changes to use bits 59-60 which are supported by extension Svrsw60t59b
+>   for soft dirty and userfaultfd write protect tracking.
+>
+> V5:
+> - Fixed typos and corrected some words in Kconfig and commit message;
+> - Removed pte_wrprotect() from pte_swp_mkuffd_wp(), this is a copy-paste
+>   error;
+> - Added Alex's Reviewed-by tag in patch 2.
+>
+> V4:
+> - Added bit(4) descriptions into "Format of swap PTE".
+>
+> V3:
+> - Fixed the issue reported by kernel test irobot <lkp@intel.com>.
+>
+> V1 -> V2:
+> - Add uffd-wp supported;
+> - Make soft-dirty uffd-wp and devmap mutually exclusive which all use
+>   the same PTE bit;
+> - Add test results of CRIU in the cover-letter.
+>
+> [1] https://github.com/riscv/Svrsw60t59b.git
+>
+> Chunyan Zhang (3):
+>   riscv: Add RISC-V Svrsw60t59b extension support
+>   riscv: mm: Add soft-dirty page tracking support
+>   riscv: mm: Add uffd write-protect support
+>
+>  arch/riscv/Kconfig                    |  16 +++
+>  arch/riscv/include/asm/hwcap.h        |   1 +
+>  arch/riscv/include/asm/pgtable-bits.h |  37 +++++++
+>  arch/riscv/include/asm/pgtable.h      | 136 +++++++++++++++++++++++++-
+>  arch/riscv/kernel/cpufeature.c        |   1 +
+>  5 files changed, 189 insertions(+), 2 deletions(-)
+>
+> --
+> 2.34.1
+>
 
