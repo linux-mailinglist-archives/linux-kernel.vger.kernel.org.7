@@ -1,117 +1,212 @@
-Return-Path: <linux-kernel+bounces-693320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA12ADFDA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:31:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD14ADFE7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64BB417AD7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:31:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0DF117686C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396AA246BDE;
-	Thu, 19 Jun 2025 06:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA0725229E;
+	Thu, 19 Jun 2025 07:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qwqYusp0"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b="QxCNY5sL"
+Received: from www522.your-server.de (www522.your-server.de [195.201.215.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3770C24167D;
-	Thu, 19 Jun 2025 06:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FAF248F6D;
+	Thu, 19 Jun 2025 07:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.215.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750314659; cv=none; b=fXCQefY0J94V3SIHJHiMDrItOgJkoVotHvcc/mBLyCdk6X3PY/sUUJvyVWvpSK2GYTDuwPhDjcqWICLA7tEChV5ZEUr5N+oNvncjSn92KsT5WInufyeVioKFYEzxc9GSxZPgliG2tE1Y6Zns7T+uFWrI9v2syUII2WMQooQ1gWE=
+	t=1750317275; cv=none; b=cW362/4xM3cg+TU1UESXHbo8tJnc+GSelw5JmM+auAVTEn7HOO87NBWr9O+Fzmv88cHYvC8HV+SeFYYIwvVDWVCEjGeWSx7stKgl13FxtzUPjCftUanBJ2wyTwmfoWZFok8GbpsRdEkVdXRVy+RiCwnb55PvTSmArf+yQTyRGRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750314659; c=relaxed/simple;
-	bh=XDYDVp3L62GmYM44274ZD7YPQjqg6i8tsN/XhAKJp6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=uO+KXWssGVXP6OqVBeZFzhKBXXQDN/YvH/eQ42YMWzab9LuaW98xRYvrQDrlZ8KQFvF34DMo8kxtpwgz09m/JgS7X9sba1t9Ey7BUihG5XJY38pc2729SmAiZGRCo2Tr28Lgl9j96XToiAzyfo7CwajTL5u08MiF8sxH5pRCY6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qwqYusp0; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1750314643;
-	bh=2wLPpUxm1cNGWwH16bxL9usJa/D5UKwe4i2r7lgYJHE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qwqYusp0jj7V35sJ+YgzQfzJSSavjp+inBbmu+n5hKLCIt0r81+gnfXs/pE+N6Iid
-	 HmUubge7UlCrQUUE7WRe01I/9wAwx0HXzTEqG2Hm9niRu0DmgjxYTsOaskGRhk/jUj
-	 nS5p/ZY62UtT7iHOvCvBLUFU+4o8/gtzKhgv6PSyVEiMXParpaOVPELlosKVcnY2MT
-	 XEAlHKQN+gyYVt6edd7xLRyjNvAYYyC/jn1q9wQOp1bPbb87fB5Ykzh8xeq30qnxBl
-	 txN/BBpszWQcGMlTAfLBnaWyyKEK15UbzX/hI24bzs1TaHY9isnzJAefXHVXjWZ6er
-	 6edkcr0ZshE+w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bN9hz0Mmxz4x8y;
-	Thu, 19 Jun 2025 16:30:42 +1000 (AEST)
-Date: Thu, 19 Jun 2025 16:30:41 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>
-Cc: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Jason Gunthorpe
- <jgg@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
- <linux@weissschuh.net>
-Subject: linux-next: manual merge of the driver-core tree with the rdma tree
-Message-ID: <20250619163041.7e4f9c96@canb.auug.org.au>
+	s=arc-20240116; t=1750317275; c=relaxed/simple;
+	bh=jH71zs3LfWkKnteZsD2czE+b35841PmPNpLX/e68fuE=;
+	h=Message-Id:Cc:To:From:Date:Subject; b=S0ZVt9jR0gfQkhJyoIfrY7lKNIuHgJrx2AOm49n9yR+kJgS4/DL5QtYKG30bBZ+XeOAF5T8jUOgYs6g1yrr218JHRUk2QgwB0ZWIa71XIf54tAEAh2SetfMnoH22TV/38PdPvSWRhhhV0DJIzDca4P2J/5thGJizWpLJj3h27eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de; spf=pass smtp.mailfrom=folker-schwesinger.de; dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b=QxCNY5sL; arc=none smtp.client-ip=195.201.215.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=folker-schwesinger.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=folker-schwesinger.de; s=default2212; h=Subject:Date:From:To:Cc:Message-Id:
+	Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References;
+	bh=eNmGhx6R0M+QxE1a3W/1Hlcq5xEj9nhVFRfzWvErvmQ=; b=QxCNY5sLajg3zF6IR5NcXZxP4L
+	aIiEzqPLqA0XCcl8t0RDZkM0nwafrHNkVT7CKf2Q7gZIwIFxGq+eMlx7jSXNk4OlBLxsiQ5woEyaZ
+	qxu1R6L8kthAzg1i/2xDEp5r8jYpeIDEi79KHiUrAxQws/ELtKTYtVo6kfedT7XLpMTT6Mzc1WiBo
+	Nx+fUvLwFZbTH8ng6//9Kgnm85NjXjeqOCwQlfhKLaaInVJrizkeNO8+3H9P7jx1LmD15hawpZHSy
+	i0KxpYwImnLTRE7pNWviaI76Hdwrq58AzXdxoLvOvs4p8rgVpUf66LYTTnNb2oNkKKPcuh1JhSIUk
+	4SxjLI0g==;
+Received: from sslproxy04.your-server.de ([78.46.152.42])
+	by www522.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <dev@folker-schwesinger.de>)
+	id 1uS97m-000BbN-0a;
+	Thu, 19 Jun 2025 08:51:50 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <dev@folker-schwesinger.de>)
+	id 1uS97k-00026S-3C;
+	Thu, 19 Jun 2025 08:51:49 +0200
+Message-Id: <DAQB7EU7UXR3.Z07Q6JQ1V67Y@folker-schwesinger.de>
+Cc: "Vinod Koul" <vkoul@kernel.org>, "Michal Simek" <michal.simek@amd.com>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Manivannan Sadhasivam"
+ <manivannan.sadhasivam@linaro.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@linaro.org>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@baylibre.com>, "Marek Vasut" <marex@denx.de>, "Radhey
+ Shyam Pandey" <radhey.shyam.pandey@amd.com>
+To: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>
+From: "Folker Schwesinger" <dev@folker-schwesinger.de>
+Date: Thu, 19 Jun 2025 08:32:58 +0200
+Subject: [PATCH v2] dmaengine: xilinx_dma: Support descriptor setup from
+ dma_vecs
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27673/Wed Jun 18 11:48:55 2025)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ZMyv+xMeANeLTptnJTxTJtH";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/ZMyv+xMeANeLTptnJTxTJtH
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The DMAEngine provides an interface for obtaining DMA transaction
+descriptors from an array of scatter gather buffers represented by
+struct dma_vec. This interface is used in the DMABUF API of the IIO
+framework [1].
+To enable DMABUF support through the IIO framework for the Xilinx DMA,
+implement callback .device_prep_peripheral_dma_vec() of struct
+dma_device in the driver.
 
-Hi all,
+[1]: https://elixir.bootlin.com/linux/v6.16-rc1/source/drivers/iio/buffer/industrialio-buffer-dmaengine.c#L104
 
-Today's linux-next merge of the driver-core tree got a conflict in:
+Signed-off-by: Folker Schwesinger <dev@folker-schwesinger.de>
 
-  drivers/infiniband/hw/qib/qib_sysfs.c
+---
+Changes in v2:
+- Improve commit message to include reasoning behind the change.
+- Rebase onto v6.16-rc1.
+- Link to v1: https://lore.kernel.org/dmaengine/D8TV2MP99NTE.1842MMA04VB9N@folker-schwesinger.de/
+---
+ drivers/dma/xilinx/xilinx_dma.c | 94 +++++++++++++++++++++++++++++++++
+ 1 file changed, 94 insertions(+)
 
-between commit:
+diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+index a34d8f0ceed8..fabff602065f 100644
+--- a/drivers/dma/xilinx/xilinx_dma.c
++++ b/drivers/dma/xilinx/xilinx_dma.c
+@@ -2172,6 +2172,99 @@ xilinx_cdma_prep_memcpy(struct dma_chan *dchan, dma_addr_t dma_dst,
+ 	return NULL;
+ }
+ 
++/**
++ * xilinx_dma_prep_peripheral_dma_vec - prepare descriptors for a DMA_SLAVE
++ *	transaction from DMA vectors
++ * @dchan: DMA channel
++ * @vecs: Array of DMA vectors that should be transferred
++ * @nb: number of entries in @vecs
++ * @direction: DMA direction
++ * @flags: transfer ack flags
++ *
++ * Return: Async transaction descriptor on success and NULL on failure
++ */
++static struct dma_async_tx_descriptor *xilinx_dma_prep_peripheral_dma_vec(
++	struct dma_chan *dchan, const struct dma_vec *vecs, size_t nb,
++	enum dma_transfer_direction direction, unsigned long flags)
++{
++	struct xilinx_dma_chan *chan = to_xilinx_chan(dchan);
++	struct xilinx_dma_tx_descriptor *desc;
++	struct xilinx_axidma_tx_segment *segment, *head, *prev = NULL;
++	size_t copy;
++	size_t sg_used;
++	unsigned int i;
++
++	if (!is_slave_direction(direction) || direction != chan->direction)
++		return NULL;
++
++	desc = xilinx_dma_alloc_tx_descriptor(chan);
++	if (!desc)
++		return NULL;
++
++	dma_async_tx_descriptor_init(&desc->async_tx, &chan->common);
++	desc->async_tx.tx_submit = xilinx_dma_tx_submit;
++
++	/* Build transactions using information from DMA vectors */
++	for (i = 0; i < nb; i++) {
++		sg_used = 0;
++
++		/* Loop until the entire dma_vec entry is used */
++		while (sg_used < vecs[i].len) {
++			struct xilinx_axidma_desc_hw *hw;
++
++			/* Get a free segment */
++			segment = xilinx_axidma_alloc_tx_segment(chan);
++			if (!segment)
++				goto error;
++
++			/*
++			 * Calculate the maximum number of bytes to transfer,
++			 * making sure it is less than the hw limit
++			 */
++			copy = xilinx_dma_calc_copysize(chan, vecs[i].len,
++					sg_used);
++			hw = &segment->hw;
++
++			/* Fill in the descriptor */
++			xilinx_axidma_buf(chan, hw, vecs[i].addr, sg_used, 0);
++			hw->control = copy;
++
++			if (prev)
++				prev->hw.next_desc = segment->phys;
++
++			prev = segment;
++			sg_used += copy;
++
++			/*
++			 * Insert the segment into the descriptor segments
++			 * list.
++			 */
++			list_add_tail(&segment->node, &desc->segments);
++		}
++	}
++
++	head = list_first_entry(&desc->segments, struct xilinx_axidma_tx_segment, node);
++	desc->async_tx.phys = head->phys;
++
++	/* For the last DMA_MEM_TO_DEV transfer, set EOP */
++	if (chan->direction == DMA_MEM_TO_DEV) {
++		segment->hw.control |= XILINX_DMA_BD_SOP;
++		segment = list_last_entry(&desc->segments,
++					  struct xilinx_axidma_tx_segment,
++					  node);
++		segment->hw.control |= XILINX_DMA_BD_EOP;
++	}
++
++	if (chan->xdev->has_axistream_connected)
++		desc->async_tx.metadata_ops = &xilinx_dma_metadata_ops;
++
++	return &desc->async_tx;
++
++error:
++	xilinx_dma_free_tx_descriptor(chan, desc);
++	return NULL;
++}
++
+ /**
+  * xilinx_dma_prep_slave_sg - prepare descriptors for a DMA_SLAVE transaction
+  * @dchan: DMA channel
+@@ -3180,6 +3273,7 @@ static int xilinx_dma_probe(struct platform_device *pdev)
+ 	xdev->common.device_config = xilinx_dma_device_config;
+ 	if (xdev->dma_config->dmatype == XDMA_TYPE_AXIDMA) {
+ 		dma_cap_set(DMA_CYCLIC, xdev->common.cap_mask);
++		xdev->common.device_prep_peripheral_dma_vec = xilinx_dma_prep_peripheral_dma_vec;
+ 		xdev->common.device_prep_slave_sg = xilinx_dma_prep_slave_sg;
+ 		xdev->common.device_prep_dma_cyclic =
+ 					  xilinx_dma_prep_dma_cyclic;
 
-  24baad32b710 ("RDMA/qib: Remove outdated driver")
-
-from the rdma tree and commit:
-
-  fb506e31b3d5 ("sysfs: treewide: switch back to attribute_group::bin_attrs=
-")
-
-from the driver-core tree.
-
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ZMyv+xMeANeLTptnJTxTJtH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhTrpEACgkQAVBC80lX
-0GyKBAf/flVo7J3UQo7cxnfxOw3AssIP+7vsKPLKXVczmfMQhXZgCD2BjgTviFp3
-+IGyy7abO09F6bttIh5nOqZnAwwiLOLGWzTiHMWJRm2qLBz2PqG/fLPZhX1OGTyp
-NMU5+SjreE5FbDAgMEJ5DmGfq0wXXO7gpEkYl4DzjdScTM09O5UV6iq9FR6yRsmc
-/tvXUty6ybhZX4Hk3i190Dw9ETBRrrnedEZvGz3ed+0HFgmBrUORV2XuzB/jC9eW
-V6KAFyTe66u91QhcexAqM7NTvwoIBdHY5br5IgSj5yjNHZVbydHoH5LvALELQ+6/
-rHwCk5OKGVxqgkV356Tb8sNYky0vIQ==
-=1/RR
------END PGP SIGNATURE-----
-
---Sig_/ZMyv+xMeANeLTptnJTxTJtH--
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+-- 
+2.49.0
 
