@@ -1,529 +1,330 @@
-Return-Path: <linux-kernel+bounces-694321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0C0AE0AC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:42:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BAC5AE0AA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 538703AF659
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CF1D3B1E28
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8951C242928;
-	Thu, 19 Jun 2025 15:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D81F2367CF;
+	Thu, 19 Jun 2025 15:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Slj00ywT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c+VRZvM1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D87231858;
-	Thu, 19 Jun 2025 15:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8C418024;
+	Thu, 19 Jun 2025 15:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750347730; cv=none; b=e9oBnlMLN+7NQnFlEtxe8ivibEUI0vWeNBW0lsyQBWNiZVtx1Lk5qhTjMi2DruJ06HFxldpJFCy9cgqrGsw+TUzx7NtcNZAHrmisLINzi8AB1wAiEy1S3kziaJvhnKFdGK9JWWZoPpmvyWboC1KQGL1hj/lKh7IMgx9+wI6bNyQ=
+	t=1750347513; cv=none; b=cQ5L5xXytI8N1I2KgxAV2s/eCCmbzn6UhV6kTANY4Z7MmSKP+ZLnt9BOjll7lIXsr/SUwXeQBhcYOK3tDJfAdAugu+PWfPSJTnaTKFSOsWb8cGmOsht7nBM3i00qwXnjC7/a8Co6KXC48HrI4NFhRL75bgdSHXI96dXoLx2ky2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750347730; c=relaxed/simple;
-	bh=oG2p1LhL/4bTJWFudY+RFWpGiCZCFCYaS0k1lXLmIHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hs0Tqjz4VAo419H3IgpnSaoSrftmA19hfFREdxRhLX2AZNQz5qF+LqnGn6v4vA0YpeY0K7kBsisOmG5mBBZ2ldyqoOrJ9hubg3o2i3quVhEGICC8dAwNGIPQVRHKeskdKQ8CSD02hFKiT79mvOz2GWm0xpPuJg4ubMKVAG0Alik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Slj00ywT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55JAbTwY009463;
-	Thu, 19 Jun 2025 15:37:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Iwn5EktbtkDuo5hAtUuchqFzuCRRgZeGBQOBDNAhu0Y=; b=Slj00ywTftsR2bfG
-	sW3tZabU3Qs/RUqQZrK1VW/vUNIeqisqFtmqNm62DGyebW7BpQPwq30YGBr7mLrO
-	HVAVcgZK0MFEKwIURPBGk3tqtAnbu3FcroWjFa3eInFcOfu6U9bpt7aw/UtAcYPq
-	t4vKw0z3md0+nOI0VsmrRmV4fKXAxNX8YsFINPNf0/orZMb+mzLKKPEexelHdUQ3
-	XuHDT3DQD6RQtv9AgUB+lKj61nki6JNjB2mOhCoMSO2mA+8BDUjFABWL4c/ph8J0
-	YReYGnj2MZ2QgcqWKt7j3F8LNdauwu+bbQWJQ4HJAOpdB7vGWH/zEjT+vvaE3//5
-	svy2nA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ag23cf3f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Jun 2025 15:37:47 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55JFbabH030408
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Jun 2025 15:37:36 GMT
-Received: from [10.216.44.69] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 19 Jun
- 2025 08:37:25 -0700
-Message-ID: <41b485ed-66cf-a220-01aa-392cc315d8a7@quicinc.com>
-Date: Thu, 19 Jun 2025 21:07:21 +0530
+	s=arc-20240116; t=1750347513; c=relaxed/simple;
+	bh=cemE3KPr09GBuAk4yA33g6zjJYuMfVRlqLTDeiEf3kU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AK6C6WqTBk2YG93FRHN8IUsXlRretSbtWdwcwaxmzV4c0RUPGUqedyPw8DGlWJOwjUNwYICKYT4hWbABV2roP3EzB2RinlHh8vKWjo/r1+Y99jb7bUGTMQsWzydUoOaBd+Yc4WUmlXD5Yk9NgXcqBgoE20GEt0iDGAdCOXhfPDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c+VRZvM1; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750347508; x=1781883508;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=cemE3KPr09GBuAk4yA33g6zjJYuMfVRlqLTDeiEf3kU=;
+  b=c+VRZvM1Us0ttWGzI9dafuy+wJvwFGaeu3BQiiVRdv1/g66VSJkMEFvR
+   paofVJkB2c7yf+yolfwcgRAaIk6RLzGo1PsSzzpTDJcCy4z4NbRkMM85l
+   FZZMDaD5Vhz30HsQX/DAJhKL82SXby+00+6OsCZdmsf63qFlIKAqSIAxV
+   uSa+Q/j9WQY/ilbDsfm5kAR9eJqNAzLnNe66IFQEhFubmZe7WujYSQ3Sl
+   6VkBvCJekGNyX45asu19gLpOw3jLlxTBwDeKn75I1gXe13W6o8AFjSt8P
+   0uqRJiP3mJEArXi7GAyOSMdi+KYdMqpnJqtSiKyUN4I1SzRTZFvC/aY0f
+   Q==;
+X-CSE-ConnectionGUID: 6J0Q959QQP+eQQdvK5RGfQ==
+X-CSE-MsgGUID: PDCaEvJCQOmUGzcjHs2VIQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="56425674"
+X-IronPort-AV: E=Sophos;i="6.16,249,1744095600"; 
+   d="scan'208";a="56425674"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 08:38:17 -0700
+X-CSE-ConnectionGUID: xl3ttfQLSL6jMsqtEydclw==
+X-CSE-MsgGUID: 9w88Gj9+Qi+FwjFKM2De2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,249,1744095600"; 
+   d="scan'208";a="150115355"
+Received: from p12ill20yoongsia.png.intel.com ([10.88.227.38])
+  by orviesa010.jf.intel.com with ESMTP; 19 Jun 2025 08:38:11 -0700
+From: Song Yoong Siang <yoong.siang.song@intel.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Shinas Rasheed <srasheed@marvell.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Brett Creeley <brett.creeley@amd.com>,
+	Blanco Alcaine Hector <hector.blanco.alcaine@intel.com>,
+	Joshua Hay <joshua.a.hay@intel.com>,
+	Sasha Neftin <sasha.neftin@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Kurt Kanzenbach <kurt@linutronix.de>,
+	Wojciech Drewek <wojciech.drewek@intel.com>,
+	Marcin Szycik <marcin.szycik@linux.intel.com>
+Cc: intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH iwl-next,v2 1/1] igc: Add wildcard rule support to ethtool NFC using Default Queue
+Date: Thu, 19 Jun 2025 23:37:38 +0800
+Message-Id: <20250619153738.2788568-1-yoong.siang.song@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v9 2/5] firmware: psci: Read and use vendor reset types
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Mukesh Ojha
-	<mukesh.ojha@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Andy Yan
-	<andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Bartosz
- Golaszewski" <bartosz.golaszewski@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <cros-qcom-dts-watchers@chromium.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Srinivas Kandagatla
-	<srinivas.kandagatla@linaro.org>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Florian Fainelli
-	<florian.fainelli@broadcom.com>,
-        Stephen Boyd <swboyd@chromium.org>, <linux-pm@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, Elliot Berman
-	<elliotb317@gmail.com>,
-        <quic_spratap@qucinc.com>, <quic_kaushalk@qucinc.com>
-References: <20250303-arm-psci-system_reset2-vendor-reboots-v9-0-b2cf4a20feda@oss.qualcomm.com>
- <20250303-arm-psci-system_reset2-vendor-reboots-v9-2-b2cf4a20feda@oss.qualcomm.com>
- <Z9QQw6BcE7IXzu+r@lpieralisi> <Z+K3uNjTNbq3pUis@hu-mojha-hyd.qualcomm.com>
- <Z/U95G+2GsoLD6Mi@lpieralisi>
- <973eaca7-0632-53d8-f892-fe4d859ebbac@quicinc.com>
- <Z/+dGLAGXpf9bX7G@lpieralisi>
- <e96e315c-69fb-bc7e-5d07-06909344ff65@quicinc.com>
- <rz7tnl5gg73gtyij3kmwk6hubikfsvu3krekjkpoofpdio6cwe@innio7qvotye>
- <d3e4417a-66cd-4e6e-590f-7a0e2bcfc0e6@quicinc.com>
- <775e4f46-32c2-406f-a47d-8c2b1f607e1a@oss.qualcomm.com>
- <c0cbfdc2-4ec9-db81-422f-bc686c8de4d3@quicinc.com>
- <CAO9ioeVOwjpSJ37Z-mMUn2tsc9b6J=OEMhrK74OMf-BpriB8-g@mail.gmail.com>
-Content-Language: en-US
-From: Shivendra Pratap <quic_spratap@quicinc.com>
-In-Reply-To: <CAO9ioeVOwjpSJ37Z-mMUn2tsc9b6J=OEMhrK74OMf-BpriB8-g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _fmYP29i-F2DKb-bN1TsKbZmiDk-MdZ1
-X-Authority-Analysis: v=2.4 cv=edY9f6EH c=1 sm=1 tr=0 ts=68542ecc cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=GcyzOjIWAAAA:8
- a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=kpUrTMeWBs2LY39yed4A:9 a=QEXdDO2ut3YA:10
- a=dtxw0mqMjrQA:10 a=hQL3dl6oAZ8NdCsdz28n:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE5MDEyOSBTYWx0ZWRfX7Ir853DEW0Fj
- 1OV87HDe8WQRzZpCrrZCKf04dpHVpC5rwJOFeDKmsmphftXRCCdrxydMaoollDTIPCu7gm4PJQu
- 1P9KB55XDd+LiRWiHR2svqtYl/Mzq7IZf3g2Cjrb3AoG4Dyj5FPv7PI0ANxGTyBgmPf8hqXZEOc
- bsFpywv6wL8hnEblYnNOM5uZsvGzWbCT9PkKTBVx1wB2kAks3uNBcUurC9A92lp53fJsWq6laC7
- Eb68E8BfRV5TMH8zPLo2mDxVd21+pnpMC6Xy07xTUHEpszK9v7dPY/6zKUrBnfeok0rMtIwUDul
- F5hGZbGPRG256Uo/ekv2xFDD8hIOF06aK3u0Hwh1sU4mhNwgXyrM5sVvkCXcHEiWONTrm5wktYt
- VhAx/Sum92M9un8+NOvXLEuu+V+A+xjKeICZNQQMJ5rECGfpbUhHV76CyXr/6dbeego2FjuH
-X-Proofpoint-GUID: _fmYP29i-F2DKb-bN1TsKbZmiDk-MdZ1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-19_06,2025-06-18_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 spamscore=0 bulkscore=0
- impostorscore=0 mlxscore=0 clxscore=1015 mlxlogscore=999 malwarescore=0
- phishscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506190129
+Content-Transfer-Encoding: 8bit
 
+Introduce support for a lowest priority wildcard (catch-all) rule in
+ethtool's Network Flow Classification (NFC) for the igc driver. The
+wildcard rule directs all unmatched network traffic, including traffic not
+captured by Receive Side Scaling (RSS), to a specified queue. This
+functionality utilizes the Default Queue feature available in I225/I226
+hardware.
 
+The implementation has been validated on Intel ADL-S systems with two
+back-to-back connected I226 network interfaces.
 
-On 6/19/2025 7:46 PM, Dmitry Baryshkov wrote:
-> On Thu, 19 Jun 2025 at 15:32, Shivendra Pratap <quic_spratap@quicinc.com> wrote:
->>
->>
->>
->> On 6/19/2025 4:34 PM, Dmitry Baryshkov wrote:
->>> On 19/06/2025 12:00, Shivendra Pratap wrote:
->>>>
->>>>
->>>> On 6/18/2025 6:44 PM, Dmitry Baryshkov wrote:
->>>>> On Tue, May 06, 2025 at 11:03:55PM +0530, Shivendra Pratap wrote:
->>>>>>
->>>>>>
->>>>>> On 4/16/2025 5:35 PM, Lorenzo Pieralisi wrote:
->>>>>>> On Wed, Apr 09, 2025 at 11:48:24PM +0530, Shivendra Pratap wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> On 4/8/2025 8:46 PM, Lorenzo Pieralisi wrote:
->>>>>>>>> On Tue, Mar 25, 2025 at 07:33:36PM +0530, Mukesh Ojha wrote:
->>>>>>>>>> On Fri, Mar 14, 2025 at 12:19:31PM +0100, Lorenzo Pieralisi wrote:
->>>>>>>>>>> On Mon, Mar 03, 2025 at 01:08:31PM -0800, Elliot Berman wrote:
->>>>>>>>>>>> From: Elliot Berman <elliot.berman@oss.qualcomm.com>
->>>>>>>>>>>>
->>>>>>>>>>>> SoC vendors have different types of resets and are controlled through
->>>>>>>>>>>> various registers. For instance, Qualcomm chipsets can reboot to a
->>>>>>>>>>>> "download mode" that allows a RAM dump to be collected. Another example
->>>>>>>>>>>> is they also support writing a cookie that can be read by bootloader
->>>>>>>>>>>> during next boot. PSCI offers a mechanism, SYSTEM_RESET2, for these
->>>>>>>>>>>> vendor reset types to be implemented without requiring drivers for every
->>>>>>>>>>>> register/cookie.
->>>>>>>>>>>>
->>>>>>>>>>>> Add support in PSCI to statically map reboot mode commands from
->>>>>>>>>>>> userspace to a vendor reset and cookie value using the device tree.
->>>>>>>>>>>
->>>>>>>>>>> I have managed to discuss a little bit this patchset over the last
->>>>>>>>>>> few days and I think we have defined a plan going forward.
->>>>>>>>>>>
->>>>>>>>>>> A point that was raised is:
->>>>>>>>>>>
->>>>>>>>>>> https://man7.org/linux/man-pages/man2/reboot.2.html
->>>>>>>>>>>
->>>>>>>>>>> LINUX_REBOOT_CMD_RESTART2 *arg command, what is it supposed to
->>>>>>>>>>> represent ?
->>>>>>>>>>>
->>>>>>>>>>> Is it the mode the system should reboot into OR it is the
->>>>>>>>>>> actual command to be issued (which is what this patchset
->>>>>>>>>>> implements) ?
->>>>>>>>>>>
->>>>>>>>>>> LINUX_REBOOT_CMD_RESTART "..a default restart..."
->>>>>>>>>>>
->>>>>>>>>>> It is unclear what "default" means. We wonder whether the
->>>>>>>>>>> reboot_mode variable was introduced to _define_ that "default".
->>>>>>>>>>>
->>>>>>>>>>> So, in short, my aim is trying to decouple reboot_mode from the
->>>>>>>>>>> LINUX_REBOOT_CMD_RESTART2 *arg command.
->>>>>>>>>>>
->>>>>>>>>>> I believe that adding a sysfs interface to reboot-mode driver
->>>>>>>>>>> infrastructure would be useful, so that the commands would
->>>>>>>>>>> be exposed to userspace and userspace can set the *arg command
->>>>>>>>>>> specifically to issue a given reset/mode.
->>>>>>>>>>>
->>>>>>>>>>> I wonder why this is not already in place for eg syscon-reboot-mode
->>>>>>>>>>> resets, how does user space issue a command in those systems if the
->>>>>>>>>>> available commands aren't exposed to userspace ?
->>>>>>>>>>>
->>>>>>>>>>> Is there a kernel entity exposing those "modes" to userspace, somehow ?
->>>>>>>>>>>
->>>>>>>>>>>> A separate initcall is needed to parse the devicetree, instead of using
->>>>>>>>>>>> psci_dt_init because mm isn't sufficiently set up to allocate memory.
->>>>>>>>>>>>
->>>>>>>>>>>> Reboot mode framework is close but doesn't quite fit with the
->>>>>>>>>>>> design and requirements for PSCI SYSTEM_RESET2. Some of these issues can
->>>>>>>>>>>> be solved but doesn't seem reasonable in sum:
->>>>>>>>>>>>   1. reboot mode registers against the reboot_notifier_list, which is too
->>>>>>>>>>>>      early to call SYSTEM_RESET2. PSCI would need to remember the reset
->>>>>>>>>>>>      type from the reboot-mode framework callback and use it
->>>>>>>>>>>>      psci_sys_reset.
->>>>>>>>>>>>   2. reboot mode assumes only one cookie/parameter is described in the
->>>>>>>>>>>>      device tree. SYSTEM_RESET2 uses 2: one for the type and one for
->>>>>>>>>>>>      cookie.
->>>>>>>>>>>
->>>>>>>>>>> This can be changed and I think it should, so that the reboot modes
->>>>>>>>>>> are exposed to user space and PSCI can use that.
->>>>>>>>>>>
->>>>>>>>>> In the case of a regular reboot or panic, the reboot/panic notifiers run
->>>>>>>>>> first, followed by the restart notifiers. The PSCI reset/reset2 should
->>>>>>>>>> be the last call from Linux, and ideally, this call should not fail.
->>>>>>>>>>
->>>>>>>>>> Reboot mode notifiers => restart notifiers or Panic notifiers => restart
->>>>>>>>>> notifiers
->>>>>>>>>>
->>>>>>>>>> So, if I understand correctly, you mean that we can change the reboot
->>>>>>>>>> mode framework to expose the arguments available to user space. We can
->>>>>>>>>> extend it to accept magic and cookies, save them in the reboot
->>>>>>>>>> framework, and retrieve them via a call from PSCI during a regular
->>>>>>>>>> reboot or panic based on the current arguments. Is this leading towards
->>>>>>>>>> writing an ARM-specific PSCI-reboot-mode driver, which in its reboot
->>>>>>>>>> notifier callback saves the magic and cookies, and these magic and
->>>>>>>>>> cookies will be used during psci_sys_reset2()? Or is there something
->>>>>>>>>> wrong with my understanding?
->>>>>>>>>
->>>>>>>>> No, you got it right (apologies for the delay in replying) - if the
->>>>>>>>> case for making reboot mode available to user space is accepted.
->>>>>>>>>
->>>>>> While moving this into reboot-mode framework, one more query came up.
->>>>>> The "ARM-specific PSCI-reboot-mode driver" that we are going to write needs
->>>>>> to be a Platform device driver for using reboot-mode framework.
->>>>>
->>>>> No, it doesn't. It rqeuires struct device, but there is no requirement
->>>>> for struct platform_device at any place.
->>>> yes, it can be struct device so may be create a virtual device
->>>> using reset-type node?
->>>
->>> It can be created, but I don't see a strong need for it.
->>>
->>>>>
->>>>>> As psci is not a platform device driver, a subdevice under it may not probe as a
->>>>>> platform driver. Is it ok to implement the "PSCI-reboot-mode driver" as a
->>>>>> early_initcall("psci_xyz") and then create a platform device something as
->>>>>> below or any other suggestions for this?
->>>>>
->>>>> Change struct reboot_mode_driver to pass corresponding of_node (or
->>>>> better fwnode) directly.  Corresponding device is used only in the
->>>>> reboot_mode_register() and only to access of-node or to print error
->>>>> messages.
->>>> struct reboot_mode_driver can be changed just to pass of_node. But then the other
->>>> suggestion was to expose sysfs from reboot-mode to show available commands.
->>>> For that we need a device. Any suggestion? A virtual device with reset-types node
->>>> passed to reboot-mode framework looks fine?
->>>
->>> You still don't need it. You'll create a new device, belonging to the new 'reboot' or 'reset' class to hold corresponding attributes.
->> just understand this - So the reboot-mode framework will create a new class
->> and a device and expose the supported commands?
-> 
-> Yes. Otherwise how would you create a vendor-independent userspace API?
-Ack. thanks.
-> 
->>>
->>>>>
->>>>>>
->>>>>> power:reset:<psci-vendor-reset-driver>:
->>>>>> -----
->>>>>> static int __init psci_vendor_reset_init(void) {
->>>>>> ..
->>>>>> ..
->>>>>>     np = of_find_node_by_name(NULL, "psci-vendor-reset");
->>>>>>     if(!np)
->>>>>>         return -ENODEV;
->>>>>>     pdev = of_platform_device_create(np, "psci-vendor-reset", NULL);
->>>>>> ..
->>>>>> ..
->>>>>> }
->>>>>> -------
->>>>>>
->>>>>> the sysfs we will expose from reboot-mode may show like below in above
->>>>>> implementation:
->>>>>>
->>>>>> ######
->>>>>> / # cat ./sys/devices/platform/psci-vendor-reset/available_modes
->>>>>> bootloader edl
->>>>>> ######
->>>>>>
->>>>>> thanks,
->>>>>> Shivendra
->>>>>>
->>>>>>>>
->>>>>>>> Agree that the available modes should be exposed to usespace via sysfs interface
->>>>>>>> and we should implement it. Also #1 and #2 can be handled via some
->>>>>>>> changes in the design as mentioned in above discussion.
->>>>>>>>
->>>>>>>> I have one doubt though when we implement this via reboot-mode framework.
->>>>>>>> The current patch implements PSCI ARM PSCI SYSTEM RESET2 vendor reset types.
->>>>>>>> psci driver is initialized very early at boot but potential ARM psci reboot-mode
->>>>>>>> driver will not probe at that stage and the ARM PSCI SYSTEM RESET2 vendor reset
->>>>>>>> types functionality will not be available in psci reset path until the reboot-mode
->>>>>>>> driver probes. Will this cause any limitation on usage of ARM's PSCI vendor-reset
->>>>>>>> types for early device resets?
->>>>>>>>
->>>>>>>> One use-case may be an early device crash or a early reset where a vendor
->>>>>>>> wants to use PSCI SYSTEM RESET2 vendor reset type to a reset the device to a
->>>>>>>> specific state but may not be able to use this driver.
->>>>>>>> (eg: a kernel panic at early boot where a vendor wants to reset device
->>>>>>>> to a specific state using vendor reset. Currently panic passes a NULL
->>>>>>>> (*arg command) while device reset but it may be explored for vendor specific
->>>>>>>> reset).
->>>>>>>
->>>>>>> As you said, that would not be a PSCI only issue - *if* we wanted to
->>>>>>> plug in this use case we should find a way to do it at reboot mode
->>>>>>> driver level.
->>>>>>>
->>>>>>> As a matter of fact, this is not a mainline issue AFAICS.
->>>>>>>
->>>>>>> Even if we did not design this as a reboot mode driver there would be a
->>>>>>> time window where you would not be able to use vendor resets on panic.
->>>>>>>
->>>>>>> I don't see it as a major roadblock at the moment.
->>>>>> Got it.
->>>>>>>
->>>>>>> Thanks,
->>>>>>> Lorenzo
->>>>>>>
->>>>>>>>
->>>>>>>> - Shivendra
->>>>>>>>
->>>>>>>>>> P.S. We appreciate Elliot for his work and follow-up on this while being
->>>>>>>>>> employed at Qualcomm.
->>>>>>>>>
->>>>>>>>> Yes I sincerely do for his patience, thank you.
->>>>>>>>>
->>>>>>>>> Lorenzo
->>>>>>>>>
->>>>>>>>>>>>   3. psci cpuidle driver already registers a driver against the
->>>>>>>>>>>>      arm,psci-1.0 compatible. Refactoring would be needed to have both a
->>>>>>>>>>>>      cpuidle and reboot-mode driver.
->>>>>>>>>>>>
->>>>>>>>>>>> Signed-off-by: Elliot Berman <elliot.berman@oss.qualcomm.com>
->>>>>>>>>>>> ---
->>>>>>>>>>>>   drivers/firmware/psci/psci.c | 105 +++++++++++++++++++++++++++++++++++++++++++
->>>>>>>>>>>>   1 file changed, 105 insertions(+)
->>>>>>>>>>>>
->>>>>>>>>>>> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
->>>>>>>>>>>> index a1ebbe9b73b136218e9d9f9b8daa7756b3ab2fbe..6f8c47deaec0225f26704e1f3bcad52603127a85 100644
->>>>>>>>>>>> --- a/drivers/firmware/psci/psci.c
->>>>>>>>>>>> +++ b/drivers/firmware/psci/psci.c
->>>>>>>>>>>> @@ -80,6 +80,14 @@ static u32 psci_cpu_suspend_feature;
->>>>>>>>>>>>   static bool psci_system_reset2_supported;
->>>>>>>>>>>>   static bool psci_system_off2_hibernate_supported;
->>>>>>>>>>>>   +struct psci_reset_param {
->>>>>>>>>>>> +    const char *mode;
->>>>>>>>>>>> +    u32 reset_type;
->>>>>>>>>>>> +    u32 cookie;
->>>>>>>>>>>> +};
->>>>>>>>>>>> +static struct psci_reset_param *psci_reset_params __ro_after_init;
->>>>>>>>>>>> +static size_t num_psci_reset_params __ro_after_init;
->>>>>>>>>>>> +
->>>>>>>>>>>>   static inline bool psci_has_ext_power_state(void)
->>>>>>>>>>>>   {
->>>>>>>>>>>>       return psci_cpu_suspend_feature &
->>>>>>>>>>>> @@ -306,9 +314,39 @@ static int get_set_conduit_method(const struct device_node *np)
->>>>>>>>>>>>       return 0;
->>>>>>>>>>>>   }
->>>>>>>>>>>>   +static int psci_vendor_system_reset2(const char *cmd)
->>>>>>>>>>>> +{
->>>>>>>>>>>> +    unsigned long ret;
->>>>>>>>>>>> +    size_t i;
->>>>>>>>>>>> +
->>>>>>>>>>>> +    for (i = 0; i < num_psci_reset_params; i++) {
->>>>>>>>>>>> +        if (!strcmp(psci_reset_params[i].mode, cmd)) {
->>>>>>>>>>>> +            ret = invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2),
->>>>>>>>>>>> +                         psci_reset_params[i].reset_type,
->>>>>>>>>>>> +                         psci_reset_params[i].cookie, 0);
->>>>>>>>>>>> +            /*
->>>>>>>>>>>> +             * if vendor reset fails, log it and fall back to
->>>>>>>>>>>> +             * architecture reset types
->>>>>>>>>>>
->>>>>>>>>>> That's not what the code does.
->>>>>>>>>>>
->>>>>>>>>> Ack.
->>>>>>>>>>
->>>>>>>>>> -Mukesh
->>>>>>>>>>
->>>>>>>>>>>> +             */
->>>>>>>>>>>> +            pr_err("failed to perform reset \"%s\": %ld\n", cmd,
->>>>>>>>>>>> +                   (long)ret);
->>>>>>>>>>>> +            return 0;
->>>>>>>>>>>> +        }
->>>>>>>>>>>> +    }
->>>>>>>>>>>> +
->>>>>>>>>>>> +    return -ENOENT;
->>>>>>>>>>>> +}
->>>>>>>>>>>> +
->>>>>>>>>>>>   static int psci_sys_reset(struct notifier_block *nb, unsigned long action,
->>>>>>>>>>>>                 void *data)
->>>>>>>>>>>>   {
->>>>>>>>>>>> +    /*
->>>>>>>>>>>> +     * try to do the vendor system_reset2
->>>>>>>>>>>> +     * If there wasn't a matching command, fall back to architectural resets
->>>>>>>>>>>> +     */
->>>>>>>>>>>> +    if (data && !psci_vendor_system_reset2(data))
->>>>>>>>>>>> +        return NOTIFY_DONE;
->>>>>>>>>>>> +
->>>>>>>>>>>>       if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
->>>>>>>>>>>>           psci_system_reset2_supported) {
->>>>>>>>>>>>           /*
->>>>>>>>>>>> @@ -795,6 +833,73 @@ static const struct of_device_id psci_of_match[] __initconst = {
->>>>>>>>>>>>       {},
->>>>>>>>>>>>   };
->>>>>>>>>>>>   +#define REBOOT_PREFIX "mode-"
->>>>>>>>>>>> +
->>>>>>>>>>>> +static int __init psci_init_system_reset2_modes(void)
->>>>>>>>>>>> +{
->>>>>>>>>>>> +    const size_t len = strlen(REBOOT_PREFIX);
->>>>>>>>>>>> +    struct psci_reset_param *param;
->>>>>>>>>>>> +    struct device_node *psci_np __free(device_node) = NULL;
->>>>>>>>>>>> +    struct device_node *np __free(device_node) = NULL;
->>>>>>>>>>>> +    struct property *prop;
->>>>>>>>>>>> +    size_t count = 0;
->>>>>>>>>>>> +    u32 magic[2];
->>>>>>>>>>>> +    int num;
->>>>>>>>>>>> +
->>>>>>>>>>>> +    if (!psci_system_reset2_supported)
->>>>>>>>>>>> +        return 0;
->>>>>>>>>>>> +
->>>>>>>>>>>> +    psci_np = of_find_matching_node(NULL, psci_of_match);
->>>>>>>>>>>> +    if (!psci_np)
->>>>>>>>>>>> +        return 0;
->>>>>>>>>>>> +
->>>>>>>>>>>> +    np = of_find_node_by_name(psci_np, "reset-types");
->>>>>>>>>>>> +    if (!np)
->>>>>>>>>>>> +        return 0;
->>>>>>>>>>>
->>>>>>>>>>> Related to my initial question above. If LINUX_REBOOT_CMD_RESTART2 *arg command,
->>>>>>>>>>> is the actual reset to be issued, should we add a default mode "cold"
->>>>>>>>>>> and, if SYSTEM_RESET2 is supported, a "warm" reset mode too ?
->>>>>>>>>>>
->>>>>>>>>>> It all boils down to what *arg represents - adding "cold" and "warm"
->>>>>>>>>>> modes would remove the dependency on reboot_mode for resets issued
->>>>>>>>>>> through LINUX_REBOOT_CMD_RESTART2, the question is whether this
->>>>>>>>>>> is the correct thing to do.
->>>>>>>>>>>
->>>>>>>>>>> Comments very welcome.
->>>>>>>>>>>
->>>>>>>>>>> Thanks,
->>>>>>>>>>> Lorenzo
->>>>>>>>>>>
->>>>>>>>>>>> +
->>>>>>>>>>>> +    for_each_property_of_node(np, prop) {
->>>>>>>>>>>> +        if (strncmp(prop->name, REBOOT_PREFIX, len))
->>>>>>>>>>>> +            continue;
->>>>>>>>>>>> +        num = of_property_count_u32_elems(np, prop->name);
->>>>>>>>>>>> +        if (num != 1 && num != 2)
->>>>>>>>>>>> +            continue;
->>>>>>>>>>>> +
->>>>>>>>>>>> +        count++;
->>>>>>>>>>>> +    }
->>>>>>>>>>>> +
->>>>>>>>>>>> +    param = psci_reset_params =
->>>>>>>>>>>> +        kcalloc(count, sizeof(*psci_reset_params), GFP_KERNEL);
->>>>>>>>>>>> +    if (!psci_reset_params)
->>>>>>>>>>>> +        return -ENOMEM;
->>>>>>>>>>>> +
->>>>>>>>>>>> +    for_each_property_of_node(np, prop) {
->>>>>>>>>>>> +        if (strncmp(prop->name, REBOOT_PREFIX, len))
->>>>>>>>>>>> +            continue;
->>>>>>>>>>>> +
->>>>>>>>>>>> +        num = of_property_read_variable_u32_array(np, prop->name, magic,
->>>>>>>>>>>> +                              1, ARRAY_SIZE(magic));
->>>>>>>>>>>> +        if (num < 0) {
->>>>>>>>>>>> +            pr_warn("Failed to parse vendor reboot mode %s\n",
->>>>>>>>>>>> +                param->mode);
->>>>>>>>>>>> +            kfree_const(param->mode);
->>>>>>>>>>>> +            continue;
->>>>>>>>>>>> +        }
->>>>>>>>>>>> +
->>>>>>>>>>>> +        param->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
->>>>>>>>>>>> +        if (!param->mode)
->>>>>>>>>>>> +            continue;
->>>>>>>>>>>> +
->>>>>>>>>>>> +        /* Force reset type to be in vendor space */
->>>>>>>>>>>> +        param->reset_type = PSCI_1_1_RESET_TYPE_VENDOR_START | magic[0];
->>>>>>>>>>>> +        param->cookie = num > 1 ? magic[1] : 0;
->>>>>>>>>>>> +        param++;
->>>>>>>>>>>> +        num_psci_reset_params++;
->>>>>>>>>>>> +    }
->>>>>>>>>>>> +
->>>>>>>>>>>> +    return 0;
->>>>>>>>>>>> +}
->>>>>>>>>>>> +arch_initcall(psci_init_system_reset2_modes);
->>>>>>>>>>>> +
->>>>>>>>>>>>   int __init psci_dt_init(void)
->>>>>>>>>>>>   {
->>>>>>>>>>>>       struct device_node *np;
->>>>>>>>>>>>
->>>>>>>>>>>> --
->>>>>>>>>>>> 2.34.1
->>>>>>>>>>>>
->>>>>
->>>
->>>
-> 
-> 
-> 
+Testing Procedure:
+1. On the Device Under Test (DUT), verify the initial statistic:
+   $ ethtool -S enp1s0 | grep rx_q.*packets
+        rx_queue_0_packets: 0
+        rx_queue_1_packets: 0
+        rx_queue_2_packets: 0
+        rx_queue_3_packets: 0
+
+2. From the Link Partner, send 10 ARP packets:
+   $ arping -c 10 -I enp170s0 169.254.1.2
+
+3. On the DUT, verify the packet reception on Queue 0:
+   $ ethtool -S enp1s0 | grep rx_q.*packets
+        rx_queue_0_packets: 10
+        rx_queue_1_packets: 0
+        rx_queue_2_packets: 0
+        rx_queue_3_packets: 0
+
+4. On the DUT, add a wildcard rule to route all packets to Queue 3:
+   $ sudo ethtool -N enp1s0 flow-type ether queue 3
+
+5. From the Link Partner, send another 10 ARP packets:
+   $ arping -c 10 -I enp170s0 169.254.1.2
+
+6. Now, packets are routed to Queue 3 by the wildcard (Default Queue) rule:
+   $ ethtool -S enp1s0 | grep rx_q.*packets
+        rx_queue_0_packets: 10
+        rx_queue_1_packets: 0
+        rx_queue_2_packets: 0
+        rx_queue_3_packets: 10
+
+7. On the DUT, add a EtherType rule to route ARP packet to Queue 1:
+   $ sudo ethtool -N enp1s0 flow-type ether proto 0x0806 queue 1
+
+8. From the Link Partner, send another 10 ARP packets:
+   $ arping -c 10 -I enp170s0 169.254.1.2
+
+9. Now, packets are routed to Queue 1 by the EtherType rule because it is
+   higher priority than the wildcard (Default Queue) rule:
+   $ ethtool -S enp1s0 | grep rx_q.*packets
+        rx_queue_0_packets: 10
+        rx_queue_1_packets: 10
+        rx_queue_2_packets: 0
+        rx_queue_3_packets: 10
+
+10. On the DUT, delete all the NFC rules:
+    $ sudo ethtool -N enp1s0 delete 63
+    $ sudo ethtool -N enp1s0 delete 64
+
+11. From the Link Partner, send another 10 ARP packets:
+    $ arping -c 10 -I enp170s0 169.254.1.2
+
+12. Now, packets are routed to Queue 0 because the value of Default Queue
+    is reset back to 0:
+    $ ethtool -S enp1s0 | grep rx_q.*packets
+         rx_queue_0_packets: 20
+         rx_queue_1_packets: 10
+         rx_queue_2_packets: 0
+         rx_queue_3_packets: 10
+
+Co-developed-by: Blanco Alcaine Hector <hector.blanco.alcaine@intel.com>
+Signed-off-by: Blanco Alcaine Hector <hector.blanco.alcaine@intel.com>
+Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
+---
+V2:
+  - use Ethtool wildcard rule instead of extra uAPI (Jakub Kicinski & Jacob Keller)
+  - combine MRQC register definitions into a single location (Kurt Kanzenbach)
+  - use FIELD_PREP (Kurt Kanzenbach)
+  - use RCT rule (Wojciech Drewek)
+  - no need brackets for single line code (Wojciech Drewek)
+  - use imperative mood in commit message (Marcin Szycik)
+  - ensure igc_ prefix in function name (Marcin Szycik)
+
+V1: https://patchwork.ozlabs.org/project/intel-wired-lan/cover/20240730012212.775814-1-yoong.siang.song@intel.com/
+---
+ drivers/net/ethernet/intel/igc/igc.h         | 15 ++++++-------
+ drivers/net/ethernet/intel/igc/igc_defines.h |  4 ++++
+ drivers/net/ethernet/intel/igc/igc_ethtool.c | 18 ++++++++++++++++
+ drivers/net/ethernet/intel/igc/igc_main.c    | 22 ++++++++++++++++++++
+ 4 files changed, 52 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/intel/igc/igc.h
+index 1525ae25fd3e..c580ecc954be 100644
+--- a/drivers/net/ethernet/intel/igc/igc.h
++++ b/drivers/net/ethernet/intel/igc/igc.h
+@@ -406,10 +406,6 @@ extern char igc_driver_name[];
+ #define IGC_FLAG_RSS_FIELD_IPV4_UDP	BIT(6)
+ #define IGC_FLAG_RSS_FIELD_IPV6_UDP	BIT(7)
+ 
+-#define IGC_MRQC_ENABLE_RSS_MQ		0x00000002
+-#define IGC_MRQC_RSS_FIELD_IPV4_UDP	0x00400000
+-#define IGC_MRQC_RSS_FIELD_IPV6_UDP	0x00800000
+-
+ /* RX-desc Write-Back format RSS Type's */
+ enum igc_rss_type_num {
+ 	IGC_RSS_TYPE_NO_HASH		= 0,
+@@ -635,6 +631,7 @@ enum igc_filter_match_flags {
+ 	IGC_FILTER_FLAG_DST_MAC_ADDR =	BIT(3),
+ 	IGC_FILTER_FLAG_USER_DATA =	BIT(4),
+ 	IGC_FILTER_FLAG_VLAN_ETYPE =	BIT(5),
++	IGC_FILTER_FLAG_DEFAULT_QUEUE = BIT(6),
+ };
+ 
+ struct igc_nfc_filter {
+@@ -662,10 +659,14 @@ struct igc_nfc_rule {
+ 	bool flex;
+ };
+ 
+-/* IGC supports a total of 32 NFC rules: 16 MAC address based, 8 VLAN priority
+- * based, 8 ethertype based and 32 Flex filter based rules.
++/* IGC supports a total of 65 NFC rules, listed below in order of priority:
++ *  - 16 MAC address based filtering rules (highest priority)
++ *  - 8 ethertype based filtering rules
++ *  - 32 Flex filter based filtering rules
++ *  - 8 VLAN priority based filtering rules
++ *  - 1 default queue rule (lowest priority)
+  */
+-#define IGC_MAX_RXNFC_RULES		64
++#define IGC_MAX_RXNFC_RULES		65
+ 
+ struct igc_flex_filter {
+ 	u8 index;
+diff --git a/drivers/net/ethernet/intel/igc/igc_defines.h b/drivers/net/ethernet/intel/igc/igc_defines.h
+index 86b346687196..498ba1522ca4 100644
+--- a/drivers/net/ethernet/intel/igc/igc_defines.h
++++ b/drivers/net/ethernet/intel/igc/igc_defines.h
+@@ -383,11 +383,15 @@
+ #define IGC_RXDEXT_STATERR_IPE		0x40000000
+ #define IGC_RXDEXT_STATERR_RXE		0x80000000
+ 
++#define IGC_MRQC_ENABLE_RSS_MQ		0x00000002
+ #define IGC_MRQC_RSS_FIELD_IPV4_TCP	0x00010000
+ #define IGC_MRQC_RSS_FIELD_IPV4		0x00020000
+ #define IGC_MRQC_RSS_FIELD_IPV6_TCP_EX	0x00040000
+ #define IGC_MRQC_RSS_FIELD_IPV6		0x00100000
+ #define IGC_MRQC_RSS_FIELD_IPV6_TCP	0x00200000
++#define IGC_MRQC_RSS_FIELD_IPV4_UDP	0x00400000
++#define IGC_MRQC_RSS_FIELD_IPV6_UDP	0x00800000
++#define IGC_MRQC_DEFAULT_QUEUE_MASK	GENMASK(5, 3)
+ 
+ /* Header split receive */
+ #define IGC_RFCTL_IPV6_EX_DIS	0x00010000
+diff --git a/drivers/net/ethernet/intel/igc/igc_ethtool.c b/drivers/net/ethernet/intel/igc/igc_ethtool.c
+index a7f397b58cd6..ecb35b693ce5 100644
+--- a/drivers/net/ethernet/intel/igc/igc_ethtool.c
++++ b/drivers/net/ethernet/intel/igc/igc_ethtool.c
+@@ -1283,6 +1283,24 @@ static void igc_ethtool_init_nfc_rule(struct igc_nfc_rule *rule,
+ 		rule->flex = true;
+ 	else
+ 		rule->flex = false;
++
++	/* The wildcard rule is only applied if:
++	 *  a) None of the other filtering rules match (match_flags is zero)
++	 *  b) The flow type is ETHER_FLOW only (no additional fields set)
++	 *  c) Mask for Source MAC address is not specified (all zeros)
++	 *  d) Mask for Destination MAC address is not specified (all zeros)
++	 *  e) Mask for L2 EtherType is not specified (zero)
++	 *
++	 * If all these conditions are met, the rule is treated as a wildcard
++	 * rule. Default queue feature will be used, so that all packets that do
++	 * not match any other rule will be routed to the default queue.
++	 */
++	if (!rule->filter.match_flags &&
++	    fsp->flow_type == ETHER_FLOW &&
++	    is_zero_ether_addr(fsp->m_u.ether_spec.h_source) &&
++	    is_zero_ether_addr(fsp->m_u.ether_spec.h_dest) &&
++	    !fsp->m_u.ether_spec.h_proto)
++		rule->filter.match_flags = IGC_FILTER_FLAG_DEFAULT_QUEUE;
+ }
+ 
+ /**
+diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+index 2e12915b42a9..87311ea47018 100644
+--- a/drivers/net/ethernet/intel/igc/igc_main.c
++++ b/drivers/net/ethernet/intel/igc/igc_main.c
+@@ -3874,6 +3874,22 @@ static void igc_del_flex_filter(struct igc_adapter *adapter,
+ 	wr32(IGC_WUFC, wufc);
+ }
+ 
++static void igc_set_default_queue_filter(struct igc_adapter *adapter, u32 queue)
++{
++	struct igc_hw *hw = &adapter->hw;
++	u32 mrqc = rd32(IGC_MRQC);
++
++	mrqc &= ~IGC_MRQC_DEFAULT_QUEUE_MASK;
++	mrqc |= FIELD_PREP(IGC_MRQC_DEFAULT_QUEUE_MASK, queue);
++	wr32(IGC_MRQC, mrqc);
++}
++
++static void igc_reset_default_queue_filter(struct igc_adapter *adapter)
++{
++	/* Reset the default queue to its default value which is Queue 0 */
++	igc_set_default_queue_filter(adapter, 0);
++}
++
+ static int igc_enable_nfc_rule(struct igc_adapter *adapter,
+ 			       struct igc_nfc_rule *rule)
+ {
+@@ -3912,6 +3928,9 @@ static int igc_enable_nfc_rule(struct igc_adapter *adapter,
+ 			return err;
+ 	}
+ 
++	if (rule->filter.match_flags & IGC_FILTER_FLAG_DEFAULT_QUEUE)
++		igc_set_default_queue_filter(adapter, rule->action);
++
+ 	return 0;
+ }
+ 
+@@ -3939,6 +3958,9 @@ static void igc_disable_nfc_rule(struct igc_adapter *adapter,
+ 	if (rule->filter.match_flags & IGC_FILTER_FLAG_DST_MAC_ADDR)
+ 		igc_del_mac_filter(adapter, IGC_MAC_FILTER_TYPE_DST,
+ 				   rule->filter.dst_addr);
++
++	if (rule->filter.match_flags & IGC_FILTER_FLAG_DEFAULT_QUEUE)
++		igc_reset_default_queue_filter(adapter);
+ }
+ 
+ /**
+-- 
+2.34.1
+
 
