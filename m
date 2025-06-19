@@ -1,168 +1,93 @@
-Return-Path: <linux-kernel+bounces-694198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE45AE093C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:54:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A89AE0904
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC1F1BC7DC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:52:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 489053A4564
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CE2285418;
-	Thu, 19 Jun 2025 14:51:35 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7C1229B23;
+	Thu, 19 Jun 2025 14:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z6Svpu2u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D7821ADA7;
-	Thu, 19 Jun 2025 14:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0455A18E02A;
+	Thu, 19 Jun 2025 14:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750344694; cv=none; b=svLT9ieZ2mTLEpxl4ymeYqgEptcTQnjBVpOOrwH3qBKn+yIRFQyj3Mg2n6qfq3EFoiQkO0l9KQ5WhiSpPkdrAf92FESBEk/EA20m/pmePbVteovKNRnlhzIfLacJnCWssph8HxPrZaBU623N2oIbF6b1WZ5od4K8vBzwxME+XjE=
+	t=1750344288; cv=none; b=s6y4EVhFL4fkMuUGW7jvkUq2FrVcLfHzTUjSbkCI9xpkAdh1A9z1Ao/UhiXtyhYxxo7ihAG1P2tQR4izCmnys6SqTMQAkfnPuxwhWC8ao6nCb37QmZ5usQQbdi1TitnAo8miN5GruGcwFc9eq9tlU8LPpRvG3uuT586entXuSSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750344694; c=relaxed/simple;
-	bh=oRXuHGOrAGSvnht4ZizfzrxEtdxdPnDJ9l6PPH5cLGs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EUNvzu6IDs6Zgv09yYgrWptRE9j3A/m76i8Xx9GGqtrQ6IrZaUAB2f1La2W64JxUHLTxjK9d352GETS5H2j0guj1AAJKO/jx+BiOUrLfC9Sg96wOaV68JzTuTRo7wt0xaFQzWSnMTUXp+rEanSXMJTyViA07EZKJs5i9DNido3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bNNm12jlgz28fSs;
-	Thu, 19 Jun 2025 22:49:05 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9FA0F140113;
-	Thu, 19 Jun 2025 22:51:30 +0800 (CST)
-Received: from localhost.localdomain (10.90.31.46) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 19 Jun 2025 22:51:29 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>
-Subject: [PATCH net-next 3/3] net: hibmcge: configure FIFO thresholds according to the MAC controller documentation
-Date: Thu, 19 Jun 2025 22:44:23 +0800
-Message-ID: <20250619144423.2661528-4-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250619144423.2661528-1-shaojijie@huawei.com>
-References: <20250619144423.2661528-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1750344288; c=relaxed/simple;
+	bh=2SBtOHAa8PXv7Oh4DwBgBrVlkUpWnuwLqFJrzHmdOjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ok3yIdJXFvm7kp0vgfHXhTTm81fvI1AJ1j1BUEkwn7xU4SjAu9LjtE25eRe6j9urRvdEXQcrfVBwQNwla8aKViWTmve2JWAH3iN4LcoHGOxrApd35tHx/PBsgqVnvsRM//zEAIZZwui+j7SJoYkTpsEQP1LKPYG44UdygtzX5lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z6Svpu2u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A739DC4CEEA;
+	Thu, 19 Jun 2025 14:44:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750344287;
+	bh=2SBtOHAa8PXv7Oh4DwBgBrVlkUpWnuwLqFJrzHmdOjE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z6Svpu2u9Rw1VPl1lBofruzEIlctenWb1IdyXMqbQNzFpmtVSulfTcXzYrPE0qye9
+	 JVPNUkToJZnrW++nJ0AZHENFTgEt1OSy8Mg9edW04BMuWf4p17L7zLVK9U/uSzKUd0
+	 1iYfW/NZUNhra8w8czOQBUrQ2L68Y/qohjjPbpqE+SDKOA8SeAw2K3k0gsQEc7deSI
+	 eIUlu7miJrsFEVPWDyV7di+KE8hBSOavlzAJREcnUiB+9/5kUEOSq3GJdJJGrBKNiT
+	 iV/SlC7L1ZyKvTmiuZJjrTK1NGLkWmxLZMvDJsDleBcSo9r+czNv1hbx1TZz+RAcAj
+	 /Sb/w87Na1dfw==
+Date: Thu, 19 Jun 2025 15:44:42 +0100
+From: Lee Jones <lee@kernel.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	broonie@kernel.org, lgirdwood@gmail.com, wangruikang@iscas.ac.cn,
+	dlan@gentoo.org, troymitchell988@gmail.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr, devicetree@vger.kernel.org, spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] mfd: spacemit: add support for SpacemiT PMICs
+Message-ID: <20250619144442.GI795775@google.com>
+References: <20250619135151.3206258-1-elder@riscstar.com>
+ <20250619135151.3206258-3-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+In-Reply-To: <20250619135151.3206258-3-elder@riscstar.com>
 
-Configure FIFO thresholds according to the MAC controller documentation
+On Thu, 19 Jun 2025, Alex Elder wrote:
 
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- .../net/ethernet/hisilicon/hibmcge/hbg_hw.c   | 49 +++++++++++++++++++
- .../net/ethernet/hisilicon/hibmcge/hbg_reg.h  |  6 +++
- 2 files changed, 55 insertions(+)
+> Add support for SpacemiT PMICs. Initially only the P1 PMIC is supported
+> but the driver is structured to allow support for others to be added.
+> 
+> The P1 PMIC is controlled by I2C, and is normally implemented with the
+> SpacemiT K1 SoC.  This PMIC provides six buck converters and 12 LDO
+> regulators.  It also implements a switch, watchdog timer, real-time clock,
+> and more, but initially we will only support its regulators.
+> 
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+> v2: - Use module_i2c_driver()
+>     - Expanded Kconfig module help text
+>     - Add MODULE_ALIAS(), and define and use DRV_NAME
+> 
+>  drivers/mfd/Kconfig         | 13 ++++++
+>  drivers/mfd/Makefile        |  1 +
+>  drivers/mfd/spacemit-pmic.c | 83 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 97 insertions(+)
+>  create mode 100644 drivers/mfd/spacemit-pmic.c
 
-diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-index 6e5602591554..2d3d233a9972 100644
---- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-+++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-@@ -18,6 +18,13 @@
- #define HBG_ENDIAN_CTRL_LE_DATA_BE	0x0
- #define HBG_PCU_FRAME_LEN_PLUS 4
- 
-+#define HBG_FIFO_TX_FULL_THRSLD		0x3F0
-+#define HBG_FIFO_TX_EMPTY_THRSLD	0x1F0
-+#define HBG_FIFO_RX_FULL_THRSLD		0x240
-+#define HBG_FIFO_RX_EMPTY_THRSLD	0x190
-+#define HBG_CFG_FIFO_FULL_THRSLD	0x10
-+#define HBG_CFG_FIFO_EMPTY_THRSLD	0x01
-+
- static bool hbg_hw_spec_is_valid(struct hbg_priv *priv)
- {
- 	return hbg_reg_read(priv, HBG_REG_SPEC_VALID_ADDR) &&
-@@ -272,6 +279,41 @@ void hbg_hw_set_rx_pause_mac_addr(struct hbg_priv *priv, u64 mac_addr)
- 	hbg_reg_write64(priv, HBG_REG_FD_FC_ADDR_LOW_ADDR, mac_addr);
- }
- 
-+static void hbg_hw_set_fifo_thrsld(struct hbg_priv *priv,
-+				   u32 full, u32 empty, enum hbg_dir dir)
-+{
-+	u32 value = 0;
-+
-+	value |= FIELD_PREP(HBG_REG_FIFO_THRSLD_FULL_M, full);
-+	value |= FIELD_PREP(HBG_REG_FIFO_THRSLD_EMPTY_M, empty);
-+
-+	if (dir & HBG_DIR_TX)
-+		hbg_reg_write(priv, HBG_REG_TX_FIFO_THRSLD_ADDR, value);
-+
-+	if (dir & HBG_DIR_RX)
-+		hbg_reg_write(priv, HBG_REG_RX_FIFO_THRSLD_ADDR, value);
-+}
-+
-+static void hbg_hw_set_cfg_fifo_thrsld(struct hbg_priv *priv,
-+				       u32 full, u32 empty, enum hbg_dir dir)
-+{
-+	u32 value;
-+
-+	value = hbg_reg_read(priv, HBG_REG_CFG_FIFO_THRSLD_ADDR);
-+
-+	if (dir & HBG_DIR_TX) {
-+		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_TX_FULL_M, full);
-+		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_TX_EMPTY_M	, empty);
-+	}
-+
-+	if (dir & HBG_DIR_RX) {
-+		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_RX_FULL_M, full);
-+		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_RX_EMPTY_M	, empty);
-+	}
-+
-+	hbg_reg_write(priv, HBG_REG_CFG_FIFO_THRSLD_ADDR, value);
-+}
-+
- static void hbg_hw_init_transmit_ctrl(struct hbg_priv *priv)
- {
- 	u32 ctrl = 0;
-@@ -332,5 +374,12 @@ int hbg_hw_init(struct hbg_priv *priv)
- 
- 	hbg_hw_init_rx_control(priv);
- 	hbg_hw_init_transmit_ctrl(priv);
-+
-+	hbg_hw_set_fifo_thrsld(priv, HBG_FIFO_TX_FULL_THRSLD,
-+			       HBG_FIFO_TX_EMPTY_THRSLD, HBG_DIR_TX);
-+	hbg_hw_set_fifo_thrsld(priv, HBG_FIFO_RX_FULL_THRSLD,
-+			       HBG_FIFO_RX_EMPTY_THRSLD, HBG_DIR_RX);
-+	hbg_hw_set_cfg_fifo_thrsld(priv, HBG_CFG_FIFO_FULL_THRSLD,
-+				   HBG_CFG_FIFO_EMPTY_THRSLD, HBG_DIR_TX_RX);
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h b/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
-index 310f8a74797d..e85a8c009f37 100644
---- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
-+++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
-@@ -141,7 +141,13 @@
- /* PCU */
- #define HBG_REG_TX_FIFO_THRSLD_ADDR		(HBG_REG_SGMII_BASE + 0x0420)
- #define HBG_REG_RX_FIFO_THRSLD_ADDR		(HBG_REG_SGMII_BASE + 0x0424)
-+#define HBG_REG_FIFO_THRSLD_FULL_M		GENMASK(25, 16)
-+#define HBG_REG_FIFO_THRSLD_EMPTY_M		GENMASK(9, 0)
- #define HBG_REG_CFG_FIFO_THRSLD_ADDR		(HBG_REG_SGMII_BASE + 0x0428)
-+#define HBG_REG_CFG_FIFO_THRSLD_TX_FULL_M	GENMASK(31, 24)
-+#define HBG_REG_CFG_FIFO_THRSLD_TX_EMPTY_M	GENMASK(23, 16)
-+#define HBG_REG_CFG_FIFO_THRSLD_RX_FULL_M	GENMASK(15, 8)
-+#define HBG_REG_CFG_FIFO_THRSLD_RX_EMPTY_M	GENMASK(7, 0)
- #define HBG_REG_CF_INTRPT_MSK_ADDR		(HBG_REG_SGMII_BASE + 0x042C)
- #define HBG_INT_MSK_WE_ERR_B			BIT(31)
- #define HBG_INT_MSK_RBREQ_ERR_B			BIT(30)
+All comments fro v1 are still relevant.
+
 -- 
-2.33.0
-
+Lee Jones [李琼斯]
 
