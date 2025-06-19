@@ -1,252 +1,386 @@
-Return-Path: <linux-kernel+bounces-693394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2CFADFE7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:15:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBCACADFE81
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 085143BA125
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:14:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E4CF176489
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE5E25C6E7;
-	Thu, 19 Jun 2025 07:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VwZaUpZq"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2078.outbound.protection.outlook.com [40.107.92.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B725258CC8;
-	Thu, 19 Jun 2025 07:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750317250; cv=fail; b=SbHQZrbA1ZNReHRzwPRH3H1J+YfhFMPiocKwQbGnKeux5HFC6cyRyH63pOtr07brgWR69mChQ1ur3VhTlCAyCrL92ggfcJijD/zUURTUyfK651nyKpLnmFlBD0vioiSnsda8fPYahfwxahwFO6+1cY/Zbf3mMxwMbLsRnadYosQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750317250; c=relaxed/simple;
-	bh=ct+hVDSqfhkdJryzUBw9aADOav3PXTIefxI252cC/Cc=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=KZtfQHOtkkz/pKugVqbqrI1Y5sSsDN08Neb39fxEmr4dw7Lv2pQlFs0Z0z+yQTGPRpAoqHoIC2vfKwwfcGvmPKgWlG0kidx/AELpBRAjTJDWW+b8iCHFMwN0EIoBSJv90sg6QesOfQn6vagJH8ffat8scD8yyv+0hVNpXU63AP4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VwZaUpZq; arc=fail smtp.client-ip=40.107.92.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M9wuwqLi6rtiXVOKEHsOXv7bTF2IZp9o6rMw5N9SjOx9j2Dd+zCHtXaSuVK52bmF94+4kpwb5Lp+PbvQ5IKT9pxfhCQ4BOHZdVrzXT9dRfdrS4NyNvMhbUXrzHaED/36mzsE6xwK98imcDggnziSpVxe/NGy/qbqU5RQxnUycuzL3KY1WH09vHU8oYJj+RzMe+gCdKdoLPa44ok3kDFgGB4LcHeUtrwgO1NIxWq9cTVRLSzDZiAWMMhh/3lIJsL+PcZ/7/cBZWVXxhRin+4D5dhWvCMyPU23bhH3/u4H/6rr9aphywVy4FMYgYEVTyJAWQFsjX9JN5XCb7I0kVZXDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZqPWN1i2wY1zeIkqUr6BelZrFeDu9RJw6OjMYUjCIVg=;
- b=iKH1qIeOuYbqvtIQcyY/A4gqpN0AyX1PwY9e5loMFSF9gF9IeyznRynStzHAY4cjtpz6a2UHOQ06psQeNZgZe4CQXJmPwPVQ5z9ArLrSLNkn4om7FaUq1UYL0Gia8uJn8AHtTuPlgptoY1L5nH//PKZIg3l5QDI8C0tf3U75L+q8qzJhrRDjYVwC1DK1T8e9Hi6oRoSpH0Zn7+k5MdGMUXXLcTchyIhfy3iIk2yZ3KUpYm9cpRLs8zLH3KeKkOA4AVXxDKBgZ2kYkJydOOzG+4CxdqC42G0Zwm01YKX1jt/g578NTsKdQXuSDyqaRvWKR/q59ZO3/fwuy10VGp2r9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZqPWN1i2wY1zeIkqUr6BelZrFeDu9RJw6OjMYUjCIVg=;
- b=VwZaUpZqadNrIg4b8fkB4Epzn1gQuso4bRxAfi09/c/DgM6rUDvcTzQWCTa1RSOLhz23bKntCn6Y8XYl2NTEZlPpoBoRDhZ9/t/GSFGGz4eAoLK+ESKuWUiO9jmCnN0zp/TkJEuzawwjKI7ezuHeKnHYkzlRtkPOOCVSssgNwZBA4hEsT3GhDH1Ly5W1g8p8xuXRV+ZtkXuCsjWR0TFBK0BIsF19jdHN2vYNQabeacEdtBqdSz6Tv8mjQTRJMAITvZAyzOmi2tAy8QFS1EgaKNZh6gGkhQHAfC+WHg8+qDxpVZStnFXdUQqQAl3zmrP5onclVow+FotCdtd7CwclWw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DM4PR12MB8474.namprd12.prod.outlook.com (2603:10b6:8:181::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Thu, 19 Jun
- 2025 07:14:05 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8857.019; Thu, 19 Jun 2025
- 07:14:05 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 19 Jun 2025 16:14:02 +0900
-Message-Id: <DAQBOGIUHI90.2NO9AVT4IRDTY@nvidia.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Benno
- Lossin" <lossin@kernel.org>, "John Hubbard" <jhubbard@nvidia.com>, "Ben
- Skeggs" <bskeggs@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>,
- "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>, "Lyude
- Paul" <lyude@redhat.com>, "Shirish Baskaran" <sbaskaran@nvidia.com>
-Subject: Re: [PATCH v5 00/23] nova-core: run FWSEC-FRTS to perform first
- stage of GSP initialization
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Danilo Krummrich" <dakr@kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250612-nova-frts-v5-0-14ba7eaf166b@nvidia.com>
- <aFMeJZuXsBRhUxJC@cassiopeiae>
-In-Reply-To: <aFMeJZuXsBRhUxJC@cassiopeiae>
-X-ClientProxiedBy: TYCP286CA0226.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c7::20) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C6D25B2E8;
+	Thu, 19 Jun 2025 07:15:05 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5218E24E01D;
+	Thu, 19 Jun 2025 07:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750317304; cv=none; b=CCoh0PaMJUBGmif1BaDWRU+Wp6nnpw+v7FEE9sR4o1ayUShPyUrsCmfNP2SAjjHgIkHQGD2aaQY7wUx4qq38Tp5olQEQyP00BMVg63vc8kLyhTDvrDZ0qx83bJyYXgIaJbTDArRQx4z9hex+/ee59uOk3yAW0FaiIhruEWrMFsA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750317304; c=relaxed/simple;
+	bh=Zq2xSoi9krA08q/eYDoaq3S9x2iXHUHzx9Ou9tVRU3w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pojBS14VtSgQct5BKzGAUozLnBthtpOjFpJO864ZTESpFuC5JylFM1amuIaKgjFYJAnozQkB4bj3UJVXGlYqkGPBjxKmy0H5d45nIRZ67BJh8v6ItXWKTP0dPQretrNNN3KAzRDAcg4MG0Bnxl6FeUWN94QnH3uG+Ned5BVlpm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8AxlnDtuFNo5agZAQ--.58049S3;
+	Thu, 19 Jun 2025 15:14:53 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowMBxLsfquFNok74gAQ--.38277S2;
+	Thu, 19 Jun 2025 15:14:50 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Xianglai Li <lixianglai@loongson.cn>
+Cc: kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] LoongArch: KVM: INTC: Add IOCSR MISC register emulation
+Date: Thu, 19 Jun 2025 15:14:49 +0800
+Message-Id: <20250619071449.1714869-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DM4PR12MB8474:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9231aa64-5e32-4660-8603-08ddaf00e00c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZWNkdFV1cVMvbmFhMTB0QmQ4d0N5YllUWDZVS1ExME1VaklXQ0FpNWJENDY2?=
- =?utf-8?B?VXdTLzhQL1MvTnRxKzZhVURZM011S2tScGpFSmhqbHNqSHdqM1I4ZXN2SWpj?=
- =?utf-8?B?L1kyRTBaSWhuYk5welhwZG0zb0wrb3d3VDdhR2Z3MkNjdmZ6ZGdzQ0ZMN3h2?=
- =?utf-8?B?NXNPdzZ2QXFLeCswMHp1WlZTOGZXaXRjVTk2UGd1NC9QalpRaEF5ZWVrblkv?=
- =?utf-8?B?eDBaN1hXcjZMMGgxTkJnZ01iS0ZwUXhKKzB4SGpSSGJQU3ZadksyUytWQm5T?=
- =?utf-8?B?MlVTRUM5ZHpmQkkrcmZlS241RXNIMEZadGVzcFMrWEM0MmZDY1hwUys2SzVl?=
- =?utf-8?B?eGduWXpod3VXL0tmMEd2U3JaT2FjbVVTZzZVcmNkY3YvNGxHdDRhREJTVmdi?=
- =?utf-8?B?SWtXaFpEaW1rT1ZtYkNrZzJ2UnZMd250OFhhV2dhV0R5d1l0dUxXcmhqOHVB?=
- =?utf-8?B?Vm5LT0l1RkUzUVpvMk1wN0tEdlk1amNvZEZjOFU3c1ZKL1BiNkFSVWpFYUJx?=
- =?utf-8?B?WUlnUVQyZzBjYlVjZGZkWC9xNGlGL1ZlaWNJa2RXbTBZNXJzVmhJWEY1aGF6?=
- =?utf-8?B?WUNlS1hCOTFpNGVIODRhaVZtYWREUXhCTEtxbTNrLytQK0FONS9rSHc0UER2?=
- =?utf-8?B?R0dmREM2WDVxK0hDRWpDMlZYUnloNkpsTEQyb01TdlI5WWJTNDFlTTBqZ0My?=
- =?utf-8?B?d0h6Zll6dzdNdFUzY05oWlY2M3JzcEFaRmY5NktuSTZrcVFLK1lCS2lxQ21N?=
- =?utf-8?B?SlFNbFVBQTcrUGQxaGp2ZndLYVY3OEVnZG9jc2xxdlpRZDRZV25scms4REcv?=
- =?utf-8?B?MC9sKzFJUGV0SHFGZ0c3czlXa2xYRkFzRWVVNVR4cXBnMGh5a1Q4bXlJc2tG?=
- =?utf-8?B?YVB4bEtZd0licjhRQ084ay9waENiRW1hRkI3UlFSMml6bnpOclFtZlRiVDM1?=
- =?utf-8?B?Zlc4YWZIQmZobXBYVTNmTU4xR3hUa0J4K1lLMWRna0VxQzdIeVVaeVBLRko4?=
- =?utf-8?B?eXQva2loeEFVMm1HK0RBSFFER2s1TURXVkI3QjBVM2dHdU9rOUtuSDdLWjBC?=
- =?utf-8?B?SGQ2eEtKT29BU1lkYit3WU5ldkZoVlBZNXZOR2Uyeks4bEpOeGdLUlRaWCtH?=
- =?utf-8?B?YTRON1I0aVpFbFF1UVZBeG9hRmtaQVVSN2dSWGRLUTVDUyt0OEhVdzN3NlAx?=
- =?utf-8?B?N2lwNDNXYnNUT1BLWWxDdGdFbVFmK2FmT2pWVFgyelYzUWFRaDFHWGdmQklT?=
- =?utf-8?B?bUpHLy9aVHcyNk9aYVAzcUJEelRFTzZuTVFNaTk2UDNDZHNDbzVQOHJPRHZ0?=
- =?utf-8?B?U3JXTVZURTliaTJNK25obW5tbGUwVDNFZ0RSWVZsbDhlQitRZHBXeTYzVDNL?=
- =?utf-8?B?M2lUQjlTdFBkVzJYT1Eyb2FQc3RUMHNaamZQMUF3ZHZUYURrMThodUFmb2l2?=
- =?utf-8?B?RXg1aW43RW1LRVZFdnJUWWFqdTFtaGFwWndMS0p4ZWdYSG5OWVU4dWhmcmZm?=
- =?utf-8?B?MzRHcGV6b2xwYVNnZzdBazdoR3RPWitIYm9sU01lUTF4aTVMa1VZaFN2RG1i?=
- =?utf-8?B?NExyeDNQV3ozMmFIQlBpN21XL0FtcW9PdS9KSFVmSHNCai83RDRud21rYjRj?=
- =?utf-8?B?azh4T3BGSFFSSmtFYmFiNkJqM0tnVUdmWWpJbm5rYkJLNUV4M0VJc0VhU3dE?=
- =?utf-8?B?TEo3TzdlZkFETTliT2RKRVZ6Y2JaYzNXaFlMZUorK05EYyt1bmF6bGxXREhv?=
- =?utf-8?B?UVN1RG90UlA1SVZ1ZmphNWpHVFFLL1dXN050Zi91Q0xmcjN1SlB1ZmRaam0z?=
- =?utf-8?B?YUdHYTFRdTVMUXFoem5DRDJaWEZxLzFQUjZhZ0kzU0RmZUJTblpkR3Z2MnY2?=
- =?utf-8?B?UWdXL3F0TDNUUE5semJ1Wjl6MlhuNHFzN04xN0FZUUdZdnd6bzhIZkV3Vndr?=
- =?utf-8?Q?7WysgY3Mcxs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Sit2OTdsbWdwbHZVaTlrRmgrVjNLcGZ3aGlRS2lEdW1VVldnSjVvdUV6WHU4?=
- =?utf-8?B?TmM3cFdwb1MxRXBzdExCai85cWZjRlk2V1VuZmhFYWtvS1RHTXkwY0QvL2pp?=
- =?utf-8?B?V05HMFJHRlB1aDZlVmN5UkJwSm5sU2FrY0h6Y25PQ2tGakJ5akpDeDJlOUFO?=
- =?utf-8?B?VUNaZklmSG9ydnFzWHRjNWdiSjFYZVhlYXREbC9pUDAvNS81UTdJR3FBaXd6?=
- =?utf-8?B?azE2S1hETWZvVnZRNXB4Y0FIOEVHWXhBUGQvYzV6WDNycHlDUnliUk9LRnNR?=
- =?utf-8?B?KzU0aHFWQzROalJFUk5XTEJFODhaRFFVYUpUZ2xNa2J3amFOSUg5QllieTNJ?=
- =?utf-8?B?MFpseElCUHRkR2lEVnpxZFkzMENkTGNVMUVDQVFSSDhWNHYwS0tuR1E3Vml5?=
- =?utf-8?B?QVl4YmFiTitDU0pmMTlQZmkvVTd2ZXJickRaVTU4RktEMjV6RlB5VHFJZTBt?=
- =?utf-8?B?VlR2eXM1ZWJoM21laXYxVGhlN21qRnV1UkROWXQzWThSMXZITXRuZmxyUk95?=
- =?utf-8?B?aXpUT0NjRW1OaE9ES1gxNEZCMXF6MGhEZTZ5Z1pTV3VKdkVtQk51ekI3OXFI?=
- =?utf-8?B?UnZaQWxEKzFtQVJqRjQzR1gvdkcwNXdFdGdRZFhQbktMemNNWnFZRXcrYXZV?=
- =?utf-8?B?OFR4MGxkZkhsTGFGMWMzNjA1SHZiMENYRGdFMWdiNWs3dm92YWEzaThLYjdZ?=
- =?utf-8?B?SmZ1d0pEREtxOHhtTWtZUVk2clh0TEx0V1dYYzlrYktrdldXZVR4U01scndP?=
- =?utf-8?B?eTVsUG5BM1lPSnlyZFZKNmM5b21BUkdOWC9zSDVrMjlKd1piRC83NEsyVC94?=
- =?utf-8?B?T2RCVHdvMUVpQVo1elJxeks5enZEM1BIV3ozMmdiWlJBSFRUVGZOSk4rN3g2?=
- =?utf-8?B?S1RoejMxZzh2ems1ZHExdFU4QlhoRnc1UEo3aEQwK1ZPMWpvUzEwaWNPYTB4?=
- =?utf-8?B?VnA1dVFPYTl5Z0hBd2NHTGVrMnAzNXEyc1VOYlFOWWNvSXVva0o3WHdocnl4?=
- =?utf-8?B?M08vTWF2aHJybG9DY1lIbFc1Qjhtb0kzWmJkR3dyQTJYR1dkM0JpOStnN2JY?=
- =?utf-8?B?bWRHSW5kTExOb1AzajYwNWg2Y3g0d0l6TUNSeWtHbDVDSHIydnJld2o3RnpR?=
- =?utf-8?B?eFh1YWJVekZKakh2NTFKTEcvamNVWEVHakFkYkV5ajFYcEZURTRrMmt4Zksw?=
- =?utf-8?B?OGQvL3Q2RjBRVGQ5b1hMcXhYSENFSzh2Q0trTm5Ha1JzdHF3cy9Gb1pCWUxW?=
- =?utf-8?B?TkNYMFdJZXYzdmNYVXJ1bklWRVMzMzZBdHRDZjd6d0lBRXBrRUZPTXdHM3pj?=
- =?utf-8?B?bElXb1lrUW9DWllObmtIdVp1Y0lURVJzWVBpNWh3dGhXQktLY0VPazEwYThS?=
- =?utf-8?B?OG1CTXZrdjhvcGkvb2gvZHZ3ajdpcHB5VTk1c0YyRnhIakJYYzhZUU85OWhT?=
- =?utf-8?B?clRCVlB4R0FxdHQ1QURyUWVXK2szVjZnRWVua0J4Y0dUOEFQL0IxRFlmRjU0?=
- =?utf-8?B?SmY3amwxRjJweHpQWFFkR2lESnBYTWJ6Tkk3YjZDeCtNakJIMHFSSERQMkxh?=
- =?utf-8?B?V2I2VjBVWlZvWFpNVlNSREo4NnFsaGRJdm4yVzcrTGhUWWNBV3FlcEd6bVZO?=
- =?utf-8?B?OXBqT2VhVnhVeHlSd2N1b1pLY1I3VytXdUJTbDRBd2x5Z3JqZkg2QU0zR3VB?=
- =?utf-8?B?b0M5Zkt2REpiZFgyUThxei95RnVTdTRobm9sUExwMU1FOGJVQjNsYXdadnQv?=
- =?utf-8?B?Vi9FOXgyNDZhL2ZOZ3ZuK2FYaTIxb1lmL21pc2F2NDFoendrdjlpcUR1UGxV?=
- =?utf-8?B?NG9jQ2tjUFRITFFseTZ6dTVkK2hlbTdtemZldVVwWm9HaVl5M2VjVG94Vm1M?=
- =?utf-8?B?RzB6bTNobGd0cEdVL05MVHYvcjN0am04N0ZuMGhQbnZiMEdDTTh1OSt0UThC?=
- =?utf-8?B?V1Y2SWl6Y0labUFXMjk1M3RkU2tkUnBiVGpNb2grRm02cWJaY1pqZG80ODly?=
- =?utf-8?B?cGh1Wm1TSldZRStJMy80M3ZDTDdqMk5aTmg0bXdMWUJNb0p4d3dZeVhoaDhW?=
- =?utf-8?B?SDRydmZhdjFTcEpMc1c0aUpHR2pCOEF1L3R5L21hVUw0ampEeUlvdWVJVElT?=
- =?utf-8?B?c09lV1ppSXpUYzk3K0NyS0k1S1ZSdTJybnRBeTlLZlRGYm4xQVR5TTkyS1pI?=
- =?utf-8?Q?WDsHBTD2F3Qm2eBspotjYP/UU4q+vvtw8bZ4+9IS24/L?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9231aa64-5e32-4660-8603-08ddaf00e00c
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2025 07:14:05.2374
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ek8cvtRJROjdxYXDWzkiM8Ltn/DZ82SbKIqKU0opMuB1Xfh2wJoZ7s4ZAohmbXKdPouvWxA9RETfwEuS33Zu3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8474
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxLsfquFNok74gAQ--.38277S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-On Thu Jun 19, 2025 at 5:14 AM JST, Danilo Krummrich wrote:
-> On Thu, Jun 12, 2025 at 11:01:28PM +0900, Alexandre Courbot wrote:
->> Hi everyone,
->>=20
->> The feedback on v4 has been (hopefully) addressed. I guess the main
->> remaining unknown is the direction of the `num` module ; for this
->> iteration, following the received feedback I have eschewed the extension
->> trait and implemented the alignment functions as methods of the new
->> `PowerOfTwo` type. This has the benefit of making it impossible to call
->> them with undesirable (i.e. non-power of two) values. The `fls` function
->> is now provided as a series of const functions for each supported type,
->> generated by a macro.
->>=20
->> It feels like the `num` module could be its own series though, so if
->> there is still discussion about it, I can also extract it and implement
->> the functionality we need in nova-core as local helper functions until
->> it gets merged at its own pace.
->>=20
->> As previously, this series only successfully probes Ampere GPUs, but
->> support for other generations is on the way.
->>=20
->> Upon successful probe, the driver will display the range of the WPR2
->> region constructed by FWSEC-FRTS with debug priority:
->>=20
->>   [   95.436000] NovaCore 0000:01:00.0: WPR2: 0xffc00000-0xffce0000
->>   [   95.436002] NovaCore 0000:01:00.0: GPU instance built
->>=20
->> This series is based on v6.16-rc1 with no other dependencies.
->
-> If compiled with rustc 1.78 there are missing imports of size_of() and
-> align_of() which break the build.
->
-> There are also a few warnings still:
->
-> warning: unreachable `pub` field
->   --> drivers/gpu/nova-core/fb.rs:79:5
->    |
-> 79 |     pub fb: Range<u64>,
->    |     ---^^^^^^^^^^^^^^^
->    |     |
->    |     help: consider restricting its visibility: `pub(crate)`
->    |
->    =3D note: requested on the command line with `-W unreachable-pub`
->
-> warning: unreachable `pub` field
->   --> drivers/gpu/nova-core/fb.rs:80:5
->    |
-> 80 |     pub vga_workspace: Range<u64>,
->    |     ---^^^^^^^^^^^^^^^^^^^^^^^^^^
->    |     |
->    |     help: consider restricting its visibility: `pub(crate)`
->
-> warning: unreachable `pub` field
->   --> drivers/gpu/nova-core/fb.rs:81:5
->    |
-> 81 |     pub frts: Range<u64>,
->    |     ---^^^^^^^^^^^^^^^^^
->    |     |
->    |     help: consider restricting its visibility: `pub(crate)`
->
-> warning: 3 warnings emitted
+IOCSR MISC register 0x420 controlls some features of eiointc, such as
+BIT 48 enables eiointc and BIT 49 set interrupt encoding mode.
 
-Sorry about this. These are confirmed fixed in v6.
+When kernel irqchip is set, IOCSR MISC register should be emulated in
+kernel also. Here add IOCSR MISC register emulation in kernel side.
+
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+---
+v1 ... v2:
+  1. Add separate file arch/loongarch/kvm/intc/misc.c for IOCSR MISC
+     register 0x420 emulation, since it controls feature about AVEC
+     irqchip also.
+
+  2. Define macro MISC_BASE as LOONGARCH_IOCSR_MISC_FUNC rather than
+     hard coded 0x420
+---
+ arch/loongarch/include/asm/kvm_eiointc.h |   2 +
+ arch/loongarch/include/asm/kvm_host.h    |   2 +
+ arch/loongarch/include/asm/kvm_misc.h    |  17 +++
+ arch/loongarch/include/asm/loongarch.h   |   1 +
+ arch/loongarch/kvm/Makefile              |   1 +
+ arch/loongarch/kvm/intc/eiointc.c        |  61 +++++++++++
+ arch/loongarch/kvm/intc/misc.c           | 125 +++++++++++++++++++++++
+ 7 files changed, 209 insertions(+)
+ create mode 100644 arch/loongarch/include/asm/kvm_misc.h
+ create mode 100644 arch/loongarch/kvm/intc/misc.c
+
+diff --git a/arch/loongarch/include/asm/kvm_eiointc.h b/arch/loongarch/include/asm/kvm_eiointc.h
+index a3a40aba8acf..2d1c183f2b1b 100644
+--- a/arch/loongarch/include/asm/kvm_eiointc.h
++++ b/arch/loongarch/include/asm/kvm_eiointc.h
+@@ -119,5 +119,7 @@ struct loongarch_eiointc {
+ 
+ int kvm_loongarch_register_eiointc_device(void);
+ void eiointc_set_irq(struct loongarch_eiointc *s, int irq, int level);
++int kvm_eiointc_get_status(struct kvm_vcpu *vcpu, unsigned long *value);
++int kvm_eiointc_update_status(struct kvm_vcpu *vcpu, unsigned long value, unsigned long mask);
+ 
+ #endif /* __ASM_KVM_EIOINTC_H */
+diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
+index a3c4cc46c892..f463ec52d86c 100644
+--- a/arch/loongarch/include/asm/kvm_host.h
++++ b/arch/loongarch/include/asm/kvm_host.h
+@@ -132,6 +132,8 @@ struct kvm_arch {
+ 	struct loongarch_ipi *ipi;
+ 	struct loongarch_eiointc *eiointc;
+ 	struct loongarch_pch_pic *pch_pic;
++	struct kvm_io_device misc;
++	bool   misc_created;
+ };
+ 
+ #define CSR_MAX_NUMS		0x800
+diff --git a/arch/loongarch/include/asm/kvm_misc.h b/arch/loongarch/include/asm/kvm_misc.h
+new file mode 100644
+index 000000000000..621e4228dea2
+--- /dev/null
++++ b/arch/loongarch/include/asm/kvm_misc.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2025 Loongson Technology Corporation Limited
++ */
++
++#ifndef __ASM_KVM_MISC_H
++#define __ASM_KVM_MISC_H
++
++#include <asm/loongarch.h>
++
++#define MISC_BASE		LOONGARCH_IOCSR_MISC_FUNC
++#define MISC_SIZE		0x8
++
++int kvm_loongarch_create_misc(struct kvm *kvm);
++void kvm_loongarch_destroy_misc(struct kvm *kvm);
++
++#endif /* __ASM_KVM_MISC_H */
+diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/include/asm/loongarch.h
+index d84dac88a584..e30d330d497e 100644
+--- a/arch/loongarch/include/asm/loongarch.h
++++ b/arch/loongarch/include/asm/loongarch.h
+@@ -1141,6 +1141,7 @@
+ #define  IOCSR_MISC_FUNC_SOFT_INT	BIT_ULL(10)
+ #define  IOCSR_MISC_FUNC_TIMER_RESET	BIT_ULL(21)
+ #define  IOCSR_MISC_FUNC_EXT_IOI_EN	BIT_ULL(48)
++#define  IOCSR_MISC_FUNC_INT_ENCODE	BIT_ULL(49)
+ #define  IOCSR_MISC_FUNC_AVEC_EN	BIT_ULL(51)
+ 
+ #define LOONGARCH_IOCSR_CPUTEMP		0x428
+diff --git a/arch/loongarch/kvm/Makefile b/arch/loongarch/kvm/Makefile
+index cb41d9265662..25fa3866613d 100644
+--- a/arch/loongarch/kvm/Makefile
++++ b/arch/loongarch/kvm/Makefile
+@@ -18,6 +18,7 @@ kvm-y += vcpu.o
+ kvm-y += vm.o
+ kvm-y += intc/ipi.o
+ kvm-y += intc/eiointc.o
++kvm-y += intc/misc.o
+ kvm-y += intc/pch_pic.o
+ kvm-y += irqfd.o
+ 
+diff --git a/arch/loongarch/kvm/intc/eiointc.c b/arch/loongarch/kvm/intc/eiointc.c
+index f39929d7bf8a..87d01521e92f 100644
+--- a/arch/loongarch/kvm/intc/eiointc.c
++++ b/arch/loongarch/kvm/intc/eiointc.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <asm/kvm_eiointc.h>
++#include <asm/kvm_misc.h>
+ #include <asm/kvm_vcpu.h>
+ #include <linux/count_zeros.h>
+ 
+@@ -708,6 +709,56 @@ static const struct kvm_io_device_ops kvm_eiointc_ops = {
+ 	.write	= kvm_eiointc_write,
+ };
+ 
++int kvm_eiointc_get_status(struct kvm_vcpu *vcpu, unsigned long *value)
++{
++	unsigned long data, flags;
++	struct loongarch_eiointc *eiointc = vcpu->kvm->arch.eiointc;
++
++	if (!eiointc) {
++		kvm_err("%s: eiointc irqchip not valid!\n", __func__);
++		return -EINVAL;
++	}
++
++	data = 0;
++	spin_lock_irqsave(&eiointc->lock, flags);
++	if (eiointc->status & BIT(EIOINTC_ENABLE))
++		data |= IOCSR_MISC_FUNC_EXT_IOI_EN;
++
++	if (eiointc->status & BIT(EIOINTC_ENABLE_INT_ENCODE))
++		data |= IOCSR_MISC_FUNC_INT_ENCODE;
++	spin_unlock_irqrestore(&eiointc->lock, flags);
++
++	*value = data;
++	return 0;
++}
++
++int kvm_eiointc_update_status(struct kvm_vcpu *vcpu, unsigned long value, unsigned long mask)
++{
++	struct loongarch_eiointc *eiointc = vcpu->kvm->arch.eiointc;
++	unsigned long old, flags;
++
++	if (!eiointc) {
++		kvm_err("%s: eiointc irqchip not valid!\n", __func__);
++		return -EINVAL;
++	}
++
++	old = 0;
++	spin_lock_irqsave(&eiointc->lock, flags);
++	if (eiointc->status & BIT(EIOINTC_ENABLE))
++		old |= IOCSR_MISC_FUNC_EXT_IOI_EN;
++	if (eiointc->status & BIT(EIOINTC_ENABLE_INT_ENCODE))
++		old |= IOCSR_MISC_FUNC_INT_ENCODE;
++
++	value |= (old & ~mask);
++	eiointc->status &= ~(BIT(EIOINTC_ENABLE_INT_ENCODE) | BIT(EIOINTC_ENABLE));
++	if (value & IOCSR_MISC_FUNC_INT_ENCODE)
++		eiointc->status |= BIT(EIOINTC_ENABLE_INT_ENCODE);
++	if (value & IOCSR_MISC_FUNC_EXT_IOI_EN)
++		eiointc->status |= BIT(EIOINTC_ENABLE);
++	spin_unlock_irqrestore(&eiointc->lock, flags);
++	return 0;
++}
++
+ static int kvm_eiointc_virt_read(struct kvm_vcpu *vcpu,
+ 				struct kvm_io_device *dev,
+ 				gpa_t addr, int len, void *val)
+@@ -993,6 +1044,15 @@ static int kvm_eiointc_create(struct kvm_device *dev, u32 type)
+ 		kfree(s);
+ 		return ret;
+ 	}
++
++	ret = kvm_loongarch_create_misc(kvm);
++	if (ret < 0) {
++		kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &s->device);
++		kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &s->device_vext);
++		kfree(s);
++		return ret;
++	}
++
+ 	kvm->arch.eiointc = s;
+ 
+ 	return 0;
+@@ -1010,6 +1070,7 @@ static void kvm_eiointc_destroy(struct kvm_device *dev)
+ 	eiointc = kvm->arch.eiointc;
+ 	kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &eiointc->device);
+ 	kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &eiointc->device_vext);
++	kvm_loongarch_destroy_misc(kvm);
+ 	kfree(eiointc);
+ }
+ 
+diff --git a/arch/loongarch/kvm/intc/misc.c b/arch/loongarch/kvm/intc/misc.c
+new file mode 100644
+index 000000000000..edee66afa36e
+--- /dev/null
++++ b/arch/loongarch/kvm/intc/misc.c
+@@ -0,0 +1,125 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2025 Loongson Technology Corporation Limited
++ */
++#include <asm/kvm_vcpu.h>
++#include <asm/kvm_eiointc.h>
++#include <asm/kvm_misc.h>
++
++static int kvm_misc_read(struct kvm_vcpu *vcpu, struct kvm_io_device *dev,
++			gpa_t addr, int len, void *val)
++{
++	unsigned long data;
++	unsigned int ret;
++
++	addr -= MISC_BASE;
++	if (addr & (len - 1)) {
++		kvm_err("%s: eiointc not aligned addr %llx len %d\n", __func__, addr, len);
++		return -EINVAL;
++	}
++
++	ret = kvm_eiointc_get_status(vcpu, &data);
++	if (ret)
++		return ret;
++
++	data = data >> ((addr & 7) * 8);
++	switch (len) {
++	case 1:
++		*(unsigned char *)val = (unsigned char)data;
++		break;
++
++	case 2:
++		*(unsigned short *)val = (unsigned short)data;
++		break;
++
++	case 4:
++		*(unsigned int *)val = (unsigned int)data;
++		break;
++
++	default:
++		*(unsigned long *)val = data;
++		break;
++	}
++
++	return 0;
++}
++
++static int kvm_misc_write(struct kvm_vcpu *vcpu, struct kvm_io_device *dev,
++		gpa_t addr, int len, const void *val)
++{
++	unsigned long data, mask;
++	unsigned int shift;
++
++	addr -= MISC_BASE;
++	if (addr & (len - 1)) {
++		kvm_err("%s: eiointc not aligned addr %llx len %d\n", __func__, addr, len);
++		return -EINVAL;
++	}
++
++	shift = (addr & 7) * 8;
++	switch (len) {
++	case 1:
++		data = *(unsigned char *)val;
++		mask = 0xFF;
++		mask = mask << shift;
++		data = data << shift;
++		break;
++
++	case 2:
++		data = *(unsigned short *)val;
++		mask = 0xFFFF;
++		mask = mask << shift;
++		data = data << shift;
++		break;
++
++	case 4:
++		data = *(unsigned int *)val;
++		mask = UINT_MAX;
++		mask = mask << shift;
++		data = data << shift;
++		break;
++
++	default:
++		data = *(unsigned long *)val;
++		mask = ULONG_MAX;
++		mask = mask << shift;
++		data = data << shift;
++		break;
++	}
++
++	return kvm_eiointc_update_status(vcpu, data, mask);
++}
++
++static const struct kvm_io_device_ops kvm_misc_ops = {
++	.read   = kvm_misc_read,
++	.write  = kvm_misc_write,
++};
++
++int kvm_loongarch_create_misc(struct kvm *kvm)
++{
++	struct kvm_io_device *device;
++	int ret;
++
++	if (kvm->arch.misc_created)
++		return 0;
++
++	device = &kvm->arch.misc;
++	kvm_iodevice_init(device, &kvm_misc_ops);
++	ret = kvm_io_bus_register_dev(kvm, KVM_IOCSR_BUS, MISC_BASE, MISC_SIZE, device);
++	if (ret < 0)
++		return ret;
++
++	kvm->arch.misc_created = true;
++	return 0;
++}
++
++void kvm_loongarch_destroy_misc(struct kvm *kvm)
++{
++	struct kvm_io_device *device;
++
++	if (kvm->arch.misc_created) {
++		device = &kvm->arch.misc;
++		kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, device);
++		kvm->arch.misc_created = false;
++	}
++}
+
+base-commit: 52da431bf03b5506203bca27fe14a97895c80faf
+-- 
+2.39.3
 
 
