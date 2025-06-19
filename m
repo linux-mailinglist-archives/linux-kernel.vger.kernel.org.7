@@ -1,314 +1,128 @@
-Return-Path: <linux-kernel+bounces-694094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3CEBAE07CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:51:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF929AE07C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BE5D3B1D68
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:50:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40E6B1BC12B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E7B27F166;
-	Thu, 19 Jun 2025 13:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ZJFOMio7"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A501B265637;
+	Thu, 19 Jun 2025 13:50:27 +0000 (UTC)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5112737E4;
-	Thu, 19 Jun 2025 13:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750341045; cv=pass; b=Rj+r646nFKrqzZhTuXmCIkGRk2BSEbAKr3TD8b3/HlxMmHzPzkPd3U9odvMCUqjXrZxUBp1Cx8UEFVmhBQc1w/5N+5+xbDmOLP0cGt10PFmAOtlup6/J6p8U0E1K2711236JfBdRlB7ri3qUcbOumz7pnplp1mP5ZF8PxiltT4Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750341045; c=relaxed/simple;
-	bh=WuziWb/b07UjG6OsaVS8BVtMh4mbA2DcoD8lv11pA18=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=GuUwWrnPz9ZkgtH9GnKGN0xSbdb3UPJwVK5gs8c5X2nk6UluQz+gmOLj7XQp165Gu0Snlu0PB2ejWQqWOgqZRb493iz7F3AhcXaHdNS7/rmXSVkbF5bNH3LwwUSD56iQBbgzgdnuU6SIC+SONDsxWodHF1L6ZLyAyyPF1agq7KQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ZJFOMio7; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1750340994; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Xg4E1OYxArkD3TA1ZtARJFjUqeqTKd93T1Gb8XIrs6l9YDUw6pIyxDn4MTmXLAejSPJgYyUlSI7leHyQ3mJfnx3ktfngXuUFCz6k6UuIFRqc73I1WuXe369HBwIB6AqUIEedQl9l1ACKWQKcf/Aof9CC37G/IUq2EDawe8hgX0o=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750340994; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=HXoig7Q+/oEFtN4SjomCo2nMhWyT3fJq8sjjjfihsNI=; 
-	b=RA09koLz/duxiHOQ0bw1Qj5jhhBDus7rzm2Abchy6wWSgiJg/fCSzRT5Eaak0I2Srcyy0VXxDIwtw9vTS4qaejnAP79LeKvh2gTBKTOnyaeAV69tPABiEhrBCY96GaaZbj7q1WO/22A93dAn/8ZzavZszVsJEmNhLUkyyOP1/i8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750340993;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=HXoig7Q+/oEFtN4SjomCo2nMhWyT3fJq8sjjjfihsNI=;
-	b=ZJFOMio78GQ7fSVmxwSZmU49YIRL5zTfMV119aCb6oNzx1bsjhE7xZlPoBup++02
-	ZwRTz2KV7MswUOatZ1YGja/p41Ol9MyhFqZxYnGFx/GFVNgO7Jul2a+gZ8sZbSZVI7K
-	IDpHbUV3sE+114KbCGKPJE9KPfFmHo3Jn/r6qV2M=
-Received: by mx.zohomail.com with SMTPS id 1750340992098417.30853778923847;
-	Thu, 19 Jun 2025 06:49:52 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117FE522A;
+	Thu, 19 Jun 2025 13:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750341027; cv=none; b=VULcQJFwkvf0dXoPWUx3vKBxCV33b4wMk6Fuu5bp9kwW9ksgvAT1WBaD3H2WxNMGh5EjOtcU2074O4G3u8CK6RCKtv0LvCiDyLW6fZmdH9vkBcEWAiHWIwTbGz2CFaNd1Y00KA6rpn22V/Ph5BNVWUccAphLibOd0yJz01h7o5o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750341027; c=relaxed/simple;
+	bh=17rqwIF9S9LIvpH8YoFd92XwGkAXj+mh597VvniVRQA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rYF6Nrz/48Z+IuuIPHPl96CRZIk4FveRmZYrx6PLgfZQexbp4bynMK81okn4M3pxYbDSWZpBRV5CUb2vnqtmVo0SbHcdWQ7fxu55uIMi6AWZC18JVzRjBy7SxIDC3vl/YeYUXT1igdal2Ts4ap32/DALvP9QZQ2/yZ54O2wU61k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-87f161d449dso582432241.3;
+        Thu, 19 Jun 2025 06:50:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750341023; x=1750945823;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8PA/2Orye8C3qBctW0WFI5cU4GUc9aL2SqWpOnNsdnA=;
+        b=GEgL6yCbo+zOs4laLOh0SmIc4fdy6xkWAeSpv0fTJNp77SR6j/FPIAGBX8ECeZP52/
+         /dGngZIxCMnnAbYl/1lxCM7jHDYTmyynqY4en0WtaPQCVzTM7MUzK0m6KIezIpTmnLjZ
+         5jNqHMF5hTafzyA0HdM2zwuiWJBkr7BC223rCBiik4mpdEPfGbRTot8SGrIbYvxc6iF3
+         haN2Lk/s50lFa217uWZVtqUPG82KCSuy5/b0tfIY2aq7YbxZrpR6R3KXy5O/TFxBpJn4
+         OaN8LoFxRB+v9Kfu/ipiJ6k4wfsem65/4pY8lxeuSROO/5+pIThbkNdpDygjq3tJYi7Z
+         v+Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQvr23+fed4AkzdPUp0SpjYyRdbxyY2I2VI7e2DT47prhYPW1Td6yD+TLqPSKxOriKuv8ysfaa23sfVlkQwcxBTc0=@vger.kernel.org, AJvYcCWXPy2I3XMtrQmBKw7Mttkwvf/pLHq6puHt2PUYlsg98nh65Yx0PZNtn1SEMjtXvJmX/CEBd5ugZ/xT@vger.kernel.org, AJvYcCX/vcabnIp9kc9L2UZtmLLPgYjZw46SpZxShw4A7bwmlm2X2QZpWFaWR+xmAw4vHNr+96dnfeJoNwc719L6@vger.kernel.org, AJvYcCX28EDRwksLaPGnjYOquaqgeKXGQmCgUQXGwzomvuPN9qb/mTBk6iSGmaKmV+GMk4d9SihPzT45FExR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFiWiVqFe5VwL36o/Ol3I4daz/p9LWR7pfvOwSSPJ7aX9uT7OY
+	vzm2kJ80bANCT+M92uN60NqqFlxXIFsywnqDYsPnqhmJuAmhnSt2IjN7lCJ9gbXI
+X-Gm-Gg: ASbGncsCsAPKMT1GX1fah7RQGhDh14vt55CYi71D2dpM4yPG/m1SBCp0GzFcSyCRFCb
+	h9qUuOxF5+aP1x/ZCl47KqGlkbWVk1AYruoxjzQNPFUVR7n+TrfmmB9bWaSAi694PjB5aThUe3C
+	SeOBSWEdYb5y+hXF8WMz6YL2hFSM9ccOhdRkOCy63phc3WSUFKu/fNs7sNGgQ6pH8z7RCavxfzs
+	jniLaUBG/JGkT5cpBNb8aTCi1znh7ilb2baakAm2vbJaw2Xs0xSpySIjZLuaVrYAZaFt12TuCVS
+	rZWE40wgXYLJ6BuKw+zZ8bb9TAOlsUpO7mlbCifPyxkYjkszMgFPr4BlKMoxqmVnOfewfEKcwW+
+	+sfTo3JEuvQBHZyC9IF/eD2g6
+X-Google-Smtp-Source: AGHT+IHRy1diZ85ChBfviMGFWd3DBbpClp67HtvaIidkA2DkikGzuFX7uVxfkTBj3mTP84t9kabzyQ==
+X-Received: by 2002:a05:6102:291e:b0:4e5:ade7:eb7c with SMTP id ada2fe7eead31-4e7f620796bmr15585848137.12.1750341022631;
+        Thu, 19 Jun 2025 06:50:22 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4e7e70c5e17sm2311693137.21.2025.06.19.06.50.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Jun 2025 06:50:22 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4e7feaae0e1so609828137.2;
+        Thu, 19 Jun 2025 06:50:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX7dr0dEGpoHw+EfwLpaeZhhyt3QTSDNZKxkMoZJu17uNe/gbAQjxzXqaCBO+CIkpNAmfgQXAFrDBQh@vger.kernel.org, AJvYcCXk2mrK7EskFraVUDKtKpXG/PjYeP9s2RwSkFB2VKA69fS2xHAiuRFqrniMJGDHtqWUo3HfGYlQqR3ZoCg+mALbeEs=@vger.kernel.org, AJvYcCXtClxbj9/o215csMD2uBJsp439mFsp9e0XDOnrB9luojwOe8i4YHwYKAN9HyWctau2kgtJLOjzj1ud@vger.kernel.org, AJvYcCXtd32Kiw1jDRoD1+2aPI/sSjelQON7iD4CqzwOzEi+3b8LjOyLpuOHufbYzKPoOakgHK5Y1zPDYlQMhYbH@vger.kernel.org
+X-Received: by 2002:a05:6102:160d:b0:4e6:df73:f147 with SMTP id
+ ada2fe7eead31-4e7f6188a81mr17457976137.11.1750341021249; Thu, 19 Jun 2025
+ 06:50:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v2 2/2] rust: drm: Add GPUVM abstraction
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250619135709.634625e0@collabora.com>
-Date: Thu, 19 Jun 2025 10:49:34 -0300
-Cc: Danilo Krummrich <dakr@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Lyude Paul <lyude@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- dri-devel@lists.freedesktop.org,
- Asahi Lina <lina@asahilina.net>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <477186AF-A8D4-4D4E-9F58-86958C654333@collabora.com>
-References: <20250422-gpuvm-v2-0-44d4fc25e411@collabora.com>
- <20250422-gpuvm-v2-2-44d4fc25e411@collabora.com>
- <aAgHGuzCZzh7YPz2@cassiopeiae>
- <DBB3E8CE-19AA-437D-AF54-BF23763B254F@collabora.com>
- <aAj7gAzFVRX3dN7L@pollux>
- <F731D6F7-312D-4633-B677-69B7CC7194A6@collabora.com>
- <20250619135709.634625e0@collabora.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+References: <20250613113839.102994-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250613113839.102994-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250613113839.102994-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 19 Jun 2025 15:50:09 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVRFUb0ht8K4ONhSn8rh7X23=vaxnZuKJ0sLFDRLwOLBA@mail.gmail.com>
+X-Gm-Features: Ac12FXy0vX9Oyxu7zFspTipfUwmgTHICoQvKiOwbL8RfYJosuAdocBaODmHex84
+Message-ID: <CAMuHMdVRFUb0ht8K4ONhSn8rh7X23=vaxnZuKJ0sLFDRLwOLBA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] dt-bindings: i2c: renesas,riic: Document RZ/T2H support
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Boris,
+On Fri, 13 Jun 2025 at 13:40, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Document support for the I2C Bus Interface (RIIC) found on the Renesas
+> RZ/T2H (R9A09G077) SoC. The RIIC IP on this SoC is similar to that on
+> the RZ/V2H(P) SoC but supports fewer interrupts, lacks FM+ support and
+> does not require resets. Due to these differences, add a new compatible
+> string `renesas,riic-r9a09g077` for the RZ/T2H SoC.
+>
+> Unlike earlier SoCs that use eight distinct interrupts, the RZ/T2H uses
+> only four, including a combined error/event interrupt. Update the binding
+> schema to reflect this interrupt layout and skip the `resets` property
+> check, as it is not required on these SoCs.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> v2->v3:
+> - Replaced Transmit Error -> `Transfer Error`
+> - Fixed the order of interrupts in the DT binding
+>   documentation to match the HW manual.
 
-> On 19 Jun 2025, at 08:57, Boris Brezillon =
-<boris.brezillon@collabora.com> wrote:
->=20
-> Hi,
->=20
-> On Fri, 13 Jun 2025 13:42:59 -0300
-> Daniel Almeida <daniel.almeida@collabora.com> wrote:
->=20
->> Danilo,
->>=20
->>=20
->>> <snip>
->>>=20
->>>>>> +// SAFETY: DRM GpuVmBo objects are always reference counted and =
-the get/put functions
->>>>>> +// satisfy the requirements.
->>>>>> +unsafe impl<T: DriverGpuVm> AlwaysRefCounted for GpuVmBo<T> {
->>>>>> +    fn inc_ref(&self) {
->>>>>> +        // SAFETY: The drm_gpuvm_get function satisfies the =
-requirements for inc_ref().
->>>>>> +        unsafe { bindings::drm_gpuvm_bo_get(&self.bo as *const _ =
-as *mut _) };
->>>>>> +    }
->>>>>> +
->>>>>> +    unsafe fn dec_ref(mut obj: NonNull<Self>) {
->>>>>> +        // SAFETY: drm_gpuvm_bo_put() requires holding the gpuva =
-lock, which is
->>>>>> +        // the dma_resv lock by default.
->>>>>> +        // The drm_gpuvm_put function satisfies the requirements =
-for dec_ref().
->>>>>> +        // (We do not support custom locks yet.)
->>>>>> +        unsafe {
->>>>>> +            let resv =3D (*obj.as_mut().bo.obj).resv;
->>>>>> +            bindings::dma_resv_lock(resv, =
-core::ptr::null_mut());
->>>>>> +            bindings::drm_gpuvm_bo_put(&mut obj.as_mut().bo);
->>>>>> +            bindings::dma_resv_unlock(resv); =20
->>>>>=20
->>>>> What if the resv_lock is held already? Please also make sure to =
-put multiple
->>>>> unsafe calls each in a separate unsafe block. =20
->>>>=20
->>>> By whom? =20
->>>=20
->>> The lock might be held already by the driver or by TTM when things =
-are called
->>> from TTM callbacks.
->>>=20
->>> This is why GPUVM never takes locks by itself, but asserts that the =
-correct lock
->>> is held.
->>>=20
->>> I think we really want to get proof by the driver by providing lock =
-guard
->>> references.
->>>=20
->>=20
->> There doesn=E2=80=99t seem to be a solution that fits all the boxes =
-here.
->>=20
->> As you said, at this point the current status of the resv is unknown. =
-If we
->> simply assume that it is not taken, we run into the problem you =
-pointed out:
->> i.e.: recursive locking where ttm or some other layer has the lock =
-already.
->>=20
->> Alternatively, if we assume that the resv must be locked in =
-dec_ref(), then we
->> may build a lock::Guard from it and assert that it is held, but in =
-any case
->> it's very confusing to expect the reservation to be locked on a =
-dec_ref() call.
->>=20
->> The fact that dec_ref() is placed automatically on drop will =
-massively
->> complicate the call sites:
->=20
-> I'm digressing, but there's an aspect I found very annoying in the C
-> version of the API: the fact that we have to take a BO ref, then lock,
-> then release the vm_bo [1], because otherwise the vm_bo might be the
-> last owner of a BO ref leading to a UAF on the lock itself. This to =
-me,
-> denotes a lifetime issue that I think would be good to address in the
-> rust version of the API.
->=20
-> It's not exactly the same problem, but I think it comes from the same
-> root issue: lax ownership definition. By that I mean it's not clear
-> who's the owner and who's the owned. gem_object::gpuva::list has
-> weak refs on the vm_bos contained in this list, which kinda makes =
-sense
-> because vm_bos themselves have a ref on the gem_object, and if we were
-> to make this weak ref a strong ref we'd never free any of these two
-> objects. The lock is also part of the BO (either the BO resv lock, or =
-a
-> custom lock), and since it's the very same lock we use to =
-insert/remove
-> vm_bos, that's problematic.
->=20
-> If we were making the gpuvm_bo_list a separate object that's =
-originally
-> created by the BO, and then let the GPUVM layer manipulate only this
-> list, it could work. Of course that means the resv lock/driver custom
-> lock should come from this object too, and I'm not too sure that's an
-> option when dma_buf imports are involved.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This would require changes to the C side, because the C helpers expect =
-the gpuva
-list to be inside drm_gem_object, and these helpers are used in the Rust
-bindings.
+Gr{oetje,eeting}s,
 
-Don't get me wrong, IMHO we can definitely pursue this if needed, or if =
-it's an
-improvement. I am merely stating the fact that it's a more elaborate =
-solution
-that what I had originally proposed so that we are all aware.
+                        Geert
 
->=20
->>=20
->> We will have to ensure that the resv is locked at all times where we =
-interface
->> with a GpuVmBo, because each of these points could possibly be the =
-last active
->> ref. If we don't, then we've introduced a race where the list is =
-modified but
->> no lock is taken, which will be a pretty easy mistake to make. This =
-seems to
->> also be the case in C, which we should try to improve upon.
->=20
-> Yep, with auto-unref thrown into the mix you have to be very careful =
-on
-> which paths might release the last vm_bo ref, and make sure an extra
-> ref is taken on the BO, and the resv/custom lock is held when that
-> happens.
->=20
->>=20
->> My suggestion is to introduce a separate GPU-VA lock here:
->>=20
->> /// A base GEM object.
->> #[repr(C)]
->> #[pin_data]
->> pub struct Object<T: DriverObject> {
->>    obj: bindings::drm_gem_object,
->>    // The DRM core ensures the Device exists as long as its objects =
-exist, so we don't need to
->>    // manage the reference count here.
->>    dev: *const bindings::drm_device,
->>    #[pin]
->>    inner: T,
->>    #[pin]
->>    _p: PhantomPinned,
->>    // Add a GPU-VA lock here <--------
->> }
->>=20
->> And only support custom locks in Rust, to the detriment of the =
-optimization
->> where the resv is used and to the detriment of any perf improvements =
-that
->> reusing the reservation might bring to the table.
->=20
-> Yes, if it was only about perf optimizations, then I'd like to see
-> numbers that prove taking an extra lock that's always going to be free
-> in a path where you already took the BO resv lock actually makes a
-> difference, and honestly, I doubt it. But my fear is that it's not so
-> much about avoiding an extra lock to be taken, and more about making
-> sure this list insertion/deletion doesn't race with other paths that
-> are assuming that taking the resv lock is enough to guarantee =
-exclusive
-> access to this vm_bo list (I mean places outside gpuvm, in the drivers
-> directly). I guess the is fixable.
->=20
->>=20
->> Notice that this would sidestep this entire discussion: nobody else =
-would be
->> aware of this new lock so we could safely lock it in dec_ref(). We =
-would also
->> be transparently managing the locking on behalf of drivers in all the =
-other
->> calls where the VA list is accessed, which is another plus as I said =
-above.
->=20
-> If the lock is part of the gem_object, it's not solving the problem I
-> described above, because you might be taking a lock that disappears if
-> you don't take a BO ref before taking the lock. In the end, that's
-> still a risky business.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I must confess I was not aware of the issue you're discussing. We can =
-add an
-instance of gem::ObjectRef in gpuvm::GpuVmBo if you think this will =
-solve it.
-This will make sure that the vmbo owns the gem object (or rather that it =
-has a
-+1 on the refcount) for its lifetime. That seems to be the semantics =
-you're
-looking for?
-
-I thought about adding this lock to the Rust wrapper for the vmbo, but =
-then
-we'd run into the issue of shared BOs, where each would be connected to =
-a
-different vmbo and would thus take a different lock when attempting to =
-modify
-the same underlying gpuva list.
-
-Just to be clear, by shared BO here I specifically mean a BO that's =
-connected
-to more than one VM, which is possible, IIUC.
-
-=E2=80=94 Daniel
-
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
