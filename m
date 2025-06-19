@@ -1,135 +1,313 @@
-Return-Path: <linux-kernel+bounces-693885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86B31AE054A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:17:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4FFAE0553
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:17:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CA3F3AC7B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:16:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0EB189C316
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C000E22F76F;
-	Thu, 19 Jun 2025 12:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B20F238159;
+	Thu, 19 Jun 2025 12:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MduUsCsq"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dt23KkSV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6C22222C3;
-	Thu, 19 Jun 2025 12:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F292192F4;
+	Thu, 19 Jun 2025 12:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750335425; cv=none; b=TG2kC8LMlHSoeCnD26+uM/9VM0gqX/zyC8TS97yUC3tdCdRllgbX+9uAPfdoslAKn9bndfD+6kT8HsJ1LGtBX7ssRc3Lro7CHQzJUNRuF3k/g4jqOO25T6ZcVEITdh07YmQzSLUcyt+oUEyzgWdeeVW1HYaLGC7FzfR3oCepGi0=
+	t=1750335453; cv=none; b=RvOLz2lQCXYCkSIVraKbHfrZF3xp/xxXbhN3eZLwvAfoK8SpG2Hw6Qvn+waavBjFkurKqWs08VaCwCRsBD1CbfTad6RpatMap8J9YCQ7XxqrPBhplI09Bo3ImDGTIHblZFpEqZp49SMFFqwD7nI16UPmRi2PcQ8vS6BKSOCECuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750335425; c=relaxed/simple;
-	bh=rdGF6VJkcw9X2DRx896iss7YrlAfYC71roWFecu+XZ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GMnYTI3Lz4QIJJ2t+UBaWOWgVCSRmZvajcHQX8H4vcDadyDGDiOoSyRh4ltEQBO+Y2Ptmy3tgeIhO8mf9E7K5oUU5i82teedjXjXs9xcT2DnSOkcHpizTwYszN7SvRR14lUxG0bWYzCjyw+TVWZntEMEwBHiXwjcpv90PYtSV+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MduUsCsq; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-74264d1832eso890573b3a.0;
-        Thu, 19 Jun 2025 05:17:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750335423; x=1750940223; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=h+HaGzP6lmIJBRwqqaUMOnA43WMQxxygiHyZNWqGWT4=;
-        b=MduUsCsqKaXlFNLDuyB74vBKyztfJaaePrwf83HbB4aZYK6m7NTNysWnFGuVxLSrAj
-         gUktNzyb1n+tFHZysSuZ4U3Kvvr8Au7u5fT4kblAzDR/NeeOsxgND8VSsvFCC+v+SUvZ
-         gn+B0ITi8tv0I/1TsLrExjGdYsz/N8HGFbTgop7hzq8uTS06WG3iI85eW5KpkO/MrqPU
-         wdbNsnniaPj6LG/yVu0gQwAsvKXhlEyuT1/cRcdmBoZ+rYdJ8qL2OXp50OJbZig1QwVD
-         dcuuJEqiv1IAXKoJH+vr+aqLUYWKgG7rnO+Nl2hdNzDANBDW4vD7x3VCOMuydZZra0yQ
-         lAlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750335423; x=1750940223;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h+HaGzP6lmIJBRwqqaUMOnA43WMQxxygiHyZNWqGWT4=;
-        b=KgjvYyxNm7qp5AVxzlqHhl2YHTsdGFcVMGpqQ/bfVQMj6usD6zifnwsEV4f0GyqcKO
-         btSFpTnpFdZ7VGVF2Q2wpWKJJcSQQt4g+B9P02vsrG9l0dxbONCqlmyXWA8XMAXc89zJ
-         bC0zDJAuM/N5FM7DwrOs8wChJdJYuI36W/15x3daa2rYgNbwEfBPXofWya6lMPUPu1pY
-         GDTLBw30kv3bJTybpFjmT/i46Eh2V/tuORp6ckRJTn8DUUdYHl/wNzNZCmf7w51a6V5t
-         ZOWIZ7T9Gvzk+EY0ISggYNqqd3+Hu9FNva36DM72Vzkc1N7Gs8w0NRQ1TaZE3W8bmmpa
-         XvEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWG9HBAUToj53HD9V5eJltj4TyBvHzxoq5sWtkxdz2L6E4/ykzpyH/Tvhj97FPqbH2NVfZbFuPdDekM3qM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/9ek+SpNClEU8KSFlETCTbg6y906ZSIv7YlFsiAb6miAgRacf
-	K+Q7Zlg/mUEHMlEaS4WZ2KND8O9CdzUqtk3ocqwJkhiS3qh5edSIsYEP
-X-Gm-Gg: ASbGncs6UP69M+HEah4sS2ZnjlnANaBgEIudApmXyZU0WPWGUe0p7q4JUFZ7RE8wuVP
-	RLHlnNL9lu31IrDAhR0xC2DD1hxfQ0EEflmUj+TUeFIpQqwp2i7wkXui+wU4WaZbNVtQOkkjPJD
-	F76DWpCg3lPk71HOHm57NLmcgy0tXXEsn27A1aUd3irV41W+xCB3oY6OHvRyrAWgAQlvOUipbM0
-	Z9vO5bo3Jdh0Z0MGQkdVoWw6aCKsU3jvVonh6I6dczD79qjZd/1ewIGzjXgv5UsCVgvSetFgw7f
-	d+QE+FRDRntIFk74Mv/I6Z2Up7Fd8dvkzEIiPxMZghCDqathI8syD2vY01sRkRhqlkhbjK6Zsm5
-	688AbJReaSN2WdflXg79M
-X-Google-Smtp-Source: AGHT+IGF0m9g+dKRp/zj+sv1IMMTa7YfXintMgX2N5TSQkjJnG1bw7LH1I70Vh9RPvjvZpguzWHcvg==
-X-Received: by 2002:a05:6a00:14cd:b0:748:4652:bff4 with SMTP id d2e1a72fcca58-7489cfcb16amr28248513b3a.13.1750335422813;
-        Thu, 19 Jun 2025 05:17:02 -0700 (PDT)
-Received: from avinash-INBOOK-Y2-PLUS.. ([2401:4900:88e2:4433:2a7d:bb88:9d3c:be74])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2fe168a0f8sm12818425a12.53.2025.06.19.05.16.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 05:17:02 -0700 (PDT)
-From: Abinash Singh <abinashlalotra@gmail.com>
-X-Google-Original-From: Abinash Singh <abinashsinghlalotra@gmail.com>
-To: jack@suse.cz,
-	amir73il@gmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abinash Singh <abinashsinghlalotra@gmail.com>,
-	syzbot+aaeb1646d01d0358cb2a@syzkaller.appspotmail.com
-Subject: [PATCH v3] fsnotify: initialize destroy_next to avoid KMSAN uninit-value warning
-Date: Thu, 19 Jun 2025 17:46:52 +0530
-Message-ID: <20250619121652.126502-1-abinashsinghlalotra@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1750335453; c=relaxed/simple;
+	bh=/EhQ8omFBROqKVC50GMU4FURNn1d6ko5wL+1nqnYQ/M=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=BCh6dmHdkgqSzhoaxyRF9FncE+bGTEaXf/w8zFfx1WQtINyX1IW8OnIEKpoaVI93FZbPhD4/E9Y4I8wruoh4ei8jfMfI1ZtfyJSn0xWpQsYjg8fghIFz4zb3R86hSMGnn/H4t4m7oOG+HT+hnY6X1VoxRLutsqCEMlQ/ufp/93k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dt23KkSV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C3BFC4CEEA;
+	Thu, 19 Jun 2025 12:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750335453;
+	bh=/EhQ8omFBROqKVC50GMU4FURNn1d6ko5wL+1nqnYQ/M=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=Dt23KkSV/9nHUWBbZqwwyVHWh5vfzY2McoksD6/jvAFf8HOocPocB7/dfzUrQVgel
+	 ZemKsW50cEAZstXzAavFEDMstS6soxv1e8fkkJMRzul607c2EBu08d4txfOx0O0EB/
+	 AooFWNZ12H3I/vK52mAGdfwwKkqLydGSWDa6RWrda1XiKWc7B1DSc9pPVu8wbQMoJP
+	 Vwr6UH3X3C4EvD6rCrCOVazVGrwwNETMEy/98VgQ/ITDLHzmjAS354iqM0i3mOyD76
+	 EDRaofER9LmRZ/fxUHhT3MfrkTijxbPM5BeXoYiKEDBfQ2BADT0H1cXD7ZsARCIk13
+	 zU1axqgl5vR/g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 19 Jun 2025 14:17:26 +0200
+Message-Id: <DAQI4RPK2Y7T.3TQ1G3IMZCNK4@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Masahiro
+ Yamada" <masahiroy@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>,
+ "Luis Chamberlain" <mcgrof@kernel.org>, "Danilo Krummrich"
+ <dakr@kernel.org>, "Nicolas Schier" <nicolas.schier@linux.dev>, "Trevor
+ Gross" <tmgross@umich.edu>, "Adam Bratschi-Kaye" <ark.email@gmail.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-kbuild@vger.kernel.org>, "Petr Pavlu" <petr.pavlu@suse.com>, "Sami
+ Tolvanen" <samitolvanen@google.com>, "Daniel Gomez" <da.gomez@samsung.com>,
+ "Simona Vetter" <simona.vetter@ffwll.ch>, "Greg KH"
+ <gregkh@linuxfoundation.org>, "Fiona Behrens" <me@kloenk.dev>, "Daniel
+ Almeida" <daniel.almeida@collabora.com>, <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v13 1/6] rust: str: add radix prefixed integer parsing
+ functions
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Andreas Hindborg" <a.hindborg@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250612-module-params-v3-v13-0-bc219cd1a3f8@kernel.org>
+ <20250612-module-params-v3-v13-1-bc219cd1a3f8@kernel.org>
+ <bbRxeBHCiFQl9UTC1hFQYdzkdAIV5HcRTuFf9ucPUEZZ-uJmaHAZXfd8Tk-k9vzROgFsCyNhGBBCn5J_HnbUSA==@protonmail.internalid> <DAPY5HF9HGXC.FCEKAMLPFY1H@kernel.org> <871prg7zoh.fsf@kernel.org>
+In-Reply-To: <871prg7zoh.fsf@kernel.org>
 
-KMSAN reported an uninitialized value use in
-fsnotify_connector_destroy_workfn(), specifically when accessing
-`conn->destroy_next`:
+On Thu Jun 19, 2025 at 1:12 PM CEST, Andreas Hindborg wrote:
+> I'm having a difficult time parsing. Are you suggesting that we guard
+> against implementations of `TryInto<u64>` that misbehave?
 
-    BUG: KMSAN: uninit-value in fsnotify_connector_destroy_workfn+0x108/0x160
-    Uninit was created at:
-     slab_alloc_node mm/slub.c:4197 [inline]
-     kmem_cache_alloc_noprof+0x81b/0xec0 mm/slub.c:4204
-     fsnotify_attach_connector_to_object fs/notify/mark.c:663
+Let me try a different explanation:
 
-The struct fsnotify_mark_connector was allocated using
-kmem_cache_alloc(), but the `destroy_next` field was never initialized,
-leading to a use of uninitialized memory when the work function later
-traversed the destroy list.
+The safety requirement for implementing the `FromStrRadix`:
 
-Fix this by explicitly initializing `destroy_next` to NULL immediately
-after allocation.
+    /// The member functions of this trait must be implemented according to
+    /// their documentation.
 
-Reported-by: syzbot+aaeb1646d01d0358cb2a@syzkaller.appspotmail.com
-Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
+Together with the functions of the trait:
+
+    /// Parse `src` to [`Self`] using radix `radix`.
+    fn from_str_radix(src: &BStr, radix: u32) -> Result<Self, crate::error:=
+:Error>;
+   =20
+    /// Return the absolute value of [`Self::MIN`].
+    fn abs_min() -> u64;
+   =20
+    /// Perform bitwise 2's complement on `self`.
+    ///
+    /// Note: This function does not make sense for unsigned integers.
+    fn complement(self) -> Self;
+
+Doesn't make sense. What does it mean to return the "absolute value of
+[`Self::MIN`]"? We don't have "absolute value" defined for an arbitrary
+type. Similarly for `complement` and `from_str_radix`, what does "Parse
+`src` to [`Self`] using radex `radix`" mean? It's not well-defined.
+
+You use this safety requirement in the parsing branch for negative
+numbers (the `unsafe` call at the bottom):
+
+    [b'-', rest @ ..] =3D> {
+        let (radix, digits) =3D strip_radix(rest.as_ref());
+        // 2's complement values range from -2^(b-1) to 2^(b-1)-1.
+        // So if we want to parse negative numbers as positive and
+        // later multiply by -1, we have to parse into a larger
+        // integer. We choose `u64` as sufficiently large.
+        //
+        // NOTE: 128 bit integers are not available on all
+        // platforms, hence the choice of 64 bits.
+        let val =3D
+            u64::from_str_radix(core::str::from_utf8(digits).map_err(|_| EI=
+NVAL)?, radix)
+                .map_err(|_| EINVAL)?;
+   =20
+        if val > Self::abs_min() {
+            return Err(EINVAL);
+        }
+   =20
+        if val =3D=3D Self::abs_min() {
+            return Ok(Self::MIN);
+        }
+   =20
+        // SAFETY: We checked that `val` will fit in `Self` above.
+        let val: Self =3D unsafe { val.try_into().unwrap_unchecked() };
+   =20
+        Ok(val.complement())
+    }
+
+But you don't mention that the check is valid due to the safety
+requirements of implementing `FromStrRadix`. But even if you did, that
+wouldn't mean anything as I explained above.
+
+So let's instead move all of this negation & u64 conversion logic into
+the `FromStrRadix` trait. Then it can be safe & the `ParseInt::from_str`
+function doesn't use `unsafe` (there still will be `unsafe` in the
+macro, but that is fine, as it's more local and knows the concrete
+types).
 
 ---
-v3: Corrected the Author name
----
- fs/notify/mark.c | 1 +
- 1 file changed, 1 insertion(+)
+Cheers,
+Benno
 
-diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-index 798340db69d7..28013046f732 100644
---- a/fs/notify/mark.c
-+++ b/fs/notify/mark.c
-@@ -665,6 +665,7 @@ static int fsnotify_attach_connector_to_object(fsnotify_connp_t *connp,
- 		return -ENOMEM;
- 	spin_lock_init(&conn->lock);
- 	INIT_HLIST_HEAD(&conn->list);
-+	conn->destroy_next = NULL;
- 	conn->flags = 0;
- 	conn->prio = 0;
- 	conn->type = obj_type;
--- 
-2.43.0
+Here is what I have in mind:
 
+diff --git a/rust/kernel/str/parse_int.rs b/rust/kernel/str/parse_int.rs
+index 0754490aec4b..9d6e146c5ea7 100644
+--- a/rust/kernel/str/parse_int.rs
++++ b/rust/kernel/str/parse_int.rs
+@@ -13,32 +13,16 @@
+ // `ParseInt`, that is, prevents downstream users from implementing the
+ // trait.
+ mod private {
++    use crate::prelude::*;
+     use crate::str::BStr;
+=20
+     /// Trait that allows parsing a [`&BStr`] to an integer with a radix.
+-    ///
+-    /// # Safety
+-    ///
+-    /// The member functions of this trait must be implemented according t=
+o
+-    /// their documentation.
+-    ///
+-    /// [`&BStr`]: kernel::str::BStr
+-    // This is required because the `from_str_radix` function on the primi=
+tive
+-    // integer types is not part of any trait.
+-    pub unsafe trait FromStrRadix: Sized {
+-        /// The minimum value this integer type can assume.
+-        const MIN: Self;
+-
++    pub trait FromStrRadix: Sized {
+         /// Parse `src` to [`Self`] using radix `radix`.
+-        fn from_str_radix(src: &BStr, radix: u32) -> Result<Self, crate::e=
+rror::Error>;
+-
+-        /// Return the absolute value of [`Self::MIN`].
+-        fn abs_min() -> u64;
++        fn from_str_radix(src: &BStr, radix: u32) -> Result<Self>;
+=20
+-        /// Perform bitwise 2's complement on `self`.
+-        ///
+-        /// Note: This function does not make sense for unsigned integers.
+-        fn complement(self) -> Self;
++        /// Tries to convert `value` into [`Self`] and negates the resulti=
+ng value.
++        fn from_u64_negated(value: u64) -> Result<Self>;
+     }
+ }
+=20
+@@ -108,19 +92,7 @@ fn from_str(src: &BStr) -> Result<Self> {
+                 let val =3D
+                     u64::from_str_radix(core::str::from_utf8(digits).map_e=
+rr(|_| EINVAL)?, radix)
+                         .map_err(|_| EINVAL)?;
+-
+-                if val > Self::abs_min() {
+-                    return Err(EINVAL);
+-                }
+-
+-                if val =3D=3D Self::abs_min() {
+-                    return Ok(Self::MIN);
+-                }
+-
+-                // SAFETY: We checked that `val` will fit in `Self` above.
+-                let val: Self =3D unsafe { val.try_into().unwrap_unchecked=
+() };
+-
+-                Ok(val.complement())
++                Self::from_u64_negated(val)
+             }
+             _ =3D> {
+                 let (radix, digits) =3D strip_radix(src);
+@@ -131,41 +103,49 @@ fn from_str(src: &BStr) -> Result<Self> {
+ }
+=20
+ macro_rules! impl_parse_int {
+-    ($ty:ty) =3D> {
+-        // SAFETY: We implement the trait according to the documentation.
+-        unsafe impl private::FromStrRadix for $ty {
+-            const MIN: Self =3D <$ty>::MIN;
+-
+-            fn from_str_radix(src: &BStr, radix: u32) -> Result<Self, crat=
+e::error::Error> {
+-                <$ty>::from_str_radix(core::str::from_utf8(src).map_err(|_=
+| EINVAL)?, radix)
+-                    .map_err(|_| EINVAL)
+-            }
+-
+-            fn abs_min() -> u64 {
+-                #[allow(unused_comparisons)]
+-                if Self::MIN < 0 {
+-                    1u64 << (Self::BITS - 1)
+-                } else {
+-                    0
++    ($($ty:ty),*) =3D> {
++        $(
++            impl private::FromStrRadix for $ty {
++                fn from_str_radix(src: &BStr, radix: u32) -> Result<Self> =
+{
++                    <$ty>::from_str_radix(core::str::from_utf8(src).map_er=
+r(|_| EINVAL)?, radix)
++                        .map_err(|_| EINVAL)
+                 }
+-            }
+=20
+-            fn complement(self) -> Self {
+-                (!self).wrapping_add((1 as $ty))
++                fn from_u64_negated(value: u64) -> Result<Self> {
++                    const ABS_MIN: u64 =3D {
++                        #[allow(unused_comparisons)]
++                        if <$ty>::MIN < 0 {
++                            1u64 << (Self::BITS - 1)
++                        } else {
++                            0
++                        }
++                    };
++
++                    fn complement(self) -> Self {
++                        (!self).wrapping_add((1 as $ty))
++                    }
++                    if val > ABS_MIN {
++                        return Err(EINVAL);
++                    }
++
++                    if val =3D=3D ABS_MIN {
++                        return Ok(<$ty>::MIN);
++                    }
++
++                    // SAFETY: The above checks guarantee that `val` fits =
+into `Self`:
++                    // - if `Self` is unsigned, then `ABS_MIN =3D=3D 0` an=
+d thus we have returned above
++                    //   (either `EINVAL` or `MIN`).
++                    // - if `Self` is signed, then we have that `0 <=3D va=
+l < ABS_MIN`. And since
++                    //   `ABS_MIN - 1` fits into `Self` by construction, `=
+val` also does.
++                    let val: Self =3D unsafe { val.try_into().unwrap_unche=
+cked() };
++
++                    Ok((!val).wrapping_add(1))
++                }
+             }
+-        }
+=20
+-        impl ParseInt for $ty {}
++            impl ParseInt for $ty {}
++        )*
+     };
+ }
+=20
+-impl_parse_int!(i8);
+-impl_parse_int!(u8);
+-impl_parse_int!(i16);
+-impl_parse_int!(u16);
+-impl_parse_int!(i32);
+-impl_parse_int!(u32);
+-impl_parse_int!(i64);
+-impl_parse_int!(u64);
+-impl_parse_int!(isize);
+-impl_parse_int!(usize);
++impl_parse_int![i8, u8, i16, u16, i32, u32, i64, u64, isize, usize];
 
