@@ -1,116 +1,143 @@
-Return-Path: <linux-kernel+bounces-694462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094DFAE0C9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:18:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4B7DAE0C8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 314A93BC521
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:17:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEFC4189993C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808C92ED879;
-	Thu, 19 Jun 2025 18:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AB92F549D;
+	Thu, 19 Jun 2025 18:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=harmstone.com header.i=@harmstone.com header.b="t8bvAQ56"
-Received: from mail.burntcomma.com (unknown [62.3.69.246])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="GYUwGMt+"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B81F2ED15D;
-	Thu, 19 Jun 2025 18:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.3.69.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF532F4A17
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 18:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750356215; cv=none; b=U4TtIHFf9kUqh8FqQPeParfIxjh9icXOMYq7qDahRZNxtPHXBUnODhO/JsZHYXXcESwgUPJSy12qFDVFao73rAyICf2G//ofOr8b2RGWL2sjbH4reU/lTP/B3KdRFLB0UALo9LjmRfpW7pqMbpMlOluC9gSWv5JLCS7FwaTaVbk=
+	t=1750356301; cv=none; b=lB7I+nnOg4qMQ8CkZTyqIlGjA/rsZ2ZyW5+rx3mPqPTWn4/zQZ2PVjw2+qK0da3t8LefZp7CtY2WGaCnOXzO7ng6bpQNwClrAoAV/+rMyPYYin/fUJoe/U4MXItuylcFtNCzjiedtFJE6kO3xF+7utV2mwY2ah53YVRBjsOlxKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750356215; c=relaxed/simple;
-	bh=mHAMYuIGEsFqdsF3yX/wqLMTXEHswZHPRaMvZ11doms=;
-	h=Message-ID:Date:Mime-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ElBgO9y1tGWaIAD9y0rxSVJeswGJ+aPRTdczZEMa5YFVlP0+Dd9QRcM0fmMThmzEbuoTzXw3yIHo8brRfWNx6mtwpYAmfciVwF6B1qy5/bgcejkEJ/Zpr7pegw6zzgzcaPe7NR/Ln5lOJ+qEs7JOKK+ivrH9EUnPw7iZ9jfEWzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=harmstone.com; spf=pass smtp.mailfrom=harmstone.com; dkim=pass (1024-bit key) header.d=harmstone.com header.i=@harmstone.com header.b=t8bvAQ56; arc=none smtp.client-ip=62.3.69.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=harmstone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=harmstone.com
-Received: from [IPV6:2a02:8012:8cf0:0:ce28:aaff:fe0d:6db2] (beren.burntcomma.com [IPv6:2a02:8012:8cf0:0:ce28:aaff:fe0d:6db2])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256
-	 client-signature RSA-PSS (2048 bits) client-digest SHA256)
-	(Client CN "hellas", Issuer "burntcomma.com" (verified OK))
-	by mail.burntcomma.com (Postfix) with ESMTPS id E356428978C;
-	Thu, 19 Jun 2025 19:03:27 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=harmstone.com;
-	s=mail; t=1750356208;
-	bh=tspvUCiguj3Wm3D+7sYAUwox/ingERnQvBTjDZbBptE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=t8bvAQ562dcHIUDPtyM7scI11vnx0aLskD+4QOHQg4HN+c7YXxVTD81a7ukUWfqHO
-	 kBGx3GCgE8p9ZXb96k85zfwwBBMuB22fA7gsgxbBJ68D/nGSbC5DLWqgy7Zz6Qmcq8
-	 696ed9DqULoa6gkGmniB4LpfRrj2r4tACWKK4Itc=
-Message-ID: <fcb1bd45-f703-4df7-a3dd-f5cdae9c3983@harmstone.com>
-Date: Thu, 19 Jun 2025 19:03:27 +0100
+	s=arc-20240116; t=1750356301; c=relaxed/simple;
+	bh=1dJVx9uawlA9hJYDvC4nybtTSvTD1cO2bZ9M1c+EVuk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MvFzTLM670UkX0+A/SF0GGPsjdrukoI/wXIJKBE+lW4zTihzjKk/8DOA/Bbyu2AeBmMtAtAd8BaNY+TOtGsQZ+N/+cfolN1cfox62G/oDwHEIvtbyvxBqEMCdKDfpgLYFdPC8PyuwNNDD7JUMCQ+tzQnGPG4RUdg/8CWpHaO1JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=GYUwGMt+; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6fadd3ad18eso11236336d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 11:04:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1750356297; x=1750961097; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ju0rK1YrXezG8RMPatgIQGMIY6rdX0cs7akdNztgfu4=;
+        b=GYUwGMt+Me/R2P1+TrGCqwGFsiJmYOM240kgzncIKaBqh85tQJh2KwK4INZBUlLM0v
+         GYf/DgQMZEaSpBRhzk6jUIdvahCLK9PZOfI9xOl4VaAnHMeK7mrmEblsTAwrghk72j0k
+         HP8ZqQM8llTy9iTBykYLa5csHFj/3AJLaIDL+QsXRrWAuRMYdDVGcejlmWryKy3OoRoS
+         x+sbMxdpNrdgxxgwXbbcpbD01xyQfqMYSnV9z2TC+/ZnLkLEmqMMTC2T73wklHCNdKAr
+         9PlY1bDWrtaJBWum/87pmoK9ivqYCMgXLwfOb7H+jD30LFc7Mw1TVCyhEkdwET9x5bNq
+         RdTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750356297; x=1750961097;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ju0rK1YrXezG8RMPatgIQGMIY6rdX0cs7akdNztgfu4=;
+        b=GfKS5VQGwH8H49Hpv7O8nBWaNH4PN4UmNLuD6IevvHwlNS1dUQwVw6Dvus8n34HhM1
+         ZIcXW3prvos67iaMfNvL7vpjgdXUywHZLeFpYRcD2Ceyer/geaewZG+fbJBxWQEdAFXp
+         awvPJVEcFzKb9EuXcye6vq7Jj6M0X21pFQ07mYDOKqxu51qbLbEOJ9D0w0rh3iMGhFkM
+         7QhlyFbXu9bnarg6zMt9GvGiwBSUISPdpuRVA6oM2VNT9vT5RNOMltBd2wkoLJ9hfc6a
+         ZibNRRt5QQq8I4azeXCBzw6Jh6gE/GiYEExW5d/ZGgUx7vaSJhLxPLpfWatQ9jzIq6q5
+         oe9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVODDwt4rSAeTroNd/k0qqNAk2HJSi4yzK4w6yCMKgHCkq5pWKayuO2uR1+8a/bFsBd+itmBMKo+SL3/70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyreYWYGjN7zSbmGMCX/x0ZZGAyP3htEovsjdY7+L26rgk7iPGh
+	uoQOtXWAp7O874zvlijIe4Db1p0GQ6m+k4NdPQmsNnu74mVSrm48mVdEroul0rCa1A==
+X-Gm-Gg: ASbGnctikW0HmDHhWVS7joSmA5hHXeYblIV9LXZlLwmDPpAl/5TQuDH73c2qNSZjRb+
+	WNnDH2swxpUv15/gAe7a9h9EPy6kAP7VwItJ/TNbgDCh2/OCBzvnDTbCGxPJRRnPy+p/JJn/OC6
+	WjtZ1FoxIjfwYnHOnyYrIuI7WygrcsXOTUUyiOPpenqkyW/YvsofuFLpx/VV1fLv7Vdmpa9TFvA
+	xWGcv5WB0bgivVYHIul6KYhgWgedSH5u0b5qopiuT07205g7g6JefipQ0SHv3Q0Q90B0Y4rUIO1
+	X/2aCyCdb5MlqCDRm7KTyfeeEBr0dIYBuStZ6AgDx7MK/Pd0ilSjRM4Wjh97gRI=
+X-Google-Smtp-Source: AGHT+IHYQPCClOz6CKzGdC08frCU41q/Xam4KfyuktRr18N70eT9mCmlX3M2z1ua5tmNIo2PbaShTw==
+X-Received: by 2002:a05:6214:4598:b0:6f8:a978:d46 with SMTP id 6a1803df08f44-6fd0a49c0e7mr3871256d6.19.1750356297608;
+        Thu, 19 Jun 2025 11:04:57 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::9ca8])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd09544e75sm2440186d6.70.2025.06.19.11.04.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jun 2025 11:04:57 -0700 (PDT)
+Date: Thu, 19 Jun 2025 14:04:52 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, lkmm@lists.linux.dev,
+	linux-arch@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v5 03/10] rust: sync: atomic: Add ordering annotation
+ types
+Message-ID: <d84ae4de-3fde-4097-a42b-9dec0902f27d@rowland.harvard.edu>
+References: <20250618164934.19817-1-boqun.feng@gmail.com>
+ <20250618164934.19817-4-boqun.feng@gmail.com>
+ <20250619103155.GD1613376@noisy.programming.kicks-ass.net>
+ <aFQQuf44uovVNFCV@Mac.home>
+ <20250619143214.GJ1613376@noisy.programming.kicks-ass.net>
+ <aFQmDoRSEmUuPIQG@Mac.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: Re: [PATCH v2] btrfs: replace deprecated strcpy with strscpy
-To: Brahmajit Das <listout@listout.xyz>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
- dsterba@suse.com, kees@kernel.org, ailiop@suse.com
-References: <20250619140623.3139-1-listout@listout.xyz>
- <20250619153904.25889-1-listout@listout.xyz>
- <b8945d37-3eb9-4ad6-b3eb-2725dbb008ad@harmstone.com>
- <rbjjfbhrwh4qjfj4pjhb5zzrvyddjlekfed6kfcrtuurj2ovgg@dm6xesb7nuzm>
-Content-Language: en-US
-From: Mark Harmstone <mark@harmstone.com>
-Autocrypt: addr=mark@harmstone.com; keydata=
- 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
-In-Reply-To: <rbjjfbhrwh4qjfj4pjhb5zzrvyddjlekfed6kfcrtuurj2ovgg@dm6xesb7nuzm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFQmDoRSEmUuPIQG@Mac.home>
 
-On 19/06/2025 6.59 pm, Brahmajit Das wrote:
-> On 19.06.2025 18:06, Mark Harmstone wrote:
->> On 19/06/2025 4.39 pm, Brahmajit Das wrote:
-> ...
->>
->> Surely this doesn't compile... strscpy takes three parameters.
->>
-> It does, the third parameter is optional. From include/linux/string.h
+On Thu, Jun 19, 2025 at 08:00:30AM -0700, Boqun Feng wrote:
+> Make sense, so something like this in the model should work:
 > 
-> #define strscpy(dst, src, ...) \
-> 	CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
+> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+> index d7e7bf13c831..90cb6db6e335 100644
+> --- a/tools/memory-model/linux-kernel.cat
+> +++ b/tools/memory-model/linux-kernel.cat
+> @@ -27,7 +27,7 @@ include "lock.cat"
+>  (* Release Acquire *)
+>  let acq-po = [Acquire] ; po ; [M]
+>  let po-rel = [M] ; po ; [Release]
+> -let po-unlock-lock-po = po ; [UL] ; (po|rf) ; [LKR] ; po
+> +let po-unlock-lock-po = po ; (([UL] ; (po|rf) ; [LKR]) | ([Release]; (po;rf); [Acquire & RMW])) ; po
 > 
-> But I'm more than happy to add the third parameter.
+>  (* Fences *)
+>  let R4rmb = R \ Noreturn       (* Reads for which rmb works *)
+> 
+> 
+> although I'm not sure whether there will be actual users that use this
+> ordering.
 
-Okay. It looks like this was added by e6584c3964f2ff76a9fb5a701e4a59997b35e547 in
-2023 - the docs don't seem to have caught up yet.
+If we do end up making a change like this then we should also start 
+keeping careful track of the parts of the LKMM that are not justified by 
+the operational model (and vice versa), perhaps putting something about 
+them into the documentation.  As far as I can remember, 
+po-unlock-lock-po is the only current example, but my memory isn't 
+always the greatest -- just one reason why it would be good to have 
+these things written down in an organized manner.
+
+Alan
 
