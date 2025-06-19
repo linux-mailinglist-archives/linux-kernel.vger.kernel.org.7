@@ -1,101 +1,147 @@
-Return-Path: <linux-kernel+bounces-693500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BA5FADFFA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFADADFFAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7399B17FC51
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:20:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C12317F90B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A884264A7A;
-	Thu, 19 Jun 2025 08:20:33 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC75725B69F;
+	Thu, 19 Jun 2025 08:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pcvzKo8O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7C321931E
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 08:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6CF2165E2;
+	Thu, 19 Jun 2025 08:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750321232; cv=none; b=M4xjnxC3369NLN5B+L3tBHmOqRXHyeaRdUnp0tTtLk00c3Fl5KDPRVYyBXJdqTBWrmYLNN1BzS/MZ8g4CYydZhXkyiut3b49CmZzp72yRO6QhMZKA91NzK1y9DDbZi/Q//Udy/MvUkrpFFuzIxdDhB374GUYjYk9ecztggoA3D8=
+	t=1750321289; cv=none; b=MuknxEdy7vlkYLId2obmCFHCYo4JILdQbf4ksMRZhrBx6EukCOVNBzrCKMBcA0HACb6gz2m9syGB3HOaFCFl1H8oxxujLouuVurE/M8gnnuEzzrMlBbO9Ke+iII7z3X44D5vOaocMys+3DVn8hmV3vIbT0LhdG+w/9SRlztGgk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750321232; c=relaxed/simple;
-	bh=cWBHqkKiS7RP9IZhf0JnGzgpy8YIgcFAm3ITjn3BpzE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pPLUfIYH9rRCbLoRXvylKbBHH2t/7CZHVUa4EwM14TH0Ie37a7vVSGEQ2AHocZbPaGlvcmqVNA6dQwi2Hp+D8ek39jxx3HxSZ/FEkmeI8eMaTtEu0z9usueDu3ATjeQBD9LPK/eYaV4pTdeT7xNGBaEElDPvOsjRETeZqkrgrvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ddd051e8e5so4948275ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 01:20:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750321230; x=1750926030;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kj47JIn7RotE7ZzkA/g+sSblwgqxbu68sprIKcbjRbo=;
-        b=LWLaY//Th18GwBEQ3AwWZg5ySgig7fyPFmAGTcXHdZxuW4T60LTS2HrgOUDcK9z8ED
-         YcTpRZcDYwWFlxYMO7US5cJ/fpF/9HiOPqBrSqhffgtejOowYJwVkrnCsOEBEy2CihQc
-         es9YBYeJjkY8zCLo64f1Z0lkUHCUc1rK05VQS0a+rFtqr5l7IGiwheWvFX+79kv0UFAg
-         5OmuwaRgQN3ZqLqabHvBWlYIS2RG9xJYfEZmb7SmFtO2UkGcob8uwAUvd8Zn/eac4EtJ
-         jl5yrZ34TzGZgr7P5bMLcDMlVGgb4pB4/7gopp6vHV8FODgQ5SH8tmvEudmRFOWo4k/S
-         0doQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIKyaRkI2QtvWRH8nUCzmyzYv2fQBO0cvVOy9OYOX7GJer1OjX/BUZrqDRVgyoCr6abrfo2uPo8IMLOXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8kR20HnMgxSbJ/sV9Aj0MlR/MV7Imsea11JMQwf4sReoLIViE
-	59w5QDwmwWLkDUEY5AaW9i/OKTCc6e8qWIzQ/9RRLPVL0in+4C8Tkvwth+5+PtQAzZc9RU0OQaH
-	MGES1R0hfv5Im7bytB7B5WefLtOv6Gj1v8XbCvgWFB5n2fssl718o9UtlDPo=
-X-Google-Smtp-Source: AGHT+IHekSLhE6eISN7XxCtRns/xqlyr1Tj56eRlcX7tBt2H9/1SWPRiHsc2bTLYO5oi+XCIY9MsM/AbXn4X37PJlgKrThzFHql6
+	s=arc-20240116; t=1750321289; c=relaxed/simple;
+	bh=5SuXMdojateYVCvuAk3sCmtmcLAbalP0g9EhYVurrOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pblx8gCylm7/TqwVEaUgZ7WzMsooZDXbtYHavi0eYeDqXlPz6iSdryotv1lEfPxP0qgXfUsshreNmBBerlQNM8TkcxAmhNxu0j9WRrusRLbAqOIn9n3kxQTdnZ5Y4qHP6orcehwkrNlrO+/okNUUvlCsauBp5Nn13GLjS01wvn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pcvzKo8O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33771C4CEEA;
+	Thu, 19 Jun 2025 08:21:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1750321288;
+	bh=5SuXMdojateYVCvuAk3sCmtmcLAbalP0g9EhYVurrOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pcvzKo8OBZdXts9ZyCZ8I/H1s6YWs/Eg2MH9txyNAt5vFHMuG2TnBhlbT/CFgqUC2
+	 0G9Uazl+qLB961WYVHC2E2xpOnvVEQgOFkgGGRkpuSXSPWQDtgAjeB5A33MBnWp8nw
+	 mZ5vhD71haeWhnPNcvvgiy+uSYlJXdZ7YYBUsppk=
+Date: Thu, 19 Jun 2025 10:21:25 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Saravana Kannan <saravanak@google.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Grant Likely <grant.likely@linaro.org>
+Subject: Re: [PATCH] driver core: Prevent deferred probe loops
+Message-ID: <2025061929-produce-petticoat-8e0f@gregkh>
+References: <CAGETcx-koKBvSXTHChYYF-qSU-r1cBUbLghJZcqtJOGQZjn3BA@mail.gmail.com>
+ <a52c513c-ff93-4767-a370-3f7c562df7bd@linux.dev>
+ <2025061147-squishier-oversleep-80cd@gregkh>
+ <7d6d8789-e10b-4b06-aa99-5c1a1bdd3b4c@linux.dev>
+ <CAGETcx9E5DB4UtdjjAO2=XfTNXdXocj7uk0JkVZ8hf9YadwNcA@mail.gmail.com>
+ <70958a2e-abc8-4894-b99a-f2981db9981f@linux.dev>
+ <2025061700-unmapped-labrador-a8c9@gregkh>
+ <0ee2f641-c3f3-4a3a-87b4-e1279a862d68@linux.dev>
+ <2025061740-banter-acclaim-2006@gregkh>
+ <24a0f3fa-2121-4de3-89fd-482b217ab98d@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda8:0:b0:3dc:8b29:30b1 with SMTP id
- e9e14a558f8ab-3de07d50d7amr207885085ab.14.1750321230259; Thu, 19 Jun 2025
- 01:20:30 -0700 (PDT)
-Date: Thu, 19 Jun 2025 01:20:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6853c84e.050a0220.216029.01cb.GAE@google.com>
-Subject: [syzbot] Monthly netfilter report (Jun 2025)
-From: syzbot <syzbot+listd62d23e3f9e32ca7ceb0@syzkaller.appspotmail.com>
-To: kadlec@netfilter.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, pablo@netfilter.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <24a0f3fa-2121-4de3-89fd-482b217ab98d@linux.dev>
 
-Hello netfilter maintainers/developers,
+On Tue, Jun 17, 2025 at 01:14:31PM -0400, Sean Anderson wrote:
+> On 6/17/25 11:49, Greg Kroah-Hartman wrote:
+> > On Tue, Jun 17, 2025 at 11:35:04AM -0400, Sean Anderson wrote:
+> >> On 6/17/25 04:50, Greg Kroah-Hartman wrote:
+> >> > On Thu, Jun 12, 2025 at 04:40:48PM -0400, Sean Anderson wrote:
+> >> >> On 6/12/25 13:56, Saravana Kannan wrote:
+> >> >> > On Thu, Jun 12, 2025 at 8:53 AM Sean Anderson <sean.anderson@linux.dev> wrote:
+> >> >> >>
+> >> >> >> On 6/11/25 08:23, Greg Kroah-Hartman wrote:
+> >> >> >> > On Tue, Jun 10, 2025 at 07:44:27PM -0400, Sean Anderson wrote:
+> >> >> >> >> On 6/10/25 19:32, Saravana Kannan wrote:
+> >> >> >> >> > On Tue, Jun 10, 2025 at 11:35 AM Sean Anderson <sean.anderson@linux.dev> wrote:
+> >> >> >> >> >>
+> >> >> >> >> >> A deferred probe loop can occur when a device returns EPROBE_DEFER after
+> >> >> >> >> >> registering a bus with children:
+> >> >> >> >> >
+> >> >> >> >> > This is a broken driver. A parent device shouldn't register child
+> >> >> >> >> > devices unless it is fully read itself. It's not logical to say the
+> >> >> >> >> > child devices are available, if the parent itself isn't fully ready.
+> >> >> >> >> > So, adding child devices/the bus should be the last thing done in the
+> >> >> >> >> > parent's probe function.
+> >> >> >> >> >
+> >> >> >> >> > I know there are odd exceptions where the parent depends on the child,
+> >> >> >> >> > so they might add the child a bit earlier in the probe
+> >> >> >> >>
+> >> >> >> >> This is exactly the case here. So the bus probing cannot happen any
+> >> >> >> >> later than it already does.
+> >> >> >> >
+> >> >> >> > Please fix the driver not to do this.
+> >> >> >>
+> >> >> >> How? The driver needs the PCS to work. And the PCS can live on the MDIO
+> >> >> >> bus.
+> >> >> > 
+> >> >> > Obviously I don't know the full details, but you could implement it as
+> >> >> > MFD. So the bus part would not get removed even if the PCS fails to
+> >> >> > probe. Then the PCS can probe when whatever it needs ends up probing.
+> >> >> 
+> >> >> I was thinking about making the MDIO bus a separate device. But I think
+> >> >> it will be tricky to get suspend/resume working correctly. And this
+> >> >> makes conversions more difficult because you cannot just add some
+> >> >> pcs_get/pcs_put calls, you have to split out the MDIO bus too (which is
+> >> >> invariably created as a child of the MAC).
+> >> >> 
+> >> >> And what happens if a developer doesn't realize they have to split off
+> >> >> the MDIO bus before converting? Everything works fine, except if there
+> >> >> is some problem loading the PCS driver, which they may not test. Is this
+> >> >> prohibition against failing after creating a bus documented anywhere? I
+> >> >> don't recall seeing it...
+> >> > 
+> >> > What do you mean "failing after creating a bus"?  If a bus is failed to
+> >> > be created, you fail like normal, no difference here.
+> >> 
+> >> Creating the bus is successful, but there's an EPROBE_DEFER failure after
+> >> that. Which induces the probe loop as described in my initial email.
+> > 
+> > Then don't allow a defer to happen :)
+> 
+> Well, I could require all PCS drivers to be built-in I guess. But I suspect
+> users will want them to be modules to reduce kernel size.
 
-This is a 31-day syzbot report for the netfilter subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/netfilter
+True, then just auto-load them as needed like all other busses do.
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 10 issues are still open and 185 have already been fixed.
+> > Or better yet, just succeed and spin up a new thread for the new bus to
+> > attach it's devices to.  That's what many other busses do today.
+> 
+> Sorry, I'm not sure I follow. How can you attach a device to a thread? Do
+> you have an example for this?
 
-Some of the still happening issues:
+Busses discover their devices in a thread, which then calls probe for
+them when needed.  A device isn't being attached to a thread, sorry for
+the confusion.
 
-Ref Crashes Repro Title
-<1> 512     Yes   INFO: rcu detected stall in addrconf_rs_timer (6)
-                  https://syzkaller.appspot.com/bug?extid=fecf8bd19c1f78edb255
-<2> 173     Yes   INFO: rcu detected stall in gc_worker (3)
-                  https://syzkaller.appspot.com/bug?extid=eec403943a2a2455adaa
-<3> 93      Yes   INFO: rcu detected stall in NF_HOOK (2)
-                  https://syzkaller.appspot.com/bug?extid=34c2df040c6cfa15fdfe
-<4> 2       No    WARNING: refcount bug in nf_nat_masq_schedule
-                  https://syzkaller.appspot.com/bug?extid=e178f373ec62758ea18b
+thanks,
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+greg k-h
 
