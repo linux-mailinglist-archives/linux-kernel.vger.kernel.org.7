@@ -1,94 +1,151 @@
-Return-Path: <linux-kernel+bounces-693393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DCEADFE79
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:14:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50AC2ADFE6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE511745A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:14:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 687FA16710C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF23259CBF;
-	Thu, 19 Jun 2025 07:14:09 +0000 (UTC)
-Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D83248F68;
+	Thu, 19 Jun 2025 07:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Wx5k9B0l"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC912494ED
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B718D2475F7;
+	Thu, 19 Jun 2025 07:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750317249; cv=none; b=MJ/DsQefKlX7qxVC7ah8ytQubcJgUryTsWSuBquitJm12CNqg3v8XzjdBd8oKiJTn7xNGWmcQitWlZeAVI2e+ljLowcCVqhzQIARhFnLvE+E7JPqTQzieqBrzoKNyvTRUnUdte75grpm2x94duKkDcg4QgkSQHPXPdikTSVuRNg=
+	t=1750317169; cv=none; b=MYp8U+zBq+PV4zPTf/HSnXYJueRc52GdicNIggMyqMGCryeuZAzm0Wdr7KVj9lKguNE3p9SpgCr32j/syzFg8uzG5bVG95XdFSjmnRYNaFIHK5/dwgskdechd30vWojg32WX9++3gVKAq4CJ/t3e4iFXCALaiD4H728rNkD2zAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750317249; c=relaxed/simple;
-	bh=AAgvmBqsd+NvBhudgv7M6iRTFypWRRyxHZ/vPM7pEE8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o6bi/0VAFn55ywatwl3F+uMbNS1eWX75pgW2YBS/631G+7tVjRvEpRBaS+16mQsf3wyHCmJvnTR/TMwKKHTR0HSHU3m4Ww7U9j0SZ01bpOu/bImzqHaB9JdmmGsCquxK392/8F93Rg9zx6o4AYjoyH3YlMOTcXK7N79IJQdu8mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201618.home.langchao.com
-        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202506191513513460;
-        Thu, 19 Jun 2025 15:13:51 +0800
-Received: from localhost.localdomain.com (10.94.7.47) by
- Jtjnmail201618.home.langchao.com (10.100.2.18) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.57; Thu, 19 Jun 2025 15:13:50 +0800
-From: chuguangqing <chuguangqing@inspur.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
-	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, chuguangqing <chuguangqing@inspur.com>
-Subject: [PATCH 1/1] ixgbe: check the ioremap return value first (supplementary CC)
-Date: Thu, 19 Jun 2025 15:11:21 +0800
-Message-ID: <20250619071253.3498-2-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250619071253.3498-1-chuguangqing@inspur.com>
-References: <20250618092544.53696-1-chuguangqing@inspur.com>
- <20250619071253.3498-1-chuguangqing@inspur.com>
+	s=arc-20240116; t=1750317169; c=relaxed/simple;
+	bh=l3qlc40PN+JkLbZgh1BtdXkaI7iJLWml0rgWSurp/ak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y6b95OtY3RZ6r/Ed+0qxL5Yii0eLiEYnleIMxDXXnU4lrtTIV8mvpH5QwqYrlXwMtOvkiht6iEFlrQour0/8i3Ws6IDlffEm3wPPf/a7e2oXGNAytOqxptC8J6hrkCmFrPQa21f6VC55Sf1dOq7YpEeGWFo4rbyI3D4Je7Z6LOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Wx5k9B0l; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=R7tGyFiM7WSeVH4C/w6xl3Lu9ITt8cyLFMs5e/oyiFg=; b=Wx5k9B0lMNkIdYL64vBUzPThua
+	aSU94dIXOmmKvkqQHEANa++whmR89vAWo8RM9Z0vv7SA0C2s/BiOfeb5pCmNyd8bzOXxdyfBocNd1
+	UIxpA8jvlMdolNZa2EbNoZEa4A93pdOFOkT24WjG9S0ttYYdJkI91kfr2+ZvG13Qmqx93KvzkB1Ic
+	FMfMfvVcJXvX1b2OUf+QfqT9PN3tckfYHwWyNBrd65OmPOX3974PtIe4saun4DsK5SCfHMKqEGivz
+	tkCJRIRt3dsqp6QVrK3k/69xyDOyDdxBZq3eVHG5Ri8e9H0LBt6qLzLhmDoZls28Qg+Y1YidWEZon
+	mqL84uVQ==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uS9Ry-00000007be1-3yJg;
+	Thu, 19 Jun 2025 07:12:43 +0000
+Message-ID: <1067bbff-be53-4bec-9cec-8a4d0f531fb7@infradead.org>
+Date: Thu, 19 Jun 2025 00:12:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201617.home.langchao.com (10.100.2.17) To
- Jtjnmail201618.home.langchao.com (10.100.2.18)
-tUid: 20256191513514699e9fac132e6ca4917fb5f5223e432
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] Documentation: typography refresh
+To: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Federico Vaga <federico.vaga@vaga.pv.it>, Akira Yokosawa <akiyks@gmail.com>,
+ Carlos Bilbao <carlos.bilbao@kernel.org>, Avadhut Naik
+ <avadhut.naik@amd.com>, Alex Shi <alexs@kernel.org>,
+ Yanteng Si <si.yanteng@linux.dev>, Dongliang Mu <dzm91@hust.edu.cn>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Stanislav Fomichev <sdf@google.com>, David Vernet <void@manifault.com>,
+ Miguel Ojeda <ojeda@kernel.org>, James Seo <james@equiv.tech>,
+ Daniel Vetter <daniel.vetter@ffwll.ch>
+References: <20250619042318.17325-2-bagasdotme@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250619042318.17325-2-bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-We should first check whether the ioremap return value is NULL before using it.
+Hi Bagas,
 
-Signed-off-by: chuguangqing <chuguangqing@inspur.com>
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 6/18/25 9:23 PM, Bagas Sanjaya wrote:
+> At present, kernel documentation uses system serif font for body text.
+> Some people, however, objected to it and instead prefer that the
+> typography choice must be legible, consistent, and accessible (after
+> all, the audience ranges developers peeking into kernel internals to
+> ordinary users that skimmed through Documentation/admin-guide/).
+> 
+> To tackle the problem, follow Wikimedia's typography refresh [1].
+> For the font choices, instead of using web fonts as in previous
+> attempt [2], use:
+> 
+>   * Linux Libertine, Georgia, Times for serif (used in h1 and h2
+>     headings)
+>   * system font for sans-serif and monospace
+> 
+> This allows for more readability and consistency without sacrificing
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index 6eccfba51fac..97a49463b09d 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -11431,11 +11431,11 @@ static int ixgbe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	hw->hw_addr = ioremap(pci_resource_start(pdev, 0),
- 			      pci_resource_len(pdev, 0));
--	adapter->io_addr = hw->hw_addr;
- 	if (!hw->hw_addr) {
- 		err = -EIO;
- 		goto err_ioremap;
- 	}
-+	adapter->io_addr = hw->hw_addr;
- 
- 	/* Setup hw api */
- 	hw->mac.ops   = *ii->mac_ops;
+More readability is debatable IMO.
+
+> page load times and bandwidth, as the font choices is most likely
+> already available on many platforms.
+> 
+> The reason why serif fonts is used for headings in complement to sans
+> serif in text body is to break up visual monotony of docs page by
+> creating contrast between headings (as entry point to docs information)
+> and text body, which is important considering that kernel docs are
+> quite lengthy with many sections.
+
+It's interesting that mediawiki chose to split the serif and sans serif
+usage this way. Newspapers essentially do the opposite: use sans serif
+for headlines (mostly, not consistently) and use serif for body text.
+
+
+Have you read "The Psychology of Computer Programming"?
+[https://geraldmweinberg.com/Site/Programming_Psychology.html]
+The content is very good but (at least in early editions) it was printed
+completely using a sans serif font (probably Helvetica). It's not a
+long book and I found the subject very interesting, but it took me
+forever to read it because it's (or was, don't know about the later
+editions) in sans serif typeface. I hated that part of it.
+
+So I applied this patch and tested it. It works as far as I can tell.
+I got tons of sans serif font text instead of serif font text that I
+don't care for. (I don't mind that the sidebar text is sans serif.)
+
+
+
+> For body text (excluding sidebar), it is set to #252525 on top
+> of #FFFFFF background as they have contrast ratio 15.3:1, which
+> is rated as AAA according to WCAG 2.0 section 1.4.6. Having slightly
+> off-black foreground text on white background can reduce eye strain
+> and juxtaposition on dyslexic readers.
+> 
+> This refresh only applies to default Alabaster theme.
+> 
+> [1]: https://www.mediawiki.org/wiki/Typography_refresh
+> [2]: https://lore.kernel.org/linux-doc/20231102123225.32768-1-bagasdotme@gmail.com/
+> 
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+>  Documentation/conf.py                      |  5 +-
+>  Documentation/sphinx-static/typography.css | 62 ++++++++++++++++++++++
+>  2 files changed, 66 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/sphinx-static/typography.css
+> 
+
+Thanks.
+
 -- 
-2.43.5
+~Randy
 
 
