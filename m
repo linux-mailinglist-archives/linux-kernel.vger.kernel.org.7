@@ -1,45 +1,48 @@
-Return-Path: <linux-kernel+bounces-693087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CC0ADFAD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 03:40:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24803ADFACD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 03:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18FF95A08B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 01:39:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4FF817D1BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 01:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7C01DDA18;
-	Thu, 19 Jun 2025 01:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F5419E97C;
+	Thu, 19 Jun 2025 01:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QN2J5AeO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="THoDMW7d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0671A3174;
-	Thu, 19 Jun 2025 01:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD960191F91;
+	Thu, 19 Jun 2025 01:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750297197; cv=none; b=ta1i9MC095OaX2nAUChHyFbrK/CMCO/tyXpU5w9jmgvlkBsQZZRE1KWPSHvUMiZQOPFU97etDF+VOm7odq4ktObsmLodfBUZxQMJXnmevzNsEpvBgDa1Go+Vb+Av/AH0kk6zlU5RSE13G4S4gXdgK3wmsXHwdxz2hTZDgiT+4KE=
+	t=1750297178; cv=none; b=Tx4/AZHNMj7JwoLUQ80NKp45Pzgct8M3gChuK74qcV0lysgCfGgI1uLTPRRMCxmdnoh9MEaryyvfkOb8trUTVV4MGaX9XDaF3Yt30gWbZ5cFEYMDef6EDS4fkeGc61/wzZNemlcROhYCOzlOIiq8BpSfPuyX5uQtVF0KHe7c1Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750297197; c=relaxed/simple;
-	bh=p/ZuUMOoZT1PBRD5ieb2s3lfcZl5ITj4+BiQYtiFZ9U=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=fEen5+fBcant7cjB3W9fDzABmGEFJc9gmBpC99w9Ri/W7QEPpFSE0rjmRU8ESjD5Y6B+iLbGtDYVjerP+GNoWBIQ+lVrfaPt+O4CBi1wdAx9dHweVlIJAuBdSpNMn+hppUSk2pq8P/bXx6LG8gHhgaGNJknbpNpzU5Zvt3oivc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QN2J5AeO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFBF9C4CEE7;
-	Thu, 19 Jun 2025 01:39:56 +0000 (UTC)
+	s=arc-20240116; t=1750297178; c=relaxed/simple;
+	bh=K8DUo9/YVURt0CuPVEJiGTxai1bzGGIZp7s3Bv/Jsp0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=NZ3EzoSRio9yuzx2Ucb13grMWvib+vlAx1O6LvcrEvBnH0l9m8PmaLM8DvoRbzzkFAE+8U2QINjBak0hX5y858h7MMZaJiBWFRFcDmMCXJ9sPrZkn0lr+VcjJ/CgjzQEaJ+YIQeej3zgcne4ny4ydgrsE/qrnbw2LBfJAbfkVD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=THoDMW7d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CC59C4CEE7;
+	Thu, 19 Jun 2025 01:39:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750297197;
-	bh=p/ZuUMOoZT1PBRD5ieb2s3lfcZl5ITj4+BiQYtiFZ9U=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=QN2J5AeOoOJTHOUFquBJjEbPwxghbLjxO4iZLnChwNwyutPs5KechcN5PTxeNysiF
-	 7sMceW2n4FLk8W4ozTGsKFnDN/GcgNFPW5veO66Rs+mHVJ8RZqZyG0LnyFx8O0TG2X
-	 bJdDCvMuwxrewTPIDw0ux+NgLPPffM/3FW1TbeyzxHwLhppOZuXkW1ioKJ/FNMOF9/
-	 cJN2+QgYm8eOV56gzzTA4WRzlvC08JiTWcmpDCuaASOXB1Hu7tmAtwXm1BPCRLxrKv
-	 ZnEHDXTjKk0RdpqL6IQONYKPCGpBUD6ZNosv1luZTaozkAjqN3VIRJL7wbNcM+qzw5
-	 HO8Fb1T5GbRdg==
+	s=k20201202; t=1750297178;
+	bh=K8DUo9/YVURt0CuPVEJiGTxai1bzGGIZp7s3Bv/Jsp0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=THoDMW7dBQ7ZbKXALhVbMpagP06mJQxj3tByiVTplZ7LjA3YhZqcqPMc3cziCfiIm
+	 Z/mfsKMG7egSSVpZhbQsV4obSufTGYMmtvpwHGSyJ8XtK19XrNgrf1AcKkWoDwHbuj
+	 nqUAcNTp4iK/8hK7DyqDshhhuya/7KxTAHiGrBIkoHT5w/15sXrfkqUtc8Vtlz7D/Q
+	 57y19hb58STAOWSZUL9ApamNAvq1V46pLAsuEEEwOEI4/33/iF2SGLsSRCL1INtE6g
+	 01UsSkENpFNxzi+Azc0b4euwBQxk/VZGI1ut+ppKvgqtgSl8tBdybx0UJuuN8dyfsm
+	 UJ2OY1W46Kmcw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF5D3806649;
+	Thu, 19 Jun 2025 01:40:07 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -47,23 +50,40 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250521210741.60467-1-robh@kernel.org>
-References: <20250521210741.60467-1-robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: Convert lsi,axm5516-clks to DT schema
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Anders Berg <anders.berg@lsi.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring (Arm) <robh@kernel.org>
-Date: Wed, 18 Jun 2025 18:39:56 -0700
-Message-ID: <175029719620.4372.15420645716466389185@lazor>
-User-Agent: alot/0.11
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] tcp: Remove inet_hashinfo2_free_mod()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175029720650.316257.6338936263736649985.git-patchwork-notify@kernel.org>
+Date: Thu, 19 Jun 2025 01:40:06 +0000
+References: <20250617130613.498659-1-yuehaibing@huawei.com>
+In-Reply-To: <20250617130613.498659-1-yuehaibing@huawei.com>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Quoting Rob Herring (Arm) (2025-05-21 14:07:40)
-> Convert the Intel/LSI AXM5516 clock binding to DT schema format. It's
-> a straight forward conversion.
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 17 Jun 2025 21:06:13 +0800 you wrote:
+> DCCP was removed, inet_hashinfo2_free_mod() is unused now.
+> 
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 > ---
+>  include/net/inet_hashtables.h | 6 ------
+>  1 file changed, 6 deletions(-)
 
-Applied to clk-next
+Here is the summary with links:
+  - [net-next] tcp: Remove inet_hashinfo2_free_mod()
+    https://git.kernel.org/netdev/net-next/c/a33556940b57
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
