@@ -1,175 +1,129 @@
-Return-Path: <linux-kernel+bounces-693593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA74CAE011C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:06:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB89FAE0130
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B9D67AECA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:04:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 166155A4BA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31B1265CA2;
-	Thu, 19 Jun 2025 09:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E4227F74B;
+	Thu, 19 Jun 2025 09:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="D/sljmd5"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ca2Clzv6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EF9277CB3
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 09:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FBE27F4D9;
+	Thu, 19 Jun 2025 09:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750323783; cv=none; b=Y4OABeh1XD2paqmOm95dweU9T0HNec5cZ+44Xj2aUukaAY6Ogsldp2D3ZmNncjJlTj/kM50j8r1D/D8k7cLbhFW6xyKFuSNgFAmT+1OJqvr5QvakEu7EkWjmpskRZ4tEDguJal6v6hms4EOGSqSw0rg2t1S8cpkJXUKZcvbDHWg=
+	t=1750323779; cv=none; b=jGYDB/O0nCAegSe2FjI7Nye/lgaFyJA7WL2zfwukO+zS99IkvfHAoq68x7OerjJ5zybkqy+F64XrzYWj84z/ekeUIJ+SWGozI9rG9tdhjWkvSmxhaj2EDtSrZt7zwGJBqIIUx/qwk6s+xC3iTAaomkO0gjhDsevS0Njl6h2Zh7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750323783; c=relaxed/simple;
-	bh=RHhsm7qDV/S77GnvCkhXBQEgEK7PlbbKz4uXoVUAEnY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fqBQ2gIELNbgPpV2jWPBflG3JjzbgdByyJreMWxT6Ai3X/yywe9LZptm/sSIRPzBy33sJdA6biWpVzKxx+IzpnjW7qh9xDoSLmnYu3e3CZzOmy1tmdMVgrSOnBKGFHNTGKZNvlAM2qQwJTtaQaOhgcn1i8zSAfeOxTZy0BTFOD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=D/sljmd5; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a54700a463so294580f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 02:03:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750323779; x=1750928579; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/hW/L8M5a/DDRbhy1aA2Xk2zg+bIWaNZ2wLOptUOeRQ=;
-        b=D/sljmd5cvn68XlrR04NmgT19TsbuH0Jp1m43pZ5N29XLGB6HZo52BnM4pkomYe1ho
-         61DexNKVb9fxkH2tZdbohvn2mUvNPgSvvwvAZ5LJkHF/30DClD/DwH1pRafERRvNhBHX
-         T/UJ6CMSC9fUKHbmipvQHNEhC/jREakx+5StqitT9wrrnOHcQBIrYKT5BRVvNJ+yUf+j
-         vDCo+CD0dLT+WXNurpTpKut7I8OOls4+zFOrnEQyyHwT+VFVT7pbP1EfjSpu7RpRsljX
-         mh1QxZOrutW2LJtHh3zW0jF5QlDeTfTsL7Su2VCuCZ5NgeN1DvItNhnk1Pm+07CcEYRD
-         ZRdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750323779; x=1750928579;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/hW/L8M5a/DDRbhy1aA2Xk2zg+bIWaNZ2wLOptUOeRQ=;
-        b=tcaUM4IzAtRKcgPm61VP+ytICK2OdZZhafDTERF14NTjVi1Vcodio7zs1laxPvKDxE
-         Vr9KaHAGmJ3ABVdnpwjFAgsM2tSabrAeHaE3bmhcqh8/seDSN6+lvH+ewS3hD7Onk/pn
-         PQxsEX2TG6cYZqoGiFyEyHZ5WsPPJZrE4NswFKTFQw2nBz31Y7KK6bmM+u347QYPpF0F
-         f5LrAOTHO3XJC9RrL9RWrRMc0BYXyaI/9ixjf2U+6VxU/3Eq9jPs9fjQrhNWRuyO+ByK
-         bVv/x4ZexlBHEl+Z8UIXY5YCRTDi77AYBwG3xkNfmhNFrO1R29kFWO2ytnH2ql2a00ju
-         8rLA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8/jwfMDvi7zpuAIm3rbGcqMmhqgJIlWrPiNVppqM5i14xkZzemMjDOA44RfUGLwLb/ldwj53oQkEtf44=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1shiipyBjDasp0KYGG1DiSz9eFWw9c9za573eP7hYybHTBE9+
-	688LjJw/LVzSahXYCLwOiRwlltfmngVKekXTdPe/RaZLaTEoxkq118upbatakc0obJEna/b1WI9
-	U5kiFY4k=
-X-Gm-Gg: ASbGncs5MYRpi3qy3lQRrAA8jbsQ9l8YDVH1H8tlQw+T9LzM9zC6lQWPm/3aJsIMfz1
-	UwW0LQOYIjSQf8FjtWJ9+VNlKPkJi36eGx1T1S3NlBWrUY5q2Vp9EXKc6xnVh8QEECz1dh476n+
-	Qy6BSemRxHvqUqtN2woppyfTVU6IfLp4ZE2eRkMLu75IVP9ApO75YBt/ndVL15NMSjGli25q7Vp
-	zMOy3CfD3DVBfwfymegzHjL4lOnUwGvs+tfjSZbXlTo6o0Lu5bOnhShozkIct0wlzsJGacEkf0P
-	FfM9enmQfMKacS/n7ZQPPg0e1k60BO3eYRaSAD5/CNoHUXfVwQ+MKfDNKpFRrW/MQE4=
-X-Google-Smtp-Source: AGHT+IEVovGyRuHtUimuo4236mDnH1SercDpE4v+HsXfDaDrjXnnjAwRmZXB1cHF6Q8aIYGsc7zGFA==
-X-Received: by 2002:a05:6000:2511:b0:3a4:f7e7:3630 with SMTP id ffacd0b85a97d-3a6c96be03dmr2350646f8f.15.1750323779231;
+	s=arc-20240116; t=1750323779; c=relaxed/simple;
+	bh=2MpgnpETN30hIWP4oUrrnam/CZGRD3pdlPHARl+Rlxk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r3+vZyLXUBIet6/jdk29QTRBtGKqNQh/bF6LderPldhrQVujJdXQYsXbVy/kTg5MEY1TadJtFWnn9w3UxkAKnbViE9PPVWBFR8sAufu9LjvXqRtfiRzf09rE7PMx3UHlDZw/xBWVXnFFPsHW9DsHlEhAlL4ZcSYWJcw1LMtGQJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ca2Clzv6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9552AC4CEEA;
+	Thu, 19 Jun 2025 09:02:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750323779;
+	bh=2MpgnpETN30hIWP4oUrrnam/CZGRD3pdlPHARl+Rlxk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ca2Clzv6y2qTL8zOzuK2HG1grncyKjUdACrWtHGk6JrPvmJCr8kr9la93CEdJMyFZ
+	 LXG1zUveZZVpoPV1Ri5UanlIUMy6q1qwl4DxuzBTi8pVTN87tCXVpRiYTOQzfP3gQP
+	 fPtFJmD4ubJolyw/JGU8ljEKh4B8kKW2gXx3gs3F5A6sp7uQrwmtt5zx8OAGOh86zk
+	 fDszTbdVXc48p+Sid12IBOzJKZDvUGQh+mlF9cRlndLm7sLUvmv//Cd8teq3w5amUh
+	 eyHpcBEYPlg+qyqB9ifrczNqFymr38sshik0bMpEJJUtx07ePDj5UvzAc+2BYtMWBg
+	 u9HErfh1CNiyA==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so729401a12.3;
         Thu, 19 Jun 2025 02:02:59 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:c485:fe15:c9ab:c72f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568b798d3sm18874645f8f.100.2025.06.19.02.02.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 02:02:58 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 19 Jun 2025 11:02:41 +0200
-Subject: [PATCH v2 2/2] USB: serial: cp210x: use new GPIO line value setter
- callbacks
+X-Forwarded-Encrypted: i=1; AJvYcCUOThlHPNAjEbSOsu1eHhMuv4OOkLQbr0yVp2SpeNxe84tWpLfuRCW9phYGXZfz8W1HMWg+Zc8DK0fI@vger.kernel.org, AJvYcCVkbmne/OJKZLo58REIzxhpeqVmQNJEjAO6W5G0MygDPjjDhF7z4dvRTah5lH8czXCDxqcF1YoOIFOsepni@vger.kernel.org, AJvYcCXrOJgJarv6bydmLHphB9EDoOP9EZwG0oajthmPlVvKHm+39+aIOd4fWOv5my5KK2Ugq74VRL9a7HDA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4QeTvTahe2bHpuV0n4BrpgZdtPvlaaR1yxhxO0NuaqejeS/S1
+	P1CGuYFtmdF/khutLNH5K10rolf2WjbTl9DrJE1jTSyVDHAe+wD81DzWYWThb+K025/LiwuY/4/
+	YDpqFMNg4LMsGGKE12pskmdLl1i9BBrQ=
+X-Google-Smtp-Source: AGHT+IHU2t65H/WSJAAf31vaV2JfeWemEmHkIfJZcXjpQJvot/8B04gIiUFgIR9cHmq9zj8EAvshhPokPD86/DAMoH0=
+X-Received: by 2002:a05:6402:34d3:b0:607:e83a:d698 with SMTP id
+ 4fb4d7f45d1cf-608d0834080mr17871001a12.2.1750323778167; Thu, 19 Jun 2025
+ 02:02:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250619-gpiochip-set-rv-usb-serial-v2-2-8c43e4a4c810@linaro.org>
-References: <20250619-gpiochip-set-rv-usb-serial-v2-0-8c43e4a4c810@linaro.org>
-In-Reply-To: <20250619-gpiochip-set-rv-usb-serial-v2-0-8c43e4a4c810@linaro.org>
-To: Johan Hovold <johan@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2176;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=MuvtdQbJLcxQJZXLZZx6q5p9m1EdL4f/pCEbUZgm6os=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoU9I/I9ng4/h8FujpF9nrsgWA6sjpbQdEtRsKN
- aSB/v8kFyyJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaFPSPwAKCRARpy6gFHHX
- cl8XEADVeyfIFgSHdaEr/OyMQe8OUZF+dsbM7K0Jd29+NHwseuiXMzhYGaArbJA3wNhOZ3kERnm
- EaQM7JSoZo0ooAlr9QB9Ni8U1NQ0oDv5GRc0gUFeLEmVBQcY+0MWAVGjdSgozNqGQDW5N5Ow8K3
- PtNGDBaINPXNdf95/19TPVcIdjERGPtpGDB0NTDVnbifQi/WErdRqFchllmQ0TEBOl/IItpI/0n
- ixw+8IVK/afN33CSd+qIYYTvjovMkGdrohP3H3jkB4GkHK6bjo1+4gehmZv4OGVATcBK5uopAdT
- tuqj3D0J6R2ShviAHpUlCsuUeuvbL7vY4kb3Dx08P9KWcyyp05yeJqahuFKms/lnHdT/gB1SDlq
- qPTojaHqslGbaE3Mdp2LxqcsX5MJt68vvnvhXOJYNbF83q6DF/sFyVGGMYCOZfn7U7TpSRhQFZx
- SeaJrgOZ/9C3odT87QviC/7ovoS9cCNgvbUhavc1BFNc7pQd+We+rR4JgRYep92dTPBl82WlQUH
- C75vRsqF7hwnrIlOyZWifNmdsWmvKvgQHV/woLp4OfdnYe88Eq9W5x1wmyGO9YIwUY+W15bHMDr
- i03leCvaCoaDJQmtlJBModZPGscI3BijKP2Tth8nela02SIg4uSi3r0r9p/ymbeGfKCviTF9k+F
- liPWlHVDVoCLNwQ==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+References: <20250617162426.12629-1-ziyao@disroot.org>
+In-Reply-To: <20250617162426.12629-1-ziyao@disroot.org>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 19 Jun 2025 17:02:48 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4dR3cd6g2+bGS1uLRKkpVVEjHY6Kd_QCYx4LuY71y6uA@mail.gmail.com>
+X-Gm-Features: AX0GCFtjs8_WZ5UK-Nxd53DwS9qeVOp0ND9KE0T_PbhGXDyWxYxLrMOHlefPrnY
+Message-ID: <CAAhV-H4dR3cd6g2+bGS1uLRKkpVVEjHY6Kd_QCYx4LuY71y6uA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/8] Add clock support for Loongson 2K0300 SoC
+To: Yao Zi <ziyao@disroot.org>
+Cc: Yinbo Zhu <zhuyinbo@loongson.cn>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
+	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi, Yao,
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
+I suggest dropping the last two patches temporarily, because:
+1, the last two should be merged via another tree.
+2, the last two depend on another series which hasn't been merged now,
+and can be squashed to that series.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/usb/serial/cp210x.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Huacai
 
-diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
-index 9960ac2b10b719192dfbab0a6e81b2cf80f40d36..cfa1d68c7919b998b645143096696bdea9ee4423 100644
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -1504,7 +1504,7 @@ static int cp210x_gpio_get(struct gpio_chip *gc, unsigned int gpio)
- 	return !!(mask & BIT(gpio));
- }
- 
--static void cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
-+static int cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
- {
- 	struct usb_serial *serial = gpiochip_get_data(gc);
- 	struct cp210x_serial_private *priv = usb_get_serial_data(serial);
-@@ -1559,7 +1559,10 @@ static void cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
- 	if (result < 0) {
- 		dev_err(&serial->interface->dev, "failed to set GPIO value: %d\n",
- 				result);
-+		return result;
- 	}
-+
-+	return 0;
- }
- 
- static int cp210x_gpio_direction_get(struct gpio_chip *gc, unsigned int gpio)
-@@ -1599,9 +1602,8 @@ static int cp210x_gpio_direction_output(struct gpio_chip *gc, unsigned int gpio,
- 	struct cp210x_serial_private *priv = usb_get_serial_data(serial);
- 
- 	priv->gpio_input &= ~BIT(gpio);
--	cp210x_gpio_set(gc, gpio, value);
- 
--	return 0;
-+	return cp210x_gpio_set(gc, gpio, value);
- }
- 
- static int cp210x_gpio_set_config(struct gpio_chip *gc, unsigned int gpio,
-@@ -1960,7 +1962,7 @@ static int cp210x_gpio_init(struct usb_serial *serial)
- 	priv->gc.direction_input = cp210x_gpio_direction_input;
- 	priv->gc.direction_output = cp210x_gpio_direction_output;
- 	priv->gc.get = cp210x_gpio_get;
--	priv->gc.set = cp210x_gpio_set;
-+	priv->gc.set_rv = cp210x_gpio_set;
- 	priv->gc.set_config = cp210x_gpio_set_config;
- 	priv->gc.init_valid_mask = cp210x_gpio_init_valid_mask;
- 	priv->gc.owner = THIS_MODULE;
-
--- 
-2.48.1
-
+On Wed, Jun 18, 2025 at 12:25=E2=80=AFAM Yao Zi <ziyao@disroot.org> wrote:
+>
+> This series adds support for Loongson 2K0300's clock controller.
+> Loongson 2 clock driver is prepared to support more clock variants and
+> its flexibility is improved. All clock hardwares except the output one
+> for GMAC module are then defined.
+>
+> A clock tree dump could be obtained here[1]. This series depends on v3
+> of series "Initial support for CTCISZ Forever Pi"[2] to apply.
+>
+> [1]: https://gist.github.com/ziyao233/160bb4693e7758b2a2a996d4510b7247
+> [2]: https://lore.kernel.org/all/20250523095408.25919-1-ziyao@disroot.org=
+/
+>
+> Changed from v1:
+> - Fold loongson,ls2k0300-clk.yaml into loongson,ls2k-clk.yaml
+> - Include the new binding header in MAINTAINERS
+> - Link to v1: https://lore.kernel.org/all/20250523104552.32742-1-ziyao@di=
+sroot.org/
+>
+> Yao Zi (8):
+>   dt-bindings: clock: loongson2: Add Loongson 2K0300 compatible
+>   clk: loongson2: Allow specifying clock flags for gate clock
+>   clk: loongson2: Support scale clocks with an alternative mode
+>   clk: loongson2: Allow zero divisors for dividers
+>   clk: loongson2: Avoid hardcoding firmware name of the reference clock
+>   clk: loongson2: Add clock definitions for Loongson 2K0300 SoC
+>   LoongArch: dts: Add clock tree for Loongson 2K0300
+>   LoongArch: dts: Remove clock-frquency from UART0 of CTCISZ Forever Pi
+>
+>  .../bindings/clock/loongson,ls2k-clk.yaml     |  26 +++-
+>  MAINTAINERS                                   |   1 +
+>  .../dts/loongson-2k0300-ctcisz-forever-pi.dts |   1 -
+>  arch/loongarch/boot/dts/loongson-2k0300.dtsi  |  17 ++-
+>  drivers/clk/clk-loongson2.c                   | 124 +++++++++++++++---
+>  .../dt-bindings/clock/loongson,ls2k0300-clk.h |  54 ++++++++
+>  6 files changed, 193 insertions(+), 30 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
+>
+> --
+> 2.49.0
+>
+>
 
