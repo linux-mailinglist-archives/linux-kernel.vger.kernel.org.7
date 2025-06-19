@@ -1,219 +1,143 @@
-Return-Path: <linux-kernel+bounces-694584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8097AE0E03
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 21:29:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89AEEAE0E07
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 21:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27BD21884F86
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:29:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE1B317E046
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D757728C870;
-	Thu, 19 Jun 2025 19:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="MNDjIQjF"
-Received: from mail-pl1-f228.google.com (mail-pl1-f228.google.com [209.85.214.228])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0210124676B;
+	Thu, 19 Jun 2025 19:29:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788B824501D
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 19:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCF32451C8;
+	Thu, 19 Jun 2025 19:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750361282; cv=none; b=PfUC7vazWDj3nzp8looC6JfKhWzufO4e0Mv3cwexbVsOwpKdtKQrjH6FymsNiwvaTsb3qj/4v+ql55Lx13nwXK1Hsjzq8W1LCOwktY1aoMYraMBrguLNIXM73jAmYZR8v6GjXxLmkWszk0cI+/0UqTUUAa9KA3yP7nS/1ur4JnQ=
+	t=1750361364; cv=none; b=StB6zJGAfzB8S2SJg850EMbUSfCyp3ptDXDFRP4IR37J9s3/95TqnBGw+J8KyIzVoSWWnNj8OyJAjCf2EevrxLi/umjUDcKYEyNjKdXg6E+fWMTpIufk2Juc+LKO9xyxY8fhTd+O9OifUKmPUqSga+LZlH87TS0r7CFA63BhQd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750361282; c=relaxed/simple;
-	bh=WAdMGPaNB/QCo15dUEuI4GjK/9ObZxnK/dP6No/A+ms=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZZ0DRydR90Cc7bmcUiyWbSWGY/41/TVEf8LlDci0m8pg3wEKmX6kvGeQwUg9HpxegLoBaxZ/oehZQbi5CAqxxn/XdWEqOE/JPmC9nQq6EbDVuZqo0bvEhmgYwit5R+3pHRY9332LoyCiXSKbG7GY7gL+cZo+alz+IkovWkhD6Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=MNDjIQjF; arc=none smtp.client-ip=209.85.214.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f228.google.com with SMTP id d9443c01a7336-234ae2bf851so1725755ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 12:27:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1750361278; x=1750966078; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O9mph6iqzfvkH6Em/eA5BqcG3h1FrFQ3qkFwr+Q5lfM=;
-        b=MNDjIQjFblz/KRs7ykCkW19Y19OCwpXEZdxUPr8cG471PRjW/lIyD2YWT7cAX/9J4z
-         pIBAy6mlCzPhvUe0WW19hN3HHG+el9F2oH2+ZGKCMJbTo4MgFKxroOzcylpsyfPMzqMt
-         HzvC63U3PwJyZV64kHcM6cSoMwCXUH3vyT5PHygfgFXHIZ0u/qkWlU3+ru1OTNgV/4ie
-         Huf1V7seOqa0njvTlTclzTS6ZYLt1j3QWCWuw2zWqjK5ZP9nD899AflltIkoFvI5yHPc
-         joAt4827ApL7RH/4AnUr9O3C3dcNeXMuSqYLNuIB4mk3vZ6rpVNy3KghiAnuOE5I1t9d
-         DU+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750361278; x=1750966078;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O9mph6iqzfvkH6Em/eA5BqcG3h1FrFQ3qkFwr+Q5lfM=;
-        b=o85HLvwfSJpcP1a/9q9TVuU6/huwRQxhWifGNaIUUPbU/6fqDFY8Auwx1w5JO6EjmU
-         qUQ7Jy2o2orAGHFzh8fpJHuceEoi0aqQhBvFBFxr9pEJdVUyS+aVO4qwJVcGMLQ8OyH4
-         F8dv4a6p4yNLPaDx1WnYw1aFkgYFOQYTncjoxRlCiTgMKRQqueNKdhXxyXfvXCg2BOuo
-         eaeiW+GRg/X35Y6vpiB8Ee7BFheSIr6CEagV2ypVaMh9A6pmQVJh/56iYcQZtK2ZjPtT
-         VLziy6xCypS+ytHxtNftudZv3zceR8qs9k/tBYqpVYtUPo+xBK9frKBiPPElnGJrfUtA
-         OCwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0QkTBXXqT1ogOFpL50r5e6H2CWDMm29FZHyHArZ2nl+6GP9Y123/9lsvAQvMUxv0txkxrlJceOSBzZLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHTBIKqTRP6J66Nnkbe2CDqb+0P8+XpnxvvZGK0DWvYwla2wDW
-	li+2SWRHj0st8w6U5Hwx1XifK2EiHZS5EEO1cgjKaiILP53zr7AqKqe9SZqHJMq1bOsOUBJKn/E
-	icdyVVmP2X2vW+oCaLuna04hzcz+7XjshGOVm
-X-Gm-Gg: ASbGncueIgBjB3PlovGGIoe+7io/bwujJGNGIb87Mar9YvbPQen+w5QBv829wsmCb8z
-	zOIKoMQnf82WCPgyHZjtK0jsz1PpLUOLL/8QFXe+jBWtcOd7jppxlOVNLvgG1PKad6xMEzvSsQX
-	cRnkGf9u0CWalBYXOYKKgPnAGfJEHHUhrjViAUpVNpQAyXscPrSYKk5vO38YFW+AoFyuxpw6DYL
-	Ux1emLkOheeVBN65BBUkcUGJ8SjFzYOYa9gRdHcJZInaDtwF5XTu6VPFLuUuCmZ9/hrmJgqm7WF
-	qZ0TKX6lYS9rTfQh0XT7u122qRZJzbvAC+JahXuFJmSbg/NeVz3NK5U=
-X-Google-Smtp-Source: AGHT+IGYwH/UnRloaxJSDbMCTU+OrSVFFK8LWCGEl/44Ty0QzPW7F7yR2nACYfTcFtaX1Uuy3m3j3z1yjWFt
-X-Received: by 2002:a17:902:ea10:b0:234:ed31:fc97 with SMTP id d9443c01a7336-237d9abddcfmr46325ad.12.1750361278556;
-        Thu, 19 Jun 2025 12:27:58 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-237d84f2724sm105245ad.66.2025.06.19.12.27.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 12:27:58 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id E768F34179F;
-	Thu, 19 Jun 2025 13:27:57 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id E5315E4410B; Thu, 19 Jun 2025 13:27:57 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: Mark Harmstone <maharmstone@fb.com>,
-	linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH 4/4] io_uring/cmd: remove struct io_uring_cmd_data
-Date: Thu, 19 Jun 2025 13:27:48 -0600
-Message-ID: <20250619192748.3602122-5-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250619192748.3602122-1-csander@purestorage.com>
-References: <20250619192748.3602122-1-csander@purestorage.com>
+	s=arc-20240116; t=1750361364; c=relaxed/simple;
+	bh=hJlbQdsKxVMtt9Kp85pBFUNoKX0kIf6XpKlK2LU7+Io=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OBImgTbB0VUwyE7m1lakby1MpEConHsRJCImrqGUMln5E7cmwd2b3D/ACbhMbhrrKRLq3yv/AjSxiIk6O/G72wpE38EhKNCaL+NHsp3rnx8caw15rGkmItlo/9xvFe9ivev7todcXYXjE5Dv2SuPH1BuiFU3R0Na5FHd/awjMPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21E41C4CEED;
+	Thu, 19 Jun 2025 19:29:19 +0000 (UTC)
+Date: Thu, 19 Jun 2025 20:29:17 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
+Cc: ryan.roberts@arm.com, yang@os.amperecomputing.com, will@kernel.org,
+	jean-philippe@linaro.org, robin.murphy@arm.com, joro@8bytes.org,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	james.morse@arm.com, broonie@kernel.org, ardb@kernel.org,
+	baohua@kernel.org, suzuki.poulose@arm.com, david@redhat.com,
+	jgg@ziepe.ca, nicolinc@nvidia.com, jsnitsel@redhat.com,
+	mshavit@google.com, kevin.tian@intel.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [PATCH v7 4/4] arm64/mm: Elide tlbi in contpte_convert() under
+ BBML2
+Message-ID: <aFRlDSZ2PPnHixjc@arm.com>
+References: <20250617095104.6772-1-miko.lenczewski@arm.com>
+ <20250617095104.6772-5-miko.lenczewski@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250617095104.6772-5-miko.lenczewski@arm.com>
 
-There are no more users of struct io_uring_cmd_data and its op_data
-field. Remove it to shave 8 bytes from struct io_async_cmd and eliminate
-a store and load for every uring_cmd.
+On Tue, Jun 17, 2025 at 09:51:04AM +0000, Mikołaj Lenczewski wrote:
+> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+> index bcac4f55f9c1..203357061d0a 100644
+> --- a/arch/arm64/mm/contpte.c
+> +++ b/arch/arm64/mm/contpte.c
+> @@ -68,7 +68,144 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
+>  			pte = pte_mkyoung(pte);
+>  	}
+>  
+> -	__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
+> +	/*
+> +	 * On eliding the __tlb_flush_range() under BBML2+noabort:
+> +	 *
+> +	 * NOTE: Instead of using N=16 as the contiguous block length, we use
+> +	 *       N=4 for clarity.
+> +	 *
+> +	 * NOTE: 'n' and 'c' are used to denote the "contiguous bit" being
+> +	 *       unset and set, respectively.
+> +	 *
+> +	 * We worry about two cases where contiguous bit is used:
+> +	 *  - When folding N smaller non-contiguous ptes as 1 contiguous block.
+> +	 *  - When unfolding a contiguous block into N smaller non-contiguous ptes.
+> +	 *
+> +	 * Currently, the BBML0 folding case looks as follows:
+> +	 *
+> +	 *  0) Initial page-table layout:
+> +	 *
+> +	 *   +----+----+----+----+
+> +	 *   |RO,n|RO,n|RO,n|RW,n| <--- last page being set as RO
+> +	 *   +----+----+----+----+
+> +	 *
+> +	 *  1) Aggregate AF + dirty flags using __ptep_get_and_clear():
+> +	 *
+> +	 *   +----+----+----+----+
+> +	 *   |  0 |  0 |  0 |  0 |
+> +	 *   +----+----+----+----+
+> +	 *
+> +	 *  2) __flush_tlb_range():
+> +	 *
+> +	 *   |____ tlbi + dsb ____|
+> +	 *
+> +	 *  3) __set_ptes() to repaint contiguous block:
+> +	 *
+> +	 *   +----+----+----+----+
+> +	 *   |RO,c|RO,c|RO,c|RO,c|
+> +	 *   +----+----+----+----+
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- include/linux/io_uring/cmd.h |  9 ---------
- io_uring/uring_cmd.c         | 12 +-----------
- io_uring/uring_cmd.h         |  1 -
- 3 files changed, 1 insertion(+), 21 deletions(-)
+From the initial layout to point (3), we are also changing the
+permission. Given the rules you mentioned in the Arm ARM, I think that's
+safe (hardware seeing either the old or the new attributes). The
+FEAT_BBM description, however, only talks about change between larger
+and smaller blocks but no mention of also changing the attributes at the
+same time. Hopefully the microarchitects claiming certain CPUs don't
+generate conflict aborts understood what Linux does.
 
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index 29892f54e0ac..cfa6d0c0c322 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -19,14 +19,10 @@ struct io_uring_cmd {
- 	u32		cmd_op;
- 	u32		flags;
- 	u8		pdu[32]; /* available inline for free use */
- };
- 
--struct io_uring_cmd_data {
--	void			*op_data;
--};
--
- static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe)
- {
- 	return sqe->cmd;
- }
- 
-@@ -135,15 +131,10 @@ static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
- static inline struct task_struct *io_uring_cmd_get_task(struct io_uring_cmd *cmd)
- {
- 	return cmd_to_io_kiocb(cmd)->tctx->task;
- }
- 
--static inline struct io_uring_cmd_data *io_uring_cmd_get_async_data(struct io_uring_cmd *cmd)
--{
--	return cmd_to_io_kiocb(cmd)->async_data;
--}
--
- /*
-  * Return uring_cmd's context reference as its context handle for driver to
-  * track per-context resource, such as registered kernel IO buffer
-  */
- static inline void *io_uring_cmd_ctx_handle(struct io_uring_cmd *cmd)
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 7cddc4c1c554..376404ffb3f9 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -23,25 +23,19 @@ void io_cmd_cache_free(const void *entry)
- 
- static void io_req_uring_cleanup(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
- 	struct io_async_cmd *ac = req->async_data;
--	struct io_uring_cmd_data *cache = &ac->data;
--
--	if (cache->op_data) {
--		kfree(cache->op_data);
--		cache->op_data = NULL;
--	}
- 
- 	if (issue_flags & IO_URING_F_UNLOCKED)
- 		return;
- 
- 	io_alloc_cache_vec_kasan(&ac->vec);
- 	if (ac->vec.nr > IO_VEC_CACHE_SOFT_CAP)
- 		io_vec_free(&ac->vec);
- 
--	if (io_alloc_cache_put(&req->ctx->cmd_cache, cache)) {
-+	if (io_alloc_cache_put(&req->ctx->cmd_cache, ac)) {
- 		ioucmd->sqe = NULL;
- 		req->async_data = NULL;
- 		req->flags &= ~(REQ_F_ASYNC_DATA|REQ_F_NEED_CLEANUP);
- 	}
- }
-@@ -185,17 +179,13 @@ static int io_uring_cmd_prep_setup(struct io_kiocb *req,
- 				   const struct io_uring_sqe *sqe)
- {
- 	struct io_uring_cmd *ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
- 	struct io_async_cmd *ac;
- 
--	/* see io_uring_cmd_get_async_data() */
--	BUILD_BUG_ON(offsetof(struct io_async_cmd, data) != 0);
--
- 	ac = io_uring_alloc_async_data(&req->ctx->cmd_cache, req);
- 	if (!ac)
- 		return -ENOMEM;
--	ac->data.op_data = NULL;
- 
- 	/*
- 	 * Unconditionally cache the SQE for now - this is only needed for
- 	 * requests that go async, but prep handlers must ensure that any
- 	 * sqe data is stable beyond prep. Since uring_cmd is special in
-diff --git a/io_uring/uring_cmd.h b/io_uring/uring_cmd.h
-index e6a5142c890e..351c58c26679 100644
---- a/io_uring/uring_cmd.h
-+++ b/io_uring/uring_cmd.h
-@@ -2,11 +2,10 @@
- 
- #include <linux/io_uring/cmd.h>
- #include <linux/io_uring_types.h>
- 
- struct io_async_cmd {
--	struct io_uring_cmd_data	data;
- 	struct iou_vec			vec;
- 	struct io_uring_sqe		sqes[2];
- };
- 
- int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags);
+> +	 *
+> +	 *  4) The kernel will eventually __flush_tlb() for changed page:
+> +	 *
+> +	 *                  |____| <--- tlbi + dsb
+[...]
+> +	 * It is also important to note that at the end of the BBML2 folding
+> +	 * case, we are still left with potentially all N TLB entries still
+> +	 * cached (the N-1 non-contiguous ptes, and the single contiguous
+> +	 * block). However, over time, natural TLB pressure will cause the
+> +	 * non-contiguous pte TLB entries to be flushed, leaving only the
+> +	 * contiguous block TLB entry. This means that omitting the tlbi+dsb is
+> +	 * not only correct, but also keeps our eventual performance benefits.
+
+Step 4 above implies some TLB flushing from the core code eventually.
+What is the situation mentioned in the paragraph above? Is it only until
+we get the TLB flushing from the core code?
+
+[...]
+> +	if (!system_supports_bbml2_noabort())
+> +		__flush_tlb_range(&vma, start_addr, addr, PAGE_SIZE, true, 3);
+>  
+>  	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
+
+Eliding the TLBI here is all good but looking at the overall set_ptes(),
+why do we bother with unfold+fold for BBML2? Can we not just change
+them in place without going through __ptep_get_and_clear()?
+
 -- 
-2.45.2
-
+Catalin
 
