@@ -1,132 +1,154 @@
-Return-Path: <linux-kernel+bounces-694164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A54AE08DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:34:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FDE3AE0926
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15FB15A2BF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:34:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 383904A5095
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55575220F2C;
-	Thu, 19 Jun 2025 14:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="JYAmYu0l"
-Received: from mail-yb1-f227.google.com (mail-yb1-f227.google.com [209.85.219.227])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25ED17E0
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 14:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4314428B4E3;
+	Thu, 19 Jun 2025 14:50:38 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B811EB5FD;
+	Thu, 19 Jun 2025 14:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750343686; cv=none; b=PC7eTtrlw8M5w8HbmkDI8mWL6bW4a3CaCtEbT1QPuR0p/EUu/JeLj7bwn8aSW92uHYEsPS3A0bnC41ocnPj98jxho0f96n2IPulIsGTtJl/Jm2chBgQuLuzh5fyC4+qgpkRWDvnHKy+PJyHcgvAwZWepfp7EFs2njX8X6Jd95nY=
+	t=1750344637; cv=none; b=MzwZ+wJZWqgI/df51Tttt1aCGhVdpSOHe25elcJAtA90/qMnMmtEF2olwjIzJSk/lKTMo9licwaX1Uc7VupQaYd/ohrTd0GHpC1BrYENKqJ7tu68ez0ivuU/pHqsffmC/7Lnt3a10dJ1PNhIxmCB5U9hFKLrNfqhF5+F1XH8m28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750343686; c=relaxed/simple;
-	bh=Gr39rdqrLsxp6lFbj8mgr6Hb47LbYzbNx2IISdyK5IA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QC7IZHkpXPd6Jb7W5jMfoSceXBG/V+QyvXiShlXH9yrn6t9Ym7QOtIrTHJyGzJaBB1cHIn10yyUQfKfZlD4Dwz+ENvfkD+UCG38VOqOTNbDBI8M9zv9K7CusRcPG37JYPfWDPLnCsBLLMTIaW56BmSVs9t9ve0sqMHglFuqDsUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=JYAmYu0l; arc=none smtp.client-ip=209.85.219.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-yb1-f227.google.com with SMTP id 3f1490d57ef6-e81881bdd55so148076276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:34:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1750343683; x=1750948483; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=y+DUhAWHkst0c7X0/9eUUU0KjzIQKkZSCUQQd7zskFc=;
-        b=JYAmYu0l59mn2+TONad2hnSOafQ+dmZ3B2yhH5Fp5P/lNzScofVPJYb7hxvRljt+Gk
-         vbbAz6fLvb1nIXuiZex1T9eIFraTNjxl1iObJtNxR5ZysIfYZj7SUy9oTK5N3WO2zHR6
-         PosNGz427nrewO7N3ghEFOmXc2e5Ld0YTi5F/nl22Ex2EkiYyDKj6Z1Oj1Ew9sqSVFVI
-         0ur7lv+wrm3QvXPAmJ8j0WwL585Vw+P1NpcJkBesI3HcrqQ0FYTdd6TgWfPI6Nxd/MlU
-         UTrsh6Em4OsmWq9M+PtaU8x9UMKwM3IpkSf/RTTwHHkH3TO354/H8oe3+pBuc8SJ1LPc
-         MBNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750343683; x=1750948483;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y+DUhAWHkst0c7X0/9eUUU0KjzIQKkZSCUQQd7zskFc=;
-        b=PAW6tPOoHtSPvbqLnn2llCkaDcib/Igv5YzT7rpPDnpkdi99mYZXGaWi+pqwnHxgVL
-         Hf87e8uEGHhdPEHaVmecvY8LwL7UOzMi1GdiI0X9hRCc3bJqdJ326sitlsrm6r6mt1E3
-         MwmpMlzeXrkicS7Um6JUbVEUzz4tIQ99AYtMeLk36PwaRXFRNg/va/BPHU5FxnD6XQ2E
-         8Mk4vq1T3Qm+dfZIDzrutGEAIDtcu/JHbbWB0v6ennAz7ZuzvrMUi3cWKmqd0F+qSvH9
-         I7YuDbpDE+NP41wSY56miC2yAeu6JQQ2dTJ2jDCvv0ZY0+OTj6glFrwkMWk4q6vBGuN7
-         eXEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUs33/Apj33e9T5W8u/R7hjo/Ibx0iwqqeNIaJX0W9KL+X1v8ktMYNlO61pGkqILNWbgWSQTIdlM7NSt8I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQFzoApJxfH69sU/RSDUXfzPaTQnd26JYAcZAax0fJNk24r2ZR
-	EKI+L5wtviWI8ipGBJQ+mc0gt1qAMwKez2PUCCsKX5zRN64WyKGVe8sCCj/zCobWvT2H/4tVofm
-	Kdlg5S0GgDcXK7qz/wZqJ74M/rfLvGKkGqghO
-X-Gm-Gg: ASbGnctrJWriv46blPEnncZuYagukrSgcLGAZ/0G0XUS5UFpA+we+8ZCx06SnuTzUKI
-	sSrg80HEdvOrvfep8cmCrm/dZ5H8U2J4FFSN6F2m6RKSxrDVRYHkaTg5l6CJDbXqxHuydXe9h0c
-	TtbdL78GmCQuGXs8zVJwTlsI0efxGvkgyTQkZwtpVQ7ZTlvxO8nFKHkddWisl8APYfs5QUahsg9
-	wMC3ELVC1WN1wxUfrAKtvwXt2cVmXLqdQD6uBKUaDV6gYmEsRw27Re+hena2v2RRblGhjDjEDRL
-	5pRCsYW1ba6bK/TMpSO3p9gdAU0sNjbjax0VNvS8265R58W2/dikr/Q=
-X-Google-Smtp-Source: AGHT+IFt6DSlakYJqe8fTMglwxYonTqU4ViPVwUFUnerbH/PRofhRZFUP0LbiTS2m5Lyqu0Zhh99vdkuPNJj
-X-Received: by 2002:a05:690c:7485:b0:711:457a:401f with SMTP id 00721157ae682-712b520498cmr22328167b3.4.1750343683581;
-        Thu, 19 Jun 2025 07:34:43 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
-        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-712b7b565a5sm528877b3.50.2025.06.19.07.34.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 07:34:43 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id EB796340278;
-	Thu, 19 Jun 2025 08:34:42 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 8E20EE44094; Thu, 19 Jun 2025 08:34:42 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring/rsrc: skip atomic refcount for uncloned buffers
-Date: Thu, 19 Jun 2025 08:34:34 -0600
-Message-ID: <20250619143435.3474028-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1750344637; c=relaxed/simple;
+	bh=VbhmAEBQ8O4YJvRcxwQ4zTltQ26TLxM7HAoCcW6W/zU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YZhGqr3gJe0T4u9rFjd6ioA8CZqSJhJQfEKnp2y9hDxMFEC3Xj6Bctlp4Qzj4PguOoHQe8wv5GuWwWbTIyzuwoSZEvniI9vwusLFGSpsDYVVGptKafp+7p55EbFYLRQGmpsrFadGxXZizEiifEVTZUxbw5jsLA3PinEknO/aIDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bNNSQ43q2z9tMS;
+	Thu, 19 Jun 2025 16:35:34 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id jvK5WwOsEdLr; Thu, 19 Jun 2025 16:35:34 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bNNSL6hPpz9tMd;
+	Thu, 19 Jun 2025 16:35:30 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DC3A98B790;
+	Thu, 19 Jun 2025 16:35:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 6cuBk6pQxYZw; Thu, 19 Jun 2025 16:35:30 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 380198B78C;
+	Thu, 19 Jun 2025 16:35:30 +0200 (CEST)
+Message-ID: <f138b40e-095a-48f0-80b9-86685c640cd6@csgroup.eu>
+Date: Thu, 19 Jun 2025 16:35:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] powerpc/bpf: Fix warning for unused
+ ori31_emitted
+To: Luis Gerhorst <luis.gerhorst@fau.de>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Hari Bathini <hbathini@linux.ibm.com>,
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Cc: kernel test robot <lkp@intel.com>
+References: <20250619142647.2157017-1-luis.gerhorst@fau.de>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250619142647.2157017-1-luis.gerhorst@fau.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-io_buffer_unmap() performs an atomic decrement of the io_mapped_ubuf's
-reference count in case it has been cloned into another io_ring_ctx's
-registered buffer table. This is an expensive operation and unnecessary
-in the common case that the io_mapped_ubuf is only registered once.
-Load the reference count first and check whether it's 1. In that case,
-skip the atomic decrement and immediately free the io_mapped_ubuf.
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- io_uring/rsrc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 94a9db030e0e..9a1f24a43035 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -133,12 +133,14 @@ static void io_free_imu(struct io_ring_ctx *ctx, struct io_mapped_ubuf *imu)
- 		kvfree(imu);
- }
- 
- static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ubuf *imu)
- {
--	if (!refcount_dec_and_test(&imu->refs))
--		return;
-+	if (unlikely(refcount_read(&imu->refs) > 1)) {
-+		if (!refcount_dec_and_test(&imu->refs))
-+			return;
-+	}
- 
- 	if (imu->acct_pages)
- 		io_unaccount_mem(ctx, imu->acct_pages);
- 	imu->release(imu->priv);
- 	io_free_imu(ctx, imu);
--- 
-2.45.2
+Le 19/06/2025 à 16:26, Luis Gerhorst a écrit :
+> Without this, the compiler (clang21) might emit a warning under W=1
+> because the variable ori31_emitted is set but never used if
+> CONFIG_PPC_BOOK3S_64=n.
+> 
+> Without this patch:
+> 
+> $ make -j $(nproc) W=1 ARCH=powerpc SHELL=/bin/bash arch/powerpc/net
+>    [...]
+>    CC      arch/powerpc/net/bpf_jit_comp.o
+>    CC      arch/powerpc/net/bpf_jit_comp64.o
+> ../arch/powerpc/net/bpf_jit_comp64.c: In function 'bpf_jit_build_body':
+> ../arch/powerpc/net/bpf_jit_comp64.c:417:28: warning: variable 'ori31_emitted' set but not used [-Wunused-but-set-variable]
+>    417 |         bool sync_emitted, ori31_emitted;
+>        |                            ^~~~~~~~~~~~~
+>    AR      arch/powerpc/net/built-in.a
+> 
+> With this patch:
+> 
+>    [...]
+>    CC      arch/powerpc/net/bpf_jit_comp.o
+>    CC      arch/powerpc/net/bpf_jit_comp64.o
+>    AR      arch/powerpc/net/built-in.a
+> 
+> Fixes: dff883d9e93a ("bpf, arm64, powerpc: Change nospec to include v1 barrier")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202506180402.uUXwVoSH-lkp@intel.com/
+> Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
+
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
+> ---
+>   arch/powerpc/net/bpf_jit_comp64.c | 11 +++++------
+>   1 file changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
+> index 3665ff8bb4bc..a25a6ffe7d7c 100644
+> --- a/arch/powerpc/net/bpf_jit_comp64.c
+> +++ b/arch/powerpc/net/bpf_jit_comp64.c
+> @@ -820,13 +820,12 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+>   		case BPF_ST | BPF_NOSPEC:
+>   			sync_emitted = false;
+>   			ori31_emitted = false;
+> -#ifdef CONFIG_PPC_E500
+> -			if (!bpf_jit_bypass_spec_v1()) {
+> +			if (IS_ENABLED(CONFIG_PPC_E500) &&
+> +			    !bpf_jit_bypass_spec_v1()) {
+>   				EMIT(PPC_RAW_ISYNC());
+>   				EMIT(PPC_RAW_SYNC());
+>   				sync_emitted = true;
+>   			}
+> -#endif
+>   			if (!bpf_jit_bypass_spec_v4()) {
+>   				switch (stf_barrier) {
+>   				case STF_BARRIER_EIEIO:
+> @@ -849,10 +848,10 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+>   					break;
+>   				}
+>   			}
+> -#ifdef CONFIG_PPC_BOOK3S_64
+> -			if (!bpf_jit_bypass_spec_v1() && !ori31_emitted)
+> +			if (IS_ENABLED(CONFIG_PPC_BOOK3S_64) &&
+> +			    !bpf_jit_bypass_spec_v1() &&
+> +			    !ori31_emitted)
+>   				EMIT(PPC_RAW_ORI(_R31, _R31, 0));
+> -#endif
+>   			break;
+>   
+>   		/*
+> 
+> base-commit: cd7312a78f36e981939abe1cd1f21d355e083dfe
 
 
