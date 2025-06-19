@@ -1,149 +1,122 @@
-Return-Path: <linux-kernel+bounces-694111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CADCBAE07FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:57:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF00AE07FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:57:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4771617A212
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:56:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BDF81BC4F1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBE21DA62E;
-	Thu, 19 Jun 2025 13:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SCZPdIqd"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3146E28E5E6;
+	Thu, 19 Jun 2025 13:53:54 +0000 (UTC)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7BC28BA8D
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 13:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE5C184F;
+	Thu, 19 Jun 2025 13:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750341205; cv=none; b=YfVU0VsUQlxQF1f/k2Yshcvbgs9HC+D6PVaNg+Xw0Tfci75vTg2wVXHmsi4FFs13bhO6aRT/joZonxDQL7VMWR6UlIYfkfmNObS1lG1GKVQYYPUUzwuS2nWqaXaSb7y+liebbfGHqKzhhgIGzVXNrUxx0oTIWBeDWvfjuGqel+k=
+	t=1750341233; cv=none; b=NMCSZS43AYl0HHGJn/DK8iN6us/4dWgtQ5uh1vuaWjalObHV61yzexBi9sLk+EiD7iEWVRnK+jtQs9mxNKq4N2n/bYhX57MfD3MqRWo2VZmiSLv0zclG6HYzcOGlVXSA/TtXqBEbjQxPpJ7EWSAxCosz1ktA2EMSK6RkoiAJqcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750341205; c=relaxed/simple;
-	bh=2NqneKlY33z9v6ssom6HUKNEFdIU6yvVwyJlxaLkGow=;
+	s=arc-20240116; t=1750341233; c=relaxed/simple;
+	bh=jbuVcEQNcpWsySlTNzCfRCPoLDuhcy4k1y3UpuSk3zQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BDOtiKMXOx6ZHRuzCual8/w+UXsAd+lV8RefEmpTCq+43SoYixHfn1SCJJaxGV1RSbREtK29pFDhE+8UMsrxYjXQ1jECYrXCRTdSXVe+1RHpLKMS1jUQinQ+6Qmjxx3MfdcLrgivRijsD1v/fCSazZ5EwhpxuXsSnz7XLcvl/9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SCZPdIqd; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-606ddbda275so1634825a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 06:53:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750341202; x=1750946002; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hy3WsHb/OXL1L2Qu4iG3kEVAl7a80hJee5UYV6CVjCI=;
-        b=SCZPdIqd8fuLoyqrfgOgSWXrN1CiW5C7bFZjSKM7c3bXPf7dlKDP1CoJSO5hutiQo4
-         2D6yNgbPXB+x4ZASldELhIX5hTtdklt1Dj6ovt5py7JiEbL9XTWT6UumZCcF/gcD+Wpq
-         6XA0+ZJNWEmoxH2qDgB15viTZJy3u9UsR83GDlrJzies84ViF1jctchQMBeLYlN9ZQBS
-         66YuqhhsCH5nCIGzIwmoSvaqh0Xg7slNhsrzuM56KrEUake1F2GSrA3UEZOO6l+CyGyG
-         ZCmcYAjVswar0zU7Sh6uTFHBg8UZNxDYO+jeMV4cuxX3yeZXmasp0zuDYlIjj3CP6cjb
-         A6wg==
+	 To:Cc:Content-Type; b=Zid5La+37tvuJG/8QEM3otlRlsBFqaYpxequ/GM82dWmpckzqlJuWdSoOKI1ClMUqH2O27mTPsJ9VZmYvc+6cGgok9z+fw7oxL4C/iX2nln5a9+310Qb2mFnf0StoUUL1spTqvZRGB5MZ7EfDz/0wiBZ71BFmW6bK+E7NYRi5pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4e7feaae0e1so612351137.2;
+        Thu, 19 Jun 2025 06:53:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750341202; x=1750946002;
+        d=1e100.net; s=20230601; t=1750341230; x=1750946030;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hy3WsHb/OXL1L2Qu4iG3kEVAl7a80hJee5UYV6CVjCI=;
-        b=fX6grp0zvrAyhhZ7veJECHEg1Kmcy1CukpqoMaKKm9Ywmwbe3AJ+L3Fqt+zVplgx0I
-         TBK4rsw5kDl54oyQWj0RbrzlqvwHgf0BKnuPR5qHL1wQhAibCTvSDdAZF8ghe2n11tHO
-         E2fH6FhEBr4G1w/e8BIfXvZXhOwgUqG1B7N4sFrgDR/cNZwAexl11BWOkpHOXbVBWOOP
-         OT5GW42CykNmzGBMex81myUkx8tNXC7STpRbksvIirITfu+pNh4baRK5KfJrj4Xere9U
-         j5s6T7c2yp0GiYh9rJNoPnafhKnBRDE0s9Y+qtvrMQ8uiSSBe+tF0YLDWDB/Sq06mjDw
-         IeoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrk2ZV5vzw0TL6iGVSheA74WXUqLs8rnfmCgjpMSwynT5dxVpMvsMyy0tfzqd0y0bVpmHBViM2z7U7C88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCaDl7nFBa5u4s+ktk8eamyDp4YEEE91od8YPYA5FtSMJiRtwJ
-	Rd43W1mrUEznSCaeNsU58FnogkVoJf8dSWgUZcS+Ec5cfuGZZ5bk4TyRGMRyH90yGYzMncYnVff
-	F01BcfMMuBlNkme4j1p3aSJy/NbpEMpbvw7Bb3s3+fA==
-X-Gm-Gg: ASbGnct8D4/O8oXCx2/Txt0BRT+j/csOCOvD9lDzXPJjGIUY2SHjloiJZ3Kw367NBAU
-	e+NIspkerggqIt9dK19ZEZuw3Hgm1GlObKs/DbYUKt7JL5lTn4iE20yaFOD4yBKtK8s3eqQekxS
-	3j84RosP83uUor80Qxikk/921wO3lB6HmmIrhhoUwxOCHG0rlasCGzzdQs4HvyKxWLsSbg3tEtl
-	cvAUfDDqTQ=
-X-Google-Smtp-Source: AGHT+IGxNz0ZAdeuWD3+xXQuKwQDZ26IRJrNyiFoRdmDetWtYHuyjc7xqtlrqOBhPAYdXWgvHHRJG2mKxOWzMUM7eNE=
-X-Received: by 2002:a17:907:7fa6:b0:ae0:3f20:68f8 with SMTP id
- a640c23a62f3a-ae03f207cdamr215951966b.39.1750341202056; Thu, 19 Jun 2025
- 06:53:22 -0700 (PDT)
+        bh=MoPSVoobirA1Jie2WgJhd5VaFqdO4CfR1E2iehiwxA8=;
+        b=AbIS9204khZ6GHGZhGLCJ5AU+pAqz5jUuHez4/FrD8pauRCS+SsolV7l1Dfb2nQ5bX
+         31uAsarHr8apja/VBf1PazvLN2QriPvl1IrD1V3uP47C3kjmYmJ4hNczV9kJU8Qx+KGm
+         nFBTiC3t5PHxQMQ82d6foQmmwWl4W0Jgu2V2sH6Be65FOvNw9Wi5X7dXZP7DuGwSgPxE
+         9kktiWhaFDmMFR88gwJC11ZofSp11YKjuh095RGblOUfgpNkIIjFummiegm3gw3omzNb
+         L9dDZwaTtIydsph1sLZPDcdRCy+tpmYXP+C3VE1zQ6URl3lVi+wFNnWDvhVNHkbOuR2U
+         EO/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUke4WD2k1Zkw56MDev3SCpNAr541KiofPfxUjr/gQdyaGT/41RsEkjjs4ZewNFGig1TPl/KIgjPrDWkarK@vger.kernel.org, AJvYcCVfw63d3b252Xi95l/ci4OCuS8SSYMGoyKzFrAaFGGDFzAK9VrPEOPoIryfY/pw+OkcxcP2XFW1ebgGV/78Bq3Xmqo=@vger.kernel.org, AJvYcCWXrU0EJn+2qL8psacQYStiWX/dkVk7oq7pj0A88NAzyPqAMyQ4ZSRdITQvsq1pY4K/+N4+qW7WUYlj@vger.kernel.org, AJvYcCXBOLupczT/lHfz6pyROrKFez/4JyKgc3aRyIv7NuOwpuXrV4AJMfchHewdAjOppCGwXoTy1mwnVrbR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEYcgOeuywLosR5o6lqyfbbLw0RF1bLPHbIkHcvfmXH+jEz1BM
+	VlAyOdc3//pJV9grazjFruWWkSOTF201TT8VlvFgyCwRCxLSY7DbvbUVcep+Z13p
+X-Gm-Gg: ASbGncsCQ7tuumLCnDgoAMmkw1/oZZa9NAvIM9HySzYZwI+XSFPLuA9x+U8Fb3JDqIU
+	GPjDFj3iutT2+11HzNuuE6cruHWcRh8EnlEogWeZtvnqLJXtp/QwfOS3q/x3A3ab1PgGfQoD4CB
+	0a0YceHRXl3AI6K8yHcTA4R5IvtEqVchPHmaxlQMx9ymuqimH+j5F1Ugmbb+sCL5KElIK4AkiB2
+	d7l70K9FHSQDM8wCBNs0k0w5TbccUroUr6ryx5GGtDStV+ylE9T9O8TF7/AHlqM8+ofCZgnLmuF
+	IcWOm71EAbWR5HIYZS9OhI+1yOMmGpcdmz6SxpRqCTqWoQ50dQmetTF71vICDGbBdJGbeKL0oy7
+	/1KNvLUyxWaA3y6eL+ekvDP0t
+X-Google-Smtp-Source: AGHT+IGWdKM89yu3kE4tT3SjGn20Z4EBuQJz4kGfhBK8mn4HqHBXTaOjulTY/vDUXTYGzPBK90T0cQ==
+X-Received: by 2002:a05:6102:50a1:b0:4e6:d7af:a7b1 with SMTP id ada2fe7eead31-4e7f6163427mr14694112137.10.1750341229857;
+        Thu, 19 Jun 2025 06:53:49 -0700 (PDT)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87f23915d10sm1724859241.7.2025.06.19.06.53.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Jun 2025 06:53:49 -0700 (PDT)
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4e9a7b4a412so753182137.0;
+        Thu, 19 Jun 2025 06:53:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVdg9rjo4rdyw/7+SshZw14MNpXtG7PFmMKuUEGahpBwzYuIVenDZ+Ol2gcHiuhZT3gjz8hc/vahZlbFTZVzOHN79c=@vger.kernel.org, AJvYcCW6lkJR4V+o/teFww+PdUKEir26QeQZuxEQqoxVFSznIod+3o+pgasMjnALDiUT9XuowtpgdGe0Y+80fJLq@vger.kernel.org, AJvYcCWYbkawcV+rtx7dlj8W6VpJP7zYvIPxq+VZBeA0lEf3O2Jao7twNZfnMmEWughGleVCywFiU1EZRA7Y@vger.kernel.org, AJvYcCWhV4+h04Z3wl4r+NAuWLFl+p+2c5oeN+QyPm2L9b+xodhY6Kx6R40lKgGUVpeApy1BoC+7CwXmfj9R@vger.kernel.org
+X-Received: by 2002:a05:6102:4bcd:b0:4e4:5df7:a10a with SMTP id
+ ada2fe7eead31-4e7f6207960mr14871581137.16.1750341227938; Thu, 19 Jun 2025
+ 06:53:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250619031942.25474-1-shijie@os.amperecomputing.com>
-In-Reply-To: <20250619031942.25474-1-shijie@os.amperecomputing.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 19 Jun 2025 15:53:10 +0200
-X-Gm-Features: AX0GCFsv5pewVhcUOfZdaWAwRIdKVrMJ79S3AakigbG_irFgG7F_9rouI3RCU4I
-Message-ID: <CAKfTPtBUJa4A2V3XR8EwYVPxiY=ENZr1=Jg5R3E75r5XnrnRPg@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: set the se->vlag strictly following the paper
-To: Huang Shijie <shijie@os.amperecomputing.com>
-Cc: mingo@redhat.com, peterz@infradead.org, patches@amperecomputing.com, 
-	cl@linux.com, yang@os.amperecomputing.com, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
+References: <20250617164914.158091-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250617164914.158091-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 19 Jun 2025 15:53:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVmL9pg8x7pgL8snX785t=6TjWEb8Uf=HBZrNd7ja9kvw@mail.gmail.com>
+X-Gm-Features: Ac12FXzJ3ul_7CaAThumFqH4rNWfG9mp9Nr35_ms6nH3U3z0tjEM4hn8sQS6LlE
+Message-ID: <CAMuHMdVmL9pg8x7pgL8snX785t=6TjWEb8Uf=HBZrNd7ja9kvw@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: mmc: renesas,sdhi: Document RZ/T2H and
+ RZ/N2H support
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 19 Jun 2025 at 05:20, Huang Shijie
-<shijie@os.amperecomputing.com> wrote:
+On Tue, 17 Jun 2025 at 18:49, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> From the paper, the lag should follow the limit:
->      -r_max < lag < max(r_max, q)
+> Add SDHI bindings for the Renesas RZ/T2H (a.k.a R9A09G077) and RZ/N2H
+> (a.k.a R9A09G087) SoCs. Use `renesas,sdhi-r9a09g057` as a fallback since
+> the SD/MMC block on these SoCs is identical to the one on RZ/V2H(P),
+> allowing reuse of the existing driver without modifications.
 >
-> But current code makes the lag follow the limit:
->      -max(r_max, q) < lag < max(r_max, q)
+> Update the binding schema to reflect differences: unlike RZ/V2H(P),
+> RZ/T2H and RZ/N2H do not require the `resets` property and use only a
+> two clocks instead of four.
 >
-> This patch introduces limit_hi/limit_lo/r_max, and
-> make the lag follow the paper strictly.
-
-We don't strictly follow the paper. Typically, paper assumes that a
-task will not run more than its slice r before deciding which task is
-the next to run. But this is not our case as we must wait for a sched
-event like the tick before picking next  task which can be longer than
-the slice r
-
-Side note, we don't have a fix definition of the quantum q which is
-something between 0 and a tick (and even more currently with run to
-parity) as we wait for the next the tick to pick another task
-
-This means that a task can run a full tick period even if its slice is
-shorter than the tick period
-
->
-> Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
->  kernel/sched/fair.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 83157de5b808..102d263df330 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -694,14 +694,17 @@ u64 avg_vruntime(struct cfs_rq *cfs_rq)
->   */
->  static void update_entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se)
->  {
-> -       s64 vlag, limit;
-> +       s64 vlag, limit_hi, limit_lo, r_max;
->
->         WARN_ON_ONCE(!se->on_rq);
->
->         vlag = avg_vruntime(cfs_rq) - se->vruntime;
-> -       limit = calc_delta_fair(max_t(u64, 2*se->slice, TICK_NSEC), se);
-> +       r_max = 2 * se->slice;
->
-> -       se->vlag = clamp(vlag, -limit, limit);
-> +       limit_hi = calc_delta_fair(max_t(u64, r_max, TICK_NSEC), se);
-> +       limit_lo = calc_delta_fair(r_max, se);
-> +
-> +       se->vlag = clamp(vlag, -limit_lo, limit_hi);
->  }
->
->  /*
-> --
-> 2.40.1
->
+> v1->v2:
+> - Added the high speed clock to the clocks list.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
