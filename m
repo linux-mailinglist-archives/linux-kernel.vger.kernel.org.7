@@ -1,348 +1,133 @@
-Return-Path: <linux-kernel+bounces-693365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63BEEADFE3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:00:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC7C5ADFEA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A613BEB9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:55:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BF8616ED3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A19D25B2FA;
-	Thu, 19 Jun 2025 06:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RSDVLsP/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2726825B67D;
+	Thu, 19 Jun 2025 07:27:56 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810F72494F5
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 06:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750315894; cv=fail; b=cj0LQc0uX/FnOYLT8lccNeJ68ns1VW8HNNXCsnKAW8AN0dYxG8x3G9NsgD7BHfvy4hsB3kjcW0oVPfFwYP4iGUK7k6tBJ9A23sJJhTDllgCb6vWsGR1ZPkRAYZx3oX84SqDFCWj5MdjwvOKrWQWO20fiuUXzb91M8htG/oSmP30=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750315894; c=relaxed/simple;
-	bh=RRjaSuPVkt7/sYC1x/hXay9HgFDu0f4nD3he09KRwPE=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=s5YadOcBUMh9Y1OY0RAYCIoHivKCrAhMyAK7IadwhheEx4ZLFb6j7LMQKXEVVmbjeNaeHO2VSnCrOUTP7d8OvhdgBqwf1f9v2+1rJw/7LO/kHit1V3i1Z5Zh7m0Gc02URTu/5H9lObJGANyOWUra+eckXVYJs+ukg2NAly9KuY0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RSDVLsP/; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750315892; x=1781851892;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=RRjaSuPVkt7/sYC1x/hXay9HgFDu0f4nD3he09KRwPE=;
-  b=RSDVLsP//fZT+GNjJplwgXybtzcyClSBJHrop8KA2LENerUsiboECX2g
-   kDM+bDEQOwrEP8ETlO7ERfDw4MSPkXhyY1Oi0DZ9P3ZuRJDy1ZaIBaZNx
-   wgQxwse/S6kMPMVO+LqKlC+XSgA40sjq/K3o0vYq3yL3RO+ABNnwLBg2A
-   ajEZlk4dztbf8W90pt3Qdk6wBrDGIMFBDgPDrnqwc1boNkm8/+rUiu4pl
-   rAqbqMh7UUjw39XtwxRKdU0OV+47zlyWE95dsPAonoYQVAyhqTHXaon13
-   zobzCdqKQ3slhvU+W1iZfEOeYSpXm0/fefpddtM4GtqqZ5RZhVKMo7oMH
-   A==;
-X-CSE-ConnectionGUID: gwKvtjdcSWaCGpINHt8O2Q==
-X-CSE-MsgGUID: V4EkLYpqRqmL8646DB/CqA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="56379759"
-X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
-   d="scan'208";a="56379759"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 23:51:32 -0700
-X-CSE-ConnectionGUID: dhVG4eNmQHOOPX9xS+ymaQ==
-X-CSE-MsgGUID: ORiC73lpSRy1xjlr4Fs/nw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
-   d="scan'208";a="150845383"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 23:51:31 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 18 Jun 2025 23:51:31 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 18 Jun 2025 23:51:31 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.86)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 18 Jun 2025 23:51:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W+81q0CIkTD1TRJyCI7Tsx3cY8zo3TiuyVWofrKxp73eLpSMerffoX11fc9o0/6HxtjYfh6Pr0LHRJLfMqjNCO1ehsxGw8Ok5EPSmfPJhsqht/X4XcBtyuSDismqwE+iPSUf7XbDSN+tgr0z+qcAbcmOwdRwDIcXAPY3OYMv3nUylKVazc4oUhyfIoM2KaH4D6mTNWd/tQXaF/teHJFFslT6sL13Ixz2kM4vm/5NSVAM2veGujv1FgY7U7dw5UJMzVT7Rp+XpSVe3xMzT48ZzQoQhsNmU7mYSiVasCYp51M9MPqt03qdvJpxuuhN+DoSwCXyEXFmNwhvaasmlvXcIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aNUZbOARQIwRoLtzh6Sc9VohUG2yN6EyzgpvQYibPxg=;
- b=IDrzkmjUptDapLeIoiU9wLnyiKu3NA2z3CmXw3rklIpryMFrWPyHc9MdPdLosRQxN4KkJa4HvRTz8FJg5f8SNBE0n8L9GI2fkEVtWIdeB4SZxwn+dC568zu3wP4ZQwWE5E08UFvl3fabP2EshdAXWWKlXvBN/i5r8n3GyV1Nap3F9uF6goqcadrwAKqNmHM/aAyomQhOlJqYph+1VX+brEQRB8k6+P013b5RBXYlkwkWj1mN/sxnaxTlY1FHHNMGlpN9d5mjwlhQWBnavrlHGKqYxe2eBVXPK/X6I135FU39RF8X9ZGDCGIebz6Y9EmySChOENMs0J0owZgnoOo4zw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB5536.namprd11.prod.outlook.com (2603:10b6:5:39b::15)
- by IA1PR11MB7856.namprd11.prod.outlook.com (2603:10b6:208:3f5::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Thu, 19 Jun
- 2025 06:51:18 +0000
-Received: from DM4PR11MB5536.namprd11.prod.outlook.com
- ([fe80::e353:636a:37f:21ef]) by DM4PR11MB5536.namprd11.prod.outlook.com
- ([fe80::e353:636a:37f:21ef%6]) with mapi id 15.20.8857.019; Thu, 19 Jun 2025
- 06:51:18 +0000
-Message-ID: <3fad6292-cbdb-4724-8e28-5315bb735d78@intel.com>
-Date: Thu, 19 Jun 2025 12:21:10 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/10] drm/xe/xe_late_bind_fw: Introduce debug fs node
- to disable late binding
-To: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
-	<intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <anshuman.gupta@intel.com>, <rodrigo.vivi@intel.com>,
-	<alexander.usyskin@intel.com>, <gregkh@linuxfoundation.org>, <jgg@nvidia.com>
-References: <20250618190007.2932322-1-badal.nilawar@intel.com>
- <20250618190007.2932322-9-badal.nilawar@intel.com>
- <b9a468c0-53ed-4da4-a044-76c5e8461b95@intel.com>
-Content-Language: en-US
-From: "Nilawar, Badal" <badal.nilawar@intel.com>
-In-Reply-To: <b9a468c0-53ed-4da4-a044-76c5e8461b95@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA1PR01CA0181.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:d::19) To DM4PR11MB5536.namprd11.prod.outlook.com
- (2603:10b6:5:39b::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8A92512FA
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750318075; cv=none; b=O2Cm4Tx66bxpOiaeZst8xn+/5AEHaRga9ds3+CaXb0O9gwzfNv5CY0DZRVfWKlNycvl0Z3TN2lX7+I005wSXYxDxlBVjkUlFryz2cG9HI+jeKN2+EYaipFhQdlH9P4QniQIW2JB0uM7SjQJXIOyoh39CCZ63+uwaRqH3qrtkF6w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750318075; c=relaxed/simple;
+	bh=pVanKbGA9hnfPVQIwO45xCpM9r4gvbatwgFFb44PMv0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cSUejyIRA5t/2V+pWxzEqJNLFvMMwh8uT+xcS0LIZq52Ummx59MJqI5qCJNpBV531d8RBixJawJkhjEyCiNvlhWCUfvoJ7HwIxmCIwtYBx7VpF7Y6Xj7KRMQocMIGyf2uW/5AHLTJ8s/7pLWkrrcpW9rUGhpR72bw1xNZS5kYiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from ubt.. (unknown [210.73.43.2])
+	by APP-01 (Coremail) with SMTP id qwCowACHNdTuu1NoWfSNBw--.21068S2;
+	Thu, 19 Jun 2025 15:27:42 +0800 (CST)
+From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-riscv@lists.infradead.org,
+	Deepak Gupta <debug@rivosinc.com>,
+	Ved Shanbhogue <ved@rivosinc.com>,
+	linux-kernel@vger.kernel.org,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V8 0/3] riscv: mm: Add soft-dirty and uffd-wp support
+Date: Thu, 19 Jun 2025 14:52:29 +0800
+Message-Id: <20250619065232.1786470-1-zhangchunyan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB5536:EE_|IA1PR11MB7856:EE_
-X-MS-Office365-Filtering-Correlation-Id: 972c8355-dda9-4920-e7e4-08ddaefdb192
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?SFd2MStsb2hSODduZHJ3NDkvWkxqZDFyRU8wMStpWU41ekx5RGdjSlhUaWFl?=
- =?utf-8?B?WVNmM01sYVAvYzdQek9oMU9vUG1oakhnendqc0JZa1Bzb0dxQWpJK293OFBY?=
- =?utf-8?B?VmFmNWVxR3R3OVYrTFFKcXFkZHArb3dadTdpSXJJckhtYmZvSFoxT0Y3ZWxU?=
- =?utf-8?B?VTJYWVV1VGIzd0J1WkRFMkszL2luVG1Bay83QVkvc3JGSERoS09HNFJHV1ZI?=
- =?utf-8?B?V3Q4TmEydExFY0JOWndWdmRpZDB0RS8rN1MyMm9wajJMRVlyMW41Q0pWbnVI?=
- =?utf-8?B?WFVRRGErL2xOd2Vhb3QyV1BvbUQ4VkJ1ZTdaQTVFYWMzVEptZEp4NFZHcGlt?=
- =?utf-8?B?YjZYVkU3VnplaW5NWk5JQlRSTFA0NWRnaE5zRDVJZzFtb09Yc2J0MGVUbEdv?=
- =?utf-8?B?c29SdUdtS1BHdTVYT1NGWlhCSWp0V0VsZHpCMGFGSXdUQk4yckJKUUtyUUM0?=
- =?utf-8?B?cDNmbit1S1Mzc3NtTGpTTzBibEZQdXZka285NjhBb1lBV1I0azJ2aEViMmlq?=
- =?utf-8?B?RTMzTU1tb2Y4SkNESjBaNEFwNTVpb3JESEJ3eXVKTmJJbUpTTms1RXRwVjcr?=
- =?utf-8?B?NGxkeHBNRklzdXVIbmxHczhEVUxoODdJQWZwY2lDYmUwU0JMcFRmUlNYeTMr?=
- =?utf-8?B?T1gwd2hMc1UrNzMwT3BhQ0VFTWJScitVTit3MC9BRytUeDZGS0NHYlRiUWxI?=
- =?utf-8?B?bTNRZzF1cjdsY0FaT0xtdFB3dUNjbzRBMlNZdm5ma1Z1YmtnTVFXZ1QwTXZO?=
- =?utf-8?B?R292YjdxTitta1BBb1FZdFRMUWNGcC95N3phRXFHNzNySUN4azB3alh0dFR6?=
- =?utf-8?B?VjJENlFlWTlTaTMxUnNLcTVuVWoxNlRSQi9yS2RkY3VrVTNRQ1JXdjAxNDlD?=
- =?utf-8?B?cVB0NzEvNllyY21nd1ZMMU1GRW12OXVJSkRTUFUvWVZiNXdiM0lCOVpqRWUz?=
- =?utf-8?B?YTVOWW1LTFEvSmVCWVNtVE55QlJHb1U0by9DbWhyWkREMlFsN2poc1BDUHFR?=
- =?utf-8?B?MGZuU2hFSEN5Q0pmbFdjT0UyWG11RmFYb2p0aUx3WndOMlFOOHFBR2NoaThG?=
- =?utf-8?B?eHZKSlRxUFhNUElkN2hhWmVPRmcwUHVOWk15SlVnK0VXNkJMWXZvdFBMQlln?=
- =?utf-8?B?VFdodFFjZVJDY3JZVFJQeGZOMXNNZW1lSDM3a3JBUkUzM2VpWHk1cnpIQ0Rv?=
- =?utf-8?B?eXg4KzViaTJtZU9sc0FXaEpDWmJsb0xpejdpYktFYkg2ZGRHTzRDZ1FnT2R6?=
- =?utf-8?B?dUVqSk9udnJFVGRoVEd0RnhYZVFiTlpWN0Z1bEpiN3F1UEx1Z1RwcE8yRm15?=
- =?utf-8?B?Wnk1SzlUSkRvUG9UM0J2U2FVWE1EQUNxM3FzcjRmSFJKRFdFSW11Q3JkSms5?=
- =?utf-8?B?bld5TTlYNjJqWEtjY040OGYxSkhQRHo5cWlsOVJBUGpQS1ZKME1aYjYyS3Va?=
- =?utf-8?B?dDFndnkyVFJUakZ0MFRWVTdkc2lRdGFBM1VHUGlseXhhM2tmNFpqUHR4RjlP?=
- =?utf-8?B?cXR4SVhlRlFpVExhNTVVUUJnUTcyeWZkRjFydVhraFBVZUlVMDFHQW5LaVhl?=
- =?utf-8?B?UERqNDVkVTNiVkhXSHFDMnZFRU5ZV25zeEhrMnRXelEvc2xCTzdKbXdYZm1v?=
- =?utf-8?B?emYrVTdHN0cxZ2xTS01qVXJKK2NxMUtnbnRjangvdUZSQTNCcEJkaEZ3L0Vv?=
- =?utf-8?B?TnA5SllpQ1VEMjdiaittdlNuTlJaaEZjeldmNklFL08yWWc5UW54RytWU0cz?=
- =?utf-8?B?UG1CL291cDNvS2ZUT0xuL0x1QUR2VTh4cDU3KzZHU1R0bTh1dTVUbzdob0tv?=
- =?utf-8?B?OVVHZERmSlNOcTZEV1J3UlJpczZPOUQ4YUNVcGZNbC9sQnBYeGEyYStSZkdp?=
- =?utf-8?B?MTVSbGlZcU80dnFwaGc2Nm1GV1NCUzAyZitvVDRmeDNIZGNjSkZpdm43T2xt?=
- =?utf-8?Q?ttQXr51DLNQ=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5536.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YVBZWkRncGgvRGlsZzg0WW9YRE9iNktpMEJXaytrR0NvVWlZb2hLMlcvSzc4?=
- =?utf-8?B?MmZkbTJwUnhWQTc4MlloOWZRRkdGUytxLzUzbC9WbnpBSG1ZcFhGbkV6NGRL?=
- =?utf-8?B?ZUxiRDVjMW9Pai9LSEhNRitpNldubjA2MmFuVGt3cU55RnZmSkQvRk50Yytr?=
- =?utf-8?B?SDkzQ2Z5ckZtdU9PN0hXbUptVnVBY1k4Y3lNZUZCMlNKRldkWE5ZaHo1SXdh?=
- =?utf-8?B?bnorWW1ZNXA2T2wzelhvcGVEbU9HV3RSTmxsUEpMayttcEhqR21qTkt6QnZZ?=
- =?utf-8?B?VXFUQ3Z6blV1MkU3b3FBbWRHMndna1lXb1B0Y1haVmJyS1pFTEpFSDJxa21P?=
- =?utf-8?B?RzJpbXBnMEV1eDJtbkhTcjVDaGhUWjZ2ejhkZ1J5S1NTbkNGNEV2SlZQZ2Jw?=
- =?utf-8?B?UkxyMC9ScDZuemVpd2Rsbk1EdHhWVXUreC9vZHVRaDI3VmlMNU04bVRpb3cy?=
- =?utf-8?B?VHlybXNlanI0MG45YWZtMU14SElvR0dJdnArYWxmdjNvOXZMVnkrazRzUFB6?=
- =?utf-8?B?MVdIRFpTRFFESFBvOWdhSVB4WUdiK3V0TVhKdStZMk9LQWhGUVZQOGk1K0NN?=
- =?utf-8?B?TjNsTytTb21KYmp4MVZIeThVWC9zd0JnVlBaVkxWSkJielJvZmJLUnd3Qi9t?=
- =?utf-8?B?ZEZudUxxR0xZc0VPQkNZWnhidEdDVFNwZ0ZRK0loYi9lWnRrMFFmRk9Hdm5z?=
- =?utf-8?B?VWNic1AzU09iNmFYRk9STjNSVFQ0Y0wzdVNFa0FQVkFKSXRKYWhTcjdMVFZX?=
- =?utf-8?B?Yzk4Q1M3UjRyRzh0QnhnaXZQaHVlbEdmYnM5MitTdloyajFpcVFQRWN1aXBa?=
- =?utf-8?B?a3h2UFR2aW9rNUowekMvOUw1dlFvOUJuMWNnenBqK01ocjgyWE0xWU5ZeEsx?=
- =?utf-8?B?cXRlQkdaYjd0UlVEdjEzZ2FlVitDUlNvblNlb0tqSUE5Q1B6ZzRTYzk0bE5Y?=
- =?utf-8?B?VGhxak9GdHZnWjcxQktDK3pLQ0w3eGROblN0TDRxazVLYzBTeXN2bEVDcmR6?=
- =?utf-8?B?VkdHNjczSEFZN0ZDVWJEM0t6YmFmdHBqZy9ReUNDdUNHTTZKQzJER29VMU9p?=
- =?utf-8?B?dkVMR3d5cjY2NGFQRUJaeUMxUjJGL1owNCtGYlFmMkkvdnIxRzE0MWRqUlVl?=
- =?utf-8?B?SkV1cWNhaW5Jb2hTU2krQmFwYXppc1M4RFVNTUdhUTZhOWxhS3l5WGlIZHly?=
- =?utf-8?B?cXNHZW95eGI4bWl0eVlkWWNuVTJmZlNkb1VXd1dpaG1UZ1p6ZGxyYlRzWlUw?=
- =?utf-8?B?WUVPYnFTdGhkMnlvUTJJWE5aN1V5bEZhWldRTmZWNThKK3JNVEF5eURDOXBV?=
- =?utf-8?B?M0o2S0pGOTdGTFYzSE92dGRKUG03ajl5S1dRRXVJYUpha2l1c0xxcVhpYXNq?=
- =?utf-8?B?MlVTdnJWWW8wa2tycnRONzVtQmt1dEo4WTY1MUdtQllnNlJZSHRnK3c2QS83?=
- =?utf-8?B?K3BoS3llYk8zV3Nua0UxVU1VUFBtNlhlMFpSSlV3aVBlVUJXaGthR01RV2pq?=
- =?utf-8?B?cnlCUnZYbmpHbkFpblJ1dkZXcExYYkU4cTBra241TWNnNkMvZW9XMnFIMjRW?=
- =?utf-8?B?RURZMUNXMEV5dHVkNUlOUVBoWEVOYURrVkxPZWsybGlEY0sxZDFHNzdGT09i?=
- =?utf-8?B?Y2RTbXlRaHF1bkhiTGhNVHpSczlZVjMvSFdEc0VTZ0FodjZTMkZjcDk3MUNX?=
- =?utf-8?B?emlWTm93T25rYjFrK2NML3BHYjc3V0wvdU03cS8raHlnVkZMS25TMXBXU0dJ?=
- =?utf-8?B?UVd5YWpUR214SFpHZHVkNVU0WTd6aTdWcHNaV3JHZ1Q4UFhuUFArcGNJZndU?=
- =?utf-8?B?V2VRWmVkYUVkZi9UeHF0czdjbUVWTlBwdnRRMW9JUWZ3WWlTMGZ1SzNWWG9F?=
- =?utf-8?B?M3BDUGN5TFhQYk9OVDN6bTFVamk1VzJYTTgzYVNncitwRXFQb1hoV3RXcy9r?=
- =?utf-8?B?bUMzMzB5eWNjcGtVeGsxOURYN2VaTDk4RTZYUXcvNEtqRDJ5NS9xS2JXRldj?=
- =?utf-8?B?NlRDL3FWbENBdU8xeUxSUWR4SUl6djRYdDRTN1VoRFVPTjFyRU9sK0xvaG1Y?=
- =?utf-8?B?c2xOaGsyQ1BtRTZiQ1QxZCtwSmkvdXN3Y0tOU0xUY0paU2p6My80RjZNZVFO?=
- =?utf-8?B?dlBZa2xpMDJjZFlSdGdJd0l6c0d3R0VSOUFvYkR1ZVcxbnA5bUNjYWNBR3ov?=
- =?utf-8?B?dXc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 972c8355-dda9-4920-e7e4-08ddaefdb192
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5536.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2025 06:51:18.6979
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gXfWO14gO9s7mv73PIqHKYo/Ekei6Zf3u+jVxfNNjCfy6UqKBRFW9UIM1sJtKKfUf1BJhb8X1XJww8XsgUNWVQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7856
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowACHNdTuu1NoWfSNBw--.21068S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar17tFy7GrW5tw1fWF4fAFb_yoW8ZFW8pF
+	sagw13KFW5Jr1ftrZ3G348CF1rXan5A34fGay3J34kJw43WFWjvr1kC3W8Gr1rJF4F9rWF
+	93W5ury5u3yqyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9mb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwV
+	C2z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kI
+	c2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_GF4l42xK82IYc2Ij64vIr41l4I
+	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
+	xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
+	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8I
+	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
+	1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07boqXLUUUUU=
+X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiBgwSB2hTjTWyEwAAs9
 
+This patchset adds Svrsw60t59b [1] extension support, also soft dirty and userfaultfd
+write protect tracking for RISC-V.
 
-On 19-06-2025 02:49, Daniele Ceraolo Spurio wrote:
->
->
-> On 6/18/2025 12:00 PM, Badal Nilawar wrote:
->> Introduce a debug filesystem node to disable late binding fw reload
->> during the system or runtime resume. This is intended for situations
->> where the late binding fw needs to be loaded from user mode.
->
-> You haven't replied to my question on the previous rev in regards to 
-> the expected use-case here.
-> Is this for testing only, or something an actual user might want to 
-> do? If we only need this for testing, please specify so.
+This patchset has been tested with kselftest mm suite in which soft-dirty, 
+madv_populate, test_unmerge_uffd_wp, and uffd-unit-tests run and pass,
+and no regressions are observed in any of the other tests.
 
-Apologies for the oversight. Yes, this is only necessary for testing the 
-binary before releasing it for up-streaming. There is internal
-tool which uses IGSC lib to download the binary. To avoid clash between 
-the binaries, this debug fs node is provided.
+This patchset applies on top of v6.16-rc1.
 
->
-> Also, what happens if we suspend with a user-loaded binary? userspace 
-> doesn't have visibility to know that they have to re-load their binary.
+V8:
+- Rebase on v6.16-rc1;
+- Add dependencies to MMU && 64BIT for RISCV_ISA_SVRSW60T59B;
+- Use 'Svrsw60t59b' instead of 'SVRSW60T59B' in Kconfig help paragraph;
+- Add Alex's Reviewed-by tag in patch 1.
 
-If the device enters D3 cold state, the binary needs to be reloaded. 
-However, the kernel mode driver (KMD) does not have control over 
-binaries downloaded via the IGSC library.
-If needed D3 cold can be disabled from BIOS or by setting up 
-vram_threshold = 0.
+V7: (https://lore.kernel.org/all/20250409095320.224100-1-zhangchunyan@iscas.ac.cn/)
+- Add Svrsw60t59b [1] extension support;
+- Have soft-dirty and uffd-wp depending on the Svrsw60t59b extension to
+  avoid crashes for the hardware which don't have this extension.
 
-Regards,
-Badal
+V6:
+- Changes to use bits 59-60 which are supported by extension Svrsw60t59b
+  for soft dirty and userfaultfd write protect tracking.
 
-> Daniele
->
->>
->> v2:
->>    -s/(uval == 1) ? true : false/!!uval/ (Daniele)
->>
->> Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
->> ---
->>   drivers/gpu/drm/xe/xe_debugfs.c            | 41 ++++++++++++++++++++++
->>   drivers/gpu/drm/xe/xe_late_bind_fw.c       |  3 ++
->>   drivers/gpu/drm/xe/xe_late_bind_fw_types.h |  3 ++
->>   3 files changed, 47 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/xe/xe_debugfs.c 
->> b/drivers/gpu/drm/xe/xe_debugfs.c
->> index d83cd6ed3fa8..d1f6f556efa2 100644
->> --- a/drivers/gpu/drm/xe/xe_debugfs.c
->> +++ b/drivers/gpu/drm/xe/xe_debugfs.c
->> @@ -226,6 +226,44 @@ static const struct file_operations 
->> atomic_svm_timeslice_ms_fops = {
->>       .write = atomic_svm_timeslice_ms_set,
->>   };
->>   +static ssize_t disable_late_binding_show(struct file *f, char 
->> __user *ubuf,
->> +                     size_t size, loff_t *pos)
->> +{
->> +    struct xe_device *xe = file_inode(f)->i_private;
->> +    struct xe_late_bind *late_bind = &xe->late_bind;
->> +    char buf[32];
->> +    int len;
->> +
->> +    len = scnprintf(buf, sizeof(buf), "%d\n", late_bind->disable);
->> +
->> +    return simple_read_from_buffer(ubuf, size, pos, buf, len);
->> +}
->> +
->> +static ssize_t disable_late_binding_set(struct file *f, const char 
->> __user *ubuf,
->> +                    size_t size, loff_t *pos)
->> +{
->> +    struct xe_device *xe = file_inode(f)->i_private;
->> +    struct xe_late_bind *late_bind = &xe->late_bind;
->> +    u32 uval;
->> +    ssize_t ret;
->> +
->> +    ret = kstrtouint_from_user(ubuf, size, sizeof(uval), &uval);
->> +    if (ret)
->> +        return ret;
->> +
->> +    if (uval > 1)
->> +        return -EINVAL;
->> +
->> +    late_bind->disable = !!uval;
->> +    return size;
->> +}
->> +
->> +static const struct file_operations disable_late_binding_fops = {
->> +    .owner = THIS_MODULE,
->> +    .read = disable_late_binding_show,
->> +    .write = disable_late_binding_set,
->> +};
->> +
->>   void xe_debugfs_register(struct xe_device *xe)
->>   {
->>       struct ttm_device *bdev = &xe->ttm;
->> @@ -249,6 +287,9 @@ void xe_debugfs_register(struct xe_device *xe)
->>       debugfs_create_file("atomic_svm_timeslice_ms", 0600, root, xe,
->>                   &atomic_svm_timeslice_ms_fops);
->>   +    debugfs_create_file("disable_late_binding", 0600, root, xe,
->> +                &disable_late_binding_fops);
->> +
->>       for (mem_type = XE_PL_VRAM0; mem_type <= XE_PL_VRAM1; 
->> ++mem_type) {
->>           man = ttm_manager_type(bdev, mem_type);
->>   diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw.c 
->> b/drivers/gpu/drm/xe/xe_late_bind_fw.c
->> index c0be9611c73b..001e526e569a 100644
->> --- a/drivers/gpu/drm/xe/xe_late_bind_fw.c
->> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw.c
->> @@ -129,6 +129,9 @@ int xe_late_bind_fw_load(struct xe_late_bind 
->> *late_bind)
->>       if (!late_bind->component_added)
->>           return -EINVAL;
->>   +    if (late_bind->disable)
->> +        return 0;
->> +
->>       for (fw_id = 0; fw_id < MAX_FW_ID; fw_id++) {
->>           lbfw = &late_bind->late_bind_fw[fw_id];
->>           if (lbfw->valid)
->> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h 
->> b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
->> index d256f53d59e6..f79f0c0b2c4a 100644
->> --- a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
->> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
->> @@ -71,6 +71,9 @@ struct xe_late_bind {
->>       struct xe_late_bind_fw late_bind_fw[MAX_FW_ID];
->>       /** @late_bind.wq: workqueue to submit request to download late 
->> bind blob */
->>       struct workqueue_struct *wq;
->> +
->> +    /** @late_bind.disable to block late binding reload during pm 
->> resume flow*/
->> +    bool disable;
->>   };
->>     #endif
->
+V5:
+- Fixed typos and corrected some words in Kconfig and commit message;
+- Removed pte_wrprotect() from pte_swp_mkuffd_wp(), this is a copy-paste
+  error;
+- Added Alex's Reviewed-by tag in patch 2.
+
+V4:
+- Added bit(4) descriptions into "Format of swap PTE".
+
+V3:
+- Fixed the issue reported by kernel test irobot <lkp@intel.com>.
+
+V1 -> V2:
+- Add uffd-wp supported;
+- Make soft-dirty uffd-wp and devmap mutually exclusive which all use
+  the same PTE bit;
+- Add test results of CRIU in the cover-letter.
+
+[1] https://github.com/riscv/Svrsw60t59b.git
+
+Chunyan Zhang (3):
+  riscv: Add RISC-V Svrsw60t59b extension support
+  riscv: mm: Add soft-dirty page tracking support
+  riscv: mm: Add uffd write-protect support
+
+ arch/riscv/Kconfig                    |  16 +++
+ arch/riscv/include/asm/hwcap.h        |   1 +
+ arch/riscv/include/asm/pgtable-bits.h |  37 +++++++
+ arch/riscv/include/asm/pgtable.h      | 136 +++++++++++++++++++++++++-
+ arch/riscv/kernel/cpufeature.c        |   1 +
+ 5 files changed, 189 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
+
 
