@@ -1,173 +1,115 @@
-Return-Path: <linux-kernel+bounces-694312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA489AE0A96
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C44AE0A9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C233E3A6A3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:35:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECA983B20CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A914D2367DF;
-	Thu, 19 Jun 2025 15:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FB42367D0;
+	Thu, 19 Jun 2025 15:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxrCKAEp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ouQZ2LGr"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE9518024;
-	Thu, 19 Jun 2025 15:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD8418024
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 15:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750347355; cv=none; b=KBjOihd693NHUdvuqxyLeI08o5muccwuMRAOVOyg+zzb73UeT0xjpTcmJlp2lug+ZB1z95u2X1PxfyzOiLiOrT6Tgyc5emoq1t3veYntYDCUmkE87aXEvrnJsNTz/claK1zlVmTsEk6Qdbw4L0Nxm2x5SDjN/VaCFV0YVKFdJJQ=
+	t=1750347440; cv=none; b=gViwbc/eL4OugaZoo/oCSMuSwkJeDmJPRDj8Yt9TdLhfprosaX2CMB60r6wdyOzJXN4nhchz8J6Rv4AZ7xvaOWWHzKV35sHWZwqRQUPfG6tM2RZehLxDOs85/kLtMK7AV1ViL4nUl+Wt9il28r7oRIhi82pvIicyDPubmmzxP0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750347355; c=relaxed/simple;
-	bh=FLBk1parzQuTc39wiLqU2V5ewA+xhI87tizdVtgIMjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BzG5LbjgisYgcPky9cd40NEBf24+XFqxZyhS64yFrdvBl6rk2RIzEsEMe0tWT1H+DZ4U+0RAveMMFZmqjklizQW920NUOtOJIDOPjv2zY4UFWs9w0HI2CCA91IE0PLK0rvW8YgGaALqRHJizG/xtWnmXUw+sFcYkBwEMHzJqvkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxrCKAEp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC772C4CEEA;
-	Thu, 19 Jun 2025 15:35:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750347354;
-	bh=FLBk1parzQuTc39wiLqU2V5ewA+xhI87tizdVtgIMjw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CxrCKAEpIwbv7rSlkUEHuD5SlOJwNU+lOK4Vln6OlpTgpFkkshadG9jpxh7ycaQzM
-	 /Tl3S1cD0ORoe6TcF+xU5SzJO6xKu+ckV0Id9UzoPtVWmHxLYNbnfP+E6DsHvBFLdS
-	 YRnDIeqDQYHt5EaUBs1rrrjWFANG8AwRhOWOybk66aU1PRPsmKnBCIqNwxKW0ePO7v
-	 2fhm68vHeaTQtaJQs95lW/Wgp1IVxz0qsYQ3biL8mhYLY1/7yBY+3udSZl7rDUBOKx
-	 SNSYG2wdggk9ilZDeW9seMaVhnhVeYZHpWpzIt5z8qI3gVgQ1DIyTApNa3S+QccA6p
-	 R17O/E3qNIOjg==
-Date: Thu, 19 Jun 2025 16:35:48 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linus.walleij@linaro.org, brgl@bgdev.pl, broonie@kernel.org,
-	lgirdwood@gmail.com, marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v6 01/12] dt-bindings: iio: adc: Add AD4170
-Message-ID: <20250619-sitter-uranium-e7298befd733@spud>
-References: <cover.1750258776.git.marcelo.schmitt@analog.com>
- <6399c1eb6d8e1bbdf720f189a7244b1d75a90ed2.1750258776.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1750347440; c=relaxed/simple;
+	bh=HXqBNC79E8+zULge9cmYzz8aTHkD1900PAbJWPHai6M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BvyRf92H1xQaX7mOuL02CZGq7X4gA5w9I8ByDoQAYLTVkE5LOwe1cZqhnGrmmLVt7oEQuw3ZVPfhztKfNuK5Rm4VJRVWP23j/FQ/CNIIsRMekQSRyOB8gXsCmwhsV209XhYxKmJRPn9y+256t4MKRu3N/rAxRFl/dMGf79AkfEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ouQZ2LGr; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-235e389599fso215775ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 08:37:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750347438; x=1750952238; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HXqBNC79E8+zULge9cmYzz8aTHkD1900PAbJWPHai6M=;
+        b=ouQZ2LGr/0PFqeCA4KDuupwvVP8H7CZscgUtikIsJ18+P5MMl3IZmEab226FHxr/ll
+         4zFN0fKQbTkLSa7QRYqOeZlAgU8OiwfXYBMsINd289xfwgzeEkK4wRYF2H62vP5F4dsD
+         haGX/BTpsIyJEvXGsvR5K0T6Q4axZTnGG00KmgUyio9QKMovZWH+uNAfiKzX6uODB9A9
+         aNUafiInSUUBBU7fJ7z/9IpVWoV8snZ43j1Pz7+9LZOO04q13riYK8ElWB+8jczIXDY/
+         ouUo0vGPIy6yuziBNlEZGJVui5BCiPLKYdXos1gmbiczvwUwMxcMk66TenVArsHGhaSX
+         c/ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750347438; x=1750952238;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HXqBNC79E8+zULge9cmYzz8aTHkD1900PAbJWPHai6M=;
+        b=t7FfBQ0H6sU2xEeA/9USQXP2Kco5CHgjNNEyJJ7nnQldSRRIbxofCstEZWIqbC0Exc
+         ml1xWz4nR8CYPF3v4l3e4vBnuPjF5nMXoHm2iRFj7BBANFUlST/42W2Ob06k9ERA1R0T
+         YrBh57oNIwyZNQCyyX9fJGH7CI3oIvZG5Ql9idGHsHUedMOFtw8xYQ2MUrC0It18+sor
+         HZEVkpEjI1m8YensuCM1pLQn7btSO3mfny3A2j1IF+Bh6YD/wIgWyPSiEoS5WVJzCwuS
+         nyB0gp9IuH/AIrreu38+9gD9FTsHT64c6XEw7JAsBF2bC+38NcS6JJqQEcuyx0nM9xU4
+         X/Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/AXpFNBUH5K+E7Ke2uatHkxEo/DvH+wAzWWrKztsN6Df7Fkbvp1uKzEH5xjgEQd/cqTNBK0jgpzyKMqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpkdfJvRI7YhMygC3Xpphcr1Qq+4+xNwQMdSS0kMpIs7+wLVwT
+	MhhdUpnUjQ0eBLwmzZ25lqAmtdqBSZNYTw5zo2YChPUAl5a/gVV140jBy5fYziJBiYPuD+T5puQ
+	aMdMVFfzfn+CCSuOc+uPDdd1gyDWS51y9xQnOOBWe
+X-Gm-Gg: ASbGnctm0vC93AyJgDeAy1H9/sXUsIqn23bMDirhO5z5JajbJ3E3+C/d+Za+hvR3Rih
+	CXhbLeLZatcyK4n1S7hXqPdsNqXYXVdcEWPrE6aS8lmL5iWdYZWjevRML6bnm6WNRCGDShImDFy
+	ByMmwjb4qBuczjvlsQX++OpB/8HWU3OPtiI4yy4HhNjjIEBGhBdSGJixg=
+X-Google-Smtp-Source: AGHT+IEeijlQPpJuvXLonxzDPjlDUwYkzvUY7s0SbGkDqtAlVdPJnNp8p53qHr02gdS8vRw9Ecwmxce7UO+kYeJGCME=
+X-Received: by 2002:a17:902:ccc9:b0:234:afcf:d9e8 with SMTP id
+ d9443c01a7336-237ce035db1mr2436035ad.7.1750347438284; Thu, 19 Jun 2025
+ 08:37:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="9epqL+mz31WyTolT"
-Content-Disposition: inline
-In-Reply-To: <6399c1eb6d8e1bbdf720f189a7244b1d75a90ed2.1750258776.git.marcelo.schmitt@analog.com>
-
-
---9epqL+mz31WyTolT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250615205914.835368-1-almasrymina@google.com>
+ <c126182c-8f26-41e2-a20d-ceefc2ced886@kernel.org> <CAHS8izPyzJvchqFNrRjY95D=41nya8Tmvx1eS9n0ijtHcUUETA@mail.gmail.com>
+ <f445633e-b72c-4b5d-bb18-acda1c1d4de6@kernel.org> <CAHS8izOhNRNXyAgfuKW1xKb8PTernfer6tJfxG5FZmq7pePjwA@mail.gmail.com>
+ <a122981d-ac9a-4c7e-a8a3-d50a3e613f0b@kernel.org>
+In-Reply-To: <a122981d-ac9a-4c7e-a8a3-d50a3e613f0b@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 19 Jun 2025 08:37:05 -0700
+X-Gm-Features: AX0GCFtbSJkA9B2FmfN23HT-G5zxw5AQXqfUAsX29ALKFUjOOk7WFn4t987JlLo
+Message-ID: <CAHS8izOQLvPAE_E2dgMS7-11ZGFK5jmZ7q58LZCnhymhhUj2bQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v4] page_pool: import Jesper's page_pool benchmark
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>, 
+	Ignat Korchagin <ignat@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 18, 2025 at 02:34:57PM -0300, Marcelo Schmitt wrote:
-> Add device tree documentation for AD4170 and similar sigma-delta ADCs.
-> The AD4170 is a 24-bit, multichannel, sigma-delta ADC.
->=20
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
-> Change log v5 -> v6
-> - Made reference-buffer string type.
-> - Moved required section before patternProperties.
-> - Made avss, refin1n, refin2n documentation open to accepting positive and
->   negative voltage specifications where appropriate.
->=20
-> The point of making avss-supply, refin1n-supply and refin2n-supply docume=
-ntation
-> open to negative voltage values is to allow device tree to specify the re=
-gulator
-> true voltage level so the drivers won't need to workaround negative suppl=
-ies in
-> the future.
->=20
->  .../bindings/iio/adc/adi,ad4170.yaml          | 558 ++++++++++++++++++
->  MAINTAINERS                                   |   7 +
->  2 files changed, 565 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad4170.=
-yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4170.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad4170.yaml
-> new file mode 100644
-> index 000000000000..b7fe664bb87d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4170.yaml
-> @@ -0,0 +1,558 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/adi,ad4170.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices AD4170 and similar Analog to Digital Converters
-> +
-> +maintainers:
-> +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-> +
-> +description: |
-> +  Analog Devices AD4170 series of Sigma-delta Analog to Digital Converte=
-rs.
-> +  Specifications can be found at:
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
-ad4170-4.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
-ad4190-4.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/=
-ad4195-4.pdf
-> +
-> +$ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +$defs:
-> +  reference-buffer:
-> +    description: |
-> +      Enable precharge buffer, full buffer, or skip reference buffering =
-of
-> +      the positive/negative voltage reference. Because the output impeda=
-nce
-> +      of the source driving the voltage reference inputs may be dynamic,
-> +      resistive/capacitive combinations of those inputs can cause DC gain
-> +      errors if the reference inputs go unbuffered into the ADC. Enable
-> +      reference buffering if the provided reference source has dynamic h=
-igh
-> +      impedance output. Note the absolute voltage allowed on REFINn+ and=
- REFINn-
-> +      inputs is from AVSS - 50 mV to AVDD + 50 mV when the reference buf=
-fers are
-> +      disabled but narrows to AVSS to AVDD when reference buffering is e=
-nabled
-> +      or in precharge mode.
+On Thu, Jun 19, 2025 at 3:24=E2=80=AFAM Jesper Dangaard Brouer <hawk@kernel=
+.org> wrote:
+> > Does this alleviate your concern? Or do you still see an issue here?
+> > There is still a delta between our results, on different
+> > hardware/configs but results are in a sane range now.
+>
+> Now the results a sane and in range :-)
+>
 
-> The valid options for this property are:
-> +      0: Reference precharge buffer.
-> +      1: Full reference buffering.
-> +      2: Bypass reference buffers (buffering disabled).
+Thanks!
 
-You forgot to remove this text. With that gone, I think this is
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-and that's explicitly an ack not an r-b cos I would like to see the lads
-being happy with what you've done.
+Jakub, this patch was marked 'changes requested' for good reason, but
+after investigation we found the patch itself is good and the issues
+were elsewhere. What do I do here? A resend of v4? Or does this un
+'changes requested' as-is?
 
---9epqL+mz31WyTolT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaFQuVAAKCRB4tDGHoIJi
-0i0eAP9nTy+DeSnflGncrmUmx/nnRZMQoDV6L8vWUxd/I6iXqAD+NzVivlD4nott
-ZhLPnuPue3oDTZOrsxZw62s/DeSFrQg=
-=MHbv
------END PGP SIGNATURE-----
-
---9epqL+mz31WyTolT--
+--=20
+Thanks,
+Mina
 
