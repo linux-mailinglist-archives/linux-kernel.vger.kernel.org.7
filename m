@@ -1,155 +1,138 @@
-Return-Path: <linux-kernel+bounces-693509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA311ADFFBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:30:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF870ADFFF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A31E17493C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:30:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96CB23BC985
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC47264A9C;
-	Thu, 19 Jun 2025 08:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hW3pKRbl"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C324027877F;
+	Thu, 19 Jun 2025 08:36:22 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A1126136D;
-	Thu, 19 Jun 2025 08:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383822475CB
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 08:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750321810; cv=none; b=IAjQ0zk1pmgO43vLblRWuBH/caLjjW7A+XBVCCZWIPbR6ASZbJfT+lSgoCg4ifR04xMhbYEaZQKyLC/MT9iUHrxag92BC+dss4c8CBHlBN0SVOn8zkEeHZrLQqAkFYufciPQq8TM37OGaLYt+gZN4lSFLYifSISu+aZuJxOGGek=
+	t=1750322182; cv=none; b=OEznFrtSrUB/8RsgMi2Sn2ZIykzb+0mlDKaaT0xEA8XeRNy8RwpV3KSEA0Ul8cBaggQRe8opl86W3qQQ2G2BCCv+DnRTYWYv8F0cdyKaQ9NMJYw+Cy4UqXZQrXTgyY1x5ghAtMuvwL1l1/gWGZ+Bhc8QpClHkvbCe5i+HDpMV1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750321810; c=relaxed/simple;
-	bh=e6K52pkiA4lbq0TxwiOJxzpreb0jdw8kCEm3dDzE+so=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DcQVR+d2LKDgRoMCbvUoSOwylS0Uon30O7l29gah7aukTFu1wbzuELrCoXrIOihJm8vpQE+csHnR/WoGVoCITcS9OccNWPh9rgi7m89u86tRIHMG6iwxmQqmIPjlqNJUmeSlNsSYtmfxc0/3N/9x1a2m/5Z0GCSoa5TYObx0lDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hW3pKRbl; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ad89333d603so91463966b.2;
-        Thu, 19 Jun 2025 01:30:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750321807; x=1750926607; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rKn1ptPL56ANrUjI3SM/qbSzwOU3Ovzfc0dxrbHyY+o=;
-        b=hW3pKRbl6rLwYBk99tBn4ruUkxbk1UAyt8ovhcF8BmjUfra/sLzChT6P8yyC8ebSwg
-         yoAiB8pmoD+yrWGLtZYwYrfMQTz3DR6rrQzC7mtWcUTNb9xDlp6etk437fwzrYiaATL4
-         iw3sY9fik5y+LxOrR04HMh68Fo8wCmlfUiuWUIk6XPnIYC0oJO6SYSiuZRq1dwIbXm4F
-         wZp38noENZBOqhS5wzwko58Auon4aDksZFXAT/X++SxTYNMtxefs9Tit9im675BZL6Hr
-         S7gvrY52SO1lawfnyhTvgK2O8XTUx/gOxBE1ckwC1gwBoRA0DBu959K+APyyCc81B22Y
-         8+0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750321807; x=1750926607;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rKn1ptPL56ANrUjI3SM/qbSzwOU3Ovzfc0dxrbHyY+o=;
-        b=YBARnVKXjf1npJqV831g10hMecrYfIqVYyhCPq9VdwfwkCTpV1px2hQw97XcCNxXCt
-         EW/yx3ESNnnjoi+ttRLM+AxA8yQ0xMsP8puPh3phkur3fr9qzVGwO0zmqJxQeRBWiTNs
-         1LMOxd6hbTY5t3xZErmVXraGLjmKlbcNC3wuGsLtzw2e8I/UF2zaeh9TJB5nKjmxBCCr
-         2CxGTEb289cv0yQvsmMd68UOBtmKVn9Y+6d/OoDvp5BnbhUzRWk7zg8gH1HHlg6kT7wA
-         BAaXxn9g57+tzlPRwyh484luoH8AvZggPO5CBsdraiRw+ozb6N2tqVDDYg1Eq9MJM9yQ
-         SvaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGRADRJXPWx3XCRAFsRUNSTm7ZYVhAQY9HUocMaJ/2JrMvRcpzsSjaRvVbDo8P8SYRO9tGGsCQaWb7AZtX@vger.kernel.org, AJvYcCUdRY2av6XQ7MjDMJLaNeQPBmrunU7Y9AzKUiRt8hebb3KskQj/G4SK2xfC7KUFTzksU2OWxagpsLeY@vger.kernel.org, AJvYcCWbCSKQbqOm9EhDcNLK9r4LJ1pRAVfYm0NGPA6JiPHMunqCHE/jzgqDxR1bmtUcaNMynyItEcPsC8cn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3W7iIf3EiUHZqDJKUwVlocteGWKy/G8V/Yb+kVDSQu73+h5si
-	2m/iindEp00FlM+bZUlqagSkIVUvqNIkuhsLzauckbXyJYdWsf8ZI57nfDgxEdhG0JZiGe8paCk
-	7IMnZN2Mzoo/KvBfOiSKoRy8jPJz+nho=
-X-Gm-Gg: ASbGncs2jjEWDkDirOhT+PpDcAU2fKLnG/NSROKIqQSnOeQseVTNyqC7kw7YMpaATH5
-	GECYzmv9pBg3wxT2N2ffPyqcmcKUKDiC5jTf8XBtIY3UaO2LpMukCdolBfRVYyuKAoxHB0AQW0r
-	7uXp8+cZQI6tgXB+d8Z8nI/WMUYLOKkmOw1Pus0acXsIQ04g==
-X-Google-Smtp-Source: AGHT+IF0i2vkEF+jFHeW2WDp5kmVNds+1mm8/x/CqyVXx2I+yZPnhJtAh3oOECcje7sEAEEwsOb1vr6CTNHgfN4ifPE=
-X-Received: by 2002:a17:907:1b0d:b0:ade:5fb:53bd with SMTP id
- a640c23a62f3a-adfad3c5445mr2083453666b.20.1750321806964; Thu, 19 Jun 2025
- 01:30:06 -0700 (PDT)
+	s=arc-20240116; t=1750322182; c=relaxed/simple;
+	bh=/Lp/O5vQ0HV7GkGwx5ZKYRSwkwyP+1/8cJhJ/GxCZmY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iwkn/H6NmN3X9rp5gWKA9qLLF3cLBtyVCStmtkY6qAIdaypHLZ4ibf7BiA/aqeS3ZusdpgZk7ir35DUV1TfmBrJA95oYmVEmw6ulr0tDbCtEePmjp95iW52fcgFMpWQlhUKRLfkGh9ofY/7oLQxY1itddaOMu2Aw29M7i4OqOLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bNDTk5XKxzYQw1h
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 16:36:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B6A641A12F3
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 16:36:09 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCH61_yy1Noq1DyPw--.49289S4;
+	Thu, 19 Jun 2025 16:36:09 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: akpm@linux-foundation.org,
+	tglx@linutronix.de,
+	john.g.garry@oracle.com,
+	axboe@kernel.dk,
+	ming.lei@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH] lib/group_cpus: fix NULL pointer dereference from group_cpus_evenly()
+Date: Thu, 19 Jun 2025 16:29:41 +0800
+Message-Id: <20250619082941.3741592-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613130207.8560-1-victor.duicu@microchip.com>
- <20250613130207.8560-3-victor.duicu@microchip.com> <CAHp75VdRisP+trez2Ysgrhan_zXMWsmawB3XeW+_ePsbNC4RzQ@mail.gmail.com>
- <f980b3c1a4fbd60f70dda9670648479a38313439.camel@microchip.com>
-In-Reply-To: <f980b3c1a4fbd60f70dda9670648479a38313439.camel@microchip.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 19 Jun 2025 11:29:30 +0300
-X-Gm-Features: AX0GCFtK0ncIVhpppFTb1voQFgUUDtzpBF-GqtLcEGCIbcMStBY2pLpHDJm_GWg
-Message-ID: <CAHp75Vc2nueOycoy8+dYyQekAAMPO82wOYSVT0RZOC4yRaE5jA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] iio: temperature: add support for MCP998X
-To: Victor.Duicu@microchip.com
-Cc: dlechner@baylibre.com, nuno.sa@analog.com, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, robh@kernel.org, jic23@kernel.org, 
-	andy@kernel.org, krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
-	Marius.Cristea@microchip.com, conor+dt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCH61_yy1Noq1DyPw--.49289S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFWrGr1UKF43JrWfuFyUJrb_yoW8ZrWkpF
+	WSkr4jkFykGF18Ca1Yvw4Ig3WSqFnYvr1fGFyxKF1YvF1aqw45ZF97XFWUXryrCws8Aa1f
+	XasYyrW5t34qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUoWlkDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Thu, Jun 19, 2025 at 10:22=E2=80=AFAM <Victor.Duicu@microchip.com> wrote=
-:
-> On Sat, 2025-06-14 at 00:50 +0300, Andy Shevchenko wrote:
-> > On Fri, Jun 13, 2025 at 4:02=E2=80=AFPM <victor.duicu@microchip.com> wr=
-ote:
+From: Yu Kuai <yukuai3@huawei.com>
 
-...
+While testing null_blk with configfs, echo 0 > poll_queues will trigger
+following panic:
 
-> > > +MICROCHIP MCP9982 TEMPERATURE DRIVER
-> > > +M:     Victor Duicu <victor.duicu@microchip.com>
-> > > +L:     linux-iio@vger.kernel.org
-> > > +S:     Supported
-> > > +F:
-> > > Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982
-> > > .yaml
-> > > +F:     drivers/iio/temperature/mcp9982.c
-> >
-> > So, with the first patch only the dangling file will be present
-> > without record in MAINTAINERS. Please, make sure that your DT schema
-> > file is in MAINTAINERS.
->
-> Are you referring here to the file sysfs-bus-iio-temperature-mcp9982?
-> This file was in v2 where there were a few custom attributes. In v3
-> I removed them, so the driver currently doesn't have custom attributes.
-> Should I had added it to the files in MAINTAINERS?
+BUG: kernel NULL pointer dereference, address: 0000000000000010
+Oops: Oops: 0000 [#1] SMP NOPTI
+CPU: 27 UID: 0 PID: 920 Comm: bash Not tainted 6.15.0-02023-gadbdb95c8696-dirty #1238 PREEMPT(undef)
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.1-2.fc37 04/01/2014
+RIP: 0010:__bitmap_or+0x48/0x70
+Call Trace:
+ <TASK>
+ __group_cpus_evenly+0x822/0x8c0
+ group_cpus_evenly+0x2d9/0x490
+ blk_mq_map_queues+0x1e/0x110
+ null_map_queues+0xc9/0x170 [null_blk]
+ blk_mq_update_queue_map+0xdb/0x160
+ blk_mq_update_nr_hw_queues+0x22b/0x560
+ nullb_update_nr_hw_queues+0x71/0xf0 [null_blk]
+ nullb_device_poll_queues_store+0xa4/0x130 [null_blk]
+ configfs_write_iter+0x109/0x1d0
+ vfs_write+0x26e/0x6f0
+ ksys_write+0x79/0x180
+ __x64_sys_write+0x1d/0x30
+ x64_sys_call+0x45c4/0x45f0
+ do_syscall_64+0xa5/0x240
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-You should have added the file to the MAINTAINERS in the same patch it
-appears. Not in some arbitrary change afterwards.
+Root cause is that numgrps is set to 0, and ZERO_SIZE_PTR is returned
+from kcalloc(), then __group_cpus_evenly() will deference the
+ZERO_SIZE_PTR.
 
-> Isn't the yaml file sufficient to describe the devicetree? Should I
-> also add a dts file?
+Fix the problem by checking kcalloc() return value with ZERO_OR_NULL_PTR,
+and NULL will be returned to caller.
 
-No, this is not the point.
+Fixes: 6a6dcae8f486 ("blk-mq: Build default queue map via group_cpus_evenly()")
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ lib/group_cpus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-...
+diff --git a/lib/group_cpus.c b/lib/group_cpus.c
+index ee272c4cefcc..5e243946ee4e 100644
+--- a/lib/group_cpus.c
++++ b/lib/group_cpus.c
+@@ -363,7 +363,7 @@ struct cpumask *group_cpus_evenly(unsigned int numgrps)
+ 		goto fail_npresmsk;
+ 
+ 	masks = kcalloc(numgrps, sizeof(*masks), GFP_KERNEL);
+-	if (!masks)
++	if (ZERO_OR_NULL_PTR(masks))
+ 		goto fail_node_to_cpumask;
+ 
+ 	build_node_to_cpumask(node_to_cpumask);
+-- 
+2.39.2
 
-> > > +#define MCP9982_CHAN(index, si, __address)
-> > > ({                                          \
-> > > +       struct iio_chan_spec __chan =3D
-> > > {                                                 \
-> >
-> > Why not compound literal?
-> >
-> In v2 I used compound literal, but Jonathan suggested to add
-> the struct in the macro. After describing the reasoning, we
-> agreed to code it like this.
-
-Neither of the versions has a compound literal.
-
-> > > };
-> > >              \
-> > > +
-> > > __chan;
-> > >              \
-> > > +})
-
-
-https://gcc.gnu.org/onlinedocs/gcc/Compound-Literals.html
-
---=20
-With Best Regards,
-Andy Shevchenko
 
