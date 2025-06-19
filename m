@@ -1,85 +1,150 @@
-Return-Path: <linux-kernel+bounces-693977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFAD5AE0654
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:56:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0FF0AE0660
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D51C3A6760
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C354D3B1BFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E7145038;
-	Thu, 19 Jun 2025 12:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B7124678A;
+	Thu, 19 Jun 2025 12:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3OMvFyJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DuAyVOJr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE102417F2;
-	Thu, 19 Jun 2025 12:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA9545038;
+	Thu, 19 Jun 2025 12:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750337765; cv=none; b=FFpma8Kv/yyG3kj1VpCS/Z+oznuog1f3pC5wrNFo7oEi973R5ndURXdqInAdSmXU0xfEUjSwonQJY9ymgkg50NPhfUi54TXokThM4k+sL5rK+71XHRTmepIhKU69BJsH3l3ath7kCTEwcY+7e5tPGBrn/8l3YIabCbRsW8u/2bk=
+	t=1750337842; cv=none; b=OHJuy8CvymP1jEauZr5Zc6YKZL1y54GmveYnEXBLIqgZpuStF4QG4wJSPgSSPKp/PRLYi1UM1D76FwAfEQUJRFGjCribLaJ2p/FYM7IfKb5CNhrG0BlK3jSzQVUsOg2t8RigxoQGC8cD1xMQGuqu7vZDpQi3KAR91f9JiRXL2YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750337765; c=relaxed/simple;
-	bh=61z3Z9ZUMVuGadXMmxoys/sL/Hu56s62dGvdkITuqjY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jQZtGSXKeFVVLd1AmJbBHOCcXQCH5uVAZXZcapKQvyNyGx87+yisTNwdLbUPSwxidB5zymZES8/3S6PIIC0qKVGnrMcO5LQ1zmiADQ5LfqwNIJhTt0RCjj37IKIEdgpNg7jXRhUbtHT02VIjZGwndMZMR3yqPtquJNxUfB6iER8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W3OMvFyJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC06DC4CEEA;
-	Thu, 19 Jun 2025 12:56:00 +0000 (UTC)
+	s=arc-20240116; t=1750337842; c=relaxed/simple;
+	bh=d9e5HJ45tr/MyEWNHOgb5I6HGDjVGDJUtmF7txoigI8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AwqbG5wEH2cTL5OXEoR+IWz6LtW3vwRBEvQvPAbof7zHbkYwG7d9Xu+9fCFOeI1WsWKYCjomGAm+XXHZMh/1vhAwmOPV45oxUz+JDX9VSg/u3VMgPs1E39+CJco9ankd3gM0kZQMoGB/Idu/kZh1ZO+OXLodQhyDrNmdDD+B/eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DuAyVOJr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB5ECC4CEEA;
+	Thu, 19 Jun 2025 12:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750337764;
-	bh=61z3Z9ZUMVuGadXMmxoys/sL/Hu56s62dGvdkITuqjY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=W3OMvFyJJlwm4NWv+4YydZ9uOtxHp04NLHXzOaghRPApC1xVT88UHNPr+Nw4Zv2tS
-	 HXYoZns4xPKpwyaiVZfZIqh0KlCyxBvRUEFBgecPNPowT9v9g9baPxFbKFrCfe3BLR
-	 MHWzNIE+JG7UeaQh7U92F6O/RcdqC5T6PM2QP0eMkSX2h/k1kIw2jHstyjAo2FBiLO
-	 XArxqHEsabqTVdpJf/+TCjOa9ajuvlqiN1z7V6965tFRuDFKYwXWJEfhEnbLIHu52r
-	 NhWZ1j+66E/2418KS6turkmp032w1yXfdzjTtD0bMny0Yv8F9fcgEvdqqqY4uwQJ5k
-	 5Htx57H4CZl2Q==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: lpieralisi@kernel.org, bhelgaas@google.com, kwilczynski@kernel.org, 
- shawn.lin@rock-chips.com, heiko@sntech.de, Hans Zhang <18255117159@163.com>
-Cc: robh@kernel.org, linux-rockchip@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250607154913.805027-1-18255117159@163.com>
-References: <20250607154913.805027-1-18255117159@163.com>
-Subject: Re: (subset) [PATCH 0/2] PCI: Consolidate PCIe message routing
- definitions and remove driver-specific duplicates
-Message-Id: <175033776037.16241.1043152602736525633.b4-ty@kernel.org>
-Date: Thu, 19 Jun 2025 18:26:00 +0530
+	s=k20201202; t=1750337841;
+	bh=d9e5HJ45tr/MyEWNHOgb5I6HGDjVGDJUtmF7txoigI8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=DuAyVOJrGQGV11NldPvoe/547B0ypS3eGxON4wu2u9gNuHg7VJsT17LIUY/dRylOo
+	 vFDJ1hD9eHIqiQNN2M5lnqCymi84iKlV3R84RVArLKYgJP3Y4DCVhFWAY2SPBMKeXR
+	 6r91rAO4JByhSfcM7Zyu7tbO0yHRZ/vumw7A73GwgyCEu+H4iyJ22tv7tYsSzyZsi/
+	 8U2Z8CUHoywLCc7thtEj/KWFPF14/+pcmhEmQCWPYqQt/cCtRDNc60yFHH3PEC4Eyz
+	 QupBAJRp6qlCmSIbZVAjSCtHmH6xxvD1XOVqNYcCxy2NB1Xl235ipxBAfwTrc1AA95
+	 8mYcE9BO//Srw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
+Cc: <boqun.feng@gmail.com>,  <alex.gaynor@gmail.com>,  <ojeda@kernel.org>,
+  <aliceryhl@google.com>,  <anna-maria@linutronix.de>,
+  <bjorn3_gh@protonmail.com>,  <dakr@kernel.org>,  <frederic@kernel.org>,
+  <gary@garyguo.net>,  <jstultz@google.com>,
+  <linux-kernel@vger.kernel.org>,  <lossin@kernel.org>,
+  <lyude@redhat.com>,  <rust-for-linux@vger.kernel.org>,
+  <sboyd@kernel.org>,  <tglx@linutronix.de>,  <tmgross@umich.edu>
+Subject: Re: [PATCH] rust: time: Seal the ClockSource trait
+In-Reply-To: <20250619.203319.1745503493999032815.fujita.tomonori@gmail.com>
+	(FUJITA Tomonori's message of "Thu, 19 Jun 2025 20:33:19 +0900")
+References: <lliFJqf-6WmrKCArjCpOguz4jsHNtiF9GU0X4Ip5bE8NseTdlyKNH_7Bp_CyxNBD5ZR-Jbz0teNRS4UgV_7Z3g==@protonmail.internalid>
+	<20250619.092816.1768105017126251956.fujita.tomonori@gmail.com>
+	<87cyb084df.fsf@kernel.org>
+	<HtpBC6KWSM5Y-x_Vzv2SvzKId8EC0R3fX9HB88gZQnIvy43YqYFDqAkXPUc1IQos2CoYljFnsJJDcGm-vep0TQ==@protonmail.internalid>
+	<20250619.203319.1745503493999032815.fujita.tomonori@gmail.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 19 Jun 2025 14:57:12 +0200
+Message-ID: <8734bv7utz.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
 
-On Sat, 07 Jun 2025 23:49:11 +0800, Hans Zhang wrote:
-> This series consolidates PCIe message routing definitions into the common
-> PCI core header, eliminating redundant enums in the Cadence and Rockchip
-> drivers. By using standardized macros (PCIE_MSG_TYPE_R_* and
-> PCIE_MSG_CODE_*) from drivers/pci/pci.h, we ensure alignment with the PCIe
-> r6.0 specification, reduce code duplication, and improve maintainability
-> across the PCI subsystem.
-> 
-> [...]
+> On Thu, 19 Jun 2025 11:31:08 +0200
+> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>
+>> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+>>
+>>> On Wed, 18 Jun 2025 21:13:07 +0200
+>>> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>>
+>>>> "Boqun Feng" <boqun.feng@gmail.com> writes:
+>>>>
+>>>>> On Tue, Jun 17, 2025 at 05:10:42PM -0700, Boqun Feng wrote:
+>>>>>> On Wed, Jun 18, 2025 at 08:20:53AM +0900, FUJITA Tomonori wrote:
+>>>>>> > Prevent downstream crates or drivers from implementing `ClockSourc=
+e`
+>>>>>> > for arbitrary types, which could otherwise leads to unsupported
+>>>>>> > behavior.
+>>>>>> >
+>>>>>>
+>>>>>> Hmm.. I don't think other impl of `ClockSource` is a problem, IIUC, =
+as
+>>>>>> long as the ktime_get() can return a value in [0, i64::MAX). Also th=
+is
+>>>>>> means ClockSource should be an `unsafe` trait, because the correct
+>>>>>> implementaion relies on ktime_get() returns the correct value. This =
+is
+>>>>>> needed even if you sealed ClockSource trait.
+>>>>>>
+>>>>>> Could you drop this and fix that the ClockSource trait instead? Than=
+ks!
+>>>>>>
+>>>>>
+>>>>> For example:
+>>>>>
+>>>>>     /// Trait for clock sources.
+>>>>>     ///
+>>>>>     /// ...
+>>>>>     /// # Safety
+>>>>>     ///
+>>>>>     /// Implementers must ensure `ktime_get()` return a value in [0,
+>>>>>     //  KTIME_MAX (i.e. i64::MAX)).
+>>>>>     pub unsafe trait ClockSource {
+>>>>>         ...
+>>>>>     }
+>>>>
+>>>> Nice catch, it definitely needs to be unsafe. We should also require
+>>>> correlation between ID and the value fetched by `ktime_get`.
+>>>
+>>> What's ID?
+>>
+>>
+>>   pub trait ClockSource {
+>>       /// The kernel clock ID associated with this clock source.
+>>       ///
+>>       /// This constant corresponds to the C side `clockid_t` value.
+>>       const ID: bindings::clockid_t;
+>>
+>> The constant used to identify the clock source when calling into C APIs.
+>
+> Ah, I see. Sorry to ask another question, but can we require
+> correlation between ID and the value fetched by `ktime_get`?
 
-Applied, thanks!
+Yes, I think we should. As in, `ClockSource::ktime_get` must return the
+time associated with the clock specified by `ClockSource::ID`.
 
-[2/2] PCI: rockchip: Remove redundant PCIe message routing definitions
-      commit: 1a69c63fdf1c9095e132096081e27ac85a4d48a5
+>The value
+> fetched by ktime_get is opaque, isn't it?
+
+It is, but the implementation must still fetch the correct counter, right?
+Not sure if it could lead to UB if it did not though =F0=9F=A4=B7
+
 
 Best regards,
--- 
-Manivannan Sadhasivam <mani@kernel.org>
+Andreas Hindborg
+
+
 
 
