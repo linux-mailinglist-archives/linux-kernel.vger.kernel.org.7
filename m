@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-693831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E34AE0456
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:51:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B6CAE0458
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B099516AA81
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63CE616E60E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D9B22DFB1;
-	Thu, 19 Jun 2025 11:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efaYPYPI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA9122A4EA;
-	Thu, 19 Jun 2025 11:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D491722DFB1;
+	Thu, 19 Jun 2025 11:52:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A0122D7B9
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 11:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750333902; cv=none; b=GwANFVhPG/UsPT/Ul3N/6gDf1vmnnhR6Wyh6SDMi9oyMIg/z8+gpScm4hOIk/i1Ktz5iRkktPXD5ZUFcBiZtOnDT1tUacwBq5RS0Q7qnk7CvN6/9OsD58e1nG3FyWypXzbW0kV2vOZaki3sYK1rjJhmx8SMg1xjYy3lQl19BDmI=
+	t=1750333924; cv=none; b=L1STLxE/AedVUmilQLJ0AuvUPUhkNl/9ggucrqL8UIIxwc3tYnT88sOg9/jJJTYQN9s2xssum/D2A4Zpw6MCIpOd6Y9N71RxIqSRIHM5FoQVtoe52Idr6if3bkEAriZ8XpQEtD4VB7yHrOoGOb3kLb97hHV78QbDYaDSBijpE54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750333902; c=relaxed/simple;
-	bh=/xeFPIk1YZqG9Yb44PzZdK2gx7mLQTryn360QlKdwEM=;
+	s=arc-20240116; t=1750333924; c=relaxed/simple;
+	bh=YLzbhb0hLth3oKZTnV2Nw5J3HjCSrsrpaFPC53QOQIM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dFzSqWmYuc1u17P003W8MYaVcXsSSnPEZ+V2gtOj+aWDxAzD2jH09GQpRiEYGWcw2ZzaubALVwghJjz3lnXgFXaCcZjcjWTkESp3x38Q/8MTlUQl9ziA/gb6Sba6y/3aGPouZwl4Hwp5niFi+RUSt2WagEV8ndbhO559rSNAImQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efaYPYPI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59F67C4CEEA;
-	Thu, 19 Jun 2025 11:51:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750333902;
-	bh=/xeFPIk1YZqG9Yb44PzZdK2gx7mLQTryn360QlKdwEM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=efaYPYPIcR+0rCCpCgXXuc3Zb9offsicCHyLPnb0mDZ+eG64uV0oDRdG2BrlOds4n
-	 6inQL7T/z5Pjn81c6lmCAinRdkYzXl6VlZ1buRzpvIiFuxvkCP5zNctF1UKxUvU7Ma
-	 1ZY4flU7cC5wxaSnQqoSeIgnHgVgOthRbj93ltX81U4cLp6IOts/VM9/1SqdFCy9LN
-	 vs27qbYGt3e+QcUmwpqkctPXI/lIWyI/9WNJXrXo4Z3K+hou2byZtux9G7zGEVTdWl
-	 rPJoQ+4jQHNB9bhkViFrOeAely9ewjEF3Xsv4S+4dBaspB4IcdiFh+YG4EygyA9Hh1
-	 wDFAOW+GqLrDQ==
-Date: Thu, 19 Jun 2025 12:51:37 +0100
-From: Lee Jones <lee@kernel.org>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: aaro.koskinen@iki.fi, andreas@kemnade.info, khilman@baylibre.com,
-	rogerq@kernel.org, tony@atomide.com, linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: twl6030-irq: Remove unused twl6030_mmc_card_detect*
-Message-ID: <20250619115137.GK587864@google.com>
-References: <20250607202232.265344-1-linux@treblig.org>
- <20250613143757.GL897353@google.com>
- <aExDbkQBhK3ZubVo@gallifrey>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q99XW7fnfyxSiViqiGgG1XQ3uGF7xtlVSzl//PzCGdbDDYt7seD31dU/fOwfKUejaM9k1y2MfvCT29dTTBBOSnsrWJj5AdCi/T2kBTujpHbaqle9XvjtqNqDU+yALOXwSdakNpTN4ou+qJW1vSqGRI/OJs0XFDn69GvUJVhKNGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 51AE312FC;
+	Thu, 19 Jun 2025 04:51:42 -0700 (PDT)
+Received: from e133081.arm.com (unknown [10.1.28.99])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22C1A3F66E;
+	Thu, 19 Jun 2025 04:51:57 -0700 (PDT)
+Date: Thu, 19 Jun 2025 12:51:55 +0100
+From: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: yang@os.amperecomputing.com, catalin.marinas@arm.com, will@kernel.org,
+	jean-philippe@linaro.org, robin.murphy@arm.com, joro@8bytes.org,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	james.morse@arm.com, broonie@kernel.org, ardb@kernel.org,
+	baohua@kernel.org, suzuki.poulose@arm.com, david@redhat.com,
+	jgg@ziepe.ca, nicolinc@nvidia.com, jsnitsel@redhat.com,
+	mshavit@google.com, kevin.tian@intel.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [PATCH v7 2/4] arm64: Add BBM Level 2 cpu feature
+Message-ID: <20250619115155.GB20673@e133081.arm.com>
+References: <20250617095104.6772-1-miko.lenczewski@arm.com>
+ <20250617095104.6772-3-miko.lenczewski@arm.com>
+ <e40989e9-9521-4915-9bae-eb7be1d4e056@arm.com>
+ <20250619085701.GA10805@e133081.arm.com>
+ <8c6f1c91-176c-4382-b631-79948e8de16f@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,35 +60,52 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aExDbkQBhK3ZubVo@gallifrey>
+In-Reply-To: <8c6f1c91-176c-4382-b631-79948e8de16f@arm.com>
 
-On Fri, 13 Jun 2025, Dr. David Alan Gilbert wrote:
-
-> * Lee Jones (lee@kernel.org) wrote:
-> > On Sat, 07 Jun 2025, linux@treblig.org wrote:
+On Thu, Jun 19, 2025 at 10:20:14AM +0100, Ryan Roberts wrote:
+> On 19/06/2025 09:57, Mikołaj Lenczewski wrote:
+> > On Wed, Jun 18, 2025 at 03:07:41PM +0100, Ryan Roberts wrote:
+> >> On 17/06/2025 10:51, Mikołaj Lenczewski wrote:
+> >>>  #ifdef CONFIG_ARM64_PAN
+> >>>  static void cpu_enable_pan(const struct arm64_cpu_capabilities *__unused)
+> >>>  {
+> >>> @@ -2980,6 +3015,11 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+> >>>  		.matches = has_cpuid_feature,
+> >>>  		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, EVT, IMP)
+> >>>  	},
+> >>> +	{
+> >>> +		.capability = ARM64_HAS_BBML2_NOABORT,
+> >>> +		.type = ARM64_CPUCAP_EARLY_LOCAL_CPU_FEATURE,
+> >>> +		.matches = has_bbml2_noabort,
+> >>
+> >> Is there a reason you have removed the .desc from this? Without it, the kernel
+> >> won't print a "detected" line when it enables the feature. Previously you had:
+> >>
+> >> 		.desc = "BBM Level 2 without conflict abort",
+> >>
+> >>> +	},
+> >>>  	{
+> >>>  		.desc = "52-bit Virtual Addressing for KVM (LPA2)",
+> >>>  		.capability = ARM64_HAS_LPA2, 
+> >>
 > > 
-> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > 
-> > > twl6030_mmc_card_detect() and twl6030_mmc_card_detect_config() have
-> > > been unused since 2013's
-> > > commit b2ff4790612b ("ARM: OMAP2+: Remove legacy
-> > > omap4_twl6030_hsmmc_init")
+> > Damn it! I completely forgot to birng that back. Yet another remenant of
+> > the NO_BBML2_NOABORT version we had discussed in v6, because a
+> > description field would have been confusing due to the double negation:
 > > 
-> > This formatting is driving the little OCD being that lives on my
-> > shoulder crazy!
+> > https://lore.kernel.org/all/83d1f7af-3dc7-45f9-94f3-8a0917c051d2@arm.com/
+> > 
+> > Thank you very much for spotting this Ryan! Ill return the description,
+> > and respin on Monday (unless it is possible to do this as a RESEND or
+> > similar, but I doubt it since this is technically a functional change) :/
+> > 
 > 
-> Thanks, which bit?  I tend to put the commit .... on it's own
-> line, but then checkpatch really doesn't like long lines so I wrap
-> any word that starts after col 75.
-
-No need to put the commit on a new line.
-
-> > I'll fix-up and apply the patch.  Bear with.
+> I think probably just send out a new version.
 > 
-> Thanks!
 
-NP
+ACK
 
 -- 
-Lee Jones [李琼斯]
+Kind regards,
+Mikołaj Lenczewski
 
