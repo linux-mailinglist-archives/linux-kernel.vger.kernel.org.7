@@ -1,196 +1,173 @@
-Return-Path: <linux-kernel+bounces-693664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A9BCAE01F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:46:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9776BAE0204
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9C047A9089
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:45:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E19E37A282C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53985220696;
-	Thu, 19 Jun 2025 09:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="qBF6F/JF"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD8E21FF5F
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 09:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0787221276;
+	Thu, 19 Jun 2025 09:48:59 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D33F21C161;
+	Thu, 19 Jun 2025 09:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750326402; cv=none; b=q1a3g0TzmZK8tM/V7X8ReWKiNh1Pv8L8EJwq1EvOZoU621B43lvZgB/YLtiMpPQej3ZkgT7sC7/mUml0r0TJCDD0TIi04k5vgcQ6XsSmC8C0v5zepYRdM+N1f4BqAw4YW7x54DoJsZOEcp8kEXDeb1RWjhMgX0ktIitoQ/jV1zs=
+	t=1750326539; cv=none; b=akyi6YgP/KYHKEXWFnKx7ke2/E1uV/BVJJx+hq16XGIr57mHalVnYiFsPUpu0ptTzctbCEUprBhiep+ScjzeDlDC7TSoOJuret2XF4yGHwx6C51BrQNf56MNifKqiQ+A43Oq8CMF3oCzqon0ZI3f9hciY+XCuwq+H/0s+plet/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750326402; c=relaxed/simple;
-	bh=apG/keP/KLT8pvUXGpwz4q0QvABCBcwZ3u8hqT6KHKE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=kCG6SXBKB88hPPIMz/6wSTFxRf4PxcnvfXN3YQT1dq6nXu0teBsgsDonNnAzcZaxMno+0JF0AdojVSrQhxQ/1ExdzpMSWl6dSJRU9fKpTCi4VWyzGGpSXXw16SgLGX9m7p7MEmd8IVgYz6XuTXMaX7iPQM2BleTlzJe3neY1guE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=qBF6F/JF; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1750326539; c=relaxed/simple;
+	bh=pQaQfvfkymPyxbo/McQRSxkUjty96tFS2NmlDh7MURs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=DcRK7kMwZOmchl8qvJHZ0gNaNPWT/LYYzJnxYP40Ru8DWLRdCRYi/E/iSZPVqha+NMV9tzl01qaR67mhtIMsCzqS0kF7uiQvxo4XID4oJbST/qHmXDxjUlnN17N2IkOF56zeH1pIra5OpabkYa4fSosz1GQ2o2pPbYlSBlUE57M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8AxnOL93FNoCr4ZAQ--.23424S3;
+	Thu, 19 Jun 2025 17:48:45 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMBxLsf33FNoCe8gAQ--.38807S3;
+	Thu, 19 Jun 2025 17:48:41 +0800 (CST)
+Subject: Re: [PATCH v3 9/9] LoongArch: KVM: INTC: Add address alignment check
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>,
+ Xianglai Li <lixianglai@loongson.cn>, kvm@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250611014651.3042734-1-maobibo@loongson.cn>
+ <20250611015145.3042884-1-maobibo@loongson.cn>
+ <CAAhV-H6Eru5e6+_i+4DY9qwshibY43hjbS-QC-fhLD04-4mOGw@mail.gmail.com>
+From: Bibo Mao <maobibo@loongson.cn>
+Message-ID: <189ff8c8-2a34-770c-9a0f-8d99b46884dc@loongson.cn>
+Date: Thu, 19 Jun 2025 17:47:14 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1750326388;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=95jwxwqOy3CE/suGZD6MlYCwgFQV2q5DD7APLcXDGSw=;
-	b=qBF6F/JFB8Ga+29xGShrQ+nv00Iv5P6Zpb4T/dk3e6MAJbO+H6+doGGxnsJfJI/kx0fgba
-	LpxYBlt/zc0ZxyJif1oMwDiMJa2RcXRGHRpLaLxrafWhFf3V0Vh+7RqAJQCUQwfRo8X7si
-	X0xwcrsDc9qzk1RPCPGkhrof7KLlyWVLEkl51JD73B8iW4qmHKoFatW4WrpoRqGSvpAClR
-	B9zyua4faYw4VV6P6C+tYUeI76n0bezZbhO9o7X0M0ecQ0TD9VFRS8HWMRmp7J4KWv1l/c
-	b34pOS6eG0FPqmk+YATMaGS1RL7N9JrziEtqd09cNbkXTkZ/gEMg38ZC+GAEKA==
-Content-Type: multipart/signed;
- boundary=a3a566baaebf2efb32d488967dad63a47cda141ad75c7e052b59f3fe5c0e;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Thu, 19 Jun 2025 11:46:15 +0200
-Message-Id: <DAQEX04P5320.CQDU7SL7AV4A@cknow.org>
-Cc: "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
- <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Fix the PinePhone Pro DTS'
- panel description
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Olivier Benjamin" <olivier.benjamin@bootlin.com>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>
-References: <20250619-dtb_fixes-v2-1-abd711d11b67@bootlin.com>
-In-Reply-To: <20250619-dtb_fixes-v2-1-abd711d11b67@bootlin.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+In-Reply-To: <CAAhV-H6Eru5e6+_i+4DY9qwshibY43hjbS-QC-fhLD04-4mOGw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxLsf33FNoCe8gAQ--.38807S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxXr43Wry7uw43Kr1DXFy3Jrc_yoW5Ww48pr
+	WUAFs8ua1rZry7X3sxtwn0g3WjqwsYgF1UZry7tFWS9F4rZF17JryrC3yYvFyjka4ftF40
+	qF4Yqrn3uF45t3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
+	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU24SoDUUU
+	U
 
---a3a566baaebf2efb32d488967dad63a47cda141ad75c7e052b59f3fe5c0e
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi,
 
-Thanks for working on upstreaming PPP things :-)
+On 2025/6/19 下午4:47, Huacai Chen wrote:
+> Hi, Bibo,
+> 
+> On Wed, Jun 11, 2025 at 9:51 AM Bibo Mao <maobibo@loongson.cn> wrote:
+>>
+>> IOCSR instruction supports 1/2/4/8 bytes access, the address should
+>> be naturally aligned with its access size. Here address alignment
+>> check is added in eiointc kernel emulation.
+>>
+>> At the same time len must be 1/2/4/8 bytes from iocsr exit emulation
+>> function kvm_emu_iocsr(), remove the default case in switch case
+>> statements.
+> Robust code doesn't depend its callers do things right, so I suggest
+> keeping the default case, which means we just add the alignment check
+> here.
+ok, will keep the default case.
+> 
+> And I think this patch should also Cc stable and add a Fixes tag.
+ok, will add Cc stabe and Fixes tag.
 
-On Thu Jun 19, 2025 at 7:21 AM CEST, Olivier Benjamin wrote:
-> Fix a few issues in the panel section of the PinePhone Pro DTS:
->   - add the second part of the Himax HX8394 LCD panel controller
->     compatible
->   - as proposed by Diederik de Haas, reuse the mipi_out and ports
->     definitions from rk3399-base.dtsi instead of redefining them
->   - add a pinctrl for the LCD_RST signal for LCD1, derived from
->     LCD1_RST, which is on GPIO4_D1, as documented on pages 11
->     and 16 of the PinePhone Pro schematic
->
-> Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
-> ---
-> Small fixes to the PinePhone Pro DTS to fit bindings and
-> suppress warnings at build.
-> ---
-> Changes in v2:
-> - Added the pinctrl definition for GPIO4_D1/LCD1_RST
-> - Incorporated Diederik de Haas' suggestion for defining mipi_out
-> - Squashed multiple patches into one
-> - Link to v1: https://lore.kernel.org/r/20250618-dtb_fixes-v1-0-e54797ad2=
-eba@bootlin.com
-> ---
->  .../boot/dts/rockchip/rk3399-pinephone-pro.dts     | 33 +++++++++++-----=
-------
->  1 file changed, 17 insertions(+), 16 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch=
-/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> index 04ba4c4565d0a205e2e46d7535c6a3190993621d..98aba146749998dd5a798aabe=
-d0fe844c474d1cf 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> @@ -463,29 +463,18 @@ &io_domains {
->  };
-> =20
->  &mipi_dsi {
-> -	status =3D "okay";
->  	clock-master;
-> -
-> -	ports {
-> -		mipi_out: port@1 {
-> -			#address-cells =3D <0>;
-> -			#size-cells =3D <0>;
-> -			reg =3D <1>;
-> -
-> -			mipi_out_panel: endpoint {
-> -				remote-endpoint =3D <&mipi_in_panel>;
-> -			};
-> -		};
-> -	};
-> +	status =3D "okay";
-> =20
->  	panel@0 {
-> -		compatible =3D "hannstar,hsd060bhw4";
-> +		compatible =3D "hannstar,hsd060bhw4", "himax,hx8394";
->  		reg =3D <0>;
->  		backlight =3D <&backlight>;
-> -		reset-gpios =3D <&gpio4 RK_PD1 GPIO_ACTIVE_LOW>;
-> -		vcc-supply =3D <&vcc2v8_lcd>;
->  		iovcc-supply =3D <&vcc1v8_lcd>;
->  		pinctrl-names =3D "default";
-> +		pinctrl-0 =3D <&lcd_reset_pin>;
-> +		reset-gpios =3D <&gpio4 RK_PD1 GPIO_ACTIVE_LOW>;
-> +		vcc-supply =3D <&vcc2v8_lcd>;
-> =20
->  		port {
->  			mipi_in_panel: endpoint {
-> @@ -495,6 +484,12 @@ mipi_in_panel: endpoint {
->  	};
->  };
-> =20
-> +&mipi_out {
-> +	mipi_out_panel: endpoint {
-> +		remote-endpoint =3D <&mipi_in_panel>;
-> +	};
-> +};
-> +
->  &pmu_io_domains {
->  	pmu1830-supply =3D <&vcc_1v8>;
->  	status =3D "okay";
-> @@ -507,6 +502,12 @@ pwrbtn_pin: pwrbtn-pin {
->  		};
->  	};
-> =20
-> +	lcd {
-> +		lcd_reset_pin: reset-pin {
+Regards
+Bibo Mao
+> 
+> 
+> Huacai
+> 
+>>
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>> ---
+>>   arch/loongarch/kvm/intc/eiointc.c | 21 +++++++++++++--------
+>>   1 file changed, 13 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/loongarch/kvm/intc/eiointc.c b/arch/loongarch/kvm/intc/eiointc.c
+>> index 8b0d9376eb54..4e9d12300cc4 100644
+>> --- a/arch/loongarch/kvm/intc/eiointc.c
+>> +++ b/arch/loongarch/kvm/intc/eiointc.c
+>> @@ -311,6 +311,12 @@ static int kvm_eiointc_read(struct kvm_vcpu *vcpu,
+>>                  return -EINVAL;
+>>          }
+>>
+>> +       /* len must be 1/2/4/8 from function kvm_emu_iocsr() */
+>> +       if (addr & (len - 1)) {
+>> +               kvm_err("%s: eiointc not aligned addr %llx len %d\n", __func__, addr, len);
+>> +               return -EINVAL;
+>> +       }
+>> +
+>>          vcpu->stat.eiointc_read_exits++;
+>>          spin_lock_irqsave(&eiointc->lock, flags);
+>>          switch (len) {
+>> @@ -323,12 +329,9 @@ static int kvm_eiointc_read(struct kvm_vcpu *vcpu,
+>>          case 4:
+>>                  ret = loongarch_eiointc_readl(vcpu, eiointc, addr, val);
+>>                  break;
+>> -       case 8:
+>> +       default:
+>>                  ret = loongarch_eiointc_readq(vcpu, eiointc, addr, val);
+>>                  break;
+>> -       default:
+>> -               WARN_ONCE(1, "%s: Abnormal address access: addr 0x%llx, size %d\n",
+>> -                                               __func__, addr, len);
+>>          }
+>>          spin_unlock_irqrestore(&eiointc->lock, flags);
+>>
+>> @@ -682,6 +685,11 @@ static int kvm_eiointc_write(struct kvm_vcpu *vcpu,
+>>                  return -EINVAL;
+>>          }
+>>
+>> +       if (addr & (len - 1)) {
+>> +               kvm_err("%s: eiointc not aligned addr %llx len %d\n", __func__, addr, len);
+>> +               return -EINVAL;
+>> +       }
+>> +
+>>          vcpu->stat.eiointc_write_exits++;
+>>          spin_lock_irqsave(&eiointc->lock, flags);
+>>          switch (len) {
+>> @@ -694,12 +702,9 @@ static int kvm_eiointc_write(struct kvm_vcpu *vcpu,
+>>          case 4:
+>>                  ret = loongarch_eiointc_writel(vcpu, eiointc, addr, val);
+>>                  break;
+>> -       case 8:
+>> +       default:
+>>                  ret = loongarch_eiointc_writeq(vcpu, eiointc, addr, val);
+>>                  break;
+>> -       default:
+>> -               WARN_ONCE(1, "%s: Abnormal address access: addr 0x%llx, size %d\n",
+>> -                                               __func__, addr, len);
+>>          }
+>>          spin_unlock_irqrestore(&eiointc->lock, flags);
+>>
+>> --
+>> 2.39.3
+>>
 
-I don't know if there's a 'hard rule' for it, but I'd recommend to use
-``lcd1_rst_pin: lcd1-rst-pin {`` as that would match the naming from
-the schematics. I realize that some but not all (other) pinctrl nodes
-follow that 'rule', but it helps with traceability.
-
-> +			rockchip,pins =3D <4 RK_PD1 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +
->  	leds {
->  		red_led_pin: red-led-pin {
->  			rockchip,pins =3D <4 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
-
-Otherwise,
-
-Reviewed-by: Diederik de Haas <didi.debian@cknow.org>
-
-Cheers,
-  Diederik
-
---a3a566baaebf2efb32d488967dad63a47cda141ad75c7e052b59f3fe5c0e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaFPcbQAKCRDXblvOeH7b
-boy+AQDbwzeOk3i0OYHIv6wu+lPogKc5TzKOKmCgkGkNRFumNwEAjC++J6IJV1V3
-YclMmumArJ0L1UN/PjW9uBrL/NoamwQ=
-=RIuv
------END PGP SIGNATURE-----
-
---a3a566baaebf2efb32d488967dad63a47cda141ad75c7e052b59f3fe5c0e--
 
