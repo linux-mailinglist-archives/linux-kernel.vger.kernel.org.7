@@ -1,106 +1,114 @@
-Return-Path: <linux-kernel+bounces-693532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE9F6ADFFEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:37:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83CB9ADFFF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6077D7AF234
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:36:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87C385A2FE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AAA274FC2;
-	Thu, 19 Jun 2025 08:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7638264A61;
+	Thu, 19 Jun 2025 08:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Ga5jSC+C"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6yj1M0O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABB126463E
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 08:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF5F25A34D;
+	Thu, 19 Jun 2025 08:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750322180; cv=none; b=j31qCDdv92yG4dPtfbi3T3hPKKQWAc+RbEhPeyLJ14DpnjtsMFOrl4iDgmtwh6E3FB0AlFLLkCMaxCtwvlirs7A68V/4XqIFu50mOYA2vlHU5fk1dZfhk/EIfO89RFF+q8C9lo8r1Xp1oG0PwLvTSVwcsDbvvYwCuNmtN7R7cXQ=
+	t=1750322246; cv=none; b=FlPjkvNQF+LLPzrs6VRy13DU/oFf+dzrn2ebdWXnIwz5KjPnd96ctBj+tE2KM96dAQX7w3Vdbp0hsNWRpztBhpEyNI5DSjPjpw4qC46dZ7DvwJYIwJHgiY6k0c7axB/U0Mw8gVsgU0JN8t/GE8NPWVllbVq+H0B/K2DT46xkYZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750322180; c=relaxed/simple;
-	bh=yzf9de8tjudMgAFImVxK60pD4txhktnI7YYgbi2dkYs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l7jENZkGAjcNXBnj6d9eoIAY4WpCRLxvwglNzEQnKxE6OXOz6CsQG2Xt2kKXOZRLdvpcFR0anFcHarpMc+jvBxPRisJGaLidlXSWsqJ9yoFxuNx64iwqulTLzyP30xIPcH8GQcBo3JTSJ/8d+jzhH6XsHNBnKOb1vilCi0xgLkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Ga5jSC+C; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-32b553e33e6so4293491fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 01:36:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750322177; x=1750926977; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yzf9de8tjudMgAFImVxK60pD4txhktnI7YYgbi2dkYs=;
-        b=Ga5jSC+CC3c57/umT5qA2vmrESoZ8QHlsHGHMsnOmZRE7np10F/p+RmzJv5rtSMcK6
-         9gh1mctNVcC3pEpiryO4IuFeZsfMkqdYktPgtzmztNQ3o5rNAlG03jim/A+CnrekZ8uX
-         dVyltll1LczZBlCOVoVul44mt8+tGbDVAstk7+sqrPa8EkPWiQQQXJNf06gbweZFptsx
-         4q4HUDa3EMPEhIgKefPuq9Oqz1nlptZeFzq4btoAa0atFoQ1jtJC68ajX4AIEfaBTxQw
-         P+28uLnYnlT5eBlXCnTR4hAQzLJzy+Us5ujrdCF+ypicKf2jlD7JqHDeJcx3ih0nr5Gx
-         Plaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750322177; x=1750926977;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yzf9de8tjudMgAFImVxK60pD4txhktnI7YYgbi2dkYs=;
-        b=ql7LahCrqKO8XpwRqiB3ECm4rXgTuWJa4nHkd3qG7lmH4F1cRZ7hbB69ifdN1bbZJP
-         rNvd0qWZJChujh5j1RubbYJFKt2L9zWw5F+GMhNqtGaX21Zat5HNlJw8ZrlFXHCOy4Yg
-         q8NveepAk7MIHZKX0r+FerKrZPzxA65Tw9WKrlFAtvBw/rR1sh1KIpZJrziUJ2CGN/Ld
-         muHYw0TLQkimScobHpsVUZCHUDxM5TvJ6wYJl59vE0ypTpKk1Q1Rk2S1g8zIxV6KATNV
-         u4NgKKf15DMagOjd0ZfC81I58iUDacyxhhOi/DyZNZ35F6ZVQER9GtIiNhIPXH9767LU
-         mCbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHRt4I+5wQZzdL/BDw+Q60e6bMfmNmFE0IzjnbntWLWHSRqb98UYNvNb3P4yE7wfTElB6A5HzXOPsSYhU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4LL2crWpqBS4pCpyuhHXXLMO2dbkILLoiQ82IuGACq5V8R1Z5
-	dX2z7/+R/br2/Qi53LYCqR64BpvCe6VhbRrD0IshoJev1HRo+LzovLITld48KcebXfV4vHWAVor
-	vepjOT0hCsfEeC991bBl/zYDDfavIQoOBf+eXRHZXLA==
-X-Gm-Gg: ASbGncv6ULwpn2S6oKX2gze90GVPMXkUxoBYHaL4DsglFsGJxo5jpsinZXDvNWyICvS
-	dFViH+J9bJyEJPnd6j1Vdic9nPXGwuZiST3YwJBoGUjPnk9p6i7hAXETjjNFZmOE7DM1g9hx247
-	KV+Xma7cu5+vXjq4pIIPvocJ3AnkbDCWdRQGj7qvNG6LtDPtAxY9u8GkA/SxPP+PRZo57K4ZLsi
-	LQ=
-X-Google-Smtp-Source: AGHT+IGROhB1BHEhVf7lp3K17L78LdhcTvHXtwk6/ks9ka8oVJATyogYr8tNLZyP1iVXGY7Rk+OL3YCyL3i+oERqtJI=
-X-Received: by 2002:a05:6512:23a7:b0:540:2fd2:6c87 with SMTP id
- 2adb3069b0e04-553b6e74f1bmr6127957e87.16.1750322177403; Thu, 19 Jun 2025
- 01:36:17 -0700 (PDT)
+	s=arc-20240116; t=1750322246; c=relaxed/simple;
+	bh=KLuXxcXXthjBdqrsgWNOCjHVsFbWRkn/d0K+J95dPpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mLSpBiyipiCJAu8/wyya/400abSbG4gpGf2rcdf5GN71MgDkHaOImwYWSjPy1lpj8YeBTnjvn+kHCT1o6gdvO0G/jEIuoTYttt4V2uZnaOhIj5tgQBgqXtFC/By80+ZrT+9c77EkGB5b6WxiWEC2iVIo+cDDkT3aYP/bBMot91k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6yj1M0O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF58CC4CEEA;
+	Thu, 19 Jun 2025 08:37:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750322245;
+	bh=KLuXxcXXthjBdqrsgWNOCjHVsFbWRkn/d0K+J95dPpg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R6yj1M0OkpFxO0SerjjhxBJlpExLKNruhn8PvIp0m8K+chuK//1kiny+q+oSzoZTM
+	 ZUkvpHsDUKNRDxnhaWFDynJPEOcQ50ZiAW5ZiyfrNo7zYcBux0MrO0PS3fzfxojDFU
+	 +cU7n8lklK9cWGX3u1ynoZQ1ggHpXiPgy0DNCKKkFoVKSGc/GwGWPXXZl2pyh6HRmZ
+	 86l3IHBmly0NUlRIh0qBJKKPsgPaBSkxHiILq3ccMeZBFVNZZ7kVTSiUs7N7Ah6ZV7
+	 VkISVRM5UjQNRigCAYrrpzRKvaF3Wm4jJnpmMLgHQZ9BH1FO4w3ufulwkEEwE/l+8Q
+	 W+fFs8U6UHmSQ==
+Date: Thu, 19 Jun 2025 10:37:08 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, "David S . Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>, 
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Hugh Dickins <hughd@google.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
+	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Qi Zheng <zhengqi.arch@bytedance.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm@vger.kernel.org, sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nvdimm@lists.linux.dev, 
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
+ consistently
+Message-ID: <20250619-vormund-ungeachtet-8a9093d475e8@brauner>
+References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
+ <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250619-gpiochip-set-rv-gpio-v2-0-74abf689fbd8@linaro.org> <20250619-gpiochip-set-rv-gpio-v2-5-74abf689fbd8@linaro.org>
-In-Reply-To: <20250619-gpiochip-set-rv-gpio-v2-5-74abf689fbd8@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 19 Jun 2025 10:36:06 +0200
-X-Gm-Features: AX0GCFte8Q5wHOGkWFWXjfIA30NLlYd4ISVYqo5eAKH8rrJ08AS71jryqV8KALU
-Message-ID: <CAMRc=MdkDF_HjRvCvUdKueRgNYDxe=aeGeWAw9bBgnAZ=kxZAA@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] gpio: pmic-eic-sprd: drop unneeded .set() callback
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Andy Shevchenko <andy@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Robert Jarzmik <robert.jarzmik@free.fr>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
 
-On Thu, Jun 19, 2025 at 10:33=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> The lines on this chip are input-only. GPIO core can handle the missing
-> .set() callback so there's no need to implement a dummy here. Drop it.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Wed, Jun 18, 2025 at 08:42:53PM +0100, Lorenzo Stoakes wrote:
+> The core kernel code is currently very inconsistent in its use of
+> vm_flags_t vs. unsigned long. This prevents us from changing the type of
+> vm_flags_t in the future and is simply not correct, so correct this.
+> 
+> While this results in rather a lot of churn, it is a critical pre-requisite
+> for a future planned change to VMA flag type.
+> 
+> Additionally, update VMA userland tests to account for the changes.
+> 
+> To make review easier and to break things into smaller parts, driver and
+> architecture-specific changes is left for a subsequent commit.
+> 
+> The code has been adjusted to cascade the changes across all calling code
+> as far as is needed.
+> 
+> We will adjust architecture-specific and driver code in a subsequent patch.
+> 
+> Overall, this patch does not introduce any functional change.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
 
-Baolin Wang <baolin.wang@linux.alibaba.com>
+Acked-by: Christian Brauner <brauner@kernel.org>
 
