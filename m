@@ -1,100 +1,77 @@
-Return-Path: <linux-kernel+bounces-693388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 693E0ADFE6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:12:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BC3DADFE7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDBB37AC278
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:11:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D754A3B6DC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C6D248F4F;
-	Thu, 19 Jun 2025 07:12:29 +0000 (UTC)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E47C24A051;
+	Thu, 19 Jun 2025 07:14:58 +0000 (UTC)
+Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437333085D3;
-	Thu, 19 Jun 2025 07:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C721248F55
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750317149; cv=none; b=YIdjGDTbL5prjsFjWDFxfmPMpKi3hE58KUNIt031HfZXoWqSvp33WlP7pi0G+XKoh5FL1IQhDFwNCOxMWd4FkZwvSiDvVoTB18HDNVhjR82gFVF0YKb3D6UWxhr0djl/37oxGCnzaiSbUbFroP38RPuGyBifID4VqUKvjeZ/YH8=
+	t=1750317298; cv=none; b=D2dJwzA7VyIhmxblFXCme1K5NymonybU38k9bSuP2KuZDr4mwY36wdlWfpKvSOmcAECUrFAgzi48DMEqvWEPSoVDtT8Lq2GO306w+QbZd3RC5Yw+gRIJwc+Da10N71F6u04W84vc52yGfTr+3IGjlhZKqbmHpKglUoZ0ThFivYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750317149; c=relaxed/simple;
-	bh=V3imZF6UNU74btzqmMqKebm/23xac0lFB6v3lNG6xh0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bFw3vHg7FF4iG2+veEkMWVn55Lx0XoBrlXVJkQjldgLlS0mXB3pszHfjKzi5PyQS+v6aIcPXxDWmLVJ2YrBld05hz1nbob1Is8TgKYhlVJf5HgI3/q5lhOINhwmCvSID6v3MB6PWIe2MpD7HXqUSN56pY1eEmgJW0PO2P7ENGdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
-X-QQ-mid: zesmtpsz2t1750317035tbaf4f31b
-X-QQ-Originating-IP: u6g0KYz0xwxR6Veyp07lpRmHTzkjeSVteaUPdzjxhww=
-Received: from [192.168.3.231] ( [116.128.244.171])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 19 Jun 2025 15:10:33 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11891332971441617108
-Message-ID: <16608EA06321C225+af69d39b-61e7-4e9a-b382-ecf1e7f2d519@chenxiaosong.com>
-Date: Thu, 19 Jun 2025 15:10:33 +0800
+	s=arc-20240116; t=1750317298; c=relaxed/simple;
+	bh=eEFc4F7xE1kxOscj3Caa6fs+2Wwo8rF7+/oxQOwlfMQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NngHNJu8Ghww6p9KHGjpNWXch63pq1pYy9n/WdWA340qQyjjCNzZ10Yy5Qrjh+HwlAc+q8fNORNFbujfathd7AvASI+xAdMNylK15w1aT3m34R/bqUO+EpXn2IFUuxhD9XHDdttXFa7/3SMfErXncmC2sgnl7n19/bE9/1PUd6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201618.home.langchao.com
+        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202506191513513446;
+        Thu, 19 Jun 2025 15:13:51 +0800
+Received: from localhost.localdomain.com (10.94.7.47) by
+ Jtjnmail201618.home.langchao.com (10.100.2.18) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.57; Thu, 19 Jun 2025 15:13:50 +0800
+From: chuguangqing <chuguangqing@inspur.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
+	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+CC: <linux-kernel@vger.kernel.org>, chuguangqing <chuguangqing@inspur.com>
+Subject: [PATCH 0/1] check the ioremap return value first (supplementary CC)
+Date: Thu, 19 Jun 2025 15:11:20 +0800
+Message-ID: <20250619071253.3498-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20250618092544.53696-1-chuguangqing@inspur.com>
+References: <20250618092544.53696-1-chuguangqing@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] nfsd: convert the nfsd_users to atomic_t
-To: Jeff Layton <jlayton@kernel.org>, chuck.lever@oracle.com, neilb@suse.de,
- okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- huhai@kylinos.cn, ChenXiaoSong <chenxiaosong@kylinos.cn>
-References: <20250618104123.398603-1-chenxiaosong@chenxiaosong.com>
- <197b15028aa942d2812b1746aff453c4e791aa00.camel@kernel.org>
-From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-In-Reply-To: <197b15028aa942d2812b1746aff453c4e791aa00.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: MAC7MeOsTVc2RwVFMb2wjRd+0wDgH1I4iR0tmJ3I7/zm1R8LUN4r4AT3
-	LpVunoB9Wd2IF0l3GKqPJdmzaD8BE7ONiTfTHA8TnMi2adHAF3t7RgPMytzWME6bQs3SYvt
-	Ie52wnHXvrUZnpstvW5hHSeHhbf+3VOqv55JEFwrKa26iIFznvP9+aQkNzmWLn/vSs4DLuO
-	SYpy7DSCVhXr0KrBpFaml9MhULgiZAuXtbOkN9+0FFnoEoJBJ0RTPE0srreoUyPCyVsH1l4
-	XJp3JO33/KAkj+XbUeRM180ctAIuQIoW0tfJVkoYWQ8aazbBOULErQu8+Vg5aplSA7E2MPg
-	U/7YsDA2FEfxFHtHvABUzkSoJrwSkKWAKYh/Ifu58y8eNSFlX5YTr+wrofSMP4sb5yOtNew
-	ZwSPAVZBWshaz6JMixTHUIwti2CIXVrlHeHZSe3OX+myU5JmVXbGGnADV0afHJf25O95Gm+
-	fhoN1P89aUvr1OKP4wnPTFMOMCITBTznr67d84O4gt9bj79A2t6Qbp0+Gx5LwN+s71NDm8M
-	gI0/8nDKOePuzd3dMTCAufQXqY7TuaQhPIjh0ByVdAr+1gxQ7YFSTx0KZ8g3heVYDdXXGO9
-	iX6JL52f0GMhANEhsZM9sutJ3WUe0xWbpHOxZJCZfIvrYk/N9tYkGtwnhZiC5z8JvjHRDPI
-	efA12Ty3wF+UjCnZ6uW8ptYNY7ClnoVuvNjiRODhkWgEuX+0eY6cpvDZbswDwt7kKhzciCW
-	l+8y16N2PDQCQIySWAuKIkR1y+bIlf7WM5cV9+etcUv3qUVhRFpc7YWJGA8phzTG7t4Az10
-	7qEQbjycZ4u0WqvPrgZgsawnhTUhwAg9VnANZ1wBbos7pDUIOHl29K3wFMynyPMqgXfzH6q
-	9xWb2giHB4UJPBbVuLf4EbKq1pl/epRxbk8CrXSws7fmMEfyOwEsJUonJa25t4JiFgqFIpT
-	lW2de8bQDVkTiCRRhPRhL1lYg8GFpPOtJtFpp22mZoO4lsMbuPnpyFzn1nIfXZ7JaE41mOE
-	rsq60Otk0/M6ksCNLGZh/CdR4ioSmG2cb6XlRq6g==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain
+X-ClientProxiedBy: Jtjnmail201617.home.langchao.com (10.100.2.17) To
+ Jtjnmail201618.home.langchao.com (10.100.2.18)
+tUid: 20256191513514699e9fac132e6ca4917fb5f5223e432
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Yes, nfsd_users is protected by the nfsd_mutex. But the following log 
-confuse me, why were they printed in a very short period when crash?
+Always check ioremap() return value  before use.
 
-     [24225.575708] nfsd: last server has exited, flushing export cache
-     [24225.580242] NFSD: starting 90-second grace period (net f0000030)
-     ...
-     [24225.807458] NFSD: starting 90-second grace period (net f0000030)
+chuguangqing (1):
+  ixgbe: check the ioremap return value first
 
-Why was callback_wq queued that it had already been freed? And a new 
-callback_wq was created. I’ve added some new vmcore analysis to the link:
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://chenxiaosong.com/en/nfs/en-null-ptr-deref-in-nfsd4_probe_callback.html
-
-
-在 2025/6/18 19:50, Jeff Layton 写道:
-> Isn't nfsd_users protected by the nfsd_mutex? It looks like it's held
-> in all of the places this counter is accessed.
-> 
-
+-- 
+2.43.5
 
 
