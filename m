@@ -1,249 +1,369 @@
-Return-Path: <linux-kernel+bounces-693296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE3EADFD68
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:58:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB2AADFD5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 362B83B968B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:57:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59CCD189B5B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB36245014;
-	Thu, 19 Jun 2025 05:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E032A242D93;
+	Thu, 19 Jun 2025 05:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="dVaq69bz"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012011.outbound.protection.outlook.com [52.101.66.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MhShRsXu"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619CB244682;
-	Thu, 19 Jun 2025 05:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750312663; cv=fail; b=qMTxWoMBuqlRvSA8sYJHdKosoUR+85MO7N7uZ4XppTGDdj6thDcAkZpBMS+IUuBZbVNtevX2MwbC+3pSnyrEK5HWNePuf1NvfH700Pic/l/awSg9PB1yi9l+koNm1fPv88j9G8JQqjQvmiuA5G/Z0RdbgIrKg6HH+tv1ININdSM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750312663; c=relaxed/simple;
-	bh=dwMYXC52XdpA8Gk+zD2yXPJol+bjMyN2fcaQUqm2w4c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Mu0UcCTzQTmE8Gk1y9qrn1m69Q8DSMRAbcX3nuDSJ21XGSEx2dRZ77l6Oz+xI5AELfCj2IlCJCxA9WAercrxOVi8rAg2Ep1CE9LYSe4c9+R8BWi+WKpSBucNlrSZgXLXIeo8P50sy72YeA6YKJCexSdI96o/aDZeBRqPiDQEiIo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=dVaq69bz; arc=fail smtp.client-ip=52.101.66.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mxBPv+0tfcdWflJhSLE1qe44VZF5BcBh8uXJaSarE/jGkhLSgC80vraHmM8qQoNRb/Glp2PQt0HSgjqMWLFFKDzn0l0cE2vnUWjjKJ2OpeOytpRyUgYpvmt3QDQk6fcxzviteqABap9S0ARK6Swnyg1liJNGKdh+BTHwzeU2Urqhrrww6XC778dWt4Aj/T5E75LwbMzhWnf/ZD9Cm3kZIS2Qw5CIPgYWNKoik7xtCIG5V/uui1nQBXcb7ZhyE3jn8u2UCETpHZtkyHZeYxrWblUdIpOfDN9bFnF0/KKz+1Sq66qUt4WsqqDj8IOehswK+JwG8NGQSA2FxL8FYVD7fA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rZS0tvudNEmwyCBSU6jLQjNGU7MlIiMDOIiK7hPlw58=;
- b=HaeJ+ZzMHB5ejddqZC7aFe9gGSA1V8wWM+836HON3VppRCIKGgL9fixU2NQHMpIef4Yd5wSwZWO3My1eOQnytIes0otCERMGFhnOpUSeW11g35aOHvJWrGkS1ZhijlcR+8YZ2N3F3rjBCvb3FJQ//pvo5VB9+1jS2OIvYKXM4TyHFor3HIFC8wQqnzX+7ETGhzxI6+8TAz7/AmCkp3ib2v1qGI2XUyNglny6go2fIfDLhCuIvR8PbqbiJoFNN5iU7dNVUjhCkF3F1afRr4PMCIEoT2Y4uiYVSnisYZQMJb8w72EatPSBUB0jq1HIWLblwAYKNKvrr1jYPqrHMLtqPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rZS0tvudNEmwyCBSU6jLQjNGU7MlIiMDOIiK7hPlw58=;
- b=dVaq69bzYDl1cWcFsedNaMUOP63HdJrzupQMdMMssjIXD19BSNFeaBRVln0Hf8jhJyqrjtYPAseBv2e4WhB6QoF30VUa3vOIvP+ZsHIoj7vIc1JtrjYYUdT+s6zjcsGEhilxmNmMMpQtW3RLoBiSU9KWJ3sgSSWJ8+5IxKdy2ZNyL+W9Sz+n2+f5ilE8xTzdAfb5Qk/Jp2QX/0ger9mv2KeFQZQccujfUkxg4exP36Gpuj11SEuiXncjhnLYGTtTqQ2lrTNvqO05S+h5OK0uXNC/Lb4zPogbWeQeYaWCmzixhUDkrc3EjrYwTEbQdBHDEpnCJym6+qB8ygJ7Lv9kFA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8676.eurprd04.prod.outlook.com (2603:10a6:20b:42b::10)
- by GVXPR04MB10151.eurprd04.prod.outlook.com (2603:10a6:150:1b7::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.20; Thu, 19 Jun
- 2025 05:57:38 +0000
-Received: from AS8PR04MB8676.eurprd04.prod.outlook.com
- ([fe80::28b2:de72:ad25:5d93]) by AS8PR04MB8676.eurprd04.prod.outlook.com
- ([fe80::28b2:de72:ad25:5d93%4]) with mapi id 15.20.8857.020; Thu, 19 Jun 2025
- 05:57:38 +0000
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: frank.li@nxp.com,
-	l.stach@pengutronix.de,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	bhelgaas@google.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com
-Cc: linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Richard Zhu <hongxing.zhu@nxp.com>
-Subject: [RESEND PATCH v1 2/2] PCI: imx6: Add external reference clock mode support
-Date: Thu, 19 Jun 2025 13:55:15 +0800
-Message-Id: <20250619055515.74675-3-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20250619055515.74675-1-hongxing.zhu@nxp.com>
-References: <20250619055515.74675-1-hongxing.zhu@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MA0P287CA0004.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:d9::14) To AS8PR04MB8676.eurprd04.prod.outlook.com
- (2603:10a6:20b:42b::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33C2239E8D;
+	Thu, 19 Jun 2025 05:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750312587; cv=none; b=uUxuu1bUNJ5HGi+CYeMMB3Nl6x0xwSr6tmSzzR1aw8yGIjY6QMfKzI2WVUviwTh9ReCKYBsMUczdd52NwVkjulMYtH3gXTpdV22yO0hXAWIUWgS9aJ3u+fSGZWZmGklri7xEaVNGH2hVWyyeXU/trbGevGyWtnU+cwCRPwBdC4k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750312587; c=relaxed/simple;
+	bh=qzwEDgPoJity0tqP0/P4eCieKrO+jS22y4Yfba4q7FY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=a9Ped8p91IikQi1m8ylToWqccMe2aF+rzAhs6+j8WECnyUV0XOJhaPw/fX7s/bZIj73wMTusNz1/zptstHGe5rrLN7dkem9vQ4LcoLkmtsUfdFy5Sd7esRZkiRaBA0GmPwDrcLrJtTZIW4awhtO41gRMdcnJWJVbXSajB6bnmyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MhShRsXu; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7425bd5a83aso297539b3a.0;
+        Wed, 18 Jun 2025 22:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750312585; x=1750917385; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=9lTx2lA8dlik7Wov+P/HO8cPT+eBFwE+42x6H/JxB8U=;
+        b=MhShRsXuUQpIERuBAUtClPzZhn/MgucEhNLWXhudM5E1bIlJ+ozyDtZaa5EqlfzIJD
+         VESEqtCRlPWUvt44kDkBPCLJ9uhjCsyDwMXhIGWHhdw0JOF2qtrfsBV2pxgTP2LJk3Kf
+         8/6wzACN5cEB6z+qJGO+wEGksz70SqTokCePihn2R9ICLnV/L/37PUSN+GRtjMF1jhJV
+         a+PKRZU8CvpwQUhSAW/aspZkDLyYsFWQ4pZMLqKzURggupDtJ2eE3pHupp3sUoRUFz1y
+         4COk+ydg3G4D3QNGwNakYx+gCjrfate5PXOKJgMEbjOL1qLDHLUAqk4iFwPuqn79r91g
+         ceMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750312585; x=1750917385;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9lTx2lA8dlik7Wov+P/HO8cPT+eBFwE+42x6H/JxB8U=;
+        b=SFq5Cc+Zq96D2tdaolkCYZRk1y+KQWE+AP7wotnrvV8d5/N7pYyEQIgXFqMFumdZNa
+         TM7KlwDFPYJEPKotTZUbqmYKN8FXDlaPHwZtPi+/odWKvztNuajJ/1V9sMz0Ozj2t7r6
+         EOzD1RWuxm/4541Q6/VKZA0drJ6SIWU/+ce8dBTvOZtpDlt9O7vovr+brKtWqA/j7NPa
+         AsI+EAn6bm/ta/J50GGqdFv8j3HZWzcBWFrEl7EEKnRyqmsaF0kiW1tDyGYUm+6vYXa2
+         PzVCqFXS+ZPXlGxO7LRiadeuzizwg8mG1LBI8gBR6Z3i3POCqgIpQh06TiEw9uTw1hL2
+         vvzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCdNbpFjDa6EsITfnxnlf4U+ifn9M3tVshDjdalahU+zNlNTT1uA+x3uel98lqFTfK5UyO7ZMTx7YC4Q==@vger.kernel.org, AJvYcCXA6fLFjWex2o835dd7I2vcXaAQKG2OUk18ugFnTgvjlObCX5LjoH1k+iyXjfHBAogzWZRSPuNf9NGI5RKS@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrW78FjImCiP33Cl/6yKZKeW8283Gq3p4lSMHAjorchrPuKyCd
+	N6kijwxC/Et1zkdI3pnC1/h49nXNeAaND8HOdNiaA+KmAwBA8XVDOuFX
+X-Gm-Gg: ASbGncsdnFMEau9xqZPqGlYa1nv8GYVNtSlb2nXPfzPzKe80xVbuat8b6ywwE/5Eta+
+	krfcZaiZAavwCOJ2UrVPiyZ/Ayv0XQDfWyhtPOYvEsrr3I223bdn3r10iye+O28YNdMMa73wwBF
+	4xlTbsXGTax6jwS0NklYV0zllY0g44XQlftM29nULRKs7ePTx8Jcj9bmNawRrCdx1vsHkjuee8z
+	nlrE5AkD8JMxzEV/DVlBvbU1gc/c+nQR9pEKneWB5dTfeAtA0/lKLp7WZk4C4XPOUfzMToKSjZp
+	sphZ8h7WjRLbaKh8dEOTfA0fMTxrIQlF6qMGqOTQrGIfPWS0vsTFnWDEDXsXrpDmb4TU1U61W+H
+	0wKzw7E59jHzRtVzGnjFA88cBsF3j7hmW6Iy8iwaKRcATnA==
+X-Google-Smtp-Source: AGHT+IEYdV+mC0ydH3lbVnFmw0ed+n4LOkJPkSEcQ0a1Sg0R3988YD5TK8HIbJREtBk1QNnuPg8cHA==
+X-Received: by 2002:a05:6a00:399e:b0:748:f8ae:bdd7 with SMTP id d2e1a72fcca58-748f8aebec6mr2589703b3a.9.1750312584961;
+        Wed, 18 Jun 2025 22:56:24 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748f856891bsm1011904b3a.47.2025.06.18.22.56.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Jun 2025 22:56:24 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <145b2916-830b-4654-84e6-3d5c356c6283@roeck-us.net>
+Date: Wed, 18 Jun 2025 22:56:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8676:EE_|GVXPR04MB10151:EE_
-X-MS-Office365-Filtering-Correlation-Id: 61d1894f-0b76-4980-5c6c-08ddaef631e6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CmfLNCv1WhX7PfwawGFYFgVSKs2uE2JM+97wS+9OeQ+c4bBs2Kq6ZC0cuWct?=
- =?us-ascii?Q?amFL+GBJQumLLGbKIdp/4CKbLT3RqdQHSrtjoq/i7pivbVYzFaOFYbnbotIv?=
- =?us-ascii?Q?NvbM9jPwP3b//AJmrgMThTOvuUYdkGTZrx3wcpwjaqjYmqtmCFuUEJJIkbWL?=
- =?us-ascii?Q?LhBEdY24hcUJpwobonvnKhqZ6040Bm+SPgEaStPcM/Vx7foVck2hnwBb6UdC?=
- =?us-ascii?Q?WsCGKRy3IV/Zne8oVWtf8sfUxq/P7gTmTnI07QUhyc42UUEsQi3LSZiHl6cQ?=
- =?us-ascii?Q?nDc/PBnisxv1KKgFWOkdSkH2o3MOoGbpU95k/fEC9FU0cAHHNYUMQlDxVEcB?=
- =?us-ascii?Q?FwhKcA8IScFo6YlRfmnPdoHeJvlWMfmt8wQpZo9P3w+I2Hn0GQNY10FEOMnC?=
- =?us-ascii?Q?G8qo3F5f8CUJDSk3Uitfd6SVf5wha2txgT3GCYZPPsWw09da50wEfpsKHjFP?=
- =?us-ascii?Q?WNlil2V2tgbkrLrJFldMDPaBEqiLapos1F9Yts3htuUGDH+c7LTIjGWR3ItC?=
- =?us-ascii?Q?w60fORdZOqCJnPlt3rRVUl7jUG4FBD+8U2rl8RD5RX27HWgd+t6Q4xz6tjv/?=
- =?us-ascii?Q?6HCsPfeXbiseMNli41hE78dBGnVj29fxbyh4Ws9zgZBXqv8olVwUSlSNCw3C?=
- =?us-ascii?Q?paW+KdkQ0fMms9XIMkUWyb36viEwYof3lWCeABw3zre/t30PBsngv00A7tep?=
- =?us-ascii?Q?uuyVw2eiadX/60Vh3pYo7EzrLRajzO6mXyICighl5kWNjvB3XzdaH8BfhDUY?=
- =?us-ascii?Q?loEmv2w0gUH/PuWTlflPlrneOC2gZN463nUuoR+dwWi/z/FDg8Kp7XGh0KN9?=
- =?us-ascii?Q?QDIzaeXe0WPiM7YYBG30IqggL9f6NspAtq4GDa0W3/r5kpo85IDfwpp+eY4s?=
- =?us-ascii?Q?/YaJqPuyuGw/XmAWmb+dfBN4aY+C0gCr943HRwjJoA1d4OPpM1qs44hbxjKE?=
- =?us-ascii?Q?0+Iv5h0uX3DKiEDT2LIYM8JkPAIf512ZyDMNxd7IRnIrhtfetx4EAebGYb1n?=
- =?us-ascii?Q?uZozQHaVEoNDiBJbv5jFumfc6DsaDqHV+kYtpExshNhq+dgheNnIoEjW0Sn6?=
- =?us-ascii?Q?Ps153GZXCEd3a0mQTfO9UB4+W8EDRRJgNi3ffr3qlSs92rNMHVuF/XEqf9iU?=
- =?us-ascii?Q?Ln0tGy+RkVpKKQeDVVQBHpplAsBTQq4FRRWiO0SAgVCurzuY+qIe7V6fTcFQ?=
- =?us-ascii?Q?+u5gklVnOBZ4v5GYmKOM5wSRFaqNeT2Jad7bUebslhE42r5y4HL7Yp3o+VWd?=
- =?us-ascii?Q?vWf6WXVwNmUK621KmPTbDPc6Zo8/mTU0NtacXx7Fo+BQWkD/M4dD8IrMJKbv?=
- =?us-ascii?Q?QjKyotGF5iUaukI4znq9GHDq7LrDnXtf6x+8DbtR2UX7GhPYpwcQRdW9+zAy?=
- =?us-ascii?Q?24hFJWGoWiHkFDsH39HOz8CO5cMW70t7avYL3JZ0DZSt9kX2+tlE1sjyl1CD?=
- =?us-ascii?Q?PmlkhWZ/Zy1PdW/z+zJnntyoHBhI+OjoC5tF3g2sfBA3ayUsb2tBDFRHcu1f?=
- =?us-ascii?Q?2GHkSm6YXClxgoU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8676.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+A5JI1CPLZjB8xUcjrggUFCV8aUK8DbIHeinJZ+FyFsSlJJfCeO8GExPucD4?=
- =?us-ascii?Q?t3IZPUnF0LMzFsUPPNFOnkU8yC8AVJVmLkIdoxf2CW1Z8AhkwjwEv/UzpTiH?=
- =?us-ascii?Q?Tz1Aioo5H4OoubZVNfeN/MzpGoxTEJMtaHUOYLq011DGDBRXDLnoitzuKpRy?=
- =?us-ascii?Q?0RvCULdvHa139nViz8QXiLA9AUkXFe0KODILEx5uDz62M6FGrHs/XbYwSbec?=
- =?us-ascii?Q?JtDkrDAPW4UkzdBpRimRY3Ul8uYvtLdV6xLLfijKhH9xESb5uyB0vSwM6qi1?=
- =?us-ascii?Q?CMQRVEUrwsaJ0T9oEynHgYy1vh6OSMXtpIN1/ztrzRojw/AMHagzWEZ1IAWF?=
- =?us-ascii?Q?eEBTtmWRIvlBWoMiXqjZjfFLpSx8axyrjZFCjCrF1TsWqNQAMLaK3Hz6yLef?=
- =?us-ascii?Q?a2AH88jghOo39vJGc4DIPl/807NKQ8EKJc3WQPszc0BxG87Ain20PdA2pWY/?=
- =?us-ascii?Q?Lts3B15sxxPt2MPage0aoumAbkH6G321LYtLahMw0/ZDLSoFCwQEkbNYktbF?=
- =?us-ascii?Q?vOJxXSjA0c9dCk0jh4fG+5WLM223uCUFFeQLffQrjuFXggI86tN+WG8kiHv5?=
- =?us-ascii?Q?3emULIBFqCYsgvauTqEn8CN6Ov1BDx4X/4H17I5rErg5DoAg8Sfl1J90OND3?=
- =?us-ascii?Q?SGSNay1+IGt1iSm+jrKVcn78w57UkKcRVHFvCl4xC3cPE6R8CLbjBzsH1cDY?=
- =?us-ascii?Q?o5b9zZoLAsj9VEKDiyD2voZ5VsAywYjH6r+VtjUE9Ub38B3hPjGc5fQhcBFL?=
- =?us-ascii?Q?YTYUjaFBo6+xDEAD1aGRto0Gl0/CKagkF3oYjGX1/bTHJWRa+32/WfNIsy0Z?=
- =?us-ascii?Q?sfO+ljorrD0rtAAXJQIXNqxFyZckY1RZHpsLmf5Dx4qgTe0xxjtcRECxXn63?=
- =?us-ascii?Q?w+qmwqtZp6KIC9jfFr8xCoAHx4Ktk0Nv5Qt+MW3+tbfLkMnHaILgA160xmNw?=
- =?us-ascii?Q?j/FG8f08Y1sK2euHQBQgLBfKBgqciYtaVaMsMflKO4vNkmkpPDbbHTUMk2Su?=
- =?us-ascii?Q?dpUJ3FOYWpwRO0dmDwswqDq3VNrl0MqXzFM56fM4S1nie2B0s+uC5c6IeOLA?=
- =?us-ascii?Q?Ui/zrwNXxFbFbDJDJyRGzoDDJMa17tU0maLctunzqFrRUh+CfK88qfPMotgW?=
- =?us-ascii?Q?zwXU4nhBVOCW8dfCFEaOnbUuZBdT/LnI4hn6yzyPdc795IGN/TCrB4de6JuA?=
- =?us-ascii?Q?u+v9wy1T+8WbffeXBdCfHM1ro0P/aWFxngJ8EdrGeGB14cONIm93xq9/ns/U?=
- =?us-ascii?Q?ALcgnUqi5gAKz1xK13JYGtui/QBP/h7GQdQuTgtMi4ppqu9UKjOCFMkZKjeo?=
- =?us-ascii?Q?yoGD4t8t9iie5/ucpc6cS6UqDcTaVEPd9ODpuZ/mnZQ9KBN0DyieBxZpQDhB?=
- =?us-ascii?Q?fHnD2DfkZqAoWEX53NaBmZk27IGuqQ3P7j8Lu5YWgzU+BgXxI6MLZCLIXEZf?=
- =?us-ascii?Q?Itp4lukq6nG5W1berCGVfvFRvDKBMprq0Qk75C5+1pa7zPlRTjiQjAUz9n7U?=
- =?us-ascii?Q?JMBIS/iqZhZr3VxizUtVhM4Vvsi6dCvgfm6YEs7CvftqbCBLPjxDNaFRzIRb?=
- =?us-ascii?Q?5du/mea3dJJyzbAvvLpWjW8RJPU09QSNIkhDDI6P?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61d1894f-0b76-4980-5c6c-08ddaef631e6
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8676.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2025 05:57:38.1058
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B9Jl4g1cb25OOpIlcyk/49cavvBMDH/HNR9to8Rr9ZGBitud9YYwHf0ccQHxUJR2T+lyvLieugYRtS+i5Pk5pA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10151
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [hwmon?] KMSAN: uninit-value in get_temp_cnct
+To: syzbot <syzbot+3bbbade4e1a7ab45ca3b@syzkaller.appspotmail.com>,
+ jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mail@mariuszachmann.de,
+ syzkaller-bugs@googlegroups.com
+References: <685392a0.050a0220.216029.0168.GAE@google.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <685392a0.050a0220.216029.0168.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The PCI Express reference clock of i.MX9 PCIes might come from external
-clock source. Add the external reference clock mode support.
+On 6/18/25 21:31, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    4774cfe3543a Merge tag 'scsi-fixes' of git://git.kernel.or..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10e3f10c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=61539536677af51c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3bbbade4e1a7ab45ca3b
+> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+> userspace arch: i386
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
 
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
----
- drivers/pci/controller/dwc/pci-imx6.c | 34 ++++++++++++++++++++-------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+It doesn't need one: The problem will be seen if the data returned from the
+power supply is shorter than expected. In the example below, the problem will
+be seen if less than NUM_TEMP_SENSORS+1 data bytes were received.
+One possible fix would be to record the returned data length in ccp_raw_event()
+and to have each caller of send_usb_cmd() check if the returned amount of data
+is sufficient.
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 5a38cfaf989b..04c720377546 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -149,6 +149,7 @@ struct imx_pcie {
- 	struct gpio_desc	*reset_gpiod;
- 	struct clk_bulk_data	*clks;
- 	int			num_clks;
-+	bool			enable_ext_refclk;
- 	struct regmap		*iomuxc_gpr;
- 	u16			msi_ctrl;
- 	u32			controller_id;
-@@ -259,13 +260,24 @@ static int imx95_pcie_init_phy(struct imx_pcie *imx_pcie)
- 			IMX95_PCIE_PHY_CR_PARA_SEL,
- 			IMX95_PCIE_PHY_CR_PARA_SEL);
- 
--	regmap_update_bits(imx_pcie->iomuxc_gpr,
--			   IMX95_PCIE_PHY_GEN_CTRL,
--			   IMX95_PCIE_REF_USE_PAD, 0);
--	regmap_update_bits(imx_pcie->iomuxc_gpr,
--			   IMX95_PCIE_SS_RW_REG_0,
--			   IMX95_PCIE_REF_CLKEN,
--			   IMX95_PCIE_REF_CLKEN);
-+	if (imx_pcie->enable_ext_refclk) {
-+		/* External clock is used as reference clock */
-+		regmap_update_bits(imx_pcie->iomuxc_gpr,
-+				   IMX95_PCIE_PHY_GEN_CTRL,
-+				   IMX95_PCIE_REF_USE_PAD,
-+				   IMX95_PCIE_REF_USE_PAD);
-+		regmap_update_bits(imx_pcie->iomuxc_gpr,
-+				   IMX95_PCIE_SS_RW_REG_0,
-+				   IMX95_PCIE_REF_CLKEN, 0);
-+	} else {
-+		regmap_update_bits(imx_pcie->iomuxc_gpr,
-+				   IMX95_PCIE_PHY_GEN_CTRL,
-+				   IMX95_PCIE_REF_USE_PAD, 0);
-+		regmap_update_bits(imx_pcie->iomuxc_gpr,
-+				   IMX95_PCIE_SS_RW_REG_0,
-+				   IMX95_PCIE_REF_CLKEN,
-+				   IMX95_PCIE_REF_CLKEN);
-+	}
- 
- 	return 0;
- }
-@@ -1600,7 +1612,7 @@ static int imx_pcie_probe(struct platform_device *pdev)
- 	struct imx_pcie *imx_pcie;
- 	struct device_node *np;
- 	struct device_node *node = dev->of_node;
--	int ret, domain;
-+	int i, ret, domain;
- 	u16 val;
- 
- 	imx_pcie = devm_kzalloc(dev, sizeof(*imx_pcie), GFP_KERNEL);
-@@ -1651,6 +1663,12 @@ static int imx_pcie_probe(struct platform_device *pdev)
- 	if (imx_pcie->num_clks < 0)
- 		return dev_err_probe(dev, imx_pcie->num_clks,
- 				     "failed to get clocks\n");
-+	for (i = 0; i < imx_pcie->num_clks; i++) {
-+		if (strncmp(imx_pcie->clks[i].id, "ref", 3) == 0)
-+			imx_pcie->enable_ext_refclk = false;
-+		else
-+			imx_pcie->enable_ext_refclk = true;
-+	}
- 
- 	if (imx_check_flag(imx_pcie, IMX_PCIE_FLAG_HAS_PHYDRV)) {
- 		imx_pcie->phy = devm_phy_get(dev, "pcie-phy");
--- 
-2.37.1
+Guenter
+
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/0cb38ba04f99/disk-4774cfe3.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/ff376a7ba200/vmlinux-4774cfe3.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/570051315dbf/bzImage-4774cfe3.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+3bbbade4e1a7ab45ca3b@syzkaller.appspotmail.com
+> 
+> usb 7-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+> usb 7-1: config 0 descriptor??
+> corsair-cpro 0003:1B1C:0C10.0017: hidraw0: USB HID v4.06 Device [HID 1b1c:0c10] on usb-dummy_hcd.6-1/input0
+> =====================================================
+> BUG: KMSAN: uninit-value in get_temp_cnct+0x1f3/0x3b0 drivers/hwmon/corsair-cpro.c:497
+>   get_temp_cnct+0x1f3/0x3b0 drivers/hwmon/corsair-cpro.c:497
+>   ccp_probe+0x458/0x790 drivers/hwmon/corsair-cpro.c:622
+>   __hid_device_probe drivers/hid/hid-core.c:2724 [inline]
+>   hid_device_probe+0x539/0xab0 drivers/hid/hid-core.c:2761
+>   call_driver_probe drivers/base/dd.c:-1 [inline]
+>   really_probe+0x4d4/0xd90 drivers/base/dd.c:657
+>   __driver_probe_device+0x268/0x380 drivers/base/dd.c:799
+>   driver_probe_device+0x70/0x8b0 drivers/base/dd.c:829
+>   __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:957
+>   bus_for_each_drv+0x3e0/0x680 drivers/base/bus.c:462
+>   __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1029
+>   device_initial_probe+0x33/0x40 drivers/base/dd.c:1078
+>   bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
+>   device_add+0x12a9/0x1c10 drivers/base/core.c:3692
+>   hid_add_device+0x5ed/0x7b0 drivers/hid/hid-core.c:2907
+>   usbhid_probe+0x1fec/0x2660 drivers/hid/usbhid/hid-core.c:1435
+>   usb_probe_interface+0xd04/0x1310 drivers/usb/core/driver.c:396
+>   call_driver_probe drivers/base/dd.c:-1 [inline]
+>   really_probe+0x4d4/0xd90 drivers/base/dd.c:657
+>   __driver_probe_device+0x268/0x380 drivers/base/dd.c:799
+>   driver_probe_device+0x70/0x8b0 drivers/base/dd.c:829
+>   __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:957
+>   bus_for_each_drv+0x3e0/0x680 drivers/base/bus.c:462
+>   __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1029
+>   device_initial_probe+0x33/0x40 drivers/base/dd.c:1078
+>   bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
+>   device_add+0x12a9/0x1c10 drivers/base/core.c:3692
+>   usb_set_configuration+0x3493/0x3b70 drivers/usb/core/message.c:2210
+>   usb_generic_driver_probe+0xfc/0x290 drivers/usb/core/generic.c:250
+>   usb_probe_device+0x38a/0x690 drivers/usb/core/driver.c:291
+>   call_driver_probe drivers/base/dd.c:-1 [inline]
+>   really_probe+0x4d4/0xd90 drivers/base/dd.c:657
+>   __driver_probe_device+0x268/0x380 drivers/base/dd.c:799
+>   driver_probe_device+0x70/0x8b0 drivers/base/dd.c:829
+>   __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:957
+>   bus_for_each_drv+0x3e0/0x680 drivers/base/bus.c:462
+>   __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1029
+>   device_initial_probe+0x33/0x40 drivers/base/dd.c:1078
+>   bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
+>   device_add+0x12a9/0x1c10 drivers/base/core.c:3692
+>   usb_new_device+0x104b/0x20c0 drivers/usb/core/hub.c:2663
+>   hub_port_connect drivers/usb/core/hub.c:5535 [inline]
+>   hub_port_connect_change drivers/usb/core/hub.c:5675 [inline]
+>   port_event drivers/usb/core/hub.c:5835 [inline]
+>   hub_event+0x5588/0x7580 drivers/usb/core/hub.c:5917
+>   process_one_work kernel/workqueue.c:3238 [inline]
+>   process_scheduled_works+0xb91/0x1d80 kernel/workqueue.c:3321
+>   worker_thread+0xedf/0x1590 kernel/workqueue.c:3402
+>   kthread+0xd5c/0xf00 kernel/kthread.c:464
+>   ret_from_fork+0x1e0/0x310 arch/x86/kernel/process.c:148
+>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+> 
+> Uninit was stored to memory at:
+>   get_temp_cnct+0x1ec/0x3b0 drivers/hwmon/corsair-cpro.c:496
+>   ccp_probe+0x458/0x790 drivers/hwmon/corsair-cpro.c:622
+>   __hid_device_probe drivers/hid/hid-core.c:2724 [inline]
+>   hid_device_probe+0x539/0xab0 drivers/hid/hid-core.c:2761
+>   call_driver_probe drivers/base/dd.c:-1 [inline]
+>   really_probe+0x4d4/0xd90 drivers/base/dd.c:657
+>   __driver_probe_device+0x268/0x380 drivers/base/dd.c:799
+>   driver_probe_device+0x70/0x8b0 drivers/base/dd.c:829
+>   __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:957
+>   bus_for_each_drv+0x3e0/0x680 drivers/base/bus.c:462
+>   __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1029
+>   device_initial_probe+0x33/0x40 drivers/base/dd.c:1078
+>   bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
+>   device_add+0x12a9/0x1c10 drivers/base/core.c:3692
+>   hid_add_device+0x5ed/0x7b0 drivers/hid/hid-core.c:2907
+>   usbhid_probe+0x1fec/0x2660 drivers/hid/usbhid/hid-core.c:1435
+>   usb_probe_interface+0xd04/0x1310 drivers/usb/core/driver.c:396
+>   call_driver_probe drivers/base/dd.c:-1 [inline]
+>   really_probe+0x4d4/0xd90 drivers/base/dd.c:657
+>   __driver_probe_device+0x268/0x380 drivers/base/dd.c:799
+>   driver_probe_device+0x70/0x8b0 drivers/base/dd.c:829
+>   __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:957
+>   bus_for_each_drv+0x3e0/0x680 drivers/base/bus.c:462
+>   __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1029
+>   device_initial_probe+0x33/0x40 drivers/base/dd.c:1078
+>   bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
+>   device_add+0x12a9/0x1c10 drivers/base/core.c:3692
+>   usb_set_configuration+0x3493/0x3b70 drivers/usb/core/message.c:2210
+>   usb_generic_driver_probe+0xfc/0x290 drivers/usb/core/generic.c:250
+>   usb_probe_device+0x38a/0x690 drivers/usb/core/driver.c:291
+>   call_driver_probe drivers/base/dd.c:-1 [inline]
+>   really_probe+0x4d4/0xd90 drivers/base/dd.c:657
+>   __driver_probe_device+0x268/0x380 drivers/base/dd.c:799
+>   driver_probe_device+0x70/0x8b0 drivers/base/dd.c:829
+>   __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:957
+>   bus_for_each_drv+0x3e0/0x680 drivers/base/bus.c:462
+>   __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1029
+>   device_initial_probe+0x33/0x40 drivers/base/dd.c:1078
+>   bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
+>   device_add+0x12a9/0x1c10 drivers/base/core.c:3692
+>   usb_new_device+0x104b/0x20c0 drivers/usb/core/hub.c:2663
+>   hub_port_connect drivers/usb/core/hub.c:5535 [inline]
+>   hub_port_connect_change drivers/usb/core/hub.c:5675 [inline]
+>   port_event drivers/usb/core/hub.c:5835 [inline]
+>   hub_event+0x5588/0x7580 drivers/usb/core/hub.c:5917
+>   process_one_work kernel/workqueue.c:3238 [inline]
+>   process_scheduled_works+0xb91/0x1d80 kernel/workqueue.c:3321
+>   worker_thread+0xedf/0x1590 kernel/workqueue.c:3402
+>   kthread+0xd5c/0xf00 kernel/kthread.c:464
+>   ret_from_fork+0x1e0/0x310 arch/x86/kernel/process.c:148
+>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+> 
+> Uninit was created at:
+>   slab_post_alloc_hook mm/slub.c:4154 [inline]
+>   slab_alloc_node mm/slub.c:4197 [inline]
+>   __do_kmalloc_node mm/slub.c:4327 [inline]
+>   __kmalloc_node_track_caller_noprof+0x96d/0x12f0 mm/slub.c:4347
+>   alloc_dr drivers/base/devres.c:119 [inline]
+>   devm_kmalloc+0xd7/0x2f0 drivers/base/devres.c:864
+>   ccp_probe+0x114/0x790 drivers/hwmon/corsair-cpro.c:596
+>   __hid_device_probe drivers/hid/hid-core.c:2724 [inline]
+>   hid_device_probe+0x539/0xab0 drivers/hid/hid-core.c:2761
+>   call_driver_probe drivers/base/dd.c:-1 [inline]
+>   really_probe+0x4d4/0xd90 drivers/base/dd.c:657
+>   __driver_probe_device+0x268/0x380 drivers/base/dd.c:799
+>   driver_probe_device+0x70/0x8b0 drivers/base/dd.c:829
+>   __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:957
+>   bus_for_each_drv+0x3e0/0x680 drivers/base/bus.c:462
+>   __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1029
+>   device_initial_probe+0x33/0x40 drivers/base/dd.c:1078
+>   bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
+>   device_add+0x12a9/0x1c10 drivers/base/core.c:3692
+>   hid_add_device+0x5ed/0x7b0 drivers/hid/hid-core.c:2907
+>   usbhid_probe+0x1fec/0x2660 drivers/hid/usbhid/hid-core.c:1435
+>   usb_probe_interface+0xd04/0x1310 drivers/usb/core/driver.c:396
+>   call_driver_probe drivers/base/dd.c:-1 [inline]
+>   really_probe+0x4d4/0xd90 drivers/base/dd.c:657
+>   __driver_probe_device+0x268/0x380 drivers/base/dd.c:799
+>   driver_probe_device+0x70/0x8b0 drivers/base/dd.c:829
+>   __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:957
+>   bus_for_each_drv+0x3e0/0x680 drivers/base/bus.c:462
+>   __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1029
+>   device_initial_probe+0x33/0x40 drivers/base/dd.c:1078
+>   bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
+>   device_add+0x12a9/0x1c10 drivers/base/core.c:3692
+>   usb_set_configuration+0x3493/0x3b70 drivers/usb/core/message.c:2210
+>   usb_generic_driver_probe+0xfc/0x290 drivers/usb/core/generic.c:250
+>   usb_probe_device+0x38a/0x690 drivers/usb/core/driver.c:291
+>   call_driver_probe drivers/base/dd.c:-1 [inline]
+>   really_probe+0x4d4/0xd90 drivers/base/dd.c:657
+>   __driver_probe_device+0x268/0x380 drivers/base/dd.c:799
+>   driver_probe_device+0x70/0x8b0 drivers/base/dd.c:829
+>   __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:957
+>   bus_for_each_drv+0x3e0/0x680 drivers/base/bus.c:462
+>   __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1029
+>   device_initial_probe+0x33/0x40 drivers/base/dd.c:1078
+>   bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
+>   device_add+0x12a9/0x1c10 drivers/base/core.c:3692
+>   usb_new_device+0x104b/0x20c0 drivers/usb/core/hub.c:2663
+>   hub_port_connect drivers/usb/core/hub.c:5535 [inline]
+>   hub_port_connect_change drivers/usb/core/hub.c:5675 [inline]
+>   port_event drivers/usb/core/hub.c:5835 [inline]
+>   hub_event+0x5588/0x7580 drivers/usb/core/hub.c:5917
+>   process_one_work kernel/workqueue.c:3238 [inline]
+>   process_scheduled_works+0xb91/0x1d80 kernel/workqueue.c:3321
+>   worker_thread+0xedf/0x1590 kernel/workqueue.c:3402
+>   kthread+0xd5c/0xf00 kernel/kthread.c:464
+>   ret_from_fork+0x1e0/0x310 arch/x86/kernel/process.c:148
+>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+> 
+> CPU: 0 UID: 0 PID: 5855 Comm: kworker/0:3 Not tainted 6.16.0-rc1-syzkaller-00203-g4774cfe3543a #0 PREEMPT(undef)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+> Workqueue: usb_hub_wq hub_event
+> =====================================================
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
 
