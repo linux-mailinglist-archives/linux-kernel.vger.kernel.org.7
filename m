@@ -1,115 +1,126 @@
-Return-Path: <linux-kernel+bounces-693667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D061CAE0201
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:48:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B75EAAE0206
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BDE117F76C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:48:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AC101898FB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBECE220F59;
-	Thu, 19 Jun 2025 09:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11ABF221278;
+	Thu, 19 Jun 2025 09:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrdVI+FI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Px1HRRr7"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1B221C161;
-	Thu, 19 Jun 2025 09:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C9C220F57
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 09:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750326483; cv=none; b=IsWItahESNDy+UhyoJY8iMxBhI0Muwkz40t+Sj7Mygy9GguDAT3x9XYnMJN4HrRN2OAixuFy7ebqcu8jSkdTZgXiNv3YMQv3hgXro2qvad/qRspZ3CfnUE1q/WLwmUwQY1uXxYWyGl7B7g0I7UqxekxGLOFQ2uJnrutrz9YiORM=
+	t=1750326560; cv=none; b=CRo5N0zDTADSIZOMcGBH67v3HLMsR8nN7RvuSSoRUUefFoMYd9Klu8MZnh0Z79346skwGq8UU+VlKLfwfZ8TEkkqmQ+HsE1gAM+HMwAFLgJKJRyqbsXqO2vJwPqKln6KMQJSQSemmsyAWI5Ngezhf2YllvmzLE/pcYirCynGStI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750326483; c=relaxed/simple;
-	bh=BV8lbAZGFsql8RhStTAYqOlvNxb6FntQtCUeglMev+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QY4cpKNf9A5KSn4/GimurCL2uab3YFPP7ftpkjJI31DdjITh/uLfsNp50rK9CXaNCBElDdVOn8gnNUOSuea04SeUu+lHXiz8lH7IPCbQYuLjM9jq5z7izuz25YHNfNu9tkFyiQbaDPruk6wTHoj5aIgLCyEP4GLuHnAKJMoOn6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HrdVI+FI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D222C4CEEA;
-	Thu, 19 Jun 2025 09:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750326482;
-	bh=BV8lbAZGFsql8RhStTAYqOlvNxb6FntQtCUeglMev+E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HrdVI+FI1D4PEC+Tw5PdCpKmsaqcKD4Kqdr5VQexXAfrxZZYgLw3a+m8KH3+WIszh
-	 PlULnBBrW9ic8vRVa8zki9RdnaOPB0d2ovN86WJnA/3fRmPfIx/Lx37U5UUvn6+5+R
-	 PtRJf5gN2cPC1aie9/hLnyMwamYdhhw+TrVMuTdfKYk6Tls+/LKFM9sW6uYqCuV/sn
-	 KVRmSXZyKcyXTFsEViWHaC6QkSR/wloKGMssIcRrmVh6fW3d1v42oruZGm0I267Q6r
-	 WZyIAfHx45b2DZAaUAnim3FyWfzqgZXGXoLhSkLKvA5RleuYfUJRmlHyQZDYIn4/TO
-	 sqdqUPQtbietw==
-Date: Thu, 19 Jun 2025 10:47:57 +0100
-From: Lee Jones <lee@kernel.org>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: Werner Sembach <wse@tuxedocomputers.com>, ilpo.jarvinen@linux.intel.com,
-	hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net,
-	cs@tuxedo.de, ggo@tuxedocomputers.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [RFC PATCH 2/3] platform/x86: Add Uniwill laptop driver
-Message-ID: <20250619094757.GB587864@google.com>
-References: <20250615175957.9781-1-W_Armin@gmx.de>
- <20250615175957.9781-3-W_Armin@gmx.de>
- <41de4cd4-2a27-4b14-a1c0-e336a3cec317@tuxedocomputers.com>
- <d645ba09-1820-4473-96bb-8550ed0b0a26@gmx.de>
+	s=arc-20240116; t=1750326560; c=relaxed/simple;
+	bh=oGgNbIXl6T2if3214aOKJS8wjoi+YfhpFcEFUg4nfOg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WnJ1ZjblPoI4uMmZgX7D33+5RjpxwnqZPnPPGWBe/tSE2L3SfWwWJnb1jz7TXwuY7D1GcIo9fN1dEt8k4PewovOkMPHUF1LAimmOZjMp87DqLGaC1dwLkYPcLh93h58vvhTKlL5hvj+ptmsrU/x8/6k5n0tIekMuk48wmtrMELU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Px1HRRr7; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-72bd5f25ea6so187965a34.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 02:49:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750326558; x=1750931358; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QJl6uGqaCbQBaMQQvNPvxbNOxoHo/eT5TsgwXHD3osA=;
+        b=Px1HRRr7V+E1w1EyOWb5RapwyhMHzmqdDJIoawJt6gXpyGlwDH2PMW/sJjTuF6+Mz6
+         rwzNcbgxhVr2LP9HRFuiEzCyHSHpriG9xkBJX4tKpL8dI8N8+5wgYptJC+EwnmIuZZLk
+         qS57Bxxo6P/est1jKh4jJo2zNPU+g2q595w/owrYD8HZlJRJIJX04JoSWKSNE1G3ZZxf
+         WatzMKjhVYkpZ3zrcMMSenPK+9H/1EiZtuS0ls9GumP1qiNF3frZxvvAtXM8BHvrBXr3
+         sTbzJpgN1anQ3OetKCbVQ02ZD7nKvJpjc8uci5ewS3TYDTKeCgFOiGCm3DsDdGsWDcO8
+         g4qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750326558; x=1750931358;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QJl6uGqaCbQBaMQQvNPvxbNOxoHo/eT5TsgwXHD3osA=;
+        b=J7eB+xfIDLrlt274GLT9dWgDZsEX47xm9WRUgBs5zpaILkHaMKiZ/4t6KLknajKzVo
+         e4gZa32LPjpq9SOcjuEaApXZCdxJa+XS7DWfJ6Ib6Uskps7OYffdxQAL7T1Ly8Ts4kky
+         av/49xeQnKHi9wtcebk4Tv0Pc9d1Y8os/aD/14hvf169pXBdkQBOc3oigTrgzFvc/qAP
+         50vySc27jQ9Qv8Vc9YWaaTCYXFg1NhFDQbFNSR0fObqQRp2kdKDqAIFQj8ksVNNAZ7I1
+         6Z8KBtnORo+IcQ8KBc/4h5Xkzeztwig2hZOYLC8065wfhjUpma7KIsUpGhaxrAVSoJyK
+         C1iw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHpoh+Oo0LV177KpBvlvsMsEo4cPgFoUtkR4MTIlOEboBR7KdIoMksCPtamkbnrP6tglgCZ1BXNu2P38s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEAmNZ2ujqLV9Od7ACSJXZZcKKC65GcRmeLrc0UEGH16Qamv3z
+	Z8QBBfT6Bk3yrr0bmIZsXpbP8y8QX9gZvKq3aHk0UUd/nAYdnlgldAyBZ+Q3h71GTbO/J0e/GJ0
+	s7dj5GSs+GM4LD7V+Y3e0GTbredyui98AAQqXY4cn
+X-Gm-Gg: ASbGncs0hjCIQYDClFtN9vXZRHPauhFhoS5OnREZUy9f/LMS2GOQbzHEoBAsH5VkUgM
+	FqNrgPqsebDASQAbfVD7UGo5LoyHy+2ePJEKpOcb+bdt4xpRDmnZfWziXozbZYyaHfmIbRA7l91
+	6J9HwY6O2L/3IMcQxcQAsDRf8cxAQX+GHQWRFSL9L5skn8SFyC4lJriQnJIRBWykXm69djBqrw0
+	A==
+X-Google-Smtp-Source: AGHT+IHPHYRmKnHOsCVbSKhmMIjCUnO2bXpi2Qwr76anVtQSsYyUsTFZp5bLxrDV1U4X7C+0Wvz26zEAZlgrLMDZAdM=
+X-Received: by 2002:a05:6870:568c:b0:2d5:c61f:c2db with SMTP id
+ 586e51a60fabf-2eaf0ba304dmr13059233fac.34.1750326557882; Thu, 19 Jun 2025
+ 02:49:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d645ba09-1820-4473-96bb-8550ed0b0a26@gmx.de>
+References: <20250611194840.877308-1-bqe@google.com> <20250611194840.877308-4-bqe@google.com>
+ <CAH5fLgiMCZuaCSYRDLCpZjaa=EZ=Zaw4y54zDED-7ox9K9++2g@mail.gmail.com>
+In-Reply-To: <CAH5fLgiMCZuaCSYRDLCpZjaa=EZ=Zaw4y54zDED-7ox9K9++2g@mail.gmail.com>
+From: Burak Emir <bqe@google.com>
+Date: Thu, 19 Jun 2025 11:49:06 +0200
+X-Gm-Features: Ac12FXzSuruTt-Nyax2FrVAzCnnuEi5Z5jbM694g7SGeod-KmRRuCItsoAZiTfY
+Message-ID: <CACQBu=UHdyxiqngiqE-5KPVyn4VFmCDapKiy2W27ic46uNO6sw@mail.gmail.com>
+Subject: Re: [PATCH v12 3/5] rust: add bitmap API.
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
+	Carlos LLama <cmllamas@google.com>, Pekka Ristola <pekkarr@protonmail.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 17 Jun 2025, Armin Wolf wrote:
+On Mon, Jun 16, 2025 at 12:49=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> On Wed, Jun 11, 2025 at 9:48=E2=80=AFPM Burak Emir <bqe@google.com> wrote=
+:
+> > +impl core::ops::DerefMut for Bitmap {
+> > +    fn deref_mut(&mut self) -> &mut CBitmap {
+> > +        let ptr =3D if self.nbits <=3D bindings::BITS_PER_LONG as _ {
+> > +            // SAFETY: Bitmap is represented inline.
+> > +            unsafe { core::ptr::addr_of_mut!(self.repr.bitmap) }
+> > +        } else {
+> > +            // SAFETY: Bitmap is represented as array of `unsigned lon=
+g`.
+> > +            unsafe { self.repr.ptr.as_mut() }
+>
+> Nit: You want NonNull::as_mut_ptr() here.
 
-> Am 16.06.25 um 14:46 schrieb Werner Sembach:
-> 
-> > Hi, small additon
-> > 
-> > Am 15.06.25 um 19:59 schrieb Armin Wolf:
-> > > +        functionality.
-> > > +
-> > > +What: /sys/bus/wmi/devices/ABBC0F6F-8EA1-11D1-00A0-C90629100000[-X]/rainbow_animation
-> > > +Date:        Juni 2025
-> > > +KernelVersion:    6.17
-> > > +Contact:    Armin Wolf <W_Armin@gmx.de>
-> > > +Description:
-> > > +        Forces the integrated lightbar to display a rainbow
-> > > animation when the machine
-> > > +        is not suspended. Writing "enable"/"disable" into this file
-> > > enables/disables
-> > > +        this functionality.
-> > > +
-> > > +        Reading this file returns the current status of the rainbow
-> > > animation functionality.
-> > > +
-> > > +What: /sys/bus/wmi/devices/ABBC0F6F-8EA1-11D1-00A0-C90629100000[-X]/breathing_in_suspend
-> > > +Date:        Juni 2025
-> > > +KernelVersion:    6.17
-> > > +Contact:    Armin Wolf <W_Armin@gmx.de>
-> > > +Description:
-> > > +        Causes the integrated lightbar to display a breathing
-> > > animation when the machine
-> > > +        has been suspended and is running on AC power. Writing
-> > > "enable"/"disable" into
-> > > +        this file enables/disables this functionality.
-> > > +
-> > > +        Reading this file returns the current status of the
-> > > breathing animation
-> > > +        functionality.
-> > 
-> > maybe this would be better under the /sys/class/leds/*/ tree if possible
-> 
-> I CCed the LED mailing list so that they can give us advice on which location is the preferred one for new drivers.
+Can you explain? That seems to be an unstable method that exists so
+one can get pointer to slice buffer.
 
-No need to involve the LED subsystem for a hardware function controlled
-by a single register value just because the interface involves an LED.
+The repr.ptr case is NonNull<usize>, not a slice - though "morally",
+it is actually an owned C array.
+Are you suggesting we could/should represent it as a Rust one?
+However, we'd like it to use the C API to free etc.
 
--- 
-Lee Jones [李琼斯]
+Thanks,
+Burak
 
