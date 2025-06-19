@@ -1,111 +1,142 @@
-Return-Path: <linux-kernel+bounces-693142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E732AADFB81
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:53:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A3D4ADFB75
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7F816879A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 02:53:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11E2317CC32
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 02:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC36238173;
-	Thu, 19 Jun 2025 02:53:05 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA69A2367D1;
-	Thu, 19 Jun 2025 02:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21903221F00;
+	Thu, 19 Jun 2025 02:52:16 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C1D221D86
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 02:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750301585; cv=none; b=NqpDnU1L4UAhs1tfjVnMWiI1tHZEO0y6anwXKVATM0ISFfeQ5B85KIEO8U4XeSTUPSUyYa0b8aIzTzcDX0mq/g3uH0G5XyRlrsf4uOxrGBqTi41yKnOxgDQAfioSc10+hrt0NNZZsjiagaeK/AIb73bX+SaFY0rV25whogfN1nU=
+	t=1750301535; cv=none; b=nGX0hVGEx4pWgfQ6p//lpVBX745bWNPC7fDEo81mbC5wx279LpbNeQ7UpdSIi1wJQxcwrxGZlvrhPVDkE70+WScPuuKbYPudFoGs6ATDscnv4vpK/PuxkblzJyb40Anr1kfCUBJ3xNCOLaldKxzQ1cXYxNsVBGI2C1hUkqNwWo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750301585; c=relaxed/simple;
-	bh=MEl+ZIwp0FazqpAfcXcXD6/juBeDei3hND4ow+STUIc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P2JUa0khp7bdbGZdLMdjcBfUH/+MJZSkvMx2RPQM28luie8p4apNQHP384ZAEp7hYUx7X9RgEtlr3Y2djloiAuELBwnDiHWoqgEBZKUAKz672a2c0Hhe7XCGa7hSF/tlRQ/WBgL8zGb6v7ATr+e0jWmJZSWdysdsckMXXcnk8+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.40.54.180])
-	by gateway (Coremail) with SMTP id _____8Axx2mGe1No0o0ZAQ--.24246S3;
-	Thu, 19 Jun 2025 10:52:54 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.40.54.180])
-	by front1 (Coremail) with SMTP id qMiowMAxj8VPe1NoOXYgAQ--.34847S6;
-	Thu, 19 Jun 2025 10:52:44 +0800 (CST)
-From: Qunqin Zhao <zhaoqunqin@loongson.cn>
-To: lee@kernel.org,
-	herbert@gondor.apana.org.au,
-	jarkko@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	davem@davemloft.net,
-	linux-crypto@vger.kernel.org,
-	peterhuewe@gmx.de,
-	jgg@ziepe.ca,
-	linux-integrity@vger.kernel.org,
-	Qunqin Zhao <zhaoqunqin@loongson.cn>
-Subject: [PATCH v11 4/4] MAINTAINERS: Add entry for Loongson Security Engine drivers
-Date: Thu, 19 Jun 2025 10:51:38 +0800
-Message-ID: <20250619025138.2854-5-zhaoqunqin@loongson.cn>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250619025138.2854-1-zhaoqunqin@loongson.cn>
-References: <20250619025138.2854-1-zhaoqunqin@loongson.cn>
+	s=arc-20240116; t=1750301535; c=relaxed/simple;
+	bh=iG9AIBOwwJWUK3xkez0l5cZOQg8I/Bo19li6N6S6vP8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=duagVSVTiuzQaBYWF3VOvRQI+8s2a3Q1lEgoLW217d/hRvXx8vIbSB60+rM1qFsxl9wT3WZLbmb0YUn4Ob6pE4Gy6weunXKdmnVC1ZjRC8s30g47fXqN1Wmx6mPIGcmcJzPd14XxhKGwASOP0By0JFx6FJm3fkoPP8ol3aV3OAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ddd5311fd3so3724085ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 19:52:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750301533; x=1750906333;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8zd4CSvo3YxjL3zyEytOcdXXsWxdDcjY434S3Ja1zW8=;
+        b=ZP41+zCwrg5uAWuguThF06qKRXnEC0tIyphU0O9xCf7Ctqowokh4RBbnFTsNHVEyp0
+         oQY5mdvLedsFHDbWAHtEgmuSHr35LtJBvzbbHX3ijdjnpF4iK0/mTTy/VWo+a+YL+99Q
+         FBhBd+ZbMHIAyxHseLComnPTwS5GC0SPjJ5NEqxj8UbNQyIoG3AM7GuGI5tQ67hkhxIR
+         178+U/YCslWReihdGmq4yN867gqI7GXYTWXkKb9g5VmWnGeCEA/2cm9kjuh0tem9sZPP
+         AVjWnm1I1+6QX6UVn6SdHO27VisERskGqQYsScXZS8CYFity1y4vSq/fwKGAD69OAb8A
+         vZVg==
+X-Gm-Message-State: AOJu0YyAYMx/uqFX+2RPZdAyvnWh3o163IuYlx/mN4An/BOIs5dfECMF
+	3SBWecIfpyFV4VddLWjB9ICHFXCjq6ktVLeKwHNKexYNFfTIzcPAYESvL6dzYXLm6sR7PMfv5DE
+	ub576vX+7cWcoWdaYaZE34HPINsHgWhcfRlsObc4d3Lq4yUtcb7PJCusc7bM=
+X-Google-Smtp-Source: AGHT+IFXQ7c0az38BtkI6HDJC4/uNzTrMn2kYl3Qx5njei15Z/9h+VnNonNd3++HAqi/l3evSSHIeS5AIri9jyuWe+1aZXG4bGK/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxj8VPe1NoOXYgAQ--.34847S6
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrurykWw48uF1rJF18JFW3XFc_yoWfWrX_C3
-	yIq397Wr18JF1xKay8ZFWxAryaqrWfXF18C3ZFqw15Zayqy343ArykAF1xW3W3urW5uFsI
-	qayxGrn7Cr1xZosvyTuYvTs0mTUanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbfkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26rWY6Fy7
-	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
-	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUVWrXDUUUU
+X-Received: by 2002:a05:6e02:180d:b0:3dd:f948:8539 with SMTP id
+ e9e14a558f8ab-3de07c3ef61mr232226795ab.2.1750301533138; Wed, 18 Jun 2025
+ 19:52:13 -0700 (PDT)
+Date: Wed, 18 Jun 2025 19:52:13 -0700
+In-Reply-To: <000000000000dbcd0f061f911231@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68537b5d.050a0220.216029.0147.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [wireless?] WARNING in cfg80211_scan_done
+From: syzbot <syzbot+189dcafc06865d38178d@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-This patch adds an entry for Loongson Security Engine drivers in the
-list of maintainers.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+***
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3ecb44458..23d889bca 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14152,6 +14152,15 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/pwm/loongson,ls7a-pwm.yaml
- F:	drivers/pwm/pwm-loongson.c
+Subject: Re: [syzbot] [wireless?] WARNING in cfg80211_scan_done
+Author: lizhi.xu@windriver.com
+
+#syz test
+
+diff --git a/net/mac80211/scan.c b/net/mac80211/scan.c
+index cd8385ecafd9..7fc1e98abb2c 100644
+--- a/net/mac80211/scan.c
++++ b/net/mac80211/scan.c
+@@ -498,6 +498,8 @@ static void __ieee80211_scan_completed(struct ieee80211_hw *hw, bool aborted)
  
-+LOONGSON SECURITY ENGINE DRIVERS
-+M:	Qunqin Zhao <zhaoqunqin@loongson.cn>
-+L:	linux-crypto@vger.kernel.org
-+S:	Maintained
-+F:	drivers/char/tpm_loongson.c
-+F:	drivers/crypto/loongson/
-+F:	drivers/mfd/loongson-se.c
-+F:	include/linux/mfd/loongson-se.h
-+
- LOONGSON-2 SOC SERIES CLOCK DRIVER
- M:	Yinbo Zhu <zhuyinbo@loongson.cn>
- L:	linux-clk@vger.kernel.org
--- 
-2.45.2
-
+ 	if (scan_req != local->int_scan_req) {
+ 		local->scan_info.aborted = aborted;
++		printk("local: %p, sr: %p, wip: %p, %s\n",
++		local, scan_req, scan_req->wiphy, __func__);
+ 		cfg80211_scan_done(scan_req, &local->scan_info);
+ 	}
+ 
+@@ -1123,6 +1125,8 @@ void ieee80211_scan_work(struct wiphy *wiphy, struct wiphy_work *work)
+ 		/* need to complete scan in cfg80211 */
+ 		rcu_assign_pointer(local->scan_req, scan_req);
+ 		aborted = true;
++		printk("local: %p, sr: %p, wip: %p, %s\n",
++			local, scan_req, scan_req->wiphy, __func__);
+ 		goto out_complete;
+ 	}
+ 
+@@ -1135,6 +1139,8 @@ void ieee80211_scan_work(struct wiphy *wiphy, struct wiphy_work *work)
+ 	do {
+ 		if (!ieee80211_sdata_running(sdata)) {
+ 			aborted = true;
++			printk("2local: %p, sr: %p, wip: %p, %s\n",
++				local, scan_req, scan_req->wiphy, __func__);
+ 			goto out_complete;
+ 		}
+ 
+@@ -1147,6 +1153,8 @@ void ieee80211_scan_work(struct wiphy *wiphy, struct wiphy_work *work)
+ 			/* if no more bands/channels left, complete scan */
+ 			if (local->scan_channel_idx >= scan_req->n_channels) {
+ 				aborted = false;
++				printk("3local: %p, sr: %p, wip: %p, %s\n",
++				local, scan_req, scan_req->wiphy, __func__);
+ 				goto out_complete;
+ 			}
+ 			ieee80211_scan_state_decision(local, &next_delay);
+@@ -1165,6 +1173,8 @@ void ieee80211_scan_work(struct wiphy *wiphy, struct wiphy_work *work)
+ 			break;
+ 		case SCAN_ABORT:
+ 			aborted = true;
++			printk("4local: %p, sr: %p, wip: %p, %s\n",
++			local, scan_req, scan_req->wiphy, __func__);
+ 			goto out_complete;
+ 		}
+ 	} while (next_delay == 0);
+diff --git a/net/wireless/scan.c b/net/wireless/scan.c
+index e8a4fe44ec2d..7c1f80be24bb 100644
+--- a/net/wireless/scan.c
++++ b/net/wireless/scan.c
+@@ -1178,6 +1178,11 @@ void cfg80211_scan_done(struct cfg80211_scan_request *request,
+ 	struct cfg80211_scan_info old_info = request->info;
+ 
+ 	trace_cfg80211_scan_done(request, info);
++	printk("r: %p, wiphy: %p, scan_req: %p, int_scan_req: %p, %s\n",
++		request, request->wiphy,
++		wiphy_to_rdev(request->wiphy)->scan_req,
++		wiphy_to_rdev(request->wiphy)->int_scan_req,
++		__func__);
+ 	WARN_ON(request != wiphy_to_rdev(request->wiphy)->scan_req &&
+ 		request != wiphy_to_rdev(request->wiphy)->int_scan_req);
+ 
 
