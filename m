@@ -1,49 +1,64 @@
-Return-Path: <linux-kernel+bounces-694705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCCC1AE0FBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 00:50:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D6F1AE0FD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 00:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79AC189E2A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 22:50:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38B2C3B85DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 22:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C321C293B46;
-	Thu, 19 Jun 2025 22:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA73928C2B2;
+	Thu, 19 Jun 2025 22:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKAPMSJ+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HFe8RqZe"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219A2290BB4;
-	Thu, 19 Jun 2025 22:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF0125FA13
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 22:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750373396; cv=none; b=JpOYCW2PQHJWLmi2OYf7Q8/kWYwYAmbgqfTZHY+CxkO0oBRF7ui5kDAtfwkci5AGBRjuSDrDEjg8ERRrTF4IDV9+sQfx8bVRDe5lFP0H4iI4V/iKIFk0AJ+p3grTmz7nIMVQOghvepy2O1xWGuHWLdATZkr+vRQOz5ss7fiIyOs=
+	t=1750373851; cv=none; b=AqWv1XTj5XKCwxg/sjHchni043wqD6MGZ8NZQUN4KJdSF1mDTHdhZnLo/3UbaDq4pkypjXAkOr1vmD31jDs+uCNRwjQs9enx6e6J1cu18rHbqMm5g7qkJNmTnWLlUC/QfelNNJDOE2wVxv7qo+h74f7OWhqqX33MWZrHrMcg4k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750373396; c=relaxed/simple;
-	bh=IEl3Qxe9G4aEzvOzD9TPWOAxEI89WxS5C40gmzn3ckM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Lxexd5chvVLX5/KC9fLEYwlvE3iACoLR9K8Ten5TE7j0/KBXXXuYoCu8xqfZLHIYzmYkCWtw+yvpSO9IrP75EjEGNLphBbovcOdVOe7u/M0CusqrfZFacEZC4UPu+8rS6V45DD/jzGjnLJwnnBcqoMa7t8B09bpUVTBRSSAbDbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKAPMSJ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E50A0C4CEFE;
-	Thu, 19 Jun 2025 22:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750373395;
-	bh=IEl3Qxe9G4aEzvOzD9TPWOAxEI89WxS5C40gmzn3ckM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=eKAPMSJ+/ILWNsGYLtmi201BqpyQISe5SReL3J49kOvB2WtfsX2ND1Dc04aLBU/Vk
-	 nb0UJlRgFLm7T2dJ56H+RiQusC1WpXRxyyaTMlCQRIY89Qq7SwOBAvHjACENElXt3F
-	 6hmwAYr4QHGeKHl8lwochHmYr94lDZffdv5dbSvISt0PMmR7v69mKm/f4WnbfDWeO3
-	 Q+NAikNlElK5qSC4dYdntLvpJqH30dTkWe98EREM/Inq4rwNaYr2QoE/pSVfffLU8u
-	 BosberWYzMLYF/0KSRBTpkgwFsSNNf/JTbWSqmJPIekW9ZbqNrdfGBIc7Jkb8o8wos
-	 Y56W7TQ6EhIcA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33CE538111DD;
-	Thu, 19 Jun 2025 22:50:25 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1750373851; c=relaxed/simple;
+	bh=SDXGraCLLAGk5RchBb5Bz0yOpH1nMVaOuCpN4NHd/fg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EVWHZh22VCgDfI7NA69CSLdJOWJVnpch+7L7GW4Zfx1fAs5yyfn1RPWPHW0hAUs5K/wucsi4h1Im7pjRhKt/443mvPGrEI4f4y/r13p5YJ/rrUzAaq4hCdPHlZWAxULG0xfFp4yRnNv3fJYVQoF/770c7R4+Y6oMB4+nmg8mGec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=HFe8RqZe; arc=none smtp.client-ip=192.19.144.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 8A998C00280C;
+	Thu, 19 Jun 2025 15:51:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 8A998C00280C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1750373470;
+	bh=SDXGraCLLAGk5RchBb5Bz0yOpH1nMVaOuCpN4NHd/fg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HFe8RqZebwhXSGwrT22L6BOIA04MBgxQJiluz5EdXFOgbyHu+F/EMVmKTG5DVrhA4
+	 PzjCMmbo28iniqv9qcon3U+eLV/tedLhkxBzUNgOxT/n2soWMgkLhNGMYt96E4Yf7B
+	 91El35cSO8QtaxtxGaXoNby3G5Fa8NKWTJ+XK6SA=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 28CAA18000530;
+	Thu, 19 Jun 2025 15:51:10 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: linux-kernel@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Kieran Bingham <kbingham@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] scripts/gdb: Fix dentry_name() lookup
+Date: Thu, 19 Jun 2025 15:51:05 -0700
+Message-ID: <20250619225105.320729-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,43 +66,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] igc: Make the const read-only array supported_sizes
- static
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175037342399.1010622.16235636667757427783.git-patchwork-notify@kernel.org>
-Date: Thu, 19 Jun 2025 22:50:23 +0000
-References: <20250618135408.1784120-1-colin.i.king@gmail.com>
-In-Reply-To: <20250618135408.1784120-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
+The "d_iname" member was replaced with "d_shortname.string" in the
+commit referenced in the Fixes tag. This prevented the GDB script
+"lx-mount" command to properly function:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+(gdb) lx-mounts
+      mount          super_block     devname pathname fstype options
+0xff11000002d21180 0xff11000002d24800 rootfs / rootfs rw 0 0
+0xff11000002e18a80 0xff11000003713000 /dev/root / ext4 rw,relatime 0 0
+Python Exception <class 'gdb.error'>: There is no member named d_iname.
+Error occurred in Python: There is no member named d_iname.
 
-On Wed, 18 Jun 2025 14:54:08 +0100 you wrote:
-> Don't populate the const read-only array supported_sizes on the
-> stack at run time, instead make it static.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/ethernet/intel/igc/igc_tsn.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Fixes: 58cf9c383c5c ("dcache: back inline names with a struct-wrapped array of unsigned long")
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+---
+ scripts/gdb/linux/vfs.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - igc: Make the const read-only array supported_sizes static
-    https://git.kernel.org/netdev/net-next/c/deb21a6e5b4a
-
-You are awesome, thank you!
+diff --git a/scripts/gdb/linux/vfs.py b/scripts/gdb/linux/vfs.py
+index c77b9ce75f6d..b5fbb18ccb77 100644
+--- a/scripts/gdb/linux/vfs.py
++++ b/scripts/gdb/linux/vfs.py
+@@ -22,7 +22,7 @@ def dentry_name(d):
+     if parent == d or parent == 0:
+         return ""
+     p = dentry_name(d['d_parent']) + "/"
+-    return p + d['d_iname'].string()
++    return p + d['d_shortname']['string'].string()
+ 
+ class DentryName(gdb.Function):
+     """Return string of the full path of a dentry.
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.43.0
 
 
