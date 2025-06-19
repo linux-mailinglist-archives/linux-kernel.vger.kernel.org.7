@@ -1,132 +1,487 @@
-Return-Path: <linux-kernel+bounces-693306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B10ADFD87
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:15:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B005ADFD8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:16:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E2897A813B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:14:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0774A3AB017
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E6C23C4EB;
-	Thu, 19 Jun 2025 06:15:43 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAB4244665;
+	Thu, 19 Jun 2025 06:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="djv9lLzJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973573085A9;
-	Thu, 19 Jun 2025 06:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D09374D1;
+	Thu, 19 Jun 2025 06:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750313743; cv=none; b=eY3c9BYoIECq1gebm8RaNOzjgYVHw+tfRbAhm2oZUmR+Tq1FNPbxQsX2TqnJiC+qOg40tQ6QuNyelBjc+6gJEIqdfXptP1fJCOBg+s4zRd0EDM44mGPXVVdj6HNYzpeW4QIZUv5pDktCpJSwELB1QfgqwFGg1Oc+1/37oL9CkLA=
+	t=1750313789; cv=none; b=Pf1AUUEPCkmD1mLZpUMSmkZAloZCkTy4qVSUcINcsQPBMwA7qbOmtEiegivLWXPQ2AAQB3c3JVGrFSBQO2o99PKZ4PTuN1QRNhesd7DIeQiFFJbzaKoZW+VkWfNAM97e0eKXUiJMf7/jMowlglBcBQVOUdbQ07uuc1S7+Mo01Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750313743; c=relaxed/simple;
-	bh=ByEiA4j+UXW4Q9BDuiOMKbZSr+Mx89lc9MWICsEynCc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bUW658adZs5ZLKR5G9Y+WgOufP8ptUdcJtwTsBojOdbTdA/Z376+36f2c4ugFfXS8fXowUYFpy0PpppPS214z4SRW8mlJqxw+yXeyDF1v2Xqx+v6K3WSZBrydg0JlWuSA12VdyrwA/UkMnUMdLYMlLZCh5gas6CxLqqYsMK2aBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.33.139] (unknown [210.73.43.2])
-	by APP-01 (Coremail) with SMTP id qwCowACHONf6qlNoGg+LBw--.43032S2;
-	Thu, 19 Jun 2025 14:15:23 +0800 (CST)
-Message-ID: <acac9522-fb19-4659-8e1a-544bf75f3864@iscas.ac.cn>
-Date: Thu, 19 Jun 2025 14:15:22 +0800
+	s=arc-20240116; t=1750313789; c=relaxed/simple;
+	bh=S2nJfHuAEgVWMuoP5MIOULxkZy7iA+qQ3cFHZksQqNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OyK6rtx4fo7SbjNQbUW99hRnnz0bir6dl017NaYSk6JpcZ76rFtqdgTZl1hz29ID+RPqRDZtd4DMXhZExqwts6wv2UM4rSisXTf93MhJMwenNiMqJadjRj6EVhSS4sQtbj6W4+eNoQ9fEfTSCVcB/AVmNE96MHl3n+qZajM8gmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=djv9lLzJ; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750313788; x=1781849788;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=S2nJfHuAEgVWMuoP5MIOULxkZy7iA+qQ3cFHZksQqNo=;
+  b=djv9lLzJBnC4T1rUjkpBF9gmG1/BFP3rBx2+CKsbYlZfiI10LVpRUr4r
+   jZnh9uJ+MPQe0i800i/R500wltG4vJXk8/XaMt+5bowikr8Thb9hsfgAn
+   UrMbd4GIMf8czy47XDFNx7kZcOMVI5yQFqiJLSvMbpT7j3Xp1H2bxUx21
+   npscHPyv6SBWdQrY+SSqu0jj7KsNfIn1fJsFNmBcPfuJDP/MdSv4la2rg
+   yvzSSBwoTqpT1x4LnZqwwX60w3gAYwzSG0lgwIX8Md5ZF/z6GVxmpdWZ2
+   j7jxc07qOeUWbFM+ZJZMBq/qC4HLQ6zz+BMB/9Pb7NlGcxn07kiZuM9Df
+   Q==;
+X-CSE-ConnectionGUID: HxV1iWcoSf+TVMS0uGLqyg==
+X-CSE-MsgGUID: Mlh+VcU3SeSlLCVRVBVO3Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52701403"
+X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
+   d="scan'208";a="52701403"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 23:16:27 -0700
+X-CSE-ConnectionGUID: ldkW5VCUQ7aMYWaWZN8i+w==
+X-CSE-MsgGUID: GoYIM3RQTpOnUtUfDen5uw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
+   d="scan'208";a="154769012"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 18 Jun 2025 23:16:20 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uS8ZO-000KSc-1i;
+	Thu, 19 Jun 2025 06:16:18 +0000
+Date: Thu, 19 Jun 2025 14:15:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>,
+	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Frank Binns <frank.binns@imgtec.com>,
+	Matt Coster <matt.coster@imgtec.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v5 8/8] drm/imagination: Enable PowerVR driver for RISC-V
+Message-ID: <202506191323.zD1fszQb-lkp@intel.com>
+References: <20250618-apr_14_for_sending-v5-8-27ed33ea5c6f@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] regulator: spacemit: support SpacemiT P1 regulators
-To: Alex Elder <elder@riscstar.com>, lee@kernel.org, lgirdwood@gmail.com,
- broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, dlan@gentoo.org
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr, troymitchell988@gmail.com, guodong@riscstar.com,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250613210150.1468845-1-elder@riscstar.com>
- <20250613210150.1468845-4-elder@riscstar.com>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <20250613210150.1468845-4-elder@riscstar.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qwCowACHONf6qlNoGg+LBw--.43032S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZF4xXF1xZFWktr1DKr18Grg_yoW8Ww1UpF
-	s0vr9xCr1ktFWrur4xur9Fy3W5W3Z3XasrAry8Jw45W3yDCF1xZr4DtF43ZF1kZrn5Gr12
-	934kuF4xWFnxWrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9qb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwV
-	C2z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4j6F
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
-	xwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE14v_GF1l42xK82IYc2Ij64vIr41l4I8I3I
-	0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
-	GVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI
-	0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0
-	rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJbIYCTnIWIevJa73UjIFyTuYvjxUB1SrDUUUU
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250618-apr_14_for_sending-v5-8-27ed33ea5c6f@samsung.com>
 
-On 6/14/25 05:01, Alex Elder wrote:
-> <snip>
->
-> diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-> index 6d8988387da45..7bb7b8fad24f2 100644
-> --- a/drivers/regulator/Kconfig
-> +++ b/drivers/regulator/Kconfig
-> @@ -1384,6 +1384,15 @@ config REGULATOR_SLG51000
->  	  The SLG51000 is seven compact and customizable low dropout
->  	  regulators.
->  
-> +config REGULATOR_SPACEMIT_P1
-> +	tristate "SpacemiT P1 regulators"
-> +	depends on ARCH_SPACEMIT || COMPILE_TEST
-> +	default ARCH_SPACEMIT
-> +	help
-> +	  Enable support for regulators implemented by the SpacemiT P1
-> +	  power controller.  The P1 implements 6 high-efficiency buck
-> +	  converters and 12 programmable LDO regulators.
-Needs module name in help text, as is the case with spacemit-pmic.
-> +
->  config REGULATOR_STM32_BOOSTER
->  	tristate "STMicroelectronics STM32 BOOSTER"
->  	depends on ARCH_STM32 || COMPILE_TEST
->
-> <snip>
->
-> +static struct platform_driver p1_regulator_driver = {
-> +	.probe = p1_regulator_probe,
-> +	.driver = {
-> +		.name = "spacemit-p1-regulator",
-> +	},
-> +};
-> +
-> +module_platform_driver(p1_regulator_driver);
-> +
-> +MODULE_DESCRIPTION("SpacemiT P1 regulator driver");
-> +MODULE_LICENSE("GPL");
+Hi Michal,
 
-If this driver is compiled as a module, it needs to be found by modalias
-so the driver auto-loads after spacemit-pmic registers the regulator
-device, so you need:
+kernel test robot noticed the following build errors:
 
-+MODULE_ALIAS("platform:spacemit-p1-regulator");
+[auto build test ERROR on 4774cfe3543abb8ee98089f535e28ebfd45b975a]
 
-Also, consider extracting the name to a macro:
+url:    https://github.com/intel-lab-lkp/linux/commits/Michal-Wilczynski/power-sequencing-Add-T-HEAD-TH1520-GPU-power-sequencer-driver/20250618-182429
+base:   4774cfe3543abb8ee98089f535e28ebfd45b975a
+patch link:    https://lore.kernel.org/r/20250618-apr_14_for_sending-v5-8-27ed33ea5c6f%40samsung.com
+patch subject: [PATCH v5 8/8] drm/imagination: Enable PowerVR driver for RISC-V
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250619/202506191323.zD1fszQb-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250619/202506191323.zD1fszQb-lkp@intel.com/reproduce)
 
-#define DRV_NAME "spacemit-p1-regulator"
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506191323.zD1fszQb-lkp@intel.com/
 
-Also, consider naming this consistently: "spacemit-p1", or
-"spacemit-p1-regulator"?
+All error/warnings (new ones prefixed by >>):
 
-Regards,
-Vivian "dramforever" Wang
+   In file included from drivers/gpu/drm/imagination/pvr_ccb.c:5:
+   drivers/gpu/drm/imagination/pvr_device.h: In function 'pvr_cr_read64':
+   drivers/gpu/drm/imagination/pvr_device.h:580:16: error: implicit declaration of function 'ioread64'; did you mean 'ioread32'? [-Werror=implicit-function-declaration]
+     580 |         return ioread64(pvr_dev->regs + reg);
+         |                ^~~~~~~~
+         |                ioread32
+   drivers/gpu/drm/imagination/pvr_device.h: In function 'pvr_cr_write64':
+   drivers/gpu/drm/imagination/pvr_device.h:604:9: error: implicit declaration of function 'iowrite64'; did you mean 'iowrite32'? [-Werror=implicit-function-declaration]
+     604 |         iowrite64(val, pvr_dev->regs + reg);
+         |         ^~~~~~~~~
+         |         iowrite32
+   In file included from drivers/gpu/drm/imagination/pvr_device.h:23:
+   drivers/gpu/drm/imagination/pvr_device.h: In function 'pvr_cr_poll_reg64':
+>> include/linux/iopoll.h:176:28: error: implicit declaration of function 'readq'; did you mean 'readl'? [-Werror=implicit-function-declaration]
+     176 |         readx_poll_timeout(readq, addr, val, cond, delay_us, timeout_us)
+         |                            ^~~~~
+   include/linux/iopoll.h:46:25: note: in definition of macro 'read_poll_timeout'
+      46 |                 (val) = op(args); \
+         |                         ^~
+   include/linux/iopoll.h:176:9: note: in expansion of macro 'readx_poll_timeout'
+     176 |         readx_poll_timeout(readq, addr, val, cond, delay_us, timeout_us)
+         |         ^~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/imagination/pvr_device.h:649:16: note: in expansion of macro 'readq_poll_timeout'
+     649 |         return readq_poll_timeout(pvr_dev->regs + reg_addr, value,
+         |                ^~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+--
+   In file included from drivers/gpu/drm/imagination/pvr_context.h:17,
+                    from drivers/gpu/drm/imagination/pvr_drv.c:4:
+   drivers/gpu/drm/imagination/pvr_device.h: In function 'pvr_cr_read64':
+   drivers/gpu/drm/imagination/pvr_device.h:580:16: error: implicit declaration of function 'ioread64'; did you mean 'ioread32'? [-Werror=implicit-function-declaration]
+     580 |         return ioread64(pvr_dev->regs + reg);
+         |                ^~~~~~~~
+         |                ioread32
+   drivers/gpu/drm/imagination/pvr_device.h: In function 'pvr_cr_write64':
+   drivers/gpu/drm/imagination/pvr_device.h:604:9: error: implicit declaration of function 'iowrite64'; did you mean 'iowrite32'? [-Werror=implicit-function-declaration]
+     604 |         iowrite64(val, pvr_dev->regs + reg);
+         |         ^~~~~~~~~
+         |         iowrite32
+   In file included from drivers/gpu/drm/imagination/pvr_device.h:23:
+   drivers/gpu/drm/imagination/pvr_device.h: In function 'pvr_cr_poll_reg64':
+>> include/linux/iopoll.h:176:28: error: implicit declaration of function 'readq'; did you mean 'readl'? [-Werror=implicit-function-declaration]
+     176 |         readx_poll_timeout(readq, addr, val, cond, delay_us, timeout_us)
+         |                            ^~~~~
+   include/linux/iopoll.h:46:25: note: in definition of macro 'read_poll_timeout'
+      46 |                 (val) = op(args); \
+         |                         ^~
+   include/linux/iopoll.h:176:9: note: in expansion of macro 'readx_poll_timeout'
+     176 |         readx_poll_timeout(readq, addr, val, cond, delay_us, timeout_us)
+         |         ^~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/imagination/pvr_device.h:649:16: note: in expansion of macro 'readq_poll_timeout'
+     649 |         return readq_poll_timeout(pvr_dev->regs + reg_addr, value,
+         |                ^~~~~~~~~~~~~~~~~~
+   In file included from include/linux/init.h:5,
+                    from include/linux/printk.h:6,
+                    from include/asm-generic/bug.h:22,
+                    from arch/x86/include/asm/bug.h:103,
+                    from arch/x86/include/asm/alternative.h:9,
+                    from arch/x86/include/asm/atomic.h:7,
+                    from include/linux/atomic.h:7,
+                    from include/drm/spsc_queue.h:27,
+                    from include/drm/gpu_scheduler.h:27,
+                    from drivers/gpu/drm/imagination/pvr_context.h:7:
+   drivers/gpu/drm/imagination/pvr_rogue_fwif_client_check.h: At top level:
+>> include/linux/build_bug.h:78:41: error: static assertion failed: "offsetof(struct rogue_fwif_cmd_compute, regs) incorrect"
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                         ^~~~~~~~~~~~~~
+   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                  ^~~~~~~~~~~~~~~
+   drivers/gpu/drm/imagination/pvr_rogue_fwif_client_check.h:10:9: note: in expansion of macro 'static_assert'
+      10 |         static_assert(offsetof(type, member) == (offset), \
+         |         ^~~~~~~~~~~~~
+   drivers/gpu/drm/imagination/pvr_rogue_fwif_client_check.h:97:1: note: in expansion of macro 'OFFSET_CHECK'
+      97 | OFFSET_CHECK(struct rogue_fwif_cmd_compute, regs, 8);
+         | ^~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+--
+   In file included from include/linux/bits.h:32,
+                    from drivers/gpu/drm/imagination/pvr_rogue_fwif_client.h:7,
+                    from drivers/gpu/drm/imagination/pvr_stream_defs.c:5:
+>> include/linux/build_bug.h:78:41: error: static assertion failed: "offsetof(struct rogue_fwif_cmd_compute, regs) incorrect"
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                         ^~~~~~~~~~~~~~
+   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                  ^~~~~~~~~~~~~~~
+   drivers/gpu/drm/imagination/pvr_rogue_fwif_client_check.h:10:9: note: in expansion of macro 'static_assert'
+      10 |         static_assert(offsetof(type, member) == (offset), \
+         |         ^~~~~~~~~~~~~
+   drivers/gpu/drm/imagination/pvr_rogue_fwif_client_check.h:97:1: note: in expansion of macro 'OFFSET_CHECK'
+      97 | OFFSET_CHECK(struct rogue_fwif_cmd_compute, regs, 8);
+         | ^~~~~~~~~~~~
+--
+   In file included from drivers/gpu/drm/imagination/pvr_vm.c:6:
+   drivers/gpu/drm/imagination/pvr_device.h: In function 'pvr_cr_read64':
+   drivers/gpu/drm/imagination/pvr_device.h:580:16: error: implicit declaration of function 'ioread64'; did you mean 'ioread32'? [-Werror=implicit-function-declaration]
+     580 |         return ioread64(pvr_dev->regs + reg);
+         |                ^~~~~~~~
+         |                ioread32
+   drivers/gpu/drm/imagination/pvr_device.h: In function 'pvr_cr_write64':
+   drivers/gpu/drm/imagination/pvr_device.h:604:9: error: implicit declaration of function 'iowrite64'; did you mean 'iowrite32'? [-Werror=implicit-function-declaration]
+     604 |         iowrite64(val, pvr_dev->regs + reg);
+         |         ^~~~~~~~~
+         |         iowrite32
+   In file included from drivers/gpu/drm/imagination/pvr_device.h:23:
+   drivers/gpu/drm/imagination/pvr_device.h: In function 'pvr_cr_poll_reg64':
+>> include/linux/iopoll.h:176:28: error: implicit declaration of function 'readq'; did you mean 'readl'? [-Werror=implicit-function-declaration]
+     176 |         readx_poll_timeout(readq, addr, val, cond, delay_us, timeout_us)
+         |                            ^~~~~
+   include/linux/iopoll.h:46:25: note: in definition of macro 'read_poll_timeout'
+      46 |                 (val) = op(args); \
+         |                         ^~
+   include/linux/iopoll.h:176:9: note: in expansion of macro 'readx_poll_timeout'
+     176 |         readx_poll_timeout(readq, addr, val, cond, delay_us, timeout_us)
+         |         ^~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/imagination/pvr_device.h:649:16: note: in expansion of macro 'readq_poll_timeout'
+     649 |         return readq_poll_timeout(pvr_dev->regs + reg_addr, value,
+         |                ^~~~~~~~~~~~~~~~~~
+   In file included from include/linux/bitops.h:67,
+                    from include/linux/kernel.h:23,
+                    from drivers/gpu/drm/imagination/pvr_rogue_fwif.h:10,
+                    from drivers/gpu/drm/imagination/pvr_ccb.h:7,
+                    from drivers/gpu/drm/imagination/pvr_device.h:7:
+   drivers/gpu/drm/imagination/pvr_vm.c: In function 'pvr_vm_create_context':
+>> include/uapi/linux/const.h:20:25: warning: conversion from 'long long unsigned int' to 'long unsigned int' changes value from '1099511627776' to '0' [-Woverflow]
+      20 | #define __AC(X,Y)       (X##Y)
+         |                         ^~~~~~
+   arch/x86/include/asm/bitops.h:265:40: note: in definition of macro '__ffs'
+     265 |          (unsigned long)__builtin_ctzl(word) :  \
+         |                                        ^~~~
+   include/uapi/linux/const.h:21:25: note: in expansion of macro '__AC'
+      21 | #define _AC(X,Y)        __AC(X,Y)
+         |                         ^~~~
+   include/linux/sizes.h:63:41: note: in expansion of macro '_AC'
+      63 | #define SZ_1T                           _AC(0x10000000000, ULL)
+         |                                         ^~~
+   drivers/gpu/drm/imagination/pvr_mmu.h:87:40: note: in expansion of macro 'SZ_1T'
+      87 | #define PVR_PAGE_TABLE_ADDR_SPACE_SIZE SZ_1T
+         |                                        ^~~~~
+   drivers/gpu/drm/imagination/pvr_mmu.h:88:40: note: in expansion of macro 'PVR_PAGE_TABLE_ADDR_SPACE_SIZE'
+      88 | #define PVR_PAGE_TABLE_ADDR_BITS __ffs(PVR_PAGE_TABLE_ADDR_SPACE_SIZE)
+         |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/imagination/pvr_vm.c:556:33: note: in expansion of macro 'PVR_PAGE_TABLE_ADDR_BITS'
+     556 |         if (device_addr_bits != PVR_PAGE_TABLE_ADDR_BITS) {
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+--
+   In file included from pvr_ccb.c:5:
+   pvr_device.h: In function 'pvr_cr_read64':
+   pvr_device.h:580:16: error: implicit declaration of function 'ioread64'; did you mean 'ioread32'? [-Werror=implicit-function-declaration]
+     580 |         return ioread64(pvr_dev->regs + reg);
+         |                ^~~~~~~~
+         |                ioread32
+   pvr_device.h: In function 'pvr_cr_write64':
+   pvr_device.h:604:9: error: implicit declaration of function 'iowrite64'; did you mean 'iowrite32'? [-Werror=implicit-function-declaration]
+     604 |         iowrite64(val, pvr_dev->regs + reg);
+         |         ^~~~~~~~~
+         |         iowrite32
+   In file included from pvr_device.h:23:
+   pvr_device.h: In function 'pvr_cr_poll_reg64':
+>> include/linux/iopoll.h:176:28: error: implicit declaration of function 'readq'; did you mean 'readl'? [-Werror=implicit-function-declaration]
+     176 |         readx_poll_timeout(readq, addr, val, cond, delay_us, timeout_us)
+         |                            ^~~~~
+   include/linux/iopoll.h:46:25: note: in definition of macro 'read_poll_timeout'
+      46 |                 (val) = op(args); \
+         |                         ^~
+   include/linux/iopoll.h:176:9: note: in expansion of macro 'readx_poll_timeout'
+     176 |         readx_poll_timeout(readq, addr, val, cond, delay_us, timeout_us)
+         |         ^~~~~~~~~~~~~~~~~~
+   pvr_device.h:649:16: note: in expansion of macro 'readq_poll_timeout'
+     649 |         return readq_poll_timeout(pvr_dev->regs + reg_addr, value,
+         |                ^~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+--
+   In file included from pvr_context.h:17,
+                    from pvr_drv.c:4:
+   pvr_device.h: In function 'pvr_cr_read64':
+   pvr_device.h:580:16: error: implicit declaration of function 'ioread64'; did you mean 'ioread32'? [-Werror=implicit-function-declaration]
+     580 |         return ioread64(pvr_dev->regs + reg);
+         |                ^~~~~~~~
+         |                ioread32
+   pvr_device.h: In function 'pvr_cr_write64':
+   pvr_device.h:604:9: error: implicit declaration of function 'iowrite64'; did you mean 'iowrite32'? [-Werror=implicit-function-declaration]
+     604 |         iowrite64(val, pvr_dev->regs + reg);
+         |         ^~~~~~~~~
+         |         iowrite32
+   In file included from pvr_device.h:23:
+   pvr_device.h: In function 'pvr_cr_poll_reg64':
+>> include/linux/iopoll.h:176:28: error: implicit declaration of function 'readq'; did you mean 'readl'? [-Werror=implicit-function-declaration]
+     176 |         readx_poll_timeout(readq, addr, val, cond, delay_us, timeout_us)
+         |                            ^~~~~
+   include/linux/iopoll.h:46:25: note: in definition of macro 'read_poll_timeout'
+      46 |                 (val) = op(args); \
+         |                         ^~
+   include/linux/iopoll.h:176:9: note: in expansion of macro 'readx_poll_timeout'
+     176 |         readx_poll_timeout(readq, addr, val, cond, delay_us, timeout_us)
+         |         ^~~~~~~~~~~~~~~~~~
+   pvr_device.h:649:16: note: in expansion of macro 'readq_poll_timeout'
+     649 |         return readq_poll_timeout(pvr_dev->regs + reg_addr, value,
+         |                ^~~~~~~~~~~~~~~~~~
+   In file included from include/linux/init.h:5,
+                    from include/linux/printk.h:6,
+                    from include/asm-generic/bug.h:22,
+                    from arch/x86/include/asm/bug.h:103,
+                    from arch/x86/include/asm/alternative.h:9,
+                    from arch/x86/include/asm/atomic.h:7,
+                    from include/linux/atomic.h:7,
+                    from include/drm/spsc_queue.h:27,
+                    from include/drm/gpu_scheduler.h:27,
+                    from pvr_context.h:7:
+   pvr_rogue_fwif_client_check.h: At top level:
+>> include/linux/build_bug.h:78:41: error: static assertion failed: "offsetof(struct rogue_fwif_cmd_compute, regs) incorrect"
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                         ^~~~~~~~~~~~~~
+   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                  ^~~~~~~~~~~~~~~
+   pvr_rogue_fwif_client_check.h:10:9: note: in expansion of macro 'static_assert'
+      10 |         static_assert(offsetof(type, member) == (offset), \
+         |         ^~~~~~~~~~~~~
+   pvr_rogue_fwif_client_check.h:97:1: note: in expansion of macro 'OFFSET_CHECK'
+      97 | OFFSET_CHECK(struct rogue_fwif_cmd_compute, regs, 8);
+         | ^~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+--
+   In file included from include/linux/bits.h:32,
+                    from pvr_rogue_fwif_client.h:7,
+                    from pvr_stream_defs.c:5:
+>> include/linux/build_bug.h:78:41: error: static assertion failed: "offsetof(struct rogue_fwif_cmd_compute, regs) incorrect"
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                         ^~~~~~~~~~~~~~
+   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                  ^~~~~~~~~~~~~~~
+   pvr_rogue_fwif_client_check.h:10:9: note: in expansion of macro 'static_assert'
+      10 |         static_assert(offsetof(type, member) == (offset), \
+         |         ^~~~~~~~~~~~~
+   pvr_rogue_fwif_client_check.h:97:1: note: in expansion of macro 'OFFSET_CHECK'
+      97 | OFFSET_CHECK(struct rogue_fwif_cmd_compute, regs, 8);
+         | ^~~~~~~~~~~~
+--
+   In file included from pvr_vm.c:6:
+   pvr_device.h: In function 'pvr_cr_read64':
+   pvr_device.h:580:16: error: implicit declaration of function 'ioread64'; did you mean 'ioread32'? [-Werror=implicit-function-declaration]
+     580 |         return ioread64(pvr_dev->regs + reg);
+         |                ^~~~~~~~
+         |                ioread32
+   pvr_device.h: In function 'pvr_cr_write64':
+   pvr_device.h:604:9: error: implicit declaration of function 'iowrite64'; did you mean 'iowrite32'? [-Werror=implicit-function-declaration]
+     604 |         iowrite64(val, pvr_dev->regs + reg);
+         |         ^~~~~~~~~
+         |         iowrite32
+   In file included from pvr_device.h:23:
+   pvr_device.h: In function 'pvr_cr_poll_reg64':
+>> include/linux/iopoll.h:176:28: error: implicit declaration of function 'readq'; did you mean 'readl'? [-Werror=implicit-function-declaration]
+     176 |         readx_poll_timeout(readq, addr, val, cond, delay_us, timeout_us)
+         |                            ^~~~~
+   include/linux/iopoll.h:46:25: note: in definition of macro 'read_poll_timeout'
+      46 |                 (val) = op(args); \
+         |                         ^~
+   include/linux/iopoll.h:176:9: note: in expansion of macro 'readx_poll_timeout'
+     176 |         readx_poll_timeout(readq, addr, val, cond, delay_us, timeout_us)
+         |         ^~~~~~~~~~~~~~~~~~
+   pvr_device.h:649:16: note: in expansion of macro 'readq_poll_timeout'
+     649 |         return readq_poll_timeout(pvr_dev->regs + reg_addr, value,
+         |                ^~~~~~~~~~~~~~~~~~
+   In file included from include/linux/bitops.h:67,
+                    from include/linux/kernel.h:23,
+                    from pvr_rogue_fwif.h:10,
+                    from pvr_ccb.h:7,
+                    from pvr_device.h:7:
+   pvr_vm.c: In function 'pvr_vm_create_context':
+>> include/uapi/linux/const.h:20:25: warning: conversion from 'long long unsigned int' to 'long unsigned int' changes value from '1099511627776' to '0' [-Woverflow]
+      20 | #define __AC(X,Y)       (X##Y)
+         |                         ^~~~~~
+   arch/x86/include/asm/bitops.h:265:40: note: in definition of macro '__ffs'
+     265 |          (unsigned long)__builtin_ctzl(word) :  \
+         |                                        ^~~~
+   include/uapi/linux/const.h:21:25: note: in expansion of macro '__AC'
+      21 | #define _AC(X,Y)        __AC(X,Y)
+         |                         ^~~~
+   include/linux/sizes.h:63:41: note: in expansion of macro '_AC'
+      63 | #define SZ_1T                           _AC(0x10000000000, ULL)
+         |                                         ^~~
+   pvr_mmu.h:87:40: note: in expansion of macro 'SZ_1T'
+      87 | #define PVR_PAGE_TABLE_ADDR_SPACE_SIZE SZ_1T
+         |                                        ^~~~~
+   pvr_mmu.h:88:40: note: in expansion of macro 'PVR_PAGE_TABLE_ADDR_SPACE_SIZE'
+      88 | #define PVR_PAGE_TABLE_ADDR_BITS __ffs(PVR_PAGE_TABLE_ADDR_SPACE_SIZE)
+         |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   pvr_vm.c:556:33: note: in expansion of macro 'PVR_PAGE_TABLE_ADDR_BITS'
+     556 |         if (device_addr_bits != PVR_PAGE_TABLE_ADDR_BITS) {
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
+
+vim +176 include/linux/iopoll.h
+
+57a29df341466b Kai-Heng Feng      2020-04-25  115  
+54c523127bcca9 Matt Wagantall     2014-12-15  116  /**
+54c523127bcca9 Matt Wagantall     2014-12-15  117   * readx_poll_timeout - Periodically poll an address until a condition is met or a timeout occurs
+54c523127bcca9 Matt Wagantall     2014-12-15  118   * @op: accessor function (takes @addr as its only argument)
+54c523127bcca9 Matt Wagantall     2014-12-15  119   * @addr: Address to poll
+54c523127bcca9 Matt Wagantall     2014-12-15  120   * @val: Variable to read the value into
+54c523127bcca9 Matt Wagantall     2014-12-15  121   * @cond: Break condition (usually involving @val)
+89124747f096fc Anna-Maria Behnsen 2024-10-14  122   * @sleep_us: Maximum time to sleep between reads in us (0 tight-loops). Please
+89124747f096fc Anna-Maria Behnsen 2024-10-14  123   *            read usleep_range() function description for details and
+89124747f096fc Anna-Maria Behnsen 2024-10-14  124   *            limitations.
+54c523127bcca9 Matt Wagantall     2014-12-15  125   * @timeout_us: Timeout in us, 0 means never timeout
+54c523127bcca9 Matt Wagantall     2014-12-15  126   *
+54c523127bcca9 Matt Wagantall     2014-12-15  127   * When available, you'll probably want to use one of the specialized
+54c523127bcca9 Matt Wagantall     2014-12-15  128   * macros defined below rather than this macro directly.
+89124747f096fc Anna-Maria Behnsen 2024-10-14  129   *
+89124747f096fc Anna-Maria Behnsen 2024-10-14  130   * Returns: 0 on success and -ETIMEDOUT upon a timeout. In either
+89124747f096fc Anna-Maria Behnsen 2024-10-14  131   * case, the last read value at @addr is stored in @val. Must not
+89124747f096fc Anna-Maria Behnsen 2024-10-14  132   * be called from atomic context if sleep_us or timeout_us are used.
+54c523127bcca9 Matt Wagantall     2014-12-15  133   */
+54c523127bcca9 Matt Wagantall     2014-12-15  134  #define readx_poll_timeout(op, addr, val, cond, sleep_us, timeout_us)	\
+eaa6b01024a74a Dejin Zheng        2020-03-23  135  	read_poll_timeout(op, val, cond, sleep_us, timeout_us, false, addr)
+54c523127bcca9 Matt Wagantall     2014-12-15  136  
+54c523127bcca9 Matt Wagantall     2014-12-15  137  /**
+54c523127bcca9 Matt Wagantall     2014-12-15  138   * readx_poll_timeout_atomic - Periodically poll an address until a condition is met or a timeout occurs
+54c523127bcca9 Matt Wagantall     2014-12-15  139   * @op: accessor function (takes @addr as its only argument)
+54c523127bcca9 Matt Wagantall     2014-12-15  140   * @addr: Address to poll
+54c523127bcca9 Matt Wagantall     2014-12-15  141   * @val: Variable to read the value into
+54c523127bcca9 Matt Wagantall     2014-12-15  142   * @cond: Break condition (usually involving @val)
+89124747f096fc Anna-Maria Behnsen 2024-10-14  143   * @delay_us: Time to udelay between reads in us (0 tight-loops). Please
+89124747f096fc Anna-Maria Behnsen 2024-10-14  144   *            read udelay() function description for details and
+89124747f096fc Anna-Maria Behnsen 2024-10-14  145   *            limitations.
+54c523127bcca9 Matt Wagantall     2014-12-15  146   * @timeout_us: Timeout in us, 0 means never timeout
+54c523127bcca9 Matt Wagantall     2014-12-15  147   *
+54c523127bcca9 Matt Wagantall     2014-12-15  148   * When available, you'll probably want to use one of the specialized
+54c523127bcca9 Matt Wagantall     2014-12-15  149   * macros defined below rather than this macro directly.
+89124747f096fc Anna-Maria Behnsen 2024-10-14  150   *
+89124747f096fc Anna-Maria Behnsen 2024-10-14  151   * Returns: 0 on success and -ETIMEDOUT upon a timeout. In either
+89124747f096fc Anna-Maria Behnsen 2024-10-14  152   * case, the last read value at @addr is stored in @val.
+54c523127bcca9 Matt Wagantall     2014-12-15  153   */
+54c523127bcca9 Matt Wagantall     2014-12-15  154  #define readx_poll_timeout_atomic(op, addr, val, cond, delay_us, timeout_us) \
+57a29df341466b Kai-Heng Feng      2020-04-25  155  	read_poll_timeout_atomic(op, val, cond, delay_us, timeout_us, false, addr)
+54c523127bcca9 Matt Wagantall     2014-12-15  156  
+54c523127bcca9 Matt Wagantall     2014-12-15  157  #define readb_poll_timeout(addr, val, cond, delay_us, timeout_us) \
+54c523127bcca9 Matt Wagantall     2014-12-15  158  	readx_poll_timeout(readb, addr, val, cond, delay_us, timeout_us)
+54c523127bcca9 Matt Wagantall     2014-12-15  159  
+54c523127bcca9 Matt Wagantall     2014-12-15  160  #define readb_poll_timeout_atomic(addr, val, cond, delay_us, timeout_us) \
+54c523127bcca9 Matt Wagantall     2014-12-15  161  	readx_poll_timeout_atomic(readb, addr, val, cond, delay_us, timeout_us)
+54c523127bcca9 Matt Wagantall     2014-12-15  162  
+54c523127bcca9 Matt Wagantall     2014-12-15  163  #define readw_poll_timeout(addr, val, cond, delay_us, timeout_us) \
+54c523127bcca9 Matt Wagantall     2014-12-15  164  	readx_poll_timeout(readw, addr, val, cond, delay_us, timeout_us)
+54c523127bcca9 Matt Wagantall     2014-12-15  165  
+54c523127bcca9 Matt Wagantall     2014-12-15  166  #define readw_poll_timeout_atomic(addr, val, cond, delay_us, timeout_us) \
+54c523127bcca9 Matt Wagantall     2014-12-15  167  	readx_poll_timeout_atomic(readw, addr, val, cond, delay_us, timeout_us)
+54c523127bcca9 Matt Wagantall     2014-12-15  168  
+54c523127bcca9 Matt Wagantall     2014-12-15  169  #define readl_poll_timeout(addr, val, cond, delay_us, timeout_us) \
+54c523127bcca9 Matt Wagantall     2014-12-15  170  	readx_poll_timeout(readl, addr, val, cond, delay_us, timeout_us)
+54c523127bcca9 Matt Wagantall     2014-12-15  171  
+54c523127bcca9 Matt Wagantall     2014-12-15  172  #define readl_poll_timeout_atomic(addr, val, cond, delay_us, timeout_us) \
+54c523127bcca9 Matt Wagantall     2014-12-15  173  	readx_poll_timeout_atomic(readl, addr, val, cond, delay_us, timeout_us)
+54c523127bcca9 Matt Wagantall     2014-12-15  174  
+54c523127bcca9 Matt Wagantall     2014-12-15  175  #define readq_poll_timeout(addr, val, cond, delay_us, timeout_us) \
+54c523127bcca9 Matt Wagantall     2014-12-15 @176  	readx_poll_timeout(readq, addr, val, cond, delay_us, timeout_us)
+54c523127bcca9 Matt Wagantall     2014-12-15  177  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
