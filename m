@@ -1,265 +1,164 @@
-Return-Path: <linux-kernel+bounces-693870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 117FCAE0521
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:11:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33158AE057B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 610E53AE03D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:07:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAAA51791B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3D57E9;
-	Thu, 19 Jun 2025 12:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4912512F0;
+	Thu, 19 Jun 2025 12:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qb4njTXl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z0dG+WWs"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E229E221D93;
-	Thu, 19 Jun 2025 12:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929D8248888;
+	Thu, 19 Jun 2025 12:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750334876; cv=none; b=Fsq90lgEENQruPEd37mDvCoYnLwLbryfueaHCh9Fy/lvGuqyTE2wC6p23h5N9kRJBvphwRMMSYEwTLlFekMxQMkdtjznyTYfOD3YdxIzSkZ3IT20bxxGzqEtDqr2CPUQmeLBDDFmFOP3+6vDGSglBFokxSj8tG+AxS5RonuwrLA=
+	t=1750335607; cv=none; b=Fjuk6g68V0xQshgvj3ATU4Cco+Z9o70/i0wij0lBkqims6FuCtknh+FIc6+NrG28Ge7jY4SZb67usMvQO7Hy1pnlHGnW9579ug4f0pgFhz4Pwk7x9xW/18W9ufn0BTp9GInu5V3DFPEXFL17IE00Q76E0uwqxnYBzGH7heM5meI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750334876; c=relaxed/simple;
-	bh=gHMcK5FXmhzyrik19qB7bBfBSgqYIFyvtGRWEL15uTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lahY/Ethlh5JlSri+qpbJVdPTMJUERD6S1PobxITnWn2dL95KJ9loaXwf68nJr4XSBZoLDzVT58L655b/GMKdehi2WuvumAWWiZVLSnFyljA7X+4zD9dPRi35uLGnF0bhohHN+H0bXcFOgbnYaGB8JUBmVeY9qAtkEpnt1K1AZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qb4njTXl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21257C4CEEA;
-	Thu, 19 Jun 2025 12:07:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750334875;
-	bh=gHMcK5FXmhzyrik19qB7bBfBSgqYIFyvtGRWEL15uTM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qb4njTXlBRdKnJZpfl2+ni+KlTxDgPty/Jj+RuE3M2mI1M7ryKK0SqGS0QN9yT4K/
-	 0bfC3CYC93oJZRh9aBDoH7nAf94xizMrMGhNbTaSROnqhfqqrj9EKxlQtmCAyoCUCW
-	 xI28sVgB+JcPyVFWvdV+l0uGXhpuQf/FHLDz6/zviybDDKwBRwbNHbk0xQk0K6M7B9
-	 nVf7dIo1hHj8mQldXy+cSqwdczeDQzGZG61tx13gNJDN+mFZosLyeCURqcYPmU9wYw
-	 8XKNvX4PM6/TXG1BdoU9zLFCcfGRh+OWs1kOrXtv6OU/LZ0YBEuihOCbfokpwF8J+8
-	 qQEf3s0El/isg==
-Date: Thu, 19 Jun 2025 14:07:52 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Francesco Dolcini <francesco@dolcini.it>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	regressions@lists.linux.dev
-Subject: Re: drm/panel/panel-simple v6.16-rc1 WARNING regression
-Message-ID: <20250619-ubiquitous-annoying-tamarin-bbfdad@houat>
-References: <20250612081834.GA248237@francesco-nb>
- <CAN9Xe3RFEXZuWTZB5E1tJdjXc9o_hB1ArgA5SvqbDUBkwYea8w@mail.gmail.com>
- <20250618105158.06e42668@booty>
- <20250618-fantastic-brown-elephant-df0ae4@houat>
- <CAN9Xe3RpkBx8k+=VqDFh1n+-35gHM_L3UQvCJH58bBPF6pPuuA@mail.gmail.com>
- <CAN9Xe3R96sTf911-n4iX=PME1zfO4Z+XojQSyK4OF8qw7vL7hA@mail.gmail.com>
+	s=arc-20240116; t=1750335607; c=relaxed/simple;
+	bh=+9UeE2l/NBrc6NHJHLM+SqBJwMqTtJPpRZcGfcKWndo=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=QICM2JGDZ3snocuHfbgpDGlYpgUOLUJUpeEyXwhARqsBtQU/5yx5RNHhcvbz89qji6tg4lbh65vY8lTpiY/gb6mBE1t0Ku5wlWgPQtLxKwiJ1uek5V3/r80lWwjFyde8Nn0JithHwuJ738tr3SOfHirUjv3uzjA8Q8JMeZ3knJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z0dG+WWs; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-450cf214200so6602575e9.1;
+        Thu, 19 Jun 2025 05:20:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750335604; x=1750940404; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xpuh9d9jSa1SnmPuObykoxa1W8u0W5/a2m7QmA4uxfc=;
+        b=Z0dG+WWsUSSNkH3hoZnMIAocLt4VDyxl2U3qySxxEaKPavWrbOxg2vjeA0XueV7AtB
+         VOq2zsRdHgt70cisIqZBUiSoq1EvF0jH3b06OUcxyMmVG9frDDw+nzBAVkklji1W/Ucl
+         tnJwi6hS2QAoiI4WELAHKVL0hzoLmd4QKvjnNLIiquynQb5Itleu9ncnUUd2bkFiP4n4
+         E/r9kuPCAhYEgbe1vu88UWTfcMLqiFCpISx3FxJymrfrD1bjPn1XQZ3uS2B+vjEVu1ZU
+         xPeqxncHPSt7Xpt/MBMG+p3juS5Q2yxJBImmufTD4Qep467/0GYGEvD3NMIMs56Bn1Ix
+         rihA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750335604; x=1750940404;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xpuh9d9jSa1SnmPuObykoxa1W8u0W5/a2m7QmA4uxfc=;
+        b=csKFg14PneVMzJjdR+fbuBi1RTK5I2SyqGJWM3kShemuc/9t2pt8hPQu9E014cXihj
+         t7CWMG1Rf09USKIPfQNGP9KLAH4wNmenk9t7nVVKOFPZBpM+EsNxge1TNth2xYNMT1uM
+         8OuwxfAvsUof08tSy8F5Y4DziduYrC1mGbIws1qAf9vTvSPlqXZ9lj9Wpf2K2ZPXZdZw
+         UM/+sq+D9TBW+lnNAyXpEhge3gQ1NE+pRzthuin1qh48487GeyTciZBW+B0UbPbWsby8
+         tN4bEQfYzKNqZJisVr+L0+qyqPyENMcGjG11RIg4gADjPUoVUhmJn0oRSBBsLQ4Gq9tZ
+         tgaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQYBVp+jwNtvbqhAfQUeBsVd9ZXvqmUNYVDgcxXuQboHTwFIiQvZw7aRTCGyIrLVgwAk/7dkR6kvdgoew=@vger.kernel.org, AJvYcCXJL+7RTK2rvfcJoTAtjeKajqCwI/tu2FmAkNMvZKxRnOnNQ8Sw0J8husvFRlxuDkAAFb5Kh5Na@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws9NgFTZzfW4xTA95LyhBFghYuS5FdhPd9N+ITTgr0tCV90rwF
+	zKwiv12OsiX0pnha6mtW6w/8vszpBKMiZN76AxcdHEwgRgJ+dekS7SUZmj3MDHok
+X-Gm-Gg: ASbGncvNCMO50gHEhSaW/NFx5mdLf8MwjM5PfyuEAjYi2i68aN2Vg7puyqZhsGMZUBk
+	oiO+r/wrj8ndNANAFGX5CURU6WVn7BGqiunPeEcTv6/r5GPCHytYHDcGK2Ytc5sRoaiFMOXLSvY
+	G/zbv4eGTXTU9015cCPzFkZ/QPr6mDQwrmKuvDjvVBRKIPzw6+3mPQdGYFW6q9gLRIR3MOquY+G
+	GLLA++uHuyMIzIG9tADkqqR3OYWlHL+RqsDm3qOSx/OpSVEz580zdc8EmXdP8aRHG2oowOhmKR9
+	RkgtzvttrRIzML3+/4QzLVdrufnuA2hnZOAbSMsE1OHrO9nxWJMpm02G6PJ9Ym7S3kkdSJUt
+X-Google-Smtp-Source: AGHT+IFaiatrhl5qZ/OrmLM3fFIrH6qG4uVdCj3J3SdJMfbXJLfvEWhGu6oFTTau9oRt+9XtwRRbhw==
+X-Received: by 2002:a05:600c:1e1d:b0:453:b44:eb69 with SMTP id 5b1f17b1804b1-4533ca7518dmr222070495e9.13.1750335603668;
+        Thu, 19 Jun 2025 05:20:03 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:ad83:585e:86eb:3f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535e97a908sm27074965e9.4.2025.06.19.05.20.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jun 2025 05:20:03 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
+ <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
+ <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
+ Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
+ <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
+ Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Ruben
+ Wauters" <rubenru09@aol.com>,  "Shuah Khan" <skhan@linuxfoundation.org>,
+  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
+  linux-kernel@vger.kernel.org,  lkmm@lists.linux.dev,
+  netdev@vger.kernel.org,  peterz@infradead.org,  stern@rowland.harvard.edu
+Subject: Re: [PATCH v7 07/17] docs: sphinx: add a parser for yaml files for
+ Netlink specs
+In-Reply-To: <79fd88d84e63351d1156a343d697d9bbca8159c5.1750315578.git.mchehab+huawei@kernel.org>
+Date: Thu, 19 Jun 2025 13:08:31 +0100
+Message-ID: <m2h60cexxc.fsf@gmail.com>
+References: <cover.1750315578.git.mchehab+huawei@kernel.org>
+	<79fd88d84e63351d1156a343d697d9bbca8159c5.1750315578.git.mchehab+huawei@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="2h5cadptvtmbwers"
-Content-Disposition: inline
-In-Reply-To: <CAN9Xe3R96sTf911-n4iX=PME1zfO4Z+XojQSyK4OF8qw7vL7hA@mail.gmail.com>
+Content-Type: text/plain
 
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
---2h5cadptvtmbwers
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: drm/panel/panel-simple v6.16-rc1 WARNING regression
-MIME-Version: 1.0
+> Add a simple sphinx.Parser to handle yaml files and add the
+> the code to handle Netlink specs. All other yaml files are
+> ignored.
+>
+> The code was written in a way that parsing yaml for different
+> subsystems and even for different parts of Netlink are easy.
+>
+> All it takes to have a different parser is to add an
+> import line similar to:
+>
+> 	from netlink_yml_parser import YnlDocGenerator
+>
+> adding the corresponding parser somewhere at the extension:
+>
+> 	netlink_parser = YnlDocGenerator()
+>
+> And then add a logic inside parse() to handle different
+> doc outputs, depending on the file location, similar to:
+>
+>         if "/netlink/specs/" in fname:
+>             msg = self.netlink_parser.parse_yaml_file(fname)
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Wed, Jun 18, 2025 at 04:45:31PM -0400, Anusha Srivatsa wrote:
-> On Wed, Jun 18, 2025 at 11:48=E2=80=AFAM Anusha Srivatsa <asrivats@redhat=
-=2Ecom>
-> wrote:
-> > On Wed, Jun 18, 2025 at 4:23=E2=80=AFAM Maxime Ripard <mripard@kernel.o=
-rg> wrote:
-> >
-> >> On Wed, Jun 18, 2025 at 10:51:58AM +0200, Luca Ceresoli wrote:
-> >> > Hello Anusha, Francesco,
-> >> >
-> >> > On Tue, 17 Jun 2025 11:17:20 -0500
-> >> > Anusha Srivatsa <asrivats@redhat.com> wrote:
-> >> >
-> >> > > On Thu, Jun 12, 2025 at 3:24=E2=80=AFAM Francesco Dolcini <
-> >> francesco@dolcini.it>
-> >> > > wrote:
-> >> > >
-> >> > > > Hello all,
-> >> > > >
-> >> > > > Commit de04bb0089a9 ("drm/panel/panel-simple: Use the new
-> >> allocation in
-> >> > > > place of devm_kzalloc()")
-> >> > > > from 6.16-rc1 introduced a regression with this warning during p=
-robe
-> >> > > > with panel dpi described in the DT.
-> >> > > >
-> >> > > > A revert solves the issue.
-> >> > > >
-> >> > > > The issue is that connector_type is set to DRM_MODE_CONNECTOR_DP=
-I in
-> >> > > > panel_dpi_probe() that after that change is called after
-> >> > > > devm_drm_panel_alloc().
-> >> > > >
-> >> > > > I am not sure if there are other implication for this change in =
-the
-> >> call
-> >> > > > ordering, apart the one that triggers this warning.
-> >> > > >
-> >> > > > [   12.089274] ------------[ cut here ]------------
-> >> > > > [   12.089303] WARNING: CPU: 0 PID: 96 at
-> >> > > > drivers/gpu/drm/bridge/panel.c:377 devm_drm_of_get_bridge+0xac/0=
-xb8
-> >> > > > [   12.130808] Modules linked in: v4l2_jpeg pwm_imx27(+) imx_vdoa
-> >> > > > gpu_sched panel_simple imx6_media(C) imx_media_common
-> >> > > > (C) videobuf2_dma_contig pwm_bl gpio_keys v4l2_mem2mem fuse ipv6
-> >> autofs4
-> >> > > > [   12.147774] CPU: 0 UID: 0 PID: 96 Comm: kworker/u8:3 Tainted:=
- G
-> >> > > >  C          6.16.0-rc1+ #1 PREEMPT
-> >> > > > [   12.157446] Tainted: [C]=3DCRAP
-> >> > > > [   12.160418] Hardware name: Freescale i.MX6 Quad/DualLite (Dev=
-ice
-> >> Tree)
-> >> > > > [   12.166953] Workqueue: events_unbound deferred_probe_work_func
-> >> > > > [   12.172805] Call trace:
-> >> > > > [   12.172815]  unwind_backtrace from show_stack+0x10/0x14
-> >> > > > [   12.180598]  show_stack from dump_stack_lvl+0x68/0x74
-> >> > > > [   12.185674]  dump_stack_lvl from __warn+0x7c/0xe0
-> >> > > > [   12.190407]  __warn from warn_slowpath_fmt+0x1b8/0x1c0
-> >> > > > [   12.195567]  warn_slowpath_fmt from
-> >> devm_drm_of_get_bridge+0xac/0xb8
-> >> > > > [   12.201949]  devm_drm_of_get_bridge from imx_pd_probe+0x58/0x=
-164
-> >> > > > [   12.207976]  imx_pd_probe from platform_probe+0x5c/0xb0
-> >> > > > [   12.213220]  platform_probe from really_probe+0xd0/0x3a4
-> >> > > > [   12.218551]  really_probe from __driver_probe_device+0x8c/0x1=
-d4
-> >> > > > [   12.224486]  __driver_probe_device from
-> >> driver_probe_device+0x30/0xc0
-> >> > > > [   12.230942]  driver_probe_device from
-> >> __device_attach_driver+0x98/0x10c
-> >> > > > [   12.237572]  __device_attach_driver from
-> >> bus_for_each_drv+0x90/0xe4
-> >> > > > [   12.243854]  bus_for_each_drv from __device_attach+0xa8/0x1c8
-> >> > > > [   12.249614]  __device_attach from bus_probe_device+0x88/0x8c
-> >> > > > [   12.255285]  bus_probe_device from
-> >> deferred_probe_work_func+0x8c/0xcc
-> >> > > > [   12.261739]  deferred_probe_work_func from
-> >> process_one_work+0x154/0x2dc
-> >> > > > [   12.268371]  process_one_work from worker_thread+0x250/0x3f0
-> >> > > > [   12.274043]  worker_thread from kthread+0x12c/0x24c
-> >> > > > [   12.278940]  kthread from ret_from_fork+0x14/0x28
-> >> > > > [   12.283660] Exception stack(0xd0be9fb0 to 0xd0be9ff8)
-> >> > > > [   12.288720] 9fa0:                                     00000000
-> >> 00000000
-> >> > > > 00000000 00000000
-> >> > > > [   12.296906] 9fc0: 00000000 00000000 00000000 00000000 00000000
-> >> 00000000
-> >> > > > 00000000 00000000
-> >> > > > [   12.305089] 9fe0: 00000000 00000000 00000000 00000000 00000013
-> >> 00000000
-> >> > > > [   12.312050] ---[ end trace 0000000000000000 ]---
-> >> > > >
-> >> > > > #regzbot ^introduced: de04bb0089a96cc00d13b12cbf66a088befe3057
-> >> > > >
-> >> > > > Any advise?
-> >> > > >
-> >> > > > Hey Francesco!
-> >> > >
-> >> > > This mail reached my spam and I hadn't realised till today. Thanks=
- for
-> >> > > bringing this to attention.
-> >> > >
-> >> > > Thinking out loud here: If we called dpi_probe() before allocating=
- the
-> >> > > panel using devm_drm_panel_alloc()
-> >> > > then we would have the connector type. But  dpi_probe() needs the
-> >> panel to
-> >> > > be allocated....
-> >> >
-> >> > Reading the panel-simple.c code, the handling of the panel_dsi
-> >> > descriptor feels a bit hacky, and the recent change to
-> >> > devm_drm_panel_alloc() breaks it easily. Perhaps it would be cleaner=
- to
-> >> > assess the whole descriptor before ding any allocation/init.
-> >> >
-> >> > You're right tat panel_dpi_probe() needs the panel, but it's only at=
- the
-> >> > very end, to assign the descriptor:
-> >> >
-> >> >   panel->desc =3D desc;
-> >> >
-> >> > I think a good fix would be to clean it up by having:
-> >> >
-> >> >  * panel_dpi_probe() not take a panel pointer but rather returning a
-> >> >    filled descriptor
-> >> >  * panel_simple_probe() call panel_dpi_probe() early [before
-> >> >    devm_drm_panel_alloc()] and get the filled descriptor
-> >> >  * call devm_drm_panel_alloc() with that descriptor in the panel-dsi
-> >> >    case, or with the good old descriptor otherwise
-> >> >
-> >> > As a good side effect, it would get rid of a case where
-> >> > devm_drm_panel_alloc() is called with a Unknown connector type.
-> >> >
-> >> > Anusha, does it look like a good plan?
-> >>
-> >> It is, and I'd even go one step further. Like you said, panel_dpi_probe
-> >> kind of exists to allocate and initialize the panel descriptor, and is
-> >> called on the descriptor being equal to the (uninitialized) panel_dpi
-> >> global variable.
-> >>
-> >> We should also get rid of that hack, so do something like creating a
-> >> function that returns the descriptor, and is indeed called first in
-> >> panel_simple_probe. It first calls of_device_get_match_data(), and if
-> >> there's no match, and if the device is compatible with panel-dpi, then
-> >> it calls panel_dpi_probe (we should probably change that name too). Th=
-at
-> >> way, we can get rid of the panel_dpi variable entirely.
-> >>
-> >>
-> > Thanks Luca and Maxime.
-> > To summarize:
-> > 1. add a function like of_device_get_simple_dsi_match_data() which calls
-> > of_device_get_match_data(). if the device is compatible with panel-dpi,
-> > call
-> > panel-dpi-probe()
-> > 3. Change panel_dpi_probe() to return the panel descriptor
-> > 4. call devm_drm_panel_alloc()
-> >
-> >
-> Looking deeper it looks like I have some gaps in my understanding.
-> panel_simple_platform_probe()
-> already checks of_device_get_match_data() to call panel_simple_probe(). At
-> this point the change suggested is
-> to have to call it again to check if it is compatible with panel-dpi? If I
-> understand correctly panel_dpi is a fallback
-> and the only place the decision to probe panel_dpi() is with the hack.
+Looks like you didn't address my comments from v5:
 
-I'm sure you can figure something out. And feel free to send me patches
-for a private review if you feel more comfortable that way.
+    > > +class YamlParser(Parser):
+    > > +    """Custom parser for YAML files.""" 
+    >
+    > Would be good to say that this is a common YAML parser that calls
+    > different subsystems, e.g. how you described it in the commit message.
 
-Maxime
+    Makes sense. Will fix at the next version.
 
---2h5cadptvtmbwers
-Content-Type: application/pgp-signature; name="signature.asc"
+    >
+    > > +
+    > > +    # Need at least two elements on this set 
+    >
+    > I think you can drop this comment. It's not that it must be two
+    > elements, it's that supported needs to be a list and the python syntax
+    > to force parsing as a list would be ('item', )
 
------BEGIN PGP SIGNATURE-----
+    Ah, ok.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaFP9mAAKCRAnX84Zoj2+
-dmGUAX9lkPTmSof8rdAbsqbqutnR0VMhpMXTErckzdIjfn52jPzCi2lwkEdOTSO1
-ciYHGK8Bf3UtW+YQPLiStMW75b+Py0Ditlm6IFforxt788D1036NSLEgfof4TYKB
-e6xyo+RzbQ==
-=tCEP
------END PGP SIGNATURE-----
+    > > +    supported = ('yaml', 'yml')
+    > > +
+    > > +    netlink_parser = YnlDocGenerator()
+    > > +
+    > > +    def do_parse(self, inputstring, document, msg): 
+    >
+    > Maybe a better name for this is parse_rst?
 
---2h5cadptvtmbwers--
+    Ok.
+
+    >
+    > > +        """Parse YAML and generate a document tree.""" 
+    >
+    > Also update comment.
+
+    Ok.
+
 
