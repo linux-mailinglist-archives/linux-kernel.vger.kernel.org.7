@@ -1,157 +1,313 @@
-Return-Path: <linux-kernel+bounces-694431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4B1AE0C30
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:57:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC96AAE0C3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DC9F3B74CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCAEF1BC31FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68C823C8D3;
-	Thu, 19 Jun 2025 17:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E9B28D843;
+	Thu, 19 Jun 2025 18:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="JaRduo96"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kFQCkQvu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BDB213259
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 17:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7471D7989;
+	Thu, 19 Jun 2025 18:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750355825; cv=none; b=kiZTvc6GPI667xyr/IAG/0hzdlBZdSok9o0MZfsR2/TSHyVnkGOhxVHFaKxH6/Xmm84ijM1leZBZjO67haJqgIDlpnshEl0Xv63UPAv+mtZr60iI0hGplsOjD8uh2YI5KMTy1jhyQekEb3jknJRlB1wrbnnsD6uPecezoD0uOxA=
+	t=1750356012; cv=none; b=KHKxe6cdY4O/6viEt37sNjkeMG3bh29AIMB7zcqBgHEGAPHyi/D2ufrA00QD0KPTbmd0qbGHf9lS5l8LpUOCNnCDJDtUzWlWOT/mBKuTXrTtinod5dlIdLvD4aEocYl5T8D9WDy+VrVWTXFWf9dul4ywPC53oirSQksEpmk0cuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750355825; c=relaxed/simple;
-	bh=eai0KmAEI/LXOe/M1noE2xH7znIEBHLB9tBGHx4OkBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X7wvR7dlhbqcxn6ZvntB9SIEugoRIkVa5capG8+NCv6/HHvmmYIlSyV20zp8FONlLu/Q0Ozmz8pNbKc+M5iSzb2/SISMIYb4JXUqDtortyhiMdUku0xGR/vHaMay1Sf2qua/OoYNqFQmL0VloEHqREs7zU6+ZHWVxOqLZBvvGZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=JaRduo96; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7d3862646eeso71887185a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 10:57:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1750355822; x=1750960622; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U8d2ui7E+uX2eOaUMaNXo/P5F6Y0SfvCqCGd0JgYOPM=;
-        b=JaRduo96YQ6iqnFjPO8CC98dm9mUwSs/BjQgN5vUvHBrlSgW9qoXLSTAhhfpzLqpTr
-         ReoT29Udl/8KWrdG0fwp0oNpQrPgMMka35YLgFOXJlKEyJ0P/V0UWEAEN2JPTNQz1iG3
-         9rGXhGvQdbb5aLcJaGMjekONyZGkd+gLzsqeI7CUj6AsW+OVAy25ta/MFCFOp1ZRvO4V
-         juAtPDJHqK3YYFcDKJjvjv9YGtW3+P9db1jcyiaifMrQUx+sHNA5lKqjSzGq8khpOPbX
-         Fg9KMv+3YkOgI/Jr73lL8nj9MmiLEElE1DQ1/4BaBIV2ZbB8+3vEM+PuLHDeofMMCkBj
-         Ydcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750355822; x=1750960622;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U8d2ui7E+uX2eOaUMaNXo/P5F6Y0SfvCqCGd0JgYOPM=;
-        b=mxsVWlaHdtC1FLEk8VuBeneNiYgOSaGbAASZuUJLx31KBCvmCljemsORQdNo5NOzuh
-         M/yiZfFt1/X6ABvRV3QERo2QGSaOwyx2DcHjbHCCaBRKfLMhkhQUSfyBo8KkfOFzdBiQ
-         M7J7xnylyazbJPiz5+xYiIB7OZWs/WQ/HHP7A8WzEVBMdwJJUpIpmNPmHzBLct6IsqL5
-         AwQtcSZCnIdQFIN8JJyaCKKhVKGwluheVK9m6GYHvTHl8iV9agW6Nljo0WnOMwlWTGqP
-         q9u4+kLo/egT5igw0sPFEiI78vcHEy4+hkG6ixNdI0xgnCeTqY35i7llzqhOk0SP9OEB
-         FnGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXybdtxE5DGoZiwWGIebK6TiFitS8v1dMGsyT5rr71NkeFlXuXvDml6xFieKysjHTIs28UiF2eRecLM9SY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPjs2UxPmz5vHYQhIKtj+JMjkf8SJIsaTXlBGBbgFJauq5m5Fc
-	Cet5Hk+f/lvOi3D2Vzo/E1hIMRuy6jN4eJEqgJH6W92TtSr4H/XMXATUN2SuIQoS9Q==
-X-Gm-Gg: ASbGncvr/JT3nBnfEh9WCKZ3XSpFR/IoAskth7rXbQo36aUzVai2i2PxBDYIc48azfh
-	9LR61pOuj0ctCQK2KxNQ7BjuLzaMdz2jdEY+e9gGwBYiPTwdyTunzQWvpSQd8dO2REKAkOhmv+W
-	rusVXJM55FuBMSAVrLkewv+ipDP3pJzlcZfPKI6KCsW5gyIMtelANgJ545NW8Ua3ww4reprdF0c
-	Tcg7stl/HjqLvKRjmzo/QZoh4zgYLtmrdS3FbBLxjjjB/97wCNOdNH1muJ07xejx6FAkC7joook
-	8qhJwxl6PPgtjgj4hjPXVm44/aBN/Xc8CT8D2cMhSg53eeIcdM0QBLgUOzrCzXA=
-X-Google-Smtp-Source: AGHT+IFfAivhqC/12RhcVOhHTCkxtn7BPAMKJ8jBgCMvwPH79EHDEwzW7+X8dU3ooMKnx4PjKTOoZg==
-X-Received: by 2002:a05:6214:2c0d:b0:6fa:c5be:daca with SMTP id 6a1803df08f44-6fd0a4694e4mr3308996d6.7.1750355822520;
-        Thu, 19 Jun 2025 10:57:02 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::9ca8])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd09593450sm2348556d6.98.2025.06.19.10.57.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 10:57:01 -0700 (PDT)
-Date: Thu, 19 Jun 2025 13:56:58 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Thomas Haas <t.haas@tu-bs.de>
-Cc: Andrea Parri <parri.andrea@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	lkmm@lists.linux.dev, hernan.poncedeleon@huaweicloud.com,
-	jonas.oberhauser@huaweicloud.com,
-	"r.maseli@tu-bs.de" <r.maseli@tu-bs.de>
-Subject: Re: [RFC] Potential problem in qspinlock due to mixed-size accesses
-Message-ID: <a0887a91-468c-43ff-872e-c4c4e23b26dd@rowland.harvard.edu>
-References: <cb83e3e4-9e22-4457-bf61-5614cc4396ad@tu-bs.de>
- <20250613075501.GI2273038@noisy.programming.kicks-ass.net>
- <aEwHufdehlQnBX7g@andrea>
- <9264df13-36db-4b25-b2c4-7a9701df2f4d@tu-bs.de>
- <aE-3_mJPjea62anv@andrea>
- <357b3147-22e0-4081-a9ac-524b65251d62@rowland.harvard.edu>
- <aFF3NSJD6PBMAYGY@andrea>
- <595209ed-2074-46da-8f57-be276c2e383b@tu-bs.de>
- <6ac81900-873e-415e-b5b2-96e9f7689468@rowland.harvard.edu>
- <c97665c6-2d8b-49ae-acc5-be5be04f0093@tu-bs.de>
+	s=arc-20240116; t=1750356012; c=relaxed/simple;
+	bh=v7X8HdeLIXf1lLXurUdqnhMFgfFuJRcw2Eza4no2QFk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JaJ1V1WxpvZAf8lhc4KoElxlA4kvkd/+0e8Isu0zIMnA6ksiCOZO9uKFuae5X0qEruAEYabZf8uWidcpYi+PJdABugAz8Nnw167WZqfrAuU3m+E7h7IbQTSch6KcYJ58Yjdb5VTApBXiVa6J4C/2AJfa8rfD6zAWcb7QVzcuq40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kFQCkQvu; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750356011; x=1781892011;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=v7X8HdeLIXf1lLXurUdqnhMFgfFuJRcw2Eza4no2QFk=;
+  b=kFQCkQvu0VeRjuam+TtpUbTLxsCh90wXVAWSTDw4nD9NzxMrBfMpSHht
+   S75AB4Squ2J4x6cTPFpI4n3PtcYt/MXc9ho5DtekS09tmnZ96z+Yy7OVK
+   W7M8aO7gtGu9swGXJwLT+43yBvSm9C3cdElNmgcnf6FgGaLImzX9+HxQp
+   XTXLKa1bYsD5lxw6AgN9kvik0UNzf8nZCI4R+6CK/4DLrNdRB0yVHGMwT
+   zI7j65SCkGHQSW6HL8n/8Ab5x6Y2fq/PtXRtmqUAstzv5Q0FGnjNIXMLg
+   uhX2LkSglcYgAdQMNxmJmDcNl0JfAqubIbIp0JWPu3/jeCMSf/rB59vc2
+   A==;
+X-CSE-ConnectionGUID: 5BKEFSBeQL2ifdHQhF74ow==
+X-CSE-MsgGUID: 1o1StTIGR1uAA48g86jXuA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="64047647"
+X-IronPort-AV: E=Sophos;i="6.16,249,1744095600"; 
+   d="scan'208";a="64047647"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 11:00:09 -0700
+X-CSE-ConnectionGUID: ITMXr5AyST2GOQ2QZabnHA==
+X-CSE-MsgGUID: N0KXH/keRMGK9OSaeK9YiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,249,1744095600"; 
+   d="scan'208";a="150919210"
+Received: from cpetruta-mobl1.ger.corp.intel.com (HELO mdjait-mobl.intel.com) ([10.245.245.13])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 10:59:58 -0700
+From: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: laurent.pinchart@ideasonboard.com,
+	sakari.ailus@linux.intel.com
+Cc: akinobu.mita@gmail.com,
+	stanislaw.gruszka@linux.intel.com,
+	hdegoede@redhat.com,
+	arnd@arndb.de,
+	alain.volmat@foss.st.com,
+	andrzej.hajda@intel.com,
+	benjamin.mugnier@foss.st.com,
+	dave.stevenson@raspberrypi.com,
+	hansg@kernel.org,
+	hverkuil@xs4all.nl,
+	jacopo.mondi@ideasonboard.com,
+	jonas@kwiboo.se,
+	kieran.bingham@ideasonboard.com,
+	khalasa@piap.pl,
+	prabhakar.csengg@gmail.com,
+	mani@kernel.org,
+	m.felsch@pengutronix.de,
+	martink@posteo.de,
+	mattwmajewski@gmail.com,
+	matthias.fend@emfend.at,
+	mchehab@kernel.org,
+	mehdi.djait@linux.intel.com,
+	michael.riesch@collabora.com,
+	naush@raspberrypi.com,
+	nicholas@rothemail.net,
+	nicolas.dufresne@collabora.com,
+	paul.elder@ideasonboard.com,
+	dan.scally@ideasonboard.com,
+	pavel@kernel.org,
+	petrcvekcz@gmail.com,
+	rashanmu@gmail.com,
+	ribalda@chromium.org,
+	rmfrfs@gmail.com,
+	zhengsq@rock-chips.com,
+	slongerbeam@gmail.com,
+	sylvain.petinot@foss.st.com,
+	s.nawrocki@samsung.com,
+	tomi.valkeinen@ideasonboard.com,
+	umang.jain@ideasonboard.com,
+	zhi.mao@mediatek.com,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH v1 00/55] media: Add a helper for obtaining the clock producer
+Date: Thu, 19 Jun 2025 19:58:53 +0200
+Message-ID: <cover.1750352394.git.mehdi.djait@linux.intel.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c97665c6-2d8b-49ae-acc5-be5be04f0093@tu-bs.de>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 19, 2025 at 04:59:38PM +0200, Thomas Haas wrote:
-> 
-> 
-> On 19.06.25 16:32, Alan Stern wrote:
-> > On Thu, Jun 19, 2025 at 04:27:56PM +0200, Thomas Haas wrote:
-> > > I support this endeavor, but from the Dartagnan side :).
-> > > We already support MSA in real C/Linux code and so extending our supported
-> > > Litmus fragment to MSA does not sound too hard to me.
-> > > We are just missing a LKMM cat model that supports MSA.
-> > 
-> > To me, it doesn't feel all that easy.  I'm not even sure where to start
-> > changing the LKMM.\
-> > 
-> > Probably the best way to keep things organized would be to begin with
-> > changes to the informal operational model and then figure out how to
-> > formalize them.  But what changes are needed to the operational model?
-> > 
-> > Alan
-> 
-> Of course, the difficult part is to get the model right. Maybe I shouldn't
-> have said that we are "just" missing the model :).
-> I'm only saying that we already have some tooling to validate changes to the
-> formal model.
-> 
-> I think it makes sense to first play around with the tooling and changes to
-> the formal model to just get a feeling of what can go wrong and what needs
-> to go right. Then it might become more clear on how the informal operational
-> model needs to change.
-> 
-> A good starting point might be to lift the existing ARM8 MSA litmus tests to
-> corresponding C/LKMM litmus tests and go from there.
-> If the informal operational model fails to explain them, then it needs to
-> change. This goes only one way though: if ARM permits a behavior then so
-> should LKMM. If ARM does not, then it is not so clear if LKMM should or not.
+Hello everyone,
 
-Okay, that seems reasonable.
+Here is my v1 for the new helper v4l2_devm_sensor_clk_get()
 
-BTW, I don't want to disagree with what you wrote ... but doesn't your 
-last paragraph contradict the paragraph before it?  Is starting with the 
-various MSA litmus tests and seeing how the operational model fails to 
-explain them not the opposite of first playing around with the tooling 
-and changes to the formal model?
+Any testing of the patches is GREATLY APPRECIATED! Especially the two
+drivers with the special ACPI case:
+1) OV8865
+2) OV2680
 
-Alan
+
+Background
+----------
+
+A reference to the clock producer is not available to the kernel
+in ACPI-based platforms but the sensor drivers still need them.
+
+devm_clk_get() will return an error and the probe function will fail.
+
+
+Solution
+--------
+
+Introduce a generic helper for v4l2 sensor drivers on both DT- and ACPI-based
+platforms.
+
+This helper behaves the same as clk_get_optional() except where there is
+no clock producer like in ACPI-based platforms.
+
+For ACPI-based platforms the function will read the "clock-frequency"
+ACPI _DSD property and register a fixed frequency clock with the frequency
+indicated in the property.
+
+
+Solution for special ACPI case
+------------------------------
+
+This function also handles the special ACPI-based system case where:
+
+1) The clock-frequency _DSD property is present.
+2) A reference to the clock producer is present, where the clock is provided
+by a camera sensor PMIC driver (e.g. int3472/tps68470.c)
+
+In this case try to set the clock-frequency value to the provided clock.
+
+
+RFC History
+-----------
+
+RFC v4 -> RFC v5:
+Suggested by Arnd Bergmann:
+	- removed IS_REACHABLE(CONFIG_COMMON_CLK). IS_REACHABLE() is actually
+	discouraged [1]. COFIG_COMMON_CLK is a bool, so IS_ENABLED() will be the
+	right solution here
+Suggested by Hans de Goede:
+	- added handling for the special ACPI-based system case, where
+	  both a reference to the clock-provider and the _DSD
+	  clock-frequency are present.
+	- updated the function's kernel-doc and the commit msg
+	  to mention this special case.
+Link RFC v4: https://lore.kernel.org/linux-media/20250321130329.342236-1-mehdi.djait@linux.intel.com/
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/Documentation/kbuild/kconfig-language.rst?h=next-20250513&id=700bd25bd4f47a0f4e02e0a25dde05f1a6b16eea
+
+RFC v3 -> RFC v4:
+Suggested by Laurent:
+	- removed the #ifdef to use IS_REACHABLE(CONFIG_COMMON_CLK)
+	- changed to kasprintf() to allocate the clk name when id is NULL and
+	  used the __free(kfree) scope-based cleanup helper when
+	  defining the variable to hold the allocated name
+Link v3: https://lore.kernel.org/linux-media/20250321093814.18159-1-mehdi.djait@linux.intel.com/
+
+RFC v2 -> RFC v3:
+- Added #ifdef CONFIG_COMMON_CLK for the ACPI case
+Link v2: https://lore.kernel.org/linux-media/20250310122305.209534-1-mehdi.djait@linux.intel.com/
+
+RFC v1 -> RFC v2:
+Suggested by Sakari:
+    - removed clk_name
+    - removed the IS_ERR() check
+    - improved the kernel-doc comment and commit msg
+Link v1: https://lore.kernel.org/linux-media/20250227092643.113939-1-mehdi.djait@linux.intel.com
+
+Mehdi Djait (55):
+  media: v4l2-common: Add a helper for obtaining the clock producer
+  Documentation: media: camera-sensor: Mention
+    v4l2_devm_sensor_clk_get() for obtaining the clock
+  media: i2c: ar0521: Use the v4l2 helper for obtaining the clock
+  media: i2c: ds90ub913: Use the v4l2 helper for obtaining the clock
+  media: i2c: ds90ub960: Use the v4l2 helper for obtaining the clock
+  media: i2c: et8ek8: Use the v4l2 helper for obtaining the clock
+  media: i2c: gc05a2: Use the v4l2 helper for obtaining the clock
+  media: i2c: gc08a3: Use the v4l2 helper for obtaining the clock
+  media: i2c: gc2145: Use the v4l2 helper for obtaining the clock
+  media: i2c: hi846: Use the v4l2 helper for obtaining the clock
+  media: i2c: imx214: Use the v4l2 helper for obtaining the clock
+  media: i2c: imx219: Use the v4l2 helper for obtaining the clock
+  media: i2c: imx283: Use the v4l2 helper for obtaining the clock
+  media: i2c: imx290: Use the v4l2 helper for obtaining the clock
+  media: i2c: imx296: Use the v4l2 helper for obtaining the clock
+  media: i2c: imx334: Use the v4l2 helper for obtaining the clock
+  media: i2c: imx335: Use the v4l2 helper for obtaining the clock
+  media: i2c: imx412: Use the v4l2 helper for obtaining the clock
+  media: i2c: imx415: Use the v4l2 helper for obtaining the clock
+  media: i2c: max2175: Use the v4l2 helper for obtaining the clock
+  media: i2c: mt9m001: Use the v4l2 helper for obtaining the clock
+  media: i2c: mt9m111: Use the v4l2 helper for obtaining the clock
+  media: i2c: mt9m114: Use the v4l2 helper for obtaining the clock
+  media: i2c: mt9p031: Use the v4l2 helper for obtaining the clock
+  media: i2c: mt9t112: Use the v4l2 helper for obtaining the clock
+  media: i2c: mt9v032: Use the v4l2 helper for obtaining the clock
+  media: i2c: mt9v111: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov02a10: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov2659: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov2685: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov5640: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov5645: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov5647: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov5648: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov5695: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov64a40: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov6650: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov7740: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov8856: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov8858: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov8865: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov9282: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov9640: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov9650: Use the v4l2 helper for obtaining the clock
+  media: i2c: s5c73m3: Use the v4l2 helper for obtaining the clock
+  media: i2c: s5k5baf: Use the v4l2 helper for obtaining the clock
+  media: i2c: s5k6a3: Use the v4l2 helper for obtaining the clock
+  media: i2c: st-mipid02: Use the v4l2 helper for obtaining the clock
+  media: i2c: tc358743: Use the v4l2 helper for obtaining the clock
+  media: i2c: tc358746: Use the v4l2 helper for obtaining the clock
+  media: i2c: thp7312: Use the v4l2 helper for obtaining the clock
+  media: i2c: vd55g1: Use the v4l2 helper for obtaining the clock
+  media: i2c: vd56g3: Use the v4l2 helper for obtaining the clock
+  media: i2c: vgxy61: Use the v4l2 helper for obtaining the clock
+  media: i2c: ov2680: Use the v4l2 helper for obtaining the clock
+
+ .../driver-api/media/camera-sensor.rst        |  3 +-
+ drivers/media/i2c/ar0521.c                    |  2 +-
+ drivers/media/i2c/ds90ub913.c                 |  2 +-
+ drivers/media/i2c/ds90ub960.c                 |  2 +-
+ drivers/media/i2c/et8ek8/et8ek8_driver.c      |  2 +-
+ drivers/media/i2c/gc05a2.c                    |  2 +-
+ drivers/media/i2c/gc08a3.c                    |  2 +-
+ drivers/media/i2c/gc2145.c                    |  2 +-
+ drivers/media/i2c/hi846.c                     |  2 +-
+ drivers/media/i2c/imx214.c                    |  2 +-
+ drivers/media/i2c/imx219.c                    |  2 +-
+ drivers/media/i2c/imx283.c                    |  2 +-
+ drivers/media/i2c/imx290.c                    |  2 +-
+ drivers/media/i2c/imx296.c                    |  2 +-
+ drivers/media/i2c/imx334.c                    |  2 +-
+ drivers/media/i2c/imx335.c                    |  2 +-
+ drivers/media/i2c/imx412.c                    |  2 +-
+ drivers/media/i2c/imx415.c                    |  2 +-
+ drivers/media/i2c/max2175.c                   |  2 +-
+ drivers/media/i2c/mt9m001.c                   |  2 +-
+ drivers/media/i2c/mt9m111.c                   |  2 +-
+ drivers/media/i2c/mt9m114.c                   |  2 +-
+ drivers/media/i2c/mt9p031.c                   |  2 +-
+ drivers/media/i2c/mt9t112.c                   |  2 +-
+ drivers/media/i2c/mt9v032.c                   |  2 +-
+ drivers/media/i2c/mt9v111.c                   |  2 +-
+ drivers/media/i2c/ov02a10.c                   |  2 +-
+ drivers/media/i2c/ov2659.c                    |  2 +-
+ drivers/media/i2c/ov2680.c                    | 27 +++-------
+ drivers/media/i2c/ov2685.c                    |  2 +-
+ drivers/media/i2c/ov5640.c                    |  2 +-
+ drivers/media/i2c/ov5645.c                    |  2 +-
+ drivers/media/i2c/ov5647.c                    |  2 +-
+ drivers/media/i2c/ov5648.c                    |  2 +-
+ drivers/media/i2c/ov5695.c                    |  2 +-
+ drivers/media/i2c/ov64a40.c                   |  2 +-
+ drivers/media/i2c/ov6650.c                    |  2 +-
+ drivers/media/i2c/ov7740.c                    |  2 +-
+ drivers/media/i2c/ov8856.c                    |  2 +-
+ drivers/media/i2c/ov8858.c                    |  2 +-
+ drivers/media/i2c/ov8865.c                    | 32 ++----------
+ drivers/media/i2c/ov9282.c                    |  2 +-
+ drivers/media/i2c/ov9640.c                    |  2 +-
+ drivers/media/i2c/ov9650.c                    |  2 +-
+ drivers/media/i2c/s5c73m3/s5c73m3-core.c      |  2 +-
+ drivers/media/i2c/s5k5baf.c                   |  2 +-
+ drivers/media/i2c/s5k6a3.c                    |  2 +-
+ drivers/media/i2c/st-mipid02.c                |  2 +-
+ drivers/media/i2c/tc358743.c                  |  2 +-
+ drivers/media/i2c/tc358746.c                  |  2 +-
+ drivers/media/i2c/thp7312.c                   |  2 +-
+ drivers/media/i2c/vd55g1.c                    |  2 +-
+ drivers/media/i2c/vd56g3.c                    |  2 +-
+ drivers/media/i2c/vgxy61.c                    |  2 +-
+ drivers/media/v4l2-core/v4l2-common.c         | 49 +++++++++++++++++++
+ include/media/v4l2-common.h                   | 25 ++++++++++
+ 56 files changed, 136 insertions(+), 102 deletions(-)
+
 
