@@ -1,215 +1,136 @@
-Return-Path: <linux-kernel+bounces-693757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31429AE031C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:11:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F5AAE0328
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D15453B000C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:11:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 495B07AD833
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4444B225762;
-	Thu, 19 Jun 2025 11:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="auJlP5xK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D86227BAA;
+	Thu, 19 Jun 2025 11:13:06 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC50221F30
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 11:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6DE221F30;
+	Thu, 19 Jun 2025 11:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750331488; cv=none; b=eVESCtT7QpAzuHylXgsdMDzwp7nulSOJWo2dJpo0ccvL+hc7IH0eSHaYC6mrHNQOVd3/PDcMRnDFggoMqLzaqToJD1MJWg+OLH7HAYwl7eKI0IVC5FWs+/pZ9/zHFyXQMbazW8AhUrMojvPBaS9IzwHaYAjyrtAahRFd5/UyvyM=
+	t=1750331585; cv=none; b=PX/AclYrZF3kWxxktQ7NRERXrlX8Z99G4dXi4YMi6MLFMEEz8F96VCh1BPosKADVWOyo/vxJTn1R8GG4wgU/xaRGMn4nXVsEn17fBL6bOpxhEj+1ALLDm5+xe6pvAAUzSc11DocAKAjXGYcPTZ9Sz/Sho2n+SpS7h0dgqGVz6Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750331488; c=relaxed/simple;
-	bh=0pEMp6R7QAB88B9N0EiVXYtD55h06b4RnP1RCeVt5bE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CKTJ0DQLNM8ZYq5iIbcUgvxUuPQUdUOcKIirCYL/WgXBtU4zO82/CuoYIGxJ2c6/gaHJa5nxM9KPy714ECiDcSZhzNtm2/kzqz+PvdPvX3MiizkFvkmTaNpJCYAHclOpOra5xMyI3bNYLCQZy3S8lF7gdFA3wZEwklf8vWQ65DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=auJlP5xK; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750331487; x=1781867487;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=0pEMp6R7QAB88B9N0EiVXYtD55h06b4RnP1RCeVt5bE=;
-  b=auJlP5xKagcvyfqSfChuNgjH1gJXFh9Qus9E8fwyXO5Uj0ehfIFTkANA
-   3EUg9Q2WsOAlxEaqRzuUClOZfDKshl66QRWL3Qyf1G67i5ElrIkRByM8M
-   tks0deaPrDn9BQWFZxpTnJVcDHUmLJvjKy+mpJw/w87WrfCYn6iWBC6ho
-   u7PpwOTSouNSJ02uOBHJoPGho3OH0DZUATiXnJvXSv5ESpbY5xb5ZnCM+
-   In8zhIOqKYzfoXesO9TlygOCbIioqPcpkjTao3y0NXAJogsXzoHNGGs87
-   T3fR3damLmd9o+9XKKuTGuCL6sZ5g3FexVr250hqMcynUcu32IiPT/p8p
-   A==;
-X-CSE-ConnectionGUID: mktmerndQJSxcKiPKZhC1Q==
-X-CSE-MsgGUID: xOOMiT0IT7G7UAYgd0IaAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52460988"
-X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
-   d="scan'208";a="52460988"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 04:11:26 -0700
-X-CSE-ConnectionGUID: ZwCQJz08SVeI9iyzLVU0yg==
-X-CSE-MsgGUID: mma9Fw8dSqSjYO5XEs32dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
-   d="scan'208";a="181649743"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 04:11:26 -0700
-Received: from [10.246.136.52] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.52])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 2696E20B5736;
-	Thu, 19 Jun 2025 04:11:24 -0700 (PDT)
-Message-ID: <d97fc799-ab9b-4c6a-a77e-8b542ac82efa@linux.intel.com>
-Date: Thu, 19 Jun 2025 07:11:23 -0400
+	s=arc-20240116; t=1750331585; c=relaxed/simple;
+	bh=25dSeC1C95FRQ+c3GHZW4DawUiBAT/q3D5t53M8lRXA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GVOmOXJ70nPzrRno1PbvlrhZQ9UthjxgP82rImtuuqyFrYvi0zHCNSWxVeqadbxV5nnVz5FqjHycmwnc0mtwu76CmSCo9I6YWWotaDLSJ9sxB9drNPxLjauSTk8LWVwoND/5xRYyH9uHH1+ChKR7QCKX3mGM5RLSqEt7vMipAlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from inp1wst086.omp.ru (85.26.170.34) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 19 Jun
+ 2025 14:12:48 +0300
+From: Dmitriy Privalov <d.privalov@omp.ru>
+To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Dmitriy Privalov <d.privalov@omp.ru>, Sanjay R Mehta
+	<sanju.mehta@amd.com>, Mark Brown <broonie@kernel.org>, Shreeya Patel
+	<shreeya.patel@collabora.com>, Lucas Tanure <tanureal@opensource.cirrus.com>,
+	<linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>, kernel test robot <lkp@intel.com>, Josh
+ Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>, Raju Rangoju
+	<Raju.Rangoju@amd.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 6.1 1/1] objtool, spi: amd: Fix out-of-bounds stack access in amd_set_spi_freq()
+Date: Thu, 19 Jun 2025 14:12:19 +0300
+Message-ID: <20250619111219.748491-1-d.privalov@omp.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/12] Support vector and more extended registers in
- perf
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- tglx@linutronix.de, dave.hansen@linux.intel.com, irogers@google.com,
- adrian.hunter@intel.com, jolsa@kernel.org,
- alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
- ak@linux.intel.com, zide.chen@intel.com
-References: <20250613134943.3186517-1-kan.liang@linux.intel.com>
- <20250617082423.GK1613376@noisy.programming.kicks-ass.net>
- <60c18595-c6a8-4c39-98fe-0822755fbdb7@linux.intel.com>
- <20250617142952.GX1613376@noisy.programming.kicks-ass.net>
- <893f1888-b8cb-4976-a0d6-606460438d73@linux.intel.com>
- <1121293d-777e-4c21-b1ad-d34516d2cd3a@linux.intel.com>
- <a116761e-30bc-49bf-a1f8-9cc0ec1faae2@linux.intel.com>
- <4d4d1ca5-aab6-45be-9485-43c39b30fd62@linux.intel.com>
- <5aabcb15-0def-4f73-b4dd-03c958192d67@linux.intel.com>
- <1bc9de32-2599-483f-8c6a-6da59f8d9549@linux.intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <1bc9de32-2599-483f-8c6a-6da59f8d9549@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 06/19/2025 10:57:42
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 194191 [Jun 19 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: d.privalov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 62 0.3.62
+ e2af3448995f5f8a7fe71abf21bb23519d0f38c3
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 85.26.170.34 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;85.26.170.34:7.1.2;lore.kernel.org:7.1.1;127.0.0.199:7.1.2;inp1wst086.omp.ru:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 85.26.170.34
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 06/19/2025 10:59:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 6/19/2025 5:52:00 AM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
+If speed_hz < AMD_SPI_MIN_HZ, amd_set_spi_freq() iterates over the
+entire amd_spi_freq array without breaking out early, causing 'i' to go
+beyond the array bounds.
 
+Fix that by stopping the loop when it gets to the last entry, so the low
+speed_hz value gets clamped up to AMD_SPI_MIN_HZ.
 
-On 2025-06-18 8:41 p.m., Mi, Dapeng wrote:
-> 
-> On 6/18/2025 9:15 PM, Liang, Kan wrote:
->>
->> On 2025-06-18 8:28 a.m., Mi, Dapeng wrote:
->>>>>>> Not sure, it eats up a whole byte. Dapeng seemed to favour separate
->>>>>>> intr/user vector width (although I'm not quite sure what the use would
->>>>>>> be).
->>>>> The reason that I prefer to add 2 separate "words" item is that user could
->>>>> sample interrupt and user space SIMD regs (but with different bit-width)
->>>>> simultaneously in theory, like "--intr-regs=YMM0, --user-regs=XMM0".
->>>> I'm not sure why the user wants a different bit-width. The
->>>> --user-regs=XMM0" doesn't seem to provide more useful information.
->>>>
->>>> Anyway, I believe the tool can handle this case. The tool can always ask
->>>> YMM0 for both --intr-regs and --user-regs, but only output the XMM0 for
->>>> --user-regs. The only drawback is that the kernel may dump extra
->>>> information for the --user-regs. I don't think it's a big problem.
->>> If we intent to handle it in user space tools, I'm not sure if user space
->>> tool can easily know which records are from user space and filter out the
->>> SIMD regs from kernel space and how complicated would the change be. IMO,
->>> adding an extra u16 "words" would be much easier and won't consume too much
->>> memory.
->> The filter is always done in kernel for --user-regs. The only difference
->> is that the YMM (after filter) will be dumped to the perf.data. The tool
->> just show the XMM registers to the end user.
-> 
-> Ok. But there could be another case, user may want to sample some APX eGPRs
-> in user space and sample SIMD regs in interrupt, like "--intr-regs=YMM0,
-> --user-regs=R16", then we have to define 2 separate "words" fields.
-> 
+Fixes the following warning with an UBSAN kernel:
 
-Not for eGPRs. It uses the regular GP regs space, which implies u64 for
-a 64b kernel. The "words" fields is only for vector and predicate registers.
+  drivers/spi/spi-amd.o: error: objtool: amd_set_spi_freq() falls through to next function amd_spi_set_opcode()
 
-I've stated working on the V2. The new interface would be as below.
+Fixes: 3fe26121dc3a ("spi: amd: Configure device speed")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Mark Brown <broonie@kernel.org>
+Cc: Raju Rangoju <Raju.Rangoju@amd.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/78fef0f2434f35be9095bcc9ffa23dd8cab667b9.1742852847.git.jpoimboe@kernel.org
+Closes: https://lore.kernel.org/r/202503161828.RUk9EhWx-lkp@intel.com/
+Signed-off-by: Dmitriy Privalov <d.privalov@omp.ru>
+---
+ drivers/spi/spi-amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/perf_event.h
-b/include/uapi/linux/perf_event.h
-index 78a362b80027..f7b8971fa99d 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -382,6 +382,7 @@ enum perf_event_read_format {
- #define PERF_ATTR_SIZE_VER6			120	/* Add: aux_sample_size */
- #define PERF_ATTR_SIZE_VER7			128	/* Add: sig_data */
- #define PERF_ATTR_SIZE_VER8			136	/* Add: config3 */
-+#define PERF_ATTR_SIZE_VER9			184	/* Add: sample_simd_regs */
+diff --git a/drivers/spi/spi-amd.c b/drivers/spi/spi-amd.c
+index bfc3ab5f39ea..b53301e563bc 100644
+--- a/drivers/spi/spi-amd.c
++++ b/drivers/spi/spi-amd.c
+@@ -243,7 +243,7 @@ static int amd_set_spi_freq(struct amd_spi *amd_spi, u32 speed_hz)
+ 	if (speed_hz < AMD_SPI_MIN_HZ)
+ 		return -EINVAL;
+ 
+-	for (i = 0; i < ARRAY_SIZE(amd_spi_freq); i++)
++	for (i = 0; i < ARRAY_SIZE(amd_spi_freq)-1; i++)
+ 		if (speed_hz >= amd_spi_freq[i].speed_hz)
+ 			break;
+ 
+-- 
+2.34.1
 
- /*
-  * 'struct perf_event_attr' contains various attributes that define
-@@ -543,6 +544,24 @@ struct perf_event_attr {
- 	__u64	sig_data;
-
- 	__u64	config3; /* extension of config2 */
-+
-+
-+	/*
-+	 * Defines set of SIMD registers to dump on samples.
-+	 * The sample_simd_req_enabled !=0 implies the
-+	 * set of SIMD registers is used to config all SIMD registers.
-+	 * If !sample_simd_req_enabled, sample_regs_XXX may be used to
-+	 * config some SIMD registers on X86.
-+	 */
-+	union {
-+		__u16 sample_simd_reg_enabled;
-+		__u16 sample_simd_pred_reg_qwords;
-+	};
-+	__u16 sample_simd_pred_reg_intr;
-+	__u16 sample_simd_pred_reg_user;
-+	__u16 sample_simd_reg_qwords;
-+	__u64 sample_simd_reg_intr;
-+	__u64 sample_simd_reg_user;
- };
-
- /*
-@@ -1016,7 +1035,15 @@ enum perf_event_type {
- 	 *      } && PERF_SAMPLE_BRANCH_STACK
- 	 *
- 	 *	{ u64			abi; # enum perf_sample_regs_abi
--	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_USER
-+	 *	  u64			regs[weight(mask)];
-+	 *	  struct {
-+	 *	  	u16 nr_vectors;
-+	 *	  	u16 vector_qwords;
-+	 *	  	u16 nr_pred;
-+	 *	  	u16 pred_qwords;
-+	 *	  	u64 data[nr_vectors * vector_qwords + nr_pred * pred_qwords];
-+	 *	  } && sample_simd_reg_enabled
-+	 *	} && PERF_SAMPLE_REGS_USER
- 	 *
- 	 *	{ u64			size;
- 	 *	  char			data[size];
-@@ -1043,7 +1070,15 @@ enum perf_event_type {
- 	 *	{ u64			data_src; } && PERF_SAMPLE_DATA_SRC
- 	 *	{ u64			transaction; } && PERF_SAMPLE_TRANSACTION
- 	 *	{ u64			abi; # enum perf_sample_regs_abi
--	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
-+	 *	  u64			regs[weight(mask)];
-+	 *	  struct {
-+	 *	  	u16 nr_vectors;
-+	 *	  	u16 vector_qwords;
-+	 *	  	u16 nr_pred;
-+	 *	  	u16 pred_qwords;
-+	 *	  	u64 data[nr_vectors * vector_qwords + nr_pred * pred_qwords];
-+	 *	  } && sample_simd_reg_enabled
-+	 *	} && PERF_SAMPLE_REGS_INTR
- 	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
- 	 *	{ u64			cgroup;} && PERF_SAMPLE_CGROUP
- 	 *	{ u64			data_page_size;} && PERF_SAMPLE_DATA_PAGE_SIZE
-
-
-Thanks,
-Kan
 
