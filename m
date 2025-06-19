@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-694724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C7CAE0FF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:20:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E34B0AE1003
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C345A3A20
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07D5E4A33C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53216291880;
-	Thu, 19 Jun 2025 23:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E70298CD5;
+	Thu, 19 Jun 2025 23:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bS+kh5pW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T26uVoHH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A1520E711;
-	Thu, 19 Jun 2025 23:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C0A2980A2;
+	Thu, 19 Jun 2025 23:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750375199; cv=none; b=sVp3oRuxzD8gCQ4QGFbaTcvmMUQx7qXEN42i0M0SrI+JBHjSEWurf4WoXq5IV6YMreq26RzSoOLbHSfLL/Vrj7BrvZBvAfXNKiMPJZlO7+9CUqDHqGh6qX0+Kn94zhRLndehWppibRzJGsT3TEbmLz728atrM+z7a657lMgjDvI=
+	t=1750375202; cv=none; b=Az8e9ECr9aNridRpaN1NN4NQYxXz9TSfT12iSrpkr0NmQ7RA03cGlv22vw8vqaGP4zfkiFZ3XpVQDm0hEyAf5q3eFIppgG4++1NYbY7gZVw6FTzcWQQqTSENqLIkSI9nQ50XKgfsOXnyKup5kH0xDolI57qW11fNDFnTc5uLNBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750375199; c=relaxed/simple;
-	bh=4Bdy9C5PuSX9JTAQNrp2VbCcmafGKAL2q+RH456Z+VE=;
+	s=arc-20240116; t=1750375202; c=relaxed/simple;
+	bh=j6/M6lV5AgkmjUTUcqy+FGFH7p1rumsUY4miWwtlLPs=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=I1dogBDi+7A/1fjajLffzJ7z0xZGRg+BqI7+r6lhK7VgUOa2VRntUbe6OcakgP0eom1lAL8ycm05mUR4Rrnd2vuHYhDu+NprRkPx2A6uN79XRwi7sfTWD+EvvJtkjv1Aar19czZRMLvDoKzVa9ThCtZV0vCij9Hz2Zaz/SICgg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bS+kh5pW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3611AC4CEEF;
-	Thu, 19 Jun 2025 23:19:59 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=r/uQMfubWQhQfCmHpm3UhtAIiL5gLnxqZb36j+pPlv9FMykSv2YbXBK1wN99Kgs32wztmRaGIe2ZT2iIH9H6ocPt0KwDmA8MmtZr2QHAy76ddwmd3SL49cxP5pkY4GjLLCePfwI5X1t5QFiBGYYOkPa1Ziy0YSODUIcdpO/8ZtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T26uVoHH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F35F6C4CEF8;
+	Thu, 19 Jun 2025 23:20:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750375199;
-	bh=4Bdy9C5PuSX9JTAQNrp2VbCcmafGKAL2q+RH456Z+VE=;
+	s=k20201202; t=1750375202;
+	bh=j6/M6lV5AgkmjUTUcqy+FGFH7p1rumsUY4miWwtlLPs=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bS+kh5pWl9k4kl46mn9V9Q+n6++HToBv1G0Y7ZvjegOw8vUPW3bXLPuXX2LdBV4K7
-	 DHKh3qsawVnZccwIARoXKmIzrHqpen+Ma/5k8yTXQ/XeQU5ldNpftgwdjsCtbO5QNV
-	 ExP20C3g/TEDhe2/Ukv487b5MDMlFDZcoOYap3tsGm/ZyF6AL1jYLiy+IAFPL6SUW9
-	 M+gqKtPZ/dP1IAx3TUbTq7s+/VfUI2bnJfvsqOxOMUHLsmsjGSZAAdFYRQtxyhjc7+
-	 yfpG+761kS2Q2IvKof2Waeb7C5OVrKgrY9CXCFcaeFjtlOo37OCtT/w7xTlp5gys9s
-	 /UIvio5ES825w==
+	b=T26uVoHHXD8fwNi39piwckyrUqyver196+QfUiG5WkoU6Grf7ri8ozUlACNwJ/0lT
+	 rfctU19R1CfkaP+hP2HmfwFMP2xyT6wqU2tlOvZnHTHcpFrGGxRyReCnVa+aeqOokZ
+	 ltEWPtHuiBOOeV19TjLle09GgB3whTkq+ziDZP4YKmSH5RXgEHMjJdGOYR0+Ooo1XK
+	 wiFC0eX+CXHpTwkANWgUdrSmxeoeZ6FXxVxb3ysUiLyyWFsNqW0in6w7WfwLElH6KL
+	 cTKckAefKJ6tvCGB59C+SKok1T/wi9alPzkK9D226L20qz2aBECf0aDr7Sdq5hD7gs
+	 L85KdEhQAwIPQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70AB438111DD;
-	Thu, 19 Jun 2025 23:20:28 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C7E38111DD;
+	Thu, 19 Jun 2025 23:20:31 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,42 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/3] netpoll: Code organization improvements
+Subject: Re: [PATCH net-next] net/smc: remove unused input parameters in
+ smc_buf_get_slot
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175037522723.1016629.14491510127149155566.git-patchwork-notify@kernel.org>
-Date: Thu, 19 Jun 2025 23:20:27 +0000
-References: <20250618-netpoll_ip_ref-v1-0-c2ac00fe558f@debian.org>
-In-Reply-To: <20250618-netpoll_ip_ref-v1-0-c2ac00fe558f@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, jv@jvosburgh.ne, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, gustavold@gmail.com
+ <175037522974.1016629.11778548886817850645.git-patchwork-notify@kernel.org>
+Date: Thu, 19 Jun 2025 23:20:29 +0000
+References: <20250618103342.1423913-1-wangliang74@huawei.com>
+In-Reply-To: <20250618103342.1423913-1-wangliang74@huawei.com>
+To: Wang Liang <wangliang74@huawei.com>
+Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, alibuda@linux.alibaba.com,
+ tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ yuehaibing@huawei.com, zhangchangzhong@huawei.com,
+ linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to netdev/net-next.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 18 Jun 2025 02:32:44 -0700 you wrote:
-> The netpoll_setup() function has grown complex over time, mixing
-> different error handling and concerns like carrier waiting, IPv4 address
-> retrieval, and IPv6 address retrieval all within a single function,
-> which is huge (127 LoC).
+On Wed, 18 Jun 2025 18:33:42 +0800 you wrote:
+> The input parameter "compressed_bufsize" of smc_buf_get_slot is unused,
+> remove it.
 > 
-> This patch series refactors the netpoll_setup() function to improve code
-> organization and readability by extracting logical blocks into dedicated
-> helper functions. netpoll_setup() length is reduced to 72 LoC.
-> 
-> [...]
+> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+> ---
+>  net/smc/smc_core.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 
 Here is the summary with links:
-  - [1/3] netpoll: Extract carrier wait function
-    https://git.kernel.org/netdev/net-next/c/76d30b51e818
-  - [2/3] netpoll: extract IPv4 address retrieval into helper function
-    https://git.kernel.org/netdev/net-next/c/3699f992e8c2
-  - [3/3] netpoll: Extract IPv6 address retrieval function
-    https://git.kernel.org/netdev/net-next/c/6ad7969a361c
+  - [net-next] net/smc: remove unused input parameters in smc_buf_get_slot
+    https://git.kernel.org/netdev/net-next/c/c3ee72ded0d2
 
 You are awesome, thank you!
 -- 
