@@ -1,190 +1,125 @@
-Return-Path: <linux-kernel+bounces-693293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E06ADFD61
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:57:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE10EADFD6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCF133B6731
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:57:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F3EC189CFAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EDC24418E;
-	Thu, 19 Jun 2025 05:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C67243958;
+	Thu, 19 Jun 2025 05:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HYePmHLQ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tlxp+2tl"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59748239E8D;
-	Thu, 19 Jun 2025 05:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CDE242D8E;
+	Thu, 19 Jun 2025 05:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750312635; cv=none; b=MlsvWNJ1KhViFOsi7tYRCNdcSpDcYRSWxe5eePZirkRv0/xX2x54tAMrpNyMuHzBTpxrcXr3cL+GT4T99TW+96kPhOOzl3Nq/LD6Rdbo4U4svjGxGSi8fuPfBNn23CjGWejflzriF7qPuFvjW3dq6JF19+d0wEYG8weRwpMXtTw=
+	t=1750312690; cv=none; b=NjwVGKyQFYEXB1090yg90cqie+Y/0o3vC5z/siAMHyBs/TB9JoyvrwBLVIWDf0ZBXH9GUZrY0NC0EXJdVtfYmMfcbPUGGrmsEFiY/drbZVpudy/7aBs9gioR221agigCb0bdvHWMCCLtQrVBykiLLITxYwJ2RhP9+g3tybd+eWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750312635; c=relaxed/simple;
-	bh=D/xlw55EoSMWX+1oNBIVOI7WZ/cWsoba7+lpu84WuNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=su/dg2NdaWnHxPOfHlkHIf29iIFNRan61qtj0hc/XMulH6eX445Y+B4+/u/1BvwjoqI7q739l3XHgCArlsAyqmZrT0cDXoACI96MnLGb50px5Eh+rUuDqNGg3UGx9o1kpNapgF0mO8UyBTbXktNdsVpJ1ELwdt8xL0JXgjpGjVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HYePmHLQ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750312631;
-	bh=D/xlw55EoSMWX+1oNBIVOI7WZ/cWsoba7+lpu84WuNQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HYePmHLQBPfH9nqNrBiWlUk9B7aSLg1PcCX6BQGVyy1svSIar9TjqA+9hmSzVyIDE
-	 zG4F9kSlE1W7H+GxLABGyl+VdZACo0DO+7z1srK6g5VsLuwe0iCfTfPNBQp7WvFzw0
-	 DMsJ5/0IZliTgBFXU7jjyokLq9Nj21GNr3pmXJS3EHt00dv6hAdx11Ru9DMpoiSjb3
-	 tSGM0qBjCCnLTZh+YChAp7g1T/JbCqvGmA/8+50mO7perxqmfusXI0MMhDkHJbIAIY
-	 /tW6PeOrGSMbe0RBwzzOZTMbbLxIuZe+7YqzE56U7oPlx27ZVfQhfmDX54auoyrX6h
-	 NoHEjjqxML6sQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EC68417E1559;
-	Thu, 19 Jun 2025 07:57:09 +0200 (CEST)
-Message-ID: <9cdf0624-f9bb-4b11-973e-9480fd655136@collabora.com>
-Date: Thu, 19 Jun 2025 07:57:09 +0200
+	s=arc-20240116; t=1750312690; c=relaxed/simple;
+	bh=UPM/iUMRZV02JBzFSJZaNVgOriCBzjVhqgGwDNTwmuE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=t1q8IUvEv65PbTZpfEJuxLjzP737iU+6a+yE99d3hiUn6qplRuNEqnO8WB8UFEUPsp5b58J6OVesh9IA6lBJBh6UnyCfm5B8ZkKiRFr1bGgDGYOtyIpyJC0RY7PhHifTwbWOhWMS2uT69zjrafqxDWMmSizTHAxFngVDvaMLFDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tlxp+2tl; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4a6f3f88613so3466401cf.1;
+        Wed, 18 Jun 2025 22:58:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750312688; x=1750917488; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E6ieeSo4vRKELhw8/rOXktM5LV24RcohaY2mZD0DT+A=;
+        b=Tlxp+2tlcu4fKgRV2Bvd4AFMANmeOYrkStP/ajqSTquahTcfmtkLPzzxAHbwAao/Ey
+         lIJJqye2GjnExvA6Ta3XcXndNKWp62s6lfafpAwSxJsgewtRqtsj1tUQEIULwU1so8mQ
+         3/4dDB6XynU+DQRQrLaAKGCGUEr1F27Q9Feh0mpdv3z4EPYeZsvYwBqPcOoGF0yugNz0
+         qVUwDYkWh/pd8yyVxAktbFryUhYCe9BFw/6AGSKUOF+Xvkm/HSE3EF6N/NRARPq4j9KU
+         B1ylyj1wIzPXwMQcdSoQvwTzD+IXzqF0UacymdbOmfjMAb3JApaQCEkAU/u7ZVnqYkel
+         Ilqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750312688; x=1750917488;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E6ieeSo4vRKELhw8/rOXktM5LV24RcohaY2mZD0DT+A=;
+        b=ST8XjInVxl3ZrA1UF8oA95necjbsxmiV8dDyzI4O37k/fcIo/jgBagCoHi2rwrx4VQ
+         WAU6UVr8ehnSbKXY/Z7P2z+EQEdt0OJpc34bxX/9BWYG6UAQ1WZ2qlCbpJgdKo/LfspD
+         vmfFWpMe1yORrak/9d2+vAsg4M6g03Dj9S0vUQOZ1hMrsWVT9tvrUEJl1BFNxYnzQSSd
+         g7HfjdRapoagJJUBUV2+5D4vyD+MtQxvswrmqKK6wANMd4sRQPNnZaWtHGQRqz6niU3l
+         9bhSrvKPhi/tc75lM7P36lRFZt9xY2Io9HxbyHxxv3SGzESAzr00FVXDIC8jmGZI7ohB
+         GNww==
+X-Forwarded-Encrypted: i=1; AJvYcCUqBZOMaIU6F1KLFbGgjiDyisySFo0TLkOKYVexM9ZQmEhUbtlDBHvRiscy0k+6scojGTwWn4PlORwq+Qs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzog1ZJeIs2URnod1BNjqaHa5Q8+0B0Hclp8bX6j6z1BG35f56s
+	/yYqoS7/qIl3d2fEpAMd+SDmOR2Uv55S9HBD93VULyQ29oXQEHtYFJnG
+X-Gm-Gg: ASbGnctpkCXDG0HE/bzbPcuQ7js017Gu5yAsmGP9OTlqro1ImNkNO5ZLKz+gef5ZyW6
+	QhhNxaLyKXgwGDQVGeAep7cZNGLtx+RrwB6pKoTxEEHgJCYCsaawacIm6RCFni9+pkUIWPNb7Cm
+	CDqD6hkU0qPQOYb6Enj26a920ygiX+udExXcB+iTcUq8Z7s0PV9TNuYkiTW0m+TkyAacI6NWwdG
+	S+dmZo6nV7II1iqUIjEXpJ+mH96fz0I3SnMjKoZzarEyEOGpG4MhjfhnCVXmewhO5MyvASZ105o
+	xsLhZM3j7r2MaRV9D9IOfMpP4kyhpJLYqCkLEs286/+/d5PSwOOAUENrZ360QkNj2yh5hyzFokG
+	8vrFHI8zdrz0GbOTaWV33W8pw8KWTcKXszu7XrhN1oAaaMcbFjWqd6p695Q==
+X-Google-Smtp-Source: AGHT+IEcgaKg2OtQgkTumlR6bZwenvChQUzb8wcskNs+GOrGozd81FZRDCNpNjG99v/XM9+ZEvANAA==
+X-Received: by 2002:a05:622a:118f:b0:4a4:3449:2b82 with SMTP id d75a77b69052e-4a73c55b6a5mr377120781cf.13.1750312688133;
+        Wed, 18 Jun 2025 22:58:08 -0700 (PDT)
+Received: from seungjin-HP-ENVY-Desktop-TE02-0xxx.dartmouth.edu ([129.170.197.81])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a72a2e750bsm79171421cf.17.2025.06.18.22.58.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 22:58:06 -0700 (PDT)
+From: Seungjin Bae <eeodqql09@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Seungjin Bae <eeodqql09@gmail.com>
+Subject: [PATCH v4] usb: host: xhci-plat: fix incorrect type for of_match variable in xhci_plat_probe()
+Date: Thu, 19 Jun 2025 01:57:47 -0400
+Message-ID: <20250619055746.176112-2-eeodqql09@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <2025061950-frown-cesarean-a1e3@gregkh>
+References: <2025061950-frown-cesarean-a1e3@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/13] further mt7988 devicetree work
-To: Frank Wunderlich <linux@fw-web.de>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Georgi Djakov <djakov@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
- Jia-Wei Chang <jia-wei.chang@mediatek.com>,
- Johnson Wang <johnson.wang@mediatek.com>, =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?=
- <arinc.unal@arinc9.com>, Landen Chao <Landen.Chao@mediatek.com>,
- DENG Qingfang <dqfext@gmail.com>, Sean Wang <sean.wang@mediatek.com>,
- Daniel Golle <daniel@makrotopia.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
- Felix Fietkau <nbd@nbd.name>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20250616095828.160900-1-linux@fw-web.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250616095828.160900-1-linux@fw-web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 16/06/25 11:58, Frank Wunderlich ha scritto:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
+The variable `of_match` was incorrectly declared as a `bool`.
+It is assigned the return value of of_match_device(), which is a pointer of
+type `const struct of_device_id *`.
 
-I think that this series is ready to be applied; however, I need someone to take
-the bindings before I can apply the devicetree part to the MediaTek trees.
+Fixes: 16b7e0cccb243 ("USB: xhci-plat: fix legacy PHY double init")
+Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
+---
+ v3 -> v4: Corrected a typo in the changelog
+ v2 -> v3: Added version of patch and used real name
+ v1 -> v2: Updated Fixes tag and corrected Signed-off-by line
+ 
+ drivers/usb/host/xhci-plat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-Angelo
-
-
-> This series continues mt7988 devicetree work
-> 
-> - Extend cpu frequency scaling with CCI
-> - GPIO leds
-> - Basic network-support (ethernet controller + builtin switch + SFP Cages)
-> 
-> depencies (i hope this list is complete and latest patches/series linked):
-> 
-> support interrupt-names because reserved IRQs are now dropped, so index based access is now wrong
-> https://patchwork.kernel.org/project/netdevbpf/patch/20250616080738.117993-2-linux@fw-web.de/
-> 
-> for SFP-Function (macs currently disabled):
-> 
-> PCS clearance which is a 1.5 year discussion currently ongoing
-> 
-> e.g. something like this (one of):
-> * https://patchwork.kernel.org/project/netdevbpf/patch/20250610233134.3588011-4-sean.anderson@linux.dev/ (v6)
-> * https://patchwork.kernel.org/project/netdevbpf/patch/20250511201250.3789083-4-ansuelsmth@gmail.com/ (v4)
-> * https://patchwork.kernel.org/project/netdevbpf/patch/ba4e359584a6b3bc4b3470822c42186d5b0856f9.1721910728.git.daniel@makrotopia.org/
-> 
-> full usxgmii driver:
-> https://patchwork.kernel.org/project/netdevbpf/patch/07845ec900ba41ff992875dce12c622277592c32.1702352117.git.daniel@makrotopia.org/
-> 
-> first PCS-discussion is here:
-> https://patchwork.kernel.org/project/netdevbpf/patch/8aa905080bdb6760875d62cb3b2b41258837f80e.1702352117.git.daniel@makrotopia.org/
-> 
-> and then dts nodes for sgmiisys+usxgmii+2g5 firmware
-> 
-> when above depencies are solved the mac1/2 can be enabled and 2.5G phy/SFP slots will work.
-> 
-> changes:
-> v4:
->    net-binding:
->      - allow interrupt names and increase max interrupts to 6 because of RSS/LRO interrupts
->        (dropped Robs RB due to this change)
-> 
->    dts-patches:
->    - add interrupts for RSS/LRO and interrupt-names for ethernet node
->    - eth-reg and clock whitespace-fix
->    - comment for fixed-link on gmac0
->    - drop phy-mode properties as suggested by andrew
->    - drop phy-connection-type on 2g5 board
->    - reorder some properties
->    - update 2g5 phy node
->      - unit-name dec instead of hex to match reg property
->      - move compatible before reg
->      - drop phy-mode
-> 
-> v3:
->    - dropped patches already applied (SPI+thermal)
->    - added soc specific cci compatible (new binding patch + changed dts)
->    - enable 2g5 phy because driver is now merged
->    - add patch for cleaning up unnecessary pins
->    - add patch for gpio-leds
->    - add patch for adding ethernet aliases
-> 
-> v2:
->    - change reg to list of items in eth binding
->    - changed mt7530 binding:
->      - unevaluatedProperties=false
->      - mediatek,pio subproperty
->      - from patternProperty to property
->    - board specific properties like led function and labels moved to bpi-r4 dtsi
-> 
-> 
-> Frank Wunderlich (13):
->    dt-bindings: net: mediatek,net: update for mt7988
->    dt-bindings: net: dsa: mediatek,mt7530: add dsa-port definition for
->      mt7988
->    dt-bindings: net: dsa: mediatek,mt7530: add internal mdio bus
->    dt-bindings: interconnect: add mt7988-cci compatible
->    arm64: dts: mediatek: mt7988: add cci node
->    arm64: dts: mediatek: mt7988: add basic ethernet-nodes
->    arm64: dts: mediatek: mt7988: add switch node
->    arm64: dts: mediatek: mt7988a-bpi-r4: add proc-supply for cci
->    arm64: dts: mediatek: mt7988a-bpi-r4: drop unused pins
->    arm64: dts: mediatek: mt7988a-bpi-r4: add gpio leds
->    arm64: dts: mediatek: mt7988a-bpi-r4: add aliases for ethernet
->    arm64: dts: mediatek: mt7988a-bpi-r4: add sfp cages and link to gmac
->    arm64: dts: mediatek: mt7988a-bpi-r4: configure switch phys and leds
-> 
->   .../bindings/interconnect/mediatek,cci.yaml   |  11 +-
->   .../bindings/net/dsa/mediatek,mt7530.yaml     |  24 +-
->   .../devicetree/bindings/net/mediatek,net.yaml |  28 +-
->   .../mediatek/mt7988a-bananapi-bpi-r4-2g5.dts  |  11 +
->   .../dts/mediatek/mt7988a-bananapi-bpi-r4.dts  |  19 ++
->   .../dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi | 198 ++++++-----
->   arch/arm64/boot/dts/mediatek/mt7988a.dtsi     | 307 +++++++++++++++++-
->   7 files changed, 498 insertions(+), 100 deletions(-)
-> 
-
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 6dab142e7278..49eb874b1d81 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -152,7 +152,7 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
+ 	int			ret;
+ 	int			irq;
+ 	struct xhci_plat_priv	*priv = NULL;
+-	bool			of_match;
++	const struct of_device_id *of_match;
+ 
+ 	if (usb_disabled())
+ 		return -ENODEV;
+-- 
+2.43.0
 
 
