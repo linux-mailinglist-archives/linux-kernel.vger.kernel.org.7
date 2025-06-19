@@ -1,268 +1,80 @@
-Return-Path: <linux-kernel+bounces-694366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F4E9AE0B7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A222AE0B7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FD867A6371
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:43:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB5977A6E1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64C728C006;
-	Thu, 19 Jun 2025 16:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C66E28C01E;
+	Thu, 19 Jun 2025 16:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qc2aD+Rk";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iYrgsVHt";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qc2aD+Rk";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iYrgsVHt"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b="HQ2jzHRs"
+Received: from mta-101a.earthlink-vadesecure.net (mta-101a.earthlink-vadesecure.net [51.81.61.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F76C2566E6
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 16:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A65511712;
+	Thu, 19 Jun 2025 16:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.61.60
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750351474; cv=none; b=radXq/OLoE9lgd8GH5kF51OFrk1lJC1uld6hd8vMhkgMlaVGERylMnlMcxEwjXv4Em03gUcTo+YL+I9kVDe6t475VkYyZF2qWjbvvyIYZwxmi+zWX0CnPGImsamKekoG25HTr2raxVmzOyhnJmmurzmdDqOiE8QhOBsyamQUfg8=
+	t=1750351812; cv=none; b=JR4sPaLIyYAmrvOsaoGFaKhXVFL9b+x4ikKSYz1brTOKUoVqUlx/BYNA9RlkeVQjjTwtL1kBz1FbussaSDbI9ySzi0d5X3WHa5+y5POW5Aho94jAAWUV7o2AyZlfYYo3vEfAHd+81JSp91iPaALJ5+Ao8JzrC9S2QN5eFtu+NjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750351474; c=relaxed/simple;
-	bh=b/+ikzLp54Gc/0Xc09GVIw86JXBMCy4h4061cXUV7GI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DanGUrvY/NEwlirL2DvLp5NAhUvzCFhYXOH7Fd3T+K/tkGQiTZMZ+QAyrr+mqjkPqcBf2+ntNUuo7ReL301QS2Kl+nh1PvMPxTXJ8yGSZ915oB3c5w+QoDPMpoMrdc1BuIAyWS3mUypzcHphm+66PUKdx5HHUHbRxujcwwwI7dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qc2aD+Rk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iYrgsVHt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qc2aD+Rk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iYrgsVHt; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8ED40211E3;
-	Thu, 19 Jun 2025 16:44:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750351469; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1N/DpDRogQtGmbHByX+jvX5Z1OyNpESX58Fdy62AS+Q=;
-	b=qc2aD+Rkb2PqRaORoyjmyNhxNS75Ye9PVbQDebDjJb62jRi5Y97Z+GJV0ky8C/4yJNPziG
-	08GfntvK4he50AzcQjuG3U6hI3ep2ssbkqs1AY48KIg7eo6zrRObRHCARAPPnDuSLb/lih
-	x/FMHO/DgRmrdzc43iVsSFbENybe188=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750351469;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1N/DpDRogQtGmbHByX+jvX5Z1OyNpESX58Fdy62AS+Q=;
-	b=iYrgsVHtWVTIxCiShTFdv0+Fe18Yck4+nQPXyCKlGSVE1QptSl6CQgIriuyzAP6Qmls1bk
-	QWMv31Iw3ia+OIAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qc2aD+Rk;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=iYrgsVHt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750351469; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1N/DpDRogQtGmbHByX+jvX5Z1OyNpESX58Fdy62AS+Q=;
-	b=qc2aD+Rkb2PqRaORoyjmyNhxNS75Ye9PVbQDebDjJb62jRi5Y97Z+GJV0ky8C/4yJNPziG
-	08GfntvK4he50AzcQjuG3U6hI3ep2ssbkqs1AY48KIg7eo6zrRObRHCARAPPnDuSLb/lih
-	x/FMHO/DgRmrdzc43iVsSFbENybe188=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750351469;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1N/DpDRogQtGmbHByX+jvX5Z1OyNpESX58Fdy62AS+Q=;
-	b=iYrgsVHtWVTIxCiShTFdv0+Fe18Yck4+nQPXyCKlGSVE1QptSl6CQgIriuyzAP6Qmls1bk
-	QWMv31Iw3ia+OIAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 80C1A13721;
-	Thu, 19 Jun 2025 16:44:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id U+9qH20+VGh9SQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 19 Jun 2025 16:44:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3DA56A29FA; Thu, 19 Jun 2025 18:44:29 +0200 (CEST)
-Date: Thu, 19 Jun 2025 18:44:29 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	ojaswin@linux.ibm.com, yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, 
-	yangerkun@huawei.com
-Subject: Re: [PATCH v2 5/6] ext4/jbd2: reintroduce
- jbd2_journal_blocks_per_page()
-Message-ID: <ugup3tdvaxgzc6agaidbdh7sdcpzcqvwzsurqkesyhsyta7q7y@h3q6mrc2jcno>
-References: <20250611111625.1668035-1-yi.zhang@huaweicloud.com>
- <20250611111625.1668035-6-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1750351812; c=relaxed/simple;
+	bh=YTlcXr9OlGydD15/oYLK7Weyj63Pb2tsjIWoisxYE6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QghKN3MnSq8CnOx4Y+h4RSd7ZPMrjZ10oRioQxGFqta7pjyFcs3VDkEmYsq7wdMYXQqVPzJpXSpbpPbdje5Mw1TE+bJmdnpnqUbahA1R4TFG32ZyMFJCdrEo2XsikNu+m8Afc1diUm0O26ODDOymCWbQbpjxUtdtBAj6uMnpPpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=onemain.com; spf=pass smtp.mailfrom=onemain.com; dkim=pass (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b=HQ2jzHRs; arc=none smtp.client-ip=51.81.61.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=onemain.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onemain.com
+Authentication-Results: earthlink-vadesecure.net;
+ auth=pass smtp.auth=svnelson@teleport.com smtp.mailfrom=sln@onemain.com;
+DKIM-Signature: v=1; a=rsa-sha256; bh=YTlcXr9OlGydD15/oYLK7Weyj63Pb2tsjIWois
+ xYE6Q=; c=relaxed/relaxed; d=earthlink.net; h=from:reply-to:subject:
+ date:to:cc:resent-date:resent-from:resent-to:resent-cc:in-reply-to:
+ references:list-id:list-help:list-unsubscribe:list-unsubscribe-post:
+ list-subscribe:list-post:list-owner:list-archive; q=dns/txt;
+ s=dk12062016; t=1750351484; x=1750956284; b=HQ2jzHRspBIedcrbh3Xwu9ZlrqH
+ w6Yb6hZ8q3mPiS1aXwM0srxcnpM0jPV8LwhcrRZfXWTiKIdGLhlt336KfL+vayjGGQ18Utu
+ XJ9halFKOr/ZXQryj9GbuqlVI0vjLXt/LaTzzg3EANGLG4YdjHkJUHbmengleZExk8uvqgS
+ iaGQzed+edFpNbz4Fp/gxwSEfcVPzXnzyruDBqN6mMTKpDgxayRRV9xmLTaKO4mfK0B05n/
+ hyi1in4iClNIXdffstHf7fbR3jFt8ofZXQmrZ18CnqpzDLb54UaDJZJDxrNLUv062UPfqUF
+ johVc98jsc4FdREd02yN9L+NN0mE2wQ==
+Received: from [192.168.0.23] ([50.47.159.51])
+ by vsel1nmtao01p.internal.vadesecure.com with ngmta
+ id 5a8dfc70-184a7f663f8b4416; Thu, 19 Jun 2025 16:44:44 +0000
+Message-ID: <8b18c015-3dbf-4c4d-a404-3831459c6326@onemain.com>
+Date: Thu, 19 Jun 2025 09:44:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611111625.1668035-6-yi.zhang@huaweicloud.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 8ED40211E3
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] mailmap: Update shannon.nelson emails
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250619010603.1173141-1-sln@onemain.com>
+ <20250619082915.08a79e6b@kernel.org>
+Content-Language: en-US
+From: Shannon Nelson <sln@onemain.com>
+In-Reply-To: <20250619082915.08a79e6b@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed 11-06-25 19:16:24, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> This partially reverts commit d6bf294773a4 ("ext4/jbd2: convert
-> jbd2_journal_blocks_per_page() to support large folio"). This
-> jbd2_journal_blocks_per_folio() will lead to a significant
-> overestimation of journal credits. Since we still reserve credits for
-> one page and attempt to extend and restart handles during large folio
-> writebacks, so we should convert this helper back to
-> ext4_journal_blocks_per_page().
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On 6/19/25 8:29 AM, Jakub Kicinski wrote:
+> On Wed, 18 Jun 2025 18:06:03 -0700 Shannon Nelson wrote:
+>> Retiring, so redirect things to a non-corporate account.
+> I just so happened to be applying your MAITNAINERS update and this
+> patch one after another, so I'm just gonna squash them. Hope you don't
+> mind.
 
-Here I'm not decided. Does it make any particular sense to reserve credits
-for one *page* worth of blocks when pages don't have any particular meaning
-in our writeback code anymore? We could reserve credits just for one
-physical extent and that should be enough. For blocksize == pagesize (most
-common configs) this would be actually equivalent. If blocksize < pagesize,
-this could force us to do some more writeback retries and thus get somewhat
-higher writeback CPU overhead but do we really care for these configs?  It
-is well possible I've overlooked something and someone will spot a
-performance regression in practical setup with this in which case we'd have
-to come up with something more clever but I think it's worth it to start
-simple and complicate later.
+That works for me - thanks!
+sln
 
-								Honza
-
-> ---
->  fs/ext4/ext4_jbd2.h  | 7 +++++++
->  fs/ext4/inode.c      | 6 +++---
->  fs/jbd2/journal.c    | 6 ++++++
->  include/linux/jbd2.h | 1 +
->  4 files changed, 17 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
-> index 63d17c5201b5..c0ee756cb34c 100644
-> --- a/fs/ext4/ext4_jbd2.h
-> +++ b/fs/ext4/ext4_jbd2.h
-> @@ -326,6 +326,13 @@ static inline int ext4_journal_blocks_per_folio(struct inode *inode)
->  	return 0;
->  }
->  
-> +static inline int ext4_journal_blocks_per_page(struct inode *inode)
-> +{
-> +	if (EXT4_JOURNAL(inode) != NULL)
-> +		return jbd2_journal_blocks_per_page(inode);
-> +	return 0;
-> +}
-> +
->  static inline int ext4_journal_force_commit(journal_t *journal)
->  {
->  	if (journal)
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 67e37dd546eb..9835145b1b27 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -2556,7 +2556,7 @@ static int mpage_map_and_submit_extent(handle_t *handle,
->   */
->  static int ext4_da_writepages_trans_blocks(struct inode *inode)
->  {
-> -	int bpp = ext4_journal_blocks_per_folio(inode);
-> +	int bpp = ext4_journal_blocks_per_page(inode);
->  
->  	return ext4_meta_trans_blocks(inode,
->  				MAX_WRITEPAGES_EXTENT_LEN + bpp - 1, bpp);
-> @@ -2634,7 +2634,7 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
->  	ext4_lblk_t lblk;
->  	struct buffer_head *head;
->  	handle_t *handle = NULL;
-> -	int bpp = ext4_journal_blocks_per_folio(mpd->inode);
-> +	int bpp = ext4_journal_blocks_per_page(mpd->inode);
->  
->  	if (mpd->wbc->sync_mode == WB_SYNC_ALL || mpd->wbc->tagged_writepages)
->  		tag = PAGECACHE_TAG_TOWRITE;
-> @@ -6255,7 +6255,7 @@ int ext4_meta_trans_blocks(struct inode *inode, int lblocks, int pextents)
->   */
->  int ext4_writepage_trans_blocks(struct inode *inode)
->  {
-> -	int bpp = ext4_journal_blocks_per_folio(inode);
-> +	int bpp = ext4_journal_blocks_per_page(inode);
->  	int ret;
->  
->  	ret = ext4_meta_trans_blocks(inode, bpp, bpp);
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index d480b94117cd..7fccb425907f 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -84,6 +84,7 @@ EXPORT_SYMBOL(jbd2_journal_start_commit);
->  EXPORT_SYMBOL(jbd2_journal_force_commit_nested);
->  EXPORT_SYMBOL(jbd2_journal_wipe);
->  EXPORT_SYMBOL(jbd2_journal_blocks_per_folio);
-> +EXPORT_SYMBOL(jbd2_journal_blocks_per_page);
->  EXPORT_SYMBOL(jbd2_journal_invalidate_folio);
->  EXPORT_SYMBOL(jbd2_journal_try_to_free_buffers);
->  EXPORT_SYMBOL(jbd2_journal_force_commit);
-> @@ -2661,6 +2662,11 @@ int jbd2_journal_blocks_per_folio(struct inode *inode)
->  		     inode->i_sb->s_blocksize_bits);
->  }
->  
-> +int jbd2_journal_blocks_per_page(struct inode *inode)
-> +{
-> +	return 1 << (PAGE_SHIFT - inode->i_sb->s_blocksize_bits);
-> +}
-> +
->  /*
->   * helper functions to deal with 32 or 64bit block numbers.
->   */
-> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-> index 43b9297fe8a7..f35369c104ba 100644
-> --- a/include/linux/jbd2.h
-> +++ b/include/linux/jbd2.h
-> @@ -1724,6 +1724,7 @@ static inline int tid_geq(tid_t x, tid_t y)
->  }
->  
->  extern int jbd2_journal_blocks_per_folio(struct inode *inode);
-> +extern int jbd2_journal_blocks_per_page(struct inode *inode);
->  extern size_t journal_tag_bytes(journal_t *journal);
->  
->  static inline int jbd2_journal_has_csum_v2or3(journal_t *journal)
-> -- 
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
