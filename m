@@ -1,64 +1,54 @@
-Return-Path: <linux-kernel+bounces-693830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D1D6AE0454
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:50:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8063DAE0457
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34B713B29FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:49:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B3243A7353
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381B3235071;
-	Thu, 19 Jun 2025 11:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJBUADiP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824A7221704;
-	Thu, 19 Jun 2025 11:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0CC22FAD3;
+	Thu, 19 Jun 2025 11:51:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB3C21FF26
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 11:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750333805; cv=none; b=IA/eBxlT3Bh10/IlZcH7n2gYe/SmzHhuXGqjsafqtnKxrPpZ4szfwjYWYvOxCAsNPrh9UD9G2MAyaWMuDvlTJZEOh9k2JmOd0nWzqXRv9AOMvJBKO0pXAeE5g7NIzy5821ZTWmzn4sTWy6pt+Jn/SCWRhAVLyzi7cxZJpIVqeiA=
+	t=1750333903; cv=none; b=LNycQoR9qoHvN65u62VnUxM8cAUMv4NZNu3pVwJzkVdSIF9o9RzEW5FHsqiFz/eCgQ4SE2x2pJhRPfAz3HocAyCf7OhvKOVpny6ok4SfnYXG+yfC26yBnam/Lve1v7ug5e4qkW7MWspfyo2n+TbKP/wMgMTLJNQKhqhKxMrvsKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750333805; c=relaxed/simple;
-	bh=xcXMxMStMR8/rb3GKA1jioXnMSxQsU2Ozqjqe/yF1w4=;
+	s=arc-20240116; t=1750333903; c=relaxed/simple;
+	bh=cV46gl3pjPGt2Sftob+tBt5M1wyyalH/s2Lx039lCQk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cYyh2maadk7gA6pk2/oD9AbS4sVsxNvk8N+7bsHs/ltZJgHeBULH4JsHNFk3m5ZhxTgSWUlK8a6sUPSsngEVLqLH3/yn/XU8ZoQiLXvU36B6zdn3qq1ppAFH/Tc80kjo+KpTNTDlsUypmlCc3zTeYguQ+0pTOeNhn4vyOxTCyiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJBUADiP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92B52C4CEEA;
-	Thu, 19 Jun 2025 11:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750333805;
-	bh=xcXMxMStMR8/rb3GKA1jioXnMSxQsU2Ozqjqe/yF1w4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iJBUADiP0/X9+azGm/g0vceCBNhs6nGkYRctOjZ0QujbBcVw07QEuw90FiyNinK/F
-	 NfZ37rkV0sUP/G0oblx/GVCfEyXj/nhORcmp5qDKSX0KH3ot5K7K59vws1ab9u98Lq
-	 EJoWZgGz25N5q51nkLZxnbG4upiC8/EdjQ/1y/YDTUhEIrC8aEDgvYIxCJ8RpieFcI
-	 rVHrJS0yuA3ss51VZzsJ4cSoJHpoOVA5SxIfiC93NY9Py8Y8VzT/lpbSGO9BzGefL0
-	 Vz9D/grzsbiLENfOJmkZpKpjPCCVMTxRsZEVtE/ahvL6O4duPDOE61p95G5saaxSRZ
-	 FiFGUqm7XKKiQ==
-Date: Thu, 19 Jun 2025 12:49:58 +0100
-From: Lee Jones <lee@kernel.org>
-To: Sven Peter <sven@kernel.org>
-Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v7 05/10] mfd: Add Apple Silicon System Management
- Controller
-Message-ID: <20250619114958.GJ587864@google.com>
-References: <20250610-smc-6-15-v7-0-556cafd771d3@kernel.org>
- <20250610-smc-6-15-v7-5-556cafd771d3@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=reKVxrgSCIy71dbtCrShfhCb8UGI5K0qmjejsX2jyrKFSNPeYuC1d37ri/8dGMMY6rk0lGYpkJ2mvAQsIn3raTwdMKkMZIUbDjUJeKqRHNZKsdVprGmPeX1wHzaD9tK9d6B2rt8nJKNo5ntfZtR3WGwQYH4cVf3WWN+w8ydKpMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0570A106F;
+	Thu, 19 Jun 2025 04:51:20 -0700 (PDT)
+Received: from e133081.arm.com (unknown [10.1.28.99])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 95C8D3F66E;
+	Thu, 19 Jun 2025 04:51:35 -0700 (PDT)
+Date: Thu, 19 Jun 2025 12:51:32 +0100
+From: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: ryan.roberts@arm.com, yang@os.amperecomputing.com, will@kernel.org,
+	jean-philippe@linaro.org, robin.murphy@arm.com, joro@8bytes.org,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	james.morse@arm.com, broonie@kernel.org, ardb@kernel.org,
+	baohua@kernel.org, suzuki.poulose@arm.com, david@redhat.com,
+	jgg@ziepe.ca, nicolinc@nvidia.com, jsnitsel@redhat.com,
+	mshavit@google.com, kevin.tian@intel.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [PATCH v7 2/4] arm64: Add BBM Level 2 cpu feature
+Message-ID: <20250619115132.GA20673@e133081.arm.com>
+References: <20250617095104.6772-1-miko.lenczewski@arm.com>
+ <20250617095104.6772-3-miko.lenczewski@arm.com>
+ <aFPu4SorUGlFt-2p@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,40 +58,108 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250610-smc-6-15-v7-5-556cafd771d3@kernel.org>
+In-Reply-To: <aFPu4SorUGlFt-2p@arm.com>
 
-On Tue, 10 Jun 2025, Sven Peter wrote:
+On Thu, Jun 19, 2025 at 12:05:05PM +0100, Catalin Marinas wrote:
+> On Tue, Jun 17, 2025 at 09:51:02AM +0000, Mikołaj Lenczewski wrote:
+> > diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> > index f9c947166322..2e80ff237b96 100644
+> > --- a/arch/arm64/kernel/cpufeature.c
+> > +++ b/arch/arm64/kernel/cpufeature.c
+> > @@ -2213,6 +2213,41 @@ static bool hvhe_possible(const struct arm64_cpu_capabilities *entry,
+> >  	return arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_HVHE);
+> >  }
+> >  
+> > +static bool has_bbml2_noabort(const struct arm64_cpu_capabilities *caps, int scope)
+> > +{
+> > +	/*
+> > +	 * We want to allow usage of BBML2 in as wide a range of kernel contexts
+> > +	 * as possible. This list is therefore an allow-list of known-good
+> > +	 * implementations that both support BBML2 and additionally, fulfill the
+> > +	 * extra constraint of never generating TLB conflict aborts when using
+> > +	 * the relaxed BBML2 semantics (such aborts make use of BBML2 in certain
+> > +	 * kernel contexts difficult to prove safe against recursive aborts).
+> > +	 *
+> > +	 * Note that implementations can only be considered "known-good" if their
+> > +	 * implementors attest to the fact that the implementation never raises
+> > +	 * TLBI conflict aborts for BBML2 mapping granularity changes.
+> 
+> s/TLBI/TLB/
+> 
 
-> The System Management Controller (SMC) on Apple Silicon machines is a
-> piece of hardware that exposes various functionalities such as
-> temperature sensors, voltage/power meters, shutdown/reboot handling,
-> GPIOs and more.
-> 
-> Communication happens via a shared mailbox using the RTKit protocol
-> which is also used for other co-processors. The SMC protocol then allows
-> reading and writing many different keys which implement the various
-> features. The MFD core device handles this protocol and exposes it
-> to the sub-devices.
-> 
-> Some of the sub-devices are potentially also useful on pre-M1 Apple
-> machines and support for SMCs on these machines can be added at a later
-> time.
-> 
-> Co-developed-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> Reviewed-by: Neal Gompa <neal@gompa.dev>
-> Signed-off-by: Sven Peter <sven@kernel.org>
-> ---
->  MAINTAINERS                |   2 +
->  drivers/mfd/Kconfig        |  18 ++
->  drivers/mfd/Makefile       |   1 +
->  drivers/mfd/macsmc.c       | 498 +++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/macsmc.h | 279 +++++++++++++++++++++++++
->  5 files changed, 798 insertions(+)
+ACK
 
-This is ready.  Let me know when you have all of the other driver/* Acks.
+> > +	 */
+> > +	static const struct midr_range supports_bbml2_noabort_list[] = {
+> > +		MIDR_REV_RANGE(MIDR_CORTEX_X4, 0, 3, 0xf),
+> > +		MIDR_REV_RANGE(MIDR_NEOVERSE_V3, 0, 2, 0xf),
+> > +		{}
+> > +	};
+> > +
+> > +	/* Does our cpu guarantee to never raise TLB conflict aborts? */
+> > +	if (!is_midr_in_range_list(supports_bbml2_noabort_list))
+> > +		return false;
+> > +
+> > +	/*
+> > +	 * We currently ignore the AA64_ID_MMFR2 register, and only care about
+> 
+> s/AA64_ID_MMFR2/ID_AA64MMFR2_EL1/
+> 
+
+ACK
+
+> > +	 * whether the MIDR check passes. This is because we specifically
+> > +	 * care only about a stricter form of BBML2 (one guaranteeing noabort),
+> > +	 * and so the MMFR2 check is pointless (all implementations passing the
+> > +	 * MIDR check should also pass the MMFR2 check).
+> 
+> I think there's at least one implementation that behaves as
+> BBML2-noabort but does not have the ID field advertising BBML2.
+> 
+
+Yes, I put "should" instead of "will" because of the AmpereOne
+situation, but I didn't want to "name and shame". Should I explicitly
+call this out? Or would you like me to soften the vocabulary here to imply
+that as long as the MIDR passes, the MMFR2 check is not important?
+
+> > +	 */
+> > +
+> > +	return true;
+> > +}
+> > +
+> >  #ifdef CONFIG_ARM64_PAN
+> >  static void cpu_enable_pan(const struct arm64_cpu_capabilities *__unused)
+> >  {
+> > @@ -2980,6 +3015,11 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+> >  		.matches = has_cpuid_feature,
+> >  		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, EVT, IMP)
+> >  	},
+> > +	{
+> > +		.capability = ARM64_HAS_BBML2_NOABORT,
+> > +		.type = ARM64_CPUCAP_EARLY_LOCAL_CPU_FEATURE,
+> > +		.matches = has_bbml2_noabort,
+> > +	},
+> >  	{
+> >  		.desc = "52-bit Virtual Addressing for KVM (LPA2)",
+> >  		.capability = ARM64_HAS_LPA2,
+> > diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
+> > index 10effd4cff6b..2bd2bfaeddcd 100644
+> > --- a/arch/arm64/tools/cpucaps
+> > +++ b/arch/arm64/tools/cpucaps
+> > @@ -45,6 +45,7 @@ HAS_LPA2
+> >  HAS_LSE_ATOMICS
+> >  HAS_MOPS
+> >  HAS_NESTED_VIRT
+> > +HAS_BBML2_NOABORT
+> >  HAS_PAN
+> >  HAS_PMUV3
+> >  HAS_S1PIE
+> 
+> Otherwise it looks fine.
+> 
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
 -- 
-Lee Jones [李琼斯]
+Kind regards,
+Mikołaj Lenczewski
 
