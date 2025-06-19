@@ -1,329 +1,203 @@
-Return-Path: <linux-kernel+bounces-693491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A8BADFF83
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:15:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02AC3ADFF78
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDEC317AE97
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:15:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65DB1189372A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BE0264625;
-	Thu, 19 Jun 2025 08:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oj9eoJuw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F7F25FA09;
+	Thu, 19 Jun 2025 08:12:36 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505F1261398;
-	Thu, 19 Jun 2025 08:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750320908; cv=fail; b=ex2gXFkhk37I3kq9QLRWzejgZLbnJiUK81753oaXzl9K6a8kZIhsgsNH+cwmKyy0b5+TuOLaI9vzivbviB2gDnF1Kw8trAaN2FZCYmWv4wgFq3hNDN2DKbN9cdeHZSQiR3sNJiI61bS4hZeWEOSElv6cwJfXkHIaZGWe2LUiqdA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750320908; c=relaxed/simple;
-	bh=bu3jCXmsgZyTiy+mqKesrtukEvc9bg4ohOi4hOcULGM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=H9vHLq7JrE3UieaKcmwFnQkaonTh5JU8h9Ns8T9I39ix80uD3LeE8s/86Rna+e/iNtx57JMcDfn1adYQBuVDSOL7IPZVrIlODkE0EZHXtf9iPcBj/ezbjjEIttDu6hx7HQTjJ6NSjxjVGBMCPT6EEOQvHO5lK/XcvBDzKPhGLTE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oj9eoJuw; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750320906; x=1781856906;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=bu3jCXmsgZyTiy+mqKesrtukEvc9bg4ohOi4hOcULGM=;
-  b=Oj9eoJuwTn6AJ1bGQ4WU1fsgyKC2vu1ek9OUhMN/pSOcfUMewd83iMc8
-   Vu9D+phBBXrrP8hjnVC2E9euQwzhu2VDMr171J2/ImlN9JFOPk76tu5PD
-   PeY8Ongwy7wsY8qBdbJpCa1tDHuqOXlNSezo/hS1Db1MjvHxtuq8IGpg6
-   3GafYuDOBoRmaW4AJit7Sj2z8NDfBbjopLse6Bd7we/dK2mlEvXrPtac/
-   XI5DPFpHKbg9b6kccefhWpVIIVSepsz3oTc+IKgWzi85n5RqqpI/WFW3l
-   wFKhswvLVhUmJXUZhAuOFjpL65lmn3YUL9zBa9IIsdbuWLK9R3QB0WT7N
-   A==;
-X-CSE-ConnectionGUID: V7xt1MIrSwmH387k+g8e0g==
-X-CSE-MsgGUID: BMWxGrLgSZ2WhLGfx2x3YQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52446203"
-X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
-   d="scan'208";a="52446203"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 01:14:44 -0700
-X-CSE-ConnectionGUID: KdHX92AwRvK4ttcxC7zKcg==
-X-CSE-MsgGUID: l3wu7+raTB6RLjxqSqy2SQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
-   d="scan'208";a="174103685"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 01:14:43 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 19 Jun 2025 01:14:42 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Thu, 19 Jun 2025 01:14:42 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.79) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 19 Jun 2025 01:14:42 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BydYq5g0KjQ7PrbmmF679Muoi5dqLW5qugSqtiddH0INHE46bSnB4xJAmRSuxf23nWax1+90muLzYo5ZXxPGNlu4N5tlzYeNAnWH2ZdMasuAdTr6mQNCOjEgPUjr3rEnMgZVlCfQlLxs8K852bAmspoXfnbzH/suXQa9yjKcBA5g9KaX2uaDcSUmnp1JGpq1bRlIxZO9hA3EK7l1FDjGU667xMx/P831zy0Qn0jmd0tTbFXFbaCMCpJg2/G/fXGGki22PpSh50cn/VnW1MQZ6/YMlmqKVWF9EdS+xF2G6Sbu2qPvK+dOZOabMqDXk/UkcCyDwYR/C345eUQq8FLYFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CQg8TQ5KoFN3dODafu8990suqMs5rEi0kp8TgRoF8xI=;
- b=PmZhJ602JeN6bXyp1gUUmdMCogtGCNtY1HX2RVSg3KxNDYtkVEmJFlwK6Y5pcWzHZQCTg6yjn0QMwhB8CXOrN9cIjHC311Gdb6liIrFvt9o/4sjVtlIZfIMx5N9Av8KrDGgJzp76WLxqVoMDke9KyrcdOotn0K4SXjm7Lk0NhaOlBYcU5uTpDvf8fY0ktbOQ/HuJ0PRBu6q1YFXtq3yI/cxBCS/bc2cLFLtVaEw91Px+kUVw9UmzbXxlPgxJZZzxk9fBFNSfqmv5M2QctejRaR4G/yyCEsbmuVL/f+wfP35thMomB+SSzUI8h9ziA7WET6RS5HTbO15OguSdrsqRag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- DM4PR11MB6408.namprd11.prod.outlook.com (2603:10b6:8:b7::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8835.29; Thu, 19 Jun 2025 08:14:12 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%5]) with mapi id 15.20.8835.027; Thu, 19 Jun 2025
- 08:14:12 +0000
-Date: Thu, 19 Jun 2025 16:11:41 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Ackerley Tng <ackerleytng@google.com>
-CC: <vannapurve@google.com>, <pbonzini@redhat.com>, <seanjc@google.com>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, <x86@kernel.org>,
-	<rick.p.edgecombe@intel.com>, <dave.hansen@intel.com>,
-	<kirill.shutemov@intel.com>, <tabba@google.com>, <quic_eberman@quicinc.com>,
-	<michael.roth@amd.com>, <david@redhat.com>, <vbabka@suse.cz>,
-	<jroedel@suse.de>, <thomas.lendacky@amd.com>, <pgonda@google.com>,
-	<zhiquan1.li@intel.com>, <fan.du@intel.com>, <jun.miao@intel.com>,
-	<ira.weiny@intel.com>, <isaku.yamahata@intel.com>, <xiaoyao.li@intel.com>,
-	<binbin.wu@linux.intel.com>, <chao.p.peng@intel.com>
-Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge
- pages
-Message-ID: <aFPGPVbzo92t565h@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <aCVZIuBHx51o7Pbl@yzhao56-desk.sh.intel.com>
- <diqzfrgfp95d.fsf@ackerleytng-ctop.c.googlers.com>
- <aEEFRXF+HrZVh5He@yzhao56-desk.sh.intel.com>
- <diqzecvxizp5.fsf@ackerleytng-ctop.c.googlers.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <diqzecvxizp5.fsf@ackerleytng-ctop.c.googlers.com>
-X-ClientProxiedBy: SI2PR02CA0013.apcprd02.prod.outlook.com
- (2603:1096:4:194::21) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294EB229B02
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 08:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750320755; cv=none; b=FqgUzkTo1hdTQdY5VmWUFO6hx/9RprMAg9/qqAMskPXGf5dEUHULZWhbGoG7KBxhcBwtRnEUSWKa4e3Ovicqtljo+GD26XTwtaMXwq/qTxaae8XxxOpzVXkPan6lqn7b6Md1eUCbw3ASpQjwo2x6g7UaAVAM1PZs+fB2v1wlPw4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750320755; c=relaxed/simple;
+	bh=fZDd2QEBhBxFp765iDz4UkzBpf2+EIFoG0m7o2T2XHY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JXRQ++PgTY9Jdb1CFQqT1K+ujcmA80usv2tN4oYfOMSrq1s1M49LlR2vhXHQargWQdjo1wvUrNKid/x0m3gbUP7JxYtK982SjAnieuX0sAXH+qtsv4kK5UnTxj9kBr4rd1aRlqAWV4epZicSsFyLxkPYHwFg52rfKWH5CO8UgQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3ddc9e145daso9789025ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 01:12:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750320753; x=1750925553;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+QwoRwYwJcF9xzb+aF468RPfwVm0aF6GUPn9yJF7qKE=;
+        b=OWSvbHh3HHcdnpIUMDRAo5Nkz95R3iyroah1FDE9iRn5kp9uO9gEfIU9GZ24JXTgve
+         rfgQ3ZD3+BfilXSJOXkOHaML4Q8VSnVRkAdntkkYyfLj2ibbF3aXfM5vN6DckbxumnJj
+         DdQNRMThDmxGWAkyTlU+sTvCiqI8NoaAP1I7SVNK3sGTuSmwzzif20ffBYfG4Q663uKd
+         BvPCOtryUH3MQYyalOBrc6xjaA15DXrbRu13m065/zZEmL8i+WekT4JLgSMhZq1FlACU
+         wEHLRBFOtNzQpjyn2IL7uR9mgVw/HbE8jfZGo9gE9KsbYPs5k89qoxFIs5d5rG+ndYFz
+         JIDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWeJ4QVJxosEgM6fAgwQW9REjKhlQnkK/5p/eVsLTgQwtooX1KcqjAEp3ccEGGqIQAYG4QWnzIQ028eMyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzzKkS83OSqJY/7IV+o8vHGURQmA0pKFZ9nP3B7NNhecaxINVD
+	BRo8TfBzvjJOT5nA1h7m7YPOkkmlaV6/1CU8C7iFERoaO4WNvqbj6R67VoXVdJcYcdSNfgPeebX
+	ZLNCnUzlu4DigdcHrJ29f1zA3qSj6JUAKF9+/QKbmaZO8ZWhE3m4ZWiCmAr8=
+X-Google-Smtp-Source: AGHT+IFOLMlXAuzzUyOTLwQFPM2bBi8X1YF58EQni0Knyk0o4mU2qnbHTS7GOvRmqbiGqTDOKOQoMpOOwHaAOiLliGSvdMG9baaQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|DM4PR11MB6408:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5e3544d7-5461-408d-68af-08ddaf094627
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|13003099007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?JKjRuIV1gH4iEVFDH8p9MuEqdIxT54vS96LW40w+BZP1KYYihatItX9Je5lU?=
- =?us-ascii?Q?cA8LQ7iidHrjjyB9wVoR8RZ6jE0wQ3er7ySAgy7IXjRIOG/ImTDGMRAWw85Z?=
- =?us-ascii?Q?0dz2ZKgNqdevk3B3kUuJJU059whF4LXhKwdwS5qLhXgp/fybi4U6fAotnXYU?=
- =?us-ascii?Q?FEpzPVTY6JyHCtWljuyd4i+XM/lan6f6em7666x6kSKyG3ZYQjwZCb7zh2SX?=
- =?us-ascii?Q?h9jrCSYAbOz9lDSGSpe0CC6Ak5716gJ5LLaNyEWJTT/HtmY6LBGSz8tedApK?=
- =?us-ascii?Q?gOBz9/gx9/5jRhI6n0LaFh3/nmoLntPUbtVshAdWGVz/wYFbBXsri0Auiw2f?=
- =?us-ascii?Q?rCjjaqeFYGaYJZjRbZ+p/6bnjA9K0K+I5GflCQ8H5fDx0DqvRUZCqOIzm9bU?=
- =?us-ascii?Q?27KpoQmE56jsFK2kPnkRFaGHatxgQKl6AS4XNgVuNrVv0PGr+RB5ybxCF4ZY?=
- =?us-ascii?Q?US+uIsmI6w9DnGoD2Pso08wcMaIunH520KnJY4k7+FCZJkX5t4A6w7DGdX9r?=
- =?us-ascii?Q?zYRAy5asNwcjcSd6I5VZcwy3cJcRkaGr1vCjhjSdnnZDQDEWvIwpBg2O/93j?=
- =?us-ascii?Q?rbfK3wc6X9eXZrrpNUPgdmJkwRaEIhUAs6XRYcbYcKBJgQ96QuFAEAN5vLAH?=
- =?us-ascii?Q?re8BPiXYGmGHvqjejbySFZbmSxXKJyb12V7ESxh+77eImOWAjQOJl3vXWZxZ?=
- =?us-ascii?Q?eysOhGg6GxwEmVreviElzDhVdUpGGfND+PSFvxwntpX8RLedQyGtZ1GyPaTO?=
- =?us-ascii?Q?QgUlK9QQhklYG5M8tqv+FznjU2hdaGQWcX5GYGVA60LPAiqjf5mZeKO3H9iZ?=
- =?us-ascii?Q?uzXNXgOyaLyeQm7QgpiNktUGfzEuzI7cQgfB++7GnM8PcTEUwMz1DNHnV7hI?=
- =?us-ascii?Q?tlifkdQKQwBLYfR4E5xAQFtfnz/0t8+GaOYDnhcZcRYIuy0BHWCOGIDb3Kcd?=
- =?us-ascii?Q?QYEFiU4PQPY0xoZDXlEs58XOm59jaKRfiMhWGj03QwLJ7D6KIhN97v5kXNVq?=
- =?us-ascii?Q?8qcUXu1R8O0383VsaqZWMIFafx1Xvaw0tvoFXNOR9HKdbDf3x7t5x1a9ELO7?=
- =?us-ascii?Q?QxWFMRYGmEMnMFnKJgJZxrvj5YjOyZo65DLbs1jdW+CNn0pWRNDbqcqoxh6n?=
- =?us-ascii?Q?UI5zbI4XO2Ip5IN9sBQL5qvCrRM5R33cyU44TaMeub3x83BUA7wx+qEaZSNE?=
- =?us-ascii?Q?v0j5MTFQAq6JoNozMi/+yjd+NWQ+RfzNx9IsW9cU8Y8ovHIEfcbvpJtcrnmZ?=
- =?us-ascii?Q?xJTy0uZ0FTRU9yABOxtZyccf/uKGm7UV0hrdyYkgqpObibW74pu0+EX3CipN?=
- =?us-ascii?Q?PeZIQAqX5OZ8+kbDRTPccHmUFTo3Y9y/0XPAOUIXrnL7zb92Q0/uOJO+6Dkp?=
- =?us-ascii?Q?dXVaEdjGZnc7JU/PAWY+1O45Gkk8?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?IAXH/j5ujq3yMiXv9cTkssPgbgcdlgBwQDRBTd8Ko3kpPaL4VlOPJ6lQh4pH?=
- =?us-ascii?Q?JBmf+1tC3BR0k71ODLGv1mm6O8v2f3bwVQRVfWYOld5xzgxY2MMVyfc9lDPk?=
- =?us-ascii?Q?KBqqmL4zt3edafrFL8TwVRrUMZfaYoth4rVGFvRJnQ/7fx7KLJE92eIPse7W?=
- =?us-ascii?Q?P1R5m42+vQciz11Huh8LyHDQ6gCMOTC35bMWriNBP7iCvYnFhyxp89jNXN4J?=
- =?us-ascii?Q?bQSdrPxq9G6Xy0q/ONGVg6ZUUhMT8Xx0DZ8hbDYNhJwQ5u6HVwjCpYkUjtaL?=
- =?us-ascii?Q?J0PS2325BUBLtsxFXFmaOUPreIqEL2z2ZjntA4fGNOcZQQNBzkzqOUmdwISE?=
- =?us-ascii?Q?ERgjQ5BXhzwPV1wp7nnIav5HcIU5wCJX4U35h3EGOH84TpSSRopLIhuOzwDQ?=
- =?us-ascii?Q?9hj3cp4BbSsKaOPPxW3fKHM+OZR4MzA0ybys5wuTQdVJ13pqUrD5+KIhAouL?=
- =?us-ascii?Q?mY6bzYmyDEF6WZUcbKhgHX6EDEDkQlcXgwtAbu8jmyh8j/vNZHme33p05CiM?=
- =?us-ascii?Q?jJfiCuyHPd2P7pec1iQNc9bOTItLHuHpAMokLl6TXj3MUKSWXFTiCeJLOiAj?=
- =?us-ascii?Q?TmKFDPO8FSjXkVqtfSoe8my7T3EkvueBJwGB2yk4JHd83g81cjofEVR4hxC4?=
- =?us-ascii?Q?zSVJdtR0gCtEevWfta4rzwm8G46oH3VgRDTXlayMxKrFtK8EDsx/sCj/03/X?=
- =?us-ascii?Q?pcZgZxzp+5qhGntINlP6wgr9IFOjJ4dTIj8PPuJ8xA2WLYfGig1SDR8a+scB?=
- =?us-ascii?Q?MbvHvsMdFHnRHMzApRNEDW5mtNWsWyMCAnhu4sXr6EYM2MwVWYM+HSNXjTJc?=
- =?us-ascii?Q?ILQUAyitMABFZ3rCw2iw8IcJOp410H3lyv7OvKexFgxcdz0uLrDGZCIwQhGz?=
- =?us-ascii?Q?a+y9WFlVL6jW85PAKlhsqQwMcpY+iLDvWBT82TFwqdQNeJgNEfyLy8jwTpOb?=
- =?us-ascii?Q?ydHTBKbt357ZQStM5s8yJyXNjzqtEIRc4+8X26Ua8ROvpDKUxKKjKd93sb6m?=
- =?us-ascii?Q?XlVeymTJHSC36Gy9jhzPd6VyUxcHojVsI5tZ2HHBYwkQT2/fcdao7rdB+Geo?=
- =?us-ascii?Q?yVhprzDNMmykQ9rNnlNW08KdTi28jSyNwPH3jXUlD4btMzkEcQIOrnZYYyok?=
- =?us-ascii?Q?ebWIHIPAnKEXjztEk4JBfk0jDc27DMxCRK/0XXrQkwflp591Fn0LZdsXbPw8?=
- =?us-ascii?Q?73lpGi9EbsrQL1m3sej1XMfiUSi+kDtTn+NVEb1vFMwagTfah5iSQQbsH8Z8?=
- =?us-ascii?Q?vSga9VF7p7GTcmapR6w4h4cqJUUSLsuVmXyDmHGJ20LIfpvBNm2JBIgb7wUw?=
- =?us-ascii?Q?e0r32kfUFmkE3UmHviEk6lFDtlNAf4rB6++ab93rBc67KbZHBlqzypiB/2I2?=
- =?us-ascii?Q?E53holleK7YJCPQzD41kR0ZskHcfGM6ymVF7q4W4H2d9fUp1sUsjTaApZhUo?=
- =?us-ascii?Q?rHSErPPlNxUh9zpWb0iMTqtS7qqBskqZ76xDO5wx278mBOpO1J4xKkqv9Q5T?=
- =?us-ascii?Q?bFD7ZKyTPZcRc4+ZBXXDfVwfmqS7BF4JHzenvZvccW3QtSmuQK+AyhdnWsSb?=
- =?us-ascii?Q?Dj4IdZe22znKuTmVw5FAQTDz7NK6uobKMWdCIaGJ?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e3544d7-5461-408d-68af-08ddaf094627
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2025 08:14:12.4906
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jkQjv9F1jNRXkg3vKPO28ffBvZqduST0/g+B9o+RpqnDGmZ/jIdXNE+fY042PNSipPcCbZfpAfP7cQFKOrD1rQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6408
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a92:ca4e:0:b0:3dd:fad4:7c61 with SMTP id
+ e9e14a558f8ab-3de07c5588dmr240916945ab.8.1750320753399; Thu, 19 Jun 2025
+ 01:12:33 -0700 (PDT)
+Date: Thu, 19 Jun 2025 01:12:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6853c671.050a0220.216029.01c8.GAE@google.com>
+Subject: [syzbot] [ntfs3?] WARNING in wnd_add_free_ext (4)
+From: syzbot <syzbot+323f07d372f692a127b3@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 05, 2025 at 03:35:50PM -0700, Ackerley Tng wrote:
-> Yan Zhao <yan.y.zhao@intel.com> writes:
-> 
-> > On Wed, Jun 04, 2025 at 01:02:54PM -0700, Ackerley Tng wrote:
-> >> Hi Yan,
-> >> 
-> >> While working on the 1G (aka HugeTLB) page support for guest_memfd
-> >> series [1], we took into account conversion failures too. The steps are
-> >> in kvm_gmem_convert_range(). (It might be easier to pull the entire
-> >> series from GitHub [2] because the steps for conversion changed in two
-> >> separate patches.)
-> > ...
-> >> [2] https://github.com/googleprodkernel/linux-cc/tree/gmem-1g-page-support-rfc-v2
-> >
-> > Hi Ackerley,
-> > Thanks for providing this branch.
-> 
-> Here's the WIP branch [1], which I initially wasn't intending to make
-> super public since it's not even RFC standard yet and I didn't want to
-> add to the many guest_memfd in-flight series, but since you referred to
-> it, [2] is a v2 of the WIP branch :)
-> 
-> [1] https://github.com/googleprodkernel/linux-cc/commits/wip-tdx-gmem-conversions-hugetlb-2mept
-> [2] https://github.com/googleprodkernel/linux-cc/commits/wip-tdx-gmem-conversions-hugetlb-2mept-v2
-Thanks. [2] works. TDX huge pages now has successfully been rebased on top of [2].
+Hello,
 
+syzbot found the following issue on:
 
-> This WIP branch has selftests that test 1G aka HugeTLB page support with
-> TDX huge page EPT mappings [7]:
-> 
-> 1. "KVM: selftests: TDX: Test conversion to private at different
->    sizes". This uses the fact that TDX module will return error if the
->    page is faulted into the guest at a different level from the accept
->    level to check the level that the page was faulted in.
-> 2. "KVM: selftests: Test TDs in private_mem_conversions_test". Updates
->    private_mem_conversions_test for use with TDs. This test does
->    multi-vCPU conversions and we use this to check for issues to do with
->    conversion races.
-> 3. "KVM: selftests: TDX: Test conversions when guest_memfd used for
->    private and shared memory". Adds a selftest similar to/on top of
->    guest_memfd_conversions_test that does conversions via MapGPA.
-> 
-> Full list of selftests I usually run from tools/testing/selftests/kvm:
-> + ./guest_memfd_test
-> + ./guest_memfd_conversions_test
-> + ./guest_memfd_provide_hugetlb_cgroup_mount.sh ./guest_memfd_wrap_test_check_hugetlb_reporting.sh ./guest_memfd_test
-> + ./guest_memfd_provide_hugetlb_cgroup_mount.sh ./guest_memfd_wrap_test_check_hugetlb_reporting.sh ./guest_memfd_conversions_test
-> + ./guest_memfd_provide_hugetlb_cgroup_mount.sh ./guest_memfd_wrap_test_check_hugetlb_reporting.sh ./guest_memfd_hugetlb_reporting_test
-> + ./x86/private_mem_conversions_test.sh
-> + ./set_memory_region_test
-> + ./x86/private_mem_kvm_exits_test
-> + ./x86/tdx_vm_test
-> + ./x86/tdx_upm_test
-> + ./x86/tdx_shared_mem_test
-> + ./x86/tdx_gmem_private_and_shared_test
-> 
-> As an overview for anyone who might be interested in this WIP branch:
-> 
-> 1.  I started with upstream's kvm/next
-> 2.  Applied TDX selftests series [3]
-> 3.  Applied guest_memfd mmap series [4]
-> 4.  Applied conversions (sub)series and HugeTLB (sub)series [5]
-> 5.  Added some fixes for 2 of the earlier series (as labeled in commit
->     message)
-> 6.  Updated guest_memfd conversions selftests to work with TDX
-> 7.  Applied 2M EPT series [6] with some hacks
-> 8.  Some patches to make guest_memfd mmap return huge-page-aligned
->     userspace address
-> 9.  Selftests for guest_memfd conversion with TDX 2M EPT
-> 
-> [3] https://lore.kernel.org/all/20250414214801.2693294-1-sagis@google.com/
-> [4] https://lore.kernel.org/all/20250513163438.3942405-11-tabba@google.com/T/
-> [5] https://lore.kernel.org/all/cover.1747264138.git.ackerleytng@google.com/T/
-> [6] https://lore.kernel.org/all/Z%2FOMB7HNO%2FRQyljz@yzhao56-desk.sh.intel.com/
-> [7] https://lore.kernel.org/all/20250424030033.32635-1-yan.y.zhao@intel.com/
-Thanks.
-We noticed that it's not easy for TDX initial memory regions to use in-place
-conversion version of guest_memfd, because
-- tdh_mem_page_add() requires simultaneous access to shared source memory and
-  private target memory.
-- shared-to-private in-place conversion first unmaps the shared memory and tests
-  if any extra folio refcount is held before the conversion is allowed.
+HEAD commit:    4663747812d1 Merge tag 'platform-drivers-x86-v6.16-2' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13f2750c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d11f52d3049c3790
+dashboard link: https://syzkaller.appspot.com/bug?extid=323f07d372f692a127b3
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
 
-Therefore, though tdh_mem_page_add() actually supports in-place add, see [8],
-we can't store the initial content in the mmap-ed VA of the in-place conversion
-version of guest_memfd.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-So, I modified QEMU to workaround this issue by adding an extra anonymous
-backend to hold source pages in shared memory, with the target private PFN
-allocated from guest_memfd with GUEST_MEMFD_FLAG_SUPPORT_SHARED set.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-46637478.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bde908b9f3d9/vmlinux-46637478.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/87a1193c8552/bzImage-46637478.xz
 
-The goal is to test whether kvm_gmem_populate() works for TDX huge pages.
-This testing exposed a bug in kvm_gmem_populate(), which has been fixed in the
-following patch.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+323f07d372f692a127b3@syzkaller.appspotmail.com
 
-commit 5f33ed7ca26f00a61c611d2d1fbc001a7ecd8dca
-Author: Yan Zhao <yan.y.zhao@intel.com>
-Date:   Mon Jun 9 03:01:21 2025 -0700
-
-    Bug fix: Reduce max_order when GFN is not aligned
-
-    Fix the warning hit in kvm_gmem_populate().
-
-    "WARNING: CPU: 7 PID: 4421 at arch/x86/kvm/../../../virt/kvm/guest_memfd.c:
-    2496 kvm_gmem_populate+0x4a4/0x5b0"
-
-    The GFN passed to kvm_gmem_populate() may have an offset so it may not be
-    aligned to folio order. In this case, reduce the max_order to decrease the
-    mapping level.
-
-    Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 4b8047020f17..af7943c0a8ba 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -2493,7 +2493,8 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long
-                }
-
-                folio_unlock(folio);
--               WARN_ON(!IS_ALIGNED(gfn, 1 << max_order));
-+               while (!IS_ALIGNED(gfn, 1 << max_order))
-+                       max_order--;
-
-                npages_to_populate = min(npages - i, 1 << max_order);
-                npages_to_populate = private_npages_to_populate(
+loop0: detected capacity change from 0 to 4096
+FAULT_INJECTION: forcing a failure.
+name failslab, interval 1, probability 0, space 0, times 1
+CPU: 0 UID: 0 PID: 5334 Comm: syz.0.0 Not tainted 6.16.0-rc2-syzkaller-00045-g4663747812d1 #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ fail_dump lib/fault-inject.c:73 [inline]
+ should_fail_ex+0x414/0x560 lib/fault-inject.c:174
+ should_failslab+0xa8/0x100 mm/failslab.c:46
+ slab_pre_alloc_hook mm/slub.c:4101 [inline]
+ slab_alloc_node mm/slub.c:4177 [inline]
+ kmem_cache_alloc_noprof+0x73/0x3c0 mm/slub.c:4204
+ wnd_remove_free_ext+0x902/0x11b0 fs/ntfs3/bitmap.c:476
+ wnd_zone_set+0x106/0x160 fs/ntfs3/bitmap.c:1396
+ ntfs_look_for_free_space+0x1cd/0x600 fs/ntfs3/fsntfs.c:383
+ attr_allocate_clusters+0x1c1/0x6d0 fs/ntfs3/attrib.c:159
+ attr_set_size+0x14a4/0x2c70 fs/ntfs3/attrib.c:574
+ ntfs_set_size+0x164/0x200 fs/ntfs3/inode.c:861
+ ntfs_extend+0x1d9/0x970 fs/ntfs3/file.c:343
+ ntfs_file_write_iter+0x3f4/0x820 fs/ntfs3/file.c:1192
+ iter_file_splice_write+0x937/0x1000 fs/splice.c:738
+ do_splice_from fs/splice.c:935 [inline]
+ direct_splice_actor+0x101/0x160 fs/splice.c:1158
+ splice_direct_to_actor+0x5a5/0xcc0 fs/splice.c:1102
+ do_splice_direct_actor fs/splice.c:1201 [inline]
+ do_splice_direct+0x181/0x270 fs/splice.c:1227
+ do_sendfile+0x4da/0x7e0 fs/read_write.c:1370
+ __do_sys_sendfile64 fs/read_write.c:1425 [inline]
+ __se_sys_sendfile64+0xd9/0x190 fs/read_write.c:1417
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9976d8e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9977c79038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f9976fb5fa0 RCX: 00007f9976d8e929
+RDX: 0000200000000080 RSI: 0000000000000005 RDI: 0000000000000005
+RBP: 00007f9977c79090 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000e0000000 R11: 0000000000000246 R12: 0000000000000002
+R13: 0000000000000000 R14: 00007f9976fb5fa0 R15: 00007ffc92c50238
+ </TASK>
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5334 at fs/ntfs3/bitmap.c:217 rb_insert_start fs/ntfs3/bitmap.c:217 [inline]
+WARNING: CPU: 0 PID: 5334 at fs/ntfs3/bitmap.c:217 wnd_add_free_ext+0xafd/0xdb0 fs/ntfs3/bitmap.c:352
+Modules linked in:
+CPU: 0 UID: 0 PID: 5334 Comm: syz.0.0 Not tainted 6.16.0-rc2-syzkaller-00045-g4663747812d1 #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:rb_insert_start fs/ntfs3/bitmap.c:217 [inline]
+RIP: 0010:wnd_add_free_ext+0xafd/0xdb0 fs/ntfs3/bitmap.c:352
+Code: 00 00 fc ff df 42 80 3c 28 00 74 08 4c 89 f7 e8 99 a5 20 ff 49 89 1e 48 89 df 4c 89 e6 e8 bb 8f 5e 08 eb 18 e8 74 26 bd fe 90 <0f> 0b 90 49 bd 00 00 00 00 00 fc ff df 4c 8b 7c 24 10 48 8b 44 24
+RSP: 0018:ffffc9000d247058 EFLAGS: 00010293
+RAX: ffffffff830335cc RBX: ffff888052c3a600 RCX: ffff88801f7ea440
+RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000003
+RBP: 0000000000000001 R08: 00000000ffffffff R09: 0000000000000000
+R10: ffff888052c3a600 R11: ffffffff81acf690 R12: ffff88801e8be2d8
+R13: ffff888052c3a5a0 R14: 0000000000000003 R15: 0000000000000003
+FS:  00007f9977c796c0(0000) GS:ffff88808d251000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f56af384000 CR3: 000000003f180000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ wnd_zone_set+0xb2/0x160 fs/ntfs3/bitmap.c:1393
+ ntfs_look_for_free_space+0x1cd/0x600 fs/ntfs3/fsntfs.c:383
+ attr_allocate_clusters+0x1c1/0x6d0 fs/ntfs3/attrib.c:159
+ attr_set_size+0x14a4/0x2c70 fs/ntfs3/attrib.c:574
+ ntfs_set_size+0x164/0x200 fs/ntfs3/inode.c:861
+ ntfs_extend+0x1d9/0x970 fs/ntfs3/file.c:343
+ ntfs_file_write_iter+0x3f4/0x820 fs/ntfs3/file.c:1192
+ iter_file_splice_write+0x937/0x1000 fs/splice.c:738
+ do_splice_from fs/splice.c:935 [inline]
+ direct_splice_actor+0x101/0x160 fs/splice.c:1158
+ splice_direct_to_actor+0x5a5/0xcc0 fs/splice.c:1102
+ do_splice_direct_actor fs/splice.c:1201 [inline]
+ do_splice_direct+0x181/0x270 fs/splice.c:1227
+ do_sendfile+0x4da/0x7e0 fs/read_write.c:1370
+ __do_sys_sendfile64 fs/read_write.c:1425 [inline]
+ __se_sys_sendfile64+0xd9/0x190 fs/read_write.c:1417
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9976d8e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9977c79038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f9976fb5fa0 RCX: 00007f9976d8e929
+RDX: 0000200000000080 RSI: 0000000000000005 RDI: 0000000000000005
+RBP: 00007f9977c79090 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000e0000000 R11: 0000000000000246 R12: 0000000000000002
+R13: 0000000000000000 R14: 00007f9976fb5fa0 R15: 00007ffc92c50238
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-[8] https://cdrdv2-public.intel.com/839195/intel-tdx-module-1.5-abi-spec-348551002.pdf
-"In-Place Add: It is allowed to set the TD page HPA in R8 to the same address as
-the source page HPA in R9. In this case the source page is converted to be a TD
-private page".
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
