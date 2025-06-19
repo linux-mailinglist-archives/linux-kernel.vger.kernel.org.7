@@ -1,140 +1,119 @@
-Return-Path: <linux-kernel+bounces-694280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6899DAE0A21
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:18:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0332FAE0A26
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F77A16A51B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:17:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC2F017F573
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF72224896;
-	Thu, 19 Jun 2025 15:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKiX1jRO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0444230D2B;
+	Thu, 19 Jun 2025 15:18:04 +0000 (UTC)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927263085DB;
-	Thu, 19 Jun 2025 15:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E8D221270;
+	Thu, 19 Jun 2025 15:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750346240; cv=none; b=lV0Q/Nimk/wTifwbGHkjTNc+YAYXIhSn8s8GZ6No8dTLDRx+rGt+Ace5dLn7WXp8sYy4FjGwtCqHi5tyjABPuFz5yr67UMgZtmiU0eaRjpzsTBWahWM3Qp77a4FNAuwWVy3FHzXaBWr3H+DPMCRUj5OeJaEDCJIdHqs6redRzEA=
+	t=1750346284; cv=none; b=nUEVCmXFsi3slhzqVy05g/QiWCdf2k/Nv78SEqdFKXzByEX3leUFm23tCsa/Ye9h5qDFP2rHuB23aTju+54wefflA2WppUCx8ZECEv9hVNLA9B0CPz3lpSblgP04AT5M6fAYXR58Ks5NztX/ZZwY7VatsgvEQ6U+dCOrlsvXb+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750346240; c=relaxed/simple;
-	bh=9cHT5F3Iq4DLNV/UcU+5bQAcKLZIjNQZKQaN/qYAq44=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=harkR+VKSkHTr/HePsgwYMvZum2F/grWvIIZ4ZM0iv+Sa+lRsvx+g0eXalQCIdJiIdlZ9e90ySc4jgHFfsqCQOBrFBUI3/wWeRatV0MQbxqDIlMIVDrVqvFh3WP8qZAYO8CAOU9W0MIoFNzXu7SdrJltkxaWZbnCr45o7yTvpuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKiX1jRO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97502C4CEEA;
-	Thu, 19 Jun 2025 15:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750346240;
-	bh=9cHT5F3Iq4DLNV/UcU+5bQAcKLZIjNQZKQaN/qYAq44=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vKiX1jROnvKTvYN3bZ9iGjqOPBAWiJT0wzDfVlBfQ9Js+NUvB+MhZ+vlYpedxozWE
-	 dLJpLKlTpGarBV/xgwtUFw/KjVWIOdzOLAlk2duINgGPIzjwJIJsEP5JzI0NCMn1DL
-	 Z2jGia4zbUfJpdV2vnUx/JdHPL2H08u9//mjrIXLjlSogUZKeCsUqhcZO9KMV2Dyo8
-	 vn/34AXSwfLlyX8nP4NRZdtw8yvPKO8LOzyTJHJ+F/RSFYa2Vg61PWWP91KNxz5tqM
-	 13YEG3JWFaPQRggFRfMYM5bzQYVAXj5kq060KUnE0SSxfHqsWZjebMnpIVOILB5SSi
-	 F3DqfSi31IHyQ==
-Date: Thu, 19 Jun 2025 16:17:14 +0100
-From: Lee Jones <lee@kernel.org>
-To: Hans de Goede <hansg@kernel.org>
-Cc: Armin Wolf <W_Armin@gmx.de>, Werner Sembach <wse@tuxedocomputers.com>,
-	ilpo.jarvinen@linux.intel.com, hdegoede@redhat.com,
-	chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
-	ggo@tuxedocomputers.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [RFC PATCH 2/3] platform/x86: Add Uniwill laptop driver
-Message-ID: <20250619151714.GJ795775@google.com>
-References: <20250615175957.9781-1-W_Armin@gmx.de>
- <20250615175957.9781-3-W_Armin@gmx.de>
- <41de4cd4-2a27-4b14-a1c0-e336a3cec317@tuxedocomputers.com>
- <d645ba09-1820-4473-96bb-8550ed0b0a26@gmx.de>
- <20250619094757.GB587864@google.com>
- <ebd9489d-2783-468a-ad07-e7d1c04fb165@kernel.org>
+	s=arc-20240116; t=1750346284; c=relaxed/simple;
+	bh=qAmKIMry2tJjYOV/mRm6EhXtZ3wqm8lfOnhBtky/cus=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FIc3rYOOJwmdeuhirfrTUwoFjbBx8FC6rRPypVQ23UD9M4C+qmFd18CHao3DNj7MwCtX13n6qBVaUIY/JYCwnAw6ZxkhS+9ap0ITmyy9oFjby1eB3aVSo+ue9JH+l4ggUw+FNtA10cHTXMvN3D1Xa0J3/pzyldpro0C3MDs27Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4e9a284c225so273325137.2;
+        Thu, 19 Jun 2025 08:18:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750346281; x=1750951081;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ntk+so1xA40iJ1eMvOf2PChc0jZI6RSYBcRU/+9kzH0=;
+        b=rMomg7rUHqajlfw/wPzqy8/BjXhIfMnVOiuW9oM1JIV90vY+O/eehpwWbTHKEvTSof
+         q1iv1ctMYELn+XwLoq7Ocykl1YCNQ8zS/f9QgpW76vO7yAn2x1r/huSugsubVXGrZFdx
+         G+BqqJe0SOK8MYAMGkiBDb5afDMAXAHgHWRmOm5Mjx2pKWsJqpVvyIKl+v0EAHCtGC22
+         hNqSzrGPVcWHbCYP8bjhP5j7mdqTctMyiJX8MaU9rthwQz8y9KPyq5clfvZeKwF0ohDg
+         nMrdHmZ2uN7n3CVpsOzD/wCWYpsDqmF9JMKY/7WAOVFPqw3H6/POhQukHqtpI57jyobm
+         P+lw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+x5F3Z4GTo0bE4RBhUZR5LR5zzcXCSoVYn7H4c123CbKsT5RxwXeTZbNmqe4DUVIdgcWoDaPCRUlS@vger.kernel.org, AJvYcCU85Xk+6z+NklAmPQsLnSsAWR1KgpPlf4J/U7zQn5c8Qv1Bl+Li20/xdHrS9E0baUH1tzowBZiJblmekM1t@vger.kernel.org, AJvYcCW1ROHspX+oHLRDdSqEAb22if+A2f2+fLPnJE1yZIjnTKOS5wbiQXKR6LxKRqRXVQqqoniAnmI4gBem@vger.kernel.org, AJvYcCXR0nx660DsCuiub3UIFx8aAYZHknD58Iu03FN7BAoZGoPVIsgLycvJDSkVdZnRV7podZgY79ZN+N3hJKRlAFQxxA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7K7CfkzTIAjmKhOLBfx3HcUgZOBPhhzqVuxEfjA+4vU2/51At
+	5JvXa7B9Yn6So+v+XuXAoqtTqGA5IQ++OGqPpEs352I2rCq3IkPiJQWqgLWbHivX
+X-Gm-Gg: ASbGnctOX9TR/IpjVWEfWhYhpPh8gNo7VgeqdkKXFl0PHZBcUT6GP75Y7nIAam3T1nM
+	Gt7cuB9LPUcQ/E+8AQoI3uvieM4xC0uIbskkUMCF9HREZi9+/NLB65qSgcF8UYz1TTf+YlkzFPM
+	4x3qOm4DgDB4H4NGz7OMZYSE0NkGmkRg58A0iBHHVst7vT6TetqgzHnT4Ib/6aLiElheF/3wRba
+	mFnrrajZyeQDoqybQsAG5WrpCw9wfXDQeQYb2PPV3eU/b+jW0EoilEd6grj1aa9MU3VFQaFD3+o
+	tLZGY8fxhjbS3v1Glajbnb0X/xIpiFtTM77Y81D3NXUPyL9hAJEy3ug8bV1bRyLgq8nilOApb9h
+	/3fbeuchXIhFG0pBQRxkXxvzv
+X-Google-Smtp-Source: AGHT+IGp+rIiFVTF0qFZtbXCpbPWn8i+wOZiAFu1907kUjqNkTIVcYFBH2366sAa2GdOb3V761kF+w==
+X-Received: by 2002:a05:6102:3e07:b0:4e2:bacd:9f02 with SMTP id ada2fe7eead31-4e7f62126d6mr15054576137.16.1750346280738;
+        Thu, 19 Jun 2025 08:18:00 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87f389dd153sm1199677241.22.2025.06.19.08.18.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Jun 2025 08:18:00 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4e9a284c225so273312137.2;
+        Thu, 19 Jun 2025 08:18:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUsUSgA6NhlCA9ZFkJsu0SpxVqPpfgQsUbCsdtSyqT2xBcyXoNveshlaicdf/wmWGaevsXiXReoK5t/eERylzrDets=@vger.kernel.org, AJvYcCVab2GRJCYUEtnVQbP7Rgqy51UvtciUgcFTdXdHJQ95PUrNa/U/rOZRWdgvpXBdOYQ192m5sdIpg23y@vger.kernel.org, AJvYcCXSjrYXpfDwdJARENkoICF5K5Dh6HronP3rawwUQPeD5CbInQkjIMXH0/HRrZuTtxtMd2sicAKPJJ35mR27@vger.kernel.org, AJvYcCXgP+0mhzs2f5St3pMkaIX2aUTDlVGP3G30qr8EMYUZEMnIG+j6EGnB0MnZU7G/VZ9POthdYV4MCstv@vger.kernel.org
+X-Received: by 2002:a05:6102:6a8c:b0:4e4:5ed0:19b2 with SMTP id
+ ada2fe7eead31-4e7f61646ecmr18359222137.9.1750346279912; Thu, 19 Jun 2025
+ 08:17:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ebd9489d-2783-468a-ad07-e7d1c04fb165@kernel.org>
+References: <20250617155757.149597-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250617155757.149597-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250617155757.149597-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 19 Jun 2025 17:17:48 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVW8oPiqUqFt573-Db3963Yawm6+sT8DAHTq-64Naegog@mail.gmail.com>
+X-Gm-Features: Ac12FXzvo_4PUAY2MpopAYSr5MVWx-2BQeRauunUyjVmJtVyUj79Za_ayKIMT50
+Message-ID: <CAMuHMdVW8oPiqUqFt573-Db3963Yawm6+sT8DAHTq-64Naegog@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] clk: renesas: r9a09g077-cpg: Add PCLKL core clock
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 19 Jun 2025, Hans de Goede wrote:
+On Tue, 17 Jun 2025 at 17:58, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add the Peripheral Module Clock L (PCLKL) for the RZ/T2H (R9A09G077) SoC.
+> PCLKL is sourced from PLL1 and runs at 62.5MHz. It is used by various
+> low-speed peripherals such as IIC and WDT.
+>
+> Also update LAST_DT_CORE_CLK to reflect the addition of PCLKL, ensuring
+> correct enumeration of core clocks exposed to the DT.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2:
+> - New patch to add PCLKL core clock.
 
-> Hi Lee,
-> 
-> On 19-Jun-25 11:47 AM, Lee Jones wrote:
-> > On Tue, 17 Jun 2025, Armin Wolf wrote:
-> > 
-> >> Am 16.06.25 um 14:46 schrieb Werner Sembach:
-> >>
-> >>> Hi, small additon
-> >>>
-> >>> Am 15.06.25 um 19:59 schrieb Armin Wolf:
-> >>>> +        functionality.
-> >>>> +
-> >>>> +What: /sys/bus/wmi/devices/ABBC0F6F-8EA1-11D1-00A0-C90629100000[-X]/rainbow_animation
-> >>>> +Date:        Juni 2025
-> >>>> +KernelVersion:    6.17
-> >>>> +Contact:    Armin Wolf <W_Armin@gmx.de>
-> >>>> +Description:
-> >>>> +        Forces the integrated lightbar to display a rainbow
-> >>>> animation when the machine
-> >>>> +        is not suspended. Writing "enable"/"disable" into this file
-> >>>> enables/disables
-> >>>> +        this functionality.
-> >>>> +
-> >>>> +        Reading this file returns the current status of the rainbow
-> >>>> animation functionality.
-> >>>> +
-> >>>> +What: /sys/bus/wmi/devices/ABBC0F6F-8EA1-11D1-00A0-C90629100000[-X]/breathing_in_suspend
-> >>>> +Date:        Juni 2025
-> >>>> +KernelVersion:    6.17
-> >>>> +Contact:    Armin Wolf <W_Armin@gmx.de>
-> >>>> +Description:
-> >>>> +        Causes the integrated lightbar to display a breathing
-> >>>> animation when the machine
-> >>>> +        has been suspended and is running on AC power. Writing
-> >>>> "enable"/"disable" into
-> >>>> +        this file enables/disables this functionality.
-> >>>> +
-> >>>> +        Reading this file returns the current status of the
-> >>>> breathing animation
-> >>>> +        functionality.
-> >>>
-> >>> maybe this would be better under the /sys/class/leds/*/ tree if possible
-> >>
-> >> I CCed the LED mailing list so that they can give us advice on which location is the preferred one for new drivers.
-> > 
-> > No need to involve the LED subsystem for a hardware function controlled
-> > by a single register value just because the interface involves an LED.
-> 
-> Lee, the question here is where put the sysfs attribute to put the lightbar
-> in breathing mode e.g. which of these 2 should be used?  :
-> 
-> 1. /sys/bus/wmi/devices/ABBC0F6F-8EA1-11D1-00A0-C90629100000[-X]/breathing_in_suspend
-> 2. /sys/class/leds/uniwill-lightbar/breathing_in_suspend
-> 
-> I think this is a fair question and since 2. involves the LED class userspace
-> API I also think that asking for the LED maintainers input is reasonable.
-> 
-> FWIW I'm not sure myself. 2. is the more logical place / path. But 2. adds
-> a custom sysfs attr the LED class device. Whereas 1. adds a custom sysfs attr
-> in a place where these are more or less expected.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.17.
 
-Right.  It was a reasonable question.  Did I imply otherwise?
+Gr{oetje,eeting}s,
 
-If it wasn't clear, my vote (this is not a dictatorship) is for 1.
+                        Geert
 
 -- 
-Lee Jones [李琼斯]
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
