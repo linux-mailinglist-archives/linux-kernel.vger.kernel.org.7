@@ -1,124 +1,141 @@
-Return-Path: <linux-kernel+bounces-693276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE165ADFD22
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32844ADFD27
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B745F188DDA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:46:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ED04188E71D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1628C24336B;
-	Thu, 19 Jun 2025 05:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MroJ7T+8"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB8D242D8C;
+	Thu, 19 Jun 2025 05:46:49 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23C623D2B0;
-	Thu, 19 Jun 2025 05:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AC0242D69;
+	Thu, 19 Jun 2025 05:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750311964; cv=none; b=l3sUdkEQ4nCCFqacqIW/QEc85MMlm7m75CXLCRkwRRBUAULlUQxwxLeaL03nVbzdIOeY8Cifn1G1roJHNRWaigqqVK9dqWrIxrPz9pmFzeNoFJZNM4k9o21KmiSY6LPiYQBbgPo5tDRLmEJaompmg8IhJWMrlz5wSaiPQOZ8+SY=
+	t=1750312009; cv=none; b=jblGZ+Yu33//X+7DE07U9OdwvduLPTQAitT7RGhkmp2K9HIXn4Vp5a1+iZRRUfEhoo7MmWLXHXl5diviADI1kDowbw0RsVOCm4R99i71MNN1JfKhkg8o6F8cnEgfTOQnLn9dw7AZvr/OvToEA38lE+qB88QMKJwOza5nldZhuSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750311964; c=relaxed/simple;
-	bh=E3WAOCfjoLZEMM2pUmkgtp7GprADNRzWcqVzCUsndrk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B9mPomcHK+BbuYZAD1HWMzHa3XVKAE3rwTZBHY8GbK7dEKZhtE+LumlGxLYB0by1cb4y9InIQjqNVbRrUsj1fC+6y63Q6IFmtB3TPI+KKz5olOSJaFEYZ+NVHu7U7ZsCMCyqsez+QNNva1Gfl6ZbfzNyA5q/5J/1ElXY3UD8HeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MroJ7T+8; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fafb6899c2so4060856d6.0;
-        Wed, 18 Jun 2025 22:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750311962; x=1750916762; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tMfUiq8pS9Cns97b04w18lZ1npqyEo3T1WCcXPPyxsQ=;
-        b=MroJ7T+8Xusf6tphmIsW1Sccztq/S2Hgr8UFlnyKoPTHGa6/LEwPYVLjEfTJd6Nrb3
-         FjUpd+YSZfo5Dt4haBzmwVl0l/c0aGxafu2wv+flaaPVCgWTxVkCBsJLBZWADz8MNwha
-         bG/LRs7NGQe2OFxeU9UdtxbDyJTllgrohh+up8KwZHby3AaqF5kAAYEEhQj2pnhKRzgs
-         Bp4TPiW4w0k5dTuSfKKfxI1x4288lyixxdymqjEnBgr1PGDxOWFfRAVtRpSgcgBWT0GJ
-         PA2rJZAbfsQtGW/hLe4M6BFqjCOt8HuKW/jk8JQaqG5OZOJo3ytl1N6QdD4iJCcb0OSh
-         fs1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750311962; x=1750916762;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tMfUiq8pS9Cns97b04w18lZ1npqyEo3T1WCcXPPyxsQ=;
-        b=niEd5YFnnS1iIP+qaw37/GL+VwYA/dBatNiRLi/jbvPwwNE1qgWNbHPoReL8WGWMRB
-         l44uloWLAuBB3xe/yWL7P6uYVri6KfWg4vyO/2l/c3l6BmyGBL/c/1oHWcpSaNJdVs/p
-         xPUofr6rqZj2upy+6xR08xlFbPawPKs7ArsjinS1lCQTpQgGsqPBKEQadZwaEG+uS+6+
-         bFgxA/QRW/HKuoFBalKPr5mMkb9SwYH6iUj6wMU0IskTkskLtcKTg86p/D4kPw5jVR8C
-         KbsUr5t9B2wASwhlGJLeBmjpnwtbXNzlwVyxKlvOWNPvYN04kvTfB3HIEEuLje8hYPBR
-         Ur9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ6pTHkRnMtao+3tGwQq7RvJJvHn5LAbVArgOX0LjT3it+r1jg/7ImnHetzphVAespcs0AeNmwvlOWpH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/vrT3iSr5GwyHoo5kkm4bPtTwsvvtu1eSD/tA3QoHBWCC7iUO
-	qWHfYON7I6OIsG8VSo+wbY6NgUDoDuJMoK0yrDyZPM8877FXEqq6At8I
-X-Gm-Gg: ASbGncvXA5Ujc9AVNorPdlIOWca6kuX8EpnBV3p93bRyecfG23HJPOIvcCEf1oT8dwj
-	cizr7P7IZjzNFrk20v7guKS65QyoRDHGtgTkAiQvRqq7n5NJ2o9xzTiAy8gtBSr90hoYGihvalZ
-	DMnAIuLWn/lljYxZUrr2Gv8To93Iw7VSDBL8tMF9QJ2Etgriyua+V4isQ4NDJkagN93/+X9oM5I
-	jJ4gkkyZusRDUc24E807GFkaj9DBtcaYG9Z4jiUeDhc0JjruGmkdPiShLyB0nFbS3KwOP0OyJ5v
-	3dG3cctSr2g8TXBUnWoGLSFUyrMwRbkjbrTGIvu7mtcNZOjPUu25NFjT9cQURrdXiQnMs+9p2/a
-	w10JfHAXyWcNYQQuJ5CH2L+JpW0kXry/ak0asW15Qb44l+glUseqlonhJ0A==
-X-Google-Smtp-Source: AGHT+IH6u9VQia+oPa6yFC+Q+CFStL6WGhlHDl5siOwIKXq/z/l53muZO8KRpxZIv1gTH6jFMB/6ew==
-X-Received: by 2002:a05:6214:d6f:b0:6e1:715f:cdf5 with SMTP id 6a1803df08f44-6fcff73b920mr33367496d6.15.1750311961767;
-        Wed, 18 Jun 2025 22:46:01 -0700 (PDT)
-Received: from seungjin-HP-ENVY-Desktop-TE02-0xxx.dartmouth.edu ([129.170.197.81])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd01639653sm3627176d6.112.2025.06.18.22.46.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 22:46:01 -0700 (PDT)
-From: Seungjin Bae <eeodqql09@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Seungjin Bae <eeodqql09@gmail.com>
-Subject: [PATCH v3] usb: host: xhci-plat: fix incorrect type for of_match variable in xhci_plat_probe()
-Date: Thu, 19 Jun 2025 01:45:46 -0400
-Message-ID: <20250619054545.173436-2-eeodqql09@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <2025061950-frown-cesarean-a1e3@gregkh>
-References: <2025061950-frown-cesarean-a1e3@gregkh>
+	s=arc-20240116; t=1750312009; c=relaxed/simple;
+	bh=4S9XGg4nCpCNQhlQ1zGgYNASrs4TqBa8i2Q9xURUCkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UStmWQht1mwNyVp8L+6Paz3mivIrvd7tW/VpNlblGLXAC9ZTtZSNy2QV4kiUasedSI3Y2Ax91LCjkqErR/MNJtLAbHr+GHgwVI04GNZQToMXD2g/mV390LaL3d3Mk0IGAOL8OBImZi4eUniSWk94JcSvhF1VHP5C1UeHMXjfL1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.33.139] (unknown [210.73.43.2])
+	by APP-01 (Coremail) with SMTP id qwCowAAHt9UrpFNods+JBw--.6421S2;
+	Thu, 19 Jun 2025 13:46:20 +0800 (CST)
+Message-ID: <4036e3c2-8324-4eeb-9aa8-df1fbe9c7943@iscas.ac.cn>
+Date: Thu, 19 Jun 2025 13:46:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] mfd: spacemit: add support for SpacemiT PMICs
+To: Alex Elder <elder@riscstar.com>, lee@kernel.org, lgirdwood@gmail.com,
+ broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, dlan@gentoo.org
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alex@ghiti.fr, troymitchell988@gmail.com, guodong@riscstar.com,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250613210150.1468845-1-elder@riscstar.com>
+ <20250613210150.1468845-3-elder@riscstar.com>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <20250613210150.1468845-3-elder@riscstar.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qwCowAAHt9UrpFNods+JBw--.6421S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WF48Aw17uw17Ar1rAry5urg_yoW8Wry3pF
+	Z8Zr93uF1UZFWF9w4DWrsruFyrGan7uFWjqFy3JwsIqFyq934jkr4DtFW7ZrWDJrWkGr42
+	gw4F9r9rWF4UJa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Sb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
+	8E87Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
+	MxkF7I0En4kS14v26r4a6rW5MxkIecxEwVAFwVW8WwCF04k20xvY0x0EwIxGrwCFx2IqxV
+	CFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r10
+	6r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxV
+	WUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG
+	6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
+	1UYxBIdaVFxhVjvjDU0xZFpf9x07jkNVkUUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-The variable `of_match` was incorrectly declared as a `bool`.
-It is assigned the return value of of_match_device(), which is a pointer of
-type `const struct of_device_id *`.
+On 6/14/25 05:01, Alex Elder wrote:
+> <snip>
+>
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 6fb3768e3d71c..c59ae6cc2dd8d 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1182,6 +1182,17 @@ config MFD_QCOM_RPM
+>  	  Say M here if you want to include support for the Qualcomm RPM as a
+>  	  module. This will build a module called "qcom_rpm".
+>  
+> +config MFD_SPACEMIT_PMIC
+> +	tristate "SpacemiT PMIC"
+> +	depends on ARCH_SPACEMIT || COMPILE_TEST
+> +	depends on I2C && OF
+> +	select MFD_CORE
+> +	select REGMAP_I2C
+> +	default ARCH_SPACEMIT
+> +	help
+> +	  This option enables support for SpacemiT I2C based PMICs.  At
+> +	  this time only the P1 PMIC (used with the K1 SoC) is supported.
+> +
 
-Fixes: 16b7e0cccb243 ("USB: xhci-plat: fix legacy PHY double init")
-Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
----
- v2 -> v3: Added version of patch and used real name
- v1 -> v2: Updated Fixes tag and corrected Signed-off-by line
+Module name?
 
- drivers/usb/host/xhci-plat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
++	  To compile this driver as a module, choose M here: the
++	  module will be called spacemit-pmic.
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 6dab142e7278..49eb874b1d81 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -152,7 +152,7 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
- 	int			ret;
- 	int			irq;
- 	struct xhci_plat_priv	*priv = NULL;
--	bool			of_match;
-+	const struct of_device_id *of_match;
- 
- 	if (usb_disabled())
- 		return -ENODEV;
--- 
-2.43.0
+>  config MFD_SPMI_PMIC
+>  	tristate "Qualcomm SPMI PMICs"
+>  	depends on ARCH_QCOM || COMPILE_TEST
+>
+> <snip>
+>
+> +static struct i2c_driver spacemit_pmic_i2c_driver = {
+> +	.driver = {
+> +		.name = "spacemit-pmic",
+> +		.of_match_table = spacemit_pmic_match,
+> +	},
+> +	.probe    = spacemit_pmic_probe,
+> +};
+> +
+> +static int __init spacemit_pmic_init(void)
+> +{
+> +	return i2c_add_driver(&spacemit_pmic_i2c_driver);
+> +}
+> +
+> +static void __exit spacemit_pmic_exit(void)
+> +{
+> +	i2c_del_driver(&spacemit_pmic_i2c_driver);
+> +}
+> +
+> +module_init(spacemit_pmic_init);
+> +module_exit(spacemit_pmic_exit);
+> +
+
+module_i2c_driver
+
+Regards,
+Vivian "dramforever" Wang
+
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("SpacemiT multi-function PMIC driver");
 
 
