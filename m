@@ -1,123 +1,123 @@
-Return-Path: <linux-kernel+bounces-694624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F14AE0E85
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 22:19:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED44AE0E91
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 22:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315AB6A4DD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:18:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD3B3BB3CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345F825C83D;
-	Thu, 19 Jun 2025 20:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EECE25C813;
+	Thu, 19 Jun 2025 20:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8dyEu3r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6gszazx"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E3E23D28E;
-	Thu, 19 Jun 2025 20:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47626209F2E;
+	Thu, 19 Jun 2025 20:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750364332; cv=none; b=j+EdKa7/zGMC5OdvCPXOpkMj+Z0dsJnlCPYcvCqJhAonH23ZAoyRilI+6o02g4BmRq7QqJfAEa+fGxWo+ivtmKkV98WYe08zfQ9dQz2d14LyIaXRN8G+3qapyxS7f20bZk59NxF1lESGpwgDqF6uVOmCrATTqAAB4Jh6zZffJEM=
+	t=1750364605; cv=none; b=incoWNd5zt/TI1zglyNyatIE95volFpej+t8olVZboe4zHIKLeAqWZHxpytFubxbC93JWbI9xcQguQuzaLuPmloIudN+kHKYd1btlNWRHd+y7rTjUO9M8/Or0x890Djo8lHWsQiygFEF9Y319uD/PEKqus3JZ5vYGIBgckUhhbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750364332; c=relaxed/simple;
-	bh=w4wRzkSo/usAv+HhkdLgr8lf3ugNk6JlmcksQBrr6sU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FFuuogfVpGXC6Y0h3NVaupfCAcUbTJjQGeqwXg04kHH7wiV4RfzJwJUpB6lyK8NTZoYFCIpc2PF7frFeGGV/FBv3r+GD7KGVCN/ThTbMJm/dYrRHSFHXUQBDElS03RaJWqqUSIM5B4JO7H7197J9QATGqU51mca8kMzcP6vUSSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8dyEu3r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45083C4CEEA;
-	Thu, 19 Jun 2025 20:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750364332;
-	bh=w4wRzkSo/usAv+HhkdLgr8lf3ugNk6JlmcksQBrr6sU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L8dyEu3ru+KmueKEBCpzJUaQ1v4VlB0jxWKBMd38flJgled/kDek2YBdep1dLpiS7
-	 +KJwr5iPrfFFiStjjUJ0rGNoYoJRDnnv9fv5XuiLwad+LI1euMGa4SMLzX5LW7v9fm
-	 tM+uQrM7uK+ZtPfzCKw+VVL/E/2BpHB0MIdC5tIePk+W0288njoibPE3IpS+NERi2V
-	 dX5XuozAJHJuv2pno3v07xwmTnCYhS56En8rJ2kSgjpIZcWf8Lb6VhKgPzoIDKaKdo
-	 8Qh8fdswlQ7+j0tlobb0/CMYm3dYCioHYfcIV8BVbchI6eYbGhjq5OMnkSitBbpTkL
-	 knMuGmfVqFK1Q==
-Message-ID: <23f5da2f-0da1-449a-ab4e-c62fbfd74d4f@kernel.org>
-Date: Thu, 19 Jun 2025 22:18:48 +0200
+	s=arc-20240116; t=1750364605; c=relaxed/simple;
+	bh=6Z+Lr29kl/c7pwUb6n7LMj+IZOon/O/gvj2xYKSCLVc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gRb193HGnXO+rYF2TnfaKiYcaIpZUPlUzL6Wepa4U9+bQoKyv7IkWWJaSV7yGcN5FfHtkpuirFXU/XUXrLckus3eStDnRVEAdEhB+CKkTeyjOuJZRDmEWzOFP4LBuP/Y+Ylb1hv/nGj4eAy799SGrTySUwgns2QLFMuTS7e+Hb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6gszazx; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2353a2bc210so10149625ad.2;
+        Thu, 19 Jun 2025 13:23:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750364603; x=1750969403; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PrYGJsuypre3Z7nW8DXdS5477XT5Cbwa9Q2vGlevBAI=;
+        b=G6gszazxCA2FtijZ8gx0aV2acpV9SPWpYotDfYlgc7GEggrDFdcbW51QPVAm3KduGQ
+         krMIxnDjvu7OcYtPEGubjcekM5H3Q9hibBS9Ws/zJCNs+qkjy8svXWA6028gV26DKRDa
+         9Qgebo0RsFK1rwNx19XQBvSju1a7naV/QScT8GLJ5isbToMnhgvFEEy1gCyQmbadaGfE
+         puowqAso2Biy/FTM5APRsRBIy29yPkT++qcY0tFidxWWVT3Dt27aE7F8RC08QsUR7HAj
+         P5ZqqMwytzQ5tCfIlh3zZOnXRuWBN3xlCbq8QbFUjVuTo1lt7AvGCmeoBcmtl96Ma6eS
+         YRRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750364603; x=1750969403;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PrYGJsuypre3Z7nW8DXdS5477XT5Cbwa9Q2vGlevBAI=;
+        b=FJ/r8Z6ajkCiNmRVDmLo83vy9k4RnXKDQEa3Sts/IDna6UDyNLYJu3Hp+Mx/WPi8gK
+         rQUkRDSqdGqZOtI7R9EkvQ2WBCNs71zQHW5wByDGHxp9E9KAGxbkEjv7K8WpwdycipF/
+         D5XWhXhNn7HULZc1XDjQywFgnDf4UxHrdZR8iCfDz7NcmT0izJEDW3N4hC7C8PNVXWDK
+         OXLFt3gRHd23I93u/kvars/ae1Dkoi2sdCiG3brMLChwgdsT6ncKOVH/c9g7PXjxelpL
+         zmFCyB0C+k5BVWbhGcpttGk6R5lliWycbq2hKVpBhGyjVwDiiOKd3Wv+LQAlraJVWY0v
+         D40Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUpNQ/Ccj1ftQbdWjaOupevG68SHyOW7CiwgkG997i7LBuTpskgt/G6XdEWXKIIbWiElcwo4RFdFTKmm2Um@vger.kernel.org, AJvYcCXON62youYUZYUBZCcAhszj57X94TLNcBkN8ENa2lVG19nf+GFRdK5uSgdyOEK1/4J5Dwxg6KoERCpb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDDWbGK8Chaml2CxczbyMmo4YpGOETj7AiMoMi8B51TyGWxY29
+	Mkq9Fy0yOqxTOSiXayW5xFCkKUw004yyXuGiehtjKPda1sGOZqpxxTTM
+X-Gm-Gg: ASbGnct+xIWEjspouTNwJku551CfZZ4SBYZNwiUnoE6ubbdX8PZ6DGCLpZeFeVHxwjK
+	+3mt9fRpq720XrbUzPauTtzhFlz1o2LLyiUsCe76QKbzFiLGNJHp+dwV3p7zfHMjF5C868MKpfp
+	EDsApFZy9eH8m95mmj2bEzccvQXMTPvzAV2+RqHGwKSJHlqquXvMnKbqNkeAWAT/9052M8rYx1r
+	Etfn1h3qr+J9JinWu5SJ2frrypNT9znwOi6L6vKrkHt5Jp2eimp/GhmaGMC0NKVVjC+6HjROMzI
+	HC1Krc4/ElB1SGFRleDf8JMhCo2RyzcmNqCNzfv9dComQlWADRy6xIkNz24KSfE4
+X-Google-Smtp-Source: AGHT+IF1p7zbV+G1dyNemKIN5cDcN6DcrHIA3F6fwW3tefaouBCLINGO5gYdhSlmsd+cyBKasTynuQ==
+X-Received: by 2002:a17:902:e752:b0:237:cadf:9aac with SMTP id d9443c01a7336-237d98e2a87mr2436615ad.29.1750364603511;
+        Thu, 19 Jun 2025 13:23:23 -0700 (PDT)
+Received: from pop-os.. ([2401:4900:1c94:78d8:2e45:4d78:9feb:bce6])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3158a226f64sm2707659a91.4.2025.06.19.13.23.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jun 2025 13:23:23 -0700 (PDT)
+From: Abhinav Ananthu <abhinav.ogl@gmail.com>
+To: bp@alien8.de
+Cc: tony.luck@intel.com,
+	james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhinav Ananthu <abhinav.ogl@gmail.com>
+Subject: [PATCH] edac: Use sysfs_emit_at() in dimmdev_location_show()
+Date: Fri, 20 Jun 2025 01:51:34 +0530
+Message-Id: <20250619202133.11843-1-abhinav.ogl@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] clk: moxart: Make read-only array div_idx static
- const
-To: Stephen Boyd <sboyd@kernel.org>, Colin Ian King <colin.i.king@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250619083035.1835133-1-colin.i.king@gmail.com>
- <175036278075.4372.3898345624525344837@lazor>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <175036278075.4372.3898345624525344837@lazor>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 19/06/2025 21:53, Stephen Boyd wrote:
-> Quoting Colin Ian King (2025-06-19 01:30:35)
->> Don't populate the read-only array div_idx on the stack at run time,
->> instead make it static const.
-> 
-> Why? This is in __init code so it can be thrown away if it stays on the
-> stack.
+Replace the use of scnprintf() with sysfs_emit_at() in
+dimmdev_location_show() to format the output into the sysfs buffer.
 
-Indeed previous code could be discarded, now will be in rodata, but we
-save several instructions runtime on copying it. Plus the actual binary
-will be slower (really less code), so also loading it will be faster.
+This change improves clarity and ensures proper bounds checking in
+line with the preferred sysfs_emit() API usage for sysfs 'show'
+functions. The PAGE_SIZE check is now handled internally by the helper.
 
-Best regards,
-Krzysztof
+No functional change intended.
+
+Signed-off-by: Abhinav Ananthu <abhinav.ogl@gmail.com>
+---
+ drivers/edac/edac_mc_sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
+index 0f338adf7d93..1b611650de3f 100644
+--- a/drivers/edac/edac_mc_sysfs.c
++++ b/drivers/edac/edac_mc_sysfs.c
+@@ -500,7 +500,7 @@ static ssize_t dimmdev_location_show(struct device *dev,
+ 	ssize_t count;
+ 
+ 	count = edac_dimm_info_location(dimm, data, PAGE_SIZE);
+-	count += scnprintf(data + count, PAGE_SIZE - count, "\n");
++	count += sysfs_emit_at(data, count, "\n");
+ 
+ 	return count;
+ }
+-- 
+2.34.1
+
 
