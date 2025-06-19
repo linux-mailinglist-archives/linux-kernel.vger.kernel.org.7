@@ -1,101 +1,149 @@
-Return-Path: <linux-kernel+bounces-693867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A86AE04FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:05:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B19AE0578
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A23A7ACCBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:04:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B6D1189CB54
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9904C23B60C;
-	Thu, 19 Jun 2025 12:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8099248F5E;
+	Thu, 19 Jun 2025 12:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1Q3A8RC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C47NiJ8n"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DF3221FDF;
-	Thu, 19 Jun 2025 12:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DB3238152;
+	Thu, 19 Jun 2025 12:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750334713; cv=none; b=VHm8htiHPMNlQp31180EJRogRIUcJrWIB8nRtgFO0CrjN+TWyp5KGHm5sYjZszrXHc5YJ/gESi+LlrZHKwXVBLlPF2sjsytcanZYBNYsqNwdSDNsq8oHuqRgNeIFLriAILmjKg5EriuYimUuLkZgVXklG5BcdDKD735ewdz0AHk=
+	t=1750335604; cv=none; b=RnN7tZNN9SJZ0IuHiWUIMbVU4MWbM7rQ3SVxSoIwzamn4KbTp38NYjS6TbgnE3MC4PGXbnGCfrzCcU5ivniCzxyDi3meDU3/0kAlCHcmbEYodgLc/7pArXfLXXqALQGHbqk1+LeTGqxnUpQQDAUxlbhLY3H4nqNleJBJN21ZTic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750334713; c=relaxed/simple;
-	bh=MunQ7b3vU7ftVz8YaGhqxMkxEggblwQtVf1vjF4zllU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZKd6QRfGhMLjotIRVlRydxIx5+A0ZRVpSH2sApxST5QTmyj1wrsmCrjo9mfWmB5nTWjW8HZdCQxD2Xws9now7xeRbosDT8ZXzDpiTFa3pUqjcSzI7Jr5lLH3EnO8J0jQvYrflB4xMpbDMebFOmhA6C1GRUReXU3oeXsNCUMrjlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1Q3A8RC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9235EC4CEEA;
-	Thu, 19 Jun 2025 12:05:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750334712;
-	bh=MunQ7b3vU7ftVz8YaGhqxMkxEggblwQtVf1vjF4zllU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m1Q3A8RCpduNXFnV1EPgCHLC9lFs/gD7zgVnx+w5hK9aQCHLcxE/5v5kKlafYvKOR
-	 fv11q1LKEieqxfDcNuftuxAJyk26/kCIlycJcf0bKS8u2uycArEG2sSyc6rtuwYoe3
-	 pi4j2i2NqKO/EsSQs1IkvdpDAIHT7B+gtxnX+hOCoJ4P0iX82AY4Gwq5IsvNCU48/H
-	 V1T287pkyxSnVzPkzrONol9U9ParA/pnUU+HRSpRVdsv8wfbYj7RR4Guf7fAnmdFOp
-	 eZTEzn6COjyNsbq8c7qE6VbyhnYRbr1DispP+jA8oO2nM7/7lGuuC58AfTMN8DvxCM
-	 +WMTvjs3CWfYw==
-Date: Thu, 19 Jun 2025 17:31:04 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, 
-	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, Sairaj Kodilkar <sarunkod@amd.com>, 
-	Vasant Hegde <vasant.hegde@amd.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Joao Martins <joao.m.martins@oracle.com>, Francesco Lavra <francescolavra.fl@gmail.com>, 
-	David Matlack <dmatlack@google.com>
-Subject: Re: [PATCH v3 17/62] KVM: SVM: Add enable_ipiv param, never set
- IsRunning if disabled
-Message-ID: <fpb6l3xwyksd7s5izmrhr4hfrkmfeavbgfatokgl5sdeh75mtx@f6gcad774zeh>
-References: <20250611224604.313496-2-seanjc@google.com>
- <20250611224604.313496-19-seanjc@google.com>
- <2eqjnjnszlmhlnvw6kcve4exjnpy7skguypwtmxutb2gecs3an@gcou53thsqww>
+	s=arc-20240116; t=1750335604; c=relaxed/simple;
+	bh=UlwbZeLMLNhVytz2MMF8Q4is5QXNpz/xiXdRg+hnNMs=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=IfxkaBkw88xsMlLXmJsntdSzbtAtuPBJlHGF5LuG4ust4VDlbmWnspYGbnrH+ujyM7keuw7oIhjLD94s/KgvFgc2fP1Pp1gHphjkorAgILTDkS79FwU/akxOCJsj1UIgSN/HkCZwa3foVFulBAbNcMU1MBm72DGtNA38vL7SsdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C47NiJ8n; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a589d99963so745537f8f.1;
+        Thu, 19 Jun 2025 05:20:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750335600; x=1750940400; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pqJP4+yTYhK9BQPQIOtnsPRRAOa7y/0vl+XuyGoTtX8=;
+        b=C47NiJ8nTlE/HJ6OLx4dDud+iwzfLzrl118DLV4uvAIgeRTFwui1gikn2tkTi5cSbx
+         c2IIpLt9Lvekkd8WxdRWFpfoIrsChH4+XYClBGgKqKNYhb96a23lR7NirHlIbZl2E+oH
+         9Dpcjvjt8agnRgWEJiIdnCKnxoLSiUvpHEp7Yx60JPS+a+/oOud3qZ2acVKbbCiiVhap
+         mGgf/8cML57wCIm71UNgt7qJq6ywleENqBaoPVn0XOGyOee119pxE1m0K9KbGJCzc7cA
+         KIvNx+FBicNTXWQ02eSPGmGVntqnIJZUWDMaDXFGkzOexi78HiSCxMylAX7vjchKIy8a
+         u15g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750335600; x=1750940400;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pqJP4+yTYhK9BQPQIOtnsPRRAOa7y/0vl+XuyGoTtX8=;
+        b=pVCxHYhlC/GloqkeUBhkVJ1GJZld5d9OYEhM+akVxcn23IYyClto9tjTi322WEH7Hu
+         bgGu5UKV6uUqKtjyeP1R7w6ET9GGz1npO6fS1ive9dO7KoKkj8cN0DfvcBm2AZMb+PMx
+         ugqhS0FXn+9xIv/V9ObPV2rpKSPRpPpPwI9FuA6Pz45SxWCGGscpzMhQscz9/6vhlupK
+         VdM4LpQuAruHs0gzcgcKYGE54cF9l21jZWLsAMG9RaSxfQLdvutl7WGHuYJ9uMQ3y33/
+         LD+4RuCFM+nhkfnoj1tDPsO5J5ED3Rvx6HmNLoanEjOQXW7wvm3X10A/TrVssPoT4xgO
+         aOWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIhzyIx89qigObnhRxhNCTZ0xKmQibJyEP4Rk3CGl8OdeqwvuyU3krhhAWpNNfyNpUZIaAIIFWZAeFiNE=@vger.kernel.org, AJvYcCXJB+8J8knEGKJuwUOL7R0XmR2afL1C3thhd4KXmSgvsKpoy/O9VyITQIWxtCTdXJnzCAVBeSK3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlbHrOTJBNc0dYBKFTfIyxQ4WwHMQfluyiDI/07OIc/owZkwok
+	x31jzigi/Pl6slHhQizYOj0O7hNM+hovzPj3N+SxaPu/o3pJ2JCXjQBu
+X-Gm-Gg: ASbGncv53D6iWnIFUU1QAhxmV7Uhf1HUbVBsGKctxAQYr0HBjttiwAFwE8mUYpAPyj/
+	PvooJBqP3v2fbr4H5kdiFbCFRvCoFJyrY47Bw9skx2ynAvwY1iDU6MhamiWScBrjHgxTT+zhIit
+	phGPibGMhu9M0nXPGA4cQR/sqCBScQLRsNvQ/gf/HvbOBAEfFTslJSq9griKFBrwoV/jfVj22/J
+	p2JW9pEpC32RJI1IAgBjdVtlzl6nO/gIyVMmHG3qDrnUL+PoLYbTEa7EVPNnqH/pzQyZ9VPiEiD
+	sMdFRAUlnhgrMW4xzhNGBZuVYS7MJdKXxLnyVW9dt/k1bpOz8s9s7nQxX4wD2NUQ1m4ihx3e
+X-Google-Smtp-Source: AGHT+IFFW++i0RClDXuN5jzsKFtxPwiv+zyqlTFsPj4l45JcwpuEYcB4ySEwNMpn0lpcnf2uOPXLqg==
+X-Received: by 2002:a05:6000:4702:b0:3a4:f7e3:c63c with SMTP id ffacd0b85a97d-3a571894b7bmr19742912f8f.0.1750335600402;
+        Thu, 19 Jun 2025 05:20:00 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:ad83:585e:86eb:3f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45362219d3dsm6837755e9.26.2025.06.19.05.19.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jun 2025 05:19:59 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
+ <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
+ <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
+ Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
+ <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
+ Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Ruben
+ Wauters" <rubenru09@aol.com>,  "Shuah Khan" <skhan@linuxfoundation.org>,
+  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
+  linux-kernel@vger.kernel.org,  lkmm@lists.linux.dev,
+  netdev@vger.kernel.org,  peterz@infradead.org,  stern@rowland.harvard.edu
+Subject: Re: [PATCH v7 04/17] tools: ynl_gen_rst.py: Split library from
+ command line tool
+In-Reply-To: <4e26583ad1d8a05ba40cada4213c95120bd45efc.1750315578.git.mchehab+huawei@kernel.org>
+Date: Thu, 19 Jun 2025 13:01:14 +0100
+Message-ID: <m2plf0ey9h.fsf@gmail.com>
+References: <cover.1750315578.git.mchehab+huawei@kernel.org>
+	<4e26583ad1d8a05ba40cada4213c95120bd45efc.1750315578.git.mchehab+huawei@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2eqjnjnszlmhlnvw6kcve4exjnpy7skguypwtmxutb2gecs3an@gcou53thsqww>
+Content-Type: text/plain
 
-On Thu, Jun 19, 2025 at 05:01:30PM +0530, Naveen N Rao wrote:
-> On Wed, Jun 11, 2025 at 03:45:20PM -0700, Sean Christopherson wrote:
-> > @@ -1030,7 +1047,7 @@ void avic_vcpu_put(struct kvm_vcpu *vcpu)
-> >  	 * can't be scheduled out and thus avic_vcpu_{put,load}() can't run
-> >  	 * recursively.
-> >  	 */
-> > -	entry = READ_ONCE(kvm_svm->avic_physical_id_table[vcpu->vcpu_id]);
-> > +	entry = svm->avic_physical_id_entry;
-> >  
-> >  	/* Nothing to do if IsRunning == '0' due to vCPU blocking. */
-> >  	if (!(entry & AVIC_PHYSICAL_ID_ENTRY_IS_RUNNING_MASK))
-> > @@ -1049,7 +1066,10 @@ void avic_vcpu_put(struct kvm_vcpu *vcpu)
-> >  	avic_update_iommu_vcpu_affinity(vcpu, -1, 0);
-> >  
-> >  	entry &= ~AVIC_PHYSICAL_ID_ENTRY_IS_RUNNING_MASK;
-> > -	WRITE_ONCE(kvm_svm->avic_physical_id_table[vcpu->vcpu_id], entry);
-> > +	svm->avic_physical_id_entry = entry;
-> > +
-> > +	if (enable_ipiv)
-> > +		WRITE_ONCE(kvm_svm->avic_physical_id_table[vcpu->vcpu_id], entry);
-> 
-> If enable_ipiv is false, then isRunning bit will never be set and we 
-> would have bailed out earlier. So, the check for enable_ipiv can be 
-> dropped here (or converted into an assert).
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> +
+> +    def generate_main_index_rst(self, output: str, index_dir: str) -> None:
+> +        """Generate the `networking_spec/index` content and write to the file"""
+> +        lines = []
+> +
+> +        lines.append(self.fmt.rst_header())
+> +        lines.append(self.fmt.rst_label("specs"))
+> +        lines.append(self.fmt.rst_title("Netlink Family Specifications"))
+> +        lines.append(self.fmt.rst_toctree(1))
+> +
+> +        index_fname = os.path.basename(output)
+> +        base, ext = os.path.splitext(index_fname)
+> +
+> +        if not index_dir:
+> +            index_dir = os.path.dirname(output)
+> +
+> +        logging.debug(f"Looking for {ext} files in %s", index_dir)
+> +        for filename in sorted(os.listdir(index_dir)):
+> +            if not filename.endswith(ext) or filename == index_fname:
+> +                continue
+> +            base, ext = os.path.splitext(filename)
+> +            lines.append(f"   {base}\n")
+> +
+> +        logging.debug("Writing an index file at %s", output)
+> +
+> +        return "".join(lines)
 
-Ignore this, I got this wrong, sorry. The earlier check is against the 
-local copy of the physical ID table entry, which will indeed have 
-isRunning set so this is all good.
+Did you miss my comment on v5 to not move this from ynl_gen_rst.py,
+since it is not needed and gets removed in a later patch.
 
-- Naveen
+> @@ -411,7 +65,6 @@ def write_to_rstfile(content: str, filename: str) -> None:
+>  
+>  def generate_main_index_rst(output: str) -> None:
+>      """Generate the `networking_spec/index` content and write to the file"""
+> -    lines = []
+>  
+>      lines.append(rst_header())
+>      lines.append(rst_label("specs"))
+> @@ -426,7 +79,7 @@ def generate_main_index_rst(output: str) -> None:
+>          lines.append(f"   {filename.replace('.rst', '')}\n")
+>  
+>      logging.debug("Writing an index file at %s", output)
+> -    write_to_rstfile("".join(lines), output)
+> +    write_to_rstfile(msg, output)
 
+The changes leave this function broken. Bot lines and msg never get
+defined.
 
