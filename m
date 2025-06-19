@@ -1,539 +1,347 @@
-Return-Path: <linux-kernel+bounces-693640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EED6AE01BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 405A3AE01BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D32787A9322
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:33:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3F2C7A2A34
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6A5211706;
-	Thu, 19 Jun 2025 09:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E58D1E3DE8;
+	Thu, 19 Jun 2025 09:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HOAa5dnm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PnJL+4Xw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MwZ2oQJj";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PnJL+4Xw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MwZ2oQJj"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456353085D0
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 09:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750325665; cv=fail; b=JaWf/tCzm8+keTRcByB5y9EVeOnArUCxjsrm299oKOFufZunonGBuggtbTNfeWMi65uk0YcaxQDmMeJthwf2p0xTceIeZI8TPasp3EMVlcGOxadT9S5W6eni++gPtDNnYLTHeb6I6eimBPvXX9KSLTXo+0viJXhWbYNxuNZGIvQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750325665; c=relaxed/simple;
-	bh=3MtO5bFz4n+Ac1crdNQXy/TJ1PUJgPvW7EJa12L57Nk=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=c+tJL+vuNbbDE1vldIBGV2jn2RRa2qZi6OgL9QPSRzzkSDKSI86+NO2E8wfEEuQreUfkPGKksS7HZ2T3pUTGATB3mSESrPBCT5EVdLy5p0IZFhTzTPe80NfJswn9cQdYEWLe+CD7mmTY6kq5ya01EKEGy0/vCZH7QFXpBqJY7hY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HOAa5dnm; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750325664; x=1781861664;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=3MtO5bFz4n+Ac1crdNQXy/TJ1PUJgPvW7EJa12L57Nk=;
-  b=HOAa5dnmRlIxbAJBtZtarREi7ZAQiQgMqsRfjv+RzAVfLywGIhSsFOSo
-   GP2b28Qxu//0xJetEF27vF0snSU7sHfXq1cXIIjbWN00dJdW6ywLOG1+j
-   MMCwCj+vyItwsgC83ZlUUBaDYO9xURsqp/b/f4KFl4VoUONVkM0+SnzNP
-   oF69TbJ+zKGUwy9irJ6jH/zugjpcJHs4F0ZoFOGC2OyKDZLyrNXBLNKhY
-   MjlmDmEsGMVa/x4ebG4hpp4e1RuMuFcVF1umWUX+35K4iVmaeIjqnAh70
-   XbhZ0eF2dGmZ1h9z6BBlX7fVDdapYRghefEABV0I879kAFSBa9qSZYl4R
-   Q==;
-X-CSE-ConnectionGUID: l9hzjlAESse4KqPAZWVdew==
-X-CSE-MsgGUID: pRcJgHeGRtWIkaDzgv5OdQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52453862"
-X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
-   d="scan'208";a="52453862"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 02:34:23 -0700
-X-CSE-ConnectionGUID: wDa/qgypTNetbhDUL2Ye6A==
-X-CSE-MsgGUID: fJswQknARWuJetzF2ozOjg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
-   d="scan'208";a="151133559"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 02:34:22 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 19 Jun 2025 02:34:02 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Thu, 19 Jun 2025 02:34:02 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.66)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 19 Jun 2025 02:33:06 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gkp99soGUvwj9wcZ81U+JkvK/B50Pu9JlCPzxoSnI/AyuLq1BqFkkWDJMHpKN9TSLWDCfUWLsUh/7yO4G8Hezwx8bzaxeS5ouQLsXoFt9QpBhIIYXLu16tn2C7vmS4NuKR2cmZ1QeaGwOypBmYrReDavV2vaEfzqVz/1Yd7UHiA/zq0UFXupwr7eC1xAIjkPF+wb1oS5CvCfcDNPHcyw8lpW0uxk8GoMHsrdmPpnN803czi9MUxJLM5uTtcB3Ed+rfoGYDKDmvhU3c6GdlskOnVQLxbOvV9jThiYQqWWUkyXtBL90Mq9aVJrIzgZxX3Aj9xRYvUiASt7WB67VJFKlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jp49sEywnknba4p8c3Jc3AIlmVk232uluobCQtZxnLI=;
- b=dpdoLHDUWzT85vMThwZxaUMso7Qijv+opGzRHvPvd1++PPKEt+p1xWvXF26j9VuDKRpOueFgYIg4CSFwjDJZqxR6T69PqPITRdVY3Ct4HKg2FcH7IJSVof55TikhlajRzQEO2szmymWI2pLTX0jV8Iv+hkGj66zAO4Z1fSlj9UtFZfqMFnOsinea43SmFHJlxKcz68cVE2cUaC7dPe6o7caE3h8j9Mkd5pFGrKI5EkE+1ciGoD4GfvcL1P3E/BEiyDyCbraQOogHMZ+Jt+jaTkrVgYjSXL4pvZRk2uLn39kS8iyB9Hr+aXlSX7CDaIuIOarormDUe2d48Qvcw+NHfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BN9PR11MB5530.namprd11.prod.outlook.com (2603:10b6:408:103::8)
- by PH0PR11MB5111.namprd11.prod.outlook.com (2603:10b6:510:3c::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.20; Thu, 19 Jun
- 2025 09:33:04 +0000
-Received: from BN9PR11MB5530.namprd11.prod.outlook.com
- ([fe80::13bd:eb49:2046:32a9]) by BN9PR11MB5530.namprd11.prod.outlook.com
- ([fe80::13bd:eb49:2046:32a9%5]) with mapi id 15.20.8857.022; Thu, 19 Jun 2025
- 09:33:04 +0000
-Message-ID: <af6e1d5b-84e2-4ad7-b7a4-9c3ba3bf00f5@intel.com>
-Date: Thu, 19 Jun 2025 15:02:54 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/10] drm/xe/xe_late_bind_fw: Extract and print
- version info
-To: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
-	<intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <anshuman.gupta@intel.com>, <rodrigo.vivi@intel.com>,
-	<alexander.usyskin@intel.com>, <gregkh@linuxfoundation.org>, <jgg@nvidia.com>
-References: <20250618190007.2932322-1-badal.nilawar@intel.com>
- <20250618190007.2932322-10-badal.nilawar@intel.com>
- <994ba1b4-281a-46bd-9431-7bdef5970ed3@intel.com>
-Content-Language: en-US
-From: "Nilawar, Badal" <badal.nilawar@intel.com>
-In-Reply-To: <994ba1b4-281a-46bd-9431-7bdef5970ed3@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0PR01CA0020.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:b8::8) To BN9PR11MB5530.namprd11.prod.outlook.com
- (2603:10b6:408:103::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB5F21CC55
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 09:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750325583; cv=none; b=VSKij+hqiqTm16x5QLlSv3jqTZB7I92bdJltT5fYYU4qAtNhoeLTg2XuuHgu27Cfdby60a4UZyNWzpyRTBl+pnU1GpE9qjAXCsd+UJJATsvZXjPVf3CfYQf0In49u6T/yaM/eX0WJ2pPYPIownIrvECWIqI0WA/3Ya5LfnJD8F0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750325583; c=relaxed/simple;
+	bh=gsAko9qOj+DsQLMAgzZcAQUhwrGnkT2Y1blrZdY/Iyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wjf0dLUXbzLHCzXloQR1hz2SpLLzoXk8/RxYd8T6iaAt27HraImtPE/9I6zB465WpJGOu5g23nYOXFQ4Uwj25WUsNP8YD77Bz6YqPVehu/GIxd9f6ATk1gz/49qTsAcCeriWdge5HEoQrt6QDGeaV2gkkqXaswog21KEMQXk4m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PnJL+4Xw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MwZ2oQJj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PnJL+4Xw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MwZ2oQJj; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 573D7211E3;
+	Thu, 19 Jun 2025 09:32:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750325578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Vq7+Feq2Bf80aTBO3jzKLagOMj9i5wqnEfSZrRgD8Aw=;
+	b=PnJL+4Xwph4O9a/0t9Da9zyBMc1ZBasML78CV42avpock3aOCFyoMjign8A6f9YP7L63ni
+	a3zGfbjWAQY2kNCD/oxlAvNF19dhhlyiXU49nAiOhDo+clqkW/6LnA6Ncof6COMkcwGOsG
+	MrOvtUHKjapEFa3MtVBRWozI70A/Igs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750325578;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Vq7+Feq2Bf80aTBO3jzKLagOMj9i5wqnEfSZrRgD8Aw=;
+	b=MwZ2oQJjTLk/VSqYNeGXAabXg3kRkrWBe4zaGKeqrAWPDCcolvq6A633qee4ubb4dWSOuT
+	U51jzQYsFXF9HfBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=PnJL+4Xw;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=MwZ2oQJj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750325578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Vq7+Feq2Bf80aTBO3jzKLagOMj9i5wqnEfSZrRgD8Aw=;
+	b=PnJL+4Xwph4O9a/0t9Da9zyBMc1ZBasML78CV42avpock3aOCFyoMjign8A6f9YP7L63ni
+	a3zGfbjWAQY2kNCD/oxlAvNF19dhhlyiXU49nAiOhDo+clqkW/6LnA6Ncof6COMkcwGOsG
+	MrOvtUHKjapEFa3MtVBRWozI70A/Igs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750325578;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Vq7+Feq2Bf80aTBO3jzKLagOMj9i5wqnEfSZrRgD8Aw=;
+	b=MwZ2oQJjTLk/VSqYNeGXAabXg3kRkrWBe4zaGKeqrAWPDCcolvq6A633qee4ubb4dWSOuT
+	U51jzQYsFXF9HfBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 198BE13721;
+	Thu, 19 Jun 2025 09:32:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id owniBUrZU2hQSQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 19 Jun 2025 09:32:58 +0000
+Message-ID: <6a7f0976-f35e-4e5b-a77d-fbf6509a4ee4@suse.cz>
+Date: Thu, 19 Jun 2025 11:32:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN9PR11MB5530:EE_|PH0PR11MB5111:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1a3dce10-0ca1-453a-ee1b-08ddaf144ac5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Y1E5aWtTcG5RblFYdnNycnRmVGVidkNTZnZnSnJaZXpNSlA0Z1RPRnJwUTBG?=
- =?utf-8?B?VFh6QnhzOXpKMXYwNy9kdVZRTjhBaHBBempuVnB6eEZZRFZkZ1hlVnBCM2Jj?=
- =?utf-8?B?dHloaVNpME1kRC9FRUV0cms1S2hIZ083SW9iZFVSSnEyVmRQZXdZbjRlYVBv?=
- =?utf-8?B?aWQvRCtXRGdhek9RUlNTNnBjMVlQMmI3aFg5VGJqWnNyYkEyUEJuVlNKZnVN?=
- =?utf-8?B?Wnl4TUh5WndIS1U1ZThjVHcvL1oveU9JVlFub2cxSmN2NTQ5N3pueitxMGRY?=
- =?utf-8?B?S0N6MEdlRWl0WVFLK3VVU2Q3RUh2YzEwS20xREp3YStaZlgvckxSdStMWGxX?=
- =?utf-8?B?V3l6M054bGhtcStvMG1Zb0lad1k4N1RBNEtjcEhQV0hFZFJQMFhoeDlyYkZr?=
- =?utf-8?B?MGpHLzNNa05kdERlelR2TXRQUmFFVVRLOG83MUNJb056SnJlSXVzVTEvQ0VT?=
- =?utf-8?B?T0taWXdNcWpTWlNna0p6dGp6ckU2NzBPRis1T0JHRC95Y1NIOHlhRFd6R0VF?=
- =?utf-8?B?Tml1YnFEbmU4UFdveStDRWoyT0wvNklSVHJ0MDhqS2x2K1dpMEczZDNiUW9w?=
- =?utf-8?B?eVArd3BZZVpVODBKeUJGcXhmeE9MT0tDazVod2N1SktxM1JZTEJRaWZBSHpN?=
- =?utf-8?B?dHVzZzIrZCtDR21tcWlOMnRDUEZmT3hWUXFCUmZBSTlZY0hmRzlqeldaSHV1?=
- =?utf-8?B?TExKYUdOdWNrUVRsemhYbW9ndGxDaSszaFh2U3VmQWZxR3BQSWlGNXRMRFR1?=
- =?utf-8?B?T0k5QUZFZ0ZMUjc1SFlmMlE1Zi9GZlYxLzB0UC9pNW4yTk1nUUJZK2tTc2F4?=
- =?utf-8?B?V3AzNjRpcXdzUHQvaEhRbWEyUkQxdE1SUlNOVVBBVjQ3TTJUdjNOSVRmcUtv?=
- =?utf-8?B?RVMxelBCN09MZE0zVFM4OFdHczJmZEJzMUhQbnk0R1hwTXd2VllWWUNDRy9W?=
- =?utf-8?B?YnNrb2FqWGFuNVB1Vm03R25VTDNHTGFSZ1hoRGwwVERSYjM1TmdKTUtvdEN5?=
- =?utf-8?B?T1Y0SjNUc04renVxMkc1d2Y3WjFuN3lNT3FtVkJyeEFBa3pXSVhvVkdHR0hK?=
- =?utf-8?B?TmRIQ1N5bS9NOHV3S2NtUjZtTnpTZFUvUHlZTlJYTndaUjlmSEg1aGluR2dl?=
- =?utf-8?B?N2xSbitZWHhtSEFIdmVLRUpWVnVmcnFsaVhWeUFNNmZPNzZoN0NnUStnMkhw?=
- =?utf-8?B?bVR3cm5JWnVrUjRHV1BYR25jM3hwVTExNHlZN2tXdVArUERiVU04cFFNa0V0?=
- =?utf-8?B?T0E2NnhZZWxROHREbzRnOXhSOFVxUXhrMTdHLzVFSE1Sa3lYS0U5UU9xQVNX?=
- =?utf-8?B?OEQ1cHcrSURQYXEvTEgxR3QvTzFkM01HWlNDdk96bmxNOE5ZMlpkQWVacUpE?=
- =?utf-8?B?WVB1OEhTMDk2WS9iUlVtVEpaVUpydzYyMUxvdGl0ZHM1ZENMSStIU2xoTUh5?=
- =?utf-8?B?UFc5UEw4d0ZQWEVQZ3JZRnVWWndqT0MyZ3h1VzFHYUlZbHRMbGQxMHhtNTBh?=
- =?utf-8?B?MGR0V2NuQ0d1QVF1ZzJEUHpvd2dKSy9NSmptZ3BITXg0dzdwcVdKOXV5YlNO?=
- =?utf-8?B?dWNqbFoxQnFXRkdFV0lDZytwM1pVTkV1L2pDbDVYNUcrVWErcnY3L3BXbFRG?=
- =?utf-8?B?VmZyMkFpa1RyNy9mVDZYM1RCUm8rRFZNd2FRZ0ZaWFFiYXZvVmZrQlVDQ2VR?=
- =?utf-8?B?dndnQXRzd2FaUWZWZEhRVGl2M1ZEeEZ1TUhEOWJSS1M0ZEVKOVNBM0s5Q3Uy?=
- =?utf-8?B?a2g3S0VJaFowalhueEgvTTVSNWlQRlBsbVJLYWh3dXN5T2JrcVNwSy9QcWFk?=
- =?utf-8?B?cnJpeUFnVWkwU1B0ZVU5ck9zdmR1N0VTUVlSSkllR3A1ajErVXJKZ3lNNzJs?=
- =?utf-8?B?eGJtZXRqK3pSM09FVXpaaGtKOXY4czdOZUdsVmZodnl6Q0krdWdNZ1YwU2Rl?=
- =?utf-8?Q?OnzsQq2iLUk=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5530.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VjI4UVJndkdWRm1zMkJBUGtKYVFrVWpXbVJ2Zlc0ajMxaU50ekNHZ2xQc3dX?=
- =?utf-8?B?ZmY2b0lBT0J5MWw1dnA1Z2lSUlJTVCtTWldvV2lTcFhPM3haVDZLUzZnT2h5?=
- =?utf-8?B?SnkrL2h5VnRqVDBMNksySC9kbXpJdmJLU1ZtMGtMaUNtM0QrbTJHNENlMUQy?=
- =?utf-8?B?a0F5ZnVpTkpIbmVxS1FPbldhWm1wUHVMMTk1cUZRYVpFSy9iRVVtKy8wR1Q5?=
- =?utf-8?B?bEN6YXhmRHUvQVh6ZDhTTG5UWXlFUldQcjZOL2JYSGpoQW1FUWErUVVtTGxz?=
- =?utf-8?B?QW1qNm44ZjN4M2JYbFF5L3ljdE55QkROTGNaMHJZTmkwaFZEWExINnJKVVpB?=
- =?utf-8?B?RHVKWXpjUjlHVzNYdUZkMkpMRC82dHhESzlIWFcxNVBoelFjN1dURll3a3Vr?=
- =?utf-8?B?OEc3UzBraFBwZitOcHRCbnNVMDB4K3hkRGptR2Fxc05FaEEzK0J5RzhneVZK?=
- =?utf-8?B?aFhZcmZrYVppeFlBR0dHZStWMi9pc0VtR2FwbUxoWXhvZStab0I3OGh6ZUpD?=
- =?utf-8?B?RHBqTEMyTXpzTW9BNkVVcm14a0JXNzF2KzBobks4QUxwZXFYOWRQSFE2ckda?=
- =?utf-8?B?VEpCRTFGZzVDdTJYcCtoSmZXVThkTkxsN2lmanNNNGNjYWpEMTN4bWdMdUh4?=
- =?utf-8?B?Z0R5Y3ZNRkxGNjBscW9OVG5Fd3dqRFJhZGRqUEpnR3BnUURxb0FHR0w4aSth?=
- =?utf-8?B?STl4UktTOUZSTHRPd09KakQwSkVYL2ZIRVE2NytmWVhlanVaM3BZOWYzbFUz?=
- =?utf-8?B?VUJQd1prOVM2TEdacGdYc2V2MEZNbnlFa3d1TGlTNEIwYjZhS1NiS1JrenRr?=
- =?utf-8?B?Z1NCV1orWnphS1pDZytCU0hlZWNWajNzY0xqSkJmdVZzajBsQnZhUUNQSlph?=
- =?utf-8?B?REVoTXBZL0hGT2tDZHd1aC9OUjNZNjVHQ3VncUsvcDkzMEpCSFB0TDRoREpl?=
- =?utf-8?B?Ukh6VmVKaE1tc01LQXJxM0VOU1Z0SWw5QTNFdEJoL3hZSTRSUXdTQm5UUkd0?=
- =?utf-8?B?aWpvbWQ3eWFNWWhrait4bHQwRVFIbi9HMHRZUCszaHdCdGxsM283akdQbkZ6?=
- =?utf-8?B?T3VnV2s3YTZxQjVNb24vNlJxaFd5ZEp2azRoY3R0S1ZLbVpDWStXWnJrUjgr?=
- =?utf-8?B?YVpVai9scWhaS1NZVlZ2aTJwK3h6bXRjdmdmRm9LaGw3cmVYVEJpcUR2dWY4?=
- =?utf-8?B?R0xkVnBPT2lpYWxrTzU5WU9WNkdNV1p1QVlhc2xnMUdwcjRURTIrTkQ1NDZr?=
- =?utf-8?B?L0lsY3g3ZmNqVXRic0wxMzc0RzRIc1hQQldDTDhpbzJIZmJjbUl2Wk5ab2Rt?=
- =?utf-8?B?Z3dERlJCdmNiQ2xRSTRYNmI5K1g1MWFESUhhYmxCUnRmU3l2cVp4QTZSeERL?=
- =?utf-8?B?SjJHeEVPUmtEcHJqcmZNL1pycTU5OHd5Rm5qeU9QbnV2cEcvakN6bTJNdzl1?=
- =?utf-8?B?SStyMnhCY05DTU5pdlRwc0drMktrT3ZmdkRWU1NKZm1kSy9aUzZ5Y0hBRnVO?=
- =?utf-8?B?NS90L25IcjFwV1kxM1F1ZlA0ZXZGMkxGZ3BKM2ZoZ01uR0hqYW54RnVEcHMz?=
- =?utf-8?B?bmg2OS9DRTdMT3RYOWF5WEM4SGtOc2hNN1dlaDQ1UkY3RXpxeEdFMGFpM0Fu?=
- =?utf-8?B?Umlid1hhZnlLWlBtK3FtZVlOY2FUc3hEZ25jQ2hERld6VUxud25jVU5DVFZq?=
- =?utf-8?B?Tmt3eFZaclV4d0pFYUJiMHAxR3BhSGh4TFc1NlVybDdXd24waHdUL0N2cFJ4?=
- =?utf-8?B?QTNCcVYyeXUweTZXVjZzSUlObHJkVkJGMEpaUDBIVVR2a0FOWGsyMXRyMFhG?=
- =?utf-8?B?bEpFN2VXclFZR0FqUU8zVjFLNFlDZTljcTVDc1lLREw5S3EzTFdCaWc0SjEx?=
- =?utf-8?B?cE5Qc2hYU3pITG5oZ09kNmMzQ05MK0l0OTMwWVYxVlBJOGYwUk5TRVV5aXd5?=
- =?utf-8?B?aHRad09zeFh3WVlZeVZIWFVMQVFxU3A4UVBDOFdvTlJvRzNkQWo5Tnd0dUlO?=
- =?utf-8?B?dzlrY2hHYXpsRjBBMExmWTlWUkJVa2EySHNwVjYxYVRtS2EvcjFib0ZZZmRq?=
- =?utf-8?B?OGtQYmthTHdKK1E3TlJBMzNqVmZab2x2TlRUQkt5cVFNOWpkWmY0UEJnbkZy?=
- =?utf-8?B?bVhXUjIvK2tyZ3UzcmVNa0RTZ2lnME1yTTJaRDZrcUhzcUVpTDRyZUpveVN6?=
- =?utf-8?B?clE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a3dce10-0ca1-453a-ee1b-08ddaf144ac5
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5530.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2025 09:33:04.7067
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NwQg6tVJYIHn/MP3eMqMXDFuGPZ3L8K+sneLgd2inFGuxmdvDeD/wEh1pKj7klgo4twY4DtlIGs4LZIrJiE3jA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5111
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/9] netmem: introduce struct netmem_desc
+ mirroring struct page
+Content-Language: en-US
+To: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
+ ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
+ akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com,
+ andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com,
+ tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
+ saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+ david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
+ linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
+References: <20250609043225.77229-1-byungchul@sk.com>
+ <20250609043225.77229-2-byungchul@sk.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250609043225.77229-2-byungchul@sk.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 573D7211E3
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[34];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,skhynix.com,kernel.org,google.com,linaro.org,oracle.com,linux-foundation.org,davemloft.net,gmail.com,lunn.ch,redhat.com,nvidia.com,iogearbox.net,suse.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[netdev];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	R_RATELIMIT(0.00)[to_ip_from(RLonr6b6f98tjic7ceeqqao359)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
+On 6/9/25 06:32, Byungchul Park wrote:
+> To simplify struct page, the page pool members of struct page should be
+> moved to other, allowing these members to be removed from struct page.
+> 
+> Introduce a network memory descriptor to store the members, struct
+> netmem_desc, and make it union'ed with the existing fields in struct
+> net_iov, allowing to organize the fields of struct net_iov.
+> 
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
+> Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
+> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+> Reviewed-by: Mina Almasry <almasrymina@google.com>
 
-On 19-06-2025 03:26, Daniele Ceraolo Spurio wrote:
->
->
-> On 6/18/2025 12:00 PM, Badal Nilawar wrote:
->> Extract and print version info of the late binding binary.
->>
->> Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
->> ---
->>   drivers/gpu/drm/xe/xe_late_bind_fw.c       | 132 ++++++++++++++++++++-
->>   drivers/gpu/drm/xe/xe_late_bind_fw_types.h |   3 +
->>   drivers/gpu/drm/xe/xe_uc_fw_abi.h          |  69 +++++++++++
->>   3 files changed, 203 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw.c 
->> b/drivers/gpu/drm/xe/xe_late_bind_fw.c
->> index 001e526e569a..f71d5825ac5b 100644
->> --- a/drivers/gpu/drm/xe/xe_late_bind_fw.c
->> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw.c
->> @@ -45,6 +45,129 @@ late_bind_to_xe(struct xe_late_bind *late_bind)
->>       return container_of(late_bind, struct xe_device, late_bind);
->>   }
->>   +/* Refer to the "Late Bind based Firmware Layout" documentation 
->> entry for details */
->> +static int parse_cpd_header(struct xe_late_bind *late_bind, u32 fw_id,
->> +                const void *data, size_t size, const char 
->> *manifest_entry)
->
-> We'll need to try and make this common between the uc_fw code and this 
-> code to reduce duplication, but we can do that as a follow up.
+I'm not willy or David, but I believe I know enough about the memdesc plans
+and as I worked on the struct slab, can confirm this goes in pretty much the
+same direction, so looks good to me. As for struct net_iov I trust the
+networking people know what they're doing there and it seems to make sense
+to me too.
 
-I agree, we should do this as follow up.
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
->
->> +{
->> +    struct xe_device *xe = late_bind_to_xe(late_bind);
->> +    const struct gsc_cpd_header_v2 *header = data;
->> +    const struct gsc_manifest_header *manifest;
->> +    const struct gsc_cpd_entry *entry;
->> +    size_t min_size = sizeof(*header);
->> +    struct xe_late_bind_fw *lb_fw;
->> +    u32 offset;
->> +    int i;
->> +
->> +    if (fw_id >= MAX_FW_ID)
->> +        return -EINVAL;
->> +    lb_fw = &late_bind->late_bind_fw[fw_id];
->> +
->> +    /* manifest_entry is mandatory */
->> +    xe_assert(xe, manifest_entry);
->> +
->> +    if (size < min_size || header->header_marker != 
->> GSC_CPD_HEADER_MARKER)
->> +        return -ENOENT;
->> +
->> +    if (header->header_length < sizeof(struct gsc_cpd_header_v2)) {
->> +        drm_err(&xe->drm, "%s late binding fw: Invalid CPD header 
->> length %u!\n",
->> +            fw_id_to_name[lb_fw->id], header->header_length);
->> +        return -EINVAL;
->> +    }
->> +
->> +    min_size = header->header_length + sizeof(struct gsc_cpd_entry) 
->> * header->num_of_entries;
->> +    if (size < min_size) {
->> +        drm_err(&xe->drm, "%s late binding fw: too small! %zu < %zu\n",
->> +            fw_id_to_name[lb_fw->id], size, min_size);
->> +        return -ENODATA;
->> +    }
->> +
->> +    /* Look for the manifest first */
->> +    entry = (void *)header + header->header_length;
->> +    for (i = 0; i < header->num_of_entries; i++, entry++)
->> +        if (strcmp(entry->name, manifest_entry) == 0)
->> +            offset = entry->offset & GSC_CPD_ENTRY_OFFSET_MASK;
->> +
->> +    if (!offset) {
->> +        drm_err(&xe->drm, "%s late binding fw: Failed to find 
->> manifest_entry\n",
->> +            fw_id_to_name[lb_fw->id]);
->> +        return -ENODATA;
->> +    }
->> +
->> +    min_size = offset + sizeof(struct gsc_manifest_header);
->> +    if (size < min_size) {
->> +        drm_err(&xe->drm, "%s late binding fw: too small! %zu < %zu\n",
->> +            fw_id_to_name[lb_fw->id], size, min_size);
->> +        return -ENODATA;
->> +    }
->> +
->> +    manifest = data + offset;
->> +
->> +    lb_fw->version.major = manifest->fw_version.major;
->> +    lb_fw->version.minor = manifest->fw_version.minor;
->> +    lb_fw->version.hotfix = manifest->fw_version.hotfix;
->> +    lb_fw->version.build = manifest->fw_version.build;
->
-> not: here you can just do:
->
->     lb_fw->version = manifest->fw_version;
->
-> since both variables are of type struct gsc_version.
-Ok
->
->> +
->> +    return 0;
->> +}
->> +
->> +/* Refer to the "Late Bind based Firmware Layout" documentation 
->> entry for details */
->> +static int parse_lb_layout(struct xe_late_bind *late_bind, u32 fw_id,
->
-> IMO it'd be cleaner to just pass xe and xe_late_bind_fw, instead of 
-> xe_late_bind and fw_id.
-> You should also be able to do a lb_fw_to_xe() call if you want with 
-> something like:
->
-> container_of(lb_fw, struct xe_device, late_bind.late_bind_fw[lb_fw->id])
-Sure.
->
->> +               const void *data, size_t size, const char *fpt_entry)
->> +{
->> +    struct xe_device *xe = late_bind_to_xe(late_bind);
->> +    const struct csc_fpt_header *header = data;
->> +    const struct csc_fpt_entry *entry;
->> +    size_t min_size = sizeof(*header);
->> +    struct xe_late_bind_fw *lb_fw;
->> +    u32 offset;
->> +    int i;
->> +
->> +    if (fw_id >= MAX_FW_ID)
->> +        return -EINVAL;
->> +
->> +    lb_fw = &late_bind->late_bind_fw[fw_id];
->> +
->> +    /* fpt_entry is mandatory */
->> +    xe_assert(xe, fpt_entry);
->> +
->> +    if (size < min_size || header->header_marker != 
->> CSC_FPT_HEADER_MARKER)
->> +        return -ENOENT;
->> +
->> +    if (header->header_length < sizeof(struct csc_fpt_header)) {
->> +        drm_err(&xe->drm, "%s late binding fw: Invalid FPT header 
->> length %u!\n",
->> +            fw_id_to_name[lb_fw->id], header->header_length);
->> +        return -EINVAL;
->> +    }
->> +
->> +    min_size = header->header_length + sizeof(struct csc_fpt_entry) 
->> * header->num_of_entries;
->> +    if (size < min_size) {
->> +        drm_err(&xe->drm, "%s late binding fw: too small! %zu < %zu\n",
->> +            fw_id_to_name[lb_fw->id], size, min_size);
->> +        return -ENODATA;
->> +    }
->> +
->> +    /* Look for the manifest first */
->
-> Here you're looking for the cpd header, not the manifest.
-Ok.
->
->> +    entry = (void *)header + header->header_length;
->> +    for (i = 0; i < header->num_of_entries; i++, entry++)
->> +        if (strcmp(entry->name, fpt_entry) == 0)
->> +            offset = entry->offset;
->> +
->> +    if (!offset) {
->> +        drm_err(&xe->drm, "%s late binding fw: Failed to find 
->> fpt_entry\n",
->> +            fw_id_to_name[lb_fw->id]);
->> +        return -ENODATA;
->> +    }
->> +
->> +    min_size = offset + sizeof(struct gsc_cpd_header_v2);
->> +    if (size < min_size) {
->> +        drm_err(&xe->drm, "%s late binding fw: too small! %zu < %zu\n",
->> +            fw_id_to_name[lb_fw->id], size, min_size);
->> +        return -ENODATA;
->> +    }
->> +
->> +    return parse_cpd_header(late_bind, fw_id, data + offset, size - 
->> offset, "LTES.man");
->> +}
->> +
->>   static int xe_late_bind_fw_num_fans(struct xe_late_bind *late_bind)
->>   {
->>       struct xe_device *xe = late_bind_to_xe(late_bind);
->> @@ -185,8 +308,15 @@ static int __xe_late_bind_fw_init(struct 
->> xe_late_bind *late_bind, u32 fw_id)
->>           return -ENODATA;
->>       }
->>   -    lb_fw->payload_size = fw->size;
->> +    ret = parse_lb_layout(late_bind, fw_id, fw->data, fw->size, 
->> "LTES");
->> +    if (ret)
->> +        return ret;
->> +
->> +    drm_info(&xe->drm, "Using %s firmware from %s version %d.%d.%d\n",
->> +         fw_id_to_name[lb_fw->id], lb_fw->blob_path,
->> +         lb_fw->version.major, lb_fw->version.minor, 
->> lb_fw->version.hotfix);
->
-> You need to log the build number as well, as that needs to be relevant 
-> for this type of headers (we do log it for GSC for example).
-I will log build number too.
->
->>   +    lb_fw->payload_size = fw->size;
->>       memcpy(lb_fw->payload, fw->data, lb_fw->payload_size);
->>       release_firmware(fw);
->>       INIT_WORK(&lb_fw->work, late_bind_work);
->> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h 
->> b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
->> index f79f0c0b2c4a..3fc4f350c81f 100644
->> --- a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
->> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
->> @@ -10,6 +10,7 @@
->>   #include <linux/mutex.h>
->>   #include <linux/types.h>
->>   #include <linux/workqueue.h>
->> +#include "xe_uc_fw_abi.h"
->>     #define MAX_PAYLOAD_SIZE (1024 * 4)
->>   @@ -41,6 +42,8 @@ struct xe_late_bind_fw {
->>       size_t payload_size;
->>       /** @late_bind_fw.work: worker to upload latebind blob */
->>       struct work_struct work;
->> +    /** @late_bind_fw.version: late binding blob manifest version */
->> +    struct gsc_version version;
->>   };
->>     /**
->> diff --git a/drivers/gpu/drm/xe/xe_uc_fw_abi.h 
->> b/drivers/gpu/drm/xe/xe_uc_fw_abi.h
->> index 87ade41209d0..13da2ca96817 100644
->> --- a/drivers/gpu/drm/xe/xe_uc_fw_abi.h
->> +++ b/drivers/gpu/drm/xe/xe_uc_fw_abi.h
->> @@ -318,4 +318,73 @@ struct gsc_manifest_header {
->>       u32 exponent_size; /* in dwords */
->>   } __packed;
->>   +/**
->> + * DOC: Late binding Firmware Layout
->> + *
->> + * The Late binding binary starts with FPT header, which contains 
->> locations
->> + * of various partitions of the binary. Here we're interested in 
->> finding out
->> + * manifest version. To the manifest version, we need to locate CPD 
->> header
->> + * one of the entry in CPD header points to manifest header. 
->> Manifest header
->> + * contains the version.
->> + *
->> + *      +================================================+
->> + *      |  FPT Header                                    |
->> + *      +================================================+
->> + *      |  FPT entries[]                                 |
->> + *      |      entry1                                    |
->> + *      |      ...                                       |
->> + *      |      entryX                                    |
->> + *      |          "LTES"                                |
->> + *      |          ...                                   |
->> + *      |          offset >-----------------------------|------o
->> + *      +================================================+ |
->> + * |
->> + *      +================================================+ |
->> + *      |  CPD Header |<-----o
->> + *      +================================================+
->> + *      |  CPD entries[]                                 |
->> + *      |      entry1                                    |
->> + *      |      ...                                       |
->> + *      |      entryX                                    |
->> + *      |          "LTES.man"                            |
->> + *      |           ...                                  |
->> + *      |           offset >----------------------------|------o
->> + *      +================================================+ |
->> + * |
->> + *      +================================================+ |
->> + *      |  Manifest Header |<-----o
->> + *      |      ...                                       |
->> + *      |      FW version                                |
->> + *      |      ...                                       |
->> + *      +================================================+
->> + */
->> +
->> +/* FPT Headers */
->> +struct csc_fpt_header {
->> +    u32 header_marker;
->> +#define CSC_FPT_HEADER_MARKER 0x54504624
->> +    u32 num_of_entries;
->> +    u8 header_version;
->> +    u8 entry_version;
->> +    u8 header_length; /* in bytes */
->> +    u8 flags;
->> +    u16 ticks_to_add;
->> +    u16 tokens_to_add;
->> +    u32 uma_size;
->> +    u32 crc32;
->> +    u16 fitc_major;
->> +    u16 fitc_minor;
->> +    u16 fitc_hotfix;
->> +    u16 fitc_build;
->
-> For other headers we grouped the version values in a gsc_version 
-> struct. So here instead of the 4 separate versions you could have:
->
-> struct gsc_version fitc_version;
->
-> Which makes it easier to read as all headers have the same type for 
-> the version. We don't read this one though, so not a blocker.
+> ---
+>  include/net/netmem.h | 94 ++++++++++++++++++++++++++++++++++----------
+>  1 file changed, 73 insertions(+), 21 deletions(-)
+> 
+> diff --git a/include/net/netmem.h b/include/net/netmem.h
+> index 386164fb9c18..2687c8051ca5 100644
+> --- a/include/net/netmem.h
+> +++ b/include/net/netmem.h
+> @@ -12,6 +12,50 @@
+>  #include <linux/mm.h>
+>  #include <net/net_debug.h>
+>  
+> +/* These fields in struct page are used by the page_pool and net stack:
+> + *
+> + *        struct {
+> + *                unsigned long pp_magic;
+> + *                struct page_pool *pp;
+> + *                unsigned long _pp_mapping_pad;
+> + *                unsigned long dma_addr;
+> + *                atomic_long_t pp_ref_count;
+> + *        };
+> + *
+> + * We mirror the page_pool fields here so the page_pool can access these
+> + * fields without worrying whether the underlying fields belong to a
+> + * page or netmem_desc.
+> + *
+> + * CAUTION: Do not update the fields in netmem_desc without also
+> + * updating the anonymous aliasing union in struct net_iov.
+> + */
+> +struct netmem_desc {
+> +	unsigned long _flags;
+> +	unsigned long pp_magic;
+> +	struct page_pool *pp;
+> +	unsigned long _pp_mapping_pad;
+> +	unsigned long dma_addr;
+> +	atomic_long_t pp_ref_count;
+> +};
+> +
+> +#define NETMEM_DESC_ASSERT_OFFSET(pg, desc)        \
+> +	static_assert(offsetof(struct page, pg) == \
+> +		      offsetof(struct netmem_desc, desc))
+> +NETMEM_DESC_ASSERT_OFFSET(flags, _flags);
+> +NETMEM_DESC_ASSERT_OFFSET(pp_magic, pp_magic);
+> +NETMEM_DESC_ASSERT_OFFSET(pp, pp);
+> +NETMEM_DESC_ASSERT_OFFSET(_pp_mapping_pad, _pp_mapping_pad);
+> +NETMEM_DESC_ASSERT_OFFSET(dma_addr, dma_addr);
+> +NETMEM_DESC_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
+> +#undef NETMEM_DESC_ASSERT_OFFSET
+> +
+> +/*
+> + * Since struct netmem_desc uses the space in struct page, the size
+> + * should be checked, until struct netmem_desc has its own instance from
+> + * slab, to avoid conflicting with other members within struct page.
+> + */
+> +static_assert(sizeof(struct netmem_desc) <= offsetof(struct page, _refcount));
+> +
+>  /* net_iov */
+>  
+>  DECLARE_STATIC_KEY_FALSE(page_pool_mem_providers);
+> @@ -31,12 +75,25 @@ enum net_iov_type {
+>  };
+>  
+>  struct net_iov {
+> -	enum net_iov_type type;
+> -	unsigned long pp_magic;
+> -	struct page_pool *pp;
+> +	union {
+> +		struct netmem_desc desc;
+> +
+> +		/* XXX: The following part should be removed once all
+> +		 * the references to them are converted so as to be
+> +		 * accessed via netmem_desc e.g. niov->desc.pp instead
+> +		 * of niov->pp.
+> +		 */
+> +		struct {
+> +			unsigned long _flags;
+> +			unsigned long pp_magic;
+> +			struct page_pool *pp;
+> +			unsigned long _pp_mapping_pad;
+> +			unsigned long dma_addr;
+> +			atomic_long_t pp_ref_count;
+> +		};
+> +	};
+>  	struct net_iov_area *owner;
+> -	unsigned long dma_addr;
+> -	atomic_long_t pp_ref_count;
+> +	enum net_iov_type type;
+>  };
+>  
+>  struct net_iov_area {
+> @@ -48,27 +105,22 @@ struct net_iov_area {
+>  	unsigned long base_virtual;
+>  };
+>  
+> -/* These fields in struct page are used by the page_pool and net stack:
+> +/* net_iov is union'ed with struct netmem_desc mirroring struct page, so
+> + * the page_pool can access these fields without worrying whether the
+> + * underlying fields are accessed via netmem_desc or directly via
+> + * net_iov, until all the references to them are converted so as to be
+> + * accessed via netmem_desc e.g. niov->desc.pp instead of niov->pp.
+>   *
+> - *        struct {
+> - *                unsigned long pp_magic;
+> - *                struct page_pool *pp;
+> - *                unsigned long _pp_mapping_pad;
+> - *                unsigned long dma_addr;
+> - *                atomic_long_t pp_ref_count;
+> - *        };
+> - *
+> - * We mirror the page_pool fields here so the page_pool can access these fields
+> - * without worrying whether the underlying fields belong to a page or net_iov.
+> - *
+> - * The non-net stack fields of struct page are private to the mm stack and must
+> - * never be mirrored to net_iov.
+> + * The non-net stack fields of struct page are private to the mm stack
+> + * and must never be mirrored to net_iov.
+>   */
+> -#define NET_IOV_ASSERT_OFFSET(pg, iov)             \
+> -	static_assert(offsetof(struct page, pg) == \
+> +#define NET_IOV_ASSERT_OFFSET(desc, iov)                    \
+> +	static_assert(offsetof(struct netmem_desc, desc) == \
+>  		      offsetof(struct net_iov, iov))
+> +NET_IOV_ASSERT_OFFSET(_flags, _flags);
+>  NET_IOV_ASSERT_OFFSET(pp_magic, pp_magic);
+>  NET_IOV_ASSERT_OFFSET(pp, pp);
+> +NET_IOV_ASSERT_OFFSET(_pp_mapping_pad, _pp_mapping_pad);
+>  NET_IOV_ASSERT_OFFSET(dma_addr, dma_addr);
+>  NET_IOV_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
+>  #undef NET_IOV_ASSERT_OFFSET
 
-Fine, I will take care of this.
-
-Badal
-
->
-> Daniele
->
->> +} __packed;
->> +
->> +struct csc_fpt_entry {
->> +    u8 name[4]; /* partition name */
->> +    u32 reserved1;
->> +    u32 offset; /* offset from beginning of CSE region */
->> +    u32 length; /* partition length in bytes */
->> +    u32 reserved2[3];
->> +    u32 partition_flags;
->> +} __packed;
->> +
->>   #endif
->
 
