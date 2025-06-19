@@ -1,446 +1,241 @@
-Return-Path: <linux-kernel+bounces-693231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E68EADFC93
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:41:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA1AADFC9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B07F27AC682
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:40:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46B357A257B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAA923C517;
-	Thu, 19 Jun 2025 04:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E3B239E78;
+	Thu, 19 Jun 2025 04:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScRZCak6"
-Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="JqDtFM4T"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068001DE885
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 04:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2686813EFE3;
+	Thu, 19 Jun 2025 04:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750308106; cv=none; b=Ui0i5DeZtbm2weZ0aPOxOBJKBXhQFeN7INKnCX7W15IHmFqrpMqsbNK1eRrbE+sbsQuqTsx+vIRVt27W/EcjgezD4UI8uIvXRFGRlRc71TEa5dmcmIc7YcFyuNSy82jr8D1ziZluLt3BDN1r54IxW9754t6iz07FOfnXiTmGOV0=
+	t=1750308521; cv=none; b=ESrVW7p/fEbTiBQMlYgnGo6TOIBvEtqqpZppV5+KMVb0ClCMGsKNS8SWywjMxEfSij7YOETk7XY3Y1pPpGM+31fnXVqrSk9F2DJOc2G6D8DE9Z+mlBCnQDmICVCAuR8YgmCYAVFMyewQJ8W8MpI65mK+Q5tdG4zEeP4ZQd6wOUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750308106; c=relaxed/simple;
-	bh=e2gNm/sRLOHorXu+vbqinOUyj1TAfLAqLN7p7lxnF38=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=V2aesHGITjkGQKycFa9sY2uyJDEy4q7WgHJsPR8cDwLCimUDy5S4/ma/q+ZYyQx4cYOXuPX9+U4vYRj8T587ZuFhfUrp3FvUbQpO4mrSfy7R1ImptgqxtIskHT8PAyt2NmQwXo9bimLoT1ns0UpLabGhuQ3po1W5k4buYRq3W4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScRZCak6; arc=none smtp.client-ip=209.85.128.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-70f862dbeaeso3915717b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 21:41:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750308104; x=1750912904; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tnhTENPgNZ/R0ObSuFGCePwS00BmqcmGFq8ONsFMWHg=;
-        b=ScRZCak6YTqMKzaFSlDSgb+wdO9P0hKHDfC+qp/qLpV+XJU5tt0gEmHUHUF+7tivqL
-         k1lVHrktl19oxB/LEp0kMqIXJ4NdHDh5nnia+YyEThExlDOHD/aTcREehSSkkwCvemEV
-         iS7ytGJB08daJeayxF1QqaGqbgla/YsbjnOKFfr9mQOSd+PoL55QjBWS7JMm4lNthfWx
-         NZNqSmV0Q/LZRkd2W7/R5ZkUquXEwfJiNzCGeDG9hEzzfH1oGi0iAEbFCZ90Hh59yAN0
-         1BUiOSegXrsNoz+RY66Z6OZfXWOs3YdVqLdDQyLkHCIv5CPIpsjKyImNwoUlnPpeovY2
-         qnhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750308104; x=1750912904;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tnhTENPgNZ/R0ObSuFGCePwS00BmqcmGFq8ONsFMWHg=;
-        b=qT03b2/CHbaAxr0WUHCYnIvUPK+ZIub4+3W05ijpkPoxFgijNNKTauQK8ASperxkbU
-         aAE7r1ICfNQdBO0aXlgwyVMJCoYN/3PErwGsJqCTSHatfWe4+ZzkSWDPFYoDwPfCu98S
-         TT/M+BW4L97Rtao5oOm9IniKn85SzQfOIHhrPqQJmRqi7/DJ9Jvlw5lvOtP8+mzwUPVy
-         xp3eANZCmKARjUfGEzi4uaIHNzrG0eeBbBwFi4lwBcMEXhuvhXaMN3Yyg32FZ0B4JwMh
-         wTbrTEO5bx1AyctVy5FykPurD0qp+J11U3NBpXYvSEPxZADSgSuFDbKauGc47ehbY+ag
-         yqnw==
-X-Gm-Message-State: AOJu0YzT7JbHrpsTvwPdQnFQI6KrSqHNhPaa6bxdDx/N88Gqdb+NwXf+
-	7dKnCWJpvqZm+IInNHZWK+oO2ULnoV0lC2Mc8l1SdLiqF88aR1VL7uiCsIJSPcvxBYIPVDik16V
-	4O89VGDuzuh0x2H8w6xGLm5XP7V4BsY5754VF3QgDEg==
-X-Gm-Gg: ASbGncu0wKxduOI6Z6Z4yumMQbEcJtaSxj9gVzjWr0WpHMxh+gFi+fqK8pZVX0TyrQ1
-	knmCijEKfZBahhKzc3UqDReJfgsNqHRn5AC4aQ/PAJ2H0Tt2CKjpBkxtxStrSadLuWCN09eHeGj
-	ZoxJRCzQKdvzHS6JH6/GefXkvemexWXdtDRyH7g5EvZn9ACUbRrxyGjR0rdMlGOlRrnM8Oy5Ida
-	GbGcQ==
-X-Google-Smtp-Source: AGHT+IH17geO9R9fMSXAR58M8flXmZICEU89/RxyxQ5wTO4kF4NYqCd8UoSGEJIiD90Fyg85kHT/o6CcGfafR8k/Kww=
-X-Received: by 2002:a05:690c:60ca:b0:710:f564:5071 with SMTP id
- 00721157ae682-7117538e19emr193359967b3.11.1750308103582; Wed, 18 Jun 2025
- 21:41:43 -0700 (PDT)
+	s=arc-20240116; t=1750308521; c=relaxed/simple;
+	bh=HQe6kFqMnGfN90tLffrWeZBRc3+Eq0D1MY7dEgvGzJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dWPPD1GhFD5b7qt4bNp5C+oI0EMqaIUBt1gW5hCbLCa1t6LcgwhBnxu+pecC/lSuvzQvOk90viXytQIgA9BiXeJywSSbn1jY8Qae+4NIJxLcKyNV7cyJIM8qkdfxEYRXw0Svff45n1X49570TistbGNX3WaZ2plh226rZgAzNL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=JqDtFM4T; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6839B10244BE3;
+	Thu, 19 Jun 2025 06:41:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1750308113;
+	h=from:reply-to:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=UUFN8WMuMRa5w96HoPF9UjI+t8hy8L5sn99KTr/bq7k=;
+	b=JqDtFM4TwU8AK2faCKlq59XOjlaV0KHeCPrlluSzgu2SSq570o5mSohAttlhWMUaJeGeLe
+	6ApCTbAqNOAzmm1RfkD9bMN8DHVvbKmsZETU1Y4DHt5M8bM2KSofd3EMjGVDOrqG//+2D0
+	lOoZKoFEWkPpO1OiiHVsLacd5FrBH1Wm/3Lw8bX6ir/9yzlZhmeByI8kYt2RUimE94S3tl
+	/QDo17C5bjc153RotlaDuxZI5/IRt2SdlwxEm1kHR5rN71qvdb3zUTeAwD2M8QJB17SMmY
+	lIqzc9ep1YdXHK9aXb6O+Pe8plPktIdXdaSZHKVFHAQAuM6VJiYbbUXtZOMYUw==
+Message-ID: <04497f71-498a-1d12-5cae-a6e0c4e77dc9@denx.de>
+Date: Thu, 19 Jun 2025 06:42:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Amit <amitchoudhary0523@gmail.com>
-Date: Thu, 19 Jun 2025 10:11:32 +0530
-X-Gm-Features: AX0GCFtFwa5BiOhMDHc1y6g7A4kcG9wC3nJHF37V_aKxiSk8ufXJ9ACL5mq05MM
-Message-ID: <CAFf+5zj-Wqdov_oCYB4OWXR++hv4mfQPXSiY3my0k_oJJ_2kuA@mail.gmail.com>
-Subject: Bits Library (Two files: bits_library.c and bits_library.h).
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH] HID: mcp2221: set gpio pin mode
+Content-Language: en-US
 To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-
-Bits Library (Two files: bits_library.c and bits_library.h).
-
-------------------
-bits_library.c
-------------------
-
-/*
- * License:
- *
- * This file has been released under "unlicense" license
- * (https://unlicense.org).
- *
- * This is free and unencumbered software released into the public domain.
- *
- * Anyone is free to copy, modify, publish, use, compile, sell, or distribute
- * this software, either in source code form or as a compiled binary, for any
- * purpose, commercial or non-commercial, and by any means.
- *
- * For more information about this license, please visit - https://unlicense.org
- */
-
-/*
- * Author: Amit Choudhary
- * Email: amitchoudhary0523 AT gmail DOT com
- */
-
-#include "bits_library.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-
-char *convert_error_num_to_error_string(int error_num)
-{
-
-    switch (error_num) {
-
-        case BL_BC_PTR_IS_NULL:
-                return ("'bc_ptr' argument is NULL.");
-
-        case BL_BIT_NUM_OUT_OF_RANGE:
-                return ("'bit_num' value given by the user is out of range"
-                        " (less than 0 or greater than 'last_bit_num').");
-
-        case BL_VAL_IS_INVALID:
-                return ("'val' argument is invalid, it is neither 0 nor 1.");
-
-        case BL_FD_IS_INVALID:
-                return ("'fd' argument is negative, hence invalid.");
-
-        case BL_FAILURE:
-                return("Some error happened. Function didn't complete"
-                       " successfully.");
-    }
-
-    return("Invalid error number.");
-
-} // end of function convert_error_num_to_error_string()
-
-struct bits_container *bl_init_bits_container(long num_bits_required)
-{
-
-    struct bits_container *bc_ptr = NULL;
-    long num_bytes_to_alloc = 0;
-
-    if (num_bits_required <= 0) {
-        return NULL;
-    }
-
-    bc_ptr = calloc(sizeof(*bc_ptr), 1);
-
-    if (bc_ptr == NULL) {
-        return NULL;
-    }
-
-    num_bytes_to_alloc = (num_bits_required/8);
-
-    if ((num_bits_required % 8) != 0) {
-        num_bits_required = num_bits_required + 1;
-    }
-
-    bc_ptr->bit_array_ptr = calloc((size_t)(num_bytes_to_alloc), 1);
-
-    if (bc_ptr->bit_array_ptr == NULL) {
-        free(bc_ptr);
-        return NULL;
-    }
-
-    bc_ptr->last_bit_num = num_bits_required - 1;
-
-    return bc_ptr;
-
-} // end of function bl_init_bits_container()
-
-// bl_set_bit(): We are not checking the function arguments in this function
-//               because this function is just a wrapper function with only one
-//               function call and no other line of code.
-int bl_set_bit(struct bits_container *bc_ptr, long bit_num)
-{
-
-    return bl_set_bit_value(bc_ptr, bit_num, 1);
-
-} // end of function bl_set_bit()
-
-// bl_unset_bit(): We are not checking the function arguments in this function
-//                 because this function is just a wrapper function with only
-//                 one function call and no other line of code.
-int bl_unset_bit(struct bits_container *bc_ptr, long bit_num)
-{
-
-    return bl_set_bit_value(bc_ptr, bit_num, 0);
-
-} // end of function bl_unset_bit()
-
-int bl_is_bit_set(struct bits_container *bc_ptr, long bit_num)
-{
-
-    int val = -1;
-
-    if (bc_ptr == NULL) {
-        return BL_BC_PTR_IS_NULL;
-    }
-
-    if ((bit_num < 0) || (bit_num > bc_ptr->last_bit_num)) {
-        return BL_BIT_NUM_OUT_OF_RANGE;
-    }
-
-    val = bl_get_bit_value(bc_ptr, bit_num);
-
-    if (val == 1) {
-        return BL_TRUE;
-    } else if (val == 0) {
-        return BL_FALSE;
-    }
-
-    return BL_FAILURE;
-
-} // end of function bl_is_bit_set()
-
-int bl_set_bit_value(struct bits_container *bc_ptr, long bit_num, int val)
-{
-
-    long arr_index = -1;
-    int bit_index = -1;
-    int retval = -1;
-
-    if (bc_ptr == NULL) {
-        return BL_BC_PTR_IS_NULL;
-    }
-
-    if ((bit_num < 0) || (bit_num > bc_ptr->last_bit_num)) {
-        return BL_BIT_NUM_OUT_OF_RANGE;
-    }
-
-    if ((val != 1) && (val != 0)) {
-        return BL_VAL_IS_INVALID;
-    }
-
-    retval = get_arr_index_and_bit_index(bit_num, &arr_index, &bit_index);
-
-    if (retval != BL_SUCCESS) {
-        return BL_FAILURE;
-    }
-
-    if (val == 1) {
-        val = (1 >> bit_index);
-        bc_ptr->bit_array_ptr[arr_index] = bc_ptr->bit_array_ptr[arr_index] |
-                                           (unsigned char)(val);
-    } else { // val is 0
-        val = ~(1 >> bit_index);
-        bc_ptr->bit_array_ptr[arr_index] = bc_ptr->bit_array_ptr[arr_index] &
-                                           (unsigned char)(val);
-    }
-
-    return BL_SUCCESS;
-
-} // end of function bl_set_bit_value()
-
-int bl_get_bit_value(struct bits_container *bc_ptr, long bit_num)
-{
-
-    long arr_index = -1;
-    int bit_index = -1;
-    int val = -1;
-    int retval = -1;
-
-    if (bc_ptr == NULL) {
-        return BL_BC_PTR_IS_NULL;
-    }
-
-    if ((bit_num < 0) || (bit_num > bc_ptr->last_bit_num)) {
-        return BL_BIT_NUM_OUT_OF_RANGE;
-    }
-
-    retval = get_arr_index_and_bit_index(bit_num, &arr_index, &bit_index);
-
-    if (retval != BL_SUCCESS) {
-        return BL_FAILURE;
-    }
-
-    val = bc_ptr->bit_array_ptr[arr_index] & (1 >> bit_index);
-
-    if (val) {
-        return 1;
-    }
-
-    return 0;
-
-} // end of function bl_get_bit_value()
-
-int bl_print_all_bits_values(struct bits_container *bc_ptr, int fd)
-{
-#define STR_SIZE 256
-
-    char str[STR_SIZE] = {0};
-
-    long i = 0;
-    int val = -1;
-
-    if (bc_ptr == NULL) {
-        return BL_BC_PTR_IS_NULL;
-    }
-
-    if (fd < 0) {
-        return BL_FD_IS_INVALID;
-    }
-
-    for (i = 0; i <= bc_ptr->last_bit_num; i++) {
-        snprintf(str, STR_SIZE, "%s", "bit_");
-        write(fd, str, strlen(str));
-        snprintf(str, STR_SIZE, "%ld", i);
-        write(fd, str, strlen(str));
-        snprintf(str, STR_SIZE, "%s", " = ");
-        write(fd, str, strlen(str));
-        val = bl_get_bit_value(bc_ptr, i);
-        if (val < 0) {
-            snprintf(str, STR_SIZE, "%s\n", "Error. Some error happened.");
-            write(fd, str, strlen(str));
-            fflush(NULL);
-            return BL_FAILURE;
-        }
-        snprintf(str, STR_SIZE, "%d\n", val);
-        write(fd, str, strlen(str));
-    } // end of for loop
-
-    fflush(NULL);
-
-    return BL_SUCCESS;
-
-} // end of function bl_print_all_bits_values()
-
-void bl_delete_bits_container(struct bits_container *bc_ptr)
-{
-
-    if (bc_ptr == NULL) {
-        return;
-    }
-
-    free(bc_ptr->bit_array_ptr);
-
-    free(bc_ptr);
-
-    return;
-
-} // end of function bl_delete_bits_container()
-
-static int get_arr_index_and_bit_index(long bit_num, long *arr_index,
-                                       int *bit_index)
-{
-
-    if ((bit_num < 0) || (arr_index == NULL) || (bit_index == NULL)) {
-        return BL_FAILURE;
-    }
-
-    *arr_index = bit_num/8;
-
-    *bit_index = (int)(bit_num % 8);
-
-    return BL_SUCCESS;
-
-} // end of function get_arr_index_and_bit_index()
-
-------------------
-bits_library.h
-------------------
-
-/*
- * License:
- *
- * This file has been released under "unlicense" license
- * (https://unlicense.org).
- *
- * This is free and unencumbered software released into the public domain.
- *
- * Anyone is free to copy, modify, publish, use, compile, sell, or distribute
- * this software, either in source code form or as a compiled binary, for any
- * purpose, commercial or non-commercial, and by any means.
- *
- * For more information about this license, please visit - https://unlicense.org
- */
-
-/*
- * Author: Amit Choudhary
- * Email: amitchoudhary0523 AT gmail DOT com
- */
-
-#ifndef _BITS_LIBRARY_H_
-#define _BITS_LIBRARY_H_
-
-// 'bl' and 'BL' mean bits library
-// 'bc' and 'BC' mean bits container
-
-#define BL_TRUE 1
-#define BL_FALSE 2
-
-// Everything happened successfully.
-#define BL_SUCCESS 0
-
-// 'bc_ptr' argument is NULL.
-#define BL_BC_PTR_IS_NULL -1
-
-// 'bit_num' value given by the user is out of range (less than 0 or greater
-// than 'last_bit_num').
-#define BL_BIT_NUM_OUT_OF_RANGE -2
-
-// 'val' argument is invalid, it is neither 0 nor 1.
-#define BL_VAL_IS_INVALID -3
-
-// 'fd' argument is negative, hence invalid.
-#define BL_FD_IS_INVALID -4
-
-// Some error happened. Function didn't complete successfully.
-#define BL_FAILURE -5
-
-struct bits_container
-{
-    unsigned char *bit_array_ptr;
-    long last_bit_num;
-};
-
-// Functions
-char *convert_error_num_to_error_string(int error_num);
-
-struct bits_container *bl_init_bits_container(long num_bits_required);
-
-int bl_set_bit(struct bits_container *bc_ptr, long bit_num);
-
-int bl_unset_bit(struct bits_container *bc_ptr, long bit_num);
-
-int bl_is_bit_set(struct bits_container *bc_ptr, long bit_num);
-
-int bl_set_bit_value(struct bits_container *bc_ptr, long bit_num, int val);
-
-int bl_get_bit_value(struct bits_container *bc_ptr, long bit_num);
-
-int bl_print_all_bits_values(struct bits_container *bc_ptr, int fd);
-
-void bl_delete_bits_container(struct bits_container *bc_ptr);
-
-// Static functions
-static int get_arr_index_and_bit_index(long bit_num, long *arr_index,
-                                       int *bit_index);
-
-#endif
+Cc: Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+ Rishi Gupta <gupt21@gmail.com>, linux-i2c@vger.kernel.org,
+ linux-input@vger.kernel.org
+References: <20250608163315.24842-1-hs@denx.de>
+Reply-To: hs@denx.de
+From: Heiko Schocher <hs@denx.de>
+In-Reply-To: <20250608163315.24842-1-hs@denx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
+
+Hi all,
+
+On 08.06.25 18:33, Heiko Schocher wrote:
+> in case we have GPIOLIB enabled the gpio pins are used
+> from the current driver as gpio pins. But may the gpio
+> functions of this pins are not enabled in the flash
+> of the chip and so gpio access fails.
+> 
+> In case CONFIG_IIO is not enabled we can prevent this
+> issue of the driver simply by enabling the gpio mode
+> for all pins.
+> 
+> Signed-off-by: Heiko Schocher <hs@denx.de>
+> ---
+> 
+>   drivers/hid/hid-mcp2221.c | 97 +++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 97 insertions(+)
+
+Got message from patchwork:
+The following patch (submitted by you) has been updated in Patchwork:
+"""
+  * linux-i2c: HID: mcp2221: set gpio pin mode
+      - http://patchwork.ozlabs.org/project/linux-i2c/patch/20250608163315.24842-1-hs@denx.de/
+      - for: Linux I2C development
+     was: New
+     now: Not Applicable
+"""
+
+May I ask to which tree I should rebase my patch, so I can
+resend? Just rebased my local patch to:
+
+*   fb4d33ab452e - (origin/master, origin/HEAD, master) Merge tag '6.16-rc2-ksmbd-server-fixes' of 
+git://git.samba.org/ksmbd
+
+and it worked without problems.
+
+And while at it, are there any issues with this patch or is it ready for
+picking up?
+
+Thanks!
+
+bye,
+Heiko
+> 
+> diff --git a/drivers/hid/hid-mcp2221.c b/drivers/hid/hid-mcp2221.c
+> index 0f93c22a479f..f693e920dffe 100644
+> --- a/drivers/hid/hid-mcp2221.c
+> +++ b/drivers/hid/hid-mcp2221.c
+> @@ -55,6 +55,27 @@ enum {
+>   	MCP2221_ALT_F_NOT_GPIOD = 0xEF,
+>   };
+>   
+> +/* MCP SRAM read offsets cmd: MCP2221_GET_SRAM_SETTINGS */
+> +enum {
+> +	MCP2221_SRAM_RD_GP0 = 22,
+> +	MCP2221_SRAM_RD_GP1 = 23,
+> +	MCP2221_SRAM_RD_GP2 = 24,
+> +	MCP2221_SRAM_RD_GP3 = 25,
+> +};
+> +
+> +/* MCP SRAM write offsets cmd: MCP2221_SET_SRAM_SETTINGS */
+> +enum {
+> +	MCP2221_SRAM_WR_GP_ENA_ALTER = 7,
+> +	MCP2221_SRAM_WR_GP0 = 8,
+> +	MCP2221_SRAM_WR_GP1 = 9,
+> +	MCP2221_SRAM_WR_GP2 = 10,
+> +	MCP2221_SRAM_WR_GP3 = 11,
+> +};
+> +
+> +#define MCP2221_SRAM_GP_DESIGN_MASK		0x07
+> +#define MCP2221_SRAM_GP_DIRECTION_MASK		0x08
+> +#define MCP2221_SRAM_GP_VALUE_MASK		0x10
+> +
+>   /* MCP GPIO direction encoding */
+>   enum {
+>   	MCP2221_DIR_OUT = 0x00,
+> @@ -607,6 +628,80 @@ static const struct i2c_algorithm mcp_i2c_algo = {
+>   };
+>   
+>   #if IS_REACHABLE(CONFIG_GPIOLIB)
+> +static int mcp_gpio_read_sram(struct mcp2221 *mcp)
+> +{
+> +	int ret;
+> +
+> +	memset(mcp->txbuf, 0, 64);
+> +	mcp->txbuf[0] = MCP2221_GET_SRAM_SETTINGS;
+> +
+> +	mutex_lock(&mcp->lock);
+> +	ret = mcp_send_data_req_status(mcp, mcp->txbuf, 64);
+> +	mutex_unlock(&mcp->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +/*
+> + * If CONFIG_IIO is not enabled, check for the gpio pins
+> + * if they are in gpio mode. For the ones which are not
+> + * in gpio mode, set them into gpio mode.
+> + */
+> +static int mcp2221_check_gpio_pinfunc(struct mcp2221 *mcp)
+> +{
+> +	int i;
+> +	int needgpiofix = 0;
+> +	int ret;
+> +
+> +	if (IS_ENABLED(CONFIG_IIO))
+> +		return 0;
+> +
+> +	ret = mcp_gpio_read_sram(mcp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < MCP_NGPIO; i++) {
+> +		if ((mcp->mode[i] & MCP2221_SRAM_GP_DESIGN_MASK) != 0x0) {
+> +			dev_warn(&mcp->hdev->dev,
+> +				 "GPIO %d not in gpio mode\n", i);
+> +			needgpiofix = 1;
+> +		}
+> +	}
+> +
+> +	if (!needgpiofix)
+> +		return 0;
+> +
+> +	/*
+> +	 * Set all bytes to 0, so Bit 7 is not set. The chip
+> +	 * only changes content of a register when bit 7 is set.
+> +	 */
+> +	memset(mcp->txbuf, 0, 64);
+> +	mcp->txbuf[0] = MCP2221_SET_SRAM_SETTINGS;
+> +
+> +	/*
+> +	 * Set bit 7 in MCP2221_SRAM_WR_GP_ENA_ALTER to enable
+> +	 * loading of a new set of gpio settings to GP SRAM
+> +	 */
+> +	mcp->txbuf[MCP2221_SRAM_WR_GP_ENA_ALTER] = 0x80;
+> +	for (i = 0; i < MCP_NGPIO; i++) {
+> +		if ((mcp->mode[i] & MCP2221_SRAM_GP_DESIGN_MASK) == 0x0) {
+> +			/* write current GPIO mode */
+> +			mcp->txbuf[MCP2221_SRAM_WR_GP0 + i] = mcp->mode[i];
+> +		} else {
+> +			/* pin is not in gpio mode, set it to input mode */
+> +			mcp->txbuf[MCP2221_SRAM_WR_GP0 + i] = 0x08;
+> +			dev_warn(&mcp->hdev->dev,
+> +				 "Set GPIO mode for gpio pin %d!\n", i);
+> +		}
+> +	}
+> +
+> +	mutex_lock(&mcp->lock);
+> +	ret = mcp_send_data_req_status(mcp, mcp->txbuf, 64);
+> +	mutex_unlock(&mcp->lock);
+> +
+> +	return ret;
+> +}
+> +
+>   static int mcp_gpio_get(struct gpio_chip *gc,
+>   				unsigned int offset)
+>   {
+> @@ -1216,6 +1311,8 @@ static int mcp2221_probe(struct hid_device *hdev,
+>   	ret = devm_gpiochip_add_data(&hdev->dev, mcp->gc, mcp);
+>   	if (ret)
+>   		return ret;
+> +
+> +	mcp2221_check_gpio_pinfunc(mcp);
+>   #endif
+>   
+>   #if IS_REACHABLE(CONFIG_IIO)
+> 
+
+-- 
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-52   Fax: +49-8142-66989-80   Email: hs@denx.de
 
