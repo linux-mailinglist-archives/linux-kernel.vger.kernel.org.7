@@ -1,167 +1,160 @@
-Return-Path: <linux-kernel+bounces-693447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA31ADFF00
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:44:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6C9ADFEFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87D3F3B20E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:44:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E127170ACE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D7E25C71B;
-	Thu, 19 Jun 2025 07:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="btFDrMc8"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C401B25D549;
+	Thu, 19 Jun 2025 07:43:54 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7912D25F7BC;
-	Thu, 19 Jun 2025 07:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAEC1624FE;
+	Thu, 19 Jun 2025 07:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750319046; cv=none; b=AU3o5d44Ejpz2AYVtQzsQMN0cSUbbjb4Ao3SkA/83PGYHGMt7tQsGSEkih0yKuCvdUfN2FLQtb/sVNK51NKCsTJN8fhyZo5WKndxAWXd8iJbLhKzFWzPrso2HWSHZM79g3tjcWtIdaZJTYw0pc/AUjVQ5sxRHvWc0Yx5rQ0bo9U=
+	t=1750319034; cv=none; b=b68GJWf5Kv4Px8X0/tEdc4tEafJDxKXEjlk8TwD9xAJgDoEAqAvrDD4DklhqTUU/aemMGPqfqXigJm07/0ahUcny2ZgGCjVolB7JpEQmMA86+QEeRWxI5XAwfW7703My7CcoPqbf8zmCuYBVxJQvCb90KfQUsVa3rJWD47riXGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750319046; c=relaxed/simple;
-	bh=6Z0HZsFZmuTX/vuM6Vx8E4uacrew6L+K8YIi+PZnOhw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nEot8SEt/T41c9D/QyWn1A26jNlHbFjTMsIcyYRrWhwVkpCZtml040ujDg/LtI5JFJaOdTRKFlXu3sWpfk9p2BN6DbGrYNMub3Yg5nQ3nOj7lsSXk47sOiGCveTC6A3azsaSie7qrhluh6+kBCZH10c53yI/0dPuD6ncaewlmp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=btFDrMc8; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1750319031;
-	bh=PdAJ7XW6WFKbkSbzeFGLxHXUKKVLvlM5q8OEKyJ+9Mc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=btFDrMc8oOCY5dvGklrrFA65i3VaE2AxuiOD2uXrT/dgvj7kpP7nC1fwD2Bp4V7YO
-	 E5KkbhyUhK3k3S0dbiYQNKBaiKQFI5jpsJP/JCBIKf5I8chi76Dnm1Wz6SgWgyxpA4
-	 SfTk7rmPbodbwzfcuvFjFX8nSNUPBr0/cnh6GBAA=
-X-QQ-mid: esmtpsz16t1750319026t495c5fb0
-X-QQ-Originating-IP: 3DbXRB9nhPXMTuvRtUZcwtO9Yq6Kft7ecjQRD63hONg=
-Received: from mail-yb1-f177.google.com ( [209.85.219.177])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 19 Jun 2025 15:43:44 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 2888044492780007741
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e7569ccf04cso472171276.0;
-        Thu, 19 Jun 2025 00:43:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVaHhm5HJkhWdozHr1t41q+D7yn89NhYkSugyo2tGGk4Jut8VtbhhwlFXKHB1VnBQX0JFsQwe/40vX+DRY=@vger.kernel.org, AJvYcCXpWgG1LQtNVf/tPEr/m98XP7qX08I4RoL7gz0BTlDZb0C5nhKtLjV8KbC2SMcIfOLrcgzTHWGw5uhUOGEEqPfd@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKjjwRPts1unODRhqmWWRCd0urc+Moq8E7z6UEgms/zo7rFpZQ
-	vm+fGIAFM7ygpZyN/4klso9q/eH8JMDW9SrdWUFjmonwULwkiV5f/pXe471b4XeM9JOZeK3rgk/
-	b4EDactzvFh/43pprS06Cafby6fogkrE=
-X-Google-Smtp-Source: AGHT+IEfZub8gy2jnZbdLcKSkmLr1O4BmFMGk4pDPzXq1+akqLOXYE5F3PLiilZoY4rSCiykRKOzABKYqNAY4dc03Pw=
-X-Received: by 2002:a05:690c:4d4a:b0:70e:2d77:3cfe with SMTP id
- 00721157ae682-71175382ebbmr318625957b3.2.1750319022448; Thu, 19 Jun 2025
- 00:43:42 -0700 (PDT)
+	s=arc-20240116; t=1750319034; c=relaxed/simple;
+	bh=L7M1r3hXW846r86reJZJKNbDYYbqOkSgw23MVbxAEB0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dtl1VwgDK6ZJh6joEb2sz3XGWV6PeJuSf9QhqhlB78r39a2umr0OQHXHi8DLnPYn/E/Fn91Epmpo/EKfholDjRgeurkhsyEamyyzY5XDNkw0z0GTty0sXep4wilkpVV/KZ3tPdMsB/PV5CObOP0fFyn72DvC39y2SEjhgFpljH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bNCD10yfnz10XVT;
+	Thu, 19 Jun 2025 15:39:13 +0800 (CST)
+Received: from kwepemo500015.china.huawei.com (unknown [7.202.194.227])
+	by mail.maildlp.com (Postfix) with ESMTPS id B239114011F;
+	Thu, 19 Jun 2025 15:43:47 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by kwepemo500015.china.huawei.com
+ (7.202.194.227) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 19 Jun
+ 2025 15:43:47 +0800
+From: z30015464 <zhongxuan2@huawei.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<stephen@networkplumber.org>, <dsahern@gmail.com>
+CC: <gaoxingwang1@huawei.com>, <yanan@huawei.com>
+Subject: [Issue] iproute2: coredump problem with command ip link xstats
+Date: Thu, 19 Jun 2025 15:43:38 +0800
+Message-ID: <20250619074338.1774229-1-zhongxuan2@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250610020559.2797938-2-chenlinxuan@uniontech.com> <96c46d3d-0e0a-464a-b64c-15c2a544a974@linuxfoundation.org>
-In-Reply-To: <96c46d3d-0e0a-464a-b64c-15c2a544a974@linuxfoundation.org>
-From: Chen Linxuan <chenlinxuan@uniontech.com>
-Date: Thu, 19 Jun 2025 15:43:31 +0800
-X-Gmail-Original-Message-ID: <E331E4A1E44CA282+CAC1kPDM76fLgE-cbKvMO3=B1hKhjTNMYmJw5XpOPV5UAxXx=Yg@mail.gmail.com>
-X-Gm-Features: AX0GCFsPEvPn4k_4SEuYgTBSBqxc9xBq4ybEKn9PA6xW3y3kIBv7aDr_GYIcAlE
-Message-ID: <CAC1kPDM76fLgE-cbKvMO3=B1hKhjTNMYmJw5XpOPV5UAxXx=Yg@mail.gmail.com>
-Subject: Re: [PATCH RESEND] selftests/memfd: clean Makefile
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Chen Linxuan <chenlinxuan@uniontech.com>, Shuah Khan <shuah@kernel.org>, zhanjun@uniontech.com, 
-	niecheng1@uniontech.com, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: M6ncIRVC3gAvOz1VEvZL4HgEyipj2jBAZ+wY92nuPRvBcbZA8XyDafdq
-	NCM7BSPIebI35DEYYfCu034zUgUH5ljCd7WZYLElfV3wsg7mPVfW7lSJJZqCisNh0QnFS8M
-	dfcHgbFokCVJOApzffm+4S1fPo4Qw8wvkeJvwG8nDpZbTznf8AVlMAtEHJsNskr8BHIkYwc
-	pViwLiMTWj6JAIbxz9zTO4ZjHOLPOZOueHclb3f/jz+VNHIskqcdUx5b2bF/YzaB3geEuHD
-	LzowtuKJ245iAg8xReHT9odF4+Pp1NFOY4OVwbPndh18dhsPVXBPkx5xJufiELnF4NN8MPF
-	uaBbdsoSWOVAQCL7OdZM6VuDTLvXp7x1z345lZBEbMLlduKbGFpvQRyFp55iPUd6HSR4hun
-	wQEMkeImwSSUudK1DmKaZM2qAfg6Nt5MtrCpOyatMEZ54iAp7t/kNM0m7takt2NeeIniAkZ
-	43hl6Z+5gcpbC8hFPPe0TKs3uXLT45bUazhW1zoQR3WL1pR3Vjsg3dzzoz+bOciFV4FRcIp
-	0NMf6w6VAXgAg4s63iWDEGxlUjwTr8DC2+b8/Va3kVZZOEgkbQ/mWW1le/Law/COhQv9nvi
-	goOa2RKDUbU6bro0GDxVu1tOPopEYY+YU3LzYEL48wKGs/HThvCvwk47/ysRp1ImfkApgld
-	Q7fkDpGiNnYhhO+ULza73IyEpbm/nh5Vo38uHICgmmFgxQXuNrsAWLSNSqcKjsdnNxzSVhE
-	6J/2RWnnbvdhue1JXS4Yt6U8GPYemWzk8XHULpfpNjaB9PMBEoweFZobQT0LIHZGumsveq8
-	E06LRurW5DQxdd//tyNo07cBNP3VQ5u0wzZvDb1ou202TiqvE29UuaQORNnPUdkADQLbsOG
-	Bf90LZreWJopTGyigqQ4iewjT99xwoCQFC/8YPsSVICvX3cFaMztR4taN5nzBt6TRutODrB
-	EE+w1zZNXtTWxCW2EHf5y5ZPXsHMi7yVL1BAYNvWfdlxUYCkCpzu3cwOXWYhgWJ5hxfn96V
-	UA8rbJJS3a7iKpICouHusrZ92Aj0urj5jvp7xVYhYWKzwvyG1VmISj4QAQu6xHGVgr79miI
-	/jn6BWQvCCjGIeTSgBnVWuB09THI//8Sg==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemo500015.china.huawei.com (7.202.194.227)
 
-On Thu, Jun 19, 2025 at 5:21=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.o=
-rg> wrote:
->
-> On 6/9/25 20:05, Chen Linxuan wrote:
-> > When writing a test for fusectl, I referred to this Makefile as a
-> > reference for creating a FUSE daemon in the selftests.
-> > While doing so, I noticed that there is a minor issue in the Makefile.
->
-> What happens if this change isn't made?
-
-Nothing will happen.
-When I was writing tests for the fusectl filesystem in the kernel repositor=
-y,
-I came across this file as a reference.
-Then I found that the process of passing CFLAGS was not correct.
-So, for the reason of not wanting others to be misled again,
-I want to update the compilation process here.
-
->
-> >
-> > The fuse_mnt.c file is not actually compiled into fuse_mnt.o,
-> > and the code setting CFLAGS for it never takes effect.
-> > The reason fuse_mnt compiles successfully is because CFLAGS is set
-> > at the very beginning of the file.
-> >
-> > Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
-> > ---
-> >   tools/testing/selftests/memfd/Makefile | 4 +---
-> >   1 file changed, 1 insertion(+), 3 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/memfd/Makefile b/tools/testing/sel=
-ftests/memfd/Makefile
-> > index 163b6f68631c4..e9b886c65153d 100644
-> > --- a/tools/testing/selftests/memfd/Makefile
-> > +++ b/tools/testing/selftests/memfd/Makefile
-> > @@ -1,5 +1,4 @@
-> >   # SPDX-License-Identifier: GPL-2.0
-> > -CFLAGS +=3D -D_FILE_OFFSET_BITS=3D64
->
-> What's the reason for deleting the above?
-
-The CFLAGS update here actually doesn't take effect.
-I believe it is the -D_FILE_OFFSET_BITS=3D64 in VAR_CFLAGS that truly
-takes effect.
-
->
-> >   CFLAGS +=3D $(KHDR_INCLUDES)
-> >
-> >   TEST_GEN_PROGS :=3D memfd_test
-> > @@ -16,10 +15,9 @@ ifeq ($(VAR_LDLIBS),)
-> >   VAR_LDLIBS :=3D -lfuse -pthread
-> >   endif
-> >
-> > -fuse_mnt.o: CFLAGS +=3D $(VAR_CFLAGS)
-> > -
-> >   include ../lib.mk
-> >
-> > +$(OUTPUT)/fuse_mnt: CFLAGS +=3D $(VAR_CFLAGS)
-> >   $(OUTPUT)/fuse_mnt: LDLIBS +=3D $(VAR_LDLIBS)
-> >
-> >   $(OUTPUT)/memfd_test: memfd_test.c common.c
->
-> thanks,
-> -- Shuah
->
->
->
+Hello everyone,=0D
+=0D
+I having an issues while using iprute2 6.15.0. When I created a bond and in=
+tended to use 'ip link xstats' command to query extended information, a sta=
+ck overflow occurred, followed by a coredump. I couldn't identify the root =
+cause through the code and need some help.=0D
+=0D
+Example:=0D
+ifconfig eth1 up=0D
+modprobe bonding mode=3D4 max_bonds=3D1 lacp_rate=3D1 miimon=3D100=0D
+ip addr add 7.7.0.100/24 dev bond0=0D
+ip link xstats type bond dev bond0=0D
+=0D
+Here is the result:=0D
+[root@localhost /]# ip link xstats type bond=0D
+bond0=0D
+                    LACPDU Rx 0=0D
+                    LACPDU Tx 0=0D
+                    LACPDU Unknown type Rx 0=0D
+                    LACPDU Illegal Rx 0=0D
+                    Marker Rx 0=0D
+                    Marker Tx 0=0D
+                    Marker response Rx 0=0D
+                    Marker response Tx 0=0D
+                    Marker unknown type Rx 0=0D
+*** stack smashing detected ***: terminated=0D
+Aborted (core dumped)=0D
+=0D
+Here is the result with valgrind:=0D
+[root@localhost /]# valgrind ip link xstats type bond dev bond0=0D
+=3D=3D242893=3D=3D Memcheck, a memory error detector=0D
+=3D=3D242893=3D=3D Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward=
+ et al.=0D
+=3D=3D242893=3D=3D Using Valgrind-3.22.0 and LibVEX; rerun with -h for copy=
+right info=0D
+=3D=3D242893=3D=3D Command: ip link xstats type bond dev bond0=0D
+=3D=3D242893=3D=3D=0D
+bond0=0D
+                    LACPDU Rx 0=0D
+                    LACPDU Tx 0=0D
+                    LACPDU Unknown type Rx 0=0D
+                    LACPDU Illegal Rx 0=0D
+                    Marker Rx 0=0D
+                    Marker Tx 0=0D
+                    Marker response Rx 0=0D
+                    Marker response Tx 0=0D
+                    Marker unknown type Rx 0=0D
+*** stack smashing detected ***: terminated=0D
+=3D=3D242893=3D=3D=0D
+=3D=3D242893=3D=3D Process terminating with default action of signal 6 (SIG=
+ABRT)=0D
+=3D=3D242893=3D=3D    at 0x498AB5C: __pthread_kill_implementation (pthread_=
+kill.c:44)=0D
+=3D=3D242893=3D=3D    by 0x493CF45: raise (raise.c:26)=0D
+=3D=3D242893=3D=3D    by 0x492733B: abort (abort.c:79)=0D
+=3D=3D242893=3D=3D    by 0x49281A8: __libc_message.cold (libc_fatal.c:152)=
+=0D
+=3D=3D242893=3D=3D    by 0x4A1621A: __fortify_fail (fortify_fail.c:24)=0D
+=3D=3D242893=3D=3D    by 0x4A17435: __stack_chk_fail (stack_chk_fail.c:24)=
+=0D
+=3D=3D242893=3D=3D    by 0x157A81: bond_print_stats_attr (iplink_bond.c:877=
+)=0D
+=3D=3D242893=3D=3D    by 0x157B02: bond_print_xstats (iplink_bond.c:895)=0D
+=3D=3D242893=3D=3D    by 0x1846A9: rtnl_dump_filter_l (libnetlink.c:926)=0D
+=3D=3D242893=3D=3D    by 0x185A01: rtnl_dump_filter_nc (libnetlink.c:969)=0D
+=3D=3D242893=3D=3D    by 0x16B0BF: iplink_ifla_xstats (iplink_xstats.c:71)=
+=0D
+=3D=3D242893=3D=3D    by 0x118C3C: do_cmd (ip.c:131)=0D
+=3D=3D242893=3D=3D=0D
+=3D=3D242893=3D=3D HEAP SUMMARY:=0D
+=3D=3D242893=3D=3D     in use at exit: 33,878 bytes in 4 blocks=0D
+=3D=3D242893=3D=3D   total heap usage: 8 allocs, 4 frees, 66,755 bytes allo=
+cated=0D
+=3D=3D242893=3D=3D=0D
+=3D=3D242893=3D=3D LEAK SUMMARY:=0D
+=3D=3D242893=3D=3D    definitely lost: 0 bytes in 0 blocks=0D
+=3D=3D242893=3D=3D    indirectly lost: 0 bytes in 0 blocks=0D
+=3D=3D242893=3D=3D      possibly lost: 0 bytes in 0 blocks=0D
+=3D=3D242893=3D=3D    still reachable: 33,878 bytes in 4 blocks=0D
+=3D=3D242893=3D=3D         suppressed: 0 bytes in 0 blocks=0D
+=3D=3D242893=3D=3D Rerun with --leak-check=3Dfull to see details of leaked =
+memory=0D
+=3D=3D242893=3D=3D=0D
+=3D=3D242893=3D=3D For lists of detected and suppressed errors, rerun with:=
+ -s=0D
+=3D=3D242893=3D=3D ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 f=
+rom 0)=0D
+Aborted (core dumped)=0D
+=0D
+Through gdb debugging, __stack_chk_fail was triggered after the end of func=
+tion bond_print_stats_attr function.=0D
+I first found this issue in version 6.6.0. After replacing package 6.15.0, =
+the issue still persists. =0D
+I also tried version 5.15.0 but there was no abnormality.=0D
+Maybe some modifications triggered this issue, but I cannot found the cause=
+. I hope to get some helps.=0D
+=0D
+Thank you very much.=0D
+=0D
+=0D
+=0D
 
