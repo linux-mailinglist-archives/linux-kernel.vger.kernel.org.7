@@ -1,97 +1,232 @@
-Return-Path: <linux-kernel+bounces-693875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 860C8AE0533
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:13:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE9EAE052C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FA355A2C1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:10:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6471898546
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEF5230BF2;
-	Thu, 19 Jun 2025 12:11:15 +0000 (UTC)
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EE722F767;
+	Thu, 19 Jun 2025 12:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gx3oG5iX"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14F53085B2;
-	Thu, 19 Jun 2025 12:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7C43085B2
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 12:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750335075; cv=none; b=C7Xb1kea/ZuAtfETus1BHcA/6ptTbG4i+jypIB7zKO9AOIJ6WcH/+ZCsqnrm0/Xe2VfeDdobFY+Eczu4vVA7gCsAgP1PZHpCWZdXGv7ulgABU7DjeOZMksH1gjXjsvSrb0e9K7sjGd7ctuPmMmPGI1gCEwLWpUBcbc1FYW8rzXs=
+	t=1750335135; cv=none; b=N9Axymff4wEeyxkmL8NMXSw3KR9aPBR/XijFqXNyfVPQFu3Q28DPqbHRSECSKfy2bels2kv/aXa4rcAbZ8pBXL2aSCZC7Te7eqUl8Bq7q6s20+maTNuYO3smaPp+yAfePYQ2AxAkLCAXxVvLdE2oN5NZXXoWWwXE7jMqM6EFtmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750335075; c=relaxed/simple;
-	bh=A2ie+kUQrkB5Lxc2V7zJYm8SbzcSncNfJ5+TypUD6uQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LiCz1m+OmEwFoM5T+lE2QC+1A9YRz/BX+OO2CvjzXUghfmtmoEtxQ8VRrqzu7pQtOPVX9N+Af4mH6nxNSQNm9zFVr+KnxZROq2hS95s1fhfBdQDj+/U/nGVXqwpyS7mnOigTbtmE75dkJijy9hSDslamEwrhHuoLJvG5RFlBDO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bNKFf55g0z9sWt;
-	Thu, 19 Jun 2025 14:11:02 +0200 (CEST)
-From: Pankaj Raghav <p.raghav@samsung.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	mcgrof@kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gost.dev@samsung.com,
-	kernel@pankajraghav.com,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH v2] fs/buffer: use min folio order to calculate upper limit in __getblk_slow()
-Date: Thu, 19 Jun 2025 14:10:58 +0200
-Message-ID: <20250619121058.140122-1-p.raghav@samsung.com>
+	s=arc-20240116; t=1750335135; c=relaxed/simple;
+	bh=nYb7xQFUld7v08K+Ac/6c9QfLWUi1rCk4mHZ65TBAd8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cq8/4RNpWyScg/s+C6/SidpyiPomG+R8WE7vnvjzGsPFc80nfi4a3UdMqrZsjL69EyVlW7pEIk7UpbhczQlb1nzjg2TJ9K9WE5SUESmZGeiFVdWHb75Coi18+9m+EgStrnjGTCunZIxoGpQkcSO3S7V6IPxvry65U9HsFZHQmeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gx3oG5iX; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e7d9d480e6cso642143276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 05:12:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750335132; x=1750939932; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y4jopdmk0/EoPtfqXFOnCJqlK5/IKjz0QIFIwGgRmIw=;
+        b=Gx3oG5iXUPx6v76gKs31xgR1/uFQErmUjxB6W3ayiYYYVxj+C/5nRJhyn6vX6FuxrH
+         lHcUCQHJOi3ZbmoT4CjfYj8XXmZxWYa/WLcdfkdbddiUf2qnYeqOd/Y1bRpd3LmgseNg
+         eTzAEdY9nBXBnAAoLWmEfMnI5E3fU6SoixB5O5MNSf3OIsENFD7C4LdbQFxSgAj4vhBb
+         7KklIMu0Kloru71ze2kxJRHUzxo365vYLObdMIJmFphF80GLhPNdaa2Xf+65YPxETcPO
+         vaVuKpvhgrZQQE9On/e/J1GqUjoS6lEc04+nxwYhlhHdRUoITnvrjibP9IlVqYlY0ikm
+         C86g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750335132; x=1750939932;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y4jopdmk0/EoPtfqXFOnCJqlK5/IKjz0QIFIwGgRmIw=;
+        b=Ic+l3MhHMM2QZ+uzsq0ZvqM/olCVmDwfOoIgEnjferb/kzIM78j/wde6jmZWXSWAbu
+         4CPvr1B60Cl/Cyv9zRIWXsPy8QzVx3GMe+NJTWqPkeZ7dXlc/J8NC7YoR8cNd6VnIhQK
+         1+Gi1jXgupxTX4jJpGGqKUF0K+BSoL/Bzgxri9yruVXfe2jd8BMW8MXLkAFMoPlYfrxc
+         yK2H9/wgjBQ5VOvFpgk4Hj7FDfoYEFs6vafj2pYUSL3WSexIeAGuy4FES2Do4kqhniNt
+         XyVnT5D/wEVt+hCHEPpuGxUfuCFQ9pegqxDyreP2WBvX7vvDyFTGs96OXcSO4Dil3gVV
+         A1ag==
+X-Forwarded-Encrypted: i=1; AJvYcCUIz107u74qQ/1BxfiC4xpCBmgB73n97UmIUlngC3JaOzGNs2R987SBlQdzajUqcTq04n3OBSNu0bDiXgY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh4WYo8d2rZZaf8p7LdwzL4owU8QlFxHgdJxOjOjLZRiOghmLW
+	XX+JHkmpJQuYS0NgYZm+tWxmRw5By/gLTXX1pjrDh8ZnSctAoZKTZHWKa0RfZQe0cMneWvZtwXL
+	FgD5fJPM/5zjkHZ2xtk3C+C/9gB2Sn0cR4UgkJjUm9w==
+X-Gm-Gg: ASbGncvnz/E8gtDJMJY/PVpCv4SlCso4JtJ1+rln2EfeH9kakTkSjjL2ac9CozoEOwt
+	duDJ9emPAASAsdCbC8otASjNiAtqBKIuUdE0mIC7pQDnF5jJX88L64BiS+osW+XBgSfQfifPBMo
+	aZhZkmA5cBc7BgVZv2QbFpkyO00UQtfRfIV+i4Qzup2gVKO12V81JT28Q=
+X-Google-Smtp-Source: AGHT+IEXUEZrdHXQYvHWd4YdUzyPKDHzLM3PIOd0gZanTJJ/vBF4uj1Av1R5EUDrVwtYV0jaSMvxy7uOAiPO38M6OqU=
+X-Received: by 2002:a05:6902:1021:b0:e81:77cd:1234 with SMTP id
+ 3f1490d57ef6-e822ad8ac40mr29042163276.34.1750335132387; Thu, 19 Jun 2025
+ 05:12:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4bNKFf55g0z9sWt
+References: <20250616135357.3929441-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250616135357.3929441-2-claudiu.beznea.uj@bp.renesas.com> <CAJZ5v0j_nm_z4ma2AsRkjiZn-AJ2bK982+Mwa8+_PoUAveNATQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0j_nm_z4ma2AsRkjiZn-AJ2bK982+Mwa8+_PoUAveNATQ@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 19 Jun 2025 14:11:35 +0200
+X-Gm-Features: AX0GCFv4bu1FSlwnwPm1SssPgVOHtD4w3WZrSHj5iZrklgepWarnGSuP3oMCWZo
+Message-ID: <CAPDyKFr_oqvtRsCeak62wxw=fqadY6nuwnr0vKxsHqybTA8gzw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] PM: domains: Detach on device_unbind_cleanup()
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>, gregkh@linuxfoundation.org, dakr@kernel.org, 
+	len.brown@intel.com, pavel@kernel.org, jic23@kernel.org, 
+	daniel.lezcano@linaro.org, dmitry.torokhov@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, bhelgaas@google.com, 
+	geert@linux-m68k.org, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, fabrizio.castro.jz@renesas.com, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The maximum IO size that a block device can read as a single block is
-based on the min folio order and not the PAGE_SIZE as we have bs > ps
-support for block devices[1].
+On Mon, 16 Jun 2025 at 19:14, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Mon, Jun 16, 2025 at 3:54=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev=
+> wrote:
+> >
+> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >
+> > The dev_pm_domain_attach() function is typically used in bus code along=
+side
+> > dev_pm_domain_detach(), often following patterns like:
+> >
+> > static int bus_probe(struct device *_dev)
+> > {
+> >     struct bus_driver *drv =3D to_bus_driver(dev->driver);
+> >     struct bus_device *dev =3D to_bus_device(_dev);
+> >     int ret;
+> >
+> >     // ...
+> >
+> >     ret =3D dev_pm_domain_attach(_dev, true);
+> >     if (ret)
+> >         return ret;
+> >
+> >     if (drv->probe)
+> >         ret =3D drv->probe(dev);
+> >
+> >     // ...
+> > }
+> >
+> > static void bus_remove(struct device *_dev)
+> > {
+> >     struct bus_driver *drv =3D to_bus_driver(dev->driver);
+> >     struct bus_device *dev =3D to_bus_device(_dev);
+> >
+> >     if (drv->remove)
+> >         drv->remove(dev);
+> >     dev_pm_domain_detach(_dev);
+> > }
+> >
+> > When the driver's probe function uses devres-managed resources that dep=
+end
+> > on the power domain state, those resources are released later during
+> > device_unbind_cleanup().
+> >
+> > Releasing devres-managed resources that depend on the power domain stat=
+e
+> > after detaching the device from its PM domain can cause failures.
+> >
+> > For example, if the driver uses devm_pm_runtime_enable() in its probe
+> > function, and the device's clocks are managed by the PM domain, then
+> > during removal the runtime PM is disabled in device_unbind_cleanup() af=
+ter
+> > the clocks have been removed from the PM domain. It may happen that the
+> > devm_pm_runtime_enable() action causes the device to be runtime-resumed=
+.
+> > If the driver specific runtime PM APIs access registers directly, this
+> > will lead to accessing device registers without clocks being enabled.
+> > Similar issues may occur with other devres actions that access device
+> > registers.
+> >
+> > Add detach_power_off member to struct dev_pm_info, to be used later in
+> > device_unbind_cleanup() as the power_off argument for
+> > dev_pm_domain_detach(). This is a preparatory step toward removing
+> > dev_pm_domain_detach() calls from bus remove functions. Since the curre=
+nt
+> > PM domain detach functions (genpd_dev_pm_detach() and acpi_dev_pm_detac=
+h())
+> > already set dev->pm_domain =3D NULL, there should be no issues with bus
+> > drivers that still call dev_pm_domain_detach() in their remove function=
+s.
+> >
+> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > ---
+> >
+> > Changes in v4:
+> > - save dev->power.detach_power_off in dev_pm_domain_attach() and use
+> >   it in device_unbind_cleanup() when detaching
+> > - adjusted patch description
+> >
+> > Changes in v3:
+> > - dropped devm_pm_domain_detach_off(), devm_pm_domain_detach_on()
+> >   and use a single function devm_pm_domain_detach()
+> >
+> > Changes in v2:
+> > - none; this patch is new
+> >
+> >  drivers/base/dd.c           | 2 ++
+> >  drivers/base/power/common.c | 3 +++
+> >  include/linux/pm.h          | 1 +
+> >  3 files changed, 6 insertions(+)
+> >
+> > diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> > index b526e0e0f52d..13ab98e033ea 100644
+> > --- a/drivers/base/dd.c
+> > +++ b/drivers/base/dd.c
+> > @@ -25,6 +25,7 @@
+> >  #include <linux/kthread.h>
+> >  #include <linux/wait.h>
+> >  #include <linux/async.h>
+> > +#include <linux/pm_domain.h>
+> >  #include <linux/pm_runtime.h>
+> >  #include <linux/pinctrl/devinfo.h>
+> >  #include <linux/slab.h>
+> > @@ -552,6 +553,7 @@ static void device_unbind_cleanup(struct device *de=
+v)
+> >         dev->dma_range_map =3D NULL;
+> >         device_set_driver(dev, NULL);
+> >         dev_set_drvdata(dev, NULL);
+> > +       dev_pm_domain_detach(dev, dev->power.detach_power_off);
+> >         if (dev->pm_domain && dev->pm_domain->dismiss)
+> >                 dev->pm_domain->dismiss(dev);
+> >         pm_runtime_reinit(dev);
+> > diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
+> > index 781968a128ff..a8f302ed27a5 100644
+> > --- a/drivers/base/power/common.c
+> > +++ b/drivers/base/power/common.c
+> > @@ -111,6 +111,9 @@ int dev_pm_domain_attach(struct device *dev, bool p=
+ower_on)
+> >         if (!ret)
+> >                 ret =3D genpd_dev_pm_attach(dev);
+> >
+> > +       if (dev->pm_domain)
+> > +               dev->power.detach_power_off =3D power_on;
+>
+> I'm assuming that you have checked all of the users of
+> dev_pm_domain_attach() and verified that the "power off" value is the
+> same as the "power on" one for all of them.
 
-Calculate the upper limit based on the on min folio order.
+Also note that the value only matters for the ACPI PM domain.
 
-[1] https://lore.kernel.org/linux-block/20250221223823.1680616-1-mcgrof@kernel.org/
+Genpd doesn't even take the value into account, which is the most
+common usage of this.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
-Changes since v1:
-- Rebased on top of vfs/vfs-6.17.misc as it has a merge conflict.
-- Added RVB tag from Jan Kara.
+[...]
 
- fs/buffer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index a14d281c6a74..445df839a0f0 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1121,9 +1121,10 @@ __getblk_slow(struct block_device *bdev, sector_t block,
- 	     unsigned size, gfp_t gfp)
- {
- 	bool blocking = gfpflags_allow_blocking(gfp);
-+	int blocklog = PAGE_SHIFT + mapping_min_folio_order(bdev->bd_mapping);
- 
- 	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
--		     (size < 512 || size > PAGE_SIZE))) {
-+		     (size < 512 || size > (1U << blocklog)))) {
- 		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
- 					size);
- 		printk(KERN_ERR "logical block size: %d\n",
-
-base-commit: 6ae58121126dcf8efcc2611f216a36a5e50b8ad9
--- 
-2.49.0
-
+Kind regards
+Uffe
 
