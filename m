@@ -1,63 +1,59 @@
-Return-Path: <linux-kernel+bounces-693208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A85ADFC38
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:05:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E92D9ADFC3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C448D1896312
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:06:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 675D71BC0AD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4773E23C38C;
-	Thu, 19 Jun 2025 04:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AC323C38C;
+	Thu, 19 Jun 2025 04:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="c8r1P5P4"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="HUnFwmnP"
+Received: from proxy41133.mail.163.com (proxy25213.mail.163.com [103.129.252.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C4121B9CD;
-	Thu, 19 Jun 2025 04:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9695023BCF1;
+	Thu, 19 Jun 2025 04:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.129.252.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750305937; cv=none; b=oAMOrKzp5NvVwUycS2zlZTgzBXoZm4sm+2P34ZmtzXMZ0A1n5SfFlYSpu1wP2ABo56ojP/F4A8mkWwMoUXLRBpJsPeqwIAOp5xclTOnybpAExesZt9JeX6oQcskb7/U12rbe2EOkLxvgXSQU/YgmyfgSVQW/VZFuzj8GJ//gsks=
+	t=1750306310; cv=none; b=ScYYmAqK9+iQXbCbO+r3LKDFYAv8aEzPOYMi5PHAn3GM51qFLDKF+40EkM5+jYhjZ7WI2G0rlj0EQs9EB5O2KppCwdeu/Y0Pw5kYurtGjboe/mXdhxto3blwjQUODi+uSthCXjuaK+GOiHxUBl83F2pWP5n3/VhUT8KlFS8hkrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750305937; c=relaxed/simple;
-	bh=AAYnKV+Ib6IADL7L7vo20VmbTbhdkeLrlyQxqalj2Qo=;
+	s=arc-20240116; t=1750306310; c=relaxed/simple;
+	bh=5ciXbicx0GrUAe2a6Ake+9ssAyQWJquLMJMIVbsjX1A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BaZuEeOmYY8wb9WMRRb8VI1eB4D5Ob4G0pg1nU/ZASOiRVC8bhqIYv5ZdHK0TgWY/r/RocPvuejwSV9G3K+vyFOmqP8pww0Mutg+4GV8C4zq7Q8MG1Bb7yR2eNaGYi+MDXP6rPw/aP4iKd/m9UfbsRPXxvwsyd/TxSA0mUaME2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=c8r1P5P4; arc=none smtp.client-ip=220.197.32.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=dZfvHPrGM0rHppYVYlmEsqyNeCZrwmz3TLV78+I0qdhLC12tCuW1P/eEerQvl/8SqJ8Qkrz4y/9n7B8fhVhx7bvK1C5mCjlJGE15sxd+MBsK0L9skgJ1BFB19P23bJs4nTG3KZsDGHMeUBItHpDKcYoQu1RmYxvXjDktRDxISjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=HUnFwmnP; arc=none smtp.client-ip=103.129.252.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
 	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=LU7QhYjxOqOH4zbvw6oM0dtf5fFvFxSixl3GW1jJGTw=;
-	b=c8r1P5P4xE0Kb3/i+H2dW91s0RkOZn33p8n76h5J7WpdAfONeFvuQYZ1B7936F
-	EK/EPsIEAzrXOu1pQ6ERZKymZQV3Z8VQhybSR9Z/6MCo4yb3obETCifpFGzJoF0B
-	TC/HLpaHvgH+aE3WKx1JA/OCruq+eSOsSYCQsB7CtBsUQ=
+	Content-Type; bh=KnuhDIQHNaECsEm59Nxn5Me/W5soIU7h5crqTMNWTVA=;
+	b=HUnFwmnPibjlj4W6KrKKeWx/Z1Rs3/bLJvV4OMFgztVcpnzquQPf1+80SLqL7i
+	prrBCud7S/zL8E0hEPnbrU8UxMfTy5J9glJCn8UIHfe/+dqdhW6LbfSa3VKTLe/Y
+	ctj8asyB23tQyOr7kKFib9UgTOJwQZd6ENsoNxV2JMUr8=
 Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDHZsPUiVNoFnv8AA--.41662S3;
-	Thu, 19 Jun 2025 11:53:58 +0800 (CST)
-Date: Thu, 19 Jun 2025 11:53:56 +0800
+	by gzsmtp3 (Coremail) with SMTP id M88vCgDX_zpui1Nou2r2AA--.60288S3;
+	Thu, 19 Jun 2025 12:00:48 +0800 (CST)
+Date: Thu, 19 Jun 2025 12:00:46 +0800
 From: Shawn Guo <shawnguo2@yeah.net>
-To: Haibo Chen <haibo.chen@nxp.com>
+To: maudspierings@gocontroll.com
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	peng.fan@nxp.com, wahrenst@gmx.net, conor@kernel.org,
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v3 3/3] ARM64: dts: add ngpios for vf610 compatible gpio
- controllers
-Message-ID: <aFOJ1OXvpEP8gaxL@dragon>
-References: <20250520-gpio-dts-v3-0-04771c6cf325@nxp.com>
- <20250520-gpio-dts-v3-3-04771c6cf325@nxp.com>
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 1/8] dt-bindings: arm: fsl: Add GOcontroll Moduline
+ Display
+Message-ID: <aFOLbiHgnpyDtUHM@dragon>
+References: <20250520-initial_display-v7-0-a8f0195420aa@gocontroll.com>
+ <20250520-initial_display-v7-1-a8f0195420aa@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,36 +62,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250520-gpio-dts-v3-3-04771c6cf325@nxp.com>
-X-CM-TRANSID:Ms8vCgDHZsPUiVNoFnv8AA--.41662S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JFW5Kr4fXw4UWr1kKFWfZrb_yoWfArc_CF
-	W0qw4UZws5uFWxKw47Kr4Ivr18Ca4fZw13Wry7Gr93Ja4YqrnrtFs3JrW3JayUWFs8KasI
-	kry5tr48Aw4agjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbUKsUUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIReG62hTideU6wAA3B
+In-Reply-To: <20250520-initial_display-v7-1-a8f0195420aa@gocontroll.com>
+X-CM-TRANSID:M88vCgDX_zpui1Nou2r2AA--.60288S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUnHq2DUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBNxZWhTcvRhSgAAsV
 
-On Tue, May 20, 2025 at 11:46:14AM +0800, Haibo Chen wrote:
-> After commit da5dd31efd24 ("gpio: vf610: Switch to gpio-mmio"),
-> the vf610 GPIO driver no longer uses the static number 32 for
-> gc->ngpio. This allows users to configure the number of GPIOs
-> per port.
+On Tue, May 20, 2025 at 08:34:50AM +0200, Maud Spierings via B4 Relay wrote:
+> From: Maud Spierings <maudspierings@gocontroll.com>
 > 
-> And some gpio controllers did have less pads. So add 'ngpios' here,
-> this can save some memory when request bitmap, and also show user
-> more accurate information when use gpio tools.
+> Document the compatible strings for the Moduline Display controller.
 > 
-> Besides, some gpio controllers have hole in the gpio ranges, so use
-> 'gpio-reserved-ranges' to cover that, then the gpioinfo tool show the
-> correct result.
-> 
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
 
-Historically we use "ARM: dts: ..." prefix for arch/arm/boot/dts changes,
-but use "arm64: dts: ..." for arch/arm64/boot/dts ones.
-
-Fixed the prefix up and applied, thanks!
-
-Shawn
+Applied, thanks!
 
 
