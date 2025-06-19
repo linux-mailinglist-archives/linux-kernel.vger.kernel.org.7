@@ -1,132 +1,192 @@
-Return-Path: <linux-kernel+bounces-694144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11551AE0870
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:17:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE82AE087D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D99041BC3A64
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:17:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DD7C17B823
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7B3201034;
-	Thu, 19 Jun 2025 14:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A1921579F;
+	Thu, 19 Jun 2025 14:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcWOWZ/p"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="IVbmkkhm"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F261386C9;
-	Thu, 19 Jun 2025 14:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750342634; cv=none; b=cGqvM/c+l7GH065in4jnJ2u7Gd48HUZe0FbnZMg+AS0jU4bF23o8ko/WE6xunEVi4RiC2ScI3Uo64af3n0DjDkn3oyRGLO0UUuVqwco2OZuNS/nPOKeIjW0BBZtgMmKULKcUzCTJ5ir04a+KICDvj9wZjzaNqZGNm103T6gsO0Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750342634; c=relaxed/simple;
-	bh=1hirRnewnVTSaRWGgBit3cpzA+mUHqZUrx6XP1uGhbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YB4FJMbNU69DrhpwxcJXpjzINWwu2XHYg3Qy9h7kPfPpF4Al12f9y3NwWCkQ2NDDmHtmAQrFLzW6nWG0Q5sxmv7LVrvcUGmWs++k8rYQ5cyapqQsXVkgvqKA7nSM4Q3KDxwgzyKYbpAyOw/RcEaMfNqF76He7N4rZPy+cYPpJjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NcWOWZ/p; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-234d366e5f2so11116895ad.1;
-        Thu, 19 Jun 2025 07:17:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750342632; x=1750947432; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hs5sTPL4UKP6A3I0eYJSr3E+nHFf8KogN1avtTdVl5M=;
-        b=NcWOWZ/pIlootJttCZS4IvNqUcvWoBuEKqWmrPnRKmmCE4PmDbFeQWwvQA/5z0R/gb
-         fFGNV7VSsX07G30xzBFWmkUqFzWcHiC6jPkXYKgoxHziT5rAkFZvA4u250VRCk/iDV2p
-         Rii26RJlnJGKvPE81SluN8IScByS04wza0mU6xXbeWUY6lqVv/9r/8opGIjVTdatAFpP
-         uMroSexi7n9sPG2rMilxN+PzmkUPtqVWGc0E3izwOwXz4jweQB8AOz7A2X7dXOPDukuc
-         7r+y5RkiOKRq630Z69Wh/cE7L/e5dP1x8v/R2Fwj2aomnSCtqGWZesSTAnnajAR+QVKf
-         gLXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750342632; x=1750947432;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hs5sTPL4UKP6A3I0eYJSr3E+nHFf8KogN1avtTdVl5M=;
-        b=nJ18xCaxILh9PNFKBzCBNt5zrgY5K/DqtTyyF6HCRBeGtysglLxulXhvPUza01pPch
-         AhKWScgc3fnLi2ixZeoUsRy6bgqY4oGN9VTZiIQ7XAtvW92kOmYTcRT9xbbmKwq2+7rr
-         L/W0Ly9yImlSEjURaNnIoUnAEkL2z1D5ckjpctMsoHQ/NngMOu79QR6jZD3m3nLu6Krk
-         aCIdjAHSX0vl3KjMTGaUXG4r4HMWl8kUCMJDixOKSMKOoJRLpaXAcrJ5fdf0JM3T+si8
-         kY2TcnI9iFnUay4RloS5zRGLdLC5R0H2UBJi9LNaF/bQ2UYFvcSAG4DLEAOAQEIcnec4
-         7w5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWj6ZfjNvhxRrKyiC/2DoyjNArtWLE7mDrJUcK1IudJHhqSlUmvjJ6A2RzlwfgS4euTB1X6hmolEJyZBEJR@vger.kernel.org, AJvYcCX9HChUpvcp1J8m48kST8xX8vLVBxAK1gIndmdTIzYLJi8J+oIr9WYDWg9mbvs6i8bUvMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTqYXuLCTT3flh9hWeaTIHsZrMc1REHHPnl+ZpSjB/nze/dOtL
-	fdnrV/HbdKFoN4OjXYSOVx+yipRaRAnPsWTYKQp1R7ydU8tcTwNeNbSK
-X-Gm-Gg: ASbGncutmMLKd8xTDuTtP6zF4FDRq/88j9Eo0Js+YOxE+CSdGdvrofoUYJKG8eBMuB+
-	ybNuYvjTcoL3H6abQqP1b3U9jRiFGD20Rea66X7iR7sINlvW4T6cODr14ks2Kac2gUyEwgEIL6T
-	JdXS0ZdwUYJQSduT/mHfZkUuhBZST99ZeYb5pG5xoPFT28q8PlF5EYbRxfC1QPVgXCzcuBs4iaW
-	IF/Dt0ddgqZz5iJ05ZbpUoyGSP1MLQXoBuhwx4b8B23826r1ceyy9M2DNLc51JIY9Vr9QG0Ln8n
-	YUukUZ+ItKoowPAksdp9NTX/IKWZm9vxuZBQp0xPPw+R4eV0XfH8z3lUfssPzb14e63SB39XLaW
-	AGmnG0XA0TB6NIktBKZVVWHv04YhpPchl4PoVtRUc
-X-Google-Smtp-Source: AGHT+IFirRO1ynx4PNieJwh+/qxRIudXvdXESLhzB5PFfPGxqyne4FswnV3bsltUa6DtqhYDvrtYcg==
-X-Received: by 2002:a17:903:b88:b0:234:9094:3fb1 with SMTP id d9443c01a7336-2366b3c2d82mr381111275ad.35.1750342632036;
-        Thu, 19 Jun 2025 07:17:12 -0700 (PDT)
-Received: from ?IPV6:2001:ee0:4f0e:fb30:5502:31a7:8320:fc5a? ([2001:ee0:4f0e:fb30:5502:31a7:8320:fc5a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2365d8a1f93sm120183875ad.79.2025.06.19.07.17.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Jun 2025 07:17:11 -0700 (PDT)
-Message-ID: <9a38a134-3ce8-4c91-a7e7-2a162cbf3b7c@gmail.com>
-Date: Thu, 19 Jun 2025 21:17:03 +0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2691D6187;
+	Thu, 19 Jun 2025 14:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750342809; cv=pass; b=k5y/jAyqOX9iAtuOPvt+jg+EHyQ7jSKWE6+I58bZkrnBPLCZQ+ez/nP3cwZWPC+OctkHj27fLdmoAfMfQoSASxx2l5+kw3FWkcq8Dm6/s0wpf6eBrghdCOndUyvZjn6JWHNHvOf6zSUQDPhYPagiCB2lvOXgzmBa+0O9hk0nWi0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750342809; c=relaxed/simple;
+	bh=0Cym437Fzw1lGFc5sfa9fLx57YRauPELSn/2mY5STGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BMCCByyk67BQ+dSaVwYIR7iHARODeek0aPh8fEf/DxAcH80VBkEko+tNpYHdvtIWJIncxU6Xmf0YIryf1rMlidEBzo2c5PWIu/NRVT2SYiXZYizYpozrMPyXrs1eq8aHB4DenlbZucHj/WY8EMvz7EkdzFYzOWrugvDP4iYdoVo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=IVbmkkhm; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1750342780; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Sr5BuXOgL2KVTzPmp8+v1j9JhBQTMY363XCLrtS9H9Z9IZteGXR1fez9QbHoCQsH+3EZN1CWFqXzcb2IV8DAKGFVsdr1zPITYSNLVKlTLm+Drr0vmI2Po5BkEJt3e5ijl1o5ipkDy0R5W2Jxf+J4TuVY2Q/P8f833i+2hBMagEk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750342780; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=CEQBftYU5GEsq+N2TpwS8b8J87N/ZfaxNbCv461Psqg=; 
+	b=PUu6EExDbfETJz0GDpKE5VnemHaQxMu9+yF+YQ3zEgT6BPfEtuyA2kBNILwR4wJEH9LPS93Pu/xyqvYwEZVpi8Kjjo7mhZtxAdr+fDcwaa4N5W4l19AxjvoVB1BDHGANOXzIWzS94khBqTMpZ1eBdP969/rychvWGOJOuIOpeNA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750342780;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=CEQBftYU5GEsq+N2TpwS8b8J87N/ZfaxNbCv461Psqg=;
+	b=IVbmkkhmZn3/slqjttwKvzYB3/PzTbZ+Q9nrn4mD1bqlo/qqdLY1Eecb57hS5DTQ
+	5zbAuHsb7ODTYngCTv4umq5/Vcgp29Ig9IdOMI8K9Qm89m+AKYtUB15IC2Cam4FaZLA
+	iEMEvCYN2kweNdcr70RfhOGxNLUZjYdEzNC6o+AY=
+Received: by mx.zohomail.com with SMTPS id 17503427768471007.5123585560125;
+	Thu, 19 Jun 2025 07:19:36 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 3965E1805A8; Thu, 19 Jun 2025 16:19:32 +0200 (CEST)
+Date: Thu, 19 Jun 2025 16:19:32 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, 
+	nicolas.dufresne@collabora.com, jgg@ziepe.ca, iommu@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v3 2/5] dt-bindings: iommu: verisilicon: Add binding for
+ VSI IOMMU
+Message-ID: <n5ddeogrpgctrljnxjfxqaz22qfnxsgm6ro7qihbjeyhd5br44@ojlzlz7gsuzb>
+References: <20250619131232.69208-1-benjamin.gaignard@collabora.com>
+ <20250619131232.69208-3-benjamin.gaignard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 1/2] virtio-net: xsk: rx: fix the frame's length check
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-References: <20250615151333.10644-1-minhquangbui99@gmail.com>
- <20250615151333.10644-2-minhquangbui99@gmail.com>
- <20250618191111.29e6136e@kernel.org>
-Content-Language: en-US
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-In-Reply-To: <20250618191111.29e6136e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hnoyd7gcbfhdjsab"
+Content-Disposition: inline
+In-Reply-To: <20250619131232.69208-3-benjamin.gaignard@collabora.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.2/250.326.2
+X-ZohoMailClient: External
 
-On 6/19/25 09:11, Jakub Kicinski wrote:
-> On Sun, 15 Jun 2025 22:13:32 +0700 Bui Quang Minh wrote:
->> +/**
->> + * buf_to_xdp() - convert the @buf context to xdp_buff
->> + * @vi: virtnet_info struct
->> + * @rq: the receive queue struct
->> + * @buf: the xdp_buff pointer that is passed to virtqueue_add_inbuf_premapped in
->> + *       virtnet_add_recvbuf_xsk
->> + * @len: the length of received data without virtio header's length
->> + * @first_buf: this buffer is the first one or not
->> + */
->>   static struct xdp_buff *buf_to_xdp(struct virtnet_info *vi,
->> -				   struct receive_queue *rq, void *buf, u32 len)
->> +				   struct receive_queue *rq, void *buf,
->> +				   u32 len, bool first_buf)
-> I think Michael mention he's AFK so while we wait could you fix this
-> kdoc? I'm not sure whether the kdoc is really necessary here, but if
-> you want to keep it you have to document the return value:
->
-> Warning: drivers/net/virtio_net.c:1141 No description found for return value of 'buf_to_xdp'
 
-I want to add kdoc to clarify that the @len must be without virtio 
-header's length. I'll fix it in the next version.
+--hnoyd7gcbfhdjsab
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 2/5] dt-bindings: iommu: verisilicon: Add binding for
+ VSI IOMMU
+MIME-Version: 1.0
 
-Thanks,
-Quang Minh.
+Hi,
 
+On Thu, Jun 19, 2025 at 03:12:23PM +0200, Benjamin Gaignard wrote:
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: verisilicon,iommu
+> +      - const: rockchip,rk3588-iommu-1.2
+
+The entries should be ordered the other way around, so that the
+"generic" compatible is the fallback. Also the 1.2 version is from
+Verisilicon. It does not really make sense for Rockchip. So I
+think it should look like this:
+
+properties:
+  compatible:
+    items:
+      - const: rockchip,rk3588-av1-iommu
+      - const: verisilicon,iommu-1.2
+
+Otherwise LGTM.
+
+-- Sebastian
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Core clock
+> +      - description: Interface clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: core
+> +      - const: iface
+> +
+> +  "#iommu-cells":
+> +    const: 0
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - "#iommu-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    bus {
+> +      #address-cells =3D <2>;
+> +      #size-cells =3D <2>;
+> +
+> +      iommu@fdca0000 {
+> +        compatible =3D "verisilicon,iommu","rockchip,rk3588-iommu-1.2";
+> +        reg =3D <0x0 0xfdca0000 0x0 0x600>;
+> +        interrupts =3D <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH 0>;
+> +        clocks =3D <&cru ACLK_AV1>, <&cru PCLK_AV1>;
+> +        clock-names =3D "core", "iface";
+> +        #iommu-cells =3D <0>;
+> +      };
+> +    };
+> --=20
+> 2.43.0
+>=20
+
+--hnoyd7gcbfhdjsab
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmhUHGUACgkQ2O7X88g7
++prRww//e+aSThtmJ810xji+RnvlWS2wXqSSig1uhBCoEFpCcWL8o04mLBsHlg+t
+QEXbDsWRcs2dstJ8R/0zTskv4dXptRsA99DDBw0oqFXDVT7DA5brVDSL36BMDKW9
+KI8KYrP1V2RpeV86Ry3q1ETRVGmiBUfN33KWDRuUDMMIW0/VIynan07sZap/0Cz4
+vxTOJ0KiLchDa92nzX2bqn0UldSlFJct4G8sVfDJui9zTpw4RmMA+5IL6c+qC/jq
+yIbHUniQVieY8q1vwAYkbw2VigzMeU/+rv/4EIuHB8lyhoMQwtGb/Zo6Dt2NgwmX
+Vad1qXEzE5HIc/4V9PjXAU+mCOcnmEhSGFRGCkbZFmirMRbpErNd/yxVvgcxP3Fy
+3IFoIkzZN9wc0aGOdWOH1Y/y5SwQHP31RRNwAlc2rQCdUQNkKUjXls7Im8Om40cD
+pJpTDGTUX0PJUg6Cq+0CmVPsIa+KMN6l2QzThllthrJICmoDvBsTROg7eQJ5sfYF
+fUTDG6G1I+MwrxgWyVtP+6C46xrXaKW+ny9XB5Cw3lITNPXTsIGugzwCZzMN85Cr
+d/KwLnOdfVykNTLDbWtkmViXDy3G7vT1lBymWPaiIxSygNjUPvcH6lELbi5hQkSS
+ys0Hb/aioLfK3y/Oz1mqsqRAcTtA96j2UxwUchBfUyRk0e9Do/A=
+=wgbS
+-----END PGP SIGNATURE-----
+
+--hnoyd7gcbfhdjsab--
 
