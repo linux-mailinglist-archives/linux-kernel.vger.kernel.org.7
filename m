@@ -1,71 +1,74 @@
-Return-Path: <linux-kernel+bounces-693382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37FBBADFE53
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:07:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59289ADFE59
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04E1E1676CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:07:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14530167EF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AC5242D8C;
-	Thu, 19 Jun 2025 07:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB74248F68;
+	Thu, 19 Jun 2025 07:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ipyZVNkl"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Ed9A7ROB"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901F5242D9F;
-	Thu, 19 Jun 2025 07:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7218F192B7D;
+	Thu, 19 Jun 2025 07:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750316813; cv=none; b=kseZZM40w76lkLA4NymOkLsHaXT8S4lYZuACLIuDn4IB32l4CKjp4qmK9+U0yTL1tgoY/5d0f6PW88ScDvK9FE4GL6LMVMz7MuNAMB/duXTmTHPR3GtwLqfs1JJbnIfj4pmjpSxk/cYWalN5qYRYuCCYxX+j52m0Wt8o+kbg+LM=
+	t=1750316833; cv=none; b=fBTZQ0lGqQtVaxwdTQeOOt4iNyj7jYUiawsej9ICk1JdqVUkVYrq6MCEHq5AbQwYDQraj5bFQV31ExQriKvd7qCVfTEL0wpBXxO4NIw2daMkZqZeTLT5HrXfRUATTALWQMSLLFJ2h+CjADk+wneMT11dPNBZVHVJC9Ts1EbRAqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750316813; c=relaxed/simple;
-	bh=o//kVFDTunc99C0AXM+9AtF6fAsGoPk6QCMYBVVFa0Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GVv4eMBz8dZxemlNZ67+pa7HdripdadiwOxE+52TOv4kJdsUT92H5f0uum3qaCNR2vpigO4apZzMFuKK3/Vy9lCZ52GXbBoZl0PpsZ+JUSLwWMqIGeCfSltOVoavFSPHbdpQ9utg8LDfqAx32nYf6BvYdtixUaPP2YZjPeKc7u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ipyZVNkl; arc=none smtp.client-ip=68.232.154.123
+	s=arc-20240116; t=1750316833; c=relaxed/simple;
+	bh=C4QpgZkZ9IIpsWFHkaQ514mxLlArKqKI3Y9pvUN/FWI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nymXZyBKRiGn+si3HRwNO0w32JnMJ6toYNH8dUbuuCSmhEJJY30EBPkf69GSICpjr6xo8dZ5GrSeyqTc6/EMo3pipYatXQFE83EmVWx8Jljhf5asCX4bJ63d1xUNvfrU5wJwApTfjwR7D/qlEF6UuCh8NR3Rls8ikWq1tZqt1Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Ed9A7ROB; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1750316811; x=1781852811;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=o//kVFDTunc99C0AXM+9AtF6fAsGoPk6QCMYBVVFa0Q=;
-  b=ipyZVNklz8LJ7sms3UddP5+tyORGoNylq4dea2Kof6exw2brRPmk9xjv
-   8FQn0FBz/DQBBcnQWaG2KQUlLY7R344PapJ1hBMqXyaumCDxT/XOGsDXJ
-   QaiTWY3mRTMA8l4Dbj7FoNu8hn+a4XtqleublFJdHazm+yayhZmQjqrko
-   yZ5h5oIT66q/lqWAJBitF5n742ipADhcpG76VZJiOTDVBP5ZP18YXU3/X
-   reXXnrkaOGINEqS6a20LWjaUPwReH9mdl+meORd5qi6PtiRSjXdh/uhPS
-   38I/4DZnR6UOeSY8dEEVR9ZQ0l+79HkgTe5kK+W4FnJYmSifLkkir/u4D
+  t=1750316828; x=1781852828;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=C4QpgZkZ9IIpsWFHkaQ514mxLlArKqKI3Y9pvUN/FWI=;
+  b=Ed9A7ROBjeCgS07GzzUQaq2K7fPIPmoxp8MXf8kGIDCW+usPh+YVZ39a
+   D5TbarSMwIbl9aNWkswtPzaGAl1JbFsM/AVBwYxQMk38N+tUMdoyDaXDg
+   IUWM2yiXYlUo9G/niFYfCQpM6E34LN+HpCiHTafOb/gG2d4hpLuMh+Tt/
+   FHiZWNBn6QZoJdf32hXXy38PPTqhK66VXzPVg4y3FkSC/frR5LJmIIorB
+   Fpx3KGmkMtZTCOFHqOgBF0cRbxFpQh86TnAdpcGF/lyfg3hfvhlAdISqm
+   Fz+QGDEgDqJ8P5QJoWJ5kCtqMA5CzR2bsVfFOOod5/5qiibH9fnXstKPY
    A==;
-X-CSE-ConnectionGUID: oDr9x4EZQ9ubUqoabc0KFg==
-X-CSE-MsgGUID: lIjcawPLQnK5EqrSyawKcQ==
+X-CSE-ConnectionGUID: PlQ5gDZlQHSrfxlUJA1/0Q==
+X-CSE-MsgGUID: Gh79I1KERw++gOMSoTiWPQ==
 X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
-   d="scan'208";a="43565501"
+   d="scan'208";a="48018357"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Jun 2025 00:06:44 -0700
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Jun 2025 00:07:02 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
  chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 19 Jun 2025 00:06:44 -0700
+ 15.1.2507.44; Thu, 19 Jun 2025 00:06:46 -0700
 Received: from archlinux.mchp-main.com (10.10.85.11) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Thu, 19 Jun 2025 00:06:41 -0700
+ 15.1.2507.44 via Frontend Transport; Thu, 19 Jun 2025 00:06:44 -0700
 From: Mihai Sain <mihai.sain@microchip.com>
 To: <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
 	<claudiu.beznea@tuxon.dev>, <robh@kernel.org>, <krzk+dt@kernel.org>,
 	<conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: Mihai Sain <mihai.sain@microchip.com>
-Subject: [PATCH v3 0/2] Add cache configuration for Microchip SAMA7D and SAMA7G MPUs
-Date: Thu, 19 Jun 2025 10:06:34 +0300
-Message-ID: <20250619070636.8844-1-mihai.sain@microchip.com>
+Subject: [PATCH v3 1/2] ARM: dts: microchip: sama7d65: Add cache configuration for cpu node
+Date: Thu, 19 Jun 2025 10:06:35 +0300
+Message-ID: <20250619070636.8844-2-mihai.sain@microchip.com>
 X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250619070636.8844-1-mihai.sain@microchip.com>
+References: <20250619070636.8844-1-mihai.sain@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,30 +78,41 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-This patch series adds cache configuration for Microchip SAMA7D and SAMA7G MPUs.
-The cache configuration is described in datasheet chapter 15.2.
+Describe the cache memories according with datasheet chapter 15.2:
 
-Changelog:
+- L1 cache configuration with 32KB for both data and instruction cache.
+- L2 cache configuration with 256KB unified cache.
 
-v2 -> v3:
-- Remove the l1-cache node
-- Move the L1 cache properties in the cpu node
-- Align with device node requirements for cpu: 
-  https://devicetree-specification.readthedocs.io/en/latest/chapter3-devicenodes.html#internal-l1-cache-properties
+Before this patch the kernel reported the warning:
 
-v1 -> v2:
-- Remove the cache-unified property from l1-cache node
+[    0.161955] cacheinfo: Unable to detect cache hierarchy for CPU 0
 
-Mihai Sain (2):
-  ARM: dts: microchip: sama7d65: Add cache configuration for cpu node
-  ARM: dts: microchip: sama7g5: Add cache configuration for cpu node
-
+Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
+---
  arch/arm/boot/dts/microchip/sama7d65.dtsi | 10 ++++++++++
- arch/arm/boot/dts/microchip/sama7g5.dtsi  | 10 ++++++++++
- 2 files changed, 20 insertions(+)
+ 1 file changed, 10 insertions(+)
 
-
-base-commit: fb4d33ab452ea254e2c319bac5703d1b56d895bf
+diff --git a/arch/arm/boot/dts/microchip/sama7d65.dtsi b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+index d08d773b1cc5..f123faaa2ef7 100644
+--- a/arch/arm/boot/dts/microchip/sama7d65.dtsi
++++ b/arch/arm/boot/dts/microchip/sama7d65.dtsi
+@@ -32,6 +32,16 @@ cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			clocks = <&pmc PMC_TYPE_CORE PMC_CPUPLL>;
+ 			clock-names = "cpu";
++			d-cache-size = <0x8000>;	// L1, 32 KB
++			i-cache-size = <0x8000>;	// L1, 32 KB
++			next-level-cache = <&L2>;
++
++			L2: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x40000>; // L2, 256 KB
++				cache-unified;
++			};
+ 		};
+ 	};
+ 
 -- 
 2.50.0
 
