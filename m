@@ -1,98 +1,59 @@
-Return-Path: <linux-kernel+bounces-693199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8797BADFC23
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:02:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA9FADFC2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2C431BC0711
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:02:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AE0D7A721B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0CD239597;
-	Thu, 19 Jun 2025 04:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B4023ABB5;
+	Thu, 19 Jun 2025 04:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RILbZXGe"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="NAy//Pt8"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02B721C9F5
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 04:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFEE21C9F5;
+	Thu, 19 Jun 2025 04:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750305751; cv=none; b=Rze63eRmVBKR2K65CMXIileQWTCIhybga6V2M1ayZtukx4mIn6tCjWLwYbXbU0Mw4O0eIh07jaI7bFKjHdaNqq2PaadQ62VNGec4BfXNf8HA03bhLhd+4T86Q1bz794somqeF/qLPLDnl7hWYGPlrjFsKvW60wSOT7BB/ZF3SKE=
+	t=1750305820; cv=none; b=YrCmDlPdhbno8c/7h6XSIOcxGBQXEczefscCV4Xr1WCaB/HpNwOOyRldfpOoroDc88IaXh6Q4UTbhs4eJFS4LEgKVVC13ldrFLrHQhnrHukuqk3GUHucHDWQkZkG6Yxwr3RIBl1Z0G/nOxVTP0GwZayZwAzcSrQt2xlu0YvC7NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750305751; c=relaxed/simple;
-	bh=LaJ/3fV7CFGu3CbSmkDL7tY02vgNOmg6uh+G6uKUqnI=;
+	s=arc-20240116; t=1750305820; c=relaxed/simple;
+	bh=w6/FZuWa3iTHH+/dFNePfKMu6CKeNLdn4jLfPQkWJHg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rqNk0jhFIRtzVIBQhZRUg5mZ849J1cbQfO7Dta72GR0KMwUW8HFiqLkJfGX17oFQ+wHm31nKFHgvU+gT5a5uajCc9LbXLJwkqal/EhFA+GbPsz0fPTWyTuuqseaXlZOQ+TovtoNnoPSMC4ZCyt1zlrpf2NknIB/+5JjE5K2NeUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RILbZXGe; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-408e0986303so227175b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 21:02:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750305749; x=1750910549; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=njiJJqXLQl7ToyJarnPfJqmhTUdls24Ce3R5x39b7qM=;
-        b=RILbZXGeMYPSY6nwvbc0SKrf/CQ38luxf2wqhJ1Crz0/I/b9qXRmjq6wILiQdIdy5p
-         OgrCrZ16aP/4vgcs8Btjbd5wADgDLExDY1ezGwZeVeDrweJ0v0FvCwwft8LFZVnqaD5r
-         xzbKnaLj4wd46+xuKME1UCJ3escSvR7Jhq7B8sG6QYbMSZZsyiZbQUQaFAw+67Nb2eJI
-         fYBtS0pKUxlp23Qro2q6sY3Eu1QxjVmf56pC9uWr0z9KI6lvYqxb+NQT88d9j270Pr0H
-         barg46KWNPpw1LeLUsOnE2humV5zfIx85oqKjMymp/NgkE7WJUm/NysIxeZotphsj2IH
-         pzww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750305749; x=1750910549;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=njiJJqXLQl7ToyJarnPfJqmhTUdls24Ce3R5x39b7qM=;
-        b=vk+A9OjR0GMQQyGBBaKtcPvwgA7vYwOOAQzAzcOFhp0d2obLayuxc/cRwYCRtZmyq3
-         v4eI9E8WgVPXe32l3Xn737a5hA4L5Vh9JzI2Ra8Zs28FClNdhwHApk3Q2BSIqMHqlPqr
-         dhslwlvHDI2OiRjuGSqdN6Sv0ZbALuZP5lw34vzq5VOtO0DMflroB4Ek7fNTEeMQjwEv
-         q7vE58M09215DMsCXBhfXVRVAXctOftNQCYCuLhl6dfRiL8hx0U32hWaONuxipEYV7q9
-         9WnbOPr6X6WPw9Mgx0ApNJ7fnWEeBB9BlqUF+A0Ke8qdAo293Ab9hOT2cB92Lz2FPmzv
-         Ygdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLjmPwN0/ijlTg1uszak2WmqDdSxsOePYowLqZNpE8gACxryr6kMOD/+OqcbjeA4TA5I4lxf8nwi/ctFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVd0teyMHMX5bjdQlECeZY/f3ILONomIQm5qt1c2f3vEU0hBOW
-	Rw1WOn5/+q+saGhE7VGexTPb/lljg1rg/bUIJPOvHwKntsdbdlOZSDbMbhm6YUx22yw=
-X-Gm-Gg: ASbGnctzpqkGkmVxKmLVsJamBqx1zvrsNV5rBXC+o39oqvkZiC9odkNAz9tiNOHFHIb
-	t2OU4pWDgIwdWGl2PvIrEiKAnRbqyWrXUTFEnu6v3kFvMpF+FUhRdTyVAXpZHKy9n8TOynfdLDR
-	dUnmO/1evzONMnHq6EGtZD7khch1ufGRIlF1LGvlgcXp9hon5EOWkywk/VA0wVteFTibm27nH1y
-	dw7m+SY/yFuQl8E9ObcgAk8+jXYJQigZsUI9+xnEBepSkkxzvyv9eNorF3QRRoFrJ6h/KDdvDxs
-	S1ilcWjHt4U20LVTqyG12YZXU/jNkHXkkk2d/1n1LWiw9m/sTclL6YLgzE6qb5ayfa7dNy2Nge4
-	4SL9w
-X-Google-Smtp-Source: AGHT+IFrMLP1wAqb88mfVUA87rWeoXsHDnuf13mLTgj804lspyaw0rxCLmor6QPmX9UAyusbltiEtw==
-X-Received: by 2002:a05:6808:5090:b0:3fe:bc96:b82d with SMTP id 5614622812f47-40a7c1da57fmr12386485b6e.36.1750305748810;
-        Wed, 18 Jun 2025 21:02:28 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:f083:6e52:f970:dc01])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40a740b281esm2631384b6e.8.2025.06.18.21.02.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jun 2025 21:02:28 -0700 (PDT)
-Date: Thu, 19 Jun 2025 07:02:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Marc Herbert <marc.herbert@linux.intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>, Benjamin.Cheatham@amd.com,
-	Jonathan.Cameron@huawei.com, dakr@kernel.org,
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rafael.j.wysocki@intel.com,
-	rafael@kernel.org, sudeep.holla@arm.com,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH] driver core: faux: fix Undefined Behavior in
- faux_device_destroy()
-Message-ID: <d478fbca-e98d-4a16-9298-01dcaa8bb008@suswa.mountain>
-References: <2025061313-theater-surrender-944c@gregkh>
- <20250614105037.1441029-1-ojeda@kernel.org>
- <2025061446-wriggle-modulator-f7f3@gregkh>
- <a3a08e5d-bfea-4569-8d13-ed0a42d81b2a@linux.intel.com>
- <2025061546-exile-baggage-c231@gregkh>
- <bcd3848d-54dd-453e-b0b5-91cb72160645@linux.intel.com>
- <6853586e9d366_1f9e10087@dwillia2-xfh.jf.intel.com.notmuch>
- <206ebae8-4e2d-4e04-8872-fa3a56b3e398@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AtlCorLMDrh2LxtZKAMsVW2sEAhA4kKFcKKaEUtboHRBMf1GEjDgIWsV02TeVyp+lMxnX6XkxB9hJt8iNW5m46foJlE5giYvFWSD5P1lHr5euCXc46RPi1pj8AnVYfr+rDTlRoyOU9PWldjj4UniBcFDayQKvROUFdZc1J9Vkss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=NAy//Pt8; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=mebxJHfBUu+PEqj1h1kC5lphByggIbGVwWubkQZ+XwQ=;
+	b=NAy//Pt8StCnO+J6isdiPSTwZBabJznZLHn78gfOQIYVXNSK4OiSg08u8bSyw5
+	pHhMaV9+UFlQmDGG9GqD03fssfyhYOAYiufj6rKky7Z9JO34yNwLAA4uLmcMtK5S
+	/FXDGpCpNh/dEFLQFF9YJOlFKv3Xn0LBePjgGEYdtyii8=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgD3_zzci1NofHL2AA--.60682S3;
+	Thu, 19 Jun 2025 12:02:38 +0800 (CST)
+Date: Thu, 19 Jun 2025 12:02:36 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: maudspierings@gocontroll.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 6/8] arm64: dts: freescale: Add the GOcontroll
+ Moduline Display baseboard
+Message-ID: <aFOL3N7Si7ZWfEYR@dragon>
+References: <20250520-initial_display-v7-0-a8f0195420aa@gocontroll.com>
+ <20250520-initial_display-v7-6-a8f0195420aa@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,23 +62,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <206ebae8-4e2d-4e04-8872-fa3a56b3e398@linux.intel.com>
+In-Reply-To: <20250520-initial_display-v7-6-a8f0195420aa@gocontroll.com>
+X-CM-TRANSID:M88vCgD3_zzci1NofHL2AA--.60682S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZrWUGr4UKF1UXw1xuF1fXrb_yoWfuwcEyr
+	WkAa17C34UJ3ykAr4fAr43GrWfuw45Xa1DW3y5trs7uFy5Gw1093WDtryrZF1Uua1xtFWU
+	Z34fKFWrA395ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbG-e5UUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIR4JbmhTi96deAAA3T
 
-On Wed, Jun 18, 2025 at 08:33:27PM -0700, Marc Herbert wrote:
-> > But, again, this is a totally different thing from what the patch does.
-> > The faux_device_destroy() code is not doing a dereference, it's doing
-> > pointer math.
+On Tue, May 20, 2025 at 08:34:55AM +0200, Maud Spierings via B4 Relay wrote:
+> From: Maud Spierings <maudspierings@gocontroll.com>
 > 
-> pointer math is what we _want_ the code to do. But if that relies on
-> some undefined behavior(s) then the bets are off again. Check
-> https://stackoverflow.com/questions/26906621/does-struct-name-null-b-cause-undefined-behaviour-in-c11
-> where offsetof() is a suggested alternative.
+> The Moduline Display platform is a part of the wider GOcontroll Moduline
+> ecosystem. These are embedded controllers that focus on modularity with
+> their swappable IO modules.
+> 
+> The base Moduline Display board includes a board-to-board connector with
+> various busses to enable adding new display types required by the
+> application. It includes 2 Moduline IO module slots, a simple mono
+> codec/amplifier, a four channel adc, 2 CAN busses, an RTC and optional
+> wifi/bluetooth.
+> 
+> busses to the display adapter include:
+> - 4 lane LVDS
+> - 4 lane MIPI-DSI
+> - 4 lane MIPI-CSI
+> - HDMI 2.0a
+> - USB 2.0
+> - I2S
+> - I2C
+> - SPI
+> 
+> Also a couple of GPIO and PWM pins for controlling various ICs on the
+> display adapter board.
+> 
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
 
-The answers talk about "But the value of a null pointer constant is not
-defined as 0." which is some trivia that had heard before.  Probably
-I heard it in the context of someone saying that we should check
-"if (p == NULL)" instead of "if (!p)"...
+Applied, thanks!
 
-regards,
-dan carpenter
 
