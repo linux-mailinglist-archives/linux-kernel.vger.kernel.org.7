@@ -1,70 +1,68 @@
-Return-Path: <linux-kernel+bounces-694607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2E3AE0E67
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 22:06:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B748AE0E78
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 22:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C4827ABCD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:04:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6737B171C2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E777244686;
-	Thu, 19 Jun 2025 20:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1493D246BCA;
+	Thu, 19 Jun 2025 20:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U3ZaH+Oz"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="h8pm/2rQ"
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D027221F28
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 20:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0ED530E85B
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 20:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750363559; cv=none; b=i0UxERFFt838DIE6+AhLmyDb/2cvKGU+3MBKaTCcC+6VzsU69ue9olP62TsOweKNVDK1IWIiGN2Um3AxtSYR5xrkzCF0Hur7a1mClP6BIMfB48MOufh2nGWBt/RP3J7V0p1ZmqGCyoXgUUGCGZv2dxkR6rJ0mio7fpp1EvkdL4k=
+	t=1750363976; cv=none; b=dKAE3kf671UUy92xL39EfMbK+oDsiNJ6FGQ/d19pd3s8DsFHWOmEL7dhcOWBZMzwYbZXa8ZLuJcmPytiVaPlb/7t2Izn6SFtRgDGBKmxfTnmcOejBfoAGLax+g1eXG+G/59zUfP6Q+2Y2AP+P+q50LPfKuXAvHn7cWkHz95MIkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750363559; c=relaxed/simple;
-	bh=dwsBTxlM2QohXlP1ErlyMOXw37DysFBS3JLvamLR6Do=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kA2ENh9Q0iDYdGqQSPBcdpEfSwxRXj0pQPTNqTMyKWlG7tAgBs0by532J4867uSppdgbJ6lMp3C2h+zuFf1l5QLDpd5XRuvdK077wl7+GksarcDiQu2O0knvwnW3S9tSZZFu1d8FcYx/GvOoVwIAkaTQSUQW61qI6nCQDMLcJLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U3ZaH+Oz; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750363555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F92lwo5VOd1tq612WPpWLZKza4VCHqS8IRTHLKoOjew=;
-	b=U3ZaH+OzZC4XyFuiMwkaaxWeHokAzLwigVj+qnaoY7KwKzsbhxDlPd9M8QE9zWVgL4B7W6
-	VDb90LbN9ao6Bcooq/qxZv7OXqed103e2WAOvU/aODvZ6Ud6hWDD2BRTRlwyxS5LnWfxtl
-	ZCcQxoxHJdj0HISri8DPdBgTf3rrDv8=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Michal Simek <michal.simek@amd.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Ira Weiny <ira.weiny@intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Sean Anderson <sean.anderson@linux.dev>,
-	Danilo Krummrich <dakr@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH net 1/4] auxiliary: Allow empty id
-Date: Thu, 19 Jun 2025 16:05:34 -0400
-Message-Id: <20250619200537.260017-2-sean.anderson@linux.dev>
-In-Reply-To: <20250619200537.260017-1-sean.anderson@linux.dev>
-References: <20250619200537.260017-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1750363976; c=relaxed/simple;
+	bh=vJqOpRfEFOxglXhl7tPer259M+wEhce1XwXNOEYZ3U4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TI6EelOJZL0/dXJaqdVnspqC3dLKqJxSa/gYa6F17SUq4Bg5t//ZuV1O8m2MIyyKJvwQW56PybarbeqdAE5AgMKwioXkthLJzM2d63erPJO8dCiHlB8WuXSWKhwb5DZTFlmuLI3zFg6raTEfPiUhV1DZ23PmfUTPlkA3Ee7Tt38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=h8pm/2rQ; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
+	; s=mail; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc
+	:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=2ghVkX+BneMVW1Xa3WPejHCVzu9VXsW60NwhuGCLsyI=; b=h8pm/2rQhh2jbnMdVJMXnLfogX
+	Vf2CGUoUsQ7Iv0meW9n/QzRE2YKCVyayYWWMrlUcVR+57ootafF/48e5mtsBZ5rJImgwakajcWoaw
+	H29KegVtulJNtWVrG4wZ/GmmRiIAgcDwRkw2pq2oj3tIUsWCTUR2OclFAVYmZOQHpcaiZGrTv+G/4
+	D88P6BKiBTtlAkzdEbNmTpUQNW+87WB75zXlQlyo9ew8ASsTG0mexv1+Rtj6P6obpZ9Gf/YBm+qth
+	+h9QswaJi708wA2VC9yD3XPN8Xa6hO9B928eebPPSnytbxwonDDAoE7QRmo6XjZu9fcRGF79kfZJG
+	7cHXHTLA==;
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@surriel.com>)
+	id 1uSLV6-000000000CT-1DVx;
+	Thu, 19 Jun 2025 16:04:44 -0400
+From: Rik van Riel <riel@surriel.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-team@meta.com,
+	dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	bp@alien8.de,
+	x86@kernel.org,
+	nadav.amit@gmail.com,
+	seanjc@google.com,
+	tglx@linutronix.de,
+	mingo@kernel.org
+Subject: [RFC PATCH v4 0/8] Intel RAR TLB invalidation
+Date: Thu, 19 Jun 2025 16:03:52 -0400
+Message-ID: <20250619200442.1694583-1-riel@surriel.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,61 +70,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Support creating auxiliary devices with the id included as part of the
-name. This allows for non-decimal ids, which may be more appropriate for
-auxiliary devices created as children of memory-mapped devices. For
-example, a name like "xilinx_emac.mac.802c0000" could be achieved by
-setting .name to "mac.802c0000" and .id to AUXILIARY_DEVID_NONE.
+This patch series adds support for IPI-less TLB invalidation
+using Intel RAR technology.
 
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
----
+Intel RAR differs from AMD INVLPGB in a few ways:
+- RAR goes through (emulated?) APIC writes, not instructions
+- RAR flushes go through a memory table with 64 entries
+- RAR flushes can be targeted to a cpumask
+- The RAR functionality must be set up at boot time before it can be used
 
- drivers/base/auxiliary.c      | 6 +++++-
- include/linux/auxiliary_bus.h | 4 +++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+The cpumask targeting has resulted in Intel RAR and AMD INVLPGB having
+slightly different rules:
+- Processes with dynamic ASIDs use IPI based shootdowns
+- INVLPGB: processes with a global ASID 
+   - always have the TLB up to date, on every CPU
+   - never need to flush the TLB at context switch time
+- RAR: processes with global ASIDs
+   - have the TLB up to date on CPUs in the mm_cpumask
+   - can skip a TLB flush at context switch time if the CPU is in the mm_cpumask
+   - need to flush the TLB when scheduled on a cpu not in the mm_cpumask,
+     in case it used to run there before and the TLB has stale entries
 
-diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-index dba7c8e13a53..64a0d5e2eb83 100644
---- a/drivers/base/auxiliary.c
-+++ b/drivers/base/auxiliary.c
-@@ -331,7 +331,11 @@ int __auxiliary_device_add(struct auxiliary_device *auxdev, const char *modname)
- 		return -EINVAL;
- 	}
- 
--	ret = dev_set_name(dev, "%s.%s.%d", modname, auxdev->name, auxdev->id);
-+	if (auxdev->id == AUXILIARY_DEVID_NONE)
-+		ret = dev_set_name(dev, "%s.%s", modname, auxdev->name);
-+	else
-+		ret = dev_set_name(dev, "%s.%s.%d", modname, auxdev->name,
-+				   auxdev->id);
- 	if (ret) {
- 		dev_err(dev, "auxiliary device dev_set_name failed: %d\n", ret);
- 		return ret;
-diff --git a/include/linux/auxiliary_bus.h b/include/linux/auxiliary_bus.h
-index 4086afd0cc6b..76904cf2c3dd 100644
---- a/include/linux/auxiliary_bus.h
-+++ b/include/linux/auxiliary_bus.h
-@@ -51,6 +51,8 @@
-  * unregisters the auxiliary device.
-  */
- 
-+#define AUXILIARY_DEVID_NONE	(-1)
-+
- /**
-  * struct auxiliary_device - auxiliary device object.
-  * @dev: Device,
-@@ -269,7 +271,7 @@ struct auxiliary_device *__devm_auxiliary_device_create(struct device *dev,
- 
- #define devm_auxiliary_device_create(dev, devname, platform_data)     \
- 	__devm_auxiliary_device_create(dev, KBUILD_MODNAME, devname,  \
--				       platform_data, 0)
-+				       platform_data, AUXILIARY_DEVID_NONE)
- 
- /**
-  * module_auxiliary_driver() - Helper macro for registering an auxiliary driver
--- 
-2.35.1.1320.gc452695387.dirty
+RAR functionality is present on Sapphire Rapids and newer CPUs.
+
+Information about Intel RAR can be found in this whitepaper.
+
+https://www.intel.com/content/dam/develop/external/us/en/documents/341431-remote-action-request-white-paper.pdf
+
+This patch series is based off a 2019 patch series created by
+Intel, with patches later in the series modified to fit into
+the TLB flush code structure we have after AMD INVLPGB functionality
+was integrated.
+
+TODO:
+- some sort of optimization to avoid sending RARs to CPUs in deeper
+  idle states when they have init_mm loaded (flush when switching to init_mm?)
+
+v4:
+- remove chicken/egg problem that made it impossible to use RAR early
+  in bootup, now RAR can be used to flush the local TLB (but it's broken?)
+- always flush other CPUs with RAR, no more periodic flush_tlb_func
+- separate, simplified cpumask trimming code
+- attempt to use RAR to flush the local TLB, which should work
+  according to the documentation
+- add a DEBUG patch to flush the local TLB with RAR and again locally,
+  may need some help from Intel to figure out why this makes a difference
+- memory dumps of rar_payload[] suggest we are sending valid RARs
+- receiving CPUs set the status from RAR_PENDING to RAR_SUCCESS
+- unclear whether the TLB is actually flushed correctly :(
+v3:
+- move cpa_flush() change out of this patch series
+- use MSR_IA32_CORE_CAPS definition, merge first two patches together
+- move RAR initialization to early_init_intel()
+- remove single-CPU "fast path" from smp_call_rar_many
+- remove smp call table RAR entries, just do a direct call
+- cleanups suggested (Ingo, Nadav, Dave, Thomas, Borislav, Sean)
+- fix !CONFIG_SMP compile in Kconfig
+- match RAR definitions to the names & numbers in the documentation
+- the code seems to work now
+v2:
+- Cleanups suggested by Ingo and Nadav (thank you)
+- Basic RAR code seems to actually work now.
+- Kernel TLB flushes with RAR seem to work correctly.
+- User TLB flushes with RAR are still broken, with two symptoms:
+  - The !is_lazy WARN_ON in leave_mm() is tripped
+  - Random segfaults.
 
 
