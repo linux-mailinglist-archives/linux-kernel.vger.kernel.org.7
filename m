@@ -1,116 +1,101 @@
-Return-Path: <linux-kernel+bounces-694725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2A3CAE0FFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:20:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB32AAE0FF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 451627AE998
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:19:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1474A1D9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3252980A1;
-	Thu, 19 Jun 2025 23:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0642128DF12;
+	Thu, 19 Jun 2025 23:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DIfz47al"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kHGCIDVT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B0F2111;
-	Thu, 19 Jun 2025 23:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BB420E711;
+	Thu, 19 Jun 2025 23:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750375201; cv=none; b=h1vbLa8yyrgVudMTGcp58IekyAZfajO91sHl+Qtd4YgR/wtTJpw3LwUnRrdYPTL9DXGFFRm+34vDhqaKQqgdVCTtT7FUmah5q5WxRM1V2iML1Mh6mzIVxpZikoVMtT113idYDHMAOFYFmWHBAMfWmZDlqios/ToQpAC3jgO3+6g=
+	t=1750375179; cv=none; b=gPglQ8qO+vyHvRvYZbyHgg9yhQYALKj2mqAiDwyfEemXM1SCb8mySoxu+nndxcytHJ4yIppKsutJubbDXbiAikhvlJfhxKM3eZENeCQKx4rtRI2kFdmxdgVQJ1+0qb+6sWFNQQPEwWz6nGLTan6X2esmAb8D2WxFy6B1cVIxbBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750375201; c=relaxed/simple;
-	bh=j8lHpLt7QIx12mDapL4H8Ev9FToLw7SXkTFbGuqECMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z29YkMiK+yr4pOVla84p+AcReYzSpHmnMyohD/T5vlJTTi7w9vNYpEUi32ZSvTJ0so95DbnppR3E7An7p5OHQONLprpn+8mMI/Axa5ie085/zDPUxB9Phtcn8AgBJ7q/UDA8GDKATGGRzw6zW245GDRTQ6fUKI6++TKhxAtvGfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DIfz47al; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750375199; x=1781911199;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=j8lHpLt7QIx12mDapL4H8Ev9FToLw7SXkTFbGuqECMk=;
-  b=DIfz47alhUhI4OJVw1FaJ1TZQXo6FXOosJndC98gpaiMSHUttAX1mQxH
-   C1SVjHFLF7vLNLe7nCjo086qfPFsZOGTqQ3JJdovc4kjTsMojbcRYtzok
-   F52edTqiZ0AdqnvDrI0tiwlbn9AyjhlrJVkkaZftrZrB99dTdwqygdE0S
-   YNx/Eo1C2TCIoXtdKNZULeByPtw2YigxhiKqHNA9OVeM8cWOvrEW+VnOi
-   e2G1MfH+RPmQyjWk7ZWO7nqw752M2O+UGVvtnhj0d5GmOyxnecGlPu/pm
-   nd8vr/90714GvV+UTDfVN43cfRy9WKsjXJ1ChDJXZHdDyaOmOV1OCcktK
-   Q==;
-X-CSE-ConnectionGUID: MGR5adWiREm0rEf1qMIqkw==
-X-CSE-MsgGUID: VawCR+3HSga6y7JhdHVgxQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="62896523"
-X-IronPort-AV: E=Sophos;i="6.16,249,1744095600"; 
-   d="scan'208";a="62896523"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 16:19:58 -0700
-X-CSE-ConnectionGUID: c92D4XivSke6aYKOKXOHig==
-X-CSE-MsgGUID: D4Iv79z1TQKDH2Bpi0fy4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,249,1744095600"; 
-   d="scan'208";a="156559224"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 19 Jun 2025 16:19:56 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uSOXy-000LAQ-00;
-	Thu, 19 Jun 2025 23:19:54 +0000
-Date: Fri, 20 Jun 2025 07:19:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sayali Lokhande <quic_sayalil@quicinc.com>, andersson@kernel.org,
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] arm64: dts: qcom: Add eMMC support for qcs8300
-Message-ID: <202506200608.fGUpDcoG-lkp@intel.com>
-References: <20250619070224.23428-2-quic_sayalil@quicinc.com>
+	s=arc-20240116; t=1750375179; c=relaxed/simple;
+	bh=1iitjCLE0DZH0hmZdXHmHbGc0acxiTVlORAr7x2Ff2U=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=DUb02xl6sv+jpkpI96r73maMysJonhCLkRFvk7uJHGvlIC/8BRGtr1KFvjgN76jDJ2BHFWCzOvLsfhRA18uliW7o285k9mq2sHWXApS1pXKsuDuVzV5IcQJEskowPPKP4nLlzmjOPTg/HB1oj+Z4j+G5nqtPZDxZDNymKyTKkA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kHGCIDVT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2EB4C4CEEA;
+	Thu, 19 Jun 2025 23:19:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750375179;
+	bh=1iitjCLE0DZH0hmZdXHmHbGc0acxiTVlORAr7x2Ff2U=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=kHGCIDVTAXuEpNeOWqvBztDwNhtbC83OdZWsNR7VxKi1DmeB59lnsfvgfRSDBi0C1
+	 DDaAdjCmRPIZs+3EMompPWmZpK2yzknxZSoWeAdGJ9z9S2lz8MKsDFgjgL/HPX0NLa
+	 HZC4N/dn7FxZj9FPVK1bqhTj21lPCWtPrZVQVi0pNSLezl+0acGbqD1uFW+MKITodj
+	 5HgaQxtTQdUABL1Pee4+F8KmHyHlFWm8U/2hNicNcM2fuTN1Ce8A8AjC/jE4s9ToKT
+	 +/XP1XOSo+Ktn1d1cM0RpT/gOkzzCs4MvoKk/cldSm9q5Rod3xhRCBFgRyh/ny5Ssk
+	 /2ZaD1IloRHYQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E3138111DD;
+	Thu, 19 Jun 2025 23:20:08 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250619070224.23428-2-quic_sayalil@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [Patch net-next v3] net: mana: Record doorbell physical address
+ in PF
+ mode
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175037520700.1016629.11511793485782650744.git-patchwork-notify@kernel.org>
+Date: Thu, 19 Jun 2025 23:20:07 +0000
+References: <1750210606-12167-1-git-send-email-longli@linuxonhyperv.com>
+In-Reply-To: <1750210606-12167-1-git-send-email-longli@linuxonhyperv.com>
+To: Long Li <longli@linuxonhyperv.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, shradhagupta@linux.microsoft.com,
+ horms@kernel.org, kotaranov@microsoft.com, schakrabarti@linux.microsoft.com,
+ erick.archer@outlook.com, linux-hyperv@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, longli@microsoft.com
 
-Hi Sayali,
+Hello:
 
-kernel test robot noticed the following build errors:
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.16-rc2 next-20250619]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On Tue, 17 Jun 2025 18:36:46 -0700 you wrote:
+> From: Long Li <longli@microsoft.com>
+> 
+> MANA supports RDMA in PF mode. The driver should record the doorbell
+> physical address when in PF mode.
+> 
+> The doorbell physical address is used by the RDMA driver to map
+> doorbell pages of the device to user-mode applications through RDMA
+> verbs interface. In the past, they have been mapped to user-mode while
+> the device is in VF mode. With the support for PF mode implemented,
+> also expose those pages in PF mode.
+> 
+> [...]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sayali-Lokhande/arm64-dts-qcom-Add-eMMC-support-for-qcs8300/20250619-150421
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250619070224.23428-2-quic_sayalil%40quicinc.com
-patch subject: [PATCH V2 1/2] arm64: dts: qcom: Add eMMC support for qcs8300
-config: arm64-randconfig-053-20250619 (https://download.01.org/0day-ci/archive/20250620/202506200608.fGUpDcoG-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.3.0
-dtschema version: 2025.3.dev28+g49451a5
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250620/202506200608.fGUpDcoG-lkp@intel.com/reproduce)
+Here is the summary with links:
+  - [net-next,v3] net: mana: Record doorbell physical address in PF mode
+    https://git.kernel.org/netdev/net/c/e0fca6f2cebf
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506200608.fGUpDcoG-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> Error: arch/arm64/boot/dts/qcom/qcs8300.dtsi:3867.19-20 syntax error
-   FATAL ERROR: Unable to parse input tree
-
+You are awesome, thank you!
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
