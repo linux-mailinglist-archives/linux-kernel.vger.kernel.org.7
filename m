@@ -1,156 +1,85 @@
-Return-Path: <linux-kernel+bounces-693737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB4BAE02EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1063BAE02F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 431E217BFB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:48:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95B617CDD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D92224B0F;
-	Thu, 19 Jun 2025 10:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DB7224B04;
+	Thu, 19 Jun 2025 10:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fdj0OnyG"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XnigmRmq"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F795223DF5;
-	Thu, 19 Jun 2025 10:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8861E18EFD4
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 10:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750330089; cv=none; b=q6NxVu5SFhzihROFAqtbQLCwbfLETtS2RMGvt9/ICyZ3eZLqycUrIsiWQolPylJTyC0uKwKT8uqSGeKvFAzlizRLf7HwaS+iPbB72eFJjMgyNRXuu0KtE9yILCzG0DFyCPHq3adU0F5jRBbIv2UE80YWQu0Jkf5MnHYOPDOKs2o=
+	t=1750330492; cv=none; b=fDoEVISupQUA/H9p4v7d4mFBzdT3KxUqluwUTeRy5XwgSTJVc2zbBDjvtFjIyZ4soVxsgjS1OoHasj9wDM3VRwCH75+Wu7j69ORPlhbnRnvXRAE7X/WgI6Up2ZrB7YUwev41ueFVxJeHMB5Jw3ooGDbrU0umDTkMZCEFHpR6R/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750330089; c=relaxed/simple;
-	bh=92oRe7d2R8Bz+GLGeI+CL7LHJz6LbFva0fu3VY+Ti6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kk4mHXsTzvJbgGjSAbQkAxsF7lG9b39VuYsYJyn7mrlVymWfL9vdy0lKmcaIOXi5UeqE8l4hnsfoLPjOd4w0V0hZT6ZHVc6WJRGjNPwoiadEtfmQpz1zBT7NMFxzqTvZEyidYVdK2aL7QGF45oIzhGvSdcVXZN8uIsbkAMU/tjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fdj0OnyG; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DF5F44396F;
-	Thu, 19 Jun 2025 10:47:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1750330079;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YrYJ8w60yCUBZigSm+JV9lV/nNFVXOxrB9Gm7xPQC6A=;
-	b=Fdj0OnyGM/LIKEoR67MIFPtCrbEaBwTFCjHjfXIe2gV/5Q5MdeVZmWL1UAwK+YucK6tESv
-	1WPzDuiDlQMae4blgiTIVdGUVGALZJaWeKzzTlv2IaBS0NpVQiMsP7WDy/DlTfCSBX7TWw
-	7mXdmJjQ/ER2+q+7oHYIyzoEecykD096ST65HAG6c6lbzw38hVTaNEKKnbRDk6+Xote/rB
-	3TzQvUCx+GFM7JZx+sD6k3Nmawn3oHIkyu498nTe1rPNCEv2CI6v5l6sFDlUrro8jtextJ
-	jHeePypFVx4xYHK0U7uqG9y3VLi+wk3YVNoMFY4MX2BBz4w97QiKtD998UdXZg==
-Message-ID: <c26ce505-343a-4759-90b5-a026c66979c7@bootlin.com>
-Date: Thu, 19 Jun 2025 12:47:58 +0200
+	s=arc-20240116; t=1750330492; c=relaxed/simple;
+	bh=QqVzPTbie3A9TvuOlY17KcQzypNzkfvBHCByV6vt1Kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YGwTPZeacsROoE1bqkwSnz0fEaZ4P4hWoE9PqvoKSzuOM/k2V2+vYFpMObtDcUCDOE1uHEGQyPT4hTutjA+1rvLFRc3voPiIWCr09KkFpffvHcKCDfPvWUowqWLa8ghl4f/toAc0DONsXoODzvWylIrReQnN5xMkIbwfbG/wCZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XnigmRmq; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=H9hr3tlsnhidjOFODG9DbxD4YaZN1ZX69cfLfOX1Jsk=; b=XnigmRmqze649VXgPYYNmISL8r
+	9uulw26JKf3uxR8JnkRycP84b9zigcJ36hZzL05uea6d0hN7FjdhoOm5b3BpEcD4+4b8sNFcmVKXH
+	LbIa7TsXTwyf/LJ7D/FhQILQPsUnlJHEJeAipX/kbe345RHaio35jOzS1QMoer/c+FriLnOVquUT0
+	bPlC3x6DC1c+sDWLKn3XCoscwnkXWUD7Bm+8wuYXgjrcZUmQaqbEucguTipkbLbdIZOerfVNUIsCb
+	pm+Kt/SgJzmOmbEFeE0zteKdfusGEiSSo/ywaLcT5FtyBy+gQPinxiF2CgyZXhLUpMvc1Ffx1vfAy
+	fjXWY9Mw==;
+Received: from 2001-1c00-8d82-d000-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d82:d000:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uSCut-00000008LBL-0vwJ;
+	Thu, 19 Jun 2025 10:54:47 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 553F230890E; Thu, 19 Jun 2025 12:49:35 +0200 (CEST)
+Date: Thu, 19 Jun 2025 12:49:35 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Dave Airlie <airlied@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	nik.borisov@suse.com, Lukas Bulwahn <lbulwahn@redhat.com>
+Subject: Re: double free in alternatives/retpoline
+Message-ID: <20250619104935.GE1613376@noisy.programming.kicks-ass.net>
+References: <CAPM=9ty750Ex93+9d6DJ1hFJE8XuhXOf7Q7dgXryvhGYLwHbdg@mail.gmail.com>
+ <CAHk-=wgd=MdzRHO=bV=g0G0mMV+7ek-q2WnQ8P5sxwJdau-t=g@mail.gmail.com>
+ <CAPM=9tyG7+6ZQuBQY=nwiPxywWgVtOHus7cH-KjKMgn+0ADv8Q@mail.gmail.com>
+ <aFPFHSLd_b538ovf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Fix the PinePhone Pro DTS' panel
- description
-To: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Diederik de Haas <didi.debian@cknow.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250619-dtb_fixes-v2-1-abd711d11b67@bootlin.com>
- <DAQEX04P5320.CQDU7SL7AV4A@cknow.org> <5461462.0VBMTVartN@phil>
-Content-Language: en-US
-From: Olivier Benjamin <olivier.benjamin@bootlin.com>
-In-Reply-To: <5461462.0VBMTVartN@phil>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdehfedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepqfhlihhvihgvrhcuuegvnhhjrghmihhnuceoohhlihhvihgvrhdrsggvnhhjrghmihhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeuieffteevudettdejleejheekkeeftefggedttefhheeikeejgeehveefjeejheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemvgefgeemvggtfeekmedvgegvtdemfhehtggvmehffeegvdemieehkeejmehfieehieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgefgeemvggtfeekmedvgegvtdemfhehtggvmehffeegvdemieehkeejmehfieehiedphhgvlhhopeglkffrggeimedvrgdtudemvgefgeemvggtfeekmedvgegvtdemfhehtggvmehffeegvdemieehkeejmehfieehiegnpdhmrghilhhfrhhomhepohhlihhvihgvrhdrsggvnhhjrghmihhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehhvghikhhosehsnhhtvggthhdruggvpdhrt
- ghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughiughirdguvggsihgrnhestghknhhofidrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-X-GND-Sasl: olivier.benjamin@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFPFHSLd_b538ovf@kernel.org>
 
+On Thu, Jun 19, 2025 at 11:06:53AM +0300, Mike Rapoport wrote:
 
+> Looking more closely, there is a typo in its_alloc(), it uses CONFIG_MODULE
+> to choose an its_array to reallocate while it should have been using
+> CONFIG_MODULES.
+> 
+> Lukas Bulwahn sent a fix for that:
+> 
+> https://lore.kernel.org/all/20250616100432.22941-1-lukas.bulwahn@redhat.com
 
-On 6/19/25 12:31, Heiko Stuebner wrote:
-> Am Donnerstag, 19. Juni 2025, 11:46:15 Mitteleuropäische Sommerzeit schrieb Diederik de Haas:
->> Hi,
->>
->> Thanks for working on upstreaming PPP things :-)
->>
-My pleasure. I also have 
-https://lore.kernel.org/linux-rockchip/20250509-camera-v3-0-dab2772d229a@bootlin.com/ 
-pending = )
->> On Thu Jun 19, 2025 at 7:21 AM CEST, Olivier Benjamin wrote:
->>> Fix a few issues in the panel section of the PinePhone Pro DTS:
->>>    - add the second part of the Himax HX8394 LCD panel controller
->>>      compatible
->>>    - as proposed by Diederik de Haas, reuse the mipi_out and ports
->>>      definitions from rk3399-base.dtsi instead of redefining them
->>>    - add a pinctrl for the LCD_RST signal for LCD1, derived from
->>>      LCD1_RST, which is on GPIO4_D1, as documented on pages 11
->>>      and 16 of the PinePhone Pro schematic
->>>
->>> Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
-> 
->>> +	lcd {
->>> +		lcd_reset_pin: reset-pin {
->>
->> I don't know if there's a 'hard rule' for it, but I'd recommend to use
->> ``lcd1_rst_pin: lcd1-rst-pin {`` as that would match the naming from
->> the schematics. I realize that some but not all (other) pinctrl nodes
->> follow that 'rule', but it helps with traceability.
-> 
-> not a "hard" rule, but a strong preference.
-> I.e. we want people to ideally be able to just hit search in the
-> schematics PDFs for the name they saw in the devicetree.
-> 
-> Sometimes that is not possible, because of naming conventions or
-> overly strange schematic-names ... and sometimes things slip through
-> as well.
-> 
-> But following the schematic names, is the general goal.
-> 
-Very fair. I used "lcd_reset" because even the schematic is not super 
-clear: it uses "LCD_RST" on page 16 and LCD1_RST on pages 11 and 16.
-
-> 
-> If this stays the only suggestion though, I can fix that when
-> applying. Or you can send a v3 - up to you :-)
-> 
-I'll correct to lcd1_rst_pin and send a v3 (most likely later today)
-> 
-> Heiko
-> 
-> 
->>
->>> +			rockchip,pins = <4 RK_PD1 RK_FUNC_GPIO &pcfg_pull_none>;
->>> +		};
->>> +	};
->>> +
->>>   	leds {
->>>   		red_led_pin: red-led-pin {
->>>   			rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
->>
->> Otherwise,
->>
->> Reviewed-by: Diederik de Haas <didi.debian@cknow.org>
->>
->> Cheers,
->>    Diederik
->>
-> 
-> 
-> 
-> 
-
--- 
-Olivier Benjamin, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Indeed. That fix is currently sitting in tip/x86/urgent and should make
+its way to Linus soon.
 
 
