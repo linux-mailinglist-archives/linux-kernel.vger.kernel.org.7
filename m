@@ -1,78 +1,100 @@
-Return-Path: <linux-kernel+bounces-694355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E11ABAE0B54
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:24:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99ACBAE0B58
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 383213A7DA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:24:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40CB13ABD44
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5987F28BA81;
-	Thu, 19 Jun 2025 16:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2509928C006;
+	Thu, 19 Jun 2025 16:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLhNKyoq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="a6M1Y00M"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D1728B7F1;
-	Thu, 19 Jun 2025 16:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3DA28A72D;
+	Thu, 19 Jun 2025 16:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750350277; cv=none; b=ZHcZKACR0g/nGtBe2hb3BgUFy2HazQemS8cxXZW02Np9pn+yUmPU67abyGiCoc8YDwX15J8+KQ0+K42ocEqCbGwMVFdost2ui6fzg1ntb0Za3wIji9l18eRnLl+0kICZoV6tDeSoUDEGB1TuEKFpQCHJpvqZPTTkz/PGQW0zf14=
+	t=1750350387; cv=none; b=kA50Ot3xOmMa1QAvd6dHj1SsL12x49PUatzWAWUMA6g1+SoYh6V1RSA1BZW0y+ATdnfwxKUrfrGxRmdTByNLiiEOG4Iis7BEmbGv558+s5gPFHXqTNvduySHIgTTOIoSP4ge/p+fI0j5MMg/2KRlOWPtSUI8ZF3N5TkrFXFN9Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750350277; c=relaxed/simple;
-	bh=kKrI2jKMPEkcb6jlgSGSYZjHHZ4eWR3Gzo8paMkNgVg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=US0EcqiFDQg2v+irOIYcSRtO6HQdcFwQO73aS5MczO2Ad+USSEWQCuvp0cGcYWc6smWzdR6XTYwOMLY6OGauHv9iTSqBPisb8ZOEOnz/cSLQZYy0V873Q3/9KQO+Egm1aV1uCmjPWjLKFG5uPgwl2T0Kl0J9krA0Onl1jD+T0Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLhNKyoq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23F1AC4CEEA;
-	Thu, 19 Jun 2025 16:24:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750350277;
-	bh=kKrI2jKMPEkcb6jlgSGSYZjHHZ4eWR3Gzo8paMkNgVg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=iLhNKyoqvbApkQeej4mwz9aUHZ995g58NMnUlFiExdhMH07prou9vlpQY6XquSyS4
-	 wOyUaITo2S/QUkTyegNsf6J9Kt/ZWXwy+VbFmFGQu9zPTmpqagMfpr7M+gg3BnEJGB
-	 oR2ENMIGEAGb6V5l0lB+qSQdC7v/OG/fPcfenkoWKBS5rCH+9y4hf5g04rUct7dSCe
-	 7p92uyK0WEC0pkEVGl20k7LiH3HzeSymeW2CLKtWwGFff79oZAJghYXdoeXem4yKIA
-	 otie1Sdkda76MK4C9VrQzfMeAe3JYHSrLqKxiSzx+i97mgN3uXazPF62y3b5PDsijo
-	 3APY8IXLlRVYw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710E838111DD;
-	Thu, 19 Jun 2025 16:25:06 +0000 (UTC)
-Subject: Re: [GIT PULL] hwmon fixes for v6.16-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250619134658.3618113-1-linux@roeck-us.net>
-References: <20250619134658.3618113-1-linux@roeck-us.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250619134658.3618113-1-linux@roeck-us.net>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v6.16-rc3
-X-PR-Tracked-Commit-Id: c25892b7a1744355e16281cd24a9b59ec15ec974
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 24770983ccfec854d89da9d87ca5f2c9efc695fc
-Message-Id: <175035030517.920710.1330674896893377472.pr-tracker-bot@kernel.org>
-Date: Thu, 19 Jun 2025 16:25:05 +0000
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1750350387; c=relaxed/simple;
+	bh=YW1WRtOgjjKeZYoFpv7wK+mazkH76ZKwJg9fzRFuC5I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=doftRYf/2mjK2FmFWFvbMJotwI8wltbfxPEAEpmi+nHJUsBoWuvEiqIrnni9G39VhuLbLpEoviUQkRS25EdNZJ8lHDY3FRXKb8kK0igNogr/6HxiQOHEu/h5b2rGGB1IXNdirdiE7NyGbd2nRoh5Kss5foK1pO5ticcwTV6f3vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=a6M1Y00M; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8D5211FD32;
+	Thu, 19 Jun 2025 16:26:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1750350376;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AyfZRBcndJNymTCun1FzXaI9H1cKammKl6UraztpG8E=;
+	b=a6M1Y00M/vorSU8AoR+SinbMnXrby7rSrDc1gIRp/XvYOQU8V+Q5YJqSnUNLVhQ64HrGn0
+	Xew0RWTOdCV3tPIUlS09V908Br3jehGuY5l9IoGHH9Se63DlhOQ/23PlHv9WXQ9VDTAhFL
+	vyBhrHzHMYNiyL8gTScMtMngawumi8s5T9PmrJnLNDeREvKzXw8fVMhXGxSgDcZSk9FKXl
+	LVQG0yMucqtTw9Fp9DqrhsOW9s9QqH4CxQvQiMcM8zoU6pMu2VeBKapL/y3cZPSs+n3q9s
+	t5W/WO+BDARF5gkvtP0iDz41laTe0VTPK7Yv73MovfJduR16C6mJbNemiFWJ/Q==
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Kory Maincent <kory.maincent@bootlin.com>,
+	kernel test robot <lkp@intel.com>,
+	thomas.petazzoni@bootlin.com,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Subject: [PATCH net-next] ethtool: pse-pd: Add missing linux/export.h include
+Date: Thu, 19 Jun 2025 18:25:47 +0200
+Message-ID: <20250619162547.1989468-1-kory.maincent@bootlin.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdehleelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheplefhhefhgeevtedutdekudegjedvhffffefhhfdtgfefteduvdehgeetgedtvdelnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddrrddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhkphesihhnthgvlhdrtghomhdpr
+ hgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehordhrvghmphgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-The pull request you sent on Thu, 19 Jun 2025 06:46:55 -0700:
+Fix missing linux/export.h header include in net/ethtool/pse-pd.c to resolve
+build warning reported by the kernel test robot.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v6.16-rc3
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202506200024.T3O0FWeR-lkp@intel.com/
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+ net/ethtool/pse-pd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/24770983ccfec854d89da9d87ca5f2c9efc695fc
-
-Thank you!
-
+diff --git a/net/ethtool/pse-pd.c b/net/ethtool/pse-pd.c
+index 6c536dfe52da..24def9c9dd54 100644
+--- a/net/ethtool/pse-pd.c
++++ b/net/ethtool/pse-pd.c
+@@ -11,6 +11,7 @@
+ #include "netlink.h"
+ #include <linux/ethtool_netlink.h>
+ #include <linux/ethtool.h>
++#include <linux/export.h>
+ #include <linux/phy.h>
+ 
+ struct pse_req_info {
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.43.0
+
 
