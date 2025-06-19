@@ -1,105 +1,95 @@
-Return-Path: <linux-kernel+bounces-693801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213B8AE03E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:37:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5CDEAE03F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90CCC4A42CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:36:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7924C17DDE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B56B2356A4;
-	Thu, 19 Jun 2025 11:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA3C243387;
+	Thu, 19 Jun 2025 11:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WRFVo6do"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YzMkdkAA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6145E236A73;
-	Thu, 19 Jun 2025 11:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A8623B627;
+	Thu, 19 Jun 2025 11:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750332842; cv=none; b=RtCqEiz/6nidUQ1MuIVTDBunadRWqPPv3zwCs1BYEgJihr5Hus6TWJvv2C6T6RediXZbi4R4zQTVWI0peyFGciqMVbYYrIbGKGLFyzMPFfjdMctuB7x7AJu0yIgvTfs2yvG1YW0ZZfL8uShgZAGkqj2sJncEpzj5Gg/mqQPPuVM=
+	t=1750332903; cv=none; b=aOW8/y2QKdkXg1mdf6oQuiUQOvj2h3OuxWRgjvdjUHjm+6T0T+PcTb/PPU6t/+ebYdSqjhV1PnciCYOiC2u8GTEWUhU2eIde8ci8+PgBYGbVGRK+v0c3X+CisBALAuJ5/XC1k4Yd+5Mw2OoLS8NGhFjW43u43MgYqAD7aTcYu9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750332842; c=relaxed/simple;
-	bh=VwmQnh86mmecCweO+pnsgNN2cDKLYEmmigNkJsNCxCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DlmZGgRmrJUEsHlaCyz6xvU+x2V5AZkHsEeLK0YU/iWDFV3vVaHY0b3+4ZjgAIb+3feS/nqVdsJCiqMHUYRx7yL0aA/+ImpywZ+UmH6d7nUvsJ6RYgkHgBLjkuwSaucyusZYe7ljb7D2x5EjCGeq/SqCV5FLYDfxU08k6KS+nns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WRFVo6do; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1750332836;
-	bh=H2AI9AZoWa/hRzsDWpMBrbrQp8NJUXeICYcsf6MSaNo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=WRFVo6doziuAy1TPdxDLZhcGVibQB6WUh4ahoYFErCT8PvP4gB3Wy5s/5LDz91MLf
-	 0AZ078R23p+8Ek9tfbjrbQtmn/yJQSyJ7/3JGSUHb+yp2d/HYQ09xiPGUTvR1aSdny
-	 koskeSLzfCsX8+dWp9N7/Scj+elnvFDD4lYYpmHu1sV3lr5ucgYgfnbVHYb6F8Br7h
-	 6aOaM5a51nNXKkpEFx6mnuQ4zlDH10XEtfqXq/1Kn7WjRyXvj2AG3LEu5LuTXgXjls
-	 GjqrmanwVJH1CTJyVprYNee7ft0HRs53Vxt+Xc/8JXy7/bgTOG1eRBwKPJeAexUurJ
-	 PLgrNkRM0yeLw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bNJQr1pp2z4x7s;
-	Thu, 19 Jun 2025 21:33:56 +1000 (AEST)
-Date: Thu, 19 Jun 2025 21:33:55 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the imx-mxs tree
-Message-ID: <20250619213355.70bc0dd0@canb.auug.org.au>
+	s=arc-20240116; t=1750332903; c=relaxed/simple;
+	bh=OSekkCHN37/wFSljw2iH1JTgpKEfUG9ZYdnTvES6x0o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=HDnrF+ToXk7itoqT0tgTYV00B3yZWWJ54LKvMbeCvIWhuNu8MU3G9KO/cO9afpy2/hYVqMYEbm9gGhsIfn+FES7P48royhpwBtLBv7zExrGZcV4Nn1w6GXW2jhfAmwe+vTxlEN26Lee7Zs/nHC6rxSYOlbxFkyAWzdwTlPPjyaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YzMkdkAA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB84EC4CEEA;
+	Thu, 19 Jun 2025 11:34:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750332903;
+	bh=OSekkCHN37/wFSljw2iH1JTgpKEfUG9ZYdnTvES6x0o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=YzMkdkAAn+eR8VtWUKEsYGskQ9UTPoAxVdqpd9edRCZG1AhpNzbhDK1TiH9VBAb9s
+	 wzigTGDSKEmFxLKeFeF9uWACGnCWOfc0Tgs1QOqELnnEPCDutD0g0io+rhbjvWRzDD
+	 UcFQeM0fNTxdluWbrZuMNtwcJxw/FSBCgBWPrQuoxlUqPEpiSzHg4WWE3hSF+BjVYo
+	 8OChQvHya7k+wmcvM0GiJ3PLZ3T4S8tyguiPxebueO0+Hcxh+ra6igU8CHh3WyJ0sf
+	 aj8Q9l5kKKWpDy5bAjYDyV7V5WgDTiMymp1FknPJ85lRa+90Xk+fsyPH4VlH0vdcSk
+	 fQEU6cg8izszw==
+From: Lee Jones <lee@kernel.org>
+To: linux-kernel@vger.kernel.org, 
+ "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: tglx@linutronix.de, Lee Jones <lee@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+ linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-omap@vger.kernel.org, 
+ patches@opensource.cirrus.com
+In-Reply-To: <20250611104348.192092-13-jirislaby@kernel.org>
+References: <20250611104348.192092-13-jirislaby@kernel.org>
+Subject: Re: (subset) [PATCH] mfd: Use dev_fwnode()
+Message-Id: <175033289843.706988.8724251028976565230.b4-ty@kernel.org>
+Date: Thu, 19 Jun 2025 12:34:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/vsJMqrd7+7F5/r3kHT5j9Au";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
---Sig_/vsJMqrd7+7F5/r3kHT5j9Au
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 11 Jun 2025 12:43:41 +0200, Jiri Slaby (SUSE) wrote:
+> irq_domain_create_simple() takes fwnode as the first argument. It can be
+> extracted from the struct device using dev_fwnode() helper instead of
+> using of_node with of_fwnode_handle().
+> 
+> So use the dev_fwnode() helper.
+> 
+> 
+> [...]
 
-Hi all,
+Applied, thanks!
 
-Commits
+[1/1] mfd: Use dev_fwnode()
+      commit: 0cfe69476ebf3a27b074848f2a147ae22c2d84fc
 
-  bfb861766f3f ("arm64: dts: freescale: Add the BOE av123z7m-n17 variant of=
- the Moduline Display")
-  8c6d53ee0a19 ("arm64: dts: freescale: Add the BOE av101hdt-a10 variant of=
- the Moduline Display")
-  844cddc2ded0 ("arm64: dts: freescale: Add the GOcontroll Moduline Display=
- baseboard")
-  67fbe9fc5d5b ("arm64: dts: freescale: add Ka-Ro Electronics tx8p-ml81 COM=
-")
-  5f465a764523 ("arm64: dts: imx8mp: Add pinctrl config definitions")
+--
+Lee Jones [李琼斯]
 
-are missing a Signed-off-by from their committers.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/vsJMqrd7+7F5/r3kHT5j9Au
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhT9aMACgkQAVBC80lX
-0Gxd9Qf9H65vwQPtnFeni37DOeukJURr69uiHcVzGWJXigoJpHTsWf63DUtgw8AB
-PHTDejzjOh+jjlS7UaAAUUiBNOQY/dY45WcUP3Gg4qFgxAiejl1/V5v2Xj0p+Mie
-w1HA0f7wWthlRxDXhp989rkyH0bnVF8mIXC9WW0+fLsJE/dKQ2DuXmTtVjR51zUM
-BTVHCCMEKcVs/0akblvRq7IqNEVhfHa6mMwlEtlWUVY7tLIE3OtGiWS9Db8kEGXQ
-97JzTYyIKDeob7bVIYEbGIoz6wTIA7HVBg4FRR1EFvI+VSuSsczcrin6OHNLevB3
-j4UnWvDooa3+lBXdI5XVBuJMadJhRA==
-=4g2E
------END PGP SIGNATURE-----
-
---Sig_/vsJMqrd7+7F5/r3kHT5j9Au--
 
