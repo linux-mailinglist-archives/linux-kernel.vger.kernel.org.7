@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-694442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A0D9AE0C4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:02:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7902CAE0C33
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F7633A86A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:01:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA5804A03F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6D428DF50;
-	Thu, 19 Jun 2025 18:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC27B28D8E8;
+	Thu, 19 Jun 2025 17:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BJ8RSSS9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4JQ0XEw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F26428DB62;
-	Thu, 19 Jun 2025 18:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3195519D8BE;
+	Thu, 19 Jun 2025 17:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750356072; cv=none; b=Jt8vX5x4I9a3RfBfMOf8M3RJ9NNwMsfddYkmOSO+jfQTm/O7Lgw5Bd9NhwlFKsSLNr90mK37IE5okhmzoW65X6RwsTIslaHdcJ5qZtjMjkQ4X7hL3IBQ8mulZYh/4azWXykpWk4LDTMOgjLDyPzyFnP3IrxeJ5PuLhoMQKo3Q8s=
+	t=1750355969; cv=none; b=hQMmZ4UK+ePj6Ng4d0foxPL3wFPuwG3h4/c85otiXrLXAb104dAaLB2WK1AgIGV1vlxbraq5dCeophPEVXllfFwVw10QoRtjdHv7v3NSTK/Qu4JuPbj2ht6zv1VHpKT1MrTK/i8GBAkXvTpeNOHPYhBrBU4WKNIMcRhbucFQ7J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750356072; c=relaxed/simple;
-	bh=m+ZUZ+xY0rPq5xshOdtz5io/qL4Yg1SP464CzNCTdBA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i6gsoMhQhUzMtMHU1IEAd/U7dkxKiYm9uOoFsZGWH/JGR9X4rW/32sIhuQwPl0bbPpI2VkNkmW6ZcPpE3izg7R9kr5MiTy8y+9/9cZnFfsFgYeEorRoVNF7j9XW/rA/eg3s8tNyZsncG95Bq4kXe0D5h+Dco95l50dbj6n22PIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BJ8RSSS9; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750356071; x=1781892071;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=m+ZUZ+xY0rPq5xshOdtz5io/qL4Yg1SP464CzNCTdBA=;
-  b=BJ8RSSS94K2xWJv7q1pfuVLgUAWYAFDIvq6f5e0JewP9biLCt0QiFOqu
-   WJiY7I7JwFSxguOM+TZZH6QHIPOqZOYfs1y1saGf8L99hLv/7hPwRRUEt
-   4IN6zgqJ/T3NvKJJB8U1MaQd4mlX4KGtQTIms5DIsMWTImVsbh2Yb2mdP
-   QJw0hnL03g3lM2/4MWn2+BgARIxHj6Rj+Fw+irXbEELYIOcHost5G1NUk
-   YFmJsuf6k3j6JWenLDnD0BXaDrJGzD/0A3KX35akJak5FWkNEDYx4uCXo
-   xpAzo9+s06SBLMAEldphDkbYr+TDzUKoCtWIzUqNrtVIg6XshDqDFSw8s
-   w==;
-X-CSE-ConnectionGUID: 7JogRgr1TjmME/xL6ns02w==
-X-CSE-MsgGUID: RVOFX+4qSY23DzLBJcnH2Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="64047856"
-X-IronPort-AV: E=Sophos;i="6.16,249,1744095600"; 
-   d="scan'208";a="64047856"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 11:01:11 -0700
-X-CSE-ConnectionGUID: T/TmCVa0QHuC9WkMjdDlAg==
-X-CSE-MsgGUID: UDhJtp0wQjqkHVDO9YYP4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,249,1744095600"; 
-   d="scan'208";a="150919329"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO mdjait-mobl.intel.com) ([10.245.245.13])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 11:01:00 -0700
-From: Mehdi Djait <mehdi.djait@linux.intel.com>
-To: laurent.pinchart@ideasonboard.com,
-	sakari.ailus@linux.intel.com
-Cc: akinobu.mita@gmail.com,
-	stanislaw.gruszka@linux.intel.com,
-	hdegoede@redhat.com,
-	arnd@arndb.de,
-	alain.volmat@foss.st.com,
-	andrzej.hajda@intel.com,
-	benjamin.mugnier@foss.st.com,
-	dave.stevenson@raspberrypi.com,
-	hansg@kernel.org,
-	hverkuil@xs4all.nl,
-	jacopo.mondi@ideasonboard.com,
-	jonas@kwiboo.se,
-	kieran.bingham@ideasonboard.com,
-	khalasa@piap.pl,
-	prabhakar.csengg@gmail.com,
-	mani@kernel.org,
-	m.felsch@pengutronix.de,
-	martink@posteo.de,
-	mattwmajewski@gmail.com,
-	matthias.fend@emfend.at,
-	mchehab@kernel.org,
-	mehdi.djait@linux.intel.com,
-	michael.riesch@collabora.com,
-	naush@raspberrypi.com,
-	nicholas@rothemail.net,
-	nicolas.dufresne@collabora.com,
-	paul.elder@ideasonboard.com,
-	dan.scally@ideasonboard.com,
-	pavel@kernel.org,
-	petrcvekcz@gmail.com,
-	rashanmu@gmail.com,
-	ribalda@chromium.org,
-	rmfrfs@gmail.com,
-	zhengsq@rock-chips.com,
-	slongerbeam@gmail.com,
-	sylvain.petinot@foss.st.com,
-	s.nawrocki@samsung.com,
-	tomi.valkeinen@ideasonboard.com,
-	umang.jain@ideasonboard.com,
-	zhi.mao@mediatek.com,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Subject: [PATCH v1 06/55] media: i2c: et8ek8: Use the v4l2 helper for obtaining the clock
-Date: Thu, 19 Jun 2025 19:58:59 +0200
-Message-ID: <0da110e814e5d0fc194a1b1996e42cb7345be66e.1750352394.git.mehdi.djait@linux.intel.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1750352394.git.mehdi.djait@linux.intel.com>
-References: <cover.1750352394.git.mehdi.djait@linux.intel.com>
+	s=arc-20240116; t=1750355969; c=relaxed/simple;
+	bh=d58puvBfc5wuZvpZedp1Wh9cQYVuL5NmGhl8ie1qK+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JcndU8VlRnFK5Y2X3D1sXZYPb20szZbFixIYxSRyel8hyosE7HpV8xDQvNckroiLzpBB/IySboFmy3JA142iyauU4a6BtgbGT4J3wqKY81Q0OFihH+sgCpA0dRLQtL6SUfH3J8YGqhOJbV63hbuhC6qXVqrFQEVyHIldodEb5yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4JQ0XEw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D627C4CEEA;
+	Thu, 19 Jun 2025 17:59:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750355968;
+	bh=d58puvBfc5wuZvpZedp1Wh9cQYVuL5NmGhl8ie1qK+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i4JQ0XEwdQ0RQTKhT67jP1Lb/RKD1KrfDMR2taXEOlHxCjr0qGbkC2E0twFaVtPqd
+	 PfPSntVaxXlkxwK4gDfxNjkfvREpWXG59UoAaOPFmf89kkn0QVJWCJm3Wchwks1IxC
+	 49izVI9Exx+Zs9q7eF8Lkeq/0Ku5NJpuUq8Tm+f8Q4VMqWZ3gXVggebJTSiFk2mChg
+	 9kG51CuHuO2GvnTV6xoDe+24AaA1ri1O+RBBYbKiFR1v7TyP63A1Sse8VSgjC9uunY
+	 dLSk52vqZyWY62V98Kl7S5oJvA1C8fBcsCqljAPnMTzPDL2iHXI18Krgi7tWf9i5oB
+	 AxB3G+cUJtOJA==
+Date: Thu, 19 Jun 2025 19:59:22 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Igor Korotin <igor.korotin.linux@gmail.com>
+Cc: ojeda@kernel.org, Rob Herring <robh@kernel.org>, alex.gaynor@gmail.com,
+	rafael@kernel.org, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-acpi@vger.kernel.org, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	lenb@kernel.org, wedsonaf@gmail.com, viresh.kumar@linaro.org,
+	alex.hung@amd.com, dingxiangfei2009@gmail.com
+Subject: Re: [PATCH v7 3/9] samples: rust: platform: conditionally call
+ Self::properties_parse()
+Message-ID: <aFRP-vGMoZNmQZ2E@pollux>
+References: <20250618100221.3047133-1-igor.korotin.linux@gmail.com>
+ <20250618101325.3048187-1-igor.korotin.linux@gmail.com>
+ <20250618131958.GA1550757-robh@kernel.org>
+ <aFLJJkeFfHR9GB-0@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFLJJkeFfHR9GB-0@pollux>
 
-devm_clk_get() fails on ACPI-based platforms, where firmware does not
-provide a direct reference to the clock producer.
+On Wed, Jun 18, 2025 at 04:11:57PM +0200, Danilo Krummrich wrote:
+> On Wed, Jun 18, 2025 at 08:19:58AM -0500, Rob Herring wrote:
+> > On Wed, Jun 18, 2025 at 11:13:25AM +0100, Igor Korotin wrote:
+> > > From: Danilo Krummrich <dakr@kernel.org>
+> > > 
+> > > Only call Self::properties_parse() when the device is compatible with
+> > > "test,rust-device".
+> > > 
+> > > Once we add ACPI support, we don't want the ACPI device to fail probing
+> > > in Self::properties_parse().
+> > > 
+> > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > 
+> > This needs your S-o-b as well since you sent the patch.
+> > 
+> > > ---
+> > >  samples/rust/rust_driver_platform.rs | 7 ++++++-
+> > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
+> > > index 000bb915af60..036dd0b899b0 100644
+> > > --- a/samples/rust/rust_driver_platform.rs
+> > > +++ b/samples/rust/rust_driver_platform.rs
+> > > @@ -40,7 +40,12 @@ fn probe(
+> > >              dev_info!(dev, "Probed with info: '{}'.\n", info.0);
+> > >          }
+> > >  
+> > > -        Self::properties_parse(dev)?;
+> > > +        if dev
+> > > +            .fwnode()
+> > > +            .is_some_and(|node| node.is_compatible(c_str!("test,rust-device")))
+> > 
+> > I think you should be checking just is this ACPI or DT rather than 
+> > compatible. It's kind of an anti-pattern to test compatible in probe. 
+> > The reason is we've already matched to a compatible and have match data 
+> > to use, so we don't need to do it again. It becomes quite messy when 
+> > there are numerous possible compatibles.
+> 
+> Yeah, that was my first approach; here's the patch from a few days ago [1].
+> 
+> The reason why I decided against this, was that all the properties we check in
+> Self::properties_parse() in a fallible way *only* apply to the device with this
+> compatible string.
+> 
+> But I don't mind if we replace it with [1] either.
 
-Replace devm_clk_get() with the new v4l2 helper
-devm_v4l2_sensor_clk_get() that works on both DT- and ACPI-based
-platforms to retrieve a reference to the clock producer from firmware.
+As mentioned, I don't mind either, so let's change it up.
 
-Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+@Igor, can you please pick up the patch in [1] and at the same time drop the
+patch introducing FwNode::is_compatible() and replace node.is_compatible() with
+node.is_of_node() in this one?
 
-diff --git a/drivers/media/i2c/et8ek8/et8ek8_driver.c b/drivers/media/i2c/et8ek8/et8ek8_driver.c
-index 7519863d77b1..3bc238e44f5b 100644
---- a/drivers/media/i2c/et8ek8/et8ek8_driver.c
-+++ b/drivers/media/i2c/et8ek8/et8ek8_driver.c
-@@ -1433,7 +1433,7 @@ static int et8ek8_probe(struct i2c_client *client)
- 		return PTR_ERR(sensor->vana);
- 	}
- 
--	sensor->ext_clk = devm_clk_get(dev, NULL);
-+	sensor->ext_clk = devm_v4l2_sensor_clk_get(dev, NULL);
- 	if (IS_ERR(sensor->ext_clk)) {
- 		dev_err(&client->dev, "could not get clock\n");
- 		return PTR_ERR(sensor->ext_clk);
+Please also remember to add your SoB to the patches not authored by yourself.
+
+Thanks,
+Danilo
+
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/commit/?h=rust/is_of_node
 
