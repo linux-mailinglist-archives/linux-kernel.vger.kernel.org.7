@@ -1,209 +1,161 @@
-Return-Path: <linux-kernel+bounces-693648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC86EAE01CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:36:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D82AE01D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 785BE7A66ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:35:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A71A1BC1FBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8282921CA03;
-	Thu, 19 Jun 2025 09:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A3B21FF38;
+	Thu, 19 Jun 2025 09:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IDU7KNrQ"
-Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Q41vX2XG"
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6AE20E33F
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 09:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CAA1E3DE8;
+	Thu, 19 Jun 2025 09:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750325790; cv=none; b=T8m7WVEQM85fIUs+Vf/Sg0C5I90kUp2NAH6u017le2ACfh8vswrthIUrSR66FwPFcWbUYfjvTt39Z+abKHaGAMU7x3duEJAsZOETSDWk+nSo+6pTThyWlmzDepHu0FJRswrfT4Op5iiXsGtWHqEVeJ7agzN3VEIVdFwOoC4WXl8=
+	t=1750325910; cv=none; b=hlmlA/IGEu99EWaqz/q5HDin4+rIo6lvDH9LSvB9sI7OXWL141Q4F/YSISLA80EeN+nZhLhWWmW7den1khgtft2K2zU1A71T3wSzvoMxXfrRUZsge6JWEFP5CltB4u6D+kfm1f44+56+ziBsznqsdRMLCRoe3Yv3ROJ2+2cgaBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750325790; c=relaxed/simple;
-	bh=wYZqWE/orBcjdt6AJ8w7ry/uJRuGBEdSpZH9j/IsQWU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=LFf91NUAA/XcCWiGCnPM7DPHox8KAMTeotnkM0QO+fHfyAlkaXdP/YUDE4/Z02+iIqHbiLOAvoBVHyCgXg+xrz1P7+j4GCgSzHVQpyuqKeqQ5upLqJLehLldzPovWl5x0MaxyvzqDfm0h0yfDM/Zd/f3GTDhWo8Ut3g2y/ucak0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IDU7KNrQ; arc=none smtp.client-ip=209.85.128.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-70b4e497d96so5377817b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 02:36:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750325788; x=1750930588; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wYZqWE/orBcjdt6AJ8w7ry/uJRuGBEdSpZH9j/IsQWU=;
-        b=IDU7KNrQBlhtbvkuOY46Hi5rlngL2Kpbj+8mUVxZoX2ijwIk/fWhP84wX61R0V+2uJ
-         bWsrFQVRgY11qcuyZd12hu1EFmlMFJeb2stEkOW25Gx9rEOtfI8+85FI8CQiYfS9+Ivh
-         Xfy0RkzNQ/F81jjSqGu7J/SvmhAxfUDecj5XXFtf8rrYOIPBq4M3pRLvui7eLyMBzzRo
-         Pu453aBcDmPrWc8ul5nhz8AtKk/vnkU8f5E1n5K+Q1anGsRRXtTYMKAnIxmQdLGllL+V
-         Y7XreauNF4sCSO2NJRE5B4bN1P8qlzVridb71251AEo0aSJswu6EzQ7cRnjsdh6SyB2M
-         hVvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750325788; x=1750930588;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wYZqWE/orBcjdt6AJ8w7ry/uJRuGBEdSpZH9j/IsQWU=;
-        b=UgGAvvZ1UEtTvzCb6wElpJVoYThItEzPS+0iQNw+3z+claUyfvq6UUMmA0qNcj1VHq
-         NcNrfT7Ddnv1XB+Ji4S5Dt+825n2ER/iOYbsWL1rRjC8J++i0AsbYQWoJwAjuW+XAFrk
-         1g6Av7jE0ExSLxwxn8FwFWUnl8HpIYCUxt2HARSvUxyj8EoNzQQh9BG4KR7Oxk7U9FHZ
-         +wqWkJkZ25Ss7anxw65VG0JQiVONZ7XF9QneroECEcLZbdGEZmxLrG57YrBVcj2s2tUA
-         lAT3hI3G3wlO1V/QT+DsPrrPjmX3b4OpIYabrG0AKfM/xxQvixGi7miFmlVKOHh0Jlgl
-         +4WA==
-X-Gm-Message-State: AOJu0Ywqapm+zb32QPuVnOjI/NQIsrwD7JEeuJIfsqFfmcguZM4FJHyj
-	B8drzx/d16fK8NQacAsCgDAK4TrivujGs1daOzL7K44crBVYn4i467qxuJauk1fLkmkIWQYy0Ch
-	2DboV/FK3Fb/aESKfvHb/VvxdYlGD7X029+1rA0Bz8g==
-X-Gm-Gg: ASbGncswXdDGs4nPBiCdYqjT95rtOhYJ/5D9csPDARHRQ1eeinlRpmkEDQttNTs0Lve
-	OLa8mxRShsfod9KO803pCROSlShFoOY/MHu3GctB38E01Ft/cTcVYI5RBim9UCJ4wjOIffZTwQZ
-	bKF3/cM/KBGgGv4XWisyyAiMdW5PZUwtZWhQqkERQIv0gmStknLaIoYsbhXMNjaLkWsQ3WIqS5J
-	93pgg==
-X-Google-Smtp-Source: AGHT+IFENmQNlimlbCa1IokyLOc8Z2OBWR7X3ZrHkHQrVhJYDoMQcPFVKSH3Tk+LsMQ2QzYB5792g/T3IdO4DC2cAf4=
-X-Received: by 2002:a05:690c:3585:b0:70d:f47a:7e21 with SMTP id
- 00721157ae682-7117539f8e2mr308912307b3.1.1750325787561; Thu, 19 Jun 2025
- 02:36:27 -0700 (PDT)
+	s=arc-20240116; t=1750325910; c=relaxed/simple;
+	bh=zrMqYXcpt3+8hKWKWL9H+r6ZpkeEiXxfMbk+2N1urQk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B5tT289lxua3NgIAlDBS60iQSoXC5AgBg0zhFXflI/fXpKjVEumfGg751e2hpgUu99TspMHB9bNVnWdZJKwAw+/oMxY/3HXhURzHzRaUrRb+ukRJVcpflNEL1lLSS2qJ1BCeNLDy9zwK7rb80jySOHJDtcMWbEujokrabOiGunA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Q41vX2XG; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1750325856;
+	bh=oAEDq5dDKcnnS2/NFb3lJLZSim6PZMNBCCc44x/tKTk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Q41vX2XG1nUzOByycrqcBvAMn/vPcQAvh4uFnptMR1XtJKRcvdYKHRL0Zu7GvnTGi
+	 t1Dk8EAPmsZNeortwavqiRZpopaeF9TSRFu/FjmjlLP5Gy+nqL2ARMYed4IlY7pz9i
+	 u/vH6h2FGU68JWeqp5PGoXbUDCINfHMkRRreAXXs=
+X-QQ-mid: zesmtpip3t1750325846ta1212646
+X-QQ-Originating-IP: cPfN9IJ3VtsMCBPFjOYSeIoL7AU/sGrgpJdMxuk/5Fg=
+Received: from avenger-e500 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 19 Jun 2025 17:37:24 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 6388095992895865980
+EX-QQ-RecipientCnt: 12
+From: WangYuli <wangyuli@uniontech.com>
+To: gregkh@linuxfoundation.org,
+	sashal@kernel.org,
+	stable@vger.kernel.org
+Cc: tangchengchang@huawei.com,
+	huangjunxian6@hisilicon.com,
+	jgg@ziepe.ca,
+	leon@kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Linxuan <chenlinxuan@uniontech.com>,
+	Winston Wen <wentao@uniontech.com>,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH 6.12/6.15] RDMA/hns: initialize db in update_srq_db()
+Date: Thu, 19 Jun 2025 17:37:19 +0800
+Message-ID: <3FDAD147897E51E6+20250619093719.90186-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Amit <amitchoudhary0523@gmail.com>
-Date: Thu, 19 Jun 2025 15:06:16 +0530
-X-Gm-Features: Ac12FXwXwNsJxfx_HLKXxp-nBdyhPBRC9jTjnu44SePD5ZWdlXIsLVHmAeDYNmA
-Message-ID: <CAFf+5zjW0En_BhpLNsqVTzJ+-kxPLdB_rK8=nmrideT03=ZKgg@mail.gmail.com>
-Subject: How to do secure coding and create secure software.
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MAMW4dxoxFythkLOmcE2IVooIkFLNl2vqZWLXB/0YFDTYFWT2T4TkzGd
+	loMUW0PDHaWTvSuWPyLssjMULuQl+3Oufspl0q3n7du8kFru0FPrA83A/D5cMuCBuTz6ex5
+	OnlBF3lLtJ8B/B/gnlESEobiq+J/cd2durlac0OPt5AxIZW1+QSGxDFmzetEgogQ3PgldI4
+	jubRl8FOnNVt95k8MahauTmNjJ98grAp+UCvh0nvjGVrwdw+qx4ZI3hJAm4rcplRpo5cmPd
+	zsF7HCFWgnWadMAjstXej7qt0CelCDtIbyE7ROo0QsyjYokcgoq/Ezq6SQujGaCdMPWF7gA
+	T1409n+UhIEinTp8zIVbSJ5mf0PJmMEWbDRsQte+TkemLLhefFzydwEApwV0KI3Ba6dgd64
+	jyuRg5qyO43Bn/uP+YmdFqjy4lFKomwPdqGM5xomEZy1nnUsq8qV2Uxy9K6m+Nl8oM5uSfq
+	P0YSTpO7QUxlun/6JTqlz4TrLNF9VCCdyN9ZevjHqrpSBssJCR6J2c9mUYDYb8CMdxU4ytS
+	6OG4I4/KXzyD94n21cd0TqkPxOzdgiQVenXN3RWJ38qEvrjeocP2IMewYfyY5Gw9zRHo+Bk
+	Q5GwNozIWKxjQgZrqmoClUrJZfEm8Wnmd1ruhdcBL/jmrPJRfXAeibbZHKCdm8yIN+0UI6G
+	JFaiCPLMrlrHGkg6iAgAvfzfZ32FFYYmV6UOtANPJOT02BoQsEBGSVVgBS00eQRjcO0Q1pd
+	sgye5Lh1YhLjKYUVxX2Hdek7Unag5cky3zKFIPIv4BgjNByvXlXz/7JuydrluJaBh3IEJwQ
+	28noT7PAAS3+4U6zT+0uPKeDxYPmVJTVuW5jFGt1HCiFf1o+5fNe2xKWHFVshpaQMrrxLtS
+	Hdx4BrResuMnubSmB6djdGyxMV7Uz9313agc52KiV75a+5HLiONN7NmlaGGyqD5Ui0fNyV0
+	Jp7R1qa59YMCkz5iBNN7OB4VYhQ9F+xnb8yHxgoqlEjvqX7EYmIABHvnlfA6wtWw4DuWHUU
+	QTlz4pDo9hIa656+5vHg6vGCsAyRAIqRmnYhjwcAEpmyxMXhTNwOBgBMVgTIo=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-How to do secure coding and create secure software.
+From: Chen Linxuan <chenlinxuan@uniontech.com>
 
------------------------------------------------------------------------
-How to do secure coding and create secure software
------------------------------------------------------------------------
+[ Upstream commit ffe1cee21f8b533ae27c3a31bfa56b8c1b27fa6e ]
 
-I can do secure coding and no one can hack my code unless the language/OS have
-some issues. You can challenge me on this.
+On x86_64 with gcc version 13.3.0, I compile
+drivers/infiniband/hw/hns/hns_roce_hw_v2.c with:
 
-Ultimately, all software boil down to functions/methods. If functions/methods
-are secure then the whole software is secure.
+  make defconfig
+  ./scripts/kconfig/merge_config.sh .config <(
+    echo CONFIG_COMPILE_TEST=y
+    echo CONFIG_HNS3=m
+    echo CONFIG_INFINIBAND=m
+    echo CONFIG_INFINIBAND_HNS_HIP08=m
+  )
+  make KCFLAGS="-fno-inline-small-functions -fno-inline-functions-called-once" \
+    drivers/infiniband/hw/hns/hns_roce_hw_v2.o
 
-If all functions in all software in this world are secure then there won't be
-any hacking.
+Then I get a compile error:
 
-Now, in the following text, the word function will mean both function and
-method.
+    CALL    scripts/checksyscalls.sh
+    DESCEND objtool
+    INSTALL libsubcmd_headers
+    CC [M]  drivers/infiniband/hw/hns/hns_roce_hw_v2.o
+  In file included from drivers/infiniband/hw/hns/hns_roce_hw_v2.c:47:
+  drivers/infiniband/hw/hns/hns_roce_hw_v2.c: In function 'update_srq_db':
+  drivers/infiniband/hw/hns/hns_roce_common.h:74:17: error: 'db' is used uninitialized [-Werror=uninitialized]
+     74 |                 *((__le32 *)_ptr + (field_h) / 32) &=                          \
+        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  drivers/infiniband/hw/hns/hns_roce_common.h:90:17: note: in expansion of macro '_hr_reg_clear'
+     90 |                 _hr_reg_clear(ptr, field_type, field_h, field_l);              \
+        |                 ^~~~~~~~~~~~~
+  drivers/infiniband/hw/hns/hns_roce_common.h:95:39: note: in expansion of macro '_hr_reg_write'
+     95 | #define hr_reg_write(ptr, field, val) _hr_reg_write(ptr, field, val)
+        |                                       ^~~~~~~~~~~~~
+  drivers/infiniband/hw/hns/hns_roce_hw_v2.c:948:9: note: in expansion of macro 'hr_reg_write'
+    948 |         hr_reg_write(&db, DB_TAG, srq->srqn);
+        |         ^~~~~~~~~~~~
+  drivers/infiniband/hw/hns/hns_roce_hw_v2.c:946:31: note: 'db' declared here
+    946 |         struct hns_roce_v2_db db;
+        |                               ^~
+  cc1: all warnings being treated as errors
 
-I am listing the main points of secure coding below. These points are applicable
-to almost all languages.
+Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Co-developed-by: Winston Wen <wentao@uniontech.com>
+Signed-off-by: Winston Wen <wentao@uniontech.com>
+Link: https://patch.msgid.link/FF922C77946229B6+20250411105459.90782-5-chenlinxuan@uniontech.com
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-1. The first point is that all the arguments to your function should be checked
-always whether they are in the allowed range or not, even if your function is
-called from other trusted functions and even if your function is
-private/protected or static. The value of a function argument should not be
-unbounded, it should be within a bounded range. All function arguments should
-have a MIN value and a MAX value. For example, you can specify that the minimum
-length of a string argument should be 1 and the maximum length of the string
-argument should be 1024. Now, for getting the length of the string you will have
-to write your own strlen() function, you can't depend on the strlen() function
-of any library because the library's version will keep counting until it finds
-'\0' character and by then your program may crash. If you are using C language
-then you can use strnlen() function. The code will be "len = strnlen(str, 1025);
-if (len == 1025) { return error; }". Similarly, your 'int' arguments, 'float'
-arguments, etc. should also have a bounded range (a MIN value and a MAX value).
-Also, always check that whether the pointer arguments are NULL or not.
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index 160e8927d364..afd2ea6da3ee 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -943,7 +943,7 @@ static void fill_wqe_idx(struct hns_roce_srq *srq, unsigned int wqe_idx)
+ static void update_srq_db(struct hns_roce_srq *srq)
+ {
+ 	struct hns_roce_dev *hr_dev = to_hr_dev(srq->ibsrq.device);
+-	struct hns_roce_v2_db db;
++	struct hns_roce_v2_db db = {};
+ 
+ 	hr_reg_write(&db, DB_TAG, srq->srqn);
+ 	hr_reg_write(&db, DB_CMD, HNS_ROCE_V2_SRQ_DB);
+-- 
+2.50.0
 
-Now, a counterpoint can be that checking all the function arguments will take
-more time but actually because of very fast processors available these days,
-it will not take noticeable time. On a 1 GHz processor, you can execute
-1 Gig (2^30 or 10^9 for simplicity) instructions per second. So, if you are
-checking a pointer for NULL then it will be around 5 instructions. So, this
-will take only 5 nanoseconds (5 * 10^-9 seconds). So, time consumed in checking
-arguments is not a big issue. Checking the length of a string may take some more
-time but it will also be not noticeable. Assuming 5 instructions for checking
-for NULL character ('\0') and 1 instruction for incrementing the len variable
-and another 5 instructions for comparing the len variable to the MAX string len,
-then we have 11 instructions per character. If the length we want to check is
-1000 then it will be 11,000 instructions and it will take only 11 microseconds
-(11 * 10^-6 seconds). So, this time is also not noticeable.
-
-2. The function body should also be secure. After writing code, you should
-review your code for security issues and also get it peer reviewed for security
-issues. In general, you should always get your code peer reviewed for security
-issues, bugs, company coding guidelines, etc. Some common security issues are -
-infinite loops that were actually not intended to be infinite loops, NULL
-pointer dereference, accessing memory that is not part of your program, copying
-more data in a buffer than the actual size of the buffer (aka buffer overflow),
-stack overflow, out-of-bounds access (for arrays), using memory/pointer after
-freeing it, etc. If you are programming in C language then you shouldn't use
-unbounded C functions like - strcpy(), strlen(), strcat(), gets(), etc.,
-but instead you should use bounded C functions like - strncpy(), strnlen(),
-strncat(), fgets(), etc.
-
-3. Always check the return values of the functions that you are calling before
-proceeding ahead. Don't assume that all functions will always succeed. It is
-quite possible that a function always succeeds in internal testing but it may
-fail when customers start using your software. If the function that you called
-returned an error and if you didn't check it and proceeded ahead then wrong
-things can happen and these wrong things can open a security hole in your
-software and your software may get hacked.
-
-4. Don't use an unsigned data type unless you are dealing with binary data
-(like - raw bits, raw bytes, network data, data from hardware devices, etc.).
-Although unsigned data type in itself doesn't present any security issue but if
-the usage of the unsigned data type is wrong then it can lead to security
-issues. For example, if you use an unsigned integer variable in a loop and the
-exit condition of the loop is that this unsigned integer variable becomes less
-than 0, then this loop will never exit because an unsigned integer variable will
-never become negative and this infinite loop can open some security holes in
-your software. Another issue with unsigned data type is that when you convert
-an unsigned data type to a signed data type then although the bits values are
-not changed but the interpretation of the bits values change because the data
-types are different. So, let's say that you have an unsigned integer 'u' and in
-'u' the most significant bit is set. But, 'u' is still positive because it is of
-unsigned type. Now, if you typecast 'u' to a signed integer variable 's' then
-'s' will be interpreted as being negative because the most significant bit is
-set. So, "u > 0" will be true but "s > 0" will be false. So, now, if you use 's'
-in some comparison then the results may not be as expected and this may open a
-security hole in your software.
-
-5. Don't typecast between data types of different lengths. This is because the
-values may change if you typecast from a longer data type to a shorter data
-type. For example, let's say that you have a 'long' variable 'l' that has a
-value of 8589934591 (0x1FFFFFFFF) and now if you typecast it to an 'int'
-variable 'i', then the value of 'i' will become -1 (0xFFFFFFFF). Now, when you
-use 'i' in your program then unexpected things may happen and these may lead to
-security issues in your software.
-
-When you typecast from a shorter data type to a longer data type and if the
-shorter data type is negative then signed extension will happen in the longer
-data type and you may not be expecting that and this may probably open a
-security hole in your software.
-
-6. Don't hard-code passwords or any other credentials in your program/software.
-Hard-coding these is a big security issue.
-
-7. Don't use recursive functions, unless absolutely necessary, because recursive
-functions can lead to stack overflow and stack overflow is a security issue.
-
-8. Avoid using global variables. In object oriented languages avoid using public
-variables as much as possible. In C language also you should avoid global
-variables, but in case you need to use some, then make them 'static' so that
-they are not visible outside the file.
-
-9. Initialize all variables (global/local/static/private/protected/public) to
-proper values before using them (in C/C++ uninitialized global and static
-variables are automatically initialized to 0).
-
-10. Don't expose all functions to the user. Expose only those functions that the
-user will actually need, rest of the functions should be private/protected in
-object oriented languages and static in C language.
-
-In my opinion, if you follow these points then your functions/software will be
-secure. I follow these points and my functions/software are fully secure, they
-can't be hacked.
-
-----
 
