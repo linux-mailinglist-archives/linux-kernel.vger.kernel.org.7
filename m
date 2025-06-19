@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-694399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE16AE0BEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:30:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88995AE0BED
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 19:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 417785A3A61
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:30:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDEE27ACDC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798BB28DF0A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93D228DF23;
 	Thu, 19 Jun 2025 17:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pT9Ouj/J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LbGvVzdH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C968928B7DF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0057923C8D3;
 	Thu, 19 Jun 2025 17:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750354214; cv=none; b=Bbxq05f44zkH9DtbiwnKc5BSgMRun8BTDPIEXyr0Bu/PuLsrp+5g7ts07IJeX6hJq0JN4TydOK8U/+y03B6CNEZCUqZqsdsAsWs/M1swPGdNk4FY1d9ROvezR86mTG39cELOGvUy20xRPU8zJAycBu2rJM0d5dQtURTekD5XCE0=
+	t=1750354215; cv=none; b=XdVjuHRBti9EcfXsEDsNG5CodjRQMBSthWD5bb63H54guM8kKwQudG34HwijRnDI6yh/1p6tMcJvgkliYZGmDGj/Upo+L1vELm2isLwkafz7fUJuaJUly9AcP+FAKV5w5qNogmdP6zqvHh70eFjuaBVoYAi9cI0O+JG6dVA7+FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750354214; c=relaxed/simple;
-	bh=q6nrjT2Dpercv5DoePpH+dBXKOMzG9sjRP9CjTTCRFQ=;
+	s=arc-20240116; t=1750354215; c=relaxed/simple;
+	bh=wCB6x+x+rj6RDpHRZY4HD76LxIfQ6M7f4ACdL/qmmIg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sTRUcDEg5/eKZ7VUGg9rZ8LbcKlEkPY4L27yeOapWZyWKIrSBWCP/7yla8GNyz4jLAR9e8GSCeGbCfmukGwBhpEQqo4ey1TdQeLb/rz9Bico5HVMZ6Qn68dH8tpqEvWQhKussnNVDCjGOjjop5YYCeIFMjY8l9x0x/duxW/IWFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pT9Ouj/J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 369AEC4CEEA;
+	 MIME-Version; b=S9orCDDm/HtGWMgkxPbVbUCQeA54aPn6ndfUrysc0WaTA+ZGW2r7OcfcEkHBpOa+cV2kbxlW/pFhD0HGqnEcb+F+5ywcr12Y9yffZo11d4ISb8cd2pasK6GDcpafGAC7htbmu+lJHK5UStFqB7sFqMoBr4nwqK23L2WThR2XagI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LbGvVzdH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 661DDC4CEF2;
 	Thu, 19 Jun 2025 17:30:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1750354214;
-	bh=q6nrjT2Dpercv5DoePpH+dBXKOMzG9sjRP9CjTTCRFQ=;
+	bh=wCB6x+x+rj6RDpHRZY4HD76LxIfQ6M7f4ACdL/qmmIg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pT9Ouj/JeTRfyA+9Nv+N2klirdDENDpWxZMDFqGzbQzxJaKbewkF05a1GUWrJ4NUq
-	 ziWjJqcoKvIbVk83Ze0XqjdkJUHZ8o+oUuKy60SZQBlHeEGeQfKrL7iJRbHgg2xD8M
-	 XucpkGHYAe3h0hvGC5VL0wzZkYVmNChU20yFmqIxpf9s9OTICKf9ZYPBhrO6e76hoZ
-	 /xQPRGr5YrkdZg5P/JI64s6arkvyCF6Pm/hVTRR2W3hS0IeG1dMmThtlOTPAAiI42i
-	 rZ82WhiFUPnM2cMdv3rVz2CwAj9f6NXXrkyqxdobNI0rPPHOS8eX4QuUuZNULVSpc+
-	 cS/y5yZtL3Q9A==
+	b=LbGvVzdHbUtWcUe5zogrNMWHrikLfYW7CiqIm9magQRZamU51Bz3bIPrs08YON8eY
+	 MsAoHl/0ZxMBtYfxmP6gpDhQOGriw/kmXXA70phtpov5VunsRmNKxK4LpDzO9J2KUs
+	 muXcN51nqvp3hfBVBnrahfk9Gno1ozMskt+/8FJJ4jA0KU9FJFIWA01jg2PbsHs2Wh
+	 V/39gC/0Kv1CkQi7eqNEp9DzlEj4Gv+wDi3nvH9DXvJbZMK24FRalFsKC+9lm0myg0
+	 NUKXryWBH3zpxt1b8vE1r7Gc9VOjGliFOeYVzmI2oosATVZhuPMWY7aYCoTHzIxCut
+	 dFUoH07Ie8DmQ==
 Received: by wens.tw (Postfix, from userid 1000)
-	id 1BFD85FE81; Fri, 20 Jun 2025 01:30:12 +0800 (CST)
+	id 23E095FF4F; Fri, 20 Jun 2025 01:30:12 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -54,9 +54,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH 1/5] dt-bindings: arm: sunxi: Add Xunlong OrangePi 4A board
-Date: Fri, 20 Jun 2025 01:30:03 +0800
-Message-Id: <20250619173007.3367034-2-wens@kernel.org>
+Subject: [PATCH 2/5] arm64: dts: allwinner: a523: Move mmc nodes to correct position
+Date: Fri, 20 Jun 2025 01:30:04 +0800
+Message-Id: <20250619173007.3367034-3-wens@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250619173007.3367034-1-wens@kernel.org>
 References: <20250619173007.3367034-1-wens@kernel.org>
@@ -70,32 +70,160 @@ Content-Transfer-Encoding: 8bit
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-The OrangePi 4A is a typical Raspberry Pi model B sized development
-board from Xunlong designed around an Allwinner T527 SoC.
+When the mmc nodes were added to the dtsi file, they were inserted in
+the incorrect position.
 
-Add its compatible name to the list of valid ones.
+Move them to the correct place.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- Documentation/devicetree/bindings/arm/sunxi.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 126 +++++++++---------
+ 1 file changed, 63 insertions(+), 63 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml b/Documentation/devicetree/bindings/arm/sunxi.yaml
-index 7807ea613258..c41d0a0b89e6 100644
---- a/Documentation/devicetree/bindings/arm/sunxi.yaml
-+++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
-@@ -996,6 +996,11 @@ properties:
-           - const: xunlong,orangepi-3
-           - const: allwinner,sun50i-h6
+diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+index 8b7cbc2e78f5..458d7ecedacd 100644
+--- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+@@ -181,69 +181,6 @@ ccu: clock-controller@2001000 {
+ 			#reset-cells = <1>;
+ 		};
  
-+      - description: Xunlong OrangePi 4A
-+        items:
-+          - const: xunlong,orangepi-4a
-+          - const: allwinner,sun55i-t527
+-		mmc0: mmc@4020000 {
+-			compatible = "allwinner,sun55i-a523-mmc",
+-				     "allwinner,sun20i-d1-mmc";
+-			reg = <0x04020000 0x1000>;
+-			clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
+-			clock-names = "ahb", "mmc";
+-			resets = <&ccu RST_BUS_MMC0>;
+-			reset-names = "ahb";
+-			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&mmc0_pins>;
+-			status = "disabled";
+-
+-			max-frequency = <150000000>;
+-			cap-sd-highspeed;
+-			cap-mmc-highspeed;
+-			cap-sdio-irq;
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-		};
+-
+-		mmc1: mmc@4021000 {
+-			compatible = "allwinner,sun55i-a523-mmc",
+-				     "allwinner,sun20i-d1-mmc";
+-			reg = <0x04021000 0x1000>;
+-			clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
+-			clock-names = "ahb", "mmc";
+-			resets = <&ccu RST_BUS_MMC1>;
+-			reset-names = "ahb";
+-			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&mmc1_pins>;
+-			status = "disabled";
+-
+-			max-frequency = <150000000>;
+-			cap-sd-highspeed;
+-			cap-mmc-highspeed;
+-			cap-sdio-irq;
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-		};
+-
+-		mmc2: mmc@4022000 {
+-			compatible = "allwinner,sun55i-a523-mmc",
+-				     "allwinner,sun20i-d1-mmc";
+-			reg = <0x04022000 0x1000>;
+-			clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
+-			clock-names = "ahb", "mmc";
+-			resets = <&ccu RST_BUS_MMC2>;
+-			reset-names = "ahb";
+-			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&mmc2_pins>;
+-			status = "disabled";
+-
+-			max-frequency = <150000000>;
+-			cap-sd-highspeed;
+-			cap-mmc-highspeed;
+-			cap-sdio-irq;
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-		};
+-
+ 		wdt: watchdog@2050000 {
+ 			compatible = "allwinner,sun55i-a523-wdt";
+ 			reg = <0x2050000 0x20>;
+@@ -449,6 +386,69 @@ its: msi-controller@3440000 {
+ 			};
+ 		};
+ 
++		mmc0: mmc@4020000 {
++			compatible = "allwinner,sun55i-a523-mmc",
++				     "allwinner,sun20i-d1-mmc";
++			reg = <0x04020000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
++			clock-names = "ahb", "mmc";
++			resets = <&ccu RST_BUS_MMC0>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&mmc0_pins>;
++			status = "disabled";
 +
-       - description: Xunlong OrangePi Lite
-         items:
-           - const: xunlong,orangepi-lite
++			max-frequency = <150000000>;
++			cap-sd-highspeed;
++			cap-mmc-highspeed;
++			cap-sdio-irq;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		mmc1: mmc@4021000 {
++			compatible = "allwinner,sun55i-a523-mmc",
++				     "allwinner,sun20i-d1-mmc";
++			reg = <0x04021000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
++			clock-names = "ahb", "mmc";
++			resets = <&ccu RST_BUS_MMC1>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&mmc1_pins>;
++			status = "disabled";
++
++			max-frequency = <150000000>;
++			cap-sd-highspeed;
++			cap-mmc-highspeed;
++			cap-sdio-irq;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		mmc2: mmc@4022000 {
++			compatible = "allwinner,sun55i-a523-mmc",
++				     "allwinner,sun20i-d1-mmc";
++			reg = <0x04022000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
++			clock-names = "ahb", "mmc";
++			resets = <&ccu RST_BUS_MMC2>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&mmc2_pins>;
++			status = "disabled";
++
++			max-frequency = <150000000>;
++			cap-sd-highspeed;
++			cap-mmc-highspeed;
++			cap-sdio-irq;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		usb_otg: usb@4100000 {
+ 			compatible = "allwinner,sun55i-a523-musb",
+ 				     "allwinner,sun8i-a33-musb";
 -- 
 2.39.5
 
