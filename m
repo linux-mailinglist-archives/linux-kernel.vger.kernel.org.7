@@ -1,274 +1,150 @@
-Return-Path: <linux-kernel+bounces-693708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A778CAE029D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:26:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01702AE02A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05A321BC2686
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:27:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A08933A93D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C31223DCB;
-	Thu, 19 Jun 2025 10:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E54223DF5;
+	Thu, 19 Jun 2025 10:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LEtDX93D"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JqML1Wc7"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B424223302
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 10:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9EE223302
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 10:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750328804; cv=none; b=tzy9fwbZ8IxhEceiTJahuhKdGJ8uQRTWvxpSRLyL9ZehhevvraIBhIIqT7jGIMgObYqxo13AvTvHKu/YDHZdkzcwv3Yp/vbtUtXj5jc3qtiqOAYYR6HJSziEldyTua2u5ycJOmZGRrYSZe8knj/SVDH9fj5xqI+yxuAKEt/D8rs=
+	t=1750328848; cv=none; b=nPU0O3V+6EFtrFny07dcjnfVbCKb0qRjNtFio4kfeos0NDEya6ILqDy9hgt6EiSH3/GWFX6QBPD63WmcqSLVAXDNZetk7tPISjjWr5tf8vmCLmaj0WqyPJXH3e0vmZjfEbWzSIAXnTt6nGxnPyn1PwdQOhM0fWBr2itJGd8EGP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750328804; c=relaxed/simple;
-	bh=l5p9J2QLOh7J7ogYCt7vV0BkK248vYvNV1+J7U/FHbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LBYAyks59lh4P1T/A5R51ltAGYSnhiulEJPtfHfZuUAcWeSEwttB3/6s0SvL9TVVqh60Lg65oGTueR+iUuikwLUcgTDI3jVFYaSkcdP/CqPgKfohhXM2dc7+ZsZWu0CHpCOFRHDwciO4MlnvV+3HePzkR3dHBOjt0Ltk+61grwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LEtDX93D; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-235e389599fso166605ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 03:26:41 -0700 (PDT)
+	s=arc-20240116; t=1750328848; c=relaxed/simple;
+	bh=Ha5pBnLB+/Wbwr2eoWpkZtiP3585DllDK64zqWFbpak=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oh1pyZaAYsctTcmhF6vIhBYD/Uo61w7c409bDsSN35wjSkSCWF50GIUZtztVFUCjF/xTRp+d4u7e6EpPB+ND1nTNrgchQaXCwjQ3StPf+2bzZnOAJNGZpVFwFandTbWYi3+7NGv99U4lf0avVuSrPZZdK+e4N7CWmYRAL8t661w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JqML1Wc7; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60789b450ceso1128364a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 03:27:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750328801; x=1750933601; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jrdYKQcH3sp0apOchPLnA+m1+Ly6Mzn8RffcZko3gSE=;
-        b=LEtDX93DFDeoZojEpnkHQoJVgEjAjCq1ih1RMCuWDYzYmZZv3SLgc0FZdXOI2A3j/C
-         SdgFl4AhIqn4ONzjhg45rpCucJulpSBGol1w+Th70biz5NQKTz8PWqXeuoKNnRgFaDBc
-         4Bg5zT353R+aAQpkHSL0zA9rUjwWp5Fp9gyNd/PiXTqt9t9FAMB+oSqfwK49GF3E1qwW
-         05hAMioXNDT3Ot+mhhxHdim0wxdl+EFqJX3a7B0CXgvqSRoLMtwtadbTUMnqtbNgLKnI
-         9stDrgABCzz0L1sZxGi45E7bMkyAYLzVmSR7DKFrIry7eUNdzxIgSvXutCHzOWHqc0ig
-         AdZQ==
+        d=suse.com; s=google; t=1750328845; x=1750933645; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rZdjOXoFyem5NArONK8WTWDxOqEiaiq3A+0Wr1BizhY=;
+        b=JqML1Wc7NAPWv3jL7VLHB1MZbHZO0/r1ugdc5f4weQlFrr1GcdTqHydNmE1MRa5/kF
+         ufOTkR6Ig3UNdJpMBWSqTtwOgRx4lbho2ahCK3FlZ+C/wPRXwOSOmpB0r25t784+HrEy
+         x/SVy/S8+1DCYV1HsHi7k/G6cEsirZgKD43YVS3AlN5OI3wIsvgX6F1XPX7jZtuIAnF8
+         se2axncjg8I/2lDU74Ut+MARSWJenNq+UyJBid+NkgVdEWSBmnjO+rXWIaizPTOGG7Yq
+         cL/NBlzsaURJZ4qEyE2PDh8jMPNd5fgfj8c/Xubce2jbOjIdmt3hMD0wYGpGqeYn/3av
+         eIjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750328801; x=1750933601;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jrdYKQcH3sp0apOchPLnA+m1+Ly6Mzn8RffcZko3gSE=;
-        b=DwaLifx0Bgak1FK6SbBX0ALBmVZ8HafiIHCB6C4yoR1yvxbLStWEFWiRzg51u57Vua
-         6UfG9mVbkWTfljYLIo0eCqvK66jWVrH0+0MFM23ZKuFOUHeZQB0h/IKcBwq6EBX/5Qr7
-         uKh9zxJ0FfOkN3QhEXQaxmuEcGBGplwtrprnV+8bEIvHymTiXkSeLjWs7yCBqkw6Bf4z
-         d8ndtcn6VdTyW7qAYFmVOaXnj6jF0pHHwYP55Aokh6jsOMx5PrdQDHtpW/ii2a45mBKM
-         itVcf8dt88XvSg6BNekauFRuvrs5h801GwVNCuMmtgsOw8TE3vUWI9SI/17IjIdQeIrc
-         7xOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNTCWjXYAMLobpAdr02lonNOxy+q16CPtqvdZUPfA6aECQqdsMadmSbbHOmQSw0x2H2JHz6hNSsfsznBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzRlTlhDae18Vj2e+tYbn1YjG61g7xKl90OrJqSFIfgSXHgaq0
-	HNMc1MDFL5IPvKGv95eB/C+Kt1uTek66JLnrh26+EtJCd76SFsrCS+5IuIIMCKPMUg==
-X-Gm-Gg: ASbGncvWUqUku81brYT1b3R08wXfrNIRRHh3eFl+FaakRkwQxEM0LjGJzZmSYN6egpS
-	tMNunPEcU2fRdmExXWEeqg/0v22nzYAqms7OmC3puSZYTuFrX62IvVEHE5p/df6GAotlOCGM2/6
-	rF/a1F3byODoMnml5y6sKYTHp8FitkHOWZXCVqVqaMkne/oNC46fShR6t3ba1tdvpxB9fkb8mlB
-	WpaH1PP+k6fogxnM/qi+MlhOdxXIlf88u6hqYv5Y6RXEET82sNQiTI9HdnBrsgISDm4N3bGTSgT
-	UYuIV7/vR2s9YXqZAh/Ju3EsNg2taUBbgsNKaG+QkptJyTwY/lGsjyNJMztBtyyHP5ajLSeMC34
-	9VKORJmxvVmIGKw7u8Ow4
-X-Google-Smtp-Source: AGHT+IGiUkrhNhPK9lXuO365Ne3OwVoTaAk8SvrZ2YyadUl+5Mml/HIcLv4k3/+1+30tV1lrdYYgXA==
-X-Received: by 2002:a17:902:e5c3:b0:224:6c8:8d84 with SMTP id d9443c01a7336-237cca5ada5mr2619125ad.4.1750328800415;
-        Thu, 19 Jun 2025 03:26:40 -0700 (PDT)
-Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748900b04e4sm12850712b3a.121.2025.06.19.03.26.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 03:26:39 -0700 (PDT)
-Date: Thu, 19 Jun 2025 10:26:28 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
-	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
-	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
-	zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v6 08/25] iommufd/viommu: Add driver-defined vDEVICE
- support
-Message-ID: <aFPl1LD8r3Du-Far@google.com>
-References: <cover.1749884998.git.nicolinc@nvidia.com>
- <937d515032be07af36c06a4adb662ee2f7693c75.1749884998.git.nicolinc@nvidia.com>
+        d=1e100.net; s=20230601; t=1750328845; x=1750933645;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rZdjOXoFyem5NArONK8WTWDxOqEiaiq3A+0Wr1BizhY=;
+        b=Yp28aerFDHtxPgzuGhptPs9ESHkm1JMqEyezEXANnVJ+zow6mIROTXtoGXNoLK1Sip
+         1EtMdHTykxQfIlUaMFMyMZCdaBEKlySNl4JLouZOa+cq2KJY6lcvKs+QmQMS35ChjqQE
+         ii/p4yDb57MhUem2+qLGbIWIyHu3Ah3h1a8xSoLY7l+rMDS0rOdgsCqCs6FFCietck7r
+         3cegmf5+CLFKCu1D+alMUgY4vt/SNwz1O7Slirx/VuRQwKLaK7oVCTXRG6VD/OBiuD2x
+         e8m9H+i8tjDRZ1UTXaPVBjCvNP27ocrhcyQX+YSfvG8lBZuDm/JEy4q9bMu/IGoelm15
+         67Og==
+X-Forwarded-Encrypted: i=1; AJvYcCXAkA3RsuTZagqvoIu3fhze2fBxXs+mG0jZJcI2dl+BZkQK2vSHxsnpD9+VMMfQleY1bo2bs4vihufPCEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1aHGtI2lWNOUZJisY3e2LzfqXRS1SArnoBjI5LyCsQhYOX4fY
+	55dTx0lMDeSqsQR+VdGdwqUyBStUWr6tyk0HGxwzwZ5BjB8hxl4cdsWoNsPyVeblmWTXFWlzRfG
+	S6rfraLLxdBIL7MojKKygEhzDVzczOzMHMULLe/Ma4w==
+X-Gm-Gg: ASbGncs81Q5pdgEVY6gWTNHhh2Xm0pqngY+UdpYuYqgfZaDBvs0wxhtVGYCTUvCW8r1
+	20mB690kNpjgoVsG+pFx05JDSIWF1MLdtuxJebo0z0Z3qmhLaWs5K2XzJKCVp5KYbQ3IUpmxhu/
+	33nAzRnVEq/WleZuUIfR+od/88ik5kZt2AIKjyo2mckQ==
+X-Google-Smtp-Source: AGHT+IFYv31V1VgYj7wiOVm2AcC04l9vXTzMKPEBeuLWE5AE7D0FfXX1iQiGE7VRTJ93WYdkcN9OxbbTEzQSKRnBhmU=
+X-Received: by 2002:a17:907:3d45:b0:ad8:91e4:a937 with SMTP id
+ a640c23a62f3a-adfad6d19a6mr2027896366b.57.1750328844882; Thu, 19 Jun 2025
+ 03:27:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <937d515032be07af36c06a4adb662ee2f7693c75.1749884998.git.nicolinc@nvidia.com>
+References: <20250613183753.31864-1-ebiggers@kernel.org> <20250613183753.31864-3-ebiggers@kernel.org>
+ <20250617201748.GE4037@suse.cz> <20250617202050.GB1288@sol> <20250617204756.GD1288@sol>
+In-Reply-To: <20250617204756.GD1288@sol>
+From: Daniel Vacek <neelx@suse.com>
+Date: Thu, 19 Jun 2025 12:27:13 +0200
+X-Gm-Features: Ac12FXxSj7KHDxvaD5P250FA9B_gw9jTRxjEbr9hoYukN-7E6ZC33jFtxLAiusA
+Message-ID: <CAPjX3Ff-A+M9Ad7iJFTDGAs=M1d6zOqDq48i1GmRn967a_GDsw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] crypto/crc32[c]: register only "-lib" drivers
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: David Sterba <dsterba@suse.cz>, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, linux-btrfs@vger.kernel.org, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+	David Sterba <dsterba@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Jun 14, 2025 at 12:14:33AM -0700, Nicolin Chen wrote:
-> NVIDIA VCMDQ driver will have a driver-defined vDEVICE structure and do
-> some HW configurations with that.
-> 
-> To allow IOMMU drivers to define their own vDEVICE structures, move the
-> struct iommufd_vdevice to the public header and provide a pair of viommu
-> ops, similar to get_viommu_size and viommu_init.
-> 
-> Doing this, however, creates a new window between the vDEVICE allocation
-> and its driver-level initialization, during which an abort could happen
-> but it can't invoke a driver destroy function from the struct viommu_ops
-> since the driver structure isn't initialized yet. vIOMMU object doesn't
-> have this problem, since its destroy op is set via the viommu_ops by the
-> driver viommu_init function. Thus, vDEVICE should do something similar:
-> add a destroy function pointer inside the struct iommufd_vdevice instead
-> of the struct iommufd_viommu_ops.
-> 
-> Note that there is unlikely a use case for a type dependent vDEVICE, so
-> a static vdevice_size is probably enough for the near term instead of a
-> get_vdevice_size function op.
-> 
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/iommufd/iommufd_private.h |  7 -------
->  include/linux/iommufd.h                 | 26 +++++++++++++++++++++++++
->  drivers/iommu/iommufd/viommu.c          | 26 ++++++++++++++++++++++++-
->  3 files changed, 51 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-> index 468717d5e5bc..e6b1eb2ab375 100644
-> --- a/drivers/iommu/iommufd/iommufd_private.h
-> +++ b/drivers/iommu/iommufd/iommufd_private.h
-> @@ -638,13 +638,6 @@ void iommufd_viommu_destroy(struct iommufd_object *obj);
->  int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd);
->  void iommufd_vdevice_destroy(struct iommufd_object *obj);
->  
-> -struct iommufd_vdevice {
-> -	struct iommufd_object obj;
-> -	struct iommufd_viommu *viommu;
-> -	struct device *dev;
-> -	u64 id; /* per-vIOMMU virtual ID */
-> -};
-> -
->  #ifdef CONFIG_IOMMUFD_TEST
->  int iommufd_test(struct iommufd_ucmd *ucmd);
->  void iommufd_selftest_destroy(struct iommufd_object *obj);
-> diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
-> index 2d1bf2f97ee3..f3b5cfdb6d53 100644
-> --- a/include/linux/iommufd.h
-> +++ b/include/linux/iommufd.h
-> @@ -104,6 +104,16 @@ struct iommufd_viommu {
->  	enum iommu_viommu_type type;
->  };
->  
-> +struct iommufd_vdevice {
-> +	struct iommufd_object obj;
-> +	struct iommufd_viommu *viommu;
-> +	struct device *dev;
-> +	u64 id; /* per-vIOMMU virtual ID */
+On Tue, 17 Jun 2025 at 22:48, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Tue, Jun 17, 2025 at 01:20:50PM -0700, Eric Biggers wrote:
+> > On Tue, Jun 17, 2025 at 10:17:48PM +0200, David Sterba wrote:
+> > > On Fri, Jun 13, 2025 at 11:37:53AM -0700, Eric Biggers wrote:
+> > > > From: Eric Biggers <ebiggers@google.com>
+> > > >
+> > > > For the "crc32" and "crc32c" shash algorithms, instead of registering
+> > > > "*-generic" drivers as well as conditionally registering "*-$(ARCH)"
+> > > > drivers, instead just register "*-lib" drivers.  These just use the
+> > > > regular library functions crc32_le() and crc32c(), so they just do the
+> > > > right thing and are fully accelerated when supported by the CPU.
+> > > >
+> > > > This eliminates the need for the CRC library to export crc32_le_base()
+> > > > and crc32c_base().  Separate patches make those static functions.
+> > > >
+> > > > Since this patch removes the "crc32-generic" and "crc32c-generic" driver
+> > > > names which crypto/testmgr.c expects to exist, update crypto/testmgr.c
+> > > > accordingly.  This does mean that crypto/testmgr.c will no longer
+> > > > fuzz-test the "generic" implementation against the "arch" implementation
+> > > > for crc32 and crc32c, but this was redundant with crc_kunit anyway.
+> > > >
+> > > > Besides the above, and btrfs_init_csum_hash() which the previous patch
+> > > > fixed, no code appears to have been relying on the "crc32-generic" or
+> > > > "crc32c-generic" driver names specifically.
+> > > >
+> > > > btrfs does export the checksum driver name in
+> > > > /sys/fs/btrfs/$uuid/checksum.  This patch makes that file contain
+> > > > "crc32c-lib" instead of "crc32c-generic" or "crc32c-$(ARCH)".  This
+> > > > should be fine, since in practice the purpose of this file seems to have
+> > > > been just to allow users to manually check whether they needed to enable
+> > > > the optimized CRC32C code.  This was needed only because of the bug in
+> > > > old kernels where the optimized CRC32C code defaulted to off and even
+> > > > needed to be explicitly added to the ramdisk to be used.  Now that it
+> > > > just works in Linux 6.14 and later, there's no need for users to take
+> > > > any action and this file is basically obsolete.
+> > >
+> > > Well, not the whole file, because it says which checksumming algo is
+> > > used for the filesystem, but the implementation part is.
+> >
+> > Oh, right.  It's one of those sysfs files that don't follow the normal sysfs
+> > convention and contain multiple values.  I'll update the paragraph above to
+> > clarify that it's referring to the driver name part of the file.
+>
+> I revised it to:
+>
+> btrfs does export the checksum name and checksum driver name in
+> /sys/fs/btrfs/$uuid/checksum.  This commit makes the driver name portion
+> of that file contain "crc32c-lib" instead of "crc32c-generic" or
+> "crc32c-$(ARCH)".  This should be fine, since in practice the purpose of
+> the driver name portion of this file seems to have been just to allow
+> users to manually check whether they needed to enable the optimized
+> CRC32C code.  This was needed only because of the bug in old kernels
+> where the optimized CRC32C code defaulted to off and even needed to be
+> explicitly added to the ramdisk to be used.  Now that it just works in
+> Linux 6.14 and later, there's no need for users to take any action and
+> the driver name portion of this is basically obsolete.  (Also, note that
+> the crc32c driver name already changed in 6.14.)
 
-Nit: Why not call this viommu_id?
-
-> +
-> +	/* Clean up all driver-specific parts of an iommufd_vdevice */
-> +	void (*destroy)(struct iommufd_vdevice *vdev);
-> +};
-> +
->  /**
->   * struct iommufd_viommu_ops - vIOMMU specific operations
->   * @destroy: Clean up all driver-specific parts of an iommufd_viommu. The memory
-> @@ -120,6 +130,14 @@ struct iommufd_viommu {
->   *                    array->entry_num to report the number of handled requests.
->   *                    The data structure of the array entry must be defined in
->   *                    include/uapi/linux/iommufd.h
-> + * @vdevice_size: Size of the driver-defined vDEVICE structure per this vIOMMU
-> + * @vdevice_init: Initialize the driver-level structure of a vDEVICE object, or
-> + *                related HW procedure. @vdev is already initialized by iommufd
-> + *                core: vdev->dev and vdev->viommu pointers; vdev->id carries a
-> + *                per-vIOMMU virtual ID (refer to struct iommu_vdevice_alloc in
-> + *                include/uapi/linux/iommufd.h)
-> + *                If driver has a deinit function to revert what vdevice_init op
-> + *                does, it should set it to the @vdev->destroy function pointer
->   */
->  struct iommufd_viommu_ops {
->  	void (*destroy)(struct iommufd_viommu *viommu);
-> @@ -128,6 +146,8 @@ struct iommufd_viommu_ops {
->  		const struct iommu_user_data *user_data);
->  	int (*cache_invalidate)(struct iommufd_viommu *viommu,
->  				struct iommu_user_data_array *array);
-> +	const size_t vdevice_size;
-> +	int (*vdevice_init)(struct iommufd_vdevice *vdev);
->  };
->  
->  #if IS_ENABLED(CONFIG_IOMMUFD)
-> @@ -224,4 +244,10 @@ static inline int iommufd_viommu_report_event(struct iommufd_viommu *viommu,
->  	 BUILD_BUG_ON_ZERO(offsetof(drv_struct, member)) +                     \
->  	 BUILD_BUG_ON_ZERO(!__same_type(struct iommufd_viommu,                 \
->  					((drv_struct *)NULL)->member)))
-> +
-> +#define VDEVICE_STRUCT_SIZE(drv_struct, member)                                \
-> +	(sizeof(drv_struct) +                                                  \
-> +	 BUILD_BUG_ON_ZERO(offsetof(drv_struct, member)) +                     \
-> +	 BUILD_BUG_ON_ZERO(!__same_type(struct iommufd_vdevice,                \
-> +					((drv_struct *)NULL)->member)))
->  #endif
-> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
-> index c5eea9900c54..28ea5d026222 100644
-> --- a/drivers/iommu/iommufd/viommu.c
-> +++ b/drivers/iommu/iommufd/viommu.c
-> @@ -116,6 +116,8 @@ void iommufd_vdevice_destroy(struct iommufd_object *obj)
->  		container_of(obj, struct iommufd_vdevice, obj);
->  	struct iommufd_viommu *viommu = vdev->viommu;
->  
-> +	if (vdev->destroy)
-> +		vdev->destroy(vdev);
->  	/* xa_cmpxchg is okay to fail if alloc failed xa_cmpxchg previously */
->  	xa_cmpxchg(&viommu->vdevs, vdev->id, vdev, NULL, GFP_KERNEL);
->  	refcount_dec(&viommu->obj.users);
-> @@ -126,6 +128,7 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
->  {
->  	struct iommu_vdevice_alloc *cmd = ucmd->cmd;
->  	struct iommufd_vdevice *vdev, *curr;
-> +	size_t vdev_size = sizeof(*vdev);
->  	struct iommufd_viommu *viommu;
->  	struct iommufd_device *idev;
->  	u64 virt_id = cmd->virt_id;
-> @@ -150,7 +153,22 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
->  		goto out_put_idev;
->  	}
->  
-> -	vdev = iommufd_object_alloc_ucmd(ucmd, vdev, IOMMUFD_OBJ_VDEVICE);
-> +	if (viommu->ops && viommu->ops->vdevice_size) {
-> +		/*
-> +		 * It is a driver bug for:
-> +		 * - ops->vdevice_size smaller than the core structure size
-> +		 * - not implementing a pairing ops->vdevice_init op
-> +		 */
-> +		if (WARN_ON_ONCE(viommu->ops->vdevice_size < vdev_size ||
-> +				 !viommu->ops->vdevice_init)) {
-> +			rc = -EOPNOTSUPP;
-> +			goto out_put_idev;
-> +		}
-> +		vdev_size = viommu->ops->vdevice_size;
-> +	}
-> +
-> +	vdev = (struct iommufd_vdevice *)_iommufd_object_alloc_ucmd(
-> +		ucmd, vdev_size, IOMMUFD_OBJ_VDEVICE);
->  	if (IS_ERR(vdev)) {
->  		rc = PTR_ERR(vdev);
->  		goto out_put_idev;
-> @@ -168,6 +186,12 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
->  		goto out_put_idev;
->  	}
->  
-> +	if (viommu->ops && viommu->ops->vdevice_init) {
-> +		rc = viommu->ops->vdevice_init(vdev);
-> +		if (rc)
-> +			goto out_put_idev;
-> +	}
-> +
->  	cmd->out_vdevice_id = vdev->obj.id;
->  	rc = iommufd_ucmd_respond(ucmd, sizeof(*cmd));
-> 
-
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
-
-> -- 
-> 2.43.0
-> 
+How about instead removing that part since it's useless now?
 
