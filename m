@@ -1,90 +1,109 @@
-Return-Path: <linux-kernel+bounces-694368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3732CAE0B7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:46:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCFE1AE0B81
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D580A3B97F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:46:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5619C1BC367E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBA028B504;
-	Thu, 19 Jun 2025 16:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEF528BABC;
+	Thu, 19 Jun 2025 16:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIDO0tcD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HnI5rWXb"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A863F1E7C2D;
-	Thu, 19 Jun 2025 16:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA73201269;
+	Thu, 19 Jun 2025 16:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750351599; cv=none; b=CnzgiA+owskFN7sniakW0+DZkmCoXTNBySUhCMWaMCgGitnAYYjQ+1ScQG1UZ+UkXprCFazUTh8m9Eu7RZ/mn6IgRO1Y+siUAh+MS+EL4Ypce/Earz8kMHAcA4JesyYWpnkUpZmyyi1sqSzk8qo4lfvAPsEnxkL56h7m9MfmRf4=
+	t=1750351881; cv=none; b=iYmaaSkgYT279aWu3sXcKEptXnuNsMbwx1Zg91+e7SY3kphKcFahf/etXbM1ivGAoGVImtkprSASq2HSs6qi9qhP5MdRUEBEld/h7nx3+Z0biTrawgkl4A8LMmSeRcZ69zJ666poP6ENDtYj79osOs2TrQkCkK5CLSPiBA3st9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750351599; c=relaxed/simple;
-	bh=6AofT9ESYtvzpKrunVUzggzgj28w/qQmVkafxRW5TS0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FJzsrPDv/rSn00fSt8OW3bDYza/OirTnf9gtMzMvL6BAQPlIg410N85q5QqRbuEIT5A7VzfWKZ1rV6eK7mPDf6nw05tlTfH0GHp3Gi0hQKHJ8vDZy5ncIGda1rJt/KSdM08IL2ZK66rZw9THSgSuCP69KOZHp//CI3XtfL/QDrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIDO0tcD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E19DEC4CEEA;
-	Thu, 19 Jun 2025 16:46:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750351599;
-	bh=6AofT9ESYtvzpKrunVUzggzgj28w/qQmVkafxRW5TS0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UIDO0tcDxPmmcC8RlZqRNMtLv7u4CeIS7PaTzZD73oiYAflzD78CM142D4UMLlmTp
-	 KCrlFeBu5HkhGq68TEF6zp5sx/wmSkPsUBFFhraBS9YRLRO1n5ZdZet+VmQdYcIId0
-	 cKYmFW2WVDKWytREBsqLW/fdxLCENXRYQsX/vEaohlWWwdaItHKjoDkfwxmt9O6XSu
-	 9y6Ml9feKgYh5Iyc14B6nO0YktS3zu5dEPxxBDteUB9YP8dwazbWj/xy7CzGnDDSRI
-	 +RLFAFAsdhyq3vdck/ABRXW6XlPKRUUFcBQGCLXPe76+BLYWcECibEcP7e4hwEVQ+G
-	 +N5zAisWJh0dA==
-From: SeongJae Park <sj@kernel.org>
-To: Yunjeong Mun <yunjeong.mun@sk.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	kernel_team@skhynix.com,
-	Honggyu Kim <honggyu.kim@sk.com>
-Subject: Re: [PATCH] samples/damon: add parameters for node0 memory usage
-Date: Thu, 19 Jun 2025 09:46:36 -0700
-Message-Id: <20250619164636.58743-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250619050313.1535-1-yunjeong.mun@sk.com>
-References: 
+	s=arc-20240116; t=1750351881; c=relaxed/simple;
+	bh=RM0Mjk8bYCBo2Yc8z9uWxE5C4u3frma1Kq1U/5aN4EQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T+v0AouMoe30SfwX9cfiawSpPRrV2AQABxsfKnet8oZTmehzMrgqhmZk+QUfYssZZcewQpOHrNiXFo6Z00lXbAkJCJ4UWWjCVpu7A1PsFKwSkaz/DH83+ctTFbIfC1W4WJdLBmk9PWYGdHG1+pt9Zs8GbR+/+JBuc9iUHL/d21s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HnI5rWXb; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-23636167afeso9774465ad.3;
+        Thu, 19 Jun 2025 09:51:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750351879; x=1750956679; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jmnv5cP3oQqRhPxYaKn3W5dFHRZevjSzcip+b6HwYw4=;
+        b=HnI5rWXbmqHhUqFlLUpEmlx63xwt2Z3537dZJZ6tI1KXVFLoElyqkW63oWg+srQYg/
+         bJRGIkKcGK0pNYrlL03MupHnh+5L9dvCO5d5FuITjT9OmNIe2ZhAOUkB0NhWkzQm6pwO
+         UZ0xZvrAxV6KKmwiGvb+mlTLJGdBOHe7DQdhk2O17dZQoxAVxJH8bk1l14MeJnQSkMim
+         z1HSQsaIcpKqIWykRRk7tM+t20FGl1GA0YxCca6QE8XcOF5cgSDFKdm1ycXxE2tXUdAM
+         jPRk6nNP8JaAAzUrySXbX71pCGpLjP7SyPH2xVdd2ygNoN/L3TttE4dj8S+E1bj6n8mO
+         SFOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750351879; x=1750956679;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jmnv5cP3oQqRhPxYaKn3W5dFHRZevjSzcip+b6HwYw4=;
+        b=V3egN21AiR0UJLUvS+PKQ/y/LkN0G3P/+eF4HN6+3ydmvD6/I9hghjWmpyJUMtE5i5
+         bCZuoB0miD2wl8wDSAtm7HU0y7oeMcl0Qbctgyb2+XBfaY9X+7A9/SzRhi3GynA1B+/j
+         BF1yzUPc+bZnnKJSpt/rx3p6EX24zyo8uvh5IKAZVTi6/ZEGCh5OQFhskeWvHqkGODXD
+         mpjkaEPdX0JqYIcKEG7phau6x6GWaZE9lykwgBXb0ze4hLwEhTOCt/+bqPRIaKZ8ll1t
+         f/isuRlNEhhB5IKfhgchngXfGrPvOlCHiJxCiv1ib4FU+/FzmA6Gh3qq4iqpWrQAxf3h
+         lg4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXL5l5UbeX2CEI6waxBQ5JpMjl0c7oqGbNC8EEHvMCiIBFVvqOVlYFNx3nC/8qnZ7dzUZcsyWk7G/V9Hp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqtgX+r6XjJb4BHEVcV1K07sN3AfgtsODMNU02ZktFRfClSqur
+	SMW1VssAXmbnoBTtiTNwaJcyBJK7kffK6yXqQg61T8M2R2WJLoGzMNgE
+X-Gm-Gg: ASbGncuvZN2nTYmZ9GN1cluHnRp/iT9TIVVEmSugg1P0JySodLORr2TN3k3gdsNwInF
+	iqyB+MohIuB8KXz4O3l+kIsJE0Y1/uhfSaX5tW/7IdTnE+y7s9RXaT2NtDFNEmxfdz9mRYixSvW
+	xsRwumYviQoA9EVwgPMMOW+dD9ORt5OTrgkzT8ni+DvcuU0S6O0ZLTdd6xdyOCPxLYdoL5AX2tY
+	8hqiPHVat1ZSX1lCZ+kG+3YpqKLX4xV/F1h/20KQ8tfGR7X02QltjL9K3vGUFN9fzSO9WGxt+BL
+	ztghRkLqLjwDrCe62N6p8dzUJYLj9b1aAs6CaS7HgkzKN67eLMICn+peTxPwHpXIHygaJRoZqOQ
+	=
+X-Google-Smtp-Source: AGHT+IHUvbvS8YmPbmobytBtwxKkvYC2HspZUfeKctdiW1aoctoZJ6ByDeqtc/6MlBe9aCYm58lkLw==
+X-Received: by 2002:a17:902:f683:b0:232:59b:58fe with SMTP id d9443c01a7336-2366b3169f9mr340353835ad.1.1750351879358;
+        Thu, 19 Jun 2025 09:51:19 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d75413cfsm384545ad.253.2025.06.19.09.51.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jun 2025 09:51:18 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 19 Jun 2025 09:51:17 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Marius Zachmann <mail@mariuszachmann.de>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jdelvare@suse.com,
+	syzbot+3bbbade4e1a7ab45ca3b@syzkaller.appspotmail.com
+Subject: Re: [PATCH] hwmon: (corsair-cpro) Validate the size of the received
+ input buffer
+Message-ID: <ffdbf2c2-81a2-4165-b37f-f89a0f90afd0@roeck-us.net>
+References: <20250619132817.39764-5-mail@mariuszachmann.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250619132817.39764-5-mail@mariuszachmann.de>
 
-On Thu, 19 Jun 2025 14:03:12 +0900 Yunjeong Mun <yunjeong.mun@sk.com> wrote:
-
-> This patch changes the hard-coded quota goal metric values into sysfs
-> knobs: `node0_mem_used_bp` and `node0_mem_free_bp`. These knobs
-> represent the used and free memory ratio of node0 in basis points
-> (bp, where 1 bp = 0.01%). As mentioned in [1], this patch is developed
-> under the assumption that node0 is always the fast-tier in a two-tiers
-> memory setup.
+On Thu, Jun 19, 2025 at 03:27:47PM +0200, Marius Zachmann wrote:
+> Add buffer_recv_size to store the size of the received bytes.
+> Validate buffer_recv_size in send_usb_cmd().
 > 
-> [1] https://lore.kernel.org/linux-mm/20250420194030.75838-8-sj@kernel.org/
+> Reported-by: syzbot+3bbbade4e1a7ab45ca3b@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/linux-hwmon/61233ba1-e5ad-4d7a-ba31-3b5d0adcffcc@roeck-us.net
+> Fixes: 40c3a4454225 ("hwmon: add Corsair Commander Pro driver")
+> Signed-off-by: Marius Zachmann <mail@mariuszachmann.de>
 
-Thank you for this patch.  Please note that this is just a sample code, and
-hence there will be no strict user space compatibility support.
-
-> 
-> Suggested-by: Honggyu Kim <honggyu.kim@sk.com>
-> Signed-off-by: Yunjeong Mun <yunjeong.mun@sk.com>
-
-Reviewed-by: SeongJae Park <sj@kernel.org>
-
+Applied.
 
 Thanks,
-SJ
-
-[...]
+Guenter
 
