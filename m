@@ -1,84 +1,113 @@
-Return-Path: <linux-kernel+bounces-694221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA40AE0977
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:59:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D7A4AE0946
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BF65169E2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:59:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618621BC714F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B356221F2E;
-	Thu, 19 Jun 2025 14:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19462264C1;
+	Thu, 19 Jun 2025 14:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Zv9cfyM9"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FNLN0j4O"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBA3273812
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 14:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E11189905;
+	Thu, 19 Jun 2025 14:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750344948; cv=none; b=tej8Ji6/mGq65VJ9dnykDnvAIUOpqALH+bO5U9I5G49aCpdgOJ8iDQzLgpX/AD/rR9TzPvs9X61keQdovvgyjiMGusNdBCUYgU+ejxq39elKZhaHf4FebOQdgA+OhUO1RH81pbjHzHZGbCqbW6FI51AsqlSp88un59orwz6xemQ=
+	t=1750344822; cv=none; b=XcQmQgOzSXUKYVqzKhLTzr7ErMgS86DKHaEVIQin7FsvZnE8AqSP6I9s7qgsF+45ghxg4mjGMOS0MY/q0Xeo/VOLa1mkZZupafDzZ8sHLWkHoYuqMSfweo8R5tbL7AgFB/16/JZXMezUWu0eL5tk05tCFD5mYaspcKLHEQGqSIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750344948; c=relaxed/simple;
-	bh=W1L0rO9dU5FFbVfVjwNW8A9US4mbKUKOKfUDHJkMAKI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=POFnnjWdJFpcAEYtE358NQN1Vxpd1ou/ll/XiCV0fn375ZqAZi+VbRUjXiTXwI4agotoOS8UJEzqLp1PzzbHDtbYCV7IWRcnU5roxOIC2319rVTuyfmoKJY3mbTtBgL5DyVLWOD0qv4GjJaRU+mHEs1h3y1b4VNOKhL6Rn4JlKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Zv9cfyM9; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750344944;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=T2eXgg8AokEwULeJHXyxGHKldGhr0QHsHsoPutM/BV0=;
-	b=Zv9cfyM99VUKZo/PGzR9whE6RlDbdLiLSHzex3RDIy4VeDzOk9P17uw8wbvXhh0FwmLVLv
-	Nx/aJaQFQY5CiNubNWHsWsvhlPcGBVbxNit/Vn8G8Y9Hby6qUKu8ywJezoEPrnft/0n1ym
-	xh3M/B2r2SFP3fUJ8zwNUnDWep9QQQw=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] sbus: envctrl: Fix typo in comment
-Date: Thu, 19 Jun 2025 16:53:31 +0200
-Message-ID: <20250619145336.174298-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1750344822; c=relaxed/simple;
+	bh=uLUavKaeFNiIlI5uBlzBb68X1JGcgvu6CQAOPa9USj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=COLfF36+02yQsXHCMdkVDKyw40e0e2DLDz5DAdhJFq12jQYET3PVEnqZGhMg1HY7c88ncVW8Kou6kuA0PP2D8iltHevoty5Q2eZcOyLVTp7m/eq5m/KaS4IbN0+DtCj2wHNVt86g9ko7frKOdY9nYXzZ8hIxq5vl8+dur26CnWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FNLN0j4O; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=p8jgOhEOMKkcTx5z4T3s9esdt47EB0o3uL2XjfooQi8=; b=FNLN0j4OW8wj03qY7CsyNi8yAW
+	g9hiyvBIKudR5/QoWv2hhp6QqBRjRc0medra+NlOYh7mfwWVtZZvFKK9PGzMbKk7zCwXspraGI4CF
+	cGKR4pr8DqvkjZ4PFwFxwbV6+ulif3ltXyrHN32oKy85jDDoWBvdU2hbsuAuSu/KX6f9Vh1yes7p4
+	eXTkSc3atpxzUGcyZ1l4sIywH1dooyCRciVI8PS0u+8HvYwNUxEkd7dXdajlsIgG5VRiNWitZh9h8
+	hyNEE0AwTa7aRYFUGBcnhSoO7ZSt8Rx+fWMREslvOAxtK0vPjk5vJ37UPHbJuM8mV6b7OCv089+Mu
+	ip9v6tCA==;
+Received: from 2001-1c00-8d82-d000-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d82:d000:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uSGdz-000000098Ex-0dPe;
+	Thu, 19 Jun 2025 14:53:35 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B18DD30890E; Thu, 19 Jun 2025 16:53:34 +0200 (CEST)
+Date: Thu, 19 Jun 2025 16:53:34 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Onur <work@onurozkan.dev>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mingo@redhat.com, will@kernel.org,
+	boqun.feng@gmail.com, longman@redhat.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu,
+	dakr@kernel.org, thatslyude@gmail.com
+Subject: Re: [PATCH V3] implement `ww_mutex` abstraction for the Rust tree
+Message-ID: <20250619145334.GM1613376@noisy.programming.kicks-ass.net>
+References: <20250619140656.498-1-work@onurozkan.dev>
+ <20250619141401.GI1613376@noisy.programming.kicks-ass.net>
+ <20250619173344.6c72c48a@nimda.home>
+ <CAH5fLggxqK+aZcynsq0koWZG5DD=Byc+DrqEZ9ZCr4+pdScMqQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CAH5fLggxqK+aZcynsq0koWZG5DD=Byc+DrqEZ9ZCr4+pdScMqQ@mail.gmail.com>
 
-s/disinguish/distinguish/
+On Thu, Jun 19, 2025 at 04:44:01PM +0200, Alice Ryhl wrote:
+> On Thu, Jun 19, 2025 at 4:33 PM Onur <work@onurozkan.dev> wrote:
+> >
+> > On Thu, 19 Jun 2025 16:14:01 +0200
+> > Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > > On Thu, Jun 19, 2025 at 05:06:56PM +0300, Onur Özkan wrote:
+> > > > +bool rust_helper_ww_mutex_is_locked(struct ww_mutex *lock)
+> > > > +{
+> > > > +   return ww_mutex_is_locked(lock);
+> > > > +}
+> > >
+> > > Do we really need this? In general I dislike all the _is_locked()
+> > > functions and would ideally like to remove them.
+> > >
+> > > Pretty much the only useful pattern for any of the _is_locked()
+> > > functions is:
+> > >
+> > >   WARN_ON_ONCE(!foo_is_locked(&foo));
+> > >
+> > > Any other use is dodgy as heck.
+> > >
+> > >
+> >
+> > It's an abstraction of `ww_mutex_is_locked`. Since this is an
+> > abstraction module, as long as `ww_mutex_is_locked` exists I think
+> > we should keep it. FWIW it's also quite useful for tests.
+> 
+> We're not just adding copies of all of the C methods - instead we
+> focus on the things we have a use-case for. If you're using them in
+> tests, then that could make sense, but otherwise you shouldn't add
+> them.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/sbus/char/envctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It might make sense to include the assert in the method. That is,
+instead of providing .is_locked() that returns a boolean, have a void
+method .assert_is_locked() that traps if not locked.
 
-diff --git a/drivers/sbus/char/envctrl.c b/drivers/sbus/char/envctrl.c
-index 81918aa67109..69e49da93b8b 100644
---- a/drivers/sbus/char/envctrl.c
-+++ b/drivers/sbus/char/envctrl.c
-@@ -734,7 +734,7 @@ static void envctrl_set_mon(struct i2c_child_t *pchild,
- {
- 	/* Firmware only has temperature type.  It does not distinguish
- 	 * different kinds of temperatures.  We use channel description
--	 * to disinguish them.
-+	 * to distinguish them.
- 	 */
- 	if (!(strcmp(chnl_desc,"temp,cpu")) ||
- 	    !(strcmp(chnl_desc,"temp,cpu0")) ||
--- 
-2.49.0
 
 
