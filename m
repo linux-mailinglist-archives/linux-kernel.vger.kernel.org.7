@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-694524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F5AAE0D05
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:35:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6F6AE0D07
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 20:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06BD51C21D35
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:36:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED19B169890
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 18:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8413628CF43;
-	Thu, 19 Jun 2025 18:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BA7255F31;
+	Thu, 19 Jun 2025 18:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMEQcIZc"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iYUOGLPI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6233213E6D;
-	Thu, 19 Jun 2025 18:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7A117D2;
+	Thu, 19 Jun 2025 18:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750358128; cv=none; b=Io6m2io/6gamqanSIjlVPXKuLxynPLAjhXr6o69OrarLBaucD69Js2b3QNZ47Zou0GDlTbWUWD6yAwKX/JhQs7gVDSnR70IyB2UAuQIA9q9wgiWQCmFdqs5qxV7MBbWcq8os3nUJPlgdw3jatmKSAQeint3Fc/4/Emh+eqAuv/g=
+	t=1750358172; cv=none; b=rtnYWjonN6Q0V70xaekZ4DmRr4v3hoAREdVTxgpaNIUFylJfHmRaPUemg5l3bwZ7LAuRj6L3j298q2mOLgdYGY+OEabk8oASHxrsOKVFZXDbdWnu2EeAxzCCwszmAuKi8yqzRPDsCLpqnK5i5qFSBUkdrM+98m/rEM5T4FWCQII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750358128; c=relaxed/simple;
-	bh=qH5/JEmkvzKPI6/HH8DjDLCOwejQwXCTuISnD7/tw+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a/sx+09HaNsZzLIkbGA7yechbc+3bQTVbpOTSSiZCu9hy1NRJugBVgtcJumpo1exCxunq4CluSQIqGmYcKJaSzB+f8+42i+Pbj/2QCbmJtPEmvFsZDgjAo2jix8ll+b2flNKU46C2lRZnOinbl34/BetpAYVEEQNOtfedD66BTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMEQcIZc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A33A2C4CEEA;
-	Thu, 19 Jun 2025 18:35:28 +0000 (UTC)
+	s=arc-20240116; t=1750358172; c=relaxed/simple;
+	bh=WsaNlTsPKbwW1LA0IoyQALMLAOiw40vo3RwoI/57mP4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iV8ohHvVjzBSK3devKVnwn9r+4Xi56REARH815EKp23XDxxKu37D074L+nRCDo2LTz5jsPLtQ1LZomIFfLUqRAQR38ai0MeQNjeOReBOB20Jm7r72jjJ6IGC1NbKy9iOq9b/Ypvssn+2/0qB+CwLeBglMY2+QCA2VBSrYGlxf3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iYUOGLPI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1F6FC4CEED;
+	Thu, 19 Jun 2025 18:36:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750358128;
-	bh=qH5/JEmkvzKPI6/HH8DjDLCOwejQwXCTuISnD7/tw+0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nMEQcIZcSEhyX9Kp2JPu8J6YgLcs2ThnNud8Juzg+VQihg3rPpas+qXiH+CKLR33o
-	 Kq0G+FKIQyV2u40098yDv/gi6mzH/FnffQ2xucfDGnlD88c5zMneW4yZ8LTX2eTIY9
-	 V0i8mornn0FufW1jUAiQkl1oYrAqZcqwriM0xCl4/MPFyMvqasv9o8AvWPRj1Gm29D
-	 D8pnqrYA7D3r7+zFoytwYbZ28GJ4yxjEqH9fxBgBLkSRDjhIOMq5A5NBS5yJTw4Wgm
-	 bAd9NIQhsNPhk5SDMWV9SIOU5ABiBSuI1WmXkHf9rul8IIyAcMCQj3pJey16FOJDG1
-	 VKJrUeFxs9yXg==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH 3/3] lib/crc/crc64: add include/linux/crc64.h to kernel-api.rst
-Date: Thu, 19 Jun 2025 11:34:14 -0700
-Message-ID: <20250619183414.100082-4-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250619183414.100082-1-ebiggers@kernel.org>
-References: <20250619183414.100082-1-ebiggers@kernel.org>
+	s=k20201202; t=1750358172;
+	bh=WsaNlTsPKbwW1LA0IoyQALMLAOiw40vo3RwoI/57mP4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iYUOGLPINT7v2eZ9EfUO7JoqJdLRVd5Wdo/snAnY8of/vlou0/0qj7XZ3THZYByxI
+	 UMSah//Kdrq/NMOr5MqIt8PVvvq8wUyJPRta7Iq8h8SRvI+VsyKUsBsClzO6PaBtTH
+	 JNlO/lXhR8MxEal64AhpGP7ZHVCs/3yXYBM81jjWtV4zHXxsTiCEihuUloroTBU6Cy
+	 yig6CC0dUcv286ggwZKWGvwOJcgeGmUIe7ijQgYAfVUh4ps5f1Gzf2IR6jmYMmGkMl
+	 NoOH1YLlcJzyApt1kmcCQKCxn7+TfA1xygXAsZFXX13HatyPQsSfkyQquROySnDJtL
+	 S0Z6HdFk26i8Q==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	damon@lists.linux.dev, kernel-team@meta.com,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org, stable@vger.kernel.org, #@web.codeaurora.org,
+	6.3.x@web.codeaurora.org
+Subject: [PATCH 0/2] mm/damon: fix memory leak in memcg_path sysfs file
+Date: Thu, 19 Jun 2025 11:36:06 -0700
+Message-Id: <20250619183608.6647-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,33 +58,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Eric Biggers <ebiggers@google.com>
+Users can leak memory by repeatedly writing a string to DAMOS sysfs
+memcg_path file.  Fix it (patch 1) and add a selftest (patch 2) to avoid
+reoccurrance of the bug.
 
-The other CRC functions with kerneldoc are here, so add crc64.h too.
+SeongJae Park (2):
+  mm/damon/sysfs-schemes: free old damon_sysfs_scheme_filter->memcg_path
+    on write
+  selftets/damon: add a test for memcg_path leak
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- Documentation/core-api/kernel-api.rst | 2 ++
- 1 file changed, 2 insertions(+)
+ mm/damon/sysfs-schemes.c                      |  1 +
+ tools/testing/selftests/damon/Makefile        |  1 +
+ .../selftests/damon/sysfs_memcg_path_leak.sh  | 43 +++++++++++++++++++
+ 3 files changed, 45 insertions(+)
+ create mode 100755 tools/testing/selftests/damon/sysfs_memcg_path_leak.sh
 
-diff --git a/Documentation/core-api/kernel-api.rst b/Documentation/core-api/kernel-api.rst
-index 0096463c7d7f7..111f6a595e48d 100644
---- a/Documentation/core-api/kernel-api.rst
-+++ b/Documentation/core-api/kernel-api.rst
-@@ -154,10 +154,12 @@ CRC Functions
- .. kernel-doc:: lib/crc/crc-itu-t.c
-    :export:
- 
- .. kernel-doc:: include/linux/crc32.h
- 
-+.. kernel-doc:: include/linux/crc64.h
-+
- Base 2 log and power Functions
- ------------------------------
- 
- .. kernel-doc:: include/linux/log2.h
-    :internal:
+
+base-commit: 05b89e828eb4f791f721cbdc65f36e1a8287a9d3
 -- 
-2.50.0
-
+2.39.5
 
