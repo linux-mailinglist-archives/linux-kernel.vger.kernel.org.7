@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-693385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86EFEADFE5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:07:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D23ADFE61
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31FAA169038
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:07:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEF323A1DBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FFC254AF4;
-	Thu, 19 Jun 2025 07:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E789198A09;
+	Thu, 19 Jun 2025 07:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="d9id/6Iw"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jITB6Yxw"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB99B246799;
-	Thu, 19 Jun 2025 07:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F5A192B7D
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750316835; cv=none; b=H52K71RXodfbVDw0/e0qpxkHYW9LLayfBAyDSj+o6alT56g1NvIypkhdDiHIHnulUP0PhgeOWolCnL8g/AL3SaGVhu0ttbMYXl0UESIR02KMf79+1PyqAkt5pcvzQEczlQ1Z7Z8f4Xbp0vIEoC5hdifZJ7ConyI1CrOsAhKk/jE=
+	t=1750316822; cv=none; b=TDWGn/tqKyxni42V3lSHImKyLn9TPJ7pkeP502k8KaCJfPhWVEVLOpm7x+Mb544JRd31oPGewulGY5eanDzpV+PEmJt7v+5nMXfRr/oLD8z+37qOiSV2yFk930Ytj6UhzRyZLDC+N4tvO/1PR+i/rhU5kWodRENqEQLC+ef1Eik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750316835; c=relaxed/simple;
-	bh=a6Xv7ZZ6shJzK/0F5v3pecDxLl9giCPyL20Xa7pa8lo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XdNTwDl5yjnGsDAz3FEd4fJvRnWhode1+OjYOc679jLIiXFYE6xnDe9QfRu0XTvPXGEir4YoFwt/tlgD1yuNn6QMSkvE8S25DWVGKWxpqAqtwhrpFs1qmZNRPNHlrrb3W9cJtL+d8S4m7Wiho5wLZBn9qEuJOuNFfFdRoBMKUuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=d9id/6Iw; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1750316833; x=1781852833;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=a6Xv7ZZ6shJzK/0F5v3pecDxLl9giCPyL20Xa7pa8lo=;
-  b=d9id/6IwWWGOt/w1z2ejXva1fgV8nyVm67pnJqiokG4iBqqBnkjYuyLy
-   UJ2eoDZZmDWIyItmLvHtaiRPp8jui13jQfeaEIHJTAIMk6iBLyJpKlwtQ
-   YGGcE9QpaPGhjMWSaMxn1a6nrROkjAmmJOeu1WyzywmdVvQq3KEbhcDMM
-   RHfbXynUMiJz90p8KkDuvd66AhZqGfkMTz9r0Vlvi6mbgq4jOtUlrhgQa
-   hTxg4sskuZwD52YqmDQRg8HQ9l4elYAGw9zhkjstl9/iTE5wDpIfow8oS
-   RLF4C1usl0EuLC98sUHT2bBzuYr1h0GTRNRRoXz5v08Y3ocwD2w0/PwzK
-   g==;
-X-CSE-ConnectionGUID: PlQ5gDZlQHSrfxlUJA1/0Q==
-X-CSE-MsgGUID: A0PB8EHXQX28o+AEtNDLlw==
-X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
-   d="scan'208";a="48018363"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Jun 2025 00:07:02 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 19 Jun 2025 00:06:49 -0700
-Received: from archlinux.mchp-main.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Thu, 19 Jun 2025 00:06:46 -0700
-From: Mihai Sain <mihai.sain@microchip.com>
-To: <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Mihai Sain <mihai.sain@microchip.com>
-Subject: [PATCH v3 2/2] ARM: dts: microchip: sama7g5: Add cache configuration for cpu node
-Date: Thu, 19 Jun 2025 10:06:36 +0300
-Message-ID: <20250619070636.8844-3-mihai.sain@microchip.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250619070636.8844-1-mihai.sain@microchip.com>
-References: <20250619070636.8844-1-mihai.sain@microchip.com>
+	s=arc-20240116; t=1750316822; c=relaxed/simple;
+	bh=gIrndrxqEQYIbQKwOcS4Mln3+RBHF7hskkcp5VOAKaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IxtVhMWiUpnBwU3DjsU/2MIBmTRq/mVbx9fny66Xmsv5hCYmF5M/CdHDFUqyUwSJd/rFE2t5cEu49kqvaEbJ90M7eWdg43MIaMS7aKDs/t5NzQryx7p4T/4wQWp1lWNOVoNbWFP1p3VVxdSQNw8bbP96RKUsDJ4vDRWlViwhGow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jITB6Yxw; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3137c20213cso390816a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 00:07:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750316821; x=1750921621; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IymuwWFz5efXWH2kgyyNSxlRPSBhBIlq8B6srm/Era0=;
+        b=jITB6YxwNdiziytTZMmOunSrMJYwnfFJlf59FgIG1M1zfjzHw1YCXXr1cL3RxvSt9g
+         pPfWHXi/GNu71l2fiKMDAD72d9CJ3Y9UoIV/RsDOorBaVU3gOBolh+p8n5rfDQRzibJ7
+         TwTnQKtw0DDJmlBWvmz0kjxdyTtr26oBtIGcjGMdiAxz8IY+WfbJ7QJTYsG1DRpmxAvm
+         06Rh09Bq0BurbrmGwM0b0/oKXjAsZuiyEg9rXqfaE+LlAFBq9JT6ZH8aHeIlg+yxjH4X
+         uFpnAKJ9eCSPTjVWwOg/a8LLN7UT89MEkyFa3m6rQgjEWpV2uqHy1QcfXVeWOXZ+3zx2
+         Og4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750316821; x=1750921621;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IymuwWFz5efXWH2kgyyNSxlRPSBhBIlq8B6srm/Era0=;
+        b=d0oR+zlEAQDa61Jc+MODcRBOoHE2byq62nhg28uynk9Yl6/yGURQYBKzoaf9wqIYLJ
+         Vpr5OMed7dhGXdvKD+Imky7gpO+MqvsesJrdGMko0vbG7m3Ajsywh5g8P+wGz6jhmAFK
+         AS+f6c0InXAhGXOr0gvXH6QKi6kVM1EU6ba1Pal9EbX7jn/lUHByqoU8NF15n9VvIokr
+         ubxAUG32zaNXgnXUrODiOVOnhHr5X2TdAz1sWg3jWrvcR1fVI+6vuudMDYQG6y9w7R4d
+         PMmuZLuqnHqDJSe0Pka+WXYb9nrBywlfAA359gxL67octohdAvC1MlO1OeejBFQUhMUQ
+         hrLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtaRygPGrINo4RsGtFk6T9664V7KPYnxIXhE/VgPNTQx1Q78ZaRv9Y6/l4lainIzOD0CpjDu+JplTdaJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypQHHoALapGTloH2VwWYeJoqncosULQI/HzX4Ej6GEVLxY0Nss
+	vgpwOdCU3aZcXZbWx00QH0lvsQLi6OarPVFulZ5BD6Wf5cyIbhfW867vjm97bkPXjLM=
+X-Gm-Gg: ASbGnctqMhIbviM+k1C+p03TXIkoF3wXikWf/9FyKv1qOpN3cQNancfZubl179TsaFp
+	rOaYU+AK6sNtkgxO1DhnKSVCU13z+aSwJO6Sg4UJ3jMqiArdbxRFfbIyqcqOs+Fi7jhabfVF7j5
+	YeEku4o1iruemuF6cYIK8b6VEe0Pf5xW2ORKX3rGPcnlkAK3gBo0GgDx6+3MoqRj+tmAj5ZG1Ji
+	Bx7tYRRmLXVMu9eFmZAFRf4TeuWv7pSD/f/2ReHuzIGAiIMaN+2zvarnvI+H0HtLGS/qYQh6ULB
+	MSn3jOo+06t1Qn8ArqS1jA2Lt6idZShwL8vZtPn0XAuC7QxYokkAEYYAoXm7kP8=
+X-Google-Smtp-Source: AGHT+IGyYaOKIL36CbVXP5wK2R0Ni0YKSM2IJpGDucT9Et2S+y0DrU3AlyTGX8LLr5798o70TnJH/A==
+X-Received: by 2002:a17:90b:380c:b0:311:baa0:89ce with SMTP id 98e67ed59e1d1-313f1c06bf5mr36604358a91.12.1750316820675;
+        Thu, 19 Jun 2025 00:07:00 -0700 (PDT)
+Received: from localhost ([122.172.81.72])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3158a23e627sm1365892a91.18.2025.06.19.00.06.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jun 2025 00:07:00 -0700 (PDT)
+Date: Thu, 19 Jun 2025 12:36:57 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Markus Mayer <mmayer@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: brcmstb-avs: Fully open-code compatible for
+ grepping
+Message-ID: <20250619070657.dshqwhulzadxpyz3@vireshk-i7>
+References: <20250613071643.46754-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250613071643.46754-2-krzysztof.kozlowski@linaro.org>
 
-Describe the cache memories according with datasheet chapter 15.2:
+On 13-06-25, 09:16, Krzysztof Kozlowski wrote:
+> It is very useful to find driver implementing compatibles with `git grep
+> compatible`, so driver should not use defines for that string, even if
+> this means string will be effectively duplicated.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/cpufreq/brcmstb-avs-cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-- L1 cache configuration with 32KB for both data and instruction cache.
-- L2 cache configuration with 256KB unified cache.
+Applied. Thanks.
 
-Before this patch the kernel reported the warning:
-
-[    0.171425] cacheinfo: Unable to detect cache hierarchy for CPU 0
-
-Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
----
- arch/arm/boot/dts/microchip/sama7g5.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm/boot/dts/microchip/sama7g5.dtsi b/arch/arm/boot/dts/microchip/sama7g5.dtsi
-index 17bcdcf0cf4a..f28bcf6daf4e 100644
---- a/arch/arm/boot/dts/microchip/sama7g5.dtsi
-+++ b/arch/arm/boot/dts/microchip/sama7g5.dtsi
-@@ -38,6 +38,16 @@ cpu0: cpu@0 {
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu_opp_table>;
- 			#cooling-cells = <2>; /* min followed by max */
-+			d-cache-size = <0x8000>;	// L1, 32 KB
-+			i-cache-size = <0x8000>;	// L1, 32 KB
-+			next-level-cache = <&L2>;
-+
-+			L2: l2-cache {
-+				compatible = "cache";
-+				cache-level = <2>;
-+				cache-size = <0x40000>; // L2, 256 KB
-+				cache-unified;
-+			};
- 		};
- 	};
- 
 -- 
-2.50.0
-
+viresh
 
