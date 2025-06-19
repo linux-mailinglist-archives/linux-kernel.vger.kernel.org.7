@@ -1,54 +1,52 @@
-Return-Path: <linux-kernel+bounces-693134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59523ADFB71
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:51:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 503EEADFBA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E23DF17CCBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 02:51:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACAC717DB6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 03:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDBC221FD3;
-	Thu, 19 Jun 2025 02:51:22 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B392113B5AE;
-	Thu, 19 Jun 2025 02:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C82238157;
+	Thu, 19 Jun 2025 03:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kgDW3oXF"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F124A3C;
+	Thu, 19 Jun 2025 03:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750301482; cv=none; b=rR249z6gjX8cIbc6fW9MWJ1V18WGERKUPlEuNPSZP74pCI939dOHPnJ4ZJ0tiVdnR0kcaAMlYxboxIyCV9oETQ85gCXIW5vTD87sls0AZbZoovFOgsWHMknzjhHPEwaSsvmoNvQw1UuGtAMJBZGTL0tuUXNprtmm1DLiKbFnMzs=
+	t=1750302671; cv=none; b=IUh4AZgSGEwykL7o4oua66OT7N3qb/ww287ni8soAS+5S+ZtfS0LNfuBOjO0AJ0IMeP5OgwMZjNTwksmNQcvxpHaE8k4g2o8nArpYUL0mU1VoBgNsYopVvekMhZhS/jHdEkHQlux5PYGx7nUA9YSRr1WqeslG1xcYbbIcVfLdZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750301482; c=relaxed/simple;
-	bh=jyRflxAFHZroptj2sNJ+CcplE3Wd/GyADtBwSwXDZcQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Aqrsrv9eu3XenIYJ2bpyedSCaLtvohPoDq+essX2UQuS1Y3hVpl/VZDFOng6z0QhwTSM2qQCBM4YO6ZHyuLMKk7JeN+qTNjd3vpiT2pd2t+KZemkFZMnP3dkqfF2M+PYDDFNOLl8vaGXx9Tax7WhTP+kUXCc5aWfofCgCRLbPms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bN4rm4lzrz2QVJY;
-	Thu, 19 Jun 2025 10:52:08 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id A80B81800B2;
-	Thu, 19 Jun 2025 10:51:14 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500016.china.huawei.com
- (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 19 Jun
- 2025 10:51:13 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <wenjia@linux.ibm.com>, <jaka@linux.ibm.com>, <alibuda@linux.alibaba.com>,
-	<tonylu@linux.alibaba.com>, <guwen@linux.alibaba.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<horms@kernel.org>
-CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<linux-rdma@vger.kernel.org>, <linux-s390@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] net/smc: remove unused function smc_lo_supports_v2
-Date: Thu, 19 Jun 2025 11:08:54 +0800
-Message-ID: <20250619030854.1536676-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750302671; c=relaxed/simple;
+	bh=51oZ/IZDB7F4eTcBwvlqPOac0I3Sr1Bdpv7wS8vzbPY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SS8Acomn9XyxmvNIHzKMjsRflrVF5Dl0m0Rnh+N5wcEn09HHkmnw1prZVnBqu+4qMPH5HSvGcE+KULs4IjjAgk7CuVSP+fiONqUN3aGXdzgg1D/4IwTwwmIf3vGWMtNKtm65QQt/A1K0FnC9uyrM5jvSuqf7OgnWUKkgeaB7AA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kgDW3oXF; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ST
+	RjQteFUZoF2HoMiQkIsJ7Znz080VPaSrZB64TS8oQ=; b=kgDW3oXF2c5Wd110nD
+	3F0z2jzbW8mqoBs9me8T0ojmZxZaJkZfDvdfxLi+1B1rNEhDq0OsP6Ug6etyVi65
+	z0J70DWpOlQaC3i56e7ryJqRJXYxbWipbS2JqESY0ei9ztOZJBmCJVO9t056lmlu
+	ZPRM0+rPLAgJsIRFD/xcCZ5ew=
+Received: from 163.com (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3P6K0f1NowTSLAQ--.64025S2;
+	Thu, 19 Jun 2025 11:10:44 +0800 (CST)
+From: chenyuan <chenyuan_fl@163.com>
+To: ast@kernel.org,
+	andrii@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chenyuan_fl@163.com,
+	chenyuan <chenyuan@kylinos.cn>
+Subject: [PATCH] bpftool: Fix memory leak in dump_link_nlmsg on realloc failure
+Date: Thu, 19 Jun 2025 11:10:37 +0800
+Message-Id: <20250619031037.39068-1-chenyuan_fl@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,44 +54,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+X-CM-TRANSID:_____wD3P6K0f1NowTSLAQ--.64025S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tFW5Xry7Wr4kJF1rAw13urg_yoW8Gw13pa
+	4UGa40vr15Wryru3s7Aa15ZFW3C3WxJrs5GF47A34ruryrXrsrZr18KFyFvanIgFn5XFy2
+	yr1Y9a17XF1UAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pio5d_UUUUU=
+X-CM-SenderInfo: xfkh05pxdqswro6rljoofrz/1tbiJxpxvWhTfSNNUwAAsK
 
-The smcd_ops->supports_v2 is only called in smcd_register_dev(), which
-calls function smcd_supports_v2 for ism. For loopback-ism, function
-smc_lo_supports_v2 is unused, remove it.
+From: chenyuan <chenyuan@kylinos.cn>
 
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
+In function dump_link_nlmsg(), when realloc() fails to allocate memory,
+the original pointer to the buffer is overwritten with NULL. This causes
+a memory leak because the previously allocated buffer becomes unreachable
+without being freed.
+
+Fix: 7900efc19214 ("tools/bpf: bpftool: improve output format for bpftool net")
+Signed-off-by: chenyuan <chenyuan@kylinos.cn>
 ---
- net/smc/smc_loopback.c | 6 ------
- 1 file changed, 6 deletions(-)
+ tools/bpf/bpftool/net.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/net/smc/smc_loopback.c b/net/smc/smc_loopback.c
-index 3c5f64ca4115..0eb00bbefd17 100644
---- a/net/smc/smc_loopback.c
-+++ b/net/smc/smc_loopback.c
-@@ -251,11 +251,6 @@ static int smc_lo_move_data(struct smcd_dev *smcd, u64 dmb_tok,
- 	return 0;
- }
- 
--static int smc_lo_supports_v2(void)
--{
--	return SMC_LO_V2_CAPABLE;
--}
--
- static void smc_lo_get_local_gid(struct smcd_dev *smcd,
- 				 struct smcd_gid *smcd_gid)
+diff --git a/tools/bpf/bpftool/net.c b/tools/bpf/bpftool/net.c
+index 64f958f437b0..e00637b85e56 100644
+--- a/tools/bpf/bpftool/net.c
++++ b/tools/bpf/bpftool/net.c
+@@ -366,17 +366,18 @@ static int dump_link_nlmsg(void *cookie, void *msg, struct nlattr **tb)
  {
-@@ -288,7 +283,6 @@ static const struct smcd_ops lo_ops = {
- 	.reset_vlan_required	= NULL,
- 	.signal_event		= NULL,
- 	.move_data = smc_lo_move_data,
--	.supports_v2 = smc_lo_supports_v2,
- 	.get_local_gid = smc_lo_get_local_gid,
- 	.get_chid = smc_lo_get_chid,
- 	.get_dev = smc_lo_get_dev,
+ 	struct bpf_netdev_t *netinfo = cookie;
+ 	struct ifinfomsg *ifinfo = msg;
++	struct ip_devname_ifindex *tmp;
+ 
+ 	if (netinfo->filter_idx > 0 && netinfo->filter_idx != ifinfo->ifi_index)
+ 		return 0;
+ 
+ 	if (netinfo->used_len == netinfo->array_len) {
+-		netinfo->devices = realloc(netinfo->devices,
+-			(netinfo->array_len + 16) *
++		tmp = realloc(netinfo->devices, (netinfo->array_len + 16) *
+ 			sizeof(struct ip_devname_ifindex));
+-		if (!netinfo->devices)
++		if (!tmp)
+ 			return -ENOMEM;
+ 
++		netinfo->devices = tmp;
+ 		netinfo->array_len += 16;
+ 	}
+ 	netinfo->devices[netinfo->used_len].ifindex = ifinfo->ifi_index;
 -- 
-2.34.1
+2.25.1
 
 
