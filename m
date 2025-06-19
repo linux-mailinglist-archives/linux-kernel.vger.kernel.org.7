@@ -1,93 +1,77 @@
-Return-Path: <linux-kernel+bounces-694320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD73AE0ABB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:40:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1EAAE0AC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:42:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA6EC4A2014
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:40:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8704A1087
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E817F28B7FD;
-	Thu, 19 Jun 2025 15:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkDfUWMk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A71B2367D0;
-	Thu, 19 Jun 2025 15:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4210263F38;
+	Thu, 19 Jun 2025 15:42:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFC623BF9F;
+	Thu, 19 Jun 2025 15:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750347594; cv=none; b=Yw/dLbkTQyPGtsyTLNc9TEEbqrpFoV0CIgJSN7H3ow6nzalrOJ9VebY9ttDr+Xq3HzCasC9Nkc3SgjfSLddKw3MYrFc6Ucl55H4M21Im3BgSQ+Z5FrJO3LSltBAh5SHiv/3ZIgNPJuPMgwdTBzvAy4jBMoBRst42BlyEUuytcdk=
+	t=1750347743; cv=none; b=Ec1R1RR3CxfauJJGahrRa697JUjBe27sX72NmGaO0LcwTPP9sm4rBSeXX8jDxi5Agne/ysFnlybiLaGw78IXUp2inn3wuMmzyvR2FLx6COK+a14qHU5o7qQf6xvaGTXf1JHStLSyf2/4rCaQs4EcsyJ2ghOHL1DDSW0y3+C4bNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750347594; c=relaxed/simple;
-	bh=Gv1esIMNo0uDDw6MYLx1fsJEtQ3q6PwnhdWcl2wQ8Xo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=uTLsQGXlnRNfv/Ufszr34lX5dyViykh9ijVjLvdiDzwMe3z5CtKCXOkAWRBJjVG3LVuYugWRfVErFTEiIkiZvIvoxfCgsTmhDpATl7KxKxUbs98UJRCi547urLN20aRDmPIGuI233Nqg13AYicjIV7BAHDT/AfgJJ0f/r1APfxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkDfUWMk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2C3AC4CEEA;
-	Thu, 19 Jun 2025 15:39:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750347593;
-	bh=Gv1esIMNo0uDDw6MYLx1fsJEtQ3q6PwnhdWcl2wQ8Xo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=nkDfUWMkK4HeHD8GkipwuTIEWMQxuAocysL8iccJXa2i0x2ZFuQ+pWHhOi2eW66uz
-	 /K/nXg2lbTX68D3FzvV/tUyU10EMxbWLN1tx/K94Z6ov1IKu4Xz+JtOuJhMyqZiSgH
-	 UR/Od4tVIZ0kXYxCpH9V/EliQBIlmEFXhXP9mITtEbdfHpgnENT6OtqLKePf9FEopb
-	 xVV6q+9O1uTwRsSmTLppUbT94TlxXBhvOy5uZts0DvlGboCeh+EfkF+NdL47rrgDvf
-	 fSuP1HVUKn3H55bUhh+zfrtTQ/sXpgrJd+80DFMoXvmXI4qoBeAruFtfrzbI+hUCgR
-	 cyz0eTeq0eafg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E7438111DD;
-	Thu, 19 Jun 2025 15:40:23 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1750347743; c=relaxed/simple;
+	bh=F7c4bHewCgBdtpNsuT/O7caWd/v5fDAoW+hiBxnfJcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=cRQAmQSHzXKzZe1p/LDImd6t60Y6nCgRS0h0Qhea+pk/Rdp2A9Q8wFvqqBiZstrmUa+16BAFitmKW20AquPn+m+nqi/P/cH6stJrsI+0msNKcywVKUmajc9CC2xZzAj4P59qHAtjKt59uuzjWYPEawyC3At40uw8LO/VmEnRtXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1BA1113E;
+	Thu, 19 Jun 2025 08:41:59 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F30F3F58B;
+	Thu, 19 Jun 2025 08:42:18 -0700 (PDT)
+Date: Thu, 19 Jun 2025 16:42:10 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Philip Radford <Philip.Radford@arm.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, cristian.marussi@arm.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org
+Subject: Re: [PATCH 4/4] firmware: arm_scmi: Add new inflight tracing
+ functionality
+Message-ID: <aFQv0rwS3PwyTeG7@pluto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] mlxbf_gige: return EPROBE_DEFER if PHY IRQ is not
- available
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175034762174.906129.17201575441243019574.git-patchwork-notify@kernel.org>
-Date: Thu, 19 Jun 2025 15:40:21 +0000
-References: <20250618135902.346-1-davthompson@nvidia.com>
-In-Reply-To: <20250618135902.346-1-davthompson@nvidia.com>
-To: David Thompson <davthompson@nvidia.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- u.kleine-koenig@baylibre.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, asmaa@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAWPR08MB99669F0D3EB80C4ACAA90DFA897DA@PAWPR08MB9966.eurprd08.prod.outlook.com>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 18 Jun 2025 13:59:02 +0000 you wrote:
-> The message "Error getting PHY irq. Use polling instead"
-> is emitted when the mlxbf_gige driver is loaded by the
-> kernel before the associated gpio-mlxbf driver, and thus
-> the call to get the PHY IRQ fails since it is not yet
-> available. The driver probe() must return -EPROBE_DEFER
-> if acpi_dev_gpio_irq_get_by() returns the same.
+On Thu, Jun 19, 2025 at 04:13:57PM +0100, Philip Radford wrote:
+> > -----Original Message-----
+> > From: Dan Carpenter <dan.carpenter@linaro.org>
+> > Sent: Thursday, June 19, 2025 3:38 PM
+> > To: Philip Radford <Philip.Radford@arm.com>
 > 
-> [...]
+> Hi, 
+> 
+> > Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; arm-
+> > scmi@vger.kernel.org; Sudeep Holla <Sudeep.Holla@arm.com>; Cristian
+> > Marussi <Cristian.Marussi@arm.com>; Luke Parkin <Luke.Parkin@arm.com>
+> > Subject: Re: [PATCH 4/4] firmware: arm_scmi: Add new inflight tracing
+> > functionality
 
-Here is the summary with links:
-  - [net,v2] mlxbf_gige: return EPROBE_DEFER if PHY IRQ is not available
-    https://git.kernel.org/netdev/net/c/e7ea5f5b1858
+Hi Phil,
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+please reply to all the recipient of the original mail-thread when answering a
+review, so we remain on the list. (mutt -> g .. I think :P) 
 
+(I added the CCs to this)
 
+Thanks,
+Cristian
 
