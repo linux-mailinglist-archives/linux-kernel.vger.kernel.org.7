@@ -1,219 +1,128 @@
-Return-Path: <linux-kernel+bounces-693650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3078AE01D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:38:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85DAAAE01B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D33CE1BC181F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:38:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BF351BC026E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED04621D3E4;
-	Thu, 19 Jun 2025 09:37:59 +0000 (UTC)
-Received: from mail-m32124.qiye.163.com (mail-m32124.qiye.163.com [220.197.32.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D87B21E08D;
+	Thu, 19 Jun 2025 09:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j20PemO6"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7248021C9E0;
-	Thu, 19 Jun 2025 09:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F105F1E570B
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 09:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750325879; cv=none; b=qu+rzz9PIeMp7Zxefv+7dkzbt8zM9TORpGCBO0606L6ZsN7gpnEVgW8xz9zY/fQpyEYMyykXa1hkDzCc0A5e4RXBPTWKk9nj5bzZul53RQgPx6kH99hp52FhyvbS81Y6ENzVvQE6vyhgPYTVayh3wZxiCxqour/IQK/2vkZUEro=
+	t=1750325569; cv=none; b=EYiKFE+T6bwZFTcMmEGrQ2hnj4fGHiR55/JsdCoCbvbgR6pbbSU2qkOfW/A5c+YBBF3Fi+ojaozKzQrn/K7FeNjpaPlnFzsMIxmEXYoTmZBeAGN54L/HodI38+SQaA7ZLSPKaZZONWev19uO6NP7Wha3Jh3EoMcQ1bXgTh9zvUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750325879; c=relaxed/simple;
-	bh=mEBTu47aw5GvM+JvGHuuz9zrHjnrCHfVaTvuFpR7CC4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FKn2MKCqf4UNkWqv5L3fy6Oa4Ml82qG9T2h32fHFLQHP7UKxnbBq6NwZh94yoDeZ6uAUQsJsAppas27QckvGhQvVupct+CEPHMFOJqbPciNQhMo2GXE1945TmWW4B6vUGtiJaaq5NSB/n9a85A+hZlJpwI0ACa7ZRNMBg+tJCEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com; spf=pass smtp.mailfrom=hj-micro.com; arc=none smtp.client-ip=220.197.32.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hj-micro.com
-Received: from localhost.localdomain (unknown [122.224.147.158])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 193d4dd7c;
-	Thu, 19 Jun 2025 17:32:34 +0800 (GMT+08:00)
-From: Hongbo Yao <andy.xu@hj-micro.com>
-To: bhelgaas@google.com,
-	lukas@wunner.de
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	peter.du@hj-micro.com,
-	jemma.zhang@hj-micro.com,
-	Hongbo Yao <andy.xu@hj-micro.com>
-Subject: [RFC PATCH] PCI: pciehp: Replace fixed delay with polling for slot power-off
-Date: Thu, 19 Jun 2025 17:32:28 +0800
-Message-ID: <20250619093228.283171-1-andy.xu@hj-micro.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1750325569; c=relaxed/simple;
+	bh=BBsKzlD1HaZNFQ00OJNqMQlFuwwlB6f+BWhKJ6p9TTk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EAc0I95Qd8x9R0TnDCso9hsMZC7fJxvVMflTJEMe+PokMozjVXb/NOb8/TwM2Oeme2v6pK2y5Ti169wOTmy1CBqxGoEpMGjtNdCG7sxdcxhHvdFN+9s0EWw4MH6VsSE03uJicaMhMzQr8qFod/vyl1eOfONM5mM0o4+aM5I8VUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j20PemO6; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2e8f84653c3so136981fac.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 02:32:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750325567; x=1750930367; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BBsKzlD1HaZNFQ00OJNqMQlFuwwlB6f+BWhKJ6p9TTk=;
+        b=j20PemO6Ck2aHkEhpi2XGorzQRyzxjzvtWwggCK56VH2ozGLluZNiVTOW/6+zkcPzn
+         ASKTsedtifv6CyQkep4HOskS0l80qziraokBo14HZb0JAcnvd23+vFQe94F+D+rw3w2v
+         NHqgmg84wDHFz2bBecanPOjajeHngd1iI5LH8sD4+oNdctuRAV8iGBOji+nr373ShxTD
+         sWLasDb2A4kzdUTvbgQ80NbiAFNpx1hUt5CavY2Con6L0JidaSwLwdHSgqe1v3cRdepm
+         W8i3uPZSnJxASif+eDWB6qgt1q50dWlkjBuEbb69hNOfdevjCQNSczGvr+N1CWshzJfz
+         9Qbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750325567; x=1750930367;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BBsKzlD1HaZNFQ00OJNqMQlFuwwlB6f+BWhKJ6p9TTk=;
+        b=vX0h2mOg9shB7Cz+ixOjTE/vNqTaeTikxGS9RqtscEMle3bofN5W8jKqZ7vCr454TS
+         YA7cKpt2vx6MCW1s70s7JmbY4BvkSRnM/Vh4ztRv7tbARUggey8ZBkBQERy18fXx/kfR
+         2DbVmipOiNZTHJAJ4nyrwo7vIFtzancNxXenWqJAQeYc2+KiyFTLBmB3P4wsXRvRYchd
+         4hMunbuAXojuDBiWh2jXu8IQl6QwxOiln3f6EGAmaX6GBpAazANm6IoKf7/gOG2T01RG
+         mbeBbmcvuHciiz5lKG7wDER4iyuqplvjesCT1ZgDtkTAwoiXKtBjFK9ukFbOKAqT3gZy
+         Yh5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVe+UMl6Na+ImvSpWrDo3UxP7UMdggLsRj0UO4ZxHZ9tg8MrBno6DQJo3B9ILgeIJ7XxeGSCYw2gcTD5WQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsN3R3Rba9BLZMJKmVDvm3zALO8ppZjzDsgJhdv4ug8d/ruadd
+	z7RaDQMiIzpYOzoaFOaVGAD36CLwTrwDHCuCyi6TrGiTNtNFww9C7kW+46v12t7spGqhcjQdMYg
+	vg4KCONP7VWRX5VsXxGNdZDzZAs3oRZ927JsDeo1U
+X-Gm-Gg: ASbGncuP6xJnKXMP0JvrK13DkgAg/5LFCO6MIaAgZonyA7ny6VbwlJCj2zbTH/oVOyd
+	OpeZI8KeNSGBcVcWs8Nl/qu/p/2HE/FL6l+h3yWTkdvM92n/UkBQN2nHht/x7vUKnJLq7HZ20I6
+	uNhChcIGf01Sw8pj8t/gWN+ai2Xbl0W9dZulNDDwJDySLG0DNg9dSJHhjQZn/7MAqdnR4ny0gBU
+	A==
+X-Google-Smtp-Source: AGHT+IFEvooeG4VcErFMLHhwcnUP1Kg+jzxVyPLvzkXLE8yIClgj+ttPBoQQQPiG07i+rui2fBgT/Bw6DQkuafbQY+4=
+X-Received: by 2002:a05:6870:8887:b0:2ea:923e:e753 with SMTP id
+ 586e51a60fabf-2eaf0837092mr11661006fac.22.1750325566775; Thu, 19 Jun 2025
+ 02:32:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaSk4aVkJCTk8YGEhDHxgZTVYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSUlVSUlPVUpPTFVKTkNZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTEpVSk
-	tLVUpCS0tZBg++
-X-HM-Tid: 0a9787886cc303afkunm9e7d02ee206d1a
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NiI6Mjo6CjEzAjc0N0o#Ix4a
-	KE4aChZVSlVKTE5LSElOTk5OT0NCVTMWGhIXVRoVHwJVAw47ExFWFhIYCRRVGBQWRVlXWRILWUFZ
-	SklJVUlJT1VKT0xVSk5DWVdZCAFZQUJDSk03Bg++
+References: <20250611194840.877308-1-bqe@google.com> <20250611194840.877308-4-bqe@google.com>
+ <CAH5fLgi1GBqDHvMh30fbxVUjnTETLXthpK6eGLJA0Vh_TZRnsQ@mail.gmail.com>
+ <CACQBu=W4PziG3Fsnzqu_wu-vgBThktD7FcEJ-vOhOMhNDz8h3g@mail.gmail.com> <CANiq72kuRLANX=W7xUo1Jv7euH2eAhwHbx-CF4_4Nj=e9e1Weg@mail.gmail.com>
+In-Reply-To: <CANiq72kuRLANX=W7xUo1Jv7euH2eAhwHbx-CF4_4Nj=e9e1Weg@mail.gmail.com>
+From: Burak Emir <bqe@google.com>
+Date: Thu, 19 Jun 2025 11:32:35 +0200
+X-Gm-Features: Ac12FXzMiLrysaexKIHEsv3OlSgqtWrN4f4wQ24ucSR8dePMWMPttaiZ4o50cC0
+Message-ID: <CACQBu=VyU3vPLaimFZWPVkLpSHgRNFJgQP1khhfq=a1UpU74aA@mail.gmail.com>
+Subject: Re: [PATCH v12 3/5] rust: add bitmap API.
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Yury Norov <yury.norov@gmail.com>, 
+	Kees Cook <kees@kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
+	Carlos LLama <cmllamas@google.com>, Pekka Ristola <pekkarr@protonmail.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fixed 1-second delay in remove_board() fails to accommodate certain
-hardware like multi-host OCP cards, which exhibit longer power-off
-latencies.
+On Thu, Jun 12, 2025 at 11:53=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Thu, Jun 12, 2025 at 10:47=E2=80=AFAM Burak Emir <bqe@google.com> wrot=
+e:
+> >
+> > True, I observed the panic but the test is erroneously marked as failin=
+g.
+> > I have commented it out and added TODO to enable it once
+> > [should_panic] is supported.
+>
+> No, please do not use `unwrap()`.
+>
+> Instead, tests are supposed to be written as you would normally write
+> kernel code as much as possible, i.e. fallible.
+>
+> We also have now support for tests that return `-> Result`, so you can
+> e.g. use the `?` operator.
 
-Failure scenario:
-1. Software clears pending_events prematurely
-2. Hardware triggers DLLSC after software clearance
-3. Subsequent power-off process may generate AER interrupts
-4. System misinterprets residual DLLSC as valid hotplug event
+Point taken about unwrap(), I will update all unit tests to return a result=
+.
 
-Fix this by replacing the fixed delay with polling for DLLLA bit in
-the link status register.
+The lack for [should_panic] support remains
+(CONFIG_RUST_BITMAP_HARDENED is intended to produce a panic which
+would be nice to test), so I can only comment out the test.
 
-Logs before fix:
-[157.778307] pcieport 0003:00:00.0: pciehp: pending interrupts 0x0001 from Slot Status
-[157.778321] pcieport 0003:00:00.0: pciehp: Slot(31): Attention button pressed
-[157.785445] pcieport 0003:00:00.0: pciehp: Slot(31): Powering off due to button press
-[157.798931] pcieport 000b:00:02.0: pciehp: pending interrupts 0x0001 from Slot Status
-[157.799263] pcieport 0003:00:00.0: pciehp: pciehp_set_indicators: SLOTCTRL 88 write cmd 2c0
-[157.799273] pcieport 000b:00:02.0: pciehp: Slot(113): Attention button pressed
-[157.800484] pcieport 000b:00:02.0: pciehp: Slot(113): Powering off due to button press
-[157.800830] pcieport 000b:00:02.0: pciehp: pciehp_set_indicators: SLOTCTRL 88 write cmd 2c0
-[162.850249] pcieport 0003:00:00.0: pciehp: pciehp_get_power_status: SLOTCTRL 88 value read 12e1
-[162.850251] pcieport 000b:00:02.0: pciehp: pciehp_get_power_status: SLOTCTRL 88 value read 12e1
-[162.850253] pcieport 0003:00:00.0: pciehp: pciehp_unconfigure_device: domain:bus:dev = 0003:01:00
-[162.850254] pcieport 000b:00:02.0: pciehp: pciehp_unconfigure_device: domain:bus:dev = 000b:02:00
-[162.850278] mlx5_core 000b:02:00.1: PME# disabled
-[164.862362] mlx5_core 000b:02:00.1: E-Switch: cleanup
-[165.171541] mlx5_core 000b:02:00.1: disabling bus mastering
-[165.171591] mlx5_core 000b:02:00.0: PME# disabled
-[167.214351] mlx5_core 000b:02:00.0: E-Switch: cleanup
-[167.539871] mlx5_core 000b:02:00.0: disabling bus mastering
-[167.540342] pcieport 000b:00:02.0: pciehp: pciehp_power_off_slot: SLOTCTRL 88 write cmd 400
-[167.540345] mlx5_core 0003:01:00.1: PME# disabled
-[168.546269] pcieport 000b:00:02.0: pciehp: pciehp_set_indicators: SLOTCTRL 88 write cmd 300
-[169.590320] mlx5_core 0003:01:00.1: E-Switch: cleanup
-[169.899852] mlx5_core 0003:01:00.1: disabling bus mastering
-[169.899241] mlx5_core 0003:01:00.0: PME# disabled
-[171.870344] mlx5_core 0003:01:00.0: E-Switch: cleanup
-[172.289046] mlx5_core 0003:01:00.0: disabling bus mastering
-[172.289366] pcieport 0003:00:00.0: pciehp: pciehp_power_off_slot: SLOTCTRL 88 write cmd 400
-[172.302385] pcieport 0003:00:00.0: AER: Corrected error message received from 0003:00:00.0
-[172.302396] pcieport 000b:00:02.0: AER: Corrected error message received from 000b:00:02.0
-[172.310641] pcieport 0003:00:00.0: PCIe Bus Error: severity=Corrected, type=Physical Layer, (Receiver ID)
-[172.310892] pcieport 000b:00:02.0: PCIe Bus Error: severity=Corrected, type=Physical Layer, (Receiver ID)
-[172.310893] pcieport 0003:00:00.0:   device [0823:0110] error status/mask=00000001/0000e000
-[172.310894] pcieport 0003:00:00.0:    [ 0] RxErr
-[172.310893] pcieport 000b:00:02.0:   device [0823:0112] error status/mask=00000001/0000e000
-[172.310894] pcieport 000b:00:02.0:    [ 0] RxErr                  (First)
-[172.332915] pcieport 0003:00:00.0: pciehp: pending interrupts 0x0100 from Slot Status
-[172.353876] pcieport 000b:00:02.0: pciehp: pending interrupts 0x0100 from Slot Status
-[172.360212] pcieport 000b:00:02.0: pciehp: pciehp_check_link_active: lnk_status = d011
-[172.360362] pcieport 000b:00:02.0: pciehp: Slot(113): Card present
-[172.374314] pcieport 000b:00:02.0: pciehp: pciehp_get_power_status: SLOTCTRL 88 value read 17e1
-[172.374357] pcieport 000b:00:02.0: pciehp: pciehp_power_on_slot: SLOTCTRL 88 write cmd 0
-[172.374383] pcieport 000b:00:02.0: pciehp: pciehp_set_indicators: SLOTCTRL 88 write cmd 200
-[173.314226] pcieport 000b:00:02.0: pciehp: pciehp_set_indicators: SLOTCTRL 88 write cmd 300
-[174.111245] pcieport 0003:00:00.0: pciehp: pending interrupts 0x0100 from Slot Status
-[174.111232] pcieport 0003:00:00.0: pciehp: pciehp_check_link_active: lnk_status = f085
-[174.111234] pcieport 0003:00:00.0: pciehp: Slot(31): Card present
-[174.117136] pcieport 0003:00:00.0: pciehp: Slot(31): Link Up
-[174.122963] pcieport 0003:00:00.0: pciehp: pciehp_get_power_status: SLOTCTRL 88 value read 17e1
-[174.122964] pcieport 0003:00:00.0: pciehp: pciehp_power_on_slot: SLOTCTRL 88 write cmd 0
-[174.122967] pcieport 0003:00:00.0: pciehp: pciehp_set_indicators: SLOTCTRL 88 write cmd 200
-
-Logs after fix:
-[143.610100] pcieport 000b:00:02.0: pciehp: pending interrupts 0x0001 from Slot Status
-[143.616525] pcieport 0003:00:00.0: pciehp: pending interrupts 0x0001 from Slot Status
-[143.629921] pcieport 000b:00:02.0: pciehp: Slot(113): Attention button pressed
-[143.629923] pcieport 000b:00:02.0: pciehp: Slot(113): Powering off due to button press
-[143.629926] pcieport 000b:00:02.0: pciehp: pciehp_set_indicators: SLOTCTRL 88 write cmd 2c0
-[143.651725] pcieport 0003:00:00.0: pciehp: Slot(31): Attention button pressed
-[143.658848] pcieport 0003:00:00.0: pciehp: Slot(31): Powering off due to button press
-[143.666666] pcieport 0003:00:00.0: pciehp: pciehp_set_indicators: SLOTCTRL 88 write cmd 2c0
-[148.863526] pcieport 000b:00:02.0: pciehp: pciehp_get_power_status: SLOTCTRL 88 value read 12e1
-[148.870562] pcieport 0003:00:00.0: pciehp: pciehp_get_power_status: SLOTCTRL 88 value read 12e1
-[148.870572] pcieport 0003:00:00.0: pciehp: pciehp_unconfigure_device: domain:bus:dev = 0003:01:00
-[148.870579] pcieport 000b:00:02.0: pciehp: pciehp_unconfigure_device: domain:bus:dev = 000b:02:00
-[148.870605] mlx5_core 0003:01:00.1: PME# disabled
-[152.536968] mlx5_core 0003:01:00.1: E-Switch: cleanup
-[152.877666] mlx5_core 0003:01:00.1: disabling bus mastering
-[152.878202] mlx5_core 0003:01:00.0: PME# disabled
-[156.592567] mlx5_core 0003:01:00.0: E-Switch: cleanup
-[156.904767] mlx5_core 0003:01:00.0: disabling bus mastering
-[156.905195] pcieport 0003:00:00.0: pciehp: pciehp_power_off_slot: SLOTCTRL 88 write cmd 400
-[156.905231] mlx5_core 000b:02:00.1: PME# disabled
-[160.360660] mlx5_core 000b:02:00.1: E-Switch: cleanup
-[161.272871] mlx5_core 000b:02:00.1: disabling bus mastering
-[161.273719] mlx5_core 000b:02:00.0: PME# disabled
-[165.028632] mlx5_core 000b:02:00.0: E-Switch: cleanup
-[165.454213] mlx5_core 000b:02:00.0: disabling bus mastering
-[165.454925] pcieport 000b:00:02.0: pciehp: pciehp_power_off_slot: SLOTCTRL 88 write cmd 400
-[165.464333] pcieport 0003:00:00.0: AER: Corrected error message received from 0003:00:00.0
-[165.478716] pcieport 000b:00:02.0: AER: Corrected error message received from 000b:00:02.0
-[165.481156] pcieport 0003:00:00.0: PCIe Bus Error: severity=Corrected, type=Physical Layer, (Receiver ID)
-[165.481158] pcieport 0003:00:00.0:   device [0823:0110] error status/mask=00000001/0000e000
-[165.481166] pcieport 0003:00:00.0:    [ 0] RxErr                  (First)
-[165.528873] pcieport 000b:00:02.0: pciehp: pending interrupts 0x0001 from Slot Status
-[165.535384] pcieport 0003:00:00.0: pciehp: pending interrupts 0x0100 from Slot Status
-[165.535403] pcieport 000b:00:02.0: PCIe Bus Error: severity=Corrected, type=Physical Layer, (Receiver ID)
-[165.535403] pcieport 000b:00:02.0:   device [0823:0112] error status/mask=00000001/0000e000
-[165.541315] pcieport 0003:00:00.0: pciehp: pciehp_set_indicators: SLOTCTRL 88 write cmd 300
-[165.550871] pcieport 0003:00:00.0:    [ 0] RxErr                  (First)
-[165.578591] pcieport 000b:00:02.0: pciehp: pciehp_set_indicators: SLOTCTRL 88 write cmd 300
-
-Signed-off-by: Hongbo Yao <andy.xu@hj-micro.com>
----
- drivers/pci/hotplug/pciehp_ctrl.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
-index bcc938d4420f..179ebe4f7797 100644
---- a/drivers/pci/hotplug/pciehp_ctrl.c
-+++ b/drivers/pci/hotplug/pciehp_ctrl.c
-@@ -30,6 +30,25 @@
- #define SAFE_REMOVAL	 true
- #define SURPRISE_REMOVAL false
- 
-+static void pciehp_wait_for_link_inactive(struct controller *ctrl)
-+{
-+	u16 lnk_status;
-+	int timeout = 10000, step = 20;
-+
-+	do {
-+		pcie_capability_read_word(ctrl->pcie->port, PCI_EXP_LNKSTA,
-+					  &lnk_status);
-+
-+		if (!(lnk_status & PCI_EXP_LNKSTA_DLLLA))
-+			return;
-+
-+		msleep(step);
-+		timeout -= step;
-+	} while (timeout >= 0);
-+
-+	ctrl_dbg(ctrl, "Timeout waiting for link inactive state\n");
-+}
-+
- static void set_slot_off(struct controller *ctrl)
- {
- 	/*
-@@ -119,8 +138,11 @@ static void remove_board(struct controller *ctrl, bool safe_removal)
- 		 * After turning power off, we must wait for at least 1 second
- 		 * before taking any action that relies on power having been
- 		 * removed from the slot/adapter.
-+		 *
-+		 * Extended wait with polling to ensure hardware has completed
-+		 * power-off sequence.
- 		 */
--		msleep(1000);
-+		pciehp_wait_for_link_inactive(ctrl);
- 
- 		/* Ignore link or presence changes caused by power off */
- 		atomic_and(~(PCI_EXP_SLTSTA_DLLSC | PCI_EXP_SLTSTA_PDC),
--- 
-2.43.0
-
+Thanks,
+Burak
 
