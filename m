@@ -1,149 +1,134 @@
-Return-Path: <linux-kernel+bounces-694115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C058AE080C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:57:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00EE8AE0812
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F8AA3BC595
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CEEE3A86AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0125B28C2B0;
-	Thu, 19 Jun 2025 13:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BD827F012;
+	Thu, 19 Jun 2025 13:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jE47HHiQ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NviNWFEb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A772B27FB0D;
-	Thu, 19 Jun 2025 13:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BDD25C818;
+	Thu, 19 Jun 2025 13:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750341348; cv=none; b=as7Py5mevscfKVVGI81PSDNUipkcNRJFNtBO0N3CgzgocmfWk8mrDCHnDComkUzLoUSZeVoUvfd2qyBPgQ4tMV+i5KJr6z51iJKohKuzWguoNkqszpyCfxM2o7g+L55OCp3oO0hqLjn4OmuPXHWOCifTjD0xBWKjb3zjTQxC1Tk=
+	t=1750341485; cv=none; b=bafcNK8YVB+tnqA7IfWTlMrqfkiQhGklmK8e8AA7bDdk7ulM9od0xQwt3b3m7X8YSwHbmBeNF10+LeL7fdfcnJiVILH093Ft012QgKILewMzzzm/S7gWKRdBKpvLiUJMHS6vpS4U9m1sOHvtY23nhez1SGGex2VsoU0zNPQxrkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750341348; c=relaxed/simple;
-	bh=OGuWlz4kNKOgb2HueMQ/0PM58Nt0kLoicQ+sl/tLXH4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZPu9Snk+r7c3jJg/ekPW9sm5orv0dDb3DlL5rI/toLm+E+IZmkXtfU6aL86b6N0of4CBKZfJBhBTuSh15hTR54WVoR1anepBoN9JAWo3hEVZ3bXFZGfdpwVk0B8YEwuCrOvBPEV1ulgM/5/xNP6phs+2MZDkNeO6kNe4cVUxAlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jE47HHiQ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-451e2f0d9c2so6424475e9.1;
-        Thu, 19 Jun 2025 06:55:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750341345; x=1750946145; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MLEG/b+IeRhjbnETc9FXsu/s4UOq+mpbqUovm0NpX0k=;
-        b=jE47HHiQx7L2/FquY6vGWDWdbCB5IrofU47S5dALW90gqEBO20JmSVtoIWeZitdwKZ
-         dxscdIZCb/deKqRoQOzevl37q8G8VOunzsoFBgIW+2+vz/zFkGc8gb80/0E3Ny5uEsss
-         zEylwbGHXZQn7f8U2k/iUGFepAYJpkgvJsl1cTd0QTFp3nCcg8MJmuZgx2Ma5piJrXuT
-         pLcKVPDguNcU+gT0R9jIrcCtY6IcfUZrMVINSgJ2rTiwxxQ77MLpaQ3YyelqSAYCByvk
-         0bstEihDqSyWlCbo9IMSMG9Zxcf10Vl9nsCEq0U1jTljnzPBvETrkMTzq7wcTYel7Y1Q
-         ll1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750341345; x=1750946145;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MLEG/b+IeRhjbnETc9FXsu/s4UOq+mpbqUovm0NpX0k=;
-        b=cNFZ5LtIcl5pP5BfopjKOfGMXcZiV5pJdnmDLKmC47y/uUOEll2iYPRDZec42SX/62
-         a7uhvdq6nlzS/KWaQwxbQhuw74/VL2PAUoLQgsuJgGfZ0BflbWe83PN3jGoWHMkLZbuD
-         +UhqJDjkh9FB8+z+jh/8gT/QOqQMACp0Y6WLeQS+LQJtfnwBe+yg83kzY+QO+z8YQgg8
-         JoitUduPpjdAab3W0BQInxrezDa8tQUfKMCbt1oLyMSPQqhK5Rqf6tPG+4PMsuRN06uD
-         quNoJk6dGuOtxXF41gkz5su1wIc0dhRv2Em74ucQdzXjyR5eatQlB+bq58TkyFW0dEwI
-         zVwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOCz9yypsspek1RSkVXWV5dqzJkbWnPKrl5IfEMrYyRZd+xJ/6crEe5oqDz7gfG1YQI0Iz7rYWfN6ek03A@vger.kernel.org, AJvYcCWUyjJEJzjpba2mR0I2oyh/YGKyQ/SimZJ7yzoI3aW4KOQtNNcCdoiJxhnbq9uvyHjId5LWyARqxIdi@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAtFElGRSg7DaxbKes50/tAtHgJpYSmZqwRF4ELxcSoEoTSpLg
-	7ZMftKk4/lNqu1EwNbZI61oW+0sexGK34EpA3F48K6ANtpzzrHyMjaq8
-X-Gm-Gg: ASbGncsdK17jwcu6ABojIIfUoMBhYHqhgBKiLIFJgqqQD1Hcr/tv+PBkQus+hTqV4dM
-	Bq0bkc5tEZNbroNOQUYLJKOv0jWMOWD9NGKBWofMYJQbEomQ50Vs+2Sl0GyKyliH/b6cSfEK7He
-	fHf3KaMwJD4L3tWxhwPd5JOP9mSSKDJrcFSEZrmvke+U3KUL7v+VIMoq0eMRAZYbGfEJceNNaIL
-	RY0lrTuCdX+rIHARZQs5JsN1QMvaQt71o7SMww3cRkumxkKoWpda7mljNLnsegqYvXrXofbkSDX
-	KMSdShw5DRq9krnzRdO/wmrW4bEnXEaWCudFoZoiiQF9gZPr6+/XyQqmhgkiiEh4KfokNKlq4VS
-	Nna9Slrvb6oI=
-X-Google-Smtp-Source: AGHT+IGRX/e/TXfjaLh2Jn7EFKzJ7tb/0bP0AYt5HbTMHfJicXxhZVXh3JRLj3/HQlWX0QV9g+JRjA==
-X-Received: by 2002:a05:600c:3d85:b0:450:ce44:b7 with SMTP id 5b1f17b1804b1-4535ec2e9cfmr36356055e9.5.1750341344638;
-        Thu, 19 Jun 2025 06:55:44 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:851f:e727:733c:ea8f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535ead202asm29454835e9.27.2025.06.19.06.55.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 06:55:43 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/2] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Add RAA215300 PMIC
-Date: Thu, 19 Jun 2025 14:55:39 +0100
-Message-ID: <20250619135539.207828-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250619135539.207828-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250619135539.207828-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1750341485; c=relaxed/simple;
+	bh=wjLepEGEAGOgVFQXi2T6s0A59N+eqbjbHSQb5NCvhL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LWigepfEcucDhjVvflt60HjVexDgmYpDOhp37Fx65NIZgaEUVpVFqtqxUZrxmSWF9+/Nej47CGgD8V0CTGFfEAJuybLnduptyPtwPpz/nR90t14uxHa/6Jzq57FTeehekwIgVJYlKaH4fJ3UVRKGQru66ubkyBxVKIZ1uT8Urvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NviNWFEb; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750341484; x=1781877484;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wjLepEGEAGOgVFQXi2T6s0A59N+eqbjbHSQb5NCvhL4=;
+  b=NviNWFEb9Vki7i9CyMdLgXUmJGqSHtwiGuy/wD+ETEXtSrfpEJKm1AJS
+   mE1K7mDKkXXRYdtHSALHxvwBQmlYxUfr0k7Vv9chFEiuhYNfXAvuqRKUF
+   3gFxC06AHkQ07fil+EV7/C8/CLFY1TwU4AqlTjnB6eHBNCpnhVtbCcPFh
+   craX2JeT6rDQLVRaUlABEt5VqWNfWRmdh7zJVt/nE6JqpOk81JIj+FyrU
+   mzCJxy3saYUNWOEDXv61OJlgnh0bCdhj16zpOOkO4ALC4NpKwNt61ZTQO
+   HhyezKDuis1hOn9FVS2hTiRGwclQUATTngqVvFm+C4izm9lgIXIistM/n
+   g==;
+X-CSE-ConnectionGUID: ezccr3QSS4C7Vixa/9iklg==
+X-CSE-MsgGUID: x8cyZXA4QP+DLgDNruOCvA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="62863203"
+X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
+   d="scan'208";a="62863203"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 06:58:04 -0700
+X-CSE-ConnectionGUID: ECyZ/YiKTk+0IDKwKw/oxw==
+X-CSE-MsgGUID: eRZz2kT1TCCY7JXJv6EIAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
+   d="scan'208";a="150250014"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 19 Jun 2025 06:57:59 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uSFm8-000KnG-2h;
+	Thu, 19 Jun 2025 13:57:56 +0000
+Date: Thu, 19 Jun 2025 21:57:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, kernel-team@meta.com, andrii@kernel.org,
+	eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net,
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com,
+	amir73il@gmail.com, gregkh@linuxfoundation.org, tj@kernel.org,
+	daan.j.demeyer@gmail.com, Song Liu <song@kernel.org>
+Subject: Re: [PATCH bpf-next 1/4] kernfs: Add __kernfs_xattr_get for RCU
+ protected access
+Message-ID: <202506192154.T111naKp-lkp@intel.com>
+References: <20250618233739.189106-2-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250618233739.189106-2-song@kernel.org>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Song,
 
-Add support for the Renesas RAA215300 PMIC to the RZ/V2N EVK. The PMIC is
-connected to I2C8 and uses a 32.768kHz fixed clock source (x6).
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- .../boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts   | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+[auto build test WARNING on bpf-next/master]
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-index b63ee1ff18d5..40014044bbc7 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-@@ -66,6 +66,13 @@ vqmmc_sdhi1: regulator-vqmmc-sdhi1 {
- 		gpios-states = <0>;
- 		states = <3300000 0>, <1800000 1>;
- 	};
-+
-+	/* 32.768kHz crystal */
-+	x6: x6-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+	};
- };
- 
- &audio_extal_clk {
-@@ -150,6 +157,14 @@ &i2c8 {
- 	pinctrl-names = "default";
- 	clock-frequency = <400000>;
- 	status = "okay";
-+
-+	raa215300: pmic@12 {
-+		compatible = "renesas,raa215300";
-+		reg = <0x12>, <0x6f>;
-+		reg-names = "main", "rtc";
-+		clocks = <&x6>;
-+		clock-names = "xin";
-+	};
- };
- 
- &mdio0 {
+url:    https://github.com/intel-lab-lkp/linux/commits/Song-Liu/kernfs-Add-__kernfs_xattr_get-for-RCU-protected-access/20250619-074026
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20250618233739.189106-2-song%40kernel.org
+patch subject: [PATCH bpf-next 1/4] kernfs: Add __kernfs_xattr_get for RCU protected access
+config: m68k-randconfig-r122-20250619 (https://download.01.org/0day-ci/archive/20250619/202506192154.T111naKp-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 8.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250619/202506192154.T111naKp-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506192154.T111naKp-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> fs/kernfs/inode.c:312:17: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   fs/kernfs/inode.c:312:17: sparse:    struct kernfs_iattrs [noderef] __rcu *
+   fs/kernfs/inode.c:312:17: sparse:    struct kernfs_iattrs *
+
+vim +312 fs/kernfs/inode.c
+
+   304	
+   305	int __kernfs_xattr_get(struct kernfs_node *kn, const char *name,
+   306			       void *value, size_t size)
+   307	{
+   308		struct kernfs_iattrs *attrs;
+   309	
+   310		WARN_ON_ONCE(!rcu_read_lock_held());
+   311	
+ > 312		attrs = rcu_dereference(kn->iattr);
+   313		if (!attrs)
+   314			return -ENODATA;
+   315	
+   316		return simple_xattr_get(&attrs->xattrs, name, value, size);
+   317	}
+   318	
+
 -- 
-2.49.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
