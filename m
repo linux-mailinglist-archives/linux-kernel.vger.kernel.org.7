@@ -1,97 +1,165 @@
-Return-Path: <linux-kernel+bounces-693215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE391ADFC4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:17:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C2EADFC4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D4D2189FE6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:17:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECA013A889E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5C118D643;
-	Thu, 19 Jun 2025 04:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E6623E334;
+	Thu, 19 Jun 2025 04:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pF47xPRx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lh1HfRYm"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA7278F4C;
-	Thu, 19 Jun 2025 04:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1453085D4
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 04:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750306632; cv=none; b=YOHA6qs6kSB3G2xR7pjHfu/SK5rSipdIWUgg7XH6u5Qn8cMbYPXivo90CeAOOc2u61yUDbvWOS2+kVDT0c60rH1k2JEkY+SiQ8sE0qeKmGGSZAXuEF7zMKRIXzDoqM2tfQZnxKroD+qOCY6tbU6HLg9/Q/Bup9lTccFJsSn/COw=
+	t=1750306797; cv=none; b=uU93N64dXZCUtQKx99pVyjnriIRs8GkzAosf2/YY++iXNAAAHC0hXQ29KEHZBcWG3ZjpkQzxNC/skaNPu7SprHaZQ7b+3wpvI2IiUSN3lDyTBtcBeogF7wLYWDUU1KkeI7X7k5dltoGCREtQvwyLS5ds3ucbERX1vRUrUIN+7Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750306632; c=relaxed/simple;
-	bh=VPKaoyzxrux1zV8zzzKWYGkZSbtqoWK89RAQveuq4KI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hYaE+asYYSx+OBOJFp/RiLtO+t0WhocAQQm4KYRCOiXyzJi80sSelVJ8XNVDj4boyBbM8H+u9clb12ynZoQ20czIhUyLh+PXEr7CtDHWOgO9URipPOxFbpEnfELPcTmWwzUlAVYl61Xaa7z2dnafM/fnfE0OY/wjvhCirWUK47w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pF47xPRx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9D5BC4CEEA;
-	Thu, 19 Jun 2025 04:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750306631;
-	bh=VPKaoyzxrux1zV8zzzKWYGkZSbtqoWK89RAQveuq4KI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pF47xPRxxODA2Y/wjrk7wxkNL2X0ngP5cstysOVwDzOpWUyBIU5iWqZ3jfzmEaic/
-	 9eDN4ltJqFS7TC0mJXngclD+H3ZNH07nEuAhYroXkx/0YOr0RBLBTQc0Z2gg70nvl0
-	 9lzOt8lyT++g8WopAYEE4co5e6h6wtt3G6Cism3c=
-Date: Thu, 19 Jun 2025 06:17:08 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Pascal Ernster <git@hardfalcon.net>
-Cc: Ronald Warsow <rwarsow@gmx.de>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, conor@kernel.org, hargar@microsoft.com,
-	broonie@kernel.org, "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: Re: [PATCH 6.15 000/780] 6.15.3-rc1 review
-Message-ID: <2025061930-jumbo-bobsled-521a@gregkh>
-References: <20250617152451.485330293@linuxfoundation.org>
- <f2b87714-0ef6-4210-9b30-86b4c79d1ed8@gmx.de>
- <2025061848-clinic-revered-e216@gregkh>
- <c8e4e868-aafb-4df1-8d07-62126bfe2982@hardfalcon.net>
- <097ef8cc-5304-4a7d-abc0-fd011d1235d5@hardfalcon.net>
+	s=arc-20240116; t=1750306797; c=relaxed/simple;
+	bh=42+ZcWihADi6feelct3b85p6eGrRRLvD+RD7THwAKIY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kciJiyRv67aeUjxHDFiuwpqHsidpJCj43Y3CSL3ikZEv8YwPrI4juytR4kYmLe8p0AVgyVuHpIPpvUJD4kAqEqOGwQe8HX+x48c9mUi2r6sxY7Yi6kp45VNmIXktGZZTWMCsB4u9N5Hb8Krm4BlqREoeaDhb7uLoVh+1Gez6/UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lh1HfRYm; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2348ac8e0b4so67475ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 21:19:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750306795; x=1750911595; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IdPPLCnOw1JLV4SAcVZKzEB7UTqx2yTdOYlcY0aplos=;
+        b=lh1HfRYmZOM7QoSsVjJssw7UGIlzRCqGywIXld6UFxwME6B+JaMhB3KyPP0RxWBP8u
+         FqvbGul5cJyTmDTTCCmcpa1Hk091H0GbzLDlrgiBqkCbV769ozj35bjGyRkYmX2iWL5u
+         7e+oTA3ghvmJQF4MK3GGHOt7GCjYqICINowCUBBOtpl5ZQib4JhIEJ+rRKLvdSnBlTI9
+         +Dp1n6Xf6G8tU38uUi9f2MelY/xSXgfcTXW3Y+Fai1y/FlGoFxnyKFvHfL7AQxDzTxDP
+         asHjKzumuPpOyAyW6oW6kzNt0D8QjqBcVsSx8v90HPvJ1oLoinVh4lTTH++PkmcM08G8
+         WyDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750306795; x=1750911595;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IdPPLCnOw1JLV4SAcVZKzEB7UTqx2yTdOYlcY0aplos=;
+        b=KttEMvxxFsMjU1bbH1ZG6UJ2wuR8q7kYDxNGIigAIYCulX2iNYMcAjQKRemhCfQl7o
+         HwBbESc2YqkziNJxUGW0DuI7VV33xndJ6j3RYAmH12gz/I1ssfWCEVviQJ5tY7ujvCzI
+         NMgg2y8HfT/i8sfwsGKlhISqA73nh8dPZ7Rz6I+1O8Uiou7WfUtXmPuEUpdjZQ83BrR6
+         y/e6vuk/slopP8FDOgkdoDr/jyx1SKzmL+/yd2PhjvLEktNYPtNgKFTJ//T5XehQEYjr
+         D8FOOgzaUlRcQLNFjT+KErhscWqYwk2b6+zy1nSP5hozTi0B/05ln5ptc+y5nuPZX6d2
+         zv2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUtbrwmXG9L86/7lnNhw2UlHsDiMmdlGNHn0PMGxqKM13Dc3S7WUb4tJ7SIya9HbEfcwrOq4ib1MzUicgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9pvEGLkLa3jCxiVbDdVrIJ/kpoEQqFvFSH/8hjhExfvULgOXW
+	cSr9LY/YXwiQJZHxbAUJv8t7ya2yNIDiP8y5Dy9VUopUH/HLP6tLvOSnCMhi5Utw3amzT1aldaO
+	777qyZV0DgG9RtiRWNhPzrxM8cWQ7/CscTTuSS4Ug
+X-Gm-Gg: ASbGncsRv7k9J8hom7hlwHHlbsEVs7jhEujC7gp8V1xBeqQDQMBXptm8X68HoENFBif
+	t3A0+XfxUkoHjXF4NPTlabNhTgKO+uIfKglJOISZWYeL1bGcl0CUPbO2RHBR0JHYtCEBaOuytJU
+	kiIhi58u18Jb9EsRC3QYo+ElhcsQcwhpuKonL+UztarCmg
+X-Google-Smtp-Source: AGHT+IG4/KdYP+fN9Tz4EPFqPl59lyfp5z5oElErmQ39hgdiqIKMNL14Yst10Fryuqu/ixWcQkhafk8e9lBxMFD/+CA=
+X-Received: by 2002:a17:902:d484:b0:234:b441:4d4c with SMTP id
+ d9443c01a7336-237cdfe93c4mr1247815ad.5.1750306794932; Wed, 18 Jun 2025
+ 21:19:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <097ef8cc-5304-4a7d-abc0-fd011d1235d5@hardfalcon.net>
+References: <20250615205914.835368-1-almasrymina@google.com>
+ <c126182c-8f26-41e2-a20d-ceefc2ced886@kernel.org> <CAHS8izPyzJvchqFNrRjY95D=41nya8Tmvx1eS9n0ijtHcUUETA@mail.gmail.com>
+ <f445633e-b72c-4b5d-bb18-acda1c1d4de6@kernel.org>
+In-Reply-To: <f445633e-b72c-4b5d-bb18-acda1c1d4de6@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 18 Jun 2025 21:19:41 -0700
+X-Gm-Features: AX0GCFvx-B1b2Dd3L5vrSsW0UL1IAM66_kMPRqHS2OPCt7MkBpentxKfBxCiSAk
+Message-ID: <CAHS8izOhNRNXyAgfuKW1xKb8PTernfer6tJfxG5FZmq7pePjwA@mail.gmail.com>
+Subject: Re: [PATCH net-next v4] page_pool: import Jesper's page_pool benchmark
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>, 
+	Ignat Korchagin <ignat@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 18, 2025 at 10:31:43PM +0200, Pascal Ernster wrote:
-> Hello again,
-> 
-> 
-> I've sent this email a few minutes ago but mixed up one of the In-Reply-To
-> message IDs, so I'm resending it now with (hopefully) the correct
-> In-Reply-To message IDs.
-> 
-> 
-> I've bisected this and found that the issue is caused by commit
-> f46262bbc05af38565c560fd960b86a0e195fd4b:
-> 
-> 'Revert "mm/execmem: Unify early execmem_cache behaviour"'
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/commit/?id=f46262bbc05af38565c560fd960b86a0e195fd4b
-> 
-> https://lore.kernel.org/stable/20250617152521.879529420@linuxfoundation.org/
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/tree/queue-6.15/revert-mm-execmem-unify-early-execmem_cache-behaviour.patch?id=344d39fc8d8b7515b45a3bf568c115da12517b22
+On Wed, Jun 18, 2025 at 5:46=E2=80=AFAM Jesper Dangaard Brouer <hawk@kernel=
+.org> wrote:
+> >> Something is off with benchmark numbers compared to the OOT version.
+> >>
+> >
+> > I assume you're comparing my results (my kernel config + my hardware +
+> > upstream benchmark) with your results (your kernel config + your
+> > hardware + OOT version). The problem may be in OOT vs upstream but it
+> > may be just different code/config/hardware.
+>
+> True I used OOT version.
+>
+> Just applied this patch, but I get compile error. Because Makefile tries
+> to get kernel headers (net/page_pool/helpers.h) from local Linux
+> installation instead of git tree.  This need to be adjusted for patch,
+> such that it builds with src-local/git tree provided headers.
+>
 
-Thank you for digging into this.  Looks like I took the last patch in a
-patch series and not the previous ones, which caused this problem.  I've
-dropped this one now and will add it back next week after I also add all
-the other ones in the series.
+I believe the fix to that is to do:
 
-thanks,
+make KDIR=3D$(pwd) -C ./tools/testing/selftests/net/bench
 
-greg k-h
+I.e. the build files assume you're building the test to run it on the
+current machine, to cross compile it for a different machine under
+test, we need to pass explicit KDIR. I've kinda copy-pasted what other
+TEST_GEN_MODS_DIR=3D makefiles do. In theory we could do something else
+but I am guessing the way current TEST_GEN_MODS_DIR does it is the way
+to go. Does it work for you if you do that?
+
+[...]
+> >
+> > Yeah, I actually just checked and I have CONFIG_DEBUG_NET on in my
+> > build, and a lot of other debug configs are turned on.
+> >
+>
+> The CONFIG_DEBUG_NET should be low overhead, so I don't expect this to
+> be the root-cause.  Other CONFIG options are more likely the issue.
+>
+
+Thank you very much for the tips. Perf report showed the locking was
+taking forever on my kernel... I had locking debug configs enabled in
+my build... sorry... with those disabled, I get much more sane
+results:
+
+[  185.557293] bench_page_pool: time_bench_page_pool01_fast_path():
+Cannot use page_pool fast-path
+[  185.607873] bench_page_pool: Type:no-softirq-page_pool01 Per elem:
+11 cycles(tsc) 4.177 ns (step:0) - (measurement period
+time:0.041772642 sec time_interval:41772642) - (invoke count:10000000
+tsc_interval:112778487)
+[  185.627090] bench_page_pool: time_bench_page_pool02_ptr_ring():
+Cannot use page_pool fast-path
+[  185.826991] bench_page_pool: Type:no-softirq-page_pool02 Per elem:
+51 cycles(tsc) 19.117 ns (step:0) - (measurement period
+time:0.191178107 sec time_interval:191178107) - (invoke count:10000000
+tsc_interval:516173586)
+[  185.846380] bench_page_pool: time_bench_page_pool03_slow(): Cannot
+use page_pool fast-path
+[  186.479432] bench_page_pool: Type:no-softirq-page_pool03 Per elem:
+168 cycles(tsc) 62.469 ns (step:0) - (measurement period
+time:0.624690697 sec time_interval:624690697) - (invoke count:10000000
+tsc_interval:1686656879)
+
+Does this alleviate your concern? Or do you still see an issue here?
+There is still a delta between our results, on different
+hardware/configs but results are in a sane range now.
+
+--=20
+Thanks,
+Mina
 
