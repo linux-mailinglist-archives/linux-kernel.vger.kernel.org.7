@@ -1,113 +1,248 @@
-Return-Path: <linux-kernel+bounces-694281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4656FAE0A1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:18:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3BB1AE0A3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB14E7AF0FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:16:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF073BD7DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053A41C8611;
-	Thu, 19 Jun 2025 15:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AB121C9F2;
+	Thu, 19 Jun 2025 15:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="RMtxkTuF"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WKtmm8hk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E4A3085DB
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 15:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E9C1C8611
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 15:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750346281; cv=none; b=LUqIYj6toqaVqbbHCmDRZ5/70gVaCrhxrWWNOYhrb4H6h6H4RX7SgeJdo9BZ2avAItR2p+FgYKuGHv0S+35oCi8YCWl8lKKxoePwViYMlKyqRTHTRgQUzJeu6r1Xxc6GwOnghLpBskaBtN+mpW3kSKy6B3Mt4rxEo9NyBy232YU=
+	t=1750346299; cv=none; b=hU3DTI/jR2YHA8nXpfZEnUHO8oGjBGDVwUCFYoOrNgFUyXVrkxQtGsXF/XVr4KC2Dhdy+83GVBR3Gpe6yiqQGXve3wR3OciXj9EuKw7EP+hJ3MJy6ZM+4pM2+k1KLsDzowspmQhSc1hoG5/c3TRRfBtldl4po5LOS5ySZEPDRso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750346281; c=relaxed/simple;
-	bh=Lss/rPYLZG9odOVpBtCol6toF0P1/fBtF9QDHyljGBw=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=pGG9YPZeulZ788eoXBAmuz0E6r3HlYKozc1IU4j1urMhsWD4AohD4allVzJCQvsN19JiVTYs8Vsy4nJOZvbldKy+CvGuSRPlt3p6eCMhwxFm+OpQWQj7DygUC2hy5pqSnHTzJmvaUTXTYTI9Axw8xDTmPWABMBWzBfvYSkDhqW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu; spf=pass smtp.mailfrom=maine.edu; dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b=RMtxkTuF; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maine.edu
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7d3e7641b76so58385585a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 08:17:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maine.edu; s=google; t=1750346279; x=1750951079; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hz28kZce3rKn2T+B8sZgV0w8PzAQ2ReDHPYg2LQY5lA=;
-        b=RMtxkTuFai+MNu/IOAYhlxMYajrC4mS7EKOUyPTs2FlgSOhC4f5gJrATVxrurfOz0T
-         jRS4pTjLWpkZd7qLCXip4JRsSeiM3P6ZqbeFfY+MrNKWU+IVUnmXp0Iru7L4S7Q3UJA+
-         VDuSl99gYZsOTkIYbGdWmJbz2KZDrir8ebg8w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750346279; x=1750951079;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hz28kZce3rKn2T+B8sZgV0w8PzAQ2ReDHPYg2LQY5lA=;
-        b=AB57ds2TC7zKGc5FusxjVHEHSsx0RQU9zpjfTcOPMW10mVGrSooHjnpLHkqmjPFPLj
-         beT2eEeU2hMIIhrT4tGr/jjt1SzPtiyYOap++q4qPMWSbaNr8oTQD2DWrE2XaMLNxT7f
-         7XqefY62/cKRAK3ZFL3tLhOrWHjMd2D9XOzX75RT0G3DwZ+RUFRZfrnw2Ow+zZRFDHHL
-         IxPR+eUv+u/SI1Mp/0f1V0QYCKannXTO7KbyMrRo0ulMimCXLUKbPZ6jPfUBGDHwgzsI
-         NfJPS3+tQKfbXgURi63lnku+u5OOMuIWAZBbvenkT2MLRnHFblHU+L/pHjSe8UXyWdTj
-         IM/w==
-X-Forwarded-Encrypted: i=1; AJvYcCX5FS9L/bwf2TIGM1DHsAPoBaKdAOEGD5a+fmDoJqkHcZfAwChawysH2WR/BBfEIbtTolI5VnCbkQFnIXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEElbhjqMpH66ALi+WpmI6KH5urllSp1hnJDc98hz9doqKmqwk
-	jsfLxE2mtAZ6yuKoW9+G6xT7HsZCcLMISLOZZF+kcxZ+ExJv2ld9/NQdRyP8VfCkBQ==
-X-Gm-Gg: ASbGncs2wr1RYdhJt18RsQK8dML9s3Jb/QdiMrkUAbOMaRNt68ke+01lEffNPEIgDod
-	c/kdPwHRAjZb4W3dTza6Cw+CubdqGoo/lVdqAjNhNxJW3nhKDKmGLjbGcm3smtCOGsLFpPGBxZT
-	rrSNth3Hvdm/kHwjcp/8IW1ClaOE0IPHkdCi+kfy1HMINLfr46FerQDXjFIa5cdcdwr8g4QhEOc
-	YAMozxQAQxBySnOLzDCyX+OXsBztPC0Zb+JCYUOHxUUXG47uo3721cg8yDgKoMmppiYT8E+XvLj
-	8u6ywBsDadA7TgNAAIaoi0Z6AUnM5L/uM9THTIQTsAn60C2wRQzhWxU+GO0Yo5n5JpNtA1Qq3c3
-	nsx5gfQ==
-X-Google-Smtp-Source: AGHT+IEtRLEcL6c4FOyoPa6VH1mLjUTdXNOPO0QoSfcHnfta24N3guMo0jFLti3k1pcheA+EEeb6AQ==
-X-Received: by 2002:a05:620a:1a86:b0:7d3:c68e:fcf6 with SMTP id af79cd13be357-7d3c6c0dd22mr3150099885a.9.1750346278672;
-        Thu, 19 Jun 2025 08:17:58 -0700 (PDT)
-Received: from [192.168.8.146] (weaver.eece.maine.edu. [130.111.218.23])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3f8e4b8ecsm7861585a.74.2025.06.19.08.17.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 08:17:57 -0700 (PDT)
-From: Vince Weaver <vincent.weaver@maine.edu>
-X-Google-Original-From: Vince Weaver <vince@maine.edu>
-Date: Thu, 19 Jun 2025 11:17:56 -0400 (EDT)
-To: Vince Weaver <vincent.weaver@maine.edu>
-cc: "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org, 
-    linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-    Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-    Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-    Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-    Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-    Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [perf] unchecked MSR access error: WRMSR to 0x3f1
-In-Reply-To: <c04824b5-5697-1de5-0003-f2c5b73ed006@maine.edu>
-Message-ID: <52656281-ab73-baf7-0a80-ebcbe79dfca2@maine.edu>
-References: <14d3167e-4dad-f68e-822f-21cd86eab873@maine.edu> <574b8701-9676-4aba-a85b-724c979b2efa@linux.intel.com> <7e8bb736-3955-c479-99de-e08efb494bdd@maine.edu> <8739c2c6-a27c-4ab6-ad74-8b95e258737e@linux.intel.com>
- <c04824b5-5697-1de5-0003-f2c5b73ed006@maine.edu>
+	s=arc-20240116; t=1750346299; c=relaxed/simple;
+	bh=OsQHC9nezz+lgdGUY/dZhjpZdYioQHWqNXx0tXhUcvE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k0lm7AprDfxCHA7Hah7KesTOwyEUYl2rk2iut/erzhUjLIkzWAi9G79EfeJ7heKb/qzZI5WeZgEEn4E9MVHC1/x17GWKL9DY6V91TKyIBIRAETlVf+NEVWeYaEwG7IJww72q1Ap7Qs8rIqGLOGi6bBiL2qoRzlVCEj0Ar7YZ3Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WKtmm8hk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750346296;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5FtkTLDW6wXNpCIAd3hpZHY0oaOsNTLBcH8jmGh2AvQ=;
+	b=WKtmm8hkJck0LYji/G71bIFi/r1+iMZvYdS+SlQ0oQEEIXdMtx0Bsjj6QsHqv5mm74C1oS
+	il9wuYH1oK4+YNnmcjqvo4GpKR4ajOVY/MfN1OwjXgHaPBWRY1Qkq8gz6IXD9vgwd5RPYY
+	nvXZWup6ngHxmlfdboKReOmbN1bMgKw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-EonD_HmAMRmYlkygPbW06Q-1; Thu,
+ 19 Jun 2025 11:18:12 -0400
+X-MC-Unique: EonD_HmAMRmYlkygPbW06Q-1
+X-Mimecast-MFC-AGG-ID: EonD_HmAMRmYlkygPbW06Q_1750346290
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 05B5919560A2;
+	Thu, 19 Jun 2025 15:18:09 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.45.224.69])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9164E30001A1;
+	Thu, 19 Jun 2025 15:18:00 +0000 (UTC)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: x86@kernel.org
+Cc: linux-efi@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Peter Jones <pjones@redhat.com>,
+	Daniel Berrange <berrange@redhat.com>,
+	Emanuele Giuseppe Esposito <eesposit@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Luca Boccassi <bluca@debian.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] x86/efi: Implement support for embedding SBAT data for x86
+Date: Thu, 19 Jun 2025 17:17:59 +0200
+Message-ID: <20250619151759.355893-1-vkuznets@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, 18 Jun 2025, Vince Weaver wrote:
+Similar to zboot architectures, implement support for embedding SBAT data
+for x86. Put '.sbat' section in between '.data' and '.text' as the former
+also covers '.bss' and '.pgtable' and thus must be the last one in the
+file.
 
-> On Wed, 18 Jun 2025, Liang, Kan wrote:
-> 
-> > No, the error message doesn't say it. Just want to check if you have
-> > extra information. Because the Topdown perf metrics is only supported on
-> > p-core. I want to understand whether the code messes up with e-core.
-> 
-> I can't easily tell from the fuzzer as it intentionally switches cores 
-> often.  I guess I could patch the kernel to report CPU when the WRMSR 
-> error triggers.
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+Changes since v3:
+- Update optional PE header so .sbat is accounted in
+'SizeOfInitializedData' and not in 'SizeOfCode'.
+---
+ arch/x86/boot/Makefile                 |  2 +-
+ arch/x86/boot/compressed/Makefile      |  5 ++++
+ arch/x86/boot/compressed/sbat.S        |  7 ++++++
+ arch/x86/boot/compressed/vmlinux.lds.S |  8 ++++++
+ arch/x86/boot/header.S                 | 35 ++++++++++++++++++--------
+ drivers/firmware/efi/Kconfig           |  2 +-
+ 6 files changed, 46 insertions(+), 13 deletions(-)
+ create mode 100644 arch/x86/boot/compressed/sbat.S
 
-I've patched the kernel to get rid of the warn_once() and added a printk
-for smp_processor_id()  (is that what I want to print?)  In any case that 
-reports the warning is happening on CPU1 which is actually a P core, not 
-an atom core.
+diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
+index 640fcac3af74..3f9fb3698d66 100644
+--- a/arch/x86/boot/Makefile
++++ b/arch/x86/boot/Makefile
+@@ -71,7 +71,7 @@ $(obj)/vmlinux.bin: $(obj)/compressed/vmlinux FORCE
+ 
+ SETUP_OBJS = $(addprefix $(obj)/,$(setup-y))
+ 
+-sed-zoffset := -e 's/^\([0-9a-fA-F]*\) [a-zA-Z] \(startup_32\|efi.._stub_entry\|efi\(32\)\?_pe_entry\|input_data\|kernel_info\|_end\|_ehead\|_text\|_e\?data\|z_.*\)$$/\#define ZO_\2 0x\1/p'
++sed-zoffset := -e 's/^\([0-9a-fA-F]*\) [a-zA-Z] \(startup_32\|efi.._stub_entry\|efi\(32\)\?_pe_entry\|input_data\|kernel_info\|_end\|_ehead\|_text\|_e\?data\|_e\?sbat\|z_.*\)$$/\#define ZO_\2 0x\1/p'
+ 
+ quiet_cmd_zoffset = ZOFFSET $@
+       cmd_zoffset = $(NM) $< | sed -n $(sed-zoffset) > $@
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index f4f7b22d8113..3a38fdcdb9bd 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -106,6 +106,11 @@ vmlinux-objs-$(CONFIG_UNACCEPTED_MEMORY) += $(obj)/mem.o
+ vmlinux-objs-$(CONFIG_EFI) += $(obj)/efi.o
+ vmlinux-libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
+ vmlinux-libs-$(CONFIG_X86_64)	+= $(objtree)/arch/x86/boot/startup/lib.a
++vmlinux-objs-$(CONFIG_EFI_SBAT) += $(obj)/sbat.o
++
++ifdef CONFIG_EFI_SBAT
++$(obj)/sbat.o: $(CONFIG_EFI_SBAT_FILE)
++endif
+ 
+ $(obj)/vmlinux: $(vmlinux-objs-y) $(vmlinux-libs-y) FORCE
+ 	$(call if_changed,ld)
+diff --git a/arch/x86/boot/compressed/sbat.S b/arch/x86/boot/compressed/sbat.S
+new file mode 100644
+index 000000000000..838f70a997dd
+--- /dev/null
++++ b/arch/x86/boot/compressed/sbat.S
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Embed SBAT data in the kernel.
++ */
++	.pushsection ".sbat", "a", @progbits
++	.incbin CONFIG_EFI_SBAT_FILE
++	.popsection
+diff --git a/arch/x86/boot/compressed/vmlinux.lds.S b/arch/x86/boot/compressed/vmlinux.lds.S
+index 3b2bc61c9408..587ce3e7c504 100644
+--- a/arch/x86/boot/compressed/vmlinux.lds.S
++++ b/arch/x86/boot/compressed/vmlinux.lds.S
+@@ -43,6 +43,14 @@ SECTIONS
+ 		*(.rodata.*)
+ 		_erodata = . ;
+ 	}
++#ifdef CONFIG_EFI_SBAT
++	.sbat : ALIGN(0x1000) {
++		_sbat = . ;
++		*(.sbat)
++		_esbat = ALIGN(0x1000);
++		. = _esbat;
++	}
++#endif
+ 	.data :	ALIGN(0x1000) {
+ 		_data = . ;
+ 		*(.data)
+diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
+index e1f4fd5bc8ee..f57c45d8584a 100644
+--- a/arch/x86/boot/header.S
++++ b/arch/x86/boot/header.S
+@@ -78,9 +78,9 @@ optional_header:
+ 	.byte	0x02				# MajorLinkerVersion
+ 	.byte	0x14				# MinorLinkerVersion
+ 
+-	.long	ZO__data			# SizeOfCode
++	.long	textsize			# SizeOfCode
+ 
+-	.long	ZO__end - ZO__data		# SizeOfInitializedData
++	.long	ZO__end - textsize		# SizeOfInitializedData
+ 	.long	0				# SizeOfUninitializedData
+ 
+ 	.long	setup_size + ZO_efi_pe_entry	# AddressOfEntryPoint
+@@ -179,15 +179,11 @@ pecompat_fstart:
+ #else
+ 	.set	pecompat_fstart, setup_size
+ #endif
+-	.ascii	".text"
+-	.byte	0
+-	.byte	0
+-	.byte	0
+-	.long	ZO__data
+-	.long	setup_size
+-	.long	ZO__data			# Size of initialized data
+-						# on disk
+-	.long	setup_size
++	.ascii	".text\0\0\0"
++	.long	textsize            		# VirtualSize
++	.long	setup_size			# VirtualAddress
++	.long	textsize			# SizeOfRawData
++	.long	setup_size			# PointerToRawData
+ 	.long	0				# PointerToRelocations
+ 	.long	0				# PointerToLineNumbers
+ 	.word	0				# NumberOfRelocations
+@@ -196,6 +192,23 @@ pecompat_fstart:
+ 		IMAGE_SCN_MEM_READ		| \
+ 		IMAGE_SCN_MEM_EXECUTE		# Characteristics
+ 
++#ifdef CONFIG_EFI_SBAT
++	.ascii	".sbat\0\0\0"
++	.long	ZO__esbat - ZO__sbat            # VirtualSize
++	.long	setup_size + ZO__sbat           # VirtualAddress
++	.long	ZO__esbat - ZO__sbat            # SizeOfRawData
++	.long	setup_size + ZO__sbat           # PointerToRawData
++
++	.long	0, 0, 0
++	.long	IMAGE_SCN_CNT_INITIALIZED_DATA	| \
++		IMAGE_SCN_MEM_READ		| \
++		IMAGE_SCN_MEM_DISCARDABLE	# Characteristics
++
++	.set	textsize, ZO__sbat
++#else
++	.set	textsize, ZO__data
++#endif
++
+ 	.ascii	".data\0\0\0"
+ 	.long	ZO__end - ZO__data		# VirtualSize
+ 	.long	setup_size + ZO__data		# VirtualAddress
+diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+index db8c5c03d3a2..16baa038d412 100644
+--- a/drivers/firmware/efi/Kconfig
++++ b/drivers/firmware/efi/Kconfig
+@@ -286,7 +286,7 @@ config EFI_SBAT
+ 
+ config EFI_SBAT_FILE
+ 	string "Embedded SBAT section file path"
+-	depends on EFI_ZBOOT
++	depends on EFI_ZBOOT || (EFI_STUB && X86)
+ 	help
+ 	  SBAT section provides a way to improve SecureBoot revocations of UEFI
+ 	  binaries by introducing a generation-based mechanism. With SBAT, older
+-- 
+2.49.0
 
-Vince Weaver
-vincent.weaver@maine.edu
 
