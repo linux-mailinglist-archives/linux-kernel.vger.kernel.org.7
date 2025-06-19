@@ -1,544 +1,150 @@
-Return-Path: <linux-kernel+bounces-694061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5419AE0747
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:31:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C6EAE06E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18892162E4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:31:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06BDC1893B41
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83ADC26FD97;
-	Thu, 19 Jun 2025 13:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B833259CB9;
+	Thu, 19 Jun 2025 13:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="QtfOjsQe"
-Received: from mail.plaes.org (mail.plaes.org [188.166.43.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="xNf2PZZu"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14F825D1E1
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 13:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.166.43.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6B824C09E
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 13:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750339706; cv=none; b=p9A6RCc95lpX7x9tES9BW44CQRdWFbyPMDTlmaiHMNCvmXzUDaf02EGLIul5/8x4AcV9j1eZJI7a2YCv6zBJy1+bfgqtlgXN8tJnbK4FlpAwv3c0CYd6T3xA7qA9W/JAn4K5+o73pRLKz2/T8AExbjRsttzgyGCSZaMOPJUkdDU=
+	t=1750339406; cv=none; b=pu8F1UzCcs/Q7p3Oy4ZWuFEX1XgREuAKW6RdMdMSIZTQntyI1NKJGCXWWyIXOmDdDtAuAz7gOBWIiZcUdI0l2akKa5uqKQ8s4zcPZRP/LayF48Jc3PE4vwng9DI79EOxUr7QCerVbvzYH8qkEBevLWmvsGoWfCRHvG7G7X3t5xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750339706; c=relaxed/simple;
-	bh=yKbZMn2LsYDyc/vK8DPPOLXR1hKAwy3r4jBgfeiCnlU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hf/vzEC4pr6WXaQfX3ZAyV5ku5G6krH/mBqfpFRSYlue+770TTAWXY1Wuu5z6zrUi7j9DV8Z5RdBDiQzRUo2HCexVhETnvuUy8bkhu+UARqF0ol7yZWOCJc9HKug1cwhSC2sjMOHCxyQ853AIrY2NNJT51ehdBiDWAjbEtJEfHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=plaes.org; spf=pass smtp.mailfrom=plaes.org; dkim=pass (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b=QtfOjsQe; arc=none smtp.client-ip=188.166.43.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=plaes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=plaes.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=plaes.org; s=mail;
-	t=1750339336; bh=yKbZMn2LsYDyc/vK8DPPOLXR1hKAwy3r4jBgfeiCnlU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=QtfOjsQe9mWNQeY3WtOXUdvVV0EtQaEEFk6rE+dWVSXhPID8kVe8Byni5eh/DGleS
-	 TmxkyjRSarPnvceyo3B3Y1VLPTyZZBnkgav1kUdZ5chX3Eu92YMVHWkiAdosxwmwoQ
-	 OBz79eEhhQVnLCei5hS7b3vA4FMPbjkM+qT3I5d8vWnve5+LlhBeK7ztbxM7oUAIq0
-	 hxm01YFIzVEaAWO0oMy092DYy4f27Cz68H77kZYDSEuxAVe8Up42rUTzFhg3H6M6WF
-	 Y7ImiiCIFXrsINbwHS99efwftg68CR2f6KowR+Y9LqhtqzOJPhnoh+ydgJcZlkPo+n
-	 h6rpTuaGEeYow==
-Received: from localhost (82-131-114-208.ip.elisa.ee [82.131.114.208])
-	by mail.plaes.org (Postfix) with ESMTPSA id DE71E40015;
-	Thu, 19 Jun 2025 13:22:15 +0000 (UTC)
-From: Priit Laes <plaes@plaes.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: John Watts <contact@jookia.org>,
-	Ryan Walklin <ryan@testtoast.com>,
-	Christophe Branchereau <cbranchereau@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panel: nv3052c: Reduce duplication of init sequences
-Date: Thu, 19 Jun 2025 16:22:09 +0300
-Message-ID: <20250619132211.556027-1-plaes@plaes.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750339406; c=relaxed/simple;
+	bh=1VIncuOXKXIdppmIXOnXByGjjj43tUTod0CayZIPC38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aXwKAtH3mc48CDwbJBHHq/LYGQPPcwO4n3coCDc3VBy6ayUBPwlQuyqgro0Qb0Ptee6YLlkVQFFGH7W/mLaxdFSkKqyC0LT9sFHl25i4445CYShzinlIF22e9waEkrjhCcEPtMopcqnMLXmOlIrD9QGjkf2uIKV7Sr1PTE05XwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=xNf2PZZu; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-40905ae04e4so191513b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 06:23:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1750339403; x=1750944203; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/8CfBC2bXTzgQwWZYshC/feOH//kuqxuZpnRg/tZqBY=;
+        b=xNf2PZZum0GL45x+L+CeiHfBIEe41ZVccD7eabWd8ZrRHBayi5DgLcn5BS/N8gQn65
+         fNmI1n80juTpaxIzyV7R3/5JnGCT3bbpXRhSmAzBceN0hEDEADX5ng06KEALhSHdIqDH
+         MEd4ldtzFn5ffNmtLsYgOBpvOg6lrQckUBT9TXekwA7jcPu0rsB3ie5JY7pOLx9WdySa
+         EW65KKsu1bbv0nUioa8WTzRiMVQ+XbXBxMDdJrakC+8V2OsEZhH3TkrDx2SkcmUKH5mO
+         BrGsaJdkmERI/KjeecvPqcnMI0bFI6jch1UJzx7B4xgOlfp+vl6JoWm+HgbL8oN3oVhz
+         t9gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750339403; x=1750944203;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/8CfBC2bXTzgQwWZYshC/feOH//kuqxuZpnRg/tZqBY=;
+        b=UBIl6wCqbO6F4bonziarxuEAflqcCrY/zCCNRyzaiPmIc35hpw0Ws5r+YlPHEpZ42W
+         eZyWpuFaWIZzBshPIoezQiYSayMlgljCDlOqB5JmFtTkxp67GX5+ZgwB29EZ4/jU+SdJ
+         O5wG7Zlo83dM93Mpv4TdVaez+MfYuXho0RlL+ohU0OSoxYNhJLQypDZ0mws2BHm955Ae
+         TTv+QlN0NDL7K9AvUgEJCG07Az8l0Es51OQqw9FtSOLfL4pDGFL4GXu4+p63oqZOqjNy
+         PHbvThuBic0i9v8pqpVp+MQKvHUjsr6JCub2PXAZI7yOMNxXaXPwrIeVy+Q8K4BJL22G
+         lSTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNNrAkPX+9oNU9u5EyTf4zDUKBF19Ies5M9pIVcifwBKZoLAsSJGWv3u7LBXaSidH0rYpumjY5B8esrdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRsnRgv3sXByGbohR6OQzsQNYuB7BA+zVxrNBiEg6WRU5Y9nXB
+	1RZbu6Z8rcA5SnRcsrdEH6DNtL2JDGOinENRvXWHs5dHEr5JfJ2TbV36yRWMEC9OAxc=
+X-Gm-Gg: ASbGncsNBT87gw4v04M/ZWGHRthZii8eI2dcO48eP8y8nh9r2yu81E27tTbEgDWJsy1
+	RTGGXOMlT3z2TMMw7oTO88UEgmfNeJxdRaxENYzQ5kSkkV9Jwm86IvAZki1aEfGC+GnY2ufj3IW
+	99siifNRsR0B9/BNbDQBViefnWrMAW4axwB0XjpWnZes30kyr3JYA3qxMxxmzDhFINHRnDIuRD/
+	M47lwJL2decXKMSgmlx/VaCCTnINjMzgybeGnLnANDDLWHj/8F9q6j9fxog60cicHEpc70JF/te
+	RHMvmyD3TCrPpfn51JXXlfiBuhoka14+yegwN/mfuvx4aRlQn+NTXu6sq537usSxavHBFCGNz5B
+	qjk+xCD3MTG26DaeqG6wbFH2klw==
+X-Google-Smtp-Source: AGHT+IGY28hFmDr7ULoWj9fl8QS8bDjzI+smc76lgSZ1x1dv+k82B0BpK2D8Bz8W0iYI/okzRPVkRA==
+X-Received: by 2002:a05:6808:2128:b0:3f4:1c2:874a with SMTP id 5614622812f47-40a7c23eabdmr13775263b6e.24.1750339403015;
+        Thu, 19 Jun 2025 06:23:23 -0700 (PDT)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40a741b8837sm2759463b6e.46.2025.06.19.06.23.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Jun 2025 06:23:22 -0700 (PDT)
+Message-ID: <13cd66da-dff4-4985-989d-d757fbae99e7@riscstar.com>
+Date: Thu, 19 Jun 2025 08:23:20 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] dt-bindings: mfd: add support the SpacmiT P1 PMIC
+To: Vivian Wang <wangruikang@iscas.ac.cn>, lee@kernel.org,
+ lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, dlan@gentoo.org
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alex@ghiti.fr, troymitchell988@gmail.com, guodong@riscstar.com,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250613210150.1468845-1-elder@riscstar.com>
+ <20250613210150.1468845-2-elder@riscstar.com>
+ <123a7558-fda9-4b56-b6ae-a29d704419ac@iscas.ac.cn>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <123a7558-fda9-4b56-b6ae-a29d704419ac@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Although there are various small changes between the init
-sequences, the second half is common for all 3 currently
-supported displays.
+On 6/19/25 1:03 AM, Vivian Wang wrote:
+> Hi Alex,
+> 
+> Before the patch body, there's a typo in the subject line: "SpacmiT" ->
+> "SpacemiT".
 
-Note that this is only compile-tested.
+Thank you, I will fix that in v2, which I plan to post today.
 
-Signed-off-by: Priit Laes <plaes@plaes.org>
----
- .../gpu/drm/panel/panel-newvision-nv3052c.c   | 408 ++++--------------
- 1 file changed, 74 insertions(+), 334 deletions(-)
+					-Alex
 
-diff --git a/drivers/gpu/drm/panel/panel-newvision-nv3052c.c b/drivers/gpu/drm/panel/panel-newvision-nv3052c.c
-index 06e16a7c14a7..0d8a367b83fd 100644
---- a/drivers/gpu/drm/panel/panel-newvision-nv3052c.c
-+++ b/drivers/gpu/drm/panel/panel-newvision-nv3052c.c
-@@ -43,59 +43,12 @@ struct nv3052c {
- 	struct gpio_desc *reset_gpio;
- };
- 
--static const struct nv3052c_reg ltk035c5444t_panel_regs[] = {
--	// EXTC Command set enable, select page 1
--	{ 0xff, 0x30 }, { 0xff, 0x52 }, { 0xff, 0x01 },
--	// Mostly unknown registers
--	{ 0xe3, 0x00 },
--	{ 0x40, 0x00 },
--	{ 0x03, 0x40 },
--	{ 0x04, 0x00 },
--	{ 0x05, 0x03 },
--	{ 0x08, 0x00 },
--	{ 0x09, 0x07 },
--	{ 0x0a, 0x01 },
--	{ 0x0b, 0x32 },
--	{ 0x0c, 0x32 },
--	{ 0x0d, 0x0b },
--	{ 0x0e, 0x00 },
--	{ 0x23, 0xa0 },
--	{ 0x24, 0x0c },
--	{ 0x25, 0x06 },
--	{ 0x26, 0x14 },
--	{ 0x27, 0x14 },
--	{ 0x38, 0xcc }, // VCOM_ADJ1
--	{ 0x39, 0xd7 }, // VCOM_ADJ2
--	{ 0x3a, 0x4a }, // VCOM_ADJ3
--	{ 0x28, 0x40 },
--	{ 0x29, 0x01 },
--	{ 0x2a, 0xdf },
--	{ 0x49, 0x3c },
--	{ 0x91, 0x77 }, // EXTPW_CTRL2
--	{ 0x92, 0x77 }, // EXTPW_CTRL3
--	{ 0xa0, 0x55 },
--	{ 0xa1, 0x50 },
--	{ 0xa4, 0x9c },
--	{ 0xa7, 0x02 },
--	{ 0xa8, 0x01 },
--	{ 0xa9, 0x01 },
--	{ 0xaa, 0xfc },
--	{ 0xab, 0x28 },
--	{ 0xac, 0x06 },
--	{ 0xad, 0x06 },
--	{ 0xae, 0x06 },
--	{ 0xaf, 0x03 },
--	{ 0xb0, 0x08 },
--	{ 0xb1, 0x26 },
--	{ 0xb2, 0x28 },
--	{ 0xb3, 0x28 },
--	{ 0xb4, 0x33 },
--	{ 0xb5, 0x08 },
--	{ 0xb6, 0x26 },
--	{ 0xb7, 0x08 },
--	{ 0xb8, 0x26 },
--	{ 0xf0, 0x00 },
--	{ 0xf6, 0xc0 },
-+/*
-+ * Common initialization registers for all currently
-+ * supported displays. Mostly seem to be related
-+ * to Gamma correction curves and output pad mappings.
-+ */
-+static const struct nv3052c_reg common_init_regs[] = {
- 	// EXTC Command set enable, select page 2
- 	{ 0xff, 0x30 }, { 0xff, 0x52 }, { 0xff, 0x02 },
- 	// Set gray scale voltage to adjust gamma
-@@ -215,7 +168,7 @@ static const struct nv3052c_reg ltk035c5444t_panel_regs[] = {
- 	{ 0xa0, 0x01 }, // PANELU2D33
- 	// EXTC Command set enable, select page 2
- 	{ 0xff, 0x30 }, { 0xff, 0x52 }, { 0xff, 0x02 },
--	// Unknown registers
-+	// Page 2 register values (0x01..0x10) are same for nv3051d and nv3052c
- 	{ 0x01, 0x01 },
- 	{ 0x02, 0xda },
- 	{ 0x03, 0xba },
-@@ -236,6 +189,62 @@ static const struct nv3052c_reg ltk035c5444t_panel_regs[] = {
- 	{ 0xff, 0x30 }, { 0xff, 0x52 }, { 0xff, 0x00 },
- 	// Display Access Control
- 	{ 0x36, 0x0a }, // bgr = 1, ss = 1, gs = 0
-+
-+};
-+
-+static const struct nv3052c_reg ltk035c5444t_panel_regs[] = {
-+	// EXTC Command set enable, select page 1
-+	{ 0xff, 0x30 }, { 0xff, 0x52 }, { 0xff, 0x01 },
-+	// Mostly unknown registers
-+	{ 0xe3, 0x00 },
-+	{ 0x40, 0x00 },
-+	{ 0x03, 0x40 },
-+	{ 0x04, 0x00 },
-+	{ 0x05, 0x03 },
-+	{ 0x08, 0x00 },
-+	{ 0x09, 0x07 },
-+	{ 0x0a, 0x01 },
-+	{ 0x0b, 0x32 },
-+	{ 0x0c, 0x32 },
-+	{ 0x0d, 0x0b },
-+	{ 0x0e, 0x00 },
-+	{ 0x23, 0xa0 },
-+	{ 0x24, 0x0c },
-+	{ 0x25, 0x06 },
-+	{ 0x26, 0x14 },
-+	{ 0x27, 0x14 },
-+	{ 0x38, 0xcc }, // VCOM_ADJ1
-+	{ 0x39, 0xd7 }, // VCOM_ADJ2
-+	{ 0x3a, 0x4a }, // VCOM_ADJ3
-+	{ 0x28, 0x40 },
-+	{ 0x29, 0x01 },
-+	{ 0x2a, 0xdf },
-+	{ 0x49, 0x3c },
-+	{ 0x91, 0x77 }, // EXTPW_CTRL2
-+	{ 0x92, 0x77 }, // EXTPW_CTRL3
-+	{ 0xa0, 0x55 },
-+	{ 0xa1, 0x50 },
-+	{ 0xa4, 0x9c },
-+	{ 0xa7, 0x02 },
-+	{ 0xa8, 0x01 },
-+	{ 0xa9, 0x01 },
-+	{ 0xaa, 0xfc },
-+	{ 0xab, 0x28 },
-+	{ 0xac, 0x06 },
-+	{ 0xad, 0x06 },
-+	{ 0xae, 0x06 },
-+	{ 0xaf, 0x03 },
-+	{ 0xb0, 0x08 },
-+	{ 0xb1, 0x26 },
-+	{ 0xb2, 0x28 },
-+	{ 0xb3, 0x28 },
-+	{ 0xb4, 0x33 },
-+	{ 0xb5, 0x08 },
-+	{ 0xb6, 0x26 },
-+	{ 0xb7, 0x08 },
-+	{ 0xb8, 0x26 },
-+	{ 0xf0, 0x00 },
-+	{ 0xf6, 0xc0 },
- };
- 
- static const struct nv3052c_reg fs035vg158_panel_regs[] = {
-@@ -291,146 +300,6 @@ static const struct nv3052c_reg fs035vg158_panel_regs[] = {
- 	{ 0xb8, 0x26 },
- 	{ 0xf0, 0x00 },
- 	{ 0xf6, 0xc0 },
--	// EXTC Command set enable, select page 0
--	{ 0xff, 0x30 }, { 0xff, 0x52 }, { 0xff, 0x02 },
--	// Set gray scale voltage to adjust gamma
--	{ 0xb0, 0x0b }, // PGAMVR0
--	{ 0xb1, 0x16 }, // PGAMVR1
--	{ 0xb2, 0x17 }, // PGAMVR2
--	{ 0xb3, 0x2c }, // PGAMVR3
--	{ 0xb4, 0x32 }, // PGAMVR4
--	{ 0xb5, 0x3b }, // PGAMVR5
--	{ 0xb6, 0x29 }, // PGAMPR0
--	{ 0xb7, 0x40 }, // PGAMPR1
--	{ 0xb8, 0x0d }, // PGAMPK0
--	{ 0xb9, 0x05 }, // PGAMPK1
--	{ 0xba, 0x12 }, // PGAMPK2
--	{ 0xbb, 0x10 }, // PGAMPK3
--	{ 0xbc, 0x12 }, // PGAMPK4
--	{ 0xbd, 0x15 }, // PGAMPK5
--	{ 0xbe, 0x19 }, // PGAMPK6
--	{ 0xbf, 0x0e }, // PGAMPK7
--	{ 0xc0, 0x16 }, // PGAMPK8
--	{ 0xc1, 0x0a }, // PGAMPK9
--	// Set gray scale voltage to adjust gamma
--	{ 0xd0, 0x0c }, // NGAMVR0
--	{ 0xd1, 0x17 }, // NGAMVR0
--	{ 0xd2, 0x14 }, // NGAMVR1
--	{ 0xd3, 0x2e }, // NGAMVR2
--	{ 0xd4, 0x32 }, // NGAMVR3
--	{ 0xd5, 0x3c }, // NGAMVR4
--	{ 0xd6, 0x22 }, // NGAMPR0
--	{ 0xd7, 0x3d }, // NGAMPR1
--	{ 0xd8, 0x0d }, // NGAMPK0
--	{ 0xd9, 0x07 }, // NGAMPK1
--	{ 0xda, 0x13 }, // NGAMPK2
--	{ 0xdb, 0x13 }, // NGAMPK3
--	{ 0xdc, 0x11 }, // NGAMPK4
--	{ 0xdd, 0x15 }, // NGAMPK5
--	{ 0xde, 0x19 }, // NGAMPK6
--	{ 0xdf, 0x10 }, // NGAMPK7
--	{ 0xe0, 0x17 }, // NGAMPK8
--	{ 0xe1, 0x0a }, // NGAMPK9
--	// EXTC Command set enable, select page 3
--	{ 0xff, 0x30 }, { 0xff, 0x52 }, { 0xff, 0x03 },
--	// Set various timing settings
--	{ 0x00, 0x2a }, // GIP_VST_1
--	{ 0x01, 0x2a }, // GIP_VST_2
--	{ 0x02, 0x2a }, // GIP_VST_3
--	{ 0x03, 0x2a }, // GIP_VST_4
--	{ 0x04, 0x61 }, // GIP_VST_5
--	{ 0x05, 0x80 }, // GIP_VST_6
--	{ 0x06, 0xc7 }, // GIP_VST_7
--	{ 0x07, 0x01 }, // GIP_VST_8
--	{ 0x08, 0x03 }, // GIP_VST_9
--	{ 0x09, 0x04 }, // GIP_VST_10
--	{ 0x70, 0x22 }, // GIP_ECLK1
--	{ 0x71, 0x80 }, // GIP_ECLK2
--	{ 0x30, 0x2a }, // GIP_CLK_1
--	{ 0x31, 0x2a }, // GIP_CLK_2
--	{ 0x32, 0x2a }, // GIP_CLK_3
--	{ 0x33, 0x2a }, // GIP_CLK_4
--	{ 0x34, 0x61 }, // GIP_CLK_5
--	{ 0x35, 0xc5 }, // GIP_CLK_6
--	{ 0x36, 0x80 }, // GIP_CLK_7
--	{ 0x37, 0x23 }, // GIP_CLK_8
--	{ 0x40, 0x03 }, // GIP_CLKA_1
--	{ 0x41, 0x04 }, // GIP_CLKA_2
--	{ 0x42, 0x05 }, // GIP_CLKA_3
--	{ 0x43, 0x06 }, // GIP_CLKA_4
--	{ 0x44, 0x11 }, // GIP_CLKA_5
--	{ 0x45, 0xe8 }, // GIP_CLKA_6
--	{ 0x46, 0xe9 }, // GIP_CLKA_7
--	{ 0x47, 0x11 }, // GIP_CLKA_8
--	{ 0x48, 0xea }, // GIP_CLKA_9
--	{ 0x49, 0xeb }, // GIP_CLKA_10
--	{ 0x50, 0x07 }, // GIP_CLKB_1
--	{ 0x51, 0x08 }, // GIP_CLKB_2
--	{ 0x52, 0x09 }, // GIP_CLKB_3
--	{ 0x53, 0x0a }, // GIP_CLKB_4
--	{ 0x54, 0x11 }, // GIP_CLKB_5
--	{ 0x55, 0xec }, // GIP_CLKB_6
--	{ 0x56, 0xed }, // GIP_CLKB_7
--	{ 0x57, 0x11 }, // GIP_CLKB_8
--	{ 0x58, 0xef }, // GIP_CLKB_9
--	{ 0x59, 0xf0 }, // GIP_CLKB_10
--	// Map internal GOA signals to GOA output pad
--	{ 0xb1, 0x01 }, // PANELD2U2
--	{ 0xb4, 0x15 }, // PANELD2U5
--	{ 0xb5, 0x16 }, // PANELD2U6
--	{ 0xb6, 0x09 }, // PANELD2U7
--	{ 0xb7, 0x0f }, // PANELD2U8
--	{ 0xb8, 0x0d }, // PANELD2U9
--	{ 0xb9, 0x0b }, // PANELD2U10
--	{ 0xba, 0x00 }, // PANELD2U11
--	{ 0xc7, 0x02 }, // PANELD2U24
--	{ 0xca, 0x17 }, // PANELD2U27
--	{ 0xcb, 0x18 }, // PANELD2U28
--	{ 0xcc, 0x0a }, // PANELD2U29
--	{ 0xcd, 0x10 }, // PANELD2U30
--	{ 0xce, 0x0e }, // PANELD2U31
--	{ 0xcf, 0x0c }, // PANELD2U32
--	{ 0xd0, 0x00 }, // PANELD2U33
--	// Map internal GOA signals to GOA output pad
--	{ 0x81, 0x00 }, // PANELU2D2
--	{ 0x84, 0x15 }, // PANELU2D5
--	{ 0x85, 0x16 }, // PANELU2D6
--	{ 0x86, 0x10 }, // PANELU2D7
--	{ 0x87, 0x0a }, // PANELU2D8
--	{ 0x88, 0x0c }, // PANELU2D9
--	{ 0x89, 0x0e }, // PANELU2D10
--	{ 0x8a, 0x02 }, // PANELU2D11
--	{ 0x97, 0x00 }, // PANELU2D24
--	{ 0x9a, 0x17 }, // PANELU2D27
--	{ 0x9b, 0x18 }, // PANELU2D28
--	{ 0x9c, 0x0f }, // PANELU2D29
--	{ 0x9d, 0x09 }, // PANELU2D30
--	{ 0x9e, 0x0b }, // PANELU2D31
--	{ 0x9f, 0x0d }, // PANELU2D32
--	{ 0xa0, 0x01 }, // PANELU2D33
--	// EXTC Command set enable, select page 2
--	{ 0xff, 0x30 }, { 0xff, 0x52 }, { 0xff, 0x02 },
--	// Unknown registers
--	{ 0x01, 0x01 },
--	{ 0x02, 0xda },
--	{ 0x03, 0xba },
--	{ 0x04, 0xa8 },
--	{ 0x05, 0x9a },
--	{ 0x06, 0x70 },
--	{ 0x07, 0xff },
--	{ 0x08, 0x91 },
--	{ 0x09, 0x90 },
--	{ 0x0a, 0xff },
--	{ 0x0b, 0x8f },
--	{ 0x0c, 0x60 },
--	{ 0x0d, 0x58 },
--	{ 0x0e, 0x48 },
--	{ 0x0f, 0x38 },
--	{ 0x10, 0x2b },
--	// EXTC Command set enable, select page 0
--	{ 0xff, 0x30 }, { 0xff, 0x52 }, { 0xff, 0x00 },
--	// Display Access Control
--	{ 0x36, 0x0a }, // bgr = 1, ss = 1, gs = 0
- };
- 
- 
-@@ -487,146 +356,6 @@ static const struct nv3052c_reg wl_355608_a8_panel_regs[] = {
- 	{ 0xb8, 0x26 },
- 	{ 0xf0, 0x00 },
- 	{ 0xf6, 0xc0 },
--	// EXTC Command set enable, select page 2
--	{ 0xff, 0x30 }, { 0xff, 0x52 }, { 0xff, 0x02 },
--	// Set gray scale voltage to adjust gamma
--	{ 0xb0, 0x0b }, // PGAMVR0
--	{ 0xb1, 0x16 }, // PGAMVR1
--	{ 0xb2, 0x17 }, // PGAMVR2
--	{ 0xb3, 0x2c }, // PGAMVR3
--	{ 0xb4, 0x32 }, // PGAMVR4
--	{ 0xb5, 0x3b }, // PGAMVR5
--	{ 0xb6, 0x29 }, // PGAMPR0
--	{ 0xb7, 0x40 }, // PGAMPR1
--	{ 0xb8, 0x0d }, // PGAMPK0
--	{ 0xb9, 0x05 }, // PGAMPK1
--	{ 0xba, 0x12 }, // PGAMPK2
--	{ 0xbb, 0x10 }, // PGAMPK3
--	{ 0xbc, 0x12 }, // PGAMPK4
--	{ 0xbd, 0x15 }, // PGAMPK5
--	{ 0xbe, 0x19 }, // PGAMPK6
--	{ 0xbf, 0x0e }, // PGAMPK7
--	{ 0xc0, 0x16 }, // PGAMPK8
--	{ 0xc1, 0x0a }, // PGAMPK9
--	// Set gray scale voltage to adjust gamma
--	{ 0xd0, 0x0c }, // NGAMVR0
--	{ 0xd1, 0x17 }, // NGAMVR0
--	{ 0xd2, 0x14 }, // NGAMVR1
--	{ 0xd3, 0x2e }, // NGAMVR2
--	{ 0xd4, 0x32 }, // NGAMVR3
--	{ 0xd5, 0x3c }, // NGAMVR4
--	{ 0xd6, 0x22 }, // NGAMPR0
--	{ 0xd7, 0x3d }, // NGAMPR1
--	{ 0xd8, 0x0d }, // NGAMPK0
--	{ 0xd9, 0x07 }, // NGAMPK1
--	{ 0xda, 0x13 }, // NGAMPK2
--	{ 0xdb, 0x13 }, // NGAMPK3
--	{ 0xdc, 0x11 }, // NGAMPK4
--	{ 0xdd, 0x15 }, // NGAMPK5
--	{ 0xde, 0x19 }, // NGAMPK6
--	{ 0xdf, 0x10 }, // NGAMPK7
--	{ 0xe0, 0x17 }, // NGAMPK8
--	{ 0xe1, 0x0a }, // NGAMPK9
--	// EXTC Command set enable, select page 3
--	{ 0xff, 0x30 }, { 0xff, 0x52 }, { 0xff, 0x03 },
--	// Set various timing settings
--	{ 0x00, 0x2a }, // GIP_VST_1
--	{ 0x01, 0x2a }, // GIP_VST_2
--	{ 0x02, 0x2a }, // GIP_VST_3
--	{ 0x03, 0x2a }, // GIP_VST_4
--	{ 0x04, 0x61 }, // GIP_VST_5
--	{ 0x05, 0x80 }, // GIP_VST_6
--	{ 0x06, 0xc7 }, // GIP_VST_7
--	{ 0x07, 0x01 }, // GIP_VST_8
--	{ 0x08, 0x03 }, // GIP_VST_9
--	{ 0x09, 0x04 }, // GIP_VST_10
--	{ 0x70, 0x22 }, // GIP_ECLK1
--	{ 0x71, 0x80 }, // GIP_ECLK2
--	{ 0x30, 0x2a }, // GIP_CLK_1
--	{ 0x31, 0x2a }, // GIP_CLK_2
--	{ 0x32, 0x2a }, // GIP_CLK_3
--	{ 0x33, 0x2a }, // GIP_CLK_4
--	{ 0x34, 0x61 }, // GIP_CLK_5
--	{ 0x35, 0xc5 }, // GIP_CLK_6
--	{ 0x36, 0x80 }, // GIP_CLK_7
--	{ 0x37, 0x23 }, // GIP_CLK_8
--	{ 0x40, 0x03 }, // GIP_CLKA_1
--	{ 0x41, 0x04 }, // GIP_CLKA_2
--	{ 0x42, 0x05 }, // GIP_CLKA_3
--	{ 0x43, 0x06 }, // GIP_CLKA_4
--	{ 0x44, 0x11 }, // GIP_CLKA_5
--	{ 0x45, 0xe8 }, // GIP_CLKA_6
--	{ 0x46, 0xe9 }, // GIP_CLKA_7
--	{ 0x47, 0x11 }, // GIP_CLKA_8
--	{ 0x48, 0xea }, // GIP_CLKA_9
--	{ 0x49, 0xeb }, // GIP_CLKA_10
--	{ 0x50, 0x07 }, // GIP_CLKB_1
--	{ 0x51, 0x08 }, // GIP_CLKB_2
--	{ 0x52, 0x09 }, // GIP_CLKB_3
--	{ 0x53, 0x0a }, // GIP_CLKB_4
--	{ 0x54, 0x11 }, // GIP_CLKB_5
--	{ 0x55, 0xec }, // GIP_CLKB_6
--	{ 0x56, 0xed }, // GIP_CLKB_7
--	{ 0x57, 0x11 }, // GIP_CLKB_8
--	{ 0x58, 0xef }, // GIP_CLKB_9
--	{ 0x59, 0xf0 }, // GIP_CLKB_10
--	// Map internal GOA signals to GOA output pad
--	{ 0xb1, 0x01 }, // PANELD2U2
--	{ 0xb4, 0x15 }, // PANELD2U5
--	{ 0xb5, 0x16 }, // PANELD2U6
--	{ 0xb6, 0x09 }, // PANELD2U7
--	{ 0xb7, 0x0f }, // PANELD2U8
--	{ 0xb8, 0x0d }, // PANELD2U9
--	{ 0xb9, 0x0b }, // PANELD2U10
--	{ 0xba, 0x00 }, // PANELD2U11
--	{ 0xc7, 0x02 }, // PANELD2U24
--	{ 0xca, 0x17 }, // PANELD2U27
--	{ 0xcb, 0x18 }, // PANELD2U28
--	{ 0xcc, 0x0a }, // PANELD2U29
--	{ 0xcd, 0x10 }, // PANELD2U30
--	{ 0xce, 0x0e }, // PANELD2U31
--	{ 0xcf, 0x0c }, // PANELD2U32
--	{ 0xd0, 0x00 }, // PANELD2U33
--	// Map internal GOA signals to GOA output pad
--	{ 0x81, 0x00 }, // PANELU2D2
--	{ 0x84, 0x15 }, // PANELU2D5
--	{ 0x85, 0x16 }, // PANELU2D6
--	{ 0x86, 0x10 }, // PANELU2D7
--	{ 0x87, 0x0a }, // PANELU2D8
--	{ 0x88, 0x0c }, // PANELU2D9
--	{ 0x89, 0x0e }, // PANELU2D10
--	{ 0x8a, 0x02 }, // PANELU2D11
--	{ 0x97, 0x00 }, // PANELU2D24
--	{ 0x9a, 0x17 }, // PANELU2D27
--	{ 0x9b, 0x18 }, // PANELU2D28
--	{ 0x9c, 0x0f }, // PANELU2D29
--	{ 0x9d, 0x09 }, // PANELU2D30
--	{ 0x9e, 0x0b }, // PANELU2D31
--	{ 0x9f, 0x0d }, // PANELU2D32
--	{ 0xa0, 0x01 }, // PANELU2D33
--	// EXTC Command set enable, select page 2
--	{ 0xff, 0x30 }, { 0xff, 0x52 }, { 0xff, 0x02 },
--	// Unknown registers
--	{ 0x01, 0x01 },
--	{ 0x02, 0xda },
--	{ 0x03, 0xba },
--	{ 0x04, 0xa8 },
--	{ 0x05, 0x9a },
--	{ 0x06, 0x70 },
--	{ 0x07, 0xff },
--	{ 0x08, 0x91 },
--	{ 0x09, 0x90 },
--	{ 0x0a, 0xff },
--	{ 0x0b, 0x8f },
--	{ 0x0c, 0x60 },
--	{ 0x0d, 0x58 },
--	{ 0x0e, 0x48 },
--	{ 0x0f, 0x38 },
--	{ 0x10, 0x2b },
--	// EXTC Command set enable, select page 0
--	{ 0xff, 0x30 }, { 0xff, 0x52 }, { 0xff, 0x00 },
--	// Display Access Control
--	{ 0x36, 0x0a }, // bgr = 1, ss = 1, gs = 0
- };
- 
- static inline struct nv3052c *to_nv3052c(struct drm_panel *panel)
-@@ -655,6 +384,7 @@ static int nv3052c_prepare(struct drm_panel *panel)
- 	gpiod_set_value_cansleep(priv->reset_gpio, 0);
- 	usleep_range(5000, 20000);
- 
-+	/* Apply panel-specific initialization registers */
- 	for (i = 0; i < panel_regs_len; i++) {
- 		err = mipi_dbi_command(dbi, panel_regs[i].cmd,
- 				       panel_regs[i].val);
-@@ -665,6 +395,16 @@ static int nv3052c_prepare(struct drm_panel *panel)
- 		}
- 	}
- 
-+	/* Apply common initialization registers */
-+	for (i = 0; i < ARRAY_SIZE(common_init_regs); i++) {
-+		err = mipi_dbi_command(dbi, common_init_regs[i].cmd,
-+				       common_init_regs[i].val);
-+		if (err) {
-+			dev_err(priv->dev, "Unable to set register: %d\n", err);
-+			goto err_disable_regulator;
-+		}
-+	}
-+
- 	err = mipi_dbi_command(dbi, MIPI_DCS_EXIT_SLEEP_MODE);
- 	if (err) {
- 		dev_err(priv->dev, "Unable to exit sleep mode: %d\n", err);
--- 
-2.49.0
+> On 6/14/25 05:01, Alex Elder wrote:
+>> Enable the SpacemiT P1, which is an I2C-controlled PMIC.  Initially we
+>> only the regulators will be supported.
+>>
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> ---
+>>   .../devicetree/bindings/mfd/spacemit,p1.yaml  | 86 +++++++++++++++++++
+>>   1 file changed, 86 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/mfd/spacemit,p1.yaml
+>>
+>> <snip>
+>>
+>> +
+>> +examples:
+>> +  - |
+>> +    i2c {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        pmic@41 {
+>> +            compatible = "spacemit,p1";
+>> +            reg = <0x41>;
+>> +            interrupts = <64>;
+>> +
+> 
+> (Not really a review, just a note.)
+> 
+> I couldn't believe it at first, but it looks like the SpacemiT K1 really
+> does have PLIC interrupt 64 dedicated to receiving PMIC interrupt [1]
+> over pin "PMIC_INT_N".
+> 
+> Regards,
+> Vivian "dramforever" Wang
+> 
+> [1]: https://developer.spacemit.com/documentation?token=AZsXwVrqaisaDGkUqMWcNuMVnPb
+> 
+>> <snip>
+> 
 
 
