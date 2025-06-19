@@ -1,59 +1,54 @@
-Return-Path: <linux-kernel+bounces-694202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F3ADAE093B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:54:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA40AE0977
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 078BC7A3B50
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:52:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BF65169E2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEAC223DC6;
-	Thu, 19 Jun 2025 14:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B356221F2E;
+	Thu, 19 Jun 2025 14:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=itb.spb.ru header.i=@itb.spb.ru header.b="pyp8Cer0"
-Received: from forward101b.mail.yandex.net (forward101b.mail.yandex.net [178.154.239.148])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Zv9cfyM9"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709DE20C480
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 14:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBA3273812
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 14:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750344842; cv=none; b=PokzA/Ycx6E4bAv3Hs8aA1uLvm00dCMno/yd0q0gnzxrOm+AnoxCig9TcEt9rjFyHu+ePAC3gwAdZ3n9aO0Rw+FZOTx+0vPHz7VE4XPS94h5icE6Zax4UEfok0tsAnJ7phJ9GgTMe+ia2YDvJ+ZGPCLAtrseq9Tvp0bnsD9Xkw8=
+	t=1750344948; cv=none; b=tej8Ji6/mGq65VJ9dnykDnvAIUOpqALH+bO5U9I5G49aCpdgOJ8iDQzLgpX/AD/rR9TzPvs9X61keQdovvgyjiMGusNdBCUYgU+ejxq39elKZhaHf4FebOQdgA+OhUO1RH81pbjHzHZGbCqbW6FI51AsqlSp88un59orwz6xemQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750344842; c=relaxed/simple;
-	bh=fzNnnupMA3aKSPvwO5RS9+uw6COJ0OojzE/96IObkHU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s7DvmYmwLrzhdhTKILZEqmgYgQWeHKQOAhjbVOuHWkKxYIBwUmCqlsiUdVa7FBpZRkycNU9UfczVhvuxJyLOb/gGoGslf10evZPkWi21Z1nntDo/fwLISNo0Bpo9soK1QXOF2Dm8gyKNvUgQOYFXE4vr5UTpL+/vH+fV5LeBwX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=itb.spb.ru; spf=pass smtp.mailfrom=itb.spb.ru; dkim=pass (1024-bit key) header.d=itb.spb.ru header.i=@itb.spb.ru header.b=pyp8Cer0; arc=none smtp.client-ip=178.154.239.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=itb.spb.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=itb.spb.ru
-Received: from mail-nwsmtp-smtp-production-main-70.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-70.sas.yp-c.yandex.net [IPv6:2a02:6b8:c24:2213:0:640:2844:0])
-	by forward101b.mail.yandex.net (Yandex) with ESMTPS id 8C69C60B23;
-	Thu, 19 Jun 2025 17:53:46 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-70.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id UrPtqvCLgmI0-dlGck7kH;
-	Thu, 19 Jun 2025 17:53:45 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=itb.spb.ru; s=mail;
-	t=1750344825; bh=TFnT8rksRCUkHgk0vFmvFTJCSDIZN2HPazNQku+gKOY=;
-	h=Message-Id:Date:Cc:Subject:To:From;
-	b=pyp8Cer0jSVMtcjVrgDJqjPpqSsUmcId6ayTUYaow8Vu6AZbjvjoXT/vHUEV5+dP+
-	 ugOEcc0ckV3d0CSSqIXiExUfAvG6SURIinqx8CW1LiND+OG2ue0EnrcPykko83Es/h
-	 xyl8vhdILP8sW6k+wNZsl0OAV5XQA/cj7KF9R1oI=
-Authentication-Results: mail-nwsmtp-smtp-production-main-70.sas.yp-c.yandex.net; dkim=pass header.i=@itb.spb.ru
-From: Ivan Stepchenko <sid@itb.spb.ru>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Ivan Stepchenko <sid@itb.spb.ru>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] mtd: fix possible integer overflow in erase_xfer()
-Date: Thu, 19 Jun 2025 17:53:13 +0300
-Message-Id: <20250619145313.5823-1-sid@itb.spb.ru>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1750344948; c=relaxed/simple;
+	bh=W1L0rO9dU5FFbVfVjwNW8A9US4mbKUKOKfUDHJkMAKI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=POFnnjWdJFpcAEYtE358NQN1Vxpd1ou/ll/XiCV0fn375ZqAZi+VbRUjXiTXwI4agotoOS8UJEzqLp1PzzbHDtbYCV7IWRcnU5roxOIC2319rVTuyfmoKJY3mbTtBgL5DyVLWOD0qv4GjJaRU+mHEs1h3y1b4VNOKhL6Rn4JlKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Zv9cfyM9; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750344944;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=T2eXgg8AokEwULeJHXyxGHKldGhr0QHsHsoPutM/BV0=;
+	b=Zv9cfyM99VUKZo/PGzR9whE6RlDbdLiLSHzex3RDIy4VeDzOk9P17uw8wbvXhh0FwmLVLv
+	Nx/aJaQFQY5CiNubNWHsWsvhlPcGBVbxNit/Vn8G8Y9Hby6qUKu8ywJezoEPrnft/0n1ym
+	xh3M/B2r2SFP3fUJ8zwNUnDWep9QQQw=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: "David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	sparclinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] sbus: envctrl: Fix typo in comment
+Date: Thu, 19 Jun 2025 16:53:31 +0200
+Message-ID: <20250619145336.174298-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,35 +56,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The expression '1 << EraseUnitSize' is evaluated in int, which causes
-a negative result when shifting by 31 - the upper bound of the valid
-range [10, 31], enforced by scan_header(). This leads to incorrect
-extension when storing the result in 'erase->len' (uint64_t), producing
-a large unexpected value.
+s/disinguish/distinguish/
 
-Found by Linux Verification Center (linuxtesting.org) with Svace.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Ivan Stepchenko <sid@itb.spb.ru>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- drivers/mtd/ftl.c | 2 +-
+ drivers/sbus/char/envctrl.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/ftl.c b/drivers/mtd/ftl.c
-index 8c22064ead38..f2bd1984609c 100644
---- a/drivers/mtd/ftl.c
-+++ b/drivers/mtd/ftl.c
-@@ -344,7 +344,7 @@ static int erase_xfer(partition_t *part,
-             return -ENOMEM;
- 
-     erase->addr = xfer->Offset;
--    erase->len = 1 << part->header.EraseUnitSize;
-+    erase->len = 1ULL << part->header.EraseUnitSize;
- 
-     ret = mtd_erase(part->mbd.mtd, erase);
-     if (!ret) {
+diff --git a/drivers/sbus/char/envctrl.c b/drivers/sbus/char/envctrl.c
+index 81918aa67109..69e49da93b8b 100644
+--- a/drivers/sbus/char/envctrl.c
++++ b/drivers/sbus/char/envctrl.c
+@@ -734,7 +734,7 @@ static void envctrl_set_mon(struct i2c_child_t *pchild,
+ {
+ 	/* Firmware only has temperature type.  It does not distinguish
+ 	 * different kinds of temperatures.  We use channel description
+-	 * to disinguish them.
++	 * to distinguish them.
+ 	 */
+ 	if (!(strcmp(chnl_desc,"temp,cpu")) ||
+ 	    !(strcmp(chnl_desc,"temp,cpu0")) ||
 -- 
-2.39.5
+2.49.0
 
 
