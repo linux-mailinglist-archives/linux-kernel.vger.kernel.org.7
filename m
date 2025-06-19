@@ -1,158 +1,113 @@
-Return-Path: <linux-kernel+bounces-694145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56FC2AE0874
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:18:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8312AE085E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D11B01BC3991
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:19:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2191899AED
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66ED202F93;
-	Thu, 19 Jun 2025 14:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="OOpYVzch"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A821D27F012;
+	Thu, 19 Jun 2025 14:13:32 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FED21D6187
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 14:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945C121883F;
+	Thu, 19 Jun 2025 14:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750342725; cv=none; b=LaZoFM5fUEoxuHfPgtTxTcFQKgE6632SBrBMX0JfL+aSeo+OBS5nDnsjm20GdbZsud7LMHnxFNfLtWfXnTn6+OQ20hzB5avEsG9Hk35URTDfaqdxClm63z0t1LcEcafTqXPQHdsOGbRVjrMeQlwlisCvGXSCY+PHE1apAzxx3Mo=
+	t=1750342412; cv=none; b=rMghthV0YI/X4xVJoKNyIV4Su6Dw3wI+yjPZv16dx+jcQDbbYnHn1b7AvtC5kv2RrIVTD9aJVcH9kGfAUFyEWE3rZmaRJbEcmB13DR9qBWDXTR6t9ezuDfDccKtV5rO4VbkmxysyeUQ9V4HJbGjuwkz3Nn7SVt224in/4ClkSg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750342725; c=relaxed/simple;
-	bh=H6wzggDRhxLgF/k7QgwWzPPiwJmYOU2J3mhjqhSXHk0=;
-	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
-	 Date:Cc:References:To; b=URw3QRCVudVOSkpL+wrXpgkBfvAwgXQpqfwNNrLQU8vfJsVQWD363Ed0X8SmVxfLiCHki7IrwaHmaped1IuYbbNUIPwQj4qEoJRoVnnsnxkxj9Bs/NiyWID3zMZvfpjqrVWeyCGL0ALIbPDx0vEgyDgb3zp4F84/0CnLchvx5PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=pass smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=OOpYVzch; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1750342704; bh=jEPNTd2WPyoDSyTpEMpP/zxHOT0uryc9RD50UhZr78A=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=OOpYVzchjatZ/O42Rtt15I/wzUYV2xm35DqhbM0nL/Q5aNbB676VqIQjGTvfkNK0Y
-	 VADggGJM9pOxtTTvkB7dIVg81kp4S7AnZQSbh9T9MeOjrzDhEqgqLc5N1NK3JSCTNM
-	 4a5eaprowaJvaOgIa+44jAySdfewgguF3QQZ/dsA=
-Received: from smtpclient.apple ([2408:8207:18a2:f420:88c5:a3d0:e224:94b2])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 30E27000; Thu, 19 Jun 2025 22:12:14 +0800
-X-QQ-mid: xmsmtpt1750342334t1qpkrhkq
-Message-ID: <tencent_6FC67FBE2D41106D17474BDCC318C1909D07@qq.com>
-X-QQ-XMAILINFO: NQR8mRxMnur9tZ/1rpJ6YURlDIRkqdSvQg6OqWDrVF/QvBWs51cGg0ant9754D
-	 mfznjollGXuxngwjuCxHkY19DV3Tl/S1vWXh5KI+Sw7OT2F5M/T55boe0d8qQrGXKNaGxP9HFlav
-	 QpC72Wx2QuZWjerGpykqJOKoV/gQISXf0Vle1EwpBziKrZE07RQQhNgYkZTDd94W90jm2ErV2kyH
-	 XHG82e1hFnkY1mnXWJOSzf6RO3kfTysuv8gHrIUPklnHR0AyACRmS/22vvL4BgJevC5Uuv999bLJ
-	 0C4wNNQfhd6AOl76BReXNvzhZa0lEbvHDNXeSGl4Y839oWBYSA6qLaqhA217SrrH/bR8ajsv0Cfo
-	 3ltr9lo2cg87GP5PQr4b7lCtTtbNjQqd5gS6sIgC+xophVxNDdAY3P6KsK4ulvxQsd4akjm8/XBU
-	 oQfCcDaMu64dN5D3QzcegZerXmJGkU7iDlFR1LWhQOkEBUZufR3WdXKLl6/rLTF8Rm6XS/4B/cqv
-	 On3Vf975oRFlxuII/vWlr/2JVKvWfBf1DQ/HLqN7YPqrBrN1m58qUEKgWOGvWawK5AkckJUvpxJ0
-	 w1m/Shq4PaKqIvH1qLK4aU8S4ZKwqxgNoqoQ6jA07E9TzJBIbawDl5ePHvftMx/8zWBvfF3frKhl
-	 TTsn85QVwSuntUBK0zOwsPC0znbE+tCjioEo82t4hQl9V2rLkv0bdw2UzsxzVB9oAFhXTeogXGNJ
-	 rfbmyCsiuYUhVNEJySMAlf8e9bDCEDuHUepP+PD6Vt6lc+/zbqu1fV6dm5oWVq11/ckuWhSfcPVY
-	 ryXZlOcngbtrzKDHAqDF+yTit9fPIcfI2BGZFXMQTHt79VvDX3I/25Rn3iX0rROGlmQXcfBI4+b2
-	 f3OAbrjaSw/wPzlT32AhFdJHCW1+mcGL3nf86vcTE7q6ffdhTktEP/LBBQmKlbt/N6kzBmurUb9l
-	 X4Xq1/u2K709dIixd3+QIAiQ+WF/6XNlnr/maF1V8Ks7KxxfJCfPv664MKRUbPp5e/Q+D858b5Cc
-	 /0CkhtnR76AD4Zs8YrV2TYat+WiqA=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1750342412; c=relaxed/simple;
+	bh=U6yVuvluXAhR/fr0dFbQGKpCGEQa4jO8zcrBl72oYAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c20sYx/YJ1MB4KiXE2dO4b/GS5NZ2Rf4FveAYIMCRRSu/0ltJrBpBMiabXxwkRPYm82eQb4o5WkZsSFmRgV2VmHwlpq2/mmrho4A8D6/yhdQAmU6/yv6/2H7Sj2bKywlqUXswrxCvq0seL6Z01N3YmS8zZcLU6rKPw9r4L97o0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.110] (unknown [114.241.87.235])
+	by APP-03 (Coremail) with SMTP id rQCowACH2VHxGlRoB2WXBw--.1804S2;
+	Thu, 19 Jun 2025 22:13:07 +0800 (CST)
+Message-ID: <b73c0d8e-9869-469e-a46a-ddec9328885e@iscas.ac.cn>
+Date: Thu, 19 Jun 2025 22:13:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [RFC patch v3 00/20] Cache aware scheduling
-From: Yangyu Chen <cyy@cyyself.name>
-In-Reply-To: <9dbdfec2-0a2d-4110-b8ef-b9d16900ff87@intel.com>
-Date: Thu, 19 Jun 2025 22:12:03 +0800
-Cc: Tim Chen <tim.c.chen@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- K Prateek Nayak <kprateek.nayak@amd.com>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>,
- Valentin Schneider <vschneid@redhat.com>,
- Tim Chen <tim.c.chen@intel.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Libo Chen <libo.chen@oracle.com>,
- Abel Wu <wuyun.abel@bytedance.com>,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
- Hillf Danton <hdanton@sina.com>,
- Len Brown <len.brown@intel.com>,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-X-OQ-MSGID: <879A5558-B722-4FC4-880E-C0DA303912D4@cyyself.name>
-References: <cover.1750268218.git.tim.c.chen@linux.intel.com>
- <tencent_6E51A3175F8AE0A7F684A319EE63CC56C806@qq.com>
- <9dbdfec2-0a2d-4110-b8ef-b9d16900ff87@intel.com>
-To: "Chen, Yu C" <yu.c.chen@intel.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] regulator: spacemit: support SpacemiT P1 regulators
+To: Alex Elder <elder@riscstar.com>, lee@kernel.org, lgirdwood@gmail.com,
+ broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, dlan@gentoo.org
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alex@ghiti.fr, troymitchell988@gmail.com, guodong@riscstar.com,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250613210150.1468845-1-elder@riscstar.com>
+ <20250613210150.1468845-4-elder@riscstar.com>
+ <acac9522-fb19-4659-8e1a-544bf75f3864@iscas.ac.cn>
+ <6504c609-f8b5-42e3-88ad-5cbee30a52ed@riscstar.com>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <6504c609-f8b5-42e3-88ad-5cbee30a52ed@riscstar.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACH2VHxGlRoB2WXBw--.1804S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Xw1xtryfJrWkGF4rtF1UZFb_yoW8Jr1fpF
+	4av3sIkwn5JFW8Zr4Durn7X3WFgF48Xa47Jr15Xr43Z34DWa129Fs2ka1Yvay8Xr95GF12
+	9w4qqryvkFyDZrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvqb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
+	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
+	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY
+	1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
+	ZFpf9x07jgPEfUUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
+On 6/19/25 21:23, Alex Elder wrote:
+> On 6/19/25 1:15 AM, Vivian Wang wrote:
+>> Also, consider naming this consistently: "spacemit-p1", or
+>> "spacemit-p1-regulator"?
+>
+> Let me see if I understand your comment, by explaining the
+> naming I used.
+>
+> The PMIC driver could support a different PMIC.  Its OF
+> match table specifies a compatible string with matching
+> data, and the data describes attributes of the P1 PMIC.
+> So that driver uses MOD_NAME "spacemit-pmic".
+>
+> This driver describes specifically the regulators found
+> in the P1 PMIC, so it uses "spacemit-p1-regulator" as
+> its MOD_NAME.
+>
+> You might still be right; but does this change what you
+> are suggesting?
 
+Oh sorry it was simpler than that. It's just I've noted that this 
+regulator module file is called "spacemit-p1":
 
-> On 19 Jun 2025, at 21:21, Chen, Yu C <yu.c.chen@intel.com> wrote:
-> 
-> On 6/19/2025 2:39 PM, Yangyu Chen wrote:
->> Nice work!
->> I've tested your patch based on commit fb4d33ab452e and found it
->> incredibly helpful for Verilator with large RTL simulations like
->> XiangShan [1] on AMD EPYC Geona.
->> I've created a simple benchmark [2] using a static build of an
->> 8-thread Verilator of XiangShan. Simply clone the repository and
->> run `make run`.
->> In a static allocated 8-CCX KVM (with a total of 128 vCPUs) on EPYC
->> 9T24, before the patch, we have a simulation time of 49.348ms. This
->> was because each thread was distributed across every CCX, resulting
->> in extremely high core-to-core latency. However, after applying the
->> patch, the entire 8-thread Verilator is allocated to a single CCX.
->> Consequently, the simulation time was reduced to 24.196ms, which
->> is a remarkable 2.03x faster than before. We don't need numactl
->> anymore!
->> [1] https://github.com/OpenXiangShan/XiangShan
->> [2] https://github.com/cyyself/chacha20-xiangshan
->> Tested-by: Yangyu Chen <cyy@cyyself.name>
-> 
-> Thanks Yangyu for your test. May I know if these 8-threads have any
-> data sharing with each other, or each thread has their dedicated
-> data? Or, there is 1 main thread, the other 7 threads do the
-> chacha20 rotate and put the result to the main thread?
+> +obj-$(CONFIG_REGULATOR_SPACEMIT_P1) += spacemit-p1.o
 
-Ah, I had forgotten to mention the benchmark. The workload is not
-about chacha20 itself. This benchmark utilizes a RTL-level simulator
-[1] that runs an Open Source OoO CPU core called XiangShan [2]. The
-chacha20 algorithm is executed on the guest CPU within this simulator.
+... but the MOD_NAME is "spacemit-p1-regulator", and I was wondering if 
+it made sense to rename the module to also "spacemit-p1-regulator". In 
+addition to consistency, modules are free to have all sorts of names in 
+Linux, but the names have to be unique, so if this is only the regulator 
+driver part, the name should reflect that.
 
-The verilator partitions a large RTL design into multiple blocks
-of functions and distributes them to each thread. These signals
-require synchronization every guest cycle, and synchronization is
-also necessary when a dependency exists. Given that we have
-approximately 5K guest cycles per second, there is a significant
-amount of data that needs to be transferred between each thread.
-If there are signal dependencies, this could lead to latency-bound
-performance.
-
-[1] https://github.com/verilator/verilator
-[2] https://github.com/OpenXiangShan/XiangShan
-
-Thanks,
-Yangyu Chen
-
-> Anyway I tested it on a Xeon EMR with turbo-disabled and saw ~20%
-> reduction in the total time.
-
-Nice result!
-
-> 
-> Thanks,
-> Chenyu
+Vivian "dramforever" Wang
 
 
 
