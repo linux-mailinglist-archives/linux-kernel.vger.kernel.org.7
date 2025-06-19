@@ -1,62 +1,86 @@
-Return-Path: <linux-kernel+bounces-694165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C88AE08E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:36:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5DCDAE08E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 16:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A4C5A3F83
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:35:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2755B7A6632
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF23220F4C;
-	Thu, 19 Jun 2025 14:36:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1AD1B3923;
-	Thu, 19 Jun 2025 14:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303BE224892;
+	Thu, 19 Jun 2025 14:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GGukmmKI"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0441B3923
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 14:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750343772; cv=none; b=jxz1DYFeNnftjTWEXjMlX2gyJ03mGBM5IU7Ww/treVJh1ADovA6hgXJZhvTKumFIsptqVBMNIH3HCFPga51steb5FMvVwYP5Nn1t5eMtINALRdOd+g1M6rmM0tlkXfT12tCC/7dN5qz2sydVJy/IxJfXhNYCK7bPcZAqO+1pFO4=
+	t=1750343881; cv=none; b=RBsir+0tRS8JrEmuki0tZ8Xz4baSGEE+sLgh1Av8bymHJnp2qzTY/b3By5aB6q+Mv1RZkRqyC0QMm0xaYen//UlMDs0te/m6j7W6qjcohLnrZW7vg0jd+P02AuqvGmWsPR+RPw+/wEqxs3vC66cLkGtrtXSQRCLDCTsxm0mfr98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750343772; c=relaxed/simple;
-	bh=TrQM8zZWOPOJoeXZtUsX+MK3ndkBL2WDH2l4576fBY8=;
+	s=arc-20240116; t=1750343881; c=relaxed/simple;
+	bh=CpbWcAfGaHy4F+EFWUw79lU+eKjQal3fLI4YNd1mJqE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SI5fwUTHCQe7RjmkHemmCTn3p3yZIt5NL3VFENZSZnAnuQREwdwpSl//M5ZFjAtX2xRUSLzNg2DHGC36upnoTZrxIK07VG6Onx7wx3UmU9GsItE1xnV/M3mRPP5/bY90xHxQZ3sfleWo4+13kdLB2sEMw+o7e1DndxkPFYB/YdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25747113E;
-	Thu, 19 Jun 2025 07:35:50 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 243363F66E;
-	Thu, 19 Jun 2025 07:36:06 -0700 (PDT)
-Date: Thu, 19 Jun 2025 15:36:04 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Koichi Okuno <fj2767dz@fujitsu.com>, Will Deacon <will@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	=?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] perf: Fujitsu: Add the Uncore PCI PMU driver
-Message-ID: <aFQgVPRvbrfcUrkY@J2N7QTR9R3>
-References: <20250617102819.3685543-1-fj2767dz@fujitsu.com>
- <20250617102819.3685543-3-fj2767dz@fujitsu.com>
- <20250617103618.GT1613376@noisy.programming.kicks-ass.net>
- <aFQXU5rK_HJE9zq0@J2N7QTR9R3>
- <20250619140442.GH1613376@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gqj2kEBwXufm6ZZqo9U80SjrIN7mrF6jFkkdH3nYzv3VMcEPL8s/IFpdcPmDY0ip/b1REOzRqYvKL/93JzwK4zes6lVqU+9uYiSf/7Ugu5oM6BegnLKZ8HEFYk03snZ4xrLLw/6BfVYBaBIpkgECjph9/CN8l+EGs/gXyFdxphM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GGukmmKI; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2e3e58edab5so263917fac.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:37:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750343878; x=1750948678; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hItRQ/EsWDhhIfBWpBCEk7E1LEl+Hcojb2DJh97cbHY=;
+        b=GGukmmKIqdIqoZEYJ7VAuPkP6w6R9fAVMs9h3seMZR72g9tmNPb1nWucOOXkvvG8AH
+         bK3x7aN05gmv+weKP6IQp1OZeonu8zL+XIVD0+i5Vcs8CYR4d8lrkBmCqid6JGvw5EKm
+         YdqJt35lDuU3OiGFNe3m5BK6WXoruC3zEqo7HQH/pxLLADP+LfE2jiYm6n0fnypb+i+h
+         ix3xGGH69E6HAhkakeKrq9ePbGL69ALZ8MhyY//tZqOjRHZ+mqVpRGoIGYOuYsqVJiiN
+         Uf/LKbOH6tKwL0WOOLTyHsEqN9kHKSYnAXQ/nDKQk+k/gPMxJ7cX6ZMs/BtBVln1cTlG
+         Vrnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750343878; x=1750948678;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hItRQ/EsWDhhIfBWpBCEk7E1LEl+Hcojb2DJh97cbHY=;
+        b=n5e9bS40f+YEKZxKWrOxco48iUvyguqJm9tCjL4abROtF40m1m5xkfhsAtIL1mSzJX
+         oTGkkprpKRP6KUW+rABRzMVG9S0cOGsEd319nWzB1TVKAMWvuYrAX6ZnGnJr+5di4Z1D
+         VsGAalT2XTDn/uX/ufaVwZfTWo6AKRKEcx3Ts0lLz9M/IU7B+naMILhvAk+rQlCrolNO
+         BEFT/Bk3618AGbGVzO9dxfOU8VlDS2LkcZREULQiUQ5c6F2RwGFWH/VGI7MVFLq0EvEF
+         orA+fYoVTd6RljSuyoMPSljpezVwoMeNGP3u6vS4e3mzIWjLhmMJ20kf7PjhoFUfKWl/
+         LDQg==
+X-Gm-Message-State: AOJu0YyukZexyCz+MNGw7yV6fxnzQD2yX6tdyRfVn6xHuUS+IHKztuad
+	K3MutR2f9zpBkg6OEtHOjBAY3jRnBAovJqBsmqttYR2cilcfE4RGD6Pn8TKmdZjv0WWuYg0Ztsv
+	pKTse
+X-Gm-Gg: ASbGnctpgSScg2LGapGdnA0FCn0hPSpS3PZXm2eBkPtHnY9rprDoGBAhIn1DVLOh3Hy
+	4zol4guXHg7VCHaobuyexUPzCea45MBUxVguFqU+9NPPmH4QthMjf6c+uKzNXEORf3jWQoKRcyf
+	WPT26xXjtdDdr/kWFu0wTgc64qT2+udmhFUyfYlbs9FizEQv1Fa59SmjT1WCxTuGrqFJIrguFzP
+	1XoFueSWh420T3yQk8rfpQNApFyQcN82qTnQtjWvnKalMTPknv5dhL/dr2hvJOc0012EcBHItdO
+	AdqriyoGYG+CccUODmomiXz7jg9jUaIPf2t8bfR8mYAVueBEKHyK5o2Oeu0XLvhmBzW5BA==
+X-Google-Smtp-Source: AGHT+IF5wWj1FQ6BbyupArvuY9tJtohfhdhFBgl6f0a/VE3YSxqXuNxxcAbMe+rm13ajKH0dqzjQsg==
+X-Received: by 2002:a05:6870:d0d5:b0:2d5:2955:aa6a with SMTP id 586e51a60fabf-2eaf0830607mr11507270fac.7.1750343877826;
+        Thu, 19 Jun 2025 07:37:57 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:67e2:ece8:b2f5:738f])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2eba625607dsm358428fac.45.2025.06.19.07.37.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jun 2025 07:37:57 -0700 (PDT)
+Date: Thu, 19 Jun 2025 17:37:54 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Philip Radford <philip.radford@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
+	cristian.marussi@arm.com, luke.parkin@arm.com
+Subject: Re: [PATCH 4/4] firmware: arm_scmi: Add new inflight tracing
+ functionality
+Message-ID: <514e4b89-d48a-41b9-bd63-0d52249bba7a@suswa.mountain>
+References: <20250619122004.3705976-1-philip.radford@arm.com>
+ <20250619122004.3705976-5-philip.radford@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,65 +89,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250619140442.GH1613376@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250619122004.3705976-5-philip.radford@arm.com>
 
-On Thu, Jun 19, 2025 at 04:04:42PM +0200, Peter Zijlstra wrote:
-> On Thu, Jun 19, 2025 at 02:57:55PM +0100, Mark Rutland wrote:
-> > On Tue, Jun 17, 2025 at 12:36:18PM +0200, Peter Zijlstra wrote:
-> > > On Tue, Jun 17, 2025 at 07:27:50PM +0900, Koichi Okuno wrote:
-> > > > +	pcipmu->pmu = (struct pmu) {
-> > > > +		.parent		= dev,
-> > > > +		.task_ctx_nr	= perf_invalid_context,
-> > > > +
-> > > > +		.pmu_enable	= fujitsu_pci__pmu_enable,
-> > > > +		.pmu_disable	= fujitsu_pci__pmu_disable,
-> > > > +		.event_init	= fujitsu_pci__event_init,
-> > > > +		.add		= fujitsu_pci__event_add,
-> > > > +		.del		= fujitsu_pci__event_del,
-> > > > +		.start		= fujitsu_pci__event_start,
-> > > > +		.stop		= fujitsu_pci__event_stop,
-> > > > +		.read		= fujitsu_pci__event_read,
-> > > > +
-> > > > +		.attr_groups	= fujitsu_pci_pmu_attr_grps,
-> > > > +		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
-> > > 
-> > > Should these drivers not also have PERF_PMU_CAP_NO_INTERRUPT ? Per them
-> > > being uncore they cannot generate samples.
-> > 
-> > These PMUs actually have an interrupt, so that might be a bit confusing.
-> > That said, the counters seem to be 64-bit, so the interrupt doesn't seem
-> > practically necessary today.
+On Thu, Jun 19, 2025 at 12:20:04PM +0000, Philip Radford wrote:
+> Adds scmi_inflight_count function to fetch the current xfer
+> inflight count to use in trace
 > 
-> Yeah, I saw they had an interrupt. But them being uncore they must not
-> sample, and NO_INTERRUPT means not being able to sample.
+> Signed-off-by: Philip Radford <philip.radford@arm.com>
+> ---
+>  drivers/firmware/arm_scmi/common.h   |  1 +
+>  drivers/firmware/arm_scmi/driver.c   | 17 +++++++++++++++--
+>  drivers/firmware/arm_scmi/raw_mode.c |  5 +++--
+>  3 files changed, 19 insertions(+), 4 deletions(-)
 > 
-> Naming urgh :-)
+> diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
+> index ad9232c982ce..07b9e629276d 100644
+> --- a/drivers/firmware/arm_scmi/common.h
+> +++ b/drivers/firmware/arm_scmi/common.h
+> @@ -505,4 +505,5 @@ static struct platform_driver __drv = {					       \
+>  void scmi_notification_instance_data_set(const struct scmi_handle *handle,
+>  					 void *priv);
+>  void *scmi_notification_instance_data_get(const struct scmi_handle *handle);
+> +int scmi_inflight_count(const struct scmi_handle *handle);
+>  #endif /* _SCMI_COMMON_H */
+> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+> index c6657582c9ab..d128d497f96e 100644
+> --- a/drivers/firmware/arm_scmi/driver.c
+> +++ b/drivers/firmware/arm_scmi/driver.c
+> @@ -1443,7 +1443,8 @@ static int do_xfer(const struct scmi_protocol_handle *ph,
+>  
+>  	trace_scmi_xfer_begin(xfer->transfer_id, xfer->hdr.id,
+>  			      xfer->hdr.protocol_id, xfer->hdr.seq,
+> -			      xfer->hdr.poll_completion, 0);
+> +			      xfer->hdr.poll_completion,
+> +				  scmi_inflight_count(&info->handle));
 
-Yeah :)
+White space is messed up.  It might be better to fold this into patch 3?
 
-FWIW, that came to mind due to:
+regards,
+dan carpenter
 
-  https://lore.kernel.org/lkml/20250618-perf-pmu-cap-docs-v1-1-0d34387d6e47@collabora.com/
-
-... and if NO_INTERRUPT would be better-named as NO_SAMPLING, that might
-be a good opportunity to clean that up.
-
-> > Either way, the fujitsu_pci__event_init() function rejects sampling
-> > events, so it correctly rejects sampling events.
-> > 
-> > IMO, it'd be a bit nicer to do the inverse, and have the perf core
-> > reject sampling events by default for non-CPU PMUs.
-> 
-> Yeah, there's lots of cleanup to be done. Quite possibly also some
-> unification between the various drivers.
-> 
-> Just need someone that knows what they're doing that has spare time,
-> know anybody like that? :-)
-
-I think a few folk likle that live in the nearest hall of mirrors...
-
-If you're happy with that in concept, I can see about getting someone to
-look at that -- the general idea has come up a few times.
-
-Mark.
 
