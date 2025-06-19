@@ -1,53 +1,64 @@
-Return-Path: <linux-kernel+bounces-694031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A689FAE06F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:24:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B824AE0742
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C1091888531
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:24:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29A334A4C20
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 13:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D8C25CC50;
-	Thu, 19 Jun 2025 13:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47781274FF0;
+	Thu, 19 Jun 2025 13:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qs66MUey"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H+XuEpV5"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833C725C706;
-	Thu, 19 Jun 2025 13:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E74E266580;
+	Thu, 19 Jun 2025 13:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750339469; cv=none; b=YNi0uIdHr1qt7BCB3Ls08IX2JDIm6rccYr0oYknrJlOUzA5yE/bMZjHIYTaVnUW3zQ4ClLPwe0Q3QlBTiHcjmWTRSSs4r7zrgHrwfrg2IZCe+BZN1+asCLx4QmmYQcdAq9lpV/AtwXTX0qBnYM+euXShFm5GfmtMNeYCgwAhd8U=
+	t=1750339578; cv=none; b=trJz0NjDkP5AZXiVGrpqWkd+CSOdm+P9egw84Jawzeb5/HW7U4b4VxGH4CqqHfq5u+zNfWmiKkITvwkpUJzjpW/FQIjzBy93CrtiDLu5RfRHExS1yyDxBdYSbj9BALPAZh5/ISLfgamCb7hy0n1dNp+pD/dIOD9Ogniv7P48XWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750339469; c=relaxed/simple;
-	bh=7Z0NVx6HuroPTKxZ/uY5Zr2GD5nqEz+D8bJSTlgruM8=;
+	s=arc-20240116; t=1750339578; c=relaxed/simple;
+	bh=KGEyud7L2TQo6xGQ56ztqBTO8TL7Cn2i0cLKJZ5YetI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n7RRoaUq7hjSSkmFJ4Nlkhvd2jsen1AgjVWneRFJsi3C0fb8y8SNRPLZLaNqixI11qb0xNdmYm1uu7skgY+zVVnh4YIF4WGkaxkkrYAb87Mo9CmLmGdpSzQ23XDruRb5ICyTUKylb+eCZfcwudZfvfrZXskEZTYS7WzGR45Zk3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qs66MUey; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 857BFC4CEEA;
-	Thu, 19 Jun 2025 13:24:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750339469;
-	bh=7Z0NVx6HuroPTKxZ/uY5Zr2GD5nqEz+D8bJSTlgruM8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qs66MUeypU2TaVeNpdtZMNZcLRdlJ/oEiARWV3kzJMB5PAauGHR4NuBOZYvA2Mg2l
-	 2F5H4xduFMlvhCAVYac2iyZZeg8oOGITs5lgzlS1KNk+9tEJ5gm8B8QkPWMjwzsMRa
-	 3dgE9dkDFqFq3iH0kmZ9157MlIA8YIjEvJe1IBN4=
-Date: Thu, 19 Jun 2025 15:24:26 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Kisub Choe <kisub.choe.0x1@gmail.com>
-Cc: sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: sm750fb: rename 'proc_setBLANK'
-Message-ID: <2025061927-pushpin-scholar-a898@gregkh>
-References: <20250618141555.5434-1-kisub.choe.0x1@gmail.com>
- <2025061817-jacket-nacho-50d6@gregkh>
- <aFQMrXRzui58krqA@zinc>
+	 Content-Type:Content-Disposition:In-Reply-To; b=izwqQ86FkwkH8aHxFsL+UUhMKX8Ce5l5VGBkIQGe5b9iVCyAspkAcuYNPkc/R+P/8zMz7eXg3oc+i3KXWfv8q7ym9W8lI2EnimDBjFudBLCTHNaWwWdfhfFJ74l/HxMRRMeWhnC5xe+ZgAJJxyI3Upd9w5XGEaMDABfgbyoXakU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H+XuEpV5; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mUtH47jkNHTUfdWVtm4j/G1WRt46Af+dgwGJAdSFHtQ=; b=H+XuEpV5mXnE+WB6V7UySKtgBl
+	jqlZGGTOTkFX1Hbpt4yp+nmMHmGCWmKd0DiFq93xPfzIs3qKQBKIbfnSZ1KEsxoQWFzCmqv3KObQe
+	Rcoh9gz8uQYxkLVVe7rvm+q5C7K1eqkqeS9cOB2ePUwQJugdCPVGtRGRhILFu1twhnzr3lqfaccvY
+	ElgkuMCMyfpfOyDqYaESt0G6UlcGlKQ3JYo3RjG9LUfXV0WPRGyQnMhUAeREXObQ7KenW44HnFqN/
+	jGL+tnqNBWTiGWQV6TWSKY1NwF8ThwNrQIoWW5SIQ4jQTlAiCrOnAtKg8lNvUuV0fonmpm1lKmvLL
+	BkKgnqeQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uSFHM-00000008p7G-1NVS;
+	Thu, 19 Jun 2025 13:26:08 +0000
+Date: Thu, 19 Jun 2025 14:26:08 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-mm@kvack.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [RFC 1/2] lib/vsprintf: Add support for pte_t
+Message-ID: <aFQP8LzVMctf6XH5@casper.infradead.org>
+References: <20250618041235.1716143-1-anshuman.khandual@arm.com>
+ <20250618041235.1716143-2-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,68 +67,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aFQMrXRzui58krqA@zinc>
+In-Reply-To: <20250618041235.1716143-2-anshuman.khandual@arm.com>
 
-On Thu, Jun 19, 2025 at 10:12:13PM +0900, Kisub Choe wrote:
-> On Wed, Jun 18, 2025 at 04:26:10PM +0200, Greg KH wrote:
-> > On Wed, Jun 18, 2025 at 11:15:55PM +0900, Kisub Choe wrote:
-> > > Rename 'proc_setBLANK' to 'proc_setBLANK' to
-> > 
-> > That doesn't rename anything :(
-> Rename 'proc_setBLANK' to 'proc_set_blank' to
-> > 
-> > 
-> > 
-> > > conform with kernel style guidelines as reported by checkpatch.pl
-> > > 
-> > > CHECK: Avoid CamelCase: <proc_setBLANK>
-> > > 
-> > > Signed-off-by: Kisub Choe <kisub.choe.0x1@gmail.com>
-> > > ---
-> > >  drivers/staging/sm750fb/sm750.c | 4 ++--
-> > >  drivers/staging/sm750fb/sm750.h | 2 +-
-> > >  2 files changed, 3 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-> > > index 1d929aca399c..bb2ade6030c2 100644
-> > > --- a/drivers/staging/sm750fb/sm750.c
-> > > +++ b/drivers/staging/sm750fb/sm750.c
-> > > @@ -577,7 +577,7 @@ static int lynxfb_ops_blank(int blank, struct fb_info *info)
-> > >  	pr_debug("blank = %d.\n", blank);
-> > >  	par = info->par;
-> > >  	output = &par->output;
-> > > -	return output->proc_setBLANK(output, blank);
-> > > +	return output->proc_set_blank(output, blank);
-> > >  }
-> > >  
-> > >  static int sm750fb_set_drv(struct lynxfb_par *par)
-> > > @@ -605,7 +605,7 @@ static int sm750fb_set_drv(struct lynxfb_par *par)
-> > >  	crtc->ypanstep = 1;
-> > >  	crtc->ywrapstep = 0;
-> > >  
-> > > -	output->proc_setBLANK = (sm750_dev->revid == SM750LE_REVISION_ID) ?
-> > > +	output->proc_set_blank = (sm750_dev->revid == SM750LE_REVISION_ID) ?
-> > >  				 hw_sm750le_set_blank : hw_sm750_set_blank;
-> > 
-> > Why do we even need this function pointer?  Why not just do the check
-> > above when it is called instead of this indirection?
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> Dear Greg,
-> 
-> Here is the updated patch with revised commit message. No code changes.
+On Wed, Jun 18, 2025 at 09:42:34AM +0530, Anshuman Khandual wrote:
+> +++ b/mm/memory.c
+> @@ -522,9 +522,8 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
+>  	mapping = vma->vm_file ? vma->vm_file->f_mapping : NULL;
+>  	index = linear_page_index(vma, addr);
+>  
+> -	pr_alert("BUG: Bad page map in process %s  pte:%08llx pmd:%08llx\n",
+> -		 current->comm,
+> -		 (long long)pte_val(pte), (long long)pmd_val(*pmd));
+> +	pr_alert("BUG: Bad page map in process %s  pte:%ppte pmd:%ppte\n",
+> +		 current->comm, &pte, pmd);
 
-Please read the documentation for how to send an updated patch (hint, it
-needs to be a new version).
+Unfortunately, the one example you've converted shows why this is a bad
+idea.  You're passing a pmd_t pointer to a function which is assuming a
+pte_t pointer.  And a pmd_t and a pte_t are sometimes different sizes!
+(eg sometimes one is 64 bit and the other 32 bit).
 
-Also, see my comments above about what you should do here instead of
-just renaming the variable.  Please make that change which will remove
-the variable entirely.
+So no, NACK.
 
-thanks,
-
-greg k-h
 
