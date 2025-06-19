@@ -1,96 +1,105 @@
-Return-Path: <linux-kernel+bounces-694654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DD9AE0EFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:22:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA4BAE0EE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 23:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E03F51891221
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 21:22:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 220E47A6F92
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 21:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0573525DCE9;
-	Thu, 19 Jun 2025 21:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FF925E815;
+	Thu, 19 Jun 2025 21:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b="EyTQbxuQ"
-Received: from mta-201a.earthlink-vadesecure.net (mta-201b.earthlink-vadesecure.net [51.81.229.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="QH8mXZfz"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995AB1E7C1C;
-	Thu, 19 Jun 2025 21:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.229.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98ADE2206BF;
+	Thu, 19 Jun 2025 21:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750368112; cv=none; b=BU5Krkr+zBZuXfpk5aFvJmSN1j6KB6bQNpkanU+2j0Sw2oMQIHLlUmY0OHT0kX+M9/40LigO+ZRJuGsuILrldM+aGOEm+kc+shxTrA//Zop9tRoD1+bJoJhtl0LPS6Q6X76vzGlbiKSeXJn+7IpVjDP9M1M/oosQjPzRkh19VHA=
+	t=1750367864; cv=none; b=IbQge4Is4WwHc+rIBWyGDzoRfxHipOEU5s2sK+Vkxuf0igqroodI84NkN7IGdQ1nVhk1iRbwYG6BBogwFkTZzwuUNs9qChw7h/Vy8t6vlpEv1HlkkmrFA3TTW/cO9DyDCAfYic4GBHvkX62Cpj1MUbEX7L/WqO1CMup0JscQxCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750368112; c=relaxed/simple;
-	bh=OCouZ563iybBnAa+5WrnH7Rsa1cCJeJzF5RAPNWT7ns=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GOJHvWH89d9hChP7P2nbsSlLocHUxb1sBDLXxvfxArEdPCeY7bna7PgksnrZ3pbZlgCaVLeK5OV2rJeqnerk1kh7U1nQ2I+/Ux9sjKdcpCG6UwOKpzKKBGT4A+GvmiTOguoepdUK829EzhtfNn5+8yaxHbsdQdF/2MOCvLnbXa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=onemain.com; spf=pass smtp.mailfrom=onemain.com; dkim=pass (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b=EyTQbxuQ; arc=none smtp.client-ip=51.81.229.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=onemain.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onemain.com
-Authentication-Results: earthlink-vadesecure.net;
- auth=pass smtp.auth=svnelson@teleport.com smtp.mailfrom=sln@onemain.com;
-DKIM-Signature: v=1; a=rsa-sha256; bh=Zth3NOT6hBrmTViZaCMJcSRN9B5Sbk7W2dm4FX
- pSX3Q=; c=relaxed/relaxed; d=earthlink.net; h=from:reply-to:subject:
- date:to:cc:resent-date:resent-from:resent-to:resent-cc:in-reply-to:
- references:list-id:list-help:list-unsubscribe:list-unsubscribe-post:
- list-subscribe:list-post:list-owner:list-archive; q=dns/txt;
- s=dk12062016; t=1750367778; x=1750972578; b=EyTQbxuQmY3eG51sU9sYLBAZBg1
- DCWLCqJICc2xSpDKhI0NOmEHvoSKacKNwX6cqQ6KRWF+6B7lLgGWuM5l1YvyxUhEIRSgO+0
- M5Eb244yJj86/cMhM/hx/7x9mHgUBST7F7a1g3nYdDRnISTjr+pnh0DAQ+8v5CDG87xmdPN
- 8/uaVCGuFdqlwGJM+OHe68oJOQoaPq5FqOUNEKOy74Sr9Qz8zSUinb43zsJOVBZKoqaB/2X
- xgLQa/2AVxJ9VTSMyxJTDtch0doIw9k5DSSGkPUmAxchmSuoVKPxxxXQ5c8MzRonSheWSP3
- pJDE3YV5DmO5zcwXRlKvVmwgGEXW0Yg==
-Received: from poptart.. ([50.47.159.51])
- by vsel2nmtao01p.internal.vadesecure.com with ngmta
- id 71176d0c-184a8e382a193ae9; Thu, 19 Jun 2025 21:16:18 +0000
-From: Shannon Nelson <sln@onemain.com>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Shannon Nelson <sln@onemain.com>
-Subject: [PATCH net] CREDITS: Add entry for Shannon Nelson
-Date: Thu, 19 Jun 2025 14:16:07 -0700
-Message-Id: <20250619211607.1244217-1-sln@onemain.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750367864; c=relaxed/simple;
+	bh=emGQpgfZNVxPTF8CtUoR2PPOZht/3gzFE34gP6kZ2DA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jBCblIqOcNmNE0UuIucJhPfRtsM4F54Cc3eirhdxOpPayQkRiSymGXeskffPTy58XVl04K8v8aY3uGIlSw/gJVTCDUm65oGQLORbzZ8biR0AsLv6BtsatYCML0IwwcWo1MFGpEzPIeXJ4B46gC/Yw+bQMh2rZhhEMbI4bO6hDKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=QH8mXZfz; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=136gTLj/Y0HhKLYdP9vuRieftyoXRpz7sdT5yNch5VM=; b=QH8mXZfzmnidfYF+tyRI3+PsbV
+	fxoIuns/M44n0uG2Rc67+usaCePYkFX2F2F8H/5wHsZiF2KC9SlXbAz9fLsmH3CxwBH1plmPQwl0Z
+	unBdqRs/Id2fE+ud78jwRICesEYhjpCZF4u7D8Yaa5/gE8M9gd6pwc3Dya2l3k9KdjcWR4BRIzwpv
+	vACAr1YnOCPHLPmksbrWoms9ZBGLA2TXeaxbRWBbak5VHH95WwioBatFoSZRFXD/Z73wlsAnIVZJN
+	mARKVOwdRzT+AHt+NJkkVYjjNIbXrHprV3uqIUQlWBC1UYSCqDrxgxWJlu7nEakbPjkvKfAh4g5Y8
+	+1OIpuZg==;
+Received: from 85-207-219-154.static.bluetone.cz ([85.207.219.154] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uSMdd-0007fA-Cl; Thu, 19 Jun 2025 23:17:37 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Alexey Charkov <alchark@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: Re: [PATCH v2 0/4] arm64: dts: rockchip: enable further peripherals on ArmSoM Sige5
+Date: Thu, 19 Jun 2025 23:17:24 +0200
+Message-ID: <175036770856.1520003.17823147228060153634.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250614-sige5-updates-v2-0-3bb31b02623c@gmail.com>
+References: <20250614-sige5-updates-v2-0-3bb31b02623c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-I'm retiring and have already had my name removed from MAINTAINERS.
-A couple of folks kindly suggested I should have an entry here.
 
-Signed-off-by: Shannon Nelson <sln@onemain.com>
----
- CREDITS | 5 +++++
- 1 file changed, 5 insertions(+)
+On Sat, 14 Jun 2025 22:14:32 +0400, Alexey Charkov wrote:
+> Link up the CPU regulators for DVFS, enable WiFi and Bluetooth.
+> 
+> Different board versions use different incompatible WiFi/Bluetooth modules
+> so split the version-specific bits out into an overlay. Basic WiFi
+> functionality works even without an overlay, but OOB interrupts and
+> all Bluetooth stuff requires one.
+> 
+> [...]
 
-diff --git a/CREDITS b/CREDITS
-index 45446ae322ec..c30b75f9a732 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -2981,6 +2981,11 @@ S: 521 Pleasant Valley Road
- S: Potsdam, New York 13676
- S: USA
- 
-+N: Shannon Nelson
-+E: sln@onemain.com
-+D: Worked on several network drivers including
-+D: ixgbe, i40e, ionic, pds_core, pds_vdpa, pds_fwctl
-+
- N: Dave Neuer
- E: dave.neuer@pobox.com
- D: Helped implement support for Compaq's H31xx series iPAQs
+Applied, thanks!
+
+[1/4] arm64: dts: rockchip: list all CPU supplies on ArmSoM Sige5
+      commit: c76bcc7d1f24e90a2d7b98d1e523d7524269fc56
+[2/4] arm64: dts: rockchip: add SDIO controller on RK3576
+      commit: e490f854b46369b096f3d09c0c6a00f340425136
+[3/4] arm64: dts: rockchip: add version-independent WiFi/BT nodes on Sige5
+      commit: 358ccc1d8b242b8c659e5e177caef174624e8cb6
+[4/4] arm64: dts: rockchip: add overlay for the WiFi/BT module on Sige5 v1.2
+      commit: a8cdcbe6a9f64f56ee24c9e8325fb89cf41a5d63
+
+Patch 1 as fix for v6.16
+
+I've also fixed the wifi@1 node in the overlay - which was using
+spaces instead of tabs.
+
+Best regards,
 -- 
-2.34.1
-
+Heiko Stuebner <heiko@sntech.de>
 
