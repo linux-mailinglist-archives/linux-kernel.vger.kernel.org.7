@@ -1,561 +1,329 @@
-Return-Path: <linux-kernel+bounces-693487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C15ADFF75
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:12:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A8BADFF83
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49D8B7A9895
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:10:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDEC317AE97
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA3A261584;
-	Thu, 19 Jun 2025 08:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BE0264625;
+	Thu, 19 Jun 2025 08:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qy3nJxt8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oj9eoJuw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD5720E33F
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 08:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750320705; cv=none; b=PxfcHttCD9MXAMv9AsQQbS2guxFMuUlS6hhUQosSLZW/NjSpSIW5gA3+sR2+WjLYiwt6lhd7Rkeg3cPZJbJ5DqAghdSGltBxx6uqpb392bCiIeIVa0wRdKBW6ADJTIDUh/+SavvcdIn3ejTVxDvscIkLBpUP66GZzujArfy6Bbc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750320705; c=relaxed/simple;
-	bh=huQBY/oPvWBfTaBuANRg8NA3+Cdc9EaRrhCRpnD9OAA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pHwwzxGZgksabsbIfahjh6Q09mD1ZPUrVe++YXQPNfbqVjVOPtO12g7a0Zp5szPp27pgUlq1Tb/hPaowQ+oKaw9oq3Ih9a0noxorGTNr1OSVGblwcXmYLSoudNqNYDaaMr1YXdRshdPeyLk9Ln0odSQ+DHZbTx0zfevRLvpgWy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qy3nJxt8; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505F1261398;
+	Thu, 19 Jun 2025 08:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750320908; cv=fail; b=ex2gXFkhk37I3kq9QLRWzejgZLbnJiUK81753oaXzl9K6a8kZIhsgsNH+cwmKyy0b5+TuOLaI9vzivbviB2gDnF1Kw8trAaN2FZCYmWv4wgFq3hNDN2DKbN9cdeHZSQiR3sNJiI61bS4hZeWEOSElv6cwJfXkHIaZGWe2LUiqdA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750320908; c=relaxed/simple;
+	bh=bu3jCXmsgZyTiy+mqKesrtukEvc9bg4ohOi4hOcULGM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=H9vHLq7JrE3UieaKcmwFnQkaonTh5JU8h9Ns8T9I39ix80uD3LeE8s/86Rna+e/iNtx57JMcDfn1adYQBuVDSOL7IPZVrIlODkE0EZHXtf9iPcBj/ezbjjEIttDu6hx7HQTjJ6NSjxjVGBMCPT6EEOQvHO5lK/XcvBDzKPhGLTE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oj9eoJuw; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750320702; x=1781856702;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=huQBY/oPvWBfTaBuANRg8NA3+Cdc9EaRrhCRpnD9OAA=;
-  b=Qy3nJxt8sTBlSqry+l+jbFFEZ1OHwVCxgc5eiKTPckYQKBIrPvieRIS6
-   jc26HenwF1FDeOD4DuyQMUxCsGlZWNJbhSRVUdJZ0yrKOA3ssjqR8QWuA
-   5OwVyYCtEsfgkCbNbyQ0nNCqvjO9erMJBMjjNwbGq6ie9ygHo2qLEos6u
-   MFdM58UK5mLDd2sWIELIT/OG2L4LmvuSoILJd0nIFKDECY9GdTkvIuGDp
-   LPtcffd+KJ2udo6vdkKUac7EutoK2BRDdUhBU70hCXngV2ZkaPN25OoQJ
-   pv6IpX8cPVLzI/ZXpy1LCTDCY7BzMTjd7WQPsUwu7Wy03eT8ZG3GKmGym
-   w==;
-X-CSE-ConnectionGUID: FfGamvkQSc2pBayGfJjNpQ==
-X-CSE-MsgGUID: jCVekK8HSdGIlIePVIBOFw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52716179"
+  t=1750320906; x=1781856906;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=bu3jCXmsgZyTiy+mqKesrtukEvc9bg4ohOi4hOcULGM=;
+  b=Oj9eoJuwTn6AJ1bGQ4WU1fsgyKC2vu1ek9OUhMN/pSOcfUMewd83iMc8
+   Vu9D+phBBXrrP8hjnVC2E9euQwzhu2VDMr171J2/ImlN9JFOPk76tu5PD
+   PeY8Ongwy7wsY8qBdbJpCa1tDHuqOXlNSezo/hS1Db1MjvHxtuq8IGpg6
+   3GafYuDOBoRmaW4AJit7Sj2z8NDfBbjopLse6Bd7we/dK2mlEvXrPtac/
+   XI5DPFpHKbg9b6kccefhWpVIIVSepsz3oTc+IKgWzi85n5RqqpI/WFW3l
+   wFKhswvLVhUmJXUZhAuOFjpL65lmn3YUL9zBa9IIsdbuWLK9R3QB0WT7N
+   A==;
+X-CSE-ConnectionGUID: V7xt1MIrSwmH387k+g8e0g==
+X-CSE-MsgGUID: BMWxGrLgSZ2WhLGfx2x3YQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52446203"
 X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
-   d="scan'208";a="52716179"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 01:11:41 -0700
-X-CSE-ConnectionGUID: iq6BaewrR52DxNSjjqHRag==
-X-CSE-MsgGUID: sWk7hBl9RTG03DIbzbudxg==
+   d="scan'208";a="52446203"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 01:14:44 -0700
+X-CSE-ConnectionGUID: KdHX92AwRvK4ttcxC7zKcg==
+X-CSE-MsgGUID: l3wu7+raTB6RLjxqSqy2SQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
-   d="scan'208";a="150639183"
-Received: from vpanait-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.191])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 01:11:37 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: "Gupta, Anshuman" <anshuman.gupta@intel.com>, "Vivi, Rodrigo"
- <rodrigo.vivi@intel.com>, "Nilawar, Badal" <badal.nilawar@intel.com>,
- "intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Usyskin,
- Alexander" <alexander.usyskin@intel.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "Ceraolo
- Spurio, Daniele" <daniele.ceraolospurio@intel.com>, "jgg@nvidia.com"
- <jgg@nvidia.com>
-Subject: RE: [PATCH v3 02/10] mei: late_bind: add late binding component driver
-In-Reply-To: <CY5PR11MB6211128133CF5AEDC50B3968957DA@CY5PR11MB6211.namprd11.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250618190007.2932322-1-badal.nilawar@intel.com>
- <20250618190007.2932322-3-badal.nilawar@intel.com>
- <CY5PR11MB6211128133CF5AEDC50B3968957DA@CY5PR11MB6211.namprd11.prod.outlook.com>
-Date: Thu, 19 Jun 2025 11:11:34 +0300
-Message-ID: <2f934107a826af7db389e318758722e08d4a2295@intel.com>
+   d="scan'208";a="174103685"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 01:14:43 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 19 Jun 2025 01:14:42 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 19 Jun 2025 01:14:42 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.79) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 19 Jun 2025 01:14:42 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BydYq5g0KjQ7PrbmmF679Muoi5dqLW5qugSqtiddH0INHE46bSnB4xJAmRSuxf23nWax1+90muLzYo5ZXxPGNlu4N5tlzYeNAnWH2ZdMasuAdTr6mQNCOjEgPUjr3rEnMgZVlCfQlLxs8K852bAmspoXfnbzH/suXQa9yjKcBA5g9KaX2uaDcSUmnp1JGpq1bRlIxZO9hA3EK7l1FDjGU667xMx/P831zy0Qn0jmd0tTbFXFbaCMCpJg2/G/fXGGki22PpSh50cn/VnW1MQZ6/YMlmqKVWF9EdS+xF2G6Sbu2qPvK+dOZOabMqDXk/UkcCyDwYR/C345eUQq8FLYFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CQg8TQ5KoFN3dODafu8990suqMs5rEi0kp8TgRoF8xI=;
+ b=PmZhJ602JeN6bXyp1gUUmdMCogtGCNtY1HX2RVSg3KxNDYtkVEmJFlwK6Y5pcWzHZQCTg6yjn0QMwhB8CXOrN9cIjHC311Gdb6liIrFvt9o/4sjVtlIZfIMx5N9Av8KrDGgJzp76WLxqVoMDke9KyrcdOotn0K4SXjm7Lk0NhaOlBYcU5uTpDvf8fY0ktbOQ/HuJ0PRBu6q1YFXtq3yI/cxBCS/bc2cLFLtVaEw91Px+kUVw9UmzbXxlPgxJZZzxk9fBFNSfqmv5M2QctejRaR4G/yyCEsbmuVL/f+wfP35thMomB+SSzUI8h9ziA7WET6RS5HTbO15OguSdrsqRag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ DM4PR11MB6408.namprd11.prod.outlook.com (2603:10b6:8:b7::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8835.29; Thu, 19 Jun 2025 08:14:12 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%5]) with mapi id 15.20.8835.027; Thu, 19 Jun 2025
+ 08:14:12 +0000
+Date: Thu, 19 Jun 2025 16:11:41 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: Ackerley Tng <ackerleytng@google.com>
+CC: <vannapurve@google.com>, <pbonzini@redhat.com>, <seanjc@google.com>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, <x86@kernel.org>,
+	<rick.p.edgecombe@intel.com>, <dave.hansen@intel.com>,
+	<kirill.shutemov@intel.com>, <tabba@google.com>, <quic_eberman@quicinc.com>,
+	<michael.roth@amd.com>, <david@redhat.com>, <vbabka@suse.cz>,
+	<jroedel@suse.de>, <thomas.lendacky@amd.com>, <pgonda@google.com>,
+	<zhiquan1.li@intel.com>, <fan.du@intel.com>, <jun.miao@intel.com>,
+	<ira.weiny@intel.com>, <isaku.yamahata@intel.com>, <xiaoyao.li@intel.com>,
+	<binbin.wu@linux.intel.com>, <chao.p.peng@intel.com>
+Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge
+ pages
+Message-ID: <aFPGPVbzo92t565h@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <aCVZIuBHx51o7Pbl@yzhao56-desk.sh.intel.com>
+ <diqzfrgfp95d.fsf@ackerleytng-ctop.c.googlers.com>
+ <aEEFRXF+HrZVh5He@yzhao56-desk.sh.intel.com>
+ <diqzecvxizp5.fsf@ackerleytng-ctop.c.googlers.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <diqzecvxizp5.fsf@ackerleytng-ctop.c.googlers.com>
+X-ClientProxiedBy: SI2PR02CA0013.apcprd02.prod.outlook.com
+ (2603:1096:4:194::21) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|DM4PR11MB6408:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e3544d7-5461-408d-68af-08ddaf094627
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|13003099007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?JKjRuIV1gH4iEVFDH8p9MuEqdIxT54vS96LW40w+BZP1KYYihatItX9Je5lU?=
+ =?us-ascii?Q?cA8LQ7iidHrjjyB9wVoR8RZ6jE0wQ3er7ySAgy7IXjRIOG/ImTDGMRAWw85Z?=
+ =?us-ascii?Q?0dz2ZKgNqdevk3B3kUuJJU059whF4LXhKwdwS5qLhXgp/fybi4U6fAotnXYU?=
+ =?us-ascii?Q?FEpzPVTY6JyHCtWljuyd4i+XM/lan6f6em7666x6kSKyG3ZYQjwZCb7zh2SX?=
+ =?us-ascii?Q?h9jrCSYAbOz9lDSGSpe0CC6Ak5716gJ5LLaNyEWJTT/HtmY6LBGSz8tedApK?=
+ =?us-ascii?Q?gOBz9/gx9/5jRhI6n0LaFh3/nmoLntPUbtVshAdWGVz/wYFbBXsri0Auiw2f?=
+ =?us-ascii?Q?rCjjaqeFYGaYJZjRbZ+p/6bnjA9K0K+I5GflCQ8H5fDx0DqvRUZCqOIzm9bU?=
+ =?us-ascii?Q?27KpoQmE56jsFK2kPnkRFaGHatxgQKl6AS4XNgVuNrVv0PGr+RB5ybxCF4ZY?=
+ =?us-ascii?Q?US+uIsmI6w9DnGoD2Pso08wcMaIunH520KnJY4k7+FCZJkX5t4A6w7DGdX9r?=
+ =?us-ascii?Q?zYRAy5asNwcjcSd6I5VZcwy3cJcRkaGr1vCjhjSdnnZDQDEWvIwpBg2O/93j?=
+ =?us-ascii?Q?rbfK3wc6X9eXZrrpNUPgdmJkwRaEIhUAs6XRYcbYcKBJgQ96QuFAEAN5vLAH?=
+ =?us-ascii?Q?re8BPiXYGmGHvqjejbySFZbmSxXKJyb12V7ESxh+77eImOWAjQOJl3vXWZxZ?=
+ =?us-ascii?Q?eysOhGg6GxwEmVreviElzDhVdUpGGfND+PSFvxwntpX8RLedQyGtZ1GyPaTO?=
+ =?us-ascii?Q?QgUlK9QQhklYG5M8tqv+FznjU2hdaGQWcX5GYGVA60LPAiqjf5mZeKO3H9iZ?=
+ =?us-ascii?Q?uzXNXgOyaLyeQm7QgpiNktUGfzEuzI7cQgfB++7GnM8PcTEUwMz1DNHnV7hI?=
+ =?us-ascii?Q?tlifkdQKQwBLYfR4E5xAQFtfnz/0t8+GaOYDnhcZcRYIuy0BHWCOGIDb3Kcd?=
+ =?us-ascii?Q?QYEFiU4PQPY0xoZDXlEs58XOm59jaKRfiMhWGj03QwLJ7D6KIhN97v5kXNVq?=
+ =?us-ascii?Q?8qcUXu1R8O0383VsaqZWMIFafx1Xvaw0tvoFXNOR9HKdbDf3x7t5x1a9ELO7?=
+ =?us-ascii?Q?QxWFMRYGmEMnMFnKJgJZxrvj5YjOyZo65DLbs1jdW+CNn0pWRNDbqcqoxh6n?=
+ =?us-ascii?Q?UI5zbI4XO2Ip5IN9sBQL5qvCrRM5R33cyU44TaMeub3x83BUA7wx+qEaZSNE?=
+ =?us-ascii?Q?v0j5MTFQAq6JoNozMi/+yjd+NWQ+RfzNx9IsW9cU8Y8ovHIEfcbvpJtcrnmZ?=
+ =?us-ascii?Q?xJTy0uZ0FTRU9yABOxtZyccf/uKGm7UV0hrdyYkgqpObibW74pu0+EX3CipN?=
+ =?us-ascii?Q?PeZIQAqX5OZ8+kbDRTPccHmUFTo3Y9y/0XPAOUIXrnL7zb92Q0/uOJO+6Dkp?=
+ =?us-ascii?Q?dXVaEdjGZnc7JU/PAWY+1O45Gkk8?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?IAXH/j5ujq3yMiXv9cTkssPgbgcdlgBwQDRBTd8Ko3kpPaL4VlOPJ6lQh4pH?=
+ =?us-ascii?Q?JBmf+1tC3BR0k71ODLGv1mm6O8v2f3bwVQRVfWYOld5xzgxY2MMVyfc9lDPk?=
+ =?us-ascii?Q?KBqqmL4zt3edafrFL8TwVRrUMZfaYoth4rVGFvRJnQ/7fx7KLJE92eIPse7W?=
+ =?us-ascii?Q?P1R5m42+vQciz11Huh8LyHDQ6gCMOTC35bMWriNBP7iCvYnFhyxp89jNXN4J?=
+ =?us-ascii?Q?bQSdrPxq9G6Xy0q/ONGVg6ZUUhMT8Xx0DZ8hbDYNhJwQ5u6HVwjCpYkUjtaL?=
+ =?us-ascii?Q?J0PS2325BUBLtsxFXFmaOUPreIqEL2z2ZjntA4fGNOcZQQNBzkzqOUmdwISE?=
+ =?us-ascii?Q?ERgjQ5BXhzwPV1wp7nnIav5HcIU5wCJX4U35h3EGOH84TpSSRopLIhuOzwDQ?=
+ =?us-ascii?Q?9hj3cp4BbSsKaOPPxW3fKHM+OZR4MzA0ybys5wuTQdVJ13pqUrD5+KIhAouL?=
+ =?us-ascii?Q?mY6bzYmyDEF6WZUcbKhgHX6EDEDkQlcXgwtAbu8jmyh8j/vNZHme33p05CiM?=
+ =?us-ascii?Q?jJfiCuyHPd2P7pec1iQNc9bOTItLHuHpAMokLl6TXj3MUKSWXFTiCeJLOiAj?=
+ =?us-ascii?Q?TmKFDPO8FSjXkVqtfSoe8my7T3EkvueBJwGB2yk4JHd83g81cjofEVR4hxC4?=
+ =?us-ascii?Q?zSVJdtR0gCtEevWfta4rzwm8G46oH3VgRDTXlayMxKrFtK8EDsx/sCj/03/X?=
+ =?us-ascii?Q?pcZgZxzp+5qhGntINlP6wgr9IFOjJ4dTIj8PPuJ8xA2WLYfGig1SDR8a+scB?=
+ =?us-ascii?Q?MbvHvsMdFHnRHMzApRNEDW5mtNWsWyMCAnhu4sXr6EYM2MwVWYM+HSNXjTJc?=
+ =?us-ascii?Q?ILQUAyitMABFZ3rCw2iw8IcJOp410H3lyv7OvKexFgxcdz0uLrDGZCIwQhGz?=
+ =?us-ascii?Q?a+y9WFlVL6jW85PAKlhsqQwMcpY+iLDvWBT82TFwqdQNeJgNEfyLy8jwTpOb?=
+ =?us-ascii?Q?ydHTBKbt357ZQStM5s8yJyXNjzqtEIRc4+8X26Ua8ROvpDKUxKKjKd93sb6m?=
+ =?us-ascii?Q?XlVeymTJHSC36Gy9jhzPd6VyUxcHojVsI5tZ2HHBYwkQT2/fcdao7rdB+Geo?=
+ =?us-ascii?Q?yVhprzDNMmykQ9rNnlNW08KdTi28jSyNwPH3jXUlD4btMzkEcQIOrnZYYyok?=
+ =?us-ascii?Q?ebWIHIPAnKEXjztEk4JBfk0jDc27DMxCRK/0XXrQkwflp591Fn0LZdsXbPw8?=
+ =?us-ascii?Q?73lpGi9EbsrQL1m3sej1XMfiUSi+kDtTn+NVEb1vFMwagTfah5iSQQbsH8Z8?=
+ =?us-ascii?Q?vSga9VF7p7GTcmapR6w4h4cqJUUSLsuVmXyDmHGJ20LIfpvBNm2JBIgb7wUw?=
+ =?us-ascii?Q?e0r32kfUFmkE3UmHviEk6lFDtlNAf4rB6++ab93rBc67KbZHBlqzypiB/2I2?=
+ =?us-ascii?Q?E53holleK7YJCPQzD41kR0ZskHcfGM6ymVF7q4W4H2d9fUp1sUsjTaApZhUo?=
+ =?us-ascii?Q?rHSErPPlNxUh9zpWb0iMTqtS7qqBskqZ76xDO5wx278mBOpO1J4xKkqv9Q5T?=
+ =?us-ascii?Q?bFD7ZKyTPZcRc4+ZBXXDfVwfmqS7BF4JHzenvZvccW3QtSmuQK+AyhdnWsSb?=
+ =?us-ascii?Q?Dj4IdZe22znKuTmVw5FAQTDz7NK6uobKMWdCIaGJ?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e3544d7-5461-408d-68af-08ddaf094627
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2025 08:14:12.4906
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jkQjv9F1jNRXkg3vKPO28ffBvZqduST0/g+B9o+RpqnDGmZ/jIdXNE+fY042PNSipPcCbZfpAfP7cQFKOrD1rQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6408
+X-OriginatorOrg: intel.com
 
-On Thu, 19 Jun 2025, "Gupta, Anshuman" <anshuman.gupta@intel.com> wrote:
->> -----Original Message-----
->> From: Nilawar, Badal <badal.nilawar@intel.com>
->> Sent: Thursday, June 19, 2025 12:30 AM
->> To: intel-xe@lists.freedesktop.org; dri-devel@lists.freedesktop.org; linux-
->> kernel@vger.kernel.org
->> Cc: Gupta, Anshuman <anshuman.gupta@intel.com>; Vivi, Rodrigo
->> <rodrigo.vivi@intel.com>; Usyskin, Alexander <alexander.usyskin@intel.com>;
->> gregkh@linuxfoundation.org; Ceraolo Spurio, Daniele
->> <daniele.ceraolospurio@intel.com>; jgg@nvidia.com
->> Subject: [PATCH v3 02/10] mei: late_bind: add late binding component driver
->> 
->> From: Alexander Usyskin <alexander.usyskin@intel.com>
->> 
->> Add late binding component driver.
->> It allows pushing the late binding configuration from, for example, the Xe graphics
->> driver to the Intel discrete graphics card's CSE device.
->> 
->> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
->> Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
->> ---
->> v2:
->>  - Use generic naming (Jani)
-> This patch still wrong naming I915_COMPONENT_LATE_BIND.
-> LATE_BIND will never be supported by i915, it is a wrong prefix.
-> @Nikula, Jani @Vivi, Rodrigo is it ok use the i915 naming prefix here ?
-> We can use INTEL_COMPONENT_LATE_BIND here ?
->
-> This header include/drm/intel/i915_component.h is used by both XE and i915.
-> May be a separate series later requires refactoring this header.
-
-Yeah the goal is that everything under include/drm/intel would be
-independent of xe and i915, both in naming and implementation.
-
-BR,
-Jani.
+On Thu, Jun 05, 2025 at 03:35:50PM -0700, Ackerley Tng wrote:
+> Yan Zhao <yan.y.zhao@intel.com> writes:
+> 
+> > On Wed, Jun 04, 2025 at 01:02:54PM -0700, Ackerley Tng wrote:
+> >> Hi Yan,
+> >> 
+> >> While working on the 1G (aka HugeTLB) page support for guest_memfd
+> >> series [1], we took into account conversion failures too. The steps are
+> >> in kvm_gmem_convert_range(). (It might be easier to pull the entire
+> >> series from GitHub [2] because the steps for conversion changed in two
+> >> separate patches.)
+> > ...
+> >> [2] https://github.com/googleprodkernel/linux-cc/tree/gmem-1g-page-support-rfc-v2
+> >
+> > Hi Ackerley,
+> > Thanks for providing this branch.
+> 
+> Here's the WIP branch [1], which I initially wasn't intending to make
+> super public since it's not even RFC standard yet and I didn't want to
+> add to the many guest_memfd in-flight series, but since you referred to
+> it, [2] is a v2 of the WIP branch :)
+> 
+> [1] https://github.com/googleprodkernel/linux-cc/commits/wip-tdx-gmem-conversions-hugetlb-2mept
+> [2] https://github.com/googleprodkernel/linux-cc/commits/wip-tdx-gmem-conversions-hugetlb-2mept-v2
+Thanks. [2] works. TDX huge pages now has successfully been rebased on top of [2].
 
 
+> This WIP branch has selftests that test 1G aka HugeTLB page support with
+> TDX huge page EPT mappings [7]:
+> 
+> 1. "KVM: selftests: TDX: Test conversion to private at different
+>    sizes". This uses the fact that TDX module will return error if the
+>    page is faulted into the guest at a different level from the accept
+>    level to check the level that the page was faulted in.
+> 2. "KVM: selftests: Test TDs in private_mem_conversions_test". Updates
+>    private_mem_conversions_test for use with TDs. This test does
+>    multi-vCPU conversions and we use this to check for issues to do with
+>    conversion races.
+> 3. "KVM: selftests: TDX: Test conversions when guest_memfd used for
+>    private and shared memory". Adds a selftest similar to/on top of
+>    guest_memfd_conversions_test that does conversions via MapGPA.
+> 
+> Full list of selftests I usually run from tools/testing/selftests/kvm:
+> + ./guest_memfd_test
+> + ./guest_memfd_conversions_test
+> + ./guest_memfd_provide_hugetlb_cgroup_mount.sh ./guest_memfd_wrap_test_check_hugetlb_reporting.sh ./guest_memfd_test
+> + ./guest_memfd_provide_hugetlb_cgroup_mount.sh ./guest_memfd_wrap_test_check_hugetlb_reporting.sh ./guest_memfd_conversions_test
+> + ./guest_memfd_provide_hugetlb_cgroup_mount.sh ./guest_memfd_wrap_test_check_hugetlb_reporting.sh ./guest_memfd_hugetlb_reporting_test
+> + ./x86/private_mem_conversions_test.sh
+> + ./set_memory_region_test
+> + ./x86/private_mem_kvm_exits_test
+> + ./x86/tdx_vm_test
+> + ./x86/tdx_upm_test
+> + ./x86/tdx_shared_mem_test
+> + ./x86/tdx_gmem_private_and_shared_test
+> 
+> As an overview for anyone who might be interested in this WIP branch:
+> 
+> 1.  I started with upstream's kvm/next
+> 2.  Applied TDX selftests series [3]
+> 3.  Applied guest_memfd mmap series [4]
+> 4.  Applied conversions (sub)series and HugeTLB (sub)series [5]
+> 5.  Added some fixes for 2 of the earlier series (as labeled in commit
+>     message)
+> 6.  Updated guest_memfd conversions selftests to work with TDX
+> 7.  Applied 2M EPT series [6] with some hacks
+> 8.  Some patches to make guest_memfd mmap return huge-page-aligned
+>     userspace address
+> 9.  Selftests for guest_memfd conversion with TDX 2M EPT
+> 
+> [3] https://lore.kernel.org/all/20250414214801.2693294-1-sagis@google.com/
+> [4] https://lore.kernel.org/all/20250513163438.3942405-11-tabba@google.com/T/
+> [5] https://lore.kernel.org/all/cover.1747264138.git.ackerleytng@google.com/T/
+> [6] https://lore.kernel.org/all/Z%2FOMB7HNO%2FRQyljz@yzhao56-desk.sh.intel.com/
+> [7] https://lore.kernel.org/all/20250424030033.32635-1-yan.y.zhao@intel.com/
+Thanks.
+We noticed that it's not easy for TDX initial memory regions to use in-place
+conversion version of guest_memfd, because
+- tdh_mem_page_add() requires simultaneous access to shared source memory and
+  private target memory.
+- shared-to-private in-place conversion first unmaps the shared memory and tests
+  if any extra folio refcount is held before the conversion is allowed.
 
->
->
->>  - Drop xe_late_bind_component struct to move to xe code (Daniele/Sasha)
->> v3:
->>  - Updated kconfig description
->>  - Move CSC late binding specific flags/defines to late_bind_mei_interface.h
->> (Daniele)
->> v4:
->>  - Add match for PCI_CLASS_DISPLAY_OTHER to support headless cards
->> (Anshuman)
->> ---
->>  drivers/misc/mei/Kconfig                    |   1 +
->>  drivers/misc/mei/Makefile                   |   1 +
->>  drivers/misc/mei/late_bind/Kconfig          |  13 +
->>  drivers/misc/mei/late_bind/Makefile         |   9 +
->>  drivers/misc/mei/late_bind/mei_late_bind.c  | 264 ++++++++++++++++++++
->>  include/drm/intel/i915_component.h          |   1 +
->>  include/drm/intel/late_bind_mei_interface.h |  50 ++++
->>  7 files changed, 339 insertions(+)
->>  create mode 100644 drivers/misc/mei/late_bind/Kconfig
->>  create mode 100644 drivers/misc/mei/late_bind/Makefile
->>  create mode 100644 drivers/misc/mei/late_bind/mei_late_bind.c
->>  create mode 100644 include/drm/intel/late_bind_mei_interface.h
->> 
->> diff --git a/drivers/misc/mei/Kconfig b/drivers/misc/mei/Kconfig index
->> 7575fee96cc6..771becc68095 100644
->> --- a/drivers/misc/mei/Kconfig
->> +++ b/drivers/misc/mei/Kconfig
->> @@ -84,5 +84,6 @@ config INTEL_MEI_VSC
->>  source "drivers/misc/mei/hdcp/Kconfig"
->>  source "drivers/misc/mei/pxp/Kconfig"
->>  source "drivers/misc/mei/gsc_proxy/Kconfig"
->> +source "drivers/misc/mei/late_bind/Kconfig"
->> 
->>  endif
->> diff --git a/drivers/misc/mei/Makefile b/drivers/misc/mei/Makefile index
->> 6f9fdbf1a495..84bfde888d81 100644
->> --- a/drivers/misc/mei/Makefile
->> +++ b/drivers/misc/mei/Makefile
->> @@ -31,6 +31,7 @@ CFLAGS_mei-trace.o = -I$(src)
->>  obj-$(CONFIG_INTEL_MEI_HDCP) += hdcp/
->>  obj-$(CONFIG_INTEL_MEI_PXP) += pxp/
->>  obj-$(CONFIG_INTEL_MEI_GSC_PROXY) += gsc_proxy/
->> +obj-$(CONFIG_INTEL_MEI_LATE_BIND) += late_bind/
->> 
->>  obj-$(CONFIG_INTEL_MEI_VSC_HW) += mei-vsc-hw.o  mei-vsc-hw-y := vsc-tp.o
->> diff --git a/drivers/misc/mei/late_bind/Kconfig
->> b/drivers/misc/mei/late_bind/Kconfig
->> new file mode 100644
->> index 000000000000..65c7180c5678
->> --- /dev/null
->> +++ b/drivers/misc/mei/late_bind/Kconfig
->> @@ -0,0 +1,13 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +# Copyright (c) 2025, Intel Corporation. All rights reserved.
->> +#
->> +config INTEL_MEI_LATE_BIND
->> +	tristate "Intel late binding support on ME Interface"
->> +	select INTEL_MEI_ME
->> +	depends on DRM_XE
->> +	help
->> +	  MEI Support for Late Binding for Intel graphics card.
->> +
->> +	  Enables the ME FW interfaces for Late Binding feature,
->> +	  allowing loading of firmware for the devices like Fan
->> +	  Controller during by Intel Xe driver.
->> diff --git a/drivers/misc/mei/late_bind/Makefile
->> b/drivers/misc/mei/late_bind/Makefile
->> new file mode 100644
->> index 000000000000..a0aeda5853f0
->> --- /dev/null
->> +++ b/drivers/misc/mei/late_bind/Makefile
->> @@ -0,0 +1,9 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +#
->> +# Copyright (c) 2025, Intel Corporation. All rights reserved.
->> +#
->> +# Makefile - Late Binding client driver for Intel MEI Bus Driver.
->> +
->> +subdir-ccflags-y += -I$(srctree)/drivers/misc/mei/
->> +
->> +obj-$(CONFIG_INTEL_MEI_LATE_BIND) += mei_late_bind.o
->> diff --git a/drivers/misc/mei/late_bind/mei_late_bind.c
->> b/drivers/misc/mei/late_bind/mei_late_bind.c
->> new file mode 100644
->> index 000000000000..cb985f32309e
->> --- /dev/null
->> +++ b/drivers/misc/mei/late_bind/mei_late_bind.c
->> @@ -0,0 +1,264 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2025 Intel Corporation  */ #include
->> +<drm/drm_connector.h> #include <drm/intel/i915_component.h> #include
->> +<drm/intel/late_bind_mei_interface.h>
->> +#include <linux/component.h>
->> +#include <linux/pci.h>
->> +#include <linux/mei_cl_bus.h>
->> +#include <linux/module.h>
->> +#include <linux/overflow.h>
->> +#include <linux/slab.h>
->> +#include <linux/uuid.h>
->> +
->> +#include "mkhi.h"
->> +
->> +#define GFX_SRV_MKHI_LATE_BINDING_CMD 0x12 #define
->> +GFX_SRV_MKHI_LATE_BINDING_RSP (GFX_SRV_MKHI_LATE_BINDING_CMD |
->> 0x80)
->> +
->> +#define LATE_BIND_SEND_TIMEOUT_MSEC 3000 #define
->> +LATE_BIND_RECV_TIMEOUT_MSEC 3000
-> I commented earlier in V2 series as well, is this timeout specific only to LATE BINDING ?
-> If this is generic timeout for mei_cldev_{send,recv}_timeout(), 
-> then this marco should be part of standard MEI headers not late binding.
-> Other consumers of mei_cldev_{send,recv}_timeout() send the timeout input by component-ops callback .
->
-> @Shahsa could you please explained that.
->> +
->> +/**
->> + * struct csc_heci_late_bind_req - late binding request
->> + * @header: @ref mkhi_msg_hdr
->> + * @type: type of the late binding payload
->> + * @flags: flags to be passed to the firmware
->> + * @reserved: reserved field
->> + * @payload_size: size of the payload data in bytes
->> + * @payload: data to be sent to the firmware  */ struct
->> +csc_heci_late_bind_req {
->> +	struct mkhi_msg_hdr header;
->> +	u32 type;
->> +	u32 flags;
->> +	u32 reserved[2];
->> +	u32 payload_size;
->> +	u8  payload[] __counted_by(payload_size); } __packed;
->> +
->> +/**
->> + * struct csc_heci_late_bind_rsp - late binding response
->> + * @header: @ref mkhi_msg_hdr
->> + * @type: type of the late binding payload
->> + * @reserved: reserved field
->> + * @status: status of the late binding command execution by firmware
->> +*/ struct csc_heci_late_bind_rsp {
->> +	struct mkhi_msg_hdr header;
->> +	u32 type;
->> +	u32 reserved[2];
->> +	u32 status;
->> +} __packed;
->> +
->> +static int mei_late_bind_check_response(const struct device *dev, const
->> +struct mkhi_msg_hdr *hdr) {
->> +	if (hdr->group_id != MKHI_GROUP_ID_GFX) {
->> +		dev_err(dev, "Mismatch group id: 0x%x instead of 0x%x\n",
->> +			hdr->group_id, MKHI_GROUP_ID_GFX);
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (hdr->command != GFX_SRV_MKHI_LATE_BINDING_RSP) {
->> +		dev_err(dev, "Mismatch command: 0x%x instead of 0x%x\n",
->> +			hdr->command, GFX_SRV_MKHI_LATE_BINDING_RSP);
->> +		return -EINVAL;
->> +	}
-> Why are we not checking mkhi_msg_hdr hdr->result here ?
->> +
->> +	return 0;
->> +}
->> +
->> +/**
->> + * mei_late_bind_push_config - Sends a config to the firmware.
->> + * @dev: device struct corresponding to the mei device
->> + * @type: payload type
->> + * @flags: payload flags
->> + * @payload: payload buffer
->> + * @payload_size: payload buffer size
->> + *
->> + * Return: 0 success, negative errno value on transport failure,
->> + *         positive status returned by FW
->> + */
->> +static int mei_late_bind_push_config(struct device *dev, u32 type, u32 flags,
->> +				     const void *payload, size_t payload_size) {
->> +	struct mei_cl_device *cldev;
->> +	struct csc_heci_late_bind_req *req = NULL;
->> +	struct csc_heci_late_bind_rsp rsp;
->> +	size_t req_size;
->> +	int ret;
->> +
->> +	if (!dev || !payload || !payload_size)
->> +		return -EINVAL;
->> +
->> +	cldev = to_mei_cl_device(dev);
->> +
->> +	ret = mei_cldev_enable(cldev);
->> +	if (ret < 0) {
->> +		dev_dbg(dev, "mei_cldev_enable failed. %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	req_size = struct_size(req, payload, payload_size);
->> +	if (req_size > mei_cldev_mtu(cldev)) {
->> +		dev_err(dev, "Payload is too big %zu\n", payload_size);
->> +		ret = -EMSGSIZE;
->> +		goto end;
->> +	}
->> +
->> +	req = kmalloc(req_size, GFP_KERNEL);
->> +	if (!req) {
->> +		ret = -ENOMEM;
->> +		goto end;
->> +	}
-> Use Kzalloc here, to make sure reserved filed of header is zeroed.
->> +
->> +	req->header.group_id = MKHI_GROUP_ID_GFX;
->> +	req->header.command = GFX_SRV_MKHI_LATE_BINDING_CMD;
->> +	req->type = type;
->> +	req->flags = flags;
->> +	req->reserved[0] = 0;
->> +	req->reserved[1] = 0;
->> +	req->payload_size = payload_size;
->> +	memcpy(req->payload, payload, payload_size);
->> +
->> +	ret = mei_cldev_send_timeout(cldev, (void *)req, req_size,
->> LATE_BIND_SEND_TIMEOUT_MSEC);
->> +	if (ret < 0) {
->> +		dev_err(dev, "mei_cldev_send failed. %d\n", ret);
->> +		goto end;
->> +	}
->> +	ret = mei_cldev_recv_timeout(cldev, (void *)&rsp, sizeof(rsp),
->> LATE_BIND_RECV_TIMEOUT_MSEC);
->> +	if (ret < 0) {
->> +		dev_err(dev, "mei_cldev_recv failed. %d\n", ret);
->> +		goto end;
->> +	}
->> +	ret = mei_late_bind_check_response(dev, &rsp.header);
->> +	if (ret) {
->> +		dev_err(dev, "bad result response from the firmware: 0x%x\n",
->> +			*(uint32_t *)&rsp.header);
->
->> +		goto end;
->> +	}
->> +	ret = (int)rsp.status;
->> +	dev_dbg(dev, "%s status = %d\n", __func__, ret);
-> AFAIU It would be useful to add the status enum in late_bind_mei_interface.h.
->> +
->> +end:
->> +	mei_cldev_disable(cldev);
->> +	kfree(req);
->> +	return ret;
->> +}
->> +
->> +static const struct late_bind_component_ops mei_late_bind_ops = {
->> +	.owner = THIS_MODULE,
->> +	.push_config = mei_late_bind_push_config, };
->> +
->> +static int mei_component_master_bind(struct device *dev) {
->> +	return component_bind_all(dev, (void *)&mei_late_bind_ops); }
->> +
->> +static void mei_component_master_unbind(struct device *dev) {
->> +	component_unbind_all(dev, (void *)&mei_late_bind_ops); }
->> +
->> +static const struct component_master_ops mei_component_master_ops = {
->> +	.bind = mei_component_master_bind,
->> +	.unbind = mei_component_master_unbind, };
->> +
->> +/**
->> + * mei_late_bind_component_match - compare function for matching mei late
->> bind.
->> + *
->> + *    The function checks if requested is Intel VGA device
-> Please modify the Kenel Doc comment here, as per the function.
->> + *    and the parent of requester and the grand parent of mei_if are the same
-> We are matching against the requester not parent of requester.
-> Modify the Kernel Doc comment properly.
->> + *    device.
->> + *
->> + * @dev: master device
->> + * @subcomponent: subcomponent to match (I915_COMPONENT_LATE_BIND)
->> + * @data: compare data (mei late-bind bus device)
-> AFAIK It is mei client device not mei bus device.
->> + *
->> + * Return:
->> + * * 1 - if components match
->> + * * 0 - otherwise
->> + */
->> +static int mei_late_bind_component_match(struct device *dev, int
->> subcomponent,
->> +					 void *data)
->> +{
->> +	struct device *base = data;
->> +	struct pci_dev *pdev;
->> +
->> +	if (!dev)
->> +		return 0;
->> +
->> +	if (!dev_is_pci(dev))
->> +		return 0;
->> +
->> +	pdev = to_pci_dev(dev);
->> +
->> +	if (pdev->vendor != PCI_VENDOR_ID_INTEL)
->> +		return 0;
->> +
->> +	if (pdev->class != (PCI_CLASS_DISPLAY_VGA << 8) ||
->> +	    pdev->class != (PCI_CLASS_DISPLAY_OTHER << 8))
->> +		return 0;
-> This condition should be like below,  if I am not missing anything. 
-> if (pdev->class != (PCI_CLASS_DISPLAY_VGA << 8) &&
->  pdev->class != (PCI_CLASS_DISPLAY_OTHER << 8))
->
-> Thanks,
-> Anshuman.
->> +
->> +	if (subcomponent != I915_COMPONENT_LATE_BIND)
->> +		return 0;
->> +
->> +	base = base->parent;
->> +	if (!base) /* mei device */
->> +		return 0;
->> +
->> +	base = base->parent; /* pci device */
->> +
->> +	return !!base && dev == base;
->> +}
->> +
->> +static int mei_late_bind_probe(struct mei_cl_device *cldev,
->> +			       const struct mei_cl_device_id *id) {
->> +	struct component_match *master_match = NULL;
->> +	int ret;
->> +
->> +	component_match_add_typed(&cldev->dev, &master_match,
->> +				  mei_late_bind_component_match, &cldev-
->> >dev);
->> +	if (IS_ERR_OR_NULL(master_match))
->> +		return -ENOMEM;
->> +
->> +	ret = component_master_add_with_match(&cldev->dev,
->> +					      &mei_component_master_ops,
->> +					      master_match);
->> +	if (ret < 0)
->> +		dev_err(&cldev->dev, "Master comp add failed %d\n", ret);
->> +
->> +	return ret;
->> +}
->> +
->> +static void mei_late_bind_remove(struct mei_cl_device *cldev) {
->> +	component_master_del(&cldev->dev, &mei_component_master_ops); }
->> +
->> +#define MEI_GUID_MKHI UUID_LE(0xe2c2afa2, 0x3817, 0x4d19, \
->> +			      0x9d, 0x95, 0x6, 0xb1, 0x6b, 0x58, 0x8a, 0x5d)
->> +
->> +static struct mei_cl_device_id mei_late_bind_tbl[] = {
->> +	{ .uuid = MEI_GUID_MKHI, .version = MEI_CL_VERSION_ANY },
->> +	{ }
->> +};
->> +MODULE_DEVICE_TABLE(mei, mei_late_bind_tbl);
->> +
->> +static struct mei_cl_driver mei_late_bind_driver = {
->> +	.id_table = mei_late_bind_tbl,
->> +	.name = KBUILD_MODNAME,
->> +	.probe = mei_late_bind_probe,
->> +	.remove	= mei_late_bind_remove,
->> +};
->> +
->> +module_mei_cl_driver(mei_late_bind_driver);
->> +
->> +MODULE_AUTHOR("Intel Corporation");
->> +MODULE_LICENSE("GPL");
->> +MODULE_DESCRIPTION("MEI Late Binding");
->> diff --git a/include/drm/intel/i915_component.h
->> b/include/drm/intel/i915_component.h
->> index 4ea3b17aa143..4945044d41e6 100644
->> --- a/include/drm/intel/i915_component.h
->> +++ b/include/drm/intel/i915_component.h
->> @@ -31,6 +31,7 @@ enum i915_component_type {
->>  	I915_COMPONENT_HDCP,
->>  	I915_COMPONENT_PXP,
->>  	I915_COMPONENT_GSC_PROXY,
->> +	I915_COMPONENT_LATE_BIND,
->>  };
->> 
->>  /* MAX_PORT is the number of port
->> diff --git a/include/drm/intel/late_bind_mei_interface.h
->> b/include/drm/intel/late_bind_mei_interface.h
->> new file mode 100644
->> index 000000000000..2c53657ce91b
->> --- /dev/null
->> +++ b/include/drm/intel/late_bind_mei_interface.h
->> @@ -0,0 +1,50 @@
->> +/* SPDX-License-Identifier: MIT */
->> +/*
->> + * Copyright (c) 2025 Intel Corporation  */
->> +
->> +#ifndef _LATE_BIND_MEI_INTERFACE_H_
->> +#define _LATE_BIND_MEI_INTERFACE_H_
->> +
->> +#include <linux/types.h>
->> +
->> +struct device;
->> +struct module;
->> +
->> +/**
->> + * Late Binding flags
->> + * Persistent across warm reset
->> + */
->> +#define CSC_LATE_BINDING_FLAGS_IS_PERSISTENT	BIT(0)
->> +
->> +/**
->> + * xe_late_bind_fw_type - enum to determine late binding fw type  */
->> +enum late_bind_type {
->> +	CSC_LATE_BINDING_TYPE_FAN_CONTROL = 1, };
->> +
->> +/**
->> + * struct late_bind_component_ops - ops for Late Binding services.
->> + * @owner: Module providing the ops
->> + * @push_config: Sends a config to FW.
->> + */
->> +struct late_bind_component_ops {
->> +	struct module *owner;
->> +
->> +	/**
->> +	 * @push_config: Sends a config to FW.
->> +	 * @dev: device struct corresponding to the mei device
->> +	 * @type: payload type
->> +	 * @flags: payload flags
->> +	 * @payload: payload buffer
->> +	 * @payload_size: payload buffer size
->> +	 *
->> +	 * Return: 0 success, negative errno value on transport failure,
->> +	 *         positive status returned by FW
->> +	 */
->> +	int (*push_config)(struct device *dev, u32 type, u32 flags,
->> +			   const void *payload, size_t payload_size); };
->> +
->> +#endif /* _LATE_BIND_MEI_INTERFACE_H_ */
->> --
->> 2.34.1
->
+Therefore, though tdh_mem_page_add() actually supports in-place add, see [8],
+we can't store the initial content in the mmap-ed VA of the in-place conversion
+version of guest_memfd.
 
--- 
-Jani Nikula, Intel
+So, I modified QEMU to workaround this issue by adding an extra anonymous
+backend to hold source pages in shared memory, with the target private PFN
+allocated from guest_memfd with GUEST_MEMFD_FLAG_SUPPORT_SHARED set.
+
+The goal is to test whether kvm_gmem_populate() works for TDX huge pages.
+This testing exposed a bug in kvm_gmem_populate(), which has been fixed in the
+following patch.
+
+commit 5f33ed7ca26f00a61c611d2d1fbc001a7ecd8dca
+Author: Yan Zhao <yan.y.zhao@intel.com>
+Date:   Mon Jun 9 03:01:21 2025 -0700
+
+    Bug fix: Reduce max_order when GFN is not aligned
+
+    Fix the warning hit in kvm_gmem_populate().
+
+    "WARNING: CPU: 7 PID: 4421 at arch/x86/kvm/../../../virt/kvm/guest_memfd.c:
+    2496 kvm_gmem_populate+0x4a4/0x5b0"
+
+    The GFN passed to kvm_gmem_populate() may have an offset so it may not be
+    aligned to folio order. In this case, reduce the max_order to decrease the
+    mapping level.
+
+    Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 4b8047020f17..af7943c0a8ba 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -2493,7 +2493,8 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long
+                }
+
+                folio_unlock(folio);
+-               WARN_ON(!IS_ALIGNED(gfn, 1 << max_order));
++               while (!IS_ALIGNED(gfn, 1 << max_order))
++                       max_order--;
+
+                npages_to_populate = min(npages - i, 1 << max_order);
+                npages_to_populate = private_npages_to_populate(
+
+
+
+[8] https://cdrdv2-public.intel.com/839195/intel-tdx-module-1.5-abi-spec-348551002.pdf
+"In-Place Add: It is allowed to set the TD page HPA in R8 to the same address as
+the source page HPA in R9. In this case the source page is converted to be a TD
+private page".
 
