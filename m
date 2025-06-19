@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-693330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB0FADFDCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:41:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 559D6ADFDD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A712189EEF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:41:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F64A17CB2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D86925C83D;
-	Thu, 19 Jun 2025 06:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC43025EF82;
+	Thu, 19 Jun 2025 06:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HXI3dMh0"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="g8UoNtzR"
 Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14550247283;
-	Thu, 19 Jun 2025 06:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC095248F57;
+	Thu, 19 Jun 2025 06:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750315207; cv=none; b=jPUPIvK7YVXDRI5lPmFfsHGmJmQy0foDzHrbQ9IpX41YM2Q/YE7sgeVDtL1NCC9hG3U4hYaK/dG3TK6ASKMdtmZK4rrYmPdTHRHZ8ZMJI6JBKKrGHUtOwKlzJ1naUAb8rY2DUvlV8hBd3C2UKmPbTzf5ogGCaeZIVTl9mr68fW0=
+	t=1750315208; cv=none; b=dJaCmlWiTLija/96SG3gFrZTnkROdnir+vtFmyF95NvsemQonTe+KLf1Gq1tqYbqGkR9JI2dmmka2Zj1qh3kNagTXdHSNIkDdmZZcsU5II8AdGrGXZ2QEp5EuorwbJHFla08+DMdFCT4kJEhkD/z0fswX6/Upn7UGGMtHERaErQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750315207; c=relaxed/simple;
-	bh=h00RAGiiwW7nS2zv9TU+tMrp4eOVvI4K5rNX5ydP3aI=;
+	s=arc-20240116; t=1750315208; c=relaxed/simple;
+	bh=TlFF/wWOnyBUBw2sRYOnF2RANPrGvlRG2sNYPUnSxe0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XF1E73A73VLlKQYN2+s+TJDLPRa9p6AyXTct3uh45yM/jDqZD/VHHFsePOgej/AwlLyXh6E8cNnF+x3JLg2JcbNsKzxSn/CiN9eriljMaA/FD0q7XMSMWCPfxUxwWCRmd9Totdl/6pacwOpHOaPyr9wuPwe3DdjRbVxf8VaVbmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HXI3dMh0; arc=none smtp.client-ip=117.135.210.3
+	 MIME-Version; b=XZBw8J7TD5LoY0ALvghN6huPm0XgDmkE0i+AGQFs3IAqQvpSWY1c/li8IOcgnAClsa89ZO3nj9eUPtRJ6Hle3QEB7L0m73agarXihRL2LeFYd40g5D3GfON8NtLFo1FixvfBRpmhqsQXZLV2BhBvMKNKIbdw4NTaF2ZRAdBCXC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=g8UoNtzR; arc=none smtp.client-ip=117.135.210.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=qQ
-	uZyiWeCRjabdZVDuZoBt10hOs5O7/FEjTfFH0/Tqw=; b=HXI3dMh0FpbqJwvqhR
-	PeFdZbM2IsA5Np0pzXCjHfFFmq+UyI153b1fsZryddFqV/luSUkZnWZKSKUx+/T3
-	xvrH3inYjeP87gdWUmV8nlDARfCIBJoWdwrGevn8JUv2v4NGh9ode21LCwIupfka
-	9/+4XrfHnrzP/l8EzYLHXjRKQ=
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Pf
+	96EL1fdLyOPgckgwexr7VHAXtwv685XpN6hfJsmNc=; b=g8UoNtzRLhdPbP0aPI
+	xo9nLiCkjwm4QB3s3AtOGzaGU2D2zIBs39Qen6UYg1GHUbgCThhknbeq0VoSHNY5
+	hBIdZEI5v+IcMBSjFydl4kRBmRrBR91duBC34xirmqASAPk9tIO+HdCmDFzCjsv3
+	8chNXe6Pl8vfjHpX4r8u1/FB8=
 Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD312OGsFNoUtqyAQ--.3973S7;
-	Thu, 19 Jun 2025 14:39:14 +0800 (CST)
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD312OGsFNoUtqyAQ--.3973S8;
+	Thu, 19 Jun 2025 14:39:15 +0800 (CST)
 From: Andy Yan <andyshrk@163.com>
 To: dmitry.baryshkov@oss.qualcomm.com,
 	heiko@sntech.de
@@ -57,9 +57,9 @@ Cc: hjc@rock-chips.com,
 	robh@kernel.org,
 	sebastian.reichel@collabora.com,
 	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v4 5/9] drm/birdge: simple-bridge: Add support for radxa ra620
-Date: Thu, 19 Jun 2025 14:38:51 +0800
-Message-ID: <20250619063900.700491-6-andyshrk@163.com>
+Subject: [PATCH v4 6/9] arm64: dts: rockchip: Add DP0 for rk3588
+Date: Thu, 19 Jun 2025 14:38:52 +0800
+Message-ID: <20250619063900.700491-7-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250619063900.700491-1-andyshrk@163.com>
 References: <20250619063900.700491-1-andyshrk@163.com>
@@ -70,49 +70,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD312OGsFNoUtqyAQ--.3973S7
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Gw47tr48Jr4ftr4xKrWUtwb_yoWkZrg_uF
-	nakryUJr4rAr95KF43uw43A34Iv3W8urZ7Wr1vgrZxAws3Zw17u3srZr95Z34fAF10kF9F
-	y3W3JFWayr17ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnbAw7UUUUU==
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqBZxXmhTrfVbHAAAs1
+X-CM-TRANSID:_____wD312OGsFNoUtqyAQ--.3973S8
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AFyxJryUuw43JrWfGry5CFg_yoW8XFW5p3
+	ZrCrZ3WrW8uF12q39xKw1ktrZ5Aan5CFZYkrnrK340kF1Sqr9rKryfKrnxA34qqr47XwsF
+	vFs3try8KFsrAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jwvtZUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqBZxXmhTrfVbHAABs0
 
 From: Andy Yan <andy.yan@rock-chips.com>
 
-The RA620 is an active DP to HDMI converter chip, basically
-no software is involved to drive it.
-
-Add it to simple bridge to make it can be find by the drm bridge chain.
+The DP0 is compliant with the DisplayPort Specification
+Version 1.4, and share the USBDP combo PHY0 with USB 3.1
+HOST0 controller.
 
 Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
 ---
 
-(no changes since v3)
+(no changes since v1)
 
-Changes in v3:
-- First introduced in this version.
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
- drivers/gpu/drm/bridge/simple-bridge.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bridge/simple-bridge.c
-index 70db5b99e5bb8..df2d8106ee755 100644
---- a/drivers/gpu/drm/bridge/simple-bridge.c
-+++ b/drivers/gpu/drm/bridge/simple-bridge.c
-@@ -261,6 +261,11 @@ static const struct of_device_id simple_bridge_match[] = {
- 			.timings = &default_bridge_timings,
- 			.connector_type = DRM_MODE_CONNECTOR_VGA,
- 		},
-+	}, {
-+		.compatible = "radxa,ra620",
-+		.data = &(const struct simple_bridge_info) {
-+			.connector_type = DRM_MODE_CONNECTOR_HDMIA,
-+		},
- 	}, {
- 		.compatible = "ti,opa362",
- 		.data = &(const struct simple_bridge_info) {
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+index 51f11b9c414aa..4a54389c89d75 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+@@ -1536,6 +1536,36 @@ dsi1_out: port@1 {
+ 		};
+ 	};
+ 
++	dp0: dp@fde50000 {
++		compatible = "rockchip,rk3588-dp";
++		reg = <0x0 0xfde50000 0x0 0x4000>;
++		interrupts = <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH 0>;
++		clocks = <&cru PCLK_DP0>, <&cru CLK_AUX16M_0>,
++			 <&cru CLK_DP0>, <&cru MCLK_I2S4_8CH_TX>,
++			 <&cru MCLK_SPDIF2_DP0>;
++		clock-names = "apb", "aux", "hdcp", "i2s", "spdif";
++		assigned-clocks = <&cru CLK_AUX16M_0>;
++		assigned-clock-rates = <16000000>;
++		resets = <&cru SRST_DP0>;
++		phys = <&usbdp_phy0 PHY_TYPE_DP>;
++		power-domains = <&power RK3588_PD_VO0>;
++		#sound-dai-cells = <0>;
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			dp0_in: port@0 {
++				reg = <0>;
++			};
++
++			dp0_out: port@1 {
++				reg = <1>;
++			};
++		};
++	};
++
+ 	hdmi0: hdmi@fde80000 {
+ 		compatible = "rockchip,rk3588-dw-hdmi-qp";
+ 		reg = <0x0 0xfde80000 0x0 0x20000>;
 -- 
 2.43.0
 
