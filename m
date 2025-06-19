@@ -1,758 +1,674 @@
-Return-Path: <linux-kernel+bounces-694255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6818AE0A06
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:15:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB9AAE0A17
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 17:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5F243AB0FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:08:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2017E1C224A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 15:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8273528E578;
-	Thu, 19 Jun 2025 15:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA14B26FA58;
+	Thu, 19 Jun 2025 15:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pre6CVtr"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YVcdC2Ju"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DD828CF71;
-	Thu, 19 Jun 2025 15:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9342E628
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 15:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750345609; cv=none; b=aBj6LPv35SLQxCuTPsGMe9QdcbFsf7bMTEZijH8bCCNlu/N477Xyuis+gO20MZuFWrj06KGX3s5Usk4ftWWw3mHG+CiUBNwdpXSbkzBfPjoivtSVnqM5FHZybzE9+Vqoh3UFEt/QiM6uixRL8p4aluAM3d+dZzhk4oZy3qr/n00=
+	t=1750345677; cv=none; b=M/ZmnfkbSf1DPAZyXai6IFGbPPtPAJJpGeqOYLoW9Uk2tKTTCeoN727uepkQHBdHOwvBsJTNbBcEcqKA1v6hfNRepQiR7l6KcELqY6lNl5OaqGYQiLHqeg8xg7cUYwl5ymPMV83NLBTz1WcGN7HsZJ6k0BQ31/am9WB/sdkIppg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750345609; c=relaxed/simple;
-	bh=lyshkepuNXBzM/AfGAS6FKh61q/DhI59C9wDKRcPAw4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AoDROOSyHyM5nyEqmIpxmAaJrvCXwWWizWCQ8/67Rp94dktb+CkkzIUw2Q2vrNtQswt4jMdiDiF7wcW8dBqrau+HTRUzyDD+htwMpX0k44wgu/F08kxsDxZGCKYzQAfIJaXVy9T2zHasYaAAtKBwZJJVkIAUgFd9Le/2cvE6Ye0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pre6CVtr; arc=none smtp.client-ip=209.85.160.176
+	s=arc-20240116; t=1750345677; c=relaxed/simple;
+	bh=DtPX7RhHVbXubCh0Jb2VoyEetOalS11DjVojxmnxXVo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s2WrDuYOdfyrcp5uEYrGGK6fnyY82VFgwGAtQ7k6a5iqWupUHJfC3s80QK9kOf4UUc15T1V0Yd4VIPHvpELlnzxp/2wfJyo+I8m+0rPbtraBHOF3GaZQZ4cAKZH9UgFTiMoBFbck2rVUvoSijPQTZC512pI6iPQgKFzmW9mximE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YVcdC2Ju; arc=none smtp.client-ip=209.85.160.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4a5840ec53dso10087971cf.0;
-        Thu, 19 Jun 2025 08:06:45 -0700 (PDT)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4a43afb04a7so6501891cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 08:07:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750345605; x=1750950405; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N+MLp/Wyw+FMmIoAUSP2P3WuAVxaRgs45Kjlyv6CyTI=;
-        b=Pre6CVtrNiZ/hv6GC39NIaNCHZvZp4hl5xHpMDyY52a1V30TRKchhyYsG+ptLe3jg7
-         NIFp4RXwg6HdIJxaXvtwrh4dIKj7qWEAvTelsxqYKLxBWPD3FnG3cBXh7YiogNd4wyWZ
-         ql4hNYvp7PQpZ4UYRzHd6bkXHn7rtba+qj0aeHgI/b7ERdPRdtIPUVID/FVmrKQbOUg4
-         pZp21FCzZMePDTO6ZY9+HB1zwm1IqgxVwXM9WhKuw0B18l7S+TyAKQZN4fOX9UrsSLv/
-         hEMJcFvLtD/HdPC6/eMYDdtxyvxP5VWCx2OnbDpVuWJ5PA21pMOoYfvTlDA11fVdDOIT
-         T53w==
+        d=gmail.com; s=20230601; t=1750345674; x=1750950474; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jl+tkAD7IEqapxaqKMGyyy5Mng7FOC4KQp7Byq+9H6M=;
+        b=YVcdC2JufXtLGUjeSWvbQw6R4F0hfhj3wzbe2K8v4Ey3TMXKpat4fBnmDJB+0HfyNS
+         KMX17Sgjx5Ce1flGjkAEsYEqd3a1+srhz+6Mkg/5XSylGw4x9kRBJe12p1drKEam2962
+         S9Ntl9nc8osPvnvUH71/ATvd8ZNkzMdvUVX1Iy++bbO8z7SF5SxsdXtuELv4ayJlgrkV
+         xeXK0N36ElPiKamXZ2zRp+z1x8VkNkU4jTW6FSpQCRTT9gVEIyfuk1mhjaeyOF9WZJwk
+         gXUIP3FX7+houEnHTmaMuc+248FFVPyNzwdLBd5yw9TzGn9NTtTo27H0TVoGmyvP7g/X
+         MssQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750345605; x=1750950405;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N+MLp/Wyw+FMmIoAUSP2P3WuAVxaRgs45Kjlyv6CyTI=;
-        b=uWNeNVAj5dkbj5a42O1cQbX/JbVnp37mDe2JXMIvHqGvwENINQRZYd2mqTlU7F141g
-         5I+eaS9Wr83B49duxNUFG7EVEtlI7NurURb0SoMGFAfOxd/mLmejkFQl4XuwOMlp59+S
-         bgdXi2gbg92anLRQWoWPleMolAy2McKpEXb/GNPRwHAJTV1m251G+R2jijborZ0kDsYm
-         XDirarhUg799GiE4A5u9Y8+2rhswMgZyhDUAv6sB4fLl/oTNvgTviXtRW9GJDRfhj4Kr
-         dpx8SH3mptzaqkDO4Z0bQU9z90Fvw86SzvS2doY3QYVjDtvCvBzR60QoC+2l7A69kX0P
-         XTew==
-X-Forwarded-Encrypted: i=1; AJvYcCUBEfAOQX9I6lb6DwO/9HvHCYOBhORnbgX5Kc1Ih4YfbmY4n32agPefv8DrOb42vUdHlu8w8NItjz4=@vger.kernel.org, AJvYcCUOk2aPRgZUF/ZYaoq5eWvxiCCQYFnTXzBrzzUaZ+m58IvHBsX5FtT4bPT++QoOn0lFwHvBz2hZfPjc@vger.kernel.org, AJvYcCUSxeBqeQyPHQ2eEBgDzaTICnzhIzuE6ghfXrP/mqgOUS88FCuAUgM/QstXv3uZidkGRWtQxUzzvV1g@vger.kernel.org, AJvYcCUyRNhLwawehdas4vS9ToZPt32O+CVnzUn7VLtEKmbOHS2IlunihOL/EKuz9mEdAfSMelM5GRy2@vger.kernel.org, AJvYcCW0bWxpTrvSStqvzGMFKvhHsjPVTl88mdtoTB3V+9GNIwqbG5r5EOmpfdAcJzYm4Ni5fyhwt2PQhhkHpLbMw/eK@vger.kernel.org, AJvYcCWpgSLXNA7Wqcn65C3LXf1lXEeTEhAN6dK68lOLc1dc2Sjm+UGLpUnhtHQHrCUrVqIXVSKSiMgjRV3Ku78=@vger.kernel.org, AJvYcCWxvVnq6RzsM9EVrD3n0zAE7rxhHnwpR7Pbes6pxEcBq/sjPe5N/r3aKVuxAx41Etgw+J0V1+QtmJom@vger.kernel.org, AJvYcCXYxI8/3OIWTFxWXOjo/Xwa7RCcFm0oankAijLedVG+QGQdDseACWOu7y1avCDOtpdIvIdf7sAhLyoZV5TU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxdh2MAeTHtC229MitVFLH5Oo0wlIyd8gxZU1hZ7WwxoWPxt64
-	hvcYcmzoZq6aprhLiHIQuHRuaPqKrIQrRemy5eQU0GM1vm2El+EHa9yG
-X-Gm-Gg: ASbGncssPRmQSF4pEpq2eN3kq14sZAihZajkoY0pwaFH5amV1a+1CCPmFh6lDhH6NsN
-	8jiu6+gncNON3mqc3FVsWcJYxhVk8f5QtyCDCCt3rGXSj7PjCZxg/sQgKbwfyx5lY2c1ov1Rj13
-	wZ+s0BvVSOB9mQgYtDuu5UcIK+NlolQGo7FVXDSluTZlle1FIEEYSqBcTsbmafz2jsNWiiPU0x6
-	zREtI3grklW9tKRVslvEMLQGm+utXOCXG7BxMFc1/2pvan/NtQIGABfXr9e3NySAQmpvZIm1Eei
-	Zrl2ygkKCt61W9YYY6hts0uxzniVXaQQZFryTQdTvFaA/h0BTJuFTiIKq+sW0Mx/gW/hYvyT9mg
-	M/t149BYHQA==
-X-Google-Smtp-Source: AGHT+IEIBl9XIMHrJ5og8oP/l3Yc1XPQQjJbdZ6bZEBoEIEuuRSD4EWvq6wtLdoVF2ZgNgXM1ksG3A==
-X-Received: by 2002:a05:622a:1890:b0:4a6:fa8e:50a8 with SMTP id d75a77b69052e-4a73c4fcea9mr360959781cf.2.1750345604456;
-        Thu, 19 Jun 2025 08:06:44 -0700 (PDT)
-Received: from tamird-mac.local ([2600:4041:5be7:7c00:5c8a:fc6a:b57c:e57f])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a7785aaacdsm250531cf.39.2025.06.19.08.06.41
+        d=1e100.net; s=20230601; t=1750345674; x=1750950474;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jl+tkAD7IEqapxaqKMGyyy5Mng7FOC4KQp7Byq+9H6M=;
+        b=pngzWUFdw3QfttgNLA2cVE+SOstOqOjTuQYDUo8s4w9+iy+7iv6Yoi8i/1lFK/EOww
+         FKGryPB6ZLvy66R8osJWLrw7WG/PF5ggvgafcRMiWhsZlER4SGVpFpg16JqG9bUnLDcz
+         Od0NvTm/RP/Crpw/pqQ3bIYaHvZHfNZIqeBnvHFMoT0T2cimQ6QkJkow0FZfZbgmHtpq
+         VQiWjcHyG2aDD0vXtsUI9yyOGKto+boUT07m/5B7VnFFxfH2qvasIFepOtDdk4aMzpjW
+         NIcznX4X+jOKq8MjPYEGJm49JVfTq/OzqOJxa3IIMEhMpi7W9kofFDRBFfN8vbcl4+yX
+         G5tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWv/W2zQwV092VfEZj53j193Q2wl5fNdQI21NigGfTAX5pSMYlF9AUTDknstAxXKAo6cVlvbhKq8fueoOU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt5gkTaPQ2wLZ9WpYqhindCqUhcJ0uODQESgOf751aFQHy1yqA
+	GVNWMpnEkAI/VHXU4bFbj0dcDu/xIRk91TAgCC5cnYkWPCdt+7zjZX/7
+X-Gm-Gg: ASbGncv05fna2NtX3DEvutLhES2hEY4lc6XgE8hdke3jMWZoqMxlh4Qg3i0wsXJTudS
+	2valxS7Yz3QUpdw+jKthBLjnrHjceqBlMbeFxF7+OEOT+mesyKgkyp+l0PvR++uEp0uKpIPAnLT
+	SBRtWZ8YkkZuoil9kZ0QxpzkOLPwrw3f6h8LzgDcKt3AxIKyIyBcR7qO6poXVrN1pIpfM5GEQp+
+	jR4z5bNXnLlw3BSOYwIagwvH7WxY7ZtCWlREVBgJUxxnvUj9xFhLMDjaqoKXwRncyOhFy4R+Bsa
+	NQ6/PFvdUsg/Iu29E5mjhpySaNN2kGDkmKYT1D0LwCY/Tg08JYEsB3iSoSls46FR7CLI1JojrzC
+	rtTtWhKGuCe4oDbGhKXUjdh7i+CIF
+X-Google-Smtp-Source: AGHT+IHOF9D5TQmsnL7C3KjpeO6dx0IaKRZCSuOUc0dAk2GQ+U8l0Y2BashIDjIRAs0q3yQmjfbFAw==
+X-Received: by 2002:a05:622a:11c9:b0:4a7:6e0c:7606 with SMTP id d75a77b69052e-4a76e0c792bmr55487251cf.32.1750345674027;
+        Thu, 19 Jun 2025 08:07:54 -0700 (PDT)
+Received: from fyre-x-redhat96-client-2.fyre.ibm.com ([129.41.87.1])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a778394f64sm490471cf.0.2025.06.19.08.07.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 08:06:43 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 19 Jun 2025 11:06:29 -0400
-Subject: [PATCH v12 5/5] rust: remove core::ffi::CStr reexport
+        Thu, 19 Jun 2025 08:07:53 -0700 (PDT)
+From: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
+To: suzuki.poulose@arm.com,
+	alexander.shishkin@linux.intel.com,
+	mike.leach@linaro.org
+Cc: james.clark@linaro.org,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
+Subject: [PATCH] coresight: Replace scnprintf() with sysfs_emit() in sysfs show functions
+Date: Thu, 19 Jun 2025 08:07:30 -0700
+Message-ID: <20250619150730.413287-1-chelsyratnawat2001@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250619-cstr-core-v12-5-80c9c7b45900@gmail.com>
-References: <20250619-cstr-core-v12-0-80c9c7b45900@gmail.com>
-In-Reply-To: <20250619-cstr-core-v12-0-80c9c7b45900@gmail.com>
-To: Michal Rostecki <vadorovsky@protonmail.com>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, 
- Brendan Higgins <brendan.higgins@linux.dev>, 
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
- Danilo Krummrich <dakr@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
- FUJITA Tomonori <fujita.tomonori@gmail.com>, Rob Herring <robh@kernel.org>, 
- Saravana Kannan <saravanak@google.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, 
- Jens Axboe <axboe@kernel.dk>, Benno Lossin <lossin@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Leon Romanovsky <leon@kernel.org>, Breno Leitao <leitao@debian.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
- dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, llvm@lists.linux.dev, linux-pci@vger.kernel.org, 
- nouveau@lists.freedesktop.org, linux-block@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
- Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
 
-Clean up references to `kernel::str::CStr`.
+Replace calls to scnprintf() with sysfs_emit() in sysfs show functions.
+These helpers are preferred in sysfs callbacks because they automatically
+handle buffer sizing (PAGE_SIZE) and improve safety and readability.
 
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+Signed-off-by: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
 ---
- drivers/gpu/drm/drm_panic_qr.rs       |  3 ++-
- drivers/gpu/nova-core/firmware.rs     |  2 +-
- drivers/gpu/nova-core/nova_core.rs    |  2 +-
- drivers/net/phy/ax88796b_rust.rs      |  1 +
- drivers/net/phy/qt2025.rs             |  1 +
- rust/kernel/auxiliary.rs              |  2 +-
- rust/kernel/clk.rs                    |  3 +--
- rust/kernel/configfs.rs               |  1 +
- rust/kernel/cpufreq.rs                |  3 ++-
- rust/kernel/device.rs                 |  3 +--
- rust/kernel/driver.rs                 |  4 ++--
- rust/kernel/drm/driver.rs             |  3 ++-
- rust/kernel/error.rs                  |  6 ++----
- rust/kernel/faux.rs                   |  5 ++++-
- rust/kernel/firmware.rs               | 15 ++++-----------
- rust/kernel/kunit.rs                  |  6 +++---
- rust/kernel/lib.rs                    |  2 +-
- rust/kernel/miscdevice.rs             |  3 +--
- rust/kernel/net/phy.rs                |  4 +++-
- rust/kernel/of.rs                     |  3 ++-
- rust/kernel/pci.rs                    |  2 +-
- rust/kernel/platform.rs               |  2 +-
- rust/kernel/prelude.rs                |  5 +----
- rust/kernel/str.rs                    |  8 +++-----
- rust/kernel/sync/condvar.rs           |  4 ++--
- rust/kernel/sync/lock.rs              |  4 ++--
- rust/kernel/sync/lock/global.rs       |  5 +++--
- rust/kernel/sync/poll.rs              |  1 +
- rust/kernel/workqueue.rs              |  1 +
- rust/macros/module.rs                 |  2 +-
- samples/rust/rust_configfs.rs         |  2 ++
- samples/rust/rust_driver_auxiliary.rs |  5 +++--
- 32 files changed, 57 insertions(+), 56 deletions(-)
+ .../hwtracing/coresight/coresight-etm-perf.c  |   4 +-
+ .../coresight/coresight-etm3x-sysfs.c         |   2 +-
+ .../coresight/coresight-etm4x-sysfs.c         | 108 +++++++++---------
+ drivers/hwtracing/coresight/coresight-stm.c   |   8 +-
+ 4 files changed, 61 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-index 01e8ba9e6de1..aa27c266213e 100644
---- a/drivers/gpu/drm/drm_panic_qr.rs
-+++ b/drivers/gpu/drm/drm_panic_qr.rs
-@@ -27,7 +27,8 @@
- //! * <https://github.com/erwanvivien/fast_qr>
- //! * <https://github.com/bjguillot/qr>
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+index f1551c08ecb2..8cfdcbc2f8f6 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.c
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+@@ -851,7 +851,7 @@ static ssize_t etm_perf_sink_name_show(struct device *dev,
+ 	struct dev_ext_attribute *ea;
  
--use kernel::{prelude::*, str::CStr};
-+use core::ffi::CStr;
-+use kernel::prelude::*;
- 
- #[derive(Debug, Clone, Copy, PartialEq, Eq, Ord, PartialOrd)]
- struct Version(usize);
-diff --git a/drivers/gpu/nova-core/firmware.rs b/drivers/gpu/nova-core/firmware.rs
-index 4b8a38358a4f..562ad048ff99 100644
---- a/drivers/gpu/nova-core/firmware.rs
-+++ b/drivers/gpu/nova-core/firmware.rs
-@@ -66,7 +66,7 @@ const fn make_entry_chipset(self, chipset: &str) -> Self {
-     }
- 
-     pub(crate) const fn create(
--        module_name: &'static kernel::str::CStr,
-+        module_name: &'static core::ffi::CStr,
-     ) -> firmware::ModInfoBuilder<N> {
-         let mut this = Self(firmware::ModInfoBuilder::new(module_name));
-         let mut i = 0;
-diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
-index 618632f0abcc..29b7ae8581e6 100644
---- a/drivers/gpu/nova-core/nova_core.rs
-+++ b/drivers/gpu/nova-core/nova_core.rs
-@@ -8,7 +8,7 @@
- mod regs;
- mod util;
- 
--pub(crate) const MODULE_NAME: &kernel::str::CStr = <LocalModule as kernel::ModuleMetadata>::NAME;
-+pub(crate) const MODULE_NAME: &core::ffi::CStr = <LocalModule as kernel::ModuleMetadata>::NAME;
- 
- kernel::module_pci_driver! {
-     type: driver::NovaCore,
-diff --git a/drivers/net/phy/ax88796b_rust.rs b/drivers/net/phy/ax88796b_rust.rs
-index 2d24628a4e58..68b8e30ae296 100644
---- a/drivers/net/phy/ax88796b_rust.rs
-+++ b/drivers/net/phy/ax88796b_rust.rs
-@@ -4,6 +4,7 @@
- //! Rust Asix PHYs driver
- //!
- //! C version of this driver: [`drivers/net/phy/ax88796b.c`](./ax88796b.c)
-+use core::ffi::CStr;
- use kernel::{
-     net::phy::{self, reg::C22, DeviceId, Driver},
-     prelude::*,
-diff --git a/drivers/net/phy/qt2025.rs b/drivers/net/phy/qt2025.rs
-index 9ccc75f70219..78ce2866f2b6 100644
---- a/drivers/net/phy/qt2025.rs
-+++ b/drivers/net/phy/qt2025.rs
-@@ -9,6 +9,7 @@
- //!
- //! The QT2025 PHY integrates an Intel 8051 micro-controller.
- 
-+use core::ffi::CStr;
- use kernel::error::code;
- use kernel::firmware::Firmware;
- use kernel::net::phy::{
-diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
-index 89d961407adb..ff29077d9c2f 100644
---- a/rust/kernel/auxiliary.rs
-+++ b/rust/kernel/auxiliary.rs
-@@ -10,11 +10,11 @@
-     driver,
-     error::{to_result, Result},
-     prelude::*,
--    str::CStr,
-     types::{ForeignOwnable, Opaque},
-     ThisModule,
- };
- use core::{
-+    ffi::CStr,
-     marker::PhantomData,
-     ptr::{addr_of_mut, NonNull},
- };
-diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-index c43a2aa154b6..bad49ecb30ed 100644
---- a/rust/kernel/clk.rs
-+++ b/rust/kernel/clk.rs
-@@ -78,10 +78,9 @@ mod common_clk {
-     use crate::{
-         device::Device,
-         error::{from_err_ptr, to_result, Result},
--        prelude::*,
-     };
- 
--    use core::{ops::Deref, ptr};
-+    use core::{ffi::CStr, ops::Deref, ptr};
- 
-     /// A reference-counted clock.
-     ///
-diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
-index 9c99fee19a5c..1eb46c6d5508 100644
---- a/rust/kernel/configfs.rs
-+++ b/rust/kernel/configfs.rs
-@@ -118,6 +118,7 @@
- use crate::sync::ArcBorrow;
- use crate::types::Opaque;
- use core::cell::UnsafeCell;
-+use core::ffi::CStr;
- use core::marker::PhantomData;
- 
- /// A configfs subsystem.
-diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-index b53769e6cee5..ecc183de3133 100644
---- a/rust/kernel/cpufreq.rs
-+++ b/rust/kernel/cpufreq.rs
-@@ -26,6 +26,7 @@
- 
- use core::{
-     cell::UnsafeCell,
-+    ffi::CStr,
-     marker::PhantomData,
-     mem::MaybeUninit,
-     ops::{Deref, DerefMut},
-@@ -853,7 +854,7 @@ fn register_em(_policy: &mut Policy) {
- ///
- /// #[vtable]
- /// impl cpufreq::Driver for SampleDriver {
--///     const NAME: &'static CStr = c"cpufreq-sample";
-+///     const NAME: &'static core::ffi::CStr = c"cpufreq-sample";
- ///     const FLAGS: u16 = cpufreq::flags::NEED_INITIAL_FREQ_CHECK | cpufreq::flags::IS_COOLING_DEV;
- ///     const BOOST_ENABLED: bool = true;
- ///
-diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-index d2b6c1ce02a5..ad5e60e96d98 100644
---- a/rust/kernel/device.rs
-+++ b/rust/kernel/device.rs
-@@ -6,10 +6,9 @@
- 
- use crate::{
-     bindings,
--    str::CStr,
-     types::{ARef, Opaque},
- };
--use core::{fmt, marker::PhantomData, ptr};
-+use core::{ffi::CStr, fmt, marker::PhantomData, ptr};
- 
- #[cfg(CONFIG_PRINTK)]
- use crate::str::CStrExt as _;
-diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
-index ec9166cedfa7..9926664d9ba2 100644
---- a/rust/kernel/driver.rs
-+++ b/rust/kernel/driver.rs
-@@ -6,8 +6,8 @@
- //! register using the [`Registration`] class.
- 
- use crate::error::{Error, Result};
--use crate::{device, of, str::CStr, try_pin_init, types::Opaque, ThisModule};
--use core::pin::Pin;
-+use crate::{device, of, try_pin_init, types::Opaque, ThisModule};
-+use core::{ffi::CStr, pin::Pin};
- use pin_init::{pin_data, pinned_drop, PinInit};
- 
- /// The [`RegistrationOps`] trait serves as generic interface for subsystems (e.g., PCI, Platform,
-diff --git a/rust/kernel/drm/driver.rs b/rust/kernel/drm/driver.rs
-index acb638086131..4c30933051c7 100644
---- a/rust/kernel/drm/driver.rs
-+++ b/rust/kernel/drm/driver.rs
-@@ -10,11 +10,12 @@
-     drm,
-     error::{to_result, Result},
-     prelude::*,
--    str::CStr,
-     types::ARef,
- };
- use macros::vtable;
- 
-+use core::ffi::CStr;
-+
- /// Driver use the GEM memory manager. This should be set for all modern drivers.
- pub(crate) const FEAT_GEM: u32 = bindings::drm_driver_feature_DRIVER_GEM;
- 
-diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-index 933c048c04f1..b2b46d26f7b7 100644
---- a/rust/kernel/error.rs
-+++ b/rust/kernel/error.rs
-@@ -4,11 +4,9 @@
- //!
- //! C header: [`include/uapi/asm-generic/errno-base.h`](srctree/include/uapi/asm-generic/errno-base.h)
- 
--use crate::{
--    alloc::{layout::LayoutError, AllocError},
--    str::CStr,
--};
-+use crate::alloc::{layout::LayoutError, AllocError};
- 
-+use core::ffi::CStr;
- use core::fmt;
- use core::num::NonZeroI32;
- use core::num::TryFromIntError;
-diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
-index 8a50fcd4c9bb..d9e5cd265101 100644
---- a/rust/kernel/faux.rs
-+++ b/rust/kernel/faux.rs
-@@ -7,7 +7,10 @@
- //! C header: [`include/linux/device/faux.h`]
- 
- use crate::{bindings, device, error::code::*, prelude::*};
--use core::ptr::{addr_of_mut, null, null_mut, NonNull};
-+use core::{
-+    ffi::CStr,
-+    ptr::{addr_of_mut, null, null_mut, NonNull},
-+};
- 
- /// The registration of a faux device.
- ///
-diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-index 09fd3a27bcf0..4ba5e5589d7b 100644
---- a/rust/kernel/firmware.rs
-+++ b/rust/kernel/firmware.rs
-@@ -4,15 +4,8 @@
- //!
- //! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h)
- 
--use crate::{
--    bindings,
--    device::Device,
--    error::Error,
--    error::Result,
--    ffi,
--    str::{CStr, CStrExt as _},
--};
--use core::ptr::NonNull;
-+use crate::{bindings, device::Device, error::Error, error::Result, ffi, str::CStrExt as _};
-+use core::{ffi::CStr, ptr::NonNull};
- 
- /// # Invariants
- ///
-@@ -168,7 +161,7 @@ unsafe impl Sync for Firmware {}
- ///     const DIR: &'static str = "vendor/chip/";
- ///     const FILES: [&'static str; 3] = [ "foo", "bar", "baz" ];
- ///
--///     const fn create(module_name: &'static kernel::str::CStr) -> firmware::ModInfoBuilder<N> {
-+///     const fn create(module_name: &'static core::ffi::CStr) -> firmware::ModInfoBuilder<N> {
- ///         let mut builder = firmware::ModInfoBuilder::new(module_name);
- ///
- ///         let mut i = 0;
-@@ -202,7 +195,7 @@ macro_rules! module_firmware {
-     // this macro. Hence, we can neither use `expr` nor `ty`.
-     ($($builder:tt)*) => {
-         const _: () = {
--            const __MODULE_FIRMWARE_PREFIX: &'static $crate::str::CStr = if cfg!(MODULE) {
-+            const __MODULE_FIRMWARE_PREFIX: &'static ::core::ffi::CStr = if cfg!(MODULE) {
-                 c""
-             } else {
-                 <LocalModule as $crate::ModuleMetadata>::NAME
-diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
-index 2bab61910f1e..5504a6216d19 100644
---- a/rust/kernel/kunit.rs
-+++ b/rust/kernel/kunit.rs
-@@ -57,9 +57,9 @@ macro_rules! kunit_assert {
-                 break 'out;
-             }
- 
--            static FILE: &'static $crate::str::CStr = $file;
-+            static FILE: &'static ::core::ffi::CStr = $file;
-             static LINE: i32 = ::core::line!() as i32 - $diff;
--            static CONDITION: &'static $crate::str::CStr =
-+            static CONDITION: &'static ::core::ffi::CStr =
-                 $crate::str_to_cstr!(stringify!($condition));
- 
-             // SAFETY: FFI call without safety requirements.
-@@ -195,7 +195,7 @@ pub fn is_test_result_ok(t: impl TestResult) -> bool {
- /// Use [`kunit_case_null`] to generate such a delimiter.
- #[doc(hidden)]
- pub const fn kunit_case(
--    name: &'static kernel::str::CStr,
-+    name: &'static core::ffi::CStr,
-     run_case: unsafe extern "C" fn(*mut kernel::bindings::kunit),
- ) -> kernel::bindings::kunit_case {
-     kernel::bindings::kunit_case {
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index aadcfaa5c759..3a7e935dd1fc 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -166,7 +166,7 @@ fn init(module: &'static ThisModule) -> impl pin_init::PinInit<Self, error::Erro
- /// Metadata attached to a [`Module`] or [`InPlaceModule`].
- pub trait ModuleMetadata {
-     /// The name of the module as specified in the `module!` macro.
--    const NAME: &'static crate::str::CStr;
-+    const NAME: &'static core::ffi::CStr;
+ 	ea = container_of(dattr, struct dev_ext_attribute, attr);
+-	return scnprintf(buf, PAGE_SIZE, "0x%lx\n", (unsigned long)(ea->var));
++	return sysfs_emit(buf, "0x%lx\n", (unsigned long)(ea->var));
  }
  
- /// Equivalent to `THIS_MODULE` in the C API.
-diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-index 00e148d9ea97..6919c884e5d2 100644
---- a/rust/kernel/miscdevice.rs
-+++ b/rust/kernel/miscdevice.rs
-@@ -17,10 +17,9 @@
-     mm::virt::VmaNew,
-     prelude::*,
-     seq_file::SeqFile,
--    str::CStr,
-     types::{ForeignOwnable, Opaque},
- };
--use core::{marker::PhantomData, mem::MaybeUninit, pin::Pin};
-+use core::{ffi::CStr, marker::PhantomData, mem::MaybeUninit, pin::Pin};
+ static struct dev_ext_attribute *
+@@ -943,7 +943,7 @@ static ssize_t etm_perf_cscfg_event_show(struct device *dev,
+ 	struct dev_ext_attribute *ea;
  
- /// Options for creating a misc device.
- #[derive(Copy, Clone)]
-diff --git a/rust/kernel/net/phy.rs b/rust/kernel/net/phy.rs
-index 5e654403c21b..468b0e038bc9 100644
---- a/rust/kernel/net/phy.rs
-+++ b/rust/kernel/net/phy.rs
-@@ -7,7 +7,7 @@
- //! C headers: [`include/linux/phy.h`](srctree/include/linux/phy.h).
- 
- use crate::{error::*, prelude::*, types::Opaque};
--use core::{marker::PhantomData, ptr::addr_of_mut};
-+use core::{ffi::CStr, marker::PhantomData, ptr::addr_of_mut};
- 
- pub mod reg;
- 
-@@ -781,6 +781,7 @@ const fn as_int(&self) -> u32 {
- ///
- /// ```
- /// # mod module_phy_driver_sample {
-+/// use core::ffi::CStr;
- /// use kernel::net::phy::{self, DeviceId};
- /// use kernel::prelude::*;
- ///
-@@ -808,6 +809,7 @@ const fn as_int(&self) -> u32 {
- /// This expands to the following code:
- ///
- /// ```ignore
-+/// use core::ffi::CStr;
- /// use kernel::net::phy::{self, DeviceId};
- /// use kernel::prelude::*;
- ///
-diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
-index 12ea65df46de..087ac8e05551 100644
---- a/rust/kernel/of.rs
-+++ b/rust/kernel/of.rs
-@@ -2,7 +2,8 @@
- 
- //! Device Tree / Open Firmware abstractions.
- 
--use crate::{bindings, device_id::RawDeviceId, prelude::*};
-+use crate::{bindings, device_id::RawDeviceId};
-+use core::ffi::CStr;
- 
- /// IdTable type for OF drivers.
- pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<DeviceId, T>;
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index 8435f8132e38..86b5f666e22b 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -13,11 +13,11 @@
-     error::{to_result, Result},
-     io::Io,
-     io::IoRaw,
--    str::CStr,
-     types::{ARef, ForeignOwnable, Opaque},
-     ThisModule,
- };
- use core::{
-+    ffi::CStr,
-     marker::PhantomData,
-     ops::Deref,
-     ptr::{addr_of_mut, NonNull},
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index 338b8d7c65ee..ccf52274142a 100644
---- a/rust/kernel/platform.rs
-+++ b/rust/kernel/platform.rs
-@@ -9,12 +9,12 @@
-     error::{to_result, Result},
-     of,
-     prelude::*,
--    str::CStr,
-     types::{ForeignOwnable, Opaque},
-     ThisModule,
- };
- 
- use core::{
-+    ffi::CStr,
-     marker::PhantomData,
-     ptr::{addr_of_mut, NonNull},
- };
-diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-index 244b660fa835..3f7ca5a95160 100644
---- a/rust/kernel/prelude.rs
-+++ b/rust/kernel/prelude.rs
-@@ -40,10 +40,7 @@
- 
- pub use super::error::{code::*, Error, Result};
- 
--pub use super::{
--    str::{CStr, CStrExt as _},
--    ThisModule,
--};
-+pub use super::{str::CStrExt as _, ThisModule};
- 
- pub use super::init::InPlaceInit;
- 
-diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-index 9908b09868bc..a64ce7cd8fc8 100644
---- a/rust/kernel/str.rs
-+++ b/rust/kernel/str.rs
-@@ -3,6 +3,7 @@
- //! String representations.
- 
- use crate::alloc::{flags::*, AllocError, KVec};
-+use core::ffi::CStr;
- use core::fmt::{self, Write};
- use core::ops::{Deref, DerefMut, Index};
- 
-@@ -175,8 +176,6 @@ macro_rules! b_str {
-     }};
+ 	ea = container_of(dattr, struct dev_ext_attribute, attr);
+-	return scnprintf(buf, PAGE_SIZE, "configid=0x%lx\n", (unsigned long)(ea->var));
++	return sysfs_emit(buf, "configid=0x%lx\n", (unsigned long)(ea->var));
  }
  
--pub use core::ffi::CStr;
--
- /// Returns a C pointer to the string.
- // It is a free function rather than a method on an extension trait because:
- //
-@@ -267,7 +266,6 @@ impl crate::fmt::Display for CStr {
-     ///
-     /// ```
-     /// # use kernel::prelude::fmt;
--    /// # use kernel::str::CStr;
-     /// # use kernel::str::CString;
-     /// let penguin = c"🐧";
-     /// let s = CString::try_from_fmt(fmt!("{}", penguin))?;
-@@ -376,8 +374,8 @@ fn as_ref(&self) -> &BStr {
- /// # Examples
- ///
- /// ```
-+/// # use core::ffi::CStr;
- /// # use kernel::str_to_cstr;
--/// # use kernel::str::CStr;
- /// const MY_CSTR: &CStr = str_to_cstr!(concat!(file!(), ":", line!(), ": My CStr!"));
- /// ```
- #[macro_export]
-@@ -387,7 +385,7 @@ macro_rules! str_to_cstr {
-     // too limiting to macro authors, so we rely on the name as a hint instead.
-     ($str:expr) => {{
-         const S: &str = concat!($str, "\0");
--        const C: &$crate::str::CStr = match $crate::str::CStr::from_bytes_with_nul(S.as_bytes()) {
-+        const C: &core::ffi::CStr = match core::ffi::CStr::from_bytes_with_nul(S.as_bytes()) {
-             Ok(v) => v,
-             Err(_) => panic!("string contains interior NUL"),
-         };
-diff --git a/rust/kernel/sync/condvar.rs b/rust/kernel/sync/condvar.rs
-index 0b6bc7f2878d..09bc35feb451 100644
---- a/rust/kernel/sync/condvar.rs
-+++ b/rust/kernel/sync/condvar.rs
-@@ -8,14 +8,14 @@
- use super::{lock::Backend, lock::Guard, LockClassKey};
- use crate::{
-     ffi::{c_int, c_long},
--    str::{CStr, CStrExt as _},
-+    str::CStrExt as _,
-     task::{
-         MAX_SCHEDULE_TIMEOUT, TASK_FREEZABLE, TASK_INTERRUPTIBLE, TASK_NORMAL, TASK_UNINTERRUPTIBLE,
-     },
-     time::Jiffies,
-     types::Opaque,
- };
--use core::{marker::PhantomPinned, pin::Pin, ptr};
-+use core::{ffi::CStr, marker::PhantomPinned, pin::Pin, ptr};
- use pin_init::{pin_data, pin_init, PinInit};
+ int etm_perf_add_symlink_cscfg(struct device *dev, struct cscfg_config_desc *config_desc)
+diff --git a/drivers/hwtracing/coresight/coresight-etm3x-sysfs.c b/drivers/hwtracing/coresight/coresight-etm3x-sysfs.c
+index 762109307b86..4868eb05a312 100644
+--- a/drivers/hwtracing/coresight/coresight-etm3x-sysfs.c
++++ b/drivers/hwtracing/coresight/coresight-etm3x-sysfs.c
+@@ -1182,7 +1182,7 @@ static ssize_t cpu_show(struct device *dev,
+ 	struct etm_drvdata *drvdata = dev_get_drvdata(dev->parent);
  
- /// Creates a [`CondVar`] initialiser with the given name and a newly-created lock class.
-diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-index a777a22976e0..21deff0bb13b 100644
---- a/rust/kernel/sync/lock.rs
-+++ b/rust/kernel/sync/lock.rs
-@@ -7,10 +7,10 @@
+ 	val = drvdata->cpu;
+-	return scnprintf(buf, PAGE_SIZE, "%d\n", val);
++	return sysfs_emit(buf, "%d\n", val);
  
- use super::LockClassKey;
- use crate::{
--    str::{CStr, CStrExt as _},
-+    str::CStrExt as _,
-     types::{NotThreadSafe, Opaque, ScopeGuard},
- };
--use core::{cell::UnsafeCell, marker::PhantomPinned, pin::Pin};
-+use core::{cell::UnsafeCell, ffi::CStr, marker::PhantomPinned, pin::Pin};
- use pin_init::{pin_data, pin_init, PinInit};
+ }
+ static DEVICE_ATTR_RO(cpu);
+diff --git a/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c b/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
+index ab251865b893..7cf4045cc748 100644
+--- a/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
++++ b/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
+@@ -63,7 +63,7 @@ static ssize_t nr_pe_cmp_show(struct device *dev,
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
  
- pub mod mutex;
-diff --git a/rust/kernel/sync/lock/global.rs b/rust/kernel/sync/lock/global.rs
-index 9caa9b419f09..ab5a3947fdd6 100644
---- a/rust/kernel/sync/lock/global.rs
-+++ b/rust/kernel/sync/lock/global.rs
-@@ -5,13 +5,14 @@
- //! Support for defining statics containing locks.
+ 	val = drvdata->nr_pe_cmp;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ static DEVICE_ATTR_RO(nr_pe_cmp);
  
- use crate::{
--    str::{CStr, CStrExt as _},
-+    str::CStrExt as _,
-     sync::lock::{Backend, Guard, Lock},
-     sync::{LockClassKey, LockedBy},
-     types::Opaque,
- };
- use core::{
-     cell::UnsafeCell,
-+    ffi::CStr,
-     marker::{PhantomData, PhantomPinned},
-     pin::Pin,
- };
-@@ -267,7 +268,7 @@ macro_rules! global_lock {
-         $pub enum $name {}
+@@ -75,7 +75,7 @@ static ssize_t nr_addr_cmp_show(struct device *dev,
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
  
-         impl $crate::sync::lock::GlobalLockBackend for $name {
--            const NAME: &'static $crate::str::CStr =
-+            const NAME: &'static ::core::ffi::CStr =
-                 $crate::str_to_cstr!(::core::stringify!($name));
-             type Item = $valuety;
-             type Backend = $crate::global_lock_inner!(backend $kind);
-diff --git a/rust/kernel/sync/poll.rs b/rust/kernel/sync/poll.rs
-index d7e6e59e124b..bf2fb24d04ea 100644
---- a/rust/kernel/sync/poll.rs
-+++ b/rust/kernel/sync/poll.rs
-@@ -11,6 +11,7 @@
-     sync::{CondVar, LockClassKey},
-     types::Opaque,
- };
-+use core::ffi::CStr;
- use core::ops::Deref;
+ 	val = drvdata->nr_addr_cmp;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ static DEVICE_ATTR_RO(nr_addr_cmp);
  
- /// Creates a [`PollCondVar`] initialiser with the given name and a newly-created lock class.
-diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
-index dbec533fd31f..bb3f917204f8 100644
---- a/rust/kernel/workqueue.rs
-+++ b/rust/kernel/workqueue.rs
-@@ -135,6 +135,7 @@
+@@ -87,7 +87,7 @@ static ssize_t nr_cntr_show(struct device *dev,
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
  
- use crate::alloc::{AllocError, Flags};
- use crate::{prelude::*, sync::Arc, sync::LockClassKey, types::Opaque};
-+use core::ffi::CStr;
- use core::marker::PhantomData;
+ 	val = drvdata->nr_cntr;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ static DEVICE_ATTR_RO(nr_cntr);
  
- /// Creates a [`Work`] initialiser with the given name and a newly-created lock class.
-diff --git a/rust/macros/module.rs b/rust/macros/module.rs
-index ec528cd86db5..5ed01f95db53 100644
---- a/rust/macros/module.rs
-+++ b/rust/macros/module.rs
-@@ -234,7 +234,7 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream {
-             type LocalModule = {type_};
+@@ -99,7 +99,7 @@ static ssize_t nr_ext_inp_show(struct device *dev,
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
  
-             impl ::kernel::ModuleMetadata for {type_} {{
--                const NAME: &'static ::kernel::str::CStr = c\"{name}\";
-+                const NAME: &'static ::core::ffi::CStr = c\"{name}\";
-             }}
+ 	val = drvdata->nr_ext_inp;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ static DEVICE_ATTR_RO(nr_ext_inp);
  
-             // Double nested modules, since then nobody can access the public items inside.
-diff --git a/samples/rust/rust_configfs.rs b/samples/rust/rust_configfs.rs
-index 4f362be5c7df..29514806bc27 100644
---- a/samples/rust/rust_configfs.rs
-+++ b/samples/rust/rust_configfs.rs
-@@ -10,6 +10,8 @@
- use kernel::prelude::*;
- use kernel::sync::Mutex;
+@@ -111,7 +111,7 @@ static ssize_t numcidc_show(struct device *dev,
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
  
-+use core::ffi::CStr;
-+
- module! {
-     type: RustConfigfs,
-     name: "rust_configfs",
-diff --git a/samples/rust/rust_driver_auxiliary.rs b/samples/rust/rust_driver_auxiliary.rs
-index 0b38729bbab7..691df473d2fd 100644
---- a/samples/rust/rust_driver_auxiliary.rs
-+++ b/samples/rust/rust_driver_auxiliary.rs
-@@ -5,10 +5,11 @@
- //! To make this driver probe, QEMU must be run with `-device pci-testdev`.
+ 	val = drvdata->numcidc;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ static DEVICE_ATTR_RO(numcidc);
  
- use kernel::{
--    auxiliary, bindings, device::Core, driver, error::Error, pci, prelude::*, str::CStr,
--    InPlaceModule,
-+    auxiliary, bindings, device::Core, driver, error::Error, pci, prelude::*, InPlaceModule,
- };
+@@ -123,7 +123,7 @@ static ssize_t numvmidc_show(struct device *dev,
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
  
-+use core::ffi::CStr;
-+
- use pin_init::PinInit;
+ 	val = drvdata->numvmidc;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ static DEVICE_ATTR_RO(numvmidc);
  
- const MODULE_NAME: &CStr = <LocalModule as kernel::ModuleMetadata>::NAME;
-
+@@ -135,7 +135,7 @@ static ssize_t nrseqstate_show(struct device *dev,
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
+ 
+ 	val = drvdata->nrseqstate;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ static DEVICE_ATTR_RO(nrseqstate);
+ 
+@@ -147,7 +147,7 @@ static ssize_t nr_resource_show(struct device *dev,
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
+ 
+ 	val = drvdata->nr_resource;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ static DEVICE_ATTR_RO(nr_resource);
+ 
+@@ -159,7 +159,7 @@ static ssize_t nr_ss_cmp_show(struct device *dev,
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
+ 
+ 	val = drvdata->nr_ss_cmp;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ static DEVICE_ATTR_RO(nr_ss_cmp);
+ 
+@@ -287,7 +287,7 @@ static ssize_t mode_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->mode;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t mode_store(struct device *dev,
+@@ -453,7 +453,7 @@ static ssize_t pe_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->pe_sel;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t pe_store(struct device *dev,
+@@ -488,7 +488,7 @@ static ssize_t event_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->eventctrl0;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t event_store(struct device *dev,
+@@ -537,7 +537,7 @@ static ssize_t event_instren_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = FIELD_GET(TRCEVENTCTL1R_INSTEN_MASK, config->eventctrl1);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t event_instren_store(struct device *dev,
+@@ -593,7 +593,7 @@ static ssize_t event_ts_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->ts_ctrl;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t event_ts_store(struct device *dev,
+@@ -623,7 +623,7 @@ static ssize_t syncfreq_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->syncfreq;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t syncfreq_store(struct device *dev,
+@@ -653,7 +653,7 @@ static ssize_t cyc_threshold_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->ccctlr;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t cyc_threshold_store(struct device *dev,
+@@ -686,7 +686,7 @@ static ssize_t bb_ctrl_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->bb_ctrl;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t bb_ctrl_store(struct device *dev,
+@@ -726,7 +726,7 @@ static ssize_t event_vinst_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = FIELD_GET(TRCVICTLR_EVENT_MASK, config->vinst_ctrl);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t event_vinst_store(struct device *dev,
+@@ -758,7 +758,7 @@ static ssize_t s_exlevel_vinst_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = FIELD_GET(TRCVICTLR_EXLEVEL_S_MASK, config->vinst_ctrl);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t s_exlevel_vinst_store(struct device *dev,
+@@ -793,7 +793,7 @@ static ssize_t ns_exlevel_vinst_show(struct device *dev,
+ 
+ 	/* EXLEVEL_NS, bits[23:20] */
+ 	val = FIELD_GET(TRCVICTLR_EXLEVEL_NS_MASK, config->vinst_ctrl);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t ns_exlevel_vinst_store(struct device *dev,
+@@ -827,7 +827,7 @@ static ssize_t addr_idx_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->addr_idx;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t addr_idx_store(struct device *dev,
+@@ -866,7 +866,7 @@ static ssize_t addr_instdatatype_show(struct device *dev,
+ 	raw_spin_lock(&drvdata->spinlock);
+ 	idx = config->addr_idx;
+ 	val = FIELD_GET(TRCACATRn_TYPE_MASK, config->addr_acc[idx]);
+-	len = scnprintf(buf, PAGE_SIZE, "%s\n",
++	len = sysfs_emit(buf, "%s\n",
+ 			val == TRCACATRn_TYPE_ADDR ? "instr" :
+ 			(val == TRCACATRn_TYPE_DATA_LOAD_ADDR ? "data_load" :
+ 			(val == TRCACATRn_TYPE_DATA_STORE_ADDR ? "data_store" :
+@@ -918,7 +918,7 @@ static ssize_t addr_single_show(struct device *dev,
+ 	}
+ 	val = (unsigned long)config->addr_val[idx];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t addr_single_store(struct device *dev,
+@@ -974,7 +974,7 @@ static ssize_t addr_range_show(struct device *dev,
+ 	val1 = (unsigned long)config->addr_val[idx];
+ 	val2 = (unsigned long)config->addr_val[idx + 1];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx %#lx\n", val1, val2);
++	return sysfs_emit(buf, "%#lx %#lx\n", val1, val2);
+ }
+ 
+ static ssize_t addr_range_store(struct device *dev,
+@@ -1049,7 +1049,7 @@ static ssize_t addr_start_show(struct device *dev,
+ 
+ 	val = (unsigned long)config->addr_val[idx];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t addr_start_store(struct device *dev,
+@@ -1104,7 +1104,7 @@ static ssize_t addr_stop_show(struct device *dev,
+ 
+ 	val = (unsigned long)config->addr_val[idx];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t addr_stop_store(struct device *dev,
+@@ -1152,7 +1152,7 @@ static ssize_t addr_ctxtype_show(struct device *dev,
+ 	idx = config->addr_idx;
+ 	/* CONTEXTTYPE, bits[3:2] */
+ 	val = FIELD_GET(TRCACATRn_CONTEXTTYPE_MASK, config->addr_acc[idx]);
+-	len = scnprintf(buf, PAGE_SIZE, "%s\n", val == ETM_CTX_NONE ? "none" :
++	len = sysfs_emit(buf, "%s\n", val == ETM_CTX_NONE ? "none" :
+ 			(val == ETM_CTX_CTXID ? "ctxid" :
+ 			(val == ETM_CTX_VMID ? "vmid" : "all")));
+ 	raw_spin_unlock(&drvdata->spinlock);
+@@ -1219,7 +1219,7 @@ static ssize_t addr_context_show(struct device *dev,
+ 	/* context ID comparator bits[6:4] */
+ 	val = FIELD_GET(TRCACATRn_CONTEXT_MASK, config->addr_acc[idx]);
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t addr_context_store(struct device *dev,
+@@ -1262,7 +1262,7 @@ static ssize_t addr_exlevel_s_ns_show(struct device *dev,
+ 	idx = config->addr_idx;
+ 	val = FIELD_GET(TRCACATRn_EXLEVEL_MASK, config->addr_acc[idx]);
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t addr_exlevel_s_ns_store(struct device *dev,
+@@ -1325,7 +1325,7 @@ static ssize_t addr_cmp_view_show(struct device *dev,
+ 	}
+ 	raw_spin_unlock(&drvdata->spinlock);
+ 	if (addr_type) {
+-		size = scnprintf(buf, PAGE_SIZE, "addr_cmp[%i] %s %#lx", idx,
++		size = sysfs_emit(buf, "addr_cmp[%i] %s %#lx", idx,
+ 				 addr_type_names[addr_type], addr_v);
+ 		if (addr_type == ETM_ADDR_TYPE_RANGE) {
+ 			size += scnprintf(buf + size, PAGE_SIZE - size,
+@@ -1335,7 +1335,7 @@ static ssize_t addr_cmp_view_show(struct device *dev,
+ 		size += scnprintf(buf + size, PAGE_SIZE - size,
+ 				  " ctrl(%#lx)\n", addr_ctrl);
+ 	} else {
+-		size = scnprintf(buf, PAGE_SIZE, "addr_cmp[%i] unused\n", idx);
++		size = sysfs_emit(buf, "addr_cmp[%i] unused\n", idx);
+ 	}
+ 	return size;
+ }
+@@ -1352,7 +1352,7 @@ static ssize_t vinst_pe_cmp_start_stop_show(struct device *dev,
+ 	if (!drvdata->nr_pe_cmp)
+ 		return -EINVAL;
+ 	val = config->vipcssctlr;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ static ssize_t vinst_pe_cmp_start_stop_store(struct device *dev,
+ 					     struct device_attribute *attr,
+@@ -1383,7 +1383,7 @@ static ssize_t seq_idx_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->seq_idx;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t seq_idx_store(struct device *dev,
+@@ -1419,7 +1419,7 @@ static ssize_t seq_state_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->seq_state;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t seq_state_store(struct device *dev,
+@@ -1453,7 +1453,7 @@ static ssize_t seq_event_show(struct device *dev,
+ 	idx = config->seq_idx;
+ 	val = config->seq_ctrl[idx];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t seq_event_store(struct device *dev,
+@@ -1486,7 +1486,7 @@ static ssize_t seq_reset_event_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->seq_rst;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t seq_reset_event_store(struct device *dev,
+@@ -1516,7 +1516,7 @@ static ssize_t cntr_idx_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->cntr_idx;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t cntr_idx_store(struct device *dev,
+@@ -1556,7 +1556,7 @@ static ssize_t cntrldvr_show(struct device *dev,
+ 	idx = config->cntr_idx;
+ 	val = config->cntrldvr[idx];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t cntrldvr_store(struct device *dev,
+@@ -1594,7 +1594,7 @@ static ssize_t cntr_val_show(struct device *dev,
+ 	idx = config->cntr_idx;
+ 	val = config->cntr_val[idx];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t cntr_val_store(struct device *dev,
+@@ -1632,7 +1632,7 @@ static ssize_t cntr_ctrl_show(struct device *dev,
+ 	idx = config->cntr_idx;
+ 	val = config->cntr_ctrl[idx];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t cntr_ctrl_store(struct device *dev,
+@@ -1664,7 +1664,7 @@ static ssize_t res_idx_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->res_idx;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t res_idx_store(struct device *dev,
+@@ -1708,7 +1708,7 @@ static ssize_t res_ctrl_show(struct device *dev,
+ 	idx = config->res_idx;
+ 	val = config->res_ctrl[idx];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t res_ctrl_store(struct device *dev,
+@@ -1746,7 +1746,7 @@ static ssize_t sshot_idx_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->ss_idx;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t sshot_idx_store(struct device *dev,
+@@ -1780,7 +1780,7 @@ static ssize_t sshot_ctrl_show(struct device *dev,
+ 	raw_spin_lock(&drvdata->spinlock);
+ 	val = config->ss_ctrl[config->ss_idx];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t sshot_ctrl_store(struct device *dev,
+@@ -1815,7 +1815,7 @@ static ssize_t sshot_status_show(struct device *dev,
+ 	raw_spin_lock(&drvdata->spinlock);
+ 	val = config->ss_status[config->ss_idx];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ static DEVICE_ATTR_RO(sshot_status);
+ 
+@@ -1830,7 +1830,7 @@ static ssize_t sshot_pe_ctrl_show(struct device *dev,
+ 	raw_spin_lock(&drvdata->spinlock);
+ 	val = config->ss_pe_cmp[config->ss_idx];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t sshot_pe_ctrl_store(struct device *dev,
+@@ -1864,7 +1864,7 @@ static ssize_t ctxid_idx_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->ctxid_idx;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t ctxid_idx_store(struct device *dev,
+@@ -1911,7 +1911,7 @@ static ssize_t ctxid_pid_show(struct device *dev,
+ 	idx = config->ctxid_idx;
+ 	val = (unsigned long)config->ctxid_pid[idx];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t ctxid_pid_store(struct device *dev,
+@@ -1972,7 +1972,7 @@ static ssize_t ctxid_masks_show(struct device *dev,
+ 	val1 = config->ctxid_mask0;
+ 	val2 = config->ctxid_mask1;
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx %#lx\n", val1, val2);
++	return sysfs_emit(buf, "%#lx %#lx\n", val1, val2);
+ }
+ 
+ static ssize_t ctxid_masks_store(struct device *dev,
+@@ -2090,7 +2090,7 @@ static ssize_t vmid_idx_show(struct device *dev,
+ 	struct etmv4_config *config = &drvdata->config;
+ 
+ 	val = config->vmid_idx;
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t vmid_idx_store(struct device *dev,
+@@ -2135,7 +2135,7 @@ static ssize_t vmid_val_show(struct device *dev,
+ 	raw_spin_lock(&drvdata->spinlock);
+ 	val = (unsigned long)config->vmid_val[config->vmid_idx];
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t vmid_val_store(struct device *dev,
+@@ -2187,7 +2187,7 @@ static ssize_t vmid_masks_show(struct device *dev,
+ 	val1 = config->vmid_mask0;
+ 	val2 = config->vmid_mask1;
+ 	raw_spin_unlock(&drvdata->spinlock);
+-	return scnprintf(buf, PAGE_SIZE, "%#lx %#lx\n", val1, val2);
++	return sysfs_emit(buf, "%#lx %#lx\n", val1, val2);
+ }
+ 
+ static ssize_t vmid_masks_store(struct device *dev,
+@@ -2303,7 +2303,7 @@ static ssize_t cpu_show(struct device *dev,
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev->parent);
+ 
+ 	val = drvdata->cpu;
+-	return scnprintf(buf, PAGE_SIZE, "%d\n", val);
++	return sysfs_emit(buf, "%d\n", val);
+ 
+ }
+ static DEVICE_ATTR_RO(cpu);
+@@ -2461,7 +2461,7 @@ static ssize_t coresight_etm4x_reg_show(struct device *dev,
+ 	val = etmv4_cross_read(drvdata, offset);
+ 	pm_runtime_put_sync(dev->parent);
+ 
+-	return scnprintf(buf, PAGE_SIZE, "0x%x\n", val);
++	return sysfs_emit(buf, "0x%x\n", val);
+ }
+ 
+ static bool
+diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+index e45c6c7204b4..fa09a43889d7 100644
+--- a/drivers/hwtracing/coresight/coresight-stm.c
++++ b/drivers/hwtracing/coresight/coresight-stm.c
+@@ -470,7 +470,7 @@ static ssize_t hwevent_enable_show(struct device *dev,
+ 	struct stm_drvdata *drvdata = dev_get_drvdata(dev->parent);
+ 	unsigned long val = drvdata->stmheer;
+ 
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t hwevent_enable_store(struct device *dev,
+@@ -499,7 +499,7 @@ static ssize_t hwevent_select_show(struct device *dev,
+ 	struct stm_drvdata *drvdata = dev_get_drvdata(dev->parent);
+ 	unsigned long val = drvdata->stmhebsr;
+ 
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t hwevent_select_store(struct device *dev,
+@@ -534,7 +534,7 @@ static ssize_t port_select_show(struct device *dev,
+ 		spin_unlock(&drvdata->spinlock);
+ 	}
+ 
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t port_select_store(struct device *dev,
+@@ -581,7 +581,7 @@ static ssize_t port_enable_show(struct device *dev,
+ 		spin_unlock(&drvdata->spinlock);
+ 	}
+ 
+-	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
++	return sysfs_emit(buf, "%#lx\n", val);
+ }
+ 
+ static ssize_t port_enable_store(struct device *dev,
 -- 
-2.50.0
+2.47.1
 
 
