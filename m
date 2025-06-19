@@ -1,155 +1,131 @@
-Return-Path: <linux-kernel+bounces-693873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C044FAE051F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:10:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0F67AE0581
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DF2E1897A2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:11:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1414189F704
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF4D221F26;
-	Thu, 19 Jun 2025 12:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04A6253924;
+	Thu, 19 Jun 2025 12:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XyceUW0V"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSDAlQcx"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B1320B80A
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 12:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5011124E019;
+	Thu, 19 Jun 2025 12:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750335041; cv=none; b=lI4RcslJ0B0iN3rKq9AMvMxXEoo3sy+LbFF0jYA10ouKAz3vWqofa86Y6i+RNOOO4CbjKohUp/C62w1Bg5CvPvICVigB9nJXBJ0qwiNVVHTAeZ/yEXTW9CDdG/Xdw8zwil4HNqlb/f7dfANCCzOAPqF5HClFAoAJPSqsApsgBxE=
+	t=1750335609; cv=none; b=H10zo9oZxMxDOHGf2gMFu7elSGGn3lU9tTFNU+8tKF5RV+oBnO/TX3N350LnOuZoFLuQaXvyvxbD9JADSkloCmgvZA7PQRdxSu2thdS1eKD8bvr7wlEymqG/ZBxjXDbFfTS9ZlyNRhXOSL+wwbsVV+3ojAFkxEKoERJ114zyOco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750335041; c=relaxed/simple;
-	bh=Z1k28oh2bsjAp3J9sxhgKELPLL0pOh9fG5HeC1Y+BL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SvaYu4MVZjEiP4E3GxJBkk6keA4GcYiqjD7KeTWkzywkHe9GntJlrAM7++ZSjNTKyKyt45MaV7ka7QuX0B4bAkLnNn/90lVUbXwLGtGxSmgw0eB6mOPCpORohryJmVGxPhYO13PHwgW/4QfdKiZu01mMeYd45F9dkMw1TizcWHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XyceUW0V; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-450cb2ddd46so4334875e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 05:10:38 -0700 (PDT)
+	s=arc-20240116; t=1750335609; c=relaxed/simple;
+	bh=mhfIBh/bFaJ/GFxVs2Ar3YirycGFXc5ADMl6GKVDQYk=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=V61fFlNcHSln090RK2zM7lHSxpF1lke5D5dRaduIQ9o4+zYUaOzwdKCyhlUHjRtaFOJMZh4KwvoCY0cyuLSJgo1SPLsg+YqI3UWrvcvXtEP8LxrpGU7D8w59FQRXLIcuwdgJfYYBaKn0SRYhq4pNncEeABBTA6NoWHxeEq5Ryqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iSDAlQcx; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a4f379662cso679886f8f.0;
+        Thu, 19 Jun 2025 05:20:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750335037; x=1750939837; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GdGldtwlWNchi8rv7SkT/y3UPzEmCjdby+cLRpS1Y/4=;
-        b=XyceUW0VpaBj4ARN4LGjcsntClzLyhTeF6XYjRnBXg/ncvFVA+rX4G1hPZZQZVlbKn
-         rBazKOWVMRC7YeBPdTnE214kL+1uzucYANZTGNjXccA9aFkeo3P4zCnaeASr6rNW0hQQ
-         gNITWkQAe4W7c58IIPOyxYbFo4DNMfOyWy9freQG+twEVGJaq+e3zCV4OGUMeCQwsg/b
-         3MrMq18D+xbOitATEXDFlu9JMZLK9lpyGRobniIhw8+Ulat8U5kSOaKfyNENTdMffW8r
-         Z/KigykcqXPtSPbQw85FhNFL0kKbvN/Tu/036/7+9qLIrokl3ztjUH58QGZeOt9WBMv3
-         Z9Pg==
+        d=gmail.com; s=20230601; t=1750335605; x=1750940405; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nygRZhXsxMlH28nxkhtm4NH4pDec5lLwDc7T4mx9LAQ=;
+        b=iSDAlQcxa16kTKZdEF4DD0RlM1MZXzGc9XhkM1SmNxhlRxx1WRrm8z4D8wysImR11b
+         LIHuqfP38LySZp0K7bRzRXRNT4A5cLeQH8gUY0XQd8Ci61CTEIcL0zaLhG3pQ/nZ+MyY
+         HxPaU7/XChTTZ8nmyWFURpTzfVl/xSAsqwPH1ukMy+AGwjoG/Sbgw9CUKfslftN04H1i
+         81vN6ztCDL2P3e4rNFuK8YRGDk/FXfvSEJEHCuco8NSknNvc+RaDkVUAdxG76gd3xbh3
+         YeJ3I4+nuBg/GdzV9yQ6m/vls154rbmPAwAzs18eOAp19IbvchYGzV2AyUTZCd5meu5j
+         Bx7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750335037; x=1750939837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1750335605; x=1750940405;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GdGldtwlWNchi8rv7SkT/y3UPzEmCjdby+cLRpS1Y/4=;
-        b=Zavmp0Gjt8ecr0XvZFSqzvILoPQQnVl3ThqOoB+7ZERkDwHDTiRmdZ3u9pzex8kO4B
-         8uUXUTmFDr3DR2floJ6L7bWjciU4WRxdHv44Fo3zyTFa6gWBUivscfZ/VW42E4C7a0XC
-         TihUyo/PSUYRSA2P39zK8ht7RdOc7rPgIYQxao8g8ShCCfdaOtQxG9BQYxwoeBw/uNkF
-         tS3/On1ISp6uRqiB3YBKk9pTfh4XdPPeHCfeurYKbsuAMGy3/8S3ieoBddezgYL12CN6
-         xG8V5p1rqTmCfXKTnOQgIRMV0NlxTRxxspQhL/zlsv2PI+Du0FmBne9jD7rbWzt/ZVxY
-         Qaiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpRoY31AsC7FqflO7im9XPeZiej7n6L94G5ZWe708u/NGc+L0l2QSvVBIR8IAsFYxr4mbsBZToHVr1hFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR144h2GG78gByXvByywidc3XJP45cXneYa/p8r5QL4/s0Q/se
-	UIGHROrnsQ9wefIexQiAr82XgbBaqiLoN4Gf0Hpwro9/1qynduuKub15ayQeZqzdYoQ=
-X-Gm-Gg: ASbGncuXTZjiqMTVMXHKPGqRR1nnpS204VZdrA/oC72zXI25dY8oladDQI9+IM3/FKc
-	z8jhhHBCcXTqOG5kXMH/LlBvCOXirySDcmn4LssnaYwfBtbJHDKcvZ2mZ+7UnzEtRaWbpiWwyIL
-	dG8qwIXlVDxygWSI3g0pfE9+TM6FjvDHss1+HHvHfSgGGcdRtUhD83tRDKMoQTCoFi9XaYHQNE1
-	bD4UGkuKji0B4E1n3OamY9f8p9/ugE4FnWqStiY3cHuevbI8dKA+a0XDikZGaRQN2sTkEHTeVnS
-	GaBiNeTP5L9iiHzXmzRQb2us870sfd5kzY2JP6up0uIH0MSLAaAlXOgYY4R90UnhYa2/tzrr4tQ
-	=
-X-Google-Smtp-Source: AGHT+IHGGooM/miBYffjvJ8pX+BjB/MPFrva4W86C087uwV8r28dL9eXqgzrXWtmG3yVk4veuPOJVg==
-X-Received: by 2002:a05:600c:1f94:b0:442:f956:53f9 with SMTP id 5b1f17b1804b1-4533caa6567mr222030495e9.18.1750335036830;
-        Thu, 19 Jun 2025 05:10:36 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535ebcecdcsm26406435e9.36.2025.06.19.05.10.35
+        bh=nygRZhXsxMlH28nxkhtm4NH4pDec5lLwDc7T4mx9LAQ=;
+        b=K7MQCuJDs05UPDp+Hayx4nJyHfPf0Wfspsb0ZDmY7DvimTaj8jGK/ZLvSP5JMWRU7q
+         GmHjDvu7NDxII6eP9UzqDGkEt8aSse5S1yU4WkAb92kWhMBKpauKqO8uZ3AnUTEY/+Go
+         Gx/QtqtdBHohTJ13wEuIU/FVyGptyDS6nA9CSo4lqoOss09wdDMEzG2IKSZiq+duLJ1f
+         1DIEHkS9Cw7sKnQZrmf1ryLu8nAPzgtvQtybdZh4PDk7p3g6BwrKVn+BzjRuYOAFNQOL
+         fkI/+s8l10WN3k32vPHORKv1aBpEvxThM2JT3Sehxxa5rLu14f2EXIEOIs6sWKLdFbH5
+         iwag==
+X-Forwarded-Encrypted: i=1; AJvYcCU1jYyZLXFy6el+M+gL/q+wWUF35iN/XtpaYnL+9LGnBv3BwtWnKLL5Cm+sfpiXThrJucPOAusAxcZMf9g=@vger.kernel.org, AJvYcCVrpV/XqTQ6Ndq6hEYzdC4cIkOf3lcuY/X2+89cp15R9p+n70PD7gCArCi4LIUur2bJUzwMWFrL@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJqSsQ6rgDqA50F4PYEc4MXeWeIPVXPHHbwJrQnEgBG2DkJUt8
+	CU0TQMdFSai8bHL2S9OkzlYq2MHt3wklaa5KvyQ8m8PmohuZiEu35mxw
+X-Gm-Gg: ASbGncs16yM+S+Vdx6XHc07SCDwiCNTi02YCufs5oasJ0SBhC0I3CMKAPL+4LW99hRR
+	p2p1uSupSlMlF7KHFM/GkHu9M0k8EIGvn2DlG1pYO9yzwxI+G+R0c5nBf2ZB4jTLG4mgaCxdInp
+	+Ei9EWsSQ1hsr9nN36pQUZxk973T3yNBpPLgg6LBvelbptx/n4tubEqh9tRxoqwaXVwWdv5SZcj
+	9M3nVFYi1f6AjC9T7AGm+dSA05p7cSDMGX78NP7VY+YkleTqNF5etAbuV7woVcaYa3SxhtdrHP8
+	YPb1x8J/iA5HmfHRORoPLvbFuLF1GB4vsiMDdzpNR+rI1teKWdRvlKRlbUFmdzSdeNDF1Uv5
+X-Google-Smtp-Source: AGHT+IGe/eW8uV97j+Ytu4ZG/Iy5t6+Hp3owg5exZAVJPvvkIYpSPp5SobusIEtfHV7zrOM0RAnADw==
+X-Received: by 2002:a05:6000:40df:b0:3a4:eb92:39b6 with SMTP id ffacd0b85a97d-3a572e58768mr15357688f8f.54.1750335605284;
+        Thu, 19 Jun 2025 05:20:05 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:ad83:585e:86eb:3f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a589092d1asm7161585f8f.24.2025.06.19.05.20.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 05:10:36 -0700 (PDT)
-Date: Thu, 19 Jun 2025 14:10:34 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Cc: Tejun Heo <tj@kernel.org>, Waiman Long <llong@redhat.com>, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, muchun.song@linux.dev
-Subject: Re: [External] Re: [PATCH] cpuset: introduce non-blocking
- cpuset.mems setting option
-Message-ID: <jtjtb7sn7kxl7rw7tfdo2sn73rlre4w3iuvbk5hrolyimq7ixx@mo4k6r663tx2>
-References: <aC4J9HDo2LKXYG6l@slm.duckdns.org>
- <CACSyD1MvwPT7i5_PnEp32seeb7X_svdCeFtN6neJ0=QPY1hDsw@mail.gmail.com>
- <aC90-jGtD_tJiP5K@slm.duckdns.org>
- <CACSyD1P+wuSP2jhMsLHBAXDxGoBkWzK54S5BRzh63yby4g0OHw@mail.gmail.com>
- <aDCnnd46qjAvoxZq@slm.duckdns.org>
- <CACSyD1OWe-PkUjmcTtbYCbLi3TrxNQd==-zjo4S9X5Ry3Gwbzg@mail.gmail.com>
- <x7wdhodqgp2qcwnwutuuedhe6iuzj2dqzhazallamsyzdxsf7k@n2tcicd4ai3u>
- <CACSyD1My_UJxhDHNjvRmTyNKHcxjhQr0_SH=wXrOFd+dYa0h4A@mail.gmail.com>
- <pkzbpeu7w6jc6tzijldiqutv4maft2nyfjsbmobpjfr5kkn27j@e6bflvg7mewi>
- <CACSyD1MhCaAzycSUSQfirLaLp22mcabVr3jfaRbJqFRkX2VoFw@mail.gmail.com>
+        Thu, 19 Jun 2025 05:20:04 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
+ <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
+ <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
+ Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
+ <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
+ Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Ruben
+ Wauters" <rubenru09@aol.com>,  "Shuah Khan" <skhan@linuxfoundation.org>,
+  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
+  linux-kernel@vger.kernel.org,  lkmm@lists.linux.dev,
+  netdev@vger.kernel.org,  peterz@infradead.org,  stern@rowland.harvard.edu
+Subject: Re: [PATCH v7 12/17] MAINTAINERS: add netlink_yml_parser.py to
+ linux-doc
+In-Reply-To: <4077605f84d7ba6423dcb5fda4e96ac950856f1d.1750315578.git.mchehab+huawei@kernel.org>
+Date: Thu, 19 Jun 2025 13:10:38 +0100
+Message-ID: <m2cyb0extt.fsf@gmail.com>
+References: <cover.1750315578.git.mchehab+huawei@kernel.org>
+	<4077605f84d7ba6423dcb5fda4e96ac950856f1d.1750315578.git.mchehab+huawei@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nops24fazq2mqnts"
-Content-Disposition: inline
-In-Reply-To: <CACSyD1MhCaAzycSUSQfirLaLp22mcabVr3jfaRbJqFRkX2VoFw@mail.gmail.com>
+Content-Type: text/plain
 
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
---nops24fazq2mqnts
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [External] Re: [PATCH] cpuset: introduce non-blocking
- cpuset.mems setting option
-MIME-Version: 1.0
+> The documentation build depends on the parsing code
+> at ynl_gen_rst.py. Ensure that changes to it will be c/c
+> to linux-doc ML and maintainers by adding an entry for
+> it. This way, if a change there would affect the build,
+> or the minimal version required for Python, doc developers
+> may know in advance.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Reviewed-by: Breno Leitao <leitao@debian.org>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a92290fffa16..caa3425e5755 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7202,6 +7202,7 @@ F:	scripts/get_abi.py
+>  F:	scripts/kernel-doc*
+>  F:	scripts/lib/abi/*
+>  F:	scripts/lib/kdoc/*
+> +F:	tools/net/ynl/pyynl/netlink_yml_parser.py
 
-On Thu, Jun 19, 2025 at 11:49:58AM +0800, Zhongkun He <hezhongkun.hzk@byted=
-ance.com> wrote:
-> In our scenario, when we shrink the allowed cpuset.mems =E2=80=94for exam=
-ple,
-> from nodes 1, 2, 3 to just nodes 2,3=E2=80=94there may still be a large n=
-umber of pages
-> residing on node 1. Currently, modifying cpuset.mems triggers synchronous=
- memory
-> migration, which results in prolonged and unacceptable service downtime u=
-nder
-> cgroup v2. This behavior has become a major blocker for us in adopting
-> cgroup v2.
->=20
-> Tejun suggested adding an interface to control the migration rate, and
-> I plan to try that later.
+Wrong path now, right?
 
-It sounds unnecessarily not work-conserving and in principle adding
-cond_resched()s (or eventually having a preemptible kernel) should
-achieve the same. Or how would that project onto service metrics?
-(But I'm not familiar with this migration path, thus I was asking about
-the contention points.)
-
-> However, we believe that the cpuset.migrate interface in cgroup v1 is
-> also sufficient for our use case and is easier to work with.  :)
-
-Too easy I think, it'd make cpuset.mems only "advisory" constraint. (I
-know it could be justified too but perhaps not as a solution to costly
-migrations.)
-
-Michal
-
---nops24fazq2mqnts
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaFP+OAAKCRB+PQLnlNv4
-CA8yAQDkZ52REH93AgKN4IVKz0LKroFqjd21SWk9JuwSDHgn+AD8CRYl7w7CtgNq
-nrZtwMOpxzenNE9b0wkmSdmWWYlidwI=
-=+giD
------END PGP SIGNATURE-----
-
---nops24fazq2mqnts--
+>  F:	scripts/sphinx-pre-install
+>  X:	Documentation/ABI/
+>  X:	Documentation/admin-guide/media/
 
