@@ -1,131 +1,253 @@
-Return-Path: <linux-kernel+bounces-693899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F67AE0581
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:22:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D69AE0520
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1414189F704
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:22:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E177C18988CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04A6253924;
-	Thu, 19 Jun 2025 12:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSDAlQcx"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5011124E019;
-	Thu, 19 Jun 2025 12:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AB322F76F;
+	Thu, 19 Jun 2025 12:10:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC472221F26;
+	Thu, 19 Jun 2025 12:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750335609; cv=none; b=H10zo9oZxMxDOHGf2gMFu7elSGGn3lU9tTFNU+8tKF5RV+oBnO/TX3N350LnOuZoFLuQaXvyvxbD9JADSkloCmgvZA7PQRdxSu2thdS1eKD8bvr7wlEymqG/ZBxjXDbFfTS9ZlyNRhXOSL+wwbsVV+3ojAFkxEKoERJ114zyOco=
+	t=1750335053; cv=none; b=Ewu6oKfwiY/QHGnd7LsNcV/S9IdtDTBSZmxspe1Tp1QOh2jaVogsZzzCj0dH6xkdSbeiFwqv65XtwPtuyZT6HEqaLGVD+dmZzbzhSobGR5LXq8w0p7wreg4xPLeZnXYnqktLIy5ejVVQiWo2p0CcVN7+xv9tTvpj/3Bugn+Xt88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750335609; c=relaxed/simple;
-	bh=mhfIBh/bFaJ/GFxVs2Ar3YirycGFXc5ADMl6GKVDQYk=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=V61fFlNcHSln090RK2zM7lHSxpF1lke5D5dRaduIQ9o4+zYUaOzwdKCyhlUHjRtaFOJMZh4KwvoCY0cyuLSJgo1SPLsg+YqI3UWrvcvXtEP8LxrpGU7D8w59FQRXLIcuwdgJfYYBaKn0SRYhq4pNncEeABBTA6NoWHxeEq5Ryqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iSDAlQcx; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a4f379662cso679886f8f.0;
-        Thu, 19 Jun 2025 05:20:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750335605; x=1750940405; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nygRZhXsxMlH28nxkhtm4NH4pDec5lLwDc7T4mx9LAQ=;
-        b=iSDAlQcxa16kTKZdEF4DD0RlM1MZXzGc9XhkM1SmNxhlRxx1WRrm8z4D8wysImR11b
-         LIHuqfP38LySZp0K7bRzRXRNT4A5cLeQH8gUY0XQd8Ci61CTEIcL0zaLhG3pQ/nZ+MyY
-         HxPaU7/XChTTZ8nmyWFURpTzfVl/xSAsqwPH1ukMy+AGwjoG/Sbgw9CUKfslftN04H1i
-         81vN6ztCDL2P3e4rNFuK8YRGDk/FXfvSEJEHCuco8NSknNvc+RaDkVUAdxG76gd3xbh3
-         YeJ3I4+nuBg/GdzV9yQ6m/vls154rbmPAwAzs18eOAp19IbvchYGzV2AyUTZCd5meu5j
-         Bx7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750335605; x=1750940405;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nygRZhXsxMlH28nxkhtm4NH4pDec5lLwDc7T4mx9LAQ=;
-        b=K7MQCuJDs05UPDp+Hayx4nJyHfPf0Wfspsb0ZDmY7DvimTaj8jGK/ZLvSP5JMWRU7q
-         GmHjDvu7NDxII6eP9UzqDGkEt8aSse5S1yU4WkAb92kWhMBKpauKqO8uZ3AnUTEY/+Go
-         Gx/QtqtdBHohTJ13wEuIU/FVyGptyDS6nA9CSo4lqoOss09wdDMEzG2IKSZiq+duLJ1f
-         1DIEHkS9Cw7sKnQZrmf1ryLu8nAPzgtvQtybdZh4PDk7p3g6BwrKVn+BzjRuYOAFNQOL
-         fkI/+s8l10WN3k32vPHORKv1aBpEvxThM2JT3Sehxxa5rLu14f2EXIEOIs6sWKLdFbH5
-         iwag==
-X-Forwarded-Encrypted: i=1; AJvYcCU1jYyZLXFy6el+M+gL/q+wWUF35iN/XtpaYnL+9LGnBv3BwtWnKLL5Cm+sfpiXThrJucPOAusAxcZMf9g=@vger.kernel.org, AJvYcCVrpV/XqTQ6Ndq6hEYzdC4cIkOf3lcuY/X2+89cp15R9p+n70PD7gCArCi4LIUur2bJUzwMWFrL@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJqSsQ6rgDqA50F4PYEc4MXeWeIPVXPHHbwJrQnEgBG2DkJUt8
-	CU0TQMdFSai8bHL2S9OkzlYq2MHt3wklaa5KvyQ8m8PmohuZiEu35mxw
-X-Gm-Gg: ASbGncs16yM+S+Vdx6XHc07SCDwiCNTi02YCufs5oasJ0SBhC0I3CMKAPL+4LW99hRR
-	p2p1uSupSlMlF7KHFM/GkHu9M0k8EIGvn2DlG1pYO9yzwxI+G+R0c5nBf2ZB4jTLG4mgaCxdInp
-	+Ei9EWsSQ1hsr9nN36pQUZxk973T3yNBpPLgg6LBvelbptx/n4tubEqh9tRxoqwaXVwWdv5SZcj
-	9M3nVFYi1f6AjC9T7AGm+dSA05p7cSDMGX78NP7VY+YkleTqNF5etAbuV7woVcaYa3SxhtdrHP8
-	YPb1x8J/iA5HmfHRORoPLvbFuLF1GB4vsiMDdzpNR+rI1teKWdRvlKRlbUFmdzSdeNDF1Uv5
-X-Google-Smtp-Source: AGHT+IGe/eW8uV97j+Ytu4ZG/Iy5t6+Hp3owg5exZAVJPvvkIYpSPp5SobusIEtfHV7zrOM0RAnADw==
-X-Received: by 2002:a05:6000:40df:b0:3a4:eb92:39b6 with SMTP id ffacd0b85a97d-3a572e58768mr15357688f8f.54.1750335605284;
-        Thu, 19 Jun 2025 05:20:05 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:ad83:585e:86eb:3f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a589092d1asm7161585f8f.24.2025.06.19.05.20.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 05:20:04 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
- <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
- <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
- Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
- <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
- Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Ruben
- Wauters" <rubenru09@aol.com>,  "Shuah Khan" <skhan@linuxfoundation.org>,
-  joel@joelfernandes.org,  linux-kernel-mentees@lists.linux.dev,
-  linux-kernel@vger.kernel.org,  lkmm@lists.linux.dev,
-  netdev@vger.kernel.org,  peterz@infradead.org,  stern@rowland.harvard.edu
-Subject: Re: [PATCH v7 12/17] MAINTAINERS: add netlink_yml_parser.py to
- linux-doc
-In-Reply-To: <4077605f84d7ba6423dcb5fda4e96ac950856f1d.1750315578.git.mchehab+huawei@kernel.org>
-Date: Thu, 19 Jun 2025 13:10:38 +0100
-Message-ID: <m2cyb0extt.fsf@gmail.com>
-References: <cover.1750315578.git.mchehab+huawei@kernel.org>
-	<4077605f84d7ba6423dcb5fda4e96ac950856f1d.1750315578.git.mchehab+huawei@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1750335053; c=relaxed/simple;
+	bh=5oDWHUZd18OQq1CL4ha9noH4a4aaK0KKcofZjfk4ELI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QgKShOXvP/d6WiRxwTo4TjrXjLNl4DYy/lhBoSfKhHvFl/T3qydOYhdbGJzB5B3TZw7BAsnTZyQkLmCFPVBPSs9l8d2jlbazGyxncQNA+ZtjEQUYMz9KIzisY440juS9GUmJHZv/xq6Kl6Fjd2NvRvDfUoZUgKKkpZTLWNscG/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2264A106F;
+	Thu, 19 Jun 2025 05:10:30 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02EB23F66E;
+	Thu, 19 Jun 2025 05:10:46 -0700 (PDT)
+Date: Thu, 19 Jun 2025 13:10:44 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Aleksandr Shubin <privatesub2@gmail.com>, linux-kernel@vger.kernel.org,
+ Conor Dooley <conor.dooley@microchip.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5p?=
+ =?UTF-8?B?Zw==?= <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Cheo Fusi <fusibrandon13@gmail.com>,
+ linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v12 1/3] dt-bindings: pwm: Add binding for Allwinner
+ D1/T113-S3/R329 PWM controller
+Message-ID: <20250619131044.20b45d8d@donnerap.manchester.arm.com>
+In-Reply-To: <20250619094407c4c849f3@mail.local>
+References: <20250427142500.151925-1-privatesub2@gmail.com>
+	<20250427142500.151925-2-privatesub2@gmail.com>
+	<20250512235619.30cff739@minigeek.lan>
+	<20250619094407c4c849f3@mail.local>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On Thu, 19 Jun 2025 11:44:07 +0200
+Alexandre Belloni <alexandre.belloni@bootlin.com> wrote:
 
-> The documentation build depends on the parsing code
-> at ynl_gen_rst.py. Ensure that changes to it will be c/c
-> to linux-doc ML and maintainers by adding an entry for
-> it. This way, if a change there would affect the build,
-> or the minimal version required for Python, doc developers
-> may know in advance.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Reviewed-by: Breno Leitao <leitao@debian.org>
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a92290fffa16..caa3425e5755 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7202,6 +7202,7 @@ F:	scripts/get_abi.py
->  F:	scripts/kernel-doc*
->  F:	scripts/lib/abi/*
->  F:	scripts/lib/kdoc/*
-> +F:	tools/net/ynl/pyynl/netlink_yml_parser.py
+Hi Alexandre,
 
-Wrong path now, right?
+> On 12/05/2025 23:56:19+0100, Andre Przywara wrote:
+> > On Sun, 27 Apr 2025 17:24:53 +0300
+> > Aleksandr Shubin <privatesub2@gmail.com> wrote:
+> > 
+> > Hi,
+> >   
+> > > Allwinner's D1, T113-S3 and R329 SoCs have a new pwm
+> > > controller witch is different from the previous pwm-sun4i.
+> > > 
+> > > The D1 and T113 are identical in terms of peripherals,
+> > > they differ only in the architecture of the CPU core, and
+> > > even share the majority of their DT. Because of that,
+> > > using the same compatible makes sense.
+> > > The R329 is a different SoC though, and should have
+> > > a different compatible string added, especially as there
+> > > is a difference in the number of channels.
+> > > 
+> > > D1 and T113s SoCs have one PWM controller with 8 channels.
+> > > R329 SoC has two PWM controllers in both power domains, one of
+> > > them has 9 channels (CPUX one) and the other has 6 (CPUS one).
+> > > 
+> > > Add a device tree binding for them.
+> > > 
+> > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > > Signed-off-by: Aleksandr Shubin <privatesub2@gmail.com>
+> > > ---
+> > >  .../bindings/pwm/allwinner,sun20i-pwm.yaml    | 84 +++++++++++++++++++
+> > >  1 file changed, 84 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
+> > > new file mode 100644
+> > > index 000000000000..4b25e94a8e46
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
+> > > @@ -0,0 +1,84 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/pwm/allwinner,sun20i-pwm.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Allwinner D1, T113-S3 and R329 PWM
+> > > +
+> > > +maintainers:
+> > > +  - Aleksandr Shubin <privatesub2@gmail.com>
+> > > +  - Brandon Cheo Fusi <fusibrandon13@gmail.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    oneOf:
+> > > +      - const: allwinner,sun20i-d1-pwm
+> > > +      - items:
+> > > +          - const: allwinner,sun50i-r329-pwm
+> > > +          - const: allwinner,sun20i-d1-pwm
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  "#pwm-cells":
+> > > +    const: 3
+> > > +
+> > > +  clocks:
+> > > +    items:
+> > > +      - description: Bus clock
+> > > +      - description: 24 MHz oscillator
+> > > +      - description: APB clock
+> > > +
+> > > +  clock-names:
+> > > +    items:
+> > > +      - const: bus
+> > > +      - const: hosc
+> > > +      - const: apb
+> > > +
+> > > +  resets:
+> > > +    maxItems: 1
+> > > +
+> > > +  allwinner,npwms:
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    description: The number of PWM channels configured for this instance
+> > > +    enum: [6, 8, 9]  
+> > 
+> > Do we really need to be so restrictive here? The IP has an
+> > "architectural" limit of 16 channels (due to the MMIO register layout
+> > and status/control bits usage in some registers), so can't we just leave
+> > this value to be anything between 1 and 16 here? If people configure
+> > this wrongly, it's their fault, I'd say? Without confining this further
+> > based on the respective compatible strings this enum is less useful
+> > anyway, I think. The Allwinner A523 uses the same IP, and supports all
+> > 16 channels, the V853 implements 12, that's what I quickly found
+> > already, and there might be more examples in the future, so I'd rather
+> > open this up.
+> >   
+> 
+> Do we really need this property? I feel like the number of PWM channels should be
+> something the driver could infer from the compatible string as we are going to
+> have one compatible string per SoC anyway.
 
->  F:	scripts/sphinx-pre-install
->  X:	Documentation/ABI/
->  X:	Documentation/admin-guide/media/
+Well yes, this would work, but I feel like it creates unnecessary churn to
+touch the driver every time some new SoC with the same IP pops up, and
+where just the number of channels is different - see above for a list of
+SoCs we already know about, and there are more in the pipe. It also means
+stable kernels would already work.
+
+And after all the code is perfectly able to handle this: the channel
+numbers used come from the PWM users in the DT, and using non-existing
+channel numbers just would not make sense. I can run some experiments, but
+I wonder if programming an out-of-range channel would actually do anything
+harmful at all - my hunch is it would just do nothing, so there is no
+risk even if the DT specifies a wrong number.
+
+So I wonder if the channel limitation is really needed at all. If the SoC
+just implements six channels, there would simply be no pin available for
+channel #6 or #7, and no PWM user would ever request those channels.
+
+But regardless of that, I would really like to have just one fallback
+compatible string, covering all SoCs that have compatible IP.
+
+Cheers,
+Andre
+
+
+> 
+> > > +
+> > > +allOf:
+> > > +  - $ref: pwm.yaml#
+> > > +
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            const: allwinner,sun50i-r329-pwm
+> > > +
+> > > +    then:
+> > > +      required:
+> > > +        - allwinner,npwms  
+> > 
+> > Can't we just simplify this by always requiring this property? As
+> > mentioned, there will be more SoCs with different values, so just
+> > omitting this for the D1 seems odd.
+> > 
+> > Cheers,
+> > Andre
+> > 
+> >   
+> > > +
+> > > +unevaluatedProperties: false
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - "#pwm-cells"
+> > > +  - clocks
+> > > +  - clock-names
+> > > +  - resets
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    #include <dt-bindings/clock/sun20i-d1-ccu.h>
+> > > +    #include <dt-bindings/reset/sun20i-d1-ccu.h>
+> > > +
+> > > +    pwm: pwm@2000c00 {
+> > > +      compatible = "allwinner,sun20i-d1-pwm";
+> > > +      reg = <0x02000c00 0x400>;
+> > > +      clocks = <&ccu CLK_BUS_PWM>, <&dcxo>, <&ccu CLK_APB0>;
+> > > +      clock-names = "bus", "hosc", "apb";
+> > > +      resets = <&ccu RST_BUS_PWM>;
+> > > +      #pwm-cells = <0x3>;
+> > > +    };
+> > > +
+> > > +...  
+> > 
+> > 
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv  
+> 
+
 
