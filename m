@@ -1,183 +1,183 @@
-Return-Path: <linux-kernel+bounces-693666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7421AE01FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:47:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E837AE01F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF4F01BC1EE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:47:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E4317A7E9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DFC220F55;
-	Thu, 19 Jun 2025 09:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D87D220F3A;
+	Thu, 19 Jun 2025 09:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKt1VgKE"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="evWXrDm0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A35521B9C0;
-	Thu, 19 Jun 2025 09:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4B320551C;
+	Thu, 19 Jun 2025 09:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750326426; cv=none; b=Ir+3VBuA7HZyYX5rtKzNcnMmipCge7zd//qCu0+f7WoeYFLLdNz82lnU0tOzoTrDWfDnDBGEc8TvlcFumMjgfV634D++cbIXvQlRkqqMqoMe7xNuVQidRXI5dj11so+InSR5OJDtcgXU9KSiWOCMBL6SsICW1vYA7xagyyTttGg=
+	t=1750326375; cv=none; b=qs6Q8yFEwDWUoWsgttBzFPrX06gDIz/iMvkJSUd7N7DR6g7WLaygRypeJYLxjn/U3bsWwhFTHcN1aoniIsfqpQy6oVrk0sF25oykmcczNVY6Pk300+u1+5OL2yMG4gcHTfwGQeO5l9YwApmzFs8db9CH77zTSSyM9d1vEScGHCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750326426; c=relaxed/simple;
-	bh=jo4S4oP37pMlRWEMLh1A4wsCbWwOGpq0aSS3GjoaWMQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s7kqdneMVA2R7khvFzf07/P2oYUeaq520qFqvPq7gbP4G8ENJ8aImyO6zmBwvvXpi+hEdMG0kyrMVLFDD2rU/HozulMpl2Dh7LwOJCVwekSq16Yi67kvktDUEkWY2qZxKNtl0lQ7JsWtM+8jBJg3W+qa9W7CY+n5U1Hv4vhtgIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RKt1VgKE; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a4e62619afso81253f8f.1;
-        Thu, 19 Jun 2025 02:47:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750326423; x=1750931223; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3wpyHDstt56CkQjT7Xqq7Dy0LffgxF5WyMGLP3dXWQc=;
-        b=RKt1VgKEWiMgG7Ln7HQGPWN9fCRpkDYYda89yqwmpbEzRNtCGjYmwfsrIZpE1rsSkz
-         LQ+IEPYUrM1qwIaXa8jOgSCy8WG6PZmtJIJDPP+HmU406pMPviyBmN7nt/L/ZO0q+mEI
-         pEPc0ZKTkgEQUqoivQFZhiFqh6EzibIgtlKkfrizOcEAZxClqa6f3NCuRaWBBome8Ula
-         81mqO5xuOvvTnwQVilu3TeFkn4nyHLQavMVPSaDiJjyzntP6Csz1aBX1rzj383rkf9Jt
-         tpMbmOvn6wHWe0sMAsLoaRWP9u9DOCxje1rnnCyXVpDac5fFGt0MOgQzafMrwY4bsmyi
-         NpYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750326423; x=1750931223;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3wpyHDstt56CkQjT7Xqq7Dy0LffgxF5WyMGLP3dXWQc=;
-        b=fMezlSQn/ksKuPIcmnLmyVfQDsgae3JbSjPoAv+qjZG9APO6yDTAkfg4HhUP/gTsyW
-         LWHbj4pxr85LVNRZIAXJS4O4v112uBmreRrTcZPWfhh3YVJDgkhHQh/Rd0ribhRFtZ8r
-         NwkHWFXmKesKjTDDXSLpNg4vRfAJQjCXn+nEyYJEcd5eu7znaiNiebHVOPS1k84iivUn
-         dA6MA6bquJEoNSIopTy87pLTaD3S7llORsLs2UtPyY+mv3uUDiQu8zQffkSFxg9dpvml
-         mTxmhC5hluYRUxIId/tFb74fVmllGb2zM2qJjyASi12MqBOMhEumdmnisPinrjsFyqtH
-         DYmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWeMD9u/YCE4R1fjb7pb1dM17IVUdh04jkKRnRqDQWlmhi8S0BUtCqjw1R7Cgm/oZmtHH98RpB80/omx+N@vger.kernel.org, AJvYcCVysFgtO5Z2d2fP8N7gTqs7g0OE9HCWxi1e8KUyH693wcSQ5XRen7/bx/+K91nH5Ou+JOIAC4Y2@vger.kernel.org, AJvYcCWt96fDRKxNfqNpPMZYW8xdthQ+uVb3pLb3lTczzxl6W1CLWliZJqnKaToNVbno4vV5z80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXyW77sLlR7FM3U4n0X9vlBig7IwhIoE3/mpuQXi/avzdlm61K
-	TGj4QVIWFCUdIDTxcKDWHpRI1q5j3V9etb1OY5XffwupNzQIWde9CLm7
-X-Gm-Gg: ASbGnctUQuyjGucFZXaa9OX+r0RZksgx8ugDlxN6gTO6KdVsfW44UBGrJyayePGgpHJ
-	j783nBGue+8YipTcxhYnlTW9HlwJNIEcVItu6U1M6fqcCJby8eqGxnzOEDRANAt5tVllDdQxdub
-	yxk3AKmJb5k/xwfZ5/Azwr0TIcc8m23h5nbj+66yVY5HWPLI75jNsvyHNH1/3UcM0z3zJL+q/hd
-	W/owQjzBtV3IPSidFSxWG6xPNOyKQmbE8TC+BJNCqTLV/LUAsbnG71n+/Dy7reBhf0ToOgQQgH1
-	xZUt5jQIpa+J/ehJGtTWgo7a8TH3FnF4zbnhV4++dFNsUBSE+/YHnR7KWdDX2VsJspewb5Sh4J/
-	KH4/TQv+ptLZg60RBmLLTSvAAuW385BLi9Xt2/OFyl0/ZvOZy3udQtmCDcNnmaYM8hpS0g9ZuXd
-	o=
-X-Google-Smtp-Source: AGHT+IEpqro60YlzzzeszDwSvToDBSiVTr/feKFQAwvdfZL6g25ljawMqwhjbgmAVFDKx/RglSW7ng==
-X-Received: by 2002:a05:6000:1789:b0:3a5:324a:9bd with SMTP id ffacd0b85a97d-3a585f2ec3emr3358471f8f.2.1750326423230;
-        Thu, 19 Jun 2025 02:47:03 -0700 (PDT)
-Received: from thomas-precision3591.home (2a01cb00014ec3008c7e3874bfd786a1.ipv6.abo.wanadoo.fr. [2a01:cb00:14e:c300:8c7e:3874:bfd7:86a1])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a568b089b5sm18825847f8f.48.2025.06.19.02.47.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 02:47:02 -0700 (PDT)
-From: Thomas Fourier <fourier.thomas@gmail.com>
-To: 
-Cc: Thomas Fourier <fourier.thomas@gmail.com>,
-	Shannon Nelson <shannon.nelson@amd.com>,
-	Brett Creeley <brett.creeley@amd.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	Taehee Yoo <ap420073@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH net v3] ethernet: ionic: Fix DMA mapping tests
-Date: Thu, 19 Jun 2025 11:45:30 +0200
-Message-ID: <20250619094538.283723-2-fourier.thomas@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1750326375; c=relaxed/simple;
+	bh=UuLnT9fGW+15a+efSTXHXPlypCxXcrd7PtLcffPU4io=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LuAjr522VIAcTKSLX50S0604v/MAh6k2ZAWcsR7d8r7LfLEjkpsGAE4vDIHsVyUBgv1rEGyqeHosmRes1FtQKQ4mNHRy9twAd6iUJkP4IxLGQpzMvhqF9nw4Ud0vEwinCg567Kd4l054qxlkzObh50u4473xPYskkp/2y3iUyeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=evWXrDm0; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750326374; x=1781862374;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UuLnT9fGW+15a+efSTXHXPlypCxXcrd7PtLcffPU4io=;
+  b=evWXrDm0aP9uoQBysECEroC+u9SjKFk4vhG2IoMZGQjYtzYuZrnT+7mc
+   s6M0WDGieWFfvmPfZrHsi7WvMomVBRlamyct3YRbjSqOjxDJfpeYhcCmW
+   u2DX7UVu1CrdM9MD6l+SFLd6GZf+6vnWrS4qATMvcRg3OddXmQTWbPeWp
+   qfAvv2jlivQNrPTnZEOurIn3i8DAl+PmLpHBOHxvpbJvR1MNGLgyLOiW+
+   Z/sN3Xq3iBt0Jv4pBRa6r9Z9gseERPKgl5MB+mBFV0vbWNfehTzW6XU9f
+   6awZYMaEW/Zryb/oy+kOTiGiWOVYO1bL4PfIwmDACoHV+9WPuq0gq0RJa
+   Q==;
+X-CSE-ConnectionGUID: AVfndRx6RSqOyJQ5s5gn5g==
+X-CSE-MsgGUID: W4XugKNsSMWkm3D42R8GSg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="64004279"
+X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
+   d="scan'208";a="64004279"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 02:46:04 -0700
+X-CSE-ConnectionGUID: VpU8txZkSyybrd7ZTLNPZg==
+X-CSE-MsgGUID: Hs2fzB2LQS6Ns2HLVkksCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; 
+   d="scan'208";a="150370624"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 02:45:41 -0700
+Message-ID: <30965147-24af-4dc8-aec4-781ea401a3a9@intel.com>
+Date: Thu, 19 Jun 2025 17:45:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+ linux-fsdevel@vger.kernel.org, aik@amd.com, ajones@ventanamicro.com,
+ akpm@linux-foundation.org, amoorthy@google.com, anthony.yznaga@oracle.com,
+ anup@brainfault.org, aou@eecs.berkeley.edu, bfoster@redhat.com,
+ binbin.wu@linux.intel.com, brauner@kernel.org, catalin.marinas@arm.com,
+ chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com,
+ david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk,
+ erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+ haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+ ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+ james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com,
+ jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
+ jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
+ kent.overstreet@linux.dev, kirill.shutemov@intel.com,
+ liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+ mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
+ michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+ nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+ palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+ pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
+ pgonda@google.com, pvorel@suse.cz, qperret@google.com,
+ quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
+ quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
+ quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
+ richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com,
+ roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com, shuah@kernel.org,
+ steven.price@arm.com, steven.sistare@oracle.com, suzuki.poulose@arm.com,
+ tabba@google.com, thomas.lendacky@amd.com, usama.arif@bytedance.com,
+ vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+ vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+ willy@infradead.org, yilun.xu@intel.com, yuzenghui@huawei.com,
+ zhiquan1.li@intel.com
+References: <cover.1747264138.git.ackerleytng@google.com>
+ <aFPGlAGEPzxlxM5g@yzhao56-desk.sh.intel.com>
+ <d15bfdc8-e309-4041-b4c7-e8c3cdf78b26@intel.com>
+ <9b55acfa-688e-49da-9599-f35aee351e3d@intel.com>
+ <aFPYLM8U7GhCKkRC@yzhao56-desk.sh.intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <aFPYLM8U7GhCKkRC@yzhao56-desk.sh.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Change error values of `ionic_tx_map_single()` and `ionic_tx_map_frag()`
-from 0 to `DMA_MAPPING_ERROR` to prevent collision with 0 as a valid
-address.
+On 6/19/2025 5:28 PM, Yan Zhao wrote:
+> On Thu, Jun 19, 2025 at 05:18:44PM +0800, Xiaoyao Li wrote:
+>> On 6/19/2025 4:59 PM, Xiaoyao Li wrote:
+>>> On 6/19/2025 4:13 PM, Yan Zhao wrote:
+>>>> On Wed, May 14, 2025 at 04:41:39PM -0700, Ackerley Tng wrote:
+>>>>> Hello,
+>>>>>
+>>>>> This patchset builds upon discussion at LPC 2024 and many guest_memfd
+>>>>> upstream calls to provide 1G page support for guest_memfd by taking
+>>>>> pages from HugeTLB.
+>>>>>
+>>>>> This patchset is based on Linux v6.15-rc6, and requires the mmap support
+>>>>> for guest_memfd patchset (Thanks Fuad!) [1].
+>>>>>
+>>>>> For ease of testing, this series is also available, stitched together,
+>>>>> at
+>>>>> https://github.com/googleprodkernel/linux-cc/tree/gmem-1g-page-
+>>>>> support-rfc-v2
+>>>> Just to record a found issue -- not one that must be fixed.
+>>>>
+>>>> In TDX, the initial memory region is added as private memory during
+>>>> TD's build
+>>>> time, with its initial content copied from source pages in shared memory.
+>>>> The copy operation requires simultaneous access to both shared
+>>>> source memory
+>>>> and private target memory.
+>>>>
+>>>> Therefore, userspace cannot store the initial content in shared
+>>>> memory at the
+>>>> mmap-ed VA of a guest_memfd that performs in-place conversion
+>>>> between shared and
+>>>> private memory. This is because the guest_memfd will first unmap a
+>>>> PFN in shared
+>>>> page tables and then check for any extra refcount held for the
+>>>> shared PFN before
+>>>> converting it to private.
+>>>
+>>> I have an idea.
+>>>
+>>> If I understand correctly, the KVM_GMEM_CONVERT_PRIVATE of in-place
+>>> conversion unmap the PFN in shared page tables while keeping the content
+>>> of the page unchanged, right?
+> However, whenever there's a GUP in TDX to get the source page, there will be an
+> extra page refcount.
 
-This also fixes the use of `dma_mapping_error()` to test against 0 in
-`ionic_xdp_post_frame()`
+The GUP in TDX happens after the gmem converts the page to private.
 
-Fixes: 0f3154e6bcb3 ("ionic: Add Tx and Rx handling")
-Fixes: 56e41ee12d2d ("ionic: better dma-map error handling")
-Fixes: ac8813c0ab7d ("ionic: convert Rx queue buffers to use page_pool")
-Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
----
- drivers/net/ethernet/pensando/ionic/ionic_txrx.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+In the view of TDX, the physical page is converted to private already 
+and it contains the initial content. But the content is not usable for 
+TDX until TDX calls in-place PAGE.ADD
 
-diff --git a/drivers/net/ethernet/pensando/ionic/ionic_txrx.c b/drivers/net/ethernet/pensando/ionic/ionic_txrx.c
-index 2ac59564ded1..d10b58ebf603 100644
---- a/drivers/net/ethernet/pensando/ionic/ionic_txrx.c
-+++ b/drivers/net/ethernet/pensando/ionic/ionic_txrx.c
-@@ -321,7 +321,7 @@ static int ionic_xdp_post_frame(struct ionic_queue *q, struct xdp_frame *frame,
- 					   len, DMA_TO_DEVICE);
- 	} else /* XDP_REDIRECT */ {
- 		dma_addr = ionic_tx_map_single(q, frame->data, len);
--		if (!dma_addr)
-+		if (dma_addr == DMA_MAPPING_ERROR)
- 			return -EIO;
- 	}
- 
-@@ -357,7 +357,7 @@ static int ionic_xdp_post_frame(struct ionic_queue *q, struct xdp_frame *frame,
- 			} else {
- 				dma_addr = ionic_tx_map_frag(q, frag, 0,
- 							     skb_frag_size(frag));
--				if (dma_mapping_error(q->dev, dma_addr)) {
-+				if (dma_addr == DMA_MAPPING_ERROR) {
- 					ionic_tx_desc_unmap_bufs(q, desc_info);
- 					return -EIO;
- 				}
-@@ -1083,7 +1083,7 @@ static dma_addr_t ionic_tx_map_single(struct ionic_queue *q,
- 		net_warn_ratelimited("%s: DMA single map failed on %s!\n",
- 				     dev_name(dev), q->name);
- 		q_to_tx_stats(q)->dma_map_err++;
--		return 0;
-+		return DMA_MAPPING_ERROR;
- 	}
- 	return dma_addr;
- }
-@@ -1100,7 +1100,7 @@ static dma_addr_t ionic_tx_map_frag(struct ionic_queue *q,
- 		net_warn_ratelimited("%s: DMA frag map failed on %s!\n",
- 				     dev_name(dev), q->name);
- 		q_to_tx_stats(q)->dma_map_err++;
--		return 0;
-+		return DMA_MAPPING_ERROR;
- 	}
- 	return dma_addr;
- }
-@@ -1116,7 +1116,7 @@ static int ionic_tx_map_skb(struct ionic_queue *q, struct sk_buff *skb,
- 	int frag_idx;
- 
- 	dma_addr = ionic_tx_map_single(q, skb->data, skb_headlen(skb));
--	if (!dma_addr)
-+	if (dma_addr == DMA_MAPPING_ERROR)
- 		return -EIO;
- 	buf_info->dma_addr = dma_addr;
- 	buf_info->len = skb_headlen(skb);
-@@ -1126,7 +1126,7 @@ static int ionic_tx_map_skb(struct ionic_queue *q, struct sk_buff *skb,
- 	nfrags = skb_shinfo(skb)->nr_frags;
- 	for (frag_idx = 0; frag_idx < nfrags; frag_idx++, frag++) {
- 		dma_addr = ionic_tx_map_frag(q, frag, 0, skb_frag_size(frag));
--		if (!dma_addr)
-+		if (dma_addr == DMA_MAPPING_ERROR)
- 			goto dma_fail;
- 		buf_info->dma_addr = dma_addr;
- 		buf_info->len = skb_frag_size(frag);
--- 
-2.43.0
+>>> So KVM_GMEM_CONVERT_PRIVATE can be used to initialize the private memory
+>>> actually for non-CoCo case actually, that userspace first mmap() it and
+>>> ensure it's shared and writes the initial content to it, after it
+>>> userspace convert it to private with KVM_GMEM_CONVERT_PRIVATE.
+> The conversion request here will be declined therefore.
+> 
+> 
+>>> For CoCo case, like TDX, it can hook to KVM_GMEM_CONVERT_PRIVATE if it
+>>> wants the private memory to be initialized with initial content, and
+>>> just do in-place TDH.PAGE.ADD in the hook.
+>>
+>> And maybe a new flag for KVM_GMEM_CONVERT_PRIVATE for user space to
+>> explicitly request that the page range is converted to private and the
+>> content needs to be retained. So that TDX can identify which case needs to
+>> call in-place TDH.PAGE.ADD.
+>>
 
 
