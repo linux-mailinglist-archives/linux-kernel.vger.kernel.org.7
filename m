@@ -1,238 +1,167 @@
-Return-Path: <linux-kernel+bounces-693442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B914ADFEF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:43:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA31ADFF00
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44B8189B3C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87D3F3B20E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FE525D204;
-	Thu, 19 Jun 2025 07:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D7E25C71B;
+	Thu, 19 Jun 2025 07:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FMNFZ1nU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="btFDrMc8"
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BE7248868;
-	Thu, 19 Jun 2025 07:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7912D25F7BC;
+	Thu, 19 Jun 2025 07:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750318977; cv=none; b=b1hbZueK0BW6DteIijaTwQNEHhD77YAkf3rxq7/hNHmR/qTqW1L+Gcd84yMivp1+rwrJWmp2QqCrzRQWNJEUeYpj051l4vXeuswqtwJ+h/A/c8KMToTA9CaSLSDJc26lNGAtaGnw395dPtzDT/BxZeNn7Gvp7V+NHO8w65p7Rag=
+	t=1750319046; cv=none; b=AU3o5d44Ejpz2AYVtQzsQMN0cSUbbjb4Ao3SkA/83PGYHGMt7tQsGSEkih0yKuCvdUfN2FLQtb/sVNK51NKCsTJN8fhyZo5WKndxAWXd8iJbLhKzFWzPrso2HWSHZM79g3tjcWtIdaZJTYw0pc/AUjVQ5sxRHvWc0Yx5rQ0bo9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750318977; c=relaxed/simple;
-	bh=RikCrKLnCHgGPRI5B8T21KzfkjhIAbjsuwYMRU52dRA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WwA2Ed+Ctex/PMAVySb+0HwTjQiCoCV47JGdYxRGcQnP2zJmYes+HP7aW4HpdnWnkD1LOaWGyI81OuxoMM0/I8f+lKyRWbkT67/54OS1sfkgJSK6HFVDabPggjtl5AI+B8HJH0c7VhsbViWKrq4RD0SrJeLorsN3SAJhrrVbKbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FMNFZ1nU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5505DC4CEF0;
-	Thu, 19 Jun 2025 07:42:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750318977;
-	bh=RikCrKLnCHgGPRI5B8T21KzfkjhIAbjsuwYMRU52dRA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=FMNFZ1nUawzVMsnxuAV8ZvSLCdcu6V/8dqwWDMNXcZ8307//KT+H9Jh96rABj7OKA
-	 Ysd5TiqF4xmP2sxZdMC38/ZG5x4lqrjStLb+h+3svSfJXCtcuWcLu0awC6v7EfI2JD
-	 m0oUHZL0zskinZOrW1roH4IBkcB85Dn0EPHgu93HsJan7fVMlC4DfHACHaJdGgZSq0
-	 MYy/+96SYmgKOuTlxa1dXL7pJeykeLxw0CHYUPC4WUOjjc1fTBBi/oiq1CpnV3ekH7
-	 ydwx5Jslr00WDLHFDWgz9OAX08/1YgTzY7RiKomz76eWThraxI6O81aPnZCRt8sXtf
-	 RT7MpY5upztrw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D00C761AE;
-	Thu, 19 Jun 2025 07:42:57 +0000 (UTC)
-From: Sung-Chi Li via B4 Relay <devnull+lschyi.chromium.org@kernel.org>
-Date: Thu, 19 Jun 2025 15:42:56 +0800
-Subject: [PATCH v4 3/3] hwmon: (cros_ec) register fans into thermal
- framework cooling devices
+	s=arc-20240116; t=1750319046; c=relaxed/simple;
+	bh=6Z0HZsFZmuTX/vuM6Vx8E4uacrew6L+K8YIi+PZnOhw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nEot8SEt/T41c9D/QyWn1A26jNlHbFjTMsIcyYRrWhwVkpCZtml040ujDg/LtI5JFJaOdTRKFlXu3sWpfk9p2BN6DbGrYNMub3Yg5nQ3nOj7lsSXk47sOiGCveTC6A3azsaSie7qrhluh6+kBCZH10c53yI/0dPuD6ncaewlmp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=btFDrMc8; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1750319031;
+	bh=PdAJ7XW6WFKbkSbzeFGLxHXUKKVLvlM5q8OEKyJ+9Mc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=btFDrMc8oOCY5dvGklrrFA65i3VaE2AxuiOD2uXrT/dgvj7kpP7nC1fwD2Bp4V7YO
+	 E5KkbhyUhK3k3S0dbiYQNKBaiKQFI5jpsJP/JCBIKf5I8chi76Dnm1Wz6SgWgyxpA4
+	 SfTk7rmPbodbwzfcuvFjFX8nSNUPBr0/cnh6GBAA=
+X-QQ-mid: esmtpsz16t1750319026t495c5fb0
+X-QQ-Originating-IP: 3DbXRB9nhPXMTuvRtUZcwtO9Yq6Kft7ecjQRD63hONg=
+Received: from mail-yb1-f177.google.com ( [209.85.219.177])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 19 Jun 2025 15:43:44 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 2888044492780007741
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e7569ccf04cso472171276.0;
+        Thu, 19 Jun 2025 00:43:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVaHhm5HJkhWdozHr1t41q+D7yn89NhYkSugyo2tGGk4Jut8VtbhhwlFXKHB1VnBQX0JFsQwe/40vX+DRY=@vger.kernel.org, AJvYcCXpWgG1LQtNVf/tPEr/m98XP7qX08I4RoL7gz0BTlDZb0C5nhKtLjV8KbC2SMcIfOLrcgzTHWGw5uhUOGEEqPfd@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKjjwRPts1unODRhqmWWRCd0urc+Moq8E7z6UEgms/zo7rFpZQ
+	vm+fGIAFM7ygpZyN/4klso9q/eH8JMDW9SrdWUFjmonwULwkiV5f/pXe471b4XeM9JOZeK3rgk/
+	b4EDactzvFh/43pprS06Cafby6fogkrE=
+X-Google-Smtp-Source: AGHT+IEfZub8gy2jnZbdLcKSkmLr1O4BmFMGk4pDPzXq1+akqLOXYE5F3PLiilZoY4rSCiykRKOzABKYqNAY4dc03Pw=
+X-Received: by 2002:a05:690c:4d4a:b0:70e:2d77:3cfe with SMTP id
+ 00721157ae682-71175382ebbmr318625957b3.2.1750319022448; Thu, 19 Jun 2025
+ 00:43:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250619-cros_ec_fan-v4-3-ca11548ce449@chromium.org>
-References: <20250619-cros_ec_fan-v4-0-ca11548ce449@chromium.org>
-In-Reply-To: <20250619-cros_ec_fan-v4-0-ca11548ce449@chromium.org>
-To: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Jonathan Corbet <corbet@lwn.net>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
- linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
- Sung-Chi Li <lschyi@google.com>, Sung-Chi Li <lschyi@chromium.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750318976; l=5521;
- i=lschyi@chromium.org; s=20250429; h=from:subject:message-id;
- bh=dGrNQjFZmAqqQuLX31fi6rvA+UA6e5udimOyMjEIouo=;
- b=0dwadgCMsVUj2zNX3LAZTyaW6PXKOphWxSH6/DPNS5uCEwqeWx63ZWVIgvgYoHCvDsHjphEi1
- L4uaCbewRHCA9AiGKf2p1+FNA5FaKMC2pN+rrjROQ6BHBtWACsiXCfq
-X-Developer-Key: i=lschyi@chromium.org; a=ed25519;
- pk=9gCZPRJmYyHDt6VN9FV2UreFcUr73JFrwYvmsltW9Y8=
-X-Endpoint-Received: by B4 Relay for lschyi@chromium.org/20250429 with
- auth_id=392
-X-Original-From: Sung-Chi Li <lschyi@chromium.org>
-Reply-To: lschyi@chromium.org
+References: <20250610020559.2797938-2-chenlinxuan@uniontech.com> <96c46d3d-0e0a-464a-b64c-15c2a544a974@linuxfoundation.org>
+In-Reply-To: <96c46d3d-0e0a-464a-b64c-15c2a544a974@linuxfoundation.org>
+From: Chen Linxuan <chenlinxuan@uniontech.com>
+Date: Thu, 19 Jun 2025 15:43:31 +0800
+X-Gmail-Original-Message-ID: <E331E4A1E44CA282+CAC1kPDM76fLgE-cbKvMO3=B1hKhjTNMYmJw5XpOPV5UAxXx=Yg@mail.gmail.com>
+X-Gm-Features: AX0GCFsPEvPn4k_4SEuYgTBSBqxc9xBq4ybEKn9PA6xW3y3kIBv7aDr_GYIcAlE
+Message-ID: <CAC1kPDM76fLgE-cbKvMO3=B1hKhjTNMYmJw5XpOPV5UAxXx=Yg@mail.gmail.com>
+Subject: Re: [PATCH RESEND] selftests/memfd: clean Makefile
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Chen Linxuan <chenlinxuan@uniontech.com>, Shuah Khan <shuah@kernel.org>, zhanjun@uniontech.com, 
+	niecheng1@uniontech.com, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: M6ncIRVC3gAvOz1VEvZL4HgEyipj2jBAZ+wY92nuPRvBcbZA8XyDafdq
+	NCM7BSPIebI35DEYYfCu034zUgUH5ljCd7WZYLElfV3wsg7mPVfW7lSJJZqCisNh0QnFS8M
+	dfcHgbFokCVJOApzffm+4S1fPo4Qw8wvkeJvwG8nDpZbTznf8AVlMAtEHJsNskr8BHIkYwc
+	pViwLiMTWj6JAIbxz9zTO4ZjHOLPOZOueHclb3f/jz+VNHIskqcdUx5b2bF/YzaB3geEuHD
+	LzowtuKJ245iAg8xReHT9odF4+Pp1NFOY4OVwbPndh18dhsPVXBPkx5xJufiELnF4NN8MPF
+	uaBbdsoSWOVAQCL7OdZM6VuDTLvXp7x1z345lZBEbMLlduKbGFpvQRyFp55iPUd6HSR4hun
+	wQEMkeImwSSUudK1DmKaZM2qAfg6Nt5MtrCpOyatMEZ54iAp7t/kNM0m7takt2NeeIniAkZ
+	43hl6Z+5gcpbC8hFPPe0TKs3uXLT45bUazhW1zoQR3WL1pR3Vjsg3dzzoz+bOciFV4FRcIp
+	0NMf6w6VAXgAg4s63iWDEGxlUjwTr8DC2+b8/Va3kVZZOEgkbQ/mWW1le/Law/COhQv9nvi
+	goOa2RKDUbU6bro0GDxVu1tOPopEYY+YU3LzYEL48wKGs/HThvCvwk47/ysRp1ImfkApgld
+	Q7fkDpGiNnYhhO+ULza73IyEpbm/nh5Vo38uHICgmmFgxQXuNrsAWLSNSqcKjsdnNxzSVhE
+	6J/2RWnnbvdhue1JXS4Yt6U8GPYemWzk8XHULpfpNjaB9PMBEoweFZobQT0LIHZGumsveq8
+	E06LRurW5DQxdd//tyNo07cBNP3VQ5u0wzZvDb1ou202TiqvE29UuaQORNnPUdkADQLbsOG
+	Bf90LZreWJopTGyigqQ4iewjT99xwoCQFC/8YPsSVICvX3cFaMztR4taN5nzBt6TRutODrB
+	EE+w1zZNXtTWxCW2EHf5y5ZPXsHMi7yVL1BAYNvWfdlxUYCkCpzu3cwOXWYhgWJ5hxfn96V
+	UA8rbJJS3a7iKpICouHusrZ92Aj0urj5jvp7xVYhYWKzwvyG1VmISj4QAQu6xHGVgr79miI
+	/jn6BWQvCCjGIeTSgBnVWuB09THI//8Sg==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-From: Sung-Chi Li <lschyi@chromium.org>
+On Thu, Jun 19, 2025 at 5:21=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.o=
+rg> wrote:
+>
+> On 6/9/25 20:05, Chen Linxuan wrote:
+> > When writing a test for fusectl, I referred to this Makefile as a
+> > reference for creating a FUSE daemon in the selftests.
+> > While doing so, I noticed that there is a minor issue in the Makefile.
+>
+> What happens if this change isn't made?
 
-Register fans connected under EC as thermal cooling devices as well, so
-these fans can then work with the thermal framework.
+Nothing will happen.
+When I was writing tests for the fusectl filesystem in the kernel repositor=
+y,
+I came across this file as a reference.
+Then I found that the process of passing CFLAGS was not correct.
+So, for the reason of not wanting others to be misled again,
+I want to update the compilation process here.
 
-During the driver probing phase, we will also try to register each fan
-as a thermal cooling device based on previous probe result (whether the
-there are fans connected on that channel, and whether EC supports fan
-control). The basic get max state, get current state, and set current
-state methods are then implemented as well.
+>
+> >
+> > The fuse_mnt.c file is not actually compiled into fuse_mnt.o,
+> > and the code setting CFLAGS for it never takes effect.
+> > The reason fuse_mnt compiles successfully is because CFLAGS is set
+> > at the very beginning of the file.
+> >
+> > Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+> > ---
+> >   tools/testing/selftests/memfd/Makefile | 4 +---
+> >   1 file changed, 1 insertion(+), 3 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/memfd/Makefile b/tools/testing/sel=
+ftests/memfd/Makefile
+> > index 163b6f68631c4..e9b886c65153d 100644
+> > --- a/tools/testing/selftests/memfd/Makefile
+> > +++ b/tools/testing/selftests/memfd/Makefile
+> > @@ -1,5 +1,4 @@
+> >   # SPDX-License-Identifier: GPL-2.0
+> > -CFLAGS +=3D -D_FILE_OFFSET_BITS=3D64
+>
+> What's the reason for deleting the above?
 
-Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
----
- Documentation/hwmon/cros_ec_hwmon.rst |  2 +
- drivers/hwmon/cros_ec_hwmon.c         | 85 +++++++++++++++++++++++++++++++++++
- 2 files changed, 87 insertions(+)
+The CFLAGS update here actually doesn't take effect.
+I believe it is the -D_FILE_OFFSET_BITS=3D64 in VAR_CFLAGS that truly
+takes effect.
 
-diff --git a/Documentation/hwmon/cros_ec_hwmon.rst b/Documentation/hwmon/cros_ec_hwmon.rst
-index 355557a08c9a54b4c177bafde3743e7dc02218be..6db812708325f7abb6d319af3312b4079e6923c6 100644
---- a/Documentation/hwmon/cros_ec_hwmon.rst
-+++ b/Documentation/hwmon/cros_ec_hwmon.rst
-@@ -27,3 +27,5 @@ Fan and temperature readings are supported. PWM fan control is also supported if
- the EC also supports setting fan PWM values and fan mode. Note that EC will
- switch fan control mode back to auto when suspended. This driver will restore
- the fan state to what they were before suspended when resumed.
-+If a fan is controllable, this driver will register that fan as a cooling device
-+in the thermal framework as well.
-diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-index c0c4ffa6f85419edf5dacd730192e7f1c28e2e5c..572b194e51fb1a05fa5151abb0826d1c8ba2948d 100644
---- a/drivers/hwmon/cros_ec_hwmon.c
-+++ b/drivers/hwmon/cros_ec_hwmon.c
-@@ -13,6 +13,7 @@
- #include <linux/platform_device.h>
- #include <linux/platform_data/cros_ec_commands.h>
- #include <linux/platform_data/cros_ec_proto.h>
-+#include <linux/thermal.h>
- #include <linux/types.h>
- #include <linux/units.h>
- 
-@@ -31,6 +32,11 @@ struct cros_ec_hwmon_priv {
- 	u8 manual_fan_pwm[EC_FAN_SPEED_ENTRIES];
- };
- 
-+struct cros_ec_hwmon_cooling_priv {
-+	struct cros_ec_hwmon_priv *hwmon_priv;
-+	u8 index;
-+};
-+
- static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
- {
- 	int ret;
-@@ -306,6 +312,42 @@ static const struct hwmon_channel_info * const cros_ec_hwmon_info[] = {
- 	NULL
- };
- 
-+static int cros_ec_hwmon_cooling_get_max_state(struct thermal_cooling_device *cdev,
-+					       unsigned long *val)
-+{
-+	*val = 255;
-+	return 0;
-+}
-+
-+static int cros_ec_hwmon_cooling_get_cur_state(struct thermal_cooling_device *cdev,
-+					       unsigned long *val)
-+{
-+	const struct cros_ec_hwmon_cooling_priv *priv = cdev->devdata;
-+	u8 read_val;
-+	int ret;
-+
-+	ret = cros_ec_hwmon_read_pwm_value(priv->hwmon_priv->cros_ec, priv->index, &read_val);
-+	if (ret)
-+		return ret;
-+
-+	*val = read_val;
-+	return ret;
-+}
-+
-+static int cros_ec_hwmon_cooling_set_cur_state(struct thermal_cooling_device *cdev,
-+					       unsigned long val)
-+{
-+	const struct cros_ec_hwmon_cooling_priv *priv = cdev->devdata;
-+
-+	return cros_ec_hwmon_write_pwm_input(priv->hwmon_priv->cros_ec, priv->index, val);
-+}
-+
-+static const struct thermal_cooling_device_ops cros_ec_thermal_cooling_ops = {
-+	.get_max_state = cros_ec_hwmon_cooling_get_max_state,
-+	.get_cur_state = cros_ec_hwmon_cooling_get_cur_state,
-+	.set_cur_state = cros_ec_hwmon_cooling_set_cur_state,
-+};
-+
- static const struct hwmon_ops cros_ec_hwmon_ops = {
- 	.read = cros_ec_hwmon_read,
- 	.read_string = cros_ec_hwmon_read_string,
-@@ -381,6 +423,48 @@ static bool cros_ec_hwmon_probe_fan_control_supported(struct cros_ec_device *cro
- 	       is_cros_ec_cmd_available(cros_ec, EC_CMD_THERMAL_AUTO_FAN_CTRL, CROS_EC_HWMON_THERMAL_AUTO_FAN_CTRL_CMD_VERSION);
- }
- 
-+static void cros_ec_hwmon_register_fan_cooling_devices(struct device *dev,
-+						       struct cros_ec_hwmon_priv *priv)
-+{
-+	struct cros_ec_hwmon_cooling_priv *cpriv;
-+	struct thermal_cooling_device *cdev;
-+	char *type;
-+	size_t i;
-+
-+	if (!IS_ENABLED(CONFIG_THERMAL))
-+		return;
-+
-+	if (!priv->fan_control_supported)
-+		return;
-+
-+	for (i = 0; i < EC_FAN_SPEED_ENTRIES; i++) {
-+		if (!(priv->usable_fans & BIT(i)))
-+			continue;
-+
-+		cpriv = devm_kzalloc(dev, sizeof(*cpriv), GFP_KERNEL);
-+		if (!cpriv) {
-+			dev_warn(dev, "no memory for registering fan %zu as a cooling device\n", i);
-+			continue;
-+		}
-+
-+		type = devm_kasprintf(dev, GFP_KERNEL, "%s-fan%zu", dev_name(dev), i);
-+		if (!type) {
-+			dev_warn(dev, "no memory to compose cooling device type for fan %zu\n", i);
-+			continue;
-+		}
-+
-+		cpriv->hwmon_priv = priv;
-+		cpriv->index = i;
-+		cdev = devm_thermal_of_cooling_device_register(dev, NULL, type, cpriv,
-+							       &cros_ec_thermal_cooling_ops);
-+		if (IS_ERR(cdev)) {
-+			dev_warn(dev, "failed to register fan %zu as a cooling device: %pe\n", i,
-+				 cdev);
-+			continue;
-+		}
-+	}
-+}
-+
- static int cros_ec_hwmon_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -408,6 +492,7 @@ static int cros_ec_hwmon_probe(struct platform_device *pdev)
- 	cros_ec_hwmon_probe_temp_sensors(dev, priv, thermal_version);
- 	cros_ec_hwmon_probe_fans(priv);
- 	priv->fan_control_supported = cros_ec_hwmon_probe_fan_control_supported(priv->cros_ec);
-+	cros_ec_hwmon_register_fan_cooling_devices(dev, priv);
- 
- 	hwmon_dev = devm_hwmon_device_register_with_info(dev, "cros_ec", priv,
- 							 &cros_ec_hwmon_chip_info, NULL);
-
--- 
-2.50.0.rc2.701.gf1e915cc24-goog
-
-
+>
+> >   CFLAGS +=3D $(KHDR_INCLUDES)
+> >
+> >   TEST_GEN_PROGS :=3D memfd_test
+> > @@ -16,10 +15,9 @@ ifeq ($(VAR_LDLIBS),)
+> >   VAR_LDLIBS :=3D -lfuse -pthread
+> >   endif
+> >
+> > -fuse_mnt.o: CFLAGS +=3D $(VAR_CFLAGS)
+> > -
+> >   include ../lib.mk
+> >
+> > +$(OUTPUT)/fuse_mnt: CFLAGS +=3D $(VAR_CFLAGS)
+> >   $(OUTPUT)/fuse_mnt: LDLIBS +=3D $(VAR_LDLIBS)
+> >
+> >   $(OUTPUT)/memfd_test: memfd_test.c common.c
+>
+> thanks,
+> -- Shuah
+>
+>
+>
 
