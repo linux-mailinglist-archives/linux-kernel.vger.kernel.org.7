@@ -1,121 +1,161 @@
-Return-Path: <linux-kernel+bounces-693952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5EF5AE0617
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:39:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6159BAE061B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 14:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5C7B177E6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:39:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCE171886558
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 12:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8486923D2A9;
-	Thu, 19 Jun 2025 12:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BBA23E347;
+	Thu, 19 Jun 2025 12:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="emSXN9QN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLHnHJyn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF34722B598;
-	Thu, 19 Jun 2025 12:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134AF22B598;
+	Thu, 19 Jun 2025 12:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750336738; cv=none; b=F9uF0rViXg/gRnb7BWD+z4p/kN2T2H1h7NXAYQIX5eWbyrn67xpQTv2P02RtYEItYMDFYJ3ZBix2VYA+DM+2IZdrVrsIkPChrY+yQidvJtjrFraWCZkMQd9v0A1nscTTlXDIc/tbsoR3l3GoQldllsfVTn22K2PYb3VcDiLrju0=
+	t=1750336899; cv=none; b=OAMXAVKP2lZYApprf7lgzNDnGsd9w0J09eCtY68MyUXYWiGj/IFFKJjrkmWhzidC1tTNZHbqw9kZ9osiTlywG7PPAQr5GWN6is7AR3s1PSDcoAHuwaPSsLQZNxncmmCLDCXQ1RS74wHGlxiHJoUdbHfco8Mo4NZg92cfh2AMSPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750336738; c=relaxed/simple;
-	bh=0O8KUs11HYzYDV9dS+Fjh+t+vw87oB0LvVgWoJBSoKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r4eRbSOaP2va/NwCP9RC1DzB3l6dqKCnzMMpeAqJtj8bzdwreCrHywvCdZH0uF4dhnZ/L6vOe58ZsIlxOzSFQ1eEbfTP0HtYeN9Lu+M1r8qlLUqepN0rYCkn9ElKVvlek9fTFyFAa0N5VD10PsxKgba2B1EDj5SbkGWOToWD5Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=emSXN9QN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD5EC4CEEA;
-	Thu, 19 Jun 2025 12:38:54 +0000 (UTC)
+	s=arc-20240116; t=1750336899; c=relaxed/simple;
+	bh=1hCQouYpGPLYCGUMm7RuelDeleW9YnV3vKdJx2C+Kp4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OSAMFpjPNB9muQUqHrnIbk+domN3tGat67OiSBd1bUjp/PYqhgqcIIW5YNCG6/kSZmjilpnHNpRpWr2FMa0QdwGNh+aywoo04n2UE6X/tra1NsZUOQoETTdks1jK0DORXLZpfrbUCroBk9zylWWWI4b1QQQZh+eqniq0cjbdJqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nLHnHJyn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 964CFC4CEEA;
+	Thu, 19 Jun 2025 12:41:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750336737;
-	bh=0O8KUs11HYzYDV9dS+Fjh+t+vw87oB0LvVgWoJBSoKI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=emSXN9QNT3nkgNQTuAleo3mJHp4mZ0ARLDH9YcB5KZfxJhext93gFSgvVOAJScqdJ
-	 G5fB2V2QcQ9rDIO5Sb3u0vVsPysUlfbhTkEWgCSMcF+/b/98dNvK7u7OIps8FVWID0
-	 07I+/dBO6Ij7UUHpr4m9jVILeLIJimvgAmvPtmVq3TfzUfx4e5DvsYLgg0WnAnnObJ
-	 AtwLwuwSY3qRoW/yFQeB4sXurSWkn2TlJGzItFPQPUgGPyje5ERerhuu21IujH8SPd
-	 t2WzcvqtBzmirpKBx95bxkuNxtB8kpIWHEEI8JROzkPoQ9iMKsnIWYEX6oYkFV/Jai
-	 wyVBqjyFb3gfA==
-Date: Thu, 19 Jun 2025 13:38:52 +0100
-From: Simon Horman <horms@kernel.org>
-To: Frank Wunderlich <frank-w@public-files.de>
-Cc: Frank Wunderlich <linux@fw-web.de>, Felix Fietkau <nbd@nbd.name>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Daniel Golle <daniel@makrotopia.org>, arinc.unal@arinc9.com
-Subject: Re: [net-next v4 1/3] net: ethernet: mtk_eth_soc: support named IRQs
-Message-ID: <20250619123852.GM1699@horms.kernel.org>
-References: <20250616080738.117993-1-linux@fw-web.de>
- <20250616080738.117993-2-linux@fw-web.de>
- <9FD09C8D-A9DC-4270-AB4A-6EBE25959F12@public-files.de>
+	s=k20201202; t=1750336898;
+	bh=1hCQouYpGPLYCGUMm7RuelDeleW9YnV3vKdJx2C+Kp4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=nLHnHJynvcZXruHY3un4m4i2As2KlH6rY6KC8PYMnX1fEcgB+rPqmwnSySo3EvVhz
+	 ROlIppyV4loCa/UndXtBvKc8MScOktM7T5F8ZWP3eG5jf2ucATD6xydNPqVlGCi7Jv
+	 E/Bxg9lBk9CsYc3gvaENUZFTSgVHq3fyQf9okpht7Ee8BarbzSFTMNRJyuwCbj7Lg/
+	 8PWv/erct9iJdRBH/OxI606fGGQR4wbOv/iLAin5528cdfzcWqLyuKvgsdUmkN6IjV
+	 e1hOXEq68MNmJOL/sRFRaISAde2pxY5yM4grcBwxFs9eljlWa8d/Exxc3OL8aEaxt1
+	 VoB/UC7FHM9lg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice
+ Ryhl" <aliceryhl@google.com>,  "Masahiro Yamada" <masahiroy@kernel.org>,
+  "Nathan Chancellor" <nathan@kernel.org>,  "Luis Chamberlain"
+ <mcgrof@kernel.org>,  "Danilo Krummrich" <dakr@kernel.org>,  "Nicolas
+ Schier" <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Adam Bratschi-Kaye" <ark.email@gmail.com>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu" <petr.pavlu@suse.com>,
+  "Sami Tolvanen" <samitolvanen@google.com>,  "Daniel Gomez"
+ <da.gomez@samsung.com>,  "Simona Vetter" <simona.vetter@ffwll.ch>,  "Greg
+ KH" <gregkh@linuxfoundation.org>,  "Fiona Behrens" <me@kloenk.dev>,
+  "Daniel Almeida" <daniel.almeida@collabora.com>,
+  <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v13 1/6] rust: str: add radix prefixed integer parsing
+ functions
+In-Reply-To: <DAQI4RPK2Y7T.3TQ1G3IMZCNK4@kernel.org> (Benno Lossin's message
+	of "Thu, 19 Jun 2025 14:17:26 +0200")
+References: <20250612-module-params-v3-v13-0-bc219cd1a3f8@kernel.org>
+	<20250612-module-params-v3-v13-1-bc219cd1a3f8@kernel.org>
+	<bbRxeBHCiFQl9UTC1hFQYdzkdAIV5HcRTuFf9ucPUEZZ-uJmaHAZXfd8Tk-k9vzROgFsCyNhGBBCn5J_HnbUSA==@protonmail.internalid>
+	<DAPY5HF9HGXC.FCEKAMLPFY1H@kernel.org> <871prg7zoh.fsf@kernel.org>
+	<a8_DtAcJxescV_Khg6IkI9hOSEk_ZKpOWfnn_KzuZg9E9COLyO6awlSWnJra20Kvqxcf3Ph7w9VlKUt9dKRrCQ==@protonmail.internalid>
+	<DAQI4RPK2Y7T.3TQ1G3IMZCNK4@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 19 Jun 2025 14:41:26 +0200
+Message-ID: <87jz577vk9.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9FD09C8D-A9DC-4270-AB4A-6EBE25959F12@public-files.de>
+Content-Type: text/plain
 
-On Thu, Jun 19, 2025 at 09:44:34AM +0200, Frank Wunderlich wrote:
-> Am 16. Juni 2025 10:07:34 MESZ schrieb Frank Wunderlich <linux@fw-web.de>:
-> >From: Frank Wunderlich <frank-w@public-files.de>
-> >
-> >Add named interrupts and keep index based fallback for exiting devicetrees.
-> >
-> >Currently only rx and tx IRQs are defined to be used with mt7988, but
-> >later extended with RSS/LRO support.
-> >
-> >Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> >Reviewed-by: Simon Horman <horms@kernel.org>
-> >---
-> >v2:
-> >- move irqs loading part into own helper function
-> >- reduce indentation
-> >- place mtk_get_irqs helper before the irq_handler (note for simon)
-> >---
-> > drivers/net/ethernet/mediatek/mtk_eth_soc.c | 39 +++++++++++++++------
-> > 1 file changed, 28 insertions(+), 11 deletions(-)
-> >
-> >diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> >index b76d35069887..81ae8a6fe838 100644
-> >--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> >+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-> >@@ -3337,6 +3337,30 @@ static void mtk_tx_timeout(struct net_device *dev, unsigned int txqueue)
-> > 	schedule_work(&eth->pending_work);
-> > }
-> > 
-> >+static int mtk_get_irqs(struct platform_device *pdev, struct mtk_eth *eth)
-> >+{
-> >+	int i;
-> >+
-> >+	eth->irq[1] = platform_get_irq_byname(pdev, "tx");
-> >+	eth->irq[2] = platform_get_irq_byname(pdev, "rx");
-> 
-> Hi Simon,
-> 
-> I got information that reserved frame-engine 
->  irqs are not unusable and have no fixed
->  meaning. So i would add fe0..fe3 in
->  dts+binding and change these names from
-> tx/rx to fe1 and fe2.
-> 
-> Can i keep your RB here?
+"Benno Lossin" <lossin@kernel.org> writes:
 
-Since the meaning is changing somewhat maybe best to drop the RB.
-I'll look out for the new version to review.
+> On Thu Jun 19, 2025 at 1:12 PM CEST, Andreas Hindborg wrote:
+>> I'm having a difficult time parsing. Are you suggesting that we guard
+>> against implementations of `TryInto<u64>` that misbehave?
+>
+> Let me try a different explanation:
+>
+> The safety requirement for implementing the `FromStrRadix`:
+>
+>     /// The member functions of this trait must be implemented according to
+>     /// their documentation.
+>
+> Together with the functions of the trait:
+>
+>     /// Parse `src` to [`Self`] using radix `radix`.
+>     fn from_str_radix(src: &BStr, radix: u32) -> Result<Self, crate::error::Error>;
+>
+>     /// Return the absolute value of [`Self::MIN`].
+>     fn abs_min() -> u64;
+>
+>     /// Perform bitwise 2's complement on `self`.
+>     ///
+>     /// Note: This function does not make sense for unsigned integers.
+>     fn complement(self) -> Self;
+>
+> Doesn't make sense. What does it mean to return the "absolute value of
+> [`Self::MIN`]"? We don't have "absolute value" defined for an arbitrary
+> type. Similarly for `complement` and `from_str_radix`, what does "Parse
+> `src` to [`Self`] using radex `radix`" mean? It's not well-defined.
+>
+> You use this safety requirement in the parsing branch for negative
+> numbers (the `unsafe` call at the bottom):
+>
+>     [b'-', rest @ ..] => {
+>         let (radix, digits) = strip_radix(rest.as_ref());
+>         // 2's complement values range from -2^(b-1) to 2^(b-1)-1.
+>         // So if we want to parse negative numbers as positive and
+>         // later multiply by -1, we have to parse into a larger
+>         // integer. We choose `u64` as sufficiently large.
+>         //
+>         // NOTE: 128 bit integers are not available on all
+>         // platforms, hence the choice of 64 bits.
+>         let val =
+>             u64::from_str_radix(core::str::from_utf8(digits).map_err(|_| EINVAL)?, radix)
+>                 .map_err(|_| EINVAL)?;
+>
+>         if val > Self::abs_min() {
+>             return Err(EINVAL);
+>         }
+>
+>         if val == Self::abs_min() {
+>             return Ok(Self::MIN);
+>         }
+>
+>         // SAFETY: We checked that `val` will fit in `Self` above.
+>         let val: Self = unsafe { val.try_into().unwrap_unchecked() };
+>
+>         Ok(val.complement())
+>     }
+>
+> But you don't mention that the check is valid due to the safety
+> requirements of implementing `FromStrRadix`. But even if you did, that
+> wouldn't mean anything as I explained above.
+>
+> So let's instead move all of this negation & u64 conversion logic into
+> the `FromStrRadix` trait. Then it can be safe & the `ParseInt::from_str`
+> function doesn't use `unsafe` (there still will be `unsafe` in the
+> macro, but that is fine, as it's more local and knows the concrete
+> types).
+>
+
+Alright. I guess my safety comments are slightly hand-wavy. Thanks for
+the suggestion, I'll apply that for next spin.
+
+Best regards,
+Andreas Hindborg
+
+
 
