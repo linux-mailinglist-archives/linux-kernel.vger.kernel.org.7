@@ -1,465 +1,211 @@
-Return-Path: <linux-kernel+bounces-693234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17FCCADFC9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:58:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C791ADFCA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE66A7A1965
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:57:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E09FB3B37C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 05:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9970239E78;
-	Thu, 19 Jun 2025 04:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11614241663;
+	Thu, 19 Jun 2025 05:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hbEyoWD9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="nJlMFyh+"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E933085A6
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 04:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750309097; cv=fail; b=LK7OltlZyoSCARt0+QP9P1vMfSxN0TQxWWNLpX5T0v3FYu185sQCvpDwjltngaMeV21kYVwmPQBVajIB9/wE+F6ShvhmmvVMiJv/y2NeGpiC7RGmjs7mM8zjVthOiZsXRhEo8p5T8mFQolaXhrErLYWtAQ2yzs5XeUg2628klLc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750309097; c=relaxed/simple;
-	bh=NVslR+CtTc3IWJB5HpJBWafwpBaCei0D66VXOmenLr8=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oWm4TOJ3WBIBr9LYH0eXL+W8rInwNpWS+b43R7pELnXW8sCexeyPxwQyyB5X3r5oQLkdmLXl7dhFGeXwm1NebBzKlR4p1SYmVJ1NKVHWeOZFTnjRUsgb0274S1Qwbzc78HQqUQ5CfSBIbFPvFvkndHFbsuTYrPN4EQ8YtSSBxrM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hbEyoWD9; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750309095; x=1781845095;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=NVslR+CtTc3IWJB5HpJBWafwpBaCei0D66VXOmenLr8=;
-  b=hbEyoWD9DxcAAJnuztu/844qAwYdA6ZFP2YfCiWN+UnhGM25QQ/TTlxY
-   36XT1MUe4oYYgjNDIJwO+xd1NV0hvFM/W9a3U/WY6/TETM5p9xi0r6LhM
-   kPvB3+tzbND+6uHet/OecGl7tEtSRO/HGyNsDTdSDhrYD452uFf3DirmH
-   dTHB8NqsknkrYVD4uE01Np+OrHZmfmEcmEyOzzcpU3LcXJ4SmTl4vnEYZ
-   hM3sbtG/qIZBetsyAFE5pWOvqO3s2mp20I7omYosn5jvAGGkSJ9i8NApI
-   shefb+gXVgOolvY5gDDePnfIYyHMen2gthKGLpay5xlpmgNB787Fa3k/+
-   Q==;
-X-CSE-ConnectionGUID: RkiKYbE3TOmKWafohm0luQ==
-X-CSE-MsgGUID: 8w3Qv1b7TVaKh+rUEvmhfw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52694750"
-X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
-   d="scan'208";a="52694750"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 21:58:14 -0700
-X-CSE-ConnectionGUID: 8usVwW1xS+2Vm4OEF76u2g==
-X-CSE-MsgGUID: yO7rgY2kSOGI9TouSA4bjg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
-   d="scan'208";a="151012633"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 21:58:14 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 18 Jun 2025 21:58:14 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 18 Jun 2025 21:58:14 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.72) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 18 Jun 2025 21:58:13 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ST4S73YwhvbUjsrS9CeLJIqTEMFzIQ9zZ5BxiGquZJwJUGjSrcleuz9iAMzEwiCR5AHhMWk6H51tZEMBmyFjJi27lUoykdDrqJbJnyfeGNnr+QPyZipn1waYSLQOzOrfN5QMpye7TFqxa3Q+dooMVF4yQrRdjxVqXDVc+e+LBYaR1E9X5A3tw7pwhbfFvw/yBR0k49K03K+u5LbpbmzaXHabuY/14kLDIhsE+rkgmn/NoZOBCcP9JidMQt73RAgM0LFK4qNCMi2OIVaEV08aBa+4kLNm+MjYk1QiszjKj7v6WTsXK07UCXNxBE1GUJXib/ah6TU5LXJNnjFO0uemPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QmaR2b/XVFgk4Ma6DXBwJAU66GAZGXpLgZXsW+juab8=;
- b=hknRx/c78APjIPkIe/OvWikfObnuHYcPOzebtkqvve798OKW7bpqG4AJcH4JuYitKWbYGcPr6Y3wAV9Q/vqpwSs0ljZ0yyBnnk8L3HVlh2LRxgZGSwHn1DL8mHxwm4MIUKYzr9Pt+ltBrCJZUA0sLcmDae9ltsurF/r73TpzQkfkaGFYZMoLkfStFj4zonhwbXod+1TTgQXm1PrYqvbgRWsfQiO6IP6OIztc8ma+mTtUrn/9p90X5g3f8y+8KNAhOMzk/Iwn5nbtDmkhISs0aeGxhyTbqEkiLj1aaOcHQcBpW0AlRneQYeTJcrKVM6FkNaf6VpVGPolqaoZTwgB3oQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BN9PR11MB5530.namprd11.prod.outlook.com (2603:10b6:408:103::8)
- by SJ1PR11MB6156.namprd11.prod.outlook.com (2603:10b6:a03:45d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Thu, 19 Jun
- 2025 04:57:57 +0000
-Received: from BN9PR11MB5530.namprd11.prod.outlook.com
- ([fe80::13bd:eb49:2046:32a9]) by BN9PR11MB5530.namprd11.prod.outlook.com
- ([fe80::13bd:eb49:2046:32a9%5]) with mapi id 15.20.8857.016; Thu, 19 Jun 2025
- 04:57:57 +0000
-Message-ID: <6a9075f7-bfde-4856-a1c8-ecc0103c75f8@intel.com>
-Date: Thu, 19 Jun 2025 10:27:48 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/10] drm/xe/xe_late_bind_fw: Initialize late binding
- firmware
-To: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
-	<intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <anshuman.gupta@intel.com>, <rodrigo.vivi@intel.com>,
-	<alexander.usyskin@intel.com>, <gregkh@linuxfoundation.org>, <jgg@nvidia.com>
-References: <20250618190007.2932322-1-badal.nilawar@intel.com>
- <20250618190007.2932322-5-badal.nilawar@intel.com>
- <d243bdbc-b3b3-4d58-b378-04d301df3b5e@intel.com>
-Content-Language: en-US
-From: "Nilawar, Badal" <badal.nilawar@intel.com>
-In-Reply-To: <d243bdbc-b3b3-4d58-b378-04d301df3b5e@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA1P287CA0011.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a00:35::15) To BN9PR11MB5530.namprd11.prod.outlook.com
- (2603:10b6:408:103::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325D821A452;
+	Thu, 19 Jun 2025 05:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750309374; cv=none; b=kOlNdhEzV7orx1V/TVOgdpdeAHG3/UsCReBJMvlYTusANW+oPz2/mvkvOhtVsnVGd4bRf+WoVBzabtXCwan3wVe1mQ8qMIAa4dh1QU2ptxWbwCSKOyzrmcJLhPBWu6KuAiiwrVGbMdUmdf2r/wXBqYUpeuh13+I3IU5KtQ6H9Ng=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750309374; c=relaxed/simple;
+	bh=cC1gNkglobCCgQWoLRRzm+tji0YRzCCMskKW7Rup5es=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GWvMkHKNOe1w9mTA/SOxeEWIySM2JmMWyTl7CkNOj87yBRIk4jNMh9+Xw9g3yaBOrpw6DY1C439j3QbgsONWQxGzx5H4FmgVfzeABUjwqfbgBGHV1WFcHsj4JChudcZhTePhMywneyByZhLa0dhzmBIUyeMZkbTC6tuL5RgjzQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=nJlMFyh+; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55J529FG1854570
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 18 Jun 2025 22:02:10 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55J529FG1854570
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025052101; t=1750309332;
+	bh=nz8+KCii5aZfAsUnyh008znZgZhwquPROyRzQoxFqeU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nJlMFyh+ggWVGqIlASPvwYh5Mktn0GpAWRc4Ez52VsMr9JJFOsr68py3bAlMqCyVa
+	 iPTFNYYN9v3AZnZMbNUzpMZrF5c5KPFwyH2FOvTO/JiF4XLBMbXxRdolhMLtWb3GQ4
+	 g6U5VKe+4x9fa3SvV3nyYsYgYselIur7BeF1j8HsmaYBDzk0IiHaYi591QoRNziaPP
+	 phFigHu1V45uCzhqSqmglaZrWJNDAdwpN7T+4/+WAoRKpwykXs/PrZ5TlpJ0/bEWs8
+	 MaGPZRCuIqr7QzmC0G9Buu4oLjgHl6Xs4ww37cGZ9QI6ps7VibWf6LNW/2QiAqLtra
+	 /X+rG0AtsNaNw==
+Message-ID: <7525af7f-a817-47d5-91f7-d7702380c85f@zytor.com>
+Date: Wed, 18 Jun 2025 22:02:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN9PR11MB5530:EE_|SJ1PR11MB6156:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2752803a-0fab-445b-4cf1-08ddaeeddba6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?NlBhSUszZGpjLzBKbjl1SzZhUFdXUG1IekFyazBtdDdEVjNkaXkvRXhLUE02?=
- =?utf-8?B?TlNSanFSNnArLzZMd3h5U3ZWbmhhUy9RMHczZGJYbEY5NU9qaWVIQVVYaWdF?=
- =?utf-8?B?NU05VktpNFBwUWxJUi9ua2RIbGNUWm5RcEpvdDVWNDBMUitxdml0Mkcyc2M0?=
- =?utf-8?B?aGZ6WlRyZTRhNDYwUERGNHc3OUtXNEZjZ0s1ak9yblFXeXRkRmEyY2Npc0hR?=
- =?utf-8?B?VEF5TGsxT1hZTTBGbUovVmd1bFZLbnRQaXF2RFNIVHpsNEVLYXpoUnpzNjlV?=
- =?utf-8?B?WFR1VU1oejk3ZjI0QW1OWlFZa0ZHWWp6T2Q4aXh6YW01ZjQrK01jTEFRQStq?=
- =?utf-8?B?d1YyNTdldFNSY1Z2RG80RzlOOFdSUzFVM202RGdmbmw2dEtOdHlvZUlqZ2Ur?=
- =?utf-8?B?TW91dWtSVkVtT0IvYmgwQmkrSmtIZDRFbldGWENoR2gzREcrR0tqdmdFS1dk?=
- =?utf-8?B?anpIMDFjYkZUTzRzblpURU5reEh4eG5pcFUrMTBOZ1M5dmlOUmVzSUV2Wktx?=
- =?utf-8?B?cXR6OGRNcHBOTkYwdDZFRkliK2JNbkgyQ3pxOGo1RXZTclAyS0xSRFJndktk?=
- =?utf-8?B?ZGpkUnlaNzlvMDd1YUQ1U3hUY2hlUzQyQVUvZ3VRSEpWQi90b1RjU3F1U0JK?=
- =?utf-8?B?NGI3SCtjUmN3N1lvY2RjL0V6ZXkzNkdIN3k4SG5yYk0zaUlNUGxXQTR6MnYw?=
- =?utf-8?B?YnNrUXkzVDlacUJ6OEdjMkxZc1VIVFEzSmVtYkxNUEpRQkk0Rk5oaUV6TTNY?=
- =?utf-8?B?Mm5LMCtsMkFmQ2g5Z1dWWmsrWGJPYXhiaCthaU5FUDNna3FLUmpKcEt3elgy?=
- =?utf-8?B?MG5CSWp0d2c5cnpieWs4YVkzOE1VbUxvekZIbzU0NGl2bHN5TitzWDVDQ2xI?=
- =?utf-8?B?c29mUzJtNHZhcWx1cFhQS0xyb1hRSWRkRDh4aU13SDE1OHBZOGtXN1FRQWEr?=
- =?utf-8?B?WjJBWFVUZEZpdlA3SHVCdEN6TzZJeTBteWp2ZEtubWRGQ0M0eWxCQjlBcW5Z?=
- =?utf-8?B?NFM2bmhNVWczK1lQOHpJVzFJYVJEdDVjeXA5TFpQdXYrUG9WRzdubmtreEF6?=
- =?utf-8?B?eE9xeWJ3dFJBTHBFK0V4VEZMR1dSaUloajhDNlo2OEVKVHZySzA4UFJDRzhq?=
- =?utf-8?B?bjUrZFNGYXA0MDN0aGY1M3A5UFhHWStTaXIrbTNxMlN5K09OWDcyRExib3h0?=
- =?utf-8?B?eldVVWZNRkxtd3lqY1FQcXdKem5UTkdDMUJGOHRweXlDcWpXNGdUcUJMWGNy?=
- =?utf-8?B?Z0hlS1R1OWNacWduV0JVcWdValNSYkZKcGU1UGpBSFl2bGN0disyYUpHUFRL?=
- =?utf-8?B?M0Zmd1NIa1RpM1VoV1RHaEsxK29IUVEva0dHd2VxK1JqQ3dvVWR6MmRXdGVD?=
- =?utf-8?B?MGNNQWJRTVdMVW9WWkl1b2pjKzdpWjgvRFlkcndnNEhPUVl5NHNXMjZ2dnZS?=
- =?utf-8?B?RUxNTERybkFObEFRZ1lGV1JlNUZrR3lna01QUndYcyt3T2FGcmZTcnpvUFhC?=
- =?utf-8?B?QVN3Q1dLR25mMmpNbjRxbFpCeDhWZ2sxZEMvWWpYNjFYVThubXE3bWx2RDY4?=
- =?utf-8?B?TWZLVDNjYXM0ckx2cm9KV3c1eTlFeFgzOTlyZWhlMFhIdWxsUWxPWHdFdks1?=
- =?utf-8?B?ZzB3ck1mT3pKRERvNXF0cFNsbjZtUFRyYzlES2FRVzFUVm5BeEg2Z2VjaDVV?=
- =?utf-8?B?WG1WbWhuV1RvSUF2d2FFdWVzQ29GenlaRzJjSTM1dzBmOVZJa08raEpyeG00?=
- =?utf-8?B?MG5YS1BnRzgzMUJjaWd2MDZCeWN0STQvSUNlZTVuTXF0dEFsZ3lzZUUwZEtW?=
- =?utf-8?B?dWZ6UkMxSXdNZThrcFRIOG5uNlBERGJJNHhiR2FqS1pvRC83ektGcG1qdytl?=
- =?utf-8?B?aE9URWJJcy9oVjJhUWxvNTU3OHR2Q1k0dVRUL2JWUGV4MXRnNDcxbEVwd25r?=
- =?utf-8?Q?GA+3w/1SoVA=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5530.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c2pLN0prbzh3dk9scXRUSWFvZXZoc2VLckVuc0hpYlk2M2FvVHI1WXFsMDhC?=
- =?utf-8?B?dEdhdUNuWHliVFpPTGdxSkhTSXM1b1RnZTRrcmtvdXM0ZWhsVXdzWUQvMEVm?=
- =?utf-8?B?NytmNHYyLzBVekRzTHM5c05pMWZwSXFZelQ0UDBtMTJRQzJTQ0dKNmwrNk5n?=
- =?utf-8?B?dFgycS9lN242ZGFlVytmcmRscUhCbWVJYWVpQXRYcWpjODErMEZnL0hkMnlC?=
- =?utf-8?B?bGRRSGRGR2puSC9UUXlVbFJnYmNkWjRmMUhuL2lMSm9Xck9XbzIyU0xWcDUr?=
- =?utf-8?B?MURzK0xEMWhrUXpTYVVUL1g5dWV1U3p5aUVQMm9nT2MzYTZxWENadnJmOXd0?=
- =?utf-8?B?elNwMGVuaCtRMVQ5b0FjOHJ1RGROQWZqbldVU2tmMTE3SjZYK2ZuSHk0aXdm?=
- =?utf-8?B?enJUMXJYK1hoeWhRSVE3OXpxN0xvTFNHV0R6R1RSUzhRdXRtQmdKMDNOT0ly?=
- =?utf-8?B?T1U4SDdBRG16WnM1dmplTEhVcU9GSENWbXZVaE1RdHF0ZFdYUEZDSTdlVWN0?=
- =?utf-8?B?dXlRQVZuYlJISEhJVXdpWnFrOTRUaFFmNnhaa2tpS0t5bnZJcjEzQytDd0tH?=
- =?utf-8?B?dlNEalBaSEhTYXAxdE15Y3EvNVdzYjVJVTNQU25nZ3hWWlV0RFBLMmRxZmw5?=
- =?utf-8?B?ek80RFdlOUxrRlpab09JRURzMVZQYitpcmF5Z3U5dHRvd1Q2MWpQc24xQm15?=
- =?utf-8?B?a0hDU1EzNm5YcS80NFZxUzNydjdZWlhmRDhJc2NwdG05aXVqVUFZOUdTR3My?=
- =?utf-8?B?Q1FsRmhDazFZU3AvQXJiRnRqT28rQWJSTlZYc01XcmUzN01uKzNHdkpCcUFt?=
- =?utf-8?B?V2IvdExUV2dXNFIzRnhFb3piQlNBajdJSlFsbERpRnY5cjdXTHRGSUh6M09n?=
- =?utf-8?B?WEV2a0g0ZWVlZ1VtWjBOV0w4WEk4bjM3ZmlHUjlheHRnOXlia2t2WjhqZWlN?=
- =?utf-8?B?WEtOVXZHTzM5Z01kWW9rY0tzS2c4Mk8zV1N3cFk4UTk1czdOdy8xS2UwOFY4?=
- =?utf-8?B?ZCtvbnJVT3BxVGxRYTQ5QnRSZUhuOXI0ZDgySE0xZmo0MnFBOTNCbUFTOTVx?=
- =?utf-8?B?VXBhWjBjTlF0QWk1aUtIOXVWbkdBUGNGVU5YUWJsaWQrY2pFZU1qN0FTbFpm?=
- =?utf-8?B?VTFRVUhDdlpBeS8xVVJjTjhyUnlKdXpsRFl5ZHlkR2tOYzJVR2xEZVlMQllh?=
- =?utf-8?B?emxTb0JSM1d6QUp1YnI3ZEZqaTg2QU9UTWg4SzltcWZKOTlhL0l5eTZ1NUtj?=
- =?utf-8?B?UkFCaU45NlBZYkcvSjQ3WXVtSVdiSE1SWmMvWGxFaUhyRGRRWXpld1ZNcFN0?=
- =?utf-8?B?bmsyWk5WblM1RzNQZTRjV1RodUhYWjZQblovWDc1NnFqeUorcmNBTThmRnJi?=
- =?utf-8?B?alhRZGVqVUhqVUlNZDVQV05xWk5abStUWTFGVWJyYWQ2dUNMMmNaOHl2ZTBo?=
- =?utf-8?B?ay94UGF1cnlqeGlmczc3R21maERFeENpaEpXMGVnQWxPOTY4akQ0WHlGODY2?=
- =?utf-8?B?cmtyM0xxL054NzRNMUpja3dkRlFoZW1SSTBJYnN1YWJFOEI4WE52TkN4SENi?=
- =?utf-8?B?Z01XUjdVdXVibHlGeWJWZGRRWVNJS2puVFlxYVNDVXE4cVgxYTBOR1VzRnBw?=
- =?utf-8?B?K3o4eUxtQ0pKTHlLQzM0K3lyREF5aXBJMmJxL3ZHNE81U3BlM3NyUWpsYkVr?=
- =?utf-8?B?QWJOZ21ud2ZmdnQ1ekEyOUduQ1lsTHZ2WTBvcUs5WmFEYW9TU09tTVZ3UlJS?=
- =?utf-8?B?VVJYTjlqcWlmd2JvMk8wSTFCVGQ3QU11OURzREFrcDF6eW5yeCsveDRnY0Fx?=
- =?utf-8?B?dmpWOVFOVUc4K0I3SS9uWUk3ejJhT0N2THgrSlJvTFRWekgvM3dhcmhsbkhQ?=
- =?utf-8?B?TjhyYllQeENubWk4ZDVlT1pMcXpaeWNkdHNDcU5PQVpiQmxsZHlOQnBnaGpV?=
- =?utf-8?B?QXBpTXBjSzM5eEFCRFZidjZhV0YrMW95YlVMSG5RVHRKaTdaN1VjU1FEZ1Aw?=
- =?utf-8?B?MDJHUVM5NjlrRjFLMXpjbnlaQitFdlJONm9sVndlMUZJMTh6K0hHN2N4QmR0?=
- =?utf-8?B?YnlCcUxyaG5SV09rcWc3TjBFT1pRZFZQMHVKR0lackgwQ3V2dDFCUEdnNVUx?=
- =?utf-8?B?aG1BUTIxSldLa0ttSDN2aW1XM2VuOStYUVJIOVh5MzVCTjJRVWN0eHJ1SHhx?=
- =?utf-8?B?ZHc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2752803a-0fab-445b-4cf1-08ddaeeddba6
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5530.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2025 04:57:57.6358
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CyX0ZuNMXdjogQbtP6mmNmvmUabGXN/C8fDgmo4Qt2zGPfKlxbCaXuaFtsjjjfPSafrpPlpKFosRFB3KKYVV+A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6156
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 02/10] x86/fred: Pass event data to the NMI entry point
+ from KVM
+To: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sean Christopherson <seanjc@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>, Tony Luck <tony.luck@intel.com>,
+        Zhang Rui <rui.zhang@intel.com>, Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Jacob Pan <jacob.pan@linux.microsoft.com>,
+        Andi Kleen <ak@linux.intel.com>, Kai Huang <kai.huang@intel.com>,
+        Sandipan Das <sandipan.das@amd.com>, linux-perf-users@vger.kernel.org,
+        linux-edac@vger.kernel.org, kvm@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20250612214849.3950094-1-sohil.mehta@intel.com>
+ <20250612214849.3950094-3-sohil.mehta@intel.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20250612214849.3950094-3-sohil.mehta@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 6/12/2025 2:48 PM, Sohil Mehta wrote:
+> Extend the FRED NMI entry point from KVM to take an extra argument to
+> allow KVM to invoke the FRED event dispatch framework with event data.
+> 
+> This API is used to pass the NMI-source bitmap for NMI-induced VM exits.
+> Read the VMCS exit qualification field to get the NMI-source information
+> and store it as event data precisely in the format expected by the FRED
+> event framework.
+> 
+> Read the VMCS exit qualification unconditionally since almost all
+> upcoming CPUs are expected to enable FRED and NMI-source together. In
+> the rare case that NMI-source isn't enabled, the extra VMREAD would be
+> harmless since the exit qualification is expected to be zero.
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Originally-by: Zeng Guang <guang.zeng@intel.com>
+> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
 
-On 19-06-2025 02:16, Daniele Ceraolo Spurio wrote:
->
->
-> On 6/18/2025 12:00 PM, Badal Nilawar wrote:
->> Search for late binding firmware binaries and populate the meta data of
->> firmware structures.
->>
->> v2 (Daniele):
->>   - drm_err if firmware size is more than max pay load size
->>   - s/request_firmware/firmware_request_nowarn/ as firmware will
->>     not be available for all possible cards
->> v3 (Daniele):
->>   - init firmware from within xe_late_bind_init, propagate error
->>   - switch late_bind_fw to array to handle multiple firmware types
->>
->> Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
->> ---
->>   drivers/gpu/drm/xe/xe_late_bind_fw.c       | 97 +++++++++++++++++++++-
->>   drivers/gpu/drm/xe/xe_late_bind_fw_types.h | 32 +++++++
->>   drivers/misc/mei/late_bind/mei_late_bind.c |  1 -
->>   3 files changed, 128 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw.c 
->> b/drivers/gpu/drm/xe/xe_late_bind_fw.c
->> index 52cb295b7df6..d416d6cc1fa2 100644
->> --- a/drivers/gpu/drm/xe/xe_late_bind_fw.c
->> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw.c
->> @@ -5,6 +5,7 @@
->>     #include <linux/component.h>
->>   #include <linux/delay.h>
->> +#include <linux/firmware.h>
->>     #include <drm/drm_managed.h>
->>   #include <drm/intel/i915_component.h>
->> @@ -13,6 +14,16 @@
->>     #include "xe_device.h"
->>   #include "xe_late_bind_fw.h"
->> +#include "xe_pcode.h"
->> +#include "xe_pcode_api.h"
->> +
->> +static const u32 fw_id_to_type[] = {
->> +        [FAN_CONTROL_FW_ID] = CSC_LATE_BINDING_TYPE_FAN_CONTROL,
->> +    };
->> +
->> +static const char * const fw_id_to_name[] = {
->> +        [FAN_CONTROL_FW_ID] = "fan_control",
->> +    };
->>     static struct xe_device *
->>   late_bind_to_xe(struct xe_late_bind *late_bind)
->> @@ -20,6 +31,86 @@ late_bind_to_xe(struct xe_late_bind *late_bind)
->>       return container_of(late_bind, struct xe_device, late_bind);
->>   }
->>   +static int xe_late_bind_fw_num_fans(struct xe_late_bind *late_bind)
->> +{
->> +    struct xe_device *xe = late_bind_to_xe(late_bind);
->> +    struct xe_tile *root_tile = xe_device_get_root_tile(xe);
->> +    u32 uval;
->> +
->> +    if (!xe_pcode_read(root_tile,
->> +               PCODE_MBOX(FAN_SPEED_CONTROL, FSC_READ_NUM_FANS, 0), 
->> &uval, NULL))
->> +        return uval;
->> +    else
->> +        return 0;
->> +}
->> +
->> +static int __xe_late_bind_fw_init(struct xe_late_bind *late_bind, 
->> u32 fw_id)
->> +{
->> +    struct xe_device *xe = late_bind_to_xe(late_bind);
->> +    struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
->> +    struct xe_late_bind_fw *lb_fw;
->> +    const struct firmware *fw;
->> +    u32 num_fans;
->> +    int ret;
->> +
->> +    if (fw_id >= MAX_FW_ID)
->> +        return -EINVAL;
->> +
->> +    lb_fw = &late_bind->late_bind_fw[fw_id];
->> +
->> +    lb_fw->valid = false;
->> +    lb_fw->id = fw_id;
->> +    lb_fw->type = fw_id_to_type[lb_fw->id];
->> +    lb_fw->flags &= ~CSC_LATE_BINDING_FLAGS_IS_PERSISTENT;
->
-> nit: lb_fw->flags should already be zero here, so no need to make sure 
-> that flag is not set. Also, that flag is ignored on BMG, so there is 
-> no need to make sure it is not set anyway.
+A couple of nits below, otherwise:
 
+Reviewed-by: Xin Li (Intel) <xin@zytor.com>
 
-If I discard this, I will need to remove the definition of 
-CSC_LATE_BINDING_FLAGS_IS_PERSISTENT. I kept this for future use. I 
-would prefer this way.
-I will fix rest of the nits and comments in next rev.
+> ---
+> v7: Pass the event data from KVM only for NMI. (Sean)
+> 
+> v6: No change
+> 
+> v5: Read the VMCS exit qualification unconditionally. (Sean)
+>      Combine related patches into one.
+> ---
+>   arch/x86/entry/entry_64_fred.S |  2 +-
+>   arch/x86/include/asm/fred.h    | 11 ++++++-----
+>   arch/x86/kvm/vmx/vmx.c         |  2 +-
+>   3 files changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/entry/entry_64_fred.S b/arch/x86/entry/entry_64_fred.S
+> index 29c5c32c16c3..1c9c6e036233 100644
+> --- a/arch/x86/entry/entry_64_fred.S
+> +++ b/arch/x86/entry/entry_64_fred.S
+> @@ -93,7 +93,7 @@ SYM_FUNC_START(asm_fred_entry_from_kvm)
+>   	 * +--------+-----------------+
+>   	 */
+>   	push $0				/* Reserved, must be 0 */
+> -	push $0				/* Event data, 0 for IRQ/NMI */
+> +	push %rsi			/* Event data for NMI */
 
-Thanks,
-Badal
+Maybe a bit more accurate?
 
->> +
->> +    if (lb_fw->type == CSC_LATE_BINDING_TYPE_FAN_CONTROL) {
->> +        num_fans = xe_late_bind_fw_num_fans(late_bind);
->> +        drm_dbg(&xe->drm, "Number of Fans: %d\n", num_fans);
->> +        if (!num_fans)
->> +            return 0;
->> +    }
->> +
->> +    snprintf(lb_fw->blob_path, sizeof(lb_fw->blob_path), 
->> "xe/%s_8086_%04x_%04x_%04x.bin",
->> +         fw_id_to_name[lb_fw->id], pdev->device,
->> +         pdev->subsystem_vendor, pdev->subsystem_device);
->> +
->> +    drm_dbg(&xe->drm, "Request late binding firmware %s\n", 
->> lb_fw->blob_path);
->> +    ret = firmware_request_nowarn(&fw, lb_fw->blob_path, xe->drm.dev);
->> +    if (ret) {
->> +        drm_dbg(&xe->drm, "%s late binding fw not available for 
->> current device",
->> +            fw_id_to_name[lb_fw->id]);
->> +        return 0;
->> +    }
->> +
->> +    if (fw->size > MAX_PAYLOAD_SIZE) {
->> +        drm_err(&xe->drm, "Firmware %s size %zu is larger than max 
->> pay load size %u\n",
->> +            lb_fw->blob_path, fw->size, MAX_PAYLOAD_SIZE);
->> +        release_firmware(fw);
->> +        return -ENODATA;
->> +    }
->> +
->> +    lb_fw->payload_size = fw->size;
->> +
->> +    memcpy(lb_fw->payload, fw->data, lb_fw->payload_size);
->> +    release_firmware(fw);
->> +    lb_fw->valid = true;
->> +
->> +    return 0;
->> +}
->> +
->> +static int xe_late_bind_fw_init(struct xe_late_bind *late_bind)
->> +{
->> +    int ret;
->> +    int fw_id;
->> +
->> +    for (fw_id = 0; fw_id < MAX_FW_ID; fw_id++) {
->> +        ret = __xe_late_bind_fw_init(late_bind, fw_id);
->> +        if (ret)
->> +            return ret;
->> +    }
->> +    return ret;
->
-> nit: this could be a return 0, since if ret != 0 we return earlier
->
->> +}
->> +
->>   static int xe_late_bind_component_bind(struct device *xe_kdev,
->>                          struct device *mei_kdev, void *data)
->>   {
->> @@ -89,5 +180,9 @@ int xe_late_bind_init(struct xe_late_bind *late_bind)
->>         late_bind->component_added = true;
->>   -    return devm_add_action_or_reset(xe->drm.dev, 
->> xe_late_bind_remove, late_bind);
->> +    err = devm_add_action_or_reset(xe->drm.dev, xe_late_bind_remove, 
->> late_bind);
->> +    if (err)
->> +        return err;
->> +
->> +    return xe_late_bind_fw_init(late_bind);
->>   }
->> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h 
->> b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
->> index ef0a9723bee4..c6fd33fd5484 100644
->> --- a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
->> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
->> @@ -10,6 +10,36 @@
->>   #include <linux/mutex.h>
->>   #include <linux/types.h>
->>   +#define MAX_PAYLOAD_SIZE (1024 * 4)
->
-> nit: could use SZ_4K instead of 1024 * 4
->
->> +
->> +/**
->> + * xe_late_bind_fw_id - enum to determine late binding fw index
->> + */
->> +enum xe_late_bind_fw_id {
->> +    FAN_CONTROL_FW_ID = 0,
->> +    MAX_FW_ID
->
-> nit: Maybe use a less generic name here, to avoid clashes? something 
-> like:
->
-> enum xe_late_bind_fw_id {
->         XE_LB_FW_FAN_CONTROL = 0,
->         XE_LB_FW_MAX_ID
-> }
->
->> +};
->> +
->> +/**
->> + * struct xe_late_bind_fw
->> + */
->> +struct xe_late_bind_fw {
->> +    /** @late_bind_fw.valid: to check if fw is valid */
->> +    bool valid;
->> +    /** @late_bind_fw.id: firmware index */
->> +    u32 id;
->> +    /** @late_bind_fw.blob_path: firmware binary path */
->> +    char blob_path[PATH_MAX];
->> +    /** @late_bind_fw.type: firmware type */
->> +    u32  type;
->> +    /** @late_bind_fw.flags: firmware flags */
->> +    u32  flags;
->> +    /** @late_bind_fw.payload: to store the late binding blob */
->> +    u8  payload[MAX_PAYLOAD_SIZE];
->
-> Sorry for the late comment on this, just realized that this is a 4K 
-> allocation, should we alloc this dynamically only if we need it?
->
->> +    /** @late_bind_fw.payload_size: late binding blob payload_size */
->> +    size_t payload_size;
->> +};
->> +
->>   /**
->>    * struct xe_late_bind_component - Late Binding services component
->>    * @mei_dev: device that provide Late Binding service.
->> @@ -34,6 +64,8 @@ struct xe_late_bind {
->>       bool component_added;
->>       /** @late_bind.mutex: protects the component binding and usage */
->>       struct mutex mutex;
->> +    /** @late_bind.late_bind_fw: late binding firmware array */
->> +    struct xe_late_bind_fw late_bind_fw[MAX_FW_ID];
->>   };
->>     #endif
->> diff --git a/drivers/misc/mei/late_bind/mei_late_bind.c 
->> b/drivers/misc/mei/late_bind/mei_late_bind.c
->> index cb985f32309e..6ea64c44bb94 100644
->> --- a/drivers/misc/mei/late_bind/mei_late_bind.c
->> +++ b/drivers/misc/mei/late_bind/mei_late_bind.c
->> @@ -2,7 +2,6 @@
->>   /*
->>    * Copyright (C) 2025 Intel Corporation
->>    */
->> -#include <drm/drm_connector.h>
->
-> This change shouldn't be in this patch. If this header is not needed 
-> just modify the patch that adds it to not do so.
->
-> All nits are non blocking.
-> Daniele
->
->>   #include <drm/intel/i915_component.h>
->>   #include <drm/intel/late_bind_mei_interface.h>
->>   #include <linux/component.h>
->
+/* Event data, NMI-source bitmap only so far */
+
+>   	push %rdi			/* fred_ss handed in by the caller */
+>   	push %rbp
+>   	pushf
+> diff --git a/arch/x86/include/asm/fred.h b/arch/x86/include/asm/fred.h
+> index 552332ca060c..bccf4a3c06b8 100644
+> --- a/arch/x86/include/asm/fred.h
+> +++ b/arch/x86/include/asm/fred.h
+> @@ -66,14 +66,14 @@ static __always_inline unsigned long fred_event_data(struct pt_regs *regs)
+>   
+>   void asm_fred_entrypoint_user(void);
+>   void asm_fred_entrypoint_kernel(void);
+> -void asm_fred_entry_from_kvm(struct fred_ss);
+> +void asm_fred_entry_from_kvm(struct fred_ss ss, unsigned long edata);
+>   
+>   __visible void fred_entry_from_user(struct pt_regs *regs);
+>   __visible void fred_entry_from_kernel(struct pt_regs *regs);
+>   __visible void __fred_entry_from_kvm(struct pt_regs *regs);
+>   
+>   /* Must be called from noinstr code, thus __always_inline */
+> -static __always_inline void fred_nmi_from_kvm(void)
+> +static __always_inline void fred_nmi_from_kvm(unsigned long edata)
+>   {
+>   	struct fred_ss ss = {
+>   		.ss	= __KERNEL_DS,
+> @@ -83,7 +83,7 @@ static __always_inline void fred_nmi_from_kvm(void)
+>   		.lm	= 1,
+>   	};
+>   
+> -	asm_fred_entry_from_kvm(ss);
+> +	asm_fred_entry_from_kvm(ss, edata);
+>   }
+>   
+>   static inline void fred_irq_from_kvm(unsigned int vector)
+> @@ -95,7 +95,8 @@ static inline void fred_irq_from_kvm(unsigned int vector)
+>   		.lm	= 1,
+>   	};
+>   
+> -	asm_fred_entry_from_kvm(ss);
+> +	/* Event data is always zero for IRQ */
+
+/* Event data not used for IRQ thus 0 */
 
