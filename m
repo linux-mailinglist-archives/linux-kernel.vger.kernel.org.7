@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-693533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF870ADFFF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:38:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C04F4ADFFC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96CB23BC985
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:37:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 796203B95B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C324027877F;
-	Thu, 19 Jun 2025 08:36:22 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358E52609FC;
+	Thu, 19 Jun 2025 08:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K0LWzaze"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383822475CB
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 08:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5364A1D;
+	Thu, 19 Jun 2025 08:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750322182; cv=none; b=OEznFrtSrUB/8RsgMi2Sn2ZIykzb+0mlDKaaT0xEA8XeRNy8RwpV3KSEA0Ul8cBaggQRe8opl86W3qQQ2G2BCCv+DnRTYWYv8F0cdyKaQ9NMJYw+Cy4UqXZQrXTgyY1x5ghAtMuvwL1l1/gWGZ+Bhc8QpClHkvbCe5i+HDpMV1w=
+	t=1750321859; cv=none; b=GtoGiFZMYwP5VGLhgs8mmUZOkxX5KHxokaOFrLBu/dW7gCmQRrFaIBMvqVQK89mnH+RKd8kvx8AoPuzut6VxfloShj80iU6ADDGSESgNGPl7EVVBqM1NiENmDgpWCYof5389nS1XiC5TKP9mP+8ZCovCmZ8+N+mOGSpZ9FHdV2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750322182; c=relaxed/simple;
-	bh=/Lp/O5vQ0HV7GkGwx5ZKYRSwkwyP+1/8cJhJ/GxCZmY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iwkn/H6NmN3X9rp5gWKA9qLLF3cLBtyVCStmtkY6qAIdaypHLZ4ibf7BiA/aqeS3ZusdpgZk7ir35DUV1TfmBrJA95oYmVEmw6ulr0tDbCtEePmjp95iW52fcgFMpWQlhUKRLfkGh9ofY/7oLQxY1itddaOMu2Aw29M7i4OqOLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bNDTk5XKxzYQw1h
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 16:36:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B6A641A12F3
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 16:36:09 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCH61_yy1Noq1DyPw--.49289S4;
-	Thu, 19 Jun 2025 16:36:09 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: akpm@linux-foundation.org,
-	tglx@linutronix.de,
-	john.g.garry@oracle.com,
-	axboe@kernel.dk,
-	ming.lei@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH] lib/group_cpus: fix NULL pointer dereference from group_cpus_evenly()
-Date: Thu, 19 Jun 2025 16:29:41 +0800
-Message-Id: <20250619082941.3741592-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1750321859; c=relaxed/simple;
+	bh=5U1WxsatwH9pCFmpAeShXCBLm1r5I+NDtPeCRXqZVpw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mRayQ9KEewVOOZ82F1EEmdPqVrKrTVox54VuE/+8g8Ofw553w4rKe8gSlA0Mbmi7rME/DBTYYIwns9uMiAYWjucd9jH3CKSQ6h9RE/wdCrzhAkTy0AR9kmjBamDACtGwkLfRTv1VZOqXgWJRP/LNlGzZBBDsiB6H6wXLkS1ZpX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K0LWzaze; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-450cf214200so4385615e9.1;
+        Thu, 19 Jun 2025 01:30:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750321856; x=1750926656; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1T6FrQp2okPwOD58MAho0evF8YiqmPgaoUsaoWni2dg=;
+        b=K0LWzazeK2rCTbFZMcSxY6kuWtGLS9/fyl1pZ3MWCKvOlyhl6bYc+0i0MOTOLIO3hy
+         pyTiaFSexrbmGc0WgkSpS0wJ7qVImr7bt+iz7Ib4MWM8i+VUDqw7fWci4xgPCAWMq5ZF
+         ZqmGfFo2cEFgv9RYgTu7ouwE8/HpfKBZifsKoIrIgkfpQVIwcn38sfzbA039WctulEIj
+         mUdbZgcPuAqxwDN3DGtyXHRaoJtqK5YGiigNgN7XwCJvAIPyhOU44RrJ+oa+lTPGwX0g
+         yVg32fo5JlSuiajSG76wu0NukcwWXNmkiZYf/hKpVqHaIw2hPQyNN/5tgyKwk/byk+Y8
+         re8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750321856; x=1750926656;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1T6FrQp2okPwOD58MAho0evF8YiqmPgaoUsaoWni2dg=;
+        b=KHm8g/5WRcHjMcj6ChtqUuKZH8MwZ02JmkGh08rbDLjhnGhnWbtYenrF4T3PpnPKyl
+         W1+cwlUxmZYTWfO701W+OxsitFXD92aAW6/ZJYroHOCT2o0NDR6IkSxh8jFcG7Iq6Diq
+         y8FOUjVFVHgGigc9NAGBV0tSRSPahfWDHLO9C54Atij+dsbhEo+iLpkcVOmZL/EmLdRb
+         1XFmH8clGQ89cu9edboKGPWmzbfnVyO8te5+H4tDXDrX9qPaSiZdUoBMNiC9lqXnyML2
+         n6uAtYzfy+zBlr+caQlFVvTwIkbTWwhb0DJujTQ6OknfjcF9L1XwcUO3PArhzK5dTE8e
+         wE5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUPKFeb/bosS0zHvDhZW3GpSgB9I/CZaq2vRAw98pn8+vzTF5R3gP6K6+ftG1yiJJgOl/dg6ed2jbg/EOVb@vger.kernel.org, AJvYcCUqx6SOE+cWG2td39lb8HC3Q88q0NozY7djxenzrshZaEbA5Z7x4Bjjig38g/HCBwrviWnPFL41ZBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdokKCCpEG1k+vnH+j+1Rcu+uPMQB8PN8NfNaGmnysf3bNsK67
+	qQ1zpJl03yPFhyqsIPZrCEwROqzxVQx+L8eLMNIM0Izq8RXP+aS894LJSSG6yp5fEWAlhw==
+X-Gm-Gg: ASbGncvdxRNwecJEbit5T3fWzaQdYv5XPME1bIRm8bKL8jT5i3Ix1Jw2wan2uQ4ck+b
+	HwlbZL44R20mExwrJBqF+ot6leE/yNZ5wVpYnJRGoiZpPgA8qh9Fe/fRdU+iXJ8QcgzYN+VdCDY
+	n5ahhyIM3QbNuGppa9pP7a0gvCdVYDH1UkwimLFZCap8evmkutpdL2ctV54eD4tmZf7shChtALp
+	ngWDNnG4M+Zg0qGui6IOFf/Jse5pQQIPRb+a/4UIK9KYcUSETpEzQS+0vkAFvpe/H+0olgO3wNy
+	Znb5y6Gcw8/lhRYGrcbTg/4pUwbLOTNZhtoECxeoWax+Kht67S9wyjXws5Bs
+X-Google-Smtp-Source: AGHT+IEQpQd/8hmEsQ9eRTPMz052eU5rjSLNmdJtdjr2u9+ZU4TSJSnOXYilvQhtflXrG48W5EC87g==
+X-Received: by 2002:a05:600c:1c02:b0:43c:fa52:7d2d with SMTP id 5b1f17b1804b1-4533cab540cmr174416875e9.20.1750321856202;
+        Thu, 19 Jun 2025 01:30:56 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-453599c9854sm27663455e9.1.2025.06.19.01.30.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jun 2025 01:30:55 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] clk: moxart: Make read-only array div_idx static const
+Date: Thu, 19 Jun 2025 09:30:35 +0100
+Message-ID: <20250619083035.1835133-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCH61_yy1Noq1DyPw--.49289S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFWrGr1UKF43JrWfuFyUJrb_yoW8ZrWkpF
-	WSkr4jkFykGF18Ca1Yvw4Ig3WSqFnYvr1fGFyxKF1YvF1aqw45ZF97XFWUXryrCws8Aa1f
-	XasYyrW5t34qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUoWlkDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
+Don't populate the read-only array div_idx on the stack at run time,
+instead make it static const.
 
-While testing null_blk with configfs, echo 0 > poll_queues will trigger
-following panic:
-
-BUG: kernel NULL pointer dereference, address: 0000000000000010
-Oops: Oops: 0000 [#1] SMP NOPTI
-CPU: 27 UID: 0 PID: 920 Comm: bash Not tainted 6.15.0-02023-gadbdb95c8696-dirty #1238 PREEMPT(undef)
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.1-2.fc37 04/01/2014
-RIP: 0010:__bitmap_or+0x48/0x70
-Call Trace:
- <TASK>
- __group_cpus_evenly+0x822/0x8c0
- group_cpus_evenly+0x2d9/0x490
- blk_mq_map_queues+0x1e/0x110
- null_map_queues+0xc9/0x170 [null_blk]
- blk_mq_update_queue_map+0xdb/0x160
- blk_mq_update_nr_hw_queues+0x22b/0x560
- nullb_update_nr_hw_queues+0x71/0xf0 [null_blk]
- nullb_device_poll_queues_store+0xa4/0x130 [null_blk]
- configfs_write_iter+0x109/0x1d0
- vfs_write+0x26e/0x6f0
- ksys_write+0x79/0x180
- __x64_sys_write+0x1d/0x30
- x64_sys_call+0x45c4/0x45f0
- do_syscall_64+0xa5/0x240
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-Root cause is that numgrps is set to 0, and ZERO_SIZE_PTR is returned
-from kcalloc(), then __group_cpus_evenly() will deference the
-ZERO_SIZE_PTR.
-
-Fix the problem by checking kcalloc() return value with ZERO_OR_NULL_PTR,
-and NULL will be returned to caller.
-
-Fixes: 6a6dcae8f486 ("blk-mq: Build default queue map via group_cpus_evenly()")
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- lib/group_cpus.c | 2 +-
+ drivers/clk/clk-moxart.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/group_cpus.c b/lib/group_cpus.c
-index ee272c4cefcc..5e243946ee4e 100644
---- a/lib/group_cpus.c
-+++ b/lib/group_cpus.c
-@@ -363,7 +363,7 @@ struct cpumask *group_cpus_evenly(unsigned int numgrps)
- 		goto fail_npresmsk;
+diff --git a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
+index 3786a0153ad1..4d34d1d18dbd 100644
+--- a/drivers/clk/clk-moxart.c
++++ b/drivers/clk/clk-moxart.c
+@@ -58,7 +58,7 @@ static void __init moxart_of_apb_clk_init(struct device_node *node)
+ 	struct clk_hw *hw;
+ 	struct clk *pll_clk;
+ 	unsigned int div, val;
+-	unsigned int div_idx[] = { 2, 3, 4, 6, 8};
++	static const unsigned int div_idx[] = { 2, 3, 4, 6, 8};
+ 	const char *name = node->name;
+ 	const char *parent_name;
  
- 	masks = kcalloc(numgrps, sizeof(*masks), GFP_KERNEL);
--	if (!masks)
-+	if (ZERO_OR_NULL_PTR(masks))
- 		goto fail_node_to_cpumask;
- 
- 	build_node_to_cpumask(node_to_cpumask);
 -- 
-2.39.2
+2.49.0
 
 
