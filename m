@@ -1,101 +1,160 @@
-Return-Path: <linux-kernel+bounces-693641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 321EAAE01BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:34:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E16AE01CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 11:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8FBC3A3F65
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:34:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3E571BC2BAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C3621D3E3;
-	Thu, 19 Jun 2025 09:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AS7uy+BC"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109581E3DE8;
-	Thu, 19 Jun 2025 09:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABDF220F3F;
+	Thu, 19 Jun 2025 09:35:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FC020E33F;
+	Thu, 19 Jun 2025 09:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750325686; cv=none; b=uGDYww9htPwSn4j2aEWnshn/kU2DBzi8wBS4us6u/eFCBiu/0+lAlPE9owxXfso5Wcv+pMeJsDjJo5Mf7VUtAc9ZcrFIodKcb7o4zaAFv6wvjuBsyJJZ53dw9qytGw92kDQPZwiZPuuBL3cQXpTa03u/7ur/gLqKEr4wd3gMoqc=
+	t=1750325722; cv=none; b=kyZBTY7grx/KzOKcKxZpn7KVXt9wynMKQatUEEQ7V+WG1XprP+7j0TePRo8fhB+nqi8mZkebJSHJoLxrij5sa4Ykk+JbnfAi0AUeDQqgiJDQkQN1zB6OtnAMxpyT5YGVrp9K78h4qA7EolpSG6xzWC7kpW/7a6s71icPN4qYK1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750325686; c=relaxed/simple;
-	bh=QcAYBKT1cIvdsyseoqgitnm430Vwz/EU0Tl9epGz3tw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q/aLUOlPU4AAbCLR838b6qJqjTslY9Q4FY95sF9qE1SoGCDhjgwR0RnjPVR6EsviNrxMog6eJ03rgOdV/YQuf8lXKj5pxuxu8VobGKqOfxMFg2r+5l20g89Ry21q1Ky3/z4TPLM/kDpZ40M5F7IoSDbrnd+aoXGmEbMp4w17DtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AS7uy+BC; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=2AUllZ+Dj4P64TXGTgLBYOcRg8kwoj8xfoPreeFt9p4=; b=AS7uy+BCM1J7UM94lymt0Uy9Fh
-	gBOsBSpu50ONWsQL3mvwYWtZgB2yjwYNbiZQaaj9gk7avxxBDMpKJp06hhbIgwEpvCqN+ZzXCVxeo
-	26S5vH/n5cKjwCuqBabHbOauwpdTOlXDGb7YpMpq4Ax6pgGe2JqywJdchVMuRCZDvBbxSnerQv1ZB
-	Pgrne9l9lVo5bomblV8NN9CIiUs7TjB/KGuwA9PrJKCybmG9fdjNhWupmurDaQ9oeTC5XUAHeV4Hx
-	sv5SE1/q9LFW6iMxY/e7DaIJcI/34VfRNlnvznJxcyyfwwE3lkExhEx/Gkxct59YZkHWetVzobS2Y
-	55ydr8iA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uSBfJ-000000084li-46D5;
-	Thu, 19 Jun 2025 09:34:38 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 204BE3088F2; Thu, 19 Jun 2025 11:34:37 +0200 (CEST)
-Date: Thu, 19 Jun 2025 11:34:37 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, x86@kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v10 07/14] unwind_user/deferred: Make unwind deferral
- requests NMI-safe
-Message-ID: <20250619093437.GI1613200@noisy.programming.kicks-ass.net>
-References: <20250611005421.144238328@goodmis.org>
- <20250611010428.938845449@goodmis.org>
- <20250619085717.GB1613376@noisy.programming.kicks-ass.net>
- <FCBAD96C-AD1B-4144-91D2-2A48EDA9B6CC@goodmis.org>
- <20250619093226.GH1613200@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1750325722; c=relaxed/simple;
+	bh=KJz4wHkbznHGbklhZhBhpri2LOwDB+obREZzjSZkApc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R7BGMjMLR2pq2N8mZjBuxfLabOPELJgcqhRRayOKXM96pRAOVMjwcP7JGQkK/7qYZTzE/+lqMxHyZ0Z4KNSo/+YkiSAfAyrmpHHi5jrUf8xICUfVrkcLewYU64AKXBk6F75qSt8izpazWPS8resSxmRzDiRiG5tLb6kBIPQ93Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E1725113E;
+	Thu, 19 Jun 2025 02:34:56 -0700 (PDT)
+Received: from [10.163.35.214] (unknown [10.163.35.214])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 953A43F58B;
+	Thu, 19 Jun 2025 02:35:13 -0700 (PDT)
+Message-ID: <0d437b3e-37b5-4e98-90bc-afa6c8150e77@arm.com>
+Date: Thu, 19 Jun 2025 15:05:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250619093226.GH1613200@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 1/2] lib/vsprintf: Add support for pte_t
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-mm@kvack.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek
+ <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250618041235.1716143-1-anshuman.khandual@arm.com>
+ <20250618041235.1716143-2-anshuman.khandual@arm.com>
+ <aFL7frrstgpzzgan@smile.fi.intel.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <aFL7frrstgpzzgan@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 19, 2025 at 11:32:26AM +0200, Peter Zijlstra wrote:
-> On Thu, Jun 19, 2025 at 05:07:10AM -0400, Steven Rostedt wrote:
-> 
-> > Does #DB make in_nmi() true? If that's the case then we do need to handle that.
-> 
-> Yes: #DF, #MC, #BP (int3), #DB and NMI all have in_nmi() true.
 
-Note: these are all the from-kernel parts of those exceptions. The
-from-user side is significantly different.
 
-> Ignoring #DF because that's mostly game over, you can get them all
-> nested for up to 4 (you're well aware of the normal NMI recursion
-> crap).
+On 18/06/25 11:16 PM, Andy Shevchenko wrote:
+> On Wed, Jun 18, 2025 at 09:42:34AM +0530, Anshuman Khandual wrote:
+>> Add a new format for printing page table entries.
 > 
-> Then there is the SEV #VC stuff, which is also NMI like. So if you're a
-> CoCo-nut, you can perhaps get it up to 5.
+>> Cc: Petr Mladek <pmladek@suse.com>
+>> Cc: Steven Rostedt <rostedt@goodmis.org>
+>> Cc: Jonathan Corbet <corbet@lwn.net>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: linux-doc@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: linux-mm@kvack.org
+> 
+> Please. move these to be after the '---' cutter line below. Just leave SoB tag
+> alone. This will have the same effect w/o polluting commit message.
+> 
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+> 
+> (somewhere here is a good place for all your Cc: tags)
+
+Is not it better to also capture the Cc: list in the commit message.
+Seems like such has been the practice for various patches on the MM
+list. But not sure if that is an expected standard for all patches.
+
+> 
+> ...
+> 
+>> +        %ppte
+> 
+> I believe you can take %pte.
+
+Yes - that should be possible.
+
+> 
+> ...
+> 
+>> +Print standard page table entry pte_t.
+>> +
+>> +Passed by reference.
+>> +
+>> +Examples for a 64 bit page table entry, given &(u64)0xc0ffee::
+> 
+> What does this mean?
+
+64 bit address containing value the 0xc0ffee
+
+> 
+>> +        %ppte   0x00c0ffee
+> 
+> Can it be ever 64-bit?
+I am sorry - did not get that. pte_t contained value can be 64
+bits if that's what you meant.
+
+> 
+> ...
+> 
+>> +			spec.field_width = 10;
+>> +			spec.precision = 8;
+>> +			spec.base = 16;
+>> +			spec.flags = SPECIAL | SMALL | ZEROPAD;
+> 
+> Do not duplicate code we have already in the file.
+I am sorry - did not get that. Is the above flag combination some
+how wrong ?
+
+> 
+>> +			if (sizeof(pte_t) == sizeof(u64)) {
+>> +				u64 val = pte_val(*pte);
+>> +
+>> +				return number(buf, end, val, spec);
+>> +			}
+> 
+> Ditto.
+> 
+>> +			WARN_ONCE(1, "Non standard pte_t\n");
+> 
+> (almost) Ditto,
+> 
+>> +			return error_string(buf, end, "(einval)", spec);
+> 
+> Ditto.
+> 
+>> +		}
+>> +		fallthrough;
+> 
+> Please, avoid this, it makes code much harder to read and maintain.
+> See above how.
+> 
+
+Could you please kindly elaborate on the code duplication problem
+you have mentioned earlier. I might not understand your concern
+here correctly.
+
+
+
+
 
