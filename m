@@ -1,52 +1,58 @@
-Return-Path: <linux-kernel+bounces-693198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE75EADFC1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:01:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F02AADFC24
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47581189E0FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:01:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91EC61BC0768
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC87954764;
-	Thu, 19 Jun 2025 04:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04442397B0;
+	Thu, 19 Jun 2025 04:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dL5pI0S1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="HsAkH6o7"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D28207A27;
-	Thu, 19 Jun 2025 04:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2956621C9F5;
+	Thu, 19 Jun 2025 04:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750305667; cv=none; b=dnDfU2Ja9atPn/Skx7T9vP1mBEc7zR0OYU0f2cEw7stobA9x4sWucKWOsCwRu7VbWPBEt3izTPiXgZxGiu+0fnw4AiP9Waceqp6nAgR14fKCDQZQG9LYeJQNNT+G39YWrk3iegn1/DBnB9iHy9txSm85EAGtrMcV1C2595eFK14=
+	t=1750305768; cv=none; b=HJobaikZBu13Wz4Q+M46SfQqX7QEa8KtFlYu1rpCCZmm4bsHmxQHHxjV1MINILTAGK/r3h2KZlZoVvXYAHRuli1q5K5Rw6BQnjeRKMJ0tpkm3HimUKovFd0+I9Ai0JoH9Fym2dFsa5d0D9py0G6HiTDjyekWmApA/fyYusk01tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750305667; c=relaxed/simple;
-	bh=uzfB+BZlFnvaD08LGcyN98GOijg8o/DIDcLcrxwZEog=;
+	s=arc-20240116; t=1750305768; c=relaxed/simple;
+	bh=dGXn9HsikZoPeqGXMzGHbrPCQh8SVD69TaCtUZdgaTk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GI/oqusZ6yJNKgELGLYWNhw+ETdCDJ8AmIDOcsVYf8jl4DkN8aDCWmUo4Sa6aALiveMK4639ZXIaqai+nSmGSqbPXTImdU64WUFCb+tPmB7GuQ7Sj3mzqa6XE5xNmCUoRw8N6gpT9/ZDqpC15pyutTM24TDU27qUa/Klhz2Rq9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dL5pI0S1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35F3EC4CEEA;
-	Thu, 19 Jun 2025 04:01:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750305666;
-	bh=uzfB+BZlFnvaD08LGcyN98GOijg8o/DIDcLcrxwZEog=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dL5pI0S1hAuBwv9hHH7stkQ2KhBOeyWRS+A3iGg7A0hVNlQTRmHKYyWBWobk3hZAc
-	 WG5wxRDchXmvSRdf+dAC08yEu8D8AaBNF0lzbyzuAfkh/FqOnHyaUDgxI2BXdQ+y2X
-	 qltLHtdTbVtXoSQMN7y9tyXZW9HZ9TDzO3gM1//s=
-Date: Thu, 19 Jun 2025 06:01:03 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Seungjin Bae <eeodqql09@gmail.com>
-Cc: Mathias Nyman <mathias.nyman@intel.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: host: xhci-plat: fix incorrect type for of_match
- variable in xhci_plat_probe()
-Message-ID: <2025061950-frown-cesarean-a1e3@gregkh>
-References: <2025061804-existing-taking-1f9c@gregkh>
- <20250618192713.20668-2-eeodqql09@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XqhLq/PwKvCzTfnm92j6hFBF/UkaU3jjMCMhwRiBYhTkM/fyFJffewEv2vrnm0su1Vn6eQkQbJD5qC45xF5yQkP5MZBnsf5ACkhoSvwC/y88D2HoQPiS1at+7VpFQ+5B6REFMSNH0zVKENO5DxMB8VlmbIifO/9yqztnaM98kwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=HsAkH6o7; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=quvcjZIyZdHXE2r5su/BoIFtXlfUorFHohW6xpcB5B0=;
+	b=HsAkH6o7CAehFoLWGauWTIMSs9aU+tPr6b4AO3hzKV+m/HV3WbbWoAYQgC2Ff/
+	CC8AbNo32cE/q7bzmRTjRNzWgKj+hN4hjlAfrSnC5RhpTMv18cfGlAuiiiQ2iKsQ
+	6BsnaF+zvMqplGN1/zwXCx9X3bsySvbSWPFm8CK5Wps0M=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgDX_zq0i1Noom_2AA--.60308S3;
+	Thu, 19 Jun 2025 12:01:58 +0800 (CST)
+Date: Thu, 19 Jun 2025 12:01:56 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: maudspierings@gocontroll.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v7 2/8] arm64: dts: imx8mp: Add pinctrl config definitions
+Message-ID: <aFOLtHeAMaCLLDdL@dragon>
+References: <20250520-initial_display-v7-0-a8f0195420aa@gocontroll.com>
+ <20250520-initial_display-v7-2-a8f0195420aa@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,64 +61,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250618192713.20668-2-eeodqql09@gmail.com>
+In-Reply-To: <20250520-initial_display-v7-2-a8f0195420aa@gocontroll.com>
+X-CM-TRANSID:M88vCgDX_zq0i1Noom_2AA--.60308S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU0EfOUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCQJxZWhTi3sBCwAAse
 
-On Wed, Jun 18, 2025 at 03:27:14PM -0400, Seungjin Bae wrote:
-> From: pip-izony <eeodqql09@gmail.com>
-
-This line doesn't match up with:
-
+On Tue, May 20, 2025 at 08:34:51AM +0200, Maud Spierings via B4 Relay wrote:
+> From: Maud Spierings <maudspierings@gocontroll.com>
 > 
-> The variable `of_match` was incorrectly declared as a `bool`.
-> It is assigned the return value of of_match_device(), which is a pointer of
-> type `const struct of_device_id *`.
+> Currently to configure each IOMUXC_SW_PAD_CTL_PAD the raw value of this
+> register is written in the dts, these values are not obvious. Add defines
+> which describe the fields of this register which can be or-ed together to
+> produce readable settings.
 > 
-> Fixes: 16b7e0cccb243 ("USB: xhci-plat: fix legacy PHY double init")
-> 
-> Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
 
-That line :(
+Applied, thanks!
 
-Also, no need for a blank line after Fixes:
-
-Also:
-
-> ---
->  drivers/usb/host/xhci-plat.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-> index 6dab142e7278..49eb874b1d81 100644
-> --- a/drivers/usb/host/xhci-plat.c
-> +++ b/drivers/usb/host/xhci-plat.c
-> @@ -152,7 +152,7 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
->  	int			ret;
->  	int			irq;
->  	struct xhci_plat_priv	*priv = NULL;
-> -	bool			of_match;
-> +	const struct of_device_id *of_match;
->  
->  	if (usb_disabled())
->  		return -ENODEV;
-> -- 
-> 2.43.0
-> 
-> Hello Greg,
-> 
-> Thank you for your review and the helpful feedback.
-> 
-> I've corrected Signed-off-by line to use my real name.
-> I also updated Fixes tag in the commit.
-> 
-> Regarding the original issue:
-> I'm not exactly sure why the compiler didn't catch this,
-> but I assume implicit casting from pointer to bool is allowed in this context.
-
-That info should go below the --- line, and this is a version 2 of this
-change, right?  Take a look at the kernel documentation for how to
-number your patch revisions.
-
-thanks,
-
-greg k-h
 
