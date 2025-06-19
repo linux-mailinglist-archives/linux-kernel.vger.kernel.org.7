@@ -1,246 +1,465 @@
-Return-Path: <linux-kernel+bounces-693232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B381ADFC98
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:46:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17FCCADFC9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 06:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13E5817ABFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:46:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE66A7A1965
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 04:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6941B6CFE;
-	Thu, 19 Jun 2025 04:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9970239E78;
+	Thu, 19 Jun 2025 04:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PkmmPBo5"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hbEyoWD9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD55B3085A6
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 04:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750308359; cv=none; b=OmcyiMc0B0Yk+KPgus144jMSYSQjDw2+rCEjmjbSqIDdzm/6LSgIduITxiVeAGfyVBp40TlB6IRCIixY3FNt8/GooiiNRPbr3r5bJaRqxxFng9jQ2pY3h60rfislDH04VTTU1+TRlLX36nU/t/YrZHijDeDMMRYEniL1pXgYZmY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750308359; c=relaxed/simple;
-	bh=yCLtShtCRE+Qi2C1Zb6SXkz9JJ81eKgJegM/5uxYrMo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I1aqNjCjesrIaat042+pRRTtk+PReDmXHY7ac0bwnb864TiKurSpSrVZn40v87zhBEXPM8Y6yaI9IpbGowDz1UY87XgbczQTeeXJJEY28h3iUFOrO9QHAeeKGF+akYwEtYoXB1omQA67Tpf4QeJ7+BDXt5f52M4+POtg3Q5hTzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PkmmPBo5; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7cad6a4fae4so85592485a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 21:45:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750308356; x=1750913156; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yCLtShtCRE+Qi2C1Zb6SXkz9JJ81eKgJegM/5uxYrMo=;
-        b=PkmmPBo5PHXaxrOlQqhx+hENazkIStHDBWg3pOEqWOFAQiSkZ/8A35l0IJMoITBK6p
-         6Oq3koJrheFBSwA4DPIsVX1qSM0Llm/EHXGdRSU95rcFvT96SqYjcUAzdg4CjQHSBVqn
-         3d0pvvXSPqjdzqlmGg1BlR1TnbiLu93qbWXDum44lGapVNW4E0NOrplmAn7qoIsZywq8
-         DVp6EWxb188PF33/6HRR4ydwLDG5Yw6a9UZIlOvaUF3n7dMq5455fvr/b2te250fgu0D
-         nTh/blZ0HxIkJu5TlKmwGo5O/S/929ucBffl58FZzjqTx77J+ZFysdGsFHxq2+xgj//N
-         cIrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750308356; x=1750913156;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yCLtShtCRE+Qi2C1Zb6SXkz9JJ81eKgJegM/5uxYrMo=;
-        b=GOufDTI5TC/ndLMPvp07+tivU88T08SDEeNa12CFkwTUaiwq1LLOLLNHDPiQzdQGpo
-         W4y/xJakjdNLRNCNKFh6o8BhvWbSiZNah5Aweu4b2ggMj/seGMRPQ7Jn+xQo3JSunMrx
-         oJyuoeZBMorQo5e7+kk6B6IioF2nBBOIPMXwBtKrhHxpy1QLGvcitxO11R2zGP1MIIxL
-         K9QoIYEO1ZSJu8whYWQWtkGdmqfHdOOkkg2ql87Xu4RN5w28VeD0UisbCK1/N8ksFsxA
-         GTX/YyrYmN9cAVArNVZScAwxlP9Kzhh8Ra5f5JRNTwDNme74hWoIxgZ+CxF+aLwgOM5u
-         plaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCmvLM7KhcLLMQFPsBTkQbW/6r6evfN3GZMAoQSqbMvDeQmFpwI+aOZlM6S8oU7MU4tIYl9nBAmCTadYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8YX4GRFhk6ZXSQ5qdEZ6+4Gtt4fY6cigQpg/SIm5NGp9iZwul
-	tXg6RUQ2UvZVw/9oGFaq4Iiz66KIpsK8i/Vnd0VKAsYtU+Mdaxgvkm7oUr6Ce59i+/NRX1COIQ7
-	wNkItcwbA0JU1V77ynoiYkPYeqIsJL/uznDqnwGrl
-X-Gm-Gg: ASbGncsfEQ1+NEVR3t5E47jcm5Jb/dMZcr678eArWq1oxqA+/ZkraUBNxfoFumbgHE2
-	MavppjBZtobp09/G34TgDdmOTy4rBYVFt/QeYvg6md76mS3fZDuSdC5Fc/XFfYKbgHBAdw6LJDC
-	NaV42XIj35F9fwEb7nM6HGVPlS3RKlyid2rINrb5jFp9GMuv3Xxiuu1okR0EDAmfXxp50SFWZ/U
-	A8f+Q==
-X-Google-Smtp-Source: AGHT+IFuzre3mf7nVG8U/X6HB+JVtxpeXm16YH4dCG1QoXGDrimyyHvmpYaRtO7dWqHDVpViH2I4BpnGGAYWzJ57yZ4=
-X-Received: by 2002:a05:6214:f2d:b0:6fa:b03f:8a39 with SMTP id
- 6a1803df08f44-6fb477eccc2mr324220596d6.35.1750308356371; Wed, 18 Jun 2025
- 21:45:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E933085A6
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 04:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750309097; cv=fail; b=LK7OltlZyoSCARt0+QP9P1vMfSxN0TQxWWNLpX5T0v3FYu185sQCvpDwjltngaMeV21kYVwmPQBVajIB9/wE+F6ShvhmmvVMiJv/y2NeGpiC7RGmjs7mM8zjVthOiZsXRhEo8p5T8mFQolaXhrErLYWtAQ2yzs5XeUg2628klLc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750309097; c=relaxed/simple;
+	bh=NVslR+CtTc3IWJB5HpJBWafwpBaCei0D66VXOmenLr8=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=oWm4TOJ3WBIBr9LYH0eXL+W8rInwNpWS+b43R7pELnXW8sCexeyPxwQyyB5X3r5oQLkdmLXl7dhFGeXwm1NebBzKlR4p1SYmVJ1NKVHWeOZFTnjRUsgb0274S1Qwbzc78HQqUQ5CfSBIbFPvFvkndHFbsuTYrPN4EQ8YtSSBxrM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hbEyoWD9; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750309095; x=1781845095;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=NVslR+CtTc3IWJB5HpJBWafwpBaCei0D66VXOmenLr8=;
+  b=hbEyoWD9DxcAAJnuztu/844qAwYdA6ZFP2YfCiWN+UnhGM25QQ/TTlxY
+   36XT1MUe4oYYgjNDIJwO+xd1NV0hvFM/W9a3U/WY6/TETM5p9xi0r6LhM
+   kPvB3+tzbND+6uHet/OecGl7tEtSRO/HGyNsDTdSDhrYD452uFf3DirmH
+   dTHB8NqsknkrYVD4uE01Np+OrHZmfmEcmEyOzzcpU3LcXJ4SmTl4vnEYZ
+   hM3sbtG/qIZBetsyAFE5pWOvqO3s2mp20I7omYosn5jvAGGkSJ9i8NApI
+   shefb+gXVgOolvY5gDDePnfIYyHMen2gthKGLpay5xlpmgNB787Fa3k/+
+   Q==;
+X-CSE-ConnectionGUID: RkiKYbE3TOmKWafohm0luQ==
+X-CSE-MsgGUID: 8w3Qv1b7TVaKh+rUEvmhfw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="52694750"
+X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
+   d="scan'208";a="52694750"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 21:58:14 -0700
+X-CSE-ConnectionGUID: 8usVwW1xS+2Vm4OEF76u2g==
+X-CSE-MsgGUID: yO7rgY2kSOGI9TouSA4bjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
+   d="scan'208";a="151012633"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 21:58:14 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 18 Jun 2025 21:58:14 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Wed, 18 Jun 2025 21:58:14 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.72) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 18 Jun 2025 21:58:13 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ST4S73YwhvbUjsrS9CeLJIqTEMFzIQ9zZ5BxiGquZJwJUGjSrcleuz9iAMzEwiCR5AHhMWk6H51tZEMBmyFjJi27lUoykdDrqJbJnyfeGNnr+QPyZipn1waYSLQOzOrfN5QMpye7TFqxa3Q+dooMVF4yQrRdjxVqXDVc+e+LBYaR1E9X5A3tw7pwhbfFvw/yBR0k49K03K+u5LbpbmzaXHabuY/14kLDIhsE+rkgmn/NoZOBCcP9JidMQt73RAgM0LFK4qNCMi2OIVaEV08aBa+4kLNm+MjYk1QiszjKj7v6WTsXK07UCXNxBE1GUJXib/ah6TU5LXJNnjFO0uemPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QmaR2b/XVFgk4Ma6DXBwJAU66GAZGXpLgZXsW+juab8=;
+ b=hknRx/c78APjIPkIe/OvWikfObnuHYcPOzebtkqvve798OKW7bpqG4AJcH4JuYitKWbYGcPr6Y3wAV9Q/vqpwSs0ljZ0yyBnnk8L3HVlh2LRxgZGSwHn1DL8mHxwm4MIUKYzr9Pt+ltBrCJZUA0sLcmDae9ltsurF/r73TpzQkfkaGFYZMoLkfStFj4zonhwbXod+1TTgQXm1PrYqvbgRWsfQiO6IP6OIztc8ma+mTtUrn/9p90X5g3f8y+8KNAhOMzk/Iwn5nbtDmkhISs0aeGxhyTbqEkiLj1aaOcHQcBpW0AlRneQYeTJcrKVM6FkNaf6VpVGPolqaoZTwgB3oQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BN9PR11MB5530.namprd11.prod.outlook.com (2603:10b6:408:103::8)
+ by SJ1PR11MB6156.namprd11.prod.outlook.com (2603:10b6:a03:45d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Thu, 19 Jun
+ 2025 04:57:57 +0000
+Received: from BN9PR11MB5530.namprd11.prod.outlook.com
+ ([fe80::13bd:eb49:2046:32a9]) by BN9PR11MB5530.namprd11.prod.outlook.com
+ ([fe80::13bd:eb49:2046:32a9%5]) with mapi id 15.20.8857.016; Thu, 19 Jun 2025
+ 04:57:57 +0000
+Message-ID: <6a9075f7-bfde-4856-a1c8-ecc0103c75f8@intel.com>
+Date: Thu, 19 Jun 2025 10:27:48 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/10] drm/xe/xe_late_bind_fw: Initialize late binding
+ firmware
+To: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
+	<intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <anshuman.gupta@intel.com>, <rodrigo.vivi@intel.com>,
+	<alexander.usyskin@intel.com>, <gregkh@linuxfoundation.org>, <jgg@nvidia.com>
+References: <20250618190007.2932322-1-badal.nilawar@intel.com>
+ <20250618190007.2932322-5-badal.nilawar@intel.com>
+ <d243bdbc-b3b3-4d58-b378-04d301df3b5e@intel.com>
+Content-Language: en-US
+From: "Nilawar, Badal" <badal.nilawar@intel.com>
+In-Reply-To: <d243bdbc-b3b3-4d58-b378-04d301df3b5e@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA1P287CA0011.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a00:35::15) To BN9PR11MB5530.namprd11.prod.outlook.com
+ (2603:10b6:408:103::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250614084711.2654593-2-davidgow@google.com> <CA+GJov7j6hxp=FfupAwZZDGCXE2j3L_87D2MOCK8po5QCW83uw@mail.gmail.com>
-In-Reply-To: <CA+GJov7j6hxp=FfupAwZZDGCXE2j3L_87D2MOCK8po5QCW83uw@mail.gmail.com>
-From: David Gow <davidgow@google.com>
-Date: Thu, 19 Jun 2025 12:45:41 +0800
-X-Gm-Features: Ac12FXx54SwfeQOKdd4jFRc15_d8-tEk5lULD6DtAnlnxQqW3UvzGsOhOvYEUq4
-Message-ID: <CABVgOSm-ycyarsUZOkjt+O67GWJNv8qeTKOEDaBFsNA2_pqHRg@mail.gmail.com>
-Subject: Re: [PATCH] kunit: Adjust kunit_test timeout based on
- test_{suite,case} speed
-To: Rae Moar <rmoar@google.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, Ujwal Jain <ujwaljain@google.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000dc71140637e56b36"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR11MB5530:EE_|SJ1PR11MB6156:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2752803a-0fab-445b-4cf1-08ddaeeddba6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?NlBhSUszZGpjLzBKbjl1SzZhUFdXUG1IekFyazBtdDdEVjNkaXkvRXhLUE02?=
+ =?utf-8?B?TlNSanFSNnArLzZMd3h5U3ZWbmhhUy9RMHczZGJYbEY5NU9qaWVIQVVYaWdF?=
+ =?utf-8?B?NU05VktpNFBwUWxJUi9ua2RIbGNUWm5RcEpvdDVWNDBMUitxdml0Mkcyc2M0?=
+ =?utf-8?B?aGZ6WlRyZTRhNDYwUERGNHc3OUtXNEZjZ0s1ak9yblFXeXRkRmEyY2Npc0hR?=
+ =?utf-8?B?VEF5TGsxT1hZTTBGbUovVmd1bFZLbnRQaXF2RFNIVHpsNEVLYXpoUnpzNjlV?=
+ =?utf-8?B?WFR1VU1oejk3ZjI0QW1OWlFZa0ZHWWp6T2Q4aXh6YW01ZjQrK01jTEFRQStq?=
+ =?utf-8?B?d1YyNTdldFNSY1Z2RG80RzlOOFdSUzFVM202RGdmbmw2dEtOdHlvZUlqZ2Ur?=
+ =?utf-8?B?TW91dWtSVkVtT0IvYmgwQmkrSmtIZDRFbldGWENoR2gzREcrR0tqdmdFS1dk?=
+ =?utf-8?B?anpIMDFjYkZUTzRzblpURU5reEh4eG5pcFUrMTBOZ1M5dmlOUmVzSUV2Wktx?=
+ =?utf-8?B?cXR6OGRNcHBOTkYwdDZFRkliK2JNbkgyQ3pxOGo1RXZTclAyS0xSRFJndktk?=
+ =?utf-8?B?ZGpkUnlaNzlvMDd1YUQ1U3hUY2hlUzQyQVUvZ3VRSEpWQi90b1RjU3F1U0JK?=
+ =?utf-8?B?NGI3SCtjUmN3N1lvY2RjL0V6ZXkzNkdIN3k4SG5yYk0zaUlNUGxXQTR6MnYw?=
+ =?utf-8?B?YnNrUXkzVDlacUJ6OEdjMkxZc1VIVFEzSmVtYkxNUEpRQkk0Rk5oaUV6TTNY?=
+ =?utf-8?B?Mm5LMCtsMkFmQ2g5Z1dWWmsrWGJPYXhiaCthaU5FUDNna3FLUmpKcEt3elgy?=
+ =?utf-8?B?MG5CSWp0d2c5cnpieWs4YVkzOE1VbUxvekZIbzU0NGl2bHN5TitzWDVDQ2xI?=
+ =?utf-8?B?c29mUzJtNHZhcWx1cFhQS0xyb1hRSWRkRDh4aU13SDE1OHBZOGtXN1FRQWEr?=
+ =?utf-8?B?WjJBWFVUZEZpdlA3SHVCdEN6TzZJeTBteWp2ZEtubWRGQ0M0eWxCQjlBcW5Z?=
+ =?utf-8?B?NFM2bmhNVWczK1lQOHpJVzFJYVJEdDVjeXA5TFpQdXYrUG9WRzdubmtreEF6?=
+ =?utf-8?B?eE9xeWJ3dFJBTHBFK0V4VEZMR1dSaUloajhDNlo2OEVKVHZySzA4UFJDRzhq?=
+ =?utf-8?B?bjUrZFNGYXA0MDN0aGY1M3A5UFhHWStTaXIrbTNxMlN5K09OWDcyRExib3h0?=
+ =?utf-8?B?eldVVWZNRkxtd3lqY1FQcXdKem5UTkdDMUJGOHRweXlDcWpXNGdUcUJMWGNy?=
+ =?utf-8?B?Z0hlS1R1OWNacWduV0JVcWdValNSYkZKcGU1UGpBSFl2bGN0disyYUpHUFRL?=
+ =?utf-8?B?M0Zmd1NIa1RpM1VoV1RHaEsxK29IUVEva0dHd2VxK1JqQ3dvVWR6MmRXdGVD?=
+ =?utf-8?B?MGNNQWJRTVdMVW9WWkl1b2pjKzdpWjgvRFlkcndnNEhPUVl5NHNXMjZ2dnZS?=
+ =?utf-8?B?RUxNTERybkFObEFRZ1lGV1JlNUZrR3lna01QUndYcyt3T2FGcmZTcnpvUFhC?=
+ =?utf-8?B?QVN3Q1dLR25mMmpNbjRxbFpCeDhWZ2sxZEMvWWpYNjFYVThubXE3bWx2RDY4?=
+ =?utf-8?B?TWZLVDNjYXM0ckx2cm9KV3c1eTlFeFgzOTlyZWhlMFhIdWxsUWxPWHdFdks1?=
+ =?utf-8?B?ZzB3ck1mT3pKRERvNXF0cFNsbjZtUFRyYzlES2FRVzFUVm5BeEg2Z2VjaDVV?=
+ =?utf-8?B?WG1WbWhuV1RvSUF2d2FFdWVzQ29GenlaRzJjSTM1dzBmOVZJa08raEpyeG00?=
+ =?utf-8?B?MG5YS1BnRzgzMUJjaWd2MDZCeWN0STQvSUNlZTVuTXF0dEFsZ3lzZUUwZEtW?=
+ =?utf-8?B?dWZ6UkMxSXdNZThrcFRIOG5uNlBERGJJNHhiR2FqS1pvRC83ektGcG1qdytl?=
+ =?utf-8?B?aE9URWJJcy9oVjJhUWxvNTU3OHR2Q1k0dVRUL2JWUGV4MXRnNDcxbEVwd25r?=
+ =?utf-8?Q?GA+3w/1SoVA=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5530.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c2pLN0prbzh3dk9scXRUSWFvZXZoc2VLckVuc0hpYlk2M2FvVHI1WXFsMDhC?=
+ =?utf-8?B?dEdhdUNuWHliVFpPTGdxSkhTSXM1b1RnZTRrcmtvdXM0ZWhsVXdzWUQvMEVm?=
+ =?utf-8?B?NytmNHYyLzBVekRzTHM5c05pMWZwSXFZelQ0UDBtMTJRQzJTQ0dKNmwrNk5n?=
+ =?utf-8?B?dFgycS9lN242ZGFlVytmcmRscUhCbWVJYWVpQXRYcWpjODErMEZnL0hkMnlC?=
+ =?utf-8?B?bGRRSGRGR2puSC9UUXlVbFJnYmNkWjRmMUhuL2lMSm9Xck9XbzIyU0xWcDUr?=
+ =?utf-8?B?MURzK0xEMWhrUXpTYVVUL1g5dWV1U3p5aUVQMm9nT2MzYTZxWENadnJmOXd0?=
+ =?utf-8?B?elNwMGVuaCtRMVQ5b0FjOHJ1RGROQWZqbldVU2tmMTE3SjZYK2ZuSHk0aXdm?=
+ =?utf-8?B?enJUMXJYK1hoeWhRSVE3OXpxN0xvTFNHV0R6R1RSUzhRdXRtQmdKMDNOT0ly?=
+ =?utf-8?B?T1U4SDdBRG16WnM1dmplTEhVcU9GSENWbXZVaE1RdHF0ZFdYUEZDSTdlVWN0?=
+ =?utf-8?B?dXlRQVZuYlJISEhJVXdpWnFrOTRUaFFmNnhaa2tpS0t5bnZJcjEzQytDd0tH?=
+ =?utf-8?B?dlNEalBaSEhTYXAxdE15Y3EvNVdzYjVJVTNQU25nZ3hWWlV0RFBLMmRxZmw5?=
+ =?utf-8?B?ek80RFdlOUxrRlpab09JRURzMVZQYitpcmF5Z3U5dHRvd1Q2MWpQc24xQm15?=
+ =?utf-8?B?a0hDU1EzNm5YcS80NFZxUzNydjdZWlhmRDhJc2NwdG05aXVqVUFZOUdTR3My?=
+ =?utf-8?B?Q1FsRmhDazFZU3AvQXJiRnRqT28rQWJSTlZYc01XcmUzN01uKzNHdkpCcUFt?=
+ =?utf-8?B?V2IvdExUV2dXNFIzRnhFb3piQlNBajdJSlFsbERpRnY5cjdXTHRGSUh6M09n?=
+ =?utf-8?B?WEV2a0g0ZWVlZ1VtWjBOV0w4WEk4bjM3ZmlHUjlheHRnOXlia2t2WjhqZWlN?=
+ =?utf-8?B?WEtOVXZHTzM5Z01kWW9rY0tzS2c4Mk8zV1N3cFk4UTk1czdOdy8xS2UwOFY4?=
+ =?utf-8?B?ZCtvbnJVT3BxVGxRYTQ5QnRSZUhuOXI0ZDgySE0xZmo0MnFBOTNCbUFTOTVx?=
+ =?utf-8?B?VXBhWjBjTlF0QWk1aUtIOXVWbkdBUGNGVU5YUWJsaWQrY2pFZU1qN0FTbFpm?=
+ =?utf-8?B?VTFRVUhDdlpBeS8xVVJjTjhyUnlKdXpsRFl5ZHlkR2tOYzJVR2xEZVlMQllh?=
+ =?utf-8?B?emxTb0JSM1d6QUp1YnI3ZEZqaTg2QU9UTWg4SzltcWZKOTlhL0l5eTZ1NUtj?=
+ =?utf-8?B?UkFCaU45NlBZYkcvSjQ3WXVtSVdiSE1SWmMvWGxFaUhyRGRRWXpld1ZNcFN0?=
+ =?utf-8?B?bmsyWk5WblM1RzNQZTRjV1RodUhYWjZQblovWDc1NnFqeUorcmNBTThmRnJi?=
+ =?utf-8?B?alhRZGVqVUhqVUlNZDVQV05xWk5abStUWTFGVWJyYWQ2dUNMMmNaOHl2ZTBo?=
+ =?utf-8?B?ay94UGF1cnlqeGlmczc3R21maERFeENpaEpXMGVnQWxPOTY4akQ0WHlGODY2?=
+ =?utf-8?B?cmtyM0xxL054NzRNMUpja3dkRlFoZW1SSTBJYnN1YWJFOEI4WE52TkN4SENi?=
+ =?utf-8?B?Z01XUjdVdXVibHlGeWJWZGRRWVNJS2puVFlxYVNDVXE4cVgxYTBOR1VzRnBw?=
+ =?utf-8?B?K3o4eUxtQ0pKTHlLQzM0K3lyREF5aXBJMmJxL3ZHNE81U3BlM3NyUWpsYkVr?=
+ =?utf-8?B?QWJOZ21ud2ZmdnQ1ekEyOUduQ1lsTHZ2WTBvcUs5WmFEYW9TU09tTVZ3UlJS?=
+ =?utf-8?B?VVJYTjlqcWlmd2JvMk8wSTFCVGQ3QU11OURzREFrcDF6eW5yeCsveDRnY0Fx?=
+ =?utf-8?B?dmpWOVFOVUc4K0I3SS9uWUk3ejJhT0N2THgrSlJvTFRWekgvM3dhcmhsbkhQ?=
+ =?utf-8?B?TjhyYllQeENubWk4ZDVlT1pMcXpaeWNkdHNDcU5PQVpiQmxsZHlOQnBnaGpV?=
+ =?utf-8?B?QXBpTXBjSzM5eEFCRFZidjZhV0YrMW95YlVMSG5RVHRKaTdaN1VjU1FEZ1Aw?=
+ =?utf-8?B?MDJHUVM5NjlrRjFLMXpjbnlaQitFdlJONm9sVndlMUZJMTh6K0hHN2N4QmR0?=
+ =?utf-8?B?YnlCcUxyaG5SV09rcWc3TjBFT1pRZFZQMHVKR0lackgwQ3V2dDFCUEdnNVUx?=
+ =?utf-8?B?aG1BUTIxSldLa0ttSDN2aW1XM2VuOStYUVJIOVh5MzVCTjJRVWN0eHJ1SHhx?=
+ =?utf-8?B?ZHc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2752803a-0fab-445b-4cf1-08ddaeeddba6
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5530.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2025 04:57:57.6358
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CyX0ZuNMXdjogQbtP6mmNmvmUabGXN/C8fDgmo4Qt2zGPfKlxbCaXuaFtsjjjfPSafrpPlpKFosRFB3KKYVV+A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6156
+X-OriginatorOrg: intel.com
 
---000000000000dc71140637e56b36
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, 19 Jun 2025 at 05:37, Rae Moar <rmoar@google.com> wrote:
+On 19-06-2025 02:16, Daniele Ceraolo Spurio wrote:
 >
-> On Sat, Jun 14, 2025 at 4:47=E2=80=AFAM David Gow <davidgow@google.com> w=
-rote:
-> >
-> > From: Ujwal Jain <ujwaljain@google.com>
-> >
-> > Currently, the in-kernel kunit test case timeout is 300 seconds. (There
-> > is a separate timeout mechanism for the whole test execution in
-> > kunit.py, but that's unrelated.) However, tests marked 'slow' or 'very
-> > slow' may timeout, particularly on slower machines.
-> >
-> > Implement a multiplier to the test-case timeout, so that slower tests
-> > have longer to complete:
-> > - DEFAULT -> 1x default timeout
-> > - KUNIT_SPEED_SLOW -> 3x default timeout
-> > - KUNIT_SPEED_VERY_SLOW -> 12x default timeout
 >
-> Hello!
+> On 6/18/2025 12:00 PM, Badal Nilawar wrote:
+>> Search for late binding firmware binaries and populate the meta data of
+>> firmware structures.
+>>
+>> v2 (Daniele):
+>>   - drm_err if firmware size is more than max pay load size
+>>   - s/request_firmware/firmware_request_nowarn/ as firmware will
+>>     not be available for all possible cards
+>> v3 (Daniele):
+>>   - init firmware from within xe_late_bind_init, propagate error
+>>   - switch late_bind_fw to array to handle multiple firmware types
+>>
+>> Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
+>> ---
+>>   drivers/gpu/drm/xe/xe_late_bind_fw.c       | 97 +++++++++++++++++++++-
+>>   drivers/gpu/drm/xe/xe_late_bind_fw_types.h | 32 +++++++
+>>   drivers/misc/mei/late_bind/mei_late_bind.c |  1 -
+>>   3 files changed, 128 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw.c 
+>> b/drivers/gpu/drm/xe/xe_late_bind_fw.c
+>> index 52cb295b7df6..d416d6cc1fa2 100644
+>> --- a/drivers/gpu/drm/xe/xe_late_bind_fw.c
+>> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw.c
+>> @@ -5,6 +5,7 @@
+>>     #include <linux/component.h>
+>>   #include <linux/delay.h>
+>> +#include <linux/firmware.h>
+>>     #include <drm/drm_managed.h>
+>>   #include <drm/intel/i915_component.h>
+>> @@ -13,6 +14,16 @@
+>>     #include "xe_device.h"
+>>   #include "xe_late_bind_fw.h"
+>> +#include "xe_pcode.h"
+>> +#include "xe_pcode_api.h"
+>> +
+>> +static const u32 fw_id_to_type[] = {
+>> +        [FAN_CONTROL_FW_ID] = CSC_LATE_BINDING_TYPE_FAN_CONTROL,
+>> +    };
+>> +
+>> +static const char * const fw_id_to_name[] = {
+>> +        [FAN_CONTROL_FW_ID] = "fan_control",
+>> +    };
+>>     static struct xe_device *
+>>   late_bind_to_xe(struct xe_late_bind *late_bind)
+>> @@ -20,6 +31,86 @@ late_bind_to_xe(struct xe_late_bind *late_bind)
+>>       return container_of(late_bind, struct xe_device, late_bind);
+>>   }
+>>   +static int xe_late_bind_fw_num_fans(struct xe_late_bind *late_bind)
+>> +{
+>> +    struct xe_device *xe = late_bind_to_xe(late_bind);
+>> +    struct xe_tile *root_tile = xe_device_get_root_tile(xe);
+>> +    u32 uval;
+>> +
+>> +    if (!xe_pcode_read(root_tile,
+>> +               PCODE_MBOX(FAN_SPEED_CONTROL, FSC_READ_NUM_FANS, 0), 
+>> &uval, NULL))
+>> +        return uval;
+>> +    else
+>> +        return 0;
+>> +}
+>> +
+>> +static int __xe_late_bind_fw_init(struct xe_late_bind *late_bind, 
+>> u32 fw_id)
+>> +{
+>> +    struct xe_device *xe = late_bind_to_xe(late_bind);
+>> +    struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
+>> +    struct xe_late_bind_fw *lb_fw;
+>> +    const struct firmware *fw;
+>> +    u32 num_fans;
+>> +    int ret;
+>> +
+>> +    if (fw_id >= MAX_FW_ID)
+>> +        return -EINVAL;
+>> +
+>> +    lb_fw = &late_bind->late_bind_fw[fw_id];
+>> +
+>> +    lb_fw->valid = false;
+>> +    lb_fw->id = fw_id;
+>> +    lb_fw->type = fw_id_to_type[lb_fw->id];
+>> +    lb_fw->flags &= ~CSC_LATE_BINDING_FLAGS_IS_PERSISTENT;
 >
-> This change is looking great to me. No major concerns with the code
-> and the tests are all passing.
+> nit: lb_fw->flags should already be zero here, so no need to make sure 
+> that flag is not set. Also, that flag is ignored on BMG, so there is 
+> no need to make sure it is not set anyway.
+
+
+If I discard this, I will need to remove the definition of 
+CSC_LATE_BINDING_FLAGS_IS_PERSISTENT. I kept this for future use. I 
+would prefer this way.
+I will fix rest of the nits and comments in next rev.
+
+Thanks,
+Badal
+
+>> +
+>> +    if (lb_fw->type == CSC_LATE_BINDING_TYPE_FAN_CONTROL) {
+>> +        num_fans = xe_late_bind_fw_num_fans(late_bind);
+>> +        drm_dbg(&xe->drm, "Number of Fans: %d\n", num_fans);
+>> +        if (!num_fans)
+>> +            return 0;
+>> +    }
+>> +
+>> +    snprintf(lb_fw->blob_path, sizeof(lb_fw->blob_path), 
+>> "xe/%s_8086_%04x_%04x_%04x.bin",
+>> +         fw_id_to_name[lb_fw->id], pdev->device,
+>> +         pdev->subsystem_vendor, pdev->subsystem_device);
+>> +
+>> +    drm_dbg(&xe->drm, "Request late binding firmware %s\n", 
+>> lb_fw->blob_path);
+>> +    ret = firmware_request_nowarn(&fw, lb_fw->blob_path, xe->drm.dev);
+>> +    if (ret) {
+>> +        drm_dbg(&xe->drm, "%s late binding fw not available for 
+>> current device",
+>> +            fw_id_to_name[lb_fw->id]);
+>> +        return 0;
+>> +    }
+>> +
+>> +    if (fw->size > MAX_PAYLOAD_SIZE) {
+>> +        drm_err(&xe->drm, "Firmware %s size %zu is larger than max 
+>> pay load size %u\n",
+>> +            lb_fw->blob_path, fw->size, MAX_PAYLOAD_SIZE);
+>> +        release_firmware(fw);
+>> +        return -ENODATA;
+>> +    }
+>> +
+>> +    lb_fw->payload_size = fw->size;
+>> +
+>> +    memcpy(lb_fw->payload, fw->data, lb_fw->payload_size);
+>> +    release_firmware(fw);
+>> +    lb_fw->valid = true;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int xe_late_bind_fw_init(struct xe_late_bind *late_bind)
+>> +{
+>> +    int ret;
+>> +    int fw_id;
+>> +
+>> +    for (fw_id = 0; fw_id < MAX_FW_ID; fw_id++) {
+>> +        ret = __xe_late_bind_fw_init(late_bind, fw_id);
+>> +        if (ret)
+>> +            return ret;
+>> +    }
+>> +    return ret;
 >
-> Just a few thoughts: I am wondering where the multipliers of 3 and 12
-> came from? Are there specific tests that need those timeout amounts?
-> And then given this changes the behavior of tests marked as slow and
-> very_slow, we should update the documentation. And if possible, we
-> should also add tests to check this feature.
-
-The multipliers are pretty arbitrary, they're loosely based on the values i=
-n:
-https://testing.googleblog.com/2010/12/test-sizes.html
-
-There aren't any _specific_ tests which need these values, though, so
-if there's another value which would be better, I'm all ears.
-Regardless, the plan is to make the base timeout also configurable,
-which should solve most machine/setup-specific, rather than
-test-specific, issues.
-
-For better documentation, that's a great idea. The in-kernel timeout
-doesn't appear to be mentioned anywhere in the documentation.
-So I'll see if we can add more complete documentation for this when we
-make the default timeout configurable.
-
-As for tests, I don't think we want to test the exact timeout values,
-as that'd just make the test brittle. But testing that timeouts work
-at all might work reliably. I'll have a play with them.
-
-Cheers,
--- David
-
---000000000000dc71140637e56b36
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIUnQYJKoZIhvcNAQcCoIIUjjCCFIoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
-4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
-mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
-KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
-VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
-ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
-vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
-BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
-OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
-1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
-ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
-BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
-18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
-bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
-AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
-BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
-A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
-MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
-jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
-0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
-jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
-jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
-C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
-NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
-zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
-A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
-hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
-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
-jmkLAgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
-/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFBp5bTxrTm/d
-WMmRETO8lNkA4c7fMFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
-BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
-MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
-LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
-bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
-FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBF
-tO3/N2l9hTaij/K0xCpLwIlrqpNo0nMAvvG5LPQQjSeHnTh06tWTgsPCOJ65GX+bqWRDwGTu8WTq
-c5ihCNOikBs25j82yeLkfdbeN/tzRGUb2RD+8n9I3CnyMSG49U2s0ZdncsrIVFh47KW2TpHTF7R8
-N1dri01wPg8hw4u0+XoczR2TiBrBOISKmAlkAi+P9ivT31gSHdbopoL4x0V2Ow9IOp0chrQQUZtP
-KBytLhzUzd9wIsE0QMNDbw6jeG8+a4sd17zpXSbBywIGw7sEvPtnBjMaf5ib3kznlOne6tuDVx4y
-QFExTCSrP3OTMUkNbpIdgzg2CHQ2aB8i8YsTZ8Q8Q8ztPJ+xDNsqBUeYxILLjTjxQQovToqipB3f
-6IMyk+lWCdDS+iCLYZULV1BTHSdwp1NM3t4jZ8TMlV+JzAyRqz4lzSl8ptkFhKBJ7w2tDrZ3BEXB
-8ASUByRxeh+pC1Z5/HhqfiWMVPjaWmlRRJVlRk+ObKIv2CblwxMYlo2Mn8rrbEDyfum1RTMW55Z6
-Vumvw5QTHe29TYxSiusovM6OD5y0I+4zaIaYDx/AtF0mMOFXb1MDyynf1CDxhtkgnrBUseHSOU2e
-MYs7IqzRap5xsgpJS+t7cp/P8fdlCNvsXss9zZa279tKwaxR0U2IzGxRGsWKGxDysn1HT6pqMDGC
-Al0wggJZAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
-BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAUXA7LnOuRz2DvkWTeMc
-0TANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQgIu2/7m4AYOP+300BWXQEtEpfv6Ng
-ABjhXcJFsHNSAx0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
-NjE5MDQ0NTU2WjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
-YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcN
-AQEBBQAEggEAMUe4f51bpStIfGzI1suieNQkDQN4EzyRhGi352/hW2X7zxO2UBO06mElWQ1gvh2z
-oCq1F800DPvNV8qZYBx/XEU6E+mz/SQnyZz7x05sMV22cYiS+l2V/LMgGrxEvjCXnlK+yC+oaegp
-oMfFKN+w7ig27BmWDlu3xshCuY5yUgwj+YJVxHMDvDnE8DFMbumac645q+o3lmcLAv0whOJYM6Yp
-H/eix1BdE9zD+17DQQHW2Yad/x9EfFlJgs//wEAyyzeIzScO/cShteMPPBUmVbnyYBlsgHbGjxld
-GjWNR5kTfh4IPZ3NKSSIYYhktIXzAn/nVsWcUV6XHzCs0BVwDg==
---000000000000dc71140637e56b36--
+> nit: this could be a return 0, since if ret != 0 we return earlier
+>
+>> +}
+>> +
+>>   static int xe_late_bind_component_bind(struct device *xe_kdev,
+>>                          struct device *mei_kdev, void *data)
+>>   {
+>> @@ -89,5 +180,9 @@ int xe_late_bind_init(struct xe_late_bind *late_bind)
+>>         late_bind->component_added = true;
+>>   -    return devm_add_action_or_reset(xe->drm.dev, 
+>> xe_late_bind_remove, late_bind);
+>> +    err = devm_add_action_or_reset(xe->drm.dev, xe_late_bind_remove, 
+>> late_bind);
+>> +    if (err)
+>> +        return err;
+>> +
+>> +    return xe_late_bind_fw_init(late_bind);
+>>   }
+>> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h 
+>> b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
+>> index ef0a9723bee4..c6fd33fd5484 100644
+>> --- a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
+>> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
+>> @@ -10,6 +10,36 @@
+>>   #include <linux/mutex.h>
+>>   #include <linux/types.h>
+>>   +#define MAX_PAYLOAD_SIZE (1024 * 4)
+>
+> nit: could use SZ_4K instead of 1024 * 4
+>
+>> +
+>> +/**
+>> + * xe_late_bind_fw_id - enum to determine late binding fw index
+>> + */
+>> +enum xe_late_bind_fw_id {
+>> +    FAN_CONTROL_FW_ID = 0,
+>> +    MAX_FW_ID
+>
+> nit: Maybe use a less generic name here, to avoid clashes? something 
+> like:
+>
+> enum xe_late_bind_fw_id {
+>         XE_LB_FW_FAN_CONTROL = 0,
+>         XE_LB_FW_MAX_ID
+> }
+>
+>> +};
+>> +
+>> +/**
+>> + * struct xe_late_bind_fw
+>> + */
+>> +struct xe_late_bind_fw {
+>> +    /** @late_bind_fw.valid: to check if fw is valid */
+>> +    bool valid;
+>> +    /** @late_bind_fw.id: firmware index */
+>> +    u32 id;
+>> +    /** @late_bind_fw.blob_path: firmware binary path */
+>> +    char blob_path[PATH_MAX];
+>> +    /** @late_bind_fw.type: firmware type */
+>> +    u32  type;
+>> +    /** @late_bind_fw.flags: firmware flags */
+>> +    u32  flags;
+>> +    /** @late_bind_fw.payload: to store the late binding blob */
+>> +    u8  payload[MAX_PAYLOAD_SIZE];
+>
+> Sorry for the late comment on this, just realized that this is a 4K 
+> allocation, should we alloc this dynamically only if we need it?
+>
+>> +    /** @late_bind_fw.payload_size: late binding blob payload_size */
+>> +    size_t payload_size;
+>> +};
+>> +
+>>   /**
+>>    * struct xe_late_bind_component - Late Binding services component
+>>    * @mei_dev: device that provide Late Binding service.
+>> @@ -34,6 +64,8 @@ struct xe_late_bind {
+>>       bool component_added;
+>>       /** @late_bind.mutex: protects the component binding and usage */
+>>       struct mutex mutex;
+>> +    /** @late_bind.late_bind_fw: late binding firmware array */
+>> +    struct xe_late_bind_fw late_bind_fw[MAX_FW_ID];
+>>   };
+>>     #endif
+>> diff --git a/drivers/misc/mei/late_bind/mei_late_bind.c 
+>> b/drivers/misc/mei/late_bind/mei_late_bind.c
+>> index cb985f32309e..6ea64c44bb94 100644
+>> --- a/drivers/misc/mei/late_bind/mei_late_bind.c
+>> +++ b/drivers/misc/mei/late_bind/mei_late_bind.c
+>> @@ -2,7 +2,6 @@
+>>   /*
+>>    * Copyright (C) 2025 Intel Corporation
+>>    */
+>> -#include <drm/drm_connector.h>
+>
+> This change shouldn't be in this patch. If this header is not needed 
+> just modify the patch that adds it to not do so.
+>
+> All nits are non blocking.
+> Daniele
+>
+>>   #include <drm/intel/i915_component.h>
+>>   #include <drm/intel/late_bind_mei_interface.h>
+>>   #include <linux/component.h>
+>
 
