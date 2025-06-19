@@ -1,115 +1,135 @@
-Return-Path: <linux-kernel+bounces-693501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3536FADFFA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:21:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D0CADFFA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989D83A92A4
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF9D5188F828
 	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CDB265CAA;
-	Thu, 19 Jun 2025 08:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BF12494FF;
+	Thu, 19 Jun 2025 08:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VUExpgCa"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iM39Y27l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6432E26528B;
-	Thu, 19 Jun 2025 08:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1121F3085D7;
+	Thu, 19 Jun 2025 08:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750321235; cv=none; b=uph66fumjhecBkYrhhfHIVgiE2i0CPjUMwBeV02MmGTb/lu50pZjnirfolw0G1OxJ1JhmfGLj2B5mdN38XIoy0A7hw8ty/mdKGeGC7rdSu/vnoXra0ZlzXcrX8kyHSaXAu91fVJP0WNQrONZepJlay3WE5NqEJNQjl5dMhqyGoM=
+	t=1750321224; cv=none; b=T30xI9gQeGkutR5+hH9+VJK2ylW7fp/ah7Pq196aOTRBHzdGxTSfCyUndHsixxMLwCHce0fXsieZPlYFcq5hvaO9suEdex1u9t6kFYr1aEQJWkFzCyV3HcPfUjcyMbbpWMMxImN2mw2Mdw85m0xXy4MHT4Z+Xd7gA35q6PNm7vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750321235; c=relaxed/simple;
-	bh=EgxCdCrhAJ9RY/w6TgbM74DLG5HeaAAQPQvwKpWlaLw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gQTVkynQgNzscOhLZWxfMpOKqfM9w6p39dEvTJLXjxvB0tcto/XQMP/TFmbrowUGxWHtTGINWi5ulB7s3Jgm0u+BE0i/Q7Vme8pwlPlvV0in88PdENIagXkFY0Zxep6IBVcPekF4OY47kLklm95cIQHamdshNEogeifi2U0/Bc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VUExpgCa; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-450ce671a08so2761175e9.3;
-        Thu, 19 Jun 2025 01:20:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750321231; x=1750926031; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pki03gT1X1YzuKfpbdeTT2NdVOKEL87eulb7qk78kEs=;
-        b=VUExpgCaTcLdDeLYOfPDHxh9bQbq12rAQLt8CDgJiEqdvqz9ayUZGmtnBVbRejXYyZ
-         H+GO2XdhH3jRpN5ODxmYJkuIKD+votu3JO5MYaCZ3KaBuCYTxiy9z8rhPwHvMobkRiBU
-         SmcvlqbSpvi4Jl+kKrW4H2zQF++qFuTrBIxPV7W4k26k+mAMs2VuaoeS9T0My+wsjMSx
-         iybTDP5Zf2dfeIcy32UuYXogJ59fXP7MdxmpQnwqAWogA5dn0ZNX+rT6qaUuwXykcjMS
-         wMvlBY7QW7j8oNKDGPHG+7zu46MH+nJRKpDZPrm1Dn5U6QRRotCgZdCDUEssJBAz4ueQ
-         cgJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750321231; x=1750926031;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Pki03gT1X1YzuKfpbdeTT2NdVOKEL87eulb7qk78kEs=;
-        b=COfLP9exkG/9LJbx1977EZaABeY5+2IZvf+xbrOW9yDtHZGPZPnHYQCXGiQCswSomF
-         omNqNoVY4eHDF35vGy0qRq1fNVhHZyv3Ge76/4UkB6ZhhLISyKoK6/T6mnoyYI6OZMuU
-         H4GPOegYTBJQMO1mS36xI08lo3w04lZRbKPM6Hsuez3/rZWHZBa0kaihCNBhfUP03EPI
-         T5mc8tOkfHG0hzDOsHtC9JdE4iV18RXM8u8GJXHMZPvGWN9deIw7316+j5ABANnrlcIj
-         CvxDs9LsB6ruuarAplj+JZDGI2XzgHMp4NnpGlG/OHekHLuEZNk8dlnETGIWp6CpKC69
-         iVfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCIWdN4vVwoOYhX/6EQRIzbbzIFBsrjKl+Lxpt5vuECbvlUuuOFh1N74Vw2xNI7wLMXIsP8k3CmhIan3g=@vger.kernel.org, AJvYcCXNmY8Iehrse9nFPWQq/3PFngSD57OmGVN/rSwyBNI91rn1KuvGjfz28cUlkjSCRwGyd7bV/c1GwuSFnnhwveA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLdwq/9WlyiAsK7TYtUR/lDrzbeVYetGCN9Btsg4/9jGXlSGX1
-	0LPkZvYH8YTjL/tbs6W34KZAOc3Xb8uUmkUSqxMDh0CQbyU6EdB9LlQ5
-X-Gm-Gg: ASbGncuVU2RSgwfoxb5etRZ7m9LiGTFopsjuekAmKXORleZGNQ+anfIldNSM4nyuNUA
-	yj7Hmv0JSfMWYWLxxvjC2usDzuFzEVM7mfYOr+7b/xNYjDQk6RlgaWAF0aRNrNJozUkUug265tk
-	dmr0M8mfvCXNcajg0Z/OEqxGKxzygYD4SMhyzt/k/GnzUhXMezIpaC48FVeFVCvDS7d3FBVF8fI
-	VKaQ/NlgFnb8MuYKTTUlmqcZJ+wVh5YVajkg1mN+wmGrL/SPWdPrdmy57X3LBRsuvTNVD7A4PWk
-	rlPpQGm5WfOAdO6aS4FlvCYwMP1M9b76tnXJHlU8MDwlVulewTzAYnX7tWtf
-X-Google-Smtp-Source: AGHT+IHBETxa/0ep34g4jXorSLAAvGUjs5el+pd3xXbuTb2u9h6HMFdh9M7fitPzbY3gq3z1MXzylQ==
-X-Received: by 2002:a05:600c:8b2a:b0:440:61eb:2ce5 with SMTP id 5b1f17b1804b1-4533cb488b5mr206420795e9.17.1750321231352;
-        Thu, 19 Jun 2025 01:20:31 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4535e97ac0fsm21574075e9.3.2025.06.19.01.20.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 01:20:30 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jeff Johnson <jjohnson@kernel.org>,
-	linux-wireless@vger.kernel.org,
-	ath11k@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] wifi: ath11k: Make read-only const array svc_id static const
-Date: Thu, 19 Jun 2025 09:20:10 +0100
-Message-ID: <20250619082010.1834109-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750321224; c=relaxed/simple;
+	bh=rs1SQZAjM42eP1OdPF5cxc7T68ok0Dt9YGM0X0I/GSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ShzOdD6pzM9OPAFFhi+Xj1B/DwhBJpu0LsJ3cWPHdISGW3u1tqfwIy1aOm6+P4hKVrEc/+06ARQguG/j2SGtwnEJdw2ZASd80XX3PZeOxNtddF0KgOmDCEKPdJUy4Bhxhbr3L0UIxMA5a8fiwOMr/baPPnpMMBPk7pLSXRnv73Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iM39Y27l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF376C4CEEA;
+	Thu, 19 Jun 2025 08:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1750321223;
+	bh=rs1SQZAjM42eP1OdPF5cxc7T68ok0Dt9YGM0X0I/GSI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iM39Y27luLaflYHgryXb8/VAbHnzQmHzyVsZrnjWmLzWdooBDAeiGqi+GgHNjJxvm
+	 00nQywoISyVUd/nEX3+lO3HlQJ7YLrDDdi4PN/K0odYO1fi1ny/pSvD8J7sLfxes8M
+	 h8QYlQjosPQ6KZ2wGEJImAcu7eks3bxDYzqGtWQA=
+Date: Thu, 19 Jun 2025 10:20:20 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Mark Brown <broonie@kernel.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, Willy Tarreau <w@1wt.eu>
+Subject: Re: [PATCH 6.15 000/780] 6.15.3-rc1 review
+Message-ID: <2025061907-finance-dodgy-b0ae@gregkh>
+References: <20250617152451.485330293@linuxfoundation.org>
+ <cc048abb-fbc0-4a79-b78a-90bfa3f8446d@sirena.org.uk>
+ <2025061858-reproduce-revolving-cae0@gregkh>
+ <1081af30-1273-4a9a-a864-f59f1cb54fd1@t-8ch.de>
+ <2025061949-epilepsy-punk-fb4e@gregkh>
+ <a757c5d9-06f4-4ed0-9de9-08edbd16134a@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <a757c5d9-06f4-4ed0-9de9-08edbd16134a@t-8ch.de>
 
-Don't populate the read-only array svc_id on the stack at run time,
-instead make it static const.
+On Thu, Jun 19, 2025 at 07:50:43AM +0200, Thomas Weißschuh wrote:
+> On 2025-06-19 06:19:52+0200, Greg Kroah-Hartman wrote:
+> > On Wed, Jun 18, 2025 at 04:15:09PM +0200, Thomas Weißschuh wrote:
+> > > On 2025-06-18 15:19:11+0200, Greg Kroah-Hartman wrote:
+> > > > On Wed, Jun 18, 2025 at 12:58:00PM +0100, Mark Brown wrote:
+> > > > > On Tue, Jun 17, 2025 at 05:15:08PM +0200, Greg Kroah-Hartman wrote:
+> > > > > > This is the start of the stable review cycle for the 6.15.3 release.
+> > > > > > There are 780 patches in this series, all will be posted as a response
+> > > > > > to this one.  If anyone has any issues with these being applied, please
+> > > > > > let me know.
+> > > > > 
+> > > > > This breaks the build of the arm64 selftests due to a change in nolibc,
+> > > > > it appears that "tools/nolibc: properly align dirent buffer" is missing
+> > > > > some dependency:
+> > > > > 
+> > > > > aarch64-linux-gnu-gcc -fno-asynchronous-unwind-tables -fno-ident -s -Os -nostdlib \
+> > > > > 	-include ../../../../include/nolibc/nolibc.h -I../..\
+> > > > > 	-static -ffreestanding -Wall za-fork.c /build/stage/build-work/kselftest/arm64/fp/za-fork-asm.o -o /build/stage/build-work/kselftest/arm64/fp/za-fork
+> > > > > In file included from ./../../../../include/nolibc/nolibc.h:107,
+> > > > >                  from <command-line>:
+> > > > > ./../../../../include/nolibc/dirent.h: In function ‘readdir_r’:
+> > > > > ./../../../../include/nolibc/dirent.h:62:64: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘__nolibc_aligned_as’
+> > > > >    62 |         char buf[sizeof(struct linux_dirent64) + NAME_MAX + 1] __nolibc_aligned_as(struct linux_dirent64);
+> > > > >       |                                                                ^~~~~~~~~~~~~~~~~~~
+> > > > > ./../../../../include/nolibc/dirent.h:62:64: error: implicit declaration of function ‘__nolibc_aligned_as’ [-Wimplicit-function-declaration]
+> > > > > ./../../../../include/nolibc/dirent.h:62:84: error: expected expression before ‘struct’
+> > > > >    62 |         char buf[sizeof(struct linux_dirent64) + NAME_MAX + 1] __nolibc_aligned_as(struct linux_dirent64);
+> > > > >       |                                                                                    ^~~~~~
+> > > > > ./../../../../include/nolibc/dirent.h:63:47: error: ‘buf’ undeclared (first use in this function)
+> > > > >    63 |         struct linux_dirent64 *ldir = (void *)buf;
+> > > > >       |                                               ^~~
+> > > > > ./../../../../include/nolibc/dirent.h:63:47: note: each undeclared identifier is reported only once for each function it appears in
+> > > > 
+> > > > Thanks for the report, I'll go drop all nolibc patches from the queues
+> > > > for now.
+> > > 
+> > > Thanks.
+> > > 
+> > > Shouldn't the bots apply prerequisite patches from the series automatically?
+> > 
+> > Hopefully yes, obviously it doesn't always work :)
+> 
+> Is there something we can do to help the tools?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/wireless/ath/ath11k/htc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That's up to Sasha, he has the tools that do this.
 
-diff --git a/drivers/net/wireless/ath/ath11k/htc.c b/drivers/net/wireless/ath/ath11k/htc.c
-index 23054ab29a5e..4571d01cc33d 100644
---- a/drivers/net/wireless/ath/ath11k/htc.c
-+++ b/drivers/net/wireless/ath/ath11k/htc.c
-@@ -497,7 +497,7 @@ static u8 ath11k_htc_get_credit_allocation(struct ath11k_htc *htc,
- static int ath11k_htc_setup_target_buffer_assignments(struct ath11k_htc *htc)
- {
- 	struct ath11k_htc_svc_tx_credits *serv_entry;
--	u32 svc_id[] = {
-+	static const u32 svc_id[] = {
- 		ATH11K_HTC_SVC_ID_WMI_CONTROL,
- 		ATH11K_HTC_SVC_ID_WMI_CONTROL_MAC1,
- 		ATH11K_HTC_SVC_ID_WMI_CONTROL_MAC2,
--- 
-2.49.0
+> > > This patch comes from [0] and the prerequisite is in there.
+> > > 
+> > > Also all nolibc patches which should go to stable are tagged as such.
+> > > Can you configure the bots not to pick up any nolibc patches automatically?
+> > 
+> > Yes we can!  I will add the needed regex to the file:
+> > 	https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/tree/ignore_list
+> > should it be:
+> > 	tools/include/nolibc/*
+> > 	tools/testing/selftests/nolibc/*
+> > ?
+> 
+> Looks good, thanks.
 
+Great, I'll go make that change now.
+
+thanks,
+
+greg k-h
 
