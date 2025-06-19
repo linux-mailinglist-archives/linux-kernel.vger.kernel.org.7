@@ -1,168 +1,156 @@
-Return-Path: <linux-kernel+bounces-693526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0CFADFFE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:36:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD321ADFFD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 10:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996EA19E279C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:36:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D9713BF9DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 08:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BBC27FD63;
-	Thu, 19 Jun 2025 08:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190CF266EFE;
+	Thu, 19 Jun 2025 08:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Pb8k3kX/"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DRY0YGc1"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6DF27FB2A;
-	Thu, 19 Jun 2025 08:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1790265CAD
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 08:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750322028; cv=none; b=ec8+oqS+pIZxZQWboGuPTjYIzUR73xq+HdaXzNrG8gVaJUTkv1T+s/68f9Cjs102PupNdGCfn+0jkCtVZAgqlC1v/mBRnAOhEU0vwyONzN1kyVBnKq/G+3WHmcz5L0MdglUnaeGnAU4PWyYdk0n2NJC1JGXbyTxNAC0mCfCqeN8=
+	t=1750322014; cv=none; b=OibgaU39FZD9tpWi9RobOrYp3ZgK33j10QBuoIwZH4+e4sBpKDusAxRAO7LYY+y8uM0OouIdy7aLSxsLwprzzqS1T47eV+EmP/RJgcRDoP4WZi2eBoNl3LlgOs7R2kFQt10lZIbo4e8QdAR/SUoyk4Vz92MN3ztpAH1gmMtsODc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750322028; c=relaxed/simple;
-	bh=Wy1UKlPMJxFgQotHhYltNJD9kZi54UdcAipelI9JT1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Rjt8FjbO2oxHg91lQQbcpxWy86HsnbduVHdwCPVZXzszDX1qf75KiuFB4rNgy6YXh8TeDmb78Kwi6+KceNnd0vVowuCpF0A3rlYjCJBO/pxx1+WlMX3oLhMjKgBGNrwOdUOx62l0WOIbZzB8n4WHT20LgFypIiNoCxC+yFqMsCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Pb8k3kX/; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55J8XMQR532765;
-	Thu, 19 Jun 2025 03:33:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750322002;
-	bh=2JTcC8uoCOSM0+5JiXWDBYfybPyfdDoEoObObpyrYRk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Pb8k3kX/r1jnFe/WEbbreOL/yDgBTgd73YVFDTq4jom9bvHeiqyV2xiyuY/kzAGKF
-	 vrlEsjMc8DjztNfoMraHrUAWcUlXHw/IbFBERcJ4SiJ8LebEwy7lw0IMGcr2rSmUsE
-	 ktuVEgZPBmP1Vvk34+fQFkwbLnI2gHF7upicEKUU=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55J8XMPc3732274
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 19 Jun 2025 03:33:22 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 19
- Jun 2025 03:33:21 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 19 Jun 2025 03:33:21 -0500
-Received: from [172.24.227.4] (hp-z2-tower.dhcp.ti.com [172.24.227.4])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55J8XHnY822301;
-	Thu, 19 Jun 2025 03:33:18 -0500
-Message-ID: <5c56f6d6-fc3e-40a1-b501-7f1054e6e408@ti.com>
-Date: Thu, 19 Jun 2025 14:03:17 +0530
+	s=arc-20240116; t=1750322014; c=relaxed/simple;
+	bh=J4/swX60dxFNnGyRxMTrvcRjJzp/EsyWsznOiUYARZc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=igjlxD/QYP0xZrnAsA+G7ulkzg+/I7V9z9EOKzNvEfsU37iYJXXBSph0mZXMtrT46hZvl+SyuVhRpJouG1ki4N+exBpsSAVjvkV9MDmxvsYLbMXJzWu4u5Rny2wMLn2XGf1RueWi+mqlk0XqjDu7pdTW67GRelhaTTQJB2JnvLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DRY0YGc1; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a36748920cso510379f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 01:33:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750322011; x=1750926811; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j3425DJ9smVNqtgfiewFDDuDZUIYNH7UVu89t2el+0A=;
+        b=DRY0YGc1RcRmMF/IgUeFFp5B4NzPzcoN+oo+oTdcpQdNkX84NHePGFxti1rW0Wdf8e
+         pMolJq58RVrHYJL7WzjMiES5VRtBWww8oN2RF7v3hyH2MPSc5r1bzDM2mD0wptTuxkuk
+         KZFSTuy3dXnuJUIeBo2QbNxswuADAHXpVEzEQNON5i5qttxVZmZrpS+KttHw1AAhp4C9
+         zBk2Z+eEk4GWKsz62/XD7UtazxDDbs0xlPr3vPMEFAmv/5kRpcRgLhuqGh1ptbQ0aIAN
+         pr3ErQ6f0PeBy2o/wOS2DnEzEE1RewU6f1zKGeKB6RSTV3QmrYMyNcYwImYxNeHFzFg9
+         8ZRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750322011; x=1750926811;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j3425DJ9smVNqtgfiewFDDuDZUIYNH7UVu89t2el+0A=;
+        b=uXHiSqgPBaR3QphvOwoBtBGaNLPL0YfLKYXtm3IOMG/Rfzjq0odK6ogygUTHyy54pw
+         GDL+L2R63ZGs3U3ppv4/kagPDXZ3Rm9sl2u5pplK/e6edFrcDq3NjNKdOAHZhAlkBUqc
+         I7xIFq7bKqmVxR67T7lehYMl1Lvf8XxpbmpHkwuNDJZv1UlboAWTV+Hdifj0hdG0h5Ri
+         8L1ANPezg0BkIJbarA12HaWJ94Zmefzw3zOTbdGp+NlwRTfDm45fsmHmTIIFUFOA9c3A
+         b0QYWM8n3/20HC0XhtmwNe1p/rvPsALRyojiiaoLQQgHn3aBz3bQ1L5vWC+ophJks80X
+         X9uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrPgouf5F/SC/JsFLS7iZEjdvObTTAfAUvK43OHFe05Rh52wDwYZjj1rpzjDsa4CLkBe6ly5Tlpr7ZWGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7vnjJZBP2Y/LLl/he4p51rFnFvEOZewrWJFuO0Gi6AogltE0O
+	TLWk6nZNcwGVgZQIhDc+cFkPDTislZmTYXWS97G/ReB9y2rK6AbW4pVurS+ybTO+L0A=
+X-Gm-Gg: ASbGncv9hzJe9GzrSla3EVrwmQua0mE8KiF0PXv8Rf3EYccONGUUGtQMaF0RosH4rmm
+	Z3J7Q68d8MuMCfCwM1lCacWIK/2kZBqVXjOcRFZeruIVbaTiFkQfRMdj2zkYoelnZAvcNMJSHTQ
+	s1fL2tHw1klbfMV5ljGBc2RMQB/yiRwAxne6IQoP3bxR+I1qAkQb6nHCdccdgUP6C5deZQMUVbe
+	+ICQnaK+l20Pqj1FVYxdnvs6iY13DB+/60X2f7HxiJbtg4AOJ8IPH6yiG8i/GZIt1nA6s5vDsQt
+	QZtAoyZI61QGWksMsAtPTH5DfpprASWN6tIacTQgaBC4T8BD1yAsqyZR8FdqM3Am9HQ=
+X-Google-Smtp-Source: AGHT+IFrsPvQBcfdGkjODy+e3yqc3AHlIahKNReGa+rvtx4ektz8kpZyRE1e3BB7ON0JDvQ8oJpUfA==
+X-Received: by 2002:a5d:64ee:0:b0:3a4:e75f:53f5 with SMTP id ffacd0b85a97d-3a5723a26f8mr17708250f8f.35.1750322011048;
+        Thu, 19 Jun 2025 01:33:31 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:c485:fe15:c9ab:c72f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a568a63a42sm18828151f8f.28.2025.06.19.01.33.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jun 2025 01:33:30 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 19 Jun 2025 10:33:18 +0200
+Subject: [PATCH v2 05/12] gpio: pmic-eic-sprd: drop unneeded .set()
+ callback
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: ti: k3-am642-evm-pcie0-ep: Add boot phase
- tag to "pcie0_ep"
-To: Vignesh Raghavendra <vigneshr@ti.com>, <nm@ti.com>, <kristo@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <s-vadapalli@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <danishanwar@ti.com>, Hrushikesh Salunke <h-salunke@ti.com>
-References: <20250610054920.2395509-1-h-salunke@ti.com>
- <98e04654-a693-494d-9f60-930b6a4cd84a@ti.com>
- <b24a97fc-8dac-443b-aec7-317b9e393f2d@ti.com>
- <f6a57a82-c534-4439-a337-8592c2e121c5@ti.com>
- <28c88a78-fe34-4595-b260-c6cc40897bc1@ti.com>
-Content-Language: en-US
-From: Hrushikesh Salunke <h-salunke@ti.com>
-In-Reply-To: <28c88a78-fe34-4595-b260-c6cc40897bc1@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250619-gpiochip-set-rv-gpio-v2-5-74abf689fbd8@linaro.org>
+References: <20250619-gpiochip-set-rv-gpio-v2-0-74abf689fbd8@linaro.org>
+In-Reply-To: <20250619-gpiochip-set-rv-gpio-v2-0-74abf689fbd8@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>, 
+ Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ Robert Jarzmik <robert.jarzmik@free.fr>, Heiko Stuebner <heiko@sntech.de>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1348;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=U5ElyLmZBGysFJL9KcblCpbMCuSewiTUa3oGkohc5iA=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoU8tSNZDHMC4DZ4e94TG9I0QxUTJPp/knIHoLZ
+ ngpzNeMrj+JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaFPLUgAKCRARpy6gFHHX
+ cs7tEADbq0rtKcu0CtpTMbhplPaVXYghftiJVLjNx9ls/h6bpBkGrExc9GChQzG+Q7zhbcHnD9u
+ C2jZn5ptHvOH7heEQ2vVjh6YD9YrwGECInonaAld8CaKlF9li75bIAu2EIPmnGHnkoeb9y9ejQq
+ NUgqfirWA+Vn89x8JYkZ2yYQGn/kYHWSYvjad4y1//nWPlTQsQTXozhafHv/sEoqUlHxI1677x3
+ jIxA8nZMpg+TK+DfjalolY+tMbGti6RYt/AYwK7k+OCERsizg+3znNQDgpF16dG4P+duDRsFTPN
+ MTuBU+/nvuDmAsfzReY7qlQEGTMvKOap5VGUx2LAXRomlj28hOomYjrSVdQjjJIBgWiArZj57lT
+ pIQVrc7vIj2UEAEmDBU6x/vJ+Ap7UpYTduZukAh+BNo+3g8RxfeW9DOcKE7HWjHODvU0Q8SDkVc
+ vRkO4k+tvkcc/5lMLF0IalPGBX6AQCDCHOo0b9GoXWVdtsix33EFG9yqiQgu4C9PDP7IcCZfH7A
+ K6MSIE73cXim8CvXAXfIpI2/PwV3RCv8jF1+NfxrIApruyfrgJb5uM7HA3n8LgjwoS+ZkywcvDW
+ qnUfQrtyAii6SWW9aBhPa+wAwsHcGbgR/x4Mt7aS9QPZh3OKG4KVP3pWFxTBV80w1DGiFHsor0s
+ +I4VtQeCui/0NNA==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+The lines on this chip are input-only. GPIO core can handle the missing
+.set() callback so there's no need to implement a dummy here. Drop it.
 
-On 19/06/25 13:25, Vignesh Raghavendra wrote:
-> 
-> 
-> On 12/06/25 15:46, Hrushikesh Salunke wrote:
->>
->>
->> On 11/06/25 14:17, Hrushikesh Salunke wrote:
->>>
->>>
->>> On 11/06/25 14:14, Vignesh Raghavendra wrote:
->>>>
->>>>
->>>> On 10/06/25 11:19, Hrushikesh Salunke wrote:
->>>>> AM64X SoC has one instance of PCIe which is PCIe0. To support PCIe boot
->>>>> on AM64X SoC, PCIe0 needs to be in endpoint mode and it needs to be
->>>>> functional at all stages of PCIe boot process. Thus add the
->>>>> "bootph-all" boot phase tag to "pcie0_ep" device tree node.
->>>>>
->>>>> Signed-off-by: Hrushikesh Salunke <h-salunke@ti.com>
->>>>> ---
->>>>> This patch is based on commit
->>>>> 475c850a7fdd Add linux-next specific files for 20250606
->>>>>
->>>>> Changes since v1
->>>>> As per feedback from Nishanth, changed the position of "bootph-all"
->>>>> tag, according to ordering rules for device tree properties.
->>>>>
->>>>> v1 : https://lore.kernel.org/
->>>>> all/20250609115930.w2s6jzg7xii55dlu@speckled/
->>>>>
->>>>>    arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso | 1 +
->>>>>    1 file changed, 1 insertion(+)
->>>>>
->>>>> diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso b/
->>>>> arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso
->>>>> index 432751774853..a7e8d4ea98ac 100644
->>>>> --- a/arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso
->>>>> +++ b/arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso
->>>>> @@ -46,6 +46,7 @@ pcie0_ep: pcie-ep@f102000 {
->>>>>            max-functions = /bits/ 8 <1>;
->>>>>            phys = <&serdes0_pcie_link>;
->>>>>            phy-names = "pcie-phy";
->>>>> +        bootph-all;
->>>>>            ti,syscon-pcie-ctrl = <&pcie0_ctrl 0x0>;
->>>>>        };
->>>>>    };
->>>>
->>>> Are the patches for PCIe boot support merged to U-Boot or such other
->>>> bootloader repo?
->>>> No, they are not in the U-Boot yet. I will be posting patches for PCIe
->>> boot support for U-Boot this week.
->>>
->>
->> I have posted Patch series for the PCIe boot support in Uboot.
-> 
-> 
-> Great, but dont you need bootph-all in dependent nodes as well such as
-> serdes0_pcie_link pcie0_ctrl? how does this work otherwise?
-> 
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpio-pmic-eic-sprd.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-When booting through PCIe, ROM configures SERDES for PCIe. So we don't
-need to reconfigure it again in subsequent bootstages, we can keep
-using the same configuration. As for PCIe endpoint controller, BAR
-registers and Address Translation registers needs to be re-configured
-at each bootstage, as bootloaders at different stage are stored at
-different memory location.
+diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
+index d9b228bea42eec53ba9d0d0945125f530a22946c..cb015fb5c9467484022723910354219e2c98d3c7 100644
+--- a/drivers/gpio/gpio-pmic-eic-sprd.c
++++ b/drivers/gpio/gpio-pmic-eic-sprd.c
+@@ -109,12 +109,6 @@ static int sprd_pmic_eic_direction_input(struct gpio_chip *chip,
+ 	return 0;
+ }
+ 
+-static void sprd_pmic_eic_set(struct gpio_chip *chip, unsigned int offset,
+-			      int value)
+-{
+-	/* EICs are always input, nothing need to do here. */
+-}
+-
+ static int sprd_pmic_eic_set_debounce(struct gpio_chip *chip,
+ 				      unsigned int offset,
+ 				      unsigned int debounce)
+@@ -351,7 +345,6 @@ static int sprd_pmic_eic_probe(struct platform_device *pdev)
+ 	pmic_eic->chip.request = sprd_pmic_eic_request;
+ 	pmic_eic->chip.free = sprd_pmic_eic_free;
+ 	pmic_eic->chip.set_config = sprd_pmic_eic_set_config;
+-	pmic_eic->chip.set = sprd_pmic_eic_set;
+ 	pmic_eic->chip.get = sprd_pmic_eic_get;
+ 	pmic_eic->chip.can_sleep = true;
+ 
 
+-- 
+2.48.1
 
->>
->> 1.https://patchwork.ozlabs.org/project/uboot/
->> patch/20250612084910.3457060-1-h-salunke@ti.com/
->> 2. https://patchwork.ozlabs.org/project/uboot/
->> cover/20250612085023.3457117-1-h-salunke@ti.com/
->> 3. https://patchwork.ozlabs.org/project/uboot/
->> cover/20250612085534.3457522-1-h-salunke@ti.com/
->>
->>
->> Regards,
->> Hrushikesh.
-> 
 
