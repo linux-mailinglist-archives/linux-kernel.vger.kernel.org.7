@@ -1,56 +1,63 @@
-Return-Path: <linux-kernel+bounces-693059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24053ADFA83
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 03:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC77ADFAA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 03:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8573189EDE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 01:07:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C47F189FFF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 01:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42FA1714B2;
-	Thu, 19 Jun 2025 01:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95547083C;
+	Thu, 19 Jun 2025 01:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="HUrctnYf"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b="gfCJwvUc"
+Received: from mta-102a.earthlink-vadesecure.net (mta-102b.earthlink-vadesecure.net [51.81.61.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17D87346F
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 01:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAA61CD3F;
+	Thu, 19 Jun 2025 01:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.61.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750295121; cv=none; b=Z5anVyOxiNSKl4GPNN1e4nqEdmrFSr4Qafe8rZy/gVR56mZ87n8n0TQk9OpjpJHtxfEnWGg5sbPd+QWjNz8bpj0bxP8GeZZeK26wqVKvrPs646w3VPG0Aiaynai6u8B+C6pWa3yWswN3Ls2zxdDZNmttR8UbAxaIZCcaj9RQTaM=
+	t=1750296118; cv=none; b=FMfaYI8l46/Obq57uR8GEf8KXRmGLcP8nSZlE7XGrFAQZtrFMPDqedeKXC6x8L881EJICRBGBOZrtKkzjJ7E20q0TMDiEGJTSS5udjwOERtCYMjXDWxnAEXX72Y76lVdIvxyrJdjOXr3F6DSYmcbiJmsC4fxcDdmARIjdVvu0OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750295121; c=relaxed/simple;
-	bh=kYVXC/8cL0AQKvj8r89iAh+CKfwN2fHxgsH4sOuPEN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u6+BcPhGMoOv/GeE69lyjVTCw5fy5cgPiw31KNuDcqGJjmgiC5Vx9oUlgFzPM6Ze/72ZQlKDRacK546DkfoohwLgKY2mBHndLRNetEv6i5/dJl45q4+pRuMxJEoJRpLAMj58BjiokJ2Bwa8QKNommHDk9jlSFKUsmAuUbXCTD6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=HUrctnYf; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=aiBWST3oENwuiu4ri6sU6T6C/tfakFuYuXOzSTAnGKU=; b=HUrctnYf16rmM9MU
-	2V+KPKyDCpSb0wK6RqmOk/xIwc+yU27XDv+TDsPVCR88Dixxk3J+zzhHRls0WAF40UarRDvMBaBBM
-	M2MyS4uvMqCaKY7xKAzuuaUNnkuKfFKLas7AMBsm8ya7fx6lbGD/NIPT5DKXU6Ezr8G4gBMHZByj/
-	B1LintnCxFq9IBNQkgzc3sm812fdngPyt9X7JmpIa89VrOTIoyd24l6Tv1MMsehQ9Wj4LkGjG/joo
-	70VVoFbq2z8Wh1nZcKHlwj22HevXYMQzlEDkbgMCnA/7/FLVG96qmJpXBlXSLoB8kTEK/T1Z30VIy
-	KxiSeTgWjh3DYUH6+A==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uS3iF-00AWhQ-25;
-	Thu, 19 Jun 2025 01:05:07 +0000
-From: linux@treblig.org
-To: loic.poulain@oss.qualcomm.com,
-	wcn36xx@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] wifi: wcn36xx: Remove unused wcn36xx_smd_update_scan_params
-Date: Thu, 19 Jun 2025 02:05:06 +0100
-Message-ID: <20250619010506.296494-1-linux@treblig.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750296118; c=relaxed/simple;
+	bh=MUo5HN2+4eHRF4vfZmOzGNcpIH8Cpomm1JQPO2fKijo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DHAGewiVjn1TzPX2iw1sJKjfB+x+vnpIaot822oWRWcRBfBv+btqEk/SyTwv1tOoMrdUh8lN0UkMoKeEh9cQa9V1EDcOF3vQXFJWfgmYlEsx+WelNvKq7pseIrczV9p62FMJcvtmKRmCIH4jntiW6JU8/0HcfBjOHEmohLs7qnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=onemain.com; spf=pass smtp.mailfrom=onemain.com; dkim=pass (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b=gfCJwvUc; arc=none smtp.client-ip=51.81.61.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=onemain.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onemain.com
+Authentication-Results: earthlink-vadesecure.net;
+ auth=pass smtp.auth=svnelson@teleport.com smtp.mailfrom=sln@onemain.com;
+DKIM-Signature: v=1; a=rsa-sha256; bh=7zg+LvQChxQon/g4lI6tNsUEpvSR500gVyAdwM
+ 5WaKU=; c=relaxed/relaxed; d=earthlink.net; h=from:reply-to:subject:
+ date:to:cc:resent-date:resent-from:resent-to:resent-cc:in-reply-to:
+ references:list-id:list-help:list-unsubscribe:list-unsubscribe-post:
+ list-subscribe:list-post:list-owner:list-archive; q=dns/txt;
+ s=dk12062016; t=1750295183; x=1750899983; b=gfCJwvUcqLLM38NLBeyPWE/2Q+g
+ QMPpcUYDwDFAD0vfwst+6+hVhEeBFTXTQD9q0HhvA0ceE/gYk9ZP5QItV1ZmscWFN+Qo1od
+ dVL0N7ufgUqbwGt4qZEwl4tBERL1qjTfgDeD33cP+h6bpBeh3jzUq5tcDalCKnqdUipbgrf
+ VdX79RjWTteXqmnJD3h9uzMkPJsCl48cJH3JGuIzlieNv7k7lvaQ+ezdg1Z0jAR8//2EvWR
+ rrAH7m5i4ERhqqkWyc1RJJQpsVIHtanvnCF2cvrKwBiAfwhwRS1/lnYxAp6pXbeFdRYlZco
+ /1iegGoYPflHH048LtVIm2Z0x69W3TQ==
+Received: from poptart.. ([50.47.159.51])
+ by vsel1nmtao02p.internal.vadesecure.com with ngmta
+ id 91a5f48a-184a4c317d2edef3; Thu, 19 Jun 2025 01:06:23 +0000
+From: Shannon Nelson <sln@onemain.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Shannon Nelson <sln@onemain.com>
+Subject: [PATCH net] mailmap: Update shannon.nelson emails
+Date: Wed, 18 Jun 2025 18:06:03 -0700
+Message-Id: <20250619010603.1173141-1-sln@onemain.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,103 +66,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Retiring, so redirect things to a non-corporate account.
 
-wcn36xx_smd_update_scan_params() last use was removed in 2020 by
-commit 5973a2947430 ("wcn36xx: Fix software-driven scan")
-
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Signed-off-by: Shannon Nelson <sln@onemain.com>
 ---
- drivers/net/wireless/ath/wcn36xx/smd.c | 60 --------------------------
- drivers/net/wireless/ath/wcn36xx/smd.h |  1 -
- 2 files changed, 61 deletions(-)
+ .mailmap | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
-index 2cf86fc3f8fe..136acc414714 100644
---- a/drivers/net/wireless/ath/wcn36xx/smd.c
-+++ b/drivers/net/wireless/ath/wcn36xx/smd.c
-@@ -1127,66 +1127,6 @@ int wcn36xx_smd_process_ptt_msg(struct wcn36xx *wcn,
- 	return ret;
- }
- 
--static int wcn36xx_smd_update_scan_params_rsp(void *buf, size_t len)
--{
--	struct wcn36xx_hal_update_scan_params_resp *rsp;
--
--	rsp = buf;
--
--	/* Remove the PNO version bit */
--	rsp->status &= (~(WCN36XX_FW_MSG_PNO_VERSION_MASK));
--
--	if (WCN36XX_FW_MSG_RESULT_SUCCESS != rsp->status) {
--		wcn36xx_warn("error response from update scan\n");
--		return rsp->status;
--	}
--
--	return 0;
--}
--
--int wcn36xx_smd_update_scan_params(struct wcn36xx *wcn,
--				   u8 *channels, size_t channel_count)
--{
--	struct wcn36xx_hal_update_scan_params_req_ex msg_body;
--	int ret;
--
--	mutex_lock(&wcn->hal_mutex);
--	INIT_HAL_MSG(msg_body, WCN36XX_HAL_UPDATE_SCAN_PARAM_REQ);
--
--	msg_body.dot11d_enabled	= false;
--	msg_body.dot11d_resolved = true;
--
--	msg_body.channel_count = channel_count;
--	memcpy(msg_body.channels, channels, channel_count);
--	msg_body.active_min_ch_time = 60;
--	msg_body.active_max_ch_time = 120;
--	msg_body.passive_min_ch_time = 60;
--	msg_body.passive_max_ch_time = 110;
--	msg_body.state = PHY_SINGLE_CHANNEL_CENTERED;
--
--	PREPARE_HAL_BUF(wcn->hal_buf, msg_body);
--
--	wcn36xx_dbg(WCN36XX_DBG_HAL,
--		    "hal update scan params channel_count %d\n",
--		    msg_body.channel_count);
--
--	ret = wcn36xx_smd_send_and_wait(wcn, msg_body.header.len);
--	if (ret) {
--		wcn36xx_err("Sending hal_update_scan_params failed\n");
--		goto out;
--	}
--	ret = wcn36xx_smd_update_scan_params_rsp(wcn->hal_buf,
--						 wcn->hal_rsp_len);
--	if (ret) {
--		wcn36xx_err("hal_update_scan_params response failed err=%d\n",
--			    ret);
--		goto out;
--	}
--out:
--	mutex_unlock(&wcn->hal_mutex);
--	return ret;
--}
--
- static int wcn36xx_smd_add_sta_self_rsp(struct wcn36xx *wcn,
- 					struct ieee80211_vif *vif,
- 					void *buf,
-diff --git a/drivers/net/wireless/ath/wcn36xx/smd.h b/drivers/net/wireless/ath/wcn36xx/smd.h
-index 2c1ed9e570bf..4e39df5589b3 100644
---- a/drivers/net/wireless/ath/wcn36xx/smd.h
-+++ b/drivers/net/wireless/ath/wcn36xx/smd.h
-@@ -66,7 +66,6 @@ int wcn36xx_smd_finish_scan(struct wcn36xx *wcn, enum wcn36xx_hal_sys_mode mode,
- int wcn36xx_smd_init_scan(struct wcn36xx *wcn, enum wcn36xx_hal_sys_mode mode,
- 			  struct ieee80211_vif *vif);
- 
--int wcn36xx_smd_update_scan_params(struct wcn36xx *wcn, u8 *channels, size_t channel_count);
- int wcn36xx_smd_start_hw_scan(struct wcn36xx *wcn, struct ieee80211_vif *vif,
- 			      struct cfg80211_scan_request *req);
- int wcn36xx_smd_stop_hw_scan(struct wcn36xx *wcn);
+diff --git a/.mailmap b/.mailmap
+index b77cd34cf852..7a3ffabb3434 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -691,9 +691,10 @@ Serge Hallyn <sergeh@kernel.org> <serge.hallyn@canonical.com>
+ Serge Hallyn <sergeh@kernel.org> <serue@us.ibm.com>
+ Seth Forshee <sforshee@kernel.org> <seth.forshee@canonical.com>
+ Shakeel Butt <shakeel.butt@linux.dev> <shakeelb@google.com>
+-Shannon Nelson <shannon.nelson@amd.com> <snelson@pensando.io>
+-Shannon Nelson <shannon.nelson@amd.com> <shannon.nelson@intel.com>
+-Shannon Nelson <shannon.nelson@amd.com> <shannon.nelson@oracle.com>
++Shannon Nelson <sln@onemain.com> <shannon.nelson@amd.com>
++Shannon Nelson <sln@onemain.com> <snelson@pensando.io>
++Shannon Nelson <sln@onemain.com> <shannon.nelson@intel.com>
++Shannon Nelson <sln@onemain.com> <shannon.nelson@oracle.com>
+ Sharath Chandra Vurukala <quic_sharathv@quicinc.com> <sharathv@codeaurora.org>
+ Shiraz Hashim <shiraz.linux.kernel@gmail.com> <shiraz.hashim@st.com>
+ Shuah Khan <shuah@kernel.org> <shuahkhan@gmail.com>
 -- 
-2.49.0
+2.34.1
 
 
