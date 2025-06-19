@@ -1,184 +1,193 @@
-Return-Path: <linux-kernel+bounces-693067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2048FADFA9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 03:12:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322FDADFAA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 03:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A44383B027E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 01:11:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51BF178511
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 01:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD38018DB16;
-	Thu, 19 Jun 2025 01:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC2C189919;
+	Thu, 19 Jun 2025 01:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UjuuijAt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MlSrfA+S"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1B22BB15;
-	Thu, 19 Jun 2025 01:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF841CD3F
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 01:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750295515; cv=none; b=CVlSmvHL7FK+PHOF07fXt0Wv0dz7opzweLmTLdoyArS5uOjsTNznDepSz0fkehdqef980lXC+a2IEAGLRPt3v76GyOPdMhoZ1yVHmRpZv95Ac4OnTaaH5m8O3BY/DBATaUOHQrUVIiTyEhKVdCJwTo4dZgQ9HQAyhYUECScEaHM=
+	t=1750296182; cv=none; b=gn2lp286Mlw20mI7lGG4nwD+VtruDM3fAsy9BCSxe6UntXQ/QHtLPgN9nX62cZNURRaPKx7r8RNo8TzQzx22tnkdSLMd8H0vQjx1uP/b8PTBNQoo1sJ4c7RVNcLFlCmsJ/YpLinKO+zm2Ud+JcqNVe5K5WctgNMps9eJEp9rQUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750295515; c=relaxed/simple;
-	bh=ubnpEBMCEnSo3S0tKIY2YGchBjUwf5oaTCDKDOK2A10=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MRSCfrgSDp8bSKqi0JU84Ukgm4YJ6ahvCjwrSJOV3kt1gvj5wsXXZER6z5Gt5ANiSddOHoPPFl4K4Xj21XOoNFq6zFwfZ+JkFkx5LIjqqop9jPn4kc3a6l6pv5+KXaTNCvnr8I7Dyv0KCyeNW6r816G1/7x7bOKgfI0YxaNatbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UjuuijAt; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750295514; x=1781831514;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=ubnpEBMCEnSo3S0tKIY2YGchBjUwf5oaTCDKDOK2A10=;
-  b=UjuuijAt0UncZDPCfuIumL7oH5+yAGnns3pKPtqu2x1ZzUf6AplZtN0M
-   d8qkanb5XJvnJ9BqzN99FA4kOe4oDSMF6k24n6D57U+eB0B7VJDpwj7HK
-   FmrmYr5m8ORUqD9z/jwaEFZePIkyM2MCLnlsxY/uy+G3+9o8S1rFQ/gDz
-   iANcTgHQqdfq6Bupg89hPCEA8ekXTzS3a4vvAtmi1gidQmlsjaEygYknD
-   UZm7X+NeBY3dDu4XYskyL0pEv4lTNcMrsKEGUwp6YzAdAXHcpEfbqeqce
-   K1l6upu8mOPU5QjmOOrDY263QEgWTw0MfZhvaNs7MNb3sDJwW8BegBmVM
-   A==;
-X-CSE-ConnectionGUID: Jb1faiqRRyquTLXjLh61VQ==
-X-CSE-MsgGUID: jUKCpox5TRuFfOqIF6A+UQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="40148036"
-X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
-   d="scan'208";a="40148036"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 18:11:53 -0700
-X-CSE-ConnectionGUID: R9dE/fHARn2lPPpTm1n1vQ==
-X-CSE-MsgGUID: 8qX4bTzsRVeoHPFF6oQ/1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
-   d="scan'208";a="154269801"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.144]) ([10.124.245.144])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 18:11:49 -0700
-Message-ID: <fa4abc9b-3f8b-4084-86e0-05dd8aa6ad67@linux.intel.com>
-Date: Thu, 19 Jun 2025 09:11:47 +0800
+	s=arc-20240116; t=1750296182; c=relaxed/simple;
+	bh=1mgzvpG6sKakGwAjQUMT8gPBm4sFDWDBckjO/agSuXk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=spFMiHQ4W/rjxnDci0Y5WwTzw7VOB91PRIiJ/cS4Jlwjb7+K5qo1gss+SaHro/T2J5kaug0yAWRpwTUrj37ol9dMbOxxk0nM/u1jnBB0kF81jU4qmrzybwKKL/mLdE3wnhKT16fzWelX3BG3Gd9E8GNv4GoC97AUxGgE6HLLku8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MlSrfA+S; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-313fb0ec33bso185332a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jun 2025 18:23:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750296180; x=1750900980; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8IB1pXwG+o7bC4LkvgA8w7LAYlqk0B9GUuwyv4RmtU4=;
+        b=MlSrfA+SMZ0LIBGoAZtoy0l0wkTNUm1mpvyWT5Jw+yqnYOqX5SUDIz164UhfBMWSVP
+         rjE0sK/w4PqkRVOKt2ScmCDJH9FxIQVJoLfKwl5Rc26ewR40ddo8Yah+iWk8fhra9qgc
+         oMa+FrrOG3x9WAS3FQTmRGFKbKLHVCs9KyoWLHW7IKU8jFZNx9rb7fSouDHVZcQaG8eV
+         w4BsloAoRi3BF7fWeGuZ93d5uMBEvxs9cRmBzXb/HK8TZwDL7sA6bao/Zvor4FlH92XZ
+         hjNvLXboVcF2gLighZJc1Rrq6cB+hEt4qs5GeWTt9vU/TlIqOqZ4/9Z64kdKIkpAHk5J
+         qArQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750296180; x=1750900980;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8IB1pXwG+o7bC4LkvgA8w7LAYlqk0B9GUuwyv4RmtU4=;
+        b=HYRwEPpg2xpNWyuDRsO/65mMwxSLxsEDwXnV7KtqzohBCzO3htdjaMS+Mg3U9WqJ6l
+         MyV44564iuKvq+IAch1fzEhwPkmIiFNFTOIeeqfSqKtT5o7gm2ElpRO2fKmF5BMgUv/r
+         RTRBZ6/7e8bqp74hsHBLULUVZl21x2NwXFnOhtV+nrRBXL8d4NxMtbT6sdbLOE/tnLS/
+         qjwLxDn7IVrzZwhH5UEmP5/wwG49p+9UWjNbVjp6G9jazmKRnNh1tSB6iJG4SxtlSdOF
+         yCaI5yyoJZJJmqE7PF7vB8gdlLCxO8mUVuGURjgF4EYxaI5KnzuIC3bc/Gy9l8hfqttU
+         Wp3A==
+X-Forwarded-Encrypted: i=1; AJvYcCU/DZ2SEIIjaULIEIszXpWimxAvxBKEPyuPkLw6jK2GarZ7lgN/tTP+Xde06nNLTJUU81cZl1CWGG5v7AI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqO/LasRu5Yi2Ymn2Q+5V4eyEuqJ5LVoVD311PHYrelZXPQjEe
+	fm6wITn5sLmULDDD7NgFSrP/HIU/+XSYXVo9/7KukrOId0vH/kxPU50CL4BMb8Ar0FE8ZnQFLUg
+	yirOZAA==
+X-Google-Smtp-Source: AGHT+IGdcvQAVVSk4fM09uW8oDEjJdJY7dpl9V3Y4AvXuJ+N0Avyh7SwiUaAWue2o5CoAmxFjj275F4p3uY=
+X-Received: from pjbsz14.prod.google.com ([2002:a17:90b:2d4e:b0:313:1c10:3595])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:254e:b0:311:e8cc:4256
+ with SMTP id 98e67ed59e1d1-313f1d644b8mr24662451a91.22.1750296180025; Wed, 18
+ Jun 2025 18:23:00 -0700 (PDT)
+Date: Wed, 18 Jun 2025 18:22:58 -0700
+In-Reply-To: <aFNIPXoEb5iCjt_L@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] perf/x86/intel: Fix IA32_PMC_x_CFG_B MSRs access
- error
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
- Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250529080236.2552247-1-dapeng1.mi@linux.intel.com>
- <aDq3S9lwO1YadCKT@gmail.com>
- <15e4f7a6-7c68-4d89-8813-cd142eb4c416@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <15e4f7a6-7c68-4d89-8813-cd142eb4c416@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250618042424.330664-1-jthoughton@google.com>
+ <20250618042424.330664-4-jthoughton@google.com> <aFMaxi5LDr4HHbMR@linux.dev>
+ <aFMl6DOcKfH6ampb@google.com> <aFNIPXoEb5iCjt_L@linux.dev>
+Message-ID: <aFNmci0s1_P845XZ@google.com>
+Subject: Re: [PATCH v3 03/15] KVM: arm64: x86: Require "struct kvm_page_fault"
+ for memory fault exits
+From: Sean Christopherson <seanjc@google.com>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: James Houghton <jthoughton@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Yan Zhao <yan.y.zhao@intel.com>, 
+	Nikita Kalyazin <kalyazin@amazon.com>, Anish Moorthy <amoorthy@google.com>, 
+	Peter Gonda <pgonda@google.com>, Peter Xu <peterx@redhat.com>, 
+	David Matlack <dmatlack@google.com>, wei.w.wang@intel.com, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
 
-Kindly ping...    Thanks.
+On Wed, Jun 18, 2025, Oliver Upton wrote:
+> On Wed, Jun 18, 2025 at 01:47:36PM -0700, Sean Christopherson wrote:
+> > On Wed, Jun 18, 2025, Oliver Upton wrote:
+> > > What I would like to see on arm64 is that for every "KVM_EXIT_MEMORY_FAULT"
+> > > we provide as much syndrome information as possible. That could imply
+> > > some combination of a sanitised view of ESR_EL2 and, where it is
+> > > unambiguous, common fault flags that have shared definitions with x86.
+> > 
+> > Me confused, this is what the above does?  "struct kvm_page_fault" is arch
+> > specific, e.g. x86 has a whole pile of stuff in there beyond gfn, exec, write,
+> > is_private, and slot.
+> 
+> Right, but now I need to remember that some of the hardware syndrome
+> (exec, write) is handled in the arch-neutral code and the rest belongs
+> to the arch.
 
-On 6/3/2025 10:14 AM, Mi, Dapeng wrote:
-> On 5/31/2025 4:01 PM, Ingo Molnar wrote:
->> * Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
->>
->>> When running perf_fuzzer on PTL, sometimes the below "unchecked MSR
->>>  access error" is seen when accessing IA32_PMC_x_CFG_B MSRs.
->>>
->>> [   55.611268] unchecked MSR access error: WRMSR to 0x1986 (tried to write 0x0000000200000001) at rIP: 0xffffffffac564b28 (native_write_msr+0x8/0x30)
->>> [   55.611280] Call Trace:
->>> [   55.611282]  <TASK>
->>> [   55.611284]  ? intel_pmu_config_acr+0x87/0x160
->>> [   55.611289]  intel_pmu_enable_acr+0x6d/0x80
->>> [   55.611291]  intel_pmu_enable_event+0xce/0x460
->>> [   55.611293]  x86_pmu_start+0x78/0xb0
->>> [   55.611297]  x86_pmu_enable+0x218/0x3a0
->>> [   55.611300]  ? x86_pmu_enable+0x121/0x3a0
->>> [   55.611302]  perf_pmu_enable+0x40/0x50
->>> [   55.611307]  ctx_resched+0x19d/0x220
->>> [   55.611309]  __perf_install_in_context+0x284/0x2f0
->>> [   55.611311]  ? __pfx_remote_function+0x10/0x10
->>> [   55.611314]  remote_function+0x52/0x70
->>> [   55.611317]  ? __pfx_remote_function+0x10/0x10
->>> [   55.611319]  generic_exec_single+0x84/0x150
->>> [   55.611323]  smp_call_function_single+0xc5/0x1a0
->>> [   55.611326]  ? __pfx_remote_function+0x10/0x10
->>> [   55.611329]  perf_install_in_context+0xd1/0x1e0
->>> [   55.611331]  ? __pfx___perf_install_in_context+0x10/0x10
->>> [   55.611333]  __do_sys_perf_event_open+0xa76/0x1040
->>> [   55.611336]  __x64_sys_perf_event_open+0x26/0x30
->>> [   55.611337]  x64_sys_call+0x1d8e/0x20c0
->>> [   55.611339]  do_syscall_64+0x4f/0x120
->>> [   55.611343]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>
->>> On PTL, GP counter 0 and 1 doesn't support auto counter reload feature,
->>> thus it would trigger a #GP when trying to write 1 on bit 0 of CFG_B MSR
->>> which requires to enable auto counter reload on GP counter 0.
->>>
->>> The root cause of causing this issue is the check for auto counter
->>> reload (ACR) counter mask from user space is incorrect in
->>> intel_pmu_acr_late_setup() helper. It leads to an invalid ACR counter
->>> mask from user space could be set into hw.config1 and then written into
->>> CFG_B MSRs and trigger the MSR access warning.
->>>
->>> e.g., User may create a perf event with ACR counter mask (config2=0xcb),
->>> and there is only 1 event created, so "cpuc->n_events" is 1.
->>>
->>> The correct check condition should be "i + idx >= cpuc->n_events"
->>> instead of "i + idx > cpuc->n_events" (it looks a typo). Otherwise,
->>> the counter mask would traverse twice and an invalid "cpuc->assign[1]"
->>> bit (bit 0) is set into hw.config1 and cause MSR accessing error.
->>>
->>> Besides, also check if the ACR counter mask corresponding events are
->>> ACR events. If not, filter out these counter mask. If a event is not a
->>> ACR event, it could be scheduled to an HW counter which doesn't support
->>> ACR. It's invalid to add their counter index in ACR counter mask.
->>>
->>> Furthermore, remove the WARN_ON_ONCE() since it's easily triggered as
->>> user could set any invalid ACR counter mask and the warning message
->>> could mislead users.
->>>
->>> Fixes: ec980e4facef ("perf/x86/intel: Support auto counter reload")
->>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->>> ---
->>>  arch/x86/events/intel/core.c | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
->>> index 3a319cf6d364..8d046b1a237e 100644
->>> --- a/arch/x86/events/intel/core.c
->>> +++ b/arch/x86/events/intel/core.c
->>> @@ -2994,7 +2994,8 @@ static void intel_pmu_acr_late_setup(struct cpu_hw_events *cpuc)
->>>  			if (event->group_leader != leader->group_leader)
->>>  				break;
->>>  			for_each_set_bit(idx, (unsigned long *)&event->attr.config2, X86_PMC_IDX_MAX) {
->>> -				if (WARN_ON_ONCE(i + idx > cpuc->n_events))
->>> +				if (i + idx >= cpuc->n_events ||
->>> +				    !is_acr_event_group(cpuc->event_list[i + idx]))
->>>  					return;
->> Is this a normal condition?
->>
->>  - If it's normal then the 'return' is destructive, isn't it? Shouldn't 
->>    it be a 'break', if this condition is legitimate?
->>
->>  - If it's not normal, then the WARN_ON_ONCE() was justified, right?
-> It's not normal.Strictly speaking, it's an invalid user configuration. It
-> looks not reasonable to trigger a kernel space warning for an invalid user
-> space configuration. It would mislead users and let users think there is
-> something wrong in kernel. That's why to remove the WARN_ON_ONCE(). Thanks.
+Yeah, can't argue there.
+
+> > The approach is non-standard, but I think my justification/reasoning for having
+> > the structure be arch-defined still holds:
+> > 
+> >  : Rather than define a common kvm_page_fault and kvm_arch_page_fault child,
+> >  : simply assert that the handful of required fields are provided by the
+> >  : arch-defined structure.  Unlike vCPU and VMs, the number of common fields
+> >  : is expected to be small, and letting arch code fully define the structure
+> >  : allows for maximum flexibility with respect to const, layout, etc.
+> > 
+> > If we could use anonymous struct field, i.e. could embed a kvm_arch_page_fault
+> > without having to bounce through an "arch" field, I would vote for the approach.
+> > Sadly, AFAIK, we can't yet use those in the kernel.
+> 
+> The general impression is that this is an unnecessary amount of complexity
+> for doing something trivial (computing flags).
+
+It looks pretty though!
+
+> > Nothing prevents arm64 (or any arch) from wrapping kvm_prepare_memory_fault_exit()
+> > and/or taking action after it's invoked.  That's not an accident; the "prepare
+> > exit" helpers (x86 has a few more) were specifically designed to not be used as
+> > the "return" to userspace.  E.g. this one returns "void" instead of -EFAULT
+> > specifically so that the callers isn't "required" to ignore the return if the
+> > caller wants to populate (or change, but hopefully that's never the case) fields
+> > after calling kvm_prepare_memory_fault_exit), and so that arch can return an
+> > entirely different error code, e.g. -EHWPOISON when appropriate.
+> 
+> IMO, this does not achieve the desired layering / ownership of memory
+> fault triage. This would be better organized as the arch code computing
+> all of the flags relating to the hardware syndrome (even boring ones
+> like RWX) 
+
+Just to make sure I'm not misinterpreting things, by "computing all of the flags",
+you mean computing KVM_MEMORY_EXIT_FLAG_xxx flags that are derived from hardware
+state, correct?
+
+> and arch-neutral code potentially lending a hand with the software bits.
 >
->
->> Thanks,
->>
->> 	Ingo
+> With this I either need to genericize the horrors of the Arm
+> architecture in the common thing or keep track of what parts of the
+> hardware flags are owned by arch v. non-arch. SW v. HW fault context is
+> a cleaner split, IMO.
+
+The problem I'm struggling with is where to draw the line.  If we leave hardware
+state to arch code, then we're not left with much.  Hmm, but it really is just
+the gfn/gpa that's needed in common code to avoid true ugliness.  The size is
+technically arch specific, but the reported size is effectively a placeholder,
+i.e. it's always PAGE_SIZE, and probably always will be PAGE_SIZE, but we wanted
+to give ourselves an out if necessary.
+
+Would you be ok having common code fill gpa and size?  If so, then we can do this:
+
+--
+void kvm_arch_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
+					struct kvm_page_fault *fault);
+
+static inline void kvm_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
+						 struct kvm_page_fault *fault)
+{
+	KVM_ASSERT_TYPE_IS(gfn_t, fault->gfn);
+
+	vcpu->run->exit_reason = KVM_EXIT_MEMORY_FAULT;
+	vcpu->run->memory_fault.gpa = fault->gfn << PAGE_SHIFT;
+	vcpu->run->memory_fault.size = PAGE_SIZE;
+
+	vcpu->run->memory_fault.flags = 0;
+	kvm_arch_prepare_memory_fault_exit(vcpu, fault);
+}
+--
+
+where arm64's arch hook is empty, and x86's is:
+
+--
+static inline void kvm_arch_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
+						      struct kvm_page_fault *fault)
+{
+	if (fault->is_private)
+		vcpu->run->memory_fault.flags |= KVM_MEMORY_EXIT_FLAG_PRIVATE;
+}
+--
+
+It's not perfect, but it should be much easier to describe the contract, and
+common code can still pass around a kvm_page_fault structure instead of a horde
+of booleans.
 
