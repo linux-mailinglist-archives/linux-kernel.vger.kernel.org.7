@@ -1,87 +1,116 @@
-Return-Path: <linux-kernel+bounces-695911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D1AAE1F60
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:50:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 786AAAE1F67
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E94754A794C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:48:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D0C4C312A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37CC2E06C9;
-	Fri, 20 Jun 2025 15:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF6C2EA17F;
+	Fri, 20 Jun 2025 15:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QgYSFcVM"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4kU49/Y"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8162D3A86
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073A02E763C;
+	Fri, 20 Jun 2025 15:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750434423; cv=none; b=Y9Se4zPJGhI8rEHE1jlIAME9GkkwfO/jrtiGkQiVhdI+YU2mJuG7jd8nSFBrolxWFV5h3RQoKoQRT+yWDwQiEDRhfuoSu8SfmtQs+BmIzakXIj3lVd8HOhNVJ32096hdzZmH5pj7xqbRRucaVOTnNzIDi+3u814BYHi5E9ANgG0=
+	t=1750434478; cv=none; b=BmyxJQW5Z0LGE4rYq/A+QUzWu2bGUrW+AezR/dwwFwoRvz15TqC8IdFfqUpvBgtF7fYRBUJqk/jJiqz7RjQV7w9AaI5nCe0I20DCCj5tiGj2kQlGk/wQdJMwrPpF4SGAfTj7gOUEdBEpTQ4NIcn7DCAMXhdscj2w9iutAK3q0fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750434423; c=relaxed/simple;
-	bh=buqInb5mqkNDwL+7hQIeuQgXeAKtV/p8V+7Iql6hX8Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GTLEcG2lX70Snv+3NZ/FMW3+YaFLZZpeTLgSExW3QQ1nrIMzX4Qg0YCWU9MOMxiPEetgfht0g03XrBHDd8Y0CzBpbOCCf3DrU0bi3taMAgCXEKxcinh1f2JB1L6KkyZ7UdFxmFeSgiPf8DK4XccJRACeL8LTgHMwyuJ8dTpsXA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QgYSFcVM; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so15231445e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 08:47:00 -0700 (PDT)
+	s=arc-20240116; t=1750434478; c=relaxed/simple;
+	bh=puPbHpytOZW7mie8GfL84As9P2RFvRpERNKNKQE1xwk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nmaIicZC6sJ8eWw1BHS6y3X6WMdpHsBSgdj+RgW5pvrzrtpT1gnIRGb0UHEYkulfAk8rGq69GThhl+kHTqA3p9RtTNvoW36yDFUYMSzIbKctDkvJNxffOc7rhWERWoWoJyctMV6lOFORHd2fv5WkgIJw440eajK/nl2bEiLARo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4kU49/Y; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-453647147c6so10377325e9.2;
+        Fri, 20 Jun 2025 08:47:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750434419; x=1751039219; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PWO2G/DbpRwwDVi2ObC8ypf7TcnofMBz/4xVPLOm7vU=;
-        b=QgYSFcVM+qtX+bYBHHiUvopNXM9Ya6ujRbKuCcKraZ5JKjbVk36l4Aa0jWZ0WRuBGu
-         vCRv8WnlH6vzfvrqes22EdTigaRyRgOQZiQQDyZPaWjOiZGWMcY4F5u/7sEFoRc2xTZB
-         oaiaPoYXfc7VNCdmt3+N1ZXGSAa1AWyPm1HtquIUveu7GALlvfhMluTCdm9fINNYaepL
-         q3+iaZgtDilKA36Z7twzhzlKbWT0WM2Qqdaad6z4kXH4o8o810EU63X8lVBrINbgj5b+
-         0Ggh2M1ltPZNvTJ1BUahDS6AhyVE+d8Ktgffx6NDhEEXF4BFkWAFMadkWQqTr5bLjrve
-         DRIg==
+        d=gmail.com; s=20230601; t=1750434475; x=1751039275; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bqFUjW8+uNCNgRtyXVYxbhOT3igrLvGYOROHOkaDs3Q=;
+        b=l4kU49/YCMtXxAV9xfHhoLUTfzCMwTHjrNNI4ZAEuYnBLDMFt8fBSJcCSHfIJGQAdE
+         bEXQjV/iAKGnR+BlMPXIsspmNMJjD4qjeQ1tT+N977UloaLbgYYpJ2wj9JCx2FzeMfSD
+         rmDbELZyuBNy6FkCkvHptQ5P4yR70VU5g/35uY9AoG+Pcdq9A1UH7MGSqdvgQRjMqgMC
+         RkQdQKVE1u0AfgQp0C3yrhtLJZHJiFdZ26cAIa9a22G1czCdbRN7BOw4d/y6Xsy1yBOI
+         nWEjyKtg568z2ZMCzuVfXEqfLIrEIJiL9is88HwlQ2LRiUPbUTAunzcAMOYniUQifqKz
+         8kMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750434419; x=1751039219;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PWO2G/DbpRwwDVi2ObC8ypf7TcnofMBz/4xVPLOm7vU=;
-        b=nIhD9bjnBh7x9vuy8uSnyeGUaE4jtiu+f7gDurwmlU4WA6GkIQCqyKU7bGAIOM8HiW
-         cyuUXUoSMR/52ynsNssDp+cVd7wm3s1Dlj5oEgAaczIhsDBVlLMtezVh0w2REWLbIimS
-         N8Tte62iq6kFK1swAqqWPnVLSJDYQ6s8L5w2v6oi4BtM1gNvVYpKlgNXHOwhs6adhv0F
-         kvlYO5qB308n5yw22Hu1hRSpA1yObpjNjn80xBTeGoFmuyE/vuiUMoqImZw0E8dGzoiG
-         A1Re+EX/Ost25HNfL/JMWdiMKDN64wMSwT9F0iRnT7QHsgCpiHrMCIpU+AwyV7IQmmwd
-         IgkA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXvlQqbQiOJTM/fT1BgyBO5QdljCESVnncuOIho9F70NDr3BBptb1e7gmKGPa2BWffxwt9hZnws8kQGh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh7hzTKtdNRz66I5uD0CC7QcOSsAoZM/tYnmjdKxeZcNkInL6+
-	Su5Fq1CoxgYhSJoJjcZDAnwD9Xlk7EowKp42qNfgh7nPwXG7UllbyqxzThLHtcVN/Nc=
-X-Gm-Gg: ASbGnctlz0lRD2QGB3QZxXOQ8qAyOcDHBpRrwdjQBt6sAlwHu3Zb0kMPke92AatyzMT
-	QZR+O4WN3zAl12YiC2k7VPQQqADcaQhm2M7yg9iyWMPreCZuOY+BSXBz9Ia9LyISPVWfCgI+shE
-	KV/HXAt0awf/k1cjnIl4+YIMeVJVbEQqGDf8PrnVHdzXAvvlx++m9A7zZiWGzeeeh+kJcUdhS5s
-	4jqO8txgF16DqhBeeBk8zx+kyvgX4K8Y4NcC8QlW/aA5CzJKeBnTgesqiPW+JSZzvh/sAKyL9sQ
-	PAfxIcgaSh5hRz3Q4Diwd78ybPs4J0uiRwrAV/BfIHfHbrRkFdgP5tRF8xb/pg==
-X-Google-Smtp-Source: AGHT+IG+CZmZfbLPrVn3DthMJ9P4F7yBCo2NT+F1A0hHwe66P2j0wSF6m5Ao5UpWm9U/Nvwk9K1L7g==
-X-Received: by 2002:a05:600c:1546:b0:453:1058:f8c1 with SMTP id 5b1f17b1804b1-45365392159mr33025775e9.3.1750434419139;
-        Fri, 20 Jun 2025 08:46:59 -0700 (PDT)
-Received: from zovi.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453647071f4sm29390755e9.34.2025.06.20.08.46.58
+        d=1e100.net; s=20230601; t=1750434475; x=1751039275;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=bqFUjW8+uNCNgRtyXVYxbhOT3igrLvGYOROHOkaDs3Q=;
+        b=kwAL+DVblYmuanI09kS63ZNSSoZrhNwHyNG9vplPYg7L46EpyJua5EPG+YBEVBIKeg
+         9EwfuyYTqkl2jgrg0qqJgOjbJ+rqN9jlfS+p0zaZJU3pFJzAfUdBKa1pLuG4w+PqAVgf
+         Gl8LxJp9DYSQv9gb5bNXPY0SBf6NLDUQp8pKDZD4hTy4BxxxxfI2MqFdqcIe+d+MGSTn
+         yKdKdVaSVCDErZgZ9zxAaI3c4vAYblKdpuVjymUwSuf2V53u5ELKLAKMJFlUj5W3yVY+
+         3ckPLsDxW7xBOHpgTQ3tGAhsJWKBroQAlrTVQ0Rh5EY8vKU9Uio3X04LsvL8o0gT5WOD
+         PQbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGPMt8k9nw+lo/zmHXjqvkSGFDGNXbSiassgnQUChP7zTV64WXXHIBjIEVNk0TN6rdgL15FDAK6bp1CYDU@vger.kernel.org, AJvYcCWkNWAD9n5MYeXxWnTFbZrMLhx5I4OFsKWjZYt1rpZBYzSgi/wKNKu+J71xHdTNZ6oL56Pw2cbn+q6LzTQAk/0=@vger.kernel.org, AJvYcCX1xZJkiQ6c/iaeSPAhLWcJFBDakCCOagHl9b9RzrfVtooxEQEuoCfNWQ9PtBoRE8ppP3PN8uE1i4nFBA==@vger.kernel.org, AJvYcCXLSjO9jokepqSYoG8KuPUUMDGr90u2+IYGrWIiLvJnHHGO9vIHubXwqPf6zVrpifOv6N7EDWnQ36yS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb0WcwUsdnlwtfR4RcscUoEEtqRF0DJPm6dgZkDnFvI86gcWLR
+	9bE0LlShQbTtTuoXMmRl/SJh8PSlKEsfiB/iitwffVKjgMVm6lWidEww
+X-Gm-Gg: ASbGncvmYLyT/Kjuk8YMOdRCde246fvNEyrAAj2rlAYGnN8yMCX67s7gZZ5+kMcuN+c
+	LHLOsFeDaZQ0+imYfUJxu7uK5EVXrynng+mEfyqj1/3H+T3vBBNwxw4d2VmEyPzjK47MHGOI/iB
+	Zxe2Nv4654uwL4aLNyrzjtA/lnRj3iJVGtjcjYOh5bpnV+kSc6Oge9dxVF/rq5kzOJhf90fegDh
+	EGCQfPsaf/WjrkNx7dJKYiuV/+TsmDS68pbrAR+fPAgqaf3pBdG2bPKY3NYk5cfV3XnXmKXWt8W
+	U8sZ6AxTTerJPiM9g4iatUOao1g1xl/Ys0hZzaI7BO93G8w4WTwxpOJ8tCw+BF4zYXUctJvk5YF
+	6lIGYKoyqj0xhtXUo+XUBqyy0IdAYe+Fb9rpT
+X-Google-Smtp-Source: AGHT+IGq8HrsMga9eVPB6fzJA1zoMGuoKpuD12G+vs6rwDV90u10qjjl3ByW06NQ8l5TR4U+898YzQ==
+X-Received: by 2002:a05:6000:248a:b0:3a5:2fae:1348 with SMTP id ffacd0b85a97d-3a6d13129c6mr2772728f8f.51.1750434474935;
+        Fri, 20 Jun 2025 08:47:54 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d0f18a29sm2442795f8f.36.2025.06.20.08.47.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 08:46:58 -0700 (PDT)
-From: Petr Pavlu <petr.pavlu@suse.com>
-To: Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	linux-s390@vger.kernel.org,
+        Fri, 20 Jun 2025 08:47:54 -0700 (PDT)
+Sender: Igor Korotin <igorkor.3vium@gmail.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: Alex Hung <alex.hung@amd.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Igor Korotin <igor.korotin.linux@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Remo Senekowitsch <remo@buenzli.dev>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Xiangfei Ding <dingxiangfei2009@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Petr Pavlu <petr.pavlu@suse.com>
-Subject: [PATCH] s390/boot: Use -D__DISABLE_EXPORTS
-Date: Fri, 20 Jun 2025 17:45:49 +0200
-Message-ID: <20250620154649.116068-1-petr.pavlu@suse.com>
-X-Mailer: git-send-email 2.49.0
+	rust-for-linux@vger.kernel.org,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Benno Lossin <lossin@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	Len Brown <lenb@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>
+Subject: [PATCH v8 9/9] samples: rust: add ACPI match table example to platform driver
+Date: Fri, 20 Jun 2025 16:45:52 +0100
+Message-ID: <20250620154552.299932-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
+References: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,44 +119,107 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Files in the arch/s390/boot directory reuse logic from the rest of the
-kernel by including certain C and assembly files from the kernel and lib
-directories. Some of these included files contain EXPORT_SYMBOL directives.
-For instance, arch/s390/boot/cmdline.c includes lib/cmdline.c, which
-exports the get_option() function.
+Extend the Rust sample platform driver to probe using device/driver name
+matching, OF ID table matching, or ACPI ID table matching.
 
-This inclusion triggers genksyms processing for the files in
-arch/s390/boot, which is unnecessary and slows down the build.
-Additionally, when KBUILD_SYMTYPES=1 is set, the generated symtypes data
-contain exported symbols that are duplicated with the main kernel. This
-duplication can confuse external kABI tools that process the symtypes data.
-
-Address this issue by compiling the files in arch/s390/boot with
--D__DISABLE_EXPORTS.
-
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
 ---
- arch/s390/boot/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ samples/rust/rust_driver_platform.rs | 70 +++++++++++++++++++++++++++-
+ 1 file changed, 69 insertions(+), 1 deletion(-)
 
-diff --git a/arch/s390/boot/Makefile b/arch/s390/boot/Makefile
-index bee49626be4b..0986c7c67eaf 100644
---- a/arch/s390/boot/Makefile
-+++ b/arch/s390/boot/Makefile
-@@ -19,8 +19,8 @@ CC_FLAGS_MARCH_MINIMUM := -march=z10
+diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
+index 8579290eecb3..9c16945e6c70 100644
+--- a/samples/rust/rust_driver_platform.rs
++++ b/samples/rust/rust_driver_platform.rs
+@@ -2,8 +2,68 @@
  
- KBUILD_AFLAGS := $(filter-out $(CC_FLAGS_MARCH),$(KBUILD_AFLAGS_DECOMPRESSOR))
- KBUILD_CFLAGS := $(filter-out $(CC_FLAGS_MARCH),$(KBUILD_CFLAGS_DECOMPRESSOR))
--KBUILD_AFLAGS += $(CC_FLAGS_MARCH_MINIMUM)
--KBUILD_CFLAGS += $(CC_FLAGS_MARCH_MINIMUM)
-+KBUILD_AFLAGS += $(CC_FLAGS_MARCH_MINIMUM) -D__DISABLE_EXPORTS
-+KBUILD_CFLAGS += $(CC_FLAGS_MARCH_MINIMUM) -D__DISABLE_EXPORTS
+ //! Rust Platform driver sample.
  
- CFLAGS_sclp_early_core.o += -I$(srctree)/drivers/s390/char
++//! ACPI match table test
++//!
++//! This demonstrates how to test an ACPI-based Rust platform driver using QEMU
++//! with a custom SSDT.
++//!
++//! Steps:
++//!
++//! 1. **Create an SSDT source file** (`ssdt.dsl`) with the following content:
++//!
++//!     ```asl
++//!     DefinitionBlock ("", "SSDT", 2, "TEST", "VIRTACPI", 0x00000001)
++//!     {
++//!         Scope (\_SB)
++//!         {
++//!             Device (T432)
++//!             {
++//!                 Name (_HID, "TST0001")  // ACPI hardware ID to match
++//!                 Name (_UID, 1)
++//!                 Name (_STA, 0x0F)        // Device present, enabled
++//!                 Name (_CRS, ResourceTemplate ()
++//!                 {
++//!                     Memory32Fixed (ReadWrite, 0xFED00000, 0x1000)
++//!                 })
++//!             }
++//!         }
++//!     }
++//!     ```
++//!
++//! 2. **Compile the table**:
++//!
++//!     ```sh
++//!     iasl -tc ssdt.dsl
++//!     ```
++//!
++//!     This generates `ssdt.aml`
++//!
++//! 3. **Run QEMU** with the compiled AML file:
++//!
++//!     ```sh
++//!     qemu-system-x86_64 -m 512M \
++//!         -enable-kvm \
++//!         -kernel path/to/bzImage \
++//!         -append "root=/dev/sda console=ttyS0" \
++//!         -hda rootfs.img \
++//!         -serial stdio \
++//!         -acpitable file=ssdt.aml
++//!     ```
++//!
++//!     Requirements:
++//!     - The `rust_driver_platform` must be present either:
++//!         - built directly into the kernel (`bzImage`), or
++//!         - available as a `.ko` file and loadable from `rootfs.img`
++//!
++//! 4. **Verify it worked** by checking `dmesg`:
++//!
++//!     ```
++//!     rust_driver_platform TST0001:00: Probed with info: '0'.
++//!     ```
++//!
++
+ use kernel::{
+-    c_str,
++    acpi, c_str,
+     device::{self, Core},
+     of, platform,
+     prelude::*,
+@@ -24,9 +84,17 @@ struct SampleDriver {
+     [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
+ );
  
-
-base-commit: 75f5f23f8787c5e184fcb2fbcd02d8e9317dc5e7
++kernel::acpi_device_table!(
++    ACPI_TABLE,
++    MODULE_ACPI_TABLE,
++    <SampleDriver as platform::Driver>::IdInfo,
++    [(acpi::DeviceId::new(b"TST0001"), Info(0))]
++);
++
+ impl platform::Driver for SampleDriver {
+     type IdInfo = Info;
+     const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
++    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = Some(&ACPI_TABLE);
+ 
+     fn probe(
+         pdev: &platform::Device<Core>,
 -- 
-2.49.0
+2.43.0
 
 
