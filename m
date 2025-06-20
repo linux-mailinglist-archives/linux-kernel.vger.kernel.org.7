@@ -1,92 +1,111 @@
-Return-Path: <linux-kernel+bounces-695354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4435AE18AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:18:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 904CBAE18B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 888B44A4B2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:18:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23E394A4FC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59462253F34;
-	Fri, 20 Jun 2025 10:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E612882D1;
+	Fri, 20 Jun 2025 10:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJ7z1a7W"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XHc2T41D"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3699C220F26
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 10:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7103253F34
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 10:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750414718; cv=none; b=KoHJmA/9+14IK4CQR1Iue33hHS/n3wJqtsmHAmNB9fa/shVCtvaBWuymjaMNUyZRqBFuoWobBLtlDlLAnaz6e4bj/H3kxHkCo0Zfp0g5H1h0SyuMBAWjCxhVqrPX/A+MLmzV6g8t6sWksTS56uF/f9qIV3XM8tHkTWMrFQLwcKY=
+	t=1750414770; cv=none; b=gldO1JMyMvYwAvxqPypZQj/aq7gOAcOnurflIYpJkri5dkns5GeWsT/MjA1b/GybiPqhnsnOUwbrlx0GG3he0SU5gbHcLxFbHIylsWldQEnTfqdeHlHtEDG0VGl8UN2NZ8uTGRGbbtm0WbAFRCGuCYi7qBKscUk6F77+v7ppNnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750414718; c=relaxed/simple;
-	bh=86ZYYAyn3U6A7PXVx8Omcm03S1mbI2p2nC4V5hM4sQ8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=rInyn3CxlcPx+kSweqARb2fMb8ovq4xAMuVA6s/Y14bSv4Z9G7zVF95VMsS/gXi4lNVUoL2750ni8DB7Z4SAcgY34s3xTypHlak9VmW2WgvyY7m66jxwUXLrbyPXACbgkVpdQG3r0TguPkpKxoZmZmIigugAZ1io48m6jeCCZCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJ7z1a7W; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6097b404f58so2933669a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 03:18:36 -0700 (PDT)
+	s=arc-20240116; t=1750414770; c=relaxed/simple;
+	bh=DxrLCeFew/xFBCDGGWMC4qBb/cJm1gUAJglWWJFeAic=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=PGCBzjUu0yw67hjVlqFek8fcJdX+nKVjygyiw28dz3YYI8U5w/nSogJkRbWaGn15yfDueWRMPBrF+5rOTy+pEPBH/ReqHnTaT4CSEsSin4wX/nhRbiTAHghI0d+JVpI2ZsYrroMsVkUtfeulSgdnewOLQtox98MracVxyUnlWeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--keyz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XHc2T41D; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--keyz.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2fa1a84566so1056643a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 03:19:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750414715; x=1751019515; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=86ZYYAyn3U6A7PXVx8Omcm03S1mbI2p2nC4V5hM4sQ8=;
-        b=XJ7z1a7WZhxM7PS3d8Q2Qf1bYfoOI/Us8d7h5sQaGz04hGajVwlsYB2gYc51LxUpkx
-         eIjx3siEFMEAleE83l2vMXbo6/TAWRxrmA/4NsW3mq2/E0rtjQqETuMxCCJ8UIomoCjV
-         YofmaOPw4pOx55Hrc1WJM/mr7YnDb7FQiktS308YaiUNit3rDmfWPsY1jYOMZJja4JLi
-         j+XlRByyn3Zg6aK/a+aEtKan0OYEJcYL21ET0M84QevdXg7fGW0ahlaIDh2DpD6h45m8
-         HMyr/oW06COtwGGoYXlR/t8/Xu2ICBN6f9KTJbyQusUs84ykfNm8qDM4pvXTjlwgGxrp
-         m/FA==
+        d=google.com; s=20230601; t=1750414768; x=1751019568; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DxrLCeFew/xFBCDGGWMC4qBb/cJm1gUAJglWWJFeAic=;
+        b=XHc2T41D+1nj0JFQVEwzmhB4Y/rlD81gwEQPR0HE+GqJ9EjtEEjAcy3+gxDv+pM0Gg
+         hE2mhlfdbWBpTkaCMO2rtKGjtology5AyTUMoxfFBW9vDBLk74lKGfwOZ/VX7x0lEPZk
+         ojsUA58enOJzrxE13wG7113xNuX6GAK1Iena1NpEbGZFPMciRmr+8JnDrpP+jG+E37Oi
+         L4M9+8n5bCcn7WJiNYFlpcYvx3HeEu2uV7fhKK3n9/e2sTycbsWT0MgsxHuUm1AUimrn
+         W03W+8LmHOZzCJROeXAa5tW7m0EvWGHR2huyZTX9y9+BfP+bxGBifZQlC/E6A1uNB3zj
+         KmuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750414715; x=1751019515;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=86ZYYAyn3U6A7PXVx8Omcm03S1mbI2p2nC4V5hM4sQ8=;
-        b=tE8VEBenkKxYi1+zPzXuoEvQwwEc0hrcbPNFZdsReCH6rny3WxF6r99S4gw9sn/RT2
-         PVQIn1t98zQGKe7WGH7aiCZsAp+FOK0O1IM4HvBS7+oatOzhyDf7av3I9CDNyLq2/W69
-         xFK3MjUvqLWwmUWwjj3LJSk0uu2Q+cmv1jxvL/eUNTBeuuvlWOD1w7Yxs7N+QhT3/U6R
-         cisJ4vDehH0b+2GmQjyafEjhzzu9jb4bEn4LynaH1UyZ6cziQib+QKaCOYwC2I06DhAZ
-         jelUIWLBTUj+F5pEQIpl5bkn/d9PKKx35WRF8fMlMRBuiG4TxQ/bhl2MDqxHiXnR8Ojr
-         77KQ==
-X-Gm-Message-State: AOJu0Yzn8mAM8enGoxltB3fpw+FxlY0VBoq+O1H3Y9uomKPaz+jTr8lW
-	gjI36nDMPaXwLtxPmOEtUVIKy++8+jj80/3FNIPI/NNDGoPJD76Ybihm451/uNxUQ8SNGVcVmUe
-	5dzOrLMkxRXCLceEWbbj/zeSM1Ramr8KuGaeK
-X-Gm-Gg: ASbGnct/TVMChqNx2mthcsQwx3KciVeB7GcY1g+7hXv4arIeazBqXoilJtHUQXbQNNA
-	Jwiy/ABt7KxPx7P8VvquY7grSCy538PqEPN4qK/dogp/7Xz7eVn6MFvWugdRKQazD/Wwdeg86Kl
-	EPa9mm4JD6EXKpjW2fNxxe60/4zzjoUIQc4dXZpGhjJBSuEeMnkqFWLeJad7dQj79Md+Mj/0Xry
-	w==
-X-Google-Smtp-Source: AGHT+IHac46BHxlsTtgjrVLIMsyz0TTIMAst8mSQCzK5mh4gYXh9rIKkFJeQlwxcvgNrvyjpcXfUXNvdrjRoL8Gy0Lo=
-X-Received: by 2002:a05:6402:35d4:b0:607:4500:2841 with SMTP id
- 4fb4d7f45d1cf-60a1cd33098mr1921683a12.25.1750414715097; Fri, 20 Jun 2025
- 03:18:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750414768; x=1751019568;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DxrLCeFew/xFBCDGGWMC4qBb/cJm1gUAJglWWJFeAic=;
+        b=VyIgCjQCNmNe9hq2kX7HFy4hz3gxIKV4Ghbi3dJGYwBmPb7O2Ax09yLGEP23/kSYYw
+         TVqulFdCM4ENPRMj5xraBR5fLABXrFYEB++pJXfjs7HAbyrb0U6X/X6IPERt9oXYsFc1
+         +H5MBkgOL5hm0Od7+fXEJNLj4X5hVT8gSO59XHahnKpIgCPEV6smY3Bu/9VPrlloThYG
+         MkqHE+z9TfiqoiisJnP5ds8+rJPdi22jcXRQjD+dgWbpE/c4wd6RHmhDW3wwesgvq/Iw
+         /20LScCZgQBMdpYcfTCQILXIk97gxmKqymSYTtmbOjONS7b+qU0VVH6dnaDznn10PPVd
+         LBoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+zafj2YhHX6S5MzatavZ+Sp2QkRMZ1/oy+JTB7nF/NJ8840IGelYehRUA58JyfMj2R/mOhiL4YkLjpIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdATIfPuuPV3Jfj47xrQgV/TzUO8JJVaCPCly027wIrpE8cpAp
+	tSxK0rgEiSN5D2SrIZAfsqLONqmHBSgAiOR1zm6WMpta3Dx0Doeq9FHKmdfWp9eZ5/s3jmdNQQ=
+	=
+X-Google-Smtp-Source: AGHT+IF4QE/1koWWFJGv2hBaG+9336BI0T4zncUNQdaG85+in/0i4XLuTIW2hEYCLo4JAsGfasFiTKRr
+X-Received: from pge25.prod.google.com ([2002:a05:6a02:2d19:b0:b1f:9534:4f55])
+ (user=keyz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:9f05:b0:215:dc01:8b1f
+ with SMTP id adf61e73a8af0-22026f9c61amr3796326637.32.1750414768159; Fri, 20
+ Jun 2025 03:19:28 -0700 (PDT)
+Date: Fri, 20 Jun 2025 18:19:06 +0800
+In-Reply-To: <9c5bf40a-b0d8-414c-a0c9-f5da5d9b612d@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Andrea Bravetti <andreabravetti@gmail.com>
-Date: Fri, 20 Jun 2025 12:18:24 +0200
-X-Gm-Features: Ac12FXzEeB51-_GarOich-TGzgFf41hjO95T8fCu8tvTXFCo_GdWFW9XAVAmZ4s
-Message-ID: <CAE_SDzhqE0JTrD6gxb3Azk-Ld=sZBEJ04AxeXNMx5ndev8u6hA@mail.gmail.com>
-Subject: Dead external monitor on Lenovo ThinkBook 14 G7 IML with Linux 6.15.3
-To: linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+References: <9c5bf40a-b0d8-414c-a0c9-f5da5d9b612d@arm.com>
+X-Mailer: git-send-email 2.50.0.rc2.761.g2dc52ea45b-goog
+Message-ID: <20250620101906.3762866-1-keyz@google.com>
+Subject: Re: [BUG] CoreSight: WARN_ON in coresight_disclaim_device_unlocked
+ due to register reset on CPU power-cycle
+From: Keita Morisaki <keyz@google.com>
+To: suzuki.poulose@arm.com
+Cc: alexander.shishkin@linux.intel.com, coresight@lists.linaro.org, 
+	ericchancf@google.com, james.clark@linaro.org, keyz@google.com, 
+	leo.yan@arm.com, linux-kernel@vger.kernel.org, mike.leach@linaro.org, 
+	yimingtseng@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-With Linux 6.15.3 the external monitor connected to the HDMI port on a
-Lenovo ThinkBook 14 G7 IML is completely dead.
+Hi,
+(Resending the same message in plain text (no HTML). The previous message was rejected by the mailing list because it contained HTML.)
+thank you so much for the quick response. Really appreciate it.
 
-It used to work properly up to 6.15.2.
+> Thanks for the report ! In the future, please use
+> scripts/get_maintainer.pl for the clear list of people/list
+> for reporting issues.
 
-I filed this bug report for this issue:
+I will do that!
 
-https://bugzilla.kernel.org/show_bug.cgi?id=220250
+> We have the ETM driver performing the save/restore of ETM context during
+> a CPUidle. This is only done when the ETM/ETE is described to be loosing
+> context over PM operation. If this is not done (via DT), the driver
+> doesn't do anything. This could be problematic. Could you try adding:
+>
+> "arm,coresight-loses-context-with-cpu"
+>
+>
+> property to the ETE nodes and see if it makes a difference ?
 
-thanks,
-Andrea
+Noted. We will try this and get back to you.
+
+Best,
+Keita
 
