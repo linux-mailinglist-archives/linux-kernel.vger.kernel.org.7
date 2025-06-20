@@ -1,394 +1,114 @@
-Return-Path: <linux-kernel+bounces-695211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8FD2AE1698
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:45:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80DECAE16A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 754CA1628F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C58F1188C3EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95622690D1;
-	Fri, 20 Jun 2025 08:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="drL2aHv/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sZOuTFpL";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="drL2aHv/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sZOuTFpL"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A26273D83;
+	Fri, 20 Jun 2025 08:46:34 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FB2266EE7
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 08:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46506272E43
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 08:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750409141; cv=none; b=Q57ap9zzjBFjoh0Mj3TX56cDhsjfbBAx4OoVB1rgYyE0VpPDt7cj7v9/IWSKS4aa6Q4xE0Swliwfa+3d3X/iU2F9fIwNTNZPyFE3W8d2pPUm/ZFWF7P4XAk8LgWZ6SIgkKTkF2l6h3VSO6Oi//ckvetzIBWWAi8dFUEJ67GCv20=
+	t=1750409194; cv=none; b=rEkfqHg1cGUttPOkTmXRRLQnrl/AyQzX4Hk2F05GVU6fwxcgqQt7ISmR09m9GhDuMRWuSr7f1fQIL8rY4kuyf4Im8jLZ3loV2wZQl33R18Kz8YALSaNd2uXQByI7op+WxuO11diwuGYq73Wv2nj00mdbyeHYG6UAgn512dHO2uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750409141; c=relaxed/simple;
-	bh=+PeBkVJpdBt0LQBKLfTN7ouk6W3CRJ/HX46KdLeSTJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iOg/KW0v9bK1BQBrr51M7r3mKQ5y1ldsEOYdoLyWsLpDRvoDQ14hPPiCoJ1/dbJfth3+m5o+EE+NUToIXaBenBgQFgrhzU0MhcwIRoZZLuHFF117m2mpsZdYK06tb2IkNP9zi8qn3vd1OPYt7NQGK6WGjudli42u/PGWUdmtER0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=drL2aHv/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sZOuTFpL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=drL2aHv/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sZOuTFpL; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 72AD3218CE;
-	Fri, 20 Jun 2025 08:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750409136; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eKeGa7VBLRAvBYON3djkPdQ3aaduYpuA7WDUVb/4p/k=;
-	b=drL2aHv/1l5jeYHhXkGtjiLQT47aWLx9nGjVsOA/gDetA95c+wk5YzW78KBQG/iDEIA4MT
-	+NkFEkQuRzw5u3Ji5E5agan6HfKbPxVIZyIEvYHaeqLl2dUWciobvthV5Rh2nxyE8eSB/j
-	5K/UBArOhRs4zqcImujbbk4ot4mX36g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750409136;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eKeGa7VBLRAvBYON3djkPdQ3aaduYpuA7WDUVb/4p/k=;
-	b=sZOuTFpLskOAy6cxr/8RT03ecZ/LiqD0QPne9u9+CQ6Q851CU1sXMjxfVmsDyGZMp6snA5
-	+dXeuB5FCFEfQUCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750409136; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eKeGa7VBLRAvBYON3djkPdQ3aaduYpuA7WDUVb/4p/k=;
-	b=drL2aHv/1l5jeYHhXkGtjiLQT47aWLx9nGjVsOA/gDetA95c+wk5YzW78KBQG/iDEIA4MT
-	+NkFEkQuRzw5u3Ji5E5agan6HfKbPxVIZyIEvYHaeqLl2dUWciobvthV5Rh2nxyE8eSB/j
-	5K/UBArOhRs4zqcImujbbk4ot4mX36g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750409136;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eKeGa7VBLRAvBYON3djkPdQ3aaduYpuA7WDUVb/4p/k=;
-	b=sZOuTFpLskOAy6cxr/8RT03ecZ/LiqD0QPne9u9+CQ6Q851CU1sXMjxfVmsDyGZMp6snA5
-	+dXeuB5FCFEfQUCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CCC64136BA;
-	Fri, 20 Jun 2025 08:45:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /zvKMK8fVWhPZgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Fri, 20 Jun 2025 08:45:35 +0000
-Message-ID: <704d2a80-79bb-4247-a2aa-25bd3eb9a7e5@suse.de>
-Date: Fri, 20 Jun 2025 10:45:35 +0200
+	s=arc-20240116; t=1750409194; c=relaxed/simple;
+	bh=R8FzsAn090SuvKZujFThBe6VcyFNEuRPnztyk7IMM+E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TbtMH6LwWLHaHWSL1zYPAfbkdoNbMwuJULEJPGe4xdcMB4XmcUVZJE/qS8Qav7GKpl53rofJ1k0oumhw4Wqiplus49lL+Nq5Se6jT0rbkjfGjXtI7gbNOX0Tqao5K/7m87g3vK4rKnxiZAUK6MY9m7tBaw3NbLBxrAUPCnoBwY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uSXO9-0001Vl-3o; Fri, 20 Jun 2025 10:46:21 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uSXO7-004QzA-0s;
+	Fri, 20 Jun 2025 10:46:19 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uSXO7-007nGl-0a;
+	Fri, 20 Jun 2025 10:46:19 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
+	Rengarajan Sundararajan <Rengarajan.S@microchip.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	Phil Elwell <phil@raspberrypi.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Simon Horman <horms@kernel.org>
+Subject: [PATCH net-next v1 1/1] net: usb: lan78xx: annotate checksum assignment to silence sparse warnings
+Date: Fri, 20 Jun 2025 10:46:18 +0200
+Message-Id: <20250620084618.1857662-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/7] PCI/VGA: Move check for firmware default out of
- VGA arbiter
-To: Mario Limonciello <superm1@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Lukas Wunner <lukas@wunner.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Woodhouse <dwmw2@infradead.org>,
- Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
- "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
- "open list:VFIO DRIVER" <kvm@vger.kernel.org>,
- "open list:SOUND" <linux-sound@vger.kernel.org>,
- Daniel Dadap <ddadap@nvidia.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250620024943.3415685-1-superm1@kernel.org>
- <20250620024943.3415685-7-superm1@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250620024943.3415685-7-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	URIBL_BLOCKED(0.00)[amd.com:email,bootlin.com:url,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[amd.com,gmail.com,ffwll.ch,wunner.de,linux.intel.com,kernel.org,infradead.org,8bytes.org,arm.com,redhat.com,perex.cz,suse.com,lists.freedesktop.org,vger.kernel.org,lists.linux.dev,nvidia.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,bootlin.com:url,imap1.dmz-prg2.suse.org:helo,amd.com:email]
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi
+sparse warns about suspicious type casts in checksum assignment:
 
-Am 20.06.25 um 04:49 schrieb Mario Limonciello:
-> From: Mario Limonciello <mario.limonciello@amd.com>
->
-> The x86 specific check for whether a framebuffer belongs to a device
-> works for display devices as well as VGA devices.  Callers to
-> video_is_primary_device() can benefit from checking non-VGA display
-> devices.
->
-> Move the x86 specific check into x86 specific code, and adjust VGA
-> arbiter to call that code as well. This allows fbcon to find the
-> right PCI device on systems that don't have VGA devices.
->
-> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->   arch/x86/video/video-common.c | 28 +++++++++++++++++++++++++++
->   drivers/pci/vgaarb.c          | 36 ++---------------------------------
->   2 files changed, 30 insertions(+), 34 deletions(-)
->
-> diff --git a/arch/x86/video/video-common.c b/arch/x86/video/video-common.c
-> index 81fc97a2a837a..718116e35e450 100644
-> --- a/arch/x86/video/video-common.c
-> +++ b/arch/x86/video/video-common.c
-> @@ -9,6 +9,7 @@
->   
->   #include <linux/module.h>
->   #include <linux/pci.h>
-> +#include <linux/screen_info.h>
->   #include <linux/vgaarb.h>
->   
->   #include <asm/video.h>
-> @@ -27,13 +28,40 @@ EXPORT_SYMBOL(pgprot_framebuffer);
->   
->   bool video_is_primary_device(struct device *dev)
+drivers/net/usb/lan78xx.c:3865:29: warning: cast to restricted __be16
+drivers/net/usb/lan78xx.c:3865:27: warning: incorrect type in assignment
+    (different base types) expected restricted __wsum [usertype] csum
+got unsigned short [usertype]
 
-I'm not sure I understand this patch. video_is_primary_device() already 
-exists for 3 architectures, including x86. [1] Adding it here should 
-produce an error. (?)
+Use __force to annotate the casts from u16 to __be16 to __wsum.
+This makes the type conversion explicit and silences the warnings.
+The code is otherwise correct; this change only clarifies intent.
 
-[1] https://elixir.bootlin.com/linux/v6.15.2/A/ident/video_is_primary_device
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/net/usb/lan78xx.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-The code on x86 is
-
-bool 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/bool>video_is_primary_device 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/video_is_primary_device>(structdevice 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/device>*dev) { 
-structpci_dev 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/pci_dev>*pdev; 
-if(!dev_is_pci 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/dev_is_pci>(dev)) 
-returnfalse <https://elixir.bootlin.com/linux/v6.15.2/C/ident/false>; 
-pdev=to_pci_dev 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/to_pci_dev>(dev); 
-return(pdev==vga_default_device 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/vga_default_device>()); }
-
-I was thinking about extending it to test for additional properties, 
-like this
-
-bool 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/bool>video_is_primary_device 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/video_is_primary_device>(structdevice 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/device>*dev) { 
-structpci_dev 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/pci_dev>*pdev; 
-if(!dev_is_pci 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/dev_is_pci>(dev)) 
-returnfalse <https://elixir.bootlin.com/linux/v6.15.2/C/ident/false>; 
-pdev=to_pci_dev 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/to_pci_dev>(dev); 
-if(pdev==vga_default_device 
-<https://elixir.bootlin.com/linux/v6.15.2/C/ident/vga_default_device>()) 
-return true for_each_pci_dev() { // test if display and could be 
-primary. } return false; // nothing found }
-
-
-This would then be called from per-device sysfs code that export a 
-property similar to boot_vga (such as boot_display).
-
-
-The issue is currently just an x86 problem, but I can imagine something 
-similar happening on ARM. There we'd have to go through the DT tree to 
-figure out the primary device. That's a problem for a later patch set, 
-but we should keep this in mind.
-
->   {
-> +	u64 base = screen_info.lfb_base;
-> +	u64 size = screen_info.lfb_size;
->   	struct pci_dev *pdev;
-> +	struct resource *r;
-> +	u64 limit;
->   
->   	if (!dev_is_pci(dev))
->   		return false;
->   
->   	pdev = to_pci_dev(dev);
->   
-> +	if (!pci_is_display(pdev))
-> +		return false;
-> +
-> +	/* Select the device owning the boot framebuffer if there is one */
-> +	if (screen_info.capabilities & VIDEO_CAPABILITY_64BIT_BASE)
-> +		base |= (u64)screen_info.ext_lfb_base << 32;
-> +
-> +	limit = base + size;
-> +
-> +	/* Does firmware framebuffer belong to us? */
-> +	pci_dev_for_each_resource(pdev, r) {
-> +		if (resource_type(r) != IORESOURCE_MEM)
-> +			continue;
-> +
-> +		if (!r->start || !r->end)
-> +			continue;
-> +
-> +		if (base < r->start || limit >= r->end)
-> +			continue;
-> +
-> +		return true;
-> +	}
-> +
-
-You can drop all this code and call screen_info_pci_dev() instead. I 
-simply never got to update vgaarb to use it.
-
-[2] 
-https://elixir.bootlin.com/linux/v6.15.2/source/drivers/video/screen_info_pci.c#L109
-
->   	return (pdev == vga_default_device());
->   }
->   EXPORT_SYMBOL(video_is_primary_device);
-> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
-> index 78748e8d2dbae..15ab58c70b016 100644
-> --- a/drivers/pci/vgaarb.c
-> +++ b/drivers/pci/vgaarb.c
-> @@ -26,12 +26,12 @@
->   #include <linux/poll.h>
->   #include <linux/miscdevice.h>
->   #include <linux/slab.h>
-> -#include <linux/screen_info.h>
->   #include <linux/vt.h>
->   #include <linux/console.h>
->   #include <linux/acpi.h>
->   #include <linux/uaccess.h>
->   #include <linux/vgaarb.h>
-> +#include <asm/video.h>
->   
->   static void vga_arbiter_notify_clients(void);
->   
-> @@ -554,38 +554,6 @@ void vga_put(struct pci_dev *pdev, unsigned int rsrc)
->   }
->   EXPORT_SYMBOL(vga_put);
->   
-> -static bool vga_is_firmware_default(struct pci_dev *pdev)
-> -{
-> -#if defined(CONFIG_X86)
-> -	u64 base = screen_info.lfb_base;
-> -	u64 size = screen_info.lfb_size;
-> -	struct resource *r;
-> -	u64 limit;
-> -
-> -	/* Select the device owning the boot framebuffer if there is one */
-> -
-> -	if (screen_info.capabilities & VIDEO_CAPABILITY_64BIT_BASE)
-> -		base |= (u64)screen_info.ext_lfb_base << 32;
-> -
-> -	limit = base + size;
-> -
-> -	/* Does firmware framebuffer belong to us? */
-> -	pci_dev_for_each_resource(pdev, r) {
-> -		if (resource_type(r) != IORESOURCE_MEM)
-> -			continue;
-> -
-> -		if (!r->start || !r->end)
-> -			continue;
-> -
-> -		if (base < r->start || limit >= r->end)
-> -			continue;
-> -
-> -		return true;
-> -	}
-> -#endif
-> -	return false;
-> -}
-> -
->   static bool vga_arb_integrated_gpu(struct device *dev)
->   {
->   #if defined(CONFIG_ACPI)
-> @@ -623,7 +591,7 @@ static bool vga_is_boot_device(struct vga_device *vgadev)
->   	if (boot_vga && boot_vga->is_firmware_default)
->   		return false;
->   
-> -	if (vga_is_firmware_default(pdev)) {
-> +	if (video_is_primary_device(&pdev->dev)) {
-
-Maybe not change this because you don't want to end up with non-VGA 
-devices here.
-
-Best regards
-Thomas
-
->   		vgadev->is_firmware_default = true;
->   		return true;
->   	}
-
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index f00284c9ad34..565b9847e2ab 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -3819,7 +3819,10 @@ static void lan78xx_rx_csum_offload(struct lan78xx_net *dev,
+ 	     !(dev->net->features & NETIF_F_HW_VLAN_CTAG_RX))) {
+ 		skb->ip_summed = CHECKSUM_NONE;
+ 	} else {
+-		skb->csum = ntohs((u16)(rx_cmd_b >> RX_CMD_B_CSUM_SHIFT_));
++		__be16 csum_raw;
++
++		csum_raw = (__force __be16)(rx_cmd_b >> RX_CMD_B_CSUM_SHIFT_);
++		skb->csum = (__force __wsum)ntohs(csum_raw);
+ 		skb->ip_summed = CHECKSUM_COMPLETE;
+ 	}
+ }
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+2.39.5
 
 
