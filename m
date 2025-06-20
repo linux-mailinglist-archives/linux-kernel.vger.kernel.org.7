@@ -1,147 +1,199 @@
-Return-Path: <linux-kernel+bounces-695788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C7F6AE1DE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 16:54:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65682AE1DEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 16:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62C1C188A8D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:54:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7462E7AD151
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD252BD5BF;
-	Fri, 20 Jun 2025 14:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40992BD5B9;
+	Fri, 20 Jun 2025 14:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JRZ5pFbv"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="sDo2dPd7"
+Received: from outbound.pv.icloud.com (p-west1-cluster5-host9-snip4-8.eps.apple.com [57.103.66.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68192BD5AF;
-	Fri, 20 Jun 2025 14:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48802BD591
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 14:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750431235; cv=none; b=MJgPDON//q1n61o0C5T+uoqMK7cF1K/92Hwp9N+wevN1VxU1vJInS0ucfbLG1I1Cg6IwIZDi4bLRZ2U6zBerI0vj+Fzjs3ud3bwp86dcF6NMpM9FGlMNXJmfu8FEeHPD874x2ML0rIBFdJiduuX4oxgCH5bZPQOj0oL+zlxsBl8=
+	t=1750431318; cv=none; b=C2LLizFFsPjOLQ+vU4pS6vwIVIjDTHzyxTXZy2tFSTghgv+ChAYxoSqDry0t62IQc4DM0D5uN4ch4qlUTrIt0CpGt2EjvhyKRT+kENaqdgFGWtMqQ4FG9dVvOdi7GWiwbkqO6BtX+MwTHqcp58A/WGrDhdHjjvmz176gDC0FQsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750431235; c=relaxed/simple;
-	bh=5HJHKUKnSy0X8qereFxAeJBjXssNqqPNsci6MxFY3eo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aOBZTjtqrXANbW7+Cx/nVH7KA2A7SisV4bg/opLI0ptU/p3yWzaSBBG5YF4uJPCU5GswrIwMqE9boIqqJ/1w+0GSaOENu8x9SOfXBBT6Y+JVMrgoV7YZ/8qgv/2BdpK9FPMvLBFbG2ZD4AXPaprJkIZlrlSEVoAKvGMQnuodisE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JRZ5pFbv; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55K9hfjr016396;
-	Fri, 20 Jun 2025 14:53:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=vBq5jk
-	WYpGasBWlEG+JUqZZjNkz2GJoDETICN+CG4pM=; b=JRZ5pFbvCCkwbotWi/CwNH
-	oqjzlscI2yXCn8HXMP5mdQCQuL0EGn0oeP8iIQZETwcbOkEpz9PFMtmTK4qHraZH
-	cRm85wLX99h1KKvx5xwsz7T+/U7hzh5XjgqC+1enxWKy2Xx7DR76iGgTeA6FOiWn
-	HOjXrg4XaODhakRg//mBAeYLS3x0pJcAPKzcubODd1v1eJz96RkitO0uT/0zzkyc
-	Qkw9j2yFvFy89V6OBPoq4yFi8yKVYjr6mvqbILbxX1+GO0Vos1pLHcxs1Yqw374g
-	SqQY0cXy8fqApUJVkcw+jn9pCQ0AA14TPM1oTV78tki+CwWvd4FsrIPYqxnxMUDQ
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 478ygnuvj6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Jun 2025 14:53:22 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55KDidtc005514;
-	Fri, 20 Jun 2025 14:53:21 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 479mwmkk8m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Jun 2025 14:53:21 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55KErGo927656938
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 20 Jun 2025 14:53:16 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2FD0E5805D;
-	Fri, 20 Jun 2025 14:53:21 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DFEB858054;
-	Fri, 20 Jun 2025 14:53:17 +0000 (GMT)
-Received: from [9.124.223.89] (unknown [9.124.223.89])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 20 Jun 2025 14:53:17 +0000 (GMT)
-Message-ID: <9841e7bf-7429-44fa-a8e2-a39f54c69d84@linux.ibm.com>
-Date: Fri, 20 Jun 2025 20:23:16 +0530
+	s=arc-20240116; t=1750431318; c=relaxed/simple;
+	bh=+5pngEUzCp9FTAmk1FjJmT5xHZ0x4ywpttSKHWJREQo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fOiFDVcFlkKNUR3+6U4D5nEWjOapx/Nj6nH9Pa1KvjgCgl/hglAAHDs12g5bYbtqZxwVtsUmpMv/1kpnkXYluQ7Ehs96okf4Er8v2bSxPBJjhsky5l2wPwZzfIx6X/blnlf4DoyWL45xjxx5m6zwMH4YtrfcWGhrHntgm15169M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=sDo2dPd7; arc=none smtp.client-ip=57.103.66.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=avpJDnO/AQa4L7qlBiS3/0Z2+LJjEKJMMv9hvOgP8e0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
+	b=sDo2dPd72kGMF4ciENM0KpcCuxImeTRcwTlCVwDaPNtx/lLBQxL3ztW6HLmvXBnOE
+	 FGtgHCb719guJfZxCJGfvQjKgO/f5BZoVI3ZYkCPhI2xt7a+sbYx6eUDWYZ1gq5eMC
+	 QbLlwzNE2kKsZhJk9UD9AbQiaVoc5oNpi1Su0Fg55iPwW/2q+RJCOAAReLR8vHV5c0
+	 oHI9441FSsXmRumghA1GLvQLeIzsko4BgvfVH+bCXAIrzkalCr2rgV779WJSQOUEot
+	 WU1eF0v8DtRrS9Ufuo8PpEoHHHWbDB23WikjZxe/g/XAnuC5KDJ7isS0yE776VvV2K
+	 /r7fM8GeZob+w==
+Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
+	by outbound.pv.icloud.com (Postfix) with ESMTPS id 716DC1801151;
+	Fri, 20 Jun 2025 14:55:11 +0000 (UTC)
+Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id CFEE018029B7;
+	Fri, 20 Jun 2025 14:53:55 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Fri, 20 Jun 2025 22:53:32 +0800
+Subject: [PATCH RFC] char: misc: Enforce simple minor space division
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/mm: Fix validate_addr helper
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        anshuman.khandual@arm.com, ryan.roberts@arm.com,
-        lorenzo.stoakes@oracle.com, david@redhat.com
-References: <20250620111150.50344-1-dev.jain@arm.com>
-Content-Language: en-US
-From: Donet Tom <donettom@linux.ibm.com>
-In-Reply-To: <20250620111150.50344-1-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIwMDEwNSBTYWx0ZWRfX548P3ByGJ1B9 w4MIOdo7UFmZ0aX0CdaYF9MFTGlwTTG+r4Zf7tBsdH8K8bYlhTwnIERTdUFpHvwwNbram2Wo53e Swbv1ynsJjfv0lcGiHkepC9iev/9Z73O4OMrcVGRH5Jv5u7X2Sz5pEpTlIDvPVHR14UHA/BgL6t
- jP+vOqiP9ze5Xogomx0CoiBYhLeB+GHqnQ0X/53dXLNL/x9BclQ0Dk2cESPMtwpHSBd36DBCW5X leGekoiDoMgcFV2zNchlt53+7B+uipBW4n+TqqmVTtD+dgIKc7XN4EBxGT79g52hsk5Jhn/6yth bq7dwJssRpiqT2eeHc6FRMU9TiK34S954olGBXTCbzsO+9EG5AsZiTDLGBlYwdBXhfbi6HuTPIp
- qmCebe98q8GjnkDub1jM/FQpDKYXVOxxd1sGyo9ErKnwS7WPRR6zD62L08IsCs5Eimvi0gnB
-X-Authority-Analysis: v=2.4 cv=fYSty1QF c=1 sm=1 tr=0 ts=685575e2 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=7CQSdrXTAAAA:8 a=VnNF1IyMAAAA:8 a=H2XVYxjsRQ50NXrrMqMA:9 a=QEXdDO2ut3YA:10
- a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-ORIG-GUID: lRQVLwiZdDPryQ5uzdmJaZg62wJwLdtY
-X-Proofpoint-GUID: lRQVLwiZdDPryQ5uzdmJaZg62wJwLdtY
+Message-Id: <20250620-rfc_miscdev-v1-1-fda25d502a37@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAOt1VWgC/02OQQrCMBREr1L+2kCTJjbpVvAAbkUkyf/RLNpqU
+ osgvbuhiricGWbmvSBTipShq16QaI45jkMRfFOBv9rhQixi0SBqoeqtqFkK/tzH7JFm1mrtAtf
+ OWYVQGrdEIT7XtSMc9js4fcxE90dZnr6Js5mYH/s+TuXJiFa4prVWBt14q4TDYDzfokLNHSJvl
+ JRGwj9RV/14yuHKc7WJtUYiSaGMMqKbOZyW5Q1WH5z+4QAAAA==
+X-Change-ID: 20250620-rfc_miscdev-788bf18bba5d
+To: Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ Zijun Hu <zijun.hu@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIwMDEwNSBTYWx0ZWRfXxFtq5C8afgfi
+ VaeraoLBA7stuJN+2S4DnpUPJhnFA+FCBxQhdFcCMS8Odc6HAMWOo5HAWu8SARCoHJp+4HG1eUf
+ JRaXE19ydMkDCaZhCl/H2NHNZroF2DQ9zNqYG5klDG7PULWNmMQa6Of66lA2WPWZe8HV56zYu6I
+ dPoQrxOiPI4G7w4CPEb8H/AoBQaIrdzYOhDIvKfffrKe3qrkVNMqNTEa6gRzqeZmkGH1dXUYQxx
+ aM5OeRILnCVT7nJXb6lZ/iwhAPGaACt+OpgoB9BBZs3TtnNbnoJmZyZXCsIhPnlpN+mmU1Ux8=
+X-Proofpoint-GUID: lx9Ek0pTvSeRj_tVpRQHKQI_NZLnX9sL
+X-Proofpoint-ORIG-GUID: lx9Ek0pTvSeRj_tVpRQHKQI_NZLnX9sL
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-20_06,2025-06-20_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- spamscore=0 mlxlogscore=999 lowpriorityscore=0 adultscore=0 mlxscore=0
- impostorscore=0 bulkscore=0 phishscore=0 clxscore=1015 priorityscore=1501
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506200105
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999
+ phishscore=0 spamscore=0 suspectscore=0 bulkscore=0 adultscore=0 mlxscore=0
+ malwarescore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.22.0-2506060001 definitions=main-2506200105
 
+From: Zijun Hu <zijun.hu@oss.qualcomm.com>
 
-On 6/20/25 4:41 PM, Dev Jain wrote:
-> validate_addr() function checks whether the address returned by mmap()
-> lies in the low or high VA space, according to whether a high addr hint
-> was passed or not. The fix commit mentioned below changed the code in
-> such a way that this function will always return failure when passed
-> high_addr == 1; addr will be >= HIGH_ADDR_MARK always, we will fall
-> down to "if (addr < HIGH_ADDR_MARK)" and return failure. Fix this.
->
-> Fixes: d1d86ce28d0f ("selftests/mm: virtual_address_range: conform to TAP format output")
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> ---
->   tools/testing/selftests/mm/virtual_address_range.c | 7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/testing/selftests/mm/virtual_address_range.c b/tools/testing/selftests/mm/virtual_address_range.c
-> index b380e102b22f..169dbd692bf5 100644
-> --- a/tools/testing/selftests/mm/virtual_address_range.c
-> +++ b/tools/testing/selftests/mm/virtual_address_range.c
-> @@ -77,8 +77,11 @@ static void validate_addr(char *ptr, int high_addr)
->   {
->   	unsigned long addr = (unsigned long) ptr;
->   
-> -	if (high_addr && addr < HIGH_ADDR_MARK)
-> -		ksft_exit_fail_msg("Bad address %lx\n", addr);
-> +	if (high_addr) {
-> +		if (addr < HIGH_ADDR_MARK)
-> +			ksft_exit_fail_msg("Bad address %lx\n", addr);
-> +		return;
-> +	}
->   
->   	if (addr > HIGH_ADDR_MARK)
->   		ksft_exit_fail_msg("Bad address %lx\n", addr);
+Enforce simple minor space division related to macro MISC_DYNAMIC_MINOR
+defined as 255 currently:
 
+<  255 : Fixed minor codes
+== 255 : Indicator to request dynamic minor code
+>  255 : Dynamic minor codes requested
 
-This looks good to me. Feel free to add
+This enforcing division also solves misc_register() reentry issue below:
 
-Reviewed-by: Donet Tom <donettom@linux.ibm.com>
+// Suppose both static @dev_A and @dev_B want to request dynamic minors.
+@dev_A.minor(255) @dev_B.minor(255)
+
+// Register @dev_A then de-register it.
+@dev_A.minor(255) -> registered -> @dev_A.minor(500) -> de-registered
+-> @dev_A.minor(500)
+
+// Register @dev_B
+@dev_B.minor(255) -> registered -> @dev_B.minor(500)
+
+// Register @dev_A again
+@dev_A.minor(500) -> encounter -EBUSY error since @dev_B has got 500.
+
+Side effects:
+It will be refused to register device whose fixed minor > 255.
+
+Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
+---
+ drivers/char/misc.c        | 16 +++++++++++++---
+ include/linux/miscdevice.h |  8 ++++++++
+ 2 files changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/char/misc.c b/drivers/char/misc.c
+index e5ea36bbf6b3d1313eb35d3259617bf90c55727d..e6a5907bbf915b4dd64522ada3024ba163cb7aa3 100644
+--- a/drivers/char/misc.c
++++ b/drivers/char/misc.c
+@@ -132,7 +132,8 @@ static int misc_open(struct inode *inode, struct file *file)
+ 		break;
+ 	}
+ 
+-	if (!new_fops) {
++	/* Only request module for fixed minor code */
++	if (!new_fops && minor < MISC_DYNAMIC_MINOR) {
+ 		mutex_unlock(&misc_mtx);
+ 		request_module("char-major-%d-%d", MISC_MAJOR, minor);
+ 		mutex_lock(&misc_mtx);
+@@ -144,10 +145,11 @@ static int misc_open(struct inode *inode, struct file *file)
+ 			new_fops = fops_get(iter->fops);
+ 			break;
+ 		}
+-		if (!new_fops)
+-			goto fail;
+ 	}
+ 
++	if (!new_fops)
++		goto fail;
++
+ 	/*
+ 	 * Place the miscdevice in the file's
+ 	 * private_data so it can be used by the
+@@ -210,6 +212,12 @@ int misc_register(struct miscdevice *misc)
+ 	int err = 0;
+ 	bool is_dynamic = (misc->minor == MISC_DYNAMIC_MINOR);
+ 
++	if (misc->minor > MISC_DYNAMIC_MINOR) {
++		pr_err("Invalid fixed minor code %d for misc char device '%s'\n",
++		       misc->minor, misc->name);
++		return -EINVAL;
++	}
++
+ 	INIT_LIST_HEAD(&misc->list);
+ 
+ 	mutex_lock(&misc_mtx);
+@@ -282,6 +290,8 @@ void misc_deregister(struct miscdevice *misc)
+ 	list_del(&misc->list);
+ 	device_destroy(&misc_class, MKDEV(MISC_MAJOR, misc->minor));
+ 	misc_minor_free(misc->minor);
++	if (misc->minor > MISC_DYNAMIC_MINOR)
++		misc->minor = MISC_DYNAMIC_MINOR;
+ 	mutex_unlock(&misc_mtx);
+ }
+ EXPORT_SYMBOL(misc_deregister);
+diff --git a/include/linux/miscdevice.h b/include/linux/miscdevice.h
+index 3e6deb00fc8535a7571f85489c74979e18385bad..9e19bce981f065ea612da0a330c529e9c044c996 100644
+--- a/include/linux/miscdevice.h
++++ b/include/linux/miscdevice.h
+@@ -71,6 +71,14 @@
+ #define USERIO_MINOR		240
+ #define VHOST_VSOCK_MINOR	241
+ #define RFKILL_MINOR		242
++
++/*
++ * Misc char device minor code space division related to below macro:
++ *
++ * <  255  : Fixed minor codes
++ * == 255  : Indicator to request dynamic minor code
++ * >  255  : Dynamic minor codes requested
++ */
+ #define MISC_DYNAMIC_MINOR	255
+ 
+ struct miscdevice {
+
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250620-rfc_miscdev-788bf18bba5d
+prerequisite-change-id: 20250620-fix_mischar-794de4259592:v1
+prerequisite-patch-id: 775e6edc4107a26a1fa30fd36315e4862dbc0cde
+prerequisite-patch-id: e32024c7470a34eb019af4bf18c08f67c3589d7e
+prerequisite-patch-id: 70045b4ad94130f051c314339a58217baed9190a
+
+Best regards,
+-- 
+Zijun Hu <zijun.hu@oss.qualcomm.com>
 
 
