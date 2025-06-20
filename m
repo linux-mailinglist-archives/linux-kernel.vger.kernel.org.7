@@ -1,209 +1,188 @@
-Return-Path: <linux-kernel+bounces-695905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4677AE1F5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:49:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E19AE1F40
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EEC71888CF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:47:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51FBC17E850
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A13119A297;
-	Fri, 20 Jun 2025 15:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457AC2E610F;
+	Fri, 20 Jun 2025 15:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oos1hSQm"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c/0L87fV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67952E763C;
-	Fri, 20 Jun 2025 15:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D7D2E54B4;
+	Fri, 20 Jun 2025 15:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750434340; cv=none; b=NnWMfv9uqAn3A74WPpRSWUDb0bkP3ub0ezahdabSdLjeUzGlq8YgjNQhj/halTEHA18fRnGc+SLlOSsAfRyLAumDerf0GAT3gjOeKhOPj4RlncyzuB0+ZrPhLm42qu9rLx+PFCLQ+5WSGMEvkcDLSzvBhwftpSzyH8FKCYNt554=
+	t=1750434279; cv=none; b=C2aZCuxz3ZqOQsM/BYoeS/C1QpVXwemkgYtYyKy86hD5s7dqCheFF0+goN1tm4RZASc+BnmjYjhj8tcWIi8TvdZOfhB0pfQzVjZ3EYgPRuEzSJKkkQVaCGK522/8LP43UWSPrGJ3DYpSPI9m8/cmI7a3svUOJoO4ZyE8IfpCbNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750434340; c=relaxed/simple;
-	bh=fCZg+qa6/P+Asbd0KRfxqaW80M7dwYJ1XuU8KBHp+rI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pw1HrWcN2wXsQdMrJPz6Wvej7FAo+MU4h7CzU1fZ+UnNZQmk8UyGiuxSo1c1Je++gfXgBPFrs0/LbVgo8mXg5HWS2bx0udQsocb7Zgxr5jfTSE52NpU+i2TdCGcHtfZtpgM2HkraxymaBn1Dq1xZMIhxtzbItTjmnTGi8o/9pGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oos1hSQm; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-451d54214adso15157165e9.3;
-        Fri, 20 Jun 2025 08:45:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750434337; x=1751039137; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LKJ+35t8HG4O3r9CAZlhOHv1jc/h4zjJpE9N6VOcuWY=;
-        b=Oos1hSQmL3OFjFa45TXg9QQlZ1ny/4S0FXwRelAY8qKVvBx4ppwtOroYVLCLw2AIv0
-         /9gSVrkE7T7eV5PD591ENT6tST24QSUs1ePcem1Ay322kMVXzLUhAn2s6GtYJtOVTLMy
-         WUAJMyCZeJQn2dTPdfyEN05CA1hned80a+auoEXBSErAgIuoVBXdutqTpXhQzGCDElYK
-         cgRg3QEAwdozWYtw7PwBygCdBMAUQY6vvhoLidpgMJf0L4d1fnyzOGG1EMelBPRe5ynE
-         eDdNLT+mNcNQT8CzbPwILMFelX5YX3Hzq/fN7UxOhe7K4lJoCpDzATeR/ck6vewjjRjz
-         fyiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750434337; x=1751039137;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=LKJ+35t8HG4O3r9CAZlhOHv1jc/h4zjJpE9N6VOcuWY=;
-        b=sHCR+nVyNJjdBN+jFMumCjKs8Sqfwv8L2UtX8rQvuZ2IuSue1buOEf4C0tfbau42Xi
-         4WMkKmyhpguPVSlU+4n55lwX7ReGGCrdeUnq2fM505+GL7fzjhlOFv+RZRNa2ELGa660
-         J2Ax8E9obL/+nlkGuYmJja6k9BN7BcPDG78+M1JGo92nzBj7L31wQOtkzCERTzqT1mrf
-         QnDcd4jNGEqRusgx5YtCI279oBJwYWuLMFjkV6Vun9R0F6LAAwn4pdAM+iySsPClaK9U
-         UrMbZv+aO1yd8gyFOVZdaEvFm2twjabmmqgKHLZtT87nT4IXFcD7R8mPDlbttxkYPusK
-         iUMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIuBYKJMj7GB8GidO0zaJ62y++VRLiNa8f2sGgUo8VeauQWtf8nU5M5rubjYAWUYjHLFpaiP0nldd1+sM1@vger.kernel.org, AJvYcCWDc2BXFxLB/ZOP799DKInUn2GmA4MIoJRZRriAAvAeAvCmQUzLXCs5cqWgNRqohsLwT2XfGxwJYpS+@vger.kernel.org, AJvYcCXJHhjcoiXMFQWYdrLqOp0zXhTVd8scTJQTxShHQhaRa4ftaUBR9Eh0BHZD9haQkQiEmPhY+y+ACxhFUPVhk34=@vger.kernel.org, AJvYcCXUsimV84OrPqc/Vp7qFYwDCq21KsWKz5q02F2V4BXrDeq2DuEXHfX7vqzrZMSEWyPJIdXrsopk9lHQkg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6OO4VkDigmHyQsbpBdHYKngCgZqln49cku1mirBoToeTsoz37
-	BRQz8r47dMqSAWrLa57I5hmdE9ptlBkbfnGkaeFERIqLuqqnJzGJ5UTC
-X-Gm-Gg: ASbGncsQSTw/Xha0dCid/INaZvlTceyojVSTetNlViut2HeiJ3R8FSciaYdYCSptKvN
-	SCNwwigOAXxXHaQrOPdJsiCkDoTTSUrLjVHHCADbBPqy6wMfm8l51eGO35DuwEhlnAxAoCGpygl
-	erncvLMiogu9Y2lS4qSgFDN4Y5UbrU95ZcYtku4R65AAASQxohxasx4XtxdOikUUNvsW0j3DLlo
-	Tisy8ZMkvzrcScj43VZffVopqpZwdchERPGaGOIumxyfRaeBWOljpCh/cK60XheCZFGKp2cG1Z6
-	bDiNghc8QxP/rNWbYmDxlh+y0ikb6bHjehcjKlO6Kb57GQxw1ovNhA45235FJzj0sL/8yzIWxhv
-	Vr+fRtqYQbc7NTF0aL1khiIuCvmmTtBqin3Ar
-X-Google-Smtp-Source: AGHT+IH2C53yc23XxCYNlV8ObdMQtnKhsc1hQMOEdirQJq6qRcmhyC9b16FY1hfzZAuThldE6PXaFQ==
-X-Received: by 2002:a05:600c:c103:b0:43d:24d:bbe2 with SMTP id 5b1f17b1804b1-45368780588mr10681265e9.28.1750434336707;
-        Fri, 20 Jun 2025 08:45:36 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d0f19e7dsm2478995f8f.38.2025.06.20.08.45.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 08:45:35 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: Alex Hung <alex.hung@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Igor Korotin <igor.korotin.linux@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Remo Senekowitsch <remo@buenzli.dev>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Xiangfei Ding <dingxiangfei2009@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Benno Lossin <lossin@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	Len Brown <lenb@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>
-Subject: [PATCH v8 8/9] rust: platform: Add ACPI match table support to `Driver` trait
-Date: Fri, 20 Jun 2025 16:43:34 +0100
-Message-ID: <20250620154334.298320-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
-References: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
+	s=arc-20240116; t=1750434279; c=relaxed/simple;
+	bh=4eJa5xbDcELWdsJk6KpEaKUJ8es/q20NBTbt7fi9Bwo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OgsYZqhx5Y0n+z8khh85Gy+hljayjV5eGYY/7bwfNrtB92q8gPNmsJm5gDslb99EPXdbmK88XWf8V4kQ6+L/meE1jXCX4Fgws6gF310vdUpbb1XRGmURrWQE6JUH2q/8h3rBhxMeLxUvymtly6cP7Kjfr9f4O1DdaZgvWVDMm/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c/0L87fV; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750434278; x=1781970278;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4eJa5xbDcELWdsJk6KpEaKUJ8es/q20NBTbt7fi9Bwo=;
+  b=c/0L87fV8tLleZrx5e8Ka3grPOYUGlkck/90lovIg0YyCbHNGLEuuSEV
+   GRCavF/85hSarG/hiXVcL125vpqYUtznKyN72JEsOC1CCjUYp5ZPPaJgK
+   vca1pLz/p/V2xzbJau9cPI5zLoCiwW997cMXTFfakbC/N/BLXtk4KGLdT
+   hqRS5aezOIujlC0eNnshk40kvEmwCaN+wSHsF/3TP4SYza+ncZcGOELc6
+   NCcDoQjtmKGCaz3I7VdWBdDxrVNMTAyxgL9jnzFX82CMtnAIrzSccUcDY
+   B1gRSuv2Gdp9Og3CJuqKU4wBB9PzSqm/D8FusZAueR4h1EuhXBXMH1RGg
+   Q==;
+X-CSE-ConnectionGUID: kZtAwWLcREeROv+AcFkV5A==
+X-CSE-MsgGUID: tcufFwDVSdG7RLteTXWb6Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="51814384"
+X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
+   d="scan'208";a="51814384"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 08:44:37 -0700
+X-CSE-ConnectionGUID: KFczqDHHQQWSuEshRwffvQ==
+X-CSE-MsgGUID: /I4sq9yASLmVhDtangNK1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
+   d="scan'208";a="151082647"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.108.136]) ([10.125.108.136])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 08:44:34 -0700
+Message-ID: <f99b8106-d716-4c50-9906-34da5c8f4061@intel.com>
+Date: Fri, 20 Jun 2025 08:44:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv6 05/16] x86/cpu: Defer CR pinning setup until after EFI
+ initialization
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ard Biesheuvel <ardb@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>,
+ "Mike Rapoport (IBM)" <rppt@kernel.org>,
+ Brijesh Singh <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>,
+ Tony Luck <tony.luck@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>,
+ Ingo Molnar <mingo@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>,
+ Breno Leitao <leitao@debian.org>, Rick Edgecombe
+ <rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>,
+ Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>,
+ Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>,
+ Eric Biggers <ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>,
+ Changbin Du <changbin.du@huawei.com>,
+ Huang Shijie <shijie@os.amperecomputing.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@redhat.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, linux-mm@kvack.org
+References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
+ <20250620135325.3300848-6-kirill.shutemov@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250620135325.3300848-6-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Extend the `platform::Driver` trait to support ACPI device matching by
-adding the `ACPI_ID_TABLE` constant.
+On 6/20/25 06:53, Kirill A. Shutemov wrote:
+>  	/*
+>  	 * This needs to follow the FPU initializtion, since EFI depends on it.
+> +	 *
+> +	 * It also needs to precede the CR pinning setup, because the CR4.LASS
+> +	 * bit has to be cleared temporarily in order to execute the
+> +	 * set_virtual_address_map() EFI call, which resides in lower addresses
+> +	 * and would trip LASS if enabled.
+> +	 *
+> +	 * Wrapping efi_enter_virtual_mode() into lass_stac()/clac() is not
+> +	 * enough because AC flag gates data accesses, but not instruction
+> +	 * fetch. Clearing the CR4 bit is required.
+>  	 */
+>  	if (efi_enabled(EFI_RUNTIME_SERVICES))
+>  		efi_enter_virtual_mode();
+>  
+> +	setup_cr_pinning();
 
-This allows Rust platform drivers to define ACPI match tables alongside
-their existing OF match tables. These changes mirror the existing OF
-support and allow Rust platform drivers to match devices based on ACPI
-identifiers.
+This is a _bit_ too much of a comment for me in this context. This would
+be enough:
 
-Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
----
- rust/kernel/platform.rs | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+	/* EFI twiddles CR4.LASS. Do it before CR pinning: */
+  	if (efi_enabled(EFI_RUNTIME_SERVICES))
+  		efi_enter_virtual_mode();
 
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index 2436f55b579b..0d00ab9acef7 100644
---- a/rust/kernel/platform.rs
-+++ b/rust/kernel/platform.rs
-@@ -37,12 +37,18 @@ unsafe fn register(
-             None => core::ptr::null(),
-         };
- 
-+        let acpi_table = match T::ACPI_ID_TABLE {
-+            Some(table) => table.as_ptr(),
-+            None => core::ptr::null(),
-+        };
-+
-         // SAFETY: It's safe to set the fields of `struct platform_driver` on initialization.
-         unsafe {
-             (*pdrv.get()).driver.name = name.as_char_ptr();
-             (*pdrv.get()).probe = Some(Self::probe_callback);
-             (*pdrv.get()).remove = Some(Self::remove_callback);
-             (*pdrv.get()).driver.of_match_table = of_table;
-+            (*pdrv.get()).driver.acpi_match_table = acpi_table;
-         }
- 
-         // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
-@@ -96,7 +102,7 @@ fn of_id_table() -> Option<of::IdTable<Self::IdInfo>> {
-     }
- 
-     fn acpi_id_table() -> Option<acpi::IdTable<Self::IdInfo>> {
--        None
-+        T::ACPI_ID_TABLE
-     }
- }
- 
-@@ -127,7 +133,7 @@ macro_rules! module_platform_driver {
- /// # Example
- ///
- ///```
--/// # use kernel::{bindings, c_str, device::Core, of, platform};
-+/// # use kernel::{acpi, bindings, c_str, device::Core, of, platform};
- ///
- /// struct MyDriver;
- ///
-@@ -140,9 +146,19 @@ macro_rules! module_platform_driver {
- ///     ]
- /// );
- ///
-+/// kernel::acpi_device_table!(
-+///     ACPI_TABLE,
-+///     MODULE_ACPI_TABLE,
-+///     <MyDriver as platform::Driver>::IdInfo,
-+///     [
-+///         (acpi::DeviceId::new(b"TST0001"), ())
-+///     ]
-+/// );
-+///
- /// impl platform::Driver for MyDriver {
- ///     type IdInfo = ();
- ///     const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
-+///     const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = Some(&ACPI_TABLE);
- ///
- ///     fn probe(
- ///         _pdev: &platform::Device<Core>,
-@@ -164,6 +180,9 @@ pub trait Driver: Send {
-     /// The table of OF device ids supported by the driver.
-     const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
- 
-+    /// The table of ACPI device ids supported by the driver.
-+    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = None;
-+
-     /// Platform driver probe.
-     ///
-     /// Called when a new platform device is added or discovered.
--- 
-2.43.0
+	setup_cr_pinning();
 
+I also dislike comments where code will do. Could
+efi_enter_virtual_mode() actually check for CR4.LASS? Or check
+cr4_pinned_bits() or 'cr_pinning.key'?
+
+Also, the "lass_stac()/clac() is not enough" comment seems more like
+changelog material to me than something for a comment.
 
