@@ -1,155 +1,172 @@
-Return-Path: <linux-kernel+bounces-695666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2C8AE1C7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:45:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09347AE1C81
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 250F36A04C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:43:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9093AABA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E5E28E574;
-	Fri, 20 Jun 2025 13:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3F128DF3F;
+	Fri, 20 Jun 2025 13:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Uek3h/ox";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hj9fDcoQ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="Ar9xuEGE"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013066.outbound.protection.outlook.com [40.107.162.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E15128B40A;
-	Fri, 20 Jun 2025 13:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750427028; cv=none; b=AsHTYPIlWOvGK/vUkm+arasoQHVGnKpQTFTO1rrjm1foEybNa99nDovPdxge+h77qYLIyrPJUzj1BBQQPraaBxajLdhhml4GjtdARpXUTLvXilKD8kO5W/4qvsUCveNb/eP/NNzD4gsfX0PhcKC8rl2GmoHM8e4KIsaBRDKNWM4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750427028; c=relaxed/simple;
-	bh=kE6T0xVo349h12vhdsOptOJ59XBo3V1Vl/qYHwIDF5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OBh1ZJcprnri825iPoPDufSVmoS6ATFS5ctV+lMHH6NGRvnuOZS79GDIdr6md+T1FL4EkZnhWzqCdtiNIc/N6ReElBsFA7rUwuIimXcnPcyYQ3sqIBR5MDo0xNQiteeaCiLihubUmcv38gtyxOB4xngbQLFOnNoI9VNSOTZIxUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Uek3h/ox; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hj9fDcoQ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 20 Jun 2025 15:43:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750427024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6e5LiVdLYV1MWzKzm2m1QtrQk2Nr/rVHB48W5asO8Cg=;
-	b=Uek3h/ox5BdHyjedKfonkpQexvpQ9o7KIUuDiu7fe3874JF9ZCdFhjafKo2geauJlK8u0N
-	5St4VbJtIg8TijyGaDbDPyFiiiPNuR6uTpnJHYZGQQdTJVrwuBzSOlxXHy83CoTYg5zrmi
-	UHVRZc9YwXxrYARSdqnBI1nyTX1KRtp0+s8naFhXeR0NQdiFnJy+YG02GPyU6IZWToqS30
-	HGdped6jS8ckUjTlEUMAmyV1Y1AZDt74DxeulpgQufmVZbFR1HIbdXMVcy1VHfruB7+W8z
-	ia6+enwyHC3umAf6Vv69ImHbaKaq4TCnZo0sSY8v4qt5x+esnqoXl2CGYOVlWA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750427024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6e5LiVdLYV1MWzKzm2m1QtrQk2Nr/rVHB48W5asO8Cg=;
-	b=hj9fDcoQDkyXcjztkkuYK+FdVDHyH2XXIcdl+2TM6PadC4dD9JUEMU+mDkWDXpM8kEkwz0
-	BIGtpZnNbb1N+6Cg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: David Gow <davidgow@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, Shuah Khan <shuah@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-doc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, workflows@vger.kernel.org
-Subject: Re: [PATCH v3 13/16] kunit: Introduce UAPI testing framework
-Message-ID: <20250620152344-fadbb8ae-0a86-4938-b05d-00da66fc05c5@linutronix.de>
-References: <20250611-kunit-kselftests-v3-0-55e3d148cbc6@linutronix.de>
- <20250611-kunit-kselftests-v3-13-55e3d148cbc6@linutronix.de>
- <CABVgOSmdcOZ0+-k=SM4LibOVMKtcbF27p6N40kuDX_axTPZ=QQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004F123183F;
+	Fri, 20 Jun 2025 13:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750427178; cv=fail; b=b4c6OrkRJ4GK4v9InqRI2VJXU9UnCmUulEQlnTvuvJMAgV2Os6ueDnL+kGNRWoELpSE5uvW658iuEDrqzsAy7j2ZiaxpV7SWQtsyqHn7zTbdFYYNj6cmySYkqKXCLhBO2Y4+Gr9iGrcE74CT1oq4JNfjntr0t1/v+tWIYYeacVE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750427178; c=relaxed/simple;
+	bh=zTfF8T2IBIF/AzTdT+/t0wieCiYi/VPmcfTWllZQNn0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HcEmlGTNEqPEj/b5XYbf8XJyXsv5bk63whDwbO7wQ9xE5glSSPfplkeaMg3GkHUJzLyQgUEiPRrKMaI6Td+1STwiVh6q5ds/cs8xJrjVqcSJSLiW65Z8Qx4ypHaTZl1CibjF8wA5gzRpb7D2ijIrwVo3n08TSruQa3WFkePRaLA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=2n.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=Ar9xuEGE; arc=fail smtp.client-ip=40.107.162.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=2n.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a8GUgLlS9Juk0cqUnN/vrgFzBZLo2mBEDYlNIsOvHrU7igvjT9JNlTdWLvPoKwoOcT/xGSJSkcagcdbFfN96ABG4M/kl7Jztpofa8cXk+lsOSt1TtldQM6mx2yrzccYX3N6pRu2+j8FDjf5PJcTs6J+j0YHjteBvHbOv+YG/ikTBHabdWdVgcFiuHhx/TpUgCBINBamT0FI384keOgylmFHh72m1NxXvmij8RjDHCOq1oOy4OOdopMhAAns4360Usbk8wIMPUZXEHSFIS5mikTu8bxcQ06cGqWp84Dtr5rn+AFKMUWcZbNq3MQprx+sHMZv89K2HrXd1GgiAuAOLFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4O5pvQPjY6w2YDCvZlJemF2XrW/T5buj51NREF5YScU=;
+ b=igcRDVs8gCyVkf/GYzYWgW9oNS42sN+M07mCP1+EUi6NJl7EzObwVqO6Y2TySp1/rip+inS6knS5/R74pRR1V85GDOZjTRu6oi6A8n9FaqRWOkyqKNAbOO/0VFl/lteAXhB28PvbjsgHTqScVVcx22IAmewzY8RbRvNvayPwmB4F0kpWG0d3LMSwjzU+URMoLpuRtuHmmolqAYQjRnDf3jWB8E3Egapo3LEv7cmT4inaLFWXpCU0pPAI2glWcc+8Mk2uDfWE/GWO+woF8krW/ZmFh3rPB8ja73/iIv0+WPD2NOxuP3Rwhxv+1B/FaRjZq2fva47KCIdoQMUe21DLjQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=broadcom.com smtp.mailfrom=2n.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4O5pvQPjY6w2YDCvZlJemF2XrW/T5buj51NREF5YScU=;
+ b=Ar9xuEGEqbphoY0bIEdDOonO66MLYJy/UQEtWtWXw+8sw2ycYPcTaSrCbyf97J5I4mY79HHj286HHdJ+nU+ommaANOvgqCDmdmT4jvhwDa6nJwHx6EXkC5e80PS/5FUSyeg9b4L8y4zb34YBomhiaNb8+ubiurPfojUZhEMFDj0=
+Received: from AS4P251CA0016.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:5d3::8)
+ by AS2PR02MB9761.eurprd02.prod.outlook.com (2603:10a6:20b:60f::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.25; Fri, 20 Jun
+ 2025 13:46:11 +0000
+Received: from AM3PEPF0000A791.eurprd04.prod.outlook.com
+ (2603:10a6:20b:5d3:cafe::cd) by AS4P251CA0016.outlook.office365.com
+ (2603:10a6:20b:5d3::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8857.25 via Frontend Transport; Fri,
+ 20 Jun 2025 13:46:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=2n.com; dkim=none (message not signed) header.d=none;dmarc=fail
+ action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of 2n.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ AM3PEPF0000A791.mail.protection.outlook.com (10.167.16.120) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8857.21 via Frontend Transport; Fri, 20 Jun 2025 13:46:10 +0000
+Received: from pcczc3457tyd.2n.cz.axis.com (10.4.0.13) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Fri, 20 Jun
+ 2025 15:46:09 +0200
+From: =?UTF-8?q?Kamil=20Hor=C3=A1k=20=282N=29?= <kamilh@axis.com>
+To: <florian.fainelli@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
+	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <kamilh@axis.com>, <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <robh@kernel.org>
+Subject: [PATCH 0/3] net: phy: bcm54811: Fix the PHY initialization
+Date: Fri, 20 Jun 2025 15:44:27 +0200
+Message-ID: <20250620134430.1849344-1-kamilh@axis.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABVgOSmdcOZ0+-k=SM4LibOVMKtcbF27p6N40kuDX_axTPZ=QQ@mail.gmail.com>
+X-ClientProxiedBy: se-mail01w.axis.com (10.20.40.7) To se-mail01w.axis.com
+ (10.20.40.7)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM3PEPF0000A791:EE_|AS2PR02MB9761:EE_
+X-MS-Office365-Filtering-Correlation-Id: 070be9af-2790-403f-2908-08ddb000d0e0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|82310400026|7416014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VU5sbWZKNUlkaFN1aUlqVWdueEY0MnVOT3NnYmpGL3gzSW81T0xuR1F5aTlG?=
+ =?utf-8?B?WVo2OVA0OHRLK2k3aXdiUDdnMkZnT1JyRzF0aThXRHhodzBYSjRWc09YeGtZ?=
+ =?utf-8?B?eDQ1alc3a0NLeDdPcSsveS9mY24yNE1RQkRoQlIrVmlPMXVrTmh0dWcyeXYy?=
+ =?utf-8?B?djlpSnc4MUU4K1BjQnN0UTVUZFZ5OHRvUkQzbG5sV0paUm4xTytSRm9QWlRo?=
+ =?utf-8?B?T3FQSE1mZi9aZEorb3kyMU5OVmpSQ0c3eU1GVXV2bDhKdGJWYXpqQWh4Y2xp?=
+ =?utf-8?B?T1pYdU9OdmdCdHpyU0NQRWRKNDRFaDNmN0R0THVEa0ltWGxiaEx4VHM3Rmxu?=
+ =?utf-8?B?b0JVOWd0RVdVZkNKRUVNRmlLMllnOEp6S2NZQWUydFR2c2FhRjlML21OTUxJ?=
+ =?utf-8?B?bFhOam1QS09jS212MVRaNlN5OS9SZlBrYjJmUmY1NTlMSDhOK0FMcSt0ZmRz?=
+ =?utf-8?B?c1Q0ckRGSzhBbWNqa3dhbUo0a0tmcURGc1p4QW4xTVl2TkU1aGdzanV3cjBa?=
+ =?utf-8?B?M1k0UEdPUURQTFh4bW5ZRWdRbzNlOWR1V1ZiRzVodjdUYzV0N0FFY0VXdi8x?=
+ =?utf-8?B?T0hZMXFEZWJmQTljVlQ1cU5PUmFrSExQMWhDVkwyZUZKcGtlbzNjbzFkUFc3?=
+ =?utf-8?B?bTlxUC9sVGtWbnlYSFBQaFFTNFBGSnBJcGRXYzdVaWhJOU9aTGp5d0hwMXlP?=
+ =?utf-8?B?RVkxMXFwdm9lZE9zbFNxOWpkeUVJdVdaMHJVa0JFME8vTXRROUk1UjRYUHlR?=
+ =?utf-8?B?Wjczc3Y3TnpiZnFiQTROOU91M2JOSkVaRnB0b1VZNnpQZW9LMkx2ODFKeGxT?=
+ =?utf-8?B?UGgvYzN2WjRvQ2FqQXBIWWwyS3FOVTErMUhTVEdjck1taXcyV2N2anJ5MlNx?=
+ =?utf-8?B?SjdyY1BiVzA1UzJ2Qk5kVTFRbWo5M0hHS3hBend5S2Zzc2pQQVFaSEdMb0Vr?=
+ =?utf-8?B?ZWNqZzlnSE1ZL1RJVldqN1N6M0tOczZpNWxDT0VJRHVuVm4zcnQ0K3oxb1Vl?=
+ =?utf-8?B?eUViVDVNcHRlSS9kR01vRWdoT0FRdFFMMUtra2RGYkFWeEZUTWJnSUVoZHpx?=
+ =?utf-8?B?U1hMN2tLdzM0KzZya3FXbHQwOFRaYmNOTWtpR1FNbERvbkthRzd4TWdPUHc5?=
+ =?utf-8?B?b285NXpMK21pU2xHbHc1UXJuS0lGdWxuVkRUakZsNVRZL2h4K2I4azdMVEpT?=
+ =?utf-8?B?U1kvcSs3UkJyaStrMjN2YVRHYy80aEVXbFYyNzdOai9iUDB3Zm42d1dRVGFv?=
+ =?utf-8?B?SHJNclZwUGROclROa0JnZlprSkRaODdmNFZLa0VCakJTQWZKU2UrVzhNeW94?=
+ =?utf-8?B?SE8wQ0lyYjZHcHZ2cmFseFFGQ2dGK2hjYjAwU0pRV0VISUxuNzJzdVpjckhY?=
+ =?utf-8?B?TVVqN2V6ZzdpMVdXOHNSZ1FHTnRYYkhXKzFNSm5PNU9YWlFBN0RiMkNxdUpm?=
+ =?utf-8?B?MWFOYlVjVWs5TGZkQVNYOUJUdG5kTHhYT05FQllEaVVOdXBXaE92b0sxUWx5?=
+ =?utf-8?B?dm1HZEQ3bUJ3dmdqeGVCU1hzMG9PYWp2L0k4K2hPSG1ibFBCeGliN0xSRGFq?=
+ =?utf-8?B?MUFxWVV4M3JjMmM0elViS3FzSThuNG83S3BYK2FYN0JNYjlHKzR5WjEvK2VF?=
+ =?utf-8?B?dXJ1YUo3aFJTWkZrTXVrY0dVWGpJTllBY1NhMU5HMEc2NzdGNXpETjVWVHpr?=
+ =?utf-8?B?OFdqcTBiNGpxaTNzd1I3YXZVMWF3K2Zoc0hZeHJUemF6VDZDV2VranIwbW9a?=
+ =?utf-8?B?VCtHaHNMZ2RtL3lwUHYySElsNVdKV3lvRVJEUjhRWW93cEhscUszcnNJMEdJ?=
+ =?utf-8?B?Y3EvNWlNWkV1MXdwKzZsMEYvTzBPbFU2ZlZRVkpRVStuUTc0a1c4b2ZwM0cr?=
+ =?utf-8?B?OW14MjBCTUxqZjRsd2t1WFVIM1BkZ2tKYWxhckZDcVM4MXpXYitjT0IwdzRn?=
+ =?utf-8?B?UkZqVk9MY25CaGszRmU1NTdTYkRqWlFxNVlSeG9UVHpZUDJuVmVtNXN3RkJ1?=
+ =?utf-8?B?ellURWpGa3JRaGo1UjV5ek40YndPTWJWK0VBamlaOGRDajBDUVdJd3h3Znhu?=
+ =?utf-8?B?UnY1Rk5EZnVLTElHT3AvYUh0b3ppTmtmT0Jvdz09?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2025 13:46:10.6876
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 070be9af-2790-403f-2908-08ddb000d0e0
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM3PEPF0000A791.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR02MB9761
 
-On Fri, Jun 20, 2025 at 05:47:39PM +0800, David Gow wrote:
-> On Wed, 11 Jun 2025 at 15:38, Thomas Weiﬂschuh
-> <thomas.weissschuh@linutronix.de> wrote:
-> >
-> > Enable running UAPI tests as part of kunit.
-> > The selftests are embedded into the kernel image and their output is
-> > forwarded to kunit for unified reporting.
-> >
-> > The implementation reuses parts of usermode drivers and usermode
-> > helpers. However these frameworks are not used directly as they make it
-> > impossible to retrieve a thread's exit code.
-> >
-> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> >
-> > ---
-> 
-> It feels to me like there are three features hidden in here:
-> - KUnit helpers for manipulating vfs files
-> - A way of having KUnit tests run userspace helpers
-> - The full framework for writing/running whole tests in userspace.
-> 
-> It's really the first two which excite me personally most -- as they
-> give us a sort-of inverse to the kselftest "helper module" paradigm --
-> so we can test things which are impossible to test from within
-> kernelspace.
+PATCH 1 - Fix the BCM54811 PHY initialization so that it conforms
+   to the datasheet regarding a reserved bit in the LRE Control
+   register, which must be written to zero after every device reset.
 
-For me it is only the third feature that I really care about right now.
-But I do expect users for the first two to pop up at some point and these are
-obviously valid usecases.
+PATCH 2 - Fix the BCM54811 PHY initialization by implementing MII-Lite
+   mode switch
 
-> So maybe those APIs should be exposed separately (so a
-> test can be written mostly in kernel-space using the KUnit framework
-> APIs, and just call out to a helper where needed). But I'm happy for
-> them to stay private functions until we have a test which actually
-> needs them.
+PATCH 3 - Add optional mii-lite-mode flag to switch the PHY to MII-Lite
 
-Agreed, let's expose it when there are users.
+Kamil Hor√°k (2N) (3):
+  net: phy: bcm54811: Fix the PHY initialization
+  net: phy: bcm5481x: Implement MII-Lite mode
+  dt-bindings: ethernet-phy: add optional mii-lite-mode flag
 
-> > Currently this depends on CONFIG_KUNIT=y as it uses some non-exported
-> > symbols around process management.
-> 
-> That's fine for now, IMHO, but will make it difficult to use this on,
-> e.g., Red Hat setups, where CONFIG_KUNIT=m. Hopefully we can resolve
-> this by exporting some of the symbols?
+ .../devicetree/bindings/net/ethernet-phy.yaml |  8 +++
+ drivers/net/phy/broadcom.c                    | 54 +++++++++++++++++--
+ include/linux/brcmphy.h                       |  7 +++
+ 3 files changed, 66 insertions(+), 3 deletions(-)
 
-I'll try to use the new EXPORT_SYMBOL_GPL_FOR_MODULES() on these symbols and
-see what the maintainers say about it.
+-- 
+2.39.5
 
-> In general, I'm happy with the implementation here. The fs stuff
-> probably needs a closer look from someone who knows the vfs better
-> than me, though.
-> 
-> Nevertheless,
-> Reviewed-by: David Gow <davidgow@google.com>
-
-Thanks
-
-> 
-> Cheers,
-> -- David
-> 
-> > ---
-> >  Documentation/dev-tools/kunit/api/index.rst |   5 +
-> >  Documentation/dev-tools/kunit/api/uapi.rst  |  12 ++
-> >  include/kunit/uapi.h                        |  24 +++
-> >  lib/kunit/Kconfig                           |  10 +
-> >  lib/kunit/Makefile                          |   2 +
-> >  lib/kunit/uapi.c                            | 287 ++++++++++++++++++++++++++++
-> >  6 files changed, 340 insertions(+)
-
-<snip>
 
