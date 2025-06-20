@@ -1,141 +1,170 @@
-Return-Path: <linux-kernel+bounces-694989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0FAAE1397
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:06:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5304DAE13A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40F6D19E23E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 06:06:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2A4F3BEFC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 06:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF3521FF55;
-	Fri, 20 Jun 2025 06:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC54C2185AA;
+	Fri, 20 Jun 2025 06:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4XFYsyR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PEP80xha"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAC038DD8;
-	Fri, 20 Jun 2025 06:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB8120F091;
+	Fri, 20 Jun 2025 06:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750399594; cv=none; b=KFvkwtMXgSwxSj0wvkOCGH3vxspfTtrQIs0l748sU+khKDkZCdRirYvdOkrScCO5G/WGk3la5bUtVCbygXGzTNKtoTzLUHjW/GHHcUe/rP8cJBhxzBY1PvjoS5VgATAQ29gVy8Oi7BhdV238GyoJVfX0/eK90yxaW92y1flJKKo=
+	t=1750399838; cv=none; b=HcTut1omv6BUL1IpvtKdO29PXTLthkQNFNmVGEBmHTuTfT1eO5kALnPtthPGUlnE2Phmq79mvtaQUq3FIkkclIEMc7sWn6WcDGGWe204RZ6wL9a3cceYLmRvx8lg3s5XSiFqFIdZXXZrMurqWrIGDbilT/MjvLSKf6FxovdciHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750399594; c=relaxed/simple;
-	bh=sEYic5OrVjD6hWkOfxuOeaGzuWpjyBgXCww2D7dncYw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NVeBnHr5KKOc+mIoAVXnE7fcwzHSURWbO7t4hi2BofRLMkRDN2GXmRWKf0hPYpFRs0dbhUj/r0B7fMDVKP9b6hXTqHbGIHlMNOfyh8zB4OteKtZbP2brAdE13wS6RMvcGBOFJKOpJXK5frfM9CbnpCZzoWM1ILKYCO0grvfgIYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4XFYsyR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41F9C4CEE3;
-	Fri, 20 Jun 2025 06:06:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750399594;
-	bh=sEYic5OrVjD6hWkOfxuOeaGzuWpjyBgXCww2D7dncYw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p4XFYsyRlkYkt54vjZI3BJzXZi70D782inBOAUs6UB1k6BYEDQHK8wsjsoFHz58qN
-	 F/uUcsNtSiTEN/kSvuiB7T0qALxDBeNiUhLXdXG+uryr2K7i/OUIkAjgfHQQ3xzNGD
-	 D18uMhxwWH8T+kx8Cui7koF25MEZ1z87ZBUPMNvUTkgi46TmLj+Qa+ewQKdpQy4hXY
-	 /7v66LkNScG2RAqFeqRG3XPkHCZGaaubnIId/tL7MFNm5UQSoN0/NbyEoa1B2mBgSY
-	 IFGRwGY6gPSpSP+mjvhxqC/B8ysj+GvT7Ey3YFAeGdc+O5/VuTzbcTkdm5YaJoWsAz
-	 yMExgYfcYxqDw==
-Message-ID: <7fcb5ca6-7881-44c2-a658-752fa7cd5f38@kernel.org>
-Date: Fri, 20 Jun 2025 08:06:29 +0200
+	s=arc-20240116; t=1750399838; c=relaxed/simple;
+	bh=MHJanwY6fC5DvEjyFwwCVe+35ey974zZGBx0Y330LEw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OWMRPV6BQyEY+VGb6+waDIOBK/fkg5BNxlAhv0gcYX/Mbiw5IP24MN3ew+XqBI0F/FF0OemlTgEUcmVWDiZs/rMyS/3ywpxOFIMq3oofV9ORTmnlBXvvcY3w+RT/ImbHYksjcrXZJ5DY+/hwkwJywC7Fv+tzgNu9x4AP2VaYqFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PEP80xha; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750399836; x=1781935836;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=MHJanwY6fC5DvEjyFwwCVe+35ey974zZGBx0Y330LEw=;
+  b=PEP80xhaO00lZIAfj5y+Kxs4yNI8PbghidUKbpwZyy81CQUhWHwqrDMi
+   PlwemB1YgUrCYqqa/XV1OHHsQgl6sHd1n1Kxg04Pxitg9zEWfN6yKc+nF
+   jYmTcJUcIyDVGXyYAvO6Ty5Q3GdNbe7GyitO9P8oGbXZlbP+GDDiNe6rC
+   V7nAeABjz6Df6RwAuixXlVPypEevqdP7lEa8EtPjOGChNFQVWOovZnHpt
+   aPlwodq4xuFO3W+CZMRq7FGHP6prVSIcEi3m+F/aUemOEKhq2daDFfoaU
+   7+4Gg2ZsVf3JesAzt0lWCcZSpWsxmxbKKgvIVQc9dtgQ2L6+Q3sHFb9fQ
+   w==;
+X-CSE-ConnectionGUID: zINGF7/MSf+gng6hA29Ytg==
+X-CSE-MsgGUID: RxtTaD9KQaeW2siec2Ntig==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="52739743"
+X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
+   d="scan'208";a="52739743"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 23:10:35 -0700
+X-CSE-ConnectionGUID: xuRE8HhTQvmuxZy4+OJG+A==
+X-CSE-MsgGUID: YihgLFvVT2SqD8EF48tANA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
+   d="scan'208";a="150412278"
+Received: from allen-box.sh.intel.com ([10.239.159.52])
+  by fmviesa007.fm.intel.com with ESMTP; 19 Jun 2025 23:10:32 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/1] iommu/vt-d: Enable ATS before cache tag assignment
+Date: Fri, 20 Jun 2025 14:08:02 +0800
+Message-ID: <20250620060802.3036137-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] dt-bindings: clock: cdce6214: add binding for pin
- configuration
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- kernel@pengutronix.de, =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-References: <20250618-clk-cdce6214-v5-0-9938b8ed0b94@pengutronix.de>
- <20250618-clk-cdce6214-v5-3-9938b8ed0b94@pengutronix.de>
- <20250619-arboreal-jaguarundi-of-passion-a2eaa1@kuoka>
- <aFP0YIgXndjTVyAL@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aFP0YIgXndjTVyAL@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 19/06/2025 13:28, Sascha Hauer wrote:
-> On Thu, Jun 19, 2025 at 09:42:06AM +0200, Krzysztof Kozlowski wrote:
->> On Wed, Jun 18, 2025 at 11:21:14AM GMT, Sascha Hauer wrote:
->>> Add pin configuration binding for the TI CDCE6214. The CDCE6214 has
->>> an internal EEPROM to to fully configure the chip, but this EEPROM
->>> might be empty, so add support for configuring the chip through
->>> the device tree.
->>>
->>> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
->>> ---
->>>  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 95 ++++++++++++++++++++++
->>>  1 file changed, 95 insertions(+)
->>
->>
->> This should be part of previous patch. Bindings should be complete, not
->> added in partial sets.
-> 
-> See cover letter why I did this. If everybody is fine with the pin
-> configuration binding then I can merge this back together, but I doubt
-> it and in that case I'd rather get the driver upstream without the pin
-> configuration at first.
+Commit <4f1492efb495> ("iommu/vt-d: Revert ATS timing change to fix boot
+failure") placed the enabling of ATS in the probe_finalize callback. This
+occurs after the default domain attachment, which is when the ATS cache
+tag is assigned. Consequently, the device TLB cache tag is missed when the
+domain is attached, leading to the device TLB not being invalidated in the
+iommu_unmap paths.
 
-We expect bindings to be complete, not added in chunks and drivers do
-not matter here that much. You can still discuss the drivers, afterwards.
+Fix it by moving the ATS enabling to the default domain attachment path,
+ensuring ATS is enabled before the cache tag assignment.
 
-Best regards,
-Krzysztof
+Fixes: 4f1492efb495 ("iommu/vt-d: Revert ATS timing change to fix boot failure")
+Cc: stable@vger.kernel.org
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel/iommu.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 7aa3932251b2..863ccb47bcca 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -54,6 +54,7 @@
+ 				__DOMAIN_MAX_PFN(gaw), (unsigned long)-1))
+ #define DOMAIN_MAX_ADDR(gaw)	(((uint64_t)__DOMAIN_MAX_PFN(gaw)) << VTD_PAGE_SHIFT)
+ 
++static void sm_iommu_enable_pcicaps(struct device *dev);
+ static void __init check_tylersburg_isoch(void);
+ static int rwbf_quirk;
+ 
+@@ -1825,10 +1826,11 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
+ 	else
+ 		ret = domain_setup_second_level(iommu, domain, dev,
+ 						IOMMU_NO_PASID, NULL);
+-
+ 	if (ret)
+ 		goto out_block_translation;
+ 
++	/* PCI ATS enablement must happen before cache tag assigning. */
++	sm_iommu_enable_pcicaps(dev);
+ 	ret = cache_tag_assign_domain(domain, dev, IOMMU_NO_PASID);
+ 	if (ret)
+ 		goto out_block_translation;
+@@ -3765,11 +3767,18 @@ static struct iommu_device *intel_iommu_probe_device(struct device *dev)
+ 	return ERR_PTR(ret);
+ }
+ 
+-static void intel_iommu_probe_finalize(struct device *dev)
++static void sm_iommu_enable_pcicaps(struct device *dev)
+ {
+ 	struct device_domain_info *info = dev_iommu_priv_get(dev);
+ 	struct intel_iommu *iommu = info->iommu;
+ 
++	/*
++	 * Called only in iommu_device_register() path when iommu is
++	 * configured in the scalable mode.
++	 */
++	if (!sm_supported(iommu) || READ_ONCE(iommu->iommu.ready))
++		return;
++
+ 	/*
+ 	 * The PCIe spec, in its wisdom, declares that the behaviour of the
+ 	 * device is undefined if you enable PASID support after ATS support.
+@@ -3780,7 +3789,7 @@ static void intel_iommu_probe_finalize(struct device *dev)
+ 	    !pci_enable_pasid(to_pci_dev(dev), info->pasid_supported & ~1))
+ 		info->pasid_enabled = 1;
+ 
+-	if (sm_supported(iommu) && !dev_is_real_dma_subdevice(dev))
++	if (!dev_is_real_dma_subdevice(dev))
+ 		iommu_enable_pci_ats(info);
+ 	iommu_enable_pci_pri(info);
+ }
+@@ -4309,6 +4318,7 @@ static int identity_domain_attach_dev(struct iommu_domain *domain, struct device
+ 		ret = intel_pasid_setup_pass_through(iommu, dev, IOMMU_NO_PASID);
+ 	else
+ 		ret = device_setup_pass_through(dev);
++	sm_iommu_enable_pcicaps(dev);
+ 
+ 	if (!ret)
+ 		info->domain_attached = true;
+@@ -4359,7 +4369,6 @@ const struct iommu_ops intel_iommu_ops = {
+ 	.domain_alloc_sva	= intel_svm_domain_alloc,
+ 	.domain_alloc_nested	= intel_iommu_domain_alloc_nested,
+ 	.probe_device		= intel_iommu_probe_device,
+-	.probe_finalize		= intel_iommu_probe_finalize,
+ 	.release_device		= intel_iommu_release_device,
+ 	.get_resv_regions	= intel_iommu_get_resv_regions,
+ 	.device_group		= intel_iommu_device_group,
+-- 
+2.43.0
+
 
