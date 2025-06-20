@@ -1,122 +1,93 @@
-Return-Path: <linux-kernel+bounces-695550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8861AE1AF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:31:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44FA3AE1AFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06AC07A8842
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:30:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB53A1C2001D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8570B28C2AF;
-	Fri, 20 Jun 2025 12:30:44 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D227221FC0;
+	Fri, 20 Jun 2025 12:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXQHHIbn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12D91C5D7B
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 12:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673CE28A41C;
+	Fri, 20 Jun 2025 12:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750422644; cv=none; b=k50qY1Y73g2gyvnhoHVVZwswv+q/nCE17bGBUL7MuxH6gReks24LjCeTCTxkOf5327HJpF6s3WrD2jD0+rzSYu+DvTT3zuZgPXGtmZb2pUZAvR3XNPDVd0pSYRJ/FSXgBuxUkAzVh3dZWfJmgweXbYIB1iJ/E3RlsBlBKqJtV7Q=
+	t=1750422687; cv=none; b=MPY2eGHCrFfAxRzyCNZ1ZfBU2us3l/E4sZhn6n7kZxVjGCe7WFdrnycpxYlyi18l2NI8Y42J58WSQCiAXfcxzMycjY0GGqVEHYrItglwq9pt35u1KgwkmjwN1Cn0hsB+8/5Ie6pZ7Jz2B+Ybe+TPb/GGoOFGH0ZqCNMGFfHV/CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750422644; c=relaxed/simple;
-	bh=07/pZfCDAJ9okFUghNJ3W/JUw1tdKSQ0ShoQtA0MFrI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KzMkybh1sYerxMBVBkrm6oKn5GfBoVomsIhxKBFPubPrBzvhtcgrzbTGUsmNXvUSV9k2Hhz67/N5vCd66qDN4XNhiK9zd4zBHNLU7Z0ypEi6dC/Iugehili7YFtsXb94AG0SyKELSoYDWX34Ph81eZSxA3QP3WR0tSBbpaNebNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 877541F38D;
-	Fri, 20 Jun 2025 12:30:30 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1077613A99;
-	Fri, 20 Jun 2025 12:30:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sH9WAWZUVWjNKAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Fri, 20 Jun 2025 12:30:30 +0000
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Peter Xu <peterx@redhat.com>,
-	Gavin Guo <gavinguo@igalia.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v2 5/5] mm,hugetlb: Drop unlikelys from hugetlb_fault
-Date: Fri, 20 Jun 2025 14:30:14 +0200
-Message-ID: <20250620123014.29748-6-osalvador@suse.de>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250620123014.29748-1-osalvador@suse.de>
-References: <20250620123014.29748-1-osalvador@suse.de>
+	s=arc-20240116; t=1750422687; c=relaxed/simple;
+	bh=aD43/sOhmsUVweGrvb0kOVvuYKCc6XzsFSDt8n0p6Lc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=RBAfRGYTwbKbnLgv3qmpk+QiAcJa5vGbXx8c7vQhDMWLqLEtzGAKAMnY5HNilFsc3UQBus6KR0NMa4IKYEJCWxsGWHsepje+2hqUNe1PDDsuIszSLclcsAAV2eroOEmzietuh1LKwQAiThQ06NaaQlBxQ52vO3KvI7gvIqPSt/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXQHHIbn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82017C4CEE3;
+	Fri, 20 Jun 2025 12:31:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750422686;
+	bh=aD43/sOhmsUVweGrvb0kOVvuYKCc6XzsFSDt8n0p6Lc=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=NXQHHIbnIGMf2IECcaAYEpTDKBvyrbqaAb2oS5t8pY85PEa8ALOWZbnjVK9rQwChH
+	 J7oLZHOEQLr1S2r6M3XA4GTHCczxJ6S9fcfNfrEC2Dxq1GOIFTAyFdOWk0VdAivY11
+	 2vhn0uavNoK8kY3kLeaTuQWCDPs8+hW+wsdz5yQqnCEqgBFFf0HWNAdsbMg776n/pq
+	 Qnj35G4baCi4+7PrqOielawwW9+GreC2JF2K9ZYDyWOostAJyBwurnzjYGJ1ts4AO7
+	 DFB0fd5u6e74uMwbzM2IZEFDBQFJEgo8nfr+kZdFoNjIbIXrNtxAVXTDfivMgPJjLZ
+	 /M9GlXMSCwy1w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: 877541F38D
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.00
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 20 Jun 2025 14:31:22 +0200
+Message-Id: <DARD1ZC0W9QR.3CBLX6RYE65VU@kernel.org>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH] poll: rust: allow poll_table ptrs to be null
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>, "Alexander Viro"
+ <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Christian Brauner" <brauner@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250620-poll-table-null-v1-1-b3fe92a4fd0d@google.com>
+In-Reply-To: <20250620-poll-table-null-v1-1-b3fe92a4fd0d@google.com>
 
-The unlikely predates an era where we were checking for hwpoisoned/migration
-entries prior to checking whether the pte was present.
+On Fri Jun 20, 2025 at 1:49 PM CEST, Alice Ryhl wrote:
+>      ///
+>      /// # Safety
+>      ///
+> -    /// The caller must ensure that for the duration of `'a`, the pointe=
+r will point at a valid poll
+> -    /// table (as defined in the type invariants).
+> -    ///
+> -    /// The caller must also ensure that the `poll_table` is only access=
+ed via the returned
+> -    /// reference for the duration of `'a`.
+> -    pub unsafe fn from_ptr<'a>(ptr: *mut bindings::poll_table) -> &'a mu=
+t PollTable {
 
-Currently, we check for the pte to be a migration/hwpoison entry after we
-have checked that is not present, so it must be either one or the other.
+Returning `Option<&'a mut PollTable>` is not an option? I'd like to
+avoid wrapping raw pointers...
 
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
 ---
- mm/hugetlb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Cheers,
+Benno
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 868ee8ed45c0..1ef554b6934a 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -6748,7 +6748,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 
- 	/* Not present, either a migration or a hwpoisoned entry */
- 	if (!pte_present(vmf.orig_pte)) {
--		if (unlikely(is_hugetlb_entry_migration(vmf.orig_pte))) {
-+		if (is_hugetlb_entry_migration(vmf.orig_pte)) {
- 			/*
- 			 * Release the hugetlb fault lock now, but retain
- 			 * the vma lock, because it is needed to guard the
-@@ -6759,7 +6759,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 			migration_entry_wait_huge(vma, vmf.address, vmf.pte);
- 			return 0;
--		} else if (unlikely(is_hugetlb_entry_hwpoisoned(vmf.orig_pte)))
-+		} else if (is_hugetlb_entry_hwpoisoned(vmf.orig_pte))
- 			ret = VM_FAULT_HWPOISON_LARGE |
- 			    VM_FAULT_SET_HINDEX(hstate_index(h));
- 		goto out_mutex;
--- 
-2.50.0
-
+> -        // SAFETY: The safety requirements guarantee the validity of the=
+ dereference, while the
+> -        // `PollTable` type being transparent makes the cast ok.
+> -        unsafe { &mut *ptr.cast() }
+> -    }
 
