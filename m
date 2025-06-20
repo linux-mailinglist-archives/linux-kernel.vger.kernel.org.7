@@ -1,176 +1,150 @@
-Return-Path: <linux-kernel+bounces-696043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFB1AE210E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:38:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D065BAE2078
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 18:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D8C16558E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:37:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6981A4C1EFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 16:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DE52E172A;
-	Fri, 20 Jun 2025 17:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8022E6136;
+	Fri, 20 Jun 2025 16:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="by1XIGAy"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oAfEnH0L"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3382E6125
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 17:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAFB2E612B
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 16:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750441062; cv=none; b=YlaHFOZiELCaWqpWE25ZSYfSZqg+qfwc4EZB55p3TCNgspQgzSR6Ul05OIJDhb7PR+0vPHtJnyF/HrI8pO1ctBxrnfstA/36lMWP6u9ko90Txy9+azB+BP6phtjqz+nBIvvHXmRsFby7lfpAYxhAyU58k6c67HP9jpwvS0qTB8k=
+	t=1750438642; cv=none; b=Ly57hxIKu2KD2ccNRzCDrOLM7Rygo7/RkQ2lY1kUyw6/FXdizF2VuPjDw/rIY/iGwcWvbejjKo6aFSjYEVMxqB1O1lOROeno7kBwT+7Vx9duqh49/ju03GJMOtasERNvgZp7l33m0L8cKs8YQnaXkMNe105OMqcXwhrNR7XNbOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750441062; c=relaxed/simple;
-	bh=BAY7XByXgMFVNwFKD6933qf59V3/WCIDwbV+JGWtPFk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=fapYA9xi0+jjY9Fm+Vc/x7Gpkjc32s/VmCkvEko/mZP47vq4u/CqSRjUloJO74vPdavPWg5QVtcwRIbNXHAzo6UXp3olmC45j0Vt3FHTima2VX+mE5G3FeLWDOrcd5hdNIV5MMk8QmQqfDzC3qp35ox7CRLnl6ZK9lbqkFIejJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=by1XIGAy; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55KGQQBt019233;
-	Fri, 20 Jun 2025 13:37:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=irglX
-	W9m1Q5FXxONXVbLB2k7lP7/bhTQkoZzemTVQjE=; b=by1XIGAyTkYpfgphefAlF
-	t42OJltXrh9jIRPSGSn9e8hx8L10rxMQ/l/Q5rmbGUeuMpaQyaWZmMoMB6ZA7UX+
-	vLjSEKj9HvgfOEW1kEzhJ3aPCs733A1i5E4kgx4GUrG0E4Vv6Jx2Fj1F+rtUtd6l
-	Wfq8KEF4Y/wj8KlQ85zVxU64s8Jv759U942NQPc2g0LNFCXbiO9HncquEsLuuPNv
-	c486jV3KbjKvlH8sPWuh67OfVsake/llOjYtarDXmJuK+Xkw/Uy5VGDhlnQOF34X
-	pQhX9BMaCyge8zOb7F04Ykld6IgNSzXQVq2KmLCJPQADcQ6h/JopH1+HsN6ARIjQ
-	g==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 47d21du56j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Jun 2025 13:37:31 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 55KHbU5X032843
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 20 Jun 2025 13:37:30 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 20 Jun
- 2025 13:37:30 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 20 Jun 2025 13:37:30 -0400
-Received: from HYB-DlYm71t3hSl.ad.analog.com (HYB-DlYm71t3hSl.ad.analog.com [10.32.14.29])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 55KHbEPc030681;
-	Fri, 20 Jun 2025 13:37:18 -0400
-From: Jorge Marques <jorge.marques@analog.com>
-Date: Fri, 20 Jun 2025 18:55:01 +0200
-Subject: [PATCH 3/3] i3c: master: dw: Use i3c_master_writesl and
- i3c_master_readsl
+	s=arc-20240116; t=1750438642; c=relaxed/simple;
+	bh=MTRrTMjk8gJcugrmcAJwb6WUoNgM0oitaPnoUyoLBzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kja8gsChL5H9nkY6bv35Jw0sdEYUXNkJq1gFJ7IUk0ZZUvk0AY3VOm2yIzKOlz/hvkgI1/LPGvA64BbOhuHKuo+OXxfI7WHna5S0FiOjYXCMUZC8P72cP9vvzRJGCGrTKlHOfL6NTt2b6iYwmgWrNdly/J5OnZXXydW/ZfBfhAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oAfEnH0L; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55KBiFpe000891
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 16:57:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aH6iMtS8aVt02x/4hZJymbYmKZmSzX/zk1qluora9rA=; b=oAfEnH0LeNoYXcQg
+	pwuWt1tSnKPkXXf4mHqj8b9TJ6Ohyu3Q5HWpqu4/l5sfVdYi8ZcqiWGhGqhWEi2X
+	r6wl7sKefFcrg2/DVvRmqLKvuxJjmQryvzXjuWqE7BGa0V3nQBdlnobojfNhf17B
+	dqC/FDBjSqqKq9ItL0Q4EeeOubnM9EP8vSz3DtEzWL19aXJ1WiuzsF32jaPk2Lar
+	EdadcvY+jANazamAoA3jHCmKQzx2tgSOwXEZ4fVVAgVCs6gvF7SjkE9PokrO+maL
+	ywHCBkRsDpWnIZ2St+vNFoslTt7DCdxAB0q4qacwtflCnpWs2DXmb0Bjb/5IBzwG
+	AYtQFA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4791h9kwdw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 16:57:20 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7d094e04aa4so58643785a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 09:57:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750438639; x=1751043439;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aH6iMtS8aVt02x/4hZJymbYmKZmSzX/zk1qluora9rA=;
+        b=ebpj4iABeSNwG9ndnSVsQQP47rVDFBcoM0nGo8OygniUhcdq7AdwlVMPjqMto1VWfV
+         fWun2+O/J3277uBf072vQU/Wz3lwrUdpSBrX3U82M6gNDuGjVLEKreY4LKScHOyBnl2x
+         Hnj4pgVvsEC1/qje5wFLTbamR3N6DHGoec6dnorfWkiW6UTD0Ka6rkLEQBGCD4X1R5Ud
+         asP/oEpTqyghkLdu8kT39P+O8qdNXxtU/bFf2iQtOuvxo20QMCPlOYjSisn0POextCXr
+         i9bnyQGDKtVq9wKW63e26MxwHuKXsCs01qSZUqVhY6D5lMvhTfmugAUXnOqL2adIXYV2
+         r8YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWu/PUkMrZgSE1jH9PDvvogRN5fJcY2bL9/Ojjp5BN2KR80fmIy5BPVWhVMjWyA6/QbF77tzYcZxzU9hic=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxmm0mKTA7IUlPP4UxostBUEQW+7igkOhN/JC3tbZDjZTcEL5U
+	dfuETqdLZAoBWNgP8iVJBLBJt8UM7V6MLYXeUMgQvqkwCv/LnHJ62Av0cCZNShXgeBOOdb5zr0x
+	mLJvkSChUKJQKDI1JZym9Qq/0X+lNpQfnjcFTU7EgjzrlJ2fmphkySjT1xgglh3wpQxQ=
+X-Gm-Gg: ASbGncus64n5m+qrTOXFd0yeE6oaOpYHIF6//MZqO8hyTUaaq0Qqe3kotUZoVTKOvB9
+	QXW0Gv97TKp7D52oM42wEbiZQAsdT0k9tTkXJEMZG6BQcm3obE6rxV9W2bijv+h50M5uwasWXX1
+	a5vKsAL7VKxquFrfMpbhA7Y5YHMsnCy6tw35zBbBW8NjI7UZCLX1TjXjmmRazyRUz9rzaa8qMmy
+	egb4R2eiSuA37fVFGxYQ41d1HI+TPGOGwYClxCYPBAPQV8sTl0gUjIGRcKLLF4SFA+J6Mui9gcG
+	Y1hSMnCwx7PIFNRTsPyS8hCIdGYROiskjpdwsv5ovKZPEq0gPHGC0g3E3NLic54ovBvjwvvvdCU
+	buhk=
+X-Received: by 2002:a05:620a:448a:b0:7d0:aafd:fb7a with SMTP id af79cd13be357-7d3f98d9073mr176484885a.4.1750438639104;
+        Fri, 20 Jun 2025 09:57:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpK+Z1a/STaxapcURqJfzeDBgLN77XcEzNViOUOIZ1OptR6KagVRbX/aeElcpv1q7LaDkYfQ==
+X-Received: by 2002:a05:620a:448a:b0:7d0:aafd:fb7a with SMTP id af79cd13be357-7d3f98d9073mr176484185a.4.1750438638761;
+        Fri, 20 Jun 2025 09:57:18 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0541b7242sm186984066b.118.2025.06.20.09.57.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Jun 2025 09:57:11 -0700 (PDT)
+Message-ID: <d045d7c2-87c0-4f4e-a853-7a3a3c5f596e@oss.qualcomm.com>
+Date: Fri, 20 Jun 2025 18:57:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/11] power: supply: qcom_smbx: respect battery
+ charge-term-current-microamp
+To: Casey Connolly <casey.connolly@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Kees Cook <kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        linux-hardening@vger.kernel.org
+References: <20250619-smb2-smb5-support-v1-0-ac5dec51b6e1@linaro.org>
+ <20250619-smb2-smb5-support-v1-6-ac5dec51b6e1@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250619-smb2-smb5-support-v1-6-ac5dec51b6e1@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250620-i3c-writesl-readsl-v1-3-e0aa1c014dff@analog.com>
-References: <20250620-i3c-writesl-readsl-v1-0-e0aa1c014dff@analog.com>
-In-Reply-To: <20250620-i3c-writesl-readsl-v1-0-e0aa1c014dff@analog.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Frank Li
-	<Frank.Li@nxp.com>,
-        =?utf-8?q?Przemys=C5=82aw_Gaj?= <pgaj@cadence.com>
-CC: <linux-i3c@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Jorge
- Marques <jorge.marques@analog.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750438498; l=1902;
- i=jorge.marques@analog.com; s=20250303; h=from:subject:message-id;
- bh=BAY7XByXgMFVNwFKD6933qf59V3/WCIDwbV+JGWtPFk=;
- b=VntJQT3NsYb6lAlu+PDBwgBaqastKOhto2s4j6qCOIKpuqVPXTJJr0UuD6iHWyBVRVX+i4o/I
- DxypYZkZyejBxaMBAnqDRJx9jcuyZvtXNDopkllWlsrdCBxEjzRKP77
-X-Developer-Key: i=jorge.marques@analog.com; a=ed25519;
- pk=NUR1IZZMH0Da3QbJ2tBSznSPVfRpuoWdhBzKGSpAdbg=
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Authority-Analysis: v=2.4 cv=Z4zsHGRA c=1 sm=1 tr=0 ts=68559c5c cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=gAnH3GRIAAAA:8 a=lSS91xS1W9WTNWmX6BAA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: fx9dTcQQoCQiWBlP4T6W77ojUQ7kCb0W
-X-Proofpoint-ORIG-GUID: fx9dTcQQoCQiWBlP4T6W77ojUQ7kCb0W
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIwMDEyNCBTYWx0ZWRfX8eh/UKl0Ubpg
- tFiwRPhqG85qzLKT9G8fNiNh0TNyLEgodBi3pC6xwwtZ1cHM2cNFSRuo00Xj5bDzDciOZ8oNykX
- MERZWvxq+nabbfoUuULr6JLOqBBlz2CPyO8h4YbqjDpMgA+uHLBuYqxrf/MrdworARdGZrAzzVT
- gMgdes6MvpD1AYPEpCWmHm25DA6GDaGQhvMDB+/Kk7KaPzNxajz7r0WW6iuGsxamcOhPu3SzpHR
- 7QLYv/8H6X21i2W83YW3OTiDAGlUMeo8EgJUw07JoBUtBSwLlPnSAw0RgFJ/YwhV+YEsxin6f77
- PP/V5DxMbZbUUEAJtqYy5w+/6BigGvSTrAAEWfon0dAJzLx0r+pffMSxW+Maq4dOObOT82rSP0L
- dJWQUZO6XbKq8BoELj3YiGX4r49QbTmy6WHnVggyJspioTR9Sri2pgF1ACroGty+0jvXT8JG
+X-Proofpoint-ORIG-GUID: 9CsVqmdTfhlDuxGzJxAJD4F5HdhbOz7j
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIwMDExOSBTYWx0ZWRfX87NcusaQ4/vK
+ K8Vnh4MkRR0tfJVxNDGUEqycJSlg2j76WiRxY89EIXCgct4pPaQu4/7xZxemAnNoCqLu9vhNAyn
+ 33cpGBsaiV3Wp+/GqMelpGkEgwvE312siG2NOYMJlNp0rOb3A2xjm8ohVajvnRZdN6+zRoKrq2W
+ vaC/4rkI20q1UNq3aN/6A4lZiA8I6oBZBw9AxFn0KwCMSdYf6lowt03t05hs4RZ1KWUFxDpulTv
+ DofoXSZrKcKHulQkTnaVEt6AN3fdtSdwzP5nExyv9nWipSr4p32oIweUhHBO51CmnGvcOfrS+SZ
+ weuTK+qB/HqPZJ+D2Gse2y8dVlvMoki/jGePwBM5YwcjztVj96/prNN06fMFrL4BaWqODj+uZhF
+ CGZbuXeThYSDDX2fo5/MSgHdwUsdzWm/q4o0ouMEobTzeVVpGISGch/OrPzQQuN6UvlFcEHe
+X-Authority-Analysis: v=2.4 cv=UL/dHDfy c=1 sm=1 tr=0 ts=685592f0 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=KKAkSRfTAAAA:8 a=PGWYFjC4ci8_ood58tIA:9
+ a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10 a=IoWCM6iH3mJn3m4BftBB:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: 9CsVqmdTfhlDuxGzJxAJD4F5HdhbOz7j
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-20_07,2025-06-20_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 phishscore=0 bulkscore=0 spamscore=0 mlxlogscore=723
- suspectscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 adultscore=0
- lowpriorityscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ mlxscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0 mlxlogscore=799
+ malwarescore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506200124
+ definitions=main-2506200119
 
-Use the inline write/read methods common to controllers that have a
-bus width of 32-bits.
+On 6/19/25 4:55 PM, Casey Connolly wrote:
+> Respect the max current limit set on the battery node, one some devices
+> this is set conservatively to avoid overheating since they only have a
+> single charger IC (instead of two in parallel).
+> 
+> Signed-off-by: Casey Connolly <casey.connolly@linaro.org>
+> ---
 
-Signed-off-by: Jorge Marques <jorge.marques@analog.com>
----
- drivers/i3c/master/dw-i3c-master.c | 24 +++---------------------
- 1 file changed, 3 insertions(+), 21 deletions(-)
+The subject references a different, similar-sounding property
 
-diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-index 611c22b72c1572ddf717c8ad473e44a3b8fcceaf..eb1346409829dc64cdd1d738e9870993d38bbb0f 100644
---- a/drivers/i3c/master/dw-i3c-master.c
-+++ b/drivers/i3c/master/dw-i3c-master.c
-@@ -336,37 +336,19 @@ static int dw_i3c_master_get_free_pos(struct dw_i3c_master *master)
- static void dw_i3c_master_wr_tx_fifo(struct dw_i3c_master *master,
- 				     const u8 *bytes, int nbytes)
- {
--	writesl(master->regs + RX_TX_DATA_PORT, bytes, nbytes / 4);
--	if (nbytes & 3) {
--		u32 tmp = 0;
--
--		memcpy(&tmp, bytes + (nbytes & ~3), nbytes & 3);
--		writesl(master->regs + RX_TX_DATA_PORT, &tmp, 1);
--	}
--}
--
--static void dw_i3c_master_read_fifo(struct dw_i3c_master *master,
--				    int reg,  u8 *bytes, int nbytes)
--{
--	readsl(master->regs + reg, bytes, nbytes / 4);
--	if (nbytes & 3) {
--		u32 tmp;
--
--		readsl(master->regs + reg, &tmp, 1);
--		memcpy(bytes + (nbytes & ~3), &tmp, nbytes & 3);
--	}
-+	i3c_master_writesl(master->regs + RX_TX_DATA_PORT, bytes, nbytes);
- }
- 
- static void dw_i3c_master_read_rx_fifo(struct dw_i3c_master *master,
- 				       u8 *bytes, int nbytes)
- {
--	return dw_i3c_master_read_fifo(master, RX_TX_DATA_PORT, bytes, nbytes);
-+	i3c_master_readsl(master + RX_TX_DATA_PORT, bytes, nbytes);
- }
- 
- static void dw_i3c_master_read_ibi_fifo(struct dw_i3c_master *master,
- 					u8 *bytes, int nbytes)
- {
--	return dw_i3c_master_read_fifo(master, IBI_QUEUE_STATUS, bytes, nbytes);
-+	i3c_master_readsl(master + IBI_QUEUE_STATUS, bytes, nbytes);
- }
- 
- static struct dw_i3c_xfer *
+The change looks ok
 
--- 
-2.49.0
-
-
+Konrad
 
