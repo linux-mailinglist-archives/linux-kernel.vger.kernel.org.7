@@ -1,95 +1,63 @@
-Return-Path: <linux-kernel+bounces-695346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A409FAE188F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:06:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E360AE1897
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E1981BC4875
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:06:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 377467AE6DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA68A2857DF;
-	Fri, 20 Jun 2025 10:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CAC284696;
+	Fri, 20 Jun 2025 10:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VhuKr3vl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33234285412;
-	Fri, 20 Jun 2025 10:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CgLswvgZ"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08867283FD1
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 10:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750413815; cv=none; b=BSTf+kr7Vzccg+Wmy8rumh1F1R7UwX2fGSvdVwbcXZmSD983YAsBMQpNy4TC8QDFip1ZY54X01bspm2kqv8ZLv8b8dicNm0QvZVlN/gKztt5LgVHaiohmr+wwInBVC/UbPmuJ8hr2JwnVm4FCCRJfBL8dcv3TeRzVVueLMTktuk=
+	t=1750413884; cv=none; b=Gs03I7OhBj/i5jVcouOiST8injBVnmiekoqfB4YNgy0OrsjAJoi6evjURyBYCy8g4mwKQtIrsTW8mC0OTrvm9OYeB2uGHEreY4rkzkznfg4SjIZHvkTrtY/KCG505Dr6SJhYEhS4/28sQGYoqA5azeUKPpAJ423iKwrqc2ES9cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750413815; c=relaxed/simple;
-	bh=dYyBprBnixwR53Tfm/dKtWJm68UzW+gDxVTIxJUHFZQ=;
+	s=arc-20240116; t=1750413884; c=relaxed/simple;
+	bh=c6LONFfZ0yM++gULrwbPfTOzdtWv9AB/e46wpXvuVyY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SDm899w2b+PVMj/llohRrri6S55bfPWp4e8mzkYEFdZnbumGL2Xu8CqIO1UD1Dh83mLPhkES75b6fQqe5Ax7PhMKkxsaOD+1SVecpfFxTbBWheoHQqkDmZit8PplVpXgyT8Nz5Lpf5tZop1PMS/o/aT16vM1isu4oSM/PHnJljU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VhuKr3vl; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750413813; x=1781949813;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=dYyBprBnixwR53Tfm/dKtWJm68UzW+gDxVTIxJUHFZQ=;
-  b=VhuKr3vlo4Y3gWngIg4OuD7KddlZDssiFGu5S9h/jOiq+YVYVUg7b3tl
-   llv+myC9emrM2t0l9EWIr8iPUT/WhKpA51cht0NII1YgC08v4Bmey+n63
-   IO0kytr09HXlqt6YxEa7VlcKCr0bx18e3WHtUtKCktMf2P6tMIhkd6zb+
-   BfJWb+7ck/y3s7E41b98V9N0IhYmXKTNtVSs23EVLD/xi0lIovBbtYn7Z
-   9EdXM/Svygi1zDLd2vOWJTlX6TlephTSbwnUGamDB2L6Yv16uytBtKss5
-   2lbdA6/Xre8uFnRKt7Wq9tH7a4SddKSo+SGyo7JQ59pUn6itG5AvnbhNc
-   g==;
-X-CSE-ConnectionGUID: i5xz8RcNRSS7NIaCXVPDYw==
-X-CSE-MsgGUID: oOPLMc1PRlaU8ea5TtxysA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="52817128"
-X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
-   d="scan'208";a="52817128"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 03:03:33 -0700
-X-CSE-ConnectionGUID: yTN32KeyTZGyDUAArqSApA==
-X-CSE-MsgGUID: IpfS2IKxSlSThBWGDenFgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
-   d="scan'208";a="181744802"
-Received: from p12ill20yoongsia.png.intel.com ([10.88.227.38])
-  by fmviesa001.fm.intel.com with ESMTP; 20 Jun 2025 03:03:27 -0700
-From: Song Yoong Siang <yoong.siang.song@intel.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Shinas Rasheed <srasheed@marvell.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Brett Creeley <brett.creeley@amd.com>,
-	Blanco Alcaine Hector <hector.blanco.alcaine@intel.com>,
-	Joshua Hay <joshua.a.hay@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Kurt Kanzenbach <kurt@linutronix.de>,
-	Marcin Szycik <marcin.szycik@linux.intel.com>,
-	Brett Creeley <bcreeley@amd.com>
-Cc: intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH iwl-next,v3 2/2] igc: Add wildcard rule support to ethtool NFC using Default Queue
-Date: Fri, 20 Jun 2025 18:02:51 +0800
-Message-Id: <20250620100251.2791202-3-yoong.siang.song@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250620100251.2791202-1-yoong.siang.song@intel.com>
-References: <20250620100251.2791202-1-yoong.siang.song@intel.com>
+	 MIME-Version; b=uTp+tkXjKmnNputE2hSQnbkoFEO+ZOTHkgH6DOFUW4kbGbzLwcsxRCyN1Hoo+BbEv3ISZU78mRYQ6o+bArHOu8qFoB+NfPA0gZ/qOT25Nyuz6At4IBeu6ckwUg6xTdvpWNep0lauX3kpMAgSGDMxLlV9nxqEhCSRrjFShGC7gDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=CgLswvgZ; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=60
+	9TVC0hOBK6dMhgn8tSTcczNdyVWJ/RBOSw15FKE+Y=; b=CgLswvgZJ9CPhVq7O1
+	ElIxKBwU3TuS9durqa2XM5A6FByXdn/DWNUajWRb5sn2DWChXTzzJ5OsqrrDIlVX
+	kLU6MUwW2vViF3rut3GRnP0vl+HIvnMYbAHXRD77VxYsXKESGAXMuFqHQ4mmaLMK
+	TEIGzxq1ZAinf0DWWklxfhZr8=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgCXf77TMVVoqyBpAQ--.37413S4;
+	Fri, 20 Jun 2025 18:03:14 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: oliver.sang@intel.com,
+	urezki@gmail.com
+Cc: ahuang12@lenovo.com,
+	akpm@linux-foundation.org,
+	bhe@redhat.com,
+	hch@infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lkp@intel.com,
+	mjguzik@gmail.com,
+	oe-lkp@lists.linux.dev,
+	harry.yoo@oracle.com,
+	kent.overstreet@linux.dev,
+	surenb@google.com
+Subject: CONFIG_TEST_VMALLOC=y conflict/race with alloc_tag_init
+Date: Fri, 20 Jun 2025 18:02:58 +0800
+Message-Id: <20250620100258.595495-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <202506181351.bba867dd-lkp@intel.com>
+References: <202506181351.bba867dd-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,207 +65,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgCXf77TMVVoqyBpAQ--.37413S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGrWUWFWUZw47uF17Zr43KFg_yoW5KFWUpa
+	yfXry7Ca95J3yxCrW7K34v9ryFqw4DGw1UJF42vayF9rnIkr4UCr1DKryIqFyUXFWYya9Y
+	qFs7tF4vkr1UZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U6HqxUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBkBpyqmhVMBM2swAAsJ
 
-Introduce support for a lowest priority wildcard (catch-all) rule in
-ethtool's Network Flow Classification (NFC) for the igc driver. The
-wildcard rule directs all unmatched network traffic, including traffic not
-captured by Receive Side Scaling (RSS), to a specified queue. This
-functionality utilizes the Default Queue feature available in I225/I226
-hardware.
+On Wed, Jun 18, 2025 at 02:25:37PM +0800, kernel test robot wrote:
+> 
+> Hello,
+> 
+> for this change, we reported
+> "[linux-next:master] [lib/test_vmalloc.c]  7fc85b92db: Mem-Info"
+> in
+> https://lore.kernel.org/all/202505071555.e757f1e0-lkp@intel.com/
+> 
+> at that time, we made some tests with x86_64 config which runs well.
+> 
+> now we noticed the commit is in mainline now.
 
-The implementation has been validated on Intel ADL-S systems with two
-back-to-back connected I226 network interfaces.
+> the config still has expected diff with parent:
+> 
+> --- /pkg/linux/x86_64-randconfig-161-20250614/gcc-12/7a73348e5d4715b5565a53f21c01ea7b54e46cbd/.config   2025-06-17 14:40:29.481052101 +0800
+> +++ /pkg/linux/x86_64-randconfig-161-20250614/gcc-12/2d76e79315e403aab595d4c8830b7a46c19f0f3b/.config   2025-06-17 14:41:18.448543738 +0800
+> @@ -7551,7 +7551,7 @@ CONFIG_TEST_IDA=m
+>  CONFIG_TEST_MISC_MINOR=m
+>  # CONFIG_TEST_LKM is not set
+>  CONFIG_TEST_BITOPS=m
+> -CONFIG_TEST_VMALLOC=m
+> +CONFIG_TEST_VMALLOC=y
+>  # CONFIG_TEST_BPF is not set
+>  CONFIG_FIND_BIT_BENCHMARK=m
+>  # CONFIG_TEST_FIRMWARE is not set
+> 
+> 
+> then we noticed similar random issue with x86_64 randconfig this time.
+> 
+> 7a73348e5d4715b5 2d76e79315e403aab595d4c8830
+> ---------------- ---------------------------
+>        fail:runs  %reproduction    fail:runs
+>            |             |             |
+>            :199         34%          67:200   dmesg.KASAN:null-ptr-deref_in_range[#-#]
+>            :199         34%          67:200   dmesg.Kernel_panic-not_syncing:Fatal_exception
+>            :199         34%          67:200   dmesg.Mem-Info
+>            :199         34%          67:200   dmesg.Oops:general_protection_fault,probably_for_non-canonical_address#:#[##]SMP_KASAN
+>            :199         34%          67:200   dmesg.RIP:down_read_trylock
+> 
+> we don't have enough knowledge to understand the relationship between code
+> change and the random issues. just report what we obsverved in our tests FYI.
+> 
 
-Testing Procedure:
-1. On the Device Under Test (DUT), verify the initial statistic:
-   $ ethtool -S enp1s0 | grep rx_q.*packets
-        rx_queue_0_packets: 0
-        rx_queue_1_packets: 0
-        rx_queue_2_packets: 0
-        rx_queue_3_packets: 0
+I think this is caused by a race between vmalloc_test_init and alloc_tag_init.
 
-2. From the Link Partner, send 10 ARP packets:
-   $ arping -c 10 -I enp170s0 169.254.1.2
+vmalloc_test actually depends on alloc_tag via alloc_tag_top_users, because when
+memory allocation fails show_mem() would invoke alloc_tag_top_users.
 
-3. On the DUT, verify the packet reception on Queue 0:
-   $ ethtool -S enp1s0 | grep rx_q.*packets
-        rx_queue_0_packets: 10
-        rx_queue_1_packets: 0
-        rx_queue_2_packets: 0
-        rx_queue_3_packets: 0
+With following configuration:
 
-4. On the DUT, add a wildcard rule to route all packets to Queue 3:
-   $ sudo ethtool -N enp1s0 flow-type ether queue 3
+CONFIG_TEST_VMALLOC=y
+CONFIG_MEM_ALLOC_PROFILING=y
+CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=y
+CONFIG_MEM_ALLOC_PROFILING_DEBUG=y
 
-5. From the Link Partner, send another 10 ARP packets:
-   $ arping -c 10 -I enp170s0 169.254.1.2
+If vmalloc_test_init starts before alloc_tag_init, show_mem() would cause
+a NULL deference because alloc_tag_cttype was not init yet.
 
-6. Now, packets are routed to Queue 3 by the wildcard (Default Queue) rule:
-   $ ethtool -S enp1s0 | grep rx_q.*packets
-        rx_queue_0_packets: 10
-        rx_queue_1_packets: 0
-        rx_queue_2_packets: 0
-        rx_queue_3_packets: 10
-
-7. On the DUT, add a EtherType rule to route ARP packet to Queue 1:
-   $ sudo ethtool -N enp1s0 flow-type ether proto 0x0806 queue 1
-
-8. From the Link Partner, send another 10 ARP packets:
-   $ arping -c 10 -I enp170s0 169.254.1.2
-
-9. Now, packets are routed to Queue 1 by the EtherType rule because it is
-   higher priority than the wildcard (Default Queue) rule:
-   $ ethtool -S enp1s0 | grep rx_q.*packets
-        rx_queue_0_packets: 10
-        rx_queue_1_packets: 10
-        rx_queue_2_packets: 0
-        rx_queue_3_packets: 10
-
-10. On the DUT, delete all the NFC rules:
-    $ sudo ethtool -N enp1s0 delete 63
-    $ sudo ethtool -N enp1s0 delete 64
-
-11. From the Link Partner, send another 10 ARP packets:
-    $ arping -c 10 -I enp170s0 169.254.1.2
-
-12. Now, packets are routed to Queue 0 because the value of Default Queue
-    is reset back to 0:
-    $ ethtool -S enp1s0 | grep rx_q.*packets
-         rx_queue_0_packets: 20
-         rx_queue_1_packets: 10
-         rx_queue_2_packets: 0
-         rx_queue_3_packets: 10
-
-Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
-Co-developed-by: Blanco Alcaine Hector <hector.blanco.alcaine@intel.com>
-Signed-off-by: Blanco Alcaine Hector <hector.blanco.alcaine@intel.com>
-Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
----
- drivers/net/ethernet/intel/igc/igc.h         | 11 +++++++---
- drivers/net/ethernet/intel/igc/igc_defines.h |  1 +
- drivers/net/ethernet/intel/igc/igc_ethtool.c | 18 ++++++++++++++++
- drivers/net/ethernet/intel/igc/igc_main.c    | 22 ++++++++++++++++++++
- 4 files changed, 49 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/intel/igc/igc.h
-index 0b35e593d5ee..c580ecc954be 100644
---- a/drivers/net/ethernet/intel/igc/igc.h
-+++ b/drivers/net/ethernet/intel/igc/igc.h
-@@ -631,6 +631,7 @@ enum igc_filter_match_flags {
- 	IGC_FILTER_FLAG_DST_MAC_ADDR =	BIT(3),
- 	IGC_FILTER_FLAG_USER_DATA =	BIT(4),
- 	IGC_FILTER_FLAG_VLAN_ETYPE =	BIT(5),
-+	IGC_FILTER_FLAG_DEFAULT_QUEUE = BIT(6),
- };
+I add some debug to confirm this theory
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index d48b80f3f007..9b8e7501010f 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -133,6 +133,8 @@ size_t alloc_tag_top_users(struct codetag_bytes *tags, size_t count, bool can_sl
+        struct codetag *ct;
+        struct codetag_bytes n;
+        unsigned int i, nr = 0;
++       pr_info("memory profiling alloc top %d: %llx\n", mem_profiling_support, (long long)alloc_tag_cttype);
++       return 0;
  
- struct igc_nfc_filter {
-@@ -658,10 +659,14 @@ struct igc_nfc_rule {
- 	bool flex;
- };
+        if (can_sleep)
+                codetag_lock_module_list(alloc_tag_cttype, true);
+@@ -831,6 +833,7 @@ static int __init alloc_tag_init(void)
+                shutdown_mem_profiling(true);
+                return PTR_ERR(alloc_tag_cttype);
+        }
++       pr_info("memory profiling ready %d: %llx\n", mem_profiling_support, (long long)alloc_tag_cttype);
  
--/* IGC supports a total of 32 NFC rules: 16 MAC address based, 8 VLAN priority
-- * based, 8 ethertype based and 32 Flex filter based rules.
-+/* IGC supports a total of 65 NFC rules, listed below in order of priority:
-+ *  - 16 MAC address based filtering rules (highest priority)
-+ *  - 8 ethertype based filtering rules
-+ *  - 32 Flex filter based filtering rules
-+ *  - 8 VLAN priority based filtering rules
-+ *  - 1 default queue rule (lowest priority)
-  */
--#define IGC_MAX_RXNFC_RULES		64
-+#define IGC_MAX_RXNFC_RULES		65
- 
- struct igc_flex_filter {
- 	u8 index;
-diff --git a/drivers/net/ethernet/intel/igc/igc_defines.h b/drivers/net/ethernet/intel/igc/igc_defines.h
-index d80254f2a278..498ba1522ca4 100644
---- a/drivers/net/ethernet/intel/igc/igc_defines.h
-+++ b/drivers/net/ethernet/intel/igc/igc_defines.h
-@@ -391,6 +391,7 @@
- #define IGC_MRQC_RSS_FIELD_IPV6_TCP	0x00200000
- #define IGC_MRQC_RSS_FIELD_IPV4_UDP	0x00400000
- #define IGC_MRQC_RSS_FIELD_IPV6_UDP	0x00800000
-+#define IGC_MRQC_DEFAULT_QUEUE_MASK	GENMASK(5, 3)
- 
- /* Header split receive */
- #define IGC_RFCTL_IPV6_EX_DIS	0x00010000
-diff --git a/drivers/net/ethernet/intel/igc/igc_ethtool.c b/drivers/net/ethernet/intel/igc/igc_ethtool.c
-index a7f397b58cd6..ecb35b693ce5 100644
---- a/drivers/net/ethernet/intel/igc/igc_ethtool.c
-+++ b/drivers/net/ethernet/intel/igc/igc_ethtool.c
-@@ -1283,6 +1283,24 @@ static void igc_ethtool_init_nfc_rule(struct igc_nfc_rule *rule,
- 		rule->flex = true;
- 	else
- 		rule->flex = false;
-+
-+	/* The wildcard rule is only applied if:
-+	 *  a) None of the other filtering rules match (match_flags is zero)
-+	 *  b) The flow type is ETHER_FLOW only (no additional fields set)
-+	 *  c) Mask for Source MAC address is not specified (all zeros)
-+	 *  d) Mask for Destination MAC address is not specified (all zeros)
-+	 *  e) Mask for L2 EtherType is not specified (zero)
-+	 *
-+	 * If all these conditions are met, the rule is treated as a wildcard
-+	 * rule. Default queue feature will be used, so that all packets that do
-+	 * not match any other rule will be routed to the default queue.
-+	 */
-+	if (!rule->filter.match_flags &&
-+	    fsp->flow_type == ETHER_FLOW &&
-+	    is_zero_ether_addr(fsp->m_u.ether_spec.h_source) &&
-+	    is_zero_ether_addr(fsp->m_u.ether_spec.h_dest) &&
-+	    !fsp->m_u.ether_spec.h_proto)
-+		rule->filter.match_flags = IGC_FILTER_FLAG_DEFAULT_QUEUE;
+        return 0;
  }
- 
- /**
-diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-index 2e12915b42a9..87311ea47018 100644
---- a/drivers/net/ethernet/intel/igc/igc_main.c
-+++ b/drivers/net/ethernet/intel/igc/igc_main.c
-@@ -3874,6 +3874,22 @@ static void igc_del_flex_filter(struct igc_adapter *adapter,
- 	wr32(IGC_WUFC, wufc);
- }
- 
-+static void igc_set_default_queue_filter(struct igc_adapter *adapter, u32 queue)
-+{
-+	struct igc_hw *hw = &adapter->hw;
-+	u32 mrqc = rd32(IGC_MRQC);
-+
-+	mrqc &= ~IGC_MRQC_DEFAULT_QUEUE_MASK;
-+	mrqc |= FIELD_PREP(IGC_MRQC_DEFAULT_QUEUE_MASK, queue);
-+	wr32(IGC_MRQC, mrqc);
-+}
-+
-+static void igc_reset_default_queue_filter(struct igc_adapter *adapter)
-+{
-+	/* Reset the default queue to its default value which is Queue 0 */
-+	igc_set_default_queue_filter(adapter, 0);
-+}
-+
- static int igc_enable_nfc_rule(struct igc_adapter *adapter,
- 			       struct igc_nfc_rule *rule)
- {
-@@ -3912,6 +3928,9 @@ static int igc_enable_nfc_rule(struct igc_adapter *adapter,
- 			return err;
- 	}
- 
-+	if (rule->filter.match_flags & IGC_FILTER_FLAG_DEFAULT_QUEUE)
-+		igc_set_default_queue_filter(adapter, rule->action);
-+
- 	return 0;
- }
- 
-@@ -3939,6 +3958,9 @@ static void igc_disable_nfc_rule(struct igc_adapter *adapter,
- 	if (rule->filter.match_flags & IGC_FILTER_FLAG_DST_MAC_ADDR)
- 		igc_del_mac_filter(adapter, IGC_MAC_FILTER_TYPE_DST,
- 				   rule->filter.dst_addr);
-+
-+	if (rule->filter.match_flags & IGC_FILTER_FLAG_DEFAULT_QUEUE)
-+		igc_reset_default_queue_filter(adapter);
- }
- 
- /**
--- 
-2.34.1
+
+When bootup the kernel, the log shows:
+
+$ sudo dmesg -T | grep profiling
+[Fri Jun 20 17:29:35 2025] memory profiling alloc top 1: 0  <--- alloc_tag_cttype == NULL
+[Fri Jun 20 17:30:24 2025] memory profiling ready 1: ffff9b1641aa06c0
+
+
+vmalloc_test_init should happened after alloc_tag_init if CONFIG_TEST_VMALLOC=y,
+or mem_show() should check whether alloc_tag is done initialized when calling
+alloc_tag_top_users
+
+
+
+David
 
 
