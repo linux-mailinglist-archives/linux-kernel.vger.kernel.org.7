@@ -1,159 +1,115 @@
-Return-Path: <linux-kernel+bounces-695813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C521FAE1E5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:21:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56BB1AE1E59
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EBD01BC5B5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:21:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE4464A53EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3787A2BFC85;
-	Fri, 20 Jun 2025 15:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C88E2BFC80;
+	Fri, 20 Jun 2025 15:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NIEEU1Op"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sj6aKunY"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BB58F5B;
-	Fri, 20 Jun 2025 15:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920BD1CAA6D;
+	Fri, 20 Jun 2025 15:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750432856; cv=none; b=HLl2gkPJCIf3Aff5NEqLdA+jkwg9qkdTp4Grlr+S5g3owbibVg1Jx/KT8whRV3IgBmXoOYv8dfJhlFGjClyfZ32A9F8afSHm+XkK6vJ6q2O6R6boicj7o0MAZb6Y/P2eCTYfq2wrUtjMMuushT4S94nYL2Uu4Sb3B5tos0eS/ec=
+	t=1750432769; cv=none; b=O7liH9ol7XpikNotJtY3M2HVzlMfoMmaFgio/ulxn8zRCvdL/xIMO0/ZW5XHg5Ppd9rL4ACSYwonQMrIY7o0fkkDfuOMtcFzTTwuPcsKrcWd7cBeYYjSNTPvvlmXK9COwQmCJkCN8rfodk+uwF2rCpanpFCc+EpO7wokCoFvPus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750432856; c=relaxed/simple;
-	bh=8+3R0drlRKnn/JI35OglwAOSwdC9nd8AtxSqpjzELK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sRO/08XOT4Ac5ZrgraaZ1EL2VaMinfYdytQLJd5+FVDOq5Neg/bcva9ZBi+v3lnh93cQP+XCCz+HOMdX4i9+IZk9CwG9sWYfIWb3AhiRjekXaSkx/V2jOwNrQUHWtgU5aa65tJnes6HKLDdJNtbhyRkICpjGOZhDpfKvnvhijVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NIEEU1Op; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-453066fad06so13046655e9.2;
-        Fri, 20 Jun 2025 08:20:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750432853; x=1751037653; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M/KIHO86ldP5ZYoE2kwfFWlV69Tw5RaRQj/rKy8DDRg=;
-        b=NIEEU1OpZ6bGXPEtZBJLe7vQYxJLQ/8YHga8PDGa70rCR21LdPdt/saNOifOY35g2y
-         A+mNnv2ZNjWDYqYSA6TsTDEb25dG6opTvdRRCFsndRtDIEsfoPaiI6G7lbq2fSAjP+7P
-         DPl6lOMctefpXzGoW/8zBf/k7AC2LmQ+5hNO/arqnTM2MbQz65K1NXWDdF3LUUpB9P7a
-         PYs+z4498JHILdGfnH6z/wwzDCwhiyLZLZ1Pm6UMwC6Oe/LE41YgwLUJVkG7IWy6zYb8
-         Xb5HBUm7WjxJOSSr8g8wKiy/pxMeZIUVlxHlIKwlfuKu49ihpoMsZKpjfrjCOHD8XLSZ
-         99Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750432853; x=1751037653;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=M/KIHO86ldP5ZYoE2kwfFWlV69Tw5RaRQj/rKy8DDRg=;
-        b=l4CB78TFljm0hmdrfQGiH6dMKD14/tom9jhqZtF1m/whDczcZSC8EBEYJ7ZCJ/U4Gt
-         xHKpSB+y9xx3eCo90imCMNt6TFhJLHlcCEUuov2rYIzxori9dCMkxU2fbSxxPbXG8llz
-         bD/lY9f15GiXVDXWl6920EsOEHpMqcLSq/VmGhAaEWuaKJukL0+A5nXuV1BDPgi52GdT
-         Au+OUniGzI/Eza6RM2D87AOQjqJjxdByixA8SweaXfp6fEqhOuj5j9lwOnEJ09x1qC0L
-         XOpK05tYkllbqA7zqLH/U7FX8M/XEDMlFIk4lyK07BAuov2abg7oS4mbmiaSU6m16aFq
-         HZcA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6c/v3LmRQ64RHS5aoq+sZen4Kn35T3PYjdcLIy2ksUp7yz2Fsk4CAC92Eac+0IVfdmnwh7iPK3cQV@vger.kernel.org, AJvYcCVDqeXgwImvlrxz6L9aXPG46iOhOerZA2+kPWmjaGyTKiyvaW8ayJxYqI/PjjlbdggqmRy9QAVHestmYdPg@vger.kernel.org, AJvYcCWFIrxNcTrErk8cwO5vNHlDFkpuFtLCYUe4S31/PwoQ9eFMLLEp6BXyXRg/FJosSFKnE2niPQLv/KZppQ==@vger.kernel.org, AJvYcCX34AKeNPHwFwqznjZp0sjrILWuYKXvTbZEv/U+1n6JBgdJUqVzxzvh9T3l/ZLn/2c8nkYbdwvRDOi43GZ1nqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXLdJRtorhJ8hcJHIMfhcSfU81yfkLxPkYW4SAaK6JduR01VBh
-	j2ZlWsb9f0pmIgSZ1cp3EHPs3OXcfABZzZmAkG7/fEnopQXJYpeMfcqk
-X-Gm-Gg: ASbGncsH4gLSMM43DJEwLrp7Hl/bUkEUPENpWlLC1P/9YwoAzG8yasKleBUhsShd+bN
-	Vlh68JoHIIGxhaWxZ+opa+sKVg37z8a5+1B9Hj94rGNiK5GPHhXeUzAKiZhy1/aUeg8+cPGqYs8
-	d3KJQHdKkVd2iIsEfrSRZ53cyPuPv+KKx2Kgu2GBzH10NhoA8wOVyMikj4cgj+6kOWxv4asL0vm
-	WeW9tNaiBpzwyRua2xbKDFPH1QFktfJJ7u4khzJRvABtK9uHEbjZ/ILCeDCyvVVO1L75dwZnCLg
-	b+EqTUMXmSoWVaSBmee4jAQlsjQdPtuYXwo5PmkLAomE6QQPe5w6+qtK9k34Ha5V096/Oie2DG6
-	MOYjseJVaVfdfqkOD+5iHt1MvnDXfu2q63S8R7Q2wdjrheoTG3w==
-X-Google-Smtp-Source: AGHT+IFWKYgJk3mh4dufOnojkp3+ym/Cq+duMM+/JKKRWEtc/dnqzc4ndzC9W90pmrbOVECY/4YLeA==
-X-Received: by 2002:a05:600c:46cb:b0:43c:f1b8:16ad with SMTP id 5b1f17b1804b1-4536877fc08mr16646495e9.30.1750432853078;
-        Fri, 20 Jun 2025 08:20:53 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453646d1508sm28563515e9.12.2025.06.20.08.20.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 08:20:52 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: Alex Hung <alex.hung@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Igor Korotin <igor.korotin.linux@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Remo Senekowitsch <remo@buenzli.dev>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Xiangfei Ding <dingxiangfei2009@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Benno Lossin <lossin@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	Len Brown <lenb@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>
-Subject: [PATCH v8 2/9] samples: rust: platform: don't call as_ref() repeatedly
-Date: Fri, 20 Jun 2025 16:18:49 +0100
-Message-ID: <20250620151849.281238-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
-References: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
+	s=arc-20240116; t=1750432769; c=relaxed/simple;
+	bh=D+NBxxS/s7lAkhzv5kblgQFQ0K3/wljS6mGdAQtA3R8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UDMyegvKHTRpX+LpawwiUNoZ3Mstl/yFunk5mpif1+liLmmRxTycx2ibYRtY8OMC7hvC/bAYuQMsz+Uw/Z0vMCzwo4dEsc5ycwtbarQl4Q6CGLajcMOREZv1q4mjvP/uzD1+4WUordkwPxEQTufwHslEsS3qzl8r5fQk+5PIPTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sj6aKunY; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55KFJEa6694542;
+	Fri, 20 Jun 2025 10:19:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1750432754;
+	bh=cmNHTwVBLJviuFOTOh0wl60eo4uFjud5nAeWBEfxhVA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=sj6aKunYigUauKJDygtl1MeGQJ4aB0kaAb0DxzJY5KPtfQcsT5yuyfdMLZx6mj8oA
+	 UFHeUS5p1j2Mk+0yd5526GP6oOOSnRRtg77UWB4YhT8/tE3lfh6q2naootGnGye/uj
+	 TUrP4EmIwMVQEpeUfCsIfVN5XhexOFSCtqYEbosw=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55KFJD9i1886801
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 20 Jun 2025 10:19:13 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 20
+ Jun 2025 10:19:13 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 20 Jun 2025 10:19:13 -0500
+Received: from [10.249.32.27] ([10.249.32.27])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55KFJCAI3401552;
+	Fri, 20 Jun 2025 10:19:12 -0500
+Message-ID: <c517f657-ec34-4878-9b09-31c48134347e@ti.com>
+Date: Fri, 20 Jun 2025 10:19:12 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] regulator: tps65219: Fix devm_kmalloc size allocation
+To: Robert Nelson <robertcnelson@gmail.com>
+CC: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
+        <rogerq@kernel.org>, <tony@atomide.com>, <lee@kernel.org>,
+        <d-gole@ti.com>, <jkridner@gmail.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <m-leonard@ti.com>, <praneeth@ti.com>,
+        <afd@ti.com>
+References: <20250620000924.2636542-1-s-ramamoorthy@ti.com>
+ <CAOCHtYgweLhO4nNhNLtJ-_25guqER7ohDf7TNy8WNFwo898wPw@mail.gmail.com>
+Content-Language: en-US
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+In-Reply-To: <CAOCHtYgweLhO4nNhNLtJ-_25guqER7ohDf7TNy8WNFwo898wPw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Danilo Krummrich <dakr@kernel.org>
+Hi Robert,
 
-In SampleDriver::probe() don't call pdev.as_ref() repeatedly, instead
-introduce a dedicated &Device.
+On 6/20/2025 8:30 AM, Robert Nelson wrote:
+> On Thu, Jun 19, 2025 at 7:09 PM Shree Ramamoorthy <s-ramamoorthy@ti.com> wrote:
+>> In probe(), devm_kmalloc uses pmic->common_irq_size to allocate an array of
+>> 2 bytes, but pmic->common_irq_size is being used like an array of structs.
+>> The param sent should've been pmic->common_irq_size * sizeof(*irq_data).
+>> This led to an issue with the kmalloc'd buffer being corrupted and EVM boot
+>> issues. The common and device-specific structs are now allocated one at a
+>> time within the loop.
+>>
+>> Fixes: 38c9f98db20a ("regulator: tps65219: Add support for TPS65215 Regulator IRQs")
+>> Reported-by: Dhruva Gole <d-gole@ti.com>
+>> Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+> Thanks Shree!  Starting testing on PB2/BeaglePlay's..
+>
+>
+>> base-commit: 5c8013ae2e86ec36b07500ba4cacb14ab4d6f728
+>> prerequisite-patch-id: cd76c901948780de20e932cf620806959e2177b1
+>> prerequisite-patch-id: e847098a38d07e5ff31e8c80d86d9702d132fdad
+>> prerequisite-patch-id: e6a01f111e527c6da442f6756f8daa4e79d0fa3c
+> ps, worked around these 3 missing in v6.16-rc2, which git tree do you
+> have them staged?
 
-Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
----
- samples/rust/rust_driver_platform.rs | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+I have them staged in master, but those 3 commits (see links below) snuck in. 
+I'll rebase this commit on a new branch & remove those for v2.
+https://lore.kernel.org/all/aB3hiEM0CB8m_X8m@stanley.mountain/
+https://lore.kernel.org/all/175034639178.919047.12885250485072078236.b4-ty@kernel.org/
 
-diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-index c0abf78d0683..000bb915af60 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -32,13 +32,15 @@ fn probe(
-         pdev: &platform::Device<Core>,
-         info: Option<&Self::IdInfo>,
-     ) -> Result<Pin<KBox<Self>>> {
--        dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver sample.\n");
-+        let dev = pdev.as_ref();
-+
-+        dev_dbg!(dev, "Probe Rust Platform driver sample.\n");
- 
-         if let Some(info) = info {
--            dev_info!(pdev.as_ref(), "Probed with info: '{}'.\n", info.0);
-+            dev_info!(dev, "Probed with info: '{}'.\n", info.0);
-         }
- 
--        Self::properties_parse(pdev.as_ref())?;
-+        Self::properties_parse(dev)?;
- 
-         let drvdata = KBox::new(Self { pdev: pdev.into() }, GFP_KERNEL)?;
- 
--- 
-2.43.0
-
+>
+> Regards,
+>
 
