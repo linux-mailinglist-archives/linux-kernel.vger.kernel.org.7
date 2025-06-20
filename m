@@ -1,225 +1,216 @@
-Return-Path: <linux-kernel+bounces-695915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 786AAAE1F67
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:51:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17067AE1F57
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D0C4C312A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:49:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23A6C7A4547
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF6C2EA17F;
-	Fri, 20 Jun 2025 15:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982C92E612F;
+	Fri, 20 Jun 2025 15:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4kU49/Y"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oCBmwHOg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073A02E763C;
-	Fri, 20 Jun 2025 15:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC82E2D3A86;
+	Fri, 20 Jun 2025 15:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750434478; cv=none; b=BmyxJQW5Z0LGE4rYq/A+QUzWu2bGUrW+AezR/dwwFwoRvz15TqC8IdFfqUpvBgtF7fYRBUJqk/jJiqz7RjQV7w9AaI5nCe0I20DCCj5tiGj2kQlGk/wQdJMwrPpF4SGAfTj7gOUEdBEpTQ4NIcn7DCAMXhdscj2w9iutAK3q0fI=
+	t=1750434458; cv=none; b=l1BqvTenxKOWASxokhtRTXgRKxAucobyOSX60QRYyZAWmjUM+nY2dcWrPG8umuNNf+e8NFsl5GB1N0x4z0yTgIfG0Ehm/5U9WZGvjWbhUjCgn6/ycz8VTe8+aeC9nkpM5EMh8zAgCAA5zvyYkqFnqtJ0rYWiLNBE+Jyz7IWad1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750434478; c=relaxed/simple;
-	bh=puPbHpytOZW7mie8GfL84As9P2RFvRpERNKNKQE1xwk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nmaIicZC6sJ8eWw1BHS6y3X6WMdpHsBSgdj+RgW5pvrzrtpT1gnIRGb0UHEYkulfAk8rGq69GThhl+kHTqA3p9RtTNvoW36yDFUYMSzIbKctDkvJNxffOc7rhWERWoWoJyctMV6lOFORHd2fv5WkgIJw440eajK/nl2bEiLARo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4kU49/Y; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-453647147c6so10377325e9.2;
-        Fri, 20 Jun 2025 08:47:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750434475; x=1751039275; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bqFUjW8+uNCNgRtyXVYxbhOT3igrLvGYOROHOkaDs3Q=;
-        b=l4kU49/YCMtXxAV9xfHhoLUTfzCMwTHjrNNI4ZAEuYnBLDMFt8fBSJcCSHfIJGQAdE
-         bEXQjV/iAKGnR+BlMPXIsspmNMJjD4qjeQ1tT+N977UloaLbgYYpJ2wj9JCx2FzeMfSD
-         rmDbELZyuBNy6FkCkvHptQ5P4yR70VU5g/35uY9AoG+Pcdq9A1UH7MGSqdvgQRjMqgMC
-         RkQdQKVE1u0AfgQp0C3yrhtLJZHJiFdZ26cAIa9a22G1czCdbRN7BOw4d/y6Xsy1yBOI
-         nWEjyKtg568z2ZMCzuVfXEqfLIrEIJiL9is88HwlQ2LRiUPbUTAunzcAMOYniUQifqKz
-         8kMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750434475; x=1751039275;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=bqFUjW8+uNCNgRtyXVYxbhOT3igrLvGYOROHOkaDs3Q=;
-        b=kwAL+DVblYmuanI09kS63ZNSSoZrhNwHyNG9vplPYg7L46EpyJua5EPG+YBEVBIKeg
-         9EwfuyYTqkl2jgrg0qqJgOjbJ+rqN9jlfS+p0zaZJU3pFJzAfUdBKa1pLuG4w+PqAVgf
-         Gl8LxJp9DYSQv9gb5bNXPY0SBf6NLDUQp8pKDZD4hTy4BxxxxfI2MqFdqcIe+d+MGSTn
-         yKdKdVaSVCDErZgZ9zxAaI3c4vAYblKdpuVjymUwSuf2V53u5ELKLAKMJFlUj5W3yVY+
-         3ckPLsDxW7xBOHpgTQ3tGAhsJWKBroQAlrTVQ0Rh5EY8vKU9Uio3X04LsvL8o0gT5WOD
-         PQbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGPMt8k9nw+lo/zmHXjqvkSGFDGNXbSiassgnQUChP7zTV64WXXHIBjIEVNk0TN6rdgL15FDAK6bp1CYDU@vger.kernel.org, AJvYcCWkNWAD9n5MYeXxWnTFbZrMLhx5I4OFsKWjZYt1rpZBYzSgi/wKNKu+J71xHdTNZ6oL56Pw2cbn+q6LzTQAk/0=@vger.kernel.org, AJvYcCX1xZJkiQ6c/iaeSPAhLWcJFBDakCCOagHl9b9RzrfVtooxEQEuoCfNWQ9PtBoRE8ppP3PN8uE1i4nFBA==@vger.kernel.org, AJvYcCXLSjO9jokepqSYoG8KuPUUMDGr90u2+IYGrWIiLvJnHHGO9vIHubXwqPf6zVrpifOv6N7EDWnQ36yS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb0WcwUsdnlwtfR4RcscUoEEtqRF0DJPm6dgZkDnFvI86gcWLR
-	9bE0LlShQbTtTuoXMmRl/SJh8PSlKEsfiB/iitwffVKjgMVm6lWidEww
-X-Gm-Gg: ASbGncvmYLyT/Kjuk8YMOdRCde246fvNEyrAAj2rlAYGnN8yMCX67s7gZZ5+kMcuN+c
-	LHLOsFeDaZQ0+imYfUJxu7uK5EVXrynng+mEfyqj1/3H+T3vBBNwxw4d2VmEyPzjK47MHGOI/iB
-	Zxe2Nv4654uwL4aLNyrzjtA/lnRj3iJVGtjcjYOh5bpnV+kSc6Oge9dxVF/rq5kzOJhf90fegDh
-	EGCQfPsaf/WjrkNx7dJKYiuV/+TsmDS68pbrAR+fPAgqaf3pBdG2bPKY3NYk5cfV3XnXmKXWt8W
-	U8sZ6AxTTerJPiM9g4iatUOao1g1xl/Ys0hZzaI7BO93G8w4WTwxpOJ8tCw+BF4zYXUctJvk5YF
-	6lIGYKoyqj0xhtXUo+XUBqyy0IdAYe+Fb9rpT
-X-Google-Smtp-Source: AGHT+IGq8HrsMga9eVPB6fzJA1zoMGuoKpuD12G+vs6rwDV90u10qjjl3ByW06NQ8l5TR4U+898YzQ==
-X-Received: by 2002:a05:6000:248a:b0:3a5:2fae:1348 with SMTP id ffacd0b85a97d-3a6d13129c6mr2772728f8f.51.1750434474935;
-        Fri, 20 Jun 2025 08:47:54 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d0f18a29sm2442795f8f.36.2025.06.20.08.47.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 08:47:54 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: Alex Hung <alex.hung@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Igor Korotin <igor.korotin.linux@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Remo Senekowitsch <remo@buenzli.dev>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Xiangfei Ding <dingxiangfei2009@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Benno Lossin <lossin@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	Len Brown <lenb@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>
-Subject: [PATCH v8 9/9] samples: rust: add ACPI match table example to platform driver
-Date: Fri, 20 Jun 2025 16:45:52 +0100
-Message-ID: <20250620154552.299932-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
-References: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
+	s=arc-20240116; t=1750434458; c=relaxed/simple;
+	bh=HB6q6Zx5mOBujUOsBMfV/rOeFmq/1ii8asxoKAUsy0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SwoYzACGRIEWQyV80f9VgDPq59sZg8l24BgCmXx0Xkag79v7mYUKhBZOPAGlOXSfWyY6sVylFFJfUyFDoDMouU/MiamhEgfgcT/9vO0M0rMTfyz8GtF5MjJqLWzOUcjysWZTxL8DT5QqysBoKNrocdYbOTKS9PrlcVtY3t2l9gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oCBmwHOg; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750434457; x=1781970457;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HB6q6Zx5mOBujUOsBMfV/rOeFmq/1ii8asxoKAUsy0o=;
+  b=oCBmwHOg676bkj54+OOXvxCZTnweuoECZu0SvOo3n3uvuU+mRbs0jLqB
+   iXriuv8yt3hJj6fof81ZQgwyoVW8NyE6HiUi+QXqt8Yv2nGsGCO3vF1/+
+   2+R8uFAgC3rbfALKANyy5ZAfx3NR9ku1N5CT4NyKa1cEgZ5Jyi/ujNsxA
+   FA1+VdrcwvXT7HLIQ5HkJgs70XAHkY2gxc+YabCDrwmyGDGVxJkKRNoFe
+   bSHELfxJLsNIeG++GMl8DC3Qlhgm1+E9NlvZrYI3odc+/cb1zVHyPxuAY
+   VZh7PI8ctE10PBrGh+YXs2378LFZ5PTECGqXoYhxsygHJfCmwC4JjH0T1
+   g==;
+X-CSE-ConnectionGUID: VOoUROyTSeWg4M96ogdzxA==
+X-CSE-MsgGUID: g6ck/0D6Q1mTnvIM1GaRqg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="51929926"
+X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
+   d="scan'208";a="51929926"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 08:47:36 -0700
+X-CSE-ConnectionGUID: mizpIV4gQTyf+VLZoEzF+w==
+X-CSE-MsgGUID: kWYn61oQT7StHW/fudnPBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
+   d="scan'208";a="155236555"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 20 Jun 2025 08:47:33 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uSdxj-000LuE-1D;
+	Fri, 20 Jun 2025 15:47:31 +0000
+Date: Fri, 20 Jun 2025 23:47:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: cp0613@linux.alibaba.com, yury.norov@gmail.com,
+	linux@rasmusvillemoes.dk, arnd@arndb.de, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr
+Cc: oe-kbuild-all@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Chen Pei <cp0613@linux.alibaba.com>
+Subject: Re: [PATCH 1/2] bitops: generic rotate
+Message-ID: <202506202300.dZGgBtbQ-lkp@intel.com>
+References: <20250620111610.52750-2-cp0613@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250620111610.52750-2-cp0613@linux.alibaba.com>
 
-Extend the Rust sample platform driver to probe using device/driver name
-matching, OF ID table matching, or ACPI ID table matching.
+Hi,
 
-Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
----
- samples/rust/rust_driver_platform.rs | 70 +++++++++++++++++++++++++++-
- 1 file changed, 69 insertions(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-index 8579290eecb3..9c16945e6c70 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -2,8 +2,68 @@
- 
- //! Rust Platform driver sample.
- 
-+//! ACPI match table test
-+//!
-+//! This demonstrates how to test an ACPI-based Rust platform driver using QEMU
-+//! with a custom SSDT.
-+//!
-+//! Steps:
-+//!
-+//! 1. **Create an SSDT source file** (`ssdt.dsl`) with the following content:
-+//!
-+//!     ```asl
-+//!     DefinitionBlock ("", "SSDT", 2, "TEST", "VIRTACPI", 0x00000001)
-+//!     {
-+//!         Scope (\_SB)
-+//!         {
-+//!             Device (T432)
-+//!             {
-+//!                 Name (_HID, "TST0001")  // ACPI hardware ID to match
-+//!                 Name (_UID, 1)
-+//!                 Name (_STA, 0x0F)        // Device present, enabled
-+//!                 Name (_CRS, ResourceTemplate ()
-+//!                 {
-+//!                     Memory32Fixed (ReadWrite, 0xFED00000, 0x1000)
-+//!                 })
-+//!             }
-+//!         }
-+//!     }
-+//!     ```
-+//!
-+//! 2. **Compile the table**:
-+//!
-+//!     ```sh
-+//!     iasl -tc ssdt.dsl
-+//!     ```
-+//!
-+//!     This generates `ssdt.aml`
-+//!
-+//! 3. **Run QEMU** with the compiled AML file:
-+//!
-+//!     ```sh
-+//!     qemu-system-x86_64 -m 512M \
-+//!         -enable-kvm \
-+//!         -kernel path/to/bzImage \
-+//!         -append "root=/dev/sda console=ttyS0" \
-+//!         -hda rootfs.img \
-+//!         -serial stdio \
-+//!         -acpitable file=ssdt.aml
-+//!     ```
-+//!
-+//!     Requirements:
-+//!     - The `rust_driver_platform` must be present either:
-+//!         - built directly into the kernel (`bzImage`), or
-+//!         - available as a `.ko` file and loadable from `rootfs.img`
-+//!
-+//! 4. **Verify it worked** by checking `dmesg`:
-+//!
-+//!     ```
-+//!     rust_driver_platform TST0001:00: Probed with info: '0'.
-+//!     ```
-+//!
-+
- use kernel::{
--    c_str,
-+    acpi, c_str,
-     device::{self, Core},
-     of, platform,
-     prelude::*,
-@@ -24,9 +84,17 @@ struct SampleDriver {
-     [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
- );
- 
-+kernel::acpi_device_table!(
-+    ACPI_TABLE,
-+    MODULE_ACPI_TABLE,
-+    <SampleDriver as platform::Driver>::IdInfo,
-+    [(acpi::DeviceId::new(b"TST0001"), Info(0))]
-+);
-+
- impl platform::Driver for SampleDriver {
-     type IdInfo = Info;
-     const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
-+    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = Some(&ACPI_TABLE);
- 
-     fn probe(
-         pdev: &platform::Device<Core>,
+[auto build test ERROR on arnd-asm-generic/master]
+[also build test ERROR on linus/master v6.16-rc2 next-20250620]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/cp0613-linux-alibaba-com/bitops-generic-rotate/20250620-192016
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
+patch link:    https://lore.kernel.org/r/20250620111610.52750-2-cp0613%40linux.alibaba.com
+patch subject: [PATCH 1/2] bitops: generic rotate
+reproduce: (https://download.01.org/0day-ci/archive/20250620/202506202300.dZGgBtbQ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506202300.dZGgBtbQ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   make[1]: *** [Makefile:1281: prepare0] Error 2
+   In file included from weak.c:10:
+   In file included from tools/objtool/include/objtool/objtool.h:11:
+   In file included from tools/include/linux/hashtable.h:13:
+   In file included from tools/include/linux/bitops.h:52:
+>> tools/include/asm-generic/bitops.h:27:10: fatal error: 'asm-generic/bitops/rotate.h' file not found
+      27 | #include <asm-generic/bitops/rotate.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from arch/x86/orc.c:5:
+   In file included from tools/objtool/include/objtool/check.h:11:
+   In file included from tools/objtool/include/objtool/arch.h:11:
+   In file included from tools/objtool/include/objtool/objtool.h:11:
+   In file included from tools/include/linux/hashtable.h:13:
+   In file included from tools/include/linux/bitops.h:52:
+>> tools/include/asm-generic/bitops.h:27:10: fatal error: 'asm-generic/bitops/rotate.h' file not found
+      27 | #include <asm-generic/bitops/rotate.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from check.c:13:
+   In file included from tools/objtool/include/objtool/arch.h:11:
+   In file included from tools/objtool/include/objtool/objtool.h:11:
+   In file included from tools/include/linux/hashtable.h:13:
+   In file included from tools/include/linux/bitops.h:52:
+>> tools/include/asm-generic/bitops.h:27:10: fatal error: 'asm-generic/bitops/rotate.h' file not found
+      27 | #include <asm-generic/bitops/rotate.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from orc_gen.c:12:
+   In file included from tools/objtool/include/objtool/check.h:11:
+   In file included from tools/objtool/include/objtool/arch.h:11:
+   In file included from tools/objtool/include/objtool/objtool.h:11:
+   In file included from tools/include/linux/hashtable.h:13:
+   In file included from tools/include/linux/bitops.h:52:
+>> tools/include/asm-generic/bitops.h:27:10: fatal error: 'asm-generic/bitops/rotate.h' file not found
+      27 | #include <asm-generic/bitIn file included from orc_dump.c:8:
+   In file included from tools/objtool/include/objtool/objtool.h:11:
+   In file included from tools/include/linux/hashtable.h:13:
+   In file included from tools/include/linux/bitops.h:52:
+>> tools/include/asm-generic/bitops.h:27:10: fatal error: 'asm-generic/bitops/rotate.h' file not found
+   o   27 | #include <asm-generic/bitops/rotate.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   ps/rotate.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from arch/x86/special.c:4:
+--
+   In file included from tools/objtool/include/objtool/check.h:11:
+   In file included from tools/objtool/include/objtool/arch.h:11:
+   In file included from tools/objtool/include/objtool/objtool.h:11:
+   In file included from tools/include/linux/hashtable.h:13:
+   In file included from tools/include/linux/bitops.h:52:
+>> tools/include/asm-generic/bitops.h:27:10: fatal error: 'asm-generic/bitops/rotate.h' file not found
+   :13   27 | #include <asm-generic/bitops/rotate.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   :
+   In file included from tools/include/linux/bitops.h:52:
+>> tools/include/asm-generic/bitops.h:27:10: fatal error: 'asm-generic/bitops/rotate.h' file not found
+      27 | #include <asm-generic/bitops/rotate.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
+   make[4]: *** [tools/build/Makefile.build:86: tools/objtool/weak.o] Error 1
+   In file included from elf.c:22:
+   In file included from tools/objtool/include/objtool/elf.h:12:
+   In file included from tools/include/linux/hashtable.h:13:
+   In file included from tools/include/linux/bitops.h:52:
+>> tools/include/asm-generic/bitops.h:27:10: fatal error: 'asm-generic/bitops/rotate.h' file not found
+      27 | #include <asm-generic/bitops/rotate.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from builtin-check.c:15:
+   In file included from tools/objtool/include/objtool/objtool.h:11:
+   In file included from tools/include/linux/hashtable.h:13:
+   In file included from tools/include/linux/bitops.h:52:
+>> tools/include/asm-generic/bitops.h:27:10: fatal error: 'asm-generic/bitops/rotate.h' file not found
+      27 | #include <asm-generic/bitops/rotate.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from objtool.c:16:
+   In file included from tools/objtool/include/objtool/objtool.h:11:
+   In file included from tools/include/linux/hashtable.h:13:
+   In file included from tools/include/linux/bitops.h:52:
+>> tools/include/asm-generic/bitops.h:27:10: fatal error: 'asm-generic/bitops/rotate.h' file not found
+      27 | #include <asm-generic/bitops/rotate.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
+   1 error generated.
+   make[5]: *** [tools/build/Makefile.build:86: tools/objtool/arch/x86/orc.o] Error 1
+--
+   In file included from tools/objtool/include/objtool/check.h:11:
+   In file included from tools/objtool/include/objtool/arch.h:11:
+   In file included from tools/objtool/include/objtool/objtool.h:11:
+   In file included from tools/include/linux/hashtable.h:13:
+   In file included from tools/include/linux/bitops.h:52:
+>> tools/include/asm-generic/bitops.h:27:10: fatal error: 'asm-generic/bitops/rotate.h' file not found
+      27 | #include <asm-generic/bitops/rotate.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
+   make[4]: *** [tools/build/Makefile.build:86: tools/objtool/check.o] Error 1
+   1 error generated.
+
+
+vim +27 tools/include/asm-generic/bitops.h
+
+    25	
+    26	#include <asm-generic/bitops/hweight.h>
+  > 27	#include <asm-generic/bitops/rotate.h>
+    28	#include <asm-generic/bitops/atomic.h>
+    29	#include <asm-generic/bitops/non-atomic.h>
+    30	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
