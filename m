@@ -1,162 +1,101 @@
-Return-Path: <linux-kernel+bounces-695914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B035AE1F7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:54:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0DDAE1F73
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A44C06A1192
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:49:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D7E11BC16DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EF82E92CD;
-	Fri, 20 Jun 2025 15:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B9513212A;
+	Fri, 20 Jun 2025 15:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OY4QPDGE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OA1nHk4N";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OY4QPDGE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OA1nHk4N"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="umancZNC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cpCtRIzb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15F52E8E17
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F081DE4E7;
+	Fri, 20 Jun 2025 15:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750434468; cv=none; b=utaGxDZFcB/BhMF2MorNineMO203IycVMMOyyfr71Iay2wBot5q1mIwZs5iTaJVS147FfmnUPeCJoSFI8B/gGwCbLvpkSBRG+JGIsoVucogrBJDjWnK6S9siC2w3jgl5M//YIIvLCDtra4+zhI8jpqr84XuvfwqrlwqnG2L7u9U=
+	t=1750434576; cv=none; b=EZxKR1cY1VqxNvDl2EnUK1MQw7F/GY4Sw/biisAaH5islnhY2IqvXrN/wwkz47Dntm5j0bjZZ7qqP6aK91rh1GS8xMQy0OKYHs+S72waybPiGnUvEKjExMntsCXhoKwenDFDm2Cd0F0+o+oSVpHojRaP8KQVU5odgGSCFhvKVoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750434468; c=relaxed/simple;
-	bh=eMGC5Ax1af3GV4qbwjp8a8GGUC5Nhvn9YI171BLAqds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=spK1qhgBSFDdd3XuUJ76HrwAFofiPIBqxmydrHcLhgDfwz2+ZUDu1oYh2pKKZovoCvqA0WZ2oUNojTX/KMjkYjkTzo9TpTXe3Ql/7FD2ErHCM7fcuYrRtwka1/fPfRehLeSPiJrlVu7VlsrN7m4Je3DtE6IuCSj2IAswRwDNExM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OY4QPDGE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OA1nHk4N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OY4QPDGE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OA1nHk4N; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4A4411F38D;
-	Fri, 20 Jun 2025 15:47:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750434465;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1750434576; c=relaxed/simple;
+	bh=Xfl+Y6rDlxDXAMJd59O7LSJjSDae0AYdTp5zCgk6yRU=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SIo/RvWLGmPKMb8M0na4sZ88pYE+D4ERR9/xoek1aTSj275+MNTjTIE8/boOG6ohMxOH0M7BNKN6XYXSQeXBcyz8L3/gMmM1zYe6U5ARzZrIw0iVGVR8F6ozIgGd4reM1JkJ39w8kK8aEmOpqzPkyCaZV4e/+oU5bir/xY/+SWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=umancZNC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cpCtRIzb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750434572;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jb4rmzCBy2JbwhbSe1U00gQREDjOVt6Lc3XN3bwP9Eg=;
-	b=OY4QPDGEDmD1mjpSUfxgQF9dRz0+RmTiFM0YBezqiBiVP/h+fad6RL/NKIq5/uN3TlqoxF
-	2rDcKUc8QmoJ4VAqohWdbSZ+TMpHtQLtbx58L4x8FG+/MkRboprcKOOXAn02Fs9BJPLBdS
-	QaR1E9d7okOCGlnvwaxqrxNlgs8LuZM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750434465;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
+	bh=TMV6/wIIylPV96Wgfii7uR83PIGoHRQP1QE1XcKouuA=;
+	b=umancZNChctpeGJ77FxDapnhmlOdXQhKKb2KMOqlfY5vAMPFYFY4ShBydzQcwf/bud15Rv
+	xJoFSMie5EM34CxLmN9zwGs9/2+dSCOoNEUM/J85rrormCbEEYFCt8014znEWPI3lgY3zc
+	1Eh6YUZ6rzCVS/3m0IZbX93DFVF+Ge/cUulWbaVvyzm9jbC+DS5qLJLaZG8SGqbLbEiath
+	uOWR41MqdABZYan+4HixaFTr0POTGdiGPBnHIbLAFPTx5Y1MEQ1IiArixgN/ZuminnSH0I
+	q59owEwAYYRGEt9OAVEiqmGr1uKaIVIBJvRx3yLgUo5ImeCQnDsgCQ8H+4FJrA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750434572;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jb4rmzCBy2JbwhbSe1U00gQREDjOVt6Lc3XN3bwP9Eg=;
-	b=OA1nHk4NQy+b6Sd2iYbdFO+su7/TkYvinaDaqefaxibMSqckDDxhy/UcEGCRyS0CHanwY4
-	RGB67sCFNhA4//Dg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750434465;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jb4rmzCBy2JbwhbSe1U00gQREDjOVt6Lc3XN3bwP9Eg=;
-	b=OY4QPDGEDmD1mjpSUfxgQF9dRz0+RmTiFM0YBezqiBiVP/h+fad6RL/NKIq5/uN3TlqoxF
-	2rDcKUc8QmoJ4VAqohWdbSZ+TMpHtQLtbx58L4x8FG+/MkRboprcKOOXAn02Fs9BJPLBdS
-	QaR1E9d7okOCGlnvwaxqrxNlgs8LuZM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750434465;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jb4rmzCBy2JbwhbSe1U00gQREDjOVt6Lc3XN3bwP9Eg=;
-	b=OA1nHk4NQy+b6Sd2iYbdFO+su7/TkYvinaDaqefaxibMSqckDDxhy/UcEGCRyS0CHanwY4
-	RGB67sCFNhA4//Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 23C9713736;
-	Fri, 20 Jun 2025 15:47:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 67OFCKGCVWgoZQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Fri, 20 Jun 2025 15:47:45 +0000
-Date: Fri, 20 Jun 2025 17:47:43 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, Jens Axboe <axboe@kernel.dk>,
-	Mark Harmstone <maharmstone@fb.com>, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] io_uring/btrfs: remove struct io_uring_cmd_data
-Message-ID: <20250620154743.GY4037@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250619192748.3602122-1-csander@purestorage.com>
+	bh=TMV6/wIIylPV96Wgfii7uR83PIGoHRQP1QE1XcKouuA=;
+	b=cpCtRIzbFiL38lMpEvYOoWuazmJ0rhTbumaGAKQ/q7GOPcp69Q+OFt6HB3z+aAC0TUHwIU
+	Lp2MCXZQgzMTbqAg==
+To: markus.stockhausen@gmx.de, tsbogend@alpha.franken.de,
+ linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+ s.gottschall@dd-wrt.com
+Subject: Re: AW: [PATCH v2] irqchip/mips-gic: allow forced affinity
+In-Reply-To: <25e101dbdc24$fb5cd4e0$f2167ea0$@gmx.de>
+References: <20250526134149.3239623-1-markus.stockhausen@gmx.de>
+ <87bjqtrtkq.ffs@tglx> <25e101dbdc24$fb5cd4e0$f2167ea0$@gmx.de>
+Date: Fri, 20 Jun 2025 17:49:31 +0200
+Message-ID: <87cyayqupg.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250619192748.3602122-1-csander@purestorage.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FROM_HAS_DN(0.00)[];
-	URIBL_BLOCKED(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo,twin.jikos.cz:mid];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
+Content-Type: text/plain
 
-On Thu, Jun 19, 2025 at 01:27:44PM -0600, Caleb Sander Mateos wrote:
-> btrfs's ->uring_cmd() implementations are the only ones using io_uring_cmd_data
-> to store data that lasts for the lifetime of the uring_cmd. But all uring_cmds
-> have to pay the memory and CPU cost of initializing this field and freeing the
-> pointer if necessary when the uring_cmd ends. There is already a pdu field in
-> struct io_uring_cmd that ->uring_cmd() implementations can use for storage. The
-> only benefit of op_data seems to be that io_uring initializes it, so
-> ->uring_cmd() can read it to tell if there was a previous call to ->uring_cmd().
-> 
-> Introduce a flag IORING_URING_CMD_REISSUE that ->uring_cmd() implementations can
-> use to tell if this is the first call to ->uring_cmd() or a reissue of the
-> uring_cmd. Switch btrfs to use the pdu storage for its btrfs_uring_encoded_data.
-> If IORING_URING_CMD_REISSUE is unset, allocate a new btrfs_uring_encoded_data.
-> If it's set, use the existing one in op_data. Free the btrfs_uring_encoded_data
-> in the btrfs layer instead of relying on io_uring to free op_data. Finally,
-> remove io_uring_cmd_data since it's now unused.
-> 
-> Caleb Sander Mateos (4):
->   btrfs/ioctl: don't skip accounting in early ENOTTY return
->   io_uring/cmd: introduce IORING_URING_CMD_REISSUE flag
->   btrfs/ioctl: store btrfs_uring_encoded_data in io_btrfs_cmd
->   io_uring/cmd: remove struct io_uring_cmd_data
+On Fri, Jun 13 2025 at 07:35, markus stockhausen wrote:
+>> Von: Thomas Gleixner <tglx@linutronix.de> 
+>> Gesendet: Donnerstag, 12. Juni 2025 15:14
+>> 
+>> On Mon, May 26 2025 at 09:41, Markus Stockhausen wrote:
+>> >
+>> > Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
+>> > Signed-off-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+>>
+>> This Signed-off-by chain is broken.
+>>
+>>
+> https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-
+> your-work-the-developer-s-certificate-of-origin
+>>
+>> and the following paragraphs explain it.
+>
+> This is my first co-authorship. So want to make sure that I understand it
+> correctly.
+>
+> - I developed the patched and
+> - Sebastian gave helpful input for it.
+>
+> So it should be like this?
+>
+> Co-developed-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+> Signed-off-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+> Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
 
-The first patch is a fix so it can be put to a -rc queue.
-
-The rest change the io_uring logic, so it's not up to me, but regarding
-how to merge them either via btrfs or io_uring tree work for me.
+Yes.
 
