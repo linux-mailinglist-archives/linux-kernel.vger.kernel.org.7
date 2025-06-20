@@ -1,107 +1,126 @@
-Return-Path: <linux-kernel+bounces-695146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25042AE15C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:20:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C05AE1566
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 821387A438C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:19:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49ACF1897D25
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CB0234963;
-	Fri, 20 Jun 2025 08:20:37 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7178421FF31
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 08:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290AE228CB7;
+	Fri, 20 Jun 2025 08:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZRtNG7zs"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A3622A7FD;
+	Fri, 20 Jun 2025 08:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750407637; cv=none; b=E6uRcVbT7BOwb6n1aQveUOgS5/+kXCcDgHGuIMwcd7GcocHEoomUiNi68tkOcUGfpmi0c64v1+5G2WZsS4xrqDCHtYjyngsVZlxcgE8787Sg3nO1eP+gbYm/BlWZZ9yy7zz/mFRJV2VpMyiof2mv/oPgHumgCeJTPJIasXFY4wk=
+	t=1750406683; cv=none; b=PYOPq2eE1vgtf0rCZtTNIXiUTnTlanZbMhQ/kkAe3SKV3aqXXOYhLHtqej/bKTAzau0yfhVlBTHFZhVihpOa7foYDyUJHNmhfAukhhqpiP4EEC0rPasd+605qmWjP7VhuyLfZub1BhDhMjuXCj0czRiFKyyXC+7nYkkoKKQUGIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750407637; c=relaxed/simple;
-	bh=98p7XFyIU8/mhoNbSjYfYvfy93NpNkwydwzxTinJHG8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YRpKcZv7fafGDbKVWLKzzbll96fxtd7FmgkCfSRug9wpzvSxm9e/Xxu8oT2BZajPvl78JxWUiNi7cCw2U1OPo+0wZhCjJFXaPtaJ00w9dxF4RlY1IL5eOWoyBPPlAm4SWbdLaBDz+ldZTo12QRti4Zkf7MJCk1JYNMenjo2gRg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bNqbG1LWXz9sXD;
-	Fri, 20 Jun 2025 09:58:02 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id l7-jiY9UMb34; Fri, 20 Jun 2025 09:58:02 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bNqbF6z05z9sB2;
-	Fri, 20 Jun 2025 09:58:01 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id EA9AF8B7AB;
-	Fri, 20 Jun 2025 09:58:01 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id DbI3ugSJkLSZ; Fri, 20 Jun 2025 09:58:01 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B36DA8B78C;
-	Fri, 20 Jun 2025 09:58:01 +0200 (CEST)
-Message-ID: <430ad145-33f7-45b5-8fbd-4b0e2e0a2398@csgroup.eu>
-Date: Fri, 20 Jun 2025 09:58:01 +0200
+	s=arc-20240116; t=1750406683; c=relaxed/simple;
+	bh=e6J/ci+AseVoDFrbJK0noq16VSi0qNOaftFeH1SKliQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFHWVXsLdR0PrgM6ZF2Omyw8QbKZxp/A3EawE9J1HrUDzT18QvlvPuCYSOd+cNuamvrPgiPXway6SZh1c1cBNMCJlT+hcZNpaegd6PwBvSttJ3QYLnEX0rH08RJn9HE2hRIy/dl2oP+gVqgWn/BGvtbZ8yhOsWHqI5CgwxyVeDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZRtNG7zs; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=POVtJUAKh/YpDAjJIegUwrxE9LaR562qjVUhPfBk15Q=; b=ZRtNG7zsfmb19myGlc2tuM2+N9
+	f9uRHk8+jcyPRdletvotKgLi5pgiFoiLkFrbxr3yCOPCzuY1yFnoRVvn0/s5W9rzku0o+YuLhU8Ns
+	fvq9IRC8xDa0ktxXSuHLVrfw2z6XRrcQ3+7VtD8HZJenf1oxCwTDYiWPaNRgOKJPAhZkCzhxm3UJt
+	Za9Bg4mdhAvQKyvuYsCa4QP7IaVHSPNiHi5MHsXq+4s9ecSPlS+0pxwAI4IuyTC51zHWPMcaAlQYN
+	dauEQ0rqHtHpc/6tDRnVjuqjuq/yLogpkYph3UDSmRjpy7z5Bm1jW+JOPvBRXK5a5DZBZsN6bAzTO
+	NVwNLQFw==;
+Received: from 2001-1c00-8d82-d000-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d82:d000:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uSWjd-00000004fg8-0kEZ;
+	Fri, 20 Jun 2025 08:04:29 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id CF8B3308989; Fri, 20 Jun 2025 10:04:26 +0200 (CEST)
+Date: Fri, 20 Jun 2025 10:04:26 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, kernel@collabora.com,
+	Jonathan Corbet <corbet@lwn.net>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf/headers: Document PERF_PMU_CAP capability flags
+Message-ID: <20250620080426.GO1613376@noisy.programming.kicks-ass.net>
+References: <20250618-perf-pmu-cap-docs-v1-1-0d34387d6e47@collabora.com>
+ <20250619145044.GL1613376@noisy.programming.kicks-ass.net>
+ <2518748.tdWV9SEqCh@workhorse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH v2] powerpc: floppy: Add missing checks after DMA map
-To: Thomas Fourier <fourier.thomas@gmail.com>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20250620075602.12575-1-fourier.thomas@gmail.com>
-Content-Language: fr-FR
-In-Reply-To: <20250620075602.12575-1-fourier.thomas@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2518748.tdWV9SEqCh@workhorse>
 
+On Thu, Jun 19, 2025 at 06:06:50PM +0200, Nicolas Frattaroli wrote:
 
+> > >  #define PERF_PMU_CAP_NO_INTERRUPT	0x0001
+> > 
+> > This is not quite right; CAP_NO_INTERRUPT means it is not able to
+> > generate samples.
+> > 
+> > While not being able to generate interrupts and not being able to
+> > generate sample is more or less the same for CPU PMU drivers, this is
+> > not true for uncore drivers. Even if an uncore driver has interrupt
+> > capacility to help with counter overflow, it cannot generate samples.
+> 
+> I'll send a follow-up v2 to fix this, though just to make sure I
+> understand this right, I have some questions for clarification.
+> 
+> Does "uncore" in this context mean PMU drivers for counters that are not
+> tied to the CPU instruction flow, but are counting other things like
+> interconnect statistics?
 
-Le 20/06/2025 à 09:55, Thomas Fourier a écrit :
-> [Vous ne recevez pas souvent de courriers de fourier.thomas@gmail.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> The DMA map functions can fail and should be tested for errors.
-> 
-> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+Correct.
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Also, am I correct in assuming "sample" in this context means the
+> concept represented by struct perf_sample_data, i.e. what appears to be
+> a snapshot of current process context, including registers and stack
+> information? 
 
-> ---
->   arch/powerpc/include/asm/floppy.h | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/include/asm/floppy.h b/arch/powerpc/include/asm/floppy.h
-> index f8ce178b43b7..34abf8bea2cc 100644
-> --- a/arch/powerpc/include/asm/floppy.h
-> +++ b/arch/powerpc/include/asm/floppy.h
-> @@ -144,9 +144,12 @@ static int hard_dma_setup(char *addr, unsigned long size, int mode, int io)
->                  bus_addr = 0;
->          }
-> 
-> -       if (!bus_addr)  /* need to map it */
-> +       if (!bus_addr) {        /* need to map it */
->                  bus_addr = dma_map_single(&isa_bridge_pcidev->dev, addr, size,
->                                            dir);
-> +               if (dma_mapping_error(&isa_bridge_pcidev->dev, bus_addr))
-> +                       return -ENOMEM;
-> +       }
-> 
->          /* remember this one as prev */
->          prev_addr = addr;
-> --
-> 2.43.0
-> 
+Right; perf_event_attr::sample_type, filled out with bits from
+perf_event_sample_format.
+
+> Which would then mean going by my understanding of uncore
+> that basically every uncore driver should set this capability flag, as
+> they're not performance counter registers on a CPU that are intimately
+> tied to the ISAs execution state.
+
+Correct again. There is interconnect, memory and even GPU drivers out
+there these days.
+
+> To further my understanding: does this mean that
+> drivers/devfreq/event/rockchip-dfi.c (used for measuring memory
+> bandwidth) should set PERF_PMU_CAP_NO_INTERRUPT, since it's not a CPU
+> but a memory controller monitor?
+
+Yup, that would indeed seem to be so.
+
+> In a more general sense, if anyone has any written resources on writing
+> PMU drivers, rather than perf from a userspace perspective, I'd be very
+> happy to get some pointers in their direction.
+
+I'm afraid not :/ The best we have is the comments in struct pmu.
 
 
