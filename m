@@ -1,122 +1,150 @@
-Return-Path: <linux-kernel+bounces-695385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D61AE1923
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:38:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CF5AE1927
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 453F41614A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:37:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91AF81BC36B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1B8266563;
-	Fri, 20 Jun 2025 10:37:35 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9104023E325
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 10:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBFC2571D3;
+	Fri, 20 Jun 2025 10:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mOGYRu+B"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1878D23B626
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 10:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750415855; cv=none; b=lSu2K8U+LsLXir9uoqjT4KxvpQ48CG920I1zFZedZPe9n07LP2BOi+l5y8ykImgh8x2tbGhahGWfV/NNO+pRGV6uSmk2MP9fqYwsFId9uT0hUiR3x6SCSEwhN4Q/pO9yYvfNGNPug4dxpeNok+ZD6mBFWrwy0gDpJfaNMku3SUU=
+	t=1750416111; cv=none; b=uloclTE+zFLxkdsGKfom2S757ockhV9i4ibQLMUUvTaJeeldinUD70HjjlJhvib1Q8q/EmskSpp1BUepSZo8cbHdDpaFoyO++IupoNfYNaBOhUpzxyz4ZHJ5BiuBOfHwVS37DGuZ0IxoOG3yft7RktGde245E+vkz5jDGWIkp6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750415855; c=relaxed/simple;
-	bh=sr18R6sd48OdpaBt0pb4YucvjAl/AlGmSjFBN2u0WQg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=gVdsyzX8Kl4z6C5adzcG39zzDIfQctctTvGIkZMUR/gXwDCtRUSz8joaMwNWWVRBBS/pX9J/e+GiWbpaUiCD0ylTOMHvSo0LzuQ5VTVaLY7dRjwtlpdPEMbJpiUPeMf4WeMgVlX7zYR1rjeTm5L37qZ9StK9xpbIr8CQs3kR2RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 55KAbQIP010256;
-	Fri, 20 Jun 2025 12:37:26 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Willy Tarreau <w@1wt.eu>
-Subject: [RFC PATCH 3/3] tools/nolibc: add a new "install_all_archs" target
-Date: Fri, 20 Jun 2025 12:37:05 +0200
-Message-Id: <20250620103705.10208-4-w@1wt.eu>
-X-Mailer: git-send-email 2.17.5
-In-Reply-To: <20250620103705.10208-1-w@1wt.eu>
-References: <20250620103705.10208-1-w@1wt.eu>
+	s=arc-20240116; t=1750416111; c=relaxed/simple;
+	bh=q7jUaZeCrfpBs43z9Hy7QBXglV4bT2WecERgxgwdQc8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TBxckCzx5RegM41C+mP7KBPt2KKmQqqJY59qEwJXLVOLucMcR7gnimEnvZeTk/51X01XE8be8EPpjJn6MV2vySFvancnYNg7GypVBSs2HP2WxMwmSPrbAlBR5SfNqAWRdEsB5s/1jvUYcjc2guuoXVbXE4Ndq24h8gLwDlrSg8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mOGYRu+B; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7399a2dc13fso1805654b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 03:41:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1750416109; x=1751020909; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lfBsCz2FCCDcQNBUcihjSy0xTy3M608ho2jYmxxH2PE=;
+        b=mOGYRu+BL9MOqtNolhYvfz9FPpJnt9lK/ETlVNm2UO8Sl9MWlVsfHyZHOzZxc/iNfx
+         KYbz5yx17wr9DZ1O1Q50wJ359EMZT4nScuptntpqO8vLKFtKcsh1d2PEcZAixj5XkmMv
+         daHUCHwKFZqZuIHQT/tDmTjJpD4B+UsFvWhjg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750416109; x=1751020909;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lfBsCz2FCCDcQNBUcihjSy0xTy3M608ho2jYmxxH2PE=;
+        b=M2KMuMEbSakdSnezfBK87XRnLx4JfqZJa2tsin97S0LXANOzDSa7+0aiO21uaXBsS+
+         Dit9tuQxeMxLgJ3SDK1sutv6gf4crXGN0JTtYiZbpM5V8AoVgeIlfktrfbZGlsW7jdoI
+         j6/Mz1iYjesXpnXnQsKo19nn92Vrld/1dC5U5oqj+dF+nzOscqT6l2MALM4XjBU/TTGC
+         RNdXS3nIdhr+o1/4FeNOjDGNGj/+WKcjtLogSohSiaPBCa8CwITR+qMYvd6Xj07kHC2Z
+         JeMGQslXVV70nORrYuCJfY2A0YYbhxtKshP4TPnw7wSo8klcTCPbLP5eHK7RtTFi4I5h
+         o3sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUX9LpbP1DG5lXi6tMABYblJMtnbgmc0cP4Yg+BUflzthHL6G3zYgiTxV3n2ebm5bs4CDNPYuruBbUZ9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3ORlga1zddnrd3zHutFjV0MELfQ1GDK2YoQwjoNdQhjUjagel
+	4YTlWdT8HJEP9t3nI3E+sGA+SKOXFikPT2F5s60XM2OKUw85j7P66sriLlIXt0JCbQ==
+X-Gm-Gg: ASbGncv/v5Irn9tExypo59Er//+rMbbMI+1l5kcwutvX6xCzbxbVYr+Gkf/kqu9Qngv
+	TqtjTXgWtv3HI3btlK4U4JpZ/ZSNsZWw9OcPOFssK+3TuNiSiktAhg8yJtdSm+YCyl1v7X6dpKd
+	usQRzmXaW3hpEEuLUdRqGo8dFy/D/AyfHsb3JeBiVQlO+IYeidEnMRgUC+dv+pFnjdC20ggnSO/
+	PY1BpYxLVRPpVqz+AcrtWU8mlTzGQdZk0KJWMs2Phs4O8EKwk5TpUfIggfN7wk2XU9n3A+i6BaF
+	3eT0j2E4m9PwnMkhh8KeMvTqRh98bnkikW/TkWwjS3z7CT+5vxS+Ru5ifUnw2G5PxEYKAxJmGAD
+	p+Q2qINuS0ebYMwpY8i3zMe6aU18ZhwYiut7D0EctCSsDTpLHyMfgKgvNbge6
+X-Google-Smtp-Source: AGHT+IGnMQSZOCLVg5rJlh2wQDEMq63wQi1fyNPC8G0fdeVlnF1TnRsHCW3F6Zyk5iZTU+Ts1fj2OQ==
+X-Received: by 2002:a17:902:d581:b0:235:2403:77b6 with SMTP id d9443c01a7336-237d9ad2891mr28004285ad.37.1750416109370;
+        Fri, 20 Jun 2025 03:41:49 -0700 (PDT)
+Received: from yuanhsinte.c.googlers.com (243.106.81.34.bc.googleusercontent.com. [34.81.106.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d83936c8sm15444775ad.7.2025.06.20.03.41.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 03:41:48 -0700 (PDT)
+From: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Date: Fri, 20 Jun 2025 10:41:43 +0000
+Subject: [PATCH v3] thermal: sysfs: Return ENODATA instead of EAGAIN for
+ reads
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250620-temp-v3-1-6becc6aeb66c@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAOY6VWgC/12MQQqDMBBFryKzbkoSjWhXvUfpIjqjzkIjiQ0t4
+ t0bpVBw+T7/vRUCeaYAt2wFT5EDuylBfsmgHezUk2BMDFpqIwtZi4XGWZTUoMotSmwQ0nX21PH
+ 7yDyeiQcOi/OfoxrVvp4CUQklapvXCqu2lB3e28G7kV/j1fke9kbUf88o/fN08mRRNWQqstaak
+ 7dt2xeFbZ/R0wAAAA==
+X-Change-ID: 20250409-temp-6ebd13ad0dbd
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+X-Mailer: b4 0.14.2
 
-This installs all supported archs together, both from nolibc and kernel
-headers. The arch-specific asm/ subdirs are renamed to asm-arch-$arch,
-and asm/ is rebuilt from all these files in order to include the right
-one depending on the build architecture.
+According to POSIX spec, EAGAIN returned by read with O_NONBLOCK set
+means the read would block. Hence, the common implementation in
+nonblocking model will poll the file when the nonblocking read returns
+EAGAIN. However, when the target file is thermal zone, this mechanism
+will totally malfunction because thermal zone doesn't implement sysfs
+notification and thus the poll will never return.
 
-This allows to use a single unified sysroot for all archs, and to only
-change the compiler or the target architecture. This way, a complete
-sysroot is much easier to use (a single directory is needed) and much
-smaller.
+For example, the read in Golang implemnts such method and sometimes
+hangs at reading some thermal zones via sysfs.
 
-Signed-off-by: Willy Tarreau <w@1wt.eu>
+Change to throw ENODATA instead of EAGAIN to userspace.
+
+Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
 ---
- tools/include/nolibc/Makefile | 39 +++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+Changes in v3:
+- Refine the control flow and optimize the success case.
+- Link to v2: https://lore.kernel.org/r/20250512-temp-v2-1-048be58eaaa5@chromium.org
 
-diff --git a/tools/include/nolibc/Makefile b/tools/include/nolibc/Makefile
-index 8de6ac5cec425..b6ed11d0b5419 100644
---- a/tools/include/nolibc/Makefile
-+++ b/tools/include/nolibc/Makefile
-@@ -88,6 +88,7 @@ help:
- 	@echo "  headers_all_archs   prepare a multi-arch sysroot in \$${OUTPUT}sysroot"
- 	@echo "  headers_standalone  like \"headers\", and also install kernel headers"
- 	@echo "  help                this help"
-+	@echo "  install_all_archs   install a multi-arch sysroot + kernel headers in \$${OUTPUT}sysroot"
- 	@echo ""
- 	@echo "These targets may also be called from tools as \"make nolibc_<target>\"."
- 	@echo ""
-@@ -120,6 +121,44 @@ headers_all_archs:
- 	$(Q)cp --parents $(all_files) arch.h "$(OUTPUT)sysroot/include/"
- 	$(Q)cp $(addsuffix .h,$(addprefix arch-,$(nolibc_supported_archs))) "$(OUTPUT)sysroot/include/"
+Changes in v2:
+- Modify commit message to make it clear
+- Link to v1: https://lore.kernel.org/r/20250409-temp-v1-1-9a391d8c60fd@chromium.org
+---
+ drivers/thermal/thermal_sysfs.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
+index 24b9055a0b6c515b865e0d7e2db1d0de176ff767..d80612506a334ab739e7545cdfe984ab4dffab7c 100644
+--- a/drivers/thermal/thermal_sysfs.c
++++ b/drivers/thermal/thermal_sysfs.c
+@@ -40,10 +40,13 @@ temp_show(struct device *dev, struct device_attribute *attr, char *buf)
  
-+install_all_archs: headers_all_archs
-+	@# install common headers for any arch, take them all. This will clear everything.
-+	$(Q)$(MAKE) -C $(srctree) ARCH=x86 mrproper
-+	$(Q)$(MAKE) -C $(srctree) ARCH=x86 headers_install no-export-headers= INSTALL_HDR_PATH="$(OUTPUT)sysroot"
-+	@# remove the contents of the unused asm dir which we will rebuild from the arch ones
-+	$(Q)rm -rf "$(OUTPUT)sysroot/include/asm"
-+	$(Q)mkdir -p "$(OUTPUT)sysroot/include/asm"
-+	@# Now install headers for all archs
-+	$(Q)for arch in $(patsubst aarch64,arm64,$(nolibc_supported_archs)); do \
-+		echo "# installing $$arch"; \
-+		if ! [ -d $(OUTPUT)sysroot/include/asm-arch-$$arch ]; then \
-+			$(MAKE) -C $(srctree) ARCH=$$arch mrproper; \
-+			$(MAKE) -C $(srctree) ARCH=$$arch headers_install no-export-headers= \
-+				INSTALL_HDR_PATH="$(OUTPUT)sysroot/include/$$arch" >/dev/null; \
-+			mv "$(OUTPUT)sysroot/include/$$arch/include/asm" "$(OUTPUT)sysroot/include/asm-arch-$$arch"; \
-+			rm -rf "$(OUTPUT)sysroot/include/$$arch"; \
-+			case "$$arch" in \
-+				arm)       cond="defined(__ARM_EABI__)" ;; \
-+				arm64)     cond="defined(__aarch64__)" ;; \
-+				loongarch) cond="defined(__loongarch__)" ;; \
-+				m68k)      cond="defined(__m68k__)" ;; \
-+				mips)      cond="defined(__mips__)" ;; \
-+				powerpc)   cond="defined(__powerpc__)" ;; \
-+				riscv)     cond="defined(__riscv__)" ;; \
-+				s390)      cond="defined(__s390__) || defined(__s390x__)" ;; \
-+				sparc)     cond="defined(__sparc__)" ;; \
-+				x86)       cond="defined(__i386__) || defined(__i486__) || defined(__i586__) || defined(__i686__) || defined(__x86_64__)";; \
-+				*)         echo "Unsupported arch" >&2; exit 1;; \
-+			esac;\
-+			for file in "$(OUTPUT)sysroot/include/asm-arch-$$arch/"*.h; do \
-+				base="$${file##*/}"; \
-+				( echo "#if $$cond"; \
-+				  echo "#include \"../asm-arch-$$arch/$$base\""; \
-+				  echo "#endif" ) >> "$(OUTPUT)sysroot/include/asm/$$base"; \
-+			done; \
-+		fi;\
-+	done
+ 	ret = thermal_zone_get_temp(tz, &temperature);
+ 
+-	if (ret)
+-		return ret;
++	if (!ret)
++		return sprintf(buf, "%d\n", temperature);
+ 
+-	return sprintf(buf, "%d\n", temperature);
++	if (ret == -EAGAIN)
++		return -ENODATA;
 +
- # GCC uses "s390", clang "systemz"
- CLANG_CROSS_FLAGS := $(subst --target=s390-linux,--target=systemz-linux,$(CLANG_CROSS_FLAGS))
++	return ret;
+ }
  
+ static ssize_t
+
+---
+base-commit: 75f5f23f8787c5e184fcb2fbcd02d8e9317dc5e7
+change-id: 20250409-temp-6ebd13ad0dbd
+
+Best regards,
 -- 
-2.17.5
+Hsin-Te Yuan <yuanhsinte@chromium.org>
 
 
