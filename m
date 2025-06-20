@@ -1,163 +1,91 @@
-Return-Path: <linux-kernel+bounces-695426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B082AAE19A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:11:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EACAE19B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4671817A9BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:11:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1674C17F659
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B22289E1F;
-	Fri, 20 Jun 2025 11:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElxpZUBO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74EF78F4A;
-	Fri, 20 Jun 2025 11:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D0E78F4A;
+	Fri, 20 Jun 2025 11:12:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84680288CBF;
+	Fri, 20 Jun 2025 11:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750417896; cv=none; b=osSqXhdnNQ2lx4uBVnZmaPNCsTiLaYHL2BOXlWucq+XnRSrWw5zEW8fQ96LBNikLRGt1vJICgjKoLj83dytp7mLjcXnYqvn1pl1b7IgQS4liWB6y3nC4Bf8zYZZi25NvBCy0Oi1foGhYMzixLZm6uE1udPmmFgiAKrOeZ1+JC28=
+	t=1750417920; cv=none; b=rwTRH6iHM4aNczs1JoWDaaRvs2Gr/ipjmx+pORtQvCoEtOIDMXIaq9WZJDX66x+1FqW6F/cn/FOWkKMt7S18flpOYXmnKaeW16QvziXMlZj4gJ4Isu4DMCUBLV8oprRbSPTRo+67O2QMv9/RvhTKSzmcfRY+4UST0HHT6fahiS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750417896; c=relaxed/simple;
-	bh=cy8sb2YDbk+4p5WEKcAZTmU3ATHgsbRxuH4N1gObOTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZJf4Frj1okx3cWlK5C2+XtiUUWPZngtTCMa6MkVLBK+w20IRdpH2ogLZqQtGtlyRTNk1JTBP6YJm5Hz94+j5GDLOLzNc+XO2t/1xN1xVcqQo9Rspg8W6+QmR6QHL0NHEEgcu1z1WAyb+DXljwt/aS+nOXxN2SptDAg9cJ5WrSr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElxpZUBO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D362EC4CEEF;
-	Fri, 20 Jun 2025 11:11:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750417896;
-	bh=cy8sb2YDbk+4p5WEKcAZTmU3ATHgsbRxuH4N1gObOTs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ElxpZUBOZmvrsdxg74RJrDytXLNkKxuV1WJrFuNjc6FiAfbUt6pTYbCs35UFmY7pY
-	 wsyKF9Y9fEMFJVRKcbARShGfctlvKUBQa8G7jle93yaXJiR0kfoSi0sOi2TNdtUJhS
-	 U5cGstDMuEns1H4X1fDkmrb9Z3xBUqoWHwHVgNs4qs43GCmd1aWmqR2Zgz6vfugnvb
-	 MSjljU2AvZ2lBJ7KqbCQgWeU93fvRmdgHOgIAi39KL/IgrIJPL5llFUfHHqB+63XKv
-	 lnfpYP2CumtpVIANYhWwWGRBd9bFGYfd06UT20lQ0XIoNf5KEsxmkVhMiw4VioIM7C
-	 U2+S0oon+RqnA==
-Date: Fri, 20 Jun 2025 13:11:30 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	Waiman Long <longman@redhat.com>, Kees Cook <kees@kernel.org>
-Subject: Re: register_syctl_init error in linux-next-20250612
-Message-ID: <agdzhkcb7f7w7zmcivjx6gnlilwglvd526pp3p5cgkdricwfx4@6iduwkqkerjp>
-References: <20250612175515.3251-1-spasswolf@web.de>
- <mve232hzw4tqc5rnqlacofzlygqks7uirkumfmibrnmzcmpywh@kpchyerpb4ju>
- <3eec91e437e2b9861e069a6c63e80b2bfd7e9802.camel@web.de>
+	s=arc-20240116; t=1750417920; c=relaxed/simple;
+	bh=C3sH3mhSfvedE6q+7+YDcLAOXFJCWeiEUkujc6ssmgU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f2R8G9XQNkrqgG/SHHTVzgALAMaU+YZx5nTWWZ03gGvKQISzeQQMhmcM5bzgoW3gIDjcm5V83SuV98pOB++LwaoEmABRHeMKdWQG7LJ7gYfIBvZ8QPeMWaIsTDHHIfkoM9JVGJPkSib5v4rETXKZDc6qo/S0r3F9oWHnlDow8rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45776176A;
+	Fri, 20 Jun 2025 04:11:38 -0700 (PDT)
+Received: from MacBook-Pro.blr.arm.com (MacBook-Pro.blr.arm.com [10.164.18.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 952DD3F673;
+	Fri, 20 Jun 2025 04:11:54 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	anshuman.khandual@arm.com,
+	ryan.roberts@arm.com,
+	lorenzo.stoakes@oracle.com,
+	david@redhat.com,
+	donettom@linux.ibm.com,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH] selftests/mm: Fix validate_addr helper
+Date: Fri, 20 Jun 2025 16:41:50 +0530
+Message-Id: <20250620111150.50344-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3ftl5bdt5sbuceua"
-Content-Disposition: inline
-In-Reply-To: <3eec91e437e2b9861e069a6c63e80b2bfd7e9802.camel@web.de>
+Content-Transfer-Encoding: 8bit
 
+validate_addr() function checks whether the address returned by mmap()
+lies in the low or high VA space, according to whether a high addr hint
+was passed or not. The fix commit mentioned below changed the code in
+such a way that this function will always return failure when passed
+high_addr == 1; addr will be >= HIGH_ADDR_MARK always, we will fall
+down to "if (addr < HIGH_ADDR_MARK)" and return failure. Fix this.
 
---3ftl5bdt5sbuceua
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: d1d86ce28d0f ("selftests/mm: virtual_address_range: conform to TAP format output")
+Signed-off-by: Dev Jain <dev.jain@arm.com>
+---
+ tools/testing/selftests/mm/virtual_address_range.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-On Fri, Jun 20, 2025 at 11:37:40AM +0200, Bert Karwatzki wrote:
-> Am Donnerstag, dem 19.06.2025 um 14:39 +0200 schrieb Joel Granados:
-> > On Thu, Jun 12, 2025 at 07:55:13PM +0200, Bert Karwatzki wrote:
-> > > When starting evolution (gnome email client) on my debian sid with
-> > > linux-next-20250612 I get the following error message on the terminal
-> > > emulator (the Gtk messages also occur  when):
-> > >=20
-> > > Gtk-Message: 13:34:49.069: Failed to load module "colorreload-gtk-mod=
-ule"
-> > > Gtk-Message: 13:34:49.070: Failed to load module "window-decorations-=
-gtk-module"
-> > > Gtk-Message: 13:34:51.012: Failed to load module "colorreload-gtk-mod=
-ule"
-> > > Gtk-Message: 13:34:51.013: Failed to load module "window-decorations-=
-gtk-module"
-> > > bwrap: Can't read /proc/sys/kernel/overflowuid: No such file or direc=
-tory
-> > >=20
-> > > ** (org.gnome.Evolution:3327): ERROR **: 13:34:51.245: Failed to full=
-y launch dbus-proxy: Der Kindprozess wurde mit Status 1 beendet
-> > > Trace/Breakpoint ausgel=F6st
-> > >=20
-> > > and the following message in dmesg:
-> > >=20
-> > > [  305.600587] [      T3327] traps: evolution[3327] trap int3 ip:7f64=
-442d3ab7 sp:7ffc9f4e94d0 error:0 in libglib-2.0.so.0.8400.2[66ab7,7f644428c=
-000+a1000]
-> > >=20
-> > > I bisected this to commit cf47285025e6 ("locking/rtmutex: Move max_lo=
-ck_depth
-> > > into rtmutex.c"). The absence of /proc/sys/kernel/overflow{uid,gid} s=
-eems to be the related
-> > > to the start failure, in affected kernel version the files are absent=
- while they're present
-> > > when evolution starts normally.
-> > I just tested with next-20250619 and I see /proc/sys/kernel/overflow{ui=
-d,gid}
-> >=20
-> > >=20
-> > > Also when booting next-20250612 I get this error message regarding ma=
-x_lock_depth and
-> > > rtmutex_sysctl_table:
-> > >=20
-> > > [    0.234399] [         T1] sysctl duplicate entry: /kernel/max_lock=
-_depth
-> > > [    0.234402] [         T1] failed when register_sysctl_sz rtmutex_s=
-ysctl_table to kernel
-> > > [    0.234405] [         T1] sysctl duplicate entry: /kernel/max_lock=
-_depth
-> > > [    0.234407] [         T1] failed when register_sysctl_sz rtmutex_s=
-ysctl_table to kernel
-> > And I do not see these messages in my dmesg. And
-> > /proc/sys/kernel/max_lock_depth exists.
-> >=20
-> > Maybe its something that only happened with the version from the 12th?
-> > Could you test again with the version from the 19?
-> >=20
-> > Best
->=20
-> I tested next-202506{12,17,19} and sysctl-next and they all show the bugg=
-y behaviour.
-> CONFIG_PREEMPT_RT=3Dy is needed for the bug to appear.
-Hey
+diff --git a/tools/testing/selftests/mm/virtual_address_range.c b/tools/testing/selftests/mm/virtual_address_range.c
+index b380e102b22f..169dbd692bf5 100644
+--- a/tools/testing/selftests/mm/virtual_address_range.c
++++ b/tools/testing/selftests/mm/virtual_address_range.c
+@@ -77,8 +77,11 @@ static void validate_addr(char *ptr, int high_addr)
+ {
+ 	unsigned long addr = (unsigned long) ptr;
+ 
+-	if (high_addr && addr < HIGH_ADDR_MARK)
+-		ksft_exit_fail_msg("Bad address %lx\n", addr);
++	if (high_addr) {
++		if (addr < HIGH_ADDR_MARK)
++			ksft_exit_fail_msg("Bad address %lx\n", addr);
++		return;
++	}
+ 
+ 	if (addr > HIGH_ADDR_MARK)
+ 		ksft_exit_fail_msg("Bad address %lx\n", addr);
+-- 
+2.30.2
 
-I have managed to reproduce, thx for the clarification.
-
-Did you have the chance to test with the patch that I sent?
-
-Best
-
---=20
-
-Joel Granados
-
---3ftl5bdt5sbuceua
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmhVQdIACgkQupfNUreW
-QU/v8wv/ZhjouvkFYifNjmtHxzTJCtzTU4FCu14BOYUBCLwecWcuDOuFCKTxstU9
-SHYDtiTmz65VpGzPc8LQS1FuIVB1Gyq+lpqXuc4v1Ndzfm8qNq9WhTXiY5IpAa5i
-oePrARLXzlezLgYVa0liaoH55t6Q3fjSog9zyHtQ79t1qOtaTjqLqc2Bxwls//uF
-OGv+1OE6doUmHBGy753O/3AD3COT8qYzzXUwio68tGGgidp2MEx213LAlmskMSSy
-tTSk8oX0ki4vw14a/ICsz64RavF4JJfKN2//ipcTUTq+Qs+SxBbtUsq52rJz5WpF
-oTkI2rKbPgF2vM/Cwui92iyU7BHa7FQjyTt8huPAkyaznTZpL/ZcW1Jk/ixxtv0A
-T5A5YMWY/zsMAsVuG183Vs7LzZN1K+bxOVARd0cbAK2Gvp9LuH9X6xOufbqTHifL
-fmyk4GM1quec/e93NFR5RC+gtqL65hebZYI5l3DwSE7TwYntA/rQJWumPrG2enHW
-XioLk98m
-=P9mq
------END PGP SIGNATURE-----
-
---3ftl5bdt5sbuceua--
 
