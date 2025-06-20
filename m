@@ -1,164 +1,105 @@
-Return-Path: <linux-kernel+bounces-694757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0EC0AE106F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 02:39:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3495AAE1073
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 02:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74E2D19E1F02
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 00:39:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B791119E2440
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 00:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3083BA92E;
-	Fri, 20 Jun 2025 00:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2cYMFHi"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856FBA935;
+	Fri, 20 Jun 2025 00:42:09 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2593D29D0E;
-	Fri, 20 Jun 2025 00:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2C8A923
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 00:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750379954; cv=none; b=Z75pBs/fCYyOWNHDFyyiBujITb3pjJi48fYCXE/QMZLqvr7SyZwzGvl+ZEZIS4emHGbtWz3Xuw2yyTcf7C4Xrvh16AOjV2t5xKxjoeyCR5c7l53H3LBk/f9XV45L8p5U1y2wvSQNX4wJRPZ4OBV0KEmuSDqNDxt8HysIzLNBHY4=
+	t=1750380129; cv=none; b=WM1Vk+2tWp4cbfGesTmmFJexkwbu7FxmjLrRutBupRXbyfklXwZk+0B35nHuorfkouy0/6kB1edXbmgAQtc1oFyjmphF/2o8xd0hERL4pn8FD8kKE53uyWMA/MPR+HG6fbDqQVvSLsdnEdqlMUBfcDJT7s8cFMn+3KV3u9xM8ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750379954; c=relaxed/simple;
-	bh=l1/IBbUcNDQFheW+9eiIMgANLamPBAEjZlIoFP/QBjQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qgu5Z7bovQ/qzq5/gN6e1f7jfr12LMEW48SDPbrJtgxNc5/xgJ3S8Rpg8klESsUC29CKIzxnrj9iDEBFF0AhmHTyQo0jpQwBphjfvqzP9qDJb4kXtGTdpfEodNm7jSjX/NO0MqeysFBxaeoBmKRDe9FR60DwavtdWWiYnZVNprU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2cYMFHi; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23694cec0feso11695295ad.2;
-        Thu, 19 Jun 2025 17:39:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750379952; x=1750984752; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LTUCGUOoWGw9YgkFlv+/jq28S9YuS0p6EeVu3wom0RI=;
-        b=A2cYMFHiRYC5s2eXwoLh3sWcOxC+ZpRGC1GAzVAQ85yUbL8QgX++gDU6Id0G6gwoW6
-         YvsNrs4QUdJ3C+5GrJKY8MOqNFSIvbbYCy/79Oz2LAXEd5OR9u4aLUU/lfYuGpmruHBz
-         O3bftpFMjNkvnFnqvbog4TPMTPVyQdDKacJuU3LYcuAkjkVn9Equd1Vs9/mUpeGvZCRF
-         66ogblNxBlQLObXUsyuN82xtcc21xZkFKtpgVbK3UYvOVCnPn2/PyKZWxmi4RvVfS/0u
-         kl3iUBxRZ6uaYKqcmCWMQmTV056n7KU81tf4zCJcSNDgR9WRQPLo1QTn4zffzXtGvfgP
-         jIMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750379952; x=1750984752;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LTUCGUOoWGw9YgkFlv+/jq28S9YuS0p6EeVu3wom0RI=;
-        b=Y/vlB2DNQfKVCVEnHH2dLKUQoz+fdffcKorQoD1/zZNBdOtuCnWALRqtfvQtbZ5Inh
-         PJ1xQLOVmx3btwrkThqHNGDmdmUwcmLOTKPg/K9M4aHjY0wED/YOks3TAZOOmnzcdBYx
-         xiAQi36H/1vA8setO0htENQWZSIXx9iXnIyb1AXYeHx54L3zHDO2L15+OGQhqy83HBs+
-         7WTJtbI6xfvtDMMuNyT2D0tW6/3zxzZ8Ed+Fu7rZjC8j0bnS4/X+ZEl81Mlm2cQxNp85
-         2zW2/accxstD5oVjU1JO1Y/wIunpxGlRfeKCSw7rGvcKpg/b2bQHIhJuUd77AWGIkbfB
-         Gsjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOA2+tADQ1QCcsoZW74uY4GbuKer4/P9A3EYqsii60iPPmkA7Q+EkGs8ENnRT9ujPoVWtk+6BEsh9l4rq722/RcRry@vger.kernel.org
-X-Gm-Message-State: AOJu0YzipeVH5fiZGY1ZUV1sKoKl1dt+92O+pJoOyRDj5K7/6zjvNXoR
-	oyuDMDqblC1d5giDMol18sPebUFOqNNWJe/uvpM31tZotR/qHfgcjAe7
-X-Gm-Gg: ASbGncsgoHyqCPhV1mNnZxs/A6Pxty+Cs/kWxlklrMoeznzEtzanvn0qwp/eNpYho5G
-	SgZ6aXBibU1ZgC6vfGRTDGoUJ5LGYeEJO0dv1TfPikQ5rz5L3cDCiZU5012JdjKXQ3wXknZh7JD
-	xqCNgqSsUcc8yv0CW/uGOUkVQmfzF6qhaPbCmH/yRzH3JCSq5zmScEcI/beJ9DoOHJvzP+IpJnW
-	6e2uMe3H2Fz9NQOJ85KllwPF/fd5IF/ZMNKFMhfu8D7bHOP7BV9EP1VA0f8dLnyEtpqwpYnnB69
-	vMFQouqYxD4MULRSX4wosn+KwwBfj6zKAp3hfwAHuSC3eLGJrEaG4WU3eoTczGd7bc37c3gxXbp
-	ujfg/PY2J
-X-Google-Smtp-Source: AGHT+IEsnon49573ykf7HKyk7csiHL4sl7FYS54aTs8DO+25TgfY+CL+ZJa6gTTuL0rTW5Ou+vUM6Q==
-X-Received: by 2002:a17:903:320e:b0:234:e8db:431d with SMTP id d9443c01a7336-237d9764d8cmr12455965ad.20.1750379952177;
-        Thu, 19 Jun 2025 17:39:12 -0700 (PDT)
-Received: from localhost.localdomain ([203.123.65.120])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d860a8a8sm4578445ad.132.2025.06.19.17.39.09
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 19 Jun 2025 17:39:11 -0700 (PDT)
-From: Xiang Shen <turyshen@gmail.com>
-To: acelan.kao@canonical.com,
-	hansg@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Xiang Shen <turyshen@gmail.com>
-Subject: [PATCH] platform/x86: intel-vbtn: Fix code style issues
-Date: Fri, 20 Jun 2025 10:38:49 +1000
-Message-ID: <20250620003849.54442-1-turyshen@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1750380129; c=relaxed/simple;
+	bh=VAQSvPyDO1ZmPDa8nxQSlhHP3K0jM5ycwZPsDCz+TOg=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=uYh5WzgwsDFtFkqi1wslXet/N545oNiaNEF/u/PVWtoEWkDwVr/CAZUzZ9z7Jic9EApsdUVp7A/uXbKwEG0b2RiATBtQRAbY/8KpkPy0gk5CLAcfdfRvfOAOl9YEy7q31KLKs89ET5ZHUNPd5h3Iha2t9aDr7omDconbMz5hsRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bNdw70kn4z5DXWg;
+	Fri, 20 Jun 2025 08:41:59 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl2.zte.com.cn with SMTP id 55K0f4Ic094365;
+	Fri, 20 Jun 2025 08:41:04 +0800 (+08)
+	(envelope-from jiang.peng9@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid31;
+	Fri, 20 Jun 2025 08:41:04 +0800 (CST)
+Date: Fri, 20 Jun 2025 08:41:04 +0800 (CST)
+X-Zmail-TransId: 2afc6854ae20ffffffffd83-7c389
+X-Mailer: Zmail v1.0
+Message-ID: <20250620084104786r5xoR16_AmYZMJLnno3_Q@zte.com.cn>
+In-Reply-To: <0f535bed-f4d4-4565-8f21-b10070f793e8@suse.com>
+References: 20250618100153468I5faNUAhCdtMA01OuuTKC@zte.com.cn,0f535bed-f4d4-4565-8f21-b10070f793e8@suse.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <jiang.peng9@zte.com.cn>
+To: <jgross@suse.com>
+Cc: <sstabellini@kernel.org>, <oleksandr_tyshchenko@epam.com>,
+        <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>,
+        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2Ml0geGVuL3hlbmJ1czogZml4IFc9MSBidWlsZCB3YXJuaW5nIGluIHhlbmJ1c192YV9kZXZfZXJyb3IgZnVuY3Rpb24=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 55K0f4Ic094365
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6854AE57.000/4bNdw70kn4z5DXWg
 
-Fix checkpatch code style errors:
+From: Peng Jiang <jiang.peng9@zte.com.cn>
 
-ERROR: do not use assignment in if condition
-+	if ((ke = sparse_keymap_entry_from_scancode(priv->buttons_dev, event))) {
+This patch fixes a W=1 format-string warning reported by GCC 12.3.0
+by annotating xenbus_switch_fatal() and xenbus_va_dev_error()
+with the __printf attribute. The attribute enables compile-time
+validation of printf-style format strings in these functions.
 
-ERROR: do not use assignment in if condition
-+	} else if ((ke = sparse_keymap_entry_from_scancode(priv->switches_dev, event))) {
+The original warning trace:
+drivers/xen/xenbus/xenbus_client.c:304:9: warning: function 'xenbus_va_dev_error' might be
+a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
 
-Signed-off-by: Xiang Shen <turyshen@gmail.com>
+Signed-off-by: Peng Jiang <jiang.peng9@zte.com.cn>
 ---
- drivers/platform/x86/intel/vbtn.c | 38 +++++++++++++++++--------------
- 1 file changed, 21 insertions(+), 17 deletions(-)
+ drivers/xen/xenbus/xenbus_client.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/platform/x86/intel/vbtn.c b/drivers/platform/x86/intel/vbtn.c
-index 232cd12e3c9f..bcc97b06844e 100644
---- a/drivers/platform/x86/intel/vbtn.c
-+++ b/drivers/platform/x86/intel/vbtn.c
-@@ -160,30 +160,34 @@ static void notify_handler(acpi_handle handle, u32 event, void *context)
- 
- 	guard(mutex)(&priv->mutex);
- 
--	if ((ke = sparse_keymap_entry_from_scancode(priv->buttons_dev, event))) {
-+	ke = sparse_keymap_entry_from_scancode(priv->buttons_dev, event);
-+	if (ke) {
- 		if (!priv->has_buttons) {
- 			dev_warn(&device->dev, "Warning: received 0x%02x button event on a device without buttons, please report this.\n",
- 				 event);
- 			return;
- 		}
- 		input_dev = priv->buttons_dev;
--	} else if ((ke = sparse_keymap_entry_from_scancode(priv->switches_dev, event))) {
--		if (!priv->has_switches) {
--			/* See dual_accel_detect.h for more info */
--			if (priv->dual_accel)
--				return;
--
--			dev_info(&device->dev, "Registering Intel Virtual Switches input-dev after receiving a switch event\n");
--			ret = input_register_device(priv->switches_dev);
--			if (ret)
--				return;
--
--			priv->has_switches = true;
--		}
--		input_dev = priv->switches_dev;
- 	} else {
--		dev_dbg(&device->dev, "unknown event index 0x%x\n", event);
--		return;
-+		ke = sparse_keymap_entry_from_scancode(priv->switches_dev, event);
-+		if (ke) {
-+			if (!priv->has_switches) {
-+				/* See dual_accel_detect.h for more info */
-+				if (priv->dual_accel)
-+					return;
-+
-+				dev_info(&device->dev, "Registering Intel Virtual Switches input-dev after receiving a switch event\n");
-+				ret = input_register_device(priv->switches_dev);
-+				if (ret)
-+					return;
-+
-+				priv->has_switches = true;
-+			}
-+			input_dev = priv->switches_dev;
-+		} else {
-+			dev_dbg(&device->dev, "unknown event index 0x%x\n", event);
-+			return;
-+		}
- 	}
- 
- 	if (priv->wakeup_mode) {
+diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
+index 51b3124b0d56..e73ec225d4a6 100644
+--- a/drivers/xen/xenbus/xenbus_client.c
++++ b/drivers/xen/xenbus/xenbus_client.c
+@@ -202,6 +202,7 @@ int xenbus_watch_pathfmt(struct xenbus_device *dev,
+ }
+ EXPORT_SYMBOL_GPL(xenbus_watch_pathfmt);
+
++__printf(4, 5)
+ static void xenbus_switch_fatal(struct xenbus_device *, int, int,
+                                const char *, ...);
+
+@@ -287,6 +288,7 @@ int xenbus_frontend_closed(struct xenbus_device *dev)
+ }
+ EXPORT_SYMBOL_GPL(xenbus_frontend_closed);
+
++__printf(3, 0)
+ static void xenbus_va_dev_error(struct xenbus_device *dev, int err,
+                                const char *fmt, va_list ap)
+ {
 -- 
-2.46.0
-
+2.25.1
 
