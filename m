@@ -1,157 +1,130 @@
-Return-Path: <linux-kernel+bounces-695111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470F1AE1565
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:04:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 425A5AE1568
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF69A167244
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:04:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B57C7A5FD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33AE22A1F1;
-	Fri, 20 Jun 2025 08:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D8522DFAA;
+	Fri, 20 Jun 2025 08:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="w1mXir5u";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="upjJ6gwW";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="w1mXir5u";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="upjJ6gwW"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XJaLQ0YC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9F2226D13
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 08:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E6D22A7FD
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 08:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750406678; cv=none; b=K0OOTriTDqJQjOpdNMJmJJUeE6NC4V8iZhXf1h/kXbWUXnIDk8okjCtw5be/lp/M684/V9EMXzTf5NXgURQE7wUejgU4y3qcjHf/WuL1ILbVdfNHrOwlQkaoI0VKvCEjNRxNJgxRyGjzKQqSN8wpjUTyPv6TR7gkL/FQoJXiXog=
+	t=1750406718; cv=none; b=oE30lAV/zqqqAaPQueuKtpUz7pcNDCFudsE/uFkkNeRINFV+r3dnTRN5k8AYhnoKnEukkm9YZTByZYRVLpjt39GIQugoozPMnamq/PSJJRGs2vgOqcBF4W6Ie6j8FWy/hrqUx3hjWiMuoEb93VnlVq2gWm2OlhXC/LOJDf6usYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750406678; c=relaxed/simple;
-	bh=1rhy81d+RuAtc7ZYN9DIIZpIf9I9UYH9nTgf9vhsOaY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sE+jCWEuLJZn+VsRavbapJUJtSk4xGYjmu8UeCGGzB+cDp3ZXi0ktuRaCsAI1K0sQRx6+Enzs/hn1/pEXl0yFIB45BWFdrYmFVFXXepQ+HxEFwpQGhXVg+IL5Bns909eveD1hEEZYeZiBoOZtK/rR/aiG3pAn+RTR1xBZe4CEsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=w1mXir5u; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=upjJ6gwW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=w1mXir5u; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=upjJ6gwW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1750406718; c=relaxed/simple;
+	bh=5KC7JaBi27FJopmR5k6s/NBwaDLKbC0pWa+YTPzaINA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O0u87XqgGIdnqfdZA8gxliuXANHeksBrziaUfLzLZr5u2I1RCktiRTYUTINTsYlWfq8q5rC9nVqjd+93EVhWniaFgJONzB/dMKV1zo4mS2rlSSptTreQHRBokQWmwa/6hwIr4NOw8rHVHePJ83xnfPNZAzxq6iHYWXRsoQ4xoHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XJaLQ0YC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750406715;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FZ6wdfT3r/PmlG/U6lgGdDA1+cv2EsGLU4a4QuReN6U=;
+	b=XJaLQ0YCR4VDyc9THRHr0AfuHHNRtdq7NvYLw7MeCZ6eLQzKBa1seEM5H+lQjZhS9tU50P
+	vyGad37jpHrphpxvSIqv8kmqpjK0C/0JRTWjofqi/G1qsNTsBAmdcd2Gw9wh1EegoKDp/X
+	fU6Qp+xfQSdW1dApWdRW7cKxIMWo5uY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-30-dp5gH5tkOeeOVjixIIFxoA-1; Fri,
+ 20 Jun 2025 04:05:11 -0400
+X-MC-Unique: dp5gH5tkOeeOVjixIIFxoA-1
+X-Mimecast-MFC-AGG-ID: dp5gH5tkOeeOVjixIIFxoA_1750406709
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 61A381F38D;
-	Fri, 20 Jun 2025 08:04:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750406674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n+cXAFgm8fewQNpOgQTL7i1df/IP0OqOMaJYMBANFNs=;
-	b=w1mXir5uqcynEeYR/+Ma1w3zxjlrvD4vh6tf2zBe6YOZjaK0vRroFFfHhRhgGzM0YDxwcn
-	CLV8fB2Fe0sPgqVSaX2jOS1NV6/1X5cVQHTztvM7vzu7utjnN0kmZ6ksMcynTLZe3v/wCc
-	W59kbkSwQM5I33QkwSS6wudIl8HhWoc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750406674;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n+cXAFgm8fewQNpOgQTL7i1df/IP0OqOMaJYMBANFNs=;
-	b=upjJ6gwWFtwJLk5D43Dp1kwKokvilDtgu8SCeICLW9GTuaIvNfmauIQeQerpsMGdfIpWMU
-	LvibrpLIh8+dJTBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=w1mXir5u;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=upjJ6gwW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750406674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n+cXAFgm8fewQNpOgQTL7i1df/IP0OqOMaJYMBANFNs=;
-	b=w1mXir5uqcynEeYR/+Ma1w3zxjlrvD4vh6tf2zBe6YOZjaK0vRroFFfHhRhgGzM0YDxwcn
-	CLV8fB2Fe0sPgqVSaX2jOS1NV6/1X5cVQHTztvM7vzu7utjnN0kmZ6ksMcynTLZe3v/wCc
-	W59kbkSwQM5I33QkwSS6wudIl8HhWoc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750406674;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n+cXAFgm8fewQNpOgQTL7i1df/IP0OqOMaJYMBANFNs=;
-	b=upjJ6gwWFtwJLk5D43Dp1kwKokvilDtgu8SCeICLW9GTuaIvNfmauIQeQerpsMGdfIpWMU
-	LvibrpLIh8+dJTBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2602A13736;
-	Fri, 20 Jun 2025 08:04:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id T7zPBxIWVWiKWQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 20 Jun 2025 08:04:34 +0000
-Date: Fri, 20 Jun 2025 10:04:33 +0200
-Message-ID: <87sejux2i6.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	Takashi Iwai <tiwai@suse.de>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: emu10k1: Replace deprecated strcpy() with strscpy()
-In-Reply-To: <20250619174057.175676-2-thorsten.blum@linux.dev>
-References: <20250619174057.175676-2-thorsten.blum@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 88715195608C;
+	Fri, 20 Jun 2025 08:05:07 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.28])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 583F918003FC;
+	Fri, 20 Jun 2025 08:05:03 +0000 (UTC)
+Date: Fri, 20 Jun 2025 16:04:59 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Barry Song <baohua@kernel.org>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 20/28] mm, swap: check swap table directly for checking
+ cache
+Message-ID: <aFUWKzlSD9GKPuP/@MiWiFi-R3L-srv>
+References: <20250514201729.48420-1-ryncsn@gmail.com>
+ <20250514201729.48420-21-ryncsn@gmail.com>
+ <aFPoiuJcBGl2E3sh@MiWiFi-R3L-srv>
+ <CAMgjq7AoJ+m64e2rWFFjU943D8kCZoR_e+Hd8LnT3bAy=gTT_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-5.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,linux.dev:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 61A381F38D
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -5.51
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMgjq7AoJ+m64e2rWFFjU943D8kCZoR_e+Hd8LnT3bAy=gTT_w@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, 19 Jun 2025 19:40:48 +0200,
-Thorsten Blum wrote:
+On 06/19/25 at 06:50pm, Kairui Song wrote:
+> On Thu, Jun 19, 2025 at 6:38 PM Baoquan He <bhe@redhat.com> wrote:
+> >
+> > On 05/15/25 at 04:17am, Kairui Song wrote:
+> > > From: Kairui Song <kasong@tencent.com>
+> > >
+> > > Instead of looking at the swap map, check swap table directly to tell if
+> > > a swap entry has cache. Prepare for remove SWAP_HAS_CACHE.
+> >
+> > But you actually check both the swap table entry and swap map entry in
+> > this patch, or do I miss anything?
 > 
-> strcpy() is deprecated; use strscpy() instead.
+> Hi, Baoquan
 > 
-> No functional changes intended.
+> >
+> > E.g
+> >
+> > if (!swap_count(si->swap_map[offset]) && swp_te_is_folio(swp_te))
 > 
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> Yes, the count info is still in the swap_map now, I'm only converting
+> the HAS_CACHE check to use swp_te_t here. We'll remove swap_map in
+> later patches and use the swp_te_t solely to get both info.
 
-Applied now.  Thanks.
+Ah, I see it now. That's why the subject is saying it's checking swap table
+for checking cache. Then it's fine to me, even though it's a little
+confusing. 
 
+> 
+> The reason some checks are added to check the swap_count is that:
+> Before this patch, `swap_map[offset] == SWAP_HAS_CACHE` implies the
+> count is zero too. So if HAS_CACHE is moved to swp_te_t, we still need
+> to check the count separately. The overhead will be gone very soon in
+> a later patch.
 
-Takashi
+Got it, that sounds great, thanks.
+
 
