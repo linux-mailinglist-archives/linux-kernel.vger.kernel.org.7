@@ -1,87 +1,76 @@
-Return-Path: <linux-kernel+bounces-694812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EAF6AE10F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 04:13:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562E1AE10FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 04:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90BAA19E2078
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 02:13:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FDE83A10F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 02:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E56F84D34;
-	Fri, 20 Jun 2025 02:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4441386B4;
+	Fri, 20 Jun 2025 02:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KgoIxtQX"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2084.outbound.protection.outlook.com [40.107.243.84])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aJNMLcuk"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010051.outbound.protection.outlook.com [52.101.84.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A79C8FE
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 02:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B59029A0;
+	Fri, 20 Jun 2025 02:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750385608; cv=fail; b=oENRdFTwl2bVLAWbXhRA7xRpCA+uFrLwnlkloHE7Vl0nJjF31bb7iL9Ky1w5IBr/JboaQOhg5nWiIS056f+2PFCWjQssqjOy/dG607xcxRCIY56uQkRr3gDyc3Sj57rcu/7pfSjFQMbvXJN9REMMWly/RiZ9yds9ZCnkB10ySic=
+	t=1750385804; cv=fail; b=MM2bZieJbNRRFrFy9YJdSnpYZpGMxV8eAF1hKeE4YP1fflF9AMnlncrCgNHWOUhtc8yZ9yiUMUCPmrokrR+7YxbYV3sqXmU/365WoUMpVc6TwHGChKkyshYCbKdlPoOxWQ+jXtoOI9aX8Gd33zDTWwQJJ355PwcLG+orzYinXDE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750385608; c=relaxed/simple;
-	bh=FBgfKN0QqExvUsFiKjjayfWPBPQLHYf322/ZqAQtg+A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Cw8y5PjA99jAEpzLAwrcPKI6IVj5qoBv/o8rWiy09wWaYAhLDRlmPaJ2vut9g8FNzn5pr3jYJejc2UrAevreq9XrlWXuYbss0p7R/zUWP8JK31hB2+668vWx3byLLi6RM6Aac4Z1O776ygcr8PC7PGWOoGdCndzyb1NRGQFSyhI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KgoIxtQX; arc=fail smtp.client-ip=40.107.243.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1750385804; c=relaxed/simple;
+	bh=Q4q5MyTcJz327bYyD7859N889d7o/wMA96kUsv052GQ=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=nXWdhpjxB1fcYdflgVMCCKaF2WiZLrjeOZQJqnV4jfRSdDZTb3JOQuDOVlh+LxTv6y0XRx7dNAw+JCmEBEHwD3BAmUWkiJnztl6leuzZ54+x5KiYOWKKrVES0vufM1B3ojpFzbsVZFKTZ1Zs55bZH3cQ4Zvm/Pt0E3jsB4+3Sdc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aJNMLcuk; arc=fail smtp.client-ip=52.101.84.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p3/20OUnCYkESyu9dl86sbJmp1UhdAaPM+QTlh0Hx6UUctGyPwiApt/JN4sbPrDqqJAkCZvgLnylgd4sPDEprCu8zDFBOnj1ZEx+pN3qi2eEs0uEsnCKUqsdjJwK0X+232RZP4b0Z0KTy2QrpUbCpe3y+yLQRBkXIehy45fEelVBWAUa5OWvsGI1oactDIwm32/lTmrCXNmibpb3dmSR6AfjomuHPjmG6/lkiFNQOpN0KbdP/t9e0U6BlzpNw5tzpQWnZ71XhRVK8LeECgnTenw4qxdJop6KwtlOHMWiqltkVTSW6YY9qUciktLWcGW7zt6KdY7i9cZyROGsgpKhQA==
+ b=pjK1gtZfs/KkwZqcuYf3yR5uQv6FTYm/HwSglDMVBqJ6qBV3n/4fNHhk/5H5qMO+GXjcWK6S9LvVne1VsU5C2y1Z4ZNwjqaRPjzI91HilXZO6P1xm9pP6TW3M8a/y7olFplx4Xwnyob80tuPaIbDBFJnAGfP8DkDprtgOOgy9OIrjjD8F0+DYTUPtIX1/KAtkgVdYUGmxrIucG4f0v1zGh0TN1CECXkfOPNtMWkzNML2DKLJJFc1eF5bCg1HHCxc+Ll4d/UWk/hp0P8GRsEem/Aeu+BzT2vr7GfI+jJdkyVrwQqDh/N211YJx9Ot5zS7UJ7TW0+m45ElIgUwZK8mxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/KEGC4RxJQmxRHXs2gtMUQzzqVeYIbJy5msq/HynXuk=;
- b=oQ6gptWRl5T+9dZYcnKYR71HtHfbjBbWztBRcqG3lBHuYvQwkCvLMNXPH5+W8CredUwQ1/MPvNPKd1vleI7Xso0kqsT9kSmmDrrv5jaCuTumv7OZKu7licHAdXhWN0V1y/aEZpYFRTlud58tjxm8GJdksmvJElEex+M0rdEsd7uykdFG7/f9tfJhUmVpnAj6xRV8wbj0Sgst+i7AVye7z9VAM1zna9kwElvPBkO5gZFGGLB1ThysaxskypzoHyVbtogIzVJX4Nr8tQub+hw+/4NSdTD9UkeUVBHYC0/kVgj4/XK7U6c13CMxeW19AkcVd5WQ48SbRfTSVSJlz9Y1sQ==
+ bh=ZGegtEMkczxR/wLNBS+hzA1vadoUL4u4tFFYHgkkvUo=;
+ b=SL9/izTKNH+r9iy+FNv8bi56oIj/JX8YI2O+/3L5oMSWmveEz8OhgKGO/755UIUvj2WTMQK47T2mfMBCZ6lGW0c+FLcGHCqydl5Suz6kritbTKeVwiemZY7Az6jMp+ItUr8WW2uxCA7C15V+8tiqfyZcjBsAnl9RUH7G0RjJJYVBwybsn/myZTcMYH705t9rvfjFU9gmxsx0IXi/T/yVM1ELH7cjH42CC3H46+looucbpXMn+QF8GdPNUy4jY1Klhp03m/wYCR1RfzlFi9ruwbHM/l6h2ouSkf5kO8W/ZV03JvXG4j/VrZFXc8kAxj3Th8QvTVX0G1r1+h1H+E1olA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/KEGC4RxJQmxRHXs2gtMUQzzqVeYIbJy5msq/HynXuk=;
- b=KgoIxtQX6V9zmtTakItS9kbLl7sdRDIMVcFJFnzDAB8vwv7CBVkbLwBchSo3rhkj1DypftKwK8wvtYp0Y+ud9VoiL5tRcwP7h58SCQXjT0pI03SIC0LuR6o7LiOcMxgzjCcXXtB5ZALCkqJDcspS7A465Ac9Pl2+0OhDoM0t4aYYBaMudrloYUuRWGfLGoMpUC8cNyf40yjMXJVA9asIH7pZJJxxgsLvQ7nb+GMeCpobncmuhrFNX1zrVKvQAWhCjE/MJe0g107sowG5tu/77vy1oOG2Xc9zeXl8rXJB1Ekeh1pzB1/ZqiAoVJ08/58s+K5I1A6sTLSfSQKbA5DAPQ==
+ bh=ZGegtEMkczxR/wLNBS+hzA1vadoUL4u4tFFYHgkkvUo=;
+ b=aJNMLcukpjZKNpw03tZGHoJyTkiSPHyuLo0XSNQ/KZKOPqaZV3auXtgCX3rjKfuwAsZy87kFUaVbfZq5hVD+rNFkcMEUtsfnHipEs9OFnPvx/0QUCyxKxgugnQxQo+r4tz53aainR+/+l1eW/Dk4yvXa8/6bDtTGFaC01JHZV0eQujpze3rmg6bliGOK4+EUCZgkey0vR8Y+soJo1q0XVGKtRFo5rVBLmmdN2P6wSH8dpjn3F0jV3fN5DFHpNxlIrT3LPNasEU5+roMSeYh5PQ/a6YVrPfF4U5O4Oilrs4MIpMvj4ahAQTvI58tqCXJApl1J7a/YbsZR8Uo6U5DXEA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- PH7PR12MB7140.namprd12.prod.outlook.com (2603:10b6:510:200::18) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR04MB7055.eurprd04.prod.outlook.com (2603:10a6:800:123::21)
+ by GV4PR04MB11332.eurprd04.prod.outlook.com (2603:10a6:150:29a::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.18; Fri, 20 Jun
- 2025 02:13:23 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8835.037; Fri, 20 Jun 2025
- 02:13:22 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Jann Horn <jannh@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Lance Yang <ioworker0@gmail.com>,
- SeongJae Park <sj@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH 3/5] mm/madvise: thread VMA range state through
- madvise_behavior
-Date: Thu, 19 Jun 2025 22:13:19 -0400
-X-Mailer: MailMate (2.0r6263)
-Message-ID: <A88CC419-113E-41DA-83F0-016BFE50B660@nvidia.com>
-In-Reply-To: <3651A1A2-6EB0-4731-BDB2-E11FF7E63749@nvidia.com>
-References: <cover.1750363557.git.lorenzo.stoakes@oracle.com>
- <a520417243ce7f8122de05a0420f964a922e392a.1750363557.git.lorenzo.stoakes@oracle.com>
- <3651A1A2-6EB0-4731-BDB2-E11FF7E63749@nvidia.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.25; Fri, 20 Jun
+ 2025 02:16:39 +0000
+Received: from VI1PR04MB7055.eurprd04.prod.outlook.com
+ ([fe80::d6ab:1538:d868:bf8]) by VI1PR04MB7055.eurprd04.prod.outlook.com
+ ([fe80::d6ab:1538:d868:bf8%4]) with mapi id 15.20.8857.021; Fri, 20 Jun 2025
+ 02:16:39 +0000
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	patches@opensource.cirrus.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shengjiu.wang@gmail.com
+Subject: [PATCH v3] ASoC: wm8524: enable constraints when sysclk is configured.
+Date: Fri, 20 Jun 2025 10:14:03 +0800
+Message-Id: <20250620021403.624303-1-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BN9PR03CA0928.namprd03.prod.outlook.com
- (2603:10b6:408:107::33) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+X-ClientProxiedBy: SG2P153CA0018.APCP153.PROD.OUTLOOK.COM (2603:1096::28) To
+ VI1PR04MB7055.eurprd04.prod.outlook.com (2603:10a6:800:123::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,231 +78,228 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH7PR12MB7140:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2af1657e-566a-4ea0-9dc6-08ddafa0080b
+X-MS-TrafficTypeDiagnostic: VI1PR04MB7055:EE_|GV4PR04MB11332:EE_
+X-MS-Office365-Filtering-Correlation-Id: f002be43-a356-422c-f276-08ddafa07d2d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Sd+gkKfe/Vq3xtDAKzG2NVvcEkQ/6T9+2V/iGxNO6XFDXrcdYlhO1SvTKJ/s?=
- =?us-ascii?Q?jTv2/hVUYJS39qUElpFNOpd3QAf4cCUUI0DyJaKSCTfqehVRhZREChjGbZF9?=
- =?us-ascii?Q?/Vq8wbGg/e7FsyAglMM6eqPN5FsPQYxEfptBjmsYdKpyHpo8qqKDkkWVF3ad?=
- =?us-ascii?Q?bNtZu9oOuwRjxTlNcZ3m48WDJC8gxLyQ7HuayhJRoIexDZzOfUHqcfdReupG?=
- =?us-ascii?Q?3jcmkFq9XKYCYTcGUmLRUg48n/oZy6woFcxIuhey5L+hUX2e1LykV8ZRzGeW?=
- =?us-ascii?Q?ZLBnOVKblawAJrO9EfpaFmFtOC3jAGOdwDvlsdbHJpjchvfe2i00TyACuA3d?=
- =?us-ascii?Q?S/9WUEJlcw2Cj6ZMfyo9iCLSyD8XbwZofTrhh0xjQS4+pV/lkiqnpxqSXtRI?=
- =?us-ascii?Q?pZUxt/o1aRt9lDrJmM5AOcRoq+XgSxoAwB6t62D00+BdpHPi1frsKDYUR++o?=
- =?us-ascii?Q?FtKt8Oz95GtPsK7sQ4mj6oYSp7Q9jM0iIOyOuyRI4keTZajeMDwlcIhOLLA0?=
- =?us-ascii?Q?rANhA7u9jPSAlI1fG8XD5A8pKSaT248t537Gx+zDiIW5Hdo3y7ZXKjNKekQJ?=
- =?us-ascii?Q?Kq+4xKX9CHPZCdR6WPp2KxviSFFtPckcQuNnroLU5RW0HicQYs02T1shS5Xs?=
- =?us-ascii?Q?R9XG+SzlyiFYH/7s45MTHXhwCfWr8CwyZh/98UgsG2Vg69AwdjixhceRIsAd?=
- =?us-ascii?Q?N3jOeYJvQBCss8mxFPzq7CIhBJhECiYJuSfK02DRuOtxaj2tBMh9e3M0g7NM?=
- =?us-ascii?Q?ATpONYs/kzWL69MlIiouklPS4p164oSacfflMb5sySxryO0aM4UfCgjbpMUc?=
- =?us-ascii?Q?+1QPL4dc2XWCoI40t07hEMCuUSPFHo0M+Hq1B65ep0UyKbsGeZ9jnpEeJkiC?=
- =?us-ascii?Q?pwUeyPOj3OVdXvMSKI6ivmWWUk8cQTgtYb2Mws4ajd2qkyt2tBpcBpFstPXk?=
- =?us-ascii?Q?GTGmArQ8fVaJE/FBbOqLomyzaKfxOE3m2B0G636xwWzSO/x4qrcTLC8sLMyZ?=
- =?us-ascii?Q?FvbBtMHJoo07NN6syNqNCzJ7EzkraTa/+27aC93EfE+86ZR7zmhtznBFAYMr?=
- =?us-ascii?Q?PhJoyJD1Nm4juH8JldRNT6RK6/67icq7mTD8f1CBIta5cZJsow9jTWU9rdsc?=
- =?us-ascii?Q?4741hi9eAtRo09HuXlIziic8j6KLzzNlUF7JszB8t5ISp6GOqMl9xTh060jk?=
- =?us-ascii?Q?Qrfn1gBcsfMX/6yoAtNxf+1zWKHQPKzHaBtcPm6uwFNPifhWdkkLR7yYNUm+?=
- =?us-ascii?Q?VP7dZjKgdQy78VOln4ZsA185ka+gmHr9LZhtZruHx12J4nFYulorbxumG+W3?=
- =?us-ascii?Q?7KnY6bRrLRtOAYttVBHmJ2QKlf/CCaOB6jBxWggsIDiEnDyvyQveiJlaXPZI?=
- =?us-ascii?Q?vKut+TaSYXUxq+1iuO9Y7J4TOCAGpiYeqtF2FE+q7RqVymWPRPRoz2w6HYbA?=
- =?us-ascii?Q?w12XyYxUMgQ=3D?=
+	=?us-ascii?Q?B5J5wlMYvasguTCJQlkiCNp9z7Aluwa08jtDFzxkhbRxydO3yKD9A+oncBvr?=
+ =?us-ascii?Q?1vsl8CaYHN21+A03Yo9ZoaZI+0OwPjTLvFKTZ0fXRCO4p8F11gyrMnDggAvN?=
+ =?us-ascii?Q?m/ousi47w8OrGaSmhhofyJdkQXFJq54n5T7SD3uvXSVdlFhYEwuKVm89j7h/?=
+ =?us-ascii?Q?cKXFSSj1iSiywf/FEhTGO1zMzMu9t1mB3UCww8v24TinObmyrXQGyQmGfk39?=
+ =?us-ascii?Q?wFC943K2YOOXWM3m/pyng1FUC+sTWobBu9x/wsIPBJGxmmw3FRiWRfh8Opbm?=
+ =?us-ascii?Q?yIGNgEISKp2lsQNEtIdESduCtsdC0KuTRpycO3luCnl55VLS3IBjA1vsaDHq?=
+ =?us-ascii?Q?g/LOBhdKc2S4kuDrqr++BS+fZgNvS5mrRBhwj/RpYh9mTQyI0l2MUnIREUA2?=
+ =?us-ascii?Q?JqnuU6Mt2lcAK+It41PXSTH4Fn4lZ5nfEqNgGpOqDX5523FameZOXknjy6Am?=
+ =?us-ascii?Q?/nwUge+LN/zfPDGwe97wdqwj0FLXbpZM/8617DHpngK/YTQhCaaZc1q5/5to?=
+ =?us-ascii?Q?aY8+spqQ0w4ysyZyJoFXDdx9uaTF5RW5tA8Zu1UNvfDS7TKhNWhexKNwtCQU?=
+ =?us-ascii?Q?ismqR8GlmmdBdbZFik911Tc6DtvG4sDxrX0JtfSXyKBg1reVxyOAonV4u6ES?=
+ =?us-ascii?Q?RvH4e0yIgdpDxqBg4sb6ma17wjMV9dxPuKBJ2vlYelrM0bPO32CiccfdsdR7?=
+ =?us-ascii?Q?7syQ+904DW5aqktvIBd6nz0BEG1gBJV1PDauF0xmCBwxluwUY/QDZSs4jrPz?=
+ =?us-ascii?Q?omjlqrzSE3Lfcxcr04Zf/E8OyBnkvnQ6IO2Qfx09LhwVfQPJnMidwLWuJsxA?=
+ =?us-ascii?Q?cuuyeMPoG9cqToq3fFm08dY7rdOEJVl7FhaQ1wKh2mPsuyP/vSsp/H27BsK9?=
+ =?us-ascii?Q?Bwh45EfLh4Bu8B3Nt/VbSWiILhIQyUJ+2hScIyskX3dsCkSZGavcLtnMEBlu?=
+ =?us-ascii?Q?LsRu5amniuqYVyYPRKQhUrM+Kjy06rBiQkP4UvOltiEVtJ/PCpuRmtWh3GVc?=
+ =?us-ascii?Q?37cLGwrsZqM4YLSPUfstNB12m4nYP+5VR58mXe0COcIO9UUXtIDajYiavJMv?=
+ =?us-ascii?Q?2GP7kCVfZjcihK0ZRdYbKv2cRdLExk+/FyMus5rMzW2sx78rYuHq8qelw/ax?=
+ =?us-ascii?Q?0Le773FOJ7+zL1cVDJsE2+a/IawxUHWxLvlNI6kiRWb2SC6wEXoja09wQdOl?=
+ =?us-ascii?Q?kmdfKOYp7E/bv7S7yS0G89vuD5/fSwiCCkJ/LZpIYEgp64ojWhc35hec/vHV?=
+ =?us-ascii?Q?SNfD5w9fyLmOIoCwx07Odfuq21aw1rOnDxzLP52FSB0MyunFEX5lVqQDni9g?=
+ =?us-ascii?Q?dqdlNtgRIpz8wUihsr1zkts6oANzK8m62PPNJ43zgy0YsIAFW1zz/x/YsNx+?=
+ =?us-ascii?Q?1d0RmWAg0hy779ZHwtG99SB0OUKfPjy19htxrWXUHD59GkuKS7k0sV/ONnVr?=
+ =?us-ascii?Q?eUGw+2ZlNAT4zvedvfj9IncfXvUAlk2tBXPgPjH3RIscD4UL+vhidUg2nooo?=
+ =?us-ascii?Q?TRCGMdNQs/1x05w=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB7055.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?WqayrBTcvdKY9lMW8DsLZMfZclMl2KjSAwPPJzqs5Sg4SH74M6Dw9oM5+REZ?=
- =?us-ascii?Q?Hntsu7WgJV6OteBFhjQ4oy4LTGTKKD3MINUhjFlZ+GzlTdcD7TXRXrH+ci+g?=
- =?us-ascii?Q?vMNOpzLuXZQW9yrcKaDyi7W6TVXYDjH/Ymo8DQr84TzKR1pnHQrgcl1wKMEh?=
- =?us-ascii?Q?KQ0BD5IhLUjzHRPXrgGGj+ZG86JH6PnNHbyus/8i79NpMLo6iCBjkByrgS4E?=
- =?us-ascii?Q?B5JYXc9JmPStjtGccw3EqyI/Op4ckY5Htdoyf7nG+DioNzVfwFsrgL7nWT0d?=
- =?us-ascii?Q?roLeS1W17wemhHNSywhPANJ1OLmpVHSSkm9Zqd3kuQ4uMKXAlcXpQNtDsI1G?=
- =?us-ascii?Q?lik1w8Kt9YusZn05YsS0MMpnrT9czqnlNggzz34f3gSr8gpj6RrU5xy+/bt3?=
- =?us-ascii?Q?5uOX9y4WYcPWMeLW1ZGnHGd41Rf/+1UnWHoW5CbRoAzzc4zinDY77tNB20Fa?=
- =?us-ascii?Q?NDwJ8+Ijq3tldZeFH6mMPRDbh8HIddhQ2pGRsLDJmMcxs4/mLYzds6wFYZUo?=
- =?us-ascii?Q?OXiIdxH3b8v9z4aOxvCzxxhP2b48j1m8Fu/Vruy5V2tShxmBVEMpko3O9LG0?=
- =?us-ascii?Q?0SeTl5yjFl1MlmYfL0lHCyufhKPjprO3oz/nBpIn/dhDNaHvYBZ7bzARZeCb?=
- =?us-ascii?Q?WuRkoPY0iPWraOh2lYJrq7zee7GfLw/t67On2ZFxaIQsJmQeDSxIEu7z9nyi?=
- =?us-ascii?Q?d0NFxqb3Q1Sx/LOAq4jKKgSIZISosfrqWZbBfw0NYxbIsiliEVVktwgmDK2b?=
- =?us-ascii?Q?qCcUYjPBDlaWJV4ML9f8wW3D+urmBzQD1pKwtw9LQStxC3lVnCFIuk2bpgI5?=
- =?us-ascii?Q?QLNOl3FfDLB2eZ6pTkhRfVUnV+q/Rhlf+kmhopYklGGyt6cQXxp/Bo62nCc2?=
- =?us-ascii?Q?TgnQ5vmJHAzWSNNfyYdSoyl1kM6RI45JxvPDXLP76vrsqV7Ooo1uiTErJPOK?=
- =?us-ascii?Q?3pCoI4bgbdvwK9sraHO2Lqp4sxhatUGAN5yl0151w7KgO4Irgd1Tmj3hlUIm?=
- =?us-ascii?Q?qtWvsjcz9201lQy3vroQsdr5E2ZwW2tBTZPRpChrQD4ItuC3gi0a8p9I6RgT?=
- =?us-ascii?Q?iTh+DXa7JwqvksJDg8ITVLPPvkcWJ3m6y9kKgViNhBopWMeXKHhJP0H8H0iy?=
- =?us-ascii?Q?wEzl7h6wobSR/6Ib8xs8OSACZwKHuOtrFpUkIC/T50gvHfIUE+Ti0Fz0kZ97?=
- =?us-ascii?Q?Jy9mQRVZPnh2rKehQPZ3M9Zgz0MR9WqmlPsy4i2W2quTpYKb9uAqSP8Kp21B?=
- =?us-ascii?Q?T6eG20icojmceQkoqFa1L+j0c/5erBz9TCZLlvx2okkctxiMP5CAuV81k3X4?=
- =?us-ascii?Q?+dxEEFFxtiFQkE2QaWzjvedMVUYYF8J25MGddapIpVxkXKFHoFJWnY6DBHmm?=
- =?us-ascii?Q?4Ijt/d7dG98LBnP8IQzJR6NcSZGOf8ORNDIN1hfQ4yAheL1Bz17rLpudpLoj?=
- =?us-ascii?Q?y5r1pU3iBaW/xBjCBFCOMRVgmaN88NBc+tI830bp7L5Pi9fLMdlOMHYdpog3?=
- =?us-ascii?Q?XSdJbh7R0l47W0YP7aN2Xo3dOeDueAiB8nGOCT61ajxx4he8cjxwmRRYbSyJ?=
- =?us-ascii?Q?Ju/QX5HhUL7LXJJ/w6A2t0byQsf9Z8MMevKtj8go?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2af1657e-566a-4ea0-9dc6-08ddafa0080b
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+	=?us-ascii?Q?T+zAY8kzBVBaxgoa6h4tBYEdWidGTQ+6ZnH2LUcDZcZyNYnY01O3RfCGdIsk?=
+ =?us-ascii?Q?JScGqxzIhM5V5PKpSfYIVriBCdXV9zIqwdw/kZqAvrl/iG0eR3QPzSkw0kxI?=
+ =?us-ascii?Q?AkqZ5JOVchlxh7B/Kg1M0qS2sRpyeAPeILUG9HkP4rLUM9tNijzGvNWrcVdg?=
+ =?us-ascii?Q?fzuisTfoYqeEuELiZmS5a81azgRhbqaEfQv+gRfMdbu8HRv6gydxSK5DK3o7?=
+ =?us-ascii?Q?v8mjJ1q+hnYITlyF3CNuF0bRk4GniI2raA6wWQMWctnq95cDY4cwklBzqDHE?=
+ =?us-ascii?Q?WkN6FSoSKmyxYtmFumLZpPaiZe+CuUuA5qQyg8lsq6RhWx/8XGfpL05h+swK?=
+ =?us-ascii?Q?P3W49T6pXZxoB00nw5omwmLiwCqRrF2x73CVvswhwD+BM8GinTTIYswTXQmc?=
+ =?us-ascii?Q?rpGs6FoS9pw1bgtFquk2FhBV/YvTbBbmC7QiKx5b88+jRmp5FllKQFXJxwTK?=
+ =?us-ascii?Q?ELMa1nb+UTojarbWDi8y44Nk97J8rlK+0eGsIw2+jXiECx+XE3VJUkTNe/op?=
+ =?us-ascii?Q?6GzS+vCZTlEtaUb3k0dyJcqT89kaVamdeXtKJDEzAGRZZez76x86SL63bijU?=
+ =?us-ascii?Q?fENPkxZMSOqHVrj8wlajZGL2PCxKy1sbKd07e6iRgfOeK1eo/muyuvEbg7B7?=
+ =?us-ascii?Q?vR0EdOej4N6CAKC4RMH8k7ykGuyCAZFvLgQrqo0xQDEA4T3si/1kLuKe9rye?=
+ =?us-ascii?Q?flaPCLlCB+7zbuVPeQKL1EJGdv0dEV1tr1NQo0xpebC+f/VTRfE1Am6i5YOf?=
+ =?us-ascii?Q?7SeI/H2hWjeA3894agP3Mfcux7j3gmwC0d6AtbFARU/47SNq7oXPRSdINb0w?=
+ =?us-ascii?Q?9GMugshiubSwZvMEzjy2inARyBF5oKS3UAQvT7J26/iNNlX7tK9vlp0k6Zry?=
+ =?us-ascii?Q?amvvPhTudlxDR/3gI6q29CsKzQVRaMiCAaNMzlUw7OyvL0rKwdCDUABtBm4i?=
+ =?us-ascii?Q?HrgTtPYTdXVbOL9mxnNo0OfQ19GQs3YI+7EcY+SDJI9isfiBhTRFJO8UohB6?=
+ =?us-ascii?Q?Ll+bnoJy1fdcxurwfjHkz95XZTbLhWZOPaD76COWfJqIe3dL1OMD1+3Tdc/z?=
+ =?us-ascii?Q?iYe7mluSR/wSzhLh+ZpWN47G82yhk/S41ho3fGm2H5zdzO1PeolTAaYA7xeG?=
+ =?us-ascii?Q?kr3NCR3xbSMzKMTkEoZx+HdV7gMEtwN0WWDJ0YBzCsGoT0PaBeJ/25J3R5gr?=
+ =?us-ascii?Q?uwkPntLh4JwevD8Fw3U3LDSLliXllKF6Q/sxRAgEk4SRH5GZhVPKRkn9GXLI?=
+ =?us-ascii?Q?Uc7q2s8AQbedbvmZ0ldXqpGWC9wV7pu2PSSZNOBfpa/i5hUoSSMfbFjp++oz?=
+ =?us-ascii?Q?pP6zYvFgsPI1YCsEkwOYexCL5UkVAbm1d80xldqguP+KBn1ceeDO27LRLnsP?=
+ =?us-ascii?Q?4wUhrXQU8hcYICbCIZE6SG9TFPydSHcuucOYfOBF4/qSbyQWJdwrQm3c9nNI?=
+ =?us-ascii?Q?G9pr3yYqxnF9Dl5PCx8UqETDxFsjapm+URbWfOexLe3TBGbC1z3T9VHp2vCw?=
+ =?us-ascii?Q?O1tS0RJDCWgRMHxMZlK2qOECOA2GmETUjZePTg3gZbiRsH3324sQqYSgHkor?=
+ =?us-ascii?Q?GfDfnw21SPnrDrlKFjuOmpZIWf6E/uAYRREZ1/JV?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f002be43-a356-422c-f276-08ddafa07d2d
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB7055.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2025 02:13:22.3606
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2025 02:16:39.1269
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3GjR1niHqDEeqEj22rdwUnJbf8F5qvrC3Plh0/QT4y8DUaxqynEE1Z3MvbCxKkDm
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7140
+X-MS-Exchange-CrossTenant-UserPrincipalName: Cs8OciZzh/MFVu32V6FiAQHCHFZiecXkiceCGJoGNDhequFxWq1eaLulpaAtCnDk7hOeipb0F95wroX+Xa45CA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV4PR04MB11332
 
-On 19 Jun 2025, at 21:54, Zi Yan wrote:
+In some cases, the sysclk won't be configured on init, and sysclk can be
+changed in hw_params() according to different sample rate, for example,
+for 44kHz sample rate, the sysclk is 11.2896MHz, for 48kHz sample rate,
+the sysclk is 12.288MHz.
 
-> On 19 Jun 2025, at 16:26, Lorenzo Stoakes wrote:
->
->> Rather than updating start and a confusing local parameter 'tmp' in
->> madvise_walk_vmas(), instead store the current range being operated up=
-on in
->> the struct madvise_behavior helper object in a range pair and use this=
+In order to support the above case, only enable constraints when sysclk
+is configured, and check the rate in hw_params.
 
->> consistently in all operations.
->>
->> This makes it clearer what is going on and opens the door to further
->> cleanup now we store state regarding what is currently being operated =
-upon
->> here.
->>
->> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> ---
->>  mm/madvise.c | 101 ++++++++++++++++++++++++++++----------------------=
+So overall there are three cases that need to be considered:
+- call set_sysclk() on init, then constraints will be initialized.
+- don't call set_sysclk() on init, but call it after startup(), then
+  constraints will be configured, the constraints can be cleared with
+  call set_sysclk() again in shutdown().
+- don't call set_sysclk() in the whole flow, then there are no any
+  constraints. The clocks depend on cpu dai.
+
+Enlarge the WM8524_NUM_RATES to 12, as the supported rate range is 8kHz
+to 192kHz.
+
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+changes in v3
+- Add rate check in hw_params, and enlarge NUM_RATES to 12.
+
+changes in v2
+- Don't remove constraints, but only enable constraints when sysclk
+  is configured.
+
+ sound/soc/codecs/wm8524.c | 55 ++++++++++++++++++++++++++++++---------
+ 1 file changed, 42 insertions(+), 13 deletions(-)
+
+diff --git a/sound/soc/codecs/wm8524.c b/sound/soc/codecs/wm8524.c
+index 403e513f3fa8..6b1a7450b0ac 100644
+--- a/sound/soc/codecs/wm8524.c
++++ b/sound/soc/codecs/wm8524.c
+@@ -21,7 +21,7 @@
+ #include <sound/soc.h>
+ #include <sound/initval.h>
+ 
+-#define WM8524_NUM_RATES 7
++#define WM8524_NUM_RATES 12
+ 
+ /* codec private data */
+ struct wm8524_priv {
+@@ -46,7 +46,7 @@ static const struct snd_soc_dapm_route wm8524_dapm_routes[] = {
+ static const struct {
+ 	int value;
+ 	int ratio;
+-} lrclk_ratios[WM8524_NUM_RATES] = {
++} lrclk_ratios[] = {
+ 	{ 1, 128 },
+ 	{ 2, 192 },
+ 	{ 3, 256 },
+@@ -63,17 +63,12 @@ static int wm8524_startup(struct snd_pcm_substream *substream,
+ 	struct wm8524_priv *wm8524 = snd_soc_component_get_drvdata(component);
+ 
+ 	/* The set of sample rates that can be supported depends on the
+-	 * MCLK supplied to the CODEC - enforce this.
++	 * MCLK supplied to the CODEC.
+ 	 */
+-	if (!wm8524->sysclk) {
+-		dev_err(component->dev,
+-			"No MCLK configured, call set_sysclk() on init\n");
+-		return -EINVAL;
+-	}
 -
->>  1 file changed, 55 insertions(+), 46 deletions(-)
->>
->> diff --git a/mm/madvise.c b/mm/madvise.c
->> index 47485653c2a1..6faa38b92111 100644
->> --- a/mm/madvise.c
->> +++ b/mm/madvise.c
->> @@ -58,17 +58,26 @@ enum madvise_lock_mode {
->>  	MADVISE_VMA_READ_LOCK,
->>  };
->>
->> +struct madvise_behavior_range {
->> +	unsigned long start, end;
->> +};
->> +
->
-> Declare members separately?
->
-> <snip>
->
->> @@ -1425,10 +1437,11 @@ static int madvise_vma_behavior(struct vm_area=
-_struct *vma,
->>  /*
->>   * Error injection support for memory error handling.
->>   */
->> -static int madvise_inject_error(unsigned long start, unsigned long en=
-d,
->> -		struct madvise_behavior *madv_behavior)
->> +static int madvise_inject_error(struct madvise_behavior *madv_behavio=
-r)
->>  {
->>  	unsigned long size;
->> +	unsigned long start =3D madv_behavior->range.start;
->> +	unsigned long end =3D madv_behavior->range.end;
->>
->>  	if (!capable(CAP_SYS_ADMIN))
->>  		return -EPERM;
->> @@ -1482,8 +1495,7 @@ static bool is_memory_failure(struct madvise_beh=
-avior *madv_behavior)
->>
->>  #else
->>
->> -static int madvise_inject_error(unsigned long start, unsigned long en=
-d,
->> -		struct madvise_behavior *madv_behavior)
->> +static int madvise_inject_error(struct madvise_behavior *madv_behavio=
-r)
->>  {
->>  	return 0;
->>  }
->
-> OK, now I get why you pass struct madvise_behavior to madvise_inject_er=
-ror()
-> in Patch 2. The changes make sense to me now. Maybe delay that conversa=
-tion
-> in this one.
->
->
->
->> @@ -1565,20 +1577,20 @@ static bool process_madvise_remote_valid(int b=
-ehavior)
->>   * If a VMA read lock could not be acquired, we return NULL and expec=
-t caller to
->>   * fallback to mmap lock behaviour.
->>   */
->> -static struct vm_area_struct *try_vma_read_lock(struct mm_struct *mm,=
+-	snd_pcm_hw_constraint_list(substream->runtime, 0,
+-				   SNDRV_PCM_HW_PARAM_RATE,
+-				   &wm8524->rate_constraint);
++	if (wm8524->sysclk)
++		snd_pcm_hw_constraint_list(substream->runtime, 0,
++					   SNDRV_PCM_HW_PARAM_RATE,
++					   &wm8524->rate_constraint);
+ 
+ 	gpiod_set_value_cansleep(wm8524->mute, 1);
+ 
+@@ -97,9 +92,11 @@ static int wm8524_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+ 	unsigned int val;
+ 	int i, j = 0;
+ 
++	wm8524->rate_constraint.count = 0;
+ 	wm8524->sysclk = freq;
++	if (!wm8524->sysclk)
++		return 0;
+ 
+-	wm8524->rate_constraint.count = 0;
+ 	for (i = 0; i < ARRAY_SIZE(lrclk_ratios); i++) {
+ 		val = freq / lrclk_ratios[i].ratio;
+ 		/* Check that it's a standard rate since core can't
+@@ -108,9 +105,13 @@ static int wm8524_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+ 		 */
+ 		switch (val) {
+ 		case 8000:
++		case 11025:
++		case 16000:
++		case 22050:
+ 		case 32000:
+ 		case 44100:
+ 		case 48000:
++		case 64000:
+ 		case 88200:
+ 		case 96000:
+ 		case 176400:
+@@ -157,6 +158,33 @@ static int wm8524_mute_stream(struct snd_soc_dai *dai, int mute, int stream)
+ 	return 0;
+ }
+ 
++static int wm8524_hw_params(struct snd_pcm_substream *substream,
++			    struct snd_pcm_hw_params *params,
++			    struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++	struct wm8524_priv *wm8524 = snd_soc_component_get_drvdata(component);
++	int i;
++
++	/* If sysclk is not configured, no need to check the rate */
++	if (!wm8524->sysclk)
++		return 0;
++
++	/* Find a supported LRCLK rate */
++	for (i = 0; i < wm8524->rate_constraint.count; i++) {
++		if (wm8524->rate_constraint.list[i] == params_rate(params))
++			break;
++	}
++
++	if (i == wm8524->rate_constraint.count) {
++		dev_err(component->dev, "LRCLK %d unsupported with MCLK %d\n",
++			params_rate(params), wm8524->sysclk);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ #define WM8524_RATES SNDRV_PCM_RATE_8000_192000
+ 
+ #define WM8524_FORMATS (SNDRV_PCM_FMTBIT_S16_LE |\
+@@ -169,6 +197,7 @@ static const struct snd_soc_dai_ops wm8524_dai_ops = {
+ 	.set_sysclk	= wm8524_set_dai_sysclk,
+ 	.set_fmt	= wm8524_set_fmt,
+ 	.mute_stream	= wm8524_mute_stream,
++	.hw_params	= wm8524_hw_params,
+ };
+ 
+ static struct snd_soc_dai_driver wm8524_dai = {
+-- 
+2.34.1
 
->> -		struct madvise_behavior *madv_behavior,
->> -		unsigned long start, unsigned long end)
->> +static
->> +struct vm_area_struct *try_vma_read_lock(struct madvise_behavior *mad=
-v_behavior)
->>  {
->> +	struct mm_struct *mm =3D madv_behavior->mm;
->
-> Is the struct mm_struct removal missed in Patch 2?
->
->
-> <snip>
->
->> @@ -1846,22 +1854,23 @@ static int madvise_do_behavior(unsigned long s=
-tart, size_t len_in,
->>  		struct madvise_behavior *madv_behavior)
->>  {
->>  	struct blk_plug plug;
->> -	unsigned long end;
->>  	int error;
->> +	struct madvise_behavior_range *range =3D &madv_behavior->range;
->>
->>  	if (is_memory_failure(madv_behavior)) {
->> -		end =3D start + len_in;
->> -		return madvise_inject_error(start, end, madv_behavior);
->> +		range->start =3D start;
->> +		range->end =3D start + len_in;
->> +		return madvise_inject_error(madv_behavior);
->>  	}
->>
->> -	start =3D get_untagged_addr(madv_behavior->mm, start);
->> -	end =3D start + PAGE_ALIGN(len_in);
->> +	range->start =3D get_untagged_addr(madv_behavior->mm, start);
->> +	range->end =3D range->start + PAGE_ALIGN(len_in);
->>
->>  	blk_start_plug(&plug);
->>  	if (is_madvise_populate(madv_behavior))
->> -		error =3D madvise_populate(start, end, madv_behavior);
->> +		error =3D madvise_populate(madv_behavior);
->>  	else
->> -		error =3D madvise_walk_vmas(start, end, madv_behavior);
->> +		error =3D madvise_walk_vmas(madv_behavior);
->>  	blk_finish_plug(&plug);
->>  	return error;
->>  }
->
-> We almost can pass just struct madvise_behavior to madvise_do_behavior(=
-).
-> I wonder why memory_failure behaves differently.
-
-Based on git history, it seems that no one paid attention to
-madvise_inject_error() and the [start, start + len_in] has never been
-changed since it was added back from 2009.
-
-OK, it seems that Kirill (cc'd) moved start =3D untagged_addr(start); fro=
-m
-before madvise_inject_error() to after it at commit 428e106ae1ad
-("mm: Introduce untagged_addr_remote()"). It changed code behavior.
-
-So memory_failure should get the same range as others, meaning
-madvise_do_behavior() can just take struct madvise_behavior
-and the range can be set at the call sites.
-
---
-Best Regards,
-Yan, Zi
 
