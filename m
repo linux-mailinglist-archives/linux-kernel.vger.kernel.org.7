@@ -1,289 +1,212 @@
-Return-Path: <linux-kernel+bounces-696075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10736AE21F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 20:15:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882A1AE21FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 20:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97AA74C1916
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 18:15:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66A993B6EBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 18:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59ABB2E6127;
-	Fri, 20 Jun 2025 18:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94142EA142;
+	Fri, 20 Jun 2025 18:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eqe3Z7A+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1cOcCDJU"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DC049641;
-	Fri, 20 Jun 2025 18:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750443335; cv=fail; b=Oqb/D3kmGHfDGj+YqGhll14DHCZGvDXg+UbRpgpM8MGjynUJ8SuoG8rjJdpXCCfY16JU/D5tGqcSl66wwWw7Y6O8hMFncHfhIgZMj/YfeyP0RrFCR7kSuYAtQXRffZRCwDWFnKnxnx/msriURaoel2VeCfBYjR4Y8dINiFNZlv8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750443335; c=relaxed/simple;
-	bh=AGtFTqyYXqphcjuhKY0jGD4hYbL2dbJLcJ5c2auJ7Ac=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HiHSw/eO1V6Jy3pY2Q9ByHUtjKWXgUSxqLiclhq1xp5O0HUbl6/0VUiYupO/dpdE8SWkLN1yPhe2MsqT4NgVoTK6hEXPTYcFPWVNlh6r3F/coazT7Gmgkz6mexf5McYl+Xv0G2q7jknbxC4KsW/yvx20be0mzgZHD6g0kkZXPyE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eqe3Z7A+; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750443334; x=1781979334;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=AGtFTqyYXqphcjuhKY0jGD4hYbL2dbJLcJ5c2auJ7Ac=;
-  b=eqe3Z7A+dKzvSwUZUnO+lu1ZMEpv/gN3lEMbyD5pI2TYdRXdK6ajbcS8
-   /Qq/5FLSfHd54LkW5IE5m3TdB2BheOpFsBFwuxln2+xhWApOhsLLi7p8i
-   cq3Qr6xP5l9yRIgzXtrTmFvfu3NA4/zjPMzlBeASsj6XIoZoZCJjVcRWW
-   gH0MiBPgMCYPt/sHh3mDRqJ195m9NyyI8sVVs4sTxddiP3dbW1+VmDrwd
-   Gux+lksJYrj2SfRKTG0zxIjXoL1JOeqE+xEkV4sL8w5/2eR0W0mipQPDM
-   fKIhKd4KAYSKTSZAUk1fLb5Sl80onpUbKLOcmQ2IVKzokp50PPHyKJN0q
-   A==;
-X-CSE-ConnectionGUID: B4YOEDeyS2eVBcegnWn+OA==
-X-CSE-MsgGUID: 7H7K8iliR4KAcIezAEM2UA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="78123152"
-X-IronPort-AV: E=Sophos;i="6.16,252,1744095600"; 
-   d="scan'208";a="78123152"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 11:15:33 -0700
-X-CSE-ConnectionGUID: Fsjd8+PfRciKTRPXOZSLrg==
-X-CSE-MsgGUID: gEfD3VXURii2YnUsAV+Ohw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,252,1744095600"; 
-   d="scan'208";a="155367537"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 11:15:32 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 20 Jun 2025 11:15:32 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Fri, 20 Jun 2025 11:15:32 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.67)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 20 Jun 2025 11:15:29 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w7vJ96xlanttr6xX5NOEZ0JEhHIucgPgSmFZWakXfrwIMr8F4nAKMx7ifg6qNJqTyt9rQDnaY2dR6esZhFhDJ0zX1KoP5eOQ85eGcWQG/TWZBNYbh/dJtTMmxYmOGtakxsJ/SejGJk2n+JdMKRUvzsvz0kRwbfirDqS6An21kEfr4cB9G1RRFX81Ok6w7TxEsKMlIhFUDvLitqVta5lGt2jIklFkd1S87lidlWzXx3H4ynZTpZ3TkEXJ0BWbTQZlk1JhWjRlwjQliXgiQYxq0ezS+4lyFGjfs0Uh2HIA6yPnPpSyy7QokGTtI3qqpWp44YD6xnaD4D+A9UZ8NU1c6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wp77A6v8ER0+ZXLeKWfFmY2JR6f+dfOSHkn2csOlwKo=;
- b=ShUA0g9i3swNy5Hy5VifYHUSWRL03aMZIkVlPNThVVKdYBBf2ALtCXkO0soBbYFAoC94Cd+q4Nu3J0Rb35ECdMxJ6JjMqA6Qm+3sSDCvOToFCAVqTmg4B2VefEZsdp/hu6hiNI94ZshuLTVipwFEZW/ObaQaz+izWL+u00PwqOiIwzgNqQU4mGjbZEG/cueJ5Jjc9CC4qgKWiRxCcgM6c2V+3Y82Gs8twMgxqY6LzqaSahUbC0t5iWCftQucsGZEV7fB56AeRTASKDeIsBukNlqs87nEqvGjEEzKLG4BV4/TwGSLxru9BrBgYzddLF6tCgj5Mh5MQv632/cdOdKUaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com (2603:10b6:a03:18::25)
- by MW4PR11MB7008.namprd11.prod.outlook.com (2603:10b6:303:227::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.38; Fri, 20 Jun
- 2025 18:14:59 +0000
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b]) by BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b%4]) with mapi id 15.20.8857.022; Fri, 20 Jun 2025
- 18:14:59 +0000
-Message-ID: <248e272c-79ec-4c11-a3a8-dff1de2147c0@intel.com>
-Date: Fri, 20 Jun 2025 11:14:56 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv6 01/16] x86/cpu: Enumerate the LASS feature bits
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>
-CC: Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>, "Pawan
- Gupta" <pawan.kumar.gupta@linux.intel.com>, Daniel Sneddon
-	<daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, "Sandipan
- Das" <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, Rick Edgecombe
-	<rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>, Hou Tao
-	<houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, Vegard Nossum
-	<vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers
-	<ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu
- (Google)" <mhiramat@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>,
-	"Rasmus Villemoes" <linux@rasmusvillemoes.dk>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du
-	<changbin.du@huawei.com>, Huang Shijie <shijie@os.amperecomputing.com>,
-	"Geert Uytterhoeven" <geert+renesas@glider.be>, Namhyung Kim
-	<namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-efi@vger.kernel.org>, <linux-mm@kvack.org>, Yian Chen
-	<yian.chen@intel.com>, Andy Lutomirski <luto@kernel.org>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter
- Zijlstra <peterz@infradead.org>, "Ard Biesheuvel" <ardb@kernel.org>, "Paul E.
- McKenney" <paulmck@kernel.org>, "Josh Poimboeuf" <jpoimboe@kernel.org>,
-	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, "Brijesh Singh"
-	<brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>, Tony Luck
-	<tony.luck@intel.com>, Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>
-References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
- <20250620135325.3300848-2-kirill.shutemov@linux.intel.com>
-Content-Language: en-US
-From: Sohil Mehta <sohil.mehta@intel.com>
-In-Reply-To: <20250620135325.3300848-2-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4P221CA0015.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:303:8b::20) To BYAPR11MB3320.namprd11.prod.outlook.com
- (2603:10b6:a03:18::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68AD21D59F
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 18:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750443460; cv=none; b=ptSxRumhCgDflcEgxSnv8nNau69Cz4HAqXu3f7yRu0tkVffa54VffNvbo8daUZa1o8+t7zyPXZsgVyqiSn+yim0md83khD894pAnYJnMPnpSFoYlJa9+Jn6hNc1k6iFUGJ5T2w+ljrUGToxH+W00Luh+jf30oJgZmP05Xjsz4yM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750443460; c=relaxed/simple;
+	bh=J0/LzDB5Lh1XrCrxj+Jd3W69MZlCOE748yQMhLe42C0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Sjb8MIIWo+T9ndxcVBjEs7vaT4TkJsDqxWVst4RTx1+XbMw0V0RUdgmcmdcq+nGfSYDPzK0JB025QlTc0LbwhITmfwDrPLYk2brdsswFQ/urn+DEIMRhZ79hGjK5sotUDE6BDFN6Jalr2+NZP86p0YWhgPB8/O4qJym15VfQ180=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1cOcCDJU; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-747af0bf0ebso1597335b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 11:17:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750443457; x=1751048257; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AoOqUmI/ukeAvOCDfitszVNrmRf7QCXDZ9hIanYDn+c=;
+        b=1cOcCDJUcTwMR+oD+jY2XiyKO+stmrnQ0pIzqKaa9zfmcz7W0XKvqaOm+0Iteu9g+0
+         xvNUmLt05Yvxk7Uy/qlPIsAPy5AsOLWZrrwUr5rzqXLCnbYfwHWzHEyFc897/ueVR3Bb
+         GBjHvf4Bm3aq0Spe7OhaYA65EdclcVmpLzU7NflZWVAs2NkLKCzZqpMqKIGtahkfom73
+         LDX7xRWD0lKzrf368yv0fOr6F0Gix2ZORJZ3qp6Bweldf3DRiEO62BF3Yiuhx9ac/Mwi
+         4MwflAW1Hiy2ctcWvDI5cjHrVsJyBAwNd5hdoykCFqq41OQc03Ho42MxbB1C7QeisU6K
+         uxxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750443457; x=1751048257;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AoOqUmI/ukeAvOCDfitszVNrmRf7QCXDZ9hIanYDn+c=;
+        b=nzjMJ5tPUFVo1OGXpOcfPMranxvKP29fiJczPxB8BNMxxysIpop1Ri7sy5j7kjmJq2
+         carj3LV82IKvSFSR1s6m6SwOKqp9QFLJ3z+CZQ939f4DpNFqpQliKQ9/UTmgcCrkcCs8
+         59PvkVhFoPvXreXjevPd+uK3fhmTBX+hLDKxZUd6lbfqEBBRTsUyXIxl3qgWgrGTDdu1
+         1U1DKNssDiViyZbhoGNpCJQ8bsQSo4DHKyrohaZ8rdrDfqXvJALikZMeiliaoIx++BfP
+         XUCdqkCZHiMjGoUuw4BI7U+iY03OrtljwxJDl8tdQtw8ftG+23brHggHqmFHu0cSCgRr
+         0xtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ4K7LMRG4BhnzDSH24lAUAKMrL+dLwhJkhHqHCmtURKWOrUSsdKmMV4ic8TbGMl7AvROkJkfnqDBpU7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySYlCkRlxly3UN1SXCVxtjlzCB+Q+R8k2tEr3jwfJHItjVdT1n
+	9ibr4fAlZxfC6hLnzqPZdziYs7xNN/Lj/UdxorxIPGTIcHpxw+Vrdh1PpCcZZgtL34pvxKMrZqM
+	mOrKjPpB2hGXZIBSEh0+89HvTUZAQmw==
+X-Google-Smtp-Source: AGHT+IGLyMBA9YVtduYhTCnTre04zoapWO94rFAMkDl8DZB2kVIM8sEEP0xqi2SKfllFUVq4GFuWa2lUG16t4cETsX4=
+X-Received: from pfbly4.prod.google.com ([2002:a05:6a00:7584:b0:749:d28:4ca2])
+ (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:238c:b0:742:ae7e:7da8 with SMTP id d2e1a72fcca58-7490d64699fmr6106675b3a.8.1750443456920;
+ Fri, 20 Jun 2025 11:17:36 -0700 (PDT)
+Date: Fri, 20 Jun 2025 11:17:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR11MB3320:EE_|MW4PR11MB7008:EE_
-X-MS-Office365-Filtering-Correlation-Id: a933fe90-769b-4db5-dec3-08ddb0265e25
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?VVB6K3lwRVJCUlhMZng5RGFlbWRqY2JVc1A4ejlpR1YyK0pDNUZqUTNNQkQ5?=
- =?utf-8?B?Sk41WEpjYk9UdElmdVcyQUdBKy83SUpMdmdwQjBzck9ES3ZUQWgwSUthQXdt?=
- =?utf-8?B?cmFFWkp4WXRZQkNMMGJnMVRYWlpuUWNLQktMY3dpNUZ3VUdMMTJYUjdTLzFM?=
- =?utf-8?B?NmtTZm0vejRKa3ZMdWZ5RjdZZ2dJSWdlSUJqOWhCaFordVJuRERLdm5uY0Iy?=
- =?utf-8?B?dWZjUkhTWlVZMnJWaHZXbUFBMGUxaXdxQTI0cThoOFJLSU1MSExZQ1NadUF0?=
- =?utf-8?B?TUw1Z2JvRXBEcnNFVU1MaFRzZlJjOXRaRWl1Sm1RdVFGb3lSbTh3T0tRVkFy?=
- =?utf-8?B?MEZpUGtxbmFHK0FDZVRJUjl4V2xVUVNxTXQ4UDUra3lrSC9uRFNiNkdLNGJi?=
- =?utf-8?B?eDJlbVRxSWdmT3JOOWxrU2RHNDJOODQ1eEhpeGhpWG80Tnp5UFlWMTBmSWNj?=
- =?utf-8?B?TDRUdE9mc25MQnhXRXY2L1VVRXBYUGJZMFkwVTV4NmpoaHl3Ymt2WEF6VWNm?=
- =?utf-8?B?eDNhT0ZzNU1zanBrdStmWEEwQ3UvWEQ2dmkrdE5abXgra0lXV2FIa1FXSUIw?=
- =?utf-8?B?RDhucGpMSHdrbGtIR0VLZEZSUnpYVWsrRFpjT3B1Vi9wdklTTS9ZaGdPcmVO?=
- =?utf-8?B?WWpiUWVDZlZMVkE1Ni9DUWtiVTRNclFZQTlPRFJYcGlOY09kMjEvYkZIVlZr?=
- =?utf-8?B?SHBwOFowNjd0UElkRmFHYVd6aGRjeDZQVm1YM3RQTGd1Z1E2QU5CTGs1ejlv?=
- =?utf-8?B?QXRJeG42MG9TSFdRU2VvNG9KdlJXelAxL2p4T1pkb2VvVmFJVTcrOUNHS3J2?=
- =?utf-8?B?Q2UzVXcrd2t1SnFDR2x2NzE0cXdDamJHbVhsSlBqeTJQRk0wMmFudXF1Q0Vk?=
- =?utf-8?B?NTVGUjFBSDMxVWdFWjZVUG9jUmx4RmdpY2lPL29mWFk2RzQwSmlxYXZmbDhZ?=
- =?utf-8?B?RldLNUN6L1QvTVVOajRQZVJ2RXE1UmRkU1NMdStTdGxiS2s1L0FmN1Z0K3k4?=
- =?utf-8?B?OUZqbmtFWjlBS3BIeHF5Q1ZaTWY4T3l5dEhTNC8zajQ0bVYxVWhVOXdtcXZH?=
- =?utf-8?B?OE9iOS9BNmxHQnU0NVo5ZEFDbXl2QnJBT0NsMnM4ODlZdXNINHNIeHIxaTBY?=
- =?utf-8?B?Tm1LYk1SL05JaklNVGpjVUZWVVVqNGJLZUNKdWY5WlN3d0FtNkpqR05JdlMw?=
- =?utf-8?B?ckZkYTVOK283WWdFa254OEs5Qld2N3h4YVlWdDlZWkNiTEswenJOVlRmVVhm?=
- =?utf-8?B?S2lCclRIVm9HdldHZ1lLeUxQMDc3UXBzUkJydklPdnhjcVdYREtQeUd0Zjg3?=
- =?utf-8?B?VC92b0hlR0NRTVZWajlsM2xVSjBmVHl4cXJ3TG9JN25CRjdhZ1QvanJ3NkRL?=
- =?utf-8?B?UG1MN0pXU1pSVEFBOFJMa3hRVWx0dkZMS2NKd3dkV1c0bENSWUNFU2JxTWpJ?=
- =?utf-8?B?a3BlNVk3emg5T2NzMlBuL2ZnUmE2T3IyQnlHd1RFcGRTWHQ5UVNHM3YzNW1n?=
- =?utf-8?B?bS9EZGp0SnBZaGRWQzU5RU9maS8xTVBlQnZxcW5jeFF6dk9OcVM1Y3Rzd1pB?=
- =?utf-8?B?OWFkRGRGaGZsSjRCeW1Zbk9LTFUraWFwT3RSZnNnNXpWcWs3NWw5bVB3dDdF?=
- =?utf-8?B?QXE3MGFpeVhJaVpBdXpxank1Qkt2WGl4UTdSaUREb0MxZlRHTUYxTXkxWEJt?=
- =?utf-8?B?ejY4ZE5ZZDFkN3NOYVFRRjlLRnN0ZjduTW9iRW9SR2VSV0U1WDVOUDBxaW5K?=
- =?utf-8?B?YnlkNS9ZeWpmeXNYL2NKOGt4TFRyVDZpT2FZcDBBL2dDWkZBQm5WRkV6RGF4?=
- =?utf-8?B?dGVoc0d5T2hpd2NsNnp6dzJ5Mk8zUU9lZVlqT1VWMFhMQzR0UklYdno4SVlq?=
- =?utf-8?B?elRwbUhZRUNDQ1p3c1B4cERNZ0Jxa2N5aTNQWnJBbE0yOUE9PQ==?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3320.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YzBBVGVrUlc4TTE4cUNyelhlcXlHaCtzVzlBSDN1dFFSaEh1Y3p1L2VzVVlZ?=
- =?utf-8?B?M1ZGRVcvSXZvT2FtWURKL0lJZk1UTVdXaU9aR2NqRXV4S3hZV0lsMmZpZ2Y0?=
- =?utf-8?B?TXhseGZjUWxLQjVxeVkycCtoL3dCdzViczE2QThhd3lUei9DUWdRMDg4eHpV?=
- =?utf-8?B?UEtOVUhBMVU5eWN0Z2l4aVd0QXVtM2c4ZGg0Vk1UdjJvTVBCWTk4K2kwOXg5?=
- =?utf-8?B?NEhTbEQ0ZVRQNXRCcVVyMzZCbzVDc1JqOER0Vk1GMXg5ckNpVUx6MDloSmxC?=
- =?utf-8?B?T0NJd3IyTUxhQmVMVG5oK1FGRDB3NjVNbERjU2ZFbVlTd0E2WXVEUFp1cE4r?=
- =?utf-8?B?VW9XS3duY3ljdHp5NzRlcFBvKzl0ZnBvanNJWUJwdjdWMzhLK3VvdWhneXFn?=
- =?utf-8?B?Ly9sdzZETlI0TnJFZEdxZHJxWWxVQUFqWEhFYXB0L0kzMDZBZEh1ZTZ3aEo4?=
- =?utf-8?B?UVhlcldMN1MzQjZJaituNjBXeXJtQUUyTFJvWTZBODg0NWRTUXY5MFBDSklE?=
- =?utf-8?B?anc5anRGQ1BMb0dkdHRPd1dyZ2p6S01NY1Q0aFp0N1VibEVuQUJBeWM5STNR?=
- =?utf-8?B?cUYrNEJ6Zng2eVlmVUZ0aU5uSk41TmlkRE1pOGwzMmlHeUU2SnJvcXJRZU9M?=
- =?utf-8?B?SXpwajJNeUtWTGgwK092Tm9HVzdpQmZobS9nWmUvcUEzcHVQaDRmVm1JYnk0?=
- =?utf-8?B?a1BKZ3MyRGdac2NQTG50SWc3T29lanh6YnIwNHFKVzZKR2hXWTJ6TVJESWxQ?=
- =?utf-8?B?WHJ5RlkzWEJlVlFHNTRmYndwTUJITHVqbncrUUhOTkdnSll2d0JLaWFRem1w?=
- =?utf-8?B?TXhFbU1scTdQSXVBelgrV1Fyb2kySytQWmtsRnNXMVlEVGdDaWw4SG1Xb0Jn?=
- =?utf-8?B?V20wdXB4RWJ0TVRDNU9BUUdDRHhEVEp0NXVTODFHK09yZi9YVytoSHlUdGx3?=
- =?utf-8?B?UGRYa05WTmZzL0J5UTlOMk1HODdwRmFWSGpSWTZTUHkyRE9GRURHcHYyRkF3?=
- =?utf-8?B?aFdrbnJ5TXFPd1RHL1hEWm5VWUlZY1RoZ3liMTNxNzJPMjgwVElaYmFVNXlK?=
- =?utf-8?B?MVJnd1RCc3IxT1BnZElpS2N0emhBUVl1WS9lUmFoTGxrb2x1b3JoOFRvVm4y?=
- =?utf-8?B?L0xGK3NTTGhGOGRkSUdHSDlVNUhqK1cxNGpvVnRsczJmTFliY1p6NXdKNEg3?=
- =?utf-8?B?d3Rrd3Z6YUIwNG55Z1NiVlNzeEhjUGs4V0JPOEZrV0hhMGRHUWJmeXhPd2lB?=
- =?utf-8?B?OUJMZzlxVmFCVUFMNnM5UzlkUXdoUlBmSkFNRHFEYjZFeTN2bDMxcHIxUnh3?=
- =?utf-8?B?N1F2YVY0VmpzTlVWMGpNcTl4OTZOSVpBN01IYWZzRGlNTklTTGlrSnZZSEtl?=
- =?utf-8?B?OEZzWUlRSkpnQ2NJYUI3SDMxOGlMOStVSVg2dGFNWUdLaXhUV0NyZjNjYXdu?=
- =?utf-8?B?L09SbHc2ZGNCQmFOWUFRTDVmSFdRM29Nakx1bFgrUE5PRzU1VHJxUFlyL3Zs?=
- =?utf-8?B?d1FKb3QxUlJNWE1XN0QvSmR6bXBySVU1Tyt1ODdKbWNaNHc5aVVLZU5ZN0pM?=
- =?utf-8?B?VVFpdnVtbjZTN3NHQWxReU0wVFh4dTNsTFI4MUdTNzFiUDZLQitSYyt2RXNq?=
- =?utf-8?B?blZia1JuZi9MWGJnaVpVTkhRNTdpcVA3ZHNlcWNOME9mMENNOWdvcGVpREtJ?=
- =?utf-8?B?WWdtNGlISFVqcHk3NVJ2b2hmR1BTUDJKUG9nSU9vRldQQTNpRFJMbFhCT0M0?=
- =?utf-8?B?MnpRWExwc0hJeDlLNGowdlFkL1ZINXkyMVQ3UWRBSDUzNTlodjV5RUt5Tk8w?=
- =?utf-8?B?VDR0Z3JmMUV1bzFDRHFON2hBN2FrV0ZDOTFZSWxMOTJNak9HM3RsaHNIdWF1?=
- =?utf-8?B?MjdhTnhHYjNBWGU3VUkxWTl6OUpoeXJXa1N3RUlSSzBaOHR6eXJlQ3plWnVW?=
- =?utf-8?B?NTRtemR5QzhSa0VRTmIyRSs2TUQ1TVFMdHI5aWwwYUhLMGw1cEpsUjIxS2hl?=
- =?utf-8?B?S1pqTXBkTzc2bUx2eUlBY2JwZFdQbnhIWTZRcUV6T28rTFRTNmJYMEJBSmJX?=
- =?utf-8?B?aStjTWhDcVBMRXFvVEFlaTkzRkUwa0tmSVdqY0VRKzJRRHV6cWdqUDhRbkd4?=
- =?utf-8?Q?s/PXNYPIhhJWpGgqGFWJDBEJS?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: a933fe90-769b-4db5-dec3-08ddb0265e25
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3320.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2025 18:14:59.2935
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uOxbWkF3xQ472Vk5vBioWLdX4Mry6D6q/9DtfOtSKbl7uQGogSjmKq862qMYvV8IW3gDqPVdA92OdMDw076R3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB7008
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.rc2.761.g2dc52ea45b-goog
+Message-ID: <20250620181719.1399856-1-willmcvicker@google.com>
+Subject: [PATCH v4 0/6] Add module support for Arm64 Exynos MCT driver
+From: Will McVicker <willmcvicker@google.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>
+Cc: Will McVicker <willmcvicker@google.com>, Donghoon Yu <hoony.yu@samsung.com>, 
+	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	John Stultz <jstultz@google.com>, Youngmin Nam <youngmin.nam@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/20/2025 6:53 AM, Kirill A. Shutemov wrote:
->  
-> +/*
-> + * The CLAC/STAC instructions toggle enforcement of X86_FEATURE_SMAP.
-> + *
-> + * X86_FEATURE_LASS requires flipping the AC flag when accessing the lower half
-> + * of the virtual address space, regardless of the _PAGE_BIT_USER bit in the
-> + * page tables. lass_clac/stac() should be used for these cases.
-> + *
+This series adds support to build the Arm64 Exynos MCT driver as a module.
+This is only possible on Arm64 SoCs since they can use the Arm architected
+timer as the clocksource. Once the Exynos MCT module is loaded and the
+device probes, the MCT is used as the wakeup source for the arch_timer to
+ensure the device can wakeup from the "c2" idle state.
 
-Is this supposed to be "regardless" or only when the _PAGE_BIT_USER bit
-it set? The way the sentence is worded it would seem that the kernel
-could always use lass_clac()/stac() since the value in _PAGE_BIT_USER
-doesn't matter.
+These patches are originally from the downstream Pixel 6 (gs101) kernel
+found at [1] and have been adapted for upstream. Not only has the Exynos MC=
+T
+driver been shipping as a module in the field with Android, but I've also
+tested this series with the upstream kernel on my Pixel 6 Pro.
 
-Please correct me if I am wrong, but here is my understanding:
+In addition, I verified that the Exynos MCT module cannot be unloaded on my
+Pixel 6. This is due to /sys/module/exynos_mct/refcnt > 0. So if you try,
+you'll get this:
 
-X86_FEATURE_SMAP and X86_FEATURE_LASS both complain when the kernel
-tries to access the lower half of the virtual addresses.
+  root@google-gs:~# rmmod exynos_mct
+  rmmod: ERROR: Module exynos_mct is in use
+  root@google-gs:~# cat /sys/module/exynos_mct/refcnt
+  9
 
-SMAP flags an issue if _PAGE_BIT_USER is not set. LASS would #GP in both
-cases with or without the _PAGE_BIT_USER being set.
+Thanks,
+Will
 
-However, in terms of usage, we want to use LASS specific stac()/clac()
-only when _PAGE_BIT_USER is set. Since this won't be flagged by SMAP.
+Note1, instructions to build and flash a Pixel 6 device with the upstream
+kernel can be found at [2].
 
-@Dave Hansen, you had suggested separating out the SMAP/LASS AC toggle
-functions. But, the difference in usage between both of them seems very
-subtle. Could this be easily misused?
+Note2, this series is based off of krzk/for-next commit a15edf91668b ("Merg=
+e
+branch 'next/dt64' into for-next") with [3] on top.
 
-For example, there is no failure that would happen if someone
-incorrectly uses the SMAP specific clac()/stac() calls instead of the
-LASS ones.
+[1] https://android.googlesource.com/kernel/gs/+log/refs/heads/android-gs-r=
+aviole-5.10-android12-d1
+[2] https://git.codelinaro.org/linaro/googlelt/pixelscripts/-/blob/clo/main=
+/README.md?ref_type=3Dheads
+[3] https://lore.kernel.org/linux-arm-kernel/20250602151853.1942521-1-danie=
+l.lezcano@linaro.org/
 
-> + * Note: a barrier is implicit in alternative().
-> + */
-> +
->  static __always_inline void clac(void)
->  {
-> -	/* Note: a barrier is implicit in alternative() */
->  	alternative("", "clac", X86_FEATURE_SMAP);
->  }
->  
->  static __always_inline void stac(void)
->  {
-> -	/* Note: a barrier is implicit in alternative() */
->  	alternative("", "stac", X86_FEATURE_SMAP);
->  }
->  
-> +static __always_inline void lass_clac(void)
-> +{
-> +	alternative("", "clac", X86_FEATURE_LASS);
-> +}
-> +
-> +static __always_inline void lass_stac(void)
-> +{
-> +	alternative("", "stac", X86_FEATURE_LASS);
-> +}
-> +
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Donghoon Yu <hoony.yu@samsung.com>
+Cc: Hosung Kim <hosung0.kim@samsung.com>
+Cc: kernel-team@android.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>
+Cc: John Stultz <jstultz@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org
+
+---
+Changes in v4:
+- Missed the "v3" string in the previous series for the actual patches
+- Re-generated patches with --base a15edf91668beefdb5171c53fa698c9b43dd1e0d
+  for kernel test robot.
+
+Changes in v3:
+- Rebased on top of Daniel's timer modularization prep series [3] and
+  krzk/for-next commit a15edf91668b ("Merge branch 'next/dt64' into
+  for-next")
+- Added owner references to Exynos MCT clocksource and clockevent objects.
+- Dropped #ifdef MODULE conditional section in favor of just using
+  module_platform_driver() which will properly handle setting up the
+  of_device_id table based on if the driver is built-in or a module.
+- Update commit message for patch 2 based on John's feedback.
+- Dropped DT change from v2 as it was picked up by Krzysztof for CPU Idle.
+
+Changes in v2:
+- Re-worked patch v1 5 based on Rob Herring's review to use the compatible
+  data for retrieving the mct_init function pointer.
+- Updated the Kconfig logic to disallow building the Exynos MCT driver as
+  a module for ARM32 configurations based on Krzysztof Kozlowski's findings=
+.
+- Added comments and clarified commit messages in patches 1 and 2 based on
+  reviews from John Stultz and Youngmin Nam.
+- Fixed an issue found during testing that resulted in the device getting
+  stuck on boot. This is included in v2 as patch 5.
+- Collected *-by tags
+- Rebased to the latest linux-next/master.
+---
+=20
+
+Donghoon Yu (1):
+  clocksource/drivers/exynos_mct: Add module support
+
+Hosung Kim (1):
+  clocksource/drivers/exynos_mct: Set local timer interrupts as percpu
+
+Will McVicker (4):
+  of/irq: Export of_irq_count for modules
+  clocksource/drivers/exynos_mct: Don't register as a sched_clock on
+    arm64
+  clocksource/drivers/exynos_mct: Fix uninitialized irq name warning
+  arm64: exynos: Drop select CLKSRC_EXYNOS_MCT
+
+ arch/arm64/Kconfig.platforms     |  1 -
+ drivers/clocksource/Kconfig      |  3 +-
+ drivers/clocksource/exynos_mct.c | 75 ++++++++++++++++++++++++++------
+ drivers/of/irq.c                 |  1 +
+ 4 files changed, 64 insertions(+), 16 deletions(-)
+
+
+base-commit: a15edf91668beefdb5171c53fa698c9b43dd1e0d
+prerequisite-patch-id: 0c5b7e9fb27295e0c125c537ac80d1eb16cef60d
+prerequisite-patch-id: 6a9b683baee83ddc2b2fada31479b27b53469759
+prerequisite-patch-id: b9cbd59ff2f4c905001ecb02868d20fb004034cc
+prerequisite-patch-id: cdde1a76624089aa818cb35e612f880107bdc073
+prerequisite-patch-id: cec67e07038c7aa93a2b53879781626d738cd199
+prerequisite-patch-id: 8fda377fcaf407026f04f2a547086cf1ecf4efc9
+prerequisite-patch-id: dce925ac224bb361c74fdb23126fab53e7c5c26b
+--=20
+2.50.0.rc2.761.g2dc52ea45b-goog
+
 
