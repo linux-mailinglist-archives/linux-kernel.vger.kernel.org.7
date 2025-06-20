@@ -1,136 +1,162 @@
-Return-Path: <linux-kernel+bounces-696039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94269AE210A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:35:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17052AE20F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0919188B7B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86FDF3AC28E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAAB2E763C;
-	Fri, 20 Jun 2025 17:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A4D2E3B14;
+	Fri, 20 Jun 2025 17:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDF6BpMq"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gc4J2vDd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031B018E20;
-	Fri, 20 Jun 2025 17:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CAFE56A;
+	Fri, 20 Jun 2025 17:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750440913; cv=none; b=GC/ibMYBmFG/J+9Bl0AiyxXcSKBtPlGffFMya8++tZXn4cTLyIXnCxqahFS7RwK3w/LXEXVPecfkfOQcqQ61LVRct5z3KBekwz1xudorm4MDAves+Wmnmsde2Mw/Lb3jcsEA4W/A2IpUcO9+Pa9KWJwc2b+PPKu3CMUJEIKm2+k=
+	t=1750440724; cv=none; b=bMsQ9vDYViRMGVkIggysvLuJ4Ofn42qRHV5TwyVDsvVCexAS86PfaRvHn38wOayaYrHmQYkCWmwLcSKLreOskYsqIZktjIaA+iXjEEbhxmruxbrnpcsfi3WByryIZGgWcyylD9B69c8mRTvF8vTnD2ZvWp/quqUydzj1NOqMLeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750440913; c=relaxed/simple;
-	bh=AgDsktD0a5AkGVgIpm4akmO9rDfL6WCNI0qCVJifB8I=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=LIXQPGG40SnM+4pB3bEw1Ovjo4KDJsZg78GnLblxbHR5nqt8OhdiGEXC84OJgFAJn1K0/NQdesUU0ctHAmFjbuKtWWQOlsU6B7RmFGhYzTZTUrtwZUjPHQra1Ga3WDS6h5WtKAvJA0VJlvRLEkjeqWXmNyRB4/RxmgVD1EPz8vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDF6BpMq; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60707b740a6so3151135a12.0;
-        Fri, 20 Jun 2025 10:35:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750440909; x=1751045709; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mg3yw4vaCMy+lJRKgBJCUBFDQZaT3XMALMfqYzvwLVc=;
-        b=EDF6BpMqlRrm8Mg1CmFObIl0veJeWviLXTb91wABwQRzN6M6hfbhb8J7lfE3LDnH48
-         l1B6V0Sx+0CotEQ0o0+feUq4wqA2G/6rJAt+opxweph9+W9f6tMPyZzZxG8I3e7Z5Kud
-         pon8BcR48tsfwFHGgIZoq8MhztL2IJ+GlxbfYEWv3LwahKc6COcQoiIrYeCw7up+urit
-         r63BrnBQ9eY5c3AfTS/T12TbXOuSO3GSQDKE1XPax6x5PciyKE+dFNFP43q5dnIa153S
-         KV3QneAYXHTM3i/Y8N4C1FcPpYCV2/PjlEx6SaSMzY1bl3sxlFNA2hhbRbztoK6wrepc
-         PM8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750440909; x=1751045709;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mg3yw4vaCMy+lJRKgBJCUBFDQZaT3XMALMfqYzvwLVc=;
-        b=kqtBSfmWAAEn9T+VAMOrjdhsmaLL5T+F5Avk1EDkVq5Au9nTJ8YinqMccMU2ZJ2F6a
-         VtdFVJrO5gzJ2DRsSVgx3GYUhU59qgRKYmetws+ccB9ZDyrUEX7DnRJq2wUHHcSWvgIa
-         zFpC1VQYR2H4q3pe1j9P4wh9m8R9/h0wsbeA6kp2utwR1NXCLtIvuvPz+J3lUtkGDb3o
-         2uaxCdctiiP0rQYXFC7HUEqgyjvtCbhn7O/Xg5iOCJi8MOIYUFeirTrZr67v7nH9LOLp
-         eErPuh6GHPMuLZ3akcedf4ofCvX9kaBoKWKyl7xji+yPdPGNPSK9hzoSOh7OiOs8Wffy
-         DQ7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWLWKf/pcWuLkC9Mn5DcnHXxIJ3ZX8uLsd3fSq776yDvN4bwBc0UQsew3h72xSMTnMmx9artiPv9f8=@vger.kernel.org, AJvYcCXc6q3LADFU26/OcDDCQJszKJPRe+LJJHMuJU4oyLn2gw63ycK9oy4W7yJXvAXfqWzJtFJdBgsxKDnasnM1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzslz5x/6taFn/tIaH7LBO/PNd8dBmXrOhrd1MMQz3uBAflczeP
-	3TznEQhtFXKQNNqgCDBz1EixHtuA7EnV8UI9/CW4dtTjyyNwB3IUAe8loV+oQQ==
-X-Gm-Gg: ASbGncvivoz1qqvuyKxivk+POTdKuEmVAYeIAm8lK26hMAEeXevJ1a0Gnhx9FajIlbq
-	b3HGqz0vArwRL/28+q5/o/68I6CUor3TeEFNbrjBeKEKCEoo1Q4RPAhY6eBBoC63wxci+L/mBAQ
-	mR8uTYYqIgItAbCJileLbqKLmWs0xn75RiR4DJD68fqc9qehM5dh7yUevFvZ3EaP0dbs4bGBnLD
-	rUtpl7FINNqDEL45R0Caz/G39iodiTZwnBBw98JSv+mlxtE+jHFG0Hli6AoiZRlF2WTf3XjULdp
-	jPcIYhg4urZKobadJDeJJzCPZ2aH4HJjYdcK7yHf/ikBMnfxX2ipnW1fUbZ/UYpiPukoFD/GIg9
-	RZyYV8YjyQxA+/d6rels7K+iPf/QHDU2aBoGrxwXZfA==
-X-Google-Smtp-Source: AGHT+IHST8t81MCtxY4AMugTj8+KZTk5dCvc7no0T46qRYJ/lTm1HFaW77DCtJbEy9i6uLRW2VFUew==
-X-Received: by 2002:a17:907:9816:b0:ad8:9b24:9d16 with SMTP id a640c23a62f3a-ae0579cd970mr352011866b.6.1750440908981;
-        Fri, 20 Jun 2025 10:35:08 -0700 (PDT)
-Received: from masalkhi.. (dynamic-176-003-044-193.176.3.pool.telefonica.de. [176.3.44.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60a1851449asm1698953a12.2.2025.06.20.10.35.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 10:35:08 -0700 (PDT)
-From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-To: wsa+renesas@sang-engineering.com,
-	linux-i2c@vger.kernel.org,
+	s=arc-20240116; t=1750440724; c=relaxed/simple;
+	bh=VQXf0OScI8qbzE6+t1uRec3PMKWSQ3rs/L0oXJEmBy4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Ew1fyWqeHCleJtN62ZqHKwu2e5AEjMIEm11VGl8Sg9ansBM20CI9nyFJYUHckGLuxySxtKswu6QJNY1shs+9WOmflfMpvtVroRo9mZOUJh9664y+HqwlNVHTi6Y2fvXpzmy+bBKAl9zZIahUgfFaCPFIiIq4pvfTfU77nZvUzPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gc4J2vDd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 034FBC4CEE3;
+	Fri, 20 Jun 2025 17:32:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750440724;
+	bh=VQXf0OScI8qbzE6+t1uRec3PMKWSQ3rs/L0oXJEmBy4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gc4J2vDd/ffRYTMRHW4o0khYZmGwctSzs9Ew9Fq+/O//m7NEW5VW2okaWU52ZGtdl
+	 ncGNuqliiFIqFPxtoMN98vlJPl7LU2aVocrQr8/vbZPPG+2R1JraSesXZbgvSZkdB3
+	 0iaC+MnTHGNgbnZW3SsYuSBpbiN8UHh/SuKyINOY7z9tZyxxCzwbkkbU70AIfPIpSZ
+	 fzyP+eEQFnRSnPuZ5njwZI8DSIHmj19rmUpDRqN4Amx/YSI+10oDpdr1ebTuKcinlC
+	 C1h+q8T2z8rlDuLBpncAT+HAYwAXJ8rk+cqd028HIcEGl/k8ZE7ZSYwfsjH7JFIcOT
+	 /BSrPmqHQl3nQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Simon Horman <horms@kernel.org>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
+	Dawid Osuchowski <dawid.osuchowski@linux.intel.com>,
+	Jedrzej Jagielski <jedrzej.jagielski@intel.com>,
+	Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
+	Piotr Kwapulinski <piotr.kwapulinski@intel.com>,
+	Slawomir Mrozowicz <slawomirx.mrozowicz@intel.com>,
+	Martyna Szapar-Mudlaw <martyna.szapar-mudlaw@linux.intel.com>,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC] i2c: Skip i2c_for_each_dev() when detection is not supported
-Date: Fri, 20 Jun 2025 17:31:21 +0000
-Message-ID: <20250620173121.15752-1-abd.masalkhi@gmail.com>
-X-Mailer: git-send-email 2.43.0
+Subject: [PATCH] [v2] ethernet: intel: fix building with large NR_CPUS
+Date: Fri, 20 Jun 2025 19:31:24 +0200
+Message-Id: <20250620173158.794034-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-While reviewing the I2C core, I noticed that i2c_for_each_dev() is
-invoked in i2c_register_driver() regardless of whether the driver
-actually supports device detection, as follow:
+From: Arnd Bergmann <arnd@arndb.de>
 
-    /* When registration returns, the driver core
-     * will have called probe() for all matching-dbut-unbound devices.
-     */
-    res = driver_register(&driver->driver);
-    if (res)
-        return res;
+With large values of CONFIG_NR_CPUS, three Intel ethernet drivers fail to
+compile like:
 
-    pr_debug("driver [%s] registered\n", driver->driver.name);
+In function ‘i40e_free_q_vector’,
+    inlined from ‘i40e_vsi_alloc_q_vectors’ at drivers/net/ethernet/intel/i40e/i40e_main.c:12112:3:
+  571 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+include/linux/rcupdate.h:1084:17: note: in expansion of macro ‘BUILD_BUG_ON’
+ 1084 |                 BUILD_BUG_ON(offsetof(typeof(*(ptr)), rhf) >= 4096);    \
+drivers/net/ethernet/intel/i40e/i40e_main.c:5113:9: note: in expansion of macro ‘kfree_rcu’
+ 5113 |         kfree_rcu(q_vector, rcu);
+      |         ^~~~~~~~~
 
-    i2c_for_each_dev(driver, __process_new_driver);
+The problem is that the 'rcu' member in 'q_vector' is too far from the start
+of the structure. Move this member before the CPU mask instead, in all three
+drivers.
 
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2: move rcu to just after the napi_struct [Alexander Lobakin]
+---
+ drivers/net/ethernet/intel/fm10k/fm10k.h | 3 ++-
+ drivers/net/ethernet/intel/i40e/i40e.h   | 2 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe.h | 3 ++-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
-However, the first check inside i2c_detect() is:
+diff --git a/drivers/net/ethernet/intel/fm10k/fm10k.h b/drivers/net/ethernet/intel/fm10k/fm10k.h
+index 6119a4108838..65a2816142d9 100644
+--- a/drivers/net/ethernet/intel/fm10k/fm10k.h
++++ b/drivers/net/ethernet/intel/fm10k/fm10k.h
+@@ -189,13 +189,14 @@ struct fm10k_q_vector {
+ 	struct fm10k_ring_container rx, tx;
+ 
+ 	struct napi_struct napi;
++	struct rcu_head rcu;	/* to avoid race with update stats on free */
++
+ 	cpumask_t affinity_mask;
+ 	char name[IFNAMSIZ + 9];
+ 
+ #ifdef CONFIG_DEBUG_FS
+ 	struct dentry *dbg_q_vector;
+ #endif /* CONFIG_DEBUG_FS */
+-	struct rcu_head rcu;	/* to avoid race with update stats on free */
+ 
+ 	/* for dynamic allocation of rings associated with this q_vector */
+ 	struct fm10k_ring ring[] ____cacheline_internodealigned_in_smp;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e.h b/drivers/net/ethernet/intel/i40e/i40e.h
+index 54d5fdc303ca..c429252859d3 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e.h
++++ b/drivers/net/ethernet/intel/i40e/i40e.h
+@@ -946,6 +946,7 @@ struct i40e_q_vector {
+ 	u16 reg_idx;		/* register index of the interrupt */
+ 
+ 	struct napi_struct napi;
++	struct rcu_head rcu;	/* to avoid race with update stats on free */
+ 
+ 	struct i40e_ring_container rx;
+ 	struct i40e_ring_container tx;
+@@ -956,7 +957,6 @@ struct i40e_q_vector {
+ 	cpumask_t affinity_mask;
+ 	struct irq_affinity_notify affinity_notify;
+ 
+-	struct rcu_head rcu;	/* to avoid race with update stats on free */
+ 	char name[I40E_INT_NAME_STR_LEN];
+ 	bool arm_wb_state;
+ 	bool in_busy_poll;
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe.h b/drivers/net/ethernet/intel/ixgbe/ixgbe.h
+index c6772cd2d802..3f9521d4e899 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe.h
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe.h
+@@ -507,9 +507,10 @@ struct ixgbe_q_vector {
+ 	struct ixgbe_ring_container rx, tx;
+ 
+ 	struct napi_struct napi;
++	struct rcu_head rcu;	/* to avoid race with update stats on free */
++
+ 	cpumask_t affinity_mask;
+ 	int numa_node;
+-	struct rcu_head rcu;	/* to avoid race with update stats on free */
+ 	char name[IFNAMSIZ + 9];
+ 
+ 	/* for dynamic allocation of rings associated with this q_vector */
+-- 
+2.39.5
 
-    if (!driver->detect || !address_list)
-        return 0;
-
-This check happens only after iterating over all registered I2C devices
-via i2c_for_each_dev(). Unless I am missing something, this seems to me
-just wasting processing time for drivers that do not support detection.
-
-To avoid this, I propose guarding the call to i2c_for_each_dev() like this:
-
-    /* When registration returns, the driver core
-     * will have called probe() for all matching-dbut-unbound devices.
-     */
-    res = driver_register(&driver->driver);
-    if (res)
-        return res;
-
-    pr_debug("driver [%s] registered\n", driver->driver.name);
-
-    if (driver->detect && driver->address_list)
-        i2c_for_each_dev(driver, __process_new_driver);
-
-This would ensure that i2c_detect() is only called when there is an
-actual possibility of detection succeeding, making the driver registration
-path more efficient.
-
-Please let me know if this change makes sense. I would be happy to submit
-a patch.
-
-Best regards,
-Abd-Alrhman Masalkhi
 
