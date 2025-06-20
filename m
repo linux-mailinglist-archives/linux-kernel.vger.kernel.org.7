@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-694969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB8DAE1313
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:39:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43159AE1346
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13B815A0DA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 05:39:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDC354A3099
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 05:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BE820C489;
-	Fri, 20 Jun 2025 05:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B54820E336;
+	Fri, 20 Jun 2025 05:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCaJ0yLW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q31SyGJ1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19C41DED53;
-	Fri, 20 Jun 2025 05:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B940380;
+	Fri, 20 Jun 2025 05:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750397979; cv=none; b=hC4UNWCjtgE3sAIH7i28eM29g4URTW/fpjZ/QrfASjmSE4ADdXiw6SxO/OEEvBKdU/ZJj88aPLcZA+CfgWzLuYm615y7khPLYEOC5ZF9zm+cGMYACicMBugA6lWv8KGABiog6LsvHdTIJAPP7+kgnMszzwtqJd+7yP+h1neCsJU=
+	t=1750398347; cv=none; b=On9E7mvsUVAuCLoQGMWtlAfurRiKkRS0f/8tyEApH4UkM8TzFjjFBj6b0wPly+0ziJAZTRoZtKVh9leWS5OzZvdac7BxpfooUNqoJ8L0u3FYUVWFyFNCCHs0PTYDpiLR2LPVIp7kngVvXrS7U8up/ReUCKaSnw3iKRQPnCfSDhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750397979; c=relaxed/simple;
-	bh=J53Bxt+CpHgBflG0yd+XaefqPIypj2Q4G2sGpszNHQg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GbZH0NuuOparkmmxa2ZEFyClJhcwc4OYjdC9ZH7aEPU2SST3sNESfbmsXNZCW168FUa2p5Er/x+9T6mbU+wJTw8DeyYg3umqSCXw0CwKpo+XjZInUCMXczCHU3Iui2gBuNBHpErGA8ojpMHHHzlN/EQMYz5ElPpK1wGbBllTFLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCaJ0yLW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 933BFC4CEE3;
-	Fri, 20 Jun 2025 05:39:36 +0000 (UTC)
+	s=arc-20240116; t=1750398347; c=relaxed/simple;
+	bh=zKYwjILYaQAPYlBM1770fKrIAlknXwMfFEvVljOlCHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u4H+hRkcwvTeFuVRFdp12WPueWKEAc3MOqBLbS1b3G/ZWKuzic35c53U0rgur7KpiHL8kgnOnG3o4XUo9hayJlcprJDhSxGe4lZxhjwM+hNnK+KVq2T4wc3Iq+Hti/EEj395Iw65gAz4vFaA7lEZM0S1N0t3+0R+hNXC7Y/KZRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q31SyGJ1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E2C7C4CEE3;
+	Fri, 20 Jun 2025 05:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750397979;
-	bh=J53Bxt+CpHgBflG0yd+XaefqPIypj2Q4G2sGpszNHQg=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=bCaJ0yLWt7EcaCwIvWzuiMzqxwE6uuf29DBGhEbmtkvVhl9PlJpwLy4SD4MvdUQ08
-	 9OBMBelK9Hf/a987JxrCAO5awdgLlf+L3t1C6zsJiFLRxjndrUDiRf14W7z4pit7a3
-	 XLOn1wN5n6Li0KINLdEQOk34SXeiXgYqEfMMdX1yt+ITehVHjM1OcvA/W/aaKF0mr6
-	 o8VltkgcsWE69FuzavQUChmEyBpzsZHw+2Rk7neuNp/EWU/lcKruUJ7hIjSjIKund9
-	 RzL1wUjGQOA1Vl3U7Repq7l55D6jUhvpfAD3n08RaCGwOl4g+Xxq/LCb57PEkZ+tmU
-	 qmNdiNvtBQP7Q==
-Message-ID: <ddc48fa7-3fca-46a3-9224-11c0c3fce4a4@kernel.org>
-Date: Fri, 20 Jun 2025 07:39:34 +0200
+	s=k20201202; t=1750398347;
+	bh=zKYwjILYaQAPYlBM1770fKrIAlknXwMfFEvVljOlCHM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Q31SyGJ19ASUx8SjtzAN0IrpTm4g9RqGt2KFKaGVT4Awpw5RpefAxZ29vVcePlF1F
+	 Nu1BLPFgeqSdUOpJydoCdVqQelCgsvEHzoXbEsBI97rqtqCTZhKX2+ancGnf8jzqg3
+	 2u1of7zacglwKKn+bQj0e0uxHeo/yfNkJ2zSjtQid0S8lR4PJYHr5M78OoJTjIpsmh
+	 wh2wUuGMIqWwsxFQh+depRY/byzZQ38xwVspE21vpBWV38GSdQ/T8mhRgrHBm3cj+V
+	 x9hy/rpVuTrg4LKKkNycEtW4Qs/RIfiAvYt6kaIeZ3jX1k73Vg1ZMWKM+BX34LqbiY
+	 AarjHav00I47A==
+Message-ID: <ca0f85f9-3908-4c7d-add3-905e9e6f634c@kernel.org>
+Date: Fri, 20 Jun 2025 07:45:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv5 0/5] wifi: ath9k: add ahb OF support
+Subject: Re: [PATCH v1 2/2] dt-bindings: iio driver: Add BMP390 pressure
+ sensor device tree binding
+To: liquancin.mereenamathai@in.bosch.com, linux-iio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, jic23@kernel.org, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, vassilisamir@gmail.com,
+ marcelo.schmitt1@gmail.com, javier.carrasco.cruz@gmail.com,
+ Xu.Zhang@cn.bosch.com, Maoting.Bian@cn.bosch.com
+References: <20250620045456.1151-1-liquancin.mereenamathai@in.bosch.com>
+ <20250620045456.1151-3-liquancin.mereenamathai@in.bosch.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org
-Cc: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
- nbd@nbd.name, Johannes Berg <johannes@sipsolutions.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:MIPS" <linux-mips@vger.kernel.org>
-References: <20250609030851.17739-1-rosenp@gmail.com>
- <37561ac8-ac0f-4744-9495-c7589544d4bb@oss.qualcomm.com>
- <ef0db40a-14d1-4670-82ca-f724a0eeee0d@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -108,52 +103,55 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <ef0db40a-14d1-4670-82ca-f724a0eeee0d@kernel.org>
+In-Reply-To: <20250620045456.1151-3-liquancin.mereenamathai@in.bosch.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/06/2025 07:32, Krzysztof Kozlowski wrote:
-> On 20/06/2025 02:33, Jeff Johnson wrote:
->> On 6/8/2025 8:08 PM, Rosen Penev wrote:
->>> First two commits are small cleanups to make the changes of the third
->>> simpler. The fourth actually adds dts definitions to use ahb.
->>>
->>> v2: Add documentation, use kernel_ulong_t, and of_device_get_match_data
->>> v3: Use qcom prefix and wifi suffix as in other ath drivers.
->>> v4: fix up dts example in Documentation
->>> v5: move back to using qca prefix. It makes no sense to diverge between
->>> all the other drivers for MIPS based qualcomm devices. qcom as a prefix
->>> is used for Quallcomm's ARM(64) stuff.
->>>
->>> Rosen Penev (5):
->>>   wifi: ath9k: ahb: reorder declarations
->>>   wifi: ath9k: ahb: reorder includes
->>>   wifi: ath9k: ahb: replace id_table with of
->>>   dt-bindings: net: wireless: ath9k: add OF bindings
->>>   mips: dts: qca: add wmac support
->>>
->>>  .../bindings/net/wireless/qca,ath9k.yaml      | 23 ++++++-
->>>  arch/mips/boot/dts/qca/ar9132.dtsi            |  9 +++
->>>  .../boot/dts/qca/ar9132_tl_wr1043nd_v1.dts    |  4 ++
->>>  arch/mips/boot/dts/qca/ar9331.dtsi            |  9 +++
->>>  arch/mips/boot/dts/qca/ar9331_dpt_module.dts  |  4 ++
->>>  .../mips/boot/dts/qca/ar9331_dragino_ms14.dts |  4 ++
->>>  arch/mips/boot/dts/qca/ar9331_omega.dts       |  4 ++
->>>  .../qca/ar9331_openembed_som9331_board.dts    |  4 ++
->>>  arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts   |  4 ++
->>>  drivers/net/wireless/ath/ath9k/ahb.c          | 60 +++++++------------
->>>  10 files changed, 84 insertions(+), 41 deletions(-)
->>>
->>
->> DT team, should I take this series through my tree?
->> Toke, Ack?
-> No, of course not. The same as you asked some time ago: DTS never, NEVER
-> goes via driver subsystem tree.
+On 20/06/2025 06:54, liquancin.mereenamathai@in.bosch.com wrote:
+> From: Liquancin Mereena Mathai <liquancin.mereenamathai@in.bosch.com>
 > 
 
-Heh, you do not have any subsystem maintainers acks or reviews on DTS,
-so this should not be considered. It's like me taking wireless patches
-without your acks.
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
+
+
+> Signed-off-by: Liquancin Mereena Mathai <liquancin.mereenamathai@in.bosch.com>
+
+
+A nit, subject: drop second/last, redundant "device tree bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
+And drop driver. Bindings are not for drivers.
+
+There are several issues in the binding at first glance, but I won't
+review it due to lack of testing. Look at other bindings and don't
+repeat common mistakes. Just take other RECENT binding as starting point.
+
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
+
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
+
 
 Best regards,
 Krzysztof
