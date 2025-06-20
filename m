@@ -1,101 +1,111 @@
-Return-Path: <linux-kernel+bounces-695887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59585AE1EF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:42:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 705BEAE1F27
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DBB07AC1AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:40:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A34933A9FDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420572D3212;
-	Fri, 20 Jun 2025 15:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C11B2D3A6A;
+	Fri, 20 Jun 2025 15:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="I8GAJEjt"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g5okcp6J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2FC2BD5BF
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9F11FBEB9;
+	Fri, 20 Jun 2025 15:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750434134; cv=none; b=hzwrNvGEHfwXHHnPAZEkrFrLKQTbDeMP1xJFt3p1MPPY3EY7KwglG2dTXDtkbyzN/247EjCy8vfXJT84ejbJbBPSyaByJ+qC5P2nfumprW9snCOZAPvFcOzaek0t4RuJuUJI/5BRGUPEkmKkIfB0yEIaY22lR9Bxm50etxLi/hk=
+	t=1750434124; cv=none; b=HGtP+J5u9GkM6RUnmJzTEHWAKQkbmGNYjdXvGAY3lOzE9VyZmaPtrqHZVvxfWj4fqdtwGWoVvL/vkMFx99ZPUNq80E80sXhGWWW9vLRh3qOQgcy6EoBHXVRmTe2FE4z85GlbHUs67RMNxx7imjgmQzszlq4gBSrkKvMJBlkfqi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750434134; c=relaxed/simple;
-	bh=cLUxPPjYkBw7STQusnQiKUISqYoRPP4aoEc3f3wxNRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UaLeD8V8lRVazhh4jDOnaIHnnN1cqP8cep2bITw32ubc1vIk3yRIlh+HAWmoLzOaP9qyJVEn4wZyhZIYPFG3/r99YKGFTdsk4iZWbzt/3iilA7ldiUTfzCt1ziCzGQCgRfGydomseI1XSlcmSXN0XCTCJNbnl8EeZQPwNuWXeW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=I8GAJEjt; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <56f52836-545a-45aa-8a6b-04aa589c2583@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750434131;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5vxNedAjVSukjlPsPkPSM2hsqyg7r1pIanZ7gFNuJhA=;
-	b=I8GAJEjtP32F6Q/LrmgaBIS5PQsFSM5HwZwx0rWj3XnRmwTe/El0Ii75HYP9sLU6d/ZOJ1
-	cVI/VZ6Wu44tRXNFU6169t1XuPyIfdInIkwtFErnMxZeu+yhZmUbYey44qlIToRwds80dF
-	1U8WRtNlQekNfmts8HlBdehctnL7cJ0=
-Date: Fri, 20 Jun 2025 11:41:52 -0400
+	s=arc-20240116; t=1750434124; c=relaxed/simple;
+	bh=SHPTxnd4pbMYQOtiIQLzx9eD7HZDUt3+mEFmqV4gGBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=QUfZJvtj+a3zj8dlzRmmNKe9p5hsFIBLtV0GuiALq5EScoWKvOl3oBpEL+zwiaQRVBj/PSGMiIJFyWmjB4aKEE+n7koUZjNavbKSAogoLOl0ZaqkeZYiBvNTP+x25s/dAQm27NWyV8sv56w59OiQxXfuL1nIveC/VGM5mtZW4a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g5okcp6J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2BC2C4CEE3;
+	Fri, 20 Jun 2025 15:42:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750434124;
+	bh=SHPTxnd4pbMYQOtiIQLzx9eD7HZDUt3+mEFmqV4gGBg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=g5okcp6JBl2EOByxwdGhanD/oHlYvrWI0Ju/YEgHG3PVZv122YXGG65QLIySgjCma
+	 EvWhT3unRjT77HoYGSlzUPV2HwmghNbhw7zb3sVVWlaXsf4xguDKGYXMERIg2YM9pX
+	 gXDqosrULppL3gOfoy8ENwCQQq1pLft2MI/KDPXuKmovWBi50brnztquvRguMV/Kf/
+	 Kw4lvcJCWsZB9ch0PkRu3OxocrNdJc6cypNlM7NJoZRv/PxZRISSIqPDff2kM0uGmK
+	 dqHzCD9MspAjRyfIlWI3SkIGkwfQj+F+zUfHIg8ucU5RnCXhFOQJ2ysIWuRpDdKTof
+	 Uu7jXcW0sVKdQ==
+Date: Fri, 20 Jun 2025 10:42:02 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Hans Zhang <18255117159@163.com>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com, kwilczynski@kernel.org,
+	shawn.lin@rock-chips.com, heiko@sntech.de, robh@kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] PCI: rockchip: Remove redundant PCIe message routing
+ definitions
+Message-ID: <20250620154202.GA1292011@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net 0/4] net: axienet: Fix deferred probe loop
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
- Saravana Kannan <saravanak@google.com>, Leon Romanovsky <leon@kernel.org>,
- Dave Ertman <david.m.ertman@intel.com>, linux-kernel@vger.kernel.org,
- Ira Weiny <ira.weiny@intel.com>, linux-arm-kernel@lists.infradead.org,
- Danilo Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20250619200537.260017-1-sean.anderson@linux.dev>
- <2025062004-sandblast-overjoyed-6fe9@gregkh>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <2025062004-sandblast-overjoyed-6fe9@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250607154913.805027-3-18255117159@163.com>
 
-On 6/20/25 01:10, Greg Kroah-Hartman wrote:
-> On Thu, Jun 19, 2025 at 04:05:33PM -0400, Sean Anderson wrote:
->> Upon further investigation, the EPROBE_DEFER loop outlined in [1] can
->> occur even without the PCS subsystem, as described in patch 4/4. The
->> second patch is a general fix, and could be applied even without the
->> auxdev conversion.
->> 
->> [1] https://lore.kernel.org/all/20250610183459.3395328-1-sean.anderson@linux.dev/
+On Sat, Jun 07, 2025 at 11:49:13PM +0800, Hans Zhang wrote:
+> The Rockchip driver contained duplicated message routing and INTx code
+> definitions (e.g., ROCKCHIP_PCIE_MSG_ROUTING_TO_RC,
+> ROCKCHIP_PCIE_MSG_CODE_ASSERT_INTA). These are already provided by the
+> PCI core in drivers/pci/pci.h as PCIE_MSG_TYPE_R_RC and
+> PCIE_MSG_CODE_ASSERT_INTA, respectively.
 > 
-> I have no idea what this summary means at all, which isn't a good start
-> to a patch series :(
+> Remove the driver-specific definitions and use the common PCIe macros
+> instead. This aligns the driver with the PCIe specification and reduces
+> maintenance overhead.
 > 
-> What problem are you trying to solve?
+> Signed-off-by: Hans Zhang <18255117159@163.com>
+> ---
+>  drivers/pci/controller/pcie-rockchip.h | 14 --------------
+>  1 file changed, 14 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/controller/pcie-rockchip.h
+> index 5864a20323f2..12bc8da59d73 100644
+> --- a/drivers/pci/controller/pcie-rockchip.h
+> +++ b/drivers/pci/controller/pcie-rockchip.h
+> @@ -215,20 +215,6 @@
+>  #define RC_REGION_0_TYPE_MASK			GENMASK(3, 0)
+>  #define MAX_AXI_WRAPPER_REGION_NUM		33
+>  
+> -#define ROCKCHIP_PCIE_MSG_ROUTING_TO_RC		0x0
+> -#define ROCKCHIP_PCIE_MSG_ROUTING_VIA_ADDR		0x1
+> -#define ROCKCHIP_PCIE_MSG_ROUTING_VIA_ID		0x2
+> -#define ROCKCHIP_PCIE_MSG_ROUTING_BROADCAST		0x3
+> -#define ROCKCHIP_PCIE_MSG_ROUTING_LOCAL_INTX		0x4
+> -#define ROCKCHIP_PCIE_MSG_ROUTING_PME_ACK		0x5
+> -#define ROCKCHIP_PCIE_MSG_CODE_ASSERT_INTA		0x20
+> -#define ROCKCHIP_PCIE_MSG_CODE_ASSERT_INTB		0x21
+> -#define ROCKCHIP_PCIE_MSG_CODE_ASSERT_INTC		0x22
+> -#define ROCKCHIP_PCIE_MSG_CODE_ASSERT_INTD		0x23
+> -#define ROCKCHIP_PCIE_MSG_CODE_DEASSERT_INTA		0x24
+> -#define ROCKCHIP_PCIE_MSG_CODE_DEASSERT_INTB		0x25
+> -#define ROCKCHIP_PCIE_MSG_CODE_DEASSERT_INTC		0x26
+> -#define ROCKCHIP_PCIE_MSG_CODE_DEASSERT_INTD		0x27
 
-See patch 4/4.
+Thanks for doing this!  In fact, these definitions are not only
+redundant, they're not even used at all.
 
-> What overall solution did you come up with?
+>  #define ROCKCHIP_PCIE_MSG_ROUTING_MASK			GENMASK(7, 5)
+>  #define ROCKCHIP_PCIE_MSG_ROUTING(route) \
+>  	(((route) << 5) & ROCKCHIP_PCIE_MSG_ROUTING_MASK)
 
-See patch 4/4.
-
-> Who is supposed to be reviewing any of this?
-
-Netdev. Hence "PATCH net".
-
-And see [1] above for background. I will quote it more-extensively next time.
-
---Sean
-
-
+And neither are these ROUTING and CODE definitions.
 
