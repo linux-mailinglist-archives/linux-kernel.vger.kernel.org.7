@@ -1,113 +1,132 @@
-Return-Path: <linux-kernel+bounces-696250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57417AE23DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 23:15:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12921AE23E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 23:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 003054A1F65
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 21:15:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 264917B1373
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 21:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACA822154F;
-	Fri, 20 Jun 2025 21:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DEF238C0F;
+	Fri, 20 Jun 2025 21:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZSQZ9Jyb"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="dF1kMzth"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591141DF97D
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 21:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9979730E859;
+	Fri, 20 Jun 2025 21:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750454126; cv=none; b=s+UuaQYER9sG7Jr7NoKxflnHLkhnlNTR99RV2Z74mMNZDNzznahS994T6Z0rrY0rUjXSSCURMgI+Hu5cU1S72KR2uVl4PDg5genrqYZwE0cUuMO6u5hH35Nfio/Ur7orlYKf5mBIq5dPce2L4cLACWV5TUio7k8diaGUbto41X4=
+	t=1750454175; cv=none; b=kWcAOsLzX/fMttTrf/PIOqtJzurcS5CJq26tNkr/TorYQCK5J9M6hAxgpWRFpUQEOyfWnMWQ9W1AIWLkZT2UOPrr7c9YT0YAdrhiNYeJxzpatXvB+5WJlzuVc/s9/J/qgF8bjH6zn0peNVcgy6y/nYyH0N3RZ17C8iKiWG0gW+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750454126; c=relaxed/simple;
-	bh=8lxuUdfMEVpUA9WKW783Zvq4WYwtwx/QH0Hphie6PRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n5M9YLQdt8L+XL/VKNWn6gIO8KR4F6escw3W0Id+PWL7YcCgptS2x48w9Fl8oygyKmXWeuSnAP6ZCPbGTiFI3iPUKBoarPKFuejSEivoiDm+iW/ePOY6055hIjoJhAjVRu2QhafS83PbOTVmLCIPTYM2M5f3Sd3derNIw6y4tXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZSQZ9Jyb; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=8lxu
-	UdfMEVpUA9WKW783Zvq4WYwtwx/QH0Hphie6PRQ=; b=ZSQZ9JybRyzcQ89/64X+
-	at9LtTjr/uZxjaZw+vYYPZ8hPzVUHcgk7kZ3w7vAlQCHPZFvg+JBSSNmNzlLN6bl
-	HJh02D+eua8XD9f/HbCFuFziyXay/5JU95JUUFk0Da9Y1S5rUEZkE6aTeS5KrHe+
-	LtD/KzBWfvZLBpbG8mslGuTwVW+UexCrd/x5SQlg5cdplLGo4Fqwt0e2WJBXiQDY
-	jxxq8n7dwNxoGG8ZOsA5uPXPDJ+/D5KF3jm+bjHfJl2VTUSEgN9CtZtrDElv2w+X
-	UKkQ8Yiji2VmMBCE1wBtsy/TK5f9sf6unxLqepIOqPsUe7WwJ1tGhAH6FcbXNK75
-	Zg==
-Received: (qmail 2837631 invoked from network); 20 Jun 2025 23:15:11 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Jun 2025 23:15:11 +0200
-X-UD-Smtp-Session: l3s3148p1@StF1Wwc4UMeySS9C
-Date: Fri, 20 Jun 2025 23:15:09 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Jorge Marques <jorge.marques@analog.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	=?utf-8?Q?Przemys=C5=82aw?= Gaj <pgaj@cadence.com>,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] i3c: master: Add inline i3c_master_readsl and
- i3c_master_writesl
-Message-ID: <aFXPXTUSvgj-a2zC@shikoro>
-References: <20250620-i3c-writesl-readsl-v1-0-e0aa1c014dff@analog.com>
- <20250620-i3c-writesl-readsl-v1-1-e0aa1c014dff@analog.com>
+	s=arc-20240116; t=1750454175; c=relaxed/simple;
+	bh=/pKDq8IkD7Gp3uCohQ5thcPbl5SLnAvtiLxz8LuwTUU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aT+hpBweIpRjuO+V9K11mJ9ibE6lMn8+GgZeh3rpO41WGQPU1TE95JDsC2UGc3P2IuDDucwu3hdTb198ERE8rlapNJ/QV/yXfwFXVsD0ar4gPM3BhnkSzHY4SomHkBRh7qZyNSDjYWKs74KlI/qo0GheEm7/7qbnHYsjq3kOf24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=dF1kMzth; arc=none smtp.client-ip=212.227.126.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1750454164; x=1751058964;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=/pKDq8IkD7Gp3uCohQ5thcPbl5SLnAvtiLxz8LuwTUU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=dF1kMzth5ZzrBDMTwLFwF9s91xo663A4skSNoKVyqRDDqESW4ecgJa1g5vI5qYlc
+	 cQZJQdLb2DExntKg4EP2CdE7XfCXBwXCDTKtwkZxfe7Wsnsb1eO/H9amqq6DFClYV
+	 r3mITW3zoRH40uFPwpEYjJhSbEae5oEb0ZMKx8voJZrNOzQFpqiYAouUo/BYRbaIN
+	 8Yv59rC3fxEeDDBZO0vLt0OgUgp01/T40OEjYk5PEkIMAiPnidALYWrtHL9dl9cbb
+	 b8XuIPNYzxT07WiQZXdzQUBzQg0+CqpV9LiA1J3oqbRNdEWqsiElOzK5K8e8kOAz1
+	 QIoSDaxqvjaNqOvWJw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.174] ([91.64.235.193]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MDyc8-1uaSKl32HM-0003Lx; Fri, 20 Jun 2025 23:16:03 +0200
+Message-ID: <33239018-ea33-49e4-87d2-4d5c399dda9b@oldschoolsolutions.biz>
+Date: Fri, 20 Jun 2025 23:15:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r1jy/dUWgI+dUiEi"
-Content-Disposition: inline
-In-Reply-To: <20250620-i3c-writesl-readsl-v1-1-e0aa1c014dff@analog.com>
-
-
---r1jy/dUWgI+dUiEi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v3 0/4] Support for Adreno X1-45 GPU
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
+ Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-pm@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20250620-x1p-adreno-v3-0-56398c078c15@oss.qualcomm.com>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <20250620-x1p-adreno-v3-0-56398c078c15@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:+4YE6MTuUgvgsp65a+V8AX62NWNmLb2aNAbb/aU8gVx1rTyqQ7I
+ jIfDf8NURnQva8qIefL59RrZ8H3hcVKWVwMk0b2yVPyQU9pSAL896sUdq5gsFkQAfFK2t9I
+ roVKD73VNBILh4vVemSmF1OhkuYV9Wf0sVca45PoxpL8F7elWwNR9ftsbQSMgrstwWEF7Cg
+ RNPAfuMCsikU7jgwcPx+A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:L7p3mqP57R0=;Yf+zHyW9R9O3+3Lcv97T4M3IQ7R
+ WMTMefP4P3sEZwafIrNDEyOWOkSf54qAjYd+5JdqK+Kv0TQn4NeDSne4Hh/KcRt6LDWObnGRT
+ 2+Us7JtBAwdT4SvNQ+sYKaUBqKojcV5MoQDB2w1y7V3io5LrVT+2kD8RJLOglrImOofL0KYIh
+ nGm/2ZS+EYUdwITYhMbroaabQ+ULJqwTAjiQBz+XwfunVgILNLSJZG4zwfaceLR6tVIjb1qxv
+ bkMu3H5WbYix6outeyNL+1u5FwXNZZ2j/mtdqJibgf7xAyxvfrcrvqkaozxyNgVw5pqkWoCg9
+ b9DEw72rJTOKW99nRhZhB1pBJwkIhB1iC5V332T2kNBUv8/dPWYTq03YKRx3XjGhaJU33hu8P
+ YFT3G/oTVvUfZwdvDV5x3yv7hfpPOSAmGbdtGBWrnvsjBt2WdRvSqX2eCxvTbt9wodIWqa9wY
+ yiQ820AxMkMCmrYUeUVYrpfYtt/mCRd48cKo4fUfinnSF8MM41fs0oK44m+pvnbVSk2R4147q
+ igaYnf6mKF+AtD5o/ZvNonP4c5khkj11h6P4XrPfcQqB/iI7dITzbqcOx16pDJm9tR2LTusRq
+ gIImiPeM5SQELR8J9l5yZCswbd2oPlbbcAv30O8JL7cbAac6GtdvZyszdTL8uzapaOIeGScmS
+ Zb3kO5D2WeCuos+i/B8F3BNKmkK/JJ9NzPXpJQVhQWnnKFHT73EWHGbAg9vufUnkiWt75nR6k
+ 8w3DZcQmEK+zzryFP5tgrp5DNSZsyrMGWG9KaTmOC17/PtL9WOHhaA7jqB8qwLGRZVNTGnkIa
+ mbmZ66OfTOJYYlrrIfOw982UdI2V/UXqj2aM35aFAO1Avm1DnfXsNyD3O9/Nzj9ZI0a7OEP1j
+ LEeQ/xYjb3+gKPMYLrXC7WB9cqmxyMI1RFJoSoVMOD/EVof/19uqSzVcBda6cElkbfu0xFlRw
+ 3p1wiZ+gndSaP/tuRo1D+ukkyqGuKs0asT3fcUjPiDxyb9IMEznF8Gdz0X3pnCWh4WN7UTDFI
+ sxvOJwc2WZWiqEU0+iP0CLM3o3dlf/N0ed4PtesDJCsW4Afy2l+g5wVysOOleV7ygs6lgxRs5
+ AvJzzj+/ZQnLdf0t4cqkEBqv2jb+CfRS0EI+EKvTP+fP8rlo4U/GIjQrirQr4EG6wSB6LuNi0
+ wjAhQGuPqGlZ2a4Ub9u53vh5Vbpn7QKww+pnrNUOMOMDwXQ3NJCg6xCeSMqh8F2+Zf2NIK+Fy
+ D3wZFXXjHlF7A8Suw4Y6ub1DOr+5dd/XXXFc21xk3oUdiyH2nAKLe0yA3YJrO8BzbHnkUcPlf
+ WNSjKnz0Uk0xpP69q6o8+4LeCsnllrowf6prZR2RQF5TgYqb9YJdO5JQ0QA3MTjhyWkNLFKmv
+ SXASEXucMAXFfBOYmbjiLLsatULsRj1nXi2qbgrbHJ9Lt+vg7thT4DqtMa
 
-On Fri, Jun 20, 2025 at 06:54:59PM +0200, Jorge Marques wrote:
-> The i3c abstraction excepts u8 buffers, but some controllers have a bus
-> width of 32-bits and don't support flagging valid bytes, so it is
-> required to read/write long words and to use memcpy on the remainder of
-> the number of bytes by 32-bits to not write/read outside the buffer
-> bounds.
->=20
-> Signed-off-by: Jorge Marques <jorge.marques@analog.com>
+On 20.06.25 08:54, Akhil P Oommen wrote:
+> Add support for X1-45 GPU found in X1P41200 chipset (8 cpu core
+> version). X1-45 is a smaller version of X1-85 with lower core count and
+> smaller memories. From UMD perspective, this is similar to "FD735"
+> present in Mesa.
+>
+> Tested Glmark & Vkmark on Debian Gnome desktop.
+>
+Hi Akhil,
 
-Suggested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+thank you for the patch set. It works well on the Lenovo ThinkBook 16 G7=
+=20
+QOY, tested on X11 and Wayland on Ubuntu 25.04.
 
-> + * i3c_master_writesl- Write bytes to long memory region from byte array
+Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 
-Frank proposed the name 'i3c_writel_fifo' which I like a tad better.
-Opinions?
+with best regards
 
+Jens
 
---r1jy/dUWgI+dUiEi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmhVz1gACgkQFA3kzBSg
-KbYCYw//Si5wvbmKRsavLRhwf93Y+rnT2QVv88eLVA+Ze2BBsONMdNTYFLoleuXZ
-Rsxe4n0FSB5YUXZcme4/AAVMD7ONaush2WnaQyJCb9u361WqqtJt7i14u5sTtlP2
-WdtICzW8U0LqzI8uQN875Jrls1f1vkfteENskR3SAIttvEogn/OLfjRUhoklAzqL
-or1zlT1MHyKDU/OJHTwhiFcFOH4aKmTnN8KjufgHx9BuvnjxeNh46rwusGPwyG61
-kiV1+RCIJ776Aqto0Ll+33C+MUsKH7eb+XnVZjCL0ZCly+OzkEsYZRZC7rCRqIBI
-2/dHX0gpy62iNPODFJtJZzQsihED6doXlwF080kVYVIn9MedPzpx+MWp+qj+z5SJ
-UXc2yYL2ll8u6VRQ4ObumwtHXU3Z3UbGUsBLNervPbP4Yqx3QAJ7cmv1tRFSHLmC
-3iahXiag8+BFPUG3w9BjERF7DIt53GIu3w8Q1VcRtyrDP3qjPqlMXaFRt/xRwNFO
-BPB7SL7e3oVnTiG86X9ztl5fGlQYlEJU7wIMblF3LepdmFZ6UvZ7xOJWUq388WgD
-0GF8tLemP7inKHpHbzG0LLIlDezZcVntd5hYgIRTR26XrxloKgHU2m7iT+LKWKov
-s1SiiW8LlD55Y0zxZednF3p8CEvh/imIdfUtBLPEWq3dNhJngP4=
-=3QT3
------END PGP SIGNATURE-----
-
---r1jy/dUWgI+dUiEi--
 
