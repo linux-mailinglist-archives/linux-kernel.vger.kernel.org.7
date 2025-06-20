@@ -1,93 +1,104 @@
-Return-Path: <linux-kernel+bounces-695552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FA3AE1AFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:32:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B71AE1B03
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB53A1C2001D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:32:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A0EE4A777E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D227221FC0;
-	Fri, 20 Jun 2025 12:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E03D28BA9A;
+	Fri, 20 Jun 2025 12:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXQHHIbn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bzVI3fgB"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673CE28A41C;
-	Fri, 20 Jun 2025 12:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78509221FC0;
+	Fri, 20 Jun 2025 12:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750422687; cv=none; b=MPY2eGHCrFfAxRzyCNZ1ZfBU2us3l/E4sZhn6n7kZxVjGCe7WFdrnycpxYlyi18l2NI8Y42J58WSQCiAXfcxzMycjY0GGqVEHYrItglwq9pt35u1KgwkmjwN1Cn0hsB+8/5Ie6pZ7Jz2B+Ybe+TPb/GGoOFGH0ZqCNMGFfHV/CI=
+	t=1750422803; cv=none; b=Ca6P+70ZAzWaWYXknkgcoAq5skj0dRKShEZuWXlghIyQ1HKEbgGFBPKUCqztTMd9vbE8OkgB8qeQ/Pi+FiXFgLNcmSFouWlPFNBnnLz8mdWnOPk37ZpJAEbmmx0cQeM13igE1HZUhei42LBovlHmZsk8YXzlDm3I7gLM1ilwrTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750422687; c=relaxed/simple;
-	bh=aD43/sOhmsUVweGrvb0kOVvuYKCc6XzsFSDt8n0p6Lc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=RBAfRGYTwbKbnLgv3qmpk+QiAcJa5vGbXx8c7vQhDMWLqLEtzGAKAMnY5HNilFsc3UQBus6KR0NMa4IKYEJCWxsGWHsepje+2hqUNe1PDDsuIszSLclcsAAV2eroOEmzietuh1LKwQAiThQ06NaaQlBxQ52vO3KvI7gvIqPSt/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXQHHIbn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82017C4CEE3;
-	Fri, 20 Jun 2025 12:31:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750422686;
-	bh=aD43/sOhmsUVweGrvb0kOVvuYKCc6XzsFSDt8n0p6Lc=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=NXQHHIbnIGMf2IECcaAYEpTDKBvyrbqaAb2oS5t8pY85PEa8ALOWZbnjVK9rQwChH
-	 J7oLZHOEQLr1S2r6M3XA4GTHCczxJ6S9fcfNfrEC2Dxq1GOIFTAyFdOWk0VdAivY11
-	 2vhn0uavNoK8kY3kLeaTuQWCDPs8+hW+wsdz5yQqnCEqgBFFf0HWNAdsbMg776n/pq
-	 Qnj35G4baCi4+7PrqOielawwW9+GreC2JF2K9ZYDyWOostAJyBwurnzjYGJ1ts4AO7
-	 DFB0fd5u6e74uMwbzM2IZEFDBQFJEgo8nfr+kZdFoNjIbIXrNtxAVXTDfivMgPJjLZ
-	 /M9GlXMSCwy1w==
+	s=arc-20240116; t=1750422803; c=relaxed/simple;
+	bh=DaGgyoq4tptnaaMFKQ5NAr1kA6WiOSlnJM6CJ4wUsz0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gJ+bVN8Y3exJfNOLXP+KVsi0yf4f8TjYpW3fzhl7Xp7+FLNk+3Ig5O7p6itZEnVQ4t1yPcyt5L3nVGqKhzVM9cIAMqQzHTZNlSLf04ivjaEpS5JJFGl6fs6xXHvvUjazr1yfqRx8Wswp8xW8ksfldE/4P7YTW1gLrWCDY1Yc78g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bzVI3fgB; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C0EB51FD3B;
+	Fri, 20 Jun 2025 12:33:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1750422799;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0nTWKYvxlcW790wtzf4aEgMXnEq9wDwuPS3BdqPXpms=;
+	b=bzVI3fgBtk/4M0taOrX2MmN8vxYXjkqdVLqs0XdmXB5/F5yK0tX7pj1MqqXTnthypSg4/F
+	4712mYfUb+ZktLTOOx99CpoN4dOZjcrBx2Lx37Fj5EsXTCkwra/y7K34dKWk3OXgzT1xSf
+	NQFLn2VuKdzYkZCOKu3E+QP741rpVNaYbSEhVMefO7hLwMET/R8TBU9lNou+5vFZ99SgEZ
+	nBbGa1HAj1aTEvdw3gcqxKqmjxEK4/lk+5APH8ZbG8ZF2kSnk64chRLbro3kMgCvXH68Hd
+	gzrvFDW4YyKj03IpVK0tRGIAI2WwE/UB/+0xMqREPYK6qOfJ3jfwgKiCOdJH/Q==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH ethtool-next 0/2] Add support for PSE priority feature.
+Date: Fri, 20 Jun 2025 14:33:05 +0200
+Message-Id: <20250620-b4-feature_poe_pw_budget-v1-0-0bdb7d2b9c8f@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 20 Jun 2025 14:31:22 +0200
-Message-Id: <DARD1ZC0W9QR.3CBLX6RYE65VU@kernel.org>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH] poll: rust: allow poll_table ptrs to be null
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>, "Alexander Viro"
- <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Christian Brauner" <brauner@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250620-poll-table-null-v1-1-b3fe92a4fd0d@google.com>
-In-Reply-To: <20250620-poll-table-null-v1-1-b3fe92a4fd0d@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAFVVWgC/x2MwQqDMBAFf0X23IUYYin9lVIk6osulESS1Qriv
+ zf0MIc5zJxUkAWFns1JGbsUSbFKe2toXHycwTJVJ2usa61xPDgO8Lpl9GuqfPthm2YoGw887ta
+ Fseuo5mtGkOO/fhF00ZQ+HHEova/rB65O5794AAAA
+To: Oleksij Rempel <o.rempel@pengutronix.de>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Michal Kubecek <mkubecek@suse.cz>
+Cc: Kyle Swenson <kyle.swenson@est.tech>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>
+X-Mailer: b4 0.15-dev-8cb71
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdekgeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthekredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedugefgudfftefhtdeghedtieeiueevleeludeiieetjeekteehleehfeetuefggeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehkhihlvgdrshifvghnshhonhesvghsthdrthgvtghhpdhrtghpthhtoheprghnughrv
+ gifsehluhhnnhdrtghhpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehmkhhusggvtggvkhesshhushgvrdgtii
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Fri Jun 20, 2025 at 1:49 PM CEST, Alice Ryhl wrote:
->      ///
->      /// # Safety
->      ///
-> -    /// The caller must ensure that for the duration of `'a`, the pointe=
-r will point at a valid poll
-> -    /// table (as defined in the type invariants).
-> -    ///
-> -    /// The caller must also ensure that the `poll_table` is only access=
-ed via the returned
-> -    /// reference for the duration of `'a`.
-> -    pub unsafe fn from_ptr<'a>(ptr: *mut bindings::poll_table) -> &'a mu=
-t PollTable {
+From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 
-Returning `Option<&'a mut PollTable>` is not an option? I'd like to
-avoid wrapping raw pointers...
+Add support for PSE (Power Sourcing Equipment) priority management and
+event monitoring capabilities.
 
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 ---
-Cheers,
-Benno
+Kory Maincent (2):
+      update UAPI header copies
+      ethtool: pse-pd: Add PSE priority and event monitoring support
 
-> -        // SAFETY: The safety requirements guarantee the validity of the=
- dereference, while the
-> -        // `PollTable` type being transparent makes the cast ok.
-> -        unsafe { &mut *ptr.cast() }
-> -    }
+ ethtool.8.in                           |  13 ++++
+ ethtool.c                              |   1 +
+ netlink/monitor.c                      |   8 ++
+ netlink/netlink.h                      |   1 +
+ netlink/pse-pd.c                       |  88 ++++++++++++++++++++++
+ uapi/linux/ethtool.h                   | 134 +++++++++++++++++----------------
+ uapi/linux/ethtool_netlink_generated.h |  59 +++++++++++++--
+ uapi/linux/if_link.h                   |  16 ++++
+ 8 files changed, 250 insertions(+), 70 deletions(-)
+---
+base-commit: 64226907d0d6734bef5098eb343fd2194cd140e2
+change-id: 20241204-b4-feature_poe_pw_budget-0aee8624fc55
+
+Best regards,
+-- 
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
 
