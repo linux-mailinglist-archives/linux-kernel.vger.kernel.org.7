@@ -1,127 +1,145 @@
-Return-Path: <linux-kernel+bounces-695497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B38AE1A66
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:03:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78D0AE1A6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6B931679A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:02:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D62921BC5480
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C85028A1F5;
-	Fri, 20 Jun 2025 12:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AEC28A409;
+	Fri, 20 Jun 2025 12:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="jfpltqY0"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W/eYAA/C"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8418417E;
-	Fri, 20 Jun 2025 12:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750420967; cv=pass; b=dptS5XyVlTaYuUv5Cmp/TBtrcycaedgVU2ARbKYtuxR1dNGqXyGiWyQp+fig8sDHBnrlTdvh85AUvE6c5bjgzwTPItRy8dEbJJnL/D4f7cxWzegplgcfizWqwmlyEELuB2V59y5fG+QUjp2nXLGmaWxTE1F9ml/7mP42UPlBhU8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750420967; c=relaxed/simple;
-	bh=xDm0ilED4qPz4FF5p1rUzW0PoZs/y2K8SzBuBuvdZsI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=JF2RpAT6y58IJJ1w4WfamornRaqArUYvBdqrWeNJMJZs5dQb0ehTL+m3XHNi2TU1iEuEdma/J4ps8/rkCXE5w79Uby2a5cebPAitt4MaDsqgU47/FnLKFsxWYqmjdWJKCuaM4b/mmUzhVFw0ScvKOsTNZCx7okaLvmgc2GvAnGM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=jfpltqY0; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
-ARC-Seal: i=1; a=rsa-sha256; t=1750420959; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=N+QHe5pw9fa2FJ8hG2sJV2cR50ujkIWOmyIwBaDnYfD0VIjzWeFFp0uFF3xRqLmKJL5zQGAY6SaG+8vdtvz3A2KpcAyM39GWQnjXC8OZ8O6ibFsiJ4XnAaBN7tcK5l6phmdodDFO1IQGdRDoJWB8utN3OLIiy0gvH5RzawKsbsc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750420959; h=Content-Transfer-Encoding:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
-	bh=3ZzuSg//Ia/otYj7pJhVIPVxw+jAtaRKy02IhuwBd9A=; 
-	b=Qb+WRunsVQML4i6+pdWu2LFoCoRnrdFN9apd2RRqcgJ9LSPwS+035O8JG8jga032j0ZxGKhkGCSJy44nBDRdIamlcYZLqUfgcYMmfMNf+4aoCZvBFdEiS2CFF3lKu/ZuZwNaLfebGY30nhvCdSXYJqrhhtqkznvNFgOWmT9nj/E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=linux.beauty;
-	spf=pass  smtp.mailfrom=me@linux.beauty;
-	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750420959;
-	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=From:From:To:To:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
-	bh=3ZzuSg//Ia/otYj7pJhVIPVxw+jAtaRKy02IhuwBd9A=;
-	b=jfpltqY0Ok8CGXnhXC0aiD3G2LvKLi1dRNBGJIIIEEdDOerB52pBOgkyAbbcMwKp
-	9CjUsajMiVrkmefXoI3/CJLT7gL4fy1iixvY1sdUBsNee8XXF0wBnumbpgHKQ+k1/0t
-	Qxkxs+CnGLiJwLgjFVNaG9u/GRjDZaD+FtVaKDCk=
-Received: by mx.zohomail.com with SMTPS id 1750420956566126.73019613968916;
-	Fri, 20 Jun 2025 05:02:36 -0700 (PDT)
-From: Li Chen <me@linux.beauty>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] HID: rate-limit hid_warn to prevent log flooding
-Date: Fri, 20 Jun 2025 20:02:31 +0800
-Message-ID: <20250620120232.81649-1-me@linux.beauty>
-X-Mailer: git-send-email 2.49.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7871B289E1F
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 12:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750421035; cv=none; b=q50xnlh2nCBxcAF5bX3gGDWSiTASG1tECgl8FiVe7B0AwYViSPgD0zlvuZniIyMlzoPpMM2wS7sWU0+6Yp7h7JE4tJRCH4H2iyrj0Fr/9TEf4H31iwH4NXTkvgAfET+uv7L1roYBylMFo5CoMryEyUKtuIlHsmX2qz/LwDOEGAE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750421035; c=relaxed/simple;
+	bh=FAqGh+Ap3WVTnB3giMA2j55BTztyBeGG/4uN29HFZ7c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hbNcypDUgDENCLPpHzVJOg/kOSF8owMCic/rTbbDCIiQo7a23QZjf+bxp0Io8bm8nY+F0i/AryP8+q7gNjtUdnAIRdY8rB85eQrDkYCq5SEtlFKKyAF5AC3CE2ajP/OCSiBASRGLkhxQnvgrkVA49xslE9X7wZp3czeAoojPcZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W/eYAA/C; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750421032;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hRiX5hP6eSsbI68Jfq5YDPv8YMSSHRs8HbY7Wk8t+xQ=;
+	b=W/eYAA/CYRJV/Z5eANwSVc1iP02rGlXBjlwB/aJBeuLhC5gKFBedNXiqMAk0volwp2KMZh
+	3wjgr5gxhrofmNiRZbg/Umu8aRezof5oRdm3aRqAOjpCpKRV0OT3qj/Akd3WsNL+8gPxLh
+	AhZN40yBRzksQwLIs5r0UuQ3Faj2qY4=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-646-cEgIK2ZSMaq2mqju_3Sulw-1; Fri, 20 Jun 2025 08:03:50 -0400
+X-MC-Unique: cEgIK2ZSMaq2mqju_3Sulw-1
+X-Mimecast-MFC-AGG-ID: cEgIK2ZSMaq2mqju_3Sulw_1750421029
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4f65a705dso999676f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 05:03:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750421029; x=1751025829;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hRiX5hP6eSsbI68Jfq5YDPv8YMSSHRs8HbY7Wk8t+xQ=;
+        b=SqAp6rEePLjHfJEZ/S+pyRRFemX6re3YFs2EGoFuxZVTwmA04vF58w5N5I34g0j/rj
+         ewGOUSBM6YCmu33JYbHSF8qWFkPVhGRs6A4aCaInaby1laNVSdyLPBDoJQudoiAI54M9
+         q/4f/fsS6O+OsBi9aRfk53wfu4lq4OIo+QKZqkViySieDgGKPV1KLSJEZsDQAYJEZIqD
+         QGc6pR0NTxqRycVrp6qBGGRX/fNaWbCuK3TJ/uhxDNBWURuGAgTKUmFuD+jnOhuzQS78
+         M4tu8dc9JY/qckK01e9dNYYVVsnk96zdx05Urt14vIDPq4DCxEZc8A6gnO4JEC5GQexF
+         PW9Q==
+X-Gm-Message-State: AOJu0Yxg8IAJ36nqh6nHLSBAjgohHpz4tsUlId59B2J3Vnv7JGL6Ix/m
+	rcd4a+ubzYM8rHdk9lARUjR0P6CokvdIgXorS0FSztTYhc4NprHtWAs8Z/BG9r400k6X3twf7Nn
+	tHHwJTRbBIXMzrlG3wCq4EN5whImiXJeJfMZmMllvDamkgXDhLviSRwkCECZIAvuAFOIpi5p2eo
+	pJ+vjG3SN8+6tIWUJTzYv9RDV1bomWX7gJd25amOhD5ZIViEaJ
+X-Gm-Gg: ASbGncsC0hYc/gwygZrbltpg9DUjO92SZAkBVeUHgvZ0FGo6deK9itpRQI/beddHBER
+	c/IXNfkAZaIOiV1hZDAAuvMHLouVi44wjbZCyFzAIZbravXRUGgzcZTLMBRMyTYkJy6CLrlqyYS
+	eXCbM=
+X-Received: by 2002:a05:6000:2282:b0:3a4:d79a:35a6 with SMTP id ffacd0b85a97d-3a6d12e34b9mr2465322f8f.14.1750421026440;
+        Fri, 20 Jun 2025 05:03:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEtw8HSbD5c31bjPnNG3AKWy62fuJMXkjNiI7W5B8OEByPQc05lu178uJKqVYi+04d45VIy1BAwLE5B8oF7v8=
+X-Received: by 2002:a05:6000:2282:b0:3a4:d79a:35a6 with SMTP id
+ ffacd0b85a97d-3a6d12e34b9mr2465273f8f.14.1750421025914; Fri, 20 Jun 2025
+ 05:03:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+References: <20250619180159.187358-1-pbonzini@redhat.com> <3133d5e9-18d3-499a-a24d-170be7fb8357@intel.com>
+In-Reply-To: <3133d5e9-18d3-499a-a24d-170be7fb8357@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Fri, 20 Jun 2025 14:03:30 +0200
+X-Gm-Features: Ac12FXwlP3mB0d4H_A3QTPM4diBtAL8jRHpn6HbJoT9oX8REYeRb2oG13FSy0CE
+Message-ID: <CABgObfaN=tcx=_38HnnPfE0_a+jRdk_UPdZT6rVgCTSNLEuLUw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] TDX attestation support and GHCI fixup
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: "Kernel Mailing List, Linux" <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>, 
+	Sean Christopherson <seanjc@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	"Huang, Kai" <kai.huang@intel.com>, Adrian Hunter <adrian.hunter@intel.com>, reinette.chatre@intel.com, 
+	"Lindgren, Tony" <tony.lindgren@intel.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
+	Yan Zhao <yan.y.zhao@intel.com>, mikko.ylinen@linux.intel.com, 
+	"Shutemov, Kirill" <kirill.shutemov@intel.com>, "Yao, Jiewen" <jiewen.yao@intel.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Li Chen <chenl311@chinatelecom.cn>
+Il ven 20 giu 2025, 03:30 Xiaoyao Li <xiaoyao.li@intel.com> ha scritto:
+>
+> On 6/20/2025 2:01 AM, Paolo Bonzini wrote:
+> > This is a refresh of Binbin's patches with a change to the userspace
+> > API.  I am consolidating everything into a single KVM_EXIT_TDX and
+> > adding to the contract that userspace is free to ignore it *except*
+> > for having to reenter the guest with KVM_RUN.
+> >
+> > If in the future this does not work, it should be possible to introduce
+> > an opt-in interface.  Hopefully that will not be necessary.
+>
+> For <GetTdVmCallInfo> exit, I think KVM still needs to report which
+> TDVMCALL leaf will exit to userspace, to differentiate between different
+> KVMs.
 
-Syzkaller can create many uhid devices that trigger
-repeated warnings like:
 
-  "hid-generic xxxx: unknown main item tag 0x0"
+The interface I chose is that KVM always exits, but it initializes the
+output values such that userspace can leave them untouched for unknown
+TDVMCALLs or unknown leaves. So there is no need for this.
 
-These messages can flood the system log, especially if a crash occurs
-(e.g., with a slow UART console, leading to soft lockups). To mitigate
-this, convert `hid_warn()` to use `dev_warn_ratelimited()`.
+Querying kernel support of other services can be added later, but
+unless the GHCI adds more input or output fields to TdVmCallInfo there
+is no need to limit the userspace exit to leaf 1.
 
-This helps reduce log noise and improves system stability under fuzzing
-or faulty device scenarios.
 
-Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
----
-Changelog:
+Paolo
 
-v2: Introduce hid_warn_ratelimited to rate-limit the specified log.
-v3: also ratelimit "reserved main item tag ..."
-
- drivers/hid/hid-core.c | 4 ++--
- include/linux/hid.h    | 2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index b348d0464314c..7d6750f05324f 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -659,9 +659,9 @@ static int hid_parser_main(struct hid_parser *parser, struct hid_item *item)
- 	default:
- 		if (item->tag >= HID_MAIN_ITEM_TAG_RESERVED_MIN &&
- 			item->tag <= HID_MAIN_ITEM_TAG_RESERVED_MAX)
--			hid_warn(parser->device, "reserved main item tag 0x%x\n", item->tag);
-+			hid_warn_ratelimited(parser->device, "reserved main item tag 0x%x\n", item->tag);
- 		else
--			hid_warn(parser->device, "unknown main item tag 0x%x\n", item->tag);
-+			hid_warn_ratelimited(parser->device, "unknown main item tag 0x%x\n", item->tag);
- 		ret = 0;
- 	}
- 
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index 568a9d8c749bc..7f260e0e20498 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -1239,6 +1239,8 @@ void hid_quirks_exit(__u16 bus);
- 	dev_notice(&(hid)->dev, fmt, ##__VA_ARGS__)
- #define hid_warn(hid, fmt, ...)				\
- 	dev_warn(&(hid)->dev, fmt, ##__VA_ARGS__)
-+#define hid_warn_ratelimited(hid, fmt, ...)				\
-+	dev_warn_ratelimited(&(hid)->dev, fmt, ##__VA_ARGS__)
- #define hid_info(hid, fmt, ...)				\
- 	dev_info(&(hid)->dev, fmt, ##__VA_ARGS__)
- #define hid_dbg(hid, fmt, ...)				\
--- 
-2.49.0
+>
+> But it's not a must for current <GetQuote> since it exits to userspace
+> from day 0. So that we can leave the report interface until KVM needs to
+> support user exit of another TDVMCALL leaf.
+>
+> > Paolo
+> >
+> > Binbin Wu (3):
+> >    KVM: TDX: Add new TDVMCALL status code for unsupported subfuncs
+> >    KVM: TDX: Handle TDG.VP.VMCALL<GetQuote>
+> >    KVM: TDX: Exit to userspace for GetTdVmCallInfo
+> >
+> >   Documentation/virt/kvm/api.rst    | 62 ++++++++++++++++++++++++-
+> >   arch/x86/include/asm/shared/tdx.h |  1 +
+> >   arch/x86/kvm/vmx/tdx.c            | 77 ++++++++++++++++++++++++++++---
+> >   include/uapi/linux/kvm.h          | 22 +++++++++
+> >   4 files changed, 154 insertions(+), 8 deletions(-)
+> >
+>
 
 
