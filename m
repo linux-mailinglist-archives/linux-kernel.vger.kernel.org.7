@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-695341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20142AE1884
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:04:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D96AE188A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 088431890054
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:04:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACC9F4A3911
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68930284B2F;
-	Fri, 20 Jun 2025 10:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714C928A703;
+	Fri, 20 Jun 2025 10:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NMyYRy+N"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="drsTSoje"
 Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B8027D773;
-	Fri, 20 Jun 2025 10:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B59283FF0;
+	Fri, 20 Jun 2025 10:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750413802; cv=none; b=oP+8aLp81EE+2mL3qnMZGBthRi+HuO/BQpQDRaBfi1WWwSB7tcLjQfS9Nr+w3mrxABINvOTAn6D778dp0HH6dEeNawnaYhlmo7AOcTJBllspGxEdz2d7sFNzDluH0cQWccdC2Nz8L7fSZeSzmc6fW72j1N60u2K0zeh2fqrIRtk=
+	t=1750413803; cv=none; b=Od2VYvjQX/W2cyVmn5CHGwXHl4kWFpLtE7YGHlnIN8gTjI+TFjCKPSEFwNjBdl5JhpBWJHW2MD5fru1+98KgpVWVGdJ3/1P/nBRuQI0V70c/8Uvm2km9oRw6Q0Y39eh2QFTcBWSTtz+EIofAS/sIQx9IxEhRfN2/QsoVGL8TTgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750413802; c=relaxed/simple;
-	bh=iKc91cdYdfE1q/34hs9vETkYhsg7TdYC4qPkcuYH0do=;
+	s=arc-20240116; t=1750413803; c=relaxed/simple;
+	bh=xPR/InKNKfudhPDMsRzEG2eMx0eJCVxmRV7MrFp61XQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UT3/LXWw5/+nTuCCeqcj8MTAk1z2EhfiztWPJjxj4l6kj6UWmBamEcXF4TM9mPu2JlrsYfPw6uJxHwoPJ/fcoVCnns3QD/rOKAuVFl42ZMah3X2IAHHcdQXci4HQxLXFjUZEis+tqInHocK9z6qcTH2saL7bl2gFle90uaeZqBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NMyYRy+N; arc=none smtp.client-ip=217.70.183.194
+	 In-Reply-To:To:Cc; b=cj8p8tBzIb1M4R4EcEWwif6GiKS0Ftg37D6bvUmAyYRb19MUKGF1J07iu0riwvG2NG0JbF438cuF/lV5iZPkkA5GcK+ZMpMJlt5I908zQn9AbZLhmjQ0IrWKx87xE6Lxjvvs79+pVia+iL7+N2D/kNdWwCCLv/dZ2yyFBKtdIik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=drsTSoje; arc=none smtp.client-ip=217.70.183.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id ECEAC43191;
-	Fri, 20 Jun 2025 10:03:12 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9F7DB43194;
+	Fri, 20 Jun 2025 10:03:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1750413793;
+	t=1750413794;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=i4izFgzZ5VPbCB317VwjTDgDBibegjlGP0F7T7bAVpM=;
-	b=NMyYRy+NchvpVq26Lyf/CmXOc7kl5vdr928epMCxdtfsz6Dml2NY+roReLQzEONGFwnpl/
-	yFRAAF1bIp753ZSFDhglsCU09vecz02+z80fmVzkLWUo5uwfApJbg/svsECspPwRETuusx
-	DSHmJeHC85baGQJS8tjKFuKEd352Urur1ugt6UvIWb6C2tEAhXH4xh0sVi97UGvToU4XDT
-	2MTTboj6pLz2qaM+tRx8m7XenALxY7OaRaEVeW3rIToGjPUr67vmOBKYUmbqpigepcHpNK
-	IKTnHu11krZA8kuKAYDeaTvvb3BOnY4FKdX4aiOY6FqD3Wvg9LRAUWwfYqrGkQ==
+	bh=AuMofWOPrsRbIItSZ8PDXSA7GLYNIKCwv7N2XYcmiBI=;
+	b=drsTSoje48BRR/mJ2Zz9hh17Ob8Yp3T9MKDv5S4FVh90S1kvFlLwDps6RvF6YG4fVhzF78
+	jzLK4WpzTNA58Jwo4chy+m7sNuWkoSII7eDXwlX/zGHjVrRAgDTHYzm1TwEIWTHjpn+evS
+	Xxq97UIHKLw+VDDdy6j+qKfUkRhm8rzhvghsJ+oWwQ5AtlQ9wWGWk8C3/a4Zcb4M6CyWja
+	ZDcJxHAJGvi2YyNJN+Mv4g5dDKWwBXpooeaP2pzwPbmUnYn+LFrai18rw2NGL2lt7/eJO7
+	/9QbClO3T7Y1O7+SP2H3c2PvUE4I5SeQyvmRhcljgGuqTHjE3uh/bllMfMhz8g==
 From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Fri, 20 Jun 2025 12:02:39 +0200
-Subject: [PATCH net-next 1/2] dt-bindings: pse: tps23881: Clarify channels
- property description
+Date: Fri, 20 Jun 2025 12:02:40 +0200
+Subject: [PATCH net-next 2/2] net: pse-pd: tps23881: Clarify
+ setup_pi_matrix callback documentation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250620-poe_doc_improve-v1-1-96357bb95d52@bootlin.com>
+Message-Id: <20250620-poe_doc_improve-v1-2-96357bb95d52@bootlin.com>
 References: <20250620-poe_doc_improve-v1-0-96357bb95d52@bootlin.com>
 In-Reply-To: <20250620-poe_doc_improve-v1-0-96357bb95d52@bootlin.com>
 To: Oleksij Rempel <o.rempel@pengutronix.de>, 
@@ -76,37 +76,39 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdekudduucetufdoteggodetrfd
  dgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehordhrvghmphgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
 X-GND-Sasl: kory.maincent@bootlin.com
 
-Improve the channels property description to better explain the
-relationship between physical delivery channels and PSE PI pairsets.
-The previous description was unclear about how channels are referenced
-and used in the port matrix mapping.
+Improve the setup_pi_matrix callback documentation to clarify its purpose
+and usage. The enhanced description explains that PSE PI devicetree nodes
+are pre-parsed before this callback is invoked, and drivers should utilize
+pcdev->pi[x]->pairset[y].np to map PSE controller hardware ports to their
+corresponding Power Interfaces.
+
+This clarification helps driver implementers understand the callback's
+role in establishing the hardware-to-PI relationship mapping.
 
 Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 ---
- Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ include/linux/pse-pd/pse.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml b/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-index 3a5f960d8489..bb1ee3398655 100644
---- a/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-+++ b/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-@@ -30,10 +30,12 @@ properties:
-     maxItems: 1
- 
-   channels:
--    description: each set of 8 ports can be assigned to one physical
--      channels or two for PoE4. This parameter describes the configuration
--      of the ports conversion matrix that establishes relationship between
--      the logical ports and the physical channels.
-+    description: |
-+      Defines the 8 physical delivery channels on the controller that can
-+      be referenced by PSE PIs through their "pairsets" property. The actual
-+      port matrix mapping is created when PSE PIs reference these channels in
-+      their pairsets. For 4-pair operation, two channels from the same group
-+      (0-3 or 4-7) must be referenced by a single PSE PI.
-     type: object
-     additionalProperties: false
- 
+diff --git a/include/linux/pse-pd/pse.h b/include/linux/pse-pd/pse.h
+index e5f305cef82e..4e5696cfade7 100644
+--- a/include/linux/pse-pd/pse.h
++++ b/include/linux/pse-pd/pse.h
+@@ -159,7 +159,13 @@ struct ethtool_pse_control_status {
+ /**
+  * struct pse_controller_ops - PSE controller driver callbacks
+  *
+- * @setup_pi_matrix: setup PI matrix of the PSE controller
++ * @setup_pi_matrix: Setup PI matrix of the PSE controller.
++ *		     The PSE PIs devicetree nodes have already been parsed by
++ *		     of_load_pse_pis() and the pcdev->pi[x]->pairset[y].np
++ *		     populated. This callback should establish the
++ *		     relationship between the PSE controller hardware ports
++ *		     and the PSE Power Interfaces, either through software
++ *		     mapping or hardware configuration.
+  * @pi_get_admin_state: Get the operational state of the PSE PI. This ops
+  *			is mandatory.
+  * @pi_get_pw_status: Get the power detection status of the PSE PI. This
 
 -- 
 2.43.0
