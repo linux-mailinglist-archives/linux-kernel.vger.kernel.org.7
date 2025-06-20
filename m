@@ -1,149 +1,83 @@
-Return-Path: <linux-kernel+bounces-695045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6123FAE147A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:02:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2BA9AE1476
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D63003B7E13
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:01:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2108E189923A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18734227EAB;
-	Fri, 20 Jun 2025 07:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31224226534;
+	Fri, 20 Jun 2025 07:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="b7PVteZ6"
-Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpggF/VY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9437E220686
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 07:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857422045B5;
+	Fri, 20 Jun 2025 07:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750402925; cv=none; b=J5M/XaZ6ExnsvzvEUlKQqpTnHZprdmBm59XcLbnU0eULSA2E5yCgGHd093TaOAHvhzV4ZZllq8tcrj5Xu5cmTBnt174dV2QTmktgZ6yEMVQm1il50HuQYv2IfF3UOB1MDrfktXTxqaWSEOc6ZQseuts3vvcxhwNj29Q8b0gC0T8=
+	t=1750402917; cv=none; b=hJSShJCwlFwfukJl5Hph8hdOwfQfPLaSyUMJRT4NCJMmgi5ezZOzQVYqWVTDtasxHVNS1luys9Ih7WOMKjx2Fb3UbhiAi/yffSNkuQaGG6MSxE5gGt6eeojJQiwcX/x9yKQHWj5Ix9PMXDh8Da9LZD+sYqLY1Lf6f+tXo1PTPRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750402925; c=relaxed/simple;
-	bh=GvtVq+ofHW/htAxcXQEoeyYdEDhq9U76CmZN6QzabDQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GdpDYy0lUpxdirH80jMZySnyWW1ZP3Vv3mBfkUaHWv3DvPZhYaZAeS97t/1urIMiLYCGrGY40IMiQrf1I98BqwekDtdkc+VqZYapDQPOwoyIDfjFl4QNWhkOI0qJW3tMD/hZEMhzamniLlgmhvM/7ddlgAXD5IeD0JSFISn4kHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=b7PVteZ6; arc=none smtp.client-ip=79.135.106.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1750402915; x=1750662115;
-	bh=ZomiTmy/Mokp/VP87JWffaAAvQX8m1ge4zOANZCRHuw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=b7PVteZ6EfoZKxCGyQ4qMFqEB8PMbV17KjTI+ihrSYiAzRS1anxOElIeouqfRVHr/
-	 lFqbVTg7DuBC1lYQX8ONyrWnDICWgGgne+M9vn8jYPtXRrDXfRiwxdosu1Xy9qaIzp
-	 Mrw9NMwOmQKvv5fV9fiphrWNHgZFHMhqZiGWnUSDBHN50I+rGTkXQuaz9CU4VHBnWo
-	 VcQoD7ACuBFXv+wTcVjdScPeyRkMmTVRxNgIq0CApgHPdqEWvQLXJr2UF/aP3BwMbn
-	 SUPnmmZk4LZyiLrGBl5RyNzF077uOxjb0aMofuhOmkBQFZP6K9AUYlc0Qxrx2B7duR
-	 dXXRXW+CRMvZg==
-Date: Fri, 20 Jun 2025 07:01:49 +0000
-To: Benno Lossin <lossin@kernel.org>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 1/5] rust: types: Add Ownable/Owned types
-Message-ID: <aFUHWtE2dm3_-Rbs@mango>
-In-Reply-To: <DAPZ3WLBCBVL.3KA57Y90UKNRT@kernel.org>
-References: <20250502-unique-ref-v10-0-25de64c0307f@pm.me> <20250502-unique-ref-v10-1-25de64c0307f@pm.me> <D9VS2Q4IX7LH.3JLXQUMWYJ2FP@kernel.org> <aFE8PFNmpFeWNgTN@mango> <DAPZ3WLBCBVL.3KA57Y90UKNRT@kernel.org>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: 6cdf635b60cf7b5d021babf819cb11d3aa65dbda
+	s=arc-20240116; t=1750402917; c=relaxed/simple;
+	bh=qeRxRMC63vK7esxYHm7vImv1jfMfKj7T6FnswfwrHaQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=WvFyF4QLpVX1/0IV1M/+M8PHxFTHLMcxZMLZLoDB+bCUk+2qV6OLUs/dVOlW6FphzoONPJ6sv8m5DYYD43z74jPvcyQRkOT3TJbDdBz9G3DKx1kKizC7lMfQmJOdq8UV2LVOO2nLU2WE8DPpVLCoNoxzv4wi+WKbx7mvsi0ubas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpggF/VY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E371C4CEE3;
+	Fri, 20 Jun 2025 07:01:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750402917;
+	bh=qeRxRMC63vK7esxYHm7vImv1jfMfKj7T6FnswfwrHaQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=HpggF/VY8C+Dsf7DY5i0UzBpXqEzPASrqq7wNsszOz5b7TghTljZxk3Y4L2biSi6g
+	 g/8KN28Pvu4Spku6UyvF0yjYTB1bbTzXw4sLIRK7U7/aZH8BqrgdFgCBo6WQyXm8uw
+	 txWIZ+iaIJE5C8ls0tmSS6k6UvYirUye9xN/S+RfRhRCWpvRNEM45eBZ5SfL6m6rES
+	 qQVSxrXCSNVCzK8VByBgmUNErzvsUDZ6LB2lbTODPO+917cqSewp8WkmMKKXq8SVp3
+	 LLNKIoPdHLu1QaBAvN+/Dp6ws8zeVP/uZzy9/Z9W015GnR+fm/bubrm2vjh1jPbMux
+	 PvsAT9Y8Oc+JA==
+Date: Fri, 20 Jun 2025 09:01:53 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Qasim Ijaz <qasdev00@gmail.com>
+cc: bentiss@kernel.org, gargaditya08@live.com, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] HID: appletb-kbd: fix "appletb_backlight" backlight
+ device reference counting
+In-Reply-To: <20250615225941.18320-1-qasdev00@gmail.com>
+Message-ID: <241po3rp-45q2-0pps-n724-9q87o86r4s69@xreary.bet>
+References: <20250615225941.18320-1-qasdev00@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On 250618 2322, Benno Lossin wrote:
-> On Tue Jun 17, 2025 at 11:58 AM CEST, Oliver Mangold wrote:
-> > On 250514 1132, Benno Lossin wrote:
-> >> On Fri May 2, 2025 at 11:02 AM CEST, Oliver Mangold wrote:
-> >> > +///
-> >> > +/// # Safety
-> >> > +///
-> >> > +/// Implementers must ensure that:
-> >> > +/// - Any objects owned by Rust as [`Owned<T>`] stay alive while th=
-at owned reference exists (i.e.
-> >> > +///   until the [`release()`](Ownable::release) trait method is cal=
-led).
-> >>
-> >> I don't immediately understand what this means. How about "Any value o=
-f
-> >> type `Self` needs to be stored as [`Owned<Self>`]."?
-> >
-> > Let me think. The safety requirements here talk about safety of
-> > implementing the trait.  But if you have a `Self` which is not wrapped,=
- you
-> > still cannot create an `Owned<Self>` in safe code. It's different from =
-an
-> > `AlwaysRefCounted`, where an `ARef<Self>` can be created from a `&Self`=
-.
->=20
-> That might be true, but AFAIK this trait is designed to be used for
-> stuff that has a `create_foo` and `destroy_foo` function in C returning
-> and taking a raw pointer to `foo` respectively. So creating it on the
-> stack doesn't make sense.
+On Sun, 15 Jun 2025, Qasim Ijaz wrote:
 
-I didn't mean creating one on the stack, but keeping it in a raw pointer or
-`NonNull<T>`, not bothering to wrap in in an `Owned<T>`. But doesn't
-matter. In any case in v11 (which predates your answer), I moved this
-requirement to `Owned::from_raw()`, as, you asked below, which should be
-okay as that function is the only way to create an `Owned<T>`. But I can
-add the "needs to be stored as `Owned<Self>`" requirement, if you think it
-is important.
+> During appletb_kbd_probe, probe attempts to get the backlight device
+> by name. When this happens backlight_device_get_by_name looks for a
+> device in the backlight class which has name "appletb_backlight" and
+> upon finding a match it increments the reference count for the device
+> and returns it to the caller. However this reference is never released 
+> leading to a reference leak.
+> 
+> Fix this by decrementing the backlight device reference count on removal
+> via put_device and on probe failure.
+> 
+> Fixes: 93a0fc489481 ("HID: hid-appletb-kbd: add support for automatic brightness control while using the touchbar")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
 
+Applied, thanks.
 
-> If we do want to make this trait more general, then we can do so, but
-> this is my current understanding.
->=20
-> >> And then ask in
-> >> `Owned::from_raw` for a pointer that is valid indefinitely (or at leas=
-t
-> >> until `release` is called).
-> >
-> > So, hmm, I think one could even move this safety requirement to `Owned:=
-:from_raw()`.
-> >
-> >> > +/// - That the C code follows the usual mutable reference requireme=
-nts. That is, the kernel will
-> >> > +///   never mutate the [`Ownable`] (excluding internal mutability t=
-hat follows the usual rules)
-> >> > +///   while Rust owns it.
-> >>
-> >> I feel like this requirement is better put on the `Owned::from_raw`
-> >> function.
-> >
-> > Together with the above, this would leave to safety requirements for `O=
-wnable.
-> > Make `Ownable` a safe trait, then? Instead of safety requirements just =
-add an invariant:
-> >
-> >     # Invariant
-> >
-> >     An `Owned<Self>` represents a unique reference to a `Self`, thus ho=
-lding
-> >     an `Owned<Self>` or `&mut Owned<Self>` allows one to assume that th=
-e object
-> >     is not accessed concurrently from elsewhere.
-> >
-> > Not sure what is best. Would that make sense?
->=20
-> Making it safe makes sense, when we can move all requirements to
-> `Owned::from_raw`. I don't think the invariants section makes sense, how
-> would the trait have any influence in that when `Owned::from_raw`
-> already guarantees it?
-
-I think you are right on that. Let's not do that.
-
-Best,
-
-Oliver
+-- 
+Jiri Kosina
+SUSE Labs
 
 
