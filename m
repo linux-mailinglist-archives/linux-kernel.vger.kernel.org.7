@@ -1,194 +1,109 @@
-Return-Path: <linux-kernel+bounces-695641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924A9AE1C23
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:28:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A362AE1BFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37A691C211D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:28:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03AF01C20FCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1222BE7D2;
-	Fri, 20 Jun 2025 13:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF38A28BA91;
+	Fri, 20 Jun 2025 13:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="r3+6T9Em";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N1+bRPVS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MtebPBvk"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25492BDC26;
-	Fri, 20 Jun 2025 13:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD00028A1FC;
+	Fri, 20 Jun 2025 13:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750425894; cv=none; b=uAe58dymYwiNsEV9ruQOzeCzZ5JZfxPMsVwTNDStotwvl02OqHL6vzsuHAov+RKkjh4CgQ6xcvDTCWJGIodpbCXIJz6NilgifRUSRuv6unhERq7pnS2MOK8zHa7vqdN5c1/XeptF548Hc+D8Y2LOiEGWjly7uTEuciZreb7drYM=
+	t=1750425787; cv=none; b=FthmTSm3OUpvAGC6clEaju3C4jPPCBH/g05i0V6qaUd32IPYwHRdpELQTF5f0Mcm9ZZNlKAcSm0mJJpvAHOcCFbq/dfM9d8Qmxd0buYMYyHlLSDfNelVyJtIusVShjm7O2KyE2+UMIkDDLolpKazlpLRFV+zQuRfVjNj7WDiQJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750425894; c=relaxed/simple;
-	bh=+yQNQVtDUDnZEDOwjEyTfF300+/7hA3mOBRzxQBCcdg=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=jihvObGZvhPnZ9qNRETGn4uI23/EIhVHPhUjHuE/Yd2ciYdyIFVOgH2YKYRXnr6Q1AXgc1wB+RoisEwTRTuQuXj6gXWTkMQqamqZ5rBXNQw8CnhgahKL+6syhypvW2BuOKKZ2Te4x6R/wHqyUYS/KZNSv4wzdqFsHIXSjkgG7ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=r3+6T9Em; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N1+bRPVS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250620131944.533741574@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750425891;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=t5AUZu+5N4DYRhjssasKvybcKzjmriU2anO1KoUYxkA=;
-	b=r3+6T9EmTdlMc7zHSKMT4YJNIkDrBT/QGeXroAsFqe9mzsUuvfGsibYbtGKmC+P0B6NxmW
-	GCucNVS+DkIVUBpmdzMDLgl+U0igiis5qIw/Qh6jaLMrle80+tXHrRArwLR0czMvpzgXu/
-	2G4ZUk/+EJWsIRxdDtsfmxGwtJ/L5LPp1NQHaaZrTsCcRnV9npi0MhKOwNGyVtg+iiIdWM
-	Qg9Eo/R69W2FYzDDF6ja9J3kSZT9RJkaZRt3KpkBVK17MoTZTTMDZ8+uW/WkiQDbaFmg8v
-	oumC10BtXaSINmBMHr8+q1D6+FUd99UP9h/x8zD9Uh6/raFxSuhxKm3tSAqYsA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750425891;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=t5AUZu+5N4DYRhjssasKvybcKzjmriU2anO1KoUYxkA=;
-	b=N1+bRPVSrrVLcFrgOp8lStb1p3QF+9b7T+aBMDPYr8aDTI+2smDURGfm8L0qCIFdxIiwWv
-	mqM09XOrzBo+X5Bg==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Richard Cochran <richardcochran@gmail.com>,
- netdev@vger.kernel.org
-Subject: [patch 13/13] ptp: Convert ptp_open/read() to __free()
-References: <20250620130144.351492917@linutronix.de>
+	s=arc-20240116; t=1750425787; c=relaxed/simple;
+	bh=vVbVRFQUAznwYxpCtzkO4d0c66o8bC/lMZQmfZTPce8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VINNoCroEZb8fzH1GACCjnsdpoMGMmyWIIUXB5h+6iZUNuN23+ffK5QKFPKaJA5rNwVFitHzQK2A1n8c4vFS25ukwf8KuWWlJaPbMrtqPbEthF8nx2jZekkQEC/48C4P2Hohp5Na0/uf8YbpiajRvQDgWWjONCz+qpd7tFVQzAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MtebPBvk; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-31329098ae8so1548636a91.1;
+        Fri, 20 Jun 2025 06:23:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750425785; x=1751030585; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vVbVRFQUAznwYxpCtzkO4d0c66o8bC/lMZQmfZTPce8=;
+        b=MtebPBvky1kL4iru3D24DKY3LLy3rAJSKB+QRR8/FUvLRaGKVtTn2sXxYnQcrKICoi
+         iQTOiaJ9DN9fMbHUdiIysteYtK7esdIyZyoJ3HJ3F8csfQzmECdoZKskIt++RU2dImW3
+         +VSPVMTXoBfec2rcaZmA0veMJJ58+zjYXoSjIb4nhnI2GOjYGydTNbknf7pHNh5Vb2nO
+         vGMisuANz+SHrpJOE15wQV+rGwQTz9blK0CFDeOCv5gU6L+6+AiNT8o/M19nl2LT6Bm/
+         Pg/BtTh7iSsLpIX6vi9ebYWD7Yv795PtNIa+GeqykZJ9fJZgg/pqEzAXMEinYeQpw4Ey
+         zWVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750425785; x=1751030585;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vVbVRFQUAznwYxpCtzkO4d0c66o8bC/lMZQmfZTPce8=;
+        b=KJQuRr8RBFjTk0IZLy6CEzYyFFM4ngVJEZ08Xs70sP54RLQJg7+vuXCi9nrUaKldzH
+         ZUzmdGtU57rcN0YyvJrSYJ8u0CT2/Hmt2BG1Ei7WCzwmSZLj0+A6hAmoJI2sCHjLrM3h
+         ztFqnTb49mpHBS/UgiRtv9Zh0eeO9GmYjqewTNmXxJDPuYUZ5iLyIG1INLCNELRsvcTz
+         DkMHSm1/tlyFGEC3AkH8jq3Bfgcr+jvOTa2nawycimymd8gCpLhkeaTRxFnBYMFiYvMW
+         kKZzAJwXvAynIbmlAm04BQNKQF095mky0oo+jBxiOcGQlUva6Yu7CtvYu9+ouwX3n5Vg
+         x7lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlePn7ItkrqMSnOPTdY3i/Wpf/kA+Ma44dJlIQ5u+I/NRtkDbIq7tTV8Jr3Qwysi5xP3VsOO37n7GjNgd2@vger.kernel.org, AJvYcCXhXfatwXBPMYPA7lYbs2yd7oGN94rT4tON7DJnPISK1n/pDvkyG+sAViVFbJh6ojMlZiFkojyvQ6Cb@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNX8Fqrey/P5nhsGbkV5DvwW4gc2wMQdot3nPqcMloaYNkYA8l
+	AyfI3GT1RmAqWG2ZFGKbgsehaygCHE6VtFc3jLL1N87W64QzQLYGJaj/1cFCTIhJ7PiaQfdwruG
+	+7manGySReoy5juZv27kg+3dlg/9H3+M=
+X-Gm-Gg: ASbGnctMSl7q3Eq7bKnEE9u71wH0pgipcXECa70Gm+VRVf/FJQ3qa3igeMjyyYXlL9B
+	EZ4CYkV3lCEmZUt+X31Lg6fQ/7fug2Hzn93CFFy8JGOsc+96oW5avql9XRIUqWSMfdaKF+vv3fa
+	cqmnVhCCmX0A+LIzqpq1XIn5y745vR+ElOpXyhL8Ur
+X-Google-Smtp-Source: AGHT+IE1J/3agy2pvlBUpx5CZrzP7qFSI3FtPdha4ZfRPlkfSyGlRzieK+BAcz2I5VxrRAtzHU31ktVhErvAuBdqNfo=
+X-Received: by 2002:a17:90b:288f:b0:310:8d4a:4a97 with SMTP id
+ 98e67ed59e1d1-3159f518ab7mr3470283a91.15.1750425785075; Fri, 20 Jun 2025
+ 06:23:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 20 Jun 2025 15:24:50 +0200 (CEST)
+References: <20250610160152.1113930-1-laurentiumihalcea111@gmail.com> <20250610160152.1113930-7-laurentiumihalcea111@gmail.com>
+In-Reply-To: <20250610160152.1113930-7-laurentiumihalcea111@gmail.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Fri, 20 Jun 2025 16:25:04 +0300
+X-Gm-Features: AX0GCFu22qEJwTwiXYLJyDUpuSZfvl_dtoxWhsBOKOtPed2Sd_Y2mWRPu5m8p4M
+Message-ID: <CAEnQRZAhsCc==X1At+s5pb1bocnVmb2sFKmzNo+gqkiWAqFHag@mail.gmail.com>
+Subject: Re: [PATCH v7 6/6] arm64: dts: imx8mp: make 'dsp' node depend on 'aips5'
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
+	Frank Li <Frank.Li@nxp.com>, Marco Felsch <m.felsch@pengutronix.de>, 
+	Marc Kleine-Budde <mkl@pengutronix.de>, Alexander Stein <alexander.stein@ew.tq-group.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Get rid of the kfree() and goto maze and just return error codes directly.
+On Tue, Jun 10, 2025 at 7:04=E2=80=AFPM Laurentiu Mihalcea
+<laurentiumihalcea111@gmail.com> wrote:
+>
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>
+> The DSP needs to access peripherals on AIPSTZ5 (to communicate with
+> the AP using AUDIOMIX MU, for instance). To do so, the security-related
+> registers of the bridge have to be configured before the DSP is started.
+> Enforce a dependency on AIPSTZ5 by adding the 'access-controllers'
+> property to the 'dsp' node.
+>
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-No functional change intended.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- drivers/ptp/ptp_chardev.c |   70 ++++++++++++----------------------------------
- 1 file changed, 19 insertions(+), 51 deletions(-)
-
---- a/drivers/ptp/ptp_chardev.c
-+++ b/drivers/ptp/ptp_chardev.c
-@@ -106,19 +106,17 @@ int ptp_set_pinfunc(struct ptp_clock *pt
- 
- int ptp_open(struct posix_clock_context *pccontext, fmode_t fmode)
- {
--	struct ptp_clock *ptp =
--		container_of(pccontext->clk, struct ptp_clock, clock);
--	struct timestamp_event_queue *queue;
-+	struct ptp_clock *ptp =	container_of(pccontext->clk, struct ptp_clock, clock);
-+	struct timestamp_event_queue *queue __free(kfree) = NULL;
- 	char debugfsname[32];
- 
- 	queue = kzalloc(sizeof(*queue), GFP_KERNEL);
- 	if (!queue)
- 		return -EINVAL;
- 	queue->mask = bitmap_alloc(PTP_MAX_CHANNELS, GFP_KERNEL);
--	if (!queue->mask) {
--		kfree(queue);
-+	if (!queue->mask)
- 		return -EINVAL;
--	}
-+
- 	bitmap_set(queue->mask, 0, PTP_MAX_CHANNELS);
- 	spin_lock_init(&queue->lock);
- 	scoped_guard(spinlock_irq, &ptp->tsevqs_lock)
-@@ -134,7 +132,6 @@ int ptp_open(struct posix_clock_context
- 		DIV_ROUND_UP(PTP_MAX_CHANNELS, BITS_PER_BYTE * sizeof(u32));
- 	debugfs_create_u32_array("mask", 0444, queue->debugfs_instance,
- 				 &queue->dfs_bitmap);
--
- 	return 0;
- }
- 
-@@ -540,67 +537,38 @@ long ptp_ioctl(struct posix_clock_contex
- ssize_t ptp_read(struct posix_clock_context *pccontext, uint rdflags,
- 		 char __user *buf, size_t cnt)
- {
--	struct ptp_clock *ptp =
--		container_of(pccontext->clk, struct ptp_clock, clock);
--	struct timestamp_event_queue *queue;
--	struct ptp_extts_event *event;
--	int result;
-+	struct ptp_clock *ptp =	container_of(pccontext->clk, struct ptp_clock, clock);
-+	struct timestamp_event_queue *queue = pccontext->private_clkdata;
-+	struct ptp_extts_event *event __free(kfree) = NULL;
- 
--	queue = pccontext->private_clkdata;
--	if (!queue) {
--		result = -EINVAL;
--		goto exit;
--	}
-+	if (!queue)
-+		return -EINVAL;
- 
--	if (cnt % sizeof(struct ptp_extts_event) != 0) {
--		result = -EINVAL;
--		goto exit;
--	}
-+	if (cnt % sizeof(struct ptp_extts_event) != 0)
-+		return -EINVAL;
- 
- 	if (cnt > EXTTS_BUFSIZE)
- 		cnt = EXTTS_BUFSIZE;
- 
--	cnt = cnt / sizeof(struct ptp_extts_event);
--
--	if (wait_event_interruptible(ptp->tsev_wq,
--				     ptp->defunct || queue_cnt(queue))) {
-+	if (wait_event_interruptible(ptp->tsev_wq, ptp->defunct || queue_cnt(queue)))
- 		return -ERESTARTSYS;
--	}
- 
--	if (ptp->defunct) {
--		result = -ENODEV;
--		goto exit;
--	}
-+	if (ptp->defunct)
-+		return -ENODEV;
- 
- 	event = kmalloc(EXTTS_BUFSIZE, GFP_KERNEL);
--	if (!event) {
--		result = -ENOMEM;
--		goto exit;
--	}
-+	if (!event)
-+		return -ENOMEM;
- 
- 	scoped_guard(spinlock_irq, &queue->lock) {
--		size_t qcnt = queue_cnt(queue);
--
--		if (cnt > qcnt)
--			cnt = qcnt;
-+		size_t qcnt = min((size_t)queue_cnt(queue), cnt / sizeof(*event));
- 
--		for (size_t i = 0; i < cnt; i++) {
-+		for (size_t i = 0; i < qcnt; i++) {
- 			event[i] = queue->buf[queue->head];
- 			/* Paired with READ_ONCE() in queue_cnt() */
- 			WRITE_ONCE(queue->head, (queue->head + 1) % PTP_MAX_TIMESTAMPS);
- 		}
- 	}
- 
--	cnt = cnt * sizeof(struct ptp_extts_event);
--
--	result = cnt;
--	if (copy_to_user(buf, event, cnt)) {
--		result = -EFAULT;
--		goto free_event;
--	}
--
--free_event:
--	kfree(event);
--exit:
--	return result;
-+	return copy_to_user(buf, event, cnt) ? -EFAULT : cnt;
- }
-
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
 
