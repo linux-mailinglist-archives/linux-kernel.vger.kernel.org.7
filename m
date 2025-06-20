@@ -1,166 +1,370 @@
-Return-Path: <linux-kernel+bounces-696335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB06AE2599
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 00:28:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E902AE2583
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 00:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996521C20DA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 22:29:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED47F5A3435
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 22:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA1624DD13;
-	Fri, 20 Jun 2025 22:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C592623C8A4;
+	Fri, 20 Jun 2025 22:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NmpSGt9h"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="iVE6Hq+p"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8FD248F4B
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 22:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD23623C505;
+	Fri, 20 Jun 2025 22:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750458092; cv=none; b=VFYDF1VbTyp+m6ct5x3OyKF0hRJMHbK5uX+qhZNug/IOsHj5n+aeozhhE1q+3ppGsGluSW8vqcd6r+U+EyX6TzJd9RECFvSJNlg9sduzp11qPqLntq5JhchnDDOx/Uz6q/yPf/7mGjOIHniRJHBkEu+z9xTn1pgFGMlFQseNrD8=
+	t=1750458022; cv=none; b=WzbIXK1QkR80X4zw+j36Xej/zXUyd6iB2Mp+YCz/IcsT0NIxrjbQSppG251reqhGw5I26PhNouxqI0PqwUSds8qwDqRdYsWNgoRAdG4Kg+XUoWbS78np44IeArq5hgo4Ya7XA7t0vhZ0CK0sXSflxwlCj0BePoKG1PXD6avm9ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750458092; c=relaxed/simple;
-	bh=UX7Qk+7NOxJbsbC9UcQ9KMGOYrU47zh3dgyBfOfkmSc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=W1iSADabHKz66+FyMsREmSlTuirCclKla20fzb2fmiUxkrrLLtdkvoCqqGdMiB60WyVwJmWJFHYjPGNpP1/KWcWFLRHKlOAki/YB+j3e4n8VNbCuJKFm/3pf6epCjzaEpVZQpqh+sOBCHAXmrv3HzbgY8DMk5ZSaKWV/lOVF4hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NmpSGt9h; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-60be827f2b7so1302013eaf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:21:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1750458090; x=1751062890; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JCcWLS8dPTQ4a25bImW7jFTx7RMnzyCqIg4blrEu6+I=;
-        b=NmpSGt9h7smTo/xPE9h8pDWrX0W0m4OhCHajt3hY8M/O2K9OuEOjsXnAJM5G5zeWWJ
-         CK2NMSqbGioc9yI+T7+ZLvfc7yB17Ow+JcvuLHjjCQVJwDgiiYIKVWq95LC5VUNdvAqO
-         FS7VLuNxEkuQnWSWgkpVsEH4KIBIOfsaqKzxAhsbbq+dZPdUVNOuMAeSbJf+NZ5kPKZc
-         6I1ag5PiwabA+9JnwUK/eNfl4w4tm1QFrKWrZi9RWZ0Xe+275MsYHnnG1/RldsVcg4Wg
-         XeSxLwsdkPxW943/4eV0dRznevFd8VvkIa3nLea+2jDLZQgvryPl3SX8Cx1SEzQIptQi
-         fTRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750458090; x=1751062890;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JCcWLS8dPTQ4a25bImW7jFTx7RMnzyCqIg4blrEu6+I=;
-        b=rKw0Y9EC/xF7mcf0SnK9KA3gztZDNkwW/uitgsRXMaU4kOiPzmKFg9Tq6hd7ZKFE1H
-         E8l9JR1Y6Ho8FAx1zEotmYHGpcTaa1VQwkk++ZpHk8fWJly90li2Js03tcmIsY/j14+v
-         5p0Y6hlSCtoGjI7pjF4aN0gFuK0IE1of/MDfOd626eOXTE5YHTft5rQg9gzeSXkr4Idj
-         cWV3uGw6UOobuLIcaK6HAf0sVJTIZQYxeT1DaKdW1uBAEAsGqy9quTAb6bwqJw5QkBYt
-         WbhTxbNtwKmVHPMatDvmYjTPEZ2cuwEWGowrn03bcvugWXdiarEs2wWf2mLFs8zi4mzw
-         nfKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWh+/EMjaqIAd0WKZBIHJYfagvbj7vlCQHvnulvsRr20IoyVqS9ntTYxgEMPVz4V2G28hWy+tzgpVO1opo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMc0xx7v1+7Py+37BrDT9oqfrEp10ZMnKvGS3yXxFWFR87pn5T
-	pg6eRt5aTJ/52ga1iyumLXORiRntoCIsW9wG3SzEVq6l6wnhsPLOIcnzQpkZgnuYwfs=
-X-Gm-Gg: ASbGncsjR2Cx+0WRrnFHwoPOxHEAzv8NS7WmIuEOCzhq0fnxI9+OAmtaD5I0Teyd/cF
-	4YzH0hJGK4w3x4AX97FK5orYwIxmUkZlPZmoLiePtA55RgDgGb8aGG2UeWFg72PTt5EBM2j3O8U
-	PPQFgFMoBHfaK5pIzuv7XTVlljaoUxZxMEW2uTCFQ0VoqX9dTa9alNl/qlkHfDoOF+2OMMzsY2g
-	9F+VBR3I5d4I2otHZAltKdziwyKx4r6Ij44odVZ9RGeOfDuQsJPABzt07CbNlEy4g9lLgPPU0Up
-	4Saf0Vv8m/oEhdxf8vW8bHUMyrjO6XXO+4Qvm0hLhxVI+5ci9XSuA6pDF539cWmCeJb9
-X-Google-Smtp-Source: AGHT+IF2GLud5cD+DfB5URuM0aIY3NYHneGgtodyB2cz+tQIr1/WtBZ+tEE+jOQd4TTZZXS289sX4g==
-X-Received: by 2002:a05:687c:2053:b0:2eb:a2ec:dc02 with SMTP id 586e51a60fabf-2ef2a952c4cmr1558341fac.11.1750458089654;
-        Fri, 20 Jun 2025 15:21:29 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:c4bf:cf27:203c:f8b0])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ef481fe06esm7561fac.35.2025.06.20.15.21.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 15:21:29 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 20 Jun 2025 17:20:10 -0500
-Subject: [PATCH 4/9] iio: adc: ad_sigma_delta: refactor setting read
- address
+	s=arc-20240116; t=1750458022; c=relaxed/simple;
+	bh=qHB0fqkbMgKmWT614pkeoUg7b5X7upr9aAVqBFaaggw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fzcZd/7XtDmYLGXBf7g7zmbpLmzBd2H50MQxn2wKF2MQNoHiS7VXS2/ya90/yU8XhBrWr/suVvvTnbKGCC/iTemsoVsIlyJuynljv1+HsMVGBZV8e3npMID6obAJoUkh3Ae1G3C6d4lJ84Wnkh6Wfv5YCFMZ65edYE3UBLKJ6ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=iVE6Hq+p; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1750458012; bh=qHB0fqkbMgKmWT614pkeoUg7b5X7upr9aAVqBFaaggw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=iVE6Hq+pcNg2FfnGNByMbjpvehjarmWT7OQs2GajQbkSynVd2VgMuh/yKdzn7cZAF
+	 Wu6tWc9RFvx8Co/hPqQf4zQB/nhDADEcZjMcDyHRkjsejcGFBQji8bEsdD/LaDlxZO
+	 Xu2HzcMYCSx75i0o71wK6CmaK1LkMprg+RxjCPXc=
+Message-ID: <d4564d4b-9510-47f8-9930-65d3c4e90e6c@lucaweiss.eu>
+Date: Sat, 21 Jun 2025 00:20:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: msm8953: Add device tree for
+ Billion Capture+
+Content-Language: en-US
+To: cristian_ci@protonmail.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org
+References: <20250620-rimob-initial-devicetree-v1-0-8e667ea21f82@protonmail.com>
+ <20250620-rimob-initial-devicetree-v1-3-8e667ea21f82@protonmail.com>
+From: Luca Weiss <luca@lucaweiss.eu>
+In-Reply-To: <20250620-rimob-initial-devicetree-v1-3-8e667ea21f82@protonmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250620-iio-adc-ad7173-add-spi-offload-support-v1-4-0766f6297430@baylibre.com>
-References: <20250620-iio-adc-ad7173-add-spi-offload-support-v1-0-0766f6297430@baylibre.com>
-In-Reply-To: <20250620-iio-adc-ad7173-add-spi-offload-support-v1-0-0766f6297430@baylibre.com>
-To: Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-spi@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2048; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=UX7Qk+7NOxJbsbC9UcQ9KMGOYrU47zh3dgyBfOfkmSc=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoVd63BLhmn+HB7QmyWk8EbmeurR9QlJsuMl3Uw
- JK5ZEn9KrCJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaFXetwAKCRDCzCAB/wGP
- wNzyCACV9VMkV37f/qNR4IYrQCDTE4Gyr8RWjjT9Mt4L6/uR58OZzQeRn0xosTA5hf+6dMpIn4G
- quzIsNpX6yWjuiSQ6BOp8oNfohOWnp+phkS2M/ADbBQ8Njme63/AsYWaPJ3vWD7FNlCVavB857O
- ed+kaYrFagaItZiaShcMkKZC/DgYP4N/tI7ivJ5YAMw4XRgbb2Vo6hMGlprukpF1MsmQHzGZ4rL
- P9iHZYWfsgNN9cL0D9w0YRzwZRxNUg4fShiWkLFRMzkN9WHpJSNe66941B/TJQYxjIn4mYQJE33
- STaX+GdnH/Orr4GEnmPjQ1Hl7VvFcQ0f9/gcHpmLS2zhrdm/
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Refactor code to set the read address in a separate function.
+Hi Cristian,
 
-This code is already duplicated twice and we will need to use it a third
-time in a later commit.
+On 20-06-2025 11:51 p.m., Cristian Cozzolino via B4 Relay wrote:
+> From: Cristian Cozzolino <cristian_ci@protonmail.com>
+> 
+> Billion Capture+ (flipkart,rimob) is a smartphone released in 2017, based
+> on Snapdragon 625 (MSM8953) SoC.
+> 
+> Add a device tree with initial support for:
+> 
+> - GPIO keys
+> - SDHCI (internal and external storage)
+> - USB Device Mode
+> - Regulators
+> - Simple framebuffer
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/adc/ad_sigma_delta.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+Thanks for sending this upstream!
 
-diff --git a/drivers/iio/adc/ad_sigma_delta.c b/drivers/iio/adc/ad_sigma_delta.c
-index fa792c800c80f960aca75b28a60cb2588e69fe7d..883cc02d4099908644af523bcf66c0178fbd0e55 100644
---- a/drivers/iio/adc/ad_sigma_delta.c
-+++ b/drivers/iio/adc/ad_sigma_delta.c
-@@ -100,6 +100,14 @@ int ad_sd_write_reg(struct ad_sigma_delta *sigma_delta, unsigned int reg,
- }
- EXPORT_SYMBOL_NS_GPL(ad_sd_write_reg, "IIO_AD_SIGMA_DELTA");
- 
-+static void ad_sd_set_read_reg_addr(struct ad_sigma_delta *sigma_delta, u8 reg,
-+				    u8 *data)
-+{
-+	data[0] = reg << sigma_delta->info->addr_shift;
-+	data[0] |= sigma_delta->info->read_mask;
-+	data[0] |= sigma_delta->comm;
-+}
-+
- static int ad_sd_read_reg_raw(struct ad_sigma_delta *sigma_delta,
- 			      unsigned int reg, unsigned int size, u8 *val)
- {
-@@ -120,9 +128,7 @@ static int ad_sd_read_reg_raw(struct ad_sigma_delta *sigma_delta,
- 	spi_message_init(&m);
- 
- 	if (sigma_delta->info->has_registers) {
--		data[0] = reg << sigma_delta->info->addr_shift;
--		data[0] |= sigma_delta->info->read_mask;
--		data[0] |= sigma_delta->comm;
-+		ad_sd_set_read_reg_addr(sigma_delta, reg, data);
- 		spi_message_add_tail(&t[0], &m);
- 	}
- 	spi_message_add_tail(&t[1], &m);
-@@ -281,9 +287,7 @@ static int ad_sigma_delta_clear_pending_event(struct ad_sigma_delta *sigma_delta
- 	if (sigma_delta->info->has_registers) {
- 		unsigned int data_reg = sigma_delta->info->data_reg ?: AD_SD_REG_DATA;
- 
--		data[0] = data_reg << sigma_delta->info->addr_shift;
--		data[0] |= sigma_delta->info->read_mask;
--		data[0] |= sigma_delta->comm;
-+		ad_sd_set_read_reg_addr(sigma_delta, data_reg, data);
- 		t[0].tx_buf = data;
- 		spi_message_add_tail(&t[0], &m);
- 	}
+> 
+> Signed-off-by: Cristian Cozzolino <cristian_ci@protonmail.com>
+> ---
+>   arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+>   .../arm64/boot/dts/qcom/msm8953-flipkart-rimob.dts | 251 +++++++++++++++++++++
+>   2 files changed, 252 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 140b0b2abfb555b8ef61bd9ed0217d8997800809..af3757ca017b6e3d8c579e43f647a71fc64c62b3 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -70,6 +70,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-samsung-a7.dtb
+>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-sony-xperia-kanuti-tulip.dtb
+>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-wingtech-wt82918.dtb
+>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-wingtech-wt82918hd.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= msm8953-flipkart-rimob.dtb
+>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8953-motorola-potter.dtb
+>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8953-xiaomi-daisy.dtb
+>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8953-xiaomi-mido.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/msm8953-flipkart-rimob.dts b/arch/arm64/boot/dts/qcom/msm8953-flipkart-rimob.dts
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..9fc58bb4dae7b463691659f8e84a634529642b69
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/msm8953-flipkart-rimob.dts
+> @@ -0,0 +1,251 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2025, Cristian Cozzolino
+> + */
+> +/dts-v1/;
+> +
+> +#include "msm8953.dtsi"
+> +#include "pm8953.dtsi"
+> +#include "pmi8950.dtsi"
+> +
+> +/delete-node/ &cont_splash_mem;
+> +/delete-node/ &qseecom_mem;
+> +
+> +/ {
+> +	model = "Billion Capture+";
+> +	compatible = "flipkart,rimob", "qcom,msm8953";
+> +	chassis-type = "handset";
+> +	qcom,msm-id = <293 0>;
+> +	qcom,board-id = <0x340008 0>;
+> +
+> +	chosen {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		framebuffer@90001000 {
+> +			compatible = "simple-framebuffer";
+> +			reg = <0 0x90001000 0 (1920 * 1080 * 3)>;
+> +
+> +			width = <1080>;
+> +			height = <1920>;
+> +			stride = <(1080 * 3)>;
+> +			format = "r8g8b8";
+> +
+> +			power-domains = <&gcc MDSS_GDSC>;
+> +
+> +			clocks = <&gcc GCC_MDSS_AHB_CLK>,
+> +				 <&gcc GCC_MDSS_AXI_CLK>,
+> +				 <&gcc GCC_MDSS_VSYNC_CLK>,
+> +				 <&gcc GCC_MDSS_MDP_CLK>,
+> +				 <&gcc GCC_MDSS_BYTE0_CLK>,
+> +				 <&gcc GCC_MDSS_PCLK0_CLK>,
+> +				 <&gcc GCC_MDSS_ESC0_CLK>;
+> +		};
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&gpio_key_default>;
+> +
+> +		key-volume-up {
+> +			label = "Volume Up";
+> +			gpios = <&tlmm 85 GPIO_ACTIVE_LOW>;
+> +			linux,code = <KEY_VOLUMEUP>;
+> +			debounce-interval = <15>;
+> +		};
+> +	};
+> +
+> +	reserved-memory {
+> +		qseecom@0 {
 
--- 
-2.43.0
+qseecom@84a00000 ?
+
+> +			reg = <0x00 0x84a00000 0x00 0x1900000>;
+> +			no-map;
+> +		};
+> +
+> +		cont_splash_mem: cont-splash@90001000 {
+> +			reg = <0x0 0x90001000 0x0 (1080 * 1920 * 3)>;
+> +			no-map;
+> +		};
+> +	};
+> +
+> +	vph_pwr: vph-pwr-regulator {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vph_pwr";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +	};
+> +};
+> +
+> +
+> +&hsusb_phy {
+> +	vdd-supply = <&pm8953_l3>;
+> +	vdda-pll-supply = <&pm8953_l7>;
+> +	vdda-phy-dpdm-supply = <&pm8953_l13>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&pm8953_resin {
+> +	linux,code = <KEY_VOLUMEDOWN>;
+> +	status = "okay";
+> +};
+> +
+> +&rpm_requests {
+> +	regulators {
+> +		compatible = "qcom,rpm-pm8953-regulators";
+> +		vdd_s1-supply = <&vph_pwr>;
+> +		vdd_s2-supply = <&vph_pwr>;
+> +		vdd_s3-supply = <&vph_pwr>;
+> +		vdd_s4-supply = <&vph_pwr>;
+> +		vdd_s5-supply = <&vph_pwr>;
+> +		vdd_s6-supply = <&vph_pwr>;
+> +		vdd_s7-supply = <&vph_pwr>;
+> +		vdd_l1-supply = <&pm8953_s3>;
+> +		vdd_l2_l3-supply = <&pm8953_s3>;
+> +		vdd_l4_l5_l6_l7_l16_l19-supply = <&pm8953_s4>;
+> +		vdd_l8_l11_l12_l13_l14_l15-supply = <&vph_pwr>;
+> +		vdd_l9_l10_l17_l18_l22-supply = <&vph_pwr>;
+> +		vdd_l23-supply = <&pm8953_s3>;
+> +
+> +		pm8953_s1: s1 {
+> +			regulator-min-microvolt = <870000>;
+> +			regulator-max-microvolt = <1156000>;
+> +		};
+> +
+> +		pm8953_s3: s3 {
+> +			regulator-min-microvolt = <1224000>;
+> +			regulator-max-microvolt = <1224000>;
+> +		};
+> +
+> +		pm8953_s4: s4 {
+> +			regulator-min-microvolt = <1900000>;
+> +			regulator-max-microvolt = <2050000>;
+> +		};
+> +
+> +		pm8953_l1: l1 {
+> +			regulator-min-microvolt = <1000000>;
+> +			regulator-max-microvolt = <1000000>;
+> +		};
+> +
+> +		pm8953_l2: l2 {
+> +			regulator-min-microvolt = <975000>;
+> +			regulator-max-microvolt = <1225000>;
+> +		};
+> +
+> +		pm8953_l3: l3 {
+> +			regulator-min-microvolt = <925000>;
+> +			regulator-max-microvolt = <925000>;
+> +		};
+> +
+> +		pm8953_l5: l5 {
+> +			regulator-min-microvolt = <1800000>;
+> +			regulator-max-microvolt = <1800000>;
+> +		};
+> +
+> +		pm8953_l6: l6 {
+> +			regulator-min-microvolt = <1800000>;
+> +			regulator-max-microvolt = <1800000>;
+> +		};
+> +
+> +		pm8953_l7: l7 {
+> +			regulator-min-microvolt = <1800000>;
+> +			regulator-max-microvolt = <1900000>;
+> +		};
+> +
+> +		pm8953_l8: l8 {
+> +			regulator-min-microvolt = <2900000>;
+> +			regulator-max-microvolt = <2900000>;
+> +		};
+> +
+> +		pm8953_l9: l9 {
+> +			regulator-min-microvolt = <3000000>;
+> +			regulator-max-microvolt = <3300000>;
+> +		};
+> +
+> +		pm8953_l10: l10 {
+> +			regulator-min-microvolt = <2850000>;
+> +			regulator-max-microvolt = <2850000>;
+> +		};
+> +
+> +		pm8953_l11: l11 {
+> +			regulator-min-microvolt = <2950000>;
+> +			regulator-max-microvolt = <2950000>;
+> +		};
+> +
+> +		pm8953_l12: l12 {
+> +			regulator-min-microvolt = <1800000>;
+> +			regulator-max-microvolt = <2950000>;
+> +		};
+> +
+> +		pm8953_l13: l13 {
+> +			regulator-min-microvolt = <3125000>;
+> +			regulator-max-microvolt = <3125000>;
+> +		};
+> +
+> +		pm8953_l16: l16 {
+> +			regulator-min-microvolt = <1800000>;
+> +			regulator-max-microvolt = <1800000>;
+> +		};
+> +
+> +		pm8953_l17: l17 {
+> +			regulator-min-microvolt = <2850000>;
+> +			regulator-max-microvolt = <2850000>;
+> +		};
+> +
+> +		pm8953_l19: l19 {
+> +			regulator-min-microvolt = <1200000>;
+> +			regulator-max-microvolt = <1350000>;
+> +		};
+> +
+> +		pm8953_l22: l22 {
+> +			regulator-min-microvolt = <2800000>;
+> +			regulator-max-microvolt = <2800000>;
+> +		};
+> +
+> +		pm8953_l23: l23 {
+> +			regulator-min-microvolt = <975000>;
+> +			regulator-max-microvolt = <1225000>;
+> +		};
+> +	};
+> +};
+> +
+> +&sdhc_1 {
+> +	vmmc-supply = <&pm8953_l8>;
+> +	vqmmc-supply = <&pm8953_l5>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&sdhc_2 {
+> +	vmmc-supply = <&pm8953_l11>;
+> +	vqmmc-supply = <&pm8953_l12>;
+> +
+> +	cd-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
+> +
+> +	pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on &sdc2_data_on &sdc2_cd_on>;
+> +	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off>;
+> +	pinctrl-names = "default", "sleep";
+> +
+> +	status = "okay";
+> +};
+> +
+> +&tlmm {
+> +	gpio-reserved-ranges = <0 4>, <135 4>;
+
+Any ideas what's connected to these pins? If you do, good to document 
+this like in other devices.
+
+Regards
+Luca
+
+> +
+> +	gpio_key_default: gpio-key-default-state {
+> +		pins = "gpio85";
+> +		function = "gpio";
+> +		drive-strength = <2>;
+> +		bias-pull-up;
+> +	};
+> +};
+> +
+> +&usb3 {
+> +	status = "okay";
+> +};
+> +
+> +&usb3_dwc3 {
+> +	dr_mode = "peripheral";
+> +};
+> 
 
 
