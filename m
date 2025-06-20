@@ -1,306 +1,97 @@
-Return-Path: <linux-kernel+bounces-695556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A5D3AE1B07
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:34:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027FBAE1AFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E7867AC206
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:32:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A0014A76B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCF628C864;
-	Fri, 20 Jun 2025 12:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HPXtqixP"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071B328B7C5;
-	Fri, 20 Jun 2025 12:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750422804; cv=none; b=JdldTRYbEyjD6F/ciClRcE6rca/Sl56+5ktKqTUz5mZULabOz9NpmWgfZUKsU8KGkaWJtlGjddka7maVavMZGnO1tyseF0rwOEOGB5XeK5a06CB9/bmiQKPQnFggKaIyr9/dMWEm9O4lPWWxUYtxc2ZInh+kWU9KjeJ9MAJbV0Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750422804; c=relaxed/simple;
-	bh=6vl7PF+/T9auoFlR4HnEk0oD6IcObTEXZv0Bj419scI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZIgazBC4jI4Z6lolGfTh/3lJ6AUoLiU3mkEjre8EvRCNZ/ZEOc94sDuEZWebRwHYn/tTGCV4Llx0RPf21jwgyIVzNLo7LMy26Vwrc+OAx2xbnCtIH8YeWqYM6RLN+DIJLgTar1gYscV3xsLjTL6RMGWOyNSINfQqqnghWG42+WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HPXtqixP; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C8A781FD3C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E330289E25;
 	Fri, 20 Jun 2025 12:33:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1750422800;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7aMJMPvcSqljiCkLImJkk0ab9T8QK7AAmCb1QEL0KHg=;
-	b=HPXtqixPr8tc9EUHMRN0Lltavg8KQMGbEQjarjeyzjmXmxwKjrwWEeLCAfFIzCrz3WjG/q
-	cxtHa2kx9kTQXhhXhmvutJC97KrwvLtvqWwlpgaC/M6enMVyg33Mpu/OLd4z/D+FcPjE3J
-	mooDzOMwdTRQIoJar5gTvECIOgJXNdH5ZKsktvAO/NKdYpPTvfbVtlSFkwKPTkNvVMuEGr
-	P0n+PhY6TW9xX1ng1XmD1EiT5uAdHg8hhFjMemWqSeXRsWSlQETQdd0fq5PJ0NvFzACiDR
-	ix+XLET/PqR12j8iYN68ChdWyKDnW2EUiOc0yYMeI6FHcKnP2c9utztMxaUSlQ==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Fri, 20 Jun 2025 14:33:07 +0200
-Subject: [PATCH ethtool-next 2/2] ethtool: pse-pd: Add PSE priority and
- event monitoring support
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF44221FC0;
+	Fri, 20 Jun 2025 12:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750422799; cv=none; b=foTglVF0mf2kJxXhM273WlaEIsNnP5DjiiLeNoUWwNAI3whNsw5nMMxF4JUdVT+JOJA7sHl9pDKX8lgeg/N4sb4i7KnmjNsxOy/IX/WALoKus8U7wU3210Vg4o0Q823wPCT3R7xD9quFgHL6WNUo6ayvVdCHtpvdtNRuIxNnP88=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750422799; c=relaxed/simple;
+	bh=8lXtsibUqhfDv7u5UfJVjn6rzJDXDt2W0ozpaZZ+90A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lcTNtZ1K2w6s40YdLsS3fsotuJHmgC40FIuVSq2ESCbd3kI880uXku9woFh7FC3BVZe7gFna8IzkHHlHhMsqfUhDhIjwZdvgYwKQNbbgZcpyrACBEG8LtXIzgTEURAi5FA3MIoPk/9lzGaM790y9uGNeaZ9RjcYelUoNZJmpb18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8096116F2;
+	Fri, 20 Jun 2025 05:32:57 -0700 (PDT)
+Received: from [10.57.27.59] (unknown [10.57.27.59])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F05803F58B;
+	Fri, 20 Jun 2025 05:33:13 -0700 (PDT)
+Message-ID: <562662d4-69ca-4d0e-ad0d-fd8cece417e0@arm.com>
+Date: Fri, 20 Jun 2025 13:33:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v5 2/4] PCI: rockchip: Set Target Link Speed before
+ retraining
+To: Geraldo Nascimento <geraldogabriel@gmail.com>,
+ linux-rockchip@lists.infradead.org
+Cc: Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rick wertenbroek <rick.wertenbroek@gmail.com>,
+ linux-phy@lists.infradead.org, linux-pci@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1749833986.git.geraldogabriel@gmail.com>
+ <1966f8ddc4a81426b4f1f48c22bea9b4a6e6297c.1749833987.git.geraldogabriel@gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <1966f8ddc4a81426b4f1f48c22bea9b4a6e6297c.1749833987.git.geraldogabriel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250620-b4-feature_poe_pw_budget-v1-2-0bdb7d2b9c8f@bootlin.com>
-References: <20250620-b4-feature_poe_pw_budget-v1-0-0bdb7d2b9c8f@bootlin.com>
-In-Reply-To: <20250620-b4-feature_poe_pw_budget-v1-0-0bdb7d2b9c8f@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Andrew Lunn <andrew@lunn.ch>, Michal Kubecek <mkubecek@suse.cz>
-Cc: Kyle Swenson <kyle.swenson@est.tech>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>
-X-Mailer: b4 0.15-dev-8cb71
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdekgeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeevgfdvgfektefgfefggeekudfggffhtdfffedtueetheejtddvledvvdelhedtveenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehkhihlvgdrshifvghnshhonhesvghsthdrthgvtghhpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepn
- hgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehmkhhusggvtggvkhesshhushgvrdgtii
-X-GND-Sasl: kory.maincent@bootlin.com
 
-From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+On 2025-06-13 6:03 pm, Geraldo Nascimento wrote:
+> Current code may fail Gen2 retraining if Target Link Speed
+> is set to 2.5 GT/s in Link Control and Status Register 2.
+> Set it to 5.0 GT/s accordingly.
 
-Add support for PSE (Power Sourcing Equipment) priority management and
-event monitoring capabilities:
+I have max-link-speed overridden to 2 in my local DTB, and indeed this 
+seems to make my NVMe report a 5.0 GT/s link where previously it was 
+still downgrading to 2.5, so:
 
-- Add priority configuration parameter (prio) for port priority management
-- Display power domain index, maximum priority, and current priority
-- Add PSE event monitoring support in ethtool monitor command
+Tested-by: Robin Murphy <robin.murphy@arm.com>
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
- ethtool.8.in      | 13 ++++++++
- ethtool.c         |  1 +
- netlink/monitor.c |  8 +++++
- netlink/netlink.h |  1 +
- netlink/pse-pd.c  | 88 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 111 insertions(+)
-
-diff --git a/ethtool.8.in b/ethtool.8.in
-index 7e164a6..b9025bd 100644
---- a/ethtool.8.in
-+++ b/ethtool.8.in
-@@ -561,6 +561,7 @@ ethtool \- query or control network driver and hardware settings
- .RB [ c33\-pse\-admin\-control
- .BR enable | disable ]
- .BN c33\-pse\-avail\-pw\-limit N
-+.BN prio N
- .HP
- .B ethtool \-\-flash\-module\-firmware
- .I devname
-@@ -1893,6 +1894,15 @@ This attribute specifies the allowed power limit ranges in mW for
- configuring the c33-pse-avail-pw-limit parameter. It defines the valid
- power levels that can be assigned to the c33 PSE in compliance with the
- c33 standard.
-+.TP
-+.B power-domain-index
-+This attribute defines the index of the PSE Power Domain.
-+.TP
-+.B priority-max
-+This attribute defines the maximum priority available for the PSE.
-+.TP
-+.B priority
-+This attribute defines the currently configured priority for the PSE.
- 
- .RE
- .TP
-@@ -1912,6 +1922,9 @@ This parameter manages c33 PSE Admin operations in accordance with the IEEE
- This parameter manages c33 PSE Available Power Limit in mW, in accordance
- with the IEEE 802.3-2022 33.2.4.4 Variables (pse_available_power)
- specification.
-+.TP
-+.B prio \ N
-+This parameter manages port priority.
- 
- .RE
- .TP
-diff --git a/ethtool.c b/ethtool.c
-index 327a2da..281484f 100644
---- a/ethtool.c
-+++ b/ethtool.c
-@@ -6283,6 +6283,7 @@ static const struct option args[] = {
- 		.xhelp	= "		[ podl-pse-admin-control enable|disable ]\n"
- 			  "		[ c33-pse-admin-control enable|disable ]\n"
- 			  "		[ c33-pse-avail-pw-limit N ]\n"
-+			  "		[ prio N ]\n"
- 	},
- 	{
- 		.opts	= "--flash-module-firmware",
-diff --git a/netlink/monitor.c b/netlink/monitor.c
-index ace9b25..cc5163e 100644
---- a/netlink/monitor.c
-+++ b/netlink/monitor.c
-@@ -75,6 +75,10 @@ static struct {
- 		.cmd	= ETHTOOL_MSG_MODULE_NTF,
- 		.cb	= module_reply_cb,
- 	},
-+	{
-+		.cmd	= ETHTOOL_MSG_PSE_NTF,
-+		.cb	= pse_ntf_cb,
-+	},
- };
- 
- static void clear_filter(struct nl_context *nlctx)
-@@ -186,6 +190,10 @@ static struct monitor_option monitor_opts[] = {
- 		.pattern	= "--show-module|--set-module",
- 		.cmd		= ETHTOOL_MSG_MODULE_NTF,
- 	},
-+	{
-+		.pattern	= "--pse-event",
-+		.cmd		= ETHTOOL_MSG_PSE_NTF,
-+	},
- };
- 
- static bool pattern_match(const char *s, const char *pattern)
-diff --git a/netlink/netlink.h b/netlink/netlink.h
-index ad2a787..6a91336 100644
---- a/netlink/netlink.h
-+++ b/netlink/netlink.h
-@@ -92,6 +92,7 @@ int cable_test_tdr_reply_cb(const struct nlmsghdr *nlhdr, void *data);
- int cable_test_tdr_ntf_cb(const struct nlmsghdr *nlhdr, void *data);
- int fec_reply_cb(const struct nlmsghdr *nlhdr, void *data);
- int module_reply_cb(const struct nlmsghdr *nlhdr, void *data);
-+int pse_ntf_cb(const struct nlmsghdr *nlhdr, void *data);
- 
- /* dump helpers */
- 
-diff --git a/netlink/pse-pd.c b/netlink/pse-pd.c
-index fd1fc4d..41af9de 100644
---- a/netlink/pse-pd.c
-+++ b/netlink/pse-pd.c
-@@ -13,6 +13,7 @@
- 
- #include "../internal.h"
- #include "../common.h"
-+#include "bitset.h"
- #include "netlink.h"
- #include "parser.h"
- 
-@@ -420,6 +421,29 @@ int pse_reply_cb(const struct nlmsghdr *nlhdr, void *data)
- 		}
- 	}
- 
-+	if (tb[ETHTOOL_A_PSE_PW_D_ID]) {
-+		u32 val;
-+
-+		val = mnl_attr_get_u32(tb[ETHTOOL_A_PSE_PW_D_ID]);
-+		print_uint(PRINT_ANY, "power-domain-index",
-+			   "Power domain index: %u\n", val);
-+	}
-+
-+	if (tb[ETHTOOL_A_PSE_PRIO_MAX]) {
-+		u32 val;
-+
-+		val = mnl_attr_get_u32(tb[ETHTOOL_A_PSE_PRIO_MAX]);
-+		print_uint(PRINT_ANY, "priority-max",
-+			   "Max allowed priority: %u\n", val);
-+	}
-+
-+	if (tb[ETHTOOL_A_PSE_PRIO]) {
-+		u32 val;
-+
-+		val = mnl_attr_get_u32(tb[ETHTOOL_A_PSE_PRIO]);
-+		print_uint(PRINT_ANY, "priority", "Priority %u\n", val);
-+	}
-+
- 	close_json_object();
- 
- 	return MNL_CB_OK;
-@@ -452,6 +476,64 @@ int nl_gpse(struct cmd_context *ctx)
- 	return ret;
- }
- 
-+static const char *pse_events_name(u64 val)
-+{
-+	switch (val) {
-+	case ETHTOOL_PSE_EVENT_OVER_CURRENT:
-+		return "over-current";
-+	case ETHTOOL_PSE_EVENT_OVER_TEMP:
-+		return "over-temperature";
-+	case ETHTOOL_C33_PSE_EVENT_DETECTION:
-+		return "detection";
-+	case ETHTOOL_C33_PSE_EVENT_CLASSIFICATION:
-+		return "classification";
-+	case ETHTOOL_C33_PSE_EVENT_DISCONNECTION:
-+		return "disconnection";
-+	case ETHTOOL_PSE_EVENT_OVER_BUDGET:
-+		return "over-budget";
-+	case ETHTOOL_PSE_EVENT_SW_PW_CONTROL_ERROR:
-+		return "software power control error";
-+	default:
-+		return "unknown";
-+	}
-+}
-+
-+int pse_ntf_cb(const struct nlmsghdr *nlhdr, void *data)
-+{
-+	const struct nlattr *tb[ETHTOOL_A_PSE_MAX + 1] = {};
-+	struct nl_context *nlctx = data;
-+	DECLARE_ATTR_TB_INFO(tb);
-+	u64 val;
-+	int ret, i;
-+
-+	ret = mnl_attr_parse(nlhdr, GENL_HDRLEN, attr_cb, &tb_info);
-+	if (ret < 0)
-+		return MNL_CB_OK;
-+
-+	if (!tb[ETHTOOL_A_PSE_NTF_EVENTS])
-+		return MNL_CB_OK;
-+
-+	nlctx->devname = get_dev_name(tb[ETHTOOL_A_PSE_HEADER]);
-+	if (!dev_ok(nlctx))
-+		return MNL_CB_OK;
-+
-+	open_json_object(NULL);
-+	print_string(PRINT_ANY, "ifname", "PSE event for %s:\n",
-+		     nlctx->devname);
-+	open_json_array("events", "Events:");
-+	val = attr_get_uint(tb[ETHTOOL_A_PSE_NTF_EVENTS]);
-+	for (i = 0; 1 << i <= ETHTOOL_PSE_EVENT_SW_PW_CONTROL_ERROR; i++)
-+		if (val & 1 << i)
-+			print_string(PRINT_ANY, NULL, " %s",
-+				     pse_events_name(val & 1 << i));
-+	close_json_array("\n");
-+	if (ret < 0)
-+		return MNL_CB_OK;
-+
-+	close_json_object();
-+	return MNL_CB_OK;
-+}
-+
- /* PSE_SET */
- 
- static const struct lookup_entry_u32 podl_pse_admin_control_values[] = {
-@@ -487,6 +569,12 @@ static const struct param_parser spse_params[] = {
- 		.handler	= nl_parse_direct_u32,
- 		.min_argc	= 1,
- 	},
-+	{
-+		.arg		= "prio",
-+		.type		= ETHTOOL_A_PSE_PRIO,
-+		.handler	= nl_parse_direct_u32,
-+		.min_argc	= 1,
-+	},
- 	{}
- };
- 
-
--- 
-2.43.0
+> Signed-off-by: Geraldo Nascimento <geraldogabriel@gmail.com>
+> ---
+>   drivers/pci/controller/pcie-rockchip-host.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
+> index 8489d51e01ca..467e3fc377f7 100644
+> --- a/drivers/pci/controller/pcie-rockchip-host.c
+> +++ b/drivers/pci/controller/pcie-rockchip-host.c
+> @@ -341,6 +341,10 @@ static int rockchip_pcie_host_init_port(struct rockchip_pcie *rockchip)
+>   		 * Enable retrain for gen2. This should be configured only after
+>   		 * gen1 finished.
+>   		 */
+> +		status = rockchip_pcie_read(rockchip, PCIE_RC_CONFIG_CR + PCI_EXP_LNKCTL2);
+> +		status &= ~PCI_EXP_LNKCTL2_TLS;
+> +		status |= PCI_EXP_LNKCTL2_TLS_5_0GT;
+> +		rockchip_pcie_write(rockchip, status, PCIE_RC_CONFIG_CR + PCI_EXP_LNKCTL2);
+>   		rockchip_pcie_write(rockchip, status, PCIE_RC_CONFIG_CR + PCI_EXP_LNKCTL2);
+>   		status = rockchip_pcie_read(rockchip, PCIE_RC_CONFIG_CR + PCI_EXP_LNKCTL);
+>   		status |= PCI_EXP_LNKCTL_RL;
 
 
