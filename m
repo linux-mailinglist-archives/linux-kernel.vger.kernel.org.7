@@ -1,87 +1,130 @@
-Return-Path: <linux-kernel+bounces-695600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FB2AAE1BA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:11:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49657AE1BB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 891A07B11B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:10:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1569617CBE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F68F29AAE7;
-	Fri, 20 Jun 2025 13:09:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54EA22951A8;
+	Fri, 20 Jun 2025 13:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jG2L3H3x"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBC728DB67
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 13:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C238428D8F8;
+	Fri, 20 Jun 2025 13:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750424945; cv=none; b=T7709czrrXrbk8uFH4Ij/EuqdUuel9qc7nys5+KA1zqWX5PgKlGy9qthj+J6azaQYyMAveE+6XHu/JJYlJO98yNrRQq5VgB4vtYA2n2KJvaVpL9CO9IBIXEBNuFuZUuJvCourANfx88hoftXtD8Ut6rBguq3blRYn6Ypk4TgRFM=
+	t=1750425013; cv=none; b=uqD6nRaYY6AE14Zvrir65/kEp7JlAPrvew8DkyvQrnk4LNKfsiqbdy0FpCJnUXP4IOOd9axOEPm/ReOcf5M89anikYh8LDymo6wMNk6DhXNPk7q8Ns8OZ9aF7VBI+cfAmZGQcjtFFiaUo/7egj/lb0EwptjSdRG1HuP1vH6ygXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750424945; c=relaxed/simple;
-	bh=a03GPhbXhB2cl+AE1QtrtXSnEV+4+bk7k99W898ZVlM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DFEKSxXLB/LrJqgra3OWI9rJ5Nnq2BUTM0plXoq5Pt+HrgmOIYis56h5haAXOrx6cR2Y46CN3xaEZ7XBf1TdImrEVQPTGMDA4qC6oo1hPP6HUfZtYAuJG459decPBu7bREm7PwnWwvttaJfk5DwyVNAMc8tGkJ9POZ4ElIrN6+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-87595d00ca0so137847339f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 06:09:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750424943; x=1751029743;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S41u+OS0BXxizA1eY4QMD2CtJm8PEDugW3r2IepL8pE=;
-        b=G60x1DKto+18KZmx/8r4RCosiSaidi36WXkuMTBbi+MyxZU61WNKWlJ9Ejj+Zfqqwg
-         HSasAZZd0R+D6Z+dm1MY76XU0Zo304OKgZlSfMMbl/DQ2i38v4k1qPZbxHZLybF9fCU6
-         jIUN+UejER2W4VxVbNfm5lHD/5u/9LBij2NxuSiKDyfNXNIJfe70riluZFTMTIMVLyOh
-         /P1HrK4iLRbPcRB3HVHamBSJHeN/v888Z9dvFw91q12PCCN7r3dvn9DzSjbpCgrIgKXM
-         Z4H4nLYZEQZHVkYGOPDpy2rMmNwc27g5G33xSfZXmDAdq+KMb5fQt2/XF2xAhcqweM83
-         E28A==
-X-Forwarded-Encrypted: i=1; AJvYcCW3QrwHFr8ry+3r6r1sH+tjK0fLnkgyE0IFOHHq4+MAwbxNhuu96ltzLL0HScXL1G0LWyxep4ihvhRM4/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzetVzNLgrP469K+CzWWVOEM1QSmBklt3Evk3d/OcKOcUBj9bvI
-	jULzSUUGFDceIfrtinqQ8JjTmusZbyXL8RoK9PFqg/jMh7/X8yZ/RyvOYSR0PiDBouGRv0LwGM2
-	T6hUcn5GK24cGFVToxIZFvCQAFPEEhFUYfsryLP2cL2Lt0HftCwwWMvMySqA=
-X-Google-Smtp-Source: AGHT+IF53zvOU4+z5tn41o35G7gzCDDtflHZJVBAPgqTIBw+yLXf9YFil1k1FunrNM0xZ3IfMn4Il7e8WrzJZlW4jCHl8X/eeWUo
+	s=arc-20240116; t=1750425013; c=relaxed/simple;
+	bh=wD9kvq63OMsE8gXCXi6rVt39wRx5i7RafSZhiuPMUsY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gmnn/iR50bOr35Ak12OnQ3dKM0DB3xuENVHVOPxu38532SaW3K3pap6lOOEii/abu/16+fSHV/4+3bDUvqbe+84jCG222tPVa/pMQEuAU9pj1UR/6/2aTMiz2vnLYodjexbFhe5KJgs7MBsmTB/LAui3qWq7sGyHPso142UI4eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jG2L3H3x; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750425011; x=1781961011;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wD9kvq63OMsE8gXCXi6rVt39wRx5i7RafSZhiuPMUsY=;
+  b=jG2L3H3xTPbvsAzlAkHRuyaTu9CFjHpRV0dNtE8/3H6Q+9DDqq9UxpjS
+   /Nu+oDVAU9ricuYbj9Ceipf69IDdYUmBdryR390G7QmHOx1COQaHHSHXH
+   v6GuRPg1XC/PAUbBn2cZLcQL+CmEChjBoEt07yyqH34T1btWZy5KXgf7U
+   bW7JLK0fPNQtg+JTL+Z9VSX64rVhh8+zujNRSrqpq1tGk3Womx42XAvbo
+   UgcXPbqg5U9No8XwMiuLn5yuMZWTzjTjCK8uy1QX95YolsXpW0DLOhmlH
+   qWGIi0Q2g9oUoaVVsRR5uCKQIjCpj5nQLsmZN1nW9uSvkT7jNB/ilhp1i
+   Q==;
+X-CSE-ConnectionGUID: KTu4gOQNTgufU+6goce4iw==
+X-CSE-MsgGUID: UIKwuTsXQwKxttdELUrYOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="52388881"
+X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
+   d="scan'208";a="52388881"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 06:10:10 -0700
+X-CSE-ConnectionGUID: wPgNx4wkQ5yTzmcAsPz8uw==
+X-CSE-MsgGUID: DKYJufbMTNSmphM4gFzFZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
+   d="scan'208";a="154928674"
+Received: from ysun46-mobl (HELO YSUN46-MOBL..) ([10.239.96.51])
+  by fmviesa003.fm.intel.com with ESMTP; 20 Jun 2025 06:10:07 -0700
+From: Yi Sun <yi.sun@intel.com>
+To: dave.jiang@intel.com,
+	vinicius.gomes@intel.com,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	fenghuay@nvidia.com,
+	philip.lantz@intel.com
+Cc: yi.sun@intel.com,
+	gordon.jin@intel.com,
+	anil.s.keshavamurthy@intel.com
+Subject: [PATCH v2 0/2] dmaengine: idxd: Add basic DSA 3.0 capability and SGL support
+Date: Fri, 20 Jun 2025 21:09:51 +0800
+Message-ID: <20250620130953.1943703-1-yi.sun@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164e:b0:3dd:d365:78bf with SMTP id
- e9e14a558f8ab-3de38cdac08mr27889265ab.22.1750424942885; Fri, 20 Jun 2025
- 06:09:02 -0700 (PDT)
-Date: Fri, 20 Jun 2025 06:09:02 -0700
-In-Reply-To: <20250620114122.1338-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68555d6e.a00a0220.137b3.004c.GAE@google.com>
-Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in do_sync_mmap_readahead
-From: syzbot <syzbot+8e4be574cb8c40140a2a@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+This patch series introduces foundational support for DSA 3.0 features,
+exposing hardware capability registers to userspace in the IDXD driver.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+DSA 3.0 introduces several new features that require awareness and
+configuration from both kernel and userspace. It is necessary to
+understand the hardware's capabilities for userspace tools (e.g.,
+idxd-config, libraries, and applications) to make use of the features
+properly, such as supported features, memory layouts, and opcode
+compatibility.
 
-Reported-by: syzbot+8e4be574cb8c40140a2a@syzkaller.appspotmail.com
-Tested-by: syzbot+8e4be574cb8c40140a2a@syzkaller.appspotmail.com
+Patch 1/2 exposes the three new capability registers (dsacap0-2)
+introduced in the DSA 3.0 specification through a new sysfs entry.
+This allows tools and users to query hardware capabilities such as
+supported SGL formats, floating-point options, and maximum supported
+sizes.
 
-Tested on:
+Patch 2/2 enables configuration of the maximum SGL size for DSA 3.0
+devices. Some DSA 3.0 opcodes (e.g., Gather Copy, Gather Reduce) require
+that the workqueue's SGL size is explicitly configured. This patch sets
+that value based on hardware capabilities at initialization time,
+allowing these opcodes to function without additional user configuration.
 
-commit:         5d4809e2 Add linux-next specific files for 20250620
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13495d0c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=58afc4b78b52b7e3
-dashboard link: https://syzkaller.appspot.com/bug?extid=8e4be574cb8c40140a2a
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11fe8182580000
+---
+Changes in v2:
+- Added the link to the DSA 3.0 spec in the commit message (Dave)
+- Fixed typos in the commit messages (Fenghua)
+- Updated the sysfs ABI documentation for accuracy (Fenghua)
+- Renamed the ABI entry from 'dsacap' to 'dsacaps' (Fenghua, Philip)
+- Moved the definition of dsacap0_reg from patch #2 to patch #1 (Fenghua)
+- Fixed the output format (Fenghua, Philip)
+- Reordered the capability registers to match the DSA 3.0 spec (Fenghua)
+- Add conditon checking to avoid accessing dsacaps when DSA 3.0 is not
+  supported (Fenghua)
 
-Note: testing is done by a robot and is best-effort only.
+Yi Sun (2):
+  dmaengine: idxd: Expose DSA3.0 capabilities through sysfs
+  dmaengine: idxd: Add Max SGL Size Support for DSA3.0
+
+ .../ABI/stable/sysfs-driver-dma-idxd          | 15 ++++++++++
+ drivers/dma/idxd/device.c                     |  5 ++++
+ drivers/dma/idxd/idxd.h                       | 19 +++++++++++++
+ drivers/dma/idxd/init.c                       | 11 ++++++++
+ drivers/dma/idxd/registers.h                  | 28 ++++++++++++++++++-
+ drivers/dma/idxd/sysfs.c                      | 24 ++++++++++++++++
+ 6 files changed, 101 insertions(+), 1 deletion(-)
+
+-- 
+2.43.0
+
 
