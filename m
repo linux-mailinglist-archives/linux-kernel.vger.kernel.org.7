@@ -1,130 +1,130 @@
-Return-Path: <linux-kernel+bounces-696047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271D8AE2126
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:41:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29BC7AE211B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0783B07C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:41:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ABE77A4AA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2272EB5D5;
-	Fri, 20 Jun 2025 17:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96DC2E8E16;
+	Fri, 20 Jun 2025 17:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KEYSZ7Ic"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fic3Qe6F"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378A22EB5AD;
-	Fri, 20 Jun 2025 17:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA6D2E172A;
+	Fri, 20 Jun 2025 17:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750441252; cv=none; b=gudWV0kX742hHw9l8F5Ffvw9PWVF3/RliwfpBhCKlpA93y5YOuDoc5bIMBz0Hf56+/r927L+XTLQ8B8S3Pvv9GoH3FUlDPyHaWuUmPUTd7Lkaz8VIF2ygwqg7NA1itQA6PTEdusVUzHGJTlFZUFCkZTBgFzBcZ2w4iNOiax++Wg=
+	t=1750441220; cv=none; b=lUFuEZc6P4ANlL46VGOwL5GON6m7YlW4sYCDMD9x07ObWFpnQuTFzbCIxktD65KtyJNoxsSyNbRrVsuXY1ukuC+F3xN4z8+DQh2CbIB8DB2IOAUleJIDWRUAwtnJeGogcFT/vt22/4zPcUgh/o1XccHNbPtAWJnCgJy2wScEkeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750441252; c=relaxed/simple;
-	bh=NRGSRyTah5ICBT0QVblczXDuitpxn/LFY+zhFSrKnus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ozl3oXX7KqqB0/r2AsEi8BoC3op3eWtu8Q4QkOWO0Ws2a5EH+HSRBLfp6SQQWmSIloSqq6NCzagiBCw2vrHyxu/jlu65d1ih/X5yCnuUFYxXuaxlyjB4kWTTGlV/yDBkSLBEZcKshuean8e44SeoLCkg7gHO1uIlJ2BWCnJygqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KEYSZ7Ic; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750441251; x=1781977251;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NRGSRyTah5ICBT0QVblczXDuitpxn/LFY+zhFSrKnus=;
-  b=KEYSZ7IcR++AAyn3Kfl/qsrDYhoJITcyBzcUm6lgzHo4SzvIcVig3amv
-   alnKdLxh5GbptWo8uc+FyP9CTr0CAsdw1yqp7j+DbLiEZh5fnC9xSZ56q
-   lEZRrrewJYK/9NTR+rVSjyhUlGUJlyee2hQ/Q/oGZOOGHSDtmSzm5l7vY
-   bJsAo17RxxKLCbK9y3M/zsNDIZhb65EXJA06SZQ4Hx+3DUJ/rYrX7M6mc
-   MKzPZ3ixloXxH90Z3XBbS/BgjzXIx7ikgdURMH1vPSDpqng0lB28lRPeR
-   HGQdcsa3AqgFpOA7r+j5X3RO22ex9AYHBYwfo3I5NEZuIhwprYj9UXOVu
-   w==;
-X-CSE-ConnectionGUID: 1WZr/DZoQwGgzgv0a3unxg==
-X-CSE-MsgGUID: B8aOE63URzCZdtInQ3R0Gw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="52586070"
-X-IronPort-AV: E=Sophos;i="6.16,252,1744095600"; 
-   d="scan'208";a="52586070"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 10:40:50 -0700
-X-CSE-ConnectionGUID: RH6NSA+vRnOBwGunq1Sriw==
-X-CSE-MsgGUID: 967yrwNfSTCe7ac8Cpd9sg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,252,1744095600"; 
-   d="scan'208";a="150459518"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 20 Jun 2025 10:40:47 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uSfjI-000M1Q-0R;
-	Fri, 20 Jun 2025 17:40:44 +0000
-Date: Sat, 21 Jun 2025 01:40:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>
-Cc: oe-kbuild-all@lists.linux.dev, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
-	Chuck Cannon <chuck.cannon@nxp.com>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 2/2] firmware: arm_scmi: power_control: Set
- SCMI_SYSPOWER_IDLE in pm resume
-Message-ID: <202506210114.2Ix0TkA0-lkp@intel.com>
-References: <20250620-scmi-pm-v1-2-c2f02cae5122@nxp.com>
+	s=arc-20240116; t=1750441220; c=relaxed/simple;
+	bh=OFWh618G+nN07dN1ddt6LCLr4FaHIYMhHdZ5Tjd6XVs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oCtECwBKwWzAY74ZHGOJCLU70n0U1yx52BELXE1/yKvxV/jcVU4KvUeD59wFV17jVwDYuUBLmzo7DOoV34l2gckng0WmdEI0CaHbCh/KJinwYu6B5rbsfpolsFIrc3TWuY9MpE63hURM6fQeZg5I6T1pRGGCj1oltHUf+UczDek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fic3Qe6F; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7fd581c2bf4so1658709a12.3;
+        Fri, 20 Jun 2025 10:40:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750441218; x=1751046018; darn=vger.kernel.org;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lrfa6f95rsQz82Z0z+vddrx+mjnxXRUvG8Wd94yuAao=;
+        b=fic3Qe6Fq67WdkVw3WQ752xp1hoPPjkCPv8TBrjl83Oak4Wf6eaY+wO0tcNPsOnRq8
+         RGCvdl+r7oTxGh+vBC/kSBpT9OK9wja5nvbSo+by63M6GAz/GB8ny8OdHaztUcoc8dtW
+         ktrpKr6emB852kLrZqRrp6eOXNofFVosURznpfQFUQUO4HktNJGeLe59gj4m9fyf61bk
+         IAyLryTdSuqDw05XVCf/MDsgvSAd7dGSUrUubv5tlCd+5t0dx6siHpMusB86ra6d/uXs
+         tWXzxxXwgX0zSNPXNB52LPYD/tX5l51PNffU2o0ZzuiQzmztdfeEE55h7cv50DpMveuZ
+         EC9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750441218; x=1751046018;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lrfa6f95rsQz82Z0z+vddrx+mjnxXRUvG8Wd94yuAao=;
+        b=naJErinFWvmQxViXKoLQJ+5L8ctsrOtA+khaJAcOm+5aHvsXz9omxVRiQTfCOdadVR
+         jJMfD46wAjVIhOJ9kKdV7qyLrTfcx/YD9QlIYdMYuyhNM6+my2CGQTF3LaFqhKFuZgIE
+         Mpgm6OVbGHkqu8bqAAJE7pBiSbMLgKnGB+L0kvjrPhhuxpfgvbnvXkTS56vl+9PnDdhu
+         8D01sVVpdBoFoE9PorwCGEgAxoC/qatUUsjNC33r/5Ig0cGwqhtukJE7HwtCvAD6MTXM
+         BpEF1/f/19DBuACTv5BweZmAZVgslj5X5tSwVi0IDmuidXyjXyoLE8QPzp4PyXZhULrx
+         Wwsg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9oY/rsdxBBEKv+2Ze8XS4Jf4eGniU7xZfeF+jkBGxJLKikeD2NqkI7XYI46VYT6UJj02yOgWNEKKHfaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoBie9A+uXlFZ7SqO4pI7PIkf5DgZnHDQS9llTZRS7anr1qcKF
+	u/5UIFfrydKptDMgeiOi6G1n3X/Qbgx/dVeTH6nwhcULGPez3fYldGIn
+X-Gm-Gg: ASbGncu0cgqdH6Iw7pnm/cIV/rwKBLEAi8ov1ypkEBeIkBFwm1xCkts6780gB3bi60l
+	aoyALFL0PKo4RzOFG4Zd/XkZSs8FKLRVpS2dE/MAVMBkfD9wE5FKQygc1GEXEMwSLeO7QbtUAXi
+	67hwSdbf9AuSVzE0PRWs1Ol/7a5zvxiaNqa3tLOk2Yuu/hJjCyOz+ivx9obc9pb43fIpY1WwsKu
+	AVXsYutRE5GbEh6m3xlXwNgz8is2PYfigxjOzlEf75EkJJNFAr3r8TMGwVzKeHWLvxdZ7Nf4j/l
+	Q7ES0pH2YaHT00iXVjlQArUYZS64VNR1LdBdkRPhpp9ys2LT9f45BQ==
+X-Google-Smtp-Source: AGHT+IE4pfEDuK4NvUg+ry5Rf4DYRoJ1U08Eu4uDQ0aEWXtK0+oZFw8hbBiESznwSJ4Y+sDyrsFZJg==
+X-Received: by 2002:a17:90b:5690:b0:312:f0d0:bc4 with SMTP id 98e67ed59e1d1-3159d626112mr5266787a91.5.1750441217907;
+        Fri, 20 Jun 2025 10:40:17 -0700 (PDT)
+Received: from fedora ([2601:646:8081:3770::15bd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d83ce860sm22864805ad.65.2025.06.20.10.40.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 10:40:17 -0700 (PDT)
+From: Collin Funk <collin.funk1@gmail.com>
+To: James Clark <james.clark@linaro.org>
+Cc: linux-perf-users@vger.kernel.org,  linux-kernel@vger.kernel.org,  Peter
+ Zijlstra <peterz@infradead.org>,  Ingo Molnar <mingo@redhat.com>,  Arnaldo
+ Carvalho de Melo <acme@kernel.org>,  Namhyung Kim <namhyung@kernel.org>,
+  Alexander Shishkin <alexander.shishkin@linux.intel.com>,  Jiri Olsa
+ <jolsa@kernel.org>,  Ian Rogers <irogers@google.com>,  Adrian Hunter
+ <adrian.hunter@intel.com>,  "Liang, Kan" <kan.liang@linux.intel.com>
+Subject: Re: [PATCH] perf build: Specify that spellcheck should use the bash
+ dialect.
+In-Reply-To: <20cce2b1-eaad-4565-817b-b094aecee0a5@linaro.org>
+References: <e3751a74be34bbf3781c4644f518702a7270220b.1749785642.git.collin.funk1@gmail.com>
+	<20cce2b1-eaad-4565-817b-b094aecee0a5@linaro.org>
+Date: Fri, 20 Jun 2025 10:40:15 -0700
+Message-ID: <874iwa71mo.fsf@gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250620-scmi-pm-v1-2-c2f02cae5122@nxp.com>
+Content-Type: text/plain
 
-Hi Peng,
+Hi James,
 
-kernel test robot noticed the following build warnings:
+James Clark <james.clark@linaro.org> writes:
 
-[auto build test WARNING on 4325743c7e209ae7845293679a4de94b969f2bef]
+> If we're enforcing bash style with static analysis shouldn't we also
+> change all the hashbangs to bash? Recently there have been changes to
+> change sh to bash in some of the tests so presumably the hard rule for
+> sh is no more?
+>
+> In the past I've had to replace bashisms that didn't work in sh but it
+> would be nice to have only one language to write tests in. I doubt
+> anyone running the tests today is running somewhere without bash, or
+> that changing it will break anything. If anything it will fix more
+> bashisms that have already been written.
+>
+> Just for reference there are 34 #!/bin/bash and 42 #!/bin/sh in
+> tools/perf/tests
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan-OSS/firmware-arm_scmi-bus-Add-pm-ops/20250620-114042
-base:   4325743c7e209ae7845293679a4de94b969f2bef
-patch link:    https://lore.kernel.org/r/20250620-scmi-pm-v1-2-c2f02cae5122%40nxp.com
-patch subject: [PATCH 2/2] firmware: arm_scmi: power_control: Set SCMI_SYSPOWER_IDLE in pm resume
-config: arm-randconfig-002-20250621 (https://download.01.org/0day-ci/archive/20250621/202506210114.2Ix0TkA0-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250621/202506210114.2Ix0TkA0-lkp@intel.com/reproduce)
+That sounds reasonable to me. Writing portable shell is a hassle and if
+we already assume a working /bin/bash in some places, I don't see a
+reason not to use it for the others.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506210114.2Ix0TkA0-lkp@intel.com/
+Regarding this patch, shellcheck will use the file extension or shebang
+only if it does not find a 'shell' directive in a .shellcheckrc. So that
+change will still require this patch.
 
-All warnings (new ones prefixed by >>):
+I saw it was used in other places, so I assumed this patch was fine:
 
->> drivers/firmware/arm_scmi/scmi_power_control.c:363:12: warning: 'scmi_system_power_resume' defined but not used [-Wunused-function]
-     363 | static int scmi_system_power_resume(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~
+$ find tools/perf -name Build | xargs grep bash
+tools/perf/Build:	$(Q)$(call echo-cmd,test)shellcheck -s bash -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+tools/perf/trace/beauty/Build:	$(Q)$(call echo-cmd,test)shellcheck -s bash -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
 
-
-vim +/scmi_system_power_resume +363 drivers/firmware/arm_scmi/scmi_power_control.c
-
-   362	
- > 363	static int scmi_system_power_resume(struct device *dev)
-   364	{
-   365	
-   366		struct scmi_syspower_conf *sc = dev_get_drvdata(dev);
-   367	
-   368		sc->state = SCMI_SYSPOWER_IDLE;
-   369	
-   370		return 0;
-   371	}
-   372	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Collin
 
