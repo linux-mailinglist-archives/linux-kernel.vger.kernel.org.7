@@ -1,189 +1,156 @@
-Return-Path: <linux-kernel+bounces-695793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1867AE1DF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 16:57:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8584CAE1D06
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 16:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A808B4A3C20
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:57:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F136D4A6308
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EAC2BDC03;
-	Fri, 20 Jun 2025 14:57:27 +0000 (UTC)
-Received: from mail-m21469.qiye.163.com (mail-m21469.qiye.163.com [117.135.214.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184EC28E579;
+	Fri, 20 Jun 2025 14:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elgZLdtS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B553C2BD5B9;
-	Fri, 20 Jun 2025 14:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC702E403;
+	Fri, 20 Jun 2025 14:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750431447; cv=none; b=giayTTbtFsXsXuXgV4Um2J+KLKeR/NWhC3P5P+DK07FVx1VnaUThXtEG395Hc7pcHGanxlWFWFTpGjltPLBlOPMvKkCDieDpXVW943bXjDo8uyjB6Fm7/BYcB33IaeHWRiFF6l5MdEf7fcN1AwI4cDHM4q8vVIml3X/EwCzHwLI=
+	t=1750428510; cv=none; b=Nws43CsWO7KUvLEHb7RIpvgn60bwctxmACX6svZj2vGpntT4Gpv26AcKZ63wODItB+Myg0rkj/w5SMTWec1IFhKQgPRTN/I1QoHRWJpTBkz8+BYxbdofhP+pYHbtRIKBLLLh3ph0+BXHaYOnaPV//Eh/j3AdBwS/sIKcMUje56I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750431447; c=relaxed/simple;
-	bh=nEieat/MdT1fvVX1SsqoS+kbALvTEjIirRnEuYybfgw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A1eIb5boLwBimKAMmSrcrLhit1xLCDIRKp+/BcXtzJj0TifsrV3btz0XYJ3PGyft5mUxUGd3vL4QS47jrEoAi1EkOmaB71iDcBsugI9QIwZLNWOABm/WnNaCPj7yfh+JoOJ2FyY13olRqN4FYO8NFOuUdQgXRaF5OmUcvjVxnZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com; spf=pass smtp.mailfrom=hj-micro.com; arc=none smtp.client-ip=117.135.214.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hj-micro.com
-Received: from [172.21.129.96] (unknown [122.224.241.34])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1956def94;
-	Fri, 20 Jun 2025 13:54:05 +0800 (GMT+08:00)
-Message-ID: <b95a60f8-0e1d-4c81-8d5a-e2ea7d083780@hj-micro.com>
-Date: Fri, 20 Jun 2025 13:54:05 +0800
+	s=arc-20240116; t=1750428510; c=relaxed/simple;
+	bh=XEAKrcXRYWA6SsaxOrWHhacPY6lqTdOvMcVrjzpRH/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KwRwviF1TXsQBpr/YApC8UMHkEJXsmAyV7+6Qc5/bINgHR8jOzR/akDIHeQl8SgnBTy7j2u4LTLdBiso0ebYuK+eCFtaRO9KdP6edm9AhOIzAdEA5hPrqUWPhV/4sTW1RAPRH319j1bIEyy827NqPB4LcA8odHYXVV1oARsm6w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elgZLdtS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EC81C4CEEE;
+	Fri, 20 Jun 2025 14:08:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750428509;
+	bh=XEAKrcXRYWA6SsaxOrWHhacPY6lqTdOvMcVrjzpRH/I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=elgZLdtSf5MSXVVhsKa1KhzQZoajyVz8+2bJ+SfsGzNb2IIfYJ2aCcEEHDZ8sS89a
+	 X/2BNn60pcUQpIehe5eAoDZLtd5MkiUxpifSPWkGHp7soCNw6O4eRASTd6W1RlCkzY
+	 lLH8GF/nkjwyytsnV4PCvTEPt6cnFGH80fQk75GOcpTdlH5TPRXPm6vowwAnUR2y5p
+	 uq7aBCDcNzQX5eq/PX7pvtHccIkO8qm1QxRZsAumOoJmTCaJWInH4UgRcMgRzRSYXU
+	 DrWjnqyXH3anyJ2h8wG6h5fcfJk3Gm5pHapTgIfg/Y6UySDEK/djG3Lx/yuCVZDeGU
+	 MRgHBzogtQPjw==
+Date: Fri, 20 Jun 2025 15:08:24 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Barker <paul.barker@sancloud.com>,
+	Marc Murphy <marc.murphy@sancloud.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Bajjuri Praneeth <praneeth@ti.com>, Andrew Davis <afd@ti.com>
+Subject: Re: [PATCH 1/2] dt-bindings: omap: Add missing AM33xx compatible
+ strings
+Message-ID: <20250620-mortally-fifteen-7a2566545a5d@spud>
+References: <20250620-ti_dts_clean-v1-0-786a3059bca7@bootlin.com>
+ <20250620-ti_dts_clean-v1-1-786a3059bca7@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] PCI: pciehp: Replace fixed delay with polling for
- slot power-off
-To: Lukas Wunner <lukas@wunner.de>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- peter.du@hj-micro.com, jemma.zhang@hj-micro.com
-References: <20250619093228.283171-1-andy.xu@hj-micro.com>
- <aFP598Yyl0el1uKh@wunner.de>
-From: Hongbo Yao <andy.xu@hj-micro.com>
-In-Reply-To: <aFP598Yyl0el1uKh@wunner.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTBpOVh0ZT01PGB9LSB1MSlYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSUlVSUlPVUlPSlVIT1lXWRYaDxIVHRRZQVlPS0hVQkJJTktVSktLVU
-	pCS0JZBg++
-X-HM-Tid: 0a978be6c2a103afkunm0488a5943ba0a8
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mzo6Pww*KzE3DjQ9CAI2FjYO
-	KC5PFDVVSlVKTE5LSEJDQ09NTUlKVTMWGhIXVRoVHwJVAw47ExFWFhIYCRRVGBQWRVlXWRILWUFZ
-	SklJVUlJT1VJT0pVSE9ZV1kIAVlBTktNSzcG
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7E0pVWu7aCWflRJE"
+Content-Disposition: inline
+In-Reply-To: <20250620-ti_dts_clean-v1-1-786a3059bca7@bootlin.com>
 
 
+--7E0pVWu7aCWflRJE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-在 2025/6/19 19:52, Lukas Wunner 写道:
-> On Thu, Jun 19, 2025 at 05:32:28PM +0800, Hongbo Yao wrote:
->> Fixed 1-second delay in remove_board() fails to accommodate certain
->> hardware like multi-host OCP cards, which exhibit longer power-off
->> latencies.
-> 
-> Please name the affected product(s).
-> 
-> They don't seem to comply to the spec.  How prevalent are they?
-> If there are only few deployed, quirks like this are probably
-> best addressed by an out-of-tree patch.
-> 
+On Fri, Jun 20, 2025 at 10:24:08AM +0200, Kory Maincent wrote:
+> Add several compatible strings that were missing from the binding
+> documentation for AM33xx-based boards. Update vendor prefix from
+> "ti" to "beagle" for BeagleBone to match actual hardware vendors.
+>=20
+> Reviewed-by: Andrew Davis <afd@ti.com>
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-Hi Lukas,
-Thank you for reviewing the patch.
+This is a v1 apparently, what is the relationship between this patch and
+https://lore.kernel.org/all/20250617-bbg-v4-1-827cbd606db6@bootlin.com/
+?
 
-The affected hardware configuration:
- - Host system: Arm Neoverse N2 based server
- - Multi-host OCP card: Mellanox Technologies MT2910 Family [ConnectX-7]
+> ---
+>  Documentation/devicetree/bindings/arm/ti/omap.yaml | 22 ++++++++++++++++=
++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/ti/omap.yaml b/Documen=
+tation/devicetree/bindings/arm/ti/omap.yaml
+> index 3603edd7361d..7e0d5d376d57 100644
+> --- a/Documentation/devicetree/bindings/arm/ti/omap.yaml
+> +++ b/Documentation/devicetree/bindings/arm/ti/omap.yaml
+> @@ -104,12 +104,32 @@ properties:
+>        - description: TI AM33 based platform
+>          items:
+>            - enum:
+> +              - beagle,am335x-bone
+> +              - beagle,am335x-bone-black
+> +              - beagle,am335x-bone-black-wireless
+> +              - beagle,am335x-bone-blue
+> +              - beagle,am335x-pocketbeagle
+> +              - bosch,am335x-guardian
+> +              - bosch,am335x-shc
+>                - compulab,cm-t335
+> +              - grinn,am335x-chiliboard
+> +              - grinn,am335x-chilisom
+> +              - gumstix,am335x-pepper
+> +              - isee,am335x-base0033
+> +              - moxa,uc-2101
+>                - moxa,uc-8100-me-t
+> +              - myir,myc-am335x
+> +              - myir,myd-am335x
+>                - novatech,am335x-lxm
+> -              - ti,am335x-bone
+> +              - oct,osd3358-sm-refdesign
+> +              - sancloud,am335x-boneenhanced
+> +              - seeed,am335x-bone-green
+> +              - seeed,am335x-bone-green-wireless
+> +              - tcl,am335x-sl50
+>                - ti,am335x-evm
+> +              - ti,am335x-evmsk
+>                - ti,am3359-icev2
+> +              - vscom,onrisc
+>            - const: ti,am33xx
+> =20
+>        - description: Compulab board variants based on TI AM33
+>=20
+> --=20
+> 2.43.0
+>=20
 
+--7E0pVWu7aCWflRJE
+Content-Type: application/pgp-signature; name="signature.asc"
 
->> Logs before fix:
->> [157.778307] pcieport 0003:00:00.0: pciehp: pending interrupts 0x0001 from Slot Status
->> [157.778321] pcieport 0003:00:00.0: pciehp: Slot(31): Attention button pressed
->> [157.785445] pcieport 0003:00:00.0: pciehp: Slot(31): Powering off due to button press
->> [157.798931] pcieport 000b:00:02.0: pciehp: pending interrupts 0x0001 from Slot Status
-> 
-> This log excerpt mixes messages from two separate hotplug ports
-> (0003:00:00.0 and 000b:00:02.0).  Are these hotplug ports related?
-> If not, please reduce the log excerpt to a single hotplug port
-> to avoid confusion.
-> 
-Sorry for not providing adequate context in the patch submission.
+-----BEGIN PGP SIGNATURE-----
 
-Yes, these two hotplug ports are related - they are part of the same
-physical multi-host OCP card.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaFVrWAAKCRB4tDGHoIJi
+0jdgAP0cmxprJm+ho6cmKXm0QY2B9SykMVlWsQP1CWYb2xnNnQD8DfGR0xJiuQgh
+GmK0oS8J1J/UoVgllbT3pROzldr3EAk=
+=AdaR
+-----END PGP SIGNATURE-----
 
-Key points:
-1. The OCP card has two independent PCIe endpoints
-2. Each endpoint connected to a PCIe root port:
-   - Endpoint 1 → Port 0003:00:00.0
-   - Endpoint 2 → Port 000b:00:02.0
-3. Both endpoints share a common power domain
-4. Full power-off occurs only after BOTH endpoints are powered down
-5. DLLSC is triggered only after complete power-off
-
-Critical log events:
-[157.778307] Both ports: Attention button pressed
-[167.540342] Port 0003:00:00.0 power off command issued
-[172.289366] Port 000b:00:02.0 power off command issued
-[172.302385] Card fully powered off, trigger AER interrupts and DLLSC
-
-Full power-off occurs only after BOTH ports complete their sequences,
-taking about 5s total.
-
->> --- a/drivers/pci/hotplug/pciehp_ctrl.c
->> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
->> @@ -30,6 +30,25 @@
->>  #define SAFE_REMOVAL	 true
->>  #define SURPRISE_REMOVAL false
->>  
->> +static void pciehp_wait_for_link_inactive(struct controller *ctrl)
->> +{
->> +	u16 lnk_status;
->> +	int timeout = 10000, step = 20;
->> +
->> +	do {
->> +		pcie_capability_read_word(ctrl->pcie->port, PCI_EXP_LNKSTA,
->> +					  &lnk_status);
->> +
->> +		if (!(lnk_status & PCI_EXP_LNKSTA_DLLLA))
->> +			return;
->> +
->> +		msleep(step);
->> +		timeout -= step;
->> +	} while (timeout >= 0);
->> +
->> +	ctrl_dbg(ctrl, "Timeout waiting for link inactive state\n");
->> +}
-> 
-> Any chance you can use one of the existing helpers, such as
-> pcie_wait_for_link()?
-> 
-> Is the 10 second delay chosen arbitrarily or how did you come up
-> with it?  How much time do the affected products really need?
->
-Ok,  I will try to use pcie_wait_for_link().
-
-The 10-second timeout was determined from actual log observations. The
-power-off process for the multi-host OCP card takes approximately 5-9
-seconds in our measurements.
-
->> @@ -119,8 +138,11 @@ static void remove_board(struct controller *ctrl, bool safe_removal)
->>  		 * After turning power off, we must wait for at least 1 second
->>  		 * before taking any action that relies on power having been
->>  		 * removed from the slot/adapter.
->> +		 *
->> +		 * Extended wait with polling to ensure hardware has completed
->> +		 * power-off sequence.
->>  		 */
->> -		msleep(1000);
->> +		pciehp_wait_for_link_inactive(ctrl);
->>  
->>  		/* Ignore link or presence changes caused by power off */
->>  		atomic_and(~(PCI_EXP_SLTSTA_DLLSC | PCI_EXP_SLTSTA_PDC),
-> 
-> Please keep the msleep(1000), that's the minimum we need to wait
-> per PCIe r6.3 sec 6.7.1.8.
-> 
-> Please make the extra wait for link down conditional on
-> ctrl->pcie->port->link_active_reporting.  (DLLLA reporting is
-> optional for hotplug ports conforming to older spec revisions.)
-> 
-Thank you for the valuable suggestion. i'll  revise the patch
-
-Best regards,
-Hongbo.> Thanks,
-> 
-> Lukas
-> 
-> 
-
+--7E0pVWu7aCWflRJE--
 
