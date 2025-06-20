@@ -1,282 +1,109 @@
-Return-Path: <linux-kernel+bounces-695008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E59AE13CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:29:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC719AE13D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C72463B82FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 06:29:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAB633B914E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 06:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F3222156E;
-	Fri, 20 Jun 2025 06:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EqDyvRKw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CE621FF58;
-	Fri, 20 Jun 2025 06:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5AC20D50B;
+	Fri, 20 Jun 2025 06:30:06 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FAD221290
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 06:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750400985; cv=none; b=Refm7Q7bNsROcTMY8ZiCP1WxhK+GYG0UAGPFrP81o898lXQ87FQFiU5Dq4nnhZ/ejBRj6jgVJc5427Qkn/2j6dVJRGXS5qmTK07lUvo435bwD1gIstjv09P6ftuDKxHMjoAFo+oxHpWwqf1kQ/5nHtbuc8eU+DvjuRfAZkaHOyQ=
+	t=1750401005; cv=none; b=oSddXycv+85k6JW1YoSmADFQ+SiMgMvPYBKPG6PO2NZ9I5Mzs975XnmeFJmoGTyFyyGzh9W3LMIyIfBDyDcSHi927lmyUXLcns1bm86AVgj9QMDOgNr6POcSj/VuL4e801qvUK2z5IWGvXsCu+3LmiT1QT3mkCkXMNonaNCOCak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750400985; c=relaxed/simple;
-	bh=iUugU0beBkguA+V8gL0p/ImULSe9RWyQ1obwjtE8WFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZlVp7UtEauykYSs3/s+yXB1RcHHFvvkUVA6VcHNX8qx+Ksbu8q+x9Lj3C73evNi0gsT3HlN6kX/tx7MbaHkcyXE4lXjX2hhFzm5Y/AcV+ELM/g2OWPiXUTYChDVrQcymmhUOIB/hqs064QfoxynQzTtHGa0oWRz80N74AypvlFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EqDyvRKw; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750400984; x=1781936984;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iUugU0beBkguA+V8gL0p/ImULSe9RWyQ1obwjtE8WFk=;
-  b=EqDyvRKwUs8d88zfwpLY+dwIKr5RTHS4qjFrq54S/DY6wHTX1LuVBEkC
-   YrPsRvlP7MNS3M87ZHzAVzgT9zuF83fPH/e5vml2QokiGGmNPNRfhbWX6
-   M8tNpUBCUTYLREsp/+s+8NpatCX86xEZfkWRpPyGC855xUn6Wcy7o4kEm
-   /NTndV5KHM/6ydE/7WpqCqXXeP3plSvsFI4eUrleJ1EpJknCRrY3QqqZk
-   3vPhEPCibEffk3jC8X3SRlR2r/CaaK1BwoBzfHAB+30QRoZDpJxeglizg
-   +4OPfVrsQaRUUTeBmX35ZGYpz2TsdwFbYkPbO/9VkfGjcoP4SuMURSDg5
-   g==;
-X-CSE-ConnectionGUID: 1UrlVzUsRz2P5pVHoMrlWw==
-X-CSE-MsgGUID: 4ya3r4SoS9S4tUWK9d/+Ew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="52799557"
-X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
-   d="scan'208";a="52799557"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 23:29:43 -0700
-X-CSE-ConnectionGUID: HyJO1NXySR6iHuubhhWGag==
-X-CSE-MsgGUID: 00rE7B2WR9WdVeFR74EtcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
-   d="scan'208";a="151370534"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 19 Jun 2025 23:29:38 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uSVFn-000LQy-1v;
-	Fri, 20 Jun 2025 06:29:35 +0000
-Date: Fri, 20 Jun 2025 14:28:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>,
-	linux-security-module@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, mic@digikod.net, kees@kernel.org,
-	stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp,
-	song@kernel.org, linux-api@vger.kernel.org,
-	apparmor@lists.ubuntu.com, linux-kernel@vger.kernel.org,
-	Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>
-Subject: Re: [PATCH v2 2/3] lsm: introduce security_lsm_config_*_policy hooks
-Message-ID: <202506201415.KiEs36AG-lkp@intel.com>
-References: <20250619181600.478038-3-maxime.belair@canonical.com>
+	s=arc-20240116; t=1750401005; c=relaxed/simple;
+	bh=ndDVKrpY8hPr55MamAh+uliDP+m6d/vRSWkwjOVyyJw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mcggu9wyGcrk5euMEJq04KUguIWbXxbSS9yiUdMnp4Ms5FY8ZhPE4NrQlfy82xvewGiElta+Bc3Ag4+xl9AZRM8nj33jrSvKhnXSDXeugMYmemfaAtLohK5nSGzWH0TXDwsgy0k/pmWghfGAvbV9qXl5xQw+7tVeC6xIDg4k9Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-cc-6854ffe17f4d
+From: Yunjeong Mun <yunjeong.mun@sk.com>
+To: SeongJae Park <sj@kernel.org>
+Cc: akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel_team@skhynix.com,
+	Honggyu Kim <honggyu.kim@sk.com>
+Subject: Re: [PATCH] samples/damon: add parameters for node0 memory usage
+Date: Fri, 20 Jun 2025 15:29:46 +0900
+Message-ID: <20250620062951.1572-1-yunjeong.mun@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <20250619164636.58743-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250619181600.478038-3-maxime.belair@canonical.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsXC9ZZnke7D/yEZBv+ncVvMWb+GzeLJ/9+s
+	Fpd3zWGzuLfmP6vF4a9vmBxYPTat6mTz2PRpErvHiRm/WTxebJ7J6PF5k1wAaxSXTUpqTmZZ
+	apG+XQJXxvrdbxkLpnFVLJvVzdTAOJ2ji5GTQ0LARGLqvwcsMPb1rmvMIDabgIbEwUMnwWwR
+	AUWJc48vsnYxcnEwC6xmlNg8uZ0NJCEs4Clx68VERhCbRUBV4kjzBrA4r4C5xN6u5UwQQzUl
+	Gi7dA7M5BYwlnrU0g9lCAjwSrzbsZ4SoF5Q4OfMJ2BHMAvISzVtnM4MskxCYwSZx9OE+qOsk
+	JQ6uuMEygZF/FpKeWUh6FjAyrWIUyswry03MzDHRy6jMy6zQS87P3cQIDM5ltX+idzB+uhB8
+	iFGAg1GJh3fHl+AMIdbEsuLK3EOMEhzMSiK8i0/4ZQjxpiRWVqUW5ccXleakFh9ilOZgURLn
+	NfpWniIkkJ5YkpqdmlqQWgSTZeLglGpgVF9+/OSp3CvHF0sydq/bG1K9I5eTve7mHcHqk3tz
+	vA8cuVpzW5zTi33exGbFtydevIjfWvVKh1ufO64otqZmzp2Q27ue+e1lya1jFHINffvtacix
+	2GU2d6/9OXJR8tF9pjUaW9bX13GrGUX7Bcx7yRz1bsHOircPb2/KKO8U3/3kgNaVp5eTNyux
+	FGckGmoxFxUnAgC+LTaISgIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOLMWRmVeSWpSXmKPExsXCNUNWR/fB/5AMg//LrS3mrF/DZvHk/29W
+	i8/PXjNbHJ57ktXi8q45bBb31vxntTj89Q2TA7vHplWdbB6bPk1i9zgx4zeLx4vNMxk9vt32
+	8Fj84gOTx+dNcgHsUVw2Kak5mWWpRfp2CVwZ63e/ZSyYxlWxbFY3UwPjdI4uRk4OCQETietd
+	15hBbDYBDYmDh06C2SICihLnHl9k7WLk4mAWWM0osXlyOxtIQljAU+LWi4mMIDaLgKrEkeYN
+	YHFeAXOJvV3LmSCGako0XLoHZnMKGEs8a2kGs4UEeCRebdjPCFEvKHFy5hMWEJtZQF6ieets
+	5gmMPLOQpGYhSS1gZFrFKJKZV5abmJljqlecnVGZl1mhl5yfu4kRGHzLav9M3MH45bL7IUYB
+	DkYlHt4dX4IzhFgTy4orcw8xSnAwK4nwLj7hlyHEm5JYWZValB9fVJqTWnyIUZqDRUmc1ys8
+	NUFIID2xJDU7NbUgtQgmy8TBKdXAeL9Csst5XbyQztygMz33ryv/P6rOefOqgF/WpxWN/Z++
+	n6p1kHN5Lias8ZWX0yq1/80rg8c37EzYTt79tv2V3nS1IwuStfxmXtec97zyyev10VrlF1IF
+	M0y43k5+u1zont8CJ6mubaKlhTG+955dmuBQwn1kj8nacp656o8fbCg9o+vCfPPNJiWW4oxE
+	Qy3mouJEACWiEao6AgAA
+X-CFilter-Loop: Reflected
 
-Hi Maxime,
+Hi Andrew, please check the patch below. I missed CC'ing you on the previous
+email.
 
-kernel test robot noticed the following build errors:
+On Thu, 19 Jun 2025 09:46:36 -0700 SeongJae Park <sj@kernel.org> wrote:
+> On Thu, 19 Jun 2025 14:03:12 +0900 Yunjeong Mun <yunjeong.mun@sk.com> wrote:
+> 
+> > This patch changes the hard-coded quota goal metric values into sysfs
+> > knobs: `node0_mem_used_bp` and `node0_mem_free_bp`. These knobs
+> > represent the used and free memory ratio of node0 in basis points
+> > (bp, where 1 bp = 0.01%). As mentioned in [1], this patch is developed
+> > under the assumption that node0 is always the fast-tier in a two-tiers
+> > memory setup.
+> > 
+> > [1] https://lore.kernel.org/linux-mm/20250420194030.75838-8-sj@kernel.org/
+> 
+> Thank you for this patch.  Please note that this is just a sample code, and
+> hence there will be no strict user space compatibility support.
+> 
 
-[auto build test ERROR on 9c32cda43eb78f78c73aee4aa344b777714e259b]
+Thanks for reviewing. As you said, this mtier sample module needs further 
+development for final version, like automatically detecting memory tiers and
+adding some useful knobs. May I continue working on the mtier module? 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-B-lair/Wire-up-lsm_config_self_policy-and-lsm_config_system_policy-syscalls/20250620-022714
-base:   9c32cda43eb78f78c73aee4aa344b777714e259b
-patch link:    https://lore.kernel.org/r/20250619181600.478038-3-maxime.belair%40canonical.com
-patch subject: [PATCH v2 2/3] lsm: introduce security_lsm_config_*_policy hooks
-config: x86_64-buildonly-randconfig-003-20250620 (https://download.01.org/0day-ci/archive/20250620/202506201415.KiEs36AG-lkp@intel.com/config)
-compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250620/202506201415.KiEs36AG-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506201415.KiEs36AG-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from kernel/fork.c:52:
->> include/linux/security.h:1614:2: error: expected function body after function declarator
-    1614 |         return -EOPNOTSUPP;
-         |         ^
->> include/linux/security.h:1615:1: error: extraneous closing brace ('}')
-    1615 | }
-         | ^
-   include/linux/security.h:1620:2: error: expected function body after function declarator
-    1620 |         return -EOPNOTSUPP;
-         |         ^
-   include/linux/security.h:1621:1: error: extraneous closing brace ('}')
-    1621 | }
-         | ^
-   4 errors generated.
---
-   In file included from kernel/sysctl.c:29:
->> include/linux/security.h:1614:2: error: expected function body after function declarator
-    1614 |         return -EOPNOTSUPP;
-         |         ^
->> include/linux/security.h:1615:1: error: extraneous closing brace ('}')
-    1615 | }
-         | ^
-   include/linux/security.h:1620:2: error: expected function body after function declarator
-    1620 |         return -EOPNOTSUPP;
-         |         ^
-   include/linux/security.h:1621:1: error: extraneous closing brace ('}')
-    1621 | }
-         | ^
-   In file included from kernel/sysctl.c:46:
-   In file included from include/linux/nfs_fs.h:31:
-   In file included from include/linux/sunrpc/auth.h:13:
-   In file included from include/linux/sunrpc/sched.h:19:
-   include/linux/sunrpc/xdr.h:803:46: warning: result of comparison of constant 4611686018427387903 with expression of type '__u32' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
-     803 |         if (U32_MAX >= SIZE_MAX / sizeof(*p) && len > SIZE_MAX / sizeof(*p))
-         |                                                 ~~~ ^ ~~~~~~~~~~~~~~~~~~~~~
-   1 warning and 4 errors generated.
---
-   In file included from kernel/signal.c:30:
->> include/linux/security.h:1614:2: error: expected function body after function declarator
-    1614 |         return -EOPNOTSUPP;
-         |         ^
->> include/linux/security.h:1615:1: error: extraneous closing brace ('}')
-    1615 | }
-         | ^
-   include/linux/security.h:1620:2: error: expected function body after function declarator
-    1620 |         return -EOPNOTSUPP;
-         |         ^
-   include/linux/security.h:1621:1: error: extraneous closing brace ('}')
-    1621 | }
-         | ^
-   kernel/signal.c:142:37: warning: array index 3 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-     142 |         case 4: ready  = signal->sig[3] &~ blocked->sig[3];
-         |                                            ^            ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   kernel/signal.c:142:19: warning: array index 3 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-     142 |         case 4: ready  = signal->sig[3] &~ blocked->sig[3];
-         |                          ^           ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   kernel/signal.c:143:30: warning: array index 2 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-     143 |                 ready |= signal->sig[2] &~ blocked->sig[2];
-         |                                            ^            ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   kernel/signal.c:143:12: warning: array index 2 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-     143 |                 ready |= signal->sig[2] &~ blocked->sig[2];
-         |                          ^           ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   kernel/signal.c:144:30: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-     144 |                 ready |= signal->sig[1] &~ blocked->sig[1];
-         |                                            ^            ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   kernel/signal.c:144:12: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-     144 |                 ready |= signal->sig[1] &~ blocked->sig[1];
-         |                          ^           ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   kernel/signal.c:148:37: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-     148 |         case 2: ready  = signal->sig[1] &~ blocked->sig[1];
-         |                                            ^            ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   kernel/signal.c:148:19: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-     148 |         case 2: ready  = signal->sig[1] &~ blocked->sig[1];
-         |                          ^           ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   8 warnings and 4 errors generated.
---
-   In file included from kernel/dma/swiotlb.c:53:
-   In file included from include/trace/events/swiotlb.h:41:
-   In file included from include/trace/define_trace.h:119:
-   In file included from include/trace/trace_events.h:21:
-   In file included from include/linux/trace_events.h:10:
-   In file included from include/linux/perf_event.h:62:
->> include/linux/security.h:1614:2: error: expected function body after function declarator
-    1614 |         return -EOPNOTSUPP;
-         |         ^
->> include/linux/security.h:1615:1: error: extraneous closing brace ('}')
-    1615 | }
-         | ^
-   include/linux/security.h:1620:2: error: expected function body after function declarator
-    1620 |         return -EOPNOTSUPP;
-         |         ^
-   include/linux/security.h:1621:1: error: extraneous closing brace ('}')
-    1621 | }
-         | ^
-   kernel/dma/swiotlb.c:639:20: warning: shift count >= width of type [-Wshift-count-overflow]
-     639 |                     phys_limit < DMA_BIT_MASK(64) &&
-         |                                  ^~~~~~~~~~~~~~~~
-   include/linux/dma-mapping.h:73:54: note: expanded from macro 'DMA_BIT_MASK'
-      73 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-         |                                                      ^ ~~~
-   1 warning and 4 errors generated.
---
-   In file included from kernel/events/core.c:34:
-   In file included from include/linux/syscalls.h:94:
-   In file included from include/trace/syscall.h:7:
-   In file included from include/linux/trace_events.h:10:
-   In file included from include/linux/perf_event.h:62:
->> include/linux/security.h:1614:2: error: expected function body after function declarator
-    1614 |         return -EOPNOTSUPP;
-         |         ^
->> include/linux/security.h:1615:1: error: extraneous closing brace ('}')
-    1615 | }
-         | ^
-   include/linux/security.h:1620:2: error: expected function body after function declarator
-    1620 |         return -EOPNOTSUPP;
-         |         ^
-   include/linux/security.h:1621:1: error: extraneous closing brace ('}')
-    1621 | }
-         | ^
-   In file included from kernel/events/core.c:43:
-   include/linux/mman.h:157:9: warning: division by zero is undefined [-Wdivision-by-zero]
-     157 |                _calc_vm_trans(flags, MAP_SYNC,       VM_SYNC      ) |
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/mman.h:135:21: note: expanded from macro '_calc_vm_trans'
-     135 |    : ((x) & (bit1)) / ((bit1) / (bit2))))
-         |                     ^ ~~~~~~~~~~~~~~~~~
-   include/linux/mman.h:158:9: warning: division by zero is undefined [-Wdivision-by-zero]
-     158 |                _calc_vm_trans(flags, MAP_STACK,      VM_NOHUGEPAGE) |
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/mman.h:135:21: note: expanded from macro '_calc_vm_trans'
-     135 |    : ((x) & (bit1)) / ((bit1) / (bit2))))
-         |                     ^ ~~~~~~~~~~~~~~~~~
-   2 warnings and 4 errors generated.
-
-
-vim +1614 include/linux/security.h
-
-  1610	
-  1611	static int security_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
-  1612						   size_t size, u32 flags)
-  1613	
-> 1614		return -EOPNOTSUPP;
-> 1615	}
-  1616	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> > 
+> > Suggested-by: Honggyu Kim <honggyu.kim@sk.com>
+> > Signed-off-by: Yunjeong Mun <yunjeong.mun@sk.com>
+> 
+> Reviewed-by: SeongJae Park <sj@kernel.org>
+> 
+> 
+> Thanks,
+> SJ
+> 
+> [...]
 
