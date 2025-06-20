@@ -1,140 +1,106 @@
-Return-Path: <linux-kernel+bounces-695748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15497AE1D6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 16:34:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48999AE1D72
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 16:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE4921BC03A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:34:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6910B166236
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C0228DEFA;
-	Fri, 20 Jun 2025 14:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A05290DA1;
+	Fri, 20 Jun 2025 14:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DeAhNqRY"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rkcicpSV"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE02417BD3;
-	Fri, 20 Jun 2025 14:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E6F28FD;
+	Fri, 20 Jun 2025 14:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750430053; cv=none; b=KzWSzVKkj3whgeEI5y+I80VM/hgmrOkt77w+E0LlANpcHjX3tIiyxqJHpDzqew5/ZUXSdCaRuCaT9zlc34Li7LG4PNr1w/gwZEDz5W2pxlnxMLy3h/c1Rbt7ySWyvV8MH/+vFOxC8bWuKle/X/LgCm5i1Wx9o0D4j7V1s37qVdY=
+	t=1750430086; cv=none; b=jnuNDsbvVg3S6Xrvxupw3uI+dqlO8TDlg71cDFFp7tSBChbDPMche7mIWOxGJHGSF/Rk9mD4JUEmHpJblo5cyWKhvXRSqIz6uQpq8P+dvcVT8zQJzd2a6VVyphdakuF21RhsBLKR6s1+FJhNH6ZGQcC0GeA//0W9AAAt3Tu9tFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750430053; c=relaxed/simple;
-	bh=lzjskJuu7ksH1CFy3LasEcflxgPRL8gOIIZ6qJVcPoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tTVtjHV3JXq3l7HmV7x21NN42rlorRcBJLYTWYYN9x0E4LJ2GlVnFcKV07AklPwWtkNn/yYdstcOZ1Sgr4EQPD+Q1eWS8hB9WROeGLBET5Cuc2irT7AP5dc6qhasSQMj+/do71N1KwNNS7xDuCRdK/0ZHoK0ZKHRwtbKT9F15ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DeAhNqRY; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55K6iL2C002720;
-	Fri, 20 Jun 2025 14:33:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=vfYteA
-	MXlJGzKlkEORfRB/OXSRRP+Xi2l+/4pMid+Qw=; b=DeAhNqRYVMJTPTfWVP+p1V
-	uuhyKynIzKPEPYvpa4yifolSeT9nMApH5RcoRavIY3eUSx8waMZrh0KThf3Qd3Vd
-	7byhPZL5qKZciX3bF2A9xqTZeDDqju10a33/gg2sX/EFRNdInJMqC/wWqzG3Byb8
-	hHZgUynuBvIj4irt/LBFU4aSD6QuW3iJZoh8Hrj9gXzOrMtSJAgO+SkDPaHtdHoh
-	BwvW3q8yVhHnU43y0gQK4zjRDzFNhElNOGX4txkix2vvQ3KNqY88g8vxamKxrNAS
-	E73k4bs3SYFWPNKKnLvxjhxLxe3TgbRrQAqlwJt8Qphpl/yi/bhWYg5tSJK2EDbQ
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47beet9uh4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Jun 2025 14:33:58 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55KBROXr014275;
-	Fri, 20 Jun 2025 14:33:57 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 479p42u7qq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Jun 2025 14:33:57 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55KEXu8d55771596
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 20 Jun 2025 14:33:56 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9E9AB58055;
-	Fri, 20 Jun 2025 14:33:56 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A50975804E;
-	Fri, 20 Jun 2025 14:33:51 +0000 (GMT)
-Received: from [9.61.191.218] (unknown [9.61.191.218])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 20 Jun 2025 14:33:51 +0000 (GMT)
-Message-ID: <ef5aceb9-a5ec-489c-88e3-f674d59299ad@linux.ibm.com>
-Date: Fri, 20 Jun 2025 20:03:50 +0530
+	s=arc-20240116; t=1750430086; c=relaxed/simple;
+	bh=eQB5eV4iQShXILJeHvcYp/UCB2dfeS5Ieo8zVzXk3Zo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=btMvsgB7XlB+e+vrTDIGnsCJBITk6QU3NlxHTUYw8KLsFUb9SESBzYzQN4Fdq2sh/nL97RMvR2GBaUGQ1DEAxeKCopTkNvyVJWKXQkNWXqmgKAnoTyzL6BrsUdC0dEaF7Nw0K5lvpl6+xC0xAW+JUsQOQCXw8wh0+WWOWf68314=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rkcicpSV; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=d9fw5HN0v/kKWel+rpUYgeRmoN6kOXJkrXAVRSMObCQ=; b=rkcicpSVsY9/iNejtlpkTvRkk+
+	f6/CplQO0sPdjeHV9G7GmsVOvMuUl5T0SQtUAUFodvOQ1VcR7uW1ytVPlw/JOs7vwkPZDKoommpRl
+	I6uP76BWOwj1oLpFBLxetE8kQg0FMOrTPjZAeO+3ldSzsEBvgFhap2vj7TcpAhdrsmfyNkMO1sjQ4
+	qXoHeMfABSqx2hnkXQtTACb4y/KCmK2qNTuAkO/ojr7+VYZEiMiNjYg9U0fWHtUOI4WyzJQG/D/v8
+	MhUxXfCo8hGF3VZY56PJDFJXz/IsnK1Lghci6nmJzjUTXkE1EkhKzxgdhSRXZSMFsOJPDoysgcQWp
+	BuPx1G8A==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uScot-0000000CosM-2xWJ;
+	Fri, 20 Jun 2025 14:34:19 +0000
+Date: Fri, 20 Jun 2025 15:34:19 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Shivank Garg <shivankg@amd.com>
+Cc: seanjc@google.com, david@redhat.com, vbabka@suse.cz,
+	akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com,
+	brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	pvorel@suse.cz, bfoster@redhat.com, tabba@google.com,
+	vannapurve@google.com, chao.gao@intel.com, bharata@amd.com,
+	nikunj@amd.com, michael.day@amd.com, yan.y.zhao@intel.com,
+	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
+	michael.roth@amd.com, aik@amd.com, jgg@nvidia.com,
+	kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz,
+	rppt@kernel.org, hch@infradead.org, cgzones@googlemail.com,
+	ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
+	ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
+	rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
+	kent.overstreet@linux.dev, ying.huang@linux.alibaba.com,
+	apopple@nvidia.com, chao.p.peng@intel.com, amit@infradead.org,
+	ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com,
+	gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com,
+	papaluri@amd.com, yuzhao@google.com, suzuki.poulose@arm.com,
+	quic_eberman@quicinc.com, aneeshkumar.kizhakeveetil@arm.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-coco@lists.linux.dev
+Subject: Re: [RFC PATCH v8 3/7] mm/filemap: Add mempolicy support to the
+ filemap layer
+Message-ID: <aFVxa-PRavav6pNd@casper.infradead.org>
+References: <20250618112935.7629-1-shivankg@amd.com>
+ <20250618112935.7629-4-shivankg@amd.com>
+ <aFQ0v0DfWgUvqK6L@casper.infradead.org>
+ <ce88982b-0a01-4673-a0f2-d490b66d0fa6@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] block: use chunk_sectors when evaluating stacked
- atomic write limits
-To: John Garry <john.g.garry@oracle.com>, agk@redhat.com, snitzer@kernel.org,
-        mpatocka@redhat.com, song@kernel.org, yukuai3@huawei.com, hch@lst.de,
-        axboe@kernel.dk
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
-        ojaswin@linux.ibm.com, martin.petersen@oracle.com
-References: <20250618083737.4084373-1-john.g.garry@oracle.com>
- <20250618083737.4084373-6-john.g.garry@oracle.com>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <20250618083737.4084373-6-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: XcNidTvOBNptHj57jYIgusGfoSy_ae7g
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIwMDA5OCBTYWx0ZWRfXwUA8Hpzlr1c4 4r4qpxnTQqI6C2HqvVrcBkxl2O8VW4+Htre7pSm5yXjlUxRm5Re671h++vl6Cz1VZ+eAHinNlm1 Q3xaao9GGxmtkNZuyB3+nd3FE3c0r+e7GMFKO4ksRna0s1Y3hZIitVWCgjwN3CJJNZa7uPW1Qf9
- uCag4T1mLFVWVxo1xs3OqdLBTP5ur2jlIG1ug6zVtSndKLJdHD/tU2GftGbOCXtMgP22xxuOUQ7 Wc33OIsA4plkJgHfxBdEy0VE1RpWOALjPgiNfpilvYmqHFwcja8jz+QPUS0O5pdPye7soNqA0Hp 0JfucHqVqiy4cn2/QwTzpZosPzUdWltR6EqY8f7UcwoHnzIrMcSWSBq63Jjd3JGFWRve0bnJQ9V
- nq8fr/T+IhqUbsCh/ARjeMxDs37M3qTNx9s2xGd8NHPn6FoSVPJnVw57EX3sPhvDijmyOw2a
-X-Authority-Analysis: v=2.4 cv=PrSTbxM3 c=1 sm=1 tr=0 ts=68557156 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=yPCof4ZbAAAA:8 a=fRhigxJsmYGPnd04RnMA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: XcNidTvOBNptHj57jYIgusGfoSy_ae7g
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-20_05,2025-06-20_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
- bulkscore=0 priorityscore=1501 adultscore=0 suspectscore=0 spamscore=0
- phishscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506200098
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce88982b-0a01-4673-a0f2-d490b66d0fa6@amd.com>
 
+On Fri, Jun 20, 2025 at 11:29:20AM +0530, Shivank Garg wrote:
+> filemap_grab_folio_mpol() is used in [Patch 6/7] in kvm_gmem_prepare_folio().
+> 
+> filemap_alloc_folio_mpol() and __filemap_get_folio_mpol()) are internally used
+> to support the filemap_grab_folio_mpol().
 
+That's not better.  We don't add unused functions, and unless there's
+something coming that's going to use them, the entire structure of this
+is wrong.
 
-On 6/18/25 2:07 PM, John Garry wrote:
-> The atomic write unit max value is limited by any stacked device stripe
-> size.
-> 
-> It is required that the atomic write unit is a power-of-2 factor of the
-> stripe size.
-> 
-> Currently we use io_min limit to hold the stripe size, and check for a
-> io_min <= SECTOR_SIZE when deciding if we have a striped stacked device.
-> 
-> Nilay reports that this causes a problem when the physical block size is
-> greater than SECTOR_SIZE [0].
-> 
-> Furthermore, io_min may be mutated when stacking devices, and this makes
-> it a poor candidate to hold the stripe size. Such an example (of when
-> io_min may change) would be when the io_min is less than the physical
-> block size.
-> 
-> Use chunk_sectors to hold the stripe size, which is more appropriate.
-> 
-> [0] https://lore.kernel.org/linux-block/888f3b1d-7817-4007-b3b3-1a2ea04df771@linux.ibm.com/T/#mecca17129f72811137d3c2f1e477634e77f06781
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
+filemap_grab_folio() is a convenience function that avoids us having to
+specify the other two arguments to __filemap_get_folio().  Since there's
+no indication at this point that there are going to be more callers of
+it, filemap_grab_folio_mpol() should not even exist.
 
-Looks good to me:
-Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
+I'll send a pair of patches which should be sufficient for your needs.
 
