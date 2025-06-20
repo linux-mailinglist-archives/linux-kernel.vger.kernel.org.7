@@ -1,201 +1,269 @@
-Return-Path: <linux-kernel+bounces-695683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CDACAE1CAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:53:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC55BAE1CBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F061E3B5DAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:53:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAA151897ADE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C52028DF23;
-	Fri, 20 Jun 2025 13:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0C4293B60;
+	Fri, 20 Jun 2025 13:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="XMz83gLG"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HEXkNUgE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A525928A3FA;
-	Fri, 20 Jun 2025 13:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750427600; cv=pass; b=dKh7nF3U33Yxw7G8jnf+uqFjA2scoLB4dZWA6U1FWA3qIkIa5xzFmQXC00+Ra+7Oq20STIApIgXFfVjI6WfLk6TSjDUxJCXk0QqcJZ9UrUENt+ci1kHsJ9GG/RXzB9/wDqzoaM7oL918P5adXQB4xwNGhz/VHIYCzl5/kxwnYMs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750427600; c=relaxed/simple;
-	bh=k67JtgBrtKH5c8MilgA2/jhp1oqwbs+SGFRe0IdC070=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T6jD852rPQibHQtEzBx3j1hfvPLm6ige6Av5GfGmvhsNb96cidtKImeqYdYg8stpBcmBayOhOC8pdr1cmvtyyMKYLBpDNNkINNw/c7ea6duXP2JmELLQf1An7BwxrcgWMaSEVU1clGkbfVR4GLxvei0YA8z1qhcA8/dVDpxgiYo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=XMz83gLG; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1750427571; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=TXFOrOvEz7z1ai2laSiHdc57LGo4WZ9k8SJkVhzrfhqnwR0b1rPncIkqMG4VX7ZpvyYelO0JBnkmhrDGjgGNrpwvL0TZWo94GZaOUrP9myK6Isj2y5llSo/uUrvLQed+opagwHRuo6jvJ5DavjSyw1jIYOsgxMftmwnigA714k0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750427571; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=V459JMUmyF9w2CF7odfd6vdr2BDTmJkRuH7Scgg3lLo=; 
-	b=MMTZaNXtnwEFO2WRdtoGadqLqAnzc/YzvA/W7Z2ArWiZ9cqNU/hUQfcLQz7ulhlcUlCExzCFwcpkxKIRch4wnIQqGxO8FpNFOfKNOtYKSO5v+JHODAaPbzxqXk0EJgb8OY3pLxG0u5SR9olb2fiMMO990y9JuMXKp99EdfKR/90=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
-	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750427571;
-	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=V459JMUmyF9w2CF7odfd6vdr2BDTmJkRuH7Scgg3lLo=;
-	b=XMz83gLGVocBQQxhMXW3P41Im4nz6IP8qnRncCfexbBczpHYl1RS8MFGcilrvPYa
-	gCE6lYBG8nfrS65sPW5tCrhl4mTSHQSVEhOyY6KOT13Ijf6FE/ha3v2o/A2qCdvvEkw
-	32AsJPhSZf6Hzk8n3E2138cANxh3Z8xrQfCPOdmQ=
-Received: by mx.zohomail.com with SMTPS id 1750427570159193.5196944847704;
-	Fri, 20 Jun 2025 06:52:50 -0700 (PDT)
-Message-ID: <d9a1b9ab-b6ab-4364-a1b7-df4debc21bc1@collabora.com>
-Date: Fri, 20 Jun 2025 15:52:46 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF9028DF0F;
+	Fri, 20 Jun 2025 13:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750427626; cv=none; b=torvdi/ByijducQjsClbt8QN1P77a9UCGieVflMl3sLizmGT14YpztFoMat52zIuqRcU7AvIGeHb8lg/M/8vSdiV9wybm0B5j0qb5U55T2kB/ffsfJZS1qWE5/KyS1rhDXoxZoX6sQyghZRGJs1pJsWbvYStUao+KQfx5pXSrgg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750427626; c=relaxed/simple;
+	bh=ZjSkdGu1x7wZq/o3wrAme9nL27I+UpLhrQk04iU0FB8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bEkl/hCiKbNPA4HzGl6iIGBq/xpcbg2SiXX22U+KfLyNKfAoV6x2lJ0IOxdBa8GhG3Dq6SdYdX4aINCu/8FnGUNzx6kA+dqGp+7Dx4+NJqxgYNHPl+Z/YDHo0XE48/dLGAwfCPYqnBtQnoDzzSmhyB3KPS/aYXxr3UxlfWet7g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HEXkNUgE; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750427624; x=1781963624;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ZjSkdGu1x7wZq/o3wrAme9nL27I+UpLhrQk04iU0FB8=;
+  b=HEXkNUgEDqK+16JNMl0DVvs/ko3hXyZByPdjQW0y3p1kwPsztt0Wtldl
+   KIqRibFQlgz1NXW0oyzGHDx+PunKQ2g8DlKGTuyCt+nSkhyiuc05pgWQo
+   VYfkBK8k4LfSdU2CyX0fc5V+Wyp/zbv9coCGGgVcDxbD9R3yUL+VymXAE
+   oZrHnZB2QpvwyPEj4IgxkEwFvWlfeeoipXJx1WESCvvxfL8hCPdDTh3KV
+   lY6lkwHjvocK/G5XeEtfSWF7BFdPxXzv1cIA0Pi/PdVEN4wMQhiiWISJv
+   rO02oopd6zRQObnrFGJnjbDQqQOOKRtmDfYg+2lxUI1NgoL/9TDG3nUzG
+   A==;
+X-CSE-ConnectionGUID: uF+wK/7MR1u8hLsVWTwsXw==
+X-CSE-MsgGUID: gYoXUmYqQWq2VaaIYRzJEA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="64047027"
+X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
+   d="scan'208";a="64047027"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 06:53:42 -0700
+X-CSE-ConnectionGUID: 8mJ0BewCQzSJgea9VjC92A==
+X-CSE-MsgGUID: nurAfVtfRXy5gZpbi9LAfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
+   d="scan'208";a="150411991"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 20 Jun 2025 06:53:30 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 3EE0F109; Fri, 20 Jun 2025 16:53:27 +0300 (EEST)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Xiongwei Song <xiongwei.song@windriver.com>,
+	Xin Li <xin3.li@intel.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Brijesh Singh <brijesh.singh@amd.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Alexey Kardashevskiy <aik@amd.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Breno Leitao <leitao@debian.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Hou Tao <houtao1@huawei.com>,
+	Juergen Gross <jgross@suse.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Kees Cook <kees@kernel.org>,
+	Eric Biggers <ebiggers@google.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Yuntao Wang <ytcoode@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Tejun Heo <tj@kernel.org>,
+	Changbin Du <changbin.du@huawei.com>,
+	Huang Shijie <shijie@os.amperecomputing.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	linux-mm@kvack.org,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv6 00/16] x86: Enable Linear Address Space Separation support
+Date: Fri, 20 Jun 2025 16:53:08 +0300
+Message-ID: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] iommu: Add verisilicon IOMMU driver
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
- nicolas.dufresne@collabora.com, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- kernel@collabora.com
-References: <20250619131232.69208-1-benjamin.gaignard@collabora.com>
- <20250619131232.69208-4-benjamin.gaignard@collabora.com>
- <20250619134752.GB1643390@ziepe.ca>
- <073ffe14-d631-4a4f-8668-ddeb7d611448@collabora.com>
- <20250619165928.GA10257@ziepe.ca>
- <e034a111-93eb-42e8-a533-46553b4f5588@collabora.com>
- <20250620120509.GA39770@ziepe.ca>
-Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <20250620120509.GA39770@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Linear Address Space Separation (LASS) is a security feature that intends to
+prevent malicious virtual address space accesses across user/kernel mode.
 
-Le 20/06/2025 à 14:05, Jason Gunthorpe a écrit :
-> On Fri, Jun 20, 2025 at 10:57:49AM +0200, Benjamin Gaignard wrote:
->> Le 19/06/2025 à 18:59, Jason Gunthorpe a écrit :
->>> On Thu, Jun 19, 2025 at 06:27:52PM +0200, Benjamin Gaignard wrote:
->>>> Le 19/06/2025 à 15:47, Jason Gunthorpe a écrit :
->>>>> Ugh. This ignores the gfp flags that are passed into map because you
->>>>> have to force atomic due to the spinlock that shouldn't be there :(
->>>>> This means it does not set GFP_KERNEL_ACCOUNT when required. It would
->>>>> be better to continue to use the passed in GFP flags but override them
->>>>> to atomic mode.
->>>> I will add a gfp_t parameter and use it like that:
->>>> page_table = iommu_alloc_pages_sz(gfp | GFP_ATOMIC | GFP_DMA32, SPAGE_SIZE);
->>> This will or together GFP_ATOMIC and GFP_KERNEL, I don't think that
->>> works..
->> I have test it, I don't see conflicts or errors. What worries you ?
-> Just looking at the bitmaps I'm not sure? Did you run with lockdep?
+Such mode based access protection already exists today with paging and features
+such as SMEP and SMAP. However, to enforce these protections, the processor
+must traverse the paging structures in memory.  Malicious software can use
+timing information resulting from this traversal to determine details about the
+paging structures, and these details may also be used to determine the layout
+of the kernel memory.
 
-Yes and it complains about that.
-I see that sun50i driver have more less the same struct than my driver
-but doesn't use lock. I will try see if I can remove the lock.
+The LASS mechanism provides the same mode-based protections as paging but
+without traversing the paging structures. Because the protections enforced by
+LASS are applied before paging, software will not be able to derive
+paging-based timing information from the various caching structures such as the
+TLBs, mid-level caches, page walker, data caches, etc. LASS can avoid probing
+using double page faults, TLB flush and reload, and SW prefetch instructions.
+See [2], [3] and [4] for some research on the related attack vectors.
 
->>>>>> +static int vsi_iommu_attach_device(struct iommu_domain *domain,
->>>>>> +				   struct device *dev)
->>>>>> +{
->>>>>> +	struct vsi_iommu *iommu = dev_iommu_priv_get(dev);
->>>>>> +	struct vsi_iommu_domain *vsi_domain = to_vsi_domain(domain);
->>>>>> +	unsigned long flags;
->>>>>> +	int ret;
->>>>>> +
->>>>>> +	if (WARN_ON(!iommu))
->>>>>> +		return -ENODEV;
->>>>>> +
->>>>>> +	/* iommu already attached */
->>>>>> +	if (iommu->domain == domain)
->>>>>> +		return 0;
->>>>>> +
->>>>>> +	ret = vsi_iommu_identity_attach(&vsi_identity_domain, dev);
->>>>>> +	if (ret)
->>>>>> +		return ret;
->>>>> Hurm, this is actually quite bad, now that it is clear the HW is in an
->>>>> identity mode it is actually a security problem for VFIO to switch the
->>>>> translation to identity during attach_device. I'd really prefer new
->>>>> drivers don't make this mistake.
->>>>>
->>>>> It seems the main thing motivating this is the fact a linked list has
->>>>> only a single iommu->node so you can't attach the iommu to both the
->>>>> new/old domain and atomically update the page table base.
->>>>>
->>>>> Is it possible for the HW to do a blocking behavior? That would be an
->>>>> easy fix.. You should always be able to force this by allocating a
->>>>> shared top page table level during probe time and making it entirely
->>>>> empty while staying always in the paging mode. Maybe there is a less
->>>>> expensive way.
->>>>>
->>>>> Otherwise you probably have work more like the other drivers and
->>>>> allocate a struct for each attachment so you can have the iommu
->>>>> attached two domains during the switch over and never drop to an
->>>>> identity mode.
->>>> I will remove the switch to identity domain and it will works fine.
->>> You'll loose invalidations..
->>>
->>> Maybe the easiest thing is to squish vsi_iommu_enable() and reorganize
->>> it so that the spinlock is held across the register programming and
->>> then you can atomically under the lock change the registers and change
->>> the linked list. The register write cannot fail so this is fine.
->>>
->>> This should probably also flush the iotlb inside the lock.
->> I will try to summarize:
->> in vsi_iommu_attach_device() I should:
->> - take the lock
->> - do nothing if the domain is the same.
->> - if iommu is used (ie powered up):
->>    - update the registers to enable the iommu
->>    - flush
->>    - update the link list
->> - update iommu->domain
->> - release the lock
-> That sounds believable, yes.. Though can you do the "powered up" checks
-> inside the spinlock - are they sleeping? Can they be done before the
-> spinlock?
->
->> in vsi_iommu_identity_attach() I should:
->> - take the lock
->> - do nothing if the domain is the same.
->> - if iommu is used (ie powered up):
->>    - disable the iommu
->>    - remove the node from the list
->> - update iommu->domain
->> - release the lock
-> And maybe flush too? How does the caching hw work at this point? You
-> can't have stale entries in the cache when you switch back to an
-> enabled/translating configuration. So either the HW flushes implicitly
-> or you need to add a flush somewhere..
+In addition, LASS prevents an attack vector described in a Spectre LAM (SLAM)
+whitepaper [7].
 
-I do not have the documentation for the hardware but it seems that
-enable/disable are enough to do the job.
-  
+LASS enforcement relies on the typical kernel implementation to divide the
+64-bit virtual address space into two halves:
+  Addr[63]=0 -> User address space
+  Addr[63]=1 -> Kernel address space
+Any data access or code execution across address spaces typically results in a
+#GP fault.
 
->   
->> vsi_iommu_suspend() and vsi_iommu_resume() will also have to take the lock
->> before calling vsi_iommu_disable() and vsi_iommu_enable().
-> Yes, if they use iommu->domain that seems good
->
-> If the above locking is a problem then I'd use the group mutex instead
-> during resume/suspend. The attach functions are already called with
-> the group mutex held.
+Kernel accesses usually only happen to the kernel address space. However, there
+are valid reasons for kernel to access memory in the user half. For these cases
+(such as text poking and EFI runtime accesses), the kernel can temporarily
+suspend the enforcement of LASS by toggling SMAP (Supervisor Mode Access
+Prevention) using the stac()/clac() instructions and in one instance a downright
+disabling LASS for an EFI runtime call.
 
-Does group mutex is also called when using vsi_iommu_map or vsi_iommu_unmap ?
+User space cannot access any kernel address while LASS is enabled.
+Unfortunately, legacy vsyscall functions are located in the address range
+0xffffffffff600000 - 0xffffffffff601000 and emulated in kernel.  To avoid
+breaking user applications when LASS is enabled, extend the vsyscall emulation
+in execute (XONLY) mode to the #GP fault handler.
 
->
->> Do I have to switch to identity domain in vsi_iommu_attach_device()
->> before applying the requested domain ?
-> No, that is what creates the security problem. What you want is to
-> update the HW registers in a way that the HW just changes hitlessly
-> from one translation to another, then flush the cache.
->
-> Jason
+In contrast, the vsyscall EMULATE mode is deprecated and not expected to be
+used by anyone.  Supporting EMULATE mode with LASS would need complex
+instruction decoding in the #GP fault handler and is probably not worth the
+hassle. Disable LASS in this rare case when someone absolutely needs and
+enables vsyscall=emulate via the command line.
+
+Changes from v5[9]:
+- Report LASS violation as NULL pointer dereference if the address is in the
+  first page frame;
+- Provide helpful error message on #SS due to LASS violation;
+- Fold patch for vsyscall=emulate documentation into patch
+  that disables LASS with vsyscall=emulate;
+- Rewrite __inline_memeset() and __inline_memcpy();
+- Adjust comments and commit messages;
+
+Changes from v4[8]:
+- Added PeterZ's Originally-by and SoB to 2/16
+- Added lass_clac()/lass_stac() to differentiate from SMAP necessitated
+  clac()/stac() and to be NOPs on CPUs that don't support LASS
+- Moved LASS enabling patch to the end to avoid rendering machines
+  unbootable between until the patch that disables LASS around EFI
+  initialization
+- Reverted Pawan's LAM disabling commit
+
+Changes from v3[6]:
+- Made LAM dependent on LASS
+- Moved EFI runtime initialization to x86 side of things
+- Suspended LASS validation around EFI set_virtual_address_map call
+- Added a message for the case of kernel side LASS violation
+- Moved inline memset/memcpy versions to the common string.h
+
+Changes from v2[5]:
+- Added myself to the SoB chain
+
+Changes from v1[1]:
+- Emulate vsyscall violations in execute mode in the #GP fault handler
+- Use inline memcpy and memset while patching alternatives
+- Remove CONFIG_X86_LASS
+- Make LASS depend on SMAP
+- Dropped the minimal KVM enabling patch
+
+
+[1] https://lore.kernel.org/lkml/20230110055204.3227669-1-yian.chen@intel.com/
+[2] “Practical Timing Side Channel Attacks against Kernel Space ASLR”,
+https://www.ieee-security.org/TC/SP2013/papers/4977a191.pdf
+[3] “Prefetch Side-Channel Attacks: Bypassing SMAP and Kernel ASLR”, http://doi.acm.org/10.1145/2976749.2978356
+[4] “Harmful prefetch on Intel”, https://ioactive.com/harmful-prefetch-on-intel/ (H/T Anders)
+[5] https://lore.kernel.org/all/20230530114247.21821-1-alexander.shishkin@linux.intel.com/
+[6] https://lore.kernel.org/all/20230609183632.48706-1-alexander.shishkin@linux.intel.com/
+[7] https://download.vusec.net/papers/slam_sp24.pdf
+[8] https://lore.kernel.org/all/20240710160655.3402786-1-alexander.shishkin@linux.intel.com/
+[9] https://lore.kernel.org/all/20241028160917.1380714-1-alexander.shishkin@linux.intel.com
+
+Alexander Shishkin (6):
+  x86/efi: Move runtime service initialization to arch/x86
+  x86/cpu: Defer CR pinning setup until after EFI initialization
+  efi: Disable LASS around set_virtual_address_map() EFI call
+  x86/traps: Communicate a LASS violation in #GP message
+  x86/traps: Handle LASS thrown #SS
+  x86/cpu: Make LAM depend on LASS
+
+Kirill A. Shutemov (2):
+  x86/asm: Introduce inline memcpy and memset
+  x86: Re-enable Linear Address Masking
+
+Sohil Mehta (7):
+  x86/cpu: Enumerate the LASS feature bits
+  x86/alternatives: Disable LASS when patching kernel alternatives
+  x86/vsyscall: Reorganize the #PF emulation code
+  x86/traps: Consolidate user fixups in exc_general_protection()
+  x86/vsyscall: Add vsyscall emulation for #GP
+  x86/vsyscall: Disable LASS if vsyscall mode is set to EMULATE
+  x86/cpu: Enable LASS during CPU initialization
+
+Yian Chen (1):
+  x86/cpu: Set LASS CR4 bit as pinning sensitive
+
+ .../admin-guide/kernel-parameters.txt         |  4 +-
+ arch/x86/Kconfig                              |  1 -
+ arch/x86/Kconfig.cpufeatures                  |  4 ++
+ arch/x86/entry/vsyscall/vsyscall_64.c         | 61 +++++++++++-----
+ arch/x86/include/asm/cpufeatures.h            |  1 +
+ arch/x86/include/asm/smap.h                   | 22 +++++-
+ arch/x86/include/asm/string.h                 | 45 ++++++++++++
+ arch/x86/include/asm/uaccess_64.h             | 37 +++-------
+ arch/x86/include/asm/vsyscall.h               | 14 ++--
+ arch/x86/include/uapi/asm/processor-flags.h   |  2 +
+ arch/x86/kernel/alternative.c                 | 12 +++-
+ arch/x86/kernel/cpu/common.c                  | 35 ++++++++--
+ arch/x86/kernel/cpu/cpuid-deps.c              |  2 +
+ arch/x86/kernel/traps.c                       | 70 ++++++++++++++-----
+ arch/x86/lib/clear_page_64.S                  | 10 ++-
+ arch/x86/mm/fault.c                           |  2 +-
+ arch/x86/platform/efi/efi.c                   | 13 ++++
+ init/main.c                                   |  5 --
+ tools/arch/x86/include/asm/cpufeatures.h      |  1 +
+ 19 files changed, 253 insertions(+), 88 deletions(-)
+
+-- 
+2.47.2
+
 
