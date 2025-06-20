@@ -1,262 +1,177 @@
-Return-Path: <linux-kernel+bounces-695250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3839AE1777
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:27:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E2BAE177F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 525BA3BDCCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:27:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40FCD3BD2AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164A4283138;
-	Fri, 20 Jun 2025 09:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D726B283C8E;
+	Fri, 20 Jun 2025 09:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tqljnBD8"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WwVce9c2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910CA2820D9;
-	Fri, 20 Jun 2025 09:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E9328368A;
+	Fri, 20 Jun 2025 09:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750411650; cv=none; b=ck4n4mmozkCnUCxaHI2xja8riKCpLuXyMMsWG1IS8N2TjRNPRVe8q0vgNwhFBr0njAuaf75upmiWR+/LLx3uQeE/Y3+Ldq7sXa0KjgcjHzWW2Y1JJot9Ba3gkasM71z/ohJR8UOlrufg7jRRAIEuIDV0fb7J0w1at5PK6XVL/Qs=
+	t=1750411723; cv=none; b=Fgpl557wdC78Ye0vg3pD9jsifHnM+tMyRYE+RNf4w78W0dNWHVqDkLSqEKowewqMexHfy5oUbc1wuh393iGLlGE3LaEep1S0Z7Zqg7zP6cHJ5KAPlI0OLX0hXNSQ1GowXpCIL7ZqfO1n1bfha8yJ7JHSMKiG6YoxD8/1MtP8pA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750411650; c=relaxed/simple;
-	bh=Le9otLwvEbWLIK3K/u+Bxc7kyJZnW7RVmeB0XyLkllg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=ejR1j5jx+OBEKutK/b8V1G7Z98xdrmRYQYWvXdwhElubzLSnVosku4Q5DMHKk5eqdMWLcRHy8Pv6siT88u3H9zOYyitMpSEMe9UmHPv6UgwQ9t0fPo1cQHPbGq6QCbKaO2jJ5VI8lrNeipld1NbNpVQZlOAhHkq5NDslLADnIgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tqljnBD8; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55K2inRn003480;
-	Fri, 20 Jun 2025 09:27:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=xs4Gwt
-	Zhq/RZpg0ApqIdO1ibqn3rjOuW0IdI803an9Y=; b=tqljnBD8glea6ilpaQASVt
-	NdT0sMx+zhAPC4XkpLeorg3e0H6/qWgQUdQIEevgiWBvpxTNc9yjbqQWQLN4Qnhu
-	N4OOy7vMWejfkNkKbABJPhlWUkicxwV8uBeyP7aiTFOPqiCkFDF7YDShE5qBlPTP
-	yBKKhdnULf1qeE8lK5N2Z8sjKizOGGbHzC/nuK+/lMNBWM/T6IiX617nJqVHMawn
-	F+Im2ugjr5Bnag1v1IIO+MGFMlPXUOxHfTR8NCFA/xgROm94Nq5DwF6XqAZaSWYD
-	SvTvgraBzazf5r5hIe5NUKZwWFuYLGbSZfzmEkaDVb1b4hacgd9cMMAEP0uqeYRg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47cy4jspuw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Jun 2025 09:27:00 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55K9JHFJ003146;
-	Fri, 20 Jun 2025 09:27:00 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47cy4jspus-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Jun 2025 09:27:00 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55K95We1021600;
-	Fri, 20 Jun 2025 09:26:59 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 47cahwe8e9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Jun 2025 09:26:59 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55K9QvAJ55640484
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 20 Jun 2025 09:26:57 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 62C7520043;
-	Fri, 20 Jun 2025 09:26:57 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7183920040;
-	Fri, 20 Jun 2025 09:26:55 +0000 (GMT)
-Received: from [9.109.241.85] (unknown [9.109.241.85])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 20 Jun 2025 09:26:55 +0000 (GMT)
-Message-ID: <19689b53-ac23-4b48-97c7-b26f360a7b75@linux.ibm.com>
-Date: Fri, 20 Jun 2025 14:56:51 +0530
+	s=arc-20240116; t=1750411723; c=relaxed/simple;
+	bh=4ue4BfPZID9I3f6U5y5QbcfTOCdGiPQZSWwbzpUYfGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PQo0NngOBsXfHvKi+6wq+grHvMYarKWSwu4spFBEtK+E5IdpJQlfr9UGYZO3atOsEQEGINLLKjQ4GpW3zwfrPjqDamJ8JwNLOUS+4Gwa7M2GBFTqw6Ta3IMnbUbpx2ruqEW+iAvWrxmRvJXCPQOIJeiJ17upIQI8ZqADbzNe3kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WwVce9c2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B49BDC4CEED;
+	Fri, 20 Jun 2025 09:28:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1750411723;
+	bh=4ue4BfPZID9I3f6U5y5QbcfTOCdGiPQZSWwbzpUYfGg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WwVce9c2149y83b4VkdwTlu4cLgxauWK6/UpYrkGz2K+CyDXri6IzlQ6DF1OfFq5w
+	 Q2aB5LweFsyt2PRfpUBORIL26C6Zq5RfdPrEfEVaaFg15AJhsh4GLtiDF8/Lu63KDs
+	 gl2wUD8/VyMoCjHduUBxPDNTrScPTsgD/xKdUVNI=
+Date: Fri, 20 Jun 2025 11:27:20 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Zongmin Zhou <min_halo@163.com>
+Cc: shuah@kernel.org, valentina.manea.m@gmail.com, i@zenithal.me,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	zhouzongmin@kylinos.cn
+Subject: Re: [PATCH v2] usbip: convert to use faux_device
+Message-ID: <2025062004-navy-emboss-4743@gregkh>
+References: <2a327b520760271471717fff9b222cdc34967489.1746662386.git.zhouzongmin@kylinos.cn>
+ <20250604065410.76069-1-min_halo@163.com>
+ <2025061926-paycheck-footnote-a2b8@gregkh>
+ <c7a2cc26-794e-49e1-bf8c-35617bb8060f@163.com>
+ <2025062010-hardiness-flashily-cb0f@gregkh>
+ <9d95bb75-586c-48dc-9e34-432cc13fd99f@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] pci/hotplug/pnv_php: Enable third attention
- indicator
-To: linuxppc-dev@lists.ozlabs.org,
-        Timothy Pearson <tpearson@raptorengineering.com>,
-        Shawn Anastasio <sanastasio@raptorengineering.com>
-References: <20250618190146.GA1213349@bhelgaas>
- <1469323476.1312174.1750293474949.JavaMail.zimbra@raptorengineeringinc.com>
-Content-Language: en-US
-From: Krishna Kumar <krishnak@linux.ibm.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "\"linux-pci\"," <linux-pci@vger.kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        christophe leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>,
-        "\"Bjorn Helgaas\","
- <bhelgaas@google.com>,
-        Shawn Anastasio <sanastasio@raptorengineering.com>
-In-Reply-To: <1469323476.1312174.1750293474949.JavaMail.zimbra@raptorengineeringinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: H5gm5CuRg5G1vL8RnfCBsF8H5nEiiA25
-X-Authority-Analysis: v=2.4 cv=a7ww9VSF c=1 sm=1 tr=0 ts=68552964 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=_AprYWD3AAAA:8 a=voM4FWlXAAAA:8 a=VnNF1IyMAAAA:8 a=1UX6Do5GAAAA:8
- a=1XWaLZrsAAAA:8 a=l-zMBAn9ipa4B3h1PFYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=fKH2wJO7VO9AkD4yHysb:22 a=IC2XNlieTeVoXbcui8wp:22 a=Et2XPkok5AAZYJIKzHr1:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIwMDA2OCBTYWx0ZWRfXztuPp7Hmqghr 98gbmuDSvnfmXzBjLf9FY5ZDg1UEfltV+FYLasqzwXEfi6it0ilw1iXa7wJRm4ed1MK0UznOnPd 20FR3xZsgaCsA+7nFA6iSbzRPfNy+Ohf2HND1ChjMGP6H1KDRHHGPnDbIvMT2JOORD3V2kL7S6b
- URA+ebAFIEWt9hoLTBWL+F2XRKUVlx/+Hs25DW5+P0Avi+ZeZ3qId2XtGEPke4brhcSwhWWWBer joR/R0/Ieo1QRusCM2hiXSJ+9Hjw0z63rjiNf+9IxgeUKshhqGSP7tyZM2E5FdyJDldBeH7Z7LU sEiFVuiYkxNB+An9MproBX8WlLgCgioaSHUQmlekwULfktUZ6GgQ+P6qznStxFRyEKkdtjvPbaQ
- vRHB0Kb/HC4BPLLWTNWvNYZg1A6m4YrUSuxWHsf5lZP5PcXSoanI0/qO50F2311LwSadJ3lK
-X-Proofpoint-ORIG-GUID: 3PPcyUxRJT5_vYdplbgsuscFw7Wby9Ox
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-20_03,2025-06-18_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- impostorscore=0 phishscore=0 clxscore=1011 malwarescore=0
- priorityscore=1501 spamscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506200068
+In-Reply-To: <9d95bb75-586c-48dc-9e34-432cc13fd99f@163.com>
 
-Shawn, Timothy:
+On Fri, Jun 20, 2025 at 05:19:33PM +0800, Zongmin Zhou wrote:
+> 
+> On 2025/6/20 12:29, Greg KH wrote:
+> > On Fri, Jun 20, 2025 at 10:16:16AM +0800, Zongmin Zhou wrote:
+> > > On 2025/6/19 19:01, Greg KH wrote:
+> > > > On Wed, Jun 04, 2025 at 02:54:10PM +0800, Zongmin Zhou wrote:
+> > > > > From: Zongmin Zhou <zhouzongmin@kylinos.cn>
+> > > > > 
+> > > > > The vhci driver does not need to create a platform device,
+> > > > > it only did so because it was simple to do that in order to
+> > > > > get a place in sysfs to hang some device-specific attributes.
+> > > > > Now the faux device interface is more appropriate,change it
+> > > > > over to use the faux bus instead.
+> > > > > 
+> > > > > Signed-off-by: Zongmin Zhou <zhouzongmin@kylinos.cn>
+> > > > > ---
+> > > > > Changes in v2:
+> > > > > - don't change faux create api,just call probe on vhci_hcd_init.
+> > > > > 
+> > > > >    drivers/usb/usbip/vhci.h             |  4 +-
+> > > > >    drivers/usb/usbip/vhci_hcd.c         | 86 +++++++++++-----------------
+> > > > >    drivers/usb/usbip/vhci_sysfs.c       | 68 +++++++++++-----------
+> > > > >    tools/usb/usbip/libsrc/vhci_driver.h |  2 +-
+> > > > >    4 files changed, 72 insertions(+), 88 deletions(-)
+> > > > I get the following build errors from this patch:
+> > > > 
+> > > > drivers/usb/usbip/vhci_hcd.c:1462:12: error: ‘vhci_hcd_resume’ defined but not used [-Werror=unused-function]
+> > > >    1462 | static int vhci_hcd_resume(struct faux_device *fdev)
+> > > >         |            ^~~~~~~~~~~~~~~
+> > > > drivers/usb/usbip/vhci_hcd.c:1418:12: error: ‘vhci_hcd_suspend’ defined but not used [-Werror=unused-function]
+> > > >    1418 | static int vhci_hcd_suspend(struct faux_device *fdev, pm_message_t state)
+> > > >         |            ^~~~~~~~~~~~~~~~
+> > > > cc1: all warnings being treated as errors
+> > > > 
+> > > > Are you sure you tested this?
+> > > I apologize for not enabling -Werror, which resulted in missing this error
+> > > warning.
+> > > I have tested usbip feature use the new patch,but not test system
+> > > suspend/resume.
+> > > The faux bus type don't add pm function,and vhci-hcd driver can't register
+> > > it.
+> > > Maybe have to add suspend/resume for it.like below:
+> > > static const struct bus_type faux_bus_type = {
+> > >      .name        = "faux",
+> > >      .match        = faux_match,
+> > >      .probe        = faux_probe,
+> > >      .remove        = faux_remove,
+> > >      .resume     = faux_resume,
+> > >      .suspend    = faux_suspend,
+> > > };
+> > > 
+> > > Is that right?
+> > > Your expertise would be greatly valued.
+> > As this is not real hardware, why do you need the suspend/resume
+> > callbacks at all?  What is happening here that requires them?
+> @greg,
+> The vhci_hcd_suspend/vhci_hcd_resume interfaces are not designed for this
+> faux device, but rather to
+> manipulate the HCD_FLAG_HW_ACCESSIBLE bit in the hcd flags associated with
+> the faux device.
+> For example:
+> During system standby: clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags)
+> During system wakeup: set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags)
+> 
+> Previously, these two functions were registered through platform_driver,
+> but faux bus does not have the relevant interface, so they were not called,
+> resulting in this compilation warning error.
+> 
+> This raises the question: Should the faux bus implement PM-related
+> interface?
+> I'm uncertain whether these functions are essential for the vhci-hcd driver
+> or if they can be safely removed.
+> 
+> However, during system standby/wakeup tests with remote USB devices bound to
+> the vhci-hcd driver,
+> I observed consistent failure scenarios across both the original platform
+> bus and faux bus patch implementations.
+> 
+> Failure Modes
+> a.Failed standby with auto-wakeup(Log excerpt):
+> [ 1449.065592][T10238] PM: suspend entry (s2idle)
+> [ 1449.106146][T10238] Filesystems sync: 0.040 seconds
+> [ 1449.216189][T10238] Freezing user space processes
+> [ 1449.219474][T10238] Freezing user space processes completed (elapsed
+> 0.002 seconds)
+> [ 1449.219887][T10238] OOM killer disabled.
+> [ 1449.220090][T10238] Freezing remaining freezable tasks
+> [ 1469.222372][T10238] Freezing remaining freezable tasks failed after
+> 20.002 seconds (0 tasks refusing to freeze, wq_busy=1):
+> [ 1469.225038][T10238] Showing freezable workqueues that are still busy:
+> [ 1469.226176][T10238] workqueue events_freezable_pwr_efficient: flags=0x86
+> [ 1469.227453][T10238]   pwq 20: cpus=0-3 node=0 flags=0x4 nice=0 active=1
+> refcnt=2
+> [ 1469.227463][T10238]     in-flight: 268:disk_events_workfn
+> [ 1469.233559][T10238] Restarting kernel threads ... done.
+> [ 1469.235119][T10238] OOM killer enabled.
+> [ 1469.235849][T10238] Restarting tasks ... done.
+> [ 1469.240121][T10238] random: crng reseeded on system resumption
+> [ 1469.241176][T10238] PM: suspend exit
+> 
+> b.Failed standby with black screen freeze:
+> [ 1820.667073][T11454] PM: suspend entry (s2idle)
 
-Thanks for posting the series of patch. Few things I wanted to do better understand Raptor problem -
+Are you sure this is the usbip driver causing suspend to not work?  If
+you unbind the usbip devices does suspend/resume work?
 
+I would think that we would have gotten some reports by now if this
+didn't work at all :)
 
-1. Last time my two patches solved all the hotunplug operation and Kernel crash issue except nvme case. It did not work with
+thanks,
 
-    NVME since dpc support was not there. I was not able to do that due to being  occupied in some other work.
-
-2. I want to understand the delta from last yr problem to this problem. Is the PHB freeze or hotunplug failure happens
-
-    only for particular Microsemi switch or it happens with all the switches. When did this problem started coming ? Till last yr 
-
-    it was not there. Is it specific to particular Hardware ? Can I get your setup to test this problem and your patch ?
-
-3. To me, hot unplug opertaion  --> AER triggering --> DPC support, this flow should mask the error to reach root port/cpu and it 
-
-    should solve the PHB freeze/ hot unplug failure operation. If there are AER/EEH related synchronization issue we need to solve them. 
-
-    Can you pls list the issue, I will pass it to EEH/AER team. But yeah, to me if AER implementation is correct and we add DPC support,
-
-    all the error will be contained by switch itself. The PHB/root port/cpu will not be impacted by this and there should not be any freeze.
-
-4. Ofcourse we can pick some of the fixes from pciehp driver if its missing in pnv_php.c. Also at the same time you have done
-
-    some cleanup in hot unplug path and fixed the attenuation button related code. If these works fine, we can pick it. But I want to test it.
-
-     Pls provide me setup.
-
-5. If point 3 and 4 does not solve the problem, then only we should move to pciehp.c. But AFAIK, PPC/Powernv is DT based while pciehp.c
-
-     may be only supporting acpi (I have to check it on this).  We need to provide PHB related information via DTB and maintain the related 
-
-     topology information via dtb and then it can be doable. Also , we need to do thorough planning/testing if we think to choose pciehp.c. 
-
-     But yeah, lets not jump here and lets try to fix the current issues via point 3 & 4. Point 5 will be our last option.
-
-
-Best Regards,
-
-Krishna
-
-
-
-
-On 6/19/25 6:07 AM, Timothy Pearson wrote:
->
-> ----- Original Message -----
->> From: "Bjorn Helgaas" <helgaas@kernel.org>
->> To: "Timothy Pearson" <tpearson@raptorengineering.com>
->> Cc: "linuxppc-dev" <linuxppc-dev@lists.ozlabs.org>, "linux-kernel" <linux-kernel@vger.kernel.org>, "linux-pci"
->> <linux-pci@vger.kernel.org>, "Madhavan Srinivasan" <maddy@linux.ibm.com>, "Michael Ellerman" <mpe@ellerman.id.au>,
->> "christophe leroy" <christophe.leroy@csgroup.eu>, "Naveen N Rao" <naveen@kernel.org>, "Bjorn Helgaas"
->> <bhelgaas@google.com>, "Shawn Anastasio" <sanastasio@raptorengineering.com>
->> Sent: Wednesday, June 18, 2025 2:01:46 PM
->> Subject: Re: [PATCH v2 6/6] pci/hotplug/pnv_php: Enable third attention indicator
->> On Wed, Jun 18, 2025 at 11:58:59AM -0500, Timothy Pearson wrote:
->>>  state
->> Weird wrapping of last word of subject to here.
-> I'll need to see what's up with my git format-patch setup. Apologies for that across the multiple series.
->
->>> The PCIe specification allows three attention indicator states,
->>> on, off, and blink.  Enable all three states instead of basic
->>> on / off control.
->>>
->>> Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
->>> ---
->>>  drivers/pci/hotplug/pnv_php.c | 15 ++++++++++++++-
->>>  1 file changed, 14 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/pci/hotplug/pnv_php.c b/drivers/pci/hotplug/pnv_php.c
->>> index 0ceb4a2c3c79..c3005324be3d 100644
->>> --- a/drivers/pci/hotplug/pnv_php.c
->>> +++ b/drivers/pci/hotplug/pnv_php.c
->>> @@ -440,10 +440,23 @@ static int pnv_php_get_adapter_state(struct hotplug_slot
->>> *slot, u8 *state)
->>>  	return ret;
->>>  }
->>>  
->>> +static int pnv_php_get_raw_indicator_status(struct hotplug_slot *slot, u8
->>> *state)
->>> +{
->>> +	struct pnv_php_slot *php_slot = to_pnv_php_slot(slot);
->>> +	struct pci_dev *bridge = php_slot->pdev;
->>> +	u16 status;
->>> +
->>> +	pcie_capability_read_word(bridge, PCI_EXP_SLTCTL, &status);
->>> +	*state = (status & (PCI_EXP_SLTCTL_AIC | PCI_EXP_SLTCTL_PIC)) >> 6;
->> Should be able to do this with FIELD_GET().
-> I used the same overall structure as the pciehp_hpc driver here.  Do you want me to also fix up that driver with FIELD_GET()?
->
->> Is the PCI_EXP_SLTCTL_PIC part needed?  It wasn't there before, commit
->> log doesn't mention it, and as far as I can tell, this would be the
->> only driver to do that.  Most expose only the attention status (0=off,
->> 1=on, 2=identify/blink).
->>
->>> +	return 0;
->>> +}
->>> +
->>> +
->>>  static int pnv_php_get_attention_state(struct hotplug_slot *slot, u8 *state)
->>>  {
->>>  	struct pnv_php_slot *php_slot = to_pnv_php_slot(slot);
->>>  
->>> +	pnv_php_get_raw_indicator_status(slot, &php_slot->attention_state);
->> This is a change worth noting.  Previously we didn't read the AIC
->> state from PCI_EXP_SLTCTL at all; we used php_slot->attention_state to
->> keep track of whatever had been previously set via
->> pnv_php_set_attention_state().
->>
->> Now we read the current state from PCI_EXP_SLTCTL.  It's not clear
->> that php_slot->attention_state is still needed at all.
-> It probably isn't.  It's unclear why IBM took this path at all, given pciehp's attention handlers predate pnv-php's by many years.
->
->> Previously, the user could write any value at all to the sysfs
->> "attention" file and then read that same value back.  After this
->> patch, the user can still write anything, but reads will only return
->> values with PCI_EXP_SLTCTL_AIC and PCI_EXP_SLTCTL_PIC.
->>
->>>  	*state = php_slot->attention_state;
->>>  	return 0;
->>>  }
->>> @@ -461,7 +474,7 @@ static int pnv_php_set_attention_state(struct hotplug_slot
->>> *slot, u8 state)
->>>  	mask = PCI_EXP_SLTCTL_AIC;
->>>  
->>>  	if (state)
->>> -		new = PCI_EXP_SLTCTL_ATTN_IND_ON;
->>> +		new = FIELD_PREP(PCI_EXP_SLTCTL_AIC, state);
->> This changes the behavior in some cases:
->>
->>  write 0: previously turned indicator off, now writes reserved value
->>  write 2: previously turned indicator on, now sets to blink
->>  write 3: previously turned indicator on, now turns it off
-> If we're looking at normalizing with pciehp with an eye toward eventually deprecating / removing pnv-php, I can't think of a better time to change this behavior.  I suspect we're the only major user of this code path at the moment, with most software expecting to see pciehp-style handling.  Thoughts?
->
+greg k-h
 
