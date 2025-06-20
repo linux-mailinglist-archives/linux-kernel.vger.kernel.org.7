@@ -1,207 +1,130 @@
-Return-Path: <linux-kernel+bounces-695883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C7C9AE1EE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:40:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3BFAE1F12
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A63F7B00EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:39:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 779BF173FA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27422BFC9B;
-	Fri, 20 Jun 2025 15:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4772E612A;
+	Fri, 20 Jun 2025 15:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="P2BCdBaY"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AB82DF3CC;
-	Fri, 20 Jun 2025 15:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xnep2/Mv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043B319A297;
+	Fri, 20 Jun 2025 15:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750433999; cv=none; b=NquXTnnhbudWW/P+pJSYLMLdbw/38F0m4mT5ea/Ip7Gp32q/T3X8Bk1A9kjlXFmSm+bOLmim+4JEUme2UxX0LNTE7/pBHPyNziP3eIxsNJc+uu3en4G7d4slsOFFETQHOWy4IrCVtzwLtZYr+rqxgBB9Hvh+MEWYh2uzjbCdZbU=
+	t=1750434234; cv=none; b=dhyI/Ldd+scYEUSD8waaFxe19dPnj+fOkCp3P6BEbHXUmaihDqE/Y1ej3/PE0RXg87CogsdBIo54Kc1PL24OZeEdjR68NQa6YgXc1NtDIDyfbFR+E45lcayQYIRtpvVF0YebFxNBkr3UsylOmEIZOTK2hsNPemFbU2/quAGis5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750433999; c=relaxed/simple;
-	bh=3TCjJNEsevipq/wYQO0d3KSail06dLDqwHLc+Sc/vuQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jJzCu1LmUYmGiP251sHmu77jI4s5RuiyUmq6NDL0Gyywc7ZplFNNMKbgxo4KnxJujxSeasYPedaB2YpwPPaqaZ7ggvhkqtTNt+SxR0XnnW018zrLtNKqG308wJcyjZ4H4O77QV5zKEHCAvB86xN2QFgf6UgjPf0J8U6+u9+9fO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=P2BCdBaY; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from LAPTOP-I1KNRUTF.home (unknown [40.68.205.236])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 53AA721176CB;
-	Fri, 20 Jun 2025 08:39:54 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 53AA721176CB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1750433997;
-	bh=8MFrkxQlcB5ZBCN4SMkrO/wa5QDMvzRY6icXFN3sfTE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P2BCdBaYvGi3WFsyzj4DeUqVte/ozZyq1SBFOykIU69NZCRH0LIrw1rJHsugTIDXQ
-	 mw/gQFTdmnkiIkiis5JesmIPJhLzrZQNpOhJJcHIBxtw6taVkoKhtEanY/hybmn8he
-	 dWqXIegMaP6vsoz9rZCWV5LkklFE4Fcj1KCMlu14=
-From: Jeremi Piotrowski <jpiotrowski@linux.microsoft.com>
-To: "Sean Christopherson" <seanjc@google.com>,
-	"Vitaly Kuznetsov" <vkuznets@redhat.com>,
-	"Paolo Bonzini" <pbonzini@redhat.com>,
-	kvm@vger.kernel.org
-Cc: "Dave Hansen" <dave.hansen@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	alanjiang@microsoft.com,
-	chinang.ma@microsoft.com,
-	andrea.pellegrini@microsoft.com,
-	"Kevin Tian" <kevin.tian@intel.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	"Haiyang Zhang" <haiyangz@microsoft.com>,
-	"Wei Liu" <wei.liu@kernel.org>,
-	"Dexuan Cui" <decui@microsoft.com>,
-	linux-hyperv@vger.kernel.org,
-	Jeremi Piotrowski <jpiotrowski@linux.microsoft.com>
-Subject: [RFC PATCH 1/1] KVM: VMX: Use Hyper-V EPT flush for local TLB flushes
-Date: Fri, 20 Jun 2025 17:39:14 +0200
-Message-Id: <4266fc8f76c152a3ffcbb2d2ebafd608aa0fb949.1750432368.git.jpiotrowski@linux.microsoft.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <cover.1750432368.git.jpiotrowski@linux.microsoft.com>
-References: <cover.1750432368.git.jpiotrowski@linux.microsoft.com>
+	s=arc-20240116; t=1750434234; c=relaxed/simple;
+	bh=1gkbm0Ahe3s4IB6dtM7/gc/Nr6esMFpIeX5/yPsyc1Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XwYlYDg7Cz1o/0aJwsDSfR2GbhMcomSrWmd6yMSgAoum+vIYRwU9foV2biSbGD4Y3tklKs7kYx2zDS1PRODU8agkAIsOuHuTdaMVzfXgmJ6ZfRJyMX2/+2Yo51q3O4ZzgxjcfdKxM0dqlvfxssRr+p7nLQZHGGzSpvjBS+lSKoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xnep2/Mv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8B5A1C4CEE3;
+	Fri, 20 Jun 2025 15:43:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750434233;
+	bh=1gkbm0Ahe3s4IB6dtM7/gc/Nr6esMFpIeX5/yPsyc1Y=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=Xnep2/MvdKDz/fdHmq2XY10w5uvObo11RdsEiCdlf+obnwW/860uuf3r37MAGFKxQ
+	 28faH4Z2e2Ptr2+nKQdmpSEtkpqcc73fjncWeDQU8mjP9JxE17VvVAXfcvU87ZHFi/
+	 EDVN5fOOCcaEIvW2Vmk+8RmJUj9eoPxOpjW694/0xfsyxyfkqyMfzw1Kp6lyWofRIr
+	 Mamo+p+0rRaXS9YrZT9VoTEQtpYPab2mTrORYIw9PD16sjtR9Ti7K0RUfhKVD0qwpN
+	 jTTa04qD7Z3YxDhGTguvgckMT6RewnkFOlBmbb83DYyNFKBJxs/hC+2jHTI/BuN1Mu
+	 KMVbaFFySn9oQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76497C7115B;
+	Fri, 20 Jun 2025 15:43:53 +0000 (UTC)
+From: Max Shevchenko via B4 Relay <devnull+wctrl.proton.me@kernel.org>
+Subject: [PATCH 00/11] ASoC: mediatek: Add support for MT6572 SoC
+Date: Fri, 20 Jun 2025 18:40:39 +0300
+Message-Id: <20250620-mt6572-v1-0-e2d47820f042@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPeAVWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDM0NL3dwSM1NzI93UNHOLROMUE1NDMwsloOKCotS0zAqwQdGxtbUASpa
+ sVlgAAAA=
+X-Change-ID: 20250619-mt6572-ef78a3d45168
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Sean Wang <sean.wang@mediatek.com>, 
+ Russell King <linux@armlinux.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-watchdog@vger.kernel.org, 
+ Max Shevchenko <wctrl@proton.me>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750434231; l=1888;
+ i=wctrl@proton.me; s=20250603; h=from:subject:message-id;
+ bh=1gkbm0Ahe3s4IB6dtM7/gc/Nr6esMFpIeX5/yPsyc1Y=;
+ b=3AEld+8wk5+1U1fLhIXFcIWHi3wiF54pBxW8LeyFpiSwe5e/VCsRfBazfxNwxh67svgValpwe
+ WLwLty6rQADAqyZaM7c8c8wsEzl+0990wJFZUTgodCzBj5BoVIqNY1r
+X-Developer-Key: i=wctrl@proton.me; a=ed25519;
+ pk=JXUx3mL/OrnRvbK57HXgugBjEBKq4QgDKJqp7BALm74=
+X-Endpoint-Received: by B4 Relay for wctrl@proton.me/20250603 with
+ auth_id=421
+X-Original-From: Max Shevchenko <wctrl@proton.me>
+Reply-To: wctrl@proton.me
 
-Use Hyper-V's HvCallFlushGuestPhysicalAddressSpace for local TLB flushes.
-This makes any KVM_REQ_TLB_FLUSH_CURRENT (such as on root alloc) visible to
-all CPUs which means we no longer need to do a KVM_REQ_TLB_FLUSH on CPU
-migration.
+This series of patches adds support for the MT6572 SoC and
+the JTY D101 tablet and Lenovo A369i smartphone based on it.
 
-The goal is to avoid invept-global in KVM_REQ_TLB_FLUSH. Hyper-V uses a
-shadow page table for the nested hypervisor (KVM) and has to invalidate all
-EPT roots when invept-global is issued. This has a performance impact on
-all nested VMs.  KVM issues KVM_REQ_TLB_FLUSH on CPU migration, and under
-load the performance hit causes vCPUs to use up more of their slice of CPU
-time, leading to more CPU migrations. This has a snowball effect and causes
-CPU usage spikes.
-
-By issuing the hypercall we are now guaranteed that any root modification
-that requires a local TLB flush becomes visible to all CPUs. The same
-hypercall is already used in kvm_arch_flush_remote_tlbs and
-kvm_arch_flush_remote_tlbs_range.  The KVM expectation is that roots are
-flushed locally on alloc and we achieve consistency on migration by
-flushing all roots - the new behavior of achieving consistency on alloc on
-Hyper-V is a superset of the expected guarantees. This makes the
-KVM_REQ_TLB_FLUSH on CPU migration no longer necessary on Hyper-V.
-
-Coincidentally - we now match the behavior of SVM on Hyper-V.
-
-Signed-off-by: Jeremi Piotrowski <jpiotrowski@linux.microsoft.com>
+Signed-off-by: Max Shevchenko <wctrl@proton.me>
 ---
- arch/x86/include/asm/kvm_host.h |  1 +
- arch/x86/kvm/vmx/vmx.c          | 20 +++++++++++++++++---
- arch/x86/kvm/vmx/vmx_onhyperv.h |  6 ++++++
- arch/x86/kvm/x86.c              |  3 +++
- 4 files changed, 27 insertions(+), 3 deletions(-)
+Max Shevchenko (11):
+      dt-bindings: serial: mediatek,uart: add MT6572
+      dt-bindings: interrupt-controller: mediatek,mt6577-sysirq: add MT6572
+      dt-bindings: timer: mediatek: add MT6572
+      dt-bindings: watchdog: mediatek,mtk-wdt: add MT6572
+      dt-bindings: vendor-prefixes: add JTY
+      dt-bindings: arm: mediatek: add boards based on the MT6572 SoC
+      ARM: mediatek: show the hardware name for the MT6572
+      ARM: mediatek: add MT6572 smp bring up code
+      ARM: dts: mediatek: add basic support for MT6572 SoC
+      ARM: dts: mediatek: add basic support for JTY D101 board
+      ARM: dts: mediatek: add basic support for Lenovo A369i board
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index b4a391929cdb..d3acab19f425 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1077,6 +1077,7 @@ struct kvm_vcpu_arch {
- 
- #if IS_ENABLED(CONFIG_HYPERV)
- 	hpa_t hv_root_tdp;
-+	bool hv_vmx_use_flush_guest_mapping;
- #endif
- };
- 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 4953846cb30d..f537e0df56fc 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1485,8 +1485,12 @@ void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu)
- 		/*
- 		 * Flush all EPTP/VPID contexts, the new pCPU may have stale
- 		 * TLB entries from its previous association with the vCPU.
-+		 * Unless we are running on Hyper-V where we promotes local TLB
-+		 * flushes to be visible across all CPUs so no need to do again
-+		 * on migration.
- 		 */
--		kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
-+		if (!vmx_hv_use_flush_guest_mapping(vcpu))
-+			kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
- 
- 		/*
- 		 * Linux uses per-cpu TSS and GDT, so set these when switching
-@@ -3243,11 +3247,21 @@ void vmx_flush_tlb_current(struct kvm_vcpu *vcpu)
- 	if (!VALID_PAGE(root_hpa))
- 		return;
- 
--	if (enable_ept)
-+	if (enable_ept) {
-+		/*
-+		 * hyperv_flush_guest_mapping() has the semantics of
-+		 * invept-single across all pCPUs. This makes root
-+		 * modifications consistent across pCPUs, so an invept-global
-+		 * on migration is no longer required.
-+		 */
-+		if (vmx_hv_use_flush_guest_mapping(vcpu))
-+			return (void)WARN_ON_ONCE(hyperv_flush_guest_mapping(root_hpa));
-+
- 		ept_sync_context(construct_eptp(vcpu, root_hpa,
- 						mmu->root_role.level));
--	else
-+	} else {
- 		vpid_sync_context(vmx_get_current_vpid(vcpu));
-+	}
- }
- 
- void vmx_flush_tlb_gva(struct kvm_vcpu *vcpu, gva_t addr)
-diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
-index cdf8cbb69209..a5c64c90e49e 100644
---- a/arch/x86/kvm/vmx/vmx_onhyperv.h
-+++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
-@@ -119,6 +119,11 @@ static inline void evmcs_load(u64 phys_addr)
- }
- 
- void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf);
-+
-+static inline bool vmx_hv_use_flush_guest_mapping(struct kvm_vcpu *vcpu)
-+{
-+	return vcpu->arch.hv_vmx_use_flush_guest_mapping;
-+}
- #else /* !IS_ENABLED(CONFIG_HYPERV) */
- static __always_inline bool kvm_is_using_evmcs(void) { return false; }
- static __always_inline void evmcs_write64(unsigned long field, u64 value) {}
-@@ -128,6 +133,7 @@ static __always_inline u64 evmcs_read64(unsigned long field) { return 0; }
- static __always_inline u32 evmcs_read32(unsigned long field) { return 0; }
- static __always_inline u16 evmcs_read16(unsigned long field) { return 0; }
- static inline void evmcs_load(u64 phys_addr) {}
-+static inline bool vmx_hv_use_flush_guest_mapping(struct kvm_vcpu *vcpu) { return false; }
- #endif /* IS_ENABLED(CONFIG_HYPERV) */
- 
- #endif /* __ARCH_X86_KVM_VMX_ONHYPERV_H__ */
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index b58a74c1722d..cbde795096a6 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -25,6 +25,7 @@
- #include "tss.h"
- #include "kvm_cache_regs.h"
- #include "kvm_emulate.h"
-+#include "kvm_onhyperv.h"
- #include "mmu/page_track.h"
- #include "x86.h"
- #include "cpuid.h"
-@@ -12390,6 +12391,8 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
- 
- #if IS_ENABLED(CONFIG_HYPERV)
- 	vcpu->arch.hv_root_tdp = INVALID_PAGE;
-+	vcpu->arch.hv_vmx_use_flush_guest_mapping =
-+		(kvm_x86_ops.flush_remote_tlbs == hv_flush_remote_tlbs);
- #endif
- 
- 	r = kvm_x86_call(vcpu_create)(vcpu);
+ .../devicetree/bindings/arm/mediatek.yaml          |   5 +
+ .../mediatek,mt6577-sysirq.yaml                    |   1 +
+ .../devicetree/bindings/serial/mediatek,uart.yaml  |   1 +
+ .../devicetree/bindings/timer/mediatek,timer.yaml  |   1 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ .../bindings/watchdog/mediatek,mtk-wdt.yaml        |   1 +
+ arch/arm/boot/dts/mediatek/Makefile                |   2 +
+ arch/arm/boot/dts/mediatek/mt6572-jty-d101.dts     |  62 ++++++++++++
+ arch/arm/boot/dts/mediatek/mt6572-lenovo-a369i.dts |  57 +++++++++++
+ arch/arm/boot/dts/mediatek/mt6572.dtsi             | 105 +++++++++++++++++++++
+ arch/arm/mach-mediatek/Kconfig                     |   4 +
+ arch/arm/mach-mediatek/mediatek.c                  |   1 +
+ arch/arm/mach-mediatek/platsmp.c                   |   7 ++
+ 13 files changed, 249 insertions(+)
+---
+base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
+change-id: 20250619-mt6572-ef78a3d45168
+
+Best regards,
 -- 
-2.39.5
+Max Shevchenko <wctrl@proton.me>
+
 
 
