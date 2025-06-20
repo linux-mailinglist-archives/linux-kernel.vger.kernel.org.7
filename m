@@ -1,144 +1,154 @@
-Return-Path: <linux-kernel+bounces-696093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E8B6AE222D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 20:28:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D24AE2238
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 20:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 018793B707B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 18:27:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77C1116BA0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 18:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF592EA74A;
-	Fri, 20 Jun 2025 18:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD772EA143;
+	Fri, 20 Jun 2025 18:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="daM7NI45"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QaYmmYJ1"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B85D2EA16A;
-	Fri, 20 Jun 2025 18:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB1D1E835D;
+	Fri, 20 Jun 2025 18:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750444074; cv=none; b=sRgeqWy5O0in7eop4yHo220YyvsbCpi6QmEHu4G+pZsbANRqXvxHZH1AbDfjEJ5pAKsLtgjKjdEFCJts7gEAQeyAp4mHC9WdmucJYKu5cMDlccyvv0N2iV8LuU2Gl5Eb7lp3iTpuYQxZBfQK1EiHfbtpN205UKlzVXvLVAVMTcM=
+	t=1750444251; cv=none; b=iSwnxKjFNu+0phZoc1/tJ96dp13s4V5BJLqKmR+h3xSsDfWxxyLc6B4Y2yixqW5V6dobylmj/Fy0wZoh2D7NEC88/amPeTPEJlQ/hiNsCqAWX5OH5GN85tgW1hyyetIF0RckPuM9PqT1IRgf8JR5m33IFj70E/b6sp0L8RhUMLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750444074; c=relaxed/simple;
-	bh=d3O9J1g1JWzmphWm7UDBt8lB/M6/JgREUMSah6KHI8g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FVC0LHVLbZBfT6GStOlQZpQqlxaGsgun+pPKWpGVwJ5elm4xM61syHFcp0YKA0495FViXNvUFUGdDemAQMDTtIIgBrQdyn4S05jk2DgMjS58uy2W/lO1WmNPfqfvBgRdrzf489QG3sQv+nULSdG2q1pcO1Yl9p/DDS/2EbG24jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=daM7NI45; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-450cfb790f7so16152675e9.0;
-        Fri, 20 Jun 2025 11:27:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750444071; x=1751048871; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zt/6wMvuIqgz85pJnrDVkDDDGGryUSiChs8NDQQDWVo=;
-        b=daM7NI45Rryey9zKuvKYzhJkEFuJnso65HakcJF14fLbXaF9kls0sH70WCkSQ2t3sZ
-         Ziq4wsSUCfFMX9GQyrOt/9aixJNv4pe8PveR+AxjkuJNX5OtO3Kn071rmRdYIWjupnyu
-         jaj+BBExxWmgwvC/WbP1XbDzVMymNKzotAVCM6I1O2OH7VXAewXUgkgPJvzBR/OI1E7X
-         cU9tlJk8Uzc2Hjq6DslTTcGxaqsliveR7DphW9ovuprSsiId71cJpsVYp+RlNwoo71Vw
-         y1gZkjVkotlFWpTY6Ln/HJ3ETZMcrQ0g9uCeooW6WbfmAK3Vj5y4lU/cpeU6GulUTykf
-         W4sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750444071; x=1751048871;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zt/6wMvuIqgz85pJnrDVkDDDGGryUSiChs8NDQQDWVo=;
-        b=JSC7MgBpUftxgnx/xggjy1FfrCHcd/Qtwm2JgSKlLEbzV6DmnS4A1v9NYAWVjFGDOg
-         +r8d6fTuZrieJqqdqxz0lVUic6Qu17iOReawL+2TXuow9ORVFVNr1+3cYYW5v++Ntr6v
-         gBJG5LVYbJIWigtC+1Yd4Z+W7zYfbjbz9mvkydu4XJ9sITyPgd5FjU3hHPMeTtoXLaCs
-         abYVqKMgV5m5IroCbMziXHQrgcZbjYoPkFsH7x5Cv6+Ye5Q7U1MbD+msUb2YRffztSl2
-         XeEKViTuCo9DRQLy1nh15ndeZiOozgioFpeEAJmtDkBq0/h289lAA1weS6mEwbjGJaJ/
-         +Prw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPtfTRgER3iY3wWRGE5IByta7dihyagCVJAkZ2kUU0IELhDnZX8Vuvb5sPET3EAAnWaaflQdIAUPDfmNrW@vger.kernel.org, AJvYcCXYpu9a/7yFyWVhIovRI+GdWvgobNJbM/EWyWoQiU1KnkXuEFs8hhSiljSPNewpLWlUYzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyITh6XXnyCt5soJ461HRfyobJs4TaMBfx7ZXp16bqSgi6G1CqQ
-	jK8hrCW8ue/3f7IubwcIZVjLU8y2Vo6F+bFkrXlZO1POqExg+XmyyRHduX9hFOVG/YmlTuDNHhT
-	/kA2QYi/rQPFNBl2dVRvSb1Aa6k7BGDg=
-X-Gm-Gg: ASbGncsUUbBXc6cmq+nI4DNmEGnPaAktA/mLXdAeJBW/A3B25NI0NBC+gPuRrMTTSSM
-	szOGimdIInjmFPokiqGD/krZqOD/a6uK8PzOvEhypfTcW/Ompr0V24Oo0ZnLHywCHZ+JYfDyn60
-	PX6+eWOpt1vZ9Xfa1szU84Y6xXuVlEQGRdh63hWE9fAstPaOxc5/gzTU40ephNe5dNVp8atESK
-X-Google-Smtp-Source: AGHT+IHl1RC5vEGeuNOIEw+Q0BWs87oSYVrmLGxL3Je5kTduEV/BPpmvNnOVPUgu+e+9h4GOG8mjOs7xr5n5bef6YWE=
-X-Received: by 2002:a05:600c:1da0:b0:451:833f:483c with SMTP id
- 5b1f17b1804b1-453653d4544mr36551175e9.7.1750444070411; Fri, 20 Jun 2025
- 11:27:50 -0700 (PDT)
+	s=arc-20240116; t=1750444251; c=relaxed/simple;
+	bh=K7Y/oWXq0aqoZQgybeVaMPCKLk+0xYO3ucR0VKjjHqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qdAWb0DxqKczOp1jYz+2xr9gDyCPHXDnx3dtDUaLrY7HjE+pN85Gn0Kl0OVlvC7JAu05iRfem51xnZ9AMMxR2djHmATEM/HxkaKYRRXJyx8TiIjpBsV9wjrtKrjnA2O5mtr11qNYAWmxSCn2FxSYdM7siBrwrxuBKTOt1VYbZ8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QaYmmYJ1; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1DFD540E019D;
+	Fri, 20 Jun 2025 18:30:45 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id jRf7-SZaFYZz; Fri, 20 Jun 2025 18:30:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1750444241; bh=m68liJooLhlG7wL7oAtHDxeahc+z03MHlUQPUJGShk8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QaYmmYJ13ZaVCMtrMyehdjWorlcAO+/xFuLeFvWKtBciydtISQzw5YLxfbvBeJ/Ga
+	 CiizMn/LD1OXXu/0hq4bVNe8I5ylle279+5lRiGn1quKKdqExHFSOGJlXQZ9UlY2fN
+	 +AN3FEQdF98eUGxJ3NnEgwV7nXiGyFX7p5/Kj2wMi9QmoN1DO3/kcMTrjd3JN3J/U4
+	 osb6/CB/JXfcRIEoOEJP2Ad90RQ1uHl5rmt7bS8k/Szfv8GlTHX6vrBMnbKI+UqPrB
+	 YLTv7iNJ8P4hfuFPk/4SVFFvjrmhsFSHwRj0SoRD1xV15lJfBV2lN+py1nnqMxxMCP
+	 XBdd8IQD9Ma0pWs+02/R+Qplxm3u+sue88giJsDDa1a8UMDNfZuj0RIRffaAzuSuiP
+	 qS/KmFI6h5J2TMH8OxhX0XTFg8mpjKxlSdenbBEMaAoFVhFhA9rMu+Hyq6H2WCrG5h
+	 tHZP/Q9bX/STS5A0+jRKdLrphcAHorNAep82OJHaONmsBOb5XSV4slFqrdosUKs29Q
+	 /1VwwTJikNkhk7Yxyt5dIBdl7nq8Dq4xlLah3UQYvw4hqHHAXdTukkrsOvQqr3mBvI
+	 MjSWW9mT+f/DPscsJKf9OK0bi3Hr6VwN0qPJe4+B5b/0MmCKi9GK+b2l/SpsBL9sAF
+	 kRxsQYDSUT9ZNVhWrmdqVs1g=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0674540E00DA;
+	Fri, 20 Jun 2025 18:29:49 +0000 (UTC)
+Date: Fri, 20 Jun 2025 20:29:43 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Xiongwei Song <xiongwei.song@windriver.com>,
+	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Brijesh Singh <brijesh.singh@amd.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Tony Luck <tony.luck@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Breno Leitao <leitao@debian.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
+	Juergen Gross <jgross@suse.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Yuntao Wang <ytcoode@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
+	Huang Shijie <shijie@os.amperecomputing.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-mm@kvack.org,
+	Yian Chen <yian.chen@intel.com>
+Subject: Re: [PATCHv6 01/16] x86/cpu: Enumerate the LASS feature bits
+Message-ID: <20250620182943.GDaFWolxhwogB2tTxb@fat_crate.local>
+References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
+ <20250620135325.3300848-2-kirill.shutemov@linux.intel.com>
+ <20250620163504.GCaFWNuI-8QFqAM0yI@fat_crate.local>
+ <6y2iqv6c2idn7yebaec7tyhzl5zcsrwqq4lcsokumlqeophzaf@ljnmxorblgcj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250620051017.111559-1-chen.dylane@linux.dev>
-In-Reply-To: <20250620051017.111559-1-chen.dylane@linux.dev>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 20 Jun 2025 11:27:38 -0700
-X-Gm-Features: Ac12FXzZDe62xxGp3JJlnJT6bukK6dDwlfsdTDNpYvcrO-W5ia9pQBHKXqSnPpk
-Message-ID: <CAADnVQLd9Z1nfp+WBdMLaZ7EP-+A9QEDdOhZaL0YTaygtKD2Hg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: Add load_time in bpf_prog fdinfo
-To: Tao Chen <chen.dylane@linux.dev>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6y2iqv6c2idn7yebaec7tyhzl5zcsrwqq4lcsokumlqeophzaf@ljnmxorblgcj>
 
-On Thu, Jun 19, 2025 at 10:10=E2=80=AFPM Tao Chen <chen.dylane@linux.dev> w=
-rote:
->
-> The field run_time_ns can tell us the run time of the bpf_prog,
-> and load_time_s can tell us how long the bpf_prog loaded on the
-> machine.
->
-> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
-> ---
->  kernel/bpf/syscall.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index 51ba1a7aa43..407841ea296 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -2438,6 +2438,7 @@ static void bpf_prog_show_fdinfo(struct seq_file *m=
-, struct file *filp)
->         const struct bpf_prog *prog =3D filp->private_data;
->         char prog_tag[sizeof(prog->tag) * 2 + 1] =3D { };
->         struct bpf_prog_kstats stats;
-> +       u64 now =3D ktime_get_boottime_ns();
->
->         bpf_prog_get_stats(prog, &stats);
->         bin2hex(prog_tag, prog->tag, sizeof(prog->tag));
-> @@ -2450,7 +2451,8 @@ static void bpf_prog_show_fdinfo(struct seq_file *m=
-, struct file *filp)
->                    "run_time_ns:\t%llu\n"
->                    "run_cnt:\t%llu\n"
->                    "recursion_misses:\t%llu\n"
-> -                  "verified_insns:\t%u\n",
-> +                  "verified_insns:\t%u\n"
-> +                  "load_time_s:\t%llu\n",
->                    prog->type,
->                    prog->jited,
->                    prog_tag,
-> @@ -2459,7 +2461,8 @@ static void bpf_prog_show_fdinfo(struct seq_file *m=
-, struct file *filp)
->                    stats.nsecs,
->                    stats.cnt,
->                    stats.misses,
-> -                  prog->aux->verified_insns);
-> +                  prog->aux->verified_insns,
-> +                  (now - prog->aux->load_time) / NSEC_PER_SEC);
+On Fri, Jun 20, 2025 at 08:33:36PM +0300, Kirill A. Shutemov wrote:
+> What is current policy around it ?
 
-I don't like where it's going.
-Soon fdinfo will be printing the xlated insns of the prog too,
-since why not?
-Let's stop here. We have syscall query api-s for that and
-bpftool to print such things.
-No more fdinfo "improvements".
+Documentation/arch/x86/cpuinfo.rst
+
+> I think it is useful to advertise security features in cpuinfo.
+
+Because who's going to consume them?
+
+Don't get me wrong - I am trying to see whether the whole use case for this is
+well thought out. Because it becomes an ABI.
+
+But if no one is going to use it, why bother?
+
+Arguably, for this thing the argument would be - as it is put in that file
+above:
+
+"So, the current use of /proc/cpuinfo is to show features which the
+kernel has *enabled* and *supports*."
+
+as it has been enabled by machinery.
+
+So that's ok. I'm just making sure we're on the same page and you're not
+aiming at something completely different with this.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
