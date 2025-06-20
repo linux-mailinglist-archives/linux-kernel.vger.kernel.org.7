@@ -1,90 +1,86 @@
-Return-Path: <linux-kernel+bounces-695033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E25F9AE144A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:54:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C56AE1459
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 854DB4A0730
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 06:54:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95A083B742D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 06:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674ED224B06;
-	Fri, 20 Jun 2025 06:54:39 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0713A225A38;
+	Fri, 20 Jun 2025 06:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RrJKdlqu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8FE2248BF
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 06:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612EB22576E;
+	Fri, 20 Jun 2025 06:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750402479; cv=none; b=mdkRshaLIy1WwcPSXdGvPpUEXgIDyhc7y4cydAHntzccVK6G1ReUFrv3xHKy44yXvJCXaQQ+wSuzph2hd4l4RhLPfF5BFNNlFn6e/nuCXySTFwV/qozxyjWYpIrXSmCsmVbfIKWNA+9wxInzoomcLMNPvWC86XQwa+DPMEIibuI=
+	t=1750402516; cv=none; b=sMTqghtgLAnolFaUpAM0ZBJQz7NglgqC1GzYl9LbtH1t0E0UV1Db/PNroDqYbl8i1MZIZtB8zttdM5WLXZP9w9ImXeR4Qx31UiMMg145JbAEO5I4JMwmhQJgMgqvezEjJvqDc8IFJuXB8C0A8k0VcsnEDB2XWMdAGvWXXYi03tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750402479; c=relaxed/simple;
-	bh=bbfx2n0y2EckyJVmb9QML8jEcSOyZ97DoWA3f1jtCYQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=N2WXn8F3pTmUFtarUWychkTLO2dDfk4eCoCg2czT+wzP2vLUmWj7uMjuDvTSj/brbmqEnlC8S7V7sOZItV8d1CKppRyYJVxtwx18PPW8B4GAWRqB917ZURdKuZJvF/U+UURBO3hNK1xTHrQFIW0cxC5diSLsvj95+OMw6xaO/YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ddce213201so14099125ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 23:54:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750402477; x=1751007277;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xbaep2FPsBJRGLzNpZF/WZNjNYCjbIrWnRi2iEY4dXs=;
-        b=S7VJO2uO2iclLhL6qt02iDHJrduykfHoofV+9rCFYRkSheuoHl9fLtFQaK3I3GWRX/
-         4XTrfYpUjWyHpVxhQVpJwjyAQRklunKnAaKbVqOyCeIlfPtuu6lTITOxOEfVvNqsy85i
-         yzX24LG2ekYfOUNxUljEoA3shlO0gOePD0UhT97sHZg46ThBd11Ze+0jwhdw+I4uhMPa
-         1Yqjd2R7cTZ5Jg1gIc9oUusgAAPb0RGRc6MPjfzH1VhSfIn+h8yow5+QRGrqhl6V6+Qx
-         KKgieaiBu9TPNPhRPvZDb2fgvHTW4EelQb6b7pfORBg6R1PJOFGryHsMsZ2BscZsIKfT
-         Au3A==
-X-Gm-Message-State: AOJu0YwSf9QX4wbeGiMSLA1/p3ARIESNYnzL7lXlENciXZ73O+mAMhMG
-	/cm6+bf4w6lZkusigIwck/W3ZI9PVINNQ3qjBHxPpNiM/Pkx50wtZraWGHqlkIK9WMg+uykykAj
-	4Rp3e1ComtZyNI9LfOEGKpaW+C3++b8KmfuudtlqkMgGWWbMhMUy0BF0FOqg=
-X-Google-Smtp-Source: AGHT+IFc+2B1yL3DwY/kW42N+wKpI6NG1p1ZrsjcR4BN23xgvlqTelkiwc0de46PoXMpUUpJgQVWE53ury8JfkDE2h5rBxLANTln
+	s=arc-20240116; t=1750402516; c=relaxed/simple;
+	bh=g2VnxAUXtleHi1yhq9BMIa6p7PhFKqx9nTY7Go9203c=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rJZC9oFVUQ00+qjogh6i6BU1fvES/VFrQPAkXDAtb+YlToLk/CBtzgp/CwvZSRZHC4rx+5qz0L+E91dn2Oz9tq5WCOd9hBWNu0oO76Z1DR6DD48pcUo6kTGBNN3JILAHZlRnxCownm80jR5wB2DUwAiet2Pdb7MICP+TZL/0Pls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RrJKdlqu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC58C4CEE3;
+	Fri, 20 Jun 2025 06:55:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750402515;
+	bh=g2VnxAUXtleHi1yhq9BMIa6p7PhFKqx9nTY7Go9203c=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=RrJKdlquRLA4snTBHcyEDxFB9bG5zyeyVyrRlNoMow9Ah9DGNdF+DUELHobk9m3EJ
+	 /HfneiB1MzjufOZpCtM3Y0mgsxWPpq2urJNMlHMrgISIbhGbvYeiLw7qqSaSoCFfBq
+	 AvJnhcA9IyJilpk6HngyQoVxpaJ+FfYS1IjvezQcUOmDZ4RFEEnt2cGS9iv8aaWO4y
+	 KOjGcrZLvwqJNT8u5i5M+LW9eWGqnp4FadwEVr+E/ezjyF2a6JIalfbvw3f32nZ9Yv
+	 gKD1RHAY4wurtotNaYHCdWW3ltzBR+AxAcjrEc/Bf9ghbBNdx/558SJ1s2wB85es8t
+	 BV63s16pWsb4A==
+Date: Fri, 20 Jun 2025 08:55:13 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: VladTop46 <mcsm2654@gmail.com>
+cc: bentiss@kernel.org, linux-usb@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION] USB HID initialization delay (~8s) for Semitek
+ keyboard on kernel 6.15.*
+In-Reply-To: <c5a8fdd3-fc35-4055-9d1e-7a5b4b50db91@gmail.com>
+Message-ID: <snor7s95-5961-o5s7-440o-7q02r81ps057@xreary.bet>
+References: <c5a8fdd3-fc35-4055-9d1e-7a5b4b50db91@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19cc:b0:3dd:b540:b795 with SMTP id
- e9e14a558f8ab-3de3954f063mr12322145ab.3.1750402476897; Thu, 19 Jun 2025
- 23:54:36 -0700 (PDT)
-Date: Thu, 19 Jun 2025 23:54:36 -0700
-In-Reply-To: <6854a3e6.a00a0220.137b3.0022.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685505ac.a00a0220.137b3.0035.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [kernel?] KMSAN: kernel-infoleak in
- vmci_host_unlocked_ioctl (3)
-From: syzbot <syzbot+9b9124ae9b12d5af5d95@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Fri, 13 Jun 2025, VladTop46 wrote:
 
-***
+> Hi Jiri and Benjamin,
+> 
+> I'm reporting a regression in USB HID initialization timing for the Skyloong
+> GK104 Pro keyboard (detected as "Semitek Gaming Keyboard", USB ID: 1ea7:0907),
+> which I observed when upgrading from Linux kernel 6.14 to 6.15.
+> 
+> Summary:
+> On kernel 6.15.2, the keyboard takes approximately 8 seconds longer to become
+> initialized and usable compared to 6.12.33-lts. The USB device is discovered
+> at the same time, but HID input registration is significantly delayed. After
+> that, the device functions normally.
 
-Subject: Re: [syzbot] [kernel?] KMSAN: kernel-infoleak in vmci_host_unlocked_ioctl (3)
-Author: lizhi.xu@windriver.com
+Hmm, there were absolutely no changes going to hid-semitek driver at all 
+between these two versions, so it's probably either USB or Input related.
 
-#syz test
+Are you by any chance able to do git bisection easily?
 
-diff --git a/drivers/misc/vmw_vmci/vmci_host.c b/drivers/misc/vmw_vmci/vmci_host.c
-index b64944367ac5..e67e6ae48e83 100644
---- a/drivers/misc/vmw_vmci/vmci_host.c
-+++ b/drivers/misc/vmw_vmci/vmci_host.c
-@@ -398,6 +398,7 @@ static int vmci_host_do_send_datagram(struct vmci_host_dev *vmci_host_dev,
- 		kfree(dg);
- 		return -EINVAL;
- 	}
-+	memset((char*)dg + 27, 0, 4);
- 
- 	pr_devel("Datagram dst (handle=0x%x:0x%x) src (handle=0x%x:0x%x), payload (size=%llu bytes)\n",
- 		 dg->dst.context, dg->dst.resource,
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
+
 
