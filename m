@@ -1,94 +1,128 @@
-Return-Path: <linux-kernel+bounces-695478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E244CAE1A30
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:44:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B026FAE1A34
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73BAE18937B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:45:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 802FD3AD946
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A217628A3E4;
-	Fri, 20 Jun 2025 11:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BB92222C8;
+	Fri, 20 Jun 2025 11:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2lup0KH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="Mrjsnqyt"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAD221A425;
-	Fri, 20 Jun 2025 11:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750419885; cv=none; b=ArueF5eylsvL3Av14olXkZ0CkUNeczmrltWEPnjwZDeGlFL+X7kyY/mA0aQb3PrGSEW2vscZuMTMIjegQeXyVCEUHbC5pTJDEGSKv/gw/L+nUOTDJcsTMYPttLqr9kcFAX2iCR85kpr+ScPn8eo9nw7gkQK88pGhx+eQZozLYpg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750419885; c=relaxed/simple;
-	bh=XtR11yMx5ZilD72xUvYz9CFq7rxGWJY+oZxpwYkMdVo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iYD9l3sVP7vvObkMsl+j5LDWS4Yk2/QvwQFjnwu+JZfpstXJmX+T3H/Yk3klQXQ795MfalIuF/dNRL5hU/KPQOF0DlRyM6D9x3lhBflG5JwrdRUFNMHLVwVpJjmMjf0UCkHMve8LZ/dcxTOxF2LXJmSlD7nWQCr+B3yltSP60SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2lup0KH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C2DFC4CEE3;
-	Fri, 20 Jun 2025 11:44:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750419884;
-	bh=XtR11yMx5ZilD72xUvYz9CFq7rxGWJY+oZxpwYkMdVo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=h2lup0KHvc4PgEcnV49OdwSSj3J/qpGQVd+Dj2bQe71XC7DPyImx5QwwU7mx7YBPE
-	 VN40t0HuYCpjacvaZi5spB46NjFyaTbqEQ6jKN/yDi2MdOdQYGCdk8nrHs3MAlgxfu
-	 V86wwfo8WfjMOX+b5n/dg9XlNd8niT47xsOAnv1C6K2LeT/iN/TPS6REkGykA4CUgu
-	 SzD3DUmbz/J78MD6820rnJnCtPdjlZNjTSm/vmZYySjJwIpf6jdSdpMGO0oGH425KL
-	 Dta4pYZydOLPEvv6gRpoarH+AcvB4p4cw+p6qZ+E8IznWvhUw+EYeRKX76Oz/sZhf6
-	 ibYZgzqvobzeQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Matthias Fend <matthias.fend@emfend.at>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	=?UTF-8?q?Andr=C3=A9=20Apitzsch?= <git@apitzsch.eu>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] leds: tps6131x: add V4L2_FLASH_LED_CLASS dependency
-Date: Fri, 20 Jun 2025 13:43:58 +0200
-Message-Id: <20250620114440.4080938-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEE430E828;
+	Fri, 20 Jun 2025 11:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750420002; cv=pass; b=DmTpKcv4V2qE02HPpmhLmpZ1YIgeoi4FdYISpjJ/eLSG5XOpsQIhItnYtXjD5zxj2gup+OvV2X326wgWaQpJl0ySt81QxHZxIQRMTW6T/IvAuLln1PmQgWbHl8AtDoElmwMLzaLK4tKmR9dhpy53wf8k13NfVs9CJA8i1ZXvNHQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750420002; c=relaxed/simple;
+	bh=mZQXe6YL/SgkGvRD2+yG02kkbd26ygGAuqXUEaPKgNw=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=eru+VtWqli3ocZNRMyIFaPbyy4e7qwOfTOgtR0u07UFQAu7XckHS8lxEspmk+N0JmE2+Zfz3vbUv7Wdn6avLDVqgVx24VK3FQJRd10U8qra4/ODLcUkSv92z8W7RtIXcEVkhGF6iu86g972wtKRyJ20pi/kmg9+dEm6OejyWvJI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=Mrjsnqyt; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
+ARC-Seal: i=1; a=rsa-sha256; t=1750419994; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mgVVCwNeUA+zZ2AfNWsj22p6ZRdc2JEKPR+UpWlmRAfAo2MkJomFHLtt5kkoSAJ/6olfujIddZlFrUFfje5Txy9+5OChgi9WThZL5Q0UxS92J0pcqdTMRtjhP4j7nYGOYplvAEmMtU6iIVx+6bKqmCFyOGM1eHqAcezXAfJVM+w=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750419994; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=jVlU+DHK8bKMw4or/Qxu1c49pZEhg++nt6bN9qPUsP0=; 
+	b=KeMJ2hmx7DYpph9pBScbZ5WII7BoQDUwXJJdT9b77C/CjKhPkBmi3Nm+6+9mh4ZvdgQgchQjBAEfVTSsreV2HbHsxutBJE5FxxT961XbO8vK70PfjJY7AKoRrZ4D+BN7ZNqQxhGK8g2SIUjMOJbzc2LseZPOxBWp7oszrkbclmQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=linux.beauty;
+	spf=pass  smtp.mailfrom=me@linux.beauty;
+	dmarc=pass header.from=<me@linux.beauty>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750419994;
+	s=zmail; d=linux.beauty; i=me@linux.beauty;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=jVlU+DHK8bKMw4or/Qxu1c49pZEhg++nt6bN9qPUsP0=;
+	b=MrjsnqytUrOQc0afK8UmyQSFCv1N/7iX6zIIFOgLlEKiJAJE63d8TP34vG/4jNKB
+	4GDUPTNM65YWILfZM/o1DqSu6Md+pezQaok4keXK7nHd7Ma3cD+Xc1XeD1hfIfCd4AH
+	iASD18U4cpgzi8WBLGfa9e/jYNv1z8OjvKXkjyBw=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1750419992200562.1431572615143; Fri, 20 Jun 2025 04:46:32 -0700 (PDT)
+Date: Fri, 20 Jun 2025 19:46:32 +0800
+From: Li Chen <me@linux.beauty>
+To: "Jiri Kosina" <jikos@kernel.org>
+Cc: "Benjamin Tissoires" <bentiss@kernel.org>,
+	"linux-input" <linux-input@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>
+Message-ID: <1978d296e6c.110b7a29b864290.2503936252680819834@linux.beauty>
+In-Reply-To: <446o7on5-8s99-01p9-rq78-4qo9pqo3qpr0@xreary.bet>
+References: <20250620021506.12624-1-me@linux.beauty> <446o7on5-8s99-01p9-rq78-4qo9pqo3qpr0@xreary.bet>
+Subject: Re: [PATCH v2] HID: rate-limit hid_warn to prevent log flooding
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi Jiri
 
-This driver can optionally use the v4l2_flash infrastructure, but fails to
-link built=in if that is in a loadable module:
+ ---- On Fri, 20 Jun 2025 15:09:37 +0800  Jiri Kosina <jikos@kernel.org> wrote --- 
+ > On Fri, 20 Jun 2025, Li Chen wrote:
+ > 
+ > > From: Li Chen <chenl311@chinatelecom.cn>
+ > > 
+ > > Syzkaller can create many uhid devices that trigger
+ > > repeated warnings like:
+ > > 
+ > >   "hid-generic xxxx: unknown main item tag 0x0"
+ > > 
+ > > These messages can flood the system log, especially if a crash occurs
+ > > (e.g., with a slow UART console, leading to soft lockups). To mitigate
+ > > this, convert `hid_warn()` to use `dev_warn_ratelimited()`.
+ > > 
+ > > This helps reduce log noise and improves system stability under fuzzing
+ > > or faulty device scenarios.
+ > > 
+ > > Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
+ > > ---
+ > > Changelog:
+ > > 
+ > > v2: Introduce hid_warn_ratelimited to rate-limit the specified log.
+ > > 
+ > >  drivers/hid/hid-core.c | 2 +-
+ > >  include/linux/hid.h    | 2 ++
+ > >  2 files changed, 3 insertions(+), 1 deletion(-)
+ > > 
+ > > diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+ > > index b348d0464314c..aaba7164a8c9a 100644
+ > > --- a/drivers/hid/hid-core.c
+ > > +++ b/drivers/hid/hid-core.c
+ > > @@ -661,7 +661,7 @@ static int hid_parser_main(struct hid_parser *parser, struct hid_item *item)
+ > >              item->tag <= HID_MAIN_ITEM_TAG_RESERVED_MAX)
+ > >              hid_warn(parser->device, "reserved main item tag 0x%x\n", item->tag);
+ > >          else
+ > > -            hid_warn(parser->device, "unknown main item tag 0x%x\n", item->tag);
+ > > +            hid_warn_ratelimited(parser->device, "unknown main item tag 0x%x\n", item->tag);
+ > >          ret = 0;
+ > 
+ > While I agree in principle that we shouldn't be flooding dmesg in case the 
+ > report descriptor is completely bogus, I think we should be more 
+ > consistent then.
+ > 
+ > I am pretty sure syzkaller produce report descriptors that will emit flood 
+ > of "reserved main item tag", but you don't seem to be addresing that case?
 
-ld.lld-21: error: undefined symbol: v4l2_flash_release
->>> referenced by leds-tps6131x.c:792 (drivers/leds/flash/leds-tps6131x.c:792)
+Thanks for the suggestion. Perhaps the shorter "reserved main item tag" didn't corrupt my system, 
+so I didn't notice. I'll ratelimit it in v3.
 
-Add the usual Kconfig dependency for it, still allowing it to be built when
-CONFIG_V4L2_FLASH_LED_CLASS is disabled.
-
-Fixes: b338a2ae9b31 ("leds: tps6131x: Add support for Texas Instruments TPS6131X flash LED driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/leds/flash/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/leds/flash/Kconfig b/drivers/leds/flash/Kconfig
-index 55ca663ca506..5e08102a6784 100644
---- a/drivers/leds/flash/Kconfig
-+++ b/drivers/leds/flash/Kconfig
-@@ -136,6 +136,7 @@ config LEDS_TPS6131X
- 	tristate "LED support for TI TPS6131x flash LED driver"
- 	depends on I2C && OF
- 	depends on GPIOLIB
-+	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
- 	select REGMAP_I2C
- 	help
- 	  This option enables support for Texas Instruments TPS61310/TPS61311
--- 
-2.39.5
-
+Regards,
+Li
 
