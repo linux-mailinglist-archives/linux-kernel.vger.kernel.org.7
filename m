@@ -1,186 +1,233 @@
-Return-Path: <linux-kernel+bounces-695330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D895AE1871
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:01:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF77AE1872
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D80C87B01AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:00:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14FBD4A3075
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C0F2882A9;
-	Fri, 20 Jun 2025 10:00:29 +0000 (UTC)
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C8421ADA2;
+	Fri, 20 Jun 2025 10:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BdfBSmxs"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314B227FD41;
-	Fri, 20 Jun 2025 10:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B322A63B9
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 10:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750413629; cv=none; b=YNo9J5aOFXZYgOXFujn+2MX+z7a/ToGWHsNcMKde4aDncottGpRWIHIT2+XMBD9UELv+X/tgz41zP1l7S3KsgAjm3ohGqq4pDl1f72wtCJyjle3uzOQCpxy2rTMANqNo4v0S0JXfMpVOJtrwhG1bXPIqEl5/Wt7dSkuvO+F7kbs=
+	t=1750413688; cv=none; b=mOz3bN3QuUtFP3kqDcGNPuUVgfJVpyxgNLMPBH/GyglyZ+/Q1c6oBiVaXDr8YnX9E9t/TdKMdxnedxKtJcGu4joUITTGLO+HX1a85n3CT/HYy7RrDLiPBz9hEDTVdnXB/ZF5Kh76w+j7pjZr+QBwXOj+kKh/EOnAnmKIU568cTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750413629; c=relaxed/simple;
-	bh=R+p0EaDC0lgqSxTQLjz9IbRSroUob7sVUhViBG86vag=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n5FVMeaJSCvilrCBt0wHUhvy9xQ/b4zilxEXx7I23UX9fWfn1pj2abi2yukSC9xTfPAoLd5bfiEBbXu95UY319QE/enwI7Zr1NamvqFwLzlS94LK75URaXcSCkon2b3N68ATdeC7kFe3ulkiggVP20qlcTj3FDQd/fu67MsH/K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c02:2eb0:2d06:fb3f:ec9:50ac])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 195ff8217;
-	Fri, 20 Jun 2025 18:00:16 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Yao Zi <ziyao@disroot.org>,
-	Rob Herring <robh@kernel.org>,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 1/1] arm64: dts: rockchip: rk3528: Add CPU frequency scaling support
-Date: Fri, 20 Jun 2025 18:00:10 +0800
-Message-Id: <20250620100010.1291658-2-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250620100010.1291658-1-amadeus@jmu.edu.cn>
-References: <20250620100010.1291658-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1750413688; c=relaxed/simple;
+	bh=XX3jpB7mpBpXk+bdtyKB6OPlgo/vZPvUa9NFJ93m3uk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=CF6N61MJBt5AAdkMTajDOPanYsbD2E2afw98qBoweTVmaPt65a2TvwSv63PAfCI3peCfh67f1s5+kM5M7XHmHxrVqnFG1FDXIhdQ4MTn3+Zcly9sEjVqlH2i101tExYWy+CQcXRu442FeEYA+48Oqgi/X5B8g5/my33WqB2Jx7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BdfBSmxs; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-450cfb790f7so12445105e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 03:01:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750413685; x=1751018485; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=mMrWYnnZWM4Y5pjy/CFIMa2zim/OPrqscxMGLqeMAX8=;
+        b=BdfBSmxs9mApCLTrbBtCJJtsq8iTQ1AzPs1UZ58y/PLugPP978hL84d+VrewTiNydF
+         PExq99JMK2Q01O68L5tAXO7mcZVIAvNdvn4n/6RG37A56yTE4+TTW2VvoaXcr5rQlC6Z
+         7tl6HbrpiMX5pJqrX5Y6Up1K/dkFsPbT3rKPShM4lpH6wKE/7yEQ0IT540DYF1aErbG5
+         p9L1rFrugAZaGVLwh3Wc80DieWX4zQGA6If8rcJKj7GioRjZ+vbEriHISOhWtgMHZELU
+         Ppduam5W9UeUpoD0ow+K+TH4pWLbXtA/bkv+6PZH0VecilwaVmt7webr9aArFuMRBnAC
+         PyNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750413685; x=1751018485;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mMrWYnnZWM4Y5pjy/CFIMa2zim/OPrqscxMGLqeMAX8=;
+        b=WzejL+dgpJDSmOwD9LSAGiOoXGfXsO/NImi27VxLDQy/JyRiDsAw8N/vJxMcmA7WTJ
+         5qSR9i83gAheinjghz+Z8Y8UNU8+plHJYlER7txPp2topHEtwdd9zDoapjAgu2h9Ho2t
+         ENo3cxRdxmsbICVe4pabxP0ZKjJ0FI4LGEFb1OZeJEXaj1bkT2S/jTjj0pTaNAbs+rnh
+         jEz9xVgy+gQLwSHYd0/sVzY5kipXap791Rn+OFGoyql3+DBLe/JmJaxTtTQxIQ5t2ZGJ
+         DkiSwE26esBHu4pz0rC/6fS7ACEdCwTbYnW5oXubU6KMGaV1KHyNDvLQNOqbeE/TOK5V
+         vOEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVn4pFT2s4ceQYpdSkqPsu1YPx5cR9IXO4N0oImifZbDvvPucQ7tz78tTswtd3ZQnzfaGV2E74kgfe9TkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydB0Ez+9+9aJoOSpGXGyYeVTByqBlDZOjJFt2t8X4hRirByq0H
+	wRP0DEN/pY8RVaUR7gb4RdcsvVaijYCR8ckBSZUHgB+R+6kE+l1SwZlof5V+M8I9vAo=
+X-Gm-Gg: ASbGnct7C/4G3nr1/JCUj4cTxxCu8gdij9AJkHZfVSPBdSxyeqFvqisQD7SeFhec67e
+	8bq+A3zlJHldmnU/QhVYatX/gbYb5R2o+QC1+JYlIcqzBOZ/N40yPT0tV7tw6dX5f3qPE4jWRdj
+	2QuxAu8s2K5Ds0r1gZ03cYYbBM+kuYWUczVZ1PwNzNFji3zyCUhg0DkkfIykz1DIhSuark10elB
+	umXS5fqlsElgncxRj1ZigmVFqUgOn1PggPpY5Fmk7thdWToixgxbLdBxz6N18IF89Mzk2oP3RHo
+	bd+ZuU+QCbR/RsVC/onFUyoT2XZ7cgvueL4S9BeM0KW4X8Hw3iz77HQj+VxUSLIY824=
+X-Google-Smtp-Source: AGHT+IHe618MZafhnAT+zQw765nD0vsugMDIuLNgSEIgsjw+wJ9N00rnaNZABT0XgCzi2ieKxGyKvw==
+X-Received: by 2002:a05:600c:8b07:b0:43c:ec0a:ddfd with SMTP id 5b1f17b1804b1-453653cc952mr18036295e9.6.1750413684863;
+        Fri, 20 Jun 2025 03:01:24 -0700 (PDT)
+Received: from [192.168.1.3] ([37.18.136.128])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535ebd02basm53176285e9.39.2025.06.20.03.01.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Jun 2025 03:01:24 -0700 (PDT)
+Message-ID: <4a8dbb2f-9058-416b-8055-46a3afcae0d1@linaro.org>
+Date: Fri, 20 Jun 2025 11:01:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaGksZVkhJGUkaSU8dSENDTVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtJQUkeGUtBSR9LTUEdGUgdQR4YQkFOSxoYWVdZFhoPEh
-	UdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQktLWQY+
-X-HM-Tid: 0a978cc825cc03a2kunm2902750c11af80
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mkk6Kzo6NjE4HioLLTEICzMu
-	SCoKCzNVSlVKTE5LT0pITUpMTUpOVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
-	Sx5BSBlIQUkYS0lBSR4ZS0FJH0tNQR0ZSB1BHhhCQU5LGhhZV1kIAVlBT0pMSzcG
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] perf test: Add sched latency and script shell
+ tests
+To: Ian Rogers <irogers@google.com>
+References: <20250619002034.97007-1-irogers@google.com>
+ <20250619002034.97007-2-irogers@google.com>
+Content-Language: en-US
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250619002034.97007-2-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-By default, the CPUs on RK3528 operates at 1.5GHz. Add CPU frequency and
-voltage mapping to the device tree to enable dynamic scaling via cpufreq.
 
-The OPP values come from downstream kernel[1]. Both 408MHz and 600MHz
-frequencies use the normal PLL, so use the corresponding highest voltage.
 
-The voltage used for other frequencies can't be less than above (875mV).
-Therefore, 816MHz to 1200MHz also uses the corresponding highest voltage.
+On 19/06/2025 1:20 am, Ian Rogers wrote:
+> Add shell tests covering the `perf sched latency` and `perf sched
+> script` commands. The test creates 2 noploop processes on the same
+> forced CPU, it then checks that the process appears in the `perf
+> sched` output.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+> v2: Skip the test if not root due to permissions.
+> ---
+>   tools/perf/tests/shell/sched.sh | 91 +++++++++++++++++++++++++++++++++
+>   1 file changed, 91 insertions(+)
+>   create mode 100755 tools/perf/tests/shell/sched.sh
+> 
+> diff --git a/tools/perf/tests/shell/sched.sh b/tools/perf/tests/shell/sched.sh
+> new file mode 100755
+> index 000000000000..0a4fe3f414e1
+> --- /dev/null
+> +++ b/tools/perf/tests/shell/sched.sh
+> @@ -0,0 +1,91 @@
+> +#!/bin/bash
+> +# perf sched tests
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +set -e
+> +
+> +if [ "$(id -u)" != 0 ]; then
+> +  echo "[Skip] No root permission"
+> +  exit 2
+> +fi
+> +
+> +err=0
+> +perfdata=$(mktemp /tmp/__perf_test_sched.perf.data.XXXXX)
+> +PID1=0
+> +PID2=0
+> +
+> +cleanup() {
+> +  rm -f "${perfdata}"
+> +  rm -f "${perfdata}".old
+> +
+> +  trap - EXIT TERM INT
+> +}
+> +
+> +trap_cleanup() {
+> +  echo "Unexpected signal in ${FUNCNAME[1]}"
+> +  cleanup
+> +  exit 1
+> +}
+> +trap trap_cleanup EXIT TERM INT
+> +
+> +start_noploops() {
+> +  # Start two noploop workloads on CPU0 to trigger scheduling.
+> +  taskset -c 0 perf test -w noploop 10 &
+> +  PID1=$!
+> +  taskset -c 0 perf test -w noploop 10 &
+> +  PID2=$!
+> +
+> +  if ! grep -q 'Cpus_allowed_list:\s*0$' "/proc/$PID1/status"
 
-The remaining 1416MHz to 2016MHz use a voltage close to actual frequency.
+Hi Ian,
 
-[1] https://github.com/rockchip-linux/kernel/blob/develop-5.10/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+Because taskset is also run in the background it's possible to grep the 
+proc file before it's managed to re-pin itself. I saw some intermittent 
+failures of the test because of this.
 
-Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
----
- arch/arm64/boot/dts/rockchip/rk3528.dtsi | 64 ++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+I think you'd need to run noploop in the background but taskset in the 
+foreground and give it the pid of noploop to make sure it finishes 
+before grepping.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-index 829f980ea353..5cb7f10b79ed 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-@@ -53,6 +53,7 @@ cpu0: cpu@0 {
- 			device_type = "cpu";
- 			enable-method = "psci";
- 			clocks = <&scmi_clk SCMI_CLK_CPU>;
-+			operating-points-v2 = <&cpu_opp_table>;
- 		};
- 
- 		cpu1: cpu@1 {
-@@ -61,6 +62,7 @@ cpu1: cpu@1 {
- 			device_type = "cpu";
- 			enable-method = "psci";
- 			clocks = <&scmi_clk SCMI_CLK_CPU>;
-+			operating-points-v2 = <&cpu_opp_table>;
- 		};
- 
- 		cpu2: cpu@2 {
-@@ -69,6 +71,7 @@ cpu2: cpu@2 {
- 			device_type = "cpu";
- 			enable-method = "psci";
- 			clocks = <&scmi_clk SCMI_CLK_CPU>;
-+			operating-points-v2 = <&cpu_opp_table>;
- 		};
- 
- 		cpu3: cpu@3 {
-@@ -77,6 +80,67 @@ cpu3: cpu@3 {
- 			device_type = "cpu";
- 			enable-method = "psci";
- 			clocks = <&scmi_clk SCMI_CLK_CPU>;
-+			operating-points-v2 = <&cpu_opp_table>;
-+		};
-+	};
-+
-+	cpu_opp_table: opp-table-cpu {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-408000000 {
-+			opp-hz = /bits/ 64 <408000000>;
-+			opp-microvolt = <875000 875000 1100000>;
-+			clock-latency-ns = <40000>;
-+			opp-suspend;
-+		};
-+
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <875000 875000 1100000>;
-+			clock-latency-ns = <40000>;
-+		};
-+
-+		opp-816000000 {
-+			opp-hz = /bits/ 64 <816000000>;
-+			opp-microvolt = <875000 875000 1100000>;
-+			clock-latency-ns = <40000>;
-+		};
-+
-+		opp-1008000000 {
-+			opp-hz = /bits/ 64 <1008000000>;
-+			opp-microvolt = <875000 875000 1100000>;
-+			clock-latency-ns = <40000>;
-+		};
-+
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <900000 900000 1100000>;
-+			clock-latency-ns = <40000>;
-+		};
-+
-+		opp-1416000000 {
-+			opp-hz = /bits/ 64 <1416000000>;
-+			opp-microvolt = <925000 925000 1100000>;
-+			clock-latency-ns = <40000>;
-+		};
-+
-+		opp-1608000000 {
-+			opp-hz = /bits/ 64 <1608000000>;
-+			opp-microvolt = <975000 975000 1100000>;
-+			clock-latency-ns = <40000>;
-+		};
-+
-+		opp-1800000000 {
-+			opp-hz = /bits/ 64 <1800000000>;
-+			opp-microvolt = <1037500 1037500 1100000>;
-+			clock-latency-ns = <40000>;
-+		};
-+
-+		opp-2016000000 {
-+			opp-hz = /bits/ 64 <2016000000>;
-+			opp-microvolt = <1100000 1100000 1100000>;
-+			clock-latency-ns = <40000>;
- 		};
- 	};
- 
--- 
-2.25.1
+Other than that the test seems ok:
+
+Reviewed-by: James Clark <james.clark@linaro.org>
+
+Thanks
+James
+
+> +  then
+> +    echo "Sched [Error taskset did not work for the 1st noploop ($PID1)]"
+> +    grep Cpus_allowed /proc/$PID1/status
+> +    err=1
+> +  fi
+> +
+> +  if ! grep -q 'Cpus_allowed_list:\s*0$' "/proc/$PID2/status"
+> +  then
+> +    echo "Sched [Error taskset did not work for the 2nd noploop ($PID2)]"
+> +    grep Cpus_allowed /proc/$PID2/status
+> +    err=1
+> +  fi
+> +}
+> +
+> +cleanup_noploops() {
+> +  kill "$PID1" "$PID2"
+> +}
+> +
+> +test_sched_latency() {
+> +  echo "Sched latency"
+> +
+> +  start_noploops
+> +
+> +  perf sched record --no-inherit -o "${perfdata}" sleep 1
+> +  if ! perf sched latency -i "${perfdata}" | grep -q perf-noploop
+> +  then
+> +    echo "Sched latency [Failed missing output]"
+> +    err=1
+> +  fi
+> +
+> +  cleanup_noploops
+> +}
+> +
+> +test_sched_script() {
+> +  echo "Sched script"
+> +
+> +  start_noploops
+> +
+> +  perf sched record --no-inherit -o "${perfdata}" sleep 1
+> +  if ! perf sched script -i "${perfdata}" | grep -q perf-noploop
+> +  then
+> +    echo "Sched script [Failed missing output]"
+> +    err=1
+> +  fi
+> +
+> +  cleanup_noploops
+> +}
+> +
+> +test_sched_latency
+> +test_sched_script
+> +
+> +cleanup
+> +exit $err
 
 
