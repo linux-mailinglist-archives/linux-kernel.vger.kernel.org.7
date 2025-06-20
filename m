@@ -1,158 +1,163 @@
-Return-Path: <linux-kernel+bounces-695959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380A7AE1FEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 18:14:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7831FAE1FEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 18:14:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B10163A80B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 16:14:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBD361892C57
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 16:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F65F2E6105;
-	Fri, 20 Jun 2025 16:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6C92C375E;
+	Fri, 20 Jun 2025 16:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="NoWCCOpi"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="lOMwqZrp"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D6A28A415;
-	Fri, 20 Jun 2025 16:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC4713774D
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 16:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750436055; cv=none; b=FtuUejq/wDhNBUkJfyrF2oiu/9W11M2l4+9ljmZ/2g0rcEbeFfKkFukZyx8SbEZ3nMp76klRBzPiYbPJNB9Yxb43F3h/2iy28+s8/zFSgm+8ep2Ah1bK+VzG7vqs74LrvzZqE7L3eIFF5FiK7b8krk9SGb0NIAn+8iojKSJ2wSk=
+	t=1750435968; cv=none; b=M+f9Y2fEsXDCZ6XDBSAsCz/m/ss1Q6MJu74ZlrZrUTVDkFwqn4kqzE9o8bJgNTAvU0dlgwjn+URhTTc8EtyTMMWq3dGIUaQDdqi2CZ9wWf2FCdQY+e0CbhrSxdeGmFdc7ydBCm2Eyd014KDT9Pcs0H9BOdEisdwhqPH1QyeLZXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750436055; c=relaxed/simple;
-	bh=xl0/m7vCTDCJ0eBO6PHDRHnK1Zkd7aaRC+ojI3/LrNU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GTLoUY5o2HfpDdpbw7kr306v7/a9sFbb9CF3Gc1RmTpsf23erIC6rUMKVwwp0UkNgPn9PJz0pIfXQvSONR2P2Df3o29VyN3hxDhCe5f/YzpFav6IAyDTajX9t17cVNBMiilOWdifUKb7GwdlfMTYvjzRoEUYOffkveMEqhublCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=NoWCCOpi; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55KGCOU92549536
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 20 Jun 2025 09:12:25 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55KGCOU92549536
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025052101; t=1750435949;
-	bh=od7VOU+Vgb8+R5vxfgKCe9w48z7ysNa+RJDKpFTFMrk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NoWCCOpiahyyyMkwLm0Z8Zf5fjEhS5Hexwzxgl/OeAD2fsaCRNRSebZJXp7aF8pIR
-	 6z5p2JPtgfJuYyMZKr66F1fNNROopW381MG2/nqP1od5JrnuECmMtc2EdYRjvPkIGJ
-	 zkpj1CNwWaKgYtJLCxHMsW1pDQW5KU0CoxmJUGwecj8ZBxaFaKN4BzHm1nJBG2cbZa
-	 JioC3k1ZCNTJhAkrk7iulKgyMXFnnNhZWDldmi4elM7CdycWQcOH3fxLSoeg0P8idr
-	 PqoFr5gBQGfXJr5IoEub99KBdsBEgpoVkn/hwV21Eqq38JCJBDaajKjc1XKu+y7xFh
-	 QDRd1MVtZAnpQ==
-Message-ID: <98703493-109a-4795-8abd-6cfe10b941f4@zytor.com>
-Date: Fri, 20 Jun 2025 09:12:23 -0700
+	s=arc-20240116; t=1750435968; c=relaxed/simple;
+	bh=dSrlAF32I5lH3btMaCGJWgljcuhVLfSPBYtyqJZd7k0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DrDDd5KA5+mHvXDdysbLCj0lbr7bGHb9w1Csz3ifZW/KJVw5IwFMt4nYqjrNWQAPaO16X4TYE9iRj9Hlt5WXlUekTJ5lraZtsT3SjKXk1GmA1CuCLbCf7BKuldYgXxgiG20i9rPiYD0XQt/vGx/AQEm6eTXDu2PzgR38zyBNmnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=lOMwqZrp; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-60634f82d1aso508604eaf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 09:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gateworks.com; s=google; t=1750435966; x=1751040766; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uk1h/OSRQW76dr7YBIYqdBe7lZw8tZ9KpxMBcLXXza8=;
+        b=lOMwqZrpYw47239a5gbVxV4UugHMwf1jWYglWSLvgqTiklguqYBsn2wxqCMfTtSrjN
+         AmcFBn/laW7MYphhKRHo0oAarn9o1QR+vwuxkQO9E8GortvmGYm85lc9AZY3xWb4vLrh
+         FEbuY++jPa8u4pfNomINHaafbpPzG0Ypu4z1p6t4yq2J4C7CewxQ8U40mBTEde22Egob
+         i7WCwGJPEeU6C0v/EcMlaD5nnCTa6nJwK/ud+AuHMjDnbWk0ZRVDT+FVJVTHRVML094N
+         grLzQe0e4EOaOTs3tN4hVuk8wzJGEmG/DIjp+sajNiOqBCCIQa67JEs2IjQiBWxJ4Jxi
+         Fihg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750435966; x=1751040766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uk1h/OSRQW76dr7YBIYqdBe7lZw8tZ9KpxMBcLXXza8=;
+        b=wX9KviyzZljxZWkZ4YH8YYL+w82aovLRGqqqeIGYPEykw2zlD4yjU5loXZ6uTyrous
+         uX52Y6+TbKIB2RqDwaus/kn0rZ9pm4COvyH4XKWbC72aIpWugPS4xNIu/7ZDjCSM0gRn
+         eb1aDLh9I/eT0UYNGucvyJSKoQTIt9IGiSTdMGL9TapXl0FhI9+9Oye7UJQ/2SBGPQzu
+         p7WwXzHnFm6oKgkhFqOqFBQDJhDyISKRgLPg5rNMr3y2Ga3YwadlgciMIu9tBMl/XMaf
+         J1pqLLy3eb7A7md5mGcvDVvPfUN3O8gF2dJtPBgoU5TxI+Ff6b8qCSy2QIYDzwLV0vF/
+         Cusg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEU+YsdaDcbyqwTqLyT3V4SCuUasVi9OBJr8sYPnLav1mqiVwSiKj464tNNCq2cG8dock0BVVEv7ztR+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPlHr/avRBH8p0YNapTZYZ3egznhp3iJlhh/Ktbm8K/giBs9qC
+	JTV4wOGWqcjC6uj/gQhec0ILOYd/BWi9dncu/wD/Vr6sM76UMLGLym1uvk81G//7VdduVcdaDwO
+	0j7ymuQnF3eYaATCaZehVJLi/Coj18V2iA+B1ZlwhDw==
+X-Gm-Gg: ASbGnctNaqAgNm0UILm4g1ZY4tG9VbjNUWfW29BwhAW5ZL+WzdjCZg+fqubpa5GHwlI
+	aZ8HSXH1rRYBlXWhgeebyLoIn3SPe9fO/BFiP3a2BEg6sNJPtWegI087gm20XxmSt/Hc2HtMsJZ
+	YfBRgeg73omFe2aD49lw1veP/DBX+/MX8yndvx/qnfBYE=
+X-Google-Smtp-Source: AGHT+IEWHRk01AMNXUO3Iti/LVUHyPY06MPi2HY582F4LaypQ5ZkZqqgLLKeo/FHsS0LAg4XUMcQcmQIpTlGgPfCCxs=
+X-Received: by 2002:a05:6820:1e87:b0:610:fc12:cbb4 with SMTP id
+ 006d021491bc7-6115b8a077cmr2461053eaf.1.1750435966109; Fri, 20 Jun 2025
+ 09:12:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv6 01/16] x86/cpu: Enumerate the LASS feature bits
-To: Randy Dunlap <rdunlap@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Xiongwei Song <xiongwei.song@windriver.com>,
-        Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>,
-        Alexey Kardashevskiy <aik@amd.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-        Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>,
-        Breno Leitao <leitao@debian.org>,
-        Rick Edgecombe
- <rick.p.edgecombe@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
-        Juergen Gross <jgross@suse.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>,
-        Eric Biggers <ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
-        Huang Shijie <shijie@os.amperecomputing.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-mm@kvack.org, Yian Chen <yian.chen@intel.com>
-References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
- <20250620135325.3300848-2-kirill.shutemov@linux.intel.com>
- <25600557-9cd5-406c-9acf-abc163afde2d@infradead.org>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <25600557-9cd5-406c-9acf-abc163afde2d@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250616085742.2684742-1-hongxing.zhu@nxp.com> <20250616085742.2684742-2-hongxing.zhu@nxp.com>
+In-Reply-To: <20250616085742.2684742-2-hongxing.zhu@nxp.com>
+From: Tim Harvey <tharvey@gateworks.com>
+Date: Fri, 20 Jun 2025 09:12:35 -0700
+X-Gm-Features: AX0GCFupqyePYKY1h7Imt92So6Th1StimJuRSWH0VvVxy1uS8kPjLbLXM76L3Es
+Message-ID: <CAJ+vNU15XpyLuxO4EowyqO9P+ZUqNApoH2Wu261iu-5b2GrkGw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] PCI: imx6: Remove apps_reset toggle in _core_reset functions
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: frank.li@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, bhelgaas@google.com, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/20/2025 9:02 AM, Randy Dunlap wrote:
->> +config X86_DISABLED_FEATURE_LASS
->> +	def_bool y
->> +	depends on !X86_64
-> Please explain why this is   !X86_64.
+On Mon, Jun 16, 2025 at 1:59=E2=80=AFAM Richard Zhu <hongxing.zhu@nxp.com> =
+wrote:
+>
+> apps_reset is LTSSM_EN on i.MX7, i.MX8MQ, i.MX8MM and i.MX8MP platforms.
+> Since the assertion/de-assertion of apps_reset(LTSSM_EN bit) had been
+> wrappered in imx_pcie_ltssm_enable() and imx_pcie_ltssm_disable();
+>
+> Remove apps_reset toggle in imx_pcie_assert_core_reset() and
+> imx_pcie_deassert_core_reset() functions. Use imx_pcie_ltssm_enable()
+> and imx_pcie_ltssm_disable() to configure apps_reset directly.
+>
+> Fix fail to enumerate reliably PI7C9X2G608GP (hotplug) at i.MX8MM, which
+> reported By Tim.
+>
+> Reported-by: Tim Harvey <tharvey@gateworks.com>
+> Closes: https://lore.kernel.org/all/CAJ+vNU3ohR2YKTwC4xoYrc1z-neDoH2TTZcM=
+HDy+poj9=3DjSy+w@mail.gmail.com/
+> Fixes: ef61c7d8d032 ("PCI: imx6: Deassert apps_reset in imx_pcie_deassert=
+_core_reset()")
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controll=
+er/dwc/pci-imx6.c
+> index 9754cc6e09b9..f5f2ac638f4b 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -860,7 +860,6 @@ static int imx95_pcie_core_reset(struct imx_pcie *imx=
+_pcie, bool assert)
+>  static void imx_pcie_assert_core_reset(struct imx_pcie *imx_pcie)
+>  {
+>         reset_control_assert(imx_pcie->pciephy_reset);
+> -       reset_control_assert(imx_pcie->apps_reset);
+>
+>         if (imx_pcie->drvdata->core_reset)
+>                 imx_pcie->drvdata->core_reset(imx_pcie, true);
+> @@ -872,7 +871,6 @@ static void imx_pcie_assert_core_reset(struct imx_pci=
+e *imx_pcie)
+>  static int imx_pcie_deassert_core_reset(struct imx_pcie *imx_pcie)
+>  {
+>         reset_control_deassert(imx_pcie->pciephy_reset);
+> -       reset_control_deassert(imx_pcie->apps_reset);
+>
+>         if (imx_pcie->drvdata->core_reset)
+>                 imx_pcie->drvdata->core_reset(imx_pcie, false);
+> @@ -1247,6 +1245,9 @@ static int imx_pcie_host_init(struct dw_pcie_rp *pp=
+)
+>                 }
+>         }
+>
+> +       /* Make sure that PCIe LTSSM is cleared */
+> +       imx_pcie_ltssm_disable(dev);
+> +
+>         ret =3D imx_pcie_deassert_core_reset(imx_pcie);
+>         if (ret < 0) {
+>                 dev_err(dev, "pcie deassert core reset failed: %d\n", ret=
+);
+> --
+> 2.37.1
+>
 
-When NOT on X86_64, the LASS code should not be compiled.
+Tested-by: Tim Harvey <tharvey@gateworks.com> # imx8mp-venice-gw74xx
+(i.MX8MP + hotplug capable switch)
 
-But first of all, as I replied earlier, X86_DISABLED_FEATURE_LASS is
-completely not needed.
+Best Regards,
 
-Thanks!
-     Xin
-
-
+Tim
 
