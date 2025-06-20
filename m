@@ -1,350 +1,161 @@
-Return-Path: <linux-kernel+bounces-696303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5195AE24ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 00:18:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF6EAE258B
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 00:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FCD51BC5C1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 22:18:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C574F3A07E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 22:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0604723C51B;
-	Fri, 20 Jun 2025 22:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F492246335;
+	Fri, 20 Jun 2025 22:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DCGTkk84"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GIF1FiK1"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218A419E98C;
-	Fri, 20 Jun 2025 22:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B6023C4F9
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 22:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750457870; cv=none; b=CSv/JsI7JTv9rcKiOvNmS9m/RSy9rsB6xMm+jeR+rF9LsO3l8ldTqFiYWC0UEO0etGfL373REtyvrnAsyDdQMO3tL72ejIkKIMwmt0FnzblTvOCb8of5bTTxoaZ6fgAx7sPsOXm6Z8UXR8dVR4J4BR4AvxwwHuJdDk1JCA5gHNQ=
+	t=1750458084; cv=none; b=eXNGwlFZKv+jZaU7Cimu62dUldAHgqyqA2k3tCScPrOHh+MmBgYWJe1llue11CW6ggPnDXwnRP97KyTFrPBEoZwpAOaEciKKdbGMberrnzomJqCV5Z5YpeFQ8FQ1pe7kOXsVM8vWrY+rqytMBotEpwcewadOWEtJnGm57kX9Fa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750457870; c=relaxed/simple;
-	bh=snYopvsiCq4b2vwnac6pmoTUyZPOxpsdJWVhg5Rc8Tw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iFjTPISKnvp6pewmmtaD2sVn9D19jWr8GzDm4MkFyJtIY+DQ9OoMYVw+NcocZlbWlNEIEd4ACrhkfS1ETrqAkmn5uxxT4MAKSquCddC/dNaJsL+XpTcslfbuUIHMo0q8utKuf/qJa0HziQ2POVPXtX2twOsU0fs/Cbz8yIhXZ+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DCGTkk84; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F5DBC4CEE3;
-	Fri, 20 Jun 2025 22:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750457869;
-	bh=snYopvsiCq4b2vwnac6pmoTUyZPOxpsdJWVhg5Rc8Tw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DCGTkk844k/dx7H3Y4wFJdO37+twNnnSN1ap6pg1rC6bsnuygUGQizkn5BibpxKX/
-	 uy5rok7SzMTt5PHXkZMxiMZKI0lpakipXWmvMdiko31m9U2WjpkGktBoOxyC3KFABv
-	 eb9ABKwjUTrGE0a7oJn6xub7jSi43BJniBFpKuTEoLb1th3N0b4AlLx3sEKOQhZ7vQ
-	 6Di4vmZtPdY5nkD6FUgJ7Pq//aFdCHsrSFUgbg5kDu2IVRTv893lVsJucWj54+rO0n
-	 DLpc74Z+u6fLGkq0Qgk+AD07zXUBnHkrip2fnDykkYEuVWP7Ll3Jo1L5oc1zIg0L3N
-	 dDCiABPSBa9IQ==
-Message-ID: <fa3bfed9-8a6f-4001-bd4a-d4d237b001d3@kernel.org>
-Date: Fri, 20 Jun 2025 17:17:44 -0500
+	s=arc-20240116; t=1750458084; c=relaxed/simple;
+	bh=vVDOA4sZGcugRpefiICW8+34bR/a/+ZbrGgJnmbrQc4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GkAaTDPjatI8rqcLDbOzD1lUBP0kLaAk5ZtDkznBlgcgwNROcMbZ84h3sc/K49Vtm6Wd0fIfsvXv5W9SE1IlTTgrfbIxAkJVlckGTC2RIJW65snzWP4dP3G2aJw58G8p1kOc66khTGaMMvm+cRJEn2VtIXuh53rm4GygJNrqlMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GIF1FiK1; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-735a53ef4feso1610699a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:21:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1750458080; x=1751062880; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LnoWbL9TACCNhDK9xUx+88BoeMpitd1subnhXAJpw30=;
+        b=GIF1FiK10eYBo6H2UG1AHfoaxkd6T6rQbg3PjfpqmPT9Wm0Uria1yqU0m4FATCJZou
+         cWKEumktX/qs542qeBlf1iNUeGqVGZAYJlZEdfu0OE3Q0ViZGDICWgbIquXiYmiTHJFS
+         6CV2K5E8EWNF22X6RZzCUH3BRGZYE1Mz/+dBoksAKxePzNi/HmV5Ms1jE6huIUIH0Wl+
+         /FERCdfmANRZ7iNRgsL1SyuI8DyINfVsLHy3jZNewlEAiylEIM2t7zoZJg30O5piydOG
+         osLJam6SElDcT4p3Hy7af29yEgj4P80CghJOgdSNO54wI2T1NJYdK3qzY0xVXZpFs4g8
+         NWag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750458080; x=1751062880;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LnoWbL9TACCNhDK9xUx+88BoeMpitd1subnhXAJpw30=;
+        b=MnioCK+cxB3XwgjP4SIl8ltPA09sTtIDrIqP2iaoenAt++VEkWVvezhleKbMq/wRSo
+         bUs4rvVIPYj0fuq3slVEY/kEybnpH7rpHuRYs87r0PJeY0vnt4oOzOkos5xvN9FZm+UI
+         oNuU+e7fTgxWZE9e8DysIbRhWiZ0GjOp3okI8FCvTXOs+9QNH9wcyz+qdkdPaABXTCge
+         ojFnD7Y5Q2d1Rm0Preat0/pbT0W+nPODtJRrJ4MahRLWFOiWDbWVeb3daSX/X47PL8O6
+         CjW5r7ato6kwM58t3SfFdoB1xMqX/SzumMhFX8iR6GdBZhUKS718OqhR8ybDv5fdbr6P
+         gT6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXxiZ6aQj2qTeALjI/1Y2zXRcYP326c1C6fRwf4K7douGrEUNH/7/ZoJCtaeG5PhdxnmXYV7ICHcSkoDnY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxptpeAyB1OIE9n2jZytbaJOykZ6SobYbB5mRz5jfXdy3lS7uPn
+	hb1gmpdySLLp4PtYrDKh0F2dA3KwdYhsLzxxoh/H2hMVGGsd5JwvVcm/ulCxjNoaCYU=
+X-Gm-Gg: ASbGncvbx2+toFe0/i3WUukWPdRllgUbAA9fF3rJ92Nkub2jWG/5GMr7p/HtpzTHmY0
+	9QaICQx9j7FAG9WqkeJPpV4myuGTU5lOvUtxOxh1OCv7YgTch2YvdmioBJUFEQe3QR7OYSHc0IR
+	KB0KVw/fZLu9hm2szvkujQfx2BbE+EVLkk3uKQj1ih/AXNmxvvu2SaAiLagXJst9uMPIv57ax/5
+	7Xo7sjmt92Ka76IiZGN3wF6KpUqG3NBNMy35tTHObjcPLJNm4+qZAjKtCMzDUQTLOxnpu4nGK3H
+	WLlft3wwLpBZtXYqhSe0xqcmbrzi5LdtWugX9C5pQqXpHkTkpggOuPQU64ofU/eXn4Bl
+X-Google-Smtp-Source: AGHT+IHkTikpQuDj9PrDQbT93iaWgnTsK9tNVi2euCxupUEhaUXbbEmdqU7CyKKsoAEt4Ih15q9KuA==
+X-Received: by 2002:a05:6871:7287:b0:2c2:d2b8:e179 with SMTP id 586e51a60fabf-2eeda503eb1mr3907370fac.4.1750458080484;
+        Fri, 20 Jun 2025 15:21:20 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:c4bf:cf27:203c:f8b0])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ef481fe06esm7561fac.35.2025.06.20.15.21.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 15:21:19 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH 0/9] iio: adc: ad7173: add SPI offload support
+Date: Fri, 20 Jun 2025 17:20:06 -0500
+Message-Id: <20250620-iio-adc-ad7173-add-spi-offload-support-v1-0-0766f6297430@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/7] PCI/VGA: Move check for firmware default out of
- VGA arbiter
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Lukas Wunner <lukas@wunner.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Woodhouse <dwmw2@infradead.org>,
- Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
- "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
- "open list:VFIO DRIVER" <kvm@vger.kernel.org>,
- "open list:SOUND" <linux-sound@vger.kernel.org>,
- Daniel Dadap <ddadap@nvidia.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250620024943.3415685-1-superm1@kernel.org>
- <20250620024943.3415685-7-superm1@kernel.org>
- <704d2a80-79bb-4247-a2aa-25bd3eb9a7e5@suse.de>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <704d2a80-79bb-4247-a2aa-25bd3eb9a7e5@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJbeVWgC/yWNQQqDMBBFryKz7kASMSlepbiIZmwHqkmTWATx7
+ h3qYvjz/uK/AwplpgJ9c0CmLxeOq4C+NTC9/Pok5CAMRplOWaOQOaIPk5zTrpUIWBJjnOd39PJ
+ vKcVcsTVeu/torfUtyFjKNPP+Fz2GizN9NvHVq4TRF8IpLgvXvllpr3g5VQfDef4A9F3IIqkAA
+ AA=
+X-Change-ID: 20250620-iio-adc-ad7173-add-spi-offload-support-32a178b666a3
+To: Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-spi@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2128; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=vVDOA4sZGcugRpefiICW8+34bR/a/+ZbrGgJnmbrQc4=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoVd6ccHt5opDnwzqD7X47mzjQNTTXgUlbBycN7
+ 2/akJOTiEWJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaFXenAAKCRDCzCAB/wGP
+ wEMLB/wMEb7Dmzk8reprmZqPVXSc2NrTVvvDc2tkK5otrsFDRmw0uWuDPj+OyaqHeoUjTNsjfyP
+ P+1Jki+TmRbv7iKl3mZgMH6u6B5oMjovISPcfhl4fhuaddPntAYl3oF4wnEupKvtTz3ueAC9xRM
+ PVicwTt5OBxAiv7SnHfdmbFgOuuQJzg3bNPvCMyaBzJmxraC8U4PIP9mkudYIeBtvMXcUw6p5/i
+ 6CgIPKLaUTFCMw3bKF6ci4C9cf4lvFUfAqCKjiHmir4fXvAx8x6wEWgXQ3GywxlBt7FFSpFClUB
+ PhtBjY6oyjCIh4SQ+eq4JmQyyv/MNWrzTzDxQU5dfYI0RxlI
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On 6/20/2025 3:45 AM, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 20.06.25 um 04:49 schrieb Mario Limonciello:
->> From: Mario Limonciello <mario.limonciello@amd.com>
->>
->> The x86 specific check for whether a framebuffer belongs to a device
->> works for display devices as well as VGA devices.  Callers to
->> video_is_primary_device() can benefit from checking non-VGA display
->> devices.
->>
->> Move the x86 specific check into x86 specific code, and adjust VGA
->> arbiter to call that code as well. This allows fbcon to find the
->> right PCI device on systems that don't have VGA devices.
->>
->> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
->> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->> ---
->>   arch/x86/video/video-common.c | 28 +++++++++++++++++++++++++++
->>   drivers/pci/vgaarb.c          | 36 ++---------------------------------
->>   2 files changed, 30 insertions(+), 34 deletions(-)
->>
->> diff --git a/arch/x86/video/video-common.c b/arch/x86/video/video- 
->> common.c
->> index 81fc97a2a837a..718116e35e450 100644
->> --- a/arch/x86/video/video-common.c
->> +++ b/arch/x86/video/video-common.c
->> @@ -9,6 +9,7 @@
->>   #include <linux/module.h>
->>   #include <linux/pci.h>
->> +#include <linux/screen_info.h>
->>   #include <linux/vgaarb.h>
->>   #include <asm/video.h>
->> @@ -27,13 +28,40 @@ EXPORT_SYMBOL(pgprot_framebuffer);
->>   bool video_is_primary_device(struct device *dev)
-> 
-> I'm not sure I understand this patch. video_is_primary_device() already 
-> exists for 3 architectures, including x86. [1] Adding it here should 
-> produce an error. (?)
+Here comes another series for adding SPI offload support to an ADC.
 
-I wasn't adding a new implementation of it, I was augmenting the x86 
-implementation.
+The primary target is AD411x, but since this uses the ad_sigma_delta
+shared module, a lot of this series is focused on that.
 
-But I guess based on your below point it just needs to call 
-screen_info_pci_dev().
+To start with, we have some cleanups to the ad_sigma_delta code, so feel
+free to pick these up as they are ready as they generally stand on their
+own.
 
-> 
-> [1] https://elixir.bootlin.com/linux/v6.15.2/A/ident/ 
-> video_is_primary_device
-> 
-> The code on x86 is
-> 
-> bool <https://elixir.bootlin.com/linux/v6.15.2/C/ident/ 
-> bool>video_is_primary_device <https://elixir.bootlin.com/linux/v6.15.2/ 
-> C/ident/video_is_primary_device>(structdevice <https:// 
-> elixir.bootlin.com/linux/v6.15.2/C/ident/device>*dev) { structpci_dev 
-> <https://elixir.bootlin.com/linux/v6.15.2/C/ident/pci_dev>*pdev; if(! 
-> dev_is_pci <https://elixir.bootlin.com/linux/v6.15.2/C/ident/ 
-> dev_is_pci>(dev)) returnfalse <https://elixir.bootlin.com/linux/v6.15.2/ 
-> C/ident/false>; pdev=to_pci_dev <https://elixir.bootlin.com/linux/ 
-> v6.15.2/C/ident/to_pci_dev>(dev); return(pdev==vga_default_device 
-> <https://elixir.bootlin.com/linux/v6.15.2/C/ident/vga_default_device>()); }
-> 
-> I was thinking about extending it to test for additional properties, 
-> like this
-> 
-> bool <https://elixir.bootlin.com/linux/v6.15.2/C/ident/ 
-> bool>video_is_primary_device <https://elixir.bootlin.com/linux/v6.15.2/ 
-> C/ident/video_is_primary_device>(structdevice <https:// 
-> elixir.bootlin.com/linux/v6.15.2/C/ident/device>*dev) { structpci_dev 
-> <https://elixir.bootlin.com/linux/v6.15.2/C/ident/pci_dev>*pdev; if(! 
-> dev_is_pci <https://elixir.bootlin.com/linux/v6.15.2/C/ident/ 
-> dev_is_pci>(dev)) returnfalse <https://elixir.bootlin.com/linux/v6.15.2/ 
-> C/ident/false>; pdev=to_pci_dev <https://elixir.bootlin.com/linux/ 
-> v6.15.2/C/ident/to_pci_dev>(dev); if(pdev==vga_default_device <https:// 
-> elixir.bootlin.com/linux/v6.15.2/C/ident/vga_default_device>()) return 
-> true for_each_pci_dev() { // test if display and could be primary. } 
-> return false; // nothing found }
-> 
+Then before adding proper SPI offload support, we make use of
+spi_optimize_message() to reduce CPU usage of all users of this driver
+during buffered reads.
 
-The above looks like some bad copy / paste.  Could you clarify?
+Also there is a new dt-binding and driver for a special SPI offload
+trigger FPGA IP core that is used in this particular setup.
 
-> 
-> This would then be called from per-device sysfs code that export a 
-> property similar to boot_vga (such as boot_display).
+Then finally actual SPI offload support is added to the ad_sigma_delta
+module and the ad7173 driver.
 
-Here's the other idea I had in mind.
+This was tested using EVAL-AD4112ARDZ on a DE10-Nano.
 
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 268c69daa4d57..8535950b4c0f3 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -30,6 +30,7 @@
-  #include <linux/msi.h>
-  #include <linux/of.h>
-  #include <linux/aperture.h>
-+#include <asm/video.h>
-  #include "pci.h"
+---
+David Lechner (9):
+      iio: adc: ad_sigma_delta: sort includes
+      iio: adc: ad_sigma_delta: use u8 instead of uint8_t
+      iio: adc: ad_sigma_delta: use BITS_TO_BYTES() macro
+      iio: adc: ad_sigma_delta: refactor setting read address
+      iio: adc: ad_sigma_delta: use spi_optimize_message()
+      dt-bindings: trigger-source: add ADI Util Sigma-Delta SPI
+      spi: offload trigger: add ADI Util Sigma-Delta SPI driver
+      iio: adc: ad_sigma_delta: add SPI offload support
+      iio: adc: ad7173: add SPI offload support
 
-  #ifndef ARCH_PCI_DEV_GROUPS
-@@ -679,6 +680,13 @@ const struct attribute_group *pcibus_groups[] = {
-         NULL,
-  };
+ .../trigger-source/adi,util-sigma-delta-spi.yaml   |  49 ++++
+ MAINTAINERS                                        |   7 +-
+ drivers/iio/adc/ad7173.c                           |  13 +
+ drivers/iio/adc/ad_sigma_delta.c                   | 281 +++++++++++++--------
+ drivers/spi/Kconfig                                |   5 +
+ drivers/spi/Makefile                               |   1 +
+ .../spi/spi-offload-trigger-adi-util-sigma-delta.c |  59 +++++
+ include/linux/iio/adc/ad_sigma_delta.h             |  27 +-
+ 8 files changed, 330 insertions(+), 112 deletions(-)
+---
+base-commit: d02f330b0c78bcf76643fbb7d3215a58b181f829
+change-id: 20250620-iio-adc-ad7173-add-spi-offload-support-32a178b666a3
 
-+static ssize_t boot_console_show(struct device *dev, struct 
-device_attribute *attr,
-+                                char *buf)
-+{
-+       return sysfs_emit(buf, "%u\n", video_is_primary_device(dev));
-+}
-+static DEVICE_ATTR_RO(boot_console);
-+
-  static ssize_t boot_vga_show(struct device *dev, struct 
-device_attribute *attr,
-                              char *buf)
-  {
-@@ -1698,6 +1706,7 @@ late_initcall(pci_sysfs_init);
-
-  static struct attribute *pci_dev_dev_attrs[] = {
-         &dev_attr_boot_vga.attr,
-+       &dev_attr_boot_console.attr,
-         NULL,
-  };
-
-@@ -1710,6 +1719,9 @@ static umode_t pci_dev_attrs_are_visible(struct 
-kobject *kobj,
-         if (a == &dev_attr_boot_vga.attr && pci_is_vga(pdev))
-                 return a->mode;
-
-+       if (a == &dev_attr_boot_console.attr && pci_is_display(pdev))
-+               return a->mode;
-+
-         return 0;
-  }
-
-
-> 
-> 
-> The issue is currently just an x86 problem, but I can imagine something 
-> similar happening on ARM. There we'd have to go through the DT tree to 
-> figure out the primary device. That's a problem for a later patch set, 
-> but we should keep this in mind.
-
-I think that the sysfs file idea above would work for any arch.
-
-> 
->>   {
->> +    u64 base = screen_info.lfb_base;
->> +    u64 size = screen_info.lfb_size;
->>       struct pci_dev *pdev;
->> +    struct resource *r;
->> +    u64 limit;
->>       if (!dev_is_pci(dev))
->>           return false;
->>       pdev = to_pci_dev(dev);
->> +    if (!pci_is_display(pdev))
->> +        return false;
->> +
->> +    /* Select the device owning the boot framebuffer if there is one */
->> +    if (screen_info.capabilities & VIDEO_CAPABILITY_64BIT_BASE)
->> +        base |= (u64)screen_info.ext_lfb_base << 32;
->> +
->> +    limit = base + size;
->> +
->> +    /* Does firmware framebuffer belong to us? */
->> +    pci_dev_for_each_resource(pdev, r) {
->> +        if (resource_type(r) != IORESOURCE_MEM)
->> +            continue;
->> +
->> +        if (!r->start || !r->end)
->> +            continue;
->> +
->> +        if (base < r->start || limit >= r->end)
->> +            continue;
->> +
->> +        return true;
->> +    }
->> +
-> 
-> You can drop all this code and call screen_info_pci_dev() instead. I 
-> simply never got to update vgaarb to use it.
-
-👍
-
-> 
-> [2] https://elixir.bootlin.com/linux/v6.15.2/source/drivers/video/ 
-> screen_info_pci.c#L109
-> 
->>       return (pdev == vga_default_device());
->>   }
->>   EXPORT_SYMBOL(video_is_primary_device);
->> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
->> index 78748e8d2dbae..15ab58c70b016 100644
->> --- a/drivers/pci/vgaarb.c
->> +++ b/drivers/pci/vgaarb.c
->> @@ -26,12 +26,12 @@
->>   #include <linux/poll.h>
->>   #include <linux/miscdevice.h>
->>   #include <linux/slab.h>
->> -#include <linux/screen_info.h>
->>   #include <linux/vt.h>
->>   #include <linux/console.h>
->>   #include <linux/acpi.h>
->>   #include <linux/uaccess.h>
->>   #include <linux/vgaarb.h>
->> +#include <asm/video.h>
->>   static void vga_arbiter_notify_clients(void);
->> @@ -554,38 +554,6 @@ void vga_put(struct pci_dev *pdev, unsigned int 
->> rsrc)
->>   }
->>   EXPORT_SYMBOL(vga_put);
->> -static bool vga_is_firmware_default(struct pci_dev *pdev)
->> -{
->> -#if defined(CONFIG_X86)
->> -    u64 base = screen_info.lfb_base;
->> -    u64 size = screen_info.lfb_size;
->> -    struct resource *r;
->> -    u64 limit;
->> -
->> -    /* Select the device owning the boot framebuffer if there is one */
->> -
->> -    if (screen_info.capabilities & VIDEO_CAPABILITY_64BIT_BASE)
->> -        base |= (u64)screen_info.ext_lfb_base << 32;
->> -
->> -    limit = base + size;
->> -
->> -    /* Does firmware framebuffer belong to us? */
->> -    pci_dev_for_each_resource(pdev, r) {
->> -        if (resource_type(r) != IORESOURCE_MEM)
->> -            continue;
->> -
->> -        if (!r->start || !r->end)
->> -            continue;
->> -
->> -        if (base < r->start || limit >= r->end)
->> -            continue;
->> -
->> -        return true;
->> -    }
->> -#endif
->> -    return false;
->> -}
->> -
->>   static bool vga_arb_integrated_gpu(struct device *dev)
->>   {
->>   #if defined(CONFIG_ACPI)
->> @@ -623,7 +591,7 @@ static bool vga_is_boot_device(struct vga_device 
->> *vgadev)
->>       if (boot_vga && boot_vga->is_firmware_default)
->>           return false;
->> -    if (vga_is_firmware_default(pdev)) {
->> +    if (video_is_primary_device(&pdev->dev)) {
-> 
-> Maybe not change this because you don't want to end up with non-VGA 
-> devices here.
-
-👍
-
-> 
-> Best regards
-> Thomas
-> 
->>           vgadev->is_firmware_default = true;
->>           return true;
->>       }
-> 
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
 
