@@ -1,103 +1,138 @@
-Return-Path: <linux-kernel+bounces-695228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E3D7AE16CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:56:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F574AE16B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4CF179C78
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:56:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 744EF7AD91F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C5B265CAF;
-	Fri, 20 Jun 2025 08:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10A6272E59;
+	Fri, 20 Jun 2025 08:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="kmlBszZP"
-Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="eElRhdTF"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02942594BD;
-	Fri, 20 Jun 2025 08:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E254255F56
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 08:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750409760; cv=none; b=DkmanP7U2+T6mTxITy4Sh6vGUWfjAKCVAPvBNPi7RvzOejy4uoY3xzPtoFum9dOXV1LTTAhQV8E9Yp5n3QTfW0XxfihfUi1Wcr6YGC36iLL/sgXTD/Oib4DZ2R8iniQ2O68AxaxTWMUCmjFti4GsEEwSXj0nNWoSJRHiUPcL7Nk=
+	t=1750409475; cv=none; b=eyw9+InVcEycyNaQjVva+CyjQ2cM+7W0gQnqQ0orn5DpUJvqtMLhreM9Duq3TDiIHxjW3yYXpen8HwhpMgOAKDNIn0muwl46Vqzc8jQdlaZ/Au2b9yuywU/yHKYOfK5Hcv+mjL6R4V3nH3cGawQHnIAKjRfEHk5zSL5xTBfRgx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750409760; c=relaxed/simple;
-	bh=mTuYhO+8RYrHvkIFsdv7f3E34qKo7UjC2oN1lSvcei4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gv29deHNAE7JKbBnfF0mWl2ov3BZOBSDz+tb3JGzBP/4fnn7jMY+vUCm4tWdJWEff9uceJJwpW6X7ruj2517ufRoV0FoY9gdyeYpZn0J9un7BKqk2/wAcRyaTh0UHeD2bUGkCu4Lz95b2mgNGH8rFAzsVeFTlAjBsBwg2PgvLgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=kmlBszZP; arc=none smtp.client-ip=45.145.95.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
-	t=1750409410; bh=mTuYhO+8RYrHvkIFsdv7f3E34qKo7UjC2oN1lSvcei4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=kmlBszZPJ0o9V5Gu5t531smG/U2NhuVXp2DOw4P4UoCzukGlFTZGbpAvDGGD79BKp
-	 9Smdaj+H5cJAHLgnOG9x1aYqn/OkdEXaNqbRSTMn/H+2kAX30uW41GmkkGgGfIpPXJ
-	 hixfOE8eWzbyq/X+xzCwLtUiNOe1x/FP4JGChL4lcNmfG88WCabTXMelyU5ieIILPq
-	 CACG6hU0Qtz3T6mVnzRgyENzHDI5yIK7rff5xlp6LzaD5vIqv1MQiKWUXj6/+d+3v5
-	 ha7faJSnHHVaf3fNTY17gUBuMwoK4NWt0ZUnjlqRwBWxkbTdQCOOoI9aIFJKwzKnue
-	 iViuNtYwZvRpQ==
-To: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org
-Cc: nbd@nbd.name, Johannes Berg <johannes@sipsolutions.net>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:MIPS" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCHv5 0/5] wifi: ath9k: add ahb OF support
-In-Reply-To: <20250609030851.17739-1-rosenp@gmail.com>
-References: <20250609030851.17739-1-rosenp@gmail.com>
-Date: Fri, 20 Jun 2025 10:50:10 +0200
-X-Clacks-Overhead: GNU Terry Pratchett
-Message-ID: <87bjqiztj1.fsf@toke.dk>
+	s=arc-20240116; t=1750409475; c=relaxed/simple;
+	bh=41+NV6wm7M4BUwGUu5BfX6Y/1mglDykUJq2/D+L+bV0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=dNCJJSRj640oKSrgeD2w9eku3YKVd18lh6LgrSbiERcxG6OoXIlzkQCS3P9jI7krdh5Hz3eraSlfogUU5EPEkHPAxSS4EAfu2nnp4Xg0o2QpJsMh3EX8AJbhPW8DImMgoY8LHtYLYWj62moy4auVYqf9KGzieWJzf5t+1+7IWAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=eElRhdTF; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-607434e1821so2327720a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 01:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1750409472; x=1751014272; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tQs46cNDxNcEM2859ny72mW8pcAVQ7BIEu+RAnGt+Uk=;
+        b=eElRhdTFqyfet3zX6SJ1DemBoJg/QYIVepXir4utb5zKu3ZxnIQpSDe8Wb4f2IeYlv
+         c6YoNmHPjPVqMTBfMpoup5C3PIFs+jAuldaiJy5wWPS/o9WohoWF5sUO/2aRQPS4lgky
+         JxhAlYByweTDsfqvJ8OGmK+gNOvF48TvrdZVnH58kMiaVh4njA3jXSfF2AunQzjQ5jKq
+         COLm+FZQSG4PMPsfsxeCNYl6mbsKwLSBCVrU5ms9jJKSiFYiMm1fBJbYLNhBA8yZeGXJ
+         wIiMp7w4tAcggmF3uxO1ArOmUCHu8FHJSIyhKJnYGXi1XZ6cbfh9mWnlJlxunJ/kqXr8
+         3KSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750409472; x=1751014272;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tQs46cNDxNcEM2859ny72mW8pcAVQ7BIEu+RAnGt+Uk=;
+        b=GOfv74y7/TxjMy+8SAyeafofFfJI1hDhQfouhU1EU6+tW23Or6Dd3kXnJwPHPAOziM
+         jCZE8Uex3RQEHfnh4fitmVSF0TjHYH66OW5G1MvNvvVYUs8GMCQi0Ga1N7GjO2ZKElHy
+         24/h/CmtnRcpWq6D0MHc55cxMq46bUQMVKqZuuJOC+rRCmqT6xPtoCnMfeVd5Ws0Dum1
+         vMIRqB1KlQc9s0RPjgou7sEFpNxQ0+31HpXg7wZlPz5h1WrfaMgwTOHtFiZ0JdjTiSkQ
+         6ZFJtBmHzc3nbSIVDiL88AnI1TTKd98Y5XlnO8WOuvxP1QEiEqEjUbWz9rCEWT3+inZd
+         orNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSY9vlXxAWnIdHU38yuKSV5QUtYQ65zIca7b1bRdUqDuuVqdQmdBvuuYph+NAj4qWBYaenNO8rI3LJhxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPspVKo27UaQMm9dyIRN3U9Z2lK5QDscUgSqNL4M7aa35Zb+9Y
+	yF4ril1G903ErEK+GfkUFjfFUmYIW2V94l+Wd46Q/U+WBDNCvvwOs1NjXYmp2DaJ/fA=
+X-Gm-Gg: ASbGncuL2BDmbW7ETwKidGyXS7ZtcMs34LEkvrRLIluYhEeyJkegWyHg6RRrzD/u9qn
+	Pum9joHExGQyMi/I6dgZD+f3g+eM0N6SCMt1KUln5EnOGt8c9r/45mtsH6+nxhWXFVxNFjYEhxN
+	o6BeP7AVSyhe+WvLE20QBEeWvUUHvjs1VrwvM+Sta1/UVJO7aAY+KoI/AP2Iu0u05gripa6YLWd
+	aubXCfoHmJt7DcGgXfLEOrr+NeZsAvHb3SZCQ38asQkX6bikHu9/rlm5GmW9T3K5HJTri62zrdE
+	+MGpJkndniTyM5YmIz7jvwCl83Nb82BA9AB6T0tKnF23xW1IjWjrdZ6pWadUd3kg6+yCtimLH5/
+	b9Fnf9bpUj/+ILKAiRZWZDOMOCAKIy0w=
+X-Google-Smtp-Source: AGHT+IEmFiflCY72gns8BJi7+wHzY3UkumCt6vc+CYitRi/cG7BsMF02qzVY1w31/s9Tg+2mrG6kaA==
+X-Received: by 2002:a17:907:f1c2:b0:ae0:635c:a400 with SMTP id a640c23a62f3a-ae0635cad5cmr13076866b.51.1750409471648;
+        Fri, 20 Jun 2025 01:51:11 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0541bc9a0sm128495266b.146.2025.06.20.01.51.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Jun 2025 01:51:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 20 Jun 2025 10:51:10 +0200
+Message-Id: <DAR8DDUQ8HM7.3IKL9TCT7SJM3@fairphone.com>
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Casey Connolly" <casey.connolly@linaro.org>, "Sebastian Reichel"
+ <sre@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Bjorn
+ Andersson" <andersson@kernel.org>, "Konrad Dybcio"
+ <konradybcio@kernel.org>, "Kees Cook" <kees@kernel.org>, "Gustavo A. R.
+ Silva" <gustavoars@kernel.org>
+Cc: <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Sebastian
+ Reichel" <sebastian.reichel@collabora.com>,
+ <linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH 04/11] power: supply: pmi8998_charger: rename to
+ qcom_smbx
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250619-smb2-smb5-support-v1-0-ac5dec51b6e1@linaro.org>
+ <20250619-smb2-smb5-support-v1-4-ac5dec51b6e1@linaro.org>
+In-Reply-To: <20250619-smb2-smb5-support-v1-4-ac5dec51b6e1@linaro.org>
 
-Rosen Penev <rosenp@gmail.com> writes:
-
-> First two commits are small cleanups to make the changes of the third
-> simpler. The fourth actually adds dts definitions to use ahb.
+On Thu Jun 19, 2025 at 4:55 PM CEST, Casey Connolly wrote:
+> Prepare to add smb5 support by making variables and the file name more
+> generic. Also take the opportunity to remove the "_charger" suffix since
+> smb2 always refers to a charger.
 >
-> v2: Add documentation, use kernel_ulong_t, and of_device_get_match_data
-> v3: Use qcom prefix and wifi suffix as in other ath drivers.
-> v4: fix up dts example in Documentation
-> v5: move back to using qca prefix. It makes no sense to diverge between
-> all the other drivers for MIPS based qualcomm devices. qcom as a prefix
-> is used for Quallcomm's ARM(64) stuff.
+> Signed-off-by: Casey Connolly <casey.connolly@linaro.org>
+> ---
+>  drivers/power/supply/Makefile                      |   2 +-
+>  .../supply/{qcom_pmi8998_charger.c =3D> qcom_smbx.c} | 148 ++++++++++---=
+--------
+>  2 files changed, 75 insertions(+), 75 deletions(-)
 >
-> Rosen Penev (5):
->   wifi: ath9k: ahb: reorder declarations
->   wifi: ath9k: ahb: reorder includes
->   wifi: ath9k: ahb: replace id_table with of
->   dt-bindings: net: wireless: ath9k: add OF bindings
->   mips: dts: qca: add wmac support
->
->  .../bindings/net/wireless/qca,ath9k.yaml      | 23 ++++++-
->  arch/mips/boot/dts/qca/ar9132.dtsi            |  9 +++
->  .../boot/dts/qca/ar9132_tl_wr1043nd_v1.dts    |  4 ++
->  arch/mips/boot/dts/qca/ar9331.dtsi            |  9 +++
->  arch/mips/boot/dts/qca/ar9331_dpt_module.dts  |  4 ++
->  .../mips/boot/dts/qca/ar9331_dragino_ms14.dts |  4 ++
->  arch/mips/boot/dts/qca/ar9331_omega.dts       |  4 ++
->  .../qca/ar9331_openembed_som9331_board.dts    |  4 ++
->  arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts   |  4 ++
->  drivers/net/wireless/ath/ath9k/ahb.c          | 60 +++++++------------
->  10 files changed, 84 insertions(+), 41 deletions(-)
->
-> --=20
-> 2.49.0
+> diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefil=
+e
+> index 4f5f8e3507f80da02812f0d08c2d81ddff0a272f..f943c9150b326d41ff241f826=
+10f70298635eb08 100644
+> --- a/drivers/power/supply/Makefile
+> +++ b/drivers/power/supply/Makefile
+> @@ -119,6 +119,6 @@ obj-$(CONFIG_RN5T618_POWER)	+=3D rn5t618_power.o
+>  obj-$(CONFIG_BATTERY_ACER_A500)	+=3D acer_a500_battery.o
+>  obj-$(CONFIG_BATTERY_SURFACE)	+=3D surface_battery.o
+>  obj-$(CONFIG_CHARGER_SURFACE)	+=3D surface_charger.o
+>  obj-$(CONFIG_BATTERY_UG3105)	+=3D ug3105_battery.o
+> -obj-$(CONFIG_CHARGER_QCOM_SMB2)	+=3D qcom_pmi8998_charger.o
+> +obj-$(CONFIG_CHARGER_QCOM_SMB2)	+=3D qcom_smbx.o
 
+While you may want to keep the CONFIG_ name the same, the description
+should be updated, at least in the SMB5 commit.
 
-For the ath9k bits:
+  =E2=94=82 Say Y here to enable the Qualcomm PMIC Charger driver. This
+  =E2=94=82 adds support for the SMB2 switch mode battery charger found
+  =E2=94=82 in PMI8998 and related PMICs.
 
-Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
+Regards
+Luca
 
