@@ -1,156 +1,111 @@
-Return-Path: <linux-kernel+bounces-695325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A94AE1868
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:00:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CBEAE186E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86A8B3AB98D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:59:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64E4A4A2A7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF43D28467B;
-	Fri, 20 Jun 2025 10:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+TqVJ89"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7955F2868A1;
+	Fri, 20 Jun 2025 10:00:28 +0000 (UTC)
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0998C28368C;
-	Fri, 20 Jun 2025 10:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1158C283FEE;
+	Fri, 20 Jun 2025 10:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750413607; cv=none; b=oTP8/O0HOiauvudjpFM2jsW0vmYm4tqjBFSs/+DPDrWzP3i492XJCs6yFWBChhzDnBbr95vibOEs0z2m7eOQE4jIOFc6DZ7a5jB5bn1p4ThKHSylyAqmPm5IDVPCGF11oZ7DrHwQuaXolagjV0YeACMAPrf0++AtUDqvTqo2ZbQ=
+	t=1750413628; cv=none; b=AuTQ0XWoKuNF9gvt2EBNvkFywSnjX/kyOWbyNXtBvOO7uqWcnpDsbOptEPwdrOGxBZtHX/atEulUOsH8H1sLfTg3b5rNPnlrDydIGN0qKCe31kfKhfqcHq7Y1yb9NL79lWo722/g3kK6Amsu8TTLPazfwWV60CTymTJQ8hkzOqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750413607; c=relaxed/simple;
-	bh=IRZCB8GMoP84MKUn9SMaAGQ9qpgXhcZRKOZp86qZfno=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YSkO8U45oCrFqayz1TmWhszDCVWYC+ojnd2/YGa3kTzDeVIGdUSsjOZmBaNnqydx1Eruch6v132VQfRSyeABUmu4mNM+7j/yB1mDw1sZhH+k1wfKS6blvfVxjuUyvOOkNLu4noqiLYQf4ZPUXaicFzRdyD3mla5kOpqCy+C2qyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+TqVJ89; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A4EC4CEE3;
-	Fri, 20 Jun 2025 10:00:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750413606;
-	bh=IRZCB8GMoP84MKUn9SMaAGQ9qpgXhcZRKOZp86qZfno=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W+TqVJ896c/dwB23Q2KDA8VvHqx5c64JMtk/c7PBTuo+CgFnCRzmEd9WvcX4A8ZXm
-	 5IOUf6CBnN1tkRp+QnUPBo9NJrbX0WghyUZLZzdiPnQ4U9eZ0KqLVY7Gwd30CF5Bf6
-	 46jqE7295eoeG+BecPycXAsXFcr+QNPTj97VEqMsrPqsfpm3Pvng2s5h2YSeac3DUB
-	 ioF0oFStcf+vyMkIAoY44tO5C/FjObUuuqCyJ96+SqE31DrF/tSKD18xOMkJRulGYj
-	 DzuS/Q2pZCIs5ne1SIod+H/w0R/lCPGvJy/rwDA8tEad6ugP9RuGzrLYeogsGo0bRI
-	 DcgFkDXOHLAPA==
-Message-ID: <fdb9c21f-aada-498a-92ec-bc48aceeb76e@kernel.org>
-Date: Fri, 20 Jun 2025 12:00:03 +0200
+	s=arc-20240116; t=1750413628; c=relaxed/simple;
+	bh=r+xjHdFFRce4YZzMF3pWuBF+VcyjHZmtTpciBTvr0Sw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MJFGhsA9DMgT2oJ5mBRWvNe7tjxu/nXccxBYW8/WlBRsdGspG8OseJE3ZqrpLeJPErLbaYnpcvabzCyv2bhfT2qxfGYr9yVnpm32nVMFatbcu9zKm8rpcV5GXMPNs/gyu9dzCyeRKdH4WH0jtomZ+qBoTJJ1nVo2CS42Oopp3HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c02:2eb0:2d06:fb3f:ec9:50ac])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 195ff8215;
+	Fri, 20 Jun 2025 18:00:14 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Yao Zi <ziyao@disroot.org>,
+	Rob Herring <robh@kernel.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/1] arm64: dts: rockchip: rk3528: Add CPU frequency scaling support
+Date: Fri, 20 Jun 2025 18:00:09 +0800
+Message-Id: <20250620100010.1291658-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: intel-vbtn: Fix code style issues
-To: Xiang Shen <turyshen@gmail.com>, acelan.kao@canonical.com,
- ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20250620003849.54442-1-turyshen@gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <20250620003849.54442-1-turyshen@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCTU5NVhodHUlOTBpMGE5PHlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtJQUkeGUtBSR9LTUEdGUgdQR4YQkFOSxoYWVdZFhoPEh
+	UdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQktLWQY+
+X-HM-Tid: 0a978cc81ec403a2kunm2902750c11af60
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NRA6Igw*IzE*TyotFzAaCz4#
+	VlEwChFVSlVKTE5LT0pITUpOTU1MVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
+	Sx5BSBlIQUkYS0lBSR4ZS0FJH0tNQR0ZSB1BHhhCQU5LGhhZV1kIAVlBSUhOTjcG
 
-Hi,
+By default, the CPUs on RK3528 operates at 1.5GHz. Add CPU frequency and
+voltage mapping to the device tree to enable dynamic scaling via cpufreq.
 
-On 20-Jun-25 2:38 AM, Xiang Shen wrote:
-> Fix checkpatch code style errors:
-> 
-> ERROR: do not use assignment in if condition
-> +	if ((ke = sparse_keymap_entry_from_scancode(priv->buttons_dev, event))) {
-> 
-> ERROR: do not use assignment in if condition
-> +	} else if ((ke = sparse_keymap_entry_from_scancode(priv->switches_dev, event))) {
-> 
-> Signed-off-by: Xiang Shen <turyshen@gmail.com>
+The OPP values come from downstream 5.10 kernel. Both 408MHz and 600MHz
+frequencies use the normal PLL, so use the corresponding highest voltage.
 
-Thank you for your patch, but this change really does not make
-the code more readable.
+The voltage used for other frequencies can't be less than above (875mV).
+Therefore, 816MHz to 1200MHz also uses the corresponding highest voltage.
 
-The contrary the suggested changes are making the code harder
-to read, so NACK.
+The remaining 1416MHz to 2016MHz use a voltage close to actual frequency.
 
-Note checkpatch is just a tool, sometimes there are good reasons
-to deviate from the style checks done by checkpatch.
+If we want the actual frequency to reach 2016MHz, the voltage
+needs to reach 1.13V (+0.03V), not sure if it is safe.
+The maximum opp-table voltage of downstream kernel is 1.1V.
 
-Next time when submitting a patch to fix checkpatch issues please
-take a look at the resulting code after the patch and only submit
-the patch upstream if it actually is an improvement.
+Here are the test results using mhz [1] on Radxa E20C:
 
-Regards,
+--------------------------------------
+display frequency |  actual frequency
+      408MHz      |       395MHz
+      600MHz      |       593MHz
+      816MHz      |       956MHz
+     1008MHz      |      1152MHz
+     1200MHz      |      1366MHz
+     1416MHz      |      1430MHz
+     1608MHz      |      1640MHz
+     1800MHz      |      1802MHz
+     2016MHz      |      1946MHz
+--------------------------------------
 
-Hans
+[1] https://github.com/wtarreau/mhz.git
 
+Chukun Pan (1):
+  arm64: dts: rockchip: rk3528: Add CPU frequency scaling support
 
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi | 64 ++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-> ---
->  drivers/platform/x86/intel/vbtn.c | 38 +++++++++++++++++--------------
->  1 file changed, 21 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/intel/vbtn.c b/drivers/platform/x86/intel/vbtn.c
-> index 232cd12e3c9f..bcc97b06844e 100644
-> --- a/drivers/platform/x86/intel/vbtn.c
-> +++ b/drivers/platform/x86/intel/vbtn.c
-> @@ -160,30 +160,34 @@ static void notify_handler(acpi_handle handle, u32 event, void *context)
->  
->  	guard(mutex)(&priv->mutex);
->  
-> -	if ((ke = sparse_keymap_entry_from_scancode(priv->buttons_dev, event))) {
-> +	ke = sparse_keymap_entry_from_scancode(priv->buttons_dev, event);
-> +	if (ke) {
->  		if (!priv->has_buttons) {
->  			dev_warn(&device->dev, "Warning: received 0x%02x button event on a device without buttons, please report this.\n",
->  				 event);
->  			return;
->  		}
->  		input_dev = priv->buttons_dev;
-> -	} else if ((ke = sparse_keymap_entry_from_scancode(priv->switches_dev, event))) {
-> -		if (!priv->has_switches) {
-> -			/* See dual_accel_detect.h for more info */
-> -			if (priv->dual_accel)
-> -				return;
-> -
-> -			dev_info(&device->dev, "Registering Intel Virtual Switches input-dev after receiving a switch event\n");
-> -			ret = input_register_device(priv->switches_dev);
-> -			if (ret)
-> -				return;
-> -
-> -			priv->has_switches = true;
-> -		}
-> -		input_dev = priv->switches_dev;
->  	} else {
-> -		dev_dbg(&device->dev, "unknown event index 0x%x\n", event);
-> -		return;
-> +		ke = sparse_keymap_entry_from_scancode(priv->switches_dev, event);
-> +		if (ke) {
-> +			if (!priv->has_switches) {
-> +				/* See dual_accel_detect.h for more info */
-> +				if (priv->dual_accel)
-> +					return;
-> +
-> +				dev_info(&device->dev, "Registering Intel Virtual Switches input-dev after receiving a switch event\n");
-> +				ret = input_register_device(priv->switches_dev);
-> +				if (ret)
-> +					return;
-> +
-> +				priv->has_switches = true;
-> +			}
-> +			input_dev = priv->switches_dev;
-> +		} else {
-> +			dev_dbg(&device->dev, "unknown event index 0x%x\n", event);
-> +			return;
-> +		}
->  	}
->  
->  	if (priv->wakeup_mode) {
+Changed from v2:
+  Rename label opp-table-0 to opp-table-cpu
+  Adjust the voltage used for 408MHz to 1200MHz
+
+-- 
+2.25.1
 
 
