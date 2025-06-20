@@ -1,138 +1,242 @@
-Return-Path: <linux-kernel+bounces-694776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08952AE10A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:17:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC777AE10A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1FB517B94C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:17:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DD157AD3FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5147835968;
-	Fri, 20 Jun 2025 01:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F204437A;
+	Fri, 20 Jun 2025 01:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N2cGqZu3"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qj0hDI5h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B54630E82C;
-	Fri, 20 Jun 2025 01:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6ED535950;
+	Fri, 20 Jun 2025 01:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750382230; cv=none; b=C3AIzGc2AFzlQqIMNzV4DmsnhogRi6SA7TpOI5SYxvELhz7VIsdlhciL5HbU/rZ8Bb4Hfhubo4w8nYdVp4FVdFjWWzuPDgP0EPzXzEkJtCeY+4YchsR/EnGoq16IKpHGgUX4GmsvpQg1OuSOQamZ78NG+omr0HE0GNludzEHkQw=
+	t=1750382466; cv=none; b=Ew2FDWaDxWBxdwyDL1dQfFJRWY3XcWF/FPdi3VUGfapMxobb1cGLgGcazW5orQ2IscE8AUr/nDsuDLgdx+PNUqfrPGyTlC6/osV5gYhJOf89tEjEXGrAGzmpJ5rwtrVZ4SFSyIzeFqRSRWCSqks97Ox3nDNdn5TRNCZhxtToTwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750382230; c=relaxed/simple;
-	bh=HuvLPxLPkstNLDVhsfm/q15+sEImbwFCn7WN5vk7pZw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Da29ZAEDkpojRTkiFY2reb/caxmdsVRiUV307xeo7QvqtIyIIv6NkNCxfP2PXZrsufUhrd4suIlV12qjIQLnwAyNkbXNEAKKdIsYARPbA4PDStz+IiuupDYJMX2BhXPRH9iiou6SYIHx3kEJXbi+CH2XFYkSp3nshwIIRcvIR2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N2cGqZu3; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad8a6c202ffso250511666b.3;
-        Thu, 19 Jun 2025 18:17:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750382227; x=1750987027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xDuuAYvAWCJrf+O+elcb74hWx7QQULFv/2SAPhAYV5s=;
-        b=N2cGqZu3W/Agl5y4L8l3jGNF/pj+3C3mnHV6WtELYYt8tBnNE2vQtepmKHqEb0TCy6
-         CI6FLbdF5je8x9kmNdRMvgeNZ0ajOsuw+hhXBsKSE8+v9l7Iomg3qSc4dgRihMLZXM59
-         p4ZG2YebcbfWpA1IiGB0yGBzKpPHNZ4KK+HrgJpvgbCLHNSoxWz48rGl18QR5BiAlcN9
-         L3VYG49JaZBizVH6lniOKYoIBGJv/gF6gWglu0ZRJ7XdbqhMOHcSOgr5IAuBOD24CmyJ
-         60W04E4KL5dF9crXXYnw5vbtVHaO8Sk2JD+KCoM7TZcAt+ayABlrpdj4T/cOvyXTBERl
-         wqeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750382227; x=1750987027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xDuuAYvAWCJrf+O+elcb74hWx7QQULFv/2SAPhAYV5s=;
-        b=O9ogLXg9TSnLEBH8BC4cOE7dRs4tzIyxI37jrz2YC3586ToR64l4YOPzfx4KmwgKZ2
-         ezG1vLf0EhA9TdriSSt7gHZZ0Uaq8Yub4BBYlIzdx3lo6wDpW/q4BOhAeSKLz7mVz6yP
-         h5eOClIO/WtCJW6dJ0LJ/qMvHpvR3xYFN9KfWX+ZLxqYsfa5Hn/uWkx00qygRxbUUf2r
-         ihvYs5fxjVYQdnbA8ycRyU72AQGjz3lnwoa+k3h9zPZNP8705sdwX/YnEJnrcf52hgjJ
-         CgxajnNwMbFoDbugw++3UUrNT6Qyix6Sb8QUJbWH3JygulQWHgDsH+4c2XQou2JWahE7
-         fc0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVkYmxXP5qlHWMYnvxWukJXCCWfoVw46yNJKaq4dC9DEkHh2/T7v5CHmyiL+Mixgbztzb7NBLIDafx2PeA=@vger.kernel.org, AJvYcCWyUHiUpSREXqaZlARysL72e2Kbl+/psFm8Oa6ciyUIQ12/ZNvZ8Qi0S3e9a2FerCrPbYAejH3mZAvT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSVLq67xtBTHumHXPwWRYObtgJS2MQ0/oDfl946BbiCT4Srt7z
-	a6VYfvxiLg+1Ri7I6qmYXNCEwb9+IGdiZTxlAiUszl6t4aRR42Sjmmdqz2DwCc0PAOso48S2w8X
-	hYG3DiwGKsK1wvzhCyW7w1gURTzBxODlSBRg/
-X-Gm-Gg: ASbGnct63CQWxTNNbll3a//DkSB9bDrzHj8mR7RQQxMvlRBLmCHE9PAPPxueFH0l/n9
-	JOMpbctXEKSmaD0Z1CFmlNnmiY7nZ5wH1NbACqxcO2DnYpe1+/q0Uizz41bMQwL8m2QSsjs9Ma1
-	iMa7f1sYZ7d6kzvqHuGeXI+6zXN6ne4r4+4J7xKZ6vK2nUgd181+En9x2rPaIh9wGbMzEbmFRZb
-	+p9
-X-Google-Smtp-Source: AGHT+IEGYjP1hNbtkB6m7CrQ1TnVG0Z1sX6Lm61kXGebSmHl9CobAe+TZjdgzJZ6k4Qpyaup2tZDqcRJ39ekUI9M/wo=
-X-Received: by 2002:a17:906:f589:b0:ad8:adea:4b15 with SMTP id
- a640c23a62f3a-ae057bd4538mr80561666b.48.1750382227139; Thu, 19 Jun 2025
- 18:17:07 -0700 (PDT)
+	s=arc-20240116; t=1750382466; c=relaxed/simple;
+	bh=7zVvybjqSFfS+Z9K61ba+IQ8a9OcQvv3itypzSUbN4o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MvoEx6C7XLL64IXTxwdXQvJNWKv01DbppneT7xLT3xcDpqHoCM7q3eEu/axHmFBDxQpZpXAO/CwboMrXQL9r0txywONiymrjRlYIWvmcj6owxc3DQOsmeiWR3LxKhCnf6VZ1McovwUxnF7m+sQKAADdJBcSgRweP2fUhg7wmNXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qj0hDI5h; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750382464; x=1781918464;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7zVvybjqSFfS+Z9K61ba+IQ8a9OcQvv3itypzSUbN4o=;
+  b=Qj0hDI5hEibpyPd5ZhZCY79aruZ0z0AR07daOrPJJDiY4svsCaf6Bqsu
+   hzEvK/5IRmLS7oB2HTn+zIGzAnRrRgMSlVQud84x2djKa4kE0oVPBlFjy
+   iO5ALlAFo97teTsgZnElSdmkDwNdXtkjA2SEuOC0WH4Z4EDayTFuiV+m3
+   T6eCVMGQddW9JXPiFrG6gDrqtH6Gft8mu8+6XMH8Hk72edPo0VpjOFrze
+   zOTcuWahxw3FrNoVtdP87TeyX8pzAfWaeIsJybrK5TNTKzevGV6Bcb4sD
+   /knwItYgnPMtGT5IDdTWr63bZx/O+vNXoULGpkdrnKpeDaDfmtLaqNdaU
+   g==;
+X-CSE-ConnectionGUID: YU7Zu6qWTUeqqTWL54/hzw==
+X-CSE-MsgGUID: RiKE7o3IS5anr+9mzn/IqQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="52605675"
+X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
+   d="scan'208";a="52605675"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 18:21:03 -0700
+X-CSE-ConnectionGUID: 8erNCieqRBK2kxgCMCZKLQ==
+X-CSE-MsgGUID: W84Lfdy6QAOxCXWnNdFBiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
+   d="scan'208";a="150911071"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 18:20:58 -0700
+Message-ID: <cc443335-442d-4ed0-aa01-a6bf5c27b39c@intel.com>
+Date: Fri, 20 Jun 2025 09:20:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2025060325-everyone-padlock-931a@gregkh> <20250604025154.10165-1-syhuang3@nuvoton.com>
- <20250604025154.10165-2-syhuang3@nuvoton.com> <2025061941-dexterous-basket-fc7f@gregkh>
-In-Reply-To: <2025061941-dexterous-basket-fc7f@gregkh>
-From: Sheng-Yuan Huang <hsyemail2@gmail.com>
-Date: Fri, 20 Jun 2025 09:16:55 +0800
-X-Gm-Features: AX0GCFt0mxPzcAFUYj_5F2aO8fWkh7EUpFuDjT_wUyyFNJUI1ZVIVigU1Qun_4U
-Message-ID: <CACW=pY7DO2aTCye3Wizd6z1fF7QycXbW4OBbLfpehAumMcRv2Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] USB: serial: nct_usb_serial: add support for
- Nuvoton USB adapter
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: johan@kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sheng-Yuan Huang <syhuang3@nuvoton.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] KVM: TDX: Exit to userspace for GetTdVmCallInfo
+To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, seanjc@google.com
+Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
+ reinette.chatre@intel.com, tony.lindgren@intel.com,
+ isaku.yamahata@intel.com, yan.y.zhao@intel.com,
+ mikko.ylinen@linux.intel.com, kirill.shutemov@intel.com,
+ jiewen.yao@intel.com, binbin.wu@linux.intel.com
+References: <20250619180159.187358-1-pbonzini@redhat.com>
+ <20250619180159.187358-4-pbonzini@redhat.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250619180159.187358-4-pbonzini@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Greg,
+On 6/20/2025 2:01 AM, Paolo Bonzini wrote:
+> From: Binbin Wu <binbin.wu@linux.intel.com>
+> 
+> Exit to userspace for TDG.VP.VMCALL<GetTdVmCallInfo> via KVM_EXIT_TDX,
+> to allow userspace to provide information about the support of
+> TDVMCALLs when r12 is 1 for the TDVMCALLs beyond the GHCI base API.
+> 
+> GHCI spec defines the GHCI base TDVMCALLs: <GetTdVmCallInfo>, <MapGPA>,
+> <ReportFatalError>, <Instruction.CPUID>, <#VE.RequestMMIO>,
+> <Instruction.HLT>, <Instruction.IO>, <Instruction.RDMSR> and
+> <Instruction.WRMSR>. They must be supported by VMM to support TDX guests.
+> 
+> For GetTdVmCallInfo
+> - When leaf (r12) to enumerate TDVMCALL functionality is set to 0,
+>    successful execution indicates all GHCI base TDVMCALLs listed above are
+>    supported.
+> 
+>    Update the KVM TDX document with the set of the GHCI base APIs.
+> 
+> - When leaf (r12) to enumerate TDVMCALL functionality is set to 1, it
+>    indicates the TDX guest is querying the supported TDVMCALLs beyond
+>    the GHCI base TDVMCALLs.
+>    Exit to userspace to let userspace set the TDVMCALL sub-function bit(s)
+>    accordingly to the leaf outputs.  KVM could set the TDVMCALL bit(s)
+>    supported by itself when the TDVMCALLs don't need support from userspace
+>    after returning from userspace and before entering guest. Currently, no
+>    such TDVMCALLs implemented, KVM just sets the values returned from
+>    userspace.
+> 
+> Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+> Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
+> [Adjust userspace API. - Paolo]
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+>   Documentation/virt/kvm/api.rst | 15 +++++++++++++-
+>   arch/x86/kvm/vmx/tdx.c         | 38 ++++++++++++++++++++++++++++++----
+>   include/uapi/linux/kvm.h       |  5 +++++
+>   3 files changed, 53 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index 3643d853a634..2b1656907356 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -7190,6 +7190,11 @@ The valid value for 'flags' is:
+>   					u64 gpa;
+>   					u64 size;
+>   				} get_quote;
+> +				struct {
+> +					u64 ret;
+> +					u64 leaf;
+> +					u64 r11, r12, r13, r14;
+> +				} get_tdvmcall_info;
+>   			};
+>   		} tdx;
+> 
+> @@ -7216,9 +7221,17 @@ queued successfully, the TDX guest can poll the status field in the
+>   shared-memory area to check whether the Quote generation is completed or
+>   not. When completed, the generated Quote is returned via the same buffer.
+>   
+> +* ``TDVMCALL_GET_TD_VM_CALL_INFO``: the guest has requested the support
+> +status of TDVMCALLs.  The output values for the given leaf should be
+> +placed in fields from ``r11`` to ``r14`` of the ``get_tdvmcall_info``
+> +field of the union.  This TDVMCALL must succeed, therefore KVM leaves
+> +``ret`` equal to ``TDVMCALL_STATUS_SUCCESS`` and ``r11`` to ``r14``
+> +equal to zero on entry.
+> +
+>   KVM may add support for more values in the future that may cause a userspace
+>   exit, even without calls to ``KVM_ENABLE_CAP`` or similar.  In this case,
+> -it will enter with output fields already valid; in the common case, the
+> +it will enter with output fields already valid as mentioned for
+> +``TDVMCALL_GET_TD_VM_CALL_INFO`` above; in the common case, the
+>   ``unknown.ret`` field of the union will be ``TDVMCALL_STATUS_SUBFUNC_UNSUPPORTED``.
+>   Userspace need not do anything if it does not wish to support a TDVMCALL.
+>   ::
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 6878a76069f8..5804d1b1ea0e 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -1451,18 +1451,49 @@ static int tdx_emulate_mmio(struct kvm_vcpu *vcpu)
+>   	return 1;
+>   }
+>   
+> +static int tdx_complete_get_td_vm_call_info(struct kvm_vcpu *vcpu)
+> +{
+> +	struct vcpu_tdx *tdx = to_tdx(vcpu);
+> +
+> +	tdvmcall_set_return_code(vcpu, vcpu->run->tdx.get_tdvmcall_info.ret);
+> +
+> +	/*
+> +	 * For now, there is no TDVMCALL beyond GHCI base API supported by KVM
+> +	 * directly without the support from userspace, just set the value
+> +	 * returned from userspace.
+> +	 */
+> +	tdx->vp_enter_args.r11 = vcpu->run->tdx.get_tdvmcall_info.r11;
+> +	tdx->vp_enter_args.r12 = vcpu->run->tdx.get_tdvmcall_info.r12;
+> +	tdx->vp_enter_args.r13 = vcpu->run->tdx.get_tdvmcall_info.r13;
+> +	tdx->vp_enter_args.r14 = vcpu->run->tdx.get_tdvmcall_info.r14;
+> +
+> +	return 1;
+> +}
+> +
+>   static int tdx_get_td_vm_call_info(struct kvm_vcpu *vcpu)
+>   {
+>   	struct vcpu_tdx *tdx = to_tdx(vcpu);
+>   
+> -	if (tdx->vp_enter_args.r12)
+> -		tdvmcall_set_return_code(vcpu, TDVMCALL_STATUS_INVALID_OPERAND);
+> -	else {
+> +	switch (tdx->vp_enter_args.r12) {
+> +	case 1:
+> +		vcpu->run->tdx.get_tdvmcall_info.leaf = tdx->vp_enter_args.r12;
+> +		vcpu->run->exit_reason = KVM_EXIT_TDX;
+> +		vcpu->run->tdx.flags = 0;
+> +		vcpu->run->tdx.nr = TDVMCALL_GET_TD_VM_CALL_INFO;
+> +		vcpu->run->tdx.get_tdvmcall_info.ret = TDVMCALL_STATUS_SUCCESS;
+> +		vcpu->run->tdx.get_tdvmcall_info.r11 = 0;
+> +		vcpu->run->tdx.get_tdvmcall_info.r12 = 0;
+> +		vcpu->run->tdx.get_tdvmcall_info.r13 = 0;
+> +		vcpu->run->tdx.get_tdvmcall_info.r14 = 0;
+> +		vcpu->arch.complete_userspace_io = tdx_complete_get_td_vm_call_info;
+> +		return 0;
+> +	default:
+>   		tdx->vp_enter_args.r11 = 0;
+> +		tdx->vp_enter_args.r12 = 0;
+>   		tdx->vp_enter_args.r13 = 0;
+>   		tdx->vp_enter_args.r14 = 0;
+> +		return 1;
 
-My apologies for the incomplete patch submission.
-This is my first time submitting a driver, and I'm still getting
-familiar with git console operations. A procedural error on my part
-led to the patch not including the necessary Kconfig and Makefile
-changes.
+Though it looks OK to return all-0 for r12 == 0 and undefined case of 
+r12 > 1, I prefer returning TDVMCALL_STATUS_INVALID_OPERAND for 
+undefined case.
 
-I truly appreciate you pointing out this mistake promptly, which
-allows me to correct it early. I've learned from this, and the next
-version of the patch will correctly incorporate all required files.
-Thank you for your understanding, and I apologize again for any
-inconvenience caused.
+So please make above "case 0:", and make the "default:" return 
+TDVMCALL_STATUS_INVALID_OPERAND
 
-Best regards,
+>   	}
+> -	return 1;
+>   }
+>   
+>   static int tdx_complete_simple(struct kvm_vcpu *vcpu)
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 6708bc88ae69..fb3b4cd8d662 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -461,6 +461,11 @@ struct kvm_run {
+>   					__u64 gpa;
+>   					__u64 size;
+>   				} get_quote;
+> +				struct {
+> +					__u64 ret;
+> +					__u64 leaf;
+> +					__u64 r11, r12, r13, r14;
+> +				} get_tdvmcall_info;
+>   			};
+>   		} tdx;
+>   		/* Fix the size of the union. */
 
-Sheng-Yuan Huang
-
-
-Greg KH <gregkh@linuxfoundation.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=8819=E6=
-=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=885:40=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Wed, Jun 04, 2025 at 10:51:54AM +0800, hsyemail2@gmail.com wrote:
-> > From: Sheng-Yuan Huang <syhuang3@nuvoton.com>
-> >
-> > Add support for the Nuvoton USB-to-serial adapter, which provides
-> > multiple serial ports over a single USB interface.
-> >
-> > The device exposes one control endpoint, one bulk-in endpoint, and
-> > one bulk-out endpoint for data transfer. Port status is reported via
-> > an interrupt-in or bulk-in endpoint, depending on device configuration.
-> >
-> > This driver implements basic TTY operations.
-> >
-> > Signed-off-by: Sheng-Yuan Huang <syhuang3@nuvoton.com>
-> > ---
-> >  drivers/usb/serial/nct_usb_serial.c | 1480 +++++++++++++++++++++++++++
-> >  1 file changed, 1480 insertions(+)
-> >  create mode 100644 drivers/usb/serial/nct_usb_serial.c
->
-> This patch does not actually allow the .c file to be built, so how was
-> this tested?
->
-> confused,
->
-> greg k-h
 
