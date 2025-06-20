@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-694978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2415CAE136F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:54:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA816AE137B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEA134A0380
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 05:54:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59F725A06A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 05:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4772E21CA12;
-	Fri, 20 Jun 2025 05:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA1221D581;
+	Fri, 20 Jun 2025 05:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VtkAWQpe"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IFJWUep7"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7DC21C18E
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 05:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FCE21D3D1
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 05:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750398882; cv=none; b=hWKCsCdhXfnlLCVvxhT5Qrt5LE2IVbcxAVlNR72Xv0Du1ecW4f+9uxcPFImXsAVNzxAqpEXHucJB7XNoMo+6pGppyugJI8SOUXgv9B0ibo/CRqgcsIGV0gzQZnfc12v3Z8eU2Hi0PyXLnaDLPVRi++pkTUOm8s+bYRhJbQpT39g=
+	t=1750398996; cv=none; b=qzZejRoGcbxgnHKa2L2wwzNM4qTGFpGWFFQXKG3rR+5ydo0kGprTMeeKGaDaf3tNuNMH+CXDrK18r/1unnC39qVMpzDp4RDDUjBMCZ/p62xqYxI6/wkl7pPXAGhQ2n/llXF2GC0OMXnPE4QmBPMAZILJHi/2ma6rIzG3cyq4IGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750398882; c=relaxed/simple;
-	bh=SGm45xOdKQPaoT5i8e6fGV+CT0zn6lmG3bc/9qhEuyM=;
+	s=arc-20240116; t=1750398996; c=relaxed/simple;
+	bh=5/mWVtLGD24gCM1si9RPcf5SvCDoz6p53AqCSJC9PcQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h0K7PAWuzqRQeQ6i6Mbh2YL4SutYxQwz3qcAy4FSvLJ8kDbiYmgRGLdygH5PPXY67XQGvLl0i8+PpqhXLoKBF22XXpVtfmdcWmGli96NJrSH2KKPu8dnB6uInwCZzgFFDqWZdWZ28z/GLolp+P6rVMMHDuhJ94Jb/0sRr5wiRhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VtkAWQpe; arc=none smtp.client-ip=209.85.221.41
+	 In-Reply-To:Content-Type; b=rFWPWBPicRXaA9UVUe2wHe9pd1NZPx6MzBJazIz4UM7IQSLroCI1bTtq5283TViGrrPmYZ5jSWWBu/ql6fv56QpAKamnQ88uM5PG+va7d3pburFPv9U9Rtl0Oq35JLAVPR9XwCCitMyaQFguBPBAdQTmtvnwFLtA8diShIHEWB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IFJWUep7; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a524caf77eso242233f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 22:54:38 -0700 (PDT)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a4e749d7b2so296615f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 22:56:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750398877; x=1751003677; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1750398993; x=1751003793; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=59PVKiZdXIvx7Cm+uTcu8gotYU98Sb4nyV+OyfABkNo=;
-        b=VtkAWQpe5FESQVNZeofYsm88L7n6VjLkVP9nbYYYEyHSnRph3B65gpXH/QXsA4RvFm
-         cAARxldo/RaAQo8HKit92XEeag2ryMbYp+tMIk+LXwd37BKsOLTEp8GX/C3kGu7mTrkm
-         TWUJh8mjTEvG2MF/jsI1ADUp6kbdXF8827ZvNBnOZI9nz1G5z8046bipm3dSJDk+8nyh
-         TIiGeY+2q/Y4whMtormRWYF83wx0DfVjIZGezjTEnY8+xP32dFRYIjlgi57oEIJpOf0I
-         KBq7JnBBBFh4atp43hBtbTyTry706ymr6qA7jMhBn/zKkgH5y5EQS1MdQmqyRJ7V9NBS
-         xzpA==
+        bh=6xdA68MYggUa1w4ukHSrMIxDEwDuDuAxvHXLdqvwJY0=;
+        b=IFJWUep74XQpWvrWThwcpOyqeIArG/WGF0RSkIDu3e8VXObyjJYuKDwCp8pVy63VsL
+         6qF7ohcrAtD1J5bMSVzRu1v0q6JM5rOh01GjDBaw5cTfuNXLkjYT8EqSg2lbOFGAPuxa
+         GcSYsFMBjTrE7Rqp2liQii/xE9OQe/KlOPoZnbR+rs194xvyVit7xCE4GB5RYJjiHM4z
+         Tf6Nh49ncqUgiErfWc+Fi7dN3+aNbGX4N3SQEFER8UzcCyhUyVAiMGH1MTXMh2Xk2ybN
+         hk++uQl2TbCvaDA4eUYw6B+MB3xHR5eSm4Jt4BrvdSMeZNTU74xbiWKiONDkWpzSfV69
+         LvuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750398877; x=1751003677;
+        d=1e100.net; s=20230601; t=1750398993; x=1751003793;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=59PVKiZdXIvx7Cm+uTcu8gotYU98Sb4nyV+OyfABkNo=;
-        b=n2noKii4m2hRg8a/T+DfnZVqGyfKNU4H9fNOq/zMN+shIMNz0Hv5IEPR03oOBLXlGk
-         mQ6WAl3ezkPHyhn00Ay6xNRyHLweMH2d4UbE9/9gSsu8A5otuab+ia3rK2Fw6uQxBADa
-         h1ohCG2y6BXQyUorphgQNcLaoW8E/Xa+fnwaVFzsLc0CahHTxU6xGMBWekludb817FRS
-         OP6atPuFovntAD1N2C1eEVo74pHIFa5gw5Ewcn4K3ZngBjxptO0fQ+Xw+aHGAx4x0/iX
-         xotJmerQccm1UrSwoz1ymkC4db01zUDFSc1iVjOF/yqNvT12ZeJnJubWlyM9I0vFG0PR
-         oRpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXb/YqNQzD8UOLnPCT/bjXkjPQqA0GDWbcT8Kfwust/+P7ULRbCVyvwW+g89iuLP65ZgtYrVxyNqnA3O5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKkWSg+uzgWdUdXUzBYmMHTSkh6DUYpZau2+oJpwAV4Ajdy8Nl
-	d1YwvkfsXSjq0zJDrv1FpyY9tK5dTsG7Fh3+DUPlu/3i6eilMYWsM3TDZTnw8y6f40U=
-X-Gm-Gg: ASbGncuIEHAX47DceN31znYQEDJ6p6EdCRbUjpyq0pPb12QZcOqxRv1sbca5BC8IYCC
-	WePvx2FLmlfQ+eBrTxtDH8qQKICK56phSfsv7XWNbM2Cazcc6SjiQ+sVNP2S6kvJUc4anOOp/BL
-	wtC3YoWGKSnAYN1wBezTr3kJW5l4ibC17H28q8Mv3rcvlHNoc4fSqJQCk0d0FNkgIT4hPQVKXpO
-	NJf5fAuxclG/0U7YjBCsmXedreACJ88qcI8kk651C6RxaSLvsjwsGbj3mg7RkCVMZrNIU0XoAUq
-	0sFKfPjl9AEQhaP+JkwEUbD2bMciFLHYn/GEX2/gSm6CJYc+EIZsOz/B7iibpnhUM/abw3ULsXs
-	qU8/8Olc5mF+01FYOgQ==
-X-Google-Smtp-Source: AGHT+IFcQ9MmxABcUgAA17Z5yhG8GD3yrVleUWb+QLqjuwBXbS596eXv/4SkhKPfSkMOcNjj8ogtDQ==
-X-Received: by 2002:a05:6000:2dc3:b0:3a6:d30e:6fd3 with SMTP id ffacd0b85a97d-3a6d30e73bamr180338f8f.10.1750398876754;
-        Thu, 19 Jun 2025 22:54:36 -0700 (PDT)
+        bh=6xdA68MYggUa1w4ukHSrMIxDEwDuDuAxvHXLdqvwJY0=;
+        b=qqatztollJHmaG1rptU3fCibdJH0n1WsyX27kV3+HBwDy03fv6mkOspdXlKEPIf9wm
+         m7LZTy2p8u+4I8fPj+xch3DyC+iGzwnWF9fDTSAvFYH8r0coXc1P99OWQrVrJdLxrPTA
+         bv1Ghcz9uybnKnb3cup9MA2XBAVRPciL/iqo+jm5OHoDhG69OM2TM/eKSkCNWqz3TYPd
+         x3mT4Mb41nw+sfRxRutuv6sma2AV5dQ9WOC+aMkG3adYSv6XXo4gzp6RUsZgFuDJ9G/0
+         yu7q4vCQRgA65GC7vfnMDg7OGXNSL3zk7sio/kmWDUMUJiXcvRpT47aduyIr1uaE+y83
+         2ToA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZj//KjEHK2AIt9QIECRsmUyJ+tSb+ORFVfMT4LOLRcqaMYQZh9X0tJbWJBNw+zsZ2nMHp/Y+Qjr7GAZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmAxPtxK/7DN0FN7zqpkKMLoF2wxs86EPxX7wAngZHpPM2Pghl
+	HyviboIaDbXrNqUkpldTFNPH9dRTn9fHm3ZeE9s/N5UEH0+qT+bmR0PjQN56ym2Qyvw=
+X-Gm-Gg: ASbGnctC9bT6G9X8DAgcYs7+2pvRETAInGYnNXJcr7BnL8idCLghSHERUFLP+xokc1u
+	TjksUd10JBjqslN/llS0bPJQgNS1sAFGRROe4WiPgqDVA3OSNtdJkTU5ylFeggqWfftnwKfKaqo
+	l543XyNPI//lbBr6L5tyDc3crDAPN0DDgnkzo+5PdEIKMdIf+RDITqK7CLa98Gu8clVXfXt6H9L
+	ZVNuCVkO5CCRvG67v3/mhDcDicoQwKMZZSWcIYogbnZi/6n+jiWOQkus2CNi9h7/Xgsjs1fPM0j
+	H4pA4wYjTc9XV/rJC8wr9wXRrq6aCqJEkJvGLjA4/sS9ZEdSv58Y/1L2wszpsNqeThQp7ztEDTI
+	G2kf/AG8=
+X-Google-Smtp-Source: AGHT+IG3gZgWQ6JAyDSzJW9KbdQ4hIpZgLdkML6+8ZihoNGPY7Ys650erfeEVxWvpsawBniEN4L/cg==
+X-Received: by 2002:a05:600c:a09:b0:453:c39:d0b1 with SMTP id 5b1f17b1804b1-453653ba8cemr4510965e9.2.1750398992874;
+        Thu, 19 Jun 2025 22:56:32 -0700 (PDT)
 Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d0f1057esm1135424f8f.10.2025.06.19.22.54.34
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45365af83easm9867515e9.25.2025.06.19.22.56.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Jun 2025 22:54:35 -0700 (PDT)
-Message-ID: <6898ce74-808d-4976-b04e-31737396a86c@linaro.org>
-Date: Fri, 20 Jun 2025 07:54:33 +0200
+        Thu, 19 Jun 2025 22:56:32 -0700 (PDT)
+Message-ID: <6068badd-8d33-4660-aef8-81de15d9b566@linaro.org>
+Date: Fri, 20 Jun 2025 07:56:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,20 +82,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 1/2] media: dt-bindings: nxp,imx8-jpeg: Add
- compatible strings for IMX95 JPEG
-To: Nicolas Dufresne <nicolas@ndufresne.ca>, Shawn Guo <shawnguo2@yeah.net>
-Cc: Frank Li <Frank.Li@nxp.com>, mirela.rabulea@nxp.com, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, imx@lists.linux.dev, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, ming.qian@nxp.com
-References: <20250521-95_jpeg-v1-0-392de5d29672@nxp.com>
- <20250521173444.310641-1-Frank.Li@nxp.com>
- <eef5ccd99d82dd33e3a4ecdb5d4a5b75ccb0b972.camel@ndufresne.ca>
- <aFORokzx/sImgDtA@dragon>
- <d46d73f84e78daf152962ffb5cce7dd3ae0920d1.camel@ndufresne.ca>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom,sm8450-videocc: Add minItems
+ property
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel test robot <lkp@intel.com>
+References: <20250618-sm8450-videocc-camcc-bindings-single-pd-fix-v1-0-02e83aeba280@quicinc.com>
+ <20250618-sm8450-videocc-camcc-bindings-single-pd-fix-v1-1-02e83aeba280@quicinc.com>
+ <4657c6d8-8454-478a-aac3-114c6194b72e@linaro.org>
+ <5ed72663-da54-46a4-8f44-1ceda4a7d0d9@quicinc.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -142,39 +147,44 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
  vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
  2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <d46d73f84e78daf152962ffb5cce7dd3ae0920d1.camel@ndufresne.ca>
+In-Reply-To: <5ed72663-da54-46a4-8f44-1ceda4a7d0d9@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 19/06/2025 19:16, Nicolas Dufresne wrote:
-> Le jeudi 19 juin 2025 à 12:27 +0800, Shawn Guo a écrit :
->> On Fri, May 23, 2025 at 07:22:04PM -0400, Nicolas Dufresne wrote:
->>> Hi,
->>>
->>> Le mercredi 21 mai 2025 à 13:34 -0400, Frank Li a écrit :
->>>> Add compatible strings "nxp,imx95-jpgdec" and "nxp,imx95-jpgenc", which
->>>> are backward compatible with "nxp,imx8qxp-jpgdec" and
->>>> "nxp,imx8qxp-jpegenc". i.MX95 just need one power domain which combine
->>>> wrap and all slots together. Reduce minItems of power-domains to 1 for
->>>> i.MX95 and keep the same restriction for others.
->>>>
->>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->>>
->>> Acked-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
->>>
->>> Krzysztof, will you take this one once the DTS part is ready ?
->>
->> dt-bindings is the prerequisite of DTS.  DTS patch looks good to me
->> and I'm waiting for dt-bindings part to be applied first.
+On 19/06/2025 12:20, Jagadeesh Kona wrote:
 > 
-> I was waiting for sign of life on the DTS part, we usually get some ack,
-> which is good sign we can take the bindings.
+> 
+> On 6/18/2025 11:56 AM, Krzysztof Kozlowski wrote:
+>> On 17/06/2025 21:07, Jagadeesh Kona wrote:
+>>> Add minItems as 1 for power-domains and required-opps properties
+>>> to allow this binding to be compatible with both single and multiple
+>>> power domains.
+>>
+>> This is your hardware, so you know how it works thus I expect here
+>> arguments why this is correct from the hardware point of view. Without
+>> this, it is impossible to judge whether this is a correct change.
+>>
+>> If I overlook this now, it will be used in discussions by other qcom
+>> engineers, so unfortunately you see, you need to prepare perfect commits
+>> now...
+>>
+> 
+> These clk controllers mainly require MMCX power domain to be enabled to access
+> the clock registers. But to configure the cam & video PLLs in probe, an additional
+> MXC power domain also needs to be enabled.
 
-Such process never happens. DT bindings are the prerequisite here and
-platform maintainers wait for bindings to be accepted before taking DTS
-or even sometimes reviewing DTS. Why even bother to review DTS if it
-follows entirely incorrect binding?
+
+Then your patch is not correct. Anyway, you should explain the hardware
+in commit msg, why this domain is optional in the hardware.
+
+> 
+> Since the initial DTS changes only added MMCX power domain, this change is required
+> to be backward compatible with older DTS and avoid ABI breakage as discussed in below
+> thread.
+
+
+So you send incorrect hardware description allowing something which will
+not work? Or how exactly?
 
 Best regards,
 Krzysztof
