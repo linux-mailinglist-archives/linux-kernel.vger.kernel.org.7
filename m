@@ -1,337 +1,177 @@
-Return-Path: <linux-kernel+bounces-695461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAF0AE1A05
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:31:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 690D0AE1A0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16C397A72AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:29:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88A177A9769
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BB027816B;
-	Fri, 20 Jun 2025 11:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8076828A3E4;
+	Fri, 20 Jun 2025 11:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BX320ln3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NXb0b8MZ"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0C521C17D
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 11:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5397F266B52;
+	Fri, 20 Jun 2025 11:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750419070; cv=none; b=HxiTT5J+TvAWKozk7eh8lu1vcfjQ3R0YZBJSqSLG5c7OpxM/kUiP6kjpNyX7ODgkAFpPOu1bKUqengywkewY+z3y4QPM/GZ8ND8eN17Ho2IPwNFI9b+arWztfYsnk2c25agMNkd9HteGTxAUwyqqeZvtzRVl3Wm7XE1wjzZkvDE=
+	t=1750419176; cv=none; b=ib625Z2ekylunBDHA/yK6l8/b7K8pB+vmX9d1Er2C5yoC492p49cmWPWmeGxJEXapOVmsadWuUTfEfB00wbRnThg5/w9Bdz/zKnVhGXR9RGslaUCi1GbXEIN8cG39b+ZvJ3fIOzu8buacjxiBm5ditWDjP5qcYToBAOGmdoty9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750419070; c=relaxed/simple;
-	bh=G6vjfcaFhBwUqsbtO8O89l1/kTIbX9qC4wkMlyxyfbU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=fPw0GDdfZk/m2MlNwiEiWqdW0209znjQsDLv59+fUjmbRqNNY6P+imcTWcMFlhcjaPdnfEW+9X9MmFB89pgA/YyaHf8HLYn9pntbu1RgJPPOExL6RZ5QxKe7AzlzExXA69txI/Evm9EkKfezkKl70qkyNpIxGwdQ29VhjSBFFOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BX320ln3; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750419068; x=1781955068;
-  h=date:from:to:cc:subject:message-id;
-  bh=G6vjfcaFhBwUqsbtO8O89l1/kTIbX9qC4wkMlyxyfbU=;
-  b=BX320ln3I1a6sbDGRLXmEkve6VnZ8XtlKnFPwG3dx99wVwxfGYC6LvWW
-   zexxMeLGwq4knttf3cxi4swP/rLNN12+bAzRTnAJZT3k4r4My9bro5M1B
-   dEyMTfMyeL0YKbqBp9eOpgkeX52zJN+qjchw7drJke7Y8suNkl5KQyUzW
-   jgl4Nz703pS6pyejdGxp+bfuFpjexdfAbRpfTU2P2Qrj0LE6F01zLhI1f
-   N2bcGhmobqWF3UEKgm11ncPheorcpFZxpe+OEe3e+/biWH+sg3ii9th+K
-   Z24W4vjrlMNOxb4LPodwMsGvmNbiKO7EMxi/pIPiiFldKKE5gwKSu4OSU
-   w==;
-X-CSE-ConnectionGUID: U8AYQN17S+iEI+dgVpuNmg==
-X-CSE-MsgGUID: nB7Tl+dbTDKZkrUV2B8YgQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="55314937"
-X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
-   d="scan'208";a="55314937"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 04:31:07 -0700
-X-CSE-ConnectionGUID: /QISFPxYRvuI9Z6XuUEp7g==
-X-CSE-MsgGUID: /XHfvPtFTl+YN1YJF3aQEQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
-   d="scan'208";a="151428799"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 20 Jun 2025 04:31:07 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uSZxY-000LhA-2b;
-	Fri, 20 Jun 2025 11:31:04 +0000
-Date: Fri, 20 Jun 2025 19:30:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/sev] BUILD SUCCESS
- 040ed574ee823a2ce5da36a8d385d3133787c9c5
-Message-ID: <202506201919.lUwSK1ZL-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1750419176; c=relaxed/simple;
+	bh=aVUis3tmwjEVO7sLfUIv5dGMKiNhugLFOOb2Uv9ONlE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gnQiZHO+namdmyNzbmY76TPYevW1cowEPmaM7AGCsVdKPv07JFU+XBN1SmRCXMpNYe+3SB5s8/gczhfDuwdnxj3D00ncuj/bESIfERMHmoxFegQmmZyYQlrrV5cSbhx6lFWpUVc+8/cCt2U3HhRZZr6F94HikxUdc9yxW6V0Wcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NXb0b8MZ; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a54690d369so1552870f8f.3;
+        Fri, 20 Jun 2025 04:32:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750419174; x=1751023974; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q6mEJj3phw5TW6gbm0SfLzIIYERO6R6gcqINxCdoWyU=;
+        b=NXb0b8MZ5uiVVOST+ylTE9Mov2arH5IHHlYJ4KIHMXvHEyELW0mcF5Leq+0J8S5+76
+         5r1uRZYj763RwOAfZ6B8KHQTJBtOZgLLNYZtMpRc9Chhjf9tOrU6BMx6MQ/VG173JYUp
+         60Mijk717h3EcEmYRCvyXJ/nk0JZUhkf3AUs6kWsaQuJM/rb0jqJrd1GMZaXocW4Imar
+         qdQVbKIAk9aUBuNm1J7RAreX4qxWesqWi5/4lxO26Ep6lBNOtcVWuGLqYTshah40ahe2
+         91dTnNts3N3W6dmWte1Rmp/xTKqn8cNldWGOnSq9c1DXTc/Dc9XWHn2qsAj5SipPFhyg
+         WQvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750419174; x=1751023974;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q6mEJj3phw5TW6gbm0SfLzIIYERO6R6gcqINxCdoWyU=;
+        b=u9EghzRN/1N4D1oPUGYJIVcY2TnHsCiHD1pmnL10qRMiZ4FrytY51Xxh7gzfHmDxEW
+         2qK/XAuDy+LW66/pHm3WFOMWT9ceChibNBCdvTQIawzK7kuTYZv3rN1Cj83kBYNazGI9
+         NqgAoGsEcKbVm2OnwER+sBl/gik7qfC7qAtNU9jpxP+Tw6RMJ+S3/fTR+GObMSAisql8
+         cL/XhrJ4ytW3h62YY5VodCOyMqW14T2LmHYwutEymm+GYltl5DTAUOd7yH3mVnBMO1It
+         zTCH/9smUGvzdaaaCeRV2aLmvmtdEuigAj7U+HcltIHvWu71XCvocJ81m98S8hZeNu58
+         vQjg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0FEK5WVp+l55szDCa5CSrpK9eNrWJZZWijuQ1nuHRjLPWZrkItmPYPQtrWGmSUdZiyYVsY3YK2EAhVIgkEdc=@vger.kernel.org, AJvYcCXAJ7PakyrMo1bM18/kfewrECgdcDBgli45Ya56wUz6KtJL+uQP/x38ROh+AkrIqNDuU9/gpX0uAqgc@vger.kernel.org, AJvYcCXLAlxDi7hrIf6gj30XzOsNcdJ0R+iFqKeuqazFV25RNu5c88tijLR6pzNQ4RgMFmkF42QmXkz7TcdCaIj1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWmJG1NihH9d8x2XE/MncpaaF97S5H18IqfqwNnwCI6jDkW39O
+	9C//jNA0pRWJmycrSULn7+n0h82Mqb/CyVelGzODNssZNPw9YBJ7gI/W
+X-Gm-Gg: ASbGncsi+A7ma/IXXPaiq3q4IHpZQI55tg/1AcYfxUpqt12S8WTKPMhAy+qxETkDdyn
+	j39rxXCRKK4YSsqJ95FXnHSXR1FYwXz80N+bnUBrUBfkQYN5FnS4A9AXw45camOI7m5D580CDuh
+	BeTLfLhS/eFV8n9YIQSX0ze+IhtVcD0PlCQefco8Amh61f9aim2kCv/RBf7kC/Pp9nRNdck/VFi
+	NsONX5xRXAw0UzAydWF7YHLkVsIulhsOM9wlg/fQc3XxumkEKxGPQX8HnWXMJGjdDe9vtHhAjzw
+	NF+CTr38CaHqsAOWf7ydv5EazOWHPnapk4lohNIL1mz2bhLYQhq5fSfPChaFJ4pYtog9
+X-Google-Smtp-Source: AGHT+IEOSthR0EbNak5G9TavGEk3affJNL6c5D3MkqGwwG0EgoahxIttjypkNXmARDLkwGDSSJ3aZg==
+X-Received: by 2002:a5d:64e4:0:b0:3a4:ebc4:45a9 with SMTP id ffacd0b85a97d-3a6d12a422fmr1841526f8f.19.1750419173444;
+        Fri, 20 Jun 2025 04:32:53 -0700 (PDT)
+Received: from [10.38.1.85] ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d118b910sm1773851f8f.84.2025.06.20.04.32.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Jun 2025 04:32:53 -0700 (PDT)
+Message-ID: <ddcdc5ac-9c6f-4aca-ad66-37e1e66ef740@gmail.com>
+Date: Fri, 20 Jun 2025 12:30:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 3/9] samples: rust: platform: conditionally call
+ Self::properties_parse()
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, Rob Herring <robh@kernel.org>, alex.gaynor@gmail.com,
+ rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-acpi@vger.kernel.org,
+ boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+ tmgross@umich.edu, lenb@kernel.org, wedsonaf@gmail.com,
+ viresh.kumar@linaro.org, alex.hung@amd.com, dingxiangfei2009@gmail.com
+References: <20250618100221.3047133-1-igor.korotin.linux@gmail.com>
+ <20250618101325.3048187-1-igor.korotin.linux@gmail.com>
+ <20250618131958.GA1550757-robh@kernel.org> <aFLJJkeFfHR9GB-0@pollux>
+ <aFRP-vGMoZNmQZ2E@pollux>
+Content-Language: en-US
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+In-Reply-To: <aFRP-vGMoZNmQZ2E@pollux>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/sev
-branch HEAD: 040ed574ee823a2ce5da36a8d385d3133787c9c5  x86/sev: Drop unnecessary parameter in snp_issue_guest_request()
+On 6/19/25 18:59, Danilo Krummrich wrote:
+> On Wed, Jun 18, 2025 at 04:11:57PM +0200, Danilo Krummrich wrote:
+>> On Wed, Jun 18, 2025 at 08:19:58AM -0500, Rob Herring wrote:
+>>> On Wed, Jun 18, 2025 at 11:13:25AM +0100, Igor Korotin wrote:
+>>>> From: Danilo Krummrich <dakr@kernel.org>
+>>>>
+>>>> Only call Self::properties_parse() when the device is compatible with
+>>>> "test,rust-device".
+>>>>
+>>>> Once we add ACPI support, we don't want the ACPI device to fail probing
+>>>> in Self::properties_parse().
+>>>>
+>>>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>>>
+>>> This needs your S-o-b as well since you sent the patch.
+>>>
+>>>> ---
+>>>>  samples/rust/rust_driver_platform.rs | 7 ++++++-
+>>>>  1 file changed, 6 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
+>>>> index 000bb915af60..036dd0b899b0 100644
+>>>> --- a/samples/rust/rust_driver_platform.rs
+>>>> +++ b/samples/rust/rust_driver_platform.rs
+>>>> @@ -40,7 +40,12 @@ fn probe(
+>>>>              dev_info!(dev, "Probed with info: '{}'.\n", info.0);
+>>>>          }
+>>>>  
+>>>> -        Self::properties_parse(dev)?;
+>>>> +        if dev
+>>>> +            .fwnode()
+>>>> +            .is_some_and(|node| node.is_compatible(c_str!("test,rust-device")))
+>>>
+>>> I think you should be checking just is this ACPI or DT rather than 
+>>> compatible. It's kind of an anti-pattern to test compatible in probe. 
+>>> The reason is we've already matched to a compatible and have match data 
+>>> to use, so we don't need to do it again. It becomes quite messy when 
+>>> there are numerous possible compatibles.
+>>
+>> Yeah, that was my first approach; here's the patch from a few days ago [1].
+>>
+>> The reason why I decided against this, was that all the properties we check in
+>> Self::properties_parse() in a fallible way *only* apply to the device with this
+>> compatible string.
+>>
+>> But I don't mind if we replace it with [1] either.
+> 
+> As mentioned, I don't mind either, so let's change it up.
+> 
+> @Igor, can you please pick up the patch in [1] and at the same time drop the
+> patch introducing FwNode::is_compatible() and replace node.is_compatible() with
+> node.is_of_node() in this one?
 
-elapsed time: 1447m
+Just to make sure that we're on the same page, I replace this:
 
-configs tested: 245
-configs skipped: 6
+    if dev.fwnode().is_some_and(|node|
+node.is_compatible(c_str!("test,rust-device")))
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+with:
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    clang-19
-alpha                            allyesconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                              allmodconfig    clang-19
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    clang-19
-arc                              allyesconfig    gcc-15.1.0
-arc                          axs103_defconfig    clang-21
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20250619    gcc-15.1.0
-arc                   randconfig-001-20250620    clang-21
-arc                   randconfig-002-20250619    gcc-15.1.0
-arc                   randconfig-002-20250620    clang-21
-arm                              allmodconfig    clang-19
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-21
-arm                               allnoconfig    gcc-15.1.0
-arm                              allyesconfig    clang-19
-arm                              allyesconfig    gcc-15.1.0
-arm                         axm55xx_defconfig    clang-21
-arm                                 defconfig    gcc-15.1.0
-arm                   randconfig-001-20250619    clang-21
-arm                   randconfig-001-20250620    clang-21
-arm                   randconfig-002-20250619    gcc-8.5.0
-arm                   randconfig-002-20250620    clang-21
-arm                   randconfig-003-20250619    gcc-8.5.0
-arm                   randconfig-003-20250620    clang-21
-arm                   randconfig-004-20250619    gcc-10.5.0
-arm                   randconfig-004-20250620    clang-21
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                               defconfig    gcc-15.1.0
-arm64                 randconfig-001-20250619    gcc-8.5.0
-arm64                 randconfig-001-20250620    clang-21
-arm64                 randconfig-002-20250619    gcc-9.5.0
-arm64                 randconfig-002-20250620    clang-21
-arm64                 randconfig-003-20250619    gcc-10.5.0
-arm64                 randconfig-003-20250620    clang-21
-arm64                 randconfig-004-20250619    gcc-10.5.0
-arm64                 randconfig-004-20250620    clang-21
-csky                              allnoconfig    gcc-15.1.0
-csky                                defconfig    gcc-15.1.0
-csky                  randconfig-001-20250619    gcc-11.5.0
-csky                  randconfig-001-20250620    clang-21
-csky                  randconfig-002-20250619    gcc-9.3.0
-csky                  randconfig-002-20250620    clang-21
-hexagon                          allmodconfig    clang-17
-hexagon                          allmodconfig    clang-19
-hexagon                           allnoconfig    clang-21
-hexagon                           allnoconfig    gcc-15.1.0
-hexagon                          allyesconfig    clang-19
-hexagon                          allyesconfig    clang-21
-hexagon                             defconfig    gcc-15.1.0
-hexagon               randconfig-001-20250619    clang-21
-hexagon               randconfig-001-20250620    clang-21
-hexagon               randconfig-002-20250619    clang-21
-hexagon               randconfig-002-20250620    clang-21
-i386                             allmodconfig    clang-20
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    clang-20
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    clang-20
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250619    gcc-12
-i386        buildonly-randconfig-001-20250620    clang-20
-i386        buildonly-randconfig-002-20250619    gcc-12
-i386        buildonly-randconfig-002-20250620    clang-20
-i386        buildonly-randconfig-003-20250619    clang-20
-i386        buildonly-randconfig-003-20250620    clang-20
-i386        buildonly-randconfig-004-20250619    clang-20
-i386        buildonly-randconfig-004-20250620    clang-20
-i386        buildonly-randconfig-005-20250619    clang-20
-i386        buildonly-randconfig-005-20250620    clang-20
-i386        buildonly-randconfig-006-20250619    clang-20
-i386        buildonly-randconfig-006-20250620    clang-20
-i386                                defconfig    clang-20
-i386                  randconfig-001-20250620    gcc-12
-i386                  randconfig-002-20250620    gcc-12
-i386                  randconfig-003-20250620    gcc-12
-i386                  randconfig-004-20250620    gcc-12
-i386                  randconfig-005-20250620    gcc-12
-i386                  randconfig-006-20250620    gcc-12
-i386                  randconfig-007-20250620    gcc-12
-i386                  randconfig-011-20250620    gcc-12
-i386                  randconfig-012-20250620    gcc-12
-i386                  randconfig-013-20250620    gcc-12
-i386                  randconfig-014-20250620    gcc-12
-i386                  randconfig-015-20250620    gcc-12
-i386                  randconfig-016-20250620    gcc-12
-i386                  randconfig-017-20250620    gcc-12
-loongarch                        allmodconfig    gcc-15.1.0
-loongarch                         allnoconfig    gcc-15.1.0
-loongarch                           defconfig    gcc-15.1.0
-loongarch             randconfig-001-20250619    gcc-15.1.0
-loongarch             randconfig-001-20250620    clang-21
-loongarch             randconfig-002-20250619    gcc-15.1.0
-loongarch             randconfig-002-20250620    clang-21
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                                defconfig    gcc-15.1.0
-m68k                           virt_defconfig    clang-21
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-15.1.0
-nios2                               defconfig    gcc-15.1.0
-nios2                 randconfig-001-20250619    gcc-8.5.0
-nios2                 randconfig-001-20250620    clang-21
-nios2                 randconfig-002-20250619    gcc-8.5.0
-nios2                 randconfig-002-20250620    clang-21
-openrisc                          allnoconfig    clang-21
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-12
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    clang-21
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-12
-parisc                randconfig-001-20250619    gcc-11.5.0
-parisc                randconfig-001-20250620    clang-21
-parisc                randconfig-002-20250619    gcc-8.5.0
-parisc                randconfig-002-20250620    clang-21
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    clang-21
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-21
-powerpc                          allyesconfig    gcc-15.1.0
-powerpc                      cm5200_defconfig    clang-21
-powerpc                     mpc5200_defconfig    clang-21
-powerpc                     ppa8548_defconfig    clang-21
-powerpc               randconfig-001-20250619    gcc-9.3.0
-powerpc               randconfig-001-20250620    clang-21
-powerpc               randconfig-002-20250619    clang-21
-powerpc               randconfig-002-20250620    clang-21
-powerpc               randconfig-003-20250619    gcc-10.5.0
-powerpc               randconfig-003-20250620    clang-21
-powerpc64             randconfig-001-20250619    gcc-11.5.0
-powerpc64             randconfig-001-20250620    clang-21
-powerpc64             randconfig-002-20250619    clang-21
-powerpc64             randconfig-002-20250620    clang-21
-powerpc64             randconfig-003-20250619    gcc-10.5.0
-powerpc64             randconfig-003-20250620    clang-21
-riscv                            allmodconfig    clang-21
-riscv                            allmodconfig    gcc-15.1.0
-riscv                             allnoconfig    clang-21
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                            allyesconfig    gcc-15.1.0
-riscv                               defconfig    gcc-12
-riscv                 randconfig-001-20250619    gcc-11.5.0
-riscv                 randconfig-001-20250620    gcc-13.3.0
-riscv                 randconfig-002-20250619    clang-16
-riscv                 randconfig-002-20250620    gcc-13.3.0
-s390                             allmodconfig    clang-18
-s390                             allmodconfig    gcc-15.1.0
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    gcc-12
-s390                  randconfig-001-20250619    clang-19
-s390                  randconfig-001-20250620    gcc-13.3.0
-s390                  randconfig-002-20250619    gcc-13.2.0
-s390                  randconfig-002-20250620    gcc-13.3.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-12
-sh                            hp6xx_defconfig    clang-21
-sh                    randconfig-001-20250619    gcc-9.3.0
-sh                    randconfig-001-20250620    gcc-13.3.0
-sh                    randconfig-002-20250619    gcc-9.3.0
-sh                    randconfig-002-20250620    gcc-13.3.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                 randconfig-001-20250619    gcc-14.3.0
-sparc                 randconfig-001-20250620    gcc-13.3.0
-sparc                 randconfig-002-20250619    gcc-10.3.0
-sparc                 randconfig-002-20250620    gcc-13.3.0
-sparc64                             defconfig    gcc-12
-sparc64               randconfig-001-20250619    gcc-13.3.0
-sparc64               randconfig-001-20250620    gcc-13.3.0
-sparc64               randconfig-002-20250619    gcc-8.5.0
-sparc64               randconfig-002-20250620    gcc-13.3.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    clang-19
-um                               allyesconfig    gcc-12
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250619    clang-19
-um                    randconfig-001-20250620    gcc-13.3.0
-um                    randconfig-002-20250619    clang-21
-um                    randconfig-002-20250620    gcc-13.3.0
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250619    clang-20
-x86_64      buildonly-randconfig-001-20250620    gcc-12
-x86_64      buildonly-randconfig-002-20250619    gcc-12
-x86_64      buildonly-randconfig-002-20250620    gcc-12
-x86_64      buildonly-randconfig-003-20250619    clang-20
-x86_64      buildonly-randconfig-003-20250620    gcc-12
-x86_64      buildonly-randconfig-004-20250619    gcc-12
-x86_64      buildonly-randconfig-004-20250620    gcc-12
-x86_64      buildonly-randconfig-005-20250619    clang-20
-x86_64      buildonly-randconfig-005-20250620    gcc-12
-x86_64      buildonly-randconfig-006-20250619    gcc-12
-x86_64      buildonly-randconfig-006-20250620    gcc-12
-x86_64                              defconfig    clang-20
-x86_64                              defconfig    gcc-11
-x86_64                                  kexec    clang-20
-x86_64                randconfig-001-20250620    clang-20
-x86_64                randconfig-002-20250620    clang-20
-x86_64                randconfig-003-20250620    clang-20
-x86_64                randconfig-004-20250620    clang-20
-x86_64                randconfig-005-20250620    clang-20
-x86_64                randconfig-006-20250620    clang-20
-x86_64                randconfig-007-20250620    clang-20
-x86_64                randconfig-008-20250620    clang-20
-x86_64                randconfig-071-20250620    clang-20
-x86_64                randconfig-072-20250620    clang-20
-x86_64                randconfig-073-20250620    clang-20
-x86_64                randconfig-074-20250620    clang-20
-x86_64                randconfig-075-20250620    clang-20
-x86_64                randconfig-076-20250620    clang-20
-x86_64                randconfig-077-20250620    clang-20
-x86_64                randconfig-078-20250620    clang-20
-x86_64                               rhel-9.4    clang-20
-x86_64                           rhel-9.4-bpf    gcc-12
-x86_64                         rhel-9.4-kunit    gcc-12
-x86_64                           rhel-9.4-ltp    gcc-12
-x86_64                          rhel-9.4-rust    clang-18
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250619    gcc-9.3.0
-xtensa                randconfig-001-20250620    gcc-13.3.0
-xtensa                randconfig-002-20250619    gcc-8.5.0
-xtensa                randconfig-002-20250620    gcc-13.3.0
+    if dev.fwnode().is_some_and(|node| node.is_of_node())
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+And reworded the comment as follows:
+
+    samples: rust: platform: conditionally call Self::properties_parse()
+
+    Only call Self::properties_parse() when the device is OF node
+
+    Once we add ACPI support, we don't want the ACPI device to fail probing
+    in Self::properties_parse().
+
+
+Thanks
+Igor
 
