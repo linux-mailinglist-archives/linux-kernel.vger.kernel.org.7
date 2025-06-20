@@ -1,97 +1,107 @@
-Return-Path: <linux-kernel+bounces-694771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03953AE1092
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:11:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277EEAE1094
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A18B1179968
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:11:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C5BC7A21ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC96288D6;
-	Fri, 20 Jun 2025 01:11:08 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8ADC2D613;
+	Fri, 20 Jun 2025 01:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="Y1DfbKel"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3EB17597
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 01:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750381867; cv=none; b=uxHds8eyWiNNYOMmh3z5spkhY8u/Ggi0xYc144GOUF7nOWQUn25F0OiaFPqhxt+cBX0aSfC/oS960jkMjnexnAvz8FqfEUcKzN56Vh0pOQtrVL3iplS5QSLFmN56jnrx0W/Dq5gckKW5zAAKaLdyc0PXpvVi/OjpAKd4sOMrgQA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750381867; c=relaxed/simple;
-	bh=m3erZLrXR9+7T+GcEAqmDT32hregWLEqYWkFpxUqFmE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=gOBeG+pG+1lPC3WkU3Ka0O9s5o9PuGZcNPEfZzH+sqNtqLWm/+B+jSfngSmrH/uBNYJ2Cj87C+1eD2Din+A6GKDeBsH0VYRMZbtZaTx3IPrGsKLNPMWlcZJP8sMUpVTEiPZOOKP3EnrCaFgLfLDQxdnnnaKVshnyKiWd5U5ZgVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bNfYg2FZMzYQvT1
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 09:11:03 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 41CF51A0B51
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 09:11:02 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgC3Gl8ktVRod9E6QA--.64470S3;
-	Fri, 20 Jun 2025 09:11:02 +0800 (CST)
-Subject: Re: [PATCH v2] lib/group_cpus: fix NULL pointer dereference from
- group_cpus_evenly()
-To: John Garry <john.g.garry@oracle.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- tglx@linutronix.de, akpm@linux-foundation.org, ming.lei@redhat.com,
- axboe@kernel.dk
-Cc: linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250619132655.3318883-1-yukuai1@huaweicloud.com>
- <9024faaf-d4e3-4699-8b7c-df6650bd6f3b@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <d03be22a-ff9f-cc1e-7739-7c455c6d9345@huaweicloud.com>
-Date: Fri, 20 Jun 2025 09:10:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF6B3D6F
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 01:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750382006; cv=pass; b=BWydTV0xIVD+GZnxz1mDg0eRM2YSb8RRLrzGUVBe9qyC2mbpOBHf6DMXZOlbzv2MeXcvS8Wgd5/UTU1WfiQ33bKKlJ3dfb8k6ieCunoJfiqPBgbVHePSasJpm9l/cipajc7MspNTmR+W/W1ZG+ptKsy12Cbo4PY27Fr6WRH92iQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750382006; c=relaxed/simple;
+	bh=YmKobdGZUSacsiyLATDgDwmAZew/T1yJQI6qw1tTEj0=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=F2M3nUyttbEiV3WE/CazgbwzuERNAsBWIRLtwxDcofy1lmsJfhEMBv8Oic5D1EAgdVCyn/8JGd3N2GqDOAfqN+Ov2Hbul7VXsbYLDWLjel33I+XavbJVtlCIhpgPVdfgkMZxXqHjVboKcZANxtOgg6coQZZhcO3db8dsvmh+6c4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=Y1DfbKel; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
+ARC-Seal: i=1; a=rsa-sha256; t=1750381999; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=RWICsVYz9D5kz5Wv+lxIftgaq3vmzlJAS9eRRSzQx4DAUDT3+IYmGR9VziDRc9CrQD7YfHVXAfaU79JPLKZEoHrzLuMPveaXp3gA43BvaUIoSrZ/CkXMGflvQXYo6njLii7HL0ZIn84zPGMQroG940XBz/HAOUpT/KvpBHR8QCU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750381999; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=G7fSfnIWcOTg0+wJbxS+jNZ66J9fLlncXmafzZBIajE=; 
+	b=kFV3W4BDZhLxhIAjWKjhCQ+pNHIi1IYrxRhYCqoHR4OmYWVInYq9t977TW3rljVJHR/rsSADEqpmcfyAk67VcsHkb87pZVnup+qGVO9xjuhpWYxyNMkP8CHwDAvq18oGIbdwJC1hHPbxkDzqceBdszIjAcQsnHfXePo5e82PviQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=linux.beauty;
+	spf=pass  smtp.mailfrom=me@linux.beauty;
+	dmarc=pass header.from=<me@linux.beauty>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750381999;
+	s=zmail; d=linux.beauty; i=me@linux.beauty;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=G7fSfnIWcOTg0+wJbxS+jNZ66J9fLlncXmafzZBIajE=;
+	b=Y1DfbKelwzSiiAqn5VsYH42otiAaBdyt8nkyq2qVz4nnwOfXdE30WZdkoearuosd
+	+7gh/Ezs0CYd+iIe4KqRyYNbRle1yLXLdSVJ9RLLNzQw7zYVmWLD77NkFpiuromAwxE
+	r5CRheVVeRxWhIY9eCwCNyQKpxajefTl9Psp5tTo=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1750381997708180.63913494283224; Thu, 19 Jun 2025 18:13:17 -0700 (PDT)
+Date: Fri, 20 Jun 2025 09:13:17 +0800
+From: Li Chen <me@linux.beauty>
+To: "OGAWA Hirofumi" <hirofumi@mail.parknet.co.jp>
+Cc: "linux-kernel" <linux-kernel@vger.kernel.org>
+Message-ID: <1978ae5ae71.d8a9ec42669040.6118933001659818858@linux.beauty>
+In-Reply-To: <87wm98aqem.fsf@mail.parknet.co.jp>
+References: <20250619113809.274808-1-me@linux.beauty> <87wm98aqem.fsf@mail.parknet.co.jp>
+Subject: Re: [PATCH] fs: fat: Prevent fsfuzzer from dominating the console
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <9024faaf-d4e3-4699-8b7c-df6650bd6f3b@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgC3Gl8ktVRod9E6QA--.64470S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
-	rI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr4
-	1l4c8EcI0Ec7CjxVAaw2AFwI0_Jw0_GFyl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r
-	43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU
-	oOJ5UUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-Hi,
+Hi OGAWA,
 
-在 2025/06/19 22:08, John Garry 写道:
-> There's a non-SMP version of group_cpus_evenly() at the bottom of 
-> lib/group_cpus.c
-> 
-> It also does a kcalloc(numgrps, ...)
-> 
-> Does that need to be fixed as well?
+ ---- On Thu, 19 Jun 2025 20:04:33 +0800  OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> wrote --- 
+ > Li Chen <me@linux.beauty> writes:
+ > 
+ > > Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
+ > > Reviewed-by: Bin Lai <laib2@chinatelecom.cn>
+ > > ---
+ > >  fs/fat/misc.c | 4 +++-
+ > >  1 file changed, 3 insertions(+), 1 deletion(-)
+ > >
+ > > diff --git a/fs/fat/misc.c b/fs/fat/misc.c
+ > > index c7a2d27120bab..75c2b59fbd532 100644
+ > > --- a/fs/fat/misc.c
+ > > +++ b/fs/fat/misc.c
+ > > @@ -23,8 +23,10 @@ void __fat_fs_error(struct super_block *sb, int report, const char *fmt, ...)
+ > >      struct fat_mount_options *opts = &MSDOS_SB(sb)->options;
+ > >      va_list args;
+ > >      struct va_format vaf;
+ > > +    static DEFINE_RATELIMIT_STATE(fat_err_rs, DEFAULT_RATELIMIT_INTERVAL,
+ > > +                                  DEFAULT_RATELIMIT_BURST);
+ > >  
+ > > -    if (report) {
+ > > +    if (report && __ratelimit(&fat_err_rs)) {
+ > >          va_start(args, fmt);
+ > >          vaf.fmt = fmt;
+ > >          vaf.va = &args;
+ > 
+ > Why didn't use fat_fs_error_ratelimit()?
 
-Yes, you're right. Just run the test with SMP disabled, and the problem
-can be reporduced as well.
+Oops, I missed that. I'll use it in v2. Thanks!
 
-Thanks,
-Kuai
-
+Regards,
+Li
 
