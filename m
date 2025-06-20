@@ -1,114 +1,101 @@
-Return-Path: <linux-kernel+bounces-694785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155E1AE10B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:27:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D29AE10BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A24E43B7F69
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:27:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5608166ED1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB78F49625;
-	Fri, 20 Jun 2025 01:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NoZcchrT"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1297B35950;
-	Fri, 20 Jun 2025 01:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623657081D;
+	Fri, 20 Jun 2025 01:29:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BF735950;
+	Fri, 20 Jun 2025 01:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750382866; cv=none; b=r+E4sUQgZE6xGqhkLhQLPM79qBtvsyQwJB40hh2ik/YJRxaRroAGy54dnidqNq3ogE62wVkL+2RMkNbbfoZieD7nedhqQdcpeneqhjPS3p7378CNp9Kx5l4WaZ/d6vvI6uLxpFYxOqiNmwsCldx7zXh3bCSUZxt3FN5BAItLtSA=
+	t=1750382960; cv=none; b=TrSjNG3CE94rmwYcpzpZMaSyIb0qBeyp7/n2oDyP6pdcMTOBpDmHiuXiU+B4Tn4yE9jXgopnguxebC2RpM81GuvdYp5K+75CgjtXxQsN+ueUuiZJik80kI3EfgFbWX+7sDkpmmsfJ8x+GtAcNygXscTI/CAtNYoKzQ+ClIDmxuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750382866; c=relaxed/simple;
-	bh=jRrcd3jIEsF31VWDqmff6c9MGZTpyAF3UKfV3oVeAUI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=twRNaEJ1kJ/Sfh8t8Dpb2z9ZKOVF8fpiZ/8EClXLxnQ+AahYZZGmuE7sGn+nSxg7SugvaMcZ4hW+1qHeONYWRi5wHwQo5l3TEOx4zn+HuJn3XWDBqLW7ktMbGjij0UyHPmOD2lfx9iy2Hhe1AOnIORqysJywm4bW4dusmJ+tdvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NoZcchrT; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Ie
-	mo//66rGggfhMsVrvcGWLgvsP6AIerLHEFJXsGHqE=; b=NoZcchrTVa7ylagmGp
-	10DCENAV5t5AdQUraRYv0/832vC7XNiZLVYGPoJNFCx2mHGwgy4k6o7BdgByZCe7
-	Y5GUcT1qcydPv87OTVOqXMhRIbP3r/51fL7637uWfl4V/ZCwY1ezkqurkJOmuyLq
-	2xxTEmb0EiyjiM8bch+IEEe4Q=
-Received: from 163.com (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wCX4izzuFRoCzlJAg--.49566S2;
-	Fri, 20 Jun 2025 09:27:15 +0800 (CST)
-From: Yuan Chen <chenyuan_fl@163.com>
-To: linus.walleij@linaro.org,
-	wens@csie.org
-Cc: linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	chenyuan_fl@163.com,
-	Yuan Chen <chenyuan@kylinos.cn>
-Subject: [PATH v2] pinctrl: sunxi: Fix memory leak on krealloc failure in sunxi_pctrl_dt_node_to_map
-Date: Fri, 20 Jun 2025 09:27:08 +0800
-Message-Id: <20250620012708.16709-1-chenyuan_fl@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250620010345.11247-1-chenyuan_fl@163.com>
-References: <20250620010345.11247-1-chenyuan_fl@163.com>
+	s=arc-20240116; t=1750382960; c=relaxed/simple;
+	bh=0gmfdf4OAtz954mnULUTEX2hkGqUAO+fPptmUl1h4wQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BluFBrM1y06LuuLRDsHRdKbVw3BsVsH8B6EyU9DCizSn1AV1iVDrZR1TLEQm0jVCstXz9rWy+yV0+0zDYLbsfsTnc8xbjjHptuhj1eOdA0x9fwEm8q/p5H3MS03+r+3PlxjtREqQl+UGZrtuQeT8cjaWsrt+Te24uBK/489VKQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 80045113E;
+	Thu, 19 Jun 2025 18:28:57 -0700 (PDT)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7620F3F673;
+	Thu, 19 Jun 2025 18:29:15 -0700 (PDT)
+Date: Fri, 20 Jun 2025 02:28:03 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+ linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: reset: sun55i-a523-r-ccu: Add missing
+ PPU0 reset
+Message-ID: <20250620022803.13e7c34c@minigeek.lan>
+In-Reply-To: <20250619171025.3359384-2-wens@kernel.org>
+References: <20250619171025.3359384-1-wens@kernel.org>
+	<20250619171025.3359384-2-wens@kernel.org>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCX4izzuFRoCzlJAg--.49566S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Zw45KF45JF17Xr1UJw45GFg_yoW8Xryfpa
-	1fGry5Ar4rJF4Sg3y3A398WFy3Gan7JrW5G3Wj934Yvrn8Arn5XF15KFWjyw4DCrWrXr1S
-	vF4DA3429F1DA3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEAR6UUUUUU=
-X-CM-SenderInfo: xfkh05pxdqswro6rljoofrz/1tbiJxJyvWhUsxR6wQABsb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Yuan Chen <chenyuan@kylinos.cn>
+On Fri, 20 Jun 2025 01:10:24 +0800
+Chen-Yu Tsai <wens@kernel.org> wrote:
 
-In sunxi_pctrl_dt_node_to_map(), when krealloc() fails to resize the pinctrl_map
-array, the function returns -ENOMEM directly without freeing the previously
-allocated *map buffer. This results in a memory leak of the original kmalloc_array
-allocation.
+> From: Chen-Yu Tsai <wens@csie.org>
+> 
+> There is a PPU0 reset control bit in the same register as the PPU1
+> reset control. This missing reset control is for the PCK-600 unit
+> in the SoC. Manual tests show that the reset control indeed exists,
+> and if not configured, the system will hang when the PCK-600 registers
+> are accessed.
 
-Fixes: e11dee2e98f8 ("pinctrl: sunxi: Deal with configless pins")
-Signed-off-by: Yuan Chen <chenyuan@kylinos.cn>
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Confirmed by experiment.
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index bf8612d72daa..d63859a2a64e 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -408,6 +408,7 @@ static int sunxi_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	const char *function, *pin_prop;
- 	const char *group;
- 	int ret, npins, nmaps, configlen = 0, i = 0;
-+	struct pinctrl_map *new_map;
- 
- 	*map = NULL;
- 	*num_maps = 0;
-@@ -482,9 +483,13 @@ static int sunxi_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	 * We know have the number of maps we need, we can resize our
- 	 * map array
- 	 */
--	*map = krealloc(*map, i * sizeof(struct pinctrl_map), GFP_KERNEL);
--	if (!*map)
--		return -ENOMEM;
-+	new_map = krealloc(*map, i * sizeof(struct pinctrl_map), GFP_KERNEL);
-+	if (!new_map) {
-+		ret = -ENOMEM;
-+		goto err_free_map;
-+	}
-+
-+	*map = new_map;
- 
- 	return 0;
- 
--- 
-2.25.1
+> Add a reset entry for it at the end of the existing ones.
+> 
+> Fixes: 52dbf84857f0 ("dt-bindings: clk: sunxi-ng: document two Allwinner A523 CCUs")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+Cheers,
+Andre
+
+> ---
+>  include/dt-bindings/reset/sun55i-a523-r-ccu.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/dt-bindings/reset/sun55i-a523-r-ccu.h b/include/dt-bindings/reset/sun55i-a523-r-ccu.h
+> index dd6fbb372e19..eb31ae9958d6 100644
+> --- a/include/dt-bindings/reset/sun55i-a523-r-ccu.h
+> +++ b/include/dt-bindings/reset/sun55i-a523-r-ccu.h
+> @@ -21,5 +21,6 @@
+>  #define RST_BUS_R_IR_RX		12
+>  #define RST_BUS_R_RTC		13
+>  #define RST_BUS_R_CPUCFG	14
+> +#define RST_BUS_R_PPU0		15
+>  
+>  #endif /* _DT_BINDINGS_RST_SUN55I_A523_R_CCU_H_ */
 
 
