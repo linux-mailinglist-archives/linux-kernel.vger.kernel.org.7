@@ -1,202 +1,120 @@
-Return-Path: <linux-kernel+bounces-695821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F00D9AE1E76
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:23:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6579DAE1E7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6996D16A418
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:22:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB403B5545
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72D32C3275;
-	Fri, 20 Jun 2025 15:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD342C324A;
+	Fri, 20 Jun 2025 15:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FBEHMOt3"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fxRU3LEn"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905D82D29CC;
-	Fri, 20 Jun 2025 15:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D749B8F5B;
+	Fri, 20 Jun 2025 15:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750432911; cv=none; b=iebmdW1P1xM8kNn2TNQSNO7biz1BXLRIbuUhWo0slGtwsMsSRN+oFlLSGvFB6u1y7PWn/+BldC9Yrlkfj4OORfI+k7NyvngX/xuN22TfZq3TREro1E4ibzOlKAnLnv2o8VpvWTVryShqTkImejbkCUgrqwBl5xGVWiaecZTbs0c=
+	t=1750432955; cv=none; b=WSmDKI2CgnLdY67LvrXTx+Cdq4plZAxtTKRgO9TxLITQvkvoRiRJPP777TyWn/c+FIYq6Zw9Gn4eL5QyuiPJ1wRKYLNrFdZWY5ZyiYH+dYBczn27C1A0jEGAfWg+wO/Ti6wkJT/UHMs7/jHEtpZ4RKOcbgb1QtTpl3csZ59R970=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750432911; c=relaxed/simple;
-	bh=LGnSFN9H9rbozGSNGVsWo0FtVKSQwW61jLk2zd/IGI8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pZp2P0yWEhhm//UXnHNP/F3eK5s10wCb5AH2pZ2/vJWGxfzmpodOKRw4ygyKBNViHP7iYD4cGd6sC79Is5UPFMZv0ms3Xs7iNxI7MRANOEf4hLWa3Kchm54XW7MPlfqzFpLTf1574D70G3fcQKF02ffSUFVpxrCZHrRRkcZiK4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FBEHMOt3; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CB8D44326A;
-	Fri, 20 Jun 2025 15:21:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1750432906;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9nY0S3h9TNbvjPa0oqXiKssMDiiZYbdnLuZAy4PGUKk=;
-	b=FBEHMOt3QA2tcRmg1IhTgJpD0kDH1a6QghFDUG9YKdXBL1/I3I536lWB8AdIqODJiCAcW2
-	9Q6vTKNX4DtrAwGRqJCs3M/aZP+6z4/Ukoik0FB2Tn6Rz5GlXr7meC6NihPF7CnWK0mDzs
-	WRPnbP8uJaefVnSXFc6P6McyZqyvx3cFUrLzRtPdHu00FzmdVbmq3C69sTBTtjh6QLO9fm
-	yEQMPP2E+WLiwC238XM5Tgz6zmFNWEUATafkTmf/D6P+A27pWzQr0FOX+2xFSdlgdobxOi
-	00dJ9s42pIeng7pJay1IdSM/asFH6pz0hsUYQWhXGLaE31YcQu01MbP1+aLC/w==
-From: Olivier Benjamin <olivier.benjamin@bootlin.com>
-Date: Fri, 20 Jun 2025 17:21:35 +0200
-Subject: [PATCH v4 4/4] arm64: dts: rockchip: describe the OV8858 user
- camera on PinePhone Pro
+	s=arc-20240116; t=1750432955; c=relaxed/simple;
+	bh=YoPXOUic11vJF3GRbjfM7M+Cn8Dt3albNubMT928Hb0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Fk/64G17CqHYy0qZVxqmhIMCBdHUGziphAb2xp8rG9eW3OzAi2dTq3IBiLvau+i6fZ2OjlnLT6osn7edHQMJ4Y9gjvO0p60z6Uclc0ENK2txwUSC7rfIIII5rS7nzwoTnRoX7ZfIhHEN5qLxHtpl0bq7VQgo37lN3zcK4t0Qzd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fxRU3LEn; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55KFM3qG694915;
+	Fri, 20 Jun 2025 10:22:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1750432923;
+	bh=pxplz14NMSwtV/r5FVNyw7ZRY4aQja4bLKODUVK5LkQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=fxRU3LEn+T686BUU8jyQZGQBjG1hmc9U0m3qQc4HoXNFI/jtS6Xahq+wX70fjR7HW
+	 h3lJJEm/lFTnqx3zEsZ6DuozqkaXJ8AqVZFhAjM89hqOugzsW0GT0ubk6qYcwHDKjJ
+	 lFxQV+XWlLkZJogc+/IHj1EdOnl549a8HNk81tFk=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55KFM3VT2369394
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 20 Jun 2025 10:22:03 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 20
+ Jun 2025 10:22:02 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 20 Jun 2025 10:22:02 -0500
+Received: from [10.249.32.27] ([10.249.32.27])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55KFM2Ri3405308;
+	Fri, 20 Jun 2025 10:22:02 -0500
+Message-ID: <bdb6de80-d65e-4f86-8bc0-cc0d127ab8a6@ti.com>
+Date: Fri, 20 Jun 2025 10:22:02 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250620-camera-v4-4-0201a8ed5fae@bootlin.com>
-References: <20250620-camera-v4-0-0201a8ed5fae@bootlin.com>
-In-Reply-To: <20250620-camera-v4-0-0201a8ed5fae@bootlin.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
- Nicholas Roth <nicholas@rothemail.net>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
- imx@lists.linux.dev, Olivier Benjamin <olivier.benjamin@bootlin.com>, 
- ~diederik/pine64-discuss@lists.sr.ht, Dragan Simic <dsimic@manjaro.org>, 
- Ondrej Jirman <megi@xff.cz>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdekjeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepqfhlihhvihgvrhcuuegvnhhjrghmihhnuceoohhlihhvihgvrhdrsggvnhhjrghmihhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegueegiedvvdevveevvddufeejvefftdeugfffkeeileehheefieehgfelfeeileenucfkphepvdgrtddumegvfeegmegvtgefkeemvdegvgdtmehfhegtvgemfhefgedvmeeiheekjeemfheiheeinecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehinhgvthepvdgrtddumegvfeegmegvtgefkeemvdegvgdtmehfhegtvgemfhefgedvmeeiheekjeemfheiheeipdhhvghloheplgduledvrdduieekrddurddvtdgnpdhmrghilhhfrhhomhepohhlihhvihgvrhdrsggvnhhjrghmihhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvgedprhgtphhtthhopeimughivgguvghrihhksdhpihhnvgeigedqughishgtuhhssheslhhishhtshdrshhrrdhhthdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhitghhohhlrghssehrohhth
- hgvmhgrihhlrdhnvghtpdhrtghpthhtohepjhgrtghophhordhmohhnughisehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopeholhhivhhivghrrdgsvghnjhgrmhhinhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhigrdguvghv
-X-GND-Sasl: olivier.benjamin@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] regulator: tps65219: Fix devm_kmalloc size allocation
+To: Robert Nelson <robertcnelson@gmail.com>
+CC: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
+        <rogerq@kernel.org>, <tony@atomide.com>, <lee@kernel.org>,
+        <d-gole@ti.com>, <jkridner@gmail.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <m-leonard@ti.com>, <praneeth@ti.com>,
+        <afd@ti.com>
+References: <20250620000924.2636542-1-s-ramamoorthy@ti.com>
+ <CAOCHtYgweLhO4nNhNLtJ-_25guqER7ohDf7TNy8WNFwo898wPw@mail.gmail.com>
+ <CAOCHtYjYTfrJ_pNCsQOXX7Hj6A7wBXKdMQYvog-5h-=WLtorhw@mail.gmail.com>
+Content-Language: en-US
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+In-Reply-To: <CAOCHtYjYTfrJ_pNCsQOXX7Hj6A7wBXKdMQYvog-5h-=WLtorhw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add the description of the front/user camera (OV8858) on the PinePhone Pro
-to the device dts file.
-It receives commands over SCCB, an I2C-compatible protocol, at
-I2C address 0x36 and transmits data over CSI-MIPI.
-I confirmed this address experimentally.
 
-The pin control mapping was again extracted from the PinePhone Pro
-schematic v1.0 as well as the RK3399 datasheet revision 1.8.
+On 6/20/2025 9:52 AM, Robert Nelson wrote:
+> On Fri, Jun 20, 2025 at 8:30 AM Robert Nelson <robertcnelson@gmail.com> wrote:
+>> On Thu, Jun 19, 2025 at 7:09 PM Shree Ramamoorthy <s-ramamoorthy@ti.com> wrote:
+>>> In probe(), devm_kmalloc uses pmic->common_irq_size to allocate an array of
+>>> 2 bytes, but pmic->common_irq_size is being used like an array of structs.
+>>> The param sent should've been pmic->common_irq_size * sizeof(*irq_data).
+>>> This led to an issue with the kmalloc'd buffer being corrupted and EVM boot
+>>> issues. The common and device-specific structs are now allocated one at a
+>>> time within the loop.
+>>>
+>>> Fixes: 38c9f98db20a ("regulator: tps65219: Add support for TPS65215 Regulator IRQs")
+>>> Reported-by: Dhruva Gole <d-gole@ti.com>
+>>> Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+> Sweet!  With 4 PB2's and 2 BeaglePlays... Power on, boot, Power off,
+> wait 30 seconds.. (repeat 10 times)
+>
+> Before:
+> 36/60: Bootup to File System
+>
+> After
+> 60/60: Bootup to File System
+>
+> Tested-by: Robert Nelson <robertcnelson@gmail.com>
+>
+> SInce i applied directly to rc2, here's my fixup of your patch for
+> reference: https://github.com/RobertCNelson/arm64-multiplatform/blob/v6.16.x-arm64-k3/patches/fixes/0001-regulator-tps65219-Fix-devm_kmalloc-size-allocation.patch
+>
+> For TI, we also need to cherry pick this in v6.12.x-ti, to fix
+> BeaglePlay and PB2..
+>
+> Thanks Everyone!
 
-Table 2-3 in section 2.8 of the RK3399 datasheet contains the mapping
-of IO functions for the SoC pins. Page 52 shows GPIO1_A4, page 54 shows
-GPIO2_B4.
+Awesome! Glad to hear this resolved those boards :) I will backport this to ti-6.12y-cicd as well.
 
-For the reset (RESET) signal:
-page 11 quadrant D2             | p.18 q.B3-4 | p.18 q.C2
-RK3399_E.R28 -> GPIO1_A4 -> Camera2_RST -> MIPI_RST1 -> OV8858.12
-
-For the powerdown (PWDN) signal:
-page 9 quadrants D4-5          | p.18 q.B2
-RK3399_L.F31 -> GPIO2_B4 -> DVP_PDN0_H -> OV8858.14
-
-Helped-by: Dragan Simic <dsimic@manjaro.org>
-Co-developed-by: Ondrej Jirman <megi@xff.cz>
-Signed-off-by: Ondrej Jirman <megi@xff.cz>
-Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
----
- .../boot/dts/rockchip/rk3399-pinephone-pro.dts     | 49 +++++++++++++++++++++-
- 1 file changed, 47 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-index b335d044138b413359ba54269ab646142254a55f..c1a151ed4215638895ef5c9872d746dca38cb671 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-@@ -454,7 +454,7 @@ wcam: camera@1a {
- 		reg = <0x1a>;
- 		clocks = <&cru SCLK_CIF_OUT>; /* MIPI_MCLK0, derived from CIF_CLKO */
- 		pinctrl-names = "default";
--		pinctrl-0 = <&camera_rst>;
-+		pinctrl-0 = <&camera_rst_l>;
- 		/* Note: both cameras also depend on vcca1v8_codec to power the I2C bus. */
- 		vif-supply = <&vcc1v8_dvp>;
- 		vana-supply = <&avdd2v8_dvp>;
-@@ -479,6 +479,27 @@ wcam_lens: camera-lens@c {
- 		/* Same I2c bus as both cameras, depends on vcca1v8_codec for power. */
- 		vcc-supply = <&vcc1v8_dvp>;
- 	};
-+
-+	ucam: camera@36 {
-+		compatible = "ovti,ov8858";
-+		reg = <0x36>;
-+		clocks = <&cru SCLK_CIF_OUT>; /* MIPI_MCLK1, derived from CIF_CLK0 */
-+		clock-names = "xvclk";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&camera2_rst_l &dvp_pdn0_h>;
-+		dovdd-supply = <&vcc1v8_dvp>;
-+		reset-gpios = <&gpio1 RK_PA4 GPIO_ACTIVE_LOW>;
-+		powerdown-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;
-+		orientation = <0>; /* V4L2_CAMERA_ORIENTATION_FRONT */
-+		rotation = <90>;
-+
-+		port {
-+			ucam_out: endpoint {
-+				remote-endpoint = <&mipi_in_ucam>;
-+				data-lanes = <1 2 3 4>;
-+			};
-+		};
-+	};
- };
- 
- &i2c3 {
-@@ -523,6 +544,24 @@ &io_domains {
- 	status = "okay";
- };
- 
-+&isp0 {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			mipi_in_ucam: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&ucam_out>;
-+				data-lanes = <1 2 3 4>;
-+			};
-+		};
-+	};
-+};
-+
-+&isp0_mmu {
-+	status = "okay";
-+};
-+
- &isp1 {
- 	status = "okay";
- 
-@@ -594,10 +633,16 @@ pwrbtn_pin: pwrbtn-pin {
- 		};
- 	};
- 
--	camera {
-+	cameras {
- 		camera_rst_l: camera-rst-l {
- 			rockchip,pins = <1 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
-+		camera2_rst_l: camera2-rst-l {
-+			rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+		dvp_pdn0_h: dvp-pdn0-h {
-+			rockchip,pins = <2 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
- 	};
- 
- 	leds {
-
--- 
-2.49.0
-
+>
 
