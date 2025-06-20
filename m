@@ -1,58 +1,106 @@
-Return-Path: <linux-kernel+bounces-695593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6410AE1B80
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:09:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27512AE1B8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C3A71897E84
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:09:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F4183BA7F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ED828BAA6;
-	Fri, 20 Jun 2025 13:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405A9290DA1;
+	Fri, 20 Jun 2025 13:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fUV8omc7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BhOrnrZe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8A728AB0B;
-	Fri, 20 Jun 2025 13:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6ADE28CF76
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 13:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750424900; cv=none; b=UtvcRw1lytwDiI5CTK9C4L+H1dcnZGKsW8eVp3UKLjF+DpOC3vGFNes2c8iR/COUR+E7t9936JtBwln54b2HbbFNThztZ1iA6MUwVwYEeFdhUWS3JOK1VP9UrmCZWXfa/lg4uxxE3B1mFsljXkjFmk13P1nwQcen5SUcXy5blN4=
+	t=1750424909; cv=none; b=r2SwAglmzIjToR8CA7GqCt0IlxoT4uS1KCuq94r4gJY/A/jISnl/I7CwhTFhplF/367lTnKSOf1Bh5glKhnB7z/7GTDM+tbfILRnrtUbVZBiK300dlO9W+I9onAFGVBtvQ2ZEzzRZU2HWsclsiZuppXwIi4SSLVrOR2JXi7duas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750424900; c=relaxed/simple;
-	bh=P2ugLm9rc6lTQsi2OLAFF1xh4IzvsAbzyIfGrgm71Gg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aWkWcCn9WflRSo3dqhq3JVPH+vHolDsY7BBGSGR6Z6+Nn8wsCS33lL83ovvXNgEcXi0qLDceGypMsJEj0O2ohJWFcTsyl1qhRzB/GUq/+H9UdTG0xHr4fiHCed2axjkdxHljhFywhG7NXe3KmCI6FPHOBZD6/SIgeFQkShVOjZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fUV8omc7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 305C9C4CEE3;
-	Fri, 20 Jun 2025 13:08:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750424900;
-	bh=P2ugLm9rc6lTQsi2OLAFF1xh4IzvsAbzyIfGrgm71Gg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fUV8omc7aETkqNFd8t8y1InzVR+eyNsj4KbQBrBptggkUw02GLvD+fUEgO47ttWi+
-	 LRDsXdIF6dM8/5glULpw/mKiByJHdNQJ8rCJrpSZxKBT1srVWxhqMZTZXQQg1dDPTv
-	 YfO1lCWV19x62L7GK7s0fsjO+n+stzJVMCGvWPBa0cPpm6Jlz1fl5iswYD1aHvNEKg
-	 IQj4osDUed0GxgE5TvaROG8JdqDhaQ3UyPiXIO5zQPOGC4luWPZwkREZumVD9NfEnD
-	 4aZtuvT6eWd1GCZlRS4cPW0OMadXZ+qLArOsgo3z38IhPf3cAaIeqCcXS8UjddYc02
-	 VxpPBEja3O5Mg==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Pratap Nirujogi <pratap.nirujogi@amd.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: zynq: add CONFIG_OF dependency
-Date: Fri, 20 Jun 2025 15:07:55 +0200
-Message-Id: <20250620130814.2580678-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1750424909; c=relaxed/simple;
+	bh=/eRyrPSfVH4pb56171VjO8PcLakHMAQoKvhNZP2d87A=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Go6Me/WpyFig40yN4LKWSgZaW856VP2zzNxCtTw2jaeRHGSLX4mjS0G0OfoSab5OY+8tiWkhLcDiyFCjx4nyFkyNw+bbt4oxAGHtUAaXMJ8tOMx1ZNpW4g6J2f3WItozx+0HR9yQzlWwedzIorKYwhCaKblLaVHbYsrv9zTUf7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BhOrnrZe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750424906;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=efezj3LnMENDrFh/B5S35gvfWn7TvlAanxYCoetZO3w=;
+	b=BhOrnrZeqFQT/RphKQgy1jZE58cRPgjN5Kxtrru7d7do2NIWl7gO73iL3bftk+Za961Vfd
+	NuRlfBRG5GN/LMbFsjngz3MxjTnqvfLFAYkdyF73gQSKmM62XlYoQXJm+sQZ0+wzlkG98W
+	gIoMVWHNVLN8eYJ2P3a9lQAnR+Y2Ayg=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-93-li-FVJFxM9aHd0M71dKmIg-1; Fri, 20 Jun 2025 09:08:25 -0400
+X-MC-Unique: li-FVJFxM9aHd0M71dKmIg-1
+X-Mimecast-MFC-AGG-ID: li-FVJFxM9aHd0M71dKmIg_1750424904
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a37a0d1005so1125467f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 06:08:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750424904; x=1751029704;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=efezj3LnMENDrFh/B5S35gvfWn7TvlAanxYCoetZO3w=;
+        b=px7+KHBdicl+OyssDP4LTmlUPoPtYkgut0JzEiAxB7id50uY9N2JkOxK/4amvup9uk
+         3B7ov1ESjp586HoqcXuPbs1Tr9eXOnkcSYawguZhlSOlA0boYQgiJC+WxKh2qfS5zBRe
+         xceEIod9jl0XbsUELXe3EzOnFWwaSE6IqWfaWl38viGv9ZTP2QRuyD9DXfSm1DY/9DaK
+         /20LKmZcvu6VnpO+kOR0kAwwUyf247Ya5FOD00HRXlJ504HwyxBhjJycYpdXBtsIiLLM
+         XSnj7fIbUt1Lc2Nn3Mh4Bz2JxxH48Rb4rjge/mEf4lvuk38VZoP4qHrwqlsMWac+N1Hs
+         Xq8g==
+X-Gm-Message-State: AOJu0YyKo03lYflsqZXDIAi+JoRE5ZBLzt8j/P4qv29pm9U7UU2D/sqE
+	AZcmlMtA1GdzY8luqn/RYm9xQAv74vlGhevF0oLa8bNgqTZ0cdF6bCdWhswASgmx1ibioGQHHZm
+	GGBq3MZkqhLpIa0TYkB9/1FM/GeUP0tSGZjNqzYKvZYtwcnUUpVvaFBsPxrXwvgcXly4G4tj8jg
+	==
+X-Gm-Gg: ASbGncvMWBeVwK8J4HLeWhqLsfasjypg6pqqsMxACAYtSOfckf3u0B0h+2AMu4iXh8F
+	FOKHlRMZhMNHev9/DhjSUYCbRnhBkstEEb+xtw03kJt2qUdlXTVpoZWhKU7kEVMFvvr38RzPO4A
+	Ri/Plb3YsyiuL5r9R2vljOa1IENamWupOdW70HObYbN1+J6022xHEZz4odRzamfLF/jZ1VBT8wm
+	80tcoMu7qS20gffJ/cH3D/AiiCRag6bVTHogj4qWJ2/zxALoxW3dkNRTvzxBaJs4LRM0L5RCgo4
+	OIt9DMVKNy+pYYC3WtjN34/gqSiry4hQXVQ=
+X-Received: by 2002:a05:6000:70d:b0:3a4:ec32:e4f3 with SMTP id ffacd0b85a97d-3a6d12e8d73mr1963674f8f.17.1750424903392;
+        Fri, 20 Jun 2025 06:08:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEvQvIvRiOMOwY6vcPGATBD4+Ygw2boYIIBCDTjikBg4YIpBv3nF1VGt1H//5h9pdOChc4ssw==
+X-Received: by 2002:a05:6000:70d:b0:3a4:ec32:e4f3 with SMTP id ffacd0b85a97d-3a6d12e8d73mr1963604f8f.17.1750424902439;
+        Fri, 20 Jun 2025 06:08:22 -0700 (PDT)
+Received: from localhost.localdomain ([193.207.146.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d0f19f9esm2059296f8f.39.2025.06.20.06.08.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 06:08:21 -0700 (PDT)
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	linux-integrity@vger.kernel.org,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Stefano Garzarella <sgarzare@redhat.com>
+Subject: [PATCH v6 0/4] tpm: add support for sync send() and use it in ftpm and svsm drivers
+Date: Fri, 20 Jun 2025 15:08:06 +0200
+Message-ID: <20250620130810.99069-1-sgarzare@redhat.com>
+X-Mailer: git-send-email 2.49.0
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,36 +109,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+The content of this version is the same of v5, but rebased on current
+linux-tpmdd/next (`git range-diff` on v5 is empty) after the merge
+window since tpm-svsm patches were merged with another tree, so we
+agreed on postpone this series, see
+  https://lore.kernel.org/linux-integrity/aDCb-wkHGoLQ-IGg@kernel.org/
 
-The zynq driver can be enabled for compile-testing on builds without
-CONFIG_OF, leading to a link error:
+This series is a follow-up to the discussion we had about whether or not
+to add send_recv() op in tpm_class_ops[1]. Much boilerplate code has
+already been removed by Jarkko with commit 980a573621ea ("tpm: Make
+chip->{status,cancel,req_canceled} opt"). With this series we try to
+avoid also the temporary buffers needed between send() and recv() for
+devices that do not support interrupts and provide a single operation
+to send the command and receive the response on the same buffer like
+tpm_ftpm_tee.
 
-ld.lld-21: error: undefined symbol: pinconf_generic_dt_node_to_map
- referenced by pinconf-generic.h:231 (/home/arnd/arm-soc/include/linux/pinctrl/pinconf-generic.h:231)
-          drivers/pinctrl/pinctrl-zynq.o:(pinconf_generic_dt_node_to_map_all) in archive vmlinux.a
+The biggest advantage for this approach is with tpm_ftpm_tee where we
+remove the local buffer and extra memory copies. For tpm_svsm it does
+not change much since we continue to use the pre-allocated buffer,
+to avoid making an allocation for each command.
 
-Prevent this with the proper compile time dependency.
+Introduce a new flag (TPM_CHIP_FLAG_SYNC) to support synchronous send().
+If that flag is set by the driver, tpm_try_transmit() will use the send()
+callback to send the command and receive the response on the same buffer
+synchronously. In that case send() return the number of bytes of the
+response on success, or -errno on failure.
 
-Fixes: 1982621decaf ("pinctrl: Allow compile testing for K210, TB10X and ZYNQ")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pinctrl/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thanks,
+Stefano
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 753692e9ecf5..ddd11668457c 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -603,6 +603,7 @@ config PINCTRL_TH1520
- config PINCTRL_ZYNQ
- 	bool "Pinctrl driver for Xilinx Zynq"
- 	depends on ARCH_ZYNQ || COMPILE_TEST
-+	depends on OF
- 	select PINMUX
- 	select GENERIC_PINCONF
- 	help
+Changelog
+- v5 -> v6
+  - rebased on linux-tpmdd/next - commit e271ed52b344 ("Merge tag
+    'pm-6.16-rc1-3' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm")
+- v4 -> v5: https://lore.kernel.org/linux-integrity/20250514134630.137621-1-sgarzare@redhat.com/
+  - changed order and parameter names to match tpm_try_transmit() [Jarkko]
+  - rebased on next-20250514
+- v3 -> v4: https://lore.kernel.org/linux-integrity/20250509085713.76851-1-sgarzare@redhat.com/
+  - reworked commit descriptions [Jarkko]
+  - added Jarkko's R-b on patch 2
+  - added Sumit's R-b on patch 3
+  - rebased on next-20250508
+- v2 -> v3: https://lore.kernel.org/linux-integrity/20250414145653.239081-1-sgarzare@redhat.com/
+  - fixed comment style [Jarkko]
+  - renamend `out_send_sync` label to `out_sync` [Jarkko]
+- v1 -> v2: https://lore.kernel.org/linux-integrity/20250408083208.43512-1-sgarzare@redhat.com/
+  - changed title since we removed send_recv() op
+  - implemented TPM_CHIP_FLAG_SYNC idea [Jarkko]
+  - removed Jens' T-b
+- RFC -> v1: https://lore.kernel.org/linux-integrity/20250320152433.144083-1-sgarzare@redhat.com/
+  - added Jens' T-b on ftpm driver
+  - removed last patch since [2] is not yet merged and will require a new version
+- RFC: https://lore.kernel.org/linux-integrity/20250311100130.42169-1-sgarzare@redhat.com/
+
+[1] https://lore.kernel.org/linux-integrity/Z8sfiDEhsG6RATiQ@kernel.org/
+[2] https://lore.kernel.org/linux-integrity/20250410135118.133240-1-sgarzare@redhat.com/
+
+Stefano Garzarella (4):
+  tpm: add bufsiz parameter in the .send callback
+  tpm: support devices with synchronous send()
+  tpm/tpm_ftpm_tee: support TPM_CHIP_FLAG_SYNC
+  tpm/tpm_svsm: support TPM_CHIP_FLAG_SYNC
+
+ drivers/char/tpm/tpm_ftpm_tee.h      |  4 --
+ include/linux/tpm.h                  |  4 +-
+ drivers/char/tpm/st33zp24/st33zp24.c |  2 +-
+ drivers/char/tpm/tpm-interface.c     | 22 ++++++++--
+ drivers/char/tpm/tpm_atmel.c         |  3 +-
+ drivers/char/tpm/tpm_crb.c           |  2 +-
+ drivers/char/tpm/tpm_ftpm_tee.c      | 66 +++++++++-------------------
+ drivers/char/tpm/tpm_i2c_atmel.c     |  3 +-
+ drivers/char/tpm/tpm_i2c_infineon.c  |  3 +-
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  3 +-
+ drivers/char/tpm/tpm_ibmvtpm.c       |  6 ++-
+ drivers/char/tpm/tpm_infineon.c      |  3 +-
+ drivers/char/tpm/tpm_nsc.c           |  3 +-
+ drivers/char/tpm/tpm_svsm.c          | 28 +++++-------
+ drivers/char/tpm/tpm_tis_core.c      |  3 +-
+ drivers/char/tpm/tpm_tis_i2c_cr50.c  |  6 ++-
+ drivers/char/tpm/tpm_vtpm_proxy.c    |  4 +-
+ drivers/char/tpm/xen-tpmfront.c      |  3 +-
+ 18 files changed, 83 insertions(+), 85 deletions(-)
+
 -- 
-2.39.5
+2.49.0
 
 
