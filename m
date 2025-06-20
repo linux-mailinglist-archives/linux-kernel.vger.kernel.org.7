@@ -1,48 +1,45 @@
-Return-Path: <linux-kernel+bounces-694750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E143DAE105F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 02:29:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8955AE1063
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 02:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3564117FEFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 00:29:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 685A019E214F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 00:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F337C79C0;
-	Fri, 20 Jun 2025 00:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D9F2576;
+	Fri, 20 Jun 2025 00:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HixbY1oq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8VLQmM8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55890EC4;
-	Fri, 20 Jun 2025 00:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697607485;
+	Fri, 20 Jun 2025 00:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750379379; cv=none; b=NRxl+f5F2Z1bAOpAhsZwtqd7l9TMqlJpJDOeLMM+G4VrPDa4gFAnDHZw35BzB+VTO0/JSz0d+g0cIvrFJBf/v/9ICDAdmHfRvHh89ulQbKQPBvcjOL0TIJH+Mw0Vi2jxfQA2Pl3hqzPXr4POM/fBWVh4TOAal7wvowxXZ5jzlMk=
+	t=1750379409; cv=none; b=JR9C5CQjZaUYVIKhcTwFaJKaPx7PL2iF6XLoC91Ey4psQ0bIiZDTcwn7pg6iTfijsxjGFzgiTQGn+hY9tjdbhDZXaIYEI5Mu2l9Bvf0tfkB/6wzx+63Vq/57phbFZ1HdRSgaLjKKk0mTI2hTfXzwOPoE2nZJPc+FAhC/G5e93sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750379379; c=relaxed/simple;
-	bh=N/gX/lWCEFFVFMQQ7VNG4vFBfHvEobL5B9N1XSTxf4M=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=GsrHH0SFrrL5KrO3JaVsgKaMueN1xo6JMOeV1mIYke1X//pN+m3re96JftBGRoxKPLnsNJt4sePsUcCqxtAA4siRlKUCyMZV2CDGo7zCXMm66zIVRutpJmS+ibEgclHzFIQXMAIjYA15OwotRqlmSqmGeY1NVJd/PFNy7hqC/Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HixbY1oq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED43C4CEEA;
-	Fri, 20 Jun 2025 00:29:38 +0000 (UTC)
+	s=arc-20240116; t=1750379409; c=relaxed/simple;
+	bh=94Lp03DmKEYMZSuv0ZiVjs4rQ14XbBrJIqhyLo0+8J8=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=OET4dc3+0/bZeQ99oDlkSm5nky3WL5TONB+DUmGMQ3OmDRhdly4Z92vYMhI1IC1KkPyNeQWHQUpVGHmyWMUQpkiaJEO3COZWDeL4vi0Ghh609LE4+IPnKXAYHBhX9KgdXwsU9pZx+DilKDXAAKdxoQBsPw+1ZM5ScjfCtuUUhj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8VLQmM8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38F35C4CEEF;
+	Fri, 20 Jun 2025 00:30:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750379378;
-	bh=N/gX/lWCEFFVFMQQ7VNG4vFBfHvEobL5B9N1XSTxf4M=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=HixbY1oqNPcCqNjxGWpm4tvHipUmhS0SLjJZ05lfdwT4b4aq3PJPaa49yyqUgzEeo
-	 rGg5Fcpb7pOstveHIE1L/BW/suhRF047nDzkNuFDU7c5BgxkDNhYspBP9tdjpkMP3O
-	 1Q8a6UUijaYShbxgpsQvA7xl+S1+qR8MCqyHMlfGp5rIoP3Y328m2rKwenE5UrGn/v
-	 OE0jqAa4Gx+Feiv3qikzUt85pzRlit2MfjDkzpjsgCW04DKntqBJX3y9qmpuung4QC
-	 rnpSow2TDGkjFRNA/yvpdUQSgju14xQ4EYnSov2vgVgrAl356pdwqNR4X5xNM5xeYF
-	 vtbhnL8bfIuPA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEE538111DD;
-	Fri, 20 Jun 2025 00:30:07 +0000 (UTC)
+	s=k20201202; t=1750379409;
+	bh=94Lp03DmKEYMZSuv0ZiVjs4rQ14XbBrJIqhyLo0+8J8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=L8VLQmM8Uba3vvqfAPrS8yiZXctb0PiTE5txEc+xp6R3EmtXXRN0Ko7mFFS7pnp4D
+	 ezVfLxBo68B/Cx1y4poNuvLeI50x7gMz8+VqwXPH+u5sILgVhy3elN6iMtWcc5aFF2
+	 gcrif9pW3bErm1NsNgw1Fb7hgaP3c723b9vHIkyR70zZzt/V56v+zxkycnhZAUnLGy
+	 /Re/1BW3GD8JKlsUtEwGQjkK4jAE5n7S4NSepDmkhzxSOgoxuhMMnTtZF+Zh/wJtil
+	 6DJH0Z1ISidwdMyNQgXsS0Ien98f3w8PyiZMfSX2ZYCnZmp7GM51/kOLbBz54EdSfS
+	 ZQMHFJdTGhjWg==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -50,48 +47,44 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3] net: ti: icssg-prueth: Add prp offload
- support to
- ICSSG driver
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175037940675.1029963.6639645780461563048.git-patchwork-notify@kernel.org>
-Date: Fri, 20 Jun 2025 00:30:06 +0000
-References: <20250618175536.430568-1-h-mittal1@ti.com>
-In-Reply-To: <20250618175536.430568-1-h-mittal1@ti.com>
-To: Himanshu Mittal <h-mittal1@ti.com>
-Cc: pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
- davem@davemloft.net, andrew+netdev@lunn.ch, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com,
- vigneshr@ti.com, rogerq@kernel.org, danishanwar@ti.com, m-malladi@ti.com,
- pratheesh@ti.com, prajith@ti.com
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250612-clk-scmi-children-parent-fix-v3-1-7de52a27593d@pengutronix.de>
+References: <20250612-clk-scmi-children-parent-fix-v3-1-7de52a27593d@pengutronix.de>
+Subject: Re: [PATCH v3] clk: scmi: Handle case where child clocks are initialized before their parents
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
+To: Cristian Marussi <cristian.marussi@arm.com>, Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, Sudeep Holla <sudeep.holla@arm.com>
+Date: Thu, 19 Jun 2025 17:30:08 -0700
+Message-ID: <175037940843.4372.15491046245744789361@lazor>
+User-Agent: alot/0.11
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Wed, 18 Jun 2025 23:25:36 +0530 you wrote:
-> Add support for ICSSG PRP mode which supports offloading of:
->  - Packet duplication and PRP trailer insertion
->  - Packet duplicate discard and PRP trailer removal
-> 
-> Signed-off-by: Himanshu Mittal <h-mittal1@ti.com>
+Quoting Sascha Hauer (2025-06-12 05:56:57)
+> The SCMI clock driver currently assumes that parent clocks are always
+> initialized before their children. However, this assumption can fail if
+> a child clock is encountered before its parent during probe.
+>=20
+> This leads to an issue during initialization of the parent_data array:
+>=20
+>     sclk->parent_data[i].hw =3D hws[sclk->info->parents[i]];
+>=20
+> If the parent clock's hardware structure has not been initialized yet,
+> this assignment results in invalid data.
+>=20
+> To resolve this, allocate all struct scmi_clk instances as a contiguous
+> array at the beginning of the probe and populate the hws[] array
+> upfront. This ensures that any parent referenced later is already
+> initialized, regardless of the order in which clocks are processed.
+>=20
+> Note that we can no longer free individual scmi_clk instances if
+> scmi_clk_ops_init() fails which shouldn't be a problem if the SCMI
+> platform has proper per-agent clock discovery.
+>=20
+> Fixes: 65a8a3dd3b95f ("clk: scmi: Add support for clock {set,get}_parent")
+> Reviewed-by: peng.fan@nxp.com
+> Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 > ---
-> v3-v2:
-> - Addresses comment to fix structure documentation
-> 
-> [...]
 
-Here is the summary with links:
-  - [net-next,v3] net: ti: icssg-prueth: Add prp offload support to ICSSG driver
-    https://git.kernel.org/netdev/net-next/c/83010fd9225b
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Applied to clk-fixes
 
