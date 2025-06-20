@@ -1,169 +1,337 @@
-Return-Path: <linux-kernel+bounces-695458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA19DAE19FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:29:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDAF0AE1A05
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BC507A4112
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:28:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16C397A72AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E7C28A1F6;
-	Fri, 20 Jun 2025 11:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BB027816B;
+	Fri, 20 Jun 2025 11:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PcB91OzR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BX320ln3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0972853EF;
-	Fri, 20 Jun 2025 11:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0C521C17D
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 11:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750418962; cv=none; b=oVd3MNFT5rFfCEdMzie6JbMTe+8Gl4aQjPnFjN5hDlrPkmK7dHHmyUvJPtCpEc/1Q5iS9vLL7dC+giV+HgdCj3RYYxE+bm4Y0Ry+f1aI4RIK4Xg7GQQRqSbw2SWs9J1ChF2BX+UNCSZW0goaPBK9OIniihvohVCS2FRoTfJ4oEQ=
+	t=1750419070; cv=none; b=HxiTT5J+TvAWKozk7eh8lu1vcfjQ3R0YZBJSqSLG5c7OpxM/kUiP6kjpNyX7ODgkAFpPOu1bKUqengywkewY+z3y4QPM/GZ8ND8eN17Ho2IPwNFI9b+arWztfYsnk2c25agMNkd9HteGTxAUwyqqeZvtzRVl3Wm7XE1wjzZkvDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750418962; c=relaxed/simple;
-	bh=c4Rc2nFa3I49nxqi5SgaiDRGigf/JNf4RcytD5THg7g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=exvH4P+5oMb9Eg7qu4dVkPdzyxCsAeCoRd4NNoUlnjS2fim5IZOyt25pmfKRhwcL721GPI6yVei8n4+D+MdYvdtyO0WWGwPJvb7Mm9NABOlTljsAuZuVtmefzCy/15McaXgbMua6eyiE2rQ9NTwMmUmNEJnBJzFK4lvqi6vlWWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PcB91OzR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A16C4CEE3;
-	Fri, 20 Jun 2025 11:29:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750418962;
-	bh=c4Rc2nFa3I49nxqi5SgaiDRGigf/JNf4RcytD5THg7g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=PcB91OzROARD50vmekIMFW8RbjI1rBadXKSlSMxIFpR/AIGvnKl8eoxyesnMbPGve
-	 C01F65HbecH8pc0TukmBZ7HdhL1q2kFziyZmB+0spokiEsnzPvNn/D6dvkcp0jOoVk
-	 prbXUdoN89pXXEzLOjlMy1/9lDprj/pIxdLCfwYm9EdR9N06QIDMyf9tdUfM9eTQWr
-	 D74VbkA2mSdfLKLQfpza0alcj3TvhtrsU6mDGLzFhLmcQ9l6MjVh6VqZmmPC3EFFoM
-	 7FjtcnSxMl0gFrmTpxnFyY9wB+sVLjeU+kgif//v9mhUfY/cUApC0OgzAE41vup1Gj
-	 5LPGzkLU9dF9w==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  "Masahiro Yamada" <masahiroy@kernel.org>,
-  "Nathan Chancellor" <nathan@kernel.org>,  "Luis Chamberlain"
- <mcgrof@kernel.org>,  "Danilo Krummrich" <dakr@kernel.org>,  "Nicolas
- Schier" <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Adam Bratschi-Kaye" <ark.email@gmail.com>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu" <petr.pavlu@suse.com>,
-  "Sami Tolvanen" <samitolvanen@google.com>,  "Daniel Gomez"
- <da.gomez@samsung.com>,  "Simona Vetter" <simona.vetter@ffwll.ch>,  "Greg
- KH" <gregkh@linuxfoundation.org>,  "Fiona Behrens" <me@kloenk.dev>,
-  "Daniel Almeida" <daniel.almeida@collabora.com>,
-  <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v13 2/6] rust: introduce module_param module
-In-Reply-To: <DAQJCUE1C2JE.204A8IS7LBIVZ@kernel.org> (Benno Lossin's message
-	of "Thu, 19 Jun 2025 15:15:00 +0200")
-References: <20250612-module-params-v3-v13-0-bc219cd1a3f8@kernel.org>
-	<20250612-module-params-v3-v13-2-bc219cd1a3f8@kernel.org>
-	<COU2bqJOzCHRf6g4rwFpu2NY3wLY0G0AmNjRaU9aGEqu1HaPZ5X4KzfDT_CEB3Okh5BV50sJS10sKhmtHut8ew==@protonmail.internalid>
-	<DAQJCUE1C2JE.204A8IS7LBIVZ@kernel.org>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Fri, 20 Jun 2025 13:29:11 +0200
-Message-ID: <87ikkq648o.fsf@kernel.org>
+	s=arc-20240116; t=1750419070; c=relaxed/simple;
+	bh=G6vjfcaFhBwUqsbtO8O89l1/kTIbX9qC4wkMlyxyfbU=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=fPw0GDdfZk/m2MlNwiEiWqdW0209znjQsDLv59+fUjmbRqNNY6P+imcTWcMFlhcjaPdnfEW+9X9MmFB89pgA/YyaHf8HLYn9pntbu1RgJPPOExL6RZ5QxKe7AzlzExXA69txI/Evm9EkKfezkKl70qkyNpIxGwdQ29VhjSBFFOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BX320ln3; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750419068; x=1781955068;
+  h=date:from:to:cc:subject:message-id;
+  bh=G6vjfcaFhBwUqsbtO8O89l1/kTIbX9qC4wkMlyxyfbU=;
+  b=BX320ln3I1a6sbDGRLXmEkve6VnZ8XtlKnFPwG3dx99wVwxfGYC6LvWW
+   zexxMeLGwq4knttf3cxi4swP/rLNN12+bAzRTnAJZT3k4r4My9bro5M1B
+   dEyMTfMyeL0YKbqBp9eOpgkeX52zJN+qjchw7drJke7Y8suNkl5KQyUzW
+   jgl4Nz703pS6pyejdGxp+bfuFpjexdfAbRpfTU2P2Qrj0LE6F01zLhI1f
+   N2bcGhmobqWF3UEKgm11ncPheorcpFZxpe+OEe3e+/biWH+sg3ii9th+K
+   Z24W4vjrlMNOxb4LPodwMsGvmNbiKO7EMxi/pIPiiFldKKE5gwKSu4OSU
+   w==;
+X-CSE-ConnectionGUID: U8AYQN17S+iEI+dgVpuNmg==
+X-CSE-MsgGUID: nB7Tl+dbTDKZkrUV2B8YgQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="55314937"
+X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
+   d="scan'208";a="55314937"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 04:31:07 -0700
+X-CSE-ConnectionGUID: /QISFPxYRvuI9Z6XuUEp7g==
+X-CSE-MsgGUID: /XHfvPtFTl+YN1YJF3aQEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
+   d="scan'208";a="151428799"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 20 Jun 2025 04:31:07 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uSZxY-000LhA-2b;
+	Fri, 20 Jun 2025 11:31:04 +0000
+Date: Fri, 20 Jun 2025 19:30:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/sev] BUILD SUCCESS
+ 040ed574ee823a2ce5da36a8d385d3133787c9c5
+Message-ID: <202506201919.lUwSK1ZL-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
 
-"Benno Lossin" <lossin@kernel.org> writes:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/sev
+branch HEAD: 040ed574ee823a2ce5da36a8d385d3133787c9c5  x86/sev: Drop unnecessary parameter in snp_issue_guest_request()
 
-> On Thu Jun 12, 2025 at 3:40 PM CEST, Andreas Hindborg wrote:
->> +/// A wrapper for kernel parameters.
->> +///
->> +/// This type is instantiated by the [`module!`] macro when module parameters are
->> +/// defined. You should never need to instantiate this type directly.
->> +///
->> +/// Note: This type is `pub` because it is used by module crates to access
->> +/// parameter values.
->> +#[repr(transparent)]
->> +pub struct ModuleParamAccess<T> {
->> +    data: core::cell::UnsafeCell<T>,
->> +}
->> +
->> +// SAFETY: We only create shared references to the contents of this container,
->> +// so if `T` is `Sync`, so is `ModuleParamAccess`.
->> +unsafe impl<T: Sync> Sync for ModuleParamAccess<T> {}
->> +
->> +impl<T> ModuleParamAccess<T> {
->> +    #[doc(hidden)]
->> +    pub const fn new(value: T) -> Self {
->> +        Self {
->> +            data: core::cell::UnsafeCell::new(value),
->> +        }
->> +    }
->> +
->> +    /// Get a shared reference to the parameter value.
->> +    // Note: When sysfs access to parameters are enabled, we have to pass in a
->> +    // held lock guard here.
->> +    pub fn get(&self) -> &T {
->> +        // SAFETY: As we only support read only parameters with no sysfs
->> +        // exposure, the kernel will not touch the parameter data after module
->> +        // initialization.
->
-> This should be a type invariant. But I'm having difficulty defining one
-> that's actually correct: after parsing the parameter, this is written
-> to, but when is that actually?
+elapsed time: 1447m
 
-For built-in modules it is during kernel initialization. For loadable
-modules, it during module load. No code from the module will execute
-before parameters are set.
+configs tested: 245
+configs skipped: 6
 
-> Would we eventually execute other Rust
-> code during that time? (for example when we allow custom parameter
-> parsing)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-I don't think we will need to synchronize because of custom parameter
-parsing. Parameters are initialized sequentially. It is not a problem if
-the custom parameter parsing code name other parameters, because they
-are all initialized to valid values (as they are statics).
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    clang-19
+alpha                            allyesconfig    gcc-15.1.0
+alpha                               defconfig    gcc-15.1.0
+arc                              allmodconfig    clang-19
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    clang-19
+arc                              allyesconfig    gcc-15.1.0
+arc                          axs103_defconfig    clang-21
+arc                                 defconfig    gcc-15.1.0
+arc                   randconfig-001-20250619    gcc-15.1.0
+arc                   randconfig-001-20250620    clang-21
+arc                   randconfig-002-20250619    gcc-15.1.0
+arc                   randconfig-002-20250620    clang-21
+arm                              allmodconfig    clang-19
+arm                              allmodconfig    gcc-15.1.0
+arm                               allnoconfig    clang-21
+arm                               allnoconfig    gcc-15.1.0
+arm                              allyesconfig    clang-19
+arm                              allyesconfig    gcc-15.1.0
+arm                         axm55xx_defconfig    clang-21
+arm                                 defconfig    gcc-15.1.0
+arm                   randconfig-001-20250619    clang-21
+arm                   randconfig-001-20250620    clang-21
+arm                   randconfig-002-20250619    gcc-8.5.0
+arm                   randconfig-002-20250620    clang-21
+arm                   randconfig-003-20250619    gcc-8.5.0
+arm                   randconfig-003-20250620    clang-21
+arm                   randconfig-004-20250619    gcc-10.5.0
+arm                   randconfig-004-20250620    clang-21
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                               defconfig    gcc-15.1.0
+arm64                 randconfig-001-20250619    gcc-8.5.0
+arm64                 randconfig-001-20250620    clang-21
+arm64                 randconfig-002-20250619    gcc-9.5.0
+arm64                 randconfig-002-20250620    clang-21
+arm64                 randconfig-003-20250619    gcc-10.5.0
+arm64                 randconfig-003-20250620    clang-21
+arm64                 randconfig-004-20250619    gcc-10.5.0
+arm64                 randconfig-004-20250620    clang-21
+csky                              allnoconfig    gcc-15.1.0
+csky                                defconfig    gcc-15.1.0
+csky                  randconfig-001-20250619    gcc-11.5.0
+csky                  randconfig-001-20250620    clang-21
+csky                  randconfig-002-20250619    gcc-9.3.0
+csky                  randconfig-002-20250620    clang-21
+hexagon                          allmodconfig    clang-17
+hexagon                          allmodconfig    clang-19
+hexagon                           allnoconfig    clang-21
+hexagon                           allnoconfig    gcc-15.1.0
+hexagon                          allyesconfig    clang-19
+hexagon                          allyesconfig    clang-21
+hexagon                             defconfig    gcc-15.1.0
+hexagon               randconfig-001-20250619    clang-21
+hexagon               randconfig-001-20250620    clang-21
+hexagon               randconfig-002-20250619    clang-21
+hexagon               randconfig-002-20250620    clang-21
+i386                             allmodconfig    clang-20
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    clang-20
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    clang-20
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250619    gcc-12
+i386        buildonly-randconfig-001-20250620    clang-20
+i386        buildonly-randconfig-002-20250619    gcc-12
+i386        buildonly-randconfig-002-20250620    clang-20
+i386        buildonly-randconfig-003-20250619    clang-20
+i386        buildonly-randconfig-003-20250620    clang-20
+i386        buildonly-randconfig-004-20250619    clang-20
+i386        buildonly-randconfig-004-20250620    clang-20
+i386        buildonly-randconfig-005-20250619    clang-20
+i386        buildonly-randconfig-005-20250620    clang-20
+i386        buildonly-randconfig-006-20250619    clang-20
+i386        buildonly-randconfig-006-20250620    clang-20
+i386                                defconfig    clang-20
+i386                  randconfig-001-20250620    gcc-12
+i386                  randconfig-002-20250620    gcc-12
+i386                  randconfig-003-20250620    gcc-12
+i386                  randconfig-004-20250620    gcc-12
+i386                  randconfig-005-20250620    gcc-12
+i386                  randconfig-006-20250620    gcc-12
+i386                  randconfig-007-20250620    gcc-12
+i386                  randconfig-011-20250620    gcc-12
+i386                  randconfig-012-20250620    gcc-12
+i386                  randconfig-013-20250620    gcc-12
+i386                  randconfig-014-20250620    gcc-12
+i386                  randconfig-015-20250620    gcc-12
+i386                  randconfig-016-20250620    gcc-12
+i386                  randconfig-017-20250620    gcc-12
+loongarch                        allmodconfig    gcc-15.1.0
+loongarch                         allnoconfig    gcc-15.1.0
+loongarch                           defconfig    gcc-15.1.0
+loongarch             randconfig-001-20250619    gcc-15.1.0
+loongarch             randconfig-001-20250620    clang-21
+loongarch             randconfig-002-20250619    gcc-15.1.0
+loongarch             randconfig-002-20250620    clang-21
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+m68k                                defconfig    gcc-15.1.0
+m68k                           virt_defconfig    clang-21
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-15.1.0
+nios2                               defconfig    gcc-15.1.0
+nios2                 randconfig-001-20250619    gcc-8.5.0
+nios2                 randconfig-001-20250620    clang-21
+nios2                 randconfig-002-20250619    gcc-8.5.0
+nios2                 randconfig-002-20250620    clang-21
+openrisc                          allnoconfig    clang-21
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-12
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    clang-21
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-12
+parisc                randconfig-001-20250619    gcc-11.5.0
+parisc                randconfig-001-20250620    clang-21
+parisc                randconfig-002-20250619    gcc-8.5.0
+parisc                randconfig-002-20250620    clang-21
+parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    clang-21
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    clang-21
+powerpc                          allyesconfig    gcc-15.1.0
+powerpc                      cm5200_defconfig    clang-21
+powerpc                     mpc5200_defconfig    clang-21
+powerpc                     ppa8548_defconfig    clang-21
+powerpc               randconfig-001-20250619    gcc-9.3.0
+powerpc               randconfig-001-20250620    clang-21
+powerpc               randconfig-002-20250619    clang-21
+powerpc               randconfig-002-20250620    clang-21
+powerpc               randconfig-003-20250619    gcc-10.5.0
+powerpc               randconfig-003-20250620    clang-21
+powerpc64             randconfig-001-20250619    gcc-11.5.0
+powerpc64             randconfig-001-20250620    clang-21
+powerpc64             randconfig-002-20250619    clang-21
+powerpc64             randconfig-002-20250620    clang-21
+powerpc64             randconfig-003-20250619    gcc-10.5.0
+powerpc64             randconfig-003-20250620    clang-21
+riscv                            allmodconfig    clang-21
+riscv                            allmodconfig    gcc-15.1.0
+riscv                             allnoconfig    clang-21
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    clang-16
+riscv                            allyesconfig    gcc-15.1.0
+riscv                               defconfig    gcc-12
+riscv                 randconfig-001-20250619    gcc-11.5.0
+riscv                 randconfig-001-20250620    gcc-13.3.0
+riscv                 randconfig-002-20250619    clang-16
+riscv                 randconfig-002-20250620    gcc-13.3.0
+s390                             allmodconfig    clang-18
+s390                             allmodconfig    gcc-15.1.0
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    gcc-12
+s390                  randconfig-001-20250619    clang-19
+s390                  randconfig-001-20250620    gcc-13.3.0
+s390                  randconfig-002-20250619    gcc-13.2.0
+s390                  randconfig-002-20250620    gcc-13.3.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-12
+sh                            hp6xx_defconfig    clang-21
+sh                    randconfig-001-20250619    gcc-9.3.0
+sh                    randconfig-001-20250620    gcc-13.3.0
+sh                    randconfig-002-20250619    gcc-9.3.0
+sh                    randconfig-002-20250620    gcc-13.3.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                 randconfig-001-20250619    gcc-14.3.0
+sparc                 randconfig-001-20250620    gcc-13.3.0
+sparc                 randconfig-002-20250619    gcc-10.3.0
+sparc                 randconfig-002-20250620    gcc-13.3.0
+sparc64                             defconfig    gcc-12
+sparc64               randconfig-001-20250619    gcc-13.3.0
+sparc64               randconfig-001-20250620    gcc-13.3.0
+sparc64               randconfig-002-20250619    gcc-8.5.0
+sparc64               randconfig-002-20250620    gcc-13.3.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    clang-19
+um                               allyesconfig    gcc-12
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250619    clang-19
+um                    randconfig-001-20250620    gcc-13.3.0
+um                    randconfig-002-20250619    clang-21
+um                    randconfig-002-20250620    gcc-13.3.0
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250619    clang-20
+x86_64      buildonly-randconfig-001-20250620    gcc-12
+x86_64      buildonly-randconfig-002-20250619    gcc-12
+x86_64      buildonly-randconfig-002-20250620    gcc-12
+x86_64      buildonly-randconfig-003-20250619    clang-20
+x86_64      buildonly-randconfig-003-20250620    gcc-12
+x86_64      buildonly-randconfig-004-20250619    gcc-12
+x86_64      buildonly-randconfig-004-20250620    gcc-12
+x86_64      buildonly-randconfig-005-20250619    clang-20
+x86_64      buildonly-randconfig-005-20250620    gcc-12
+x86_64      buildonly-randconfig-006-20250619    gcc-12
+x86_64      buildonly-randconfig-006-20250620    gcc-12
+x86_64                              defconfig    clang-20
+x86_64                              defconfig    gcc-11
+x86_64                                  kexec    clang-20
+x86_64                randconfig-001-20250620    clang-20
+x86_64                randconfig-002-20250620    clang-20
+x86_64                randconfig-003-20250620    clang-20
+x86_64                randconfig-004-20250620    clang-20
+x86_64                randconfig-005-20250620    clang-20
+x86_64                randconfig-006-20250620    clang-20
+x86_64                randconfig-007-20250620    clang-20
+x86_64                randconfig-008-20250620    clang-20
+x86_64                randconfig-071-20250620    clang-20
+x86_64                randconfig-072-20250620    clang-20
+x86_64                randconfig-073-20250620    clang-20
+x86_64                randconfig-074-20250620    clang-20
+x86_64                randconfig-075-20250620    clang-20
+x86_64                randconfig-076-20250620    clang-20
+x86_64                randconfig-077-20250620    clang-20
+x86_64                randconfig-078-20250620    clang-20
+x86_64                               rhel-9.4    clang-20
+x86_64                           rhel-9.4-bpf    gcc-12
+x86_64                         rhel-9.4-kunit    gcc-12
+x86_64                           rhel-9.4-ltp    gcc-12
+x86_64                          rhel-9.4-rust    clang-18
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250619    gcc-9.3.0
+xtensa                randconfig-001-20250620    gcc-13.3.0
+xtensa                randconfig-002-20250619    gcc-8.5.0
+xtensa                randconfig-002-20250620    gcc-13.3.0
 
->
-> This function also must never be `const` because of the following:
->
->     module! {
->         // ...
->         params: {
->             my_param: i64 {
->                 default: 0,
->                 description: "",
->             },
->         },
->     }
->
->     static BAD: &'static i64 = module_parameters::my_param.get();
->
-> AFAIK, this static will be executed before loading module parameters and
-> thus it makes writing to the parameter UB.
-
-As I understand, the static will be initialized by a constant expression
-evaluated at compile time. I am not sure what happens when this is
-evaluated in const context:
-
-    pub fn get(&self) -> &T {
-        // SAFETY: As we only support read only parameters with no sysfs
-        // exposure, the kernel will not touch the parameter data after module
-        // initialization.
-        unsafe { &*self.data.get() }
-    }
-
-Why would that not be OK? I would assume the compiler builds a dependency graph
-when initializing statics?
-
-
-Best regards,
-Andreas Hindborg
-
-
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
