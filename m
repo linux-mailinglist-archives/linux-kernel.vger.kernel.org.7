@@ -1,229 +1,169 @@
-Return-Path: <linux-kernel+bounces-695906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF87CAE1F4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:47:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7477AE1F5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F139D7A261F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:46:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49B804A6F30
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB4C2EA74B;
-	Fri, 20 Jun 2025 15:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F023E2ECD07;
+	Fri, 20 Jun 2025 15:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j8V1vKbt"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KEA4cHs8"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C092EAB67
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662A92EBDF0;
+	Fri, 20 Jun 2025 15:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750434345; cv=none; b=gKEwcwEie930RrF6XFPQRNgZP4d2yQW1qGcCZNo7nCXyjOHcGrmFkagTSRAOiZjfmgEtL59fMh92E3WIICCcwxi90cNHpBPiWcy+Q8f3Ym3FM9hMgTWjesUZsj/5yT5kbVzKhvT+NtDSeuj0Nkc/BJPHy24k8FWP0fa+j9ewTGQ=
+	t=1750434373; cv=none; b=MwfBvpP249xZJIHG4kVrUliI5CRnwxBOMYTeoiDYPg7VIV4DGuLM42woF+FrOt3k0EbW5OIb7A46/MvKoYSs4+SKv8DpJlYMmP+UtnJ7QC0uk42tzULOQ0Yv5bz2qOiNdc6VCZxTG6vpItLc/U9jmAX8xiA5vf2T4OpHScJR3CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750434345; c=relaxed/simple;
-	bh=9HGUuLKucGQxXQmt3jlyStZam8b2x9uuQn3iyTypahk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G3Cj4m/V8RMeuH7NIPaHRb5hKCWycD6CzRBxdCjETydS49akj8DjeyJXE2Hhhx7vLaR2YWS2fMlM/NmAyprvaxMTUnRYUMUwHtNy2msJDdZhHuFip4oY1oIlkdYNLvanl2YWI6v5zhjr6MKRHgmCbe0CghNIChbyuDLx2Ilitao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j8V1vKbt; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-553b584ac96so2208654e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 08:45:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750434341; x=1751039141; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j4gHMbfrP62AyybD3k1CrUQ7A0/RCXBAPC12kLOvMpU=;
-        b=j8V1vKbtWcCTLz2YCi3LWBWxmKxJYPID2w8SIo6hSchnrxRQOG+DmHzRypKz3gY+z6
-         Fe8GTm6o3lC7i5hmJ1DvM92PFKH5pJQasDxxXOUvwcEwUE15yfqlKshrd2ASTT5GR4Xn
-         k7yDfnWQFJOAmb96qAdxRKIe5gbl4WvUB4a+rCC9WWpyx7VZRMAZxdIPx1G8FbsXULqL
-         StO2YFIY2p1dcUq02AZRpynOtn+GjWfP1yWgxB/J11qtHbq1sEBIzXO5Hj29xqPn7E9E
-         jCOZTTTOO0OsXnv/5x0ksb5kx5+fnUlxLiBqhMIAOVvDHWIZW+Ry5DQ35MPGH04dcBn6
-         KctA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750434341; x=1751039141;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j4gHMbfrP62AyybD3k1CrUQ7A0/RCXBAPC12kLOvMpU=;
-        b=Kq2mt6v8On5jmOmfluTW5QIt/GBTP+dEF2v6IJgATAK1jwbk3SPSUvHcbivSZRqhwV
-         Dz+iOyDoi6CsdoJi8u3lWM70jTKq9+6fjh3GdMqhKF7gaLu8nOsFPQpmn8IRQNcMPC6c
-         c56AmpubfMrNAmvKeSicsoyJ026SrrU+Y1ntGUVhKJlW0RAJGtqlHfxn2L+H29PBbGyS
-         i33gzlOU2HBuCZUWOreYu3q3CfFaq/4XHsV+m46u8bAjPn4MrFQJLt1lyDtm7QLKnDRN
-         ud/M66Goq8aUgVpZhFKJG2MIPyo1mjU11zdtE7CUdVqcwo6kRfIDyuWkcTDgz2zIMhQW
-         Xh4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXsOD3kFZZYmbsipQgmHH2U6wbTqJ04JLRP8NtQfdcYF+Op9Bxoa079bN2Tzix8WrUf+9WqXgEP6IW87ME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxIe6aTPoEQcF5/FR3UVQXvS7ipUEm184i/hMSpmf7AzmRBwej
-	r6vFIrU7M1vv5jF9T4dgr5EzCdtDrJrgeK5WPsqNvPNI1hUoos+d/hPp
-X-Gm-Gg: ASbGncuiP5meQQBkDC0s4DXjPCLJpv2sJ5djAokdUEcEMU3dvlZ0NS8MqT+z5X/t/en
-	YGDib/QwxyVJPAVUYEpMUCxaWwHopamOLPtZCXXDK1TldqKCOVcsb4cAj1fUF7oXrELL5hV/lw3
-	eoG5syho+h+1FlCLJQV6nhbRxqOsa1esnN7PWArHgiGV8JENBeE/tGtQ7h/j0EdjFohC1Uqaq2R
-	2ZWWgvYNTNoJJyrWTUkzTz2rfbroujI1++y9OJ3x3eAPaJXXF+xNWeP0+m2CAdE9cxXC51C6I/I
-	UhG2Jd9Fsn+i3HDPGNhPH15cOf8dKyVV7UquQBEcRM9DiS8cWxG+UgbcxtpmedOvV6TO2AmblFF
-	65g==
-X-Google-Smtp-Source: AGHT+IHie5DgDR9fAEvkFZRLnTQygV7sMClPhEOHfnmOPQG3XhthUwEw/pgKPY8+lQ5Ma1A4lzeVSg==
-X-Received: by 2002:a05:6512:3e17:b0:550:e608:410b with SMTP id 2adb3069b0e04-553e3bfe5dcmr1300695e87.33.1750434340878;
-        Fri, 20 Jun 2025 08:45:40 -0700 (PDT)
-Received: from localhost (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
-        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-553e41cc3bdsm321721e87.216.2025.06.20.08.45.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 08:45:40 -0700 (PDT)
-Date: Fri, 20 Jun 2025 17:45:39 +0200
-From: Klara Modin <klarasmodin@gmail.com>
-To: Hao Ge <hao.ge@linux.dev>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Hao Ge <gehao@kylinos.cn>
-Subject: Re: [PATCH] mm/alloc_tag: Fix the kmemleak false positive issue in
- the allocation of the percpu variable tag->counters
-Message-ID: <qjmnlgowadwtndmwween63mmpi2krtbioagani4paorzgcecaa@e625xdk4ya52>
-References: <20250619183154.2122608-1-hao.ge@linux.dev>
+	s=arc-20240116; t=1750434373; c=relaxed/simple;
+	bh=z3+EbKKsksPaYGeqv0T8bAxEan67c93CBJV5WVPnYFM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Vb2qBDltJHa7jjVLtqMQPeFPUEuqZfRvsW85zZSKAZuqqodsPguNO6ow8OdswIgBO1yXgwhIV4ZVw3/Watovasny7Bgb6UAxIdfFGJziAZISB3Zz6QhLHmEr6Zd04DGxwqDcZMZAkSGh9UqS/eUjQFPWdDtlWIxjAPY0FBNiojI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KEA4cHs8; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55KFjgaL698508;
+	Fri, 20 Jun 2025 10:45:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1750434342;
+	bh=K3hFN5dq7YOejTLa+4FEAejSPJ7VJDkEOvGoTt+ZXJE=;
+	h=From:To:CC:Subject:Date;
+	b=KEA4cHs8IikWdiuHge2SXGf5/hQt08Bs4BpAB4KwkW6udTevgEHiYwRY9rlcJ+kGH
+	 97raLTPQ1Vj5U4ED3eSb0uQo5QR4ervrPfYVaqvsjcq5lWG18SRZXvF5or7FQx7oSi
+	 ZS+4BxTxgko7hm5wYVB/ip7E8MATqpy2LEI0NeT8=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55KFjfZs806765
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 20 Jun 2025 10:45:42 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 20
+ Jun 2025 10:45:41 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 20 Jun 2025 10:45:41 -0500
+Received: from DMZ007XYY.dhcp.ti.com (dmz007xyy.dhcp.ti.com [128.247.29.251])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55KFjfPZ3189272;
+	Fri, 20 Jun 2025 10:45:41 -0500
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+To: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
+        <rogerq@kernel.org>, <tony@atomide.com>, <lee@kernel.org>,
+        <d-gole@ti.com>, <robertcnelson@gmail.com>, <jkridner@gmail.com>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <m-leonard@ti.com>, <praneeth@ti.com>, <afd@ti.com>
+Subject: [PATCH v2] regulator: tps65219: Fix devm_kmalloc size allocation
+Date: Fri, 20 Jun 2025 10:45:41 -0500
+Message-ID: <20250620154541.2713036-1-s-ramamoorthy@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250619183154.2122608-1-hao.ge@linux.dev>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi,
+In probe(), two arrays of structs are allocated with the devm_kmalloc()
+function, but the memory size of the allocations were given as the arrays'
+length (pmic->common_irq_size for the first call and pmic->dev_irq_size for
+the second devm_kmalloc call). The memory size should have been the total
+memory needed.
 
-On 2025-06-20 02:31:54 +0800, Hao Ge wrote:
-> From: Hao Ge <gehao@kylinos.cn>
-> 
-> When loading a module, as long as the module has memory
-> allocation operations, kmemleak produces a false positive
-> report that resembles the following:
-> 
-> unreferenced object (percpu) 0x7dfd232a1650 (size 16):
->   comm "modprobe", pid 1301, jiffies 4294940249
->   hex dump (first 16 bytes on cpu 2):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace (crc 0):
->     kmemleak_alloc_percpu+0xb4/0xd0
->     pcpu_alloc_noprof+0x700/0x1098
->     load_module+0xd4/0x348
->     codetag_module_init+0x20c/0x450
->     codetag_load_module+0x70/0xb8
->     load_module+0xef8/0x1608
->     init_module_from_file+0xec/0x158
->     idempotent_init_module+0x354/0x608
->     __arm64_sys_finit_module+0xbc/0x150
->     invoke_syscall+0xd4/0x258
->     el0_svc_common.constprop.0+0xb4/0x240
->     do_el0_svc+0x48/0x68
->     el0_svc+0x40/0xf8
->     el0t_64_sync_handler+0x10c/0x138
->     el0t_64_sync+0x1ac/0x1b0
-> 
-> This is because the module can only indirectly reference alloc_tag_counters
-> through the alloc_tag section, which misleads kmemleak.
-> 
-> However, we don't have a kmemleak ignore interface for percpu
-> allocations yet. So let's create one and invoke it for tag->counters.
-> 
-> Fixes: 12ca42c23775 ("alloc_tag: allocate percpu counters for module tags dynamically")
-> Signed-off-by: Hao Ge <gehao@kylinos.cn>
-> ---
->  include/linux/kmemleak.h |  1 +
->  lib/alloc_tag.c          |  8 +++++++-
->  mm/kmemleak.c            | 14 ++++++++++++++
->  3 files changed, 22 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/kmemleak.h b/include/linux/kmemleak.h
-> index 93a73c076d16..2ea8e66bf689 100644
-> --- a/include/linux/kmemleak.h
-> +++ b/include/linux/kmemleak.h
-> @@ -28,6 +28,7 @@ extern void kmemleak_update_trace(const void *ptr) __ref;
->  extern void kmemleak_not_leak(const void *ptr) __ref;
->  extern void kmemleak_transient_leak(const void *ptr) __ref;
->  extern void kmemleak_ignore(const void *ptr) __ref;
+This led to a heap overflow when the struct array was used. The issue was
+first discovered with the PocketBeagle2 and BeaglePlay. The common and
+device-specific structs are now allocated one at a time within the loop.
 
-> +extern void kmemleak_igonore_percpu(const void __percpu *ptr) __ref;
+Fixes: 38c9f98db20a ("regulator: tps65219: Add support for TPS65215 Regulator IRQs")
+Reported-by: Dhruva Gole <d-gole@ti.com>
+Closes: https://lore.kernel.org/all/20250619153526.297398-1-d-gole@ti.com/
+Tested-by: Robert Nelson <robertcnelson@gmail.com>
+Acked-by: Andrew Davis <afd@ti.com>
+Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+---
+v2: Update commit message explanation & tags.
+---
+ drivers/regulator/tps65219-regulator.c | 28 +++++++++++++-------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-Note that there's no stub defined in the #else block, which means this
-will fail to build if CONFIG_DEBUG_KMEMLEAK is disabled.
+diff --git a/drivers/regulator/tps65219-regulator.c b/drivers/regulator/tps65219-regulator.c
+index b16b300d7f45..5e67fdc88f49 100644
+--- a/drivers/regulator/tps65219-regulator.c
++++ b/drivers/regulator/tps65219-regulator.c
+@@ -436,46 +436,46 @@ static int tps65219_regulator_probe(struct platform_device *pdev)
+ 					     pmic->rdesc[i].name);
+ 	}
+ 
+-	irq_data = devm_kmalloc(tps->dev, pmic->common_irq_size, GFP_KERNEL);
+-	if (!irq_data)
+-		return -ENOMEM;
+-
+ 	for (i = 0; i < pmic->common_irq_size; ++i) {
+ 		irq_type = &pmic->common_irq_types[i];
+ 		irq = platform_get_irq_byname(pdev, irq_type->irq_name);
+ 		if (irq < 0)
+ 			return -EINVAL;
+ 
+-		irq_data[i].dev = tps->dev;
+-		irq_data[i].type = irq_type;
++		irq_data = devm_kmalloc(tps->dev, sizeof(*irq_data), GFP_KERNEL);
++		if (!irq_data)
++			return -ENOMEM;
++
++		irq_data->dev = tps->dev;
++		irq_data->type = irq_type;
+ 		error = devm_request_threaded_irq(tps->dev, irq, NULL,
+ 						  tps65219_regulator_irq_handler,
+ 						  IRQF_ONESHOT,
+ 						  irq_type->irq_name,
+-						  &irq_data[i]);
++						  irq_data);
+ 		if (error)
+ 			return dev_err_probe(tps->dev, PTR_ERR(rdev),
+ 					     "Failed to request %s IRQ %d: %d\n",
+ 					     irq_type->irq_name, irq, error);
+ 	}
+ 
+-	irq_data = devm_kmalloc(tps->dev, pmic->dev_irq_size, GFP_KERNEL);
+-	if (!irq_data)
+-		return -ENOMEM;
+-
+ 	for (i = 0; i < pmic->dev_irq_size; ++i) {
+ 		irq_type = &pmic->irq_types[i];
+ 		irq = platform_get_irq_byname(pdev, irq_type->irq_name);
+ 		if (irq < 0)
+ 			return -EINVAL;
+ 
+-		irq_data[i].dev = tps->dev;
+-		irq_data[i].type = irq_type;
++		irq_data = devm_kmalloc(tps->dev, sizeof(*irq_data), GFP_KERNEL);
++		if (!irq_data)
++			return -ENOMEM;
++
++		irq_data->dev = tps->dev;
++		irq_data->type = irq_type;
+ 		error = devm_request_threaded_irq(tps->dev, irq, NULL,
+ 						  tps65219_regulator_irq_handler,
+ 						  IRQF_ONESHOT,
+ 						  irq_type->irq_name,
+-						  &irq_data[i]);
++						  irq_data);
+ 		if (error)
+ 			return dev_err_probe(tps->dev, PTR_ERR(rdev),
+ 					     "Failed to request %s IRQ %d: %d\n",
 
->  extern void kmemleak_scan_area(const void *ptr, size_t size, gfp_t gfp) __ref;
->  extern void kmemleak_no_scan(const void *ptr) __ref;
->  extern void kmemleak_alloc_phys(phys_addr_t phys, size_t size,
-> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-> index d48b80f3f007..de6dcf4ea0f5 100644
-> --- a/lib/alloc_tag.c
-> +++ b/lib/alloc_tag.c
-> @@ -10,6 +10,7 @@
->  #include <linux/seq_buf.h>
->  #include <linux/seq_file.h>
->  #include <linux/vmalloc.h>
-> +#include <linux/kmemleak.h>
->  
->  #define ALLOCINFO_FILE_NAME		"allocinfo"
->  #define MODULE_ALLOC_TAG_VMAP_SIZE	(100000UL * sizeof(struct alloc_tag))
-> @@ -632,8 +633,13 @@ static int load_module(struct module *mod, struct codetag *start, struct codetag
->  			       mod->name);
->  			return -ENOMEM;
->  		}
-> -	}
->  
-> +		/*
-> +		 * Avoid a kmemleak false positive. The pointer to the counters is stored
-> +		 * in the alloc_tag section of the module and cannot be directly accessed.
-> +		 */
-> +		kmemleak_igonore_percpu(tag->counters);
-> +	}
->  	return 0;
->  }
->  
-> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-> index da9cee34ee1b..8797fe88861e 100644
-> --- a/mm/kmemleak.c
-> +++ b/mm/kmemleak.c
-> @@ -1246,6 +1246,20 @@ void __ref kmemleak_transient_leak(const void *ptr)
->  }
->  EXPORT_SYMBOL(kmemleak_transient_leak);
->  
-> +/**
+base-commit: 75f5f23f8787c5e184fcb2fbcd02d8e9317dc5e7
+-- 
+2.43.0
 
-> + * kmemleak_ignore_phys - similar to kmemleak_ignore but taking a percpu
-
-This should match with the function below.
-
-> + *			  address argument
-> + * @ptr:	percpu address of the object
-> + */
-> +void __ref kmemleak_igonore_percpu(const void __percpu *ptr)
-> +{
-> +	pr_debug("%s(0x%px)\n", __func__, ptr);
-> +
-> +	if (kmemleak_enabled && ptr && !IS_ERR_PCPU(ptr))
-> +		make_black_object((unsigned long)ptr, OBJECT_PERCPU);
-> +}
-> +EXPORT_SYMBOL_GPL(kmemleak_igonore_percpu);
-> +
->  /**
->   * kmemleak_ignore - ignore an allocated object
->   * @ptr:	pointer to beginning of the object
-> -- 
-> 2.25.1
-> 
-
-s/igonore/ignore/
-
-The commit summary should probably also be shortened, it is recommended
-to be at most 70-75 characters[1]. Perhaps something like
-
-mm/alloc_tag: Fix kmemleak false positive in percpu tag->counters
-
-could be appropriate?
-
-Regards,
-Klara Modin
-
-Link: https://www.kernel.org/doc/html/latest/process/submitting-patches.html [1]
 
