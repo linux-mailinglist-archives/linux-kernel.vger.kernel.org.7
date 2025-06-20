@@ -1,133 +1,94 @@
-Return-Path: <linux-kernel+bounces-696025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD370AE20E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:28:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B85AE2107
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3DDC7A416C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:26:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FEAE6A29ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A482ECD2A;
-	Fri, 20 Jun 2025 17:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ItdQE9Nk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB5A2EA16A;
+	Fri, 20 Jun 2025 17:33:53 +0000 (UTC)
+Received: from mail.monkeyblade.net (shards.monkeyblade.net [23.128.96.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27272ECD1A
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 17:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB46C218AAB;
+	Fri, 20 Jun 2025 17:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.128.96.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750440402; cv=none; b=UJ7UxpIpMK3cIXJJavHVzQKzXpEWjaf6Usuv+8xfiPZKBJ99EiESCM1WJKzAlP6R7pkYNA8ZfhDQVQre5Z5oAZsi8pcZ9XZkBxmIQ4Wip3b8/u6SRnC5+KT9MD0RWRziI9phXS7U04RUs5qYgrneoHPM/rqLEkYIeABj50x8WDo=
+	t=1750440833; cv=none; b=aygQP+F3ixx8xOTjQ7cXwVnXXnr2AHXEQ16dTJmobZnod6B+bUwqf9GR/xELX4ynk+8XSUCSkCCA2mPQPmY4yyuXmLeyhBjL+rWuxAXKg+1wKUl/iv2uPIpMQkBSfLYhEP/qUSBfBfg7AXEBcaBXhG8ntyGBDnIVJ4pZ01TRouQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750440402; c=relaxed/simple;
-	bh=OMbvB3+Bgh7ZH/dGCkrpzdqRe/AVt/TYCz0eQJ4uPEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kJR7OPPICt8kBLBImWTDEG5x2iUxR85YKZ1PD+umy0NF672p9Z8KK9a6EfD5hWkN20TLc6HDcb/wPchCQOeNdAxfNVi6GR9DSJ1xrZGfxN0RAaj4ASf6h7W0AQBsna/fSFkyz9Xz8ysSuob7Rx/BH7SD4vLuqj9jYDT3VKHe8cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ItdQE9Nk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750440399;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oW1wB1FdrUHROAIYbkZS8OO3BReKXHOvb71P4QLKK10=;
-	b=ItdQE9NkjslrfxgttpYIRzaSJhl8Ol9obybyydhEfBXlPRptUSkd+GXNn34PLjy0ZbHJ6k
-	jts0LQFsRKq+OrGO0YEGF6jsEZ6m+ZdMyMjSl/pJitznzkaZk9B1hCfQSLxAB0EMhMP2Tr
-	WOAIrAzxAEz5VzblnWY5w/um8qQobU4=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-593-NHP4OT9vO-CI5YZBmpv-qg-1; Fri, 20 Jun 2025 13:26:38 -0400
-X-MC-Unique: NHP4OT9vO-CI5YZBmpv-qg-1
-X-Mimecast-MFC-AGG-ID: NHP4OT9vO-CI5YZBmpv-qg_1750440396
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7d400a4d4f2so85421885a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 10:26:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750440395; x=1751045195;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oW1wB1FdrUHROAIYbkZS8OO3BReKXHOvb71P4QLKK10=;
-        b=MFeCcue9rla4LvNxWKJ0OnWqjsq75OEbKweNMfuTvQ7L/rY+W2UcgB9P5d7y+WyZ+y
-         tU3f3xUCK3/WM8OoRTeAmpSbs2dpujWssPNg7NPeOY2+/iETT5EFUpr5IGPdosw0d652
-         DcLpUy4uGtkRGZEvKTtkzliUadjJGqHByGe2ffrlnR73sjP+LwSqTGp740Exy7mvMYBl
-         UsYxo9vVh4luYLXfnHcO3kyuYfuzGLNL06oWXzhYBIui6IWiTx+kwESELmi7YH+JZsBe
-         x2a9dRZoBuBMPoEyHE0oV2Ulr3l8WQRaAwmJEy8Tuvg/0ywWa8kg+z9Q/e+AIUy6KfTX
-         S8Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCVZYCWQWwmeNwZTnR1l0JhhCRUCHpBiz4ZdCTFnDeYBsOR2TtQ//emiv3iWRHDRt4qmUKMJw5DLB1L2up8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy+51jk8+qYjWDv7EKQzdhrvu1DymS77dPYJa+xRp6dVttLs0A
-	Q46drL2EHW8nZ8P5UBR7gQwWKCiYo9I0POof0JaJt3oRVyM34Y8ywBLPBemBe6Y472mSrV+CH2C
-	hqA4b5kcRdTb6FFBtDsI0iyB3Ez4w7U+ISFqETdfMU0p5XjrtwJbfOY9OsCs0RCh2YA==
-X-Gm-Gg: ASbGncto2kEWEGuTxiaKbh5L3My2/DsZZ6Q301p3NoS2N3EtLgh+fzo1x1DamvZnEjD
-	vUMIhRlMm52OMlF+JzSTkru1zyxYuHiYs8oM8FcsQI0+V3KKT2LsOJaEpqbS3e7I9vduTsk4L54
-	12br0zj1fkaLQTHIYtkjDHYOmT/VhI+PiAwg7UjA+itWoRo+mty1Y6xx9JguepcJONtBUP5VPsf
-	JFIEf3dqIgSZfd8sZINR+cr1cFfhd7S/ibAvodxAXn5ykkOvDbHy450RZ3XGx3SlOYPGqvia7Vp
-	pmwlG0uRN1L091+TXYQ=
-X-Received: by 2002:a05:620a:4508:b0:7ca:f2cf:eb8b with SMTP id af79cd13be357-7d3f9923e6bmr440263785a.34.1750440395703;
-        Fri, 20 Jun 2025 10:26:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFwn0FOYZdQIgzW0lIgog7qT3m0aCTEHJnIBNGa4hMVm/8ZQQ5oeBJdA+DeqKv13eQnIHQcNA==
-X-Received: by 2002:a05:620a:4508:b0:7ca:f2cf:eb8b with SMTP id af79cd13be357-7d3f9923e6bmr440257685a.34.1750440394942;
-        Fri, 20 Jun 2025 10:26:34 -0700 (PDT)
-Received: from thinkpad2024 ([71.217.79.154])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3f999c1b6sm114174185a.6.2025.06.20.10.26.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 10:26:34 -0700 (PDT)
-Date: Fri, 20 Jun 2025 13:26:32 -0400
-From: "John B. Wyatt IV" <jwyatt@redhat.com>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: "Shinji Nomoto (Fujitsu)" <fj5851bi@fujitsu.com>,
-	Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
-	John Kacur <jkacur@redhat.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] cpupower: Allow control of boost feature on non-x86
- based systems with boost support.
-Message-ID: <aFWZyPs4eBwGcKPu@thinkpad2024>
-References: <20250522061122.2149188-1-fj5851bi@fujitsu.com>
- <aDhJdTWzDihchywc@thinkpad2024>
- <OS9PR01MB14003E72236096AD987D2D4CED96DA@OS9PR01MB14003.jpnprd01.prod.outlook.com>
- <0053926a-7b0a-4e49-9acf-fcb1d73134cc@linuxfoundation.org>
+	s=arc-20240116; t=1750440833; c=relaxed/simple;
+	bh=jUA5FzrvydbyyzJDdBtIRqJNaPZDEbr9XTxybWbYM80=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Q+Wpmv4pVaU+UvMXpR6eWPW8Tw5tEApvnVEqsVQ0peGBqPF2wUWlMBRDEwzmeIDQzIX2GP3aIBqkdKQCQxzVzOKduQm2FxKgDeeEHWo/lU0Ak09R8OqVaQj61P2hkvKY2iGRXjiLN1cDHZjr2zdYaekTBczsenXMLjaEjnGjapQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net; spf=none smtp.mailfrom=davemloft.net; arc=none smtp.client-ip=23.128.96.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davemloft.net
+Received: from localhost (brnt-05-b2-v4wan-161083-cust293.vm7.cable.virginm.net [86.11.207.38])
+	by mail.monkeyblade.net (Postfix) with ESMTPSA id C42CA841F1AC;
+	Fri, 20 Jun 2025 10:26:55 -0700 (PDT)
+Date: Fri, 20 Jun 2025 18:26:49 +0100 (BST)
+Message-Id: <20250620.182649.211302145878462506.davem@davemloft.net>
+To: nicolas.dichtel@6wind.com
+Cc: g.goller@proxmox.com, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] ipv6: enable per-interface forwarding
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <d429f28f-f515-405d-b490-9b60e5f95070@6wind.com>
+References: <20250620152813.1617783-1-g.goller@proxmox.com>
+	<d429f28f-f515-405d-b490-9b60e5f95070@6wind.com>
+X-Mailer: Mew version 6.8 on Emacs 26.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0053926a-7b0a-4e49-9acf-fcb1d73134cc@linuxfoundation.org>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail.monkeyblade.net [0.0.0.0]); Fri, 20 Jun 2025 10:26:57 -0700 (PDT)
 
-On Wed, Jun 18, 2025 at 03:54:56PM -0600, Shuah Khan wrote:
-> On 6/3/25 01:16, Shinji Nomoto (Fujitsu) wrote:
-> > John Wyatt wrote:
-> > > Did you test this on non-x86 systems? If so, would you please provide details on those architectures and systems?
-> > 
-> > Hello,
-> > 
-> > This patch has been tested on Arm-based systems.
-> > 
-> > * It was tested on our internal simulator based on QEMU which supports boost.
-> > * It was tested on the Nvidia grace system (which does not support boost).
-> > * The cppc_cpufreq driver is working on both of the above systems.
-> > 
-> > We have also confirmed that it continues to work as expected on AMD systems.
-> > 
-> 
-> John,
-> 
-> Let me know if you are good with this testing details.
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Date: Fri, 20 Jun 2025 18:09:52 +0200
 
-I have not tested it, but I the testing details are fine.
+> Le 20/06/2025 =E0 17:28, Gabriel Goller a =E9crit=A0:
+>> It is currently impossible to enable ipv6 forwarding on a per-interf=
+ace
+>> basis like in ipv4. To enable forwarding on an ipv6 interface we nee=
+d to
+>> enable it on all interfaces and disable it on the other interfaces u=
+sing
+>> a netfilter rule. This is especially cumbersome if you have lots of
+>> interface and only want to enable forwarding on a few. According to =
+the
+>> sysctl docs [0] the `net.ipv6.conf.all.forwarding` enables forwardin=
+g
+>> for all interfaces, while the interface-specific
+>> `net.ipv6.conf.<interface>.forwarding` configures the interface
+>> Host/Router configuration.
+>> =
 
--- 
-Sincerely,
-John Wyatt
-Software Engineer, Core Kernel
-Red Hat
+>> This patch modifies the forwarding logic to check both the global
+>> forwarding flag AND the per-interface forwarding flag. Packets are
+> You cannot change this, it will break existing setups.
+
+Therefore.
+> The only way I see for this is probably to introduce a new sysctl, sa=
+y
+> net.ipv6.conf.<iface>.fwd_per_iface (there is probably a better name)=
+.=
+
+> When the user set net.ipv6.conf.all.forwarding to 0, the kernel shoul=
+d reset all
+> existing net.ipv6.conf.<iface>.fwd_per_iface entries to keep the back=
+ward compat.
+I agree.
+
+Thanks.
 
 
