@@ -1,216 +1,106 @@
-Return-Path: <linux-kernel+bounces-695418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE57AE1993
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:07:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E352FAE1889
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A7E37B04E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:06:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB99189C83A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5D0289353;
-	Fri, 20 Jun 2025 11:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F7628A40D;
+	Fri, 20 Jun 2025 10:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZNaFjfw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="faqqaLln"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6985A1D54F7
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 11:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BF5280A5A;
+	Fri, 20 Jun 2025 10:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750417665; cv=none; b=Qoqrj9n1yhyrvNEODsnVvg4b1Kd0jqWMqA4i6i48nNfPeErTKEitwMgdhUPX5yM/BqXhu+v2pG78kwg2NMV9vs0PESE5Yp9vIVMYx5gJjgqp6IqZax8Lh5W7q+JflQCdXxdx7r30/RwoegQnp5p/xQLsfxMa1wdWPJnjsgtTKwA=
+	t=1750413803; cv=none; b=JpM0aSKOq4Jhx/J47xOeui5IKAASmwYR3Dq5cBpv507zE38YiiyhMtsmZRd6tSPmmRwrrs4IVa2MV56ERnj/sw01iCjEPR4SVwwEFTeburIxF9g5/1QRY6QASH8L/ww4cIeL8PrKqdx79zyl3Fwois1SQanYcB0ywMwz2j2hmEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750417665; c=relaxed/simple;
-	bh=CigLereCZe6ocaLo3SuKk8vwfiZ20m04vzD/+v2lvgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QcK4W63V66gP8yB3jAV37lTdduPTKepHdV3qQXoInDFJKi+usuI+Ck1ezmp5Q+UD46oi8S7Kw5DeS1aQHP/LLRtnlnrUIsCvEBfVhLzFqgjvMef2ih/ltPSBZJcu7ZGgfub1VVQvdiWMLe4F6aXzTnYQi0veUQi4N2xCMvWDE40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VZNaFjfw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E41C4CEE3;
-	Fri, 20 Jun 2025 11:07:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750417664;
-	bh=CigLereCZe6ocaLo3SuKk8vwfiZ20m04vzD/+v2lvgk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VZNaFjfwQxegOrI76Gf9If9HUoK7T+Wenvq/WDhWA2mTXLdhVVQqRdkgj237Nh14N
-	 KI7OJIQiyFGV5mGB2KAh5u1gZstoJ24Zhmat6zhRR0dX5w+3boEn0vrD95xqzXDYor
-	 fq36Aa7xp7zdAIRu7nV7ki52fofqqq5U8qjH66Nw0lV+A9I13C6g+T+s/bPr4Yu1BK
-	 5YnwiNGAv+f8w1D2Ul1eIn7TjN1n4C2Zc0Uturc2FOcL4gn+GeWGzFVpBSqXCFHBqF
-	 0fS2hq6NreYau7AXaHwIDTp3Vn5KeiAGpt/H5IJ+hrSjho+SW8I5WEDDe0PAkHq2r2
-	 LKPyS+0GkGSug==
-Date: Fri, 20 Jun 2025 11:42:28 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: register_syctl_init error in linux-next-20250612
-Message-ID: <szadjbcldmcirdtgiv6wowqumlk4cbthb37f3e42lzcbt4tnla@ilp4m6quqk4b>
-References: <20250612175515.3251-1-spasswolf@web.de>
- <vvorpevngfle6budlgqhmj3f25lb77czzyvd5aa6jil7zkaqgp@weanygri324r>
- <11898dd756020687c2016a37af3c948b350bdbbc.camel@web.de>
+	s=arc-20240116; t=1750413803; c=relaxed/simple;
+	bh=uKKp2EBsRiuwSy+I9KhR58Sjyf6N6HlLxdT1yn08xWw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jrnBXC50I5ff+9U06az79ilctUkDdhp/w9o6MG48cQxxGJI0kxOj8+zzSZMOdnRA4GP6XC2XJhaz6M4YMN4XLB8SqDvRsi4XarpYHYKAtAnsE8fFCs7JdDz2VWMbaD+QEiy0oinEogTl16qC3rkaP+qb0vAIzO1miwkwqH+fXVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=faqqaLln; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E138C43183;
+	Fri, 20 Jun 2025 10:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1750413792;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=l9om1U2XVpUqMgPGNhzFWlJzgB+9ciqKyIqRaV1cuRI=;
+	b=faqqaLlnI+kxIlIV8vXffBT8LU9sx4/1FcQDR9tqxQQedukkoFjAc6VUcyAz+FdU7wCjZT
+	AjOAh79B6dKYHC2bLBRt0+W/eg4jMu9rRfZOySGjx/yLV3SLNyW0ce7LBAoyCoyjCkJDuh
+	TvPKxn3/bias88iN9dhDyp/aCcRCRha4lI32PdR/+fgPIb3HOAnG7YpMTif5QjEU6ZnJ7U
+	p5xJGkL7nXJ6OdHwgvNegqizJc1CaQvoA3GvqDM+0DpOWfOgq09YhoPN4znQ/M/NaTKHB8
+	xbmbz7hmDNWu9cwRjTuopJze93g84JIIY+60vp/u6dcPeRHsinUyyWqfV8le8g==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH net-next 0/2] PSE: Improve documentation clarity
+Date: Fri, 20 Jun 2025 12:02:38 +0200
+Message-Id: <20250620-poe_doc_improve-v1-0-96357bb95d52@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3jubu2pejz6gje7k"
-Content-Disposition: inline
-In-Reply-To: <11898dd756020687c2016a37af3c948b350bdbbc.camel@web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAL4xVWgC/x3MQQqAIBBG4avErBN0oKiuEhGhfzWLVDQiiO6et
+ PwW7z2UkQSZhuqhhEuyBF9g6orsvvgNSlwxseZGt6ZXMWB2wc5yxBQuKMddz8ZZ1hpUqpiwyv0
+ fR/I4lcd90vS+HyYPbTRrAAAA
+X-Change-ID: 20250619-poe_doc_improve-d28921dc200e
+To: Oleksij Rempel <o.rempel@pengutronix.de>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Piotr Kubik <piotr.kubik@adtran.com>, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Kory Maincent <kory.maincent@bootlin.com>
+X-Mailer: b4 0.15-dev-dd21f
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdekudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthekredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedugefgudfftefhtdeghedtieeiueevleeludeiieetjeekteehleehfeetuefggeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduhedprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsr
+ dhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehordhrvghmphgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
+X-GND-Sasl: kory.maincent@bootlin.com
 
+Thanks to new PSE driver being proposed on the mailinglist figured out
+there was some unclear documentation, which lead the developer on the
+wrong path. Clarify these documentation.
 
---3jubu2pejz6gje7k
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The changes focus on clarifying the setup_pi_matrix callback behavior
+and improving device tree binding descriptions, particularly around
+channel-to-PI mapping relationships that are critical for proper PSE
+controller integration.
 
-On Thu, Jun 19, 2025 at 04:09:04PM +0200, Bert Karwatzki wrote:
-> Am Donnerstag, dem 19.06.2025 um 13:50 +0200 schrieb Joel Granados:
-> > Hey Bert
-> >=20
-> > Thx for the report.
-> >=20
-> > I just tested on my https://git.kernel.org/pub/scm/linux/kernel/git/sys=
-ctl/sysctl.git/log/?h=3Dsysctl-next
-> > and can't see the issue. Maybe its something that I'm missing in the
-> > configuration. Do you happen to have your the .config that you used?
-=2E..
-> > > +#endif
-> > >  };
-> > > =20
-> > >  int __init sysctl_init_bases(void)
-> > >=20
-> > >=20
-> > > Bert Karwatzki
->=20
-> I'm running next-20250617 (but I'll also try your sysctl-next branch) wit=
-h PREEMPT_RT=3Dy, my current theory is that
-> the init_rtmutex_sysctl() is corrupting the rbtree (if I remove init_rtmu=
-tex_sysctl() everything works
-> (with the same .config)), and in the process=A0removes the overflow{uid,g=
-id} files.
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+Kory Maincent (2):
+      dt-bindings: pse: tps23881: Clarify channels property description
+      net: pse-pd: tps23881: Clarify setup_pi_matrix callback documentation
 
-I think that the error occurs when the register gets called several
-times for the same path, returns an error resulting in a undefined
-state. I see that rtmutex.c is included from 4 files, I also see that the
-registration happens 4 times.
+ Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml | 10 ++++++----
+ include/linux/pse-pd/pse.h                                    |  8 +++++++-
+ 2 files changed, 13 insertions(+), 5 deletions(-)
+---
+base-commit: 0341e1290e40a14ba8c955b9681c739dc2f14e99
+change-id: 20250619-poe_doc_improve-d28921dc200e
 
-I just did not understand what was being done in my initial patch. The
-fix is to put the sysctl registration in some "main" file (rtmutx_api?)
-and to keep the max_lock_depth variable there as well (like it was
-originally)
+Best regards,
+--  
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
-
-This is my proposal, Does it solve your issue?
-
-
-diff --git i/include/linux/rtmutex.h w/include/linux/rtmutex.h
-index dc9a51cda97c..fa9f1021541e 100644
---- i/include/linux/rtmutex.h
-+++ w/include/linux/rtmutex.h
-@@ -18,6 +18,8 @@
- #include <linux/rbtree_types.h>
- #include <linux/spinlock_types_raw.h>
-=20
-+extern int max_lock_depth;
-+
- struct rt_mutex_base {
- 	raw_spinlock_t		wait_lock;
- 	struct rb_root_cached   waiters;
-diff --git i/kernel/locking/rtmutex.c w/kernel/locking/rtmutex.c
-index 705a0e0fd72a..c80902eacd79 100644
---- i/kernel/locking/rtmutex.c
-+++ w/kernel/locking/rtmutex.c
-@@ -29,29 +29,6 @@
- #include "rtmutex_common.h"
- #include "lock_events.h"
-=20
--/*
-- * Max number of times we'll walk the boosting chain:
-- */
--static int max_lock_depth =3D 1024;
--
--static const struct ctl_table rtmutex_sysctl_table[] =3D {
--	{
--		.procname	=3D "max_lock_depth",
--		.data		=3D &max_lock_depth,
--		.maxlen		=3D sizeof(int),
--		.mode		=3D 0644,
--		.proc_handler	=3D proc_dointvec,
--	},
--};
--
--static int __init init_rtmutex_sysctl(void)
--{
--	register_sysctl_init("kernel", rtmutex_sysctl_table);
--	return 0;
--}
--
--subsys_initcall(init_rtmutex_sysctl);
--
- #ifndef WW_RT
- # define build_ww_mutex()	(false)
- # define ww_container_of(rtm)	NULL
-diff --git i/kernel/locking/rtmutex_api.c w/kernel/locking/rtmutex_api.c
-index 9e00ea0e5cfa..4fa1acceaebb 100644
---- i/kernel/locking/rtmutex_api.c
-+++ w/kernel/locking/rtmutex_api.c
-@@ -8,6 +8,30 @@
- #define RT_MUTEX_BUILD_MUTEX
- #include "rtmutex.c"
-=20
-+/*
-+ * Max number of times we'll walk the boosting chain:
-+ */
-+int max_lock_depth =3D 1024;
-+
-+static const struct ctl_table rtmutex_sysctl_table[] =3D {
-+	{
-+		.procname	=3D "max_lock_depth",
-+		.data		=3D &max_lock_depth,
-+		.maxlen		=3D sizeof(int),
-+		.mode		=3D 0644,
-+		.proc_handler	=3D proc_dointvec,
-+	},
-+};
-+
-+static int __init init_rtmutex_sysctl(void)
-+{
-+	printk("registering rtmutex");
-+	register_sysctl_init("kernel", rtmutex_sysctl_table);
-+	return 0;
-+}
-+
-+subsys_initcall(init_rtmutex_sysctl);
-+
- /*
-  * Debug aware fast / slowpath lock,trylock,unlock
-  *
-
-
---=20
-
-Joel Granados
-
---3jubu2pejz6gje7k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmhVLQQACgkQupfNUreW
-QU9wfQv9EEs98fDOojiKBdSXxhA9PkvERiDG3zo9aQsiZUaFZkmQm/zfsBgWK+Ej
-gFWF+t68/HiNYLLRf/iAvEEtJgdng2hO7yD2W5OyZKFz1RyplABWm84VUR+F7WhW
-LMiayPU9+IWQk9LnKdFG+xa0sUcht2CO1XXBbt1ijq5mq/xG4ZnlL4BrVrfbgGuJ
-TpP7FL9zanS2nDWFTb4ZkSEgFQOHzEERgRA0lqfg52hgPkmdpBNjw7H4JSaoq2ps
-T4hdcVGtK4QKlAswgBXiTko7jPGiBlwhRB4wRRMs2RoGl8jIKqioxZWTp2n1A2kj
-Aevj/LcRzrLhzohgyZLnNEaFu767jA2Zx3kXDUgT2tjD+iG4FMOOgtGXSYrrGUZC
-hF/lvY7ZW9ZPJxDm1cvGvJ9OfJHCmFDnFRzi/ev9Ux/NMJ8p8/AD0o+z9aaOittu
-/J4x/zHrzm8soVKmdKoTHOoxgMHXls2qmYyf572TpR83IxfLHlZUv3psyG6hLd9G
-pDVPCMD0
-=7Pzx
------END PGP SIGNATURE-----
-
---3jubu2pejz6gje7k--
 
