@@ -1,178 +1,205 @@
-Return-Path: <linux-kernel+bounces-696158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C51F4AE22E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 21:36:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2614BAE22ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 21:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CBCE189DC55
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:36:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3296A7ADCB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5B62236F2;
-	Fri, 20 Jun 2025 19:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451C0225390;
+	Fri, 20 Jun 2025 19:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CP5qdagT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fBfrTGAW"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2080.outbound.protection.outlook.com [40.107.244.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8228C30E82F
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 19:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750448169; cv=none; b=RFwMpTKFxolPJnYZSsnHochqzT77s731HSuMeKMEdI5z0wzsNScVWqqt9wse7VmG/k3MIh0PsjYU2ncSU9q/1PlYLGldS/j/FqpD7CD+ahsWVatVN+mh0NQoKFbM1a1752vyAFA0QsgisFlAgp4jrjuv6WAP83xwZrfc/KWlMb4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750448169; c=relaxed/simple;
-	bh=8U0ApAmF5qQnF/Hc87FkoU72bmbRHVKky63vgfV7N5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cNpLGT17h/pg+6HHDMz0SFIYvW/JHCFc3JLu9Hu1zpY33Ay+VWv9Yyi4uuu+rcBKKgKUTLhZPzE+X+gf1YWeYZ4gHptou5mShIlejIBKcbKpvkT/Et8kheC3nfWtJw4u+EvGoZaWGBxe+AcaNNOhv3cJg2Ax4rftmihI3+LWquY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CP5qdagT; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750448166; x=1781984166;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8U0ApAmF5qQnF/Hc87FkoU72bmbRHVKky63vgfV7N5s=;
-  b=CP5qdagTc0T7bgp0IJObXGB+Vj/XkpcWXf7FHNdxUEodLgzNhYeRPzNT
-   Ck09YIeMmRcMAEN29XagNpbk3u7aHNVExsfDxTh/L6zER+MWEkbpUrQPD
-   FjXoDJ/f6OZdVGg7s0//pP+FTOhFMAH/icuriMVT3gp9S81oP2V0q+FUK
-   td9x9YhoDDIvUZLsyeC5322phJ6mQNwT/Qml/w08xeaF2G1h9EmjmG8oP
-   UOHWOUSaP+XeqooFehRbN/b5DTqM+pw3v8xWnAAuiqmFsVlh3mTNfZc2h
-   QnUp6YvsSvpD/4MNlUlI9aCFoUw9m03eiWtk86drBqWA32SGBcRsGJ4a1
-   g==;
-X-CSE-ConnectionGUID: tK8uFejxSZmNSh5inRUIrg==
-X-CSE-MsgGUID: 9upjRQfqSTiUmRvHLXvX4A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="63404313"
-X-IronPort-AV: E=Sophos;i="6.16,252,1744095600"; 
-   d="scan'208";a="63404313"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 12:36:05 -0700
-X-CSE-ConnectionGUID: NUv5Vzu4SV+K2m1kfwhYqQ==
-X-CSE-MsgGUID: +UYhgqZcTqKvo2GUGOcCZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,252,1744095600"; 
-   d="scan'208";a="150423021"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 20 Jun 2025 12:36:03 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uShWq-000M6A-0I;
-	Fri, 20 Jun 2025 19:36:00 +0000
-Date: Sat, 21 Jun 2025 03:35:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Binbin Zhou <zhoubinbin@loongson.cn>,
-	Binbin Zhou <zhoubb.aaron@gmail.com>,
-	Huacai Chen <chenhuacai@loongson.cn>, Lee Jones <lee@kernel.org>,
-	Corey Minyard <minyard@acm.org>
-Cc: oe-kbuild-all@lists.linux.dev, Xuerui Wang <kernel@xen0n.name>,
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net, jeffbai@aosc.io,
-	kexybiscuit@aosc.io, wangyao@lemote.com,
-	Chong Qiao <qiaochong@loongson.cn>
-Subject: Re: [PATCH v5 2/3] mfd: ls2kbmc: Add Loongson-2K BMC reset function
- support
-Message-ID: <202506210343.XCHkzorp-lkp@intel.com>
-References: <174677c13e41140e19a62dd01b9502aaa7fae669.1750301674.git.zhoubinbin@loongson.cn>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B76B8632B;
+	Fri, 20 Jun 2025 19:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750448224; cv=fail; b=o/UBAysr8N7ppJJ3GwyN5x38LOpfc1Elo0S5V9CQrLsCFpLNHLEJ+h1lAM9XCqleDkwQbExe3LAgRdGIKVEKPslHUUzfqxBw7SgNJHgJNv605wsaT5v4vnnyhUbGrtKBkgwtmdA7ZS/7n2n+N+whHYdvvSbCqYFwHp2Axp10wCg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750448224; c=relaxed/simple;
+	bh=1IZam3QYJJXz7WzBGDixlcZWVLxTmoL38Q4neDsDdGA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Vizm874I5fCILnf9Gd83pKiGiQOMf8djbxI5SOgoS+5HDLJ1GthpBa0JbI9vxyN1sfJC1XsQJuy9uWeenUykwcQ5BGL7ANIxOf4SqmM7eSzljEVJsHgEeOlGeGMc9kRDLn0dvaEV7uBKjYEn+0kthpMITPYcSb9H1DqYrQslv6w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fBfrTGAW; arc=fail smtp.client-ip=40.107.244.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N+pDKGKnclb1bPr8GK/DsBsr+anorwmHrYLL2Ko50MYcym9myB4cUeMfRAiVfI4phpO5PqmTOe6kPlp2MfX7bV/6BigF2sPzITlA1XOUDCkHlQjMp0zpW1/MCLFac9t0FBxBo5dbbBN646U8bK8a+MafkOD7TBnqE8ykHLQq91uN/zDdXdbQQeLNktkUMM8QItU17cUu2ronRMsk/CFYZTilBQhp7UlY1zCj2I+4ts05nFBrG+y0fwxSyycfOCnVP4fpzu59bOwKhdKeqYq64VGwHhifUGdeKSrVYmf5T+SwCSjn+a68Pncf4svJEMrx4Ku7LUBmrChtmGYTRgochA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VI7TBazVA7tItFx6bQWapzKucGzweMn/P54LiQAQe4Y=;
+ b=Rz9hji3ylWeG9BZ6mA7WbSsctTX6P8PlRnqZG4l2OfI2E2CyjHEiyY8IT8nP8KMW3firqmQlDjkUY9krN7x2XvDzyW+GAEGb8bZxsf75bHso4gv21jT04FiX1RpH9zhj3VeV6F6cMutWfG/6qUG3V8z8D9La1/v/MRfTtNSIL+HHnX9Gt+2H5qYxTtTflNE97nSxBEIuCFO/ZrC3EKxOhmBFk0FqSBAlq6t4CnYAsPnTGkntI6dN2bBQV3eEVcYrUoJZFatNRNoj9tk5fGUY6LX03nP3BbBDDXPcatpF/GRa0qdaE2OdiHwBjwFSY24hMBav2imn8j65djeTgEhmxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VI7TBazVA7tItFx6bQWapzKucGzweMn/P54LiQAQe4Y=;
+ b=fBfrTGAWiOYccuuQ47PGeMAL4mrNdAFxm3zZMhpsUdMxBGcWuwwNveyio7AQrDeP6aupg50cg8ztZNR2+WcIvDcgqQCwJeAPmqdumX0Tgm8PoBfYLvitb/aJpW8gA8CJqOyEDnjMgWGs/YkO05x8b3XpV6k5/pi7Pvu3Pm7yKEVQRxy2uOBqJQ8vofTRNL5oiJZSpIgI8yLT+RaJShq1RnOF2JIur0mvecuoZ8P4uOZykkoxOn/QOpxMdCtTwjlk+myDCxoC4Nu08w5I3anb6lOZV5vQccKu/5n5/osWXXSuQ2ShVkWvDtOKd6l9a3KZC012qrIycfFnGTDlUr/b1w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ MN0PR12MB6175.namprd12.prod.outlook.com (2603:10b6:208:3c4::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.22; Fri, 20 Jun
+ 2025 19:36:56 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8835.037; Fri, 20 Jun 2025
+ 19:36:56 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Minchan Kim <minchan@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+ Peter Xu <peterx@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>,
+ Naoya Horiguchi <nao.horiguchi@gmail.com>,
+ Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
+ Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>
+Subject: Re: [PATCH RFC 10/29] mm/migrate: remove folio_test_movable() and
+ folio_movable_ops()
+Date: Fri, 20 Jun 2025 15:36:52 -0400
+X-Mailer: MailMate (2.0r6263)
+Message-ID: <E8840368-938E-4AE1-9D1B-A2C71FF663BA@nvidia.com>
+In-Reply-To: <20250618174014.1168640-11-david@redhat.com>
+References: <20250618174014.1168640-1-david@redhat.com>
+ <20250618174014.1168640-11-david@redhat.com>
+Content-Type: text/plain
+X-ClientProxiedBy: BN9PR03CA0787.namprd03.prod.outlook.com
+ (2603:10b6:408:13f::12) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174677c13e41140e19a62dd01b9502aaa7fae669.1750301674.git.zhoubinbin@loongson.cn>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|MN0PR12MB6175:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6012c98a-b440-474d-1f3e-08ddb031d127
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Mydri1aERD4XrA/eia2JWXXchBp/7PnpQeQveLln/gkaO2aabMzouuVWJ/K+?=
+ =?us-ascii?Q?2W+Rgj+Hq8zJypc8GelwYLYSq06rrymouqKpNYbZjfqkujEQ3SPLOQUtP/5u?=
+ =?us-ascii?Q?JHxJKBrGAFiUvZOEgwMi+6iSf+BQKI2+qQ7T8elyQhDmhEK7vMHmVmxALzT3?=
+ =?us-ascii?Q?YE6NbZLRzLeMrmr2swp1yQiDQRxmmOY/gtSI6xUMgbi+6v6aDCZTRyP6FgMD?=
+ =?us-ascii?Q?5OjDLMRfsLAnYLD2BDyHlsdBm+Rr2oXZPCXndgjO0TdUsH2AkpvG75L3woiN?=
+ =?us-ascii?Q?H2LpbwHZzVl/CeAyXANkHgWunRdhMXrrBtrq2yyH2GaHmW3yuCDetZbNZaUR?=
+ =?us-ascii?Q?8qtoi3mb3dr9UrUNc9Xn2Xnk28gG1y5SjdqvjQdCufhY1pG6uywJ9aYJTJdA?=
+ =?us-ascii?Q?aaYwoweHUzvQTDeFJ86OoId9O+3Yon04H9T0/mBwHqcue/ndb7N0wF/6EpSA?=
+ =?us-ascii?Q?m/lVGGHh6mL4bAJDNWN43ZOhHgXK6Dw+rA9+5Ea372l4hjlpnweOj5crGL4R?=
+ =?us-ascii?Q?okeJWr14D6UpEK+ZInlJC57jMIYteNLc+M84HQO+d9YmflmV1y1Km+DySC67?=
+ =?us-ascii?Q?XiMAxvXt54CLJM+NB8VGq6Zf0bJt4eoMW6Kk7Rbi8D8CvflRT79Bnr1Uo88p?=
+ =?us-ascii?Q?MbiI2rd/GmJmvKi8+AD+LeGWv66NNCYHsYiYA92D4l/hLjBWyEZujs23W+75?=
+ =?us-ascii?Q?yNU8IeO8vhmWHeedH3etYFNdNgihxa75/LosNefEeinRztxcoaHz1cmVjQN/?=
+ =?us-ascii?Q?GI6eE/UT2XeyjHP/+EjPXfFLmUzKw7am0/AjWvG5moLn4ZbKQYXktpvPgTBv?=
+ =?us-ascii?Q?27GJDGxQgilaWnYQnsNZrt8j9kAgxSGFUjZpuYQTox5r2530VOxH0jBLu+oa?=
+ =?us-ascii?Q?aRlEJ9PZG26pW5hp9+0U++ce2MDgdV6xIAznzM7ivUq/JQBxjQPD0ab7mAVT?=
+ =?us-ascii?Q?Ht2Pbx9B3p49zPd1Z2H7ThWPjv+7aV7gF6OR/2ngNpRbY3s3QA8VfWpN9pdr?=
+ =?us-ascii?Q?UDJ3Q+J3o6VXnrCFji3YxM8XxoQ0Gi2KwEUBE3fGkPMjhi7Ypu4K4ZJyFHVF?=
+ =?us-ascii?Q?KxrJaeZNnLWmOXf2FogXekREHgQ2fcaVQuIlaXZhDS2NxfoQn+oRRNMacbiN?=
+ =?us-ascii?Q?r6VRS6JphGWZUo4K4WxtKi7+ILK9bQpFot7gkyoUVf+/PHnFWDhkXUw5cAVJ?=
+ =?us-ascii?Q?EsdnG9MImE/Y4ECJHX+KftUVyI8pg5m0b5jLkPwWkZaIyLrtGyd3taLNB6h6?=
+ =?us-ascii?Q?xWikbzfxoxJSPwbRONiTMzYsLuf3jmV9DiBUmp2YD8bf6kz6aWOSsMaUGAWs?=
+ =?us-ascii?Q?YoKFDfx3mh5D4fYou3ZwXSr7GDE88pib6dAXiyGF3onkWheG7UAGYHytaBSq?=
+ =?us-ascii?Q?vVp/M/eCkwS8kDQ5CyHjVd/zs3YKJ0B2nvzMGJXRDYOk97iqb43HUZ+T2lkV?=
+ =?us-ascii?Q?fZti/tTpx0Q=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xn2FzTTxReRyuQ++fXNhlWHxsSMDkmdiwV+MdUzgCGiurwOEK5hvuao+qDwA?=
+ =?us-ascii?Q?nN3Q1E9dOWl+mE7Zu02fE2yMNInQNIhfhu4o37aVvfNtfDK63x6LJLbcWoCW?=
+ =?us-ascii?Q?WpWuKQuRvvXYvSiozLPD0R5qNaNJJI40sBo0dyvPcW0S8rKG8h9I3RlC0P1q?=
+ =?us-ascii?Q?KYj+BhCcmLcHkCD3Qqoe3wvUMrk6TcIEL78SX5ORIDCQyjo+84jl2ib63Pjc?=
+ =?us-ascii?Q?YWewX+vwLPNxmCHmRW4+krcLJTbB9MzN7UjRzMO5prSIbH39GLhHmEI54m/F?=
+ =?us-ascii?Q?1hMoSnscUHTvHE9I35Owpc+SyakeCMCf77VaxCYopVjYp33g250x6FxjMmCs?=
+ =?us-ascii?Q?8KX97lZLyP2wicwfiorlHqofJWQl3id6ttraNr3GSrUBae8EtbI1BpkszKuX?=
+ =?us-ascii?Q?zE0HUHFq2iQxb+wadEkoPIEeYE19O5g/HS5G5YpXXieKIxdi6G+4CQClANFr?=
+ =?us-ascii?Q?zwf3yKDh411QJVX+cgWQ/LxaXPy3fYsy8rkqTtv3s42lXGSODmLjVQyQxXPx?=
+ =?us-ascii?Q?KxZ5OpgG4CC4b49npFRiOYluHupvdpsJMMXFNDsj6pGF77b0Lv6xmimDsmbN?=
+ =?us-ascii?Q?cj8TMMv7L+ROji6/YM1ocVOuYTTwPgqIYPEl8hu96B/5/+3tHyvnUEuTw1Mw?=
+ =?us-ascii?Q?I6YkWnARe9Lm92kZNx7a1HTzi80kd2iNuV+jSLiT0H6+y1xOvTWsXSixOI6T?=
+ =?us-ascii?Q?8jaeuBE5e6GcgydM7dWhCZkzE3sUrt7PDLVcg6GYB7TIKmOJ4Dk3+5uY7QRj?=
+ =?us-ascii?Q?PKvtbinRNP9B8DELX/LnhXw/OxtwGbR7RPDLNA7YNpsYDVKbNl3EO/tnBN6M?=
+ =?us-ascii?Q?CLGIXAlwMLFG2oQ6CXWm/dcL3sgjIwHnDaDfyWPQIkBUsokggRN9UiKrbSlX?=
+ =?us-ascii?Q?B2nY9KpXGws/aWuAfidD1G+HWnAhyKc/J9tfU4iudx1aoQ36m2snv6+HjWzv?=
+ =?us-ascii?Q?GAs4roQt4UYfp/iTfaX48a65ET6xHGFKiNi6TD884VI3Y1wirW0R7R2AqTqu?=
+ =?us-ascii?Q?oLKvJkos9O4LIwgInPt/kkHH5JAtiN6clIHmUKnFkN6oGunmlGL1anpC5Ueu?=
+ =?us-ascii?Q?FFsC3zknDQb/8F0ZRKQ0QSirZglRCYGaFo6LlnpPfwTTAmj/JOSwXpfDQoen?=
+ =?us-ascii?Q?ERV2o6QO7hx9C5nmt7ilSlKFjiKxy/LuNdDStUy4Nx0s3l0t5NIhJzJ9rIjR?=
+ =?us-ascii?Q?JrxhEtVPHNrmlwiyiX7FijNeq2fhuVmhXu7KhqHAX8uaZiJPEDALIUJ+fF3u?=
+ =?us-ascii?Q?tY3JH+Vakn3OloGAmOhuRFKNlExKAC2ZamaODPZXEcNL+BQQACs+cx8Gr+bi?=
+ =?us-ascii?Q?GPqzLxM7hZxECuRH8IVjay/8hbS0WJMGG18mOfQG1M5bKtvbVh2OK6vxv7io?=
+ =?us-ascii?Q?5mqpaov8/cStsHapN2L0i0/yjMjloEeN1tLpC/rMR5lf6M9nKMGJLZmAiZgk?=
+ =?us-ascii?Q?FiyeGDPH6zuQDlO3eiz5FqREkye6y0KlIXKWjFFBntgfBUj/a6e6YzRcZblQ?=
+ =?us-ascii?Q?+OUl4kLmVYuI+GiuKdNfGm/CVuLADcdtNU8jmIC8kg9P0UlJENWM8Ad0Qjyf?=
+ =?us-ascii?Q?/Y98NTLOlTPSdGCtXLINPFYpuWdcBraYGGLOn6Fn?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6012c98a-b440-474d-1f3e-08ddb031d127
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2025 19:36:56.7980
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: J6WvMwRMDHbXnkg3idOR+0tTmSla/YOmlTl3dbfYFyGpyQqohuUAWgBxqOHhfVz6
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6175
 
-Hi Binbin,
+On 18 Jun 2025, at 13:39, David Hildenbrand wrote:
 
-kernel test robot noticed the following build errors:
+> Folios will have nothing to do with movable_ops page migration. These
+> functions are now unused, so let's remove them.
+>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  include/linux/migrate.h | 14 --------------
+>  1 file changed, 14 deletions(-)
+>
+Reviewed-by: Zi Yan <ziy@nvidia.com>
 
-[auto build test ERROR on 8ffcb7560b4a15faf821df95e3ab532b2b020f8c]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Binbin-Zhou/mfd-ls2kbmc-Introduce-Loongson-2K-BMC-core-driver/20250620-100856
-base:   8ffcb7560b4a15faf821df95e3ab532b2b020f8c
-patch link:    https://lore.kernel.org/r/174677c13e41140e19a62dd01b9502aaa7fae669.1750301674.git.zhoubinbin%40loongson.cn
-patch subject: [PATCH v5 2/3] mfd: ls2kbmc: Add Loongson-2K BMC reset function support
-config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250621/202506210343.XCHkzorp-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250621/202506210343.XCHkzorp-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506210343.XCHkzorp-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/mfd/ls2k-bmc-core.c: In function 'ls2k_bmc_pcie_is_connected':
->> drivers/mfd/ls2k-bmc-core.c:156:16: error: implicit declaration of function 'pci_iomap'; did you mean 'pcim_iomap'? [-Wimplicit-function-declaration]
-     156 |         base = pci_iomap(parent, 0, LS7A_PCI_CFG_SIZE);
-         |                ^~~~~~~~~
-         |                pcim_iomap
->> drivers/mfd/ls2k-bmc-core.c:156:14: error: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     156 |         base = pci_iomap(parent, 0, LS7A_PCI_CFG_SIZE);
-         |              ^
-   In file included from include/linux/io.h:12,
-                    from include/linux/iopoll.h:14,
-                    from drivers/mfd/ls2k-bmc-core.c:17:
->> arch/sh/include/asm/io.h:122:21: error: implicit declaration of function 'pci_iounmap'; did you mean 'pcim_iounmap'? [-Wimplicit-function-declaration]
-     122 | #define pci_iounmap pci_iounmap
-         |                     ^~~~~~~~~~~
-   drivers/mfd/ls2k-bmc-core.c:167:17: note: in expansion of macro 'pci_iounmap'
-     167 |                 pci_iounmap(parent, base);
-         |                 ^~~~~~~~~~~
-   drivers/mfd/ls2k-bmc-core.c: In function 'ls2k_bmc_pdata_initial':
-   drivers/mfd/ls2k-bmc-core.c:350:15: error: implicit declaration of function 'acpi_register_gsi' [-Wimplicit-function-declaration]
-     350 |         irq = acpi_register_gsi(NULL, gsi, ACPI_EDGE_SENSITIVE, ACPI_ACTIVE_LOW);
-         |               ^~~~~~~~~~~~~~~~~
-   drivers/mfd/ls2k-bmc-core.c:377:9: error: implicit declaration of function 'acpi_unregister_gsi'; did you mean 'arch_unregister_cpu'? [-Wimplicit-function-declaration]
-     377 |         acpi_unregister_gsi(gsi);
-         |         ^~~~~~~~~~~~~~~~~~~
-         |         arch_unregister_cpu
-   drivers/mfd/ls2k-bmc-core.c: At top level:
-   drivers/mfd/ls2k-bmc-core.c:481:1: warning: data definition has no type or storage class
-     481 | module_pci_driver(ls2k_bmc_driver);
-         | ^~~~~~~~~~~~~~~~~
-   drivers/mfd/ls2k-bmc-core.c:481:1: error: type defaults to 'int' in declaration of 'module_pci_driver' [-Wimplicit-int]
-   drivers/mfd/ls2k-bmc-core.c:481:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
-   drivers/mfd/ls2k-bmc-core.c:475:26: warning: 'ls2k_bmc_driver' defined but not used [-Wunused-variable]
-     475 | static struct pci_driver ls2k_bmc_driver = {
-         |                          ^~~~~~~~~~~~~~~
-
-
-vim +156 drivers/mfd/ls2k-bmc-core.c
-
-   150	
-   151	static bool ls2k_bmc_pcie_is_connected(struct pci_dev *parent, struct ls2k_bmc_pdata *priv)
-   152	{
-   153		void __iomem *base;
-   154		int sts, ret;
-   155	
- > 156		base = pci_iomap(parent, 0, LS7A_PCI_CFG_SIZE);
-   157		if (!base)
-   158			return false;
-   159	
-   160		writel(readl(base + LS7A_PCIE_PORT_CTL0) | LS2K_BMC_PCIE_LTSSM_ENABLE,
-   161		       base + LS7A_PCIE_PORT_CTL0);
-   162	
-   163		ret = readl_poll_timeout_atomic(base + LS7A_PCIE_PORT_STS1, sts,
-   164						(sts & LS2K_BMC_PCIE_LTSSM_STS) == LS2K_BMC_PCIE_CONNECTED,
-   165						LS2K_BMC_PCIE_DELAY_US, LS2K_BMC_PCIE_TIMEOUT_US);
-   166		if (ret) {
-   167			pci_iounmap(parent, base);
-   168			dev_err(priv->dev, "PCIE train failed status=0x%x\n", sts);
-   169			return false;
-   170		}
-   171	
-   172		pci_iounmap(parent, base);
-   173		return true;
-   174	}
-   175	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--
+Best Regards,
+Yan, Zi
 
