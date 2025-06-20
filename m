@@ -1,46 +1,70 @@
-Return-Path: <linux-kernel+bounces-694970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 498F5AE1344
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:44:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36502AE12F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E79284A2D71
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 05:44:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60C6F3BFF03
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 05:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B2020B20A;
-	Fri, 20 Jun 2025 05:44:45 +0000 (UTC)
-Received: from out28-65.mail.aliyun.com (out28-65.mail.aliyun.com [115.124.28.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E20B204096;
+	Fri, 20 Jun 2025 05:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="eEQZY7Q7"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93AA31DED53;
-	Fri, 20 Jun 2025 05:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.65
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750398285; cv=none; b=Xq0D5szUZCKgxE1YcpRkAISqpr4u7AnXhLYlIS396SHZi4e4C4t3HPaLHCYck92Vq0cAs1uiVNmunqZOKOsC2b+6HAwS1MiLXZJnhwhWc1apVIG59zl2ps5FT2b1HvfkfSO9uQPXGkGJ5Zny5xp1m3S4roD51apiN8wAdephDkc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750398285; c=relaxed/simple;
-	bh=7k8+Y/w2qZUhh6BqouZYxeP0tLwrf349HJCudLLDX88=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rQEMcj34NLJARu+TRUBJDOF3STpTGwcgIFg6jtHTJye5ysTEfSNq3aYqlhrSH2PFR47DDAcm8zYQ5tjjt8M7/GS0tGHqj6S3d9I8rOqDnoaPl8JEmmjSgOL6IicsN0BZrC5s8Cnudqj6rsocp9mFiKHPU1jyFbCxRV2vys6Fbqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=myth5.com; spf=pass smtp.mailfrom=myth5.com; arc=none smtp.client-ip=115.124.28.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=myth5.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myth5.com
-Received: from precision-5560..(mailfrom:myth5@myth5.com fp:SMTPD_---.dQz1H9s_1750397323 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Fri, 20 Jun 2025 13:28:50 +0800
-From: "fangzhong.zhou" <myth5@myth5.com>
-To: wsa+renesas@sang-engineering.com
-Cc: westeri@kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3E778F39;
+	Fri, 20 Jun 2025 05:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750397398; cv=pass; b=qdUpYxG/WLMQHg7L3buIUTXdjpGm4lfLwCl65+lk3xAyoIFDa95IO0K018BnrL+3TuL2Z9Wm8j30Rib4ISFmO4wS+z7YVxDQ4QXvtEBMH68Go+166eQZFb+RYv3TLdNdK+kCdUfjA5OH3FnqnRc2yBA8uN1y9JTE8coHmhwgS6Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750397398; c=relaxed/simple;
+	bh=KLTwekWnOIGEwf5a6ZTZCxAx2BXsXPUzPeMu4ceMhuo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s06iS5nJ9Zlkd6V8tfl+ja5N4BeIh1HVH4A3Wry85CjEUmK4Zhv2Ntddgd7p2SU13dzwog2NPgUIEhdoym3tkqlYZ4grq8SJL6TgtqrmCCgU35ghTduXfSYmuhFeJFklERXsSyvo6ErBw/2GFyWVjFygvfj0R1hSFVpzWDX36BQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=eEQZY7Q7; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1750397376; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TQd3JhPbWX6Zj9oOK1b+4YrHsAeMiAD9Aj4L/DgVIkxom/FGVT2vYy6OdxEVNboRW2qqmoz/nEgDivR4LuyAJB47E3Nsvy7DCv+B306VRCEIGCRlWFrsT9+qpKPbxg+7Hc+GcDgMV+Yq2Mg2F9lHN8gl/cxB3iSGoTieM0+4dkE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750397376; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=qHKGusWoiF5FpA2uC1/f3a/JKaJs0uOL3w3lBc2uXGk=; 
+	b=ZfXAugwP/Glj005SP9pajcifQGA3xrveJ13P0nOt+pgqw4hFtjcbzcOMQtpW3soaVYzLddrpAHJRsLx47WnhYmYa2tJ3qJlKxZtYZp444ftyp49saWlHZK5O+6WZOgJAzV6x52jh0GWT6GkOkqsGkndlxWdjpve60dO3y0dR8vU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750397376;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
+	bh=qHKGusWoiF5FpA2uC1/f3a/JKaJs0uOL3w3lBc2uXGk=;
+	b=eEQZY7Q7eLV3z7Q6Ep4REsu2TQ5M+z/QIzvfpBZ4ZidFt25YkP9yUPKaHk1UpJ0o
+	rzvo+7hep/U+MjgcRRjYbht8XMiabN2xQ/ZbrPAQBFDtBJxojZxCmteOUcCP3lV/u/0
+	JmYKMqK02WMywTKT8medokU2JOZfOyKsosWL3Hf0=
+Received: by mx.zohomail.com with SMTPS id 1750397374690501.77460902845905;
+	Thu, 19 Jun 2025 22:29:34 -0700 (PDT)
+From: Li Ming <ming.li@zohomail.com>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	shiju.jose@huawei.com
+Cc: linux-cxl@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	"fangzhong.zhou" <myth5@myth5.com>
-Subject: [PATCH] i2c: Force DLL0945 touchpad i2c freq to 100khz
-Date: Fri, 20 Jun 2025 13:28:31 +0800
-Message-ID: <20250620052832.26614-1-myth5@myth5.com>
-X-Mailer: git-send-email 2.48.1
+	Li Ming <ming.li@zohomail.com>
+Subject: [PATCH 1/1] cxl/edac: Fix using wrong repair type to check dram event record
+Date: Fri, 20 Jun 2025 13:29:24 +0800
+Message-Id: <20250620052924.138892-1-ming.li@zohomail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,23 +72,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Feedback-ID: rr08011227e91d332aa4327cec4390cd8c000070e5c6e3aaaf2626bd44fd99da857da8c2cce1fae56102dfa1:zu08011227b4c49e91e48aad6e698398d90000ce84e86fa77c950d222468a501679f95896125cc8706d71a78:rf0801122dad43ba7108c01f6139ddb1d30000fd05ee002c0a4218da4faef59692162b9daa6ab47612c72597284f8f88d85b:ZohoMail
+X-ZohoMailClient: External
 
-Signed-off-by: fangzhong.zhou <myth5@myth5.com>
+cxl_find_rec_dram() is used to find a DRAM event record based on the
+inputted attributes. Different repair_type of the inputted attributes
+will check the DRAM event record in different ways.
+When EDAC driver is performing a memory rank sparing, it should use
+CXL_RANK_SPARING rather than CXL_BANK_SPARING as repair_type for DRAM
+event record checking.
+
+Fixes: 588ca944c277 ("cxl/edac: Add CXL memory device memory sparing control feature")
+Signed-off-by: Li Ming <ming.li@zohomail.com>
 ---
- drivers/i2c/i2c-core-acpi.c | 1 +
- 1 file changed, 1 insertion(+)
+base-commit: 3c70ec71abdaf4e4fa48cd8fdfbbd864d78235a8 cxl/fixes
+---
+ drivers/cxl/core/edac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i2c-core-acpi.c
-index d2499f302b50..5b424637bbaf 100644
---- a/drivers/i2c/i2c-core-acpi.c
-+++ b/drivers/i2c/i2c-core-acpi.c
-@@ -371,6 +371,7 @@ static const struct acpi_device_id i2c_acpi_force_100khz_device_ids[] = {
- 	 * a 400KHz frequency. The root cause of the issue is not known.
- 	 */
- 	{ "ELAN06FA", 0 },
-+	{ "DLL0945", 0 },
- 	{}
- };
-2.48.1
+diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c
+index d725ee954199..623aaa4439c4 100644
+--- a/drivers/cxl/core/edac.c
++++ b/drivers/cxl/core/edac.c
+@@ -1323,7 +1323,7 @@ cxl_mem_get_rec_dram(struct cxl_memdev *cxlmd,
+ 		attrbs.bank = ctx->bank;
+ 	break;
+ 	case EDAC_REPAIR_RANK_SPARING:
+-		attrbs.repair_type = CXL_BANK_SPARING;
++		attrbs.repair_type = CXL_RANK_SPARING;
+ 		break;
+ 	default:
+ 		return NULL;
+-- 
+2.34.1
 
 
