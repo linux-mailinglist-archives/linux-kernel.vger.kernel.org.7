@@ -1,130 +1,199 @@
-Return-Path: <linux-kernel+bounces-694937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D722AE12A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 06:54:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05590AE12AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 06:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25C8D3BC6F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 04:53:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89BE84A0034
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 04:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1420F1F0996;
-	Fri, 20 Jun 2025 04:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC4A1F150A;
+	Fri, 20 Jun 2025 04:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VYxGS7kv"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=in.bosch.com header.i=@in.bosch.com header.b="hhzbaqRL"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012038.outbound.protection.outlook.com [52.101.66.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E31F30E826
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 04:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750395234; cv=none; b=khr5C2WWkQzdGAP3y4vNn3Yl1eTT2ntqFb1Y21Jqbfr5vFMnf0GitQZ6w4Re+ZTnL746VysySX8R3u4FWfSXQH4IxlnlLuHgFUItzVw+qSdXi9qU9KuP49nfjpwfMSbt9yLgicc2Duxd1kBg/+K02t7hKU8FZ18LshdS1TR0wJo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750395234; c=relaxed/simple;
-	bh=E/YiGHnW1wZQ5X/0H0XDdrD4sDL0PuYMkMZ0cU3VFVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P0OXisMQhvRdmWYS03U13vbQtrCM36lfhsRN5zyhX+Fb5yV6/N0tsFfyTqIBs25mRjJpfU4ZUGjwPIfRfzVcUc1svmlkOLhKhhzfVejBz+UYYijG84/JwtH7/1WkFoRKxIK6FipGStruUMaEx4d1ykV9vI3kIo87vyXWbazhqI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VYxGS7kv; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-234c5b57557so13829395ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 21:53:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750395232; x=1751000032; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q2G3dD31TRdLmU2kMFyJcNMrg5YHR0QH2/Tfvo3Rsac=;
-        b=VYxGS7kv0WvICnF/14n2jOIJQ7K2q3TkVpgidj7fojgr4C4T8vd04Vp6eacnQKact5
-         x70QzlIK7YU6UoezLZfoWwCbIXayGQqK0a6Qq6OX2Tg05Fi0CmjQyUxtTbJY+UmS+4pq
-         hMbDGu4EdDWwlWImlDqTDy1ccuy5Ry+HdV5Zw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750395232; x=1751000032;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q2G3dD31TRdLmU2kMFyJcNMrg5YHR0QH2/Tfvo3Rsac=;
-        b=TtRVQPSbfbHDtjpcp+gnnwV/tUHZfPmcsRpC/e+20QHJJs4701Y+EaDhK7wrzdgVCY
-         kZ//Py0WWaY+sHXLEoFzIdFzksb4kQVCtNTqu1xCTU8mggJvMazsz6Fc1+E+xIYqJ1nG
-         oRYKFlT5iLntpiVmrGh3GflK9WvgN1QnUBS7hXHbbsUxA4LsxNT/IjFSHb3CoWZC2g/3
-         Enesm8IzfHWKdIp7mpvB4a25hSS3YSt4npF4mZIqqjWaWQBPDc96atwNL3lysUeWEx5W
-         XfBloeW3NSoHWvUPNiDTm4HTjlQZfXrRRaaY8/rrJvGGh2+WwFiwMhZanA7WF47rt6RJ
-         1dOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6mZgO2KTkKti8e9ZZa60YT+xAF2mo0MPC3tpgrp9gustlzQhao8G9RHxykH3JXmnveDkwtBpQWWahRSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzokZf01CEMK0dkPImsYAK4uqhYeD8DPQ1Ji2D4llAfuFn7KswE
-	Gzr13XFCJ3DJBUYpny02Vf7R93C9DNuxg2X8RHQR8idS+gyfE5oRTx70BkSbw2gRQF2oM2PVJzd
-	Vb9g=
-X-Gm-Gg: ASbGncuNCSvERxPS+hen4CkTAbt1D3IzI+q8Z2dSqD6oYGMhIk31iVdTEQYcZVzaV7q
-	ZtKfpLe5nRstwTxb9tJHDUG6Yg/m/n1ua/MUH0cP8znJ51WV4dJujh+poDKU6RLzgMtMDr1hT35
-	eJPcUQjecHy4STviK9yb2szYqBdgw8YnQ8CJF/6g3S0FYBewTtQg/VBrFG8tGKPx8oDmx+ojfb0
-	0VJXiqxV0mJIQmlj2gjYAU4TjUWVn191bY9p4VfyGmJz/DIO3yiRkY7EizCalIaVcm9tT6aOOa9
-	gXBX1695rSc31begBup3CAs1nwXcA1yVBxHj+BnBPD3SnFIWtC6aCy6J8HbxhvN5hg==
-X-Google-Smtp-Source: AGHT+IFk7B8k/GlrcRZRoZuXgJlsllcTVXF/E2PZN7eWGLXhECASjJTNH1UzB9LoljR7ceAwxCiMEA==
-X-Received: by 2002:a17:902:e842:b0:234:ef42:5d48 with SMTP id d9443c01a7336-237d9980027mr24292165ad.38.1750395232197;
-        Thu, 19 Jun 2025 21:53:52 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:e574:cc97:5a5d:2a87])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d860a854sm8018115ad.116.2025.06.19.21.53.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 21:53:51 -0700 (PDT)
-Date: Fri, 20 Jun 2025 13:53:47 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>, 
-	Matthew Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [RFC PATCH] fanotify: wake-up all waiters on release
-Message-ID: <76mwzuvqxrpml7zm3ebqaqcoimjwjda27xfyqracb7zp4cf5qv@ykpy5yabmegu>
-References: <3p5hvygkgdhrpbhphtjm55vnvprrgguk46gic547jlwdhjonw3@nz54h4fjnjkm>
- <20250520123544.4087208-1-senozhatsky@chromium.org>
- <bsji6w5ytunjt5vlgj6t53rrksqc7lp5fukwi2sbettzuzvnmg@fna73sxftrak>
- <ccdghhd5ldpqc3nps5dur5ceqa2dgbteux2y6qddvlfuq3ar4g@m42fp4q5ne7n>
- <xlbmnncnw6swdtf74nlbqkn57sxpt5f3bylpvhezdwgavx5h2r@boz7f5kg3x2q>
- <yo2mrodmg32xw3v3pezwreqtncamn2kvr5feae6jlzxajxzf6s@dclplmsehqct>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3034C30E826;
+	Fri, 20 Jun 2025 04:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750395353; cv=fail; b=C2it9CvoqcGby1mBMBCaVIzgSqRKcOmQMXWyr68w0hWO2z5bXzP/NlD1UDMdKq22eZ8FWYTMEAeCRhUsZpHwSV0byeRdy7LTVgoeDyPnzuAg3XWpZIySEgYTNgcCxDLBc54NoSlZidOfN0uRIsjp7UoCq5UmJeDH0wVRzm9siHU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750395353; c=relaxed/simple;
+	bh=ARkg33rY7XjfTHfa9bbdCwN8OQjX+WV2E2jALtbE/SA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JL8Y5jTvBrO976m+GCuVzyWvBOeBk6XkZ8ldcFHeYYLmJPbSaLUGfczKv2mU9oChKa0k2kpJRmwgkCdtwPLJVMSAETozyjofHU2ObaBWnSAEgHcUz8YHpBZIbsyofQDJsplK4a9oNBvW3/LYU70THBPM5Sha2U0yH1ygrg8jVV0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=in.bosch.com; spf=pass smtp.mailfrom=in.bosch.com; dkim=pass (2048-bit key) header.d=in.bosch.com header.i=@in.bosch.com header.b=hhzbaqRL; arc=fail smtp.client-ip=52.101.66.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=in.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FrZ0+VVJ3lYKI6eMUUP8MLXL+plIWVpR5LM2QAa/PvLwYGi5NO+OJ/UMm5pwOqrjV235XiZS5uPSJ15xscd6vmDHFqqwCBKuuxRS80ohQGi0CRt6/AsJB8YqnQkJc68ij4bI9E6aiNLKyc5CCX9s9VpJ+JsbCE58/yu2YKdiRctCFEAZA7KIJwvDVtprmarY1oDEwgUh6rLI9aOuzAua2UHY/Z0RyfLJXHm61U6TFNTYF8DiUAlErbKDPrXgmPcpVsqOI2Gqx4JKp8YcH2ZnSaYc6a3MkukdK3BXCRT57TPkhYBU8wUsWjuFlsiqk9ypZNM2u2qCAwNzvuVA0XDFbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TLM8xQMykI6kPN6iZcoGXkeGAbMrW4qm+3q+RKFWlZo=;
+ b=r/9DNO1JfWuPOGh/NbpfOhQEi28jLnIz7ZJ0fhPq+YhVjgNYQixC4b08c8HZtiFUV+L2y1T/FM2NajgnpI7jYtdcWOr3TNhZP8pjJCDYVK3FHr4CpN1soIxyIav1rx1Ysde3tnPprn5KOGcNrHc/kFArBQWfi58nLpxH/e3n9YW/aK6SmgIWk2LJsNyDpWHoW8BVRbkV8uKhCIxE3grO1RH52+H6JjPdNZBNpOSi9JLcWzaWnOO700YB6Iv9IjQqpRlo2pMpDSrldLs8lGUhHvMPxd8hIJpv5ARKigvFSGs77AADjk+7T1JHO8uExGdqF55TQykKeq+XLNXkEwgQFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.205) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=in.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=in.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=in.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TLM8xQMykI6kPN6iZcoGXkeGAbMrW4qm+3q+RKFWlZo=;
+ b=hhzbaqRLqADL+LotvbPC6dRgcsFf531yHA9yEqQ+aEEYZkBAL+ryJka/C/m2SIixo3epw6sluf+57fEAk5stptoTa9nJEnBXBdagzpeo05u0o+RldWYIjyortkkZrwiq7x2e8dJ1pGqVwuzGAogHS6VxFHAlLbtQptE8C5TLbmMkLPRpiQvIFk6HEo0VNnb5SAybv8R+e7lrEnKE68klBggMRj6n4vXFxGUUbz80zC24ak22d8XiTqweyzw22WOtXAYy7V96RoTEtkCn2soUBfaNzOpUvmZd4HNfp7Kqbk2BPaikmhhHhwKCL0tMmUCDxhclV6NWaMDf3ANUOzTiKg==
+Received: from AS8PR04CA0199.eurprd04.prod.outlook.com (2603:10a6:20b:2f3::24)
+ by GV2PR10MB6068.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:7e::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.25; Fri, 20 Jun
+ 2025 04:55:43 +0000
+Received: from AM1PEPF000252DD.eurprd07.prod.outlook.com
+ (2603:10a6:20b:2f3:cafe::c6) by AS8PR04CA0199.outlook.office365.com
+ (2603:10a6:20b:2f3::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8857.25 via Frontend Transport; Fri,
+ 20 Jun 2025 04:55:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
+ smtp.mailfrom=in.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=in.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of in.bosch.com designates
+ 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.205) by
+ AM1PEPF000252DD.mail.protection.outlook.com (10.167.16.55) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8857.21 via Frontend Transport; Fri, 20 Jun 2025 04:55:43 +0000
+Received: from FE-EXCAS2000.de.bosch.com (10.139.217.199) by eop.bosch-org.com
+ (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.26; Fri, 20 Jun
+ 2025 06:55:37 +0200
+Received: from RNGMBX3003.de.bosch.com (10.124.11.208) by
+ FE-EXCAS2000.de.bosch.com (10.139.217.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.57; Fri, 20 Jun 2025 06:55:37 +0200
+Received: from COB-C-005HH.cob.apac.bosch.com (10.169.242.187) by
+ smtp.app.bosch.com (10.124.11.208) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Fri, 20 Jun 2025 06:55:35 +0200
+From: <liquancin.mereenamathai@in.bosch.com>
+To: <linux-iio@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <jic23@kernel.org>,
+	<dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
+	<vassilisamir@gmail.com>, <marcelo.schmitt1@gmail.com>,
+	<javier.carrasco.cruz@gmail.com>, <Xu.Zhang@cn.bosch.com>,
+	<Maoting.Bian@cn.bosch.com>, <Liquancin.MereenaMathai@in.bosch.com>,
+	Liquancin Mereena Mathai <liquancin.mereenamathai@in.bosch.com>
+Subject: [PATCH v1 0/2] Add BMP390 IIO driver, device tree bindings and support
+Date: Fri, 20 Jun 2025 10:24:53 +0530
+Message-ID: <20250620045456.1151-1-liquancin.mereenamathai@in.bosch.com>
+X-Mailer: git-send-email 2.47.1.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yo2mrodmg32xw3v3pezwreqtncamn2kvr5feae6jlzxajxzf6s@dclplmsehqct>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM1PEPF000252DD:EE_|GV2PR10MB6068:EE_
+X-MS-Office365-Filtering-Correlation-Id: 58a1bd7a-49c1-417d-f8e7-08ddafb6b678
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?aocXfmLxBgCmI0pvsW2XuEWTc7wSqQ+ylEK78Gf2ZhOtv/7vNKBvrSD7zWwV?=
+ =?us-ascii?Q?w4q9Eu8Km4CkWUrM19SVhEaP8h6byH+ls53wV8OjSJrcruL6As4ER73gTH7j?=
+ =?us-ascii?Q?8sW+x3hlQhCO0MAYpfux3WBrgjMSiQnNzLVKE0zbCdvTFDMADYLt5b0Z43vO?=
+ =?us-ascii?Q?E711j2p+v56zFdtxeJZJEtcf1Ij4AbxpNeTgbdyryr0t/9Z5sUrbRqZTWzQl?=
+ =?us-ascii?Q?p9LVpSfuPz97tFMMVWTKnCJMWXPwJ9aNt/vP6Emgr6Jx2hkbnDLxuDQak2Jj?=
+ =?us-ascii?Q?pPIuj5q5H80xMARR9f6yIR2aQ2/eQi48LR26Aj/jCO3YTpCjV2Fr/V20GkYZ?=
+ =?us-ascii?Q?NUBGDI5Tcfba58uLXVPwdngVRYJz0i1DAOrEe/fKX91ggV40mJ9SAQG0lxnL?=
+ =?us-ascii?Q?YOIvnxkPQmfhc3JRQ3xHw8QHuHrAxuIKrjT5UOqZ3S7m5dSsG/55ULKPbSdH?=
+ =?us-ascii?Q?JkxPX58uktO9ApmUvhst12Gma8G0bfzMIYrkZ4iTweQc0s+RSuDcQY1cL8DW?=
+ =?us-ascii?Q?hm/ZjOVX1fxb+WNwTwjvGhTMmJ+O0HVlkwui2vh5Pv9VtDqAUuC5UNLcljjP?=
+ =?us-ascii?Q?CpiUR+t4lZxE4nG6HN1C044PPgBmxuNHyOy1JBSCCEMtJkThS3ZyAfrFFdw4?=
+ =?us-ascii?Q?UwolvEuiJFuqBWxzw2Wxx73UkpHcCFzJZWtRpUqywZD6Ae98ulXg+aRDdH7m?=
+ =?us-ascii?Q?wE/2oQ1kek5ZZMmSQDJ/WY8Mir50PJxIWf4EwMd81LlNirZTS3PuYiOVSWrH?=
+ =?us-ascii?Q?2pGmrf7tOzzQsDESv10Y+Mrgnl7tBeUMzc54mNu2+PpckqnwwDglUq4lbsMq?=
+ =?us-ascii?Q?NGYaHpCvalK0jkk+ee4z1r5NgIOImUFf1kIGXhwbPMMf5iwAdOpoziAUTgxA?=
+ =?us-ascii?Q?Un4TAcX7rqgg0wiATLyyyJtqvxn2pJ1F7r5zH5fGjjotsAXEVuyi1sBQdJ6U?=
+ =?us-ascii?Q?lfgPhvSeHyQ/CXMeq/Gg+6/ikJiFBH7qeRnPK7sKhf8R3oEna2WDFtIEXG6u?=
+ =?us-ascii?Q?ukvUCEBpC0XUHoYK8z2zk57EksjRf0dfjjA5qYtNQrRt41YOcEN9lopj58dD?=
+ =?us-ascii?Q?+zc9cQbWFj+/rEu7Jt4GxNmki/8y76mvvjECBVEi3ThuWd3LtNtGik6nQv0c?=
+ =?us-ascii?Q?aQrYRYxjSzrcVlhwREVgDkoKlWfbW6xI01TS6etJVmCgcVzf+1f6BmcFazDT?=
+ =?us-ascii?Q?WutWw78eobusxMteaeyTh5UUhGIDp5lTX/7Y0Sksm/jL4nVuaY4ygDthdSIi?=
+ =?us-ascii?Q?aB+iqKIYP/Iy/iqQgR9Sjs1i5o8ZNlGUlve87GFsCXuSw/iYp2lGSqM8SnH3?=
+ =?us-ascii?Q?FV2q/hf+BMno/4toVavsQvUi+diHoWbsAPO16GRU1dl6aA52r5fUTkxG+afH?=
+ =?us-ascii?Q?5AhGHGGzhZa8HN/yDLmhSCFF2JbHl4Rr22poEywZCuvIGY3dE6h/u1CA0EDL?=
+ =?us-ascii?Q?Yjqz5iIGaDBX4eg6Nnx5T6sJSRN+qds7j/+FKBsrgRA8u3F+Ir451MbwfYWN?=
+ =?us-ascii?Q?1FqpabgLjld9bvY+KZ3bKsJh11T54BsALroR?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: in.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2025 04:55:43.6064
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58a1bd7a-49c1-417d-f8e7-08ddafb6b678
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM1PEPF000252DD.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB6068
 
-On (25/05/26 23:12), Sergey Senozhatsky wrote:
-[..]
-> > >  schedule+0x534/0x2540
-> > >  fsnotify_destroy_group+0xa7/0x150
-> > >  fanotify_release+0x147/0x160
-> > >  ____fput+0xe4/0x2a0
-> > >  task_work_run+0x71/0xb0
-> > >  do_exit+0x1ea/0x800
-> > >  do_group_exit+0x81/0x90
-> > >  get_signal+0x32d/0x4e0
+From: Liquancin Mereena Mathai <liquancin.mereenamathai@in.bosch.com>
 
-[..]
+This patch series adds support for the Bosch BMP390 pressure sensor to the
+Linux IIO subsystem. It includes the main driver implementation as well as
+the necessary device tree bindings for integration on supported platforms.
 
-> @@ -945,8 +945,10 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
->         if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS)) {
->                 fsid = fanotify_get_fsid(iter_info);
->                 /* Racing with mark destruction or creation? */
-> -               if (!fsid.val[0] && !fsid.val[1])
-> -                       return 0;
-> +               if (!fsid.val[0] && !fsid.val[1]) {
-> +                       ret = 0;
-> +                       goto finish;
-> +               }
->         }
+Patch 1 adds the IIO driver for the BMP390 pressure sensor.
+Patch 2 introduces the device tree bindings documentation.
 
-Surprisingly enough, this did not help.
+Liquancin Mereena Mathai (2):
+  Add the iio driver for bosch pressure sensor bmp390. The bmp390 is a
+    pressure sensor module. It will support SPI and I2C protocol based
+    on configuration.
+  dt-bindings: iio driver: Add BMP390 pressure sensor device tree
+    binding
 
-Jan, one more silly question:
+ .../bindings/iio/pressure/bosch,bmp390.yaml   |   65 +
+ MAINTAINERS                                   |    7 +
+ drivers/iio/pressure/Kconfig                  |   26 +
+ drivers/iio/pressure/Makefile                 |    1 +
+ drivers/iio/pressure/bmp390/Kconfig           |   29 +
+ drivers/iio/pressure/bmp390/Makefile          |   32 +
+ drivers/iio/pressure/bmp390/bmp3.c            | 2781 +++++++++++++++++
+ drivers/iio/pressure/bmp390/bmp3.h            |  537 ++++
+ drivers/iio/pressure/bmp390/bmp390_driver.c   | 1604 ++++++++++
+ drivers/iio/pressure/bmp390/bmp390_driver.h   |  232 ++
+ drivers/iio/pressure/bmp390/bmp390_i2c.c      |  328 ++
+ .../iio/pressure/bmp390/bmp390_iio_buffer.c   |  220 ++
+ drivers/iio/pressure/bmp390/bmp390_spi.c      |  286 ++
+ drivers/iio/pressure/bmp390/bmp3_defs.h       |  871 ++++++
+ drivers/iio/pressure/bmp390/bmp3_selftest.c   |  184 ++
+ drivers/iio/pressure/bmp390/bmp3_selftest.h   |   93 +
+ 16 files changed, 7296 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/pressure/bosch,bmp390.yaml
+ create mode 100644 drivers/iio/pressure/bmp390/Kconfig
+ create mode 100644 drivers/iio/pressure/bmp390/Makefile
+ create mode 100644 drivers/iio/pressure/bmp390/bmp3.c
+ create mode 100644 drivers/iio/pressure/bmp390/bmp3.h
+ create mode 100644 drivers/iio/pressure/bmp390/bmp390_driver.c
+ create mode 100644 drivers/iio/pressure/bmp390/bmp390_driver.h
+ create mode 100644 drivers/iio/pressure/bmp390/bmp390_i2c.c
+ create mode 100644 drivers/iio/pressure/bmp390/bmp390_iio_buffer.c
+ create mode 100644 drivers/iio/pressure/bmp390/bmp390_spi.c
+ create mode 100644 drivers/iio/pressure/bmp390/bmp3_defs.h
+ create mode 100644 drivers/iio/pressure/bmp390/bmp3_selftest.c
+ create mode 100644 drivers/iio/pressure/bmp390/bmp3_selftest.h
 
-fsnotify_get_mark_safe() and fsnotify_put_mark_wake() can be called on
-NULL mark.  Is it possible that between fsnotify_prepare_user_wait(iter_info)
-and fsnotify_finish_user_wait(iter_info) iter_info->marks[type] changes in
-such a way that creates imbalance?  That is, fsnotify_finish_user_wait() sees
-more NULL marks and hence does not rollback all the group->user_waits
-increments that fsnotify_prepare_user_wait() did?
+-- 
+2.20.1
+
 
