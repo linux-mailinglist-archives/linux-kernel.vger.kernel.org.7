@@ -1,136 +1,138 @@
-Return-Path: <linux-kernel+bounces-695245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43415AE175E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:20:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D36AE1765
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AB9B1BC0F33
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:20:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F5BE4A6708
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B46280A35;
-	Fri, 20 Jun 2025 09:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42D9280CD9;
+	Fri, 20 Jun 2025 09:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="taqNcruz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZXKuors"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE06B28033F;
-	Fri, 20 Jun 2025 09:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A50E1E2607;
+	Fri, 20 Jun 2025 09:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750411217; cv=none; b=sGPSwnEyeEFjgrtIkWvOzHmik1yu7jjJZFC0UCenkW7GE/2RV/0FQkiC6z0yt6X9N/tCZdcCWiZfx8u6lRP+mITzqVWFI2ntGDB3Ixcj56RqNYJSjIc8pqYACp42FYiNkb1j0wVrpBxyxqbLvYorvr/VGmNS3Qvfw4B8MScOZ1c=
+	t=1750411268; cv=none; b=Sxwzxu6h2ySG4os8rM56MU8hNSzIt0htTId0XEEdoe3bIWGaEWJlUO+uXUc6yXaBVxUrJZ1JU214lokgivF0SyN7NI49dU0aoxfa2poIiZVRkvVM3A4zZuGJ8NcChTh/kFhY0Z3zoO0qSduGp5rvO7rnMy2m8R6Zq5jBniVum60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750411217; c=relaxed/simple;
-	bh=ZclNXEJGgmtvivW3+zTBau1Wqx9MCt1Nu5jQDpqLs1U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W95N3CwuT5oIM7RaMyt6ieqdwASNkwoKw8whQfibMQziAKfj477bM9IEebnHzWpp2AJWJWj12b2SNmmglxM5vNqWNMSOhURj8BP8xwfQ3Lg/KeO7eyfQM3hioplNvUWBA/UuGSqA4Ty7TV94RIjzZ79iFZTkPLwh5g8fJHNX9V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=taqNcruz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC6C7C4CEEF;
-	Fri, 20 Jun 2025 09:20:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750411216;
-	bh=ZclNXEJGgmtvivW3+zTBau1Wqx9MCt1Nu5jQDpqLs1U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=taqNcruz4qiBDwEUxWLJi6i8RZdIS2nFjggQS6vFH30g5XqOf/aYaP5sPvxbPVwO+
-	 op9N6ifVe4ci97R1wvnuTwLjf98eH069n9Srxtgq4XS9vJ/EkGSdTJpJ3K3oNjzSWB
-	 kkTLr5ru2/Yj6BrW/auJ9rvi9F3BZLMVSwhmnjHWq1qPEzH13tDnuonBPuW2ujMaKt
-	 +cXI8l5vGDvKnbY7VrCS/v0S7uCR7466Z52GiYMXn3jtFhFyuqaR/Ll/RYFAEzwxQ5
-	 E2I2rr0C92H+JYHr2B36D4bgfDq9PNchbQ1gUlXRwmHfXAmEdoZGzTR1nk4Ff/RKdf
-	 izrQfbw4STafQ==
-Message-ID: <1a4b060e-475e-46a1-9ff5-aae16a7d326a@kernel.org>
-Date: Fri, 20 Jun 2025 11:20:10 +0200
+	s=arc-20240116; t=1750411268; c=relaxed/simple;
+	bh=SJHQLC1eKMZEuzpk6u6D1TsLqXdJUkG3iE+wUgLFr6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YtI2oEQaSV7NHLKVRgsqBo7aNJQU0+Q/2FKlvBHI9P/ANA4U5wm1gXYvX0545GR9rZ0VDU0HuxCzQJ77oH2NIRZEx+eDxsizvl72cDldUIcrkBTLj2ihu6GrAvJD0Zrl8HBd+/4qXP0CnbDPAmDY1AXEONdk6a3aBQlu14xtwf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZZXKuors; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45348bff79fso18483805e9.2;
+        Fri, 20 Jun 2025 02:21:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750411265; x=1751016065; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9cgL5PeqdGLu0lhfa4303QYfoHbGcsA6Evash3JXswM=;
+        b=ZZXKuorsSNQqzCYmOpvMbNJ8gbrKtHuEAvvi19mDTRf1ectUPr2F0r7fpGzb/oKVAc
+         bTv55kravICIk/GANoaNZAR5wCIBw6rkF6ehb7T33V9oIFXTeOEYxlgk2xQVS788NnTC
+         b09+ib5hwvhxoWZO+4UTQN86Nazf4U20Y/qRw3c1bI7AaKEmopdRMiHzbnv3dbjEyaXt
+         NIiAW3rAg1V/tPdJuaIsLZRYpxHvLI+wpFE0k1DYuZ11ge3/7rhdasZTyjfOb0o29tA/
+         uMJETddUrrOAgc18t8mkA+E16k+A9y19oQDLZH434D51s0myIW/GIbfJ7etU0RhsqdR+
+         ohMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750411265; x=1751016065;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9cgL5PeqdGLu0lhfa4303QYfoHbGcsA6Evash3JXswM=;
+        b=F3Q41qlrW/JlKs3Q02KLC47hmwMv1kb82F2ZA1O5uHGccCU1g5WdFkR1IEGhJZH+nO
+         21MwM/c1CYRtUh2U6EscWzsuC7USR+0/io7rX37vjSMAEiwNFA7h2jbEVBxHmj/+ogOH
+         EM5QxbQS8kBMaodX5/tFUdP9QXON8ALAPdvf9AVvVR7STq0S77hRbgBhUX/w+rOMc/hF
+         ZqbO690B7IDTFQtnKM953Qh5hq6l/Vhg0lGcNeOL5ZiGJeA5oL3VXxeRq9GsDcV6Zwjx
+         LUhQbQQA7wlkAZtJmZfTEzGdEGu760eYg5FyZb0uXI9lDhu1BCgJf6JyXecCigcjoxgr
+         6SAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCAxA6MXGRBTb7AvljBSwvYEykkIB0Wh2WUOkX3Eo3x9WypzL1fU7MjjKVrbUYGwUe/+NeFX+oa17R9Sa6es8c@vger.kernel.org, AJvYcCXFTxRLdH+7hpPM4jMP6rnQv5xyYYZPEE+l2YnqkcaAl/R+PBtN5Ihv40ULMSCt6/wqzw4n1E7N8PfLWNs=@vger.kernel.org, AJvYcCXoaXK8hr/N3NK9WlPhlgq2FPEpII7jERLzEElewlgWOozAimaX7meW/gIt84GWmxORoKx8kEZw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD9j52tCwt8xWa5usl/G4kaO1s5Hk1mLbWbXFt29XwZW2SklF1
+	btHaN8IrDwOfnt9su/O9PbYOUe1HqfOqiIaJYp9jAT4QBy5mUwjPQKK1
+X-Gm-Gg: ASbGnctR0vUkY/iXXDj9zXOAHIGbJsCSEdA9R/15f9g+TL0EPRTmaiFROdkw2N4Ngpt
+	zLkVZK5rqyqF9ahytfe3VIfkCYyxcfHyQMazGkMTmGduOo7oR3SAloRTnsjlC7aWITbonHfNSgy
+	3S3e/0l85QV5bCvZTJdMVPJ+L+G0vpbpo2FCCEO6dRshoaTeWmz78Wh3oaTZgCt7uvkH0P9vhvC
+	lFY17SkOMVBUgMitnsGK5aFG/3Wg1wThJs83fw5wLN+BIEQSptJ/Q43z2GW+MDKbk/5/KljcuHy
+	yq21QdSNb29I61crALAY1mBKRWB3L3NrLSXK63N9JHZdMtdKFnVjE9I87brOo0pkerabRGyAAzt
+	now5RnP0=
+X-Google-Smtp-Source: AGHT+IG43zWGtn9uFfkv4FevdfYfDhQ+fjbZ2m39/GB8AGJj7THZEDuxdos2Ezv1hYXLiqGA9o3oUQ==
+X-Received: by 2002:a05:600c:b86:b0:441:b076:fce8 with SMTP id 5b1f17b1804b1-453659c0bb9mr20372295e9.14.1750411264449;
+        Fri, 20 Jun 2025 02:21:04 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:3031:2e0:6513:b62f:12bd:a2f9:30a4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535ead2a27sm51858675e9.31.2025.06.20.02.21.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 02:21:04 -0700 (PDT)
+From: RubenKelevra <rubenkelevra@gmail.com>
+To: Jozsef Kadlecsik <kadlec@netfilter.org>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	RubenKelevra <rubenkelevra@gmail.com>
+Subject: [PATCH] netfilter: ipset: fix typo in hash size macro
+Date: Fri, 20 Jun 2025 11:20:53 +0200
+Message-ID: <20250620092053.180550-1-rubenkelevra@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250619151029.97870-1-rubenkelevra@gmail.com>
+References: <20250619151029.97870-1-rubenkelevra@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] dt-bindings: arm: fsl: Add Mettler-Toledo
- Snowflake V2 board
-To: Wojciech Dubowik <Wojciech.Dubowik@mt.com>, linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Marek Vasut <marex@denx.de>, Frieder Schrempf <frieder.schrempf@kontron.de>,
- Markus Niebel <Markus.Niebel@tq-group.com>, Frank Li <Frank.Li@nxp.com>,
- =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
- Michael Walle <mwalle@kernel.org>, Heiko Schocher <hs@denx.de>,
- Francesco Dolcini <francesco.dolcini@toradex.com>,
- Max Merchel <Max.Merchel@ew.tq-group.com>, Tim Harvey
- <tharvey@gateworks.com>, Primoz Fiser <primoz.fiser@norik.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Heiko Stuebner
- <heiko@sntech.de>, Manivannan Sadhasivam <mani@kernel.org>,
- Kever Yang <kever.yang@rock-chips.com>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20250620084512.31147-1-Wojciech.Dubowik@mt.com>
- <20250620084512.31147-3-Wojciech.Dubowik@mt.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250620084512.31147-3-Wojciech.Dubowik@mt.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20/06/2025 10:41, Wojciech Dubowik wrote:
-> Add bindings for Mettler-Toledo Snowflake V2 terminal. The board
-> is using Kontron SL i.MX 8M Mini SoM.
-> Split the existing Kontron BL i.MX8MM as it uses the same module.
-> 
-> Signed-off-by: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
-> ---
->  Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++--
+Rename IPSET_MIMINAL_HASHSIZE → IPSET_MINIMAL_HASHSIZE in
+ip_set_hash_gen.h, matching the header typo-fix.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: RubenKelevra <rubenkelevra@gmail.com>
+---
+ include/linux/netfilter/ipset/ip_set_hash.h | 2 +-
+ net/netfilter/ipset/ip_set_hash_gen.h       | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/include/linux/netfilter/ipset/ip_set_hash.h b/include/linux/netfilter/ipset/ip_set_hash.h
+index 838abab672af1..56e883661f857 100644
+--- a/include/linux/netfilter/ipset/ip_set_hash.h
++++ b/include/linux/netfilter/ipset/ip_set_hash.h
+@@ -6,7 +6,7 @@
+ 
+ 
+ #define IPSET_DEFAULT_HASHSIZE		1024
+-#define IPSET_MIMINAL_HASHSIZE		64
++#define IPSET_MINIMAL_HASHSIZE		64
+ #define IPSET_DEFAULT_MAXELEM		65536
+ #define IPSET_DEFAULT_PROBES		4
+ #define IPSET_DEFAULT_RESIZE		100
+diff --git a/net/netfilter/ipset/ip_set_hash_gen.h b/net/netfilter/ipset/ip_set_hash_gen.h
+index 5251524b96afa..785d109645fed 100644
+--- a/net/netfilter/ipset/ip_set_hash_gen.h
++++ b/net/netfilter/ipset/ip_set_hash_gen.h
+@@ -1543,8 +1543,8 @@ IPSET_TOKEN(HTYPE, _create)(struct net *net, struct ip_set *set,
+ 
+ 	if (tb[IPSET_ATTR_HASHSIZE]) {
+ 		hashsize = ip_set_get_h32(tb[IPSET_ATTR_HASHSIZE]);
+-		if (hashsize < IPSET_MIMINAL_HASHSIZE)
+-			hashsize = IPSET_MIMINAL_HASHSIZE;
++		if (hashsize < IPSET_MINIMAL_HASHSIZE)
++			hashsize = IPSET_MINIMAL_HASHSIZE;
+ 	}
+ 
+ 	if (tb[IPSET_ATTR_MAXELEM])
+-- 
+2.49.0
+
 
