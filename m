@@ -1,92 +1,51 @@
-Return-Path: <linux-kernel+bounces-695548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0C9AE1AF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:31:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8861AE1AF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53A4717B2FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:31:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06AC07A8842
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6ABF28C00D;
-	Fri, 20 Jun 2025 12:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1G+OesWg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MKuKDAP2";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1G+OesWg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MKuKDAP2"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8570B28C2AF;
+	Fri, 20 Jun 2025 12:30:44 +0000 (UTC)
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12831DA3D
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 12:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12D91C5D7B
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 12:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750422638; cv=none; b=X0NGPu/3o1ielCWpy00TNlCH8nKjnVoDa8Tfa30HKhKwTI/as5chPyIjqWQoZsBnUYLrXURhS+15TtFvQ2Oni8XHAkY6qIykZiNQQkhhaKKmO6o+JNYucK+I9LcwihDaSAlRQfkg8qaJGlvtFcf/Z9NBaeYhEhBpN/hVHqUuOds=
+	t=1750422644; cv=none; b=k50qY1Y73g2gyvnhoHVVZwswv+q/nCE17bGBUL7MuxH6gReks24LjCeTCTxkOf5327HJpF6s3WrD2jD0+rzSYu+DvTT3zuZgPXGtmZb2pUZAvR3XNPDVd0pSYRJ/FSXgBuxUkAzVh3dZWfJmgweXbYIB1iJ/E3RlsBlBKqJtV7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750422638; c=relaxed/simple;
-	bh=PeZJy0irop+IqFUTm3kwAzdkFYJc3Owr/GcP3sRc0lI=;
+	s=arc-20240116; t=1750422644; c=relaxed/simple;
+	bh=07/pZfCDAJ9okFUghNJ3W/JUw1tdKSQ0ShoQtA0MFrI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eMpE0faLL6noexchkhMzjniy33PXdl9MKfTrs4BV0p0mEsMh52J8lz1D1/c/4wqDhxQl5mEKqIZT8UyAhGBaxNwQbUwO3TmxKeasZj6Mf9ZDAsUBL0tS3ZCPwsELLPG37dD4zrymTe88dSws+5ZORXjJSj3owsIrhHzgKZoAgUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1G+OesWg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MKuKDAP2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1G+OesWg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MKuKDAP2; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=KzMkybh1sYerxMBVBkrm6oKn5GfBoVomsIhxKBFPubPrBzvhtcgrzbTGUsmNXvUSV9k2Hhz67/N5vCd66qDN4XNhiK9zd4zBHNLU7Z0ypEi6dC/Iugehili7YFtsXb94AG0SyKELSoYDWX34Ph81eZSxA3QP3WR0tSBbpaNebNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id F349F1F7D1;
-	Fri, 20 Jun 2025 12:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750422630; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pqj2rggzXteZzAUJN8tx9Q855H+tvUXgTa4vK7ebx5c=;
-	b=1G+OesWgkHDerbnxpS/4O0VE493I5+0vzf8Aq9NuP5NbsNk6vI1nOXnJJkWdLYPbOzRztZ
-	M1CnlnBUPRvzuXDva4UssDsRfpZ61O4EvyRpeBOp5vOOZeBeDa5h0V0PDGTFtjPmkCIAGZ
-	69QzSNITI8SqjStx9h20MCLEC9bkyUg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750422630;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pqj2rggzXteZzAUJN8tx9Q855H+tvUXgTa4vK7ebx5c=;
-	b=MKuKDAP2NL8oZHqlEBFsKROK4xnQRY4cSAvbwZK/4Dn8lt9SLzNgNM1mm+o5wUg8Okg08z
-	u6JbW/BzU+jv4WBQ==
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 877541F38D;
+	Fri, 20 Jun 2025 12:30:30 +0000 (UTC)
 Authentication-Results: smtp-out2.suse.de;
 	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750422630; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pqj2rggzXteZzAUJN8tx9Q855H+tvUXgTa4vK7ebx5c=;
-	b=1G+OesWgkHDerbnxpS/4O0VE493I5+0vzf8Aq9NuP5NbsNk6vI1nOXnJJkWdLYPbOzRztZ
-	M1CnlnBUPRvzuXDva4UssDsRfpZ61O4EvyRpeBOp5vOOZeBeDa5h0V0PDGTFtjPmkCIAGZ
-	69QzSNITI8SqjStx9h20MCLEC9bkyUg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750422630;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pqj2rggzXteZzAUJN8tx9Q855H+tvUXgTa4vK7ebx5c=;
-	b=MKuKDAP2NL8oZHqlEBFsKROK4xnQRY4cSAvbwZK/4Dn8lt9SLzNgNM1mm+o5wUg8Okg08z
-	u6JbW/BzU+jv4WBQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7962B136BA;
-	Fri, 20 Jun 2025 12:30:29 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1077613A99;
+	Fri, 20 Jun 2025 12:30:30 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EGLmGmVUVWjNKAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Fri, 20 Jun 2025 12:30:29 +0000
+	id sH9WAWZUVWjNKAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Fri, 20 Jun 2025 12:30:30 +0000
 From: Oscar Salvador <osalvador@suse.de>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: David Hildenbrand <david@redhat.com>,
@@ -96,9 +55,9 @@ Cc: David Hildenbrand <david@redhat.com>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v2 4/5] mm,hugetlb: Drop obsolete comment about non-present pte and second faults
-Date: Fri, 20 Jun 2025 14:30:13 +0200
-Message-ID: <20250620123014.29748-5-osalvador@suse.de>
+Subject: [PATCH v2 5/5] mm,hugetlb: Drop unlikelys from hugetlb_fault
+Date: Fri, 20 Jun 2025 14:30:14 +0200
+Message-ID: <20250620123014.29748-6-osalvador@suse.de>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250620123014.29748-1-osalvador@suse.de>
 References: <20250620123014.29748-1-osalvador@suse.de>
@@ -109,100 +68,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -6.80
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Queue-Id: 877541F38D
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
 X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.00
 
-There is a comment in hugetlb_fault() that does not hold anymore.
-This one:
+The unlikely predates an era where we were checking for hwpoisoned/migration
+entries prior to checking whether the pte was present.
 
- /*
-  * vmf.orig_pte could be a migration/hwpoison vmf.orig_pte at this
-  * point, so this check prevents the kernel from going below assuming
-  * that we have an active hugepage in pagecache. This goto expects
-  * the 2nd page fault, and is_hugetlb_entry_(migration|hwpoisoned)
-  * check will properly handle it.
-  */
-
-This was written because back in the day we used to do:
-
- hugetlb_fault () {
-  ptep = huge_pte_offset(...)
-  if (ptep) {
-    entry = huge_ptep_get(ptep)
-    if (unlikely(is_hugetlb_entry_migration(entry))
-        ...
-    else if (unlikely(is_hugetlb_entry_hwpoisoned(entry)))
-        ...
-  }
-
-  ...
-  ...
-
-  /*
-   * entry could be a migration/hwpoison entry at this point, so this
-   * check prevents the kernel from going below assuming that we have
-   * a active hugepage in pagecache. This goto expects the 2nd page fault,
-   * and is_hugetlb_entry_(migration|hwpoisoned) check will properly
-   * handle it.
-   */
-  if (!pte_present(entry))
-          goto out_mutex;
-  ...
- }
-
-The code was designed to check for hwpoisoned/migration entries upfront,
-and then bail out if further down the pte was not present anymore,
-relying on the second fault to properly handle migration/hwpoison entries that
-time around.
-
-The way we handle this is different nowadays, so drop the misleading comment.
+Currently, we check for the pte to be a migration/hwpoison entry after we
+have checked that is not present, so it must be either one or the other.
 
 Signed-off-by: Oscar Salvador <osalvador@suse.de>
 ---
- mm/hugetlb.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ mm/hugetlb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 57bb8b2dce21..868ee8ed45c0 100644
+index 868ee8ed45c0..1ef554b6934a 100644
 --- a/mm/hugetlb.c
 +++ b/mm/hugetlb.c
-@@ -6746,13 +6746,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+@@ -6748,7 +6748,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
  
- 	ret = 0;
- 
--	/*
--	 * vmf.orig_pte could be a migration/hwpoison vmf.orig_pte at this
--	 * point, so this check prevents the kernel from going below assuming
--	 * that we have an active hugepage in pagecache. This goto expects
--	 * the 2nd page fault, and is_hugetlb_entry_(migration|hwpoisoned)
--	 * check will properly handle it.
--	 */
-+	/* Not present, either a migration or a hwpoisoned entry */
+ 	/* Not present, either a migration or a hwpoisoned entry */
  	if (!pte_present(vmf.orig_pte)) {
- 		if (unlikely(is_hugetlb_entry_migration(vmf.orig_pte))) {
+-		if (unlikely(is_hugetlb_entry_migration(vmf.orig_pte))) {
++		if (is_hugetlb_entry_migration(vmf.orig_pte)) {
  			/*
+ 			 * Release the hugetlb fault lock now, but retain
+ 			 * the vma lock, because it is needed to guard the
+@@ -6759,7 +6759,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
+ 			migration_entry_wait_huge(vma, vmf.address, vmf.pte);
+ 			return 0;
+-		} else if (unlikely(is_hugetlb_entry_hwpoisoned(vmf.orig_pte)))
++		} else if (is_hugetlb_entry_hwpoisoned(vmf.orig_pte))
+ 			ret = VM_FAULT_HWPOISON_LARGE |
+ 			    VM_FAULT_SET_HINDEX(hstate_index(h));
+ 		goto out_mutex;
 -- 
 2.50.0
 
