@@ -1,306 +1,229 @@
-Return-Path: <linux-kernel+bounces-695909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F87AE1F72
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:52:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF87CAE1F4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70CF13B638C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:47:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F139D7A261F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18A82EBDCF;
-	Fri, 20 Jun 2025 15:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB4C2EA74B;
+	Fri, 20 Jun 2025 15:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AvviTS9f"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j8V1vKbt"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E36A2EBBAB
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C092EAB67
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750434351; cv=none; b=bmTlnw2D7+uv1LF8GQrp0kdqtOGaoCR+4Hnx2nRCHuqV2SW5Si3BWjDKuYMFhclMDCtjjaiD45w1XXRlPQsrKgWdhrQbgnvInoK3M6OubSDR4nNG4c6rmk2GNPTVS4JH/ogyyzz/oIJ0MQBew+0QSHgUXghjybQc+r54Br/QSEg=
+	t=1750434345; cv=none; b=gKEwcwEie930RrF6XFPQRNgZP4d2yQW1qGcCZNo7nCXyjOHcGrmFkagTSRAOiZjfmgEtL59fMh92E3WIICCcwxi90cNHpBPiWcy+Q8f3Ym3FM9hMgTWjesUZsj/5yT5kbVzKhvT+NtDSeuj0Nkc/BJPHy24k8FWP0fa+j9ewTGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750434351; c=relaxed/simple;
-	bh=MYuEJE+0SdySaYO3CVU/uvi2cgNQjyHkEeNQNPJjWt8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=myF1l+aCCYxJVdZGOJYVRMQliIN2polQx9dTDNdeOs4th0OMCm7ftiljOYLToCySFF7pL5WrVCPHthbvTojWy+XJWK/N46HTRxxv/zhdH8rg4h1yROPflZysWnYvKiooW9DHGeRA4xH4Xw+q/SoT/UHwcCwt29LbHJQP/Z9bYXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AvviTS9f; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55KD1K9c013410
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:45:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=IBNhqEhlbdF
-	Pkj+kCuKLrjIW5Ve2xstiu6VBwj267oo=; b=AvviTS9f6YCfBfqr5RxjM/w0mcB
-	ZeBKRk0jNK8bNr6inafZx1LJ/Gy5dAoSpznk/4QKl8qv4lW4Pd1BrEzF+Gny/jCY
-	bTxbrjYfu1iS4IqLH3YwwboDiT120HmoAH9sI+mdn6Ow0FkzEzS57cqyvtMpsQ2N
-	/QMUMDPCkiY6sCEBWZSe4Q0zDNEniBQwRhnTTj6vQHrxe2aBejhBSUyXcyLBT5ZY
-	rUFfc55w9ubPwxaaAyKdsffHZQxdd9JR/YwrOm00vx3yZQOF3rAyx5izkXPllGjG
-	xDEKdACYyJSGcLi577870cRSSeQXTDgS18X946FVkuN/V1zFl8or6GV98oA==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4792cabxrd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:45:49 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2356ce66d7cso25695475ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 08:45:49 -0700 (PDT)
+	s=arc-20240116; t=1750434345; c=relaxed/simple;
+	bh=9HGUuLKucGQxXQmt3jlyStZam8b2x9uuQn3iyTypahk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G3Cj4m/V8RMeuH7NIPaHRb5hKCWycD6CzRBxdCjETydS49akj8DjeyJXE2Hhhx7vLaR2YWS2fMlM/NmAyprvaxMTUnRYUMUwHtNy2msJDdZhHuFip4oY1oIlkdYNLvanl2YWI6v5zhjr6MKRHgmCbe0CghNIChbyuDLx2Ilitao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j8V1vKbt; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-553b584ac96so2208654e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 08:45:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750434341; x=1751039141; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=j4gHMbfrP62AyybD3k1CrUQ7A0/RCXBAPC12kLOvMpU=;
+        b=j8V1vKbtWcCTLz2YCi3LWBWxmKxJYPID2w8SIo6hSchnrxRQOG+DmHzRypKz3gY+z6
+         Fe8GTm6o3lC7i5hmJ1DvM92PFKH5pJQasDxxXOUvwcEwUE15yfqlKshrd2ASTT5GR4Xn
+         k7yDfnWQFJOAmb96qAdxRKIe5gbl4WvUB4a+rCC9WWpyx7VZRMAZxdIPx1G8FbsXULqL
+         StO2YFIY2p1dcUq02AZRpynOtn+GjWfP1yWgxB/J11qtHbq1sEBIzXO5Hj29xqPn7E9E
+         jCOZTTTOO0OsXnv/5x0ksb5kx5+fnUlxLiBqhMIAOVvDHWIZW+Ry5DQ35MPGH04dcBn6
+         KctA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750434348; x=1751039148;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IBNhqEhlbdFPkj+kCuKLrjIW5Ve2xstiu6VBwj267oo=;
-        b=taJjpvMW/1Pmg/CpzwUxUG18Atxn4Xs6HkAa6CbeYl3mDAQcPmieSw7+uqUfsbHoSR
-         cTG1+qvnDQxlFKvTzzBCb3bAC/GGWohWspNOVwXEOnj/1wZ9PFwKfy0F43GW0q2Do6qj
-         2FJNYHf5/hrDejwIvitEK7bzPwTSKB7aBGi1DA0AkReA3j5zZ9QWk5IO/ekyEtVBLDyN
-         Rn6TkwqoABGRYzlnsyI+2f2wK/ZIK9UbvhMFD1q/VbCZKCxQATdfUW26mPrME3eq6FST
-         OR7+/L7vNxCqB+YQPCaFcGqbeVqf+gPM9MSy/j8BInElztCAO5dZiyNDQhxZjHc1YDka
-         jnow==
-X-Forwarded-Encrypted: i=1; AJvYcCUrCngp9DEwpzeyDugmmMy5PGnJL9agHPms9bl3bP30pmNcttVze13gEK9UY7h6qR+kbIlwhFhlRLhO9Bw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFBxKumI/ayIS6ODimvXyWsORv8Xh3rVJNIW0H/QOwbtGrQ3pF
-	4y2YQVBkaQJERM4jPQ+pulKhgkE39lEdWrQfylLJuGY4DPaFLOsvDTxwTHSNn392sBwT2cpVMBp
-	S1zW4hVQiRCa6kMWT9EFycqhf1Zol5STxowiDGsOHMx1xpnImDcD7pdW8G5BuoYRnRwc=
-X-Gm-Gg: ASbGncteS0pUtOkiiKXuBrAB/XPs49SbAAZX+EHiK0HvyOW9u2kpFr1gaoLb12HahW2
-	a2sVxXHPw7XmmuPvRWrdewG1EQxEK608XE8/wW9J2XyYgINaMxfqUl7+1A8kaBlF61fPhCyJQnS
-	XIiRqYPU2UGIVJF+cgut+0YMRPE4fp5FeRqAa+9jgZSOqpqERe9IhZUF2FuWup7xw8PQgn0aUJj
-	nXnyPnvcjmUtFThHwXOhgNMb01nFcZkuJVN/1RGVC2TL2qFJ8vJ1Sig2HOeG0OyIWlgeoYPnT8X
-	nZH14SZdFEbBZTHuE7W3ae3qC89lsaGI
-X-Received: by 2002:a17:903:166b:b0:234:b123:b4ff with SMTP id d9443c01a7336-237d9870a0amr41976055ad.21.1750434348475;
-        Fri, 20 Jun 2025 08:45:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3uiV9mVqMw9I/3jinpD0YtzGr6J2SplRLMbVB/rccnB3N+Yx+1W+hkGE50i19U8Yzi4Uw5g==
-X-Received: by 2002:a17:903:166b:b0:234:b123:b4ff with SMTP id d9443c01a7336-237d9870a0amr41975625ad.21.1750434348053;
-        Fri, 20 Jun 2025 08:45:48 -0700 (PDT)
-Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d8640dc6sm20800765ad.146.2025.06.20.08.45.47
+        d=1e100.net; s=20230601; t=1750434341; x=1751039141;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j4gHMbfrP62AyybD3k1CrUQ7A0/RCXBAPC12kLOvMpU=;
+        b=Kq2mt6v8On5jmOmfluTW5QIt/GBTP+dEF2v6IJgATAK1jwbk3SPSUvHcbivSZRqhwV
+         Dz+iOyDoi6CsdoJi8u3lWM70jTKq9+6fjh3GdMqhKF7gaLu8nOsFPQpmn8IRQNcMPC6c
+         c56AmpubfMrNAmvKeSicsoyJ026SrrU+Y1ntGUVhKJlW0RAJGtqlHfxn2L+H29PBbGyS
+         i33gzlOU2HBuCZUWOreYu3q3CfFaq/4XHsV+m46u8bAjPn4MrFQJLt1lyDtm7QLKnDRN
+         ud/M66Goq8aUgVpZhFKJG2MIPyo1mjU11zdtE7CUdVqcwo6kRfIDyuWkcTDgz2zIMhQW
+         Xh4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXsOD3kFZZYmbsipQgmHH2U6wbTqJ04JLRP8NtQfdcYF+Op9Bxoa079bN2Tzix8WrUf+9WqXgEP6IW87ME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxIe6aTPoEQcF5/FR3UVQXvS7ipUEm184i/hMSpmf7AzmRBwej
+	r6vFIrU7M1vv5jF9T4dgr5EzCdtDrJrgeK5WPsqNvPNI1hUoos+d/hPp
+X-Gm-Gg: ASbGncuiP5meQQBkDC0s4DXjPCLJpv2sJ5djAokdUEcEMU3dvlZ0NS8MqT+z5X/t/en
+	YGDib/QwxyVJPAVUYEpMUCxaWwHopamOLPtZCXXDK1TldqKCOVcsb4cAj1fUF7oXrELL5hV/lw3
+	eoG5syho+h+1FlCLJQV6nhbRxqOsa1esnN7PWArHgiGV8JENBeE/tGtQ7h/j0EdjFohC1Uqaq2R
+	2ZWWgvYNTNoJJyrWTUkzTz2rfbroujI1++y9OJ3x3eAPaJXXF+xNWeP0+m2CAdE9cxXC51C6I/I
+	UhG2Jd9Fsn+i3HDPGNhPH15cOf8dKyVV7UquQBEcRM9DiS8cWxG+UgbcxtpmedOvV6TO2AmblFF
+	65g==
+X-Google-Smtp-Source: AGHT+IHie5DgDR9fAEvkFZRLnTQygV7sMClPhEOHfnmOPQG3XhthUwEw/pgKPY8+lQ5Ma1A4lzeVSg==
+X-Received: by 2002:a05:6512:3e17:b0:550:e608:410b with SMTP id 2adb3069b0e04-553e3bfe5dcmr1300695e87.33.1750434340878;
+        Fri, 20 Jun 2025 08:45:40 -0700 (PDT)
+Received: from localhost (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
+        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-553e41cc3bdsm321721e87.216.2025.06.20.08.45.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 08:45:47 -0700 (PDT)
-From: Rob Clark <robin.clark@oss.qualcomm.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        Danilo Krummrich <dakr@redhat.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 2/2] drm/gpuvm: Add locking helpers
-Date: Fri, 20 Jun 2025 08:45:36 -0700
-Message-ID: <20250620154537.89514-3-robin.clark@oss.qualcomm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250620154537.89514-1-robin.clark@oss.qualcomm.com>
-References: <20250620154537.89514-1-robin.clark@oss.qualcomm.com>
+        Fri, 20 Jun 2025 08:45:40 -0700 (PDT)
+Date: Fri, 20 Jun 2025 17:45:39 +0200
+From: Klara Modin <klarasmodin@gmail.com>
+To: Hao Ge <hao.ge@linux.dev>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Hao Ge <gehao@kylinos.cn>
+Subject: Re: [PATCH] mm/alloc_tag: Fix the kmemleak false positive issue in
+ the allocation of the percpu variable tag->counters
+Message-ID: <qjmnlgowadwtndmwween63mmpi2krtbioagani4paorzgcecaa@e625xdk4ya52>
+References: <20250619183154.2122608-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: S9RbULr1PzzRSTSt1I0u0vKnXarS2BLU
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIwMDExMiBTYWx0ZWRfXwbDXbIpW4oPO
- QAR3AWHoyf9+SiQOETWuY5COg3/GwoG3K+N6fU/pGwqp9Gk++1/sHDv3EMEh1gXlNyVVkwggnEJ
- c97ZziKNHYIto8/N3DEYXkaEF1Rw1beI5T9mj1QgTDYvaGJfyXFeZ+bqa3xmht6vylVR/TIsTUY
- WFtBtSEeOUQepUo1QPP8jjqfVYd7wpCK7nnZL++K0t12rNauUDSXKIYP5ghB5rXaXq5+/zWl81q
- xVL2Xhpob0CMvcYb9NxqECHoo5wRk8LUJKes0amtvb6eNgRs7DcoxCvDRNAuFf7bSZ53JWPMWG8
- 3atphe/htvIiMBqO4FxEpkd0IW8BG4/qMz85YPm0nYYFT1TCuH3tAAAe90CAd9tiNhPQmWSaVhv
- Z/lm6A3bOVjq6RfaAh6avREHjNYYQ6j3pCWUBHkvdxWoSNJQmV/n0dxg5env5bv/Ya9snA97
-X-Proofpoint-ORIG-GUID: S9RbULr1PzzRSTSt1I0u0vKnXarS2BLU
-X-Authority-Analysis: v=2.4 cv=etffzppX c=1 sm=1 tr=0 ts=6855822d cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10
- a=EUspDBNiAAAA:8 a=gXmLzIc8hE4PcKHQkQgA:9 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-20_06,2025-06-20_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 adultscore=0 spamscore=0 malwarescore=0
- priorityscore=1501 suspectscore=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 bulkscore=0 mlxscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506200112
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250619183154.2122608-1-hao.ge@linux.dev>
 
-For UNMAP/REMAP steps we could be needing to lock objects that are not
-explicitly listed in the VM_BIND ioctl in order to tear-down unmapped
-VAs.  These helpers handle locking/preparing the needed objects.
+Hi,
 
-Note that these functions do not strictly require the VM changes to be
-applied before the next drm_gpuvm_sm_map_lock()/_unmap_lock() call.  In
-the case that VM changes from an earlier drm_gpuvm_sm_map()/_unmap()
-call result in a differing sequence of steps when the VM changes are
-actually applied, it will be the same set of GEM objects involved, so
-the locking is still correct.
+On 2025-06-20 02:31:54 +0800, Hao Ge wrote:
+> From: Hao Ge <gehao@kylinos.cn>
+> 
+> When loading a module, as long as the module has memory
+> allocation operations, kmemleak produces a false positive
+> report that resembles the following:
+> 
+> unreferenced object (percpu) 0x7dfd232a1650 (size 16):
+>   comm "modprobe", pid 1301, jiffies 4294940249
+>   hex dump (first 16 bytes on cpu 2):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace (crc 0):
+>     kmemleak_alloc_percpu+0xb4/0xd0
+>     pcpu_alloc_noprof+0x700/0x1098
+>     load_module+0xd4/0x348
+>     codetag_module_init+0x20c/0x450
+>     codetag_load_module+0x70/0xb8
+>     load_module+0xef8/0x1608
+>     init_module_from_file+0xec/0x158
+>     idempotent_init_module+0x354/0x608
+>     __arm64_sys_finit_module+0xbc/0x150
+>     invoke_syscall+0xd4/0x258
+>     el0_svc_common.constprop.0+0xb4/0x240
+>     do_el0_svc+0x48/0x68
+>     el0_svc+0x40/0xf8
+>     el0t_64_sync_handler+0x10c/0x138
+>     el0t_64_sync+0x1ac/0x1b0
+> 
+> This is because the module can only indirectly reference alloc_tag_counters
+> through the alloc_tag section, which misleads kmemleak.
+> 
+> However, we don't have a kmemleak ignore interface for percpu
+> allocations yet. So let's create one and invoke it for tag->counters.
+> 
+> Fixes: 12ca42c23775 ("alloc_tag: allocate percpu counters for module tags dynamically")
+> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+> ---
+>  include/linux/kmemleak.h |  1 +
+>  lib/alloc_tag.c          |  8 +++++++-
+>  mm/kmemleak.c            | 14 ++++++++++++++
+>  3 files changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/kmemleak.h b/include/linux/kmemleak.h
+> index 93a73c076d16..2ea8e66bf689 100644
+> --- a/include/linux/kmemleak.h
+> +++ b/include/linux/kmemleak.h
+> @@ -28,6 +28,7 @@ extern void kmemleak_update_trace(const void *ptr) __ref;
+>  extern void kmemleak_not_leak(const void *ptr) __ref;
+>  extern void kmemleak_transient_leak(const void *ptr) __ref;
+>  extern void kmemleak_ignore(const void *ptr) __ref;
 
-v2: Rename to drm_gpuvm_sm_*_exec_locked() [Danilo]
-v3: Expand comments to show expected usage, and explain how the usage
-    is safe in the case of overlapping driver VM_BIND ops.
+> +extern void kmemleak_igonore_percpu(const void __percpu *ptr) __ref;
 
-Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
----
- drivers/gpu/drm/drm_gpuvm.c | 126 ++++++++++++++++++++++++++++++++++++
- include/drm/drm_gpuvm.h     |   8 +++
- 2 files changed, 134 insertions(+)
+Note that there's no stub defined in the #else block, which means this
+will fail to build if CONFIG_DEBUG_KMEMLEAK is disabled.
 
-diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-index 0ca717130541..a811471b888e 100644
---- a/drivers/gpu/drm/drm_gpuvm.c
-+++ b/drivers/gpu/drm/drm_gpuvm.c
-@@ -2390,6 +2390,132 @@ drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm, void *priv,
- }
- EXPORT_SYMBOL_GPL(drm_gpuvm_sm_unmap);
- 
-+static int
-+drm_gpuva_sm_step_lock(struct drm_gpuva_op *op, void *priv)
-+{
-+	struct drm_exec *exec = priv;
-+
-+	switch (op->op) {
-+	case DRM_GPUVA_OP_REMAP:
-+		if (op->remap.unmap->va->gem.obj)
-+			return drm_exec_lock_obj(exec, op->remap.unmap->va->gem.obj);
-+		return 0;
-+	case DRM_GPUVA_OP_UNMAP:
-+		if (op->unmap.va->gem.obj)
-+			return drm_exec_lock_obj(exec, op->unmap.va->gem.obj);
-+		return 0;
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static const struct drm_gpuvm_ops lock_ops = {
-+	.sm_step_map = drm_gpuva_sm_step_lock,
-+	.sm_step_remap = drm_gpuva_sm_step_lock,
-+	.sm_step_unmap = drm_gpuva_sm_step_lock,
-+};
-+
-+/**
-+ * drm_gpuvm_sm_map_exec_lock() - locks the objects touched by a drm_gpuvm_sm_map()
-+ * @gpuvm: the &drm_gpuvm representing the GPU VA space
-+ * @exec: the &drm_exec locking context
-+ * @num_fences: for newly mapped objects, the # of fences to reserve
-+ * @req_addr: the start address of the range to unmap
-+ * @req_range: the range of the mappings to unmap
-+ * @req_obj: the &drm_gem_object to map
-+ * @req_offset: the offset within the &drm_gem_object
-+ *
-+ * This function locks (drm_exec_lock_obj()) objects that will be unmapped/
-+ * remapped, and locks+prepares (drm_exec_prepare_object()) objects that
-+ * will be newly mapped.
-+ *
-+ * The expected usage is:
-+ *
-+ *    vm_bind {
-+ *        struct drm_exec exec;
-+ *
-+ *        // IGNORE_DUPLICATES is required, INTERRUPTIBLE_WAIT is recommended:
-+ *        drm_exec_init(&exec, IGNORE_DUPLICATES | INTERRUPTIBLE_WAIT, 0);
-+ *
-+ *        drm_exec_until_all_locked (&exec) {
-+ *            for_each_vm_bind_operation {
-+ *                switch (op->op) {
-+ *                case DRIVER_OP_UNMAP:
-+ *                    ret = drm_gpuvm_sm_unmap_exec_lock(gpuvm, &exec, op->addr, op->range);
-+ *                    break;
-+ *                case DRIVER_OP_MAP:
-+ *                    ret = drm_gpuvm_sm_map_exec_lock(gpuvm, &exec, num_fences,
-+ *                                                     op->addr, op->range,
-+ *                                                     obj, op->obj_offset);
-+ *                    break;
-+ *                }
-+ *
-+ *                drm_exec_retry_on_contention(&exec);
-+ *                if (ret)
-+ *                    return ret;
-+ *            }
-+ *        }
-+ *    }
-+ *
-+ * This enables all locking to be performed before the driver begins modifying
-+ * the VM.  This is safe to do in the case of overlapping DRIVER_VM_BIND_OPs,
-+ * where an earlier op can alter the sequence of steps generated for a later
-+ * op, because the later altered step will involve the same GEM object(s)
-+ * already seen in the earlier locking step.  For example:
-+ *
-+ * 1) An earlier driver DRIVER_OP_UNMAP op removes the need for a
-+ *    DRM_GPUVA_OP_REMAP/UNMAP step.  This is safe because we've already
-+ *    locked the GEM object in the earlier DRIVER_OP_UNMAP op.
-+ *
-+ * 2) An earlier DRIVER_OP_MAP op overlaps with a later DRIVER_OP_MAP/UNMAP
-+ *    op, introducing a DRM_GPUVA_OP_REMAP/UNMAP that wouldn't have been
-+ *    required without the earlier DRIVER_OP_MAP.  This is safe because we've
-+ *    already locked the GEM object in the earlier DRIVER_OP_MAP step.
-+ *
-+ * Returns: 0 on success or a negative error codec
-+ */
-+int
-+drm_gpuvm_sm_map_exec_lock(struct drm_gpuvm *gpuvm,
-+			   struct drm_exec *exec, unsigned int num_fences,
-+			   u64 req_addr, u64 req_range,
-+			   struct drm_gem_object *req_obj, u64 req_offset)
-+{
-+	if (req_obj) {
-+		int ret = drm_exec_prepare_obj(exec, req_obj, num_fences);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return __drm_gpuvm_sm_map(gpuvm, &lock_ops, exec,
-+				  req_addr, req_range,
-+				  req_obj, req_offset);
-+
-+}
-+EXPORT_SYMBOL_GPL(drm_gpuvm_sm_map_exec_lock);
-+
-+/**
-+ * drm_gpuvm_sm_unmap_exec_lock() - locks the objects touched by drm_gpuvm_sm_unmap()
-+ * @gpuvm: the &drm_gpuvm representing the GPU VA space
-+ * @exec: the &drm_exec locking context
-+ * @req_addr: the start address of the range to unmap
-+ * @req_range: the range of the mappings to unmap
-+ *
-+ * This function locks (drm_exec_lock_obj()) objects that will be unmapped/
-+ * remapped by drm_gpuvm_sm_unmap().
-+ *
-+ * See drm_gpuvm_sm_map_exec_lock() for expected usage.
-+ *
-+ * Returns: 0 on success or a negative error code
-+ */
-+int
-+drm_gpuvm_sm_unmap_exec_lock(struct drm_gpuvm *gpuvm, struct drm_exec *exec,
-+			     u64 req_addr, u64 req_range)
-+{
-+	return __drm_gpuvm_sm_unmap(gpuvm, &lock_ops, exec,
-+				    req_addr, req_range);
-+}
-+EXPORT_SYMBOL_GPL(drm_gpuvm_sm_unmap_exec_lock);
-+
- static struct drm_gpuva_op *
- gpuva_op_alloc(struct drm_gpuvm *gpuvm)
- {
-diff --git a/include/drm/drm_gpuvm.h b/include/drm/drm_gpuvm.h
-index 2a9629377633..274532facfd6 100644
---- a/include/drm/drm_gpuvm.h
-+++ b/include/drm/drm_gpuvm.h
-@@ -1211,6 +1211,14 @@ int drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm, void *priv,
- int drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm, void *priv,
- 		       u64 addr, u64 range);
- 
-+int drm_gpuvm_sm_map_exec_lock(struct drm_gpuvm *gpuvm,
-+			  struct drm_exec *exec, unsigned int num_fences,
-+			  u64 req_addr, u64 req_range,
-+			  struct drm_gem_object *obj, u64 offset);
-+
-+int drm_gpuvm_sm_unmap_exec_lock(struct drm_gpuvm *gpuvm, struct drm_exec *exec,
-+				 u64 req_addr, u64 req_range);
-+
- void drm_gpuva_map(struct drm_gpuvm *gpuvm,
- 		   struct drm_gpuva *va,
- 		   struct drm_gpuva_op_map *op);
--- 
-2.49.0
+>  extern void kmemleak_scan_area(const void *ptr, size_t size, gfp_t gfp) __ref;
+>  extern void kmemleak_no_scan(const void *ptr) __ref;
+>  extern void kmemleak_alloc_phys(phys_addr_t phys, size_t size,
+> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> index d48b80f3f007..de6dcf4ea0f5 100644
+> --- a/lib/alloc_tag.c
+> +++ b/lib/alloc_tag.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/seq_buf.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/vmalloc.h>
+> +#include <linux/kmemleak.h>
+>  
+>  #define ALLOCINFO_FILE_NAME		"allocinfo"
+>  #define MODULE_ALLOC_TAG_VMAP_SIZE	(100000UL * sizeof(struct alloc_tag))
+> @@ -632,8 +633,13 @@ static int load_module(struct module *mod, struct codetag *start, struct codetag
+>  			       mod->name);
+>  			return -ENOMEM;
+>  		}
+> -	}
+>  
+> +		/*
+> +		 * Avoid a kmemleak false positive. The pointer to the counters is stored
+> +		 * in the alloc_tag section of the module and cannot be directly accessed.
+> +		 */
+> +		kmemleak_igonore_percpu(tag->counters);
+> +	}
+>  	return 0;
+>  }
+>  
+> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+> index da9cee34ee1b..8797fe88861e 100644
+> --- a/mm/kmemleak.c
+> +++ b/mm/kmemleak.c
+> @@ -1246,6 +1246,20 @@ void __ref kmemleak_transient_leak(const void *ptr)
+>  }
+>  EXPORT_SYMBOL(kmemleak_transient_leak);
+>  
+> +/**
 
+> + * kmemleak_ignore_phys - similar to kmemleak_ignore but taking a percpu
+
+This should match with the function below.
+
+> + *			  address argument
+> + * @ptr:	percpu address of the object
+> + */
+> +void __ref kmemleak_igonore_percpu(const void __percpu *ptr)
+> +{
+> +	pr_debug("%s(0x%px)\n", __func__, ptr);
+> +
+> +	if (kmemleak_enabled && ptr && !IS_ERR_PCPU(ptr))
+> +		make_black_object((unsigned long)ptr, OBJECT_PERCPU);
+> +}
+> +EXPORT_SYMBOL_GPL(kmemleak_igonore_percpu);
+> +
+>  /**
+>   * kmemleak_ignore - ignore an allocated object
+>   * @ptr:	pointer to beginning of the object
+> -- 
+> 2.25.1
+> 
+
+s/igonore/ignore/
+
+The commit summary should probably also be shortened, it is recommended
+to be at most 70-75 characters[1]. Perhaps something like
+
+mm/alloc_tag: Fix kmemleak false positive in percpu tag->counters
+
+could be appropriate?
+
+Regards,
+Klara Modin
+
+Link: https://www.kernel.org/doc/html/latest/process/submitting-patches.html [1]
 
