@@ -1,130 +1,125 @@
-Return-Path: <linux-kernel+bounces-696045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29BC7AE211B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE5DAE212E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ABE77A4AA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:39:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B8607A8038
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96DC2E8E16;
-	Fri, 20 Jun 2025 17:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAE728AAFB;
+	Fri, 20 Jun 2025 17:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fic3Qe6F"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lAyEZ8Je"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA6D2E172A;
-	Fri, 20 Jun 2025 17:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8251EB5F8;
+	Fri, 20 Jun 2025 17:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750441220; cv=none; b=lUFuEZc6P4ANlL46VGOwL5GON6m7YlW4sYCDMD9x07ObWFpnQuTFzbCIxktD65KtyJNoxsSyNbRrVsuXY1ukuC+F3xN4z8+DQh2CbIB8DB2IOAUleJIDWRUAwtnJeGogcFT/vt22/4zPcUgh/o1XccHNbPtAWJnCgJy2wScEkeY=
+	t=1750441335; cv=none; b=YVfKsT9Y0ZHCdlD3udpZsw6agoMBG+vLA91PW336d7owpXK4U7O0Z9ryZtp3zecMZYEOlcHcD4VutNub4UoapexBAm9jG/V1Z7Wh72tHk0oK7f5JPqD5pCtFY4ILkXKmMsTI82cBO0NwpThlitHlatwMHzMlQF/YfBMTekN43TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750441220; c=relaxed/simple;
-	bh=OFWh618G+nN07dN1ddt6LCLr4FaHIYMhHdZ5Tjd6XVs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oCtECwBKwWzAY74ZHGOJCLU70n0U1yx52BELXE1/yKvxV/jcVU4KvUeD59wFV17jVwDYuUBLmzo7DOoV34l2gckng0WmdEI0CaHbCh/KJinwYu6B5rbsfpolsFIrc3TWuY9MpE63hURM6fQeZg5I6T1pRGGCj1oltHUf+UczDek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fic3Qe6F; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7fd581c2bf4so1658709a12.3;
-        Fri, 20 Jun 2025 10:40:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750441218; x=1751046018; darn=vger.kernel.org;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lrfa6f95rsQz82Z0z+vddrx+mjnxXRUvG8Wd94yuAao=;
-        b=fic3Qe6Fq67WdkVw3WQ752xp1hoPPjkCPv8TBrjl83Oak4Wf6eaY+wO0tcNPsOnRq8
-         RGCvdl+r7oTxGh+vBC/kSBpT9OK9wja5nvbSo+by63M6GAz/GB8ny8OdHaztUcoc8dtW
-         ktrpKr6emB852kLrZqRrp6eOXNofFVosURznpfQFUQUO4HktNJGeLe59gj4m9fyf61bk
-         IAyLryTdSuqDw05XVCf/MDsgvSAd7dGSUrUubv5tlCd+5t0dx6siHpMusB86ra6d/uXs
-         tWXzxxXwgX0zSNPXNB52LPYD/tX5l51PNffU2o0ZzuiQzmztdfeEE55h7cv50DpMveuZ
-         EC9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750441218; x=1751046018;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lrfa6f95rsQz82Z0z+vddrx+mjnxXRUvG8Wd94yuAao=;
-        b=naJErinFWvmQxViXKoLQJ+5L8ctsrOtA+khaJAcOm+5aHvsXz9omxVRiQTfCOdadVR
-         jJMfD46wAjVIhOJ9kKdV7qyLrTfcx/YD9QlIYdMYuyhNM6+my2CGQTF3LaFqhKFuZgIE
-         Mpgm6OVbGHkqu8bqAAJE7pBiSbMLgKnGB+L0kvjrPhhuxpfgvbnvXkTS56vl+9PnDdhu
-         8D01sVVpdBoFoE9PorwCGEgAxoC/qatUUsjNC33r/5Ig0cGwqhtukJE7HwtCvAD6MTXM
-         BpEF1/f/19DBuACTv5BweZmAZVgslj5X5tSwVi0IDmuidXyjXyoLE8QPzp4PyXZhULrx
-         Wwsg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9oY/rsdxBBEKv+2Ze8XS4Jf4eGniU7xZfeF+jkBGxJLKikeD2NqkI7XYI46VYT6UJj02yOgWNEKKHfaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoBie9A+uXlFZ7SqO4pI7PIkf5DgZnHDQS9llTZRS7anr1qcKF
-	u/5UIFfrydKptDMgeiOi6G1n3X/Qbgx/dVeTH6nwhcULGPez3fYldGIn
-X-Gm-Gg: ASbGncu0cgqdH6Iw7pnm/cIV/rwKBLEAi8ov1ypkEBeIkBFwm1xCkts6780gB3bi60l
-	aoyALFL0PKo4RzOFG4Zd/XkZSs8FKLRVpS2dE/MAVMBkfD9wE5FKQygc1GEXEMwSLeO7QbtUAXi
-	67hwSdbf9AuSVzE0PRWs1Ol/7a5zvxiaNqa3tLOk2Yuu/hJjCyOz+ivx9obc9pb43fIpY1WwsKu
-	AVXsYutRE5GbEh6m3xlXwNgz8is2PYfigxjOzlEf75EkJJNFAr3r8TMGwVzKeHWLvxdZ7Nf4j/l
-	Q7ES0pH2YaHT00iXVjlQArUYZS64VNR1LdBdkRPhpp9ys2LT9f45BQ==
-X-Google-Smtp-Source: AGHT+IE4pfEDuK4NvUg+ry5Rf4DYRoJ1U08Eu4uDQ0aEWXtK0+oZFw8hbBiESznwSJ4Y+sDyrsFZJg==
-X-Received: by 2002:a17:90b:5690:b0:312:f0d0:bc4 with SMTP id 98e67ed59e1d1-3159d626112mr5266787a91.5.1750441217907;
-        Fri, 20 Jun 2025 10:40:17 -0700 (PDT)
-Received: from fedora ([2601:646:8081:3770::15bd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d83ce860sm22864805ad.65.2025.06.20.10.40.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 10:40:17 -0700 (PDT)
-From: Collin Funk <collin.funk1@gmail.com>
-To: James Clark <james.clark@linaro.org>
-Cc: linux-perf-users@vger.kernel.org,  linux-kernel@vger.kernel.org,  Peter
- Zijlstra <peterz@infradead.org>,  Ingo Molnar <mingo@redhat.com>,  Arnaldo
- Carvalho de Melo <acme@kernel.org>,  Namhyung Kim <namhyung@kernel.org>,
-  Alexander Shishkin <alexander.shishkin@linux.intel.com>,  Jiri Olsa
- <jolsa@kernel.org>,  Ian Rogers <irogers@google.com>,  Adrian Hunter
- <adrian.hunter@intel.com>,  "Liang, Kan" <kan.liang@linux.intel.com>
-Subject: Re: [PATCH] perf build: Specify that spellcheck should use the bash
- dialect.
-In-Reply-To: <20cce2b1-eaad-4565-817b-b094aecee0a5@linaro.org>
-References: <e3751a74be34bbf3781c4644f518702a7270220b.1749785642.git.collin.funk1@gmail.com>
-	<20cce2b1-eaad-4565-817b-b094aecee0a5@linaro.org>
-Date: Fri, 20 Jun 2025 10:40:15 -0700
-Message-ID: <874iwa71mo.fsf@gmail.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1750441335; c=relaxed/simple;
+	bh=+d8rWtAZJO4o7jYg3VVESTCyMRK/oKsbIChLqwzbf0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i205fpFMgF3/EBZ2p4ZujxJ/rP880dgzp9Kg0lofYdWGWHPn7hmSYJhbXd3ynBmXboP+YgpKPetjJZq0Sa8k3cscRAkRlxBxzlWHUMgCPrn6+uIBTu6uRihKXptzRKfODdXBpvV6UQM1pvntUHeDuyPLJmR8RZxrXhGhiUx7uxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lAyEZ8Je; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750441334; x=1781977334;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+d8rWtAZJO4o7jYg3VVESTCyMRK/oKsbIChLqwzbf0k=;
+  b=lAyEZ8JeIWaxE/7CIH0xhLVGxj87APxxhZHoTc82l5QlIHs+EZ5A9qKf
+   Jn5UezPw5xkScEy40xjJaAL0WITqXnplEdna+Y9B4IRFQYCpN0XAGGuzq
+   uqoqWzHMHPHwDGMhD25/5ElF4dtWWLwuyaJ7Wn2TzWc3TZzJPyTSn8NUW
+   gJsglbJpQ9mx+eElPgXBY++mXKsR6azW+VpF4CCn6Qw6FYl52JX+ZuqOT
+   MRl8/dN+Klbn0CPn54vepZYjTKBuN2a6mWJMVQcaNxAYE8gomyP8fPk5p
+   KZva+ZvwTDCpODAAoC30c0yvneXHIWaqZFf/2n3Kdl1GsnSOh/0LQQ+kS
+   g==;
+X-CSE-ConnectionGUID: hRsgTmLiR1y9jNeBY9lgsw==
+X-CSE-MsgGUID: cUbm9elmSqyZy5xjS2gYzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="63396414"
+X-IronPort-AV: E=Sophos;i="6.16,252,1744095600"; 
+   d="scan'208";a="63396414"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 10:42:13 -0700
+X-CSE-ConnectionGUID: Jz2GhDOiQICSKlR67fCgag==
+X-CSE-MsgGUID: K38Nbuk0TT+ExDsKqRqDHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,252,1744095600"; 
+   d="scan'208";a="151514115"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa008.jf.intel.com with ESMTP; 20 Jun 2025 10:42:02 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 4B1EE109; Fri, 20 Jun 2025 20:42:00 +0300 (EEST)
+Date: Fri, 20 Jun 2025 20:42:00 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
+	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
+	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, 
+	Ingo Molnar <mingo@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCHv6 04/16] x86/efi: Move runtime service initialization to
+ arch/x86
+Message-ID: <aqkhzspx6bh7u6gkxkgp7ih3onk27rot7ojwvwvsk6c7zv4ror@ilbd7wt56jxi>
+References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
+ <20250620135325.3300848-5-kirill.shutemov@linux.intel.com>
+ <ba766193-e344-4def-84fd-f366872a2ee0@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ba766193-e344-4def-84fd-f366872a2ee0@intel.com>
 
-Hi James,
+On Fri, Jun 20, 2025 at 08:35:14AM -0700, Dave Hansen wrote:
+> On 6/20/25 06:53, Kirill A. Shutemov wrote:
+> > From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> > 
+> > The EFI call in start_kernel() is guarded by #ifdef CONFIG_X86. Move
+> > the thing to the arch_cpu_finalize_init() path on x86 and get rid of
+> > the #ifdef in start_kernel().
+> 
+> What does this have to do with LASS?
 
-James Clark <james.clark@linaro.org> writes:
+It is required to move CR pinning below it and allow to disable CR4.LASS
+temporarily during EFI initialization.
 
-> If we're enforcing bash style with static analysis shouldn't we also
-> change all the hashbangs to bash? Recently there have been changes to
-> change sh to bash in some of the tests so presumably the hard rule for
-> sh is no more?
->
-> In the past I've had to replace bashisms that didn't work in sh but it
-> would be nice to have only one language to write tests in. I doubt
-> anyone running the tests today is running somewhere without bash, or
-> that changing it will break anything. If anything it will fix more
-> bashisms that have already been written.
->
-> Just for reference there are 34 #!/bin/bash and 42 #!/bin/sh in
-> tools/perf/tests
+> Is there any reason not to just pull this in to tip now as a cleanup? It
+> looks good regardless of what it does to LASS.
 
-That sounds reasonable to me. Writing portable shell is a hassle and if
-we already assume a working /bin/bash in some places, I don't see a
-reason not to use it for the others.
+I am totally fine with applying it right away.
 
-Regarding this patch, shellcheck will use the file extension or shebang
-only if it does not find a 'shell' directive in a .shellcheckrc. So that
-change will still require this patch.
-
-I saw it was used in other places, so I assumed this patch was fine:
-
-$ find tools/perf -name Build | xargs grep bash
-tools/perf/Build:	$(Q)$(call echo-cmd,test)shellcheck -s bash -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
-tools/perf/trace/beauty/Build:	$(Q)$(call echo-cmd,test)shellcheck -s bash -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
-
-Collin
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
