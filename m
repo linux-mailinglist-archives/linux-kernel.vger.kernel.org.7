@@ -1,121 +1,178 @@
-Return-Path: <linux-kernel+bounces-696059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F41AE21BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 20:03:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38259AE21F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 20:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB9DB5A4DA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 18:02:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 652183AEBF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 18:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE8E2E974C;
-	Fri, 20 Jun 2025 18:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3492EA73D;
+	Fri, 20 Jun 2025 18:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="OftwhLSt"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="n4GjbPnC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="Ai0PM/MS"
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6512DFF17
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 18:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750442591; cv=none; b=f0Uoi2Vg37E0ypVCdSvn6GX3H3VmyAe+JuX842Or5TAdQJxqyBLMAfUfLOO7+BlKmVa31vf3PXXYnukxOoquUN0R0ksinCFYhaGlWIckqwTTXYD58bHYVHcd8tzD+J8SaW7e3qnF5p/HwUroR5Sy5vCsJi6vIz8H0iXXKeNyy9o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750442591; c=relaxed/simple;
-	bh=jFX7Zn97NNqcIpZJHQJ1GlN7HXgR2NyfxKF/YU5EaSc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TGgOe6bhU3JFDeoUTg+MJb/rfZTOIswBEVoNss/5vSzLZnJsJpaxCvQEpgZ/sXwaDQhYcFKDveLlCm/tqMe8qUmjHDOf0F614fvGM1cq3EsCIbJYzi9S6q0tq6JxredYczvdx8L/benTsBZGaEbvSvi73nufUHIv+DHmpzhdMDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=OftwhLSt; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-748e378ba4fso2878786b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 11:03:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brighamcampbell.com; s=google; t=1750442589; x=1751047389; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LASqD0oWUo5WFt/+IQjzZizw1Tgw6LTsbm7AdZ6Fm7Q=;
-        b=OftwhLStxMF0iVL+ILcb4NxJj9Q7SNR/4Pt5EYD2GKlbeSkx51BDywP0b1/SY7lPpH
-         BSIvg/MrEI8wI0Ly9vd36dYIbFC9vXKfFfUEuqUyr27Tnoft+19gWIiF1PHs3lXjr5T6
-         1S3knnjH77N2/uNEsGsK1psEvdkEBgD7uwIlH3zgHoJWH/2HmsnwdgE7yREGELsi/mYT
-         F+SaFBg8ZNchJI9E0kxrlGvquUfg8+EsAL+jfzdPSXejIbzs5boG2RXL77jwMJUITkeW
-         4bVOTohjwUVSbW4EVrwTsrjQrXuFN4DDD2agedTQOkH3sa0gPGctnFgCyg4rEBg2VBQ4
-         8AZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750442589; x=1751047389;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LASqD0oWUo5WFt/+IQjzZizw1Tgw6LTsbm7AdZ6Fm7Q=;
-        b=OlcYSt4vlF+8pPy1N0Ol50tg0at7Y1Jrik0DoyDAx4jLsIrWif0j8MhUEU9B0rbB+2
-         epLA/tZmNRkGcSodnn9zk9Wxe/n9uCS+iJdOZ/uS+yhvJIBHs+keaGjF412evVWGYmva
-         RwRBXahuWm1N5dX578KeeaUsz8+lLDNLaZ9RjQJO11ZUeifeHHAf/eRkBq6Fy3ENyoGj
-         GcBiNzWrdiM2JkZcIM6b/yLJCQlANXUqqE3pD13QBv416sSbGsoK/mZfbHOQ3gXjW5N2
-         32waFVjILA6FxQbYCAmfG2cxQO9E5Wd782gTYRw5oahwKOGLwXNYi1x1sEd53JIyU7ri
-         luxw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+fledSF8l+5b0nAYIhlGbGfjX+y7T/e8bLewPUoDdYzAXgXcN3YUUk72UymY6MmX4UUDmW6K2qKYKhPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ0DGcmgGufQ3x1OeHYNTngBuZXAxsv6deNcV3xZ7hHxQQHbZq
-	4DuUWgI4TUvLbvXVG5uxX5Ltjh4AgyMqVkhCQnjKE4pAkAvdkx7Tv0sTj8JNTW8t/zY=
-X-Gm-Gg: ASbGncufemBguZHDpZWZ0EBLLaKkXlE9oWvgAf2I1GPTiy/cdWAhZanqh/MKrkDu4Mh
-	69dytS+R5+v3i3ymUQoQX0QLMG1Wv/+uJ9/2psvsKZWk2e0e8yjflrgFO/eeoqL3Y6FToL/5MUH
-	QqfVWAjGi3PU8bgU2QMEEhLQVukhsfe0TpAGTPIhTMrMz/P0t+vK61pVc2zTI/Hg8r9W9pOOE3u
-	1NScdrLIK9ybClYCKldRM4thwCoEeysrHOVNLQV+2eF/HQ0uQ9SNL+D2tMZqPfLwucRwJw1cAgN
-	fvGtsjgWULrC9lbDNjbRQ5oZ4UiNi7sAOWoIbvkBuICC0g8VFz7RWGVhiwjxlUUAVkI/VebNU9i
-	rmE30hS/8r1xzK+VQkg==
-X-Google-Smtp-Source: AGHT+IFlM8cNRiBkGT187wOeWcfkfeb30/gPkHi7Ft0d5GjTVFgLhRQpzSohSUSYFxFeTwX7y0TLjg==
-X-Received: by 2002:a05:6a20:72a5:b0:203:bb65:995a with SMTP id adf61e73a8af0-22026f007fcmr6414483637.30.1750442589385;
-        Fri, 20 Jun 2025 11:03:09 -0700 (PDT)
-Received: from mystery-machine.brighamcampbell.com ([64.71.154.6])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b31f1256f03sm2131724a12.51.2025.06.20.11.03.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 11:03:08 -0700 (PDT)
-From: Brigham Campbell <me@brighamcampbell.com>
-To: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jonathan Corbet <corbet@lwn.net>,
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Brigham Campbell <me@brighamcampbell.com>
-Subject: [PATCH] Fix typo in drm docs
-Date: Fri, 20 Jun 2025 12:02:58 -0600
-Message-ID: <20250620180258.132160-1-me@brighamcampbell.com>
-X-Mailer: git-send-email 2.49.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51EF21516E;
+	Fri, 20 Jun 2025 18:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750443366; cv=pass; b=dBvqu8kcHuWjzuQ9CjXfdVl4xVcKAzNwdeLVBUwANKNzBXgECydcC24arPLXtpOAduZpoRubbUUkA9+sfFjEO4bAtTGZu9dm2Mi2qaDssyEPR7q2/XFEtco1l5mSspRoccNU7H9D2Q9NuqNfrTk35absP5gK85ufutk6tqQT3bQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750443366; c=relaxed/simple;
+	bh=5xnwn57hToUPm8QF6wQM7Wxtz/nSB0bNz8XLEqhjj0o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CcgMDchsYXBTd2L8fxSDXDggm9eVtlJFr9bFR/QVt2mlplpcj6w4w3UYTK9RY1l8W2P4KXkTabkf40QeUzinBP+2l/0ikr3GE5icY/sAm7wCyI8hyFOWs8W85HnAU9IAupff+trzKLW6i5AlOeR//Co13eii2z+VloDIv+Z6g4A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=n4GjbPnC; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=Ai0PM/MS; arc=pass smtp.client-ip=185.56.87.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=instance-europe-west4-srw8.prod.antispam.mailspamprotection.com; s=arckey; t=1750443363;
+	 b=KeT/n9feh9wPIC40j49ZpdG6Nnp3UH0voYtAFPOeWprKWu3SYhgprSzz+XFA4bk/4iq+NJ0Qli
+	  q0HDf843vvKwTYa4SCag90guUGetZ1lQchQ8V3nDVf2mlJbVUCPh4vArYPQUJ/80H/CHjXcgsl
+	  +Yq/237vc292pC2/8dKUFqD45TTkopYeKgllpx4KzYNoeYU4YgPbfE0dZW5vnh7D3llAIw2Kf9
+	  khdGRvA3VaK5IEVEeZXH3eYwJxovRoGoAz3IpnQQ1awtVYvgHcMKWgia7uwcLxv52R5xelhLai
+	  VKv67uIXbGx+Y11pMoFCWl5TDgmX9GHMZm8bAF4hmm9vVQ==;
+ARC-Authentication-Results: i=1; instance-europe-west4-srw8.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=instance-europe-west4-srw8.prod.antispam.mailspamprotection.com; s=arckey; t=1750443363;
+	bh=5xnwn57hToUPm8QF6wQM7Wxtz/nSB0bNz8XLEqhjj0o=;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	  Message-ID:Date:Subject:Cc:To:From:DKIM-Signature:DKIM-Signature;
+	b=Z0qoFNAr1t1IdGLay//CKw5YKYNwmF4Hd2CvJTOO/ne0Ni0XQV6YnZJ5b8umt+mKx3nEDTY+ul
+	  2gh1Rpb8k2BUxOviCvyf76ZvKmcVi2VkrtW49MOrs8dX/BL/ybbTWk+tLKoGU6d0N7z+F2XtbA
+	  N55FQ1N5EhK6iHoLtsiIXaIlUFXEEuWjXeH4XFMESnjRYGqFUp2/k2XErPqPrVGkF/eo6MJmS5
+	  e1na/WvFtrVc+dXOvaQXs5qzPiRROWPHhP0FSR6fB6ARY2NDZfsgtDkDRg4/8VwvTF57BNDWp8
+	  1S/V7Nxz8ky3yid1jCOmkg+9KbT/Bvth5BX4aSImRYWwsQ==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
+	:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Reply-To:List-Unsubscribe;
+	bh=3LVEzoRSold9GVypbu5ltp+xX0GVkhV3+mynLXoiQZA=; b=n4GjbPnCloUpXz4rNw7cWhCIP7
+	Gv5+coj9Veu7Ymm4XagwPo/SBLCu/KUBjHBQk5AkkHunVKdpI3HSTBg/jBvMdL27O9apzm/wiSbI1
+	gvCAB+mi03u14W6XBeh9ZAme+Z6l9rmivf8Ex0M/h/qRCnBHSmOb0mRBQUq+K3CrDktI=;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-s8d9.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1uSe6B-00000008F2G-1mcI;
+	Fri, 20 Jun 2025 15:56:17 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=3LVEzoRSold9GVypbu5ltp+xX0GVkhV3+mynLXoiQZA=; b=Ai0PM/MSA3RrtHq/pVxozvFBb1
+	eYVoaJKyULwWR+OuPDhBoQCzgNUu84c0SH9K0+RYSSZOUheO9JMqU/Ajm6YFQeJGKiVD7OFwd+sSb
+	ImY9RfmBPzb730BHd6NwTaOM6tWfPejdC2ZQfMLBmdJhiPvYQs6j0qO+q2GmeZE/q8Kk=;
+Received: from [82.60.196.243] (port=62607 helo=fedora-2.fritz.box)
+	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1uSe5y-00000000DoG-1ZGg;
+	Fri, 20 Jun 2025 15:56:02 +0000
+From: Francesco Valla <francesco@valla.it>
+To: Sebastian Reichel <sre@kernel.org>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+ linux-pm@vger.kernel.org, =?UTF-8?B?U8O4cmVu?= Andersen <san@skov.dk>,
+ Guenter Roeck <groeck@chromium.org>,
+ Matti Vaittinen <mazziesaccount@gmail.com>,
+ Ahmad Fatoum <a.fatoum@pengutronix.de>,
+ Andrew Morton <akpm@linux-foundation.org>, chrome-platform@lists.linux.dev
+Subject:
+ Re: [PATCH v11 6/7] power: reset: add PSCR NVMEM Driver for Recording Power
+ State Change Reasons
+Date: Fri, 20 Jun 2025 17:56:01 +0200
+Message-ID: <3135893.lGaqSPkdTl@fedora-2.fritz.box>
+In-Reply-To: <20250618120255.3141862-7-o.rempel@pengutronix.de>
+References:
+ <20250618120255.3141862-1-o.rempel@pengutronix.de>
+ <20250618120255.3141862-7-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: 2ae7087a56985d2acc2a7b87f96cc4c3
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
+CFBL-Feedback-ID: 1uSe6B-00000008F2G-1mcI-feedback@antispam.mailspamprotection.com
+Authentication-Results: instance-europe-west4-srw8.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-Fix typo in Documentation/gpu/introduction.rst
+Hi Oleksij,
 
-Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
----
- Documentation/gpu/introduction.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wednesday, 18 June 2025 at 14:02:54 Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+> This driver utilizes the Power State Change Reasons Recording (PSCRR)
+> framework to store specific power state change information, such as
+> shutdown or reboot reasons, into a designated non-volatile memory
+> (NVMEM) cell.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+> changes v6:
+> - rename pscr_reason to psc_reason
+> changes v5:
+> - avoid a build against NVMEM=m
+> changes v4:
+> - remove devicetree dependencies
+> ---
+>  drivers/power/reset/Kconfig       |  22 +++
+>  drivers/power/reset/Makefile      |   1 +
+>  drivers/power/reset/pscrr-nvmem.c | 254 ++++++++++++++++++++++++++++++
+>  3 files changed, 277 insertions(+)
+>  create mode 100644 drivers/power/reset/pscrr-nvmem.c
+> 
 
-diff --git a/Documentation/gpu/introduction.rst b/Documentation/gpu/introduction.rst
-index 3cd0c8860b94..39b4c943fa00 100644
---- a/Documentation/gpu/introduction.rst
-+++ b/Documentation/gpu/introduction.rst
-@@ -32,7 +32,7 @@ member, only the structure.
- 
- Except in special situations (to separate locked from unlocked variants)
- locking requirements for functions aren't documented in the kerneldoc.
--Instead locking should be check at runtime using e.g.
-+Instead locking should be checked at runtime using e.g.
- ``WARN_ON(!mutex_is_locked(...));``. Since it's much easier to ignore
- documentation than runtime noise this provides more value. And on top of
- that runtime checks do need to be updated when the locking rules change,
--- 
-2.49.0
+Tested-by: Francesco Valla <francesco@valla.it>
+
+I tested this on a i.MX93 FRDM using the on-board EEPROM as storage and
+a single-byte cell. Unfortunately, the on-board RTC does not have a
+scratchpad.
+
+PSCR was set in two different ways during subsequent tests:
+
+ - manually from userspace
+ - simulating a over-temperature condition through the emul_temp sysfs
+
+In both cases, it was re-read correctly after reboot.
+
+This will be very useful to detect and debug anomalous shutdowns or
+reboots on the field.
+
+Thank you!
+
+Regards,
+Francesco
+
 
 
