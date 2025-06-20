@@ -1,149 +1,108 @@
-Return-Path: <linux-kernel+bounces-695000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F32AE13B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:22:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC30AE13C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2652A7A92E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 06:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7A385A193E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 06:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEEF226D12;
-	Fri, 20 Jun 2025 06:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FA322127D;
+	Fri, 20 Jun 2025 06:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e4ReLmde"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eQOiohJ7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C850221281;
-	Fri, 20 Jun 2025 06:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CD31BE86E;
+	Fri, 20 Jun 2025 06:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750400508; cv=none; b=sftCVBb66JofMWHk20NIDng/hFDMXi7qqKAtTJzj3Y9lprrzN/h5aWOEawZ+g+6VMRJrQu0eVza/DuhhH922t+2qQRZnt/q18G93of4q6c3Jegx7//j56Yd3aWQNJH6sQAf6sNNGJ8NdAW34WEvEr0QV+ksxBOPNf31pUoRCH0w=
+	t=1750400585; cv=none; b=Y8teh9Q+qCW7glDug3l57gZu9y/WidocQVzGdVS7DxyP6yrAnA+W48UMtQ9Pig6Ac6EO4D+PSQPAHVaQG6WhZCx22kczVsuV+9ymxWYMpsooQdRVg2yeSBy9CxbLagJej39h/nWSc8+onv+vqakNjqAB/3lPrEdU/lcPrjTGshs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750400508; c=relaxed/simple;
-	bh=7yLqISZi2iOkaYLdO3jaD791BiQle43dMbxx3g6IDjM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=g/9VL+RefcOIydcz+24QIajB234shibfWnbQkobQoiJH95eYrVI7eGV0ajE2eb4tn51CvbQCyBPKu/zx9Jo7AW6HagQTY4qMrRw2p2tpB8Oc458Xn0tqDbNeU0uz/0v5JIonfqe6zl0eZidmSugHbDbnQiJ/LZxVTejIjL3xSZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e4ReLmde; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55JFeTc5024471;
-	Fri, 20 Jun 2025 06:21:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tv69h5+7Ly9EksC2Tsf+uzCBpppecTtLheLgqclXCFk=; b=e4ReLmdeLx7bjypR
-	60e8TaJ2+OAkWksErbwrMTRFlIKkNRU5zxTxr+xvpnpixbOBqeb8WM1pOVhcGpo/
-	ZCmsEYqdGDl7geKB18uZcTzw6D9oymDbNx6z5cK1UpK0rIHXRh86h4h1AFx8t5gS
-	5PYbBKZN2MHlIAku7PDQKQP3gAfMXEjvEl5p7GYjuPoCwxBACESLgMB7msAABC6J
-	9kGSXOh9b4PRENCxUwQ/c7gZRPbn2CjclYy7usCkzfEdTUq99Pw8Lb0seWmmDLcF
-	s0CfGryVLLjEZH+ZhO/mwxRejFrJnUgnwv2b1YtPFefchHHDdR4w471CVmbwwvSH
-	Z1MG8w==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4792caad3q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Jun 2025 06:21:42 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55K6LfJi032172
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Jun 2025 06:21:41 GMT
-Received: from hu-vgarodia-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 19 Jun 2025 23:21:38 -0700
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-Date: Fri, 20 Jun 2025 11:50:55 +0530
-Subject: [PATCH 5/5] media: iris: configure DMA device for vb2 queue on
- OUTPUT plane
+	s=arc-20240116; t=1750400585; c=relaxed/simple;
+	bh=BKzgWLiSnVkSnztu+6QWiSSx2eUFe40sPzurewxO+1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UEV1nOGiyrOovgi381eaVAKZjCQwt+d13ESeD3H4hKYK7NigOKaXEKE7Xa6bBevB+V6XIK8zKq9lDObabmj3jMe1WTg44WyyGu7bjp1suw4ZgXciqp8uTDuZjaxCI7KGbpmjaeSPQTSTXoQekPkPO6tWeZrlCSSyDOoVDIikLfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eQOiohJ7; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750400583; x=1781936583;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BKzgWLiSnVkSnztu+6QWiSSx2eUFe40sPzurewxO+1Y=;
+  b=eQOiohJ7WzhXSJxw02wLKvqYsY+8MdzrBMcmQAD/1L+sdnKWT8d1u5tk
+   uvWOmQZLt6K+nrfBpK1Avad3eVIdOxKPrQTY5/+GANzMpdCzbSIxsC5Pw
+   w82wgSJ4pqgrTyGUk4LXSv38qU4tg/SCn7arlKlxhBJV143ojLYQbV6/z
+   GP+b8dqbqAYhP/SHIuwrCiSz23OqLrx6mLQ0WFzmQOVpmIvVGsiThi8ne
+   LYTSryfEx1CC1FlzzZkom0VWrfrWa9mDA2DFwLU3Y/BfQGCoJOT9Pv2cq
+   dvchKIQF0pzR/au/W1HuT0EIAnSk0KKR9GYLG67QiX6VXOOOGd+naorsn
+   g==;
+X-CSE-ConnectionGUID: TDt3R79yQ6OXgvdFG3gm1w==
+X-CSE-MsgGUID: O5q44YwLQ5anYed3wpA68w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="51882204"
+X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
+   d="scan'208";a="51882204"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 23:23:02 -0700
+X-CSE-ConnectionGUID: zHvPMjEvQhWPLSgBssdQ9w==
+X-CSE-MsgGUID: 3B3SeY8tTju2cgyUofolLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
+   d="scan'208";a="181849497"
+Received: from emr-bkc.sh.intel.com ([10.112.230.82])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 23:23:01 -0700
+From: Chenyi Qiang <chenyi.qiang@intel.com>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Zide Chen <zide.chen@intel.com>
+Cc: Chenyi Qiang <chenyi.qiang@intel.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xuelian Guo <xuelian.guo@intel.com>
+Subject: [PATCH] KVM: selftests: Add back the missing check of MONITOR/MWAIT availability
+Date: Fri, 20 Jun 2025 14:22:18 +0800
+Message-ID: <20250620062219.342930-1-chenyi.qiang@intel.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250620-video_cb-v1-5-9bcac1c8800c@quicinc.com>
-References: <20250620-video_cb-v1-0-9bcac1c8800c@quicinc.com>
-In-Reply-To: <20250620-video_cb-v1-0-9bcac1c8800c@quicinc.com>
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar
-	<abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750400480; l=1047;
- i=quic_vgarodia@quicinc.com; s=20241104; h=from:subject:message-id;
- bh=7yLqISZi2iOkaYLdO3jaD791BiQle43dMbxx3g6IDjM=;
- b=ImbgSpYiEs9xk00RdFh8SJ7TLQu3dgodnogThKGLS1vi0czi7n02MC7Wst+Q9O/1/9YJqPv+x
- Do8NvlMd0J4Dv/N4i9bVNM+zsP11kCQLowyDX0l9Z+phNsFXddyWwwJ
-X-Developer-Key: i=quic_vgarodia@quicinc.com; a=ed25519;
- pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: CVd8M26JK9lmEvmR1FHGqWzp6EIPuFS6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIwMDA0NSBTYWx0ZWRfX/dzq0DEt1NZq
- Uu/zS4GWCSjeJ5viOyitQjhayXENIiJLQoPo6Ahr1BOWpkYREvrV3ECI2CyxVVvhnWXpIw70f2+
- zGpw/0uFwVQPkP5HeuW3iI0gYYx3oWS7sEb1vB7eIMZxvIj5a7MbZVBr9ePXiS2wxLDEcs5EHou
- x5eN4NQOjZCiUCFmtpPwTyOJ8s4tGgedLipWlXReLUB9LRRH8yvwpKTD/HfdAHjFItzRXcAWZ92
- WSOjYl8AR8i6r9Zjpnkt1vjNywsjS/Jtyr787pOjCyQ+SHWEmFUBAV3zzcoZZGpNd5uZt7s9Z3e
- YipFSwjNWd06YS/z3f0kazwV9X4a1yMKYGAqV4oMuI6Wc0CS+KNkcoMEV2Nu3o9+Utq4KSbTIjO
- hoeb4k7SM+EdPHrdHmy9OMjwtkcsMtRAt43sbVABd7voXB7f4rfLXJZYpggShXl+PB+4aiNk
-X-Proofpoint-ORIG-GUID: CVd8M26JK9lmEvmR1FHGqWzp6EIPuFS6
-X-Authority-Analysis: v=2.4 cv=etffzppX c=1 sm=1 tr=0 ts=6854fdf6 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
- a=9NI5Io21HBJBbxBAymgA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-20_02,2025-06-18_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 adultscore=0 spamscore=0 malwarescore=0
- priorityscore=1501 suspectscore=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 bulkscore=0 mlxscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506200045
+Content-Transfer-Encoding: 8bit
 
-While setting up the vb2 queues, assign "non_pixel" device to manage
-OUTPUT plane buffers i.e bitstream buffers incase of decoder. It prefers
-the non_pixel device(np_dev) when available, falling back to core->dev
-otherwise.
+The revamp of monitor/mwait test missed the original check of feature
+availability [*]. If MONITOR/MWAIT is not supported or is disabled by
+IA32_MISC_ENABLE on the host, executing MONITOR or MWAIT instruction
+from guest doesn't cause monitor/mwait VM exits, but a #UD.
 
-Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+[*] https://lore.kernel.org/all/20240411210237.34646-1-zide.chen@intel.com/
+
+Reported-by: Xuelian Guo <xuelian.guo@intel.com>
+Fixes: 80fd663590cf ("selftests: kvm: revamp MONITOR/MWAIT tests")
+Signed-off-by: Chenyi Qiang <chenyi.qiang@intel.com>
 ---
- drivers/media/platform/qcom/iris/iris_vb2.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ tools/testing/selftests/kvm/x86/monitor_mwait_test.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/qcom/iris/iris_vb2.c b/drivers/media/platform/qcom/iris/iris_vb2.c
-index cdf11feb590b5cb7804db3fcde7282fb1f9f1a1e..01cc337970400d48063c558c1ac039539dbcbaba 100644
---- a/drivers/media/platform/qcom/iris/iris_vb2.c
-+++ b/drivers/media/platform/qcom/iris/iris_vb2.c
-@@ -159,6 +159,10 @@ int iris_vb2_queue_setup(struct vb2_queue *q,
- 	*num_planes = 1;
- 	sizes[0] = f->fmt.pix_mp.plane_fmt[0].sizeimage;
+diff --git a/tools/testing/selftests/kvm/x86/monitor_mwait_test.c b/tools/testing/selftests/kvm/x86/monitor_mwait_test.c
+index 390ae2d87493..0eb371c62ab8 100644
+--- a/tools/testing/selftests/kvm/x86/monitor_mwait_test.c
++++ b/tools/testing/selftests/kvm/x86/monitor_mwait_test.c
+@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
+ 	int testcase;
+ 	char test[80];
  
-+	if (q->type == V4L2_BUF_TYPE_VIDEO_OUTPUT ||
-+	    q->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-+		q->dev = core->np_dev ? core->np_dev : core->dev;
-+
- unlock:
- 	mutex_unlock(&inst->lock);
++	TEST_REQUIRE(this_cpu_has(X86_FEATURE_MWAIT));
+ 	TEST_REQUIRE(kvm_has_cap(KVM_CAP_DISABLE_QUIRKS2));
  
-
+ 	ksft_print_header();
 -- 
-2.34.1
+2.43.5
 
 
