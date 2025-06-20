@@ -1,289 +1,144 @@
-Return-Path: <linux-kernel+bounces-695499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7026CAE1A6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:04:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34487AE1A6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DB7F4A57DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:03:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 918BD7A37E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6239828AB07;
-	Fri, 20 Jun 2025 12:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BFA28B3FF;
+	Fri, 20 Jun 2025 12:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mc2GoOCS"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hTaPe6/q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E551027FD56;
-	Fri, 20 Jun 2025 12:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A18428A71B
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 12:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750421023; cv=none; b=d72/Od/jxl/h/U9ZhPjTknc78grWVrSE6jA0vEH+1mwxocnMFvh8BaGpDInONOFEklU5afkQIn1jvlruFV6vZ6Ssfiqb9KsGTo+5VgP6wlv0no5+OEwFZhsJ3hw361mykkCovfWfbrEQVNomwMQ56loODg+A9x5JbrOg3z20IFA=
+	t=1750421048; cv=none; b=QH0FK8PQmlGwS1VvCpZsRrl3kd/lBaQO2n9YqO6IGGKkLX/MKQW7xmMMURelabKxSxyCovEGOuzeES+p1eQ/dYsEsssqM1oNLjpFfg/4C3L7cTQRhVfEH5kycZK1pu67VCZRKFeipGIFZBnFKVYErd2zyaSscPBZ0wp0Y+lNyWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750421023; c=relaxed/simple;
-	bh=FDVn6kzGJUMG813ArcDGLuAChLYEGlTwgPSx629w6Ps=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=uRJ0/+5Ky+0X/jQonFq8+mnpOEPIRqjCErCxkUATVsuFk04WnpZYc2yt0NE8e3CGo9HD8OKglivDK8Bp2hr2jjZAOpJmBql5GCOtlE7G0IPw6ph5mWpRXr1BoQKWxb59v6PS751BJprAkGRn+IU0QSETpikzlhotXDNekZkzRgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mc2GoOCS; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso1298261b3a.2;
-        Fri, 20 Jun 2025 05:03:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750421021; x=1751025821; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XdQekhyjCzmH4tNfpfSgyUB7lCWhyPe9Dj+g7h1mCmg=;
-        b=mc2GoOCS+A3QLvNSK1/kAIhwHYihdltbvHOJyoFeQT7pRzD6kicE1rRpHHczn2ypw6
-         thCRAmdd6IE9v8UvkRPR6jYFIkyAZDKs+wQ/jY/UTuHKDXloRkY95uDpPZFjVi7upHFl
-         lEGO8+hjQ0Q9B8p908sWI3D+QqkryqCLhufFhr6F8oCiZjmrE0ks6ZoLDcglj5Ig4tXO
-         u1KveSEQAqFIDI5QQaLVWN921JSUn9DTxtXwEqKb06jfFb0EQtnpELEBpbwYNAhDf/cU
-         16AAH0VaWBR/CEPAER+3G7avuXGXVX838pyY7CXS3EHEzgcjs9E1em7Vsbe5ciNVKMIM
-         sqvw==
+	s=arc-20240116; t=1750421048; c=relaxed/simple;
+	bh=l1Z6RZ+Jg/F0bsfyt7bxGpqft0eCD+Wo2GNzL0aL/xw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DT5EnT21XtrWG6+ONrc+fRxivDUetlgA6jvpwahNqiqqz08mcIlmUj+Y+fMccgwUNJJB5mUDsk8PVmQ7oxSWit/SI69l4U4k6+tibIpj2RphZjj/CCCo8/pXBPQgRCwxOhOpeCsMJUDLrG2SiU4zqQshDDnA32DM9FoRBF5QBlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hTaPe6/q; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750421044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JW3kxfXMYL5iahKOftdvklIyRga4xpLB5+77DL7Pz9M=;
+	b=hTaPe6/qfpZATNdEbXTfqSn94+igvssEc/Tszvlwno2SKMzZTr0T+qHer0FHxp9M9R4TjE
+	tL3psX/uLfO2dkQxyr6lt61p74RhiZrhmIkvdp04QnDHxT8C8EvflojXBl2ymezvHcZy2y
+	x231bOLvcIC9NGpRb9br5vcz/kl1Zzg=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-6-yogXgJUhPYSLNRPvkIGO5w-1; Fri, 20 Jun 2025 08:04:03 -0400
+X-MC-Unique: yogXgJUhPYSLNRPvkIGO5w-1
+X-Mimecast-MFC-AGG-ID: yogXgJUhPYSLNRPvkIGO5w_1750421042
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-450d50eacafso10776715e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 05:04:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750421021; x=1751025821;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XdQekhyjCzmH4tNfpfSgyUB7lCWhyPe9Dj+g7h1mCmg=;
-        b=u2NptaN8Fp6hyiFy0mGP97AQjo4HU13v71pixKvGl17j/3r0Zn3C34uoJ0lk665OPx
-         7XAWJM6OmuvuoNW0cZ6Nm35RhhoCNADGLmhJ/ob4F1M3lNldkmUYSwKN+OSwkXa1ZfMv
-         0OVtk7FzTTTU2QfOzg4CnQv/w0w8jrpK42ZFALT2uR5sePdqhYL0CdS2XHzmL2ThXhfe
-         DhoDvuA1iIkVwRrMt+BDjZWP1aQDWqWN8A1T3lMNf5YHcOcgI7+IigzDKwqNjWx3NkaR
-         g62V5QcwsRdbsfZyMws1sYZYOmNBKyv2g6HR8GCwFvqktnM13AzYC0QtuJ54c8FogjVc
-         FPnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUW6j6EDQkegB4akbiT9fAUuugKX84SMVtjHbZhcil6Q87AOVqGKlDRqw4jGDdBH1mLVc2EL5EDbS6CZhE=@vger.kernel.org, AJvYcCWVW1FGXJOm/wWFK/fIIzwifgLifDDLZ8FFGxbNUVfIbOr5VpT3xDTBzbnTNbmQGXufy7sUR1/UjkU5O+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznbAqaDv42Ir5wiip6l1no7GnWeoq3siS9nD08fAhoLVZlS60v
-	w4hSajZOVIPK5/xJOGnka8/zkF+CO82vAQ9+ESA98l92lD64QomMWOfyzYTz+YsE
-X-Gm-Gg: ASbGncu/7VxAZ1w6UfRFFe6ykr31i+IvAHbWCiOlEhJn+my1pjmdlKwM3XcNaSfEtBK
-	20LUlGxIV48mmvnIB1ntaPOTEfMG6YUkVZqYiJE2LUP2EZFQNSxkJzvcRLdMKKznKOBYJe+cS4K
-	gzu/FAtIRr1VxT4Oyb86pVIhDFXUa5hZWA3Ews7u9xSJANsmMmmAyjegEFtg+H57EGspibjVKli
-	AHGzZJR4AUjmxBRiX6hLns5qmUVs9N8KLc3+rjX+RWdCt4f7u/n5wVvxAiKMhZNynDWOkDHwaaj
-	xjCr/82eTfAmmf8TZJG+6CSYjC6+SVQ3fqxxj5JAKli66ICkc3nVOQ==
-X-Google-Smtp-Source: AGHT+IFLHQB0eNT6ur3ow177JDXob9FKBK/stJsroAx+A8CaHFBkobGYBsZY3Si9wYrKAZj/R0GKQg==
-X-Received: by 2002:a05:6a00:3c89:b0:748:3849:e790 with SMTP id d2e1a72fcca58-7490d201941mr3889412b3a.0.1750421020893;
-        Fri, 20 Jun 2025 05:03:40 -0700 (PDT)
-Received: from localhost ([240d:1a:f76:b500:4431:46e3:c76b:79bc])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7490a46b788sm1915365b3a.5.2025.06.20.05.03.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Jun 2025 05:03:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750421042; x=1751025842;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JW3kxfXMYL5iahKOftdvklIyRga4xpLB5+77DL7Pz9M=;
+        b=v/tFoL33PNdYCokHtVrQOQexWEoMVc4JBNjFdqT9Xr2pUYxYdeLUK/Z/KUF+SGxZ9o
+         dUVTeF3pquCSYAFabbsx5OJ61QpZQyjKcUp4l8acRdvkqK7d+muQsqxVuEnpNziBYFxm
+         c0QRJv7Hc4ZcGVJCMOvL757sd1Px+AQJ/3ON0R1uNb63Iqw6ghKCSkX/l9Y/d/X+XPXi
+         VZ1fgToR66LwmndnH3GLZb4PlPCQMxeqV9Z/DiAAIEU1bmMKYz0fnUwHnjwvhVcNexn5
+         eNmyJprRMvKm7XWtPm5jF0+7NqYXHeu3A20Mt7DyqU/d+sY89liucL0Z15toYDabqPV1
+         eABg==
+X-Gm-Message-State: AOJu0YypWWEqLT5u9ttEJnhVuC9pRxUQ5P1EjUeQGoclcxwaJ5+tI2OO
+	HQO5H1gM6KmVTN0Ojvzk44luueFGDCdChxLppZH9rU7avWHEmniG3J0UcrcfCraoOmYIg4zeFaq
+	NQ1omB8e1BBMfo7vOSbLEhRQdB+nQ9xtcr5G/PEnlmf5Jbj6ZQbkhQIvewGadMQH7Ez02gE68CX
+	dFTwti1wy3RSRW4bePOXpT57oX7QiJ+U29EbJUdqC7
+X-Gm-Gg: ASbGncsznQ/8J7P1SbfknyEyy4iBvIHzA+nXv2FnUR4tHgtR4d7SCDFLg3fn2HdRcQX
+	GLlWyjA4jdt+kUCo0hbAbi16Z17gdZBBEZagygsp3L/adTUd4juxQrzL1YYpBwtzYnMnHjeVe7W
+	NoUVc=
+X-Received: by 2002:a5d:5f8e:0:b0:3a5:243c:6042 with SMTP id ffacd0b85a97d-3a6d12bb6b6mr2193975f8f.2.1750421041727;
+        Fri, 20 Jun 2025 05:04:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEJzasLSc76E2amKmRvg22TG4v1hAFaZKZ2pNBS9y7yYicS3IGqkmtp9MKL+Y+V7M0fpDUlyS00yQ6bumKJzPI=
+X-Received: by 2002:a5d:5f8e:0:b0:3a5:243c:6042 with SMTP id
+ ffacd0b85a97d-3a6d12bb6b6mr2193916f8f.2.1750421041262; Fri, 20 Jun 2025
+ 05:04:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 20 Jun 2025 21:03:34 +0900
-Message-Id: <DARCGOT0TKN8.OC6467QNJA9O@gmail.com>
-From: "Alexandre Courbot" <gnurou@gmail.com>
-To: "Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>
-Cc: "Albert Esteve" <aesteve@redhat.com>, "Michael S. Tsirkin"
- <mst@redhat.com>, "Mauro Carvalho Chehab" <mchehab@kernel.org>, "Hans
- Verkuil" <hverkuil@xs4all.nl>, "Jason Wang" <jasowang@redhat.com>, "Xuan
- Zhuo" <xuanzhuo@linux.alibaba.com>, =?utf-8?q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, <gurchetansingh@google.com>,
- <daniel.almeida@collabora.com>, <adelva@google.com>,
- <changyeon@google.com>, <nicolas.dufresne@collabora.com>,
- <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
- <virtualization@lists.linux.dev>
-Subject: Re: [PATCH v3] media: add virtio-media driver
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250412-virtio-media-v3-1-97dc94c18398@gmail.com>
- <20250526141316.7e907032@foz.lan> <DA6Q0LZPGS2D.2QCV889PQL2A7@gmail.com>
- <20250527111311.105246f2@sal.lan>
- <CAAVeFu+=RpEfu3i_Fh9_eq_g=cmDFF0gcurT0gU9AX1UX+UNVA@mail.gmail.com>
- <20250527153547.6603eaf4@sal.lan>
- <CAAVeFuJtp=UEEULeMSVpmYDmH81Y6OQgj6NCeuPUhabSRHw4dA@mail.gmail.com>
- <20250617104938.09d21b7c@foz.lan> <20250617110318.7c89d999@foz.lan>
- <20250617122034.3e570b4e@foz.lan> <DAPQ9L3FCLIF.24FIDLQST2S1O@gmail.com>
- <20250618170500.1e60aacf@sal.lan>
-In-Reply-To: <20250618170500.1e60aacf@sal.lan>
+MIME-Version: 1.0
+References: <20250619180159.187358-1-pbonzini@redhat.com> <20250619180159.187358-4-pbonzini@redhat.com>
+ <cc443335-442d-4ed0-aa01-a6bf5c27b39c@intel.com>
+In-Reply-To: <cc443335-442d-4ed0-aa01-a6bf5c27b39c@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Fri, 20 Jun 2025 14:03:49 +0200
+X-Gm-Features: Ac12FXzbneTz5YpRMuZL36zwNtkuaeE1Xz-EjUQKtd3ZczaGjNE0oZuCnQ-GZx8
+Message-ID: <CABgObfaeYdKeYQb+6j6j6u5ytasgb=t2z03cQvkG2c+owfOCgg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] KVM: TDX: Exit to userspace for GetTdVmCallInfo
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: "Kernel Mailing List, Linux" <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>, 
+	Sean Christopherson <seanjc@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	"Huang, Kai" <kai.huang@intel.com>, Adrian Hunter <adrian.hunter@intel.com>, reinette.chatre@intel.com, 
+	"Lindgren, Tony" <tony.lindgren@intel.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
+	Yan Zhao <yan.y.zhao@intel.com>, mikko.ylinen@linux.intel.com, 
+	"Shutemov, Kirill" <kirill.shutemov@intel.com>, "Yao, Jiewen" <jiewen.yao@intel.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Mauro,
-
-Really appreciating the time you are spending reviewing and testing
-this! m(__)m Thanks also for sharing your script, I've learned a few
-things I didn't know about crosvm. :P
-
-On Thu Jun 19, 2025 at 12:05 AM JST, Mauro Carvalho Chehab wrote:
-<snip>
->> > Found how to setup cpus and memory, but didn't find a way to setup
->> > network without running it as root. The gpu parameter has several
->> > options. Not sure what backend works well for media apps like qv4l2,
->> > camorama, X11, ... =20
->>=20
->> I'm afraid getting GPU and graphics in general to work is more involved
->> and tricky on a regular Linux setup (crosvm was primarily designed for
->> ChromeOS). If you really need it I can do some more research; most of my
->> tests have been done using v4l2-ctl or ffmpeg and saving the output on
->> disk for later inspection.
+Il ven 20 giu 2025, 03:21 Xiaoyao Li <xiaoyao.li@intel.com> ha scritto:
 >
-> It was actually easier than what I expected, but it had to run
-> as root. Due to that, I had to move it to a test machine that I
-> use just for such kind of tests. I updated it to the Ubuntu=20
-> version 24.10, but crossvm refused to build even. I end needing
-> to install rust via rustup, as only version 1.81.0 had what it is
-> required to run with the needed features (network, media and gpu).
+> >               tdx->vp_enter_args.r11 = 0;
+> > +             tdx->vp_enter_args.r12 = 0;
+> >               tdx->vp_enter_args.r13 = 0;
+> >               tdx->vp_enter_args.r14 = 0;
+> > +             return 1;
+>
+> Though it looks OK to return all-0 for r12 == 0 and undefined case of
+> r12 > 1, I prefer returning TDVMCALL_STATUS_INVALID_OPERAND for
+> undefined case.
 
-Yes, rustup is the preferred way (if not traditional from the point of
-view of Linux distros) to get the latest Rust toolchain.
+
+From the GHCI I wasn't sure that TDVMCALL_STATUS_INVALID_OPERAND is a
+valid result at all.
+
+Paolo
 
 >
->> >> > Btw, on a quick test with v4l2-compliance, something looks weird:
->> >> > I started a camera application at the host. Still, v4l2-compliance
->> >> > said successfully excecuted mmap:
->> >> >=20
->> >> > Streaming ioctls:
->> >> >         test read/write: OK (Not Supported)
->> >> >         test blocking wait: OK
->> >> >         test MMAP (no poll): OK                          =20
->> >> >         test MMAP (select): OK                           =20
->> >> >         Vide[2025-06-17T08:44:49.177972817+00:00 ERROR virtio_media=
-::ioctl] VIDIOC_REQBUFS: memory type DmaBuf is currently unsupported
->> >> > [2025-06-17T08:44:49.178164554+00:00 ERROR virtio_media::ioctl] VID=
-IOC_REQBUFS: memory type DmaBuf is currently unsupported
->> >> > o Capturtest MMAP (epoll): OK                            =20
->> >> >         test USERPTR (no poll): OK (Not Supported)
->> >> >         test USERPTR (select): OK (Not Supported)
->> >> >         test DMABUF (no poll): OK (Not Supported)
->> >> >         test DMABUF (select): OK (Not Supported)
->> >> >=20
->> >> > Which doesn't make any sense, as the host OS should not allow acces=
-s
->> >> > to mmap while streaming.   =20
->> >>=20
->> >> Ah, this was with the "simple" device, not with the proxy one.
->> >> With the proxy one, I'm getting:
->> >>=20
->> >> # v4l2-ctl --all
->> >> Driver Info:
->> >>         Driver name      : virtio-media
->> >>         Card type        : usb video: usb video
->> >>         Bus info         : platform:virtio-media
->> >>         Driver version   : 6.15.0
->> >>         Capabilities     : 0x84200001
->> >>                 Video Capture
->> >>                 Streaming
->> >>                 Extended Pix Format
->> >>                 Device Capabilities
->> >>         Device Caps      : 0x04200001
->> >>                 Video Capture
->> >>                 Streaming
->> >>                 Extended Pix Format
->> >> Priority: 2
->> >> Video input : 0 (Camera 1: ok)
->> >> Format Video Capture:
->> >>         Width/Height      : 1280/720
->> >>         Pixel Format      : 'MJPG' (Motion-JPEG)
->> >>         Field             : None
->> >>         Bytes per Line    : 0
->> >>         Size Image        : 1843200
->> >>         Colorspace        : sRGB
->> >>         Transfer Function : Rec. 709
->> >>         YCbCr/HSV Encoding: ITU-R 601
->> >>         Quantization      : Default (maps to Full Range)
->> >>         Flags             :=20
->> >> Crop Capability Video Capture:
->> >>         Bounds      : Left 0, Top 0, Width 1280, Height 720
->> >>         Default     : Left 0, Top 0, Width 1280, Height 720
->> >>         Pixel Aspect: 1/1
->> >> Selection Video Capture: crop_default, Left 0, Top 0, Width 1280, Hei=
-ght 720, Flags:=20
->> >> Selection Video Capture: crop_bounds, Left 0, Top 0, Width 1280, Heig=
-ht 720, Flags:=20
->> >> Streaming Parameters Video Capture:
->> >>         Capabilities     : timeperframe
->> >>         Frames per second: 30.000 (30/1)
->> >>         Read buffers     : 0
->> >>=20
->> >> User Controls
->> >>=20
->> >>                      brightness 0x00980900 (int)    : min=3D-128 max=
-=3D127 step=3D1 default=3D-11 value=3D-11
->> >>                        contrast 0x00980901 (int)    : min=3D0 max=3D2=
-55 step=3D1 default=3D148 value=3D148
->> >>                      saturation 0x00980902 (int)    : min=3D0 max=3D2=
-55 step=3D1 default=3D180 value=3D180
->> >>                             hue 0x00980903 (int)    : min=3D-128 max=
-=3D127 step=3D1 default=3D0 value=3D0
->> >>=20
->> >> # v4l2-compliance -d0 -s
->> >>=20
->> >> Streaming ioctls:
->> >>         test read/write: OK (Not Supported)
->> >>         test blocking wait: OK
->> >>                 fail: v4l2-test-buffers.cpp(1345): node->streamon(q.g=
-_type()) !=3D EINVAL
->> >>         test MMAP (no poll): FAIL
->> >>                 fail: v4l2-test-buffers.cpp(1345): node->streamon(q.g=
-_type()) !=3D EINVAL
->> >>         test MMAP (select): FAIL
->> >>                 fail: v4l2-test-buffers.cpp(1345): node->streamon(q.g=
-_type()) !=3D EINVAL
->> >>         test MMAP (epoll): FAIL
->> >>         test USERPTR (no poll): OK (Not Supported)
->> >>         test USERPTR (select): OK (Not Supported)
->> >> [2025-06-17T08:55:20.768760714+00:00 ERROR virtio_media::ioctl] VIDIO=
-C_REQBUFS: memory type DmaBuf is currently unsupported
->> >>         test DMABUF (no poll): OK (Not Supported)
->> >> [2025-06-17T08:55:20.769745707+00:00 ERROR virtio_media::ioctl] VIDIO=
-C_REQBUFS: memory type DmaBuf is currently unsupported
->> >>         test DMABUF (select): OK (Not Supported)
->> >>=20
->> >> At the host, I'm getting:
->> >>=20
->> >> Streaming ioctls:
->> >>         test read/write: OK (Not Supported)
->> >>         test blocking wait: OK
->> >>                 fail: ../utils/v4l2-compliance/v4l2-test-buffers.cpp(=
-1346): node->streamon(q.g_type()) !=3D EINVAL
->> >>         test MMAP (no poll): FAIL
->> >>                 fail: ../utils/v4l2-compliance/v4l2-test-buffers.cpp(=
-1346): node->streamon(q.g_type()) !=3D EINVAL
->> >>         test MMAP (select): FAIL
->> >>                 fail: ../utils/v4l2-compliance/v4l2-test-buffers.cpp(=
-1346): node->streamon(q.g_type()) !=3D EINVAL
->> >>         test MMAP (epoll): FAIL
->> >>         test USERPTR (no poll): OK                       =20
->> >>         test USERPTR (select): OK                        =20
->> >>         test DMABUF: Cannot test, specify --expbuf-device =20
->>=20
->> These logs look ok to me: the MMAP tests are failing on the host, so
->> they are also expected to fail on the guest (still I expect regular
->> streaming to work on both). USERPTR is not supported on the guest, as
->> per your request to not support this memory type in new drivers. DMABUF
->> is not supported at all at the moment.
+> So please make above "case 0:", and make the "default:" return
+> TDVMCALL_STATUS_INVALID_OPERAND
 >
-> In the specific case of a virtio driver, while it is OK for the first
-> versions to support MMAP only, USERPTR support could make sense, as=20
-> this is not a real driver for a certain hardware, but instead it is
-> replicating at the guest whatever the host driver has, which may or
-> may not have MMAP.
+> >       }
+> > -     return 1;
+> >   }
+> >
+> >   static int tdx_complete_simple(struct kvm_vcpu *vcpu)
+> > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> > index 6708bc88ae69..fb3b4cd8d662 100644
+> > --- a/include/uapi/linux/kvm.h
+> > +++ b/include/uapi/linux/kvm.h
+> > @@ -461,6 +461,11 @@ struct kvm_run {
+> >                                       __u64 gpa;
+> >                                       __u64 size;
+> >                               } get_quote;
+> > +                             struct {
+> > +                                     __u64 ret;
+> > +                                     __u64 leaf;
+> > +                                     __u64 r11, r12, r13, r14;
+> > +                             } get_tdvmcall_info;
+> >                       };
+> >               } tdx;
+> >               /* Fix the size of the union. */
+>
 
-There is a module parameter (allow_userptr) which you can set to enable
-USERPTR buffers, in case you want to try this as well.
-
->
-> That's said, I don't recall any driver with USERPTR and without MMAP
-> those days. I did a quick check: VB2 devices always seem to have MMAP.
->
-> -
->
-> There is one case where only read ioctl is supported: pvrusb2, which
-> is probably not interesting enough those days, but IMHO, for the few
-> cases where a device can't be used at the guest due to the lack of a=20
-> compatible streaming API, virtio-media should not expose it to the
-> guest and/or issue an error or warning.
-
-I've never tested virtio-media with a PVR driver, to be honest. :) Only
-regular cameras and video accelerators. So I cannot guarantee other
-kinds of devices will work properly - there may also be limitations in
-the crosvm proxy device that will prevent these devices from working.
-Just a heads-up.
 
