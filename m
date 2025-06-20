@@ -1,125 +1,125 @@
-Return-Path: <linux-kernel+bounces-694816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72DA2AE1100
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 04:17:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D83AE110A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 04:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AC0C19E259A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 02:17:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E51736A0BD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 02:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C98013B5A0;
-	Fri, 20 Jun 2025 02:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD533987D;
+	Fri, 20 Jun 2025 02:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dY/ON7BY"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26577450EE;
-	Fri, 20 Jun 2025 02:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffUjgbHD"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C743628FD;
+	Fri, 20 Jun 2025 02:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750385817; cv=none; b=SE8BHHC7rjAm91TrPCURt3pEOHge1/M0lZaTm/oQBPVMyMXs1LgAqtbzkwGN76dzHyO4kkstgF3RrfS1XxUl8tpQ2AE9uzbRnVH+5hLTZg1XIGSwvNSS26WHmb8s80gYNdS5G3MDH7oT42TBmsdXJIcsp+N5EhRMl1A9RPnJEGo=
+	t=1750385884; cv=none; b=uviwcGMWDgV7zYzZ/Xi2bqZAFN4SIbHNXxDZTLk2aYeObv+Hiqv+svZECVp1pnzO2rTmFyzpU6hjrdR1pQ5tgqTxL+oWOdcQyZBMaX7uLZU7MCA50UkbwBmqbE9/nByV7NsXQgVjpyLRaIoZcY3JIIPn3enKKi3fsZMQi1el7fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750385817; c=relaxed/simple;
-	bh=O+MCyM3Cxz5sWUQ66OxBKvk7kzwuF8sbo1dhdzjIfDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=evKzw1PSJPZGaoiYz341oFRN1bsVJI+sjwK4S/rOe9hoIE0J/XatGc6ROhkgTMEAY0P1ixe3qiyq2uTB+Ktge+AFf7vmyWJFqk4jT8A4pgikIhyoSw4tUkrN2GaTNyuxrBPS04s/tHawag9XKn63L/IW9/CMDyXDIHEnA4gLbxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dY/ON7BY; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=dddU8SQMwKyWLwSUA3HDzNyoq3hFA/VcuWgu/ai403Y=;
-	b=dY/ON7BYaFM2fMI1rb/YVH6H0uSiZoOz9ahWbuFVTQLugQxqVeG+vI7jn6+2QI
-	GHfX8muUajb9gdZAN2/o15pMPEm3Ivy5RxhE2oIQUcnaUfyDoeTO/FvxPIsI4akc
-	237QRhlMkZwR+ga5qJd7WGVChROmvwgUYHZo7dEhrwYDw=
-Received: from [10.42.12.155] (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wA3nVxwxFRoEsFNAg--.1447S2;
-	Fri, 20 Jun 2025 10:16:17 +0800 (CST)
-Message-ID: <c7a2cc26-794e-49e1-bf8c-35617bb8060f@163.com>
-Date: Fri, 20 Jun 2025 10:16:16 +0800
+	s=arc-20240116; t=1750385884; c=relaxed/simple;
+	bh=6MCffwkdHeIHrVXhbn54erx3b/fYlg9DTNvSFcS+Igc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=IMV3x1Oxw4wQfkTp0GgsUtNTQHP4BDPxLBEPRwAtbuU+OfGM5DIMFLHRV4r5xYoHib2jHXB6/+yPnfLQjDgv2UbtxanklWtjDvxpOw7BQ69CBv2pqiWD29Wbk19VuHHbpHWTuhUAHZx/zbxt/7Q3iiC5jHmVRKlZrKPvcTReBDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ffUjgbHD; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7481600130eso1577046b3a.3;
+        Thu, 19 Jun 2025 19:18:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750385882; x=1750990682; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CrAwGmYD6smdn/1bwvG0NE4H0xPUOXXyruWhgIcWsJo=;
+        b=ffUjgbHDrDGJaKOAtyhbaI/xhxAeehs1BAl3sixiNtH67AThkge4M5XL1k05DCAjPG
+         6aLnkrV0MtBNZLypL8xzRecPvinUg7NLus5RF8QLKDxGelg1NbdYVDYtsshnr+SSoutV
+         fKNiE9aSjDzTaYjJvdCMYcNOilhEY80rC/0kqaSo6j6UDxl+j8f8dXcxObKVsx5RPjFE
+         X1ydMBNWYeuEFwOxd8WcGwXjW98Ux37T8f2uYquBZvWZZA8HkwnbdaHXBhzvXDqwCrCP
+         f+Y5OLnhwAESJr9FWYVb1kNpyOVyxkzNKb6BLmh003TUOQcGYN/PzBnAX6fpjP5uXbTl
+         47gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750385882; x=1750990682;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CrAwGmYD6smdn/1bwvG0NE4H0xPUOXXyruWhgIcWsJo=;
+        b=T3uCk9wOlbssZtHbEBb/Thjr147L3sRzSXpAya6gTim9lTwBl4DITpTcLqOvb9HVAL
+         32kMwg6TdC75ZUONbgM+QebMyMsfLWxCDL94Xun02sZhUY9+oCf5+ALf1SrE3aAuFrYp
+         5/jobEnMGWOjxAGfBINiOn4aTE4AFUUm64s5lo61Ko+FOpRIM1j/XgCoDkiH/n9hZuO5
+         9glVujAJEMmZWmdF+0sE3sqdSROGHLGqmAuIKn+XQLbykumIs0m6KTW3M6Iu0FJ9edVo
+         EpM6qfWKTAR2BayfPJPC/adMTbkYVouBgHewa+mKkrvYx2BUxiA+o/l8e3Ehp3o2up1N
+         8BaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdKXv/EQXGhMU8fbcra9AnuxYLt9F7gvXVQvRIvlLDJjwDDLHtVr08b3nmImU2vxqhUzw+TIBv8Fct@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkwFFXVO4THbQn2cluBzhp/1Idh52eJKXA1/7TWl0Z3keFQpIl
+	SgS/0pfLmly5MQe7auyv+ZyfKJ57n2e7d33Api7msXT/Bv+9lsdKF5u6
+X-Gm-Gg: ASbGncuYIIi8tPSvxlc997nyx33kDQibUGsGK7C4iwd8esGml1AYN05BDn0qLI/m66e
+	BK7FNJ6iqpqPRNftniJpWfrS8BaNxZSuEdmqyreC/jGvYDEJUhgexQZL2DhFBG1+dkFz1hhC1/P
+	NA+YuDPdVaHSoeTr5AtF8jTALBDsuRdnE/mOCiz8o7pWaC1L9/VhJOGsfansyk8CfBfzp/SV3HA
+	fdhdHRconyEm+r78sma5rGmZt+HPL8UitHmY23Au8y//IcARCmqVlvecF/FeeW3/Zq2FB1IQ+Bf
+	UQrLj1wB5aEVpvYYNhU26DXlPL+7GQIE+vpVsD3StGJaM6A+szfJMUI/FLGhKVguv8KvYe+TMYf
+	HWCDY8hVC6F4ifH/yuiy7CQDy+l4oCLWEhY8=
+X-Google-Smtp-Source: AGHT+IGa81kAriMSCsca0OKoBHvxPEwEHy/Ct3EWldlcMjXEdkPkRSl57mtl2UgfH04e4BDa99UnlQ==
+X-Received: by 2002:a05:6a00:170b:b0:748:eb38:8830 with SMTP id d2e1a72fcca58-7490d75a080mr1354457b3a.13.1750385881940;
+        Thu, 19 Jun 2025 19:18:01 -0700 (PDT)
+Received: from SHOUYELIU-MC0.tencent.com ([43.132.141.21])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7490a6743c5sm845105b3a.143.2025.06.19.19.18.00
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 19 Jun 2025 19:18:01 -0700 (PDT)
+From: shouyeliu <shouyeliu@gmail.com>
+To: corbet@lwn.net
+Cc: linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org,
+	sfr@canb.auug.org.au,
+	shouyeliu@gmail.com,
+	shouyeliu@tencent.com
+Subject: [PATCH] Documentation: amd-pstate:fix minimum performance state label error
+Date: Fri, 20 Jun 2025 10:16:58 +0800
+Message-Id: <20250620021658.92161-1-shouyeliu@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <87jz57h6us.fsf@trenco.lwn.net>
+References: <87jz57h6us.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] usbip: convert to use faux_device
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: shuah@kernel.org, valentina.manea.m@gmail.com, i@zenithal.me,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- zhouzongmin@kylinos.cn
-References: <2a327b520760271471717fff9b222cdc34967489.1746662386.git.zhouzongmin@kylinos.cn>
- <20250604065410.76069-1-min_halo@163.com>
- <2025061926-paycheck-footnote-a2b8@gregkh>
-Content-Language: en-US
-From: Zongmin Zhou <min_halo@163.com>
-In-Reply-To: <2025061926-paycheck-footnote-a2b8@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wA3nVxwxFRoEsFNAg--.1447S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ww18uw4kGw1UAw1DXrWUArb_yoW8Zw13pF
-	WfJFZIkrWUGFsFqrsrWF4Ut34ftwsay3yYyry3J397Ww4jyr98uF17Gr1Fk39xtry0ywnF
-	qr4DKas8GFyUuFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uf-BiUUUUU=
-X-CM-SenderInfo: pplqsxxdorqiywtou0bp/1tbixxhxq2hT6U90lgABs7
 
+From: Shouye Liu <shouyeliu@tencent.com>
 
-On 2025/6/19 19:01, Greg KH wrote:
-> On Wed, Jun 04, 2025 at 02:54:10PM +0800, Zongmin Zhou wrote:
->> From: Zongmin Zhou <zhouzongmin@kylinos.cn>
->>
->> The vhci driver does not need to create a platform device,
->> it only did so because it was simple to do that in order to
->> get a place in sysfs to hang some device-specific attributes.
->> Now the faux device interface is more appropriate,change it
->> over to use the faux bus instead.
->>
->> Signed-off-by: Zongmin Zhou <zhouzongmin@kylinos.cn>
->> ---
->> Changes in v2:
->> - don't change faux create api,just call probe on vhci_hcd_init.
->>
->>   drivers/usb/usbip/vhci.h             |  4 +-
->>   drivers/usb/usbip/vhci_hcd.c         | 86 +++++++++++-----------------
->>   drivers/usb/usbip/vhci_sysfs.c       | 68 +++++++++++-----------
->>   tools/usb/usbip/libsrc/vhci_driver.h |  2 +-
->>   4 files changed, 72 insertions(+), 88 deletions(-)
-> I get the following build errors from this patch:
->
-> drivers/usb/usbip/vhci_hcd.c:1462:12: error: ‘vhci_hcd_resume’ defined but not used [-Werror=unused-function]
->   1462 | static int vhci_hcd_resume(struct faux_device *fdev)
->        |            ^~~~~~~~~~~~~~~
-> drivers/usb/usbip/vhci_hcd.c:1418:12: error: ‘vhci_hcd_suspend’ defined but not used [-Werror=unused-function]
->   1418 | static int vhci_hcd_suspend(struct faux_device *fdev, pm_message_t state)
->        |            ^~~~~~~~~~~~~~~~
-> cc1: all warnings being treated as errors
->
-> Are you sure you tested this?
-I apologize for not enabling -Werror, which resulted in missing this 
-error warning.
-I have tested usbip feature use the new patch,but not test system 
-suspend/resume.
-The faux bus type don't add pm function,and vhci-hcd driver can't 
-register it.
-Maybe have to add suspend/resume for it.like below:
-static const struct bus_type faux_bus_type = {
-     .name        = "faux",
-     .match        = faux_match,
-     .probe        = faux_probe,
-     .remove        = faux_remove,
-     .resume     = faux_resume,
-     .suspend    = faux_suspend,
-};
+In the AMD P-States Performance Scale diagram, the labels for "Max Perf"
+and "Lowest Perf" were incorrectly used to define the range for
+"Desired Perf".The "Desired performance target" should be bounded by the
+"Maximum requested performance" and the "Minimum requested performance",
+which corresponds to "Max Perf" and "Min Perf", respectively.
 
-Is that right?
-Your expertise would be greatly valued.
-Thanks very much.
->
-> thanks,
->
-> greg k-h
+Signed-off-by: Shouye Liu <shouyeliu@tencent.com>
+---
+ Documentation/admin-guide/pm/amd-pstate.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/pm/amd-pstate.rst b/Documentation/admin-guide/pm/amd-pstate.rst
+index 412423c54f25..e1771f2225d5 100644
+--- a/Documentation/admin-guide/pm/amd-pstate.rst
++++ b/Documentation/admin-guide/pm/amd-pstate.rst
+@@ -72,7 +72,7 @@ to manage each performance update behavior. ::
+   Lowest non-        |                       |                         |                       |
+   linear perf ------>+-----------------------+                         +-----------------------+
+                      |                       |                         |                       |
+-                     |                       |       Lowest perf  ---->|                       |
++                     |                       |          Min perf  ---->|                       |
+                      |                       |                         |                       |
+   Lowest perf ------>+-----------------------+                         +-----------------------+
+                      |                       |                         |                       |
+-- 
+2.19.1
 
 
