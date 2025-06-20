@@ -1,163 +1,160 @@
-Return-Path: <linux-kernel+bounces-695009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97385AE13D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:30:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C75AE13CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 241013B75DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 06:29:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB1BA189A8D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 06:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B4D221F17;
-	Fri, 20 Jun 2025 06:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14520220F4D;
+	Fri, 20 Jun 2025 06:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cPY0ed+K"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Wngawbcb"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6057221281;
-	Fri, 20 Jun 2025 06:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCDD30E837
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 06:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750400987; cv=none; b=Ck66zEOQnmR55bVcLWJz6kwZmZrywGrik8QA6mJ3pC2Jj7gJ9BG0A4TA4ofbQ5IDWwcfZ7bnElQHUxoirYBDdtIkWwPuGP4fBX0DV7x8korE0p3mY4+vl2Ob3DwvXdy6tLJotv02E94V2S9Yh3b6TsVtPzvC0Tvx7SvQfGpNDOE=
+	t=1750400957; cv=none; b=WiGuJYZk+vC6wSHu3Fln6e1N+qN+0c2Nvkn0KzrZykdyMXIIx3HEkF6UBBeHJMRjEKRWpnXU1o2QgxtX6+YMBnTuUBHip5nsmlBBnYbNHTDiXTi5fDFaUZNiXgrMt79hWEInQ4eufVut7iO4sYxEw7ytK/vtC8Pc0Q3cn/gwmgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750400987; c=relaxed/simple;
-	bh=hD7ZFg2oUF1zO6JNaxETcxrUQ675xpCMaUgDOQcTzEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gXBlxMsv7wsth6Vkkjx47uFPNJumFzA1vetaSeI+fUB9urT33Ri0098AViSCbNhVVcGtrsdTnicY3G/QXg4hANPVE/ah3QfxiqScenFq8JeS3p2Aq7yubexivUAmFWNdfk3mC1cY7t+MDVPoSwn2qJO1sVv6Q8H3lGI7mhNtd2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cPY0ed+K; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750400986; x=1781936986;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hD7ZFg2oUF1zO6JNaxETcxrUQ675xpCMaUgDOQcTzEY=;
-  b=cPY0ed+KlXLhLj/xRyNAfkv21G0adHWoBWkrPifBshVNK+BstnSHzVKP
-   XAi+e4fAk94Cwh6mhbIh/pP1qVQaelFWVD44CIlI/g9VCE4xQsj+blnom
-   IDueJibQqASwaXXwDEwzmOblzZhyUbUIXivPu7STR6NEtVVKRQVsdcidV
-   NbXClVULZJvc8zZDzUGrlwKHS1IpZMpJcfAc47xGaOXcfvBkisA2wi44m
-   l8aDCH3tIucwNm9yK0MHSrj5hoYoe1fa2L3hGcN8k1vCE8eFCVWpw/nJ1
-   GKva3AL3tsy+LeqS/wvhV3AVlz5g0rCjNOvseRDR4/SQc3cRrjLWDnUXZ
-   Q==;
-X-CSE-ConnectionGUID: yCKS7getRb+p98N8s1m30g==
-X-CSE-MsgGUID: Ig6XqNNeS8i4fL61A15K2Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="52799571"
-X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
-   d="scan'208";a="52799571"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 23:29:43 -0700
-X-CSE-ConnectionGUID: 6/qi+xb+SXS8ZP7Y8EHbmg==
-X-CSE-MsgGUID: kCKCdyveR5aVl7otqVCwdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
-   d="scan'208";a="151370535"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 19 Jun 2025 23:29:38 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uSVFn-000LR1-28;
-	Fri, 20 Jun 2025 06:29:35 +0000
-Date: Fri, 20 Jun 2025 14:28:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>,
-	linux-security-module@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, john.johansen@canonical.com,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	mic@digikod.net, kees@kernel.org, stephen.smalley.work@gmail.com,
-	casey@schaufler-ca.com, takedakn@nttdata.co.jp,
-	penguin-kernel@i-love.sakura.ne.jp, song@kernel.org,
-	linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
-	linux-kernel@vger.kernel.org,
-	Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>
-Subject: Re: [PATCH v2 3/3] AppArmor: add support for lsm_config_self_policy
- and lsm_config_system_policy
-Message-ID: <202506201414.tHOEthTb-lkp@intel.com>
-References: <20250619181600.478038-4-maxime.belair@canonical.com>
+	s=arc-20240116; t=1750400957; c=relaxed/simple;
+	bh=NeWTm7PCrdmVVP+amZpDYiQRtF29U5JNNzt5h9G/uXs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RcWyaN2s3ymIlSKIQ8Z5iqtG5ynvEuPd1sm3Ex/mUNVV0yN4TvsJRJ3NvfSHoWhiLrKJNkZKlwnh40bBhIn7hfH1Le5N5tJmXjiL++UkiGZ4XvIm5308ZU0z5R9evc1Qqdms7W5yX1+iUiAvZkUBykiaUaZMhe4lTnSr1Qb63ZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Wngawbcb; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1750400945; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=ObrpFPq4/eth+coXbnoMx94uYFGAmPwTnmHT3WznBzw=;
+	b=WngawbcbjTqKjDDMwO/kjRyf87jxd2p1YivLFPUeecDLniF+KiJlxbwkOOI/8VKdS8krOywP4UVRYo3IxdurbtLEqb+9GLrUrwncOGfJDWBAzmJYjyX/aKobUkud0HT/NOaab7JGWxg6GOIPR4kVH+MEO/gDxYrI2raxMoZunao=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WeJm7u6_1750400932 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 20 Jun 2025 14:29:03 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Li Zhijian <lizhijian@fujitsu.com>
+Cc: linux-mm@kvack.org,  akpm@linux-foundation.org,
+  linux-kernel@vger.kernel.org,  y-goto@fujitsu.com,  Ingo Molnar
+ <mingo@redhat.com>,  Peter Zijlstra <peterz@infradead.org>,  Juri Lelli
+ <juri.lelli@redhat.com>,  Vincent Guittot <vincent.guittot@linaro.org>,
+  Dietmar Eggemann <dietmar.eggemann@arm.com>,  Steven Rostedt
+ <rostedt@goodmis.org>,  Ben Segall <bsegall@google.com>,  Mel Gorman
+ <mgorman@suse.de>,  Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH RFC] mm: memory-tiering: Fix PGPROMOTE_CANDIDATE accounting
+In-Reply-To: <20250619075245.3272384-1-lizhijian@fujitsu.com> (Li Zhijian's
+	message of "Thu, 19 Jun 2025 15:52:45 +0800")
+References: <20250619075245.3272384-1-lizhijian@fujitsu.com>
+Date: Fri, 20 Jun 2025 14:28:51 +0800
+Message-ID: <87ldpn2afw.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250619181600.478038-4-maxime.belair@canonical.com>
+Content-Type: text/plain; charset=ascii
 
-Hi Maxime,
+Li Zhijian <lizhijian@fujitsu.com> writes:
 
-kernel test robot noticed the following build warnings:
+> Goto-san reported confusing pgpromote statistics where
+> the pgpromote_success count significantly exceeded pgpromote_candidate.
+> The issue manifests under specific memory pressure conditions:
+> when top-tier memory (DRAM) is exhausted by memhog and allocation begins
+> in lower-tier memory (CXL). After terminating memhog, the stats show:
 
-[auto build test WARNING on 9c32cda43eb78f78c73aee4aa344b777714e259b]
+The above description is confusing.  The page promotion occurs when the
+size of the top-tier free space is large enough (after killing the
+memhog above).  The accessed lower-tier memory will be promoted upon
+accessing to take full advantage of the more expensive top-tier memory.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-B-lair/Wire-up-lsm_config_self_policy-and-lsm_config_system_policy-syscalls/20250620-022714
-base:   9c32cda43eb78f78c73aee4aa344b777714e259b
-patch link:    https://lore.kernel.org/r/20250619181600.478038-4-maxime.belair%40canonical.com
-patch subject: [PATCH v2 3/3] AppArmor: add support for lsm_config_self_policy and lsm_config_system_policy
-config: x86_64-buildonly-randconfig-002-20250620 (https://download.01.org/0day-ci/archive/20250620/202506201414.tHOEthTb-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250620/202506201414.tHOEthTb-lkp@intel.com/reproduce)
+> $ grep -e pgpromote /proc/vmstat
+> pgpromote_success 2579
+> pgpromote_candidate 1
+>
+> This update increments PGPROMOTE_CANDIDATE within the free space branch
+> when a promotion decision is made, which may alter the mechanism of the
+> rate limit. Consequently, it becomes easier to reach the rate limit than
+> it was previously.
+>
+> For example:
+> Rate Limit = 100 pages/sec
+> Scenario:
+>   T0: 90 free-space migrations
+>   T0+100ms: 20-page migration request
+>
+> Before:
+>   Rate limit is *not* reached: 0 + 20 = 20 < 100
+>   PGPROMOTE_CANDIDATE: 20
+> After:
+>   Rate limit is reached: 90 + 20 = 110 > 100
+>   PGPROMOTE_CANDIDATE: 110
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506201414.tHOEthTb-lkp@intel.com/
+Yes.  The rate limit will be influenced by the change.  So, more tests
+may be needed to verify it will not incurs regressions.
 
-All warnings (new ones prefixed by >>):
+>
+> Reported-by: Yasunori Gotou (Fujitsu) <y-goto@fujitsu.com>
+> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+> ---
+>
+> This is markes as RFC because I am uncertain whether we originally
+> intended for this or if it was overlooked.
+>
+> However, the current situation where pgpromote_candidate < pgpromote_success
+> is indeed confusing when interpreted literally.
+>
+> Cc: Huang Ying <ying.huang@linux.alibaba.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Ben Segall <bsegall@google.com>
+> Cc: Mel Gorman <mgorman@suse.de>
+> Cc: Valentin Schneider <vschneid@redhat.com>
+> ---
+>  kernel/sched/fair.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 7a14da5396fb..4715cd4fa248 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -1940,11 +1940,13 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
+>  		struct pglist_data *pgdat;
+>  		unsigned long rate_limit;
+>  		unsigned int latency, th, def_th;
+> +		long nr = folio_nr_pages(folio)
+>  
+>  		pgdat = NODE_DATA(dst_nid);
+>  		if (pgdat_free_space_enough(pgdat)) {
+>  			/* workload changed, reset hot threshold */
+>  			pgdat->nbp_threshold = 0;
+> +			mod_node_page_state(pgdat, PGPROMOTE_CANDIDATE, nr);
+>  			return true;
+>  		}
+>  
+> @@ -1958,8 +1960,7 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
+>  		if (latency >= th)
+>  			return false;
+>  
+> -		return !numa_promotion_rate_limit(pgdat, rate_limit,
+> -						  folio_nr_pages(folio));
+> +		return !numa_promotion_rate_limit(pgdat, rate_limit, nr);
+>  	}
+>  
+>  	this_cpupid = cpu_pid_to_cpupid(dst_cpu, current->pid);
 
->> security/apparmor/apparmorfs.c:454: warning: Function parameter or struct member 'name' not described in 'aa_profile_load_ns_name'
->> security/apparmor/apparmorfs.c:454: warning: Function parameter or struct member 'name_size' not described in 'aa_profile_load_ns_name'
->> security/apparmor/apparmorfs.c:454: warning: Function parameter or struct member 'buf' not described in 'aa_profile_load_ns_name'
->> security/apparmor/apparmorfs.c:454: warning: Function parameter or struct member 'size' not described in 'aa_profile_load_ns_name'
->> security/apparmor/apparmorfs.c:454: warning: Function parameter or struct member 'ppos' not described in 'aa_profile_load_ns_name'
---
->> security/apparmor/lsm.c:1287: warning: Function parameter or struct member 'lsm_id' not described in 'apparmor_lsm_config_self_policy'
->> security/apparmor/lsm.c:1287: warning: Function parameter or struct member 'op' not described in 'apparmor_lsm_config_self_policy'
->> security/apparmor/lsm.c:1287: warning: Function parameter or struct member 'flags' not described in 'apparmor_lsm_config_self_policy'
->> security/apparmor/lsm.c:1318: warning: Function parameter or struct member 'lsm_id' not described in 'apparmor_lsm_config_system_policy'
->> security/apparmor/lsm.c:1318: warning: Function parameter or struct member 'op' not described in 'apparmor_lsm_config_system_policy'
->> security/apparmor/lsm.c:1318: warning: Function parameter or struct member 'flags' not described in 'apparmor_lsm_config_system_policy'
-
-
-vim +454 security/apparmor/apparmorfs.c
-
-   441	
-   442	/**
-   443	 * aa_profile_load_ns_name - load a profile into the current namespace identified by name
-   444	 * @name The name of the namesapce to load the policy in. "" for root_ns
-   445	 * @name_size size of @name. 0 For root ns
-   446	 * @buf buffer containing the user-provided policy
-   447	 * @size size of @buf
-   448	 * @ppos position pointer in the file
-   449	 *
-   450	 * Returns: 0 on success, negative value on error
-   451	 */
-   452	ssize_t aa_profile_load_ns_name(char *name, size_t name_size, const void __user *buf,
-   453					size_t size, loff_t *ppos)
- > 454	{
-   455		struct aa_ns *ns;
-   456	
-   457		if (name_size == 0)
-   458			ns = aa_get_ns(root_ns);
-   459		else
-   460			ns = aa_lookupn_ns(root_ns, name, name_size);
-   461	
-   462		if (!ns)
-   463			return -EINVAL;
-   464	
-   465		int error = policy_update(AA_MAY_LOAD_POLICY | AA_MAY_REPLACE_POLICY,
-   466					  buf, size, ppos, ns);
-   467	
-   468		aa_put_ns(ns);
-   469	
-   470		return error >= 0 ? 0 : error;
-   471	}
-   472	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+---
+Best Regards,
+Huang, Ying
 
