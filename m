@@ -1,135 +1,143 @@
-Return-Path: <linux-kernel+bounces-694854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A6CAE1176
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 05:00:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4126BAE117D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 05:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AB6217EACC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:00:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7731BC1FC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489A313C3F6;
-	Fri, 20 Jun 2025 03:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2A21D6DB4;
+	Fri, 20 Jun 2025 03:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ch7S/74U"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ecMWs2IE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183471C8632;
-	Fri, 20 Jun 2025 03:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030AD81ACA;
+	Fri, 20 Jun 2025 03:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750388413; cv=none; b=MLNTY8LJcjpkVPormPYPY5qyGDqk5MLcCw7uffIs8ZRJqx8Mco/9VZCR6gJwChEKOKTTH27QdRfntmtSTikc9OxMJfFSsA7ZTCi1Ss6gaTDvNiP5Cwz4UJ4+Ir2Ffsn99BFkwEGbLqoajGukdBcvbL7MyFRLCFqCXf7zWT+lT0w=
+	t=1750388482; cv=none; b=CWP7IDGKYuGTl95n/XaXCC9mF+4dkLHcTZDAZ6tzEXRRClc8SqPZKod1ZDuAzqwNDmz9K3JXtsm8IfbOQ0tO+WLxRy004pd7GiSj2VQiBWRkP7zPYb6dvWT73iO0lZugEsKihDV1j9Dn2W3tyGGEGxct8EIAEEEHjKfHempL58w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750388413; c=relaxed/simple;
-	bh=492FkEcbUqlitli7afwsSzul8nCEhg3OOiELnPHhD0k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eApFHcZNWjFt6us0rJrtMkYr4ZfA4qDRaNTyZiM4ePj1RrMWmQB1C14ahmZzYCCJDPCklmTil91TVbGWIs+3brPvohdjrJAmmVEH+rNt6JdQoExcQxsZXu9bGPr9VFw2AgXjJ/gJODEO6hGOXMTfeWZOXn1O0CAYpfZg8V9pfHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ch7S/74U; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-450cfb79177so7152785e9.0;
-        Thu, 19 Jun 2025 20:00:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750388410; x=1750993210; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ap5dRT8eTtOkg8Wh5kHr4/xuZQ7FxGdTJiWZWoXWBZA=;
-        b=ch7S/74UGPW5tqHHhimIC6AlsThoNicwoRNPMmXjtoSuoEHCBiK7ChldCDxOSjURKH
-         e/uibot8bJbu9/885u2B+ooI7BHwsKW5Ht3PcPzn0bZyBI7UZpWdEUAjHNZVwhWxf30m
-         NKxccYV5nry9Gh2mbt8xmXAtFhqezlD343Cl3RoPFxW9X/exmNUw/BmZOLucGdAVEOT0
-         8zIDt4gUNeBmC43IwLkGtni9u442yf8qo52IgHi9eYGeTAgm+e5MxXTO+/eHv8mPNyiu
-         zpqmKSTBhd9WprBbBTrk/lmY1mqSUOAPnttHMll2Qso1zPw6OW4tbUOViA6xsURyUDaR
-         jaXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750388410; x=1750993210;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ap5dRT8eTtOkg8Wh5kHr4/xuZQ7FxGdTJiWZWoXWBZA=;
-        b=AeR7ZncJrVlBAlVTBfYT+/VDVDNFZpQi2klTCQuJU9/2B1pDxGxS7JSDnFwbGOx8o/
-         FCnuREMVrDGBsRLLgCVEnE6Ztb3zEHXO5c0+HgrqfBbfcIEgdU5gG5QBSQFRQmutRbWk
-         5oVKFlGbDOqck6kqVJPoLdGFrrvoApb5i9Bq6WfRCXDn0p+C9JvmIo3ELrscxPq/g/Od
-         ELxBoA7q/f2JGHjjCUpSSRpxL8PYrCztGQYMCgqdBzfOQLLIpfkaxlduqLTvHm4W0fKp
-         BE86mjgq0Xlp6reGVtgv/N+81Jzvh5/st4IH1dt6QIVBtKpiUzl7tmINTfIC0OOOwz6R
-         5dcg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6p4JN9JuP0HeEcJaFFuY28QahhsR7ut+Lwc121W4+9at74EhVQV4UnrISdKEZH95ONoOwawsAkqJrZ9E4k7wdilTD@vger.kernel.org, AJvYcCVq+Lz1vs9rK/Fa7E2rSyaqkYvHD0ye2wnILPzi7ptGJOfW0Hpp3wHzm2pyhdK37winvxhowfnqbpzpCoab@vger.kernel.org, AJvYcCXNRHji9m09eTjEK3A2g+BzGg3X01ycXAxNwVMA7TLLWRYZzya7pgwceotpVz9pZo1EvEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy35cH12Beo8R4DaYp4JpQryFFLfAXTMnJwh0nAjeVdIH02zAOU
-	GcanvuMzDEXF/vzmOjpZgtotW8sXxD+IRm1l7XBjr6TO5JVg28/J0kftoXPvx1ZBxAWCRWb/gpK
-	g5rUEL4SFTm3TF4M8EVam8vmJ+P4SR0Q=
-X-Gm-Gg: ASbGncvo6FQoiizkIX69rxsL0YHPojEJQJJ2RdRHRDdrOB1f1A3G8Vn7IXw5zZYawPS
-	ZW1vsPHL72LNJ5yNbMilDeyRe+ti1bZ/O1CvM5UlGw6Zk90r2F7/j4cwMBiUcqk4rGyFyyCky9W
-	3R16E/WHfRX5UtVUP+zNLgfNAcJtoiFopWbbo7YNdr82I8MRV4DhlgiURFoftw2K5c+/R/LP5fr
-	tnRwxDXTHs=
-X-Google-Smtp-Source: AGHT+IGsnhG6fTAAT1UObGDFDFR647lPms9A8JEG/JJiKLiJ1UD/icxHvsb5XUs4Md6E5j0VCaYuwe5RdMxO1nOqvSk=
-X-Received: by 2002:a05:6000:4182:b0:3a4:eecd:f4d2 with SMTP id
- ffacd0b85a97d-3a6d12dafc8mr721486f8f.38.1750388410067; Thu, 19 Jun 2025
- 20:00:10 -0700 (PDT)
+	s=arc-20240116; t=1750388482; c=relaxed/simple;
+	bh=f7V5rYWc1EwjcgrxpnoH3ziozc2NpXhZC+YcuAXFxeE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pJJqgGJVibP7XMKwp3nRZRE6FnDGLhiEWrTczavCDs1PVQKmNn4KYjRZ2+3mmWMfc3wAEosIsraTDyiLVJapJTb8Z1eaCz9lfzTlM3szpSdzlg0XNrkq3DHcvhYa5BzqV1OIc6abRi2HNYeKzHXamP9ndopP7rj50SW4sSoCPU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ecMWs2IE; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750388481; x=1781924481;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=f7V5rYWc1EwjcgrxpnoH3ziozc2NpXhZC+YcuAXFxeE=;
+  b=ecMWs2IEvV9YE7XE7ZHHPOkzvHFd4oJPHx4eakVSUTkCgtcQFY0jSBVy
+   OXfOQphJVULkLXIJoWQxrL8uGVyBxnGFO2V47z19jmxRoCUhwz24XbXwC
+   j3gTg36Fd9zRhQW/j8CsLlBGPChwLUKLJS5u89TfJhGZGhI8QWmf3fPm9
+   ci7UJSrL10kel2QIMCF0VPmoekFUzPKUuXTzNNUtPL/vRnzsAemn3b8ll
+   zB0YsU9fEswWaYSIyRWxWTXCHpJ+R4lVCZMCInRj65lmlOlkDOFuftO6s
+   3asugS5qFMEiCdM302xvx6i9t7W86OrqYf1qJkcnGx6VG3vrdaznos0W8
+   w==;
+X-CSE-ConnectionGUID: gLPstCzDQjuo8/JZiDINmA==
+X-CSE-MsgGUID: 8tjdHGr7TSKgPSc0PK2h/w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="51871292"
+X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
+   d="scan'208";a="51871292"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 20:01:20 -0700
+X-CSE-ConnectionGUID: AscknAMsTSqjYgMPwfOSEw==
+X-CSE-MsgGUID: zF1ixVj+S4iOTJcojkyKRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
+   d="scan'208";a="181664045"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 19 Jun 2025 20:01:17 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uSS0B-000LJu-1o;
+	Fri, 20 Jun 2025 03:01:15 +0000
+Date: Fri, 20 Jun 2025 11:00:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ovidiu Panait <ovidiu.panait.oss@gmail.com>, clabbe.montjoie@gmail.com,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	linux-crypto@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, wens@csie.org, jernej.skrabec@gmail.com,
+	samuel@sholland.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+Subject: Re: [PATCH 10/10] crypto: sun8i-ce - implement request batching
+Message-ID: <202506201006.eQ2P1PuC-lkp@intel.com>
+References: <20250619122316.2587236-11-ovidiu.panait.oss@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250619034257.70520-1-chen.dylane@linux.dev> <20250619034257.70520-2-chen.dylane@linux.dev>
- <CAADnVQLyAeo9ztPoJzU1QJUQf6SMptVNoOzZza02xPuXO1ES2g@mail.gmail.com> <9eedd830-9222-4ac0-8ccd-72499fb85b13@linux.dev>
-In-Reply-To: <9eedd830-9222-4ac0-8ccd-72499fb85b13@linux.dev>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 19 Jun 2025 19:59:58 -0700
-X-Gm-Features: Ac12FXwaZwTIE2k7zGGdi2J1vur8ZmKROFqRXFOqv5Xmlf0XVxISh9G5k-LHsFc
-Message-ID: <CAADnVQJcdVCKPu8aPPj5hZExNTFYAYTd5xkF=Ljfm__+ugirGg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v4 2/2] bpf: Add show_fdinfo for kprobe_multi
-To: Tao Chen <chen.dylane@linux.dev>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250619122316.2587236-11-ovidiu.panait.oss@gmail.com>
 
-On Thu, Jun 19, 2025 at 7:46=E2=80=AFPM Tao Chen <chen.dylane@linux.dev> wr=
-ote:
->
-> =E5=9C=A8 2025/6/20 01:17, Alexei Starovoitov =E5=86=99=E9=81=93:
-> > On Wed, Jun 18, 2025 at 8:44=E2=80=AFPM Tao Chen <chen.dylane@linux.dev=
-> wrote:
-> >>
-> >> Show kprobe_multi link info with fdinfo, the info as follows:
-> >>
-> >> link_type:      kprobe_multi
-> >> link_id:        1
-> >> prog_tag:       a15b7646cb7f3322
-> >> prog_id:        21
-> >> type:   kprobe_multi
-> >
-> > ..
-> >
-> >> +       seq_printf(seq,
-> >> +                  "type:\t%s\n"
-> >> +                  "kprobe_cnt:\t%u\n"
-> >> +                  "missed:\t%lu\n",
-> >> +                  kmulti_link->flags =3D=3D BPF_F_KPROBE_MULTI_RETURN=
- ? "kretprobe_multi" :
-> >> +                                        "kprobe_multi",
-> >
-> > why print the same info twice ?
-> > seq_printf(m, "link_type:\t%s\n", bpf_link_type_strs[type]);
-> > in bpf_link_show_fdinfo() already did it in a cleaner way.
-> >
->
-> link_type only shows 'kprobe_multi', maybe we can show the format like:
+Hi Ovidiu,
 
-Ohh. Especially so. It would be wrong and confusing to display:
-link_type:      kprobe_multi
-type: kretprobe_multi
+kernel test robot noticed the following build warnings:
 
-Let's fix 'link_type' to display it properly.
+[auto build test WARNING on herbert-cryptodev-2.6/master]
+[also build test WARNING on next-20250619]
+[cannot apply to sunxi/sunxi/for-next herbert-crypto-2.6/master linus/master v6.16-rc2]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ovidiu-Panait/crypto-sun8i-ce-remove-channel-timeout-field/20250619-202957
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+patch link:    https://lore.kernel.org/r/20250619122316.2587236-11-ovidiu.panait.oss%40gmail.com
+patch subject: [PATCH 10/10] crypto: sun8i-ce - implement request batching
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250620/202506201006.eQ2P1PuC-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250620/202506201006.eQ2P1PuC-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506201006.eQ2P1PuC-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c: In function 'sun8i_ce_dump_task_descriptors':
+>> drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c:178:52: warning: '%d' directive output may be truncated writing between 1 and 11 bytes into a region of size 7 [-Wformat-truncation=]
+     178 |                 snprintf(task, sizeof(task), "TASK %d:", i);
+         |                                                    ^~
+   drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c:178:46: note: directive argument in the range [-2147483641, 2147483646]
+     178 |                 snprintf(task, sizeof(task), "TASK %d:", i);
+         |                                              ^~~~~~~~~~
+   drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c:178:17: note: 'snprintf' output between 8 and 18 bytes into a destination of size 12
+     178 |                 snprintf(task, sizeof(task), "TASK %d:", i);
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +178 drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+
+   171	
+   172	static void sun8i_ce_dump_task_descriptors(struct sun8i_ce_flow *chan)
+   173	{
+   174		for (int i = 0; i < chan->reqs_no; ++i) {
+   175			struct ce_task *cet = &chan->tl[i];
+   176			char task[CE_MAX_TASK_DESCR_DUMP_MSG_SIZE];
+   177	
+ > 178			snprintf(task, sizeof(task), "TASK %d:", i);
+   179			print_hex_dump(KERN_INFO, task, DUMP_PREFIX_NONE, 16, 4,
+   180				       cet, sizeof(struct ce_task), false);
+   181		}
+   182	}
+   183	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
