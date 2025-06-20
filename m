@@ -1,126 +1,111 @@
-Return-Path: <linux-kernel+bounces-694792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719A1AE10C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:35:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FDE1AE10BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE2A819E1383
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:36:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC931689B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 01:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E68C83A14;
-	Fri, 20 Jun 2025 01:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sotapeli.fi header.i=@sotapeli.fi header.b="HvFIseGN"
-Received: from se.sotapeli.fi (se.sotapeli.fi [206.168.212.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319367DA93;
-	Fri, 20 Jun 2025 01:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.168.212.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053E686344;
+	Fri, 20 Jun 2025 01:27:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB2535950;
+	Fri, 20 Jun 2025 01:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750383344; cv=none; b=sR2OFuAzOPpemW6x+Ih8dDL2z0DhdDGZU6iFariEJW4ZWt2jjfkgPCJz4XujVCTAFKgJXcw2Ozx9z0/QWP5jdCTKluuhFolTRwTJXyEjpyR5n0yOIEs0+L5nuJjRT0IFYUyeZUHBLzgkKMCzgr1qpQkLI14bbZWR9D9TRgvWFwg=
+	t=1750382872; cv=none; b=RPgKAdkRBYQJLDQ48llv3EcbYgg2BBoZs7KkhJfsoLL3DmAMSxLHu1O2tdPBSi2c1mKgCUe/dkwLusO89WmJrfJjb15Z3uzrGAVkyaqS9zgDoaCHDV88A0ErsASXTJX78rOP652j7V2I/XkJ5y7bVjHDY8u+UwyTaMbbtDXkf8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750383344; c=relaxed/simple;
-	bh=DRdl5eR/UzuOYgEY5RDTATzbmynKlsuhFRQmTGemV9U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BnM1Mp78EkJ1GceNi1htETx9xIp124mrmRimbpizYGGzvgJmxrI03jClmajhuPqLhkjM5rFaWdyaGhL5R0SDZU0QzNodZTGo/rvZTBh5F/nlcSgQc7+kdrFR37JV55xmWFPalptaxSZw/rzYwpCiaWagduP3kMtCrIJJ+ZzK17E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sotapeli.fi; spf=pass smtp.mailfrom=sotapeli.fi; dkim=pass (2048-bit key) header.d=sotapeli.fi header.i=@sotapeli.fi header.b=HvFIseGN; arc=none smtp.client-ip=206.168.212.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sotapeli.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sotapeli.fi
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 49B1A181AA1D;
-	Fri, 20 Jun 2025 03:26:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sotapeli.fi; s=dkim;
-	t=1750382766; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=9cKmbQfCWsEv39A0uvZFeauocHYAx0z8D51a+ocIPcI=;
-	b=HvFIseGNxePtnQLkZKUNx/IfS9Z+jjO37zG5wuXlotlfEQsDmSCHIW710AIfk6vBLf6A6K
-	083oKeh67N2PVlG5C7sEsvswB3YsSRu464eY4IdIH3l74isbetD4QQCqcYEigJ3enGc0/4
-	tKpRKZNTeoFGPRcyw0EE3Fe7qL0lAQYRZFTaAcKrKZQy5Pr2ip4Vivx0Mw1jssx3Aoie95
-	2yXrQvve3cBly0+2q9pJZ3bowbdcwyVZqsBV2D7+fDcUBB1FN0L6fNZFkB0oyJFH/G0WL0
-	6iCCeR3pwZfsIBkLESYZZqFrsbD9iCL63U3mYcKCWQyF1A3VwRiBQc0LoMKbbQ==
-Message-ID: <06f75836-8276-428e-b128-8adffd0664ee@sotapeli.fi>
-Date: Fri, 20 Jun 2025 04:25:58 +0300
+	s=arc-20240116; t=1750382872; c=relaxed/simple;
+	bh=Zd92iYIzE2QZV6mmjP9DmFBsZ0UtcOy6Na1HkdFSCpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W3bAFVfbF+el40SWNAte3vKbaE1vXjXvTUSPhXJmaAkQE+dBB1KLXIq0JHZgFqX/v9luJhDCBOaOVsLK/QFMSHWkECXNk7s5xLILUSDdwSGk+YAe2U7pKHqAy8zAYZtx5+BpO6EjRyBqMIU4GgfU2jjrRzcqdk50mO1jZ49K77k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7AB9113E;
+	Thu, 19 Jun 2025 18:27:29 -0700 (PDT)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 92CF33F673;
+	Thu, 19 Jun 2025 18:27:47 -0700 (PDT)
+Date: Fri, 20 Jun 2025 02:26:30 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+ linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: sunxi-ng: sun55i-a523-r-ccu: Add missing PPU0
+ reset
+Message-ID: <20250620022548.2f589c26@minigeek.lan>
+In-Reply-To: <20250619171025.3359384-3-wens@kernel.org>
+References: <20250619171025.3359384-1-wens@kernel.org>
+	<20250619171025.3359384-3-wens@kernel.org>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc3
-To: Kent Overstreet <kent.overstreet@linux.dev>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <4xkggoquxqprvphz2hwnir7nnuygeybf2xzpr5a4qtj4cko6fk@dlrov4usdlzm>
- <CAHk-=wi2ae794_MyuW1XJAR64RDkDLUsRHvSemuWAkO6T45=YA@mail.gmail.com>
- <lyvczhllyn5ove3ibecnacu323yv4sm5snpiwrddw7tyjxo55z@6xea7oo5yqkn>
-Content-Language: en-US
-From: Jani Partanen <jiipee@sotapeli.fi>
-Autocrypt: addr=jiipee@sotapeli.fi; keydata=
- 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
-In-Reply-To: <lyvczhllyn5ove3ibecnacu323yv4sm5snpiwrddw7tyjxo55z@6xea7oo5yqkn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
 
+On Fri, 20 Jun 2025 01:10:25 +0800
+Chen-Yu Tsai <wens@kernel.org> wrote:
 
-On 20/06/2025 4.09, Kent Overstreet wrote:
-> I'm not seeing that _you_ get that.
+Hi,
 
+> From: Chen-Yu Tsai <wens@csie.org>
+> 
+> There is a PPU0 reset control bit in the same register as the PPU1
+> reset control. This missing reset control is for the PCK-600 unit
+> in the SoC. Manual tests show that the reset control indeed exists,
+> and if not configured, the system will hang when the PCK-600 registers
+> are accessed.
+> 
+> Add a reset entry for it at the end of the existing ones.
 
-How hard it is?
+Right, just this one bit is not mentioned in the manuals (both A523 and
+T527), even though the PPU1 reset bit and the PPU0 clock gate bit are,
+so it's clearly a manual bug. I can also confirm that both bit 16 and 17
+(and none above that) are writable, and both bit 16 (reset) and bit 0
+(clock gate) are required to access the PCK-600 PPU (as per: sunxi-fel
+readl 0x7060fc8).
+ 
+> Fixes: 8cea339cfb81 ("clk: sunxi-ng: add support for the A523/T527 PRCM CCU")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-New feature window for 6.16 was 2 weeks ago.
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
-rc<insert number here> is purely for fixing bugs, not adding new 
-features and potential new bugs.
+Thanks for spotting this!
 
+Cheers,
+Andre
 
-But I am not a coder, thats how I see it just by following.
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c b/drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c
+> index b5464d8083c8..70ce0ca0cb7d 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c
+> @@ -204,6 +204,7 @@ static struct ccu_reset_map sun55i_a523_r_ccu_resets[] = {
+>  	[RST_BUS_R_IR_RX]	= { 0x1cc, BIT(16) },
+>  	[RST_BUS_R_RTC]		= { 0x20c, BIT(16) },
+>  	[RST_BUS_R_CPUCFG]	= { 0x22c, BIT(16) },
+> +	[RST_BUS_R_PPU0]	= { 0x1ac, BIT(16) },
+>  };
+>  
+>  static const struct sunxi_ccu_desc sun55i_a523_r_ccu_desc = {
 
 
