@@ -1,196 +1,118 @@
-Return-Path: <linux-kernel+bounces-695810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777F7AE1E54
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:17:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55458AE1EBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20B9E3AE883
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:17:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3F515A5670
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884862BFC6D;
-	Fri, 20 Jun 2025 15:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B012E3366;
+	Fri, 20 Jun 2025 15:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kF8cYHf6"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b="eR29HlEw"
+Received: from mailrelay.tugraz.at (mailrelay.tugraz.at [129.27.2.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A50183A14;
-	Fri, 20 Jun 2025 15:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562FE12A177;
+	Fri, 20 Jun 2025 15:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.27.2.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750432633; cv=none; b=OMg4EHq7PPBOOIogIqJlnHKhfECLVTD8yP0IxV2oxGY+A+C2K1SjXcuMfN8zyhU1W47DxmrReQ1gmoHgPSHIqd0ipDaoEF5wkBMpxjdLo7M/C84imbLnJBcnfkNS02Ak2XNuV+o0+8JAezU05VUAcmp5+1YgHR7p4AVnTMAx+cQ=
+	t=1750433193; cv=none; b=O4fUTSQmDUPgzoqIonOXmVXjSPABvA3Bddw5eY6/UJjoViaMzBzCoAgCLrr8jGiTvenLdIBTjDOjimyQxmTMwqbldssEpNzGAwVjbvWedvCqkWXfX8nM2JfE4/HZTFI4y6kM0x4f2QPRENRv4bPcYitUvL/OizuFm3oSJs5DUJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750432633; c=relaxed/simple;
-	bh=fcDRVRsB7kTTxKbuSPIJvammikJeVCV2Sey5irOixwo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ghv0KNt7iEbRGFbyaCi+ZKSKZ+doP6YppLARMOnN2MlMqpI79cglQhItIF0wE00YpZOm4CXwj70FpJ1fAjEqH5zQJ5Bug+FlbnwqlZJSgABwrnnRtHf0T0SBkHkYaL165UGjerkkFL7Z4TwdchZ6+YJlu6jQdaxw9076MjaHlDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kF8cYHf6; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-451dbe494d6so22613685e9.1;
-        Fri, 20 Jun 2025 08:17:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750432630; x=1751037430; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g9Z79uO0bQTG7SBiWvsssoDMq0Ao6no6bKJ2a4NfcKE=;
-        b=kF8cYHf62bxcZr6i97MsG7gwmNPJ9T1ne3HsWKIKm8shgtGUsy+Ist0a+2L2hDUUxm
-         O2C9JYakrgUZXYL6vvJsBaxo4n/MEjckn6YbLiwED4DIUMye2lyKhsNYvnpzKM+LwiP2
-         3L6ElgWX6Dwv6yXL3hL1d7uM06qceuufxSBiLqpYtI51zI9h7LLWiWrws61dSmPfRLIM
-         my/bX/YFWyRm6W4Sh0vrg0NrIhFvLh2mG0/5HE1IXi8VDuDx2vveG+KscbS9jJ8rwA+d
-         4iaEUw8McUpMWn+ojk3wOU+8HoN/C2b/friyxHrlaem6M/74+aV+8c1OgT+Qf1wQNYBd
-         hFDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750432630; x=1751037430;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=g9Z79uO0bQTG7SBiWvsssoDMq0Ao6no6bKJ2a4NfcKE=;
-        b=VRFQae9Mx0NpxnvXJnWZ2ePRdSBWxNnkDmk1YPJQKrYF2RoDG4/V/vF83dUC9w0+Ie
-         NHhiE38vUY4LPCiQe41A0qhh/XcjVtA+aPi4Z6PH6C5w8jhmh28Kpa33HU/lBr2dP2Ip
-         rKqU0jKJDkx3SP3iMlQpIq/p3/5XwpVCJUEhMrW2qMVsbGHivpAsyGkW5d341H6z98vn
-         IWrOoeepHdJ1muuCjVJA5mTIC3cdZtFp5YIPDhDNzxWwsn13iAVFRcLB8KSEMMbM4NQP
-         1KwTojkxfXGJjG3vcBVe7s7+vsVvGwZN/A6A8OlOiMOdFPYHtpeQHYQ69qUucbgo54SY
-         dDvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOxjW9U/+l478DEbxTCUOVYk0NsuxjTBhUdVxsjGzHIC8YNiQMw0AC/YhLzMZNS5n0j1R66mO1g7ebOg==@vger.kernel.org, AJvYcCWR+vEJ798LZkfSamDp0WeowNnqYnR57VsB6Yu7drlB4GvlqMJlFmbbE8XaxIXj0+YoQHJxVBUsttVnwWWX@vger.kernel.org, AJvYcCWyXKD/SlACaVfXXfVfWVl/XrKhOidu+jpXdnhyJEgPnwliIyRzMexzoH7RhlkjkLfS7Yi4Qu1igRrs@vger.kernel.org, AJvYcCX7iGae6ZyWM/QgmTMIVtzP7Ui3grc6sMAgtJ+Xp5rRiCV7Is0Ymj/UAzRjNic4ecdO1cS+qUFHv5R5YL3oLDE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+zRRbiqgU3vctI7koNW1LoSGU4IRHWkNrYfYiqS+K0UzU23ue
-	uDdXQS1YC5T67DxxMyXkaQlARcyJcYBfpxJIY0/Zwuttl8LOy0J/yD/Takm96G8N3TU=
-X-Gm-Gg: ASbGncs8sB7oA8xQ4cAA4xeIuT4W+kOPRI9ShUBbwJfZb+2uGEvaBiadE/X80lYOTz/
-	PKWZc/zby1GTKCeVbIM0eL7Gq8pPetoXWDtJTyMQUOVMCzDpAx8bQUIQJhQm803LQW48XB6M/e5
-	9yHVRi9Skn5XrkdAlA5QqRWEdquUvj2TLC5wPOPU3amYcfFo/KnLNZ6DhoWO9pALV73drag0KA1
-	ZOPRF4eXFyi0AUuH76J0SQ1OXzmlY5SGHRrJwZqcv7TWBOAjTwi5vfQ9JAJOiDp07T8C7JDl6p0
-	Gtt4vzMlDFUjM9DgR8yfxlvFz29gfyiwyt1VPAoQHy6zIpNj5ayTSGyHAdhc14GGNGFtQoM6EVu
-	rT67pxC/Hfn06tUapDApKWPPqUgFf6/NH4OFzFXk=
-X-Google-Smtp-Source: AGHT+IEHFgrcMTbzofDrxYhszmZSjhSU+Dr+aUv88uObflo1lT+8kHGwGwDfULZbO4ZhDjQFQW/1LA==
-X-Received: by 2002:a05:600c:3582:b0:43c:ee3f:2c3 with SMTP id 5b1f17b1804b1-45369ade30amr4425595e9.7.1750432629909;
-        Fri, 20 Jun 2025 08:17:09 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d0f1d1bbsm2343322f8f.41.2025.06.20.08.17.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 08:17:09 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: Alex Hung <alex.hung@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Igor Korotin <igor.korotin.linux@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Remo Senekowitsch <remo@buenzli.dev>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Xiangfei Ding <dingxiangfei2009@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Benno Lossin <lossin@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	Len Brown <lenb@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>
-Subject: [PATCH v8 1/9] rust: device: implement FwNode::is_of_node()
-Date: Fri, 20 Jun 2025 16:15:04 +0100
-Message-ID: <20250620151504.278766-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
-References: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
+	s=arc-20240116; t=1750433193; c=relaxed/simple;
+	bh=E4agwpxGFwqFeVJHeOCM9PGifChpw9gXLh90YWEsmCM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=XVs9FfIZbNlW3Sc3s/NsmqKkarNpcL7ytDN8MexQNcIron30SQ60+qQ+2Y+cTASSypaOVWzJv04YTsHN5cr2v1KN8LNIkXjVOq0rVNAWJoeiaJzvo2j5PCMgGVCGZsYk8xWQaC6T8bQJAcWL+CqTOYMPNjOKvnL34t/SfypMyJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=student.tugraz.at; spf=pass smtp.mailfrom=student.tugraz.at; dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b=eR29HlEw; arc=none smtp.client-ip=129.27.2.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=student.tugraz.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=student.tugraz.at
+Received: from [10.0.0.5] (178-189-174-90.adsl.highway.telekom.at [178.189.174.90])
+	by mailrelay.tugraz.at (Postfix) with ESMTPSA id 4bP1L86r7hz1LQwm;
+	Fri, 20 Jun 2025 17:17:20 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailrelay.tugraz.at 4bP1L86r7hz1LQwm
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tugraz.at;
+	s=mailrelay; t=1750432641;
+	bh=9ajYOC1IbfhtjE7fvp73fh+D1VdWRvU4dVnosjwrY8k=;
+	h=Date:To:Cc:References:Subject:From:In-Reply-To:From;
+	b=eR29HlEwJg3v3GBMZqac+sDtM+0wyFt3SvPD0p9LjNopg1EjYMM0M6vyLdnqvrXNt
+	 35fZmhTZBygX5vK75wqZ2aMzAnVr7vm8arNSxdn5dFxuVfJWXHB29VqZ6kEH4F7Ne+
+	 AFKhQBOUAlWjx4yGSaa6kq1o1y0ZNhADwCGN5hS0=
+Message-ID: <46b1a3d8-c77d-44bc-9d92-edc32d7b88eb@student.tugraz.at>
+Date: Fri, 20 Jun 2025 17:17:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: tytso@mit.edu
+Cc: jiipee@sotapeli.fi, kent.overstreet@linux.dev,
+ linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, martin@lichtvoll.de,
+ torvalds@linux-foundation.org
+References: <20250620124346.GB3571269@mit.edu>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc3
+Content-Language: en-US
+From: Christoph Heinrich <christoph.heinrich@student.tugraz.at>
+In-Reply-To: <20250620124346.GB3571269@mit.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TUG-Backscatter-control: gmwzW8oMfNreqDqbcncFhA
+X-Spam-Scanner: SpamAssassin 3.003001 
+X-Spam-Score-relay: 0.0
+X-Scanned-By: MIMEDefang 2.74 on 129.27.10.117
 
-From: Danilo Krummrich <dakr@kernel.org>
+> On Fri, Jun 20, 2025 at 04:14:24AM -0400, Kent Overstreet wrote:
+>> 
+>> There is a time and a place for rules, and there is a time and a place
+>> for using your head and exercising some common sense and judgement.
+>> 
+>> I'm the one who's responsible for making sure that bcachefs users have a
+>> working filesystem. That means reading and responding to every bug
+>> report and keeping track of what's working and what's not in
+>> fs/bcachefs/. Not you, and not Linus.
+> 
+> Kent, the risk as always of adding features after the merge window is
+> that you might introduce regressions.  This is especially true if you
+> are making changes to relatively sensitive portions of any file system
+> --- such as journalling.
+> > The rules around the merge window is something which the vast majority
+> of the kernel developers have agreeded upon for well over a decade.
+> And it is Linus's responsibility to *enforce* those rules.
+While bcachefs is marked as experimental, perhaps the rules should be
+somewhat relaxed. After all those rules were made in the context of
+"stable" parts of the kernel and thus might not be the best strategy
+for parts explicitly marked as experimental.
 
-Implement FwNode::is_of_node() in order to check whether a FwNode
-instance is embedded in a struct device_node.
+After following bcachefs development for a while now, I'd be totally
+fine with him pushing new features up to rc5 or so.
+Of course such a relaxed rule set should be agreed upon _before_
+sending something.
 
-Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
----
- MAINTAINERS                    | 1 +
- rust/helpers/helpers.c         | 1 +
- rust/helpers/of.c              | 8 ++++++++
- rust/kernel/device/property.rs | 7 +++++++
- 4 files changed, 17 insertions(+)
- create mode 100644 rust/helpers/of.c
+> If, as you say, bcachefs is experimental, and no sane person should be
+> trusting their data on it, then perhaps this shouldn't be urgent.  On
+> the flip side, perhaps if you are claiming that people should be using
+> it for critical data, then perhaps your care for user's data safety
+> should be.... revisted.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9f724cd556f4..1e918319cff4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18579,6 +18579,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
- F:	Documentation/ABI/testing/sysfs-firmware-ofw
- F:	drivers/of/
- F:	include/linux/of*.h
-+F:	rust/helpers/of.c
- F:	rust/kernel/of.rs
- F:	scripts/dtc/
- F:	tools/testing/selftests/dt/
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index ed00695af971..041a8112eb9e 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -26,6 +26,7 @@
- #include "kunit.c"
- #include "mm.c"
- #include "mutex.c"
-+#include "of.c"
- #include "page.c"
- #include "platform.c"
- #include "pci.c"
-diff --git a/rust/helpers/of.c b/rust/helpers/of.c
-new file mode 100644
-index 000000000000..86b51167c913
---- /dev/null
-+++ b/rust/helpers/of.c
-@@ -0,0 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/of.h>
-+
-+bool rust_helper_is_of_node(const struct fwnode_handle *fwnode)
-+{
-+	return is_of_node(fwnode);
-+}
-diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
-index 838509111e57..63fe4b6ee6bc 100644
---- a/rust/kernel/device/property.rs
-+++ b/rust/kernel/device/property.rs
-@@ -61,6 +61,13 @@ pub(crate) fn as_raw(&self) -> *mut bindings::fwnode_handle {
-         self.0.get()
-     }
- 
-+    /// Returns `true` if `&self` is an OF node, `false` otherwise.
-+    pub fn is_of_node(&self) -> bool {
-+        // SAFETY: The type invariant of `Self` guarantees that `self.as_raw() is a pointer to a
-+        // valid `struct fwnode_handle`.
-+        unsafe { bindings::is_of_node(self.as_raw()) }
-+    }
-+
-     /// Returns an object that implements [`Display`](core::fmt::Display) for
-     /// printing the name of a node.
-     ///
--- 
-2.43.0
+Considering bcachefs's track record of not loosing data, it shouldn't
+be surprising that some people start trusting it, despite being marked
+experimental. With that one fs being saved by journal rewind, I guess
+we're back to nobody ever loosing any data to bcachefs, which is quite
+impressive.
 
+FWIW I'm running two multi device filesystems with bcachefs right
+now. They are purely for bulk storage so far, so I'm not the best
+advocate for daily use stability. However I've been lurking in IRC ever
+since Kent saved my ass after I screwed up one of those filesystems
+(100% user error, wouldn't have blamed it on the fs for loosing it),
+and after watching him work his magic for other users, I'd trust
+bcachefs more to not permanently eat my data then other filesystems.
+
+- Christoph
 
