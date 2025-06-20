@@ -1,151 +1,162 @@
-Return-Path: <linux-kernel+bounces-695912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4606AAE1F62
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:50:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B035AE1F7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07F454C182B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:49:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A44C06A1192
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433352E610B;
-	Fri, 20 Jun 2025 15:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EF82E92CD;
+	Fri, 20 Jun 2025 15:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q2WGRp4Z";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QkxT30PD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OY4QPDGE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OA1nHk4N";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OY4QPDGE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OA1nHk4N"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A89A1519BA
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15F52E8E17
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750434457; cv=none; b=P5aBuXVOGsT2YArw+tkq0KS/0gmduwN3IQVLMy2ohVKfEuI1GAIGvUQEN4YktBfN5f3CL7wCEgGNrHSXzNQBsw3rJDBydTSeiYPkQYMI3a6D2t918qDn0lvBfp8NGM+K8id92XwBY0JBoSNfeiK+Rce7K1d/YVJuT9aR+7Z1vcc=
+	t=1750434468; cv=none; b=utaGxDZFcB/BhMF2MorNineMO203IycVMMOyyfr71Iay2wBot5q1mIwZs5iTaJVS147FfmnUPeCJoSFI8B/gGwCbLvpkSBRG+JGIsoVucogrBJDjWnK6S9siC2w3jgl5M//YIIvLCDtra4+zhI8jpqr84XuvfwqrlwqnG2L7u9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750434457; c=relaxed/simple;
-	bh=wwr/YmNwjPG+rqs2HRZsJp3V7IFN9PO1s2HPPBfwwno=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mAiwLp2aLPpEGYAMHV1l8h2X6tjWeLDY3fCWfT4PR4wzMBeCGuKqWcWRogJdnMuTv9m1Ks620pPsLE30YYQ1pkw4i+P//bZWtUZv2W0sCq3EwgGVApNML+jHcrcg44K739+wlVOtBnnrXLut1QUm8eBCdV6a+u9T3pXMz1LcPew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q2WGRp4Z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QkxT30PD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750434454;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1750434468; c=relaxed/simple;
+	bh=eMGC5Ax1af3GV4qbwjp8a8GGUC5Nhvn9YI171BLAqds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=spK1qhgBSFDdd3XuUJ76HrwAFofiPIBqxmydrHcLhgDfwz2+ZUDu1oYh2pKKZovoCvqA0WZ2oUNojTX/KMjkYjkTzo9TpTXe3Ql/7FD2ErHCM7fcuYrRtwka1/fPfRehLeSPiJrlVu7VlsrN7m4Je3DtE6IuCSj2IAswRwDNExM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OY4QPDGE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OA1nHk4N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OY4QPDGE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OA1nHk4N; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4A4411F38D;
+	Fri, 20 Jun 2025 15:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750434465;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tfqaj/3WWZBVl1QTBcQ1INc4aDbdWSa9MSU+sxm99vk=;
-	b=q2WGRp4Zypz/uauEJSeeL+t/l0B/78EFT1yZxzPC3qNK7bV2+pq4hvwDvKy9+Juts2NYaY
-	jDhBT3ZmmvrWliFGCQNIhz2tY5n+zQQvRmibHmKSTV8HpvieYH05a4VR5zLjh1P9Mr9SdE
-	nxNOnoZRZL+47e8rlG9pYBc+H3vKKsupw/pTRrpMe8flrVr0P7ZOFTFNsTmv4CdhW1jmyX
-	cF+S/zX1yQ11/hNJqbx9xl+Q2BBswt4mttaSpNEgbgTNHvaJxTcypD7kD1VyJB4/o8FMnz
-	zb5CCOF3uYLp1mxOn+Q+I7kP5YB23EwJ94L/PS0CbI9R2xZ1Txt32Nxofpt9xA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750434454;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	bh=jb4rmzCBy2JbwhbSe1U00gQREDjOVt6Lc3XN3bwP9Eg=;
+	b=OY4QPDGEDmD1mjpSUfxgQF9dRz0+RmTiFM0YBezqiBiVP/h+fad6RL/NKIq5/uN3TlqoxF
+	2rDcKUc8QmoJ4VAqohWdbSZ+TMpHtQLtbx58L4x8FG+/MkRboprcKOOXAn02Fs9BJPLBdS
+	QaR1E9d7okOCGlnvwaxqrxNlgs8LuZM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750434465;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tfqaj/3WWZBVl1QTBcQ1INc4aDbdWSa9MSU+sxm99vk=;
-	b=QkxT30PD+Qb6Ocm5Z+N+FV6UFo2mwWZXmutBYBsIW5BXR/b/V+JmGev/daBRCSuH6gS0mq
-	F6z+a89ep4/p20AQ==
-To: Li Chen <me@linux.beauty>
-Cc: Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, x86 <x86@kernel.org>, linux-kernel
- <linux-kernel@vger.kernel.org>
-Subject: [PATCH] x86/smpboot: Decrapify build_sched_topology()
-In-Reply-To: <87msa2r018.ffs@tglx>
-References: <1965cae22a0.12ab5a70c833868.7155412488566097801@linux.beauty>
- <87msa2r018.ffs@tglx>
-Date: Fri, 20 Jun 2025 17:47:33 +0200
-Message-ID: <87frfuqusq.ffs@tglx>
+	bh=jb4rmzCBy2JbwhbSe1U00gQREDjOVt6Lc3XN3bwP9Eg=;
+	b=OA1nHk4NQy+b6Sd2iYbdFO+su7/TkYvinaDaqefaxibMSqckDDxhy/UcEGCRyS0CHanwY4
+	RGB67sCFNhA4//Dg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750434465;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jb4rmzCBy2JbwhbSe1U00gQREDjOVt6Lc3XN3bwP9Eg=;
+	b=OY4QPDGEDmD1mjpSUfxgQF9dRz0+RmTiFM0YBezqiBiVP/h+fad6RL/NKIq5/uN3TlqoxF
+	2rDcKUc8QmoJ4VAqohWdbSZ+TMpHtQLtbx58L4x8FG+/MkRboprcKOOXAn02Fs9BJPLBdS
+	QaR1E9d7okOCGlnvwaxqrxNlgs8LuZM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750434465;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jb4rmzCBy2JbwhbSe1U00gQREDjOVt6Lc3XN3bwP9Eg=;
+	b=OA1nHk4NQy+b6Sd2iYbdFO+su7/TkYvinaDaqefaxibMSqckDDxhy/UcEGCRyS0CHanwY4
+	RGB67sCFNhA4//Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 23C9713736;
+	Fri, 20 Jun 2025 15:47:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 67OFCKGCVWgoZQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Fri, 20 Jun 2025 15:47:45 +0000
+Date: Fri, 20 Jun 2025 17:47:43 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, Jens Axboe <axboe@kernel.dk>,
+	Mark Harmstone <maharmstone@fb.com>, linux-btrfs@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] io_uring/btrfs: remove struct io_uring_cmd_data
+Message-ID: <20250620154743.GY4037@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20250619192748.3602122-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250619192748.3602122-1-csander@purestorage.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_HAS_DN(0.00)[];
+	URIBL_BLOCKED(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo,twin.jikos.cz:mid];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
 
-The #ifdeffery and the initializers in build_sched_topology() are just
-disgusting. The SCHED_SMT #ifdef is also pointless because SCHED_SMT is
-unconditionally enabled when SMP is enabled.
+On Thu, Jun 19, 2025 at 01:27:44PM -0600, Caleb Sander Mateos wrote:
+> btrfs's ->uring_cmd() implementations are the only ones using io_uring_cmd_data
+> to store data that lasts for the lifetime of the uring_cmd. But all uring_cmds
+> have to pay the memory and CPU cost of initializing this field and freeing the
+> pointer if necessary when the uring_cmd ends. There is already a pdu field in
+> struct io_uring_cmd that ->uring_cmd() implementations can use for storage. The
+> only benefit of op_data seems to be that io_uring initializes it, so
+> ->uring_cmd() can read it to tell if there was a previous call to ->uring_cmd().
+> 
+> Introduce a flag IORING_URING_CMD_REISSUE that ->uring_cmd() implementations can
+> use to tell if this is the first call to ->uring_cmd() or a reissue of the
+> uring_cmd. Switch btrfs to use the pdu storage for its btrfs_uring_encoded_data.
+> If IORING_URING_CMD_REISSUE is unset, allocate a new btrfs_uring_encoded_data.
+> If it's set, use the existing one in op_data. Free the btrfs_uring_encoded_data
+> in the btrfs layer instead of relying on io_uring to free op_data. Finally,
+> remove io_uring_cmd_data since it's now unused.
+> 
+> Caleb Sander Mateos (4):
+>   btrfs/ioctl: don't skip accounting in early ENOTTY return
+>   io_uring/cmd: introduce IORING_URING_CMD_REISSUE flag
+>   btrfs/ioctl: store btrfs_uring_encoded_data in io_btrfs_cmd
+>   io_uring/cmd: remove struct io_uring_cmd_data
 
-Statically initialize the domain levels in the topology array and let
-build_sched_topology() invalidate the package domain level when NUMA in
-package is available.
+The first patch is a fix so it can be put to a -rc queue.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
-Note: This allows to remove the SMT level with a simple memmove()
----
- arch/x86/kernel/smpboot.c |   45 +++++++++++++++++----------------------------
- 1 file changed, 17 insertions(+), 28 deletions(-)
-
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -478,43 +478,32 @@ static int x86_cluster_flags(void)
-  */
- static bool x86_has_numa_in_package;
- 
--static struct sched_domain_topology_level x86_topology[6];
-+#define DOMAIN(maskfn, flagsfn, dname) { .mask = maskfn, .sd_flags = flagsfn, .name = #dname }
- 
--static void __init build_sched_topology(void)
--{
--	int i = 0;
--
--#ifdef CONFIG_SCHED_SMT
--	x86_topology[i++] = (struct sched_domain_topology_level){
--		cpu_smt_mask, cpu_smt_flags, SD_INIT_NAME(SMT)
--	};
--#endif
-+static struct sched_domain_topology_level x86_topology[] = {
-+	DOMAIN(cpu_smt_mask, cpu_smt_flags, SMT),
- #ifdef CONFIG_SCHED_CLUSTER
--	x86_topology[i++] = (struct sched_domain_topology_level){
--		cpu_clustergroup_mask, x86_cluster_flags, SD_INIT_NAME(CLS)
--	};
-+	DOMAIN(cpu_clustergroup_mask, x86_cluster_flags, CLS),
- #endif
- #ifdef CONFIG_SCHED_MC
--	x86_topology[i++] = (struct sched_domain_topology_level){
--		cpu_coregroup_mask, x86_core_flags, SD_INIT_NAME(MC)
--	};
-+	DOMAIN(cpu_coregroup_mask, x86_core_flags, MC),
- #endif
--	/*
--	 * When there is NUMA topology inside the package skip the PKG domain
--	 * since the NUMA domains will auto-magically create the right spanning
--	 * domains based on the SLIT.
--	 */
--	if (!x86_has_numa_in_package) {
--		x86_topology[i++] = (struct sched_domain_topology_level){
--			cpu_cpu_mask, x86_sched_itmt_flags, SD_INIT_NAME(PKG)
--		};
--	}
-+	DOMAIN(cpu_cpu_mask, x86_sched_itmt_flags, PKG),
-+	{ NULL },
-+};
- 
-+static void __init build_sched_topology(void)
-+{
- 	/*
--	 * There must be one trailing NULL entry left.
-+	 * When there is NUMA topology inside the package invalidate the
-+	 * PKG domain since the NUMA domains will auto-magically create the
-+	 * right spanning domains based on the SLIT.
- 	 */
--	BUG_ON(i >= ARRAY_SIZE(x86_topology)-1);
-+	if (x86_has_numa_in_package) {
-+		unsigned int pkgdom = ARRAY_SIZE(x86_topology) - 2;
- 
-+		memset(&x86_topology[pkgdom], 0, sizeof(x86_topology[pkgdom]));
-+	}
- 	set_sched_topology(x86_topology);
- }
- 
-
+The rest change the io_uring logic, so it's not up to me, but regarding
+how to merge them either via btrfs or io_uring tree work for me.
 
