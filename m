@@ -1,197 +1,193 @@
-Return-Path: <linux-kernel+bounces-695734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7848CAE1D3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 16:25:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF9DAE1D4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 16:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15E0216DB02
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:25:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 084591BC8827
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7ED290D85;
-	Fri, 20 Jun 2025 14:25:44 +0000 (UTC)
-Received: from mail-ot1-f80.google.com (mail-ot1-f80.google.com [209.85.210.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17F3290BB4;
+	Fri, 20 Jun 2025 14:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RucEdvV2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A725E237708
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 14:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497B928A3E4;
+	Fri, 20 Jun 2025 14:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750429544; cv=none; b=d71syteyLG1odsmbi5ApX0RZST95K+kQpvMEMrfbmF5Bj8iZGphp68CYAeUJU8f8T2EvUpuYziLtGjKqziorej8MjdBOwt2MsRhYGjU9Wmsg6p+Y+ZpQgI2PhorLQCbtfs2ARCEtdJst6NlPwIQ5lgBYHq2GmP6D0jWKAcf8XCg=
+	t=1750429609; cv=none; b=ryoFjYzmYiScoTa4rqGWtNYXSip3BX/kyfDWvnbxt7dOEmwSHSvfbhVjoeVYdIORRxzVsrIuETiRIqif/n5I4WwXUD7euuS38KaCNVpcRxfMpQkuepThWarrMO0dDbP+dRHk9h4KfQzr5R2cD4diqVDNRgvcGscO5ckq8ZjeNbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750429544; c=relaxed/simple;
-	bh=8HkaNlz/z1RF1iFtvf3rQwBjKFiBjnp+npALTuGZSxA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=itT4IUOr/BZd7Raa66hAtJ79a0w30ygY4OPtYLoxEjTgmar1TaRdxjhz4GdgvthehcdMskFnK64oDfXexoBSixnQVbIUrUrrvA0U2OQEzpR/rkQsDY/Efy4taL67Bln4GW7Wn2mZUG1yojvdUpLcLH7q+hiIcjG70eiaFTqlcD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.210.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-ot1-f80.google.com with SMTP id 46e09a7af769-735abe7be85so1221730a34.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 07:25:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750429542; x=1751034342;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KIuYEzj3Bif6xHXQrRqNZNi2f01/mYgvrmDFs7Ux7OQ=;
-        b=o7XlhwjOJLbtuvlIHj9T6e6ru1RYlTfCZ1Z0Y8ROW7d9P2aGrO8TaTffiNp2nqHeOk
-         rr8+fjC8Ro9DrGM+D9wQQ02IysD3LCpL1he8XKEbPabAjTyaIkzZZLoY/gjoC5oKb0VY
-         H+T9MU49WTaKclTvGPY2XbMUgEw06D9d9WcB76Eoa0j9SbFOC3QgTxrjRkveKRV5g8cG
-         5/PgS1MR8cf59xjW3PC5ulth7rlj1wsfqDJTvqAzWZM2Oe5mB+5f8yXO2aw/0rcKjUg7
-         UTIdDlhX3LVhaIziQnLaGA+47ypAjrq12TQdn2xFTn00ouDR4ZX3ZGtPQ6XDND7CFUmX
-         xvbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWn1v69aVNNWAz6Seby8bvmb6sWypWjQTpeSyRraAQPnD5hLVjuR4sRdz8OCCjnnl/gm30FisehcEqgCfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy18jo3oNYLX1SXkuNvaic6pvGQm59SylVPgLPhbc2rwD9K3xXQ
-	zSKuW/7VkdWic3uduav2SV3tWdYVmFoxJRw6j2MiscSa5ivYE3+kieWKdcqTImNLSi+qho/2JuS
-	f2VALiLYNMK+2Rg5IPwA5XPmdFZJPOmxRMIwdpgEYjcLFeKDvfd9FWXOHJQ4=
-X-Google-Smtp-Source: AGHT+IEXiz8sVveXCQTPjG7tOrNybCKhuwdIDwWDwdtIv00EE8qa0rkZ3+oxvR+pBoU8uR5CxXxC7Y38HIFl91iYoZGmgbjOO0+w
+	s=arc-20240116; t=1750429609; c=relaxed/simple;
+	bh=+pWQPw+Ca2mJz3X31Q1pGdLyshBfBAfKJlr9EFmlMsk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uENAsiovztx/izpAaJyLZI7JaH2G/CLIoJyiVALE5oxjXmDvhjIxkSOxSVd4Z4itIytrlEgrpMPsYXfAYxAtCTiAInvsXkmh07no2AK2Lj4zAp1EfknkIc+63bfs+xen/2j3hkk8cNO2BoQTBY0FfYxEPDzpEg/4BldhPFpbYRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RucEdvV2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55K7H9dZ009657;
+	Fri, 20 Jun 2025 14:26:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tXkJ67cMbeMVJ9YZw29ONigI2pwCgXoma9QCqa3pX88=; b=RucEdvV2mPKLvwI5
+	T6F7UEO3Tui9rGeReMnhUQq29KoXO/B/CYurSOFM0aaRmYzHTtsVBaf7uxgg70XI
+	q1ZcCrG2Oky/TU46flij+fW9QPKUCMe1c7LS8QxMtC3hFIFTQeQ5/tHVBmnk8k2r
+	uh47MfhZE6cIdpyl5rso7iOUi0METaeQYPMyqqZ7nPQaB9IowQEmpTGX0DeZP+70
+	vgmR/JZhPUKAao1bcCB5T3KU14AI8OZYN8FGE+OVTcMRYRJB5PD0xi07/0Yj+x/R
+	B7wCS8I5sAwmxZeJ15uSjm9+XBpTaMjUollDjpd6+u223GOZM1BNNwRXyllEh0xP
+	3dn02Q==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47d340155f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Jun 2025 14:26:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55KEQJbN023197
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Jun 2025 14:26:19 GMT
+Received: from [10.216.13.27] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 20 Jun
+ 2025 07:26:13 -0700
+Message-ID: <9c846734-9267-442d-bba0-578d993650c1@quicinc.com>
+Date: Fri, 20 Jun 2025 19:55:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19cc:b0:3dd:b540:b795 with SMTP id
- e9e14a558f8ab-3de3954f063mr26936825ab.3.1750429529031; Fri, 20 Jun 2025
- 07:25:29 -0700 (PDT)
-Date: Fri, 20 Jun 2025 07:25:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68556f59.a00a0220.137b3.004e.GAE@google.com>
-Subject: [syzbot] [net?] [ext4?] general protection fault in clip_push
-From: syzbot <syzbot+1316233c4c6803382a8b@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V6 10/10] scsi: ufs: qcom : Refactor phy_power_on/off
+ calls
+To: Aishwarya <aishwarya.tcv@arm.com>
+CC: <James.Bottomley@HansenPartnership.com>, <andersson@kernel.org>,
+        <bvanassche@acm.org>, <dmitry.baryshkov@oss.qualcomm.com>,
+        <kishon@kernel.org>, <konrad.dybcio@oss.qualcomm.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-scsi@vger.kernel.org>,
+        <manivannan.sadhasivam@linaro.org>, <martin.petersen@oracle.com>,
+        <neil.armstrong@linaro.org>, <quic_cang@quicinc.com>,
+        <quic_rdwivedi@quicinc.com>, <vkoul@kernel.org>
+References: <20250526153821.7918-11-quic_nitirawa@quicinc.com>
+ <20250619135302.9192-1-aishwarya.tcv@arm.com>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <20250619135302.9192-1-aishwarya.tcv@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ZHYQYXUdS1hDqa-RbOPXtdnN-IZwsXyx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIwMDEwMyBTYWx0ZWRfX7wUCeFZ/MuQ2
+ uVV2KVg+Gmu+Zg2yHEdVhWakIyNIdlOIQnsYwcHdtymxTLgmlDNwzImLMcJS/3oym6Qu93oGmJn
+ 3u0Nx/1fyU6dqbp1koyKdP+2cx7wTBB0/rIOUIcHJGJb8VK//7avb92NMoXG4ekQf0FsoWd0jiX
+ PHAi+2McHCwUh1wgoMQn6lkhe2nr6MMM+n/bjSnm4sHRaAcg28u3/obBfJ1F+8v51RMUfKTSIlk
+ IDUdGS1dINPxwaymt2TtK1RVK3xNiogFL7LybBl1GeLv773CzxrrqePOOe8OTmjdSjKDBeg/jA7
+ uwhnKPO8USsvAbgxyYPfejU/Tj30X+hCOcAMgJp56Ewmarj/mWN8LYMND/yyA9dAEYEQCIxTwuU
+ hicCo8bppRDyepwSZdOlzFaymUwnYZHFsJrRiSp8Nv2rMYIOrqVjaJv7InulMhRbT+D++sLi
+X-Authority-Analysis: v=2.4 cv=JLE7s9Kb c=1 sm=1 tr=0 ts=68556f8c cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
+ a=ydUYT1VdIsrJ1VNw940A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: ZHYQYXUdS1hDqa-RbOPXtdnN-IZwsXyx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-20_05,2025-06-20_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 mlxlogscore=999 adultscore=0 mlxscore=0 lowpriorityscore=0
+ malwarescore=0 impostorscore=0 suspectscore=0 bulkscore=0 priorityscore=1501
+ spamscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506200103
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    41687a5c6f8b Merge tag 'spi-fix-v6.16-rc2' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12ca5370580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d11f52d3049c3790
-dashboard link: https://syzkaller.appspot.com/bug?extid=1316233c4c6803382a8b
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17365d0c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11cff5d4580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-41687a5c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c889133baca6/vmlinux-41687a5c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/288c0c860dbf/bzImage-41687a5c.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/ad66cd154f6a/mount_4.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=10818182580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1316233c4c6803382a8b@syzkaller.appspotmail.com
-
-EXT4-fs: Ignoring removed oldalloc option
-EXT4-fs (loop0): 1 truncate cleaned up
-EXT4-fs (loop0): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: writeback.
-Oops: general protection fault, probably for non-canonical address 0xdffffc000000001c: 0000 [#1] SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x00000000000000e0-0x00000000000000e7]
-CPU: 0 UID: 0 PID: 5312 Comm: syz-executor180 Not tainted 6.16.0-rc2-syzkaller-00162-g41687a5c6f8b #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:clip_push+0x6dd/0x760 net/atm/clip.c:197
-Code: 20 8d aa 8c e8 e4 f6 5b fa 48 83 3d bc 23 64 0f 00 0f 85 94 f9 ff ff e8 a1 32 27 f7 48 8d bb e0 00 00 00 48 89 f8 48 c1 e8 03 <0f> b6 04 28 84 c0 75 3c 8b ab e0 00 00 00 49 8d bd 40 01 00 00 be
-RSP: 0018:ffffc9000d4e7898 EFLAGS: 00010202
-RAX: 000000000000001c RBX: 0000000000000000 RCX: ffff888000f3c880
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000000e0
-RBP: dffffc0000000000 R08: ffffffff8fa110f7 R09: 1ffffffff1f4221e
-R10: dffffc0000000000 R11: ffffffff8a9922e0 R12: ffffffff8a9922e0
-R13: ffff888031799000 R14: ffff8880429ce180 R15: ffff888031799578
-FS:  0000000000000000(0000) GS:ffff88808d251000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f074213de58 CR3: 000000003f358000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- vcc_destroy_socket net/atm/common.c:183 [inline]
- vcc_release+0x15a/0x460 net/atm/common.c:205
- __sock_release net/socket.c:647 [inline]
- sock_close+0xc0/0x240 net/socket.c:1391
- __fput+0x44c/0xa70 fs/file_table.c:465
- task_work_run+0x1d1/0x260 kernel/task_work.c:227
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0x6ad/0x22e0 kernel/exit.c:955
- do_group_exit+0x21c/0x2d0 kernel/exit.c:1104
- get_signal+0x1286/0x1340 kernel/signal.c:3034
- arch_do_signal_or_restart+0x9a/0x750 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop+0x75/0x110 kernel/entry/common.c:111
- exit_to_user_mode_prepare include/linux/entry-common.h:330 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:414 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:449 [inline]
- do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f07420ea849
-Code: Unable to access opcode bytes at 0x7f07420ea81f.
-RSP: 002b:00007f074209f198 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: 0000000000000001 RBX: 00007f07421716c8 RCX: 00007f07420ea849
-RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00007f07421716cc
-RBP: 00007f07421716c0 R08: 65732f636f72702f R09: 65732f636f72702f
-R10: 65732f636f72702f R11: 0000000000000246 R12: 00007f074213e56c
-R13: 00007f074209f1a0 R14: 0031656c69662f2e R15: 0000200000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:clip_push+0x6dd/0x760 net/atm/clip.c:197
-Code: 20 8d aa 8c e8 e4 f6 5b fa 48 83 3d bc 23 64 0f 00 0f 85 94 f9 ff ff e8 a1 32 27 f7 48 8d bb e0 00 00 00 48 89 f8 48 c1 e8 03 <0f> b6 04 28 84 c0 75 3c 8b ab e0 00 00 00 49 8d bd 40 01 00 00 be
-RSP: 0018:ffffc9000d4e7898 EFLAGS: 00010202
-RAX: 000000000000001c RBX: 0000000000000000 RCX: ffff888000f3c880
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000000e0
-RBP: dffffc0000000000 R08: ffffffff8fa110f7 R09: 1ffffffff1f4221e
-R10: dffffc0000000000 R11: ffffffff8a9922e0 R12: ffffffff8a9922e0
-R13: ffff888031799000 R14: ffff8880429ce180 R15: ffff888031799578
-FS:  0000000000000000(0000) GS:ffff88808d251000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f074213de58 CR3: 00000000403da000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	20 8d aa 8c e8 e4    	and    %cl,-0x1b177356(%rbp)
-   6:	f6 5b fa             	negb   -0x6(%rbx)
-   9:	48 83 3d bc 23 64 0f 	cmpq   $0x0,0xf6423bc(%rip)        # 0xf6423cd
-  10:	00
-  11:	0f 85 94 f9 ff ff    	jne    0xfffff9ab
-  17:	e8 a1 32 27 f7       	call   0xf72732bd
-  1c:	48 8d bb e0 00 00 00 	lea    0xe0(%rbx),%rdi
-  23:	48 89 f8             	mov    %rdi,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	0f b6 04 28          	movzbl (%rax,%rbp,1),%eax <-- trapping instruction
-  2e:	84 c0                	test   %al,%al
-  30:	75 3c                	jne    0x6e
-  32:	8b ab e0 00 00 00    	mov    0xe0(%rbx),%ebp
-  38:	49 8d bd 40 01 00 00 	lea    0x140(%r13),%rdi
-  3f:	be                   	.byte 0xbe
+On 6/19/2025 7:23 PM, Aishwarya wrote:
+> Hi Nitin,
+> 
+> When booting the kernel from next-20250619 on Arm64 Qualcomm boards
+> (RB5 and DB845C), we observe that the baseline bootr test fails due to
+> dmesg.emerg errors in our CI environment.
+> 
+> A full git bisect (log included below) points to this patch as the
+> culprit. The issue was introduced sometime from tag next-20250616 in
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Hi Aishwarya,
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I tested booting the QRB5165 using the qrb5165-rb5.dtb with the latest 
+upstream tip multiple times, and each time it successfully booted to the 
+shell without any issues.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Are you encountering a boot failure, or is there a specific test case 
+you're running that triggers the problem? If so, could you please share 
+the dmesg log to help check further.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Thanks,
+Nitin
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> 
+> This issue is not present in v6.16-rc2
+> 
+> Here’s a sample of the failure observed on the RB5 board:
+> lert :   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> kern  :alert :   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> kern  :alert :   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> kern  :alert : user pgtable: 4k pages, 48-bit VAs, pgdp=0000000102c4c000
+> kern  :alert : [0000000000000000] pgd=0000000000000000
+> kern  :emerg : Internal error: Oops: 0000000096000004 [#1]  SMP
+> kern  :emerg : Code: a90157f3 aa0003f3 f90013f6 f9405c15 (f94002b6)
+> <8>[   30.933289] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=emerg RESULT=fail UNITS=lines MEASUREMENT=2>
+> + <8>[   30.943798] <LAVA_SIGNAL_ENDRUN 0_dmesg 1000325_2.4.4.1>
+> set +x
+> 
+> Git bisection log:
+> git bisect start
+> # status: waiting for both good and bad commits
+> # good: [9afe652958c3ee88f24df1e4a97f298afce89407] Merge tag 'x86_urgent_for_6.16-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+> git bisect good 9afe652958c3ee88f24df1e4a97f298afce89407
+> # status: waiting for bad commit, 1 good commit known
+> # bad: [4325743c7e209ae7845293679a4de94b969f2bef] Add linux-next specific files for 20250617
+> git bisect bad 4325743c7e209ae7845293679a4de94b969f2bef
+> # good: [436c8cbbcb18deb96100cd9f33f1efedddc31d9c] Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git
+> git bisect good 436c8cbbcb18deb96100cd9f33f1efedddc31d9c
+> # good: [183d224083773ca4a84a458fb608efecff19e19e] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git
+> git bisect good 183d224083773ca4a84a458fb608efecff19e19e
+> # good: [1347ff0c0e510f1a6adb78259a2a0ddfac41d258] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git
+> git bisect good 1347ff0c0e510f1a6adb78259a2a0ddfac41d258
+> # bad: [b09bd04eabb1994257f4c11d0ed25ff03517d3ec] Merge branch 'gpio/for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
+> git bisect bad b09bd04eabb1994257f4c11d0ed25ff03517d3ec
+> # good: [70bc9e18653c20fbcb47184d9498ad7bd7b7d6be] Merge branch 'togreg' of git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git
+> git bisect good 70bc9e18653c20fbcb47184d9498ad7bd7b7d6be
+> # bad: [3a847fb85c9d47e61ad5d9d54b762a3e99a08084] Merge branch 'next' of git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git
+> git bisect bad 3a847fb85c9d47e61ad5d9d54b762a3e99a08084
+> # skip: [50355ac70d4f104e2f82bfbd0658c129027ebb37] dt-bindings: phy: Convert marvell,comphy-cp110 to DT schema
+> git bisect skip 50355ac70d4f104e2f82bfbd0658c129027ebb37
+> # good: [acc6b0d73d902d3296d8c77878a9b508c2c6a5bf] phy: qcom-qmp-ufs: Rename qmp_ufs_power_off
+> git bisect good acc6b0d73d902d3296d8c77878a9b508c2c6a5bf
+> # bad: [35b629b28afd72a14ed573f1b180dc4ab1bf7e19] dt-bindings: phy: Convert ti,dm816x-usb-phy to DT schema
+> git bisect bad 35b629b28afd72a14ed573f1b180dc4ab1bf7e19
+> # bad: [66acaf8f6b0bcc273f8356b2a77baa90b177014c] dt-bindings: phy: Convert img,pistachio-usb-phy to DT schema
+> git bisect bad 66acaf8f6b0bcc273f8356b2a77baa90b177014c
+> # bad: [f151f3a6ebe184b5f8c9abe58fe2d63f9950139b] dt-bindings: phy: Convert brcm,ns2-drd-phy to DT schema
+> git bisect bad f151f3a6ebe184b5f8c9abe58fe2d63f9950139b
+> # bad: [77d2fa54a94574f767d5fb296b6b8e011eba0c8e] scsi: ufs: qcom : Refactor phy_power_on/off calls
+> git bisect bad 77d2fa54a94574f767d5fb296b6b8e011eba0c8e
+> # good: [7f600f0e193a6638135026c3718ac296ed3f5044] phy: qcom-qmp-ufs: Remove qmp_ufs_exit() and Inline qmp_ufs_com_exit()
+> git bisect good 7f600f0e193a6638135026c3718ac296ed3f5044
+> # good: [a079b2d715340482e425ff136b55810ab8279800] phy: qcom-qmp-ufs: refactor qmp_ufs_power_off
+> git bisect good a079b2d715340482e425ff136b55810ab8279800
+> # first bad commit: [77d2fa54a94574f767d5fb296b6b8e011eba0c8e] scsi: ufs: qcom : Refactor phy_power_on/off calls
+> 
+> Thanks,
+> Aishwarya
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
