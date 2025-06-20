@@ -1,206 +1,129 @@
-Return-Path: <linux-kernel+bounces-695825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32024AE1E7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:25:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3167AE1E90
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA23C3BD60B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:23:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 250591C24E68
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9066B2D3212;
-	Fri, 20 Jun 2025 15:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660B22E6128;
+	Fri, 20 Jun 2025 15:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uxMdQLaV"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0GoWGit"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE44E2D3210;
-	Fri, 20 Jun 2025 15:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23C12E54CF
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750432992; cv=none; b=a/fIvfuS2oEqMs7Tbl/6eH2KFwFAfEequr16no/+NhaA+QMxmQQfw7i1ZTFDWtkwwz1qlgeRfJElksuj+aF296y62J3/CmLhGxNdHE1skv1P1LARsUUdfEpkS1XDnMcoUFDSe8cVweZBHP2ZmrfLEAXtrsohi8dOYLrTBv9J0gw=
+	t=1750433012; cv=none; b=gikun+fVh2oiFMo2RGRLSiDosVaCGvNVeJifswmVcdNF9nF+TJeTnZDfEOTwNXMfPgaGQ70Um0Y11q3O6UNZKjcuWKSOxznHlRSGVjfZ6+A9eEV7F+flvh+kH0f5xqrC8ErTh3M4AnEyuR5vBrofQTsEyXauc1HEiJTZDWYlVbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750432992; c=relaxed/simple;
-	bh=vVCB/bub1g69JDqiL/vdIbAykfLQcbkNGrw/3r9HK5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EfC51+FXQzGqnATFAmFL3N0aHBz+JX+qCoTNGJTgOZyH9kFAaxh0spC8PXeBFCq3AXR3cqUht+xMDGDcD+JTr8zggr55T7wdBeQuDigpE2zBG+tC0zAyi9CMj0RvnXfU+6B305JZgqnc68s6ThrD3T2JNuq0DIUKZzeG6ARQUm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uxMdQLaV; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55KFMn7O332763;
-	Fri, 20 Jun 2025 10:22:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750432969;
-	bh=vVCB/bub1g69JDqiL/vdIbAykfLQcbkNGrw/3r9HK5s=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=uxMdQLaVji2FSFb3JaAssk44MZ2Iyh18DR3WFrIhaMVpLoY2RtkKPE0dAveBeoSU9
-	 yU9cj67Ogvrn/NTm0E6NXixzDJb4//NqEKk453wOUdU8Shj7stQzxMhqWJCjA2EOdr
-	 tRhcZ5WyVik5VnA2E6ROJL+kXQXQ6Jn9g3hWxRnM=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55KFMnoB792178
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 20 Jun 2025 10:22:49 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 20
- Jun 2025 10:22:49 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 20 Jun 2025 10:22:49 -0500
-Received: from [10.249.32.27] ([10.249.32.27])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55KFMmNr3406043;
-	Fri, 20 Jun 2025 10:22:48 -0500
-Message-ID: <7f5dc278-ff5f-4554-b490-49de23f1e1b0@ti.com>
-Date: Fri, 20 Jun 2025 10:22:48 -0500
+	s=arc-20240116; t=1750433012; c=relaxed/simple;
+	bh=5ZDs0SoJ8yatsvNiDpfTaIQZ7Et15dC+wW8JUAJyaC4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oIU+o20tlQMWcUfduFDbbKNvHPqMv7fsYPGepT5gpAEadIee805vofv7/W3fzlrgtDIizL4V/1voCboVvakOJTOl/qgSGbv5/X+lxcTzhInfXUtcAviX0p+DGXX4sgLp1QySVlColEBsoHYnHwaUsBBiQRWeint8ZUz9rp0Jq9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N0GoWGit; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D8A3C4CEF1;
+	Fri, 20 Jun 2025 15:23:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750433012;
+	bh=5ZDs0SoJ8yatsvNiDpfTaIQZ7Et15dC+wW8JUAJyaC4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=N0GoWGitkAAPEFD4VB5WV0lsjJeMMqPW/RjtPbDmKWgyegn813ztRSTvejygMwPe+
+	 KngmwpDKwqSpbfjIrvCAc45lgKRgkrdqvaoBqgbO0GT6zY5oS9p/VZmpZe2CPVSHl5
+	 N7iv8Ke1n7/qP4Vg56o0C/5E6EVGmPIQwZJKE0ssVJyBeEHXvjd82QZUy8Jkm1zfid
+	 +pnMSNJ/3noGsHybSfuXSHN3WW3tIIBolDNQ9f5CY5PBKtLZbuYC0HpIi2hVHU81Z9
+	 wX0FI4cfDMgGL8Z1/8I0KBgvuL7n5VjBePTEpi4jRBhdiB8LnB53fCYteEM5ei8bH+
+	 5H28P9i3kAEJA==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH 07/27] sched/isolation: Save boot defined domain flags
+Date: Fri, 20 Jun 2025 17:22:48 +0200
+Message-ID: <20250620152308.27492-8-frederic@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250620152308.27492-1-frederic@kernel.org>
+References: <20250620152308.27492-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] regulator: tps65219: Fix devm_kmalloc size allocation
-To: Andrew Davis <afd@ti.com>, <aaro.koskinen@iki.fi>, <andreas@kemnade.info>,
-        <khilman@baylibre.com>, <rogerq@kernel.org>, <tony@atomide.com>,
-        <lee@kernel.org>, <d-gole@ti.com>, <robertcnelson@gmail.com>,
-        <jkridner@gmail.com>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <m-leonard@ti.com>, <praneeth@ti.com>
-References: <20250620000924.2636542-1-s-ramamoorthy@ti.com>
- <67352ec8-6bd0-4434-8553-9fe7829ed188@ti.com>
-Content-Language: en-US
-From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-In-Reply-To: <67352ec8-6bd0-4434-8553-9fe7829ed188@ti.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 6/20/2025 9:58 AM, Andrew Davis wrote:
-> On 6/19/25 7:09 PM, Shree Ramamoorthy wrote:
->> In probe(), devm_kmalloc uses pmic->common_irq_size to allocate an
->> array of
->> 2 bytes, but pmic->common_irq_size is being used like an array of
->> structs.
->
-> The issue is with both `common_irq_size` and `dev_irq_size`, so might
-> be good
-> to mention both since you fix both in the patch. Also "2" bytes was an
-> example,
-> to be more technically correct (the best kind of correct) you can say:
->
-> In probe(), two arrays of structs are allocated but the memory size of
-> the
-> allocations were given as the arrays' length, not the total memory
-> needed.
->
->> The param sent should've been pmic->common_irq_size * sizeof(*irq_data).
->> This led to an issue with the kmalloc'd buffer being corrupted and
->> EVM boot
->
-> Don't need to mention "EVM" here unless you want to give a specific
-> example
-> by name (PocketBeagle2 being the board that first exposed this issue
-> IIRC).
->
-> Anyway, the issue wasn't just the kmalloc'd buffer being corrupted, but
-> other structures in the heap after, and since the issues caused by heap
-> overflows are usually random, easier to say:
->
-> This led to a heap overflow when the struct array was used.
->
->> issues. The common and device-specific structs are now allocated one
->> at a
->> time within the loop.
->>
->
-> Acked-by: Andrew Davis <afd@ti.com>
+HK_TYPE_DOMAIN will soon integrate not only boot defined isolcpus= CPUs
+but also cpuset isolated partitions.
 
-Thank you for reviewing!! I will update the cover letter & submit a v2.
+Housekeeping still needs a way to record what was initially passed
+to isolcpus= in order to keep these CPUs isolated after a cpuset
+isolated partition is modified or destroyed while containing some of
+them.
 
->
->> Fixes: 38c9f98db20a ("regulator: tps65219: Add support for TPS65215
->> Regulator IRQs")
->> Reported-by: Dhruva Gole <d-gole@ti.com>
->> Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
->> ---
->>   drivers/regulator/tps65219-regulator.c | 28 +++++++++++++-------------
->>   1 file changed, 14 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/regulator/tps65219-regulator.c
->> b/drivers/regulator/tps65219-regulator.c
->> index d80749cdae1d..d77ca486879f 100644
->> --- a/drivers/regulator/tps65219-regulator.c
->> +++ b/drivers/regulator/tps65219-regulator.c
->> @@ -436,46 +436,46 @@ static int tps65219_regulator_probe(struct
->> platform_device *pdev)
->>                            pmic->rdesc[i].name);
->>       }
->>   -    irq_data = devm_kmalloc(tps->dev, pmic->common_irq_size,
->> GFP_KERNEL);
->> -    if (!irq_data)
->> -        return -ENOMEM;
->> -
->>       for (i = 0; i < pmic->common_irq_size; ++i) {
->>           irq_type = &pmic->common_irq_types[i];
->>           irq = platform_get_irq_byname(pdev, irq_type->irq_name);
->>           if (irq < 0)
->>               return -EINVAL;
->>   -        irq_data[i].dev = tps->dev;
->> -        irq_data[i].type = irq_type;
->> +        irq_data = devm_kmalloc(tps->dev, sizeof(*irq_data),
->> GFP_KERNEL);
->> +        if (!irq_data)
->> +            return -ENOMEM;
->> +
->> +        irq_data->dev = tps->dev;
->> +        irq_data->type = irq_type;
->>           error = devm_request_threaded_irq(tps->dev, irq, NULL,
->>                             tps65219_regulator_irq_handler,
->>                             IRQF_ONESHOT,
->>                             irq_type->irq_name,
->> -                          &irq_data[i]);
->> +                          irq_data);
->>           if (error)
->>               return dev_err_probe(tps->dev, error,
->>                            "Failed to request %s IRQ %d\n",
->>                            irq_type->irq_name, irq);
->>       }
->>   -    irq_data = devm_kmalloc(tps->dev, pmic->dev_irq_size,
->> GFP_KERNEL);
->> -    if (!irq_data)
->> -        return -ENOMEM;
->> -
->>       for (i = 0; i < pmic->dev_irq_size; ++i) {
->>           irq_type = &pmic->irq_types[i];
->>           irq = platform_get_irq_byname(pdev, irq_type->irq_name);
->>           if (irq < 0)
->>               return -EINVAL;
->>   -        irq_data[i].dev = tps->dev;
->> -        irq_data[i].type = irq_type;
->> +        irq_data = devm_kmalloc(tps->dev, sizeof(*irq_data),
->> GFP_KERNEL);
->> +        if (!irq_data)
->> +            return -ENOMEM;
->> +
->> +        irq_data->dev = tps->dev;
->> +        irq_data->type = irq_type;
->>           error = devm_request_threaded_irq(tps->dev, irq, NULL,
->>                             tps65219_regulator_irq_handler,
->>                             IRQF_ONESHOT,
->>                             irq_type->irq_name,
->> -                          &irq_data[i]);
->> +                          irq_data);
->>           if (error)
->>               return dev_err_probe(tps->dev, error,
->>                            "Failed to request %s IRQ %d\n",
->>
->> base-commit: 5c8013ae2e86ec36b07500ba4cacb14ab4d6f728
->> prerequisite-patch-id: cd76c901948780de20e932cf620806959e2177b1
->> prerequisite-patch-id: e847098a38d07e5ff31e8c80d86d9702d132fdad
->> prerequisite-patch-id: e6a01f111e527c6da442f6756f8daa4e79d0fa3c
+Create a new HK_TYPE_DOMAIN_BOOT to keep track of those.
+
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ include/linux/sched/isolation.h | 1 +
+ kernel/sched/isolation.c        | 5 +++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
+index 8de4f625a5c1..731506d312d2 100644
+--- a/include/linux/sched/isolation.h
++++ b/include/linux/sched/isolation.h
+@@ -7,6 +7,7 @@
+ #include <linux/tick.h>
+ 
+ enum hk_type {
++	HK_TYPE_DOMAIN_BOOT,
+ 	HK_TYPE_DOMAIN,
+ 	HK_TYPE_MANAGED_IRQ,
+ 	HK_TYPE_KERNEL_NOISE,
+diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+index 8c02eeccea3b..9ecf53c5328b 100644
+--- a/kernel/sched/isolation.c
++++ b/kernel/sched/isolation.c
+@@ -9,6 +9,7 @@
+  */
+ 
+ enum hk_flags {
++	HK_FLAG_DOMAIN_BOOT	= BIT(HK_TYPE_DOMAIN_BOOT),
+ 	HK_FLAG_DOMAIN		= BIT(HK_TYPE_DOMAIN),
+ 	HK_FLAG_MANAGED_IRQ	= BIT(HK_TYPE_MANAGED_IRQ),
+ 	HK_FLAG_KERNEL_NOISE	= BIT(HK_TYPE_KERNEL_NOISE),
+@@ -214,7 +215,7 @@ static int __init housekeeping_isolcpus_setup(char *str)
+ 
+ 		if (!strncmp(str, "domain,", 7)) {
+ 			str += 7;
+-			flags |= HK_FLAG_DOMAIN;
++			flags |= HK_FLAG_DOMAIN | HK_FLAG_DOMAIN_BOOT;
+ 			continue;
+ 		}
+ 
+@@ -244,7 +245,7 @@ static int __init housekeeping_isolcpus_setup(char *str)
+ 
+ 	/* Default behaviour for isolcpus without flags */
+ 	if (!flags)
+-		flags |= HK_FLAG_DOMAIN;
++		flags |= HK_FLAG_DOMAIN | HK_FLAG_DOMAIN_BOOT;
+ 
+ 	return housekeeping_setup(str, flags);
+ }
+-- 
+2.48.1
+
 
