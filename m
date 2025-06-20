@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-695446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 069EDAE19DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:19:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34039AE19E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F4274A330A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:19:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82F647A437A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842C328A3FC;
-	Fri, 20 Jun 2025 11:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F1628A40F;
+	Fri, 20 Jun 2025 11:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZNHFMLM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzzisRUr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E358A268683;
-	Fri, 20 Jun 2025 11:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6712F2836A6
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 11:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750418384; cv=none; b=sg8Ovj11HnRbbA8OW49ndyET+beselJLRKffJnMzGLgG/rWYzUYnMVQh9oQfmAnfJg8EVWLIIDusG2zGqTrvVQFE7b6ndaT+ougRVLABC3Zi+hTYxgoGURONOvu7rC54gy1+0YLueRi40KvUwYNMbdD1HkYaBAZxvUVEL0y758o=
+	t=1750418407; cv=none; b=SP4C2lvd9qjZ3xLfHs867CjRwB/R40FvqCeIF3v8d67s5FD2RfrX3P8NPmB8m3UqqXnZlTFoEjyOb+w6KKhv0UaBuARuSKrZIveOr1SqzYBC/JWazb27h4ghqH3Yftdm8rEC95KMhBDdDzn9aVzms3m0ugvBd4I/+nYzaSStAVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750418384; c=relaxed/simple;
-	bh=v4CSPeGlTth/fyAsN1KxvH9LcX2LADhaZVDWoO+/GwU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bkpWL/Iz3u8xg8uznCF4ZLFvztTvkT7VL7d/kA/cF1K6qP2b0LymwseKYLMJvv/kTcO8YvRg7x9BehxiP6Lww/p1zZlmsRFrJZtE9FoCFbh9V5dMAescz+reTOmZw9NYgQJiEGwfaQ2s5/m0sSOtaIOb7bV1fQ9NF7P2/cZSnEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XZNHFMLM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF3B6C4CEEE;
-	Fri, 20 Jun 2025 11:19:41 +0000 (UTC)
+	s=arc-20240116; t=1750418407; c=relaxed/simple;
+	bh=lrY3AgKwDr2QnUYeMAu9baBFC0TNe1uwbz5QnFOlaB0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NIHDBomp1kvN588GuJ9PDgFIvWg4IXqu2/71e7ncrMtPIJ4p4xGQwqsb1SEliZq1xbosaKK+sHz5FuY2092miUb+sdLbJob/rAbB2OTp+ip+yMhKp+B3Unn9qWDMhLzvlmtadYMu3fo6C33aIoGv1dszDNAfe+gVUmyzXbpUcCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzzisRUr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C18E4C4CEED;
+	Fri, 20 Jun 2025 11:20:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750418383;
-	bh=v4CSPeGlTth/fyAsN1KxvH9LcX2LADhaZVDWoO+/GwU=;
+	s=k20201202; t=1750418407;
+	bh=lrY3AgKwDr2QnUYeMAu9baBFC0TNe1uwbz5QnFOlaB0=;
 	h=From:To:Cc:Subject:Date:From;
-	b=XZNHFMLMOwJs1tRC9UEfBSfA5v9xqXp3vhC2nC7TtET0tRZikVz7OeRertU+daUAw
-	 LA3TF/NWE9VMthu1Hwj6dNdd/4jDOoDN9ChBMwWhOB7a0/f28nQhvV+WktLGe0OBak
-	 2ZA0/JyGoMqX8Ky7ivixNDebHthm32Fjht9dJQpUyaTVjZ0jpF2ghqIaxPpcwC8AJQ
-	 lZWVGxErxouSemnabSzvHNF0EpcUzktj/EuRyuwPPNjeI+Tn1nxBFDCaFsTY+yCWPA
-	 RhQxY2Kw4a8kXLXevWjHy8YI0hUOkXuVkjuDzUd2pW8iCW9O9WitKpUeGFytoPJEek
-	 zUUE4oc2J6EOQ==
+	b=fzzisRUrhgjv2O7fszTxjloAcgWtEadSboNSrZUxsnMMtS5TfbkONQ7BpGsCQlgeD
+	 XQ8Xaovvm1yBLdqF6cFvfx3g3aPsGs8PWoXmUviSnyHMa9auI58Bu5y9ZvCXoYp6aS
+	 ObkifRnkI4QTjwAMUCmH0KO7FK9yKqNZUhDG7kNx2ju/+i6BD51AWghA3gsc4nMPkd
+	 Vv9NIHmmRV9TciY1hcxwutHSGFTj0c/7uwNRSEPs7RRwMfZiDYsnv7i0CAZvnseKEl
+	 MBEU8ZVCPlBSZLQ26w0GKBeeZWAolm7w+Invto+8QoOwCanXVHzDb/T4S9JJUpWT7Q
+	 io6AaZSeIPnVw==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Pohsun Su <pohsuns@nvidia.com>,
-	Robert Lin <robelin@nvidia.com>
+To: Kees Cook <kees@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] clocksource: tegra186: avoid 64-bit division
-Date: Fri, 20 Jun 2025 13:19:35 +0200
-Message-Id: <20250620111939.3395525-1-arnd@kernel.org>
+	SeongJae Park <sj@kernel.org>,
+	David Gow <davidgow@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] binfmt_elf: reduce stackusage in kunit test
+Date: Fri, 20 Jun 2025 13:19:58 +0200
+Message-Id: <20250620112003.3395792-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,45 +61,52 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The newly added function causes a build failure on 32-bit targets with
-older compiler version such as gcc-10:
+Constructing arrays on the stack in the test case triggers a warning
+in some configurations:
 
-arm-linux-gnueabi-ld: drivers/clocksource/timer-tegra186.o: in function `tegra186_wdt_get_timeleft':
-timer-tegra186.c:(.text+0x3c2): undefined reference to `__aeabi_uldivmod'
+fs/tests/binfmt_elf_kunit.c: In function 'total_mapping_size_test':
+fs/tests/binfmt_elf_kunit.c:52:1: error: the frame size of 1448 bytes is larger than 1408 bytes [-Werror=frame-larger-than=]
 
-The calculation can trivially be changed to avoid the division entirely,
-as USEC_PER_SEC is a multiple of 5. Change both such calculation for
-consistency, even though gcc apparently managed to optimize the other one
-properly already.
+Change the arrays to 'static const' to not use any stack space at all.
+This is possible since the contents are never modified.
 
-Fixes: 28c842c8b0f5 ("clocksource/drivers/timer-tegra186: Add WDIOC_GETTIMELEFT support")
+Fixes: 9e1a3ce0a952 ("binfmt_elf: Introduce KUnit test")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/clocksource/timer-tegra186.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/tests/binfmt_elf_kunit.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
-index e5394f98a02e..bd3d443e41cd 100644
---- a/drivers/clocksource/timer-tegra186.c
-+++ b/drivers/clocksource/timer-tegra186.c
-@@ -159,7 +159,7 @@ static void tegra186_wdt_enable(struct tegra186_wdt *wdt)
- 	tmr_writel(wdt->tmr, TMRCSSR_SRC_USEC, TMRCSSR);
+diff --git a/fs/tests/binfmt_elf_kunit.c b/fs/tests/binfmt_elf_kunit.c
+index 11d734fec366..023042f6aeee 100644
+--- a/fs/tests/binfmt_elf_kunit.c
++++ b/fs/tests/binfmt_elf_kunit.c
+@@ -3,7 +3,7 @@
  
- 	/* configure timer (system reset happens on the fifth expiration) */
--	value = TMRCR_PTV(wdt->base.timeout * USEC_PER_SEC / 5) |
-+	value = TMRCR_PTV(wdt->base.timeout * (USEC_PER_SEC / 5)) |
- 		TMRCR_PERIODIC | TMRCR_ENABLE;
- 	tmr_writel(wdt->tmr, value, TMRCR);
- 
-@@ -267,7 +267,7 @@ static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device *wdd)
- 	 * counter value to the time of the counter expirations that
- 	 * remain.
+ static void total_mapping_size_test(struct kunit *test)
+ {
+-	struct elf_phdr empty[] = {
++	static const struct elf_phdr empty[] = {
+ 		{ .p_type = PT_LOAD, .p_vaddr = 0, .p_memsz = 0, },
+ 		{ .p_type = PT_INTERP, .p_vaddr = 10, .p_memsz = 999999, },
+ 	};
+@@ -11,7 +11,7 @@ static void total_mapping_size_test(struct kunit *test)
+ 	 * readelf -lW /bin/mount | grep '^  .*0x0' | awk '{print "\t\t{ .p_type = PT_" \
+ 	 *				$1 ", .p_vaddr = " $3 ", .p_memsz = " $6 ", },"}'
  	 */
--	timeleft += (((u64)wdt->base.timeout * USEC_PER_SEC) / 5) * (4 - expiration);
-+	timeleft += (u64)wdt->base.timeout * (USEC_PER_SEC / 5) * (4 - expiration);
- 
- 	/*
- 	 * Convert the current counter value to seconds,
+-	struct elf_phdr mount[] = {
++	static const struct elf_phdr mount[] = {
+ 		{ .p_type = PT_PHDR, .p_vaddr = 0x00000040, .p_memsz = 0x0002d8, },
+ 		{ .p_type = PT_INTERP, .p_vaddr = 0x00000318, .p_memsz = 0x00001c, },
+ 		{ .p_type = PT_LOAD, .p_vaddr = 0x00000000, .p_memsz = 0x0033a8, },
+@@ -28,7 +28,7 @@ static void total_mapping_size_test(struct kunit *test)
+ 	};
+ 	size_t mount_size = 0xE070;
+ 	/* https://lore.kernel.org/linux-fsdevel/YfF18Dy85mCntXrx@fractal.localdomain */
+-	struct elf_phdr unordered[] = {
++	static const struct elf_phdr unordered[] = {
+ 		{ .p_type = PT_LOAD, .p_vaddr = 0x00000000, .p_memsz = 0x0033a8, },
+ 		{ .p_type = PT_LOAD, .p_vaddr = 0x0000d330, .p_memsz = 0x000d40, },
+ 		{ .p_type = PT_LOAD, .p_vaddr = 0x00004000, .p_memsz = 0x005c91, },
 -- 
 2.39.5
 
