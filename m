@@ -1,117 +1,183 @@
-Return-Path: <linux-kernel+bounces-696067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC3E6AE21CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 20:11:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BFEAAE21D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 20:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 371FE4A7CF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 18:11:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2DAC7A9B20
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 18:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D732EB5A9;
-	Fri, 20 Jun 2025 18:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE532E7172;
+	Fri, 20 Jun 2025 18:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhJem19N"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfAaz1+j"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CE42EA752;
-	Fri, 20 Jun 2025 18:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FB72DFF17
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 18:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750443090; cv=none; b=Gh148CpQ+BDl5heV6qpqtCSTTQI27IAZBlfz2eCelZEqr4nu16ZzpZT0yzzhyBhHk5VKHpQ55bFs05wkvPgXWTGXVTn/U1UOvE5r+FHvsg+wLhZmS6g3Ozj0mqyZ1vS+GVPV5WkGBsDk7SOZ0wYh+LZKDomRqHlzSJccDdUWEg0=
+	t=1750443110; cv=none; b=sGxmjJVhpJPRRD78O2TiUWKLY7DpWirjwrrtLbVJUymvT2MRpwsNdAKEOGBfRxpIb9gcfoAB2pfGaXRx0ekRD9rWUQcVVc3ZhG63QmJeeV3d5xw4u4+3U9YG7ryw8ddl3o6oSnAWyq+6OESz1XrpaYEk0vfRhk9EH4q4JiFoD1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750443090; c=relaxed/simple;
-	bh=1dDLFyjAEHX8cxwcTCC/k6iBaRFF/axpFXkeBLu67dM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NvcSxBMNFIbQaE2fo+4aWcGFvG4rJ9Bs4fmriMSUf7s6KTCXH5pbmoucFgr0xXMYuS+7MWe/4Kkh5VtU8UO5bI81kuXecE9ncgKJen95P1lnT/FZdXNNpQwGvn+IeC0ZsGgTJ0027vjl9T9IDRHql9/URNvm+rU+7u52P1USNRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhJem19N; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1750443110; c=relaxed/simple;
+	bh=S5W+2wzhOf70gLHouOcf3i1hTYAKPJZKpUoJye4dZ1w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PN8gKKteZ4jnyHdKPXZmj92agUX227TAVu8VX/ITnvH0ooEdnDPO6ODyAeovInBYaZke2U21rphksbY1gLSPuXXnlxBjA0dECPx9tiFcQhLczx8oSnW0H2YTR8c57Lttlhiu4tnxEEsQ9Zw/cHgrjAGWn+gTMqUsknFo9an6hfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GfAaz1+j; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so2188888f8f.1;
-        Fri, 20 Jun 2025 11:11:28 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2352400344aso22824255ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 11:11:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750443087; x=1751047887; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2mEzXZ/YIhixe6E1kyZ5GIWXcl4av2h83GgvTF7RG6c=;
-        b=fhJem19Nxd5HtTVDbiWg7qT8ulK/k0VLXouM/SZffxvSjhf96aO7ROeG/XH/6vDLnX
-         SeICoFd4PtLYMZW0k4r2X0adfBPYFDvgeH1R8EQAMQ9rtdHStgFEz4ah/WIRjp5c5zGj
-         aSPECJB1/jnm+Lo72u63YDnHXm4XRMeSDQ8Th4FmoTmXsyJFzigsb7jYlV2/fVf34elI
-         EeLkmBYEBvNXDu0J/Mj4T8wcOxohINFWNw84rtCzC+KK4RH49k7TFBSu0LrCzFEDouaQ
-         cB9lupTCg3r9Iw++f3QjYqTpUF7SAV5V0Qfp3GRsfMDNzC8pmiJ71xrl+OThVaWXG4/5
-         JuKQ==
+        d=gmail.com; s=20230601; t=1750443108; x=1751047908; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pvtTJ1kHeCmxTLbmdO2cHISakb3o5Bb3qadp7bFl/tA=;
+        b=GfAaz1+j+Idu1qfAVaWdZJ9lTcHoKqdxX8OIektYk4J3e/OFcFPuLSB/O2/JmzyFDP
+         PNuZdPcDusB0BFiRg8amLE27gnU2Gc4FXCCh0rHxgUV1ShXI6+a24viLYlsqEtx0AnWa
+         WRcEZ0ABaSydvCR3SgxBqvajB107VZBufYRUq3NdHVd0PG1loxLDjszrx8CWsGjyWGmi
+         4p9ZCgKWFdbX58LwmU1ZoebBNa1WKnIEeSpdkO1whXf39h/FqySNLUzqk07HASqbowBZ
+         eA7zRprzw9VmNWxGUx09rjCNbR/iBY1VrzG3S/7jbrhcYv13wmp1k3N/eBz5X3AQ9K8l
+         5a6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750443087; x=1751047887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2mEzXZ/YIhixe6E1kyZ5GIWXcl4av2h83GgvTF7RG6c=;
-        b=IxP4lGphzozaKG0sMBP1+15yOWSty9OYCT6hG/kzblsV68t1xelzPZU+YExbJWmnpG
-         iCxA2I4s9BgDs+gG84qZ8bmiskNTompCzEDhWeJhMaQYZUif6jyQgOFoqh3e+NPxMEKT
-         GLWILgFrb8tj/qSE0n0lD/pCiYshCGW+5NunHLesAwduKa4Tz83Mp5go/rMWtGt1KIhk
-         f2Btis4hpHGw7e7xDvt8nx7+bMmFqzUKz42POJ7TTnCII3ZV4roLB7nTmif1W8oZ8d25
-         yTOeJF1EKUoHeRtmcY2+WjMUQL0hGL43zwtiQHSe+yeOHZ/IZHMoRWK+HlnBG0fskZMK
-         EaSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbVelZf8AQI0YaRAsb20HT5wR9mG9In4yEzZMLQxXmdGwZFB7ZhDZATPCMU2j6Y++MJTlmag8/+gv8G9zP@vger.kernel.org, AJvYcCVOuKwyAwvluHj66MqTgZsjb4m//kuz3aBX6FnPWrYnlUR7zLsOBdWrnn+10D8QFeG573Xes9p5r5/hpSd1cU1IwkXGJvbR@vger.kernel.org, AJvYcCXEAi9NoLGr0bEFuIS0vlYHuCckHcT/6P46tdx0OtQk7Vu9WeVdA2G6AXOqGU8x7pVBlQu97rUlGyeY+dPK@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw4bf1LH+J7pbPHRAlvT9yEq6EDJ9gwHkQv0YocLAE9arkccsU
-	Tvdfjfi2nxcPRHkPH9nlcK43jJaRhcWIjLY0V8OMqCzRK6DInSwF+qgOYce3tkYKtJG6ANdXDaK
-	5c5ab3KaO2TY73ldX9CMaA6odeMWBwmA=
-X-Gm-Gg: ASbGncuEdZu2bDMoPQzHH3PQJkpE+AoZmRnSGRA8cglG8RsD5js3FtQuRXgCjRFxWmx
-	TEOJilV5i9HIGbsGlwUn3MR2Z0JXgkiUig7s4CrqlzwiQ8I63UQFGlDYO8KQp1K/SYE7vAkczEz
-	e4azj8QX+hp2zTo0nb6Th3FrWZR0NnwDWC7+TfZ16HbF0lqCCwxVo2wwUmEmD9UQTJYQpsMO4O
-X-Google-Smtp-Source: AGHT+IGfJOYs+TU8Pm+1eKpur6OPfhxYVjv6rAi7gkrEUuJaY+iWia/CHhyGwOziyeDcYZ+upUUxt3w9mKnp3ZXK7uY=
-X-Received: by 2002:a05:6000:2011:b0:3a0:b565:a2cb with SMTP id
- ffacd0b85a97d-3a6d277a9bcmr3464061f8f.1.1750443086458; Fri, 20 Jun 2025
- 11:11:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750443108; x=1751047908;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pvtTJ1kHeCmxTLbmdO2cHISakb3o5Bb3qadp7bFl/tA=;
+        b=me3i3PzdKNgh5qZKVaGpwLpVOul81Xgd8yR52pk7cVciqhHZt3PqTA8ZDeFugZA2sQ
+         AFfOXrFHPGFNbBj47h6zqw/B0FVCAk82MgbPydEtNLyAW7XOJ8Uigz33EMB71uAeh7IN
+         ZI+k2F+cRCZ0AFFFfWBhYn3L+sKAOjOYZ5J/Z0z6nmdwEkjyCldl2585WIUxYpu3ptzg
+         dJMgj2VRHmjiJ+YdUlWSBooZ/ykUyi3ZiJpDeLsbpFTJF72CXdctURSKKKOUszlkIeZA
+         jHxAYTKBDiOqEs33xoPdw4Z92QCojCPSKgEvqlMr5Vr7+gJhjKZq6bli3PlQKOdGszA0
+         GUoA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+hCmDOsghKUUVRWzasKdEWWLetO5CQR1j64dZ4dt2s0DGMgNi9yOkVgmaadgDjkRM7BN2xsWu+krHkFc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOPZ6HWClcbI81aamQYyszt8OsMQXE7pfoRnn2Lpwm14mJfumB
+	QquA2b5dbt5fZXA/mager3Z1cro+gQUTdSwNmNLE24y5pmZiVHTUMJ/j2uID0g1p
+X-Gm-Gg: ASbGncurDANFWFq1bnmMkBIDkByt+6vkF4zuDBABtTeBlkSe8e7XdAX+at+ixADzexu
+	iCGG2aBWR+nrsmY9lUP16y8UTSRVKQB/jbh6UIv0sj0eG8n5jsLAieHzfk4a+Ubw8KJ8gwPSmLM
+	z8ngzHqCX94FSsriQSLm8cpo3jwjsTryHnh2TnpcnPblZSt+coO/dTl4CBLwn2sZG3a+jG0/UUm
+	OfuijYo+3hQdQawfWR0ZcPNqqiNvgFe5GYrmomumognnHOPxAtrMJXaQgHn3pBZAjijXsqN6GrI
+	24pcjPVRdSX3VdbLwRbBtHB29YDD41v7PXY6AS/ucu1ttcwwnq9jtxnA33uSxm8=
+X-Google-Smtp-Source: AGHT+IEkKualNq3kDWX54ZvRRoM63Hsk4wstuNdFVMQrD/3uSyOxwAAD1THoibWhcQxW2+2hUuNthg==
+X-Received: by 2002:a17:902:d2c6:b0:235:f45f:ed53 with SMTP id d9443c01a7336-237d99b8f35mr62267535ad.33.1750443108280;
+        Fri, 20 Jun 2025 11:11:48 -0700 (PDT)
+Received: from p920.. ([2001:569:799a:1600:9fdb:eae:b35c:757c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d83d0bedsm23005985ad.67.2025.06.20.11.11.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 11:11:47 -0700 (PDT)
+From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+To: alexander.usyskin@intel.com
+Cc: arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Moon Hee Lee <moonhee.lee.ca@gmail.com>
+Subject: [PATCH] mei: bus: replace sprintf/scnprintf with sysfs_emit in show functions
+Date: Fri, 20 Jun 2025 11:11:44 -0700
+Message-ID: <20250620181144.10750-1-moonhee.lee.ca@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250619220114.3956120-1-song@kernel.org> <20250619220114.3956120-5-song@kernel.org>
-In-Reply-To: <20250619220114.3956120-5-song@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 20 Jun 2025 11:11:15 -0700
-X-Gm-Features: Ac12FXyshEwARoZFYJF1zB3nJckCcTMlv6mMIXAMOjn59QA2CaNEhkcL1gCUHnA
-Message-ID: <CAADnVQKKQ8G91EudWVpw5TZ6zg3DTaKx9nVBUj1EdLu=7K+ByQ@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 4/5] selftests/bpf: Add tests for bpf_cgroup_read_xattr
-To: Song Liu <song@kernel.org>, "Jose E. Marchesi" <jemarch@gnu.org>, 
-	"Jose E. Marchesi" <jose.marchesi@oracle.com>
-Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tejun Heo <tj@kernel.org>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 19, 2025 at 3:02=E2=80=AFPM Song Liu <song@kernel.org> wrote:
-> +       bpf_dynptr_from_mem(xattr_value, sizeof(xattr_value), 0, &value_p=
-tr);
+Update all device attribute show callbacks in the MEI bus driver to use
+sysfs_emit(), as recommended by Documentation/filesystems/sysfs.rst.
 
-https://github.com/kernel-patches/bpf/actions/runs/15767046528/job/44445539=
-248
+This improves consistency and aligns with current sysfs guidelines,
+even though the existing use of sprintf/scnprintf is functionally safe.
 
-progs/cgroup_read_xattr.c:19:9: error: =E2=80=98bpf_dynptr_from_mem=E2=80=
-=99 is static
-but used in inline function =E2=80=98read_xattr=E2=80=99 which is not stati=
-c [-Werror]
-19 | bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
-| ^~~~~~~~~~~~~~~~~~~
+Signed-off-by: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+---
+ drivers/misc/mei/bus.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/misc/mei/bus.c b/drivers/misc/mei/bus.c
+index 67176caf5416..bc124a15006e 100644
+--- a/drivers/misc/mei/bus.c
++++ b/drivers/misc/mei/bus.c
+@@ -1156,7 +1156,7 @@ static ssize_t name_show(struct device *dev, struct device_attribute *a,
+ {
+ 	struct mei_cl_device *cldev = to_mei_cl_device(dev);
+ 
+-	return scnprintf(buf, PAGE_SIZE, "%s", cldev->name);
++	return sysfs_emit(buf, "%s", cldev->name);
+ }
+ static DEVICE_ATTR_RO(name);
+ 
+@@ -1166,7 +1166,7 @@ static ssize_t uuid_show(struct device *dev, struct device_attribute *a,
+ 	struct mei_cl_device *cldev = to_mei_cl_device(dev);
+ 	const uuid_le *uuid = mei_me_cl_uuid(cldev->me_cl);
+ 
+-	return sprintf(buf, "%pUl", uuid);
++	return sysfs_emit(buf, "%pUl", uuid);
+ }
+ static DEVICE_ATTR_RO(uuid);
+ 
+@@ -1176,7 +1176,7 @@ static ssize_t version_show(struct device *dev, struct device_attribute *a,
+ 	struct mei_cl_device *cldev = to_mei_cl_device(dev);
+ 	u8 version = mei_me_cl_ver(cldev->me_cl);
+ 
+-	return sprintf(buf, "%02X", version);
++	return sysfs_emit(buf, "%02X", version);
+ }
+ static DEVICE_ATTR_RO(version);
+ 
+@@ -1187,8 +1187,7 @@ static ssize_t modalias_show(struct device *dev, struct device_attribute *a,
+ 	const uuid_le *uuid = mei_me_cl_uuid(cldev->me_cl);
+ 	u8 version = mei_me_cl_ver(cldev->me_cl);
+ 
+-	return scnprintf(buf, PAGE_SIZE, "mei:%s:%pUl:%02X:",
+-			 cldev->name, uuid, version);
++	return sysfs_emit(buf, "mei:%s:%pUl:%02X:", cldev->name, uuid, version);
+ }
+ static DEVICE_ATTR_RO(modalias);
+ 
+@@ -1198,7 +1197,7 @@ static ssize_t max_conn_show(struct device *dev, struct device_attribute *a,
+ 	struct mei_cl_device *cldev = to_mei_cl_device(dev);
+ 	u8 maxconn = mei_me_cl_max_conn(cldev->me_cl);
+ 
+-	return sprintf(buf, "%d", maxconn);
++	return sysfs_emit(buf, "%d", maxconn);
+ }
+ static DEVICE_ATTR_RO(max_conn);
+ 
+@@ -1208,7 +1207,7 @@ static ssize_t fixed_show(struct device *dev, struct device_attribute *a,
+ 	struct mei_cl_device *cldev = to_mei_cl_device(dev);
+ 	u8 fixed = mei_me_cl_fixed(cldev->me_cl);
+ 
+-	return sprintf(buf, "%d", fixed);
++	return sysfs_emit(buf, "%d", fixed);
+ }
+ static DEVICE_ATTR_RO(fixed);
+ 
+@@ -1218,7 +1217,7 @@ static ssize_t vtag_show(struct device *dev, struct device_attribute *a,
+ 	struct mei_cl_device *cldev = to_mei_cl_device(dev);
+ 	bool vt = mei_me_cl_vt(cldev->me_cl);
+ 
+-	return sprintf(buf, "%d", vt);
++	return sysfs_emit(buf, "%d", vt);
+ }
+ static DEVICE_ATTR_RO(vtag);
+ 
+@@ -1228,7 +1227,7 @@ static ssize_t max_len_show(struct device *dev, struct device_attribute *a,
+ 	struct mei_cl_device *cldev = to_mei_cl_device(dev);
+ 	u32 maxlen = mei_me_cl_max_len(cldev->me_cl);
+ 
+-	return sprintf(buf, "%u", maxlen);
++	return sysfs_emit(buf, "%u", maxlen);
+ }
+ static DEVICE_ATTR_RO(max_len);
+ 
+-- 
+2.43.0
 
-Jose,
-
-Could you please help us understand this gcc-bpf error ?
-What does it mean?
 
