@@ -1,240 +1,116 @@
-Return-Path: <linux-kernel+bounces-695256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D1B7AE1787
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:30:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A171FAE17E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5AAA167332
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:30:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA3187AE682
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A70C2836B0;
-	Fri, 20 Jun 2025 09:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i8RHISMv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445FA2882A9;
+	Fri, 20 Jun 2025 09:40:38 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E9F27FB12
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 09:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403A5283FEF
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 09:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750411804; cv=none; b=nk2e45i1n/di2/pqtN6qczuJrkzNt/cryrvdS0WKLEjBgULzBeIVEC1rzbAvGqCWbwja0Ld/wuouH+G5rmGGd1NudvpRjNZ+9PpRV492uMByJ7n/F7zjAWMPRwbOw+yrkGCU/IzKGjVAMQVUQ90ygqn/h8CJfmTLUKUqgEWrqT8=
+	t=1750412436; cv=none; b=P3tWy+yOBHBIDP0SQrOoRLTvh5scorUfa723iUPewCFWKUsEGfFOdIoBBT3DyQJ53FG2MqL6oc91SkiCLYlABnIwTTAAnVnazm2G7iY6rYJSboTPCmpr6C70jrih8JsMuWP/37ybYvuv68IV5STOFluuaql177GSNv7PG8dGIbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750411804; c=relaxed/simple;
-	bh=JPId0eQLV4dcv3sTxXz97sPgv64ajB4V4FeCupYJa+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KM3V5plTQG7B/lAKHOr45lcG2HLBly9GZYnoaHvyTs8bQ1Q69jYAoMy7YfkWmYnd/G1D3CUbXKytepFlzG5YU41rn1KKhnYrU1nv0EyDrYyPMghREKLAsIBDKMsE1ASjsxoiYJ/10clcT3UVtSTaijJVn8rBOpNnQuJKVF8fpF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i8RHISMv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750411800;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hd8VIzwj8HNj19g6D59MdbOy8OI+i4DYZ/1MoGvCyOM=;
-	b=i8RHISMvY8D1Ie/YWls8jDz7IcUT/2uV0xqZKOkeGBkL1TLQWwWpW3hExeE4CYfwK+lRan
-	gU2KT1oJ86dWAEXlJQMrogtzxSJMn3Ah+DYrjXWXgqgHgHIX/tT5T3M1J95aSRASmDNGe7
-	kolioOH/FseAbAgVPkS8c50t6o/pm70=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-374-kP3J8eCcMSax1RfdP_gIDg-1; Fri, 20 Jun 2025 05:29:58 -0400
-X-MC-Unique: kP3J8eCcMSax1RfdP_gIDg-1
-X-Mimecast-MFC-AGG-ID: kP3J8eCcMSax1RfdP_gIDg_1750411797
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4eee2398bso702259f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 02:29:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750411797; x=1751016597;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hd8VIzwj8HNj19g6D59MdbOy8OI+i4DYZ/1MoGvCyOM=;
-        b=RE3Ci9zXHiJwjsgRxPrZIU5h2DEJimycKpkTihmouwZj903bJbNc3C6sNZjjnoFmo9
-         6EbzDv/w43ECI3AQvQ3io+zSp9V1Go6fQj4oL1LM3TmziX9AzuRsxEVeUkBewoSqrGjw
-         LcuB+YG3K6N0K+MsFXCUJwdKDWZHc2eLp3y0T7GAo/29gzJBDv4IEaaOthu1euCY034U
-         bzy6Wfxj5fY7na3svAR7a+rV6k7FzeEz/DqIkxndQflbT7vwIZV1HVYpcarcjuyI/PYh
-         o5Wrq7webi1R8HixxzLGP8t3BLG+6SvrEBS6sHh8Xa5FBr4Ej1Uv9AFOtw70Y9OCEz29
-         GZ+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXsLGStA0fcfR7lzxnMAUdjSsJ3j0txmepqNuaJSJLw65opINZELBJ807FugGozDGV+DxWafBRiIBhkKfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoKwIqPY6IY/adLmObVVFdETNhjPmOOCO96Ej5h050m4vdN8nA
-	pWPM5wC1CGXdm7NKQSttZpCyKxEI/gKND7UCC3XUOj2/tHDFc/K2fOfRIEjwRfjX3Mluv/t9Wcr
-	dsiAAF9wv+QJGWnQ17a8YNHC5L01ZCWBnP8n0omQ6KCBNSohs9mdu9wwjLCyDNRzCMQ==
-X-Gm-Gg: ASbGncs1Gmg2ns8Ja1jHbbsex9d9YI0/tBboVnvFpZtN6umY3XZtRCeueLbrT6jcrbW
-	yaeo6Zz88jYtMEq/3K7YwuWvGKhZowIogFGXiFJcJz/x4rIsEtUWWvvB3jtZdlH4qTMdvgKDmj2
-	wYYnOTHzh7/KBJ+xfHxXoXt1W/cRLDP0cpC/DempMSt5J/PVQP4m4e/y1dnBiWosLI1tC91+8Yx
-	qx3mPQl3qMp4Xbqe+EU8mhOd1/zvYGuZyVlGM79gh8AUMgxnQddeIVV5Mt2aMN9clMKJoUDberV
-	hlA2G8ZJ4PmuHv/sItUaM+ozX23Zh9YJJQ/Ugk2GVpUojIkoqPc=
-X-Received: by 2002:a05:6000:4b06:b0:3a4:d98d:76b9 with SMTP id ffacd0b85a97d-3a6d12e1bebmr1516430f8f.41.1750411797390;
-        Fri, 20 Jun 2025 02:29:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGiY3PBWywzu2JN+DUjCDMKvvRM5vsrzy1ObZgzrMeG3d4lY3DoBZQAiDIf3DKVG0o29mGqJA==
-X-Received: by 2002:a05:6000:4b06:b0:3a4:d98d:76b9 with SMTP id ffacd0b85a97d-3a6d12e1bebmr1516414f8f.41.1750411796919;
-        Fri, 20 Jun 2025 02:29:56 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.43.84.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4536366326fsm26619345e9.38.2025.06.20.02.29.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 02:29:56 -0700 (PDT)
-Date: Fri, 20 Jun 2025 11:29:52 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
-Cc: luca abeni <luca.abeni@santannapisa.it>, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vineeth Pillai <vineeth@bitbyteword.org>
-Subject: Re: SCHED_DEADLINE tasks missing their deadline with
- SCHED_FLAG_RECLAIM jobs in the mix (using GRUB)
-Message-ID: <aFUqELdqM8VcyNCh@jlelli-thinkpadt14gen4.remote.csb>
-References: <aBTO3r6Py_emwf1Y@jlelli-thinkpadt14gen4.remote.csb>
- <f532441d8b3cf35e7058305fd9cd3f2cbd3a9fac.camel@codethink.co.uk>
- <20250507222549.183e0b4a@nowhere>
- <92690eb9158c1019dc0945f8298800cad17cae05.camel@codethink.co.uk>
- <20250523214603.043833e3@nowhere>
- <c91a117401225290fbf0390f2ce78c3e0fb3b2d5.camel@codethink.co.uk>
- <aDgrOWgYKb1_xMT6@jlelli-thinkpadt14gen4.remote.csb>
- <8d6dd3013b05225541821132398cb7615cdd874e.camel@codethink.co.uk>
- <aFFdseGAqImLtVCH@jlelli-thinkpadt14gen4.remote.csb>
- <880890e699117e02d984ba2bb391c63be5fd71e8.camel@codethink.co.uk>
+	s=arc-20240116; t=1750412436; c=relaxed/simple;
+	bh=ghqP4BKuSLffyOj08ZqVjGFdk4r9kdA4DyiGyptY0aI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TSZJx7JQS/vOPyy7337BKDrqgD7Z/cXtX//ZzIfxyfUbj5csgFLfDcnX2CwDGAy5EGH49vuHAnbcb74APHAtyTqwYZr1sAY8dA24WwrYZCfb5LVQeiaX2XhYiZfuZIUhp6NfOWvbBEJ1bDv2Ib4g1oa9CwU+oeAq/lfen71n5Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4bNsql0FXdz27g2D;
+	Fri, 20 Jun 2025 17:38:59 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 93FD3180043;
+	Fri, 20 Jun 2025 17:40:30 +0800 (CST)
+Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 20 Jun 2025 17:40:30 +0800
+Received: from localhost.huawei.com (10.169.71.169) by
+ kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 20 Jun 2025 17:40:29 +0800
+From: Yongbang Shi <shiyongbang@huawei.com>
+To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <dmitry.baryshkov@oss.qualcomm.com>
+CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
+	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<jani.nikula@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 drm-dp 00/10] Fix hibmc driver bugs
+Date: Fri, 20 Jun 2025 17:30:54 +0800
+Message-ID: <20250620093104.2016196-1-shiyongbang@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <880890e699117e02d984ba2bb391c63be5fd71e8.camel@codethink.co.uk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemq100007.china.huawei.com (7.202.195.175)
 
-On 18/06/25 12:24, Marcel Ziswiler wrote:
+From: Baihan Li <libaihan@huawei.com>
 
-...
-
-> Yeah, granularity/precision is definitely a concern. We initially even started off with 1 ms sched_deadline =
-> sched_period for task 1 but neither of our test systems (amd64-based Intel NUCs and aarch64-based RADXA
-> ROCK5Bs) was able to handle that very well. So we opted to increase it to 5 ms which is still rather stressful.
-
-Ah, OK, even though I meant granularity of the 'fake' runtime of the
-tasks. In rt-app we simulate it by essentially reading the clock until
-that much runtime elapsed (or performing floating point operations) and
-in some cases is not super tight.
-
-For runtime enforcement (dl_runtime) and/or period/deadline (dl_{period,
-deadline}), did you try enabling HRTICK_DL sched feature? It is kind of
-required for parameters under 1ms if one wants precise behavior.
-
-> > Order is the same as above, last tasks gets constantly throttled and
-> > makes no harm to the rest.
-> > 
-> > With reclaim (only last misbehaving task) we indeed seem to have a problem:
-> > 
-> > https://github.com/jlelli/misc/blob/main/deadline-reclaim.png
-> > 
-> > Essentially all other tasks are experiencing long wakeup delays that
-> > cause deadline misses. The bad behaving task seems to be able to almost
-> > monopolize the CPU. Interesting to notice that, even if I left max
-> > available bandwidth to 95%, the CPU is busy at 100%.
-> 
-> Yeah, pretty much completely overloaded.
-> 
-> > So, yeah, Luca, I think we have a problem. :-)
-> > 
-> > Will try to find more time soon and keep looking into this.
-> 
-> Thank you very much and just let me know if I can help in any way.
-
-I have been playing a little more with this and noticed (by chance) that
-after writing a value on sched_rt_runtime_us (even the 950000 default)
-this seem to 'work' - I don't see deadline misses anymore.
-
-I thus have moved my attention to GRUB related per-cpu variables [1] and
-noticed something that looks fishy with extra_bw: after boot and w/o any
-DEADLINE tasks around (other than dl_servers) all dl_rqs have different
-values [2]. E.g.,
-
-  extra_bw   : (u64)447170
-  extra_bw   : (u64)604454
-  extra_bw   : (u64)656882
-  extra_bw   : (u64)691834
-  extra_bw   : (u64)718048
-  extra_bw   : (u64)739018
-  extra_bw   : (u64)756494
-  extra_bw   : (u64)771472
-  extra_bw   : (u64)784578
-  extra_bw   : (u64)796228
-  ...
-
-When we write a value to sched_rt_runtime_us only extra_bw of the first
-cpu of a root_domain gets updated. So, this might be the reason why
-things seem to improve with single CPU domains like in the situation at
-hand, but still probably broken in general. I think the issue here is
-that we end up calling init_dl_rq_bw_ratio() only for the first cpu
-after the introduction of dl_bw_visited() functionality.
-
-So, this might be one thing to look at, but I am honestly still confused
-by why we have weird numbers as the above after boot. Also a bit
-confused by the actual meaning and purpose of the 5 GRUB variables we
-have to deal with.
-
-Luca, Vineeth (for the recent introduction of max_bw), maybe we could
-take a step back and re-check (and maybe and document better :) what
-each variable is meant to do and how it gets updated?
-
-Thanks!
-Juri
-
-1 - Starts at https://elixir.bootlin.com/linux/v6.16-rc2/source/kernel/sched/sched.h#L866
-2 - The drgn script I am using
+There are some bugfix for hibmc-drm driver.
 ---
-#!/usr/bin/env drgn
-
-desc = """
-This is a drgn script to show the current root domains configuration. For more
-info on drgn, visit https://github.com/osandov/drgn.
-"""
-
-import os
-import argparse
-
-import drgn
-from drgn import FaultError, NULL, Object, alignof, cast, container_of, execscript, implicit_convert, offsetof, reinterpret, sizeof, stack_trace
-from drgn.helpers.common import *
-from drgn.helpers.linux import *
-
-def print_dl_bws_info():
-
-    print("Retrieving dl_rq  Information:")
-
-    runqueues = prog['runqueues']
-
-    for cpu_id in for_each_possible_cpu(prog):
-        try:
-            rq = per_cpu(runqueues, cpu_id)
-
-            dl_rq = rq.dl
-
-            print(f"  From CPU: {cpu_id}")
-
-            print(f"  running_bw : {dl_rq.running_bw}")
-            print(f"  this_bw    : {dl_rq.this_bw}")
-            print(f"  extra_bw   : {dl_rq.extra_bw}")
-            print(f"  max_bw     : {dl_rq.max_bw}")
-            print(f"  bw_ratio   : {dl_rq.bw_ratio}")
-
-        except drgn.FaultError as fe:
-            print(f"  (CPU {cpu_id}: Fault accessing kernel memory: {fe})")
-        except AttributeError as ae:
-            print(f"  (CPU {cpu_id}: Missing attribute for dl_rq (kernel struct change?): {ae})")
-        except Exception as e:
-            print(f"  (CPU {cpu_id}: An unexpected error occurred: {e})")
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=desc,
-                                     formatter_class=argparse.RawTextHelpFormatter)
-    args = parser.parse_args()
-
-    print_dl_bws_info()
+ChangeLog:
+v1 -> v2:
+  - use the hibmc_ddc_del() in hibmc_connector_destroy(), suggested by Dmitry Baryshkov.
+  - fix the tag, suggested by Dmitry Baryshkov.
+  - don't use the flag, and use more checks in detect_ctx(), suggested by Dmitry Baryshkov.
+  - delete if (dev->registered), suggested by Dmitry Baryshkov.
+  - add explanations in commit, suggested by Dmitry Baryshkov.
+  - delete if (!dp->is_connected) in hibmc_dp_mode_valid(), suggested by Dmitry Baryshkov.
+  - don't tie VGA and DP status, suggested by Dmitry Baryshkov.
+  - use crtc clone to let 2 connectors can display simultaneous
+  - separate the patch, suggested by Dmitry Baryshkov.
 ---
+
+Baihan Li (10):
+  drm/hisilicon/hibmc: fix the i2c device resource leak when vdac init
+    failed
+  drm/hisilicon/hibmc: fix dp probabilistical detect errors after HPD
+    irq
+  drm/hisilicon/hibmc: fix irq_request()'s irq name variable is local
+  drm/hisilicon/hibmc: fix the hibmc loaded failed bug
+  drm/hisilicon/hibmc: fix rare monitors cannot display problem
+  drm/hisilicon/hibmc: add dp mode valid check
+  drm/hisilicon/hibmc: fix dp and vga cannot show together
+  drm/hisilicon/hibmc: fix no showing when no connectors connected
+  drm/hisilicon/hibmc: fix no showing problem with loading hibmc
+    manually
+  drm/hisilicon/hibmc: adapting modification for the former commit
+
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  4 +-
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 48 +++++++++----
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  8 +++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  | 33 ++++++---
+ .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.c    | 12 ----
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 70 +++++++++++++++++--
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   | 22 +++---
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  1 +
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c   |  5 ++
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  | 12 ++--
+ 10 files changed, 163 insertions(+), 52 deletions(-)
+
+-- 
+2.33.0
 
 
