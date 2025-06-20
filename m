@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-696024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E23AE20E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96151AE20E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5B243B2E36
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:27:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D13B3A628D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F07D2EBDCF;
-	Fri, 20 Jun 2025 17:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C222E9EB4;
+	Fri, 20 Jun 2025 17:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XwEph24N"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fTagO/T0"
 Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A602EA737
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 17:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E582E3AE5
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 17:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750440397; cv=none; b=nTi495diXVtcGOY6qcozGJOxKJKsecS8TiCeRnQxfVfOr8JXIEQZB2+irc8FROd7vMS5XzR1gt4XcJXvwIBKNk9pVJAAYTsxXgQkbiy86B31jx0gjBE6nkX8igx2MBnTEKLnU58+HzbRiRZmLuW8DBlWExxfA0/bSVcb7RQKnK8=
+	t=1750440393; cv=none; b=rLh9fyM4U33u8WMVvBjP9A39QOf9KGBJXvUhgEggoY36cXjz76LAvEI1Ikk8OVzDp5LAi+UI6DB+bzP7PTEtw+Pxsrq4eLor+g1fz4wKNpoMyQqrqpDwvW6CdWP+LQhRhOxK5NdJC2eKEFmfm2Oe9UvzvX2AyWxDz11VwF3J4PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750440397; c=relaxed/simple;
-	bh=sFXt5Hfa8fzRV2BAEylvdv3O1RHUEpTzrxJY01GuBhw=;
+	s=arc-20240116; t=1750440393; c=relaxed/simple;
+	bh=VV2AhUpUmGsjpQfjWSSNhTVUiXyM+8eP7m2M76dktuQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=An105zBBYvbIoTH6rPDgo29jAnZvfaZb9xc5AgCElsElkO0w0FbKn0nOFOFQZzRbJ4/oah2w/qsxX1tKiiLUaa28dEgIb2At2M8usGl7a3GW5FIzQEerbYnPE5HNtKo8UilnYHVASd8E124Ap/JX2p8/0mWg9Dwcg81ipteGCFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XwEph24N; arc=none smtp.client-ip=217.70.183.195
+	 In-Reply-To:To:Cc; b=sT901GfT71tUmfGmx2LxboP0iSdSVHNhkkD9opvS6a1qebUjkEfGwUMR39cisbieQSu/zcke0Pdk1EakPhKlkVZJDcksG0Kny13Lg+UT4SDGdQaBayNgtlAjSO9Ul2CKnfKKIXYTV7S0lkezx+5vjrJV63RHGDwblDl08VyKU6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fTagO/T0; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E711D1FD3C;
-	Fri, 20 Jun 2025 17:26:26 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B19161FD35;
+	Fri, 20 Jun 2025 17:26:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1750440388;
+	t=1750440390;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WXjnwSQXDdtuytqxtM3L0hY5puciJ4Vzaf5CQJt2GEg=;
-	b=XwEph24NxMunBm+1IjcSw4FMaGc6u5HQQsElJXg6SRdwrSinyvEcufBN/hRkCnK7Av4ct0
-	wweKtkH+quKN+qa0Wddar3/LdGGpUKNVjuPr1++qK+5yKCrsgr7Odjmb2ZN6mok8+vo0dY
-	K7iCuToEInTUAE69BwmhRNnNgqSU7BVyk/SLd4kVIl81cwvFSGMjL7YOLJBA8alXtqGv0H
-	QHpxWHV5ANYspBuBXD6Tf4IO/NXDpdgP7Bw+nkzbqX/OPn/uQysdbQ0Outkow5oanyh68Z
-	ABf0cy2xZPhSQhF+V9LdBzLYSBCf+iPW7O5nT22sW7yWOmn3EQug34/SNbMrFw==
+	bh=c6fqZjW1oWvLkqh+RlLTrzx123aebdEE6NvTpETPRbs=;
+	b=fTagO/T0OTOSnVnshXf2t7eoC1TNsFFRvmJASF050aBRmpJRPng/1jWaqHVE4EV6nLUYkG
+	LXT/aLNHx9qBUC9eL/DZhwOtFzoWXAdPj/1N13PgsZKCkO8XNVXR8fyg7QZGx0pMmNt/MI
+	QftrSf9TvdyWs4oGgeQI1pk5tg4L8bCUpmf6M3t4saZyqmBzng3op7NRmd+R9eQGviVPOF
+	p5uyZgnlMCKkkY5xXbqugJVQ0hrVmVjSU/d0Tuxe1mK1SzPSD1n/F23H2UTsKwDn8sbFyE
+	zNdkaNl5I4YVNp2B7IXTm9y4JXGtCF6BlghMtjHoQrxGFZn8+2eNJn5+uvY2Iw==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 20 Jun 2025 19:26:15 +0200
-Subject: [PATCH v8 3/5] drm/mxsfb: put the bridge returned by
+Date: Fri, 20 Jun 2025 19:26:16 +0200
+Subject: [PATCH v8 4/5] drm/atomic-helper: put the bridge returned by
  drm_bridge_chain_get_first_bridge()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250620-drm-bridge-alloc-getput-drm_bridge_chain_get_first_bridge-v8-3-0321845fcafb@bootlin.com>
+Message-Id: <20250620-drm-bridge-alloc-getput-drm_bridge_chain_get_first_bridge-v8-4-0321845fcafb@bootlin.com>
 References: <20250620-drm-bridge-alloc-getput-drm_bridge_chain_get_first_bridge-v8-0-0321845fcafb@bootlin.com>
 In-Reply-To: <20250620-drm-bridge-alloc-getput-drm_bridge_chain_get_first_bridge-v8-0-0321845fcafb@bootlin.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -83,38 +83,84 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdekleelucetufdoteggodetrfd
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
 The bridge returned by drm_bridge_chain_get_first_bridge() is
-refcounted. Put it when done. Use a scope-based free action to catch all
-the code paths.
+refcounted. Put it when done.
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
 
+Changes in v8:
+- reworked after the changes in pre_enable/post_disable order:
+  f6ee26f58870 ("drm/atomic-helper: Refactor crtc & encoder-bridge op loops into separate functions")
+  d5bef6430c85 ("drm/atomic-helper: Separate out bridge pre_enable/post_disable from enable/disable")
+  c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain pre-enable and post-disable")
+- Removed R-by Maxime as the diff is not identical, even though it is in
+  principle the same (there are 2 new drm_bridge_chain_get_first_bridge
+  calls, thus added the corresponding drm_bridge_put calls)
+
 This patch was added in v7.
 ---
- drivers/gpu/drm/mxsfb/lcdif_kms.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/drm_atomic_helper.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/gpu/drm/mxsfb/lcdif_kms.c b/drivers/gpu/drm/mxsfb/lcdif_kms.c
-index dbd42cc1da87f82ef9cd4ccc70cdecbe56035174..21311cf5efee7d26c80316bffe80dd2bfed02238 100644
---- a/drivers/gpu/drm/mxsfb/lcdif_kms.c
-+++ b/drivers/gpu/drm/mxsfb/lcdif_kms.c
-@@ -433,7 +433,6 @@ static int lcdif_crtc_atomic_check(struct drm_crtc *crtc,
- 	struct drm_connector *connector;
- 	struct drm_encoder *encoder;
- 	struct drm_bridge_state *bridge_state;
--	struct drm_bridge *bridge;
- 	u32 bus_format, bus_flags;
- 	bool format_set = false, flags_set = false;
- 	int ret, i;
-@@ -448,6 +447,8 @@ static int lcdif_crtc_atomic_check(struct drm_crtc *crtc,
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index ef56b474acf599bb9cd341674dc83b04ae247eb7..d5ebe6ea0acbc5a08aef7fa41ecb9ed5d8fa8e80 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -456,6 +456,7 @@ mode_fixup(struct drm_atomic_state *state)
+ 		ret = drm_atomic_bridge_chain_check(bridge,
+ 						    new_crtc_state,
+ 						    new_conn_state);
++		drm_bridge_put(bridge);
+ 		if (ret) {
+ 			drm_dbg_atomic(encoder->dev, "Bridge atomic check failed\n");
+ 			return ret;
+@@ -527,6 +528,7 @@ static enum drm_mode_status mode_valid_path(struct drm_connector *connector,
+ 	bridge = drm_bridge_chain_get_first_bridge(encoder);
+ 	ret = drm_bridge_chain_mode_valid(bridge, &connector->display_info,
+ 					  mode);
++	drm_bridge_put(bridge);
+ 	if (ret != MODE_OK) {
+ 		drm_dbg_atomic(encoder->dev, "[BRIDGE] mode_valid() failed\n");
+ 		return ret;
+@@ -1212,6 +1214,7 @@ encoder_bridge_disable(struct drm_device *dev, struct drm_atomic_state *state)
+ 		 */
+ 		bridge = drm_bridge_chain_get_first_bridge(encoder);
+ 		drm_atomic_bridge_chain_disable(bridge, state);
++		drm_bridge_put(bridge);
  
- 	/* Try to find consistent bus format and flags across first bridges. */
- 	for_each_new_connector_in_state(state, connector, connector_state, i) {
-+		struct drm_bridge *bridge __free(drm_bridge_put) = NULL;
-+
- 		if (!connector_state->crtc)
- 			continue;
+ 		/* Right function depends upon target state. */
+ 		if (funcs) {
+@@ -1329,6 +1332,7 @@ encoder_bridge_post_disable(struct drm_device *dev, struct drm_atomic_state *sta
+ 		 */
+ 		bridge = drm_bridge_chain_get_first_bridge(encoder);
+ 		drm_atomic_bridge_chain_post_disable(bridge, state);
++		drm_bridge_put(bridge);
+ 	}
+ }
+ 
+@@ -1501,6 +1505,7 @@ crtc_set_mode(struct drm_device *dev, struct drm_atomic_state *state)
+ 
+ 		bridge = drm_bridge_chain_get_first_bridge(encoder);
+ 		drm_bridge_chain_mode_set(bridge, mode, adjusted_mode);
++		drm_bridge_put(bridge);
+ 	}
+ }
+ 
+@@ -1580,6 +1585,7 @@ encoder_bridge_pre_enable(struct drm_device *dev, struct drm_atomic_state *state
+ 		 */
+ 		bridge = drm_bridge_chain_get_first_bridge(encoder);
+ 		drm_atomic_bridge_chain_pre_enable(bridge, state);
++		drm_bridge_put(bridge);
+ 	}
+ }
+ 
+@@ -1655,6 +1661,7 @@ encoder_bridge_enable(struct drm_device *dev, struct drm_atomic_state *state)
+ 		}
+ 
+ 		drm_atomic_bridge_chain_enable(bridge, state);
++		drm_bridge_put(bridge);
+ 	}
+ }
  
 
 -- 
