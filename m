@@ -1,60 +1,88 @@
-Return-Path: <linux-kernel+bounces-695102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3DE2AE154C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:54:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA35AE1551
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A3405A4695
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:54:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFAE6188ACA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20015231A24;
-	Fri, 20 Jun 2025 07:54:22 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B434231852;
+	Fri, 20 Jun 2025 07:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gkmRIIAE"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49803230D0D
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 07:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A19230BFF
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 07:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750406061; cv=none; b=DC2kwal/OQjRJo4yvgcLQp0SrJGiHFM8yJIjcVXX0UAMgrhrxTDQdXO7CEUdBSIW5SPmePg3FQ0lfEtajaIjkkNQDny/aOT+4p1un+d1uQAkSeq4r6bpUDkV5bY32Wzy56dmgmO0pFsQTiwp8cdn7DuFg9GlVjobzv/W7gCZp4E=
+	t=1750406172; cv=none; b=i28v9zAELmQzOzqpANcStrCd17c86QuEis0W+RD4aZQeDvgkreCjYcCZbFs3F5kgbGArrMxMmdyJ6hLdU+pUSJo8moxpHeILZ/RXvRo1jsOna6GaugJq7/Jyf/4msL1YISrx9SuOT3i+kCfzXaCzizcvj2BkV4Hw7OBGYBVo2VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750406061; c=relaxed/simple;
-	bh=DHoSI1dxPFY3+Yyx0f+O3lhZysn1sLnDEJ6xDZObPy8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=seLZJcx6RO2+EhSTWgIVGJQ1AeBbPAoPsDXLZjeTQ7I2c1POC+Zsti9cdh7Wm6fiWJt//7BaJNi3uRgfEILoKGrYXfO/v+MlypESp9slYwdVUQrA6BBACkjdIoz+BYbUde6Wr4pniLpRDpaEC8q8VOaDKYs36XvuGvq5G6cIBN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bNqWz1btmz2y92X;
-	Fri, 20 Jun 2025 15:55:11 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 028711A0188;
-	Fri, 20 Jun 2025 15:54:17 +0800 (CST)
-Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 20 Jun 2025 15:54:15 +0800
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemn500004.china.huawei.com (7.202.194.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 20 Jun 2025 15:54:14 +0800
-From: Junhao He <hejunhao3@huawei.com>
-To: <suzuki.poulose@arm.com>, <james.clark@arm.com>, <leo.yan@arm.com>,
-	<anshuman.khandual@arm.com>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <yangyicong@huawei.com>,
-	<prime.zeng@hisilicon.com>, <hejunhao3@huawei.com>
-Subject: [PATCH v2 3/3] coresight: tmc: Decouple the perf buffer allocation from sysfs mode
-Date: Fri, 20 Jun 2025 15:54:12 +0800
-Message-ID: <20250620075412.952934-4-hejunhao3@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250620075412.952934-1-hejunhao3@huawei.com>
-References: <20250620075412.952934-1-hejunhao3@huawei.com>
+	s=arc-20240116; t=1750406172; c=relaxed/simple;
+	bh=Y/lCaeibLecauQgNTC/mOcsFmA87wn5O1ZEIoqiFswM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z4rkT21Icx4zrYejYMZ2BBSAE24ykfTX76PlU9EzkWj8wfSTt7SXqiPWbJeerJv6NK9gCkUO2zKfJe3wtPG90caF8Ch8/VrSctMwoxppF0UbJwHFkqZcX7mCtJXCbPbgJ1E+dJz7OM/BvvrgW3bCiOtBF73jE23l74MLKIJkY58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gkmRIIAE; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4535fc0485dso2181865e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 00:56:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750406169; x=1751010969; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TvY87dOFEDSl5uZTK8KSbQcIdJ58gT9kw8uM9F5GHbk=;
+        b=gkmRIIAEr1ZMAeFNk0JGcW7UIS4msrug3rlQUXFeM14hcbSYpG0tGnCYJNbzm50aq2
+         7SQhc4KuAyos7ohsee9GAIamOctkkCUzj9lOOF4RosN0y/zcgxrm5/WB/dHQHULnNjXy
+         Yg45Lw9ahQeLcefcRXUKqSuIWADcUKRlTzqkyLO1t8ylQxFZs31im6HgRptfTmdsm5Tr
+         q7G2KmKROLISTicrVZkPktb612695k9a9NHjFrCOAsFtWeTMxXgfkwW7sPI4dRvNHU5m
+         VS3QghS4Tr8G5ACfm5Wlx8hQnj0jV1CmUuHgHkMXZ84pL34HTBLPTboJzKlsvnfGfRf/
+         v0pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750406169; x=1751010969;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TvY87dOFEDSl5uZTK8KSbQcIdJ58gT9kw8uM9F5GHbk=;
+        b=QdLVHk9rCEkh0nZefLbQ6eqyCZTAV+Th/aN2pCPHhubdc5ncCf1zB9pXGtRIFesus5
+         5/GyAN4bcTjwrbA1W7MFYT69rTP2KZ5vOnSv9vD0EDwHjxmciCh6HW98dwRjhrntVoVW
+         o4NGkxdamej6g3lwPM9UNyPt01Tb0BGnTbVtO1gJ8kBWA6ZSb7t1mFVqozBSgUE8Aytc
+         pM1tJx780402us3b5RHRV4y+/0hpo1XlcctiBCA665rJMRGxGktS/B7/ivpXieGo3tqb
+         epZdSUlaj/ajO+ul8H8IUhimhXzcyHxW1nSq99DXwdQcvH9rfAQ4RB7KRI+swNzQnMP3
+         tcNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXScejfz+hsi3MO4TZilMkSxrdKO3LlkX4E2xmgTDCOXOrIU4ynyD39/k0khQbHc13rOKNvm2x0BMjzJ4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw61OVwG3d7p/GLxAEzUZ6EsHbdIUxZTlvqYy+YndSnJDNq57pT
+	CptMdlbPqTmBP2JZiXB7nX47Y7vXz1zvNjDyecRFunc08ai9CkLV6tJby+tlvRJg
+X-Gm-Gg: ASbGncs5pUkPJXH4icnRjllLn0QqVvyMhRwx4xFV3TiXZ2pvq8OIDBtPKVT62ZZTlZC
+	EMD2vu9oT5YwS0uORTOTzDzaB2AxbIxuCp0vY5ydiInnHIxW1nM3dn1DL1od0dYIFuwAppa0XAG
+	lfHy7bGRkqqLESFXlOSSEmZRbz1OfCtRSUXhIP7z8mlAV+qd5C2fwhFpOIEjEHpQeGJ5BVOOOCJ
+	+8ld5JZjcQcHtnWHwCaEBRae+aOkyye45hR+9qufScPV3Dys6D+iovYIcJkp5lplA2/YZPEgqHi
+	yQILyNG8FVcIhpG7jRNzn/hJ+tKHpoBUszf18axZH4DxpAy8zJysxe+QNv2AGxYEslCn3qJs60e
+	vFYdJdBC0PPpoJ/PLVnk=
+X-Google-Smtp-Source: AGHT+IHYS7jIIxnZIERmDkugdwivLbicxS7Nxqbv3Ggs0pGVY2hWqBpMywyYJbdSBt8oaWkIcL7YNg==
+X-Received: by 2002:a05:6000:2890:b0:3a6:d2ca:df15 with SMTP id ffacd0b85a97d-3a6d2cafb34mr347317f8f.11.1750406169025;
+        Fri, 20 Jun 2025 00:56:09 -0700 (PDT)
+Received: from thomas-precision3591.. ([2a0d:e487:44f:8ec9:e0c0:3bc5:bbdf:e81])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4535eada7adsm50814715e9.35.2025.06.20.00.56.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 00:56:08 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] powerpc: floppy: Add missing checks after DMA map
+Date: Fri, 20 Jun 2025 09:55:55 +0200
+Message-ID: <20250620075602.12575-1-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,86 +90,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemn500004.china.huawei.com (7.202.194.145)
 
-From: Yicong Yang <yangyicong@hisilicon.com>
+The DMA map functions can fail and should be tested for errors.
 
-Currently the perf buffer allocation follows the below logic:
-- if the required AUX buffer size if larger, allocate the buffer with
-  the required size
-- otherwise allocate the size reference to the sysfs buffer size
-
-This is not useful as we only collect to one AUX data, so just try to
-allocate the buffer match the AUX buffer size.
-
-Suggested-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Link: https://lore.kernel.org/linux-arm-kernel/df8967cd-2157-46a2-97d9-a1aea883cf63@arm.com/
-Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-Signed-off-by: Junhao He <hejunhao3@huawei.com>
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
 ---
- .../hwtracing/coresight/coresight-tmc-etr.c   | 29 ++++++-------------
- 1 file changed, 9 insertions(+), 20 deletions(-)
+ arch/powerpc/include/asm/floppy.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index 252a57a8e94e..94dc968a76da 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -1327,9 +1327,7 @@ EXPORT_SYMBOL_GPL(tmc_etr_get_buffer);
+diff --git a/arch/powerpc/include/asm/floppy.h b/arch/powerpc/include/asm/floppy.h
+index f8ce178b43b7..34abf8bea2cc 100644
+--- a/arch/powerpc/include/asm/floppy.h
++++ b/arch/powerpc/include/asm/floppy.h
+@@ -144,9 +144,12 @@ static int hard_dma_setup(char *addr, unsigned long size, int mode, int io)
+ 		bus_addr = 0;
+ 	}
  
- /*
-  * alloc_etr_buf: Allocate ETR buffer for use by perf.
-- * The size of the hardware buffer is dependent on the size configured
-- * via sysfs and the perf ring buffer size. We prefer to allocate the
-- * largest possible size, scaling down the size by half until it
-+ * Allocate the largest possible size, scaling down the size by half until it
-  * reaches a minimum limit (1M), beyond which we give up.
-  */
- static struct etr_buf *
-@@ -1341,33 +1339,24 @@ alloc_etr_buf(struct tmc_drvdata *drvdata, struct perf_event *event,
- 	unsigned long size;
+-	if (!bus_addr)	/* need to map it */
++	if (!bus_addr) {	/* need to map it */
+ 		bus_addr = dma_map_single(&isa_bridge_pcidev->dev, addr, size,
+ 					  dir);
++		if (dma_mapping_error(&isa_bridge_pcidev->dev, bus_addr))
++			return -ENOMEM;
++	}
  
- 	node = (event->cpu == -1) ? NUMA_NO_NODE : cpu_to_node(event->cpu);
--	/*
--	 * Try to match the perf ring buffer size if it is larger
--	 * than the size requested via sysfs.
--	 */
--	if ((nr_pages << PAGE_SHIFT) > drvdata->size) {
--		etr_buf = tmc_alloc_etr_buf(drvdata, ((ssize_t)nr_pages << PAGE_SHIFT),
--					    0, node, NULL);
--		if (!IS_ERR(etr_buf))
--			goto done;
--	}
-+
-+	/* Use the minimum limit if the required size is smaller */
-+	size = (unsigned long)nr_pages << PAGE_SHIFT;
-+	if (size < TMC_ETR_PERF_MIN_BUF_SIZE)
-+		size = TMC_ETR_PERF_MIN_BUF_SIZE;
- 
- 	/*
--	 * Else switch to configured size for this ETR
--	 * and scale down until we hit the minimum limit.
-+	 * Try to allocate the required size for this ETR, if failed scale
-+	 * down until we hit the minimum limit.
- 	 */
--	size = drvdata->size;
- 	do {
- 		etr_buf = tmc_alloc_etr_buf(drvdata, size, 0, node, NULL);
- 		if (!IS_ERR(etr_buf))
--			goto done;
-+			return etr_buf;
- 		size /= 2;
- 	} while (size >= TMC_ETR_PERF_MIN_BUF_SIZE);
- 
- 	return ERR_PTR(-ENOMEM);
--
--done:
--	return etr_buf;
- }
- 
- static struct etr_buf *
+ 	/* remember this one as prev */
+ 	prev_addr = addr;
 -- 
-2.33.0
+2.43.0
 
 
