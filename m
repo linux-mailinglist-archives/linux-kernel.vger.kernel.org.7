@@ -1,101 +1,177 @@
-Return-Path: <linux-kernel+bounces-696167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A74AE22FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 21:50:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A270AE2315
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 21:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74A3C189DD79
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:50:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C3364C204F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D2A22689C;
-	Fri, 20 Jun 2025 19:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B861E2E6134;
+	Fri, 20 Jun 2025 19:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhQc/S03"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tSnZnlBp"
+Received: from smtp.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD65221FBF;
-	Fri, 20 Jun 2025 19:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC27B2ECE9B;
+	Fri, 20 Jun 2025 19:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750448989; cv=none; b=V6oB/vlqZu5rGX+SdhnrxE+dFoPzc0Ivae8XKxc5t7IKeaFVeg/A9dYgfxipKtZgX5PZeWdyGWkZJLgOXaX071Njg0664zW8sKhsHsu9SNUZUTqDx1+UbROakZvOpoY45Iso9ftha2UZWsqPgLN6OIrI9XfJp88zDpblqE2Y+mQ=
+	t=1750449210; cv=none; b=N0hl44+gVoSNF6E/IbskMyWnGZKDo544cindB+9uFJiTTrextmN3NCr7lw3C8DzbxmvHjY4ahQacAtQJiQwesoUnSA90kEsqmC9aR3iTez4o7gNACWr6lJ2OcVkSAj+ccxQQeqfRNUVDP/qyJseLVWvZIzY+/qiluBof5u2TajU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750448989; c=relaxed/simple;
-	bh=z+HfKDdsyzsrpnsoLJvtgubg3CCA3Ue1+63lfUDySZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kj+uUjv7JQjehaxIzcxd6RGODe59ML6YY9vpqtjaeFDEu+giBR8xwOGcZEjNPIKNhAN8kX/URsw6sG1CEzDPwk2OCZC/U1QRJijDjbkWrNqmiXfEMfYVD+OyWM2F63eeDr4kynq7CR/D/XCF9lfE55k7aF0zRs2TcwCOJv+Icdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhQc/S03; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F499C4CEED;
-	Fri, 20 Jun 2025 19:49:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750448989;
-	bh=z+HfKDdsyzsrpnsoLJvtgubg3CCA3Ue1+63lfUDySZI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DhQc/S03WVGLEuYA0WHsMALbHN0I+FjpCcxQivpMEIFSl1ywqChIvJ4g3l9JeJNHp
-	 +j1KhC6nu9RmuzOfrawbE4gYDehN+xYl9C/AaTt93wrTDJBoNRkmHQLqZn34p6zaVF
-	 Ht3mmktQu2vJr23lCTgxfQKvYCGSn/2EglOuqrLyYFjnyqzaHv9YeBVL58mIs2ATWl
-	 72Q3S8yCUKA7YyBbeIvsi8FgUSgWnnqTmumAAuNZjGEsGTelXTMLAougv4LxgcALdP
-	 cwTMuaa3MEXHooFOiH8NC/DOuIdkLAQG9bZx1nqiNykUnS2zWxc93yIG5uBC7CNA0P
-	 5SuIJmNTkg6HA==
-Date: Fri, 20 Jun 2025 14:49:47 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Lukas Wunner <lukas@wunner.de>,
-	=?utf-8?B?TMawxqFuZyBWaeG7h3QgSG/DoG5n?= <tcm4095@gmail.com>,
-	Joel Mathew Thomas <proxy0@tutamail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-	Alex Williamson <alex.williamson@redhat.com>
-Subject: [GIT PULL] PCI fixes for v6.16
-Message-ID: <20250620194947.GA1311741@bhelgaas>
+	s=arc-20240116; t=1750449210; c=relaxed/simple;
+	bh=RNFe6OsXiIa25lThIwwSEn6qb0BH3hZlmmOumOwKmL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EaHYxQWOjUiSbvbNes+IZeu+KFy1uvkIuvft4apovDSK1xO0woS6eHkO/EUc6c44SFRe1rlATc1RmkMSx4BCzV5CLFJ81bfbdLP33rElXUPhJOwLjNWSKxNdGKAJcVmgDpi9eagvvJ0EOaCdH7MwC889GFvsWWSa7CgXxQWOEPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tSnZnlBp; arc=none smtp.client-ip=80.12.242.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id ShmauIDQsBqt7Shmauhv5q; Fri, 20 Jun 2025 21:52:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1750449136;
+	bh=2bElo9HwhnRSM0NAT+XlQ6v5ReuWUrVRquq0Qs1cSFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=tSnZnlBpqXBKoYO84tVJ44EYQOtH3COuTe5YqwirKz/RLlfZCR+99hjQVvErnZJIq
+	 UJslU3anrpYhVkh6fr4b6zyhVexsACxeNhipuhthLWx6smtD0etTBxD6kTFfnDCoiX
+	 eag906y51+aGJDcUXM17MTkQZLZvgacjFub3ahci/G/S2PkvLWaQSOHbgVMxbauzQ6
+	 TK7ontWUHFFOJD7YwstaKnCsRcO2YKUrZd8KpHHeqUIZinvy9vHtvtmnXZXppsnU5+
+	 BzZAN1WvXtQGSP4qGf8X3EwBAk2KiBqN6wD1XuT9nfsl6mqKma6cJFGoVUlz6r7U7J
+	 OOGYLIPvaRBFw==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 20 Jun 2025 21:52:16 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <72d03217-16a4-4700-952b-a98b68a37140@wanadoo.fr>
+Date: Fri, 20 Jun 2025 21:52:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tpm: Replace scnprintf() with sysfs_emit() and
+ sysfs_emit_at() in sysfs show functions
+To: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>, peterhuewe@gmx.de,
+ jarkko@kernel.org
+Cc: jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250619123707.399022-1-chelsyratnawat2001@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250619123707.399022-1-chelsyratnawat2001@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+Le 19/06/2025 à 14:37, Chelsy Ratnawat a écrit :
+> Replace calls to scnprintf() with sysfs_emit() and sysfs_emit_at() in
+> sysfs show functions. These helpers are preferred in sysfs callbacks
+> because they automatically handle buffer sizing (PAGE_SIZE) and
+> improve safety and readability.
+> 
+> Signed-off-by: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
+> ---
+>   drivers/char/tpm/tpm_ppi.c | 26 +++++++++++++-------------
+>   1 file changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
+> index bc7b1b4501b3..421c6264bac9 100644
+> --- a/drivers/char/tpm/tpm_ppi.c
+> +++ b/drivers/char/tpm/tpm_ppi.c
+> @@ -52,7 +52,7 @@ static ssize_t tpm_show_ppi_version(struct device *dev,
+>   {
+>   	struct tpm_chip *chip = to_tpm_chip(dev);
+>   
+> -	return scnprintf(buf, PAGE_SIZE, "%s\n", chip->ppi_version);
+> +	return sysfs_emit(buf, "%s\n", chip->ppi_version);
+>   }
+>   
+>   static ssize_t tpm_show_ppi_request(struct device *dev,
+> @@ -87,11 +87,11 @@ static ssize_t tpm_show_ppi_request(struct device *dev,
+>   		else {
+>   			req = obj->package.elements[1].integer.value;
+>   			if (tpm_ppi_req_has_parameter(req))
+> -				size = scnprintf(buf, PAGE_SIZE,
+> +				size = sysfs_emit(buf,
+>   				    "%llu %llu\n", req,
+>   				    obj->package.elements[2].integer.value);
+>   			else
+> -				size = scnprintf(buf, PAGE_SIZE,
+> +				size = sysfs_emit(buf,
+>   						"%llu\n", req);
+>   		}
+>   	} else if (obj->package.count == 2 &&
+> @@ -100,7 +100,7 @@ static ssize_t tpm_show_ppi_request(struct device *dev,
+>   		if (obj->package.elements[0].integer.value)
+>   			size = -EFAULT;
+>   		else
+> -			size = scnprintf(buf, PAGE_SIZE, "%llu\n",
+> +			size = sysfs_emit(buf, "%llu\n",
+>   				 obj->package.elements[1].integer.value);
+>   	}
+>   
+> @@ -211,9 +211,9 @@ static ssize_t tpm_show_ppi_transition_action(struct device *dev,
+>   	}
+>   
+>   	if (ret < ARRAY_SIZE(info) - 1)
+> -		status = scnprintf(buf, PAGE_SIZE, "%d: %s\n", ret, info[ret]);
+> +		status = sysfs_emit(buf, "%d: %s\n", ret, info[ret]);
+>   	else
+> -		status = scnprintf(buf, PAGE_SIZE, "%d: %s\n", ret,
+> +		status = sysfs_emit(buf, "%d: %s\n", ret,
+>   				   info[ARRAY_SIZE(info)-1]);
+>   	return status;
+>   }
+> @@ -255,22 +255,22 @@ static ssize_t tpm_show_ppi_response(struct device *dev,
+>   	res = ret_obj[2].integer.value;
+>   	if (req) {
+>   		if (res == 0)
+> -			status = scnprintf(buf, PAGE_SIZE, "%llu %s\n", req,
+> +			status = sysfs_emit(buf, "%llu %s\n", req,
+>   					   "0: Success");
+>   		else if (res == 0xFFFFFFF0)
+> -			status = scnprintf(buf, PAGE_SIZE, "%llu %s\n", req,
+> +			status = sysfs_emit(buf, "%llu %s\n", req,
+>   					   "0xFFFFFFF0: User Abort");
+>   		else if (res == 0xFFFFFFF1)
+> -			status = scnprintf(buf, PAGE_SIZE, "%llu %s\n", req,
+> +			status = sysfs_emit(buf, "%llu %s\n", req,
+>   					   "0xFFFFFFF1: BIOS Failure");
+>   		else if (res >= 1 && res <= 0x00000FFF)
+> -			status = scnprintf(buf, PAGE_SIZE, "%llu %llu: %s\n",
+> +			status = sysfs_emit(buf, "%llu %llu: %s\n",
+>   					   req, res, "Corresponding TPM error");
+>   		else
+> -			status = scnprintf(buf, PAGE_SIZE, "%llu %llu: %s\n",
+> +			status = sysfs_emit(buf, "%llu %llu: %s\n",
+>   					   req, res, "Error");
+>   	} else {
+> -		status = scnprintf(buf, PAGE_SIZE, "%llu: %s\n",
+> +		status = sysfs_emit(buf, "%llu: %s\n",
+>   				   req, "No Recent Request");
+>   	}
+>   
+> @@ -314,7 +314,7 @@ static ssize_t show_ppi_operations(acpi_handle dev_handle, char *buf, u32 start,
+>   		}
+>   
+>   		if (ret > 0 && ret < ARRAY_SIZE(info))
+> -			str += scnprintf(str, PAGE_SIZE, "%d %d: %s\n",
+> +			str += sysfs_emit_at(str, "%d %d: %s\n",
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+sysfs_emit_at() does not work like that.
+But does this code even compile?
 
-are available in the Git repository at:
+CJ
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.16-fixes-1
+>   					 i, ret, info[ret]);
+>   	}
+>   
 
-for you to fetch changes up to bbf10cd686835d5a4b8566dc73a3b00b4cd7932a:
-
-  PCI: pciehp: Ignore belated Presence Detect Changed caused by DPC (2025-06-18 10:10:19 -0500)
-
-----------------------------------------------------------------
-
-- Set up runtime PM even for devices that lack a PM Capability as we did
-  before 4d4c10f763d7 ("PCI: Explicitly put devices into D0 when
-  initializing"), which broke resume in some VFIO scenarios (Mario
-  Limonciello)
-
-- Ignore pciehp Presence Detect Changed events caused by DPC, even if they
-  occur after a Data Link Layer State Changed event, to fix a VFIO GPU
-  passthrough regression in v6.13 (Lukas Wunner)
-
-----------------------------------------------------------------
-Lukas Wunner (1):
-      PCI: pciehp: Ignore belated Presence Detect Changed caused by DPC
-
-Mario Limonciello (1):
-      PCI/PM: Set up runtime PM even for devices without PCI PM
-
- drivers/pci/hotplug/pciehp_hpc.c | 2 +-
- drivers/pci/pci.c                | 5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
 
