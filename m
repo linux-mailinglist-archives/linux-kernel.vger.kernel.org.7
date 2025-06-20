@@ -1,101 +1,111 @@
-Return-Path: <linux-kernel+bounces-696237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 109CDAE23CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 22:52:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5A8AE23CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 22:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A9F07A7066
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 20:50:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64C764A13DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 20:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008C2238171;
-	Fri, 20 Jun 2025 20:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA8323E347;
+	Fri, 20 Jun 2025 20:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="udySxNgu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ISdXrzz2"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B36223185D;
-	Fri, 20 Jun 2025 20:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BE5482F2;
+	Fri, 20 Jun 2025 20:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750452719; cv=none; b=GO1+tO6tCVmHPFVfd/Sq0MTAKDlr30x+tBUuUBeAMoltlK3wVbuGcpx2iuKdxHqEaDFqF70ZapPFgxX3lka0YPepuCZzF9FoQ7LBzd3R9HL3rAW5Qjz56wIcwGyVcwJonX8eQ1fvlQur2dljizAivp++45vHokvFOhyMM2BWlDI=
+	t=1750453114; cv=none; b=myWHxRQOUoPZn5hgFBtgvn9LjUmdVHC1VZmnZAO9R6Z/GAGR9GYC9fR8ElBRD21GWPGl6Ay6OLdQFmp/FjxVffa5Ko5zoqmhiaSn2ErKmSArliG86SbrIxItB/ZR7NUY/TDdjcVOajYnMXbacjZFQAvFgdBLzlRxA982+41oDmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750452719; c=relaxed/simple;
-	bh=0NdZ4CRoINYOWhBpUl2mwfaStrZeKVVIQuamgT21rT4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c/0gBR+VXuPbLKI6YhfglFn1l6Kz8jedPsij99xYPv2pw2Z5tUBaT6dPtU8hzOlG+b076WqUs4+2kCpwzzLNaw8N+GjJ+hBZLhk/Pv1O0qtoUmTFAFic+bp+TFGUnwVh5xQr4arOaU7lAJQhfvVnedNXZjS40xs/kkXuZD7JkOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=udySxNgu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A24DBC4CEE3;
-	Fri, 20 Jun 2025 20:51:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750452718;
-	bh=0NdZ4CRoINYOWhBpUl2mwfaStrZeKVVIQuamgT21rT4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=udySxNguXn0+xQw3y+qMf/khi2PUVIUWo/5JK8PrpyzDyj9BJKg65RFYVQdNwYZjy
-	 5N4hYWfBH0uWgpHvZrGtbVB2UFPp6DCi8RnRbv8dXnTjVk4a5greJgp+/OWFvKsmOY
-	 la/rxPSWJg2dsp5zTBfGUoHOm/AD5LOw5UXSmUDIf3qv9AUgr4DIAlZlvnvmbIalSO
-	 MHZh9FnN6VYcYhuLFhcex1/SVhCYLzPs7QHzkkYzRJU0NAfisma7iegrN+a4ShXJil
-	 GJm7gYMkT8/tD4Ye/fwibnoumCLc/IjvjqLUIcliM5kIAcrNuwHtUXGbiq20D9ZtQN
-	 ozSHhePv3RKDQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] nvmem: layouts: Switch from crc32() to crc32_le()
-Date: Fri, 20 Jun 2025 13:50:27 -0700
-Message-ID: <20250620205027.23403-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1750453114; c=relaxed/simple;
+	bh=Cjpuh5vjBPzLcu+hsyVvSelBCLA41PZZRQOTCXqBOhs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NCHNnyXSiabKSgD/MjflZ4sw6RwSyp8W6THSG3s9mRp/Jt1/uQ0UpwoQPUTrl8UXEwmTMaCWvjfobFUtKe7B4G1q3TJiYyf6VLj8uZEKb/zqczR3X3+adlRoNw5AWFfQGAms50b4XBIHLFQncoGygs1xquACWhD84X89o2rGIV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ISdXrzz2; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=RmxX3GcEAqirVX2xL3JmZWN/yrXriImaULmWLhDXmS8=; b=ISdXrzz2QewK1kgmY3GyFg++AM
+	/6qLB8uUlYUyKOF6vEmVu4PkYV1YU9zFWU6/5+u3ruI2VhbjQ/vvKep6buGqhREZwFnUwn8rHkWNr
+	pOEMuAdZXTOe7kwoLzLgXcrDUxvdojBE5aH0cuyjcY/ZWPFELOafQQhBlhaXpBM65ogxfw4VyYVMq
+	Q9ADmHPsdKuLYUz0rgw6+BFnP7AAm+HP8QxiVXjiA4ARcUToS5kmBFrsQoJS7tfbikZM1VNQuNcW1
+	UkOyJxRLekQrw3O850Ik4Tp8M1UvubhqAbKvS1mC7wHJoA2kP3JFB3gukvY0D4uV827oJy1r8dYnG
+	3fumYUYw==;
+Received: from 85-207-219-154.static.bluetone.cz ([85.207.219.154] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uSioS-0005nr-Ra; Fri, 20 Jun 2025 22:58:16 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	Hsun Lai <i@chainsx.cn>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	andrew@lunn.ch,
+	inindev@gmail.com,
+	quentin.schulz@cherry.de,
+	jonas@kwiboo.se,
+	sfr@canb.auug.org.au,
+	nicolas.frattaroli@collabora.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [RESEND PATCH v5 0/2] Add support for Firefly Station-M3/ROC-RK3588S-PC
+Date: Fri, 20 Jun 2025 22:58:06 +0200
+Message-ID: <175045307845.1579770.12394851384194838033.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250609113044.8846-1-i@chainsx.cn>
+References: <20250609113044.8846-1-i@chainsx.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-u_boot_env_parse() calls crc32() from within a scope that has a uint32_t
-variable named crc32.  This works only because crc32() is actually a
-macro that expands to crc32_le().  I'm planning to make it an inline
-function instead, which will make the usual C scoping rules apply to it.
-Therefore, update u_boot_env_parse() to be compatible with that.  To do
-so, just call crc32_le() directly instead of using the crc32() alias.
-(An alternative would be to rename the local variable.)
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
+On Mon, 09 Jun 2025 19:30:42 +0800, Hsun Lai wrote:
+> This series add support for Firefly Station-M3/ROC-RK3588S-PC.
+> 
+> Info of device can be found at:
+> https://wiki.t-firefly.com/en/Station-M3/index.html
+> 
+> Changes in v5:
+> - Make led-1 off by default (Chukun Pan, v4)
+> - Add color settings for led (Chukun Pan, v4)
+> - Remove vcc5v0_usbdcin
+> - Put enable/gpio before regulator (Chukun Pan, v4)
+> - Remove always-on and boot-on from vcc5v0_host (Chukun Pan, v4)
+> - Update the name of vbus_typec (Chukun Pan, v4)
+> - Remove always-on and boot-on from vbus5v0_typec (Chukun Pan, v4)
+> - Put pinctrl-names before pinctrl-0 (Chukun Pan, v4)
+> - Remove usb_con node
+> - Remove extra blank lines (Chukun Pan, v4)
+> - Add phy-supply for u2phy3_host (Chukun Pan, v4)
+> 
+> [...]
 
-I'm planning to apply this patch to crc-next, since my patch
-https://lore.kernel.org/r/20250619183414.100082-3-ebiggers@kernel.org/
-depends on this.
+Applied, thanks!
 
- drivers/nvmem/layouts/u-boot-env.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1/2] dt-bindings: arm: rockchip: Add Firefly ROC-RK3588S-PC
+      commit: 4734c93b5032a3a28ab2313fd9e2a792204de2fe
+[2/2] arm64: dts: rockchip: add DTs for Firefly ROC-RK3588S-PC
+      commit: 471f0718c815767c2c7f6ce66880f1acb9515581
 
-diff --git a/drivers/nvmem/layouts/u-boot-env.c b/drivers/nvmem/layouts/u-boot-env.c
-index 436426d4e8f91..274e8a456e8c1 100644
---- a/drivers/nvmem/layouts/u-boot-env.c
-+++ b/drivers/nvmem/layouts/u-boot-env.c
-@@ -146,11 +146,11 @@ int u_boot_env_parse(struct device *dev, struct nvmem_device *nvmem,
- 	crc32_addr = (__le32 *)(buf + crc32_offset);
- 	crc32 = le32_to_cpu(*crc32_addr);
- 	crc32_data_len = dev_size - crc32_data_offset;
- 	data_len = dev_size - data_offset;
- 
--	calc = crc32(~0, buf + crc32_data_offset, crc32_data_len) ^ ~0L;
-+	calc = crc32_le(~0, buf + crc32_data_offset, crc32_data_len) ^ ~0L;
- 	if (calc != crc32) {
- 		dev_err(dev, "Invalid calculated CRC32: 0x%08x (expected: 0x%08x)\n", calc, crc32);
- 		err = -EINVAL;
- 		goto err_kfree;
- 	}
-
-base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
+Best regards,
 -- 
-2.50.0
-
+Heiko Stuebner <heiko@sntech.de>
 
