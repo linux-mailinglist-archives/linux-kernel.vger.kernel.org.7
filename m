@@ -1,153 +1,122 @@
-Return-Path: <linux-kernel+bounces-695628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31592AE1C09
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:24:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7886AE1CFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 16:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B04945A509C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:24:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93EB54A09AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE21128DB50;
-	Fri, 20 Jun 2025 13:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE37928CF6D;
+	Fri, 20 Jun 2025 14:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S5/LTCYH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hQ4m2N5c"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="Xev9waoG"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFD528B414;
-	Fri, 20 Jun 2025 13:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D598A28B4FD;
+	Fri, 20 Jun 2025 14:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750425871; cv=none; b=vC5grL+7JpjG4/35ufm4QHfSmskZJN6GkQNjy71aDU3XHTQJsSyk+o04QWEay8T1PAj3y6auMozuq/IXFxBXku/ZUVffFjuZzJ+Fgxxo9nv9ddKhhml4sJUmaqTY2RLFGtddpnnWQ3ZtWKoAK3NXacRW5eJhpkstOqv0X2M1Y4c=
+	t=1750428216; cv=none; b=qqljjeWhoUKvZuwRcieKrpO+IUUfdVN4XD8bVYpRxQwdyMtvJMT8iqSBP5zAozRQRx36noT1yZiBw60q4z4hIK9Kf6vgWU6yX8gt3YPu1M2CvCPPyypapGWfOpUcR8VUu6KDhQ320v6xj4UYzWi5kGlUozghIrqzqH1/FMc5gMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750425871; c=relaxed/simple;
-	bh=D0hNaC1los/+J8Ec10aBDfo3+sIyv8yVvL4pcYj2rwU=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=r2x5Om6joO/AVrJvZQY4Y08VrpEHlYpZTUemIvKMZLibDq+ooaoTsHPEDgkj49GSKjmkCOK6Gxn7PfH0q4UQVg3tEvsLPt5fIiEXiOhnFXSFXyqI5dzelwiMtFLAtF2qOhtoOVVQ+UfsdWAX4lnvHdbRXK3VJt3g6LfX0acZYOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S5/LTCYH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hQ4m2N5c; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250620131943.779603403@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750425868;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=+/B4z0/jfyKkYbKfvt/J+B+BcvknysPOJc978SNnbXk=;
-	b=S5/LTCYHMUx9td4gltSAXIReafhuJAe1hSApdvlwHfCLGWOOrOTS2jeDtYxHYt2cNp7X6d
-	oyWvZDs9Tn3N5GGRsovKsI0ugwoTQ/7WRGfWtI1C91fZPV9P821leQhVCCBQX93atOmPgE
-	iFOXDHs9/ECRDOj/W0Qa/quJND/Uix6B9ajLuNPpBw3lXjOSsTEEWGDM43rGpyGe+MH4Y3
-	wnhf7+kt81F5EAXslNNpvOOGDJIDVcRpr+7J/ax9EV5ZU7y6fwXvoZRZJBUondg+dDUXpt
-	P900l5GflrIBH4JXmKcAvCHWlarIiM0HymG9uZCIKeAoFufmGS102Q0dxYhC7w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750425868;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=+/B4z0/jfyKkYbKfvt/J+B+BcvknysPOJc978SNnbXk=;
-	b=hQ4m2N5cpNUswwzDNB3NFlUUqmd2vompIPmOdI+SkpRf6GQbKzAW4ILkA1M85njJkqBs4N
-	GdxlBw/h0imjmgDA==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Richard Cochran <richardcochran@gmail.com>,
- netdev@vger.kernel.org
-Subject: [patch 01/13] ptp: Split out PTP_CLOCK_GETCAPS ioctl code
-References: <20250620130144.351492917@linutronix.de>
+	s=arc-20240116; t=1750428216; c=relaxed/simple;
+	bh=XDSYm0LAP+6mIAyG1KOcL1BQwmwnediG65sYR4tURfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qq2lwmfEStidVtc0lttl5cnuRSZxZKUfxhDqPEmGsmqsS0O1lRDAJJp4Gh3XIFx23yHZXciCCRx0/s60CoNWH6gwcmq9zBF4yYV33H6nFE7EErnez7DeSbgxbULXU/03pEPP6mQsVQPRCRYEZ7JXNv1UYTQHyCU2eUfOeOcsQWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=Xev9waoG; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=DDBlc6X06W7RqhIMTP6H4wGHxtmOyxhuVoFdQGnU/JY=; b=Xev9waoGKB/yOZL6DtC7FSYtoD
+	mHdKnQepePRvZsJPJS3oD/FFwxtGfk3CE9H7zItG/4MMQVk3O32pKSxBeNP2BRahz75ZYudDPs8DX
+	rOj82yKRit66GJqEbH+VPIMCvUF68oX6xN9fptWj38nVc+lDLfb95FUEiUn58H1Vdy5usU8P4k28Q
+	7R9jmo28pTsNy6mP/Rs5LLe8+cNJIAMUzv2o+SskQCnrItxwlTx0XfHFrJy80FeTcKST6IPviMFpO
+	7+935TRYzFGl/ujRWYWevVkyC/oxBeJXH9ZNiHmK6kuAJC/d5P+dc07m55WOB1m0zI5j8nsk6Cxe3
+	Zr0JeV8w==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1uSbjI-00E85J-0d;
+	Fri, 20 Jun 2025 14:24:28 +0100
+Date: Fri, 20 Jun 2025 14:24:28 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: "Orlov, Ivan" <iorlov@amazon.co.uk>
+Cc: "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+	"jarkko@kernel.org" <jarkko@kernel.org>,
+	"jgg@ziepe.ca" <jgg@ziepe.ca>,
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Woodhouse, David" <dwmw@amazon.co.uk>
+Subject: Re: [PATCH] tpm: Fix the timeout & use ktime
+Message-ID: <aFVhDDewVHneFXnO@earth.li>
+References: <20250611162508.85149-1-iorlov@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 20 Jun 2025 15:24:27 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250611162508.85149-1-iorlov@amazon.com>
 
-ptp_ioctl() is an inpenetrable letter soup with a gazillion of case (scope)
-specific variables defined at the top of the function and pointless breaks
-and gotos.
+On Wed, Jun 11, 2025 at 04:25:24PM +0000, Orlov, Ivan wrote:
+>The current implementation of timeout detection works in the following
+>way:
+>
+>1. Read completion status. If completed, return the data
+>2. Sleep for some time (usleep_range)
+>3. Check for timeout using current jiffies value. Return an error if
+>   timed out
+>4. Goto 1
+>
+>usleep_range doesn't guarantee it's always going to wake up strictly in
+>(min, max) range, so such a situation is possible:
+>
+>1. Driver reads completion status. No completion yet
+>2. Process sleeps indefinitely. In the meantime, TPM responds
+>3. We check for timeout without checking for the completion again.
+>   Result is lost.
 
-Start cleaning it up by splitting out the PTP_CLOCK_GETCAPS ioctl code into
-a helper function. Use a argument pointer with a single sparse compliant
-type cast instead of proliferating the type cast all over the place.
+This looks similar to the issue I fixed in 7146dffa875c ('Fix timeout
+handling when waiting for TPM status'), I assume you're actually seeing
+it in your systems? I think we're starting to see it (rarely) now the
+other issues are fixed in our builds. As a similar approach does the
+following work?
 
-No functional change intended.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- drivers/ptp/ptp_chardev.c |   41 +++++++++++++++++++++++------------------
- 1 file changed, 23 insertions(+), 18 deletions(-)
-
---- a/drivers/ptp/ptp_chardev.c
-+++ b/drivers/ptp/ptp_chardev.c
-@@ -157,6 +157,26 @@ int ptp_release(struct posix_clock_conte
- 	return 0;
- }
- 
-+static long ptp_clock_getcaps(struct ptp_clock *ptp, void __user *arg)
-+{
-+	struct ptp_clock_caps caps = {
-+		.max_adj		= ptp->info->max_adj,
-+		.n_alarm		= ptp->info->n_alarm,
-+		.n_ext_ts		= ptp->info->n_ext_ts,
-+		.n_per_out		= ptp->info->n_per_out,
-+		.pps			= ptp->info->pps,
-+		.n_pins			= ptp->info->n_pins,
-+		.cross_timestamping	= ptp->info->getcrosststamp != NULL,
-+		.adjust_phase		= ptp->info->adjphase != NULL &&
-+					  ptp->info->getmaxphase != NULL,
-+	};
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 8d7e4da6ed53..18ae0767fa60 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -127,7 +127,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+  		goto out_recv;
+  
+  	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
+-	do {
++	while (true) {
+  		u8 status = tpm_chip_status(chip);
+  		if ((status & chip->ops->req_complete_mask) ==
+  		    chip->ops->req_complete_val)
+@@ -138,9 +138,12 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+  			return -ECANCELED;
+  		}
+  
++		if (time_after(jiffies, stop))
++			break;
 +
-+	if (caps.adjust_phase)
-+		caps.max_phase_adj = ptp->info->getmaxphase(ptp->info);
-+
-+	return copy_to_user(arg, &caps, sizeof(caps)) ? -EFAULT : 0;
-+}
-+
- long ptp_ioctl(struct posix_clock_context *pccontext, unsigned int cmd,
- 	       unsigned long arg)
- {
-@@ -171,37 +191,22 @@ long ptp_ioctl(struct posix_clock_contex
- 	struct timestamp_event_queue *tsevq;
- 	struct ptp_system_timestamp sts;
- 	struct ptp_clock_request req;
--	struct ptp_clock_caps caps;
- 	struct ptp_clock_time *pct;
- 	struct ptp_pin_desc pd;
- 	struct timespec64 ts;
- 	int enable, err = 0;
-+	void __user *argptr;
- 
- 	if (in_compat_syscall() && cmd != PTP_ENABLE_PPS && cmd != PTP_ENABLE_PPS2)
- 		arg = (unsigned long)compat_ptr(arg);
-+	argptr = (void __force __user *)arg;
- 
- 	tsevq = pccontext->private_clkdata;
- 
- 	switch (cmd) {
--
- 	case PTP_CLOCK_GETCAPS:
- 	case PTP_CLOCK_GETCAPS2:
--		memset(&caps, 0, sizeof(caps));
--
--		caps.max_adj = ptp->info->max_adj;
--		caps.n_alarm = ptp->info->n_alarm;
--		caps.n_ext_ts = ptp->info->n_ext_ts;
--		caps.n_per_out = ptp->info->n_per_out;
--		caps.pps = ptp->info->pps;
--		caps.n_pins = ptp->info->n_pins;
--		caps.cross_timestamping = ptp->info->getcrosststamp != NULL;
--		caps.adjust_phase = ptp->info->adjphase != NULL &&
--				    ptp->info->getmaxphase != NULL;
--		if (caps.adjust_phase)
--			caps.max_phase_adj = ptp->info->getmaxphase(ptp->info);
--		if (copy_to_user((void __user *)arg, &caps, sizeof(caps)))
--			err = -EFAULT;
--		break;
-+		return ptp_clock_getcaps(ptp, argptr);
- 
- 	case PTP_EXTTS_REQUEST:
- 	case PTP_EXTTS_REQUEST2:
-
+  		tpm_msleep(TPM_TIMEOUT_POLL);
+  		rmb();
+-	} while (time_before(jiffies, stop));
++	}
+  
+  	tpm_chip_cancel(chip);
+  	dev_err(&chip->dev, "Operation Timed out\n");
 
