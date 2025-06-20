@@ -1,200 +1,184 @@
-Return-Path: <linux-kernel+bounces-695599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153C8AE1BA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:11:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A974AE1B86
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C1EE1C2077E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:11:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACA437A8C16
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52A329A311;
-	Fri, 20 Jun 2025 13:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BBF28E579;
+	Fri, 20 Jun 2025 13:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AYwH43wz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikYbpV3d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02195299A9E
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 13:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2DD28DF36;
+	Fri, 20 Jun 2025 13:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750424943; cv=none; b=QnQ+SvUfqTAZFPnDNFK8hklI7nZHnbS12+PlavXykEr/f3+HUSpMBeJOKDOSRKNpAjoR9VPZSN8YxEB1IMWWGONQ6/+oLh22fdK5/R5GCZDfi350AR8kpA97Eyg5sIO9h9YfA7+eNnWlDBFoMft/kap7VCLdN0bp/pGDnPtr4KM=
+	t=1750424903; cv=none; b=cG5oaUMP/QF32AMvam6GXQJxmM/8lAHkJT3tl5KRMk/GNyZFv0kMFgTgN/PViBTcuYDC4gm1PYeTRE6WrMWwNdn+TJcO32vlGcBniDqRcjamUo95FCjaPa+AMKfLMK3ny7B5u3gWJJ4EcDBOFTHx6YbMGCN0yZWOfzJh/aFtV9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750424943; c=relaxed/simple;
-	bh=r704CciIs6S8l1HQAxMJ8T5ehpg4WbCdT2WeOTpKhmA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k7N+deWWHSm4JXuC0fuEmAmDTnFbrYgbdsZdufAUYU0l8XWe1ue1vmdh0Cv3XdmbVKEDA/uqoCndeptk/fB1TaqPj844UcqoX0Lf3JmKFSxOtUNCh+ASXVybN5MBPISKtEEsmCz/Kq4Yxj1M0A4RGe7zvXqmkqGZppT1o6UOV0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AYwH43wz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750424940;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dM1iIgQEOaOLBHShUWBj9x+RovZVG7Za/6uALilylTw=;
-	b=AYwH43wzpj3b+tIulaSovDTTVS4J3ruRn3RmfL759qMDxGAMpl5G9lmTe+MYv6DbcJpVMa
-	AP24oRjVVYqogwHBvxVxEOPt6G/FnVGYX5gvrCKcz0FKezRspUOIowag7yHjd+eznlpy/d
-	0JihPkpNAPJKD/jBG6l5lD1wqkTLDXg=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-608-kmZyjoBMOUGCOXm6Kkg1cQ-1; Fri, 20 Jun 2025 09:08:58 -0400
-X-MC-Unique: kmZyjoBMOUGCOXm6Kkg1cQ-1
-X-Mimecast-MFC-AGG-ID: kmZyjoBMOUGCOXm6Kkg1cQ_1750424938
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso1057763f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 06:08:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750424937; x=1751029737;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dM1iIgQEOaOLBHShUWBj9x+RovZVG7Za/6uALilylTw=;
-        b=n+coGao73yG5gGm61Jl9aua/fPw5pyZpKRcdIvx10RJ4a7Qj2iM0wz7OGKy/QrOqkz
-         bJ9ZmwPQFFdbBisVK6zNQG4hnhVqaPCB7NBR22w4xEL7pSc/ik8C0uWF/0X2Sibq/G0Z
-         D/vsYNyzWBf+ONcCmyh3WgiusURxvP1H2XIjIQ6ffF9ubvdTOkc2/VKuGnnDwBd8Ntkp
-         yrMzo2+0ZpAd8r3b0hmQVBIQa2ik3GPRFliyXQoYllkoNUyBfC3ecOPYxPJUguU3nGUz
-         k2De5EO9uwlMXAgXw1wADtG9VPmAVue4cjCRNHm+zbDmGe9PGtaEW7kGwws3qnqIEgv6
-         JWTA==
-X-Gm-Message-State: AOJu0YwjGK7e3P1hfPhBRlkI3hgS7x90IEUncNEusWdZx3mnDEJ7QnFW
-	hLNexxak96B4XAPapE8wwRi6EStEFVvcOYnQSnSZX5INYO5ROBh6ijvTAHUtRCOkAtXxnGF2QMm
-	+vi7x9m2/6uItYwt4QKAvyN2FpmYX3HfmAmCKS2BtqiiVaGdkRxZZH3zMUUhQQiD8VA==
-X-Gm-Gg: ASbGncsLua3lhvb34J2+jajxQcU32SU9U7K8buouRZxMWyIsFSZmS7YD7E7MLFX+0xh
-	w7DEmgVI4+VKowSXCbQPcYFmOuAB+xyXp1pzpGyyxFaVISVmGiqxQUTrpuRyjqw3YXCuakMjO6j
-	no6R1/REqaO9Xgj3JoAuGzPqYnCxFKEO+pxTYA0EDzOYI4WY8WXQHTaQv3caTzTX7NVPPv5/+53
-	U3xHBaNUWrdVxSIJgTBRFXJAZiMoOZHavWLt8gPpcohGgNM8CA0chB4FDXJcOVDmuwxksw3ckFI
-	ZP8jdjxddUNcKCt6z8kDDHkf9Ob0I6YEwPc=
-X-Received: by 2002:a05:6000:23c1:b0:3a4:fcc3:4a14 with SMTP id ffacd0b85a97d-3a6d13176fbmr1522860f8f.34.1750424937550;
-        Fri, 20 Jun 2025 06:08:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IErCfEU/IVq7uI6YOAV42Q6eu/6bPqI5NWLxqRlPFpxO3LmsQRBOu3Tts8nxYdGgHaYTR596A==
-X-Received: by 2002:a05:6000:23c1:b0:3a4:fcc3:4a14 with SMTP id ffacd0b85a97d-3a6d13176fbmr1522807f8f.34.1750424936821;
-        Fri, 20 Jun 2025 06:08:56 -0700 (PDT)
-Received: from localhost.localdomain ([193.207.146.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d0f18215sm2026391f8f.29.2025.06.20.06.08.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 06:08:55 -0700 (PDT)
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	linux-integrity@vger.kernel.org,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Stefano Garzarella <sgarzare@redhat.com>
-Subject: [PATCH v6 4/4] tpm/tpm_svsm: support TPM_CHIP_FLAG_SYNC
-Date: Fri, 20 Jun 2025 15:08:10 +0200
-Message-ID: <20250620130810.99069-5-sgarzare@redhat.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250620130810.99069-1-sgarzare@redhat.com>
-References: <20250620130810.99069-1-sgarzare@redhat.com>
+	s=arc-20240116; t=1750424903; c=relaxed/simple;
+	bh=+9H6JcjTjRDyG1OblNVj9FXm7YspOKs/ESBzyf6Ag/I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qobmUOYLLjndq3wY8xIq/ZcaEA0ZC+li9kXdO1JWokuBBETSm3AQ9D+zRRFgX9iBBR65Mito2/ZEsErA+PV3HxnFAnJ0kPAw5V9f9AvEdnqAzR/kkhfw0fW3kFoYTxsO6Fddysf0dcVxw3mUt/eOba3Z5c0Fk157kzMZ5oZTgQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikYbpV3d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B769C4CEEE;
+	Fri, 20 Jun 2025 13:08:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750424902;
+	bh=+9H6JcjTjRDyG1OblNVj9FXm7YspOKs/ESBzyf6Ag/I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ikYbpV3djtoMZC4zunIhWqeO+nOC9+2wy9yMZ+uerAs+3IkaRuiJqk4jSIDyDFhGk
+	 RNVkBnOa4IfxYdQQYUTsA25+H3tPbXZZuFHWY/v+472XaOqarx5uvOm+9mHLmfFq6R
+	 govT7oVJnAv5r5fMEn/gw1E5FxTQeQTLvgY0/Fz5AqULmANSd0DPIHWSvl3fkA5yRC
+	 582khYGx4F+6amr9NjTOGnGiQx6wpgYMKC6AhHEZUXwqPodeIAChXqd2tWowLiMl/u
+	 6N68j+25wShwp+gfZMms/GJAHfl0saapqavn+7nVC3Q0L7IY5oreHIfpyweUXUdmDy
+	 3rwYAX/DgZofg==
+Message-ID: <130fe1fc-913b-48cf-b2a4-e9c4952354fd@kernel.org>
+Date: Fri, 20 Jun 2025 15:08:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-binding: pci-imx6: Add external reference clock
+ mode support
+To: Hongxing Zhu <hongxing.zhu@nxp.com>
+Cc: Frank Li <frank.li@nxp.com>,
+ "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+ "mani@kernel.org" <mani@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "festevam@gmail.com" <festevam@gmail.com>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250620031350.674442-1-hongxing.zhu@nxp.com>
+ <20250620031350.674442-2-hongxing.zhu@nxp.com>
+ <20250620-honored-versed-donkey-6d7ef4@kuoka>
+ <AS8PR04MB8676FBE47C2ECE074E5B14768C7CA@AS8PR04MB8676.eurprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <AS8PR04MB8676FBE47C2ECE074E5B14768C7CA@AS8PR04MB8676.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Stefano Garzarella <sgarzare@redhat.com>
+On 20/06/2025 10:26, Hongxing Zhu wrote:
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: 2025年6月20日 15:53
+>> To: Hongxing Zhu <hongxing.zhu@nxp.com>
+>> Cc: Frank Li <frank.li@nxp.com>; l.stach@pengutronix.de;
+>> lpieralisi@kernel.org; kwilczynski@kernel.org; mani@kernel.org;
+>> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+>> bhelgaas@google.com; shawnguo@kernel.org; s.hauer@pengutronix.de;
+>> kernel@pengutronix.de; festevam@gmail.com; linux-pci@vger.kernel.org;
+>> linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
+>> imx@lists.linux.dev; linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH v3 1/2] dt-binding: pci-imx6: Add external reference clock
+>> mode support
+>>
+>> On Fri, Jun 20, 2025 at 11:13:49AM GMT, Richard Zhu wrote:
+>>> On i.MX, the PCIe reference clock might come from either internal
+>>> system PLL or external clock source.
+>>> Add the external reference clock source for reference clock.
+>>>
+>>> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+>>> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml | 7 ++++++-
+>>>  1 file changed, 6 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
+>>> b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
+>>> index ca5f2970f217..c472a5daae6e 100644
+>>> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
+>>> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
+>>> @@ -219,7 +219,12 @@ allOf:
+>>>              - const: pcie_bus
+>>>              - const: pcie_phy
+>>>              - const: pcie_aux
+>>> -            - const: ref
+>>> +            - description: PCIe reference clock.
+>>> +              oneOf:
+>>> +                - description: The controller might be configured
+>> clocking
+>>> +                    coming in from either an internal system PLL or
+>> an
+>>> +                    external clock source.
+>>> +                  enum: [ref, gio]
+>>
+>> Internal like within PCIe or coming from other SoC block? What does "gio"
+>> mean?
+> Internal means that the PCIe reference clock is coming from other
+>  internal SoC block, such as system PLL. "gio" is on behalf that the
+> reference clock comes form external crystal oscillator.
 
-This driver does not support interrupts, and receiving the response is
-synchronous with sending the command.
+Then what does "ref" mean, if gio is the clock supplied externally? We
+talk here about signals coming to this chip, regardless how they are
+generated.
 
-Enable synchronous send() with TPM_CHIP_FLAG_SYNC, which implies that
-->send() already fills the provided buffer with a response, and ->recv()
-is not implemented.
 
-Keep using the same pre-allocated buffer to avoid having to allocate
-it for each command. We need the buffer to have the header required by
-the SVSM protocol and the command contiguous in memory.
-
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
-v5:
-- changed order and parameter names to match tpm_try_transmit() [Jarkko]
-v4:
-- reworked commit description [Jarkko]
----
- drivers/char/tpm/tpm_svsm.c | 27 +++++++++++----------------
- 1 file changed, 11 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm_svsm.c b/drivers/char/tpm/tpm_svsm.c
-index 0847cbf450b4..f5ba0f64850b 100644
---- a/drivers/char/tpm/tpm_svsm.c
-+++ b/drivers/char/tpm/tpm_svsm.c
-@@ -26,37 +26,31 @@ struct tpm_svsm_priv {
- };
- 
- static int tpm_svsm_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
--			 size_t len)
-+			 size_t cmd_len)
- {
- 	struct tpm_svsm_priv *priv = dev_get_drvdata(&chip->dev);
- 	int ret;
- 
--	ret = svsm_vtpm_cmd_request_fill(priv->buffer, 0, buf, len);
-+	ret = svsm_vtpm_cmd_request_fill(priv->buffer, 0, buf, cmd_len);
- 	if (ret)
- 		return ret;
- 
- 	/*
- 	 * The SVSM call uses the same buffer for the command and for the
--	 * response, so after this call, the buffer will contain the response
--	 * that can be used by .recv() op.
-+	 * response, so after this call, the buffer will contain the response.
-+	 *
-+	 * Note: we have to use an internal buffer because the device in SVSM
-+	 * expects the svsm_vtpm header + data to be physically contiguous.
- 	 */
--	return snp_svsm_vtpm_send_command(priv->buffer);
--}
--
--static int tpm_svsm_recv(struct tpm_chip *chip, u8 *buf, size_t len)
--{
--	struct tpm_svsm_priv *priv = dev_get_drvdata(&chip->dev);
-+	ret = snp_svsm_vtpm_send_command(priv->buffer);
-+	if (ret)
-+		return ret;
- 
--	/*
--	 * The internal buffer contains the response after we send the command
--	 * to SVSM.
--	 */
--	return svsm_vtpm_cmd_response_parse(priv->buffer, buf, len);
-+	return svsm_vtpm_cmd_response_parse(priv->buffer, buf, bufsiz);
- }
- 
- static struct tpm_class_ops tpm_chip_ops = {
- 	.flags = TPM_OPS_AUTO_STARTUP,
--	.recv = tpm_svsm_recv,
- 	.send = tpm_svsm_send,
- };
- 
-@@ -85,6 +79,7 @@ static int __init tpm_svsm_probe(struct platform_device *pdev)
- 
- 	dev_set_drvdata(&chip->dev, priv);
- 
-+	chip->flags |= TPM_CHIP_FLAG_SYNC;
- 	err = tpm2_probe(chip);
- 	if (err)
- 		return err;
--- 
-2.49.0
-
+Best regards,
+Krzysztof
 
