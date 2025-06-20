@@ -1,122 +1,211 @@
-Return-Path: <linux-kernel+bounces-695709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7886AE1CFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 16:03:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAA6AE1C0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93EB54A09AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 14:03:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 720991C20D37
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE37928CF6D;
-	Fri, 20 Jun 2025 14:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9291428FAA5;
+	Fri, 20 Jun 2025 13:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="Xev9waoG"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Dc4m4j+/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qfeo3p7P"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D598A28B4FD;
-	Fri, 20 Jun 2025 14:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7F828E576;
+	Fri, 20 Jun 2025 13:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750428216; cv=none; b=qqljjeWhoUKvZuwRcieKrpO+IUUfdVN4XD8bVYpRxQwdyMtvJMT8iqSBP5zAozRQRx36noT1yZiBw60q4z4hIK9Kf6vgWU6yX8gt3YPu1M2CvCPPyypapGWfOpUcR8VUu6KDhQ320v6xj4UYzWi5kGlUozghIrqzqH1/FMc5gMk=
+	t=1750425875; cv=none; b=RAmFdfBtWrfpna1gsIKUJICwEBfrEvxCIYiRf2Ajtj+VY42JNKFeT553MoEQF38Xvdi+k5VaP6q1jJUwS/iLDPHDVMatYnrtAAe7CwPt8nXBKK0tmlnrbJcDNsSbsotIal0lcqBt+D0XVuMxq8laTW8cuSa5+mBXrhLlc7VQXNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750428216; c=relaxed/simple;
-	bh=XDSYm0LAP+6mIAyG1KOcL1BQwmwnediG65sYR4tURfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qq2lwmfEStidVtc0lttl5cnuRSZxZKUfxhDqPEmGsmqsS0O1lRDAJJp4Gh3XIFx23yHZXciCCRx0/s60CoNWH6gwcmq9zBF4yYV33H6nFE7EErnez7DeSbgxbULXU/03pEPP6mQsVQPRCRYEZ7JXNv1UYTQHyCU2eUfOeOcsQWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=Xev9waoG; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=DDBlc6X06W7RqhIMTP6H4wGHxtmOyxhuVoFdQGnU/JY=; b=Xev9waoGKB/yOZL6DtC7FSYtoD
-	mHdKnQepePRvZsJPJS3oD/FFwxtGfk3CE9H7zItG/4MMQVk3O32pKSxBeNP2BRahz75ZYudDPs8DX
-	rOj82yKRit66GJqEbH+VPIMCvUF68oX6xN9fptWj38nVc+lDLfb95FUEiUn58H1Vdy5usU8P4k28Q
-	7R9jmo28pTsNy6mP/Rs5LLe8+cNJIAMUzv2o+SskQCnrItxwlTx0XfHFrJy80FeTcKST6IPviMFpO
-	7+935TRYzFGl/ujRWYWevVkyC/oxBeJXH9ZNiHmK6kuAJC/d5P+dc07m55WOB1m0zI5j8nsk6Cxe3
-	Zr0JeV8w==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1uSbjI-00E85J-0d;
-	Fri, 20 Jun 2025 14:24:28 +0100
-Date: Fri, 20 Jun 2025 14:24:28 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: "Orlov, Ivan" <iorlov@amazon.co.uk>
-Cc: "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-	"jarkko@kernel.org" <jarkko@kernel.org>,
-	"jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Woodhouse, David" <dwmw@amazon.co.uk>
-Subject: Re: [PATCH] tpm: Fix the timeout & use ktime
-Message-ID: <aFVhDDewVHneFXnO@earth.li>
-References: <20250611162508.85149-1-iorlov@amazon.com>
+	s=arc-20240116; t=1750425875; c=relaxed/simple;
+	bh=4uSa6gwPUParCICWn+l34Lh046IYe02V7OwC7v6mlB0=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=pyXjU7U3ekE/RFQsUOnCE/EgdS56Jw+jQfR1sSBzhruglPEfeYZ5fyLdz8QoL5NGUY6tKgnAB0TItcNAl8p0FCQgwhiuRNndYNFblAm7jp5ZsB76kCf358zxHVz2zRobRMcwSPRiouf+rckD77OaijaLo8GESzebx5G/ZMa81dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Dc4m4j+/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qfeo3p7P; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250620131943.842871495@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750425870;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=TAfEr+4WrC24WCfcf0MBVVB3Is+yKhCwqq1vSI7Px4s=;
+	b=Dc4m4j+/6yV/Umqw0A9//E+w1S69XgmBI2bUMGROhs4Lft0bAOx/avy+pNiRE7kuJtgm6b
+	xyRW/PWXQnvPdIp92MiCO0yLBQGGJM2GdpYNmdra5YzTMrqDkBYJDX+wj/pWfuepkdLwXb
+	8xL8lzK4PzvZiX6sSvPlFENoi5bpO18G8UUKIzXqGqdKmOM6HZKb20WsX8UvHChIEBiUrm
+	NSyHkFCbQXyEScYmcaphpesq9c3TzqY7C1NgNsJg2aPN9J1Fu2sLIUO9Tn7y9HyqPfbAN9
+	XnaHxsW6JYdfpbKHuXzWHeEAvXKqBBRQCZkPP4TWHpAYknt0lKccdp9n916zLg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750425870;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=TAfEr+4WrC24WCfcf0MBVVB3Is+yKhCwqq1vSI7Px4s=;
+	b=qfeo3p7PZCAeJTt3W4Q4JzUXu0dAuCiC6s6ZVuj9hEUhiiSTU8u9tcfCtUm09sv1X4fT0S
+	JSGmqv5C/ZSePrBQ==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Richard Cochran <richardcochran@gmail.com>,
+ netdev@vger.kernel.org
+Subject: [patch 02/13] ptp: Split out PTP_EXTTS_REQUEST ioctl code
+References: <20250620130144.351492917@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250611162508.85149-1-iorlov@amazon.com>
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 20 Jun 2025 15:24:29 +0200 (CEST)
 
-On Wed, Jun 11, 2025 at 04:25:24PM +0000, Orlov, Ivan wrote:
->The current implementation of timeout detection works in the following
->way:
->
->1. Read completion status. If completed, return the data
->2. Sleep for some time (usleep_range)
->3. Check for timeout using current jiffies value. Return an error if
->   timed out
->4. Goto 1
->
->usleep_range doesn't guarantee it's always going to wake up strictly in
->(min, max) range, so such a situation is possible:
->
->1. Driver reads completion status. No completion yet
->2. Process sleeps indefinitely. In the meantime, TPM responds
->3. We check for timeout without checking for the completion again.
->   Result is lost.
+Continue the ptp_ioctl() cleanup by splitting out the PTP_EXTTS_REQUEST
+ioctl code into a helper function. Convert to a lock guard while at it.
 
-This looks similar to the issue I fixed in 7146dffa875c ('Fix timeout
-handling when waiting for TPM status'), I assume you're actually seeing
-it in your systems? I think we're starting to see it (rarely) now the
-other issues are fixed in our builds. As a similar approach does the
-following work?
+No functional change intended.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 8d7e4da6ed53..18ae0767fa60 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -127,7 +127,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
-  		goto out_recv;
-  
-  	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
--	do {
-+	while (true) {
-  		u8 status = tpm_chip_status(chip);
-  		if ((status & chip->ops->req_complete_mask) ==
-  		    chip->ops->req_complete_val)
-@@ -138,9 +138,12 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
-  			return -ECANCELED;
-  		}
-  
-+		if (time_after(jiffies, stop))
-+			break;
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ drivers/ptp/ptp_chardev.c |  105 +++++++++++++++++++++-------------------------
+ 1 file changed, 50 insertions(+), 55 deletions(-)
+
+--- a/drivers/ptp/ptp_chardev.c
++++ b/drivers/ptp/ptp_chardev.c
+@@ -177,12 +177,57 @@ static long ptp_clock_getcaps(struct ptp
+ 	return copy_to_user(arg, &caps, sizeof(caps)) ? -EFAULT : 0;
+ }
+ 
++static long ptp_extts_request(struct ptp_clock *ptp, unsigned int cmd, void __user *arg)
++{
++	struct ptp_clock_request req = { .type = PTP_CLK_REQ_EXTTS };
++	struct ptp_clock_info *ops = ptp->info;
++	unsigned int supported_extts_flags;
 +
-  		tpm_msleep(TPM_TIMEOUT_POLL);
-  		rmb();
--	} while (time_before(jiffies, stop));
++	if (copy_from_user(&req.extts, arg, sizeof(req.extts)))
++		return -EFAULT;
++
++	if (cmd == PTP_EXTTS_REQUEST2) {
++		/* Tell the drivers to check the flags carefully. */
++		req.extts.flags |= PTP_STRICT_FLAGS;
++		/* Make sure no reserved bit is set. */
++		if ((req.extts.flags & ~PTP_EXTTS_VALID_FLAGS) ||
++		    req.extts.rsv[0] || req.extts.rsv[1])
++			return -EINVAL;
++
++		/* Ensure one of the rising/falling edge bits is set. */
++		if ((req.extts.flags & PTP_ENABLE_FEATURE) &&
++		    (req.extts.flags & PTP_EXTTS_EDGES) == 0)
++			return -EINVAL;
++	} else {
++		req.extts.flags &= PTP_EXTTS_V1_VALID_FLAGS;
++		memset(req.extts.rsv, 0, sizeof(req.extts.rsv));
 +	}
-  
-  	tpm_chip_cancel(chip);
-  	dev_err(&chip->dev, "Operation Timed out\n");
++
++	if (req.extts.index >= ops->n_ext_ts)
++		return -EINVAL;
++
++	supported_extts_flags = ptp->info->supported_extts_flags;
++	/* The PTP_ENABLE_FEATURE flag is always supported. */
++	supported_extts_flags |= PTP_ENABLE_FEATURE;
++	/* If the driver does not support strictly checking flags, the
++	 * PTP_RISING_EDGE and PTP_FALLING_EDGE flags are merely hints
++	 * which are not enforced.
++	 */
++	if (!(supported_extts_flags & PTP_STRICT_FLAGS))
++		supported_extts_flags |= PTP_EXTTS_EDGES;
++	/* Reject unsupported flags */
++	if (req.extts.flags & ~supported_extts_flags)
++		return -EOPNOTSUPP;
++
++	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &ptp->pincfg_mux)
++		return ops->enable(ops, &req, req.extts.flags & PTP_ENABLE_FEATURE ? 1 : 0);
++}
++
+ long ptp_ioctl(struct posix_clock_context *pccontext, unsigned int cmd,
+ 	       unsigned long arg)
+ {
+ 	struct ptp_clock *ptp =
+ 		container_of(pccontext->clk, struct ptp_clock, clock);
+-	unsigned int i, pin_index, supported_extts_flags;
+ 	struct ptp_sys_offset_extended *extoff = NULL;
+ 	struct ptp_sys_offset_precise precise_offset;
+ 	struct system_device_crosststamp xtstamp;
+@@ -192,6 +237,7 @@ long ptp_ioctl(struct posix_clock_contex
+ 	struct ptp_system_timestamp sts;
+ 	struct ptp_clock_request req;
+ 	struct ptp_clock_time *pct;
++	unsigned int i, pin_index;
+ 	struct ptp_pin_desc pd;
+ 	struct timespec64 ts;
+ 	int enable, err = 0;
+@@ -210,60 +256,9 @@ long ptp_ioctl(struct posix_clock_contex
+ 
+ 	case PTP_EXTTS_REQUEST:
+ 	case PTP_EXTTS_REQUEST2:
+-		if ((pccontext->fp->f_mode & FMODE_WRITE) == 0) {
+-			err = -EACCES;
+-			break;
+-		}
+-		memset(&req, 0, sizeof(req));
+-
+-		if (copy_from_user(&req.extts, (void __user *)arg,
+-				   sizeof(req.extts))) {
+-			err = -EFAULT;
+-			break;
+-		}
+-		if (cmd == PTP_EXTTS_REQUEST2) {
+-			/* Tell the drivers to check the flags carefully. */
+-			req.extts.flags |= PTP_STRICT_FLAGS;
+-			/* Make sure no reserved bit is set. */
+-			if ((req.extts.flags & ~PTP_EXTTS_VALID_FLAGS) ||
+-			    req.extts.rsv[0] || req.extts.rsv[1]) {
+-				err = -EINVAL;
+-				break;
+-			}
+-			/* Ensure one of the rising/falling edge bits is set. */
+-			if ((req.extts.flags & PTP_ENABLE_FEATURE) &&
+-			    (req.extts.flags & PTP_EXTTS_EDGES) == 0) {
+-				err = -EINVAL;
+-				break;
+-			}
+-		} else if (cmd == PTP_EXTTS_REQUEST) {
+-			req.extts.flags &= PTP_EXTTS_V1_VALID_FLAGS;
+-			req.extts.rsv[0] = 0;
+-			req.extts.rsv[1] = 0;
+-		}
+-		if (req.extts.index >= ops->n_ext_ts) {
+-			err = -EINVAL;
+-			break;
+-		}
+-		supported_extts_flags = ptp->info->supported_extts_flags;
+-		/* The PTP_ENABLE_FEATURE flag is always supported. */
+-		supported_extts_flags |= PTP_ENABLE_FEATURE;
+-		/* If the driver does not support strictly checking flags, the
+-		 * PTP_RISING_EDGE and PTP_FALLING_EDGE flags are merely
+-		 * hints which are not enforced.
+-		 */
+-		if (!(supported_extts_flags & PTP_STRICT_FLAGS))
+-			supported_extts_flags |= PTP_EXTTS_EDGES;
+-		/* Reject unsupported flags */
+-		if (req.extts.flags & ~supported_extts_flags)
+-			return -EOPNOTSUPP;
+-		req.type = PTP_CLK_REQ_EXTTS;
+-		enable = req.extts.flags & PTP_ENABLE_FEATURE ? 1 : 0;
+-		if (mutex_lock_interruptible(&ptp->pincfg_mux))
+-			return -ERESTARTSYS;
+-		err = ops->enable(ops, &req, enable);
+-		mutex_unlock(&ptp->pincfg_mux);
+-		break;
++		if ((pccontext->fp->f_mode & FMODE_WRITE) == 0)
++			return -EACCES;
++		return ptp_extts_request(ptp, cmd, argptr);
+ 
+ 	case PTP_PEROUT_REQUEST:
+ 	case PTP_PEROUT_REQUEST2:
+
 
