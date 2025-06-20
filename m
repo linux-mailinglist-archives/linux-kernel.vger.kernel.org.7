@@ -1,212 +1,180 @@
-Return-Path: <linux-kernel+bounces-695087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F13AE150F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:36:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C012EAE14E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBBEE5A1A28
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:36:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 506AB3BD717
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDA022655E;
-	Fri, 20 Jun 2025 07:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA0A227E8F;
+	Fri, 20 Jun 2025 07:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="uwdtHSME"
-Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012064.outbound.protection.outlook.com [52.101.71.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HVAxzzDY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C7D17583;
-	Fri, 20 Jun 2025 07:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750404980; cv=fail; b=eMXxy9rVig7B74cmt7mtWPWxSTTiYcq2o6YmalOyEORU0wAP0ncH7DO+Ib/pfP+rcZT+8VD83iVSm8fzf8UdC+XYm6Ldw2L0jdTInqS7dzBRN8uZw20cGDHIYIwOoHVk5LXgnyg8i03PCskwwHOKSMcKQJnpGEZai0SMSwEwltU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750404980; c=relaxed/simple;
-	bh=6uPcoaVyrC8nbTG0asagZgngWoYUkO3MHw/+hvv8Xqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=U7Bbiotc7D1hhw79WkKFhxv0v60i8jTzBDlwzxtdgGdsIMwYotOAWk+tWjQ8hBLz0qioIQEsecYNzNFDXA0398bxiOTGm5DJ1OeDGc0K7KjUaj1SpRCoSEukimdCz5LBuY0UHcqFjc6M1YxMOqfut1BWN2jHCsCAq3AMbBnAXm8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=uwdtHSME; arc=fail smtp.client-ip=52.101.71.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R2oAXKpMwduM0P7ck/TxaNP42h4McYPbzirmHhW82a/kcC6XYe8xrZeUnhB0IyvytFGRJLSMpKkOQJRF6NBGVmk5pvqkSfr3CbPn5/Q6zI/Th7TGjJoLOgOx+13X4AN0Wo9Xz/eLmtxjTREU6JM5Syr1i0EQZNjkBxlbZZri3h5U0T1sW/V8yfpkPpgsBYgey/e98kn/Wep6lWrF0zEgWfLggmZsr2AiIr1Hn6KLgKp8ZaoJ4eW65rQA+qD1O1DWrJE77Me0OeQKodjlV9X9klU2J5snlda7JQki3AlRnoZKIvt0gM2dbQ2bSFpOjPhHF39xlLOHDzuwUmOUEAWYKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hEUK7B4dmwdfbRmsiYzMAMscAiSFYXDxbHesbi/bE9E=;
- b=rwzqoHO3Z6+x3LDs0XxXAR3xdo2UMyNdiw0RjCpusbUowliKZdUXarf8QCPwGAykrsAPBc7ktVgvVE6HdsGCFGedZJEzisxE+HuiAgiRYrusB7xSWEOyTTbf/PU1oX7eNiibe4t0GyfXyS80XuWvqLrEil+QAOGtqJLZ7aSGKdAlZ4mqS/6P7hI8IRNxaaXPhhy7eGiMkwdihX53a066RPxifMj0zNM8oFiohUAZu+ydgWp/TtXYpYIyhhV7OmDhLp7mx0GjDOlDBuwv3ab9up6CT4byyv4bzy6/AO8sIZ5qAo6eFXmtVPWy+GKOKPcYTI3M8UoqdrexUlJyfmV2bg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hEUK7B4dmwdfbRmsiYzMAMscAiSFYXDxbHesbi/bE9E=;
- b=uwdtHSMEwO5w3mcTK5fLZtOpKepIMitUXyuSMjs+8YVe52/NTFCPznhWA6uRrRGA/b4B2p3eYn1AXuUCbrTWBs5k7RtWIcpEkbW7BOK2th69Z4kCMPDibfFaxP7DwEdmTkGzEw1NfJ0fAhdZfLf7OasWmcvrP204IxzevMRuI6FPzCSnIzQVeCGQwR20XJ8LfKukwp+H6PfAtWJAvg/uRquddO8lgZZXLQs9iW2G9shbD2FMbJimbII9FaJ0JysekNRS3P4mxvyjj83SIf4Hajj6a1L9l5egcqHLyc88uP0GfITHBs/hHS4zQJGNAbfiX3n3vLeMX1P21VXZefYgXA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PA4PR04MB9223.eurprd04.prod.outlook.com (2603:10a6:102:2a2::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.21; Fri, 20 Jun
- 2025 07:36:13 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%3]) with mapi id 15.20.8857.021; Fri, 20 Jun 2025
- 07:36:13 +0000
-Date: Fri, 20 Jun 2025 16:46:34 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Philip Radford <philip.radford@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	cristian.marussi@arm.com, luke.parkin@arm.com
-Subject: Re: [PATCH 0/4] firmware: arm_scmi: Add xfer inflight debug and trace
-Message-ID: <20250620084634.GB27519@nxa18884-linux>
-References: <20250619122004.3705976-1-philip.radford@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250619122004.3705976-1-philip.radford@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SI2PR02CA0022.apcprd02.prod.outlook.com
- (2603:1096:4:195::23) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3260530E85C;
+	Fri, 20 Jun 2025 07:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750404549; cv=none; b=Di2e53BeTtoXsNlFAH1EWTwmI9i+P35LXBF8nc5nE+nr3fiSrfEvBRgxJXzc4PX6hqJcWpY96pd7GjA5lJPhUQCF/p8F/zm9kg66EnMpGik/4QrMY8CbsZvKMR36O7Tg0w5ofe4Mk+LkRYa7YdLj2rZZrEdqPWvxwsWlvd5UqDk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750404549; c=relaxed/simple;
+	bh=rX4dGrsbLq3FgPw/2yOAdvSoS8IhBEmeFaDDof+YduA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N4ZEWLUEYzYQ8+uBEMJ8wAVjhKeM/druIZRM4PbZ7bnP1uBTnDWtdGgkHBUCTbklCG1LnofwZXzNZETXujxUdcZIk9/wwsKBpSFuX3LyNnl283zTPWbLHK/6UFU5fABc+WocAL8PL8gdUEh062GjxUgBeq7rK4K6z3hJkaWDDpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HVAxzzDY; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750404548; x=1781940548;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rX4dGrsbLq3FgPw/2yOAdvSoS8IhBEmeFaDDof+YduA=;
+  b=HVAxzzDYoM/rLwc0fHAdfB5j8Zc5SC8k4YqfQGAiDyP/qbEO8Z2xX67J
+   JdTQSSN1rJW5njH27GY1gNA74GIfwicAFQxGwj+zRu9uyMgWYmQT1zXOj
+   16b5FFnHvVNIF74gZPWEC64IgubzHGPVb/HhGfjXj+dFekjWJeYXSdSbH
+   Di9C9uQ333CtjlNEtyQRrtROd9eyWx1VS/SzLAYSGvoDRRNX1dSdtkkVn
+   lcVKw6sUkY6z0LGLZhNi5bqsf54kmZ1HcAZfrI9HLkMYX4jMTAcSv9nzu
+   Jg40dwGyty747Smud8SiMCNXQV7Xsc7Bsl5b770MTmG11kWRPMH2Efcb3
+   Q==;
+X-CSE-ConnectionGUID: iw4t9+UAT1KmLjG+YSXr6g==
+X-CSE-MsgGUID: Z4q5KXSXQOmh9Rs/oCsbew==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="51887701"
+X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
+   d="scan'208";a="51887701"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 00:29:07 -0700
+X-CSE-ConnectionGUID: t3hEvRYBQwazCwA07Niiig==
+X-CSE-MsgGUID: mdbPH5DQR8KHW1sr60JdEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,250,1744095600"; 
+   d="scan'208";a="156650933"
+Received: from emr.sh.intel.com ([10.112.229.56])
+  by orviesa005.jf.intel.com with ESMTP; 20 Jun 2025 00:29:04 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [Patch v4 00/13] arch-PEBS enabling for Intel platforms 
+Date: Fri, 20 Jun 2025 10:38:56 +0000
+Message-ID: <20250620103909.1586595-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PA4PR04MB9223:EE_
-X-MS-Office365-Filtering-Correlation-Id: b0b90efc-89bf-4289-adf1-08ddafcd21d8
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?RwXgS37K5vtMVFkqLRUigFBdGcSEx9H39PB6xynJXtwdxMKUuEJa111BR23n?=
- =?us-ascii?Q?md4DcrfyTNJGOAGhZfYnGesTBqYrt5RUm+r2cHjjvcWzP/Nnh1829ZKM93PT?=
- =?us-ascii?Q?YD+jcAmZPXPzFJZ4vKPz0ryJqbSK6rN2o2mfw1l2+m/UaEL0aOL/rua9NdlJ?=
- =?us-ascii?Q?hBPBtUstaAL6oWs26jbLG930x54oOHP5NLklLhhXevrC50GIYWM1ERuxbB6/?=
- =?us-ascii?Q?PHKTLfKH9x91J7YEtljSC1gyvG4KaRsbeeLyGY1aaLPsOSk5xzJblQD3KZ5G?=
- =?us-ascii?Q?TbHvidLOKhfrLwCHGURdtpNgoAsrsf3dloS2E+cd/9yOuosFcZ3+qDhQrPzb?=
- =?us-ascii?Q?+4EuW209ifMY0GF/+zQQ6T+krIyYfeh2MPSnx+n3Wan39suqe73DI2XUos8j?=
- =?us-ascii?Q?GbauA58oSe5HXxQPAgxS8LTbVPisoGDMjV7/ef2yl+kjdbnpmyyU8RUPHQyk?=
- =?us-ascii?Q?DQxRbUNNb6y0f4d/9roATvpGBcGYGBq1+Dek6OLBYeyFcSejVcqsvNZ7ODLN?=
- =?us-ascii?Q?VuNrM4B2aMkmVRh8Iq5kso6gdgP86WpM7MEh2KPkXjHxNLV8BXUMRoP6D8CR?=
- =?us-ascii?Q?s4hFzENJfkopzFL3ryChRfD/jTzROePiYznsLk9bXi7LYHdnAXLJAJPYCP+1?=
- =?us-ascii?Q?sbkWlfyN1HhEdE9xZnhbNzQwEMWvZOXS4OuPd9NhLuSwpSeuUZg9wxl5Njfi?=
- =?us-ascii?Q?OgNQ7ETXWGHyjIYc6ZhCgQgyokB7UBorNVV3t4s08fKjkk+2OM1cp2TN5PFV?=
- =?us-ascii?Q?7yzxfM2OFmJEnfQYoI6fNAOQusgpYN9Alz8vHHVu1VU7J7+R/EaCpttuyz0A?=
- =?us-ascii?Q?cK84vlkuX3s7TD/in7rKbfPThwPs5O1gDcJEkiEsP+cel3Bydi4e4NmMeP8a?=
- =?us-ascii?Q?UiifYky2BPpOpwM6/mgBjIYM6zyzYhEI9bxe7QI5niD4Cxd6bB6eUc/UMH7H?=
- =?us-ascii?Q?kVc8Zb6n7llEyLsOTfdP50jug4H8MXCDnFLZAsZtqbXKxlt/lmc6B/pItVRB?=
- =?us-ascii?Q?QEd3hhqDM/MiBhb5NPlc1E6Ulwl+y/3sO21P8GoDOHxcq5R5UevOpuOTPybs?=
- =?us-ascii?Q?KJI1tnxU6SF+sY0x/qVu7pd2WWa3guzgbcTNaVgbUCZrK5R585tWFTyk/Shz?=
- =?us-ascii?Q?q3SOUE/pn6F2f2HLoIcJRFXkQ2HFw8/X+dJOKJhd8cLe4Y7tAYIsywtNDx8V?=
- =?us-ascii?Q?2YS14czaDD6cM9q6+AZGL7vYIfSfj6Ve1WQkflbMwCKM1lD+omwq9vqfT2b1?=
- =?us-ascii?Q?o3EgfIr582mAMIeopeL2UsgbOpnn7OUKEWFtfuR+TiBG97JLol0nMR5Db4V/?=
- =?us-ascii?Q?PS+cFVYhjiW57sf2T5V8I2mcl5xV726D5TrMOWcYE/rKF1INA8nVrpkMPQHP?=
- =?us-ascii?Q?sw/1bezP4NUovoJWCHYu52i46PgJ31xxmXxDOQvL0ErJZimBvg0gg407YWQS?=
- =?us-ascii?Q?cGHfVkFYF9ptx86i4U0Q8409PXlk7gC2eh2bmAVNfhuWMMgdfx+Now=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?72oB8W6yKTZIneibJroSImB3dAtCsb7rz2l9ULdAIdBe2b0N7A6CRu0ddE7u?=
- =?us-ascii?Q?oqU/svhm4s3yHepwz5inKcWpDE7fRpj1SN0Io8iHBxSDZX9I5TM/zlyrHGYj?=
- =?us-ascii?Q?8UT2WslRsfJ44ba8sO+EZ8UkYJvJ/CVXlQq7VE6f6efzdDSqHxGRU/1eJmRT?=
- =?us-ascii?Q?Ogxj7cOX9hLGSnFxDyqjTNKMJlRb24HQ4CFAVqHIxi8NBQP9qFtEAIrohPWT?=
- =?us-ascii?Q?VfANCZ2k3Rf5oP+AAvQXFB4y99EHCig0hQFN+2QpzIpnCoGUs4ugwu5IBMKu?=
- =?us-ascii?Q?O6Rj/Pns5fubuAGeOV4pa23TOhuh9HtfJ26lhChg8DTISBKGxGTpANF2uxPw?=
- =?us-ascii?Q?gh40gRtxbGr1WKUh0H29okzY1CLTSfknEag+Vl7V8+I0qlDUCJ31x/XrkO33?=
- =?us-ascii?Q?Q1GCODctb1Lea3mbpG+1/IK8jkRNl+d9Xu0+sHYC66m0HqcY3Qlhn/Rok4Z3?=
- =?us-ascii?Q?giW9ihrhf7MRPio7Ahh9Yd58NQDjbG8UfxxVrESl9SvwnqSOR0ZIq/UTTRU3?=
- =?us-ascii?Q?ft3OBTLn153JERKko2xK9OQz16BRFw0qmcvuX9ZKDsJUNoz6BmhdJ0LkYnmG?=
- =?us-ascii?Q?tsLXPswQhXcnFa83CChW2aU53oKHHfLB+EeCe2ZK1s5RfaIagDBaf8RIy1k1?=
- =?us-ascii?Q?ulM9ngwNvK4OKe3l0+CWIWqCqm0aRlhd0DRsInnfik+/BmMxvIfDjk41amh4?=
- =?us-ascii?Q?hyiUk8JUegwphU1l1EcngRocogOi7R98yp/tHMLdI9WybULZzPW9V6bWz0X8?=
- =?us-ascii?Q?jqwbYQpkgo/cYyL9hZ/hHKSCLuDmJZoNYNwzj2rF6rp3mMLil18NSm+HKwuO?=
- =?us-ascii?Q?W+goSn23mhbDwMTpenNGHfRxrBBHT8GDB0MdNyJwt9800TbOW8RcWNJ8xG2Q?=
- =?us-ascii?Q?W59jCF1UD9aM58EEbPVcSH/MKwM5PftJqCfkbzhM3/o60W1Vxanz1fR3Ss+r?=
- =?us-ascii?Q?deSISqpi60BZ6KTFgL6gXQhxjF8YdBfdN0+1obx+6gnWk/JMQEIEFiNzse/q?=
- =?us-ascii?Q?Bfwk/WrepXwUN4e2ucw5dSSIqFdW9JvHXS/4ltqQ568jZBLTx1sSRt1HN++N?=
- =?us-ascii?Q?vTLd8Wfv09x3/BDxl1Wvx3lZ4J7vsZHx/pJ7KGGXGh1KKlpYFmmhxcP8tABV?=
- =?us-ascii?Q?o3VOvFDsYVHRq6imOqJk5QNuorw0lXUoeLIem6zOFwKHwf4/V6VOsL/K/xZP?=
- =?us-ascii?Q?An/0EZN+AkCt2oQmTK6XZJfUZvzuPOZu17mIBrEgGR/OkYOoxPIMhTXr19qz?=
- =?us-ascii?Q?xpWsGh5rCc13zfNGqRfHNye+Cq4hgDTQpap4kHNHyLXR2VGdUtn6Dxc63DWX?=
- =?us-ascii?Q?p837L0GKNRMepr7gkYMoYhVHNRePlFibsA1La1dkedmkVrc7iVrlB6i/jWIb?=
- =?us-ascii?Q?xqn6Hl6OsngUNWKB+ivKVJo9mX4Wt95veQdwG65HNlRYHQlgleNYTh8FUot9?=
- =?us-ascii?Q?qUcFGWzxIGYizP7HHhLh31zVUqk/6NBuODE5tQJ9zhk7li4rIvTthPRz8xir?=
- =?us-ascii?Q?DP3NEYDXxYpfJ0wqC2OVGAjQrYZaHJQr3A3pZMbCs/piNZQKQptO/6Rzg8D9?=
- =?us-ascii?Q?cWIp+R3MfMhZ23J/Uf8LVD8ZgHhwU6QEjbVeSdu9?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0b90efc-89bf-4289-adf1-08ddafcd21d8
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2025 07:36:12.9856
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pnHoYyRmFymDNdvgvlRnDhsw+NmeKUivqQrd1KDcWBNZwRvwiStJw/gRIo7VVNaEiG1/TOywEJRlYKVroQu53g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9223
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 19, 2025 at 12:20:00PM +0000, Philip Radford wrote:
->Hi all,
->
->This series adds a new counter to the Arm SCMI firmware driver to track
->the number of in-flight message transfers during debug and trace. This
->will be useful for examining behaviour under a large load with regards
->to concurrent messages being sent and received. As the counter only gives
->a live value, printing the value in trace allows logging of the in-flight
->xfers.
+This patchset introduces architectural PEBS support for Intel platforms
+like Clearwater Forest (CWF) and Panther Lake (PTL). The detailed
+information about arch-PEBS can be found in chapter 11
+"architectural PEBS" of "Intel Architecture Instruction Set Extensions
+and Future Features".
 
-Just a general question, is this counter count in flight messages
-for a scmi instance or it is per transport? I ask because 
-one scmi instance could have multiple mailboxes. If counting based
-on scmi instance, it may not be that accurate.
+Comparing with v3 patchset, the most significant change is to remove the
+sampling support for new SIMD regs (OPMASK/YMM/ZMM). Considering the
+complication of supporting SIMD regs sampling, the SIMD regs sampling
+support is extracted as an independent patchset[1] and this patchset only
+focus on the arch-PEBS enabling itself. Once the basic SIMD regs sampling
+is supported, the arch-PEBS based SIMD regs (OPMASK/YMM/ZMM) sampling
+would be added on top of the basic SIMD regs sampling.
 
-Thanks,
-Peng
+Changes:
+  v3 -> v4:
+  * Rebase code to 6.16-rc2
+  * Extract the new SIMD regs sampling to an independent patchset
+  * Fix the PEBS buffer allocation issue (Peter)
+  * Fix the arch-PEBS dynamic constraints issue (Kan)
 
->
->The series is divided into four small patches:
->Patch [1/4]
->	- Adds a fuction to decrement debug counters, similar to the existing
->	  counter to increment debug counters
->Patch [2/4]
->	- Adds a new xfers_inflight debug counter to track active transfers
->Patch [3/4]
->	- Enhances two tracepoints (scmi_xfer_begin and scmi_xfer_end) to
->	  include the number of in-flight transfers, setting default values
->	  of 0
->Patch [4/4]
->	- Adds a function (scmi_inflight_count) that retrieves the current
->	  in-flight count for use in tracing
->
->Based on v6.16-rc2
->
->Regards,
->Phil
->
->Philip Radford (4):
->  firmware: arm_scmi: Add debug decrement counter
->  firmware: arm_scmi: Add xfer_inflight counter
->  include: trace: Add inflight_xfer counter tracepoint
->  firmware: arm_scmi: Add new inflight tracing functionality
->
-> drivers/firmware/arm_scmi/common.h   |  8 ++++++++
-> drivers/firmware/arm_scmi/driver.c   | 28 ++++++++++++++++++++++++++--
-> drivers/firmware/arm_scmi/raw_mode.c |  6 ++++--
-> include/trace/events/scmi.h          | 24 ++++++++++++++----------
-> 4 files changed, 52 insertions(+), 14 deletions(-)
->
->--
->2.25.1
->
+Tests:
+  Run below tests on Clearwater Forest and Pantherlake, no issue is
+  found.
+
+  1. Basic perf counting case.
+    perf stat -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
+
+  2. Basic PMI based perf sampling case.
+    perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
+
+  3. Basic PEBS based perf sampling case.
+    perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}:p' sleep 1
+
+  4. PEBS sampling case with basic, GPRs, vector-registers and LBR groups
+    perf record -e branches:p -Iax,bx,ip,ssp,xmm0 -b -c 10000 sleep 1
+
+  5. User space PEBS sampling case with basic GPRs and LBR groups
+    perf record -e branches:p --user-regs=ax,bx,ip -b -c 10000 sleep 1
+
+  6 PEBS sampling case with auxiliary (memory info) group
+    perf mem record sleep 1
+
+  7. PEBS sampling case with counter group
+    perf record -e '{branches:p,branches,cycles}:S' -c 10000 sleep 1
+
+  8. Perf stat and record test
+    perf test 96; perf test 125
+
+
+History:
+  v3: https://lore.kernel.org/all/20250415114428.341182-1-dapeng1.mi@linux.intel.com/
+  v2: https://lore.kernel.org/all/20250218152818.158614-1-dapeng1.mi@linux.intel.com/
+  v1: https://lore.kernel.org/all/20250123140721.2496639-1-dapeng1.mi@linux.intel.com/
+
+Ref:
+  [1]: https://lore.kernel.org/all/20250613134943.3186517-1-kan.liang@linux.intel.com/
+
+
+Dapeng Mi (13):
+  perf/x86/intel: Replace x86_pmu.drain_pebs calling with static call
+  perf/x86/intel: Correct large PEBS flag check
+  perf/x86/intel: Initialize architectural PEBS
+  perf/x86/intel/ds: Factor out PEBS record processing code to functions
+  perf/x86/intel/ds: Factor out PEBS group processing code to functions
+  perf/x86/intel: Process arch-PEBS records or record fragments
+  perf/x86/intel: Allocate arch-PEBS buffer and initialize PEBS_BASE MSR
+  perf/x86/intel: Update dyn_constranit base on PEBS event precise level
+  perf/x86/intel: Setup PEBS data configuration and enable legacy groups
+  perf/x86/intel: Add counter group support for arch-PEBS
+  perf/x86: Support to sample SSP register
+  perf/x86/intel: Support to sample SSP register for arch-PEBS
+  perf tools: x86: Support to show SSP register
+
+ arch/x86/events/core.c                        |  37 +-
+ arch/x86/events/intel/core.c                  | 256 +++++++-
+ arch/x86/events/intel/ds.c                    | 595 ++++++++++++++----
+ arch/x86/events/perf_event.h                  |  46 +-
+ arch/x86/include/asm/intel_ds.h               |  10 +-
+ arch/x86/include/asm/msr-index.h              |  20 +
+ arch/x86/include/asm/perf_event.h             | 117 +++-
+ arch/x86/include/uapi/asm/perf_regs.h         |   4 +-
+ arch/x86/kernel/perf_regs.c                   |   7 +
+ tools/arch/x86/include/uapi/asm/perf_regs.h   |   7 +-
+ tools/perf/arch/x86/util/perf_regs.c          |   2 +
+ tools/perf/util/intel-pt.c                    |   2 +-
+ .../perf/util/perf-regs-arch/perf_regs_x86.c  |   2 +
+ 13 files changed, 959 insertions(+), 146 deletions(-)
+
+
+base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
+-- 
+2.43.0
+
 
