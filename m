@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-696150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ACF2AE22D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 21:30:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3419AE22D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 21:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13AEB4C1793
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:30:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12AD76A2AF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD5A2ECE8F;
-	Fri, 20 Jun 2025 19:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1192ED84C;
+	Fri, 20 Jun 2025 19:29:13 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B3D2EBDEE;
-	Fri, 20 Jun 2025 19:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3254C2ECEB8;
+	Fri, 20 Jun 2025 19:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750447750; cv=none; b=NYaoxWAgN6hJzjMPuQR6B2AXZstGaYLOrjDlPAkQp53lFGndO1YS39cuiwz7lbedoaV/WA+/Thd24QdIku7xeO/hluhb8v8Kj9wOyQLp38TYd616sWMVDLqbjELJkhZqBKYzkFBkcUlpkfxWBXuPjUFk6ekcoSDzSTCr195hINA=
+	t=1750447752; cv=none; b=ICKjbdxCf1yl3OSexTAvbCo4vgJKrU8EUFPEUxERTCRZdOVMzi+si0qdmsEaYdlvecnihNb3D7R/mvVSiQESgyvCuoGliZuUtSrafABxMfQK8kHP1SIiMedlLF/ZFxSIm57QanXu+K1ITbpfaIAIzpgN+EmtaeRT69N7w2xHOlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750447750; c=relaxed/simple;
-	bh=/B8UcsaoV7Vi/z/5l2WdivMer4DZbo4+2QI0Zs+clM4=;
+	s=arc-20240116; t=1750447752; c=relaxed/simple;
+	bh=t+QuqQ+qtw3HRlrQJM9FCveIvct5aAupfcpOJz1MILA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IeVsGrczx1zHboQrKvwWnDFUDEU0nGXqqHBQwAHzPUVYsPwIhP/iiwOxJbaZWBxdlG/zOxZ6O9eWMEgTip0ZLoprDrkBKz4IidWCQ6bJjDuFjroPG0qLhMEjQVouxoZ2JHXafHnTj8TJq60yLmZEqoHUeFotsCJaFVFQbplfmfg=
+	 MIME-Version; b=mpnXkMh5e8UsuOgrTnLP/3JExYfvHu81Czz+KkBqa28nZDP/aVrWhHQwS792UWdyxhg5MFv10Zr6br4ZrNJOkKw2RD3nsNkwvTsAR0IR+TjRj2kVSG8fxXY/zvz6broy2c/tfk8nJ/16jwVb6xzuN6rqiCx1HL1zfmgYGSX9lBo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2D0F16F2;
-	Fri, 20 Jun 2025 12:28:48 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 28A8816A3;
+	Fri, 20 Jun 2025 12:28:51 -0700 (PDT)
 Received: from pluto.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DCE7E3F673;
-	Fri, 20 Jun 2025 12:29:05 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6390F3F673;
+	Fri, 20 Jun 2025 12:29:08 -0700 (PDT)
 From: Cristian Marussi <cristian.marussi@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
@@ -48,9 +48,9 @@ Cc: sudeep.holla@arm.com,
 	d-gole@ti.com,
 	souvik.chakravarty@arm.com,
 	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [RFC PATCH 6/7] include: trace: Add Telemetry trace events
-Date: Fri, 20 Jun 2025 20:28:12 +0100
-Message-ID: <20250620192813.2463367-7-cristian.marussi@arm.com>
+Subject: [RFC PATCH 7/7] firmware: arm_scmi: Use new Telemetry traces
+Date: Fri, 20 Jun 2025 20:28:13 +0100
+Message-ID: <20250620192813.2463367-8-cristian.marussi@arm.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20250620192813.2463367-1-cristian.marussi@arm.com>
 References: <20250620192813.2463367-1-cristian.marussi@arm.com>
@@ -62,80 +62,128 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add custom traces to report Telemetry failed accesses and to report when DE
-values are updated internally after a notification is processed.
+Track failed SHMTI accesses and notification updates.
 
 Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 ---
- include/trace/events/scmi.h | 48 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 47 insertions(+), 1 deletion(-)
+ drivers/firmware/arm_scmi/telemetry.c | 35 +++++++++++++++++++++++----
+ 1 file changed, 30 insertions(+), 5 deletions(-)
 
-diff --git a/include/trace/events/scmi.h b/include/trace/events/scmi.h
-index 127300481123..471f028f36db 100644
---- a/include/trace/events/scmi.h
-+++ b/include/trace/events/scmi.h
-@@ -7,7 +7,8 @@
+diff --git a/drivers/firmware/arm_scmi/telemetry.c b/drivers/firmware/arm_scmi/telemetry.c
+index 3cbad06251a9..7843ff802bd0 100644
+--- a/drivers/firmware/arm_scmi/telemetry.c
++++ b/drivers/firmware/arm_scmi/telemetry.c
+@@ -16,6 +16,8 @@
+ #include "protocols.h"
+ #include "notify.h"
  
- #include <linux/tracepoint.h>
++#include <trace/events/scmi.h>
++
+ /* Updated only after ALL the mandatory features for that version are merged */
+ #define SCMI_PROTOCOL_SUPPORTED_VERSION		0x10000
  
--#define TRACE_SCMI_MAX_TAG_LEN	6
-+#define TRACE_SCMI_MAX_TAG_LEN		6
-+#define TRACE_SCMI_TLM_MAX_TAG_LEN	16
+@@ -813,8 +815,10 @@ static int scmi_telemetry_tdcf_parse_one(struct telemetry_info *ti,
+ 	int used_qwords;
  
- TRACE_EVENT(scmi_fc_call,
- 	TP_PROTO(u8 protocol_id, u8 msg_id, u32 res_id, u32 val1, u32 val2),
-@@ -176,6 +177,51 @@ TRACE_EVENT(scmi_msg_dump,
- 		  __entry->tag, __entry->msg_id, __entry->seq, __entry->status,
- 		__print_hex_str(__get_dynamic_array(cmd), __entry->len))
- );
-+
-+TRACE_EVENT(scmi_tlm_access,
-+	TP_PROTO(u64 de_id, unsigned char *tag, u64 startm, u64 endm),
-+	TP_ARGS(de_id, tag, startm, endm),
-+
-+	TP_STRUCT__entry(
-+		__field(u64, de_id)
-+		__array(char, tag, TRACE_SCMI_TLM_MAX_TAG_LEN)
-+		__field(u64, startm)
-+		__field(u64, endm)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->de_id = de_id;
-+		strscpy(__entry->tag, tag, TRACE_SCMI_TLM_MAX_TAG_LEN);
-+		__entry->startm = startm;
-+		__entry->endm = endm;
-+	),
-+
-+	TP_printk("de_id=0x%llX [%s] - startm=%016llX endm=%016llX",
-+		  __entry->de_id, __entry->tag, __entry->startm, __entry->endm)
-+);
-+
-+TRACE_EVENT(scmi_tlm_collect,
-+	TP_PROTO(u64 ts, u64 de_id, u64 value, unsigned char *tag),
-+	TP_ARGS(ts, de_id, value, tag),
-+
-+	TP_STRUCT__entry(
-+		__field(u64, ts)
-+		__field(u64, de_id)
-+		__field(u64, value)
-+		__array(char, tag, TRACE_SCMI_TLM_MAX_TAG_LEN)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->ts = ts;
-+		__entry->de_id = de_id;
-+		__entry->value = value;
-+		strscpy(__entry->tag, tag, TRACE_SCMI_TLM_MAX_TAG_LEN);
-+	),
-+
-+	TP_printk("ts=%llu  de_id=0x%04llX  value=%016llu [%s]",
-+		  __entry->ts, __entry->de_id, __entry->value, __entry->tag)
-+);
-+
- #endif /* _TRACE_SCMI_H */
+ 	de = xa_load(&ti->xa_des, le32_to_cpu(payld->id));
+-	if (!de || DATA_INVALID(payld))
++	if (!de || DATA_INVALID(payld)) {
++		trace_scmi_tlm_access(de->id, "DE_INVALID", 0, 0);
+ 		return -EINVAL;
++	}
  
- /* This part must be outside protection */
+ 	used_qwords = 4;
+ 
+@@ -840,6 +844,8 @@ static int scmi_telemetry_tdcf_parse_one(struct telemetry_info *ti,
+ 	else
+ 		tde->last_ts = 0;
+ 
++	trace_scmi_tlm_collect(0, de->id, tde->last_val, "SHMTI_UPDATE");
++
+ 	return used_qwords;
+ }
+ 
+@@ -864,8 +870,10 @@ static int scmi_telemetry_shmti_scan(struct telemetry_info *ti,
+ 		fsleep((SCMI_TLM_TDCF_MAX_RETRIES - retries) * 1000);
+ 
+ 		startm = TDCF_START_SEQ_GET(tdcf);
+-		if (IS_BAD_START_SEQ(startm))
++		if (IS_BAD_START_SEQ(startm)) {
++			trace_scmi_tlm_access(0, "MSEQ_BADSTART", startm, 0);
+ 			continue;
++		}
+ 
+ 		qwords = tdcf->prlg.num_qwords;
+ 		next = tdcf->payld;
+@@ -874,14 +882,18 @@ static int scmi_telemetry_shmti_scan(struct telemetry_info *ti,
+ 
+ 			used_qwords = scmi_telemetry_tdcf_parse_one(ti, next,
+ 								    update ? shmti : NULL);
+-			if (qwords < used_qwords)
++			if (qwords < used_qwords) {
++				trace_scmi_tlm_access(0, "BAD_QWORDS", 0, 0);
+ 				return -EINVAL;
++			}
+ 
+ 			next += used_qwords * 4;
+ 			qwords -= used_qwords;
+ 		}
+ 
+ 		endm = TDCF_END_SEQ_GET(eplg);
++		if (startm != endm)
++			trace_scmi_tlm_access(0, "MSEQ_MISMATCH", startm, endm);
+ 	} while (startm != endm && --retries);
+ 
+ 	if (startm != endm)
+@@ -1252,12 +1264,17 @@ static int scmi_telemetry_de_tdcf_parse(struct telemetry_de *tde,
+ 		fsleep((SCMI_TLM_TDCF_MAX_RETRIES - retries) * 1000);
+ 
+ 		startm = TDCF_START_SEQ_GET(tdcf);
+-		if (IS_BAD_START_SEQ(startm))
++		if (IS_BAD_START_SEQ(startm)) {
++			trace_scmi_tlm_access(tde->de.id, "MSEQ_BADSTART",
++					      startm, 0);
+ 			continue;
++		}
+ 
+ 		payld = tde->base + tde->offset;
+-		if (le32_to_cpu(payld->id) != tde->de.id || DATA_INVALID(payld))
++		if (le32_to_cpu(payld->id) != tde->de.id || DATA_INVALID(payld)) {
++			trace_scmi_tlm_access(tde->de.id, "DE_INVALID", 0, 0);
+ 			return -EINVAL;
++		}
+ 
+ 		//TODO BLK_TS
+ 		if (tstamp && USE_LINE_TS(payld) && TS_VALID(payld))
+@@ -1266,6 +1283,9 @@ static int scmi_telemetry_de_tdcf_parse(struct telemetry_de *tde,
+ 		*val = LINE_DATA_GET(&payld->tsl);
+ 
+ 		endm = TDCF_END_SEQ_GET(tde->eplg);
++		if (startm != endm)
++			trace_scmi_tlm_access(tde->de.id, "MSEQ_MISMATCH",
++					      startm, endm);
+ 	} while (startm != endm && --retries);
+ 
+ 	if (startm != endm)
+@@ -1412,6 +1432,9 @@ scmi_telemetry_msg_payld_process(struct telemetry_info *ti,
+ 			tde->last_ts = LINE_TSTAMP_GET(&payld->tsl);
+ 		else
+ 			tde->last_ts = 0;
++
++		trace_scmi_tlm_collect(timestamp, tde->de.id, tde->last_val,
++				       "MESSAGE");
+ 	}
+ }
+ 
+@@ -1622,6 +1645,8 @@ static void scmi_telemetry_scan_update(struct telemetry_info *ti, u64 ts)
+ 			tde->last_ts = tstamp;
+ 		else
+ 			tde->last_ts = 0;
++
++		trace_scmi_tlm_collect(ts, de->id, tde->last_val, "FC_UPDATE");
+ 	}
+ }
+ 
 -- 
 2.47.0
 
