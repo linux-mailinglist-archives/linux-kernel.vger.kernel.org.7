@@ -1,174 +1,241 @@
-Return-Path: <linux-kernel+bounces-695061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA7B4AE14B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:20:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A241AE14A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 702AB5A12EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:20:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1783A188ED3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73B9227BB6;
-	Fri, 20 Jun 2025 07:20:20 +0000 (UTC)
-Received: from mail.lichtvoll.de (lichtvoll.de [37.120.160.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B7822655E;
+	Fri, 20 Jun 2025 07:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="vTen+s1C"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D5430E85C;
-	Fri, 20 Jun 2025 07:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.160.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACED4A923
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 07:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750404020; cv=none; b=KrH4qZOB+EftGcQlCqJa+h0M2UjhHvRgk632GzIjqSJv/aKJ84rm7JOpZQprJ5JGoqp48u0Jir1SBl4ms724l5zG5FzXhO3jLhGAQ6D1Db2jQXqFoYXhzWXj2ezudxgdQOCa6pZTwfWoaIdO/AtsL7ZxTjovrzbenLbXIg1XPnU=
+	t=1750403630; cv=none; b=mfQV69lordg3LgdS6lisSGaFKjXM/aPiPOTc5TAVNYK7pT1xiEC1JFjUe+XvTdq7wK5rs9kg55rtNp1nFUl59wTZv/TYv9Z1EDWp8UviibQ11AklqSqh5L9hLKiLyZBv1BG7aFiE5FkApe83Oz4Jz7RkmWxkMXz3BVoqiDH0Jhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750404020; c=relaxed/simple;
-	bh=640FEkkWd+camIx2PfPKgGyzSdcB8xu/mk++Zu4dM30=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nPnyetH+xJE8ijgQ8GtLDeyzWk5Av1MgTqAqLmwCbxe8vs+5+bj4ArFsryZZIB/0hc+2fs7/yLTg1ZE+0ustnSnakcrY0YQRD0wVXDQ1YSATOOTOgwJJiml9shXbGWcjh1O8d17oD9cdEt7qcXGItMkzumdA+TNyUpu3ezZaaqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=37.120.160.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by mail.lichtvoll.de (Postfix) with ESMTPSA id 406E510F721;
-	Fri, 20 Jun 2025 07:12:24 +0000 (UTC)
-Authentication-Results: mail.lichtvoll.de;
-	auth=pass smtp.auth=martin@lichtvoll.de smtp.mailfrom=martin@lichtvoll.de
-From: Martin Steigerwald <martin@lichtvoll.de>
-To: Jani Partanen <jiipee@sotapeli.fi>,
- Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc3
-Date: Fri, 20 Jun 2025 09:12:21 +0200
-Message-ID: <3366564.44csPzL39Z@lichtvoll.de>
-In-Reply-To: <ep4g2kphzkxp3gtx6rz5ncbbnmxzkp6jsg6mvfarr5unp5f47h@dmo32t3edh2c>
-References:
- <4xkggoquxqprvphz2hwnir7nnuygeybf2xzpr5a4qtj4cko6fk@dlrov4usdlzm>
- <06f75836-8276-428e-b128-8adffd0664ee@sotapeli.fi>
- <ep4g2kphzkxp3gtx6rz5ncbbnmxzkp6jsg6mvfarr5unp5f47h@dmo32t3edh2c>
+	s=arc-20240116; t=1750403630; c=relaxed/simple;
+	bh=ukQlFVbcX3h33vRusMn0u9y9gVxLT2zG4hpbLqghLhQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NFuRxjztK8Y1jZhQ4md17dO7hYB1IvFXXYUagfpzzCVg8fAh8ZNqmnsx+cDo7GcTg+5Z4HLXg36LaRvhtppAlcJ7nM0joRN57h0vKb3sfgZo+/BAFio8T9KNCErtgnVC3P6cvu5FkHsLW8wo4H9lqIKgenYIP9lfkGZh6XLB9ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=vTen+s1C; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 55K7DTPv83420616, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1750403609; bh=Sc61VNUPMIaeNDpQ7qNuVnKqnJw0KCMEt5Qcx+rNo28=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=vTen+s1Cki9hFPfg8ppQXCYf4XtIbCxav475IHZ4x1nswclEC+COWZojyHlADF4GF
+	 MADG8GITBGPmkJPpezHhWYQn/UnCqPEbqnrG3NoBwX4bp9gddyT5Yp0gyhs3QtfbZj
+	 irC0V0NZ5xbHzXVaJ9Y8s+7aqUqvks6SOGzPEHhnGj/0JatiWo/gVOcuVECqHovswR
+	 IpKaAMjq5Rm3Lnz9vxtcW6uXxU1QQXf0lgFpXync3psV0eEB6B4WwPd4ObAmMcBkLc
+	 VJh/eYhxnMnISHOQapY//zAhUtZ6wiUTAnlSESxaEXQkxbF2ZkIc0GwG6TQiTtNfVq
+	 If/VtjBzgzHQQ==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 55K7DTPv83420616
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 20 Jun 2025 15:13:29 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 20 Jun 2025 15:13:38 +0800
+Received: from RTEXH36506.realtek.com.tw (172.21.6.27) by
+ RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 20 Jun 2025 15:13:37 +0800
+Received: from localhost (172.22.144.1) by RTEXH36506.realtek.com.tw
+ (172.21.6.27) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Fri, 20 Jun 2025 15:13:37 +0800
+From: Ricky Wu <ricky_wu@realtek.com>
+To: <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <ricky_wu@realtek.com>,
+        <bhelgaas@google.com>, <viro@zeniv.linux.org.uk>
+Subject: [PATCH] misc: rtsx: Add support for RTS5264 Version B and optimize init flow
+Date: Fri, 20 Jun 2025 15:13:25 +0800
+Message-ID: <20250620071325.1887017-1-ricky_wu@realtek.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-KSE-ServerInfo: RTEXMBS03.realtek.com.tw, 9
+X-KSE-AntiSpam-Interceptor-Info: fallback
+X-KSE-Antivirus-Interceptor-Info: fallback
+X-KSE-Antivirus-Interceptor-Info: fallback
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-Hi Kent, hi,
+This patch adds support for the Realtek RTS5264 Version B
+card reader controller.
+To support this chip revision, the driver introduces specific
+initialization logic to handle the hardware requirements of
+Version B. The probe flow is updated to detect this version
+and apply the necessary register configurations.
+Additionally, the initialization sequence for Version B has
+been optimized to improve robustness and ensure proper device
+setup during power-on.
+These changes ensure correct operation and compatibility with
+systems using RTS5264 Version B.
 
-Kent Overstreet - 20.06.25, 03:51:45 CEST:
-> On Fri, Jun 20, 2025 at 04:25:58AM +0300, Jani Partanen wrote:
-> > On 20/06/2025 4.09, Kent Overstreet wrote:
-> > > I'm not seeing that _you_ get that.
-> >=20
-> > How hard it is?
-> >=20
-> > New feature window for 6.16 was 2 weeks ago.
-> >=20
-> > rc<insert number here> is purely for fixing bugs, not adding new
-> > features and potential new bugs.
->=20
-> That's an easy rule for the rest of the kernel, where all your mistakes
-> are erased at a reboot. Filesystems don't have that luxury.
->=20
-> In the past, I've had to rush entire new on disk format features in
-> response to issues I saw starting to arise - I think more than once, but
-> the btree bitmap in the member info section was the big one that sticks
-> in my mind; that one was very hectic, but 100% proved its worth.
+Signed-off-by: Ricky Wu <ricky_wu@realtek.com>
+---
+ drivers/misc/cardreader/rts5264.c  | 63 ++++++++++++++++++++++++++++--
+ drivers/misc/cardreader/rts5264.h  |  6 +++
+ drivers/misc/cardreader/rtsx_pcr.c |  2 +-
+ 3 files changed, 67 insertions(+), 4 deletions(-)
 
-Kent, from what I gathered, you'd like to change some window rules =E2=80=
-=93 at=20
-least for filesystems or new-in-kernel filesystems.
-
-And from what I observed: You try to do so by just not adhering to at=20
-least one of those rules at least once in a while. Maybe for a good=20
-reason, but still, you just do not adhere to the rule of only fixes. Or at=
-=20
-the very least, you define a fix to be something that is (way) more than a=
-=20
-fix for other kernel developers.
-
-It may make sense to change some merge window rules or it may not, I don't=
-=20
-know. However=E2=80=A6 from what I observe:
-
-Just unilaterally changing a rule or redefining a word in that rule may=20
-not be a sustainable and working (!) approach to go about it. Just from=20
-observing the communication pattern here I conclude that.
-
-I'd rather recommend to bring this up the next opportunity you can discuss=
-=20
-it with fellow kernel developers, ideally while meeting face to face.=20
-Cause let's face it: The Linux kernel is a team effort.
-
-If you stick to your approach about merge window rules and many other=20
-kernel developers including Linus stick to their rules this will go in=20
-circles.
-
-Indefinitely so.
-
-Not sure whether that is a good use of your time. But your call really.
-
-So how about adhering to the current rules for now and bringing up the=20
-topic in a meeting you will have at one point in the future?
-
-Just my two cents from observing the repeated (!) communication pattern=20
-here. Cause it is not at all the first time the discussion arrives exactly=
-=20
-at this point.
-
-> For a lot of users, compiling a kernel from some random git repository
-> is a lot to ask. I spend a lot of time doing what amounts to support;
-> that's just how it is these days. But rc kernels are packaged by most
-> kernels, and we absolutely do not want to wait an additional 3 months
-> for it to show up in a release kernel -
-
-Those users should probably not use BCacheFS right now already to begin=20
-with but wait for it to be marked as stable?
-
-It reminds my about Debian Unstable users wanting the newest and greatest=20
-and then complaining that at times some things are not stable. Which is=20
-the very definition of what can happen in Debian Unstable.
-
-I meanwhile use BCacheFS. On Devuan. But for now that means I have to=20
-compile BCacheFS tools myself, and better also the kernel to have the=20
-latest and probably greatest during the hard freeze of Debian.
-
-And I use it for data that is backed up or that I can afford to loose.
-
-
-And about what you wrote in your previous mail:
-
-Kent Overstreet - 20.06.25, 03:09:07 CEST:
-> There are a _lot_ of people who've been burned by btrfs. I've even been
-> seeing more and more people in recent discussions talking about
-> unrecoverable filesystems with XFS (!).
-
-And I have seen a lot of threads on XFS over the years where XFS=20
-developers went great lengths to help users recover their data. I have=20
-seen those threads also on the BTRFS mailing list. Those users had no=20
-support contract, they did not pay anything for that free service either.
-
-So I am not sure it is wise or even just accurate to implicitly imply that=
-=20
-other than BCacheFS filesystem developers do not care about user data.=20
-=46rom what I have seen I conclude: They do!
-
-But maybe that is not even the point: Other filesystems are maintained by=20
-other people and they do what they think is best. If you like to see a=20
-change in some merge window rules for what you try to achieve with=20
-BCacheFS you can independently from what other filesystem developers do=20
-ask for a slot to talk in one of the next face to face kernel developer=20
-meetings.
-
-Best,
-=2D-=20
-Martin
-
+diff --git a/drivers/misc/cardreader/rts5264.c b/drivers/misc/cardreader/rts5264.c
+index 06d7a8a95fd6..d050c9fff7ac 100644
+--- a/drivers/misc/cardreader/rts5264.c
++++ b/drivers/misc/cardreader/rts5264.c
+@@ -413,8 +413,8 @@ static void rts5264_init_from_hw(struct rtsx_pcr *pcr)
+ {
+ 	struct pci_dev *pdev = pcr->pci;
+ 	u32 lval1, lval2, i;
+-	u16 setting_reg1, setting_reg2;
+-	u8 valid, efuse_valid, tmp;
++	u16 setting_reg1, setting_reg2, phy_val;
++	u8 valid, efuse_valid, tmp, efuse_len;
+ 
+ 	rtsx_pci_write_register(pcr, RTS5264_REG_PME_FORCE_CTL,
+ 		REG_EFUSE_POR | REG_EFUSE_POWER_MASK,
+@@ -433,6 +433,8 @@ static void rts5264_init_from_hw(struct rtsx_pcr *pcr)
+ 			break;
+ 	}
+ 	rtsx_pci_read_register(pcr, RTS5264_EFUSE_READ_DATA, &tmp);
++	efuse_len = ((tmp & 0x70) >> 4);
++	pcr_dbg(pcr, "Load efuse len: 0x%x\n", efuse_len);
+ 	efuse_valid = ((tmp & 0x0C) >> 2);
+ 	pcr_dbg(pcr, "Load efuse valid: 0x%x\n", efuse_valid);
+ 
+@@ -445,6 +447,58 @@ static void rts5264_init_from_hw(struct rtsx_pcr *pcr)
+ 		REG_EFUSE_POR, 0);
+ 	pcr_dbg(pcr, "Disable efuse por!\n");
+ 
++	if (is_version(pcr, PID_5264, RTS5264_IC_VER_B)) {
++		pci_write_config_dword(pdev, 0x718, 0x0007C000);
++		rtsx_pci_write_register(pcr, AUTOLOAD_CFG_BASE, 0xFF, 0x88);
++		rtsx_pci_read_phy_register(pcr, _PHY_REV0, &phy_val);
++		phy_val &= 0xFFFD;
++
++		if (efuse_len == 0) {
++			rtsx_pci_write_register(pcr, RTS5264_FW_CFG_INFO2, 0x0F, 0x0F);
++			rtsx_pci_write_register(pcr, 0xFF14, 0xFF, 0x79);
++			rtsx_pci_write_register(pcr, 0xFF15, 0xFF, 0xFF);
++			rtsx_pci_write_register(pcr, 0xFF16, 0xFF, 0x3D);
++			rtsx_pci_write_register(pcr, 0xFF17, 0xFF, 0xFE);
++
++			rtsx_pci_write_register(pcr, 0xFF18, 0xFF, 0x5B);
++			rtsx_pci_write_register(pcr, 0xFF19, 0xFF, 0xFF);
++			rtsx_pci_write_register(pcr, 0xFF1A, 0xFF, 0x3E);
++			rtsx_pci_write_register(pcr, 0xFF1B, 0xFF, 0xFE);
++
++			rtsx_pci_write_register(pcr, 0xFF1C, 0xFF, 0x00);
++			rtsx_pci_write_register(pcr, 0xFF1D, 0xFF, 0xFF);
++			rtsx_pci_write_register(pcr, 0xFF1E, 0xFF, 0x3F);
++			rtsx_pci_write_register(pcr, 0xFF1F, 0xFF, 0xFE);
++
++			rtsx_pci_write_register(pcr, 0xFF20, 0xFF, 0x81);
++			rtsx_pci_write_register(pcr, 0xFF21, 0xFF, 0xFF);
++			rtsx_pci_write_register(pcr, 0xFF22, 0xFF, 0x3C);
++			rtsx_pci_write_register(pcr, 0xFF23, 0xFF, 0xFE);
++		}
++
++		rtsx_pci_write_register(pcr, 0xFF24, 0xFF, 0x79);
++		rtsx_pci_write_register(pcr, 0xFF25, 0xFF, 0x5B);
++		rtsx_pci_write_register(pcr, 0xFF26, 0xFF, 0x00);
++		rtsx_pci_write_register(pcr, 0xFF27, 0xFF, 0x40);
++
++		rtsx_pci_write_register(pcr, 0xFF28, 0xFF, (u8)phy_val);
++		rtsx_pci_write_register(pcr, 0xFF29, 0xFF, (u8)(phy_val >> 8));
++		rtsx_pci_write_register(pcr, 0xFF2A, 0xFF, 0x19);
++		rtsx_pci_write_register(pcr, 0xFF2B, 0xFF, 0x40);
++
++		rtsx_pci_write_register(pcr, 0xFF2C, 0xFF, 0x20);
++		rtsx_pci_write_register(pcr, 0xFF2D, 0xFF, 0xDA);
++		rtsx_pci_write_register(pcr, 0xFF2E, 0xFF, 0x0A);
++		rtsx_pci_write_register(pcr, 0xFF2F, 0xFF, 0x40);
++
++		rtsx_pci_write_register(pcr, 0xFF30, 0xFF, 0x20);
++		rtsx_pci_write_register(pcr, 0xFF31, 0xFF, 0xD2);
++		rtsx_pci_write_register(pcr, 0xFF32, 0xFF, 0x0A);
++		rtsx_pci_write_register(pcr, 0xFF33, 0xFF, 0x40);
++	} else {
++		rtsx_pci_write_register(pcr, AUTOLOAD_CFG_BASE, 0x80, 0x80);
++	}
++
+ 	if (efuse_valid == 2 || efuse_valid == 3) {
+ 		if (valid == 3) {
+ 			/* Bypass efuse */
+@@ -618,6 +672,9 @@ static int rts5264_optimize_phy(struct rtsx_pcr *pcr)
+ 			rtsx_pci_update_phy(pcr, _PHY_REV0, 0x1FF, 0x3800);
+ 	}
+ 
++	if (is_version(pcr, PID_5264, RTS5264_IC_VER_B))
++		rtsx_pci_write_phy_register(pcr, 0x00, 0x5B79);
++
+ 	return 0;
+ }
+ 
+@@ -820,7 +877,7 @@ int rts5264_pci_switch_clock(struct rtsx_pcr *pcr, unsigned int card_clock,
+ 			SSC_DEPTH_MASK, ssc_depth);
+ 	rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, SSC_DIV_N_0, 0xFF, n);
+ 
+-	if (is_version(pcr, 0x5264, IC_VER_A)) {
++	if (is_version(pcr, PID_5264, RTS5264_IC_VER_A)) {
+ 		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, SSC_CTL1, SSC_RSTB, 0);
+ 		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, RTS5264_CARD_CLK_SRC2,
+ 			RTS5264_REG_BIG_KVCO_A, 0);
+diff --git a/drivers/misc/cardreader/rts5264.h b/drivers/misc/cardreader/rts5264.h
+index e3cbbf2fe1a4..f3e81daa708d 100644
+--- a/drivers/misc/cardreader/rts5264.h
++++ b/drivers/misc/cardreader/rts5264.h
+@@ -61,6 +61,8 @@
+ /* DMACTL 0xFE2C */
+ #define RTS5264_DMA_PACK_SIZE_MASK	0x70
+ 
++#define RTS5264_FW_CFG_INFO2	0xFF52
++
+ #define RTS5264_FW_CFG1			0xFF55
+ #define RTS5264_SYS_CLK_SEL_MCU_CLK	(0x01<<7)
+ #define RTS5264_CRC_CLK_SEL_MCU_CLK	(0x01<<6)
+@@ -272,6 +274,10 @@
+ #define SD_LUN			1
+ #define SD_EXPRESS_LUN		2
+ 
++#define RTS5264_IC_VER_A		0
++#define RTS5264_IC_VER_B		2
++#define RTS5264_IC_VER_C		3
++
+ int rts5264_pci_switch_clock(struct rtsx_pcr *pcr, unsigned int card_clock,
+ 		u8 ssc_depth, bool initial_mode, bool double_clk, bool vpclk);
+ 
+diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
+index a7b066c48740..f9952d76d6ed 100644
+--- a/drivers/misc/cardreader/rtsx_pcr.c
++++ b/drivers/misc/cardreader/rtsx_pcr.c
+@@ -1236,7 +1236,7 @@ static int rtsx_pci_init_hw(struct rtsx_pcr *pcr)
+ 	else if (PCI_PID(pcr) == PID_5228)
+ 		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, SSC_CTL2, 0xFF,
+ 			RTS5228_SSC_DEPTH_2M);
+-	else if (is_version(pcr, 0x5264, IC_VER_A))
++	else if (is_version(pcr, PID_5264, RTS5264_IC_VER_A))
+ 		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, SSC_CTL1, SSC_RSTB, 0);
+ 	else if (PCI_PID(pcr) == PID_5264)
+ 		rtsx_pci_add_cmd(pcr, WRITE_REG_CMD, SSC_CTL2, 0xFF,
+-- 
+2.25.1
 
 
