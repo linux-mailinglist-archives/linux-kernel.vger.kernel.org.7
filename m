@@ -1,167 +1,134 @@
-Return-Path: <linux-kernel+bounces-695920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E99AE1F7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:54:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C37AE1F8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73EF4188ADD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:54:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 278031731C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2551F2D5434;
-	Fri, 20 Jun 2025 15:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9192DF3D1;
+	Fri, 20 Jun 2025 15:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NPck3FAA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA4C2C374E;
-	Fri, 20 Jun 2025 15:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VBrUoXzc"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AA62DCBFC;
+	Fri, 20 Jun 2025 15:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750434862; cv=none; b=aNYAuIpmHMe/oHOy7FO1D2sZVmatSlt3QVL+s5O5dp4xMPoSSb8RXuezXunnwC2kOQUaOJhedRWM06Ez7Ki9YZ1tmr5/RKwWz6/3+2GVqbG7HKSzDVoyAUXC0AEYwEKUGn3XSGf8/MlVzcuDhCLBFxZIQNfUYQAhWk+kRpGxL9w=
+	t=1750434989; cv=none; b=fsDRwx5wEParCJku0HAAKsBwFZJDEKCFVYUwUuOCc5zN7dS0OTPicCymWKdUyRaEOaDUxm3QW2mslgCmtmbCLa5DMCYpOmPpDXI5hRAvehvar81IPuN/qSMXUpFRp64vhA5BpidnK3srbpB4Ff79nIhJoIgN4vMMAArt6tZk9QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750434862; c=relaxed/simple;
-	bh=L+5n/q1joZENJYF/r0KuVXPChvTNGh+qOVoAXlFy97U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hXHn0Lzvez9AbATfqWOqW66Fbv826dt7/w8R17hTJX2UhXWG5G5RL6zzshINYaPALl0Ey3exl7sJBkMfo/rLqpAAFEvVsMZhyGVHSgjXLKlj5tcgWI3krWK8DAeNNSeCb29SKlTHZaN05UYT2uLhUnuKx6H9m3zkMfZKzgWpyHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NPck3FAA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 155F8C4CEE3;
-	Fri, 20 Jun 2025 15:54:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750434862;
-	bh=L+5n/q1joZENJYF/r0KuVXPChvTNGh+qOVoAXlFy97U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NPck3FAAqqQbowswZ4Bs9WQSeDFdlLzALda6dw2sOGvdu2GPaaXPwVC+Ue0I3mT2D
-	 xCodo5MJbVikwhdWdkZ9KQX17P32/qNs+DkOOWOcm7J8AHB24n3Z6oSANV67PtdbD1
-	 cKyM41Ve2cxXpIHJOWj0sLrNZZq3wqJRJnn8X99zANQiM+N0E8ickQhCSUhTTdwUe1
-	 fT/NQ237d0qLc/QQqXQKOJNTKwdEMqnQ8ymBcatzxVPZFH8eTFWD+ll03OPolwsIpy
-	 nselsg0dC2PWXafRdiiu+p+BgUjWN3daNGM9iaZx3bgWbSwVgyKckmzPHfn9jl9JcH
-	 d7R7tM/JcfOyA==
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
+	s=arc-20240116; t=1750434989; c=relaxed/simple;
+	bh=fMYwjyhYFYuRlUv8Qls31E3jPvYALaOapzxxnPqAbe0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m80wow1HtIzDEspLWPOyjvy1dVug1MZ+L2tCdImIKbviFBk/mUJmA/D+RotRNvPl/STK3qfvd4YQGoAYYtA3oFmYUJm/J46KG0lgjboig1tyN7iYE9SoVHngyhobKfj8YUEJDWXTV0cloqdxJHr3aBREBRaZn0gmXHm1cctl6qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VBrUoXzc; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=oQ
+	ZPCQlL01STFivOq4uM2KDIfp6YbbOsKwLoJEg45CM=; b=VBrUoXzc2gSTvyzwq7
+	EBr6Og07qOm0qv+6T/jbcGNm/XzOXwvQ9UnJ0ZzTWttid231GQ8m5WFiry61vyyd
+	BcoXHnJnN2lFjDon8RCz4/HPHeVaTtdR5PQlEGYSZU4Z6B97+aS6QFiQelc+E02t
+	vTX7rYeRG9LUWLC8sGSJX9alE=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDHyCldhFVo3bDnAg--.55764S2;
+	Fri, 20 Jun 2025 23:55:10 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	bhelgaas@google.com,
+	heiko@sntech.de,
+	mani@kernel.org,
+	yue.wang@Amlogic.com
+Cc: pali@kernel.org,
+	neil.armstrong@linaro.org,
+	robh@kernel.org,
+	jingoohan1@gmail.com,
+	khilman@baylibre.com,
+	jbrunet@baylibre.com,
+	martin.blumenstingl@googlemail.com,
+	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Chun-Tse Shao <ctshao@google.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [GIT PULL] perf tools fixes for v6.16
-Date: Fri, 20 Jun 2025 12:54:15 -0300
-Message-ID: <20250620155415.88215-1-acme@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH v5 0/2] Configure root port MPS during host probing
+Date: Fri, 20 Jun 2025 23:55:05 +0800
+Message-Id: <20250620155507.1022099-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHyCldhFVo3bDnAg--.55764S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CrW8AFWrWF4fWrWfuryDJrb_yoW8uw4DpF
+	WfGan3trs7GF13GF9rWa1kCFy5Xa4xGFWUGr9rJwnxZanxAFyUXry8Kw4rA3srXrWfZ3W2
+	9F1jqFy8u3WDZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pina9fUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQwdyo2hVgfhDOQAAsr
 
-Hi Linus,
+Current PCIe initialization exhibits a key optimization gap: Root Ports
+may operate with non-optimal Maximum Payload Size (MPS) settings. While
+downstream device configuration is handled during bus enumeration, Root
+Port MPS values inherited from firmware or hardware defaults often fail
+to utilize the full capabilities supported by controller hardware. This
+results in suboptimal data transfer efficiency throughout the PCIe
+hierarchy.
 
-	Please consider pulling,
+This patch series addresses this by:
 
-Best regards,
+1.  Core PCI enhancement (Patch 1):
+- Proactively configures Root Port MPS during host controller probing
+- Sets initial MPS to hardware maximum (128 << dev->pcie_mpss)
+- Conditional on PCIe bus tuning being enabled (PCIE_BUS_TUNE_OFF unset)
+- Maintains backward compatibility via PCIE_BUS_TUNE_OFF check
+- Preserves standard MPS negotiation during downstream enumeration
 
-- Arnaldo
+2.  Driver cleanup (Patch 2):
+- Removes redundant MPS configuration from Meson PCIe controller driver
+- Functionality is now centralized in PCI core
+- Simplifies driver maintenance long-term
 
-The following changes since commit 44a5ab7a7958fbf190ae384b8ef252f23b840c1b:
+---
+Changes for v5:
+- Use pcie_set_mps directly instead of pcie_write_mps.
+- The patch 1 commit message were modified.
 
-  Merge tag 'powerpc-6.16-3' of git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux (2025-06-16 08:49:58 -0700)
+Changes for v4:
+- The patch [v4 1/2] add a comment to explain why it was done this way.
+- The patch [v4 2/2] have not been modified.
+- Drop patch [v3 3/3]. The Maintainer of the pci-aardvark.c file suggests
+  that this patch cannot be submitted. In addition, Mani also suggests
+  dropping this patch until this series of issues is resolved.
 
-are available in the Git repository at:
+Changes for v3:
+- The new split is patch 2/3 and 3/3.
+- Modify the patch 1/3 according to Niklas' suggestion.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.16-1-2025-06-20
+Changes for v2:
+- According to the Maintainer's suggestion, limit the setting of MPS
+  changes to platforms with controller drivers.
+- Delete the MPS code set by the SOC manufacturer.
+---
 
-for you to fetch changes up to d222b6e6fb31e320eca506e665694d8ddf459157:
+Hans Zhang (2):
+  PCI: Configure root port MPS during host probing
+  PCI: dwc: Remove redundant MPS configuration
 
-  tools headers x86 cpufeatures: Sync with the kernel sources (2025-06-17 18:29:42 -0300)
+ drivers/pci/controller/dwc/pci-meson.c | 17 -----------------
+ drivers/pci/probe.c                    | 10 ++++++++++
+ 2 files changed, 10 insertions(+), 17 deletions(-)
 
-----------------------------------------------------------------
-perf tools fixes for v6.16, 1st batch:
 
-- Fix some file descriptor leaks that stand out with recent changes to
-  'perf list'.
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+-- 
+2.25.1
 
-- Fix prctl include to fix building 'perf bench futex' hash with musl libc.
-
-- Restrict 'perf test' uniquifying entry to machines with 'uncore_imc' PMUs.
-
-- Document new output fields (op, cache, mem, dtlb, snoop) used with
-  'perf mem'.
-
-- Synchronize kernel header copies.
-
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-----------------------------------------------------------------
-Arnaldo Carvalho de Melo (16):
-      tools headers: Update the fs headers with the kernel sources
-      tools headers UAPI: Sync linux/prctl.h with the kernel sources to pick FUTEX knob
-      tools kvm headers arm64: Update KVM header from the kernel sources
-      tools headers UAPI: Sync KVM's vmx.h header with the kernel sources
-      tools headers x86 svm: Sync svm headers with the kernel sources
-      tools headers UAPI: Sync kvm header with the kernel sources
-      perf beauty: Update copy of linux/socket.h with the kernel sources
-      tools headers UAPI: Sync the drm/drm.h with the kernel sources
-      tools headers UAPI: Sync linux/kvm.h with the kernel sources
-      tools headers: Update the copy of x86's mem{cpy,set}_64.S used in 'perf bench'
-      tools headers: Syncronize linux/build_bug.h with the kernel sources
-      tools arch x86: Sync the msr-index.h copy with the kernel sources
-      tools arch amd ibs: Sync ibs.h with the kernel sources
-      tools headers: Synchronize linux/bits.h with the kernel sources
-      perf bench futex: Fix prctl include in musl libc
-      tools headers x86 cpufeatures: Sync with the kernel sources
-
-Chun-Tse Shao (1):
-      perf test: Restrict uniquifying test to machines with 'uncore_imc'
-
-Ian Rogers (2):
-      perf evsel: Missed close() when probing hybrid core PMUs
-      perf test: Directory file descriptor leak
-
-Namhyung Kim (1):
-      perf mem: Document new output fields (op, cache, mem, dtlb, snoop)
-
- include/uapi/linux/bits.h                          |  4 +-
- tools/arch/arm64/include/uapi/asm/kvm.h            |  9 +--
- tools/arch/x86/include/asm/amd/ibs.h               |  5 ++
- tools/arch/x86/include/asm/cpufeatures.h           | 14 +++--
- tools/arch/x86/include/asm/msr-index.h             | 16 +++--
- tools/arch/x86/include/uapi/asm/kvm.h              | 71 ++++++++++++++++++++++
- tools/arch/x86/include/uapi/asm/svm.h              |  2 +
- tools/arch/x86/include/uapi/asm/vmx.h              |  5 +-
- tools/arch/x86/lib/memcpy_64.S                     |  1 +
- tools/arch/x86/lib/memset_64.S                     |  1 +
- tools/include/linux/bits.h                         | 57 ++++++++++++++++-
- tools/include/linux/build_bug.h                    | 10 +--
- tools/include/linux/compiler.h                     |  8 +++
- tools/include/uapi/drm/drm.h                       |  4 ++
- tools/include/uapi/linux/fscrypt.h                 |  6 +-
- tools/include/uapi/linux/kvm.h                     |  4 ++
- tools/include/uapi/linux/stat.h                    |  8 ++-
- tools/perf/Documentation/perf-amd-ibs.txt          | 59 ++++++++++++------
- tools/perf/Documentation/perf-mem.txt              | 50 +++++++++++++++
- tools/perf/bench/futex-hash.c                      |  1 -
- tools/perf/bench/futex.c                           |  9 ++-
- tools/perf/check-headers.sh                        |  2 +-
- tools/perf/tests/shell/stat+event_uniquifying.sh   | 12 +++-
- tools/perf/tests/tests-scripts.c                   |  1 +
- tools/perf/trace/beauty/include/linux/socket.h     |  2 +-
- tools/perf/trace/beauty/include/uapi/linux/fs.h    |  1 +
- tools/perf/trace/beauty/include/uapi/linux/prctl.h |  7 +++
- tools/perf/trace/beauty/include/uapi/linux/stat.h  |  8 ++-
- tools/perf/util/include/linux/linkage.h            |  4 ++
- tools/perf/util/print-events.c                     |  1 +
- 30 files changed, 329 insertions(+), 53 deletions(-)
 
