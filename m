@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-696357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D653AE25E1
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 01:03:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D13AAE25DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 01:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F53D5A7264
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 23:02:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDDBA1BC52E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 23:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8C82475C7;
-	Fri, 20 Jun 2025 23:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34B5243369;
+	Fri, 20 Jun 2025 23:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0eW5L0/"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dIOc1g/N"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC11246BC5
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 23:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6402405F9
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 23:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750460534; cv=none; b=gFIWNs4RbJFbdzk2ZmepgaUtYE+FGB0IpGn7wakHSESVWoEHuFsXnQCOKAkY1+Ju+GypS7tIknutv60Ux+U+EP8me27BbTlRO5EXvnkjmr68FMXV0UVp/Y8S5oOZUAE059bsEM8BclpAr5q0u4nzZLrrZh4Bs2noMxj8EY6HNZQ=
+	t=1750460526; cv=none; b=F9TiRTB8R7xzLLmZsk+AM9wSxCzWx5IwOWlmndR3QmT23pPpihMliQQkJv/FvoPcyy6+6cOE6mUpk5mU0niT2fn50PhSB7FXud1xQWVr3nU37z2SShTvt9XIxQV4tIZKacz5wkgjnuA5jzp739IssayNufZ8imnxk6qdp7Q9ALI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750460534; c=relaxed/simple;
-	bh=XnkfGep55I541ApHJD2QZdhM5aWbZnlK1BM5kBi3CyY=;
+	s=arc-20240116; t=1750460526; c=relaxed/simple;
+	bh=ZmhCAfFsbP8HzjXLpfEsaIh15zCG/QnRjgaSxbnOxz4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n84RXTJ+/quXEcgc3TbrelvcYiIiEljbu4Aw5ZG4/ihm6aTexBHs8g8lFoDWHwmVHY2LRG3nL6lcJ/Z2tFawc+YtfKOTtd3FB7uxIYq6AJJizYpGAvtyC4MLITZsXtpXEFEAlvJakxESRUtNCwvwJP0tv/5tfAMx0W4X3bcpvYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O0eW5L0/; arc=none smtp.client-ip=209.85.222.182
+	 MIME-Version; b=TMe1ZEXHCF5aQ/Ll9nUhRFmMdivflHBr3F1P7WZElyGlvdrQU567OPu+mGdPx7pGKD33AlIdnsNT96D6DbKOW0VWqL8LNyHlqsEiFvF7fDu66EsBq2DqPoVRzTTvhcj+vofcdI9A/nOLxxgFIinBdAXeUtQnHIck1ZItljccA+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dIOc1g/N; arc=none smtp.client-ip=209.85.219.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7d09a17d2f7so206233685a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 16:02:13 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e8259b783f6so2079200276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 16:02:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750460532; x=1751065332; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750460524; x=1751065324; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6QuG91aj9FVspnq30Ro0SdZ3sAijtIfNiwe75Boh82w=;
-        b=O0eW5L0/1NgWgJ7MfnjvPxaxFIo80HbzeMeuehLA2Zq3M8Ow9Xhgw/Jnq+pG7OMV7p
-         1RxMY5BxQKi3pnCjIZDMffGXb9Rr2cDyiIK/hqtG6FZ4+N+cUi/A4+A8qqg+URtMFkHr
-         A0xUAMVJVbOwQsJ1ai3x49v2TKzg6n7p5P+M915b6dDqI1MXGm6kaH4Ghgf2xPosT1IH
-         eaC1rpeM8RVUP0V9gGTa3/16D2bntw2ezZvaV4ON4ZgdO+1o7S5zhawfWu0PdSvugw1c
-         IUrX4RtrMvFTdgJLQ3VaLP7aCi1bZY7yJ+j1a7bspbUDPL+AW+SPkbXW7mIrj7bkHe3a
-         RPHA==
+        bh=d/1QIWRbzRKxzNSeHg/2eVD4jkQvQIPlD9+yolNy+D8=;
+        b=dIOc1g/NFvMgbDEPaR5MtIOI6opOkGxhheG8i55IHrBFY+BwZFQEguDnITD+f7ZssL
+         zWpLIqv9CpN+YeytPLACJL6jjf55Do+C4BNTSrasHTopmNUyXr1zMFnuzFtx/Km4PlyJ
+         bovSV9K9vYEiqGMC08ErZLDKiMzZ2kTv0mdsgEtX1iKdRuHz5puTsJOcom63gQbLEQlc
+         XMlkTm8gDUHvodHl72jyY63rXmtvma6SwJtj+2cYXG4uHomT6cpvKMha+Kvi/93y+TE+
+         qBM8MwkY66lZVOYs7F4UPw+TD96WcZ1EafGbGLXPkcxQvmHYZ4qiqLAV7XD2zgTSl61n
+         YBPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750460532; x=1751065332;
+        d=1e100.net; s=20230601; t=1750460524; x=1751065324;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6QuG91aj9FVspnq30Ro0SdZ3sAijtIfNiwe75Boh82w=;
-        b=IsByEaltvNjTRuNLwpc4VEp3zwV4/dlfBiw3BpJG8VoAdelj6cwxrXeOr62ggbTGEi
-         GEy3+t4CubYm1eSrJg0vC4dib3I2MEtMgnQxjS/hZ3LQr4KOxjRikyjU3dbxlxGW/7yU
-         unqDZxnqcADBFxhIrYIRwvdRPbaCgccLpmp0BC7xFYqMyi4qQw5Z5wJjLzXJo0WGGtXV
-         xsfVGACut6HWxfgF1rcOwKmg3/a+RZrPQnIcz+N5kkIzZU5nwA49tll9YkANdL9h4XNP
-         xVO/5P6wOfU8jCzK7aj4xqJlUl4xi7dXWcZWwmUzLeoO1JpoN2cSTIPu+3o+H+xaMcfh
-         Q4cA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5A3/62nk0/GUuaVAHu9D+oZV71JrFbf/2Xgtp92EBvyVqUVTpnu9BJ2I2ErvksGtOAgwa/F/9nCewzGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVW6bM7sYw93GRRcrkeGYhax+w3WP3/0I0iOINBydDR36oJt+H
-	WzFYczhtfH0N8OyMZBghhrSy1Zqp/pmJz+kxvJ/lrk6b6TrM02mI4HWJItWIH9jf
-X-Gm-Gg: ASbGncvEdWGMw04msX5CvJmOK54fZUtk3hN2NnsYv5ROMYdaoMv6yRqJ0EgegfHWuJA
-	Snnznww/S3Yf90K6TiaoEHt6mRL4eZk+FuEV3LibjZI2oJvbXpoZU8VhNIzN7TMehTBttmldfut
-	94epltJToU5R5bzYZzX7usr3Ccg+qqLZmaDWd79KAaNfFPVjhmJVXE+ClvHKJ8A2U7FBdZr/DN4
-	Lb0adbUed42oqhPN/msytKgcGssuSMtCzzJ7bU39mxAzqxSXS2N2auTQWP8Z6c6prQouGd6fdU3
-	rT3z44rueQCi+pHqzpNfEJKBI1JWtxxIvTLkR0VPo6oAozKcJe1Zz2xlrfslF6szEOBa4vtRNnD
-	DSA==
-X-Google-Smtp-Source: AGHT+IGNj3h+Rpu5SikVNW6ff7BWM+PCiJO4+wXZXfuc9+jR2gtExRzEx3jNWUJZg4Y3tr/pE5qFMw==
-X-Received: by 2002:a05:6902:2388:b0:e84:2a27:f30f with SMTP id 3f1490d57ef6-e842bb4bab9mr5748413276.0.1750460521069;
-        Fri, 20 Jun 2025 16:02:01 -0700 (PDT)
+        bh=d/1QIWRbzRKxzNSeHg/2eVD4jkQvQIPlD9+yolNy+D8=;
+        b=sEzR9zLqEiU6uWDYp7dmp4Ss5KvyweHa+LvdE+S5bWGKT9RExIyTXAyHAK/BxV44ix
+         4Xfp50m1TX/46hOEY2g+mLKTdFOzBTP9ADNxWhHlDtV82u4CkqVfhlAneQG+43dknG9j
+         SSxGINv+OWrJnRwA6VOtFfrWm8fch6uS0H9/QG/hfwqvErlsPL9bzDHxkullmqGA6izT
+         W3/IjLvd1bV/BowvfR4zTBHulN1BMvyIk2G7sQiZF2krjCi2h/4SMKvgXlc3hkwQU5D0
+         Nzv+aNZKo0IC6y0jOArqhfcljVs3Q+JTl5U2vs86q8yXMCMe2nIhWiosfE3+XZPQ20jB
+         6GJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsDDuwem7G5FXNS/EQcC37OaqXTnTyQwAzMbMX+kBLcRG2DluswLsHtcw61lYEUKCTXMuQadHXwgIihCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXJNjNE495Z2TRHLaUaK8jsj4U/G7kd5/9Dp37fHG5eMPAbISO
+	KDA47BLXLg3ePSElDAxQyWowx0tUthvyFw8sy7lMNg14f4IyQx4WVNJxgYmBln59
+X-Gm-Gg: ASbGncsiCqz1OfEBOUmgLDU3gExfTxS03kzxDExyZIlK7q3F1LWav1SGisyjVQ8t9D1
+	MD8StG1f1PFkqYCSoBn72w2DhzpYtheZkrflFk2NzwGYMVBl+nbDiwMguGlAXpuOGlXk0O1xX+p
+	y4UEHz1DrM36WcYoIHrlA4FN/N9FYVN3+R8zDBiUvFvqDNcKo6qS8BzS75J5q2Q9SXmdLrPTC9j
+	vuihaAvfAUyd774nnYFHAnN9LhBhznLcbQBHAXVX8jOHpzb1WHhZPvtFA0MAY7TiBwJ9ftrjuyw
+	NuJCZP9ZFrgWTzSPSQt1KMWxDZqOCokwjn/Su+4EgyxNnp+LlmrKl9+/yJfu6JIhhyqcPN5XoKT
+	UXw==
+X-Google-Smtp-Source: AGHT+IGX4IufRywQjEM7JFniXjofJ8cQ0neKxCM0222lvjekXAFNwhnvngUj9sfvXYaAfrKauKeUfw==
+X-Received: by 2002:a05:6902:2743:b0:e82:65d2:5120 with SMTP id 3f1490d57ef6-e842bcf3610mr6063904276.27.1750460523581;
+        Fri, 20 Jun 2025 16:02:03 -0700 (PDT)
 Received: from Slackware.localdomain ([191.96.150.102])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e842ac984b4sm893270276.48.2025.06.20.16.01.58
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e842ac984b4sm893270276.48.2025.06.20.16.02.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 16:02:00 -0700 (PDT)
+        Fri, 20 Jun 2025 16:02:03 -0700 (PDT)
 From: Bhaskar Chowdhury <unixbhaskar@gmail.com>
 To: dan.carpenter@linaro.org
 Cc: Bhaskar Chowdhury <unixbhaskar@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/9] Eliminate the full path to the script in usage output
-Date: Sat, 21 Jun 2025 04:08:52 +0530
-Message-ID: <88fe1267b23608c27ba4e6dbe69c12a49dab4290.1750459100.git.unixbhaskar@gmail.com>
+Subject: [PATCH 4/9] Doing it for the consistency in the tree,eliminating the full path to the script
+Date: Sat, 21 Jun 2025 04:08:53 +0530
+Message-ID: <4ac24fc6d88cc4cc11ac6a4590562d23882deba6.1750459100.git.unixbhaskar@gmail.com>
 X-Mailer: git-send-email 2.46.3
 In-Reply-To: <cover.1750459100.git.unixbhaskar@gmail.com>
 References: <cover.1750459100.git.unixbhaskar@gmail.com>
@@ -90,25 +90,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Clean to the usage outputted text without full path of the script
+Just try to making things consistent across the tree by eliminating full path
+to the script.
 
 Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
 ---
- smatch_scripts/filter_kernel_deref_check.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ smatch_scripts/find_null_params.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/smatch_scripts/filter_kernel_deref_check.sh b/smatch_scripts/filter_kernel_deref_check.sh
-index c70d7994ead9..88071a464c45 100755
---- a/smatch_scripts/filter_kernel_deref_check.sh
-+++ b/smatch_scripts/filter_kernel_deref_check.sh
-@@ -2,7 +2,7 @@
-
+diff --git a/smatch_scripts/find_null_params.sh b/smatch_scripts/find_null_params.sh
+index 9e39146d2d40..a78eb7623fb4 100755
+--- a/smatch_scripts/find_null_params.sh
++++ b/smatch_scripts/find_null_params.sh
+@@ -3,7 +3,7 @@
  file=$1
+
  if [[ "$file" = "" ]] ; then
 -    echo "Usage:  $0 <file with smatch messages>"
 +	echo "Usage:  $(basename $0) <file with smatch messages>"
      exit 1
  fi
+
+@@ -13,7 +13,7 @@ cat null_calls.txt unchecked | sort | uniq -d > null_params.txt
+ IFS="
+ "
+ for i in $(cat null_params.txt) ; do
+-	grep "$i" $file | grep -w undefined
++	grep "$i" $file | grep -w undefined
+ done
+
 
 --
 2.46.3
