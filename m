@@ -1,121 +1,86 @@
-Return-Path: <linux-kernel+bounces-696152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1EF0AE22D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 21:30:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 029C5AE22DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 21:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86C0E4C187F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:30:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D042A1BC1DE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C92A225A59;
-	Fri, 20 Jun 2025 19:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D392223DCE;
+	Fri, 20 Jun 2025 19:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Wj+ZKeKQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X9ws03ck"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ifMtgACB"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37196225762
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 19:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D145A2EB5D5
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 19:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750447766; cv=none; b=FwzBlWgE1g8Zp0TWU0CHfp+FR/2wChFukvBthZnGQ2etizxmQiVsC5QgM3SSeDjcvDRQy8kD2H8QfIyPU8gczXJ4fJgDib719w73flRcscCg8KGMXxJW4mxklDkQcdhHnXvQ+Ot0ob4Y3fcp/KF7UgpAk3Yl8qExYAECA/O337o=
+	t=1750447814; cv=none; b=u/lxyK3dAYALnhINeocKYiytsnunHrY2Ij0hvr3oYjGUEihvYivfoDKeysJBLQDpJ0AJTN9KbXSfwhOcFi3ANl1JrLh+RuS/E6NMf5Kt1ZtJC05+FWmoeyYPIQGuzrERwDsIedy5k62/0XS7zlYYijtivXYhpsaEjkbOnoVPyO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750447766; c=relaxed/simple;
-	bh=++mNnEsEJVQVCd9D0wJIlXaWUcaKB1Ggp9kMSokg9CA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=ZK/zWR+fuKtkyUK3wJeaDlI+xQ47Ef/9BMFwmyNFDELa4R5lLNoh+JjzGIqZ6sor+j7t4Ad+wkrSfcsOBuq5j+SAXvxhkwxz+xgk7bMqqoG+6pb3UVuxWCCqDRkCLPES35sidJtKZVwo6PZaG6SPpKan69QpeV23O4SdCsWo5DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Wj+ZKeKQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X9ws03ck; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 4B3031380483;
-	Fri, 20 Jun 2025 15:29:23 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 20 Jun 2025 15:29:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1750447763;
-	 x=1750534163; bh=UrarUtOd0EyOKgTF8yM1WqJ3oiJY098/Joh074uugmk=; b=
-	Wj+ZKeKQWSvl4rVBfqViw/2Sm4weaMpw2fZA210Hi0Kv3rTEtPpfxM/HIwzhNIU2
-	DXHEtwbKqnZ2WhXywixG2X5n0rn82mGakLWDK3CoyXhzEz3lHxdDp/Or7VDHNNJe
-	cyYQp34rXJhSTJ0GdW97B2xKOVyvRz1ZVvNo1iyJEmfo0n4mZUBzmIuMuQv1YABL
-	IYr3GmGPDBfL2lPltJgNS5IzGMXoLs/VSUCY6Ue8noH7tMZ826byx7GpnptgDeSH
-	7MtVCwQc9EOS1/bqTK4DW0Q+PMAw3HqJCnQNi4K76BppuwxGRxH+Hbor0NgTPWHk
-	fk5ESqhSAIEvZ6X3mHpiaA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1750447763; x=
-	1750534163; bh=UrarUtOd0EyOKgTF8yM1WqJ3oiJY098/Joh074uugmk=; b=X
-	9ws03cknfRFVo0gz81ynueDMngFXv3hmJslHbyASX6yVKOjsr5wGfICuvF12QA0V
-	OmT46+GeJcrsouoqD7RojcPNCPEadUbtux2ek+gzMcmOlRoApWh54EnhQUxTAFTH
-	lyzHY/JtShw9pMDX4LdohWaySumo5T5k+UXg2yknqPooq7Vd9wKePbGwYLwbNiSi
-	1xAFSfUE/2zG1mg6z7QuSS4p9T1TW170VkuTrKjxu4yh5PoHrKLHJkKxHJa36ynu
-	vRTyYvzKOJsi5V4cKocLJal9uAhzs2+X6WnZNsdnimqDni+P+W7KMDJzItF+tC2+
-	crd3TveWvICPLVbm33MzA==
-X-ME-Sender: <xms:krZVaNPk62WNj1fJa3FmIceNf3z_ku_YxDQADW1xyuZl8kMr3L1OLA>
-    <xme:krZVaP8bgImECxKDDu47G4Yo4p8bgu9fijUWLyoU4t5q7k4GTXm-om9RWjAbAgP4A
-    wINRbpUGutmFXhN5Ps>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdelvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhguuceu
-    vghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnh
-    ephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdeinecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhguse
-    grrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtohepshgvnhhoiihhrghtshhkhiestghhrhhomhhiuhhmrdhorhhgpdhrtghpth
-    htoheprhhoshhtvgguthesghhoohgumhhishdrohhrghdprhgtphhtthhopegrrhhnuges
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhhnrdhoghhnvghssheslhhinhhuth
-    hrohhnihigrdguvgdprhgtphhtthhopehthhhomhgrshdrfigvihhsshhstghhuhhhsehl
-    ihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepphhmlhgruggvkhesshhushgvrdgtoh
-    hmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhg
-X-ME-Proxy: <xmx:krZVaMRdJ422W-CSzKg9GG1hvim-m66FIut3s_9KpJ1MDMtUXomfgA>
-    <xmx:krZVaJtwlCXHGbQc0TshjnfRFTKvr9w0AiL5WbGbSdVaBoY2kcNB7Q>
-    <xmx:krZVaFf4htKS37kwpWoX5H4F_1udD33uXoCmzJnYSkHGyuBHetarFQ>
-    <xmx:krZVaF2DsMlMc18BeNb2zReRLEDbYDujoog6WNDtZylDMqZD6dNAtQ>
-    <xmx:k7ZVaLq2wVxR9fPRaPcpn1OGgtU_fbA9v8Eq3c-Bg5MQ8k04ip_NylW9>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 92AA4700062; Fri, 20 Jun 2025 15:29:22 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1750447814; c=relaxed/simple;
+	bh=QP5FKXkOvXJVgnLo7dy4hr0VyXj3zHtRrrMGGJwoX2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QtOIqioyOUFMsV1sGbuHbhR1TLLxmWgfnPPeRCIVKx/KdNI6mYT2x+zehskmqAIVTk8vIUWgrScFs8EcHU3qU9fK5OZYxaSmJbbj1/1kKY5p5wXXpv1B0Rs3HGlA4gLYYebV5PSQWtcf4rDdYehheTt2YwQ0TmPbTw92aHc0F8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ifMtgACB; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 20 Jun 2025 12:30:03 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750447810;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+AJ4MmUMawQsQJ+yWlhSORCWDOitW49EDv6tCdjnvxs=;
+	b=ifMtgACBjxoEMcXauHo4b23Gv5jsjQGterQCy2KA4Sfgqlvde2QOw/2B+PW7evPpfEyRSa
+	ZqrVUH6ZlpzLtTe0rvef+HYnKRQXA2vNtdxlEWx1U8o+g+h0hWkV9uW+aOTEuGk5l8LorR
+	uuzP9jfZvTl1MrrXGB/NKoQ2zOm5GWU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@redhat.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Marco Crivellari <marco.crivellari@suse.com>, 
+	Michal Hocko <mhocko@kernel.org>, Michal Hocko <mhocko@suse.com>, 
+	Muchun Song <muchun.song@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCH 16/27] sched/isolation: Flush memcg workqueues on cpuset
+ isolated partition change
+Message-ID: <ezplssjtvj5kfp7zutj5ufmmxvvyd2bioxdsfqaauzi5i6b3yv@2hbbax4kfct6>
+References: <20250620152308.27492-1-frederic@kernel.org>
+ <20250620152308.27492-17-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tfb6be10fbbe3f164
-Date: Fri, 20 Jun 2025 21:28:42 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Arnd Bergmann" <arnd@kernel.org>, "Petr Mladek" <pmladek@suse.com>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- "John Ogness" <john.ogness@linutronix.de>
-Cc: "Steven Rostedt" <rostedt@goodmis.org>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org
-Message-Id: <d3b46690-0822-46cf-9736-43a3ff7cf58d@app.fastmail.com>
-In-Reply-To: <20250620192554.2234184-1-arnd@kernel.org>
-References: <20250620192554.2234184-1-arnd@kernel.org>
-Subject: Re: [PATCH] printk: kunit: support offstack cpumask
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250620152308.27492-17-frederic@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Jun 20, 2025, at 21:25, Arnd Bergmann wrote:
+On Fri, Jun 20, 2025 at 05:22:57PM +0200, Frederic Weisbecker wrote:
+> The HK_TYPE_DOMAIN housekeeping cpumask is now modifyable at runtime. In
+> order to synchronize against memcg workqueue to make sure that no
+> asynchronous draining is still pending or executing on a newly made
+> isolated CPU, the housekeeping susbsystem must flush the memcg
+> workqueues.
 > 
-> +	if (alloc_cpumask_var(&test_cpus, GFP_KERNEL))
-> +		return;
-> +
+> However the memcg workqueues can't be flushed easily since they are
+> queued to the main per-CPU workqueue pool.
+> 
+> Solve this with creating a memcg specific pool and provide and use the
+> appropriate flushing API.
+> 
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
-Sorry, I got the polarity wrong here, alloc_cpumask_var()
-returns true on success.
-
-      Arnd
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
