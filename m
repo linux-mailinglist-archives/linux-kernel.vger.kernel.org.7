@@ -1,78 +1,63 @@
-Return-Path: <linux-kernel+bounces-695605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF53AE1BB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:13:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C08AE1BB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F300C3A6591
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:12:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB1EB1C20841
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD1E2BCF7B;
-	Fri, 20 Jun 2025 13:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3C6294A04;
+	Fri, 20 Jun 2025 13:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TIVF1vtS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqkWog/L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7762629CB40;
-	Fri, 20 Jun 2025 13:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B408F292936;
+	Fri, 20 Jun 2025 13:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750425017; cv=none; b=i5WcnCeV2rPG8xjjbFIgM1vn4boNEBIleIPaUTesrMPEtFBqcvyy6MOIRv/0ww2NIoLsiLFA2Wo6l56Tq0f762cuY4jJzCht3ld4c/00bzjQkqe3tXvhJnfcPCEKIdFxtBWVF3CybDt308Fhx/e0+8HTtjrQfSPfdTT//OT9Zug=
+	t=1750425003; cv=none; b=ac9unfhZwHdKRx10EOc3bgAVuxODf6kfn9f1rt1Yac8Zf2f1QjiRfRxCDLk0//2hI956F1ki74mB666l8NoYc26Ownpxcy66T7KeKeCbb0xcvDtVhzcqsCpDvgqUz5N3fQzvp+5Ej1pOBxPYRAjpFMuIc1z+DkZJlZtDFhnVlp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750425017; c=relaxed/simple;
-	bh=I5vk2rGm9Gp8qpb3w92XvEWty7AtHtw6DnFufqS61L4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XYLaNrsmP3yMWCyhzgrFajQboTCR8nuctzRXM8zDQrGl8o0aL2mXHwppIdXPkC1FhwyzszX8xEiWmvvJrTFSyiWjpgPY2I/DrznwFm02NAel+S6hGMcvcvog7WHIVIMiiWJ0tz/n8IZVSfU2Mju4QvH7ljZBE1xBhsA/SwCp8AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TIVF1vtS; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750425015; x=1781961015;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=I5vk2rGm9Gp8qpb3w92XvEWty7AtHtw6DnFufqS61L4=;
-  b=TIVF1vtS4Or9ezyCizY/T3Nn7Q6pmVV1Uiy+ynR16GLzFk6UQWA6LuSy
-   HsKnsZBkHqGSJk1Q7hdZBnEO0NgixM+bAWXtaVOOa0y/shlapVi/YUgkH
-   G//RZX916MhgaRvQlxDKpIEqq5vWpBb0pTuqcdUFrrVeBDXtz4VlNRfhq
-   Ds79y1apSdm0wMqD7q1HhcQNZ/2qbn3B2O7Eg+EX26LHeQWc12dc5RvFg
-   24lUxb0WFG3whNNFbGVGrmsWVQeeT9rS5tCwC8NWTchrqejAxSKvYl6sV
-   xtz5h+RafGVzazoKrG6dUMNMGf6o1SaVLPtD22fJLP57gRGsKpU+8Zz+M
-   w==;
-X-CSE-ConnectionGUID: Z+Tt6J96Q/O/+4lLhKTV7Q==
-X-CSE-MsgGUID: X05uKYOAR1GT1ww8rSmgMA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="52388893"
-X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
-   d="scan'208";a="52388893"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 06:10:14 -0700
-X-CSE-ConnectionGUID: sqL897AZQWejJ8rtDWZK4A==
-X-CSE-MsgGUID: Nl3L8TU5RMetN1FVbCUJMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
-   d="scan'208";a="154928687"
-Received: from ysun46-mobl (HELO YSUN46-MOBL..) ([10.239.96.51])
-  by fmviesa003.fm.intel.com with ESMTP; 20 Jun 2025 06:10:12 -0700
-From: Yi Sun <yi.sun@intel.com>
-To: dave.jiang@intel.com,
-	vinicius.gomes@intel.com,
-	dmaengine@vger.kernel.org,
+	s=arc-20240116; t=1750425003; c=relaxed/simple;
+	bh=WbCME8fESr+rlhYeTNtW17nAZ6PIIOdd7ebJuruuPdw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lyM7hFJapiC+NwclDxIl0RbBSqfZKk1G7Ziof3aEj98mQHRb1F3x7SS/5K+2NctPrLkR2Srb1xsfIRHZRJhdTqYRfOu3P/cxhtpT5Cx/QgCdTfJkHboTOgTUD0zTnhYX//ti/pqYvw9GJQegZ4rbt7HCTDGJMMCl4JMQXG0NY8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqkWog/L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E90F8C4CEF0;
+	Fri, 20 Jun 2025 13:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750425003;
+	bh=WbCME8fESr+rlhYeTNtW17nAZ6PIIOdd7ebJuruuPdw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sqkWog/LXRIoTG+6CAObPN3i3f1RKdPcOeYJRccWks74n8Vx2zKxhE2JSnT8opqaJ
+	 johHEBFLTigRkx/270JkYouoqbEeyqQzOdVsLkRkuvs2WVOwQEceDk+v4guWL4qloq
+	 /ZZWOwx0NAd2w2rwJN6IcLH43mtGbsZTMzLuIiHWg5R4FznUoRNLLwuMSWstCTuUFX
+	 4E21BBuBBQreYEFq9oXix9fxd4EldtRa6DX7hfMEu5nMRmBpLSuwFMRFCLhvEyhIWZ
+	 qkGf+zKIyfU63c9iIOno1EMzPNEQzWYEmLfZ1uY6dYsaR1hDgmBTfBbMjYv+JD+X7c
+	 TAcSw3sbPMKBg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Manish Chopra <manishc@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	fenghuay@nvidia.com,
-	philip.lantz@intel.com
-Cc: yi.sun@intel.com,
-	gordon.jin@intel.com,
-	anil.s.keshavamurthy@intel.com
-Subject: [PATCH v2 2/2] dmaengine: idxd: Add Max SGL Size Support for DSA3.0
-Date: Fri, 20 Jun 2025 21:09:53 +0800
-Message-ID: <20250620130953.1943703-3-yi.sun@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250620130953.1943703-1-yi.sun@intel.com>
-References: <20250620130953.1943703-1-yi.sun@intel.com>
+	llvm@lists.linux.dev
+Subject: [PATCH] net: qed: reduce stack usage for TLV processing
+Date: Fri, 20 Jun 2025 15:09:53 +0200
+Message-Id: <20250620130958.2581128-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,127 +66,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Certain DSA 3.0 opcodes, such as Gather copy and Gather reduce, require max
-SGL configured for workqueues prior to supporting these opcodes.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Configure the maximum scatter-gather list (SGL) size for workqueues during
-setup on the supported HW. Application can then properly handle the SGL
-size without explicitly setting it.
+clang gets a bit confused by the code in the qed_mfw_process_tlv_req and
+ends up spilling registers to the stack hundreds of times. When sanitizers
+are enabled, this can end up blowing the stack warning limit:
 
-Signed-off-by: Yi Sun <yi.sun@intel.com>
-Co-developed-by: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Signed-off-by: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+drivers/net/ethernet/qlogic/qed/qed_mng_tlv.c:1244:5: error: stack frame size (1824) exceeds limit (1280) in 'qed_mfw_process_tlv_req' [-Werror,-Wframe-larger-than]
 
-diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
-index 5cf419fe6b46..1c10b030bea7 100644
---- a/drivers/dma/idxd/device.c
-+++ b/drivers/dma/idxd/device.c
-@@ -375,6 +375,7 @@ static void idxd_wq_disable_cleanup(struct idxd_wq *wq)
- 	memset(wq->name, 0, WQ_NAME_SIZE);
- 	wq->max_xfer_bytes = WQ_DEFAULT_MAX_XFER;
- 	idxd_wq_set_max_batch_size(idxd->data->type, wq, WQ_DEFAULT_MAX_BATCH);
-+	idxd_wq_set_init_max_sgl_size(idxd, wq);
- 	if (wq->opcap_bmap)
- 		bitmap_copy(wq->opcap_bmap, idxd->opcap_bmap, IDXD_MAX_OPCAP_BITS);
- }
-@@ -974,6 +975,8 @@ static int idxd_wq_config_write(struct idxd_wq *wq)
- 	/* bytes 12-15 */
- 	wq->wqcfg->max_xfer_shift = ilog2(wq->max_xfer_bytes);
- 	idxd_wqcfg_set_max_batch_shift(idxd->data->type, wq->wqcfg, ilog2(wq->max_batch_size));
-+	if (idxd_sgl_supported(idxd))
-+		wq->wqcfg->max_sgl_shift = ilog2(wq->max_sgl_size);
- 
- 	/* bytes 32-63 */
- 	if (idxd->hw.wq_cap.op_config && wq->opcap_bmap) {
-@@ -1152,6 +1155,8 @@ static int idxd_wq_load_config(struct idxd_wq *wq)
- 
- 	wq->max_xfer_bytes = 1ULL << wq->wqcfg->max_xfer_shift;
- 	idxd_wq_set_max_batch_size(idxd->data->type, wq, 1U << wq->wqcfg->max_batch_shift);
-+	if (idxd_sgl_supported(idxd))
-+		wq->max_sgl_size = 1U << wq->wqcfg->max_sgl_shift;
- 
- 	for (i = 0; i < WQCFG_STRIDES(idxd); i++) {
- 		wqcfg_offset = WQCFG_OFFSET(idxd, wq->id, i);
-diff --git a/drivers/dma/idxd/idxd.h b/drivers/dma/idxd/idxd.h
-index cc0a3fe1c957..ea8c4daed38d 100644
---- a/drivers/dma/idxd/idxd.h
-+++ b/drivers/dma/idxd/idxd.h
-@@ -227,6 +227,7 @@ struct idxd_wq {
- 	char name[WQ_NAME_SIZE + 1];
- 	u64 max_xfer_bytes;
- 	u32 max_batch_size;
-+	u32 max_sgl_size;
- 
- 	/* Lock to protect upasid_xa access. */
- 	struct mutex uc_lock;
-@@ -348,6 +349,7 @@ struct idxd_device {
- 
- 	u64 max_xfer_bytes;
- 	u32 max_batch_size;
-+	u32 max_sgl_size;
- 	int max_groups;
- 	int max_engines;
- 	int max_rdbufs;
-@@ -692,6 +694,20 @@ static inline void idxd_wq_set_max_batch_size(int idxd_type, struct idxd_wq *wq,
- 		wq->max_batch_size = max_batch_size;
+Apparently the problem is the complexity of qed_mfw_update_tlvs()
+after inlining, and marking the four main branches of that function
+as noinline_for_stack makes this problem completely go away, the stack
+usage goes down to 100 bytes.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+If anyone feels adventurous and able to figure out what exactly goes
+wrong in clang, I can provide preprocessed source files for debugging.
+---
+ drivers/net/ethernet/qlogic/qed/qed_mng_tlv.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_mng_tlv.c b/drivers/net/ethernet/qlogic/qed/qed_mng_tlv.c
+index f55eed092f25..7d78f072b0a1 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_mng_tlv.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_mng_tlv.c
+@@ -242,7 +242,7 @@ static int qed_mfw_get_tlv_group(u8 tlv_type, u8 *tlv_group)
  }
  
-+static bool idxd_sgl_supported(struct idxd_device *idxd)
-+{
-+	return idxd->data->type == IDXD_TYPE_DSA &&
-+	       idxd->hw.version >= DEVICE_VERSION_3 &&
-+	       idxd->hw.dsacap0.sgl_formats;
-+}
-+
-+static inline void idxd_wq_set_init_max_sgl_size(struct idxd_device *idxd,
-+						 struct idxd_wq *wq)
-+{
-+	if (idxd_sgl_supported(idxd))
-+		wq->max_sgl_size = 1U << idxd->hw.dsacap0.max_sgl_shift;
-+}
-+
- static inline void idxd_wqcfg_set_max_batch_shift(int idxd_type, union wqcfg *wqcfg,
- 						  u32 max_batch_shift)
- {
-diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-index 216461aa0cd1..4daf5995acee 100644
---- a/drivers/dma/idxd/init.c
-+++ b/drivers/dma/idxd/init.c
-@@ -217,6 +217,7 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
- 		init_completion(&wq->wq_resurrect);
- 		wq->max_xfer_bytes = WQ_DEFAULT_MAX_XFER;
- 		idxd_wq_set_max_batch_size(idxd->data->type, wq, WQ_DEFAULT_MAX_BATCH);
-+		idxd_wq_set_init_max_sgl_size(idxd, wq);
- 		wq->enqcmds_retries = IDXD_ENQCMDS_RETRIES;
- 		wq->wqcfg = kzalloc_node(idxd->wqcfg_size, GFP_KERNEL, dev_to_node(dev));
- 		if (!wq->wqcfg) {
-@@ -587,6 +588,10 @@ static void idxd_read_caps(struct idxd_device *idxd)
- 		idxd->hw.dsacap1.bits = ioread64(idxd->reg_base + IDXD_DSACAP1_OFFSET);
- 		idxd->hw.dsacap2.bits = ioread64(idxd->reg_base + IDXD_DSACAP2_OFFSET);
- 	}
-+	if (idxd_sgl_supported(idxd)) {
-+		idxd->max_sgl_size = 1U << idxd->hw.dsacap0.max_sgl_shift;
-+		dev_dbg(dev, "max sgl size: %u\n", idxd->max_sgl_size);
-+	}
+ /* Returns size of the data buffer or, -1 in case TLV data is not available. */
+-static int
++static noinline_for_stack int
+ qed_mfw_get_gen_tlv_value(struct qed_drv_tlv_hdr *p_tlv,
+ 			  struct qed_mfw_tlv_generic *p_drv_buf,
+ 			  struct qed_tlv_parsed_buf *p_buf)
+@@ -304,7 +304,7 @@ qed_mfw_get_gen_tlv_value(struct qed_drv_tlv_hdr *p_tlv,
+ 	return -1;
+ }
  
- 	/* read iaa cap */
- 	if (idxd->data->type == IDXD_TYPE_IAX && idxd->hw.version >= DEVICE_VERSION_2)
-diff --git a/drivers/dma/idxd/registers.h b/drivers/dma/idxd/registers.h
-index b430bddbd1e4..c665687913c6 100644
---- a/drivers/dma/idxd/registers.h
-+++ b/drivers/dma/idxd/registers.h
-@@ -385,7 +385,8 @@ union wqcfg {
- 		/* bytes 12-15 */
- 		u32 max_xfer_shift:5;
- 		u32 max_batch_shift:4;
--		u32 rsvd4:23;
-+		u32 max_sgl_shift:4;
-+		u32 rsvd4:19;
+-static int
++static noinline_for_stack int
+ qed_mfw_get_eth_tlv_value(struct qed_drv_tlv_hdr *p_tlv,
+ 			  struct qed_mfw_tlv_eth *p_drv_buf,
+ 			  struct qed_tlv_parsed_buf *p_buf)
+@@ -438,7 +438,7 @@ qed_mfw_get_tlv_time_value(struct qed_mfw_tlv_time *p_time,
+ 	return QED_MFW_TLV_TIME_SIZE;
+ }
  
- 		/* bytes 16-19 */
- 		u16 occupancy_inth;
+-static int
++static noinline_for_stack int
+ qed_mfw_get_fcoe_tlv_value(struct qed_drv_tlv_hdr *p_tlv,
+ 			   struct qed_mfw_tlv_fcoe *p_drv_buf,
+ 			   struct qed_tlv_parsed_buf *p_buf)
+@@ -1073,7 +1073,7 @@ qed_mfw_get_fcoe_tlv_value(struct qed_drv_tlv_hdr *p_tlv,
+ 	return -1;
+ }
+ 
+-static int
++static noinline_for_stack int
+ qed_mfw_get_iscsi_tlv_value(struct qed_drv_tlv_hdr *p_tlv,
+ 			    struct qed_mfw_tlv_iscsi *p_drv_buf,
+ 			    struct qed_tlv_parsed_buf *p_buf)
 -- 
-2.43.0
+2.39.5
 
 
