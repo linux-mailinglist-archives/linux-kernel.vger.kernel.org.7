@@ -1,200 +1,179 @@
-Return-Path: <linux-kernel+bounces-694870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41DDAE11A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 05:17:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28445AE119E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 05:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 759A23AC3C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:16:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D74E57ABCE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C623E1DC997;
-	Fri, 20 Jun 2025 03:16:56 +0000 (UTC)
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3FD1DF261;
+	Fri, 20 Jun 2025 03:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="Cs6G+hpC";
+	dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="KRB4Yd3X"
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E318E801
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 03:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF058801
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 03:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750389416; cv=none; b=OeCcLp/vaggow+j2ct9WS9DOVpLyTzKOYjZFguLrMHEYul51do48UdZ1iGo8F8jcs5t41PyEwR85D1E6UmX2IzdyX1OIb+WRB8lbIHotnoSZmkwMfMDv9AVmpp5RgoOd40JsBzAsMcGYxHVNfBd7EtseEvX0Fm5E+k1DLzSqz8k=
+	t=1750389368; cv=none; b=Kvrbxob/fHY/U/sJng10k9pO5HOPmJqU//TTTbiO6F28RGNHB2ArBHqvAZRdW2COD+iqPA1bCXsx632uyyb+v2gk7rxrp0QcK9gptim3RbDAts/OzXx07vFONbZ3yR99pLV6UXiKuRaQ+kKjcDXge+QyiOF0aiZyKGOKCkD0x6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750389416; c=relaxed/simple;
-	bh=PsaUAxfRj9CuYUjCQXDco1nqJRJzkfZTLOJqsh1HqT4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=jO+2NwB0czj6cqdgKcSrA4CuTO6C944u4jpLI7IttZ9rfSUqL/nTVPllwOwMDDptQDHEPls43o1C+VuGWuFaj9qpQ8c52asU8dD91mlRUxSqaTZRNA9DfsFzHm7dYBvU8oW3XBc+t4OilL/4UZdAA7UjoDixwIi8+UDT8ndGaI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bamaicloud.com; spf=pass smtp.mailfrom=bamaicloud.com; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bamaicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bamaicloud.com
-X-QQ-mid: esmtpgz12t1750389349teda56343
-X-QQ-Originating-IP: Zo98sSbsqoUDsUkXJ0WApzQJ12Ats2G0qcArjT+Gb7M=
-Received: from smtpclient.apple ( [111.202.70.99])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 20 Jun 2025 11:15:46 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2506058706453155900
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1750389368; c=relaxed/simple;
+	bh=O2GvBgg/BxYhZTydzvibsdx6k/2knZD4ueSDzAgPU9A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ag6AuA/QsZxxDHw0tUuciDXUzqM1q2AxCAk5Y12PMQBDXAV4EV1SoFrg6tSuimJkkrPzjCr1lsEwda0AEmXW+dSex8kBjHL3EoK/fXHdNKyIJpG1dzt7eXmxHc7gGx/Itn2nR6oYj/IYFRqIf9AV4GbIoH0703aEo/f6XqS2wOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=Cs6G+hpC; dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=KRB4Yd3X; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id 9A38E26F75D5;
+	Fri, 20 Jun 2025 12:16:01 +0900 (JST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114; t=1750389361;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lIT+A3Ph7WWNHmUmXCYqK/z9hZmbl30OP3CAfbAILAo=;
+	b=Cs6G+hpCngjQibUcMvGhq4nhxa8WyNCTrpv/fXFJMFmBT1SbLKD692Tp/N4nDe3B7FH+t2
+	VgMlrRpa0F+xMFbDpOkBUFIz8Ubg6x8ydxY484GYCxAews3PCVRBgOC3Ieaxpo4tJRbdwl
+	tsLe8VtGkIH/qzm3tClYmqDGFoH05a6bwtZR9DHtvoDpU7XrBB5fYBuzOHUPtJmmtLHRmV
+	4Ytl1aUH9Uk6xNIi9aNv8Dld9qMc+85Mm4BQBIOFHHC8b6GAgkx6ZtalexsK3DI1tqvod/
+	cpeQq07RjgwKzQDXauxQiRUtPgtQH4nq2KdITqldSTmvVLPoWBfHGpGm+6CuRA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114-ed25519; t=1750389361;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lIT+A3Ph7WWNHmUmXCYqK/z9hZmbl30OP3CAfbAILAo=;
+	b=KRB4Yd3XBAYdBQ+0uAr+BEFTGapXvRN6F3esGVC+eKOqMUBZ+cUrUUDLTaSBOxJFxeAU0p
+	HclfnHrOch+bVTBg==
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 55K3G0ro013301
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 20 Jun 2025 12:16:01 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 55K3G0jf040331
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 20 Jun 2025 12:16:00 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 55K3FxZK040330;
+	Fri, 20 Jun 2025 12:15:59 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Li Chen <me@linux.beauty>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] fs: fat: Prevent fsfuzzer from dominating the console
+In-Reply-To: <20250620020231.9292-1-me@linux.beauty>
+References: <20250620020231.9292-1-me@linux.beauty>
+Date: Fri, 20 Jun 2025 12:15:59 +0900
+Message-ID: <87a563w1ao.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH] bonding: Improve the accuracy of LACPDU transmissions
-From: Tonghao Zhang <tonghao@bamaicloud.com>
-In-Reply-To: <20250618195309.368645-1-carlos.bilbao@kernel.org>
-Date: Fri, 20 Jun 2025 11:15:36 +0800
-Cc: jv@jvosburgh.net,
- andrew+netdev@lunn.ch,
- davem@davemloft.net,
- edumazet@google.com,
- kuba@kernel.org,
- pabeni@redhat.com,
- horms@kernel.org,
- netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- sforshee@kernel.org,
- bilbao@vt.edu
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <341249BC-4A2E-4C90-A960-BB07FAA9C092@bamaicloud.com>
-References: <20250618195309.368645-1-carlos.bilbao@kernel.org>
-To: carlos.bilbao@kernel.org
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:bamaicloud.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: OE2SNMSfMbmOh2dsmTMGQU1X3c5oy7ccON50BUOaDaS68HyR7p2x8xR0
-	yzgSk/8MmqzsnMHzv7EUwDr07vdpfj6Z83cNfX8a7f/YJ0T0AnVmKqU7mi0mnEUn3RBSmut
-	crD1mmh5JTEPtqzZspHb0PJMmMs7L/3jNQCD2J5Eav6OPeLou/wt5IXfReFbrEkJyD5POmW
-	dWRnoJMU8SWnwktDSZmACJ8163TXkdYb81RzwOR7hSDnwkRugiRZ4wB07hmhQhdlt+2cX5k
-	A2JCs9v0j9Lbx2By2s8ik9sgE+cDKbnB1qv5msN46VTdKSJEJuwr4OZ9pY4fW161t6/k7nN
-	HEpsdFiLixdrTsZq/2yirRjg6tAaDvnwQQmkhS+HLA0anzD6XUU6KDzAUTXNpVn6Epd6PCS
-	20h80wig+xZTw0l5iGCJ13YL5PKIfEaUNI5t1WYgwby+TBZuMzfm1x5boHovqgR+4STd3Ip
-	HT7zSUUIwdqIEIbKQxCnTO47EP229heTYJ1Qk1cZxBEJ+myHw1yV3zF165H80pTbUdXwHYg
-	jOv8XxPF8sx1dqUJgZhRUTScriJfax/0nyh9AaqXJj2XL3HxtbS+EarhyT33rqhj38QMh39
-	ZNLXCv3ljgUeYQ7hazvNP9I0uBWsAhQJGfpr1yDn3svMveczNxgubL2pwdNVxNmKpQ7i7NK
-	T26BJ/s2EUnsPPyjW2tX8WzX1zmFfCnxTdc7qbl79BwJOl6aWDBRHBt0UJGE9KktnW6SNL9
-	EqNaIs3njHiFU5/NSfim2D2GiiAtAmnHFk+VmDMVfYMz/TEzxzGnyderM2c+di7egnyf2mb
-	xcs6l8QYF/+QzUxmQmverRtu+M964Wgd4ajUU8AFwmvBeZqQRd6qitBeIFyiW1bXfDI3iUA
-	cidgJu3VfF1R5V09ZmOEtC5WefP/5vR5DrhHALfLry9cDMEJqz01Rj+lcv4hJ5CEhwxivaT
-	GD7Upz6bnV3Z3eQ==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Content-Type: text/plain
 
+Li Chen <me@linux.beauty> writes:
 
+> From: Li Chen <chenl311@chinatelecom.cn>
+>
+> fsfuzzer may make many invalid access for FAT-fs and generate many kmsg
+> like "FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)".
+>
+> For platforms & os that enables hardware serial device whose speed are
+> slow, this may cause softlockup easily.
+>
+> So let's ratelimit the error log.
+>
+> The log as below:
+> [11916.242560] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.254485] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.266388] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.278287] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.290180] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.302068] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.313962] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.325848] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.337732] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.349619] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.361505] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.373391] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.385272] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.397144] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.409025] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.420909] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.432791] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.444674] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.456558] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.468446] FAT-fs (loop2): error, invalid access to FAT (entry 0x00000ccb)
+> [11916.480352] watchdog: BUG: soft lockup - CPU#58 stuck for 26s! [cat:2446035]
+> [11916.480357] Modules linked in: ...
+> [11916.480503] CPU: 58 PID: 2446035 Comm: cat Kdump: loaded Tainted: ...
+> [11916.480508] Hardware name: vclusters VSFT5000 B/VSFT5000 B, BIOS ...
+> [11916.480510] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [11916.480513] pc : console_emit_next_record+0x1b4/0x288
+> [11916.480524] lr : console_emit_next_record+0x1ac/0x288
+> [11916.480525] sp : ffff80009bcdae90
+> [11916.480527] x29: ffff80009bcdaec0 x28: ffff800082513810 x27: 0000000000000001
+> [11916.480530] x26: 0000000000000001 x25: ffff800081f66000 x24: 0000000000000000
+> [11916.480533] x23: 0000000000000000 x22: ffff80009bcdaf8f x21: 0000000000000001
+> [11916.480535] x20: 0000000000000000 x19: ffff800082513810 x18: ffffffffffffffff
+> [11916.480538] x17: 0000000000000002 x16: 0000000000000001 x15: ffff80009bcdab30
+> [11916.480541] x14: 0000000000000000 x13: 205d353330363434 x12: 32545b5d36343438
+> [11916.480543] x11: 652820544146206f x10: 7420737365636361 x9 : ffff800080159a6c
+> [11916.480546] x8 : 69202c726f727265 x7 : 545b5d3634343836 x6 : 342e36313931315b
+> [11916.480549] x5 : ffff800082513a01 x4 : ffff80009bcdad31 x3 : 0000000000000000
+> [11916.480551] x2 : 00000000ffffffff x1 : 0000000001b9b000 x0 : ffff8000836cef00
+> [11916.480554] Call trace:
+> [11916.480557]  console_emit_next_record+0x1b4/0x288
+> [11916.480560]  console_flush_all+0xcc/0x190
+> [11916.480563]  console_unlock+0x78/0x138
+> [11916.480565]  vprintk_emit+0x1c4/0x210
+> [11916.480568]  vprintk_default+0x40/0x58
+> [11916.480570]  vprintk+0x84/0xc8
+> [11916.480572]  _printk+0x68/0xa0
+> [11916.480578]  _fat_msg+0x6c/0xa0 [fat]
+> [11916.480593]  __fat_fs_error+0xf8/0x118 [fat]
+> [11916.480601]  fat_ent_read+0x164/0x238 [fat]
+> [11916.480609]  fat_get_cluster+0x180/0x2c8 [fat]
+> [11916.480617]  fat_get_mapped_cluster+0xb8/0x170 [fat]
+>
+> Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
 
-> 2025=E5=B9=B46=E6=9C=8819=E6=97=A5 03:53=EF=BC=8Ccarlos.bilbao@kernel.or=
-g =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> From: Carlos Bilbao <carlos.bilbao@kernel.org>
->=20
-> Improve the timing accuracy of LACPDU transmissions in the bonding =
-802.3ad
-> (LACP) driver. The current approach relies on a decrementing counter =
-to
-> limit the transmission rate. In our experience, this method is =
-susceptible
-> to delays (such as those caused by CPU contention or soft lockups) =
-which
-> can lead to accumulated drift in the LACPDU send interval. Over time, =
-this
-> drift can cause synchronization issues with the top-of-rack (ToR) =
-switch
-> managing the LAG, manifesting as lag map flapping. This in turn can =
-trigger
-> temporary interface removal and potential packet loss.
->=20
-> This patch improves stability with a jiffies-based mechanism to track =
-and
-> enforce the minimum transmission interval; keeping track of when the =
-next
-> LACPDU should be sent.
->=20
-> Suggested-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> Signed-off-by: Carlos Bilbao (DigitalOcean) <carlos.bilbao@kernel.org>
+Looks good.
+
+Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+
+Thanks.
+
 > ---
-> drivers/net/bonding/bond_3ad.c | 18 ++++++++----------
-> include/net/bond_3ad.h         |  5 +----
-> 2 files changed, 9 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/net/bonding/bond_3ad.c =
-b/drivers/net/bonding/bond_3ad.c
-> index c6807e473ab7..47610697e4e5 100644
-> --- a/drivers/net/bonding/bond_3ad.c
-> +++ b/drivers/net/bonding/bond_3ad.c
-> @@ -1375,10 +1375,12 @@ static void ad_churn_machine(struct port =
-*port)
->  */
-> static void ad_tx_machine(struct port *port)
-> {
-> - /* check if tx timer expired, to verify that we do not send more =
-than
-> - * 3 packets per second
-> - */
-> - if (port->sm_tx_timer_counter && !(--port->sm_tx_timer_counter)) {
-> + unsigned long now =3D jiffies;
-> +
-> + /* Check if enough time has passed since the last LACPDU sent */
-> + if (time_after_eq(now, port->sm_tx_next_jiffies)) {
-> + port->sm_tx_next_jiffies +=3D ad_ticks_per_sec / =
-AD_MAX_TX_IN_SECOND;
-> +
-> /* check if there is something to send */
-> if (port->ntt && (port->sm_vars & AD_PORT_LACP_ENABLED)) {
-> __update_lacpdu_from_port(port);
-> @@ -1395,10 +1397,6 @@ static void ad_tx_machine(struct port *port)
-> port->ntt =3D false;
-> }
-> }
-> - /* restart tx timer(to verify that we will not exceed
-> - * AD_MAX_TX_IN_SECOND
-> - */
-> - port->sm_tx_timer_counter =3D ad_ticks_per_sec/AD_MAX_TX_IN_SECOND;
-> }
-> }
->=20
-> @@ -2199,9 +2197,9 @@ void bond_3ad_bind_slave(struct slave *slave)
-> /* actor system is the bond's system */
-> __ad_actor_update_port(port);
-> /* tx timer(to verify that no more than MAX_TX_IN_SECOND
-> - * lacpdu's are sent in one second)
-> + * lacpdu's are sent in the configured interval (1 or 30 secs))
-> */
-> - port->sm_tx_timer_counter =3D ad_ticks_per_sec/AD_MAX_TX_IN_SECOND;
-> + port->sm_tx_next_jiffies =3D jiffies + ad_ticks_per_sec / =
-AD_MAX_TX_IN_SECOND;
+> Changelog:
+> v2: use fat_fs_error_ratelimit instead as suggested by OGAWA Hirofumi
+>
+>  fs/fat/fatent.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
+> index 1db348f8f887a..a7061c2ad8e4d 100644
+> --- a/fs/fat/fatent.c
+> +++ b/fs/fat/fatent.c
+> @@ -356,7 +356,7 @@ int fat_ent_read(struct inode *inode, struct fat_entry *fatent, int entry)
+>  
+>  	if (!fat_valid_entry(sbi, entry)) {
+>  		fatent_brelse(fatent);
+> -		fat_fs_error(sb, "invalid access to FAT (entry 0x%08x)", entry);
+> +		fat_fs_error_ratelimit(sb, "invalid access to FAT (entry 0x%08x)", entry);
+>  		return -EIO;
+>  	}
 
-If CONFIG_HZ is 1000, there is 1000 tick per second, but =
-"ad_ticks_per_sec / AD_MAX_TX_IN_SECOND=E2=80=9D =3D=3D 10/3 =3D=3D 3, =
-so that means send lacp packets every 3 ticks ?
-
->=20
-> __disable_port(port);
->=20
-> diff --git a/include/net/bond_3ad.h b/include/net/bond_3ad.h
-> index 2053cd8e788a..956d4cb45db1 100644
-> --- a/include/net/bond_3ad.h
-> +++ b/include/net/bond_3ad.h
-> @@ -231,10 +231,7 @@ typedef struct port {
-> mux_states_t sm_mux_state; /* state machine mux state */
-> u16 sm_mux_timer_counter; /* state machine mux timer counter */
-> tx_states_t sm_tx_state; /* state machine tx state */
-> - u16 sm_tx_timer_counter; /* state machine tx timer counter
-> - * (always on - enter to transmit
-> - *  state 3 time per second)
-> - */
-> + unsigned long sm_tx_next_jiffies;/* expected jiffies for next LACPDU =
-sent */
-> u16 sm_churn_actor_timer_counter;
-> u16 sm_churn_partner_timer_counter;
-> u32 churn_actor_count;
-> --=20
-> 2.43.0
->=20
->=20
->=20
-
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
