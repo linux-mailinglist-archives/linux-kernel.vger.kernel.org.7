@@ -1,183 +1,198 @@
-Return-Path: <linux-kernel+bounces-696301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97785AE24E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 00:12:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F08CAE24F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 00:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FCD13B1742
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 22:11:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9595A24C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 22:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7DC23BCE3;
-	Fri, 20 Jun 2025 22:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD987241668;
+	Fri, 20 Jun 2025 22:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LojU7jDA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NQqPZw7d"
+Received: from mail-il1-f201.google.com (mail-il1-f201.google.com [209.85.166.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB9B221DAC;
-	Fri, 20 Jun 2025 22:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43717233721
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 22:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750457526; cv=none; b=u3DH0l1A66G4zJk6gT0jyR9my5XtRMM1x8KB54Rd5a+fkRWUj2ujmKe+wLWFCf95ZxlS/V5AaSnyHMEUyo9kqLcq+kKjE2CJN3YAv5A5POXq2K8akyYmKD1QT0FH0euZFTEniVJ3K72fTQrU0UO0OA/cokmOoMfireXL5t1nzqI=
+	t=1750457919; cv=none; b=jL3aYXzQOLyObTG0gQQxxm8dNdB6rPHE6e4kVCHWnb9Hrs68F0Btys/N8uYgf9XbKVFC2AG9PWQtB7TeZZr70hsB+Is46cbUcA8C45Nwq4PZ0izqsJ3KWXbKCFDmKeJaWNyb+GvvTa8jIU99LDKUp0xRzvvh53inHSst7RuKNCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750457526; c=relaxed/simple;
-	bh=wTDpmuMLI1jmsJXs5SO5HcqWlMfheX5Tl55J4mYQJRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lvgUW4wXZSt+WGGOop1el3llgEAs2nyu8Q6Rm3xMZr5QAaHwBoQ3Q/HUVRVPF0eGV7OO4r8lEgpGYq1FeqFwXsIaqNoLn57t9KIsV82lXgf9b8sJTJ7nkew06b5hOCgpqOmVtj5kSG4uvSdMmge8Q7Zdf/uqqh9L4gaepbb5Jdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LojU7jDA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D69F6C4CEE3;
-	Fri, 20 Jun 2025 22:12:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750457526;
-	bh=wTDpmuMLI1jmsJXs5SO5HcqWlMfheX5Tl55J4mYQJRU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LojU7jDABaRMMIPyJ1x620YVNRDj3CBPbmanfnRiqAVo1tsK9zYH5OCl4kfRBPQUM
-	 IVvI86KRUFedOD0RCqXjoaGve4iZyNJ4TeLvF6L4ET8dRPFWMn6qFErAJx44XX6xi+
-	 Pk2uadCXq1VfRvf0/N0uLFHErkb8i4YhNiLih/Vz4O99SERJI8qI1t1twkWAlrJkPj
-	 3I3gnvUyZOCbLO3qdbI8lVukAXoxM8OpGI2+78pdgDaqxXxj86g+N0cAztCLxiPPVu
-	 kbuMOZAWRbegqTG/avGqFka1ZM8nQgIV09ZY+KXzDq+L/eM/3FTLpXEo1OO4KhwzFm
-	 bbe2yPdI/XPPA==
-Date: Fri, 20 Jun 2025 15:12:04 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Chun-Tse Shao <ctshao@google.com>
-Cc: Ian Rogers <irogers@google.com>, linux-kernel@vger.kernel.org,
-	peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1] perf stat: Fix uncore aggregation number
-Message-ID: <aFXctF683XlLmiRy@google.com>
-References: <20250611233239.3098064-1-ctshao@google.com>
- <CAP-5=fXyB3H-msiSUGH_XqOntJNv-A2X7DtjvZO=nLzJgdTY+A@mail.gmail.com>
- <CAJpZYjVxs3yAS1-Uj_aQjkHGo+hRkHnwCbWxNsS4pT50-rvRPg@mail.gmail.com>
- <CAP-5=fWvnALUJiHrb_xzHXjseD88HF7LExs4N_Okg+UguuXsXg@mail.gmail.com>
- <CAJpZYjWUUbnNyBYXNSu_mmUrYLhNHHmdro8r08Xe0tN7nAanxg@mail.gmail.com>
+	s=arc-20240116; t=1750457919; c=relaxed/simple;
+	bh=7pulN/OkGjkY7Bx65ebnOL221hHWSP3hgKF52P74crE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=q7jP3apUmym09FCZIsnVXuXMCpSYshN15vihMNBmu03Ta3cQ57SxLDG3k0hnf9JFpprGfI/BhE5Q8ZOAYLuirC6Hs7l5qJVQEJx/hjYfPMqbAHpEoVbUtr4aEPwcVbe/l30U5DrYl+p8915ZwV5QAW5ZvQwv57RewWAVW/69q0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NQqPZw7d; arc=none smtp.client-ip=209.85.166.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-il1-f201.google.com with SMTP id e9e14a558f8ab-3ddb4a92e80so28360415ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 15:18:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750457915; x=1751062715; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yU/fLL+92RLO71Pe+syN2lmq3wCTn8ghsMcg6jKW0VU=;
+        b=NQqPZw7ddC9TwDH1GR9skDkJdD3LdMbUCfSqeXg1HGoU57dozRflSqncZw3faeE0k4
+         F68i57FGDCunExzdtVAY4FuoXTNVhdg4FUk/jHACTUe1mexujKyel2rIGXdtX3FT0XCZ
+         OjHcZMSOZg1OjyFKgT9eLdZHFYNlkFBV3ebIG5Utl4+CsvW+PSBKyleDqzbsA+gH1X3D
+         e5USNEl0nG2qvOR+SAqdX2vLyiEZwKc0bawXTbBwKP5/txfYSUoan9/V6G7Og1x9ML52
+         kvYVaRwg0zjNerS9kp6XiBpZ47+rjrdPsyZW+UJ7td9cQAIY0tk6ew5zZY3lpqMQyEWl
+         84zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750457915; x=1751062715;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yU/fLL+92RLO71Pe+syN2lmq3wCTn8ghsMcg6jKW0VU=;
+        b=dysGyVfZq1vohDt8WwVqnlWEJu9Irvoj9/oE29D3O5X+zBX3vVy9n2uVtyEtpY70ZS
+         ECFRfFgoe+Qs11mMdwVfXTtz6FmOFKT4XeK9slWZHRDuULJJXA4Uga6h8HCa0zCmPx7p
+         LXIhOLecDf/+jtXVSnx4XhBQa+xls21Onc7i/TC0E/YgKjqffzafyl2bD8U0O7lMp5sJ
+         uYiATuyB9QKNBGn0pIi/577wjxYkZTk1QtiMnSx7XBfiWYzPBiDj62t35qMPRRYgN63i
+         gpUlehKAODLlW+XZcDwTlnOu3BKs6PD2XqaISDo7jx7S0gXv1eXz2pD3UxrUmEXfhotG
+         aHXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbCn9bydVm3OASbnFu7kiXOT/jjsrGUfthYX8PLn2JGY7KWa8xXnGZ4sJYegxiQAenb4XYDttMBP3gAz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykFsmODyr72V92o7XHaCs+kQBOCh+AE+xKnDaOLFEdjU/x6kfM
+	I059o+h42NnseFFryeuOn9816fZM/RTEsA7uMqDmcNmYjHKzwrXLbGi5pQUJf3og4vD7oBGyx6T
+	lEJh9HJM7MVlqFaksNmTuVfTitQ==
+X-Google-Smtp-Source: AGHT+IFQfd+HFEgJUFIDJKFNT2FwvsKl4Qb5d6oW09ns3YI6iz4RavO8zz9nyubEwG4dIvHgjtj9BKcQ+WfnlUpyug==
+X-Received: from ilbbb11.prod.google.com ([2002:a05:6e02:b:b0:3de:11fe:800c])
+ (user=coltonlewis job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6e02:16ce:b0:3dd:d653:5a05 with SMTP id e9e14a558f8ab-3de38c1bec3mr55832985ab.3.1750457915390;
+ Fri, 20 Jun 2025 15:18:35 -0700 (PDT)
+Date: Fri, 20 Jun 2025 22:13:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJpZYjWUUbnNyBYXNSu_mmUrYLhNHHmdro8r08Xe0tN7nAanxg@mail.gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.714.g196bf9f422-goog
+Message-ID: <20250620221326.1261128-1-coltonlewis@google.com>
+Subject: [PATCH v2 00/23] ARM64 PMU Partitioning
+From: Colton Lewis <coltonlewis@google.com>
+To: kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Colton Lewis <coltonlewis@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi CT,
+This series creates a new PMU scheme on ARM, a partitioned PMU that
+allows reserving a subset of counters for more direct guest access,
+significantly reducing overhead. More details, including performance
+benchmarks, can be read in the v1 cover letter linked below.
 
-On Thu, Jun 12, 2025 at 03:55:59PM -0700, Chun-Tse Shao wrote:
-> Hi Ian, I actually renamed it to `aggr_nr` in v2 patch so it should be
-> better aligned to json mode, which is using `aggregate-nunber`. But
-> anyway I think any name other than `cpus` is better.
-> v2 patch: lore.kernel.org/20250612225324.3315450-1-ctshao@google.com
+v2:
 
-I think "aggregation-count" is a better name, maybe abbreviated to
-"ag_cnt".  Can we rename the JSON as well?  I'm not sure if it's
-documented somewhere.
+* Rebased on top of kvm/queue to pick up Sean's patch [1] that
+  reorganizes some of the same headers and would otherwise conflict.
 
-Thanks,
-Namhyung
+* Changed the semantics of the command line parameters and the
+  ioctl. It was pointed out in the comments last time that it doesn't
+  work to repartition at runtime because the perf subsystem assumes
+  the number of counters it gets will not change after the PMU is
+  probed. Now the PMUv3 command line parameters are the sole thing
+  that divides up guest and host counters and the ioctl just toggles a
+  flag for whether a vcpu should use the partitioned PMU. I've also
+  moved from one to two parameters: partition_pmu=[y/n] and
+  reserved_guest_counters=[0-N]. This makes it possible to
+  unambiguously express configurations like a partitioned PMU with 0
+  general purpose counters exposed to the guest (which still exposes
+  the cycle counter.
 
-> 
-> 
-> On Wed, Jun 11, 2025 at 10:12 PM Ian Rogers <irogers@google.com> wrote:
-> >
-> > On Wed, Jun 11, 2025 at 8:18 PM Chun-Tse Shao <ctshao@google.com> wrote:
-> > >
-> > > Thanks for your test, Ian!
-> > >
-> > > I wonder if `nr_pmus` makes sense, since the column would be shared
-> > > with multiple different pmus. WDYT?
-> >
-> > So each PMU in sysfs has a cpumask that specifies which CPUs perf
-> > should pass to perf_event_open. For example, on a two socket machine
-> > the cpumask will typically have the first CPU of each socket. If the
-> > cpumask (or cpus) file isn't present then the cpumask is implicitly
-> > all online CPUs. Given that the aggregation number is the number of
-> > CPUs in the cpumask multiplied by the number of PMUs, I think the most
-> > neutral name is probably "counters" possibly shortened down to "ctrs".
-> > I suspect others have better suggestions :-)
-> >
-> > Thanks,
-> > Ian
-> >
-> > > -CT
-> > >
-> > > On Wed, Jun 11, 2025 at 5:16 PM Ian Rogers <irogers@google.com> wrote:
-> > > >
-> > > > On Wed, Jun 11, 2025 at 4:36 PM Chun-Tse Shao <ctshao@google.com> wrote:
-> > > > >
-> > > > > Follow up:
-> > > > > lore.kernel.org/CAP-5=fVDF4-qYL1Lm7efgiHk7X=_nw_nEFMBZFMcsnOOJgX4Kg@mail.gmail.com/
-> > > > >
-> > > > > The patch adds unit aggregation during evsel merge the aggregated uncore
-> > > > > counters.
-> > > > >
-> > > > > Tested on a 2-socket machine with SNC3, uncore_imc_[0-11] and
-> > > > > cpumask="0,120"
-> > > > > Before:
-> > > > >   perf stat -e clockticks -I 1000 --per-socket
-> > > > >   #           time socket cpus             counts unit events
-> > > > >        1.001085024 S0        1         9615386315      clockticks
-> > > > >        1.001085024 S1        1         9614287448      clockticks
-> > > > >   perf stat -e clockticks -I 1000 --per-node
-> > > > >   #           time node   cpus             counts unit events
-> > > > >        1.001029867 N0        1         3205726984      clockticks
-> > > > >        1.001029867 N1        1         3205444421      clockticks
-> > > > >        1.001029867 N2        1         3205234018      clockticks
-> > > > >        1.001029867 N3        1         3205224660      clockticks
-> > > > >        1.001029867 N4        1         3205207213      clockticks
-> > > > >        1.001029867 N5        1         3205528246      clockticks
-> > > > > After:
-> > > > >   perf stat -e clockticks -I 1000 --per-socket
-> > > > >   #           time socket cpus             counts unit events
-> > > >
-> > > > I wonder if there is a better column heading than "cpus" given that
-> > > > these are imc PMUs.
-> > > >
-> > > > >        1.001022937 S0       12         9621463177      clockticks
-> > > > >        1.001022937 S1       12         9619804949      clockticks
-> > > > >   perf stat -e clockticks -I 1000 --per-node
-> > > > >   #           time node   cpus             counts unit events
-> > > > >        1.001029867 N0        4         3206782080      clockticks
-> > > > >        1.001029867 N1        4         3207025354      clockticks
-> > > > >        1.001029867 N2        4         3207067946      clockticks
-> > > > >        1.001029867 N3        4         3206871733      clockticks
-> > > > >        1.001029867 N4        4         3206199005      clockticks
-> > > > >        1.001029867 N5        4         3205525058      clockticks
-> > > > >
-> > > > > Suggested-by: Ian Rogers <irogers@google.com>
-> > > > > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> > >
-> > > Added Namhyung's ack from the previous email.
-> > > Acked-by: Namhyung Kim <namhyung@kernel.org>
-> > >
-> > > >
-> > > > Tested-by: Ian Rogers <irogers@google.com>
-> > > >
-> > > > Thanks,
-> > > > Ian
-> > > >
-> > > > > ---
-> > > > >  tools/perf/util/stat.c | 1 +
-> > > > >  1 file changed, 1 insertion(+)
-> > > > >
-> > > > > diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-> > > > > index 355a7d5c8ab8..52266d773353 100644
-> > > > > --- a/tools/perf/util/stat.c
-> > > > > +++ b/tools/perf/util/stat.c
-> > > > > @@ -527,6 +527,7 @@ static int evsel__merge_aggr_counters(struct evsel *evsel, struct evsel *alias)
-> > > > >                 struct perf_counts_values *aggr_counts_b = &ps_b->aggr[i].counts;
-> > > > >
-> > > > >                 /* NB: don't increase aggr.nr for aliases */
-> > > > > +               ps_a->aggr[i].nr += ps_b->aggr[i].nr;
-> > > > >
-> > > > >                 aggr_counts_a->val += aggr_counts_b->val;
-> > > > >                 aggr_counts_a->ena += aggr_counts_b->ena;
-> > > > > --
-> > > > > 2.50.0.rc1.591.g9c95f17f64-goog
-> > > > >
+* Moved the partitioning code into the PMUv3 driver itself so KVM code
+  isn't modifying fields that are otherwise internal to the driver.
+
+* Define PMI{CNTR,FILTR} as undef_access since KVM isn't ready to
+  support that counter. It is, however, still handled in the
+  partitioning because the driver recognizes it.
+
+* Take out the dependency on FEAT_FGT since it is not widely available
+  on hardware yet. Instead, define a fast path in switch.h for
+  handling accesses to the registers that would otherwise be
+  untrapped.
+
+* During MDCR_EL2 setup for guests, ensure the computed HPMN value is
+  always below the number of guest counters allocated by the driver at
+  boot and always below the number of counters on the current
+  CPU. This accounts for the possibiliy of heterogeneous hardware
+  where I guest might be able to use the partitioned PMU on one CPU
+  but not another.
+
+* The KVM PMU event filter API says that counters must not count while
+  the event is filtered. To ensure this, enforce the filter on every
+  vcpu_load into the guest.
+
+* Settable PMCR_EL0.N with a partitioned PMU now works and the
+  vcpu_counter_access selftest changes reflect that.
+
+v1:
+https://lore.kernel.org/kvm/20250602192702.2125115-1-coltonlewis@google.com/
+
+Colton Lewis (22):
+  arm64: cpufeature: Add cpucap for HPMN0
+  arm64: Generate sign macro for sysreg Enums
+  arm64: cpufeature: Add cpucap for PMICNTR
+  arm64: Define PMI{CNTR,FILTR}_EL0 as undef_access
+  KVM: arm64: Reorganize PMU functions
+  perf: arm_pmuv3: Introduce method to partition the PMU
+  perf: arm_pmuv3: Generalize counter bitmasks
+  perf: arm_pmuv3: Keep out of guest counter partition
+  KVM: arm64: Correct kvm_arm_pmu_get_max_counters()
+  KVM: arm64: Set up FGT for Partitioned PMU
+  KVM: arm64: Writethrough trapped PMEVTYPER register
+  KVM: arm64: Use physical PMSELR for PMXEVTYPER if partitioned
+  KVM: arm64: Writethrough trapped PMOVS register
+  KVM: arm64: Write fast path PMU register handlers
+  KVM: arm64: Setup MDCR_EL2 to handle a partitioned PMU
+  KVM: arm64: Account for partitioning in PMCR_EL0 access
+  KVM: arm64: Context swap Partitioned PMU guest registers
+  KVM: arm64: Enforce PMU event filter at vcpu_load()
+  perf: arm_pmuv3: Handle IRQs for Partitioned PMU guest counters
+  KVM: arm64: Inject recorded guest interrupts
+  KVM: arm64: Add ioctl to partition the PMU when supported
+  KVM: arm64: selftests: Add test case for partitioned PMU
+
+Marc Zyngier (1):
+  KVM: arm64: Cleanup PMU includes
+
+ Documentation/virt/kvm/api.rst                |  21 +
+ arch/arm/include/asm/arm_pmuv3.h              |  34 +
+ arch/arm64/include/asm/arm_pmuv3.h            |  61 +-
+ arch/arm64/include/asm/kvm_host.h             |  20 +-
+ arch/arm64/include/asm/kvm_pmu.h              |  61 ++
+ arch/arm64/kernel/cpufeature.c                |  15 +
+ arch/arm64/kvm/Makefile                       |   2 +-
+ arch/arm64/kvm/arm.c                          |  22 +
+ arch/arm64/kvm/debug.c                        |  24 +-
+ arch/arm64/kvm/hyp/include/hyp/switch.h       | 233 ++++++
+ arch/arm64/kvm/pmu-emul.c                     | 676 +----------------
+ arch/arm64/kvm/pmu-part.c                     | 359 +++++++++
+ arch/arm64/kvm/pmu.c                          | 687 ++++++++++++++++++
+ arch/arm64/kvm/sys_regs.c                     |  66 +-
+ arch/arm64/tools/cpucaps                      |   2 +
+ arch/arm64/tools/gen-sysreg.awk               |   1 +
+ arch/arm64/tools/sysreg                       |   6 +-
+ drivers/perf/arm_pmuv3.c                      | 150 +++-
+ include/linux/perf/arm_pmu.h                  |  15 +-
+ include/linux/perf/arm_pmuv3.h                |  14 +-
+ include/uapi/linux/kvm.h                      |   4 +
+ tools/include/uapi/linux/kvm.h                |   2 +
+ .../selftests/kvm/arm64/vpmu_counter_access.c |  63 +-
+ virt/kvm/kvm_main.c                           |   1 +
+ 24 files changed, 1791 insertions(+), 748 deletions(-)
+ create mode 100644 arch/arm64/kvm/pmu-part.c
+
+
+base-commit: 79150772457f4d45e38b842d786240c36bb1f97f
+--
+2.50.0.714.g196bf9f422-goog
 
