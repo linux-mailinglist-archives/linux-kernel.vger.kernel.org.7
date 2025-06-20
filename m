@@ -1,275 +1,190 @@
-Return-Path: <linux-kernel+bounces-695616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D041AE1BE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:18:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D373CAE1BED
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835EE1C20E85
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:18:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57F823AD857
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5889A28A702;
-	Fri, 20 Jun 2025 13:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234012882A4;
+	Fri, 20 Jun 2025 13:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Cg6/0oun";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hveZh6xA"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hH8KdSB+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zqsKlHN2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mGELOX9l";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QOzO8MZP"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F3F8BE5;
-	Fri, 20 Jun 2025 13:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A59A95C
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 13:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750425507; cv=none; b=VK+5O4NlOeibYk9JcIYWBOquCYVjqoeLJSoYpWfDdrYB93BhnyIUeubwmdl4OF7FKTbt3iymq8ItLEhtUC2wo1B2SM17vfvjnuou4mESLiTECjXaayeH8gWiVvMuKAGnX64i+CjHfK7EXhWdKXL4f7vjHIody+2zD3C+IbU9UrM=
+	t=1750425550; cv=none; b=APktcxz0Leuo2PRgJCzVaur2rI3xMueoCMSHKwmdnGCaNYpV2S0cl90p6McLUZoeS7v59JAWnIQsAu5Z3rQPV8ECA60wjZZMUx4eAkqCSbmb/dFYutJ8GDRLJpSwNBVTVvoymdUe5NbeXFllBf0LFFo67NW37vVLlzJPyyQRf/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750425507; c=relaxed/simple;
-	bh=j68EaIKsl6TVM8MjA15aWipXrGHM9K+eyDJGkUlfU2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VeyxRXrbPFQD9p8/pP7S0KdILB9t1cYD5Mn0OKNCuiHpFcyqb0rN9rozHJCN6DpKtCT5uUZ1cRIAw9lXoCgHqKQkhHHxqPtZTJIpDxhqcETYLfNML/PXODwHeU2kEf15DWLm5iiQcGAWqeDuCkm5clnvgEjngvQ9PGYdrFQMhXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Cg6/0oun; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hveZh6xA; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 20 Jun 2025 15:18:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750425503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1750425550; c=relaxed/simple;
+	bh=tb27oC8Nv19HnnuNym9QuZynNCHkklqYVGfNCR/Mc18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JbPUrqPmjP+KRXZT3Ot/Ww+6TX4vDVsm+2d/iCsMrvQh3ZY9/vmqplIT6ZF+AzWsGomt/raP8RhEHppOANEg/YcVxAVe7mEYEzK4LYjLpoTPruCDM3xVaouLALpj85FAPbqcbUpbZwrO0FkdTRZUxk9zg3JoYM+CNzTpGI9tbOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hH8KdSB+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zqsKlHN2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mGELOX9l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QOzO8MZP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 18DBD1F38D;
+	Fri, 20 Jun 2025 13:19:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750425547; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xFAOt2MavbSZy6+6CRRkv0iVG6HD+B7/Z0Dvh8oYqA4=;
-	b=Cg6/0ounJmq7Cw+OltJXvfJ830rXTfB6nNkMuuLtwvHcbK4Amj50MeTEZtoILLNjlUPR3U
-	sCaq+l2jH8M7czq685gfwR+DMATSEQMN7JKPCns6TDsFOwW4YNSzdSQe5w/mt61BhtWkhE
-	TF6dktdEgpIye5JR3oxO/ctekctnPc6g6LPzGIKDckV8P2+r1CCVj4AzhQuGlrzKupDnry
-	W6lbCoGD6WTYbpj95tb53M1vSGRuEcusOrMfJ2Sa5anHigllsQKmWtK16DdCCdf3YjuxpX
-	m1CP1QZIryF1iAMSlSU0vw/GXw+zi7fhdhaK+GY5Kw7vSzC7Azd3aEzawgp8oQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750425503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+07ee/d/6c4m/vhaVYT3fbuPqf4cuKaP4c+Jl77q8sc=;
+	b=hH8KdSB+q8tvw8yxq5W4FsvowERHmcjDmj/XBojrpjOOtM6z2nupY8yesDy2nfnKGPms0T
+	wrTAZGa/aLOZ8M14KTWmJhjWiJfRXl8f+5M5oVA/90hTbt9KCilMSWpkZUWqnECs14od2P
+	duv2NXTWCwjMEc21rbhDaA/o6Imdzfw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750425547;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xFAOt2MavbSZy6+6CRRkv0iVG6HD+B7/Z0Dvh8oYqA4=;
-	b=hveZh6xAQHMQoFD472CWRsLBzqWtE6Cv6mC3P0CCPCwZ8Mvls39XPbu0vdKaTy+6KQ+Dq/
-	NIPrJfXvr2KvonAw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: David Gow <davidgow@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, Shuah Khan <shuah@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-doc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, workflows@vger.kernel.org
-Subject: Re: [PATCH v3 00/16] kunit: Introduce UAPI testing framework
-Message-ID: <20250620145812-e6fc0e34-28bd-4a8a-8376-63c3ac6b6b30@linutronix.de>
-References: <20250611-kunit-kselftests-v3-0-55e3d148cbc6@linutronix.de>
- <CABVgOSn+530YJ3OPNJQncLDQNbd9JEDtZ04Amyyxk57jOVYUyQ@mail.gmail.com>
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+07ee/d/6c4m/vhaVYT3fbuPqf4cuKaP4c+Jl77q8sc=;
+	b=zqsKlHN2OwnR8Ovq8qpJm10gsBJby7MEb2A2g7T5X79Fx5m5C2cuIwhCIwLv7pxF2oYhcg
+	6XzdmS3EddadqwBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750425546; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+07ee/d/6c4m/vhaVYT3fbuPqf4cuKaP4c+Jl77q8sc=;
+	b=mGELOX9l6mpjsHKBS/LhNyI/R7b5z0sVCpO/xLd7n1KAqVFnM3cw8kpPEaNlR++C3hEEs7
+	wv+0ff8b+BPeUYz+LCKmdvWaG965tjQNplVHOrdFNtsqA82pcqTzjfP5Ta5+6nR7oTbXXA
+	6uu3pjtC+vi5ak0BLP84rP1Z3vZVtCc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750425546;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+07ee/d/6c4m/vhaVYT3fbuPqf4cuKaP4c+Jl77q8sc=;
+	b=QOzO8MZPVew1qrXdFQgBB+zPE+3euiczCyj/ym5cejEe0mNe97CF5t5UhBmZH4CjrNo47M
+	GDTSW7SmHj4yetDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E38EE13736;
+	Fri, 20 Jun 2025 13:19:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id uKE/N8lfVWgfNwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 20 Jun 2025 13:19:05 +0000
+Message-ID: <fb9f80e9-9eb3-4f9b-8214-ad1d5e852ae3@suse.cz>
+Date: Fri, 20 Jun 2025 15:19:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABVgOSn+530YJ3OPNJQncLDQNbd9JEDtZ04Amyyxk57jOVYUyQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] mm/madvise: thread mm_struct through madvise_behavior
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Jann Horn <jannh@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Lance Yang <ioworker0@gmail.com>,
+ SeongJae Park <sj@kernel.org>, Suren Baghdasaryan <surenb@google.com>
+References: <cover.1750363557.git.lorenzo.stoakes@oracle.com>
+ <1be4352e1d414712e876cff4b5d982cc24dc7692.1750363557.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <1be4352e1d414712e876cff4b5d982cc24dc7692.1750363557.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,nvidia.com,linux.alibaba.com,oracle.com,arm.com,kernel.org,google.com,kvack.org,vger.kernel.org,gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.cz:mid,suse.cz:email]
+X-Spam-Level: 
 
-On Fri, Jun 20, 2025 at 05:37:24PM +0800, David Gow wrote:
-> On Wed, 11 Jun 2025 at 15:38, Thomas Weiﬂschuh
-> <thomas.weissschuh@linutronix.de> wrote:
-> >
-> > Currently testing of userspace and in-kernel API use two different
-> > frameworks. kselftests for the userspace ones and Kunit for the
-> > in-kernel ones. Besides their different scopes, both have different
-> > strengths and limitations:
-> >
-> > Kunit:
-> > * Tests are normal kernel code.
-> > * They use the regular kernel toolchain.
-> > * They can be packaged and distributed as modules conveniently.
-> >
-> > Kselftests:
-> > * Tests are normal userspace code
-> > * They need a userspace toolchain.
-> >   A kernel cross toolchain is likely not enough.
-> > * A fair amout of userland is required to run the tests,
-> >   which means a full distro or handcrafted rootfs.
-> > * There is no way to conveniently package and run kselftests with a
-> >   given kernel image.
-> > * The kselftests makefiles are not as powerful as regular kbuild.
-> >   For example they are missing proper header dependency tracking or more
-> >   complex compiler option modifications.
-> >
-> > Therefore kunit is much easier to run against different kernel
-> > configurations and architectures.
-> > This series aims to combine kselftests and kunit, avoiding both their
-> > limitations. It works by compiling the userspace kselftests as part of
-> > the regular kernel build, embedding them into the kunit kernel or module
-> > and executing them from there. If the kernel toolchain is not fit to
-> > produce userspace because of a missing libc, the kernel's own nolibc can
-> > be used instead.
-> > The structured TAP output from the kselftest is integrated into the
-> > kunit KTAP output transparently, the kunit parser can parse the combined
-> > logs together.
-> >
-> > Further room for improvements:
-> > * Call each test in its completely dedicated namespace
-> > * Handle additional test files besides the test executable through
-> >   archives. CPIO, cramfs, etc.
-> > * Compatibility with kselftest_harness.h (in progress)
-> > * Expose the blobs in debugfs
-> > * Provide some convience wrappers around compat userprogs
-> > * Figure out a migration path/coexistence solution for
-> >   kunit UAPI and tools/testing/selftests/
-> >
-> > Output from the kunit example testcase, note the output of
-> > "example_uapi_tests".
-> >
-> > $ ./tools/testing/kunit/kunit.py run --kunitconfig lib/kunit example
-> > ...
-> > Running tests with:
-> > $ .kunit/linux kunit.filter_glob=example kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
-> > [11:53:53] ================== example (10 subtests) ===================
-> > [11:53:53] [PASSED] example_simple_test
-> > [11:53:53] [SKIPPED] example_skip_test
-> > [11:53:53] [SKIPPED] example_mark_skipped_test
-> > [11:53:53] [PASSED] example_all_expect_macros_test
-> > [11:53:53] [PASSED] example_static_stub_test
-> > [11:53:53] [PASSED] example_static_stub_using_fn_ptr_test
-> > [11:53:53] [PASSED] example_priv_test
-> > [11:53:53] =================== example_params_test  ===================
-> > [11:53:53] [SKIPPED] example value 3
-> > [11:53:53] [PASSED] example value 2
-> > [11:53:53] [PASSED] example value 1
-> > [11:53:53] [SKIPPED] example value 0
-> > [11:53:53] =============== [PASSED] example_params_test ===============
-> > [11:53:53] [PASSED] example_slow_test
-> > [11:53:53] ======================= (4 subtests) =======================
-> > [11:53:53] [PASSED] procfs
-> > [11:53:53] [PASSED] userspace test 2
-> > [11:53:53] [SKIPPED] userspace test 3: some reason
-> > [11:53:53] [PASSED] userspace test 4
-> > [11:53:53] ================ [PASSED] example_uapi_test ================
-> > [11:53:53] ===================== [PASSED] example =====================
-> > [11:53:53] ============================================================
-> > [11:53:53] Testing complete. Ran 16 tests: passed: 11, skipped: 5
-> > [11:53:53] Elapsed time: 67.543s total, 1.823s configuring, 65.655s building, 0.058s running
-> >
-> > Based on v6.15-rc1.
-> >
-> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> > ---
-> > Changes in v3:
-> > - Reintroduce CONFIG_CC_CAN_LINK_STATIC
-> > - Enable CONFIG_ARCH_HAS_NOLIBC for m68k and SPARC
-> > - Properly handle 'clean' target for userprogs
-> > - Use ramfs over tmpfs to reduce dependencies
-> > - Inherit userprogs byte order and ABI from kernel
-> > - Drop now unnecessary "#ifndef NOLIBC"
-> > - Pick up review tags
-> > - Drop usage of __private in blob.h,
-> >   sparse complains and it is not really necessary
-> > - Fix execution on loongarch when using clang
-> > - Drop userprogs libgcc handling, it was ugly and is not yet necessary
-> > - Link to v2: https://lore.kernel.org/r/20250407-kunit-kselftests-v2-0-454114e287fd@linutronix.de
-> >
-> > Changes in v2:
-> > - Rebase onto v6.15-rc1
-> > - Add documentation and kernel docs
-> > - Resolve invalid kconfig breakages
-> > - Drop already applied patch "kbuild: implement CONFIG_HEADERS_INSTALL for Usermode Linux"
-> > - Drop userprogs CONFIG_WERROR integration, it doesn't need to be part of this series
-> > - Replace patch prefix "kconfig" with "kbuild"
-> > - Rename kunit_uapi_run_executable() to kunit_uapi_run_kselftest()
-> > - Generate private, conflict-free symbols in the blob framework
-> > - Handle kselftest exit codes
-> > - Handle SIGABRT
-> > - Forward output also to kunit debugfs log
-> > - Install a fd=0 stdin filedescriptor
-> > - Link to v1: https://lore.kernel.org/r/20250217-kunit-kselftests-v1-0-42b4524c3b0a@linutronix.de
-> >
-> > ---
+On 6/19/25 22:26, Lorenzo Stoakes wrote:
+> There's no need to thread a pointer to the mm_struct nor have different
+> functions signatures for each behaviour, instead store state in the struct
+> madvise_behavior object consistently and use it for all madvise() actions.
 > 
-> 
-> Thanks very much for persisting with this, and sorry for the delayed response.
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Thanks for the review.
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-> I've taken quite a liking to it: it'd definitely have made my life
-> easier more than once.
->
-> As a more general wrapping of selftests in KUnit tests, I do think
-> that there's still some risk of confusion as to when a KUnit UAPI test
-> makes sense versus a simple selftest. The UAPI tests are definitely
-> (IMO) easier to build and run, but won't be easier to debug, or to run
-> on an existing, non-test system as a part of troubleshooting (which
-> has been a complaint when selftests have been ported to KUnit in the
-> past).
-
-The tests I am currently running with this framework are actually real
-kselftests. They primarily live in tools/testing/selftests/ but I have a
-wrapper in the "real" source tree and also build as part of KUnit.
-This gives the advantages of both systems.
-FWIW, the KUnit UAPI tests still exist as regular binaries in the output
-tree and can also be used on their own.
-
-> Nevertheless, I'm pretty happy to have this be a part of KUnit, though
-> I have three slight reservations:
-> 1. There's no real _user_ of this yet -- save for the small test of
-> /proc/self/comm in the example -- I'd like to see a real-world test
-> using this.
-
-As mentioned before I am using this with real kselftests.
-So far I have plugged in:
-
-* all of tools/testing/selftests/vDSO/
-* all of tools/testing/selftests/timens/
-* a bit of tools/testing/selftests/x86/
-* a bit of tools/testing/selftests/timers/
-
-The selftests require a few small changes but these are mostly to resolve
-warnings introduced by the more struct userprogs CFLAGS.
-Or make the tests compatible with nolibc by changing syscall constants
-from the generic SYS_foo to the Linux UAPI variant __NR_foo.
-
-If you want to take a look at the (very WIP) code:
-https://git.kernel.org/pub/scm/linux/kernel/git/thomas.weissschuh/linux.git/log/?h=kunit-kselftests-integration
-
-In addition, some extensions to nolibc and the vDSO selftest libraries were
-necessary. But all of that has been upstreamed already.
-
-> 2. There's a fair bit of complexity here, and we're already a bit
-> behind with KUnit reviews. I'd love it if you could commit to helping
-> maintain the KUnit parts of this in MAINTAINERS.
-
-Ack. I'll add this in the next revision.
-
-> 3. We need to make sure that there's a clear understanding of when to
-> use this, versus in-kernel KUnit tests, versus kselftest. This'll
-> probably involve (a) making sure Shuah is on board -- or at least not
-> strongly opposed, and (b) updating
-> Documentation/dev-tools/testing-overview.rst.
-
-As mentioned above, I think for most testcases both can be used from the same
-codebase. So far I don't have any other requirements, although I am fairly sure
-those will come up at some point. Let's go there when necessary.
-
-I talked to Shuah about the proposal before and she had a positive reaction.
-But I still would be very happy to get more feedback from her, also about the
-posted patches.
-
-I'll also update testing-overview.rst.
-
-> But thanks very much -- it's working well in my testing here, and
-> running the tests is very pleasant.
-
-Good to hear!
-
-<snip>
 
