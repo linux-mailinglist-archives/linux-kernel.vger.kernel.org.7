@@ -1,141 +1,190 @@
-Return-Path: <linux-kernel+bounces-696119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC95AE2280
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 20:49:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D0FCAE2285
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 20:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744C618970EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 18:49:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A1061884FDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 18:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1512EAB67;
-	Fri, 20 Jun 2025 18:49:07 +0000 (UTC)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BA52EAB8E;
+	Fri, 20 Jun 2025 18:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iTRbb3x/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cFGjpwls";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="F4PkB7qi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eaXfd8nK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF351FBEA6;
-	Fri, 20 Jun 2025 18:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C822E8E1D
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 18:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750445347; cv=none; b=PWFC9LZaa83x2AoKQL9UOS3gMADqUweSxI6em5K8zgIi1ojORCvC3aQEqyI2tVdepJeNI3Hs4Ijzl09yeYJeUK5emMXxlB/1UALIq7WbbhWLbvn/UDngVMzKsGq8I+KHxOlCrqKOm3GcNirw3mgEOPXaiuQqT5xblVEX1rS03eY=
+	t=1750445388; cv=none; b=ibFS5nXS1r6SPjLCGkvLg5dbjtp3ajgtJiVoYaDZQzAiPX7tlODiInaw3QSQv58UIZB5G1mjK8b0p8syH4Uhg7yqBisfnyBkfxUXnsq3WzYiWphm9V/ZHoSVyzugbTIJAln3r78vZQXjwDxiU/rS6LbDRWwOKjXgOhowUAcVsb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750445347; c=relaxed/simple;
-	bh=2pKdhzo1HMxwVwHjaTbCM/9MIT5gPisq5Z/5W/ypTeI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tebpRQgcoUnwfhpvI6nLI+tYhlsRibVJ27eWyKLweagtaeEtJy001HaFEoz2cnrF8HQzLQz3GXSo8ebfY73H/IIqv0E6Yg3ciobngfCnbaIjsA7U54E3hnNG+ZDgdA+hPlIrCeguPJvqmAZ4idF3cicbzWI1+Jsjfrrg9VOpVPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ad891bb0957so392850566b.3;
-        Fri, 20 Jun 2025 11:49:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750445344; x=1751050144;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5MdUYRtToZ9U4e1Pjq6noTjhPUQvGWSQvHQg6vYWd4Q=;
-        b=P016kuM6vcBKZlDFBrqbUlU175j6A6nTmev8vZQ94JeS398HckbpoVWdJVG9utHhis
-         pSTiKcgdAPNRYmSKs0fDlltmynhdcmjmvcnPM4XxXgjHhM+8+aOuQaMZZwpHVtxrCMmn
-         qZBwHuHCJ3X10EGda+cVZHJJVByXKH57s8ftBAUInmaFC9QAuLE/ShfG2ge9OOphM5tA
-         QzP74T7WCGDmY9qWiQ1MGDhypFsQVmo0KTGxg1hbkezD7nTG6hjIsoD4elyp0lICe55L
-         t8Y9Q03dWOAduMGwv3fY1BzJT6EVVHtJy+VoEigQVCSDRoU189fqYjAkPeGozrzxh3yV
-         aGAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUehqTkO4mG1Fv9lTkrYjYeApVDpCQE4HkZMPH1RlMydZOWY4BJztGGIHZjSXffL5In7flrELOrENItQ6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC5D9pqJ0PR19f3FbgvGowfOxBkj399uxBBepsLZR7YOBRCjSo
-	nabix8AwUJ4FktB/MKFiFWSafHSQ6K+DSVwo25vDMXF6uqgnmPk2vV03
-X-Gm-Gg: ASbGncvgBXvhM1P4t1DHaxale8oUIBjRP09zt6nrB1/WZKm2QqTTm97ImAC8M17b8NT
-	0+NaEL0ZH6NAvs05kz+Pn+zK87TgN5I1F86THCQugcX/O3cC0yE6ZT0ljCYLKTkKWnjKXURzu/K
-	4WqNlaoH+qtHyHNJRnOBvl1geFaVpE3IyC8rUAwrZPU5U92zkP4AG5gGJ0Ebf3PCClZyT3KQ6Vq
-	WLuFrAPbeR4ivdHoBPJvvF+foPD75l3hRZwnRmqnzocQwltNiiaw5r7Qr8TZhYtnSzQQY/aVK7+
-	45ziVXicfsG6/G0r7+ICqrXQpztNI752Ll/WKcc8HCODhbn8AMhM
-X-Google-Smtp-Source: AGHT+IHLlxF80gRgnE171HGf8KUHqIIkDaUzm0/WHD6+jhSVE1sQJbVAfM8euNQ84LQUMdOHJPIw+Q==
-X-Received: by 2002:a17:907:1c0f:b0:ae0:4820:2474 with SMTP id a640c23a62f3a-ae057c07320mr411690866b.43.1750445343736;
-        Fri, 20 Jun 2025 11:49:03 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:7::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0541b7535sm202587366b.141.2025.06.20.11.49.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 11:49:03 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 20 Jun 2025 11:48:55 -0700
-Subject: [PATCH net] net: netpoll: Initialize UDP checksum field before
- checksumming
+	s=arc-20240116; t=1750445388; c=relaxed/simple;
+	bh=moJYz9KTOVCIx14VqQgsxvkkDcTyQFefHhQk8HOQd28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pmQpYzkf6cX1extlTaUi3plYgiED+mQkAHY60xNqJNPpURVnlYKhmfkdNUKyl1oA5Sx6CBZAJ7ZDfXsYObZjz+zqSpHUIxWIiiOJH9B+sinn0Ml30R8dfUISLloF7IMs5KM2iXW7NBrURr65SMhzpR9Wsya0ulFs9/FtooZmpwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iTRbb3x/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cFGjpwls; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=F4PkB7qi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eaXfd8nK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1E8701F399;
+	Fri, 20 Jun 2025 18:49:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750445385; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HsDMuMlCrsQpPWi7dij7vagoFn+Y8urO2hbzs//mY48=;
+	b=iTRbb3x/V1lVM3Mhyi3s5ejBxmiyemjZIafhwxsD7XY0G8Fvztr4+/yfaUzFWpQCaQ7he6
+	spU/wDU/PzMd9+ousiGxEHLQ3DpIVToKWVEWXTwNAIbUXpEqRNSCY/pzq8MyFkucXbpV93
+	q0BXor/aYRH1TRvouGM+8/j5O8/w8Fo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750445385;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HsDMuMlCrsQpPWi7dij7vagoFn+Y8urO2hbzs//mY48=;
+	b=cFGjpwlseUMli0Zg2Ce4CyNJDuOhKI+G5tWZwV5jo/wU5Nt0SX+31D2YMcdTSAAFCvpr5+
+	XSzChU7TKqXeQvAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=F4PkB7qi;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=eaXfd8nK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750445384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HsDMuMlCrsQpPWi7dij7vagoFn+Y8urO2hbzs//mY48=;
+	b=F4PkB7qiZM4gc+sXtq6YRdReJEQZw4WnaMkSZdRdQt3fRvVcXw8FK8qGmycDIzZS2pxKEj
+	fWRXHgJ6+k1yDfeVw22ZBkA3IhqB562G2GBWEJNKImRrDXcChCx3Rk81WR8XJdaORwPea5
+	kWLbkp+ZbM+hPBuD92qSfQIglZT7Xh8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750445384;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HsDMuMlCrsQpPWi7dij7vagoFn+Y8urO2hbzs//mY48=;
+	b=eaXfd8nKvkgKNmVYQhlW4y9ZpoM3hIUyaifM1lv4LIbZrxVxmDr4VyWiPqwYfVI2ytnB4P
+	/LKoanusS1MW6vDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A00E136BA;
+	Fri, 20 Jun 2025 18:49:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QRKIIkStVWinFwAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Fri, 20 Jun 2025 18:49:40 +0000
+Date: Fri, 20 Jun 2025 19:49:34 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, "David S . Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <kees@kernel.org>, 
+	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Hugh Dickins <hughd@google.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
+	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
+ consistently
+Message-ID: <oevjoalbpopfydsazxa4fh4tjyy3zxgpdb3jttyryxyo5x5rmo@nezt4ycsaf7x>
+References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
+ <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250620-netpoll_fix-v1-1-f9f0b82bc059@debian.org>
-X-B4-Tracking: v=1; b=H4sIABatVWgC/x3MUQqAIBAFwKss7zvBhMq8SkSErrUQFhoRRHcPm
- gPMg8JZuMDRg8yXFNkTHNUVwa9zWlhJgCMYbRrdGq0Sn8e+bVOUW1nfdjbOPtjQoyIcmaPc/zY
- g8YnxfT9dHhpLYgAAAA==
-X-Change-ID: 20250620-netpoll_fix-8c678facd8d9
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1372; i=leitao@debian.org;
- h=from:subject:message-id; bh=2pKdhzo1HMxwVwHjaTbCM/9MIT5gPisq5Z/5W/ypTeI=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoVa0emlkuev5y+6QX5LuXW2KMpoaGPzlbpLWKe
- lSV40lG2lOJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaFWtHgAKCRA1o5Of/Hh3
- bcjxEACk1HprFMc3NfaPilfP6gpFg5F6CbQhT/NgXTsPf2qs62D1FuxrQlaIyJ9dyYjd/xpql8+
- awDmhOAX6x3d4ariMYm2Al620r12pkM4KI9XLGqFJdSLel01d2VJxVL5Oe50Cin6b4gWXyr9d+l
- /3SgmBYCszTYkmKQJ57YzSl5tqpF7g8Az7dEaMPZrht1cSEOdNwjSHvJ5I43CQCPgESpD5H+8Wa
- fbYyEnXr/90eOf9EWBQ46XbDid92OT+UJ6wGqPHR3GV0KWpR5blqvXgWXtY8R9itqFQVU2XwGTB
- pFzD06LAQWHchTBSbqMaursY2kfzjnVYxkzV1D0stHr8CJDZbxOTN8YpXDdsGGi6QC5KLwTMqgN
- OSUlPbkUzJUGvUxrr/g8U3YGAd9gpAtme66LeNR94FkKsQf4+DgkBUAP3vfrCRsROm4doCdX5NP
- RMGpcnGsb2/YhlX9pRAqQ6/oQHjcODNvA/u7qaXe+SKO2VCghj+rWy+BxODAgdeNL6bCDbRJ94l
- mTCBckMFgp/TS5t/mQGeolQkAB7vwK7Q4nrRZNCyfrQIe499nNZrXG7dYFi4TIJd+rAXhvghQYm
- 22A3DsFShkcYxq9utQMLzi2UXT2UFyvPySXcxTAfxINAMUb1gDONUhaKYjkdI8KL7WAUMd7FsWw
- +RMl6QYx2tlALhw==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:email,oracle.com:email];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,armlinux.org.uk,arm.com,kernel.org,linux.ibm.com,ellerman.id.au,gmail.com,csgroup.eu,davemloft.net,gaisler.com,linux.intel.com,linutronix.de,redhat.com,alien8.de,zytor.com,infradead.org,zeniv.linux.org.uk,suse.cz,nvidia.com,linux.alibaba.com,oracle.com,zte.com.cn,linux.dev,google.com,suse.com,surriel.com,intel.com,goodmis.org,efficios.com,ziepe.ca,suse.de,cmpxchg.org,bytedance.com,lists.infradead.org,vger.kernel.org,lists.ozlabs.org,kvack.org,lists.linux.dev];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_GT_50(0.00)[64];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 1E8701F399
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.01
 
-commit f1fce08e63fe ("netpoll: Eliminate redundant assignment") removed
-the initialization of the UDP checksum, which was wrong and broke
-netpoll IPv6 transmission due to bad checksumming.
+On Wed, Jun 18, 2025 at 08:42:53PM +0100, Lorenzo Stoakes wrote:
+> The core kernel code is currently very inconsistent in its use of
+> vm_flags_t vs. unsigned long. This prevents us from changing the type of
+> vm_flags_t in the future and is simply not correct, so correct this.
+> 
+> While this results in rather a lot of churn, it is a critical pre-requisite
+> for a future planned change to VMA flag type.
+> 
+> Additionally, update VMA userland tests to account for the changes.
+> 
+> To make review easier and to break things into smaller parts, driver and
+> architecture-specific changes is left for a subsequent commit.
+> 
+> The code has been adjusted to cascade the changes across all calling code
+> as far as is needed.
+> 
+> We will adjust architecture-specific and driver code in a subsequent patch.
+> 
+> Overall, this patch does not introduce any functional change.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-udph->check needs to be set before calling csum_ipv6_magic().
+Reviewed-by: Pedro Falcato <pfalcato@suse.de>
 
-Fixes: f1fce08e63fe ("netpoll: Eliminate redundant assignment")
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- net/core/netpoll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/core/netpoll.c b/net/core/netpoll.c
-index 4ddb7490df4b8..6ad84d4a2b464 100644
---- a/net/core/netpoll.c
-+++ b/net/core/netpoll.c
-@@ -432,6 +432,7 @@ int netpoll_send_udp(struct netpoll *np, const char *msg, int len)
- 	udph->dest = htons(np->remote_port);
- 	udph->len = htons(udp_len);
- 
-+	udph->check = 0;
- 	if (np->ipv6) {
- 		udph->check = csum_ipv6_magic(&np->local_ip.in6,
- 					      &np->remote_ip.in6,
-@@ -460,7 +461,6 @@ int netpoll_send_udp(struct netpoll *np, const char *msg, int len)
- 		skb_reset_mac_header(skb);
- 		skb->protocol = eth->h_proto = htons(ETH_P_IPV6);
- 	} else {
--		udph->check = 0;
- 		udph->check = csum_tcpudp_magic(np->local_ip.ip,
- 						np->remote_ip.ip,
- 						udp_len, IPPROTO_UDP,
-
----
-base-commit: 720d4a1714e78cfdc05d44352868601be9c3de94
-change-id: 20250620-netpoll_fix-8c678facd8d9
-
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
-
+-- 
+Pedro
 
