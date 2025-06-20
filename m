@@ -1,130 +1,97 @@
-Return-Path: <linux-kernel+bounces-695093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C3DAE1539
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:50:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E67AE155B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42AE65A2589
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:49:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 759E54A4F6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 08:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5F822F77D;
-	Fri, 20 Jun 2025 07:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ujuVLiDw"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1A822DFAD
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 07:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6940F228C99;
+	Fri, 20 Jun 2025 08:01:04 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B211730E824;
+	Fri, 20 Jun 2025 08:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750405807; cv=none; b=BatPSkA3cp1OyvZcfupqbsdD5nL3j59Zk0MU0i66UbhJscFWcMyeh1mXShpBZEtfnUObWp0p4k88bJwsAbLcpeH0mYVJPAlMiNdufpg+w+f+XCnL5OjF1fbnFX5Sq8I1qjyfk+dYi/Uuz0u1fQRLKb9FiqOq7S8Wx0KrGUQ5Rho=
+	t=1750406464; cv=none; b=lfiKXBcUTcN2fd88L5PqQJUqCbeebKP2oj2hQU3GhPFXTFM/fB5HWZrnzVx0o2I/jdZZzVM9MYprwDZezwbM8yT2pDNVf4lU3TnaBd5XNTEOd8l1sdoJqnpHRlJf5fuq9c+j+yRKUPb1I0Kg/UaOYj4659MYJHgLB7au5NgzsNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750405807; c=relaxed/simple;
-	bh=qQKAs1X/idcDaCqNkY8izTWAI7iaNfyNo5OvgxUiWXk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mygt6eU0TgUPRjL/a2M4y6pQ11biSEtSAIaH3VU/z8dhEx5BKgRHGh2/NyRCg5HpeRuTa3ipS3gVL8PrTELEMfdkpaP9tZ+7k8cSj1JzCd2hStg7LB56ilPEBeUgejRqSad6709kIrbz48cf8umfTj5W4uf41DS8GdkCTZlpYDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ujuVLiDw; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a4f71831abso1294726f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 00:50:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750405804; x=1751010604; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hgs/aXUaS0FHvreTt0i+GqI5HPA2Yq2mywly9pWL0cQ=;
-        b=ujuVLiDwZcq6NjQIccwbRtdpYSlVxClOaQ/3K3Pp2BM/CT9MUfNEoU+keKcpPo2kAk
-         30y5XPZrDwEAA0ScEO/ZwUHsF8Rz97hkq0i4u9sAeHAp2Q7kWL6VdLaKTv1mbS8VH1Fc
-         TatzX1pFjDG+1nXev1GydFUH4owkDkrzR/HZ50FTrRGZoy0zlNSgesfCRLbGyzX8UQa+
-         z7KI5k9tzH/AVGEais7S6ZzhAuuYzwUKHIh1peU/FAx8AzDyuovCmUx7aArl/sl6+ju0
-         L8FPC8nXDI8VCchmMIUPnylCCjVvnb4ZGtMWmdrNxhNXAZtvRSskGBDV3hgUxYVyc/b+
-         QyGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750405804; x=1751010604;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Hgs/aXUaS0FHvreTt0i+GqI5HPA2Yq2mywly9pWL0cQ=;
-        b=eFipuRrQG6CMjVMjucjJm/6GnoUhiN8p6OKUMloZa82GFonSPQAONpjf0VF+ZFidbP
-         6RTvIr1TOOtGrL58ClsdYsk2Nk/JmzSaroOYvZgKG9PCHduG/B1D+t7qHUwOOjOXWdEL
-         B9UzNrCUAeXwbfiq89GKYZE7v/3KXCX+SwqaiU51pGBsuZ2KBLb4+EfANAe7/43rJC9v
-         M/vTy0GlVLVqw4moxFI/f7pwnkHIWfX0uiPd9Yq/JH3ryjEfgzG7KHaSbgx0ntYJagGF
-         VvcqGpRO5zy2YeazSBZNNxFXHaz4dX+nwrRDh2A7TOFpvnxx5pZHseS6aCj9Wq55pvji
-         KwAw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7J7QFVFdgXaMOuMmj6RVchE2zDkq4ahPYAWo4fP/B2eL7NAOHrWY9CIy5qHrGFWh7qek4NeI07BsC4gk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGf1f1EG0z8ZveYRBD9yC6VgN+YdH2wtkQuzYfXo+uGaS14e4l
-	WLdcJGeyhnLSL2n7lBpJNKv9iCQIRRKePtSTJPoTeiaJq1lUYer0MY06xFDIx4YAdUE=
-X-Gm-Gg: ASbGnct7yYrk2Q2mgKH7Zuh0QoCNumkLdiLZhcC1BfNJDNm8yvpH22YPIpK1T4sr19P
-	c9GkX86WWQLz/EzpUTPozJPptBD3uwljFOlrYG4Op5wzKo6kLW0Xka51qgWaXpwSUy+W9UPqBHb
-	ZQsz/23DaV0IqYXASp3Rxr+p7XHB8cTckUfAHhWlEexR1sttzJlsWbZc7Z9Hyz0C8RNHxBDUKo8
-	sV49sWHVeHT8+KJivtqtFdsrWxsJW2TEIbtbNaZ9HRHTG0JQ+0SySsH8LY5ujbk/PYsB9WOFtcc
-	e0/ViH6KPmlGAqRBQ/YZ3hzQC3LELe64Thib6bAzFDLA7pvthICokFhEbkRhp3U=
-X-Google-Smtp-Source: AGHT+IFs8zGZQM01COG50yX2bVTZqY67pJjZf0ROPMbZcGOX6kAoBqID9nQ+RnfeZgYlSiBCPOybvA==
-X-Received: by 2002:a05:6000:2b11:b0:3a4:f6ed:767a with SMTP id ffacd0b85a97d-3a6d1308facmr914488f8f.38.1750405803871;
-        Fri, 20 Jun 2025 00:50:03 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:69fe:2655:53a6:f735])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535eac8e0asm50143715e9.23.2025.06.20.00.50.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 00:50:03 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Douglas Anderson <dianders@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] drm/bridge: ti-sn65dsi86: remove unnecessary GPIO line direction check
-Date: Fri, 20 Jun 2025 09:49:51 +0200
-Message-ID: <20250620074951.32758-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1750406464; c=relaxed/simple;
+	bh=AGwI9uUo58D8rhz4PFt/7iXNiYZDkRmoqVfEo+Wsk3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GdQVSGzFVWXZi+ARs55sdquwSJJDwNQxx39xOe+w2yLs5Gvv6uYfcTMOSc4AVtV9yiMrHUc6FUE4Mkn7MU3ccEqimrf574zNo5CBw95Za7rsjbJMOvYsH1jWsTySaMsUiv7/xmy0K280MKzLv1J7NB1snHggL1tlrWToe4vFLD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 55K7pQKq022946;
+	Fri, 20 Jun 2025 09:51:26 +0200
+Date: Fri, 20 Jun 2025 09:51:26 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Yoshinori Sato <ysato@users.osdn.me>, Rich Felker <dalias@libc.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Shuah Khan <shuah@kernel.org>, linux-sh@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] selftests/nolibc: use file driver for QEMU serial
+Message-ID: <20250620075126.GB22550@1wt.eu>
+References: <20250609-nolibc-sh-v1-0-9dcdb1b66bb5@weissschuh.net>
+ <20250609-nolibc-sh-v1-2-9dcdb1b66bb5@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250609-nolibc-sh-v1-2-9dcdb1b66bb5@weissschuh.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Thomas,
 
-As of commit 92ac7de3175e3 ("gpiolib: don't allow setting values on input
-lines"), the GPIO core makes sure values cannot be set on input lines.
-Remove the unnecessary check.
+On Mon, Jun 09, 2025 at 11:28:58AM +0200, Thomas Weiﬂschuh wrote:
+> For the test implementation of the SuperH architecture a second serial
+> serial port needs to be used. Unfortunately the currently used 'stdio'
+> driver does not support multiple serial ports at the same time.
+> 
+> Switch to the 'file' driver which does support multiple ports and is
+> sufficient for the nolibc-test usecase.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> ---
+>  tools/testing/selftests/nolibc/Makefile | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/nolibc/Makefile b/tools/testing/selftests/nolibc/Makefile
+> index 22da78a4bfea0274f66abec319d34b3d2a2824ac..238acaa7bb06dcdbcadd9d3190c2de726e1a40b1 100644
+> --- a/tools/testing/selftests/nolibc/Makefile
+> +++ b/tools/testing/selftests/nolibc/Makefile
+> @@ -315,12 +315,12 @@ kernel-standalone: initramfs | defconfig
+>  
+>  # run the tests after building the kernel
+>  run: kernel initramfs.cpio
+> -	$(Q)qemu-system-$(QEMU_ARCH) -display none -no-reboot -kernel "$(IMAGE)" -initrd initramfs.cpio -serial stdio $(QEMU_ARGS) > "$(CURDIR)/run.out"
+> +	$(Q)qemu-system-$(QEMU_ARCH) -display none -no-reboot -kernel "$(IMAGE)" -initrd initramfs.cpio -serial file:/dev/stdout $(QEMU_ARGS) > "$(CURDIR)/run.out"
+>  	$(Q)$(REPORT) $(CURDIR)/run.out
+>  
+>  # re-run the tests from an existing kernel
+>  rerun:
+> -	$(Q)qemu-system-$(QEMU_ARCH) -display none -no-reboot -kernel "$(IMAGE)" -initrd initramfs.cpio -serial stdio $(QEMU_ARGS) > "$(CURDIR)/run.out"
+> +	$(Q)qemu-system-$(QEMU_ARCH) -display none -no-reboot -kernel "$(IMAGE)" -initrd initramfs.cpio -serial file:/dev/stdout $(QEMU_ARGS) > "$(CURDIR)/run.out"
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 5 -----
- 1 file changed, 5 deletions(-)
+I'm cautious every time we touch the -serial output after having faced
+issues earlier when trying to use pipes. Here I think it's OK, however,
+I'm wondering if "file:$(CURDIR)/run.out" wouldn't be clearer, and also
+encourage future changes to stick to a file and avoid piping the output
+to a filter command. No strong opinion though.
 
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index 78a50b947a08..3d0b4bc5129d 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -1677,11 +1677,6 @@ static int ti_sn_bridge_gpio_set(struct gpio_chip *chip, unsigned int offset,
- {
- 	struct ti_sn65dsi86 *pdata = gpiochip_get_data(chip);
- 
--	if (!test_bit(offset, pdata->gchip_output)) {
--		dev_err(pdata->dev, "Ignoring GPIO set while input\n");
--		return -EPERM;
--	}
--
- 	val &= 1;
- 	return regmap_update_bits(pdata->regmap, SN_GPIO_IO_REG,
- 				  BIT(SN_GPIO_OUTPUT_SHIFT + offset),
--- 
-2.48.1
+In any case: Acked-by: Willy Tarreau <w@1wt.eu>
 
+Thanks,
+Willy
 
