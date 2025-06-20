@@ -1,152 +1,200 @@
-Return-Path: <linux-kernel+bounces-694865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-694870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D1E3AE1198
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 05:15:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E41DDAE11A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 05:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D283D19E09B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:15:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 759A23AC3C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 03:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4949B183098;
-	Fri, 20 Jun 2025 03:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dM2F/IEd"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C623E1DC997;
+	Fri, 20 Jun 2025 03:16:56 +0000 (UTC)
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7B5801
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 03:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E318E801
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 03:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750389317; cv=none; b=fH4yC1+YeMxgVghxTtjsEO/WQNdwrktjeMqgLapXxg5SRnbIpbVKhGQMRujaYGDDR50M56u+rFYO4Eic5l4AZQH2cNPL+DlsseeGUvBB1Ci45s6YiOAVlf2yzDcfl/pZEkbWCXfyQDP9AY4c2rgI/yoU9VabHqttgiXNBvmmXto=
+	t=1750389416; cv=none; b=OeCcLp/vaggow+j2ct9WS9DOVpLyTzKOYjZFguLrMHEYul51do48UdZ1iGo8F8jcs5t41PyEwR85D1E6UmX2IzdyX1OIb+WRB8lbIHotnoSZmkwMfMDv9AVmpp5RgoOd40JsBzAsMcGYxHVNfBd7EtseEvX0Fm5E+k1DLzSqz8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750389317; c=relaxed/simple;
-	bh=qGw6QsVkDorN/WcsEMO4MKMspWLeMtrQB/HDWuaMiF4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nce4J6V45sPuMKAR1JcapesPchylhvyOAqGsSNtp7+njwM5AQVF94IDGFSkpQ0K4uoVuYD3NopY/dfGcjF5AQknmotZmDxtETWAHUBeCta5mY0WKm/zL13Dt+foJ8QiRd3SghTQTwLJMxemPjjWbCqTkJL49AeKf2GUCnEd8vXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dM2F/IEd; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b31e076f714so984126a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 20:15:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750389315; x=1750994115; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TTV2xrvG0Z1mVglMumMG6IGCfJ/cF65U85wOLttNrPE=;
-        b=dM2F/IEdQMqDirk7cNaQ6AOcQVRHLHpaPmdYdzHf6HT7YLBFV5laP1MQKfzbTrvhsw
-         XQpAZwel8/8LQMXoqXDhacOg+Rr8JhZVGZ8hapwnnk5IKGiSVpK1faXB2O12DYewO8FD
-         8wl2xAHjomfNmRfb6/HSlAEjUvNqIaQfGKAFeHfTY6zvB5i1uk1xHTyOjNfsAeB1BK7q
-         9AxlVd/pflFWOOhboXpuzKpJA3ria7tkNG30Yfl0kVLgExQ23IyTt++xN3muKBxslwXx
-         r9uu9PaOx0hLMOtVFRKHF0Wizw8Xv4222Y5A8kPW+o1It5nyE0uKYeLFidHj9T970DPW
-         Il+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750389315; x=1750994115;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TTV2xrvG0Z1mVglMumMG6IGCfJ/cF65U85wOLttNrPE=;
-        b=PkB9QeFm+u4doINN5Td+Xswlt0WVkTw2+rzsudMxiUfE+Okvkdx66EVVBxvVWVfysK
-         77jKuLvVHu43pS3N6RNVdU6N0UflZ44eLnqDMVHc/fRqQq85I2mQPxDfe3tuk6CbI5CN
-         IiN/6eRJLXUVlpHZLBrYXSKmNccqcZ+hG7sIyZmiqKrS9ueRkO9kmuiEHW0CpH7oRg4G
-         iHNAmx2GunSA8hH2yCet+6PSWFosV33mdUYRipgWvIL9DjLdNi57801KmhfB6grtLw9J
-         4gK5q3LmnAke84zK2mhZWEHBArloEceqBPr4Rw7D6mlOXKzEBCjdzEw3edoTm+MFGJVz
-         bErg==
-X-Gm-Message-State: AOJu0YyzFAVOG6dg8l1DKGmUr9JXd+fGudLw1jnhTpz3H7dngKjL4s10
-	53JhPUmeIwCISHauVX4Hai+V2GnQrA2+Kq2/wq4xJubBiLVOuNPZovEb
-X-Gm-Gg: ASbGncsZWPQUjKqlIzkATovh4ipuGGhDD+mlAYmZqt+fCtLVaYQyuZecIDIJc2f32Zp
-	LtfLiiF7r0S4W1f7ah0wZQWpY06g+YXEazrsLFAF+RvVM3233tSgnJvV5RyrIvL/XzeRPfiEVuH
-	85w1iBycFcYKj4LWo951P3BYLe7beTq/SR1eeL27PwZvApL797G8BabbP/G70kOydQ4tvKMfdMA
-	uSHNZAttYehOFb0EuTjDgFHaVjqXvvt4V6+WfplPjoh0HWrmn1VqcVxn5Zd255nKtW9rEA/2KQ2
-	5yzY+wisuFubG0g4bshdpgT6Ilm2TeumMFQPj6sTcoMBryyurvxUUc1eyXopHFXctwoDkk7u9jY
-	=
-X-Google-Smtp-Source: AGHT+IF9RIpEAJdPDiXTGxJSZJUHaziLjzG4Os/4Rce9JK1QXiw3TMZ+I0P2/At5wq591wTb5XKhqw==
-X-Received: by 2002:a17:90b:2710:b0:313:d361:73d7 with SMTP id 98e67ed59e1d1-3159f51ab2emr1294866a91.13.1750389315452;
-        Thu, 19 Jun 2025 20:15:15 -0700 (PDT)
-Received: from localhost.localdomain ([119.147.10.164])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d86103e5sm6486555ad.120.2025.06.19.20.15.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 20:15:14 -0700 (PDT)
-From: Olice Zou <zoucaox@gmail.com>
-X-Google-Original-From: Olice Zou <olicezou@tencent.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com
-Cc: linux-kernel@vger.kernel.org,
-	zoucaox@gmail.com,
-	Olice Zou <olicezou@tencent.com>
-Subject: [PATCH] sched/stats: TASK_IDLE task bypass the block_starts time
-Date: Fri, 20 Jun 2025 11:14:50 +0800
-Message-Id: <20250620031450.581290-1-olicezou@tencent.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1750389416; c=relaxed/simple;
+	bh=PsaUAxfRj9CuYUjCQXDco1nqJRJzkfZTLOJqsh1HqT4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=jO+2NwB0czj6cqdgKcSrA4CuTO6C944u4jpLI7IttZ9rfSUqL/nTVPllwOwMDDptQDHEPls43o1C+VuGWuFaj9qpQ8c52asU8dD91mlRUxSqaTZRNA9DfsFzHm7dYBvU8oW3XBc+t4OilL/4UZdAA7UjoDixwIi8+UDT8ndGaI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bamaicloud.com; spf=pass smtp.mailfrom=bamaicloud.com; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bamaicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bamaicloud.com
+X-QQ-mid: esmtpgz12t1750389349teda56343
+X-QQ-Originating-IP: Zo98sSbsqoUDsUkXJ0WApzQJ12Ats2G0qcArjT+Gb7M=
+Received: from smtpclient.apple ( [111.202.70.99])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 20 Jun 2025 11:15:46 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 2506058706453155900
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH] bonding: Improve the accuracy of LACPDU transmissions
+From: Tonghao Zhang <tonghao@bamaicloud.com>
+In-Reply-To: <20250618195309.368645-1-carlos.bilbao@kernel.org>
+Date: Fri, 20 Jun 2025 11:15:36 +0800
+Cc: jv@jvosburgh.net,
+ andrew+netdev@lunn.ch,
+ davem@davemloft.net,
+ edumazet@google.com,
+ kuba@kernel.org,
+ pabeni@redhat.com,
+ horms@kernel.org,
+ netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ sforshee@kernel.org,
+ bilbao@vt.edu
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <341249BC-4A2E-4C90-A960-BB07FAA9C092@bamaicloud.com>
+References: <20250618195309.368645-1-carlos.bilbao@kernel.org>
+To: carlos.bilbao@kernel.org
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:bamaicloud.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: OE2SNMSfMbmOh2dsmTMGQU1X3c5oy7ccON50BUOaDaS68HyR7p2x8xR0
+	yzgSk/8MmqzsnMHzv7EUwDr07vdpfj6Z83cNfX8a7f/YJ0T0AnVmKqU7mi0mnEUn3RBSmut
+	crD1mmh5JTEPtqzZspHb0PJMmMs7L/3jNQCD2J5Eav6OPeLou/wt5IXfReFbrEkJyD5POmW
+	dWRnoJMU8SWnwktDSZmACJ8163TXkdYb81RzwOR7hSDnwkRugiRZ4wB07hmhQhdlt+2cX5k
+	A2JCs9v0j9Lbx2By2s8ik9sgE+cDKbnB1qv5msN46VTdKSJEJuwr4OZ9pY4fW161t6/k7nN
+	HEpsdFiLixdrTsZq/2yirRjg6tAaDvnwQQmkhS+HLA0anzD6XUU6KDzAUTXNpVn6Epd6PCS
+	20h80wig+xZTw0l5iGCJ13YL5PKIfEaUNI5t1WYgwby+TBZuMzfm1x5boHovqgR+4STd3Ip
+	HT7zSUUIwdqIEIbKQxCnTO47EP229heTYJ1Qk1cZxBEJ+myHw1yV3zF165H80pTbUdXwHYg
+	jOv8XxPF8sx1dqUJgZhRUTScriJfax/0nyh9AaqXJj2XL3HxtbS+EarhyT33rqhj38QMh39
+	ZNLXCv3ljgUeYQ7hazvNP9I0uBWsAhQJGfpr1yDn3svMveczNxgubL2pwdNVxNmKpQ7i7NK
+	T26BJ/s2EUnsPPyjW2tX8WzX1zmFfCnxTdc7qbl79BwJOl6aWDBRHBt0UJGE9KktnW6SNL9
+	EqNaIs3njHiFU5/NSfim2D2GiiAtAmnHFk+VmDMVfYMz/TEzxzGnyderM2c+di7egnyf2mb
+	xcs6l8QYF/+QzUxmQmverRtu+M964Wgd4ajUU8AFwmvBeZqQRd6qitBeIFyiW1bXfDI3iUA
+	cidgJu3VfF1R5V09ZmOEtC5WefP/5vR5DrhHALfLry9cDMEJqz01Rj+lcv4hJ5CEhwxivaT
+	GD7Upz6bnV3Z3eQ==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-For TASK_IDLE task, we not should record the block_starts, it is
-not real TASK_UNINTERRUPTIBLE task.
 
-It is easy to find this problem in a idle machine as followe:
 
-bpftrace -e 'tracepoint:sched:sched_stat_blocked {  \
-    if (args->delay > 1000000)  \
-    {  \
-	printf("%s %d\n", args->comm, args->delay);  \
-	print(kstack());  \
-    }  \
-}
+> 2025=E5=B9=B46=E6=9C=8819=E6=97=A5 03:53=EF=BC=8Ccarlos.bilbao@kernel.or=
+g =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> From: Carlos Bilbao <carlos.bilbao@kernel.org>
+>=20
+> Improve the timing accuracy of LACPDU transmissions in the bonding =
+802.3ad
+> (LACP) driver. The current approach relies on a decrementing counter =
+to
+> limit the transmission rate. In our experience, this method is =
+susceptible
+> to delays (such as those caused by CPU contention or soft lockups) =
+which
+> can lead to accumulated drift in the LACPDU send interval. Over time, =
+this
+> drift can cause synchronization issues with the top-of-rack (ToR) =
+switch
+> managing the LAG, manifesting as lag map flapping. This in turn can =
+trigger
+> temporary interface removal and potential packet loss.
+>=20
+> This patch improves stability with a jiffies-based mechanism to track =
+and
+> enforce the minimum transmission interval; keeping track of when the =
+next
+> LACPDU should be sent.
+>=20
+> Suggested-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> Signed-off-by: Carlos Bilbao (DigitalOcean) <carlos.bilbao@kernel.org>
+> ---
+> drivers/net/bonding/bond_3ad.c | 18 ++++++++----------
+> include/net/bond_3ad.h         |  5 +----
+> 2 files changed, 9 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/net/bonding/bond_3ad.c =
+b/drivers/net/bonding/bond_3ad.c
+> index c6807e473ab7..47610697e4e5 100644
+> --- a/drivers/net/bonding/bond_3ad.c
+> +++ b/drivers/net/bonding/bond_3ad.c
+> @@ -1375,10 +1375,12 @@ static void ad_churn_machine(struct port =
+*port)
+>  */
+> static void ad_tx_machine(struct port *port)
+> {
+> - /* check if tx timer expired, to verify that we do not send more =
+than
+> - * 3 packets per second
+> - */
+> - if (port->sm_tx_timer_counter && !(--port->sm_tx_timer_counter)) {
+> + unsigned long now =3D jiffies;
+> +
+> + /* Check if enough time has passed since the last LACPDU sent */
+> + if (time_after_eq(now, port->sm_tx_next_jiffies)) {
+> + port->sm_tx_next_jiffies +=3D ad_ticks_per_sec / =
+AD_MAX_TX_IN_SECOND;
+> +
+> /* check if there is something to send */
+> if (port->ntt && (port->sm_vars & AD_PORT_LACP_ENABLED)) {
+> __update_lacpdu_from_port(port);
+> @@ -1395,10 +1397,6 @@ static void ad_tx_machine(struct port *port)
+> port->ntt =3D false;
+> }
+> }
+> - /* restart tx timer(to verify that we will not exceed
+> - * AD_MAX_TX_IN_SECOND
+> - */
+> - port->sm_tx_timer_counter =3D ad_ticks_per_sec/AD_MAX_TX_IN_SECOND;
+> }
+> }
+>=20
+> @@ -2199,9 +2197,9 @@ void bond_3ad_bind_slave(struct slave *slave)
+> /* actor system is the bond's system */
+> __ad_actor_update_port(port);
+> /* tx timer(to verify that no more than MAX_TX_IN_SECOND
+> - * lacpdu's are sent in one second)
+> + * lacpdu's are sent in the configured interval (1 or 30 secs))
+> */
+> - port->sm_tx_timer_counter =3D ad_ticks_per_sec/AD_MAX_TX_IN_SECOND;
+> + port->sm_tx_next_jiffies =3D jiffies + ad_ticks_per_sec / =
+AD_MAX_TX_IN_SECOND;
 
-rcu_preempt 3881764
-        __update_stats_enqueue_sleeper+604
-        __update_stats_enqueue_sleeper+604
-        enqueue_entity+1014
-        enqueue_task_fair+156
-        activate_task+109
-        ttwu_do_activate+111
-        try_to_wake_up+615
-        wake_up_process+25
-        process_timeout+22
-        call_timer_fn+44
-        run_timer_softirq+1100
-        handle_softirqs+178
-        irq_exit_rcu+113
-        sysvec_apic_timer_interrupt+132
-        asm_sysvec_apic_timer_interrupt+31
-        pv_native_safe_halt+15
-        arch_cpu_idle+13
-        default_idle_call+48
-        do_idle+516
-        cpu_startup_entry+49
-        start_secondary+280
-        secondary_startup_64_no_verify+404
+If CONFIG_HZ is 1000, there is 1000 tick per second, but =
+"ad_ticks_per_sec / AD_MAX_TX_IN_SECOND=E2=80=9D =3D=3D 10/3 =3D=3D 3, =
+so that means send lacp packets every 3 ticks ?
 
-Signed-off-by: Olice Zou <olicezou@tencent.com>
----
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a85539df75a5..e473e3244dda 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1285,7 +1285,7 @@ update_stats_dequeue_fair(struct cfs_rq *cfs_rq, struct sched_entity *se, int fl
- 		if (state & TASK_INTERRUPTIBLE)
- 			__schedstat_set(tsk->stats.sleep_start,
- 				      rq_clock(rq_of(cfs_rq)));
--		if (state & TASK_UNINTERRUPTIBLE)
-+		if (state != TASK_IDLE && (state & TASK_UNINTERRUPTIBLE))
- 			__schedstat_set(tsk->stats.block_start,
- 				      rq_clock(rq_of(cfs_rq)));
- 	}
--- 
-2.25.1
+>=20
+> __disable_port(port);
+>=20
+> diff --git a/include/net/bond_3ad.h b/include/net/bond_3ad.h
+> index 2053cd8e788a..956d4cb45db1 100644
+> --- a/include/net/bond_3ad.h
+> +++ b/include/net/bond_3ad.h
+> @@ -231,10 +231,7 @@ typedef struct port {
+> mux_states_t sm_mux_state; /* state machine mux state */
+> u16 sm_mux_timer_counter; /* state machine mux timer counter */
+> tx_states_t sm_tx_state; /* state machine tx state */
+> - u16 sm_tx_timer_counter; /* state machine tx timer counter
+> - * (always on - enter to transmit
+> - *  state 3 time per second)
+> - */
+> + unsigned long sm_tx_next_jiffies;/* expected jiffies for next LACPDU =
+sent */
+> u16 sm_churn_actor_timer_counter;
+> u16 sm_churn_partner_timer_counter;
+> u32 churn_actor_count;
+> --=20
+> 2.43.0
+>=20
+>=20
+>=20
 
 
