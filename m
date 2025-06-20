@@ -1,125 +1,182 @@
-Return-Path: <linux-kernel+bounces-695649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF621AE1C42
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:31:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337AAAE1C48
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02B5216E817
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:31:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AACA1899812
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DDC28A735;
-	Fri, 20 Jun 2025 13:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB93225777;
+	Fri, 20 Jun 2025 13:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDQq8wTk"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.b="iL54NTVE"
+Received: from dane.soverin.net (dane.soverin.net [185.233.34.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D994086A;
-	Fri, 20 Jun 2025 13:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A6814F70
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 13:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.34.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750426270; cv=none; b=iqXq90m0o+yTSFY+gHdvALk+hvXtysdkjK3ikrYMLQJdzmS14DSemgL5HqIpMNI5XHyIbcvtZdqr2SL3Fs0KvkH9UjID11fD+vP3ghrqbeMuSeceH/fUlA7LWAAuvK3sSqHON6BEJiqpM/1DadTOuWUuv4Y73WkR0WtoSlL0vNo=
+	t=1750426405; cv=none; b=cTgQD9JS1gD6lR7Ux0Bf9x0jP9whzga+Y8j5twNoNfNXz705wPE5eRCFEMswlC/KcuklGSIEpKk6wAgYwDo0pZSKcXmwvf3aO2mXZGRoVHea02FnqckZxFssRIda5ZnN0kYUzIJOfrmTeFF5oUDyMyw2I86NlmRokLiGaEiRqr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750426270; c=relaxed/simple;
-	bh=NHJhrXB6OOJw1NgU5mymcdv9hMgqTBO2fpNUTrhtfL0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=unL2mJfYxKkNh0QWAACJIOgVQts2BD2Im5eF044gTVQ2E8i72jtfGQ6iobezo4RlqYJcPX8JIfvgwghyCiWuERetSCR7eLei9sU/ruEQrKKAKXEbv0ITuFhC/WZmJzG2u778pyw2FtuD1rEJGbf39jXf4nWf5lzX2mirfH59X68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mDQq8wTk; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-312e747d2d8so1473603a91.0;
-        Fri, 20 Jun 2025 06:31:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750426268; x=1751031068; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gSVJk3M3p74vqFTAAlpzPjLkZhZ1ij1cbOy0LDfjwl8=;
-        b=mDQq8wTk+SicpnkAxJKVhEdpPgc/+40FRvinqjK3BxVoiDe9AGIfF9gBqjmrMh+i36
-         ncZ0nKOB7NMa6BCVwBFRz3FPKydDyocuJ+ulEVUKxbCj9vxhn00qCjycENKDoGPcdbtc
-         qlB9s1oRnOAabaITSDGONm1wvTKxPVaHPg6EQHiFpiWE6wFah/ASEXgfTPQGWTOquHrn
-         BkPiFnugUMjFNYZfGs6ZTe1VFTvASQH8AYBLCahvEKQ4UKeG5VOY08w+XfD/QTzw43fL
-         sVoszbBJphy+5w42U4y0Hh4kyGHFuNF4IyKI6o9MDBlAfzRdT4H2Br/NJQ6ZAY5HP4ID
-         xFYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750426268; x=1751031068;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gSVJk3M3p74vqFTAAlpzPjLkZhZ1ij1cbOy0LDfjwl8=;
-        b=oU/mil7K4/hVoo93xa6HopZKxEQmIKPMOhm7yRWSw8MVWgt0MuoMGl0qtAT8gc9Py3
-         tvIHfQLxATqDpe//JmzX4e1c1KbMi1dfmDk8s8NmjAPEoNutQlxGAPM3d3J2Z2bwoXm/
-         5yNePsLbcLGXw+dXb1/FMlWwXM37o6KR0OHFf1wLvMvktmm3GK0hBE1BgR3eS85xhKp9
-         Ap58uaGfTPMJGeKf0feYa9g3lm640rnnBu8mF9Qb0TXLJHEp5QxMTuuwTgkpIQxfJfyL
-         gB/8vIZaG1jskDRZs48ZW8WEj66JljU7PsXoDO2R1i9badBQIQgSscrthYojITYNKR0J
-         ys4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX3i7yV2l4YuBmBPAbJpcWNGeGRUl4zQVsh0DhM3JkP5DeHJzPEU3qqfAi9gfCAWt9W/krOtwcWRj4zUQ==@vger.kernel.org, AJvYcCXvO06EthizJHDFOnzTVBxx7PGVK7FaKIzIdSDNUICLGeNMwiq7W5BFxcGBIrTa2cpos5zAKfQqSfFuftU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC6Q2hI74DXomknJlBLL6wr4tDHEb366MTxoLJ0/nFl90AB4ng
-	ikSA+2abERaBm1+WB790DPULbwXDQBsBnm/ewW5O6JMdpio1L+UOsqTbf91LTsw5AimAjzRKCJP
-	+WldGiahf+ziihu78tJW8e2RGkrQ7xNtxfVyx
-X-Gm-Gg: ASbGncsboXs3wDUHLmW0pMthBYkjH8uYT3r7Oteg3L0cIuPGpIhBz5MUpxAu+U7TrXA
-	mZXGkG4ArM5Gv748wpEe10dCEIcJR0OKDh9clzVuBFM0MMZry8/0Yk+ywsh/xG/L2YnyN/ojf8d
-	YLiToG9mH1+/PNHEkm9/vssVQxps/J2l3IZUCqM82Tye3C
-X-Google-Smtp-Source: AGHT+IFs4RbzWCJt7R1NKN5zR2ZjAqi6cP5mF1/cPV5Fh+WgJJ9fRgY0uvVGrODJSJBqoXKypKKxrsPxHZ44CU8FGuM=
-X-Received: by 2002:a17:90b:3850:b0:311:b5ac:6f7d with SMTP id
- 98e67ed59e1d1-3159f46cf94mr3615235a91.6.1750426268102; Fri, 20 Jun 2025
- 06:31:08 -0700 (PDT)
+	s=arc-20240116; t=1750426405; c=relaxed/simple;
+	bh=FPGphQYx6b7qeQBw6b6Z8fGijToU16xeu1elpiFKgso=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YgL22SnFtc4T4v4E6aTpYM8GI9UysZnJQmNd72BOLQ0VwJMbNniq3k7kttZKir/OrE7x5mO+/JzAGO7k0s1snZOhrnCKGJUBOwT2JUNV0NY8cIdFWP772XfzdAcRzIGerqlAOaqBoNN8KPMDLAU1fuqB/fubLCpg8263mYeHlZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jjverkuil.nl; spf=pass smtp.mailfrom=jjverkuil.nl; dkim=pass (2048-bit key) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.b=iL54NTVE; arc=none smtp.client-ip=185.233.34.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jjverkuil.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jjverkuil.nl
+Received: from smtp.freedom.nl (unknown [10.10.4.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by dane.soverin.net (Postfix) with ESMTPS id 4bNz1y5fMHz191B;
+	Fri, 20 Jun 2025 13:33:10 +0000 (UTC)
+Received: from smtp.freedom.nl (smtp.freedom.nl [10.10.4.107]) by freedom.nl (Postfix) with ESMTPSA id 4bNz1y0mXpz4c;
+	Fri, 20 Jun 2025 13:33:10 +0000 (UTC)
+Authentication-Results: smtp.freedom.nl;
+	dkim=pass (2048-bit key; unprotected) header.d=jjverkuil.nl header.i=@jjverkuil.nl header.a=rsa-sha256 header.s=soverin1 header.b=iL54NTVE;
+	dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jjverkuil.nl;
+	s=soverin1; t=1750426390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=sOom6N1XQVz40Jn1AkaDqwt+Ls9VfdwS4vkarVSIrNg=;
+	b=iL54NTVEPuQJ7FxIUfmQqJMXDXyqrpVuK7uzySLzB0sQd4ERMTWUJgc2Bro/+adRucIkDy
+	XEWi1Qa9QupOwg8UsuWzT56no+8/CJ6pYJgV5ljujha8KROHzh6wrVRHp1sU9kqtkxfC/a
+	iDNgkAXNZLzNy0uSxmJ0o7Wxjxpyw4OiyHomo/nMVg9E5UO8Nxpz32JqSwFTv1lXXU3UKd
+	NeiTkobhgPsrlToGKToBkcsmaU0ipfmYu7yUfH+YWU8rsTzFibXGX0rOYnz9xv/8at1gKK
+	OI9VgBGX9+8ak/nFLosLM+WEbclFd2Z28Scw1bdTZP7NzRjRdz8LuD4WjZtlVw==
+X-CM-Analysis: v=2.4 cv=d/oPyQjE c=1 sm=1 tr=0 ts=68556316 a=lpDW1mawwhc5Xzrow+Hbkg==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=Ltpjkhsd4fKLfEjNPkIA:9 a=QEXdDO2ut3YA:10
+X-CM-Envelope: MS4xfIgg2jk/FZdpSuIJd6A4NNeUdG6KJXv47nnAdDXmxIPKdb9Dtl/wybtE4Nr/Df0MILKxr+x8lADA+t3BhgxtyiuOf8EueXMCPR4AOvz2Mcs5tzIK8rv6 8Oju4HvYp8WenC4cR8JmCTMqxb7yRiQ09+G5DHl0AroIhUxXoAuZ4O3s112DquitV5E/xVcEgSMEs3rGkbHTqajcJHEtfPzopTNHTweynfNS9dpvt9YUdvk4 KL3V2Cukc/Yzk+pyDbzl3Mcr/zlNxrB8WaDA/FFLBPTTklaA9DGbVbe9P3OJtPUSNlRY0vFCzgLfFTkZrWC+HcRn9R7Yw0TDUN0qrmev/hcacGT6/YU8Zlla vdi0UDDxN7JwC9iWV7AoDU2wXiuCeQBxy0OSZ+xQpHqxE2C7qSrKeeoC+opJcO3aNC2rH3IN
+Message-ID: <dc177375-5e28-40da-bab1-d0627c70bd85@jjverkuil.nl>
+Date: Fri, 20 Jun 2025 15:33:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250620000924.2636542-1-s-ramamoorthy@ti.com>
-In-Reply-To: <20250620000924.2636542-1-s-ramamoorthy@ti.com>
-From: Robert Nelson <robertcnelson@gmail.com>
-Date: Fri, 20 Jun 2025 08:30:41 -0500
-X-Gm-Features: AX0GCFtqggjuCFjLlKH5B6QhmXEMMAiDCgs8jNEzHS8qXl1UYUt3AF6T68Q4_IY
-Message-ID: <CAOCHtYgweLhO4nNhNLtJ-_25guqER7ohDf7TNy8WNFwo898wPw@mail.gmail.com>
-Subject: Re: [PATCH] regulator: tps65219: Fix devm_kmalloc size allocation
-To: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-Cc: aaro.koskinen@iki.fi, andreas@kemnade.info, khilman@baylibre.com, 
-	rogerq@kernel.org, tony@atomide.com, lee@kernel.org, d-gole@ti.com, 
-	jkridner@gmail.com, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	m-leonard@ti.com, praneeth@ti.com, afd@ti.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] media: av7110: Workaround a compiler warning
+To: Stefan Herdler <herdler@nurfuerspam.de>, lkp@intel.com
+Cc: hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
+ oe-kbuild-all@lists.linux.dev
+References: <202504262127.FkkWHzfs-lkp@intel.com>
+ <20250426215409.36852-1-herdler@nurfuerspam.de>
+Content-Language: en-US, nl
+From: Hans Verkuil <hans@jjverkuil.nl>
+Autocrypt: addr=hans@jjverkuil.nl; keydata=
+ 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
+In-Reply-To: <20250426215409.36852-1-herdler@nurfuerspam.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spampanel-Class: ham
 
-On Thu, Jun 19, 2025 at 7:09=E2=80=AFPM Shree Ramamoorthy <s-ramamoorthy@ti=
-.com> wrote:
->
-> In probe(), devm_kmalloc uses pmic->common_irq_size to allocate an array =
-of
-> 2 bytes, but pmic->common_irq_size is being used like an array of structs=
-.
-> The param sent should've been pmic->common_irq_size * sizeof(*irq_data).
-> This led to an issue with the kmalloc'd buffer being corrupted and EVM bo=
-ot
-> issues. The common and device-specific structs are now allocated one at a
-> time within the loop.
->
-> Fixes: 38c9f98db20a ("regulator: tps65219: Add support for TPS65215 Regul=
-ator IRQs")
-> Reported-by: Dhruva Gole <d-gole@ti.com>
-> Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+Hi Stefan,
 
-Thanks Shree!  Starting testing on PB2/BeaglePlay's..
+On 26/04/2025 23:54, Stefan Herdler wrote:
+> Avoid compiler warning caused by an empty block statement.
+> 
+> Signed-off-by: Stefan Herdler <herdler@nurfuerspam.de>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202504262127.FkkWHzfs-lkp@intel.com/
+> ---
+> 
+> I could not reproduce this warning with gcc10 here, but I already had similar
+> warnings with gcc12 on other projects.
+> I think it has most probably been triggered by the empty block statement.
+> 
+> I'm pretty confident this patch will fix the warning, but not 100% sure.
+> 
+> The kernel test robot will pick this patch and test is anyway, if I'm correct.
+> Let's wait, if it complains again.
+> That's the best I can do right now.
 
+Is this patch still needed? I noticed that it wasn't CC-ed to the linux-media
+mailinglist, so it never appeared in patchwork, and was never picked up.
 
-> base-commit: 5c8013ae2e86ec36b07500ba4cacb14ab4d6f728
-> prerequisite-patch-id: cd76c901948780de20e932cf620806959e2177b1
-> prerequisite-patch-id: e847098a38d07e5ff31e8c80d86d9702d132fdad
-> prerequisite-patch-id: e6a01f111e527c6da442f6756f8daa4e79d0fa3c
-
-ps, worked around these 3 missing in v6.16-rc2, which git tree do you
-have them staged?
+If it is still needed, then please post it to linux-media and it will be
+picked up for v6.17.
 
 Regards,
 
---=20
-Robert Nelson
-https://rcn-ee.com/
+	Hans
+
+> 
+> Regards
+> Stefan
+> 
+> 
+>  drivers/staging/media/av7110/av7110.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/media/av7110/av7110.c b/drivers/staging/media/av7110/av7110.c
+> index bc9a2a40a..962536ed7 100644
+> --- a/drivers/staging/media/av7110/av7110.c
+> +++ b/drivers/staging/media/av7110/av7110.c
+> @@ -159,7 +159,7 @@ static void init_av7110_av(struct av7110 *av7110)
+>  		 * some special handling for the Siemens DVB-C cards...
+>  		 */
+>  	} else if (av7110_init_analog_module(av7110) == 0) {
+> -		/* done. */
+> +		goto init_skip_analog_module;
+>  	} else if (dev->pci->subsystem_vendor == 0x110a) {
+>  		pr_info("DVB-C w/o analog module @ card %d detected\n", av7110->dvb_adapter.num);
+>  		av7110->adac_type = DVB_ADAC_NONE;
+> @@ -168,6 +168,7 @@ static void init_av7110_av(struct av7110 *av7110)
+>  		pr_info("adac type set to %d @ card %d\n", av7110->adac_type, av7110->dvb_adapter.num);
+>  	}
+>  
+> +init_skip_analog_module:
+>  	if (av7110->adac_type == DVB_ADAC_NONE || av7110->adac_type == DVB_ADAC_MSP34x0) {
+>  		// switch DVB SCART on
+>  		ret = av7110_fw_cmd(av7110, COMTYPE_AUDIODAC, MainSwitch, 1, 0);
+
 
