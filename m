@@ -1,255 +1,247 @@
-Return-Path: <linux-kernel+bounces-695590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B73AEAE1B6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:05:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCE7AE1B78
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04F7F3AC8E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:04:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 667E27A1B75
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CC028A41B;
-	Fri, 20 Jun 2025 13:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332A228C5BA;
+	Fri, 20 Jun 2025 13:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ljyAvX6y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ekurzktQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ljyAvX6y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ekurzktQ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="HK60ujtK"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31311236442
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 13:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750424705; cv=none; b=C22XaPjWXWez4Di34KLXRByhnHtM7U/EIzqkvqEAAi8FRdGU1FD0S9eooN1jl1PuzpnMXoVkpMG3CU6uBqMoSBMINeFGKLL1NvS/lS9+3JiLEnfKO/kQyFQeoKzpEbSjB1C4Ezn5CyMW8igeOpqoiVCIPM4Hywrk9libkHmx2YU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750424705; c=relaxed/simple;
-	bh=2YdG+o9yyXjFTHBMglWNk/zaHuQ+KY9OfnhjNqkzLKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cMpbHZbE28T6vaeTb3+a8yEUf+Tlw2n4goNVwqF/AHBfEHtVI+6xkeTxzIaHTWXZbs/BIoqdY7PT2xSd3WjdGAx52v2+5+gbBI1W9qqO6D9kAbYbBSlo26Aoh/mUgP7KxpxmjlPhuKKNM1LvuoMDR/Y22QQmDJRGQ64FbDbDmHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ljyAvX6y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ekurzktQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ljyAvX6y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ekurzktQ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 674641F38D;
-	Fri, 20 Jun 2025 13:05:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750424702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=g5Vh7PQtzn7ctlN5CnoQKtRomFBLSHgBU4H7pj3uRrk=;
-	b=ljyAvX6yHma/vYwnb9hA/aUwoGPEdPzAE0Lku4ZszVg9ngpFDAAV9y8h9IOk9/8LSZifSm
-	2D1YskRtGmlQ6YkpvU+ClBdQUiRqb5UH13EMulrhF/hRhsc2JQS7RoavC6B5tgbgmheYKo
-	B5d6zM8ZKu6EcooKUYv6BpDsouNS3p8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750424702;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=g5Vh7PQtzn7ctlN5CnoQKtRomFBLSHgBU4H7pj3uRrk=;
-	b=ekurzktQlwUwBQk6RQd4alsVf73brvr3Gmcz6Wms3xm2o7HFuQdO9ZSZmtgE+nYWUljY//
-	JgD73G8wv9V2JpDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750424702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=g5Vh7PQtzn7ctlN5CnoQKtRomFBLSHgBU4H7pj3uRrk=;
-	b=ljyAvX6yHma/vYwnb9hA/aUwoGPEdPzAE0Lku4ZszVg9ngpFDAAV9y8h9IOk9/8LSZifSm
-	2D1YskRtGmlQ6YkpvU+ClBdQUiRqb5UH13EMulrhF/hRhsc2JQS7RoavC6B5tgbgmheYKo
-	B5d6zM8ZKu6EcooKUYv6BpDsouNS3p8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750424702;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=g5Vh7PQtzn7ctlN5CnoQKtRomFBLSHgBU4H7pj3uRrk=;
-	b=ekurzktQlwUwBQk6RQd4alsVf73brvr3Gmcz6Wms3xm2o7HFuQdO9ZSZmtgE+nYWUljY//
-	JgD73G8wv9V2JpDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 48D63136BA;
-	Fri, 20 Jun 2025 13:05:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GIBfEX5cVWjlMgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 20 Jun 2025 13:05:02 +0000
-Message-ID: <8c4a4ea2-1eab-47dd-9b65-d60cfac16577@suse.cz>
-Date: Fri, 20 Jun 2025 15:05:02 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60615289E25;
+	Fri, 20 Jun 2025 13:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750424881; cv=pass; b=YSE1RGV6Mw7jspybSeHXaoe1DALjXtYMEggKd3mOqUmCqaEXYUPNn47rDetczPu8htiUohyVaOk6RG1dZX1pbSWzGQQKOFjm5igZJkh2GIhFNZkHodPXX1yuc1/LHG3EgKk6mbAT2t8V5jmW1dlQVjMuysUp9h5C3i7naP0oG5o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750424881; c=relaxed/simple;
+	bh=2iXG7eia1v94YWNjbygODnzZKHmhGakBBqNvfYOZtDY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=k0A6/eSd9XTq58+w+qF2LqI3p61cES8Km5uCZD2bV9tZOptSeiM8kChSbg0m7QR8kZEccZYhYGb5oW1WcVwgYXQOolv3QoBZM/WlNKpr2AevpXD31nf3VTtbeQaytwSXFC5mOMKjfm0iK0wOqoFv448RRkzwh57yYxihyT6O4vo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=HK60ujtK; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1750424855; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZuRdDeXji7e8RdZ+/rQ2quJwb0hTa2g3WxOdrtvq0A9zhhV7X/51m6ww9cKM4WcZs/FaF4srdPoWtLCpwm9/sUmet06xoaKapSuxANQLWQ3CBTZ9E9Rx92WUS0IscNKxFRTi30KQNVYugEfeiKctBVvjzhCAmfHtpfc8esJm6o4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750424855; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7bK7CVuSOQysQX8426rv7mnq8+Wx0EPjV/U4SoHzy5s=; 
+	b=BssliwiLqLgAdRKgkwSrY9C4gNVF5m7PA6gRHD4zFkX5qGtMmBSY0MN+X01dZ4YSub8Jr5iT6o7YVskoQeNlzGIL6bBwhP+BHhvPcJJUNwVfnRbS9Pdwet5pUgVXmCn8BnOTycD2CWeF/aq3e14VpKyFJaEcFDXnn9jnsC1jkBc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750424855;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
+	bh=7bK7CVuSOQysQX8426rv7mnq8+Wx0EPjV/U4SoHzy5s=;
+	b=HK60ujtKAyvh7sf7ThXqhKGa0FkB9ELU8K40CkU5U34EnxMgjTFHgf7We0Nkx2oi
+	Fryp9ttJN71hNgWLrQ1KR78c2To3DeO+sCOH1NTyUQjzTq0My8EnbLaxDmrKu7ghytD
+	L4QKW4erjxAOTnS199rMyd+00EbeY3ny0z6u1pf4=
+Received: by mx.zohomail.com with SMTPS id 1750424852417349.11288406056326;
+	Fri, 20 Jun 2025 06:07:32 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Date: Fri, 20 Jun 2025 15:06:57 +0200
+Subject: [PATCH v2] perf/headers: Document PERF_PMU_CAP capability flags
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] mm/madvise: remove the visitor pattern and thread
- anon_vma state
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Jann Horn <jannh@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Lance Yang <ioworker0@gmail.com>,
- SeongJae Park <sj@kernel.org>, Suren Baghdasaryan <surenb@google.com>
-References: <cover.1750363557.git.lorenzo.stoakes@oracle.com>
- <4239e727b98763856b86cbd9eeaa0ba792eb2394.1750363557.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <4239e727b98763856b86cbd9eeaa0ba792eb2394.1750363557.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,nvidia.com,linux.alibaba.com,oracle.com,arm.com,kernel.org,google.com,kvack.org,vger.kernel.org,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,oracle.com:email,suse.cz:mid]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Message-Id: <20250620-perf-pmu-cap-docs-v2-1-97d7752fefac@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAPBcVWgC/32OzQ6CMBAGX4Xs2TWUIn8n38NwKO0iTYBiWwiG8
+ O5W8OxxNpn5dgNHVpODKtrA0qKdNmOA5BKB7MT4JNQqMCRxcoszVuBEtsVpmFGKCZWRDgXjlAo
+ qeSkkBG+y1Or1aD7qky295pD25xEa4QilGQbtq2ik1eMvX8JX6LTzxr6PnxZ2GH/mF4YMY8VTX
+ uQqozS/S9P3ojFWXMMG1Pu+fwCnTiPH5wAAAA==
+X-Change-ID: 20250618-perf-pmu-cap-docs-a13e4ae939ac
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>
+Cc: kernel@collabora.com, Jonathan Corbet <corbet@lwn.net>, 
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ James Clark <james.clark@linaro.org>, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 6/19/25 22:26, Lorenzo Stoakes wrote:
-> Now we have the madvise_behavior helper struct we no longer need to mess
-> around with void* pointers in order to propagate anon_vma_name, and this
-> means we can get rid of the confusing and inconsistent visitor pattern
-> implementation in madvise_vma_anon_name().
-> 
-> This means we now have a single state object that threads through most of
-> madvise()'s logic and a single code path which executes the majority of
-> madvise() behaviour (we maintain separate logic for failure injection and
-> memory population for the time being).
-> 
-> Note that users cannot inadvertently cause this behaviour to occur, as
-> madvise_behavior_valid() would reject it.
+Over the years, capability flags for perf PMUs were introduced in a
+piecemeal fashion whenever a new driver needed to signal to the perf
+core some limitation or special feature.
 
-This paragraph is a bit confusing. I've inferred from the code you're
-talking about the new internal negative values, but the preceding paragraphs
-don't mention them. Could you explain in more detail what the patch does?
-I.e. adding the new struct madvise_behavior field and the new behavior value(s).
+Since one more undocumented flag that can have its meaning inferred from
+the commit message and implementation never seems that bad, it's
+understandable that this resulted in a total of 11 undocumented
+capability flags, which authors of new perf PMU drivers are expected to
+set correctly for their particular device.
 
-> Doing this results in a can_modify_vma_madv() check for anonymous VMA name
-> changes, however this will cause no issues as this operation is not
-> prohibited.
-> 
-> We can also then reuse more code and drop the redundant
-> madvise_vma_anon_name() function altogether.
-> 
-> Additionally separate out behaviours that update VMAs from those that do
-> not.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Since I am in the process of becoming such an author of a new perf
+driver, it feels proper to pay it forward by documenting all
+PERF_PMU_CAP_ constants, so that no future person has to go through an
+hour or two of git blame + reading perf core code to figure out which
+capability flags are right for them.
 
-> @@ -1325,21 +1388,25 @@ static int madvise_vma_behavior(struct vm_area_struct *vma,
->  		if (error)
->  			goto out;
->  		break;
-> -	case MADV_COLLAPSE:
-> -		return madvise_collapse(vma, prev, start, end);
-> -	case MADV_GUARD_INSTALL:
-> -		return madvise_guard_install(vma, prev, start, end);
-> -	case MADV_GUARD_REMOVE:
-> -		return madvise_guard_remove(vma, prev, start, end);
-> +	case __MADV_SET_ANON_VMA_NAME:
-> +	case __MADV_CLEAR_ANON_VMA_NAME:
-> +		/* Only anonymous mappings can be named */
-> +		if (vma->vm_file && !vma_is_anon_shmem(vma))
-> +			return -EBADF;
-> +		break;
->  	}
->  
->  	/* We cannot provide prev in this lock mode. */
-> -	VM_WARN_ON_ONCE(arg->lock_mode == MADVISE_VMA_READ_LOCK);
-> -	anon_name = anon_vma_name(vma);
-> -	anon_vma_name_get(anon_name);
-> +	VM_WARN_ON_ONCE(madv_behavior->lock_mode == MADVISE_VMA_READ_LOCK);
-> +
-> +	if (!is_anon_vma_name(behavior)) {
-> +		anon_name = anon_vma_name(vma);
-> +		anon_vma_name_get(anon_name);
-> +	}
->  	error = madvise_update_vma(vma, prev, start, end, new_flags,
->  				   anon_name);
-> -	anon_vma_name_put(anon_name);
-> +	if (!is_anon_vma_name(behavior))
-> +		anon_vma_name_put(anon_name);
+Add comments in kernel-doc format that describes each flag. This follows
+the somewhat verbose "Object-like macro documentation" format, and can
+be verified with
 
-This is not new, but the refactoring made it very visible that we're doing
-get/put on anon_name exactly in cases where we're not messing with anon_name
-so it might look buggy. Some explanatory comment would be thus nice,
-otherwise people need to git blame for commit 942341dcc5748.
+	./scripts/kernel-doc -v -none include/linux/perf_event.h
 
-Otherwise LGTM, will wait with tag for v2 as you replied elsewhere there
-will be changes. Thanks!
+The current in-tree kernel documentation does not include a page on the
+perf subsystem, but once it does, these comments should render as proper
+documentation annotation. Until then, they'll also be quite useful for
+anyone looking at the header file.
+
+Reviewed-by: James Clark <james.clark@linaro.org>
+Reviewed-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+There may be more perf documentation patches in the future, but right
+now I'm focused on getting a minimally viable driver for the hardware
+I'm working on going. Documenting these seemed to have a fairly good
+effort-to-future-payoff ratio though.
+
+I Cc'd Corbet in case he has any input on the verbosity of the
+kernel-doc syntax here, maybe I'm missing something and all of these
+could be in a single /* comment */, but as it is in this patch doesn't
+seem too awful to me either.
+---
+Changes in v2:
+- Fixed the description of PERF_PMU_CAP_NO_INTERRUPT and expanded it to
+  make it clearer for driver authors whether this flag is right for them
+- Made PERF_PMU_CAP_NO_EXCLUDE docs mention the precise attributes the
+  flag concerns itself with, as suggested by Peter Zijlstra
+- Link to v1: https://lore.kernel.org/r/20250618-perf-pmu-cap-docs-v1-1-0d34387d6e47@collabora.com
+---
+ include/linux/perf_event.h | 85 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index ec9d96025683958e909bb2463439dc69634f4ceb..d0e6b66cfd268bdad742b707633792f26352a428 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -294,16 +294,101 @@ struct perf_event_pmu_context;
+ /**
+  * pmu::capabilities flags
+  */
++
++/**
++ * define PERF_PMU_CAP_NO_INTERRUPT - \
++ *    PMU is incapable of generating samples
++ *
++ * On CPU PMU hardware, a PMU driver is only capable of generating sample data
++ * in the form of &struct perf_sample_data if the hardware is capable of
++ * generating hardware interrupts. If such interrupt capability is missing,
++ * this flag should be set.
++ *
++ * Uncore drivers, i.e. drivers for hardware performance counters that are not
++ * closely entwined with CPUs and their model of execution, should also set
++ * this flag, as they are not able to generate meaningful sample data, even if
++ * they do use an interrupt for some purpose.
++ */
+ #define PERF_PMU_CAP_NO_INTERRUPT	0x0001
++/**
++ * define PERF_PMU_CAP_NO_NMI - \
++ *    PMU is guaranteed to not generate non-maskable interrupts
++ */
+ #define PERF_PMU_CAP_NO_NMI		0x0002
++/**
++ * define PERF_PMU_CAP_AUX_NO_SG - \
++ *    PMU does not support using scatter-gather as the output
++ *
++ * The PERF_PMU_CAP_AUX_NO_SG flag indicates that the PMU does not support
++ * scatter-gather for its output buffer, and needs a larger contiguous buffer
++ * to output to.
++ */
+ #define PERF_PMU_CAP_AUX_NO_SG		0x0004
++/**
++ * define PERF_PMU_CAP_EXTENDED_REGS - \
++ *    PMU is capable of sampling extended registers
++ *
++ * Some architectures have a concept of extended registers, e.g. XMM0 on x86
++ * or VG on arm64. If the PMU is capable of sampling these registers, then the
++ * flag PERF_PMU_CAP_EXTENDED_REGS should be set.
++ */
+ #define PERF_PMU_CAP_EXTENDED_REGS	0x0008
++/**
++ * define PERF_PMU_CAP_EXCLUSIVE - \
++ *    PMU can only have one scheduled event at a time
++ *
++ * Certain PMU hardware cannot track several events at the same time. Such
++ * hardware must set PERF_PMU_CAP_EXCLUSIVE in order to avoid conflicts.
++ */
+ #define PERF_PMU_CAP_EXCLUSIVE		0x0010
++/**
++ * define PERF_PMU_CAP_ITRACE - PMU traces instructions
++ *
++ * Some PMU hardware does instruction tracing, in that it traces execution of
++ * each instruction. Setting this capability flag makes the perf core generate
++ * a %PERF_RECORD_ITRACE_START event, recording the profiled task's PID and TID,
++ * to allow tools to properly decode such traces.
++ */
+ #define PERF_PMU_CAP_ITRACE		0x0020
++/**
++ * define PERF_PMU_CAP_NO_EXCLUDE - \
++ *    PMU is incapable of excluding events based on context
++ *
++ * The PERF_PMU_CAP_NO_EXCLUDE flag, when set, makes the perf core reject any
++ * request for an event that has one of the attributes
++ * perf_event_attr::exclude_{user,kernel,hv,idle,host,guest} set.
++ *
++ * Drivers for PMU hardware that cannot distinguish between these different
++ * execution contexts should set this flag.
++ */
+ #define PERF_PMU_CAP_NO_EXCLUDE		0x0040
++/**
++ * define PERF_PMU_CAP_AUX_OUTPUT - PMU non-AUX events generate AUX data
++ *
++ * Drivers for PMU hardware that supports non-AUX events which generate data for
++ * AUX events should set PERF_PMU_CAP_AUX_OUTPUT. This flag tells the perf core
++ * to schedule non-AUX events together with AUX events, so that this data isn't
++ * lost.
++ */
+ #define PERF_PMU_CAP_AUX_OUTPUT		0x0080
++/**
++ * define PERF_PMU_CAP_EXTENDED_HW_TYPE - \
++ *    PMU supports PERF_TYPE_HARDWARE and PERF_TYPE_HW_CACHE
++ */
+ #define PERF_PMU_CAP_EXTENDED_HW_TYPE	0x0100
++/**
++ * define PERF_PMU_CAP_AUX_PAUSE - \
++ *    PMU can pause and resume AUX area traces based on events
++ */
+ #define PERF_PMU_CAP_AUX_PAUSE		0x0200
++/**
++ * define PERF_PMU_CAP_AUX_PREFER_LARGE - PMU prefers contiguous output buffers
++ *
++ * The PERF_PMU_CAP_AUX_PREFER_LARGE capability flag is a less strict variant of
++ * %PERF_PMU_CAP_AUX_NO_SG. PMU drivers for hardware that doesn't strictly
++ * require contiguous output buffers, but find the benefits outweigh the
++ * downside of increased memory fragmentation, may set this capability flag.
++ */
+ #define PERF_PMU_CAP_AUX_PREFER_LARGE	0x0400
+ 
+ /**
+
+---
+base-commit: 1d07605c859ee3f483f07acd461452d9e505c58c
+change-id: 20250618-perf-pmu-cap-docs-a13e4ae939ac
+
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
 
