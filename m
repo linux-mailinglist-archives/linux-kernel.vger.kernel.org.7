@@ -1,145 +1,133 @@
-Return-Path: <linux-kernel+bounces-695373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA08AAE18E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:31:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF4AAE18F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74B3D3A50D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:31:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 601644A5C3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5083283C89;
-	Fri, 20 Jun 2025 10:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9D728315F;
+	Fri, 20 Jun 2025 10:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0S+Cef7L";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i89kE8Az"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="N/8NpJs9"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9473B25F7AE
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 10:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FE120F091
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 10:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750415478; cv=none; b=GDSvhQy/e5y8z1BzWanNFkEKzfB0I9yVJIIWRLZ0jj99/MmbohPkJsjWTA0hdHepPsQpGUNnQPRY9ijNRV7ZwAPWVVz5I7kl8jrk8RZ7MwuIu8r/oMixH9UbMHquty6L7y/nk9TrkXCjYMEnzhQJJja8E599qepMN0/UPLhXOUg=
+	t=1750415498; cv=none; b=godllalgx30t3cqlmJGD0now+5KrgnRmjAYlOcxSjBubmzuuEZpVyxHixFt2Kwrjv/zFWEoMgxMS8RueOAetxgEcA4EZz8vebt5CAnxOht+MKHggXHwNm4hRqZb6ep3tsJ03L0syTn8HdVza7WilZEI4M7Pd1NBX/8YlhmZBdM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750415478; c=relaxed/simple;
-	bh=c6IDS8T9wHW8s7QkDM4UrKxOliUno9y9BDqIPf7LWdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fABX641ioL9ihoHOJmqVtRk0Ron+X29Hu4iANuRzGYi1vgEUTqZ9wcO2tjFGSSmQKARstLv4vj2Kom5v4+I6wzW0z4soAK+2VtOxObQUL6+9+nhhqtQd/Rg+QJ6BlsBlE1ckR3UFAUV7/fHJ2bW05DUiR28Q0imG0HxZnnH84Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0S+Cef7L; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i89kE8Az; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 20 Jun 2025 12:31:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750415471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Sg9GHCRtO1sQUXysbcDzzLew2ed7aT71YjB8Gf6mqs=;
-	b=0S+Cef7LEhicLOEn9qty7sqRds7ZTDpj0TpQFp+5nUx+XzU3QV0bfOW2vwQg6oRvHdQaXy
-	OTDCFL8KUchCfEBAylvXk34SpYHaudZIUdtpZdrxNoRRoY7DzWcMlw46FHSPZbu5is3LNG
-	rdJ+zHkDF40rwrUF+Ucx48ReAha0SzR0v/YWjCfAYLszNYw7WkAiYh7Ty8J0Wb/X2OSgmZ
-	O1TDBqaoJTC4L2zqHDw3pHPQL1Qte9U9FzLlkfkR1ZNGnLKmH6DQUeJsl+nAJFqkGVbuCW
-	vWbzSYp/z4G5NncwG2Juchd4cmfI0eL8MaGyfrVpCIbpOQD2uFQNU3aJD9oQWw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750415471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Sg9GHCRtO1sQUXysbcDzzLew2ed7aT71YjB8Gf6mqs=;
-	b=i89kE8AzW4ItP0s4BfzzHB9pqCgbw1Hdm3+Qiow/TyN+OniVUua3jYR55sEV494xEEbk7s
-	jN41NrjnW9BRYrAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Calvin Owens <calvin@wbinvd.org>
-Cc: linux-kernel@vger.kernel.org, "Lai, Yi" <yi1.lai@linux.intel.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
-Subject: Re: [tip: locking/urgent] futex: Allow to resize the private local
- hash
-Message-ID: <20250620103110.xd5CEFDs@linutronix.de>
-References: <20250617071628.lXtqjG7C@linutronix.de>
- <aFEz_Fzr-_-nGAHV@mozart.vkv.me>
- <20250617095037.sOnrJlPX@linutronix.de>
- <aFGTmn_CFkuTbP4i@mozart.vkv.me>
- <20250618160333.PdGB89yt@linutronix.de>
- <aFLuDoX9BGBUC3tW@mozart.vkv.me>
- <20250618170924.Z34OXf1E@linutronix.de>
- <aFMoDcWy-OzE3yoV@mozart.vkv.me>
- <aFNCHS-5LLywIAC7@mozart.vkv.me>
- <aFR8EuMg82aMCvjo@mozart.vkv.me>
+	s=arc-20240116; t=1750415498; c=relaxed/simple;
+	bh=g/vzD+cOWNqqj2T/TniSFBbEUCUdsEigkFpQHb857BU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bfCLkgepJwm1ANvUV1uQhVOYxq4HzPqgWex6pQ60N7jqCexnjfcxkfewsfXbkcqbGE2o+Awh+sj+23aaFrHF7WNW4FU98ajN+BV8cV/rq2f65vCe/lHvyg0RbvXSyXCYwW9YzRnhjRjZp+Xz+SCWS2CwGryJ6dxR6cGVL9TQbzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=N/8NpJs9; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-adb2bb25105so279914666b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 03:31:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1750415494; x=1751020294; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1muw2blYzxaHAsDZg3IXNPfcSbqmSvh2KRGWNScsj00=;
+        b=N/8NpJs9dg3pyarbLXvUlulb9TyRFA4p5WKoT3XPptUWkRk+VIsT0rya51KAtFIiHd
+         14+zus8p8k4Vnx1cwhHZQIjaH5yhIxK41rOR719hPjp5oVnsAgaHsSJWdGuv/hhXHMZl
+         dUUDe0z2/9fHLpk8ATboBfOnM9O2cH7sbgW6bSd6ov/Sy52bt3Yv8c5qvcfve1UQYTHS
+         PPkcALp99j4Av66Wh4ULIEW3M7ojVdPDvYDdXW0dlcedhrjxSW3Ey/4Mynkaz6lM7Fyn
+         S+k1cd0bWeK53RtkJEcX+/7wR2XasPPNB4sVywcjZHv3mMiuUuBbbss0j+8BssX8CJ5X
+         0T9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750415494; x=1751020294;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1muw2blYzxaHAsDZg3IXNPfcSbqmSvh2KRGWNScsj00=;
+        b=nAt4UrFRf8cpQq+wmRscmt6H4Tm2e3dbeiW2ZO9Vs0xqHuKqs3k4BYKgJXBYcZqjiD
+         XDXmRs0m7GVK9kQOv4/ekd1GsitRoJ1ijOoZ7Gt2EmZYCShQTtDveCM7i/PTqO7HkexK
+         9ykm03t/+oR4yqC1IKVsyKJUX/TcuAUfnvngAtQh2m+QsE0P3jHi0MEKxVacX4uiHDWf
+         MYTZAvsjHhQ8shqin0rcyArPMzK4ppw3X0Xn3DRrgy5JCQHpYyrJ1Uv1uoSLRrOMW7XT
+         hgXLKHh7+Z4F8YCiWVCN9UISLONPELTbgU6K8Iq+45ItTeToT7QGZbzcWxE2BOMKZTpR
+         pArw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1jpfgj3yS3dgQUAKHtNeCki4hyaJdITkBpdr4RyH0mEiuYMDK/aCmmon/Tw/sYJWTdG3Yl1Gd0dfMf9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvX11gb5BdEQqMbAkXRlVY7r8bd26AR7vG81BroVLUfFiCFE1w
+	Smn57XzFDiwyXk61zFT9Gj7S3ucX2yqIxID4q6Y67ZkrdTSm7mSiXb2u6f70ItW3tk53Kezmyol
+	wfJRj
+X-Gm-Gg: ASbGncvWjsZiTGMxp7jPD610b8qvOWECI5fhkqpR1E+5mCigzj80gXl+TkMcIRziizY
+	m2YLb1Png9+09x1dz8cNU+zZyAZmQHvOxRJi4BmlbeeANu+Ckl5qf6tUH9R9oBNrlQB6eH6NH6D
+	HuwbVqL2JABq+Ke7VTPYYWmWFP3rmw/TlnILfjQbmOuOyqDA2Z1Fn09t+Gq4xFUDUY6JGRmm6Qu
+	yBEDoLq+r+s00vlSyTkQ7dWzA/FZckws57UCEO3BxRgHcnwl/kXyeNkHUHSrZlD56naKIj9RQK1
+	b6loT7Me/TDEh4J22+ILbKuSZvFFJZrxI34M/+kQkdpvQ/a53aiyvDyOxzvtay/OtCdPOHOWGPZ
+	IAujiyqR4/pFERCMFaFa51KnV70fp6JjP
+X-Google-Smtp-Source: AGHT+IHoDGaWZ5BrbMFRiOuhEj2IF/mLQzBgFpihvoZBrr7fr3ArCX7v7z9d95MM7gVJZXVieJjUCw==
+X-Received: by 2002:a17:907:97cd:b0:adf:f8f4:2001 with SMTP id a640c23a62f3a-ae057bf6566mr224474466b.49.1750415493718;
+        Fri, 20 Jun 2025 03:31:33 -0700 (PDT)
+Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0541b6f5csm138047366b.122.2025.06.20.03.31.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 03:31:33 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH 0/3] Add interconnent support for simpledrm/simplefb
+Date: Fri, 20 Jun 2025 12:31:24 +0200
+Message-Id: <20250620-simple-drm-fb-icc-v1-0-d92142e8f74f@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aFR8EuMg82aMCvjo@mozart.vkv.me>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHw4VWgC/x3MTQqAIBBA4avErBtIS8uuEi3KxhroRxQikO6et
+ PwW7yWIFJgi9EWCQDdHvs4MURZgt+lcCXnJBllJVWnRYuTD74RLONDNyNZiZxotrFLGiBpy5wM
+ 5fv7nML7vB1pWCE9jAAAA
+X-Change-ID: 20250617-simple-drm-fb-icc-89461c559913
+To: Hans de Goede <hdegoede@redhat.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Javier Martinez Canillas <javierm@redhat.com>, Helge Deller <deller@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750415493; l=929;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=g/vzD+cOWNqqj2T/TniSFBbEUCUdsEigkFpQHb857BU=;
+ b=9cYc3EXbQ33AMBFKnPLXHwMs1U5skgQNdQEyFJ2oPbg7cPoKkn78i6p8FdCpi4ycoC0PtPnwr
+ xSeaoEOjEGfB4uj+AatP1PQpE65PFg2JOldcgkg62kv7/usFdeh7zaK
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-On 2025-06-19 14:07:30 [-0700], Calvin Owens wrote:
-> > Machine #2 oopsed with the GCC kernel after just over an hour:
-> >=20
-> >     BUG: unable to handle page fault for address: ffff88a91eac4458
-> >     RIP: 0010:futex_hash+0x16/0x90
-=E2=80=A6
-> >     Call Trace:
-> >      <TASK>
-> >      futex_wait_setup+0x51/0x1b0
-=E2=80=A6
+Some devices might require keeping an interconnect path alive so that
+the framebuffer continues working. Add support for that by setting the
+bandwidth requirements appropriately for all provided interconnect
+paths.
 
-The futex_hash_bucket pointer has an invalid ->priv pointer.
-This could be use-after-free or double-free. I've been looking through
-your config and you don't have CONFIG_SLAB_FREELIST_* set. I don't
-remember which one but one of the two has a "primitiv" double free
-detection.=20
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+Luca Weiss (3):
+      dt-bindings: display: simple-framebuffer: Add interconnects property
+      drm/sysfb: simpledrm: Add support for interconnect paths
+      fbdev/simplefb: Add support for interconnect paths
 
-=E2=80=A6
-> I am not able to reproduce the oops at all with these options:
->=20
->     * DEBUG_PAGEALLOC_ENABLE_DEFAULT
->     * SLUB_DEBUG_ON
+ .../bindings/display/simple-framebuffer.yaml       |  3 +
+ drivers/gpu/drm/sysfb/simpledrm.c                  | 83 ++++++++++++++++++++++
+ drivers/video/fbdev/simplefb.c                     | 83 ++++++++++++++++++++++
+ 3 files changed, 169 insertions(+)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250617-simple-drm-fb-icc-89461c559913
 
-SLUB_DEBUG_ON is something that would "reliably" notice double free.
-If you drop SLUB_DEBUG_ON (but keep SLUB_DEBUG) then you can boot with
-slab_debug=3Df keeping only the consistency checks. The "poison" checks
-would be excluded for instance. That allocation is kvzalloc() but it
-should be small on your machine to avoid vmalloc() and use only
-kmalloc().
+Best regards,
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
 
-> I'm also experimenting with stress-ng as a reproducer, no luck so far.
-
-Not sure what you are using there. I think cargo does:
-- lock/ unlock in a threads
-- create new thread which triggers auto-resize
-- auto-resize gets delayed due to lock/ unlock in other threads (the
-  reference is held)
-
-And now something happens leading to what we see.
-_Maybe_ the cargo application terminates/ execs before the new struct is
-assigned in an unexpected way.
-The regular hash bucket has reference counting so it should raise
-warnings if it goes wrong. I haven't seen those.
-
-> A third machine with an older Skylake CPU died overnight, but nothing
-> was logged over netconsole. Luckily it actually has a serial header on
-> the motherboard, so that's wired up and it's running again, maybe it
-> dies in a different way that might be a better clue...
-
-So far I *think* that cargo does something that I don't expect and this
-leads to a memory double-free. The SLUB_DEBUG_ON hopefully delays the
-process long enough that the double free does not trigger.
-
-I think I'm going to look for a random rust packet that is using cargo
-for building (unless you have a recommendation) and look what it is
-doing. It was always cargo after all. Maybe this brings some light.
-=20
-> > > Thanks,
-> > > Calvin
-
-Sebastian
 
