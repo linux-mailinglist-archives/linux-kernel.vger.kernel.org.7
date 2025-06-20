@@ -1,129 +1,136 @@
-Return-Path: <linux-kernel+bounces-696031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8D0AE20F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94269AE210A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 19:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AEA61C23C8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:31:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0919188B7B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3152DFF28;
-	Fri, 20 Jun 2025 17:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAAB2E763C;
+	Fri, 20 Jun 2025 17:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SFpWuaIJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDF6BpMq"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596F51F03C7;
-	Fri, 20 Jun 2025 17:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031B018E20;
+	Fri, 20 Jun 2025 17:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750440690; cv=none; b=rw66UTOsN1Jq4b0E/R2we4C5pdeEXwPni+uugu9s1ezaUUlzIEGH8EJqeeMdTfi66Q/az/nkay68XWHyLYeTv55Vsjpdh53rZbD6sMEPcRC7g4rYYbbaIfo0w86hu6Qto9fq77oJwSTSmq0jrrRTrc/eDHu/fJmnK3oJ4ga4w8U=
+	t=1750440913; cv=none; b=GC/ibMYBmFG/J+9Bl0AiyxXcSKBtPlGffFMya8++tZXn4cTLyIXnCxqahFS7RwK3w/LXEXVPecfkfOQcqQ61LVRct5z3KBekwz1xudorm4MDAves+Wmnmsde2Mw/Lb3jcsEA4W/A2IpUcO9+Pa9KWJwc2b+PPKu3CMUJEIKm2+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750440690; c=relaxed/simple;
-	bh=MCJBmCnyJELdwnimYECzk7tUYaiPn0GwNjQCQ+gCzYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iULZEg9N+ZFG62u5On85eC1LJYdTt3195wPZcMNlgrnq6wHN9rlPqdNW2lr92BoMCcKlBgY4i99PsXK1cpICru0mmp+kDO+XCVg2gNxxvherJgJemjMDTQxCMNNnWIgdpHwfuUCxisqs1+GeQCzj9fZDOkpAffmqzuS1dbIUG3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SFpWuaIJ; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750440690; x=1781976690;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MCJBmCnyJELdwnimYECzk7tUYaiPn0GwNjQCQ+gCzYI=;
-  b=SFpWuaIJxl7LuDi7zD3CMnO7i/ZYKsKtB1waLV//JrELfQLsyn0PCJDi
-   SJlcNnoywBrLIdc+fVx3aM63gcTZ0Lh8J+MoNGaxV+UMgYvSP05Z8bH4y
-   jX/16Vh2RtkQ3gf0Yf5G/zHOotw3u0qQA8pUfAHmYrdAhpxfyWpwFEBO6
-   HWGqKOZgm4AZUH7lWpIUmvRQkrgBuhhNNeLYeLZxEmJs7TyIoTqL5GCkS
-   KWm+ghiV3u8xM2FvfmskkVXCmcO0/ZhmKo9a2L4UNJFIqa/wJ5yXiZ/A9
-   uE4vYe1D7C1V3lebqFkDh7RGHIc9QMBVB1RqsHiSioaFRWkNIYJC83L8B
-   Q==;
-X-CSE-ConnectionGUID: BpBpmkrSTAOiWwn4XwHSAA==
-X-CSE-MsgGUID: azF0R2lKRum+aXzUOD2csw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="52642485"
-X-IronPort-AV: E=Sophos;i="6.16,252,1744095600"; 
-   d="scan'208";a="52642485"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 10:31:28 -0700
-X-CSE-ConnectionGUID: 0nCgDcPRRmS29HR0Ox+sFw==
-X-CSE-MsgGUID: /U721Y/eRLC9+caxN/kv0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,252,1744095600"; 
-   d="scan'208";a="151511068"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 20 Jun 2025 10:31:15 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 59B1A109; Fri, 20 Jun 2025 20:31:14 +0300 (EEST)
-Date: Fri, 20 Jun 2025 20:31:14 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Xin Li <xin@zytor.com>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
-	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
-	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, 
-	Ingo Molnar <mingo@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
-	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-mm@kvack.org, Yian Chen <yian.chen@intel.com>
-Subject: Re: [PATCHv6 01/16] x86/cpu: Enumerate the LASS feature bits
-Message-ID: <tfpekzid4hu4xguq3fetosyltg3owjy2cactqklohfohalhbza@hx7qdrpcymrn>
-References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
- <20250620135325.3300848-2-kirill.shutemov@linux.intel.com>
- <d3055288-c640-4df3-978e-abb97b1610e7@zytor.com>
+	s=arc-20240116; t=1750440913; c=relaxed/simple;
+	bh=AgDsktD0a5AkGVgIpm4akmO9rDfL6WCNI0qCVJifB8I=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=LIXQPGG40SnM+4pB3bEw1Ovjo4KDJsZg78GnLblxbHR5nqt8OhdiGEXC84OJgFAJn1K0/NQdesUU0ctHAmFjbuKtWWQOlsU6B7RmFGhYzTZTUrtwZUjPHQra1Ga3WDS6h5WtKAvJA0VJlvRLEkjeqWXmNyRB4/RxmgVD1EPz8vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDF6BpMq; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60707b740a6so3151135a12.0;
+        Fri, 20 Jun 2025 10:35:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750440909; x=1751045709; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mg3yw4vaCMy+lJRKgBJCUBFDQZaT3XMALMfqYzvwLVc=;
+        b=EDF6BpMqlRrm8Mg1CmFObIl0veJeWviLXTb91wABwQRzN6M6hfbhb8J7lfE3LDnH48
+         l1B6V0Sx+0CotEQ0o0+feUq4wqA2G/6rJAt+opxweph9+W9f6tMPyZzZxG8I3e7Z5Kud
+         pon8BcR48tsfwFHGgIZoq8MhztL2IJ+GlxbfYEWv3LwahKc6COcQoiIrYeCw7up+urit
+         r63BrnBQ9eY5c3AfTS/T12TbXOuSO3GSQDKE1XPax6x5PciyKE+dFNFP43q5dnIa153S
+         KV3QneAYXHTM3i/Y8N4C1FcPpYCV2/PjlEx6SaSMzY1bl3sxlFNA2hhbRbztoK6wrepc
+         PM8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750440909; x=1751045709;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mg3yw4vaCMy+lJRKgBJCUBFDQZaT3XMALMfqYzvwLVc=;
+        b=kqtBSfmWAAEn9T+VAMOrjdhsmaLL5T+F5Avk1EDkVq5Au9nTJ8YinqMccMU2ZJ2F6a
+         VtdFVJrO5gzJ2DRsSVgx3GYUhU59qgRKYmetws+ccB9ZDyrUEX7DnRJq2wUHHcSWvgIa
+         zFpC1VQYR2H4q3pe1j9P4wh9m8R9/h0wsbeA6kp2utwR1NXCLtIvuvPz+J3lUtkGDb3o
+         2uaxCdctiiP0rQYXFC7HUEqgyjvtCbhn7O/Xg5iOCJi8MOIYUFeirTrZr67v7nH9LOLp
+         eErPuh6GHPMuLZ3akcedf4ofCvX9kaBoKWKyl7xji+yPdPGNPSK9hzoSOh7OiOs8Wffy
+         DQ7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWLWKf/pcWuLkC9Mn5DcnHXxIJ3ZX8uLsd3fSq776yDvN4bwBc0UQsew3h72xSMTnMmx9artiPv9f8=@vger.kernel.org, AJvYcCXc6q3LADFU26/OcDDCQJszKJPRe+LJJHMuJU4oyLn2gw63ycK9oy4W7yJXvAXfqWzJtFJdBgsxKDnasnM1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzslz5x/6taFn/tIaH7LBO/PNd8dBmXrOhrd1MMQz3uBAflczeP
+	3TznEQhtFXKQNNqgCDBz1EixHtuA7EnV8UI9/CW4dtTjyyNwB3IUAe8loV+oQQ==
+X-Gm-Gg: ASbGncvivoz1qqvuyKxivk+POTdKuEmVAYeIAm8lK26hMAEeXevJ1a0Gnhx9FajIlbq
+	b3HGqz0vArwRL/28+q5/o/68I6CUor3TeEFNbrjBeKEKCEoo1Q4RPAhY6eBBoC63wxci+L/mBAQ
+	mR8uTYYqIgItAbCJileLbqKLmWs0xn75RiR4DJD68fqc9qehM5dh7yUevFvZ3EaP0dbs4bGBnLD
+	rUtpl7FINNqDEL45R0Caz/G39iodiTZwnBBw98JSv+mlxtE+jHFG0Hli6AoiZRlF2WTf3XjULdp
+	jPcIYhg4urZKobadJDeJJzCPZ2aH4HJjYdcK7yHf/ikBMnfxX2ipnW1fUbZ/UYpiPukoFD/GIg9
+	RZyYV8YjyQxA+/d6rels7K+iPf/QHDU2aBoGrxwXZfA==
+X-Google-Smtp-Source: AGHT+IHST8t81MCtxY4AMugTj8+KZTk5dCvc7no0T46qRYJ/lTm1HFaW77DCtJbEy9i6uLRW2VFUew==
+X-Received: by 2002:a17:907:9816:b0:ad8:9b24:9d16 with SMTP id a640c23a62f3a-ae0579cd970mr352011866b.6.1750440908981;
+        Fri, 20 Jun 2025 10:35:08 -0700 (PDT)
+Received: from masalkhi.. (dynamic-176-003-044-193.176.3.pool.telefonica.de. [176.3.44.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60a1851449asm1698953a12.2.2025.06.20.10.35.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 10:35:08 -0700 (PDT)
+From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+To: wsa+renesas@sang-engineering.com,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC] i2c: Skip i2c_for_each_dev() when detection is not supported
+Date: Fri, 20 Jun 2025 17:31:21 +0000
+Message-ID: <20250620173121.15752-1-abd.masalkhi@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d3055288-c640-4df3-978e-abb97b1610e7@zytor.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 20, 2025 at 08:36:30AM -0700, Xin Li wrote:
-> On 6/20/2025 6:53 AM, Kirill A. Shutemov wrote:
-> > diff --git a/arch/x86/Kconfig.cpufeatures b/arch/x86/Kconfig.cpufeatures
-> > index 250c10627ab3..9574c198fc08 100644
-> > --- a/arch/x86/Kconfig.cpufeatures
-> > +++ b/arch/x86/Kconfig.cpufeatures
-> > @@ -124,6 +124,10 @@ config X86_DISABLED_FEATURE_PCID
-> >   	def_bool y
-> >   	depends on !X86_64
-> > +config X86_DISABLED_FEATURE_LASS
-> > +	def_bool y
-> > +	depends on !X86_64
-> > +
-> >   config X86_DISABLED_FEATURE_PKU
-> >   	def_bool y
-> >   	depends on !X86_INTEL_MEMORY_PROTECTION_KEYS
-> 
-> You don't need to add X86_DISABLED_FEATURE_LASS, because the LASS code
-> is NOT optional at build time, i.e., you now don't have CONFIG_X86_LASS.
+While reviewing the I2C core, I noticed that i2c_for_each_dev() is
+invoked in i2c_register_driver() regardless of whether the driver
+actually supports device detection, as follow:
 
-Hmm. But it is optional. It depends on CONFIG_X86_64. I don't think we
-want it to be advertised on 32-bit kernels.
+    /* When registration returns, the driver core
+     * will have called probe() for all matching-dbut-unbound devices.
+     */
+    res = driver_register(&driver->driver);
+    if (res)
+        return res;
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+    pr_debug("driver [%s] registered\n", driver->driver.name);
+
+    i2c_for_each_dev(driver, __process_new_driver);
+
+
+However, the first check inside i2c_detect() is:
+
+    if (!driver->detect || !address_list)
+        return 0;
+
+This check happens only after iterating over all registered I2C devices
+via i2c_for_each_dev(). Unless I am missing something, this seems to me
+just wasting processing time for drivers that do not support detection.
+
+To avoid this, I propose guarding the call to i2c_for_each_dev() like this:
+
+    /* When registration returns, the driver core
+     * will have called probe() for all matching-dbut-unbound devices.
+     */
+    res = driver_register(&driver->driver);
+    if (res)
+        return res;
+
+    pr_debug("driver [%s] registered\n", driver->driver.name);
+
+    if (driver->detect && driver->address_list)
+        i2c_for_each_dev(driver, __process_new_driver);
+
+This would ensure that i2c_detect() is only called when there is an
+actual possibility of detection succeeding, making the driver registration
+path more efficient.
+
+Please let me know if this change makes sense. I would be happy to submit
+a patch.
+
+Best regards,
+Abd-Alrhman Masalkhi
 
