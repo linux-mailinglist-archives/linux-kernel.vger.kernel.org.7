@@ -1,95 +1,158 @@
-Return-Path: <linux-kernel+bounces-695449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255BAAE19E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:21:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53833AE19E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A61911893BC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:21:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 889ED7A8C5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD8C289E1C;
-	Fri, 20 Jun 2025 11:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2B728935C;
+	Fri, 20 Jun 2025 11:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DHI9kYRr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aqXpD3Yx"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKBJXDpt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084DA27814A;
-	Fri, 20 Jun 2025 11:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB796221260;
+	Fri, 20 Jun 2025 11:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750418439; cv=none; b=Gh2GjerU6h5T/QTZOZTRJF6QwFWCPmAfNSjrGIF4DCHF8i1xS4xGq51F2htU+NRHPaVxY7qEjKEEF4RW4UoG7zCq74eZwVcJZ6Tb2z/AZLiiB7nXFNQTmHcgadlaj/uH4kj+Svm1u/JEFZRTV4zTx79e/vwTF6VrIg8KPuXVTos=
+	t=1750418470; cv=none; b=JAL+Fxl/troA+CKemlxs+2LiwoZ4RVxfOv8WiiGdQiH85NuRSt3Cz644+9zSuydZeTucd379b2PmmAPG7KkWAYSmo4/1hpThZlKNml6+mxmpazN49BkAhVzUAPBC5EyNDfVyfy6FR4f+1YZFCD4juiKOdgBjOZ7ieF5qrcSCptI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750418439; c=relaxed/simple;
-	bh=QZQn5hlcEoc8aWSjPZrTR9kgtMnW7nGO1rmhXIili4A=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QIjCnObyIy2SFXocShfAs+DuB3l4L3RllA3qoxl+2rOX2tGNNqjeGU5ej+kVLYzRmF/VYl3ibORHJVUpM2QKl+XzyG7sGKHlCJYrdcWWRV7Q0OIztVvTMTM33ucOLSAPovQ7695MaYabyGoSoxwFqLFVnGBqzNSc5bIoo65NYoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DHI9kYRr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aqXpD3Yx; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750418435;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QZQn5hlcEoc8aWSjPZrTR9kgtMnW7nGO1rmhXIili4A=;
-	b=DHI9kYRrUMkGcx/u4tFkP55K9Ei4oCOvSrrsFKnffiCAJ6UinzhzkpiH5Ih8l43TJ4M2YK
-	44uGrVPA8Rs6TAbDb7/o4ThqsZzyQjeXaDx2jYPib6a6zyKrvQtKGXvRyf9/7LNo5GJ6F0
-	R6XvMO/dp5ToO+gDkArQdyVOQ+eMZ6GcH90+1MEb3AW6YVpdC+bcZmcbt5hG3Gh3PhQ2Eh
-	xKjGIy+g0fL98ZP7gJ6cnjBGqspU2V/zrI8aoTFZ3uOAOBkfXd6dUfkWK5Rk8NbGlXmcYy
-	OIP/vT8Azaq7sRqQmlHDxJFZyXPRp0S0cJeS2uZcO12jU3ay76PyC64KXwQGhQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750418435;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QZQn5hlcEoc8aWSjPZrTR9kgtMnW7nGO1rmhXIili4A=;
-	b=aqXpD3YxtJzh4w3dtZQQcMWKsYpGa7iD0P8JeTHMlCyLjKafOJgb+H/EvWGu19vuMklg7j
-	vO6Ns/uq8ryvLUAQ==
-To: Yunhui Cui <cuiyunhui@bytedance.com>, arnd@arndb.de,
- andriy.shevchenko@linux.intel.com, benjamin.larsson@genexis.eu,
- cuiyunhui@bytedance.com, gregkh@linuxfoundation.org,
- heikki.krogerus@linux.intel.com, ilpo.jarvinen@linux.intel.com,
- jirislaby@kernel.org, jkeeping@inmusicbrands.com,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- markus.mayer@linaro.org, matt.porter@linaro.org, namcao@linutronix.de,
- paulmck@kernel.org, pmladek@suse.com, schnelle@linux.ibm.com,
- sunilvl@ventanamicro.com, tim.kryger@linaro.org
-Subject: Re: [PATCH v9 3/4] serial: 8250: avoid potential PSLVERR issue
-In-Reply-To: <20250610092135.28738-4-cuiyunhui@bytedance.com>
-References: <20250610092135.28738-1-cuiyunhui@bytedance.com>
- <20250610092135.28738-4-cuiyunhui@bytedance.com>
-Date: Fri, 20 Jun 2025 13:26:34 +0206
-Message-ID: <848qlmk6bh.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1750418470; c=relaxed/simple;
+	bh=O4PKCznY7W3LGDkG5sDRa0s05jDbDksNrKayrGHplQk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BMj6C/610YaVGk3ZG3ylSJYsGDG+zlmz/jSr0Dkh2B+fICNXamLsWTXTPko/wyIS+9/zKBjkeucxo56qChgHjKDhlNZ1KMFdEVu3n29C3vEZDC5qk9di5ntvgIJmyZhAv2GhU42yX4cia8cpQEVNZ8N1nvUhTZVKsWXT+fyYoeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKBJXDpt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45C10C4CEE3;
+	Fri, 20 Jun 2025 11:21:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750418470;
+	bh=O4PKCznY7W3LGDkG5sDRa0s05jDbDksNrKayrGHplQk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=AKBJXDptacMfKYLxow6/dFuLpayqedKiG7MUgBG73PRvOXa9pauNqlJl1td5CgHeG
+	 AEtNEyQGBsedoaOLcUNIe3IIPiOLmX2dmephDtwhHTb02R35TT1lEYawDL/zaAjZQ0
+	 Z6prlcvM9cQXLp3USRGUCOdKmOarqpvq4ojRl8drI196T0FEWyy1S5JZQT7ovoFCGB
+	 S/AZ+bS16iL0MFezHxgvNmbTN1hGMGyI9FqoHr93C44q8q0u/jA5kKyuo/QcuuNial
+	 8faOdjJCpSqVFtqt2kVtg/9m+8VDR7hgQB54pJytDRR5Dy8H2bPOkFKFXR88oj/Fyw
+	 XPgK6rtPrlB4Q==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Jan Kara <jack@suse.cz>,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+	Jann Horn <jannh@google.com>,
+	Luca Boccassi <luca.boccassi@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Roman Kisel <romank@linux.microsoft.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] coredump: reduce stack usage in vfs_coredump()
+Date: Fri, 20 Jun 2025 13:21:01 +0200
+Message-Id: <20250620112105.3396149-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On 2025-06-10, Yunhui Cui <cuiyunhui@bytedance.com> wrote:
-> When the PSLVERR_RESP_EN parameter is set to 1, reading UART_RX while
-> the FIFO is enabled and UART_LSR_DR is not set will generate a PSLVERR
-> error.
->
-> Failure to check the UART_LSR_DR before reading UART_RX, or the non-
-> atomic nature of clearing the FIFO and reading UART_RX, poses
-> potential risks that could lead to PSLVERR.
->
-> PSLVERR is addressed through two methods. One is to introduce
-> serial8250_discard_data() to check whether UART_LSR_DR is set before
-> reading UART_RX, thus solving the PSLVERR issue when the FIFO is
-> enabled. The other is to place FIFO clearing and reading of UART_RX
-> under port->lock.
->
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: John Ogness <john.ogness@linutronix.de>
+The newly added socket coredump code runs into some corner cases
+with KASAN that end up needing a lot of stack space:
+
+fs/coredump.c:1206:1: error: the frame size of 1680 bytes is larger than 1280 bytes [-Werror=frame-larger-than=]
+
+Mark the socket helper function as noinline_for_stack so its stack
+usage does not leak out to the other code paths. This also seems to
+help with register pressure, and the resulting combined stack usage of
+vfs_coredump() and coredump_socket() is actually lower than the inlined
+version.
+
+Moving the core_state variable into coredump_wait() helps reduce the
+stack usage further and simplifies the code, though it is not sufficient
+to avoid the warning by itself.
+
+Fixes: 6a7a50e5f1ac ("coredump: use a single helper for the socket")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/coredump.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index e2611fb1f254..c46e3996ff91 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -518,27 +518,28 @@ static int zap_threads(struct task_struct *tsk,
+ 	return nr;
+ }
+ 
+-static int coredump_wait(int exit_code, struct core_state *core_state)
++static int coredump_wait(int exit_code)
+ {
+ 	struct task_struct *tsk = current;
++	struct core_state core_state;
+ 	int core_waiters = -EBUSY;
+ 
+-	init_completion(&core_state->startup);
+-	core_state->dumper.task = tsk;
+-	core_state->dumper.next = NULL;
++	init_completion(&core_state.startup);
++	core_state.dumper.task = tsk;
++	core_state.dumper.next = NULL;
+ 
+-	core_waiters = zap_threads(tsk, core_state, exit_code);
++	core_waiters = zap_threads(tsk, &core_state, exit_code);
+ 	if (core_waiters > 0) {
+ 		struct core_thread *ptr;
+ 
+-		wait_for_completion_state(&core_state->startup,
++		wait_for_completion_state(&core_state.startup,
+ 					  TASK_UNINTERRUPTIBLE|TASK_FREEZABLE);
+ 		/*
+ 		 * Wait for all the threads to become inactive, so that
+ 		 * all the thread context (extended register state, like
+ 		 * fpu etc) gets copied to the memory.
+ 		 */
+-		ptr = core_state->dumper.next;
++		ptr = core_state.dumper.next;
+ 		while (ptr != NULL) {
+ 			wait_task_inactive(ptr->task, TASK_ANY);
+ 			ptr = ptr->next;
+@@ -858,7 +859,7 @@ static bool coredump_sock_request(struct core_name *cn, struct coredump_params *
+ 	return coredump_sock_mark(cprm->file, COREDUMP_MARK_REQACK);
+ }
+ 
+-static bool coredump_socket(struct core_name *cn, struct coredump_params *cprm)
++static noinline_for_stack bool coredump_socket(struct core_name *cn, struct coredump_params *cprm)
+ {
+ 	if (!coredump_sock_connect(cn, cprm))
+ 		return false;
+@@ -1095,7 +1096,6 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
+ {
+ 	struct cred *cred __free(put_cred) = NULL;
+ 	size_t *argv __free(kfree) = NULL;
+-	struct core_state core_state;
+ 	struct core_name cn;
+ 	struct mm_struct *mm = current->mm;
+ 	struct linux_binfmt *binfmt = mm->binfmt;
+@@ -1131,7 +1131,7 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
+ 	if (coredump_force_suid_safe(&cprm))
+ 		cred->fsuid = GLOBAL_ROOT_UID;
+ 
+-	if (coredump_wait(siginfo->si_signo, &core_state) < 0)
++	if (coredump_wait(siginfo->si_signo) < 0)
+ 		return;
+ 
+ 	old_cred = override_creds(cred);
+-- 
+2.39.5
+
 
