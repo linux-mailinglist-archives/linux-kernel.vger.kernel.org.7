@@ -1,132 +1,69 @@
-Return-Path: <linux-kernel+bounces-695086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1917AE1509
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:35:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C69AE14F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 09:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE6C97A8DD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:34:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69B6019E4E1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 07:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9DD227E87;
-	Fri, 20 Jun 2025 07:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CEC17A2FC;
+	Fri, 20 Jun 2025 07:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKdUMLkq"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o3O7idWY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBA01F8756;
-	Fri, 20 Jun 2025 07:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C017D226CFB;
+	Fri, 20 Jun 2025 07:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750404921; cv=none; b=f/37IfclR4e/Www6pGJ49Kykx5+WFWcPD9f9tBBPIhBr2zgOS8tIe+r9YPOdS7pDJnhZh4q+LtbtqoMouuuNJkZWhzRD4e0HYI8ZKct7lDUsofUIt/0Exv/gZNTE4+8B/o2op+0ossZsKnx3tUwov3DHnCn5W82g20br8nQDtVU=
+	t=1750404619; cv=none; b=YYHh9zjgPtQxloaI26GD0GrtrcqVLa0DM/MRK24gzq56mgZ5G7YnZ9D3eB9gsTIdnxbauVTdR7NPyg15D+7xTub4yLUyfzXC1wGhRVb/0knZKzU1Il7Pk027ucDP24L8KN5QEZ+OjuKXoM1bLyGjeCJrmKcB1ygim4rXZQUU2ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750404921; c=relaxed/simple;
-	bh=AIvL/6g2H/0sTgoq/ACnifDpyEvv8ah2mbQnCZ/NZcY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IiXfA0TV+He2PWSlJiN0qzE31RFOEg/b2R21e1z21cf0yKJ0Zj1cGaV3E8I+d1W8UXLJ0DNCi8faa/4Tod6lJI7ikBniy8/N4m6W6rpEow+8+3oW74fhh+/bR53U5a7UWQ2mNk0Gdh7awDTmMaqeMhyJGYOR2IFE/qvJebbYmgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKdUMLkq; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a4f64cdc2dso251528f8f.1;
-        Fri, 20 Jun 2025 00:35:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750404918; x=1751009718; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/n2D/c88J35CJ4xA93h8LPGldZG/T3YYZwEnGb335pg=;
-        b=WKdUMLkqoyhLno2XGd8w8ERQD+/8Un8PVaaUbN6QJH2amB8Eea0LlbqlIBEXRQsIoL
-         uYwKAmXcqP089uSqg/1jgeKpuPGB1qO0SUgJejkfA5xyRygWjvR1My4cPqkQmUe8L87M
-         Pq4J5KuAjjCZB3VkHDJ02alTtzQGrPySi4A1SZEOjXah8Z3mSqz+/OVOVgfc44Eu4IN2
-         uZ9I5aHr8D/+/B4nyUCLhbANFsJhG42n37Y6kkugqnabCY477hHkKY+frV8+kIYcPu3i
-         MPtlGGY22qZWhJ5+W8PiWilQnj9KoLJOR8OME+EYInMMvZ/i0kyigmC8uCqt7lK2Gtth
-         aMQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750404918; x=1751009718;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/n2D/c88J35CJ4xA93h8LPGldZG/T3YYZwEnGb335pg=;
-        b=W9SXjeSzcGqhpj2Q+PQOxvAZ9OTlQJ3ZqWLN6XcrCFxJQoH3/0NJv+W8pAeoxtc2J6
-         rhqKhxTlhrEMnbmL0ABUq8wAKYgE+NkXLsEMA0w0aIEbi7p3KTCmUVUBlfnQLAX1n1FC
-         nSC4/UZIi74TMeuVmK1lCCiez2mh0qpWqc+MKEngSKzdAfJLqAxfdilZ3VZCM8fUUckx
-         xEDig8k+j5qlLHgDQjnGFH1oop64Vj+4yOltRDrpho038Sg81Uoi9J0yCPrtqEIIxtNR
-         ga5kwl6nCEBkC/D8heElgrSNmVIUjuhU3kgLfhvSXneEUoWuVHdO3tUuyOCrz7ScVXeb
-         yTeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDqybWXncEm+KIRvbUxjOyXIAXL2ApKFSK3VcXsR0fqlI1dXI69Meq/WaVkapbuLoPBjruw3bpUpBa1Vu9@vger.kernel.org, AJvYcCWdDYUKSM7YzwZFAaxeOBrSGu3R0SHJI6nZ7EZuZcrQDNM5vziFMP8Hn83S9I6IkqfLbyM+TGKR1yuqH7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlDGtvUHELpAg3pe3DT0XRQzZs1lxx9dIE6WHiXJMB5bXnMcAb
-	if5/xq28F60pTeyM2jRVL6Gkom9ACWw7Os3PYo4ROMS1YdrB8RoMaux4
-X-Gm-Gg: ASbGncvWLW8nI6n4FBllS1kF/OISPZBBeSg8qPJ2CF8OG2VfuZeE/ql5g9h9HF/gEUB
-	Tlpo1HH4vqRR1wvmo8MGq33FQBmkIUchvovEQCKOZYZrPIOwbRcqP6glU+rUne2XRRFi3FMUcwN
-	E835RKuwklHSj4Xui5xEPxfNVaN6bPKzkILSth4hQUmPwoJiQ3A4dTmAvt3el6pnJYeJ0x7dyJM
-	dgWafGauIGUSV3RGmw0TnSie3qKict5nK+G0akQpioSvWrFaf8d8M0Q8MIu7Re4sR5zYFoiF2YL
-	C24dhBL0XdZVO9W6GMG6qBhXNOgs8lOfF2kcWwrIee2Xjzv0lU0Uvs4KVvz9F58FEloYX5OuqBN
-	DqzGpG8Fx
-X-Google-Smtp-Source: AGHT+IG9uq871/vm49hT7v7R+52axsivlpKJWrEcHdv0QAYKq50BJGM11XgD1kQsciNUlFJOBk2lqA==
-X-Received: by 2002:a05:600c:5026:b0:451:df07:cd00 with SMTP id 5b1f17b1804b1-453659d8ffbmr5029475e9.7.1750404917817;
-        Fri, 20 Jun 2025 00:35:17 -0700 (PDT)
-Received: from thomas-precision3591.. ([2a0d:e487:44f:8ec9:e0c0:3bc5:bbdf:e81])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-453646d14f3sm16091875e9.13.2025.06.20.00.35.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 00:35:17 -0700 (PDT)
-From: Thomas Fourier <fourier.thomas@gmail.com>
-To: 
-Cc: Thomas Fourier <fourier.thomas@gmail.com>,
-	Antoine Tenart <atenart@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] crypto: inside-secure: Fix `dma_unmap_sg()` nents value
-Date: Fri, 20 Jun 2025 09:29:26 +0200
-Message-ID: <20250620072930.8223-2-fourier.thomas@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1750404619; c=relaxed/simple;
+	bh=Yrt2TcHzfK/2skWTG9EDpbM90y6BNCwHb5IOESl5biY=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=Hia1q0rfXqoSw/uqw9icfNfRZK0l8558tJJLFYa++5Al5h+4UGl/lIkBoDhQkBetEBGHOpj+MxaGE2Vh7WriTWhzv3iOdwHOkwyN8b1bRRnM6oOHZMBYvngm2xAKaKuNNsGMHQ0Pmb/Cqwar8yKU07JexS1BrQIJskcysiw/b7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o3O7idWY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32E75C4CEE3;
+	Fri, 20 Jun 2025 07:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750404619;
+	bh=Yrt2TcHzfK/2skWTG9EDpbM90y6BNCwHb5IOESl5biY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=o3O7idWYy1KTa1StFEsoNrdMP0TQ/iFgHBgKnyX/tlS0NvCRJGqTJ8tmzCjqZNQLx
+	 uP92eBGU53f80ol5Psg/nZNkrlb2AO11esIDAsUmQYLShI9FT2XbqyhNFZLYWsWwSG
+	 1+kubEV+l7BaT6kVY+tgnLUNDzak3UXNLFtEJYR/a1wvBxxKAubgBgwVV60ldXHrm0
+	 Kois7ioMiYmXz30/qqseIfStW7CV6P858v8HsPGMsuQ27tvPXT9QayACdOD4htqp5M
+	 cWwfs+7eLD+6n0NZeUxTpy4TEZ0ADDgzANYO8mGlhagx3FSFuOhgV1/KJse5ggW5GS
+	 iF6m9y6Mql7IA==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250528194453.567324-2-krzysztof.kozlowski@linaro.org>
+References: <20250528194453.567324-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] clk: versaclock7: Constify regmap_range_cfg array
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Alex Helms <alexander.helms.jy@renesas.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 20 Jun 2025 00:30:18 -0700
+Message-ID: <175040461828.4372.15455002701463298980@lazor>
+User-Agent: alot/0.11
 
-The `dma_unmap_sg()` functions should be called with the same nents as the
-`dma_map_sg()`, not the value the map function returned.
+Quoting Krzysztof Kozlowski (2025-05-28 12:44:54)
+> Static 'struct regmap_range_cfg' array is not modified so can be changed
+> to const for more safety.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-Fixes: c957f8b3e2e5 ("crypto: inside-secure - avoid unmapping DMA memory that was not mapped")
-Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
-Reviewed-by: Antoine Tenart <atenart@kernel.org>
----
- drivers/crypto/inside-secure/safexcel_hash.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
-index d2b632193beb..5baf4bd2fcee 100644
---- a/drivers/crypto/inside-secure/safexcel_hash.c
-+++ b/drivers/crypto/inside-secure/safexcel_hash.c
-@@ -249,7 +249,9 @@ static int safexcel_handle_req_result(struct safexcel_crypto_priv *priv,
- 	safexcel_complete(priv, ring);
- 
- 	if (sreq->nents) {
--		dma_unmap_sg(priv->dev, areq->src, sreq->nents, DMA_TO_DEVICE);
-+		dma_unmap_sg(priv->dev, areq->src,
-+			     sg_nents_for_len(areq->src, areq->nbytes),
-+			     DMA_TO_DEVICE);
- 		sreq->nents = 0;
- 	}
- 
-@@ -497,7 +499,9 @@ static int safexcel_ahash_send_req(struct crypto_async_request *async, int ring,
- 			 DMA_FROM_DEVICE);
- unmap_sg:
- 	if (req->nents) {
--		dma_unmap_sg(priv->dev, areq->src, req->nents, DMA_TO_DEVICE);
-+		dma_unmap_sg(priv->dev, areq->src,
-+			     sg_nents_for_len(areq->src, areq->nbytes),
-+			     DMA_TO_DEVICE);
- 		req->nents = 0;
- 	}
- cdesc_rollback:
--- 
-2.43.0
-
+Applied to clk-next
 
