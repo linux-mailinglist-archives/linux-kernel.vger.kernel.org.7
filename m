@@ -1,125 +1,145 @@
-Return-Path: <linux-kernel+bounces-695459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4FFAE1A00
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 13:29:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA08AAE18E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 12:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1D727A47FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 11:28:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74B3D3A50D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 10:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA14528A727;
-	Fri, 20 Jun 2025 11:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5083283C89;
+	Fri, 20 Jun 2025 10:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rACp/zYB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0S+Cef7L";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i89kE8Az"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078562853EF;
-	Fri, 20 Jun 2025 11:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9473B25F7AE
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 10:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750418968; cv=none; b=mQDEzhGenSMUo+HZFfkul3KICuo0s+qM3unQ3WnDOUaVF4E6aoYMBwxpm+JXaagFd2KmNorU0ZTqlS1WMxw3Mw94lGXi4D9sPprzpgQc/8QBDn1DwuTyq/26NvRsf9kO3pznt3v1XLRU4B8XYetv0a1MIuTuuEsB30S2L/JOzjk=
+	t=1750415478; cv=none; b=GDSvhQy/e5y8z1BzWanNFkEKzfB0I9yVJIIWRLZ0jj99/MmbohPkJsjWTA0hdHepPsQpGUNnQPRY9ijNRV7ZwAPWVVz5I7kl8jrk8RZ7MwuIu8r/oMixH9UbMHquty6L7y/nk9TrkXCjYMEnzhQJJja8E599qepMN0/UPLhXOUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750418968; c=relaxed/simple;
-	bh=toY/8RlMvZbaSXxFKcYu2G72F3PE0BpQoMJH1XDj3DE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=U1K1UXJixmF4s5ZdEYb3FvlSpMSfiik+zRXTsYpoh8WpVj6jaH/syH6P0gy2Q7Thi+9V8O1gpn7btMEIMHgcD2X2lSZQM3tyYivLw6vaQAr7kPYUN54x40S5iuezIVnN+vlBYCbredDyhk7TQxcEz47LLEjZrgne9ASWavNYVSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rACp/zYB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC79C4CEED;
-	Fri, 20 Jun 2025 11:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750418967;
-	bh=toY/8RlMvZbaSXxFKcYu2G72F3PE0BpQoMJH1XDj3DE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=rACp/zYBSDuBwdyMyauNMZ+PtNQx4mAX0MagrZFICgxBbzDorvHD3BbX77sBhT4+z
-	 YCKWHq0j+0+7Zr5yt7rwmQvq3WFij9ipXbZQbjNjdazhhQgANwugyh0Y+imrI/ov+Z
-	 TjDQjEBI9Mib/oZvblQav2X4I56jy6I4qisn4X5YdmcsF/gBpuNGzWhDljGMtJP8Bb
-	 WfKA9JqMokqJYELT8W93LE13kleX7tRhc+Io20uMLYH7sXMilpkZT+qVZFmF/89NKy
-	 BSRDXanCFJqHjtmhuqOtFFGz0sdptrc9+v0y1dAvwYTpvqLWm30FazxxM7FSfPvmcb
-	 V15wQSiEcZpeQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  "Masahiro Yamada" <masahiroy@kernel.org>,
-  "Nathan Chancellor" <nathan@kernel.org>,  "Luis Chamberlain"
- <mcgrof@kernel.org>,  "Danilo Krummrich" <dakr@kernel.org>,  "Nicolas
- Schier" <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Adam Bratschi-Kaye" <ark.email@gmail.com>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu" <petr.pavlu@suse.com>,
-  "Sami Tolvanen" <samitolvanen@google.com>,  "Daniel Gomez"
- <da.gomez@samsung.com>,  "Simona Vetter" <simona.vetter@ffwll.ch>,  "Greg
- KH" <gregkh@linuxfoundation.org>,  "Fiona Behrens" <me@kloenk.dev>,
-  "Daniel Almeida" <daniel.almeida@collabora.com>,
-  <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v13 2/6] rust: introduce module_param module
-In-Reply-To: <DAQIXKJ9VMS6.2044WT0FQQCVC@kernel.org> (Benno Lossin's message
-	of "Thu, 19 Jun 2025 14:55:03 +0200")
-References: <20250612-module-params-v3-v13-0-bc219cd1a3f8@kernel.org>
-	<20250612-module-params-v3-v13-2-bc219cd1a3f8@kernel.org>
-	<aa9d7lhjQuDhyNw8zShbtfPFK19W5awx7cPJgC-2X4fGv2yUTnn0jqyIHfMN4wyuaYoS3fU6Fqe_wFteVUGtUg==@protonmail.internalid>
-	<DAPYMAB44RUZ.7NIWDUWY1UYF@kernel.org> <87v7or7wiv.fsf@kernel.org>
-	<cYt7F9EQzCCQcq4wPsJlpuXF6bXYHVEq7yhlX8MMQbBIFr2zkJLktttiIwEl7oD5aaaFKp1Mco39U3mkfTvrGw==@protonmail.internalid>
-	<DAQIXKJ9VMS6.2044WT0FQQCVC@kernel.org>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Fri, 20 Jun 2025 12:31:05 +0200
-Message-ID: <87o6ui66xi.fsf@kernel.org>
+	s=arc-20240116; t=1750415478; c=relaxed/simple;
+	bh=c6IDS8T9wHW8s7QkDM4UrKxOliUno9y9BDqIPf7LWdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fABX641ioL9ihoHOJmqVtRk0Ron+X29Hu4iANuRzGYi1vgEUTqZ9wcO2tjFGSSmQKARstLv4vj2Kom5v4+I6wzW0z4soAK+2VtOxObQUL6+9+nhhqtQd/Rg+QJ6BlsBlE1ckR3UFAUV7/fHJ2bW05DUiR28Q0imG0HxZnnH84Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0S+Cef7L; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i89kE8Az; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 20 Jun 2025 12:31:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750415471;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Sg9GHCRtO1sQUXysbcDzzLew2ed7aT71YjB8Gf6mqs=;
+	b=0S+Cef7LEhicLOEn9qty7sqRds7ZTDpj0TpQFp+5nUx+XzU3QV0bfOW2vwQg6oRvHdQaXy
+	OTDCFL8KUchCfEBAylvXk34SpYHaudZIUdtpZdrxNoRRoY7DzWcMlw46FHSPZbu5is3LNG
+	rdJ+zHkDF40rwrUF+Ucx48ReAha0SzR0v/YWjCfAYLszNYw7WkAiYh7Ty8J0Wb/X2OSgmZ
+	O1TDBqaoJTC4L2zqHDw3pHPQL1Qte9U9FzLlkfkR1ZNGnLKmH6DQUeJsl+nAJFqkGVbuCW
+	vWbzSYp/z4G5NncwG2Juchd4cmfI0eL8MaGyfrVpCIbpOQD2uFQNU3aJD9oQWw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750415471;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Sg9GHCRtO1sQUXysbcDzzLew2ed7aT71YjB8Gf6mqs=;
+	b=i89kE8AzW4ItP0s4BfzzHB9pqCgbw1Hdm3+Qiow/TyN+OniVUua3jYR55sEV494xEEbk7s
+	jN41NrjnW9BRYrAg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: linux-kernel@vger.kernel.org, "Lai, Yi" <yi1.lai@linux.intel.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
+Subject: Re: [tip: locking/urgent] futex: Allow to resize the private local
+ hash
+Message-ID: <20250620103110.xd5CEFDs@linutronix.de>
+References: <20250617071628.lXtqjG7C@linutronix.de>
+ <aFEz_Fzr-_-nGAHV@mozart.vkv.me>
+ <20250617095037.sOnrJlPX@linutronix.de>
+ <aFGTmn_CFkuTbP4i@mozart.vkv.me>
+ <20250618160333.PdGB89yt@linutronix.de>
+ <aFLuDoX9BGBUC3tW@mozart.vkv.me>
+ <20250618170924.Z34OXf1E@linutronix.de>
+ <aFMoDcWy-OzE3yoV@mozart.vkv.me>
+ <aFNCHS-5LLywIAC7@mozart.vkv.me>
+ <aFR8EuMg82aMCvjo@mozart.vkv.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aFR8EuMg82aMCvjo@mozart.vkv.me>
 
-"Benno Lossin" <lossin@kernel.org> writes:
+On 2025-06-19 14:07:30 [-0700], Calvin Owens wrote:
+> > Machine #2 oopsed with the GCC kernel after just over an hour:
+> >=20
+> >     BUG: unable to handle page fault for address: ffff88a91eac4458
+> >     RIP: 0010:futex_hash+0x16/0x90
+=E2=80=A6
+> >     Call Trace:
+> >      <TASK>
+> >      futex_wait_setup+0x51/0x1b0
+=E2=80=A6
 
-> On Thu Jun 19, 2025 at 2:20 PM CEST, Andreas Hindborg wrote:
->> "Benno Lossin" <lossin@kernel.org> writes:
->>> On Thu Jun 12, 2025 at 3:40 PM CEST, Andreas Hindborg wrote:
+The futex_hash_bucket pointer has an invalid ->priv pointer.
+This could be use-after-free or double-free. I've been looking through
+your config and you don't have CONFIG_SLAB_FREELIST_* set. I don't
+remember which one but one of the two has a "primitiv" double free
+detection.=20
 
-[...]
+=E2=80=A6
+> I am not able to reproduce the oops at all with these options:
+>=20
+>     * DEBUG_PAGEALLOC_ENABLE_DEFAULT
+>     * SLUB_DEBUG_ON
 
->>>> +    crate::error::from_result(|| {
->>>> +        let new_value = T::try_from_param_arg(arg)?;
->>>> +
->>>> +        // SAFETY: By function safety requirements `param` is be valid for reads.
->>>> +        let old_value = unsafe { (*param).__bindgen_anon_1.arg as *mut T };
->>>> +
->>>> +        // SAFETY: By function safety requirements, the target of `old_value` is valid for writes
->>>> +        // and is initialized.
->>>> +        unsafe { *old_value = new_value };
->>>
->>> So if we keep the `ModuleParam: Copy` bound from above, then we don't
->>> need to drop the type here (as `Copy` implies `!Drop`). So we could also
->>> remove the requirement for initialized memory and use `ptr::write` here
->>> instead. Thoughts?
->>
->> Yes, that is the rationale for the `Copy` bound. What would be the
->> benefit of using `ptr::write`? They should be equivalent for `Copy`
->> types, right.
->
-> They should be equivalent, but if we drop the requirement that the value
-> is initialized to begin with, then removing `Copy` will result in UB
-> here.
->
->> I was using `ptr::replace`, but Alice suggested the pace expression
->> assignment instead, since I was not using the old value.
->
-> That makes sense, but if we also remove the initialized requirement,
-> then I would prefer `ptr::write`.
+SLUB_DEBUG_ON is something that would "reliably" notice double free.
+If you drop SLUB_DEBUG_ON (but keep SLUB_DEBUG) then you can boot with
+slab_debug=3Df keeping only the consistency checks. The "poison" checks
+would be excluded for instance. That allocation is kvzalloc() but it
+should be small on your machine to avoid vmalloc() and use only
+kmalloc().
 
-OK, we can do that.
+> I'm also experimenting with stress-ng as a reproducer, no luck so far.
 
+Not sure what you are using there. I think cargo does:
+- lock/ unlock in a threads
+- create new thread which triggers auto-resize
+- auto-resize gets delayed due to lock/ unlock in other threads (the
+  reference is held)
 
-Best regards,
-Andreas Hindborg
+And now something happens leading to what we see.
+_Maybe_ the cargo application terminates/ execs before the new struct is
+assigned in an unexpected way.
+The regular hash bucket has reference counting so it should raise
+warnings if it goes wrong. I haven't seen those.
 
+> A third machine with an older Skylake CPU died overnight, but nothing
+> was logged over netconsole. Luckily it actually has a serial header on
+> the motherboard, so that's wired up and it's running again, maybe it
+> dies in a different way that might be a better clue...
 
+So far I *think* that cargo does something that I don't expect and this
+leads to a memory double-free. The SLUB_DEBUG_ON hopefully delays the
+process long enough that the double free does not trigger.
+
+I think I'm going to look for a random rust packet that is using cargo
+for building (unless you have a recommendation) and look what it is
+doing. It was always cargo after all. Maybe this brings some light.
+=20
+> > > Thanks,
+> > > Calvin
+
+Sebastian
 
