@@ -1,165 +1,244 @@
-Return-Path: <linux-kernel+bounces-695880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-695884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 088F3AE1ED6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:39:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1575AAE1F18
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 17:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D42216E1C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:38:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2EE91885D63
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Jun 2025 15:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30112D3A7A;
-	Fri, 20 Jun 2025 15:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BC52D3A7A;
+	Fri, 20 Jun 2025 15:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QHwrajbv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1F010FI"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495A52D323D;
-	Fri, 20 Jun 2025 15:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84DA19A297;
+	Fri, 20 Jun 2025 15:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750433919; cv=none; b=eNCaOd+8dJ150nmQiWet7M0o2jXoJE47vWmDIi94ktN761XACJcZmvIVjxj2u++OLTAlQM2Z7m+ub6kkTtDxXnqFpHFp12kXSQZWjAfB2rA6YIC13uf3WSwdeCSd9opWkcuVAz18/kRAeNoeKTnE5HiTCkkFP1koyE5HpISXdOE=
+	t=1750434080; cv=none; b=kv2SZ3i7Z2jW1wfvA2Df2UOYsS0uA3JjQ7dNyyHGATeylcA1C1hpNyYqJHRndxp3CSK22LeVRFKItCrrlhrHEJ0wspssFQncrxM3iA6qt6nZxpeC5RqGZhC+AVX4mUXE/+k5egzbBMZXO9HG31X95U71Ez1/bS5crNzH4snS7pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750433919; c=relaxed/simple;
-	bh=PAIoPfMTWibH7qafGrXshZ8+nCkKa7tLFKjMpKLkQ8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qenL6gOGGyyJiA1KcNQ1hjjVWf5GWiJfWWAUVed7XGM/6Le8hk5vfqNeKEG3aSqMWqh1ZBaWd/mh8aofz5l7pm9tHBqEX20yCUo2dVb3upUchRhZVtII78FVeiOrj7PcVtxCA7LqVIFIlgMWVPGd2u2uqWrXyCih7bql9C9uP4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QHwrajbv; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750433918; x=1781969918;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PAIoPfMTWibH7qafGrXshZ8+nCkKa7tLFKjMpKLkQ8E=;
-  b=QHwrajbvx3+kHf3nRd8Og4tfXahdz7Z6w5IghMlhO6bZBHjsJQNswK3C
-   7tD8GjyBAWZiqEjqEoPx/uzznoWqdMps+Rrh8sZpDumHNG0DPRCfyhz7V
-   1B8lIndqRkwuaP+0XjjpgnBBvXjdUeZilS/0A3J920otD7wOBtBvmZScE
-   VITre3ODw22GvhVn/B2DcKv84yzvSCqZifitdv9qC904L1bujRaC7T7uu
-   Mek33fEILmWwBd4HQQOhHUP9GxbTxGgkxDa6kp/IJA6CSmofsroI8rwaj
-   ZCsqzvorGV9SvaUxbcU5fSElZUbJlniel1HUQVy/LJM6YIIP1Dfqw/W9N
-   A==;
-X-CSE-ConnectionGUID: 2kmqp/08T5aesxJLVPSz6Q==
-X-CSE-MsgGUID: bj24c5GKSDCGfoaKZz+4nQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="55335852"
-X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
-   d="scan'208";a="55335852"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 08:38:35 -0700
-X-CSE-ConnectionGUID: l6UZGO/CQFeG0u0UoVQoog==
-X-CSE-MsgGUID: bJVjcbSCRVibreZzqGTa5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; 
-   d="scan'208";a="151156407"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.108.136]) ([10.125.108.136])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2025 08:38:34 -0700
-Message-ID: <61af62d9-4cd0-485f-8f0c-2da981f52695@intel.com>
-Date: Fri, 20 Jun 2025 08:38:33 -0700
+	s=arc-20240116; t=1750434080; c=relaxed/simple;
+	bh=1Hy3ujJXBqxV9lfXBO++FN2/fZmpMCZpJfkWT5aJ4iQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=H5z86OiNtSSzLpBsKXNofl3rhDUWAn+1p5/iJ38uCQDyoHYdXjej8qd8NwDBDX56NEMT7On8mj6oJoAXLqL2FtwxYdQ3c6sFeg2AckTAA67Xq9xFnxQcFi+NviXNepwl6EFfr/V+R6xQFDY2mCPsJOQCht2mpgZ/i3CvHRWWnMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b1F010FI; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a54700a463so1173812f8f.1;
+        Fri, 20 Jun 2025 08:41:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750434077; x=1751038877; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f7KlnwZB+CxVWmAEV673+n7G11D71TLYbf9q51R/jMw=;
+        b=b1F010FIpU/hLuKZP/4+afeZhU/wKNN4zYGiBBhgEbDtmFxsk1MLAxDbrJt0cq2Thv
+         7sowAnpLtvcDWAZnjJjE747BvJXyjmJ6pcaSAcEtHEvUxU1uXUDfrCvIuvo5HC/yRzwF
+         UW6ejK5yKP7EzLIu85zMSQ70Fmai6EvPji93kwz0Rd0T0huKvDK83PfuRyDVLjRAe1fT
+         8OpxQvsHEBFTf1KYDLrTrm72twC0wYpw4bCV8mO4s2hrVN4MJTwK4K1ZL9w3gIEo581M
+         Ak48XTHjrnLCjoYijPty51JoykEIddUztJAfwIEyfpfMmYVatHR9HP7k+LXGStrbj/hZ
+         RhwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750434077; x=1751038877;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=f7KlnwZB+CxVWmAEV673+n7G11D71TLYbf9q51R/jMw=;
+        b=Hh/5v8ZpbFNxKbmkFS9WwL6PP6IJ0EbV+GO0bNwiW3KMu3FscYTMBJHVL5wan/8ejF
+         xJ1qyuYEiZ1oychNDlB9d6ca8K3OZUxuHbFgkRXEZW/+xwXs3SSmAPQxIcW/UKNBqvvD
+         ZDxvalny+FsPW0ZOqwq+poB+Se8Taz8ASigp/QM2FNo4K3IHhGqHMOopTAX01AoTRQwT
+         QMvfcrR53SVTlFsXEurc+gN/gLC2FJNqqSl5nOCHjuvoraaHqLQIz6Ok9qnMBXQMnfyI
+         QtZqCFvp4izdihsJjASuPCjemNlMkLnRbxB2amosfeSMXxp0C/1U1/sB0MHcbCsdeqn4
+         pbog==
+X-Forwarded-Encrypted: i=1; AJvYcCUCh3Rxf+mz7yzs/o+2NByisqjwhA8zEWyUknVYiLbBhJC6dcPxGIijjQVVFT6UsvWIU4dL+xo9xEix@vger.kernel.org, AJvYcCUHL9GUSUJuac5OP/6gFtUIkYjWRgiv0WPWcqZfNKsjp9FTNOSlrElNAo7/yyBhLBwAe1y0q1hRlYwmjd0q@vger.kernel.org, AJvYcCUpe/nnymwZeibJlrbgbI5uPgF4zqSDFRIYxIk9dfxUV2O/G4Dj7ExDlfcLM3wMwa982MRjWCTRYgsXng==@vger.kernel.org, AJvYcCX6TEeITeG4rA7FhMLiCzrH3GT8hdgK4EQ9KS09yRGRTwJ1/B3Hi5bTXGLQ3yK7yGt656Wwmf5QS1wZDOw2zVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNh7Y0a4t/LDeUPzQd5xC1OYht2ohMgJ2yF/6YlUr1vOTrG+R+
+	I3mVNVBDg5h3d+c8tCvYP6w1e/fVMgPt7YACVVc0uTWh4u+r2bY+s9/C+0xrLaIhBfk=
+X-Gm-Gg: ASbGnctAFLR2YA/VwVCgvzpSKhlzpFha6OopfYZMUf4tY5+fnKw9TFR6b7cY98cqOOn
+	93lpDxXFIZAPXf5Kl3IvgbwpaCZ8m82XAD9Adw89OaJoSGIPOCEwXNNE/pXqBE+h7vQlcpzOuvW
+	GIUVxENGc/EKXSo2XYJXGfHU5NjU9N9AGPOR9P70ZZcj2i7/29j+xdzZS2L3Iv91ocJkAxAnVDF
+	iAcHGAEH5+5kaOXNLP1DYZzWV6oUpYSc2UjBRzSTFco/mVIoelsmUYeT1qt6+7hcMEm1O8e97ZB
+	ztWTWIZ8ZFSXVvDjZZxJhvKIokGkrSq/AxVKF+G7oQhDONxnQUH+YZf9n2qb2ma6VNTaeiDeEq9
+	RyON+xEPOw5oQJMeBj8ERgxEjeH+l8XB2IG4z
+X-Google-Smtp-Source: AGHT+IHOv7jEZj3mRK2FKbLya5sasuGQ2QY4nLc12MK00uIo4X2fqCr1Bwt8tjCkiXqrV6BFEuewOg==
+X-Received: by 2002:a05:6000:460e:b0:3a5:8601:613b with SMTP id ffacd0b85a97d-3a6d27e1793mr2283088f8f.20.1750434076927;
+        Fri, 20 Jun 2025 08:41:16 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d0f104bbsm2413391f8f.4.2025.06.20.08.41.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 08:41:16 -0700 (PDT)
+Sender: Igor Korotin <igorkor.3vium@gmail.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: Alex Hung <alex.hung@amd.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Igor Korotin <igor.korotin.linux@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Remo Senekowitsch <remo@buenzli.dev>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Xiangfei Ding <dingxiangfei2009@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Benno Lossin <lossin@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	Len Brown <lenb@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>
+Subject: [PATCH v8 6/9] rust: driver: Add ACPI id table support to Adapter trait
+Date: Fri, 20 Jun 2025 16:39:13 +0100
+Message-ID: <20250620153914.295679-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
+References: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv6 00/16] x86: Enable Linear Address Space Separation
- support
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Ard Biesheuvel <ardb@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>,
- "Mike Rapoport (IBM)" <rppt@kernel.org>,
- Brijesh Singh <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>,
- Tony Luck <tony.luck@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>,
- Ingo Molnar <mingo@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Daniel Sneddon <daniel.sneddon@linux.intel.com>,
- Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>,
- Breno Leitao <leitao@debian.org>, Rick Edgecombe
- <rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>,
- Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>,
- Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>,
- Eric Biggers <ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>,
- Changbin Du <changbin.du@huawei.com>,
- Huang Shijie <shijie@os.amperecomputing.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@redhat.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, linux-mm@kvack.org
-References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/20/25 06:53, Kirill A. Shutemov wrote:
-> Linear Address Space Separation (LASS) is a security feature that intends to
-> prevent malicious virtual address space accesses across user/kernel mode.
+Extend the `Adapter` trait to support ACPI device identification.
 
-Most of the cover letter here reads like an Intel whitepaper. That's not
-the worst thing in the world, but I think it glosses over one very
-important point:
+This mirrors the existing Open Firmware (OF) support (`of_id_table`) and
+enables Rust drivers to match and retrieve ACPI-specific device data
+when `CONFIG_ACPI` is enabled.
 
-	Had it been available, LASS alone would have mitigated Meltdown.
+To avoid breaking compilation, a stub implementation of `acpi_id_table()`
+is added to the Platform adapter; the full implementation will be provided
+in a subsequent patch.
 
-Could we say this up front in a prominent place, please?
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+---
+ rust/bindings/bindings_helper.h |  1 +
+ rust/kernel/driver.rs           | 41 ++++++++++++++++++++++++++++++++-
+ rust/kernel/platform.rs         |  6 ++++-
+ 3 files changed, 46 insertions(+), 2 deletions(-)
+
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index bc494745f67b..dfb2dd500ef6 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -28,6 +28,7 @@
+  */
+ #include <linux/hrtimer_types.h>
+ 
++#include <linux/acpi.h>
+ #include <drm/drm_device.h>
+ #include <drm/drm_drv.h>
+ #include <drm/drm_file.h>
+diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+index cb62b75a0c0e..8389c122a047 100644
+--- a/rust/kernel/driver.rs
++++ b/rust/kernel/driver.rs
+@@ -6,7 +6,7 @@
+ //! register using the [`Registration`] class.
+ 
+ use crate::error::{Error, Result};
+-use crate::{device, of, str::CStr, try_pin_init, types::Opaque, ThisModule};
++use crate::{acpi, device, of, str::CStr, try_pin_init, types::Opaque, ThisModule};
+ use core::pin::Pin;
+ use pin_init::{pin_data, pinned_drop, PinInit};
+ 
+@@ -141,6 +141,40 @@ pub trait Adapter {
+     /// The type holding driver private data about each device id supported by the driver.
+     type IdInfo: 'static;
+ 
++    /// The [`acpi::IdTable`] of the corresponding driver
++    fn acpi_id_table() -> Option<acpi::IdTable<Self::IdInfo>>;
++
++    /// Returns the driver's private data from the matching entry in the [`acpi::IdTable`], if any.
++    ///
++    /// If this returns `None`, it means there is no match with an entry in the [`acpi::IdTable`].
++    fn acpi_id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
++        #[cfg(not(CONFIG_ACPI))]
++        {
++            let _ = dev;
++            return None;
++        }
++
++        #[cfg(CONFIG_ACPI)]
++        {
++            let table = Self::acpi_id_table()?;
++
++            // SAFETY:
++            // - `table` has static lifetime, hence it's valid for read,
++            // - `dev` is guaranteed to be valid while it's alive, and so is `pdev.as_ref().as_raw()`.
++            let raw_id = unsafe { bindings::acpi_match_device(table.as_ptr(), dev.as_raw()) };
++
++            if raw_id.is_null() {
++                None
++            } else {
++                // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and
++                // does not add additional invariants, so it's safe to transmute.
++                let id = unsafe { &*raw_id.cast::<acpi::DeviceId>() };
++
++                Some(table.info(<acpi::DeviceId as crate::device_id::RawDeviceId>::index(id)))
++            }
++        }
++    }
++
+     /// The [`of::IdTable`] of the corresponding driver.
+     fn of_id_table() -> Option<of::IdTable<Self::IdInfo>>;
+ 
+@@ -180,6 +214,11 @@ fn of_id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
+     /// If this returns `None`, it means that there is no match in any of the ID tables directly
+     /// associated with a [`device::Device`].
+     fn id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
++        let id = Self::acpi_id_info(dev);
++        if id.is_some() {
++            return id;
++        }
++
+         let id = Self::of_id_info(dev);
+         if id.is_some() {
+             return id;
+diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+index 5b21fa517e55..5923d29a0511 100644
+--- a/rust/kernel/platform.rs
++++ b/rust/kernel/platform.rs
+@@ -5,7 +5,7 @@
+ //! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
+ 
+ use crate::{
+-    bindings, container_of, device, driver,
++    acpi, bindings, container_of, device, driver,
+     error::{to_result, Result},
+     of,
+     prelude::*,
+@@ -94,6 +94,10 @@ impl<T: Driver + 'static> driver::Adapter for Adapter<T> {
+     fn of_id_table() -> Option<of::IdTable<Self::IdInfo>> {
+         T::OF_ID_TABLE
+     }
++
++    fn acpi_id_table() -> Option<acpi::IdTable<Self::IdInfo>> {
++        None
++    }
+ }
+ 
+ /// Declares a kernel module that exposes a single platform driver.
+-- 
+2.43.0
+
 
