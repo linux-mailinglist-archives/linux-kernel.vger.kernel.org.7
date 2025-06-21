@@ -1,157 +1,156 @@
-Return-Path: <linux-kernel+bounces-696784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25AEAE2B65
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 21:15:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA429AE2B61
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 21:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C020170FE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 19:15:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75ACB17480F
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 19:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529D5269AE9;
-	Sat, 21 Jun 2025 19:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B3526A1AA;
+	Sat, 21 Jun 2025 19:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nC4a2Wdw"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J5iGXEEM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B56211F;
-	Sat, 21 Jun 2025 19:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7766BFC0
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Jun 2025 19:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750533330; cv=none; b=D+ymbIQiNN2yMBWWIvX62rRTEAZhvL3A+iXbzdwMBemcRxNNQ5+4BI8PWr8tiGcBcR5LA8Sj6I3RLblHJB9lbPPVFLf2cXWWoc2CTJJxapNQLASjvMMk5cPMfFaeCHhOjl9gnAupdUbqq59HOqSUHaE2LlAn5e8Yq9cT8IlOUWc=
+	t=1750533142; cv=none; b=fPEvNnrhfwXKHJwZWHGWGV+aEveNIc+x1WcCcY3mXb2GSplK2//jjwLXZjlUiukVuQhsbPBfCXUY+gKe+UpYutL3gL5yUlMpdxkI0m/sC/CKRuhUAKgdIXa8NXL4xfOAVUMzX7nocdlm1tg4Ny2Iqb+lSbf9C9ZzSePvH2mg990=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750533330; c=relaxed/simple;
-	bh=KzUQDnReREBPfVZQbb3GMmWlm2zqkpJbIDRwtszYAKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nx4zFZJbYsRa2c9AR2cTW5rOkkmnhCt0bvwxD9WgVevQGiQ7HPngRniDA3k7b7Ye2X6a/S5VTnbkmcszyjwrs92w8GxW5q8ZFGQas1W/7cayZ/lEX04/lO6+L8/DWBSsflqP+pML+knbPNc/ZXIrd06c9fW2PeonT/L1eq0ySVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nC4a2Wdw; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b26df8f44e6so3381185a12.2;
-        Sat, 21 Jun 2025 12:15:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750533328; x=1751138128; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FyabKKZRpe1kbc7KaEKrqFY9IqxUD7ZU2rCerIRqy7M=;
-        b=nC4a2WdwIuxRa0T5XJiPacTlmkXN3IW+Os26yLMj+ltIbNpp9r4ZRh+/REqc3bgYPA
-         V9IChSrs1/YodXKluAmPxln5BJu/pTqmX/UGizTOf06+qUBFhK5dBSrW6XMtiMTaIUyd
-         JnKyEFpBEZyoLdG3itDv8wuDGFN2E5E0rPJUy/GBBTzw/SWzPhpX9thaxRQpmXd0sUcA
-         1FYwa+h2gQKEqxq4YkKeA+3UTPu0sRdZRoJW6cvfyOSa4ekoGIZlPWo/sHgtNRV6W3lL
-         WWel5m82lB785Q441e2NCge8CgCoSjuA3oRXPvocF/nZriFZJV0Pumy8NNsTNiyipX5d
-         MGpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750533328; x=1751138128;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FyabKKZRpe1kbc7KaEKrqFY9IqxUD7ZU2rCerIRqy7M=;
-        b=Zep3qnMBkkyzOTxeJxXmPteBPPHTHNrJY5DFTj8QarkukE8O5ZxIY+cWgL1ISR9zg9
-         t2nGVfDGxyLcKdLoBlltwLL4AzlLWCkb2W3b0yupCVENGujQDMsEZxjcTotv7N6yuxcl
-         vf8SNrKPAlbgZH75TVvLrlFauWNI6rue4Pr5CZx8V5C/EkObBn40+h7p6rTWlWmsykRD
-         pr87z06jqOEBj/w7BQMTjj1Zse8ru6qV/oUp/A8B5NW5vvkffDMhWU/udSinc/i26MoR
-         T27CzcXAOrxjOR5cnD1uH/9GVgTo/cFfz8zQbZkrxP6yE5VWOu1DFZQUntT0vm517G94
-         13pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuXP53GV5ae/GSL8SYulpq1tb4uNQgMzse/mI8Dvw2Gthz3xWtjuwVuoXDDxMJLd52/5IWcDe9SrcoHZU=@vger.kernel.org, AJvYcCWUXCZxanspRu+G+hZjB3jh/vCHMfUg878MCZx7Q2Tqf55bgy9M68Zr8Hoy004PJTYDLdwhH7sfTLbz6wE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDjHLhYrIYNktiydonID1WvpMjBuZrGTUHLFs36I4WexUhCmjG
-	VSn9/sZR6kt0ZMbCG9QorHqJJwYhX80z29HtJ85FG9TiG1KSWD3qFmZD
-X-Gm-Gg: ASbGnct8d4oMzzFxna7C/eABXKFF/6UshUksijfAg0ggOnFA8Q1LvyuC3jLrxNWCffz
-	EyB0u22sT0N+OaOXzvzGRegVO28uBDG/xmQVkVRE+Gfa3KrTCKyekD1IQaaR1Uzyon1TPusWHQM
-	ikkdQoWWggZA8dBWVwcdK12C9ykdQPJSsC2JjBo2EOHeVWthfVaTPNhD6AVk0TULBpRIN9fEWjh
-	SBGSAOu8xBXBZ3+PRiXJL84cwXmbD0d0Ma3WaozE9lX3fqBoedpEOn4O/pw9nOWbIZvVtSizMYO
-	7P/IfLI3gEYhtG2rbtDohtP/HOGPmEkYrzvuyyBdEk0Ho9OxiKRGLPNUXJFQfzWVFe+TjDE5QLH
-	TSQOQwBT12Q==
-X-Google-Smtp-Source: AGHT+IH0/oCczFhSPKQ3YqY770/xMT6R9Vz+U/odFqTFEILAvRAB8bWMSAOlsFEqbW1XlAarUlPBfQ==
-X-Received: by 2002:a17:902:db11:b0:235:f45f:ed55 with SMTP id d9443c01a7336-237d977a56cmr120790325ad.1.1750533328466;
-        Sat, 21 Jun 2025 12:15:28 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14d:4c64:81ec:7409:107a:a63b:a3da])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d86628ffsm44843365ad.156.2025.06.21.12.15.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Jun 2025 12:15:28 -0700 (PDT)
-From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-To: vkoul@kernel.org,
-	yung-chuan.liao@linux.intel.com,
-	pierre-louis.bossart@linux.dev,
-	sanyog.r.kale@intel.com
-Cc: ~lkcamp/patches@lists.sr.ht,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] soundwire: debugfs: move debug statement outside of error handling
-Date: Sat, 21 Jun 2025 16:09:38 -0300
-Message-ID: <20250621191522.14415-1-rodrigo.gobbi.7@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750533142; c=relaxed/simple;
+	bh=MjI3arHxiaLd6kiYKl5oUIrg2f97H0q7JfnGOQ5rDb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lXbTiVH8FNnWw4hWwFLHGmO58R4OHe1qKqKieVx+G//tv26LfuvWcskK73y5rVvSx2Oy33UoPKdWmUcpTmCQtZHi8DHVCCguer5w9bpIxvMO0fpM0sBUmVKXXyyrSUL3OsPF99gtCW+ksOY7ZhuDfqb5kqJw1Cja6vcpHy4+CnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J5iGXEEM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 643B9C4CEE7;
+	Sat, 21 Jun 2025 19:12:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750533141;
+	bh=MjI3arHxiaLd6kiYKl5oUIrg2f97H0q7JfnGOQ5rDb4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=J5iGXEEM1l4kWx+QN+2DPoJmHVuA2ElzfJ8rRTz8jTDO/Kdwpn4XaIfXStUjFwV6W
+	 jYSZBSqlZIshXvonwZKno/73n42jrG38mJojSlSAScGfs72MsVtt5xwz69P5TQpD5C
+	 A/ilzVLqTe3TmOWQJFfEkRpiLUdLv+uEvInL8Q1jUKDfY7qV9uMbauKH4R0B7kWDqu
+	 gxOCGOeYBgQhTD2eGjXpG+QsmOyPTGv1o34jCcnzCW85JBtycfvEKi07f6y17DdhT8
+	 Jx2jWZpdZgnX4RHJ+BYl7/mjafHQfEMmCyhspW4NQku3bXoWxAQ2pFK8ejC+EhnGJ+
+	 HUJsCdZ+Wp9TA==
+Message-ID: <d20cbb64-1eef-4ce5-a2fa-fce9044a50bb@kernel.org>
+Date: Sat, 21 Jun 2025 14:12:19 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: AMDGPU - Regression: Black screen due to commit
+ 16dc8bc27c2aa3c93905d3e885e27f1e3535f09a
+To: Walt Holman <waltholman09@gmail.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, mario.limonciello@amd.com,
+ alexander.deucher@amd.com
+References: <CAMb39_mAWfeuyDjHR4Ej9fH=PXdH0qUda50R=iqGKVzN1mcHPQ@mail.gmail.com>
+ <48ff3e59-db6f-4870-8f0b-3c49dd4d865e@kernel.org>
+ <CAMb39_nRz-9NemdsASTG_34Lm_6a1uw4qLwkqBdn7FnMmN3O7w@mail.gmail.com>
+ <CAMb39_=0tUsn9u=KB72nT5MUhhdpujsOR1_+yhQTSXbijOM0MQ@mail.gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <CAMb39_=0tUsn9u=KB72nT5MUhhdpujsOR1_+yhQTSXbijOM0MQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The start_t and finish_t variables are not properly initialized
-if errors happens over request_firmware actions.
-This was also detected by smatch:
 
-drivers/soundwire/debugfs.c:301 cmd_go() error: uninitialized symbol 'finish_t'.
-drivers/soundwire/debugfs.c:301 cmd_go() error: uninitialized symbol 'start_t'.
 
-Initialize those variables and move the debug statement outside of
-firmware error handling.
+On 6/21/25 11:07 AM, Walt Holman wrote:
+> On Sat, Jun 21, 2025 at 11:03 AM Walt Holman <waltholman09@gmail.com> wrote:
+>>
+>> On Sat, Jun 21, 2025 at 10:52 AM Mario Limonciello <superm1@kernel.org> wrote:
+>>>
+>>>
+>>>
+>>> On 6/21/25 10:18 AM, Walt Holman wrote:
+>>>> Hello,
+>>>>
+>>>> With the latest drm fixes this week on 6.16-rc2, I am experiencing a
+>>>> black screen instead of the sddm greeter and the GPU appears to be
+>>>> locked up. I can ssh into the laptop and reboot it, but that's about
+>>>> it. I have bisected the commit to commit id:
+>>>> 16dc8bc27c2aa3c93905d3e885e27f1e3535f09a and upon reverting the
+>>>> commit, the system works as normal. The hardware is an Asus Rog
+>>>> Zephyrus G16 with AMD Ryzen AI 9 HX 370 w/ Radeon 890M video. I'm able
+>>>> to test patches etc.. if need be.
+>>>
+>>> Hi there,
+>>>
+>>> By chance do you have an OLED panel?  If so can you please try the patch
+>>> attached to this bug?
+>>>
+>>> https://gitlab.freedesktop.org/drm/amd/-/issues/4338
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>> 16dc8bc27c2aa3c93905d3e885e27f1e3535f09a is the first bad commit
+>>>> commit 16dc8bc27c2aa3c93905d3e885e27f1e3535f09a (HEAD)
+>>>> Author: Mario Limonciello <mario.limonciello@amd.com>
+>>>> Date:   Thu May 29 09:46:32 2025 -0500
+>>>>
+>>>>       drm/amd/display: Export full brightness range to userspace
+>>>>
+>>>>       [WHY]
+>>>>       Userspace currently is offered a range from 0-0xFF but the PWM is
+>>>>       programmed from 0-0xFFFF.  This can be limiting to some software
+>>>>       that wants to apply greater granularity.
+>>>>
+>>>>       [HOW]
+>>>>       Convert internally to firmware values only when mapping custom
+>>>>       brightness curves because these are in 0-0xFF range. Advertise full
+>>>>       PWM range to userspace.
+>>>>
+>>>>       Cc: Mario Limonciello <mario.limonciello@amd.com>
+>>>>       Cc: Alex Deucher <alexander.deucher@amd.com>
+>>>>       Reviewed-by: Roman Li <roman.li@amd.com>
+>>>>       Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>>>       Signed-off-by: Alex Hung <alex.hung@amd.com>
+>>>>       Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+>>>>       Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+>>>>       (cherry picked from commit 8dbd72cb790058ce52279af38a43c2b302fdd3e5)
+>>>>       Cc: stable@vger.kernel.org
+>>>>
+>>>>    drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 41
+>>>> +++++++++++++++++++++++++++--------------
+>>>>    1 file changed, 27 insertions(+), 14 deletions(-)
+>>>>
+>>>
+>>
+>> Yes, I do have an OLED panel and that patch does make it visible
+>> again. It is still very dark, but visible.
+>>
+>> -Walt
+> 
+> Upon rebooting again, the display was much brighter and is fine. Just
+> the first boot after that was dark.
+> 
+> -Walt
 
-Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/linux-sound/0db6d0bf-7bac-43a7-b624-a00d3d2bf829@stanley.mountain/
-Fixes: bb5cb09eedce ("soundwire: debugfs: add interface for BPT/BRA transfers")
----
-@Vinod Koul, tks for the suggestion. I`ve kept the ktime_t initialization, after moving
-the debug statement, they are not actually needed, but I think there is no harm to keep that.
-Tks and regards.
+Thanks, this makes sense.  I suspect that because 0 means "off" for your 
+panel that the patch you bisected to exposed running at 0 (or near 
+enough to 0) that it caused this behavior.
 
-Changelog:
-v2: moving debug statement
-v1: https://lore.kernel.org/linux-sound/20250617015230.54981-1-rodrigo.gobbi.7@gmail.com/#t
----
- drivers/soundwire/debugfs.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+That patch you tested will be upstreamed in a future promotion, and I 
+think we can take it in a -fixes PR later in the 6.16 fixes cycle.
 
-diff --git a/drivers/soundwire/debugfs.c b/drivers/soundwire/debugfs.c
-index 3099ea074f10..42d2aba285f5 100644
---- a/drivers/soundwire/debugfs.c
-+++ b/drivers/soundwire/debugfs.c
-@@ -237,8 +237,8 @@ static int cmd_go(void *data, u64 value)
- {
- 	const struct firmware *fw = NULL;
- 	struct sdw_slave *slave = data;
--	ktime_t start_t;
--	ktime_t finish_t;
-+	ktime_t start_t = 0;
-+	ktime_t finish_t = 0;
- 	int ret;
- 
- 	if (value != 1)
-@@ -291,6 +291,9 @@ static int cmd_go(void *data, u64 value)
- 
- 	finish_t = ktime_get();
- 
-+	dev_dbg(&slave->dev, "command completed, num_byte %zu status %d, time %lld ms\n",
-+		num_bytes, ret, div_u64(finish_t - start_t, NSEC_PER_MSEC));
-+
- out:
- 	if (fw)
- 		release_firmware(fw);
-@@ -298,9 +301,6 @@ static int cmd_go(void *data, u64 value)
- 	pm_runtime_mark_last_busy(&slave->dev);
- 	pm_runtime_put(&slave->dev);
- 
--	dev_dbg(&slave->dev, "command completed, num_byte %zu status %d, time %lld ms\n",
--		num_bytes, ret, div_u64(finish_t - start_t, NSEC_PER_MSEC));
--
- 	return ret;
- }
- DEFINE_DEBUGFS_ATTRIBUTE(cmd_go_fops, NULL,
--- 
-2.49.0
+But there is one more thing I would like to confirm - on your system can 
+you run with drm.debug=0x106 on the kernel command line and share me the 
+output from this debug print?
+
+https://github.com/torvalds/linux/blob/v6.16-rc2/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c#L4933
+
+
 
 
