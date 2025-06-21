@@ -1,137 +1,182 @@
-Return-Path: <linux-kernel+bounces-696450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69C4AE278F
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 07:52:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E07AE2794
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 08:09:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3B4E17ED3B
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 05:52:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8033617A408
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 06:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3575C18BC3B;
-	Sat, 21 Jun 2025 05:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E516D19E806;
+	Sat, 21 Jun 2025 06:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G38nV9c8"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YUKu3lLi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F202818B47C;
-	Sat, 21 Jun 2025 05:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0BA191F72
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Jun 2025 06:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750485128; cv=none; b=iIxQYqGKGwqeDt9/uOloBtanaudkdE82WxxyGnKL2f+eEnkfMsDnqH1h0qLnYqp2UnkFzapjgRBJGAnxjPWWpnq0004gLR2MlSY9laNlk2GksLzErGNpLwmoyOYIMX1FyNBMiLLU/mmsarVU1YccU+CCrCSO3SVrjHV2Q+exzuI=
+	t=1750486141; cv=none; b=W3xeBMQJMzeR6DCn3NEuZ27kd0WSslR+UuFErnxMSsKr4eeGo5ON/6lSsL1FXPD3iHeT5u3vvxK2DNNsxQuaS//yKGKE5E6kgBROqM9EEx7Hjo0Wo9q7xZJFBOYTlBhtebXdyHAqsd+lomiPHL4+BDlGq1UiUbB0zcCQ4sn8gMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750485128; c=relaxed/simple;
-	bh=I2qfDeaK/yT5SBxGqMaxj0vINrFUNTL30vXC81G8BN4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rtyuOtv2vrpN+Gr/GScQqFG8jwBKFMIYFjt+FDznUuZt+LkgYU+mg6o2u4m8WyqxhmqimrGhhCtwGhMPDfPYXeQzxXaO47eytF/eQ/5pNXL16F3bY++RubdTL8m7fmGamHlpT1u+2HDiaU76WRZN82CaNrPRXsVRqLrN83wA1BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G38nV9c8; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4533fbbd21bso1237325e9.2;
-        Fri, 20 Jun 2025 22:52:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750485125; x=1751089925; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WQpUEjf0YxYX6Ci4pItp/DxE3akefzENzegjXg1pXvE=;
-        b=G38nV9c8u5CkpiZyU99Zqfgb7VbRBVX4PV0Y7sZAfvozMzifxVMF2cm3p7Nw0TVc4I
-         j4COGTefAZBm/YikEtZ4gfoO1WeNFzT+m78Zyb6vuW0YHdyV24UGOairikzy/0l0n9jh
-         C2y6SWBdKyM1M+CPMeEfcrBpUqbSiUyJaaaEwfxwscWOhxqR6BE5iUAo0xFACQRWrgR4
-         FJ0DA6nQoaYO1SRfD6TGpJOya70uDrUtJnFOMlhV/PI2KzkRF5CRFPzWCK93DEDDbIIW
-         QtRSrN4FYbPGlUmfq+19pi4cYoi5u0hIhQZjjj6gbIYO5zJDalZ4DJbochBQHQOd0myu
-         V/1Q==
+	s=arc-20240116; t=1750486141; c=relaxed/simple;
+	bh=H5TZ2/yxYZP3oSZxiSV6KJv3Y+I2Wa2DX/w3wTurgGc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=Ae7BsMaeqFJKEGdlXNthR3G7qTPfAC8tIOlHPWWAyzk/OnHRSb4o/2CtwAu+BVZWcpD+U12UARrOWwqzrhDhTeKNsdxL60N0JfYx3JtKS/8cCG+ec4B01qHnwA+QNCW8nla5nPhlY8sAyV6MLhH+JSkZZoP13EeKzWXfgqf61cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YUKu3lLi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750486138;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=K52vtEFucQLGuMYKPj05GF3xHKKk00K2SQIo3fmgfSg=;
+	b=YUKu3lLiNzeE/VdF5fvNp3SFNISk2zJrwSm8pD/ia2R3skqCP0cufJhU+L/1Pe4EYtrwwE
+	+10yjaOup5UPnWiUUphaeG8eLQRX9j1Y8dF6AMPl62y1mMukHCobeJjnHthKMhLbTNA/ts
+	hAVbAaWrjhtEVD59a/zXEf2+A0HP6oQ=
+Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com
+ [209.85.221.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-277-NID8hDdJPImaHVvauUnVGg-1; Sat, 21 Jun 2025 02:08:56 -0400
+X-MC-Unique: NID8hDdJPImaHVvauUnVGg-1
+X-Mimecast-MFC-AGG-ID: NID8hDdJPImaHVvauUnVGg_1750486136
+Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-5314d22c278so795335e0c.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 23:08:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750485125; x=1751089925;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WQpUEjf0YxYX6Ci4pItp/DxE3akefzENzegjXg1pXvE=;
-        b=OqlK2q8E0TbkFlNogYctHCr/B+stiIr3lqIMo04YtEY8d4897nrOD9nghVxYR/Cywd
-         sVa63qS9Zy5UY2y7QtDBFPetYFo0rQnKbyg/+4J3okbuM346so0tpLCzXnvaNWGZgUcV
-         K56w9/zPPBiz65vQvCS8JN/I7cKF17t74y6jYHzZPRTTSWRwf82Hs8nEAqwJXHHG4ynv
-         skbksaqtp5tCZYIizQq49JiqqzDtES7mwLij0fFMYiL56h3LMm9WYiob3M1CJcX8eP8h
-         cJvuC9cJEu1Swr3izrEp3DYLpK7e+hzIzYD5BNOcpaIC7wmRfSrK74DnXIv0uj9hjC5Z
-         B0fA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBUtza94n1Hvp6CdCRDekSmeIeN/kzPehGzk/n63+uOvgpki1k2zxm1iyrCZL2ul6OSbaLVecYemFu@vger.kernel.org, AJvYcCWv3hfE457+LaikYWLllRXTvCTnrqx3caTWIevJuawqA8ou9XgrzuP9x+eFKF0kB0TLARGwFwvNX7jY5LYH@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQzMUm+9wLsOO6syG76UYwEuv9ogy9u6MuVEj+XnSKZeM92U8G
-	TiTjLNdBIae1rr41S4ylAXiI9eOEQZoqxfwgIZMlQODxgPVjVz5tIgU8
-X-Gm-Gg: ASbGncsWVdwnq+LkiyDIzSdLFaqd6Ua4aPUrc/yN3KnRFKq610GnRP3vysQWQUv1A2Y
-	OKEBrv5zOzamgqoQPx0RXYHXUdzZSf57CrtV2uMElAkXQLg64O3G1IKXQJyNm2F0IhYeliSRaXq
-	ynpcWiJvexFr5oKAJ3l9cdx7wU6mBtrOJixgpH+RIRX/2tc9OA2uorsD2zS+d6/FkePFIXEAWlY
-	Q5mVbBuGKFIl6kn+dzaHOeL9zs283+fUQZDRD5io0UcNxuwo0Q7p4tbvk32CANLu+RnbWIMIufD
-	pf1Q1Gu4fSRTFX9VpdijHxJVpvmC4HnORVX2Bwmv/ho4utZFCBD5Qq3zwWEp94GhkO5G0RHwBRY
-	TQKgJvmdNMf8Mt8pD/tm2c0/ny557tTJgWA==
-X-Google-Smtp-Source: AGHT+IGpx8LAUbfT+/oAv5emrbinMdbFFJI0Ah20iXYdZhFuPKxIxIt+hSS5OM2azlVyMH9Ov14N1A==
-X-Received: by 2002:a05:600c:5494:b0:453:590b:d392 with SMTP id 5b1f17b1804b1-453657bf79cmr18822625e9.2.1750485124972;
-        Fri, 20 Jun 2025 22:52:04 -0700 (PDT)
-Received: from localhost.localdomain ([102.46.244.122])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d1190d13sm3785172f8f.90.2025.06.20.22.52.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jun 2025 22:52:04 -0700 (PDT)
-From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-To: rafael@kernel.org,
-	lenb@kernel.org
-Cc: skhan@linuxfoundation.com,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Subject: [PATCH] ACPI: fan: Replace sprintf/scnprintf with sysfs_emit in show functions
-Date: Sat, 21 Jun 2025 08:52:00 +0300
-Message-Id: <20250621055200.166361-1-abdelrahmanfekry375@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1750486136; x=1751090936;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K52vtEFucQLGuMYKPj05GF3xHKKk00K2SQIo3fmgfSg=;
+        b=ZobRDfZLWUKlc+mNInFod/0fs7r7MNdM4U0aK984y5TGRv2gamSSStdKq2Q8f7F3nB
+         BMcPAITEkBNDKVTHjLhF3TjNaaJJkLr/UgT/OMRcFhHCNbx4KwQ+A/EePmDq0rf/plk6
+         gner7VOVMxk1X75f/BF7pGnmrSLItlQFrgtW6kowkwyAjMIhRpH0/iwh47n01Tagiq8O
+         f0ctmnJzcp6D7uDWFKSCJuSRbifGjGFItX5gAxA0usmTXFNd6ofS8k7Cl33Lw33qEkqV
+         x1GbpAT6PkYshwgeNZepkzHmwT9BvqUlDIeGfbATDta1yFuqZdgWz+VZEdXqruXrSAWP
+         Hcvw==
+X-Gm-Message-State: AOJu0YxKM4yBxxBdH9C1Sn5mgbNy4O0kSq2yTVTt9v/qT7P4wAVBVJuE
+	rA5LL1xeM+cOT/KcWamoTaIZL7PVtMzBSxue8zClETAf9lfwOHZ6aWhiwGr/5l7zhADqcDzY39x
+	nAOyr4h8jmCKxMSC+nqX9N7Dxarq5+eMD22rwji4qIKpRalhrtlxM2RMOYv2dMIk+Z9fKfmpuAi
+	pBoz7vXU8HV4M6xNV8ZsGehU2OZ5YEv6muaA8hQdHKHcjeqVpaj4M=
+X-Gm-Gg: ASbGncsj0Y9NmrZGPXzq4yEqcFUsgnI8zHedLnv7LC1nK3VK27Htr1Ya7/dZl+R+RON
+	mlX2eWQVLyqSwqebdpv9/8pVzJgE3TgwQybvfMw7wt1uQzzvoV8dZCsqh3luuwfquDFvEjkh225
+	L8zrQ8
+X-Received: by 2002:a05:6122:ca8:b0:530:7e05:3839 with SMTP id 71dfb90a1353d-531ad7b2082mr3595213e0c.11.1750486135678;
+        Fri, 20 Jun 2025 23:08:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEsHUaRWc2NcM9Iqj58DIfeKtW/k58h/kPWizo7tsvDaVv46Vjv8vidCt+94KkPp1WvqaYnP6K+S0vIDIN99aE=
+X-Received: by 2002:a05:6122:ca8:b0:530:7e05:3839 with SMTP id
+ 71dfb90a1353d-531ad7b2082mr3595208e0c.11.1750486135330; Fri, 20 Jun 2025
+ 23:08:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Ming Lei <ming.lei@redhat.com>
+Date: Sat, 21 Jun 2025 14:08:44 +0800
+X-Gm-Features: Ac12FXwu1_xOHn-k9ps5wWmOA0_RKeWo_S7_wOTUx3GDXOQVZ2GLfnGfNFK8GQM
+Message-ID: <CAFj5m9KOjqYmUOYM4EgDBrJ-rQxEgOhm+pokmdAE6w+bCGrhSg@mail.gmail.com>
+Subject: [v6.16-rc2+ Bug] panic in inode_doinit_with_dentry during booting
+To: linux-kernel <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, selinux@vger.kernel.org, 
+	Paul Moore <paul@paul-moore.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Update two sysfs show() functions in the ACPI fan driver to use sysfs_emit()
-and sysfs_emit_at() instead of sprintf() and scnprintf().
+Hello Guys,
 
-- show_fan_speed(): replaced sprintf() with sysfs_emit().
-- show_state(): replaced scnprintf() with sysfs_emit() for the first write,
-  and retained sysfs_emit_at() for incremental writes.
+The latest v6.16-rc2+ kernel panics during booting, commit
+3f75bfff44be ("Merge tag 'mtd/fixes-for-6.16-rc3' of
+git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux"):
 
-This change is in accordance with Documentation/filesystems/sysfs.rst,
-which recommends using sysfs_emit/sysfs_emit_at in all sysfs show()
-callbacks for buffer safety, clarity, and consistency.
 
-Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
----
- drivers/acpi/fan_attr.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+[  OK  ] Finished systemd-modules-load.service - Load Kernel Modules.
+         Starting systemd-sysctl.service - Apply Kernel Variables...
+         Starting systemd-sysusers.service - Create System Users...
+[  OK  ] Finished systemd-sysctl.service - Apply Kernel Variables.
+[    1.851473] Oops: general protection fault, probably for
+non-canonical address 0x8cbad568292ed62c: 0000 [#1] SMP NOPTI
+[    1.853362] CPU: 9 UID: 0 PID: 269 Comm: systemd-sysuser Not
+tainted 6.16.0-rc2+ #328 PREEMPT(full)
+[    1.854923] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+BIOS 1.16.3-1.fc39 04/01/2014
+[    1.856374] RIP: 0010:__list_add_valid_or_report+0x1e/0xa0
+[    1.857366] Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
+53 48 83 ec 08 48 85 f6 0f 84 76 2f 76 ff 48 89 d3 48 85 d2 0f 84 5c
+2f9
+[    1.860338] RSP: 0018:ffffd152c0de3a10 EFLAGS: 00010286
+[    1.861244] RAX: ffff8aa5414d38d8 RBX: 8cbad568292ed624 RCX: 0000000000000000
+[    1.862439] RDX: 8cbad568292ed624 RSI: ffff8aa5401f40f0 RDI: ffff8aa5414d38d8
+[    1.863622] RBP: ffff8aa5414d38f4 R08: ffffd152c0de3a7c R09: ffffd152c0de3a20
+[    1.864810] R10: ffff8aa5401f40c0 R11: 0000000000000007 R12: ffff8aa5414d38d8
+[    1.864813] R13: ffff8aa5401f40c0 R14: ffff8aa5401f40f0 R15: ffff8aa5414d38d0
+[    1.864814] FS:  00007feebef42bc0(0000) GS:ffff8aa9ed02f000(0000)
+knlGS:0000000000000000
+[    1.864816] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.864818] CR2: 00007feebfb58180 CR3: 0000000117f4d004 CR4: 0000000000770ef0
+[    1.870018] PKRU: 55555554
+[    1.870020] Call Trace:
+[    1.870029]  <TASK>
+[    1.870031]  inode_doinit_with_dentry+0x42d/0x520
+[    1.870035]  security_d_instantiate+0x93/0xb0
+[    1.870038]  d_instantiate+0x2e/0x60
+[    1.870043]  ramfs_mknod+0x58/0xb0
+[    1.870047]  path_openat+0xf53/0x1200
+[    1.870050]  do_filp_open+0xd7/0x190
+[    1.870053]  ? _raw_spin_unlock+0xe/0x30
+[    1.870055]  do_sys_openat2+0x8a/0xe0
+[    1.870058]  __x64_sys_openat+0x54/0xa0
+[    1.870060]  do_syscall_64+0x84/0x2c0
+[    1.870063]  ? __x64_sys_openat+0x54/0xa0
+[    1.870064]  ? do_syscall_64+0x84/0x2c0
+[    1.870066]  ? do_sys_openat2+0xa4/0xe0
+[    1.870068]  ? __x64_sys_openat+0x54/0xa0
+[    1.870069]  ? do_syscall_64+0x84/0x2c0
+[    1.870070]  ? handle_mm_fault+0x1d7/0x2e0
+[    1.870074]  ? do_user_addr_fault+0x211/0x680
+[    1.870077]  ? clear_bhb_loop+0x50/0xa0
+[    1.870079]  ? clear_bhb_loop+0x50/0xa0
+[    1.870080]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[    1.870082] RIP: 0033:0x7feebf965e63
+[    1.870084] Code: 83 e2 40 75 52 89 f0 f7 d0 a9 00 00 41 00 74 47
+80 3d 50 22 0e 00 00 74 62 89 da 4c 89 e6 bf 9c ff ff ff b8 01 01 00
+008
+[    1.870085] RSP: 002b:00007ffd85a4c5d0 EFLAGS: 00000202 ORIG_RAX:
+0000000000000101
+[    1.870087] RAX: ffffffffffffffda RBX: 00000000000a0141 RCX: 00007feebf965e63
+[    1.870088] RDX: 00000000000a0141 RSI: 000055ed496c4f10 RDI: 00000000ffffff9c
+[    1.870089] RBP: 00007ffd85a4c640 R08: 00000000ffffff9c R09: 00007ffd85a4c4f0
+[    1.870090] R10: 0000000000000180 R11: 0000000000000202 R12: 000055ed496c4f10
+[    1.870091] R13: 0000000000000000 R14: 00007ffd85a4c6c0 R15: 000055ed29c98940
+[    1.870092]  </TASK>
+[    1.870093] Modules linked in: scsi_dh_rdac scsi_dh_emc
+scsi_dh_alua ip6_tables ip_tables fuse dm_multipath qemu_fw_cfg
+[    1.870121] ---[ end trace 0000000000000000 ]---
+[    1.870123] RIP: 0010:__list_add_valid_or_report+0x1e/0xa0
+[    1.870127] Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
+53 48 83 ec 08 48 85 f6 0f 84 76 2f 76 ff 48 89 d3 48 85 d2 0f 84 5c
+2f9
+[    1.870127] RSP: 0018:ffffd152c0de3a10 EFLAGS: 00010286
+[    1.870129] RAX: ffff8aa5414d38d8 RBX: 8cbad568292ed624 RCX: 0000000000000000
+[    1.870130] RDX: 8cbad568292ed624 RSI: ffff8aa5401f40f0 RDI: ffff8aa5414d38d8
+[    1.870130] RBP: ffff8aa5414d38f4 R08: ffffd152c0de3a7c R09: ffffd152c0de3a20
+[    1.870131] R10: ffff8aa5401f40c0 R11: 0000000000000007 R12: ffff8aa5414d38d8
+[    1.870132] R13: ffff8aa5401f40c0 R14: ffff8aa5401f40f0 R15: ffff8aa5414d38d0
+[    1.870133] FS:  00007feebef42bc0(0000) GS:ffff8aa9ed02f000(0000)
+knlGS:0000000000000000
+[    1.870134] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    1.870135] CR2: 00007feebfb58180 CR3: 0000000117f4d004 CR4: 0000000000770ef0
+[    1.870137] PKRU: 55555554
+[    1.870138] Kernel panic - not syncing: Fatal exception
+[    1.870365] Kernel Offset: 0x3a000000 from 0xffffffff81000000
+(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[    1.898219] ---[ end Kernel panic - not syncing: Fatal exception ]---
 
-diff --git a/drivers/acpi/fan_attr.c b/drivers/acpi/fan_attr.c
-index 22d29ac2447c..6a53da3d6d82 100644
---- a/drivers/acpi/fan_attr.c
-+++ b/drivers/acpi/fan_attr.c
-@@ -22,9 +22,9 @@ static ssize_t show_state(struct device *dev, struct device_attribute *attr, cha
- 	int count;
- 
- 	if (fps->control == 0xFFFFFFFF || fps->control > 100)
--		count = scnprintf(buf, PAGE_SIZE, "not-defined:");
-+		count = sysfs_emit(buf, "not-defined:");
- 	else
--		count = scnprintf(buf, PAGE_SIZE, "%lld:", fps->control);
-+		count = sysfs_emit(buf, "%lld:", fps->control);
- 
- 	if (fps->trip_point == 0xFFFFFFFF || fps->trip_point > 9)
- 		count += sysfs_emit_at(buf, count, "not-defined:");
-@@ -59,7 +59,7 @@ static ssize_t show_fan_speed(struct device *dev, struct device_attribute *attr,
- 	if (status)
- 		return status;
- 
--	return sprintf(buf, "%lld\n", fst.speed);
-+	return sysfs_emit(buf, "%lld\n", fst.speed);
- }
- 
- static ssize_t show_fine_grain_control(struct device *dev, struct device_attribute *attr, char *buf)
--- 
-2.25.1
+
+
+
+Thanks,
 
 
