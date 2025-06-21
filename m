@@ -1,95 +1,85 @@
-Return-Path: <linux-kernel+bounces-696856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3255AE2C62
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 22:44:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 626CBAE2C67
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 22:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57E41170681
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 20:44:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10FD01897CBA
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 20:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC17270565;
-	Sat, 21 Jun 2025 20:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0109A271455;
+	Sat, 21 Jun 2025 20:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TcFf+daJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Jem5puHm"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bitology.eu header.i=@bitology.eu header.b="L3VmS15f"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A581F5E6;
-	Sat, 21 Jun 2025 20:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEFA271442
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Jun 2025 20:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750538671; cv=none; b=pTgZaP5ZO0YM5qro5G7EKrPWyFNP2knR1z/6APFf6RQup+sj1jhueb0Q8xLz5VemOmMQLPqxa7opZrD0QErs0gKnVPRhBeypAX6oO6iPpovoYQuAAtKHEQVtGiO5zyoW7t5cmzKJeH9y6m+NEJtAVH9AO6IqA8bf8q1Y6SZKuIk=
+	t=1750539083; cv=none; b=Y5M4TG2qj/1P/THcYJ5D7xkTmGF+NUnryAqSWfXNRiWLA0EosBk5GhGOc7mwi8fvvTARWj3vX9wmpXeKEzLBpSaR6hr4/ADYPg07iaPjNiDXM9okr2ShJDxImF6kb5C5zCO7EaSK4aPIRFBxGpi5t5eyYXSTCSOlWE8zrv9Uj9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750538671; c=relaxed/simple;
-	bh=P89KZvCJZCwzhvtoknxL77RvxV6jVy7/qA7INZizj3Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=J3YoK36DQ3MUVAExyefj7VOD3SBwxUtRfD/0FJzrMWW7pR4O8nzgNJndU40cz557EA9DMCWQXh8OFD3CUPkGaZvrLFAGLNtTrSQ8Q7CNX6+c34cV1HOx5cRvI06j/I9dTK62VpiPqiZZcmvlxsfa4PhmhBtoYJw/lUeRW5X5668=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TcFf+daJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Jem5puHm; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750538667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ngcP24uDNqaeTF7ZEpDIvhpdOdD9ObmW7Xhx1/y8BFI=;
-	b=TcFf+daJZQH0kPs201twgopdn3C3XKuKviz/BE5aZNxsGyw0EXX3KGMrHtnzQB0z+47Hde
-	Cs2SBQID1vc1Udrix2pX1NW0AsofJ7hPAv+uCWTOmTap72yauJoEUrZoGJ/dNkQzqSS3rR
-	ED6fl6yhEqx71uW0PQC/npjNb6jcepNJB1WK4HU0KOBCVjeEkV7jVcsED4Mer97MGwMIbY
-	OqbPT1/Z0vibdu5bGZBBLfV3HELs1is/ZgiSnxwKWuKj2fOuKykUgLYXpwmDefgKZXmswA
-	qt9M9SeGikB9goW4f/LcgggbIiQoJyilvZyd1eGwfvgKf7vBxxDWHpH6mml8zQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750538667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ngcP24uDNqaeTF7ZEpDIvhpdOdD9ObmW7Xhx1/y8BFI=;
-	b=Jem5puHmK29iF20Nh/aabkqakF/Gnrni4T4JUoyGc3JuRBa83mrXhixr1ZjS1CGhCV3Gp9
-	D4XgZZXx7PyX+OAQ==
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>, LKML
- <linux-kernel@vger.kernel.org>
-Cc: Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org
-Subject: Re: [patch 10/13] ptp: Split out PTP_MASK_CLEAR_ALL ioctl code
-In-Reply-To: <80052862-683c-4a53-b7a2-8d767a057022@linux.dev>
-References: <20250620130144.351492917@linutronix.de>
- <20250620131944.344887489@linutronix.de>
- <80052862-683c-4a53-b7a2-8d767a057022@linux.dev>
-Date: Sat, 21 Jun 2025 22:44:27 +0200
-Message-ID: <877c14q0yc.ffs@tglx>
+	s=arc-20240116; t=1750539083; c=relaxed/simple;
+	bh=v9SEfWHaLKLzZ51yBh3GMJkvnWnGKDt6pqWgxr1ZXrk=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=TWDLmZKd2rgPdGYnUtKA0S8tCvHZrOFYli2iK7WMpPE/t05dj+2UWqZLJe1Op8lzJpClaOZNfkLlmg9H6u1+TeJE1v+MXIGJjBsbsNAINqimA4h4hLT+BNFgoKuZYMiIJywtY3ag87r9OkOGPW7qNBQHR4pUHSEMA2XvBLK075E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bitology.eu; spf=pass smtp.mailfrom=bitology.eu; dkim=pass (2048-bit key) header.d=bitology.eu header.i=@bitology.eu header.b=L3VmS15f; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bitology.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitology.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bitology.eu
+	; s=ds202506; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
+	MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:
+	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=GC5wteb01X8aWqz8GPS3uLooUpeEnYoTVV8sCOwJyWg=; b=L3VmS15fm8qNYpybnHgvJ62FYQ
+	6RKW90wCcoSiGMF4JQj3WsUf2PbwOtjRaEeugJkC9UZS7jlJLnvybgL32SK5SYG/r9zcX9VDyopV0
+	jdb5hbXtd5cvIH3G6RskChKTpH8u2MSRrTH7ztJRaTF+sKNNncTk35I8WYhhnuVg/Jg7DkEXqBSQ+
+	TP8XBuGqkax9k9PYwdjEN0L/fDCJBSOzUtpwM8Tbw00m0uFEmg5QLB2tKRkKU9T0X3t6htTk5sDzM
+	LeNtYWKE2MWheY6BBuVxfM6KuGUNstXYWIrytBEEJKMiJ+/SXu1LzU/ovnlkA5Cha5mPnsSj3wdqJ
+	gk2zSrBg==;
+Received: from smtp
+	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	id 1uT5BB-005RP9-A9
+	for linux-kernel@vger.kernel.org;
+	Sat, 21 Jun 2025 22:51:13 +0200
+Message-ID: <dc59820f-9856-4f56-b57f-c733b4c05a67@bitology.eu>
+Date: Sat, 21 Jun 2025 22:50:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <bit-budi@bitology.eu>
+Subject: Some updates on Philosophy perspective (was low jitter, fair pay
+ philosophy)
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 21 2025 at 21:36, Vadim Fedorenko wrote:
-> On 20/06/2025 14:24, Thomas Gleixner wrote:
->> Continue the ptp_ioctl() cleanup by splitting out the PTP_MASK_CLEAR_ALL ioctl
->> code into a helper function.
->>   	case PTP_MASK_CLEAR_ALL:
->> -		bitmap_clear(tsevq->mask, 0, PTP_MAX_CHANNELS);
->> -		break;
->> +		return ptp_mask_clear_all(pccontext->private_clkdata);
->>   
->>   	case PTP_MASK_EN_SINGLE:
->>   		if (copy_from_user(&i, (void __user *)arg, sizeof(i))) {
->> 
->
-> Not quite sure there is a benefit of having a function for this type,
-> apart from having one style. But it adds some LoC...
+I have moved to using MIT licence. It seems GNU really tries to be this.
 
-Sure it's debatable benefit, but it makes the code more consistent and
-does not introduce this oddball in the middle of the other function
-calls.
+My own suggested developments is called Bit Wavelet, Bit DAW, Bit CPU.
 
-Thanks,
+Website is now Bitology.EU, and Euro from Brüsseels seems optimal, as 
+digital IT currency. (not Ethereum "hacking" or mining crypto.)
 
-        tglx
+As before: https://www.youtube.com/@Ram_Bitstreams_EU
+w/ playlists aswell.
+
+!-!
+
+Light,
+Ywe Cærlyn
+Bit Budi
+https://bitology.eu/
+
+
 
