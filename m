@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-696807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8F1AE2BFA
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 21:56:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60684AE2C03
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 21:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC683189A98C
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 19:56:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9E301893872
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 19:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39AB271458;
-	Sat, 21 Jun 2025 19:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0173273D94;
+	Sat, 21 Jun 2025 19:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTl/F1lw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGX/t1w3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6409259C82;
-	Sat, 21 Jun 2025 19:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D052270571;
+	Sat, 21 Jun 2025 19:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750535761; cv=none; b=n00k9+EfRMBuVTL1oCEtX94r2VcBpNEPrwTPlSeboO8Cs8NFl5c/GLpvbTDPvx8RNl5fkP6FcW0oBaCur6de0+2cWsJLa51Rj92aPREgV38okWX79RdjNVnDqLBYBnKoefUyFIZEeLHYDXV0R0IO4aoWoA8Icy9rynXFc/hDYw0=
+	t=1750535761; cv=none; b=lii9Z4UudqPFFG3BKcIebfZO/yoJ0uafAuRihomytlBTK7wK38Vdav0p/Ss9D9VSJIxEcoyW5jfXid3ITpiR8weelZvPuTCtMrXqMpadtCsWCxvqjqWLtTQDxdnZtxqz4+lt8nMzd4r0rQ86Vfneze7euEOKyGmOACsgGnxCzHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1750535761; c=relaxed/simple;
-	bh=XYACLriiJLRgjgNmojKmyTGCkYgpJcwpU+eU2NamY1k=;
+	bh=JuIEICGnpDYmiVcGm/h58xaHAndEpsJueWYoYVCqMQs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X2Ni7NpszKjQYyqM6veerheD52qXmBxBv2/Beu3P+ATvaBu3cWlR3RcklYnR/Y67WG50lKUWk5Mvzc3UT+be582ZH5SQDH3G7P2COd4bsTdc4/FHvBNo9mjnGxrhUBXRTfejD1kU6XHaB+Wb3kzw/4e9jxzllepbpH/B+1x1hBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTl/F1lw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 949C0C4AF09;
+	 MIME-Version; b=MxOTcjmcaBGvGvwOis1ee0/vDsBpMcWQoWLs79wrd8UPJ/svsZT52yGsu0+rBr+kzDKd76H3/WX3+JByWhAcrglHKRwV51QwLhs6YiZz7vRf4e1gvVONEg+P7QVb3Ov9CfMOWVIfhRQRlMu0uUT+dN5ml1FxyTiEZEpLBUTMolQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DGX/t1w3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0EDAC4AF0C;
 	Sat, 21 Jun 2025 19:56:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1750535760;
-	bh=XYACLriiJLRgjgNmojKmyTGCkYgpJcwpU+eU2NamY1k=;
+	bh=JuIEICGnpDYmiVcGm/h58xaHAndEpsJueWYoYVCqMQs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oTl/F1lw92gn7j6PvN2MD6wP3QD43u1ljkmRhGc2Tugx7354ISiVB+dL2jTrG+ie0
-	 SVr0MS61LY/Rx6ShNS1aCaMwLJZd1WifeFWdEehuSBttvfGcvIULZL0O5rkEKlkmCK
-	 GMoUxTZndkcFRavc46VgrQCR2Tqx96xN6ANDRqC27Ll6Xu4xPp+/xBQxMCiQdXSKeU
-	 Mo1Qk6ldqLTNjq+blvBBFL/j/fyuMYkkJLWU98mUu/RcuBmoeaHGEsri3r4jMvGobv
-	 GNGhI7IOq7rCmjjrTtWkJQI0otvMW+8fFKvryZQCs7zubKMp0DMHT5vp8mKlMk1kbj
-	 YY/vYIHG2+OBQ==
+	b=DGX/t1w3KvdxSzPASQUFu9xAAcgqC/5+rZsstgB6LLAHjcuog8BQoZGHc5cMVPlCV
+	 6mphv1zgtfw+7avQykv4kSdLS2hYN4/dSNSV+It5bfECXjw79vi0W2lFAOLlIFcvB1
+	 /tMM9JoEHM7jxkzuVz8cfrCpAAah9i3PVvaxwy2vdszm96oiTm9WSSms7qin6286Yb
+	 sFjjNTtD42j0XlHmWxYNS8XifszOOOIpnZN6weJUGjniywKZRJUkGSwvq32gm5mX73
+	 i3sE67HLuanQZEW6j8XEMBP56gqCMxsdXq9mWz11cH9Iq7eLpuAeJRZ01ZRUs6zhg6
+	 5vpyIRH9n2wmA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uT4Ji-00000000e3w-2wSV;
+	id 1uT4Ji-00000000e40-33EF;
 	Sat, 21 Jun 2025 21:55:58 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -51,9 +51,9 @@ Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Akira Yokosawa" <akiyks@gmail.com>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 06/15] scripts: test_doc_build.py: better adjust to python version
-Date: Sat, 21 Jun 2025 21:55:45 +0200
-Message-ID: <0d9e86390f0bc443880cafc442466a959c59609f.1750535171.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 07/15] scripts: test_doc_build.py: improve dependency list
+Date: Sat, 21 Jun 2025 21:55:46 +0200
+Message-ID: <9eac3b7dab2f59349044c53201d6a71cf06d8df1.1750535171.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1750535171.git.mchehab+huawei@kernel.org>
 References: <cover.1750535171.git.mchehab+huawei@kernel.org>
@@ -66,63 +66,141 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Very old versions of Sphinx require older versions of python.
-The original script assumes that a python3.9 exec exists,
-but this may not be the case.
-
-Relax python requirements.
+Change the dependency list to ensure that:
+- all docutils versions are covered;
+- provide an explanation about the dependencies;
+- set a better minimal requirement for 3.4.3.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/test_doc_build.py | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ scripts/test_doc_build.py | 68 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 50 insertions(+), 18 deletions(-)
 
 diff --git a/scripts/test_doc_build.py b/scripts/test_doc_build.py
-index 5b9eb2c0bf01..129c2862065c 100755
+index 129c2862065c..087b8c476f05 100755
 --- a/scripts/test_doc_build.py
 +++ b/scripts/test_doc_build.py
-@@ -12,15 +12,28 @@ and optionally test the build.
- import argparse
- import asyncio
- import os.path
-+import shutil
- import sys
- import time
- import subprocess
- 
--# Minimal python version supported by the building system
--MINIMAL_PYTHON_VERSION = "python3.9"
-+# Minimal python version supported by the building system.
- 
--# Starting from 8.0.2, Python 3.9 becomes too old
--PYTHON_VER_CHANGES = {(8, 0, 2): "python3"}
-+PYTHON = os.path.basename(sys.executable)
-+
-+min_python_bin = None
-+
-+for i in range(9, 13):
-+    p = f"python3.{i}"
-+    if shutil.which(p):
-+        min_python_bin = p
-+        break
-+
-+if not min_python_bin:
-+    min_python_bin = PYTHON
-+
-+# Starting from 8.0, Python 3.9 is not supported anymore.
-+PYTHON_VER_CHANGES = {(8, 0, 2): PYTHON}
+@@ -37,70 +37,102 @@ PYTHON_VER_CHANGES = {(8, 0, 2): PYTHON}
  
  # Sphinx versions to be installed and their incremental requirements
  SPHINX_REQUIREMENTS = {
-@@ -290,7 +303,7 @@ class SphinxVenv:
-                 args.verbose = True
- 
-         cur_requirements = {}
--        python_bin = MINIMAL_PYTHON_VERSION
-+        python_bin = min_python_bin
- 
-         for cur_ver, new_reqs in SPHINX_REQUIREMENTS.items():
-             cur_requirements.update(new_reqs)
++    # Oldest versions we support for each package required by Sphinx 3.4.3
+     (3, 4, 3): {
++        "docutils": "0.16",
++        "alabaster": "0.7.12",
++        "babel": "2.8.0",
++        "certifi": "2020.6.20",
++        "docutils": "0.16",
++        "idna": "2.10",
++        "imagesize": "1.2.0",
++        "Jinja2": "2.11.2",
++        "MarkupSafe": "1.1.1",
++        "packaging": "20.4",
++        "Pygments": "2.6.1",
++        "PyYAML": "5.1",
++        "requests": "2.24.0",
++        "snowballstemmer": "2.0.0",
++        "sphinxcontrib-applehelp": "1.0.2",
++        "sphinxcontrib-devhelp": "1.0.2",
++        "sphinxcontrib-htmlhelp": "1.0.3",
++        "sphinxcontrib-jsmath": "1.0.1",
++        "sphinxcontrib-qthelp": "1.0.3",
++        "sphinxcontrib-serializinghtml": "1.1.4",
++        "urllib3": "1.25.9",
++    },
++
++    # Update package dependencies to a more modern base. The goal here
++    # is to avoid to many incremental changes for the next entries
++    (3, 5, 4): {
+         "alabaster": "0.7.13",
+         "babel": "2.17.0",
+         "certifi": "2025.6.15",
+-        "charset-normalizer": "3.4.2",
+-        "docutils": "0.15",
+         "idna": "3.10",
+         "imagesize": "1.4.1",
+         "Jinja2": "3.0.3",
+         "MarkupSafe": "2.0",
+         "packaging": "25.0",
+         "Pygments": "2.19.1",
+-        "PyYAML": "5.1",
+         "requests": "2.32.4",
+         "snowballstemmer": "3.0.1",
+         "sphinxcontrib-applehelp": "1.0.4",
+-        "sphinxcontrib-devhelp": "1.0.2",
+         "sphinxcontrib-htmlhelp": "2.0.1",
+-        "sphinxcontrib-jsmath": "1.0.1",
+-        "sphinxcontrib-qthelp": "1.0.3",
+         "sphinxcontrib-serializinghtml": "1.1.5",
+-        "urllib3": "2.4.0",
+     },
+-    (3, 5, 4): {},
++
++    # Starting from here, ensure all docutils versions are covered with
++    # supported Sphinx versions. Other packages are upgraded only when
++    # required by pip
+     (4, 0, 3): {
+-        "docutils": "0.17.1",
++        "docutils": "0.17",
+         "PyYAML": "5.1",
+     },
+-    (4, 1, 2): {},
+-    (4, 3, 2): {},
++    (4, 1, 2): {
++    },
++    (4, 3, 2): {
++    },
+     (4, 4, 0): {},
+     (4, 5, 0): {},
+     (5, 0, 2): {},
+     (5, 1, 1): {},
+     (5, 2, 3): {
++        "docutils": "0.17.1",
+         "Jinja2": "3.1.2",
+         "MarkupSafe": "2.0",
+         "PyYAML": "5.3.1",
+     },
+-    (5, 3, 0): {
+-        "docutils": "0.18.1",
+-        "PyYAML": "5.3.1",
++    (5, 3, 0): {},
++    (6, 0, 1): {
++        "docutils": "0.18",
+     },
+-    (6, 0, 1): {},
+     (6, 1, 3): {},
+     (6, 2, 1): {
++        "docutils": "0.18.1",
+         "PyYAML": "5.4.1",
+     },
+-    (7, 0, 1): {},
++    (7, 0, 1): {
++    },
+     (7, 1, 2): {},
+     (7, 2, 3): {
++        "docutils": "0.19",
+         "PyYAML": "6.0.1",
+         "sphinxcontrib-serializinghtml": "1.1.9",
+     },
+     (7, 3, 7): {
++        "docutils": "0.20",
+         "alabaster": "0.7.14",
+         "PyYAML": "6.0.1",
+     },
+     (7, 4, 7): {
+-        "docutils": "0.20",
++        "docutils": "0.21",
+         "PyYAML": "6.0.1",
+     },
+-    (8, 0, 2): {},
++    (8, 0, 2): {
++        "docutils": "0.21.1",
++    },
+     (8, 1, 3): {
++        "docutils": "0.21.2",
+         "PyYAML": "6.0.1",
+         "sphinxcontrib-applehelp": "1.0.7",
+         "sphinxcontrib-devhelp": "1.0.6",
 -- 
 2.49.0
 
