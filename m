@@ -1,152 +1,103 @@
-Return-Path: <linux-kernel+bounces-696567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FDF1AE28D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 13:35:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57ECAE28CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 13:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A735C7A9123
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 11:33:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1047F3A890A
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 11:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D212063D2;
-	Sat, 21 Jun 2025 11:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454B52036EC;
+	Sat, 21 Jun 2025 11:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=czerwinskis.de header.i=@czerwinskis.de header.b="HxOCC+8j";
-	dkim=pass (1024-bit key) header.d=czerwinskis.de header.i=@czerwinskis.de header.b="bklw8Df8"
-Received: from magratgarlick.emantor.de (magratgarlick.emantor.de [78.46.208.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWBssDVI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87F61F3BAE;
-	Sat, 21 Jun 2025 11:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.208.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B50EA95C;
+	Sat, 21 Jun 2025 11:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750505707; cv=none; b=bmvow/0pFq72/cCoRo7UxFhSs0Ogw0yGeh4j6KeKPTkfI3M7DYuMAsFMTbDN9CT4VINIO28I5+rxpt4yLAYIWjKsjVKsiDmIuPV/Pz3DSOPGY5p7gD6YbP0WcFKzSppy0QRgUdT+a25CclIoNCRwv5vIbwz+iKm1AjO+KXMMj0U=
+	t=1750505512; cv=none; b=uXATQouWrwb3igNB5kVm1xslg2g6WrKUWjkPjlM2YS3YkDHTIEBZ7eVnLQcFih1RTr9wmJtO0S75gKpUYqtT1PmRFjnKseIPWQ+AojgXMnpHmTeaR/obAMaVXmaIa4AiIif8JuQbMVs9TJicYORgLYyjBhMrWNiSM3fHf+plI48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750505707; c=relaxed/simple;
-	bh=zOTrb3kuMMd0YVV8FliK7cqEdxGgOmIKIt+TlxhEpCE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=My+bVD1E8LkxY/3DuLT74pkLHl6OowPkIwZyyk1eqhF/aOuWP3IL8YYvt1uQDEaglUBjPB5HOGAV+oBparsiSOy8xi+6imJVVMUkyzH4S25Ss0DqOGv5aZ2vsKf5aZTZGePaHb8+bIuninlCfc5llA2ssliemvfyN3NPtJ05YFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=czerwinskis.de; spf=pass smtp.mailfrom=czerwinskis.de; dkim=pass (1024-bit key) header.d=czerwinskis.de header.i=@czerwinskis.de header.b=HxOCC+8j; dkim=pass (1024-bit key) header.d=czerwinskis.de header.i=@czerwinskis.de header.b=bklw8Df8; arc=none smtp.client-ip=78.46.208.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=czerwinskis.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=czerwinskis.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=czerwinskis.de;
-	s=mail; t=1750505359;
-	bh=zOTrb3kuMMd0YVV8FliK7cqEdxGgOmIKIt+TlxhEpCE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HxOCC+8jVMMmYEVE5Y4ROVGsjXQRlyPFSavGrtOkqkIJ6cIMp7GVPJXhod+/bpZLm
-	 A9iKD28mLEUA5Sc52gvkK2ozRM3NcVd17qpxKmCUtG4K2zax3gFhcIDMIGuRblnyLo
-	 AIqap+rrDlwwwBcMUokOqA8aBIj9J1jnfIy1EqJM=
-Received: by magratgarlick.emantor.de (Postfix, from userid 114)
-	id 7156E96984; Sat, 21 Jun 2025 13:29:19 +0200 (CEST)
-X-Spam-Level: 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=czerwinskis.de;
-	s=mail; t=1750505358;
-	bh=zOTrb3kuMMd0YVV8FliK7cqEdxGgOmIKIt+TlxhEpCE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bklw8Df8JfO4eK+Rh3rbd0QcvX4/g/JIQJZinyaXdUeOZeA2wEi0vfnMX3PRIlAfC
-	 SlEQIIVLDpqkYlT/AQUZe3VcakY+dBqYF4OjW+LmueCxdURiaEXV9hfLSnf880uxtS
-	 aGOH6l3yK9g2GYbeO4SGxnaf+8GYhrhQHauQY6iI=
-Received: from localhost (unknown [IPv6:2a0e:c5c1:0:100:cc93:f0a3:c76:aa90])
-	by magratgarlick.emantor.de (Postfix) with ESMTPSA id 5C3399697B;
-	Sat, 21 Jun 2025 13:29:18 +0200 (CEST)
-From: Rouven Czerwinski <rouven@czerwinskis.de>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: kernel@pengutronix.de,
-	Rouven Czerwinski <rouven@czerwinskis.de>,
-	linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] brcmfmac: remove always true variable and code
-Date: Sat, 21 Jun 2025 13:29:11 +0200
-Message-ID: <20250621112912.180436-2-rouven@czerwinskis.de>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250621112912.180436-1-rouven@czerwinskis.de>
-References: <20250621112912.180436-1-rouven@czerwinskis.de>
+	s=arc-20240116; t=1750505512; c=relaxed/simple;
+	bh=fMeNHwlvdxhVpulaFu75Rk3QBuy7carLB9qer/sIg78=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=PtumY/BnfK57I/UWLHwhVPeTve1SGeTrcQGVjTPBwhOXwTXpuVSiKK81KaJinjeMhzu0bvV5NP1AtitvW1dEIHIQ7+RF8/N4ihdKDBRB34zi0oZvFkxvGR79FEN2jfsJmZWKKtG4CHIFRYh3orthXK16l716cTsCnzVKG7MEng8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWBssDVI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31EF6C4CEEF;
+	Sat, 21 Jun 2025 11:31:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750505512;
+	bh=fMeNHwlvdxhVpulaFu75Rk3QBuy7carLB9qer/sIg78=;
+	h=From:Date:Subject:To:Cc:From;
+	b=rWBssDVIxN+heJAm5e8YCmpldEd1eH8gFArkMiaSt8gi15lqMH9wmudwKChiKyfmt
+	 vVKjwVVOK+1URHQ5eyi0sMjZkEX4XkFJWbhi4f/8WseOyCHJDeVVnGgl88A/FA4YUd
+	 HpdUeBY1Dvu/sGIr8hJVgjQqFkGfSz5xpS4107tsXPY9yh9dvzTQ4Lce6+f9BDcBHK
+	 mxuk8s5P94Howle3SM+CF6yaaDH8mIqMjpgjWUwLx9xnQRq+WBayeIsogE+y+xRmIn
+	 I/ijXokhyBajJVjQUxXmvG77lM7RtLHVsT8biuvebI1HDwW4TVwit6DrirF2q7JtmI
+	 dqceAIMthxFSA==
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-606477d77easo1666438eaf.1;
+        Sat, 21 Jun 2025 04:31:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWTXlu6XUlWU1S5p7nhs20kdU140SRNLHOXjESwlVkEVxiO3gPVXCdWBYKNWJkr4pgEpcG44+qRSG1mFAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcJD2ExguazNaY/phDhjUfeTzgwTM7MH5lQQz636Vz5u9v5VQ7
+	izAixG8B7jrBTDK41HMobhbHgepZZOSjXK2TM9U0n7iUzV1jaM2QRbg5r9XG/MiAuJiR5ywXAzw
+	/K2JWSFupmqlYNjoM+a975MmQ31Wq20Y=
+X-Google-Smtp-Source: AGHT+IE5n394XM+7zHcgyPrTHWVFOTviAqX3t2Z6skAUnNv3LIEPZutFXJKATyqljUcH6zXQJn4KIzwJGUFjlx85eA0=
+X-Received: by 2002:a05:6820:6ac3:b0:611:6cb6:46bf with SMTP id
+ 006d021491bc7-6116cb647f2mr1044516eaf.4.1750505511421; Sat, 21 Jun 2025
+ 04:31:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sat, 21 Jun 2025 13:31:37 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iNVFFJVgzeMx=+UMw5MTOUgdu_WGpJxE3qjHikQ4Sp4A@mail.gmail.com>
+X-Gm-Features: AX0GCFsZ4VbA-qN3-aLKoEtFFt1821bPf6EqEI0cFHzu1w7RgboPt-kPW8xdR6I
+Message-ID: <CAJZ5v0iNVFFJVgzeMx=+UMw5MTOUgdu_WGpJxE3qjHikQ4Sp4A@mail.gmail.com>
+Subject: [GIT PULL] ACPI fix for v6.16-rc3
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The bus->intr variable was always set to true inside the probe attach
-function, remove it. Also remove the code that depends on the variable
-to be set on false.
+Hi Linus,
 
-Signed-off-by: Rouven Czerwinski <rouven@czerwinskis.de>
----
- .../broadcom/brcm80211/brcmfmac/sdio.c        | 25 -------------------
- 1 file changed, 25 deletions(-)
+Please pull from the tag
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-index 26e09a7acb02..861c7f51b4cd 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-@@ -474,7 +474,6 @@ struct brcmf_sdio {
- 
- 	u8 sdpcm_ver;	/* Bus protocol reported by dongle */
- 
--	bool intr;		/* Use interrupts */
- 	atomic_t ipend;		/* Device interrupt is pending */
- 	uint spurious;		/* Count of spurious interrupts */
- 
-@@ -2327,8 +2326,6 @@ static uint brcmf_sdio_sendfromq(struct brcmf_sdio *bus, uint maxframes)
- {
- 	struct sk_buff *pkt;
- 	struct sk_buff_head pktq;
--	u32 intstat_addr = bus->sdio_core->base + SD_REG(intstatus);
--	u32 intstatus = 0;
- 	int ret = 0, prec_out, i;
- 	uint cnt = 0;
- 	u8 tx_prec_map, pkt_num;
-@@ -2361,21 +2358,6 @@ static uint brcmf_sdio_sendfromq(struct brcmf_sdio *bus, uint maxframes)
- 		ret = brcmf_sdio_txpkt(bus, &pktq, SDPCM_DATA_CHANNEL);
- 
- 		cnt += i;
--
--		/* In poll mode, need to check for other events */
--		if (!bus->intr) {
--			/* Check device status, signal pending interrupt */
--			sdio_claim_host(bus->sdiodev->func1);
--			intstatus = brcmf_sdiod_readl(bus->sdiodev,
--						      intstat_addr, &ret);
--			sdio_release_host(bus->sdiodev->func1);
--
--			bus->sdcnt.f2txdata++;
--			if (ret != 0)
--				break;
--			if (intstatus & bus->hostintmask)
--				atomic_set(&bus->ipend, 1);
--		}
- 	}
- 
- 	/* Deflow-control stack if needed */
-@@ -3653,10 +3635,6 @@ void brcmf_sdio_isr(struct brcmf_sdio *bus, bool in_isr)
- 			brcmf_err("failed backplane access\n");
- 		}
- 
--	/* Disable additional interrupts (is this needed now)? */
--	if (!bus->intr)
--		brcmf_err("isr w/o interrupt configured!\n");
--
- 	bus->dpc_triggered = true;
- 	queue_work(bus->brcmf_wq, &bus->datawork);
- }
-@@ -4037,9 +4015,6 @@ brcmf_sdio_probe_attach(struct brcmf_sdio *bus)
- 	bus->rxhdr = (u8 *) roundup((unsigned long)&bus->hdrbuf[0],
- 				    bus->head_align);
- 
--	/* Set the poll and/or interrupt flags */
--	bus->intr = true;
--
- 	return 0;
- 
- fail:
--- 
-2.49.0
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-6.16-rc3
 
+with top-most commit 6fcab2791543924d438e7fa49276d0998b0a069f
+
+ ACPICA: Refuse to evaluate a method if arguments are missing
+
+on top of commit e04c78d86a9699d136910cfc0bdcf01087e3267e
+
+ Linux 6.16-rc2
+
+to receive an ACPI fix for 6.16-rc3.
+
+This fixes a crash in ACPICA while attempting to evaluate a control
+method that expects more arguments than are being passed to it, which
+was exposed by a defective firmware update from a prominent OEM on
+multiple systems.
+
+Thanks!
+
+
+---------------
+
+Rafael J. Wysocki (1):
+      ACPICA: Refuse to evaluate a method if arguments are missing
+
+---------------
+
+ drivers/acpi/acpica/dsmethod.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
