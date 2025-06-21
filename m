@@ -1,254 +1,133 @@
-Return-Path: <linux-kernel+bounces-696499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BAA1AE2815
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 10:51:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B65A1AE282B
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 10:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7ADC27AE08A
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 08:49:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 491D6189EE61
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 08:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D771E5B68;
-	Sat, 21 Jun 2025 08:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28771E5718;
+	Sat, 21 Jun 2025 08:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1poLS87"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JOcAmgTS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EE2149C41;
-	Sat, 21 Jun 2025 08:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4181DE3BA;
+	Sat, 21 Jun 2025 08:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750495852; cv=none; b=bxEo7TCrPk1rbAdNXNQwtnvz1EWgoTVMH9wj1TtXj2Q411v0Hy/ZsCKso62Uq/t9gjqb1eyIR2qNgxzouyOFoqoDXUJHKmuVbDKH5wcwjxUQBFunrts4v7Hm3y88Ekmr2k8gPuPNrIEWowx9PqYzI1F/EunQaVcNCOY37jyLCAc=
+	t=1750496195; cv=none; b=Cqta/h3W4gQW4JrK3lhrRsByt6LjdFOamI2uy5TUrd/eT+w/yoZsMUxeNDh9cYGFvS4TdfK/cjtA+EYHqZkAfqEsHmn/GwiO+S8vIgV9ahKYmSCUA/QvRZrltAzd2+8DrRpECyIcm2HFODk1VP2pj4fA3B9HTJUngAL3BGwjR/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750495852; c=relaxed/simple;
-	bh=rKyE8IXZALHKw3NE/EHwg4GeUXpJIUOSLMr19SCqxSA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aIPjTu+Iy/O7img/4tt0LlIuwLktFkbL0vHLDxIO8+aa5mMpP+dHx4rcMZvbj61eN+M7Wor4xYu7F1s/7v33y0fz+2UXq7EeIWx9yoM1HIc84r6F8Zcr+vKM8a2KcY1KatphcSb33cVSHczT1IrQFo6LS65Tj57d+DCbelPKg70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1poLS87; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FBC6C4CEE7;
-	Sat, 21 Jun 2025 08:50:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750495851;
-	bh=rKyE8IXZALHKw3NE/EHwg4GeUXpJIUOSLMr19SCqxSA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=n1poLS87RgFr/Y73+xM9/JN7R23jpVHrIX2E6wpZrygMI+ASCHH/oJwjvwpgGJNnC
-	 5x/tg5U0ftKRTBNT3ZlS5BJRWsLGVNTQoWyxRZwveRMhetNKNRzBEVYaJQZFk0jDRq
-	 h+9xJ7gHkRtjsVdj5F3L6ChRgeq0kdaUUALr0XTVredpZLvmlkJQJwuRRYaAHX8pAG
-	 L6WjHwH+HBx7pTdQufNJxfSuQqj9M45Gzow7prVFK2uMCd9u7gJtTkP2K7YANnZj0y
-	 vPu0cjri9U3DT9T1fqlOZUXlwbXXJcJ2VLS6S1qjPB5kdKb8zwTgqcvistf3qAaDPc
-	 1VXzAaavGEbDw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uStw1-008mP9-7S;
-	Sat, 21 Jun 2025 09:50:49 +0100
-Date: Sat, 21 Jun 2025 09:50:48 +0100
-Message-ID: <87frftfpg7.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Raghavendra Rao Ananta <rananta@google.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Mingwei Zhang <mizhang@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] KVM: arm64: Introduce attribute to control GICD_TYPER2.nASSGIcap
-In-Reply-To: <20250613155239.2029059-4-rananta@google.com>
-References: <20250613155239.2029059-1-rananta@google.com>
-	<20250613155239.2029059-4-rananta@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1750496195; c=relaxed/simple;
+	bh=lozJVjeayu4fuBFr7YB8LDGyPpQu/TGuMPYpYyOubJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PH0VHptS2mT3JiKrQE3J37/92vEL5QGGzrucI4AeaFBsGbl7fNDpQhhK2fENLJuodMV0Zp2l3UwXwKjOgRvr1xG43uY9NTuu430oR7o8W6ctU6Mog8Iy1FN5qaV5qmBeOZ6mPOMoF6VobUGbu2SpSifuRBTDk8gotJ1TP6x/Vto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JOcAmgTS; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750496193; x=1782032193;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lozJVjeayu4fuBFr7YB8LDGyPpQu/TGuMPYpYyOubJE=;
+  b=JOcAmgTSqsuzUHqVkv4Promp7cQ1Y7544qRf+MlVuq1jRdfogr4JGjbS
+   JkrYz+5rzhg6ZMnlLGmzApW+veItyQvgeFPhgs2JSPcFggwiQrobo30v3
+   AFL6fDSAtPCzNJat4zaGDN7xmxaXCHeNCJHtuDGnmq+BGxR6Rcb5IEXw5
+   3YigTbCaQoN4NW5G7hLbuJ4XsDkAXW+294/GtFSQoW3cAbprLiRy8IiU1
+   XP6PHyyF369qTLXUwJGYM6oNpGkwdE8n2ZwAffLcx/hph2bFRMczNi0Bm
+   qaJg+UHBEu19+9jkQcOgCNEG2PKT24UgOmYlqiePBjepOIT9MVLogongO
+   g==;
+X-CSE-ConnectionGUID: eP5q64BRSwewEkbfn7xvZw==
+X-CSE-MsgGUID: 7Nj52L2aR7m+3LiLzwF3MA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="40359655"
+X-IronPort-AV: E=Sophos;i="6.16,253,1744095600"; 
+   d="scan'208";a="40359655"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2025 01:56:33 -0700
+X-CSE-ConnectionGUID: UR9IhsTnQHedEH4bECr6Yg==
+X-CSE-MsgGUID: JcJqLz9gSfy5YSgtYqhRzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,253,1744095600"; 
+   d="scan'208";a="151256679"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 21 Jun 2025 01:56:29 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uSu1T-000MUk-1Q;
+	Sat, 21 Jun 2025 08:56:27 +0000
+Date: Sat, 21 Jun 2025 16:55:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: liquancin.mereenamathai@in.bosch.com, linux-iio@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, vassilisamir@gmail.com, marcelo.schmitt1@gmail.com,
+	javier.carrasco.cruz@gmail.com, Xu.Zhang@cn.bosch.com,
+	Maoting.Bian@cn.bosch.com, Liquancin.MereenaMathai@in.bosch.com
+Subject: Re: [PATCH v1 1/2] Add the iio driver for bosch pressure sensor
+ bmp390. The bmp390 is a pressure sensor module. It will support SPI and I2C
+ protocol based on configuration.
+Message-ID: <202506211617.KOMMf9eA-lkp@intel.com>
+References: <20250620045456.1151-2-liquancin.mereenamathai@in.bosch.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: rananta@google.com, oliver.upton@linux.dev, mizhang@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250620045456.1151-2-liquancin.mereenamathai@in.bosch.com>
 
-On Fri, 13 Jun 2025 16:52:37 +0100,
-Raghavendra Rao Ananta <rananta@google.com> wrote:
-> 
-> KVM unconditionally advertises GICD_TYPER2.nASSGIcap (which internally
-> implies vSGIs) on GICv4.1 systems. Allow userspace to change whether a
-> VM supports the feature. Only allow changes prior to VGIC initialization
-> as at that point vPEs need to be allocated for the VM.
-> 
-> For convenience, bundle support for vLPIs and vSGIs behind this feature,
-> allowing userspace to control vPE allocation for VMs in environments
-> that may be constrained on vPE IDs.
-> 
-> Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
-> Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
-> ---
->  .../virt/kvm/devices/arm-vgic-v3.rst          | 29 +++++++++++++++
->  arch/arm64/include/uapi/asm/kvm.h             |  3 ++
->  arch/arm64/kvm/vgic/vgic-init.c               |  3 ++
->  arch/arm64/kvm/vgic/vgic-kvm-device.c         | 37 +++++++++++++++++++
->  arch/arm64/kvm/vgic/vgic-mmio-v3.c            | 10 ++++-
->  arch/arm64/kvm/vgic/vgic-v3.c                 |  5 ++-
->  arch/arm64/kvm/vgic/vgic-v4.c                 |  2 +-
->  include/kvm/arm_vgic.h                        |  3 ++
->  8 files changed, 88 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/virt/kvm/devices/arm-vgic-v3.rst b/Documentation/virt/kvm/devices/arm-vgic-v3.rst
-> index e860498b1e35..049d77eae591 100644
-> --- a/Documentation/virt/kvm/devices/arm-vgic-v3.rst
-> +++ b/Documentation/virt/kvm/devices/arm-vgic-v3.rst
-> @@ -306,3 +306,32 @@ Groups:
->  
->      The vINTID specifies which interrupt is generated when the vGIC
->      must generate a maintenance interrupt. This must be a PPI.
-> +
-> +  KVM_DEV_ARM_VGIC_GRP_FEATURES
-> +   Attributes:
-> +
-> +    KVM_DEV_ARM_VGIC_FEATURE_nASSGIcap
-> +      Control whether support for SGIs without an active state is exposed
-> +      to the VM. attr->addr points to a __u8 value which indicates whether
-> +      he feature is enabled / disabled.
+Hi,
 
-s/he/the/
+kernel test robot noticed the following build warnings:
 
-> +
-> +      A value of 0 indicates that the feature is disabled. A nonzero value
-> +      indicates that the feature is enabled.
-> +
-> +      This attribute can only be set prior to initializing the VGIC (i.e.
-> +      KVM_DEV_ARM_VGIC_CTRL_INIT).
-> +
-> +      Support for SGIs without an active state depends on hardware support.
-> +      Userspace can discover support for the feature by reading the
-> +      attribute after creating a VGICv3. It is possible that
-> +      KVM_DEV_ARM_VGIC_CTRL_INIT can later fail if this feature is enabled
-> +      and KVM is unable to allocate GIC vPEs for the VM.
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on linus/master v6.16-rc2 next-20250620]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Can you please add a sentence about the default behaviour? We
-currently rely on the GICv4.1 capabilities to be available by default,
-and it'd be important to capture this.
+url:    https://github.com/intel-lab-lkp/linux/commits/liquancin-mereenamathai-in-bosch-com/Add-the-iio-driver-for-bosch-pressure-sensor-bmp390-The-bmp390-is-a-pressure-sensor-module-It-will-support-SPI-and-I2C-p/20250620-125832
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20250620045456.1151-2-liquancin.mereenamathai%40in.bosch.com
+patch subject: [PATCH v1 1/2] Add the iio driver for bosch pressure sensor bmp390. The bmp390 is a pressure sensor module. It will support SPI and I2C protocol based on configuration.
+config: loongarch-randconfig-r122-20250621 (https://download.01.org/0day-ci/archive/20250621/202506211617.KOMMf9eA-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 15.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20250621/202506211617.KOMMf9eA-lkp@intel.com/reproduce)
 
-> +
-> +  Errors:
-> +
-> +    =======  ========================================================
-> +    -ENXIO   Invalid attribute in attr->attr
-> +    -EFAULT  Invalid user address in attr->addr
-> +    -EBUSY   The VGIC has already been initialized
-> +    -EINVAL  KVM doesn't support the requested feature setting
-> +    =======  ========================================================
-> diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
-> index ed5f3892674c..41e9ce412afd 100644
-> --- a/arch/arm64/include/uapi/asm/kvm.h
-> +++ b/arch/arm64/include/uapi/asm/kvm.h
-> @@ -417,6 +417,7 @@ enum {
->  #define KVM_DEV_ARM_VGIC_GRP_LEVEL_INFO  7
->  #define KVM_DEV_ARM_VGIC_GRP_ITS_REGS 8
->  #define KVM_DEV_ARM_VGIC_GRP_MAINT_IRQ  9
-> +#define KVM_DEV_ARM_VGIC_GRP_FEATURES 10
->  #define KVM_DEV_ARM_VGIC_LINE_LEVEL_INFO_SHIFT	10
->  #define KVM_DEV_ARM_VGIC_LINE_LEVEL_INFO_MASK \
->  			(0x3fffffULL << KVM_DEV_ARM_VGIC_LINE_LEVEL_INFO_SHIFT)
-> @@ -429,6 +430,8 @@ enum {
->  #define   KVM_DEV_ARM_VGIC_SAVE_PENDING_TABLES	3
->  #define   KVM_DEV_ARM_ITS_CTRL_RESET		4
->  
-> +#define   KVM_DEV_ARM_VGIC_FEATURE_nASSGIcap	0
-> +
->  /* Device Control API on vcpu fd */
->  #define KVM_ARM_VCPU_PMU_V3_CTRL	0
->  #define   KVM_ARM_VCPU_PMU_V3_IRQ		0
-> diff --git a/arch/arm64/kvm/vgic/vgic-init.c b/arch/arm64/kvm/vgic/vgic-init.c
-> index 5e0e4559004b..944e24750ac4 100644
-> --- a/arch/arm64/kvm/vgic/vgic-init.c
-> +++ b/arch/arm64/kvm/vgic/vgic-init.c
-> @@ -157,6 +157,9 @@ int kvm_vgic_create(struct kvm *kvm, u32 type)
->  
->  	kvm->arch.vgic.in_kernel = true;
->  	kvm->arch.vgic.vgic_model = type;
-> +	if (type == KVM_DEV_TYPE_ARM_VGIC_V3)
-> +		kvm->arch.vgic.nassgicap = kvm_vgic_global_state.has_gicv4_1 &&
-> +					   gic_cpuif_has_vsgi();
->  
->  	kvm->arch.vgic.vgic_dist_base = VGIC_ADDR_UNDEF;
->  
-> diff --git a/arch/arm64/kvm/vgic/vgic-kvm-device.c b/arch/arm64/kvm/vgic/vgic-kvm-device.c
-> index e28cf68a49c3..629f56063a13 100644
-> --- a/arch/arm64/kvm/vgic/vgic-kvm-device.c
-> +++ b/arch/arm64/kvm/vgic/vgic-kvm-device.c
-> @@ -626,6 +626,26 @@ static int vgic_v3_set_attr(struct kvm_device *dev,
->  		dev->kvm->arch.vgic.mi_intid = val;
->  		return 0;
->  	}
-> +	case KVM_DEV_ARM_VGIC_GRP_FEATURES: {
-> +		u8 __user *uaddr = (u8 __user *)attr->addr;
-> +		u8 val;
-> +
-> +		if (attr->attr != KVM_DEV_ARM_VGIC_FEATURE_nASSGIcap)
-> +			return -ENXIO;
-> +
-> +		if (get_user(val, uaddr))
-> +			return -EFAULT;
-> +
-> +		guard(mutex)(&dev->kvm->arch.config_lock);
-> +		if (vgic_initialized(dev->kvm))
-> +			return -EBUSY;
-> +
-> +		if (!(kvm_vgic_global_state.has_gicv4_1 && gic_cpuif_has_vsgi()) && val)
-> +			return -EINVAL;
-> +
-> +		dev->kvm->arch.vgic.nassgicap = val;
-> +		return 0;
-> +	}
->  	default:
->  		return vgic_set_common_attr(dev, attr);
->  	}
-> @@ -646,6 +666,17 @@ static int vgic_v3_get_attr(struct kvm_device *dev,
->  		guard(mutex)(&dev->kvm->arch.config_lock);
->  		return put_user(dev->kvm->arch.vgic.mi_intid, uaddr);
->  	}
-> +	case KVM_DEV_ARM_VGIC_GRP_FEATURES: {
-> +		u8 __user *uaddr = (u8 __user *)attr->addr;
-> +		u8 val;
-> +
-> +		if (attr->attr != KVM_DEV_ARM_VGIC_FEATURE_nASSGIcap)
-> +			return -ENXIO;
-> +
-> +		guard(mutex)(&dev->kvm->arch.config_lock);
-> +		val = dev->kvm->arch.vgic.nassgicap;
-> +		return put_user(val, uaddr);
-> +	}
->  	default:
->  		return vgic_get_common_attr(dev, attr);
->  	}
-> @@ -683,8 +714,14 @@ static int vgic_v3_has_attr(struct kvm_device *dev,
->  			return 0;
->  		case KVM_DEV_ARM_VGIC_SAVE_PENDING_TABLES:
->  			return 0;
-> +		default:
-> +			return -ENXIO;
->  		}
-> +	case KVM_DEV_ARM_VGIC_GRP_FEATURES:
-> +		return attr->attr != KVM_DEV_ARM_VGIC_FEATURE_nASSGIcap ?
-> +		       -ENXIO : 0;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506211617.KOMMf9eA-lkp@intel.com/
 
-Do we really want to advertise KVM_DEV_ARM_VGIC_FEATURE_nASSGIcap even
-when we don't have GICv4.1? This seems rather odd. My take on this API
-is that this should report whether the feature is configurable, making
-it backward compatible with older versions of KVM.
+sparse warnings: (new ones prefixed by >>)
+>> drivers/iio/pressure/bmp390/bmp390_i2c.c:38:16: sparse: sparse: symbol 'iio_i2c_dev' was not declared. Should it be static?
+--
+>> drivers/iio/pressure/bmp390/bmp390_iio_buffer.c:41:56: sparse: sparse: dereference of noderef expression
+>> drivers/iio/pressure/bmp390/bmp390_iio_buffer.c:41:56: sparse: sparse: dereference of noderef expression
+   drivers/iio/pressure/bmp390/bmp390_iio_buffer.c:44:40: sparse: sparse: dereference of noderef expression
+   drivers/iio/pressure/bmp390/bmp390_iio_buffer.c:44:40: sparse: sparse: dereference of noderef expression
+   drivers/iio/pressure/bmp390/bmp390_iio_buffer.c:47:43: sparse: sparse: dereference of noderef expression
+   drivers/iio/pressure/bmp390/bmp390_iio_buffer.c:47:43: sparse: sparse: dereference of noderef expression
 
-Thanks,
+vim +/iio_i2c_dev +38 drivers/iio/pressure/bmp390/bmp390_i2c.c
 
-	M.
+    33	
+    34	/*********************************************************************/
+    35	/* global variables */
+    36	/*********************************************************************/
+    37	static struct i2c_client *bmp3_i2c_client;
+  > 38	struct iio_dev *iio_i2c_dev;
+    39	
 
 -- 
-Jazz isn't dead. It just smells funny.
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
