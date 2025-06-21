@@ -1,164 +1,73 @@
-Return-Path: <linux-kernel+bounces-696870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F683AE2C87
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 23:06:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75685AE2C82
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 23:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC5F73BB925
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 21:06:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 732227AB05F
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 21:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C0F274653;
-	Sat, 21 Jun 2025 21:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2C4273D94;
+	Sat, 21 Jun 2025 21:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kc3WlPrY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYibt3vi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7F2273D7F;
-	Sat, 21 Jun 2025 21:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0412273814;
+	Sat, 21 Jun 2025 21:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750539944; cv=none; b=KJgTK1DVl0gf3hIhVmKdnq+bm6H9aWUUWpCV+IZwPhwsf55n0UuPOCoUzLUDi7InslV8/anlkh2LXK5kgrraB5pFlnaxZqnEJF1Om0ja0XjY1vMy3eYu2fNrabe1dfbD5iONtKLj4/fgcZK1no6WddIuqWu/Z3/CeOwzJQi49zA=
+	t=1750539943; cv=none; b=STjUOFYlDRZOFloN6orOslejIW3PQVWzawz8yJbKEJC6u8UKrZsclqL4/pFyc5CSkaAjBJUQ3+GUbknFtydrOOEY4G8VmxNU3/U4Dg+O7iCc8Q6JeYoVLuNv//VJS1UGWaVi2r2zPtUpM7XZ5o4GlF14kRIgN8UlMtne3zm+A7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750539944; c=relaxed/simple;
-	bh=SMiK8R4rvJPitqeDKcJiQw7hgXniGdGbaSll/QfassA=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qEP9V/D/rBJsMG3QMyBSPPXrfvyhK9t/cw60F0llJ7n6wyyLwOJwgqr/xNf98dR7xdjSlrqk528LSKR4rkZKD2FNlTfQtkjw9y6peIrBHN5Mo3A/B/RN97VgVOuKfWNzmf1MgSCuhCyMk2ZkKYmVAWgpd/T6x40wQCFNNBo3CRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kc3WlPrY; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750539944; x=1782075944;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=SMiK8R4rvJPitqeDKcJiQw7hgXniGdGbaSll/QfassA=;
-  b=Kc3WlPrYRDodOvYwCix9g9qjrjIccScDNrM+JElYmCKb2yvPiXNR1dM3
-   zcjEyDQR7p/Pxby35ERcl/9tqfcDRzDWn+fadAXhI4H/IAvvU/LiUd9KL
-   S7U2FQuqbFcwEHUYvup0bK7XgF7OCgBNvAyBM0dN0naccmb/1PVn7eK4w
-   VwQaZPa8OKJ+fsKxPrJ3cliIzKaHlBjDDV+DY+x508kzee6+KkZHhCl7X
-   LBmJ4JIZxuLSGyvx52GC8zrg5WeGZLUwSiVxOFTLVnKBThD3VyKc4vzs9
-   1sWstv7S8pkKfYjISVlq4sDpoDP+ZfmaC1md5evIeUk39zdLhp2D6pS2x
-   Q==;
-X-CSE-ConnectionGUID: 6gDswicOSkGJpbNUPo8mGA==
-X-CSE-MsgGUID: xfXqSYAyTiyVkRpNjEB9+g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11470"; a="63826263"
-X-IronPort-AV: E=Sophos;i="6.16,254,1744095600"; 
-   d="scan'208";a="63826263"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2025 14:05:43 -0700
-X-CSE-ConnectionGUID: tC0UU2EmRqqfqw525sJZHg==
-X-CSE-MsgGUID: KTnUx5w6QIeXuFN7eQvtiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,254,1744095600"; 
-   d="scan'208";a="155775328"
-Received: from mdroper-mobl2.amr.corp.intel.com (HELO xpardee-desk.intel.com) ([10.124.222.74])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2025 14:05:41 -0700
-From: Xi Pardee <xi.pardee@linux.intel.com>
-To: xi.pardee@linux.intel.com,
-	irenic.rajneesh@gmail.com,
-	david.e.box@linux.intel.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v1 5/5] platform/x86:intel/pmc: Enable SSRAM support for Panther Lake
-Date: Sat, 21 Jun 2025 14:05:25 -0700
-Message-ID: <20250621210529.237964-6-xi.pardee@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250621210529.237964-1-xi.pardee@linux.intel.com>
-References: <20250621210529.237964-1-xi.pardee@linux.intel.com>
+	s=arc-20240116; t=1750539943; c=relaxed/simple;
+	bh=TMo8k+8IJdqt4u8TLI55e7D9ohk0QRKTGTcOWP4yYe4=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=Id2zPW41s4MhknwR59guRsaqtq4z4z7baRoIUco6ZbS3vvrO6uykDx7w4ogk77360E/qiGqt7Ic6KfMKGtCE8wwggdcVfTXpuaDdVh4mK6s3ZpgjcA6c9SXYHdTCKHbXua+JAnrCCEri5lvkeIiLiWspEFfyyqFdBo78JAefx5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYibt3vi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AD07C4CEF0;
+	Sat, 21 Jun 2025 21:05:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750539942;
+	bh=TMo8k+8IJdqt4u8TLI55e7D9ohk0QRKTGTcOWP4yYe4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=nYibt3vibwJeT5u6Oe+0xRB5fmBCmGjuk13rlfTPO7vuG6LGnXpW72u0F5dIAg07+
+	 8eybcWPxdm01jpzQ3i05cPKJdlId2nKTWg7Nc+0TGsrKKJMxZQ3obgJvcXb/56UJZY
+	 jGCUIEImWNugMJS8lOXUxCfEp+fIsL+tKEW4gpLVprWB4f/Y3TYPEMnf2n6lUGZM46
+	 55fAWOma3eXK9Np49/PUA6wEba8vWYkhiP7+qcfT96fuCe1e1dvlHahsUzIgPgp8vn
+	 3g+B7h2Ml3DNi/RYemaApVbIRbEkVkvEqGng/EMac9hwexaRdhVfr2oLCsam5VT5op
+	 oVQz6TeqtcHHg==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250618121358.503781-9-apatel@ventanamicro.com>
+References: <20250618121358.503781-1-apatel@ventanamicro.com> <20250618121358.503781-9-apatel@ventanamicro.com>
+Subject: Re: [PATCH v6 08/23] dt-bindings: clock: Add RPMI clock service controller bindings
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Anup Patel <apatel@ventanamicro.com>, Conor Dooley <conor.dooley@microchip.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Anup Patel <apatel@ventanamicro.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Date: Sat, 21 Jun 2025 14:05:41 -0700
+Message-ID: <175053994174.4372.16441022738031138174@lazor>
+User-Agent: alot/0.11
 
-Enable Panther Lake platforms to achieve PMC information from
-Intel PMC SSRAM Telemetry driver and substate requirements data
-from telemetry region.
+Quoting Anup Patel (2025-06-18 05:13:43)
+> Add device tree bindings for the RPMI clock service group based
+> controller for the supervisor software.
+>=20
+> The RPMI clock service group is defined by the RISC-V platform
+> management interface (RPMI) specification.
+>=20
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
 
-Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
----
- drivers/platform/x86/intel/pmc/core.h |  2 ++
- drivers/platform/x86/intel/pmc/ptl.c  | 30 +++++++++++++++++++++++++++
- 2 files changed, 32 insertions(+)
-
-diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
-index d8c7b28493055..cdb32f2203cff 100644
---- a/drivers/platform/x86/intel/pmc/core.h
-+++ b/drivers/platform/x86/intel/pmc/core.h
-@@ -301,6 +301,8 @@ enum ppfear_regs {
- #define PTL_PMC_LTR_CUR_ASLT			0x1C28
- #define PTL_PMC_LTR_CUR_PLT			0x1C2C
- #define PTL_PCD_PMC_MMIO_REG_LEN		0x31A8
-+#define PTL_NUM_S0IX_BLOCKER			106
-+#define PTL_BLK_REQ_OFFSET			55
- 
- /* SSRAM PMC Device ID */
- /* LNL */
-diff --git a/drivers/platform/x86/intel/pmc/ptl.c b/drivers/platform/x86/intel/pmc/ptl.c
-index 394515af60d60..48be79b4e769f 100644
---- a/drivers/platform/x86/intel/pmc/ptl.c
-+++ b/drivers/platform/x86/intel/pmc/ptl.c
-@@ -10,6 +10,17 @@
- 
- #include "core.h"
- 
-+/* PMC SSRAM PMT Telemetry GUIDS */
-+#define PCDP_LPM_REQ_GUID 0x47179370
-+
-+/*
-+ * Die Mapping to Product.
-+ * Product PCDDie
-+ * PTL-H   PCD-H
-+ * PTL-P   PCD-P
-+ * PTL-U   PCD-P
-+ */
-+
- static const struct pmc_bit_map ptl_pcdp_pfear_map[] = {
- 	{"PMC_0",               BIT(0)},
- 	{"FUSE_OSSE",           BIT(1)},
-@@ -515,6 +526,22 @@ static const struct pmc_reg_map ptl_pcdp_reg_map = {
- 	.lpm_live_status_offset = MTL_LPM_LIVE_STATUS_OFFSET,
- 	.s0ix_blocker_maps = ptl_pcdp_blk_maps,
- 	.s0ix_blocker_offset = LNL_S0IX_BLOCKER_OFFSET,
-+	.num_s0ix_blocker = PTL_NUM_S0IX_BLOCKER,
-+	.blocker_req_offset = PTL_BLK_REQ_OFFSET,
-+};
-+
-+static struct pmc_info ptl_pmc_info_list[] = {
-+	{
-+		.guid	= PCDP_LPM_REQ_GUID,
-+		.devid	= PMC_DEVID_PTL_PCDH,
-+		.map	= &ptl_pcdp_reg_map,
-+	},
-+	{
-+		.guid   = PCDP_LPM_REQ_GUID,
-+		.devid  = PMC_DEVID_PTL_PCDP,
-+		.map    = &ptl_pcdp_reg_map,
-+	},
-+	{}
- };
- 
- #define PTL_NPU_PCI_DEV                0xb03e
-@@ -543,6 +570,9 @@ static int ptl_core_init(struct pmc_dev *pmcdev, struct pmc_dev_info *pmc_dev_in
- }
- 
- struct pmc_dev_info ptl_pmc_dev = {
-+	.pci_func = 2,
-+	.telem_info = SUB_REQ_BLK,
-+	.regmap_list = ptl_pmc_info_list,
- 	.map = &ptl_pcdp_reg_map,
- 	.suspend = cnl_suspend,
- 	.resume = ptl_resume,
--- 
-2.43.0
-
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
