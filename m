@@ -1,252 +1,204 @@
-Return-Path: <linux-kernel+bounces-696688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F15AE2A5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 18:52:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B73EEAE2A68
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 18:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB8A41898957
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 16:53:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ACD93B8B2B
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 16:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F87221544;
-	Sat, 21 Jun 2025 16:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF78221FAA;
+	Sat, 21 Jun 2025 16:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAkrmPUc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQ02WcIw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C82AD51;
-	Sat, 21 Jun 2025 16:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A4B221DB5;
+	Sat, 21 Jun 2025 16:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750524770; cv=none; b=j5GpcoIWcWEDiSO89vtfYvQtzkJ9j1rL9BMSWglDnNMprm1QPGJ1QyFJKC4QohXULXh2o7DxYP8celknYFpzkIifcQ6qMSdOFhFfibT8QaonsOH4J5oSflvi2ZDevEqqsmA01k2BoiXtMhLqsq8TXJ3RdZoP8XcPjuEvCuhE/os=
+	t=1750524949; cv=none; b=YlVsRZH7mZ+k8AYsLuRf6B3kZyRCAaswkywjc2Eh4JSbcpk9kG+eS5h/jIBfwePWeZ6KKjuaB6t3VxdI+4gmnnAMJxqrMe138mmFADUtuXyR+B/p1M/QXfI40JaTJm57KjOQjE+f+BnX36UtZjZG9nr6hZDzwdYjTNuxrBiplko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750524770; c=relaxed/simple;
-	bh=C4V6BITK01gKrNQfHEyGf+PpKARDFZa+RaS5xcshGGs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aAvJd7vJjSKEZ3vFXJNHp5dHiHDUpZvfDc/BqaZuBZPTrCOpJzi4RZpals4kPHVALuzdCyzulRNmgSXRWan7Hq26XyoBab37el1mbsPod/tP+EsQDe3K5GSbn4z+JkedCahkun3WIGQVzuY99ajxEbRdZMKqrBan/4fdySq3LwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAkrmPUc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 205F2C4CEE7;
-	Sat, 21 Jun 2025 16:52:49 +0000 (UTC)
+	s=arc-20240116; t=1750524949; c=relaxed/simple;
+	bh=PjBQFQE8zjc9oymlL/eDzoUk6y1uxAwN/iyT4IRP/mk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F7cVDFZ0HqSMXz3DLlHbB8AdhY0F6a9nZHTiw72U+mMxJtinjrWlxJ97p8yfUdyNrlWXpSPdxLEzbWY04aZGAVaIFvV8JMIeTHNuMjmdMPQ0Zcfa30nboeuPKzySxYLLzX7qtInp4m/NzUfLFLlhk/ZxZFe8uiOFpi6e/FEljcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQ02WcIw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 116C9C4CEE7;
+	Sat, 21 Jun 2025 16:55:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750524769;
-	bh=C4V6BITK01gKrNQfHEyGf+PpKARDFZa+RaS5xcshGGs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GAkrmPUcKpmJk8j9rJCCiKJ6YC3fSE0fBPWOHMv8vrQdAPW8A5dQGVJl77bdRJOSW
-	 ZZbsK7+O+NwI3KeO9TPFnfyKPC80NgNDnfPZePsAEHAFOulHX5H0jzu3Djsv7ipsgU
-	 Os6SUp/H/XkyOAB7Dh+zPfDOsAfr9+Gyp2jv8lnhHFQk19+nPBCeqdOUSyoJAHmuHD
-	 In63CFQmC8/N79MP40tB+Ff/QX3P/cvDtZfvTlbRcONWbYg2ewnFoOc/noRPkSPG7g
-	 /2JHkiWHrOqWZ6JFDFMuBphPaxmCYqI8Nese4h/4qKrzX6aIn7efsvNxgS/2xncxjc
-	 tHyWQzbM7d55w==
-Received: by pali.im (Postfix)
-	id C3674400; Sat, 21 Jun 2025 18:52:46 +0200 (CEST)
-Date: Sat, 21 Jun 2025 18:52:46 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Paulo Alcantara <pc@manguebit.org>
-Cc: Steve French <sfrench@samba.org>, Remy Monsen <monsen@monsen.cc>,
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cifs: Fix lstat() and AT_SYMLINK_NOFOLLOW to work on
- broken symlink nodes
-Message-ID: <20250621165246.5yvdolrrdchrbe22@pali>
-References: <20250610213404.16288-1-pali@kernel.org>
- <26e59412fa2c70efad5f9c585bfc198f@manguebit.org>
- <20250621122139.3xq675cbs5kgkd7t@pali>
- <82bf746b2c44f9cccd7e3f4ca349d145@manguebit.org>
+	s=k20201202; t=1750524948;
+	bh=PjBQFQE8zjc9oymlL/eDzoUk6y1uxAwN/iyT4IRP/mk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mQ02WcIw2N6SOWPysc7+BValZopTQJQS+rjo8k0kL1+14t5UqgAPZho7+j/WfzOvT
+	 vtqeKzCc9LIazz3PEfnVwaSes/lp3nD0g0ieT8HEb3kyUCDlPlWizAMb36lsKWstzU
+	 y0ws+WEcatBWD6HsCTjfOK2zn3XbjctRF/3cuz+ivQB8FSuELkdWYF8e8AGrRiMHqp
+	 sSksQTlOQ69MT7LPQ90xT0QLVUaz6/vFWMmlUIp9EGVD2ezSoodL7QJMODSwgCfmJf
+	 MlQFuvvBrek/72BYUk2Tpp/zp+EPIdD0zioKhdTHz1CYKhkHR3uuDWQAW6FGZLL0d4
+	 fDTI8ubPql0bg==
+Date: Sat, 21 Jun 2025 17:55:40 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, corbet@lwn.net,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, eraretuya@gmail.com
+Subject: Re: [PATCH v9 01/11] iio: accel: adxl345: apply scale factor to tap
+ threshold
+Message-ID: <20250621175540.4520a6b5@jic23-huawei>
+In-Reply-To: <CAFXKEHbh=_A9WvEvkBaz9nNEGX5bxWu2sFvbMtqLM-Ag0cdY0A@mail.gmail.com>
+References: <20250610215933.84795-1-l.rubusch@gmail.com>
+	<20250610215933.84795-2-l.rubusch@gmail.com>
+	<20250614144208.363c29cf@jic23-huawei>
+	<CAFXKEHbh=_A9WvEvkBaz9nNEGX5bxWu2sFvbMtqLM-Ag0cdY0A@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <82bf746b2c44f9cccd7e3f4ca349d145@manguebit.org>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Saturday 21 June 2025 12:38:34 Paulo Alcantara wrote:
-> Pali Rohár <pali@kernel.org> writes:
-> 
-> > On Friday 20 June 2025 20:44:37 Paulo Alcantara wrote:
-> >> Pali Rohár <pali@kernel.org> writes:
-> >> 
-> >> > Currently Linux SMB client returns EIO for lstat() and AT_SYMLINK_NOFOLLOW
-> >> > calls on symlink node when the symlink target location is broken or cannot
-> >> > be read or parsed.
-> >> >
-> >> > Fix this problem by relaxing the errors from various locations which parses
-> >> > information about symlink file node (UNIX SMB1, native SMB2+, NFS-style,
-> >> > WSL-style) and let readlink() syscall to return EIO when the symlink target
-> >> > location is not available.
-> >> 
-> >> Please, don't.  We still want those validations for the other types of
-> >> symlinks.
+On Mon, 16 Jun 2025 00:20:49 +0200
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
+
+> On Sat, Jun 14, 2025 at 3:42=E2=80=AFPM Jonathan Cameron <jic23@kernel.or=
+g> wrote:
 > >
-> > Well, validation was not removed. Validation is still there, just the
-> > error is signalled by the readlink() syscall instead of the lstat() or
-> > AT_SYMLINK_NOFOLLOW syscalls.
+> > On Tue, 10 Jun 2025 21:59:23 +0000
+> > Lothar Rubusch <l.rubusch@gmail.com> wrote:
+> > =20
+> > > The threshold for tap detection was still not scaled. The datasheet s=
+ets
+> > > a scale factor of 62.5mg/LSB. Remove commit about not scaled threshold
+> > > for tap detection, and apply scaling to it.
+> > > =20
 > >
-> > My opinion is that the lstat() or AT_SYMLINK_NOFOLLOW should work on
-> > symlink node independently of where the symlink points (and whether the
-> > symlink target is valid POSIX path or not). That is because the lstat()
-> > and AT_SYMLINK_NOFOLLOW says that the symlink target location must not
-> > be used and must not be resolved.
+> > Given tap detection algorithms are not generally well defined and not a=
+ simple
+> > threshold (generally) what scaling should we be aiming for here?
+> > Even if it were a simple threshold, when a channel provides _raw the
+> > expectation is that event config is vs _raw, not the base units.
 > >
-> > But still the invalid / incorrect / broken or non-representable symlink
-> > target path in POSIX notation should be reported as an issue and the
-> > readlink() is the correct syscall which should report these errors.
-> 
-> The only issue is breaking existing customer or user applications that
-> really don't care if cifs.ko could follow those kind of symlinks.
-> 
-> Samba create symlinks to represent DFS links with targets like
-> 'msdfs:srv1\share,srv2\share', which are not valid POSIX paths.  Does
-> that mean the filesystem should not allow readlink(2) to succeed just
-> because it is not a valid POSIX path?  Is that what you mean?
-
-But this is something totally different thing.
-
-Here you are referring to the behavior of Samba server, which interprets
-symlink node stored on local filesystem named e.g. "link1" pointing to
-target relative file name 'msdfs:srv1\share,srv2\share' specially.
-
-Calling "ln -s 'msdfs:srv1\share,srv2\share' link1" is perfectly fine on
-the ext4 filesystem. It creates a relative symlink to the specified
-file.
-
-And if you call "echo test > 'msdfs:srv1\share,srv2\share'" then it would
-world correctly and "cat link1" will print "test".
-
-The 'msdfs:srv1\share,srv2\share' is a valid POSIX path and it is stored
-on the local Linux filesystem. So I do not see anything wrong with it or
-reason why local filesystem should disallow creating such symlink or why
-would realink() should fail on such node.
-
-
-That example has nothing with symlinks stored on NTFS-compatible
-filesystems which has ability to store symlinks pointing to non-POSIX
-NT object model paths.
-
-Here the issue is with symlink target locations which are coming from
-the remote NT server and are pointing to location which cannot be
-directly represented by the Linux system. The translation needs to be
-done in both directions and reversible. Otherwise moving the file or
-symlink from cifs to ext4 and back would damage the file or symlink.
-
-> >> The problem is just that cifs.ko can't handle absolute
-> >> symlink targets in the form of '\??\UNC\srv\share\foo', while Windows
-> >> client can.  They are still valid symlink targets, but cifs.ko doesn't
-> >> know how to follow them.
+> > So if this doesn't care about the current fullscale range (which the
+> > comment implied was the case) it would need to rescale when the
+> > IIO_INFO_SCALE changes.
 > >
-> > Windows client can represent and follow such symlink because the symlink
-> > is in the NT style format and Windows kernel uses NT style of paths
-> > internally. Linux kernel uses POSIX paths and POSIX does not contain any
-> > GLOBAL?? namespace for NT object hierarchy.
+> > That comment is I think indicating we decided to gloss over the
+> > detail because it's going into a (potentially) non trivial algorithm an=
+yway.
 > >
-> > Leaking raw NT object hierarchy from SMB to POSIX userspace via
-> > readlink() syscall is a bad idea. Applications are really not expecting
-> > that the readlink() syscall will return NT kernel internals (exported
-> > over SMB protocol and passed to cifs.ko).
-> >
-> > For UNC paths encoded in NT object hierarchy, which is just some subset
-> > of all possible NT paths, I had an idea that we could convert these
-> > paths to some format like:
-> >
-> >    <prefix>/server/share/path...
-> >
-> > Where <prefix> would be specified by the string mount option. So user
-> > could say that wants all UNC symlinks pointing to /mnt/unc/.
-> >
-> > And in the same way if user would want to create symlink pointing to
-> > /mnt/unc/server/share/path... then cifs.ko will transform it into valid
-> > NT UNC path and create a symlink to this location.
-> 
-> That's really a terrible idea.  The symlink targets in the form of
-> '\??\UNC\...' could be resolved by cifs.ko.  The ones that refer to a
-> file outside the mounted share, we would set those as automounts.
+> > Jonathan
+> > =20
+>=20
+> Well, the tap threshold so far was around in "raw" LSB bits. At that
+> time I only left the comment that the value is not scaled. The current
+> patch is just putting now the scale factor and the sysfs handle then
+> will take values of 'g' and not just raw bits. This is like for the
+> other scaled values such as periods.
 
-I agree that above is not the best idea, but I wrote at least something
-as an idea as I do not know how it could be solved in better way.
+Tricky corner because tap isn't a simple threshold - it it were I'd have
+a cleaner argument.
 
-And I do not see how it could be resolved by cifs.ko somehow
-automatically. I'm not sure to which you refer how it can be resolved by
-cifs.ko. I understood you message as it could automount another share
-and do the whole path symlink resolving in cifs.ko.
+If we were doing this it would need to be scalling to m/s^2 not g but
+that's not important for this discussion.
 
-And I think that this is even worse idea than mine. Because that
-automount means that symlinks pointing outside of the share would start
-behaving like a mount point. Such thing can cause even a security issues
-if not used carefully.
+Huh. For thresholds I thought we had this clear in the ABI docs, but we don=
+'t.
+The ABI doc refers to having _raw_ in the name which I'm not sure has been =
+true=20
+in a very long time.  The convention is intended to be if the channel
+has _raw the thresholds are in that unit (i.e. ADC counts) and if not
+they are in the processed value units.
 
-But moreover there is a big difference between symlink and mount point.
-Symlinks are not resolved by filesystem itself (but rather by the VFS,
-to ensure that all access checks are applied) and also moving the
-symlink between filesystems should not break them. In this idea when the
-symlink is going to be moved from smb share to e.g. ext4 local fs, then
-it would stops working (if the path resolved is in the cifs.ko) as
-ext4.ko would not be able to process special cifs.ko symlinks.
+It has to be this way because of non linear sensors.  We have cases
+where there isn't a transform we can sensibly convert in the kernel
+to set a 'raw' threshold.   (involves cube roots for instance).
+As a side note, those sensors are one of the few cases where we have
+both _RAW and _PROCESSED because the thresholds have to relate to _RAW
+but we need _PROCESSED to give standard units.
+=20
+Now for this case where it's kind of tangentially connected by the
+particular algorithm to the raw reading things are non obvious.
+The tap detector could just as easily be a threshold on jerk -
+rate of change of acceleration or some 'score' calculated from
+a bunch of inputs in which case we couldn't apply a scaling.
 
-> > But this would solve only problem with UNC symlink, not symlinks
-> > pointing to NT object hierarchy in general.
-> >
-> >> The following should do it and then restore old behavior
-> >> 
-> >> diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-> >> index bb25e77c5540..11d44288e75a 100644
-> >> --- a/fs/smb/client/reparse.c
-> >> +++ b/fs/smb/client/reparse.c
-> >> @@ -875,15 +875,8 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
-> >>  			abs_path += sizeof("\\DosDevices\\")-1;
-> >>  		else if (strstarts(abs_path, "\\GLOBAL??\\"))
-> >>  			abs_path += sizeof("\\GLOBAL??\\")-1;
-> >> -		else {
-> >> -			/* Unhandled absolute symlink, points outside of DOS/Win32 */
-> >> -			cifs_dbg(VFS,
-> >> -				 "absolute symlink '%s' cannot be converted from NT format "
-> >> -				 "because points to unknown target\n",
-> >> -				 smb_target);
-> >> -			rc = -EIO;
-> >> -			goto out;
-> >> -		}
-> >> +		else
-> >> +			goto out_unhandled_target;
-> >>  
-> >>  		/* Sometimes path separator after \?? is double backslash */
-> >>  		if (abs_path[0] == '\\')
-> >> @@ -910,13 +903,7 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
-> >>  			abs_path++;
-> >>  			abs_path[0] = drive_letter;
-> >>  		} else {
-> >> -			/* Unhandled absolute symlink. Report an error. */
-> >> -			cifs_dbg(VFS,
-> >> -				 "absolute symlink '%s' cannot be converted from NT format "
-> >> -				 "because points to unknown target\n",
-> >> -				 smb_target);
-> >> -			rc = -EIO;
-> >> -			goto out;
-> >> +			goto out_unhandled_target;
-> >>  		}
-> >>  
-> >>  		abs_path_len = strlen(abs_path)+1;
-> >> @@ -966,6 +953,7 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
-> >>  		 * These paths have same format as Linux symlinks, so no
-> >>  		 * conversion is needed.
-> >>  		 */
-> >> +out_unhandled_target:
-> >>  		linux_target = smb_target;
-> >>  		smb_target = NULL;
-> >>  	}
-> >
-> > I'm really not sure if removing the messages and error reporting about
-> > symlinks which cannot be represented in POSIX system is a good idea.
-> 
-> Those messages are just useless and noisy.  Do you think it's useful
-> printing that message for _every_ symlink when someone is calling
-> readdir(2) in a directory that contain such files?
+>=20
+> I think at the time I left the thresholds a bit out, because for me
+> it's clear what a time is. But I'm not sure, if actually the
+> thresholds are going so much by the unit values. So, in particular
+> what is missing here? Is it just about the commit message, or does it
+> need technical further adjustments?
 
-I though that for any debugging purposes these messages are useful.
-Now I see that VFS level is printed always, so maybe the FYI level could
-be better. Or do you really think that it is useless even for debugging?
+I don't think the patch is needed. For this particular parameter there
+isn't a clear concept of scale (putting aside that for this particular
+sensor there is one).  Thus it's a twiddle control. No need to connect
+it to real world units at all.  Also change this is an ABI change
+so we should do it only if we are considering the change to be fixing
+a bug.
+
+Jonathan
+
+>=20
+> Best,
+> L
+> > =20
+> > > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> > > ---
+> > >  drivers/iio/accel/adxl345_core.c | 11 +++++------
+> > >  1 file changed, 5 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adx=
+l345_core.c
+> > > index 7c093c0241de..d80efb68d113 100644
+> > > --- a/drivers/iio/accel/adxl345_core.c
+> > > +++ b/drivers/iio/accel/adxl345_core.c
+> > > @@ -697,17 +697,15 @@ static int adxl345_read_event_value(struct iio_=
+dev *indio_dev,
+> > >               switch (info) {
+> > >               case IIO_EV_INFO_VALUE:
+> > >                       /*
+> > > -                      * The scale factor would be 62.5mg/LSB (i.e. 0=
+xFF =3D 16g) but
+> > > -                      * not applied here. In context of this general=
+ purpose sensor,
+> > > -                      * what imports is rather signal intensity than=
+ the absolute
+> > > -                      * measured g value.
+> > > +                      * Scale factor is 62.5mg/LSB i.e. 0xff =3D 16g
+> > >                        */
+> > >                       ret =3D regmap_read(st->regmap, ADXL345_REG_THR=
+ESH_TAP,
+> > >                                         &tap_threshold);
+> > >                       if (ret)
+> > >                               return ret;
+> > > -                     *val =3D sign_extend32(tap_threshold, 7);
+> > > -                     return IIO_VAL_INT;
+> > > +                     *val =3D 62500 * sign_extend32(tap_threshold, 7=
+);
+> > > +                     *val2 =3D MICRO;
+> > > +                     return IIO_VAL_FRACTIONAL;
+> > >               case IIO_EV_INFO_TIMEOUT:
+> > >                       *val =3D st->tap_duration_us;
+> > >                       *val2 =3D 1000000;
+> > > @@ -746,6 +744,7 @@ static int adxl345_write_event_value(struct iio_d=
+ev *indio_dev,
+> > >       case IIO_EV_TYPE_GESTURE:
+> > >               switch (info) {
+> > >               case IIO_EV_INFO_VALUE:
+> > > +                     val =3D DIV_ROUND_CLOSEST(val * MICRO + val2, 6=
+2500);
+> > >                       ret =3D regmap_write(st->regmap, ADXL345_REG_TH=
+RESH_TAP,
+> > >                                          min(val, 0xFF));
+> > >                       if (ret) =20
+> > =20
+
 
