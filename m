@@ -1,79 +1,93 @@
-Return-Path: <linux-kernel+bounces-696857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ACE6AE2C66
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 22:51:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD97EAE2C68
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 22:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A4EA175B38
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 20:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09CAD3B8AE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 20:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530EB270EB0;
-	Sat, 21 Jun 2025 20:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAF02701CC;
+	Sat, 21 Jun 2025 20:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M677msOz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Vnlcnr9X"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAAB4CE08;
-	Sat, 21 Jun 2025 20:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BD3221FC6
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Jun 2025 20:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750539079; cv=none; b=klq8TnUY6+FZf6Mbd52Tnj5khPOSjE4smHKmu8onjvsFYdKJy5J/++meZqC+DnWtYmkGv4SP0mCNQU7roLt1IUCvZBjwTbR28M071BSAWHers1U05PH9AoN7WVgxW3QfbUbaV1zOcX7iwDU8fX8sVMaWCX8i9I+5+lYC8uVEX+4=
+	t=1750539498; cv=none; b=elvjwzDRQN5fxDuYPNrC+611vJTPJrKZwZCcP2sqYx7jcp1ejY+cOvMFVy48Z5h+gbkffa/9jSbouHPJS/xQ6fRrevr0dcn7SVZ1YwlWnVh5jtUXDcO+LN49AMoDycjq4BdVA6j0EdU9EgVCYurpmyHoDNePQTyFbJ0JcPdez2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750539079; c=relaxed/simple;
-	bh=B+DuNopW44+Lh7XHj4O2MzRgvBUrBmL58pqFDgxbbnQ=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=bBwaiadZ/cKoamoWl/954D2MuUZ6s8peDXYoVKUiRc9EE5rgw3Hj3H9HY91BZErDRUtSTk6WCrOmaIuXsFOsp3xoNpSbtEBbNX9HlfbzZWtcd+l3g8DsbfcLNrlj3KRQt8IDIo3t9mSmji+lb4/lfLdbZhRmn4jxy6nYepxuLvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M677msOz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2648FC4CEE7;
-	Sat, 21 Jun 2025 20:51:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750539077;
-	bh=B+DuNopW44+Lh7XHj4O2MzRgvBUrBmL58pqFDgxbbnQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=M677msOz5QqeisCcomJhJdH5mYIg/X0Hre6RPDykAA70W0SIYwwLTZFI7lVeZE6yx
-	 gQ6Dm38jBqTdYeQyJ8rMR9JEEm8NyKQkpT+6PgiaNFBOhzd6A0kU08FQq0JsKZjkQU
-	 CVpr3J8GrtqicvzX0SNORe/q1KgPyqfH3+CKWSQJrXLFznFu6DM7ioajp3yBr8OgyP
-	 MHK7xkBpyMMkdVipmlBhLrzaejUUh3pyXUXHCOHsi8FzkLgTIb28b35wcuIkLw2C9a
-	 P534mf/f8T6+DXXJ5IlYQH8LovHalYJ5wG7L0mr05NWoWD7yLJO/ZwRGRFmGe6YuNC
-	 GOF7v1iWW9U3A==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1750539498; c=relaxed/simple;
+	bh=siVc9RXe7otepqDtpg3E1usZhGrwMlWqN9Q+Gtweicg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n5jBy/egXMsPvdaUuBnjPoMN5BjAbUtbVa4+G0IEaQJA8dWBvGIMlKS1tSpc14TUEGp6zvSuEcU0qJ7LGtOkCoC8YAIB8RIKXnj9hC0+dGFSPEEB7tI/jr9bR24FpnNL8wflPC/rd7UOcPSYxtE4mwIaDlLWj2+VGYkVd6TghBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Vnlcnr9X; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2211ddf3-88d3-40c4-a6f4-22e31c5446ea@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750539494;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B8MS0cazfGUsxYyk6B/exVLlLdNWKEHr5YMhhdcZ8Lk=;
+	b=Vnlcnr9XHU8OHhGIdcjxkNPWIroG2eGXz8aQ8mLBrhK33Mawsjq1mozTFagGPXv5F8+2lr
+	pw8/YyITMAtjJZYpA7WY9n4f0IsqlvBEzC5iPTEVOapuDnJFaHWVc2E2fe+Y4vpC5GfD5k
+	aStdtJPPrfct4QtlL+YjjMol2svOBBc=
+Date: Sat, 21 Jun 2025 21:58:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <jvsdn67x2qm2avaktnpqzoixcd46xuuf6i5kpeolsnewgoqt6q@jid7unlmmu65>
-References: <20250506-qcom-apcs-mailbox-cc-v1-0-b54dddb150a5@linaro.org> <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org> <7vszdea2djl43oojvw3vlrip23f7cfyxkyn6jw3wc2f7yowht5@bgsc2pqscujc> <aCNGSwL7043GoJBz@linaro.org> <20250514160841.GA2427890-robh@kernel.org> <aCUHTJGktLFhXq4Q@linaro.org> <20250521-psychedelic-cute-grouse-ee1291@kuoka> <aC-AqDa8cjq2AYeM@linaro.org> <20250523-markhor-of-fortunate-experience-1f575e@kuoka> <jvsdn67x2qm2avaktnpqzoixcd46xuuf6i5kpeolsnewgoqt6q@jid7unlmmu65>
-Subject: Re: [PATCH 1/4] dt-bindings: mailbox: qcom,apcs: Add separate node for clock-controller
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Stephan Gerhold <stephan.gerhold@linaro.org>, Saravana Kannan <saravanak@google.com>, Rob Herring <robh@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, Georgi Djakov <djakov@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Date: Sat, 21 Jun 2025 13:51:16 -0700
-Message-ID: <175053907628.4372.13105365536734444855@lazor>
-User-Agent: alot/0.11
+Subject: Re: [patch 07/13] ptp: Split out PTP_SYS_OFFSET ioctl code
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org
+References: <20250620130144.351492917@linutronix.de>
+ <20250620131944.156514985@linutronix.de>
+ <83c30e4a-d674-47a7-bda9-4b2fc0d590e3@linux.dev> <87a560q10x.ffs@tglx>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <87a560q10x.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Quoting Bjorn Andersson (2025-06-10 20:31:57)
->=20
-> I'm still sceptical here.
->=20
-> In the first snippet above, we describe a single IP block which provides
-> mailboxes and clocks.
->=20
-> In the second snippet we're saying that the IP block is a mailbox, and
-> then it somehow have a subcomponent which is a clock provider.
->=20
-> It seems to me that we're choosing the second option because it better
-> fits the Linux implementation, rather than that it would be a better
-> representation of the hardware. To the point that we can't even describe
-> the register range of the subcomponent...
->=20
+On 21/06/2025 21:42, Thomas Gleixner wrote:
+> On Sat, Jun 21 2025 at 21:14, Vadim Fedorenko wrote:
+>> On 20/06/2025 14:24, Thomas Gleixner wrote:
+>>> +	pct = &sysoff->ts[0];
+>>> +	for (unsigned int i = 0; i < sysoff->n_samples; i++) {
+>>> +		struct ptp_clock_info *ops = ptp->info;
+>>
+>> Looks like *ops initialization can be moved outside of the loop.
+> 
+> Well it can, but does it matter? No, because this is only a coding
+> artifact. The compiler can evaluate ptp->info inside of the loop at his
+> own peril even on both usage sites.
+> 
+> Though what's more important is that from a context point of view, ops
+> belongs into the loop, because that's where it is used and not outside,
+> no?
 
-Agreed. Don't workaround problems in the kernel by changing the binding
-to have sub-nodes.
+Well, in the original code it was always outside of any loops. And the
+scope a bit bigger, all these functions work with ptp_clock object, so
+the context is really subjective. It just looks a bit weird to de-
+reference something, which is known not to change, every iteration. Of
+course the compiler is smart enough to optimize it, but still..
+
+
+> Thanks,
+> 
+>          tglx
+
 
