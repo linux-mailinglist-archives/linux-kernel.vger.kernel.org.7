@@ -1,52 +1,53 @@
-Return-Path: <linux-kernel+bounces-696492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E331AE2807
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 10:34:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC3AAE280C
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 10:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E1E189F077
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 08:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5F7A189F39A
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 08:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEA41DEFC8;
-	Sat, 21 Jun 2025 08:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E711E1DE5;
+	Sat, 21 Jun 2025 08:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="fq9yjymJ"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="j/2raRqf"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2AA7FD;
-	Sat, 21 Jun 2025 08:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66F31DED49;
+	Sat, 21 Jun 2025 08:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750494883; cv=none; b=RKNOAUQX+aoE191Mc3PA6Bpk910EukZcWhmq1V/axu6w7AHXCMoGGGsoEjkJsyov5o1GzSRvnKsBzgOi5Mn8msQXv8lWvbIJk3AbrENzjDSS2rRjMsdAa96Shy1sv7Kd+d5HUJ/0Bb6szHapK2iLg+Rj+5dqUShQTBKdiEbsf2w=
+	t=1750494966; cv=none; b=V089xfr61FvHsTPcMYO8tGMk8AzKoXjvvnCyBmeYgNvbdr8I9izun0audDSOoHhruoc7sgg5XjdLgGCyGaAak7P3cD79LjJ/SAhTdDAEj8i+dRf9yhVYlJfDx2xDDjKkluyUIUf5pSY8Iv1m/HV0EZv4rXoob/9a5tFhNbNe4os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750494883; c=relaxed/simple;
-	bh=Sfdtifw6Zrv9FX17DlIP1vQunnFlVczaidXMG3mD3gs=;
+	s=arc-20240116; t=1750494966; c=relaxed/simple;
+	bh=S+btYjTpaDR+H9zyUrrcPktiVcYTaJ+qZKepdMYabL4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lUJ5/CV5gSgexA75VUSNZKi0gae1n2PXDtj9rgKsExNlIbJ5ZDzumb29wsBPwz/gkeY6iB4VNA2sUgtzOfVJYIGqAZpmS7M274pzFZMJL9GShwSnPl54sQUIC1Xyhnr0jGapPprLkJydWMwLcsZFFd8AUfabhQLcATwKVWQIiHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=fq9yjymJ; arc=none smtp.client-ip=159.69.126.157
+	 Content-Type:Content-Disposition:In-Reply-To; b=f7H6DegY5q850d9PpdDPdF0r6j+gfEeQJL4OqUapAxy3aj7cbynXoOCQ3KOhxKgfBtP+xsqZTYjr3YggR7jlhTfFgNYrThGQgCAmsYqcpd5eYV5dZ4Q37uctnbl3s4YVh1IkV3TgbgjLgh3+R0Kpl2rKGk5nOftYnRFqTq0ludg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=j/2raRqf; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1750494879;
-	bh=Sfdtifw6Zrv9FX17DlIP1vQunnFlVczaidXMG3mD3gs=;
+	s=mail; t=1750494962;
+	bh=S+btYjTpaDR+H9zyUrrcPktiVcYTaJ+qZKepdMYabL4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fq9yjymJNwx/Sphq17qhiOjRbQ01MKOFX6gcnryqmrjPieV7i2e9YBx6PM9kOVhT3
-	 B2Sym51+mV4MKaHcQhf3bCbtdYFbBQ+PMZQXTBawGkkvts5izu2X1PcA4TKtlY/l8O
-	 Uj/uHVmUHM94pCzLW9QgXOhaUE6YR5wCgUoAgzlI=
-Date: Sat, 21 Jun 2025 10:34:38 +0200
+	b=j/2raRqfQZYJBEm2re78QTL0BTQaV/Z43lecW5wB4bc2VXbrUcoX6PTNxn1tbBsNa
+	 sjXbNhlmb54GvzDqXHbzOknSaoHlzpm+327kgvQQ0/OuOlwLbH0wR1JnYo3AtwvhwD
+	 NincIln8AtI9tdAzynwiAtEuFtnEYvHmIGs9NOe4=
+Date: Sat, 21 Jun 2025 10:36:01 +0200
 From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
 To: Willy Tarreau <w@1wt.eu>
-Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 3/4] selftests/nolibc: rename Makefile
-Message-ID: <20db87b0-05ff-476b-a58f-d0945bfacf20@t-8ch.de>
-References: <20250620-nolibc-selftests-v1-0-f6b2ce7c5071@weissschuh.net>
- <20250620-nolibc-selftests-v1-3-f6b2ce7c5071@weissschuh.net>
- <20250621041421.GA26603@1wt.eu>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] tools/nolibc: fix spelling of FD_SETBITMASK in FD_*
+ macros
+Message-ID: <87bac9f6-1646-4a5f-84f7-1dd127717dbc@t-8ch.de>
+References: <20250620083325.24390-1-w@1wt.eu>
+ <e5561bc6-8220-4088-8bc0-0aba62c2cec3@t-8ch.de>
+ <20250621082133.GA26919@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,42 +57,30 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250621041421.GA26603@1wt.eu>
+In-Reply-To: <20250621082133.GA26919@1wt.eu>
 
-On 2025-06-21 06:14:21+0200, Willy Tarreau wrote:
-> Hi Thomas,
-> 
-> On Fri, Jun 20, 2025 at 11:39:32PM +0200, Thomas Weißschuh wrote:
-> > The nolibc tests are not real kselftests, they work differently and
-> > provide a different interface. Users trying to use them like real
-> > selftests may be confused and the tests are not executed by CI systems.
+On 2025-06-21 10:21:34+0200, Willy Tarreau wrote:
+> On Sat, Jun 21, 2025 at 10:19:52AM +0200, Thomas Weißschuh wrote:
+> > On 2025-06-20 10:33:25+0200, Willy Tarreau wrote:
+> > > While nolibc-test does test syscalls, it doesn't test as much the rest
+> > > of the macros, and a wrong spelling of FD_SETBITMASK in commit
+> > > feaf75658783a broke programs using either FD_SET() or FD_CLR() without
+> > > being noticed. Let's fix these macros.
+> > > 
+> > > Fixes: feaf75658783a ("nolibc: fix fd_set type")
+> > > Cc: stable@vger.kernel.org # v6.2+
+> > > Signed-off-by: Willy Tarreau <w@1wt.eu>
 > > 
-> > To make space for an integration with the kselftest framework, move the
-> > custom tests out of the way.
-> > The custom tests are still useful to keep as they provide functionality
-> > not provided by kselftests.
+> > Acked-by: Thomas Weißschuh <linux@weissschuh.net>
+> > 
+> > Let me know if I should apply it.
 > 
-> I'm wondering, what prevents us from merging the new rules into the
-> current makefile instead of renaming it, especially considering the
-> fact that we initially took care of not confiscating the "all" target ?
+> As you prefer, given that you already have other ones in flight, maybe
+> you want to order them as desired. Otherwise I'll push it.
 
-We'll have conflicts around CFLAGS, the nolibc-test target and probably
-other things. It will also make everything harder to understand and may
-break unexpectedly in the future.
+Then feel free to push it.
+I have nothing going on right now.
 
-> I'm asking because: 
-> 
->   $ make -f Makefile.nolibc help
-> 
-> is clearly less convenient and intuitive than:
-> 
->   $ make help
 
-Is your issue specifically with the help target?
-We should be able to show the help message from the main Makefile with a
-hint to the Makefile.nolibc.
-
-Another, more general, possibility would be to move the special Makefile
-to tools/testing/nolibc/ and keep only the selftest parts in
-tools/testing/selftests/nolibc/.
+Thomas
 
