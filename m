@@ -1,96 +1,109 @@
-Return-Path: <linux-kernel+bounces-696500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6126AE281F
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 10:52:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12928AE280D
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 10:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DEB73A9162
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 08:51:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D19C189A4F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 08:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA761922C4;
-	Sat, 21 Jun 2025 08:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=naver.com header.i=@naver.com header.b="JZdzsuWd"
-Received: from cvsmtppost37.nm.naver.com (cvsmtppost37.nm.naver.com [114.111.35.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5301CD208
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Jun 2025 08:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.111.35.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EC51DFD8F;
+	Sat, 21 Jun 2025 08:42:57 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1B442A96
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Jun 2025 08:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750495915; cv=none; b=oBkY3YXhyVBGdXDF1hqaas7Ryo1H3vKRcVmNzwdx7NXMvyT3PQfbEktw+90k5YbJjIYJV6kuFqj4tImIQIp4RRq7zLQGMf47NjZ1bvle+BDO/21rOwWpGJ6F7HDvtYwM31fOoW0w6tUGcdDrjg1F8j5PySvMGIXAhzx8kqzEak4=
+	t=1750495377; cv=none; b=s/arKJUyZiS45vCmikbCACIVke47eQQ3Q6oY9WWVFnpQtWIZwkFOsmi4ykrycdDzIf277kMeHSDv8xPI1Qd33jz7TXfEFGCQ+q3s11ACZOXPEnS8dUpRnBUxf3i80ncLdHHfvC6VW88Xy34TgaGnnAqThxyygogWVpJVwDJ77wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750495915; c=relaxed/simple;
-	bh=rKtFqi4VVgxh1mefZj2DobHy7+yO6s5RafJYIJAk6MQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kgrsv7Liw40N0sUsV+5fFjKJxgo184WE3t+D31oXFtG9efhU68pf/oo5D9ghv54FoN+bnUvB59OQpADZen2A8eycNJmElLVLL93nI95oV7b5j2OJTZPxb8FwXBfcMey6IN8K3Ef6kHCafTxjygMi7B8MFZYpnFZTfoLXYOVuR60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=naver.com; spf=pass smtp.mailfrom=naver.com; dkim=pass (2048-bit key) header.d=naver.com header.i=@naver.com header.b=JZdzsuWd; arc=none smtp.client-ip=114.111.35.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=naver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=naver.com
-Received: from cvsendbo006.nm ([10.112.20.43])
-  by cvsmtppost37.nm.naver.com with ESMTP id 8Rv4yiJgTgyIXlaekh9u0Q
-  for <linux-kernel@vger.kernel.org>;
-  Sat, 21 Jun 2025 08:41:44 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=naver.com; s=s20171208;
-	t=1750495304; bh=rKtFqi4VVgxh1mefZj2DobHy7+yO6s5RafJYIJAk6MQ=;
-	h=From:To:Subject:Date:Message-ID:From:Subject:Feedback-ID:
-	 X-Works-Security;
-	b=JZdzsuWd6+2ijbjDgh0FkHf9nE9O49YX21Bz5TeTkxwmmS9em2vKYAIRV8Z8H5eM9
-	 o+pKujuhjYy2qHWsa58HCEGrOPsjmJGJ6KPEgqDHrKAa8YhMDVA5urVMakQGkbyUeI
-	 R2PUv+h5w5KROFUqhndMfN1rgXgiHosJQ7NlmUHL/A+nhBEgDJWoGgSpp3hLxb0NMg
-	 QkZnPjCXVbJcE/BYX8MuNpzlx7+S1NjUhtZ/mUUfnfvgyoFPGEmLFoDJTj3IIuC/ko
-	 VPOKE85KyTNSCggZzLKVateqAx2LTxB+Osq5/DZhqpfIB+koDdSTMGg9GfFwWBFSl1
-	 afs2C+PheMyCA==
-X-Session-ID: 50YONv5+QGuiAFKKIujcIw
-X-Works-Send-Opt: k/YdjAJYjHmlKxu/FoJYKxgXKBwkx0eFjAJYKg==
-X-Works-Smtp-Source: XZnrFAg9FqJZ+HmqKAvZ+6E=
-Received: from asya.. ([121.138.252.96])
-  by cvnsmtp003.nm.naver.com with ESMTP id 50YONv5+QGuiAFKKIujcIw
-  for <multiple recipients>
-  (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-  Sat, 21 Jun 2025 08:41:43 -0000
-From: Cherniaev Andrei <dungeonlords789@naver.com>
-To: linux-kbuild@vger.kernel.org
-Cc: masahiroy@kernel.org,
-	yann.morin.1998@free.fr,
-	linux-kernel@vger.kernel.org,
-	Cherniaev Andrei <dungeonlords789@naver.com>
-Subject: [PATCH 1/1] kconfig: fix 'space' to (de)select options
-Date: Sat, 21 Jun 2025 17:41:24 +0900
-Message-ID: <20250621084124.7134-1-dungeonlords789@naver.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1750495377; c=relaxed/simple;
+	bh=LJL1u14B/iB4Hf2UFRUO3x3r1Wh6cVhZuH3jkGStHEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U9rdRtY5frI+888TMaaqU2rr7PjT5qa9HYGWqSyPJ+hu/c/N1L4iqUwrBQgFGLor7IWdf4s1eVxjLVpd2CRaMXqtf5Xv6btzWYLAet7+YFVDsUiubHW5cAqWkB9B4sXpg1mzeiyIa0F2I9x+BWVdfgQ6yIx8zzNaXXIxvTapc2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 55L8gYFW026946;
+	Sat, 21 Jun 2025 10:42:34 +0200
+Date: Sat, 21 Jun 2025 10:42:34 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] tools/nolibc: add missing memchr() to string.h
+Message-ID: <20250621084234.GA26934@1wt.eu>
+References: <20250620100251.9877-1-w@1wt.eu>
+ <20250620100251.9877-5-w@1wt.eu>
+ <d7b81639-c53c-4186-9e30-04137576a1f1@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <d7b81639-c53c-4186-9e30-04137576a1f1@t-8ch.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Fix that by treating 'space' as we treat y/m/n, ie. as an action key, not as shortcut to jump to prompt. This is copy of commit https://gitlab.com/buildroot.org/buildroot/-/raw/master/support/kconfig/patches/16-fix-space-to-de-select-options.patch
+On Sat, Jun 21, 2025 at 10:27:11AM +0200, Thomas Weißschuh wrote:
+> On 2025-06-20 12:02:51+0200, Willy Tarreau wrote:
+> > Surprisingly we forgot to add this common one. It was added with a
+> > per-arch guard allowing to later implement it in arch-specific asm
+> > code like was done for a few other ones.
+> > 
+> > The test verifies that we don't search past the indicated length.
+> > 
+> > Signed-off-by: Willy Tarreau <w@1wt.eu>
+> > ---
+> >  tools/include/nolibc/string.h                | 15 +++++++++++++++
+> >  tools/testing/selftests/nolibc/nolibc-test.c |  2 ++
+> >  2 files changed, 17 insertions(+)
+> > 
+> > diff --git a/tools/include/nolibc/string.h b/tools/include/nolibc/string.h
+> > index 163a17e7dd38b..4000926f44ac4 100644
+> > --- a/tools/include/nolibc/string.h
+> > +++ b/tools/include/nolibc/string.h
+> > @@ -93,6 +93,21 @@ void *memset(void *dst, int b, size_t len)
+> >  }
+> >  #endif /* #ifndef NOLIBC_ARCH_HAS_MEMSET */
+> >  
+> > +#ifndef NOLIBC_ARCH_HAS_MEMCHR
+> 
+> So far we only have added these guards when necessary,
+> which they aren't here. Can we drop them?
 
-Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
-Signed-off-by: Cherniaev Andrei <dungeonlords789@naver.com>
----
- scripts/kconfig/lxdialog/menubox.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I intentionally placed them so that we can easily override them,
+as we did for the other ones on x86 where string operations are
+super short (repnz scasb is two bytes once you have the registers
+already loaded).
 
-diff --git a/scripts/kconfig/lxdialog/menubox.c b/scripts/kconfig/lxdialog/menubox.c
-index 6e6244df0c56..d4c19b7beebb 100644
---- a/scripts/kconfig/lxdialog/menubox.c
-+++ b/scripts/kconfig/lxdialog/menubox.c
-@@ -264,7 +264,7 @@ int dialog_menu(const char *title, const char *prompt,
- 		if (key < 256 && isalpha(key))
- 			key = tolower(key);
- 
--		if (strchr("ynmh", key))
-+		if (strchr("ynmh ", key))
- 			i = max_choice;
- 		else {
- 			for (i = choice + 1; i < max_choice; i++) {
--- 
-2.48.1
+> > +static __attribute__((unused))
+> > +void *memchr(const void *s, int c, size_t len)
+> > +{
+> > +	char *p = (char *)s;
+> 
+> The docs say that they are interpreted as "unsigned char".
 
+It does not change anything here, except adding an extra
+modifier (since we'll then also have to do it in the loop
+when comparing against c), thus IMHO it's extra noise.
+
+> Also, can we keep the const?
+
+It's memchr()'s definition which requires to return a void* so the
+const needs to be dropped somewhere. Here I found visually cleaner to
+have a single cast during the variable assignment rather than have a
+second one on the return statement. But it's a matter of taste. I
+tend to hate casts as they confuse the reader and remove the ability
+of the compiler to produce relevant warnings, so for me the less the
+better.
+
+Thanks,
+Willy
 
