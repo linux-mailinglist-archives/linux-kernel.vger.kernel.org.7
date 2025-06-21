@@ -1,63 +1,58 @@
-Return-Path: <linux-kernel+bounces-696736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF96AE2AE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 20:01:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA549AE2AEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 20:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F8DD3B47BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 18:01:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3179517760D
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 18:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F65526A1AB;
-	Sat, 21 Jun 2025 18:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59E526FA70;
+	Sat, 21 Jun 2025 18:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r0gBrQJG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOIsqXM6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FF31F8753;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A3926F46E;
 	Sat, 21 Jun 2025 18:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750528883; cv=none; b=Eznp7c6kppMp6lrPrhLljxn5DbEjnfJ1UBmaslmzzgQpR5TWfTXlMY4RJYvN0nqKhHs0/etByIx0+AIZpCqGiYM0JRdQx65FYQ3XXTndqYJARyGxV3RS1013oC5/fWPrqAkJaDFA5VknVA9SYqgKPF3Iryxhu1L/hf4iT/61uFQ=
+	t=1750528884; cv=none; b=Nk2Zv9CSpU5539TE6XQVfEzboJevK1RO2kfyVKcThVUvvjywo+MjWMUSSWEhrnYVRYSHqjWp3BJu5+woBYQGx/enh7VTt48ug/nzMl/N3n5ayJ578okqsW88yehpjO5ObJjs8f6hAvQqnox0zvjM1woe6CFVT0sIg5Re2k/QAQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750528883; c=relaxed/simple;
-	bh=cgKZMrdaREWLFVQ/3rxzvJMlSIIgdA9YBDueSuzt0b8=;
+	s=arc-20240116; t=1750528884; c=relaxed/simple;
+	bh=QIQ1W9n/2wTSUm8GTP6ksbZ+avPTfI+yWmDqMPp6dm4=;
 	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BDfkde7TG4o2aCI2NwmKXN3639huKmKUKJ5qt4CSEusgy3RA6KiogR7NB30Oz8JWdNkiTLyvV5y0+qCpRgq833CQtQsvuy2970RbfSYm7a3Y7iP+VFgb9cujM47k0TGUYTzo9jwFr4Ypv30plGvO+QjINrSDJWC/sEchqlh00PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r0gBrQJG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AC10C4CEF3;
-	Sat, 21 Jun 2025 18:01:22 +0000 (UTC)
+	 MIME-Version:Content-Type; b=d5x4lgXvvxWZyikXa7TwmJIKMBFx9rgZmulJvNcotUV9rgxRTe4/v3CxQnjYgzoydlNYtuKWNngyIvAuw58tdg1UL5Tu/fWPg27eNKJW4ZtmP5eMwGUw3RKeB0xRVsD3k/gUhbaQaQaVY5JjPlr8jWF2Mrkech+uGmuSHa5ne3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cOIsqXM6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 770B3C4AF0C;
+	Sat, 21 Jun 2025 18:01:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750528882;
-	bh=cgKZMrdaREWLFVQ/3rxzvJMlSIIgdA9YBDueSuzt0b8=;
+	s=k20201202; t=1750528883;
+	bh=QIQ1W9n/2wTSUm8GTP6ksbZ+avPTfI+yWmDqMPp6dm4=;
 	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=r0gBrQJGpDsT2THjNjeSJJD9J3y5qSAwA0HOgaSeBCoS5A7a7ZR5CFmS6T2gQAIar
-	 SsZWGpo8JaM3dJuIY4yT+8lW14vQnhfMoAtspXEH32GRZ3lvpR/rNRJjuafO1R9rhm
-	 IbzJeQjW8JEkk3Fma/0ZbJQAKw4o3DFX4CLiFVFgoUYYbSkR608896CmxY6o4/Ca68
-	 YwJooL8dSt2VG3CbbICpZeR5282b2QbwrzUm9KcjSeI0IYMyicPikfMyFD1SGvUd5D
-	 vgINUkoI94Xj4lreS1gx0km+GX63ocUBJKi8moyh8L8xlGGiTLdKUINzVEyEjIR9Eo
-	 9Sz9ebtQEgHGQ==
+	b=cOIsqXM6uCcYGX+UhP30iUqDkTZA39y1Ye6iHl/+loTZJEcNKtIwOd3PlK2rb0fya
+	 8d9OFm1whqfKwyud/U2FeyvmwCrlEMwTjM7IYfTsiJUpqOMJH092hG2OXnapNEUF+V
+	 OmviAkXZlHbsUQzzD6K4K5NrGQdtfrNnGgFi5RC3aq38HGqGjaXaXtADzFSbU8GRvG
+	 3HOl/yAnryLKR7tk9js7EUZolgR1rufkN9Dr795ZTRSm1yBfKYasJwZoX8BxbOS6xE
+	 HOjRjJOrm+t3yexHaxhkk07AQ6u2kWPG7mxTcpN6peGIaiF3YGhdREn9YjrYcYE5pm
+	 /Vus5xcytzSxQ==
 From: Namhyung Kim <namhyung@kernel.org>
-To: Kan Liang <kan.liang@linux.intel.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
  Arnaldo Carvalho de Melo <acme@kernel.org>, 
  Mark Rutland <mark.rutland@arm.com>, 
  Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
  Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Ravi Bangoria <ravi.bangoria@amd.com>, 
- Howard Chu <howardchu95@gmail.com>, linux-perf-users@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ian Rogers <irogers@google.com>
-In-Reply-To: <20250614004528.1652860-1-irogers@google.com>
-References: <20250614004528.1652860-1-irogers@google.com>
-Subject: Re: [PATCH v1] perf test: Expand user space event reading (rdpmc)
- tests
-Message-Id: <175052888239.2250071.5449360979148529294.b4-ty@kernel.org>
-Date: Sat, 21 Jun 2025 11:01:22 -0700
+ Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, Ian Rogers <irogers@google.com>
+In-Reply-To: <20250619002555.100896-1-irogers@google.com>
+References: <20250619002555.100896-1-irogers@google.com>
+Subject: Re: [PATCH v1] perf test: Add header shell test
+Message-Id: <175052888344.2250071.11324057542557447908.b4-ty@kernel.org>
+Date: Sat, 21 Jun 2025 11:01:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,17 +63,11 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Fri, 13 Jun 2025 17:45:28 -0700, Ian Rogers wrote:
-> Test that disabling rdpmc support via /sys/bus/event_source/cpu*/rdpmc
-> disables reading in the mmap (libperf read support will fallback to
-> using a system call).
-> Test all hybrid PMUs support rdpmc.
-> Ensure hybrid PMUs use the correct CPU to rdpmc the correct
-> event. Previously the test would open cycles or instructions with no
-> extended type then rdpmc it on whatever CPU. This could fail/skip due
-> to which CPU the test was scheduled upon.
+On Wed, 18 Jun 2025 17:25:55 -0700, Ian Rogers wrote:
+> Add a shell test that sanity checks perf data and pipe mode produce
+> expected header fields.
 > 
-> [...]
+> 
 Applied to perf-tools-next, thanks!
 
 Best regards,
