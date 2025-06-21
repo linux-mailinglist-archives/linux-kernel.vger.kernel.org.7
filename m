@@ -1,84 +1,149 @@
-Return-Path: <linux-kernel+bounces-696794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A71AE2BCF
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 21:40:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B657AE2BD7
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 21:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 532D818854EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 19:40:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88A083BADAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 19:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618AD26FDA3;
-	Sat, 21 Jun 2025 19:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1131E26FA7B;
+	Sat, 21 Jun 2025 19:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="rIYECFqc"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nk7HRXwF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB821F8753;
-	Sat, 21 Jun 2025 19:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E751B414E;
+	Sat, 21 Jun 2025 19:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750534752; cv=none; b=YubxYBUYw4Z9GxDIR2kvJYW0sRyKdj2SxhKgvgZg7SZa94Y4yVoR0yd47L2E9aQmSfBaLBhyCZ+ctL+upi9l8VXgj2KZnDdegZf+wAtIz0aLBT2oSC+yarY9UsblU/+zSE1FNiBPAQOR+++48Jwm5hkaxuxjKvSI2B3Pi0mNoII=
+	t=1750535488; cv=none; b=eeq20SO2nac9f2jUDKA08PK7SimsolfHumfoAth2pcdbnH9zCLLGkk1CJde3f+DbuE7BYBjOffXi+ogXrZ49+5a1owR9ZJFLMxwSVSAjTrATJA4wULSn63oCYb8P281kTKixmgtyPB9PRVoLABjBBnEiY0c/5tswOkl4eBDU1oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750534752; c=relaxed/simple;
-	bh=3yiVFdTPNAuUz4xvy0quCMpPzcyTEdAaCd8L2MTQ+pw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ek3INxiVfC5kxOZLY8hjLJiWyZwmD3gEW6d9VuWAWF8/S/3Cx+q4iQ+pp7bp/ccC9UgYGcD9NS0zIhz5DXDiXubb5Bho7rc3V9wNkWKB7xha+eAm0Pig79DKXZOwj/FiajqTzKZ3yE9Wy3xqDntRuWcLOn9NtzF6Aic/OwSIIs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=rIYECFqc; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 8B4AB41AD8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1750534750; bh=3yiVFdTPNAuUz4xvy0quCMpPzcyTEdAaCd8L2MTQ+pw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=rIYECFqcI9E61znUsBSXySGfTlkNf4a90G2leZDRyJG6Tw0PnWxKob+guqA+NoLzo
-	 AErGEMLmEF8OnYqkEmnaiemcTjEFs3nYYJnWVi61v729BPhGXzpObiCWXYDJguO4+A
-	 wZ/AZXSyqhusPsbr10RQC9cUdnAZv86UN51kZvIEeGI0b9vcpmr7sPEN5uikVNMe4h
-	 PF6aJHxCvkI0JvTl2OkjqCwFeR5/LJPoXFrc7M36grz6hQTvftfhpeM4iI7m97xFpz
-	 hjPb8KaENddi/ImFXHKRp5BeaXJBoiXBLZCC9xvMQFQvqFfaYgvtrbhc0oQdx2h2LR
-	 Dzcf3B3WQc/xw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9:67c:16ff:fe81:5f9b])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 8B4AB41AD8;
-	Sat, 21 Jun 2025 19:39:10 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
- List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
- <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH 0/6] Some improvements for the doc build system
-In-Reply-To: <cover.1750406900.git.mchehab+huawei@kernel.org>
-References: <cover.1750406900.git.mchehab+huawei@kernel.org>
-Date: Sat, 21 Jun 2025 13:39:09 -0600
-Message-ID: <87ldpkdgv6.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1750535488; c=relaxed/simple;
+	bh=dNb7xAF9Q/a6CUsX7C6s6yY6BMrON4Y9eNUkNm0UIcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E5tWaZDSrVaE+TOFP//sx1iFzqpD9fvhQjStLq4PZVOG4VLZfaxZLYgLOGwgZYdu7fBJ6EWTgujkwhxVPEfBYulrnRrZIc25faLGKnVqiyr+2bjYKJffBIgtw3F3+uZTyZPVp+9znEvs6u1BAUKRQF4KEg58Ys3hCXa0uMuqIyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nk7HRXwF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AFD3C4CEE7;
+	Sat, 21 Jun 2025 19:51:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750535487;
+	bh=dNb7xAF9Q/a6CUsX7C6s6yY6BMrON4Y9eNUkNm0UIcI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nk7HRXwFGqn+hYTXTTyqKYXjD97C91odMQqoXIhITnK+pveD0pJ1qO8+P19cas6fO
+	 tiy5qCqJc+tOVf6sKVEyC7fzrbeE397nWVmzQElGT7MGucdw1V+gs3ubpZx6u61A6G
+	 IeesnsZ0/OxfEkwqgRReAvFa5om2iMA+Vej6dtYpYuo+YxIuUYX2h/rAn2aQUni6mv
+	 lEnrA9HrKtZZh6Vgy6fYUM0PGpKyxpdcx81vsS/c/6+OGwLHMxZ5JNz/Fq7Oyl66DU
+	 nTTGTZVGi04i8AlgIAL1Nqfpu6ydSwvuhRvLZaQEb1nSk1M4Bhr1blzUPNOrG8x0u5
+	 E4VPL9/LnEWaw==
+From: Danilo Krummrich <dakr@kernel.org>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	david.m.ertman@intel.com,
+	ira.weiny@intel.com,
+	leon@kernel.org,
+	kwilczynski@kernel.org,
+	bhelgaas@google.com
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH 0/8] Device: generic accessors for drvdata + Driver::unbind()
+Date: Sat, 21 Jun 2025 21:43:26 +0200
+Message-ID: <20250621195118.124245-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+This patch series consists of the following three parts.
 
-> Hi Jon,
->
-> This series contain some patches from my parser-yaml one that
-> aren't directly related to it. It basically addresses some issues
-> at the build system. It also adds a script that I wrote with the
-> purpose of checking backward problems when building against
-> older toolchains.
->
-> IMO, the best is to merge and apply it before the YAML series.
+  1. Introduce the 'Internal' device context (semantically identical to the
+     'Core' device context), but only accessible for bus abstractions.
 
-OK, I've applied it, but ... someday, I think the test_doc_build tool
-should be properly documented and put somewhere under tools/testing.
+  2. Introduce generic accessors for a device's driver_data  pointer. Those are
+     implemented for the 'Internal' device context only, in order to only enable
+     bus abstractions to mess with the driver_data pointer of struct device.
 
-jon
+  3. Implement the Driver::unbind() callback (details below).
+
+Driver::unbind()
+----------------
+
+Currently, there's really only one core callback for drivers, which is
+probe().
+
+Now, this isn't entirely true, since there is also the drop() callback of
+the driver type (serving as the driver's private data), which is returned
+by probe() and is dropped in remove().
+
+On the C side remove() mainly serves two purposes:
+
+  (1) Tear down the device that is operated by the driver, e.g. call bus
+      specific functions, write I/O memory to reset the device, etc.
+
+  (2) Release the resources that have been allocated by a driver for a
+      specific device.
+
+The drop() callback mentioned above is intended to cover (2) as the Rust
+idiomatic way.
+
+However, it is partially insufficient and inefficient to cover (1)
+properly, since drop() can't be called with additional arguments, such as
+the reference to the corresponding device that has the correct device
+context, i.e. the Core device context.
+
+This makes it inefficient (but not impossible) to access device
+resources, e.g. to write device registers, and impossible to call device
+methods, which are only accessible under the Core device context.
+
+In order to solve this, add an additional callback for (1), which we
+call unbind().
+
+The reason for calling it unbind() is that, unlike remove(), it is *only*
+meant to be used to perform teardown operations on the device (1), but
+*not* to release resources (2).
+
+Danilo Krummrich (8):
+  rust: device: introduce device::Internal
+  rust: device: add drvdata accessors
+  rust: platform: use generic device drvdata accessors
+  rust: pci: use generic device drvdata accessors
+  rust: auxiliary: use generic device drvdata accessors
+  rust: platform: implement Driver::unbind()
+  rust: pci: implement Driver::unbind()
+  samples: rust: pci: reset pci-testdev in unbind()
+
+ rust/helpers/auxiliary.c        | 10 ------
+ rust/helpers/device.c           | 10 ++++++
+ rust/helpers/pci.c              | 10 ------
+ rust/helpers/platform.c         | 10 ------
+ rust/kernel/auxiliary.rs        | 35 +++++++++-----------
+ rust/kernel/device.rs           | 57 ++++++++++++++++++++++++++++++++-
+ rust/kernel/pci.rs              | 47 +++++++++++++++++----------
+ rust/kernel/platform.rs         | 52 +++++++++++++++++++-----------
+ samples/rust/rust_driver_pci.rs | 11 ++++++-
+ 9 files changed, 154 insertions(+), 88 deletions(-)
+
+
+base-commit: b29929b819f35503024c6a7e6ad442f6e36c68a0
+-- 
+2.49.0
+
 
