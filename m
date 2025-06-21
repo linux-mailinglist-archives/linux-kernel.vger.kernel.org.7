@@ -1,86 +1,96 @@
-Return-Path: <linux-kernel+bounces-696494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC3AAE280C
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 10:36:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6126AE281F
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 10:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5F7A189F39A
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 08:36:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DEB73A9162
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 08:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E711E1DE5;
-	Sat, 21 Jun 2025 08:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA761922C4;
+	Sat, 21 Jun 2025 08:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="j/2raRqf"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=naver.com header.i=@naver.com header.b="JZdzsuWd"
+Received: from cvsmtppost37.nm.naver.com (cvsmtppost37.nm.naver.com [114.111.35.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66F31DED49;
-	Sat, 21 Jun 2025 08:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5301CD208
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Jun 2025 08:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.111.35.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750494966; cv=none; b=V089xfr61FvHsTPcMYO8tGMk8AzKoXjvvnCyBmeYgNvbdr8I9izun0audDSOoHhruoc7sgg5XjdLgGCyGaAak7P3cD79LjJ/SAhTdDAEj8i+dRf9yhVYlJfDx2xDDjKkluyUIUf5pSY8Iv1m/HV0EZv4rXoob/9a5tFhNbNe4os=
+	t=1750495915; cv=none; b=oBkY3YXhyVBGdXDF1hqaas7Ryo1H3vKRcVmNzwdx7NXMvyT3PQfbEktw+90k5YbJjIYJV6kuFqj4tImIQIp4RRq7zLQGMf47NjZ1bvle+BDO/21rOwWpGJ6F7HDvtYwM31fOoW0w6tUGcdDrjg1F8j5PySvMGIXAhzx8kqzEak4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750494966; c=relaxed/simple;
-	bh=S+btYjTpaDR+H9zyUrrcPktiVcYTaJ+qZKepdMYabL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f7H6DegY5q850d9PpdDPdF0r6j+gfEeQJL4OqUapAxy3aj7cbynXoOCQ3KOhxKgfBtP+xsqZTYjr3YggR7jlhTfFgNYrThGQgCAmsYqcpd5eYV5dZ4Q37uctnbl3s4YVh1IkV3TgbgjLgh3+R0Kpl2rKGk5nOftYnRFqTq0ludg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=j/2raRqf; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1750494962;
-	bh=S+btYjTpaDR+H9zyUrrcPktiVcYTaJ+qZKepdMYabL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j/2raRqfQZYJBEm2re78QTL0BTQaV/Z43lecW5wB4bc2VXbrUcoX6PTNxn1tbBsNa
-	 sjXbNhlmb54GvzDqXHbzOknSaoHlzpm+327kgvQQ0/OuOlwLbH0wR1JnYo3AtwvhwD
-	 NincIln8AtI9tdAzynwiAtEuFtnEYvHmIGs9NOe4=
-Date: Sat, 21 Jun 2025 10:36:01 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>
-Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] tools/nolibc: fix spelling of FD_SETBITMASK in FD_*
- macros
-Message-ID: <87bac9f6-1646-4a5f-84f7-1dd127717dbc@t-8ch.de>
-References: <20250620083325.24390-1-w@1wt.eu>
- <e5561bc6-8220-4088-8bc0-0aba62c2cec3@t-8ch.de>
- <20250621082133.GA26919@1wt.eu>
+	s=arc-20240116; t=1750495915; c=relaxed/simple;
+	bh=rKtFqi4VVgxh1mefZj2DobHy7+yO6s5RafJYIJAk6MQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kgrsv7Liw40N0sUsV+5fFjKJxgo184WE3t+D31oXFtG9efhU68pf/oo5D9ghv54FoN+bnUvB59OQpADZen2A8eycNJmElLVLL93nI95oV7b5j2OJTZPxb8FwXBfcMey6IN8K3Ef6kHCafTxjygMi7B8MFZYpnFZTfoLXYOVuR60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=naver.com; spf=pass smtp.mailfrom=naver.com; dkim=pass (2048-bit key) header.d=naver.com header.i=@naver.com header.b=JZdzsuWd; arc=none smtp.client-ip=114.111.35.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=naver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=naver.com
+Received: from cvsendbo006.nm ([10.112.20.43])
+  by cvsmtppost37.nm.naver.com with ESMTP id 8Rv4yiJgTgyIXlaekh9u0Q
+  for <linux-kernel@vger.kernel.org>;
+  Sat, 21 Jun 2025 08:41:44 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=naver.com; s=s20171208;
+	t=1750495304; bh=rKtFqi4VVgxh1mefZj2DobHy7+yO6s5RafJYIJAk6MQ=;
+	h=From:To:Subject:Date:Message-ID:From:Subject:Feedback-ID:
+	 X-Works-Security;
+	b=JZdzsuWd6+2ijbjDgh0FkHf9nE9O49YX21Bz5TeTkxwmmS9em2vKYAIRV8Z8H5eM9
+	 o+pKujuhjYy2qHWsa58HCEGrOPsjmJGJ6KPEgqDHrKAa8YhMDVA5urVMakQGkbyUeI
+	 R2PUv+h5w5KROFUqhndMfN1rgXgiHosJQ7NlmUHL/A+nhBEgDJWoGgSpp3hLxb0NMg
+	 QkZnPjCXVbJcE/BYX8MuNpzlx7+S1NjUhtZ/mUUfnfvgyoFPGEmLFoDJTj3IIuC/ko
+	 VPOKE85KyTNSCggZzLKVateqAx2LTxB+Osq5/DZhqpfIB+koDdSTMGg9GfFwWBFSl1
+	 afs2C+PheMyCA==
+X-Session-ID: 50YONv5+QGuiAFKKIujcIw
+X-Works-Send-Opt: k/YdjAJYjHmlKxu/FoJYKxgXKBwkx0eFjAJYKg==
+X-Works-Smtp-Source: XZnrFAg9FqJZ+HmqKAvZ+6E=
+Received: from asya.. ([121.138.252.96])
+  by cvnsmtp003.nm.naver.com with ESMTP id 50YONv5+QGuiAFKKIujcIw
+  for <multiple recipients>
+  (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+  Sat, 21 Jun 2025 08:41:43 -0000
+From: Cherniaev Andrei <dungeonlords789@naver.com>
+To: linux-kbuild@vger.kernel.org
+Cc: masahiroy@kernel.org,
+	yann.morin.1998@free.fr,
+	linux-kernel@vger.kernel.org,
+	Cherniaev Andrei <dungeonlords789@naver.com>
+Subject: [PATCH 1/1] kconfig: fix 'space' to (de)select options
+Date: Sat, 21 Jun 2025 17:41:24 +0900
+Message-ID: <20250621084124.7134-1-dungeonlords789@naver.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250621082133.GA26919@1wt.eu>
 
-On 2025-06-21 10:21:34+0200, Willy Tarreau wrote:
-> On Sat, Jun 21, 2025 at 10:19:52AM +0200, Thomas Weißschuh wrote:
-> > On 2025-06-20 10:33:25+0200, Willy Tarreau wrote:
-> > > While nolibc-test does test syscalls, it doesn't test as much the rest
-> > > of the macros, and a wrong spelling of FD_SETBITMASK in commit
-> > > feaf75658783a broke programs using either FD_SET() or FD_CLR() without
-> > > being noticed. Let's fix these macros.
-> > > 
-> > > Fixes: feaf75658783a ("nolibc: fix fd_set type")
-> > > Cc: stable@vger.kernel.org # v6.2+
-> > > Signed-off-by: Willy Tarreau <w@1wt.eu>
-> > 
-> > Acked-by: Thomas Weißschuh <linux@weissschuh.net>
-> > 
-> > Let me know if I should apply it.
-> 
-> As you prefer, given that you already have other ones in flight, maybe
-> you want to order them as desired. Otherwise I'll push it.
+Fix that by treating 'space' as we treat y/m/n, ie. as an action key, not as shortcut to jump to prompt. This is copy of commit https://gitlab.com/buildroot.org/buildroot/-/raw/master/support/kconfig/patches/16-fix-space-to-de-select-options.patch
 
-Then feel free to push it.
-I have nothing going on right now.
+Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Signed-off-by: Cherniaev Andrei <dungeonlords789@naver.com>
+---
+ scripts/kconfig/lxdialog/menubox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/scripts/kconfig/lxdialog/menubox.c b/scripts/kconfig/lxdialog/menubox.c
+index 6e6244df0c56..d4c19b7beebb 100644
+--- a/scripts/kconfig/lxdialog/menubox.c
++++ b/scripts/kconfig/lxdialog/menubox.c
+@@ -264,7 +264,7 @@ int dialog_menu(const char *title, const char *prompt,
+ 		if (key < 256 && isalpha(key))
+ 			key = tolower(key);
+ 
+-		if (strchr("ynmh", key))
++		if (strchr("ynmh ", key))
+ 			i = max_choice;
+ 		else {
+ 			for (i = choice + 1; i < max_choice; i++) {
+-- 
+2.48.1
 
-Thomas
 
