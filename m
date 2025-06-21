@@ -1,90 +1,153 @@
-Return-Path: <linux-kernel+bounces-696403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76FD4AE26EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 03:50:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D2BDAE26EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 03:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E53DE5A5F1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 01:49:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B704B5A0A5F
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 01:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B951D7080E;
-	Sat, 21 Jun 2025 01:50:04 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E43112CDA5;
+	Sat, 21 Jun 2025 01:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HzGPspwB"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68FB17BD3
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Jun 2025 01:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B459C17BD3
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Jun 2025 01:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750470604; cv=none; b=HwI88ZmyKJnvjU1v8HvFysXIDuGMLeOrcR8/uSZ3f8bs/lRdMdaHRwbKh/rrajzT0uMbsz4XTWcXUZO+hVMXtLzwgeBvugVVxC5+bXB18Fg6AU11Zz843CddfOU+zVtSKLrNHCqQWzPmZ5xU7NhjuyJ41b12N4mAo7cht5eAICI=
+	t=1750470965; cv=none; b=hup26M9fhjpD7jJeCOmTLZA7WrBDCaB7nIcec4maMXkwb0YFvLO+ySSz+zn2s1mTDXw1uGVzJ9k5/H+KF8GIKe234b+XtCvImQA18sizgjygwHCJNAxSWoWw+YelygZgiHb+CBkn4yKB9Wx8/DbRNdV/Wz1wVwrGaUrTZmEQYlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750470604; c=relaxed/simple;
-	bh=/sxYexQ+58dkjFennMReNmcOGzMTMGYGFx6L+JikHA8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hZBgw6PlA6GKQz6oso/qj/LgJVsDh4+x0mAng5dUmiSaw1iIcZUulLcgpmcyFaSUcnD26keqHMQm1DPD1jWwN7jxzJSfso8oP9aAHAeFF/G2bGGNi+D9Nf866Otu/gm37jJ00WHLXDThdNR41angBs9uvg9FoLCYPan7Zx8/d+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ddcf82bb53so20805385ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 18:50:02 -0700 (PDT)
+	s=arc-20240116; t=1750470965; c=relaxed/simple;
+	bh=NMF6G32vdf4i3TxCm2iSX0efygVyuLomfbliQ5TJ/04=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ts+ilkuUR1TA4ZXM0kqWoX8KzrRxJxEAntP6a+bNd2oDD45fvBzh8s7ATIEzDIHDkjww6t59qSZ8U8c65q14/0WHDJoyysswf/Q+ib+MqPJXEnHNdnDzpFQ6hs9KsfH9LcjaEU2EY94SKM5aI4aZQF8elZVQ0nm2G8T+8XymsFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HzGPspwB; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60794c43101so3572441a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Jun 2025 18:56:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750470962; x=1751075762; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kKDXqmPoJsPGYezIapXfVxiBd+2xBchIauyV0qRr0zs=;
+        b=HzGPspwBIZa5tRn7mVoByB59r7gpwKmcmTAyWtIBdG8e75mitJYmNVV+HsZ6ThjWkF
+         Au9rrnknQEH6RSHstSViuJx+ajN5ZM29t+XdSxfJ8ZApukMrHm6WIwusJGuhHETGFIRA
+         7Gao4YO7xbY6vTA7X25+AKtvw+kiL/wjuCJzebPBAUGOw/cXF/QWirKl6Hx4/m3z6pq5
+         gRxYm7jUfiYlByCaPpsLpMS22761yUBx2PaUWWMSNCj7GCF7iYgXj0491UiFC0K7MSFY
+         QhbiL/3gHf1QzY1P49tVQxVRWrgtm8+bgysr/dN+flavy+2fSdrFt2h3ONx9goauYcK3
+         caSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750470602; x=1751075402;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1750470962; x=1751075762;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vRMMmdlDx1Nx9RYKLwiUmguyu2r/kk1t9Vx+YhjJB+M=;
-        b=kLfGIglG/eFrANPOPCWXwc2kgkWw9urTu+X4MgGloFZB+blOkMcx9vIdHneQ6+u3Pu
-         yfGKEVajyJ+SCt+ESroC20AD8xaUTl5a2BolnT7VbXpuToemt3AOCY7uKNuGHqKm3wN8
-         t31mMbz8nW8lrzoLBootgsPeZaJuJTwoB5sQiTyaAhdEmsX7qdnpo4HzVOTE9Yrpmqrd
-         T3Gq0vsIEQ8f6CLMstziaf3MfPbmy92eYTD8RZN4eAk/Cn8HiPJBF9hL+CpfclKdrxPa
-         AJijQ+uR3H3rDaU9A5LVVZDHnbUrs55qu12+0Ppdynn/TXPTLHussLp50cwoIKJOiBo1
-         WwsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+miwyIVuochaTwtlc7hDQ7Iqb6p4cZ9fJfO9KlBkGpJdK0RUMrNgf5X3osfBW5wRRcdsJYxYZHq90KXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/+R33CdBnPD7+34hkAa97sDvhNkdDtzcNWprmy1JKe7h8aIC+
-	n7vYHzeJGET/r2PCs5HyM2z2rroO5Z6Wj1ySxZobAUnHTYG12/35YvoDbGnDdRespEVYFp9yQs7
-	n+PqnCvpMEZEk2gF3VLJbgHyJM7Tptyab/Jkx7odndAi619c1HEOrVPD7Ljc=
-X-Google-Smtp-Source: AGHT+IExPTz/TzN6V5eviaV1lQBhH7Own0NZuZKCXjy5BaTddYMoA6CTovIN3EB34VgXECbEagv9d7pAY+IIwZ1r77ZGiUVH9TkR
+        bh=kKDXqmPoJsPGYezIapXfVxiBd+2xBchIauyV0qRr0zs=;
+        b=EY1jAjujjRSUNftFttYmZJ4suVc9LJoR/DS2mKxf9sGQtZedSffMzHQAGzmjkx+Xg7
+         LWGOrA8kF0cZQSeXrlPOMkWBM4sOe2JsSNReXfuvZNW1xaiLwlQKHS0bkNP2bTtwot/h
+         lON+H6832Msk+xsEwrURAiuneiuShMgySOFw1L7Yr9TrEd0sVYLkBunlr3ZyaW5P8Eqm
+         gI5bFBhEXp8ySK+YJF9pfS3yTgwNwnGiMSZ48bJp6ynvd0G7zxFddbWgeiZzbrwzrAx6
+         bdWbq59eJjTVVscMipI8pTyxqzeTDRnJXKR9xEvdP3r5XVmjgET/8hnfDPfLu3pPxkJy
+         nk/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUbJ58+Bu5ZzIo05/ozG3xkC7HM0pIMjA//wpGr4d01pXmWZQrVtE7Etnmwd3V/ISFrng14IJvWtMPlNuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvDFWShDr313pmSJSD5LAFF6uq/CZLMXRkcj1Lr3cdokdEWbee
+	ZE4AONcRGToVCBmzDkgz0mKfiqyd33jXXhFiJ1bxKpB/c8ypzAlseWmLNrIId5VH
+X-Gm-Gg: ASbGncuS+0/8oesZtfq0jbQSLLKO9ZRDDNJhDzilA7rVkM/MjmoIucyrCakpY6vZa2Z
+	R3g1jg0FiDfQ0AE4Zy35R/ZF0rXVBSgQKUKI5RwqqoUbusyK9MTpBNiWFVHXe3FSNianhBl1ONt
+	BmLIvwZRexKUG2LoM+MdbA83Wr0AlvUMyK02fHcAltB/fz1Ykx3wsOqU+FHmDxadNHwZ8aMtvO7
+	IFJUju4Ik44R08059/05l8yPUuVzOK2eM7ReSzIVzyK3zf1s44Vx0nZkvUzl5a2Zcq22NsVfAFr
+	SaftDdno0TDijLVbWzIV2xP7jBaicvnziT5gZ4sIJwB5VTmz/vLA
+X-Google-Smtp-Source: AGHT+IGQGwSpHA5R2GkgVuxhxeakJNAhknYlOERPI26+5SNqpQm9QsPJZiVyJDRW2GjfxvolypcWcA==
+X-Received: by 2002:a05:6402:270d:b0:606:9211:e293 with SMTP id 4fb4d7f45d1cf-60a1cd2fc42mr4103401a12.9.1750470961830;
+        Fri, 20 Jun 2025 18:56:01 -0700 (PDT)
+Received: from localhost ([95.85.21.12])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-60a18c94acesm2252267a12.44.2025.06.20.18.56.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Jun 2025 18:56:01 -0700 (PDT)
+Date: Sat, 21 Jun 2025 04:55:52 +0300
+From: Ahmed Salem <x0rw3ll@gmail.com>
+To: airlied@redhat.com
+Cc: lukas@wunner.de, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+Subject: [RFC PATCH] amd64-agp: do not bind to pci driver if probing fails
+Message-ID: <c5kqcudzrcafm24nr5ixgalhxdkxl3uoueerjlp6tbksj3hzy7@klytjugpkvdm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1749:b0:3dc:90fc:282d with SMTP id
- e9e14a558f8ab-3de38cb1f1amr54420815ab.16.1750470601859; Fri, 20 Jun 2025
- 18:50:01 -0700 (PDT)
-Date: Fri, 20 Jun 2025 18:50:01 -0700
-In-Reply-To: <675cb812.050a0220.37aaf.00b6.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68560fc9.a00a0220.137b3.005c.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] INFO: task hung in bch2_page_fault
-From: syzbot <syzbot+32415e0466b02533303c@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-syzbot has bisected this issue to:
+Commit 3be5fa236649 ("Revert "iommu/amd: Prevent binding other PCI
+drivers to IOMMU PCI devices"") had an unintended side effect in that
+when looking for any AGP bridge, driver_attach() will try to bind to
+IOMMU devices without preemptively checking for PCI_CAP_ID_AGP
+capability. This happens during agp_amd64_init().
 
-commit 8b1f46bff38f075b8d4071e7ac1edecb441fd53c
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sun Dec 29 00:57:04 2024 +0000
+As a result, driver_attach() calls driver_probe_device(), which then
+calls really_probe(), raising this critical condition:
 
-    bcachefs: Dropped superblock write is no longer a fatal error
+ pci 0000:00:00.2: Resources present before probing
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=140d530c580000
-start commit:   9afe652958c3 Merge tag 'x86_urgent_for_6.16-rc3' of git://..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=160d530c580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=120d530c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6a237c32900fc479
-dashboard link: https://syzkaller.appspot.com/bug?extid=32415e0466b02533303c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130d790c580000
+With the device being:
 
-Reported-by: syzbot+32415e0466b02533303c@syzkaller.appspotmail.com
-Fixes: 8b1f46bff38f ("bcachefs: Dropped superblock write is no longer a fatal error")
+ 00:00.2 IOMMU: Advanced Micro Devices, Inc. [AMD] Raven/Raven2 IOMMU
+	Subsystem: Advanced Micro Devices, Inc. [AMD] Raven/Raven2 IOMMU
+	Flags: bus master, fast devsel, latency 0, IRQ 25
+	Capabilities: [40] Secure device <?>
+	Capabilities: [64] MSI: Enable+ Count=1/4 Maskable- 64bit+
+	Capabilities: [74] HyperTransport: MSI Mapping Enable+ Fixed+
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+As pci_register_driver() calls the device's probing function, the latter
+(agp_amd64_probe) tries to find the device's PCI_CAP_ID_AGP capability,
+and returns -ENODEV if said capability is not found.
+
+Do not attempt driver_attach() if agp_amd64_pci_driver.probe is non-zero
+to avoid probing already present resources.
+
+Link: https://lore.kernel.org/all/aFJOLZ88KIH5WBy2@wunner.de
+
+Signed-off-by: Ahmed Salem <x0rw3ll@gmail.com>
+---
+I'm not quite sure whether I should have maintained the linked
+conversation's Ccs, so please let me know if I should Cc anyone else.
+
+Lukas, kindly let me know whether you want me to add a Suggested-by
+trailer as well.
+
+
+diff --git a/drivers/char/agp/amd64-agp.c b/drivers/char/agp/amd64-agp.c
+index bf490967241a..e6a0d09e115a 100644
+--- a/drivers/char/agp/amd64-agp.c
++++ b/drivers/char/agp/amd64-agp.c
+@@ -768,10 +768,15 @@ int __init agp_amd64_init(void)
+ 
+ 		/* Look for any AGP bridge */
+ 		agp_amd64_pci_driver.id_table = agp_amd64_pci_promisc_table;
+-		err = driver_attach(&agp_amd64_pci_driver.driver);
+-		if (err == 0 && agp_bridges_found == 0) {
++		if ((int *)agp_amd64_pci_driver.probe != 0) {
+ 			pci_unregister_driver(&agp_amd64_pci_driver);
+ 			err = -ENODEV;
++		} else {
++			err = driver_attach(&agp_amd64_pci_driver.driver);
++			if (err == 0 && agp_bridges_found == 0) {
++				pci_unregister_driver(&agp_amd64_pci_driver);
++				err = -ENODEV;
++			}
+ 		}
+ 	}
+ 	return err;
+
+base-commit: 11313e2f78128c948e9b4eb58b3dacfc30964700
+-- 
+2.47.2
+
 
