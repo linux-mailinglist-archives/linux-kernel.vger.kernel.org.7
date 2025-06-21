@@ -1,130 +1,163 @@
-Return-Path: <linux-kernel+bounces-696564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26A6AE28D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 13:33:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 366E1AE28D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 13:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B09FE7A9CC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 11:31:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A37D7171AFE
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 11:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E39204C00;
-	Sat, 21 Jun 2025 11:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0D42116FE;
+	Sat, 21 Jun 2025 11:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="URKiGKqK"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ae78bcYu"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E66743AA8;
-	Sat, 21 Jun 2025 11:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B0C1F3FF8;
+	Sat, 21 Jun 2025 11:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750505590; cv=none; b=qbWm0GOOTuJkyJGih/7xRMP3oXWIM81qB0uDrs635D7jh4G3vXFoAhjQSPnMmBSIXEhJv9Utont0ba3jKOTt32D3OT5GsFMMzJgYB1QPtNlFhFbysauUgJLy3EoP75H/0dOkjYtm0fl2+84pBqWOGziPffwwcMbNF6yXlQKyEaE=
+	t=1750505660; cv=none; b=mvpOxjbaf5kq2rRXsK1mwny+KO1n56+6uf3hOt3hB0SOiMQ0qcx1TVhXp0MWNM0t/7lYA2ooBDYL0/CIFitirXCSQKBMK57sTNbhkALLIpXpH7mdPunat5AEDihYHX+OBiSoopelErWPD9KOWoPVbyiE6agocIZiDZDf/dVdpzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750505590; c=relaxed/simple;
-	bh=B0YQJuQAJ5JfVPCP8NJktO7x2CM0QDZH86+KZ7/x97c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ntyd5NZh1p/u/TRJvZfoKv25IiD8asRxwrW9xBN3CXrENn8zcq+59nb0SJ6QDilQplubCe5m5WxJfdL51HwjTzQ/lIiBzwMU5RWFXFw0vdSB7mxyJ7HNjaZ1CBHrhdHoJjG9K0EuH8w5xS9ZypOmUekCIKlDB+1gbqwM6EE2Lbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=URKiGKqK; arc=none smtp.client-ip=209.85.215.177
+	s=arc-20240116; t=1750505660; c=relaxed/simple;
+	bh=SxfvbnWricSVk2rr9LYbXJtXiy8oTDx7l02AiN+NxP4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D68maEipUNz+MASjnv24tA31kvXcs26Wy2ZjlO/pVGeXDSsETPguOtSAsySYRjMRohp5Ii15v88lxQBYGEt+9DQwtUjUhb/BWSOoFQJ0PrxwVdUHAfIBOg6fyvwwDiGh8EMmcuXbKRjoE6pgiOzGskR1bgt1KVGTn+Fa9XLL1Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ae78bcYu; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b31c84b8052so3042671a12.1;
-        Sat, 21 Jun 2025 04:33:09 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45348bff79fso30012585e9.2;
+        Sat, 21 Jun 2025 04:34:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750505589; x=1751110389; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=m6xWMsAWZYmxQCQIsCXgEHzm6wGct00ke2bZk96Vt4g=;
-        b=URKiGKqK7Jd8r5MTYfS/xEeqh+LMt+kBOmwZCx82ypdZmgwP+QQz67xRaIxEip4vDo
-         E8P/U64d1U1IJqsFVcFB58SHpGUfPTCdcMwIggtpm+BqMtaZinE6Kbx7+9ugV4G3dEq9
-         xokeUG4gVG7ArNVE/ztwmlkN+5sJpK6VPNKPT6YcZlufTkhj+dffKOeYxffoZauLR1pm
-         I+EnUiDHZ+ybX4Y/AMABkdAT2drVp0ttm8fZGS2At/yXYZfCGCr4ljbx7PMiRGEQwtqs
-         HJAdZSHxXCal5nAR7tCGrMoiAjG1z8F0hv5XzA0vZ3gSXXzq78CQOIkanjbxf48XzeTa
-         Ar9w==
+        d=gmail.com; s=20230601; t=1750505657; x=1751110457; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hzc1DejGfVwQjMkwxmm6tr2D5X64wbt/M5/qE0zLhZA=;
+        b=ae78bcYum3nIzwsO4ZYnDpqs136J4uMNEsZoI4DEIq+kFgCaghy+TeYnCAyCZCbCoL
+         1Icu4rdW8IlAXZN5EgFloak2qxcxanV7+QEOzS3hveEXic1CPxye/O6nOjQ4k5LdQW3n
+         SVKm08XeVdcydDdlWHy5Op1vqpRpH5SoMwBPuu1OqAiFZMwdjfQz7Smj1+CtSV+KkO43
+         iDjknqETkoT4XJdy/+9OGv+GucvRmaxVy5wS2RXP2x0YCDWlR0qMbB+sY0Q9cBiZvrPS
+         t/tydk8Pz/yn10Fp38QcjKKFdXbZboYVfR3WKslTzX4vRHSWUEoBYO3vvjRMensnn60u
+         iisg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750505589; x=1751110389;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m6xWMsAWZYmxQCQIsCXgEHzm6wGct00ke2bZk96Vt4g=;
-        b=b27HUyioRhY/mfiRwOTpYscEnLmM595JSsR3iXbKirxV+aHvCr7B7vvQ9T6NoRY6O1
-         hIszyuq4ZMi3UU9P89o5YUbU0YarVMqDiluy1AkqlnufxcTHM+qzTWCEFQZCAcIHNidS
-         sPRNDYectvMVCsugE+2EaH5rZv9dkB2HTB4L8XEP6ykAoVjgH5I8b5c/iN54p3QXPVav
-         +zxxwGm++zv0XSh9yd7lVwBImsA/SnjqXhD87LGBznEYg1VsgPIpKH4GHU4SN0CTaf7t
-         dDgYDWRqNCRmEk8yIQPJjErk5SUFnh5q1T5gDKfgWFHcl+cfFpDqqxDMPyLke5IyYbBk
-         qbUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVHMHOU2nNSEnc50ytBnCfwiOEl0KeFR52suWFRSNvP4PYb8+PsCh9m+5kyNTbI14QxUnfW17s1gI4+3k=@vger.kernel.org, AJvYcCWTl283ORm32DqMgb3XRgpt3xOfWvnC+Lr/laLOoLIYauDBGpKM2SqDp2MkOahZFMhDUsPZ2+e29GLm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6gIF6No2FJ8wpumc8wnOJj4VyKh2SeNdHAgvIimqXdWJUnVPr
-	y5WaayUxtloRVI5ef412Sa96xX3j1vqkFdEW2WONaLWaLiPpVVkGzJQk
-X-Gm-Gg: ASbGnctIgsFKWSpp7rlepCt+TBVRsgEK3DNCtRnIL/lJFhEUXDqv34kwh2KmgESDhp4
-	am0d/rtHzHwkXLzdB9gmPyoC/ZFFxCsuGXOcyimWno9RkWwl4MN+7krLvap5VSBVD345ztdVulK
-	hL0aqznEzcvKVGNXVJzIQduFMgysGaMjJZarZmoM4UUy51ztwUZF88Ac4K96vCqlWlMVR+PDxOm
-	POTc717oWeBVceFn6Qc+SLHmhCD0e34qZxGSgwi7gfysdaOmcutIyUiNoMGGQUtCgL0RhHDftgh
-	x1fAdftJJQ1LYBqDFSEaaj2dmqwQAtqql6AhV85iVkYhri/4Eg==
-X-Google-Smtp-Source: AGHT+IH6gtQnon9pj6eccRXS/FbkW5+UypmNMlcvNoE6c4fJcgUCpR3GPt9papU67FN/24ZcWA6t+g==
-X-Received: by 2002:a17:90b:1f89:b0:313:176b:3d4b with SMTP id 98e67ed59e1d1-3159d7c8fb2mr7713377a91.22.1750505588733;
-        Sat, 21 Jun 2025 04:33:08 -0700 (PDT)
-Received: from geday ([2804:7f2:800b:d58e::dead:c001])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3158a226f7asm6301825a91.10.2025.06.21.04.33.04
+        d=1e100.net; s=20230601; t=1750505657; x=1751110457;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hzc1DejGfVwQjMkwxmm6tr2D5X64wbt/M5/qE0zLhZA=;
+        b=P0cFbe9rRUpwvqRohYspUeawtG8yGB+bwBcEFGTbRJcsSX6NGFEmSnpxOMv2ofeV9N
+         GheAN/7+cFXmiECg7XvEQcU0oFeCXXk5bOMEHo1yl97iRJetj7PEsAcsuxFowSVCPDDI
+         zXSG4Lzqcr+BiZ1Ibzc9umy2eKLtgUF8hDQ3uJVsg8LOxM/dJ8plW+XcSEuMJq8Oe3T7
+         rVrnpqfm7WKroVnMWZOqXehlpTIAz7rwiQKZu6mzq34U7LN76Sk3LfzSrotnsJeSJI77
+         9dLZm8SRABiW64kBs36xwBe/Cycg72LGzWbdeOICp+PPkHrj5wZvC4Z5o271FwDNemxu
+         4kwg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2vD+ZCr5znown9HFGY39Q/w7g1quRGyf65YthhmGhHIXAdu6n5IyytUx9qLxZdGyvUauqpt6TbuXy+os=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyG7TDOeyQ1RiZ8nIUlwtal+WfJA1xbXzVhVckmulzm6x5JYBs
+	XYLnFp9VxbR5l77PZwhiWQVM2PspWG6KSjzHMKsHAPCu/1dz/zlZFkbX
+X-Gm-Gg: ASbGncs6H78oYKzCTQaKAuHC6IsIhJOi9fTEuy/PZIJz9jhqzSHHWiGEOzeUeYcoA+F
+	t8kbWVWNCzmEbESHJSrXdkDqqsm4S+qdexoYvRkq/rJp97vzphA9sLsQ9SwAh0wnbR+HVj2QfZB
+	7h14KgyGkfJWRZolFk910OodE0yIRVJTiPB7UICzeE4Us8EG7fOjvjgYMa8SkSHhEkyan5SF8ka
+	pfobABZuJvWLFZJ7sjCMkDwGhxgYav6IMjPr+L6pKYsnPuseIzkbZ+y+RSDBHEdnv7416RkRPbY
+	TSqJ/MhBSam4cZlaBMLTaVmLKhdVMvJR5Kc4E6vtIx3lUV9t2NcX3LNCuBxaDJZafwaTIs0Dwu8
+	nTw==
+X-Google-Smtp-Source: AGHT+IGx+D4eCsVnjUnX6B9AebadC3/x2ggnJ0+naCHpyvZdZHYNfxv+XTEfeB2PCW7TVHieUw5hTA==
+X-Received: by 2002:a05:600c:34c4:b0:450:30e4:bdf6 with SMTP id 5b1f17b1804b1-453659dccb8mr52620085e9.19.1750505656402;
+        Sat, 21 Jun 2025 04:34:16 -0700 (PDT)
+Received: from localhost.localdomain ([41.79.198.24])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d1187df7sm4490910f8f.66.2025.06.21.04.34.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Jun 2025 04:33:08 -0700 (PDT)
-Date: Sat, 21 Jun 2025 08:33:02 -0300
-From: Geraldo Nascimento <geraldogabriel@gmail.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rick wertenbroek <rick.wertenbroek@gmail.com>,
-	linux-phy@lists.infradead.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v6 0/4] PCI: rockchip: Improve driver quality
-Message-ID: <aFaYbqRRV2l7nPcr@geday>
-References: <cover.1750470187.git.geraldogabriel@gmail.com>
- <4760493.mogB4TqSGs@phil>
+        Sat, 21 Jun 2025 04:34:16 -0700 (PDT)
+From: Khalid Ali <khaliidcaliy@gmail.com>
+X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
+To: ardb@kernel.org,
+	lukas@wunner.de,
+	bp@alien8.de
+Cc: linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Khalid Ali <khaliidcaliy@gmail.com>
+Subject: [PATCH] efi/libstub: Print status codes on failure
+Date: Sat, 21 Jun 2025 11:33:32 +0000
+Message-ID: <20250621113334.7789-1-khaliidcaliy@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4760493.mogB4TqSGs@phil>
 
-On Sat, Jun 21, 2025 at 09:39:08AM +0200, Heiko Stuebner wrote:
-> Hi Geraldo,
-> 
-> Am Samstag, 21. Juni 2025, 03:47:51 Mitteleuropäische Sommerzeit schrieb Geraldo Nascimento:
-> > During a 30-day debugging-run fighting quirky PCIe devices on RK3399
-> > some quality improvements began to take form and this is my attempt
-> > at upstreaming it. It will ensure maximum chance of retraining to Gen2
-> > 5.0GT/s, on all four lanes and fix async strobe TEST_WRITE disablement.
-> 
-> just a driver by comment, you might want to drop the RFC element from
-> the patch subjects.
-> 
-> It does look like things take form nicely and how people read those
-> RFC marks varies wildly. Some may even read it as "this is unfinished"
-> or something and spent review time on other things.
-> 
-> So if you're mostly happy with your changes, just drop the RFC part :-)
->
+From: Khalid Ali <khaliidcaliy@gmail.com>
 
-Hi Heiko,
+Print status codes on errors. This makes easier to understand the reason
+of failure.
 
-thanks for heads-up, we really don't want people to ignore patches so
-I'll drop RFC tag for next iteration. The cover letter needs some love
-too.
+Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
+---
+ drivers/firmware/efi/libstub/x86-stub.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Thanks,
-Geraldo Nascimento
+diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
+index cafc90d4caaf..09ed1c122106 100644
+--- a/drivers/firmware/efi/libstub/x86-stub.c
++++ b/drivers/firmware/efi/libstub/x86-stub.c
+@@ -846,14 +846,14 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
+ 
+ 	status = efi_setup_5level_paging();
+ 	if (status != EFI_SUCCESS) {
+-		efi_err("efi_setup_5level_paging() failed!\n");
++		efi_err("efi_setup_5level_paging() failed, status %lu\n", status);
+ 		goto fail;
+ 	}
+ 
+ #ifdef CONFIG_CMDLINE_BOOL
+ 	status = parse_options(CONFIG_CMDLINE);
+ 	if (status != EFI_SUCCESS) {
+-		efi_err("Failed to parse options\n");
++		efi_err("Failed to parse options, status %lu\n", status);
+ 		goto fail;
+ 	}
+ #endif
+@@ -862,7 +862,7 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
+ 					       ((u64)boot_params->ext_cmd_line_ptr << 32));
+ 		status = parse_options((char *)cmdline_paddr);
+ 		if (status != EFI_SUCCESS) {
+-			efi_err("Failed to parse options\n");
++			efi_err("Failed to parse options status %lu\n", status);
+ 			goto fail;
+ 		}
+ 	}
+@@ -872,7 +872,7 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
+ 
+ 	status = efi_decompress_kernel(&kernel_entry, boot_params);
+ 	if (status != EFI_SUCCESS) {
+-		efi_err("Failed to decompress kernel\n");
++		efi_err("Failed to decompress kernel, status %lu\n", status);
+ 		goto fail;
+ 	}
+ 
+@@ -921,7 +921,7 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
+ 
+ 	status = exit_boot(boot_params, handle);
+ 	if (status != EFI_SUCCESS) {
+-		efi_err("exit_boot() failed!\n");
++		efi_err("exit_boot() failed, status %lu\n", status);
+ 		goto fail;
+ 	}
+ 
+@@ -935,7 +935,7 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
+ 
+ 	enter_kernel(kernel_entry, boot_params);
+ fail:
+-	efi_err("efi_stub_entry() failed!\n");
++	efi_err("efi_stub_entry() failed, status %lu\n", status);
+ 
+ 	efi_exit(handle, status);
+ }
+-- 
+2.49.0
+
 
