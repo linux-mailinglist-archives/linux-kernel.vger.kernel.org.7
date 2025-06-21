@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-696817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD5DAE2C07
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 21:57:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40B51AE2C02
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 21:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E0EA1783E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 19:57:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA9561786CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 19:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348DC2741C2;
-	Sat, 21 Jun 2025 19:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AAC273D95;
+	Sat, 21 Jun 2025 19:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kLqUlr1n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBGPoQ6I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AFC270ECF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EF2270EBF;
 	Sat, 21 Jun 2025 19:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750535761; cv=none; b=aVXagkPlMz4ih6My4lMahW6gmMcKb/eezK47U5eIHSLGaQ5jV+ZKkZBhpMbNE3NqIOYD0nqwNtRWntdtTUguUy40QF+IGVq6RgIBVo1DZ27Qo2nv27gINmwTdOmpj0/wBaaNEdsqYBKjqEmMlemlDMqESWBW4rxtmkBHgh+mzPk=
+	t=1750535761; cv=none; b=V5RVYktysQ0hv+bNChqpMVl9BMJg9EdTFWatbQSY474gfbWJ2f9H9lP5fkVO2NepDrqLXCeylTNyR5s8PMdpEO4gbPyrtAwg+wrMn6Ppad7Y2QmC+iHcQEneH3ve/jXpw94zLFE/JIxCkINwrdkmp5lhsyEFkCkpuR6KjBbr+UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1750535761; c=relaxed/simple;
-	bh=y8LZ0fXrmuwyAMvRo91pI8wsN2CZiBu2VRksVUBmRVg=;
+	bh=3yI0hd++pTAVk6UlNj1uaAE4va43OAIfWkR3JnQPolk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s/RwP9ShywsyRDX7TdPTy7u7+QqSKrw/FUb6nwGNTXMwqOv6lIUNk1FvhouZS+NiUj7V+nXh0XoZD213vRCXR+04aODZkTQSkKSMcREw7tpI0hVoud01SwPHqeYric2G3is/s6bgZYjHN15dXTeBMLViSn7p3Vwh3NqD9yq7IX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kLqUlr1n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEB92C4CEF7;
+	 MIME-Version; b=W4RGvrZHhrh0gx6XOpM91DW/8bNcSAOAvmoGHUgiHjLvd20vBRxCh/Jjec2kWGYaDJJUqFplNfo5vsf8JYpwzEgJHtkqoyO0+QTFS74Pq9ZSFz7orPHmShWQbmRk4FI680cgDpro178CCcqsdkOENSMnURjjsKLNsT+/JlKQ3fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBGPoQ6I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF44DC4AF0E;
 	Sat, 21 Jun 2025 19:56:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1750535760;
-	bh=y8LZ0fXrmuwyAMvRo91pI8wsN2CZiBu2VRksVUBmRVg=;
+	bh=3yI0hd++pTAVk6UlNj1uaAE4va43OAIfWkR3JnQPolk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kLqUlr1n+TfBEGpK4FBNaNDec7oYi3DJOT/Ci9PnXtyvKNJKtZQ6dPdM9toVihJWF
-	 h6MjWsRNQJWJSPzItbaZhhqKEVmiSFP07FcNMxsgmZUWxy7u0RVoUZWovCiwgvaSTr
-	 qQYL7Y0i6kFISQ80CI4sU3C4gFcdOl6FqLUzuMnpTd1fxOBCIki5a+r/+i8LJgKFma
-	 emCV8JI8R3lRlbO1K9vawhW6ROHSk2Snej2JjAGK/Ejk2bgiNJsROwCUgFHTXlfumk
-	 GFyySLO1nNQtG/gvU0OzvkJC9brw15trnPvIqOSXBvgOVA3N+tMD28uxp/P1ULKLCR
-	 vd4O8S7MPlXpA==
+	b=hBGPoQ6I5ihvFzE3BhClvLrR5MeGUfP3lE+/jI6+EoJgc2UJjsWi5OgY7YY5UenuJ
+	 C9q8kL2ROLsMzi2MqK2fJwyN+ZxAeHmjjEItV4CPhrZnIBMZa2/UnZkj+8okOSP5D8
+	 u8+YwfyyEC1i+NZQwY1Zff4WZopx+NzbmdEKRZIQR7oD+BokXvOgk6dIwkoC3MB/Q8
+	 GiGTE+3l4csDVvqmnpJWkYYv4HzZZPeIfHDVZvT4jhFXrcrV+tveTuCtdAGGPilyds
+	 cX8Vwxx6Ftyxl7peaDYNG6JssTJKb+WgGTxyNK1T9RnysaPW3x4x4aqv2VfDQIeoNd
+	 LKZUgvrAzr21g==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uT4Ji-00000000e4K-3bGK;
+	id 1uT4Ji-00000000e4O-3hyM;
 	Sat, 21 Jun 2025 21:55:58 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -50,10 +50,11 @@ To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Akira Yokosawa" <akiyks@gmail.com>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 12/15] scripts: test_doc_build.py: regroup and rename arguments
-Date: Sat, 21 Jun 2025 21:55:51 +0200
-Message-ID: <0a9b4666029d7ceea73a4f922043bc334bb62d9a.1750535171.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 13/15] docs: sphinx: add a file with the requirements for lowest version
+Date: Sat, 21 Jun 2025 21:55:52 +0200
+Message-ID: <3bfcb9d4ddb303e2f0dd678fc590bac52bb4c1dc.1750535171.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1750535171.git.mchehab+huawei@kernel.org>
 References: <cover.1750535171.git.mchehab+huawei@kernel.org>
@@ -66,172 +67,71 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The script now have lots or arguments. Better organize and
-name them, for it to be a little bit more intuitive.
+Those days, it is hard to install a virtual env that would
+build docs with Sphinx 3.4.3, as even python 3.13 is not
+compatible anymore with it.
+
+	/usr/bin/python3.9 -m venv sphinx_3.4.3
+	. sphinx_3.4.3/bin/activate
+	pip install -r Documentation/sphinx/min_requirements.txt
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/test_doc_build.py | 95 +++++++++++++++++++++++++--------------
- 1 file changed, 61 insertions(+), 34 deletions(-)
+ Documentation/doc-guide/sphinx.rst        | 23 +++++++++++++++++++++++
+ Documentation/sphinx/min_requirements.txt | 10 ++++++++++
+ 2 files changed, 33 insertions(+)
+ create mode 100644 Documentation/sphinx/min_requirements.txt
 
-diff --git a/scripts/test_doc_build.py b/scripts/test_doc_build.py
-index 5e905a350bd0..47b4606569f9 100755
---- a/scripts/test_doc_build.py
-+++ b/scripts/test_doc_build.py
-@@ -269,7 +269,7 @@ class SphinxVenv:
+diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
+index 5a91df105141..607589592bfb 100644
+--- a/Documentation/doc-guide/sphinx.rst
++++ b/Documentation/doc-guide/sphinx.rst
+@@ -131,6 +131,29 @@ It supports two optional parameters:
+ ``--no-virtualenv``
+ 	Use OS packaging for Sphinx instead of Python virtual environment.
  
-         ver = ".".join(map(str, cur_ver))
- 
--        if not self.first_run and args.wait_input and args.make:
-+        if not self.first_run and args.wait_input and args.build:
-             ret = input("Press Enter to continue or 'a' to abort: ").strip().lower()
-             if ret == "a":
-                 print("Aborted.")
-@@ -300,11 +300,11 @@ class SphinxVenv:
-         result = await cmd.run([pip, "freeze"], verbose=False, check=True)
- 
-         # Pip install succeeded. Write requirements file
--        if args.write:
-+        if args.req_file:
-             with open(req_file, "w", encoding="utf-8") as fp:
-                 fp.write(result.stdout)
- 
--        if args.make:
-+        if args.build:
-             start_time = time.time()
- 
-             # Prepare a venv environment
-@@ -317,7 +317,16 @@ class SphinxVenv:
- 
-             # Test doc build
-             await cmd.run(["make", "cleandocs"], env=env, check=True)
--            make = ["make"] + args.make_args + ["htmldocs"]
-+            make = ["make"]
++Installing Sphinx Minimal Version
++---------------------------------
 +
-+            if args.output:
-+                sphinx_build = os.path.realpath(f"{bin_dir}/sphinx-build")
-+                make += [f"O={args.output}", f"SPHINXBUILD={sphinx_build}"]
++When changing Sphinx build system, it is important to ensure that
++the minimal version will still be supported. Nowadays, it is
++becoming harder to do that on modern distributions, as it is not
++possible to install with Python 3.13 and above.
 +
-+            if args.make_args:
-+                make += args.make_args
++Testing with the lowest supported Python version as defined at
++Documentation/process/changes.rst can be done by creating
++a venv with it with, and install minimal requirements with::
 +
-+            make += args.targets
- 
-             if args.verbose:
-                 cmd.log(f". {bin_dir}/activate", verbose=True)
-@@ -380,7 +389,7 @@ class SphinxVenv:
-             await self._handle_version(args, fp, cur_ver, cur_requirements,
-                                        python_bin)
- 
--        if args.make:
-+        if args.build:
-             cmd = AsyncCommands(fp)
-             cmd.log("\nSummary:", verbose=True)
-             for ver, elapsed_time in sorted(self.built_time.items()):
-@@ -407,7 +416,7 @@ This tool allows creating Python virtual environments for different
- Sphinx versions that are supported by the Linux Kernel build system.
- 
- Besides creating the virtual environment, it can also test building
--the documentation using "make htmldocs".
-+the documentation using "make htmldocs" (and/or other doc targets).
- 
- If called without "--versions" argument, it covers the versions shipped
- on major distros, plus the lowest supported version:
-@@ -418,8 +427,8 @@ A typical usage is to run:
- 
-    {SCRIPT} -m -l sphinx_builds.log
- 
--This will create one virtual env for the default version set and do a
--full htmldocs build for each version, creating a log file with the
-+This will create one virtual env for the default version set and run
-+"make htmldocs" for each version, creating a log file with the
- excecuted commands on it.
- 
- NOTE: The build time can be very long, specially on old versions. Also, there
-@@ -433,6 +442,15 @@ reduce the number of threads from "-jauto" to, for instance, "-j4":
- 
- """
- 
-+MAKE_TARGETS = [
-+    "htmldocs",
-+    "texinfodocs",
-+    "infodocs",
-+    "latexdocs",
-+    "pdfdocs",
-+    "epubdocs",
-+    "xmldocs",
-+]
- 
- async def main():
-     """Main program"""
-@@ -440,32 +458,41 @@ async def main():
-     parser = argparse.ArgumentParser(description=DESCRIPTION,
-                                      formatter_class=argparse.RawDescriptionHelpFormatter)
- 
--    parser.add_argument('-V', '--versions', help='Sphinx versions to test',
--                        nargs="*", default=DEFAULT_VERSIONS_TO_TEST,
--                        type=parse_version)
--    parser.add_argument('--min-version', "--min", help='Sphinx minimal version',
--                        type=parse_version)
--    parser.add_argument('--max-version', "--max", help='Sphinx maximum version',
--                        type=parse_version)
--    parser.add_argument('-a', '--make_args',
--                        help='extra arguments for make htmldocs, like SPHINXDIRS=netlink/specs',
--                        nargs="*")
--    parser.add_argument('-w', '--write', help='write a requirements.txt file',
--                        action='store_true')
--    parser.add_argument('-m', '--make',
--                        help='Make documentation',
--                        action='store_true')
--    parser.add_argument('-f', '--full',
--                        help='Add all (major,minor,latest_patch) version to the version list',
--                        action='store_true')
--    parser.add_argument('-i', '--wait-input',
--                        help='Wait for an enter before going to the next version',
--                        action='store_true')
--    parser.add_argument('-v', '--verbose',
--                        help='Verbose all commands',
--                        action='store_true')
--    parser.add_argument('-l', '--log',
--                        help='Log command output on a file')
-+    ver_group = parser.add_argument_group("Version range options")
++	/usr/bin/python3.9 -m venv sphinx_min
++	. sphinx_min/bin/activate
++	pip install -r Documentation/sphinx/min_requirements.txt
 +
-+    ver_group.add_argument('-V', '--versions', nargs="*",
-+                           default=DEFAULT_VERSIONS_TO_TEST,type=parse_version,
-+                           help='Sphinx versions to test')
-+    ver_group.add_argument('--min-version', "--min", type=parse_version,
-+                           help='Sphinx minimal version')
-+    ver_group.add_argument('--max-version', "--max", type=parse_version,
-+                           help='Sphinx maximum version')
-+    ver_group.add_argument('-f', '--full', action='store_true',
-+                           help='Add all Sphinx (major,minor) supported versions to the version range')
++A more comprehensive test can be done by using:
 +
-+    build_group = parser.add_argument_group("Build options")
++	scripts/test_doc_build.py
 +
-+    build_group.add_argument('-b', '--build', action='store_true',
-+                             help='Build documentation')
-+    build_group.add_argument('-a', '--make-args', nargs="*",
-+                             help='extra arguments for make, like SPHINXDIRS=netlink/specs',
-+                        )
-+    build_group.add_argument('-t', '--targets', nargs="+", choices=MAKE_TARGETS,
-+                             default=[MAKE_TARGETS[0]],
-+                             help="make build targets. Default: htmldocs.")
-+    build_group.add_argument("-o", '--output',
-+                             help="output directory for the make O=OUTPUT")
++Such script create one Python venv per supported version,
++optionally building documentation for a range of Sphinx versions.
 +
-+    other_group = parser.add_argument_group("Other options")
-+
-+    other_group.add_argument('-r', '--req-file', action='store_true',
-+                             help='write a requirements.txt file')
-+    other_group.add_argument('-l', '--log',
-+                             help='Log command output on a file')
-+    other_group.add_argument('-v', '--verbose', action='store_true',
-+                             help='Verbose all commands')
-+    other_group.add_argument('-i', '--wait-input', action='store_true',
-+                        help='Wait for an enter before going to the next version')
  
-     args = parser.parse_args()
- 
+ Sphinx Build
+ ============
+diff --git a/Documentation/sphinx/min_requirements.txt b/Documentation/sphinx/min_requirements.txt
+new file mode 100644
+index 000000000000..52d9f27010e8
+--- /dev/null
++++ b/Documentation/sphinx/min_requirements.txt
+@@ -0,0 +1,10 @@
++alabaster >=0.7,<0.8
++docutils>=0.15,<0.18
++jinja2>=2.3,<3.1
++PyYAML>=5.1,<6.1
++Sphinx==3.4.3
++sphinxcontrib-applehelp==1.0.2
++sphinxcontrib-devhelp==1.0.1
++sphinxcontrib-htmlhelp==1.0.3
++sphinxcontrib-qthelp==1.0.2
++sphinxcontrib-serializinghtml==1.1.4
 -- 
 2.49.0
 
