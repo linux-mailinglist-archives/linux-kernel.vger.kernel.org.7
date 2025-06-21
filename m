@@ -1,115 +1,357 @@
-Return-Path: <linux-kernel+bounces-696770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B66AE2B4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 20:53:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF36AE2B4F
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 20:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 248D53B3B19
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 18:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD2D23BC0F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 18:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A38C26FA60;
-	Sat, 21 Jun 2025 18:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E224A26FA6A;
+	Sat, 21 Jun 2025 18:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="O/Fzwsk3"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8OYNlCR"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95B62561BB;
-	Sat, 21 Jun 2025 18:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA2B2036ED;
+	Sat, 21 Jun 2025 18:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750531998; cv=none; b=giJ48X/WsKr+zStQ7s2my7HeJFX4TSOmJ1GrWe9XogiEk2IxCugSARnkiuoy0l9jYu46bJXR0RpNBCfIPdS93MZZwl4ojC1LU9jJ5HrWT+XkSt7mdyvqIkAUSQTNmJzfB7Y1ZLCm3WtSfiabVMO0BP8wObCk01F9s12jDoCoirk=
+	t=1750532078; cv=none; b=jIE33rU96arSnJOCQ0wk81pRcXPD5aTeFAAlmeQp9k1iugyrPUsr4sDWrlnGYgqbXPEFAldEBSHUkaex4DoClP7DoL2x3EmHKljUQs2Y0cyPGM3Zuu3UIWNchoB5D3OE2fRpb/yaCDNTfoPQ4Nxyt4VIDpXbOH2HPLuOOtyLa3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750531998; c=relaxed/simple;
-	bh=uxoKRcY2W6kCcNzZ8+R+4JIj5r251Ne/rkyNdGnRGY8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sY8T9M86MGCp1qfChj2WfbfNd+lHR8q6zAFSby0P6b+4Pkbjh/6bE++QXlvHGdvQ/MhluNlXvkvgy6Aq31bzplbEMup7UW3ioJnlyZdEEBdtgIaMCkV/9CcP5OlC2DMwolblkDGIpnI6BOM8mJIXJHftLkDv6YCWtiZXyjmHp+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=O/Fzwsk3; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55LIYZgV008646;
-	Sat, 21 Jun 2025 18:53:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=Dd9iZj99umaHJEcHImbFxWpsE+0f+
-	IXdMuohHxZlqSE=; b=O/Fzwsk3oCw8QyOBgSkKsURbsi3AIghTBVfbcOBuToQ9i
-	YvOnSzdRxOdpUAbvQ3BiYSFi/pTlNkqFz9YKblD4wGuQby1DUrLHdeN97h0yTyrp
-	pmJ38rziy37BuCKRypH8V7r37RyomFYkCo704U4r9seeGtU5sffX71iR7sbfTJjw
-	X7XjwQ2VbUPTAKBFtlv1dpL7M1cwlnxA5k7HQXy0lRyxO11l6fNNiSRE4KvHw00e
-	Dt4eiXFii2f9UtAxcFYZReJ1EiUw2L5XAyKEh4UUEu7eiweHpFj1T/WiPaOiZPWB
-	9v3+H9wUltsrNMSySW600cm4eCJEsnwOjDr150IBA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47ds7crchy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 21 Jun 2025 18:53:04 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55LE4TMP034526;
-	Sat, 21 Jun 2025 18:53:03 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47dk67wej7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 21 Jun 2025 18:53:03 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55LIr2XG002700;
-	Sat, 21 Jun 2025 18:53:02 GMT
-Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 47dk67wej2-1;
-	Sat, 21 Jun 2025 18:53:02 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: perex@perex.cz, tiwai@suse.com, phasta@kernel.org,
-        andriy.shevchenko@linux.intel.com, linux-sound@vger.kernel.org
-Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: intel8x0: Fix incorrect codec index usage in mixer for ICH4
-Date: Sat, 21 Jun 2025 11:52:24 -0700
-Message-ID: <20250621185233.4081094-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1750532078; c=relaxed/simple;
+	bh=I7SHUy6DKxGY4qxGAYqD8q8Jtc1LLybDSKRrQonjoKg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W/38gCBKjV34z6zuFh0DDLE6QvjhBAFGpVPEZsuu/VR1Ovfe5J3N2v+Fc8n1Molyz7mmgg9+QdRSu4+dXCI/P3GhLyvv7oC0zG1SdvcKTn3f7jmBvBf4BFDft377mlHYeg+TphxSFooM137VaKj62LXv4VwcOhqYp6+NLIYeLeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i8OYNlCR; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e83199d55a0so350984276.3;
+        Sat, 21 Jun 2025 11:54:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750532074; x=1751136874; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E2qckyOsqB8VW6uHaBqylbBJUmynOcUW3ziq8cxMk9s=;
+        b=i8OYNlCRCMZwVgLQ9HwaP1LU+1NXDF3YNcEwXQU5izUOZHdVmYRx6er42YsQDa1rCE
+         kp01Q5QBfSXso0ptR+PvkGgGKgbGvsDKlqpVmJfIJJx0kbtF3zx6ZY2tmp4x5lYNjGhY
+         VR4Htgpiux05gHgmHvPvsmhT/xFiTD6UICBEJCISpJyloFka/HxoXRjKZbBvwav0JKll
+         k7SgeFXOZcMWxS+kBlcng5Vjl90NrZq2Y21FNBPBBTAYB0y9Zb2bwtHa4yTTlrI2m0WT
+         jWFT32fDq5V80bisCaD9QyNCMODSQ5uDVappPXU5oMDEMvKCxzQQPVtokJgdNuuH4Pq7
+         TwAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750532074; x=1751136874;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E2qckyOsqB8VW6uHaBqylbBJUmynOcUW3ziq8cxMk9s=;
+        b=RdK9aqXGCxfP3VY7MLWeOAvaOSKpBxLjklapK0zrCxcbsmo6c14105jgqrkq0BjRhJ
+         iS16zwifdhn1MsfUug7ustliK+2wlX//IoGrVreDZ1TAkX6Zr9WNBOfpf5T3RVMbvxGc
+         xnXhHzP4ZDRucckdR0UUJLqDcXDnPWNFXbuTlybC2ihDPZnFWykVWYCRFnUA8wK+LSG+
+         WvBb1OxNcbYd9lcedyPyLD7kO3Vh5BA9NrrjpgV9+PCoj8AuTRYXnanpONs2glG7Um2z
+         WywUJN0kADNXex9nkX4KLhL41WbrTrPYPtTTLCq74Nd+TqR0y0BDkOWPge6zBwh8RhFf
+         s7bA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdhukmpV2VQMxJGyfoWCJTmT0J8U3ASSA6GLgPCEKvzc50wgaZgBztHpJCMU9AZvVc2xhEfnlhsW0=@vger.kernel.org, AJvYcCWHjuMsTnisQIDPXPYEUDbTIEvP/QdxkhvbeQAPMM6fkb9iWcOqdWtW2WY4lCihwhtT6KFGMO5EX5l3qKzG@vger.kernel.org, AJvYcCXHlK9lsRMyH/JtCxvsJp83zP+s2G9B0EKrCcKjCxYlYtJQ3MooL9S2+kuXZBqG9/E1ea6RijxlaUTL@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBgmrv4yFahcqp/j0r2hEHIW376rnjAyJFw7SbD3mDGp6jcAjf
+	51c08b9gyylIV/FWDRRjS40AEJYIxm9QQb8Bjq+9dsUFvw4mbjO1Z+lTIW4uhvTpwPoriDgcoPo
+	iosxuMI37faEn9I/sZ75JkxoZcN2KhNs=
+X-Gm-Gg: ASbGncv2HQLuqNtx9cd5jGAzrsrU/ABj6Sa7ZBqEUvIOE0G4Gi5lb88WHoJE6jw+2aV
+	THHStbh6Q1mHTXTVGbNCoW1NTbFeQKxBbkFFO9cvVxlIrcFHbjGuyZm2wrB8ANRILRvv8MdIB3s
+	gmmFVmp44CcFtM7PxKQw+ZIVD8qW3WwUXAT+Jz7fHT3F8=
+X-Google-Smtp-Source: AGHT+IFoNdlG6OGyptEDgyQ7J7Y2noHRDxWhWFL0nKAdcsTluhnP2tRcD7MA8Pp6OUa21m6VsanQyquKtk9dxIdzuBQ=
+X-Received: by 2002:a05:690c:6f0b:b0:70e:4cdc:6e7a with SMTP id
+ 00721157ae682-712c64f673dmr48997567b3.6.1750532074339; Sat, 21 Jun 2025
+ 11:54:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-21_06,2025-06-20_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 suspectscore=0
- malwarescore=0 phishscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2506210119
-X-Proofpoint-GUID: OEZ8hdpfEkdqASKukuF-8mLYe3dSoj20
-X-Proofpoint-ORIG-GUID: OEZ8hdpfEkdqASKukuF-8mLYe3dSoj20
-X-Authority-Analysis: v=2.4 cv=G5McE8k5 c=1 sm=1 tr=0 ts=6856ff90 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8 a=96bbWqfXC7VXjgqvvdgA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIxMDEyMCBTYWx0ZWRfX0w0VY+4531sR T+oMjgoTVRmfuruY4b7xt3sd2AZmPM+NrrDuCbWtUf7DMH60UMQxiNdLt+YegzYucPrscONfQDF LSDqfynpTPGROj1lvBDoOb18SwuJXTtxpNBBhSnpyU3kqQkHbb1hensvGqKXtj2YcXj3ku7TdpM
- r/RfXqDA5MEt9R/3SXCWuGY1DQLQwbCChFpxBjc4HGDzr32sKuC0h5/g1lzaVOKQWnOzNm+PVij XG9T+T6WC6l5e3EdFj1RCQqjM5K3DQtCPxW/QnFUSrrv81Xj1HFVZWpwpEL37PiGs1YoMMLB64M 1Fh2DMErlilAS895llH44+MH9mWZNYbSYRjb4Ah+eg5yA13jpsSSJ9JhVn+55UO9P/POxA6ycpw
- 0MFgB0ZN1xvFLhefLq5xlqRQiTsqB6dqbhqgntM9ZVRTw0EPi5rQHuI8qTWQyTFkehtZbF7l
+References: <20250610215933.84795-1-l.rubusch@gmail.com> <20250610215933.84795-9-l.rubusch@gmail.com>
+ <aErE0xmlm4qBHg03@smile.fi.intel.com>
+In-Reply-To: <aErE0xmlm4qBHg03@smile.fi.intel.com>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Sat, 21 Jun 2025 20:53:58 +0200
+X-Gm-Features: AX0GCFuAJvsyydfuvEoWB_tms_BjlTAFOx2hhW_6tF87VW6WKx8Xilr2jgOX7ms
+Message-ID: <CAFXKEHao9xKsizGLMQxikcLbG5Him9n9i3btLtqK2Orj_39a9Q@mail.gmail.com>
+Subject: Re: [PATCH v9 08/11] iio: accel: adxl345: add inactivity feature
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, corbet@lwn.net, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, eraretuya@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-code mistakenly used a hardcoded index (codec[1]) instead of
-iterating, over the codec array using the loop variable i.
-Use codec[i] instead of codec[1] to match the loop iteration.
+On Thu, Jun 12, 2025 at 2:15=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+>
+> On Tue, Jun 10, 2025 at 09:59:30PM +0000, Lothar Rubusch wrote:
+> > Add the inactivity feature of the sensor to the driver. When activity
+> > and inactivity are enabled, a link bit will be set linking activity and
+> > inactivity handling. Additionally, the auto-sleep mode will be enabled.
+> > Due to the link bit the sensor is going to auto-sleep when inactivity
+> > was detected.
+> >
+> > Inactivity detection needs a threshold to be configured and a period of
+> > time in seconds. After, it will transition to inactivity state, if
+> > measurements stay below inactivity threshold.
+> >
+> > When a ODR is configured the period for inactivity is adjusted with a
+> > corresponding reasonable default value, in order to have higher
+> > frequencies, lower inactivity times, and lower sample frequency but
+> > give more time until inactivity. Both with reasonable upper and lower
+> > boundaries, since many of the sensor's features (e.g. auto-sleep) will
+> > need to operate between 12.5 Hz and 400 Hz. This is a default setting
+> > when actively changing sample frequency, explicitly setting the time
+> > until inactivity will overwrite the default.
+> >
+> > Similarly, setting the g-range will provide a default value for the
+> > activity and inactivity thresholds. Both are implicit defaults, but
+> > equally can be overwritten to be explicitly configured.
+>
+> ...
+>
+> > +static const struct iio_event_spec adxl345_fake_chan_events[] =3D {
+> > +     {
+> > +             /* inactivity */
+> > +             .type =3D IIO_EV_TYPE_MAG,
+> > +             .dir =3D IIO_EV_DIR_FALLING,
+> > +             .mask_separate =3D BIT(IIO_EV_INFO_ENABLE),
+> > +             .mask_shared_by_type =3D BIT(IIO_EV_INFO_VALUE) |
+> > +                     BIT(IIO_EV_INFO_PERIOD),
+>
+> Slightly better
+>
+>                 .mask_shared_by_type =3D
+>                         BIT(IIO_EV_INFO_VALUE) |
+>                         BIT(IIO_EV_INFO_PERIOD),
+>
+> > +     },
+> > +};
+>
+> And the same for other similar cases.
+>
+> ...
+>
+> > +/**
+> > + * adxl345_set_inact_time - Configure inactivity time explicitly or by=
+ ODR.
+> > + * @st: The sensor state instance.
+> > + * @val_s: A desired time value, between 0 and 255.
+> > + *
+> > + * Inactivity time can be configured between 1 and 255 sec. If a val_s=
+ of 0
+> > + * is configured by a user, then a default inactivity time will be com=
+puted.
+> > + *
+> > + * In such case, it should take power consumption into consideration. =
+Thus it
+> > + * shall be shorter for higher frequencies and longer for lower freque=
+ncies.
+> > + * Hence, frequencies above 255 Hz shall default to 10 s and frequenci=
+es below
+> > + * 10 Hz shall result in 255 s to detect inactivity.
+> > + *
+> > + * The approach simply subtracts the pre-decimal figure of the configu=
+red
+> > + * sample frequency from 255 s to compute inactivity time [s]. Sub-Hz =
+are thus
+> > + * ignored in this estimation. The recommended ODRs for various featur=
+es
+> > + * (activity/inactivity, sleep modes, free fall, etc.) lie between 12.=
+5 Hz and
+> > + * 400 Hz, thus higher or lower frequencies will result in the boundar=
+y
+> > + * defaults or need to be explicitly specified via val_s.
+> > + *
+> > + * Return: 0 or error value.
+> > + */
+> > +static int adxl345_set_inact_time(struct adxl345_state *st, u32 val_s)
+> > +{
+> > +     unsigned int max_boundary =3D 255;
+> > +     unsigned int min_boundary =3D 10;
+> > +     unsigned int val =3D min(val_s, max_boundary);
+> > +     enum adxl345_odr odr;
+> > +     unsigned int regval;
+> > +     int ret;
+> > +
+> > +     if (val =3D=3D 0) {
+> > +             ret =3D regmap_read(st->regmap, ADXL345_REG_BW_RATE, &reg=
+val);
+> > +             if (ret)
+> > +                     return ret;
+> > +
+> > +             odr =3D FIELD_GET(ADXL345_BW_RATE_MSK, regval);
+>
+> > +             val =3D (adxl345_odr_tbl[odr][0] > max_boundary)
+> > +                     ? min_boundary : max_boundary - adxl345_odr_tbl[o=
+dr][0];
+>
+> clamp() ?
+>
 
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
----
- sound/pci/intel8x0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Isn't clamp() dealing with signed ints? Also, I'll take the diff from
+max_boundary here. So, I'll try staying with the current line and hope
+it's fine.
 
-diff --git a/sound/pci/intel8x0.c b/sound/pci/intel8x0.c
-index 51e7f1f1a48e4..b521cec203336 100644
---- a/sound/pci/intel8x0.c
-+++ b/sound/pci/intel8x0.c
-@@ -2249,7 +2249,7 @@ static int snd_intel8x0_mixer(struct intel8x0 *chip, int ac97_clock,
- 			tmp |= chip->ac97_sdin[0] << ICH_DI1L_SHIFT;
- 			for (i = 1; i < 4; i++) {
- 				if (pcm->r[0].codec[i]) {
--					tmp |= chip->ac97_sdin[pcm->r[0].codec[1]->num] << ICH_DI2L_SHIFT;
-+					tmp |= chip->ac97_sdin[pcm->r[0].codec[i]->num] << ICH_DI2L_SHIFT;
- 					break;
- 				}
- 			}
--- 
-2.46.0
+Best,
+L
 
+> > +     }
+> > +
+> > +     return regmap_write(st->regmap, ADXL345_REG_TIME_INACT, val);
+> > +}
+>
+> ...
+>
+> >       if (type =3D=3D ADXL345_ACTIVITY) {
+> >               axis_ctrl =3D ADXL345_ACT_X_EN | ADXL345_ACT_Y_EN |
+> >                               ADXL345_ACT_Z_EN;
+> >       } else {
+> > -             axis_ctrl =3D 0x00;
+> > +             axis_ctrl =3D ADXL345_INACT_X_EN | ADXL345_INACT_Y_EN |
+> > +                             ADXL345_INACT_Z_EN;
+> >       }
+>
+> Now this can be as simple as
+>
+>         axis_ctrl =3D ADXL345_ACT_X_EN;
+>         if (type =3D=3D ADXL345_ACTIVITY)
+>                 axis_ctrl |=3D ADXL345_ACT_Y_EN | ADXL345_ACT_Z_EN;
+>         else
+>                 axis_ctrl |=3D ADXL345_INACT_Y_EN | ADXL345_INACT_Z_EN;
+>
+> Yeah, I don't know how to make the diff better (it gets worse), but the e=
+nd
+> result is better.
+>
+> One way, which I don't like much is to previously have this conditional w=
+ritten as:
+>
+>         axis_ctrl =3D ADXL345_ACT_X_EN;
+>         if (type =3D=3D ADXL345_ACTIVITY)
+>                 axis_ctrl |=3D ADXL345_ACT_Y_EN | ADXL345_ACT_Z_EN;
+>         else
+>                 axis_ctrl =3D 0;
+>
+> ...
+>
+> > +     ret =3D regmap_assign_bits(st->regmap, ADXL345_REG_POWER_CTL,
+> > +                              (ADXL345_POWER_CTL_AUTO_SLEEP | ADXL345_=
+POWER_CTL_LINK),
+>
+> Unneeded parentheses.
+>
+> > +                              en);
+> >       if (ret)
+> >               return ret;
+>
+> ...
+>
+> >  static int adxl345_set_odr(struct adxl345_state *st, enum adxl345_odr =
+odr)
+> >  {
+> > -     return regmap_update_bits(st->regmap, ADXL345_REG_BW_RATE,
+> > +     int ret;
+> > +
+> > +     ret =3D regmap_update_bits(st->regmap, ADXL345_REG_BW_RATE,
+> >                                ADXL345_BW_RATE_MSK,
+> >                                FIELD_PREP(ADXL345_BW_RATE_MSK, odr));
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     /* update inactivity time by ODR */
+> > +     return adxl345_set_inact_time(st, 0);
+>
+> Okay, in this case the initial form of
+>
+>         int ret;
+>
+>         ret =3D ...
+>         if (ret)
+>                 return ret;
+>
+>         return 0;
+>
+>
+> will be better with the respectful comment (as Jonathan suggested) in tha=
+t
+> change that this is not optimal as standalone change, but it will help re=
+duce
+> churn in the next change(s).
+>
+> >  }
+>
+> ...
+>
+> >  static int adxl345_set_range(struct adxl345_state *st, enum adxl345_ra=
+nge range)
+> >  {
+> > -     return regmap_update_bits(st->regmap, ADXL345_REG_DATA_FORMAT,
+>
+> Same here.
+>
+> > +     unsigned int act_threshold, inact_threshold;
+> > +     unsigned int range_old;
+> > +     unsigned int regval;
+> > +     int ret;
+> > +
+> > +     ret =3D regmap_read(st->regmap, ADXL345_REG_DATA_FORMAT, &regval)=
+;
+> > +     if (ret)
+> > +             return ret;
+> > +     range_old =3D FIELD_GET(ADXL345_DATA_FORMAT_RANGE, regval);
+> > +
+> > +     ret =3D regmap_read(st->regmap,
+> > +                       adxl345_act_thresh_reg[ADXL345_ACTIVITY],
+> > +                       &act_threshold);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D regmap_read(st->regmap,
+> > +                       adxl345_act_thresh_reg[ADXL345_INACTIVITY],
+> > +                       &inact_threshold);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D regmap_update_bits(st->regmap, ADXL345_REG_DATA_FORMAT,
+> >                                ADXL345_DATA_FORMAT_RANGE,
+> >                                FIELD_PREP(ADXL345_DATA_FORMAT_RANGE, ra=
+nge));
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     act_threshold =3D act_threshold * adxl345_range_factor_tbl[range_=
+old]
+> > +             / adxl345_range_factor_tbl[range];
+> > +     act_threshold =3D min(U8_MAX, max(1, act_threshold));
+> > +
+> > +     inact_threshold =3D inact_threshold * adxl345_range_factor_tbl[ra=
+nge_old]
+> > +             / adxl345_range_factor_tbl[range];
+> > +     inact_threshold =3D min(U8_MAX, max(1, inact_threshold));
+> > +
+> > +     ret =3D regmap_write(st->regmap, adxl345_act_thresh_reg[ADXL345_A=
+CTIVITY],
+> > +                        act_threshold);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return regmap_write(st->regmap, adxl345_act_thresh_reg[ADXL345_IN=
+ACTIVITY],
+> > +                        inact_threshold);
+> >  }
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
