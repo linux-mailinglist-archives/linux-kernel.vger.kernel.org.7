@@ -1,154 +1,63 @@
-Return-Path: <linux-kernel+bounces-696544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB27AAE28A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 12:36:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C516AE28CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 13:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BC5F17E554
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 10:36:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C21DC1BC0081
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 11:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B3E1FDA6D;
-	Sat, 21 Jun 2025 10:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F3In1HUI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2B7209F46;
+	Sat, 21 Jun 2025 11:25:51 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D02E1624E9;
-	Sat, 21 Jun 2025 10:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7891D43AA8
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Jun 2025 11:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750502188; cv=none; b=AFWEqiRBcw6rKsL04QvKGjKaql+8IDZOhwo7vOeA1vf91MYPi6hAgsRn1I1RXv+WOFBl2imTWlS+ByCGKJGrSlqUZODHDaCtNH1GzJGAuv12yK1+xVoztkeUoCT2n1cuTtfg+pEHBj4G1CQH4YqMesxf1d/36FVjz2xjZD5lmL4=
+	t=1750505151; cv=none; b=usdN/1KjgTHy/UUZsHMETugv9+XbRmMEG9q9ZfCFQlpX2xNOv+1DrR7AXJ/vMRhBzlV7nNJ/zQc3YCtX0Jm4CbKWdfeaM8XZOAr47XQ6IpOZrKpA0XONVv/8wwoc2Mea8Za01mEiMvcK3gJuGvRU3jkHdzoJ8V7abcDuo23rGE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750502188; c=relaxed/simple;
-	bh=XdhXJ6xgtEXxF6yH2/iVd6cbk2kpHK0jLlVvy4AbYBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bl63OInrHQLKHWO/gDbcx72rtfl0ML/mXpF7dYhIgah4XJjL9N69u47lEpP5u2yQ6vjZLijrqTX5Nt7McIMU9UbJlIUj3lJW+G38yq+IsIOsvKFKi74R9d3pg+vW41HdqQuy3vtFycd6069hH6YhtfYImz+nuQxKCZTmw/UK9jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F3In1HUI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1061C4CEE7;
-	Sat, 21 Jun 2025 10:36:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750502188;
-	bh=XdhXJ6xgtEXxF6yH2/iVd6cbk2kpHK0jLlVvy4AbYBs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F3In1HUIGF53PwoOpZt39X/4nPxZYqMpOneJJ/Jap14f0/AWjnp5znxKJSYSu35G3
-	 skFxN+tDbpi4T03ooAwHY7SxmtXwVI/+t6EiSC+56WU9uIDcHG6MA3SebwIi+Y1D7N
-	 9cQ+G9gPjdp6ea8IhygJykAPh3Tp38uWHXIJFLCqYvDhe+wtPURqz/vwBXvMPWxIyB
-	 mfizEMaNie3s+81xGjQ3XcU2FEKkpA18TJOG2OMamcFD7tls6J8orOmqaRivLI2Ude
-	 7ptRl+Uf2iwrJbqZsjEcz+w4rJw8IPop3JX2BedH5DCh6AkE912g8AH9Fv80jqyMbR
-	 IeApTrpuRqTVw==
-Date: Sat, 21 Jun 2025 11:36:23 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH net-next 2/3] net: enetc: separate 64-bit counters from
- enetc_port_counters
-Message-ID: <20250621103623.GB71935@horms.kernel.org>
-References: <20250620102140.2020008-1-wei.fang@nxp.com>
- <20250620102140.2020008-3-wei.fang@nxp.com>
+	s=arc-20240116; t=1750505151; c=relaxed/simple;
+	bh=sN9g8anDqB/hfRISr+88Pl51E8jeOfwy3U9zxCrkx3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Hk6p4LKjrNduiEWegs64qoItCp0tib0Ho2N/3ZqMMlPAYhxsOphfS/7hxzaxqYaFvX+J5ztlsPyGZihVfWo0fMO51DBCj3ja/kLN8gR6dA0NB96Roa4fHWIECmN+H92B3D3C3EvZq5UjurfOWZooVvSE+IbViRHAGlcWwGA/a/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 55LAfnwE039467;
+	Sat, 21 Jun 2025 19:41:49 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 55LAfno7039464
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 21 Jun 2025 19:41:49 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <ced3af37-9b56-471b-b053-f4ee8c9d8196@I-love.SAKURA.ne.jp>
+Date: Sat, 21 Jun 2025 19:41:50 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250620102140.2020008-3-wei.fang@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [cgroups?] WARNING in NUM (2)
+To: syzbot <syzbot+ee0ddd3c79cac08cd4f6@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org
+References: <684f296b.a00a0220.279073.0033.GAE@google.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <684f296b.a00a0220.279073.0033.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav201.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Fri, Jun 20, 2025 at 06:21:39PM +0800, Wei Fang wrote:
-> Some counters in enetc_port_counters are 32-bit registers, and some are
-> 64-bit registers. But in the current driver, they are all read through
-> enetc_port_rd(), which can only read a 32-bit value. Therefore, separate
-> 64-bit counters (enetc_pm_counters) from enetc_port_counters and use
-> enetc_port_rd64() to read the 64-bit statistics.
-> 
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-
-This patch looks fine to me, as does the following one.
-However, they multiple sparse warnings relating
-to endianness handling in the ioread32() version of _enetc_rd_reg64().
-
-I've collected together my thoughts on that in the form of a patch.
-And I'd appreciate it if we could resolve this one way or another.
-
-From: Simon Horman <horms@kernel.org>
-Subject: [PATCH RFC net] net: enetc: Correct endianness handling in
- _enetc_rd_reg64
-
-enetc_hw.h provides two versions of _enetc_rd_reg64.
-One which simply calls ioread64() when available.
-And another that composes the 64-bit result from ioread32() calls.
-
-In the second case the code appears to assume that each ioread32()
-call returns a little-endian value. The high and the low 32 bit
-values are then combined to make a 64-bit value which is then
-converted to host byte order.
-
-However, both the bit shift and the logical or used to combine
-the two 32-bit values assume that they are operating on host-byte
-order entities. This seems broken and I assume that the code
-has only been tested on little endian systems.
-
-Correct this by converting the 32-bit little endian values
-to host byte order before operating on them.
-
-Also, use little endian types to store these values, to make
-the logic clearer and is moreover good practice.
-
-Flagged by Sparse
-
-Fixes: 69c663660b06 ("net: enetc: Correct endianness handling in _enetc_rd_reg64")
-Signed-off-by: Simon Horman <horms@kernel.org>
----
-I have marked this as RFC as I am unsure that the above is correct.
-
-The version of _enetc_rd_reg64() that is a trivial wrapper around
-ioread64() assumes that the call to ioread64() returns a host byte order
-value?
-
-If that is the case then is it also the case that the ioread32() calls,
-in this version of _enetc_rd_reg64() also return host byte order values.
-And if so, it is probably sufficient for this version to keep using u32
-as the type for low, high, and tmp.  And simply:
-
-	return high << 32 | low;
----
- drivers/net/ethernet/freescale/enetc/enetc_hw.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_hw.h b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-index cb26f185f52f..3f40fcdbc4a7 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-@@ -502,15 +502,15 @@ static inline u64 _enetc_rd_reg64(void __iomem *reg)
- /* using this to read out stats on 32b systems */
- static inline u64 _enetc_rd_reg64(void __iomem *reg)
- {
--	u32 low, high, tmp;
-+	__le32 low, high, tmp;
- 
- 	do {
--		high = ioread32(reg + 4);
--		low = ioread32(reg);
--		tmp = ioread32(reg + 4);
-+		high = (__force __le32)ioread32(reg + 4);
-+		low = (__force __le32)ioread32(reg);
-+		tmp = (__force __le32)ioread32(reg + 4);
- 	} while (high != tmp);
- 
--	return le64_to_cpu((__le64)high << 32 | low);
-+	return (u64)le32_to_cpu(high) << 32 | le32_to_cpu(low);
- }
- #endif
- 
--- 
-2.47.2
-
+#syz dup: WARNING in rhashtable_init_noprof
 
