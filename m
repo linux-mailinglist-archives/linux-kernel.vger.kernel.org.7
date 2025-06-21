@@ -1,102 +1,205 @@
-Return-Path: <linux-kernel+bounces-696641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D736AE29E1
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 17:35:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95CD3AE29EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 17:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 717793B82FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 15:35:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E4AF7A2AE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 15:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C59213E65;
-	Sat, 21 Jun 2025 15:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9162E1547F2;
+	Sat, 21 Jun 2025 15:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBL8oLAr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="Y0wTNBvk"
+Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C752229CE6;
-	Sat, 21 Jun 2025 15:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E672AE8D;
+	Sat, 21 Jun 2025 15:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750520145; cv=none; b=b6ph95U4i+8Y1PZxqBVLhrZeXwX+eLilWdWUXNAPGTPdPmSTQNhBZBmz+EFT8Ax9gjmECfnONTviS9r8SSCoOTWViIyEFTVuqH1uI5jNtg57Hf/FhbEXJB4jGoYZyt7vfX96s4vEDQkBXZdJR8f61eF3fh2p+G2xYsJ7GeP9x9I=
+	t=1750520321; cv=none; b=cSmFC03Y2kRp/IEgUvHAZbvsNhdha7ei2lrSNRPE22MwlArqE7871Qfn82DaFgU7OXuAOlByuQ9DgT32UCJwTHuv597hrqjgaZBdsvmYClAFUS9NIAp3qXns3ErtznIYsyaJpofetMj9ciRDjMIQni2JrQsAhmM0RuLORVObUX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750520145; c=relaxed/simple;
-	bh=uaqrAVHz4P77UurQRE+V0vifBS02a/slmFHXIxT4b3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mdPgVO1XxSPK4dG+7oqZP7H2ARCEMMKVuMV9GCFYP36hGVYuJwsnpbeyi9NZOyxOHYxUMxiaBVGeW6XLfA6Dl3SE0/v5EACl0apIq07jX2f1uxXAzTLc5lY1wvcG7UbP+TNm1lo1UI6eREubWs4HABzP7PJyuaOvHZ/930VfPHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UBL8oLAr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8A9AC4CEE7;
-	Sat, 21 Jun 2025 15:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750520145;
-	bh=uaqrAVHz4P77UurQRE+V0vifBS02a/slmFHXIxT4b3E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UBL8oLArVeOqAbPKjTPsumI1euKNLdReRm74C0srTEOCHR2z3d9+wkvIUjkpi+O5B
-	 NQAzQI9TLQpdNMbF65s0gxzKM7uPaygkOBb5oZpf9BIWc7cF1m3a+B/XSvwEfMUItR
-	 8rAS0V3TI1IF7vrYZM+6Q+CCar9HGizxy5Dej19mZAFuPDMzI2RqHp3JdZViMsluSA
-	 wvDtcHtApWRaONp8VzFrhPOarVTbx4TtDyWclGDIdIXzxafgNsTKXvTOpjQgpmEtyB
-	 iu+EcJymhAi6zTU3OPZbCxNVVBLVTEZvOLGw6GU57lE2qch48ESWnPH7El5QKBhg6+
-	 MsrfSu7HYXNvw==
-Date: Sat, 21 Jun 2025 08:35:43 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <andrew+netdev@lunn.ch>, <horms@kernel.org>, <shenjian15@huawei.com>,
- <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
- <chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
- <shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 3/3] net: hibmcge: configure FIFO thresholds
- according to the MAC controller documentation
-Message-ID: <20250621083543.67459b3b@kernel.org>
-In-Reply-To: <20250619144423.2661528-4-shaojijie@huawei.com>
-References: <20250619144423.2661528-1-shaojijie@huawei.com>
-	<20250619144423.2661528-4-shaojijie@huawei.com>
+	s=arc-20240116; t=1750520321; c=relaxed/simple;
+	bh=LeDpyYSR6p+/K41s/GHHCawtvnbpcs6sOzpl7rZSVfE=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=lGtiRFtU97bzFQExLcA/8vswapvpJVRgGYlaDI2b2wEqFqdph6CmygMJZCDHDou6IXptAzHCij0Qfhz/MHwiVcv5P/LnrD2N/40ML4xRdbgwblaMi5QkYOAM9I89dzccZa81IaXLeG1rfsfrvw6aCvhNvsZrcFC+qDdTgb87e5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=Y0wTNBvk; arc=none smtp.client-ip=143.255.12.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=manguebit.org; s=dkim; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Date:References:In-Reply-To:Subject:Cc:To:From:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=U2ZsFZSJxpetuM39KNMl2GJu7AoJ2Q1cr/uPrANJIyo=; b=Y0wTNBvkGB5oRX4OPVlQNf1J/v
+	tIyhKnQsiPxkssvSkM/XZTVuOY7v4FOXv/jujcAfLGq6NBfZLo8s0nT+zq2r86EyC1TSKmvXPZl0A
+	b98cwFDI23Y6nKNA70Pi1txlytkWA+QgZXngCuAcZCVsZTlstbQQMUZboThGXWMEYkZdHY5BZRRTv
+	NIbnMEWyOaIvCAuYCRJ79zEgulAGNf16bbHP/ocbJcO8sIkDuBGzN+w/JPJjNOoojlE0zT+u5sY5O
+	Ww9wmxkdQJ9/NGJcGNjtm7hkYMQH/mzbxsSKxtVckTLoc/lpEgBU2UbRObEYz81cJL1m2mnpPANOE
+	2SS/p5Aw==;
+Received: from pc by mx1.manguebit.org with local (Exim 4.98.2)
+	id 1uT0Id-00000000NPZ-3kAc;
+	Sat, 21 Jun 2025 12:38:35 -0300
+Message-ID: <82bf746b2c44f9cccd7e3f4ca349d145@manguebit.org>
+From: Paulo Alcantara <pc@manguebit.org>
+To: Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>
+Cc: Steve French <sfrench@samba.org>, Remy Monsen <monsen@monsen.cc>,
+ linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Fix lstat() and AT_SYMLINK_NOFOLLOW to work on
+ broken symlink nodes
+In-Reply-To: <20250621122139.3xq675cbs5kgkd7t@pali>
+References: <20250610213404.16288-1-pali@kernel.org>
+ <26e59412fa2c70efad5f9c585bfc198f@manguebit.org>
+ <20250621122139.3xq675cbs5kgkd7t@pali>
+Date: Sat, 21 Jun 2025 12:38:34 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 19 Jun 2025 22:44:23 +0800 Jijie Shao wrote:
-> +		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_TX_FULL_M, full);
-> +		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_TX_EMPTY_M	, empty);
-> +	}
-> +
-> +	if (dir & HBG_DIR_RX) {
-> +		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_RX_FULL_M, full);
-> +		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_RX_EMPTY_M	, empty);
+Pali Roh=C3=A1r <pali@kernel.org> writes:
 
-nit checkpatch says:
+> On Friday 20 June 2025 20:44:37 Paulo Alcantara wrote:
+>> Pali Roh=C3=A1r <pali@kernel.org> writes:
+>>=20
+>> > Currently Linux SMB client returns EIO for lstat() and AT_SYMLINK_NOFO=
+LLOW
+>> > calls on symlink node when the symlink target location is broken or ca=
+nnot
+>> > be read or parsed.
+>> >
+>> > Fix this problem by relaxing the errors from various locations which p=
+arses
+>> > information about symlink file node (UNIX SMB1, native SMB2+, NFS-styl=
+e,
+>> > WSL-style) and let readlink() syscall to return EIO when the symlink t=
+arget
+>> > location is not available.
+>>=20
+>> Please, don't.  We still want those validations for the other types of
+>> symlinks.
+>
+> Well, validation was not removed. Validation is still there, just the
+> error is signalled by the readlink() syscall instead of the lstat() or
+> AT_SYMLINK_NOFOLLOW syscalls.
+>
+> My opinion is that the lstat() or AT_SYMLINK_NOFOLLOW should work on
+> symlink node independently of where the symlink points (and whether the
+> symlink target is valid POSIX path or not). That is because the lstat()
+> and AT_SYMLINK_NOFOLLOW says that the symlink target location must not
+> be used and must not be resolved.
+>
+> But still the invalid / incorrect / broken or non-representable symlink
+> target path in POSIX notation should be reported as an issue and the
+> readlink() is the correct syscall which should report these errors.
 
-WARNING: line length of 81 exceeds 80 columns
-#62: FILE: drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c:306:
-+		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_TX_EMPTY_M	, empty);
+The only issue is breaking existing customer or user applications that
+really don't care if cifs.ko could follow those kind of symlinks.
 
-ERROR: space prohibited before that ',' (ctx:WxW)
-#62: FILE: drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c:306:
-+		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_TX_EMPTY_M	, empty);
- 		                                                      	^
+Samba create symlinks to represent DFS links with targets like
+'msdfs:srv1\share,srv2\share', which are not valid POSIX paths.  Does
+that mean the filesystem should not allow readlink(2) to succeed just
+because it is not a valid POSIX path?  Is that what you mean?
 
-WARNING: line length of 81 exceeds 80 columns
-#67: FILE: drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c:311:
-+		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_RX_EMPTY_M	, empty);
+>> The problem is just that cifs.ko can't handle absolute
+>> symlink targets in the form of '\??\UNC\srv\share\foo', while Windows
+>> client can.  They are still valid symlink targets, but cifs.ko doesn't
+>> know how to follow them.
+>
+> Windows client can represent and follow such symlink because the symlink
+> is in the NT style format and Windows kernel uses NT style of paths
+> internally. Linux kernel uses POSIX paths and POSIX does not contain any
+> GLOBAL?? namespace for NT object hierarchy.
+>
+> Leaking raw NT object hierarchy from SMB to POSIX userspace via
+> readlink() syscall is a bad idea. Applications are really not expecting
+> that the readlink() syscall will return NT kernel internals (exported
+> over SMB protocol and passed to cifs.ko).
+>
+> For UNC paths encoded in NT object hierarchy, which is just some subset
+> of all possible NT paths, I had an idea that we could convert these
+> paths to some format like:
+>
+>    <prefix>/server/share/path...
+>
+> Where <prefix> would be specified by the string mount option. So user
+> could say that wants all UNC symlinks pointing to /mnt/unc/.
+>
+> And in the same way if user would want to create symlink pointing to
+> /mnt/unc/server/share/path... then cifs.ko will transform it into valid
+> NT UNC path and create a symlink to this location.
 
-ERROR: space prohibited before that ',' (ctx:WxW)
-#67: FILE: drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c:311:
-+		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_RX_EMPTY_M	, empty);
- 		                                                      	^
+That's really a terrible idea.  The symlink targets in the form of
+'\??\UNC\...' could be resolved by cifs.ko.  The ones that refer to a
+file outside the mounted share, we would set those as automounts.
 
-total: 2 errors, 2 warnings, 0 checks, 79 lines checked
+> But this would solve only problem with UNC symlink, not symlinks
+> pointing to NT object hierarchy in general.
+>
+>> The following should do it and then restore old behavior
+>>=20
+>> diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
+>> index bb25e77c5540..11d44288e75a 100644
+>> --- a/fs/smb/client/reparse.c
+>> +++ b/fs/smb/client/reparse.c
+>> @@ -875,15 +875,8 @@ int smb2_parse_native_symlink(char **target, const =
+char *buf, unsigned int len,
+>>  			abs_path +=3D sizeof("\\DosDevices\\")-1;
+>>  		else if (strstarts(abs_path, "\\GLOBAL??\\"))
+>>  			abs_path +=3D sizeof("\\GLOBAL??\\")-1;
+>> -		else {
+>> -			/* Unhandled absolute symlink, points outside of DOS/Win32 */
+>> -			cifs_dbg(VFS,
+>> -				 "absolute symlink '%s' cannot be converted from NT format "
+>> -				 "because points to unknown target\n",
+>> -				 smb_target);
+>> -			rc =3D -EIO;
+>> -			goto out;
+>> -		}
+>> +		else
+>> +			goto out_unhandled_target;
+>>=20=20
+>>  		/* Sometimes path separator after \?? is double backslash */
+>>  		if (abs_path[0] =3D=3D '\\')
+>> @@ -910,13 +903,7 @@ int smb2_parse_native_symlink(char **target, const =
+char *buf, unsigned int len,
+>>  			abs_path++;
+>>  			abs_path[0] =3D drive_letter;
+>>  		} else {
+>> -			/* Unhandled absolute symlink. Report an error. */
+>> -			cifs_dbg(VFS,
+>> -				 "absolute symlink '%s' cannot be converted from NT format "
+>> -				 "because points to unknown target\n",
+>> -				 smb_target);
+>> -			rc =3D -EIO;
+>> -			goto out;
+>> +			goto out_unhandled_target;
+>>  		}
+>>=20=20
+>>  		abs_path_len =3D strlen(abs_path)+1;
+>> @@ -966,6 +953,7 @@ int smb2_parse_native_symlink(char **target, const c=
+har *buf, unsigned int len,
+>>  		 * These paths have same format as Linux symlinks, so no
+>>  		 * conversion is needed.
+>>  		 */
+>> +out_unhandled_target:
+>>  		linux_target =3D smb_target;
+>>  		smb_target =3D NULL;
+>>  	}
+>
+> I'm really not sure if removing the messages and error reporting about
+> symlinks which cannot be represented in POSIX system is a good idea.
 
-NOTE: For some of the reported defects, checkpatch may be able to
-      mechanically convert to the typical style using --fix or --fix-inplace.
--- 
-pw-bot: cr
+Those messages are just useless and noisy.  Do you think it's useful
+printing that message for _every_ symlink when someone is calling
+readdir(2) in a directory that contain such files?
 
